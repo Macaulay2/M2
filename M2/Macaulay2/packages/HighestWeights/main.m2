@@ -17,7 +17,7 @@
 
 export {"LieWeights","setWeights","getWeights","propagateWeights",
      "GroupActing","MinimalityTest","LeadingTermTest","Forward",
-     "highestWeightsDecomposition","Range"}
+     "highestWeightsDecomposition"}
 
 --INPUT
 --D: a Dynkin type
@@ -193,7 +193,7 @@ highestWeightsDecomposition = method(Options=>{Range=>{-infinity,infinity}})
 --OPTIONAL
 --Range: a list of 2 integers denoting the indices of the leftmost and
 --rightmost modules to decompose (only used for complexes)
-highestWeightsDecomposition (ChainComplex, ZZ, List) := HashTable => o -> (C,i,L) ->(
+highestWeightsDecomposition (Complex, ZZ, List) := HashTable => o -> (C,i,L) ->(
      --define the range of the complex to be examined
      maxLeft := max{min(C),(o.Range)_0};
      maxRight := min{max(C),(o.Range)_1};
@@ -257,7 +257,7 @@ highestWeightsDecomposition (ChainComplex, ZZ, List) := HashTable => o -> (C,i,L
 --This is a shortcut that can be used when resolving a quotient of a
 --polynomial ring by an ideal; it uses the fact that the first module
 --has rank one and therefore it is a trivial representation
-highestWeightsDecomposition (ChainComplex) := HashTable => o -> C ->(
+highestWeightsDecomposition (Complex) := HashTable => o -> C ->(
     m := min C;
     if rank C_m != 1 then (
 	error "expected the first module to have rank 1";

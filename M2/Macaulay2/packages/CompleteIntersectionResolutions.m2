@@ -8,7 +8,7 @@ newPackage(
               Headline => "Analyzing Resolutions over a Complete Intersection",
 	      Keywords => {"Commutative Algebra"},
 	      PackageImports => {"Truncations"},
-	      PackageExports => {"MCMApproximations","BGG"},
+	      PackageExports => {"MCMApproximations","BGG","Complexes"},
 --note: this package requires  MCMApproximations.m2
 --in the version of August 21,2018	      
 	      DebuggingMode => false
@@ -111,7 +111,7 @@ regularitySequence(List, Module) := (R,M) ->(
     )
 
 Shamash = method()
-Shamash(Matrix, ChainComplex,ZZ) := (ff, F, len) ->(
+Shamash(Matrix, Complex,ZZ) := (ff, F, len) ->(
     --Given a 1 x 1 matrix ff over a ring R and a chain complex F
     --admitting a homotopy for ff_0, produce the Shamash complex
     -- F as a chain complex Fbar over Rbar = R/ideal ff.
@@ -133,10 +133,10 @@ Shamash(Matrix, ChainComplex,ZZ) := (ff, F, len) ->(
            map(G_(i-1),G_i,matrix apply(i//2, p-> apply(1+i//2, q-> d(2*p+1,2*q)))) else
            map(G_(i-1),G_i,matrix apply(1+(i-1)//2, p-> apply(1+i//2, q-> d(2*p,2*q+1))));
     Rbar := ring ff/ideal ff;
-    chainComplex apply(len, i-> Rbar**D(i+1))
+    complex apply(len, i-> Rbar**D(i+1))
 )
 
-Shamash(Ring, ChainComplex,ZZ) := (Rbar, F, len) ->(
+Shamash(Ring, Complex,ZZ) := (Rbar, F, len) ->(
     P := map(Rbar,ring F);
     ff := gens trim ker P;
     if numcols ff != 1 then error"given ring must be quotient of ring of complex by one element";
@@ -147,7 +147,7 @@ Shamash(Ring, ChainComplex,ZZ) := (Rbar, F, len) ->(
 
 
 EisenbudShamash = method()
-EisenbudShamash (Ring, ChainComplex, ZZ) := (R, F, len) ->(
+EisenbudShamash (Ring, Complex, ZZ) := (R, F, len) ->(
     --Given a 1 x c matrix ff over a ring S and a chain complex F over S,
     --admitting higher homotopies
     -- for the entries of ff, produce the Shamash complex
@@ -156,13 +156,13 @@ EisenbudShamash (Ring, ChainComplex, ZZ) := (R, F, len) ->(
     ff := gens ker map(R,ring F, vars R);
     F' := F[min F];
     h :=  makeHomotopies(ff,F');
-    (chainComplex apply(len, i-> dpart(R,h,F',i+1)))[-min F]
+    (complex apply(len, i-> dpart(R,h,F',i+1)))[-min F]
 )
-EisenbudShamash (Matrix, ChainComplex, ZZ) := (ff, F, len) ->
+EisenbudShamash (Matrix, Complex, ZZ) := (ff, F, len) ->
                       EisenbudShamash((ring F)/(ideal ff), F, len)
 
 Gpart = method()
-Gpart(Ring, ChainComplex, ZZ, ZZ) :=  (R, F, i,j) ->(
+Gpart(Ring, Complex, ZZ, ZZ) :=  (R, F, i,j) ->(
 	-- j-th part of i-th module in Shamash(ff, F), in the order
 	-- F_i, D_1**F_(i-2), ...
 	ff := gens ker map(R,ring F, vars R);
@@ -175,7 +175,7 @@ Gpart(Ring, ChainComplex, ZZ, ZZ) :=  (R, F, i,j) ->(
 		degshift = sum apply(c, cc-> e_cc*ffdegs_cc);
 		R^{-degshift}**(R**F_(i-2*j))))
 	)
-Gpart(Ring, ChainComplex, ZZ) :=  (R, F, i) ->(
+Gpart(Ring, Complex, ZZ) :=  (R, F, i) ->(
     ff := gens ker map(R,ring F, vars R);
     range := toList(min F..i//2);
     if range == {} then return R^0;
@@ -194,7 +194,7 @@ concatVertical = LL -> (
     m)
 
 dpart = method()
-dpart(Ring, HashTable, ChainComplex, List) := (R, h , F, L) ->(
+dpart(Ring, HashTable, Complex, List) := (R, h , F, L) ->(
     --Let G  = Shamash(ff, F), and {i,j,k} = L.
     --The function returns the map
     --from the j-th summand of G_i to the k-th summand of G_(i-1).
@@ -219,7 +219,7 @@ dpart(Ring, HashTable, ChainComplex, List) := (R, h , F, L) ->(
     );
     map(G0,G1,concatVertical LL)
      )
-dpart(Ring, HashTable, ChainComplex, ZZ) := (R,h,F,i)->(
+dpart(Ring, HashTable, Complex, ZZ) := (R,h,F,i)->(
     -- i-th differential of Shamash
     LL := apply(1+(i-1)//2, k->  concatHorizontal apply(1+i//2, j-> dpart(R,h,F,{i,j,k})));
     map(Gpart(R, F, i-1), Gpart(R, F, i), concatVertical LL)
@@ -236,7 +236,7 @@ layeredResolution(Matrix, Module) := opts ->(ff, M) ->(
     L := null;
     cod := numcols ff;
     if cod <=1 then (
-	L = res M;
+	L = freeResolution M;
 --    	<<{rank L_0, rank L_1} << " in codimension "<< cod<<endl;	
         return (L, map(M,L_0,id_(L_0))));
     S := ring ff;
@@ -267,8 +267,8 @@ layeredResolution(Matrix, Module) := opts ->(ff, M) ->(
     B0S := target bS;
     B1S := source bS;    
     if opts.Verbose === true then << {rank B1S, rank B0S} << " in codimension " << cod<<endl;
-    KK := koszul(ff');
-    B := chainComplex{bS};
+    KK := koszulComplex ff';
+    B := complex{bS};
     
     (L',aug') := layeredResolution(ff', M'S, Verbose => opts.Verbose);
     assert(target aug' == M'S);
@@ -282,9 +282,15 @@ layeredResolution(Matrix, Module) := opts ->(ff, M) ->(
     Psi2 := Psi1**KK;
     Psi := extend(L',L'**KK, id_(L'_0))*Psi2;
     L = cone Psi; -- L', the target of Psi, is the first summand, so this is L_0==L'_0++B_0
-    assert(L_0 == L'_0 ++ B_0);
-    m := (sub(matrix (alpha*pruneMapM'),S)*matrix aug') |sub(matrix beta,S);
-    aug := map(M,L'_0++B_0,m);
+    -- we (MES+GGS) changed the following 3 lines:
+    -- assert(L_0 == L'_0 ++ B_0);
+    -- m := (sub(matrix (alpha*pruneMapM'),S)*matrix aug') |sub(matrix beta,S);
+    -- aug := map(M,L'_0++B_0,m);
+    -- to
+    assert(L_0 == B_0 ++ L'_0);
+    m := sub(matrix beta,S) | (sub(matrix (alpha*pruneMapM'),S)*matrix aug');
+    aug := map(M,B_0 ++ L'_0,m);
+    
 --Check exactness
 --    scan(length L -1, s->assert( HH_(s+1) L == 0));
     (L,aug)
@@ -313,7 +319,7 @@ layeredResolution(Matrix, Module, ZZ) := opts -> (ff, M, len) ->(
     MS := pushForward(StoR, M);
     
     if cod == 0 then (
-    	L := res(M,LengthLimit => len);
+    	L := freeResolution(M,LengthLimit => len);
     	return (L, map(M, L_0, id_(L_0))));
     ff' := ff_{0..cod-2};
     R' := S/ideal ff';
@@ -339,7 +345,7 @@ layeredResolution(Matrix, Module, ZZ) := opts -> (ff, M, len) ->(
     psi := psib^[0];
     b := psib^[1];
     (L',aug') := layeredResolution(ff',M', len);
-    B := chainComplex {b};
+    B := complex {b};
     Psi := extend(L', B[1], matrix(psi//aug'));
     box := cone Psi;
     L =  Shamash(R, box, len);    
@@ -488,7 +494,7 @@ oddExtModule Module := opts -> M -> (
      )
 
 makeT = method()
-makeT(Matrix, ChainComplex,ZZ) := (ff,F,i) ->(
+makeT(Matrix, Complex,ZZ) := (ff,F,i) ->(
      -*
      If ff is an c x 1 matrix and
      F is a chain complex
@@ -501,7 +507,7 @@ makeT(Matrix, ChainComplex,ZZ) := (ff,F,i) ->(
      degsff := flatten((degrees ff)_1);
      R := ring F;
      S := ring ff;
-     complete F;
+     --complete F;
      minF := min F;
      d0 := sub(F.dd_i, S);
      d1 := sub(F.dd_(i-1), S);
@@ -555,8 +561,8 @@ cosyzygyRes (ZZ,Module) := (p,M)-> (
     --This is zero if the module
     --is annihilated by a nonzerodivisor. Makes most sense for
     --an MCM over a Gorenstein ring.
-    E:=res (transpose M, LengthLimit => p+1);
-    chainComplex apply(p+1, j->transpose E.dd_(p+1-j))
+    E:=freeResolution (transpose M, LengthLimit => p+1);
+    complex apply(p+1, j->transpose E.dd_(p+1-j))
     )
 	     
 cosyzygyRes Module := M -> cosyzygyRes(2,M)
@@ -622,7 +628,7 @@ lmfa(Matrix,Module) := opts -> (ff,M) ->(
     --MS will be the target of gamma
     --check that MS is MCM of the right codim
     if opts.Check == true then(
-    FS := res MS;
+    FS := freeResolution MS;
     if length FS != c then 
        error"module is not MCM mod the regular sequence");
     ---
@@ -1064,7 +1070,7 @@ highSyzygy Module := opts -> M0 ->(
     --bound, which is best possible.
     -- But if that's not good enough, use Optimism=>-1 etc
     len := 1+mfBound M0-opts#Optimism;
-    F := res(M0, LengthLimit => len);
+    F := freeResolution(M0, LengthLimit => len);
     coker F.dd_len)
 
 
@@ -1129,9 +1135,9 @@ expo(ZZ,List):= (n,L) ->(
 
 -*
 makeHomotopies = method()
-makeHomotopies (Matrix, ChainComplex) := (f,F) ->
+makeHomotopies (Matrix, Complex) := (f,F) ->
      makeHomotopies(f,F, max F)
-makeHomotopies(Matrix, ChainComplex, ZZ) := (f,F,d) ->(
+makeHomotopies(Matrix, Complex, ZZ) := (f,F,d) ->(
      --given a 1 x lenf matrix f and a chain complex 
      -- F_min <-...,
      --the script attempts to make a family of higher homotopies
@@ -1191,10 +1197,10 @@ makeHomotopies(Matrix, ChainComplex, ZZ) := (f,F,d) ->(
 *-
 makeHomotopies = method()
 
-makeHomotopies (Matrix, ChainComplex) := (f,F) ->
+makeHomotopies (Matrix, Complex) := (f,F) ->
      makeHomotopies(f,F, max F)
 
-makeHomotopies(Matrix, ChainComplex, ZZ) := (f,F,d) ->(
+makeHomotopies(Matrix, Complex, ZZ) := (f,F,d) ->(
            --given a 1 x lenf matrix f and a chain complex 
            -- F_min <-...,
            --the script attempts to make a family of higher homotopies
@@ -1253,10 +1259,10 @@ makeHomotopies(Matrix, ChainComplex, ZZ) := (f,F,d) ->(
            H1)
 
 makeHomotopies1 = method()
-makeHomotopies1 (Matrix, ChainComplex) := (f,F) ->(
+makeHomotopies1 (Matrix, Complex) := (f,F) ->(
      makeHomotopies1 (f,F, length F))
 
-makeHomotopies1 (Matrix, ChainComplex, ZZ) := (f,F,b) ->(
+makeHomotopies1 (Matrix, Complex, ZZ) := (f,F,b) ->(
      --given a 1 x lenf matrix f and a chain complex 
      -- F_min <-...,
      --the script attempts to make a family of first homotopies
@@ -1304,7 +1310,7 @@ makeHomotopies1 (Matrix, ChainComplex, ZZ) := (f,F,b) ->(
 
 
 makeHomotopiesOnHomology = method()
-makeHomotopiesOnHomology (Matrix, ChainComplex) := (ff,C)->(
+makeHomotopiesOnHomology (Matrix, Complex) := (ff,C)->(
     --returns a pair (H,h) whose first element is the hashTable of homology of C
     --and whose second element is the hashTable of 1-step homotopies for ff
     h0 := makeHomotopies1(ff,C);
@@ -1320,7 +1326,7 @@ makeHomotopiesOnHomology (Matrix, ChainComplex) := (ff,C)->(
 
 
 exteriorHomologyModule = method()
-exteriorHomologyModule(Matrix,ChainComplex) := (ff, C) ->(
+exteriorHomologyModule(Matrix,Complex) := (ff, C) ->(
     -*
     Assuming that the elements of the 1xc matrix ff are null-homotopic
     on C, the script returns their direct sum as a module over 
@@ -1410,13 +1416,13 @@ exteriorTorModule(Matrix, Module) := (f,M) -> (
      S := ring M;
      n := numgens S;
      k := coefficientRing S;     
-     F := complete res M;
+     F := freeResolution M;
      H := makeHomotopies1(f,F);
      e := symbol e;
      E := k[e_0..e_(numcols f -1), SkewCommutative => true];
      red := map(E,S, {n:0},DegreeMap=>d->{0});
      --problem: the following indexes T starting with 0. But we shouldn't need it!
-     T := hashTable apply(toList(0..max F),i->{i,E^{ -i}**red F_i}); 
+     T := hashTable apply(toList(0..1 + max F),i->{i,E^{ -i}**red F_i}); 
      goodkeys := select(keys H, k->k_1>=0);
      Hk := hashTable apply(goodkeys, h-> (h, red H#h));
      --Hk(j,i) is the homotopy for f_j from F_i**k to F_(i+1)**k,
@@ -1438,8 +1444,7 @@ exteriorTorModule(Matrix,Module,Module) := (ff,M,N) ->(
     --this is NOT symmetric in the two factors.
     --NOTE:
     --h0#{i,j} is the homotopy for f_i starting from the j-th step of the resolution.    
-    Mres := res M;
-    complete Mres;
+    Mres := freeResolution M;
     exteriorHomologyModule(ff, Mres**N)
     )
 
@@ -1463,7 +1468,7 @@ exteriorExtModule(Matrix, Module, Module) := (ff, M,N)->(
     --this is NOT symmetric in the two factors.
     --NOTE:
     --h0#{i,j} is the homotopy for f_i starting from the j-th step of the resolution.    
-    Mres := complete res M;
+    Mres := freeResolution M;
     exteriorHomologyModule(ff, Hom(Mres,N))
     )
 
@@ -1502,10 +1507,9 @@ S2(ZZ,Module) := Matrix => (b,M)-> (
 
 TateResolution = method()
 TateResolution(Module,ZZ,ZZ) := (M,low,high) ->(
-         d := transpose ((res(M, LengthLimit => high)).dd_high);
-	 F := res (coker d, LengthLimit =>(high-low+2));
-	 complete F;
-         T := (chainComplex reverse apply(high-low+1, j->transpose (F.dd_j)))[-low];
+         d := transpose ((freeResolution(M, LengthLimit => high)).dd_high);
+	 F := freeResolution (coker d, LengthLimit =>(high-low+2));
+         T := (complex reverse apply(high-low+1, j->transpose (F.dd_j)))[-low];
 	 T
          )
 TateResolution(Module,ZZ) := (M,b) -> TateResolution(M,b,b)
@@ -1673,10 +1677,10 @@ moduleAsExt(Module,Ring) := (M,R) ->(
     reg := regularity M;
     --truncate M at the regularity to get MM
     MM := minimalPresentation truncate(1+reg, M)**rr^{reg};
-    F := res MM;
+    F := freeResolution MM;
     m := length F;
     --now prepare the CI operators as maps of resolutions
-    K := res(coker vars R, LengthLimit => m+1);
+    K := freeResolution(coker vars R, LengthLimit => m+1);
     T1 := apply (m, i->makeT(ff, K, 2+i));
     T := apply (m, i->apply(c, j-> 
 	    map(K_i,
@@ -1710,7 +1714,7 @@ moduleAsExt(Module,Ring) := (M,R) ->(
 
   
 koszulExtension = method()
-koszulExtension(ChainComplex,ChainComplex,Matrix,Matrix) := (FF, BB, psi1, ff) ->(
+koszulExtension(Complex,Complex,Matrix,Matrix) := (FF, BB, psi1, ff) ->(
     --with BB a two-term complex B_1-->B_0 and FF a resolution
     --of a module annihilated by ideal ff, and
     --psi1: B_1-->F_0,
@@ -1718,9 +1722,9 @@ koszulExtension(ChainComplex,ChainComplex,Matrix,Matrix) := (FF, BB, psi1, ff) -
     --KK(ff)**B[1] --> F
     --and returns the cone on this map.
     S := ring ff;
-    KK := koszul ff;
+    KK := koszulComplex ff;
     --first make the Koszul extension from the complex BB1: FF_0 --> 0
-    BB1 := chainComplex map(S^0,FF_0,0);
+    BB1 := complex(FF_0, Base => 1);
     phi11 := map (FF_0, (KK**BB1)_1,id_(FF_0)|map(FF_0,KK_1**BB1_0,0));
     psi11 := extend(FF, KK**BB1[1], id_(FF_0));
     --then compose with KK tensored with the map BB[1] --> BB1[1]
@@ -1741,10 +1745,10 @@ makeFiniteResolution(Matrix, List) := (ff,MF) -> (
     R := S/ideal(ff_{0..(c-c'-1)}); -- codim c-c'
       --ring over which the finite resolution first occurs.
     toR := map(R,S);
-    A := chainComplex toR B_(0);
+    A := complex{toR B_(0)};
     scan(c'-1, p -> 
      A = koszulExtension(
-      A,chainComplex toR B_(p+1), toR psi_(p), toR ff_{(c-c')..(c-c'+p)}));
+      A,complex{toR B_(p+1)}, toR psi_(p), toR ff_{(c-c')..(c-c'+p)}));
     scan(length A-1, i-> if( prune HH_(i+1) A) != 0 then error"A not acyclic");
     A
 
@@ -1789,7 +1793,7 @@ makeFiniteResolutionCodim2(Matrix,List) := opts -> (ff,MF) -> (
     d1 := map(F0,F1,(bb_0 | ps_0 | map(B01,B02',0)) || (map(B02,B11,0)| bb_1 | f1*map(B02,B02',1)));
     d2 := map(F1,F2, map(B11,B12', h_0*ps_0) || -f1*map(B12,B12',1) || (S^{ -deg1}**bb_1));
     d3 := map(F2,F3,0);
-    F := chainComplex{d1,d2,d3};
+    F := complex{d1,d2,d3};
     --check homology
     if opts.Check == true then (
 	apply(length F, i->(
@@ -1887,7 +1891,7 @@ BGGL = (P,S) ->(
 	map(S^{rank source Blist_(i+1):i+1},
 	    S^{rank source Blist_i:i},
 	   maplist1_i));
-    (chainComplex reverse maplist)[dmax]**S^{dmin}
+    (complex reverse maplist)[dmax]**S^{dmin}
     )
 
 extVsCohomology = method()
@@ -1959,7 +1963,7 @@ kk := coefficientRing R;
 n := numgens R;
 bar := map(Rbar,R);
 RM := pushForward(bar, Mbar); -- M as R-module
-RF := res RM;
+RF := freeResolution RM;
 if o.Check == true then (
     assert(isHomogeneous RM and (RF)_(n+1) == 0)
     );
@@ -1977,7 +1981,7 @@ s := o.Variables;
 S := kk[s_0..s_(c-1),gens R, Degrees => 
 	apply(c, i->{-2, -(degree ff_i)_0})|apply(n, i->{0, (degree R_i)_0})];
 RtoS := map(S,R,DegreeMap => i->{0,i_0});
-SF := chainComplex apply(length RF, i->
+SF := complex apply(length RF, i->
     map (
 	S^{{-i,0}}**RtoS (RF_i), 
 	S^{{-i-1,0}}**RtoS RF_(i+1),
@@ -2180,16 +2184,16 @@ Sbar := S/(RtoS I);
 RbartoSbar := map(Sbar,Rbar, DegreeMap => d->prepend(0,d));
 SbarNbar := coker RbartoSbar presentation Nbar;
 E := prune (
-    HH_1 chainComplex {d0**SbarNbar, d1**SbarNbar}++
-    Sbar^{{1,0}}**HH_1 chainComplex {Sbar^{{-2,0}}**d1**SbarNbar, d0**SbarNbar}
+    HH_1 complex {d0**SbarNbar, d1**SbarNbar}++
+    Sbar^{{1,0}}**HH_1 complex {Sbar^{{-2,0}}**d1**SbarNbar, d0**SbarNbar}
     );
 if o.Check == true then(
     EE := Ext(Mbar,Nbar);
     S' := ring EE; -- note that S' is the polynomial ring
     StoSbar := map(Sbar,S);
     ES := prune pushForward(StoSbar, E);
-    A := res ES;
-    B := res EE;
+    A := freeResolution ES;
+    B := freeResolution EE;
     assert all(length A+1, i-> sort degrees A_i == sort degrees B_i)
     );
 --and optionally move it back to the polynomial ring
@@ -2387,7 +2391,7 @@ Description
   ff = X*map(source X, , genericMatrix(S,a_(1,1),c,c));
   R = S/ideal ff;
   mbound = mfBound coker (R**X)
-  F = res(coker (R**X) , LengthLimit =>mbound+1);
+  F = freeResolution(coker (R**X) , LengthLimit =>mbound+1);
   M = coker F.dd_(mbound+1);
   MF = matrixFactorization(ff,M)
   netList BRanks MF
@@ -2404,12 +2408,12 @@ Description
   from the matrix factorization MF by the routine
   makeFiniteResolution(ff,MF).
  Example
-  betti res M
+  betti freeResolution(M, LengthLimit => 7)
   infiniteBettiNumbers(MF,7)
-  betti res pushForward(map(R,S),M)
+  betti freeResolution pushForward(map(R,S),M)
   finiteBettiNumbers MF  
   G = makeFiniteResolution (ff,MF)
-  G' = res(pushForward(map(R,S),M))
+  G' = freeResolution(pushForward(map(R,S),M))
  Text
   The group of routines ExtModule, evenExtModule, oddExtmodule,
   extModuleData (which call the routine
@@ -2534,8 +2538,8 @@ doc ///
     Text
      The two versions of Ext appear to be the same up to change of variables:
     Example
-     A = res ES
-     B = res EE
+     A = freeResolution ES
+     B = freeResolution EE
      all(length A+1, i-> sort degrees A_i == sort degrees B_i)
     Text
      but they have apparently different annihilators
@@ -2665,7 +2669,7 @@ doc ///
 doc///
    Key
     makeHomotopiesOnHomology
-    (makeHomotopiesOnHomology, Matrix, ChainComplex)
+    (makeHomotopiesOnHomology, Matrix, Complex)
    Headline
     Homology of a complex as exterior module
    Usage
@@ -2673,7 +2677,7 @@ doc///
    Inputs
     ff:Matrix
      matrix of elements homotopic to 0 on C
-    C:ChainComplex
+    C:Complex
    Outputs
     H:HashTable
      Homology of C, indexed by places in the C
@@ -2757,7 +2761,7 @@ doc ///
 doc ///
    Key
     exteriorHomologyModule
-    (exteriorHomologyModule, Matrix, ChainComplex)
+    (exteriorHomologyModule, Matrix, Complex)
    Headline
     Make the homology of a complex into a module over an exterior algebra
    Usage
@@ -2765,7 +2769,7 @@ doc ///
    Inputs
     ff:Matrix
      Matrix of elements that are homotopic to 0 on C
-    C:ChainComplex
+    C:Complex
    Outputs
     M:Module
    Description
@@ -2834,7 +2838,7 @@ Inputs
  ff:Matrix
    the regular sequence used for the matrixFactorization computation
 Outputs
- A:ChainComplex
+ A:Complex
    A is the minimal finite resolution of M over R.
 Description
  Text
@@ -2859,7 +2863,7 @@ Description
   M = highSyzygy (R^1/ideal vars R);
   mf = matrixFactorization (ff, M)
   G = makeFiniteResolution(ff,mf)
-  F = res pushForward(map(R,S),M)
+  F = freeResolution pushForward(map(R,S),M)
   G.dd_1
   F.dd_1
   G.dd_2
@@ -2881,7 +2885,7 @@ Description
   G = makeFiniteResolution(ff,mf);
   codim ring G
   R1 = ring G
-  F = res prune pushForward(map(R,R1),M)
+  F = freeResolution(prune pushForward(map(R,R1),M), LengthLimit => 4)
   betti F
   betti G
 
@@ -2966,7 +2970,7 @@ Description
   complexity M
   mf = matrixFactorization (ff, M)
   complexity mf
-  betti res (R^1/ideal"a2b2", LengthLimit=>10)
+  betti freeResolution (R^1/ideal"a2b2", LengthLimit=>10)
 SeeAlso
  matrixFactorization
  makeFiniteResolution
@@ -2976,22 +2980,22 @@ SeeAlso
 doc ///
 Key 
  koszulExtension
- (koszulExtension, ChainComplex,ChainComplex,Matrix,Matrix)
+ (koszulExtension, Complex,Complex,Matrix,Matrix)
 Headline 
  creates the Koszul extension complex of a map
 Usage 
  MM = koszulExtension(FF,BB,psi1,ff)
 Inputs 
- FF:ChainComplex
+ FF:Complex
   resolution over S
- BB:ChainComplex
+ BB:Complex
   two-term complex BB_1-->BB_0
  psi1:Matrix
   from BB_1 to FF_0
  ff:Matrix
   regular sequence annihilating the module resolved by FF
 Outputs
- MM:ChainComplex
+ MM:Complex
   the mapping cone of the induced map B[-1]\otimes KK(ff) to W extending psi
 Description
  Text
@@ -3075,7 +3079,7 @@ Description
   Ops = kk[x_1,x_2,x_3];
   MM = Ops^1/(x_1*ideal(x_2^2,x_3));
   N = moduleAsExt(MM,R);
-  betti res( N, LengthLimit => 10)
+  betti freeResolution( N, LengthLimit => 10)
   hfModuleAsExt(12,MM,3)
 Caveat
   The elements f_1..f_c must be homogeneous of the same degree.
@@ -3129,7 +3133,7 @@ Description
   Ops = kk[x_1,x_2,x_3];
   MM = Ops^1/(x_1*ideal(x_2^2,x_3));
   N = moduleAsExt(MM,R);
-  betti res( N, LengthLimit => 10)
+  betti freeResolution( N, LengthLimit => 10)
   hfModuleAsExt(12,MM,3)
 SeeAlso
  moduleAsExt
@@ -3282,9 +3286,9 @@ doc ///
      ff = f*random(source f, source f)
      R = S/ideal f
      M0 = R^1/ideal"x2z2,xyz"
-     betti res (M0, LengthLimit => 7)
+     betti freeResolution (M0, LengthLimit => 7)
      mfBound M0
-     M = betti res highSyzygy M0
+     M = betti freeResolution(highSyzygy M0, LengthLimit => 7)
      netList BRanks matrixFactorization(ff, highSyzygy M0)
     Text
      In this case as in all others we have examined, 
@@ -3410,7 +3414,7 @@ doc ///
      f = map(S^1, S^4, (i,j) -> S_j^3)
      R = S/ideal f;
      M = R^1/ideal"ab2+cd2";     
-     betti (F = res(M, LengthLimit => 5))
+     betti (F = freeResolution(M, LengthLimit => 5))
      E = ExtModuleData M;
      E_2     
      E_3          
@@ -3473,7 +3477,7 @@ doc ///
     upper:ZZ
           lower and upper bounds for the resolution
    Outputs
-    F:ChainComplex
+    F:Complex
    Description
     Text
      Forms an interval, lower..upper, 
@@ -3496,8 +3500,8 @@ doc ///
 doc ///
    Key
     makeT
-    (makeT,Matrix, ChainComplex,ZZ)
---    (makeT,Matrix, ChainComplex,Matrix, ZZ)    
+    (makeT,Matrix, Complex,ZZ)
+--    (makeT,Matrix, Complex,Matrix, ZZ)    
    Headline
     make the CI operators on a complex
    Usage
@@ -3506,7 +3510,7 @@ doc ///
    Inputs
     ff:Matrix
       1xc matrix whose entries are a complete intersection in S
-    F:ChainComplex
+    F:Complex
       over S/ideal ff
     t0:Matrix
       CI-operator on F for ff_0 to be preserved
@@ -3530,7 +3534,7 @@ doc ///
      ff = matrix"x3,y3,z3";
      R = S/ideal ff;
      M = coker matrix"x,y,z;y,z,x";
-     betti (F = res M)
+     betti (F = freeResolution(M, LengthLimit => 3))
      T = makeT(ff,F,3);
      netList T
      isHomogeneous T_2
@@ -3566,7 +3570,7 @@ doc ///
 	  I1 = ideal "x3y"
 	  R1 = S/I1
 	  M1 = R1^1/ideal(x^2)
-	  betti res (M1, LengthLimit =>5)
+	  betti freeResolution (M1, LengthLimit =>5)
 	  E = ExtModule M1
 	  apply(toList(0..10), i->hilbertFunction(i, E))
 	  Eeven = evenExtModule(M1)
@@ -3578,7 +3582,7 @@ doc ///
 	  I2 = ideal"x3,yz"
 	  R2 = S/I2
 	  M2 = R2^1/ideal"x2,y,z"
-	  betti res (M2, LengthLimit =>10)	  
+	  betti freeResolution (M2, LengthLimit =>10)	  
 	  E = ExtModule M2
 	  apply(toList(0..10), i->hilbertFunction(i, E))
 	  Eeven = evenExtModule M2
@@ -3625,7 +3629,7 @@ doc ///
 	  I2 = ideal"x3,yz"
 	  R2 = S/I2
 	  M2 = R2^1/ideal"x2,y,z"
-	  betti res (M2, LengthLimit =>10)	  
+	  betti freeResolution (M2, LengthLimit =>10)	  
 	  E = ExtModule M2
 	  apply(toList(0..10), i->hilbertFunction(i, E))
 	  Eeven = evenExtModule M2
@@ -3662,7 +3666,7 @@ doc ///
 	  I2 = ideal"x3,yz"
 	  R2 = S/I2
 	  M2 = R2^1/ideal"x2,y,z"
-	  betti res (M2, LengthLimit =>10)	  
+	  betti freeResolution (M2, LengthLimit =>10)	  
 	  E = ExtModule M2
 	  apply(toList(0..10), i->hilbertFunction(i, E))
 	  Eodd = oddExtModule M2
@@ -3677,8 +3681,8 @@ doc ///
 doc ///
 Key
  makeHomotopies
- (makeHomotopies,Matrix,ChainComplex,ZZ)
- (makeHomotopies,Matrix,ChainComplex)
+ (makeHomotopies,Matrix,Complex,ZZ)
+ (makeHomotopies,Matrix,Complex)
 Headline
  returns a system of higher homotopies
 Usage
@@ -3686,7 +3690,7 @@ Usage
 Inputs
  f:Matrix
    1xn matrix of elements of S
- F:ChainComplex
+ F:Complex
    admitting homotopies for the entries of f
  b:ZZ
    how far back to compute the homotopies (defaults to length of F)
@@ -3726,7 +3730,7 @@ Description
  Example
   kk=ZZ/101
   S = kk[a,b,c,d]
-  F = res ideal vars S  
+  F = freeResolution ideal vars S  
   f = matrix{{a,b,c}}
   homot = makeHomotopies(f,F,2)
  Text
@@ -3742,7 +3746,7 @@ Description
   kk= ZZ/32003;
   S = kk[a,b,c,d];
   M = S^1/(ideal"a2,b2,c2,d2");
-  F = res M
+  F = freeResolution M
   setRandomSeed 0
   f = random(S^1,S^{2:-5});
   homot = makeHomotopies(f,F,5)
@@ -3769,8 +3773,8 @@ SeeAlso
 doc ///
 Key
  makeHomotopies1
- (makeHomotopies1, Matrix,ChainComplex,ZZ)
- (makeHomotopies1, Matrix,ChainComplex) 
+ (makeHomotopies1, Matrix,Complex,ZZ)
+ (makeHomotopies1, Matrix,Complex) 
 Headline
  returns a system of first homotopies
 Usage
@@ -3778,7 +3782,7 @@ Usage
 Inputs
  f:Matrix
    1xn matrix of elements of S
- F:ChainComplex
+ F:Complex
    admitting homotopies for the entries of f
  d:ZZ
    how far back to compute the homotopies (defaults to length of F)
@@ -3857,7 +3861,7 @@ Description
   SE = prune target S2map;
   extra = prune coker S2map;
   KE = prune ker S2map;
-  betti res(Mb, LengthLimit => 10)
+  betti freeResolution(Mb, LengthLimit => 10)
   apply (5, i-> hilbertFunction(i, KE))
   apply (5, i-> hilbertFunction(i, E))
   apply (5, i-> hilbertFunction(i, SE))
@@ -4015,9 +4019,9 @@ Description
   MF = matrixFactorization(ff,M);
   netList BRanks MF
   netList bMaps MF
-  betti res(M, LengthLimit => 7)
+  betti freeResolution(M, LengthLimit => 7)
   infiniteBettiNumbers (MF,7)
-  betti res pushForward(map(R,S),M)
+  betti freeResolution pushForward(map(R,S),M)
   finiteBettiNumbers MF
 SeeAlso
   finiteBettiNumbers
@@ -4054,13 +4058,13 @@ Description
   ff = matrix"au,bv"
   R = S/ideal ff
   M0 = R^1/ideal"a,b"
-  F = res(M0, LengthLimit =>3)
+  F = freeResolution(M0, LengthLimit =>3)
   M = coker F.dd_3;
   MF = matrixFactorization(ff,M);
-  betti res pushForward(map(R,S),M)
+  betti freeResolution pushForward(map(R,S),M)
   finiteBettiNumbers MF
   infiniteBettiNumbers(MF,5)
-  betti res (M, LengthLimit => 5)
+  betti freeResolution (M, LengthLimit => 5)
 SeeAlso
   matrixFactorization
   infiniteBettiNumbers
@@ -4095,13 +4099,13 @@ Description
   ff = matrix"au,bv"
   R = S/ideal ff
   M0 = R^1/ideal"a,b"
-  F = res(M0, LengthLimit =>3)
+  F = freeResolution(M0, LengthLimit =>3)
   M = coker F.dd_3;
   MF = matrixFactorization(ff,M);
-  betti res pushForward(map(R,S),M)
+  betti freeResolution pushForward(map(R,S),M)
   finiteBettiNumbers MF
   infiniteBettiNumbers(MF,5)
-  betti res (M, LengthLimit => 5)
+  betti freeResolution (M, LengthLimit => 5)
 SeeAlso
   matrixFactorization
   finiteBettiNumbers
@@ -4161,17 +4165,17 @@ Description
   R = S/ideal f
   p = map(R,S)
   M = coker map(R^2, R^{3:-1}, {{a,b,c},{b,c,a}})			       
-  betti (FF =res( M, LengthLimit =>6))
+  betti (FF =freeResolution( M, LengthLimit =>6))
   MS = prune pushForward(p, coker FF.dd_6);
   T = exteriorTorModule(f,MS);
   betti T
-  betti res (PT = prune T)
+  betti freeResolution (PT = prune T, LengthLimit => 4)
   ann PT
   PT0 = image (inducedMap(PT,cover PT)* ((cover PT)_{0..12}));
   PT1 = image (inducedMap(PT,cover PT)* ((cover PT)_{13..30}));
-  betti res prune PT0
-  betti res prune PT1
-  betti res prune PT
+  betti freeResolution(prune PT0, LengthLimit => 4)
+  betti freeResolution(prune PT1, LengthLimit => 4)
+  betti freeResolution(prune PT, LengthLimit => 4)
 SeeAlso
   makeModule
 ///
@@ -4220,15 +4224,15 @@ Description
   R = S/ideal f
   p = map(R,S)
   M = coker map(R^2, R^{3:-1}, {{a,b,c},{b,c,a}})			       
-  betti (FF =res( M, LengthLimit =>6))
+  betti (FF =freeResolution( M, LengthLimit =>6))
   MS = prune pushForward(p, coker FF.dd_6);
   resFld := pushForward(p, coker vars R);
   T = exteriorTorModule(f,MS);
   E = exteriorExtModule(f,MS);
   hf(-4..0,E)
-  betti res MS
-  betti res (PE = prune E)
-  betti res (PT = prune T)
+  betti freeResolution MS
+  betti freeResolution (PE = prune E, LengthLimit => 6)
+  betti freeResolution (PT = prune T, LengthLimit => 6)
   
   E1 = prune exteriorExtModule(f, MS, resFld);
   ring E1
@@ -4294,7 +4298,7 @@ doc ///
     M:Module
       Should be a CM module over a Gorenstein ring
    Outputs
-    F:ChainComplex
+    F:Complex
       last map is presentation of M
    Description
     Text
@@ -4551,7 +4555,7 @@ Inputs
  S:Ring
   polynomial ring on the same number of vars
 Outputs
- L:ChainComplex
+ L:Complex
   linear chain complex over S corresponding to P
 Description
  Text
@@ -4561,7 +4565,7 @@ Description
  Example
   E = ZZ/101[a,b,c,d, SkewCommutative => true]
   P = E^1/ideal(a*b,c)
-  betti res P
+  betti freeResolution(P, LengthLimit => 5)
   hf(0..3, P)
   S = ZZ/101[x,y,z,w]
   betti BGGL(P,S)
@@ -4682,7 +4686,7 @@ doc ///
      M = R^1/ideal"a,bc"
      k = 1
      m = k+5
-     F = res(M, LengthLimit => m)
+     F = freeResolution(M, LengthLimit => m)
      syzygies = apply(1..m, i->coker F.dd_i);
      t1 = makeT(ff,F,k+4);
      t2 = makeT(ff,F,k+2);
@@ -4696,8 +4700,8 @@ doc ///
 doc ///
    Key
     Shamash
-    (Shamash, Matrix, ChainComplex, ZZ)
-    (Shamash, Ring, ChainComplex, ZZ)
+    (Shamash, Matrix, Complex, ZZ)
+    (Shamash, Ring, Complex, ZZ)
    Headline
     Computes the Shamash Complex
    Usage
@@ -4708,11 +4712,11 @@ doc ///
      1 x 1 Matrix over ring F.
     Rbar:Ring
      ring F mod ideal ff
-    F:ChainComplex
+    F:Complex
      defined over ring ff
     len: ZZ
    Outputs
-    FF: ChainComplex
+    FF: Complex
      chain complex over (ring F)/(ideal ff)
    Description
     Text
@@ -4736,7 +4740,7 @@ doc ///
      S = ZZ/101[x,y,z]
      R = S/ideal"x3,y3"
      M = R^1/ideal(x,y,z)
-     F = res M
+     F = freeResolution(M, LengthLimit => 4)
      ff = matrix{{z^3}}
      R1 = R/ideal ff
      betti F
@@ -4756,8 +4760,8 @@ doc ///
 doc ///
    Key
     EisenbudShamash
-    (EisenbudShamash, Matrix, ChainComplex, ZZ)
-    (EisenbudShamash, Ring, ChainComplex, ZZ)
+    (EisenbudShamash, Matrix, Complex, ZZ)
+    (EisenbudShamash, Ring, Complex, ZZ)
    Headline
     Computes the Eisenbud-Shamash Complex
    Usage
@@ -4768,11 +4772,11 @@ doc ///
      1 x c Matrix over ring F.
     Rbar:Ring
      ring F mod ideal ff
-    F:ChainComplex
+    F:Complex
      starting from F_0, defined over the same ring as ff
     len: ZZ
    Outputs
-    FF:ChainComplex
+    FF:Complex
      chain complex over (ring F)/(ideal ff)
    Description
     Text
@@ -4785,7 +4789,7 @@ doc ///
     Example     
      x = symbol x
      S = ZZ/101[x_0..x_4]
-     F = res coker vars S
+     F = freeResolution coker vars S
      ff = matrix{{x_0^2,x_1^3}}     
      R = S/(ideal ff)
      len = 10
@@ -4820,7 +4824,7 @@ doc ///
      S = ZZ/101[a..f]
      R = S/ideal"a3,b3"
      M = coker vars R     
-     F = res M
+     F = freeResolution(M, LengthLimit => 7)
      betti F     
      ff = matrix"c3"
      R1 = R/ideal ff
@@ -4856,7 +4860,7 @@ doc ///
     len:ZZ
      length of the segment of the resolution to be computed over R, in the second form.
    Outputs
-    FF:ChainComplex
+    FF:Complex
      resolution of M over S in the first case; length len segment of the resolution over R in the second.
    Description
     Text
@@ -4873,8 +4877,8 @@ doc ///
      M = syzygyModule(2,coker vars R)
      (FF, aug) = layeredResolution(ff,M,5)
      betti FF
-     betti res(M, LengthLimit=>5)
-     C = chainComplex flatten {{aug} |apply(4, i-> FF.dd_(i+1))}
+     betti freeResolution(M, LengthLimit=>5)
+     C = complex flatten {{aug} |apply(4, i-> FF.dd_(i+1))}
      apply(4, i ->FF.dd_(i+1))
      apply(5, j-> prune HH_j C == 0)
     Text
@@ -4884,8 +4888,8 @@ doc ///
      (GG, aug) = layeredResolution(ff,MS)
      (GG, aug) = layeredResolution(ff,MS, Verbose =>true)
      betti GG
-     betti res MS
-     C = chainComplex flatten {{aug} |apply(length GG -1, i-> GG.dd_(i+1))}    
+     betti freeResolution MS
+     C = complex flatten {{aug} |apply(length GG -1, i-> GG.dd_(i+1))}    
      apply(length GG +1 , j-> prune HH_j C == 0)     
 ///
 
@@ -4976,7 +4980,7 @@ doc///
      pushing it forward to S and seeing that it has a linear
      resolution of length 2:
     Example
-     betti res pushForward(map(R,S),M)
+     betti freeResolution pushForward(map(R,S),M)
     Text
      We compute the layered resolution and the associated homotopies and augmentation,
      giving the matrix factorization:
@@ -5118,9 +5122,9 @@ doc ///
      The maps d0,d1 form a matrix factorization 
      of sum(c, i->s_i*f_i). The have the property that for any Rbar module N, 
      
-     HH_1 chainComplex \{d0**N, d1**N\} = Ext^{even}_{Rbar}(M,N)
+     HH_1 complex \{d0**N, d1**N\} = Ext^{even}_{Rbar}(M,N)
      
-     S^{{1,0}}**HH_1 chainComplex \{S^{{-2,0}}**d1**N, d0**N\} = Ext^{odd}_{Rbar}(M,N)    
+     S^{{1,0}}**HH_1 complex \{S^{{-2,0}}**d1**N, d0**N\} = Ext^{odd}_{Rbar}(M,N)    
 
      This is encoded in the script newExt
      
@@ -5154,9 +5158,9 @@ doc ///
      Hom(d0,Sbar) and Hom(d1,Sbar) together form the resolution of Mbar;
      thus the homology of one composition is 0, while the other is Mbar
     Example
-     prune HH_1 chainComplex{dual (Sbar**d0), dual(Sbar**d1)} == 0
+     prune HH_1 complex{dual (Sbar**d0), dual(Sbar**d1)} == 0
      Mbar' = Sbar^1/(Sbar_0, Sbar_1)**SMbar
-     ideal presentation prune HH_1 chainComplex{dual (Sbar**d1), dual(Sbar**d0)} == ideal presentation Mbar'
+     ideal presentation prune HH_1 complex{dual (Sbar**d1), dual(Sbar**d0)} == ideal presentation Mbar'
    SeeAlso
     Ext
     newExt
@@ -5195,8 +5199,8 @@ EE = Ext(Mbar,K);
 S' = ring EE -- note that S' is the polynomial ring
 
 --The two versions of Ext appear to be the same up to change of variables:
-A = res ES
-B = res EE
+A = freeResolution ES
+B = freeResolution EE
 assert all(length A+1, i-> sort degrees A_i == sort degrees B_i)
 --but they have apparently different annihilators
 ann EE
@@ -5233,8 +5237,8 @@ Sbar = S/SI
 RbartoSbar = map(Sbar,Rbar,DegreeMap => d->prepend(0,d)) 
 N = prune coker RbartoSbar presentation Mbar;
 E = prune (
-    HH_1 chainComplex {d0**N, d1**N}++
-    Sbar^{{1,0}}**HH_1 chainComplex {Sbar^{{-2,0}}**d1**N, d0**N}
+    HH_1 complex {d0**N, d1**N}++
+    Sbar^{{1,0}}**HH_1 complex {Sbar^{{-2,0}}**d1**N, d0**N}
     );
 EE = Ext(Mbar,Mbar);
 gens ring E
@@ -5354,21 +5358,21 @@ len = 4
 ff = matrix{{}}
 M = S1^1
 (FF, aug) = layeredResolution(ff,M,len)
-betti FF == betti res(M, LengthLimit=>len)
+betti FF == betti freeResolution(M, LengthLimit=>len)
 --codim 1
 use S1
 ff = matrix"a3" 
 R1 = S1/ideal ff
 M = syzygyModule(3,coker vars R1)
 (FF, aug) = layeredResolution(ff,M,len)
-betti FF == betti res(M, LengthLimit=>len)
+betti FF == betti freeResolution(M, LengthLimit=>len)
 --codim 2
 use S1
 ff = matrix"a3, b3" 
 R1 = S1/ideal ff
 M = syzygyModule(2,coker vars R1)
 (FF, aug) = layeredResolution(ff,M,len)
-assert(betti FF == betti res(M, LengthLimit=>len))
+assert(betti FF == betti freeResolution(M, LengthLimit=>len))
 --codim 3
 use S1
 len = 5
@@ -5376,8 +5380,8 @@ ff = matrix"a3, b3, c3"
 R1 = S1/ideal ff
 M = syzygyModule(2,coker vars R1)
 (FF, aug) = layeredResolution(ff,M,len)
-assert(betti FF == betti res(M, LengthLimit=>len))
-C = chainComplex flatten {{aug} |apply(len-1, i-> FF.dd_(i+1))}
+assert(betti FF == betti freeResolution(M, LengthLimit=>len))
+C = complex flatten {{aug} |apply(len-1, i-> FF.dd_(i+1))}
 scan(len, j-> assert(prune HH_j C == 0))
 ///
 
@@ -5388,8 +5392,8 @@ setRandomSeed 0
 ff = ff1*random(source ff1, source ff1)
 R = S/(ideal ff)
 M = coker matrix {{R_0,R_1,R_2},{R_1,R_2,R_0}}
-F = res coker vars R
-F0 = res (M, LengthLimit =>3)
+F = freeResolution(coker vars R, LengthLimit => 3)
+F0 = freeResolution (M, LengthLimit =>3)
 makeT(ff, F0, 4)
 min F0
 --generateAssertions"makeT(ff, F0, 2)"
@@ -5404,7 +5408,7 @@ assert( (makeT(ff, F0, 2)) === {map((R)^{{-3},{-3}},(R)^{{-3},{-3},{-3},{-3},{-3
 S = ZZ/101[x,y,z]
 R = S/ideal"x3,y3"
 M = R^1/ideal(x,y,z)
-F = res M
+F = freeResolution(M, LengthLimit => 4)
 ff = matrix{{z^3}}
 FF = Shamash(ff,F,4)
 scan(length FF -1, i->assert(0==(HH_(i+1)FF)))
@@ -5447,7 +5451,7 @@ R = S/ideal ff;
 M = highSyzygy (R^1/ideal vars R)
 mf = matrixFactorization (ff, M)
 G = makeFiniteResolution(ff,mf)
-F = res pushForward(map(R,S),M)
+F = freeResolution pushForward(map(R,S),M)
 assert(betti G == betti F)
 ///
 
@@ -5472,7 +5476,7 @@ R = S/ideal ff
 M0 = R^1/ideal"a,b"
 assert(2==regularity ExtModule M0)
 len = 2
-F = res(M0, LengthLimit =>len)
+F = freeResolution(M0, LengthLimit =>len)
 MF = matrixFactorization(ff, coker F.dd_len, Check=>true)
 use S
 assert(BRanks MF=={{2,2}})
@@ -5596,7 +5600,7 @@ TEST///
   assert(BRanks mf == {{2, 2}, {1, 2}})
   G = makeFiniteResolution(ff,mf);
   R1 = ring G
-  F = res prune pushForward(map(R,R1),M);
+  F = freeResolution prune pushForward(map(R,R1),M);
   assert(betti F ==  betti G)
 ///
 ///TEST
@@ -5604,7 +5608,7 @@ TEST///
      ff = matrix"x3,y3,z3";
      R = S/ideal ff;
      M = coker matrix"x,y,z;y,z,x";
-     betti (F = res M)
+     betti (F = freeResolution(M, LengthLimit => 4))
 assert( (makeT(ff,F,3)) === {map(R^{{-4},{-4},{-4}},R^{{-4},{-4},{-4},{-4},{-4},{-4}},{{0, 0, 0, 0, 1,
       --------------------------------------------------------------------------------------------------------
       0}, {0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0,
@@ -5663,7 +5667,7 @@ S = kk[a,b,c];
 ff = matrix{{a^2,b^2}};
 R = S/ideal ff;
 red = map(R,S);
-F = res (ideal (vars R)_{0..2}, LengthLimit => 3);
+F = freeResolution (ideal (vars R)_{0..2}, LengthLimit => 3);
 MS2 = pushForward(red, coker F.dd_3);
 MS1 = pushForward(red, coker F.dd_2);
 
@@ -5676,7 +5680,7 @@ T1 = exteriorTorModule(ff, MS2);
 assert(apply(10, d->rank source basis(d, T1))==
     apply(10, d->rank source basis(Tor_d(MS2,coker vars ring MS2))))
 
-Ex1 = exteriorHomologyModule(ff, (coker vars ring ff)**dual res MS2);
+Ex1 = exteriorHomologyModule(ff, (coker vars ring ff)**dual freeResolution MS2);
 assert(apply(10, d->rank source basis(-d, Ex1))=={0, 0, 5, 7, 1, 3, 0, 0, 0, 0});
 ///
 
@@ -5691,14 +5695,14 @@ toe presentation t)
 ff = matrix{{a^2,b^2}}
 R = S/ideal ff
 red = map(R,S)
-F = complete res (ideal (vars R)_{0..2}, LengthLimit => 7)
+F = freeResolution (ideal (vars R)_{0..2}, LengthLimit => 7)
 M = apply(7, i-> coker F.dd_(i+1));
 MS = M/(Mi -> pushForward(red, Mi));
 
-C = (complete res MS_1)**MS_0;
+C = (freeResolution MS_1)**MS_0;
 T0 = apply(7, i -> exteriorTorModule(ff,MS_i));
 T1 = apply(7, i -> exteriorTorModule(ff, MS_i, coker vars S));
-T2 = apply(7, i -> exteriorHomologyModule(ff, (complete res MS_i)**coker vars S));
+T2 = apply(7, i -> exteriorHomologyModule(ff, (freeResolution MS_i)**coker vars S));
 assert( (apply(T0, t->isHomogeneous t)) === {true,true,true,true,true,true,true} );
        assert( (apply(T1, t->isHomogeneous t)) === {true,true,true,true,true,true,true} );
        assert( (apply(T2, t->isHomogeneous t)) === {true,true,true,true,true,true,true} );
@@ -5750,15 +5754,15 @@ R = S/ideal ff;
 q = map(R,S);
 M0= coker random(R^2, R^{4:-1});
 M = pushForward(q,syzygyModule(3,M0));
-assert(betti (layeredResolution(ff,M))_0 == betti res M)
+assert(betti (layeredResolution(ff,M))_0 == betti freeResolution(M, LengthLimit => 3))
 ///
 
 TEST///
 S = ZZ/101[x,y,z]
 ff = matrix {apply(gens S, x->x^3)}
-F = res (ideal gens S)^2
+F = freeResolution (ideal gens S)^2
 R = S/ideal ff
-F = res coker vars R
+F = freeResolution(coker vars R, LengthLimit => 3)
 makeHomotopiesOnHomology(vars R, F)
 ///
 

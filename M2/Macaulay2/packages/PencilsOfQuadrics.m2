@@ -48,7 +48,6 @@ peek loadedFiles
 	 "randNicePencil",
          "qqRing",
          "quadraticForm",
-         "baseRing",
          "isotropicSpace",
          "matFact1",
          "matFact2",
@@ -185,14 +184,14 @@ randomNicePencil(Ring,ZZ) := (kk,g) -> (
     Y := matrix {drop(last entries transpose syz (X|qq),-1)};
     (m1,m2) := matrixFactorizationK(X,Y);
     cub:=sum_n (i-> S_i^3);
-    F := res(coker X**(S/cub));
+    F := freeResolution(coker X**(S/cub), LengthLimit => 2*g+4);
     degsEven := reverse flatten degrees F_(2*g+4);
     degsOdd := flatten degrees F_(2*g+3);
     M2 := map(S^-degsOdd,S^-degsEven,m2)**S^{2*g+2};
     M1 := map(S^-degsEven**S^{3},S^-degsOdd,m1)**S^{2*g+2};
     Yu := matrix {drop(last entries transpose syz (u|qq),-1)};
     (m1u,m2u) := matrixFactorizationK(u,Yu);
-    F = res(coker u**SQ);
+    F = freeResolution(coker u**SQ, LengthLimit => 2*g+4);
     degsEven = reverse flatten degrees F_(2*g+4);
     degsOdd = flatten degrees F_(2*g+3);
     Mu2 := map(S^-degsOdd,S^-degsEven,m2u)**S^{2*g+2};
@@ -209,7 +208,7 @@ randNicePencil(Ring,ZZ) := (kk,g)->(
     new RandomNicePencil from hashTable{
         (qqRing, L_0),
 	(quadraticForm, L_1),
-	(baseRing, L_2),
+	(symbol baseRing, L_2),
 	(isotropicSpace, L_3),
 	(matFact1, L_4),
 	(matFact2, L_5),
@@ -600,7 +599,7 @@ tensorProduct(Matrix,Matrix) := (phi,psi) -> (
     R := ring phi;
     g := degree ideal ((phi^2)_(0,0))//2 - 1;
     inclusion:=syz(phi**id_(target psi)-(id_(target phi)**psi)); 	
-    F:=chainComplex(inclusion);
+    F:=complex inclusion;
     F1:=F**R^{g+1}; 
     (extend(F1,F,map(F1_0,F_0,(phi**id_(target psi)))))_1
 )
@@ -617,8 +616,8 @@ tensorProduct(CliffordModule, VectorBundleOnE) := (M,L) -> (
     inclusion0 := syz(phi0**id_(target psi)-(id_(target phi0)**psi)); 	
     inclusion1 := syz(R^{1}**(phi1**id_(target psi)+(id_(target phi1)**psi))); 	    
 
-    FEven := chainComplex(inclusion0);
-    FOdd := chainComplex(inclusion1);
+    FEven := complex inclusion0;
+    FOdd := complex inclusion1;
     Odd' := null;
     Even' := null;
     eOdd := apply(M.oddOperators, Odd->(
@@ -627,7 +626,7 @@ tensorProduct(CliffordModule, VectorBundleOnE) := (M,L) -> (
 
     eEv := apply(M.evenOperators, Even->(
 	Even' = map(FOdd_0, R^{-g-1}**FEven_0, R^{-g-1}**Even**id_(target psi));
-	(extend(FOdd,FEven, Even'))_1));
+	(extend(FOdd,R^{-g-1} ** FEven, Even'))_1));
 
     assert(symMatrix(eOdd,eEv) == symMatrix(M.oddOperators, M.evenOperators));
     c0 := tensorProduct(phi0, psi);
@@ -920,7 +919,7 @@ g=3
 (S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g);
 M=cliffordModule(Mu1,Mu2,R)
 elapsedTime Ulrich = searchUlrich(M,S);
-betti res Ulrich
+betti freeResolution Ulrich
 ann Ulrich
 
 
@@ -948,7 +947,7 @@ CI = P/ideal qs
 
 ciRes=cliffordModuleToCIResolution(MV,S,CI)
 betti ciRes
-betti res coker lift(ciRes.dd_5,P)
+betti freeResolution coker lift(ciRes.dd_5,P)
 *-
 
 ///
@@ -1098,7 +1097,7 @@ cliffordModuleToCIResolution(CliffordModule,Ring, Ring) :=(M,S,CI) ->(
     assert(degrees target ((transpose M1)**S^d1)==degrees target B1);
     dd1 := (((transpose M1)**S^d1)*B2)//B1;
     dd1':= StoCI (dd1);
-    res coker  dd1'
+    freeResolution(coker  dd1', LengthLimit => numgens ring dd1' + 1)
     )
 -*
 cliffordModuleToCIResolution(CliffordModule,Ring, Ring) :=(M,S,CI) ->(
@@ -1111,7 +1110,7 @@ cliffordModuleToCIResolution(CliffordModule,Ring, Ring) :=(M,S,CI) ->(
     --B2 has target even
     StoCI := map(CI, S, gens CI | {0,0});
     d := StoCI ((M1*B1)//B2);
-    res(coker d, LengthLimit => 5)[i]
+    (freeResolution(coker d, LengthLimit => 5))[i]
     )
 *-
 ///
@@ -1126,16 +1125,16 @@ P = kk[drop(gens S, -2)]
 qs = sub(diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq), P)
 CI = P/ideal qs
 
-F = res( coker (sub(u, CI)), LengthLimit => 3)
-betti (FF = res( coker transpose F.dd_3, LengthLimit => 5))
+F = freeResolution( coker (sub(u, CI)), LengthLimit => 3)
+betti (FF = freeResolution( coker transpose F.dd_3, LengthLimit => 5))
 M = cliffordModule(Mu1, Mu2, R)
 betti (F1=cliffordModuleToCIResolution(M,S,CI)) 
 betti FF
-betti (FFF = res coker FF.dd_5)
+betti (FFF = freeResolution(coker FF.dd_5, LengthLimit => 5))
 q1 = diff(S_(2*g+2),qq)
 q2 = diff(S_(2*g+3),qq)
 N = (S^1/(ideal(q1,q2))**coker sub(F.dd_2,S))
-betti res (N, LengthLimit =>10)
+betti freeResolution (N, LengthLimit =>10)
 betti F1.dd_(g+3-(g%2))
 assert(ideal F1.dd_(g+3-(g%2))_{0} ==ideal sub(u,CI))
 M = cliffordModule(M1,M2,R)
@@ -1149,8 +1148,8 @@ P = kk[drop(gens S, -2)]
 qs = sub(diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq), P)
 CI = P/ideal qs
 
-F = res( coker (sub(u, CI)), LengthLimit => 3)
-betti (FF = res( coker transpose F.dd_3, LengthLimit => 5))
+F = freeResolution( coker (sub(u, CI)), LengthLimit => 3)
+betti (FF = freeResolution( coker transpose F.dd_3, LengthLimit => 5))
 M = cliffordModule(Mu1, Mu2, R)
 betti (F1=cliffordModuleToCIResolution(M,S,CI)) 
 betti FF
@@ -1167,8 +1166,8 @@ P = kk[drop(gens S, -2)]
 qs = sub(diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq), P)
 CI = P/ideal qs
 
-F = res( coker (sub(u, CI)), LengthLimit => 3)
-betti (FF = res( coker transpose F.dd_3, LengthLimit => 5))
+F = freeResolution( coker (sub(u, CI)), LengthLimit => 3)
+betti (FF = freeResolution( coker transpose F.dd_3, LengthLimit => 5))
 M = cliffordModule(Mu1, Mu2, R)
 betti (F1=cliffordModuleToCIResolution(M,S,CI)) 
 betti FF
@@ -1261,14 +1260,14 @@ randomNicePencil(kk,2)
 
 
 isMinimal = method()
-isMinimal(Ideal, ChainComplex) := (mm, F) -> (
+isMinimal(Ideal, Complex) := (mm, F) -> (
     --tests whether the differential is in mm
     n := length F;
     R := ring F;
     k := R^1/mm;
     all(n, i-> F.dd_i**k == 0)
     )
-isMinimal ChainComplex := F -> (
+isMinimal Complex := F -> (
     mm := ideal vars ring F;
     isMinimal(mm,F))
 
@@ -1280,7 +1279,7 @@ check PencilsOfQuadrics
 ///
       makeTlocal = method()
       --local copy of code from "CompleteIntersectionResolutions"
-      makeTlocal(Matrix, ChainComplex,ZZ) := (ff,F,i) ->(
+      makeTlocal(Matrix, Complex,ZZ) := (ff,F,i) ->(
            -*
            If ff is an c x 1 matrix and
            F is a chain complex
@@ -1293,7 +1292,6 @@ check PencilsOfQuadrics
            degsff := flatten((degrees ff)_1);
            R := ring F;
            S := ring ff;
-           complete F;
            minF := min F;
            d0 := sub(F.dd_i, S);
            d1 := sub(F.dd_(i-1), S);
@@ -1514,8 +1512,8 @@ doc ///
      qq = random(U^1, U^{2:-2})
      Ubar = U/ideal qq
      M = coker vars Ubar
-     betti (fM=res M)
-     betti res coker transpose fM.dd_3 
+     betti (fM=freeResolution(M, LengthLimit => n))
+     betti freeResolution(coker transpose fM.dd_3, LengthLimit => n) 
      (e1,e0) = ciModuleToMatrixFactorization M;
     Text
      Check that it's a matrix factorization:
@@ -1523,7 +1521,6 @@ doc ///
      source e0 == target e1
      0 == e0*e1 - diagonalMatrix(ring e0, apply(numcols e0, i->(e0*e1)_0_0))
      degrees source e1-degrees target e0
-   Caveat
    SeeAlso
     cliffordModule
     cliffordModuleToCIResolution
@@ -2034,7 +2031,7 @@ doc ///
 
 doc ///
     Key
-    	baseRing
+    	"baseRing of a RandomNicePencil"
     Headline
     	part of a RandomNicePencil
     Usage
@@ -2081,7 +2078,7 @@ doc ///
 	    
 	    S=rNP.qqRing
     SeeAlso
-    	baseRing
+    	"baseRing of a RandomNicePencil"
 	quadraticForm
 	matFact1
 	matFact2
@@ -2116,7 +2113,7 @@ doc ///
 	    qq==S_(2*g+2)*q1+S_(2*g+3)*q2
     SeeAlso
     	qqRing
-	baseRing
+	"baseRing of a RandomNicePencil"
 	matFact1
 	matFact2
 	matFactu1
@@ -2145,7 +2142,7 @@ doc ///
 	    u=rNP.isotropicSpace
     SeeAlso
     	qqRing
-	baseRing
+	"baseRing of a RandomNicePencil"
 	quadraticForm
 	matFact1
 	matFact2
@@ -2181,7 +2178,7 @@ doc ///
 	    M1*M2 - M2*M1
     SeeAlso
     	qqRing
-	baseRing
+        "baseRing of a RandomNicePencil"
 	quadraticForm
 	matFact2
 	matFactu1
@@ -2217,7 +2214,7 @@ doc ///
 	    M1*M2 - M2*M1
     SeeAlso
     	qqRing
-	baseRing
+	"baseRing of a RandomNicePencil"
 	quadraticForm
 	matFact1
 	matFactu1
@@ -2254,7 +2251,7 @@ doc ///
 	    Mu1*Mu2 - Mu2*Mu1
     SeeAlso
     	qqRing
-	baseRing
+	"baseRing of a RandomNicePencil"
 	quadraticForm
 	matFact1
 	matFact2
@@ -2291,7 +2288,7 @@ doc ///
 	    Mu1*Mu2 - Mu2*Mu1
     SeeAlso
     	qqRing
-	baseRing
+	"baseRing of a RandomNicePencil"
 	quadraticForm
 	matFact1
 	matFact2
@@ -2886,7 +2883,7 @@ doc ///
 	CI : Ring
 	    a complete intersection S/ideal(q1,q2) where qq=s*q1+t*q2
     Outputs
-    	F : ChainComplex
+    	F : Complex
 	    a resolution which represents a module over CI
     Description
     	Text
@@ -2975,7 +2972,7 @@ doc ///
 	    
 	    M=cliffordModule(Mu1,Mu2,R)
 	    elapsedTime Ulr = searchUlrich(M,S);
-	    betti res Ulr
+	    betti freeResolution Ulr
 	    ann Ulr == ideal qs
     Caveat
     	searchUlrich uses the method randomLineBundle, so the ground field kk has to be finite.
@@ -3105,12 +3102,12 @@ g=2
 M=cliffordModule(Mu1,Mu2,R)
 
 elapsedTime Ulrich = searchUlrich(M,S);
-betti res Ulrich
+betti freeResolution Ulrich
 ann Ulrich
 T=kk[drop(gens S,-2)]-- coordinate ring of PP^(2g+1)
 m1=sub(presentation Ulrich,T)
 Ulrich =coker m1
-fU=res Ulrich
+fU=freeResolution Ulrich
 elapsedTime betti Hom(Ulrich,Ulrich)   -- 10.1731 seconds elapsed
 elapsedTime betti Hom(Ulrich, T^{-2}**coker transpose fU.dd_2)
 -- => Ulrich isomorphic to T^{-2}**coker transpose fU.dd_2 in case g=2, 
@@ -3118,16 +3115,16 @@ elapsedTime betti Hom(Ulrich, T^{-2}**coker transpose fU.dd_2)
 
 qs= apply(2,i->(gens ann Ulrich)*random(T^{2:-2},T^{-2}))
 Mqs= apply(qs, q1->(Tq= T/ideal sub(q1,T);
-     coker lift((res coker sub(u,Tq)).dd_4,T)**T^{3}))
+     coker lift((freeResolution(coker sub(u,Tq), LengthLimit => numgens Tq + 1)).dd_4,T)**T^{3}))
 homs=apply(Mqs,M->Hom(M,Ulrich));
 
 ring homs_0
 apply(homs,h->betti h)
 -- => there are 4 homomorphisms
 homsList=apply(homs,h-> apply(4,i-> matrix homomorphism h_{i}))
-Cs=apply(Mqs, Mq1->chainComplex presentation Mq1)
+Cs=apply(Mqs, Mq1->complex presentation Mq1)
 ring Cs_0
-D=chainComplex presentation Ulrich
+D=complex presentation Ulrich
 ring D
 
 hom1s= apply(2, j->apply(4,i->(
@@ -3163,8 +3160,8 @@ q0=q=qs_0_(0,0)
 q1=qs_1_(0,0)
 m0'=secondMatrix(m0,q0);
 m1'=secondMatrix(m1,q1);
-res coker (transpose m0'| transpose m1')
-mm*(res image mm).dd_1
+freeResolution coker (transpose m0'| transpose m1')
+mm*(freeResolution image mm).dd_1
 betti Hom(T^{-2}**coker transpose fU.dd_2,coker (transpose m0'| transpose m1'))
 
 
@@ -3177,11 +3174,11 @@ m0*n0
 n1'=lift(syz sub(m1,T1),T)
 n1=n1'*inverse ((m1*n1')//(qs_1_(0,0)*id_(target m1)))
 m1*n1
-betti res coker (nn=(transpose n0|transpose n1))
+betti freeResolution coker (nn=(transpose n0|transpose n1))
 betti Hom(coker mm, coker transpose syz nn)
 h=Hom(coker mm, coker transpose syz mm);
 betti (a=homomorphism h_{0})
-G=chainComplex(mm,(syz mm)*matrix a)
+G=complex(mm,(syz mm)*matrix a)
 ann coker G.dd_1_{0..7}
 ann coker (transpose G.dd_2)_{0..7}
 
@@ -3189,7 +3186,7 @@ ann coker (syz mm)^{0..7}==ideal qs_1
 ann coker (syz mm)^{8..15} == ideal qs_0
 m0*m1-m1*m0
 
-mats=apply(2,j->apply(4,i->(transpose (res Ulrich).dd_2) * syz(transpose hom1s_j_i)))
+mats=apply(2,j->apply(4,i->(transpose (freeResolution Ulrich).dd_2) * syz(transpose hom1s_j_i)))
 apply(flatten mats,m-> betti ann coker m)
 ///
 
@@ -3216,7 +3213,7 @@ M2=map(S^(2^(n-1)),,M2)
 ulrich=coker(M1|transpose M2)
 A=M1-transpose M2
 A^2
-betti res ulrich
+betti freeResolution ulrich
 ann ulrich
 g=n-2
 T=kk[z_0..z_(2*g+1)]
@@ -3290,8 +3287,8 @@ numberOfFactors = # factor det C
 -- We run the code until (det C) is a 4th power of the product of two linear forms
 
 ann UlrichWithoutst
-betti res UlrichWithoutst
-betti res rU
+betti freeResolution UlrichWithoutst
+betti freeResolution rU
 ann rU
 
 (factor det C)
@@ -3303,8 +3300,8 @@ factor1^4 * factor2^4 == det C
 rU1 = prune ker (sub(diff(t,factor1),PCodim2)*A - sub(diff(s,factor1),PCodim2)*B);
 rU2 = prune ker (sub(diff(t,factor2),PCodim2)*A - sub(diff(s,factor2),PCodim2)*B);
 
-betti res rU1
-betti res rU2
+betti freeResolution rU1
+betti freeResolution rU2
 
 needsPackage "TateOnProducts"
 elapsedTime tally apply(5, i->isIsomorphic(rU1++rU2,rU)) 
@@ -3356,8 +3353,8 @@ if numberOfFactors==4 and degree (factor detC)#2#0 == {2} then numberOfFactors=0
 
 betti endOfrU
 ann UlrichWithoutst
-betti res UlrichWithoutst
-betti res rU
+betti freeResolution UlrichWithoutst
+betti freeResolution rU
 ann rU
 
 (factor detC)
@@ -3380,15 +3377,15 @@ endList=apply(4, i->homomorphism (endOfrU_{i}));
 solList=apply(4, i->(syz factorMatrix^{i})*random(P3^3,P3^1))
 rUList=apply(4, i->prune ker sum apply(4, j->sub((solList_i)_(j,0), PCodim4) * endList_j))
 
-tally apply(4,i->betti res rUdecompositionList_i)
-tally apply(4,i->betti res rUList_i)
+tally apply(4,i->betti freeResolution rUdecompositionList_i)
+tally apply(4,i->betti freeResolution rUList_i)
 temp=rUList_0++rUList_1++rUList_2++rUList_3
 
 rU1 = prune image (sub(diff(t,factor1),PCodim2)*A - sub(diff(s,factor1),PCodim2)*B);
 rU2 = prune image (sub(diff(t,factor2),PCodim2)*A - sub(diff(s,factor2),PCodim2)*B);
 
-betti res rU1
-betti res rU2
+betti freeResolution rU1
+betti freeResolution rU2
 
 needsPackage "TateOnProducts"
 elapsedTime tally apply(5, i->isIsomorphic(temp,rU)) 

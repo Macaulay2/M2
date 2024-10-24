@@ -71,7 +71,7 @@ unfold(DifferentialModule,ZZ,ZZ) := Complex => (D,low,high)->(
     d := degree D;
     R := ring D;
     phi := differential D;
-    chainComplex apply(L,l-> phi)[-low]
+    (complex apply(L,l-> phi))[-low]
     )
 
 minFlagOneStep = method()
@@ -82,7 +82,7 @@ minFlagOneStep(DifferentialModule) := (D) -> (
     colList := select(rank source (mingens HH_0(D)), i -> degree (mingens HH_0(D))_i == minDegree);
     minDegHom := (mingens HH_0(D))_colList;
     homMat :=  mingens image((minDegHom) % (image D.dd_1));
-    G := res image homMat;
+    G := freeResolution image homMat;
     psi := map(D_0,G_0**R^{d},homMat, Degree=>d);
     newDiff := matrix{{D.dd_1,psi},{map(G_0**R^{d},D_1,0, Degree=>d), map(G_0**R^{d},G_0**R^{d},0, Degree=>d)}};
     assert (newDiff*(newDiff) == 0);
@@ -109,7 +109,7 @@ killingCyclesOneStep(DifferentialModule) := (D)->(
     d := degree D;
     R := ring D;
     homMat := mingens image((gens HH_0 D) %  (image D.dd_1));
-    G := res image homMat;
+    G := freeResolution(image homMat, LengthLimit => 1);
     psi := map(D_0,G_0**R^{d},homMat, Degree=>d);
     newDiff := matrix{{D.dd_1,psi},{map(G_0**R^{d},D_1,0, Degree=>d),map(G_0**R^{d},G_0**R^{d},0, Degree=>d)}}; 
     assert (newDiff*(newDiff) == 0);
@@ -699,7 +699,7 @@ doc ///
          (flag) differential module of degree d.
       Example
          R = QQ[x,y];
-         C = complex res ideal(x,y)
+         C = freeResolution ideal(x,y)
          D = foldComplex(C,0);
          D.dd_1
    SeeAlso

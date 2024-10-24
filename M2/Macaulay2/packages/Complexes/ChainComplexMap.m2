@@ -99,13 +99,9 @@ map(Complex, Complex, ZZ) := ComplexMap => opts -> (D, C, j) -> (
         result.cache.isCommutative = true;
         return result
         );
-    if j === 1 then (
-        if C == D and (opts.Degree === null or opts.Degree === 0) then
-            return id_C;
-        error "expected source and target to be the same";
-        );
-    error "expected integer to be zero or one";
-    )
+    if C == D and (opts.Degree === null or opts.Degree === 0) then
+        return j * id_C;
+    error "expected 0 or source and target to be the same")
 
 map(Complex, Complex, ComplexMap) := ComplexMap => opts -> (tar, src, f) -> (
     deg := if opts.Degree === null then degree f else opts.Degree;
