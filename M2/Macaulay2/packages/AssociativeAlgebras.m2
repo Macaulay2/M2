@@ -353,6 +353,7 @@ setNCGBStrategy := stratStr -> (
 
 NCGB = method(Options => {Strategy=>"F4Parallel"})
 NCGB(Ideal, ZZ) := opts -> (I, maxdeg) -> (
+    if I == 0 then return gens I;
     strat := opts#Strategy;
     if not I.cache.?NCGB or I.cache.NCGB#0 < maxdeg then (
         tobecomputed := raw if I.cache.?NCGB then I.cache.NCGB#1 else gens I;
@@ -371,6 +372,7 @@ NCGB(Ideal, ZZ) := opts -> (I, maxdeg) -> (
     I.cache.NCGB#1
     )
 NCGB Ideal := opts -> (I) -> (
+    if I == 0 then return gens I;
     if I.cache.?NCGB then I.cache.NCGB#1
     else (
         maxdegI := max((degrees source gens I) / sum); -- TODO: change once multidegrees are allowed.
@@ -425,7 +427,7 @@ freeAlgebraQuotient (FreeAlgebra, Ideal, Matrix) := FreeAlgebraQuotient => (R,I,
      S
 )
 
-ncBasis = method(Options => {Limit => infinity})
+ncBasis = method(Options => {Strategy => "F4Parallel", Limit => infinity})
 ncBasis(InfiniteNumber,InfiniteNumber,Ring) := 
 ncBasis(List,InfiniteNumber,Ring) := 
 ncBasis(InfiniteNumber,List,Ring) := 
@@ -446,7 +448,7 @@ ncBasis(List,List,Ring) := opts -> (lo,hi,R) -> (
     limit := if opts.Limit === infinity then -1 else if instance(opts.Limit,ZZ) then opts.Limit else
        error "expected 'Limit' option to be an integer or infinity";
     if #hi == 1 and hi#0 < 0 then return map(R^1, R^0, {{}}); -- disallow use of "-1" meaning infinity, at top level.
-    gbR := if #hi == 1 then NCGB(ideal R, hi#0) else NCGB(ideal R);
+    gbR := if #hi == 1 then NCGB(ideal R, hi#0, Strategy => opts.Strategy) else NCGB(ideal R, Strategy => opts.Strategy);
     result := map(ring gbR, rawNCBasis(raw gbR, lo, hi, limit));
     map(R^1,, promote(result, R))
     )
@@ -787,6 +789,8 @@ skewPolynomialRing (Ring,RingElement,List) := (R,skewElt,varList) -> (
    gensA := gens A;
    I := ideal apply(subsets(numgens A, 2), p ->
             (gensA_(p#0))*(gensA_(p#1)) - promote(skewElt,R)*(gensA_(p#1))*(gensA_(p#0)));
+   -- this will be a GB for any coefficient ring, so we should tell the system that.
+   I.cache.NCGB = {infinity,gens I};
    B := A/I;
    B
 )
@@ -801,7 +805,7 @@ threeDimSklyanin (Ring, List, List) := opts -> (R, params, varList) -> (
    I := ideal {params#0*gensA#1*gensA#2+params#1*gensA#2*gensA#1+params#2*(gensA#0)^2,
        params#0*gensA#2*gensA#0+params#1*gensA#0*gensA#2+params#2*(gensA#1)^2,
        params#0*gensA#0*gensA#1+params#1*gensA#1*gensA#0+params#2*(gensA#2)^2};
-   Igb := NCGB(I, opts.DegreeLimit, Strategy=>"F4");
+   Igb := NCGB(I, opts.DegreeLimit, Strategy=>if char R == 0 then "Naive" else "F4");
    B := A/I;
    B
 )
@@ -1475,7 +1479,7 @@ rightKernel Matrix := opts -> M -> (
 superpotential = method(Options => {Strategy => "F4"})
 superpotential FreeAlgebraQuotient := opts -> B -> (
    -- compute the relations of the Koszul dual out to degree d+e-1
-   -- d = number of generatos of the algebra
+   -- d = number of generators of the algebra
    -- e = relation degree
    A := ambient B;
    kk := coefficientRing A;
@@ -1486,19 +1490,19 @@ superpotential FreeAlgebraQuotient := opts -> B -> (
    koszB := A/koszI;
    
    -- compute a basis of the Koszul dual
-   allBasis := flatten apply(d+e, i -> flatten entries ncBasis(i,koszB));
+   allBasis := flatten apply(d+e, i -> flatten entries ncBasis(i,koszB,Strategy => opts.Strategy));
    
    -- find a generator of the 'top' degree of the Koszul dual
    topDeg := max apply(allBasis, m -> first degree m);
-   topForm := ncBasis(topDeg,koszB);
+   topForm := ncBasis(topDeg,koszB,Strategy => opts.Strategy);
    if numcols topForm != 1 then error "Expected (m)-Koszul AS-regular algebra.";
 
-   deg1Basis := flatten entries ncBasis(1,A);
+   deg1Basis := vars A;
    -- phi is the projection map from A to koszB
    phi := map(koszB,A,gens koszB);
    
    -- basis of the entire tensor algebra in the 'correct degree'
-   bigBasis := ncBasis(topDeg,A);
+   bigBasis := ncBasis(topDeg,A,Strategy => opts.Strategy);
    
    -- project the basis of the tensor algebra to the koszul dual to get a coefficient from the top form
    -- and take the sum of the basis with these coeffs as the superpotential
@@ -1559,7 +1563,7 @@ nakayamaAut FreeAlgebraQuotient := opts -> B -> (
    spWL := #(last first (toVariableList sp));
    P = (-1)^(if degf == 2 then spWL + 1 else spWL)*P^(-1);
    -- cycling from right to left gives the inverse of the Nakayama automorphism
-   map(B,B,flatten entries (P*(transpose ncBasis(1,B))))
+   map(B,B,flatten entries (P*(transpose vars B)))
 )
 
 nakayamaAut RingElement := opts -> sp -> (
