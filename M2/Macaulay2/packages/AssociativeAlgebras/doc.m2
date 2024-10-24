@@ -1688,6 +1688,29 @@ doc ///
 	delta y^2
 ///
 
+doc ///
+   Key
+     nakayamaAut
+     (nakayamaAut, FreeAlgebraQuotient)
+     (nakayamaAut, RingElement)
+   Headline
+     Computes the Nakayama automorphism using the superpotential
+   Usage
+     nu = nakayamaAut B
+   Inputs
+     B : FreeAlgebraQuotient
+     w : RingElement
+   Outputs
+     nu : RingMap
+   Description
+      Text
+         This function uses the superpotential to compute the Nakayama
+	 automorphism of an m-Koszul AS regular algebra B.  For example,
+	 the Nakayama automorphism of the commutative polynomial ring is trivial:
+      Example
+///
+
+
 -*
 
 restart
