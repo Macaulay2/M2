@@ -3,7 +3,7 @@ newPackage(
     Version => "1.0",
     Date => "October 25, 2024",
     Headline => "Compute the Apery set and invariants of a numerical semigroup ring",
-    Authors => {{ Name => "David Eisenbud", Email => "de@berkeley.edu", HomePage => "eisenbud.github.io"},
+    Authors => {{ Name => "David Eisenbud", Email => "de@berkeley.edu", HomePage => "http://eisenbud.github.io"},
 	        { Name => "Frank-Olaf Schreyer", Email => "schreyer@math.uni-sb.de", HomePage => "https://www.math.uni-sb.de/ag/schreyer/index.php/publications/publications-frank-olaf-schreyer"}},
     AuxiliaryFiles => false,
     DebuggingMode => false,
