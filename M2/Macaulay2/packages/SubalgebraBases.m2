@@ -30,7 +30,21 @@ newPackage(
     Headline => "Canonical subalgebra bases (aka SAGBI/Khovanskii bases)",
     AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
     DebuggingMode => false, -- set to true only during development
-    Keywords => {"Commutative Algebra"}
+    Keywords => {"Commutative Algebra"},
+    Certification => {
+	"journal name" => "Journal of Software for Algebra and Geometry",
+	"journal URI" => "https://msp.org/jsag/",
+	"article title" => "SubalgebraBases in Macaulay2",
+	"acceptance date" => "2024-03-18",
+	"published article URI" => "https://msp.org/jsag/2024/14-1/p11.xhtml",
+	"published article DOI" => "10.2140/jsag.2024.14.97",
+	"published code URI" => "https://msp.org/jsag/2024/14-1/jsag-v14-n1-x11-SAGBIBases.zip",
+	"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/SubalgebraBases.m2",
+	"release at publication" => "97d711d9b7232b6fcf64c0395bd9cb07b8b968c0",
+	"version at publication" => "1.3",
+	"volume number" => "14",
+	"volume URI" => "https://msp.org/jsag/2024/14-1/"
+	}
 )
 
 needs "./SubalgebraBases/exports.m2"
