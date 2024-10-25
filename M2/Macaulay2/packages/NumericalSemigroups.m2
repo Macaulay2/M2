@@ -1,13 +1,14 @@
 newPackage(
     "NumericalSemigroups",
-    Version => "0.1",
-    Date => "March 12, 2024",
+    Version => "1.0",
+    Date => "October 25, 2024",
     Headline => "Compute the Apery set and invariants of a numerical semigroup ring",
     Authors => {{ Name => "David Eisenbud", Email => "de@berkeley.edu", HomePage => "eisenbud.github.io"},
 	        { Name => "Frank-Olaf Schreyer", Email => "schreyer@math.uni-sb.de", HomePage => "https://www.math.uni-sb.de/ag/schreyer/index.php/publications/publications-frank-olaf-schreyer"}},
     AuxiliaryFiles => false,
-    DebuggingMode => true,
-    PackageExports => {"FourierMotzkin","Normaliz", "IntegralClosure", "FastMinors",  "RandomPoints"}
+    DebuggingMode => false,
+    PackageExports => {"FourierMotzkin","Normaliz", "IntegralClosure", "FastMinors",  "RandomPoints"},
+    Keywords => {"Commutative Algebra", "Algebraic Geometry", "Combinatorics"}
     )
 ///
 restart
@@ -22,6 +23,7 @@ viewHelp "NumericalSemigroups"
 viewHelp Normaliz
 
 ///
+--"done" indicates that there is a TEST installed for that function.
 export { 
     "apery", --done FOS
     "aperySet", --done FOS
@@ -60,7 +62,6 @@ export {
     "isARandomFiberSmooth", --done FOS
     "getFlatFamily", --done FOS
     "isWeierstrassSemigroup", -- done FOS
---    "estimateTruncationRatio",
     "nonWeierstrassSemigroups", -- done FOS
     "LabBookProtocol", --done FOS
     "fractionalIdeal", --done
