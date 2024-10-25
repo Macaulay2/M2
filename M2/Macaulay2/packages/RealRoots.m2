@@ -1065,7 +1065,7 @@ document {
 		hurwitzMatrix(f,4)
 	        hurwitzMatrix(f,3)	      
 	 	 ///,
-	PARA{"We can also use mutliple variables to represent unknown coefficients. Note that we create another ring ",TT "S"," so 
+	PARA{"We can also use multiple variables to represent unknown coefficients. Note that we create another ring ",TT "S"," so 
 	    that ", TT "x", " and ", TT "y"," are not considered variables in the same ring and so confuse the monomials ", TEX///$x$///, " or ",TEX///$y$///,
 	    " with ",TEX///$xy$///,"."},
 	EXAMPLE lines ///
