@@ -2115,7 +2115,7 @@ importParameterFile(String) := o ->(aString)->(
     if o.NameParameterFile===3 then NPF="random_values";
     aString=aString|NPF;
     if false===fileExists aString
-    then error"The file "|NPF|" does not exist at "|aString|". ";
+    then error("The file "|NPF|" does not exist at "|aString|".");
     getLines:=apply(lines get (aString),i->select("[0-9e.+-]+",i)); -- grabs all lines of the solution file and selects desired words
     expectedNumberOfParameters:=value (getLines_0_0);
     getLines=drop(getLines,2);
