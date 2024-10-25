@@ -43,6 +43,13 @@ document {
 document {
     Key => "changes made for the next release",
     UL {
+	LI { "packages that have been published and certified:",
+	    UL {
+		LI { star, " ", TO "A1BrouwerDegrees::A1BrouwerDegrees", ", a package by Nikita Borisov, Thomas Brazelton, Frenly Espino, Tom Hagedorn, Zhaobo Han, Jordy Lopez Garcia, Joel Louwsma, Wern Juin Gabriel Ong, and Andrew Tawfeek for A1-Brouwer degree computations, has been published." },
+		LI { star, " ", TO "SpecialFanoFourfolds::SpecialFanoFourfolds", ", a package by Giovanni Staglianò for Hodge-special fourfolds, has been published." },
+		LI { star, " ", TO "SubalgebraBases::SubalgebraBases", ", a package by Michael Burr, Oliver Clarke, Timothy Duff, Jackson Leaman, Nathan Nichols, and Elise Walker for Canonical subalgebra bases (aka SAGBI/Khovanskii bases), has been published." }
+		}
+	    },
 	LI { "functionality changed in a way that could break code:",
 	    UL {
 		LI { "The function ", TO remove, ", which previously had no return value, now returns the value that was removed." }
