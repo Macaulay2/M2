@@ -504,6 +504,7 @@ doc ///
       (ncBasis, Ring)
       (ncBasis, List, List, Ring)
       [ncBasis, Limit]
+      [ncBasis, Strategy]
    Headline
       Returns a basis of an noncommutative ring in specified degrees.
    Usage
@@ -1616,6 +1617,7 @@ doc ///
      rightKernel
      (rightKernel,Matrix)
      [rightKernel,DegreeLimit]
+     [rightKernel,Strategy]
    Headline
      Right kernel of a matrix
    Usage
@@ -1693,6 +1695,7 @@ doc ///
      nakayamaAut
      (nakayamaAut, FreeAlgebraQuotient)
      (nakayamaAut, RingElement)
+     [nakayamaAut, Strategy]
    Headline
      Computes the Nakayama automorphism using the superpotential
    Usage
@@ -1708,9 +1711,9 @@ doc ///
 	 automorphism of an m-Koszul AS regular algebra B.  For example,
 	 the Nakayama automorphism of the commutative polynomial ring is trivial:
          As a Groebner basis may need to be performed, one may pass the
-         strategy as an optional argument.  The "Naive" strategy is used
+         strategy as an optional argument.  Here, the "Naive" strategy is used
          here as the default Groebner basis strategy is not compatible with
-         coefficients not over a finite field, so passing this option
+         coefficients not over the rationals, so passing this option
          helps suppress certain warnings.
       Example
          kk = QQ
@@ -1740,6 +1743,7 @@ doc ///
    Key
      superpotential
      (superpotential, FreeAlgebraQuotient)
+     [superpotential, Strategy]
    Headline
      Computes the (twisted) superpotential of an m-Koszul AS regular algebra
    Usage
@@ -1768,12 +1772,16 @@ doc ///
 	 the symmetric group of the product of the variables, with coefficient
 	 given by the sign of the permutation.
       Example
-         kk = QQ
+         kk = ZZ/32009
          R = skewPolynomialRing(kk,1_kk,{x,y,z,w})
-         nak = superpotential(R, Strategy => "Naive")
+         nak = superpotential R
       Text
          Skew polynomial rings with general skewing factors can also
-         be considered.
+         be considered.  Here we use a field of rational functions over
+	 the rational numbers.  As in the case of the rationals themselves,
+	 the default Groebner basis algorithm is not currently designed
+	 for such fields, so we include the "Naive" strategy to suppress
+	 warnings.
       Example
          ll = frac(QQ[a,b,c])
          M = matrix {{1,a,b},{a^(-1),1,c},{b^(-1),c^(-1),1}}
@@ -1792,9 +1800,62 @@ doc ///
       Example
          A = kk <| u,v |>
          I = ideal (u^2*v + v*u^2, v^2*u + u*v^2 )
-         Igb = NCGB(I, 10, Strategy => "Naive")
+         Igb = NCGB(I, 10)
          U = A/I
-         wU = superpotential(U, Strategy => "Naive")
+         wU = superpotential U
+///
+
+doc ///
+   Key
+     derivationQuotientIdeal
+     (derivationQuotientIdeal, RingElement, ZZ)
+     derivationQuotient
+     (derivationQuotient, RingElement, ZZ)
+     [derivationQuotient, Strategy]
+   Headline
+     Computes the derivation-quotient algebra of a superpotential
+   Usage
+     w = superpotential B
+   Inputs
+     w : RingElement
+     l : ZZ
+   Outputs
+     B : FreeAlgebraQuotient
+   Description
+      Text
+        Let $V$ be a vector space over a field $k$ and let $n \geq 2$ be
+	an integer.  An element $\mathsf{w}$ of the $n^\text{th}$
+	tensor power of $V$ is called a twisted superpotential if
+	there exists $\sigma \in \operatorname{GL}(V)$ such that
+	$(\text{id}^{\otimes n-1} \otimes \sigma)\theta(\mathsf{w}) = \mathsf{w}$
+	where $\theta$ cycles the leftmost factor of an $n$-fold
+	elementary tensor to the right end.
+
+	Given such a twisted superpotential (or really, any element of
+	$V^{\otimes n}$, but the algebras obtained by twisted
+	superpotentials are nice, as we will state soon) and an
+	integer $m \leq \ell - 2$, one may define the derivation-quotient
+	algebra, which is the algebra $T(V)/\langle \del^{m} V \rangle$,
+	where $\del^\ell(\mathsf{w})$ denotes the span of results of $\ell$ "formal deletions"
+        of the variables from the left of $\mathsf{w}$.
+	
+	A result of Dubois-Violette shows that if $A$ is an $m$-Koszul
+	AS regular algebra, then there exist a twisted superpotential $\mathsf{w}_A$
+	such that $A \cong T(V)/\langle \del^{\ell}(\mathsf{w}_A) \rangle$,
+	where $\ell$ is determined by the degree of the relations of $A$, as
+	well as the global dimension of $A$.
+
+        We illustrate with an example.
+     Example
+        kk = ZZ/32009
+        R = skewPolynomialRing(kk,(-1)_kk,{a,b,c,d,e})
+        A = ambient R
+	wR = superpotential R
+        I = derivationQuotientIdeal(wR,3)
+        Igb = NCGB(I,10)
+	R' = A/I
+	phi = map(R,R',gens R)
+	ncKernel phi
 ///
 
 -*
