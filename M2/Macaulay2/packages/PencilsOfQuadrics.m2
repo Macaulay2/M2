@@ -17,13 +17,13 @@ peek loadedFiles
     	     Date => "October 10, 2024",
              Authors => {{Name => "Frank-Olaf Schreyer", 
                        Email => "schreyer@math.uni-sb.de", 
-                       HomePage => ""},
+                       HomePage => "https://www.math.uni-sb.de/ag/schreyer/index.php/"},
              	         {Name => "David Eisenbud", 
                        Email => "de@msri.org", 
-                       HomePage => "www.msri.org/~de"},
+                       HomePage => "https://eisenbud.github.io/"},
 		       {Name => "Yeongrak Kim",
     	    	    	   Email => "yeongrak.kim@pusan.ac.kr",
-			   HomePage => "sites.google.com/view/yeongrak"}
+			   HomePage => "https://sites.google.com/view/yeongrak"}
 		   },
 	               PackageExports => {"CompleteIntersectionResolutions"},
              Headline => "Clifford Algebra of a pencil of quadratic forms",
