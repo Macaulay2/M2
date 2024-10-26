@@ -13,8 +13,7 @@ newPackage(
     Keywords => {"Noncommutative Algebra"},
     PackageImports =>{"Complexes"},
     PackageExports =>{"IntegralClosure"},
-    AuxiliaryFiles => true,
-    DebuggingMode => true
+    AuxiliaryFiles => true
     )
 
 -- TODO for tbb update: (Dec 2021)
