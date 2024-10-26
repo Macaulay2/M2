@@ -1,14 +1,11 @@
 ///
 restart
-loadPackage "CompleteIntersectionResolutions"
 loadPackage "PencilsOfQuadrics"
 uninstallPackage("PencilsOfQuadrics")
+restart
 installPackage("PencilsOfQuadrics")
 check "PencilsOfQuadrics"
 viewHelp "PencilsOfQuadrics"
-needsPackage"CompleteIntersectionResolutions"
-loadPackage("PencilsOfQuadrics", Reload=>true)
-peek loadedFiles
 ///
 
      newPackage(
@@ -427,24 +424,6 @@ matrixFactorizationK(Matrix,Matrix) := (X,Y) -> (
     (M1,M2)
     )
 
-TEST/// 
--- test of matrixFactorizationK
-kk=ZZ/101
-d=2
-n=2*d
-R=kk[a_0..a_(binomial(n+2,2))]
-S=kk[x_0..x_(n-1),a_0..a_(binomial(n+2,2))]
-M=genericSymmetricMatrix(S,a_0,n)
-X=(vars S)_{0..n-1}
-Y=X*M
-(M1,M2)=matrixFactorizationK(X,Y);
-M12=M1*M2;
-assert(M12-M12_(0,0)*id_(target M12)==0)
-assert(isHomogeneous M1)
-assert(isHomogeneous M2)
-assert(source M1==target M2)
-assert( source M2==target M1**S^{-3})
-///
 
 
 matFact = (X,Y) -> (
@@ -628,34 +607,6 @@ centers(List,List) := (eOdd,eEv) -> (
 
 
 
-TEST///
-
--- Testing the pfaffian formula
-
-kk=ZZ/101
-d=1
-n=2*d
-R=kk[a_0..a_(binomial(n+2,2)-1)]
-S=kk[x_0..x_(n-1),a_0..a_(binomial(n+2,2)-1)]
-M=genericSymmetricMatrix(S,a_0,n)
-X=(vars S)_{0..n-1}
-Y=X*M
-(M1,M2)=matrixFactorizationK(X,Y);
-(eOdd,eEv)=cliffordOperators(M1,M2,R);
-symMatrix(eOdd,eEv)
-(c0,c1)=centers(eOdd,eEv);
-assert isHomogeneous c0
-assert isHomogeneous c1
-betti c0, betti c1
-all(n,i->eOdd_i*c1+c0*eOdd_i==0)
-all(n,i->eEv_i*c0+c1*eEv_i==0)
-assert(target eEv_0 == target c1)
-assert(target eOdd_0 == target c0)
-determ=det symMatrix(eOdd,eEv)
--- Note the factor (-1)^d occurs in the test below
-assert(c0^2-(-1)^d*determ*id_(target c0)==0)
-assert(c1^2-(-1)^d*determ*id_(source c1)==0)
-///
 
 factorToList = method()
 factorToList(Product) := pf ->(
@@ -749,12 +700,11 @@ randomLineBundle(ZZ, RingElement) := (d,f) -> (
 	);
     Ld
     )
-
-
-TEST///
---test of preRandomLineBundle and randomLineBundle
-restart
-load "PencilsOfQuadrics.m2"
+///
+--restart
+--load "PencilsOfQuadrics.m2"
+///
+///--test of preRandomLineBundle and randomLineBundle-- but there were no "asserts"
 kk = ZZ/nextPrime(10^3)
 R = kk[ s,t]
 g = 3
@@ -771,9 +721,6 @@ betti preLd.yAction))
 tally apply(100, i->(
 Ld=randomLineBundle(d,f);
 betti Ld.yAction))
-
-
-
 ///
 
 
@@ -806,25 +753,6 @@ randomMatrixFactorization(RingElement) :=  f -> (
 restart
 loadPackage("PencilsOfQuadrics", Reload =>true)
 check "PencilsOfQuadrics"
-///
-TEST///  
-kk=ZZ/101
-g=1
-(S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g) 
-(uOdd,uEv)=cliffordOperators(Mu1,Mu2,R)
-(c0,c1)=centers(uOdd,uEv)
-symMatrix(uOdd,uEv)
-f=det symMatrix(uOdd,uEv)
-assert(c0^2+(-1)^g*f*id_(target c0)==0)
-L=randomLineBundle(0,f)
-m=L.yAction
-assert((m)^2_(0,0)+(-1)^g*f==0)
---b = random(2*g+2, R)
-assert isHomogeneous m
-degOnE L
-orderInPic L
-
---lcm apply(10,c-> (L=randomLineBundle(0,f); orderInPic L))
 ///
 
 degOnE = method() 
@@ -958,23 +886,6 @@ f=random(4,R)
 factor f
 ///
 
-TEST///
---test of tensorProduct of randomLineBundle and degreeOnE and orderInPic
-kk = ZZ/101
-R = kk[ s,t]
-g = 1
-
-f = random(2*g+2, R)
-assert(dim ideal(jacobian ideal f)== 0)
-L1=randomLineBundle(1,f)
-assert(degOnE L1 == 1)
-L2=randomLineBundle(2,f)
-assert(degOnE L2 == 2)
-L0 = randomLineBundle(0,f)
-assert(degOnE L0 == 0)
-assert(degOnE tensorProduct(L1,L1) == 2)
-orderInPic randomLineBundle(0,f)
-///
 
 
 
@@ -1113,24 +1024,6 @@ cliffordModule(Matrix,Matrix,Ring) := (M1,M2,R)->(
 
 
 
-TEST///
-kk=ZZ/101
-g=1
-(S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g) 
-(uOdd,uEv)=cliffordOperators(Mu1,Mu2,R)
-(c0,c1)=centers(uOdd,uEv)
-betti c0
-betti c1
-symMatrix(uOdd,uEv)
-f=det symMatrix(uOdd,uEv)
-cMu = cliffordModule(uOdd, uEv)
-cM = cliffordModule(M1, M2, R)
-cM.oddOperators
-cMu.symmetricM
-class cM
-
-assert ((cMu.evenCenter, cMu.oddCenter)==centers(cMu.oddOperators, cMu.evenOperators))
-///
 
 randomExtension=method()
 randomExtension(Matrix,Matrix) := (m1,m2) -> (
@@ -1484,44 +1377,6 @@ cliffordModuleToMatrixFactorization(CliffordModule,Ring) := (M,S) ->(
     N1' := map(target (S^{1}**N1),,N1);
     N2' := map(target (S^{-1}**N2),,N2);
     (N1', N2'))
-TEST///
-kk = ZZ/101;g= 1
-(S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
-M = cliffordModule(Mu1, Mu2, R)
-(Mu1', Mu2') = cliffordModuleToMatrixFactorization (M,S);
-assert(Mu1'-Mu1 == 0 and Mu2'-Mu2 ==0)
-assert(Mu1'==Mu1)
-assert(Mu2'==Mu2)
-betti Mu1', betti Mu1
-betti Mu2', betti Mu2
-M = cliffordModule(M1, M2, R);
-(M1', M2') = cliffordModuleToMatrixFactorization (M,S);
-assert(M1'-M1 == 0 and M2'-M2 ==0)
-betti M1', betti M1
-assert(M1'==M1)
-betti M2', betti M2
-assert(M2'==M2)
---g=2
-
-kk = ZZ/101;g=2
-(S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
-M = cliffordModule(Mu1, Mu2, R)
-(Mu1', Mu2') = cliffordModuleToMatrixFactorization (M,S);
-assert(Mu1'-Mu1 == 0 and Mu2'-Mu2 ==0)
-betti Mu1', betti Mu1
-betti Mu2', betti Mu2
-assert(Mu1'==Mu1)
-assert(Mu2'==Mu2)
-
-
-M = cliffordModule(M1, M2, R);
-(M1', M2') = cliffordModuleToMatrixFactorization (M,S);
-assert(M1'-M1 == 0 and M2'-M2 ==0)
-assert(M1'==M1)
-assert(M2'==M2)
-betti M1', betti M1
-betti M2', betti M2
-///
 
 -- Translating isotropic subspaces by degree 0 line bundles
 translateIsotropicSubspace = method()
@@ -1587,19 +1442,6 @@ randomIsotropicSubspace(CliffordModule, PolynomialRing) := (M,S) -> (
     )
 
 
-TEST///
--- needsPackage "PencilsOfQuadrics"
-kk=ZZ/101;g=2
-(S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
-
-M=cliffordModule (Mu1, Mu2, R);
-f=M.hyperellipticBranchEquation;
-L=randomLineBundle(0,f)
-uL=translateIsotropicSubspace(M,L,S)
-
-rU=randomIsotropicSubspace(M,S)
-assert (betti rU == betti u)
-///
 
 
 ///
@@ -1638,80 +1480,6 @@ cliffordModuleToCIResolution(CliffordModule,Ring, Ring) :=(M,S,CI) ->(
 restart
 loadPackage "PencilsOfQuadrics"
 ///
-TEST///
-kk = ZZ/101;g=1
-(S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
-diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq)
-P = kk[drop(gens S, -2)]
-qs = sub(diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq), P)
-CI = P/ideal qs
-
-F = res( coker (sub(u, CI)), LengthLimit => 3)
-betti (FF = res( coker transpose F.dd_3, LengthLimit => 5))
-M = cliffordModule(Mu1, Mu2, R)
-betti (F1=cliffordModuleToCIResolution(M,S,CI)) 
-betti FF
-betti (FFF = res coker FF.dd_5)
-q1 = diff(S_(2*g+2),qq)
-q2 = diff(S_(2*g+3),qq)
-N = (S^1/(ideal(q1,q2))**coker sub(F.dd_2,S))
-betti res (N, LengthLimit =>10)
-betti F1.dd_(g+3-(g%2))
-assert(ideal F1.dd_(g+3-(g%2))_{0} ==ideal sub(u,CI))
-M = cliffordModule(M1,M2,R)
-betti (F2=cliffordModuleToCIResolution(M,S,CI)) 
-assert(ideal F2.dd_(2*g+3)_{0}^{0..2*g+1} == ideal gens CI)
------ now genus 2
-g=2
-(S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
-diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq)
-P = kk[drop(gens S, -2)]
-qs = sub(diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq), P)
-CI = P/ideal qs
-
-F = res( coker (sub(u, CI)), LengthLimit => 3)
-betti (FF = res( coker transpose F.dd_3, LengthLimit => 5))
-M = cliffordModule(Mu1, Mu2, R)
-betti (F1=cliffordModuleToCIResolution(M,S,CI)) 
-betti FF
-betti F1.dd_(g+3-(g%2))
-assert(ideal F1.dd_(g+3-(g%2))_{0} ==ideal sub(u,CI))
-M = cliffordModule(M1,M2,R)
-betti (F2=cliffordModuleToCIResolution(M,S,CI)) 
-assert(ideal F2.dd_(2*g+3)_{0}^{0..2*g+1} == ideal gens CI)
--*
-g=3
-(S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
-diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq)
-P = kk[drop(gens S, -2)]
-qs = sub(diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq), P)
-CI = P/ideal qs
-
-F = res( coker (sub(u, CI)), LengthLimit => 3)
-betti (FF = res( coker transpose F.dd_3, LengthLimit => 5))
-M = cliffordModule(Mu1, Mu2, R)
-betti (F1=cliffordModuleToCIResolution(M,S,CI)) 
-betti FF
-betti F1.dd_(g+3-(g%2))
-assert(ideal F1.dd_(g+3-(g%2))_{0} ==ideal sub(u,CI))
-M = cliffordModule(M1,M2,R)
-betti (F2=cliffordModuleToCIResolution(M,S,CI)) 
-assert(ideal F2.dd_(2*g+3)_{0}^{0..2*g+1} == ideal gens CI)
-*-
-
-///
-
-TEST///
-restart
-loadPackage "PencilsOfQuadrics"
-debug PencilsOfQuadrics
-kk = ZZ/101
-R = kk[s,t,x,y,z]
-mm = ideal(x,y,z)
-L = ext1Prep(R,mm)
-assert ((L_0)_1 == coker matrix{{x^2,y,z}})
-///    
-    
 
 
 ciModuleToCliffordModule = method()
@@ -1782,7 +1550,7 @@ randomNicePencil(kk,2)
 
 isMinimal = method()
 isMinimal(Ideal, ChainComplex) := (mm, F) -> (
-    --tests whether the differential is in mm
+    --test whether the differential is in mm
     n := length F;
     R := ring F;
     k := R^1/mm;
@@ -1882,14 +1650,6 @@ horizontalConcatenate = L ->(
 	  
 
 
-TEST///
-restart
-loadPackage "PencilsOfQuadrics"
-debug PencilsOfQuadrics
-N = ZZ^2
-L = {id_N,id_N}
-horizontalConcatenate L
-///
 
 beginDocumentation()
 
@@ -2028,6 +1788,7 @@ doc ///
      Using the multigrading, a new matrix factorization in the form needed for
      cliffordModule(e1,e0,R), where R=k[s,t].
     Example
+     setRandomSeed 0
      n = 4
      c = 2
      kk = ZZ/101
@@ -2159,6 +1920,7 @@ doc ///
  
       \{(s,t) | s*q1+t*q2 is singular\} \subset PP^1.
     Example
+     setRandomSeed 0
      kk=ZZ/101
      g=1
      (S, qq, R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g); 
@@ -2198,6 +1960,7 @@ doc ///
 	    Generates a random pencil of quadrics in the same way as randomNicePencil(kk,g). 
 	    Returns a hash table of the type RandomNicePencil.
 	Example
+            setRandomSeed 0
 	    kk=ZZ/101;
 	    g=1;
 	    L=randNicePencil(kk,g)
@@ -2330,6 +2093,7 @@ doc ///
     Text
      The list of the even operators uEv_i: M_0\to M_1
     Example
+     setRandomSeed 0
      kk = ZZ/101
      g = 1
      (S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g);
@@ -2356,6 +2120,7 @@ doc ///
     Text
      The list of the odd operators uOdd_i: M_1\to M_0
     Example
+     setRandomSeed 0     
      kk = ZZ/101
      g = 1
      (S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g);
@@ -2381,6 +2146,7 @@ doc ///
     Text
      Gives the action of Haag's center element y of the even Clifford algebra on the even part of M
     Example
+     setRandomSeed 0    
      kk = ZZ/101
      g = 1
      (S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g);
@@ -2408,6 +2174,7 @@ doc ///
     Text
      the underlying pencil of quadratic forms
     Example
+     setRandomSeed 0     
      kk = ZZ/101
      g = 1
      (S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g);
@@ -2439,6 +2206,7 @@ doc ///
     Text
      Gives the action of Haag's center element y of the even Clifford algebra on the odd part of M
     Example
+     setRandomSeed 0    
      kk = ZZ/101
      g = 1
      (S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g);
@@ -2473,6 +2241,7 @@ doc ///
 
     Example
      kk = ZZ/101
+     setRandomSeed 0     
      g = 1
      (S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g);
      M = cliffordModule(M1,M2, R)
@@ -2507,6 +2276,7 @@ doc ///
      the pencil of quadratic forms defining the Clifford algebra. The functions
      symmetricMatrix and symMatrix are the same.
     Example
+     setRandomSeed 0    
      kk = ZZ/101
      g = 1
      (S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g);
@@ -2538,6 +2308,7 @@ doc ///
 	    points over which the associated quadratic form is singular. It is same as 
 	    the determinant of the symmetric matrix M.symmetricM. 
 	Example
+            setRandomSeed 0	
 	    kk=ZZ/101;
 	    g=1;
 	    rNP=randNicePencil(kk,g);
@@ -2567,9 +2338,8 @@ doc ///
     Description
     	Text
 	     The base ring kk[s,t] which is the coordnate ring of PP^1.  
-	Example
-	    kk=ZZ/101;
 	    g=1;
+	    kk=ZZ/101;
 	    rNP=randNicePencil(kk,g);
 	    
 	    R=rNP.baseRing
@@ -2597,6 +2367,7 @@ doc ///
     	Text
 	     The ambient polynomial ring where the quadratic form qq = s*q1 + t*q2 lives.
 	Example
+	    setRandomSeed 0
 	    kk=ZZ/101;
 	    g=1;
 	    rNP=randNicePencil(kk,g);
@@ -2627,6 +2398,7 @@ doc ///
 	     the polynomial that represents a pencil of quadrics qq=s*q1+t*q2 with a fixed isotropic subspace
 	     and a fixed corank one quadric in normal form q1.
 	Example
+            setRandomSeed 0	
 	    kk=ZZ/101;
 	    g=1;
 	    rNP=randNicePencil(kk,g);
@@ -2661,6 +2433,7 @@ doc ///
 	     a row matrix whose entries are generators of the ideal of an isotropic subspace for qq.
 	Example
 	    kk=ZZ/101;
+	    setRandomSeed 0
 	    g=1;
 	    rNP=randNicePencil(kk,g);
 	    
@@ -2691,6 +2464,7 @@ doc ///
 	     of the base ring R=S/(ideal matrix x_0..y_{(g-1)},z_1,z_2) as a module over S/(ideal qq). 
 	     These are used to construct the Clifford algebra of qq.
 	Example
+	    setRandomSeed 0
 	    kk=ZZ/101;
 	    g=1;
 	    rNP=randNicePencil(kk,g);
@@ -2727,6 +2501,7 @@ doc ///
 	     of the base ring R=S/(ideal matrix x_0..y_{(g-1)},z_1,z_2) as a module over S/(ideal qq). 
 	     These are used to construct the Clifford algebra of qq.
 	Example
+	    setRandomSeed 0
 	    kk=ZZ/101;
 	    g=1;
 	    rNP=randNicePencil(kk,g);
@@ -2765,6 +2540,7 @@ doc ///
 	     and the hyperelliptic curve branched over the degeneracy locus of the pencil.
 	Example
 	    kk=ZZ/101;
+	    setRandomSeed 0
 	    g=1;
 	    rNP=randNicePencil(kk,g);
 	    S=rNP.qqRing;
@@ -2802,6 +2578,7 @@ doc ///
 	     and the hyperelliptic curve branched over the degeneracy locus of the pencil.
 	Example
 	    kk=ZZ/101;
+	    setRandomSeed 0
 	    g=1;
 	    rNP=randNicePencil(kk,g);
 	    S=rNP.qqRing;
@@ -2888,6 +2665,7 @@ doc ///
      is singular.
     Example
      kk = ZZ/101
+     setRandomSeed 0
      g = 1
      (S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g);
      M = cliffordModule(M1,M2, R)
@@ -2959,6 +2737,7 @@ doc ///
       where the index I runs over all even length ordered 
       subsets of [2d].
     Example
+     setRandomSeed 0
      kk=ZZ/101; d=1;
      n=2*d
      R=kk[a_0..a_(binomial(n+2,2)-1)]
@@ -3025,6 +2804,7 @@ doc ///
      is found. Note that this works well over a finite field,
      but is unlikely to work over QQ.
     Example
+     setRandomSeed 0
      kk=ZZ/101
      R = kk[s,t]
      f =(s+2*t)*(s+t)*(s-t)*(s-2*t)
@@ -3062,6 +2842,7 @@ doc ///
     	Text
 	    A matrix representing the action of y for the hyperelliptic curve E with equation y^2 - (-1)^g * f.
 	Example
+	    setRandomSeed 0
 	    kk = ZZ/101;
 	    R = kk[s,t];
 	    f = (s+2*t)*(s+t)*(s-t)*(s-2*t);
@@ -3114,6 +2895,7 @@ doc ///
      
     Example
      kk=ZZ/101
+     setRandomSeed 0
      g=1
      (S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g) ;
      (uOdd,uEv)=cliffordOperators(Mu1,Mu2,R);
@@ -3158,6 +2940,7 @@ doc ///
 	    Computes the degree of a vector bundle L on the hyperelliptic curve E.
 	Example
 	    kk=ZZ/101;
+	    setRandomSeed 0
 	    g=1;
 	    
 	    rNP=randNicePencil(kk,g);
@@ -3200,6 +2983,7 @@ doc ///
     	Text
 	    Computes the order of a degree 0 line bundle L on the hyperelliptic curve E by the most naive method.
 	Example
+	    setRandomSeed 0
 	    kk=ZZ/101;
 	    g=1;
 	    rNP=randNicePencil(kk,g);
@@ -3256,6 +3040,7 @@ doc ///
 	        
 	Example
 	    kk=ZZ/101;
+	    setRandomSeed 0
 	    g=1;
 	    rNP=randNicePencil(kk,g);
 	    cM=cliffordModule(rNP.matFact1,rNP.matFact2,rNP.baseRing);
@@ -3313,6 +3098,7 @@ doc ///
   	    
 	Example
 	    kk=ZZ/1009;
+	    setRandomSeed 0
 	    g=2;
 	    rNP=randNicePencil(kk,g);
 	    cM=cliffordModule(rNP.matFact1,rNP.matFact2,rNP.baseRing);
@@ -3357,6 +3143,7 @@ doc ///
 	    Chooses a random extension of V2 by V1, where V1, V2 are vector bundles on E 
 	    represented by the type VectorBundleOnE.
 	Example
+	    setRandomSeed 0
 	    kk=ZZ/101;
 	    g=1;
 	    rNP=randNicePencil(kk,g);
@@ -3418,6 +3205,7 @@ doc ///
 	    From this representation we read off a matrix factorization (M1, M2) of qq.
 	Example
 	    kk=ZZ/101;
+	    setRandomSeed 0
 	    g=1;
 	    rNP=randNicePencil(kk,g);
 	    qq=rNP.quadraticForm;
@@ -3481,6 +3269,7 @@ doc ///
 	    its minimal free resolution over CI. This function uses cliffordModuleToMatrixFactorization.
 	Example
 	    kk=ZZ/101;
+	    setRandomSeed 0
 	    g=1;
 	    rNP=randNicePencil(kk,g);
 	    qq=rNP.quadraticForm;
@@ -3546,6 +3335,7 @@ doc ///
 	    
 	Example
 	    kk=ZZ/101;
+	    setRandomSeed 0
 	    g=2;
 	    rNP=randNicePencil(kk,g);
 	    S=rNP.qqRing;
@@ -3600,6 +3390,7 @@ doc ///
 
 	    g=3
 	    kk= ZZ/101;
+	    setRandomSeed 0
 	    elapsedTime (S,qq,R,u, M1,M2, Mu1, Mu2)=randomNicePencil(kk,g);
 	     -- 0.644455 seconds elapsed
 	    M=cliffordModule(Mu1,Mu2,R)
@@ -3667,7 +3458,8 @@ doc ///
 	    computes the maximal isotropic subspace uL corresponding to the
 	    translation of u by L.
 	Example
-	    kk=ZZ/101; 
+	    kk=ZZ/101;
+	    setRandomSeed 0
 	    g=2;
 	    (S,qq,R,u, M1,M2, Mu1,Mu2) = randomNicePencil(kk,g);
 	    
@@ -3709,7 +3501,8 @@ doc ///
 	    computes the maximal isotropic subspace ru corresponding to the
 	    translation of u by L.
 	Example
-	    kk=ZZ/101; 
+	    kk=ZZ/101;
+	    setRandomSeed 0
 	    g=2;
 	    (S,qq,R,u, M1,M2, Mu1,Mu2) = randomNicePencil(kk,g);
 	    
@@ -3724,10 +3517,213 @@ doc ///
 	CliffordModule
 ///
 
-
+--TEST SECTION--
 ---------------
 ---tests-------
 ---------------
+TEST///
+setRandomSeed 0
+kk = ZZ/101;g=1
+(S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
+diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq)
+P = kk[drop(gens S, -2)]
+qs = sub(diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq), P)
+CI = P/ideal qs
+
+F = res( coker (sub(u, CI)), LengthLimit => 3)
+betti (FF = res( coker transpose F.dd_3, LengthLimit => 5))
+M = cliffordModule(Mu1, Mu2, R)
+betti (F1=cliffordModuleToCIResolution(M,S,CI)) 
+betti (FFF = res coker FF.dd_5)
+q1 = diff(S_(2*g+2),qq)
+q2 = diff(S_(2*g+3),qq)
+N = (S^1/(ideal(q1,q2))**coker sub(F.dd_2,S))
+assert(ideal F1.dd_(g+3-(g%2))_{0} ==ideal sub(u,CI))
+M = cliffordModule(M1,M2,R)
+betti (F2=cliffordModuleToCIResolution(M,S,CI)) 
+assert(ideal F2.dd_(2*g+3)_{0}^{0..2*g+1} == ideal gens CI)
+----- now genus 2
+g=2
+(S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
+diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq)
+P = kk[drop(gens S, -2)]
+qs = sub(diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq), P)
+CI = P/ideal qs
+
+F = res( coker (sub(u, CI)), LengthLimit => 3)
+betti (FF = res( coker transpose F.dd_3, LengthLimit => 5))
+M = cliffordModule(Mu1, Mu2, R)
+betti (F1=cliffordModuleToCIResolution(M,S,CI)) 
+assert(ideal F1.dd_(g+3-(g%2))_{0} ==ideal sub(u,CI))
+M = cliffordModule(M1,M2,R)
+betti (F2=cliffordModuleToCIResolution(M,S,CI)) 
+assert(ideal F2.dd_(2*g+3)_{0}^{0..2*g+1} == ideal gens CI)
+
+--This was omitted from a test because it's slow
+kk = ZZ/101;g=1
+g=3
+(S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
+diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq)
+P = kk[drop(gens S, -2)]
+qs = sub(diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq), P)
+CI = P/ideal qs
+
+F = res( coker (sub(u, CI)), LengthLimit => 3)
+betti (FF = res( coker transpose F.dd_3, LengthLimit => 5))
+M = cliffordModule(Mu1, Mu2, R)
+betti (F1=cliffordModuleToCIResolution(M,S,CI)) 
+assert(ideal F1.dd_(g+3-(g%2))_{0} ==ideal sub(u,CI))
+M = cliffordModule(M1,M2,R)
+betti (F2=cliffordModuleToCIResolution(M,S,CI)) 
+assert(ideal F2.dd_(2*g+3)_{0}^{0..2*g+1} == ideal gens CI)
+///
+
+
+TEST///-* test of randomIsotropicSubspace*-
+-- needsPackage "PencilsOfQuadrics"
+setRandomSeed 0
+kk=ZZ/101;g=2
+(S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
+
+M=cliffordModule (Mu1, Mu2, R);
+f=M.hyperellipticBranchEquation;
+L=randomLineBundle(0,f)
+uL=translateIsotropicSubspace(M,L,S)
+
+rU=randomIsotropicSubspace(M,S)
+assert (betti rU == betti u)
+///
+
+TEST///-*test of cliffordModuleToMatrixFactorization*-
+setRandomSeed 0
+kk = ZZ/101;g= 1
+(S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
+M = cliffordModule(Mu1, Mu2, R)
+(Mu1', Mu2') = cliffordModuleToMatrixFactorization (M,S);
+assert(Mu1'-Mu1 == 0 and Mu2'-Mu2 ==0)
+assert(Mu1'==Mu1)
+assert(Mu2'==Mu2)
+M = cliffordModule(M1, M2, R);
+(M1', M2') = cliffordModuleToMatrixFactorization (M,S);
+assert(M1'-M1 == 0 and M2'-M2 ==0)
+assert(M1'==M1)
+assert(M2'==M2)
+
+--g=2
+kk = ZZ/101;g=2
+(S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
+M = cliffordModule(Mu1, Mu2, R)
+(Mu1', Mu2') = cliffordModuleToMatrixFactorization (M,S);
+assert(Mu1'-Mu1 == 0 and Mu2'-Mu2 ==0)
+assert(Mu1'==Mu1)
+assert(Mu2'==Mu2)
+M = cliffordModule(M1, M2, R);
+(M1', M2') = cliffordModuleToMatrixFactorization (M,S);
+assert(M1'-M1 == 0 and M2'-M2 ==0)
+assert(M1'==M1)
+assert(M2'==M2)
+///
+
+TEST///-*test of centers*-
+setRandomSeed 0
+kk=ZZ/101
+g=1
+(S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g) 
+(uOdd,uEv)=cliffordOperators(Mu1,Mu2,R)
+(c0,c1)=centers(uOdd,uEv)
+betti c0
+betti c1
+symMatrix(uOdd,uEv)
+f=det symMatrix(uOdd,uEv)
+cMu = cliffordModule(uOdd, uEv)
+cM = cliffordModule(M1, M2, R)
+assert ((cMu.evenCenter, cMu.oddCenter)==centers(cMu.oddOperators, cMu.evenOperators))
+///
+
+TEST///-*test of tensorProduct of randomLineBundle and degreeOnE and orderInPic*-
+setRandomSeed 0
+kk = ZZ/101
+R = kk[ s,t]
+g = 1
+f = random(2*g+2, R)
+assert(dim ideal(jacobian ideal f)== 0)
+L1=randomLineBundle(1,f)
+assert(degOnE L1 == 1)
+L2=randomLineBundle(2,f)
+assert(degOnE L2 == 2)
+L0 = randomLineBundle(0,f)
+assert(degOnE L0 == 0)
+assert(degOnE tensorProduct(L1,L1) == 2)
+assert(orderInPic randomLineBundle(0,f) == 2)
+///
+
+
+TEST///-*Test of the pfaffian formula *-
+kk=ZZ/101
+d=1
+n=2*d
+R=kk[a_0..a_(binomial(n+2,2)-1)]
+S=kk[x_0..x_(n-1),a_0..a_(binomial(n+2,2)-1)]
+M=genericSymmetricMatrix(S,a_0,n)
+X=(vars S)_{0..n-1}
+Y=X*M
+(M1,M2)=matrixFactorizationK(X,Y);
+(eOdd,eEv)=cliffordOperators(M1,M2,R);
+symMatrix(eOdd,eEv)
+(c0,c1)=centers(eOdd,eEv);
+assert isHomogeneous c0
+assert isHomogeneous c1
+betti c0, betti c1
+assert(all(n,i->eOdd_i*c1+c0*eOdd_i==0))
+assert(all(n,i->eEv_i*c0+c1*eEv_i==0))
+assert(target eEv_0 == target c1)
+assert(target eOdd_0 == target c0)
+determ=det symMatrix(eOdd,eEv)
+-- Note the factor (-1)^d occurs in the test below
+assert(c0^2-(-1)^d*determ*id_(target c0)==0)
+assert(c1^2-(-1)^d*determ*id_(source c1)==0)
+///
+
+
+TEST///-*test of randomNicePencil*-
+setRandomSeed 0
+kk=ZZ/101
+g=1
+(S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g) 
+(uOdd,uEv)=cliffordOperators(Mu1,Mu2,R)
+(c0,c1)=centers(uOdd,uEv)
+symMatrix(uOdd,uEv)
+f=det symMatrix(uOdd,uEv)
+assert(c0^2+(-1)^g*f*id_(target c0)==0)
+L=randomLineBundle(0,f)
+m=L.yAction
+assert((m)^2_(0,0)+(-1)^g*f==0)
+--b = random(2*g+2, R)
+assert isHomogeneous m
+degOnE L
+orderInPic L
+///
+
+
+TEST/// 
+-- test of matrixFactorizationK
+kk=ZZ/101
+d=2
+n=2*d
+R=kk[a_0..a_(binomial(n+2,2))]
+S=kk[x_0..x_(n-1),a_0..a_(binomial(n+2,2))]
+M=genericSymmetricMatrix(S,a_0,n)
+X=(vars S)_{0..n-1}
+Y=X*M
+(M1,M2)=matrixFactorizationK(X,Y);
+M12=M1*M2;
+assert(M12-M12_(0,0)*id_(target M12)==0)
+assert(isHomogeneous M1)
+assert(isHomogeneous M2)
+assert(source M1==target M2)
+assert( source M2==target M1**S^{-3})
+///
+
 TEST///
 kk=ZZ/101
 d=2
@@ -3753,6 +3749,7 @@ end--
 --   coker mm is isomorphic to coker transpose nn
 restart
 uninstallPackage "PencilsOfQuadrics"
+restart
 installPackage "PencilsOfQuadrics"
 check "PencilsOfQuadrics"
 kk=ZZ/101
