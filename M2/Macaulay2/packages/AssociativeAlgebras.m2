@@ -1606,15 +1606,11 @@ derivationQuotientIdeal (RingElement, ZZ) := (w,n) -> (
    d := first degree w;
    nBasis := flatten entries ncBasis(n,A);
    diffs := apply(nBasis, m -> leftDiff(w,m));
-   -- The code below was to create a minimal set of generators of the defining
-   -- ideal, but in retrospect I think its best to just leave the gens as is.
-   --basisA := ncBasis(d-n,A);
-   --coeffs := sub(last coefficients(matrix{diffs}, Monomials => basisA),baseA);
-   --idealGens := flatten entries (basisA*(mingens image coeffs));
-   --ideal idealGens
-   --result := flatten entries (basisA * coeffs);
-   --error "err";
-   ideal diffs
+   -- The code below was to create a minimal set of generators of the defining ideal
+   basisA := ncBasis(d-n,A);
+   coeffs := sub(last coefficients(matrix{diffs}, Monomials => basisA),baseA);
+   idealGens := ideal flatten entries (basisA*(mingens image coeffs));
+   idealGens
 )
 
 derivationQuotient = method(Options => {DegreeLimit => 10, Strategy => "F4"})
