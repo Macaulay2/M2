@@ -2,7 +2,7 @@ include ../Makefile
 
 ## Parameters
 DISTRIBUTION = rockylinux
-RELEASE = 8
+RELEASE = 9
 BUILD = autotools
 BUILD_ARGS = --build-arg DISTRIBUTION=$(DISTRIBUTION) \
 	--build-arg RELEASE=$(RELEASE)
