@@ -270,7 +270,7 @@ randomSubSimplicialComplex(AbstractSimplicialComplex) := AbstractSimplicialCompl
 
 -- ambient simplicial set
 
-ambientAbstractSimplicialComplexSize = method() -- return the size of the underyling ambient simplex
+ambientAbstractSimplicialComplexSize = method() -- return the size of the underlying ambient simplex
 
 ambientAbstractSimplicialComplexSize(AbstractSimplicialComplex) := (K) -> (
     max flatten(K_0)
@@ -701,7 +701,7 @@ doc ///
      Description
      	  Text	  
 	     This method returns the reduced homological chain complex (i.e., there is a nonzero term in
-		 homological degree -1 that corresponds to the empty face) that is asociated
+		 homological degree -1 that corresponds to the empty face) that is associated
 	     to an abstract simplicial complex.  The chain complex is defined over the integers.
           Example
 	       K = abstractSimplicialComplex({{1,2,3},{2,4,9},{1,2,3,5,7,8},{3,4}})
@@ -717,7 +717,7 @@ doc ///
      Description
      	  Text	  
 	     This method returns the (non-reduced) homological chain complex (i.e., there is no nonzero term in
-		 homological degree -1 that corresponds to the empty face) that is asociated
+		 homological degree -1 that corresponds to the empty face) that is associated
 	     to an abstract simplicial complex.  The chain complex is defined over the integers.
 	  Example
 	       K = abstractSimplicialComplex({{1,2,3},{1,4,5},{2,4,5,7}})
