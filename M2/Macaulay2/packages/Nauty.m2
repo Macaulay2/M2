@@ -6,7 +6,7 @@
 -- License as published by the Free Software Foundation, either version 2
 -- of the License, or any later version.
 
-newPackage select((
+newPackage(
     "Nauty",
     Version => "1.4.3.1",
     Date => "01. March 2013",
@@ -32,7 +32,7 @@ newPackage select((
 	 "volume number" => "3",
 	 "volume URI" => "https://msp.org/jsag/2011/3-1/"
 	 }
-), x -> x =!= null)
+    )
 
 -------------------
 -- Configuration

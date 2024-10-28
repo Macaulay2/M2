@@ -311,6 +311,7 @@ bumpPrecedence();
      export elapsedTimeS := special("elapsedTime",unaryop,precSpace,wide);
      export elapsedTimingS := special("elapsedTiming",unaryop,precSpace,wide);
      export shieldS := special("shield",unaryop,precSpace,wide);
+     export TestS := special("TEST",unaryop,precSpace,wide);
      export throwS := special("throw",nunaryop,precSpace,wide);
      export returnS := special("return",nunaryop,precSpace,wide);
      export breakS := special("break",nunaryop,precSpace,wide);
@@ -395,12 +396,15 @@ export NewOfFromE := Expr(NewOfFromS);
 export InverseS := makeProtectedSymbolClosure("InverseMethod");
 export InverseE := Expr(InverseS);
 
+export RobustPrintS := makeProtectedSymbolClosure("RobustPrintMethod");
+export RobustPrintE := Expr(RobustPrintS);
+
 export StopIterationS := makeProtectedSymbolClosure("StopIteration");
 export StopIterationE := Expr(StopIterationS);
 
 -----------------------------------------------------------------------------
 export makeSymbol(t:Token):Symbol := (
-     e := makeSymbol(t.word,position(t),t.dictionary);
+     e := makeSymbol(t.word,t.position,t.dictionary);
      t.entry = e;
      e);
 export makeErrorTree(e:ParseTree,message:string):void := (
@@ -462,6 +466,7 @@ lookup(t:Token,forcedef:bool,thread:bool):void := (
      	  when lookup(t.word,t.dictionary)
      	  is entry:Symbol do (
 	       t.entry = entry;
+	       if entry.position == tempPosition then entry.position = t.position;
 	       if entry.flagLookup then (
 		    printErrorMessage(t,"flagged symbol encountered");
 		    HadError=true;
@@ -483,7 +488,7 @@ lookup(t:Token,forcedef:bool,thread:bool):void := (
 
 		    locallyCreated := t.dictionary.frameID != 0 && dictionaryDepth(t.dictionary) > 0;
 		    t.dictionary = globalDictionary; -- undefined variables are defined as global
-		    t.entry = makeSymbol(t.word,position(t),globalDictionary,thread,locallyCreated);
+		    t.entry = makeSymbol(t.word,t.position,globalDictionary,thread,locallyCreated);
 		    )
 	       else (
 	       	    printErrorMessage(t,"undefined symbol " + t.word.name);
@@ -754,10 +759,10 @@ bindassignment(assn:Binary,dictionary:Dictionary,colon:bool):void := (
 	  )
      is n:New do (
 	  if colon then (
-	       bind(n.newclass,dictionary);
-	       bind(n.newparent,dictionary);
-	       bind(n.newinitializer,dictionary);
-	       bind(body,dictionary))
+	    bind(n.newClass,       dictionary);
+	    bind(n.newParent,      dictionary);
+	    bind(n.newInitializer, dictionary);
+	    bind(body,             dictionary))
 	  else makeErrorTree(assn.Operator, 
 	       "left hand side of assignment inappropriate"))
      else makeErrorTree(assn.Operator, 
@@ -766,13 +771,13 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
      when e
      is i:IfThen do (
 	  bind(i.predicate,dictionary);
-	  -- i.thenclause = bindnewdictionary(i.thenclause,dictionary);
-	  bind(i.thenclause,dictionary);
+	  -- i.thenClause = bindnewdictionary(i.thenClause,dictionary);
+	  bind(i.thenClause,dictionary);
 	  )
      is i:IfThenElse do (
 	  bind(i.predicate,dictionary);
-	  -- i.thenclause = bindnewdictionary(i.thenclause,dictionary);
-	  bind(i.thenclause,dictionary);
+	  -- i.thenClause = bindnewdictionary(i.thenClause,dictionary);
+	  bind(i.thenClause,dictionary);
 	  -- i.elseClause = bindnewdictionary(i.elseClause,dictionary);
 	  bind(i.elseClause,dictionary);
 	  )
@@ -880,9 +885,10 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	  bind(w.doClause,dictionary);
 	  )
      is n:New do (
-     	  bind(n.newclass,dictionary);
-     	  bind(n.newparent,dictionary);
-     	  bind(n.newinitializer,dictionary);)
+	 bind(n.newClass,       dictionary);
+	 bind(n.newParent,      dictionary);
+	 bind(n.newInitializer, dictionary);
+	 )
      is i:TryElse do (
 	  -- i.primary = bindnewdictionary(i.primary,dictionary);
 	  bind(i.primary,dictionary);

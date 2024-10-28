@@ -1686,7 +1686,7 @@ polynomialAnn = (F') -> (
     ideal mingens ideal (allMons * mingens ker coeffs)        
 )
 
--- computes the annilihator of a vector space V of polynomials
+-- computes the annihilator of a vector space V of polynomials
 -- typically one expects that V is close under differentiation
 -- Input: a list which is a basis of V. Output: the ideal annihilator.
 vectorAnn = (V) -> (
@@ -1783,7 +1783,7 @@ polynomialVectorAnn = (F) -> (
     (mons, coeffs) := coefficients diffMat;
     image mingens image (allMons * mingens ker coeffs)        
 )
--- computes the annilihator of a vector space V of polynomials
+-- computes the annihilator of a vector space V of polynomials
 vectorSpaceAnn = (W) -> (
     intersect(apply(W / matrix, F -> polynomialVectorAnn(F)))      
 )

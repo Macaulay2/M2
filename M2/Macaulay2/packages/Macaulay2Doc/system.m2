@@ -43,7 +43,6 @@ document {
 	"Dumping and restoring the state of the system:",
 	  TO "top level loop", -- see repl.m2
 	  TO "restart",
-	  TO "addStartFunction",
 	  TO "addEndFunction",
 	"Interface to the operating system:",
 	  TO "alarm",
@@ -593,16 +592,7 @@ document {
 	  afresh, as described in ", TO "Invoking the program", "."
 	  }
      }
-document {
-     Key => addStartFunction,
-     Headline => "add a startup function",
-     Usage => "addStartFunction f",
-     Inputs => { "f" => Function },
-     Consequences => {
-	  {"When the program restarts, the function ", TT "f", " will be called, with no arguments."}
-	  },
-     SeeAlso => {"addEndFunction"}
-     }
+
 document {
      Key => addEndFunction,
      Headline => "add an ending function",
@@ -610,8 +600,7 @@ document {
      Inputs => { "f" => Function },
      Consequences => {
 	  {"When the program is about the exit, the function ", TT "f", " will be called, with no arguments."}
-	  },
-     SeeAlso => {"addStartFunction"}
+	  }
      }
 
 document {

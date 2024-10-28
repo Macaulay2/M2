@@ -22,7 +22,7 @@ needs "installPackage.m2" -- TODO: can this be removed?
 -- set by about and used by (help, ZZ)
 lastabout := null
 
-authorDefaults    := new HashTable from { Name => "Anonymous", Email => null, HomePage => null }
+authorDefaults    := new HashTable from { Name => "Anonymous", Email => null, HomePage => null, Maintainer => false }
 
 binary   := set flexibleBinaryOperators
 prefix   := set flexiblePrefixOperators
@@ -34,23 +34,19 @@ operator := binary + prefix + postfix + augmented
 -- Local utilities
 -----------------------------------------------------------------------------
 
--- used by help, viewHelp, and infoHelp
+-- used by help, viewHelp, infoHelp, and examples
 seeAbout := (f, i) -> (
     if     lastabout === null then error "no previous 'about' response";
     if not lastabout#?i       then error("previous 'about' response contains no entry numbered ", i);
     f lastabout#i)
+
+examples ZZ := seeAbout_examples
 
 -----------------------------------------------------------------------------
 -- these menus have to get sorted, so optTO and optTOCLASS return sequence:
 --   the first three members of the pair are used for sorting
 --   the last member is the corresponding hypertext entry in the UL list
 -----------------------------------------------------------------------------
-
--- we want quotes around elements of the "Ways to use" list so that
--- "* String" works when running "help" inside Macaulay2, but we don't
--- need the quotes otherwise
-MaybeQuotedTT = new IntermediateMarkUpType of TT
-net MaybeQuotedTT := x -> formatNoEscaping x#0
 
 counter := 0
 next := () -> counter = counter + 1
@@ -64,8 +60,8 @@ optTO := key -> (
 	-- TODO: figure out how to align the lists using padding
 	-- ref = pad(ref, printWidth // 4);
 	(format ptag, fkey, next(), fixup (
-		if currentHelpTag === ptag then MaybeQuotedTT fkey
-		else SPAN {MaybeQuotedTT fkey, " -- see ", TOH{ptag}})))
+		if currentHelpTag === ptag then KBD fkey
+		else SPAN {KBD fkey, " -- see ", TOH{ptag}})))
     -- need an alternative here for secondary tags such as (export,Symbol)
     else (fkey, fkey, next(), TOH{tag}))
 -- this isn't different yet, work on it!
@@ -245,7 +241,8 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 		    (defs, args) := override(authorDefaults, toSequence au);
 		    LI {
 			if defs.HomePage === null then defs.Name else HREF{defs.HomePage, defs.Name},
-			if defs.Email    =!= null then SPAN{" <", HREF{concatenate("mailto:", defs.Email), defs.Email}, ">"}}))
+			if defs.Email    =!= null then SPAN{" <", HREF{concatenate("mailto:", defs.Email), defs.Email}, ">"},
+			if defs.Maintainer        then SPAN{" (maintainer)"}}))
 	    },
 	if (cert := pkg.Options.Certification) =!= null then (
 	    cert  = new HashTable from cert;
@@ -346,6 +343,10 @@ getOption := (rawdoc, tag) -> if rawdoc =!= null and rawdoc#?tag then rawdoc#tag
 headline = method(Dispatch => Thing)
 headline Thing := key -> getOption(fetchRawDocumentationNoLoad makeDocumentTag key, Headline)
 headline DocumentTag := tag -> getOption(fetchRawDocumentation getPrimaryTag tag, Headline)
+
+headlines = method()
+headlines List := L -> TABLE apply(#L, i -> { pad(floor log_10(#L) + 2, i | "."),
+	TO2(tag := makeDocumentTag L#i, net tag), commentize headline tag })
 
 -- Compare with SYNOPSIS in document.m2
 getSynopsis := (key, tag, rawdoc) -> (
@@ -564,7 +565,7 @@ about Symbol   :=
 about Function := o -> f -> about("\\b" | toString f | "\\b", o)
 about String   := o -> re -> lastabout = (
     packagesSeen := new MutableHashTable;
-    NumberedVerticalList apply(sort join(
+    NumberedVerticalList sort join(
         flatten for pkg in loadedPackages list (
             pkgname := pkg#"pkgname";
             if packagesSeen#?pkgname then continue else packagesSeen#pkgname = 1;
@@ -574,7 +575,7 @@ about String   := o -> re -> lastabout = (
                     matchfun_re if o.Body then pkg#rawKeyDB),
                 select(keys pkg#"raw documentation",
                     matchfun_re if o.Body then pkg#"raw documentation"));
-            apply(keyList, key -> (pkgname,key))),
+            apply(keyList, key -> pkgname | " :: " | key )),
         flatten for pkg in getPackageInfoList() list (
             pkgname := pkg#"name";
             if packagesSeen#?pkgname then continue else packagesSeen#pkgname = 1;
@@ -583,10 +584,7 @@ about String   := o -> re -> lastabout = (
             db := if o.Body then openDatabase dbname;
             keyList := select(dbkeys, matchfun_re db);
             if o.Body then close db;
-            apply(keyList, key -> (pkgname,key)))
-	    ),(pkgname,key) -> SPAN { pkgname, " ", TOH {pkgname | "::" | key} }
-	)
-    )
+            apply(keyList, key -> pkgname | " :: " | key ))))
 
 -- TODO: should this go to system?
 pager = x -> if height stdio > 0

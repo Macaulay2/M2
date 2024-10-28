@@ -37,14 +37,17 @@ export nextHash():hash_t := (
      HashCounter = HashCounter + 1;
      HashCounter);
 
--- Knuth, Art of Computer Programming, Section 6.4
--- constant is approx. 2^64 / phi
-export fibonacciHash(k:hash_t,p:int):hash_t := (
-    Ccode(hash_t, "(11400714819323198485ull * ",k,") >> (64 - ",p,")"));
-
--- hash codes for mutable objects that don't use nextHash
--- we use 9 since #buckets ZZ = 2^9
-export hashFromAddress(e:Expr):hash_t := fibonacciHash(Ccode(hash_t, "(long)", e), 9);
+------------------------------------------------------------
+-- hash codes for mutable objects that don't use nextHash --
+------------------------------------------------------------
+-- We use Fibonacci hashing (Knuth, Art of Computer Programming, Section 6.4)
+-- The constant 11400714819323198485 is approximately 2^64 / phi.
+-- We want to use the p most significant bits for hashing (where 2^p is the
+-- number of buckets), but in practice we use the p least significant bits,
+-- so we swap them.  We use p = 10 here since #buckets Matrix = 2^10.
+export hashFromAddress(e:Expr):hash_t := (
+    x := Ccode(hash_t, "11400714819323198485ull * (unsigned long)", e);
+    Ccode(hash_t, "(", x, " >> 54) | (", x, " << 10)"));
 
 export NULL ::= null();
 
@@ -185,7 +188,7 @@ export newHashTableWithHash(Class:HashTable,parent:HashTable):HashTable := (
        ht.hash=nextHash();
        ht);
 
-export newCompiledFunction(fn:fun):CompiledFunction := (
+export newCompiledFunction(fn:function(Expr):Expr):CompiledFunction := (
     cf := CompiledFunction(fn, hash_t(0));
     cf.hash = hashFromAddress(Expr(cf));
     cf);
@@ -201,6 +204,7 @@ dummybinary(w:ParseTree,v:Token,o:TokenFile,prec:int,obeylines:bool):ParseTree :
      w);
 export nopr := -1;						    -- represents unused precedence
 export newParseinfo():parseinfo := parseinfo(nopr,nopr,nopr,parsefuns(dummyunary,dummybinary));
+
 export dummyUnaryFun(c:Code):Expr := (
      anywhereError("dummy unary function called");
      nullE);
@@ -213,9 +217,11 @@ export dummyBinaryFun(c:Code,d:Code):Expr := (
 export dummyTernaryFun(c:Code,d:Code,e:Code):Expr := (
      anywhereError("dummy ternary function called");
      nullE);
+export dummyMultaryFun(c:CodeSequence):Expr := (
+     anywhereError("dummy multary function called");
+     nullE);
 
 export emptySequence := Sequence();
-
 export emptySequenceE := Expr(emptySequence);
 
 export dummySymbol := Symbol(
@@ -231,13 +237,10 @@ dummySymbolClosure := SymbolClosure(globalFrame,dummySymbol);
 globalFrame.values.dummySymbolFrameIndex = Expr(dummySymbolClosure);
 export dummyCode := Code(nullCode());
 export NullCode := Code(nullCode());
-export dummyCodeClosure := CodeClosure(dummyFrame,dummyCode);
+export dummyPseudocodeClosure := PseudocodeClosure(dummyFrame,dummyCode);
 export dummyToken   := Token(
      Word("-*dummy token*-",TCnone,hash_t(0),newParseinfo()),
-     dummyPosition.filename,
-     dummyPosition.line,
-     dummyPosition.column,
-     dummyPosition.loadDepth,
+     dummyPosition,
      Macaulay2Dictionary,dummySymbol,false);
 
 export parseWORD    := newParseinfo();			    -- parsing functions filled in later
@@ -281,12 +284,12 @@ export compiledFunctionClass := newtypeof(functionClass);
 export compiledFunctionClosureClass := newtypeof(functionClass);
 export symbolClass := newbasictype();
 export keywordClass := newtypeof(symbolClass);
-export codeClass := newbasictype();
+export pseudocodeClass := newbasictype();
 export mysqlConnectionClass := newbasictype();
 export mysqlFieldClass := newbasictype();
 export mysqlResultClass := newbasictype();
 export functionBodyClass := newbasictype();
-export compiledFunctionBodyClass := newbasictype();
+export compiledFunctionBodyClass := newtypeof(functionBodyClass);
 export errorClass := newbasictype();
 export netClass := newbasictype();
 export netFileClass := newbasictype();
@@ -351,6 +354,7 @@ export angleBarListClass := newtypeof(visibleListClass);
 export RRiClass := newbignumbertype();
 export pointerClass := newbasictype();
 export atomicIntClass := newbasictype();
+export pseudocodeClosureClass := newtypeof(pseudocodeClass);
 -- all new types, dictionaries, and classes go just above this line, if possible, so hash codes don't change gratuitously!
 
 
@@ -371,8 +375,6 @@ export WrongArgRRorCC():Expr := WrongArg("a real or complex number");
 export WrongArgRRorCC(n:int):Expr := WrongArg(n,"a real or complex number");
 export WrongArgRRorRRi():Expr := WrongArg("a real number or interval");
 export WrongArgRRorRRi(n:int):Expr := WrongArg(n,"a real number or interval");
-export WrongArgRRorRRiorCC():Expr := WrongArg("a real number or interval or a complex number");
-export WrongArgRRorRRiorCC(n:int):Expr := WrongArg(n,"a real number or interval or a complex number");
 export WrongArgSmallInteger():Expr := WrongArg("a small integer");
 export WrongArgSmallInteger(n:int):Expr := WrongArg(n,"a small integer");
 export WrongArgSmallUInteger():Expr := WrongArg("a small non-negative integer");

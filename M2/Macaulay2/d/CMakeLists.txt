@@ -61,15 +61,16 @@ set(DLIST
   parser.d
   binding.d
   basic.d
-  convertr.d
   common.d
   util.d
+  convertr.d
   struct.d
   classes.dd
   buckets.dd
   equality.dd
   hashtables.dd
   regex.dd
+  debugging.dd
   evaluate.d
   sets.dd
   mysql.d	# removed unless WITH_SQL
@@ -82,7 +83,7 @@ set(DLIST
   # tasks.d
   xmlactors.d	# removed unless WITH_XML
   actors5.d
-  actors6.dd
+  chrono.dd
   threads.dd
   python.d	# removed unless WITH_PYTHON
   interface.dd interface2.d
@@ -133,11 +134,6 @@ foreach(_d_source IN LISTS DLIST)
   _SCC_TRANSLATE(${_d_source} _c) # sets _c_source
   list(APPEND CLIST ${_c_source})
 endforeach()
-
-# To avoid unnecessary recompiling, only version.dd is given GIT_DESCRIPTION
-set_property(SOURCE version-tmp.cc APPEND PROPERTY COMPILE_DEFINITIONS
-  GIT_DESCRIPTION="${GIT_DESCRIPTION}"
-  GIT_BRANCH="${GIT_BRANCH}")
 
 ###############################################################################
 ## Compile the interpreter

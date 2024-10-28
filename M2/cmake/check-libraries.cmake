@@ -154,7 +154,7 @@ pkg_search_module(GIVARO	IMPORTED_TARGET	givaro>=4.1.1)
 
 set(LIBRARY_OPTIONS
   Eigen3 BDWGC MPFR MPFI NTL Flint Factory Frobby cddlib MPSolve
-  GTest GLPK Givaro FFLAS_FFPACK)
+  GTest GLPK Givaro FFLAS_FFPACK Normaliz)
 
 ###############################################################################
 ## Optional libraries:
@@ -232,7 +232,8 @@ foreach(_library IN LISTS LIBRARY_OPTIONS)
     elseif(BUILD_LIBRARIES MATCHES "(ALL|ON)" OR "${_name}" IN_LIST BUILD_LIBRARIES)
       # exists on the system, but we want to build it
       unset(${_library}_DIR CACHE) # for Eigen3
-      unset(${_name}_FOUND CACHE)
+      unset(${_name}_FOUND CACHE)  # for fflas_ffpack and givaro
+      unset(${_name}_FOUND)        # for everything else
       unset(${_name}_LIBDIR CACHE)
       unset(${_name}_LIBRARY CACHE)
       unset(${_name}_LIBRARIES CACHE)
@@ -318,16 +319,7 @@ unset(CMAKE_REQUIRED_LIBRARIES)
 unset(CMAKE_REQUIRED_INCLUDES)
 
 ###############################################################################
-## Set four library related definitions
-
-if(GIVARO_FOUND)
-  set(CMAKE_REQUIRED_INCLUDES "${GIVARO_INCLUDE_DIRS}")
-  # whether givaro has isUnit (4.0.3) or isunit (4.0.2)
-  check_cxx_source_compiles([[#include <givaro/gfq.h>
-    int main(){class Givaro::GFqDom<long int> foo; foo.isunit(0);return 0;}]] HAVE_GIVARO_isunit)
-else()
-  unset(HAVE_GIVARO_isunit CACHE)
-endif()
+## Set several library related definitions
 
 if(FACTORY_FOUND)
   set(CMAKE_REQUIRED_INCLUDES "${FACTORY_INCLUDE_DIR}")

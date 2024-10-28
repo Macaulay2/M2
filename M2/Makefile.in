@@ -10,7 +10,7 @@ all install:										\
 	M2 all-in-subdirs report-M2-location
 configured-files: @CONFIGURED_FILES@
 $(foreach f,@CONFIGURED_FILES@,$(eval $f: @srcdir@/$f.in; ./config.status $f))
-M2: GNUmakefile
+M2:
 	rm -f M2
 	(echo '#! /bin/sh'; echo 'exec @pre_bindir@/M2 "$$@"') >M2
 	chmod a+x M2
@@ -67,7 +67,7 @@ clean:
 	if [ -f Makefile ] ; then $(MAKE) -f Makefile clean-tools ; fi
 
 install: configured; $(MAKE) -C distributions $@
-@srcdir@/configure : @srcdir@/configure.ac @srcdir@/config/files; $(MAKE) -C @srcdir@ -f Makefile
+@srcdir@/configure : @srcdir@/configure.ac @srcdir@/m4/files; $(MAKE) -C @srcdir@ -f Makefile
 recheck config.status: @srcdir@/configure @srcdir@/Macaulay2/packages/=distributed-packages
 	$(WHY)
 	./config.status --recheck
@@ -83,7 +83,7 @@ status: @srcdir@/configure
 	@echo '#  to run it that way again.'
 	@echo '#'
 	@echo '-----------------------------------------------------------------------------'
-srcdir: GNUmakefile
+srcdir:
 	: creating or removing symbolic link to common staging area, if necessary,
 	: based on comparison of these directories:
 	:                      pre_prefix : @pre_prefix@
@@ -105,13 +105,13 @@ srcdir: GNUmakefile
 subst: config.status ; ./config.status
 show: config.status
 	<$< sed -e 's/\\\n//' |egrep '^[SD]\["' | sed -e 's/^S."\(.*\)"\]="\(.*\)"$$/\1=\2/' -e 's/^D."\(.*\)"\]="\(.*\)"$$/#define \1 \2/' -e 's/\\"/"/g'
-CONFIG_FILES = @srcdir@/configure @srcdir@/config/install-sh @srcdir@/config/config.sub @srcdir@/config/config.guess @srcdir@/config/files
+CONFIG_FILES = @srcdir@/configure @srcdir@/install-sh @srcdir@/config.sub @srcdir@/config.guess @srcdir@/m4/files
 reconfigure-top-only: recheck check-for-undefined-configure-variables protect-configs
 protect-configs:
-	 @ chmod a-w $(shell cat @srcdir@/config/files)
+	 @ chmod a-w $(shell cat @srcdir@/m4/files)
 check-for-undefined-configure-variables:
 	: "checking for strings that look like undefined configure variables in all *.in files..."
-	@ if egrep -nH '@[A-Za-z_]+@' $(shell cat @srcdir@/config/files) | sed -e 's=^\([^:]*\):=@srcdir@/\1.in:=' | egrep . ;	\
+	@ if egrep -nH '@[A-Za-z_]+@' $(shell cat @srcdir@/m4/files) | sed -e 's=^\([^:]*\):=@srcdir@/\1.in:=' | egrep . ;	\
 	  then exit 1;														\
 	  fi
 configure-help: $(CONFIG_FILES) ; @ @srcdir@/configure --help

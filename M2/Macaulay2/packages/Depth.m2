@@ -648,7 +648,7 @@ doc///
 	  (depth, Ideal, Module)
 	  (depth, Module)
           (depth, Ideal, Ideal)
-     Headline 
+     Headline
           computes the depth of a ring
      Usage
           d = depth(I,M)

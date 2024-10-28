@@ -18,8 +18,8 @@
 
 newPackage("Probability",
     Headline => "basic probability functions",
-    Version => "0.4",
-    Date => "January 23, 2024",
+    Version => "0.5",
+    Date => "September 13, 2024",
     Authors => {{
 	    Name     => "Doug Torrance",
 	    Email    => "dtorrance@piedmont.edu",
@@ -46,6 +46,13 @@ newPackage("Probability",
 ---------------
 
 -*
+
+0.5 (2024-09-13, M2 1.24.11)
+* add JSAG info
+* remove Constant methods now that we can use inheritance
+* adjust tests now that we use flint instead of boost for some special functions
+* use mpfr's built-in function for generating normally distributed variates
+* add subnodes to improve docs
 
 0.4 (2024-01-23, M2 1.23)
 * release under GPL
@@ -332,6 +339,7 @@ exponentialDistribution Number := lambda -> (
 	QuantileFunction => p -> -log(1 - p) / lambda,
 	Description => "Exp(" | toString lambda | ")"))
 
+importFrom(Core, "rawRandomRRNormal")
 normalDistribution = method()
 normalDistribution(Number, Number) := (mu, sigma) -> (
     checkReal mu;
@@ -342,9 +350,9 @@ normalDistribution(Number, Number) := (mu, sigma) -> (
 	    1/2 * (1 + erf((x - mu) / (sigma * sqrt 2))),
 	QuantileFunction => p ->
 	    mu + sigma * sqrt 2 * inverseErf(2 * p - 1),
-	-- box muller transform
-	RandomGeneration => () ->
-	    mu + sigma * sqrt(-2 * log random 1.) * cos (2 * pi * random 1.),
+	RandomGeneration => (
+	    p := min(precision numeric mu, precision numeric sigma);
+	    () -> mu + sigma * rawRandomRRNormal p),
 	Support => (-infinity, infinity),
 	Description => "N" | toString (mu, sigma)))
 
@@ -460,6 +468,8 @@ doc ///
     As is always the case when working with real numbers in Macaulay2,
     unexpected results may occur due to the limitations of floating
     point arithmetic.
+  Subnodes
+    ProbabilityDistribution
 ///
 
 doc ///
@@ -513,6 +523,16 @@ doc ///
       constructor methods, @TO discreteProbabilityDistribution@,
       @TO continuousProbabilityDistribution@, or any of the various built-in
       methods for common distributions.
+  Subnodes
+    :Keys
+    DensityFunction
+    DistributionFunction
+    QuantileFunction
+    RandomGeneration
+    Support
+    :Constructor methods
+    discreteProbabilityDistribution
+    continuousProbabilityDistribution
 ///
 
 doc ///
@@ -526,19 +546,23 @@ doc ///
       @TO discreteProbabilityDistribution@ and
       @TO continuousProbabilityDistribution@ for setting the probability
       density/mass function to be used by @TO density@.
+  Subnodes
+    density
 ///
 
 doc ///
   Key
     DistributionFunction
   Headline
-    cumulative density function
+    cumulative distribution function
   Description
     Text
       A key in @TO ProbabilityDistribution@ objects and an option for
       @TO discreteProbabilityDistribution@ and
       @TO continuousProbabilityDistribution@ for setting the cumulative
       distribution function to be used by @TO probability@.
+  Subnodes
+    probability
 ///
 
 doc ///
@@ -552,6 +576,8 @@ doc ///
       @TO discreteProbabilityDistribution@ and
       @TO continuousProbabilityDistribution@ for setting the quantile function
       to be used by @TO quantile@.
+  Subnodes
+    quantile
 ///
 
 doc ///
@@ -565,6 +591,8 @@ doc ///
       @TO discreteProbabilityDistribution@ and
       @TO continuousProbabilityDistribution@ for setting the random generation
       function to be used by @TO (random, ProbabilityDistribution)@.
+  Subnodes
+    (random, ProbabilityDistribution)
 ///
 
 doc ///
@@ -655,6 +683,8 @@ doc ///
       probability \(S_X(x) = P(X > x)\).
     Example
       probability_Z(1.96, LowerTail => false)
+  Subnodes
+    LowerTail
 ///
 
 doc ///
@@ -792,6 +822,12 @@ doc ///
     When defining a probability mass function, the user must be careful that
     it satisfies the definition, i.e., it must be nonnegative and its values
     must sum to 1 on its support.
+  Subnodes
+    binomialDistribution
+    poissonDistribution
+    geometricDistribution
+    negativeBinomialDistribution
+    hypergeometricDistribution
 ///
 
 doc ///
@@ -860,6 +896,15 @@ doc ///
     When defining a probability density function, the user must be careful that
     it satisfies the definition, i.e., it must be nonnegative and it must
     integrate to 1 on its support.
+  Subnodes
+    uniformDistribution
+    exponentialDistribution
+    normalDistribution
+    gammaDistribution
+    chiSquaredDistribution
+    tDistribution
+    fDistribution
+    betaDistribution
 ///
 
 doc ///

@@ -112,6 +112,9 @@ setUpApplicationDirectory = () -> (
      f := (n,c) -> (n = dir|n; if not fileExists n then n << c << close);
      f("init.m2", sampleInitFile);
      f("README", readmeFile);
+     f(historyFilename, concatenate(
+	     "-- This is the beginning of your Macaulay2 log stored at ",
+	     dir, historyFilename, newline));
      )
 
 -----------------------------------------------------------------------------

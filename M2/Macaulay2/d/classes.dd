@@ -7,7 +7,8 @@ setupconst("HashTable",Expr(hashTableClass));
 setupconst("Dictionary",Expr(dictionaryClass));
 setupconst("LocalDictionary",Expr(localDictionaryClass));
 setupconst("GlobalDictionary",Expr(globalDictionaryClass));
-setupconst("Pseudocode",Expr(codeClass));
+setupconst("Pseudocode",Expr(pseudocodeClass));
+setupconst("PseudocodeClosure",Expr(pseudocodeClosureClass));
 setupconst("FunctionBody",Expr(functionBodyClass));
 setupconst("SymbolBody",Expr(symbolBodyClass));
 setupconst("CompiledFunctionBody",Expr(compiledFunctionBodyClass));
@@ -102,24 +103,26 @@ ancestorfun(e:Expr):Expr := (
 	       else WrongArgHashTable(1))
 	  else WrongArgHashTable(2))
      else WrongNumArgs(2));
+-- # typical value: ancestor, Type, Type, Boolean
 setupfun("ancestor",ancestorfun);
 
 export Parent(e:Expr):HashTable := (
      when e
+     -- # typical value: parent, HashTable, HashTable
      is obj:HashTable do obj.parent
+     -- # typical value: parent, Thing, Type
      is s:SpecialExpr do Parent(s.e)
      else nothingClass);
-
 export parentfun(e:Expr):Expr := Expr(Parent(e));
 setupfun("parent",parentfun);
-
 
 export Class(e:Expr):HashTable := (
      when e
      is obj:HashTable do obj.Class
      is x:List do x.Class
      is ZZcell do ZZClass
-     is CodeClosure do codeClass
+     is PseudocodeClosure do pseudocodeClosureClass
+     is Pseudocode do pseudocodeClass
      is pythonObjectCell do pythonObjectClass
      is xmlNodeCell do xmlNodeClass
      is TaskCell do taskClass
@@ -174,7 +177,17 @@ export Class(e:Expr):HashTable := (
      is atomicIntCell do atomicIntClass
      );
 classfun(e:Expr):Expr := Expr(Class(e));
+-- # typical value: class, Thing, Type
 setupfun("class",classfun);
+
+instanceof(e:Expr):Expr := (
+    when e   is s:Sequence  do
+    when s.1 is T:HashTable do
+    -- # typical value: instance, Thing, Type, Boolean
+    if ancestor(Class(s.0), T) then True else False
+    else WrongArgHashTable(2)
+    else WrongNumArgs(2));
+setupfun("instance", instanceof);
 
 export commonAncestor(x:HashTable,y:HashTable):HashTable :=
      if ancestor(x,y) then y

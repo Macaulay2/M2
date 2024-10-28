@@ -886,3 +886,30 @@ needsPackage "Complexes"
   assert isWellDefined F
   F2 = freeResolution(M, LengthLimit => 2)
 ///
+
+TEST ///
+  R = QQ[x, Degrees => {{}}]
+  M = image x
+  F = freeResolution M
+  assert(isWellDefined F)
+  epsilon = augmentationMap F
+  assert isWellDefined epsilon
+  assert(M === (target epsilon)_0)
+///
+
+TEST ///
+  -- errorDepth = 0
+  A = ZZ/103[x,y,z];
+  J = ideal(x^3,y^4,z^5);
+  B = A/J;
+  f = matrix {{27*x^2-19*z^2, 38*x^2*y+47*z^3},
+      { -5*x^2+z^2, -37*x^2*y+51*x*y^2-36*y^3+11*y*z^2+8*z^3},
+      {x^2-x*y, z^3}};
+  M = cokernel f;
+  N = B^1/(x^2 + z^2,y^3 - 2*z^3);
+  time E = Ext(M,N); -- used 3.32 seconds in version 0.9.92
+  t = tally degrees target presentation E
+  u = new Tally from {{-3, -7} => 7, {-3, -6} => 7, {0, 1} => 3, {0, 2} => 4, {-4, -9} => 4, {-4, -8} => 1, {-4, -7} => 1, {-1, -2} => 4, {-2, -5} => 3,
+        {-2, -4} => 8}
+  assert ( t === u )
+///

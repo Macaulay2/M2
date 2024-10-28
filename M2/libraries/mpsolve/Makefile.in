@@ -15,6 +15,8 @@ LICENSEFILES = README
 # their use of libtool prevents this from working -- somehow "make install" rebuilds mpsolve during the installation, after we strip it
 # STRIPFILES = src/mpsolve/mpsolve
 
+PRECONFIGURE = autoreconf -fvi
+
 INSTALLTARGET = install-strip
 CONFIGOPTIONS += --disable-shared		\
 		 --disable-dependency-tracking	\

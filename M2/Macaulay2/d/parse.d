@@ -37,10 +37,8 @@ export anywhereAbort(s:string) ::= Ccode(exits,"err_abort(",s,")");
 -- Typedefs for functions of various numbers of arguments
 export unop := function(Code):Expr;
 export binop := function(Code,Code):Expr;
-export binopExpr := function(Expr,Expr):Expr;
 export ternop := function(Code,Code,Code):Expr;
 export multop := function(CodeSequence):Expr;
-
 
 export TokenFile := {+
      posFile:PosFile,
@@ -112,7 +110,7 @@ export Dictionary := {
 
 export Token := {+		-- a word, as encountered in the input
      word:Word,			--   the word
-     filename:string, line:ushort, column:ushort, loadDepth:ushort, -- position:Position, --   the location where it was encountered
+     position:Position,         --   the location where it was encountered
      dictionary:Dictionary,	--   the dictionary active at the time it was encountered
      entry:Symbol,     	  	--   the symbol table entry, found in the dictionary above, or one for wider lexical scope
      followsNewline:bool        --   whether it followed white space with a newline in it
@@ -132,9 +130,9 @@ export TryThen     := {+ tryToken:Token, primary:ParseTree, thenToken:Token, seq
 export TryElse     := {+ tryToken:Token, primary:ParseTree,                                    elseToken:Token, alternate:ParseTree};
 export Try         := {+ tryToken:Token, primary:ParseTree};
 export Catch := {+ catchToken:Token, primary:ParseTree};
-export IfThen := {+ ifToken:Token, predicate:ParseTree, thenclause:ParseTree };
-export IfThenElse := {+ ifToken:Token, predicate:ParseTree, thenclause:ParseTree, elseClause:ParseTree};
-export New := {+ newtoken:Token, newclass:ParseTree, newparent:ParseTree, newinitializer:ParseTree};
+export IfThen := {+ ifToken:Token, predicate:ParseTree, thenClause:ParseTree };
+export IfThenElse := {+ ifToken:Token, predicate:ParseTree, thenClause:ParseTree, elseClause:ParseTree};
+export New := {+ newToken:Token, newClass:ParseTree, newParent:ParseTree, newInitializer:ParseTree };
 export Arrow := {+lhs:ParseTree, Operator:Token, rhs:ParseTree, desc:functionDescription};
 export Quote := {+Operator:Token, rhs:Token};
 export GlobalQuote := {+Operator:Token, rhs:Token, global:void};
@@ -143,16 +141,18 @@ export LocalQuote := {+Operator:Token, rhs:Token, local:void};
 export Binary := {+lhs:ParseTree, Operator:Token, rhs:ParseTree};
 export Unary  := {+Operator:Token, rhs:ParseTree};
 export Postfix:= {+lhs:ParseTree, Operator:Token};
-export ArrayParseTree := array(ParseTree);
 export Parentheses := {+ left:Token, contents:ParseTree, right:Token };
 export EmptyParentheses := {+ left:Token, right:Token };
 export dummy := {+position:Position};
-export ParseTree := (
-     Token or Adjacent or Binary or Unary or Postfix or Parentheses 
-     or EmptyParentheses or IfThen or IfThenElse
-     or Quote or GlobalQuote or ThreadQuote or LocalQuote
-     or TryThenElse or TryThen or TryElse or Try or Catch or WhileDo or For or WhileList or WhileListDo or Arrow or New or dummy );
 
+export ParseTree := (
+    Token or Parentheses or EmptyParentheses or Adjacent or Arrow
+    or Quote or GlobalQuote or ThreadQuote or LocalQuote
+    or Unary or Binary or Postfix or IfThen or IfThenElse
+    or Try or TryThen or TryThenElse or TryElse or Catch
+    or WhileDo or WhileListDo or WhileList or For
+    or New
+    or dummy );
 
 -- Code
 
@@ -220,7 +220,7 @@ export evaluatedCode := {+ expr:Expr, position:Position};
 export nullCode := {+};
 export realCode := {+x:RR,position:Position};
 export integerCode := {+x:ZZ,position:Position};
-export stringCode := {+x:string};
+export stringCode := {+x:string,position:Position};
 export unaryCode := {+f:unop,rhs:Code,position:Position};
 export binaryCode := {+f:binop,lhs:Code,rhs:Code,position:Position};
 export adjacentCode := {+lhs:Code,rhs:Code,position:Position};
@@ -244,11 +244,6 @@ export semiCode         := {+w:CodeSequence, position:Position};
 export multaryCode      := {+f:multop, args:CodeSequence, position:Position};
 export forCode          := {+inClause:Code, fromClause:Code, toClause:Code, whenClause:Code, listClause:Code, doClause:Code, frameID:int, framesize:int, position:Position} ;
 
-export newLocalFrameCode := {+
-     frameID:int,
-     framesize:int,
-     body:Code
-     };
 export functionDescription := {
      frameID:int,		    -- seqno of dictionary
      framesize:int,
@@ -256,13 +251,14 @@ export functionDescription := {
      restargs:bool		    -- whether last parm gets rest of args
      };
 export dummyDesc := functionDescription(-1,0,0,false);
-export functionCode := {+
-     arrow:Token,			  -- just for display purposes
-     body:Code, 
+export functionCode := {+ -- this is called FunctionBody in the top-level
+     body:Code,
      desc:functionDescription,
-     hash:hash_t
+     hash:hash_t,
+     position:Position
      };
 export Code := (
+    -- when adding or removing classes of core here, also update debugging.dd
      nullCode or realCode or stringCode or integerCode 
      or globalMemoryReferenceCode or threadMemoryReferenceCode or localMemoryReferenceCode 
      or globalAssignmentCode or localAssignmentCode 
@@ -274,26 +270,13 @@ export Code := (
      or whileDoCode or whileListCode or whileListDoCode
      or ifCode or tryCode or adjacentCode or functionCode or catchCode
      or Error						    -- for tail recursion
-     or newLocalFrameCode				    -- soon obsolete
      );
-export CodeClosure := {+ frame:Frame, code:Code };
+export PseudocodeClosure := {+ frame:Frame, code:Code };
+export Pseudocode := {+ code:Code };
 
-
-
---misc
-
-
-export CompiledFunction := {+fn:fun,hash:hash_t};
-export CompiledFunctionClosure := {+
-     fn:function(Expr,Sequence):Expr,
-     hash:hash_t,
-     env:Sequence
-     };
-export CompiledFunctionBody := {+
-     fn:function(Expr,Sequence):Expr			    -- it's hard to make hash codes for these things!
-     };
-
-
+export CompiledFunction        := {+ fn:function(Expr):Expr,          hash:hash_t };
+export CompiledFunctionBody    := {+ fn:function(Expr,Sequence):Expr }; -- TODO: compute hash
+export CompiledFunctionClosure := {+ fn:function(Expr,Sequence):Expr, hash:hash_t, env:Sequence };
 
 -- Expr
 
@@ -380,7 +363,8 @@ export Expr := (
      RRcell or
      RRicell or
      Boolean or
-     CodeClosure or
+     PseudocodeClosure or
+     Pseudocode or
      CompiledFunction or
      CompiledFunctionBody or
      CompiledFunctionClosure or
@@ -432,7 +416,6 @@ export Expr := (
      pointerCell or
      atomicIntCell
      );
-export fun := function(Expr):Expr;
 
 --Unique True expression
 export True := Expr(Boolean(true));	  -- don't make new ones!
@@ -479,7 +462,7 @@ export HashTable := {+
      mutex:ThreadRWLockPtr
      };
 
---This unfortunately needs to be here as it references Hash Table which needs expr.  
+--This unfortunately needs to be here as it references HashTable which needs expr.
 
 export m2cfile := Pointer "struct M2File*";	
 

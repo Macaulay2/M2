@@ -173,6 +173,7 @@ doc ///
                 TO (Ext, ZZ, Module, Module),
                 TO (Ext, ZZ, Matrix, Module),
                 TO (Ext, ZZ, Module, Matrix),
+                TO (Ext, Module, Module),
                 TO (Hom, Complex, Complex),
                 TO (Hom, ComplexMap, ComplexMap),
                 TO (homomorphism, ComplexMap),
@@ -408,9 +409,10 @@ doc ///
 
 doc ///
     Key
-        complex
         (complex, List)
-        [complex, Base]
+        complex
+        (complex, Matrix)
+        [(complex, List), Base]
         Base
     Headline
         make a chain complex
@@ -418,7 +420,7 @@ doc ///
         complex L
     Inputs
         L:List
-            of maps
+            of maps, or a single matrix.
         Base => ZZ
             the index of the target of the first map 
             in the differential.
@@ -483,6 +485,14 @@ doc ///
             HH C
             prune HH C
             prune HH_1 C
+        Text
+            Having the input be a matrix is equivalent to having it be
+            a singleton list containing this matrix.
+        Example
+            C' = complex F1
+            assert isWellDefined C'
+            C'' = complex(F1, Base => 3)
+            assert isWellDefined C''
     Caveat
         This constructor minimizes computation
         and does very little error checking. To verify that a complex
@@ -2341,10 +2351,8 @@ doc ///
    Usage
      D = C1 ** C2
    Inputs
-     C1:Complex
-       or @ofClass Module@
-     C2:Complex
-       or @ofClass Module@
+     C1:{Complex, Module}
+     C2:{Complex, Module}
    Outputs
      D:Complex
        tensor product of {\tt C1} and {\tt C2}
@@ -2401,19 +2409,17 @@ doc ///
    Usage
      D = Hom(C1,C2)
    Inputs
-     C1:Complex
-       or @ofClass Module@, or @ofClass Ring@
-     C2:Complex
-       or @ofClass Module@, or @ofClass Ring@
+     C1:{Complex, Module, Ring}
+     C2:{Complex, Module, Ring}
    Outputs
      D:Complex
        the complex of homomorphisms between {\tt C1} and {\tt C2}
    Description
     Text
       The complex of homomorphisms is a complex $D$ whose $i$th component is
-      the direct sum of $Hom(C1_j, C2_{j+i})$ over all $j$.
-      The differential on $Hom(C1_j, C2_{j+i})$ is the differential 
-      $Hom(id_{C1}, dd^{C2}) + (-1)^j Hom(dd^{C1}, id_{C2})$.
+      the direct sum of $\operatorname{Hom}(C1_j, C2_{j+i})$ over all $j$.
+      The differential on $\operatorname{Hom}(C1_j, C2_{j+i})$ is the differential 
+      $\operatorname{Hom}(id_{C1}, dd^{C2}) + (-1)^j \operatorname{Hom}(dd^{C1}, id_{C2})$.
       $dd^{C1} \otimes id_{C2} + (-1)^j id_{C1} \otimes dd^{C2}$.
 
       In particular, for this operation to be well-defined, both
@@ -2425,7 +2431,7 @@ doc ///
       dd^D
       assert isWellDefined D
     Text
-      The homology of this complex is $Hom(C, ZZ/101)$
+      The homology of this complex is $\operatorname{Hom}(C, ZZ/101)$
     Example
       prune HH D == Hom(C, coker vars S)
     Text
@@ -2472,9 +2478,9 @@ doc ///
         g = homomorphism f
     Inputs
         f:ComplexMap
-            a map of the form $f : R^1 \to Hom(C, D)$, where
+            a map of the form $f : R^1 \to \operatorname{Hom}(C, D)$, where
             $C$ and $D$ are complexes,
-            $Hom(C,D)$ has been previously computed, and $R$ is
+            $\operatorname{Hom}(C,D)$ has been previously computed, and $R$ is
             the underlying ring of these complexes
     Outputs
         g:ComplexMap
@@ -2482,7 +2488,7 @@ doc ///
     Description
         Text
             As a first example, consider two Koszul complexes $C$ and $D$.
-            From a random map $f : R^1 \to Hom(C, D)$, we construct 
+            From a random map $f : R^1 \to \operatorname{Hom}(C, D)$, we construct 
             the corresponding map of chain complexes $g : C \to D$.
         Example
             R = ZZ/101[a,b,c]
@@ -2495,9 +2501,9 @@ doc ///
             isWellDefined g
             assert not isCommutative g
         Text
-            The map $g : C \to D$ corresponding to a random map into $Hom(C,D)$
+            The map $g : C \to D$ corresponding to a random map into $\operatorname{Hom}(C,D)$
             does not generally commute with the differentials.  However, if the
-            element of $Hom(C,D)$ is a cycle, then the corresponding map does commute.
+            element of $\operatorname{Hom}(C,D)$ is a cycle, then the corresponding map does commute.
         Example
             f = randomComplexMap(H, complex R^{-2}, Cycle => true)
             isWellDefined f
@@ -2543,12 +2549,12 @@ doc ///
             from $C$ to $D$
     Outputs
         f:ComplexMap
-            a map of the form $f : R^1 \to Hom(C, D)$, where
+            a map of the form $f : R^1 \to \operatorname{Hom}(C, D)$, where
             $R$ is the underlying ring of these complexes
     Description
         Text
             As a first example, consider two Koszul complexes $C$ and $D$.
-            From a random map $f : R^1 \to Hom(C, D)$, we construct 
+            From a random map $f : R^1 \to \operatorname{Hom}(C, D)$, we construct 
             the corresponding map of chain complexes $g : C \to D$.
         Example
             R = ZZ/101[a,b,c]
@@ -2559,9 +2565,9 @@ doc ///
             f = homomorphism' g
             isWellDefined f
         Text
-            The map $g : C \to D$ corresponding to a random map into $Hom(C,D)$
+            The map $g : C \to D$ corresponding to a random map into $\operatorname{Hom}(C,D)$
             does not generally commute with the differentials.  However, if the
-            element of $Hom(C,D)$ is a cycle, then the corresponding map does commute.
+            element of $\operatorname{Hom}(C,D)$ is a cycle, then the corresponding map does commute.
         Example
             g = randomComplexMap(D, C, Cycle => true, InternalDegree => 3)
             isWellDefined g
@@ -2604,7 +2610,7 @@ doc ///
             method returns the corresponding map of complexes of degree $i$.
         Text
             As a first example, consider two Koszul complexes $C$ and $D$.
-            From a random map $f \colon R^1 \to Hom(C, D)$, we construct 
+            From a random map $f \colon R^1 \to \operatorname{Hom}(C, D)$, we construct 
             the corresponding map of chain complexes $g \colon C \to D$.
         Example
             R = ZZ/101[a,b,c];
@@ -2616,9 +2622,9 @@ doc ///
             assert isWellDefined g
             assert not isCommutative g
         Text
-            The map $g \colon C \to D$ corresponding to a random map into $Hom(C,D)$
+            The map $g \colon C \to D$ corresponding to a random map into $\operatorname{Hom}(C,D)$
             does not generally commute with the differentials.  However, if the
-            element of $Hom(C,D)$ is a cycle, then the corresponding map does commute.
+            element of $\operatorname{Hom}(C,D)$ is a cycle, then the corresponding map does commute.
         Example
             h = randomComplexMap(E, complex R^{-2}, Cycle => true, Degree => -1)
             f = h_0
@@ -2742,7 +2748,7 @@ doc ///
      :Complex
    Description
     Text
-      The dual of a complex $C$ is by definition $Hom(C, R)$, where $R$ is the ring of $C$.
+      The dual of a complex $C$ is by definition $\operatorname{Hom}(C, R)$, where $R$ is the ring of $C$.
     Example
       S = ZZ/101[a..d];
       B = intersect(ideal(a,c),ideal(b,d))
@@ -4363,6 +4369,66 @@ doc ///
         freeResolution
 ///
 
+doc ///
+    Key
+        (Ext,Module,Module)
+        (Ext,Ideal,Ideal)
+        (Ext,Ideal,Module)
+        (Ext,Ideal,Ring)
+        (Ext,Module,Ideal)
+        (Ext,Module,Ring)
+    Headline
+        total Ext module
+    Usage
+        Ext(M, N)
+    Inputs
+        M:{Module, Ideal, Ring}
+            that is homogeneous
+        N:{Module, Ideal, Ring}
+            over the same ring as $M$, that is also homogeneous
+    Outputs
+        :Module
+            the $\operatorname{Ext}$ module of $M$ and $N$, as a
+            multigraded module, with the modules
+            $\operatorname{Ext}^i(M,N)$ for all values of $i$
+            appearing simultaneously.
+    Description
+        Text
+            The computation of the total Ext module is possible for modules over the
+            ring $R$ of a complete intersection, according to the algorithm
+            of Shamash-Eisenbud-Avramov-Buchweitz.  The result is provided as a finitely
+            presented module over a new ring with one additional variable of degree
+            $\{-2,-d\}$ for each equation of degree $d$ defining $R$.  The 
+            variables in this new ring have degree length $1$ more than the degree length of 
+            the original ring.  In other words, it is multigraded with the
+            degree $d$ part of $\operatorname{Ext}^n(M,N)$ appearing as the degree
+	        $\{-n,d\}$ part of $\operatorname{Ext}(M,N)$.
+        Text
+            We illustrate this in the following example.
+        Example
+            R = QQ[x,y]/(x^3,y^2);
+            N = cokernel matrix {{x^2, x*y}}
+            H = Ext(N,N);
+            ring H
+            S = ring H;
+            H
+            isHomogeneous H
+            rank source basis( { -2,-3 }, H)
+            rank source basis( { -3 }, Ext^2(N,N) )
+            rank source basis( { -4,-5 }, H)
+            rank source basis( { -5 }, Ext^4(N,N) )
+            hilbertSeries H
+            hilbertSeries(H,Order=>11)
+        Text
+            For more information, see the chapter {\it Resolutions and cohomology over complete intersections}
+            by Luchezar L. Avramov and Daniel R. Grayson, in the book
+            @HREF("https://macaulay2.com/Book/ComputationsBook/book/book.pdf", "Computatations in Algebraic Geometry with Macaulay2")@.
+        Text
+            The result of the computation is cached for future reference.
+    SeeAlso
+        "computing with Ext"
+///
+
 ///
     Key
     Headline
@@ -4375,3 +4441,5 @@ doc ///
     Caveat
     SeeAlso
 ///
+
+

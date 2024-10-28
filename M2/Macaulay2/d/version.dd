@@ -100,10 +100,6 @@ factoryversion():constcharstar := Ccode(returns,"
      ");
 
 header "#include <readline/readline.h>";
-readlineversion():constcharstar := Ccode(returns,"
-     static char buf[8];
-     snprintf(buf, 8, \"%d.%d\", (rl_readline_version>>8)&0xff, rl_readline_version&0xff );
-     return buf");
 
 header "#include <gdbm.h>";
 gdbmversion():constcharstar := Ccode(returns, "return gdbm_version");
@@ -192,7 +188,7 @@ setupconst("version", Expr(toHashTable(Sequence(
    "mathic version" => Ccode(constcharstar,"MATHIC_VERSION_STRING"),
    "mathicgb version" => Ccode(constcharstar,"MATHICGB_VERSION_STRING"),
    "factory version" => factoryversion(),
-   "readline version" => readlineversion(),
+   "readline version" => Ccode(constcharstar,"stringize(RL_VERSION_MAJOR) \".\" stringize(RL_VERSION_MINOR)"),
    "mpfr version" => Ccode(constcharstar,"MPFR_VERSION_STRING"),
    "mpfi version" => Ccode(constcharstar,"MPFI_VERSION_STRING"),
    "tbb version" => Ccode(constcharstar,"
@@ -216,9 +212,9 @@ setupconst("version", Expr(toHashTable(Sequence(
    "packages" => Ccode(constcharstar,"DISTRIBUTED_PACKAGES"),
    "build" => Ccode(constcharstar,"buildsystemtype"),
    "host" => Ccode(constcharstar,"hostsystemtype"),
-   "git description" => Ccode(constcharstar,"GIT_DESCRIPTION"),
-   "git branch" => Ccode(constcharstar, "GIT_BRANCH")
-   ))));
+   "git description" => Ccode(constcharstar, "PACKAGE_VERSION \"-bin\""),
+   "git branch"      => "version.m2 not found"
+   )))).Protected = false; -- "git description" and "git branch" will be added in m2/version.m2
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d version.o "

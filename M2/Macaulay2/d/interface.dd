@@ -63,6 +63,12 @@ export rawRandomRR(e:Expr):Expr := (
      else toExpr(Ccode(RR, "rawRandomRR(", toULong(prec.v), ")"))
      else WrongArgZZ());
 setupfun("rawRandomRR",rawRandomRR);
+export rawRandomRRNormal(e:Expr):Expr := (
+     when e
+     is prec:ZZcell do if !isULong(prec.v) then WrongArgSmallInteger()
+     else toExpr(Ccode(RR, "rawRandomRRNormal(", toULong(prec.v), ")"))
+     else WrongArgZZ());
+setupfun("rawRandomRRNormal",rawRandomRRNormal);
 export rawRandomCC(e:Expr):Expr := (
      when e
      is prec:ZZcell do if !isULong(prec.v) then WrongArgSmallInteger() 

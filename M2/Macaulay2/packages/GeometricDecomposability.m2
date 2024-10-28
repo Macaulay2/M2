@@ -4,7 +4,7 @@ newPackage(
         "GeometricDecomposability",
         Version => "1.4.1",
         Date => "May 7, 2024",
-        Headline => "A package to check whether ideals are geometrically vertex decomposable",
+        Headline => "checking whether ideals are geometrically vertex decomposable",
         Authors => {
                 {
                 Name => "Mike Cummings",
@@ -191,7 +191,7 @@ initialYForms(Ideal, RingElement) := opts -> (I, y) -> (
                 return sub(ideal listOfInitYForms, givenRing);
                 );
 
-        -- if we don't have a universal Gröbner bais
+        -- if we don't have a universal Gröbner basis
         inyFormIdeal := ideal leadTerm(1,I);
         return sub(inyFormIdeal, givenRing);
         )

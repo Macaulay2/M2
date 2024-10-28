@@ -194,7 +194,7 @@ randomSimplicialComplex(ZZ,ZZ):= (k,n) -> (
    N:=#sets-k-2;
    I:=monomialIdeal apply(apply(n,i->sets_(random(N)+k+2)),s->product(s,i->x_i));
    c:=simplicialComplex I;
-   CQ:=chainComplex c; 
+   CQ:=chainComplex complex c; 
    C:=(chainComplex apply(length CQ-1,i->lift(CQ.dd_(i+1),ZZ)))
    )
 

@@ -5,7 +5,7 @@ newPackage("Matroids",
 	Authors => {{
 		Name => "Justin Chen",
 		Email => "jchen@math.berkeley.edu"}},
-	Headline => "a package for computations with matroids",
+	Headline => "computations with matroids",
 	Keywords => {"Matroids"},
 	HomePage => "https://github.com/jchen419/Matroids-M2",
 	PackageExports => {"Graphs", "Posets"},

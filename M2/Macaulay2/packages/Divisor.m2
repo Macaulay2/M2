@@ -3637,7 +3637,7 @@ doc ///
 	Headline
 	 compute the ramification divisor of a finite inclusion of normal domains or a blowup over a smooth base
 	Usage
-	 ramficationDivisor( f )
+	 ramificationDivisor( f )
 	Inputs
 	 f: RingMap
 	 b: Boolean
@@ -3654,7 +3654,7 @@ doc ///
 	  f = map(S, R, {y^3});
 	  ramificationDivisor(f)
 	 Text
-	  The next example is a Veronese which is etale in codimension 1.
+	  The next example is a Veronese which is étale in codimension 1.
 	 Example
 	  R = QQ[x,y];
 	  T = QQ[a,b,c,d];

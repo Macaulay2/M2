@@ -81,7 +81,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y -q --no-install-recommends clang-16 gfortran libtool-bin ninja-build yasm ccache
           sudo apt-get install -y -q --no-install-recommends liblzma-dev libboost-stacktrace-dev \
-                  libncurses-dev libncurses5-dev libreadline-dev libeigen3-dev liblapack-dev libxml2-dev \
+                  libncurses-dev libncurses5-dev libreadline-dev libeigen3-dev libopenblas-dev libxml2-dev \
                   libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libmpfi-dev libntl-dev gfan \
                   libgivaro-dev libboost-regex-dev fflas-ffpack libflint-dev libmps-dev libfrobby-dev \
                   libsingular-dev singular-data libcdd-dev cohomcalg topcom 4ti2 libnormaliz-dev normaliz coinor-csdp \
@@ -130,7 +130,6 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release -DBUILD_NATIVE=OFF \
             -DCMAKE_PREFIX_PATH="`brew --prefix`;`brew --prefix libffi`" \
             -DCMAKE_INSTALL_PREFIX=/usr \
-            -DWITH_PYTHON=ON \
             --debug-trycompile
 
       - name: Build libraries using Ninja
@@ -155,13 +154,14 @@ jobs:
       - name: Configure Macaulay2 using Autotools
         if: matrix.build-system == 'autotools'
         run: |
-          make -C ../.. all
+          ../../autogen.sh
           export PYVERSION=`python3 -c "from sys import version_info; \
             print(f'{version_info.major}.{version_info.minor}')"`
           export CPPFLAGS="-I`brew --prefix`/include -I`brew --prefix libomp`/include"
           export  LDFLAGS="-L`brew --prefix`/lib -L`brew --prefix libomp`/lib \
             -L/Library/Frameworks/Python.framework/Versions/${PYVERSION}/lib"
-          ../../configure --enable-download --with-python --with-system-gc
+          export F77=gfortran-14
+          ../../configure --enable-download --with-system-gc
 
       - name: Build Macaulay2 using Make
         if: matrix.build-system == 'autotools'
@@ -176,9 +176,9 @@ jobs:
         if: matrix.build-system == 'cmake' && runner.os == 'macOS'
         run: |
           set -xe
-          ./M2 -q --check 1 -e 'exit 0'
-          ./M2 -q --check 2 -e 'exit 0'
-          ./M2 -q --check 3 -e 'exit 0'
+          ./M2 -q --check 1
+          ./M2 -q --check 2
+          ./M2 -q --check 3
           cmake --build . --target M2-tests
           cmake --build . --target M2-unit-tests
           cmake --build . --target memtailor-unit-tests mathic-unit-tests mathicgb-unit-tests
@@ -225,6 +225,7 @@ jobs:
            path: |
              # Autotools
              M2/BUILD/build/config.log
+             M2/BUILD/build/check-configure/tmp/config.log
              M2/BUILD/build/include/*
              M2/BUILD/build/libraries/*/build/*/config.log
              # CMake

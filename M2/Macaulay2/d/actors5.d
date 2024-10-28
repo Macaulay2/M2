@@ -36,6 +36,7 @@ setup(DeductionS,unaryDeductionFun,binaryDeductionFun);
 
 -- doublePointerfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,DoubleArrowS);
 optionFun(lhs:Code,rhs:Code):Expr := (
+    -- # typical value: symbol =>, Thing, Thing, Option
      l := eval(lhs);
      when l is Error do l
      else (
@@ -444,7 +445,7 @@ examine(e:Expr):Expr := (
 	  stdIO << "symbol body :" << endl;
 	  showsym(sb.symbol);
 	  nullE)
-     is c:CodeClosure do (
+     is c:PseudocodeClosure do (
 	  f := c.frame;
      	  showFrames(f);
 	  nullE)
@@ -575,7 +576,9 @@ setupfun("netDepth",netDepth);
 
 unstack(e:Expr):Expr := (
      when e
+    -- # typical value: unstack, Net, List
      is n:Net do list(new Sequence len length(n.body) do foreach s in n.body do provide toExpr(s))
+    -- # typical value: unstack, String, List
      is stringCell do list(e)
      else WrongArg("a net"));
 setupfun("unstack",unstack);
@@ -1581,7 +1584,7 @@ getglobalsym(d:Dictionary,s:string):Expr := (
      is null do (
           if !isvalidsymbol(s) then return buildErrorPacket("invalid symbol");
 	  if d.Protected then return buildErrorPacket("attempted to create symbol in protected dictionary");
-	  t := makeSymbol(w,dummyPosition,d);
+	  t := makeSymbol(w,tempPosition,d);
 	  globalFrame.values.(t.frameindex)));
 
 getglobalsym(s:string):Expr := (
@@ -1590,7 +1593,7 @@ getglobalsym(s:string):Expr := (
      is x:Symbol do Expr(SymbolClosure(if x.thread then threadFrame else globalFrame,x))
      is null do (
 	  if globalDictionary.Protected then return buildErrorPacket("attempted to create symbol in protected dictionary");
-	  t := makeSymbol(w,dummyPosition,globalDictionary);
+	  t := makeSymbol(w,tempPosition,globalDictionary);
 	  globalFrame.values.(t.frameindex)));
 
 getGlobalSymbol(e:Expr):Expr := (
@@ -1632,7 +1635,7 @@ frame(e:Expr):Expr := (
      is s:Sequence do 
      if length(s) == 0 then Expr(listFrame(localFrame)) else WrongNumArgs(1,2)
      is sc:SymbolClosure do Expr(listFrame(sc.frame))
-     is c:CodeClosure do Expr(listFrame(c.frame))
+     is c:PseudocodeClosure do Expr(listFrame(c.frame))
      is fc:FunctionClosure do Expr(listFrame(fc.frame))
      is cfc:CompiledFunctionClosure do Expr(listFrame(cfc.env))
      is CompiledFunction do Expr(listFrame(emptySequence))
@@ -1649,11 +1652,17 @@ listFrames(f:Frame):Expr := Expr( list( new Sequence len numFrames(f) do while (
 
 frames(e:Expr):Expr := (
      when e
+    -- # typical value: frames, Sequence, List
      is a:Sequence do if length(a) == 0 then listFrames(localFrame) else WrongNumArgs(0,1) 
+    -- # typical value: frames, Symbol, List
      is sc:SymbolClosure do Expr(listFrames(sc.frame))
-     is c:CodeClosure do Expr(listFrames(c.frame))
+    -- # typical value: frames, PseudocodeClosure, List
+    is c:PseudocodeClosure do Expr(listFrames(c.frame))
+    -- # typical value: frames, FunctionClosure, List
      is fc:FunctionClosure do Expr(listFrames(fc.frame))
+    -- # typical value: frames, CompiledFunctionClosure, List
      is cfc:CompiledFunctionClosure do Expr(list(listFrame(cfc.env)))
+    -- # typical value: frames, CompiledFunction, List
      is CompiledFunction do Expr(list(listFrame(emptySequence)))
      is s:SpecialExpr do frames(s.e)
      else WrongArg("a function, a symbol, or ()"));
@@ -1663,12 +1672,19 @@ localDictionaries(f:Frame):Expr := Expr( list( new Sequence len numFrames(f) do 
 
 localDictionaries(e:Expr):Expr := (
      when e
+    -- # typical value: localDictionaries, Sequence, List
      is x:Sequence do if length(x) != 0 then WrongNumArgs(0,1) else localDictionaries(noRecycle(localFrame))
+    -- # typical value: localDictionaries, Dictionary, List
      is x:DictionaryClosure do localDictionaries(x.frame)
+    -- # typical value: localDictionaries, Symbol, List
      is x:SymbolClosure do localDictionaries(x.frame)
-     is x:CodeClosure do localDictionaries(x.frame)
+    -- # typical value: localDictionaries, PseudocodeClosure, List
+    is x:PseudocodeClosure do localDictionaries(x.frame)
+    -- # typical value: localDictionaries, FunctionClosure, List
      is x:FunctionClosure do localDictionaries(x.frame)
+    -- # typical value: localDictionaries, CompiledFunctionClosure, List
      is CompiledFunctionClosure do localDictionaries(emptyFrame)	    -- some values are there, but no symbols
+    -- # typical value: localDictionaries, CompiledFunction, List
      is CompiledFunction do localDictionaries(emptyFrame)			    -- no values or symbols are there
      is s:SpecialExpr do localDictionaries(s.e)
      else WrongArg("a function, a symbol, or ()"));
@@ -2119,21 +2135,6 @@ GCstats(e:Expr):Expr := (
      else WrongNumArgs(0)
      else WrongNumArgs(0));
 setupfun("GCstats",GCstats);
-
-showtimefun(a:Code):Expr := (
-     cpuStart := cpuTime();
-     threadStart := threadTime();
-     gcStart := gcTime();
-     ret := eval(a);
-     cpuEnd := cpuTime();
-     threadEnd := threadTime();
-     gcEnd := gcTime();
-     stdError << " -- used "
-	 << cpuEnd - cpuStart << "s (cpu); "
-	 << threadEnd - threadStart << "s (thread); "
-	 << gcEnd - gcStart << "s (gc)" << endl;
-     ret);
-setupop(timeS,showtimefun);
 
 header "extern void set_gftable_dir(char *); /* defined in library factory, as patched by us */";
 setFactoryGFtableDirectory(e:Expr):Expr := (

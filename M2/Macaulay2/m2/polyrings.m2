@@ -4,7 +4,6 @@
 needs "methods.m2"
 needs "enginering.m2"
 needs "monoids.m2"
-needs "tables.m2"
 needs "indeterminates.m2" -- runLengthEncode
 
 -----------------------------------------------------------------------------

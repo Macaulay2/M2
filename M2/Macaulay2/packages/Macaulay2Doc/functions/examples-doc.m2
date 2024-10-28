@@ -55,6 +55,8 @@ Node
   Key
      examples
     (examples, Thing)
+    (examples, ZZ)
+    (examples, List)
   Headline
     list the examples in documentation
   Usage
@@ -76,6 +78,17 @@ Node
       Alternatively, one could use @TO "print"@ to display them with no indentation.
     Example
       print ex
+    Text
+      If the input is an integer, then the examples will correspond to the
+      documentation node with that index in the last call to @TO about@.
+    Example
+      about firstFunction
+      examples 0
+    Text
+      If the input is a list, then the examples for all of its elements will be
+      gathered into a single net.
+    Example
+      examples about firstFunction
   SeeAlso
     "reading the documentation"
     capture

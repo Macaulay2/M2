@@ -55,15 +55,16 @@ M2_DFILES += lex.d
 M2_DFILES += parser.d
 M2_DFILES += binding.d
 M2_DFILES += basic.d
-M2_DFILES += convertr.d
 M2_DFILES += common.d
 M2_DFILES += util.d
+M2_DFILES += convertr.d
 M2_DFILES += struct.d
 M2_DFILES += classes.dd
 M2_DFILES += buckets.dd
 M2_DFILES += equality.dd
 M2_DFILES += hashtables.dd
 M2_DFILES += regex.dd
+M2_DFILES += debugging.dd
 M2_DFILES += evaluate.d
 M2_DFILES += sets.dd
 M2_DFILES += version.dd
@@ -86,7 +87,7 @@ else
 M2_SRCFILES += xmlactors.d
 endif
 M2_DFILES += actors5.d
-M2_DFILES += actors6.dd
+M2_DFILES += chrono.dd
 M2_DFILES += threads.dd
 
 ifeq (@PYTHON@,yes)
@@ -176,7 +177,6 @@ interface.o :						\
 	@srcdir@/../e/aring-qq-flint.hpp		\
 	@srcdir@/../e/aring-qq-gmp.hpp			\
 	@srcdir@/../e/aring-m2-gf.hpp			\
-	@srcdir@/../e/aring-gf-givaro.hpp		\
 	@srcdir@/../e/polyring.hpp			\
 	@srcdir@/../e/skew.hpp				\
 	@srcdir@/../e/qring.hpp				\

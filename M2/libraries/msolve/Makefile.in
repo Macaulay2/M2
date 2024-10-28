@@ -1,10 +1,16 @@
 HOMEPAGE = https://msolve.lip6.fr/
-VERSION = 0.7.1
+VERSION = 0.7.3
 URL = https://github.com/algebraic-solving/msolve/archive/refs/tags
 TARFILE = v$(VERSION).tar.gz
 LICENSEFILES = README.md COPYING
 
 PRECONFIGURE = ./autogen.sh
+
+# need to link against libpthread for configure script to find flint
+# need to build as a static library since we build flint as a static library
+CONFIGOPTIONS += LIBS=-lpthread --disable-shared
+
+VLIMIT = 1500000
 
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/msolve/Makefile

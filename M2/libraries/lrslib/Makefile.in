@@ -1,6 +1,6 @@
 # replace lrslib by the name of the library or package
 # install this file as lrslib/Makefile.in
-# add libraries/lrslib/Makefile to ../config/files
+# add libraries/lrslib/Makefile to ../m4/files
 # run make -C ../..
 # reconfigure in the build directory
 HOMEPAGE = http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html

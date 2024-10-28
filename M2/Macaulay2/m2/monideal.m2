@@ -34,7 +34,7 @@ monomialIdeal Sequence := v -> monomialIdeal toList v
 monomialIdeal RingElement := v -> monomialIdeal {v}
 
 MonomialIdeal#1 = I -> monomialIdeal 1_(ring I)
-MonomialIdeal ^ ZZ    := MonomialIdeal => (I, n) -> monomialIdeal (ideal I)^n
+MonomialIdeal ^ ZZ    := MonomialIdeal => BinaryPowerMethod
 MonomialIdeal ^ Array := MonomialIdeal => (I, e) -> monomialIdeal (ideal I)^e
 
 MonomialIdeal + MonomialIdeal := MonomialIdeal => ((I, J) -> newMonomialIdeal(ring I, raw I + raw J)) @@ samering

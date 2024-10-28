@@ -831,8 +831,14 @@ dual ToricVectorBundle := {} >> opts -> tvb -> (
      else (
 	  -- Inverting the filtration. If the filtration has d steps then the new n-th boundary is -(d-n+1th boundary)-1 and the n-th step is the 
      	  -- d-n+2 th step
-     	  fT := hashTable apply(pairs tvb#"filtrationTable", (r,e) -> r => (k:=sort keys e;e = apply(#k-1, i -> (k#i,e#(k#(i+1))))|{(last k,{})}; hashTable apply(e, entry -> -(entry#0)-1 => entry#1)));
-     	  fMT := hashTable apply(pairs fT, q -> q#0 => (q1new:= hashTable flatten apply(pairs q#1, p -> apply(p#1, i -> i => p#0)); matrix {apply(#q1new, j -> q1new#j)}));
+	  fT := hashTable apply(pairs tvb#"filtrationTable", (r,e) -> r => (
+		  newkeys := reverse drop(sort keys e, 1);
+		  newvalues := {{}} | apply(newkeys, k -> e#k);
+		  newkeys = {-first newkeys - 1} | -newkeys;
+		  hashTable apply(#newkeys, i -> newkeys#i => newvalues#i)
+		  )
+	      );
+	  fMT := hashTable apply(pairs fT, q -> q#0 => (q1new:= hashTable flatten apply(pairs q#1, p -> apply(p#1, i -> i => p#0)); matrix {apply(#q1new, j -> q1new#j)}));
      	  -- The orthogonal complement is given by the transpose of the inverse matrix
      	  bT := hashTable apply(pairs tvb#"baseTable", p -> p#0 => transpose inverse p#1);
      	  T := new ToricVectorBundleKlyachko from {
@@ -4206,7 +4212,7 @@ assert(T#"dimension of the variety" == 3)
 T1 = tangentBundle projectiveSpaceFan 3
 T = dual(T1 ++ T)
 assert(T#"ring" === QQ)
-assert(T#"filtrationMatricesTable" === hashTable {matrix{{-1},{-1},{-1}} => matrix{{1,0,0,-1}},matrix{{0},{0},{1}} => matrix{{1,0,0,-1}},matrix{{0},{1},{0}} => matrix{{1,0,0,-1}}, matrix{{1},{0},{0}} => matrix{{1,0,0,-1}}})
+assert(T#"filtrationMatricesTable" === hashTable {matrix{{-1},{-1},{-1}} => matrix{{1,0,0,-1}},matrix{{0},{0},{1}} => matrix{{1,0,0,-4}},matrix{{0},{1},{0}} => matrix{{1,0,0,-3}}, matrix{{1},{0},{0}} => matrix{{1,0,0,-2}}})
 assert(T#"baseTable" === hashTable {matrix{{-1},{-1},{-1}} => matrix{{-1_QQ,-1,-1,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}},matrix{{0},{0},{1}} => matrix{{0_QQ,1,0,0},{0,0,1,0},{1,0,0,0},{0,0,0,1}},matrix{{0},{1},{0}} => matrix{{0_QQ,1,0,0},{1,0,0,0},{0,0,1,0},{0,0,0,1}}, matrix{{1},{0},{0}} => matrix{{1_QQ,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}}})
 assert(rank T == 4)
 assert(T#"dimension of the variety" == 3)

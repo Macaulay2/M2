@@ -7,10 +7,11 @@
  * examples
  *-
 
+processExamplesStrict = true
+
 needs "hypertext.m2"
 needs "run.m2"
-
-processExamplesStrict = true
+needs "document.m2" -- for DocumentTag
 
 -----------------------------------------------------------------------------
 -- local utilities
@@ -169,15 +170,41 @@ extractExamples = docBody -> (
 -- examples: get a list of examples in a documentation node
 -----------------------------------------------------------------------------
 
+fetchExamples = tag -> (
+    rawdoc := fetchAnyRawDocumentation tag;
+    if rawdoc =!= null and rawdoc.?Description
+    then toList extractExamplesLoop DIV { rawdoc.Description })
+
 examples = method(Dispatch => Thing)
-examples Hypertext := dom -> raise(stack extractExamplesLoop dom, -1)
-examples Thing     := key -> (
-    rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
-    if rawdoc =!= null and rawdoc.?Description then examples DIV{rawdoc.Description})
+examples Thing       := examples @@ makeDocumentTag
+examples DocumentTag := tag -> (
+    ex := fetchExamples tag;
+    if ex === null or #ex == 0
+    then "-- no examples for tag: " | format tag
+    else stack(
+	"-- examples for tag: " | format tag,
+	"-- " | net locate tag,
+	stack ex))
+
+examples List := L -> (
+    L = splice \ pairs apply(L, key ->
+	(tag := makeDocumentTag key, locate tag));
+    n := #L;
+    stack apply(L, (i, tag, loc) -> (
+	    ex := examples tag;
+	    -- deduplicate tags w/ same location
+	    if i < n - 1 and loc === L#(i + 1)#2 then ex#0
+	    else if i < n - 1 then ex || net HR() else ex)))
 
 -----------------------------------------------------------------------------
 -- storeExampleOutput
 -----------------------------------------------------------------------------
+
+captureExamples := (pkg, fkey) -> (
+    src := fetchExamples makeDocumentTag(fkey, Package => pkg);
+    if #src =!= 0 then last capture(src,
+	UserMode       => false,
+	PackageExports => pkg))
 
 getExampleOutputFilename := (pkg, fkey) -> (
     if pkg#?"package prefix" and pkg#"package prefix" =!= null then (
@@ -193,8 +220,7 @@ getExampleOutput := (pkg, fkey) -> (
     filename := getExampleOutputFilename(pkg, fkey);
     output := if fileExists filename
     then ( verboseLog("info: reading cached example results from ", filename); get filename )
-    else if width (ex := examples fkey) =!= 0
-    then ( verboseLog("info: capturing example results on-demand"); last capture(ex, UserMode => false, PackageExports => pkg) );
+    else ( verboseLog("info: capturing example results for ", fkey); captureExamples(pkg, fkey) );
     pkg#"example results"#fkey = if output === null then {} else separateM2output output)
 
 -- used in installPackage.m2

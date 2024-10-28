@@ -3414,7 +3414,7 @@ doc///
    a list, array or sequence representing a (single) multi-index in the complex defined by A
  Description
   Text
-   For example, consder the first five steps in the resolution of the residue field
+   For example, consider the first five steps in the resolution of the residue field
    in the following example:
   Example
    R = QQ[x,y,z]/(ideal(x^3,y^3,z^3,x*y*z))

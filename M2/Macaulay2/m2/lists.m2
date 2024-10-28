@@ -11,8 +11,6 @@ needs "methods.m2"
  MutableList.synonym = "mutable list"
 AngleBarList.synonym = "angle bar list"
 
-List#"major documentation node" = true
-
 List ? List := (s,t) -> if class s === class t then toSequence s ? toSequence t else (class s) ? (class t)
 Option ? Option := (s,t) -> toSequence s ? toSequence t
 
@@ -123,8 +121,14 @@ delete(Thing, BasicList) := (x, v) -> select(v, i -> i =!= x)
 number = x -> # select x
 
 -----------------------------------------------------------------------------
--- all, same, uniform, isMember
+-- any, all, same, uniform, isMember
 -----------------------------------------------------------------------------
+
+-- method defined in actors4.d
+any(ZZ,                   Function) :=
+any(HashTable,            Function) :=
+any(BasicList,            Function) :=
+any(BasicList, BasicList, Function) := Boolean => any
 
 all = method(TypicalValue => Boolean)
 all(ZZ,                   Function) := -- uses 0 .. n-1
@@ -263,20 +267,20 @@ commonest Tally := t -> (
 
 -- suggested by Allen Knutson:
 insert = method()
-insert(ZZ,Thing,VisibleList) := VisibleList => (i,x,s) -> (
+insert(ZZ,Thing,BasicList) := BasicList => (i,x,s) -> (
      j := i;
      if j < 0 then j = j + #s + 1;
      if j < 0 or j > #s then error("insert: index ", toString i, " out of bounds: 0..", toString length s);
      join(take(s,{0,j-1}),{x},take(s,{j,#s-1})))
 switch = method()
-switch(ZZ,ZZ,VisibleList) := VisibleList => (i,j,s) -> (
+switch(ZZ,ZZ,BasicList) := BasicList => (i,j,s) -> (
      t := new MutableList from s;
      t#i = s#j;
      t#j = s#i;
      new class s from t)
 --
 
-replace(ZZ,Thing,VisibleList) := VisibleList => {} >> o -> (i,x,s) -> (
+replace(ZZ,Thing,BasicList) := BasicList => {} >> o -> (i,x,s) -> (
      j := i;
      if j < 0 then j = j + #s;
      if j < 0 or j >= #s then error("replace: index ", toString i, " out of bounds: 0..", toString (length s - 1));
@@ -288,6 +292,30 @@ isSorted VisibleList := s -> all(#s-1, i -> s#i <= s#(i+1))
 deepApply' = (L, f, g) -> flatten if g L then toList apply(L, e -> deepApply'(e, f, g)) else toList{f L}
 deepApply  = (L, f) ->  deepApply'(L, f, e -> instance(e, BasicList))
 deepScan   = (L, f) -> (deepApply'(L, f, e -> instance(e, BasicList));) -- not memory efficient
+
+-----------------------------------------------------------------------------
+-- Tables (nested lists)
+-----------------------------------------------------------------------------
+
+isTable = L -> instance(L, List) and all(L, row -> instance(row, List)) and same apply(L, length)
+
+table = (rows, cols, f) -> apply(rows, r -> apply(cols, c -> f(r, c)))
+
+subtable = (rows, cols, a) -> table(rows, cols, (r, c) -> a_r_c)
+
+applyTable = (m,f) -> apply(m, v -> apply(v,f))
+
+transpose List := List => L -> if isTable L then pack(#L, mingle L) else error "transpose expected a table"
+
+pack' = pack -- defined in d/actors4.d
+pack = method()
+pack(ZZ, String)    :=
+pack(ZZ, BasicList) := List => pack'
+-- TODO: deprecate these versions
+pack(String,    ZZ) :=
+pack(BasicList, ZZ) := List => (L, n) -> pack'(n, L)
+
+-----------------------------------------------------------------------------
 
 parallelApplyRaw = (L, f) ->
      -- 'reverse's to minimize thread switching in 'taskResult's:
@@ -304,6 +332,7 @@ parallelApply(BasicList, Function) := o -> (L, f) -> (
 	  flatten parallelApplyRaw(pack(L, ceiling(n / numChunks)), chunk -> apply(chunk, f));
      allowableThreads = oldAllowableThreads;
      res);
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

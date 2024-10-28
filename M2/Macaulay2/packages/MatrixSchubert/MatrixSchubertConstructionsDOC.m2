@@ -231,7 +231,7 @@ doc ///
 	    efficiently by computing the associated invariants for their antidiagonal initial ideals,
 	    which are known to be squarefree by [Wei17]. Therefore the extremal Betti numbers
 	    (which encode regularity, depth, and projective dimension) of ASM ideals coincide 
-	    with those of their antidiagonal initical ideals by [CV20].
+	    with those of their antidiagonal initial ideals by [CV20].
 	Example
 	    time schubertRegularity B
 	    time regularity comodule schubertDeterminantalIdeal B
@@ -718,7 +718,7 @@ doc ///
     	:Ideal
     Description
         Text
-            Given a permutation in 1-line notation or, more generally, a partial alternating sign matrix, outputs the associated alternating sign matrix ideal (which is called a Schubert determinantal ideal in the case of a permutation).  (The convention throughout this package is that the permutation matrix of a pemutation $w$ has 1's in positions $(i,w(i))$.)
+            Given a permutation in 1-line notation or, more generally, a partial alternating sign matrix, outputs the associated alternating sign matrix ideal (which is called a Schubert determinantal ideal in the case of a permutation).  (The convention throughout this package is that the permutation matrix of a permutation $w$ has 1's in positions $(i,w(i))$.)
 	    
 	    This function computes over the coefficient field of rational numbers unless an alternative is specified.
         Example

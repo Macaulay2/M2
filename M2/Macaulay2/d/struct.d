@@ -4,12 +4,13 @@ use util;
 
 reverse(e:Expr):Expr := (
      when e
+     -- # typical value: reverse, BasicList, BasicList
      is a:Sequence do Expr(reverse(a))
      is a:List do Expr(reverse(a))
+     -- # typical value: reverse, String, String
      is s:stringCell do toExpr(reverse(s.v))
      else WrongArg("a list, sequence, or string"));
 setupfun("reverse",reverse);
-export seq(e:Expr):Expr := Expr(Sequence(e));
 -- setupfun("singleton",seq);
 export splice(a:Sequence):Sequence := (
      -- warning - this function may return its argument without copying
@@ -35,6 +36,7 @@ export splice(a:Sequence):Sequence := (
      else a);
 export splice(e:Expr):Expr := (
      when e
+     -- # typical value: splice, BasicList, BasicList
      is v:Sequence do Expr(splice(v))
      is a:List do list(
 	  a.Class,

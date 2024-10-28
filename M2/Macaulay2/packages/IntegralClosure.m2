@@ -32,7 +32,6 @@ export{
      "integralClosure", 
      "icFractions", 
      "icMap", 
-     "isNormal", 
      "conductor", 
      "makeS2",
      "idealizer", 
@@ -662,7 +661,8 @@ fInIdeal = (f,I) -> (
 -- COMMENT: This computes the jacobian of the ring which can be expensive.  
 -- However, it first checks the less expensive S2 condition and then 
 -- checks R1.  
-isNormal = method()     
+
+--isNormal = method()     
 isNormal(Ring) := Boolean => (R) -> (
      -- 1 argument:  A ring - usually a quotient ring. 
      -- Return: A boolean value, true if the ring is normal and false

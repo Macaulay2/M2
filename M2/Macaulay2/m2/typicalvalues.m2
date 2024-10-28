@@ -6,8 +6,6 @@
 needs "methods.m2"
 needs "lists.m2"
 
-typicalValues#class = Type
-typicalValues#parent = Type
 typicalValues#(symbol timing) = Time
 typicalValues#(symbol local) = Symbol
 typicalValues#(symbol global) = Symbol
@@ -15,94 +13,52 @@ typicalValues#(symbol symbol) = Symbol
 typicalValues#(symbol ?) = Boolean
 
 dummy := x -> error("dummy method function called")
-installMethod(symbol #?, HashTable, Thing, Boolean => x -> (dummy x;))
-installMethod(symbol #?, Set, Thing, Boolean => x -> (dummy x;))
-installMethod(symbol #?, Database, String, Boolean => x -> (dummy x;))
-installMethod(symbol #?, BasicList, ZZ, Boolean => x -> (dummy x;))
-installMethod(symbol #?, String, ZZ, Boolean => x -> (dummy x;))
-installMethod(symbol #, HashTable, Thing, Thing => x -> (dummy x;))
-installMethod(symbol #, Database, String, String => x -> (dummy x;))
-installMethod(symbol #, String, ZZ, Thing => x -> (dummy x;))
-installMethod(symbol #, BasicList, ZZ, Thing => x -> (dummy x;))
 
--- installMethod(symbol #, File, ZZ => x -> (dummy x;))
-installMethod(symbol #, Set, ZZ => x -> (dummy x;))
-installMethod(symbol #, HashTable, ZZ => x -> (dummy x;))
-installMethod(symbol #, BasicList, ZZ => x -> (dummy x;))
-installMethod(symbol #, String, ZZ => x -> (dummy x;))
-
-installMethod(symbol <, Thing, Thing, Boolean => x -> (dummy x;))
-installMethod(symbol <=, Thing, Thing, Boolean => x -> (dummy x;))
-installMethod(symbol =!=, Thing, Thing, Boolean => x -> (dummy x;))
-installMethod(symbol ===, Thing, Thing, Boolean => x -> (dummy x;))
-installMethod(symbol =>, Thing, Thing, Option => x -> (dummy x;))
-installMethod(symbol >, Thing, Thing, Boolean => x -> (dummy x;))
-installMethod(symbol >=, Thing, Thing, Boolean => x -> (dummy x;))
-
-installMethod(symbol .., ZZ, ZZ, Sequence => x -> (dummy x;))
-installMethod(symbol ..<, ZZ, ZZ, Sequence => x -> (dummy x;))
-any(ZZ,Function) := any(BasicList,Function) := any(BasicList,BasicList,Function) := any(HashTable,Function) := Boolean => any
 append(BasicList,Thing) := BasicList => append
 prepend(Thing,BasicList) := BasicList => prepend
-apply(BasicList,Function) := BasicList => apply
-apply(BasicList,BasicList,Function) := BasicList => apply
-apply(BasicList,String,Function) := Sequence => apply
-apply(String,Function) := Sequence => apply
-apply(String,BasicList,Function) := Sequence => apply
-apply(String,String,Function) := Sequence => apply
-apply(ZZ,Function) := List => apply
-apply(Thing,Function) := Iterator => apply
-applyKeys(HashTable,Function) := HashTable => applyKeys
-applyKeys(HashTable,Function,Function) := HashTable => applyKeys
-applyPairs(HashTable,Function) := HashTable => applyPairs
-applyValues(HashTable,Function) := HashTable => applyValues
+
 atEndOfFile(File) := Boolean => atEndOfFile
+echoOff File := Nothing => echoOff
+echoOn File := Nothing => echoOn
+fileMode(File) := fileMode
+fileMode(String) := ZZ => fileMode
+fileMode(ZZ,File) := fileMode
+fileMode(ZZ,String) := fileMode
+get File := get String := String => get
+getc File := String => getc
 isInputFile(File) := Boolean => isInputFile
 isListener(File) := Boolean => isListener
-isOpen(File) := Boolean => isOpen
 isOpen(Database) := Boolean => isOpen
+isOpen(File) := Boolean => isOpen
 isOutputFile(File) := Boolean => isOutputFile
-isMutable(Thing) := Boolean => isMutable
-concatenate Nothing := concatenate String := concatenate Symbol := concatenate ZZ := concatenate BasicList := String => concatenate
+linkFile(String,String) := Nothing => linkFile
+openIn String := File => openIn
+openInOut String := openInOut File := File => openInOut
+openListener String := File => openListener
+openOut String := File => openOut
+openOutAppend String := File => openOutAppend
+kill File := Nothing => kill
+kill ZZ := Nothing => kill
+read File := String => read
+read(File,ZZ) := String => read
+read Sequence := String => read
+read String := String => read
+getenv String := String => getenv
+
 deepSplice BasicList := BasicList => deepSplice
 drop(BasicList,ZZ) := drop(BasicList,List) := BasicList => drop
 take(BasicList,ZZ) := take(BasicList,List) := BasicList => take
 take(Thing,ZZ) := take(Thing,List) := List => take
-get File := get String := String => get
-getc File := String => getc
-getenv String := String => getenv
+
+isMutable(Thing) := Boolean => isMutable
 hashTable List := HashTable => hashTable
 hashTable(Function,List) := HashTable => hashTable
-typicalValues#horizontalJoin = Net
-horizontalJoin BasicList := Net => horizontalJoin
-unstack Net := List => unstack
-localDictionaries Function := List => localDictionaries
-localDictionaries Symbol := List => localDictionaries
-localDictionaries Pseudocode := List => localDictionaries
-localDictionaries Dictionary := List => localDictionaries
-values HashTable := List => values
-merge(HashTable,HashTable,Function) := HashTable => merge
-mergePairs(BasicList,BasicList,Function) := BasicList => mergePairs
-mingle BasicList := List => mingle
+remove(MutableList,ZZ) := Nothing => remove
+remove(Database,String) := Nothing => remove
+remove(HashTable,Thing) := Nothing => remove
 openDatabase String := Database => openDatabase
 openDatabaseOut String := Database => openDatabaseOut
-openIn String := File => openIn
-openOut String := File => openOut
-openOutAppend String := File => openOutAppend
-openInOut String := openInOut File := File => openInOut
-openListener String := File => openListener
-pack(BasicList,ZZ) := List => pack
-pack(ZZ,BasicList) := List => pack
-pack(String,ZZ) := List => pack
-pack(ZZ,String) := List => pack
-reverse BasicList := BasicList => reverse
-reverse String := String => reverse
-set VisibleList := Set => set
-tally VisibleList := Tally => tally
-tally String := Tally => tally
-splice BasicList := BasicList => splice
-typicalValues#stack = Net
-stack BasicList := Net => stack
+
 substring(String,ZZ) := String => substring
 substring(String,ZZ,ZZ) := String => substring
 substring(ZZ,String) := String => substring
@@ -111,46 +67,8 @@ substring(ZZ,ZZ,String) := String => substring
 toSequence BasicList :=
 toSequence String    :=
 toSequence Thing     := Sequence => toSequence
-ascii String := List => ascii
-ascii List := String => ascii
-remove(MutableList,ZZ) := Nothing => remove
-remove(Database,String) := Nothing => remove
-remove(HashTable,Thing) := Nothing => remove
-echoOff File := Nothing => echoOff
-echoOn File := Nothing => echoOn
-
--- close File := File =>
---      f -> close f		    -- this code is bypassed by built-in compiled code
-
--- closeIn File := File =>
---      f -> closeIn f		    -- this code is bypassed by built-in compiled code
--- closeOut File := File =>
---      f -> closeOut f		    -- this code is bypassed by built-in compiled code
-
-kill File := Nothing => kill
-kill ZZ := Nothing => kill
-read File := String => read
-read (File,ZZ) := String => read
-read Sequence := String => read
-read String := String => read
-Function Thing := Thing => x -> (dummy x;)
-scan(BasicList,Function) := Nothing => scan
-scan(BasicList,BasicList,Function) := Nothing => scan
-scan(ZZ,Function) := Nothing => scan
-scan(Thing,Function) := Nothing => scan
-scanPairs(HashTable,Function) := Nothing => scanPairs
 lines(String,String) := List => lines
 lines String := List => lines
-linkFile(String,String) := Nothing => linkFile
-fileMode(String) := ZZ => fileMode
-fileMode(ZZ,File) := fileMode
-fileMode(File) := fileMode
-fileMode(ZZ,String) := fileMode
-frames(Sequence) := frames
-frames(Symbol) := frames
-frames(Function) := frames
-frames(Pseudocode) := frames
-powermod(ZZ,ZZ,ZZ) := ZZ => powermod
 
 chk := (type,key) -> if type#?key then (
      stderr << "-- method already installed:" << endl
@@ -180,8 +98,32 @@ typval4k-*(Keyword,Type,Type,Type)*- := (f,X,Y,Z) -> (
      installMethod(f, X, Y, Z => x -> (dummy x;))
      )
 
-if isMember("--no-tvalues", commandLine) then end
+-----------------------------------------------------------------------------
+-- This function generates the file "tvalues.m2" from the files ../d/*.d
+-- The file "tvalues.m2" should be distributed with binary distributions
 
+typicalValuesSource := prefixDirectory | replace("PKG", "Core", currentLayout#"package") | "tvalues.m2"
+typicalValuesFormat := "-- # typical value: *(.*?), ([^ ]*) *"
+
+generateTypicalValues = (srcdir) -> (
+    if not fileExists srcdir then error "unable to find the source code for the interpreter";
+    printerr("Extracting typical values from ", relativizeFilename srcdir);
+    ddfiles := select(readDirectory srcdir, file -> match("\\.dd?$", file));
+    printerr("Generating typical values in ", relativizeFilename typicalValuesSource);
+    outfile := openOut typicalValuesSource;
+    for file in sort ddfiles do (
+	comment := "-- typical values extracted from " | file;
+	srcstring := stack apply(pairs lines get(srcdir | file), (num, line) -> line | " -- " | file | ":" | num);
+	-- TODO: separate method key (\\1) and output type (\\2)
+	extracted := select(typicalValuesFormat | " -- (.*)$", "typval(\\1, \\2) -- \\3", toString srcstring);
+	extracted  = apply(extracted, line -> first select("(.*?)--(.*?)$", "\\1" | pad_(91-#line) "\t-- \\2", line));
+	if 0 < #extracted then outfile << comment << endl << stack extracted << endl);
+    close outfile)
+
+-- if missing, tvalues.m2 is regenerated directly
+if not fileExists typicalValuesSource then generateTypicalValues(currentFileDirectory | "../d/")
+
+-----------------------------------------------------------------------------
 -- numerical functions that will be wrapped
 redefs := hashTable apply({acos, agm, asin, atan, atan2, Beta, cos, cosh, cot, coth, csc, csch, Digamma, eint, erf, erfc, exp, expm1, Gamma, inverseErf, inverseRegularizedBeta, inverseRegularizedGamma, log, log1p, regularizedBeta, regularizedGamma, sec, sech, sin, sinh, sqrt, tan, tanh, zeta},
     f -> f => method());
@@ -240,7 +182,8 @@ typval = x -> (
 	 )
      )
 
-load "tvalues.m2"
+-- tvalues.m2 is loaded here
+load typicalValuesSource
 
 scanPairs(redefs, (k,v) -> globalAssign(baseName k,v))
 scanPairs(new HashTable from variants, (args,f) -> (
