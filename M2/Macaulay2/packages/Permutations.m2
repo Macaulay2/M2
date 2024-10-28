@@ -17,7 +17,6 @@ export {
     "Permutation",
     -- methods
     "permutation",
-    "toMatrix",
     "cycleDecomposition",
     "cycleType",
     "ascents",
@@ -62,7 +61,7 @@ Permutation.synonym = "permutation"
 new Permutation from VisibleList := (typeofPermutation,w) -> w
 
 permutation = method()
-permutation List := Permutation => w -> new Permutation from w
+permutation VisibleList := Permutation => w -> new Permutation from w
 
 isWellDefined Permutation := Boolean => w -> (
     wList := toList w;
@@ -121,25 +120,28 @@ Permutation ^ ZZ := Permutation => (w, n) -> fold(if n < 0 then (-n):(permutatio
 -- Matrix representation of a permutation
 ------------------------------------
 -- some people prefer the transpose of this
-toMatrix = method(TypicalValue => Matrix)
-toMatrix Permutation := w -> (
+matrix Permutation := Matrix => o -> w -> (
     id_(ZZ^(#w))_(to0Index toList w)
 )
 
 ------------------------------------
 -- Group actions
 ------------------------------------
-Permutation * List := List => (w, l) -> (
+Permutation * VisibleList := VisibleList => (w, l) -> (
     if #(trim w) > #l then error(toString w | " permutes more than " | toString #l | " elements.") 
     else l_(to0Index toList extend(w, #l))
 )
--- group action on a matrix permutes the ROWS of the matrix
--- maybe would prefer to permute the columns? Seems more natural
+VisibleList _ Permutation := VisibleList => (l, w) -> (w*l)
+
+-- group action on a matrix permutes the rows/columns of the matrix
 Permutation * Matrix := Matrix => (w, M) -> (
     m := numRows M;
     if #(trim w) > m then error(toString w | " permutes more than " | toString m | " elements.") 
-    else (toMatrix extend(w, m)) * M
+    else (matrix extend(w, m)) * M
 )
+Matrix _ Permutation := Matrix => (M, w) -> (w*M)
+Matrix * Permutation := Matrix => (M, w) -> (transpose(w*(transpose M)))
+Matrix ^ Permutation := Matrix => (M, w) -> (M*w)
 
 ------------------------------------
 -- Cycle decomposition of a permutation
@@ -356,7 +358,7 @@ length Permutation := ZZ => w -> (#(inversions w))
 -----------------------------------------------------------------------------
 -- **DOCUMENTATION** --
 -----------------------------------------------------------------------------
-beginDocumentation()    
+beginDocumentation()
 load "./Permutations/docs.m2"
 
 -----------------------------------------------------------------------------
@@ -364,11 +366,6 @@ load "./Permutations/docs.m2"
 -----------------------------------------------------------------------------
 load "./Permutations/tests.m2"
 end
-
------------------------------------------------------------------------------
--- **SCRATCH SPACE** --
------------------------------------------------------------------------------
-
 
 -----------------------------------------------------------------------------
 --Development Section
