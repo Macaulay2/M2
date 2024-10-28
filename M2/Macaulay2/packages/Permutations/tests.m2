@@ -90,8 +90,8 @@ TEST ///
     extendedList = toList (1 .. #extendedIdentity)
     
     -- matrix representation
-    assert(toMatrix trimmedIdentity == id_(ZZ^1))
-    assert(toMatrix extendedIdentity == id_(ZZ^(#extendedIdentity)))
+    assert(matrix trimmedIdentity == id_(ZZ^1))
+    assert(matrix extendedIdentity == id_(ZZ^(#extendedIdentity)))
 ///
 
 TEST ///
@@ -110,11 +110,11 @@ TEST ///
     assert(extendedIdentity * toList(1 .. #extendedIdentity+2) == toList(1 .. #extendedIdentity+2))
     assert(extendedIdentity * switch(0, 1, toList(1 .. #extendedIdentity+2)) == switch(0, 1, toList(1 .. #extendedIdentity+2)))
 
-    assert(trimmedIdentity * (toMatrix trimmedIdentity) == toMatrix trimmedIdentity)
-    assert(trimmedIdentity * (toMatrix extend(trimmedIdentity, 3)) == toMatrix extend(trimmedIdentity, 3))
-    assert(trimmedIdentity * (toMatrix permutation {3,1,2}) == toMatrix permutation {3,1,2})
-    assert(extendedIdentity * (toMatrix extend(extendedIdentity, #extendedIdentity+2)) == toMatrix extend(extendedIdentity, #extendedIdentity+2))
-    assert(extendedIdentity * (toMatrix permutation switch(0, 1, toList(1 .. #extendedIdentity+2))) == toMatrix permutation switch(0, 1, toList(1 .. #extendedIdentity+2)))
+    assert(trimmedIdentity * (matrix trimmedIdentity) == matrix trimmedIdentity)
+    assert(trimmedIdentity * (matrix extend(trimmedIdentity, 3)) == matrix extend(trimmedIdentity, 3))
+    assert(trimmedIdentity * (matrix permutation {3,1,2}) == matrix permutation {3,1,2})
+    assert(extendedIdentity * (matrix extend(extendedIdentity, #extendedIdentity+2)) == matrix extend(extendedIdentity, #extendedIdentity+2))
+    assert(extendedIdentity * (matrix permutation switch(0, 1, toList(1 .. #extendedIdentity+2))) == matrix permutation switch(0, 1, toList(1 .. #extendedIdentity+2)))
 ///
 
 TEST ///
@@ -286,7 +286,7 @@ TEST ///
 
     -- matrix representation
     antiDiagIdentity = matrix for i in (0 ..< #p) list for j in (0 ..< #p) list if i+j == #p-1 then 1 else 0
-    assert(toMatrix p == antiDiagIdentity)
+    assert(matrix p == antiDiagIdentity)
 ///
 
 TEST ///
@@ -301,9 +301,11 @@ TEST ///
     assert(p * toList(1 .. #p) == pList)
     assert(p * toList(1 .. #p+2) == toList extendedP)
     assert(p * {5,4,3,2,1,10,9,8,7,6} == {6,7,8,9,10,1,2,3,4,5})
+    assert(p * (5,4,3,2,1,10,9,8,7,6) == {6,7,8,9,10,1,2,3,4,5})
+    assert(p * [5,4,3,2,1,10,9,8,7,6] == {6,7,8,9,10,1,2,3,4,5})
 
-    assert(p * (toMatrix p) == id_(ZZ^#p))
-    assert(p * (toMatrix permutation {6,7,8,9,10,1,2,3,4,5}) == matrix {{0,0,0,0,1,0,0,0,0,0},
+    assert(p * (matrix p) == id_(ZZ^#p))
+    assert(p * (matrix permutation {6,7,8,9,10,1,2,3,4,5}) == matrix {{0,0,0,0,1,0,0,0,0,0},
                                                                         {0,0,0,1,0,0,0,0,0,0},
                                                                         {0,0,1,0,0,0,0,0,0,0},
                                                                         {0,1,0,0,0,0,0,0,0,0},

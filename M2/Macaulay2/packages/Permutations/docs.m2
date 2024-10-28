@@ -1,8 +1,19 @@
 -- Sean Grate
 
 doc ///
+  Key
+    "Permutations"
+  Headline
+    a package which implements permutations
+  Description
+    Text
+      This package defines the @TO Permutation@ type. An overview of the package's
+      can be found in the @TO "Permutations Guide"@.
+///
+
+doc ///
  Key
-  "permutations"
+  "Permutations Guide"
  Headline
   a detailed overview of permutations in Macaulay2
  Description
@@ -36,12 +47,12 @@ doc ///
    Permutations must be constructed from lists consisting of only the integers
    $1 \textemdash n$. If a list contains any other elements or does not consist of the entire
    range, then an error is thrown.
-   The method @TO toMatrix@ can be used to get the matrix representation of the
+   The method @TO matrix@ can be used to get the matrix representation of the
    permutation. In this representation, for a permutation $p$, if $p(i)=j$, then
    then the $(i,j)$th entry is $1$.
   Example
    p = permutation {3,1,2,4,5}
-   toMatrix p
+   matrix p
   Text
    This is especially useful for considering the action of permutations on matrices,
    see {\bf Group actions}.
@@ -87,7 +98,7 @@ doc ///
    p*L
   Text
    A permutation $p$ on $n$ symbols can also be regarded as a permutation on $N$ 
-   symbols for any $N \geq n$ by regarding all of the indices $n+1, n+2, \hdots$
+   symbols for any $N \geq n$ by regarding all of the indices $n+1, n+2, \dots$
    as fixed by $p$, i.e., $p(i)=i$ for all $i > n$. This is also reflected in the 
    group action.
   Example
@@ -96,10 +107,9 @@ doc ///
    p*L
   Text
    In a similar manner, permutations on $n$ symbols also act on the space of 
-   $n \times n$ matrices by permuting the rows (or columns). For us, this group
-   action is reflected via permutation of the rows of the matrix. Another way to 
+   $m \times n$ matrices by permuting the rows (or columns). Another way to 
    view this action is via the multiplication on the left by the matrix representation
-   of the permutation.
+   of the permutation (if acting on the rows).
   Example
    p = permutation {3,1,2};
    M = id_(ZZ^3);
@@ -120,6 +130,14 @@ doc ///
    N = matrix {{1,0},{0,1},{1,1}};
    p*M
    p*N
+  Text
+   We can also act on the columns of the matrix in a similar way.
+  Example
+   p = permutation {3,1,2};
+   M = id_(ZZ^3) || id_(ZZ^3);
+   N = matrix {{1,0,0,0},{0,1,0,0},{0,0,1,0}};
+   M*p
+   N*p
 
   --
   Text
@@ -138,7 +156,7 @@ doc ///
    1. each cycle is listed with its largest element first, and @BR{}@
    2. the cycles are listed in increasing order.
 
-   A permutation's \emph{cycle type} is the sequence consisting of the lengths of the 
+   A permutation's {\em cycle type} is the sequence consisting of the lengths of the 
    cycles in its cycle decomposition, listed in weakly decreasing order.
   Example
    cycleType p
@@ -148,8 +166,8 @@ doc ///
 
    {\bf Ascents, descents, runs, exceedances, saliances, and records.}
 
-   A permutation $p=(p_1 \, \hdots \, p_n)$ has an \emph{ascent} at $i$ (for $i < n$)
-   if $p(i) < p(i+1)$. Similarly, it has a \emph{descent} at $i$ (for $i < n$) if 
+   A permutation $p=(p_1 \, \dots \, p_n)$ has an {\em ascent} at $i$ (for $i < n$)
+   if $p(i) < p(i+1)$. Similarly, it has a {\em descent} at $i$ (for $i < n$) if 
    $p(i) > p(i+1)$. We can compute the set of ascents and the set of descents using
    {\tt ascents} and {\tt descents}, respectively.
   Example
@@ -157,27 +175,27 @@ doc ///
    ascents p
    descents p
   Text
-   An \emph{ascending run} is a maximal subsequence of successive ascents.
-   Similarly, a \emph{descending run} is a maximal subsequence of successive 
+   An {\em ascending run} is a maximal subsequence of successive ascents.
+   Similarly, a {\em descending run} is a maximal subsequence of successive 
    descents.
   Example
    p = permutation {3,1,2,5,4};
    ascendingRuns p
    descendingRuns p
   Text
-   A permutation $p=(p_1 \, \hdots \, p_n)$ has an \emph{exceedance} at $i$ if 
-   $p(i) > i$; this is called a \emph{weak exceedance} if the inequality is not 
+   A permutation $p=(p_1 \, \dots \, p_n)$ has an {\em exceedance} at $i$ if 
+   $p(i) > i$; this is called a {\em weak exceedance} if the inequality is not 
    strict, i.e., $p(i) \geq i$.
   Example
    p = permutation {3,1,2,5,4};
    exceedances p
   Text
-   A permutation $p$ has a {\emph saliance} at $i$ if $p(j) < p(i)$ for all $j > i$.
+   A permutation $p$ has a {\em saliance} at $i$ if $p(j) < p(i)$ for all $j > i$.
   Example
    p = permutation {3,1,2,5,4};
    saliances p
   Text
-   A permutation $p$ has a \emph{record} at $i$ if $p(j) < p(i)$ for all $j < i$.
+   A permutation $p$ has a {\em record} at $i$ if $p(j) < p(i)$ for all $j < i$.
   Example
    p = permutation {3,1,2,5,4};
    records p
@@ -195,7 +213,7 @@ doc ///
    avoidsPattern(p, {2,1,4,3})
   Text
    Some patterns are common enough that those pattern-avoiding permutations
-   are given a name, such as \emph{vexillary} for those that are $2143$-avoiding.
+   are given a name, such as {\em vexillary} for those that are $2143$-avoiding.
   Example
    p = permutation {3,1,2,5,4};
    isVexillary p
@@ -232,28 +250,28 @@ doc ///
 
    {\bf Miscellaneous.}
 
-   We can compute the \emph{inverse} of a permutation.
+   We can compute the {\em inverse} of a permutation.
   Example
    p = permutation {3,1,2,5,4};
    inverse p
   Text
-   The \emph{order} of a permutation $p$ is its order in the symmetric group $\mathfrak{S}_n$, i.e.,
+   The {\em order} of a permutation $p$ is its order in the symmetric group $\mathfrak{S}_n$, i.e.,
    the smallest positive integer $k$ such that $p^k$ is the identity permutation.
   Example
    p = permutation {3,1,2,5,4};
    ord p
   Text
-   Every permutation can be written as a product of transpositions. One definition for the \emph{sign}
+   Every permutation can be written as a product of transpositions. One definition for the {\em sign}
    of a permutation $p$ is $1$ if it can be written as a product of an even number of transpositions
    and is $-1$ if it can be written as an odd number of transpositions. If $\text{sign}(p) = 1$,
-   the permutation is called \emph{even} and if $\text{sign}(p) = -1 $, it is called \emph{pdd}.
+   the permutation is called {\em even} and if $\text{sign}(p) = -1 $, it is called {\em pdd}.
   Example
    p = permutation {3,1,2,5,4};
    sign p
    isEven p
    isOdd p
   Text
-   A permutation $p$ is a \emph{derangement} if $p(i) \neq i$ for all $i$.
+   A permutation $p$ is a {\em derangement} if $p(i) \neq i$ for all $i$.
    We can determine if $p$ is a derangement as well its fixed points.
   Example
    p = permutation {3,1,2,5,4};
@@ -269,9 +287,13 @@ doc ///
   (symbol _, Permutation, ZZ)
   (symbol _, Permutation, List)
   (symbol _, Permutation, Sequence)
+  (symbol _, VisibleList, Permutation)
   (symbol ==, Permutation, Permutation)
-  (symbol *, Permutation, List)
+  (symbol *, Permutation, VisibleList)
   (symbol *, Permutation, Matrix)
+  (symbol *, Matrix, Permutation)
+  (symbol _, Matrix, Permutation)
+  (symbol ^, Matrix, Permutation)
   (symbol *, Permutation, Permutation)
   (symbol ^, Permutation, ZZ)
   ascendingRuns
@@ -300,7 +322,27 @@ doc ///
   trim
   saliances
   sign
-  toMatrix
+  (matrix, Permutation)
+///
+
+-- Permutation
+-- (permutation, VisibleList)
+doc ///
+  Key
+    Permutation
+    (permutation, VisibleList)
+  Headline
+    the Permutation type
+  Description
+    Text
+      Permutations are constructed from lists. To create a permutation, 
+      use the {\tt permutation} method.
+    Example
+      p = permutation {3,1,2,4,5}
+    Text
+      Permutations must be constructed from lists consisting of only the integers
+      $1 \dots n$. If a list contains any other elements or does not consist of 
+      the entire range, then an error is thrown.
 ///
 
 -- (symbol _, Permutation, ZZ)
@@ -411,25 +453,25 @@ doc ///
       p == q
 ///
 
--- (symbol *, Permutation, List)
+-- (symbol *, Permutation, VisibleList)
 doc ///
   Key
-    (symbol *, Permutation, List)
+    (symbol *, Permutation, VisibleList)
   Headline
     computes the action of a permutation on a list
   Usage
     w * l
   Inputs
     w:Permutation
-    l:List
+    l:VisibleList
   Outputs
-    :List
+    :VisibleList
   Description
     Text
       A permutation $p$ acts on the elements of list by permuting the elements
       of the list according to the permutation. More precisely, if 
-      $L = \{ e_1, \hdots, e_k \}$ is a list and $p=(p_1, \hdots, p_n)$ is a 
-      permutation, then the action is given by $p*L = \{ e_{p(1)}, \hdots, e_{p(k)}}$.
+      $L = \{ e_1, \dots, e_k \}$ is a list and $p=(p_1, \dots, p_n)$ is a 
+      permutation, then the action is given by $p*L = \{ e_{p(1)}, \dots, e_{p(k)}}$.
 
       The permutation cannot permute more than {\tt #l} elements. 
     Example
@@ -442,6 +484,43 @@ doc ///
       p = permutation {3,1,2,4,5}
       L = {3,1,2,5,4,6,7}
       p * L
+  SeeAlso
+    (symbol _, VisibleList, Permutation)
+///
+
+-- (symbol _, VisibleList, Permutation)
+doc ///
+  Key
+    (symbol _, VisibleList, Permutation)
+  Headline
+    computes the action of a permutation on a list
+  Usage
+    l_p
+  Inputs
+    l:VisibleList
+    w:Permutation
+  Outputs
+    :VisibleList
+  Description
+    Text
+      A permutation $p$ acts on the elements of list by permuting the elements
+      of the list according to the permutation. More precisely, if 
+      $L = \{ e_1, \dots, e_k \}$ is a list and $p=(p_1, \dots, p_n)$ is a 
+      permutation, then the action is given by $p*L = \{ e_{p(1)}, \dots, e_{p(k)}}$.
+
+      The permutation cannot permute more than {\tt #l} elements. 
+    Example
+      p = permutation {3,1,2,5,4,7,6}
+      L = {3,1,2,5,4,6,7}
+      L_p
+    Text
+      The permutation can be a permutation on less than {\tt #l} elements.
+    Example
+      p = permutation {3,1,2,4,5}
+      L = {3,1,2,5,4,6,7}
+      L_p
+  SeeAlso
+    (symbol *, Permutation, VisibleList)
 ///
 
 -- (symbol *, Permutation, Matrix)
@@ -449,7 +528,7 @@ doc ///
   Key
     (symbol *, Permutation, Matrix)
   Headline
-    computes the action of a permutation on a matrix
+    computes the action of a permutation on the rows of a matrix
   Usage
     w * M
   Inputs
@@ -470,9 +549,110 @@ doc ///
     Text
       The permutation can be a permutation on less than {\tt numRows M} elements.
     Example
-      p = permutation {3,1,2}
+      p = permutation {2,1}
       A = matrix {{1,2},{3,4},{5,6}}
       p * A
+  SeeAlso
+    (symbol _, Matrix, Permutation)
+///
+
+-- (symbol _, Matrix, Permutation)
+doc ///
+  Key
+    (symbol _, Matrix, Permutation)
+  Headline
+    computes the action of a permutation on the rows of a matrix
+  Usage
+    w * M
+  Inputs
+    M:Matrix
+    w:Permutation
+  Outputs
+    :Matrix
+  Description
+    Text
+      A permutation $p \in \mathfrak{S}_m$ acts on the space of $m \times n$ matrices by permuting
+      the rows of the matrix according to the permutation.
+
+      The permutation cannot permute more than {\tt numRows M} elements. 
+    Example
+      p = permutation {3,1,2}
+      A = matrix {{1,2,3},{4,5,6},{7,8,9}}
+      p * A
+    Text
+      The permutation can be a permutation on less than {\tt numRows M} elements.
+    Example
+      p = permutation {2,1}
+      A = matrix {{1,2},{3,4},{5,6}}
+      A_p
+  SeeAlso
+    (symbol *, Permutation, Matrix)
+///
+
+-- (symbol *, Matrix, Permutation)
+doc ///
+  Key
+    (symbol *, Matrix, Permutation)
+  Headline
+    computes the action of a permutation on the columns of a matrix
+  Usage
+    M * w
+  Inputs
+    M:Matrix
+    w:Permutation
+  Outputs
+    :Matrix
+  Description
+    Text
+      A permutation $p \in \mathfrak{S}_n$ acts on the space of $m \times n$ matrices by permuting
+      the columns of the matrix according to the permutation.
+
+      The permutation cannot permute more than {\tt numColumns M} elements. 
+    Example
+      p = permutation {3,1,2}
+      A = matrix {{1,2,3},{4,5,6},{7,8,9}}
+      A * p
+    Text
+      The permutation can be a permutation on less than {\tt numColumns M} elements.
+    Example
+      p = permutation {2,1}
+      A = matrix {{1,2,3},{4,5,6}}
+      A * p
+  SeeAlso
+    (symbol ^, Matrix, Permutation)
+///
+
+-- (symbol ^, Matrix, Permutation)
+doc ///
+  Key
+    (symbol ^, Matrix, Permutation)
+  Headline
+    computes the action of a permutation on a matrix
+  Usage
+    M^w
+  Inputs
+    M:Matrix
+    w:Permutation
+  Outputs
+    :Matrix
+  Description
+    Text
+      A permutation $p \in \mathfrak{S}_n$ acts on the space of $m \times n$ matrices by permuting
+      the columns of the matrix according to the permutation.
+
+      The permutation cannot permute more than {\tt numColumns M} elements. 
+    Example
+      p = permutation {3,1,2}
+      A = matrix {{1,2,3},{4,5,6},{7,8,9}}
+      A^p
+    Text
+      The permutation can be a permutation on less than {\tt numColumns M} elements.
+    Example
+      p = permutation {2,1}
+      A = matrix {{1,2,3},{4,5,6}}
+      A^p
+  SeeAlso
+    (symbol *, Matrix, Permutation)
 ///
 
 -- (symbol *, Permutation, Permutation)
@@ -542,7 +722,7 @@ doc ///
     allRuns:List
   Description
     Text
-      An \emph{ascending run} is a maximal subsequence of successive ascents.
+      An {\em ascending run} is a maximal subsequence of successive ascents.
     Example
       p = permutation {3,1,2,5,4}
       ascendingRuns p
@@ -570,7 +750,7 @@ doc ///
     :List
   Description
     Text
-      A permutation $p=(p_1 \, \hdots \, p_n)$ has an \emph{ascent} at $i$ (for $i < n$)
+      A permutation $p=(p_1 \, \dots \, p_n)$ has an {\em ascent} at $i$ (for $i < n$)
       if $p(i) < p(i+1)$.
     Example
       p = permutation {3,1,2,5,4}
@@ -683,7 +863,7 @@ doc ///
     :Sequence
   Description
     Text
-      A permutation's \emph{cycle type} is the sequence consisting of the lengths of the 
+      A permutation's {\em cycle type} is the sequence consisting of the lengths of the 
       cycles in its cycle decomposition, listed in weakly decreasing order.
     Example
       p = permutation {3,1,2,5,4}
@@ -707,7 +887,7 @@ doc ///
     allRuns:List
   Description
     Text
-      A \emph{descending run} is a maximal subsequence of successive descents.
+      A {\em descending run} is a maximal subsequence of successive descents.
     Example
       p = permutation {3,1,2,5,4}
       descendingRuns p
@@ -735,7 +915,7 @@ doc ///
     :List
   Description
     Text
-      A permutation $p=(p_1 \, \hdots \, p_n)$ has a \emph{descent} at $i$ (for $i < n$)
+      A permutation $p=(p_1 \, \dots \, p_n)$ has a {\em descent} at $i$ (for $i < n$)
       if $p(i) > p(i+1)$.
     Example
       p = permutation {3,1,2,5,4}
@@ -766,13 +946,13 @@ doc ///
     :List
   Description
     Text
-      A permutation $p=(p_1 \, \hdots \, p_n)$ has an \emph{exceedance} at $i$ if 
+      A permutation $p=(p_1 \, \dots \, p_n)$ has an {\em exceedance} at $i$ if 
       $p(i) > i$.
     Example
       p = permutation {3,1,2,5,4}
       exceedances p
     Text
-      This is called a \emph{weak exceedance} if the inequality is not 
+      This is called a {\em weak exceedance} if the inequality is not 
       strict, i.e., $p(i) \geq i$.
     Example
       p = permutation {3,1,2,5,4}
@@ -830,7 +1010,7 @@ Description
  Text
   For ease, we can also extend two permutations so that they are regarded as 
   permutations on the same number of symbols. More precisely, if we have 
-  permutations $p=(p_1, \hdots, p_n)$ and $q=(q_1, \hdots, q_m)$, then 
+  permutations $p=(p_1, \dots, p_n)$ and $q=(q_1, \dots, q_m)$, then 
   {\tt extend(p,q)} will return both $p$ and $q$ as permutations on
   $\text{max}(m,n)$ symbols.
  Example
@@ -858,7 +1038,7 @@ doc ///
     :List
   Description
     Text
-      A permutation $p$ has a {\emph fixed point} at $i$ if $p(i) = i$.
+      A permutation $p$ has a {\em fixed point} at $i$ if $p(i) = i$.
       {\tt fixedPoints} computes all of the fixed points of a permutation.
     Example
       p = permutation {2,1,3,5,4}
@@ -925,7 +1105,7 @@ doc ///
     :List
   Description
     Text
-      A permutation $p$ has an {\emph inversion} $(i,j)$ if $i < j$ and $p(i) > p(j)$.
+      A permutation $p$ has an {\em inversion} $(i,j)$ if $i < j$ and $p(i) > p(j)$.
       {\tt inversions} computes all of the inversions of a permutation.
     Example
       p = permutation {3,1,2,5,4}
@@ -950,7 +1130,7 @@ doc ///
     :Boolean
   Description
     Text
-      A permutation $p$ is {\emph Cartwright-Sturmfels} if it avoids.
+      A permutation $p$ is {\em Cartwright-Sturmfels} if it avoids.
     Example
       p = permutation {3,1,2,5,4}
       isCartwrightSturmfels p
@@ -978,7 +1158,7 @@ doc ///
     :Boolean
   Description
     Text
-      A permutation $p$ is {\emph CDG} if it avoids.
+      A permutation $p$ is {\em CDG} if it avoids.
     Example
       p = permutation {3,1,2,5,4}
       isCDG p
@@ -1004,7 +1184,7 @@ doc ///
     :Boolean
   Description
     Text
-      A permutation $p$ is a {\emph derangement} if it has no fixed points.
+      A permutation $p$ is a {\em derangement} if it has no fixed points.
     Example
       p = permutation {3,1,2,5,4}
       isDerangement p
@@ -1027,7 +1207,7 @@ doc ///
     :Boolean
   Description
     Text
-      A permutation $p$ is {\emph even} if it can be written as a product of an
+      A permutation $p$ is {\em even} if it can be written as a product of an
       even number of transpositions. Equivalently, a permutation is even if its
       @TO sign@ is $1$.
     Example
@@ -1053,7 +1233,7 @@ doc ///
     :Boolean
   Description
     Text
-      A permutation $p$ is {\emph odd} if it can be written as a product of an
+      A permutation $p$ is {\em odd} if it can be written as a product of an
       odd number of transpositions. Equivalently, a permutation is odd if its
       @TO sign@ is $-1$.
     Example
@@ -1104,7 +1284,7 @@ doc ///
     :Boolean
   Description
     Text
-      A permutation $p$ is {\emph vexillary} if it is $2143$-avoiding.
+      A permutation $p$ is {\em vexillary} if it is $2143$-avoiding.
     Example
       p = permutation {3,1,2,5,4}
       isVexillary p
@@ -1129,7 +1309,7 @@ doc ///
     :ZZ
   Description
     Text
-      The {\emph length} of a permutation is the size of its inversion set.
+      The {\em length} of a permutation is the size of its inversion set.
     Example
       p = permutation {3,1,2,5,4}
       length p
@@ -1152,7 +1332,7 @@ doc ///
     :ZZ
   Description
     Text
-      The {\emph order} of a permutation $p$ is the smallest positive integer 
+      The {\em order} of a permutation $p$ is the smallest positive integer 
       $n$ such that $p^n$ is the identity permutation, i.e., its order in the 
       symmetric group.
     Example
@@ -1175,7 +1355,7 @@ doc ///
     :List
   Description
     Text
-      A permutation $p$ has a {\emph record} at $i$ if $p(j) < p(i)$ for all $j < i$.
+      A permutation $p$ has a {\em record} at $i$ if $p(j) < p(i)$ for all $j < i$.
     Example
       p = permutation {3,1,2,5,4}
       saliances p
@@ -1229,7 +1409,7 @@ doc ///
     :List
   Description
     Text
-      A permutation $p$ has a {\emph saliance} at $i$ if $p(j) < p(i)$ for all $j > i$.
+      A permutation $p$ has a {\em saliance} at $i$ if $p(j) < p(i)$ for all $j > i$.
     Example
       p = permutation {3,1,2,5,4}
       saliances p
@@ -1257,7 +1437,7 @@ doc ///
     :ZZ
   Description
     Text
-      Every permutation can be written as a product of transpositions. One definition for the \emph{sign}
+      Every permutation can be written as a product of transpositions. One definition for the {\em sign}
       of a permutation $p$ is $1$ if it can be written as a product of an even number of transpositions
       and is $-1$ if it can be written as an odd number of transpositions.
     Example
@@ -1270,15 +1450,14 @@ doc ///
     isOdd
 ///
 
--- toMatrix
+-- (matrix, Permutation)
 doc ///
   Key
-    toMatrix
-    (toMatrix, Permutation)
+    (matrix, Permutation)
   Headline
     computes the matrix representation of a permutation
   Usage
-    toMatrix w
+    matrix w
   Inputs
     w:Permutation
   Outputs
@@ -1290,7 +1469,8 @@ doc ///
       and $0$ otherwise.
     Example
       p = permutation {3,1,2,5,4}
-      toMatrix p
+      matrix p
   SeeAlso
     (symbol *, Permutation, Matrix)
+    (symbol *, Matrix, Permutation)
 ///
