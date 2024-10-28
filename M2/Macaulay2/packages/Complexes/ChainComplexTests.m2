@@ -2366,3 +2366,20 @@ TEST ///
   assert all(3, i -> dd^LES'_(-3*(i+1)) == delta_(-i-2)) -- note that contravariance shifts the indexing...
   assert(HH LES == 0)
 ///
+
+TEST ///
+  k = ZZ/101
+  R = k[a..e]
+  I = inverseSystem random(4, R);
+  C = freeResolution(I, Strategy => Nonminimal)
+  C5 = constantStrand(C, 5)
+  assert isWellDefined C5
+  assert(ring C5 === k)
+  C7 = constantStrand(C, {7})
+  assert isWellDefined C7
+  assert(ring C7 === k)
+  C12 = constantStrand(C, 12)
+  assert isWellDefined C12
+  C9 = constantStrand(C, 9)
+  assert isWellDefined C9
+///

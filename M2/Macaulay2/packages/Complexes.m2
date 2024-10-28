@@ -31,6 +31,7 @@ export {
     "connectingMap",
     "connectingExtMap",
     "connectingTorMap",
+    "constantStrand",
     "cylinder",
     "epicResolutionMap",
     "freeResolution",

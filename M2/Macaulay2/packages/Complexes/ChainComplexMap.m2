@@ -1381,3 +1381,27 @@ connectingExtMap(Matrix, Matrix, Module) := ComplexMap => opts -> (g, f, N) -> (
     -- TODO: the indexing on opts.Concentration needs to be negated
     connectingMap(Hom(f', G), Hom(g', G), Concentration => opts.Concentration)
     )
+
+constantStrand = method()
+constantStrand(Complex, ZZ) :=
+constantStrand(Complex, List) := (C, deg) -> (
+    kk := coefficientRing ring C;
+    (loC, hiC) := concentration C;
+    modules := new MutableHashTable;
+    maps := hashTable for i from loC + 1 to hiC list (
+        m := lift(submatrixByDegrees(C.dd_i, deg, deg), kk);
+        if numrows m != 0 then modules#i = target m;
+        if numcols m != 0 then modules#i = source m;
+        if m != 0 then i => m else continue
+        );
+    if #keys maps === 0 then (
+      if #keys modules === 0 then
+          complex kk^0
+      else directSum for i from loC to hiC list (
+          if modules#?i then
+              complex(modules#i, Base => i)
+          else continue
+          )
+      )
+    else complex maps
+    )
