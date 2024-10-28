@@ -1,8 +1,6 @@
 #ifndef NEWDELETE_H
 #define NEWDELETE_H 1
 
-#define GC_REDIRECT_TO_LOCAL // enable thread-local allocation
-
 #include "M2mem.h"  // for freemem, getmem, outofmem2
 #include "debug.h"  // for TRAPCHK, TRAPCHK_SIZE
 
