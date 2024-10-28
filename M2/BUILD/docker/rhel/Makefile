@@ -4,6 +4,8 @@ include ../Makefile
 DISTRIBUTION = rockylinux
 RELEASE = 8
 BUILD = autotools
+BUILD_ARGS = --build-arg DISTRIBUTION=$(DISTRIBUTION) \
+	--build-arg RELEASE=$(RELEASE)
 TAG = m2-$(BUILD)-$(DISTRIBUTION)-$(RELEASE)-build
 BUILD_DIR = M2/BUILD/build-docker
 
