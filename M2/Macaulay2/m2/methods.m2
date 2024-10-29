@@ -237,6 +237,7 @@ options Command  := C   -> options C#0
 options Sequence := key -> (
     if (m := lookup key) =!= null then options m
     else error("no method installed for ", toString key))
+options List := L -> apply(L, options)
 
 oftab := new HashTable from {
     -- MethodFunctionWithOptions
