@@ -774,6 +774,16 @@ basis(List, Complex) := Complex => opts -> (deg, C) -> (
 --------------------------------------------------------------------
 importFrom_Core "residueMap" -- gives a map back to the coefficient ring
 
+-- this may not always be well-defined, so it is not exported
+cover' = method()
+cover' Complex := Complex => C -> (
+    (lo, hi) := concentration C;
+    if lo == hi
+    then complex(cover C_lo, Base => lo)
+    else complex applyValues(C.dd.map, cover))
+cover' ComplexMap := ComplexMap => f -> (
+    map(cover' target f, cover' source f, i -> cover f_i, Degree => degree f))
+
 -- returns the graded component of the complex in the given degree
 -- but as a complex over the coefficient ring instead
 part(ZZ,   Complex) :=
