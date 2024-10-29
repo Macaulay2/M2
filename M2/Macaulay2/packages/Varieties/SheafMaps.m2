@@ -32,7 +32,7 @@ autotruncate = { MinimalGenerators => false } >> opts -> L -> (
 -----------------------------------------------------------------------------
 
 SheafMap = new Type of HashTable
-SheafMap.synonym = "Morphism of Sheaves"
+SheafMap.synonym = "morphism of sheaves"
 
 -- TODO: if over affine variety, dehomogenize the maps
 map(CoherentSheaf, CoherentSheaf, Matrix) := SheafMap => opts -> (G, F, phi) -> (
