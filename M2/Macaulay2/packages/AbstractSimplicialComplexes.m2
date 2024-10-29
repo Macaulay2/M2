@@ -31,7 +31,7 @@ newPackage(
     )
 
 export {"AbstractSimplicialComplex", "abstractSimplicialComplex","simplicialChainComplex", "reducedSimplicialChainComplex", "ambientAbstractSimplicialComplexSize",
-    "ambientAbstractSimplicialComplex", "facets", "randomAbstractSimplicialComplex", "randomSubSimplicialComplex",
+    "ambientAbstractSimplicialComplex", "abstractSimplicialComplexFacets", "randomAbstractSimplicialComplex", "randomSubSimplicialComplex",
      "inducedSimplicialChainComplexMap","inducedReducedSimplicialChainComplexMap","areEqual", "dimAbstractSimplicialComplex",
     }
 
@@ -103,9 +103,9 @@ select(L,i-> isMaximal(i,L))
 
 --- return the facets of a simplicial complex
 
-facets = method()
+abstractSimplicialComplexFacets = method()
 
-facets(AbstractSimplicialComplex) := List => K ->(
+abstractSimplicialComplexFacets(AbstractSimplicialComplex) := List => K ->(
     L := flatten(apply(spots K, i-> K_i));
     return listFacets(L)
     )
@@ -118,7 +118,7 @@ facets(AbstractSimplicialComplex) := List => K ->(
 areEqual = method()
 
 areEqual(AbstractSimplicialComplex,AbstractSimplicialComplex) := Boolean => (K,L) ->(
-    return (facets K) == (facets L)
+    return (abstractSimplicialComplexFacets K) == (abstractSimplicialComplexFacets L)
     )
 
 --- returns the dimension of a simplicial complex
@@ -126,7 +126,7 @@ areEqual(AbstractSimplicialComplex,AbstractSimplicialComplex) := Boolean => (K,L
 dimAbstractSimplicialComplex = method()
 
 dimAbstractSimplicialComplex(AbstractSimplicialComplex) := ZZ => (K) -> (
-    return (max apply(facets(K), i -> #i) - 1)
+    return (max apply(abstractSimplicialComplexFacets(K), i -> #i) - 1)
     )
 
 --- Constructors for AbstractSimplicialComplexs
@@ -248,7 +248,7 @@ randomSubSimplicialComplex = method()
 
 randomSubSimplicialComplex(AbstractSimplicialComplex) := AbstractSimplicialComplex => (K) -> (
  setRandomSeed(currentTime());
- L := facets K;
+ L := abstractSimplicialComplexFacets K;
  abstractSimplicialComplex unique apply(L, i-> randomSubset(i))
 )
 
@@ -256,7 +256,7 @@ randomSubSimplicialComplex(AbstractSimplicialComplex) := AbstractSimplicialCompl
 
 -- ambient simplicial complex
 
-ambientAbstractSimplicialComplexSize = method() -- return the size of the underlying ambient simplex
+ambientAbstractSimplicialComplexSize = method() -- return the size of the underyling ambient simplex
 
 ambientAbstractSimplicialComplexSize(AbstractSimplicialComplex) := (K) -> (
     max flatten(K_0)
@@ -476,13 +476,13 @@ doc ///
 	      K_0
 	      K_1
 	      K_2
-	      facets K
+	      abstractSimplicialComplexFacets K
 	      L_(-1)
 	      L_0
 	      L_1
 	      L_2
 	      L_3
-	      facets L
+	      abstractSimplicialComplexFacets L
 ///
 
 
@@ -746,7 +746,7 @@ doc ///
      Description
      	  Text	  
 	     This method returns the reduced homological chain complex (i.e., there is a nonzero term in
-		 homological degree -1 that corresponds to the empty face) that is associated
+		 homological degree -1 that corresponds to the empty face) that is asociated
 	     to an abstract simplicial complex.  The chain complex is defined over the integers.
           Example
 	       K = abstractSimplicialComplex({{1,2,3},{2,4,9},{1,2,3,5,7,8},{3,4}})
@@ -762,7 +762,7 @@ doc ///
      Description
      	  Text	  
 	     This method returns the (non-reduced) homological chain complex (i.e., there is no nonzero term in
-		 homological degree -1 that corresponds to the empty face) that is associated
+		 homological degree -1 that corresponds to the empty face) that is asociated
 	     to an abstract simplicial complex.  The chain complex is defined over the integers.
 	  Example
 	       K = abstractSimplicialComplex({{1,2,3},{1,4,5},{2,4,5,7}})
@@ -815,8 +815,8 @@ doc ///
 
 doc ///
      Key
-          facets 
-          (facets, AbstractSimplicialComplex)
+          abstractSimplicialComplexFacets 
+          (abstractSimplicialComplexFacets, AbstractSimplicialComplex)
      Headline
      	  The facets of a simplicial complex 
      Description
@@ -824,7 +824,7 @@ doc ///
 	     This method returns the collection of facets of a given AbstractSimplicialComplex.
 	  Example
 	       K = abstractSimplicialComplex(3)
-	       facets K
+	       abstractSimplicialComplexFacets K
 ///
 
 doc ///
