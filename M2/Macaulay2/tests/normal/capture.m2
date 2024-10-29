@@ -21,7 +21,7 @@ o2 : Matrix K  <-- K\n" | ".*", out))
 
 -- printing errors
 (err, out) = capture "1/0"
-assert(err and match("\\A\ni1 : 1/0\ncurrentString:1:2:\\(3\\):\\[.\\]: error: division by zero\n\\Z", out))
+assert(err and match("\\A\ni1 : 1/0\ncurrentString:1:1:\\(3\\):\\[.\\]: error: division by zero\n\\Z", out))
 
 -- make sure runaway existing private symbols are not changed
 -- TODO: how can we prevent new methods or hooks from escaping capture?

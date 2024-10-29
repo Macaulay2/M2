@@ -40,6 +40,9 @@ gmp_RR rawRandomRR(unsigned long prec);
 /* returns a uniformly distributed random real with the given precision, in
  * range [0.0,1.0] */
 
+gmp_RR rawRandomRRNormal(unsigned long prec);
+/* returns a normally distributed random real with the given precision */
+
 gmp_CC rawRandomCC(unsigned long prec);
 
 void randomMpfr(mpfr_t result);

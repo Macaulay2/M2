@@ -2,6 +2,8 @@
 --- author(s): Mahrud
 --- notes: functions below are all defined in packages.m2
 
+undocumented (newPackage, Sequence)
+
 doc ///
 Node
   Key
@@ -31,7 +33,7 @@ Node
         exportMutable
         beginDocumentation
         document
-        TEST
+        symbol TEST
 
       :Functions useful when debugging a package:
         "debugging"

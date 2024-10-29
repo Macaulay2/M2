@@ -37,12 +37,25 @@ addStartFunction(
      	       dismiss "User";
 	       newPackage("User",
 		   Headline       => "default package for interpreter interactions",
-		   DebuggingMode  => true,
-		   PackageImports => if isMember("--no-preload", commandLine) then {} else Core#"pre-installed packages");
+		   DebuggingMode  => true);
+	       User.PackageIsLoaded = true;
+	       User#"source directory" = "";
 	       path = prepend("./",path); -- now we search also the user's current directory, since our files have already been loaded
 	       path = unique apply( path, minimizeFilename);	    -- beautify
 	       allowLocalCreation User#"private dictionary";
-	       );
+	       )))
+
+-- the location of init.m2 is documented in the node "initialization file"
+addStartFunction( () -> (
+	if not noinitfile
+	then load(applicationDirectory() | "init.m2")))
+
+-- packages are loaded after init.m2, so preloaded packages can be adjusted
+addStartFunction( () -> (
+	if not isMember("--no-preload", commandLine)
+	then for pkg in Core#"preloaded packages" do needsPackage pkg))
+
+addStartFunction( () -> (
 	  if not nobanner then (
 	       if topLevelMode === TeXmacs then stderr << TeXmacsBegin << "verbatim:";
 	       relevant := select(loadedPackages,mentionQ);
@@ -76,6 +89,10 @@ addStartFunction( () -> if not noinitfile then (
 	  ))
 
 addStartFunction( () -> if version#"gc version" < "7.0" then error "expected libgc version 7.0 or larger; perhaps our shareable library is not being found" )
+
+copyright = new Command from(() -> help "Copyright and license")
+if fullCopyright then addStartFunction(() -> print copyright())
+
 unexportedSymbols = () -> hashTable apply(pairs Core#"private dictionary", (n,s) -> if not Core.Dictionary#?n then (s => class value s => value s))
 Function.GlobalReleaseHook = (X,x) -> (
      if dictionary X =!= User#"private dictionary" then warningMessage(X," redefined");

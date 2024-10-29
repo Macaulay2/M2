@@ -645,7 +645,7 @@ M2_bool rawSolve(MutableMatrix *A,
      call the correct routine */
   /* Otherwise: give error:
      OR: make mutable matrices of the correct size, call the correct routine
-     and afterwords, copy to x. */
+     and afterwards, copy to x. */
   try {
     const Ring *R = A->get_ring();
     if (R != b->get_ring() || R != x->get_ring())

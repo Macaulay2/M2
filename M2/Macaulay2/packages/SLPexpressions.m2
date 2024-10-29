@@ -3,7 +3,7 @@
 
 -- TODO: compress (with CacheTable)
 
-newPackage select((
+newPackage(
      "SLPexpressions",
      Version => "1.21",
      Date => "Nov 2022",
@@ -36,7 +36,7 @@ newPackage select((
      --   but false after it is done
      --DebuggingMode => true
      DebuggingMode => false
-     ), x -> x =!= null)
+     )
 
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists

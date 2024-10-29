@@ -1,6 +1,6 @@
 newPackage(
         "SagbiGbDetection",
-        Headline => "this package verifies whether the given generators of an ideal form the Gr\"obner basis or whether the given generators of a finitely generated subalgebra of a polynomial ring are the SAGBI basis",
+        Headline => "finding term orders for which the given generators of an ideal/algebra form a Gröbner/SAGBI basis",
         Version => "0.1",  
         Date => "April 11, 2023",
         Authors => {
@@ -11,7 +11,6 @@ newPackage(
         DebuggingMode => false, 
         PackageExports => { "Polyhedra", "ReesAlgebra", "SubalgebraBases" },   
         PackageImports => { "SubalgebraBases"},   
-        Reload => true,
 	Keywords => {"Commutative Algebra"}
 )   
 

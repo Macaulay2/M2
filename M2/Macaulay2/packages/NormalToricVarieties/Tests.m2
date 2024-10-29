@@ -206,7 +206,7 @@ Y = makeSmooth X;
 assert isWellDefined Y
 assert isSmooth Y
 assert (set rays Y === set {{-2,-3},{1,0},{0,1},{-1,-2},{-1,-1},{0,-1}})
-assert (sort max Y === sort {{0,5},{0,4},{1,2},{1,3},{2,4},{3,5}})
+assert (sort max Y === sort {{0,3},{0,4},{1,2},{1,5},{2,4},{3,5}})
 ///
 
 -- test 5

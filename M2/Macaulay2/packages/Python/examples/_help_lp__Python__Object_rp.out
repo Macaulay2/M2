@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 538010608
+-- -*- M2-comint -*- hash: 234211404776825840
 
 i1 : math = import "math"
 

@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => class,
+     Key => {class, (class, Thing)},
      Headline => "class of an object",
      Usage => "class x",
      Inputs => {

@@ -1,5 +1,13 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+-----------------------------------------------------------------------------
+-- Functions dealing with types
+-----------------------------------------------------------------------------
+
+-- TODO: is there a better name for ancestors'?
+ancestors  = T -> unique join({T}, while (T = parent T) =!= Thing list T, {Thing})
+ancestors' = T -> unique join({T}, while (T = class  T) =!= Type  list T, {Type})
+
 -- TODO: make this TT toString X later?
 synonym = X -> if X.?synonym then X.synonym else "object of class " | toString X
 
@@ -23,7 +31,6 @@ File.synonym = "file"
 Symbol.synonym = "symbol"
 Keyword.synonym = "keyword"
 Dictionary.synonym = "dictionary"
--- Pseudocode.synonym = "pseudocode" -- "a pseudocode" doesn't sound so great
 Task.synonym = "task"
 
 -----------------------------------------------------------------------------

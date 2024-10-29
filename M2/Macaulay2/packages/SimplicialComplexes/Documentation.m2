@@ -497,7 +497,7 @@ doc ///
 	Stanley–Reisner ideal in any polynomial ring with a sufficiently large
 	number of variables, some operations in this package do depend of the
 	choice of the polynomial ring (or its coefficient ring).  For example,
-	the @TO2((chainComplex, SimplicialComplex), "chain complex")@ of an
+	the @TO2((complex, SimplicialComplex), "chain complex")@ of an
 	abstract simplicial complex is typically constructed over the
 	coefficient ring of this polynomial ring, and the dual of a 
 	simplicial complex (or monomial ideal) is dependent on the number
@@ -564,20 +564,20 @@ doc ///
 	    Stanley–Reisner ideal in any polynomial ring with a sufficiently
 	    large number of variables, some operations in this package do
 	    depend of the choice of the polynomial ring (or its coefficient ring).
-	    For example, the @TO2((chainComplex, SimplicialComplex), "chain
+	    For example, the @TO2((complex, SimplicialComplex), "chain
 	    complex")@ of an abstract simplicial complex is, by default,
 	    constructed over the coefficient ring of its polynomial ring, and 
 	    the dual of a simplicial complex (or monomial ideal) is dependent 
 	    on the number of variables in the polynomial ideal.
 	Example
-    	    C = chainComplex Δ
-	    D = chainComplex Γ
-	    C' = chainComplex Δ'
+    	    C = complex Δ
+	    D = complex Γ
+	    C' = complex Δ'
 	    assert (D == C ** QQ and C' == C ** (ZZ/101))
     SeeAlso
         "Finding attributes and properties"    
         (ring, SimplicialComplex)
-        (chainComplex, SimplicialComplex)
+        (complex, SimplicialComplex)
 ///
 
 doc ///
@@ -732,15 +732,15 @@ doc ///
 	    Stanley–Reisner ideal in any polynomial ring with a sufficiently
 	    large number of variables, some operations in this package do
 	    depend of the choice of the polynomial ring (or its coefficient ring).
-	    For example, the @TO2((chainComplex, SimplicialComplex), "chain
+	    For example, the @TO2((complex, SimplicialComplex), "chain
 	    complex")@ of an abstract simplicial complex is typically
 	    constructed over the coefficient ring of this polynomial ring, and 
 	    the dual of a simplicial complex (or monomial ideal) is dependent 
 	    on the number of variables in the polynomial ideal.
 	Example
-    	    chainComplex Δ
-	    chainComplex Γ
-	    chainComplex Δ'
+    	    complex Δ
+	    complex Γ
+	    complex Δ'
     SeeAlso
         "Making an abstract simplicial complex"    
         (simplicialComplex, MonomialIdeal)
@@ -833,15 +833,15 @@ doc ///
 	    Stanley–Reisner ideal in any polynomial ring with a sufficiently
 	    large number of variables, some operations in this package do
 	    depend of the choice of the polynomial ring (or its coefficient ring).
-	    For example, the @TO2((chainComplex, SimplicialComplex), "chain
+	    For example, the @TO2((complex, SimplicialComplex), "chain
 	    complex")@ of an abstract simplicial complex is typically
 	    constructed over the coefficient ring of this polynomial ring, and 
 	    the dual of a simplicial complex (or monomial ideal) is dependent 
 	    on the number of variables in the polynomial ideal.
 	Example
-    	    chainComplex Δ
-	    chainComplex Γ
-	    chainComplex Δ'
+    	    complex Δ
+	    complex Γ
+	    complex Δ'
 	Text
 	    The input can be an @TO Ideal@, in which case the constructor
 	    verifies that it is a squarefree monomial ideal.
@@ -1083,7 +1083,7 @@ doc ///
 	    matrix {facets Δ}
 	    dim Δ
 	    fVector Δ
-	    prune HH chainComplex Δ
+	    prune HH complex Δ
 	    assert(dim Δ === 3 and isPure Δ)
 	    assert(fVector Δ === {1,16,106,180,90})
 	Text
@@ -1360,7 +1360,7 @@ doc ///
 	    fVector Δ
 	    assert(dim Δ === 2 and isPure Δ)
 	    assert(fVector Δ === {1,6,15,11})
-	    prune HH chainComplex Δ
+	    prune HH complex Δ
 	Text
 	    This abstract simplicial complex is Cohen-Macaulay and shellable.	    
 	Text
@@ -1719,7 +1719,7 @@ doc ///
         (dual, MonomialIdeal)
 	(pdim, Module)
 	(regularity, Module)
-	(betti, GradedModule)
+	(betti, Complex)
 ///
 
 doc /// 
@@ -2688,7 +2688,7 @@ doc ///
     	    @SUBSECTION "Basic operations arising of "@
 	Text
     	    @UL {
-                TO (chainComplex, SimplicialComplex),		
+                TO (complex, SimplicialComplex),		
                 TO (boundaryMap, ZZ, SimplicialComplex),
         	TO (homology, ZZ, SimplicialComplex),
         	TO (cohomology, ZZ, SimplicialComplex)
@@ -2716,7 +2716,7 @@ doc ///
 	    minimal resolutions of some monomial ideals.
 	Text
     	    @UL {
-		TO [(chainComplex, SimplicialComplex), Labels],		
+		TO [(complex, SimplicialComplex), Labels],		
 		TO (buchbergerResolution, MonomialIdeal),
 		TO (lyubeznikResolution, MonomialIdeal),
 		TO (scarfChainComplex, MonomialIdeal), 
@@ -2773,7 +2773,7 @@ doc ///
 	    boundaryMap(2, Δ)
 	    boundaryMap(3, Δ)	    
     	    fVector Δ	    	    	    
-    	    C = chainComplex Δ
+    	    C = complex Δ
 	    assert all(4, i -> C.dd_i == - boundaryMap(i, Δ))
     	Text
             The boundary maps may depend on the coefficient ring.
@@ -2811,27 +2811,27 @@ doc ///
 	    assert all(4, i -> T.dd_(i+1) == boundaryMap(i, Δ,  Labels => sort M_*))
     SeeAlso
         "Working with associated chain complexes"
-        (chainComplex, SimplicialComplex)
+        (complex, SimplicialComplex)
 	(taylorResolution, MonomialIdeal)
 ///
 
 
 doc ///
     Key
-        (chainComplex, SimplicialComplex)
-	[(chainComplex, SimplicialComplex), Labels]
+        (complex, SimplicialComplex)
+	[(complex, SimplicialComplex), Labels]
     	Labels
     Headline
         create the chain complex associated to a simplicial complex.
     Usage
-    	chainComplex Delta
-	chainComplex(Delta, Labels => L)
+    	complex Delta
+	complex(Delta, Labels => L)
     Inputs
     	Delta : SimplicialComplex
 	Labels => List	  
 	    L of monomials in a polynomial ring, one for each vertex of $\Delta$
     Outputs
-    	C : ChainComplex
+    	C : Complex
 	    of free modules
     Description
     	Text
@@ -2850,7 +2850,7 @@ doc ///
     	Example
 	    S = QQ[a..g];
 	    torus = smallManifold(2, 7, 6, S)
-	    C = chainComplex torus
+	    C = complex torus
 	    fVector torus	
 	    prune HH C
 	    assert(prune HH_1 C == QQ^2)
@@ -2859,7 +2859,7 @@ doc ///
 	Example
 	    R = ZZ[a..h];
 	    Δ = kleinBottleComplex R
-	    C' = chainComplex Δ
+	    C' = complex Δ
 	    C'.dd
 	    fVector Δ
 	    prune HH C'
@@ -2882,10 +2882,10 @@ doc ///
 	Example
 	    S = QQ[a..d];
 	    Γ = simplicialComplex{a*b*c, b*c*d};
-	    C = chainComplex Γ
+	    C = complex Γ
 	    C.dd
 	    R = QQ[x_0..x_3];
-	    hC = chainComplex(Γ, Labels => {x_0*x_1, x_3, x_1*x_2, x_0*x_2})
+	    hC = complex(Γ, Labels => {x_0*x_1, x_3, x_1*x_2, x_0*x_2})
 	    hC.dd
 	    prune homology hC
     	Text
@@ -2898,7 +2898,7 @@ doc ///
 	    simplicial complex does not always produce a free resolution.
 	    Reordering the labels in the previous example demonstrates this.
 	Example
-	    hC' = chainComplex(Γ, Labels => {x_3, x_0*x_1, x_1*x_2, x_0*x_2})
+	    hC' = complex(Γ, Labels => {x_3, x_0*x_1, x_1*x_2, x_0*x_2})
 	    hC'.dd
 	    prune HH hC'
     SeeAlso
@@ -2906,7 +2906,7 @@ doc ///
 	(coefficientRing, SimplicialComplex)
 	(boundaryMap, ZZ, SimplicialComplex)
 	(resolution, Ideal)
-	(homology, ChainComplex)
+	(homology, Complex)
 ///
 
 doc ///
@@ -2982,7 +2982,7 @@ doc ///
     SeeAlso
     	"Working with associated chain complexes"    
         (homology, SimplicialComplex, Ring)
-        (chainComplex, SimplicialComplex)
+        (complex, SimplicialComplex)
         (homology, SimplicialComplex, SimplicialComplex)
 ///
 
@@ -3000,7 +3000,7 @@ doc ///
         Delta : SimplicialComplex
         R : Ring
     Outputs
-        : GradedModule
+        : Complex
             that is reduced homology group of $\Delta$ with coefficients in $R$
     Description
         Text
@@ -3026,7 +3026,7 @@ doc ///
 	    prune homology(Δ, QQ)
 	    prune homology(Δ, ZZ/2)
 	    assert(homology Δ == HH Δ)
-    	    assert(prune homology Δ == gradedModule ZZ^1[-2])
+    	    assert(prune homology Δ == (complex ZZ^1)[-2])
         Text
 	    The reduced homology of the 
 	    @TO2(kleinBottleComplex, "Klein bottle")@ has torsion.	    
@@ -3035,7 +3035,7 @@ doc ///
 	    prune homology Γ
 	    prune homology(Γ, QQ)
 	    prune homology(Γ, ZZ/2)
-	    assert(prune homology(Γ, ZZ/2) == gradedModule((ZZ/2)^2[-1] ++ (ZZ/2)^1[-2]))
+	    assert(prune homology(Γ, ZZ/2) == (complex (ZZ/2)^2)[-1] ++ (complex (ZZ/2)^1)[-2])
 	Text
 	    There are two "trivial" simplicial complexes: the irrelevant
 	    complex has the empty set as a facet whereas the void complex has
@@ -3044,14 +3044,14 @@ doc ///
 	Example
 	    irrelevant = simplicialComplex monomialIdeal gens S
 	    homology irrelevant
-    	    assert(homology irrelevant == gradedModule ZZ^1[1])
+    	    assert(homology irrelevant == (complex ZZ^1)[1])
 	    void = simplicialComplex monomialIdeal 1_S
 	    homology void
-    	    assert(homology void == gradedModule ZZ^0[0])	    
+    	    assert(homology void == complex ZZ^0)	    
     SeeAlso
     	"Working with associated chain complexes"    
         (homology, ZZ, SimplicialComplex, Ring)
-        (chainComplex, SimplicialComplex)
+        (complex, SimplicialComplex)
         (homology, SimplicialComplex, SimplicialComplex)
 ///
 
@@ -3101,7 +3101,7 @@ doc ///
     	"Working with associated chain complexes" 
         (cohomology, ZZ, SimplicialComplex, Ring)
         boundaryMap
-        (chainComplex, SimplicialComplex)
+        (complex, SimplicialComplex)
         (cohomology, ZZ, SimplicialComplex, SimplicialComplex)
 ///
 
@@ -3239,7 +3239,7 @@ doc ///
 	    The Buchberger complex supports a free resolution of $I$, called the
 	    @TO2(buchbergerResolution,"Buchberger resolution")@ of $I$.
 	Example
-    	    BRes = chainComplex(B1, Labels => first entries mingens I)
+    	    BRes = complex(B1, Labels => first entries mingens I)
 	    HH_0(BRes)
 	    all(1..dim B1+1, i -> prune HH_i(BRes) == 0)
 	    BRes == buchbergerResolution(I) 
@@ -3272,7 +3272,7 @@ doc ///
         L : List
 	    a minimal set of generators for a monomial ideal $I$
     Outputs
-        : ChainComplex
+        : Complex
 	    the free resolution of the monomial ideal $I$ we get by homogenizing
 	    the Buchberger complex of $I$.
     Description
@@ -3284,7 +3284,7 @@ doc ///
 	    L = {x_1^2, x_2^2, x_3^2, x_1*x_3, x_2*x_4};
 	    BRes = (buchbergerResolution L);
 	    BRes.dd 
-	    BRes == chainComplex(buchbergerSimplicialComplex(L,R), Labels => L)
+	    BRes == complex(buchbergerSimplicialComplex(L,R), Labels => L)
 	Text
 	    When the Buchberger resolution is a minimal free resolution, it agrees
 	    with the Scarf complex.
@@ -3315,7 +3315,7 @@ doc ///
 	     ideal.
 	 M : MonomialIdeal
      Outputs
-         : ChainComplex
+         : Complex
      Description
         Text
 	    If $M$ is a monomial ideal, minimally generated by $L$, then
@@ -3379,11 +3379,11 @@ doc ///
 	    D = lyubeznikSimplicialComplex(M,R)
 	Text
 	    The lyubeznik resolution of $M$ is the homogenization of
-	    $D$ by $M$ (See @TO([(chainComplex, SimplicialComplex),Labels])@).
+	    $D$ by $M$ (See @TO([(complex, SimplicialComplex),Labels])@).
         Example
 	    L = lyubeznikResolution(M);
 	    L.dd
-            L' = chainComplex(D,Labels=>(first entries mingens M));
+            L' = complex(D,Labels=>(first entries mingens M));
 	    L'.dd
 	Text
 	    Changing the order of the generators may change the output.
@@ -3419,7 +3419,7 @@ doc ///
 	M : MonomialIdeal
 	MonomialOrder => List
     Outputs
-        : ChainComplex
+        : Complex
 	  the Lyubeznik resolution of $S/M$.
     Description
         Text
@@ -3526,7 +3526,7 @@ doc ///
 	    a monomial ideal.
 	M : MonomialIdeal
     Outputs
-        C : ChainComplex
+        C : Complex
     Description
         Text
 	    For a monomial ideal $M$, minimally generated by a list of
@@ -4041,15 +4041,15 @@ doc ///
 
 doc ///
     Key
-    	(chainComplex, SimplicialMap)
+    	(complex, SimplicialMap)
     Headline
     	constructs the associated map between chain complexes
     Usage
-    	chainComplex f
+    	complex f
     Inputs
         f : SimplicialMap
     Outputs
-    	 : ChainComplexMap
+    	 : ComplexMap
     Description
     	Text
 	    Given a simplicial map, this constructs the map between the associated
@@ -4059,7 +4059,7 @@ doc ///
 	    Δ = simplicialComplex monomialIdeal(x_0*x_5, x_1*x_4, x_2*x_3)
 	    Γ = simplicialComplex monomialIdeal(x_1*x_2)
 	    f = map(Γ, Δ, {x_0,x_0,x_1,x_2,x_3,x_3})
-	    F = chainComplex f
+	    F = complex f
 	Text
 	    The inclusion of a face induces an inclusion of chain complexes.
 	Example
@@ -4068,12 +4068,12 @@ doc ///
 	    S'' = ZZ[z_0,z_1,z_2];
 	    fishface = simplicialComplex {z_0*z_1*z_2}
 	    f = map(fish,fishface,{y_0,y_1,y_2});
-	    F = chainComplex f
+	    F = complex f
     	    kernel F == 0
     SeeAlso
         "Working with simplicial maps" 
-    	(chainComplex, SimplicialComplex)
-	ChainComplexMap
+    	(complex, SimplicialComplex)
+	ComplexMap
 ///	
 
 doc ///
@@ -4307,7 +4307,7 @@ doc ///
     Inputs
         f : SimplicialMap
     Outputs
-        : GradedModuleMap
+        : ComplexMap
 	    which is the map on homology induced by $f$
     Description
         Text
@@ -4383,7 +4383,7 @@ doc ///
         Delta : SimplicialComplex
 	Gamma : SimplicialComplex
     Outputs
-    	: ChainComplex
+    	: Complex
     Description
     	Text
 	    This method computes the relative homology of a simplicial complex

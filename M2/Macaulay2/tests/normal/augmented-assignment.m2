@@ -126,7 +126,7 @@ assert Equation(x#0, 5)
 
 -- install custom method
 Bar - Bar := (x, y) -> Bar(x#0 - y#0)
-Bar -= (x, y) -> if even y#0 then x#0 = 0 else Default
+installMethod(symbol -=, Bar, (x, y) -> if even y#0 then x#0 = 0 else Default)
 x = Bar 5
 x -= Bar 2
 assert Equation(x#0, 0)

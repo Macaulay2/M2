@@ -60,11 +60,16 @@ assert Equation(apply(("f", "o", "o"), "bar", concatenate), ("fb", "oa", "or"))
 assert Equation(reverse "Hello, world!", "!dlrow ,olleH")
 
 -- pack
-assert Equation(pack("The quick brown fox jumps over the lazy dog", 5),
-    {"The q","uick ","brown"," fox ","jumps"," over"," the ","lazy ","dog"})
-assert Equation(pack(5, "The quick brown fox jumps over the lazy dog"),
-    {"The q","uick ","brown"," fox ","jumps"," over"," the ","lazy ","dog"})
-assert Equation(pack(0, ""), pack("", 0))
+str = "The quick brown fox jumps over the lazy dog"
+cut = {"The q","uick ","brown"," fox ","jumps"," over"," the ","lazy ","dog"}
+assert Equation(pack(5, str), cut)
+assert Equation(pack(str, 5), cut)
+assert Equation(pack(5, ascii str), ascii \ cut)
+assert Equation(pack(ascii str, 5), ascii \ cut)
+assert Equation(pack(5, toSequence ascii str), ascii \ cut)
+assert Equation(pack(toSequence ascii str, 5), ascii \ cut)
+assert Equation(pack(0, ""), {})
+assert Equation(pack("", 0), {})
 
 -- tally
 assert BinaryOperation(symbol ===, tally "Hello, world!", new Tally from {

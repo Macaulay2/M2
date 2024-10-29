@@ -21,6 +21,13 @@ truncate = method(Options => true)
 
 isEmpty = method(TypicalValue => Boolean)
 
+isSmooth = method(TypicalValue => Boolean, Options => true)
+isVeryAmple = method(TypicalValue => Boolean, Options => true)
+
+isNormal = method()
+
+normalCone = method(Options => true)
+
 -- symbols
 
 protect Base
@@ -28,3 +35,5 @@ protect Base
 protect Jacobian
 
 protect Iterate
+
+protect Threads

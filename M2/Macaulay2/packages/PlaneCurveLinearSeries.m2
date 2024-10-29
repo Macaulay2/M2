@@ -5,7 +5,7 @@ newPackage(
           Headline => "Linear series on the normalization of a plane curve",
           Authors => {{ Name => "David Eisenbud", 
 		  Email => "de@berkeley.edu", 
-		  HomePage => "eisenbud.io.github.com"}},
+		  HomePage => "https://eisenbud.github.io/"}},
 	  PackageExports => {"IntegralClosure","PrimaryDecomposition"},
           AuxiliaryFiles => false,
           DebuggingMode => false,

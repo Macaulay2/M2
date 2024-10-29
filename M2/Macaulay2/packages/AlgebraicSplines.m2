@@ -9,7 +9,7 @@
 ------------------------------------------
 ------------------------------------------
 
-newPackage select((
+newPackage(
     "AlgebraicSplines",
         Version => "0.1.0", 
         Date => "27. May 2015",
@@ -27,7 +27,7 @@ newPackage select((
         PackageExports => {
 	    "FourierMotzkin"
 	    }
-        ), x -> x =!= null)
+    )
 
 export {
    "BaseRing",

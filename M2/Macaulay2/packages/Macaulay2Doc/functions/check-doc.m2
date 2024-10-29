@@ -5,21 +5,13 @@
 doc ///
 Node
   Key
-     TEST
-    (TEST, String)
-    (TEST, List)
-    [TEST, FileName]
+     symbol TEST
   Headline
     add a test for a package
   Usage
     TEST s
   Inputs
-    s:String
-      or list of strings, containing Macaulay2 code
-    FileName=>Boolean
-      if true, then @TT "s"@ (or each element of @TT "s"@, if it is a
-      list) is interpreted as the name of a file containing a test as
-      opposed to the test itself.
+    s:String -- containing Macaulay2 code
   Consequences
     Item
       registers the string @TT "s"@ as a test of the @TO2 {"currentPackage", "current package"}@.
@@ -84,7 +76,7 @@ Node
   Description
     Text
       It is important for package authors to provide tests to ensure that the package is functioning properly.
-      One provides tests using the @TO TEST@ function following the @TO beginDocumentation@ call in the source
+      One provides tests using the @TO symbol TEST@ function following the @TO beginDocumentation@ call in the source
       of the package.
 
       Optionally, one can store all tests in a @TT "tests.m2"@ directory under the auxiliary subdirectory of
@@ -109,7 +101,7 @@ Node
   SeeAlso
     "packages"
     "creating a package"
-    TEST
+    symbol TEST
     installPackage
     loadPackage
 ///

@@ -126,7 +126,7 @@ d1d1 := hashTable for i from min B to max B2 -2 list
 
 D := map(labeledTensorComplex{A0,B},B2,d1d1, Degree => -2);
 assert (isComplexMap D);
-m0 := nullHomotopy D;
+m0 := nullHomotopy(D, FreeToExact => true);
 for i from 4 to limit do(
     (C,K) := componentsAndIndices B2_i;
     for k in K do (
@@ -212,7 +212,7 @@ for i from lo+1 to hi list
 	 (A0**G).dd_(i-2)*D_i - D_(i-1)*BG.dd_i
 	 );
 
-m0 := nullHomotopy D;
+m0 := nullHomotopy(D, FreeToExact => true);
 for i from 2 to min(limit, 1+(concentration G)_1) do( --was just 1+(concentration G)_1
     (C,K) := componentsAndIndices BG_i;
     for k in K do (
@@ -386,7 +386,7 @@ p = new MutableHashTable from
 for i from 2 to length G list i=>(presentation R ** G_(i-2))*(BG_i)^[{2,i-2}]
 p#2
 p#3
-nullHomotopy map(G[-2],BG,p)
+nullHomotopy(map(G[-2],BG,p), FreeToExact => true)
 G[-2]
 BG
 
@@ -646,7 +646,7 @@ if n >= 2 then (
     d1d1 := hashTable for i from min B to max B list 
        i+2 => (d1**id_(B_i))*(B2_(i+2))^[{2,i}] - (id_(B_i)**d1)*(B2_(i+2))^[{i,2}];
     D := map(A0**B,B2,d1d1, Degree => -2);
-    m0 := nullHomotopy D;
+    m0 := nullHomotopy(D, FreeToExact => true);
 
     tlist := flatten for i from 4 to 1+(concentration B)_1 list(
         (C,K) := componentsAndIndices B2_i;

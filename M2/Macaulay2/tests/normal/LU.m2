@@ -83,3 +83,9 @@ M == L*U
 L*U
 M
 M == checkLU LUdecomposition M
+
+-- empty matrix (reported by Joel Louwsma in Zulip)
+scan({map(RR^0, RR^0, {}), map(CC^0, CC^0, {})}, M -> (
+	checkLU M;
+	assert Equation(rank M, 0);
+	assert Equation(det M, 1)))

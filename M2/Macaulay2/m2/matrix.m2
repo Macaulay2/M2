@@ -85,6 +85,8 @@ Matrix * Number :=
 Matrix * RingElement := (m,r) -> (
     if ring r =!= ring m then try r = promote(r,ring m) else m = promote(m,ring r);
      map(target m, source m, reduce(target m, raw m * raw r)))
+Matrix / Number      :=
+Matrix / RingElement := (m,r) -> m * (1/r)
 
 toSameRing = (m,n) -> (
      if ring m =!= ring n then (
@@ -515,8 +517,8 @@ contract'(Matrix, Matrix) := Matrix => ((m,n) -> ( flip(dual target n, target m)
 
 jacobian = method()
 jacobian Matrix := Matrix => (m) -> diff(transpose vars ring m, m)
-
 jacobian Ring := Matrix => (R) -> jacobian presentation R ** R
+jacobian RingElement := Matrix => f -> jacobian matrix {{f}}
 
 leadTerm(ZZ, Matrix) := Matrix => (i,m) -> (
      map(target m, source m, rawInitial(i,m.RawMatrix)))

@@ -308,7 +308,11 @@ ComplexMap == ZZ := Boolean => (f,n) -> (
     )
 ZZ == ComplexMap := Boolean => (n,f) -> f == n
 
-RingElement * ComplexMap := (r,f) -> (
+Number * ComplexMap :=
+RingElement * ComplexMap := ComplexMap => (r,f) -> (
+    if ring r =!= ring f then
+        try r = promote(r,ring f)
+        else error "can't promote scalar to ring of complex homomorphism";
     df := degree f;
     (lo,hi) := (source f).concentration;
     maps := hashTable for i from lo to hi list i => (
@@ -321,7 +325,11 @@ RingElement * ComplexMap := (r,f) -> (
     result
     )
 
+ComplexMap * Number :=
 ComplexMap * RingElement := (f,r) -> (
+    if ring r =!= ring f then
+        try r = promote(r,ring f)
+        else error "can't promote scalar to ring of complex homomorphism";
     df := degree f;
     (lo,hi) := (source f).concentration;
     maps := hashTable for i from lo to hi list i => (
@@ -332,16 +340,6 @@ ComplexMap * RingElement := (f,r) -> (
     if isCommutativeCached f and isCommutative ring f then
         result.cache.isCommutative = true;
     result
-    )
-
-Number * ComplexMap := (r,f) -> (
-    try r = promote(r,ring f) else error "can't promote scalar to ring of complex homomorphism";
-    r * f
-    )
-
-ComplexMap * Number := (f,r) -> (
-    try r = promote(r,ring f) else error "can't promote scalar to ring of complex homomorphism";
-    f * r
     )
 
 - ComplexMap := (f) -> (
@@ -636,6 +634,7 @@ Hom(Matrix, ComplexMap) := ComplexMap => opts -> (f,g) ->
     Hom(map(complex target f, complex source f, i -> if i === 0 then f), g, opts)
 
 dual ComplexMap := ComplexMap => {} >> o -> f -> Hom(f, (ring f)^1)
+transpose ComplexMap := ComplexMap => f -> dual f
 
 homomorphism ComplexMap := ComplexMap => (h) -> (
     -- h should be a homomorphism of complexes from R^1[-i] --> E = Hom(C,D)
@@ -1069,9 +1068,6 @@ coimage ComplexMap := Complex => f -> (
 -- homotopy --------------------------------------------------------
 --------------------------------------------------------------------
 isNullHomotopyOf = method()
-isNullHomotopic = method()
-nullHomotopy = method() -- this function attempts to construct one, might fail
-
 isNullHomotopyOf(ComplexMap, ComplexMap) := (h, f) -> (
     -- returns true if h is a null homotopy for f : C --> D.
     -- if debugLevel > 0, then more info as to where it is not, is given
@@ -1105,32 +1101,7 @@ isNullHomotopyOf(ComplexMap, ComplexMap) := (h, f) -> (
         )
     )
 
--- TODO: we are keeping this version so that we may compare the 
---   more general version with this version, at a later date.
-nullHomotopyFreeSource = f -> (
-    -- f:ComplexMap
-    -- key assumption: 'source f' is a complex of free modules
-    -- result is a ComplexMap h : C --> D, of degree degree(f)+1
-    C := source f;
-    D := target f;
-    deg := degree f + 1;
-    hs := new MutableHashTable;
-    (lo,hi) := concentration f;
-    for i from lo to hi do (
-        if hs#?(i-1) then ( 
-            rem := (f_i - hs#(i-1) * dd^C_i) % (dd^D_(i+deg));
-            if rem != 0 then return null; -- error "can't construct homotopy";
-            hs#i = (f_i - hs#(i-1) * dd^C_i) // (dd^D_(i+deg))
-            )
-        else (
-            rem = f_i % dd^D_(i+deg);
-            if rem != 0 then return null; -- error "can't construct homotopy";
-            hs#i = f_i // dd^D_(i+deg)
-            )
-        );
-    map(D, C, new HashTable from hs, Degree => deg)
-    )
-
+isNullHomotopic = method()
 isNullHomotopic ComplexMap := Boolean => f -> (
     g := homomorphism' f;
     H := target g; 
@@ -1139,11 +1110,34 @@ isNullHomotopic ComplexMap := Boolean => f -> (
     g_0 == dd^H_(d+1) * g1
     )
 
-nullHomotopy ComplexMap := ComplexMap => f -> (
-    -- we check that the source is free, as that can be much faster
-    -- TODO: nullHomotopy should perhaps be hook-ified.
-    result := if isFree source f then nullHomotopyFreeSource f;
-    if result =!= null then return result;
+nullHomotopyFreeToExact = f -> (
+    -- key assumption: 'source f' is a complex of free modules AND the target is exact
+    -- result is a ComplexMap h : C --> D, of degree degree(f)+1
+    if not isFree source f then error "expected source of complex map to be free";
+    -- Note: we do not check that the target is exact!
+    C := source f;
+    D := target f;
+    deg := degree f + 1;
+    hs := new MutableHashTable;
+    (lo,hi) := concentration f;
+    for i from lo to hi do (
+        if hs#?(i-1) then ( 
+            --rem := (f_i - hs#(i-1) * dd^C_i) % (dd^D_(i+deg));
+            --if rem != 0 then return null; -- error "can't construct homotopy";
+            hs#i = (f_i - hs#(i-1) * dd^C_i) // (dd^D_(i+deg))
+            )
+        else (
+            --rem = f_i % dd^D_(i+deg);
+            --if rem != 0 then return null; -- error "can't construct homotopy";
+            hs#i = f_i // dd^D_(i+deg)
+            )
+        );
+    map(D, C, new HashTable from hs, Degree => deg)
+    )
+
+nullHomotopy = method(Options => true) -- this function attempts to construct one, might fail
+nullHomotopy ComplexMap := ComplexMap => {FreeToExact => false} >> opts -> f -> (
+    if opts.FreeToExact then return nullHomotopyFreeToExact f;
     g := homomorphism' f;
     H := target g; 
     d := degree f;
@@ -1333,7 +1327,7 @@ connectingMap(ComplexMap, ComplexMap) := ComplexMap => opts -> (g, f) -> (
         assert isWellDefined p;
         assert isWellDefined q;
         );
-    HH(q) * (HH(p))^-1
+    - HH(q) * (HH(p))^-1 -- sign is negative because of the def of cylinder.
     )
 
 longExactSequence = method(Options => true)
@@ -1379,14 +1373,15 @@ horseshoeResolution(Matrix, Matrix) := Sequence => opts -> (g,f) -> (
     horseshoeResolution(complex{g,f}, opts)
     )  
 
-connectingExtMap = method(Options => {Concentration => null})
+connectingExtMap = method(Options => {Concentration => null,
+        LengthLimit => infinity})
 connectingExtMap(Module, Matrix, Matrix) := ComplexMap => opts -> (M, g, f) -> (
-    F := freeResolution M;
-    connectingMap(Hom(F, g), Hom(F, f), opts)
+    F := freeResolution(M, LengthLimit => opts.LengthLimit);
+    connectingMap(Hom(F, g), Hom(F, f), Concentration => opts.Concentration)
     )
 connectingExtMap(Matrix, Matrix, Module) := ComplexMap => opts -> (g, f, N) -> (
-    (g', f') := horseshoeResolution(g, f);
-    G := freeResolution N;
+    (g', f') := horseshoeResolution(g, f, LengthLimit => opts.LengthLimit);
+    G := freeResolution(N, LengthLimit => opts.LengthLimit);
     -- TODO: the indexing on opts.Concentration needs to be negated
-    connectingMap(Hom(f', G), Hom(g', G), opts)
+    connectingMap(Hom(f', G), Hom(g', G), Concentration => opts.Concentration)
     )

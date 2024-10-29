@@ -3,7 +3,8 @@
 --- notes:
 
 document { 
-     Key => {atan2,(atan2,RR,RR),(atan2, RRi, RRi)
+     Key => {atan2,(atan2,RR,RR),(atan2, RRi, RRi),
+	 (atan2,RR,RRi), (atan2,RRi,RR)
 	  },
      Headline => "compute an angle of a certain triangle",
      Usage => "atan2(y,x)\natan2(y,I)\natan2(J,x)\natan2(J,I)",
@@ -50,10 +51,10 @@ document {
      }
 
 document {
-     Key => {atanh, (atanh,Number), (atanh,Constant)},
+     Key => {atanh, (atanh,Number)},
      Headline => "compute the hyperbolic arctangent of a number",
      Usage => "atanh x",
-     Inputs => { "x" => { ofClass Number, " or ", ofClass Constant } },
+     Inputs => { "x" => { ofClass Number } },
      Outputs => {
 	  Number => { "the hyperbolic arctangent of ", TT "x" }
 	  },
@@ -64,10 +65,10 @@ document {
      }
 
 document {
-     Key => {acoth, (acoth,Number), (acoth,Constant)},
+     Key => {acoth, (acoth,Number)},
      Headline => "compute the hyperbolic arctangent of a number",
      Usage => "acoth x",
-     Inputs => { "x" => { ofClass Number, " or ", ofClass Constant } },
+     Inputs => { "x" => { ofClass Number } },
      Outputs => {
 	  Number => { "the hyperbolic arccotangent of ", TT "x" }
 	  },

@@ -95,6 +95,10 @@ extern void fatalarrayindex(int indx, int len, const char *file, int line, int c
 
 extern void fatalarraylen(int len, const char *file, int line, int column);
 
+/******************************************************************************/
+/*  Functions dealing with libreadline and completion                         */
+/******************************************************************************/
+
 static char *M2_completion_generator(const char *text, int state) {
   static int i;
   static char **v;
@@ -125,9 +129,26 @@ static char **M2_completion(const char *text, int start, int end) {
   return rl_completion_matches(text, M2_completion_generator);
 }
 
+int system_readHistory(char *filename) { return read_history(filename); }
+int system_appendHistory(int n, char *filename)
+{
+  return append_history(n, filename);
+}
+
+void system_addHistory(char *buf) { add_history(buf); }
+char *system_getHistory(const int n)
+{
+  HIST_ENTRY *entry = history_get(n);
+  if (entry != NULL) return entry->line;
+  return NULL;
+}
+
+int system_historyLength() { return history_length; }
+
 void system_initReadlineVariables(void) {
   static char readline_name[] = "M2";
   static char basic_word_break_characters[] = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ \t\n\r";
+  rl_catch_signals = FALSE; /* tell readline not to catch signals, such as SIGINT */
   rl_readline_name = readline_name;
   rl_attempted_completion_function = M2_completion;
   rl_basic_word_break_characters = basic_word_break_characters;

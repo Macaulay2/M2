@@ -1,6 +1,7 @@
 -- Copyright 1994 by Daniel R. Grayson
 
 needs "methods.m2"
+needs "shared.m2" -- for union
 
 -----------------------------------------------------------------------------
 -- Tally and VirtualTally type declarations and basic constructors
@@ -8,6 +9,10 @@ needs "methods.m2"
 
 VirtualTally.synonym = "virtual tally"
 Tally.synonym = "tally"
+
+-- constructors, defined in d/sets.dd
+tally String      :=
+tally VisibleList := Tally => tally
 
 elements = method()
 elements Tally := x -> splice apply(pairs x, (k,v) -> v:k)
@@ -78,11 +83,13 @@ product VirtualTally := (w) -> product(pairs w, (k,v) -> k^v)
 
 Set.synonym = "set"
 
--- constructor
-new Set from List := Set => (X,x) -> set x -- compiled function
-elements Set := List => x -> keys x
+-- constructors, both compiled functions defined in d/sets.dd
+set VisibleList := Set => set
+new Set from List := Set => (X,x) -> set x
 
 -- set operations
+elements Set := List => keys
+installMethod(union, () -> set {})
 union(Set, Set) := Set + Set := Set => (x,y) -> merge(x,y,(i,j)->i)
 
 -- Set ++ Set := Set => (x,y) -> applyKeys(x,i->(0,i)) + applyKeys(y,j->(1,j))

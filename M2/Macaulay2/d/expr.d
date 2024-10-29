@@ -24,20 +24,30 @@ threadLocal export recursionLimit := 300;
 
 
 threadCounter := 0;
-threadLocal HashCounter := ( threadCounter = threadCounter + 1; 1000000 + 3 + (threadCounter-1) * 10000 );
+threadLocal HashCounter := (
+    threadCounter = threadCounter + 1;
+    hash_t(1000000 + 3 + (threadCounter-1) * 10000 ));
+-- give 32-bit machines enough space to store a 64-bit hash code
+-- TODO: instead, allow 64-bit entries in the array of thread local variables
+threadLocal HashCounterExtraBits := 0;
 
-export nextHash():int := (
-     HashCounter = HashCounter + 1;
-     if HashCounter < 0 -- check for integer overflow
+export nextHash():hash_t := (
+     if HashCounter == Ccode(hash_t, "18446744073709551615ull") -- check for integer overflow
      then Ccode(void, " fprintf(stderr, \" *** hash code serial number counter overflow (too many mutable objects created)\\n\"); abort(); ");
+     HashCounter = HashCounter + 1;
      HashCounter);
 
--- Knuth, Art of Computer Programming, Section 6.4
-export fibonacciHash(k:int,p:int):int := (
-    Ccode(int, "(2654435769 * ",k,") >> (32 - ",p,")"));
-
--- hash codes for mutable objects that don't use nextHash
-export hashFromAddress(e:Expr):int := fibonacciHash(Ccode(int, "(long)",e), 9);
+------------------------------------------------------------
+-- hash codes for mutable objects that don't use nextHash --
+------------------------------------------------------------
+-- We use Fibonacci hashing (Knuth, Art of Computer Programming, Section 6.4)
+-- The constant 11400714819323198485 is approximately 2^64 / phi.
+-- We want to use the p most significant bits for hashing (where 2^p is the
+-- number of buckets), but in practice we use the p least significant bits,
+-- so we swap them.  We use p = 10 here since #buckets Matrix = 2^10.
+export hashFromAddress(e:Expr):hash_t := (
+    x := Ccode(hash_t, "11400714819323198485ull * (unsigned long)", e);
+    Ccode(hash_t, "(", x, " >> 54) | (", x, " << 10)"));
 
 export NULL ::= null();
 
@@ -158,7 +168,7 @@ export isglobaldict(d:Dictionary):bool := !d.transient && d.frameID == 0;
 
 -----------------------------------------------------------------------------
 
-export bucketEnd := KeyValuePair(nullE,0,nullE,self);
+export bucketEnd := KeyValuePair(nullE,hash_t(0),nullE,self);
 --Dummy Symbol needs to go in tokens because it needs error support.
 --To preserve existing hashes of types we use this workaround and preallocate it a hash number
 export dummySymbolHash := nextHash();
@@ -168,7 +178,7 @@ export newHashTable(Class:HashTable,parent:HashTable):HashTable := (
 	  -- we start with four empty buckets.  It is important for the 
 	  -- enlarge/shrink code in hashtable.dd that the number of buckets
 	  -- (here four) is a power of two
-	  Class,parent,0,0,
+	  Class,parent,0,hash_t(0),
 	  true,				  -- mutable by default; careful: other routines depend on this
 	  false,
 	  newThreadRWLock()
@@ -178,8 +188,8 @@ export newHashTableWithHash(Class:HashTable,parent:HashTable):HashTable := (
        ht.hash=nextHash();
        ht);
 
-export newCompiledFunction(fn:fun):CompiledFunction := (
-    cf := CompiledFunction(fn, 0);
+export newCompiledFunction(fn:function(Expr):Expr):CompiledFunction := (
+    cf := CompiledFunction(fn, hash_t(0));
     cf.hash = hashFromAddress(Expr(cf));
     cf);
 
@@ -194,6 +204,7 @@ dummybinary(w:ParseTree,v:Token,o:TokenFile,prec:int,obeylines:bool):ParseTree :
      w);
 export nopr := -1;						    -- represents unused precedence
 export newParseinfo():parseinfo := parseinfo(nopr,nopr,nopr,parsefuns(dummyunary,dummybinary));
+
 export dummyUnaryFun(c:Code):Expr := (
      anywhereError("dummy unary function called");
      nullE);
@@ -206,36 +217,35 @@ export dummyBinaryFun(c:Code,d:Code):Expr := (
 export dummyTernaryFun(c:Code,d:Code,e:Code):Expr := (
      anywhereError("dummy ternary function called");
      nullE);
+export dummyMultaryFun(c:CodeSequence):Expr := (
+     anywhereError("dummy multary function called");
+     nullE);
 
 export emptySequence := Sequence();
-
 export emptySequenceE := Expr(emptySequence);
 
 export dummySymbol := Symbol(
-     Word("-*dummy symbol*-",TCnone,0,newParseinfo()),dummySymbolHash,dummyPosition,
+     Word("-*dummy symbol*-",TCnone,hash_t(0),newParseinfo()),dummySymbolHash,dummyPosition,
      dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
      Macaulay2Dictionary.frameID,dummySymbolFrameIndex,1,
      false,						    -- not protected, so we can use it in parallelAssignmentFun
      false,
      false,
-     0
+     hash_t(0)
      );
 dummySymbolClosure := SymbolClosure(globalFrame,dummySymbol);
 globalFrame.values.dummySymbolFrameIndex = Expr(dummySymbolClosure);
 export dummyCode := Code(nullCode());
 export NullCode := Code(nullCode());
-export dummyCodeClosure := CodeClosure(dummyFrame,dummyCode);
+export dummyPseudocodeClosure := PseudocodeClosure(dummyFrame,dummyCode);
 export dummyToken   := Token(
-     Word("-*dummy token*-",TCnone,0,newParseinfo()),
-     dummyPosition.filename,
-     dummyPosition.line,
-     dummyPosition.column,
-     dummyPosition.loadDepth,
+     Word("-*dummy token*-",TCnone,hash_t(0),newParseinfo()),
+     dummyPosition,
      Macaulay2Dictionary,dummySymbol,false);
 
 export parseWORD    := newParseinfo();			    -- parsing functions filled in later
 
-export dummyWord    := Word("-*dummy word*-",TCnone,0,newParseinfo());
+export dummyWord    := Word("-*dummy word*-",TCnone,hash_t(0),newParseinfo());
 
 export dummyTree    := ParseTree(dummy(dummyPosition));
 
@@ -274,12 +284,12 @@ export compiledFunctionClass := newtypeof(functionClass);
 export compiledFunctionClosureClass := newtypeof(functionClass);
 export symbolClass := newbasictype();
 export keywordClass := newtypeof(symbolClass);
-export codeClass := newbasictype();
+export pseudocodeClass := newbasictype();
 export mysqlConnectionClass := newbasictype();
 export mysqlFieldClass := newbasictype();
 export mysqlResultClass := newbasictype();
 export functionBodyClass := newbasictype();
-export compiledFunctionBodyClass := newbasictype();
+export compiledFunctionBodyClass := newtypeof(functionBodyClass);
 export errorClass := newbasictype();
 export netClass := newbasictype();
 export netFileClass := newbasictype();
@@ -344,6 +354,7 @@ export angleBarListClass := newtypeof(visibleListClass);
 export RRiClass := newbignumbertype();
 export pointerClass := newbasictype();
 export atomicIntClass := newbasictype();
+export pseudocodeClosureClass := newtypeof(pseudocodeClass);
 -- all new types, dictionaries, and classes go just above this line, if possible, so hash codes don't change gratuitously!
 
 
@@ -360,6 +371,8 @@ export WrongArgZZ():Expr := WrongArg("an integer");
 export WrongArgZZ(n:int):Expr := WrongArg(n,"an integer");
 export WrongArgRR():Expr := WrongArg("a real number");
 export WrongArgRR(n:int):Expr := WrongArg(n,"a real number");
+export WrongArgRRorCC():Expr := WrongArg("a real or complex number");
+export WrongArgRRorCC(n:int):Expr := WrongArg(n,"a real or complex number");
 export WrongArgRRorRRi():Expr := WrongArg("a real number or interval");
 export WrongArgRRorRRi(n:int):Expr := WrongArg(n,"a real number or interval");
 export WrongArgSmallInteger():Expr := WrongArg("a small integer");
@@ -374,6 +387,8 @@ export WrongArgMutableMatrix(n:int):Expr := WrongArg(n,"a raw mutable matrix");
 export WrongArgMutableMatrix():Expr := WrongArg("a raw mutable matrix");
 export WrongArgMatrix(n:int):Expr := WrongArg(n,"a raw matrix");
 export WrongArgMatrix():Expr := WrongArg("a raw matrix");
+export WrongArgHashTable():Expr := WrongArg("a hash table");
+export WrongArgHashTable(n:int):Expr := WrongArg(n, "a hash table");
 export ArgChanged(name:string,n:int):Expr := (
      buildErrorPacket(quoteit(name) + " expected argument " + tostring(n)
 	  + " not to change its type during execution"));

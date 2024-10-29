@@ -226,21 +226,6 @@ assert(f%a + a * (f//a) == f)
 
 
 --
-S = ZZ/101[t_1 .. t_9,u_1 .. u_9]
-m = matrix pack (3,toList (t_1 .. t_9))			  -- 3 by 3
-n = matrix pack (3,toList (u_1 .. u_9))			  -- 3 by 3
-j = flatten (m * n - n * m)
-k = flatten (m * n - n * m)
-G = gb j
-jj = generators G
-assert( numgens source jj == 26 )
-T = (degreesRing S)_0
-assert( poincare cokernel j == 1-8*T^2+2*T^3+31*T^4-32*T^5-25*T^6+58*T^7-32*T^8+4*T^9+T^10 )
-v = apply(7, i -> numgens source generators gb(k,DegreeLimit => i) )
-assert (v  === {0, 0, 8, 20, 25, 26, 26} )
-
-
---
 R = ZZ/101[a..d]
 A = image matrix {{a}}
 B = image matrix {{b}}
@@ -813,12 +798,6 @@ assert( degree U4 == 0 )
 
 
 --
-R=ZZ/101[x]
-assert(monomialIdeal vars R != 0)
-assert(monomialIdeal map(R^1,R^1,0) == 0)
-
-
---
 R = ZZ/101[a .. d,Degrees=>{1,2,3,5}]
 f = vars R
 C = resolution cokernel f
@@ -1054,7 +1033,7 @@ assert try (clean(0.1,A);false) else true  -- not yet implemented.
 needsPackage "SimplicialComplexes"
 R = QQ[a..d]
 D = simplicialComplex {a*b*c,a*b*d,a*c*d,b*c*d}
-C = chainComplex D
+C = complex D
 assert ( rank HH_2 C == 1 )
 
 
@@ -1184,22 +1163,6 @@ F 3
 
 --
      assert( 3 === position({a,b,c,d,e,f},i->i===d ) )
-
-
-
---
-    R = QQ[x,y,z];
-    I = monomialIdeal(x^2,y^3,x*y^2*z,y*z^4);
-    J = polarize(I);
-    assert(betti res I==betti res J)
-
-
---
-    R = QQ[x,y,z];
-    I = monomialIdeal(x^2*y^2,y^2*z^2,x*y*z^4);
-    J = polarize(I, VariableBaseName => "whyNotAWord");
-    assert(betti res I==betti res J)
-
 
 --
 clearAll

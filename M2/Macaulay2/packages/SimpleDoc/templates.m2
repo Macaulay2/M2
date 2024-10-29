@@ -1,25 +1,26 @@
 docTemplate = "doc ///
-Key
-Headline
-Usage
-Inputs
-Outputs
-Consequences
-  Item
-Description
-  Text
-  Tree
-  Code
-  Pre
-  Example
-  CannedExample
-ExampleFiles
-Acknowledgement
-Contributors
-References
-Caveat
-SeeAlso
-Subnodes
+Node
+  Key
+  Headline
+  Usage
+  Inputs
+  Outputs
+  Consequences
+    Item
+  Description
+    Text
+    Tree
+    Code
+    Pre
+    Example
+    CannedExample
+  ExampleFiles
+  Acknowledgement
+  Contributors
+  References
+  Caveat
+  SeeAlso
+  Subnodes
 ///"
 
 packagetemplate = "newPackage(

@@ -13,7 +13,6 @@ conjugate Number := identity
 toExternalString Number := simpleToString
 floor Number := x -> floor0(x)
 floor Constant := floor0 @@ numeric
-ceiling Constant :=
 ceiling Number := x -> - floor(-x)
 
 -----------------------------------------------------------------------------
@@ -58,6 +57,7 @@ abs ZZ := abs RR := abs RRi := abs CC := abs QQ := abs0
 abs Constant := abs @@ numeric
 
 lcm = method(Binary => true)
+installMethod(lcm, () -> 1)
 lcm(ZZ,ZZ) := (f,g) -> (
     d := gcd(f, g);
     if d == 0 then 0

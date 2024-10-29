@@ -393,8 +393,6 @@ hypertext Descent := x -> SPAN prepend( "style" => "display:inline-table;text-al
 	  , BR{})))
 hypertext Time := x -> DIV { x#1, DIV ("-- ", toString x#0, " seconds", "class" => "token comment") }
 SAMPc = c -> x -> SAMP {toString x,"class"=>"token "|c}
-hypertext Pseudocode :=
-hypertext CompiledFunctionBody := SAMPc "function"
 hypertext Command :=
 hypertext FunctionBody :=
 hypertext Function := f -> SAMP deepSplice {

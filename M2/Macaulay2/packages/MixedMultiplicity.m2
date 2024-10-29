@@ -30,7 +30,6 @@ newPackage(
 	    }
 	},
     Headline => "Mixed Multiplicities",
-    Reload => true,
     Headline => "Mixed Multiplicities of ideals",
     PackageImports=>{"Divisor", "ReesAlgebra", "Depth", "Polyhedra"},
     Keywords => {"Commutative Algebra"},

@@ -24,27 +24,17 @@ document {
 undocumented {
      (symbol *, Number, RingElement),
      (symbol *, RingElement, Number),
-    (symbol*,  Minus, Expression),
-    (symbol*,  Product, Holder),
-    (symbol*,  Minus, Minus),
-    (symbol*,  ZZ, InfiniteNumber),
-    (symbol*,  QQ, InfiniteNumber),
-    (symbol*,  RR, InfiniteNumber),
+    (symbol*,  Number, InfiniteNumber),
     (symbol*,  InfiniteNumber, ZZ),
     (symbol*,  InfiniteNumber, QQ),
     (symbol*,  InfiniteNumber, RR),
     (symbol*,  ZZ, Ideal),
     (symbol*,  ZZ, GradedModuleMap),
     (symbol*,  InfiniteNumber, InfiniteNumber),
-    (symbol*,  Expression, Minus),
-    (symbol*,  Product, Product),
-    (symbol*,  Holder, Product),
     (symbol*,  ZZ, Module),
     (symbol*,  ZZ, MonomialIdeal),
     (symbol*,  String),
     (symbol*,  ZZ, ChainComplexMap),
-    (symbol*,  Expression, OneExpression),
-    (symbol*,  OneExpression, Expression),
     }
 
      
@@ -89,7 +79,6 @@ document {
     (symbol*,  RingMap, RingMap),
     (symbol*,  RingElement, MutableMatrix),
     (symbol*,  Ring, MonomialIdeal),
-    (symbol*,  MonomialIdeal, Module),
     (symbol*,  MonomialIdeal, MonomialIdeal),
     (symbol*,  RingElement, Ideal),
     (symbol*,  Matrix, Vector),
@@ -271,7 +260,6 @@ undocumented {
 document {
      Key => {symbol -,
 	  (symbol -, ChainComplexMap, ChainComplexMap),
-	  (symbol -, Minus),
 	  (symbol -, ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
 	  (symbol -, ProjectiveHilbertPolynomial, ZZ),
 	  (symbol -, ZZ, ProjectiveHilbertPolynomial),
@@ -284,7 +272,6 @@ document {
 	  (symbol -, RingElement, RingElement),
 	  (symbol -, InfiniteNumber),
 	  (symbol -, InfiniteNumber, InfiniteNumber),
-	  (symbol -, ZeroExpression),
 	  (symbol -, RingElement, ChainComplexMap),
 	  (symbol -, ChainComplexMap),
 	  (symbol -, MutableMatrix, MutableMatrix),
@@ -332,7 +319,6 @@ document {
 	  (symbol -, Matrix),
 	  (symbol -, RingElement, Matrix),
 	  (symbol -, ChainComplexMap, RingElement),
-	  (symbol -, Holder),
 	  (symbol -, Vector, Vector)
 	  },
      Headline => "a unary or binary operator, usually used for negation or subtraction",
@@ -362,11 +348,9 @@ undocumented {
      (symbol /, RingElement, Number),
      (symbol /, Number, RingElement),
      (symbol /, Number, InfiniteNumber),
-     (symbol /, InfiniteNumber, ZZ),
-     (symbol /, InfiniteNumber, QQ),
+     (symbol /, InfiniteNumber, Number),
      (symbol /, InfiniteNumber, RR),
      (symbol /, EngineRing, Ideal),
-     (symbol /, Expression, OneExpression),
      (symbol /, List, SelfInitializingType)
      }
 
@@ -419,6 +403,33 @@ document {
      SeeAlso => { "//"}
      }
 
+doc ///
+  Key
+    (symbol /, Matrix, Number)
+    (symbol /, Matrix, RingElement)
+    (symbol /, Vector, Number)
+    (symbol /, Vector, RingElement)
+  Headline
+    scalar division
+  Usage
+    v / c
+  Inputs
+    v:{Matrix, Vector}
+    c:{Number, RingElement}
+  Outputs
+    :{Matrix, Vector}
+  Description
+    Text
+      This operation is equivalent to right scalar multiplication by the
+      multiplicative inverse of @CODE "c"@, i.e., @CODE "v * (1/c)"@.
+    Example
+      R = QQ[a,b,c,d]
+      matrix {{d, -b}, {-c, a}} / (a * d - b * c)
+  Caveat
+    The base ring of the output will be a field containing the base ring
+    of @CODE "v"@.
+///
+
 document {
      Key => {symbol %,
 	  (symbol %, CC, CC),
@@ -467,8 +478,7 @@ document {
 	  (symbol //, CC, QQ),
 	  (symbol //, CC, RR),
 	  (symbol //, CC, ZZ),
-	  (symbol //, InfiniteNumber, ZZ),
-	  (symbol //, InfiniteNumber, QQ),
+	  (symbol //, InfiniteNumber, Number),
 	  (symbol //, InfiniteNumber, RR),
 	  (symbol //, Matrix, Number),
 	  (symbol //, QQ, QQ),
@@ -515,13 +525,6 @@ document {
      }
 
 undocumented {
-     (symbol ^, ZeroExpression, Holder),
-     (symbol ^, Holder, ZeroExpression),
-     (symbol ^, Holder, OneExpression),
-     (symbol ^, Expression, ZeroExpression),
-     (symbol ^, ZeroExpression, Expression),
-     (symbol ^, Expression, OneExpression),
-     (symbol ^, ZeroExpression, ZeroExpression),
      (symbol ^, InfiniteNumber, ZZ),
      (symbol ^, InfiniteNumber, QQ),
      (symbol ^, InfiniteNumber, RR),
@@ -800,72 +803,7 @@ document {
      }
 
 document {
-     Key => { symbol ==,
-	  (symbol==, Matrix, Matrix), (symbol==, ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
-	  (symbol==, ZZ, ProjectiveHilbertPolynomial), (symbol==, ProjectiveHilbertPolynomial, ZZ),
-	  (symbol==, ChainComplex, ChainComplex), (symbol==, RingElement, RingElement), (symbol==, GradedModuleMap, GradedModuleMap),
-	  (symbol==, Ideal, Ideal), (symbol==, MutableMatrix, MutableMatrix), (symbol ==,Boolean,Boolean),
-	  (symbol ==,CC,CC), (symbol ==,CC,QQ), (symbol ==,CC,RR), (symbol ==,CC,ZZ), (symbol ==,Matrix,Number),
-	  (symbol ==,Number,Matrix), (symbol ==,QQ,CC), (symbol ==,QQ,QQ), (symbol ==,QQ,RR), (symbol ==,RR,CC),
-	  (symbol ==,RR,QQ), (symbol ==,RR,RR), (symbol ==,RR,ZZ),
-      (symbol ==,QQ,RRi), (symbol ==,ZZ, RRi), (symbol ==, RR, RRi),
-      (symbol ==,RRi,QQ), (symbol ==,RRi, ZZ), (symbol ==,RRi, RR),
-      (symbol ==,RRi,RRi), (symbol ==,RingElement,ZZ), (symbol ==,Sequence,Sequence),
-	  (symbol ==,String,String), (symbol ==,Symbol,Symbol), (symbol ==,ZZ,CC), (symbol ==,ZZ,RR),
-	  (symbol ==,ZZ,RingElement), (symbol ==,ZZ,ZZ), (symbol==, Module, Module), (symbol==, Vector, Vector),
-	  (symbol==, BettiTally, BettiTally), (symbol==, VisibleList, VisibleList),
-	  (symbol==, RingElement, Number),
-	  (symbol==, Number, RingElement),
-	  (symbol==, RingElement, Matrix),
-	  (symbol==, Ideal, MonomialIdeal),
-	  (symbol==, GradedModuleMap, ZZ),
-	  (symbol==, InfiniteNumber, InfiniteNumber),
-	  (symbol==, ZZ, Ring),
-	  (symbol==, ZZ, QQ),
-	  (symbol==, Matrix, ZZ),
-	  (symbol==, ZZ, ChainComplex),
-	  (symbol==, ChainComplex, ZZ),
-	  (symbol==, MonomialIdeal, Ring),
-	  (symbol==, Ring, MonomialIdeal),
-	  (symbol==, MonomialIdeal, ZZ),
-	  (symbol==, Equation, Holder),
-	  (symbol==, Holder, Equation),
-	  (symbol==, ChainComplexMap, ZZ),
-	  (symbol==, ZZ, MutableMatrix),
-	  (symbol==, Number, InfiniteNumber),
-	  (symbol==, Nothing, Nothing),
-	  (symbol==, Equation, Equation),
-	  (symbol==, GradedModuleMap, RingElement),
-	  (symbol==, RingElement, GradedModuleMap),
-	  (symbol==, String, Net),
-	  (symbol==, Ideal, Ring),
-	  (symbol==, ZZ, Ideal),
-	  (symbol==, Ideal, ZZ),
-	  (symbol==, Matrix, RingElement),
-	  (symbol==, MonomialIdeal, Ideal),
-	  (symbol==, ZZ, GradedModuleMap),
-	  (symbol==, GradedModule, GradedModule),
-	  (symbol==, Module, ZZ),
-	  (symbol==, ZZ, Module),
-	  (symbol==, ChainComplexMap, RingElement),
-	  (symbol==, RingElement, ChainComplexMap),
-	  (symbol==, Ring, ZZ),
-	  (symbol==, QQ, ZZ),
-	  (symbol==, ZZ, MonomialIdeal),
-	  (symbol==, ZZ, ChainComplexMap),
-	  (symbol==, MutableMatrix, ZZ),
-	  (symbol==, MonoidElement, MonoidElement),
-	  (symbol==, MonomialIdeal, MonomialIdeal),
-	  (symbol==, InfiniteNumber, Number),
-	  (symbol==, ChainComplexMap, ChainComplexMap),
-	  (symbol==, Net, Net),
-	  (symbol==, Net, String),
-	  (symbol==, Module, Ideal),
-	  (symbol==, Ideal, Module),
-	  (symbol==, Ring, Ideal),
-	  (symbol==, RingMap, ZZ),
-	  (symbol==, ZZ, RingMap)
-	  },
+    Key => { symbol == },
      Headline => "equality",
      Usage => "x == y",
      PARA {
@@ -958,7 +896,6 @@ document {
 
 undocumented {
     (symbol**, QuotientRing, PolynomialRing),
---    (symbol**, Expression, NonAssociativeProduct),
     (symbol**, QuotientRing, QuotientRing),
     (symbol**, Number, Matrix),
     (symbol**, Matrix, Number),
@@ -967,14 +904,8 @@ undocumented {
     (symbol **,RingElement,Number),
     (symbol **,RingElement,RingElement),
     (symbol **,Thing,InexactFieldFamily),
---    (symbol**, NonAssociativeProduct, NonAssociativeProduct),
     (symbol**, PolynomialRing, PolynomialRing),
     (symbol**, PolynomialRing, QuotientRing),
---    (symbol**, NonAssociativeProduct, Expression),
---    (symbol**, NonAssociativeProduct, Holder),
---    (symbol**, Holder, NonAssociativeProduct),
-    (symbol**, Expression, OneExpression),
-    (symbol**, OneExpression, Expression)
      }
 
 document {

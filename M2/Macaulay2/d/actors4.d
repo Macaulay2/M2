@@ -20,7 +20,7 @@ header "// required for toString routines
 #include <interface/ring.h>                 // for IM2_Ring_to_string
 #include <interface/ringelement.h>          // for IM2_RingElement_to_string
 #include <interface/ringmap.h>              // for IM2_RingMap_to_string
-#include <readline/history.h>               // for history_get";
+";
 
 internalName(s:string):string := (
      -- was "$" + s in 0.9.2
@@ -135,28 +135,13 @@ select(n:int,f:Expr):Expr := (
 	  );
      Expr(list(new Sequence len found do foreach p at i in b do if p then provide toExpr(i))));
 select(e:Expr,f:Expr):Expr := (
-     when e is obj:HashTable do (
-	  if obj.Mutable then return WrongArg(0+1,"an immutable hash table");
-	  u := newHashTable(obj.Class,obj.parent);
-	  u.beingInitialized = true;
-	  foreach bucket in obj.table do (
-	       p := bucket;
-	       while p != p.next do (
-		    newvalue := applyEE(f,p.value);
-		    when newvalue
-		    is err:Error do if err.message == breakMessage then return if err.value == dummyExpr then nullE else err.value else return newvalue
-		    else if newvalue == True
-		    then (storeInHashTable(u,p.key,p.hash,p.value);)
-	  	    else if newvalue != False then return buildErrorPacket("select: expected predicate to yield true or false");
-		    p = p.next;
-		    ));
-	  Expr(sethash(u,obj.Mutable)))
+     when e
      is a:Sequence do Expr(select(a,f))
      is b:List do (
 	  c := select(b.v,f);
 	  when c
 	  is Error do c
-	  is v:Sequence do list(b.Class,v)
+	  is v:Sequence do list(b.Class,v,b.Mutable)
 	  else e			  -- shouldn't happen
 	  )
      is n:ZZcell do (
@@ -195,33 +180,12 @@ select(n:Expr,e:Expr,f:Expr,g:Expr,h:Expr):Expr := (
 	 else WrongArgString(2))
      is n:ZZcell do if isInt(n) then
      when e
-     is obj:HashTable do (
-	  if obj.Mutable then return WrongArg(1+1,"an immutable hash table");
-	  u := newHashTable(obj.Class,obj.parent);
-	  u.beingInitialized = true;
-	  nval := toInt(n);
-	  if nval > 0 then
-	  foreach bucket in obj.table do (
-	       p := bucket;
-	       while nval > 0 && p != p.next do (
-		    newvalue := applyEE(f,p.value);
-		    when newvalue
-		    is err:Error do if err.message == breakMessage then return if err.value == dummyExpr then nullE else err.value else return newvalue
-		    else if newvalue == True
-		    then (
-			 storeInHashTable(u,p.key,p.hash,p.value);
-			 nval = nval-1;
-			 )
-	  	    else if newvalue != False then return buildErrorPacket("select: expected predicate to yield true or false");
-		    p = p.next;
-		    ));
-	  Expr(sethash(u,obj.Mutable)))
      is a:Sequence do Expr(select(toInt(n),a,f))
      is b:List do (
 	  c := select(toInt(n),b.v,f);
 	  when c
 	  is Error do c
-	  is v:Sequence do list(b.Class,v)
+	  is v:Sequence do list(b.Class,v,b.Mutable)
 	  else e			  -- shouldn't happen
 	  )
      else WrongArg(1+1,"a list")
@@ -235,6 +199,62 @@ select(e:Expr):Expr := (
      else WrongNumArgs(2,5)
      else WrongNumArgs(2,5));
 setupfun("select", select).Protected = false; -- will be overloaded in m2/lists.m2 and m2/regex.m2
+
+selectPairs(nval:int, obj:HashTable, f:Expr):Expr := (
+    u := newHashTable(obj.Class,obj.parent);
+    u.beingInitialized = true;
+    if nval > 0 then
+    foreach bucket in obj.table do (
+	p := bucket;
+	while nval > 0 && p != p.next do (
+	    newvalue := applyEEE(f,p.key,p.value);
+	    when newvalue
+	    is err:Error
+	    do (
+		if err.message == breakMessage
+		then return (
+		    if err.value == dummyExpr
+		    then nullE
+		    else err.value)
+		else return newvalue)
+	    else if newvalue == True
+	    then (
+		storeInHashTable(u,p.key,p.hash,p.value);
+		nval = nval-1;
+		)
+	    else (
+		if newvalue != False
+		then return buildErrorPacket(
+		    "expected predicate to yield true or false"));
+	    p = p.next));
+    Expr(sethash(u,obj.Mutable)));
+selectPairs(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	-- # typical value: selectPairs, HashTable, Function, HashTable
+	if length(a) == 2 then (
+	    when a.0
+	    is obj:HashTable do (
+		if obj.Mutable
+		then WrongArg(1, "an immutable hash table")
+		else selectPairs(obj.numEntries, obj, a.1))
+	    else WrongArgHashTable(1))
+	-- # typical value: selectPairs, ZZ, HashTable, Function, HashTable
+	else if length(a) == 3 then (
+	    when a.0
+	    is n:ZZcell do (
+		if !isInt(n) then WrongArgSmallInteger(1)
+		else (
+		    when a.1 is obj:HashTable
+		    do (
+			if obj.Mutable
+			then WrongArg(2, "an immutable hash table")
+			else selectPairs(toInt(n), obj, a.2))
+		    else WrongArgHashTable(2)))
+	    else WrongArgZZ(1))
+	else WrongNumArgs(2, 3))
+    else WrongNumArgs(2, 3));
+setupfun("selectPairs", selectPairs);
 
 any(f:Expr,n:int):Expr := (
      for i from 0 to n-1 do (
@@ -344,14 +364,17 @@ setupfun("any",any);
 --setupfun("find",find);
 
 ascii(e:Expr):Expr := (
+    -- # typical value: ascii, BasicList, String
      if isIntArray(e)
      then toExpr((
 	  v := toIntArray(e);
 	  new string len length(v) do foreach i in v do provide char(i)))
      else
+    -- # typical value: ascii, String, Sequence
      when e is s:stringCell do list(
 	  new Sequence len length(s.v) do (
 	       foreach c in s.v do provide toExpr(int(uchar(c)))))
+    -- # typical value: ascii, ZZ, String
      is i:ZZcell do (
 	  if isInt(i)
 	  then toExpr(new string len 1 do provide char(toInt(i)))
@@ -605,10 +628,14 @@ export stringcatseq(a:Sequence):Expr := (
 	  toExpr(s)));
 stringcatfun(e:Expr):Expr := (
      when e
+    -- # typical value: concatenate, BasicList, String
      is a:Sequence do stringcatseq(a)
      is a:List do stringcatseq(a.v)
+    -- # typical value: concatenate, Nothing, String
      is Nothing do emptyString
+    -- # typical value: concatenate, Symbol, String
      is y:SymbolClosure do toExpr(y.symbol.word.name)
+    -- # typical value: concatenate, ZZ, String
      is n:ZZcell do (
 	  if isInt(n) then (
 	       m := max(toInt(n), 0);
@@ -616,6 +643,7 @@ stringcatfun(e:Expr):Expr := (
 	       )
 	  else buildErrorPacket("encountered a large integer")
 	  )
+    -- # typical value: concatenate, String, String
      is stringCell do e
      else WrongArg("a sequence or list of strings, integers, or symbols"));
 setupfun("concatenate",stringcatfun);
@@ -645,95 +673,41 @@ minglefun(e:Expr):Expr := (
      is a:List do mingleseq(a.v)
      is Error do e
      else WrongArg("a list or sequence"));
+-- # typical value: mingle, BasicList, List
 setupfun("mingle", minglefun);
 
-packlist(v:Sequence,n:int):Expr := (
+packlist(n:int, v:Sequence):Sequence := (
      d := length(v);
      i := 0;
-     list(new Sequence len (d + n - 1) / n do
+     new Sequence len (d + n - 1) / n do
      	  provide list(
 	       new Sequence len if n < d-i then n else d-i do (
 		    j := i;
 		    i = i+1;
-	       	    provide v.j))));
-packstring(s:string,n:int):Expr := (
-     d := length(s);
-     i := 0;
-     list(new Sequence len (d + n - 1) / n do
-	  provide stringCell(new string len if n < d - i then n else d - i do (
-	       j := i;
-	       i = i + 1;
-	       provide s.j))));
+		    provide v.j)));
 packfun(e:Expr):Expr := (
-     when e
-     is a:Sequence do (
-     	  if length(a) == 2 then (
-	       when a.0
-	       is n:ZZcell do (
-		    if isInt(n)
-		    then (
-			 nn := toInt(n);
-			 if nn > 0 then (
-			      when a.1
-			      is x:Sequence do packlist(x,nn)
-			      is x:List do packlist(x.v,nn)
-			      is x:stringCell do packstring(x.v,nn)
-			      else WrongArg(1,"a list or sequence")
-			      )
-			 else if nn == 0 then (
-			      when a.1
-			      is x:Sequence do if length(x) == 0 then emptyList else WrongArg(1,"a positive integer")
-			      is x:List do if length(x.v) == 0 then emptyList else WrongArg(1,"a positive integer")
-			      is x:stringCell do if length(x.v) == 0 then emptyList else WrongArg(1,"a positive integer")
-			      else WrongArg(1,"a list, sequence, or string")
-			      )
-			 else WrongArg(1,"a positive integer")
-			 )
-		    else WrongArgSmallInteger(1)
-		    )
-	       is x:Sequence do (
-		    when a.1
-		    is n:ZZcell do (
-			 if isInt(n)
-			 then (
-			      nn := toInt(n);
-			      if nn > 0
-			      then packlist(x,nn)
-			      else if nn == 0 && length(x) == 0
-			      then emptyList
-			      else WrongArg(2,"a positive integer"))
-			 else WrongArgSmallInteger(2))
-		    else WrongArgZZ(2))
-	       is x:List do (
-		    when a.1
-		    is n:ZZcell do (
-			 if isInt(n)
-			 then (
-			      nn := toInt(n);
-			      if nn > 0
-			      then packlist(x.v,nn)
-			      else if nn == 0 && length(x.v) == 0
-			      then emptyList
-			      else WrongArg(2,"a positive integer"))
-			 else WrongArgSmallInteger(2))
-		    else WrongArgZZ(2))
-	       is x:stringCell do (
-		    when a.1
-		    is n:ZZcell do (
-			 if isInt(n)
-			 then (
-			      nn := toInt(n);
-			      if nn > 0
-			      then packstring(x.v,nn)
-			      else if nn == 0 && length(x.v) == 0
-			      then emptyList
-			      else WrongArg(2,"a positive integer"))
-			 else WrongArgSmallInteger(2))
-		    else WrongArgZZ(2))
-	       else WrongArg(1,"a list, sequence, or string"))
-	  else WrongNumArgs(2))
-     else WrongNumArgs(2));
-setupfun("pack", packfun);
+    when e is a:Sequence do
+    if length(a) == 2 then (
+	when a.0 is n:ZZcell do if !isInt(n) then WrongArgSmallInteger(1) else (
+	    s := toInt(n);
+	    when a.1
+	    is x:List do (
+		if s > 0 then list ( packlist(s, x.v) ) else
+		if s == 0 && length(x.v) == 0 then emptyList
+		else WrongArg(1, "a positive integer"))
+	    is x:Sequence do (
+		if s > 0 then list ( packlist(s, x) ) else
+		if s == 0 && length(x) == 0 then emptyList
+		else WrongArg(1, "a positive integer"))
+	    is x:stringCell do (
+		if s > 0 then list ( map(stringcatfun, packlist(s, strtoseq(x))) ) else
+		if s == 0 && length(x.v) == 0 then emptyList
+		else WrongArg(1, "a positive integer"))
+	    else WrongArg(2, "a basic list, sequence, or string"))
+	else WrongArg(1, "a positive integer"))
+    else WrongNumArgs(2)
+    else WrongNumArgs(2));
+setupfun("pack", packfun).Protected = false; -- will be overloaded in m2/lists.m2
 
 getenvfun(e:Expr):Expr := (
      when e
@@ -991,7 +965,8 @@ tostringfun(e:Expr):Expr := (
 	  + tostring(Ccode(int,"\n # if WITH_MYSQL \n (", fld.fld, ")->type \n #else \n 0 \n #endif \n"))
 	  + ">>")
      is Net do toExpr("<<net>>")
-     is CodeClosure do toExpr("<<pseudocode>>")
+     is PseudocodeClosure do toExpr("<<pseudocode closure>>")
+     is Pseudocode do toExpr("<<pseudocode>>")
      is functionCode do toExpr("<<a function body>>")
      is CompiledFunction do toExpr("<<a compiled function>>")
      is CompiledFunctionClosure do toExpr("<<a compiled function closure>>")
@@ -1191,16 +1166,6 @@ join(e:Expr):Expr := (
      else WrongArg("lists or sequences"));
 setupfun("join",join);
 
-instanceof(e:Expr):Expr := (
-     when e
-     is args:Sequence do (
-	  when args.1
-	  is y:HashTable do if ancestor(Class(args.0),y) then True else False
-	  else WrongArg(2,"a hash table"))
-     else WrongNumArgs(2));
-setupfun("instance",instanceof);
-
-
 threadLocal hadseq := false;
 deeplen(a:Sequence):int := (
      n := 0;
@@ -1274,10 +1239,14 @@ horizontalJoin(s:Sequence):Expr := (
      Expr(HorizontalJoin(v)));
 horizontalJoin(e:Expr):Expr := (
      when e
+     -- # typical value: horizontalJoin, BasicList, Net
      is s:Sequence do horizontalJoin(s)
      is s:List do horizontalJoin(s.v)
+     -- # typical value: horizontalJoin, Net, Net
      is n:Net do e
+     -- # typical value: horizontalJoin, String, Net
      is s:stringCell do Expr(toNet(s.v))
+     -- # typical value: horizontalJoin, Nothing, Net
      is Nothing do horizontalJoin(emptySequence)
      else WrongArg("a net, a string, or a list or sequence of nets and strings"));
 setupfun("horizontalJoin",horizontalJoin);
@@ -1301,10 +1270,14 @@ stack(s:Sequence):Expr := (
      Expr(VerticalJoin(v)));
 stack(e:Expr):Expr := (
      when e
+    -- # typical value: stack, BasicList, Net
      is s:Sequence do stack(s)
      is s:List do stack(s.v)
+    -- # typical value: stack, Net, Net
      is n:Net do e
+    -- # typical value: stack, String, Net
      is s:stringCell do Expr(toNet(s.v))
+    -- # typical value: stack, Nothing, Net
      is Nothing do stack(emptySequence)
      else WrongArg("a sequence of nets and strings"));
 setupfun("stack",stack);
@@ -1332,7 +1305,7 @@ youngest(e:Expr):Expr := (
 	  if length(b) == 0
 	  then nullE
 	  else (
-	       h := 0;
+	       h := hash_t(0);
 	       e = nullE;
 	       foreach x in b do (
 		    when x
@@ -1565,146 +1538,13 @@ precision(e:Expr):Expr := (
      else WrongArgRR());
 setupfun("precision0",precision);
 
--- locate:
-
-positionRange := {filename:string, minline:int, mincol:int, maxline:int, maxcol:int};
-threadLocal locatedCode := positionRange("",0,0,0,0);
-lookat(p:Position):void := (
-     if p == dummyPosition then return;
-     locatedCode.filename = p.filename;
-     if locatedCode.minline > int(p.line) then (
-	  locatedCode.minline = int(p.line);
-	  locatedCode.mincol = int(p.column);
-	  )
-     else if locatedCode.minline == int(p.line) && locatedCode.mincol > int(p.column) then (
-	  locatedCode.mincol = int(p.column);
-	  );
-     if locatedCode.maxline < int(p.line) then (
-	  locatedCode.maxline = int(p.line);
-	  locatedCode.maxcol = int(p.column);
-	  )
-     else if locatedCode.maxline == int(p.line) && locatedCode.maxcol < int(p.column) then (
-	  locatedCode.maxcol = int(p.column);
-	  );
-     );
-locate(x:Token):void := lookat(position(x));
-locate(e:Code):void := (
-     when e
-     is nullCode do nothing
-     is v:adjacentCode do (lookat(v.position); locate(v.lhs); locate(v.rhs);)
-     is v:augmentedAssignmentCode do (lookat(v.position); locate(v.lhs); locate(v.rhs))
-     is v:arrayCode do foreach c in v.z do locate(c)
-     is v:angleBarListCode do foreach c in v.t do locate(c)
-     is v:Error do lookat(v.position)
-     is v:semiCode do foreach c in v.w do locate(c)
-     is v:binaryCode do (lookat(v.position); locate(v.lhs); locate(v.rhs);)
-     is v:evaluatedCode do lookat(v.position)
-     is v:forCode do ( lookat(v.position); locate(v.fromClause); locate(v.toClause); locate(v.whenClause); locate(v.listClause); locate(v.doClause); )
-     is v:functionCode do (locate(v.arrow);locate(v.body);)
-     is v:globalAssignmentCode do (lookat(v.position); locate(v.rhs);)
-     is v:globalMemoryReferenceCode do lookat(v.position)
-     is v:threadMemoryReferenceCode do lookat(v.position)
-     is v:globalSymbolClosureCode do lookat(v.position)
-     is v:threadSymbolClosureCode do lookat(v.position)
-     is v:ifCode do ( lookat(v.position); locate(v.predicate); locate(v.thenClause); locate(v.elseClause); )
-     is v:integerCode do lookat(v.position)
-     is v:listCode do foreach c in v.y do locate(c)
-     is v:localAssignmentCode do (lookat(v.position); locate(v.rhs);)
-     is v:localMemoryReferenceCode do lookat(v.position)
-     is v:localSymbolClosureCode do lookat(v.position)
-     is v:multaryCode do ( lookat(v.position); foreach c in v.args do locate(c);)
-     is v:newCode do ( lookat(v.position); locate(v.newClause); )
-     is v:newFromCode do ( lookat(v.position); locate(v.newClause); locate(v.fromClause); )
-     is v:newLocalFrameCode do locate(v.body)
-     is v:newOfCode do ( lookat(v.position); locate(v.newClause); locate(v.ofClause); )
-     is v:newOfFromCode do ( lookat(v.position); locate(v.newClause); locate(v.ofClause); locate(v.fromClause); )
-     is v:parallelAssignmentCode do (lookat(v.position); locate(v.rhs);)
-     is v:realCode do lookat(v.position)
-     is v:sequenceCode do foreach c in v.x do locate(c)
-     is v:stringCode do nothing
-     is v:ternaryCode do ( lookat(v.position); locate(v.arg1); locate(v.arg2); locate(v.arg3);)
-     is v:tryCode do ( lookat(v.position); locate(v.code); locate(v.thenClause); locate(v.elseClause); )
-     is v:catchCode do ( lookat(v.position); locate(v.code); )
-     is v:unaryCode do (lookat(v.position); locate(v.rhs);)
-     is v:whileDoCode do ( lookat(v.position); locate(v.predicate); locate(v.doClause); )
-     is v:whileListCode do ( lookat(v.position); locate(v.predicate); locate(v.listClause); )
-     is v:whileListDoCode do ( lookat(v.position); locate(v.predicate); locate(v.listClause); locate(v.doClause); )
-     );
-locate0():void := (
-     locatedCode.filename = "-*unknown file name*-";
-     locatedCode.minline = 1000000;
-     locatedCode.maxline = 0;
-     );
-locate1():void := (
-     if locatedCode.minline == 1000000 then (
-	  locatedCode.minline = 0;
-	  locatedCode.mincol = 0;
-	  locatedCode.maxcol = 0;
-	  ));
-locate2(c:Code):Expr := (
-     locate1();
-     p := codePosition(c);
-     Expr(Sequence(
-	       toExpr(verifyMinimizeFilename(locatedCode.filename)),
-	       toExpr(locatedCode.minline),
-	       toExpr(locatedCode.mincol),
-	       toExpr(locatedCode.maxline),
-	       toExpr(locatedCode.maxcol),
-	       toExpr(int(p.line)),
-	       toExpr(int(p.column)))));
-locate(e:Expr):Expr := (
-     when e
-     is Nothing do nullE
-     is Sequence do locate(lookupfun(e))
-     is CompiledFunction do nullE
-     is CompiledFunctionClosure do nullE
-     is s:SymbolClosure do (
-	  p := s.symbol.position;
-	  if p == dummyPosition
-	  then nullE
-	  else Expr(
-	       Sequence(
-		    toExpr(verifyMinimizeFilename(p.filename)),
-		    toExpr(int(p.line)),toExpr(int(p.column)),
-		    toExpr(int(p.line)),toExpr(int(p.column)+length(s.symbol.word.name)),
-		    toExpr(int(p.line)),toExpr(int(p.column))
-		    )))
-     is c:CodeClosure do (
-	  locate0();
-	  locate(c.code);
-	  locate2(c.code))
-     is s:SpecialExpr do locate(s.e)
-     is f:functionCode do (
-	  locate0();
-	  locate(f.body);
-	  locate2(f.body))
-     is f:FunctionClosure do (
-	  locate0();
-	  locate(f.model.arrow);
-	  locate(f.model.body);
-	  locate2(f.model.body))
-     else WrongArg("a function, symbol, sequence, or null"));
-setupfun("locate", locate).Protected = false; -- will be overloaded in m2/methods.m2
-
-historyGet(e:Expr):Expr := (
-    when e
-    is n:ZZcell do (
-	if !isInt(n) then WrongArgSmallInteger()
-	else (
-	    entry := Ccode(voidPointer, "history_get(", toInt(n), ")");
-	    if entry == nullPointer()
-	    then buildErrorPacket("no history entry with that offset")
-	    else toExpr(tostring(Ccode(charstar, "((HIST_ENTRY *)", entry,
-			")->line")))))
-    else WrongArgZZ());
-setupfun("historyGet", historyGet);
-
 powermod(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 3 then
      when s.0 is base:ZZcell do
      when s.1 is exp:ZZcell do
      when s.2 is mod:ZZcell do
+     -- # typical value: powermod, ZZ, ZZ, ZZ, ZZ
      toExpr(powermod(base.v,exp.v,mod.v))
      else WrongArgZZ(3)
      else WrongArgZZ(2)

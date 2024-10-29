@@ -1,7 +1,7 @@
 -- numbers
 assert Equation(toJSON 1, "1")
 assert Equation(toJSON 3.14159, "3.14159")
-assert Equation(toJSON pi, "3.14159265358979")
+assert Equation(toJSON pi, "3.141592653589793")
 assert Equation(toJSON(1/2), ".5")
 
 -- strings

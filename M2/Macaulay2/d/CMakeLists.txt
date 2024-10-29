@@ -20,7 +20,7 @@ set(CLIST
   memdebug.c memdebug.h
   debug.c debug.h
   getpagesize.h M2mem.h
-  gmp_aux.c gmp_aux.h # TODO: needed with mpir?
+  gmp_aux.c gmp_aux.h
   gdbm_interface.c
   )
 
@@ -45,6 +45,7 @@ set(DLIST
   pthread0.d
   stdiop0.d
   gmp.d
+  ballarith.d
   engine.dd
   xml.d		# removed unless WITH_XML
   stdio0.d
@@ -60,15 +61,16 @@ set(DLIST
   parser.d
   binding.d
   basic.d
-  convertr.d
   common.d
   util.d
+  convertr.d
   struct.d
   classes.dd
   buckets.dd
   equality.dd
   hashtables.dd
   regex.dd
+  debugging.dd
   evaluate.d
   sets.dd
   mysql.d	# removed unless WITH_SQL
@@ -81,7 +83,7 @@ set(DLIST
   # tasks.d
   xmlactors.d	# removed unless WITH_XML
   actors5.d
-  actors6.dd
+  chrono.dd
   threads.dd
   python.d	# removed unless WITH_PYTHON
   interface.dd interface2.d
@@ -132,10 +134,6 @@ foreach(_d_source IN LISTS DLIST)
   _SCC_TRANSLATE(${_d_source} _c) # sets _c_source
   list(APPEND CLIST ${_c_source})
 endforeach()
-
-# To avoid unnecessary recompiling, only version.dd is given GIT_DESCRIPTION
-set_source_files_properties(version-tmp.cc
-  PROPERTIES COMPILE_DEFINITIONS GIT_DESCRIPTION="${GIT_DESCRIPTION}")
 
 ###############################################################################
 ## Compile the interpreter

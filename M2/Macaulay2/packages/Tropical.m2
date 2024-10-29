@@ -12,12 +12,11 @@ newPackage(
     		{Name => "Paolo Tripoli", Email => "paolo.tripoli@nottingham.ac.uk", HomePage=>"https://sites.google.com/view/paolotripoli/home"},
    		{Name => "Magdalena Zajaczkowska", Email => "Magdalena.A.Zajaczkowska@gmail.com", HomePage=>""}
 		},
-	Headline => "A package for doing computations in tropical geometry",
+	Headline => "computations in tropical geometry",
 	Configuration => {
 		"path" => "",
 		"fig2devpath" => "",
---		"keepfiles" => true,
-"keepfiles" => false,
+		"keepfiles" => false,
 		"cachePolyhedralOutput" => true,
 		"tropicalMax" => false,
 		"polymakeCommand" =>""
@@ -25,7 +24,6 @@ newPackage(
     	OptionalComponentsPresent => true,
         PackageExports => {"gfanInterface","EliminationMatrices","Matroids","Polyhedra"},
 	AuxiliaryFiles => true,
---	AuxiliaryFiles => false,
 	CacheExampleOutput => true,
 	Keywords => {"Tropical Geometry"}
 )

@@ -189,6 +189,7 @@ COMMANDS = \
 	engine \
 	interface/aring \
 	interface/cra \
+	interface/cone \
 	interface/factory \
 	interface/flint \
 	interface/freemodule \

@@ -29,7 +29,11 @@ document { Key => {isReal,(isReal,CC),(isReal,QQ),(isReal,RR),(isReal,ZZ),
      ///
      }
 
-document { Key => {isFinite, (isFinite,Number)},
+document { Key => {
+	isFinite,
+	(isFinite,Constant),
+	(isFinite,InfiniteNumber),
+	(isFinite,Number)},
      Usage => "isFinite x",
      Headline => "whether a number is finite",
      Inputs => { "x" => Number },
@@ -60,31 +64,57 @@ document { Key => {commonRing, (commonRing,List)},
      	  ///
      }
 
-document { Key => {log1p,(log1p, RR),(log1p, RRi)},
-     Usage => "log1p x\nlog1p I",
-     Headline => "logarithm of 1+x",
-     Inputs => { "x", "I" => RRi },
-     Outputs => { RR => { "the logarithm of ", TT "1+x" },
-RRi => { "an interval containing logarithm of 1 plus the points of ", TT "I" }
-},
-     EXAMPLE lines ///
-log1p 1p100e-10
-log(1 + 1p100e-10)
-     ///
-     }
-document { Key => {expm1,(expm1, RR),(expm1,RRi)},
-     Usage => "expm1 x\nexpm1 I",
-     Headline => "exponential minus 1",
-     Inputs => { "x" , "I"=>RRi},
-     Outputs => { RR => { "the quantity ", TT "exp(x)-1" },
-RRi => { "an interval containing the exponential of the points of ", TT "I", " minus one"}
-},
-     EXAMPLE lines ///
-     	  expm1 1p100e-10
-     	  exp(1p100e-10)-1
-     ///
-     }
-document { Key => {eint,(eint, RR)},
+doc ///
+  Key
+    log1p
+    (log1p,CC)
+    (log1p,RR)
+    (log1p,RRi)
+  Headline
+    logarithm of 1+x
+  Usage
+    log1p x
+    log1p I
+  Inputs
+    x:{CC,RR}
+    I:RRi
+  Outputs
+    :{RR,CC}
+      the logarithm of @TT "1+x"@
+    :{RRi}
+      an interval containing logarithm of 1 plus the points of @TT "I"@
+  Description
+    Example
+      log1p 1p100e-10
+      log(1 + 1p100e-10)
+///
+
+doc ///
+  Key
+    expm1
+    (expm1,CC)
+    (expm1,RR)
+    (expm1,RRi)
+  Headline
+    exponential minus 1
+  Usage
+    expm1 x
+    expm1 I
+  Inputs
+    x:{CC,RR}
+    I:RRi
+  Outputs
+    :{RR,CC}
+      the quantity @TT "exp(x)-1"@
+    :RRi
+      an interval containing the exponential of the points of @TT "I"@ minus one
+  Description
+    Example
+      expm1 1p100e-10
+      exp(1p100e-10)-1
+///
+
+document { Key => {eint,(eint, RR),(eint,CC),(eint,RRi)},
      Usage => "eint x",
      Headline => "exponential integral",
      Inputs => { "x" },
@@ -94,7 +124,7 @@ document { Key => {eint,(eint, RR)},
      ///,
      PARA {"See ", wikipedia "Exponential integral", "."}
      }
-document { Key => {Digamma,(Digamma, RR)},
+document { Key => {Digamma,(Digamma, RR),(Digamma,CC),(Digamma,RRi)},
      Usage => "Digamma x",
      Headline => "Digamma function",
      Inputs => { "x" },
@@ -105,7 +135,7 @@ document { Key => {Digamma,(Digamma, RR)},
      PARA {"See ", wikipedia "Digamma function", "."},
      SeeAlso => {Gamma}
      }
-document { Key => {zeta,(zeta, RR)},
+document { Key => {zeta,(zeta, RR),(zeta,CC),(zeta,RRi)},
      Usage => "zeta x",
      Headline => "Riemann zeta function",
      Inputs => { "x" },
@@ -308,7 +338,7 @@ document { Key => {InexactNumber'},
 document { Key => {RingFamily},
      "This family is used to contain classes that correspond to a family of similar rings with a default member."
      }
-document { Key => {BesselJ,(BesselJ, ZZ, Number), (BesselJ, ZZ, Constant)},
+document { Key => {BesselJ,(BesselJ, ZZ, Number),(BesselJ,Number,Number)},
      Usage => "BesselJ(n,x)\nBesselJ_n x",
      Headline => "Bessel function of the first kind",
      Inputs => {
@@ -325,7 +355,7 @@ document { Key => {BesselJ,(BesselJ, ZZ, Number), (BesselJ, ZZ, Constant)},
      PARA {"See ", wikipedia "Bessel function", "."},
      SeeAlso => { BesselY }
      }
-document { Key => {BesselY,(BesselY, ZZ, Number), (BesselY, ZZ, Constant)},
+document { Key => {BesselY,(BesselY, ZZ, Number),(BesselY,Number,Number)},
      Usage => "BesselY(n,x)\nBesselY_n x",
      Headline => "Bessel function of the second kind",
      Inputs => {
@@ -342,7 +372,7 @@ document { Key => {BesselY,(BesselY, ZZ, Number), (BesselY, ZZ, Constant)},
      PARA {"See ", wikipedia "Bessel function", "."},
      SeeAlso => { BesselJ }
      }
-document { Key => {agm,	(agm, RR, RR), (agm,CC,CC)},
+document { Key => {agm, (agm, RR, RR), (agm,CC,CC), (agm,CC,RR), (agm,RR,CC)},
      Usage => "agm(x,y)",
      Inputs => { "x" => "a number", "y" => "a number" },
      Outputs => { {"the arithmetic-geometric mean of ", TT "x", " and ", TT "y"}},

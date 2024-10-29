@@ -1,7 +1,7 @@
 newPackage(
     "AssociativeAlgebras",
-    Version => "0.8", 
-    Date => "21 Jan 2021",
+    Version => "0.9", 
+    Date => "23 Oct 2024",
     Authors => {{Name => "Frank Moore", 
 	   Email => "moorewf@wfu.edu",
 	   HomePage => "https://math.wfu.edu/moore"},
@@ -24,7 +24,7 @@ newPackage(
 --   run multithreaded tests for NCF4 and mgb to make sure they are actually getting speedups.
 --   add in the arena stuff? Jay's pull request to mathicgb
 --      (We would need to make the same changes for M2 usage, i.e. NCF4).
--- 
+ 
 ---- Warning!!  This package is a current work in progress.
 ---- The interface will change (even basic things like Groebner bases and the basis command)
 ---- and more functionality is expected to be added.
@@ -106,7 +106,12 @@ export {
     "ncMatrixMult",
     "rightKernel",
     "Derivation",
-    "derivation"
+    "derivation",
+    "superpotential",
+    "nakayamaAut",
+    "isSuperpotential",
+    "derivationQuotientIdeal",
+    "derivationQuotient"
     -- "forceNCBasis"  -- not exported yet
     }
 
@@ -347,6 +352,7 @@ setNCGBStrategy := stratStr -> (
 
 NCGB = method(Options => {Strategy=>"F4Parallel"})
 NCGB(Ideal, ZZ) := opts -> (I, maxdeg) -> (
+    if I == 0 then return gens I;
     strat := opts#Strategy;
     if not I.cache.?NCGB or I.cache.NCGB#0 < maxdeg then (
         tobecomputed := raw if I.cache.?NCGB then I.cache.NCGB#1 else gens I;
@@ -365,6 +371,7 @@ NCGB(Ideal, ZZ) := opts -> (I, maxdeg) -> (
     I.cache.NCGB#1
     )
 NCGB Ideal := opts -> (I) -> (
+    if I == 0 then return gens I;
     if I.cache.?NCGB then I.cache.NCGB#1
     else (
         maxdegI := max((degrees source gens I) / sum); -- TODO: change once multidegrees are allowed.
@@ -419,7 +426,7 @@ freeAlgebraQuotient (FreeAlgebra, Ideal, Matrix) := FreeAlgebraQuotient => (R,I,
      S
 )
 
-ncBasis = method(Options => {Limit => infinity})
+ncBasis = method(Options => {Strategy => "F4Parallel", Limit => infinity})
 ncBasis(InfiniteNumber,InfiniteNumber,Ring) := 
 ncBasis(List,InfiniteNumber,Ring) := 
 ncBasis(InfiniteNumber,List,Ring) := 
@@ -440,7 +447,7 @@ ncBasis(List,List,Ring) := opts -> (lo,hi,R) -> (
     limit := if opts.Limit === infinity then -1 else if instance(opts.Limit,ZZ) then opts.Limit else
        error "expected 'Limit' option to be an integer or infinity";
     if #hi == 1 and hi#0 < 0 then return map(R^1, R^0, {{}}); -- disallow use of "-1" meaning infinity, at top level.
-    gbR := if #hi == 1 then NCGB(ideal R, hi#0) else NCGB(ideal R);
+    gbR := if #hi == 1 then NCGB(ideal R, hi#0, Strategy => opts.Strategy) else NCGB(ideal R, Strategy => opts.Strategy);
     result := map(ring gbR, rawNCBasis(raw gbR, lo, hi, limit));
     map(R^1,, promote(result, R))
     )
@@ -781,6 +788,8 @@ skewPolynomialRing (Ring,RingElement,List) := (R,skewElt,varList) -> (
    gensA := gens A;
    I := ideal apply(subsets(numgens A, 2), p ->
             (gensA_(p#0))*(gensA_(p#1)) - promote(skewElt,R)*(gensA_(p#1))*(gensA_(p#0)));
+   -- this will be a GB for any coefficient ring, so we should tell the system that.
+   I.cache.NCGB = {infinity,gens I};
    B := A/I;
    B
 )
@@ -795,7 +804,7 @@ threeDimSklyanin (Ring, List, List) := opts -> (R, params, varList) -> (
    I := ideal {params#0*gensA#1*gensA#2+params#1*gensA#2*gensA#1+params#2*(gensA#0)^2,
        params#0*gensA#2*gensA#0+params#1*gensA#0*gensA#2+params#2*(gensA#1)^2,
        params#0*gensA#0*gensA#1+params#1*gensA#1*gensA#0+params#2*(gensA#2)^2};
-   Igb := NCGB(I, opts.DegreeLimit, Strategy=>"F4");
+   Igb := NCGB(I, opts.DegreeLimit, Strategy=>if char R == 0 then "Naive" else "F4");
    B := A/I;
    B
 )
@@ -1462,6 +1471,156 @@ rightKernel Matrix := opts -> M -> (
    result
 )
 
+------------------------------------------------------
+--- superpotential code
+------------------------------------------------------
+
+superpotential = method(Options => {Strategy => "F4"})
+superpotential FreeAlgebraQuotient := opts -> B -> (
+   -- compute the relations of the Koszul dual out to degree d+e-1
+   -- d = number of generators of the algebra
+   -- e = relation degree
+   A := ambient B;
+   kk := coefficientRing A;
+   e := first degree first (ideal B)_*;
+   koszI := homogDual ideal B;
+   d := numgens B;
+   koszIgb := NCGB(koszI,d+e-1,Strategy => opts.Strategy);
+   koszB := A/koszI;
+   
+   -- compute a basis of the Koszul dual
+   allBasis := flatten apply(d+e, i -> flatten entries ncBasis(i,koszB,Strategy => opts.Strategy));
+   
+   -- find a generator of the 'top' degree of the Koszul dual
+   topDeg := max apply(allBasis, m -> first degree m);
+   topForm := ncBasis(topDeg,koszB,Strategy => opts.Strategy);
+   if numcols topForm != 1 then error "Expected (m)-Koszul AS-regular algebra.";
+
+   deg1Basis := vars A;
+   -- phi is the projection map from A to koszB
+   phi := map(koszB,A,gens koszB);
+   
+   -- basis of the entire tensor algebra in the 'correct degree'
+   bigBasis := ncBasis(topDeg,A,Strategy => opts.Strategy);
+   
+   -- project the basis of the tensor algebra to the koszul dual to get a coefficient from the top form
+   -- and take the sum of the basis with these coeffs as the superpotential
+   first flatten entries (bigBasis * (transpose sub(last coefficients(phi bigBasis, Monomials=>topForm),kk)))
+)
+
+--- B = k[x,y,z] 
+--- koszB = k<x,y,z>/(xy+yx,xz+zx,yz+zy,x^2,y^2,z^2)
+--- xyz is a basis of the top form in koszB
+--- A = k<x,y,z>
+--- a basis of A in degree 3 is (27 terms)
+--- xyz   xzy  yxz    yzx   zxy   zyx
+--- xyz   -xyz -xyz   xyz   xyz   -xyz
+--- this gives coeffs:
+--- xyz - xzy - yxz + yzx + zxy - xyz
+
+isSuperpotential = method()
+isSuperpotential RingElement := f -> (
+   X := matrix entries transpose splitElement f;
+   if rank X != numcols X then return false;
+   Y := matrix entries transpose splitElement cycleElement f;
+   if rank Y != numcols Y then return false;
+   P := (Y // X);
+   return ((Y - X*P) == 0);
+)
+
+-- cycle from right to left
+cycleElement = method()
+cycleElement RingElement := f -> (
+   varList := toVariableList f;
+   monLen := #(last first varList);
+   sum apply(varList, p -> p#0*((p#1)#(monLen-1))*product(drop(p#1,-1)))
+)
+
+splitElement = method()
+splitElement RingElement := f -> (
+   A := ring f;
+   kk := coefficientRing A;
+   d := first degree f;
+   basis1 := flatten entries ncBasis(1,A);
+   basisrest := flatten entries ncBasis(d-1,A);
+   matrix apply(basis1, x -> apply(basisrest, m -> sub(first flatten entries last coefficients(f,Monomials=>matrix {{x*m}}),kk)))
+)
+
+nakayamaAut = method(Options => options superpotential)
+nakayamaAut FreeAlgebraQuotient := opts -> B -> (
+   sp := superpotential(B,opts);
+   X := matrix entries transpose splitElement sp;
+   Y := matrix entries transpose splitElement cycleElement sp;
+   -- should multiply by (-1)^(gldim + 1) here, but this is expensive to compute and should be known by the user.
+   -- the map P defined below should satisfy X = YP where Y is the matrix after cycling
+   -- and X is the matrix representation of the original superpotential.
+   P := (X // Y);
+   -- if the algebra is quadratic, mult by (-1)^(word length sp + 1)
+   -- if the algebra is cubic, mult by (-1)^(word length sp)
+   f := first (ideal B)_*;
+   degf := #(last first (toVariableList f));
+   spWL := #(last first (toVariableList sp));
+   P = (-1)^(if degf == 2 then spWL + 1 else spWL)*P^(-1);
+   -- cycling from right to left gives the inverse of the Nakayama automorphism
+   map(B,B,flatten entries (P*(transpose vars B)))
+)
+
+nakayamaAut RingElement := opts -> sp -> (
+   A := ring sp;
+   X := matrix entries transpose splitElement sp;
+   Y := matrix entries transpose splitElement cycleElement sp;
+   P := (Y // X);
+   -- for the superpotential version, we assume that sp will give a quadratic algebra
+   -- (this gives the right answer also in the only other known case
+   -- of m-Koszul AS-regular algebra, namely m = 3 of gldim 3 on 2 generators
+   spWL := #(last first (toVariableList sp));
+   P = (-1)^(spWL + 1) * P^(-1);
+   map(A,A,flatten entries (P*(transpose ncBasis(1,A))))
+)
+
+leftDiff = method()
+leftDiff (RingElement, RingElement) := (w,v) -> (
+   -- this function selects those monomials from w that start with the
+   -- variable v, delete v from the monomial and keep the coefficient.
+   if #(terms v) != 1 then error "Expected a monomial in second argument.";
+   curElt := w;
+   diffList := last first toVariableList v;
+   for var in diffList do (
+       curElt = sum for p in toVariableList curElt list (
+                   if first p#1 == var then (p#0) * (product drop(p#1,1)) else 0
+                );
+       if curElt == 0 then return 0;
+   );
+   curElt
+)
+
+derivationQuotientIdeal = method()
+derivationQuotientIdeal (RingElement, ZZ) := (w,n) -> (
+   -- this method defines the derivation-quotient ideal
+   -- of dubois-violette corresponding to w.  It is not verified
+   -- that w is a superpotential.  n derivatives (deletions) are taken on the left.
+   if not isHomogeneous w then error "Expected a homogeneous input.";
+   A := ring w;
+   baseA := coefficientRing A;
+   d := first degree w;
+   nBasis := flatten entries ncBasis(n,A);
+   diffs := apply(nBasis, m -> leftDiff(w,m));
+   -- The code below was to create a minimal set of generators of the defining ideal
+   basisA := ncBasis(d-n,A);
+   coeffs := sub(last coefficients(matrix{diffs}, Monomials => basisA),baseA);
+   idealGens := ideal flatten entries (basisA*(mingens image coeffs));
+   idealGens
+)
+
+derivationQuotient = method(Options => {DegreeLimit => 10, Strategy => "F4"})
+derivationQuotient (RingElement, ZZ) := opts -> (w,n) -> (
+   A := ring w;
+   I := derivationQuotientIdeal(w,n);
+   Igb := NCGB(I,opts#DegreeLimit, Strategy => opts#Strategy);
+   B := A / I;
+   B
+)
+
 --- load the tests
 -- 21 Jan 2021: there are two failing tests, which have been modified to not fail:
 -- one is commented out by using FAILINGTEST rather than TEST
@@ -1503,13 +1662,13 @@ freeMonoid FreeAlgebra := R -> (
 
 -- making a new type of monoid for noncommutative algebras.
 restart
-debug Core
 debug needsPackage "AssociativeAlgebras"
-R = QQ{x,y}
+R = QQ <| x,y |>
 M = freeMonoid R
 M_0
 M_1
 M_1*M_0
+M_0*M_1
 
 doc ///
 Key
@@ -1581,16 +1740,7 @@ B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
 basis(3,B)
 ///
 TEST ///
--- 3. Double curly braces for associative algebras?
-restart
-needsPackage "AssociativeAlgebras"
-A = QQ{{x,y,z}}
-assert(instance(A,FreeAlgebra))
-B = QQ{x,y,z}
-assert(instance(B,PolynomialRing))
-///
-TEST ///
--- 4. isWellDefined broken for maps of nc rings.
+-- 3. isWellDefined broken for maps of nc rings.
 restart
 needsPackage "AssociativeAlgebras"
 B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
@@ -1598,7 +1748,7 @@ phi = map(B,B,{y,z,x})
 isWellDefined phi
 ///
 TEST ///
--- 5. kernel broken for maps of nc rings (but we can make a product order which will compute it).
+-- 4. kernel broken for maps of nc rings (but we can make a product order which will compute it).
 -- FIXED with ncKernel
 restart
 needsPackage "AssociativeAlgebras"
@@ -1607,18 +1757,18 @@ phi = map(B,B,{y,z,x})
 ker phi
 ///
 TEST ///
--- 6. ** doesn't work right for nc rings.
+-- 5. ** doesn't work right for nc rings.
 restart
 needsPackage "AssociativeAlgebras"
 B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
 C = B ** B
 ///
 TEST ///
--- 7. "//" doesn't work for matrices over nc rings.  Need left/right ncgbs.
+-- 6. "//" doesn't work for matrices over nc rings.  Need left/right ncgbs.
 --    no test available just yet.
--- 8. Documentation!!! Continue to bring over working documentation nodes from NCAlgebra
--- 9. Opposite Ring and element don't work yet.
--- 10. Change toM2Ring to 'abelianization' or some such
+-- 7. Documentation!!! Continue to bring over working documentation nodes from NCAlgebra
+-- 8. Opposite Ring and element don't work yet.
+-- 9. Change toM2Ring to 'abelianization' or some such
 ///
 
 -- Some things not bringing over yet:

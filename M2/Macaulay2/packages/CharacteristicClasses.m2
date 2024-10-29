@@ -9,7 +9,7 @@ newPackage(
 		  HomePage => "https://math.berkeley.edu/~mhelmer/"},
 	      {Name => "Christine Jost", 
 		  Email => "christine.e.jost@gmail.com"}},
-    	Headline => "CSM classes, Segre classes and the Euler characteristic for some subschemes of smooth complete toric varieties",
+	Headline => "CSM and Segre classes and the Euler characteristic for subschemes of smooth complete toric varieties",
 	Keywords => {"Intersection Theory"},
     	DebuggingMode => false,
 	PackageImports => { "Elimination", "PrimaryDecomposition", "NormalToricVarieties"},

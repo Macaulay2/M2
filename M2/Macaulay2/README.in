@@ -30,7 +30,7 @@ fitness for a particular purpose.
 
 Some programs or packages may be distributed along with Macaulay2 according to the terms of
 their own licenses, not affecting the license we offer you for Macaulay2
-itself.  These include the following programs: 4ti2, normaliz, and gfan.
+itself.  These include the following programs: 4ti2, normaliz, gfan, and msolve.
 
 The source code for the libraries, programs, or packages that we use is
 available on our web site at

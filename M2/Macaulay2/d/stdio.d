@@ -7,7 +7,6 @@ use expr;
 use stdio0;
 
 header "#include \"../system/m2fileinterface.h\"
-        #include <readline/history.h>
 	#include <assert.h>";
 
 --provide a constant representation of default buffer size for a file
@@ -743,9 +742,8 @@ export filbuf(o:file):int := (
 		    then 0 -- take care of "string files" made by stringTokenFile in interp.d
 		    else (
 			ret := read(o.infd,o.inbuffer,n,o.insize);
-			if ret > 0 && o == stdIO then (
-			    buf := tocharstarn(o.inbuffer, ret - 1);
-			    Ccode(void, "add_history(", buf, ")"));
+			if ret > 0 && o == stdIO
+			then addHistory(tocharstarn(o.inbuffer, ret - 1));
 			ret)));
 	  if r == ERROR then (
 	       fileErrorMessage(o,"read");
@@ -969,6 +967,8 @@ export endLine(o:file):void := (
 export (o:file) << (x:long) : file :=  o << tostring(x);
 
 export (o:file) << (x:ulong) : file :=  o << tostring(x);
+
+export (o:file) << (x:hash_t) : file := o << tostring(x);
 
 export setIOSynchronized(e:Expr):Expr :=(
      when e

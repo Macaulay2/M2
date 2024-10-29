@@ -346,7 +346,6 @@ document {
      Key => {(symbol /, Ring, Ideal),
 	  (symbol /, Ring, Module),
 	  (symbol /, Ring, RingElement),
-	  (symbol /, Ring, MonomialIdeal),
 	  (symbol /, Ring, List),
 	  (symbol /, Ring, Sequence),
 	  (symbol /, Ring, ZZ)

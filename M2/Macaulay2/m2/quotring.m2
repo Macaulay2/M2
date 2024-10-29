@@ -1,6 +1,7 @@
 --		Copyright 1996-2006 by Daniel R. Grayson and Michael E. Stillman
 
 needs "enginering.m2"
+needs "polyrings.m2"
 needs "matrix1.m2"
 
 -----------------------------------------------------------------------------
@@ -54,7 +55,6 @@ expression QuotientRing := S -> (
     if hasAttribute(S, ReverseDictionary)
     then expression getAttribute(S, ReverseDictionary)
     else new Divide from { unhold expression ambient S, unhold expression printRels S })
-toExternalString QuotientRing := toString @@ describe
 -- TODO: add AfterPrint for QuotientRing
 
 -----------------------------------------------------------------------------

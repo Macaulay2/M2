@@ -1,7 +1,9 @@
 // Copyright 2004.  Michael E. Stillman
 #pragma once
 
+#ifdef HAVE_ALLOCA_H
 #include <alloca.h>  // for alloca
+#endif
 #include <stddef.h>  // for size_t
 #include <string>    // for string
 #include <vector>    // for vector
