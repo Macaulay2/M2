@@ -56,6 +56,7 @@ Node
     (options, Function)
     (options, Command)
     (options, Sequence)
+    (options, List)
     (options, ZZ)
   Headline
     get the optional arguments and default values of a function or method
@@ -74,6 +75,8 @@ Node
       options res
       options codim
       options(codim, Ideal)
+      methods codim
+      options oo
       methods intersect
       options 0
   SeeAlso
