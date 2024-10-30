@@ -45,7 +45,9 @@ public:
   
   int numVars() const { return monoid().numVars(); }
   int n_vars() const { return numVars(); }
-  
+
+  bool is_quotient_ring() const { return true; }
+
   // these are all the functions from Ring that must exist for M2FreeAlgebraQuotient to be instantiated
   virtual int index_of_var(const ring_elem a) const;
   
