@@ -27,7 +27,7 @@ newPackage(
     DebuggingMode => false,
     PackageImports => {"Complexes"},
     PackageExports => {"Complexes"},
-    Keywords => {"Simplicial complexes", "Simplicial chain complexes", "Random simplicial complexes"}
+    Keywords => {"Combinatorial Commutative Algebra"}
     )
 
 export {"AbstractSimplicialComplex", "abstractSimplicialComplex","simplicialChainComplex", "reducedSimplicialChainComplex", "ambientAbstractSimplicialComplexSize",
