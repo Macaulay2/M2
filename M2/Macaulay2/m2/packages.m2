@@ -473,7 +473,8 @@ Core#"preloaded packages" = {
     "SimpleDoc",
     "OnlineLookup",
     "Isomorphism",
-    "Varieties"}
+    "Varieties",
+    "PackageCitations"}
 
 protect PackageIsLoaded
 
