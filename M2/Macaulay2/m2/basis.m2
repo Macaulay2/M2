@@ -28,9 +28,10 @@ inf := t -> if t === infinity then -1 else t
 -----------------------------------------------------------------------------
 
 -- the output of this is used in BasisContext
-getVarlist = (R, varlist) -> (
-    if varlist === null then toList(0 .. numgens R - 1)
-    else if instance(varlist, List) then apply(varlist, v ->
+getVarlist = (R, varlist) -> toList(
+    numvars := R.numallvars ?? numgens R;
+    if varlist === null then toList(0 .. numvars - 1)
+    else if instance(varlist, VisibleList) then apply(varlist, v ->
         -- TODO: what if R = ZZ?
         if instance(v, R)  then index v else
         if instance(v, ZZ) then v
@@ -127,7 +128,7 @@ basis = method(TypicalValue => Matrix,
 basis Module := opts -> M -> basis(-infinity, infinity, M, opts)
 basis Ideal  := opts -> I -> basis(module I, opts)
 basis Ring   := opts -> R -> basis(module R, opts)
--- TODO: add? basis Matrix := opts -> m -> basis(-infinity, infinity, m, opts)
+basis Matrix := opts -> m -> basis(-infinity, infinity, m, opts)
 
 -----------------------------------------------------------------------------
 
@@ -173,6 +174,18 @@ basis(ZZ,             ZZ,             Ring) := opts -> (lo, hi, R) -> basis(lo, 
 
 -----------------------------------------------------------------------------
 
+inducedBasisMap = (G, F, f) -> (
+    -- Assumes G = image basis(deg, target f) and F = image basis(deg, source f)
+    -- this helper routine is useful for computing basis of a pair of composable
+    -- matrices or a chain complex, when target f is the source of a matrix which
+    -- we previously computed basis for.
+    psi := f * inducedMap(source f, , generators F);
+    phi := last coefficients(ambient psi, Monomials => generators G);
+    map(G, F, phi, Degree => degree f))
+    -- TODO: benchmark against inducedTruncationMap in Truncations.m2
+    -- f' := f * inducedMap(source f, F)       * inducedMap(F, source generators F, generators F);
+    -- map(G, F, inducedMap(G, source f', f') // inducedMap(G, source generators G, generators G), Degree => degree f))
+
 basis(List,                           Matrix) :=
 basis(ZZ,                             Matrix) := opts -> (deg, M) -> basis(deg, deg, M, opts)
 basis(InfiniteNumber, InfiniteNumber, Matrix) :=
@@ -183,12 +196,28 @@ basis(List,           List,           Matrix) :=
 basis(List,           ZZ,             Matrix) :=
 basis(ZZ,             InfiniteNumber, Matrix) :=
 basis(ZZ,             List,           Matrix) :=
-basis(ZZ,             ZZ,             Matrix) := opts -> (lo, hi, M) -> (
-    BF := basis(lo, hi, target M, opts);
-    BG := basis(lo, hi, source M, opts);
-    -- TODO: is this general enough?
-    BM := last coefficients(matrix (M * BG), Monomials => BF);
-    map(image BF, image BG, BM))
+basis(ZZ,             ZZ,             Matrix) := opts -> (lo, hi, M) -> inducedBasisMap(
+    image basis(lo, hi, target M, opts), image basis(lo, hi, source M, opts), M)
+
+-----------------------------------------------------------------------------
+
+-- Note: f needs to be homogeneous, otherwise returns nonsense
+basis           RingMap  := Matrix => opts ->        f  -> basis(({},   {}),   f, opts)
+basis(ZZ,       RingMap) :=
+basis(List,     RingMap) := Matrix => opts -> (degs, f) -> basis((degs, degs), f, opts)
+basis(Sequence, RingMap) := Matrix => opts -> (degs, f) -> (
+    -- if not isHomogeneous f then error "expected a graded ring map (try providing a DegreeMap)";
+    if #degs != 2          then error "expected a sequence (tardeg, srcdeg) of degrees for target and source rings";
+    (T, S) := (target f, source f);
+    (tardeg, srcdeg) := degs;
+    if tardeg === null then tardeg = f.cache.DegreeMap  srcdeg;
+    if srcdeg === null then srcdeg = f.cache.DegreeLift tardeg;
+    targens := basis(tardeg, tardeg, T);
+    srcgens := basis(srcdeg, srcdeg, S);
+    -- TODO: should matrix RingMap return this map instead?
+    -- mon := map(module T, image matrix(S, { S.FlatMonoid_* }), f, matrix f)
+    mat := last coefficients(f cover srcgens, Monomials => targens);
+    map(image targens, image srcgens, f, mat))
 
 -----------------------------------------------------------------------------
 

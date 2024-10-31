@@ -79,6 +79,9 @@ assert( hash (1p111*ii) =!= hash (1p110*ii) )
 assert( hash (1p111*ii) === hash (1p111*ii) )
 assert( realPart toCC 1. === 1. )
 assert( imaginaryPart toCC 1. === 0. )
+assert( realPart ii === 0. )
+assert( imaginaryPart ii === 1. )
+assert( conjugate ii == -ii )
 
 assert try (lift(1.3,ZZ); false) else true
 assert not liftable(1.3,ZZ)

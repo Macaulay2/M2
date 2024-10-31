@@ -281,7 +281,7 @@ char QuotientRing := (stashValue symbol char) ((S) -> (
      g := generators gb relns;
      if g == 0 then return char ring g;
      m := g_(0,0);
-     if liftable(m,ZZ) then lift(m,ZZ) else 0))
+     lift(m,ZZ,Verify=>false) ?? 0))
 
 singularLocus = method()
 singularLocus(Ring) := QuotientRing => (R) -> (

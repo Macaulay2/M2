@@ -226,9 +226,19 @@ CC // RR := (x,y) -> x // y_CC;
 CC % RR := (x,y) -> x % y_CC;
 
 -- functions
-realPart Number := realPart0
-imaginaryPart Number := imaginaryPart0
+realPart ZZ :=
+realPart QQ :=
+realPart InexactNumber := realPart0
+realPart Number := realPart0 @@ numeric
+
+imaginaryPart ZZ :=
+imaginaryPart QQ :=
+imaginaryPart InexactNumber := imaginaryPart0
+imaginaryPart Number := imaginaryPart0 @@ numeric
+
 conjugate CC := z -> toCC(precision z, realPart z, - imaginaryPart z)
+conjugate Constant := conjugate @@ numeric
+
 isConstant Number := i -> true
 
 round RR := round CC := round0
