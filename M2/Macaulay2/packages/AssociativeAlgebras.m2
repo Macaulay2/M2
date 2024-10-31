@@ -355,7 +355,7 @@ NCGB(Ideal, ZZ) := opts -> (I, maxdeg) -> (
     if I == 0 then return gens I;
     strat := opts#Strategy;
     if not I.cache.?NCGB or I.cache.NCGB#0 < maxdeg then (
-        tobecomputed := raw if I.cache.?NCGB then I.cache.NCGB#1 else gens I;
+	tobecomputed := raw if I.cache.?NCGB then I.cache.NCGB#1 else compress gens I;
 	possField := ZZ/(char ultimate(coefficientRing, ring I));
 	f4Allowed := (possField === (coefficientRing ring I)); -- or instance(coefficientRing ring I, GaloisField) or coefficientRing ring I === QQ;
 	if not isHomogeneous I or (not f4Allowed and (strat == "F4" or strat == "F4Parallel")) then (
