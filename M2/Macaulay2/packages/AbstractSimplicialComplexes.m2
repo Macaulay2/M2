@@ -32,7 +32,7 @@ newPackage(
 
 export {"AbstractSimplicialComplex", "abstractSimplicialComplex","simplicialChainComplex", "reducedSimplicialChainComplex", "ambientAbstractSimplicialComplexSize",
     "ambientAbstractSimplicialComplex", "abstractSimplicialComplexFacets", "randomAbstractSimplicialComplex", "randomSubSimplicialComplex",
-     "inducedSimplicialChainComplexMap","inducedReducedSimplicialChainComplexMap","areEqual", "dimAbstractSimplicialComplex",
+     "inducedSimplicialChainComplexMap","inducedReducedSimplicialChainComplexMap" 
     }
 
 -* Code section *-
@@ -113,19 +113,15 @@ abstractSimplicialComplexFacets(AbstractSimplicialComplex) := List => K ->(
 
 --- decide if two simplicial complexes are equal
 
---- we could overload "==" here but it seems better not to overload too many things that are external to the package
-
-areEqual = method()
-
-areEqual(AbstractSimplicialComplex,AbstractSimplicialComplex) := Boolean => (K,L) ->(
+AbstractSimplicialComplex == AbstractSimplicialComplex := Boolean => (K,L) ->(
     return (abstractSimplicialComplexFacets K) == (abstractSimplicialComplexFacets L)
     )
 
+
 --- returns the dimension of a simplicial complex
 
-dimAbstractSimplicialComplex = method()
 
-dimAbstractSimplicialComplex(AbstractSimplicialComplex) := ZZ => (K) -> (
+dim AbstractSimplicialComplex := ZZ => (K) -> (
     return (max apply(abstractSimplicialComplexFacets(K), i -> #i) - 1)
     )
 
@@ -400,7 +396,7 @@ inducedSimplicialChainComplexMap(AbstractSimplicialComplex,AbstractSimplicialCom
 (
     h := simplicialChainComplex H;
     l := simplicialChainComplex L;
-    if areEqual(abstractSimplicialComplex {{}},H)==true then return map(l,h,zero)
+    if ((abstractSimplicialComplex {{}}) == H) then return map(l,h,zero)
     else( 
     f := hashTable apply(spots h, i -> if i == -1 then i => map(l_(-1),h_(-1),zero) else i => inducedKFaceSimplicialChainComplexMap(i,L,H));
     return map(l,h,f);
@@ -414,7 +410,7 @@ inducedReducedSimplicialChainComplexMap = method()
 inducedReducedSimplicialChainComplexMap(AbstractSimplicialComplex,AbstractSimplicialComplex) := (L,H) -> (
     h := reducedSimplicialChainComplex H;
     l := reducedSimplicialChainComplex L;
-    if areEqual(abstractSimplicialComplex {{}},H)==true then return map(l,h, hashTable {-2 => map(l_(-2),h_(-2),zero), -1 => map(l_(-1),h_(-1),id_(h_(-1)))})
+    if ((abstractSimplicialComplex {{}}) == H) then return map(l,h, hashTable {-2 => map(l_(-2),h_(-2),zero), -1 => map(l_(-1),h_(-1),id_(h_(-1)))})
     else( 
     f := hashTable apply(spots h, i -> if i == -1 then i => map(l_(-1),h_(-1),id_(h_(-1))) else i => inducedKFaceSimplicialChainComplexMap(i,L,H));
     return map(l,h,f);
@@ -591,15 +587,14 @@ doc ///
 
 doc ///
     Key
-         areEqual
-	 (areEqual,AbstractSimplicialComplex,AbstractSimplicialComplex)
+	 (symbol ==,AbstractSimplicialComplex,AbstractSimplicialComplex)
     Headline
          Decide if two simplicial complexes are equal
     Description
           Text
 	     Decides if two simplicial complexes are equal.
 	  Example
-	     areEqual(randomAbstractSimplicialComplex(4),randomAbstractSimplicialComplex(4))
+	     randomAbstractSimplicialComplex(4) == randomAbstractSimplicialComplex(4)
 ///	     
 
 doc ///
@@ -829,8 +824,7 @@ doc ///
 
 doc ///
      Key
-          dimAbstractSimplicialComplex 
-          (dimAbstractSimplicialComplex, AbstractSimplicialComplex)
+          (dim, AbstractSimplicialComplex)
      Headline
      	  The dimension of a simplicial complex  
      Description
@@ -838,7 +832,7 @@ doc ///
 	     This method returns the dimension a given AbstractSimplicialComplex.
 	  Example
 	       K = abstractSimplicialComplex(3)
-	       dimAbstractSimplicialComplex K
+	       dim K
 ///
 
 
