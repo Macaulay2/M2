@@ -50,6 +50,8 @@ public:
   virtual const M2FreeAlgebraOrQuotient * cast_to_M2FreeAlgebraOrQuotient()  const { return this; }
   virtual       M2FreeAlgebraOrQuotient * cast_to_M2FreeAlgebraOrQuotient()        { return this; }
 
+  bool is_commutative_ring() const { return false; }
+
 };
 
 class M2FreeAlgebra : public M2FreeAlgebraOrQuotient
@@ -166,6 +168,8 @@ public:
   ring_elem makeTerm(const ring_elem a, const_varpower monom) const;
 
   void makeTerm(Poly& result, const ring_elem a, const_varpower monom) const;
+
+  bool is_commutative_ring() const { return false; }
 };
 
 PolyList copyPolyVector(const M2FreeAlgebraOrQuotient* A,
