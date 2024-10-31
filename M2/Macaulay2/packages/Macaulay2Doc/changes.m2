@@ -40,6 +40,29 @@ document {
 	  }
      }
 
+-- helper code for listing new/certified packages
+-- single new package:    changesHelper "NewPackage"
+-- multiple new packages: changesHelper {"NewPackage1", "NewPackage2"}
+-- certified package:     changesHelper("NewPackage", Certification => true)
+
+changesHelper := method(Options => {Certification => false})
+changesHelper String := opt -> pkgname -> changesHelper({pkgname}, opt)
+changesHelper List := opt -> pkgnames -> (
+    getName := x -> (new OptionTable from x).Name;
+    commaAnd := x -> concatenate (
+	if #x > 2 then (between (", ", drop(x, -1)), ", and ", x#-1)
+	else between (" and ", x));
+    scan(pkgnames, pkgname -> (
+	    pkg := needsPackage pkgname;
+	    << "LI { "
+	    << (if opt.Certification then "star, \" \", " else "")
+	    << "TO \"" << pkgname << "::" << pkgname << "\", \", a package by "
+	    << commaAnd apply((options pkg).Authors, getName)
+	    << " for " << (options pkg).Headline << ", has been "
+	    << (if opt.Certification then "published" else "added")
+	    << ".\" },"
+	    << endl)))
+
 document {
     Key => "changes made for the next release",
     UL {
