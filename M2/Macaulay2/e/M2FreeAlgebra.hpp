@@ -168,8 +168,6 @@ public:
   ring_elem makeTerm(const ring_elem a, const_varpower monom) const;
 
   void makeTerm(Poly& result, const ring_elem a, const_varpower monom) const;
-
-  bool is_commutative_ring() const { return false; }
 };
 
 PolyList copyPolyVector(const M2FreeAlgebraOrQuotient* A,
