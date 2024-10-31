@@ -276,3 +276,5 @@ MultigradedImplicitization
 Msolve
 Permutations
 SCMAlgebras
+HomologicalShiftIdeals
+MatchingPowers
