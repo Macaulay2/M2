@@ -1,4 +1,3 @@
-restart
 needsPackage "WeylAlgebras"
 needsPackage "AssociativeAlgebras"
 
