@@ -396,7 +396,7 @@ inducedSimplicialChainComplexMap(AbstractSimplicialComplex,AbstractSimplicialCom
 (
     h := simplicialChainComplex H;
     l := simplicialChainComplex L;
-    if ((abstractSimplicialComplex {{}}) == H)==true then return map(l,h,zero)
+    if ((abstractSimplicialComplex {{}}) == H) then return map(l,h,zero)
     else( 
     f := hashTable apply(spots h, i -> if i == -1 then i => map(l_(-1),h_(-1),zero) else i => inducedKFaceSimplicialChainComplexMap(i,L,H));
     return map(l,h,f);
@@ -410,7 +410,7 @@ inducedReducedSimplicialChainComplexMap = method()
 inducedReducedSimplicialChainComplexMap(AbstractSimplicialComplex,AbstractSimplicialComplex) := (L,H) -> (
     h := reducedSimplicialChainComplex H;
     l := reducedSimplicialChainComplex L;
-    if ((abstractSimplicialComplex {{}}) == H) == true then return map(l,h, hashTable {-2 => map(l_(-2),h_(-2),zero), -1 => map(l_(-1),h_(-1),id_(h_(-1)))})
+    if ((abstractSimplicialComplex {{}}) == H) then return map(l,h, hashTable {-2 => map(l_(-2),h_(-2),zero), -1 => map(l_(-1),h_(-1),id_(h_(-1)))})
     else( 
     f := hashTable apply(spots h, i -> if i == -1 then i => map(l_(-1),h_(-1),id_(h_(-1))) else i => inducedKFaceSimplicialChainComplexMap(i,L,H));
     return map(l,h,f);
@@ -604,7 +604,7 @@ doc ///
 	 (randomAbstractSimplicialComplex,ZZ,ZZ)
 	 (randomAbstractSimplicialComplex,ZZ,ZZ,ZZ)
     Headline
-          Create a random abstract simplicial complex 
+          Create a random simplicial set
     Description
           Text
 	     Create a random abstract simplicial complex with vertices supported on a subset of [n] = {1,...,n}.
