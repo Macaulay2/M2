@@ -2787,7 +2787,8 @@ basToMat(ZZ,List,LieAlgebra):=(d,m,L)->(
 basToMat(ZZ,ZZ,List,LieAlgebra):=(d,j,m,L)->(
     if m==={} or L#cache.dim#d==0 then matrix{{0_(L#Field)}} else 
           (
-       	    idm:=entries (basis((L#Field)^(dim(d,j,L))));
+	F := L#Field;
+	idm := entries basis(F^(dim(d,j,L)), Variables => F_*);
        	    transpose matrix apply(m, x->if x==0 then 
                	flatten table(1,dim(d,j,L),x->0_(L#Field)) 
 	       	else sum(

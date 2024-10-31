@@ -331,7 +331,7 @@ else()
 endif()
 
 if(FLINT_FOUND)
-  set(CMAKE_REQUIRED_INCLUDES "${FLINT_INCLUDE_DIR}")
+  set(CMAKE_REQUIRED_INCLUDES "${FLINT_INCLUDE_DIR};${GMP_INCLUDE_DIRS}")
   check_include_files(flint/nmod.h HAVE_FLINT_NMOD_H)
   check_include_files(flint/arb.h  HAVE_FLINT_ARB_H)
 else()

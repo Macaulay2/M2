@@ -6,6 +6,9 @@ restart
 installPackage("PencilsOfQuadrics")
 check "PencilsOfQuadrics"
 viewHelp "PencilsOfQuadrics"
+needsPackage"CompleteIntersectionResolutions"
+loadPackage("PencilsOfQuadrics", Reload=>true)
+peek loadedFiles
 ///
 
      newPackage(
@@ -37,9 +40,7 @@ viewHelp "PencilsOfQuadrics"
 	 "tensorProduct",
 	 "preRandomLineBundle", -- methods updated in ver 1.0
 	 "randomLineBundle", -- methods updated in ver 1.0
---	 "Nontrivial", -- an option which is not used in ver 0.2
 	 "degOnE",
---	 "degreeOnE",
 	 "orderInPic",
 	 "randomExtension",
 	 --
@@ -59,7 +60,6 @@ viewHelp "PencilsOfQuadrics"
 	 "oddOperators",
 	 "evenCenter",
 	 "oddCenter",
---	 "symmetricMatrix",--function returning the symmetric matrix
 	 "symMatrix",--same as symmetricMatrix
 	  "symmetricM", -- key for CliffordModule
 	 "hyperellipticBranchEquation", -- key for CliffordModule
@@ -607,6 +607,34 @@ centers(List,List) := (eOdd,eEv) -> (
 
 
 
+TEST///
+
+-- Testing the pfaffian formula
+
+kk=ZZ/101
+d=1
+n=2*d
+R=kk[a_0..a_(binomial(n+2,2)-1)]
+S=kk[x_0..x_(n-1),a_0..a_(binomial(n+2,2)-1)]
+M=genericSymmetricMatrix(S,a_0,n)
+X=(vars S)_{0..n-1}
+Y=X*M
+(M1,M2)=matrixFactorizationK(X,Y);
+(eOdd,eEv)=cliffordOperators(M1,M2,R);
+symMatrix(eOdd,eEv)
+(c0,c1)=centers(eOdd,eEv);
+assert isHomogeneous c0
+assert isHomogeneous c1
+betti c0, betti c1
+all(n,i->eOdd_i*c1+c0*eOdd_i==0)
+all(n,i->eEv_i*c0+c1*eEv_i==0)
+assert(target eEv_0 == target c1)
+assert(target eOdd_0 == target c0)
+determ=det symMatrix(eOdd,eEv)
+-- Note the factor (-1)^d occurs in the test below
+assert(c0^2-(-1)^d*determ*id_(target c0)==0)
+assert(c1^2-(-1)^d*determ*id_(source c1)==0)
+///
 
 factorToList = method()
 factorToList(Product) := pf ->(
@@ -700,11 +728,13 @@ randomLineBundle(ZZ, RingElement) := (d,f) -> (
 	);
     Ld
     )
-///
---restart
---load "PencilsOfQuadrics.m2"
-///
-///--test of preRandomLineBundle and randomLineBundle-- but there were no "asserts"
+
+
+TEST///
+--test of preRandomLineBundle and randomLineBundle
+restart
+load "PencilsOfQuadrics.m2"
+>>>>>>> 82c56807936dda91b86f9ccae7189b001e15ff19
 kk = ZZ/nextPrime(10^3)
 R = kk[ s,t]
 g = 3
@@ -3098,7 +3128,6 @@ doc ///
   	    
 	Example
 	    kk=ZZ/1009;
-	    setRandomSeed 0
 	    g=2;
 	    rNP=randNicePencil(kk,g);
 	    cM=cliffordModule(rNP.matFact1,rNP.matFact2,rNP.baseRing);
@@ -3390,7 +3419,6 @@ doc ///
 
 	    g=3
 	    kk= ZZ/101;
-	    setRandomSeed 0
 	    elapsedTime (S,qq,R,u, M1,M2, Mu1, Mu2)=randomNicePencil(kk,g);
 	     -- 0.644455 seconds elapsed
 	    M=cliffordModule(Mu1,Mu2,R)

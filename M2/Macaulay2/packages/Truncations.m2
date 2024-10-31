@@ -260,12 +260,16 @@ truncate(List, Module) := Module => truncateModuleOpts >> opts -> (degs, M) -> (
 
 --------------------------------------------------------------------
 
+inducedTruncationMap = (G, F, f) -> (
+    -- Assumes G = truncate(deg, target f) and F = truncate(deg, source f)
+    -- this helper routine is useful for truncating complexes or a pair of
+    -- composable matrices, when target f is the source of a previously
+    -- truncated matrix, so we have truncated it once already.
+    f' := f * inducedMap(source f, F)       * inducedMap(F, source gens F, gens F);
+    map(G, F, inducedMap(G, source f', f') // inducedMap(G, source gens G, gens G)))
+
 truncate(List, Matrix) := Matrix => truncateModuleOpts >> opts -> (degs, f) -> (
-    F := truncate(degs, source f, opts);
-    G := truncate(degs, target f, opts);
-    -- FIXME, what is right?
-    fgenF := (f * inducedMap(source f, F) * inducedMap(F, source gens F, gens F));
-    map(G, F, inducedMap(G, source fgenF, fgenF) // inducedMap(G, source gens G, gens G)))
+    inducedTruncationMap(truncate(degs, target f, opts), truncate(degs, source f, opts), f))
 
 --------------------------------------------------------------------
 

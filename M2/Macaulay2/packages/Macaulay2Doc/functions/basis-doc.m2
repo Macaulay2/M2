@@ -26,12 +26,16 @@ doc ///
      (basis, List, Matrix)
      (basis, List, Module)
      (basis, List, Ring)
+     (basis, List, RingMap)
      (basis, List, ZZ, Ideal)
      (basis, List, ZZ, Matrix)
      (basis, List, ZZ, Module)
      (basis, List, ZZ, Ring)
+     (basis, Matrix)
      (basis, Module)
      (basis, Ring)
+     (basis, RingMap)
+     (basis, Sequence, RingMap)
      (basis, ZZ, Ideal)
      (basis, ZZ, InfiniteNumber, Ideal)
      (basis, ZZ, InfiniteNumber, Matrix)
@@ -44,6 +48,7 @@ doc ///
      (basis, ZZ, Matrix)
      (basis, ZZ, Module)
      (basis, ZZ, Ring)
+     (basis, ZZ, RingMap)
      (basis, ZZ, ZZ, Ideal)
      (basis, ZZ, ZZ, Matrix)
      (basis, ZZ, ZZ, Module)
@@ -145,7 +150,8 @@ doc ///
     Example
       A = ZZ/101[a..d];
       B = A[x,y]/(a*x, x^2, y^2);
-      basis B
+      try basis B
+      basis(B, Variables => B_*)
     Text
       If $M$ is an ideal or module, the resulting map looks somewhat strange, since maps between modules
       are given from generators, in terms of the generators of the target module.  Use @TO super@ or @TO cover@
