@@ -1,7 +1,9 @@
 include ../ubuntu/Makefile
 
 ## Parameters
-TAG = m2-fedora-build
+RELEASE = latest
+BUILD_ARGS = --build-arg RELEASE=$(RELEASE)
+TAG = m2-fedora-$(RELEASE)-build
 BUILD_DIR = M2/BUILD/build-docker
 BUILD_OPT = -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
 
