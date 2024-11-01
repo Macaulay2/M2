@@ -101,6 +101,8 @@ document {
 	    },
 	LI { "functionality added or improved:",
 	    UL {
+		LI { "A new function ", TO headlines, " is now available for viewing a table of documentation
+		    headlines from a list produced by ", TO methods, ", ", TO about, ", or ", TO apropos, "."},
 		LI { "It is now possible to construct an empty matrix by passing an empty list to ", TO matrix, "." },
 		LI { TO LUdecomposition, " now supports empty real and complex matrices." },
 		LI { "The ", TO "version", " hash table now contains a \"git branch\" key." },
@@ -117,7 +119,6 @@ document {
 		LI { "It is now possible to compare ", TO GroebnerBasis, " objects using ", TO symbol ==, "." },
 		LI { "Items in the \"ways to use\" section of documentation pages are now formatted using ", TO "Text::KBD", "."},
 		LI { "It is now possible to use ", TO symbol try, " with ", TO symbol then, ", but without ", TO symbol else, "."},
-		LI { "The function ", TO headlines, " has been added for viewing documentation headlines."},
 		LI { "When running Macaulay2 without the ", CODE "--no-readline", " option, command history is now saved between sessions.  This history can be found in the file ", CODE "history.m2", " in the ", TO applicationDirectory, "."},
 		LI { "The error message is now more informative when a key is not found in a hash table." },
 		LI { "New methods for scalar division, e.g., ", TO (symbol /, Matrix, Number), " have been added." },
@@ -126,6 +127,9 @@ document {
 	    },
 	LI { "functionality changed in a way that could break code:",
 	    UL {
+		LI { "The behavior of ", TO basis, " over tower rings has changed. Previously basis was computed
+		    over the most recent coefficient ring, but now it is computed over the first coefficient ring.
+		    Previous behavior can be mimicked by passing the option ", TT "basis(..., Variables => gens R)", "." },
 		LI { "Testing equality of zero modules using ", TO symbol ==, " so that two zero modules are equal if they are equal as cosets.  The only implication is that zero submodules of any free module are now the same, but zero submodules of arbitrary modules are only the same if they have the same ambient module." },
 		LI { "The syntactic sugar ", CODE "T OP= f", " for ", TO "installing augmented assignment methods", " has been removed." },
 		LI { TO symbol TEST, " is now a keyword instead of a method function.  It functionality remains essentially unchanged.  However, its ", TO FileName, " option has been removed.  Use ", M2CODE "TEST get(...)", " instead when storing the code for a test in a file." }
