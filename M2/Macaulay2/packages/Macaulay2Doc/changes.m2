@@ -5,7 +5,8 @@ star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldSta
 document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
-	  TO "changes made for the next release",
+	  -- TO "changes made for the next release",
+	  TO "changes, 1.24.11",
 	  TO "changes, 1.24.05",
 	  TO "changes, 1.23",
 	  TO "changes, 1.22",
@@ -63,8 +64,11 @@ changesHelper List := opt -> pkgnames -> (
 	    << ".\" },"
 	    << endl)))
 
+-- document {
+--     Key => "changes made for the next release"}
+
 document {
-    Key => "changes made for the next release",
+    Key => "changes, 1.24.11",
     UL {
 	LI { "packages that have been published and certified:",
 	    UL {
