@@ -2,7 +2,9 @@
 # Net usage:  54+124+
 # Disk usage: ??
 
-FROM registry.fedoraproject.org/fedora-minimal:32
+ARG RELEASE=latest
+
+FROM quay.io/fedora/fedora-minimal:$RELEASE
 
 # Programs we require to build
 #  kernel-devel rpm-build rpm-sign rpmdevtools
