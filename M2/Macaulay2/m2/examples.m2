@@ -130,8 +130,8 @@ isCapturable = (inputs, pkg, isTest) -> (
     -- alternatively, no-capture-flag can be used with an example or test
     if argumentMode & NoCapture =!= 0 or match("no-capture-flag", inputs) then return false;
     -- strip commented segments first
-    inputs = replace("--.*$", "",       inputs);
-    inputs = replace("-\\*.*?\\*-", "", inputs);
+    inputs = replace("--.*$", "",            inputs);
+    inputs = replace("-\\*(.|\n)*?\\*-", "", inputs);
     -- TODO: remove this when the effects of capture on other packages is reviewed
     (isTest or match({"FirstPackage", "Macaulay2Doc"},            pkg#"pkgname"))
     and not match({
