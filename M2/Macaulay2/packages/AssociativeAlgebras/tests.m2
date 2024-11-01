@@ -347,8 +347,9 @@ TEST ///
   assert(G b == s)
   assert(G 3 == 3)
   F s
-  assert(F (s*t) == d*c*b*c) -- Do we want to allow this? F is not well-defined. kind of a BUG!!
-          
+  assert(F(s*t) == F(s) * F(t))  -- note that the map F is not well-defined, but
+                                 -- M2 still allows such ring maps.
+  
   F1 = map(R,R,{c,b,d})
   F1 (b*c*d + b*b*d*c*d*b)
 
