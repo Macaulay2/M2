@@ -128,6 +128,8 @@ then if test -f /usr/bin/sw_vers
 	 *"openSUSE") ISSUE_FLAVOR=openSUSE ;;
 	 "SUSE LINUX") ISSUE_FLAVOR=SuseLinux ;;
 	 "arch") ISSUE_FLAVOR=ArchLinux ; ISSUE_RELEASE=none ;;
+	 "rocky") ISSUE_FLAVOR=RockyLinux ;;
+	 "almalinux") ISSUE_FLAVOR=AlmaLinux ;;
 	 "") AC_MSG_ERROR([issue not found]) ;;
 	 *)  AC_MSG_NOTICE([unrecognized issue: $ISSUE_FLAVOR]) ;;
      esac

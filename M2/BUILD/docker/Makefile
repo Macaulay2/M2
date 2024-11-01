@@ -20,7 +20,7 @@ clean-ccache: rm -rf $(STORAGE)/.ccache
 
 build: build-image
 
-build-image:;	docker build --tag $(TAG) .
+build-image:;	docker build $(BUILD_ARGS) --tag $(TAG) .
 
 ###############################################################################
 # M2 targets

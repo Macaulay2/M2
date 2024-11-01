@@ -5,7 +5,8 @@ star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldSta
 document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
-	  TO "changes made for the next release",
+	  -- TO "changes made for the next release",
+	  TO "changes, 1.24.11",
 	  TO "changes, 1.24.05",
 	  TO "changes, 1.23",
 	  TO "changes, 1.22",
@@ -40,22 +41,106 @@ document {
 	  }
      }
 
+-- helper code for listing new/certified packages
+-- single new package:    changesHelper "NewPackage"
+-- multiple new packages: changesHelper {"NewPackage1", "NewPackage2"}
+-- certified package:     changesHelper("NewPackage", Certification => true)
+
+changesHelper := method(Options => {Certification => false})
+changesHelper String := opt -> pkgname -> changesHelper({pkgname}, opt)
+changesHelper List := opt -> pkgnames -> (
+    getName := x -> (new OptionTable from x).Name;
+    commaAnd := x -> concatenate (
+	if #x > 2 then (between (", ", drop(x, -1)), ", and ", x#-1)
+	else between (" and ", x));
+    scan(pkgnames, pkgname -> (
+	    pkg := needsPackage pkgname;
+	    << "LI { "
+	    << (if opt.Certification then "star, \" \", " else "")
+	    << "TO \"" << pkgname << "::" << pkgname << "\", \", a package by "
+	    << commaAnd apply((options pkg).Authors, getName)
+	    << " for " << (options pkg).Headline << ", has been "
+	    << (if opt.Certification then "published" else "added")
+	    << ".\" },"
+	    << endl)))
+
+-- document {
+--     Key => "changes made for the next release"}
+
 document {
-    Key => "changes made for the next release",
+    Key => "changes, 1.24.11",
     UL {
-	LI { "functionality changed in a way that could break code:",
+	LI { "packages that have been published and certified:",
 	    UL {
-		LI { "The function ", TO remove, ", which previously had no return value, now returns the value that was removed." }
+		LI { star, " ", TO "A1BrouwerDegrees::A1BrouwerDegrees", ", a package by Nikita Borisov, Thomas Brazelton, Frenly Espino, Tom Hagedorn, Zhaobo Han, Jordy Lopez Garcia, Joel Louwsma, Wern Juin Gabriel Ong, and Andrew Tawfeek for A1-Brouwer degree computations, has been published." },
+		LI { star, " ", TO "SpecialFanoFourfolds::SpecialFanoFourfolds", ", a package by Giovanni Staglianò for Hodge-special fourfolds, has been published." },
+		LI { star, " ", TO "SubalgebraBases::SubalgebraBases", ", a package by Michael Burr, Oliver Clarke, Timothy Duff, Jackson Leaman, Nathan Nichols, and Elise Walker for Canonical subalgebra bases (aka SAGBI/Khovanskii bases), has been published." }
+		}
+	    },
+	LI { "new packages: ",
+	    UL {
+		LI { TO "AbstractSimplicialComplexes::AbstractSimplicialComplexes", ", a package by Nathan Grieve for abstract simplicial complexes, has been added." },
+		LI { TO "Msolve::Msolve", ", a package by Martin Helmer, Mike Stillman, and Anton Leykin for interfacing with the msolve library for solving multivariate polynomial systems using Groebner Bases, has been added." },
+		LI { TO "MultigradedImplicitization::MultigradedImplicitization", ", a package by Joseph Cummings and Benjamin Hollering for solving implicitization problems using multigradings, has been added." },
+		LI { TO "NumericalSemigroups::NumericalSemigroups", ", a package by David Eisenbud and Frank-Olaf Schreyer for computing the Apery set and invariants of a numerical semigroup ring, has been added." },
+		LI { TO "Permutations::Permutations", ", a package by Sean Grate for functions for working with permutations, has been added." },
+		LI { TO "SCMAlgebras::SCMAlgebras", ", a package by Ernesto Lax for sequentially Cohen-Macaulay modules or ideals, has been added." }
 		}
 	    },
 	LI { "improved packages:",
 	    UL {
+		LI { TO "A1BrouwerDegrees::A1BrouwerDegrees", " has been updated to version 1.1 with bug fixes and improved documentation."},
+		LI { TO "AssociativeAlgebras::AssociativeAlgebras", " has been updated to version 0.9 with new functions related to derivation-quotient algebras, superpotentials, and Nakayama automorphisms of m-Koszul Artin-Schelter regular algebras."},
+		LI { TO "ForeignFunctions::ForeignFunctions", " has been updated to version 0.4 with improved documentation."},
 		LI { TO "Jets::Jets", " has been updated to version 1.2 with improvements and new methods for principal jets."},
+		LI { TO "LieTypes::LieTypes", " has been updated to version 0.82 with bug fixes, improved documentation, and a new method, ", TO "LieTypes::zeroModule", "."},
+		LI { TO "PositivityToricBundles::PositivityToricBundles", " has been updated to version 1.9 with bug fixes and a new method, ", TO "PositivityToricBundles::wellformedBundleFiltrations", "."},
+		LI { TO "Probability::Probability", " has been updated to version 0.5 with improved documentation." },
+		LI { TO "Seminormalization::Seminormalization", " has been updated to version 0.22 with several improvements."},
+		LI { TO "TerraciniLoci::TerraciniLoci", " has been updated to version 0.2 with minor updates." },
+		LI { TO "Triangulations::Triangulations", " has been updated to version 0.2 with a bug fix." },
+		LI { TO "VectorGraphics::VectorGraphics", " has been updated to version 1.1 with several improvements."},
+		LI { TO "Visualize::Visualize", " has been updated to version 1.6 with improvements to the JavaScript code."}
+		}
+	    },
+	LI { "functionality added or improved:",
+	    UL {
+		LI { "A new function ", TO headlines, " is now available for viewing a table of documentation
+		    headlines from a list produced by ", TO methods, ", ", TO about, ", or ", TO apropos, "."},
+		LI { "It is now possible to construct an empty matrix by passing an empty list to ", TO matrix, "." },
+		LI { TO LUdecomposition, " now supports empty real and complex matrices." },
+		LI { "The ", TO "version", " hash table now contains a \"git branch\" key." },
+		LI { "The version number displayed in the startup banner now includes git information." },
+		LI { TO copyright, " is now a command that displays the ", TO "Copyright and license", " documentation."},
+		LI { "A number of improvements have been made to methods dealing with ", TO MonomialIdeal, " objects."},
+		LI { "The function ", TO remove, ", which previously had no return value, now returns the value that was removed." },
+		LI { "The function ", TO changeDirectory, ", for changing the working directory, has been added." },
+		LI { "Many numerical functions that previously did not accept ", TO CC, " or ", TO RRi, " arguments now do." },
+		LI { "The functions ", TO selectKeys, ", ", TO selectValues, ", and ", TO selectPairs, " for selecting from hash tables have been added." },
+		LI { "It is now possible to edit the list of packages that are loaded when Macaulay2 starts up by modifying the list ", M2CODE "Core#\"preloaded packages\"", " in ", CODE "init.m2", "." },
+		LI { "The classes ", TO Constant, ", ", TO InfiniteNumber, " and ", TO IndeterminateNumber, " are now all subclasses of ", TO Number, "."},
+		LI { "Hash codes are now unsigned 64-bit integers, vastly reducing the probability of running out when creating new types."},
+		LI { "It is now possible to compare ", TO GroebnerBasis, " objects using ", TO symbol ==, "." },
+		LI { "Items in the \"ways to use\" section of documentation pages are now formatted using ", TO "Text::KBD", "."},
+		LI { "It is now possible to use ", TO symbol try, " with ", TO symbol then, ", but without ", TO symbol else, "."},
+		LI { "When running Macaulay2 without the ", CODE "--no-readline", " option, command history is now saved between sessions.  This history can be found in the file ", CODE "history.m2", " in the ", TO applicationDirectory, "."},
+		LI { "The error message is now more informative when a key is not found in a hash table." },
+		LI { "New methods for scalar division, e.g., ", TO (symbol /, Matrix, Number), " have been added." },
+		LI { "The restriction on promotion/lifting has been relaxed so one can promote/lift between any two rings, and apply this to fraction fields and tensor products." }
+		}
+	    },
+	LI { "functionality changed in a way that could break code:",
+	    UL {
+		LI { "The behavior of ", TO basis, " over tower rings has changed. Previously basis was computed
+		    over the most recent coefficient ring, but now it is computed over the first coefficient ring.
+		    Previous behavior can be mimicked by passing the option ", TT "basis(..., Variables => gens R)", "." },
+		LI { "Testing equality of zero modules using ", TO symbol ==, " so that two zero modules are equal if they are equal as cosets.  The only implication is that zero submodules of any free module are now the same, but zero submodules of arbitrary modules are only the same if they have the same ambient module." },
+		LI { "The syntactic sugar ", CODE "T OP= f", " for ", TO "installing augmented assignment methods", " has been removed." },
+		LI { TO symbol TEST, " is now a keyword instead of a method function.  It functionality remains essentially unchanged.  However, its ", TO FileName, " option has been removed.  Use ", M2CODE "TEST get(...)", " instead when storing the code for a test in a file." }
 		}
 	    }
 	}
     }
-
 
 document {
     Key => "changes, 1.24.05",
