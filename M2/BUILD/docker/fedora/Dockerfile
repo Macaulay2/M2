@@ -28,7 +28,7 @@ RUN microdnf install -y cddlib-devel 4ti2 gfan normaliz csdp-tools nauty \
     lrslib-utils cohomCalg msolve
 
 # Optional packages
-RUN microdnf install -y mlocate bash-completion R
+RUN microdnf install -y plocate bash-completion R
 
 # Add non-root user for building and running Macaulay2
 RUN useradd -G wheel -g root -u 1000 -m macaulay && echo "macaulay ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
