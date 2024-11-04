@@ -67,7 +67,7 @@ clean:
 	if [ -f Makefile ] ; then $(MAKE) -f Makefile clean-tools ; fi
 
 install: configured; $(MAKE) -C distributions $@
-@srcdir@/configure : @srcdir@/configure.ac @srcdir@/m4/files; $(MAKE) -C @srcdir@ -f Makefile
+@srcdir@/configure : @srcdir@/configure.ac @srcdir@/m4/files; @srcdir@/autogen.sh
 recheck config.status: @srcdir@/configure @srcdir@/Macaulay2/packages/=distributed-packages
 	$(WHY)
 	./config.status --recheck
