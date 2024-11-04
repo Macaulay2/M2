@@ -3378,7 +3378,7 @@ doc ///
 	    ann Ulr == ideal qs
 	    
 	    elapsedTime Ulr3 = searchUlrich(M,S,3);
-	    betti res Ulr3
+	    betti freeResolution Ulr3
 	    ann Ulr3 == ideal qs
     Caveat
     	searchUlrich uses the method randomLineBundle, so the ground field kk has to be finite. 
@@ -3556,11 +3556,11 @@ P = kk[drop(gens S, -2)]
 qs = sub(diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq), P)
 CI = P/ideal qs
 
-F = res( coker (sub(u, CI)), LengthLimit => 3)
-betti (FF = res( coker transpose F.dd_3, LengthLimit => 5))
+F = freeResolution( coker (sub(u, CI)), LengthLimit => 3)
+betti (FF = freeResolution( coker transpose F.dd_3, LengthLimit => 5))
 M = cliffordModule(Mu1, Mu2, R)
 betti (F1=cliffordModuleToCIResolution(M,S,CI)) 
-betti (FFF = res coker FF.dd_5)
+betti (FFF = freeResolution(coker FF.dd_5, LengthLimit => 5))
 q1 = diff(S_(2*g+2),qq)
 q2 = diff(S_(2*g+3),qq)
 N = (S^1/(ideal(q1,q2))**coker sub(F.dd_2,S))
@@ -3576,8 +3576,8 @@ P = kk[drop(gens S, -2)]
 qs = sub(diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq), P)
 CI = P/ideal qs
 
-F = res( coker (sub(u, CI)), LengthLimit => 3)
-betti (FF = res( coker transpose F.dd_3, LengthLimit => 5))
+F = freeResolution( coker (sub(u, CI)), LengthLimit => 3)
+betti (FF = freeResolution( coker transpose F.dd_3, LengthLimit => 5))
 M = cliffordModule(Mu1, Mu2, R)
 betti (F1=cliffordModuleToCIResolution(M,S,CI)) 
 assert(ideal F1.dd_(g+3-(g%2))_{0} ==ideal sub(u,CI))
@@ -3594,8 +3594,8 @@ P = kk[drop(gens S, -2)]
 qs = sub(diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq), P)
 CI = P/ideal qs
 
-F = res( coker (sub(u, CI)), LengthLimit => 3)
-betti (FF = res( coker transpose F.dd_3, LengthLimit => 5))
+F = freeResolution( coker (sub(u, CI)), LengthLimit => 3)
+betti (FF = freeResolution( coker transpose F.dd_3, LengthLimit => 5))
 M = cliffordModule(Mu1, Mu2, R)
 betti (F1=cliffordModuleToCIResolution(M,S,CI)) 
 assert(ideal F1.dd_(g+3-(g%2))_{0} ==ideal sub(u,CI))
