@@ -177,7 +177,6 @@ interface.o :						\
 	@srcdir@/../e/aring-qq-flint.hpp		\
 	@srcdir@/../e/aring-qq-gmp.hpp			\
 	@srcdir@/../e/aring-m2-gf.hpp			\
-	@srcdir@/../e/aring-gf-givaro.hpp		\
 	@srcdir@/../e/polyring.hpp			\
 	@srcdir@/../e/skew.hpp				\
 	@srcdir@/../e/qring.hpp				\

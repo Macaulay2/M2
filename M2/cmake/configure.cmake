@@ -30,8 +30,7 @@ option(WITH_TBB		"Link with the TBB library"		ON)
 option(WITH_FFI		"Link with the FFI library"		ON)
 # TODO: parse.d expr.d tokens.d actors4.d actors5.d still need xml
 option(WITH_XML		"Link with the libxml2 library"		ON)
-# TODO: still not operational
-option(WITH_PYTHON	"Link with the Python library"		OFF)
+option(WITH_PYTHON	"Link with the Python library"		ON)
 option(WITH_MYSQL	"Link with the MySQL library"		OFF)
 
 set(BUILD_PROGRAMS  "" CACHE STRING "Build programs, even if found")
@@ -140,7 +139,7 @@ set(ENV{PKG_CONFIG_PATH}	${M2_HOST_PREFIX}/lib/pkgconfig:$ENV{PKG_CONFIG_PATH})
 
 ## Setting the prefixes where CMake will look for headers, libraries, and programs
 set(CMAKE_SYSTEM_PREFIX_PATH	${M2_HOST_PREFIX} ${CMAKE_SYSTEM_PREFIX_PATH})
-set(CMAKE_PREFIX_PATH		${CMAKE_PREFIX_PATH} ${M2_HOST_PREFIX})
+set(CMAKE_PREFIX_PATH		${M2_HOST_PREFIX} ${CMAKE_PREFIX_PATH})
 
 ## Setting the folder for Macaulay2 Core and packages
 set(CMAKE_INSTALL_DATADIR	share/Macaulay2)

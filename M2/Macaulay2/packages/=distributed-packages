@@ -271,6 +271,9 @@ SchurVeronese
 VNumber
 TropicalToric
 MultigradedBGG
+AbstractSimplicialComplexes
 MultigradedImplicitization
 Msolve
+Permutations
 SCMAlgebras
+NumericalSemigroups

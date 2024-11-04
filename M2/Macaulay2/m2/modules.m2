@@ -132,6 +132,7 @@ lift(Vector,Number) := Vector => o -> (v,S) -> vector (lift(v#0,S))
 - Vector := Vector => v -> new class v from {-v#0}
 Number * Vector := RingElement * Vector := Vector => (r,v) -> vector(r * v#0)
 Vector * Number := Vector * RingElement := Vector => (v,r) -> vector(v#0 * r)
+Vector / Number := Vector / RingElement := Vector => (v,r) -> vector(v#0 / r)
 Vector + Vector := Vector => (v,w) -> vector(v#0+w#0)
 Vector - Vector := Vector => (v,w) -> vector(v#0-w#0)
 Vector ** Vector := Vector => (v,w) -> vector(v#0**w#0)
@@ -351,14 +352,6 @@ isSubset(Module, Module) := (M, N) -> (
     else false)
 
 -----------------------------------------------------------------------------
-
--- the key for issub hooks under GlobalHookStore
-protect ContainmentHooks
-issub = (f, g) -> f === g or ring f === ring g and tryHooks(ContainmentHooks, (f, g),
-    -- This is used by isSubset and for checking equality of ideals and modules.
-    -- Specialized strategies may be added as hooks, for instance for local rings.
-    -- TODO: how can do better in the homogeneous case?
-    (f, g) -> -1 === rawGBContains(raw gb g, raw f))
 
 -- used for sorting a list of modules
 Module ? Module := (M, N) -> if rank M != rank N then rank M ? rank N else degrees M ? degrees N

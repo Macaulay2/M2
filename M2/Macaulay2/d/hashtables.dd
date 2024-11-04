@@ -318,10 +318,11 @@ lookup(object:HashTable, key:Expr):Expr; -- forward declaration
 KeyNotFound(object:string, key:Expr):Expr := (
     -- TODO: implement a similar trick to call synonym(object)
     msg := "key not found in " + object;
-    see := lookup(Class(key), RobustPrintE);
-    if see != notfoundE then
-    when applyEEEpointer(see, toExpr(msg), key)
-    is str:stringCell do msg = str.v else nothing;
+    if !SuppressErrors then (
+	see := lookup(Class(key), RobustPrintE);
+	if see != notfoundE then
+	when applyEEEpointer(see, toExpr(msg), key)
+	is str:stringCell do msg = str.v else nothing);
     buildErrorPacket(msg));
 
 export lookup1(object:HashTable,key:Expr,keyhash:hash_t):Expr := (

@@ -2,27 +2,33 @@
 # Net usage:  54+124+
 # Disk usage: ??
 
-FROM registry.fedoraproject.org/fedora-minimal:32
+ARG RELEASE=latest
+
+FROM quay.io/fedora/fedora-minimal:$RELEASE
 
 # Programs we require to build
 #  kernel-devel rpm-build rpm-sign rpmdevtools
-RUN microdnf install autoconf bison ccache cmake curl diffutils file gcc-c++ git \
-	gnupg libtool make ninja-build patch yasm rpm-build rpmlint which
+RUN microdnf install -y autoconf bison ccache cmake curl diffutils file     \
+    gcc-c++ git gnupg libtool make ninja-build patch yasm rpm-build rpmlint \
+    which flex gcc-gfortran
 
 # Libraries we require
-RUN microdnf install openblas-devel libxml2-devel readline-devel gdbm-devel \
-	boost-devel libomp-dev libtbb-dev
+RUN microdnf install -y openblas-devel libxml2-devel readline-devel gdbm-devel \
+    boost-devel libomp-devel tbb-devel python3-devel libffi-devel
 
 # Libraries we can build (factory not available on ubuntu)
-RUN microdnf install eigen3-devel glpk-devel gmp-devel mpfr-devel ntl-devel \
-	libnauty-devel libnormaliz-devel libfrobby-devel gc-devel
+RUN microdnf install -y eigen3-devel glpk-devel gmp-devel mpfr-devel ntl-devel \
+    libnauty-devel libnormaliz-devel libfrobby-devel gc-devel mpfi-devel       \
+    factory-devel mpsolve-devel fflas-ffpack-devel memtailor-devel             \
+    mathic-devel mathicgb-devel
 
 # Programs we can build
-# TODO: cohomcalg available soon. Polymake requires firefox???
-#RUN microdnf install libcdd-devel 4ti2 gfan normaliz coinor-csdp nauty lrslib
+# TODO: Polymake requires firefox???
+RUN microdnf install -y cddlib-devel 4ti2 gfan normaliz csdp-tools nauty \
+    lrslib-utils cohomCalg msolve
 
 # Optional packages
-RUN microdnf install mlocate bash-completion
+RUN microdnf install -y plocate bash-completion R
 
 # Add non-root user for building and running Macaulay2
 RUN useradd -G wheel -g root -u 1000 -m macaulay && echo "macaulay ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers

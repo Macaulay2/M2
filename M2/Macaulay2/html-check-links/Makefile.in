@@ -2,7 +2,7 @@
 # FULLDEBUG = TRUE
 include ../../include/config.Makefile
 VPATH = @srcdir@
-CPPFLAGS += -I@srcdir@ -I.
+CPPFLAGS := -I@srcdir@ -I. $(CPPFLAGS)
 YACC = @YACC@
 %.tab.c %.tab.h: %.y; $(YACC.y) $< && mv y.tab.c $*.tab.c && mv y.tab.h $*.tab.h
 %.fixed.c : %.tab.c

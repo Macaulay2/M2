@@ -1,8 +1,8 @@
--- TerraciniLoci - Macaulay2 package for computing Terracini locus
+-- TerraciniLoci - Macaulay2 package for computing the Terracini locus
 -- of a projective variety
 
--- Copyright (c) 2023 Francesco Galuppi, Pierpaola Santarsiero, Doug Torrance,
--- and Ettore Teixeira Turatti
+-- Copyright (c) 2023-2024 Francesco Galuppi, Pierpaola Santarsiero,
+-- Doug Torrance, and Ettore Teixeira Turatti
 
 -- This program is free software; you can redistribute it and/or
 -- modify it under the terms of the GNU General Public License
@@ -31,8 +31,8 @@
 
 newPackage("TerraciniLoci",
     Headline => "Terracini loci of projective varieties",
-    Version => "0.1",
-    Date => "November 16, 2023",
+    Version => "0.2",
+    Date => "October 19, 2024",
     Authors => {
 	{
 	    Name => "Francesco Galuppi",
@@ -53,6 +53,20 @@ newPackage("TerraciniLoci",
 	"CorrespondenceScrolls",
 	"FastMinors",
 	"MinimalPrimes"})
+
+---------------
+-- ChangeLog --
+---------------
+
+-*
+
+0.2 (2024-10-19, M2 1.24.11)
+* stop exporting "Threads" symbol from FastMinors; now exported by Core
+
+0.1 (2023-11-16, M2 1.23)
+* initial release
+
+*-
 
 export {
     "terraciniLocus"

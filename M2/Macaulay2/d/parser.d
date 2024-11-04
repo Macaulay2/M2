@@ -273,30 +273,6 @@ matcher(left:string):string := (
 	  );
      ""
      );
-export varexprlist := {
-     list:array(ParseTree),
-     size:int
-     };
-export newvarexprlist(i:int):varexprlist := varexprlist(
-     new array(ParseTree) len i do provide dummyTree, 
-     0);
-needatleast(i:int,v:varexprlist):void := (
-     if length(v.list) < i then (
-     	  v.list = new array(ParseTree) len 2*i do (
-	       foreach e in v.list do provide e;
-	       while true do provide dummyTree;
-	       );
-     	  );
-     );
-export (v:varexprlist) << (e:ParseTree) : varexprlist := (
-     needatleast(v.size + 1,v);
-     v.list.(v.size) = e;
-     v.size = v.size + 1;
-     v
-     );
-export toexprlist(v:varexprlist):ArrayParseTree := (
-     new array(ParseTree) len v.size do foreach e in v.list do provide e
-     );
 export unaryparen(left:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      rightparen := matcher(left.word.name);
      if rightparen == peektoken(file,false).word.name

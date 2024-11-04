@@ -50,7 +50,6 @@ assert (hash ZZ < hash QQ)
 lift(QQ,ZZ) := opts -> (r,o) -> if denominator r === 1 then numerator r else if opts.Verify then error "rational number is not an integer"
 liftable(QQ,ZZ) := (r,o) -> denominator r === 1
 lift(QQ,QQ) := opts -> (r,QQ) -> r
-liftable(QQ,QQ) := (QQ,QQ) -> true
 
 QQ.degreeLength = 0
 isUnit Number := x -> x != 0

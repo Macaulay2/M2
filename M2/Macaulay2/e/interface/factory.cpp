@@ -785,6 +785,11 @@ M2_arrayintOrNull rawIdealReorder(const Matrix *M)
             }
         }
 
+      if (I.length() == 0) {
+        ERROR("expected at least one generator");
+        return nullptr;
+      }
+
       List<int> t = neworderint(I);
 
       int n = t.length();

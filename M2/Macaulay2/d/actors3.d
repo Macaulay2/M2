@@ -1060,8 +1060,6 @@ atan(e:Expr):Expr := (
      is x:CCcell do toExpr(atan(x.v))				    -- # typical value: atan, CC, CC
      is x:RRcell do toExpr(atan(x.v))				    -- # typical value: atan, RR, RR
      is x:RRicell do toExpr(atan(x.v))				    -- # typical value: atan, RRi, RRi
-     is a:Sequence do if length(a) == 2 then buildErrorPacket("atan(x,y) has been replaced by atan2(y,x)")
-     else WrongNumArgs(1)
      else WrongArgRRorCC()
      );
 setupfun("atan",atan).Protected=false;

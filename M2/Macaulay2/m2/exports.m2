@@ -1127,6 +1127,8 @@ export {
 	"setRandomSeed",
 	"setup",
 	"setupEmacs",
+	"setupLift",
+	"setupPromote",
 	"shield",
 	"show",
 	"showClassStructure",

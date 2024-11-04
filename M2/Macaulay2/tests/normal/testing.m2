@@ -1,4 +1,4 @@
-testpkg = temporaryFileName() | ".m2"
+testpkg = minimizeFilename(temporaryFileName() | ".m2")
 testpkg << ///newPackage("TestPackage")
 beginDocumentation()
 TEST "assert Equation(1 + 1, 2)"

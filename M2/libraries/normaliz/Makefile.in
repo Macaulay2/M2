@@ -1,6 +1,6 @@
 HOMEPAGE = https://www.normaliz.uni-osnabrueck.de/
 # get releases from https://github.com/Normaliz/Normaliz/releases
-VERSION = 3.10.3
+VERSION = 3.10.4
 #PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 URL = https://github.com/Normaliz/Normaliz/releases/download/v$(VERSION)
@@ -33,7 +33,7 @@ NORMFLAGS =
 CXXFLAGS1 = $(CPPFLAGS) -Wall -O3 -Wno-unknown-pragmas -I .. -I . $(CXXFLAGS0)
 BUILDOPTIONS =  CXX="$(CXX)" \
 		NORMFLAGS="$(NORMFLAGS)" \
-		CXXFLAGS="$(CXXFLAGS1)" \
+		CXXFLAGS="$(CXXFLAGS1) -std=c++14" \
 		RANLIB="@RANLIB@" \
 		GMPFLAGS="$(LDFLAGS) -lgmpxx -lgmp"
 PROGRAMS = source/normaliz

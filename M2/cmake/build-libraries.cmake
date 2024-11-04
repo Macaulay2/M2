@@ -484,8 +484,8 @@ endif()
 
 # https://github.com/algebraic-solving/msolve
 ExternalProject_Add(build-msolve
-  URL               https://github.com/algebraic-solving/msolve/archive/refs/tags/v0.7.2.tar.gz
-  URL_HASH          SHA256=a834283700921051c9a8c93c07498d1a247e2b17bf32b01c01bfe9f80b0075b8
+  URL               https://github.com/algebraic-solving/msolve/archive/refs/tags/v0.7.3.tar.gz
+  URL_HASH          SHA256=b82bf7dfe1fb7d3064ecf95e0d0a01334820b09b1107368ca9b4d05ba9ee1241
   PREFIX            libraries/msolve
   SOURCE_DIR        libraries/msolve/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -966,8 +966,8 @@ _ADD_COMPONENT_DEPENDENCY(libraries nauty "" NAUTY_FOUND)
 # https://www.normaliz.uni-osnabrueck.de/
 # normaliz needs libgmp, libgmpxx, boost, and openmp, and is used by the package Normaliz
 ExternalProject_Add(build-normaliz
-  URL               https://github.com/Normaliz/Normaliz/releases/download/v3.10.2/normaliz-3.10.2.tar.gz
-  URL_HASH          SHA256=0f649a8eae5535c18df15e8d35fc055fd0d7dbcbdd451e8876f4a47061481f07
+  URL               https://github.com/Normaliz/Normaliz/releases/download/v3.10.4/normaliz-3.10.4.tar.gz
+  URL_HASH          SHA256=9b424f966d553ae32e710b8ab674c7887ddcbf0e5ea08af7f8bc1b587bcbb2aa
   PREFIX            libraries/normaliz
   SOURCE_DIR        libraries/normaliz/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -979,9 +979,10 @@ ExternalProject_Add(build-normaliz
                       --without-flint # ${FLINT_ROOT}
 		      --without-nauty
 		      --without-cocoalib
+		      --without-e-antic
                       "CPPFLAGS=${CPPFLAGS} -I${GMP_INCLUDE_DIRS}"
                       CFLAGS=${CFLAGS}
-                      CXXFLAGS=${CXXFLAGS}
+                      "CXXFLAGS=${CXXFLAGS} -std=gnu++14"
                       "LDFLAGS=${LDFLAGS}  -L${GMP_LIBRARY_DIRS}"
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}

@@ -35,7 +35,8 @@ document {
      "See also ", TO "odd", "."}
 
 document {
-     Key => {realPart, (realPart,Number)},
+     Key => {realPart, (realPart,Number), (realPart,QQ), (realPart,ZZ),
+	 (realPart,InexactNumber)},
      Headline => "real part",
      Usage => "realPart z",
      Inputs => {"z" => "an integer, rational, real or complex number"},
@@ -44,10 +45,11 @@ document {
 	  "realPart(3/4)",
 	  "realPart(1.5+2*ii)"
 	  },
-     SeeAlso => {CC}
+     SeeAlso => {CC, imaginaryPart}
      }
 document {
-     Key => {imaginaryPart,(imaginaryPart,Number)},
+     Key => {imaginaryPart,(imaginaryPart,Number), (imaginaryPart,QQ),
+	 (imaginaryPart,ZZ), (imaginaryPart,InexactNumber)},
      Headline => "imaginary part",
      Usage => "imaginaryPart z",
      Inputs => {"z" => "an integer, rational, real or complex number"},
@@ -56,15 +58,11 @@ document {
 	  "imaginaryPart(3/4)",
 	  "imaginaryPart(1.5+2*ii)"
 	  },
-     SeeAlso => {CC}
+     SeeAlso => {CC, realPart}
      }
 
 document {
-     Key => conjugate,
-     Headline => "complex conjugate",
-     TT "conjugate z", " -- the complex conjugate of the complex number z."}
-document {
-     Key => {(conjugate,CC),(conjugate,Number)},
+     Key => {conjugate,(conjugate,CC),(conjugate,Number),(conjugate,Constant)},
      Headline => "complex conjugate",
      Usage => "conjugate z",
      Inputs => {"z"},
