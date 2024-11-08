@@ -679,3 +679,17 @@ f = diagonalToricMap (P,2)
 assert isWellDefined f
 assert (codim ideal f == n)
 ///
+
+-- test 18
+TEST ///
+  N = ZZ^3
+  P = convexHull matrix {0_N, N_0, N_1, N_0 + N_1 + 2*N_2}
+  D = toricDivisor P
+  X = variety D
+  Y = toricProjectiveSpace 3
+  f = map(Y, X, matrix {{1, -1, 0}, {0, -1, 0}, {1, 0, 2}})
+  assert(classGroup f == map(classGroup X, classGroup Y, {{0}, {0}, {2}}))
+  -- TODO: ideally this shouldn't be -1
+  -- c.f. https://github.com/Macaulay2/M2/issues/2261
+  assert(picardGroup f == map(picardGroup X, picardGroup Y, {{-1}}))
+///
