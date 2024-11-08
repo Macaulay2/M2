@@ -310,9 +310,8 @@ classGroup ToricMap := Matrix => (cacheValue symbol classGroup) (f -> (
     	X := source f;
     	Y := target f;
     	divisorMap := weilDivisorGroup f;
-    	map(classGroup X, classGroup Y, transpose (
-	    	(transpose (fromWDivToCl(X) * divisorMap)) // transpose fromWDivToCl(Y)
-	    	))
+	map(classGroup X, classGroup Y,
+	    fromWDivToCl Y \\ (fromWDivToCl X * divisorMap))
     	)
     )
 
@@ -332,9 +331,8 @@ picardGroup ToricMap := Matrix => (cacheValue symbol picardGroup) (f -> (
     	X := source f;
     	Y := target f;
     	divisorMap := cartierDivisorGroup f;
-    	map(classGroup X, classGroup Y, transpose (
-	    	(transpose (fromCDivToPic(X) * divisorMap)) // transpose fromCDivToPic(Y)
-	    	))
+	map(classGroup X, classGroup Y,
+	    fromCDivToPic Y \\ (fromCDivToPic X * divisorMap))
     	)
     )
 
