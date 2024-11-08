@@ -331,7 +331,7 @@ picardGroup ToricMap := Matrix => (cacheValue symbol picardGroup) (f -> (
     	X := source f;
     	Y := target f;
     	divisorMap := cartierDivisorGroup f;
-	map(classGroup X, classGroup Y,
+	map(picardGroup X, picardGroup Y,
 	    fromCDivToPic Y \\ (fromCDivToPic X * divisorMap))
     	)
     )
