@@ -393,11 +393,11 @@ inducedMap ToricMap := RingMap => o -> (cacheValue symbol inducedMap) (f -> (
     	Y := target f;
     	S := ring Y;
     	R := ring source f;
-    	m := picardGroup f; -- degree map
+	m := classGroup f; -- degree map
     	map(R, S, apply(numgens S, i -> (
 		    exps := entries pullback(f, Y_i);
 		    product(numgens R, j -> R_j^(exps#j)))),
-	    DegreeMap => (deg -> first entries (matrix{deg} * transpose m)))
+	    DegreeMap => (deg -> flatten entries(m * transpose matrix {deg})))
 	)
     )
 
