@@ -686,10 +686,20 @@ TEST ///
   P = convexHull matrix {0_N, N_0, N_1, N_0 + N_1 + 2*N_2}
   D = toricDivisor P
   X = variety D
+  assert(11 == # monomials(2*D))
+  assert(11 == rank HH^0(X, OO(2*D)))
+  assert(11 == numcols latticePoints(2*D))
+  assert(4  == numcols vertices(2*D))
   Y = toricProjectiveSpace 3
   f = map(Y, X, matrix {{1, -1, 0}, {0, -1, 0}, {1, 0, 2}})
   assert(classGroup f == map(classGroup X, classGroup Y, {{0}, {0}, {2}}))
   -- TODO: ideally this shouldn't be -1
   -- c.f. https://github.com/Macaulay2/M2/issues/2261
   assert(picardGroup f == map(picardGroup X, picardGroup Y, {{-1}}))
+  -- c.f. https://github.com/Macaulay2/M2/issues/3575
+  D' = 2*X_0-2*X_1+2*X_2;
+  assert(11 == # monomials(2*D'))
+  assert(11 == rank HH^0(X, OO(2*D')))
+  assert(0  == numcols latticePoints(2*D'))
+  assert(0  == numcols vertices(2*D'))
 ///
