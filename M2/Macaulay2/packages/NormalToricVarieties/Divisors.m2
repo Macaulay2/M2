@@ -521,8 +521,8 @@ vertices ToricDivisor := Matrix => D -> (
     X := variety D;
     if not isComplete X then 
     	error "-- expected a divisor on a complete toric variety";
-    if not isEffective D then return null;
     d := dim X;
+    if not isEffective D then return map(ZZ^d, ZZ^0, 0);
     V := transpose (matrix vector D | matrix rays variety D);
     V = V | transpose matrix {{1} | toList(d:0)};
     -( (fourierMotzkin V)#0)^{1..d} 
@@ -530,7 +530,7 @@ vertices ToricDivisor := Matrix => D -> (
 
 latticePoints ToricDivisor := Matrix => D -> (
     V := vertices D;
-    if V === null then return null;
+    if numColumns V <= 1 then return V;
     c := matrix(vector \ latticePoints convexHull V);
     c_(sortColumns c) 
     );
