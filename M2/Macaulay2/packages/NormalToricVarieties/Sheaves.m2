@@ -135,6 +135,7 @@ setupHHOO = X -> (
 	);
     -- create rings
     degS := degrees S; 
+    ClX := classGroup X;
     X.cache.rawHHOO = new HashTable from apply(d+1, 
 	i -> {i, apply(sigma#i, s -> (
 	  	    v := - degree product(n, 
@@ -143,7 +144,7 @@ setupHHOO = X -> (
 	  	    degT := apply(n, 
 	    		j -> if member(j,s#0) then -degS#j else degS#j
 			);
-	  	    T := (ZZ/2)(monoid [gens S, Degrees => degT]);
+		    T := (ZZ/2)(monoid [gens S, Degrees => degT, DegreeGroup => ClX]);
 	  	    {v,T,s#0,s#1}
 		    )
 		)
