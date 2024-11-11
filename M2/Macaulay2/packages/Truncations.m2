@@ -353,7 +353,7 @@ basisMonomials(List, Ring) := opts -> (d, R) -> (
 -- FIXME: when M has relations, it should be pruned
 basis' = method(Options => options basis ++ {"partial degrees" => null})
 basis'(List, Module) := Matrix => opts -> (degs, M) -> (
-    if M == 0 then return M;
+    if M == 0 then return gens M;
     if not truncateImplemented(R := ring M) then error "cannot use basis' with this ring type";
     degs = checkOrMakeDegreeList(degs, degreeLength R);
     if isFreeModule M
