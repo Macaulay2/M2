@@ -72,6 +72,9 @@ checkOrMakeDegreeList(List, ZZ) := (L, degrank) -> (
         then sort L else error("expected a list of multidegrees, each of length " | degrank))
     )
 
+-- c.f. https://github.com/Macaulay2/M2/issues/3578
+selectByDegrees = (M, lo, hi) -> rawSelectByDegrees(raw (ring M)^(-degrees M), lo, hi)
+
 --------------------------------------------------------------------
 -- Divisorial information
 --------------------------------------------------------------------
@@ -320,7 +323,7 @@ basisMonomials(List, Ring) := opts -> (d, R) -> (
         -- opportunistically use cached truncation results
         -- TODO: is this always correct? with negative degrees?
         truncgens := R#(symbol truncate, d, null);
-	psrc := rawSelectByDegrees(raw source truncgens, d, d);
+	psrc := selectByDegrees(source truncgens, d, d);
         submatrix(truncgens, , psrc))
     else (
         (R1, phi1) := flattenRing R;
@@ -347,7 +350,7 @@ basisMonomials(List, Ring) := opts -> (d, R) -> (
         result := mingens ideal(mongens % J); -- ~40% of computation
         if R1 =!= ambR then result = result ** R1;
         if R =!= R1 then result = phi1^-1 result;
-        psrc = rawSelectByDegrees(raw source result, d, d);
+	psrc = selectByDegrees(source result, d, d);
         submatrix(result, , psrc)))
 
 -- FIXME: when M has relations, it should be pruned
