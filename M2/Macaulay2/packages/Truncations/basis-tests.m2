@@ -64,3 +64,24 @@ TEST ///
   -- TODO: can we do partial multidegrees for hilbertFunction?
   sum apply(7, i -> hilbertFunction({3,i}, A))
 ///
+
+TEST ///
+  needsPackage "NormalToricVarieties"
+  -- Bruns and Gubeladze Example 5.1
+  P = convexHull matrix transpose {
+      {1,1,1,0,0,0}, {0,1,1,0,0,1},
+      {1,1,0,1,0,0}, {0,1,0,1,1,0},
+      {1,0,1,0,1,0}, {0,1,0,0,1,1},
+      {1,0,0,1,0,1}, {0,0,1,1,1,0},
+      {1,0,0,0,1,1}, {0,0,1,1,0,1}}
+  N = ZZ^5
+  P = affineImage(id_N | transpose matrix {{-1,-1,-1,-1,-1}}, P)
+
+  D = toricDivisor P
+  X = variety D
+  S = ring X
+
+  -- tests the basis' which is added as a hook in NormalToricVarieties
+  (t, B) = toSequence elapsedTiming basis(degree D, S^1);
+  assert(numcols B == 11 and t < 10)
+///
