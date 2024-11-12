@@ -4,6 +4,7 @@ TEST /// -- basic test
   A = summands M
   B = summands prune M
   C = summands trim M
+  -- FIXME: this keeps annoyingly breaking
   assert same(A, {prune M}, B, prune \ C)
 ///
 
@@ -34,6 +35,7 @@ TEST /// -- direct summands of a ring
   assert(M == S^{0,-1,-2})
 ///
 
+-- FIXME: takes 13s, which is more than it used to
 TEST /// -- direct summands over field extensions
   debug needsPackage "DirectSummands"
   R = (ZZ/7)[x,y,z]/(x^3+y^3+z^3);
@@ -66,14 +68,20 @@ TEST /// -- testing in char 0
   S = QQ[x,y];
   assert(2 == #summands coker matrix "x,y; y,x")
   assert(1 == #summands coker matrix "x,y;-y,x")
+  S = QQ[a,b,c,d];
+  -- TODO: can we make sure the last block remains symmetric?
+  assert(3 == #summands coker matrix "a,b,c,d;d,a,b,c;c,d,a,b;b,c,d,a")
   K = toField(QQ[i]/(i^2+1));
   S = K[x,y];
   assert(2 == #summands coker matrix "x,y; y,x")
   assert(2 == #summands coker matrix "x,y;-y,x")
   S = K[a,b,c,d];
   assert(4 == #summands coker matrix "a,b,c,d;d,a,b,c;c,d,a,b;b,c,d,a")
+  S = CC[x,y];
+  scan(20, i -> assert(set summands coker matrix {{x,y},{-y,x}} == set {cokernel matrix {{x-ii*y}}, cokernel matrix {{x+ii*y}}}))
 ///
 
+-- FIXME: takes 78s
 TEST ///
   --tests largepowers
   K = ZZ/7
@@ -84,3 +92,29 @@ TEST ///
   L = potentialExtension M2
   findIdem changeBaseField(L, M2)
 ///
+
+///
+  -- from David's email: reaches recursion limit overnight
+  needsPackage "DirectSummands"
+  kk = ZZ/101
+  S = kk[x,y,z]
+  I = monomialIdeal(x^4,x*y,y^4,x*z,y^2*z,z^4)
+  R = S/I
+  F = res(coker vars R, LengthLimit => 5)
+  M = coker F.dd_5;
+  debugLevel = 1
+  elapsedTime L5 = summands M;
+///
+
+///
+needsPackage "DirectSummands"
+  kk = ZZ/101
+  S = kk[x,y,z]
+  P = Proj S
+  TP = tangentSheaf P
+  R = S/(x*y-z^2)
+  assert(length summands prune sheaf(module TP ** R) == rank TP)
+  assert(length summands sheaf(module TP ** R) == length summands prune sheaf(module TP ** R))
+///
+
+load "./large-tests.m2"

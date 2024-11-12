@@ -11,6 +11,7 @@
 -- 5. implement diagonalize for matrices (and later, complexes)
 -- 6. restrict and pass End to the summands
 -- 7. check for isomorphic summands
+-- 8. make summands work over ZZ (currently rank fails)
 ---------------------------------------------------------------------------
 newPackage(
     "DirectSummands",
@@ -184,10 +185,26 @@ flatten' = m -> map(R := ring m, rawReshape(m = raw m, raw R^1, raw R^(rawNumber
 leadCoefficient Matrix := RingElement => m -> for c to numcols m - 1 do for r to numrows m - 1 do (
     if not zero m_(r,c) then return leadCoefficient m_(r,c))
 
+-- hacky things for CC
+-- TODO: move to Core, also add conjugate Matrix, realPart, imaginaryPart, etc.
+conjugate RingElement := x -> sum(listForm x, (e, c) -> conjugate c * (ring x)_e)
+magnitude = x -> x * conjugate x
+isZero = x -> if not instance(F := ultimate(coefficientRing, ring x), InexactField) then x == 0 else (
+    leadCoefficient magnitude x < 2^(-precision F))
+
+-- borrowed from Varieties as hack to get around
+-- https://github.com/Macaulay2/M2/issues/3407
+flattenMorphism = f -> (
+    g := presentation ring f;
+    S := ring g;
+    -- TODO: sometimes lifting to ring g is enough, how can we detect this?
+    -- TODO: why doesn't lift(f, ring g) do this automatically?
+    map(target f ** S, source f ** S, lift(cover f, S)) ** cokernel g)
+
 -- this is a kludge to handle the case when h^2 = ah
 reduceScalar = m -> if m == 0 then m else map(target m, source m, cover m // leadCoefficient m)
 isIdempotent = h -> reduceScalar(h^2) == reduceScalar h
-isWeakIdempotent = h -> 0 == det cover(reduceScalar(h^2) - reduceScalar h)
+isWeakIdempotent = h -> all(flatten entries flattenMorphism(reduceScalar(h^2) - reduceScalar h), isZero)
 
 -- TODO: can we return cached summands from the closest field extension?
 -- all cached keys: select(keys M.cache, k -> instance(k, Option) and k#0 === symbol directSummands)
@@ -238,6 +255,7 @@ directSummands Module := List => opts -> (cacheValue (symbol summands => opts.Ex
     -- FIXME: this currently does not find _all_ idempotents
     flag := true; -- whether all non-identity homomorphisms are zero mod m
     -- TODO: 10k columns for F_*(OO_X) on Gr(2,4) over ZZ/3 take a long time
+    -- TODO: add option to skip this step
     idem := position(numcols B, c -> (
 	    h := homomorphism B_{c};
 	    if h == id_M or h == 0 then false else (
@@ -319,6 +337,7 @@ directSummands(List, Module) := List => opts -> (Ls, M) -> fold(Ls, {M},
 --
 isDefinitelyIndecomposable = method()
 isDefinitelyIndecomposable Module := M -> M.cache.?Indecomposable
+-- TODO: check that the sheaf is pruned also
 isDefinitelyIndecomposable CoherentSheaf := M -> isDefinitelyIndecomposable module M
 
 --directSummands Matrix  := List => opts -> f -> apply(directSummands(coker f,  opts), presentation)
