@@ -505,8 +505,8 @@ isVeryAmple ToricDivisor := {} >> o -> D -> (
 	)
     );
      
-isFano = method ()
-isFano NormalToricVariety := Boolean => X -> isAmple (- toricDivisor X)
+isFano = method()
+isFano NormalToricVariety := Boolean => X -> X.cache.isFano ??= isAmple(- toricDivisor X)
 
 isQQFano = method()
 isQQFano NormalToricVariety := Boolean => X -> X.cache.isQQFano ??= (
