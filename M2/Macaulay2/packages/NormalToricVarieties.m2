@@ -58,6 +58,7 @@ export {
     "isNef",  
     "isProper", 
     "isQQCartier", 
+    "isQQFano",
     "kleinschmidt",
     "makeSimplicial",
     "makeSmooth",

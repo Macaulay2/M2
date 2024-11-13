@@ -1688,6 +1688,7 @@ doc ///
         (cartierDivisorGroup,NormalToricVariety)
         (isSimplicial,NormalToricVariety)
         (isCartier,ToricDivisor)
+	(isQQFano, NormalToricVariety)
 ///	
 
 
@@ -1942,9 +1943,59 @@ doc ///
         "finding attributes and properties"   
         (toricDivisor, NormalToricVariety)
         (isAmple, ToricDivisor)
+	(isQQFano, NormalToricVariety)
         (smoothFanoToricVariety, ZZ, ZZ)
 ///
 
+doc ///
+    Key
+       (isQQFano, NormalToricVariety)
+        isQQFano
+    Headline
+        whether a normal toric variety is $\QQ$-Fano
+    Usage
+        isQQFano X
+    Inputs
+        X : NormalToricVariety
+    Outputs
+        : Boolean
+	    that is @TO true@ if the normal toric variety is $\QQ$-Fano
+    Description
+	Text
+	    A normal toric variety is $\QQ$-Fano if its anticanonical divisor $K_X$,
+	    namely the sum of all the torus-invariant irreducible divisors,
+	    is $\QQ$-Cartier and some positive integer multiple of $-K_X$ is
+	    Cartier and ample. This is equivalent to saying that the polyhedron
+	    associated to the anticanonical divisor contains the origin.
+	Text
+	    Weighted projective spaces are $\QQ$-Fano.
+	Example
+	    X = weightedProjectiveSpace {1,1,3};
+	    assert not isFano X
+	    assert isQQFano X
+	    K = toricDivisor X
+	    isQQCartier K
+	    isCartier K
+	    isCartier(3*K)
+	    isAmple(-K)
+	    isAmple(-3*K)
+	    interiorLatticePoints polytope(-K)
+	Text
+	    All Hirzebruch surfaces are $\QQ$-Fano.
+	Example
+	    apply(5, t -> isFano hirzebruchSurface t)
+	    apply(5, t -> isQQFano hirzebruchSurface t)
+	Text
+	    To avoid duplicate computations, the attribute is cached in the
+	    normal toric variety.
+    SeeAlso
+	"finding attributes and properties"
+	(toricDivisor, NormalToricVariety)
+	(isFano, NormalToricVariety)
+	(isAmple, ToricDivisor)
+	(isCartier, ToricDivisor)
+	(isQQCartier, ToricDivisor)
+///
 
 ------------------------------------------------------------------------------
 -- Polyhedral features of a toric divisor

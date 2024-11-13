@@ -508,6 +508,9 @@ isVeryAmple ToricDivisor := {} >> o -> D -> (
 isFano = method ()
 isFano NormalToricVariety := Boolean => X -> isAmple (- toricDivisor X)
 
+isQQFano = method()
+isQQFano NormalToricVariety := Boolean => X -> X.cache.isQQFano ??= (
+    contains(polytope(-toricDivisor X), convexHull matrix{0_(QQ^(dim X))}))
 
 ------------------------------------------------------------------------------
 -- Polyhedral features of a toric divisor
