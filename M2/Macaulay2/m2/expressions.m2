@@ -1256,7 +1256,7 @@ toString Dots := x -> "..."
 net Dots := x -> if x === vdots then "."||"."||"." else if x === ddots then ".  "||" . "||"  ." else "..."
 
 -- used e.g. in chaincomplexes.m2
-shortLength := 8
+shortLength = 8
 shortStringLength := 3*shortLength
 short = method(Dispatch => Thing, TypicalValue => Expression)
 short Thing := x -> short expression x
