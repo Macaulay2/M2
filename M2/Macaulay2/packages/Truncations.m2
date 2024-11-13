@@ -31,6 +31,7 @@ importFrom_Core {
     "freeComponents",
     "raw", "rawHilbertBasis", "rawSelectByDegrees",
     "tryHooks",
+    "reduce",
     }
 
 -- "truncate" is exported by Core
@@ -353,15 +354,16 @@ basisMonomials(List, Ring) := opts -> (d, R) -> (
 	psrc = selectByDegrees(source result, d, d);
         submatrix(result, , psrc)))
 
--- FIXME: when M has relations, it should be pruned
 basis' = method(Options => options basis ++ {"partial degrees" => null})
 basis'(List, Module) := Matrix => opts -> (degs, M) -> (
-    if M == 0 then return gens M;
+    if M == 0 then return map(M, 0, 0);
     if not truncateImplemented(R := ring M) then error "cannot use basis' with this ring type";
     degs = checkOrMakeDegreeList(degs, degreeLength R);
-    if isFreeModule M
-    then map(M, , basisMonomials(degs, M, "partial degrees" => opts#"partial degrees"))
-    else map(M, , basis'(degs, target presentation M, opts)))
+    -- TODO: "mingens image" seems silly ...
+    B := map(M, , if not M.?relations
+    then basisMonomials(degs, M, "partial degrees" => opts#"partial degrees")
+    else reduce(super M, raw basis'(degs, image generators M, opts)));
+    inducedMap(M, , mingens image B))
 
 --------------------------------------------------------------------
 ----- Tests section
