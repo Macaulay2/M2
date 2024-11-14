@@ -415,6 +415,30 @@ TEST /// -- test of truncationPolyhedron with torsion in class group
   --Y = toricBlowup({7}, Bl1);
 ///
 
+TEST ///
+  needsPackage "NormalToricVarieties"
+  needsPackage "Complexes"
+  N = ZZ^3
+  D = toricDivisor convexHull matrix {0_N, N_0, N_1, N_0 + N_1 + 2*N_2}
+  X = variety D
+  X.cache.nefCone = coneFromVData map(coker matrix {{2, 0}, {0, 2}, {0, 0}}, , transpose{{0,0,1}})
+  S = ring X
+
+  -- TODO: are these correct?
+  -- C = complex gens truncate(degree D, S)
+  -- part(degree(2*D), C) -- TODO: add an assertion
+  -- assert(part(degree(2*D), HH_0 C) == 0)
+  -- assert(part(degree(2*D), HH_1 C) == QQ^5)
+  -- assert(part(degree(2*D), HH C) == complex map(QQ^0, QQ^5, 0))
+  -- assert(part(degree(2*D), HH C) == prune HH part(degree(2*D), C))
+
+  M = coker basis({0,0,2}, S)
+  assert(basis({0,0,1}, M) == x_3)
+  assert(basis({0,0,2}, M) == 0)
+  assert(basis({0,0,3}, M) == x_0*x_1*x_2)
+  assert(basis({0,0,4}, M) == x_0*x_1*x_2*x_3)
+///
+
 end--
 
 restart
