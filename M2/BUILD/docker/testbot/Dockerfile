@@ -1,8 +1,10 @@
 # Time usage: <5min
 # Net usage:  <200MB
-# Disk usage: <700MB
+# Disk usage: <800MB
 
 FROM debian:bookworm
+
+LABEL org.opencontainers.image.source=https://github.com/Macaulay2/M2
 
 # Setup the system
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates debian-keyring git && apt-get clean
