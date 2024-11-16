@@ -2018,8 +2018,7 @@ doc ///
             Cartier divisor is a lattice polytope.  Given a torus-invariant
             Cartier divisor on a normal toric variety, this method returns an
             integer matrix whose columns correspond to the vertices of the
-            associated lattice polytope.  For a non-effective Cartier divisor,
-            this methods returns @TO null@.  When the divisor is ample,
+	    associated lattice polytope. When the divisor is ample,
             the normal fan the corresponding polytope equals the fan
             associated to the normal toric variety.
         Text
@@ -2027,7 +2026,7 @@ doc ///
 	    a point, or a triangle.
         Example  
     	    PP2 = toricProjectiveSpace 2;
-    	    assert (null === vertices (-PP2_0))
+	    assert (vertices (-PP2_0) == 0)
     	    vertices (0*PP2_0)
     	    assert isAmple PP2_0
     	    V1 = vertices (PP2_0)
@@ -2082,14 +2081,13 @@ doc ///
   	    Cartier divisor is a lattice polytope.  Given a torus-invariant
   	    Cartier divisor on a normal toric variety, this method returns an
   	    integer matrix whose columns correspond to the lattices points
-  	    contained in the associated polytope.  For a non-effective Cartier
-  	    divisor, this method returns @TO null@.
+	    contained in the associated polytope.
         Text  
             On the projective plane, the associate polytope is either empty, a
    	    point, or a triangle.
         Example
             PP2 = toricProjectiveSpace 2;
-    	    assert (null === vertices (-PP2_0))
+	    assert (vertices (-PP2_0) == 0)
     	    latticePoints (0*PP2_0)
     	    assert isAmple PP2_0
     	    V1 = latticePoints (PP2_0)
