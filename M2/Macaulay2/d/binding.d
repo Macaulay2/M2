@@ -286,6 +286,8 @@ bumpPrecedence();
      export PlusS := makeKeyword(unarybinaryleft("+"));	    -- also binary
      export PlusPlusS := makeKeyword(binaryleft("++"));
 bumpPrecedence();
+     export InterpunctS := makeKeyword(binaryleft("·"));
+bumpPrecedence();
      export StarStarS := makeKeyword(binaryleft("**"));
 bumpPrecedence();
      precBracket := prec;
@@ -511,7 +513,8 @@ export opsWithBinaryMethod := array(SymbolClosure)(
      PowerGreaterEqualS,   UnderscoreGreaterEqualS,
      PowerLessS,           UnderscoreLessS,
      PowerLessEqualS,      UnderscoreLessEqualS,
-     PowerStarStarS
+     PowerStarStarS,
+     InterpunctS
      );
 export opsWithUnaryMethod := array(SymbolClosure)(
      StarS, MinusS, PlusS, LessLessS, QuestionQuestionS,
