@@ -98,6 +98,7 @@ Vector#AfterPrint = Vector#AfterNoPrint = v -> moduleAbbrv(module v, Vector)
 ring Vector := v -> ring class v
 module Vector := v -> target v#0
 leadTerm Vector := v -> new class v from leadTerm v#0
+leadTerm (ZZ, Vector) := (n,v) -> new class v from leadTerm(n,v#0)
 degree Vector := v -> (
      f := ambient v#0;
      first degrees source map(target f,,f))

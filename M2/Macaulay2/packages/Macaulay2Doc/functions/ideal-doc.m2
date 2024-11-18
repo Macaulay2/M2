@@ -4,6 +4,8 @@
 
 -- in Classic: (ideal, String)
 
+undocumented (ideal,Ideal)
+
 document { 
      Key => ideal,
      Headline => "make an ideal",
