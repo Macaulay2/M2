@@ -99,13 +99,9 @@ map(Complex, Complex, ZZ) := ComplexMap => opts -> (D, C, j) -> (
         result.cache.isCommutative = true;
         return result
         );
-    if j === 1 then (
-        if C == D and (opts.Degree === null or opts.Degree === 0) then
-            return id_C;
-        error "expected source and target to be the same";
-        );
-    error "expected integer to be zero or one";
-    )
+    if C == D and (opts.Degree === null or opts.Degree === 0) then
+        return j * id_C;
+    error "expected 0 or source and target to be the same")
 
 map(Complex, Complex, ComplexMap) := ComplexMap => opts -> (tar, src, f) -> (
     deg := if opts.Degree === null then degree f else opts.Degree;
@@ -1384,4 +1380,28 @@ connectingExtMap(Matrix, Matrix, Module) := ComplexMap => opts -> (g, f, N) -> (
     G := freeResolution(N, LengthLimit => opts.LengthLimit);
     -- TODO: the indexing on opts.Concentration needs to be negated
     connectingMap(Hom(f', G), Hom(g', G), Concentration => opts.Concentration)
+    )
+
+constantStrand = method()
+constantStrand(Complex, ZZ) :=
+constantStrand(Complex, List) := (C, deg) -> (
+    kk := coefficientRing ring C;
+    (loC, hiC) := concentration C;
+    modules := new MutableHashTable;
+    maps := hashTable for i from loC + 1 to hiC list (
+        m := lift(submatrixByDegrees(C.dd_i, deg, deg), kk);
+        if numrows m != 0 then modules#i = target m;
+        if numcols m != 0 then modules#i = source m;
+        if m != 0 then i => m else continue
+        );
+    if #keys maps === 0 then (
+      if #keys modules === 0 then
+          complex kk^0
+      else directSum for i from loC to hiC list (
+          if modules#?i then
+              complex(modules#i, Base => i)
+          else continue
+          )
+      )
+    else complex maps
     )

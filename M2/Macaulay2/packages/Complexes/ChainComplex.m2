@@ -998,7 +998,7 @@ resolutionMapPrivate(Complex, Boolean) := ComplexMap => opts -> (C, isEpi) -> (
       or C.cache.resolutionMap.cache.LengthLimit < opts.LengthLimit then (
         (lo,hi) := concentration C;
         local f;
-        lengthlimit := defaultLengthLimit(ring C, length C, opts.LengthLimit);
+        lengthlimit := defaultLengthLimit(ring C, hi - lo, opts.LengthLimit);
         if lo === hi then (
             -- if C has only one nonzero module, use the faster free resolution code
             -- which is also important for Yoneda ext.
@@ -1029,11 +1029,11 @@ resolutionMapPrivate(Complex, Boolean) := ComplexMap => opts -> (C, isEpi) -> (
             -- of the base case above.
             f = naiveTruncation(f,(lo,infinity));
             );
-        f.cache.LengthLimit = if length source f < lengthlimit then infinity else lengthlimit;
+        f.cache.LengthLimit = if -difference concentration source f < lengthlimit then infinity else lengthlimit;
         C.cache.resolutionMap = f;
         );
     fC := C.cache.resolutionMap;
-    if opts.LengthLimit < length source fC
+    if opts.LengthLimit < -difference concentration source fC
     then naiveTruncation(fC, (0, opts.LengthLimit))
     else fC
     )
@@ -1131,6 +1131,7 @@ Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
             );
         H.cache.yonedaExtension = liftmap;
         H.cache.yonedaExtension' = invmap;
+        H.cache.formation = FunctionApplication { Ext, (i, M, N) };
         H.cache.Ext = (i,M,N);
         H
         );
@@ -1154,7 +1155,7 @@ yonedaExtension Matrix := Complex => f -> (
     g := homomorphism E.cache.yonedaExtension f; -- g: FM_d --> N
     -- if g has a non-zero degree, we must twist the target to preserve homogeneity
     gdegree := degree g;
-    g = map(N ** (ring g)^gdegree, source g, g);
+    g = map(N ** (ring g)^{gdegree}, source g, g);
     if d <= 0 then error "Yoneda extension only defined for Ext^d module for d at least 1";
     h := dd^FM_d || g;
     P := coker h; -- FM_d --> FM_(d-1) ++ N --> P --> 0

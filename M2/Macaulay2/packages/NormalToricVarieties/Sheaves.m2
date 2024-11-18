@@ -69,9 +69,9 @@ addHook((minimalPresentation, CoherentSheaf), Strategy => symbol NormalToricVari
     	B := ideal X;
     	N := saturate(image map(M,S^0,0), B);
     	if N != 0 then M = M/N;
-    	C := res M;
+    	C := freeResolution M;
     	-- is there a better bound?
-    	a := max(1, max flatten flatten apply(length C +1, i -> degrees C#i));
+    	a := max(1, max flatten flatten apply(length C +1, i -> degrees C_i));
 	return sheaf(X, minimalPresentation Hom(B^[a], M)) )
     )
 
@@ -117,7 +117,7 @@ setupHHOO = X -> (
     RfromS := map (R, S, gens R);
     B := RfromS ideal X;
     -- use simplicial cohomology find the support sets 
-    quasiCech := Hom (res (R^1/B), R^1);
+    quasiCech := Hom (freeResolution(R^1/B), R^1);
     supSets := delete ({}, subsets (toList (0..n-1)));
     d := dim X;
     sigma := new MutableHashTable;
@@ -188,7 +188,7 @@ cohomology (ZZ, NormalToricVariety, CoherentSheaf) := Module => opts -> (i,X,F) 
 	    )
     	else (
       	    B := ideal X;
-      	    C := res M;
+      	    C := freeResolution M;
       	    deg := toList (degreeLength S : 0);
       	    bettiNum := flatten apply (1+length C, 
 		j -> apply (unique degrees C_j, alpha -> {j,alpha}));

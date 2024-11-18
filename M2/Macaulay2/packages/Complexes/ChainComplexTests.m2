@@ -2009,10 +2009,12 @@ TEST ///
   restart
   needsPackage "Complexes"
 *-
-
   S = ZZ/101[a..d, Degrees=>{2:{1,0},2:{0,1}}]
   B = ideal(a,b) * ideal(c,d)
-  Ext^1(B, S)
+  E = Ext^1(B, S)
+  C = yonedaExtension map(E, , matrix random cover E)
+  assert(C_0 == module B)
+  assert(C_2 == module S)
   F = random({1,2}, S)
   f = map(S^1, S^{-degree F}, {{F}})
   assert isHomogeneous f
@@ -2363,4 +2365,21 @@ TEST ///
   LES = longExactSequence(g', f')
   assert all(3, i -> dd^LES'_(-3*(i+1)) == delta_(-i-2)) -- note that contravariance shifts the indexing...
   assert(HH LES == 0)
+///
+
+TEST ///
+  k = ZZ/101
+  R = k[a..e]
+  I = inverseSystem random(4, R);
+  C = freeResolution(I, Strategy => Nonminimal)
+  C5 = constantStrand(C, 5)
+  assert isWellDefined C5
+  assert(ring C5 === k)
+  C7 = constantStrand(C, {7})
+  assert isWellDefined C7
+  assert(ring C7 === k)
+  C12 = constantStrand(C, 12)
+  assert isWellDefined C12
+  C9 = constantStrand(C, 9)
+  assert isWellDefined C9
 ///

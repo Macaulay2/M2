@@ -38,7 +38,8 @@ newPackage(
 	     "volume number" => "5",
 	     "volume URI" => "https://msp.org/jsag/2013/5-1/"
 	     },
-	PackageImports => {"MinimalPrimes"},
+        PackageExports => {"Complexes"},
+        PackageImports => {"MinimalPrimes"},
     	DebuggingMode => false
     	)
 
@@ -467,7 +468,7 @@ maxMinors(Matrix) := M -> (
 
 
 -- Method: trimResolution
--- Input: (Module,ChainComplex) -- projective module over a polynomial ring, given as a cokernel.  Also a free resolution of the module.
+-- Input: (Module,Complex) -- projective module over a polynomial ring, given as a cokernel.  Also a free resolution of the module.
 -- Output: (Matrix,Matrix) -- (Map from R^m -> R^n, Projection map from R^n -> P)
 -- Description:
 -- Given a projective module P which is presented as a cokernel,
@@ -477,7 +478,7 @@ maxMinors(Matrix) := M -> (
 -- "Applications of the Quillen-Suslin Theorem" (pg. 37)
 
 trimResolution = method()
-trimResolution(Module,ChainComplex) := (mp,F) -> (
+trimResolution(Module,Complex) := (mp,F) -> (
      local dd1; local dd2; local dd3; local dd3t; local ident;
      local mp; local p; local proj; local R; local T;
      
@@ -1880,7 +1881,7 @@ qsIsomorphism(Module) := opts -> M -> (
      pruneMap = mp.cache.pruningMap;
      if verbosity >= 3 then print("qsIsomorphism: Constructing a free resolution of the minimal presentation.");
      
-     F = res mp;
+     F = freeResolution mp;
      -- If Macaulay2 already knows that the module is free, then just return the pruning map.
      if length F == 0 then (
 	  if verbosity >= 2 then print "qsIsomorphism: Macaulay2 already knows that this module is free.  Returning the pruning map.";
