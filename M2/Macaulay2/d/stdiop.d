@@ -179,6 +179,8 @@ export peek(o:PosFile, offset:int):int := (
 	  );
      c);
 export peek(o:PosFile):int := peek(o,0);
+-- concatenate the next two bytes into a single int
+export peek2(o:PosFile):int := (peek(o) << 8) | peek(o, 1);
 export isatty(o:PosFile):bool := o.file.inisatty;
 export close(o:PosFile):int := (
      when close(o.file) is errmsg do ERROR else 0

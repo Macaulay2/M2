@@ -25,8 +25,7 @@ foreach c in " \t\r"	                   do setchartype(c,WHITE);
 foreach c in "\n"                          do setchartype(c,NEWLINE);
 foreach c in "$'"                          do setchartype(c,ALNUMEXTRA);
 
-for c from 128 to 225	       	    	   do setchartype(char(c),ALPHA);  -- 226 is unicode math symbols
-for c from 227 to 255	       	    	   do setchartype(char(c),ALPHA);
+for c from 128 to 255                      do setchartype(char(c),ALPHA);
 					      setchartype('\"',QUOTE);
 
 chartype(c:int):int := if (c & ~255) == 0 then int(chartypes.c) else 0;
@@ -52,10 +51,28 @@ export isspace    (c:char):bool := (chartype(c) & SPACE    ) != 0;
 export isnewline  (c:char):bool := (chartype(c) & NEWLINE  ) != 0;
 export isquote    (c:char):bool := (chartype(c) & QUOTE    ) != 0;
 
-export isvalidsymbol  (s:string):bool := (
-     if int(uchar(s.0)) == 226 && length(s) == 3 then return true; -- ugly unicode math symbol hack
+-- c = two bytes concatenated
+export ismathoperator(c:int):bool := (
+    (c & 0xffe0) == 0xc2a0 || -- latin-1 punctuation/symbols
+    c == 0xc397            || -- multiplication sign
+    c == 0xc3b7            || -- division sign
+    (c & 0xfffc) == 0xe288 || -- mathematical operators
+    (c & 0xfffc) == 0xe2a8 || -- supplemental mathematical operators
+    c == 0xe29f            || -- misc. mathematical symbols A
+    (c & 0xfffe) == 0xe2a6 || -- misc. mathematical symbols B
+    (c & 0xfffc) == 0xe28c    -- misc. technical
+    );
+
+ismathoperator(c1:char, c2:char):bool := (
+    ismathoperator((int(uchar(c1)) << 8) | int(uchar(c2))));
+
+export isvalidsymbol(s:string):bool := (
      if !isalpha(s.0) then return false;
-     foreach c in s do if !isalnum(c) then return false;
+     if ismathoperator(s.0, s.1) && length(s) == utf8charlength(s.0)
+     then return true;
+     for i from 0 to length(s) - 1 do (
+	 if !isalnum(s.i) || ismathoperator(s.i, s.(i + 1))
+	 then return false);
      true);
 
 -- Local Variables:
