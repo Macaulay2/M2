@@ -1081,6 +1081,10 @@ assert( not isANumber ((1/0.-1/0.) + 1*ii) )
 assert( not isANumber (1 + (ii/0.-ii/0.) ) )
 assert( not isANumber ((1 + ii/0.) - ii/0. ) )
 
+importFrom(Core, "rawFareyApproximation")
+assert( rawFareyApproximation(numeric pi, 10) == 22/7 )
+assert( rawFareyApproximation(numeric pi, 200) == 355/113 )
+assert( rawFareyApproximation(-pi, 10) == -22/7 )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test numbers.out"
