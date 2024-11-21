@@ -596,7 +596,7 @@ document {
      Key => "The authors",
      PARA{},
      "To communicate with the authors about the program, use this email address:
-     ", HREF {"mailto:Macaulay2@math.uiuc.edu", "<Macaulay2@math.uiuc.edu>"}, ".",
+     ", HREF {"mailto:macaulay2@googlegroups.com", "<macaulay2@googlegroups.com>"}, ".",
      Subnodes => {
      	  "The authors of Macaulay2:",
 	  TO "Daniel R. Grayson",
