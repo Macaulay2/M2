@@ -66,7 +66,7 @@ doc ///
     diffRatFun(m,g,f,a)
   Inputs
     f:RingElement
-      polynomial in a Weyl algebra $D$ in $n$ variables or ratinoal function in the fraction
+      polynomial in a Weyl algebra $D$ in $n$ variables or rational function in the fraction
       field of a polynomial ring in $n$ variables
     g:RingElement
       polynomial in a Weyl algebra $D$ in $n$ variables

@@ -1,6 +1,7 @@
 --		Copyright 1996-2006 by Daniel R. Grayson and Michael E. Stillman
 
 needs "enginering.m2"
+needs "polyrings.m2"
 needs "matrix1.m2"
 
 -----------------------------------------------------------------------------
@@ -54,7 +55,6 @@ expression QuotientRing := S -> (
     if hasAttribute(S, ReverseDictionary)
     then expression getAttribute(S, ReverseDictionary)
     else new Divide from { unhold expression ambient S, unhold expression printRels S })
-toExternalString QuotientRing := toString @@ describe
 -- TODO: add AfterPrint for QuotientRing
 
 -----------------------------------------------------------------------------
@@ -80,14 +80,15 @@ ZZp Ideal := opts -> (I) -> (
      else if savedQuotients#?(typ, n) then
          savedQuotients#(typ, n)
      else (
-	  if not isPrime n
-	  then error ("ZZ/n not implemented yet for composite n = ", toString n);
+	  if not isPrime n or n > 2^64
+	  then return ZZ[DegreeRank => 0]/n;
 	  S := new QuotientRing from 
       if typ === "Ffpack" then rawARingGaloisField(n,1)  
         else if typ === "Flint" then rawARingZZpFlint n
         else if typ === "Aring" then rawARingZZp n
         else if typ === "Old" then rawZZp n
-        else error("unknown implementation choice: "|typ|///. Choices are "Flint" (default), "Ffpack", "Aring", "Old"///);
+        else error("unknown implementation choice: ", typ, ". ", newline,
+	    ///Choices are "Flint" (default), "Ffpack", "Aring", "Old"///);
 	  S.cache = new CacheTable;
 	  S.isBasic = true;
 	  S.ideal = I;
@@ -280,7 +281,7 @@ char QuotientRing := (stashValue symbol char) ((S) -> (
      g := generators gb relns;
      if g == 0 then return char ring g;
      m := g_(0,0);
-     if liftable(m,ZZ) then lift(m,ZZ) else 0))
+     lift(m,ZZ,Verify=>false) ?? 0))
 
 singularLocus = method()
 singularLocus(Ring) := QuotientRing => (R) -> (
@@ -312,14 +313,7 @@ getNonUnit = R -> if R.?Engine and R.Engine then (
 
 -- nextPrime and getPrimeWithRootOfUnity, written by Frank Schreyer.
 nextPrime=method(TypicalValue=>ZZ)
-nextPrime Number := n -> (
-   n0 := ceiling n;
-   if n0 <= 2 then return 2;
-   if even n0 then n0=n0+1;
-   while not isPrime n0 do n0=n0+2;
-   n0
-   )
-
+nextPrime Number := nextPrime0 @@ ceiling
 
 getPrimeWithRootOfUnity = method(Options=>{Range=>(10^4,3*10^4)})
 getPrimeWithRootOfUnity(ZZ,ZZ) := opt-> (n,r1) -> (

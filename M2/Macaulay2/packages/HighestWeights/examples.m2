@@ -28,7 +28,7 @@ doc ///
 	
     Example
 	I=Grassmannian(1,5,CoefficientRing=>QQ); R=ring I;
-	RI=res I; betti RI
+	RI=freeResolution I; betti RI
     Text
     	Now we assign weights to the variables of $R$. First we input the weights of $e_0,\ldots,e_5$ in a list @TT "L"@.
 	
@@ -91,7 +91,7 @@ doc ///
     Example
     	R=QQ[x_(1,1)..x_(6,3)];
 	G=genericMatrix(R,3,6)
-	M=coker G; BR=res M; betti BR
+	M=coker G; BR=freeResolution M; betti BR
     Text
     	The ring $R$ carries a degree compatible action of $SL_6 ({\mathbb C}) \times SL_3 ({\mathbb C})$. Define the map of graded free $R$-modules
 	$$\phi : E \otimes R(-1) \rightarrow F^* \otimes R, e_i \otimes 1 \mapsto \sum_{j=1}^3 f_j^* \otimes x_{i,j}$$
@@ -151,7 +151,7 @@ doc ///
 	R=QQ[x_(1,1)..x_(3,2),y_(1,1)..y_(4,2),Degrees=>{6:{1,0},8:{0,1}}]
 	G=genericMatrix(R,2,3)|genericMatrix(R,y_(1,1),2,4)
 	I=minors(2,G);
-	EN=res I; betti EN
+	EN=freeResolution I; betti EN
     Text
     	Notice how the first three columns of $G$ involve only the $x_{i,j}$ variables while the other columns involve only the $y_{i,j}$ variables. In fact, $G$ is the matrix of the map
 	$$\phi : E\otimes R(-1,0) \oplus F\otimes R(0,-1) \rightarrow H^* \otimes R, e_i \otimes 1 \mapsto \sum_{k=1}^2 h_k^* \otimes x_{i,k}, f_j \otimes 1 \mapsto \sum_{k=1}^2 h_k^* \otimes y_{j,k}$$
@@ -229,7 +229,7 @@ doc ///
      	Next we generate the resolution and obtain its decomposition.
      
      Example
-      	EFW=res coker f; betti EFW
+      	EFW=freeResolution coker f; betti EFW
 	highestWeightsDecomposition(EFW,0,W)
      Text
      	We conclude that with the action of $SL(E)$ the complex has the 
@@ -300,7 +300,7 @@ doc ///
 	
     Example
     	I=ideal jacobian ideal Delta;
-	RI=res I; betti RI
+	RI=freeResolution I; betti RI
     Text
     	The root system of type $C_3$ is contained in $\RR^3$. It is easy
 	to express the weight of each variable of the ring $R$ with respect
@@ -399,7 +399,7 @@ doc ///
 	    x_{0,2}*x_{1,2,3,4}-x_{1,2}*x_{0,2,3,4}+x_{2,3}*x_{0,1,2,4}-x_{2,4}*x_{0,1,2,3},
 	    -x_{0,3}*x_{1,2,3,4}+x_{1,3}*x_{0,2,3,4}-x_{2,3}*x_{0,1,3,4}+x_{3,4}*x_{0,1,2,3},
 	    x_{0,4}*x_{1,2,3,4}-x_{1,4}*x_{0,2,3,4}+x_{2,4}*x_{0,1,3,4}-x_{3,4}*x_{0,1,2,4});
-    	RI=res I; betti RI
+    	RI=freeResolution I; betti RI
     Text
     	The root system of type $D_5$ is contained in $\RR^5$. It is easy
 	to express the weight of each variable of the ring $R$ with respect
@@ -463,7 +463,7 @@ doc ///
     Example
     	R=QQ[x_(-2, 1),x_(-1, 0),x_(-1, 1),x_(0, 0),x_(1,-1),x_(1, 0),x_(2,-1)]
 	m=ideal vars R;
-	K=koszul gens m; betti K
+	K=koszulComplex gens m; betti K
     Text
     	Now we define  the list of weights of the variables and attach it to the ring.
 	

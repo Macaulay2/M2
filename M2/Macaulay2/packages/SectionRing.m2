@@ -369,6 +369,10 @@ doc ///
     SectionRing
   Headline
     computing the section ring of a Weil Divisor
+  Description
+    Text
+      This package provides a method for computing the section ring of a Weil
+      divisor.
 ///    
 
 doc ///

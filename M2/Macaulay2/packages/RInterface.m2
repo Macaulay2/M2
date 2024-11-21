@@ -1,7 +1,7 @@
 newPackage("RInterface",
     Headline => "interface to R for statistical computing",
     Version => "0.1",
-    Date => "December 14, 2023",
+    Date => "January 28, 2024",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -11,15 +11,19 @@ newPackage("RInterface",
     AuxiliaryFiles => true,
     PackageImports => {"ForeignFunctions"})
 
-if not (options currentPackage).OptionalComponentsPresent
-then (
-    printerr "warning: R cannot be found; ending";
+
+endpkg = msg -> (
+    document {Key => RInterface,
+	Headline => (options currentPackage).Headline,
+	"Warning: RInterface was loaded without key components."};
+    printerr("warning: ", msg, "; ending");
     end)
 
+if not (options currentPackage).OptionalComponentsPresent
+then endpkg "R cannot be found"
+
 if not ForeignFunctions#"private dictionary"#?"foreignFunction"
-then (
-    printerr "warning: foreign function interface is not available; ending";
-    end)
+then endpkg "foreign function interface is not available"
 
 export {
     -- types
@@ -141,8 +145,7 @@ new RObject from ZZ := (T, x) -> T scalarInteger x
 
 scalarReal = foreignFunction(Rlib, "Rf_ScalarReal", SEXP, double)
 new RObject from RR := (T, x) -> T scalarReal x
-new RObject from Constant :=
-new RObject from QQ := (T, x) -> T numeric x
+new RObject from Number := (T, x) -> T numeric x
 
 Rcomplex = foreignStructType("Rcomplex", {"r" => double, "i" => double})
 scalarComplex = foreignFunction(Rlib, "Rf_ScalarComplex", SEXP, Rcomplex)
@@ -429,6 +432,8 @@ scan({
 	installMethod(m2f, RObject, RObject, rf);
 	installMethod(m2f, RObject, Thing, rf);
 	installMethod(m2f, Thing, RObject, rf)))
+
+?? RObject := x -> if TYPEOF x > 0 then x
 
 load "./RInterface/test.m2"
 load "./RInterface/doc.m2"

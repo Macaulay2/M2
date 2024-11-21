@@ -38,7 +38,6 @@ KaTeX := () -> (
       });
     </script>
     <style>.katex { font-size: 1em; }</style>
-    <link href="%PATH%/contrib/copy-tex.min.css" rel="stylesheet" type="text/css">
     <script defer="defer" src="%PATH%/contrib/copy-tex.min.js"></script>
     <script defer="defer" src="%PATH%/contrib/render-a11y-string.min.js"></script>///;
     LITERAL replace("%PATH%", katexPath, katexTemplate | newline))
@@ -187,7 +186,7 @@ show Hypertext := x -> (
     fn := temporaryFileName() | ".html";
     addEndFunction( () -> if fileExists fn then removeFile fn );
     fn << html HTML { defaultHEAD "Macaulay2 Output", BODY {x}} << endl << close;
-    show new URL from replace(" ", "%20", rootURI | realpath fn)) -- TODO: urlEncode might need to replace more characters
+    show URL urlEncode(rootURI | realpath fn))
 show URL := url -> (
     cmd := { getViewer("WWWBROWSER", "firefox"), url#0 }; -- TODO: silence browser messages, perhaps with "> /dev/null"
     if fork() == 0 then (

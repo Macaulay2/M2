@@ -24,7 +24,6 @@ newPackage(
 	{Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}},
     Keywords => {"Commutative Algebra"},
     PackageExports => { "Elimination" },
-    PackageImports => { "Varieties" },
     AuxiliaryFiles => true,
     DebuggingMode => false
     )
@@ -37,7 +36,6 @@ importFrom_Core { "nonnull", "raw", "rawColon", "rawSaturate", "newMonomialIdeal
 importFrom_Core { "isComputationDone", "cacheComputation", "fetchComputation", "updateComputation", "cacheHit", "Context", "Computation" }
 
 -- TODO: where should these be placed?
-trim MonomialIdeal := MonomialIdeal => opts -> (cacheValue (symbol trim => opts)) ((I) -> monomialIdeal trim(module I, opts))
 
 -- TODO: pick a better name and move to interpreter for speed?
 -- this is similar to override, except:
@@ -47,7 +45,7 @@ override' := (def, opts) -> nonnull apply(keys def, key -> if opts#?key and opts
 
 -- TODO: is this the right name for this function?
 ambient' = method()
-ambient' Module := Module => ambient
+ambient' Module := Module => super
 ambient' Ideal  := Ideal  => I -> (if instance(I, MonomialIdeal) then monomialIdeal else ideal) 1_(ring I)
 ambient' LeftIdeal  := LeftIdeal  => I -> ideal 1_(ring I)
 

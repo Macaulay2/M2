@@ -4,6 +4,7 @@ needs "engine.m2"
 needs "expressions.m2"
 needs "indeterminates.m2"
 needs "methods.m2"
+needs "remember.m2"
 needs "shared.m2" -- for tensor
 needs "variables.m2"
 
@@ -78,6 +79,7 @@ degree MonoidElement := m -> (
 baseName MonoidElement := m -> if #(s := rawSparseListFormMonomial raw m) == 1 and s#0#1 == 1
     then (class m).generatorSymbols#(s#0#0) else error "expected a generator"
 
+promote(IndexedVariable, RingElement) := RingElement => (m, R) -> promote(value m, R)
 promote(MonoidElement, RingElement) := RingElement => (m, R) -> (
     k := coefficientRing first flattenRing R;
     -- TODO: audit this code
@@ -88,6 +90,7 @@ promote(MonoidElement, RingElement) := RingElement => (m, R) -> (
     then new R from rawTerm(R.RawRing, raw 1_k, m.RawMonomial)
     else "expected monomial from same ring")
 
+lift(IndexedVariable, MonoidElement) := MonoidElement => (m, M) -> lift(value m, M)
 lift(RingElement, MonoidElement) := MonoidElement => (m, M) -> (
     k := coefficientRing first flattenRing(R := ring m);
     if instance(m, monoid k)
@@ -373,7 +376,7 @@ degreesMonoid List := memoize lookup(degreesMonoid, List)
 -- findHeft
 -----------------------------------------------------------------------------
 
-checkHeft = (degs, heftvec) -> all(degs, d -> sum apply(d, heftvec, times) > 0)
+checkHeft = (degs, heftvec) -> all(degs, d -> sum(d, heftvec, times) > 0)
 -- vector that zeros the torsion part of the degrees
 -- TODO: what should happen when there are zero-divisors that are not torsion?
 -- compare with freeComponents and torsionComponents in basis.m2
@@ -401,14 +404,8 @@ findHeft List := opts -> degs -> (
     -- TODO: should this heuristic look at other degree components also?
      if all(degs,d->d#0 > 0) then return splice {  1, degrk-1:0 };
      if all(degs,d->d#0 < 0) then return splice { -1, degrk-1:0 };
-    -- TODO: should FourierMotzkin become preloaded?
-    fm := symbolFrom_"FourierMotzkin" "fourierMotzkin";
-    A := transpose matrix degs;
-    B := first fm A;
-     r := rank source B;
-     f := (matrix{toList(r:-1)} * transpose B);
-     if f == 0 then return;
-    heftvec := first entries f;
+    heftvec := - sum entries map(ZZ, rawFourierMotzkin raw matrix degs);
+    if heftvec === 0 then return null;
     if (g := gcd heftvec) > 1   then heftvec = apply(heftvec, h -> h // g);
     if checkHeft(degs, heftvec) then heftvec)
 
@@ -473,14 +470,12 @@ checkSymbol = sym -> if instance(sym, Symbol) or lookup(symbol <-, class sym) =!
 -- turns {x, y, z, y} into {x, y_0, z, y_1}
 -- adding 'toString' in a few places will eliminate more duplications
 -- but makes creating temporary rings in functions more difficult.
-dedupSymbols = varlist -> if 0 == repeats varlist then varlist else while 0 < repeats varlist do (
-    mapping := hashTable toList pairs varlist;
-    -- TODO: applyPairs with collision handler, and accepting MutableHashTable
-    counter := new MutableHashTable from applyKeys(mapping,
-	i -> varlist#i, dups -> makeVars(#dups, first dups));
-    varlist = values applyValues(mapping, var -> if instance(counter#(name := var), List)
-	then first(counter#name#0, counter#name = drop(counter#name, 1)) else var);
-    if 0 == repeats varlist then break varlist else varlist)
+dedupSymbols = varlist -> (
+    while 0 < repeats varlist do (
+	counter := applyPairs(tally varlist, (name, count) ->
+	    name => new MutableList from if count == 1 then {name} else makeVars(count, name));
+	varlist  = apply(varlist, var -> remove(counter#var, 0)));
+    varlist)
 
 -- also used in AssociativeAlgebras.m2
 findSymbols = varlist -> dedupSymbols toList apply(pairs listSplice varlist,
@@ -620,12 +615,13 @@ monoidSymbol  = (M, x) -> ( b := try baseName x;
     and M.indexStrings#?x then M.indexSymbols#x     else
     error("expected an index, symbol, or name of variable of the ring or monoid: ", toString x))
 
--- also used in Elimination
+-- also used in Elimination and Msolve
 monoidIndices = (M, v) -> apply(v, monoidIndex_M)
 monoidIndex   = (M, x) -> ( b := try baseName x;
     if instance(x, ZZ)    then x else
     if instance(x, List)  then monoidIndices(M, x) else
     if M.index#?b         then M.index#b else
+    try index x else -- last ditch attempt for ring elements
     error("expected an integer or variable of the ring or monoid: ", toString x))
 
 -----------------------------------------------------------------------------
@@ -668,6 +664,8 @@ shiftAndJoin = (n, L, R) -> if R === null then L else join(L,
 -- TODO: do we want to support a syntax this?
 --   'tensor (a => ZZ^2, b => ZZ^3, c => ZZ^4)'
 Monoid ** Monoid := Monoid => (M, N) -> tensor(M, N)
+Monoid^** ZZ     := Monoid => (M, n) -> BinaryPowerMethod(M, n, tensor, M -> monoid [],
+    M -> error "Monoid ^** ZZ: expected non-negative integer")
 tensor(Monoid, Monoid) := Monoid => monoidTensorDefaults >> opts0 -> (M, N) -> (
      Mopts := M.Options;
      Nopts := N.Options;

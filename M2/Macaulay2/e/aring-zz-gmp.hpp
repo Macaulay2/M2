@@ -196,7 +196,7 @@ class ARingZZGMP : public SimpleARing<ARingZZGMP>
   void random(ElementType& result) const
   {
     // TODO: this leaks a gmp_ZZ
-    mpz_set(&result, rawRandomInteger(0));
+    mpz_set(&result, rawRandomInteger(nullptr));
   }
   /** @} */
 

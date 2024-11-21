@@ -4,13 +4,18 @@
 
 document {
      Key => "polynomial rings",
-     "Create a polynomial ring using the usual mathematical notation.",
-     EXAMPLE {
-	  "R = QQ[x,y,z];",
-          "R",
-	  },
+     "A polynomial ring can be created with the usual mathematical notation.",
+     EXAMPLE "ZZ[x,y,z]",
+     "If you try to construct this ring again, you will get a different
+     answer.  We use the strict comparison operator ", TO "===", " to
+     demonstrate this.",
+     EXAMPLE "ZZ[x,y,z]===ZZ[x,y,z]",
+     "Thus it is a good idea to assign a new ring to a variable for
+     future reference.",
+     EXAMPLE "R = QQ[a,b,c,d,e,f]",
      "Notice that after assignment to a global variable, Macaulay2
      knows the ring's name, and this name is used when printing the ring.",
+     EXAMPLE "R",
      "The original description of the ring can be recovered
      with ", TO "describe", ".",
      EXAMPLE "describe R",
@@ -24,6 +29,9 @@ document {
      "Obtain the variables (generators) of the ring by subscripting the name of 
      the ring.  As always in Macaulay2, indexing starts at 0.",
      EXAMPLE "R_0^10+R_1^3+R_2",
+     "It is also possible to obtain the variables in a ring from strings
+     containing their names.",
+     EXAMPLE ///"a"_R^10+"b"_R^3+"c"_R///,
      "The number of variables is provided by ", TO "numgens", ".",
      EXAMPLE {
 	  "numgens R",
@@ -43,6 +51,20 @@ document {
      "The coefficient ring can be recovered with ", TO "coefficientRing", ".",
      EXAMPLE "coefficientRing R",
 
+     "An element of the coefficient ring can be promoted to the polynomial ring.",
+     EXAMPLE "promote(11/2,R)",
+     "Conversely, an element of the polynomial ring that is known to be a scalar
+     can be lifted back to the coefficient ring.",
+     EXAMPLE {
+	 "sc = (a-2)^2-a^2+4*a",
+	 "lift(sc,QQ)",
+	 },
+     "In programs, the function ", TO "liftable", " can be used to see whether
+     this is possible.",
+     EXAMPLE {
+	 "liftable(sc,QQ)",
+	 "liftable(c^3,QQ)",
+	 },
      "A random homogeneous element can be obtained with ", TO "random", ".",
      EXAMPLE "random(2,R)",
 
@@ -51,12 +73,15 @@ document {
      EXAMPLE "basis(2,R)",
 
      "We may construct polynomial rings over polynomial rings.",
-     EXAMPLE "ZZ[a,b,c][d,e,f];",
+     EXAMPLE "R = ZZ[a,b,c][d,e,f];",
      "When displaying an element of an iterated polynomial ring,
      parentheses are used to organize the coefficients recursively, which
      may themselves be polynomials.",
      EXAMPLE "(a+d+1)^2",
+     "Internally, the polynomials in such towers are expressed in terms of a flattened monoid
+     containing all the variables, obtainable with the key ", TO "FlatMonoid", ".",
 
+     EXAMPLE "R.FlatMonoid",
      "Variable names may be words.",
      EXAMPLE {
 	  "QQ[rho,sigma,tau];",
@@ -91,18 +116,23 @@ document {
 	  "protect xx; protect yy; protect zz;",
       	  "ZZ[ee_[xx],ee_[yy],ee_[zz]]",
 	  },
-     "Polynomial rings over polynomial rings work:",
-     EXAMPLE lines ///
-     R = QQ[a,b][x]
-     (a+b+x)^3
-     ///,
-     PARA {
-	  "Internally, the polynomials in such towers are expressed in terms of a flattened monoid
-	  containing all the variables, obtainable with the key ", TO "FlatMonoid", "."
-	  },
-     EXAMPLE lines ///
-     R.FlatMonoid
-     ///,
+     "A basis of the subspace of ring elements of a given degree can be obtained
+     in matrix form with ", TO "basis", ".",
+     EXAMPLE {
+	 "R = QQ[a,b,c,d,e,f];",
+	 "basis(2,R)"
+	 },
+     "The Hilbert series of a polynomial ring can be obtained.  Its power
+     series expansion is the generating function for the dimensions of the
+     degree ", TT "n", " parts.",
+     EXAMPLE "hilbertSeries R",
+     "We may use the option ", TO "Degrees", " to produce rings where the
+     generators have degrees other than 1.",
+     EXAMPLE {
+	 "S = ZZ/101[a,b,c,d,Degrees=>{1,2,3,4}]",
+	 "random(5,S)",
+	 "hilbertSeries S"
+	 },
      "Some things to watch out for when using polynomial rings:",
      UL {
 	  LI ("Defining a ring twice gives different rings, as far as Macaulay2 is concerned:
@@ -133,16 +163,81 @@ document {
      }
 
 document {
-     Key => "monomial orderings", 
+     Key => "monomial orderings",
      "Every polynomial ring in Macaulay2 comes equipped with an ordering on
-     the monomials.  See below for the definitions of all implemented
-     orderings.  The default ordering is GRevLex, the graded reverse
-     lexicographic order.",
-     PARA{},
+     the monomials.",
      "Polynomials are displayed by ordering the monomials in decreasing order.
      The choice of monomial order can make a difference in the
      time and space required for various computations,
      especially Gröbner basis computations.",
+     "See below for the definitions of all implemented
+     orderings.",
+     PARA{},
+     "The default ordering is ", TO GRevLex, ", the graded reverse
+     lexicographic order.",
+     "This means that terms of higher total degree come first;
+     and for two terms of the same degree, the term with the higher
+     power of the last variable comes last; for terms with the same
+     power of the last variable, the exponent on the next to last
+     variable is consulted, and so on.",
+     EXAMPLE {
+	 "R=ZZ/101[a,b,c]",
+	 "(a+b+c+1)^2",
+	 },
+     "Explicit comparison of monomials with respect to the chosen
+     ordering is possible.",
+     EXAMPLE "b^2 > a*c",
+     "The comparison operator ", TO "?", " returns a symbol indicating
+     the result of the comparison: the convention is that the larger
+     monomials are printed first (leftmost).",
+     EXAMPLE "b^2 ? a*c",
+     "The monomial ordering is also used when sorting lists with ", TO "sort", ".",
+     EXAMPLE "sort {1_R, a, a^2, b, b^2, a*b, a^3, b^3}",
+     PARA{},
+     "The next ring uses graded lexicographic ordering.  This means that
+     terms of higher total degree come first; for two terms of the
+     same degree, the term with the higher power of the first variable comes
+     first: for terms with the same power of the first variable the
+     power of the second variable is consulted, and so on.",
+     EXAMPLE {
+	 "R=ZZ/101[a,b,c,MonomialOrder=>GLex];",
+	 "(a+b+c+1)^2",
+	 },
+     "(Notice how similar the result above is to the one obtained when
+     graded reverse lexicographic ordering is used.)",
+     PARA{},
+     "The next ring uses lexicographic ordering.  This means that
+     terms with the highest power of the first variable come
+     first: for two terms with the same power of the first variable the
+     power of the second variable is consulted, and so on.",
+     EXAMPLE {
+	 "R=ZZ/101[a,b,c,MonomialOrder=>Lex];",
+	 "(a+b+c+1)^2",
+	 },
+     "The next ring uses an elimination order suitable for eliminating
+     the first two variables, ", TT "a", " and ", TT "b", ".  In such an
+     ordering we want all terms in which either of the first two
+     variables appears to come before all of those terms in which
+     the first two variables don't appear.  This particular ordering
+     accomplishes this by consulting first the graded reverse lexicographic
+     ordering ignoring all variables but the first two, and in case of
+     a tie, consulting the graded reverse lexicographic ordering of the
+     entire monomials.",
+     EXAMPLE {
+	 "R=ZZ/101[a,b,c,MonomialOrder=>Eliminate 2];",
+	 "(a+b+c+1)^2",
+	 },
+     "The next ring uses the product ordering that segregates the
+     first variable from the next two.  This means that terms come
+     first that would come first in the graded reverse lexicographic
+     ordering when their parts involving the
+     second two variables are ignored, and in case of equality,
+     the graded reverse lexicographic ordering of their parts involving
+     just the next two variables is consulted.",
+     EXAMPLE {
+	 "R=ZZ/101[a,b,c,MonomialOrder=>ProductOrder{1,2}];",
+	 "(a+b+c+1)^2"
+	 },
      PARA{},
      Subnodes => {
 	  TO "examples of specifying alternate monomial orders",

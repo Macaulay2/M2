@@ -541,4 +541,31 @@ document {
     }
 
 -- TODO: (symmetricPower, ZZ, CoherentSheaf)
--- TODO: (annihilator, CoherentSheaf)
+
+doc ///
+Node
+  Key
+   (annihilator, CoherentSheaf)
+  Headline
+    the annihilator ideal
+  Usage
+    ann F
+    annihilator F
+  Inputs
+    F:{CoherentSheaf}
+    Strategy=>Symbol
+      either @TT "Quotient"@ or @TT "Intersection"@; see @TO [annihilator, Strategy]@
+  Outputs
+    :Ideal
+      the annihilator ideal
+  Description
+    Text
+      @stacksProject("0H2G", "The annihilator of a sheaf of modules")@ $\mathcal F$
+      is the ideal corresponding to the kernel of the map of sheaves
+      $$ \mathcal O_X \to \mathcal Hom_{\mathcal O_X}(\mathcal F, \mathcal F).b $$
+
+      You may use @TT "ann"@ as a synonym for @TT "annihilator"@.
+  SeeAlso
+    (annihilator, Module)
+    (isSupportedInZeroLocus, Ideal, Module)
+///

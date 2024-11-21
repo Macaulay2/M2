@@ -6,7 +6,7 @@ pythonPresent := Core#"private dictionary"#?"pythonRunString"
 
 newPackage("Python",
     Version => "0.6",
-    Date => "December 4, 2023",
+    Date => "January 28, 2024",
     Headline => "interface to Python",
     Authors => {
 	{Name => "Daniel R. Grayson",
@@ -27,11 +27,13 @@ newPackage("Python",
 
 -*
 
-0.6 (2023-12-04, M2 1.23)
+0.6 (2024-01-28, M2 1.23)
 * add expression, net, texMath, describe, and toExternalString methods
-* move initialization of python from M2 startup package load time
+* move initialization of python from M2 startup to package load time
 * update int <-> ZZ conversion for python 3.12
 * use a constant hash for None
+* add support for augmented assignment
+* add support for null coalescing operator
 
 0.5 (2023-05-18, M2 1.22)
 * improvements for displaying python objects in webapp mode
@@ -203,8 +205,8 @@ toFunction = method()
 toFunction PythonObject := x -> y -> (
     p := partition(a -> instance(a, Option),
 	if instance(y, Sequence) then y else 1:y);
-    args := toPython if p#?false then p#false else ();
-    kwargs := toPython hashTable if p#?true then toList p#true else {};
+    args := toPython(p#false ?? ());
+    kwargs := toPython hashTable (toList p#true ?? {});
     if debugLevel > 0 then printerr(
 	"callable: " | toString x    ||
 	"args: "     | toString args ||
@@ -303,10 +305,31 @@ scan({
 	)
     )
 
+scan({
+	(symbol +=, "iadd"),
+	(symbol -=, "isub"),
+	(symbol *=, "imul"),
+	(symbol @=, "imatmul"),
+	(symbol /=, "itruediv"),
+	(symbol //=, "ifloordiv"),
+	(symbol %=, "imod"),
+	(symbol ^=, "ipow"),
+	(symbol <<=, "ilshift"),
+	(symbol >>=, "irshift"),
+	(symbol &=, "iand"),
+	(symbol |=, "ior"),
+	(symbol ^^=, "ixor")},
+    (op, name) -> installMethod(op, PythonObject, (x, y) -> (
+	    m := "__" | name | "__";
+	    if hasattr(x, m) then x@@m y
+	    else Default)))
+
 -PythonObject := o -> o@@"__neg__"()
 +PythonObject := o -> o@@"__pos__"()
 abs PythonObject := o -> o@@"__abs__"()
 PythonObject~ := o -> o@@"__invert__"()
+
+?? PythonObject := x -> if x != pythonNone then x
 
 PythonObject Thing := (o, x) -> (toFunction o) x
 
@@ -684,6 +707,23 @@ checkToExternalString hashTable {"a" => 1, "b" => 2, "c" => 3}
 checkToExternalString null
 ///
 
+TEST ///
+-- augmented assignment
+-- if x is a list, then x += y should modify x directly, i.e., its
+-- hash shouldn't change, unlike x = x + y, which would create a new list
+x = toPython {1, 2, 3}
+oldhash = hash x
+x += {4}
+assert Equation(hash x, oldhash)
+///
+
+TEST ///
+-- null coalescing operator
+x = toPython null
+y = toPython 2
+assert Equation(x ?? y, y)
+assert Equation(y ?? x, y)
+///
 
 -- not part of default testsuite since it requires numpy
 ///

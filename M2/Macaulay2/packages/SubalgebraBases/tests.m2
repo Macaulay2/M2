@@ -90,11 +90,11 @@ ans = matrix {{x_11*x_13-x_10*x_14, x_8*x_13-x_7*x_14, x_5*x_13-x_4*x_14, x_2*x_
     x_2*x_4*x_6*x_8-x_1*x_5*x_6*x_8-x_2*x_3*x_7*x_8+x_0*x_5*x_7*x_8+x_1*x_3*x_8^2-x_0*x_4*x_8^2,
     x_0*x_2*x_4*x_6-x_0*x_1*x_5*x_6-x_0*x_2*x_3*x_7+x_0^2*x_5*x_7+x_0*x_1*x_3*x_8-x_0^2*x_4*x_8}};
 assert(
-    time subalgebraBasis(F,Limit=>100,PrintLevel=>1)
+    time subalgebraBasis(F,Limit=>100)
     ==
     ans)
 assert(
-    time subalgebraBasis(F,Limit=>100,PrintLevel=>1,AutoSubduce=>false)
+    time subalgebraBasis(F,Limit=>100,AutoSubduce=>false)
     ==
     ans)
 ///
@@ -306,7 +306,7 @@ ans = matrix {{x, x*y-y^2, x*y^2, x*y^3+50*y^4, x*y^4, x*y^5-34*y^6, x*y^6, x*y^
     x*y^17-45*y^18, x*y^18, x*y^19+10*y^20, x*y^20, x*y^21-46*y^22, x*y^22, x*y^23+42*y^24, x*y^24,
     x*y^25+31*y^26, x*y^26, x*y^27+36*y^28, x*y^28, x*y^29-27*y^30}}
 assert(
-    time subalgebraBasis(F,Limit=>30,PrintLevel=>0)
+    time subalgebraBasis(F,Limit=>30)
     ==
     ans)
 ///
@@ -520,7 +520,7 @@ R = QQ[x, y, MonomialOrder => Lex]
 S = subring({x*y - y, x - y^2, y^3})
 ans = matrix {{x - y^2, x*y - y, y^3}}
 assert(
-    time subalgebraBasis(S,PrintLevel=>0,Limit=>30)
+    time subalgebraBasis(S,Limit=>30)
     ==
     ans
     )
@@ -536,7 +536,7 @@ S = subring({x^2,x*y-y,2*x+y^3,y^4})
 ans =  matrix {{x+(1/2)*y^3, x*y-y, y^4, x*y^3+(1/4)*y^6,
     x*y^6+(2/9)*y^9-(1/3)*y^6-(4/9)*y^3, y^6-4*y^3, y^9-8*y^3}}
 assert(
-    time subalgebraBasis(S,PrintLevel=>0,Limit=>30)
+    time subalgebraBasis(S,Limit=>30)
     ==
     ans
     )
@@ -549,7 +549,7 @@ R = QQ[x, y];
 S = subring({x*y-y,2*x+y^3,y^4});
 ans = matrix {{x*y-y, y^3+2*x, y^4, x^4-4*x^3+6*x^2-4*x}}
 assert(
-    time subalgebraBasis(S,PrintLevel=>0,Limit=>30)
+    time subalgebraBasis(S,Limit=>30)
     ==
     ans
     )
@@ -563,7 +563,7 @@ S = subring({x^2,x*y-y,2*x+y^3,y^4})
 ans = matrix {{x*y-y, x^2, y^3+2*x, y^4, x^4*y-y, x*y^6-4*x*y^3-12*x^3-4*x,
     x^5-2*x*y^3-4*x^3-x, x*y^3+2*x^3, x^3+x}}
 assert(
-    time subalgebraBasis(S,PrintLevel=>0,Limit=>30)
+    time subalgebraBasis(S,Limit=>30)
     ==
     ans
     )

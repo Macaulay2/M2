@@ -198,9 +198,7 @@ items = (textlines, keylinenum) -> apply(splitByIndent(textlines, false), (s, e)
 	desc := demark(" ", getText \ textlines_{s+1..e});
 	result := render(if s === e then abbr else abbr | desc, getLinenum textlines#s);
 	if ps#1 != "" then result = (
-	    type := value ps#1;
-	    if instance(type, List)   then between_", " {ofClass type, result} else
-	    if instance(type, String) then between_", " {        type, result} else type => result);
+	    if instance(type := value ps#1, String) then between_", " {type, result} else type => result);
 	if ps#0 != "" then result = (if match("=>", line) then value else identity) ps#0 => result;
 	result))
 

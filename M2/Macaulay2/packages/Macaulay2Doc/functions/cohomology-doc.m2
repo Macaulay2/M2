@@ -104,7 +104,7 @@ document {
 	  "needsPackage \"SimplicialComplexes\"",
 	  "R = QQ[a..d]",
           "D = simplicialComplex {a*b*c,a*b*d,a*c*d,b*c*d}",
-          "C = chainComplex D",  
+          "C = complex D",  
           "HH_2 C",
 	  "prune oo"
 	  },

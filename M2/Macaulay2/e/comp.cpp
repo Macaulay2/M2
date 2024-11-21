@@ -20,7 +20,7 @@ Computation /* or null */ *Computation::set_stop_conditions(
     M2_arrayint length_limit)
 {
   stop_.always_stop = always_stop;
-  stop_.stop_after_degree = (degree_limit != 0 && degree_limit->len > 0);
+  stop_.stop_after_degree = (degree_limit != nullptr && degree_limit->len > 0);
   stop_.degree_limit = degree_limit;
   stop_.basis_element_limit = basis_element_limit;
   stop_.syzygy_limit = syzygy_limit;
@@ -34,7 +34,7 @@ Computation /* or null */ *Computation::set_stop_conditions(
   if (stop_conditions_ok())
     return this;
   else
-    return 0;
+    return nullptr;
 }
 
 Computation::Computation()
@@ -43,7 +43,7 @@ Computation::Computation()
 
   stop_.always_stop = false;
   stop_.stop_after_degree = false;
-  stop_.degree_limit = 0;
+  stop_.degree_limit = nullptr;
   stop_.basis_element_limit = 0;
   stop_.syzygy_limit = 0;
   stop_.pair_limit = 0;
@@ -51,7 +51,7 @@ Computation::Computation()
   stop_.codim_limit = 0;
   stop_.subring_limit = 0;
   stop_.just_min_gens = false;
-  stop_.length_limit = 0;
+  stop_.length_limit = nullptr;
 }
 
 Computation::~Computation() {}

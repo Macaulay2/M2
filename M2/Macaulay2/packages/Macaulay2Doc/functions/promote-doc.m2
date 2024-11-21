@@ -149,5 +149,5 @@ document {
      an algebra over ", TO "QQ", ", then an element of ", TT "R", " is provided
      by attempting the evident division.",
      SeeAlso => {baseRings, lift, liftable, "substitution and maps between rings",
-	  substitute, (symbol**,Matrix,Ring) }
+	  substitute, (symbol**,Matrix,Ring), setupPromote }
      }

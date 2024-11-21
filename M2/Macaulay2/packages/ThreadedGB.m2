@@ -11,24 +11,19 @@ newPackage("ThreadedGB",
 	    Name => "Sara Jamshidi Zelenberg",
 	    Email => "szelenberg@mx.lakeforest.edu",
 	    HomePage => "https://www.sjzelenberg.com/"
-	},
-        {
-      	    Name => "Contributing Author: Tanner Zielinski",
-	    Email => "tzielin1@hawk.iit.edu",
-	    HomePage => "https://www.linkedin.com/in/tannerzielinski/"
 	}
     },
     Keywords => {"Groebner Basis Algorithms"},
     Headline => "Compute a Groebner basis using the classical Buchberger with multiple threads",
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry",
-	 "journal URI" => "http://j-sag.org/",
+	 "journal URI" => "https://msp.org/jsag/",
 	 "article title" => "Threaded Gröbner bases: a Macaulay2 package",
 	 "acceptance date" => "8 October 2021",
 	 "published article URI" => "https://msp.org/jsag/2021/11-1/p12.xhtml",
 	 "published article DOI" => "10.2140/jsag.2021.11.123",
 	 "published code URI" => "https://msp.org/jsag/2021/11-1/jsag-v11-n1-x12-ThreadedGB.m2",
-	 "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/ThreadedGB.m2",
+	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/ThreadedGB.m2",
 	 "release at publication" => "51d352fbdb9f5903c5bedbd5dce0c14d3fc66d2d",	    -- git commit number in hex
 	 "version at publication" => "1.1",
 	 "volume number" => "11",
@@ -398,6 +393,8 @@ doc ///
       a remainder.
   SeeAlso
     tgb
+  Contributors
+    @HREF{"https://www.linkedin.com/in/tannerzielinski/", "Tanner Zielinski"}@ <@HREF{"mailto:tzielin1\@hawk.iit.edu", "tzielin1\@hawk.iit.edu"}@>
 ///
 doc ///
   Key

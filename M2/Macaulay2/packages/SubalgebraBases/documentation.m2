@@ -71,6 +71,8 @@ doc ///
         {HREF("https://mathematics.ku.edu/people/ritika-nair", "Ritika Nair")},
         {HREF("https://www.utm.utoronto.ca/math-cs-stats/people/ilir-dema", "Ilir Dema")}
         }@
+
+        Michael Stillman and  Harrison Tsai authored an earlier version of this package.
     SeeAlso
         "Example: Translation and rotation sub-actions of the adjoint action of SE(3)"
 ///
@@ -138,7 +140,7 @@ doc ///
     Description
         Text
             Computes a partial subalgebra basis for its input.
-            This command returns the computed generators and not a computaiton object.
+            This command returns the computed generators and not a computation object.
             If the input is @ ofClass Subring@,
             then the computation object is stored in the cache of the input.
         Example
@@ -968,7 +970,7 @@ doc ///
             may be performed.    When the flag is set
             to @TT "false"@, the function being called only uses the results
             of prior computations, if they have been stored.    When previous
-            computations have not been peformed, the function usually returns
+            computations have not been performed, the function usually returns
             @TT "null"@.
 
             When the flag is set to @TT "true"@, additional computations will
@@ -1006,7 +1008,7 @@ doc ///
             @ofClass Subring@).
 
             If the flag is set to @TT "false"@,
-            then the check is aplied to the subalgebra generators of $SB$.
+            then the check is applied to the subalgebra generators of $SB$.
             If the flag is set to @TT "true"@,
             then the check is applied to the generators of the subring of $SB$.
     SeeAlso
@@ -1580,7 +1582,7 @@ doc ///
             An instance of a @TT "Subring"@ is constructed with the function @TO "subring"@.
             For many uses, it is suggested to use a @ TT "Subring"@,
             as the computation objects (@TO "SAGBIBasis"@)
-            are handeled behind the scenes, and
+            are handled behind the scenes, and
             the user experience
             is more streamlined.
 
@@ -1641,7 +1643,7 @@ doc ///
             This function serves as the canonical constructor for the @TO "Subring"@ type.
             For many uses, it is suggested to use @ ofClass Subring@,
             as the computation objects (@TO "SAGBIBasis"@)
-            are handeled behind the scenes, and
+            are handled behind the scenes, and
             the user experience
             is more streamlined.
         Example
@@ -1838,7 +1840,7 @@ doc ///
             picking up a computation where it left off.
             For many uses, it is superior to use @ ofClass Subring@,
             as the computation @TT "SAGBIBases"@
-            are handeled behind the scenes, and
+            are handled behind the scenes, and
             the user experience
             is more streamlined.
             To create @ ofClass SAGBIBasis @, use the function @TO "sagbiBasis"@.
@@ -2186,7 +2188,7 @@ doc ///
             unused option
     Outputs
         result:String
-            a desciption of the status of a subalgebra basis computation
+            a description of the status of a subalgebra basis computation
     Description
         Text
             Returns a string with a human readable description

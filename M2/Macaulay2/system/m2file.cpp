@@ -1,6 +1,8 @@
 #include "m2file.hpp"
 #include "pthread-methods.hpp"
 #include <iostream>
+#include <mutex>
+using std::lock_guard;
 
 extern "C"
 {
@@ -10,11 +12,11 @@ extern stdio0_fileOutputSyncState stdio0_newDefaultFileOutputSyncState();
 M2File::M2File(stdio0_fileOutputSyncState fileUnsyncState):
     currentThreadMode(0),
     unsyncState(fileUnsyncState),
-    exclusiveChangeCondition(PTHREAD_COND_INITIALIZER),
+    ownerChangeCondition(PTHREAD_COND_INITIALIZER),
     recurseCount(0),
     exclusiveRecurseCount(0)
 {
-  clearThread(exclusiveOwner);
+  clearThread(syncOrExclOwner);
 }
 M2File::~M2File()
 {
@@ -27,100 +29,79 @@ M2File::~M2File()
 }
 
 
-void M2File::waitExclusiveThread(size_t recurseCounter)
+void M2File::waitExclusiveThread(size_t exclusiveRecurseDelta)
 {
   //acquire a lock on the thread map
-  m_MapMutex.lock();
+  lock_guard<pthreadMutex> lock(m_MapMutex);
   while(1)
     {
       //recursive mutex part -- if the current owner is self, return. 
       //Note that there is always a current owner in exclusive mode so this works
-      if(exclusiveOwner==pthread_self())
+      if(syncOrExclOwner==pthread_self())
 	{
-	  exclusiveRecurseCount+=recurseCounter;
+	  exclusiveRecurseCount+=exclusiveRecurseDelta;
 	  if(exclusiveRecurseCount==0)
 	    {
-	    pthread_cond_broadcast(&exclusiveChangeCondition);	
+	    pthread_cond_broadcast(&ownerChangeCondition);
 	    //this is to cover the case where we switch from 2 to 1 and need to set no exclusive owner upon exclusive finish
 	    if(currentThreadMode!=2)
-	      {
-		clearThread(exclusiveOwner);
-	      }
+		clearThread(syncOrExclOwner);
 	    }
-	  m_MapMutex.unlock();
 	  return;
 	}
       //this handles the case where the user shifts from exclusive to synchronized mode
       if(currentThreadMode!=2)
-	{
-	  if(currentThreadMode==1)
-	    {
-	      m_MapMutex.unlock();
-	      return;
-	    }
-	  return;
-	}
+	  return;	// TODO: used to not unlock m_MapMutex if currentThreadMode==0 (buggy?)
       //otherwise wait for the exclusive thread to be changed
-      pthread_cond_wait(&exclusiveChangeCondition,&m_MapMutex.m_Mutex);  
+      pthread_cond_wait(&ownerChangeCondition,&m_MapMutex.m_Mutex);
     }
-  m_MapMutex.unlock();
 }
 
-void M2File::waitExclusiveThreadAcquire(size_t recurseCounter)
+void M2File::waitThreadAcquire(size_t recurseDelta)
 {
-  m_MapMutex.lock();
+  lock_guard<pthreadMutex> lock(m_MapMutex);
   while(1)
     {
       //if we have recently switched from exclusive to synchronized mode and the exclusive mode isn't done, wait.
-      if(exclusiveRecurseCount && exclusiveOwner!=pthread_self())
+      if(exclusiveRecurseCount && syncOrExclOwner!=pthread_self())
 	{
 	}
-      else if(exclusiveOwner==0)//if the exclusive/synchronized owner isn't in use, take ownership of it.
+      else if(syncOrExclOwner==0)//if the exclusive/synchronized owner isn't in use, take ownership of it.
 	{
-	  exclusiveOwner=pthread_self();
-	  recurseCount=recurseCounter;
-	  m_MapMutex.unlock();
-	  pthread_cond_broadcast(&exclusiveChangeCondition);
+	  syncOrExclOwner=pthread_self();
+	  recurseCount=recurseDelta;
+	  pthread_cond_broadcast(&ownerChangeCondition);
 	  return;
 	}
-      else if(exclusiveOwner==pthread_self())//if it is in use, check to make sure it is this thread, otherwise wait
+      else if(syncOrExclOwner==pthread_self())//if it is in use, check to make sure it is this thread, otherwise wait
 	{
-	  recurseCount+=recurseCounter;
-	  m_MapMutex.unlock();
+	  recurseCount+=recurseDelta;
 	  return;
 	}
-      pthread_cond_wait(&exclusiveChangeCondition,&m_MapMutex.m_Mutex);
-      
+      pthread_cond_wait(&ownerChangeCondition,&m_MapMutex.m_Mutex);
     }
-  m_MapMutex.unlock();
-
 }
 
-void M2File::setExclusiveOwner(pthread_t newExclusiveOwner, size_t recurseCounter)
+void M2File::setOwnerThread(pthread_t newOwner, size_t recurseCounter)
 {
   //change the current owner of the thread.
   //note this does no sanity checking.
   //should it?
-  m_MapMutex.lock();
+  lock_guard<pthreadMutex> lock(m_MapMutex);
   recurseCount=recurseCounter;
-  exclusiveOwner = newExclusiveOwner;
-  pthread_cond_broadcast(&exclusiveChangeCondition);
-  m_MapMutex.unlock();
+  syncOrExclOwner = newOwner;
+  pthread_cond_broadcast(&ownerChangeCondition);
 }
 
-void M2File::releaseExclusiveThreadCount(size_t recurseCounter)
+void M2File::releaseThreadCount(size_t recurseDelta)
 {
-  m_MapMutex.lock();
-  recurseCount-=recurseCounter;
+  lock_guard<pthreadMutex> lock(m_MapMutex);
+  recurseCount-=recurseDelta;
   if(!recurseCount)
     {
-      clearThread(exclusiveOwner);
-      pthread_cond_broadcast(&exclusiveChangeCondition);
+      clearThread(syncOrExclOwner);
+      pthread_cond_broadcast(&ownerChangeCondition);
     }
-  else
-    {
-    }
-  m_MapMutex.unlock();
 }
 
 extern "C"
@@ -137,15 +118,15 @@ extern "C"
 	if(threadMode!=2)
 	  {
 	    if(file->exclusiveRecurseCount==0)
-	      clearThread(file->exclusiveOwner);
-	    pthread_cond_broadcast(&file->exclusiveChangeCondition);
+	      clearThread(file->syncOrExclOwner);	// TODO: needs to lock m_MapMutex !?
+	    pthread_cond_broadcast(&file->ownerChangeCondition);
 	  }
       }
     else
       {
 	//if switching into exclusive mode, the current owner becomes the thread that did the switching by default
 	if(threadMode==2)
-	  file->setExclusiveOwner(pthread_self(),0);
+	  file->setOwnerThread(pthread_self(),0);
 	file->currentThreadMode = threadMode; 
       }
   }
@@ -162,14 +143,14 @@ extern "C"
     //if sync mode, acquire lock
     else if(file->currentThreadMode==1)
       {
-	file->waitExclusiveThreadAcquire(1);
+	file->waitThreadAcquire(1);
 	return file->unsyncState;
       }
     else // if(file->currentThreadMode==2)
       {
 	//get thread id
 	pthread_t localId = pthread_self();
-	file->m_MapMutex.lock();
+	lock_guard<pthreadMutex> lock(file->m_MapMutex);
 	//try to find thread id in thread states map
 	gc_map(pthread_t, struct M2FileThreadState*)::iterator it = file->threadStates.find(localId);
 	stdio0_fileOutputSyncState foss = NULL;
@@ -187,7 +168,6 @@ extern "C"
 	    state->syncState = foss;
 	    file->threadStates[localId]=state;
 	  }
-	file->m_MapMutex.unlock();
 	return foss;
       }
   }
@@ -200,13 +180,13 @@ extern "C"
     //in sync mode, release the recursive mutex
     else if(file->currentThreadMode==1)
       {
-	file->releaseExclusiveThreadCount(1);
+	file->releaseThreadCount(1);
       }
     else if(file->currentThreadMode==2)
       {
 	//get thread id
 	pthread_t localId = pthread_self();
-	file->m_MapMutex.lock();
+	lock_guard<pthreadMutex> lock(file->m_MapMutex);
 	//try to find thread id in thread states map
 	gc_map(pthread_t, struct M2FileThreadState*)::iterator it = file->threadStates.find(localId);
 	if(it!=file->threadStates.end())
@@ -219,9 +199,6 @@ extern "C"
 	    abort();
 	  }
 	file->recurseCount-=1;
-	file->m_MapMutex.unlock();
-
-
       }
   }
   void M2File_StartInput(struct M2File* file)

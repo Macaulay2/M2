@@ -7,16 +7,6 @@ undocumented {
     (symbol SPACE, ProjectiveVariety, Array),
     }
 
-document {
-    Key => "varieties",
-    HEADER2 "An overview",
-    Subnodes => {
-	-- Mike wanted this: TO "algebraic varieties",
-	TO "coherent sheaves",
-	TO "Variety"
-	},
-    }
-
 -----------------------------------------------------------------------------
 -- Types and basic constructors and methods that return a variety
 -----------------------------------------------------------------------------
@@ -24,6 +14,37 @@ document {
 document { Key => Variety, Headline => "the class of all algebraic varieties", SeeAlso => "varieties" }
 document { Key => AffineVariety, Headline => "the class of all affine varieties" }
 document { Key => ProjectiveVariety, Headline => "the class of all projective varieties" }
+
+document { Key => "varieties",
+    "We may use ", TO "Spec", " to create an affine scheme (or algebraic variety) with
+    a specified coordinate ring and ", TO "ring", " to recover the ring.",
+    EXAMPLE {
+	"R = ZZ/2[x,y,z]",
+	"X = Spec R",
+	"ring X",
+	"dim X",
+	},
+    "The variety ", TT "X", " is a 3-dimensional affine space.",
+    PARA{},
+    "We may form products.",
+    EXAMPLE {
+	"X ** X",
+	"dim oo",
+	},
+    PARA{},
+    "We may use ", TO "Proj", " to create a projective scheme (or algebraic variety)
+    with a specified homogeneous coordinate ring.",
+    EXAMPLE {
+	"Y = Proj R",
+	"ring Y",
+	"dim Y",
+	},
+    "The most important reason for introducing the notion of algebraic variety into a computer
+    algebra system is to support the notion of coherent sheaf.  See ", TO "coherent sheaves", "
+    for information about that.",
+    PARA{},
+    "For more details about varieties, see ", TO "Variety", "."
+    }
 
 document {
     Key => {Spec, (Spec, Ring)},
@@ -72,18 +93,17 @@ document {
 doc ///
   Key
     (variety, Ring)
-    (variety, RingElement)
   Headline
     the variety previously associated to a given ring
   Usage
-    variety A
+    variety S
   Inputs
-    A:Ring
+    S:Ring
       the intersection ring of a variety $X$, say, or the homogeneous (Cox) ring of a normal toric variety,
       or another ring that has been associated to a variety, or an element in such a ring
   Outputs
-    :
-      $X$, the variety associated with {\tt A}, or with the ring of {\tt A}, if {\tt A} is a @TO "RingElement"@
+    :Variety
+      $X$, the variety associated with {\tt S}
   Description
    Example
      needsPackage "NormalToricVarieties"
@@ -96,13 +116,10 @@ doc ///
      IY = intersectionRing Y
      Y === variety IY
    Text
-     If a @TO RingElement@ is provided, then the variety of its ring is returned.
-   Example
-     variety S_0
-     variety IY_0
-   Text
-     For package developers: All this function does is to look up the symbol {\tt variety} in {\tt A}.  This is currently
-     used in two packages, but can be used in other settings, if desired.
+     For package developers: All this function does is to look up the symbol {\tt variety} in {\tt S}.
+     This is currently used in two packages, but can be used in other settings, if desired.
+  SourceCode
+     (variety, Ring)
   SeeAlso
     "NormalToricVarieties::NormalToricVarieties"
     "Schubert2::Schubert2"

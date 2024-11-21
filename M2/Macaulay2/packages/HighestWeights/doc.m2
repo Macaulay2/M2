@@ -424,23 +424,6 @@ doc ///
 
 doc ///
      Key
-     	  Range
-     Headline
-     	  decompose only part of a complex
-     Description
-     	  Text
-	       Restrict the range of a complex to be decomposed into highest
-	       weight modules. Set this argument to @TT "{lo,hi}"@ to restrict
-	       to homological dimensions from @TT "lo"@ to @TT "hi"@.
-     Caveat
-          This argument is not used when decomposing rings, ideals or modules
-	  but only with complexes.
-     SeeAlso
-     	  highestWeightsDecomposition
-///
-
-doc ///
-     Key
      	  [highestWeightsDecomposition,Range]
      Headline
      	  decompose only part of a complex
@@ -495,14 +478,14 @@ doc ///
 
 doc ///
      Key
-     	  (highestWeightsDecomposition,ChainComplex,ZZ,List)
-	  (highestWeightsDecomposition,ChainComplex)
+     	  (highestWeightsDecomposition,Complex,ZZ,List)
+	  (highestWeightsDecomposition,Complex)
      Headline
      	  decompose an equivariant complex of graded free modules
      Usage
      	  highestWeightsDecomposition(C,i,W)
      Inputs
-     	  C:ChainComplex
+     	  C:Complex
 	       an equivariant minimal complex of graded free modules
 	  i:ZZ
 	       the homological dimension of a module of @TT "C"@
@@ -555,7 +538,7 @@ doc ///
 	       R=QQ[x_(1,1)..x_(3,4)];
 	       G=genericMatrix(R,4,3)
 	       I=minors(2,G);
-	       resI=res I
+	       resI=freeResolution I
 	       betti resI
 	       D=dynkinType{{"A",2},{"A",3}};
 	       U={{1,0,1,0,0},{1,0,-1,1,0},{1,0,0,-1,1},{1,0,0,0,-1},{-1,1,1,0,0},{-1,1,-1,1,0},{-1,1,0,-1,1},{-1,1,0,0,-1},{0,-1,1,0,0},{0,-1,-1,1,0},{0,-1,0,-1,1},{0,-1,0,0,-1}};
@@ -572,7 +555,7 @@ doc ///
 	       partition $\lambda$.
 	       
 	       To obtain only a partial decomposition, we may use the optional
-	       argument @TO "Range"@.
+	       argument @TO2([highestWeightsDecomposition, Range], "Range")@.
 
      	  Example
 	       highestWeightsDecomposition(resI,0,{{0,0,0,0,0}},Range=>{0,2})

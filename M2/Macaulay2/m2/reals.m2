@@ -226,9 +226,19 @@ CC // RR := (x,y) -> x // y_CC;
 CC % RR := (x,y) -> x % y_CC;
 
 -- functions
-realPart Number := realPart0
-imaginaryPart Number := imaginaryPart0
+realPart ZZ :=
+realPart QQ :=
+realPart InexactNumber := realPart0
+realPart Number := realPart0 @@ numeric
+
+imaginaryPart ZZ :=
+imaginaryPart QQ :=
+imaginaryPart InexactNumber := imaginaryPart0
+imaginaryPart Number := imaginaryPart0 @@ numeric
+
 conjugate CC := z -> toCC(precision z, realPart z, - imaginaryPart z)
+conjugate Constant := conjugate @@ numeric
+
 isConstant Number := i -> true
 
 round RR := round CC := round0
@@ -242,7 +252,6 @@ truncate Number := {} >> o -> x -> (
     if x >= 0 then floor x
     else if x < 0 then ceiling x
     else 0) -- e.g., RRi's containing 0 as interior pt
-truncate Constant := {} >> o -> truncate @@ numeric
 
 random RR := RR => opts -> x -> x * rawRandomRR precision x
 random(RR,RR) := opts -> (x,y) -> x + random(y-x)
@@ -271,18 +280,27 @@ EulerConstant = new Constant from { symbol EulerConstant, mpfrConstantEuler, eRR
 CatalanConstant = new Constant from { symbol CatalanConstant, mpfrConstantCatalan, cRRi0}
 ii = new Constant from { symbol ii, ConstantII}
 
+ring Constant := ring @@ numeric
+promote(Constant, InexactNumber') :=
+promote(Constant, RingElement)    := (x, R) -> (
+    promote(numeric(precision R, x), R))
+
+isFinite Constant := x -> true
+
 lngamma = method()
 lngamma RR := x -> (
      (y,s) := lgamma x;
      if s == -1 then y + ii * numeric_(precision y) pi else y
      )
-lngamma ZZ := lngamma QQ := lngamma Constant := lngamma @@ numeric
+lngamma Number := lngamma @@ numeric
+lngamma RRi := lngamma CC := lgamma
 
 expression Constant := hold
 toString Constant := net Constant := c -> toString c#0
 toExternalString Constant := c -> toString c#0
 numeric Constant := c -> c#1 defaultPrecision
 numeric(ZZ,Constant) := (prec,c) -> c#1 prec
+numeric(InfiniteNumber, Constant) := (prec, c) -> numeric c
 numericInterval Constant := c -> if #c < 3 then interval(0,-1,Precision=>defaultPrecision) else c#2 defaultPrecision
 numericInterval(ZZ,Constant) := (prec,c) -> if #c < 3 then interval(0,-1,Precision=>prec) else c#2 prec
 
@@ -357,15 +375,6 @@ Number == Constant := (x,c) -> x == numeric c
 Constant ? Number := (c,x) -> numeric c ? x
 Number ? Constant := (x,c) -> x ? numeric c
 
-Constant + InfiniteNumber := (c,x) -> x
-InfiniteNumber + Constant := (x,c) -> x
-Constant - InfiniteNumber := (c,x) -> -x
-InfiniteNumber - Constant := (x,c) -> x
-Constant * InfiniteNumber := (c,x) -> (numeric c)*x
-InfiniteNumber * Constant := (x,c) -> x*(numeric c)
-Constant // InfiniteNumber := Constant / InfiniteNumber := (c,x) -> 0
-InfiniteNumber // Constant := (x,c) -> x // (numeric c)
-InfiniteNumber / Constant := (x,c) -> x / (numeric c)
 Constant ! := c -> (numeric c)!
 
 -- printing
@@ -414,6 +423,7 @@ texMath RR := x -> (
 	printingLeadLimit,
 	printingTrailLimit,
 	"}\\cdot 10^{", x ) | "}")
+texMath RRi := x -> concatenate("\\big[",texMath left x,",",texMath right x,"\\big]",if isEmpty x then "\\text{ (an empty interval)}")
 withFullPrecision = f -> (
      prec := printingPrecision;
      acc := printingAccuracy;
@@ -440,27 +450,24 @@ isInfinite InfiniteNumber := x -> true
 
 acosh = method()
 acosh Number := z -> log(z+sqrt(z^2-1))
-acosh Constant := acosh @@ numeric
 asinh = method()
 asinh Number := z -> log(z+sqrt(z^2+1))
-asinh Constant := asinh @@ numeric
 atanh = method()
 atanh Number := z -> log((1+z)/(1-z))/2
-atanh Constant := atanh @@ numeric
 acoth = method()
 acoth Number := z -> atanh(1/z)
-acoth Constant := acoth @@ numeric
 acot = method()
 acot Number := z -> atan(1/z)
-acot Constant := acot @@ numeric
 
 BesselJ' = BesselJ
 BesselJ = method()
-BesselJ(ZZ, Number) := BesselJ(ZZ, Constant) := (n, x) -> BesselJ'(n, numeric x)
+BesselJ(ZZ, Number) := (n, x) -> BesselJ'(n, numeric x)
+BesselJ(Number, Number) := (n, x) -> BesselJ'(numeric n, numeric x)
 
 BesselY' = BesselY
 BesselY = method()
-BesselY(ZZ, Number) := BesselY(ZZ, Constant) := (n, x) -> BesselY'(n, numeric x)
+BesselY(ZZ, Number) := (n, x) -> BesselY'(n, numeric x)
+BesselY(Number, Number) := (n, x) -> BesselY'(numeric n, numeric x)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -1,0 +1,48 @@
+-- -*- M2-comint -*- hash: 12304955485749569065
+
+i1 : rayList={{1,0},{0,1},{-1,-1},{0,-1}}
+
+o1 = {{1, 0}, {0, 1}, {-1, -1}, {0, -1}}
+
+o1 : List
+
+i2 : coneList={{0,1},{1,2},{2,3},{3,0}}
+
+o2 = {{0, 1}, {1, 2}, {2, 3}, {3, 0}}
+
+o2 : List
+
+i3 : X = normalToricVariety(rayList,coneList)
+
+o3 = X
+
+o3 : NormalToricVariety
+
+i4 : D = X_3
+
+o4 = X
+      3
+
+o4 : ToricDivisor on X
+
+i5 : E = {0,3}
+
+o5 = {0, 3}
+
+o5 : List
+
+i6 : F = {1,2}
+
+o6 = {1, 2}
+
+o6 : List
+
+i7 : isTransverse(D,E)
+
+o7 = false
+
+i8 : isTransverse(D,F)
+
+o8 = true
+
+i9 : 

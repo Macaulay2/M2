@@ -99,10 +99,7 @@ document {
      cache information about it, put it in the hash table ", TT "I.cache", "."
      }
 document {
-     Key => {(symbol *,Ideal,Ideal),
-	  (symbol *,Ideal,MonomialIdeal),
-	  (symbol *,MonomialIdeal,Ideal)
-	  },
+     Key => (symbol *,Ideal,Ideal),
      Headline => "product of ideals",
      Usage => "I * J",
      Inputs => { "I", "J" => {"in the same ring as ", TT "I"},
@@ -120,10 +117,7 @@ document {
      SeeAlso => {"ideals"}
      }
 document {
-     Key => {(symbol +,LeftIdeal,LeftIdeal),
-	  (symbol +,Ideal,MonomialIdeal),
-	  (symbol +,MonomialIdeal,Ideal)
-	  },
+     Key => {(symbol +,LeftIdeal,LeftIdeal)},
      Headline => "sum of ideals",
      Usage => "I + J",
      Inputs => { "I", "J" => {"in the same ring as ", TT "I"}, },

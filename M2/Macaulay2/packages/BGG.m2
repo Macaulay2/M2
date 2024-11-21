@@ -12,7 +12,7 @@ newPackage(
 	     },
     	Headline => "Bernstein-Gelfand-Gelfand correspondence",
 	Keywords => {"Commutative Algebra"},
-	PackageExports => {"BoijSoederberg"},
+	PackageExports => {"BoijSoederberg", "Complexes"},
 	PackageImports => {"Truncations","Varieties"},
     	DebuggingMode => false
     	)
@@ -51,8 +51,8 @@ bgg(ZZ,Module,PolynomialRing) := Matrix => (i,M,E) ->(
      --correct the degrees (which are otherwise wrong in the transpose)
      map(E^{(rank target b):i+1},E^{(rank source b):i}, b));
 
-tateResolution = method(TypicalValue => ChainComplex)
-tateResolution(Matrix, PolynomialRing, ZZ, ZZ) := ChainComplex => (m,E,loDeg,hiDeg)->(
+tateResolution = method()
+tateResolution(Matrix, PolynomialRing, ZZ, ZZ) := Complex => (m,E,loDeg,hiDeg)->(
      M := coker m;
      reg := regularity M;
      bnd := max(reg+1,hiDeg-1);
@@ -62,7 +62,7 @@ tateResolution(Matrix, PolynomialRing, ZZ, ZZ) := ChainComplex => (m,E,loDeg,hiD
      ofixed   :=  map(E^{(rank target o):bnd+1},
                 E^{(rank source o):bnd},
                 o);
-     res(coker ofixed, LengthLimit=>max(1,bnd-loDeg+1)));
+     freeResolution(coker ofixed, LengthLimit=>max(1,bnd-loDeg+1)));
 
 sortedBasis = (i,E) -> (
      m := basis(i,E);
@@ -147,35 +147,28 @@ degreeD(ZZ,Matrix) := (d,m) -> (
      submatrix(m, tar, src)
      )
 
-degreeD(ZZ,ChainComplex) := (d, F) -> (
-     -- takes the first degree d part of F
-     a := min F;
-     b := max F;
-     G := new ChainComplex;
-     G.ring = ring F;
-     for i from a to b do
-	  G#i = degreeD(d, F#i);
-     for i from a+1 to b do (
-	  G.dd#i = map(G#(i-1), G#i, degreeD(d, F.dd_i));
-	  );
-     G
-     )
-degreeD(ZZ,ChainComplexMap) := (d, f) -> (
+degreeD(ZZ, Complex) := Complex => (d, F) -> (
+    -- takes the first degree d part of F
+    (lo, hi) := concentration F;
+    modules := applyValues(F.module, m -> degreeD(d, m));
+    if lo === hi then return complex(modules#lo, Base => lo);
+    maps := hashTable for i from lo+1 to hi list
+                i => map(modules#(i-1), modules#i, degreeD(d, dd^F_i));
+    complex maps
+    )
+
+degreeD(ZZ, ComplexMap) := ComplexMap => (d, f) -> (
      -- takes the first degree d part of f : S --> T
      -- assumption: that min C === min D
-     -- returning a new ChainComplexMap
+     -- returning a new ComplexMap
      S := source f;
      T := target f;
      Sd := degreeD(d, S);
      Td := degreeD(d, T);
      a := min(min Sd, min Td);
      b := max(max Sd, max Td);
-     map(Td, Sd, i -> (
-	       -- need the degree d part of the map from Sd_i --> Td_i
-	       degreeD(d, f_i)
-	       ))
+     map(Td, Sd, i -> degreeD(d, f_i))
      )
-
 
 symmetricToExteriorOverA=method()
 symmetricToExteriorOverA(Matrix,Matrix,Matrix):= (m,e,x) -> (
@@ -226,7 +219,7 @@ symmetricToExteriorOverA(Module) := M -> (
 
 
 directImageComplex = method(Options => {Regularity=>null})
-directImageComplex Module := opts -> (M) -> (
+directImageComplex Module := Complex => opts -> (M) -> (
      S := ring M;
      regM := if opts.Regularity === null then regularityMultiGraded M
           else opts.Regularity;
@@ -237,23 +230,17 @@ directImageComplex Module := opts -> (M) -> (
      xm := regM * degree(S_0);
      phi := symmetricToExteriorOverA(N ** S^{xm});
      E := ring phi;
-     F := complete res( image phi, LengthLimit => max(1,1+regM));
+     F := freeResolution( image phi, LengthLimit => max(1,1+regM));
      F = E^{-xm} ** F[regM];
      F0 := degreeD(0, F);
      toA := map(coefficientRing E,E,DegreeMap=> i -> drop(i,1));
      --we should truncate away the terms that are 0, and (possibly) the terms above the (n+1)-st
      F0A := toA F0;
-     G := new ChainComplex;
-     G.ring = ring F0A;
      n := numgens ring M;
-     for i from -n+1 to 1 do(
-	  G.dd_i = F0A.dd_i);
-     G
+     naiveTruncation(F0A, -n+1, 1)
      )
 
-RingMap ChainComplexMap := ChainComplexMap => (f,phi) -> map(f target phi, f source phi, i -> f phi_i)
-
-directImageComplex Matrix := opts -> (f) -> (
+directImageComplex Matrix := ComplexMap =>  opts -> (f) -> (
      -- plan: compute both regularities
      --   if a value is given, then it should be the max of the 2 regularities
      -- 
@@ -280,21 +267,20 @@ directImageComplex Matrix := opts -> (f) -> (
      phiM := symmetricToExteriorOverA(M ** S^{xm});
      phiN := symmetricToExteriorOverA(N ** S^{xm});
      E := ring phiM;
-     FM := complete res( image phiM, LengthLimit => max(1,1+regMN));
-     FN := complete res( image phiN, LengthLimit => max(1,1+regMN));
+     FM := freeResolution( image phiM, LengthLimit => max(1,1+regMN));
+     FN := freeResolution( image phiN, LengthLimit => max(1,1+regMN));
      fMN := extend(FN, FM, truncfA ** E);
      fMN = E^{-xm} ** fMN[regMN];
      FM = E^{-xm} ** FM[regMN];
      FN = E^{-xm} ** FN[regMN];
      fMN0 := degreeD(0, fMN);
      EtoA := map(A,E,DegreeMap=> i -> drop(i,1));
---     error("debug");
      EtoA fMN0
      )
 
 --New 10/2010 -- David Eisenbud
 
-directImageComplex ChainComplex := opts -> F -> (
+directImageComplex Complex := Complex => opts -> F -> (
      --The idea is to take the Tate resolutions of th modules
      --in F at a point where they're all linear (beyond all the
      --regularities) and form one map of the double complex
@@ -342,7 +328,7 @@ directImageComplex ChainComplex := opts -> F -> (
      E := ring Ediffs_0;
      EtoA := map(A,E,DegreeMap=> i -> drop(i,1));     
 
-     Ereslen := apply(len+1, i -> complete res( image Ediffs_i, LengthLimit => len+1));
+     Ereslen := apply(len+1, i -> freeResolution( image Ediffs_i, LengthLimit => len+1));
      mapsE := apply(len, i -> map((Ereslen_i)_0, Ereslen_(i+1)_0, mapsA_i ** E));
      FE := apply(len, i -> extend(Ereslen_i, Ereslen_(i+1), mapsE_i));
 
@@ -360,16 +346,14 @@ directImageComplex ChainComplex := opts -> F -> (
 	       if j == i+1 then ((FE_i)_(-regF-j)) else 
 	       map(CE0_i, CE1_j, 0)));
      Dmat := matrix D;
-     Eres := complete res(coker Dmat, LengthLimit => max(1,1+regF+len));
+     Eres := freeResolution(coker Dmat, LengthLimit => max(1,1+regF+len));
      dirIm := (EtoA degreeD(0,Eres))[regF+1-minF];
      --now truncate away the parts below zero and above 
      nonzero := positions(apply(min dirIm..max dirIm, i -> rank dirIm_i != 0), t -> t);
      minDirIm := min nonzero + min dirIm;
      maxDirIm := max nonzero + min dirIm;
---     error(); -- there was an error when the output would be 0. Fixed Jan 29, 2012.
-     if minDirIm>maxDirIm then chainComplex{map(A^0, A^0, 0)} else
-     chainComplex(apply(minDirIm..maxDirIm, i-> dirIm.dd_i))[-minDirIm+1]
-     
+     if minDirIm>maxDirIm then complex A^0 else
+     (complex(apply(toList(minDirIm..maxDirIm), i-> dirIm.dd_i)))[-minDirIm+1]
      )
 
 
@@ -586,7 +570,7 @@ pureResolution(Ring, List) := (A, degListOrig) -> (
      --to the normalized degreeList_0.
 
      (S,params) := projectiveProduct(A, dimList);
-     K := S^{reverse twists}**koszul(params);
+     K := S^{reverse twists}**koszulComplex(params);
      while ring K =!= A do (
 	  K = directImageComplex K;
 	  S = ring K);
@@ -626,7 +610,7 @@ pureResolution(Matrix, List) := (M, degListOrig) -> (
 
      --now set up the direct image computation
      (S,params) := projectiveProduct(M, dimList);
-     K := S^{reverse twists}**koszul(params);
+     K := S^{reverse twists}**koszulComplex(params);
      while ring K =!= A do (
 	  K = directImageComplex K;
 	  S = ring K);
@@ -680,7 +664,7 @@ document {
      This package implements routines for investigating the BGG correspondence.", 
      PARA {}, 
      "More details can be found in ",  
-     HREF("http://www.math.uiuc.edu/Macaulay2/Book/", "Sheaf Algorithms Using Exterior Algebra"), ".", 
+     HREF("https://macaulay2.com/Book/", "Sheaf Algorithms Using Exterior Algebra"), ".", 
      } 
      
 document { 
@@ -747,7 +731,7 @@ document {
 	  "h" => ZZ => "upper bound on the cohomological degree"
 	  },
      Outputs => {
-	  ChainComplex => {"a finite piece of the Tate resolution"}  
+	  Complex => {"a finite piece of the Tate resolution"}  
 	  },
      "This function takes as input a presentation matrix ", TT "m", " of a finitely generated graded "
      , TT "S", "-module ", TT "M", " an exterior algebra ", TT "E", " and two integers ", TT "l", 
@@ -799,7 +783,7 @@ document {
      a presentation matrix ", TT "m", " of a finitely generated graded "
      , TT "S", "-module ", TT "M", "and an exterior algebra ", TT "E", "with the same number of variables. 
      In this form, the function is equivalent to the function ", TT "sheafCohomology", 
-     " in ", HREF("http://www.math.uiuc.edu/Macaulay2/Book/", "Sheaf Algorithms Using Exterior Algebra"),  ".",
+     " in ", HREF("https://macaulay2.com/Book/", "Sheaf Algorithms Using Exterior Algebra"),  ".",
      EXAMPLE lines ///
 	  S = ZZ/32003[x_0..x_2]; 
 	  E = ZZ/32003[e_0..e_2, SkewCommutative=>true];
@@ -814,13 +798,13 @@ document {
      EXAMPLE lines /// 
           S = ZZ/32003[x_0..x_4]; 
 	  X = Proj S; 
-          ff = res coker map(S^{1:0},S^{3:-1,2:-2},{{x_0..x_2,x_3^2,x_4^2}}); 
+          ff = freeResolution coker map(S^{1:0},S^{3:-1,2:-2},{{x_0..x_2,x_3^2,x_4^2}}); 
 	  alpha = map(S^{1:-2},target ff.dd_3,{{1,4:0,x_0,2:0,x_1,0}})*ff.dd_3; 
 	  beta = ff.dd_4//syz alpha; 
 	  K = syz syz alpha|beta;
-	  fK = res prune coker K;
+	  fK = freeResolution prune coker K;
 	  s = random(target fK.dd_1,S^{1:-4,3:-5});
-	  ftphi = res prune coker transpose (fK.dd_1|s);
+	  ftphi = freeResolution prune coker transpose (fK.dd_1|s);
 	  I = ideal ftphi.dd_2;
 	  F = sheaf S^1/I; 
 	  cohomologyTable(F,-2,6)
@@ -863,7 +847,7 @@ document {
 	  alphad' = beilinson(alphad,S)
 	  alpha' = beilinson(alpha,S)
 	  F = prune homology(alphad',alpha');
-	  betti res F
+	  betti freeResolution F
 	  regularity F
 	  cohomologyTable(presentation F,E,-6,6)
      	  ///,
@@ -918,7 +902,7 @@ doc ///
      Regularity=>ZZ
        the Castelnuovo-Mumford regularity of {\tt M}.  If not provided, this value will be computed
    Outputs
-     F: ChainComplex
+     F: Complex
        complex of free modules over A. Homology in homological degree -i is 
        $R^i \pi_* {\mathcal M}$, where ${\mathcal M}$ is the sheaf on $\PP^n_A$ represented by M.
    Description
@@ -994,7 +978,7 @@ doc ///
        a homomorphism $F : M \rightarrow N$ of graded $S = A[y_0..y_n]$ modules, graded of degree 0,
        where we think of $M$ and $N$ as representing sheaves on $\PP^n_A$
    Outputs
-     piF:ChainComplexMap
+     piF:ComplexMap
        the induced map on chain complexes {\tt piF : directImageComplex M --> directImageComplex N}
    Description
     Text
@@ -1037,7 +1021,7 @@ doc ///
      complex itself in this case.
     Example
      m = transpose D_(-1)
-     betti res coker m
+     betti freeResolution coker m
      (dual oo)[-3]
    SeeAlso
      directImageComplex
@@ -1047,16 +1031,16 @@ doc ///
 
 doc ///
    Key
-     (directImageComplex, ChainComplex)
+     (directImageComplex, Complex)
    Headline
      direct image of a chain complex
    Usage
      piC = directImageComplex C
    Inputs
-     C:ChainComplex
+     C:Complex
        over a bigraded ring $S = A[y_0..y_n]$, where $A$ is singly graded
    Outputs
-     piC:ChainComplex
+     piC:Complex
        a minimal free complex representing the direct image complex in the derived category
    Description
     Text
@@ -1076,7 +1060,7 @@ doc ///
       S = A [x_0..x_(p-1)];
       M = sub(map(A^p, A^{q:-1},transpose genericMatrix(A,a_(0,0),q,p)), S)
       Y = map(S^1, S^{q:{-1,-1}}, (vars S)*M)
-      F = koszul Y
+      F = koszulComplex Y
       L = for i from -1 to q-p+1 list directImageComplex(F**S^{{i,0}});
       L/betti
    Caveat
@@ -1156,7 +1140,7 @@ doc ///
        constructs a base ring of characteristic p and makes a generic system of parameters
        with q elements by taking a generic matrix for M.
    Outputs
-     F:ChainComplex
+     F:Complex
        F will be a pure resolution over A of a module of finite length
        over A, with the desired degree sequence.
        If there are more than #D-1 variables, then a longer resolution
@@ -1188,7 +1172,7 @@ doc ///
      A = kk[u,v,w]
      T = A[x,y]
      params = matrix"ux,uy+vx,vy+wx,wy"
-     kn = koszul(params)
+     kn = koszulComplex(params)
      directImageComplex kn
     Text
      If we twist the map kn a little before taking the direct image
@@ -1287,7 +1271,7 @@ TEST///
 	  m = matrix{{x_0,x_1}};
 	  regularity coker m
 	  T = tateResolution(m,E,-2,4)
-          assert(toList(7:1) == apply(length T+1, i-> rank T#i))
+          assert(toList(7:1) == apply(length T+1, i-> rank T_i))
 	  assert(all(toList(1..length T), i-> (matrix entries T.dd_i)==matrix {{e_2}}))
 ///
 TEST /// 
@@ -1335,23 +1319,25 @@ TEST ///
 ///
 
 TEST ///
-  needsPackage "ChainComplexExtras"
   kk = ZZ/101
   A = kk[a]
   S = A[x,y]
   M1 = S^{{-1,0},{0,0}}
   C1 = directImageComplex(id_M1)
   assert(C1_0 == 1)
-  assert isChainComplexMap C1
+  assert isWellDefined C1
+  assert isCommutative C1
 
   M2 = S^{{-1,0}}
   C2 = directImageComplex(id_M2)
-  assert isChainComplexMap C2
+  assert isWellDefined C2
+  assert isCommutative C2
   assert(C2_0 == 0)
 
   M3 = S^{{-2,0}}
   C3 = directImageComplex(id_M3)
-  assert isChainComplexMap C3
+  assert isWellDefined C3
+  assert isCommutative C3
   assert(C3_0 == 0)
 ///
 
@@ -1363,7 +1349,7 @@ TEST///
   M = sub(map(A^p, A^{q:-1},transpose genericMatrix(A,a_(0,0),q,p)), S)
 
   Y = map(S^1, S^{q:{-1,-1}}, (vars S)*M)
-  F = koszul Y
+  F = koszulComplex Y
   L = directImageComplex(F**S^{{2,0}})
   ans = new BettiTally from {(0,{0},0) => 3, (3,{4},4) => 5, 
        (1,{1},1) => 10, (4,{5},5) => 2,
@@ -1386,7 +1372,7 @@ betti pureResolution(11,{0,2,4})== new BettiTally from {(0,{0},0) => 3, (1,{2},2
 betti pureResolution(2,{1,2,4})==new BettiTally from {(0,{1},1) => 2, (1,{2},2) => 3, (2,{4},4) => 1}
 betti pureResolution(2,3,{1,2,4})
 ///
-end
+end--
 
 restart
 uninstallPackage "BGG"

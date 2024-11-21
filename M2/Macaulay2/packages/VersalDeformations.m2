@@ -17,16 +17,17 @@ newPackage("VersalDeformations",
     Keywords => {"Deformation Theory"},
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
-	 "journal URI" => "http://j-sag.org/",
+	 "journal URI" => "https://msp.org/jsag/",
 	 "article title" => "Versal deformations and local Hilbert schemes",
 	 "acceptance date" => "2012-06-05",
-	 "published article URI" => "http://j-sag.org/Volume4/jsag-3-2012.pdf",
-	 "published code URI" => "http://j-sag.org/Volume4/VersalDeformations.m2",
+	 "published article URI" => "https://msp.org/jsag/2012/4-1/p03.xhtml",
+	 "published article DOI" => "10.2140/jsag.2012.4.12",
+	 "published code URI" => "https://msp.org/jsag/2012/4-1/jsag-v4-n1-x03-code.zip",
 	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/VersalDeformations.m2",
 	 "release at publication" => "ff4ff53a9177b4ff3f8995bbb41b194b92a69ca2",
 	 "version at publication" => "1.0",
 	 "volume number" => "4",
-	 "volume URI" => "http://j-sag.org/Volume4/"
+	 "volume URI" => "https://msp.org/jsag/2012/4-1/"
 	 }
     )
 

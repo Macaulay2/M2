@@ -7,9 +7,6 @@ needs "polyrings.m2"
 GaloisField = new Type of EngineRing
 GaloisField.synonym = "Galois field"
 
-toExternalString GaloisField := k -> toString describe k
-toString GaloisField := toString @@ expression
-net GaloisField := net @@ expression
 expression GaloisField := F -> if hasAttribute(F,ReverseDictionary) then expression getAttribute(F,ReverseDictionary) else (expression GF) (expression F.order)
 describe GaloisField := F -> Describe (expression GF) (expression F.order)
 
@@ -230,8 +227,9 @@ GF(Ring) := GaloisField => opts -> (S) -> (
      F)
 
 random GaloisField := opts -> F -> (
-     i := random F.order;
-     if i === 0 then 0_F else F_0^i
+     p := char F;
+     t := F_0;
+     sum(F.degree, i -> random p * t^i)
      )
 
 dim GaloisField := ZZ => R -> 0

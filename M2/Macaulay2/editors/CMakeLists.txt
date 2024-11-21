@@ -3,7 +3,6 @@
 ## and syntax highlighting engines as well as the M2-mode package for Emacs.
 ## - M2-editors generates grammar files
 ## - M2-emacs   generates the M2-mode package for Emacs
-## - M2-highlightjs   generates syntax highlighting library for javascript
 
 # TODO: generate vim grammar
 # TODO: generate textmate grammar
@@ -70,21 +69,13 @@ file(MAKE_DIRECTORY PRISM_DIR)
 file(COPY prism/ DESTINATION ${PRISM_DIR}
   FILES_MATCHING PATTERN "*.json" PATTERN "*.js" PATTERN "*.css")
 
+if(NOT NPM)
+  return()
+endif()
+
 add_custom_target(M2-prism ALL DEPENDS prism/prism.js)
 add_custom_command(OUTPUT prism/prism.js
   COMMENT "Generating prism.js syntax file"
   COMMAND ${NPM} install && ${NPM} run build
   WORKING_DIRECTORY ${PRISM_DIR}
   DEPENDS prism/macaulay2.js)
-
-set(HIGHLIGHTJS_DIR ${CMAKE_CURRENT_BINARY_DIR}/highlightjs)
-file(MAKE_DIRECTORY HIGHLIGHTJS_DIR)
-file(COPY highlightjs/ DESTINATION ${HIGHLIGHTJS_DIR}
-  FILES_MATCHING PATTERN "*.json" PATTERN "*.js" PATTERN "*.css")
-
-add_custom_target(M2-highlightjs ALL DEPENDS highlightjs/highlight.js)
-add_custom_command(OUTPUT highlightjs/highlight.js
-  COMMENT "Generating highlight.js syntax file"
-  COMMAND ${NPM} install && ${NPM} run build
-  WORKING_DIRECTORY ${HIGHLIGHTJS_DIR}
-  DEPENDS highlightjs/macaulay2.js)

@@ -268,13 +268,15 @@ doc ///
             For example, a permutation $w$ is $2143$-avoiding if there does not exist indices $i < j < k < l$
             such that $w_j < w_i < w_l < w_k$.
         Example
-            w = {7,2,5,8,1,3,6,4}
-            pattern2143 = {2,1,4,3}
+            w = {7,2,5,8,1,3,6,4};
+            pattern2143 = {2,1,4,3};
             isPatternAvoiding(w, pattern2143)
 
-            v = {2,3,7,1,5,8,4,6}
-            pattern1432 = {1,4,3,2}
+            v = {2,3,7,1,5,8,4,6};
+            pattern1432 = {1,4,3,2};
             isPatternAvoiding(v, pattern1432)
+
+            isPatternAvoiding({3,1,2},{3,1,2})
 ///
 
 

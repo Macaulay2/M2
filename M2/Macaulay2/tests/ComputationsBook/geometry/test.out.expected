@@ -328,8 +328,8 @@ o37 : ProjectiveVariety
 
 i38 : cotangentSheaf Cubic
 
-o38 = cokernel {1} | -x_3 -x_2 -x_1 |
-               {1} | x_2  x_1  x_0  |
+o38 = cokernel {1} | -2x_3 -2x_2 -2x_1 |
+               {1} | x_2   x_1   x_0   |
 
                                                   2
 o38 : coherent sheaf on Cubic, quotient of OO      (-1)

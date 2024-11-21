@@ -13,7 +13,7 @@ notsamering := (X,Y) -> (
 nottosamering := (X,Y) -> (
      if X === Y then error("expected ",pluralsynonym X, " for compatible rings")
      else error("expected ",X.synonym," and ",Y.synonym," for compatible rings"))
-samering := (M,N) -> if ring M === ring N then (M,N) else notsamering(class M,class N)
+samering = (M,N) -> if ring M === ring N then (M,N) else notsamering(class M,class N)
 tosamering := (M,N) -> if ring M === ring N then (M,N) else (
      z := try 0_(ring M) + 0_(ring N) else nottosamering(class M,class N);
      (promote(M,ring z),promote(N,ring z)))
@@ -84,7 +84,8 @@ map(Module,Module,Matrix) := Matrix => o -> (M,N,f) -> (
 	  R := ring M;
 	  deg := if o.Degree === null then (degreeLength R : 0) else o.Degree;
 	  deg = degreeCheck(deg,R);
-	  map(M,N,reduce(M,rawMatrixRemake2(raw cover M, raw cover N, deg, raw f,0)))))
+	  g := rawMatrixRemake2(raw cover M, raw cover N, deg, raw f, 0);
+	  map(M, N, if M =!= f.target then reduce(M, g) else g)))
 
 -- combine the one above with the one below
 map(Module,ZZ,List) := 
@@ -95,8 +96,7 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
      local k;
      if N === null then (
 	  k = R;
-	  if #p === 0 then error "expected non-empty list of entries for matrix";
-	  rankN = #p#0;
+	  rankN = if #p === 0 then 0 else #p#0;
 	  )
      else if class N === ZZ then (
 	  k = R;
@@ -275,7 +275,7 @@ matrix(Matrix) := Matrix => opts -> (m) -> (
 matrix RingElement := matrix Number := opts -> r -> matrix({{r}}, opts)
 
 matrix(List) := Matrix => opts -> (m) -> (
-     if #m === 0 then error "expected nonempty list";
+     if #m === 0 then return matrix(ZZ, {});
      mm := apply(splice m,splice);
      if #mm === 0 then error "expected nonempty list";
      types := unique apply(mm,class);
@@ -341,7 +341,7 @@ subquotient(Matrix,Nothing) := (subgens,null) -> (
 subquotient(Matrix,Matrix) := (subgens,relns) -> (
      R := ring relns;
      E := target subgens;
-     if E != target relns then error "expected maps with the same target"; -- we used to have =!=, but Schreyer orderings of free modules are discarded by "syz"
+     if E =!= target relns then error "expected maps with the same target";
      rE := E.RawFreeModule;
      n := rawRank rE;
      if n == 0 then new Module from (R,rE)
@@ -383,10 +383,17 @@ tensor(Matrix, Matrix) := Matrix => {} >> opts -> ((f, g) -> (
      samering(target f,target g);
      samering(source f,source g);
      R := ring target f;
+     if f === id_(R^1) then return g;
+     if g === id_(R^1) then return f;
      map(target f ** target g, 
 	  source f ** source g, 
 	  map(R, f.RawMatrix ** g.RawMatrix),
 	  Degree => degree f + degree g))) @@ toSameRing
+
+Matrix ** Module := Matrix => (f, M) -> tensor(f, id_M)
+Module ** Matrix := Matrix => (M, f) -> tensor(id_M, f)
+tensor(Matrix, Module) := Matrix => {} >> o -> (f, M) -> tensor(f, id_M)
+tensor(Module, Matrix) := Matrix => {} >> o -> (M, f) -> tensor(id_M, f)
 
 Matrix ** Number := (f,r) -> r * f
 Number ** Matrix := (r,f) -> r * f
@@ -439,6 +446,9 @@ degrees LeftIdeal := I -> degrees source generators I
 -- TODO: deprecate these
 degreeLength LeftIdeal := I -> degreeLength ring I
 degreesRing LeftIdeal := I -> degreesRing ring I
+-* should we keep this only for Ideal?
+degrees Ideal := I -> degrees source generators I
+*-
 
 promote(LeftIdeal,Number) :=  
 promote(LeftIdeal,RingElement) := (I,R) -> ideal promote(generators I, R)
@@ -561,6 +571,10 @@ LeftIdeal == LeftIdeal := (I,J) -> (
 LeftIdeal == Module := (I,M) -> module I == M
 Module == LeftIdeal := (M,I) -> M == module I
 
+isSubset(LeftIdeal,LeftIdeal) := (I,J) -> isSubset(module I, module J)
+isSubset(Module,LeftIdeal) := (M,J) -> isSubset(M, module J)
+isSubset(LeftIdeal,Module) := (I,N) -> isSubset(module I, N)
+
 ideal Matrix := LeftIdeal => f -> (
      R := ring f;
      if not isFreeModule target f or not isFreeModule source f 
@@ -585,6 +599,7 @@ ideal Module := LeftIdeal => M -> (
      if isSubmodule M and rank F === 1 then ideal generators M
      else error "expected a submodule of a free module of rank 1"
      )
+
 idealPrepare = method()
 idealPrepare RingElement := 
 idealPrepare Number := identity

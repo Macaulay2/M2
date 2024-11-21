@@ -227,29 +227,8 @@ isSAGBI Subring := {
             -- subduct to zero against the sagbiGenerators
             -- 4. the leading terms of the sagbi generators are 'the same'
             -- as the leading terms of the subring, i.e., they generate the same algebra
-            SB' := if (hasSAGBIBasis and not zero SB#SAGBIdata#"sagbiGenerators" and (
-                highDegreeGens :=
-                matrix {for gen in first entries gens S list if ((
-                matrix{degree leadTerm gen})*SB#SAGBIrings#"heftVector")_(0,0) >
-                SB#SAGBIdata#"limit" then gen else continue};
-                zero highDegreeGens or zero (highDegreeGens % SB)
-                ) and (
-                -- the initial algebra lies in the quotient by the initial ideal
-                LTAmbient := (if isQuotientRing flattenedRing S then (
-                    Q := flattenedRing S;
-                    R := ambient Q;
-                    I := ideal Q;
-                    R / ideal leadTerm I)
-                    else flattenedRing S);
-                liftMap := map(LTAmbient, flattenedRing S, gens LTAmbient);
-                LTgensS := liftMap leadTerm gens S;
-                LTgensSB := liftMap leadTerm gens SB;
-                subringLTgensS := subring LTgensS;
-                subringLTgensSB := subring LTgensSB;
-                forceSB subringLTgensS;
-                forceSB subringLTgensSB;
-                zero(LTgensS % subringLTgensSB) and zero(LTgensSB % subringLTgensS))
-                ) then (
+            SB' := if (hasSAGBIBasis and not zero SB#SAGBIdata#"sagbiGenerators" and
+                isHighDegreeZero(S,SB) and isInitialInQuotient(S,SB)) then (
                 -- we can use the cached SAGBIBasis for the computation
                 -- if the sagbiStatus flag is non-zero then we can use it directly
                 -- otherwise we need to use perform an internal check
@@ -307,6 +286,40 @@ isSAGBI List := {
     } >> opts -> L -> (
     S := subring L;
     isSAGBI(S, opts)
+)
+
+----------------------------------------
+-- isHighDegreeZero(S, SB) = high degree generators (those above the limit) reduce to zero
+-- S a subring of a polynomial ring (or quotient ring)
+-- SB its SAGBI Basis
+isHighDegreeZero = method()
+isHighDegreeZero (Subring, SAGBIBasis) := (S,SB) -> (
+    highDegreeGens := matrix {for gen in first entries gens S list if ((
+        matrix{degree leadTerm gen})*SB#SAGBIrings#"heftVector")_(0,0) >
+        SB#SAGBIdata#"limit" then gen else continue};
+    zero highDegreeGens or zero (highDegreeGens % SB)
+)
+
+----------------------------------------
+-- isInitialInQuotient(S, SB) = the initial algebra lies in the quotient by the initial ideal
+-- S a subring of a polynomial ring (or quotient ring)
+-- SB its SAGBI Basis
+isInitialInQuotient = method()
+isInitialInQuotient (Subring,SAGBIBasis) := (S, SB) -> (
+    LTAmbient := (if isQuotientRing flattenedRing S then (
+        Q := flattenedRing S;
+        R := ambient Q;
+        I := ideal Q;
+        R / ideal leadTerm I)
+    else flattenedRing S);
+    liftMap := map(LTAmbient, flattenedRing S, gens LTAmbient);
+    LTgensS := liftMap leadTerm gens S;
+    LTgensSB := liftMap leadTerm gens SB;
+    subringLTgensS := subring LTgensS;
+    subringLTgensSB := subring LTgensSB;
+    forceSB subringLTgensS;
+    forceSB subringLTgensSB;
+    zero(LTgensS % subringLTgensSB) and zero(LTgensSB % subringLTgensS)
 )
 
 ----------------------------------------
@@ -382,17 +395,17 @@ RingElement // Subring := RingElement => (f, S) -> (
 -- 2) If there is not a complete sagbi basis then use the 'extrinsic method' - see groebnerMembershipTest above
 -- Note: we construct the tensor ring with a monomial order lifted from the ambient ring
 Matrix % SAGBIBasis := Matrix => (M, SB) -> (
-    assert(ambient SB === ring M);
+    if not (ambient SB === ring M) then error "expected rings to be the same";
     SB#SAGBImaps#"inverseFlatteningMap" subduction(SB, M)
 );
 
 RingElement % SAGBIBasis := RingElement => (f, SB) -> (
-    assert(ambient SB === ring f);
+    if not (ambient SB === ring f) then error "expected rings to be the same";
         SB#SAGBImaps#"inverseFlatteningMap" first first entries subduction(SB, matrix{{f}})
     );
 
 Matrix % Subring := Matrix => (M, S) -> (
-    assert(ring M === ambient S);
+    if not (ambient S === ring M) then error "expected rings to be the same";
     if S#cache#?SAGBIBasis and S#cache#SAGBIBasis#SAGBIdata#"sagbiStatus" == 1 then (
         -- S has a complete sagbi basis so use subduction
         SB := S#cache#SAGBIBasis;
@@ -460,7 +473,6 @@ isFullIntersection IntersectedSubring := Boolean => S -> (
 
 -- subringIntersection(Subring, Subring)
 -- intersects the subrings using a method analogous to the GB method
--- subringIntersectionLimitWarning := false;
 subringIntersection = method(
     Options => {
         Strategy => "Master",

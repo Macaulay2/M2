@@ -543,32 +543,32 @@ int system_unlink(M2_string name) {
 }
 
 int system_link(M2_string oldfilename,M2_string newfilename) {
-  char *old = M2_tocharstar(oldfilename);
-  char *new = M2_tocharstar(newfilename);
+  char *oldf = M2_tocharstar(oldfilename);
+  char *newf = M2_tocharstar(newfilename);
   int r = 
     #ifdef HAVE_LINK
-    link(old,new)
+    link(oldf, newf)
     #else
     -1
     #endif
     ;
-  freemem(old);
-  freemem(new);
+  freemem(oldf);
+  freemem(newf);
   return r;
 }
 
 int system_symlink(M2_string oldfilename,M2_string newfilename) {
-  char *old = M2_tocharstar(oldfilename);
-  char *new = M2_tocharstar(newfilename);
+  char *oldf = M2_tocharstar(oldfilename);
+  char *newf = M2_tocharstar(newfilename);
   int r = 
     #ifdef HAVE_SYMLINK
-    symlink(old,new)
+    symlink(oldf, newf)
     #else
     -1
     #endif
     ;
-  freemem(old);
-  freemem(new);
+  freemem(oldf);
+  freemem(newf);
   return r;
 }
 

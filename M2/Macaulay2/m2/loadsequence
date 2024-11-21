@@ -16,10 +16,8 @@ files.m2
 set.m2
 fold.m2
 max.m2
-structure.m2
 combinatorics.m2
 lists.m2
-tables.m2
 
 nets.m2
 robust.m2
@@ -87,8 +85,8 @@ schubert.m2
 local.m2
 
 packages.m2
-examples.m2
 document.m2
+examples.m2
 installPackage.m2
 testing.m2
 help.m2

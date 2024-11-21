@@ -83,8 +83,10 @@ updateComputation(PushforwardComputation, Module) := Module => options pushForwa
 
 pushForward(RingMap, Module) := Module => opts -> (f, M) -> (
     R := ring M;
-    assert( target f === R );
     strategy := opts.Strategy;
+
+    -- error checking
+    if target f =!= R then error "expected module over the target of the ring map";
 
     -- this logic runs the strategies in order, or the specified strategy
     computation := (opts, container) -> (

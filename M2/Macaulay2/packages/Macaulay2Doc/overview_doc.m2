@@ -241,6 +241,6 @@ Node
       and @TO "Text :: Text"@.
   SeeAlso
     installPackage
-    TEST
+    symbol TEST
     check
 ///

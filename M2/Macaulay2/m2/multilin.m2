@@ -13,27 +13,25 @@ hasNoQuotients QuotientRing := (R) -> isField R
 hasNoQuotients PolynomialRing := (R) -> hasNoQuotients coefficientRing R
 hasNoQuotients Ring := (R) -> true
 
-getMinorsStrategy := (R, opts) -> (
-     bareiss := 0;  -- WARNING: these must match the engine!!
-     cofactor := 1;
-     dynamic := 2;
-     strat := if opts.?Strategy then opts.Strategy else null;
-     if strat === global Bareiss then bareiss
-     else if strat === global Cofactor then cofactor
-     else if strat === global Dynamic then dynamic
-     else if strat =!= null then (
-	  error "'Strategy' keyword must be 'Cofactor', 'Bareiss' or 'Dynamic";
-	  )
-     else (
+hasFreeSupport = (R, m) -> 0 == # intersect(set \\ index \ support m, set \\ index \ support ideal R)
+
+-- Keep this in sync DET_* strategy codes in Macaulay2/e/det.hpp
+RawMinorsStrategyCodes = new HashTable from {
+    Bareiss  => 0,
+    Cofactor => 1,
+    Dynamic  => 2,
+    }
+
+getMinorsStrategy := (R, m, strat) -> RawMinorsStrategyCodes#strat ?? (
+    if strat === null then RawMinorsStrategyCodes#(
 	  -- Use the Bareiss algorithm unless R is a quotient of
 	  -- a polynomial ring.  Note that if R is non-commutative
 	  -- then either algorithm is incorrect.  What is the correct
 	  -- thing to do in this case?
-          if hasNoQuotients R and precision R === infinity then
-            bareiss
-          else
-     	    cofactor
-     ))
+	if precision R < infinity then Cofactor else
+        if hasNoQuotients R       then Bareiss  else
+	if hasFreeSupport(R, m)   then Bareiss  else Cofactor)
+    else error "'Strategy' keyword must be 'Cofactor', 'Bareiss' or 'Dynamic")
 
 -----------------------------------------------------------------------------
 -- symmetricAlgebra
@@ -110,7 +108,7 @@ exteriorPower(ZZ, Matrix) := Matrix => opts -> (p, m) -> (
     else map(
 	exteriorPower(p, target m, opts),
 	exteriorPower(p, source m, opts),
-	rawExteriorPower(p, raw m, getMinorsStrategy(R, opts)))
+	rawExteriorPower(p, raw m, getMinorsStrategy(R, m, opts.Strategy)))
     )
 
 wedgeProduct = method()
@@ -141,7 +139,7 @@ minors(ZZ, Matrix) := Ideal => opts -> (j, m) -> (
 	       )
 	  ) then error "expected a list of 2 lists of integers";
      if j <= 0 then ideal 1_(ring m)
-     else ideal map(ring m, rawMinors(j, raw m, getMinorsStrategy(ring m,opts), 
+     else ideal map(ring m, rawMinors(j, raw m, getMinorsStrategy(ring m, m, opts.Strategy),
 	       if opts.Limit === infinity then -1 else opts.Limit,
 	       if f =!= null then f#0, 
 	       if f =!= null then f#1)))

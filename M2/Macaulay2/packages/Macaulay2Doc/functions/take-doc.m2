@@ -7,6 +7,7 @@ doc ///
   (take, BasicList, ZZ)
   (take, BasicList, List)
   (take, Thing, ZZ)
+  (take, Thing, List)
  Headline
   Take some elements from a list or sequence.
  Usage
@@ -31,19 +32,21 @@ doc ///
    take({a,b,c,d,e,f,g}, {1,3})
    take({a,b,c,d,e,f,g}, {2,2})    
   Text
-   The pair {\tt \{j,k\}} must be given with both entries non-negative, and $j\le k$. Otherwise an empty list is returned.
+   The pair $\{j,k\}$ must be given with both entries non-negative, and $j\le k$. Otherwise an empty list is returned.
   Example
    take({a,b,c,d,e,f,g}, {3,1})
    take({a,b,c,d,e,f,g}, {4,-1})
   Text
    If @TT "x"@ is any object belonging to a class with the @TO iterator@ method
-   installed, then a list containing the first @TT "i"@ objects returned when
-   @TO next@ is called on the output of @M2CODE "iterator x"@ is returned.
-   If fewer then @TT "i"@ objects are returned before the @TO StopIteration@
-   symbol is encountered, then the list will have length less than @TT "i"@.
+   installed, then a list containing the first $i$ (or the $(j+1)$th
+   through $(k+1)$th) objects returned when @TO next@ is called on the output
+   of @M2CODE "iterator x"@ is returned.  If fewer than $i$ (or $k+1$) objects
+   are returned before the @TO StopIteration@ symbol is encountered, then the
+   list will have shorter than expected length.
   Example
    take("Hello, world!", 5)
    take("Hello, world!", 20)
+   take("Hello, world!", {7, 11})
  SeeAlso
   drop
   select

@@ -7,7 +7,7 @@ document {
 	  (ring,ChainComplexMap),(ring, GradedModuleMap),(ring, GroebnerBasis),(ring, Number),
 	  (ring,Module),(ring,ChainComplex),(ring,Matrix),
 	  (ring,MutableMatrix),(ring,LeftIdeal), (ring,CC),(ring,RR),(ring,RRi),(ring,Resolution),
-	  (ring,CoherentSheaf),(ring,MonomialIdeal)},
+	  },
      Headline => "get the associated ring of an object",
      Usage => "ring M",
      Inputs => {"M" => "an object with a ring associated to it"},

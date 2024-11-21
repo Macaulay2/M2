@@ -223,7 +223,7 @@ sparseMonodromySolve PolySystem := o ->  PS -> (
     if numgens coefficientRing R > 0 then error "expected parameter-less system";
     W := symbol W;
     AR := CC[apply(ind,i->W_i)][gens R];
-    polysP := transpose matrix{for i to #polys-1 list -- system with parameteric coefficients and same support 
+    polysP := transpose matrix{for i to #polys-1 list -- system with parametric coefficients and same support 
         sum(exponents polys#i, t->W_(i,t)*AR_(t))};
     P := if o#"new tracking routine" then gateSystem polysP else polySystem polysP;
     targetParam := point sub(fold(polys/coefficients/last,(a,b)->a||b),CC);

@@ -378,7 +378,7 @@ smoothFanoToricVariety (ZZ,ZZ) := NormalToricVariety => opts -> (d, i) -> (
     	error "-- there are only 7622 smooth Fano toric 6-folds";
     if d > 6 then 
     	error "-- database doesn't include varieties with dimension > 6";
-    if i === 0 then return toricProjectiveSpace d;
+    if i === 0 then return toricProjectiveSpace(d, opts);
     if d < 5 then (
     	s := (getFano (d))#(d,i);
     	return normalToricVariety (s#0, s#1, 
@@ -433,7 +433,7 @@ fan NormalToricVariety := Fan => X -> (
 -- Basic attributes and properties
 ------------------------------------------------------------------------------
 -- The method 'rays' is defined in 'Polyhedra'
-rays NormalToricVariety := List => X -> X.rays
+rays NormalToricVariety := List => {} >> o -> X -> X.rays
 max  NormalToricVariety := List => X -> X.max
 dim NormalToricVariety := ZZ => (cacheValue symbol dim) (X -> #(rays X)#0)
 
@@ -451,7 +451,7 @@ isSimplicial NormalToricVariety := Boolean => (
 	)
     );
 
-isSmooth NormalToricVariety := Boolean => (
+isSmooth NormalToricVariety := Boolean => {} >> o -> (
     cacheValue symbol isSmooth) (X -> (
     	rayGenMatrix := transpose matrix rays X;
     	b := all(max X, sigma -> 
@@ -630,7 +630,7 @@ regularSubdivisionLocal (NormalToricVariety, List, List) := (X,s,w) -> (
 	    coneList = drop (coneList,{k,k}) | coneList') 
 	);
     if coneList == max X then return X;
-    Y := normalToricVariety (rayList, coneList);
+    Y := normalToricVariety (rayList, coneList, CoefficientRing => X.cache.CoefficientRing, Variable => X.cache.Variable);
     Y.cache.Weights = apply (#rayList, i -> wtg i);
     Y 
     );    
@@ -693,13 +693,15 @@ toricBlowup (List, NormalToricVariety, List) := NormalToricVariety => (s, X, v) 
       	    if member (s#0,t) then continue
       	    else sort (t | s)
 	    );
-    	return normalToricVariety (rays X, coneList | coneList') 
+	Z := normalToricVariety (rays X, coneList | coneList', CoefficientRing => X.cache.CoefficientRing, Variable => X.cache.Variable);
+        Z.cache.toricBlowup = X;
+        return Z
 	);
     coneList' = for t in clStar list (
 	if all (s, i -> member (i,t)) then continue
 	else t | {n}
 	);
-    Z := normalToricVariety (rays X | {v}, coneList | coneList');
+    Z = normalToricVariety (rays X | {v}, coneList | coneList', CoefficientRing => X.cache.CoefficientRing, Variable => X.cache.Variable);
     Z.cache.toricBlowup = X;
     Z
     );

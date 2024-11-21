@@ -11,8 +11,6 @@ needs "methods.m2"
  MutableList.synonym = "mutable list"
 AngleBarList.synonym = "angle bar list"
 
-List#"major documentation node" = true
-
 List ? List := (s,t) -> if class s === class t then toSequence s ? toSequence t else (class s) ? (class t)
 Option ? Option := (s,t) -> toSequence s ? toSequence t
 
@@ -27,10 +25,11 @@ Sequence | Sequence := Sequence => join
 List + List  := List => (v,w) -> apply(v,w,plus)
      - List  := List => v -> apply(v,minus)
 List - List  := List => (v,w) -> apply(v,w,difference)
+List * Thing := List => (v,a) -> apply(v,x->x * a)
 Thing * List := List => (a,v) -> apply(v,x->a * x)
 List ** List := List => (X,Y) -> flatten for x in X list apply(Y, y -> (x, y))
 
-List / Thing := List => (v,b) -> apply(v,x->x / b)	    -- slight conflict with List / Function!
+List /  RingElement := List /  Number := List => (v,b) -> apply(v,x->x /  b)
 List // RingElement := List // Number := List => (v,b) -> apply(v,x->x // b)
 List  % RingElement := List  % Number := List => (v,b) -> apply(v,x->x  % b)
 
@@ -77,6 +76,26 @@ String ..< String := Sequence => (s,t) -> (
      if #s =!= #t then error "expected strings of equal length (in utf8 encoding)";
      utf8 \ ( s ..< t ))
 
+-----------------------------------------------------------------------------
+-- positions, position, minPosition, maxPosition, number
+-----------------------------------------------------------------------------
+
+positions = method(TypicalValue => List)
+positions(MutableList, Function) :=
+positions(VisibleList, Function) := (v, f) -> for i from 0 to #v-1 list if f v#i then i else continue
+
+position = method(TypicalValue => ZZ, Options => {Reverse => false})
+position(ZZ,          Function) := o -> (n, f) -> position(0..n-1, f, o)
+position(VisibleList, Function) := o -> (v, f) -> (
+    if o.Reverse
+    then (for i to #v-1 do if f v#(-i-1) then return #v-i-1)
+    else (for i to #v-1 do if f v#i      then return i))
+position(VisibleList, VisibleList, Function) := o -> (v, w, f) -> (
+    if #v != #w then error "expected lists of the same length";
+    if o.Reverse
+    then (for i to #v-1 do if f(v#(-i-1), w#(-i-1)) then return #v-i-1)
+    else (for i to #v-1 do if f(v#i,      w#i)      then return i))
+
 maxPosition = method(Dispatch => Thing)
 minPosition = method(Dispatch => Thing)
 
@@ -96,11 +115,28 @@ minPosition BasicList := ZZ => x -> (
 	  scan(1 .. # x-1, i -> if x#i<m then (m=x#i;pos=i));
 	  pos))
 
+delete = method()
+delete(Thing, BasicList) := (x, v) -> select(v, i -> i =!= x)
+
 number = x -> # select x
 
+-----------------------------------------------------------------------------
+-- any, all, same, uniform, isMember
+-----------------------------------------------------------------------------
+
+-- method defined in actors4.d
+any(ZZ,                   Function) :=
+any(HashTable,            Function) :=
+any(BasicList,            Function) :=
+any(BasicList, BasicList, Function) := Boolean => any
+
 all = method(TypicalValue => Boolean)
-all(ZZ,Function) := all(HashTable,Function) := all(BasicList,Function) := (x,p) -> not any(x, i -> not p i)
-all(BasicList,BasicList,Function) := (x,y,p) -> not any(apply(x,y,identity), ij -> not p ij)
+all(ZZ,                   Function) := -- uses 0 .. n-1
+all(HashTable,            Function) := -- uses pairs h
+all(BasicList,            Function) := (x,    p) -> not any(x,    i  -> not p i)
+all(BasicList, BasicList, Function) := (x, y, p) -> not any(x, y, ij -> not p ij)
+-- TODO: implement this for 'any'
+all BasicList := L -> not any(L, x -> not x)
 
 -- TODO: how to get this to work? When fixed, replace "same apply" with "same"
 --same = method(TypicalValue => Boolean)
@@ -111,6 +147,8 @@ same = L -> #L <= 1 or (t := L#0; not any(L, l -> t =!= l))
 uniform = L -> same apply(L, class)
 
 isMember(Thing,VisibleList) := Boolean => (c,x) -> any(x, i -> c===i)
+
+-----------------------------------------------------------------------------
 
 sum List := x -> plus toSequence x
 
@@ -175,6 +213,11 @@ rotate(ZZ,VisibleList) := (n,s) -> (
 sort List :=  opts -> internalsort
 rsort List := opts -> internalrsort
 
+apply({sort, rsort}, sort ->
+    sort(List, Function) := opts -> (L, f) -> (
+	H := hashTable(join, apply(L, l -> f(l) => {l}));
+	flatten apply(sort keys H, k -> H#k)))
+
 List << List := (A, B) -> all(min(#A, #B), i -> A#i <= B#i)
 
 -- we've been waiting to do this:
@@ -224,20 +267,20 @@ commonest Tally := t -> (
 
 -- suggested by Allen Knutson:
 insert = method()
-insert(ZZ,Thing,VisibleList) := VisibleList => (i,x,s) -> (
+insert(ZZ,Thing,BasicList) := BasicList => (i,x,s) -> (
      j := i;
      if j < 0 then j = j + #s + 1;
      if j < 0 or j > #s then error("insert: index ", toString i, " out of bounds: 0..", toString length s);
      join(take(s,{0,j-1}),{x},take(s,{j,#s-1})))
 switch = method()
-switch(ZZ,ZZ,VisibleList) := VisibleList => (i,j,s) -> (
+switch(ZZ,ZZ,BasicList) := BasicList => (i,j,s) -> (
      t := new MutableList from s;
      t#i = s#j;
      t#j = s#i;
      new class s from t)
 --
 
-replace(ZZ,Thing,VisibleList) := VisibleList => {} >> o -> (i,x,s) -> (
+replace(ZZ,Thing,BasicList) := BasicList => {} >> o -> (i,x,s) -> (
      j := i;
      if j < 0 then j = j + #s;
      if j < 0 or j >= #s then error("replace: index ", toString i, " out of bounds: 0..", toString (length s - 1));
@@ -249,6 +292,47 @@ isSorted VisibleList := s -> all(#s-1, i -> s#i <= s#(i+1))
 deepApply' = (L, f, g) -> flatten if g L then toList apply(L, e -> deepApply'(e, f, g)) else toList{f L}
 deepApply  = (L, f) ->  deepApply'(L, f, e -> instance(e, BasicList))
 deepScan   = (L, f) -> (deepApply'(L, f, e -> instance(e, BasicList));) -- not memory efficient
+
+-----------------------------------------------------------------------------
+-- Tables (nested lists)
+-----------------------------------------------------------------------------
+
+isTable = L -> instance(L, List) and all(L, row -> instance(row, List)) and same apply(L, length)
+
+table = (rows, cols, f) -> apply(rows, r -> apply(cols, c -> f(r, c)))
+
+subtable = (rows, cols, a) -> table(rows, cols, (r, c) -> a_r_c)
+
+applyTable = (m,f) -> apply(m, v -> apply(v,f))
+
+transpose List := List => L -> if isTable L then pack(#L, mingle L) else error "transpose expected a table"
+
+pack' = pack -- defined in d/actors4.d
+pack = method()
+pack(ZZ, String)    :=
+pack(ZZ, BasicList) := List => pack'
+-- TODO: deprecate these versions
+pack(String,    ZZ) :=
+pack(BasicList, ZZ) := List => (L, n) -> pack'(n, L)
+
+-----------------------------------------------------------------------------
+
+parallelApplyRaw = (L, f) ->
+     -- 'reverse's to minimize thread switching in 'taskResult's:
+     reverse (taskResult \ reverse apply(L, e -> schedule(f, e)));
+parallelApply = method(Options => {Strategy => null})
+parallelApply(BasicList, Function) := o -> (L, f) -> (
+     if o.Strategy === "raw" then return parallelApplyRaw(L, f);
+     n := #L;
+     numThreads := min(n + 1, maxAllowableThreads);
+     oldAllowableThreads := allowableThreads;
+     if allowableThreads < numThreads then allowableThreads = numThreads;
+     numChunks := 3 * numThreads;
+     res := if n <= numChunks then toList parallelApplyRaw(L, f) else
+	  flatten parallelApplyRaw(pack(L, ceiling(n / numChunks)), chunk -> apply(chunk, f));
+     allowableThreads = oldAllowableThreads;
+     res);
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

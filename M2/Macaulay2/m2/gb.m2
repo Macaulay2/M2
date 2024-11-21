@@ -134,6 +134,7 @@ processAlgorithm := (alg, m) -> (
     else if alg === LinearAlgebra then (warnexp(); 6)
     else if alg === Toric         then (warnexp(); 7)
     else if alg === Test          then 8
+    else if alg === ParallelF4    then 9 -- also experimental
     else error "unknown algorithm encountered")
 
 -----------------------------------------------------------------------------
@@ -229,6 +230,9 @@ Matrix          % GroebnerBasis  :=
 remainder(Matrix, GroebnerBasis) := Matrix      => (n, G) -> map(target n, , rawGBMatrixRemainder(raw G, raw n))
 Number          % GroebnerBasis  :=
 RingElement     % GroebnerBasis  := RingElement => (r, G) -> (remainder(promote(r, ring G) * id_(target G), G))_(0,0)
+
+-- TODO: IM2_GB_is_equal is mentioned in the interpreter, but never defined
+GroebnerBasis == GroebnerBasis := (G1, G2) -> -1 === rawGBContains(raw G1, raw generators G2) and -1 === rawGBContains(raw G2, raw generators G1)
 
 -----------------------------------------------------------------------------
 -- helpers for gb

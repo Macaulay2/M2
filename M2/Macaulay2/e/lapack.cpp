@@ -305,7 +305,7 @@ M2_arrayintOrNull Lapack::LU(const LMatrixRRR *A, LMatrixRRR *L, LMatrixRRR *U)
   if (info < 0)
     {
       ERROR("argument passed to dgetrf had an illegal value");
-      return 0;
+      return nullptr;
     }
 
   return result;
@@ -403,9 +403,9 @@ bool Lapack::eigenvalues(const LMatrixRRR *A, LMatrixCCC *eigvals)
          &size,
          real,
          imag,
-         static_cast<double *>(0),
+         static_cast<double *>(nullptr),
          &size, /* left eigenvectors */
-         static_cast<double *>(0),
+         static_cast<double *>(nullptr),
          &size, /* right eigenvectors */
          workspace,
          &wsize,
@@ -473,7 +473,7 @@ bool Lapack::eigenvectors(const LMatrixRRR *A,
          &size,
          real,
          imag,
-         static_cast<double *>(0),
+         static_cast<double *>(nullptr),
          &size, /* left eigvecs */
          eigen,
          &size, /* right eigvecs */
@@ -1015,7 +1015,7 @@ M2_arrayintOrNull Lapack::LU(const LMatrixCCC *A, LMatrixCCC *L, LMatrixCCC *U)
     {
       ERROR("argument passed to zgetrf had an illegal value");
       freemem(result);
-      result = NULL;
+      result = nullptr;
     }
   else
     {
@@ -1156,9 +1156,9 @@ bool Lapack::eigenvalues(const LMatrixCCC *A, LMatrixCCC *eigvals)
          copyA,
          &size,
          evals,
-         static_cast<double *>(0),
+         static_cast<double *>(nullptr),
          &size, /* left eigenvectors */
-         static_cast<double *>(0),
+         static_cast<double *>(nullptr),
          &size, /* right eigenvectors */
          workspace,
          &wsize,
@@ -1226,7 +1226,7 @@ bool Lapack::eigenvectors(const LMatrixCCC *A,
          copyA,
          &size,
          evals,
-         static_cast<double *>(0),
+         static_cast<double *>(nullptr),
          &size, /* left eigvecs */
          evecs,
          &size, /* right eigvecs */
@@ -1962,7 +1962,7 @@ M2_arrayintOrNull Lapack::LU(const LMatrixRR *A, LMatrixRR *L, LMatrixRR *U)
   if (info < 0)
     {
       ERROR("argument passed to dgetrf had an illegal value");
-      return 0;
+      return nullptr;
     }
 
   return result;
@@ -2060,9 +2060,9 @@ bool Lapack::eigenvalues(const LMatrixRR *A, LMatrixCC *eigvals)
          &size,
          real,
          imag,
-         static_cast<double *>(0),
+         static_cast<double *>(nullptr),
          &size, /* left eigenvectors */
-         static_cast<double *>(0),
+         static_cast<double *>(nullptr),
          &size, /* right eigenvectors */
          workspace,
          &wsize,
@@ -2130,7 +2130,7 @@ bool Lapack::eigenvectors(const LMatrixRR *A,
          &size,
          real,
          imag,
-         static_cast<double *>(0),
+         static_cast<double *>(nullptr),
          &size, /* left eigvecs */
          eigen,
          &size, /* right eigvecs */
@@ -2895,7 +2895,7 @@ M2_arrayintOrNull Lapack::LU(const LMatrixCC *A, LMatrixCC *L, LMatrixCC *U)
     {
       ERROR("argument passed to zgetrf had an illegal value");
       freemem(result);
-      result = NULL;
+      result = nullptr;
     }
   else
     {
@@ -3036,9 +3036,9 @@ bool Lapack::eigenvalues(const LMatrixCC *A, LMatrixCC *eigvals)
          copyA,
          &size,
          evals,
-         static_cast<double *>(0),
+         static_cast<double *>(nullptr),
          &size, /* left eigenvectors */
-         static_cast<double *>(0),
+         static_cast<double *>(nullptr),
          &size, /* right eigenvectors */
          workspace,
          &wsize,
@@ -3106,7 +3106,7 @@ bool Lapack::eigenvectors(const LMatrixCC *A,
          copyA,
          &size,
          evals,
-         static_cast<double *>(0),
+         static_cast<double *>(nullptr),
          &size, /* left eigvecs */
          evecs,
          &size, /* right eigvecs */

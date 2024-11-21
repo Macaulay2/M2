@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => {isIdeal, (isIdeal,Thing), (isIdeal,Module),(isIdeal, LeftIdeal),(isIdeal, MonomialIdeal)},
+     Key => {isIdeal, (isIdeal,Thing), (isIdeal,Module), (isIdeal, LeftIdeal)},
      Headline => "whether something is an ideal",
      Usage => "isIdeal I",
      Inputs => {

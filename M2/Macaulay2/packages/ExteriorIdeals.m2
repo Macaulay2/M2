@@ -10,18 +10,19 @@ newPackage(
         DebuggingMode => false,
         Certification => {
          "journal name" => "The Journal of Software for Algebra and Geometry",
-         "journal URI" => "http://j-sag.org/",
+         "journal URI" => "https://msp.org/jsag/",
          "article title" => "ExteriorIdeals: a package for computing monomial ideals in an exterior algebra",
          "acceptance date" => "24 June 2018",
          "published article URI" => "https://msp.org/jsag/2018/8-1/p07.xhtml",
          "published article DOI" => "10.2140/jsag.2018.8.71",
          "published code URI" => "https://msp.org/jsag/2018/8-1/jsag-v8-n1-x07-ExteriorIdeals.m2",
-         "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/ExteriorIdeals.m2",
+         "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/ExteriorIdeals.m2",
          "release at publication" => "1073789664ba1f00096121613a8b6d932a0e5c4e",        -- git commit number in hex
          "version at publication" => "1.0",
          "volume number" => "8",
          "volume URI" => "https://msp.org/jsag/2018/8-1/"
-         }
+         },
+        PackageExports => {"Complexes"}
         )
 
 export {
@@ -369,8 +370,8 @@ stableIdeal Ideal := I -> (
 -------------------------------------------------------------------------------------------
 -- Computes the minimal Betti numbers of a graded ideal
 ----------------------------------------------------------------------------------------------
-minimalBettiNumbers = method(TypicalValue=>BettiTally)
-minimalBettiNumbers Ideal := I -> betti res ideal flatten entries mingens I
+minimalBettiNumbers = method(Options => {LengthLimit => infinity})
+minimalBettiNumbers Ideal := BettiTally => opts -> I -> betti freeResolution(ideal flatten entries mingens I, opts)
 
 
 -------------------------------------------------------------------------------------------
@@ -596,11 +597,13 @@ document {
      }
 
 document {
-     Key => {minimalBettiNumbers,(minimalBettiNumbers,Ideal)},
+     Key => {minimalBettiNumbers,(minimalBettiNumbers,Ideal),[minimalBettiNumbers,LengthLimit]},
      Headline => "compute the minimal Betti numbers of a given graded ideal",
-     Usage => "minimalBettiNumbers I",
-     Inputs => {"I" => {"a graded ideal of an exterior algebra"}
-      },
+     Usage => "minimalBettiNumbers(I, LengthLimit => lim)",
+     Inputs => {
+         "I" => {"a graded ideal of an exterior algebra"},
+         LengthLimit => ZZ => { "only compute enough to determine the Betti table up to and including the column labelled ", TT "lim"}
+         },
      Outputs => {BettiTally => {"the Betti table of the ideal ", TT "I", " computed using its minimal generators"}},
      PARA {"Example:"},
      EXAMPLE lines ///
@@ -609,7 +612,7 @@ document {
            J=ideal(join(flatten entries gens I,{e_1*e_2*e_3}))
            I==J
            betti I==betti J
-           minimalBettiNumbers I==minimalBettiNumbers J
+           minimalBettiNumbers(I, LengthLimit => 5) == minimalBettiNumbers(J, LengthLimit => 5)
       ///
      }
 
@@ -767,7 +770,7 @@ E=QQ[e_1..e_4,SkewCommutative=>true]
 I=ideal {e_1*e_2,e_1*e_3,e_2*e_3}
 J=ideal(join(flatten entries gens I,{e_1*e_2*e_3}))
 assert(I==J)
-assert(minimalBettiNumbers I==minimalBettiNumbers J)
+minimalBettiNumbers(I, LengthLimit => 5) == minimalBettiNumbers(J, LengthLimit => 5)
 ///
 
 ----------------------------

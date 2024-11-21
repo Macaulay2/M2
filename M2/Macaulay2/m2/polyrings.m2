@@ -4,7 +4,6 @@
 needs "methods.m2"
 needs "enginering.m2"
 needs "monoids.m2"
-needs "tables.m2"
 needs "indeterminates.m2" -- runLengthEncode
 
 -----------------------------------------------------------------------------
@@ -64,8 +63,6 @@ expression PolynomialRing := R -> (
     if hasAttribute(R, ReverseDictionary)
     then expression getAttribute(R, ReverseDictionary)
     else(expression last R.baseRings) expressionPolynomialRing R)
-
-toExternalString PolynomialRing := toString @@ describe
 -- the rest are inherited from EngineRing
 
 -----------------------------------------------------------------------------
@@ -277,7 +274,12 @@ selectVariables(List,PolynomialRing) := (v,R) -> (
      o.Variables = o.Variables_v;
      o.Degrees = o.Degrees_v;
      o = new OptionTable from o;
-     (S := (coefficientRing R)(monoid [o]),map(R,S,(generators R)_v)))
+     S := (coefficientRing R)(monoid [o]);
+     f := map(R,S,(generators R)_v);
+     g := map(S,R,apply(generators R, v->substitute(v,S)));
+     setupPromote f;
+     setupLift g;
+     (S,f))
 
 -----------------------------------------------------------------------------
 

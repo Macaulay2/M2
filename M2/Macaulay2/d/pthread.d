@@ -203,7 +203,9 @@ taskResult(e:Expr):Expr := (
      when e is c:TaskCell do
      if c.body.resultRetrieved then buildErrorPacket("task result already retrieved")
      else if !taskKeepRunning(c.body.task) then buildErrorPacket("task canceled")
-     else if !taskDone(c.body.task) then buildErrorPacket("task not done yet")
+     else if !taskDone(c.body.task) then (
+	  Ccode(voidPointer, "waitOnTask(",c.body.task,")");
+	  taskResult(e))
      else (
 	  r := c.body.returnValue;
 	  c.body.returnValue = nullE;
@@ -217,6 +219,16 @@ setupfun("taskResult",taskResult);
 setupfun("setIOSynchronized",setIOSynchronized);
 setupfun("setIOUnSynchronized",setIOUnSynchronized);
 setupfun("setIOExclusive",setIOExclusive);
+
+export getIOThreadMode(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 0
+	then toExpr(getFileThreadMode(stdIO))
+	else WrongNumArgs(0, 1))
+    is f:file do toExpr(getFileThreadMode(f))
+    else WrongArg("a file or ()"));
+setupfun("getIOThreadMode", getIOThreadMode);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d pthread.o "

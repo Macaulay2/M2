@@ -5,7 +5,7 @@ loadPackage("Bertini",Reload=>true)
      sol1 = point {{1}};
      sol2 = point {{-1}};
      S1= { sol1, sol2  };--solutions to H when t=1	  
-     S0 = sort bertiniTrackHomotopy (t, H, S1) --solutions to H when t=0
+     S0 = sortSolutions bertiniTrackHomotopy (t, H, S1) --solutions to H when t=0
      assert((1.414213562373-abs first coordinates first S0) <1e-7)
      peek S0_0
      R=CC[x,y,t]; -- include the path variable in the ring     
@@ -15,7 +15,7 @@ loadPackage("Bertini",Reload=>true)
      sol1=    point{{1,1}}--{{x,y}} coordinates
      sol2=    point{{ -1,1}}
      S1={sol1,sol2}--solutions to H when t=1
-     S0=sort bertiniTrackHomotopy(t, H, S1, IsProjective=>1) --solutions to H when t=0 
+     S0=sortSolutions bertiniTrackHomotopy(t, H, S1, IsProjective=>1) --solutions to H when t=0 
      --assert(#S0==2) --Not always passing. 
      target1=coordinates first S0
      target2=coordinates last S0
