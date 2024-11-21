@@ -71,6 +71,7 @@ extern "C" {
   void createThreadGCMemory();
   extern void delThread(pthread_t thread);
   extern void initializeThreadSupervisor();
+  extern char isThreadSupervisorInitialized(void);
   /**
      Set the maximum number of allowable threads
   **/
