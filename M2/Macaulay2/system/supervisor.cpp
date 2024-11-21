@@ -78,6 +78,10 @@ extern "C" {
     threadSupervisor->m_TargetNumThreads=maxNumThreads;
     threadSupervisor->initialize();
   }
+  char isThreadSupervisorInitialized(void)
+  {
+    return threadSupervisor->is_initialized;
+  }
   void pushTask(struct ThreadTask* task)
   {
     lock_guard<pthreadMutex> supLock(threadSupervisor->m_Mutex);
@@ -272,6 +276,7 @@ void ThreadSupervisor::initialize()
       m_Threads.push_back(thread);
       thread->start();
     }
+  is_initialized = true;
 }
 // done or canceled; task's mutex is locked by caller
 void ThreadSupervisor::_i_finished(struct ThreadTask* task)
