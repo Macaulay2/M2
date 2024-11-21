@@ -97,8 +97,12 @@ nextTaskSerialNumber():int := (
      taskSerialNumber = taskSerialNumber+1;		    -- race condition here, solve later
      taskSerialNumber);
 
+NoThreadsError() ::= buildErrorPacket("thread support has been disabled");
+
 createTask2(fun:Expr,arg:Expr):Expr :=(
      if !isFunction(fun) then return WrongArg(1,"a function");
+     if Ccode(bool, "!isThreadSupervisorInitialized()")
+     then return NoThreadsError();
      tc := TaskCell(TaskCellBody(nextHash(),nextTaskSerialNumber(),Ccode(taskPointer,"((void *)0)"), false, fun, arg, nullE ));
      blockingSIGINT();
      -- we are careful not to give the new thread the pointer tc, which we finalize:
@@ -170,6 +174,8 @@ setupfun("addCancelTask",addCancelTaskM2);
 
 schedule2(fun:Expr,arg:Expr):Expr := (
      if !isFunction(fun) then return WrongArg(1,"a function");
+     if Ccode(bool, "!isThreadSupervisorInitialized()")
+     then return NoThreadsError();
      tc := TaskCell(TaskCellBody(nextHash(),nextTaskSerialNumber(),Ccode(taskPointer,"((void *)0)"), false, fun, arg, nullE ));
      blockingSIGINT();
      -- we are careful not to give the new thread the pointer tc, which we finalize:
