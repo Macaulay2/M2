@@ -44,7 +44,7 @@ MonomialIdeal - MonomialIdeal := MonomialIdeal => ((I, J) -> newMonomialIdeal(ri
 MonomialIdeal * Ring := MonomialIdeal => (I, S) -> if ring I === S then I else monomialIdeal(generators I ** S)
 Ring * MonomialIdeal := MonomialIdeal => (S, I) -> I ** S
 
-RingElement * MonomialIdeal := ZZ * MonomialIdeal := MonomialIdeal => (r, I) -> monomialIdeal(r * generators I)
+RingElement * MonomialIdeal := Number * MonomialIdeal := MonomialIdeal => (r, I) -> monomialIdeal(r * generators I)
 
 -----------------------------------------------------------------------------
 -- Basic methods (specifically those which are distinct from Ideal)
@@ -66,8 +66,8 @@ generators MonomialIdeal := o -> I -> I.cache.generators ??= map(ring I, rawMono
 Matrix %  MonomialIdeal := Matrix => (f, I) -> f %  forceGB generators I
 Matrix // MonomialIdeal := Matrix => (f, I) -> f // forceGB generators I
 
-RingElement %  MonomialIdeal := ZZ %  MonomialIdeal := RingElement => (r, I) -> r_(ring I) %  forceGB generators I
-RingElement // MonomialIdeal := ZZ // MonomialIdeal := RingElement => (r, I) -> r_(ring I) // forceGB generators I
+RingElement %  MonomialIdeal := Number %  MonomialIdeal := RingElement => (r, I) -> r_(ring I) %  forceGB generators I
+RingElement // MonomialIdeal := Number // MonomialIdeal := RingElement => (r, I) -> r_(ring I) // forceGB generators I
 
 MonomialIdeal == MonomialIdeal := (I, J) -> I === J
 MonomialIdeal == ZZ := (I, i) -> (
