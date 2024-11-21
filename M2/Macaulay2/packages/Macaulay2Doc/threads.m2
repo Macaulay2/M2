@@ -329,6 +329,7 @@ Node
      for i to 5 do t_i = createTask(() -> i)
      for i from 1 to 5 do addDependencyTask(t_i, t_(i - 1))
      schedule t_0
+     sleep 1
      taskResult t_5
 Node
  Key
