@@ -1,7 +1,6 @@
 VPATH = @srcdir@
 HOMEPAGE = https://numpi.dm.unipi.it/software/mpsolve 
 VERSION = 3.2.1
-URL = https://macaulay2.com/Downloads/OtherSourceCode
 
 # obtained from https://numpi.dm.unipi.it/_media/software/mpsolve
 #               https://numpi.dm.unipi.it/_media/software/mpsolve/mpsolve-3.2.1.tar.gz

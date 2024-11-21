@@ -12,6 +12,7 @@ PREFIX = $(BUILTLIBPATH)
 ifneq ($(PARALLEL),yes)
 NOTPARALLEL = -j1
 endif
+URL = https://macaulay2.com/Downloads/OtherSourceCode
 LIBNAME ?= $(shell basename `pwd`)
 UNTARDIR = build
 OLDUNTARDIR = build-old
