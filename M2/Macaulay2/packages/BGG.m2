@@ -664,7 +664,7 @@ document {
      This package implements routines for investigating the BGG correspondence.", 
      PARA {}, 
      "More details can be found in ",  
-     HREF("http://www.math.uiuc.edu/Macaulay2/Book/", "Sheaf Algorithms Using Exterior Algebra"), ".", 
+     HREF("https://macaulay2.com/Book/", "Sheaf Algorithms Using Exterior Algebra"), ".", 
      } 
      
 document { 
@@ -783,7 +783,7 @@ document {
      a presentation matrix ", TT "m", " of a finitely generated graded "
      , TT "S", "-module ", TT "M", "and an exterior algebra ", TT "E", "with the same number of variables. 
      In this form, the function is equivalent to the function ", TT "sheafCohomology", 
-     " in ", HREF("http://www.math.uiuc.edu/Macaulay2/Book/", "Sheaf Algorithms Using Exterior Algebra"),  ".",
+     " in ", HREF("https://macaulay2.com/Book/", "Sheaf Algorithms Using Exterior Algebra"),  ".",
      EXAMPLE lines ///
 	  S = ZZ/32003[x_0..x_2]; 
 	  E = ZZ/32003[e_0..e_2, SkewCommutative=>true];

@@ -455,7 +455,7 @@ newPackage("Core",
 	  },
      DebuggingMode => debuggingMode,
      Reload => true,
-     HomePage => "http://www.math.uiuc.edu/Macaulay2/",
+     HomePage => "https://macaulay2.com/",
      Version => version#"VERSION",
      Headline => "A computer algebra system designed to support algebraic geometry")
 Core#"preloaded packages" = {

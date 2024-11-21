@@ -1,6 +1,6 @@
 #! /bin/rpm
 Name: Macaulay2-common
-URL: http://www.math.uiuc.edu/Macaulay2/
+URL: https://macaulay2.com/
 Version: @PACKAGE_VERSION@
 Release: @DISTRIBUTION@
 BuildArch: noarch

@@ -13,7 +13,7 @@ newPackage ("Macaulay2Doc",
 	  },
      Keywords => {"Documentation"},
      PackageExports => Core#"preloaded packages",
-     HomePage => "http://www.math.uiuc.edu/Macaulay2/",
+     HomePage => "https://macaulay2.com/",
      Version => version#"VERSION")
 
 scan(pairs Core#"raw documentation", (k,v) -> (
