@@ -12,6 +12,7 @@ taskCreate(f:function(TaskCellBody):null,tb:TaskCellBody) ::=  Ccode(taskPointer
 
 export taskDone(tp:taskPointer) ::= Ccode(int, "taskDone(",tp,")")==1;
 export taskStarted(tp:taskPointer) ::=Ccode(int, "taskStarted(",tp,")")==1;
+export taskReady(tp:taskPointer) ::= Ccode(int, "taskReady(", tp, ")") == 1;
 pushTask(tp:taskPointer) ::=Ccode(void, "pushTask(",tp,")");
 taskResult(tp:taskPointer) ::=Ccode(voidPointer, "taskResult(",tp,")");
 export taskKeepRunning(tp:taskPointer) ::= Ccode(int, "taskKeepRunning(",tp,")")==1;
