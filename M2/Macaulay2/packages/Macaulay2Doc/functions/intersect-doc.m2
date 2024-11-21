@@ -5,10 +5,10 @@
 doc ///
 Node
   Key
-     (intersect, Ideal, Ideal)
-    [(intersect, Ideal, Ideal), Strategy]
-    [(intersect, Ideal, Ideal), MinimalGenerators]
-     (intersect, Ideal)
+     (intersect, LeftIdeal, LeftIdeal)
+    [(intersect, LeftIdeal, LeftIdeal), Strategy]
+    [(intersect, LeftIdeal, LeftIdeal), MinimalGenerators]
+     (intersect, LeftIdeal)
      (intersect, Module, Module)
     [(intersect, Module, Module), Strategy]
     [(intersect, Module, Module), MinimalGenerators]
@@ -19,15 +19,15 @@ Node
     intersect(M, N)
     intersect(M, N, ..., P)
   Inputs
-    :{Ideal,Module}
-    :{Ideal,Module}
+    :{LeftIdeal,Module}
+    :{LeftIdeal,Module}
       submodules of the same module or ideals in the same ring
     Strategy=>Thing
       specifies the algorithm
     MinimalGenerators=>Boolean
       indicates whether the output should be @TO2 {trim, "trimmed"}@
   Outputs
-    :{Ideal,Module}
+    :{LeftIdeal,Module}
       the intersection of the sequence of objects
   Description
     Text
@@ -52,7 +52,7 @@ Node
       Multiple strategies are implemented via @TO2 {"Macaulay2Doc :: using hooks", "hooks"}@ and
       can be listed using the function @TO hooks@. More strategies may be added using @TO addHook@.
     Example
-      hooks(intersect, Ideal, Ideal)
+      hooks(intersect, LeftIdeal, LeftIdeal)
       hooks(intersect, Module, Module)
     Text
       By default, the strategies are attempted in the reverse order in which the were added, until one is successful.

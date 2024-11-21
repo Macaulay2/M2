@@ -11,7 +11,8 @@ document {
     	 (degrees, FractionField),
 	 (degrees, Module),
 	 (degrees, Monoid),
-	 (degrees, Ideal)},
+	 (degrees, LeftIdeal),
+	 (degrees, CoherentSheaf)},
      Headline => "degrees of generators",
      Usage => "degrees A",
      Inputs => {"A" => { ofClass Ring, ", ", ofClass Ideal, ", ", ofClass Module, ", or ", ofClass Monoid }

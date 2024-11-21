@@ -216,7 +216,7 @@ document {
 	  (symbol +, ChainComplexMap, ZZ),
 	  (symbol +, RingElement, RingElement),
 	  (symbol +, InfiniteNumber, InfiniteNumber),
-	  (symbol +, Ideal, RingElement),
+	  (symbol +, LeftIdeal, RingElement),
 	  (symbol +, RingElement, ChainComplexMap),
 	  (symbol +, MutableMatrix, MutableMatrix),
 	  (symbol +, Matrix, Matrix),
@@ -444,7 +444,7 @@ document {
 	  (symbol %, RR, RR),
 	  (symbol %, RR, ZZ),
 	  (symbol %, Number, GroebnerBasis),
-	  (symbol %, Number, Ideal),
+	  (symbol %, Number, LeftIdeal),
 	  (symbol %, ZZ, MonomialIdeal),
 	  (symbol %, ZZ, ZZ)
 	  },	  

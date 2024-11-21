@@ -121,7 +121,7 @@ createCommAlgebra PolynomialRing := W -> (
 
 -- These routines compute the Fourier transform which is the automorphism
 -- of the Weyl algebra sending x -> -dx, dx -> x.
--- Input: RingElement f, Matrix m, Ideal I, ChainComplex C, or Module M
+-- Input: RingElement f, Matrix m, LeftIdeal I, ChainComplex C, or Module M
 -- Output: Fourier transform of f, m, I, C, or M
 Fourier = method()
 FourierLocal := M -> (
@@ -145,7 +145,7 @@ FourierLocal := M -> (
      FMap M
      )
 Fourier RingElement := M -> (FourierLocal M)
-Fourier Ideal := M -> (FourierLocal M)
+Fourier LeftIdeal := M -> (FourierLocal M)
 Fourier Matrix := M -> (FourierLocal M)
 Fourier ChainComplex := M -> (FourierLocal M)
 Fourier Module := M -> (cokernel FourierLocal relations prune M)
@@ -172,7 +172,7 @@ FourierInverseLocal := M -> (
      FInvMap M
      )
 FourierInverse RingElement := M -> (FourierInverseLocal M)
-FourierInverse Ideal := M -> (FourierInverseLocal M)
+FourierInverse LeftIdeal := M -> (FourierInverseLocal M)
 FourierInverse Matrix := M -> (FourierInverseLocal M)
 FourierInverse ChainComplex := M -> (FourierInverseLocal M)
 FourierInverse Module := M -> (cokernel FourierInverseLocal relations prune M)
@@ -214,7 +214,7 @@ Dtransposition Matrix := m -> (
      mtrans
      )
 
-Dtransposition Ideal := I -> (
+Dtransposition LeftIdeal := I -> (
      ideal Dtransposition gens I
      )
 
@@ -236,7 +236,7 @@ Dtransposition ChainComplex := C -> (
 
 -- This routine computes the dimension of a D-module
 Ddim = method()
-Ddim Ideal := (cacheValue Ddim) (I -> (
+Ddim LeftIdeal := (cacheValue Ddim) (I -> (
      -- preprocessing
      W := ring I;
      -- error checking
@@ -269,7 +269,7 @@ addHook((codim, Module), Strategy => WeylAlgebra,
 
 -- This routine determines whether a D-module is holonomic
 isHolonomic = method()
-isHolonomic Ideal := I -> (
+isHolonomic LeftIdeal := I -> (
      -- preprocessing
      W := ring I;
      -- error checking
@@ -296,10 +296,7 @@ isHolonomic Module := M -> (
 -- This routine computes the rank of a D-module
 -- QUESTION: this changes the current ring?
 holonomicRank = method()
-holonomicRank Ideal := I -> (
-     holonomicRank ((ring I)^1/I)
-     )
-
+holonomicRank LeftIdeal := I -> holonomicRank cokernel gens I
 holonomicRank Module := M -> (
      W := ring M;
      createDpairs W;

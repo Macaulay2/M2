@@ -195,7 +195,7 @@ RingMap Vector := Vector => (p,m) -> (
      f := p new Matrix from m;
      new target f from f)
 
-RingMap Ideal  := Ideal  => (f, I) -> ideal f module I
+RingMap LeftIdeal  := LeftIdeal  => (f, I) -> ideal f module I
 RingMap Module := Module => (f, M) -> (
     (S, R) := (target f, source f);
     if R =!= ring M then error "expected module over source ring";
@@ -413,18 +413,18 @@ substitute(RingElement,Matrix) := RingElement => (r,f) -> (map(ring f,ring r,f))
 substitute(Vector,Matrix) := Vector => (v,f) -> (map(ring f,ring v,f)) v
 substitute(Matrix,Matrix) := Matrix => (m,f) -> (map(ring f,ring m,f)) m
 substitute(Module,Matrix) := Module => (M,f) -> (map(ring f,ring M,f)) M
-substitute(Ideal,Matrix) := Ideal => (I,f) -> (map(ring f,ring I,f)) I
+substitute(LeftIdeal,Matrix) := LeftIdeal => (I,f) -> (map(ring f,ring I,f)) I
 
 substitute(Matrix,Ring) := Matrix => (m,S) -> (map(S,ring m)) m
 substitute(Module,Ring) := Module => (M,S) -> (map(S,ring M)) M
-substitute(Ideal,Ring) := Ideal => (I,S) -> (map(S,ring I)) I
+substitute(LeftIdeal,Ring) := LeftIdeal => (I,S) -> (map(S,ring I)) I
 substitute(Vector,Ring) := Vector => (v,S) -> (map(S,ring v)) v
 substitute(Number,Ring) := 
 substitute(RingElement,Ring) := RingElement => (r,S) -> (map(S,ring r)) r
 
 substitute(Matrix,RingFamily) := Matrix => (m,S) -> substitute(m, default S)
 substitute(Module,RingFamily) := Module => (M,S) -> substitute(M, default S)
-substitute(Ideal,RingFamily) := Ideal => (I,S) -> substitute(I, default S)
+substitute(LeftIdeal,RingFamily) := LeftIdeal => (I,S) -> substitute(I, default S)
 substitute(Vector,RingFamily) := Vector => (v,S) -> substitute(v, default S)
 substitute(Number,RingFamily) := 
 substitute(RingElement,RingFamily) := RingElement => (r,S) -> substitute(r, default S)
@@ -493,13 +493,13 @@ sub2 = (S,R,v) -> (				   -- S is the target ring or might be null, meaning targ
 
 substitute(Matrix,List) := Matrix => (f,v) -> (sub2(,ring f,v)) f
 substitute(Module,List) := Module => (M,v) -> (sub2(,ring M,v)) M
-substitute(Ideal,List) := Ideal => (I,v) -> (sub2(,ring I,v)) I
+substitute(LeftIdeal,List) := LeftIdeal => (I,v) -> (sub2(,ring I,v)) I
 substitute(Vector,List) := Vector => (f,v) -> (sub2(,ring f,v)) f
 substitute(RingElement,List) := RingElement => (f,v) -> (sub2(,ring f,v)) f
 
 substitute(Matrix,Option) := (f,v) -> (sub2(,ring f,{v})) f
 substitute(Module,Option) := (M,v) -> (sub2(,ring M,{v})) M
-substitute(Ideal,Option) := (I,v) -> (sub2(,ring I,{v})) I
+substitute(LeftIdeal,Option) := (I,v) -> (sub2(,ring I,{v})) I
 substitute(Vector,Option) := (f,v) -> (sub2(,ring f,{v})) f
 substitute(RingElement,Option) := (f,v) -> (sub2(,ring f,{v})) f
 

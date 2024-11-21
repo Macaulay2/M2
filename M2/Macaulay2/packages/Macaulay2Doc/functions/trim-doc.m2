@@ -43,7 +43,7 @@ Node
 Node
   Key
     trim
-   (trim, Ideal)
+   (trim, LeftIdeal)
    (trim, Ring)
    (trim, Module)
    (trim, MonomialIdeal)

@@ -68,7 +68,7 @@ moduleIntersectOpts := {
     }
 
 -- ideally this should be unnecessary, but some code seems to depend on this
-intersect Ideal  := Ideal  =>  idealIntersectOpts >> opts -> I -> doTrim(opts, I)
+intersect LeftIdeal  := LeftIdeal  =>  idealIntersectOpts >> opts -> I -> doTrim(opts, I)
 intersect Module := Module => moduleIntersectOpts >> opts -> M -> doTrim(opts, M)
 
 -- intersect is a MethodFunctionBinary, so arbitrary lists
@@ -77,12 +77,12 @@ intersect Module := Module => moduleIntersectOpts >> opts -> M -> doTrim(opts, M
 --   installing a method (intersect, S, T) => T enables intersect(S, T, T, ...)
 --   installing a method (intersect, S, S) => S enables intersect(S, S, T, T, ...)
 --   installing a method (intersect, T, S) => S enables intersect(S, T, S, T, ...)
-intersect(Ideal,  Ideal)  :=  Ideal =>  idealIntersectOpts >> opts -> L -> intersectHelper(L, (intersect, Ideal,  Ideal),  opts)
+intersect(LeftIdeal,  LeftIdeal)  :=  LeftIdeal =>  idealIntersectOpts >> opts -> L -> intersectHelper(L, (intersect, LeftIdeal,  LeftIdeal),  opts)
 intersect(Module, Module) := Module => moduleIntersectOpts >> opts -> L -> intersectHelper(L, (intersect, Module, Module), opts)
 
 -- Specializations for intersecting many objects at once, e.g. Modules,
 -- can be installed on (symbol intersect, T), which calls T.intersect
-Ideal.intersect  =  idealIntersectOpts >> opts -> L -> intersectHelper(L, (intersect, Ideal,  Ideal),  opts)
+LeftIdeal.intersect  =  idealIntersectOpts >> opts -> L -> intersectHelper(L, (intersect, LeftIdeal,  LeftIdeal),  opts)
 Module.intersect = moduleIntersectOpts >> opts -> L -> intersectHelper(L, (intersect, Module, Module), opts)
 
 -----------------------------------------------------------------------------
@@ -112,7 +112,7 @@ scan({Default}, strategy ->
 
 -----------------------------------------------------------------------------
 
-algorithms#(intersect, Ideal, Ideal) = new MutableHashTable from {
+algorithms#(intersect, LeftIdeal, LeftIdeal) = new MutableHashTable from {
     Default => (opts, L) -> ideal intersect(opts, apply(L, module)),
 
     -- TODO: can this be extended to do more than 2 at once?
@@ -145,6 +145,6 @@ algorithms#(intersect, Ideal, Ideal) = new MutableHashTable from {
 	    newMonomialIdeal(R, rawIntersect(raw monomialIdeal I, raw monomialIdeal J)))),
     }
 
--- Installing hooks for intersect(Ideal, Ideal)
+-- Installing hooks for intersect(LeftIdeal, LeftIdeal)
 scan({Default, "Elimination", Monomial}, strategy ->
-    addHook(key := (intersect, Ideal, Ideal), algorithms#key#strategy, Strategy => strategy))
+    addHook(key := (intersect, LeftIdeal, LeftIdeal), algorithms#key#strategy, Strategy => strategy))

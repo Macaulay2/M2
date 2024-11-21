@@ -1,7 +1,7 @@
 -- internal, also used in multiplierIdeals.m2
 -- TODO: move to Dbasic?
 eliminateWA = method()
-eliminateWA(Ideal, List) := Ideal => (I, v) -> (
+eliminateWA(LeftIdeal, List) := LeftIdeal => (I, v) -> (
     R := ring I;
     if not isSubset(v, gens R) then error "expected generators of the ring";
     w := apply(gens R, g -> if member(g, v) then 1 else 0);
@@ -17,7 +17,7 @@ protect s						    -- is this right?  should s be visible to the user?
 
 -- internal
 computeJf = method()
-computeJf RingElement := Ideal => f -> (
+computeJf RingElement := LeftIdeal => f -> (
      if #(options (ring f).monoid)#WeylAlgebra > 0 -- isWA
      then (
 	  D := ring f;
@@ -87,7 +87,7 @@ exceptionalLocusB (RingElement,RingElement) := RingElement => o -> (f,b) -> (
 protect ColonIdeal
 
 -- this version performs the computation given (ring f, I3, b)
-exceptionalLocusB (Ring,Ideal,RingElement) := RingElement => o -> (R,I3,b) -> (
+exceptionalLocusB (Ring,LeftIdeal,RingElement) := RingElement => o -> (R,I3,b) -> (
      Rs := ring I3;
      K := coefficientRing Rs;
      s := Rs_0;
@@ -176,7 +176,7 @@ localBFunctionStrata RingElement := HashTable => f -> (
      )
 
 localBFunction = method(TypicalValue => RingElement)
-localBFunction (RingElement,Ideal) := RingElement => (f,P) -> (
+localBFunction (RingElement,LeftIdeal) := RingElement => (f,P) -> (
      if ring f =!= ring P then error "same ring for polynomial and ideal expected";
      R := ring f;
      D := makeWeylAlgebra(R,SetVariables=>false);

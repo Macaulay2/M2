@@ -102,8 +102,8 @@ Ring * Ideal := Ring ** Ideal := Ideal => (R, I) -> if ring I === R then I else 
 
 -----------------------------------------------------------------------------
 
-ZZ == Ideal := (n,I) -> I == n
-Ideal == ZZ := (I,n) -> (
+ZZ == LeftIdeal := (n,I) -> I == n
+LeftIdeal == ZZ := (I,n) -> (
      if n === 0
      then I.generators == 0
      else if n === 1
@@ -348,6 +348,7 @@ pushout(Matrix, Matrix) := Module => (f, g) -> (
 	inducedMap(P, T) * map(T, target f, T_[0], Degree => - degree f),
 	inducedMap(P, T) * map(T, target g, T_[1], Degree => - degree g)};
     P)
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

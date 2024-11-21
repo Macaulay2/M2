@@ -81,7 +81,7 @@ eliminate1 = (elimindices,I) -> (
      ideal mingens ideal toR selectInSubring(1,generators gb J)
      )
 
-eliminate (List, Ideal) := (v,I) -> (     
+eliminate (List, LeftIdeal) := (v,I) -> (     
      R := ring I;
      -- if R is a quotient ring, then give error
      if not isFlatPolynomialRing R then
@@ -92,9 +92,9 @@ eliminate (List, Ideal) := (v,I) -> (
      eliminate1(varlist, I)
      )
 
-eliminate (Ideal, RingElement) := (I,v) -> eliminate({v},I)
-eliminate (Ideal, List) := (I,v) -> eliminate(v,I)
-eliminate(RingElement, Ideal) := (v,I) -> eliminate({v},I)
+eliminate (LeftIdeal, RingElement) := (I,v) -> eliminate({v},I)
+eliminate (LeftIdeal, List) := (I,v) -> eliminate(v,I)
+eliminate(RingElement, LeftIdeal) := (v,I) -> eliminate({v},I)
 
 -----------------------------------------------
 -- Sylvester matrix, resultant, discriminant --
@@ -173,17 +173,14 @@ document {
      SeeAlso => {"sylvesterMatrix", "discriminant", "eliminate"}
      }
 
-
-undocumented {
-	  (eliminate, Ideal, RingElement), 
-	  (eliminate, Ideal, List)
-     }
 document {
      Key => {eliminate,
-	  (eliminate, RingElement, Ideal), 
-	  (eliminate, List, Ideal)
+	  (eliminate, RingElement, LeftIdeal), 
+	  (eliminate, LeftIdeal, RingElement), 
+	  (eliminate, LeftIdeal, List),
+	  (eliminate, List, LeftIdeal)
 	  },
-     Usage => "eliminate(v,J)",
+     Usage => "eliminate(v,J)\neliminate(J,v)",
      Inputs => {
 	  "v" => Nothing => {ofClass RingElement, " or ", ofClass List, ", a variable or list of variables of a polynomial ring ", TT "R"},
 	  "J" => Ideal => {"in the ring ", TT "R"},

@@ -22,7 +22,7 @@ inw (RingElement, List) := (L, w) -> (
      mw := max apply(lf,t->sum(#w,i->t#0#i*w#i));
      part(mw,w,L)
      )
-inw(Ideal,  List) := (I, w) -> ideal inw(gens I, w)
+inw(LeftIdeal,  List) := (I, w) -> ideal inw(gens I, w)
 inw(Matrix, List) := (m, w) -> (
      -- preprocessing
      W := ring m;
@@ -120,7 +120,7 @@ inw(Matrix, List) := (m, w) -> (
 -- this routine computes a grobner basis of an ideal or matrix with respect
 -- a weight vector w.
 gbw = method(Options => { Strategy => null })
-gbw(Ideal,  List) := opts -> (I, w) -> ideal gbw(gens I, w, opts)
+gbw(LeftIdeal,  List) := opts -> (I, w) -> ideal gbw(gens I, w, opts)
 gbw(Matrix, List) := opts -> (m, w) -> (
      -- preprocessing
      W := ring m;
@@ -187,7 +187,7 @@ gbw(Matrix, List) := opts -> (m, w) -> (
 
 -- This routine computes the characteristic ideal of a D-module
 characteristicIdeal = method()
-characteristicIdeal Ideal := I -> (
+characteristicIdeal LeftIdeal := I -> (
     if not isWeylAlgebra(W := ring I) then error "expected an ideal in a Weyl algebra";
     createDpairs W;
     w := apply( toList(0..numgens W - 1),
@@ -209,7 +209,7 @@ characteristicIdeal Module := M -> (
 -- This routine computes the singular locus of a D-ideal
 -- SHOULD IT BE CHANGED SO THAT OUTPUT IS IN POLY SUBRING?
 DsingularLocus = method()
-DsingularLocus Ideal  := I -> DsingularLocus comodule I
+DsingularLocus LeftIdeal  := I -> DsingularLocus comodule I
 DsingularLocus Module := M -> (
     if not isWeylAlgebra(W := ring M) then error "expected a module over a Weyl algebra";
     createDpairs W;

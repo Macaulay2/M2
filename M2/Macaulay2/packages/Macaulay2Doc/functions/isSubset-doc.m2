@@ -26,7 +26,7 @@ document {
      }
 
 document { 
-     Key => {(isSubset,Module,Module),(isSubset,Ideal,Module),(isSubset,Module,Ideal)},
+     Key => {(isSubset,Module,Module),(isSubset,LeftIdeal,Module),(isSubset,Module,LeftIdeal)},
      Usage => "isSubset(M,N)",
      Inputs => { "M", "N" },
      Outputs => { Boolean => {"whether ", TT "M", " is contained in ", TT "N"} },
@@ -40,7 +40,7 @@ document {
      }
 
 document {
-     Key => {(isSubset,Ideal,Ideal)},
+     Key => {(isSubset,LeftIdeal,LeftIdeal)},
      Usage => "isSubset(I,J)",
      Inputs => { "I", "J" },
      Outputs => { Boolean => {"whether ", TT "I", " is contained in ", TT "J"} },

@@ -19,7 +19,7 @@ document {
 	  (isHomogeneous,ChainComplex),
 	  (isHomogeneous,RingMap),
 	  (isHomogeneous,Vector),
-	  (isHomogeneous,Ideal)},
+	  (isHomogeneous,LeftIdeal)},
      Headline => "whether something is homogeneous (graded)",
      Usage => "isHomogeneous x",
      Inputs => {
@@ -27,7 +27,7 @@ document {
 	       TO RingElement, ", ",
 	       TO Vector, ", ",
 	       TO Matrix, ", ",
-	       TO Ideal, ", ",
+	       TO LeftIdeal, ", ",
 	       TO Module, ", ",
 	       TO RingMap, ", ",
 	       TO ChainComplex, ", or ",

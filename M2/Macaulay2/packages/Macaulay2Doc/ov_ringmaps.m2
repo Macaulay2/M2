@@ -68,7 +68,7 @@ document {
      UL {
 	  TO (symbol SPACE, RingMap, RingElement),
 	  TO (symbol SPACE, RingMap, Matrix),
-	  TO (symbol SPACE, RingMap, Ideal),
+	  TO (symbol SPACE, RingMap, LeftIdeal),
 	  TO (symbol SPACE, RingMap, Module),
 	  TO (symbol *, RingMap, RingMap),
 	  },

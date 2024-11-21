@@ -2,7 +2,7 @@ document {
      Key => bFunction,
      Headline => "b-function",
      UL {
-	  {TO (bFunction, Ideal,List), " - for an ideal"},
+	  {TO (bFunction, LeftIdeal,List), " - for an ideal"},
 	  {TO (bFunction, Module,List,List), " - for a module"}  
 	  }
      }
@@ -40,7 +40,7 @@ document {
      }
 
 document {
-     Key => (bFunction, Ideal, List),
+     Key => (bFunction, LeftIdeal, List),
      Headline => "b-function of an ideal",
      Usage => "b = bFunction(I,w)",
      Inputs => {
@@ -310,7 +310,7 @@ document {
      }
 
 document {
-     Key => {(globalB, Ideal, RingElement), globalB},
+     Key => {(globalB, LeftIdeal, RingElement), globalB},
      Headline => "compute global b-function and b-operator 
           for a D-module and a polynomial",
      Usage => "H = globalB(I,f)", 
@@ -350,7 +350,7 @@ document {
      } 
 
 document { 
-     Key => {(localBFunction,RingElement,Ideal), localBFunction},
+     Key => {(localBFunction,RingElement,LeftIdeal), localBFunction},
      Headline => "local b-function (a.k.a. the local Bernstein-Sato polynomial)",
      Usage => "b = localBFunction(f,P)",
      Inputs => {

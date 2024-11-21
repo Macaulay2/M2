@@ -47,7 +47,7 @@ document {
      SeeAlso => {euler}
      }
 document { 
-     Key => (genera,Ideal),
+     Key => (genera,LeftIdeal),
      Usage => "genera I",
      Inputs => {"I"
 	  },

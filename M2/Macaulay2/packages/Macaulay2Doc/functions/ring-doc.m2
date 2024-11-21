@@ -6,7 +6,7 @@ document {
      Key => {ring, (ring,Vector), (ring,RingElement), (ring,GradedModule),
 	  (ring,ChainComplexMap),(ring, GradedModuleMap),(ring, GroebnerBasis),(ring, Number),
 	  (ring,Module),(ring,ChainComplex),(ring,Matrix),
-	  (ring,MutableMatrix),(ring,Ideal), (ring,CC),(ring,RR),(ring,RRi),(ring,Resolution),
+	  (ring,MutableMatrix),(ring,LeftIdeal), (ring,CC),(ring,RR),(ring,RRi),(ring,Resolution),
 	  },
      Headline => "get the associated ring of an object",
      Usage => "ring M",

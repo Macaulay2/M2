@@ -4,9 +4,9 @@
 
 document { 
      Key => {comodule,
-	  (comodule, Ideal),
+	  (comodule, LeftIdeal),
 	  (comodule, Module),
-	  (quotient, Ideal),
+	  (quotient, LeftIdeal),
 	  (quotient, Module)
 	  },
      Headline => "submodule to quotient module",

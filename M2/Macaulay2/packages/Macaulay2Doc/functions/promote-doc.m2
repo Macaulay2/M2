@@ -20,8 +20,8 @@ promote(Vector,type of RingElement)
 
 undocumented {(promote,CC,CC_*),
      (promote, Matrix, InexactNumber),(promote, Number, InexactNumber),
-     (promote, Ideal, Number),
-     (promote, Ideal, RingElement),
+     (promote, LeftIdeal, Number),
+     (promote, LeftIdeal, RingElement),
      (promote, List, QQ, CC_*),
      (promote, List, QQ, QQ),
      (promote, List, QQ, RR_*),
@@ -99,7 +99,7 @@ document {
      Headline => "promote to another ring",
      Usage => "promote(f,R)",
      Inputs => {
-	  "f" => {ofClass{RingElement, Ideal, Matrix}, " over some base ring of R"},
+	  "f" => {ofClass{RingElement, LeftIdeal, Matrix}, " over some base ring of R"},
 	  "R" => Ring
 	  },
      Outputs => {
