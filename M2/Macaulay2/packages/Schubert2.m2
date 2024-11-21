@@ -11,7 +11,7 @@ newPackage(
 	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
 	     {Name => "Charley Crissman", Email => "charleyc@math.berkeley.edu", HomePage => "http://math.berkeley.edu/~charleyc/"}
 	     },
-	HomePage => "http://www.math.uiuc.edu/Macaulay2/",
+	HomePage => "https://macaulay2.com/",
     	Headline => "characteristic classes for varieties without equations",
 	Keywords => {"Intersection Theory"},
         DebuggingMode => false,

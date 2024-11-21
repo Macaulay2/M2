@@ -679,7 +679,7 @@ document {
      Key => "Other sources of information about Macaulay2",
      SUBSECTION "Web site",
      UL {
-	  (HREF "http://www.math.uiuc.edu/Macaulay2/", " -- the main Macaulay2 web site: citations, binary distributions"),
+	  (HREF "https://macaulay2.com/", " -- the main Macaulay2 web site: citations, binary distributions"),
 	  },
      SUBSECTION "Books",
      UL {

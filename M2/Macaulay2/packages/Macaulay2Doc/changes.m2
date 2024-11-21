@@ -2447,7 +2447,7 @@ document {
 			      TO "Text :: Text"
 			      }
 			 },
-		    LI { "downloadable ", HREF{"http://www.math.uiuc.edu/Macaulay2/Packages/", "packages"}, ":",
+		    LI { "downloadable packages:",
 			 UL {
 			      LI { EM "Kronecker", ", Kronecker normal form of a matrix pencil, by Edward Carter" },
 			      LI { EM "LDL", ", the ", TT "LDL'", " factorization of a positive semidefinite matrix, by Helfried Peyrl" }

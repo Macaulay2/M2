@@ -9,7 +9,7 @@ document {
 	  },
      PARA {
 	  "Macaulay2 is available from our web page ", 
-	  HREF "http://www.math.uiuc.edu/Macaulay2/",
+	  HREF "https://macaulay2.com/",
 	  ".  There you will find online documentation, 
 	  the source code, and precompiled versions
 	  for MacOSX, Linux, Microsoft Windows, and for 
