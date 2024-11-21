@@ -141,6 +141,13 @@ extern "C" {
 	// synchronizes-with the task's thread, avoids data races
     return task->m_Started;
   }
+  int taskReady(struct ThreadTask *task)
+  {
+    if (!task)
+      return false;
+    lock_guard<pthreadMutex> lock(task->m_Mutex);
+    return task->m_ReadyToRun;
+  }
   void* taskResult(struct ThreadTask* task)
   {
     lock_guard<pthreadMutex> lock(task->m_Mutex);
