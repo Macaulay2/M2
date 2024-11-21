@@ -209,6 +209,8 @@ setupfun("schedule",schedule);
 taskResult(e:Expr):Expr := (
      when e is c:TaskCell do
      if c.body.resultRetrieved then buildErrorPacket("task result already retrieved")
+     else if !taskReady(c.body.task)
+     then buildErrorPacket("task not scheduled yet")
      else if !taskKeepRunning(c.body.task) then buildErrorPacket("task canceled")
      else if !taskDone(c.body.task) then (
 	  Ccode(voidPointer, "waitOnTask(",c.body.task,")");
