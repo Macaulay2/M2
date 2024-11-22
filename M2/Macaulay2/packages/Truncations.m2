@@ -361,10 +361,10 @@ basis'(List, Module) := Matrix => opts -> (degs, M) -> (
     degs = checkOrMakeDegreeList(degs, degreeLength R);
     B := if isFreeModule M then (
 	map(M, , basisMonomials(degs, M, "partial degrees" => opts#"partial degrees")))
-    -- TODO: "mingens image" seems silly ...
-    else if not M.?relations then map(M, ,
-	mingens image basisMonomials(degs, cover M, "partial degrees" => opts#"partial degrees"))
+    else if not M.?relations then (
+	map(M, , basisMonomials(degs, cover M, "partial degrees" => opts#"partial degrees")))
     else inducedMap(M, ,
+	-- TODO: "mingens image" seems silly ...
 	mingens image map(ambient M, ,
 	    reduce(super M, raw gens image basis'(degs, image generators M))))
     )
