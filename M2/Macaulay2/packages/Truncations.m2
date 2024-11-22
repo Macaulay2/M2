@@ -326,7 +326,7 @@ basisMonomials(List, Ring) := opts -> (d, R) -> (
         truncgens := R#(symbol truncate, d, null);
 	psrc := selectByDegrees(source truncgens, d, d);
         submatrix(truncgens, , psrc))
-    else (
+    else R#(symbol basis', d) = (
         (R1, phi1) := flattenRing R;
         -- generates the effective cone
         A := effGenerators R1;
