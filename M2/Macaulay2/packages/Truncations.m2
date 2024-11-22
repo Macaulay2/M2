@@ -359,11 +359,15 @@ basis'(List, Module) := Matrix => opts -> (degs, M) -> (
     if M == 0 then return map(M, 0, 0);
     if not truncateImplemented(R := ring M) then error "cannot use basis' with this ring type";
     degs = checkOrMakeDegreeList(degs, degreeLength R);
-    -- TODO: "mingens image" seems silly ...
-    B := map(M, , if not M.?relations
-    then basisMonomials(degs, M, "partial degrees" => opts#"partial degrees")
-    else reduce(super M, raw basis'(degs, image generators M, opts)));
-    inducedMap(M, , mingens image B))
+    B := if isFreeModule M then (
+	map(M, , basisMonomials(degs, M, "partial degrees" => opts#"partial degrees")))
+    else if not M.?relations then (
+	map(M, , basisMonomials(degs, cover M, "partial degrees" => opts#"partial degrees")))
+    else inducedMap(M, ,
+	-- TODO: "mingens image" seems silly ...
+	mingens image map(ambient M, ,
+	    reduce(super M, raw gens image basis'(degs, image generators M))))
+    )
 
 --------------------------------------------------------------------
 ----- Tests section

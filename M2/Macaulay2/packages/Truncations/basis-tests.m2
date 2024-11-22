@@ -85,3 +85,10 @@ TEST ///
   (t, B) = toSequence elapsedTiming basis(degree D, S^1);
   assert(numcols B == 11 and t < 10)
 ///
+
+TEST ///
+  needsPackage "NormalToricVarieties"
+  X = hirzebruchSurface 2
+  M = cotangentSheaf X
+  assert(HH^1(X, M) == QQ^2)
+///
