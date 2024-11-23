@@ -204,6 +204,9 @@ setup(InterpunctS, interpunctfun);
 boxtimesfun(lhs:Code, rhs:Code):Expr := binarymethod(lhs, rhs, BoxTimesS);
 setup(BoxTimesS, boxtimesfun);
 
+shuffleproductfun(lhs:Code, rhs:Code):Expr := binarymethod(lhs, rhs, ShuffleProductS);
+setup(ShuffleProductS, shuffleproductfun);
+
 Tildefun(rhs:Code):Expr := unarymethod(rhs,TildeS);
 setuppostfix(TildeS,Tildefun);
 

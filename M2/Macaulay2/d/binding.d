@@ -290,6 +290,7 @@ bumpPrecedence();
 bumpPrecedence();
      export StarStarS := makeKeyword(binaryleft("**"));
      export BoxTimesS := makeKeyword(binaryleft("⊠"));
+     export ShuffleProductS := makeKeyword(binaryleft("⧢"));
 bumpPrecedence();
      precBracket := prec;
      export leftbracket := parens("[","]",precBracket, precRightParen, precRightParen);
@@ -516,7 +517,8 @@ export opsWithBinaryMethod := array(SymbolClosure)(
      PowerLessEqualS,      UnderscoreLessEqualS,
      PowerStarStarS,
      InterpunctS,
-     BoxTimesS
+     BoxTimesS,
+     ShuffleProductS
      );
 export opsWithUnaryMethod := array(SymbolClosure)(
      StarS, MinusS, PlusS, LessLessS, QuestionQuestionS,
