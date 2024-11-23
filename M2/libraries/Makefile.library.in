@@ -196,7 +196,7 @@ endif
 PATCHCMD = cd $(UNTARDIR) && for i in $(PATCHFILE) ; do @PATCH@ --batch -p0 < $$i ; done
 .patched-$(VERSION) : $(PATCHFILE)
 	$(WHY)
-	if [ -d $(UNTARDIR) -a -d $(OLDUNTARDIR)/$(UNTARDIR) ] ; \
+	@ if [ -d $(UNTARDIR) -a -d $(OLDUNTARDIR)/$(UNTARDIR) ] ; \
 	    then echo please remove or move $(OLDUNTARDIR)/$(UNTARDIR) out of the way ; \
 	         exit 1 ; \
 	    fi
