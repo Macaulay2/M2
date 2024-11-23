@@ -358,7 +358,10 @@ genera  CoherentSheaf := F -> genera  module F
 -- TODO: this is incorrect in higher picard rank
 pdim    CoherentSheaf := F -> tryHooks((pdim,  CoherentSheaf), F, pdim  @@ module)
 
-hilbertPolynomial CoherentSheaf := opts -> F -> hilbertPolynomial(module F, opts)
+hilbertPolynomial          CoherentSheaf  := opts ->     F  -> hilbertPolynomial(variety F, F, opts)
+-- c.f. the toric version in NormalToricVariety/Chow.m2
+-- TODO: should this be only for ProjectiveVariety and error for affine variety?
+hilbertPolynomial(Variety, CoherentSheaf) := opts -> (X, F) -> hilbertPolynomial(module F, opts)
 
 -- twist and powers
 -- TODO: sheaf should dehomogenize modules on Affine varieties

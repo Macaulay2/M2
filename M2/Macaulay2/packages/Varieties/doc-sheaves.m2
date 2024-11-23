@@ -731,7 +731,10 @@ Node
 -- TODO: (ambient, CoherentSheaf)
 
 document {
-    Key => (hilbertPolynomial, CoherentSheaf),
+    Key => {
+	(hilbertPolynomial, CoherentSheaf),
+	(hilbertPolynomial, Variety, CoherentSheaf)
+	},
     Headline => "compute the Hilbert polynomial of the coherent sheaf",
     Usage => "hilbertPolynomial S",
     Inputs => {"S"},
