@@ -59,6 +59,7 @@ export {
 	"_<=",
 	"·",
 	"⊠",
+	"⧢",
 	"Acknowledgement",
 	"AdditionalPaths",
 	"Adjacent",
