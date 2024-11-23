@@ -58,6 +58,7 @@ export {
 	"_<",
 	"_<=",
 	"·",
+	"⊠",
 	"Acknowledgement",
 	"AdditionalPaths",
 	"Adjacent",
