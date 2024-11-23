@@ -201,6 +201,9 @@ setup(HatHatS,hathatfun);
 interpunctfun(lhs:Code, rhs:Code):Expr := binarymethod(lhs, rhs, InterpunctS);
 setup(InterpunctS, interpunctfun);
 
+boxtimesfun(lhs:Code, rhs:Code):Expr := binarymethod(lhs, rhs, BoxTimesS);
+setup(BoxTimesS, boxtimesfun);
+
 Tildefun(rhs:Code):Expr := unarymethod(rhs,TildeS);
 setuppostfix(TildeS,Tildefun);
 
