@@ -38,7 +38,8 @@ Hom(Module, Module) := Module => opts -> (M, N) -> (
     trim' := if opts.MinimalGenerators then trim else identity;
     -- a hack: we really want to type "Hom(M, N) = ..."
     H = Y#(Hom, M, N, e) = if opts.MinimalGenerators then trim H else H;
-    H.cache.homomorphism = f -> map(N, M, adjoint'(f, M, N), Degree => first degrees source f + degree f);
+    H.cache.homomorphism = f ->  H.cache#(homomorphism, f) ??= (
+	map(N, M, adjoint'(f, M, N), Degree => first degrees source f + degree f));
     H.cache.formation = FunctionApplication { Hom, (M, N, DegreeLimit => e) };
     H)
 

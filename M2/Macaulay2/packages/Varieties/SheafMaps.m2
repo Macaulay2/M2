@@ -469,7 +469,8 @@ Hom(CoherentSheaf, CoherentSheaf) := Module => opts -> (F, G) -> (
     B := basis(0, module H);
     g := inverse f * B;
     V := part(0, source B);
-    V.cache.homomorphism = h -> psi * sheaf(phi.variety, homomorphism(g * h)) * phi;
+    V.cache.homomorphism = h -> V.cache#(homomorphism, h) ??= (
+	psi * sheaf(phi.variety, homomorphism(g * h)) * phi);
     V.cache.formation = FunctionApplication { Hom, (F, G) };
     V.cache.Ext = (0, F, G);
     V)
