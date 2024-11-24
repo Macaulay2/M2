@@ -51,11 +51,10 @@ sheaf (NormalToricVariety, Module) := CoherentSheaf => (X,M) -> (
 	    symbol cache   => new CacheTable
 	    }
 	));
-sheaf (NormalToricVariety, Ring) := SheafOfRings => (X,R) -> (
+sheaf (NormalToricVariety, Ring) := SheafOfRings => (X,R) -> X.cache.sheaf ??= (
     if ring X =!= R then 
 	error "-- expected the ring of the variety";
-    -- TODO: simplify when https://github.com/Macaulay2/M2/issues/3351 is fixed
-    X.sheaf = X.sheaf ?? new SheafOfRings from {
+    new SheafOfRings from {
       	symbol variety => X, 
       	symbol ring    => R
 	}
