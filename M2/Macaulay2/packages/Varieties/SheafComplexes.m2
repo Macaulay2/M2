@@ -52,19 +52,21 @@ Complex ** CoherentSheaf := Complex => {} >> opts -> (C, F) -> tensor(C, F, opts
 isSheafComplex = C -> instance(C_(C.concentration#0), CoherentSheaf)
 variety Complex := C -> variety C_(C.concentration#0)
 
-sheaf Complex := Complex => C -> C.cache.sheaf ??= (
+sheaf          Complex  := Complex =>     C  -> sheaf(variety ring C, C)
+sheaf(Variety, Complex) := Complex => (X, C) -> C.cache.sheaf ??= (
     if isSheafComplex C then return C;
     (lo, hi) := C.concentration;
-    if lo === hi then return complex(sheaf C_lo, Base => lo);
-    D := complex applyValues(C.dd.map, sheaf);
+    if lo === hi then return complex(sheaf_X C_lo, Base => lo);
+    D := complex applyValues(C.dd.map, sheaf_X);
     D.cache.module = C;
     D)
 
-sheaf ComplexMap := ComplexMap => phi -> phi.cache.sheaf ??= (
+sheaf          ComplexMap  := ComplexMap =>     phi  -> sheaf(variety ring phi, phi)
+sheaf(Variety, ComplexMap) := ComplexMap => (X, phi) -> phi.cache.sheaf ??= (
     S := source phi;
     T := target phi;
     if isSheafComplex S and isSheafComplex T then return phi;
-    sphi := map(sheaf T, sheaf S, applyValues(phi.map, sheaf));
+    sphi := map(sheaf_X T, sheaf_X S, applyValues(phi.map, sheaf_X));
     sphi.cache.module = phi;
     sphi)
 
