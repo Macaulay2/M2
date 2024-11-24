@@ -396,6 +396,15 @@ dual SheafMap := SheafMap => options(dual, Matrix) >> o -> f -> map(null, dual t
 exteriorPower (ZZ, SheafMap) := SheafMap => o -> (d, phi) -> sheaf(phi.variety,  exteriorPower(d, matrix phi, o))
 symmetricPower(ZZ, SheafMap) := SheafMap =>      (d, phi) -> sheaf(phi.variety, symmetricPower(d, matrix phi))
 
+koszul(ZZ, SheafMap) := SheafMap => {} >> o -> (i, f) -> map(
+    exteriorPower(i-1, source f),
+    exteriorPower(i,   source f),
+    sheaf(f.variety, koszul(i, matrix f)))
+-- TODO: implement generalized koszul complexes
+-- TODO: follow what koszulComplex from Complexes does instead?
+koszulComplex SheafMap := Complex => {} >> o -> f -> complex apply(
+    toList(1 .. rank source f), i -> koszul(i, f))
+
 -----------------------------------------------------------------------------
 -- inverse
 -----------------------------------------------------------------------------
@@ -742,7 +751,6 @@ CoherentSheaf ^ Array := SheafMap => (F, v) -> (
 -- TODO: Beilinson resolution of the diagonal for PP^n
 
 eulerSequence = method()
--- TODO: should return a complex of sheaves
 eulerSequence ProjectiveVariety := Complex => X -> (
     -- Given a projective variety X \subset PP^n, returns the two maps
     -- 0 <-- OO_X^1 <-- OO_X^(n+1)(-1) <-- Omega_PP^n|X <-- 0
