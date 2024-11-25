@@ -111,6 +111,8 @@ changeBaseField(GaloisField, Module) := (L, M) -> (
         R0 := quotient sub(ideal S, L monoid S);
         return directSum apply(components M,
 	    N -> coker sub(presentation N, R0)));
+    -- don't needlessly create new rings:
+    if K.order === L.order then return M;
     i0 := map(L, K);
     LS := L(monoid S);
     i1 := map(LS, ring ideal S, gens LS | { i0 K_0 });
@@ -201,10 +203,13 @@ flattenMorphism = f -> (
     -- TODO: why doesn't lift(f, ring g) do this automatically?
     map(target f ** S, source f ** S, lift(cover f, S)) ** cokernel g)
 
+leadCoefficient Number := identity
+
 -- this is a kludge to handle the case when h^2 = ah
 reduceScalar = m -> if m == 0 then m else map(target m, source m, cover m // leadCoefficient m)
 isIdempotent = h -> reduceScalar(h^2) == reduceScalar h
 isWeakIdempotent = h -> all(flatten entries flattenMorphism(reduceScalar(h^2) - reduceScalar h), isZero)
+--isWeakIdempotent = h -> isZero det cover flattenMorphism(reduceScalar(h^2) - reduceScalar h)
 
 -- TODO: can we return cached summands from the closest field extension?
 -- all cached keys: select(keys M.cache, k -> instance(k, Option) and k#0 === symbol directSummands)
@@ -299,27 +304,33 @@ directSummands(Module, Module) := List => opts -> (L, M) -> (
     if rank L  >= rank M then return {M};
     if 1 < #cachedSummands M then return sort flatten apply(cachedSummands M, N -> directSummands(L, N, opts));
     zdeg := degree 0_M;
-    -- we look for a composition L -> M -> L which is the identity
-    B := smartBasis(zdeg, Hom(L, M, DegreeLimit => zdeg, MinimalGenerators => false));
-    C := smartBasis(zdeg, Hom(M, L, DegreeLimit => zdeg, MinimalGenerators => false));
-    -- attempt to find a random isomorphism
-    h := for i to opts.Tries - 1 do (
-	b := homomorphism(B * random source B);
-	c := homomorphism(C * random source C);
-	if isIsomorphism(c * b) then break b);
-    if h === null then h = (
-	if opts.Strategy & 8 == 8 then (
-	    -- precomputing the Homs can sometimes be a good strategy
-	    Bhoms := apply(numcols B, i -> homomorphism B_{i});
-	    Choms := apply(numcols C, i -> homomorphism C_{i});
-	    pos := position'(Choms, Bhoms,
-		(c, b) -> isIsomorphism(c * b));
-	    if pos =!= null then last pos)
-	else (
-	    -- and sometimes too memory intensive
-	    ind := position'(numcols C, numcols B,
-		(c, b) -> isIsomorphism(homomorphism C_{c} * homomorphism B_{b}));
-	    if ind =!= null then homomorphism B_{last ind}));
+    if isFreeModule L then(
+        B := smartBasis(zdeg, Hom(L, M, DegreeLimit => zdeg, MinimalGenerators => false));
+        h := for i to opts.Tries - 1 do (
+	    b := homomorphism(B * random source B);
+            if isSurjective b then break b);)
+    else(
+        -- we look for a composition L -> M -> L which is the identity
+        B = smartBasis(zdeg, Hom(L, M, DegreeLimit => zdeg, MinimalGenerators => false));
+        C := smartBasis(zdeg, Hom(M, L, DegreeLimit => zdeg, MinimalGenerators => false));
+        -- attempt to find a random isomorphism
+        h = for i to opts.Tries - 1 do (
+	    b := homomorphism(B * random source B);
+	    c := homomorphism(C * random source C);
+	    if isIsomorphism(c * b) then break b);
+        if h === null then h = (
+	    if opts.Strategy & 8 == 8 then (
+	        -- precomputing the Homs can sometimes be a good strategy
+	        Bhoms := apply(numcols B, i -> homomorphism B_{i});
+	        Choms := apply(numcols C, i -> homomorphism C_{i});
+	        pos := position'(Choms, Bhoms,
+		    (c, b) -> isIsomorphism(c * b));
+	        if pos =!= null then last pos)
+	    else (
+	        -- and sometimes too memory intensive
+	        ind := position'(numcols C, numcols B,
+		    (c, b) -> isIsomorphism(homomorphism C_{c} * homomorphism B_{b}));
+	        if ind =!= null then homomorphism B_{last ind})););
     if h === null then return {M};
     if 0 < debugLevel then stderr << concatenate(rank L : ".") << flush;
     -- TODO: can we detect multiple summands of L at once?
