@@ -2,7 +2,7 @@
 
 -- Returns a non-minimal free resolution, for testing purposes.
 -- Homogenizes the ideal w.r.t. a new variable, calculates a free resolution
--- using res with option FastNonminimal, then dehomogenizes
+-- using res with option Strategy => Nonminimal, then dehomogenizes
 -- Warning: only works for finite fields
 freeRes = I -> (
     -- Warning: only works for finite fields
@@ -10,7 +10,7 @@ freeRes = I -> (
     homogvar := local homogvar;
     S := (coefficientRing R)(monoid [gens R, homogvar]);
     Ih := ideal homogenize(sub(gens gb I, S), S_(numgens R));
-    C1 := res(Ih, FastNonminimal=>true);
+    C1 := freeResolution(Ih, Strategy => Nonminimal);
     phi := map(R,S,gens R | {1});
     phi C1
     )
@@ -23,11 +23,11 @@ testSuit = (I, P, strategy) -> (
         assert(C.dd^2 == 0);
         time D := pruneComplex(C, Strategy => strategy, Direction => "left", PruningMap => true);
         assert(D.dd^2 == 0);
-        if isHomogeneous I then assert(betti D == betti res I);
+        if isHomogeneous I then assert(betti D == betti freeResolution I);
         assert(isCommutative D.cache.pruningMap);
         assert(isQuasiIsomorphism(D, I));
         E := D ** R_P;
-        ) else E = res I;
+        ) else E = freeResolution I;
     RP := ring E;
     assert(E.dd^2 == 0);
     time F := pruneComplex(E, Strategy => strategy, Direction => "left", PruningMap => true);
@@ -42,7 +42,7 @@ TEST ///
   R = ZZ/32003[x,y,z]
   M = coker random(R^{1, 2, -1}, R^{-1, -2, -3, -4})
   assert isHomogeneous M
-  C = res M
+  C = freeResolution M
   assert isHomogeneous C
   C' = pruneComplex C
   assert(C'.dd^2 == 0)
@@ -55,7 +55,7 @@ TEST ///
   m1 = genericMatrix(R,a,3,3)
   m2 = genericMatrix(R,j,3,3)
   I = ideal(m1*m2-m2*m1)
-  C = res I;
+  C = freeResolution I;
   C' = freeRes I;
   C' = C'[-10]
   C'' = C'[20]
@@ -72,7 +72,6 @@ TEST ///
 
 TEST ///
   debug needsPackage "PruneComplex"
-  needsPackage "ChainComplexExtras"
   R = ZZ/32003[vars(0..8)]
   M = genericMatrix(R,3,3)
   I = minors(2, M)
@@ -81,8 +80,8 @@ TEST ///
   elapsedTime C1 = pruneComplex(C, UnitTest => isScalar); -- fastest
   elapsedTime C2 = pruneComplex(C, Strategy=>null); -- FIXME far too slow
   elapsedTime C3 = pruneComplex(C, Strategy=>null, UnitTest => isScalar); -- okay
-  elapsedTime C4 = target minimize C; -- slow
-  assert({res I, C0, C1, C2, C3, C4}/betti//same)
+  elapsedTime C4 = minimize C; -- slow
+  assert({freeResolution I, C0, C1, C2, C3, C4}/betti//same)
 
   needsPackage "LocalRings"
   P = ideal gens R
@@ -93,7 +92,7 @@ TEST ///
   elapsedTime B1 = betti pruneComplex(C', UnitTest => isScalar); -- fast
   elapsedTime B2 = betti pruneComplex(C', Strategy=>null); -- slow
   elapsedTime B3 = betti pruneComplex(C', Strategy=>null, UnitTest => isScalar); -- slow
-  assert(same {betti res IP, B0, B1, B2, B3})
+  assert(same {betti freeResolution IP, B0, B1, B2, B3})
 ///
 
 TEST ///
@@ -213,8 +212,8 @@ TEST /// -- An example for comparison with Singular
   b-15961b2c3-15961b2c3d-15988b2c3d2-16000b2c3d3+15988b3c3-9b3c3d+16000b3c3d2-27a3bc2-18a3bc2d-3a3bc2d2+9a3b2c2+3a3b2c2d-15997a6c-16000a6cd+16000a6bc"
   RP = localRing(R, ideal gens R)
   IP = promote(I, RP)
-  C = pruneComplex res I
-  elapsedTime CP = pruneComplex res IP -- 0.17
+  C = pruneComplex freeResolution I
+  elapsedTime CP = pruneComplex freeResolution IP -- 0.17
 ///
 
 /// -- Singular code for the above example, this gives a resolution with no real effort.
@@ -277,10 +276,10 @@ TEST ///
   assert(isQuasiIsomorphism f)
   assert(isMinimal(D, UnitTest => isScalar));
 
-  h = nullhomotopy(f)
+  h = nullHomotopy(f, FreeToExact => true)
   f' = h * D.dd + C.dd * h;
   assert(isCommutative f')
-  assert(nullhomotopy(f - f') == 0)
+  assert(nullHomotopy(f - f', FreeToExact => true) == 0)
   -- TODO what does this tell me? hahaha
 --  prune HH f -- what to do with this?
 
@@ -291,7 +290,7 @@ TEST ///
 
   assert(D'.dd^2 == 0)
   assert(isCommutative g)
---  assert(isQuasiIsomorphism g) -- FIXME THIS IS VERRRY SLOW
+  assert(isQuasiIsomorphism g)
   assert(isMinimal D');
 
 --  h' = nullhomotopy(g) -- FIXME what does it mean that h' is zero?
