@@ -52,8 +52,8 @@ findIdem'(Module,ZZ) := opts -> (M,e) -> (
     L := infinity;
     for c to opts.Tries - 1 do (
         f := generalEndomorphism M;
-        chi := char f;
-        eigen := if instance(F, InexactField) then roots chi else flatten rationalPoints ideal chi;
+        Chi := char f;
+        eigen := if instance(F, InexactField) then roots Chi else flatten rationalPoints ideal Chi;
 	if #eigen <= 1 then continue;
         opers := flatten for y in eigen list (
 	    if p == 0 then (f - y*id_M) else (
@@ -132,21 +132,25 @@ findIdempotent(Module, ZZ) := opts -> (M, e) -> (
     L := infinity;
     for c to opts.Tries - 1 do (
         f := generalEndomorphism M;
-        chi := char f;
-	K' := if instance(F, InexactField) then F else try extField {chi};
+        Chi := char f;
+	K' := if instance(F, InexactField) then F else try extField {Chi};
         --TODO: remember different L to extend to; right now the L you return at the end may not be large enough
         if p != 0 then L = min(L, K'.order) else L = K';
 	-- TODO: this seems too messy, what's the precise requirement?
 	-- maybe we should separate this in a different method
-        eigen := if instance(F, InexactField) or isMember(coefficientRing ring chi, {ZZ, QQ})
-	then roots chi else flatten rationalPoints ideal chi;
+        --exactFlag := not( instance(F, InexactField) or isMember(coefficientRing ring Chi, {ZZ, QQ}));
+        exactFlag := not( instance(F, InexactField));
+        eigen := if not exactFlag then roots Chi else flatten rationalPoints ideal Chi;
 	-- if at most one eigenvalue is found then the module is probably indecomposable
-	if #eigen <= 1 then continue; -- TODO: check that eigen doesn't have higher multiplicity
+	if not exactFlag and #eigen <= 1  then continue;
+	if exactFlag and p!= 0 and #eigen <= 1 and L == F.order then continue;
+        --TODO: add check for when the field is QQ
 	-- we only want eigen values in F
 	eigen = nonnull apply(eigen, y -> try lift(y, F));
 	if #eigen == 0 then continue;
         opers := flatten for y in eigen list (
 	    if p == 0 then reduceScalar(f - y*id_M) else (
+                --TODO: should we just take powers of K**(f-y*id_M)?
 		for j from 0 to e list largePower'(p, j+1, largePower(p, l, f - y*id_M))));
         idem := position(opers, g -> isWeakIdempotent(K ** g) and g != id_M and K ** g != 0);
         if idem =!= null then (
