@@ -1,3 +1,4 @@
+
 --needsPackage "PushForward"
 --needsPackage "Polyhedra" -- for lattice points
 --needsPackage "Complexes"
@@ -67,6 +68,7 @@ frobeniusTwist(ZZ, Matrix) := Matrix => (e, f) -> (
     map(frobeniusTwist(e, target f), frobeniusTwist(e, source f),
 	frobeniusTwistMap(e, ring f) ** f))
 
+--TODO: maybe export "frobeniusMap"
 frobeniusMap = method(TypicalValue => RingMap)
 frobeniusMap(Ring, ZZ) := (R, e) -> frobeniusMap(e, R)
 frobeniusMap(ZZ, Ring) := (e, R) -> (
@@ -110,6 +112,29 @@ frobeniusPushforward(ZZ, Matrix)  := (e, f) -> (
 	frobeniusTwist(e, f));
     if not isHomogeneous g then g
     else directSum decomposeFrobeniusPresentation(e, g)))
+
+frobeniusPushforward(ZZ, SheafMap)  := (e, f) -> (
+    if  f.cache#?(FrobeniusPushforward, e)
+    then f.cache#(FrobeniusPushforward, e)
+    else f.cache#(FrobeniusPushforward, e) = (
+    --if not(isFreeModule module source f and isFreeModule module target f) then error "expected a map between free modules";
+    g := myPushForward(
+	frobeniusMap(e, ring matrix f),
+	frobeniusTwist(e, matrix f));
+    if not isHomogeneous g then g
+    else Fg := first decomposeFrobeniusPresentation(e, g);
+    R := ring matrix f;
+    p := char R;
+    targetPres := presentation target Fg;
+    (tPrestardegs, tPressrcdegs) := toSequence(-degrees targetPres // p^e);
+    Fgtarget := sheaf coker map(R^tPrestardegs, R^tPressrcdegs, sub(targetPres, R));
+    sourcePres := presentation source Fg;
+    (sPrestardegs, sPressrcdegs) := toSequence(-degrees sourcePres // p^e);
+    Fgsource := sheaf coker map(R^sPrestardegs, R^sPressrcdegs, sub(sourcePres, R));
+    sheaf map(module Fgtarget, module Fgsource, sub(cover Fg, R)))
+)
+
+
 --frobeniusPushforward(ZZ, Complex) := (e, C) -> () -- TODO
 
 frobeniusPushforward(ZZ, SheafOfRings)  := (e, N0) -> frobeniusPushforward(e, N0^1) -- TODO: is this cached?
@@ -117,7 +142,7 @@ frobeniusPushforward(ZZ, CoherentSheaf) := (e, N) -> (
     if  N.cache#?(FrobeniusPushforward, e)
     then N.cache#(FrobeniusPushforward, e)
     else N.cache#(FrobeniusPushforward, e) = (
-    R := ring N;
+    R := ring variety N;
     p := char R;
     FN := first components frobeniusPushforward(e, module N);
     -- slow alternative:
