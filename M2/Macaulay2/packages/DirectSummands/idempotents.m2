@@ -128,10 +128,12 @@ findIdempotent(Module, ZZ) := opts -> (M, e) -> (
     p := char R;
     F := ultimate(coefficientRing', R);
     K := quotient ideal gens R;
+    V := K ** M;
     l := if p == 0 then e else max(e, ceiling log_p numgens M);
     L := infinity;
     for c to opts.Tries - 1 do (
         f := generalEndomorphism M;
+	fm := K ** f;
         Chi := char f;
 	K' := if instance(F, InexactField) then F else try extField {Chi};
         --TODO: remember different L to extend to; right now the L you return at the end may not be large enough
@@ -149,13 +151,13 @@ findIdempotent(Module, ZZ) := opts -> (M, e) -> (
 	eigen = nonnull apply(eigen, y -> try lift(y, F));
 	if #eigen == 0 then continue;
         opers := flatten for y in eigen list (
-	    if p == 0 then reduceScalar(f - y*id_M) else (
-                --TODO: should we just take powers of K**(f-y*id_M)?
-		for j from 0 to e list largePower'(p, j+1, largePower(p, l, f - y*id_M))));
-        idem := position(opers, g -> isWeakIdempotent(K ** g) and g != id_M and K ** g != 0);
+	    if p == 0 then (1, f - y*id_M, fm - y*id_V) else (
+		for j from 0 to e list (j, f - y*id_M, largePower'(p, j+1, largePower(p, l, fm - y*id_V)))));
+	idem := position(opers, (j, g, g') -> isWeakIdempotent g' and not isSurjective g' and g' != 0);
         if idem =!= null then (
+	    (j, g, g') := opers_idem;
 	    if 1 < debugLevel then printerr("found idempotent after ", toString c, " attempts.");
-	    idem = opers_idem;
+	    idem = (if p != 0 then largePower'(p, j+1, largePower(p, l, g)) else g);
 	    -- for inexact fields, we compose the idempotent until the determinant is zero
 	    if instance(F, InexactField) then idem = idem ^ (findErrorMargin idem);
 	    return idem));
