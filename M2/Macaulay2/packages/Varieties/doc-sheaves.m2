@@ -733,6 +733,9 @@ Node
 document {
     Key => {
 	(hilbertPolynomial, CoherentSheaf),
+	(hilbertPolynomial, Variety, Ring),
+	(hilbertPolynomial, Variety, Ideal),
+	(hilbertPolynomial, Variety, SheafOfRings),
 	(hilbertPolynomial, Variety, CoherentSheaf)
 	},
     Headline => "compute the Hilbert polynomial of the coherent sheaf",

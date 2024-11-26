@@ -547,8 +547,6 @@ doc ///
 doc ///
     Key
         (hilbertPolynomial, NormalToricVariety)
-	(hilbertPolynomial, NormalToricVariety, Ring)
-	(hilbertPolynomial, NormalToricVariety, SheafOfRings)
     Headline 
         compute the multivariate Hilbert polynomial
     Usage 
@@ -615,7 +613,6 @@ doc ///
     Key
         (hilbertPolynomial, NormalToricVariety, CoherentSheaf)
 	(hilbertPolynomial, NormalToricVariety, Module)
-	(hilbertPolynomial, NormalToricVariety, Ideal)
     Headline 
         compute the multivariate Hilbert polynomial
     Usage 

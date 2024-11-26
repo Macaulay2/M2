@@ -158,11 +158,5 @@ hilbertPolynomial (NormalToricVariety, Module) := RingElement => opts ->
 	    )
 	);
 
-hilbertPolynomial (NormalToricVariety, Ring) := RingElement => opts -> 
-    (X, S) -> hilbertPolynomial (X, S^1, opts)
-hilbertPolynomial (NormalToricVariety, SheafOfRings) := RingElement => 
-    opts -> (X, S) -> hilbertPolynomial (X, ring S, opts)    
-hilbertPolynomial (NormalToricVariety, Ideal) := RingElement => opts -> 
-    (X, I) -> hilbertPolynomial (X, (ring I)^1/I, opts)
 hilbertPolynomial (NormalToricVariety, CoherentSheaf) := RingElement => 
     opts -> (X, F) -> hilbertPolynomial (X, module F, opts)
