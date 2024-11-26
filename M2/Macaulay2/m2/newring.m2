@@ -64,13 +64,7 @@ QuotientRing ** PolynomialRing :=
 PolynomialRing ** QuotientRing :=
 QuotientRing ** QuotientRing := (R,S) -> tensor(R,S)
 
-tensor(PolynomialRing, PolynomialRing) := monoidTensorDefaults >> optns -> (R, S) -> (
-     k := coefficientRing R;
-     if k =!= coefficientRing S 
-     then error "expected rings to have the same coefficient ring";
-     k tensor(monoid R, monoid S, optns)
-     )
-
+tensor(PolynomialRing, PolynomialRing) := 
 tensor(QuotientRing,   PolynomialRing) :=
 tensor(PolynomialRing, QuotientRing) :=
 tensor(QuotientRing,   QuotientRing) := monoidTensorDefaults >> optns -> (R, S) -> (
@@ -79,12 +73,18 @@ tensor(QuotientRing,   QuotientRing) := monoidTensorDefaults >> optns -> (R, S) 
      then error "expected rings to have the same coefficient ring";
      f := presentation R; A := ring f; M := monoid A; m := numgens M;
      g := presentation S; B := ring g; N := monoid B; n := numgens N;
-     MN := k tensor(M, N, optns);
-     fg := substitute(f,(vars MN)_{0 .. m-1}) | substitute(g,(vars MN)_{m .. m+n-1});
-     -- forceGB fg;  -- if the monomial order chosen doesn't restrict, then this
-                     -- is an error!! MES
-     AB := MN;
-     RS := AB/image fg;
+     AB := k tensor(M, N, optns);
+     -- need "if" below, since for non-commutative R or S `image fg` is a (zero) LeftIdeal
+     --   alt: need to prohibit tensoring non-commutative rings???
+     --   alt (future???): quotients of non-commutative rings would be allowed and
+     --                    `presentation R` then returns a potentially nontrivial two-sided ideal;
+     --                    e.g., WA with some commuting variables
+     RS := if class R === PolynomialRing and class S === PolynomialRing then AB else (
+	 fg := substitute(f,(vars AB)_{0 .. m-1}) | substitute(g,(vars AB)_{m .. m+n-1});
+	 -- forceGB fg;  -- if the monomial order chosen doesn't restrict, then this
+	 -- is an error!! MES
+	 AB/image fg
+	 );
      setupPromote map(RS,R,(vars AB)_{0 .. m-1});
      setupLift map(R,RS,generators A | toList(n:0));
      if S =!= R then (

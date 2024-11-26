@@ -689,7 +689,7 @@ super Matrix := Matrix => (f) -> (
 isInjective Matrix := (f) -> kernel f == 0
 isSurjective Matrix := (f) -> cokernel f == 0
 
--- two-sided ideal expected
+-- AL: `**` may cause problems in the noncommutative case 
 scan({ZZ,QQ}, S -> (
 	  lift(LeftIdeal,S) := opts -> (I,S) -> (
 	       -- this will be pretty slow

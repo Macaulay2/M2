@@ -141,10 +141,6 @@ complement Matrix := Matrix => (f) -> (
 -----------------------------------------------------------------------------
 -- the method is declared in gb.m2
 mingens LeftIdeal  := Matrix => opts -> I -> mingens(module I, opts)
-mingens Module := Matrix => opts -> (cacheValue symbol mingens) ((M) -> (
-        c := runHooks((mingens, Module), (opts, M));
-        if c =!= null then c else error "mingens: no method implemented for this type of module"))
-
 -- TODO: the strategies should be separated
 mingens Module := Matrix => opts -> M -> if isFreeModule M then generators M else cacheHooks(
     symbol mingens, M, (mingens, Module), (opts, M), (opts, M) -> (
@@ -174,8 +170,8 @@ trim = method (Options => { Strategy => null -* TODO: add DegreeLimit => {} *-})
 trim Ring         := Ring => o -> identity
 trim QuotientRing := Ring => o -> R -> quotient trim(ideal presentation R, o)
 
--- trim Ideal  := Ideal  => opts -> I -> ideal trim(module I, opts)
-trim LeftIdeal  := LeftIdeal  => opts -> (cacheValue (symbol trim => opts)) ((I) -> ideal trim(module I, opts))
+trim LeftIdeal  := LeftIdeal  => opts -> I -> ideal trim(module I, opts)
+-- old or new version???: trim LeftIdeal  := LeftIdeal  => opts -> (cacheValue (symbol trim => opts)) ((I) -> ideal trim(module I, opts))
 trim Module := Module => opts -> M -> if isFreeModule M then M else cacheHooks(
     (symbol trim, opts), M, (trim, Module), (opts, M), (opts, M) -> (
 	if opts.Strategy === null then opts = opts ++ { Strategy => Complement };
