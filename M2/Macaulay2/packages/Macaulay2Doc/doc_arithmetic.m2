@@ -72,15 +72,42 @@ document {
 	  "conjugate 3"
 	  }
      }
-document {
-     Key => {gcdCoefficients,(gcdCoefficients, RingElement, RingElement),(gcdCoefficients, ZZ, ZZ)},
-     Headline => "gcd with coefficients",
-     TT "gcdCoefficients(a,b)", " -- returns ", TT "{d,r,s}", " so that
-     ", TT"a*r + b*s", " is the greatest common divisor ", TT "d", " of ", TT "a", "
-     and ", TT "b", ".",
-     PARA{},
-     "Works for integers or elements of polynomial rings in onve variable.",
-     SeeAlso => "gcd"}
+
+doc ///
+  Key
+    gcdCoefficients
+    (gcdCoefficients, RingElement, RingElement)
+    (gcdCoefficients, RingElement, ZZ)
+    (gcdCoefficients, ZZ, RingElement)
+    (gcdCoefficients, ZZ, ZZ)
+  Headline
+    greatest common divisor with coefficients
+  Usage
+    gcdCoefficients(a, b)
+  Inputs
+    a:{RingElement, ZZ}
+    b:{RingElement, ZZ}
+  Description
+    Text
+      This returns a list of the form @CODE "{d, r, s}"@, where $d=\gcd(a, b)$
+      and $r$ and $s$ are the minimal Bézout coefficients satisfying the
+      equation $d = ar + bs$.
+
+      It works for integers or elements of polynomial rings in one variable.
+    Example
+      gcdCoefficients(46, 240)
+      gcd(46, 240)
+      46 * 47 + 240 * (-9)
+      R = ZZ/2[x]
+      f = x^8 + x^4 + x^3 + x + 1
+      g = x^6 + x^4 + x + 1
+      gcdCoefficients(f, g)
+      gcd(f, g)
+      f * (x^5 + x^4 + x^3 + x^2 + 1) + g * (x^7 + x^6 + x^3 + x)
+  SeeAlso
+    gcd
+///
+
 document {
      Key => mod,
      Headline => "reduce modulo an integer",
