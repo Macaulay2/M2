@@ -39,6 +39,8 @@ gcd(RingElement,RingElement) := RingElement => (r,s) -> (
      else notImplemented()))
 gcd RingElement := identity
 
+gcdCoefficients(ZZ, RingElement) := (r, s) -> gcdCoefficients(r_(ring s), s)
+gcdCoefficients(RingElement, ZZ) := (r, s) -> gcdCoefficients(r, s_(ring r))
 gcdCoefficients(RingElement,RingElement) := (f,g) -> (	    -- ??
      R := ring f;
      if R =!= ring g then error "expected elements of the same ring";
