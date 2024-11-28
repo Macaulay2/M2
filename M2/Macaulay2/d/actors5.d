@@ -1994,7 +1994,12 @@ functionBody(e:Expr):Expr := (
      );
 setupfun("functionBody",functionBody);
 
-symbolBody(e:Expr):Expr := when e is s:SymbolClosure do Expr(SymbolBody(s.symbol)) else WrongArg("a symbol");
+symbolBody(e:Expr):Expr := (
+     when e
+     is s:SymbolClosure do Expr(SymbolBody(s.symbol))
+     is s:SpecialExpr do symbolBody(s.e)
+     else WrongArg("a symbol")
+     );
 setupfun("symbolBody",symbolBody);
 
 dumpNodes(e:Expr):Expr := (dumpNodes(); nullE);
