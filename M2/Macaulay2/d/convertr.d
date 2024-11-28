@@ -21,6 +21,8 @@ export UnaryInstallMethodFun := dummyTernaryFun;
 export InstallValueFun := dummyMultaryFun;
 export UnaryInstallValueFun := dummyTernaryFun;
 
+export binarymethod1 := dummyTernaryFun; -- temporary, will be redefined in evaluate.d
+
 convert(e:ParseTree):Code;
 CodeSequenceLength(e:ParseTree,separator:Word):int := (
      i := 0;
@@ -189,7 +191,12 @@ export convert0(e:ParseTree):Code := (
 		rhs := convertGlobalOperator(token);
 		-- TODO: is this check necessary?
 		if token.word.typecode == TCid
-		then Code(binaryCode(b.Operator.entry.binary, convert(b.lhs), rhs, pos))
+		then (
+		  f:=b.Operator.entry.binary; if f==dummyBinaryFun then
+		  Code(ternaryCode(binarymethod1,convert(b.lhs), rhs, globalSymbolClosureCode(b.Operator.entry, dummyPosition),pos))
+		  else
+		  Code(binaryCode(f, convert(b.lhs), rhs, pos))
+		)
 		else dummyCode -- should not occur
 		)
 	    else dummyCode -- should not occur
@@ -300,8 +307,12 @@ export convert0(e:ParseTree):Code := (
 	      else Code(augmentedAssignmentCode(
 		      b.Operator.entry, dummyCode, dummyCode, dummySymbol, dummyPosition)) -- CHECK
 		      )
-	  else Code(binaryCode(b.Operator.entry.binary, convert(b.lhs), convert(b.rhs), pos))
-	  )
+	  else (
+		  f:=b.Operator.entry.binary; if f==dummyBinaryFun then
+		  Code(ternaryCode(binarymethod1,convert(b.lhs), convert(b.rhs), globalSymbolClosureCode(b.Operator.entry, dummyPosition),pos))
+		  else
+		  Code(binaryCode(f, convert(b.lhs), convert(b.rhs), pos))
+	  ))
     is u:Unary do (
 	if u.Operator.word == CommaW     then Code(sequenceCode(makeCodeSequence(e, CommaW),     pos)) else
 	if u.Operator.word == SemicolonW then Code(semiCode(    makeCodeSequence(e, SemicolonW), pos))

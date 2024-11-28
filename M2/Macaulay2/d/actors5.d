@@ -1,6 +1,7 @@
 --		Copyright 1995,2010 by Daniel R. Grayson
 use actors;
 use actors2;
+use binding;
 
 header "#include <interface/random.h>";
 
@@ -12,6 +13,15 @@ getParsing(e:Expr):Expr := (
 	  list( toExpr(x.precedence), toExpr(x.binaryStrength), toExpr(x.unaryStrength)))
      else nullE);
 setupfun("getParsing",getParsing);
+
+export makeKeywordFun(e:Expr):Expr := (
+     when e
+     is s:stringCell do (
+         Expr(makeKeyword(binaryleft(s.v))) -- TODO check whether install is really needed (for mathematical symbols as opposed to words)
+     )
+     else nullE -- TODO error (but anyway won't be called directly)
+     );
+setupfun("makeKeyword",makeKeywordFun);
 
 LongDoubleRightArrowFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongDoubleRightArrowS);
 setup(LongDoubleRightArrowS,LongDoubleRightArrowFun);

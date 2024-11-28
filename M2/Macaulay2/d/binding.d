@@ -137,7 +137,7 @@ export makeProtectedSymbolClosure(w:Word):SymbolClosure := (
      when globalFrame.values.(entry.frameindex)
      is s:SymbolClosure do s
      else SymbolClosure(globalFrame,entry));
-makeKeyword(w:Word):SymbolClosure := (
+export makeKeyword(w:Word):SymbolClosure := (
      -- keywords differ from symbols in that their initial value is null
      entry := makeEntry(w,dummyPosition,globalDictionary);
      entry.Protected = true;
@@ -157,7 +157,7 @@ unaryword(s:string)     :Word :=           makeUniqueWord(s, parseinfo(prec,nopr
 postfix(s:string)       :Word := install(s,makeUniqueWord(s, parseinfo(prec,nopr  ,nopr,parsefuns(errorunary,postfixop))));
 unarybinaryleft(s:string)     :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec  ,prec,parsefuns(unaryop   ,binaryop))));
 unarybinaryright(s:string)    :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec-1,prec,parsefuns(unaryop   ,binaryop))));
-binaryleft(s:string)    :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec  ,nopr,parsefuns(errorunary,binaryop))));
+export binaryleft(s:string)    :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec  ,nopr,parsefuns(errorunary,binaryop))));
 nright(s:string)        :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec-1,nopr,parsefuns(errorunary,nbinaryop))));
 nleftword(s:string)     :Word :=           makeUniqueWord(s, parseinfo(prec,prec  ,nopr,parsefuns(errorunary,nbinaryop)));
 nunarybinaryleft(s:string)    :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec  ,prec,parsefuns(nnunaryop ,nbinaryop))));
@@ -644,14 +644,17 @@ bindParenParmList(e:ParseTree,dictionary:Dictionary,desc:functionDescription):vo
      is p:EmptyParentheses do nothing
      else makeErrorTree(e,"expected parenthesized argument list or symbol"));
 opHasBinaryMethod(o:Symbol):bool := (
+     return true; -- TEMP
      foreach s in opsWithBinaryMethod do if s.symbol == o then return true;
      return false;
      );
 opHasUnaryMethod(o:Symbol):bool := (
+     return true; -- TEMP
      foreach s in opsWithUnaryMethod do if s.symbol == o then return true;
      return false;
      );
 opHasPostfixMethod(o:Symbol):bool := (
+     return true; -- TEMP
      foreach s in opsWithPostfixMethod do if s.symbol == o then return true;
      return false;
      );

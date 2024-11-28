@@ -1095,6 +1095,7 @@ export unarymethod(rhs:Code,methodkey:SymbolClosure):Expr := (
 	  method := lookup(Class(right),Expr(methodkey),methodkey.symbol.hash);
 	  if method == nullE then MissingMethod(methodkey)
 	  else applyEE(method,right)));
+
 export binarymethod(lhs:Code,rhs:Code,methodkey:SymbolClosure):Expr := (
      left := eval(lhs);
      when left is Error do left
@@ -1119,6 +1120,12 @@ export binarymethod(left:Expr,rhs:Code,methodkey:SymbolClosure):Expr := (
 	       else MissingMethodPair(methodkey,left,right)
 	       )
 	  else applyEEE(method,left,right)));
+export binarymethodCode(lhs:Code,rhs:Code,methodkey:Code):Expr := (
+    when methodkey is
+        s:globalSymbolClosureCode do binarymethod(lhs,rhs,SymbolClosure(globalFrame,s.symbol))
+    else nullE
+);
+
 
 -----------------------------------------------------------------------------
 
@@ -2109,6 +2116,8 @@ nullCoalescion(lhs:Code,rhs:Code):Expr := (
     is Nothing do eval(rhs)
     else e);
 setup(QuestionQuestionS, nullify, nullCoalescion);
+
+binarymethod1=binarymethodCode;
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d evaluate.o "
