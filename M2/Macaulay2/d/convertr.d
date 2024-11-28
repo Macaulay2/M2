@@ -22,6 +22,7 @@ export InstallValueFun := dummyMultaryFun;
 export UnaryInstallValueFun := dummyTernaryFun;
 
 export binarymethod1 := dummyTernaryFun; -- temporary, will be redefined in evaluate.d
+export unarymethod1 := dummyBinaryFun; -- temporary, will be redefined in evaluate.d
 
 convert(e:ParseTree):Code;
 CodeSequenceLength(e:ParseTree,separator:Word):int := (
@@ -316,8 +317,20 @@ export convert0(e:ParseTree):Code := (
     is u:Unary do (
 	if u.Operator.word == CommaW     then Code(sequenceCode(makeCodeSequence(e, CommaW),     pos)) else
 	if u.Operator.word == SemicolonW then Code(semiCode(    makeCodeSequence(e, SemicolonW), pos))
-	else Code(unaryCode(u.Operator.entry.unary, convert(u.rhs), pos)))
-    is u:Postfix do Code(unaryCode(u.Operator.entry.postfix, convert(u.lhs), pos))
+	else (
+	  f:=u.Operator.entry.unary;
+	  if f==dummyUnaryFun then
+	    Code(binaryCode(unarymethod1,convert(u.rhs), globalSymbolClosureCode(u.Operator.entry, dummyPosition),pos))
+	  else
+	    Code(unaryCode(f, convert(u.rhs), pos))
+	  ))
+    is u:Postfix do (
+        f:=u.Operator.entry.postfix;
+	if f==dummyPostfixFun then
+	  Code(binaryCode(unarymethod1,convert(u.lhs), globalSymbolClosureCode(u.Operator.entry, dummyPosition),pos))
+	else
+	  Code(unaryCode(f, convert(u.lhs), pos))
+	  )
     is q:Quote do (
 	  token := q.rhs;
 	  sym := token.entry;

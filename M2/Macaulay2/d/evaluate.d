@@ -1125,6 +1125,11 @@ export binarymethodCode(lhs:Code,rhs:Code,methodkey:Code):Expr := (
         s:globalSymbolClosureCode do binarymethod(lhs,rhs,SymbolClosure(globalFrame,s.symbol))
     else nullE
 );
+export unarymethodCode(rhs:Code,methodkey:Code):Expr := (
+    when methodkey is
+        s:globalSymbolClosureCode do unarymethod(rhs,SymbolClosure(globalFrame,s.symbol))
+    else nullE
+);
 
 
 -----------------------------------------------------------------------------
@@ -2118,6 +2123,7 @@ nullCoalescion(lhs:Code,rhs:Code):Expr := (
 setup(QuestionQuestionS, nullify, nullCoalescion);
 
 binarymethod1=binarymethodCode;
+unarymethod1=unarymethodCode;
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d evaluate.o "

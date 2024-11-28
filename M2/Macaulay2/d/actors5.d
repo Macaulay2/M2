@@ -23,27 +23,6 @@ export makeKeywordFun(e:Expr):Expr := (
      );
 setupfun("makeKeyword",makeKeywordFun);
 
-LongDoubleRightArrowFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongDoubleRightArrowS);
-setup(LongDoubleRightArrowS,LongDoubleRightArrowFun);
-
-LongLongDoubleRightArrowFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongLongDoubleRightArrowS);
-setup(LongLongDoubleRightArrowS,LongLongDoubleRightArrowFun);
-
-LongDoubleLeftArrowFun1(rhs:Code):Expr := unarymethod(rhs,LongDoubleLeftArrowS);
-LongDoubleLeftArrowFun2(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongDoubleLeftArrowS);
-setup(LongDoubleLeftArrowS,LongDoubleLeftArrowFun1,LongDoubleLeftArrowFun2);
-
-LongLongDoubleLeftArrowFun1(rhs:Code):Expr := unarymethod(rhs,LongLongDoubleLeftArrowS);
-LongLongDoubleLeftArrowFun2(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongLongDoubleLeftArrowS);
-setup(LongLongDoubleLeftArrowS,LongLongDoubleLeftArrowFun1,LongLongDoubleLeftArrowFun2);
-
-LongBiDoubleArrowFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongBiDoubleArrowS);
-setup(LongBiDoubleArrowS,LongBiDoubleArrowFun);
-
-binaryDeductionFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,DeductionS);
-unaryDeductionFun(rhs:Code):Expr := unarymethod(rhs,DeductionS);
-setup(DeductionS,unaryDeductionFun,binaryDeductionFun);
-
 -- doublePointerfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,DoubleArrowS);
 optionFun(lhs:Code,rhs:Code):Expr := (
     -- # typical value: symbol =>, Thing, Thing, Option
@@ -147,108 +126,6 @@ integermod(e:Expr):Expr := (
      else WrongNumArgs(2));
 installMethod(PercentS,ZZClass,ZZClass,integermod);
 
-modC(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PercentS);
-setup(PercentS,modC);
-
-AtAtfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,AtAtS);
-setup(AtAtS,AtAtfun);
-
-StarStarfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,StarStarS);
-setup(StarStarS,StarStarfun);
-
-doubleplusfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PlusPlusS);
-setup(PlusPlusS,doubleplusfun);
-
-lesslessfun2(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LessLessS);
-lesslessfun1(rhs:Code):Expr := unarymethod(rhs,LessLessS);
-setup(LessLessS,lesslessfun1,lesslessfun2);
-
-greatergreaterfun2(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,GreaterGreaterS);
-setup(GreaterGreaterS,greatergreaterfun2);
-
-barfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,BarS);
-setup(BarS,barfun);
-
-BarUnderscorefun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,BarUnderscoreS);
-setup(BarUnderscoreS,BarUnderscorefun);
-
-UnderscoreGreaterfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreGreaterS);
-setup(UnderscoreGreaterS,UnderscoreGreaterfun);
-
-UnderscoreGreaterEqualfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreGreaterEqualS);
-setup(UnderscoreGreaterEqualS,UnderscoreGreaterEqualfun);
-
-UnderscoreLessfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreLessS);
-setup(UnderscoreLessS,UnderscoreLessfun);
-
-UnderscoreLessEqualfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreLessEqualS);
-setup(UnderscoreLessEqualS,UnderscoreLessEqualfun);
-
-PowerGreaterfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PowerGreaterS);
-setup(PowerGreaterS,PowerGreaterfun);
-
-PowerGreaterEqualfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PowerGreaterEqualS);
-setup(PowerGreaterEqualS,PowerGreaterEqualfun);
-
-PowerLessfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PowerLessS);
-setup(PowerLessS,PowerLessfun);
-
-PowerLessEqualfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PowerLessEqualS);
-setup(PowerLessEqualS,PowerLessEqualfun);
-
-PowerStarStarfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PowerStarStarS);
-setup(PowerStarStarS,PowerStarStarfun);
-
-colonfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,ColonS);
-setup(ColonS,colonfun);
-
-ampersandfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,AmpersandS);
-setup(AmpersandS,ampersandfun);
-
-hathatfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,HatHatS);
-setup(HatHatS,hathatfun);
-
-interpunctfun(lhs:Code, rhs:Code):Expr := binarymethod(lhs, rhs, InterpunctS);
-setup(InterpunctS, interpunctfun);
-
-boxtimesfun(lhs:Code, rhs:Code):Expr := binarymethod(lhs, rhs, BoxTimesS);
-setup(BoxTimesS, boxtimesfun);
-
-shuffleproductfun(lhs:Code, rhs:Code):Expr := binarymethod(lhs, rhs, ShuffleProductS);
-setup(ShuffleProductS, shuffleproductfun);
-
-Tildefun(rhs:Code):Expr := unarymethod(rhs,TildeS);
-setuppostfix(TildeS,Tildefun);
-
-PowerTildefun(rhs:Code):Expr := unarymethod(rhs,PowerTildeS);
-setuppostfix(PowerTildeS,PowerTildefun);
-
-UnderscoreTildefun(rhs:Code):Expr := unarymethod(rhs,UnderscoreTildeS);
-setuppostfix(UnderscoreTildeS,UnderscoreTildefun);
-
-ParenStarParenfun(rhs:Code):Expr := unarymethod(rhs,ParenStarParenS);
-setuppostfix(ParenStarParenS,ParenStarParenfun);
-
-UnderscoreStarfun(rhs:Code):Expr := unarymethod(rhs,UnderscoreStarS);
-setuppostfix(UnderscoreStarS,UnderscoreStarfun);
-
-PowerStarfun(rhs:Code):Expr := unarymethod(rhs,PowerStarS);
-setuppostfix(PowerStarS,PowerStarfun);
-
---PowerSharpfun(rhs:Code):Expr := unarymethod(rhs,PowerSharpS);
---setuppostfix(PowerSharpS,PowerSharpfun);
-
---UnderscoreSharpfun(rhs:Code):Expr := unarymethod(rhs,UnderscoreSharpS);
---setuppostfix(UnderscoreSharpS,UnderscoreSharpfun);
-
-Exclamationfun(rhs:Code):Expr := unarymethod(rhs,ExclamationS);
-setuppostfix(ExclamationS,Exclamationfun);
-
-PowerExclamationfun(rhs:Code):Expr := unarymethod(rhs,PowerExclamationS);
-setuppostfix(PowerExclamationS,PowerExclamationfun);
-
-UnderscoreExclamationfun(rhs:Code):Expr := unarymethod(rhs,UnderscoreExclamationS);
-setuppostfix(UnderscoreExclamationS,UnderscoreExclamationfun);
 
 factorial(x:Expr):Expr := (
      when x
@@ -265,9 +142,6 @@ setupfun("factorial",factorial);
 installMethod(ExclamationS,RRClass,factorial);
 installMethod(ExclamationS,ZZClass,factorial);
 installMethod(ExclamationS,QQClass,factorial);
-
-underscorefun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreS);
-setup(UnderscoreS,underscorefun);
 
 dotfun(lhs:Code,rhs:Code):Expr := (
      left := eval(lhs);
@@ -290,11 +164,6 @@ dotQfun(lhs:Code,rhs:Code):Expr := (
      else False);
 setup(DotQuestionS,dotQfun);
 
-atfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,AtS);
-setup(AtS,atfun);
-
-leftDividefun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LeftDivideS);
-setup(LeftDivideS,leftDividefun);
 
 header "
 #ifdef HAVE_SYS_IOCTL_H
