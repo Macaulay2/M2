@@ -732,6 +732,22 @@ registerFinalizer' = registerFinalizer
 registerFinalizer = method()
 registerFinalizer(Thing, String) := registerFinalizer'
 
+-- move to a new file keywords.m2?
+protect Binary
+protect Prefix
+protect Postfix
+protect Precedence
+protect Syntax
+makeKeyword'=makeKeyword
+makeKeyword=method(TypicalValue => Keyword, Options => { Precedence => symbol *, Syntax => Binary })
+makeKeyword String := o -> s -> (
+    pr:=if instance(o.Precedence,Symbol) then (getParsing o.Precedence)#0 else o.Precedence;
+    makeKeyword'(s,
+    pr,
+    o.Syntax === Binary or (class o.Syntax === List and isMember(Binary,o.Syntax)),
+    o.Syntax === Prefix or (class o.Syntax === List and isMember(Prefix,o.Syntax))
+    ))
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

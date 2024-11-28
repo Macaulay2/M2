@@ -15,13 +15,37 @@ getParsing(e:Expr):Expr := (
 setupfun("getParsing",getParsing);
 
 export makeKeywordFun(e:Expr):Expr := (
-     when e
-     is s:stringCell do (
-         Expr(makeKeyword(binaryleft(s.v))) -- TODO check whether install is really needed (for mathematical symbols as opposed to words)
+    when e
+    is seq:Sequence do (
+     	when seq.0
+     	is s:stringCell do
+	when seq.1
+	is p:ZZcell do
+	when seq.2
+        is b1:Boolean do
+	when seq.3
+	is b2:Boolean do (
+	    u:=errorunary;
+	    t:=errorbinary;
+	    prec:=toInt(p);
+	    uprec:=nopr;
+	    bprec:=nopr;
+	    if b1.v || b2.v then (
+	    if b1.v then (t=binaryop; bprec=prec);
+	    if b2.v then (u=unaryop; uprec=prec);
+	    ) else t=postfixop;
+	    w:=makeUniqueWord(s.v, parseinfo(prec,bprec,uprec,parsefuns(u,t)));
+     	    install(s.v,w);  -- TODO check whether install is really needed (for mathematical symbols as opposed to words)
+     	    Expr(makeKeyword(w))
+	)
+	else nullE
+	else nullE
+	else nullE
+	else nullE -- TODO error (but anyway won't be called directly)
      )
      else nullE -- TODO error (but anyway won't be called directly)
-     );
-setupfun("makeKeyword",makeKeywordFun);
+    );
+setupfun("makeKeyword",makeKeywordFun).Protected = false; -- will be overloaded in m2/methods.m2
 
 -- doublePointerfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,DoubleArrowS);
 optionFun(lhs:Code,rhs:Code):Expr := (
