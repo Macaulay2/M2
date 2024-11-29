@@ -643,21 +643,6 @@ bindParenParmList(e:ParseTree,dictionary:Dictionary,desc:functionDescription):vo
 	  )
      is p:EmptyParentheses do nothing
      else makeErrorTree(e,"expected parenthesized argument list or symbol"));
-opHasBinaryMethod(o:Symbol):bool := (
-     return true; -- TEMP
-     foreach s in opsWithBinaryMethod do if s.symbol == o then return true;
-     return false;
-     );
-opHasUnaryMethod(o:Symbol):bool := (
-     return true; -- TEMP
-     foreach s in opsWithUnaryMethod do if s.symbol == o then return true;
-     return false;
-     );
-opHasPostfixMethod(o:Symbol):bool := (
-     return true; -- TEMP
-     foreach s in opsWithPostfixMethod do if s.symbol == o then return true;
-     return false;
-     );
 bindTokenLocally(t:Token,dictionary:Dictionary):void := (
      lookupCountIncrement = 0;
      r := lookup(t.word,dictionary);
@@ -718,54 +703,26 @@ bindassignment(assn:Binary,dictionary:Dictionary,colon:bool):void := (
 	  bindop(unary.Operator,dictionary);
 	  bind(unary.rhs,dictionary);
 	  bind(body,dictionary);
-	  if colon
-	  then (
-	       if ! opHasUnaryMethod(unary.Operator.entry)
-	       then makeErrorTree(assn.Operator, "can't assign a method for this unary operator");
-	       )
-	  else (
-	       if ! opHasUnaryMethod(unary.Operator.entry)
-	       then makeErrorTree(assn.Operator, "can't assign a value for this unary operator")
-	       )
 	  )
      is unary:Postfix do (
 	  bind(unary.lhs,dictionary);
 	  bindop(unary.Operator,dictionary);
 	  bind(body,dictionary);
-	  if colon
-	  then (
-	       if ! opHasPostfixMethod(unary.Operator.entry)
-	       then makeErrorTree(assn.Operator, "can't assign a method for this postfix operator");
-	       )
-	  else (
-	       if ! opHasPostfixMethod(unary.Operator.entry)
-	       then makeErrorTree(assn.Operator, "can't assign a value for this postfix operator")
-	       )
 	  )
      is binary:Binary do (
 	  bind(binary.lhs,dictionary);
 	  bindop(binary.Operator,dictionary);
-	  bind(binary.rhs, if binary.Operator.word == DotS.symbol.word then globalDictionary else dictionary );
+	  bind(binary.rhs, if binary.Operator.word == DotS.symbol.word then globalDictionary else dictionary);
 	  bind(body,dictionary);
-	  if colon then (
-	       if ! opHasBinaryMethod(binary.Operator.entry)
-	       then makeErrorTree( assn.Operator, "can't assign a method for this binary operator");
-	       )
-	  else (
-	       if !(binary.Operator.word == DotS.symbol.word
-		    || 
-		    binary.Operator.word == SharpS.symbol.word
-		    ||
-		    opHasBinaryMethod(binary.Operator.entry))
-	       then makeErrorTree( assn.Operator, "can't assign a value for this binary operator");
-	       if binary.Operator.word == DotS.symbol.word then (
-		    when binary.rhs is t:Token do (
-			 if t.word.typecode != TCid
-			 then makeErrorTree(assn.Operator, "expected a symbol to right of '.'");
-			 )
-		    else makeErrorTree(assn.Operator, "expected a symbol to right of '.'");
-		    );
-	       )
+	  if colon && (binary.Operator.word == DotS.symbol.word
+                   ||
+                   binary.Operator.word == SharpS.symbol.word
+		   ) then makeErrorTree( assn.Operator, "can't assign a method for this binary operator");
+	  if binary.Operator.word == DotS.symbol.word then (
+              when binary.rhs is t:Token do return
+	      else nothing;
+              makeErrorTree(assn.Operator, "expected a symbol to right of '.'");
+	      );
 	  )
      is n:New do (
 	  if colon then (
