@@ -740,8 +740,10 @@ protect Precedence
 protect Syntax
 makeKeyword'=makeKeyword
 makeKeyword=method(TypicalValue => Keyword, Options => { Precedence => symbol *, Syntax => Binary })
+syntaxOptions:=set {Binary,Prefix,Postfix,{Binary,Prefix},{Prefix,Binary}}
 makeKeyword String := o -> s -> (
-    pr:=if instance(o.Precedence,Symbol) then (getParsing o.Precedence)#0 else o.Precedence;
+    pr:=if instance(o.Precedence,Symbol) then (getParsing o.Precedence)#0 else if instance(o.Precedence,ZZ) then o.Precedence else error "incorrect Symbol option";
+    if not isMember(o.Syntax,syntaxOptions) then error "incorrect Syntax option";
     makeKeyword'(s,
     pr,
     o.Syntax === Binary or (class o.Syntax === List and isMember(Binary,o.Syntax)),

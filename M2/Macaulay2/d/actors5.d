@@ -16,7 +16,10 @@ setupfun("getParsing",getParsing);
 
 export makeKeywordFun(e:Expr):Expr := (
     when e
-    is seq:Sequence do (
+    is seq:Sequence do
+    if length(seq) != 4
+	  then WrongNumArgs(4)
+	  else (
      	when seq.0
      	is s:stringCell do
 	when seq.1
@@ -25,25 +28,27 @@ export makeKeywordFun(e:Expr):Expr := (
         is b1:Boolean do
 	when seq.3
 	is b2:Boolean do (
-	    u:=errorunary;
-	    t:=errorbinary;
-	    prec:=toInt(p);
-	    uprec:=nopr;
-	    bprec:=nopr;
-	    if b1.v || b2.v then (
-	    if b1.v then (t=binaryop; bprec=prec);
-	    if b2.v then (u=unaryop; uprec=prec);
-	    ) else t=postfixop;
-	    w:=makeUniqueWord(s.v, parseinfo(prec,bprec,uprec,parsefuns(u,t)));
-     	    install(s.v,w);  -- TODO check whether install is really needed (for mathematical symbols as opposed to words)
-     	    Expr(makeKeyword(w))
+	   u:=errorunary;
+	   t:=errorbinary;
+	   prec:=toInt(p);
+	   uprec:=nopr;
+	   bprec:=nopr;
+	   if b1.v || b2.v then (
+	   if b1.v then (t=binaryop; bprec=prec);
+	   if b2.v then (u=unaryop; uprec=prec);
+	   ) else t=postfixop;
+	   w:=makeUniqueWord(s.v, parseinfo(prec,bprec,uprec,parsefuns(u,t)));
+	   when globalLookup(w) is x:Symbol do buildErrorPacket("symbol already in use")
+	   else (
+	   install(s.v,w);  -- TODO check whether install is really needed (for mathematical symbols as opposed to words)
+	   Expr(makeKeyword(w)))
 	)
-	else nullE
-	else nullE
-	else nullE
-	else nullE -- TODO error (but anyway won't be called directly)
+	else WrongArg(4,"a boolean")
+	else WrongArg(3,"a boolean")
+	else WrongArg(2,"an integer")
+	else WrongArg(1,"a string")
      )
-     else nullE -- TODO error (but anyway won't be called directly)
+     else WrongNumArgs(4)
     );
 setupfun("makeKeyword",makeKeywordFun).Protected = false; -- will be overloaded in m2/methods.m2
 
