@@ -2,6 +2,7 @@ v = vector {1, 2}
 w = vector {3, 4}
 assert(v⊗w == vector {3, 4, 6, 8})
 
+makeKeyword("·")
 Vector·Vector := (v, w) -> ((transpose v#0) * w#0)_(0, 0)
 assert(v·w == 11)
 

@@ -127,7 +127,7 @@ keywordTexMath = applyKeys(hashTable { -- both unary and binary keywords
 	symbol ^** => "{}^{\\otimes}", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
 	symbol _*  => "{}_*", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
 	symbol ^*  => "{}^*", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
-	symbol ·   => "\\cdot",
+--	symbol ·   => "\\cdot",
 	},symbolBody)
 
 bbLetters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
