@@ -28,6 +28,8 @@ export makeKeywordFun(e:Expr):Expr := (
         is b1:Boolean do
 	when seq.3
 	is b2:Boolean do (
+	   validSymbol:=isvalidsymbol(s.v) && length(s.v)>1;
+	   if !validSymbol && !isvalidkeyword(s.v) then buildErrorPacket("invalid keyword") else (
 	   u:=errorunary;
 	   t:=errorbinary;
 	   prec:=toInt(p);
@@ -40,9 +42,9 @@ export makeKeywordFun(e:Expr):Expr := (
 	   w:=makeUniqueWord(s.v, parseinfo(prec,bprec,uprec,parsefuns(u,t)));
 	   when globalLookup(w) is x:Symbol do buildErrorPacket("symbol already in use")
 	   else (
-	   install(s.v,w);  -- TODO check whether install is really needed (for mathematical symbols as opposed to words)
+	   if !validSymbol then install(s.v,w);  -- install only needed for nonstandard symbols
 	   Expr(makeKeyword(w)))
-	)
+	))
 	else WrongArg(4,"a boolean")
 	else WrongArg(3,"a boolean")
 	else WrongArg(2,"an integer")
@@ -1507,7 +1509,7 @@ getglobalsym(d:Dictionary,s:string):Expr := (
      w := makeUniqueWord(s,parseWORD);
      when lookup(w,d.symboltable)
      is x:Symbol do Expr(SymbolClosure(globalFrame,x))
-     is null do if w.parse != parseWORD then buildErrorPacket("symbol is a keyword") else createSymbol(w, d, s)
+     is null do if w.parse != parseWORD then buildErrorPacket("symbol "+s+" is a keyword") else createSymbol(w, d, s)
      );
 
 getglobalsym(s:string):Expr := (

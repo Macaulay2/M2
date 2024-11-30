@@ -14,7 +14,8 @@ export hashTable := (
      len 7313			-- just a convenient prime number
      do provide null()
      );
-export makeUniqueWord(s:string,p:parseinfo):Word := (
+export makeUniqueWord(s:string,p:parseinfo):Word := ( -- note that p is parseinfo *only if* new word created
+
      h := hash(s);
      hashCode := h%length(hashTable);
      hashList := hashTable.hashCode;
