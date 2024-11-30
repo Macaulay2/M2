@@ -67,6 +67,7 @@ ismathoperator(c1:char, c2:char):bool := (
     ismathoperator((int(uchar(c1)) << 8) | int(uchar(c2))));
 
 export isvalidsymbol(s:string):bool := (
+     if length(s)==0 then return false; -- duh
      if !isalpha(s.0) then return false;
      if ismathoperator(s.0, s.1) && length(s) == utf8charlength(s.0)
      then return true;

@@ -1505,8 +1505,10 @@ createSymbol(w:Word, d:Dictionary, s:string):Expr := (
 
 getglobalsym(d:Dictionary,s:string):Expr := (
      w := makeUniqueWord(s,parseWORD);
-     when lookup(w,d.symboltable) is x:Symbol do Expr(SymbolClosure(globalFrame,x))
-     is null do createSymbol(w, d, s));
+     when lookup(w,d.symboltable)
+     is x:Symbol do Expr(SymbolClosure(globalFrame,x))
+     is null do if w.parse != parseWORD then buildErrorPacket("symbol is a keyword") else createSymbol(w, d, s)
+     );
 
 getglobalsym(s:string):Expr := (
      w := makeUniqueWord(s,parseWORD);

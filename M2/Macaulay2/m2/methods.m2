@@ -439,7 +439,7 @@ flatten VisibleList := VisibleList => oldflatten
 -----------------------------------------------------------------------------
 
 dictionary = method()
-dictionary Keyword := s -> Core.Dictionary
+-- dictionary Keyword := s -> Core.Dictionary -- unnecessary and makes debugging harder
 dictionary Symbol := s -> (				    -- eventually every symbol will know what dictionary it's in, perhaps
      n := toString s;
      scan(dictionaryPath, d -> if d#?n and d#n === s then break d))

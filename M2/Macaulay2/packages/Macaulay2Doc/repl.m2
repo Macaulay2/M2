@@ -784,7 +784,7 @@ document {
      }
 
 document {
-     Key => {dictionary,(dictionary, Keyword),(dictionary, Symbol),(dictionary, Thing)},
+     Key => {dictionary,(dictionary, Symbol),(dictionary, Thing)},
      Headline => "determine the dictionary to which a symbol belongs",
      Usage => "dictionary x",
      Inputs => {
