@@ -396,14 +396,18 @@ dual SheafMap := SheafMap => options(dual, Matrix) >> o -> f -> map(null, dual t
 exteriorPower (ZZ, SheafMap) := SheafMap => o -> (d, phi) -> sheaf(phi.variety,  exteriorPower(d, matrix phi, o))
 symmetricPower(ZZ, SheafMap) := SheafMap =>      (d, phi) -> sheaf(phi.variety, symmetricPower(d, matrix phi))
 
-koszul(ZZ, SheafMap) := SheafMap => {} >> o -> (i, f) -> map(
-    exteriorPower(i-1, source f),
-    exteriorPower(i,   source f),
-    sheaf(f.variety, koszul(i, matrix f)))
--- TODO: implement generalized koszul complexes
+wedgeProduct(ZZ, ZZ, CoherentSheaf) := SheafMap => (p, q, F) -> sheaf(F.variety, wedgeProduct(p, q, module F))
+
+koszul(ZZ, SheafMap) := SheafMap => (i, f) -> (
+    F := source f;
+    G := exteriorPower(i, F);
+    g := wedgeProduct(1, i, F);
+    (f ** id_G) * g)
 -- TODO: follow what koszulComplex from Complexes does instead?
-koszulComplex SheafMap := Complex => {} >> o -> f -> complex apply(
-    toList(1 .. rank source f), i -> koszul(i, f))
+koszulComplex SheafMap := Complex => {} >> o -> f -> (
+    F := source f;
+    r := rank(module F ** quotient support F);
+    complex apply(r, i -> koszul(i + 1, f)))
 
 -----------------------------------------------------------------------------
 -- inverse
