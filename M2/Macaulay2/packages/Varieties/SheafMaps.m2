@@ -400,8 +400,8 @@ wedgeProduct(ZZ, ZZ, CoherentSheaf) := SheafMap => (p, q, F) -> sheaf(F.variety,
 
 koszul(ZZ, SheafMap) := SheafMap => (i, f) -> (
     F := source f;
-    G := exteriorPower(i, F);
-    g := wedgeProduct(1, i, F);
+    G := exteriorPower(i-1, F);
+    g := wedgeProduct(1, i-1, F);
     (f ** id_G) * g)
 -- TODO: follow what koszulComplex from Complexes does instead?
 koszulComplex SheafMap := Complex => {} >> o -> f -> (

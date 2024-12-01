@@ -9,6 +9,7 @@
 
 importFrom_Core {
     "short",
+    "rawKoszul",
     "rawTensor",
     "concatBlocks",
     "moduleAbbrv",
@@ -921,10 +922,27 @@ eagonNorthcott Matrix := f -> (
 		    j += 1) ;
       chainComplex d);
 
------- koszul
-koszul Matrix := ChainComplex => f ->(
-     n := rank source f;
-     chainComplex toList apply(1 .. n, i -> koszul(i,f)))
+-----------------------------------------------------------------------------
+-- koszul
+-----------------------------------------------------------------------------
+
+-- this version only works when target f is R^1
+freeKoszul = (i, f) -> map(
+    exteriorPower(i-1, source f),
+    exteriorPower(i,   source f),
+    rawKoszul(i, raw f))
+
+koszul(ZZ, Matrix) := Matrix => (i, f) -> (
+    if target f === module ring f then return freeKoszul(i, f);
+    -- this version is more general, but perhaps slower
+    F := source f;
+    G := exteriorPower(i-1, F);
+    g := wedgeProduct(1, i-1, F);
+    (f ** id_G) * g)
+
+-- Note: exterior powers of modules are cached
+koszul Matrix := ChainComplex => f -> chainComplex apply(
+    toList(1 .. rank source f), i -> koszul(i, f))
 
 -- this seems not to be useful to the user (yet):
 -- koszul(ZZ, Matrix, Matrix) := Matrix => (i,m,n) -> map(ring m, rawKoszulMonomials(i, raw m, raw n))
