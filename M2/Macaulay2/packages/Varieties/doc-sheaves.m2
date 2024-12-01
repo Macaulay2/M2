@@ -963,8 +963,9 @@ doc ///
 Node
   Key
    (annihilator, CoherentSheaf)
+   (support,     CoherentSheaf)
   Headline
-    the annihilator ideal
+    the support of a coherent sheaf
   Usage
     ann F
     annihilator F

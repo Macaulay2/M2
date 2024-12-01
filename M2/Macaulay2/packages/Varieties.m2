@@ -421,6 +421,7 @@ determinant        CoherentSheaf  := CoherentSheaf => o ->     F  -> exteriorPow
 exteriorPower (ZZ, CoherentSheaf) := CoherentSheaf => o -> (i, F) -> sheaf(F.variety,  exteriorPower(i, F.module, o))
 symmetricPower(ZZ, CoherentSheaf) := CoherentSheaf =>      (i, F) -> sheaf(F.variety, symmetricPower(i, F.module))
 
+support     CoherentSheaf := Ideal =>      F -> annihilator module F
 annihilator CoherentSheaf := Ideal => o -> F -> annihilator(module F, o)
 
 -- printing
