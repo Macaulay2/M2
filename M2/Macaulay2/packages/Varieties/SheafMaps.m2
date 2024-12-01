@@ -59,12 +59,13 @@ map(Nothing, CoherentSheaf, Matrix) := SheafMap => opts -> (null, G, psi) -> map
 map(CoherentSheaf, CoherentSheaf, Matrix, ZZ)             := SheafMap => opts -> (G, F, phi, d) -> map(G, F, phi, Degree => d)
 map(CoherentSheaf, CoherentSheaf, Matrix, InfiniteNumber) := SheafMap => opts -> (G, F, phi, d) -> (
     if d === -infinity then map(G, F, phi) else error "unexpected degree for map of sheaves")
--- TODO: support map(F, F, 1) and map(F, G, 0) for identity and zero maps
+
 map(CoherentSheaf, CoherentSheaf, ZZ)                     := SheafMap => opts -> (G, F, n)      -> (
-    if n === 0 then sheaf map(module G, module F, 0) else
     if F === G then n * id_G else
+    if n === 0 then map(G, F, map(module G, module F, 0)) else
     error "expected 0 or source and target equal")
 map(CoherentSheaf, CoherentSheaf, SheafMap)               := SheafMap => opts -> (G,F,phi)      -> sheaf map(G,F,matrix phi)
+
 map(CoherentSheaf, Module, ZZ) := SheafMap => opts -> (F, M, n) -> (
     if n === 0 then sheaf map(module F, M, 0) else
     if M === module F then n * id_F else
@@ -73,6 +74,7 @@ map(Module, CoherentSheaf, ZZ) := SheafMap => opts -> (M, F, n) -> (
     if n === 0 then sheaf map(M, module F, 0) else
     if M === module F then n * id_F else
     error "expected 0 or source and target equal")
+
 sheaf SheafMap             := SheafMap =>  phi        -> sheaf matrix phi
 sheaf Matrix := Matrix^~   := SheafMap =>  phi        -> sheaf(variety ring phi, phi)
 sheaf(Matrix, ZZ)          := SheafMap => (phi, d)    -> sheaf(variety ring phi, phi, d)
