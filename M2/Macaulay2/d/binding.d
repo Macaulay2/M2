@@ -190,9 +190,9 @@ special(s:string,f:function(Token,TokenFile,int,bool):ParseTree,lprec:int,rprec:
 -- created below are all in the global dictionary.
 
 -- new operators must be:
---   set up as an "actor" with "setup()" -- or not TODO explain
+--   set up as an "actor" with "setup()" if they have nonstandard syntax
+--   (without "setup()", M2 will just lookup a method)
 --   added to the export list in ../m2/exports.m2
---   added to the table binaryOperatorFunctions in ../m2/expressions.m2
 --   added to the list of operators in the documentation node "operators" in ../packages/Macaulay2Doc/ov_language.m2
 --   documented with a suitable headline, such as:
 --     	    "a unary operator"
