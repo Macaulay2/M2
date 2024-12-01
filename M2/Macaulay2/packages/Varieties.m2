@@ -362,12 +362,13 @@ pdim    CoherentSheaf := F -> tryHooks((pdim,  CoherentSheaf), F, pdim  @@ modul
 -- and the original definition and hook in m2/hilbert.m2
 addHook((hilbertPolynomial, Module), Strategy => Varieties, (opts, M) ->
     if M.ring.?variety then return try hilbertPolynomial(M.ring.variety, M, opts))
+hilbertPolynomial(Variety, Module)        := o -> (X, M) -> error "variety does not have a method for computing Hilbert polynomial"
 -- TODO: should these be only for ProjectiveVariety and error for affine variety?
 hilbertPolynomial(Variety, Ring)          := o -> (X, S) -> hilbertPolynomial(X, module S, o)
 hilbertPolynomial(Variety, Ideal)         := o -> (X, I) -> hilbertPolynomial(X, comodule I, o)
 hilbertPolynomial(Variety, SheafOfRings)  := o -> (X, O) -> hilbertPolynomial(X, module O, o)
 hilbertPolynomial(Variety, CoherentSheaf) := o -> (X, F) -> hilbertPolynomial(X, module F, o)
-hilbertPolynomial          CoherentSheaf  := o ->     F  -> hilbertPolynomial(F.variety, module F, o)
+hilbertPolynomial          CoherentSheaf  := o ->     F  -> hilbertPolynomial(module F, o)
 
 -- twist and powers
 -- TODO: sheaf should dehomogenize modules on Affine varieties
@@ -382,7 +383,9 @@ dual CoherentSheaf := CoherentSheaf => options(dual, Module) >> o -> F -> sheaf(
 -- 2. Truncation of the underlying modules is the same
 -- Here we use the first, but start with comparing Hilbert polynomials, which may be faster,
 -- TODO: benchmark different strategies
-CoherentSheaf == CoherentSheaf := Boolean => (F, G) -> hilbertPolynomial F === hilbertPolynomial G and module prune F == module prune G
+CoherentSheaf == CoherentSheaf := Boolean => (F, G) -> F.variety === G.variety and (
+    hilbertPolynomial F === hilbertPolynomial G and module prune F == module prune G)
+-- FIXME: dim module F <= 0 breaks for toric varieties
 CoherentSheaf == ZZ            := Boolean => (F, z) -> if z == 0 then dim module F <= 0 else error "attempted to compare sheaf to nonzero integer"
 CoherentSheaf == Module        := Boolean => (F, M) -> F == sheaf M
 Module        == CoherentSheaf := Boolean => (M, F) -> sheaf M == F
