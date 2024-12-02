@@ -7,3 +7,5 @@ assert(v·w == 11)
 
 -- should get "invalid symbol" error
 assert try getSymbol "⟎⟎" then false else true
+
+assert((a⇒b) === (a => b))
