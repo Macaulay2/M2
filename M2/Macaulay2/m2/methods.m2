@@ -439,7 +439,7 @@ flatten VisibleList := VisibleList => oldflatten
 -----------------------------------------------------------------------------
 
 dictionary = method()
-dictionary Keyword := s -> Core.Dictionary
+-- dictionary Keyword := s -> Core.Dictionary -- unnecessary and makes debugging harder
 dictionary Symbol := s -> (				    -- eventually every symbol will know what dictionary it's in, perhaps
      n := toString s;
      scan(dictionaryPath, d -> if d#?n and d#n === s then break d))
@@ -731,6 +731,24 @@ show = method()
 registerFinalizer' = registerFinalizer
 registerFinalizer = method()
 registerFinalizer(Thing, String) := registerFinalizer'
+
+-- move to a new file keywords.m2?
+protect Binary
+protect Prefix
+protect Postfix
+protect Precedence
+protect Syntax
+makeKeyword'=makeKeyword
+makeKeyword=method(TypicalValue => Keyword, Options => { Precedence => symbol *, Syntax => Binary })
+syntaxOptions:=set {Binary,Prefix,Postfix,{Binary,Prefix},{Prefix,Binary}}
+makeKeyword String := o -> s -> (
+    pr:=if instance(o.Precedence,Symbol) then (getParsing o.Precedence)#0 else if instance(o.Precedence,ZZ) then o.Precedence else error "incorrect Symbol option";
+    if not isMember(o.Syntax,syntaxOptions) then error "incorrect Syntax option";
+    makeKeyword'(s,
+    pr,
+    o.Syntax === Binary or (class o.Syntax === List and isMember(Binary,o.Syntax)),
+    o.Syntax === Prefix or (class o.Syntax === List and isMember(Prefix,o.Syntax))
+    ))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

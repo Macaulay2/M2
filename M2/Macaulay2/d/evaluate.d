@@ -1095,6 +1095,7 @@ export unarymethod(rhs:Code,methodkey:SymbolClosure):Expr := (
 	  method := lookup(Class(right),Expr(methodkey),methodkey.symbol.hash);
 	  if method == nullE then MissingMethod(methodkey)
 	  else applyEE(method,right)));
+
 export binarymethod(lhs:Code,rhs:Code,methodkey:SymbolClosure):Expr := (
      left := eval(lhs);
      when left is Error do left
@@ -1119,6 +1120,17 @@ export binarymethod(left:Expr,rhs:Code,methodkey:SymbolClosure):Expr := (
 	       else MissingMethodPair(methodkey,left,right)
 	       )
 	  else applyEEE(method,left,right)));
+export binarymethodCode(lhs:Code,rhs:Code,methodkey:Code):Expr := (
+    when methodkey is
+        s:globalSymbolClosureCode do binarymethod(lhs,rhs,SymbolClosure(globalFrame,s.symbol))
+    else nullE
+);
+export unarymethodCode(rhs:Code,methodkey:Code):Expr := (
+    when methodkey is
+        s:globalSymbolClosureCode do unarymethod(rhs,SymbolClosure(globalFrame,s.symbol))
+    else nullE
+);
+
 
 -----------------------------------------------------------------------------
 
@@ -1262,34 +1274,33 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 		else return r)
 	    else return r);
 	-- if not, use default behavior
+	r:=nullE;
+	f:=s.binary; if f==dummyBinaryFun then
+	r=binarymethod(Code(left),x.rhs,SymbolClosure(globalFrame,s))
+	else
+	r=f(Code(left),x.rhs);
+	when r is e:Error do Expr(e) else (
 	when x.lhs
-	is y:globalMemoryReferenceCode do (
-	    r := s.binary(Code(left), x.rhs);
-	    when r is e:Error do Expr(e)
-	    else globalAssignment(y.frameindex, x.info, r))
-	is y:localMemoryReferenceCode do (
-	    r := s.binary(Code(left), x.rhs);
-	    when r is e:Error do Expr(e)
-	    else localAssignment(y.nestingDepth, y.frameindex, r))
-	is y:threadMemoryReferenceCode do (
-	    r := s.binary(Code(left), x.rhs);
-	    when r is e:Error do Expr(e)
-	    else globalAssignment(y.frameindex, x.info, r))
+	is y:globalMemoryReferenceCode do globalAssignment(y.frameindex, x.info, r)
+	is y:localMemoryReferenceCode do localAssignment(y.nestingDepth, y.frameindex, r)
+	is y:threadMemoryReferenceCode do globalAssignment(y.frameindex, x.info, r)
 	is y:binaryCode do (
-	    r := Code(binaryCode(s.binary, Code(left), x.rhs, dummyPosition));
-	    if y.f == DotS.symbol.binary || y.f == SharpS.symbol.binary
-	    then AssignElemFun(y.lhs, y.rhs, r)
-	    else InstallValueFun(CodeSequence(
-		    convertGlobalOperator(x.info), y.lhs, y.rhs, r)))
-	is y:adjacentCode do (
-	    r := Code(binaryCode(s.binary, Code(left), x.rhs, dummyPosition));
-	    InstallValueFun(CodeSequence(
-		    convertGlobalOperator(AdjacentS.symbol), y.lhs, y.rhs, r)))
-	is y:unaryCode do (
-	    r := Code(binaryCode(s.binary, Code(left), x.rhs, dummyPosition));
-	    UnaryInstallValueFun(convertGlobalOperator(x.info), y.rhs, r))
+           if y.f == DotS.symbol.binary || y.f == SharpS.symbol.binary
+           then AssignElemFun(y.lhs, y.rhs, Code(evaluatedCode(r,dummyPosition)))
+	   else if y.f == unarymethodCode then UnaryInstallValueFun(convertGlobalOperator(x.info), y.lhs, Code(evaluatedCode(r,dummyPosition))) -- y.rhs redundant
+           else InstallValueFun(CodeSequence(
+                   convertGlobalOperator(x.info), y.lhs, y.rhs, Code(evaluatedCode(r,dummyPosition))))) -- y.f redundant
+	is y:ternaryCode do ( -- TODO check binarymethodCode?
+           InstallValueFun(CodeSequence(
+                   convertGlobalOperator(x.info), y.arg1, y.arg2, Code(evaluatedCode(r,dummyPosition))))) -- y.arg3 redundant -- combine with previous case?
+        is y:adjacentCode do (
+           InstallValueFun(CodeSequence(
+                   convertGlobalOperator(AdjacentS.symbol), y.lhs, y.rhs, Code(evaluatedCode(r,dummyPosition)))))
+        is y:unaryCode do (
+           UnaryInstallValueFun(convertGlobalOperator(x.info), y.rhs, Code(evaluatedCode(r,dummyPosition))))
 	else buildErrorPacket(
-	    "augmented assignment not implemented for this code")));
+	    "augmented assignment not implemented for this code")
+	    )));
 
 -----------------------------------------------------------------------------
 steppingFurther(c:Code):bool := steppingFlag && (
@@ -2109,6 +2120,9 @@ nullCoalescion(lhs:Code,rhs:Code):Expr := (
     is Nothing do eval(rhs)
     else e);
 setup(QuestionQuestionS, nullify, nullCoalescion);
+
+binarymethod1=binarymethodCode;
+unarymethod1=unarymethodCode;
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d evaluate.o "
