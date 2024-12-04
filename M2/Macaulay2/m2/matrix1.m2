@@ -319,14 +319,15 @@ subquotient(Nothing,Matrix) := (null,relns) -> (
 	  Mparts = append(Mparts, symbol relations => relns);
 	  );
      new Module of Vector from hashTable Mparts)
-subquotient(Matrix,Nothing) := (subgens,null) -> (
-     R := ring subgens;
-     E := target subgens;
-     rE := E.RawFreeModule;
-     subgens = align matrix subgens;
+subquotient(Matrix, Nothing) := (subgens0, null) -> (
+    R := ring subgens0;
+    E := target subgens0;
+    rE := E.RawFreeModule;
+    subgens := align matrix subgens0;
      if E.?generators then subgens = E.generators * subgens;
      Mparts := {
 	  symbol cache => new CacheTable from { 
+	    symbol Monomials => subgens0,
 	       cache => new MutableHashTable	    -- this hash table is mutable, hence has a hash number that can serve as its age
 	       },
 	  symbol RawFreeModule => rE,
@@ -338,16 +339,16 @@ subquotient(Matrix,Nothing) := (subgens,null) -> (
 	  Mparts = append(Mparts, symbol relations => E.relations);
 	  );
      new Module of Vector from hashTable Mparts)
-subquotient(Matrix,Matrix) := (subgens,relns) -> (
-     R := ring relns;
-     E := target subgens;
+subquotient(Matrix, Matrix) := (subgens0, relns) -> (
+    R := ring relns;
+    E := target subgens0;
      if E =!= target relns then error "expected maps with the same target";
      rE := E.RawFreeModule;
      n := rawRank rE;
      if n == 0 then new Module from (R,rE)
      else (
 	  relns = align matrix relns;
-	  subgens = align matrix subgens;
+	subgens := align matrix subgens0;
 	  if E.?generators then (
 	       relns = E.generators * relns;
 	       subgens = E.generators * subgens;
@@ -355,6 +356,7 @@ subquotient(Matrix,Matrix) := (subgens,relns) -> (
 	  if E.?relations then relns = relns | E.relations;
 	  Mparts := {
 	       symbol cache => new CacheTable from { 
+		symbol Monomials => subgens0,
 		    cache => new MutableHashTable	    -- this hash table is mutable, hence has a hash number that can serve as its age
 		    },
 	       symbol RawFreeModule => rE,
