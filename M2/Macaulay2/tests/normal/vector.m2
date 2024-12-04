@@ -20,6 +20,8 @@ v = vector(N, {1, 2, 3})
 w = vector(N, {4, 5, 6})
 assert Equation(v, vector map(N,, {{1}, {2}, {3}}))
 
+assert zero vector {0, 0, 0}
+
 -- module operations
 assert Equation(+v, v)
 assert Equation(v + w, vector(N, {5, 7, 9}))
