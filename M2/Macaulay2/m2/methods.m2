@@ -271,7 +271,7 @@ setupMethods((), {
 	  koszul, target, source,
 	  getChangeMatrix, cover, coverMap, super, terms,
 	  cokernel, coimage, comodule, image, someTerms, scanKeys, scanValues,
-	  substitute, complete, ambient, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
+	  substitute, complete, ambient, remainder, quotientRemainder, remainder', quotientRemainder',
 	  coefficients, monomials, size, sum, product, nullhomotopy, module, raw,
 	  content, leadTerm, leadCoefficient, leadMonomial, components,
 	  assign, realPart, imaginaryPart, conjugate,
