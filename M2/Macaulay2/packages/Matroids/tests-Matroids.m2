@@ -180,7 +180,7 @@ assert(tuttePolynomial(M, T) == tuttePolynomial(N, T) and tuttePolynomial(N, T) 
 G = graph({{0,1},{0,2},{1,2},{2,3},{3,4},{4,5},{4,6},{5,6}}) -- bowtie graph
 M = matroid G
 assert(set coloops M === set {4,3})
-p = {6, 0, 5, 1, 4, 7, 2, 3}
+p = {0, 4, 5, 1, 2, 3, 6, 7}
 assert(values isomorphism (M, relabel(M, p)) === p)
 ///
 
@@ -267,4 +267,28 @@ V8plus = specificMatroid "V8+"
 s = "Matroid(groundset = 'abcdefgh', bases = ['dfgh','cfgh','bfgh','afgh','degh','cegh','begh','aegh','bdgh','adgh','bcgh','acgh','defh','cefh','befh','aefh','cdfh','bdfh','adfh','bcfh','acfh','abfh','cdeh','bdeh','adeh','bceh','aceh','abeh','bcdh','acdh','abdh','abch','defg','cefg','befg','aefg','cdfg','bdfg','adfg','bcfg','acfg','abfg','cdeg','bdeg','adeg','bceg','aceg','abeg','bcdg','acdg','abdg','abcg','bdef','adef','bcef','acef','bcdf','acdf','abdf','abcf','bcde','acde','abde','abce'])"
 assert (s === toSageMatroid V8plus)
 assert (V8plus == fromSageMatroid s)
+///
+
+TEST ///
+k = GF 2
+X = toList(0..<9)
+L = apply(subsets X, s -> matroid(id_(k^3) | matrix pack(3, apply(X, i -> if member(i, s) then 1_k else 0_k))));
+elapsedTime IL = isoTypes L; -- ~3s with DFS strategy in isomorphism, ~4s with old (fixed) strategy
+assert(#IL == 22)
+
+L6 = select(allMatroids 6, M -> rank M <= 3);
+binary6 = select(L6, M -> searchRepresentation(M, k) =!= null);
+assert(#binary6 == 45 and #select(binary6, M -> rank M == 3) == 22)
+all(select(binary6, M -> rank M == 3), M -> any(IL, N -> areIsomorphic(M, N)))
+
+M = (allMatroids(3, 6))#14
+N = matroid({{1,2,3},{0,1,2,4},{0,3,4},{1,2,5},{3,5},{0,4,5}}, EntryMode => "circuits")
+assert(areIsomorphic(M, N) and areIsomorphic(N, M))
+
+M = (allMatroids(3, 6))#24
+assert(#bases M == 4 and #loops M == 2)
+U34 = uniformMatroid(3,4)
+U02 = uniformMatroid(0,2)
+assert(areIsomorphic (U02++U34,U34++U02) and areIsomorphic (U34++U02,U02++U34))
+assert(areIsomorphic(M, U34 ++ U02) and areIsomorphic(U34 ++ U02, M))
 ///

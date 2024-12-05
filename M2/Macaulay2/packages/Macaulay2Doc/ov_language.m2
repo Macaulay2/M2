@@ -149,6 +149,7 @@ document {
 	  TO "viewing the symbols defined so far",
 	  TO "subscripted variables",
 	  TO "numbered variables",
+	  TO "augmented assignment"
 	  }
      }
 document {
@@ -605,18 +606,17 @@ document {
 		},
 	SeeAlso => {"if", "then"}
      }
-document { Key => "catch",
-     Headline => "catch a thrown exception", SeeAlso => {"throw"},
-     Usage => "catch c",
-     Outputs => {{"the value obtained by evaluating the code ", TT "c", ", or, if a ", TO "throw", " was executed during the evaluation of ", TT "c", ",
-	       the argument given to ", TO "throw", "."}},
-     EXAMPLE lines ///
-          catch scan(0..10, i -> if i == 5 then throw 18 else print i)
-     ///}
-document { Key => "throw",
-     Headline => "throw an exception", SeeAlso => {"catch"},
-     Usage => "throw x", 
-     Consequences => {{"the flow of control is passed to the surrounding ", TO "catch", ", and ", TT "x", " is returned as its value"}},
+document {
+    Key => {"throw", "catch"},
+    Headline => "throw and catch exceptions",
+    Usage => "catch c\nthrow x",
+    Outputs => {{
+	    TT "catch", " returns the value obtained by evaluating the code ", TT "c",
+	    ", or, if a ", TT "throw", " was executed during the evaluation of ", TT "c",
+	    ", the argument given to ", TT "throw", "."}},
+    Consequences => {{
+	    TT "throw", " passes the flow of control to the surrounding ", TT "catch",
+	    ", and ", TT "x", " is returned as its value"}},
      EXAMPLE lines ///
           catch scan(0..10, i -> if i == 5 then throw 18 else print i)
      ///}
@@ -743,6 +743,10 @@ document {
      "The return value is the value returned by ", TT "y", " or ", TT "z", ", as the case may be.",
      PARA{},
      "The clause '", TT "then y", "' may be omitted, in which case the return value is the value returned by ", TT "x", ", if there is no error or alarm.",
+     PARA{},
+     "The clause '", TT "else z", "' may be omitted,
+     in which case the return value is the value returned by ", TT "y", ",
+     unless an error or alarm occurs, in which case ", TO "null", " is returned.",
      PARA{},
      "The clauses '", TT "then y else z", "' may both be omitted, in which case the return value is the value returned by ", TT "x", ", unless an error or
      alarm occurs, in which case ", TO "null", " is returned.",
@@ -1048,6 +1052,7 @@ postfixOperators := core "postfixOperators"
 flexibleBinaryOperators := core "flexibleBinaryOperators"
 flexiblePrefixOperators := core "flexiblePrefixOperators"
 flexiblePostfixOperators := core "flexiblePostfixOperators"
+augmentedAssignmentOperators := core "augmentedAssignmentOperators"
 allOperators := core "allOperators"
 getParsing := core "getParsing"
 
@@ -1066,13 +1071,14 @@ document {
      PARA {
 	  "Of those, the ones for which users may install new methods are ",
 	  "the binary operators ",
-	  between_" " apply(sort toList flexibleBinaryOperators, s -> TO {s}),
+	  between_" " apply(sort toList join(flexibleBinaryOperators,
+		  augmentedAssignmentOperators), s -> TO {s}),
 	  " , the unary prefix operators ",
 	  between_" " apply(sort toList flexiblePrefixOperators, s -> TO {s}),
 	  " , and the unary postfix operators ",
 	  between_" " apply(sort toList flexiblePostfixOperators, s -> TO {s}),
 	  " ."},
-     Subnodes => {
+     Subnodes => splice {
      "assignment",
 	  TO symbol = ,
 	  TO symbol := ,
@@ -1129,6 +1135,7 @@ document {
           TO symbol || ,
           TO symbol @ ,
           TO symbol ^^ ,
+          TO symbol ?? ,
           TO symbol |- ,
           TO symbol <==> ,
           TO symbol ===> ,
@@ -1139,6 +1146,9 @@ document {
 	  TO symbol => ,
           TO symbol , ,
           TO symbol ;,
+     "augmented assignment",
+	 toSequence apply(sort toList augmentedAssignmentOperators,
+	     op -> TO op),
      "further information",
           TO "precedence of operators",
 	  TO "operatorAttributes"

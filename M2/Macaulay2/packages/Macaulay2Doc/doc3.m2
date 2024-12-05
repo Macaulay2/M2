@@ -21,6 +21,34 @@ document {
      }
 
 document {
+     Key => symbol ^!,
+     Headline => "a unary postfix operator, used for the upper shriek functor"
+     }
+
+document {
+     Key => symbol _!,
+     Headline => "a unary postfix operator, used for the lower shriek functor"
+     }
+
+document {
+     Key => symbol |_,
+     Headline => "a binary operator, used for restriction to a subset"
+     }
+
+document {
+     Key => symbol ^~,
+     Headline => "a unary postfix operator, used for sheafification"
+     }
+
+document {
+     Key => symbol _~,
+     Headline => "a unary postfix operator"
+     }
+
+apply({symbol ^>, symbol ^>=, symbol ^<, symbol ^<=, symbol _>, symbol _>=, symbol _<, symbol _<=},
+    symb -> document { Key => symb, Headline => "a binary operator, used for truncation" })
+
+document {
      Key => symbol <==>,
      Headline => "a binary operator"
      }
@@ -81,7 +109,7 @@ document {
      }
 
 document {
-     Key => {(symbol /,List,Thing)},
+     Key => {(symbol /,List,RingElement),(symbol /,List,Number)},
      Headline => "vector division",
      Usage => "v/c",
      Inputs => {"v" => "to be treated as a vector", "c" => "a number or scalar ring element"},
@@ -96,13 +124,13 @@ document {
 	  (symbol \,Function,VirtualTally),
 	  (symbol \,SelfInitializingType,VisibleList),
 	  (symbol \,Command,VisibleList),
-	  (symbol \,RingMap,List),
+	  (symbol \,RingMap,VisibleList),
 	  (symbol \,Command,VirtualTally),
 	  (symbol /,VisibleList,SelfInitializingType),
 	  (symbol /,List,Command),
 	  (symbol /,VirtualTally,Command),
 	  (symbol /,VirtualTally,Function),
-	  (symbol /,List,RingMap),
+	  (symbol /,VisibleList,RingMap),
 	  (symbol /,VisibleList,Command),
 	  (symbol /,String,Command),
 	  (symbol /,String,Function),
@@ -273,34 +301,6 @@ document { Key => Dynamic,
      SeeAlso => {[exteriorPower,Strategy], [minors,Strategy], [det,Strategy]}
      }
 
-
-document { Key => SumOfTwists,
-     Headline => "the class of all sums of twists",
-     "This class is used internally as an abstract representation of a graded module as an infinite direct sum of twists of a coherent sheaf.",
-     EXAMPLE lines ///
-     	  R = QQ[x,y,z]
-     	  X = Proj R
-	  OO_X(*)
-	  peek oo
-	  OO_X(>=2)
-	  peek oo
-	  Ext^0(OO_X^1, OO_X^1)
-	  Ext^0(OO_X^1, OO_X^1(*))
-     ///
-     }
-document { Key => {(symbol (*),CoherentSheaf),
-	  (symbol (*),SheafOfRings)},
-     Headline => "sum of twists",
-     Usage => "F(*)",
-     Inputs => {"F" => {" or a ", ofClass SheafOfRings}},
-     Outputs => {{"a symbolic representation of the graded object consisting of the twists ", TT "F(n)", ", for all integers ", TT "n"}},
-     EXAMPLE lines ///
-     	  R = QQ[x,y,z];
-     	  X = Proj R
-	  Ext^0(OO_X^1, OO_X^1)
-	  Ext^0(OO_X^1, OO_X^1(*))
-	  Ext^0(OO_X^1, OO_X(*))	  
-     ///}
 
 document { Key => {(netList, VisibleList),
 	  netList,
@@ -512,29 +512,6 @@ document { Key => "printingSeparator",
      	  3000000000000.
      ///,
      SeeAlso => {"printingPrecision", "printingAccuracy", "printingLeadLimit", "printingTrailLimit", format}
-     }
-
-document { Key => {
-	  (sheafHom, CoherentSheaf, CoherentSheaf),
-	  sheafHom,
-	  (sheafHom, SheafOfRings, CoherentSheaf),
-	  (sheafHom, CoherentSheaf, SheafOfRings),
-	  (sheafHom, SheafOfRings, SheafOfRings)
-	  },
-     Headline => "sheaf Hom",
-     Usage => "sheafHom(M,N)",
-     Inputs => {"M","N"},
-     Outputs => {{"the coherent sheaf of homomorphisms from ", TT "M", " to ", TT "N", ""}},
-     "If ", TT "M", " or ", TT "N", " is a sheaf of rings, it is regarded as a sheaf of modules in the evident way.",
-     PARA{},
-     TT "M", " and ", TT "N", " must be coherent sheaves on the same projective variety or scheme ", TT "X", ".",
-     PARA{},
-     "The result is the sheaf associated to the graded module Hom(module M, module N).",
-     EXAMPLE lines ///
-     	  X = Proj(QQ[x,y])
-	  sheafHom(OO_X^1(2),OO_X(11)^1)
-     ///,
-     SeeAlso => {OO, sheafExt, Hom, Ext, HH, (Hom, CoherentSheaf, CoherentSheaf)}
      }
 
 -- Local Variables:

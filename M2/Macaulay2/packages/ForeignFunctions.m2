@@ -1,7 +1,25 @@
+-- ForeignFunctions package for Macaulay2
+-- Copyright (C) 2022-2024 Doug Torrance
+
+-- This program is free software; you can redistribute it and/or
+-- modify it under the terms of the GNU General Public License
+-- as published by the Free Software Foundation; either version 2
+-- of the License, or (at your option) any later version.
+
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+
+-- You should have received a copy of the GNU General Public License
+-- along with this program; if not, write to the Free Software
+-- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+-- 02110-1301, USA.
+
 newPackage("ForeignFunctions",
     Headline => "foreign function interface",
-    Version => "0.2",
-    Date => "May 13, 2023",
+    Version => "0.4",
+    Date => "October 1, 2024",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -14,6 +32,20 @@ newPackage("ForeignFunctions",
 ---------------
 
 -*
+
+0.4 (2024-10-01, M2 1.24.11)
+* remove redundant Constant methods now that it's a subclass of Number
+* further tweak macOS dlopen hack (not just ARM machines)
+* license under GPL-2+
+* significant documentation improvements (e.g., subnodes, more examples)
+* update examples to use functions from C standard library to avoid
+  build errors on systems where we're using mpfr and mps as static libraries
+
+0.3 (2024-02-08, M2 1.23)
+* add subscripted assignment for various pointer types
+* add support for GMP integers and MPFR reals
+* add support for describe, expression, toExternalString, and toString
+* use null coalescing operator
 
 0.2 (2023-05-13, M2 1.22)
 * improvements for displaying foreign objects in webapp mode
@@ -68,8 +100,10 @@ export {
     "uint",
     "long",
     "ulong",
+    "mpzT",
     "float",
     "double",
+    "mpfrT",
     "voidstar",
     "charstar",
     "voidstarstar",
@@ -116,7 +150,8 @@ importFrom_Core {
     "ffiStructAddress",
     "ffiUnionType",
     "ffiFunctionPointerAddress",
-    "registerFinalizerForPointer"
+    "registerFinalizerForPointer",
+    "toExternalFormat"
     }
 
 
@@ -136,9 +171,14 @@ Pointer - ZZ := (ptr, n) -> ptr + -n
 
 ForeignObject = new SelfInitializingType of HashTable
 ForeignObject.synonym = "foreign object"
-net ForeignObject := x -> net value x
-texMath ForeignObject := texMath @@ value
+expression ForeignObject := expression @@ value
+net ForeignObject := net @@ expression
+toString ForeignObject := toString @@ expression
+texMath ForeignObject := texMath @@ expression
 ForeignObject#AfterPrint = x -> (ForeignObject, " of type ", class x)
+
+describe ForeignObject := x -> Describe FunctionApplication(class x, value x)
+toExternalString ForeignObject := toExternalFormat @@ describe
 
 value ForeignObject := x -> error("no value function exists for ", class x)
 
@@ -149,7 +189,7 @@ address Nothing := identity
 foreignObject = method(TypicalValue => ForeignObject)
 foreignObject ForeignObject := identity
 foreignObject ZZ := n -> int n
-foreignObject Number := foreignObject Constant := x -> double x
+foreignObject Number := x -> double x
 foreignObject String := x -> charstar x
 foreignObject VisibleList := x -> (
     types := unique(class \ foreignObject \ x);
@@ -170,11 +210,10 @@ ForeignType.synonym = "foreign type"
 
 new ForeignType := T -> new ForeignType of ForeignObject
 
-net ForeignType := T -> if T.?Name then T.Name else "<<a foreign type>>"
+net ForeignType := T -> T.Name ?? "<<a foreign type>>"
 
 protect Address
-address ForeignType := T -> if T.?Address then T.Address else error(
-    toString T, " has no address")
+address ForeignType := T -> T.Address ?? error(toString T, " has no address")
 
 size ForeignType := ffiTypeSize @@ address
 
@@ -246,11 +285,11 @@ if version#"pointer size" == 4 then (
     ) else (
     long = int64;
     ulong = uint64)
+mpzT = foreignIntegerType("mpz_t", 0, true)
 
-ForeignIntegerType Number :=
-ForeignIntegerType Constant := (T, x) -> new T from truncate x
+ForeignIntegerType Number := (T, x) -> new T from truncate x
 
-isAtomic ForeignIntegerType := T -> true
+isAtomic ForeignIntegerType := T -> if T === mpzT then false else true
 
 -----------------------
 -- foreign real type --
@@ -266,17 +305,17 @@ foreignRealType(String, ZZ) := (name, bits) -> (
     T.Address = ffiRealType(bits);
     new T from RR := (T, x) -> new T from {Address => ffiRealAddress(x, bits)};
     value T := x -> ffiRealValue(address x, bits);
-    net T := x -> format(0, value x);
+    expression T := x -> expression format(0, value x);
     T)
 
 float = foreignRealType("float", 32)
 double = foreignRealType("double", 64)
+mpfrT = foreignRealType("mpfr_t", 0)
 
-ForeignRealType Number :=
-ForeignRealType Constant := (T, x) -> new T from realPart numeric x
+ForeignRealType Number := (T, x) -> new T from realPart numeric x
 ForeignRealType RRi := (T, x) -> T toRR x
 
-isAtomic ForeignRealType := T -> true
+isAtomic ForeignRealType := T -> if T === mpfrT then false else true
 
 --------------------------
 -- foreign pointer type --
@@ -336,6 +375,9 @@ foreignArrayType(String, ForeignType, ZZ) := (name, T, n) -> (
     value S := x -> for y in x list value y;
     S_ZZ := (x, i) -> dereference_T(
 	ffiPointerValue address x + size T * checkarraybounds(n, i));
+    S_ZZ = (x, i, val) -> (
+	ptr := ffiPointerValue address x + size T * checkarraybounds(n, i);
+	*ptr = T val);
     iterator S := x -> Iterator(
 	ptr := ffiPointerValue address x;
 	i := 0;
@@ -379,17 +421,20 @@ foreignPointerArrayType(String, ForeignType) := (name, T) -> (
 	Address => ffiPointerAddress(address T,
 	    append(apply(x, y -> address T y), address voidstar nullPointer))};
     value S := x -> for y in x list value y;
-    S_ZZ := (x, i) -> (
+    getptr := (x, i) -> (
 	len := 0;
 	ptr := ffiPointerValue address x;
 	while ffiPointerValue ptr =!= nullPointer
 	do (
-	    if len == i then return dereference_T ptr;
-	    len = len + 1;
-	    ptr = ptr + sz);
+	    if len == i then return ptr
+	    else (
+		len = len + 1;
+		ptr = ptr + sz));
 	if i >= 0 or i < -len then error(
 	    "array index ", i, " out of bounds 0 .. ", len - 1)
-	else dereference_T(ptr + sz * i));
+	else ptr + sz * i);
+    S_ZZ := dereference_T @@ getptr;
+    S_ZZ = (x, i, val) -> *getptr(x, i) = T val;
     iterator S := x -> Iterator(
 	ptr := ffiPointerValue address x;
 	() -> (
@@ -434,9 +479,13 @@ foreignStructType(String, VisibleList) := (name, x) -> (
 	applyPairs(types, (mbr, type) ->
 	    (mbr, value dereference_type(ptr' + offsets#mbr))));
     T_String := (y, mbr) -> dereference_(types#mbr)(address y + offsets#mbr);
+    T_String = (y, mbr, val) -> *(address y + offsets#mbr) = types#mbr val;
     T)
 
 ForeignStructType VisibleList := (T, x) -> new T from x
+ForeignStructType HashTable := (T, x) -> T apply(keys x, k -> k => x#k)
+ForeignStructType ForeignObject := lookup(
+    symbol SPACE, ForeignType, ForeignObject)
 
 isAtomic ForeignStructType := T -> T.Atomic
 
@@ -462,6 +511,7 @@ foreignUnionType(String, VisibleList) := (name, x) -> (
 	ptr := address y;
 	applyPairs(types, (mbr, type) -> (mbr, value dereference_type ptr)));
     T_String := (y, mbr) -> dereference_(types#mbr) address y;
+    T_String = (y, mbr, val) -> *address y = types#mbr val;
     T)
 
 ForeignUnionType Thing := (T, x) -> new T from {Address =>
@@ -520,15 +570,19 @@ ForeignFunctionPointerType Function := (T, f) -> new T from f
 
 SharedLibrary = new SelfInitializingType of BasicList
 SharedLibrary.synonym = "shared library"
-net SharedLibrary := lib -> lib#1
+expression SharedLibrary := lib -> expression lib#1
+net SharedLibrary := net @@ expression
+toString SharedLibrary := toString @@ expression
+texMath SharedLibrary := texMath @@ expression
 
--- on apple silicon machines, shared libraries are often in /opt/homebrew/lib,
--- but this is not in DYLD_LIBRARY_PATH, so we try there if the first call to
--- dlopen fails
+describe SharedLibrary := lib -> Describe FunctionApplication(
+    openSharedLibrary, lib#1)
+toExternalString SharedLibrary := toExternalFormat @@ describe
+
+-- on some apple systems, dlopen doesn't check for libraries installed by
+-- homebrew, so we try there if the first call to dlopen fails
 importFrom_Core {"isAbsolutePath"}
-if (version#"operating system" == "Darwin" and
-    member(version#"architecture", {"aarch64", "arm64"}))
-then (
+if version#"operating system" == "Darwin" then (
     brewPrefix := replace("\\s+$", "", get "!brew --prefix");
     dlopen' = filename -> (
 	if isAbsolutePath filename then dlopen filename
@@ -626,9 +680,10 @@ getMemory ForeignVoidType := o -> T -> error "can't allocate a void"
 
 memcpy = foreignFunction("memcpy", voidstar, {voidstar, voidstar, ulong})
 * voidstar = (ptr, val) -> (
-    if not instance(val, ForeignObject) then val = foreignObject val;
-    memcpy(ptr, address val, size class val))
-* Pointer = (ptr, val) -> value (*voidstar ptr = val)
+    val = foreignObject val;
+    memcpy(ptr, address val, size class val);
+    val)
+* Pointer = (ptr, val) -> *voidstar ptr = val
 
 ForeignType * voidstar := (T, ptr) -> T value ptr
 
@@ -643,13 +698,41 @@ doc ///
     Text
       This package provides the ability to load and call "foreign" functions
       from shared libraries and to convert back and forth between Macaulay2
-      things and the foreign objects used by these functions.
+      things and the foreign objects used by these functions.  It is powered
+      by @HREF{"https://sourceware.org/libffi/", "libffi"}@.
+
+      As a simple example, we call the @CODE "cos"@ function from the C
+      standard library, which sends a @CODE "double"@ (a real number
+      represented as a double-precision floating point number) to another
+      @CODE "double"@, the cosine of the input.
     Example
       mycos = foreignFunction("cos", double, double)
       mycos pi
       value oo
     Text
-      It is powered by @HREF{"https://sourceware.org/libffi/", "libffi"}@.
+      In this example, we created a @CODE "ForeignFunction"@ object using the
+      @TO foreignFunction@ constructor method and specified that both its
+      output and input were instances of the @TO double@ type, which is one
+      of several @TO ForeignType@ objects that are available.
+
+      See also the following additional examples:
+
+      @UL {
+	  LI {TOH "fast Fourier transform example"},
+	  LI {TOH "general linear model example"},
+	  LI {TOH "just-in-time compilation example"}
+	  }@
+  Subnodes
+    :Examples
+      "fast Fourier transform example"
+      "general linear model example"
+      "just-in-time compilation example"
+    :Types
+      ForeignFunction
+      SharedLibrary
+      ForeignType
+      ForeignObject
+      Pointer
 ///
 
 doc ///
@@ -676,6 +759,10 @@ doc ///
     Example
       ptr + 5
       ptr - 3
+  Subnodes
+    "nullPointer"
+    address
+    (symbol SPACE, ForeignType, Pointer)
 ///
 
 doc ///
@@ -710,6 +797,18 @@ doc ///
 	  LI {TT "Address", ", ", ofClass Pointer, ", a pointer to the ",
 	      "corresponding ", TT "ffi_type", " object, used by ",
 	      TO (address, ForeignType), "."}}@
+  Subnodes
+    (size, ForeignType)
+    :Subtypes
+      ForeignArrayType
+      ForeignIntegerType
+      ForeignPointerType
+      ForeignPointerArrayType
+      ForeignRealType
+      ForeignStringType
+      ForeignStructType
+      ForeignUnionType
+      ForeignVoidType
 ///
 
 doc ///
@@ -784,6 +883,7 @@ doc ///
  Key
    ForeignVoidType
    "void"
+   (symbol SPACE, ForeignVoidType, Nothing)
  Headline
    foreign void type
  Description
@@ -844,12 +944,16 @@ doc ///
       uint
       long
       ulong
+  SeeAlso
+    mpzT
+  Subnodes
+    mpzT
+    (symbol SPACE, ForeignIntegerType, Number)
 ///
 
 doc ///
   Key
     (symbol SPACE, ForeignIntegerType, Number)
-    (symbol SPACE, ForeignIntegerType, Constant)
     (NewFromMethod, int8, ZZ)
     (NewFromMethod, int16, ZZ)
     (NewFromMethod, int32, ZZ)
@@ -879,6 +983,28 @@ doc ///
 
 doc ///
   Key
+    mpzT
+    (NewFromMethod, mpzT, ZZ)
+    (value, mpzT)
+  Headline
+    GMP arbitrary-precision integer type
+  Description
+    Text
+      Macaulay2's native @TO ZZ@ integer type wraps around @TT "mpz_t"@ from
+      @HREF{"https://gmplib.org/", "GMP"}@.  This type (which is an instance
+      of @TO ForeignIntegerType@) allows for conversion between Macaulay2
+      integers and GMP integers without loss of precision.
+    Example
+      mpzT 2^100
+      value oo
+      mpzAdd = foreignFunction("__gmpz_add", void, {mpzT, mpzT, mpzT})
+      x = mpzT 0
+      mpzAdd(x, 2, 3)
+      x
+///
+
+doc ///
+  Key
     ForeignRealType
     "float"
     "double"
@@ -893,12 +1019,33 @@ doc ///
     Example
       float
       double
+  Subnodes
+    mpfrT
+    (symbol SPACE, ForeignRealType, Number)
+///
+
+doc ///
+  Key
+    mpfrT
+    (NewFromMethod, mpfrT, RR)
+    (value, mpfrT)
+  Headline
+    MPFR multiple-precision floating-point type
+  Description
+    Text
+      Macaulay2's native @TO RR@ real number type wraps around @TT
+      "mpfr_t"@ from @HREF{"https://mpfr.org/", "MPFR"}@.  This type
+      (which is an instance of @TO ForeignRealType@) allows for
+      conversion between Macaulay2 reals and MPFR reals without loss
+      of precision.
+    Example
+      mpfrT numeric(100, pi)
+      value oo
 ///
 
 doc ///
   Key
     (symbol SPACE, ForeignRealType, Number)
-    (symbol SPACE, ForeignRealType, Constant)
     (symbol SPACE, ForeignRealType, RRi)
     (NewFromMethod, float, RR)
     (NewFromMethod, double, RR)
@@ -936,6 +1083,11 @@ doc ///
       @TT "voidstar"@.
     Example
       voidstar
+  Subnodes
+    (symbol SPACE, ForeignPointerType, Pointer)
+    ((symbol *, symbol =), voidstar)
+    (symbol *, ForeignType, voidstar)
+    getMemory
 ///
 
 doc ///
@@ -971,6 +1123,8 @@ doc ///
       arrays.  There is one built-in type, @TT "charstar"@.
     Example
       charstar
+  Subnodes
+    (symbol SPACE, ForeignStringType, String)
 ///
 
 doc ///
@@ -1020,6 +1174,14 @@ doc ///
        next i
        next i
        for y in x list value y + 1
+    Text
+      They may also be modified using subscripted assignment.
+    Example
+      x_0 = 9
+      x
+  Subnodes
+    foreignArrayType
+    (symbol SPACE, ForeignArrayType, VisibleList)
 ///
 
 doc ///
@@ -1091,6 +1253,8 @@ doc ///
     voidstarstar
     (symbol _, charstarstar, ZZ)
     (symbol _, voidstarstar, ZZ)
+    ((symbol _, symbol =), charstarstar, ZZ)
+    ((symbol _, symbol =), voidstarstar, ZZ)
     (length, charstarstar)
     (length, voidstarstar)
     (iterator, charstarstar)
@@ -1126,6 +1290,14 @@ doc ///
        next i
        next i
        scan(x, print)
+    Text
+      They may also be modified using subscripted assignment.
+    Example
+      x_0 = "qux"
+      x
+  Subnodes
+    foreignPointerArrayType
+    (symbol SPACE, ForeignPointerArrayType, VisibleList)
 ///
 
 doc ///
@@ -1192,6 +1364,9 @@ doc ///
       This is the class for @wikipedia("Struct_(C_programming_language)",
       "C struct")@ types.  There are no built-in types.  They must be
       constructed using @TO "foreignStructType"@.
+  Subnodes
+    foreignStructType
+    (symbol SPACE, ForeignStructType, VisibleList)
 ///
 
 doc ///
@@ -1221,13 +1396,14 @@ doc ///
 doc ///
   Key
     (symbol SPACE, ForeignStructType, VisibleList)
+    (symbol SPACE, ForeignStructType, HashTable)
   Headline
     cast a hash table to a foreign struct
   Usage
     T x
   Inputs
     T:ForeignStructType
-    x:VisibleList -- whose elements are options
+    x:{HashTable, VisibleList}
   Outputs
     :ForeignObject
   Description
@@ -1245,6 +1421,11 @@ doc ///
     Example
       x_"foo"
       x_"bar"
+    Text
+      They may also be modified using subscripted assignment.
+    Example
+      x_"foo" = 6
+      x
 ///
 
 doc ///
@@ -1257,6 +1438,9 @@ doc ///
       This is the class for @wikipedia("Union_type", "C union")@ types.  There
       are no built-in types.  They must be  constructed using
       @TO "foreignUnionType"@.
+  Subnodes
+    foreignUnionType
+    (symbol SPACE, ForeignUnionType, Thing)
 ///
 
 doc ///
@@ -1288,6 +1472,11 @@ doc ///
       x = myunion (4 * char') append(ascii "hi!", 0)
       x_"foo"
       x_"bar"
+    Text
+      They may also be modified using subscripted assignment.
+    Example
+      x_"bar" = "ho!"
+      x
 ///
 
 doc ///
@@ -1420,6 +1609,12 @@ doc ///
       Use @TO class@ to determine the type of the object.
     Example
       class x
+  Subnodes
+    foreignObject
+    foreignSymbol
+    (value, ForeignObject)
+    (symbol SPACE, ForeignType, ForeignObject)
+    (registerFinalizer, ForeignObject, Function)
 ///
 
 doc ///
@@ -1439,9 +1634,14 @@ doc ///
     (value, uint64)
     (value, voidstar)
     (value, voidstarstar)
+    (describe, ForeignObject)
+    (expression, ForeignObject)
+    (expression, float)
+    (expression, double)
     (net, ForeignObject)
-    (net, double)
-    (net, float)
+    (texMath, ForeignObject)
+    (toExternalString, ForeignObject)
+    (toString, ForeignObject)
   Headline
     get the value of a foreign object as a Macaulay2 thing
   Usage
@@ -1485,14 +1685,14 @@ doc ///
       x = mystruct {"a" => 2, "b" => sqrt 2}
       value x
     Text
-      Note that this function is also used by @TT "net(ForeignObject)"@ for
+      Note that this function is also used by @TO describe@, @TO expression@,
+      @TO net@, @TO texMath@, @TO toExternalString@, and @TO toString@ for
       representing foreign objects.
 ///
 
 doc ///
   Key
     foreignObject
-    (foreignObject, Constant)
     (foreignObject, ForeignObject)
     (foreignObject, VisibleList)
     (foreignObject, Number)
@@ -1540,6 +1740,7 @@ doc ///
 doc ///
   Key
     (symbol SPACE, ForeignType, ForeignObject)
+    (symbol SPACE, ForeignStructType, ForeignObject)
   Headline
     cast a foreign object to the given foreign type
   Usage
@@ -1584,22 +1785,32 @@ doc ///
       finalizer = x -> (print("freeing memory at " | net x); free x)
       for i to 9 do (x := malloc 8; registerFinalizer(x, finalizer))
       collectGarbage()
+  SeeAlso
+    getMemory
 ///
 
 doc ///
   Key
     SharedLibrary
+    (describe, SharedLibrary)
+    (expression, SharedLibrary)
     (net, SharedLibrary)
+    (texMath, SharedLibrary)
+    (toExternalString, SharedLibrary)
+    (toString, SharedLibrary)
   Headline
     a shared library
   Description
     Text
       A shared library that could be used to load foreign functions.  Each
       shared library object consists of a pointer to a handle for the library
-      and a string that is used by @TT "net(SharedLibrary)"@.
+      and a string that is used by @TO describe@, @TO expression@, @TO net@,
+      @TO texMath@, @TO toExternalString@, and @TO toString@.
     Example
       mpfr = openSharedLibrary "mpfr"
       peek mpfr
+  Subnodes
+    openSharedLibrary
 ///
 
 doc ///
@@ -1657,18 +1868,12 @@ doc ///
     Text
       Load a function contained in a shared library using the C function
       @TT "dlsym"@ and declare its signature.
-    Example
-      mpfr = openSharedLibrary "mpfr"
-      mpfrVersion = foreignFunction(mpfr, "mpfr_get_version", charstar, void)
-      mpfrVersion()
-    Text
       The library may be omitted if it is already loaded, e.g., for functions
       in the C standard library or libraries that Macaulay2 is already linked
-      against.  For example, since Macaulay2 uses @TT "mpfr"@ for its
-      arbitrary precision real numbers, the above example may be simplified.
+      against.
     Example
-      mpfrVersion = foreignFunction("mpfr_get_version", charstar, void)
-      mpfrVersion()
+      mycos = foreignFunction("cos", double, double)
+      mycos pi
     Text
       If a function takes multiple arguments, then provide these argument
       types using a list.
@@ -1701,7 +1906,7 @@ doc ///
     Text
       If the foreign function allocates any memory, then register a finalizer
       for its outputs to deallocate the memory during garbage collection using
-      @TT "registerFinalizer"@.
+      @TO (registerFinalizer, ForeignObject, Function)@.
     Example
       malloc = foreignFunction("malloc", voidstar, ulong)
       free = foreignFunction("free", void, voidstar)
@@ -1729,15 +1934,10 @@ doc ///
     Text
       This function is a wrapper around the C function @TT "dlsym"@.  It
       loads a symbol from a shared library using the specified foreign type.
-    Example
-      mps = openSharedLibrary "mps"
-      cplxT = foreignStructType("cplx_t", {"r" => double, "i" => double})
-      foreignSymbol(mps, "cplx_i", cplxT)
-    Text
       If the shared library is already linked against Macaulay2, then it may
       be omitted.
     Example
-      foreignSymbol("cplx_i", cplxT)
+      foreignSymbol("errno", int)
 ///
 
 doc ///
@@ -1774,6 +1974,8 @@ doc ///
       should be set will be determined automatically.
     Example
       ptr = getMemory int
+  SeeAlso
+    (registerFinalizer, ForeignObject, Function)
 ///
 
 doc ///
@@ -1828,6 +2030,310 @@ doc ///
       allocated.  Otherwise, segmentation faults may occur!
 ///
 
+doc ///
+  Key
+    "fast Fourier transform example"
+  Headline
+    fast Fourier transforms using foreign function calls to the FFTW library
+  Description
+    Text
+      In this example, we make foreign function calls using the
+      @HREF{"https://www.fftw.org/", "FFTW"}@ library to compute fast Fourier
+      transforms for polynomial multiplication.
+
+      Once FFTW is installed, there should be a file named @CODE "libfftw3.so"@
+      or @CODE "libfftw3.dylib"@ available on the system in one of the standard
+      shared library directories.  We can then open the library using
+      @TO openSharedLibrary@.
+    CannedExample
+      i2 : libfftw = openSharedLibrary "fftw3"
+
+      o2 = fftw3
+
+      o2 : SharedLibrary
+    Text
+      Next, we create our foreign functions using the constructor method
+      @TO foreignFunction@.  We will need three: one to wrap
+      @CODE "fftw_plan_dft_1d"@, which creates the plan for a fast Fourier
+      transform computation, one to wrap @CODE "fftw_execute"@, which actually
+      does the computation, and one to wrap @CODE "fftw_destroy_plan"@,
+      which deallocates the memory allocated by @CODE "fftw_plan_dft_1d"@.
+
+      Let's walk through each of these.
+
+      According to the FFTW documentation, @CODE "fftw_plan_dft_1d"@ has the
+      following signature: @CODE "fftw_plan fftw_plan_dft_1d(int n0,
+      fftw_complex *in, fftw_complex *out, int sign, unsigned flags)"@.
+      Our goal is to compute the discrete Fourier transform
+      $\mathscr F\{\mathbf a\}$ of a vector $\mathbf a\in\CC^n$.  In this case,
+      @CODE "n0"@ will be $n$, @CODE "in"@ will be $\mathbf a$ represented as
+      an array of $2n$ @TO double@ objects (alternating between real and
+      imaginary parts), @CODE "out"@ will be an array ultimately containing
+      $\mathscr F\{\mathbf a\}$, @CODE "sign"@ will be 1 unless we want to
+      compute the inverse discrete Fourier transform
+      $\mathscr F^{-1}\{\mathbf a\}$, in which case it will be $-1$.  Finally,
+      @CODE "flags"@ will contain planning flags for the computation.  When
+      setting up our foreign function objects, we won't worry about the
+      structures of the @CODE "fftw_plan"@ or @CODE "fftw_complex"@ types and
+      will just use @TO voidstar@ to indicate that they are pointers.
+    CannedExample
+      i3 : fftwPlanDft1d = foreignFunction(libfftw, "fftw_plan_dft_1d", voidstar,
+               {int, voidstar, voidstar, int, uint})
+
+      o3 = fftw3::fftw_plan_dft_1d
+
+      o3 : ForeignFunction
+    Text
+      Next, we define foreign functions for @CODE "fftw_execute"@, which has
+      signature @CODE "void fftw_execute(const fftw_plan plan)"@, and
+      @CODE "fftw_destroy_plan"@, which has signature
+      @CODE "void fftw_destroy_plan(fftw_plan plan)"@.
+    CannedExample
+      i4 : fftwExecute = foreignFunction(libfftw, "fftw_execute", void, voidstar)
+
+      o4 = fftw3::fftw_execute
+
+      o4 : ForeignFunction
+
+      i5 : fftwDestroyPlan = foreignFunction(libfftw, "fftw_destroy_plan", void, voidstar)
+
+      o5 = fftw3::fftw_destroy_plan
+
+      o5 : ForeignFunction
+    Text
+      Now we wrap these functions inside Macaulay2 functions.  Since
+      computing $\mathscr F\{\mathbf a\}$ and $\mathscr F^{-1}\{\mathbf a\}$
+      using FFTW requires only changing the @CODE "sign"@ parameter of the
+      call to @CODE "fftw_plan_dft_1d"@, we create a helper function that
+      will do most of the work.
+
+      This helper function takes a list @CODE "x"@ representing the vector
+      $\mathbf a$ as well as the value of @CODE "sign"@, allocates the
+      memory required for the @CODE "in"@ and @CODE "out"@ lists using
+      @TO getMemory@, and then calls the foreign function
+      @CODE "fftwPlanDft1d"@.  Note that we pass 64 as the value of
+      @CODE "flags"@.  This specifies the @CODE "FFTW_ESTIMATE"@ planning
+      flag, which uses a simple heuristic to quickly pick a plan for the
+      computation.  We then call
+      @TO (registerFinalizer, ForeignObject, Function)@ to make sure
+      that the @CODE "fftw_plan"@ object that was returned is properly
+      deallocated during garbage collection.  Next, we set up the @CODE "in"@
+      array by finding the real and imaginary parts of the elements of
+      @CODE "x"@ and assigning them using @TO ((symbol *, symbol =), voidstar)@.
+      Finally, we call @CODE "fftw_execute"@ and convert the result back
+      to a list of complex numbers.
+    CannedExample
+      i6 : fftHelper = (x, sign) -> (
+               n := #x;
+               inptr := getMemory(2 * n * size double);
+               outptr := getMemory(2 * n * size double);
+               p := fftwPlanDft1d(n, inptr, outptr, sign, 64);
+               registerFinalizer(p, fftwDestroyPlan);
+               dbls := splice apply(x, y -> (realPart numeric y, imaginaryPart numeric y));
+               apply(2 * n, i -> *(value inptr + i * size double) = double dbls#i);
+               fftwExecute p;
+               r := ((2 * n) * double) outptr;
+               apply(n, i -> value r_(2 * i) + ii * value r_(2 * i + 1)));
+
+      i7 : fastFourierTransform = method();
+
+      i8 : fastFourierTransform List := x -> fftHelper(x, -1);
+
+      i9 : inverseFastFourierTransform = method();
+
+      i10 : inverseFastFourierTransform List := x -> fftHelper(x, 1);
+    Text
+      One application of fast Fourier transforms is log-linear time
+      multiplication of polynomials.  Indeed, if $f,g\in\CC[x]$ have degrees
+      $m$ and $n$, respectively, and if $\mathbf a,\mathbf b\in\CC^{m+n+1}$ are
+      the vectors formed by taking $a_i$ to be the coefficient of $x^i$ in $f$
+      and $b_i$ the coefficient of $x_i$ in $g$, then
+      $\frac{1}{m+n+1}\mathscr F^{-1}\left\{\mathscr F\{\mathbf a\}\cdot
+      \mathscr F\{\mathbf b\}\right\}$, where $\mathscr F\{\mathbf a\}\cdot
+      \mathscr F\{\mathbf b\}$ is computed using component-wise multiplication,
+      contains the coefficients of the product $fg$.  In some cases, this process
+      can be faster than Macaulay2's native polynomial multiplication.
+
+      Let's look at a particular example.
+    CannedExample
+      i11 : fftMultiply = (f, g) -> (
+                m := first degree f;
+                n := first degree g;
+                a := fastFourierTransform splice append(
+                    apply(m + 1, i -> coefficient(x^i, f)), n:0);
+                b := fastFourierTransform splice append(
+                    apply(n + 1, i -> coefficient(x^i, g)), m:0);
+                c := inverseFastFourierTransform apply(a, b, times);
+                sum(m + n + 1, i -> c#i * x^i)/(m + n + 1));
+
+      i12 : R = CC[x];
+
+      i13 : f = x - 1;
+
+      i14 : g = x^2 + x + 1;
+
+      i15 : fftMultiply(f, g)
+
+             3
+      o15 = x  - 1
+
+      o15 : R
+///
+
+doc ///
+  Key
+    "general linear model example"
+  Headline
+    constrained least squares using foreign function calls to the LAPACK library
+  Description
+    Text
+      In this example, we make foreign function calls to
+      @HREF{"https://www.netlib.org/lapack/", "LAPACK"}@ to solve constrained
+      least squares problems. LAPACK is already used by Macaulay2 for a number
+      of its linear algebra computations, but some functions aren't available.
+
+      One of these is @CODE "dggglm"@, which solves constrained least squares
+      problems that have applications to general Gauss-Markov linear models in
+      statistics.  In particular, suppose $A$ is an $n\times m$ real matrix,
+      $B$ is an $n\times p$ real matrix, and $\mathbf d$ is a vector in
+      $\RR^n$.  We would like to find the vectors $\mathbf x\in\RR^m$ and
+      $\mathbf y\in\RR^p$ that minimize $\|\mathbf y\|$ subject to the
+      constraint $\mathbf d = A\mathbf x + B\mathbf y$.
+
+      The @CODE "dggglm"@ function does exactly this.  Its signature is
+      @CODE "void dggglm_(int *n, int *m, int *p, double *A, int *ldA,
+      double *B, int *ldB, double *d, double *x, double *y, double *work,
+      int *lwork, int *info)"@.  Note the trailing underscore that was
+      added by the Fortran compiler.  Each of the 13 arguments are pointers,
+      so we use @TO voidstar@ to represent them in our call to
+      @TO foreignFunction@.  Since Macaulay2 is already linked against LAPACK,
+      we don't need to worry about calling @TO openSharedLibrary@.
+    Example
+      dggglm = foreignFunction("dggglm_", void, toList(13:voidstar))
+    Text
+      The parameters @CODE "n"@, @CODE "m"@ and @CODE "p"@ are exactly the
+      numbers $n$, $m$, and $p$ above.  The parameters @CODE "A"@, @CODE "B"@,
+      and @CODE "d"@ are arrays that will store the entries of $A$, $B$, and
+      $\mathbf d$.  LAPACK expects these to be in column-major order, in
+      contrast to the row-major order used by Macaulay2.  So we add
+      helper methods to take care of this conversion.  The local variable
+      @CODE "T"@ is a @TO ForeignArrayType@ created by
+      @TO (symbol *, ZZ, ForeignType)@.
+    Example
+      toLAPACK = method();
+      toLAPACK Matrix := A -> (
+          T := (numRows A * numColumns A) * double;
+          T flatten entries transpose A);
+      toLAPACK Vector := toLAPACK @@ matrix;
+    Text
+      The parameters @CODE "ldA"@ and @CODE "ldB"@ are the "leading dimensions"
+      of the arrays @CODE "A"@ and @CODE "B"@.  We will use $n$ for both.  The
+      arrays @CODE "x"@ and @CODE "y"@ will store the solutions.  The array
+      @CODE "work"@ has dimension @CODE "lwork"@ (for which we will use $n + m
+      + p$) that the procedure will use as a workspace.  Finally, @CODE "info"@
+      stores the return value (0 on success).
+
+      The following method prepares matrices $A$ and $B$ and a vector
+      $\mathbf d$ to be sent to the foreign function we created above, and then
+      converts the solutions into a sequence two of Macaulay2 vectors.  Note
+      that we use @TO getMemory@ to allocate memory for @CODE "x"@, @CODE "y"@,
+      and @CODE "info"@ (which we name @CODE "i"@ here to avoid conflicting
+      with @TO info@) and @TO address@ to get pointers to the other integer
+      arguments.  We also use @TO (symbol *, ForeignType, voidstar)@ to
+      dereference @CODE "i"@ and determine whether the call was successful.
+    Example
+      generalLinearModel= method();
+      generalLinearModel(Matrix, Matrix, Vector) := (A, B, d) -> (
+          if numRows A != numRows B
+          then error "expected first two arguments to have the same number of rows";
+          n := numRows A;
+          m := numColumns A;
+          p := numColumns B;
+          x := getMemory(m * size double);
+          y := getMemory(p * size double);
+          lwork := n + m + p;
+          work := getMemory(lwork * size double);
+          i := getMemory int;
+          dggglm(address int n, address int m, address int p, toLAPACK A,
+              address int n, toLAPACK B, address int n, toLAPACK d, x, y, work,
+              address int lwork, i);
+          if value(int * i) != 0 then error("call to dggglm failed");
+          (vector value (m * double) x, vector value (p * double) y));
+    Text
+      Finally, let's call this method and solve a constrained least squares
+      problem.  This example is from
+      @HREF{"https://doi.org/10.1080/01621459.1981.10477694",
+	  "Kourouklis, S., & Paige, \"A Constrained Least Squares Approach to
+	  the General Gauss-Markov Linear Model\""}@.
+    Example
+      A = matrix {{1, 2, 3}, {4, 1, 2}, {5, 6, 7}, {3, 4, 6}};
+      B = matrix {{1, 0, 0, 0}, {2, 3, 0, 0}, {4, 5, 1e-5, 0}, {7, 8, 9, 10}};
+      d = vector {1, 2, 3, 4};
+      generalLinearModel(A, B, d)
+///
+
+doc ///
+  Key
+    "just-in-time compilation example"
+  Headline
+    using foreign function calls for computing Fibonacci numbers using JIT
+  Description
+    Text
+      Macaulay2's language is interpreted, which means that in general programs
+      will run more slowly than programs written in a compiled language like C.
+      If the speed of a compiled language is desirable, then one option is
+      @wikipedia "just-in-time compilation"@ (JIT), where we compile some code
+      at runtime.
+
+      As an example, let's suppose that we would like to compute Fibonacci
+      numbers using the recursive definition, i.e., for all nonnegative
+      $n\in\ZZ$, $F_n = n$ if $n < 2$ and $F_n = F_{n-2} + F_{n-1}$ otherwise.
+      As an algorithm, this is horribly inefficient and has exponential running
+      time, but it will be useful to illustrate our point.
+
+      We will write two functions.  One will be a straight Macaulay2
+      implementation:
+    CannedExample
+      i2 : fibonacci1 = n -> if n < 2 then n else fibonacci1(n - 1) + fibonacci1(n - 2);
+    Text
+      The next will be a function that creates a C source file, compiles it
+      into a shared library using @HREF{"https://gcc.gnu.org/", "GCC"}@, opens
+      that library using @TO openSharedLibrary@, calls @TO foreignFunction@ to
+      create a foreign function, calls that foreign function, and then converts
+      the output back into a Macaulay2 integer using @TO(value, ForeignObject)@.
+    CannedExample
+      i3 : fibonacci2 = n -> (
+               dir := temporaryFileName();
+               makeDirectory dir;
+               dir | "/libfib.c" << ////int fibonacci2(int n)
+           {
+               if (n < 2)
+                   return n;
+               else
+                   return fibonacci2(n - 1) + fibonacci2(n - 2);
+           }
+           //// << close;
+               run("gcc -c -fPIC " | dir | "/libfib.c -o " | dir | "/libfib.o");
+               run("gcc -shared " | dir | "/libfib.o -o " | dir | "/libfib.so");
+               lib := openSharedLibrary("libfib", FileName => dir | "/libfib.so");
+               f = foreignFunction(lib, "fibonacci2", int, int);
+               value f n);
+    Text
+      Now let's run both functions to compare the results.
+    CannedExample
+      i4 : peek elapsedTiming fibonacci1 35
+
+      o4 = Time{10.0202, 9227465}
+
+      i5 : peek elapsedTiming fibonacci2 35
+
+      o5 = Time{.0958821, 9227465}
+    Text
+      As we can see, despite the additional overhead of creating a shared
+      library and making a foreign function call, the function that used JIT was
+      significantly faster.
+///
+
 TEST ///
 -----------
 -- value --
@@ -1859,10 +2365,12 @@ longexp = 8 * version#"pointer size"
 assert Equation(value ulong(2^longexp - 1), 2^longexp - 1)
 assert Equation(value long(2^(longexp - 1) - 1), 2^(longexp - 1) - 1)
 assert Equation(value long(-2^(longexp - 1)), -2^(longexp - 1))
+assert Equation(value mpzT 10^100, 10^100)
 
 -- real types
 assert Equation(value float 3.14159, 3.14159p24)
 assert Equation(value double 3.14159, 3.14159p53)
+assert Equation(value mpfrT 3.14159p100, 3.14159p100)
 
 -- pointer types
 ptr = address int 3
@@ -1881,25 +2389,35 @@ ptr = address x
 assert Equation(value intarray3 ptr, {1, 2, 3})
 assert Equation(value x_0, 1)
 assert Equation(value x_(-1), 3)
+x_0 = 5
+assert Equation(value x, {5, 2, 3})
 ptrarray = 3 * voidstar
 x = ptrarray {address int 1, address int 2, address int 3}
 assert Equation(for ptr in x list value (int * ptr), {1, 2, 3})
+x_0 = address int 5
+assert Equation(for ptr in x list value (int * ptr), {5, 2, 3})
 x = charstarstar {"foo", "bar", "baz"}
 assert Equation(length x, 3)
 assert Equation(value x, {"foo", "bar", "baz"})
 assert Equation(value x_0, "foo")
 assert Equation(value x_(-1), "baz")
+x_0 = "qux"
+assert Equation(value x, {"qux", "bar", "baz"})
 x = voidstarstar {address int 1, address int 2, address int 3, address int 4}
 assert Equation(length x, 4)
 assert Equation(value \ for ptr in x list (int * ptr), {1, 2, 3, 4})
 assert Equation(value (int * x_0), 1)
 assert Equation(value (int * x_(-1)), 4)
+x_0 = address int 5
+assert Equation(value \ for ptr in x list (int * ptr), {5, 2, 3, 4})
 int3star = foreignPointerArrayType(3 * int)
 x = int3star {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}}
 assert Equation(length x, 4)
 assert Equation(value x, {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}})
 assert Equation(value x_0, {1, 2, 3})
 assert Equation(value x_(-1), {10, 11, 12})
+x_0 = {13, 14, 15}
+assert Equation(value x, {{13, 14, 15}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}})
 
 -- struct types
 teststructtype = foreignStructType("foo",
@@ -1910,6 +2428,9 @@ assert Equation(value x_"a", 1)
 assert Equation(value x_"b", 2.0)
 assert Equation(value x_"c", "foo")
 assert Equation(value (int * x_"d"), 4)
+x_"a" = 5
+assert Equation(value x_"a", 5)
+assert BinaryOperation(symbol ===, teststructtype x, x)
 
 -- union types
 testuniontype = foreignUnionType("bar", {"a" => float, "b" => uint32})
@@ -1917,6 +2438,10 @@ x = testuniontype float 1
 assert instance(value x, HashTable)
 assert Equation(value x_"a", 1)
 assert Equation(value x_"b", 0x3f800000)
+x_"a" = 2
+assert Equation(value x_"a", 2)
+x_"b" = 3
+assert Equation(value x_"b", 3)
 y = testuniontype uint32 0xc0000000
 assert Equation(value y_"a", -2)
 assert Equation(value y_"b", 0xc0000000)
@@ -2036,4 +2561,31 @@ ptr = getMemory foo
 *ptr = foo {"a" => 5, "b" => pi, "c" => "Hello, world!"}
 assert BinaryOperation(symbol ===, value (foo * ptr),
     hashTable{"a" => 5, "b" => numeric pi, "c" => "Hello, world!"})
+///
+
+TEST ///
+-- describe/toExternalString
+x = int 5
+assert Equation(value value describe x, 5)
+assert Equation(value value toExternalString x, 5)
+x = charstar "foo"
+assert Equation(value value describe x, "foo")
+assert Equation(value value toExternalString x, "foo")
+int3 = 3 * int
+x = int3 {1, 2, 3}
+assert Equation(value value describe x, {1, 2, 3})
+assert Equation(value value toExternalString x, {1, 2, 3})
+x = charstarstar {"foo", "bar", "baz"}
+assert Equation(value value describe x, {"foo", "bar", "baz"})
+assert Equation(value value toExternalString x, {"foo", "bar", "baz"})
+foo = foreignStructType("foo", {"a" => int, "b" => double, "c" => charstar})
+x = foo {"a" => 5, "b" => pi, "c" => "Hello, world!"}
+assert BinaryOperation(symbol ===, value value describe x,
+    hashTable{"a" => 5, "b" => numeric pi, "c" => "Hello, world!"})
+assert BinaryOperation(symbol ===, value value toExternalString x,
+    hashTable{"a" => 5, "b" => numeric pi, "c" => "Hello, world!"})
+
+mpfi = openSharedLibrary "mpfi"
+assert instance(value describe mpfi, SharedLibrary)
+assert instance(value toExternalString mpfi, SharedLibrary)
 ///

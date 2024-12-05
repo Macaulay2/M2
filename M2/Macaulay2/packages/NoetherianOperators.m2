@@ -20,11 +20,25 @@ newPackage(
     PackageImports => {"PrimaryDecomposition"},
     AuxiliaryFiles => false,
     DebuggingMode => false,
-    Keywords => {"Numerical Algebraic Geometry", "Commutative Algebra"}
-)
+    Keywords => {"Numerical Algebraic Geometry", "Commutative Algebra"},
+    Certification => {
+	 "journal name" => "The Journal of Software for Algebra and Geometry",
+	 "journal URI" => "https://msp.org/jsag/",
+	 "article title" => "Noetherian operators in Macaulay2",
+	 "acceptance date" => "26 September 2022",
+	 "published article URI" => "https://msp.org/jsag/2022/12-1/p05.xhtml",
+	 "published article DOI" => "10.2140/jsag.2022.12.33",
+	 "published code URI" => "https://msp.org/jsag/2022/12-1/jsag-v12-n1-x05-NoetherianOperators.m2",
+	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/NoetherianOperators.m2",
+	 "release at publication" => "28faaabb38111c186c23ef6e6a3d487b0823390e",	    -- git commit number in hex
+	 "version at publication" => "2.2.1",
+	 "volume number" => "12",
+	 "volume URI" => "https://msp.org/jsag/2022/12-1/"
+	 }
+     )
 
 debug NumericalLinearAlgebra
-
+     
 export {
     "truncatedDual",
     "zeroDimensionalDual",
@@ -1672,7 +1686,7 @@ polynomialAnn = (F') -> (
     ideal mingens ideal (allMons * mingens ker coeffs)        
 )
 
--- computes the annilihator of a vector space V of polynomials
+-- computes the annihilator of a vector space V of polynomials
 -- typically one expects that V is close under differentiation
 -- Input: a list which is a basis of V. Output: the ideal annihilator.
 vectorAnn = (V) -> (
@@ -1769,7 +1783,7 @@ polynomialVectorAnn = (F) -> (
     (mons, coeffs) := coefficients diffMat;
     image mingens image (allMons * mingens ker coeffs)        
 )
--- computes the annilihator of a vector space V of polynomials
+-- computes the annihilator of a vector space V of polynomials
 vectorSpaceAnn = (W) -> (
     intersect(apply(W / matrix, F -> polynomialVectorAnn(F)))      
 )

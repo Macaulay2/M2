@@ -20,7 +20,7 @@
 --          todo list of degree,level includes multi-degrees: maybe?  (heftdeg, multidegree, level).
 -- 2. Allow inhomogeneous input
 -- 3. Allow modules to be input (several related tests below failing)
---   how: 2,3 are closeely related: need better monomial order support.
+--   how: 2,3 are closely related: need better monomial order support.
 --   TODO:
 --      (a) try using the monomial order in input matrix.
 --      (b) sorting a set of monomials at a specific level:
@@ -159,6 +159,21 @@ TEST ///
   I = ideal(a-d, b+13*a)
   B1 = betti res I
   C = res(ideal(I_*), FastNonminimal => true)
+  assert(B1 == betti C)
+  B1 = betti res (ideal(I_*), LengthLimit=>7)
+  B2 = betti res(ideal(I_*), FastNonminimal => true, LengthLimit=>7)
+  assert(B1 == B2)
+  assert(C.dd^2 == 0)
+///
+
+TEST ///
+  -- nonminimal resolution.
+  -- test linear ideal in exterior algebra
+  R = ZZ/101[a..d, SkewCommutative=>true]
+  I = ideal(a-d, b+13*a)
+  B1 = betti res I
+  C = res(ideal(I_*), FastNonminimal => true, LengthLimit => 5)
+  C.dd^2
   assert(B1 == betti C)
   B1 = betti res (ideal(I_*), LengthLimit=>7)
   B2 = betti res(ideal(I_*), FastNonminimal => true, LengthLimit=>7)

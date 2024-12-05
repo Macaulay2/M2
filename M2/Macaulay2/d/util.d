@@ -207,6 +207,7 @@ export toExpr(h:int32_t):Expr := Expr(ZZcell(toInteger(h)));
 export toExpr(h:uint32_t):Expr := Expr(ZZcell(toInteger(h)));
 export toExpr(h:int64_t):Expr := Expr(ZZcell(toInteger(h)));
 export toExpr(h:uint64_t):Expr := Expr(ZZcell(toInteger(h)));
+export toExpr(h:hash_t):Expr := Expr(ZZcell(toInteger(h)));
 export toExpr(s:string):Expr := Expr(stringCell(s));
 export emptyString := toExpr("");
 export toExpr(x:ZZ):Expr := Expr(ZZcell(x));

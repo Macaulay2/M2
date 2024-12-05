@@ -5,7 +5,7 @@ needs "max.m2"
 needs "methods.m2"
 needs "nets.m2"
 
-Constant = new Type of BasicList
+Constant = new Type of Number
 globalAssignment Constant
 
 precedence = method(Dispatch => Thing)
@@ -446,8 +446,12 @@ scan(assocList, opClass -> (
 	if opClass#?unit then (
 	    installMethod(opClass#operator,Expression,opClass#unit,(x,y) -> x);
 	    installMethod(opClass#operator,opClass#unit,Expression,(x,y) -> y);
+	    installMethod(opClass#operator,opClass,opClass#unit,(x,y) -> x);
+	    installMethod(opClass#operator,opClass#unit,opClass,(x,y) -> y);
 	    )
 ))
+ZeroExpression * Expression := (x,y) -> x
+Expression * ZeroExpression := (x,y) -> y
        - ZeroExpression     := identity
 	   - Minus          := x -> expression x#0
            - Expression     := x -> new Minus from {x}
@@ -472,6 +476,7 @@ expression ZZ := i -> (
      else if i < 0 then new Minus from { -i }
      else hold i
      )
+OneExpression ^ Expression :=
 Holder     ^ OneExpression :=
 Expression ^ OneExpression := (x,y) -> x
 Holder     ^ ZeroExpression :=
@@ -552,6 +557,7 @@ matrixOpts := m -> ( -- helper function
     )
 expressionValue MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
+    if #m === 0 then return map(ZZ^0,ZZ^0,0); -- not great but best one can do
     m = (if opts.MutableMatrix then mutableMatrix else matrix) applyTable(m,expressionValue);
     -- TODO: keep track of blocks too
     if opts.Degrees === null then m else (
@@ -566,7 +572,7 @@ toString'(Function, MatrixExpression) := (fmt,x) -> concatenate(
 -----------------------------------------------------------------------------
 VectorExpression = new HeaderType of Expression
 VectorExpression.synonym = "vector expression"
-expressionValue VectorExpression := x -> vector apply(toList x,expressionValue)
+expressionValue VectorExpression := x -> if #x===0 then vector(map(ZZ^0,ZZ^1,0)) else vector apply(toList x,expressionValue)
 toString'(Function,VectorExpression) := (fmt,v) -> concatenate(
      "vector {",
      between(", ",apply(toList v,fmt)),
@@ -580,45 +586,6 @@ toString'(Function, Table) := (fmt,m) -> concatenate(
      between(", ",apply(toList m,row->("{", between(", ",apply(row,fmt)), "}"))),
      "}" )
 -----------------------------------------------------------------------------
-
--- TODO: move this to latex.m2
-keywordTexMath = new HashTable from { -- both unary and binary keywords
-    symbol |- => "\\vdash ",
-    symbol .. => "\\,{.}{.}\\, ",
-    symbol ..< => "\\,{.}{.}{<}\\, ",
-    symbol <= => "\\le ",
-    symbol >= => "\\ge ",
-    symbol => => "\\Rightarrow ",
-    symbol ==> => "\\Longrightarrow ",
-    symbol <== => "\\Longleftarrow ",
-    symbol <==> => "\\Longleftrightarrow ",
-    symbol ** => "\\otimes ",
-    symbol ++ => "\\oplus ",
-    symbol != => "\\ne ",
-    symbol -> => "\\rightarrow ",
-    symbol <- => "\\leftarrow ",
-    symbol ===> => "{\\large\\Longrightarrow}",
-    symbol <=== => "{\\large\\Longleftarrow}",
-    symbol << => "\\ll ",
-    symbol >> => "\\gg ",
-    symbol ~ => "\\sim ",
-    symbol ^** => "{}^{\\otimes}", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
-    symbol _ => "\\_ ",
-    symbol { => "\\{ ",
-    symbol } => "\\} ",
-    symbol \ => "\\backslash ",
-    symbol \\ => "\\backslash\\backslash ",
-    symbol # => "\\#",
-    symbol #? => "\\#?",
-    symbol % => "\\%",
-    symbol & => "\\&",
-    symbol ^ => "\\wedge",
-    symbol ^^ => "\\wedge\\wedge",
-    symbol <| => "\\langle",
-    symbol |> => "\\rangle",
-    symbol _* => "{}_*", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
-    symbol ^* => "{}^*" -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
-    }
 
 BinaryOperation = new HeaderType of Expression -- {op,left,right}
 BinaryOperation.synonym = "binary operation expression"
@@ -835,7 +802,7 @@ net Sum := v -> (
 		    then bigParenthesize net v#i
 		    else      	   	 net v#i))))
 
-isNumber = method(TypicalValue => Boolean)
+isNumber = method(Dispatch => Thing, TypicalValue => Boolean)
 isNumber Thing := i -> false
 isNumber RR :=
 isNumber QQ := -- QQ never appears in an expression...
@@ -1079,28 +1046,22 @@ html Product := v -> (
      )
 *-
 
-texMath Power := v -> if v#1 === 1 or v#1 === ONE then texMath v#0 else (
+texMathSuperscript := v -> (
     p := precedence v;
     x := texMath v#0;
     y := texMath v#1;
-    if precedence v#0 <  p then x = "\\left(" | x | "\\right)";
+    if precedence v#0 < p or class v#0 === Superscript or class v#0 === Power then x = "\\left(" | x | "\\right)"; -- precedence of double superscript
     concatenate(x,"^{",y,"}") -- no braces around x
-    )
-
-texMath Superscript := v -> if v#1 === moduleZERO then "0" else (
-    p := precedence v;
-    x := texMath v#0;
-    y := texMath v#1;
-    if precedence v#0 <  p then x = "\\left(" | x | "\\right)";
-    concatenate(x,"^{",y,"}") -- no braces around x
-    )
+)
+texMath Power := v -> if v#1 === 1 or v#1 === ONE then texMath v#0 else texMathSuperscript v
+texMath Superscript := v -> if v#1 === moduleZERO then "0" else texMathSuperscript v
 
 texMath Subscript := v -> (
      p := precedence v;
      x := texMath v#0;
      y := if class v#1 === Sequence then demark(",", apply(v#1,texMath)) else texMath v#1; -- no () for sequences
      if precedence v#0 <  p or class v#0 === Subscript then x = "\\left(" | x | "\\right)"; -- precedence or double subscript
-     concatenate(x,"_{",y,"}") -- no braces around x
+     concatenate(x,"_{",y,"}",if class v#0===Symbol and last toString v#0=="'" then "{}") -- no braces around x
      )
 
 -*
@@ -1143,6 +1104,7 @@ texMath SparseMonomialVectorExpression := v -> (
      )
 
 texMath Table := m -> (
+    if any(m, x-> not instance(x,VisibleList)) then m = apply(m, x -> {x});
     if m#?0 then concatenate(
 	"\\begin{array}{", #m#0: "c", "}", newline,
 	between(///\\/// | newline, apply(toList m, row -> between("&",apply(row,texMath)))),
@@ -1173,7 +1135,7 @@ texMath MatrixExpression := x -> (
 		 between("&",m#i),
 		 if i<#m-1 then "\\\\", -- sadly, LaTeX *requires* no final \\
 		 newline,
-		 if blk then (j=j+1; if h<#opts.Blocks#0-1 and j == opts.Blocks#0#h then (j=0; h=h+1; "\\hline\n"))
+		 if blk then (j += 1; if h<#opts.Blocks#0-1 and j == opts.Blocks#0#h then (j=0; h=h+1; "\\hline\n"))
 		 )),
 	"\\end{array}\\!",
 	"\\right)"
@@ -1181,7 +1143,8 @@ texMath MatrixExpression := x -> (
 )
 
 texMath VectorExpression := v -> (
-    concatenate(
+    if all(v,i->class i===ZeroExpression) then "0"
+    else concatenate(
 	"\\left(",
 	"\\!\\begin{array}{c}",
 	newline,
@@ -1268,12 +1231,6 @@ net Option := net @@ expression
 texMath Option := texMath @@ expression
 toString Option := toString @@ expression
 
-SheafExpression = new WrapperType of Expression;
-toString'(Function, SheafExpression) := (fmt,x) -> toString'(fmt,new FunctionApplication from { sheaf, x#0 })
-net SheafExpression := x -> net x#0
-texMath SheafExpression := x -> texMath x#0
-expressionValue SheafExpression := x -> sheaf expressionValue x#0
-
 moduleZERO = new ZeroExpression from { 0, Module }
 
 -- note that one can't have a symbol <---
@@ -1282,12 +1239,12 @@ toString'(Function, MapExpression) := (fmt,x) -> toString'(fmt,new FunctionAppli
 lineOnTop := (s) -> concatenate(width s : "-") || s
 net MapExpression := x-> if #x>2 then horizontalJoin(net x#0, " <--",
 		    lineOnTop net x#2,
-		    "-- ", net x#1) else net x#0 | " <--- " | net x#1
+		    "-- ", net x#1) else net x#0 | " <-- " | net x#1
 texMath MapExpression := x -> texMath x#0 | "\\," | (if #x>2 then "\\xleftarrow{" | texMath x#2 | "}" else "\\longleftarrow ") | "\\," | texMath x#1
 expressionValue MapExpression := x -> map toSequence apply(x,expressionValue)
 
 -- moved from set.m2 because of loadsequence order
-expression Set := x -> Adjacent {set, expression (sortByName keys x)}
+expression Set := x -> Adjacent {set, expression keys x}
 toString Set := toString @@ expression
 net Set := net @@ expression
 texMath Set := texMath @@ expression

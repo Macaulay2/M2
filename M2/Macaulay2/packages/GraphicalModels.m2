@@ -60,16 +60,17 @@ newPackage(
      PackageImports => { "IntegralClosure", "Elimination" },
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
-	  "journal URI" => "http://j-sag.org/",
+	  "journal URI" => "https://msp.org/jsag/",
 	  "article title" => "Graphical Models",
 	  "acceptance date" => "2013-03-05",
-	  "published article URI" => "http://j-sag.org/Volume5/jsag-1-2013.pdf",
-	  "published code URI" => "http://j-sag.org/Volume5/GraphicalModels.m2",
-	  "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/GraphicalModels.m2",
+	  "published article URI" => "https://msp.org/jsag/2013/5-1/p01.xhtml",
+	  "published article DOI" => "10.2140/jsag.2013.5.1",
+	  "published code URI" => "https://msp.org/jsag/2013/5-1/jsag-v5-n1-x01-code.zip",
+	  "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/GraphicalModels.m2",
 	  "release at publication" => "68f41d641fadb0a1054023432eb60177f1d7cbd9",
 	  "version at publication" => "1.0",
 	  "volume number" => "5",
-	  "volume URI" => "http://j-sag.org/Volume5/"
+	  "volume URI" => "https://msp.org/jsag/2013/5-1/"
 	  },
      DebuggingMode => false
      )
@@ -329,7 +330,7 @@ normalizeStmt = (D) -> (
      {D0#0, D0#1, D1}
      )
 
-minimize = (Ds) -> (
+minimizeStmts = (Ds) -> (
      -- each element of Ds should be a list {A,B,C}
      answer := {};
      -- step 1: first make the first two elements of each set a set
@@ -367,7 +368,7 @@ removeRedundants = (Ds) -> (
 	       a := Ds_i;
 	       D0 := drop(Ds,{i,i});
 	       all(D0, b -> not test1(a,b))));
-     minimize(Ds_c))
+     minimizeStmts(Ds_c))
 
 
 

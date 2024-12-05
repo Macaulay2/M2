@@ -1,0 +1,15 @@
+HOMEPAGE = https://eigen.tuxfamily.org/
+VERSION = 3.4.0
+URL = https://gitlab.com/libeigen/eigen/-/archive/$(VERSION)
+TARFILE = eigen-$(VERSION).tar.gz
+LICENSEFILES = COPYING.* README.md
+
+CONFIGURECMD = true
+BUILDCMD = true
+INSTALLCMD = $(MKDIR_P) $(LIBRARIESDIR)/include &&        \
+	cp -r Eigen $(LIBRARIESDIR)/include &&            \
+	$(MKDIR_P) $(LIBRARIESDIR)/include/unsupported && \
+	cp -r unsupported/Eigen $(LIBRARIESDIR)/include/unsupported
+
+include ../Makefile.library
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/eigen/Makefile

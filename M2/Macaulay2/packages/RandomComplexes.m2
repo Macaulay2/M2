@@ -194,7 +194,7 @@ randomSimplicialComplex(ZZ,ZZ):= (k,n) -> (
    N:=#sets-k-2;
    I:=monomialIdeal apply(apply(n,i->sets_(random(N)+k+2)),s->product(s,i->x_i));
    c:=simplicialComplex I;
-   CQ:=chainComplex c; 
+   CQ:=chainComplex complex c; 
    C:=(chainComplex apply(length CQ-1,i->lift(CQ.dd_(i+1),ZZ)))
    )
 
@@ -1038,6 +1038,10 @@ apply(5,i->hilbertFunction(i,Rp/Ip))
 A=Rp/(Ip+ideal random(1,Rp))
 apply(5,i->hilbertFunction(i,A))
 /// 
+
+-- the following example refers to example files that don't exist,
+-- and removed undocumented features of res.
+///
 restart
 needsPackage "SVDComplexes"
 needsPackage "AGRExamples"

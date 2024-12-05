@@ -6,7 +6,7 @@
 export { 
     "isOn",
     "sample", 
-    "union", -- aka "|"
+    --"union", -- aka "|"
     "removeRedundantComponents"
     }
 
@@ -22,7 +22,8 @@ polySystem WitnessSet := W->if W.cache.?SolutionSystem then W.cache.SolutionSyst
     	)
 
 check WitnessSet := o -> W -> for p in W.Points do 
-if residual(polySystem(equations polySystem W | slice W), p) > 1000*DEFAULT.Tolerance then error "check failed" --!!!
+if residual(polySystem(equations polySystem W | slice W), p) > 1000*DEFAULT.Tolerance
+then error "check failed" -- !!! should we check this differently: e.g., Newton method convergence?
 
 randomSlice = method()
 randomSlice (ZZ,ZZ,Ring) := (d,n,C) -> (randomUnitaryMatrix n)^(toList(0..d-1)) | random(C^d,C^1)   
@@ -257,10 +258,8 @@ isSubset(WitnessSet,NumericalVariety) := (W,V) -> any(components V, W'->isSubset
 isSubset(NumericalVariety,NumericalVariety) := (A,B) -> all(components A, W->isSubset(W,B)) 
 NumericalVariety == NumericalVariety := (A,B) -> isSubset(A,B) and isSubset(B,A)
 
-union = method()
-union (NumericalVariety, NumericalVariety) := (A,B) -> new NumericalVariety from 
-  merge(new HashTable from A, new HashTable from B,(a,b)->a|b)
-NumericalVariety | NumericalVariety := union
+union(NumericalVariety, NumericalVariety) :=
+NumericalVariety | NumericalVariety := NumericalVariety => (A, B) -> merge(A, B, (a,b) -> a|b)
 
 removeRedundantComponents = method(Options=>{Tolerance=>null})
 removeRedundantComponents NumericalVariety := o -> V -> (

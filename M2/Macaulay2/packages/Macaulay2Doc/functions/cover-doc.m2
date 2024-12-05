@@ -9,6 +9,7 @@ document {
 
 document {
      Key => {(cover,Matrix)},
+     Headline => "get the map between the covering free modules",
      Usage => "cover f",
      Inputs => {"f"},
      Outputs => {{"the corresponding map of free modules between the covers of the source and target of ", TT "f" }},
@@ -16,7 +17,7 @@ document {
      }
 
 document {
-     Key => {(cover,Module),(cover, CoherentSheaf),(cover, GradedModule)},
+     Key => {(cover, Module), (cover, GradedModule)},
      Usage => "F = cover M",
      Inputs => {"M"},
      Outputs => {"F" => {"the free module whose basis elements correspond to the generators of ", TT "M", "."}},

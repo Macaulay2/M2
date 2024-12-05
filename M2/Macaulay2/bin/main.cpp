@@ -14,7 +14,6 @@
 
 #include <gdbm.h>
 #include <mpfr.h>
-#include <readline/readline.h>
 
 #include <boost/stacktrace.hpp>
 #include <atomic>
@@ -24,6 +23,7 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <flint/flint.h> // for flint_set_abort
 
 #ifdef WITH_MPI
 #include <mpi.h>
@@ -59,6 +59,14 @@ bool interrupts_interruptShield;
 void* interpFunc(ArgCell* vargs);
 void* profFunc(ArgCell* p);
 void* testFunc(ArgCell* p);
+void  M2_flint_abort(void);
+
+static void * GC_start_performance_measurement_0(void *) {
+#ifdef GC_start_performance_measurement /* added in bdwgc 8 */
+  GC_start_performance_measurement();
+#endif
+  return NULL;
+}
 
 int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[])
 {
@@ -85,6 +93,14 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
   while (env[++envc] != NULL) { /* iterate over environ until you hit NULL */ }
 
   GC_INIT();
+  size_t heap_size = GC_get_heap_size(),
+	 min_heap_size = 150'000'000 + getMaxAllowableThreads() * 8'000'000;
+		// each thread is currently started with 8 MB of stack space
+  if (heap_size < min_heap_size)
+    GC_expand_hp(min_heap_size - heap_size);
+  GC_call_with_alloc_lock(GC_start_performance_measurement_0, NULL);
+    // record total time of (full) gcs for GCstats()
+
   IM2_initialize();
 
 #ifndef NDEBUG
@@ -93,15 +109,12 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
 
   system_cpuTime_init();
 
-#ifdef WITH_PYTHON
-  Py_Initialize();
-#endif
-
   abort_jmp.is_set = FALSE;
   interrupt_jmp.is_set = FALSE;
 
   signal(SIGPIPE,SIG_IGN); /* ignore the broken pipe signal */
-  rl_catch_signals = FALSE; /* tell readline not to catch signals, such as SIGINT */
+
+  flint_set_abort(M2_flint_abort);
 
   static struct ArgCell* M2_vargs;
   M2_vargs = (ArgCell*) GC_MALLOC_UNCOLLECTABLE(sizeof(struct ArgCell));
@@ -145,6 +158,11 @@ void stack_trace(std::ostream &stream, bool M2) {
     stream << boost::stacktrace::stacktrace();
     stream << "-- end stack trace *-" << std::endl;
   }
+}
+
+void M2_flint_abort(void) {
+  stack_trace(std::cerr, false);
+  abort();
 }
 
 extern "C" {

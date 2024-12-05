@@ -36,11 +36,19 @@ document {
      
      SUBSECTION "by its entries",
        "Using the function ", TO "matrix", " is the most basic method 
-       for inputting a matrix.  The entries are typed in by rows.",
+       for inputting a matrix.  The entries are typed in by rows as a doubly
+       nested list of ring elements.",
        EXAMPLE {
 	    "R = ZZ/5[s..z];",
 	    "M = matrix {{ x^2+y, z^3}, {y^3-z,3*z-6*x-5*y}}"
 	    },
+       "One way to construct a doubly nested
+       list of ring elements is with the ", TO "table", " command.",
+       EXAMPLE {
+	   "table(3,3,(i,j) -> R_i^j)",
+	   "p = matrix oo",
+	   "q = matrix table(3,3,(i,j) -> R_j^i)",
+	   },
 
      SUBSECTION "by a function",  
        "The function ", TO map, " can be used to construct 
@@ -137,15 +145,46 @@ document {
        TO "target", " command to obtain the target of the 
        linear transformation ", TT "f", ".",
        EXAMPLE {
-	    "target f"
+	    "M = target f"
 	    },     
+      "Free modules are actually graded free modules, with the same sort
+      of grading that the ring comes with.  The degrees of the basis vectors
+      of the target are always zero.",
+      EXAMPLE {
+	  "degree M_0",
+	  "degree M_1",
+	  },
 
      SUBSECTION "source",
        "Likewise, to obtain the source of our linear transformation,
        use the ", TO "source", " command.",
        EXAMPLE {
-	    "source f"
+	    "N = source f"
 	    },
+       "If possible, the degrees of the basis vectors of the source are set so
+       that the map ", TT "f", " turns out to a homogeneous map of degree zero.
+       This opportunism is important because certain algorithms will run faster
+       on homogeneous maps.",
+       EXAMPLE {
+	   "degree N_0",
+	   "degree N_1",
+	   "degree N_2",
+	   "degree N_3",
+	   "isHomogeneous f",
+	   },
+      "A list of the degrees of all the basis vectors can be obtained with
+      ", TO "degrees", ".",
+      EXAMPLE "degrees N",
+      "It may happen that the matrix can not be made homogeneous.  In that
+      case, the degree of a basis vector is currently set to the degree of the
+      largest monomial occurring in the corresponding column of the matrix.  In
+      a future version of the program it might be more sensible to set
+      the degrees of the basis vectors all to zero.",
+      EXAMPLE {
+	  "g = matrix {{x,0,y*z},{y^2,x^2,0}}",
+	  "isHomogeneous g",
+	  "degrees source g",
+	  },
 
      SUBSECTION "number of rows or columns",
        "Use ", TO "numgens", " to obtain the rank of a free module. Combining 
@@ -201,6 +240,10 @@ document {
 	    },
        "The matrices in question must have the same number of rows 
        and columns and also must have the same ring.",
+       PARA{},
+       "Scalars are converted to scalar matrices when necessary.",
+       EXAMPLE "matrix {{1, 2}, {3, 4}} + 5",
+       "This is also true for the other arithmetic operations discussed below.",
 
      SUBSECTION "-",
        "To subtract two matrices, use the ", TO "-", " operator.",
@@ -218,6 +261,35 @@ document {
 	    "gg = matrix {{g,h},{i,j},{k,l}}",
 	    "ff * gg"
 	    },
+       "Suppose we multiply a homogeneous polynomial by a homogeneous matrix.
+       The result ought to be homogeneous, but how can we arrange that?  Scalar
+       multiplication should not change the source or target of a map!  Instead,
+       we introduce one final complication: each matrix records a degree of its own,
+       which is normally zero, and is used when deciding whether the matrix is
+       homogeneous.",
+       EXAMPLE {
+	   "R = ZZ/101[x,y,z];",
+	   "degree matrix {{x^10}}",
+	   "f = matrix {{x,0,y*z},{0,y^2,x^2}};",
+	   "degree f",
+	   },
+       "Multiplying a matrix by a homogeneous polynomial adds the degree of
+       the polynomial to the degree of the map.",
+       EXAMPLE {
+	   "h = x^10 * f",
+	   "degree h",
+	   "degrees source h",
+	   "isHomogeneous h",
+	   },
+       "If you don't like this, you have an alternative.  The degree of a tensor
+       product of two matrices is the sum of the degrees, and its source module is
+       the tensor product of the source modules.",
+       EXAMPLE {
+	   "h = x^10 ** f",
+	   "degree h",
+	   "degrees source h",
+	   "isHomogeneous h"
+	   },
 
      SUBSECTION "^",
        "To raise a square matrix to a power, use the ", TO "^", " operator.",
@@ -275,6 +347,7 @@ document {
        ff ** gg : K ** M  ---> L ** N
        ///,
        EXAMPLE {
+	    "R = ZZ/17[a..l];",
 	    "ff = matrix {{a,b,c},{d,e,f}}",
 	    "gg = matrix {{g,h},{i,j},{k,l}}",
 	    "ff ** gg"
@@ -318,8 +391,16 @@ document {
        matrix function that row entry must have 3 entries.",
 
      SUBSECTION "direct sum of matrices as maps between modules", 
-       "++"
-     }
+       "Use ", TO symbol ++, " to find the direct sum of two matrices.",
+       EXAMPLE {
+	   "R = ZZ/101[x,y,z];",
+	   "p = matrix table(3,3,(i,j) -> R_i^j)",
+	   "q = matrix table(3,3,(i,j) -> R_j^i)",
+	   "r=p++q"
+	   },
+       "The components of a direct sum can be recovered later.",
+       EXAMPLE "components r"
+       }
 
 -*
 -- Mike wanted this: 
@@ -350,10 +431,30 @@ document {
      "The command ", TO2(determinant, "det"), " can be used to compute the determinant of
      a square matrix.",
      EXAMPLE {
-	  "R = ZZ[a..d];",
-	  "f = matrix{{a,b},{c,d}}",
-	  "det f"
-	  },      
+	  "R = ZZ[a..i];",
+	  "det matrix{{a,b},{c,d}}"
+	  },
+     "Macaulay2 can use three different algorithms to compute determinants:
+     the ", TO "Cofactor", " method, which expands a determinant using the standard cofactor
+     approach, and ", TO "Bareiss", " which uses a fraction-free variant of Gaussian elimination
+     to compute a determinant. The ", TO "Dynamic", " algorithm implements a version of cofactor
+     expansion, with caching of intermediate results. The algorithm to use may be chosen using the optional ",
+     TO "Strategy", " argument:",
+     EXAMPLE {
+	 "m = matrix{{0,a,b},{a+b,a,d},{e,f,g}}",
+	 "det(m, Strategy => Cofactor)",
+	 "minors(2,m, Strategy => Bareiss)",
+	 "exteriorPower(2,m, Strategy => Dynamic)",
+	 },
+     "One warning is in order here: the Bareiss algorithm requires division in the base ring,
+     and so can yield the INCORRECT answer if the base ring contains zero divisors.  However,
+     the Bareiss algorithm is often dramatically faster than the cofactor method, unless the
+     matrix is particularly sparse.  Consequently, the default strategy for rings which are fields or are
+     not quotients of polynomial rings is ", TO "Bareiss", ", while the default for quotients of polynomial
+     rings that are not (declared to be) fields is ", TO "Cofactor", ".",
+     " The ", TO "Dynamic", " algorithm can sometimes also result in significant speedups compared to ", TO "Cofactor",
+     " and ", TO "Bareiss", ", at the cost of a slight memory overhead.",
+     PARA{},
      "The command ", TO "minors", " can be used to construct the ideal 
      generated by the ", TT "n", " by ", TT "n", " minors of a matrix. 
      Recall that the ", TT "n", " by ", TT "n", " minors of a matrix are 
@@ -363,7 +464,17 @@ document {
 	  "R = QQ[x,y,z];",
 	  "f = matrix{{x,y,z},{y,z,x^2}}",
 	  "I = minors(2,f)"
-	  }
+	  },
+     "Sometimes finer control is needed when one is computing the ideal of minors of a larger
+     matrix.  Compute the ideal of some determinants using ", TO "minors", " with optional
+     arguments as in",
+     EXAMPLE {
+	 "R = ZZ[a..i];",
+	 "M = genericMatrix(R,a,3,3);",
+	 "minors(2,M,First => {{0,1},{1,2}}, Limit => 3)"
+	 },
+     "The argument to the optional argument ", TO "First", " is the list of row and column positions
+     to use for the first minor.  Starting at this first minor, we then compute three minors."
      }
 
 document {
@@ -385,6 +496,14 @@ document {
      TT "2", 
      " minor (the determinant of a ", TT "2", " by ", TT "2", " submatrix) 
      of the matrix ", TT "ff", ".",
+     PARA{},
+     "The signs are chosen so that this operation commutes with multiplication:",
+     EXAMPLE {
+	 "S = QQ[x_(1,1) .. x_(3,5), y_(1,1) .. y_(5,4)]",
+	 "M = transpose genericMatrix(S,x_(1,1),5,3)",
+	 "N = transpose genericMatrix(S,y_(1,1),4,5)",
+	 "exteriorPower(3,M*N) == exteriorPower(3,M) * exteriorPower(3,N)"
+	 },
      SeeAlso => "exterior power of a module"
      }
 

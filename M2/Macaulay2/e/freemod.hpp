@@ -50,7 +50,6 @@ class FreeModule : public EngineObject
 
  public:
   const Ring *get_ring() const { return R; }
-  const Monoid *degree_monoid() const { return R->degree_monoid(); }
   const SchreyerOrder *get_schreyer_order() const { return schreyer; }
   const_monomial degree(int i) const { return components[i]; }
   int rank() const { return components.size(); }

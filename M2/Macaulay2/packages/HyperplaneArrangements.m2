@@ -3348,7 +3348,7 @@ doc ///
 	    @HREF("https://arxiv.org/abs/math/9912212", "arXiv:math/9912212")@,
 	    as well as Sheaf Algorithms Using the Exterior Algebra, 
 	    by Wolfram Decker and David Eisenbud, in 
-	    @HREF("https://faculty.math.illinois.edu/Macaulay2/Book/",
+	    @HREF("https://macaulay2.com/Book/",
 		    "Computations in algebraic geometry with Macaulay 2")@,
 		 Algorithms and Computations in Mathematics, Springer-Verlag, 
 		 Berlin, 2001.

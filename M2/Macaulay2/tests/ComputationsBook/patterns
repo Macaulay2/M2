@@ -4,7 +4,7 @@
 # s//\n/
 
 # wipe out execution timing results
-s/-- used [0-9.][0-9.e-]* seconds/-- used XXX seconds/g
+s/-- used [0-9.][0-9.e-]* *s.*/-- used XXX seconds/g
 s/-- [0-9.][0-9.e-]* seconds/-- XXX seconds/g
 
 # Wipe out source code line numbers, which may change.  The format used by "code" may also change.
@@ -36,3 +36,6 @@ s/\$\([[:alpha:]]\)/\1/g
 /^--changing factory characteristic \(back \)\{0,1\}from [0-9][0-9]* to [0-9][0-9]*$/d
 /^--setting factory rational mode \(back \)\{0,1\}on$/d
 /^--setting factory rational mode \(back \)\{0,1\}off$/d
+
+# GC warnings
+/GC Warning:.*/d

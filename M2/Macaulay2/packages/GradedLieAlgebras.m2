@@ -19,13 +19,13 @@ newPackage(
 	Headline => "computations in graded Lie algebras",
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "Software for doing computations in graded Lie algebras",
 	     "acceptance date" => "28 August 2020",
 	     "published article URI" => "https://msp.org/jsag/2021/11-1/p02.xhtml",
              "published article DOI" => "10.2140/jsag.2021.11.9",
 	     "published code URI" => "",
-     	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/GradedLieAlgebras.m2",
+     	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/GradedLieAlgebras.m2",
 	     "release at publication" => "f0a30a45ffbd70f81cc7b5dece281162b4919fdf",	    -- git commit number in hex
 	     "version at publication" => "3.0",
 	     "volume number" => "11",
@@ -2787,7 +2787,8 @@ basToMat(ZZ,List,LieAlgebra):=(d,m,L)->(
 basToMat(ZZ,ZZ,List,LieAlgebra):=(d,j,m,L)->(
     if m==={} or L#cache.dim#d==0 then matrix{{0_(L#Field)}} else 
           (
-       	    idm:=entries (basis((L#Field)^(dim(d,j,L))));
+	F := L#Field;
+	idm := entries basis(F^(dim(d,j,L)), Variables => F_*);
        	    transpose matrix apply(m, x->if x==0 then 
                	flatten table(1,dim(d,j,L),x->0_(L#Field)) 
 	       	else sum(

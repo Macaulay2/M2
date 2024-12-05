@@ -12,23 +12,26 @@ function gfxInitData(el) {
 }
 
 // auto-rotation button
-window.gfxToggleRotation = function(event) {
+window.gfxToggleRotation = function(event,flag) {
     //    this.blur();
-    //    var svgel=document.getElementById(svgid);
-    //    if (!svgel) return;
     var el = event.currentTarget;
     var svgel = el.ownerSVGElement;
+    while (!el.classList.contains("gfxauto")) el=el.parentElement;
+    if (el.svgel) return; // shouldn't happen
     if (!svgel.gfxdata) gfxInitData(svgel);
     if (!el.ondblclick) el.ondblclick= function(event) { event.stopPropagation(); }; // weak
     
     if (!svgel.gfxdata.cmatrix) svgel.gfxdata.cmatrix = new Matrix(1);
-    if (el.classList.contains("active")) {
+    if (flag===undefined) flag=!el.classList.contains("active"); // if no flag, toggle state
+    if (!flag) {
 	clearInterval(el.intervalId);
 	el.classList.remove("active");
+	svgel.pauseAnimations(); // for SVG style animate
     }
     else
     {
 	el.classList.add("active");
+	svgel.unpauseAnimations(); // for SVG style animate
 	el.intervalId=setInterval(() => {
 	    if ((!svgel)||(!document.body.contains(svgel))) {
 		svgel=null; // for garbage collecting
@@ -407,14 +410,14 @@ function gfxReorder(el) {
     }
 }
 
-function gNode(nd) {
+function gNode(nd,vec) {
     if (nd instanceof HTMLCollection) { // we're in trouble -- id used multiple times
 	i=0;
 	while (i<nd.length && !currentEl.contains(nd[i])) i++;
 	if (i<nd.length) nd=nd[i]; else return; // shouldn't happen
     }
     return function(cmat) {
-	return nd.gfxdata.cmatrix.vectmultiply([0,0,0,1]); // TODO optimize
+	return nd.gfxdata.cmatrix.vectmultiply(vec?vec:[0,0,0,1]); // TODO optimize
     }
 }
 

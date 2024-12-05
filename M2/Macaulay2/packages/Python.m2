@@ -5,8 +5,8 @@ this does not work unless M2 is compiled --with-python
 pythonPresent := Core#"private dictionary"#?"pythonRunString"
 
 newPackage("Python",
-    Version => "0.5",
-    Date => "May 13, 2023",
+    Version => "0.6",
+    Date => "January 28, 2024",
     Headline => "interface to Python",
     Authors => {
 	{Name => "Daniel R. Grayson",
@@ -15,6 +15,7 @@ newPackage("Python",
 	{Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
+    Keywords => {"Interfaces"},
     AuxiliaryFiles => true,
     CacheExampleOutput => true,
     OptionalComponentsPresent => pythonPresent
@@ -26,8 +27,18 @@ newPackage("Python",
 
 -*
 
-0.5 (2023-05-13, M2 1.22)
+0.6 (2024-01-28, M2 1.23)
+* add expression, net, texMath, describe, and toExternalString methods
+* move initialization of python from M2 startup to package load time
+* update int <-> ZZ conversion for python 3.12
+* use a constant hash for None
+* add support for augmented assignment
+* add support for null coalescing operator
+
+0.5 (2023-05-18, M2 1.22)
 * improvements for displaying python objects in webapp mode
+* switch member -> isMember
+* add keyword
 
 0.4 (2022-10-31, M2 1.21)
 * fix bug involving hash codes for unhashtable types
@@ -66,18 +77,19 @@ exportFrom_Core {
     "objectType"}
 
 importFrom_Core {
-    "getPythonNone",
     "pythonComplexFromDoubles",
     "pythonDictNew",
     "pythonDictSetItem",
     "pythonFalse",
     "pythonImportImportModule",
+    "pythonInitialize",
     "pythonListNew",
     "pythonListSetItem",
     "pythonLongAsLong",
     "pythonLongFromLong",
     "pythonFloatAsDouble",
     "pythonFloatFromDouble",
+    "pythonNone",
     "pythonObjectGetAttrString",
     "pythonObjectHasAttrString",
     "pythonObjectRichCompareBool",
@@ -90,7 +102,8 @@ importFrom_Core {
     "pythonTupleNew",
     "pythonUnicodeAsUTF8",
     "pythonUnicodeFromString",
-    "pythonWrapM2Function"
+    "pythonWrapM2Function",
+    "toExternalFormat"
 }
 
 export { "pythonHelp", "context", "Preprocessor", "toPython",
@@ -107,17 +120,24 @@ export { "pythonHelp", "context", "Preprocessor", "toPython",
 
 exportMutable { "val", "eval", "valuestring", "stmt", "expr", "dict", "symbols", "stmtexpr"}
 
+pythonInitialize()
+
 pythonHelp = Command (() -> pythonValue ///help()///)
 
-toString PythonObject := pythonUnicodeAsUTF8 @@ pythonObjectStr
+expression PythonObject := expression @@ pythonUnicodeAsUTF8 @@ pythonObjectStr
+toString PythonObject := toString @@ expression
+net PythonObject := net @@ expression
+texMath PythonObject := texMath @@ expression
+
+describe PythonObject := x -> Describe FunctionApplication(pythonValue,
+    expression x@@"__repr__"())
+toExternalString PythonObject := toExternalFormat @@ describe
 
 PythonObject.synonym = "python object"
 PythonObject#AfterPrint = x -> (
      t := toString objectType x;
      t = replace("<([a-z]+) '(.*)'>"," of \\1 \\2",t);
      (PythonObject, t))
-
-pythonNone = getPythonNone()
 
 pythonValue = method(Dispatch => Thing)
 pythonValue String := s -> (
@@ -185,8 +205,8 @@ toFunction = method()
 toFunction PythonObject := x -> y -> (
     p := partition(a -> instance(a, Option),
 	if instance(y, Sequence) then y else 1:y);
-    args := toPython if p#?false then p#false else ();
-    kwargs := toPython hashTable if p#?true then toList p#true else {};
+    args := toPython(p#false ?? ());
+    kwargs := toPython hashTable (toList p#true ?? {});
     if debugLevel > 0 then printerr(
 	"callable: " | toString x    ||
 	"args: "     | toString args ||
@@ -200,7 +220,7 @@ addPyToM2Function(String, Function, String) := (type, f, desc) ->
     addPyToM2Function({type}, f, desc)
 addPyToM2Function(List, Function, String) := (types, f, desc) ->
     addHook((value, PythonObject),
-	x -> if member(toString (objectType x)@@"__name__", types) then f x,
+	x -> if isMember(toString (objectType x)@@"__name__", types) then f x,
 	Strategy => desc)
 
 addHook((value, PythonObject),
@@ -285,10 +305,31 @@ scan({
 	)
     )
 
+scan({
+	(symbol +=, "iadd"),
+	(symbol -=, "isub"),
+	(symbol *=, "imul"),
+	(symbol @=, "imatmul"),
+	(symbol /=, "itruediv"),
+	(symbol //=, "ifloordiv"),
+	(symbol %=, "imod"),
+	(symbol ^=, "ipow"),
+	(symbol <<=, "ilshift"),
+	(symbol >>=, "irshift"),
+	(symbol &=, "iand"),
+	(symbol |=, "ior"),
+	(symbol ^^=, "ixor")},
+    (op, name) -> installMethod(op, PythonObject, (x, y) -> (
+	    m := "__" | name | "__";
+	    if hasattr(x, m) then x@@m y
+	    else Default)))
+
 -PythonObject := o -> o@@"__neg__"()
 +PythonObject := o -> o@@"__pos__"()
 abs PythonObject := o -> o@@"__abs__"()
 PythonObject~ := o -> o@@"__invert__"()
+
+?? PythonObject := x -> if x != pythonNone then x
 
 PythonObject Thing := (o, x) -> (toFunction o) x
 
@@ -320,8 +361,8 @@ setattr(PythonObject, String, Thing) := (x, y, e) ->
     pythonObjectSetAttrString(x, y, toPython e)
 PythonObject @@ Thing = (x, y, e) -> setattr(x, toString y, e)
 
-member(Thing,        PythonObject) := (x, y) -> false
-member(PythonObject, PythonObject) := (x, y) -> value y@@"__contains__" x
+isMember(Thing,        PythonObject) := (x, y) -> false
+isMember(PythonObject, PythonObject) := (x, y) -> value y@@"__contains__" x
 
 quotientRemainder(PythonObject, PythonObject) := (x, y) -> (
     qr := x@@"__divmod__" y;
@@ -555,7 +596,7 @@ TEST ///
 -- issue #2315
 rand = import "random"
 L = toPython {1, 2, 3}
-assert member(value rand@@choice L, {1, 2, 3})
+assert isMember(value rand@@choice L, {1, 2, 3})
 assert Equation(L + L, toPython {1, 2, 3, 1, 2, 3})
 ///
 
@@ -592,9 +633,9 @@ assert Equation(abs toPython(-3), 3)
 assert Equation((toPython 5)~, -6)
 
 -- __contains__
-assert member(toPython 3, toPython {1, 2, 3})
-assert not member(toPython 4, toPython {1, 2, 3})
-assert not member(3, toPython {1, 2, 3})
+assert isMember(toPython 3, toPython {1, 2, 3})
+assert not isMember(toPython 4, toPython {1, 2, 3})
+assert not isMember(3, toPython {1, 2, 3})
 
 -- divmod
 assert Equation(quotientRemainder(toPython 1234, toPython 456), (2, 322))
@@ -634,6 +675,55 @@ assert Equation(value pythonValue "10**100", 10^100)
 assert Equation(value pythonValue "-10**100", -10^100)
 ///
 
+TEST ///
+-- describe
+assert instance(describe toPython 5, Describe)
+checkDescribe = x -> assert BinaryOperation(symbol ===,
+    value value describe toPython x, x)
+checkDescribe true
+checkDescribe 5
+checkDescribe 3.14159
+checkDescribe (1 + 2*ii)
+checkDescribe "foo"
+checkDescribe (1, 3, 5, 7, 9)
+checkDescribe {1, 3, 5, 7, 9}
+checkDescribe set {1, 3, 5, 7, 9}
+checkDescribe hashTable {"a" => 1, "b" => 2, "c" => 3}
+checkDescribe null
+
+-- toExternalString
+assert instance(toExternalString toPython 5, String)
+checkToExternalString = x -> assert BinaryOperation(symbol ===,
+    value value toExternalString toPython x, x)
+checkToExternalString true
+checkToExternalString 5
+checkToExternalString 3.14159
+checkToExternalString (1 + 2*ii)
+checkToExternalString "foo"
+checkToExternalString (1, 3, 5, 7, 9)
+checkToExternalString {1, 3, 5, 7, 9}
+checkToExternalString set {1, 3, 5, 7, 9}
+checkToExternalString hashTable {"a" => 1, "b" => 2, "c" => 3}
+checkToExternalString null
+///
+
+TEST ///
+-- augmented assignment
+-- if x is a list, then x += y should modify x directly, i.e., its
+-- hash shouldn't change, unlike x = x + y, which would create a new list
+x = toPython {1, 2, 3}
+oldhash = hash x
+x += {4}
+assert Equation(hash x, oldhash)
+///
+
+TEST ///
+-- null coalescing operator
+x = toPython null
+y = toPython 2
+assert Equation(x ?? y, y)
+assert Equation(y ?? x, y)
+///
 
 -- not part of default testsuite since it requires numpy
 ///

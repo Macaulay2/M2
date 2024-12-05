@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 704393788
+-- -*- M2-comint -*- hash: 1503209601929851452
 
 i1 : R = QQ[x,y,z]
 
@@ -21,7 +21,7 @@ o3 : NumericalVariety
 
 i4 : S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
 
-o4 = {{-1.10806e-63-6.72876e-63*ii, 7.72046e-63-5.95645e-64*ii, .397346+.0700853*ii}}
+o4 = {{2.64468e-59+1.83949e-59*ii, -1.0877e-60+3.37583e-59*ii, .261246+.146018*ii}}
 
 o4 : VerticalList
 
@@ -33,11 +33,11 @@ o5 : List
 
 i6 : peek oo_0 --then list position
 
-o6 = WitnessSet{cache => CacheTable{...3...}                                                              }
+o6 = WitnessSet{cache => CacheTable{...3...}                                                            }
                 Equations => {-3} | x3+xy2+xz2-x |
                              {-3} | x2y+y3+yz2-y |
-                Points => {{-1.10806e-63-6.72876e-63*ii, 7.72046e-63-5.95645e-64*ii, .397346+.0700853*ii}}
-                Slice => | -1.51179-2.7846ii -.654837-3.31013ii 4.905-1.2379ii -2.03574+.148105ii |
+                Points => {{2.64468e-59+1.83949e-59*ii, -1.0877e-60+3.37583e-59*ii, .261246+.146018*ii}}
+                Slice => | .073883+1.51329ii 1.3836+.186588ii -2.02193+.757676ii .638855+.0972991ii |
 
 i7 : PD=primaryDecomposition( ideal F)
 

@@ -11,13 +11,13 @@ newPackage( "Divisor",
      PackageImports => { "IntegralClosure", "RationalMaps" },
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
-	  "journal URI" => "http://j-sag.org/",
+	  "journal URI" => "https://msp.org/jsag/",
 	  "article title" => "Divisor Package for Macaulay2",
 	  "acceptance date" => "31 August 2018",
 	  "published article URI" => "https://msp.org/jsag/2018/8-1/p09.xhtml",
 	  "published article DOI" => "10.2140/jsag.2018.8.87",
 	  "published code URI" => "https://msp.org/jsag/2018/8-1/jsag-v8-n1-x09-Divisor.m2",
-	  "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Divisor.m2",
+	  "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Divisor.m2",
 	  "release at publication" => "0e40b423ff375d6eb0a98d6fbbe7be8b2db95a98",	    -- git commit number in hex
 	  "version at publication" => "0.3",
 	  "volume number" => "8",
@@ -49,7 +49,7 @@ export{
 	"toQWeilDivisor", --added checks
 	"toRWeilDivisor", --added checks
     --divisors to modules and functorial properties
-	"pullback", --added checks
+	--"pullback", --added checks
 	"findElementOfDegree", --added checks
 	"getLinearDiophantineSolution",		--added checks --has Safe option
 	"canonicalDivisor", --added checks --has IsGraded option
@@ -68,20 +68,20 @@ export{
     "nonCartierLocus", --added checks, has IsGraded option, cached
     "isSNC", --added checks, has IsGraded option, cached
     "isZeroDivisor", --added checks
-    "isVeryAmple", --added checks, 
+    --"isVeryAmple", --added checks,
     --functions for getting maps to projective space from divisors (graded only)
 	"baseLocus", --added checks
 	"mapToProjectiveSpace", --added checks
     --general useful functions not directly related to divisors
     "idealPower", --added checks
     "reflexify", --added checks
-	"isReflexive", --added checks
+	--"isReflexive", --added checks
 	"reflexivePower", --added checks
 	"torsionSubmodule", --added checks
 	"dualize", --added checks
 	"embedAsIdeal", --added checks, has IsGraded option
 	"isDomain", --added checks
-	"isSmooth", --added checks, has IsGraded option
+	--"isSmooth", --added checks, has IsGraded option
     --options
     "Safe", --an option, if set true then the above commands avoid doing any checks
 	"CoefficientType", --an option, one can set the coefficient type
@@ -932,9 +932,7 @@ ideal( RWeilDivisor ) := Ideal=> (D) ->
 --Give a ring map f: R -> S for which we assume is finite or flat, we want to construct its pullback from Div X to Div Y
 --where Div X = Spec S and Div Y = Spec R.  If the map is neither finite or flat, then this method can produce unexpected results unless the divisor is Cartier (which the function checks for).  
 
-pullback = method(Options => {Strategy => Primes});
-
-pullback(RingMap, RWeilDivisor) := BasicDivisor => o->(f, D) ->
+pullback(RingMap, RWeilDivisor) := BasicDivisor => {Strategy => Primes} >> o -> (f, D) ->
 (		
 	if ( not (ring D === source f) ) then error "(pullback, WeilDivisor): Expected the Divisor and the source of the map to have the same ambient ring.";
 	
@@ -1544,9 +1542,7 @@ baseLocus(WeilDivisor) := Ideal => (D1) -> (
 	baseLocus(M1)
 );
 
-isVeryAmple = method(Options => {Verbose=>false});
-
-isVeryAmple(WeilDivisor) := Boolean => o->(D1) -> (    
+isVeryAmple WeilDivisor := { Verbose => false } >> o -> D1 -> (
     if (D1#cache#?isVeryAmple == true) then (
         return D1#cache#isVeryAmple;
     );    
@@ -1716,14 +1712,12 @@ reflexifyModule(Module) := Module => o-> (M1) -> (
 	)
 );
 
-isReflexive = method(Options => {Strategy => NoStrategy, KnownDomain=>true});
-
-isReflexive(Module) := Boolean => o -> (M1) ->(
+isReflexive Module := Boolean => { Strategy => NoStrategy, KnownDomain => true } >> o -> M1 -> (
 	g := reflexify(M1, ReturnMap => true, Strategy => o.Strategy, KnownDomain=>o.KnownDomain);
 	(-1 == dim coker g)
 );
 
-isReflexive(Ideal) := Boolean => o-> (I1) ->(
+isReflexive Ideal := Boolean => { Strategy => NoStrategy, KnownDomain => true } >> o -> I1 -> (
 	J1 := reflexify(I1, Strategy => o.Strategy, KnownDomain=>o.KnownDomain);
 	(J1 == I1)
 );
@@ -1914,9 +1908,7 @@ isDomain(Ring) := Boolean => (R1) -> (
 );
 
 --checks whether R/J1 is regular
-isSmooth  = method(Options => {IsGraded => false});
-
-isSmooth(Ideal) := Boolean => o->J1 -> (
+isSmooth(Ideal) := Boolean => {IsGraded => false} >> o -> J1 -> (
 	--empty schemes are smooth (which is why we are first check whether ideals are the whole ring or contain the irrelevant ideal
 	flag := false;
 	if (o.IsGraded == true) then (
@@ -2489,9 +2481,8 @@ doc ///
 
 doc ///
 	 Key
-		isVeryAmple
 		(isVeryAmple, WeilDivisor)
-		[isVeryAmple, Verbose]
+	       [(isVeryAmple, WeilDivisor), Verbose]
 	Headline
 		whether a divisor is very ample.
 	Usage
@@ -3086,7 +3077,7 @@ doc ///
 	 Text
 	  In the above, when KnownDomain=>true (an incorrect assumption), this function returns the incorrect answer for $I$.
 	SeeAlso
-	 isReflexive
+	 (isReflexive, Ideal)
 	 dualize
 ///
 
@@ -3202,7 +3193,7 @@ doc ///
 	  J1 == J2
 	SeeAlso
 	 reflexify
-	 isReflexive
+	 (isReflexive, Ideal)
 ///
 
 
@@ -3263,7 +3254,7 @@ doc ///
 	 Text
 	  If {\tt Strategy=>Primes} then the pullback method will pull back each prime individually.
 	SeeAlso
-	 pullback
+	 (pullback, RingMap, RWeilDivisor)
 	 Sheaves
 ///
 
@@ -3276,7 +3267,7 @@ doc ///
 	 Text
 	  If {\tt Strategy => Sheaves} then the pullback method will pull back the sheaf $O(D)$.
 	SeeAlso
-	 pullback
+	 (pullback, RingMap, RWeilDivisor)
 	 Primes
 ///
 
@@ -3316,19 +3307,18 @@ doc ///
 
 doc ///
 	Key
-	 isReflexive
 	 (isReflexive, Ideal)
 	 (isReflexive, Module)
-	 [isReflexive, Strategy]
-	 [isReflexive, KnownDomain]
+	 [(isReflexive, Ideal), Strategy]
+	 [(isReflexive, Ideal), KnownDomain]
+	 [(isReflexive, Module), Strategy]
+	 [(isReflexive, Module), KnownDomain]
 	Headline
 	 whether an ideal or module is reflexive
 	Usage
-	 isReflexive( I1 )
-	 isReflexive( M1 )
+	 isReflexive I
 	Inputs
-	 I1: Ideal
-	 M1: Module
+	 I:{Ideal,Module}
 	 Strategy => Symbol
 	   specify a strategy for the internal call to reflexify
 	 KnownDomain => Boolean
@@ -3460,9 +3450,8 @@ doc ///
 
 doc ///
     Key
-     pullback
      (pullback, RingMap, RWeilDivisor)
-     [pullback, Strategy]
+     [(pullback, RingMap, RWeilDivisor), Strategy]
     Headline
      pullback a divisor under a ring map
     Usage
@@ -3473,7 +3462,7 @@ doc ///
      Strategy => Symbol
        specify the strategy used by pullback
     Outputs
-     : RWeilDivisor
+     : BasicDivisor
     Description
      Text
       This function computes the pullback of a divisor under a ring map.  There are two potential strategies, {\tt Primes} and {\tt Sheaves} ({\tt Primes} is the default strategy).  The {\tt Primes} strategy pulls back each prime individually.  It can be faster, but it only works for ring maps that are either finite or flat (unless each prime is also Cartier).  For more general maps, it can give incorrect results.  The other option for {\tt Strategy} is {\tt Sheaves}.  This can be slower, especially for divisors with large coefficients, but it will successfully pull back any Cartier divisor.  The option {\tt Sheaves} also requires the divisor passed to be a {\tt WeilDivisor}.
@@ -3648,7 +3637,7 @@ doc ///
 	Headline
 	 compute the ramification divisor of a finite inclusion of normal domains or a blowup over a smooth base
 	Usage
-	 ramficationDivisor( f )
+	 ramificationDivisor( f )
 	Inputs
 	 f: RingMap
 	 b: Boolean
@@ -3665,7 +3654,7 @@ doc ///
 	  f = map(S, R, {y^3});
 	  ramificationDivisor(f)
 	 Text
-	  The next example is a Veronese which is etale in codimension 1.
+	  The next example is a Veronese which is étale in codimension 1.
 	 Example
 	  R = QQ[x,y];
 	  T = QQ[a,b,c,d];
@@ -4076,9 +4065,8 @@ doc ///
 
 doc /// 
    	Key
-   	 isSmooth
    	 (isSmooth, Ideal)
-   	 [isSmooth, IsGraded]
+	 [(isSmooth, Ideal), IsGraded]
    	Headline
    	 whether R mod the ideal is smooth
    	Usage

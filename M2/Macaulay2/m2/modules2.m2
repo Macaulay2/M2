@@ -12,7 +12,7 @@ Module + Module := Module => (M,N) -> (
      if ring M =!= ring N
      then error "expected modules over the same ring";
      R := ring M;
-     if ambient M != ambient N
+     if ambient M =!= ambient N
      or M.?relations and N.?relations and M.relations != N.relations
      or M.?relations and not N.?relations
      or not M.?relations and N.?relations
@@ -29,6 +29,7 @@ tensor(Thing, Thing) := true >> opts -> (M, N) -> M ** N
 undocumented' (tensor, Thing, Thing)
 
 Module ** Module := Module => (M, N) -> tensor(M, N)
+Module^** ZZ     := Module => (F, n) -> BinaryPowerMethod(F, n, tensor, module @@ ring, dual)
 tensor(Module, Module) := Module => {} >> opts -> (M, N) -> (
      (oM,oN) := (M,N);
      Y := youngest(M.cache.cache,N.cache.cache);
@@ -57,9 +58,6 @@ tensor(Module, Module) := Module => {} >> opts -> (M, N) -> (
      -- we do not set T.cache.components, as "components" is for sums, not tensor products
      T.cache.formation = FunctionApplication (tensor, (M,N));
      T)
-
-Matrix ** Module := Matrix => (f,M) -> if isFreeModule M and M == (ring M)^1 and ring M === ring f then f else  f ** id_M
-Module ** Matrix := Matrix => (M,f) -> if isFreeModule M and M == (ring M)^1 and ring M === ring f then f else id_M ** f
 
 -- TODO: this is undocumented and only works correctly in a specific case.
 -- can its goal be accomplished differently?
@@ -104,16 +102,6 @@ Ring * Ideal := Ring ** Ideal := Ideal => (R, I) -> if ring I === R then I else 
 
 -----------------------------------------------------------------------------
 
--- the key for issub hooks under GlobalHookStore
-protect ContainmentHooks
-issub := (f, g) -> (
-    if (R := ring f) =!= ring g then error "isSubset: expected objects of the same ring";
-    if (c := runHooks(ContainmentHooks, (f, g))) =!= null then c
-    else error "isSubset: no strategy implemented for this type of ring")
-
--- TODO: we can do better in the homogeneous case!
-addHook(ContainmentHooks, Strategy => Inhomogeneous, (f, g) -> -1 === rawGBContains(raw gb g, raw f))
-
 ZZ == Ideal := (n,I) -> I == n
 Ideal == ZZ := (I,n) -> (
      if n === 0
@@ -121,19 +109,6 @@ Ideal == ZZ := (I,n) -> (
      else if n === 1
      then issub(matrix {{1_(ring I)}}, generators I)
      else error "attempted to compare ideal to integer not 0 or 1"
-     )
-
-ZZ == Module := (n,M) -> M == n
-Module == ZZ := (M,n) -> (
-     if n =!= 0 then error "attempted to compare module to nonzero integer";
-     if M.?generators then (
-	  if M.?relations then issub(M.generators, M.relations)
-	  else M.generators == 0
-	  )
-     else (
-	  if M.?relations then issub(id_(ambient M), M.relations)
-	  else M.numgens === 0
-	  )
      )
 
 -----------------------------------------------------------------------------
@@ -204,7 +179,7 @@ addHook((minimalPresentation, Module), (opts, M) -> (
 	       N.cache.pruningMap = map(M,N,id_(target ch) // ch);	    -- yuk, taking an inverse here, gb should give inverse change matrices, or the pruning map should go the other way
 	       break N)))
 
-addHook((minimalPresentation, Module), (opts, M) -> (
+addHook((minimalPresentation, Module), Strategy => "PID", (opts, M) -> (
      	  R := ring M;
 	  if instance(R,PolynomialRing) and numgens R === 1 and isField coefficientRing R and not isHomogeneous M then (
 	       f := presentation M;
@@ -218,6 +193,7 @@ addHook((minimalPresentation, Module), (opts, M) -> (
 	       isunit := r -> r != 0 and degree r === {0};
 	       piv := select(pivots g,ij -> isunit g_ij);
 	       rows := first \ piv;
+    	       rows = rows | toList(rank target f..<rank target g); -- temporary fix for #3017
 	       cols := last \ piv;
 	       (g,ch) = (submatrix'(g,rows,cols),submatrix'(ch,rows,));
 	       (g,ch) = (p' g,p' ch);
@@ -248,79 +224,6 @@ factor Module := opts -> (M) -> (
 
 -----------------------------------------------------------------------------
 
-dual Module := Module => {} >> o -> F -> if F.cache.?dual then F.cache.dual else F.cache.dual = (
-     if not isFreeModule F then kernel transpose presentation F
-     else new Module from (ring F,rawDual raw F))
-
-Module#id = (M) -> map(M,M,1)
-
-reshape = method()
-reshape(Module,Module,Matrix) := Matrix => (F, G, m) -> map(F,G,rawReshape(raw m, raw cover F, raw cover G))
-
-Hom(Ideal, Ideal) := Module => (I,J) -> Hom(module I, module J)
-Hom(Ideal, Module) := Module => (I,M) -> Hom(module I, M)
-Hom(Module, Ideal) := Module => (M,I) -> Hom(M, module I)
-
-Hom(Module, Ring) := Module => (M,R) -> Hom(M, R^1)
-Hom(Ring, Module) := Module => (R,M) -> Hom(R^1, M)
-Hom(Ideal, Ring) := Module => (I,R) -> Hom(module I, R^1)
-Hom(Ring, Ideal) := Module => (R,I) -> Hom(R^1, module I)
-
-Hom(Module, Module) := Module => (M,N) -> (
-     Y := youngest(M.cache.cache,N.cache.cache);
-     if Y#?(Hom,M,N) then return Y#(Hom,M,N);
-     H := trim kernel (transpose presentation M ** N);
-     H.cache.homomorphism = (f) -> map(N,M,adjoint'(f,M,N), Degree => first degrees source f);
-     Y#(Hom,M,N) = H; -- a hack: we really want to type "Hom(M,N) = ..."
-     H.cache.formation = FunctionApplication { Hom, (M,N) };
-     H)
-
-adjoint' = method()
-adjoint'(Matrix,Module,Module) := Matrix => (m,G,H) -> (
-     -- adjoint':  m : F --> Hom(G,H) ===> F ** G --> H
-     -- warning: in versions 1.7.0.1 and older dual G was called for, instead of G, since G was assumed to be free
-     F := source m;
-     inducedMap(H, F ** G, reshape(super H, F ** G, super m),Verify=>false))
-
-adjoint = method()
-adjoint (Matrix,Module,Module) := Matrix => (m,F,G) -> (
-     -- adjoint :  m : F ** G --> H ===> F --> Hom(G,H)
-     H := target m;
-     inducedMap(Hom(G,H), F, reshape(Hom(cover G,ambient H), F, super m),Verify=>false))
-
-homomorphism = method()
-homomorphism Matrix := Matrix => (f) -> (
-     -- from a map R^1 -> Hom(M,N) produce a map M-->N
-     H := target f;
-     if not H.cache.?homomorphism then error "expected target of map to be of the form 'Hom(M,N)'";
-     if not isFreeModule source f
-     or not rank source f == 1 then error "expected source of map to be free of rank 1";
-     H.cache.homomorphism f)
-
-homomorphism' = method()
-homomorphism' Matrix := Matrix => (f) -> (
-     -- from a map M-->N produce a map R^1 -> Hom(M,N)
-     R := ring f;
-     M := source f;
-     adjoint(f,R^1,M)
-     )
-
-compose = method()
-compose(Module, Module, Module) := Matrix => (M,N,P) -> (
-     R := ring M;
-     if not ring N === R or not ring P === R then error "expected modules over the same ring";
-     if isQuotientModule N then (
-	  -- Now cover N === ambient N
-	  inducedMap(Hom(M,P),,
-	       map(dual cover M ** ambient P, Hom(M,N)**Hom(N,P), 
-		    (dual cover M ** reshape(R^1, cover N ** dual cover N, id_(cover N)) ** ambient P)
-		    *
-		    (generators Hom(M,N) ** generators Hom(N,P))),
-	       Verify=>false))
-     else (
-	  N' := cokernel presentation N;
-	  compose(M,N',P) * (Hom(M,map(N',N,1))**Hom(map(N,N',1),P))))
-
 flatten Matrix := Matrix => m -> (
      R := ring m;
      F := target m;
@@ -341,7 +244,7 @@ flip(Module,Module) := Matrix => (F,G) -> map(ring F,rawFlip(raw F, raw G))
 
 Module / Module := Module => (M,N) -> (
      L := ambient M;
-     if L != ambient N then error "expected modules with the same ambient module";
+     if L =!= ambient N then error "expected modules with the same ambient module";
      R := ring M;
      if N.?generators
      then (
@@ -423,25 +326,28 @@ Module ^ List := Matrix => (M, rows) -> submatrix(map(cover M, M, id_M), rows,)
 Module _ List := Matrix => (M, cols) -> submatrix(map(M, cover M, id_M), cols)
 -----------------------------------------------------------------------------
 
------------------------------------------------------------------------------
-isSubset(Module,Module) := (M,N) -> (
-     -- here is where we could use gb of a subquotient!
-     ambient M == ambient N and
-     if M.?relations and N.?relations then (
-	  image M.relations == image N.relations
-	  and
-	  issub(M.relations | generators M, N.relations | generators N))
-     else if not M.?relations and not N.?relations then (
-	  issub(generators M, generators N))
-     else (
-	  -- see the code for subquotient: if present, M.relations is nonzero; same for N
-	  -- so one of the modules has nonzero relations and the other doesn't
-	  false
-	  )
-     )
-isSubset(Ideal,Ideal) := (I,J) -> isSubset(module I, module J)
-isSubset(Module,Ideal) := (M,J) -> isSubset(M, module J)
-isSubset(Ideal,Module) := (I,N) -> isSubset(module I, N)
+-- TODO: also implement for a longer lists of matrices or other types of map
+pullback = method(Options => true)
+pullback(Matrix, Matrix) := Module => {} >> o -> (f, g) -> (
+    if target f =!= target g then error "expected maps with the same target";
+    h := f | -g;
+    P := kernel h;
+    S := source h;
+    P.cache.pullbackMaps = {
+	map(source f, S, S^[0], Degree => - degree f) * inducedMap(S, P),
+	map(source g, S, S^[1], Degree => - degree g) * inducedMap(S, P)};
+    P)
+
+pushout = method()
+pushout(Matrix, Matrix) := Module => (f, g) -> (
+    if source f =!= source g then error "expected maps with the same source";
+    h := f || -g;
+    P := cokernel h;
+    T := target h;
+    P.cache.pushoutMaps = {
+	inducedMap(P, T) * map(T, target f, T_[0], Degree => - degree f),
+	inducedMap(P, T) * map(T, target g, T_[1], Degree => - degree g)};
+    P)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

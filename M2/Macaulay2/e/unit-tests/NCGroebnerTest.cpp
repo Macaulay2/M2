@@ -17,6 +17,8 @@
 #include "monordering.hpp"
 #include "monoid.hpp"
 
+#include "util-polyring-creation.hpp"
+
 /** MemoryBlock tests
  */
 
@@ -52,36 +54,6 @@ TEST(MemoryBlock, tryit)
 
 /** Monoid tests
  */
-const Monoid* degreeMonoid(const std::vector<std::string>& names)
-{
-  std::vector<int> wts;
-  for (int i=0; i<names.size(); i++)
-    wts.push_back(-1);
-  MonomialOrdering* mo = MonomialOrderings::join
-    ({
-      MonomialOrderings::Weights(wts),
-      MonomialOrderings::GroupLex(1),
-      MonomialOrderings::PositionUp()
-    });
-
-  return Monoid::create(mo,
-                        names,
-                        IM2_Ring_trivial_polyring()->cast_to_PolynomialRing(),
-                        {},
-                        {});
-}
-
-const PolynomialRing* degreeRing(const std::vector<std::string>& names)
-{
-  auto degM = degreeMonoid(names);
-  if (degM == nullptr) return nullptr;
-  return PolyRing::create(globalZZ, degM);
-}
-const PolynomialRing* degreeRing(int ndegrees)
-{
-  assert(ndegrees == 1);
-  return degreeRing({"T"});
-}
 
 extern void tryOutMathicCode();
 

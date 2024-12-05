@@ -29,7 +29,7 @@ HypertextVoid.synonym = "void markup"
 toString         Hypertext := s -> concatenate(toString class s, toString         toList s)
 toExternalString Hypertext := s -> concatenate(toString class s, toExternalString toList s)
 
-new Hypertext from VisibleList := (M,x) -> x
+new Hypertext from VisibleList := (M,x) -> x -- needed because otherwise next line takes over
 new Hypertext from Thing  := (M,x) -> {x}
 new Hypertext from Net    := (M,x) -> {toString x}
 
@@ -48,7 +48,7 @@ isAbsoluteURL = url -> match( "^(#|mailto:|[a-z]+://)", url )
 -- TODO: phase this one out eventually
 toURL = method()
 toURL String := pth -> (
-     if isAbsolutePath pth then concatenate(rootURI,
+     urlEncode if isAbsolutePath pth then concatenate(rootURI,
 	  if fileExists pth then realpath pth
 	  else (
 	       stderr << "-- *** warning: file needed for URL not found: " << pth << endl;
@@ -74,7 +74,7 @@ toURL(String, String) := (prefix,tail) -> (		    -- this is the good one
 	  stderr << "--                      prefix        = " << prefix << endl;
 	  stderr << "--                      result        = " << r << endl;
 	  );
-     r)
+     urlEncode r)
 
 -----------------------------------------------------------------------------
 -- MarkUpType type declarations
@@ -140,7 +140,11 @@ BOLD       = new MarkUpType of Hypertext
 STRONG     = new MarkUpType of Hypertext
 SUB        = new MarkUpType of Hypertext
 SUP        = new MarkUpType of Hypertext
-TT         = new MarkUpType of Hypertext
+TT         = new MarkUpType of Hypertext -- not supported in HMTL5
+-- TT replacements
+SAMP        = new MarkUpType of Hypertext
+KBD         = new MarkUpType of Hypertext
+VAR         = new MarkUpType of Hypertext
 
 -- Lists
 OL         = new MarkUpType of HypertextContainer
@@ -331,7 +335,8 @@ scan({HTML, HEAD, TITLE, BODY}, T -> addAttribute(T, htmlGlobalAttr))
 addAttribute(META,  htmlGlobalAttr | {"name", "content", "http-equiv"})
 addAttribute(LINK,  htmlGlobalAttr | {"href", "rel", "title", "type"})
 addAttribute(STYLE, htmlGlobalAttr | {"type"})
-addAttribute(SCRIPT, htmlGlobalAttr | {"src", "type"})
+addAttribute(SCRIPT, htmlGlobalAttr | {"async", "crossorigin", "defer",
+	"integrity", "nomodule", "referrerpolicy", "src", "type"})
 
 -- html global and event attributes
 htmlAttr = htmlGlobalAttr | {
@@ -347,8 +352,8 @@ htmlAttr = htmlGlobalAttr | {
     }
 
 scan({BR, HR, PARA, PRE, HEADER1, HEADER2, HEADER3, HEADER4, HEADER5, HEADER6,
-	BLOCKQUOTE, EM, ITALIC, SMALL, BOLD, STRONG, SUB, SUP, SPAN, TT, LI, CODE,
-	DL, DT, DD, OL, UL, DIV, TABLE, TR}, T -> addAttribute(T, htmlAttr))
+	BLOCKQUOTE, EM, ITALIC, SMALL, BOLD, STRONG, SUB, SUP, SPAN, TT, SAMP, KBD, VAR, LI, CODE,
+	DL, DT, DD, UL, DIV, TABLE, TR}, T -> addAttribute(T, htmlAttr))
 addAttribute(LABEL,  htmlAttr | {"for", "from"})
 addAttribute(ANCHOR, htmlAttr | {"href", "rel", "target", "type"})
 addAttribute(TD,     htmlAttr | {"colspan", "headers", "rowspan"})
@@ -372,12 +377,9 @@ style = method(Options => true)
 style Hypertext := true >> o -> x -> (
     str := concatenate apply(keys o, key -> if class key === String then key|":"|toString o#key|";");
     if str === "" then return x;
-    i := position(toList x, y -> class y === Option and y#0 === "style");
-    if i=!=null then (
-	str = concatenate(x#i#1, if #x#i#1>0 and last x#i#1 =!= ";" then ";",str);
-	x = drop(x,{i,i});
-	);
-    append(x,"style"=>str)
+    (ops,arg) := override(options class x,toSequence x);
+    ops = applyPairs(ops,(k,v)->if k==="style" then (k,concatenate(v, if v=!=null and #v>0 and last v =!= ";" then ";",str)) else if v=!=null then (k,v));
+    new class x from (toList sequence arg | apply(pairs ops,a->new Option from a))
     )
 
 hypertext = method(Dispatch => Thing, TypicalValue => Hypertext)
@@ -390,32 +392,34 @@ hypertext Descent := x -> SPAN prepend( "style" => "display:inline-table;text-al
 	  else (k, " : ", v)
 	  , BR{})))
 hypertext Time := x -> DIV { x#1, DIV ("-- ", toString x#0, " seconds", "class" => "token comment") }
-TTc = c -> x -> TT {toString x,"class"=>"token "|c}
-hypertext Pseudocode :=
-hypertext CompiledFunctionBody := TTc "function"
+SAMPc = c -> x -> SAMP {toString x,"class"=>"token "|c}
 hypertext Command :=
 hypertext FunctionBody :=
-hypertext Function := f -> TT deepSplice {
+hypertext Function := f -> SAMP deepSplice {
     if hasAttribute(f,ReverseDictionary) then toString getAttribute(f,ReverseDictionary) else (
 	t := locate if instance(f,Command) then f#0 else f;
-	"-*",
 	SPAN class f,
-	if t =!= null then ("[", SPAN t, "]"),
-	"*-"
+	"[", if t === null then "" else SPAN t, "]"
 	),
     "class"=>"token function"
     }
 hypertext File :=
 hypertext IndeterminateNumber :=
 hypertext Manipulator :=
-hypertext Boolean := TTc "constant"
+hypertext Nothing :=
+hypertext Boolean := SAMPc "constant"
 hypertext Type :=
 hypertext FilePosition :=
-hypertext Dictionary := TTc "class-name"
-hypertext String := TTc "string"
-hypertext Net := n -> PRE { toString n, BR{}, "class"=>"token string", "style" => "display:inline-table;vertical-align:"|toString(if #n>0 then 100*(height n-1) else 0)|"%" }
---hypertext VerticalList         := x -> UL apply(x, y -> new LI from hold y)
---hypertext NumberedVerticalList := x -> OL apply(x, y -> new LI from hold y)
+hypertext Dictionary := SAMPc "class-name"
+hypertext String := SAMPc "string"
+hypertext Net := n -> PRE {
+    toString n, BR{},
+    "class"=>"token net",
+    if #n>0 and depth n!=0 then "style" => "vertical-align:"|toString(-100*depth n)|"%"
+    }
+hypertext VerticalList         := x -> if #x==0 then SPAN{"{}"} else UL append(apply(x, y -> new LI from hold y),"style"=>"display:inline-table")
+hypertext NumberedVerticalList := x -> if #x==0 then SPAN{"{}"} else OL append(apply(x, y -> new LI from hold y),"style"=>"display:inline-table")
+hypertext RawObject := hypertext @@ net
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -1,6 +1,9 @@
 doc ///
   Key
     erf
+   (erf,CC)
+   (erf,RR)
+   (erf,RRi)
   Headline
     error function
   Usage
@@ -23,6 +26,9 @@ doc ///
 doc ///
   Key
     erfc
+   (erfc,CC)
+   (erfc,RR)
+   (erfc,RRi)
   Headline
     complementary error function
   Usage
@@ -45,6 +51,8 @@ doc ///
 doc ///
   Key
     inverseErf
+   (inverseErf,RR)
+   (inverseErf,RRi)
   Headline
     inverse error function
   Usage

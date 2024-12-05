@@ -11,7 +11,7 @@ smallestFace(Matrix,Polyhedron) := (p,P) -> (
      if contains(P,convexHull p) then (
 	      (M,v) := halfspaces P;
      	   (N,w) := hyperplanes P;
-     	  -- Selecting the half-spaces that fullfil equality for p
+     	  -- Selecting the half-spaces that fulfill equality for p
 	  -- and adding them to the hyperplanes
 	  v = promote(v,QQ);
 	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == v^{i});
@@ -48,8 +48,7 @@ polar Polyhedron := P -> getProperty(P, computedPolar)
 -- PURPOSE : Checks if a polytope is very ample
 --   INPUT : 'P'  a Polyhedron, which must be compact
 --  OUTPUT : 'true' or 'false'
-isVeryAmple = method()
-isVeryAmple Polyhedron := P -> getProperty(P, computedVeryAmple)
+isVeryAmple Polyhedron := {} >> o -> P -> getProperty(P, computedVeryAmple)
 
 
 -- PURPOSE : Computing the vertex-edge-matrix of a polyhedron
@@ -202,8 +201,8 @@ polarFace(Polyhedron, Polyhedron) := (f, P) -> (
 -- PURPOSE : Checks if a lattice polytope is reflexive
 --   INPUT : 'P'  a Polyhedron
 --  OUTPUT : 'true' or 'false'
-isReflexive = method(TypicalValue => Boolean)
-isReflexive Polyhedron := (cacheValue symbol isReflexive)(P -> isLatticePolytope P and inInterior(matrix toList(ambDim P:{0}),P) and isLatticePolytope polar P)
+isReflexive = method(TypicalValue => Boolean, Options => true)
+isReflexive Polyhedron := {} >> o -> (cacheValue symbol isReflexive)(P -> isLatticePolytope P and inInterior(matrix toList(ambDim P:{0}),P) and isLatticePolytope polar P)
 
 
 -- PURPOSE : Triangulating a compact Polyhedron

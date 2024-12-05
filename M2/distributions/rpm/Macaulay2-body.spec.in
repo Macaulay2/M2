@@ -1,6 +1,6 @@
 #! /bin/rpm
 Name: Macaulay2
-URL: http://www.math.uiuc.edu/Macaulay2/
+URL: https://macaulay2.com/
 Version: @PACKAGE_VERSION@
 Release: @DISTRIBUTION@
 Summary: Macaulay2 is a software system for algebraic geometry research

@@ -22,17 +22,24 @@ newPackage(
         { Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud" }
         },
     Keywords => { "Commutative Algebra" },
-    PackageImports => { "Polyhedra", "NormalToricVarieties" },
-    AuxiliaryFiles => true,
-    DebuggingMode => true
+    PackageExports => { "Polyhedra" },
+    AuxiliaryFiles => true
     )
 
-importFrom_Core {"concatCols", "raw", "rawSelectByDegrees"}
+importFrom_Core {
+    "concatCols",
+    "freeComponents",
+    "raw", "rawHilbertBasis", "rawSelectByDegrees",
+    "tryHooks",
+    }
 
 -- "truncate" is exported by Core
+export {
+    "effCone", "effGenerators",
+    "nefCone", "nefGenerators",
+    }
 
 protect Exterior
-protect Nef
 
 --------------------------------------------------------------------
 -- Helpers
@@ -65,22 +72,25 @@ checkOrMakeDegreeList(List, ZZ) := (L, degrank) -> (
         then sort L else error("expected a list of multidegrees, each of length " | degrank))
     )
 
--- Helpers for toric varieties
+--------------------------------------------------------------------
+-- Divisorial information
+--------------------------------------------------------------------
 
 -- Generators of effective cone
-effGenerators = method()
-effGenerators Ring := (cacheValue symbol effGenerators) (R -> transpose matrix degrees R)
-effGenerators NormalToricVariety := X -> effGenerators ring X
+effGenerators = method(TypicalValue => Matrix)
+effGenerators Ring := R -> tryHooks((effGenerators, Ring), R, R -> map(degreeGroup R, , transpose matrix degrees R))
 
--- Nef cone of X as a polyhedral object
-nefCone = method()
-nefCone NormalToricVariety := (cacheValue symbol nefCone) (X -> convexHull(matrix{0_(picardGroup X)}, nefGenerators X))
-nefCone Ring := R -> if R.?variety and instance(R.variety, NormalToricVariety) then nefCone R.variety
+-- Generators of Nef cone
+nefGenerators = method(TypicalValue => Matrix)
+nefGenerators Ring := R -> null -- will be overridden in Varieties package
 
 -- Effective cone of X as a polyhedral object
-effCone = method()
-effCone NormalToricVariety := (cacheValue symbol effCone) (X -> convexHull(matrix{0_(picardGroup X)}, effGenerators X))
-effCone Ring := R -> if R.?variety and instance(R.variety, NormalToricVariety) then effCone R.variety
+effCone = method(TypicalValue => Cone)
+effCone Ring := R -> tryHooks((effCone, Ring), R, R -> convexHull(matrix{0_(degreeGroup R)}, effGenerators R))
+
+-- Nef cone of X as a polyhedral object
+nefCone = method(TypicalValue => Cone)
+nefCone Ring := R -> null -- will be overridden in Varieties package
 
 --------------------------------------------------------------------
 -- Polyhedral algorithms
@@ -91,13 +101,13 @@ effCone Ring := R -> if R.?variety and instance(R.variety, NormalToricVariety) t
 -- and b is an element of the Picard group of X (e.g. a multidegree in S)
 -- then truncationPolyhedron returns a polyhedron in the lattice of
 -- exponent vectors of monomials of S whose degree is in b + nef cone of X
-truncationPolyhedron = method(Options => { Exterior => {}, Nef => null })
+truncationPolyhedron = method(Options => { Exterior => {}, Cone => null })
 -- Exterior should be a list of variable indices which are skew commutative; i.e. have max degree 1.
 truncationPolyhedron(Matrix, List)   := Polyhedron => opts -> (A, b) -> truncationPolyhedron(A, transpose matrix {b}, opts)
 truncationPolyhedron(Matrix, Matrix) := Polyhedron => opts -> (A, b) -> (
     -- assumption: A is m x n. b is m x 1.
     -- returns the polyhedron {Ax >= b, x_i >= 0}
-    -- or if Nef is present   {Ax - b in Nef cone, x_i >= 0}
+    -- or if cone C is given  {Ax - b in C, x_i >= 0}
     -- TODO: why is it better to be over QQ?
     if ring A === ZZ then A = A ** QQ;
     if ring A =!= QQ then error "expected matrix over ZZ or QQ";
@@ -113,17 +123,11 @@ truncationPolyhedron(Matrix, Matrix) := Polyhedron => opts -> (A, b) -> (
         hdataLHS = hdataLHS || (I ^ (opts.Exterior));
         hdataRHS = hdataRHS || matrix toList(#opts.Exterior : {1_QQ});
         );
-    return if opts.Nef === null or rays opts.Nef == id_(target A)
-    -- this is correct when the Nef cone equals the positive quadrant
+    if opts#Cone === null or rays opts#Cone == id_(target A)
+    -- this is correct when the truncation cone equals the positive quadrant
     then polyhedronFromHData(hdataLHS, hdataRHS)
-    -- otherwise, compute the preimage of the Nef cone
-    else affinePreimage(-hdataLHS, opts.Nef * convexHull(z, I), hdataRHS);
-    --
-    -- this is correct when the Nef cone equals the positive quadrant
-    P := polyhedronFromHData(hdataLHS, hdataRHS);
-    if opts.Nef === null or rays opts.Nef == id_(target A) then return P;
-    -- otherwise, intersect with the preimage of the Nef cone
-    intersection(P, affinePreimage(A, opts.Nef, -b)))
+    -- otherwise, compute the preimage of the truncation cone
+    else affinePreimage(-hdataLHS, opts#Cone * convexHull(z, I), hdataRHS))
 
 -- Assume the same conditions as above,
 -- then basisPolyhedron returns a polyhedron in the lattice of
@@ -150,34 +154,36 @@ basisPolyhedron(Matrix, Matrix) := Polyhedron => opts -> (A, b) -> (
 -- Algorithms for truncations of a polynomial ring
 --------------------------------------------------------------------
 
-truncationMonomials = method(Options => { Exterior => {}, Nef => null })
+truncationMonomials = method(Options => { Exterior => {}, Cone => null })
 truncationMonomials(List, Module) := opts -> (degs, F) -> (
     -- inputs: a list of multidegrees, a free module F = sum_i R(-a_i)
     -- assume checkOrMakeDegreeList has already been called on degs
     (R1, phi1) := flattenRing (R := ring F);
     ext := if opts.Exterior =!= null then opts.Exterior else (options R1).SkewCommutative;
-    nef := if opts.Nef      =!= null then opts.Nef      else  nefCone R1; -- changing to effCone gives an alternative result
-    -- TODO: call findMins on degs, but with respect to the Nef cone!
+    nef := if opts#Cone     =!= null then opts#Cone     else  nefCone R1; -- changing to effCone gives an alternative result
+    -- the free components of the degree group
+    free := freeComponents degreeGroup R;
+    -- TODO: call findMins on degs, but with respect to the given cone!
     -- checks to see if twist S(-a) needs to be truncated
-    isInNef := if nef === null then a -> any(degs, d -> d << a) else (
-	truncationCone := nef + convexHull matrix transpose degs;
+    isInCone := if nef === null then a -> any(degs, d -> d_free << a) else (
+	-- FIXME
+        truncationCone := nef + convexHull(matrix (transpose degs)_free);
 	a -> contains(truncationCone, convexHull matrix transpose{a}));
     -- TODO: either figure out a way to use cached results or do this in parallel
-    directSum apply(degrees F, a -> if isInNef a then gens R^{a} else concatCols(
-	     apply(degs, d -> truncationMonomials(d - a, R, Exterior => ext, Nef => nef)))))
+    directSum apply(degrees F, a -> if isInCone a_free then gens R^{a} else concatCols(
+	     apply(degs, d -> truncationMonomials(d - a, R, Exterior => ext, Cone => nef)))))
 truncationMonomials(List, Ring) := opts -> (d, R) -> (
     -- inputs: a single multidegree, a graded ring
     -- valid for total coordinate ring of any simplicial toric variety
     -- or any polynomial ring, quotient ring, or exterior algebra.
-    if  R#?(symbol truncate, d)
-    then R#(symbol truncate, d)
-    else R#(symbol truncate, d) = (
+    R#(symbol truncate, d, if opts#Cone =!= null then rays opts#Cone) ??= (
         (R1, phi1) := flattenRing R;
         -- generates the effective cone
         A := effGenerators R1;
-        P := truncationPolyhedron(A, transpose matrix{d}, opts);
-        H := hilbertBasis cone P; -- ~50% of computation
-        H = for h in H list flatten entries h;
+        F := freeComponents target A;
+        b := transpose matrix{d_F};
+        P := truncationPolyhedron(A^F, b, opts);
+        H := entries map(ZZ, rawHilbertBasis raw transpose rays cone P); -- ~50% of computation
         J := leadTerm ideal R1;
         ambR := ring J;
         -- generates the Nef cone
@@ -200,6 +206,8 @@ truncation0 = (deg, M) -> (
     else image basis(deg, deg, M, Truncate => true))
 
 truncation1 = (deg, M) -> (
+    -- short-circuit the computation if no truncation is needed
+    if all(degrees M, d -> deg <= d) then return M;
     -- WARNING: valid for towers of rings with degree length = 1.
     -- uses the engine routines for basis with Truncate => true
     -- deg: a List of integers
@@ -223,6 +231,7 @@ truncation1 = (deg, M) -> (
 --------------------------------------------------------------------
 
 truncateModuleOpts := {
+    Cone              => null,
     MinimalGenerators => true -- whether to trim the output
     }
 
@@ -241,18 +250,31 @@ truncate(List, Module) := Module => truncateModuleOpts >> opts -> (degs, M) -> (
     doTrim if degreeLength R === 1 and any(degrees R, d -> d =!= {0})
     then truncation1(min degs, M)
     else if isFreeModule M then return ( -- NOTE: skip trimming
-        image map(M, , truncationMonomials(degs, M)))
+        image map(M, , truncationMonomials(degs, M, Cone => opts#Cone)))
     else if not M.?relations then (
-        image map(M, , truncationMonomials(degs, cover M)))
+        image map(M, , truncationMonomials(degs, cover M, Cone => opts#Cone)))
     else subquotient(
-        gens truncate(degs, image generators M, MinimalGenerators => false),
-        gens truncate(degs, image  relations M, MinimalGenerators => false))
+        gens truncate(degs, image generators M, opts ++ { MinimalGenerators => false }),
+        gens truncate(degs, image  relations M, opts ++ { MinimalGenerators => false }))
     )
 
+--------------------------------------------------------------------
+
+inducedTruncationMap = (G, F, f) -> (
+    -- Assumes G = truncate(deg, target f) and F = truncate(deg, source f)
+    -- this helper routine is useful for truncating complexes or a pair of
+    -- composable matrices, when target f is the source of a previously
+    -- truncated matrix, so we have truncated it once already.
+    f' := f * inducedMap(source f, F)       * inducedMap(F, source gens F, gens F);
+    map(G, F, inducedMap(G, source f', f') // inducedMap(G, source gens G, gens G)))
+
 truncate(List, Matrix) := Matrix => truncateModuleOpts >> opts -> (degs, f) -> (
-    F := truncate(degs, source f, opts);
-    G := truncate(degs, target f, opts);
-    map(G, F, (f * gens F) // gens G))
+    inducedTruncationMap(truncate(degs, target f, opts), truncate(degs, source f, opts), f))
+
+--------------------------------------------------------------------
+
+truncate(InfiniteNumber, Thing) := truncateModuleOpts >> o -> (d, M) -> (
+    if d === -infinity then M else error "unexpected degree for truncation")
 
 --------------------------------------------------------------------
 -- basis using basisPolyhedron (experimental)
@@ -268,27 +290,27 @@ basisMonomials(List, Module) := (degs, F) -> (
     -- assume checkOrMakeDegreeList has already been called on degs
     -- TODO: either figure out a way to use cached results or do this in parallel
     R := ring F; directSum apply(degrees F, a -> concatCols apply(degs, d -> basisMonomials(d - a, R))))
-basisMonomials(List, Ring) := (d, R) -> (
+basisMonomials(List, Ring) := (d, R) -> R#(symbol basis', d) ??= (
     -- inputs: a single multidegree, a graded ring
     -- valid for total coordinate ring of any simplicial toric variety
     -- or any polynomial ring, quotient ring, or exterior algebra.
-    if  R#?(symbol basis', d)
-    then R#(symbol basis', d)
-    else if R#?(symbol truncate, d)
-    then R#(symbol basis', d) = (
+    -- TODO: we should accept _any_ cached truncation as a hint
+    if R#?(symbol truncate, d, null) then (
         -- opportunistically use cached truncation results
         -- TODO: is this always correct? with negative degrees?
-        truncgens := R#(symbol truncate, d);
-        psrc := rawSelectByDegrees(raw source truncgens, d, d);
+        truncgens := R#(symbol truncate, d, null);
+	psrc := rawSelectByDegrees(raw source truncgens, d, d);
         submatrix(truncgens, , psrc))
-    else R#(symbol basis', d) = (
+    else (
         (R1, phi1) := flattenRing R;
         -- generates the effective cone
         A := effGenerators R1;
-        P := basisPolyhedron(A, transpose matrix{d},
+        F := freeComponents target A;
+        b := transpose matrix{d_F};
+        -- TODO: would be better if basisPolyhedron could account for torsion
+        P := basisPolyhedron(A^F, b,
             Exterior => (options R1).SkewCommutative);
-        H := hilbertBasis cone P; -- ~40% of computation
-        H = for h in H list flatten entries h;
+        H := entries map(ZZ, rawHilbertBasis raw transpose rays cone P); -- ~40% of computation
         J := leadTerm ideal R1;
         ambR := ring J;
         -- generates the degree zero part of the basis
@@ -297,7 +319,8 @@ basisMonomials(List, Ring) := (d, R) -> (
         result := mingens ideal(mongens % J); -- ~40% of computation
         if R1 =!= ambR then result = result ** R1;
         if R =!= R1 then result = phi1^-1 result;
-        result))
+        psrc = rawSelectByDegrees(raw source result, d, d);
+        submatrix(result, , psrc)))
 
 -- FIXME: when M has relations, it should be pruned
 basis' = method(Options => options basis)
@@ -331,8 +354,8 @@ end--
 restart
 uninstallPackage "Truncations"
 restart
-loadPackage "Truncations"
-debug needsPackage "Truncations"
+loadPackage("Truncations", Reload => true)
+debug Truncations
 restart
 installPackage "Truncations"
 check "Truncations"

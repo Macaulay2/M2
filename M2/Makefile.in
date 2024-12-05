@@ -1,0 +1,203 @@
+# @configure_input@
+.NOTPARALLEL:
+include include/config.Makefile
+VPATH = @srcdir@
+.PRECIOUS:@srcdir@/configure config.status
+.PHONY:unconfigure-libs reconfigure configure-help report-M2-location help scripts
+all install:										\
+	check-make config.status configured check-for-undefined-configure-variables	\
+	srcdir protect-configs configured-files check-machine				\
+	M2 all-in-subdirs report-M2-location
+configured-files: @CONFIGURED_FILES@
+$(foreach f,@CONFIGURED_FILES@,$(eval $f: @srcdir@/$f.in; ./config.status $f))
+M2:
+	rm -f M2
+	(echo '#! /bin/sh'; echo 'exec @pre_bindir@/M2 "$$@"') >M2
+	chmod a+x M2
+define package
+all install-$1: all-$1
+install: install-$1
+install-$1 all-$1:; $(MAKE) -C Macaulay2/packages $$@
+endef
+$(foreach i, $(PACKAGES), $(eval $(call package,$i)))
+
+check-make:; @ echo "$(.FEATURES)" | grep order-only >/dev/null || (echo error: version >= 3.81 of GNU make is required >&2; false)
+which-tools:
+	for i in m4 autoconf automake; do which $$i ; $$i --version | head -1 ; done
+	printenv ACLOCAL_PATH
+configured:include/configuration
+check:configured check-in-Macaulay2
+ifeq "@ENABLE_STRIP@" "yes"
+check: check-stripped
+endif
+check:; : +++ all Macaulay2 tests succeeded +++
+check-machine:; @[ "@UNAME_INFO@" = "` @UNAME_INFO_COMMAND@ `" ] || (echo "error: reconfiguration required (uname output seems different)" >&2; false)
+
+define cdw
+set +x && cd "$1" && echo make: Entering directory \'`pwd`\' && set -x
+endef
+
+# terminology:
+#   subdirectories of the source tree
+#     usr-build  -- install tools needed for rebuilding the configure script here, if needed
+#   subdirectories of the build tree
+#     usr-host   -- install the results of compilation of libraries and programs here, for the target machine
+#     usr-dist   -- place copies of everything needed in the final Macaulay2 distribution here, for the target machine
+
+check-stripped:
+	@ echo "-- checking for unstripped binaries"
+	file @pre_programsdir@/* $(BUILTLIBPATH)/bin/* @pre_bindir@/M2-binary usr-dist/bin/M2-binary usr-host/bin/* | (! grep "not stripped")
+
+## 
+distclean:clean distclean-in-subdirs distclean-this-dir
+distclean-this-dir:
+	rm -f @CONFIGURED_FILES@ include/M2/config.h include/config.Makefile config.cache config.log configure.options config.status config.args
+	rm -f include/M2/synchronization.h
+	find . -type d -empty -delete
+$(foreach t,all check clean distclean,					\
+	$(foreach d,libraries Macaulay2 distributions check-configure,	\
+	   $(eval .PHONY: $t-in-subdirs)				\
+	   $(eval .PHONY $t $t-in-subdirs:$t-in-$d)			\
+	   $(eval $t-in-$d:; $$(MAKE) -C $d $t)))
+clean:
+	rm -rf .completed
+	rm -f M2 srcdir .link-test srcdir confdefs.h configure.lineno conftest.* include/config.h
+	rm -rf usr-dist conf_* usr-host
+	rm -f pre-install.sh post-install.sh normal-install.sh
+	if [ -f Makefile ] ; then $(MAKE) -f Makefile clean-tools ; fi
+
+install: configured; $(MAKE) -C distributions $@
+@srcdir@/configure : @srcdir@/configure.ac @srcdir@/m4/files; @srcdir@/autogen.sh
+recheck config.status: @srcdir@/configure @srcdir@/Macaulay2/packages/=distributed-packages
+	$(WHY)
+	./config.status --recheck
+	./config.status
+status: @srcdir@/configure
+	@echo '-----------------------------------------------------------------------------'
+	@echo '#  Here is the way you ran $^ before:'
+	@echo '#'
+	@echo "# `if test -f config.args ; then cat config.args ; else echo arguments not available ; fi`"
+	@echo '#'
+	@echo '#  Type'
+	@echo '        make reconfigure'
+	@echo '#  to run it that way again.'
+	@echo '#'
+	@echo '-----------------------------------------------------------------------------'
+srcdir:
+	: creating or removing symbolic link to common staging area, if necessary,
+	: based on comparison of these directories:
+	:                      pre_prefix : @pre_prefix@
+	: abs_builddir/usr-dist/common : @abs_builddir@/usr-dist/common
+	@ if [ "@abs_builddir@"/usr-dist/common != "@pre_prefix@" ] ;\
+	then (set -x ;\
+	     rm -rf usr-dist/common ;\
+	     $(MKDIR_P) usr-dist ;\
+	     ln -s "@pre_prefix@" usr-dist/common) ;\
+	else \
+	     if [ -L "@abs_builddir@"/usr-dist/common ] ;\
+	     then (set -x ;\
+		   rm usr-dist/common ;\
+		  ) ;\
+	     fi ;\
+	fi
+	rm -f $@ .link-test
+	echo "@srcdir@/" >$@
+subst: config.status ; ./config.status
+show: config.status
+	<$< sed -e 's/\\\n//' |egrep '^[SD]\["' | sed -e 's/^S."\(.*\)"\]="\(.*\)"$$/\1=\2/' -e 's/^D."\(.*\)"\]="\(.*\)"$$/#define \1 \2/' -e 's/\\"/"/g'
+CONFIG_FILES = @srcdir@/configure @srcdir@/install-sh @srcdir@/config.sub @srcdir@/config.guess @srcdir@/m4/files
+reconfigure-top-only: recheck check-for-undefined-configure-variables protect-configs
+protect-configs:
+	 @ chmod a-w $(shell cat @srcdir@/m4/files)
+check-for-undefined-configure-variables:
+	: "checking for strings that look like undefined configure variables in all *.in files..."
+	@ if egrep -nH '@[A-Za-z_]+@' $(shell cat @srcdir@/m4/files) | sed -e 's=^\([^:]*\):=@srcdir@/\1.in:=' | egrep . ;	\
+	  then exit 1;														\
+	  fi
+configure-help: $(CONFIG_FILES) ; @ @srcdir@/configure --help
+relink:; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d @pre_exec_prefix@/bin/M2@EXE@
+relink-nostrip:; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d ENABLE_STRIP=no @pre_exec_prefix@/bin/M2@EXE@
+unmark-packages:; $(MAKE) -C Macaulay2/packages $@
+reconfigure: reconfigure-top-only unconfigure-libs 
+unconfigure-libs:; $(MAKE) -C libraries unconfigure
+remove-deps:; find . -name \*.dep -delete
+find-conflicts:; grep -r -nH --exclude-dir BUILD -e '^<<<<<<< ' @srcdir@ || true
+log-archive:; find . -name config.log |xargs tar xzf config-logs.tgz
+shell:; PKG_CONFIG_PATH=$(M2_PKG_CONFIG_PATH) bash
+report-M2-location:
+	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :
+	: Macaulay2 executable location:
+	:    @pre_bindir@/M2@EXE@
+	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :
+
+validate-html:
+	$(MAKE) -C Macaulay2/packages $@
+
+announce:
+	@ echo "================================================================="
+	@ echo "    Macaulay2 version @PACKAGE_VERSION@"
+	@ echo "    OS=@OS@ ISSUE=@ISSUE@ ARCH=@ARCH@"
+	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@"
+	@ echo "================================================================="
+
+help:
+	@ echo "Macaulay2 version @PACKAGE_VERSION@"
+	@ echo ""
+	@ echo "make files configured with:"
+	@ echo "    OS=@OS@ ISSUE=@ISSUE@ ARCH=@ARCH@"
+	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@"
+	@ echo ""
+	@ echo "Macaulay2 executable location:"
+	@ echo "   @pre_bindir@/M2@EXE@"
+	@ echo ""
+	@ echo "usage: make ..."
+	@ echo ""
+	@ echo "targets:"
+	@ echo "  all               build/compile all files and distributions [the default target]"
+	@ echo "  install -o all    install files (without re-making them)"
+	@ echo "  relink            remove M2@EXE@ and rebuild it"
+	@ echo "  relink-nostrip    remove M2@EXE@ and rebuild it, unstripped"
+	@ echo "  install           make and install files"
+	@ echo "  check             run the tests"
+	@ echo "  clean             remove all generated files except configured files"
+	@ echo "  distclean         remove all generated files"
+	@ echo "  help              show this help"
+	@ echo ""
+	@ echo "targets for all libraries:"
+	@ echo "  all-in-libraries"
+	@ echo "  check-in-libraries"
+	@ echo "  install-in-libraries"
+	@ echo "  clean-in-libraries"
+	@ echo ""
+	@ echo "configuration display:"
+	@ echo "  status                    show options used with 'configure'"
+	@ echo "  configure-help            show help for 'configure'"
+	@ echo "  reconfigure               re-run configure, set libraries for later reconfiguration and thus recompilation"
+	@ echo "  reconfigure-top-only      re-run configure"
+	@ echo "  unconfigure-libs          set libraries for later reconfiguration"
+	@ echo "  subst                     re-run config.status, remaking the makefiles"
+	@ echo "  show                      show configuration variable values"
+	@ echo "  find-conflicts            find conflict markers in source files"
+	@ echo ""
+	@ echo "package options:"
+	@ echo "  PACKAGES='Foo Bar'             the list of packages to install"
+	@ echo "  ReinstallPackages=true         reinstall the packages"
+	@ echo ""
+	@ echo "package options, when installing:"
+	@ echo "  IgnoreExampleErrors=true       continue even after errors in example code"
+	@ echo "  RerunExamples=true             rerun example output files"
+	@ echo "  RemakeAllDocumentation=true    remake all documentation"
+	@ echo "  CheckDocumentation=false       don't check documentation for completeness"
+	@ echo "  debugLevel=1                   turn on further M2 debugging output"
+	@ echo ""
+	@ echo "make install options:"
+	@ echo "  prefix=...          installation prefix"
+	@ echo "                      (currently ${prefix})"
+	@ echo "  exec_prefix=...     installation prefix for architecture dependent files"
+	@ echo "                      (currently ${exec_prefix})"
+	@ echo "  ENCAP=yes           install in ${prefix}/@package@ instead"
+	@ echo "  MAPFILE=yes         create a mapfile when linking M2"
+	@ echo "  DESTDIR=/Foo/Bar    install in /Foo/Bar${prefix} instead"
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR "
+# End:

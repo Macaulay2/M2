@@ -2,7 +2,13 @@ emacs/M2-emacs-hlp.txt
 emacs/M2-emacs.m2
 emacs/M2-symbols.el
 highlightjs/macaulay2.js
+Macaulay2Web/M2-symbols.ts
 prism/macaulay2.js
+prism/node_modules/
+prism/package-lock.json
+prism/prism.js
+prism/prism.js.LICENSE.txt
 pygments/macaulay2.py
 rouge/macaulay2.rb
 atom/macaulay2.cson
+textmate/macaulay2.tmLanguage.json

@@ -101,10 +101,16 @@ doc ///
     Example
       runProgram("normaliz", "--version")
       peek oo
+    Text
+      Internally, this routine uses @TO run@.
+      Another way to interact with programs is to pass a string beginning
+      with "!" to @TO get@, @TO openIn@, @TO openOut@, or @TO openInOut@.
   SeeAlso
     ProgramRun
     findProgram
     (status, ProgramRun)
+    run
+    get
 ///
 
 doc ///

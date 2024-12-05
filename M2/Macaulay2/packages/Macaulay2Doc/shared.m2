@@ -6,6 +6,51 @@ document { Key => decompose,    methodstr, SeeAlso => { "MinimalPrimes::MinimalP
 document { Key => truncate,     methodstr, SeeAlso => { "Truncations::Truncations" } }
 document { Key => chi,          methodstr }
 document { Key => isEmpty,      methodstr, SeeAlso => { "Polyhedra::Polyhedra",(isEmpty, RRi)} }
+document { Key => isSmooth,     methodstr, SeeAlso => {
+	"Divisor::isSmooth(Ideal)", "LatticePolytopes::isSmooth(Polyhedron)",
+	"Varieties::isSmooth(Variety)", "SpaceCurves::isSmooth(Curve)",
+	"Polyhedra::isSmooth(Cone)", "NormalToricVarieties::isSmooth(NormalToricVariety)",
+	"SpecialFanoFourfolds::isSmooth(EmbeddedProjectiveVariety)" } }
+document { Key => isVeryAmple,  methodstr, SeeAlso => {
+	"Divisor::isVeryAmple(WeilDivisor)", "Polyhedra::isVeryAmple(Polyhedron)",
+	"PositivityToricBundles::isVeryAmple(ToricVectorBundleKlyachko)",
+	"NormalToricVarieties::isVeryAmple(ToricDivisor)" } }
+document { Key => isNormal,     methodstr, SeeAlso => {
+	"Polyhedra::isNormal(Polyhedron)",
+	"IntegralClosure::isNormal(Ring)",
+	"AssociativeAlgebras::isNormal(RingElement)",
+	} }
+document { Key => normalCone,      methodstr, SeeAlso => { "Polyhedra::normalCone(Polyhedron,Polyhedron)","ReesAlgebra::normalCone(Ideal)"} }
+
+
+document { Key => cone,
+    Headline => "mapping cone or polyhedral cone",
+    SeeAlso => {
+	(cone, ChainComplexMap),
+	"Complexes::cone(ComplexMap)",
+	"Polyhedra::cone(Polyhedron)",
+	}
+    }
+document { Key => rays,
+    Headline => "1-dimensional cones of a fan or polyhedral object",
+    SeeAlso => {
+	"FourTiTwo::rays(Matrix)",
+	"NormalToricVarieties::rays(NormalToricVariety)",
+	"Polyhedra::rays(PolyhedralObject)",
+	}
+    }
+
+document {
+     Key => pullback,
+     Headline => "compute the pullback morphism",
+     SeeAlso => { pushout }
+     }
+
+document {
+     Key => pushout,
+     Headline => "compute the pushout morphism",
+     SeeAlso => { pullback }
+     }
 
 -- also see functions/intersect-doc.m2
 document {
@@ -26,6 +71,12 @@ document {
 document {
      Key => intersection,
      Headline => "compute an intersection",
+    PARA{
+	"When a more efficient algorithm is available for computing the intersection of all inputs
+	simultaneously rather than iteratively, for instance for intersecting ", TO Module, "s,
+	a specialized function that takes a list or sequence may be installed on ", TT "(symbol intersect, Type)", "."
+	},
+    EXAMPLE ///code lookup(symbol intersect, Module)///,
      SeeAlso => { intersect }
      }
 
@@ -42,12 +93,6 @@ document {
 	For two arguments, this is the same as ", TT "A ** B", " except that options are allowed."
 	},
     EXAMPLE ///tensor(ZZ^2, ZZ^3, ZZ^4)///,
-    PARA{
-	"When a more efficient algorithm is available for computing the intersection of all inputs
-	simultaneously rather than iteratively, for instance for intersecting ", TO Module, "s,
-	a specialized function that takes a list or sequence may be installed on ", TT "(symbol intersect, Type)", "."
-	},
-    EXAMPLE ///code lookup(symbol intersect, Module)///,
     SeeAlso => {
 	symbol**
 	-- add references to tensor methods installed in packages _other than Core_ here

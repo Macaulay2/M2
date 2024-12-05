@@ -62,7 +62,7 @@ class MonomialTableZZ : public our_new_delete
                          mpz_srcptr coeff,
                          exponents_t exp,
                          int comp,
-                         VECTOR(mon_term *) *result = 0) const;
+                         VECTOR(mon_term *) *result = nullptr) const;
   /* max: the max number of divisors to find.
      exp: the monomial whose divisors we seek.
      result: an array of mon_term's.
@@ -71,7 +71,7 @@ class MonomialTableZZ : public our_new_delete
   int find_monomial_divisors(int max,
                              exponents_t exp,
                              int comp,
-                             VECTOR(mon_term *) *result = 0) const;
+                             VECTOR(mon_term *) *result = nullptr) const;
 
   mon_term *find_exact(mpz_srcptr coeff, exponents_t exp, int comp) const;
   /* If this returns non-NULL, it is valid to grab the 'val' field, and/or to

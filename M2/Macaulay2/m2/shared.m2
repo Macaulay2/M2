@@ -6,8 +6,12 @@ needs "methods.m2"
 
 chi = method()
 
+cone = method()
+rays = method(Options => true)
+
 decompose = method(Options => true)
 
+union = method(Binary => true)
 intersect = method(Options => true, Binary => true) -- an associative binary method
 intersection = method(Options => true)
 
@@ -17,8 +21,19 @@ truncate = method(Options => true)
 
 isEmpty = method(TypicalValue => Boolean)
 
+isSmooth = method(TypicalValue => Boolean, Options => true)
+isVeryAmple = method(TypicalValue => Boolean, Options => true)
+
+isNormal = method()
+
+normalCone = method(Options => true)
+
 -- symbols
+
+protect Base
 
 protect Jacobian
 
 protect Iterate
+
+protect Threads

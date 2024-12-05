@@ -2,8 +2,8 @@
 -- licensed under GPL v2 or any later version
 newPackage(
     "LieTypes",
-    Version => "0.8",
-    Date => "Jan 22, 2023",
+    Version => "0.82",
+    Date => "Sep 23, 2024",
     Headline => "common types and methods for Lie groups and Lie algebras",
     Authors => {
 	  {Name => "Dave Swinarski", Email => "dswinarski@fordham.edu"},
@@ -18,13 +18,13 @@ newPackage(
     Certification => {
 	 -- same article as for package ConformalBlocks
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
-	  "journal URI" => "http://j-sag.org/",
+	  "journal URI" => "https://msp.org/jsag/",
 	  "article title" => "Software for computing conformal block divisors on bar M_0,n",
 	  "acceptance date" => "2 August 2018",
 	  "published article URI" => "https://msp.org/jsag/2018/8-1/p08.xhtml",
 	  "published article DOI" => "10.2140/jsag.2018.8.81",
 	  "published code URI" => "https://msp.org/jsag/2018/8-1/jsag-v8-n1-x08-LieTypes.m2",
-	  "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/LieTypes.m2",
+	  "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/LieTypes.m2",
 	  "release at publication" => "923fbcc7c77b23f510bb0d740e00fc1722a2f397",	    -- git commit number in hex
 	  "version at publication" => "0.5",
 	  "volume number" => "8",
@@ -51,7 +51,7 @@ export {
     "subLieAlgebra",
     --for the LieAlgebraModule type
     "LieAlgebraModule", 
-    "irreducibleLieAlgebraModule", "LL",
+    "irreducibleLieAlgebraModule", "LL", "ω",
 --    "isIsomorphic",
     "casimirScalar",
     "weightDiagram",
@@ -62,6 +62,7 @@ export {
     "LieAlgebraModuleFromWeights",
     "trivialModule",
     "adjointModule",
+    "zeroModule",
     "isIrreducible",
     "character",
     "adams",
@@ -90,7 +91,7 @@ simpleLieAlgebra
 dualCoxeterNumber
 highestRoot
 simpleRoots
-simpleCoroots
+positiveCoroots
 positiveRoots
 starInvolution
 killingForm
@@ -172,6 +173,7 @@ global variable names instead of the hash table contents.
 * define a Lie algebra based on its Cartan matrix
 * M @ M' for tensor product of modules over different Lie algebras
 * improved caching of characters
+* added/exported method zeroModule
 
 *-
 
@@ -402,7 +404,7 @@ LieAlgebra#AfterPrint = g -> (
 LieAlgebraModule = new Type of HashTable 
 LieAlgebraModule.GlobalAssignHook = globalAssignFunction
 LieAlgebraModule.GlobalReleaseHook = globalReleaseFunction
-LL = new ScriptedFunctor from { subscript => w -> g -> irreducibleLieAlgebraModule(try toList w else {w},g) }
+LL = new ScriptedFunctor from { subscript => w -> g -> irreducibleLieAlgebraModule(g,w) }
 LL.texMath = ///{\mathcal L}///
 
 describe LieAlgebraModule := M -> Describe (
@@ -426,6 +428,12 @@ new LieAlgebraModule from Sequence := (T,s) -> new LieAlgebraModule from {
 
 LieAlgebraModule_ZZ := (M,i) -> irreducibleLieAlgebraModule(M#"LieAlgebra",(sort keys M#"DecompositionIntoIrreducibles")#i)
 LieAlgebraModule_* := M -> apply(sort keys M#"DecompositionIntoIrreducibles", v -> irreducibleLieAlgebraModule(M#"LieAlgebra",v))
+LieAlgebraModule_List := (V,w) -> (V#"DecompositionIntoIrreducibles")_w
+LieAlgebraModule_Vector := (V,w) -> V_(entries w)
+LieAlgebraModule_LieAlgebraModule := (V,W) -> (
+	if not isIrreducible W then error "last module must be irreducible";
+    	V_(first keys W#"DecompositionIntoIrreducibles")
+    )
 
 isIrreducible = method()
 isIrreducible LieAlgebraModule := M -> values M#"DecompositionIntoIrreducibles" == {1}
@@ -450,12 +458,23 @@ LieAlgebraModule#AfterPrint = M -> (
 trivialModule = method(TypicalValue => LieAlgebraModule)
 trivialModule LieAlgebra := g -> irreducibleLieAlgebraModule(toList(rank g:0),g)
 
+zeroModule = method(TypicalValue => LieAlgebraModule)
+zeroModule LieAlgebra := g -> new LieAlgebraModule from (g,{})
+
+
 LieAlgebraModule ^** ZZ := (cacheValue'(0,symbol ^**)) ((M,n) -> (
 	if n<0 then "error nonnegative powers only";
     	if n==0 then trivialModule M#"LieAlgebra"
     	else if n==1 then M
     	else M**(M^**(n-1)) -- order matters for speed purposes
     ))
+
+-*
+-- the implementation below seems more reasonable but it's actually slower in most circumstances
+LieAlgebraModule ^** ZZ := LieAlgebraModule => (M, n) -> BinaryPowerMethod(M, n, tensor,
+    M -> trivialModule M#"LieAlgebra",
+    M -> error "LieAlgebraModule ^** ZZ: expected non-negative integer")
+*-
 
 adjointWeight := (type,m) -> splice (
     if type == "A" then if m==1 then {2} else {1,m-2:0,1}
@@ -512,16 +531,24 @@ LieAlgebraModule.directSum = args -> (
 )
 LieAlgebraModule ++ LieAlgebraModule := directSum
 
+ωsub := i -> Subscript{symbol ω,i};
+ω=new ScriptedFunctor from { subscript => ωsub }
 irreducibleLieAlgebraModule = method(
     TypicalValue => LieAlgebraModule
     )
-irreducibleLieAlgebraModule(List,LieAlgebra) := (v,g) -> (
+irreducibleLieAlgebraModule(LieAlgebra,List) := (g,v) -> (
     v = deepSplice v;
-    if #v != rank g or not all(v, a -> class a === ZZ) then error "wrong highest weight";
+    if #v != rank g or not all(v, a -> class a === ZZ) then error "invalid highest weight";
     new LieAlgebraModule from (g,{v => 1})
     )
-irreducibleLieAlgebraModule(Vector,LieAlgebra) := (v,g) -> irreducibleLieAlgebraModule(entries v,g)
-irreducibleLieAlgebraModule(LieAlgebra,List) := irreducibleLieAlgebraModule(LieAlgebra,Vector) := (g,v) -> irreducibleLieAlgebraModule(v,g)
+irreducibleLieAlgebraModule(LieAlgebra,VisibleList) := (g,v) -> irreducibleLieAlgebraModule(g,toList v)
+irreducibleLieAlgebraModule(LieAlgebra,Vector) := (g,v) -> irreducibleLieAlgebraModule(g,entries v)
+irreducibleLieAlgebraModule(LieAlgebra,ZZ) := (g,v) -> irreducibleLieAlgebraModule(g,{v})
+irreducibleLieAlgebraModule(LieAlgebra,Expression) := (g,v) -> (
+        ω.subscript = i -> apply(rank g,j->if j+1==i then 1 else 0 );
+        irreducibleLieAlgebraModule(g,first(value v,ω.subscript=ωsub))
+    )
+irreducibleLieAlgebraModule(Thing,LieAlgebra) := (v,g) -> irreducibleLieAlgebraModule(g,v)
 
 -*-----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
@@ -666,7 +693,7 @@ casimirScalar(String,ZZ,List) := (type, m, w) -> (
     rho:=apply(plus sequence m,h->1/1);
     killingForm(type,m,w,w) + 2*killingForm(type,m,w,rho)
 )
-
+casimirScalar(LieAlgebra,List) := (g, w) -> casimirScalar(g#"RootSystemType",g#"LieAlgebraRank",w)
 casimirScalar(LieAlgebraModule) := (M) -> (
     if not isIrreducible M then error "Casimir scalar on irreducible modules only";
     g:=M#"LieAlgebra";
@@ -790,7 +817,7 @@ elemSym = memoize((L,i) -> (
     else sum(subsets(L,i),product)
     ))
 characterAlgorithms#"JacobiTrudi'" = (type,m,v) -> ( -- good for high rank algebras, small weights
-    if type != "A" or m<=3 then return;
+    if type != "A" then return;
     z := stdVars(type,m);
     conj:=reverse splice apply(m,i -> v#i : i+1);
     if #conj == 0 then 1_(characterRing(type,m)) else det matrix table(#conj,#conj,(i,j)->elemSym(z,conj#i+j-i))
@@ -905,26 +932,31 @@ characterAlgorithms#"Freudenthal" = (type,m,v) -> (
     Omega:=Freud(type,m,v);
     mults:=new MutableHashTable from Omega;
     posroots:=positiveRoots(type,m);
-    -- sort, removing highest weight
-    Omega=drop(apply(reverse sort apply(toList Omega,w->R_w),first @@ exponents),1);
-    scan(Omega, w -> (
-    	    rhs:=0;
-    	    scan(posroots, a -> (
-        	    w':=w+a;
-        	    while mults#?w' do (
-	    		rhs=rhs+killingForm(type,m,w',a)*mults#w';
-	    		w'=w'+a;
-	    		)));
-    	    lhs:=killingForm(type,m,v+rho,v+rho)-killingForm(type,m,w+rho,w+rho);
-    	    mults#w = lift(2*rhs/lhs,ZZ);
-	    ));
-    sum(pairs mults,(w,mu) -> mu * R_w) -- is there a nicer way of writing this?
+    -- sort
+    Omega=apply(reverse sort apply(toList Omega,w->R_w),first @@ exponents);
+    s:=R_v;
+    for i from 1 to #Omega-1 do s+=(
+	w:=Omega#i;
+	rhs:=0;
+	scan(posroots, a -> (
+		w':=w+a;
+		while mults#?w' do (
+		    rhs=rhs+killingForm(type,m,w',a)*mults#w';
+		    w'=w'+a;
+		    )));
+	lhs:=killingForm(type,m,v+rho,v+rho)-killingForm(type,m,w+rho,w+rho);
+	mults#w = lift(2*rhs/lhs,ZZ)
+	)*R_w;
+    s
 )
 
-
+characterAlgorithms#"Picker" = (type,m,v) -> (
+    if type != "A" and m>4 then characterAlgorithms#"Freudenthal"(type,m,v) -- forces Freudenthal for high rank not A
+    else if type == "A" and m<=3 then characterAlgorithms#"Weyl"(type,m,v) -- forces Weyl for low rank A
+    )
 
 -- last strategy = first choice
-scan({"JacobiTrudi","Freudenthal","Weyl","JacobiTrudi'"}, strat -> addHook(symbol character,characterAlgorithms#strat,Strategy=>strat))
+scan({"JacobiTrudi","Freudenthal","Weyl","JacobiTrudi'","Picker"}, strat -> addHook(symbol character,characterAlgorithms#strat,Strategy=>strat))
 
 character = method(
     Options=>{Strategy=>null},
@@ -941,7 +973,9 @@ character (String,ZZ,List) := o -> (type,m,v) -> character1(type,m,v,o) -- trick
 character (Sequence,Sequence,List) := o -> (type,m,v) -> character2(type,m,v,o) -- tricky to memoize a method with options
 character (LieAlgebra,List) := o -> (g,v) -> if rank g == 0 then 1_(characterRing g) else character(g#"RootSystemType",g#"LieAlgebraRank",v,o) -- annoying special case, otherwise wrong ring
 character (LieAlgebra,Vector) := o -> (g,v) -> character(g,entries v,o)
-character LieAlgebraModule := o -> (cacheValue character) ((M) -> sum(pairs M#"DecompositionIntoIrreducibles",(v,a) -> a * character (M#"LieAlgebra",v,o)))
+character LieAlgebraModule := o -> (cacheValue character) ((M) ->
+    if #(M#"DecompositionIntoIrreducibles") == 0 then 0_(characterRing M#"LieAlgebra")
+    else sum(pairs M#"DecompositionIntoIrreducibles",(v,a) -> a * character (M#"LieAlgebra",v,o)))
 
 weightDiagram = method(
     Options=>{Strategy=>null},
@@ -1122,12 +1156,7 @@ LieAlgebraModule ** LieAlgebraModule := (V,W) -> ( -- cf Humpheys' intro to LA &
 
 tensorCoefficient = method(
     TypicalValue=>ZZ)
-tensorCoefficient(LieAlgebraModule, LieAlgebraModule,LieAlgebraModule) := (U,V,W) -> (
-	if not isIrreducible W then error "third module must be irreducible";
-    	nu:=first keys W#"DecompositionIntoIrreducibles";
-    	fullTensorProduct:=(U**V)#"DecompositionIntoIrreducibles";
-    	fullTensorProduct_nu
-    )
+tensorCoefficient(LieAlgebraModule, LieAlgebraModule,LieAlgebraModule) := (U,V,W) -> (U**V)_W
 
 
 ---------------------------------------------------------
@@ -1211,7 +1240,7 @@ fusionProduct(LieAlgebraModule,LieAlgebraModule,ZZ) := (V,W,l) -> (
         	while cnt < #pr do (
 --		    s := sum(u,pr'#i,times);
 		    s := killingForm(g,u,pr#i); -- is the same just more explicit
-		    sn := numerator s; sd := denominator s; -- in non simply laced types, there can be a denimonator
+		    sn := numerator s; sd := denominator s; -- in non simply laced types, there can be a denominator
 		    if sd == 1 and sn % l == 0 then break else if s < -l or s > l then (
 			u=u-((sn+l*sd)//(2*l*sd))*l*pr#i;
 			cnt=0;
@@ -1353,6 +1382,7 @@ subLieAlgebra (LieAlgebra, List) := (g,S) -> subLieAlgebra(g,if #S==0 then map(Z
 *-
 
 subLieAlgebra (LieAlgebra,Matrix) := (g,M) -> ( -- matrix of coroots
+    if ring M =!= ZZ then try M=lift(M,ZZ) else error "matrix must be integer";
     -- in the simply laced case it'd be simply transpose M * cartanMatrix g * M. in general have to work harder
     if numRows M != rank g then error "wrong size of coroots";
     G := transpose M * inverse quadraticFormMatrix g * M; -- new inverse quadratic form <coroot_i|coroot_j>
@@ -1437,8 +1467,11 @@ doc ///
             the simple Lie algebra with the given rank and type	        
     Description
         Text
-            The classification of simple Lie algebras over the complex numbers is well known.  There are four infinite families (types A, B, C, D) corresponding to the Lie algebras $sl(n+1,\mathbb{C})$, $so(2n+1,\mathbb{C})$, $sp(2n,\mathbb{C})$, $so(2n,\mathbb{C})$ respectively, and five exceptional simple Lie algebras, E6, E7, E8, F4, G2.  
-	    	   
+            The classification of simple Lie algebras over the complex numbers is well known.
+	    There are four infinite families (types $\mathfrak{a}_n$, $\mathfrak{b}_n$, $\mathfrak{c}_n$, $\mathfrak{d}_n$) corresponding to the Lie algebras
+	    $\mathfrak{sl}(n+1,\mathbb{C})$, $\mathfrak{so}(2n+1,\mathbb{C})$, $\mathfrak{sp}(2n,\mathbb{C})$, $\mathfrak{so}(2n,\mathbb{C})$ respectively,
+	    and five exceptional simple Lie algebras, $\mathfrak{e}_6$, $\mathfrak{e}_7$, $\mathfrak{e}_8$, $\mathfrak{f}_4$, $\mathfrak{g}_2$.
+
         Example
             --simpleLieAlgebra(sl_2)
 	    simpleLieAlgebra("A",1)
@@ -1638,7 +1671,7 @@ doc ///
 	w:List
     Description
         Text
-	    Let $\mathbf{g}$ be a Lie algebra.  The Killing form on $\mathbf{g}$ is the symmetric bilinear form given by $(x,y) = Tr(ad x ad y)$.  It can restricted to a Cartan subalgebra $\mathbf{h}$ and transferred to $\mathbf{h}^*$, yielding a symmetric bilinear form on weights.  One popular convention is to scale the Killing form so that $(\theta,\theta) =2$, where $\theta$ is the highest root.
+	    Let $\mathbf{g}$ be a Lie algebra.  The Killing form on $\mathbf{g}$ is the symmetric bilinear form given by $(x,y) = Tr(\mathrm{ad}_x \mathrm{ad}_y)$.  It can restricted to a Cartan subalgebra $\mathbf{h}$ and transferred to $\mathbf{h}^*$, yielding a symmetric bilinear form on weights.  One popular convention is to scale the Killing form so that $(\theta,\theta) =2$, where $\theta$ is the highest root.
 	    
         Example
             g=simpleLieAlgebra("A",2)
@@ -1695,23 +1728,26 @@ doc ///
         class for Lie algebra modules
     Description
         Text 
-    	    This class represents Lie algebra modules.  Currently only modules over simple Lie algebras over the complex numbers are supported.  An object of type LieAlgebraModule is a hash table recording the Lie algebra and the decomposition of the module into irreducible Lie algebra modules, which are indexed by their highest weights. 
+    	    This class represents Lie algebra modules.  Currently only modules over semi-simple Lie algebras over the complex numbers are supported.
+	    An object of type LieAlgebraModule is a hash table recording the Lie algebra and the decomposition of the module into irreducible Lie algebra modules, which are indexed by their highest weights.
 	    
 	Example
 	    g=simpleLieAlgebra("A",2)
-	    M=irreducibleLieAlgebraModule({1,1},g)                   
+	    M=irreducibleLieAlgebraModule(g,{1,1})
 ///
 
 doc ///
     Key
         irreducibleLieAlgebraModule
-	(irreducibleLieAlgebraModule,List,LieAlgebra)
-	(irreducibleLieAlgebraModule,Vector,LieAlgebra)
+	(irreducibleLieAlgebraModule,LieAlgebra,List)
+	(irreducibleLieAlgebraModule,LieAlgebra,Vector)
 	LL
+	ω
     Headline
         construct the irreducible Lie algebra module with given highest weight
     Usage
         irreducibleLieAlgebraModule(w,g)
+        irreducibleLieAlgebraModule(g,w)
     Inputs
         w:List
 	    the highest weight of the desired module
@@ -1723,11 +1759,14 @@ doc ///
             This function creates the irreducible Lie algebra module with a given highest weight.
 	Example
 	    g=simpleLieAlgebra("A",2)
-            irreducibleLieAlgebraModule({1,1},g)
+            irreducibleLieAlgebraModule(g,{1,1})
         Text
 	    One can also use the shorthand LL:
 	Example
             LL_(1,1) (g)
+	Text
+	    as well as the shorthand ω:
+	    LL_(ω_2) (g)
 ///
 
 TEST ///
@@ -2171,6 +2210,17 @@ doc ///
 
 doc ///
     Key
+        zeroModule
+	(zeroModule,LieAlgebra)
+    Headline
+        The zero module of a Lie algebra
+    Description
+        Text
+	    Returns the zero-dimensional module.
+///
+
+doc ///
+    Key
         adjointModule
 	(adjointModule,LieAlgebra)
     Headline
@@ -2188,6 +2238,7 @@ TEST ///
     g=simpleLieAlgebra("A",2);
     M=irreducibleLieAlgebraModule({2,1},g);
     assert(M ** trivialModule g === M)
+    assert(M ** zeroModule g === zeroModule g)
     assert(dim adjointModule(g++g)==2*dim adjointModule g)
 ///
 
@@ -2452,6 +2503,45 @@ doc ///
 	    cartanMatrix h
 ///
 
+doc ///
+    Key
+       (symbol _,LieAlgebraModule,ZZ)
+       (symbol _,LieAlgebraModule,List)
+       (symbol _,LieAlgebraModule,Vector)
+       (symbol _,LieAlgebraModule,LieAlgebraModule)
+    Headline
+        Pick out one irreducible submodule of a Lie algebra module
+    Description
+        Text
+	   If a number is given, the ordering is the same as when the module is displayed:
+	Example
+	   g=simpleLieAlgebra("A",2);
+	   (adjointModule g)^**3
+	   oo_2
+        Text
+	   Instead one can simply use a weight or irreducible module as subscript:
+	Example
+	   g=simpleLieAlgebra("A",3);
+	   M=(adjointModule g)^**2
+	   describe M
+	   M_{1,0,1}
+	   M_(trivialModule g)
+///
+
+doc ///
+    Key
+       (symbol _*,LieAlgebraModule)
+    Headline
+        List irreducible submodules of a Lie algebra module
+    Description
+        Text
+	   Gives a list of nonisomorphic irreducible submodules:
+	Example
+	   g=simpleLieAlgebra("A",2);
+	   (adjointModule g)^**3
+	   oo_*
+///
+
 
 undocumented ( {
     (describe,LieAlgebra),(expression,LieAlgebra),(net,LieAlgebra),(texMath,LieAlgebra),
@@ -2459,7 +2549,7 @@ undocumented ( {
     (symbol ==,LieAlgebraModule,LieAlgebraModule), (symbol ==,LieAlgebraModule,ZZ),
     (NewFromMethod,LieAlgebraModule,Sequence),
     (symbol ^,LieAlgebraModule,QQ),
-    (irreducibleLieAlgebraModule,LieAlgebra,Vector), (irreducibleLieAlgebraModule,LieAlgebra,List),
+    (irreducibleLieAlgebraModule,LieAlgebra,ZZ), (irreducibleLieAlgebraModule,LieAlgebra,VisibleList), (irreducibleLieAlgebraModule,LieAlgebra,Expression), (irreducibleLieAlgebraModule,Thing,LieAlgebra),
     (dynkinDiagram,String,ZZ),(cartanMatrix,String,ZZ),(cartanMatrix,Sequence,Sequence),(isSimple,String,ZZ),isSimple,(isSimple,LieAlgebra),
     (dim,LieAlgebra),(rank,LieAlgebra),
     (character,String,ZZ,List),(character,Sequence,Sequence,List),

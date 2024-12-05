@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -805984641
+-- -*- M2-comint -*- hash: 5645148757851219583
 
 i1 : A = {matrix{{0,2,4},{0,2,4}},matrix{{0,0,2,2},{0,2,0,2}}};
 
@@ -102,6 +102,16 @@ The mixed volume of
  is 3
  yet we found 2 points
 Attempting to find all 3 points via monodromy.
+Found:2 solutions via monodromy
+Found:3 solutions via monodromy
+Found:3 solutions via monodromy
+Found:3 solutions via monodromy
+Found:3 solutions via monodromy
+Found:3 solutions via monodromy
+Found:3 solutions via monodromy
+Found:3 solutions via monodromy
+Found:3 solutions via monodromy
+Found:3 solutions via monodromy
 Monodromy recovery was successful
 basicSolver: Computed 3 solutions
 

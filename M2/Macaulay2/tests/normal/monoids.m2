@@ -119,6 +119,14 @@ use S
 R = S/(x-y)
 monoid R
 
+-- used to be in debugme.m2
+A = ZZ[a]
+B = A/a^6
+C = B[b]
+assert(B === ring a)
+assert(C === ring b)
+assert(C === ring(a*b))
+
 --- test Cox rings with torsion degree group
 needsPackage "NormalToricVarieties"
 B = {{2, -1}, {-1, 2}, {-1,-1}}
@@ -134,6 +142,10 @@ L = monomials(D = 3*X_0)
 assert(set first entries basis(degree D, S) === set L)
 -- FIXME should be homogeneous
 isHomogeneous sum({1,1,1,1}, L, times)
+
+-- test truncate
+needsPackage "Truncations"
+assert(set(truncate({0,3}, S))_* === set(monomials(X_0+2*X_1) | monomials(2*X_0+X_1) | monomials(3*X_0)))
 
 --- test passing a map of ZZ-modules for Degrees
 M = monoid[a,b,c, Degrees => A]
@@ -227,9 +239,15 @@ assert(B.Options.SkewCommutative == {0, 1, 2, 3})
 -- test variable deduplication
 assert(gens(A = monoid[x,y]) == {x,y})
 assert(gens(B = A ** A) == {x_0,y_0,x_1,y_1}) -- TODO: eliminate the warning
-assert(gens(C = B ** B) == {x_(0,0),y_(0,0),x_(1,0),y_(1,0),x_(0,1),y_(0,1),x_(1,1),y_(1,1)})
+assert(gens(C = B ** B) == {x_(0,0),y_(0,0),x_(0,1),y_(0,1),x_(1,0),y_(1,0),x_(1,1),y_(1,1)})
 assert(toString gens(A ** B) == "{x, y, x_0, y_0, x_1, y_1}") -- TODO: not yet working without toString
 assert(toString gens(monoid[x,y,x,z]) == "{x_0, y, x_1, z}") -- TODO: not yet working without toString
+assert(toString gens(monoid[x,x,x]) == "{x_0, x_1, x_2}") -- issue #3261
+
+-- test ^** and runLengthEncode
+-- TODO: what should happen for odd powers?
+A = (monoid[x_0..x_2]) ^** 2
+assert(toString runLengthEncode(expression \ gens A) == "{x_(0,0)..x_(1,2)}")
 
 -- test of Weyl algebra variable handling
 A = QQ[t, dt, WeylAlgebra => {t => dt}]
@@ -243,7 +261,7 @@ assert(B.WeylAlgebra == {{1, 2}})
 assert(N.Options.WeylAlgebra == {{N_1, N_2}})
 
 -- test of adjoining variables with local variables
-needsPackage "Dmodules"
+needsPackage "BernsteinSato"
 W = QQ[u, v, Du, Dv, WeylAlgebra => {u => Du, v => Dv}];
 assert(RatAnn(u^5 - v^2) == ideal{2*u*Du+5*v*Dv+10, 5*u^4*Dv+2*v*Du})
 

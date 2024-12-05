@@ -177,6 +177,8 @@ doc ///
 		    p = point{{1e-7-1e-7*ii,1e-7+1e-7*ii,1+1e-7}};
     	            certifySingularSolution(f,p)
 
+	Acknowledgement
+	  Special thanks: Michael Burr, Anton Leykin, Thomas Yahl.
 
 ///
 

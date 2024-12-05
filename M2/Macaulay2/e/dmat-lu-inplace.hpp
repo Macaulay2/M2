@@ -9,7 +9,12 @@
 
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
-#include <flint/perm.h>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#include <flint/fq_nmod_mat.h>  // for fq_nmod_mat_lu, fq_zech_mat_lu
+#include <flint/perm.h>         // for _perm_parity
+#pragma GCC diagnostic pop
 
 template <typename RT>
 class LUUtil
@@ -279,6 +284,9 @@ inline void DMatLUinPlace<M2::ARingRR>::computeLU()
   int info;
   int min = (rows <= cols) ? rows : cols;
 
+  if (min == 0)
+    return;
+
   // printf("entering DMatLUinPlace::computeLUNaive for RR\n");
 
   int* perm = newarray_atomic(int, min);
@@ -339,6 +347,9 @@ inline void DMatLUinPlace<M2::ARingCC>::computeLU()
   int cols = static_cast<int>(mLU.numColumns());
   int info;
   int min = (rows <= cols) ? rows : cols;
+
+  if (min == 0)
+    return;
 
   // printf("entering DMatLUtemplate::computeLUNaive for RR\n");
 

@@ -36,16 +36,19 @@ monomialIdeal NormalToricVariety := MonomialIdeal => X ->
 -- sheaves
 ------------------------------------------------------------------------------
 sheaf (NormalToricVariety, Module) := CoherentSheaf => (X,M) -> (
-    if ring M =!= ring X then 
-    	error "-- expected the module and the variety to have the same ring";
-    if not isHomogeneous M then 
-    	error "-- expected a homogeneous module";
-    -- constructing coherent sheaf
-    new CoherentSheaf from {
-    	symbol module  => M,
-    	symbol variety => X
-	}
-    );
+    if M.cache#?(sheaf, X) then return M.cache#(sheaf, X);
+    M.cache#(sheaf, X) = (
+	if ring M =!= ring X then
+	   error "-- expected the module and the variety to have the same ring";
+	if not isHomogeneous M then
+	   error "-- expected a homogeneous module";
+	-- constructing coherent sheaf
+	new CoherentSheaf from {
+	    symbol module  => M,
+	    symbol variety => X,
+	    symbol cache   => new CacheTable
+	    }
+	));
 sheaf (NormalToricVariety, Ring) := SheafOfRings => (X,R) -> (
     if ring X =!= R then 
 	error "-- expected the ring of the variety";
@@ -56,68 +59,35 @@ sheaf (NormalToricVariety, Ring) := SheafOfRings => (X,R) -> (
     );
 sheaf NormalToricVariety := X -> sheaf_X ring X
 
-CoherentSheaf#{Standard,AfterPrint} = F -> (
-    X := variety F;
-    M := module F;
-    << endl;				  -- double space
-    n := rank ambient F;
-    << concatenate(interpreterDepth:"o") << lineNumber << " : coherent sheaf on " << X;
-    if M.?generators then
-    if M.?relations then << ", subquotient of " << ambient F
-    else << ", subsheaf of " << ambient F
-    else if M.?relations then << ", quotient of " << ambient F;
-    << endl;)
-
 installMethod(symbol _, OO, NormalToricVariety, (OO,X) -> sheaf(X, ring X))
 
-CoherentSheaf Sequence := CoherentSheaf => (F,a) -> sheaf(variety F, 
-    F.module ** (ring F)^{toList(a)})
-   
-sheafHom(CoherentSheaf,CoherentSheaf) := (F,G) -> (
-    sheaf(variety F, Hom(module F, module G)) );
-Hom(CoherentSheaf,CoherentSheaf) := Module => (F,G) -> HH^0(variety F, sheafHom(F,G))
-
-CoherentSheaf.directSum = args -> (
-    assert(#args > 0);
-    X := variety args#0;
-    if not all(args, F -> variety F === X) then (
-    	error "-- expected all sheaves to be over the same ring");
-    sheaf(X, directSum apply(args, F -> F.module)) );
-
-SheafOfRings Sequence := CoherentSheaf => (O,a) -> O^1 a
-
-super   CoherentSheaf := CoherentSheaf => F -> sheaf(variety F, super   module F)
-ambient CoherentSheaf := CoherentSheaf => F -> sheaf(variety F, ambient module F)
-cover   CoherentSheaf := CoherentSheaf => F -> sheaf(variety F, cover   module F)
-
-minimalPresentation CoherentSheaf := 
-prune CoherentSheaf := opts -> F -> (
-    X := variety F;
-    if instance(X, NormalToricVariety) then (
+-- Add a new strategy as a hook
+addHook((minimalPresentation, CoherentSheaf), Strategy => symbol NormalToricVarieties, (opts, F) ->
+    if instance(X := variety F, NormalToricVariety) then (
     	M := module F;
     	S := ring M;
     	B := ideal X;
     	N := saturate(image map(M,S^0,0), B);
     	if N != 0 then M = M/N;
-    	C := res M;
+    	C := freeResolution M;
     	-- is there a better bound?
-    	a := max(1, max flatten flatten apply(length C +1, i -> degrees C#i));
-    	return sheaf(X, minimalPresentation Hom(B^[a], M)) );
-    sheaf minimalPresentation HH^0 F(>=0) );
+    	a := max(1, max flatten flatten apply(length C +1, i -> degrees C_i));
+	return sheaf(X, minimalPresentation Hom(B^[a], M)) )
+    )
 
 cotangentSheaf NormalToricVariety := CoherentSheaf => opts -> (
     (cacheValue (symbol cotangentSheaf => opts)) (
 	X -> (
       	    if isDegenerate X then 
-		error "-- expect a non-degenerate toric variety";
+		error "-- expected a non-degenerate toric variety";
       	    S := ring X;
       	    d := dim X;
       	    n := numgens S;
       	    nu := map (S^n, S^d, (matrix rays X) ** S);
       	    eta := map (directSum apply(n, i -> S^1 / ideal(S_i)), S^n, id_(S^n));
       	    om := sheaf (X, kernel (eta * nu));
-      	    if opts.Minimize then om = minimalPresentation om;
-      	    om 
+	    if opts.MinimalGenerators
+	    then minimalPresentation om else om
 	    )
 	)
     );
@@ -147,7 +117,7 @@ setupHHOO = X -> (
     RfromS := map (R, S, gens R);
     B := RfromS ideal X;
     -- use simplicial cohomology find the support sets 
-    quasiCech := Hom (res (R^1/B), R^1);
+    quasiCech := Hom (freeResolution(R^1/B), R^1);
     supSets := delete ({}, subsets (toList (0..n-1)));
     d := dim X;
     sigma := new MutableHashTable;
@@ -218,7 +188,7 @@ cohomology (ZZ, NormalToricVariety, CoherentSheaf) := Module => opts -> (i,X,F) 
 	    )
     	else (
       	    B := ideal X;
-      	    C := res M;
+      	    C := freeResolution M;
       	    deg := toList (degreeLength S : 0);
       	    bettiNum := flatten apply (1+length C, 
 		j -> apply (unique degrees C_j, alpha -> {j,alpha}));
@@ -243,9 +213,8 @@ cohomology (ZZ, NormalToricVariety, CoherentSheaf) := Module => opts -> (i,X,F) 
 cohomology (ZZ, NormalToricVariety, SheafOfRings) := Module => opts -> 
     (i, X ,O) -> HH^i (X, O^1)
 
-euler CoherentSheaf := F -> (
-    X := variety F;
-    if class variety F === NormalToricVariety then 
-    	return sum (1 + dim X, i -> (-1)^i * (rank HH^i(X,F)) );
-    if class variety F === ProjectiveVariety then return euler module F;
-    error "-- expected a sheaf on a ProjectiveVariety or NormalToricVariety");
+-- Add a new strategy as a hook
+addHook((euler, CoherentSheaf), Strategy => symbol NormalToricVarieties, F ->
+    if instance(X := variety F, NormalToricVariety) then
+	return sum (1 + dim X, i -> (-1)^i * (rank HH^i(X,F)) )
+    )

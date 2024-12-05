@@ -165,7 +165,7 @@ document {
      }
 
 document {
-     Key => (leadTerm, ZZ, Matrix),
+     Key => {(leadTerm, ZZ, Matrix), (leadTerm, ZZ, GroebnerBasis), (leadTerm, ZZ, Vector)},
      Headline => "get the matrix of lead polynomials of each column",
      Usage => "leadTerm(n,f)",
      Inputs => {"n", "f" => "in a polynomial ring"},
@@ -249,171 +249,6 @@ document {
      }
 
 document {
-     Key => {(reshape,Module,Module,Matrix),reshape},
-     Headline => "reshape a matrix",
-     Usage => "reshape(F,G,f)",
-     Inputs => {
-	  "F" => "a free module",
-	  "G" => "a free module",
-	  "f"
-	  },
-     Outputs => {
-	  { " ", TT "F <-- G", " obtained from f by 
-     	       taking elements from the first column of ", TT "f", ", 
-	       then the second, and
-     	       so on, filling them into the result column by column."
-	       }
-	  },
-     "Currently, it is assumed
-     that ", TT "f", " and the result both have the same 
-     number of entries.  The resulting map has the same degree that ", TT "f", " has,
-     but it is easy to spoil homogeneity by giving incorrect free modules.",
-     EXAMPLE lines ///
-	  f = matrix{{1,3,5,7,9,11},{2,4,6,8,10,12}}
-	  reshape(ZZ^3,ZZ^4,f)
-	  ///
-     }
-document {
-     Key => {(adjoint',Matrix,Module,Module),adjoint'},
-     Headline => "an adjoint map",
-     Usage => "adjoint'(f,G,H)",
-     Inputs => {
-	  "f" => {"a homomorphism ", TT "F --> Hom(G,H)", " between modules"},
-	  "G" => "a free module",
-	  "H" => "a free module"
-	  },
-     Outputs => {
-	  {"the adjoint homomorphism ", TT "F ** G --> H"}
-	  },
-     PARA {
-     	  "Recall that ", TO "**", " refers to the tensor product of modules.  If ", TT "f", " is
-	  homogeneous, then the resulting matrix will be homogeneous."
-	  },
-     EXAMPLE {
-	  "R = QQ[x_1 .. x_12];",
-	  "f = genericMatrix(R,6,2)",
-	  "g = adjoint'(f,R^2,R^3)",
-	  "isHomogeneous g"
-	  },
-     SeeAlso => {adjoint, flip, reshape, (symbol**,Module,Module), dual}
-     }
-document {
-     Key => {(adjoint,Matrix,Module,Module),adjoint},
-     Headline => "an adjoint map",
-     Usage => "adjoint(f,F,G)",
-     Inputs => {
-	  "f" => {"a homomorphism ", TT "F ** G --> H"},
-	  "F" => "a free module",
-	  "G" => "a free module"
-	  },
-     Outputs => {{"the adjoint homomorphism ", TT "F --> Hom(G,H)"}},
-     PARA{"Recall that ", TO "**", " refers to the tensor product of modules."},
-     EXAMPLE lines ///
-	  R = QQ[x_1 .. x_24];
-	  f = genericMatrix(R,2,4*3)
-     	  isHomogeneous f
-	  g = adjoint(f,R^4,R^3)
-	  ///,
-     PARA{"If ", TT "f", " is homogeneous, and ", TT "source f === F ** G", 
-     	  " (including the grading), then the resulting matrix will be homogeneous."},
-     EXAMPLE lines ///
-	  g = adjoint(f,R^4,R^{-1,-1,-1})
-	  isHomogeneous g
-	  ///,
-     SeeAlso => {adjoint', flip, reshape, (symbol**,Module,Module), dual}
-     }
-document {
-     Key => {(flip,Module,Module),flip},
-     Headline => "matrix of commutativity of tensor product",
-     Usage => "flip(F,G)",
-     Inputs => {"F", "G"},
-     Outputs => {{"the matrix representing the natural isomorphism ", TT "G ** F <-- F ** G"}},
-     EXAMPLE lines ///
-     	  R = QQ[x,y];
-	  F = R^{1,2,3}
-	  G = R^{10,20,30}
-	  f = flip(F,G)
-	  isHomogeneous f
-	  target f
-	  source f
-	  target f === G**F
-	  source f === F**G
-	  u = x * F_0
-	  v = y * G_1
-	  u ** v
-	  v ** u
-	  f * (u ** v)
-	  f * (u ** v) === v ** u
-     ///}
-document {
-     Key => (symbol**,Module,Module),
-     Headline => "tensor product",
-     Usage => "M ** N",
-     Inputs => {"M", "N"},
-     Outputs => {
-	       Module => {"the tensor product of M and N"}
-	       },
-     "If M has generators m1, m2, ..., mr, and N has generators n1, n2, ..., ns,
-     then M ** N has generators: m1**n1, m1**n2, ..., m2**n1, ..., mr**ns.",
-     EXAMPLE lines ///
-          R = ZZ[a..d];
-	  M = image matrix {{a,b}}
-	  N = image matrix {{c,d}}
-	  M ** N
-	  N ** M
-     ///,
-     PARA{},
-     "Use ", TO trim, " or ", TO minimalPresentation, " if a more compact presentation
-     is desired.",
-     PARA{
-     	  "Use ", TO (flip,Module,Module), " to produce the isomorphism M ** N --> N ** M.",
-	  },
-     PARA {
-	  "To recover the factors from the tensor product, use the function ", TO "formation", "."
-	  },
-     SeeAlso => {flip, (symbol**,Module,Matrix),(symbol**,Matrix,Matrix),formation}
-     }
-document {
-     Key => (symbol**,Matrix,Matrix),
-     Headline => "tensor product",
-     Usage => "f ** g",
-     Inputs => {"f", "g"},
-     Outputs => {
-	       Matrix => {"the tensor product of maps f and g"}
-	       },
-     "Other names for the tensor product include: the outer product, or the Kronecker product 
-     of two matrices.",
-     EXAMPLE lines ///
-          R = ZZ[a..d];
-	  f = matrix {{a,b}}
-	  g = transpose matrix {{c,d}}
-	  f ** g
-     ///,
-     PARA{},
-     SeeAlso => {flip, (symbol**,Module,Module),(symbol**,Matrix,Module)}
-     }
-document {
-     Key => (symbol**,Vector,Vector),
-     Headline => "tensor product",
-     Usage => "v ** w",
-     Inputs => {"v", "w"},
-     Outputs => {
-	       Vector => {"the tensor product of v and w"}
-	       },
-     "If ", TT "v", " is in the module ", TT "M", ", and ", TT "w", " is in the module ", TT "N", ", then ", TT "v**w", " is in
-     the module ", TT "M**N", ".",
-     EXAMPLE lines ///
-          R = ZZ[a..d];
-	  F = R^3
-	  G = coker vars R
-	  v = (a-37)*F_1
-	  v ** G_0
-     ///,
-     PARA{},
-     SeeAlso => {(symbol**,Module,Module)}
-     }
-
-document {
      Key => SubringLimit,
      Headline => "stop after finding enough elements of a subring",
      TT "SubringLimit", " -- an option for  ", TO "kernel", " and ", TO "gb", "
@@ -433,7 +268,7 @@ document {
      TT "dual f", " -- the dual (transpose) of a homomorphism."
      }
 document {
-     Key => {singularLocus,(singularLocus, ProjectiveVariety),(singularLocus, Ideal),(singularLocus, Ring),(singularLocus, AffineVariety)},
+     Key => {singularLocus, (singularLocus, Ideal), (singularLocus, Ring)},
      Headline => "singular locus",
      TT "singularLocus R", " -- produce the singular locus of a ring, which is assumed to be integral.",
      PARA{},
@@ -511,7 +346,6 @@ document {
      Key => {(symbol /, Ring, Ideal),
 	  (symbol /, Ring, Module),
 	  (symbol /, Ring, RingElement),
-	  (symbol /, Ring, MonomialIdeal),
 	  (symbol /, Ring, List),
 	  (symbol /, Ring, Sequence),
 	  (symbol /, Ring, ZZ)
@@ -676,74 +510,6 @@ document {
      "The two modules should be submodules of the same module."
      }
 document {
-     Key => {(symbol **, Matrix, Module),
-	  (symbol **, Module, Matrix)},
-     Headline => "tensor product",
-     Usage => "f ** M\nM ** f",
-     Inputs => {
-	  "f", "M"},
-     Outputs => {
-	  Matrix => {"formed by tensoring ", TT "f", " with the identity map of ", TT "M"},
-	  },
-     EXAMPLE lines ///
-	  R = ZZ/101[x,y];
-      	  R^2 ** vars R
-	  (vars R) ** R^2
-	  ///,
-     "When ", TT "N", " is a free module of rank 1 the net effect of the
-     operation is to shift the degrees of ", TT "f", ".",
-     EXAMPLE lines ///
-	  R = ZZ/101[t];
-      	  f = matrix {{t}}
-      	  degrees source f
-      	  degrees source (f ** R^{-3})
-	  ///,
-     SeeAlso => {(symbol**,Module,Module),(symbol**,Matrix,Matrix)}
-     }
-document {
-     Key => {(symbol **, Module, Ring),
-	  (symbol **, Ring, Module),
-          (symbol **, Ideal, Ring),
-          (symbol **, Ring, Ideal)},
-     Headline => "tensor product",
-     Usage => "M ** R\nR ** M",
-     Inputs => {
-	  "M", "R"},
-     Outputs => {
-	  Module => {"over ", TT "R", ", obtained by forming the tensor product of
-	  the module ", TT "M", " with ", TT "R"}
-	  },
-     "If the ring of ", TT "M", " is a base ring of ", TT "R", ", then the matrix presenting
-     the module will be simply promoted (see ", TO "promote", ").  Otherwise, a ring map from the ring of ", TT "M", " 
-     to ", TT "R", " will be constructed by examining the names of the variables, as described in ", TO (map,Ring,Ring), ".",
-     EXAMPLE lines ///
-	  R = ZZ/101[x,y];
-      	  M = coker vars R
-      	  M ** R[t]
-	  ///,
-     }
-document {
-     Key => {(symbol **, Matrix, Ring),
-	  (symbol **, Ring, Matrix)},
-     Headline => "tensor product",
-     Usage => "f ** R\nR ** f",
-     Inputs => {
-	  "f", "R"},
-     Outputs => {
-	  Matrix => {"over ", TT "R", ", obtained by forming the tensor product of
-	  the module map ", TT "f", " with ", TT "R"}
-	  },
-     PARA{},
-     "The ring of ", TT "f", " should be a base ring of ", TT "R", ".  The degree 
-     of the map is preserved.",
-     EXAMPLE lines ///
-	  R = ZZ[a..c];
-	  S = R/(a+b+c);
-      	  f = vars R
-	  f ** S
-	  ///
-     }
-document {
      Key => Order,
      Headline => "specify the order of a Hilbert series required",
      TT "Order", " -- an optional argument used with ", TO "hilbertSeries", "
@@ -801,80 +567,6 @@ document {
      Key => (dual, Module),
      Headline => "dual module",
      TT "dual M", " -- the dual of a module."
-     }
-document {
-     Key => (dual, CoherentSheaf),
-     Headline => "dual coherent sheaf",
-     TT "dual M", " -- the dual of a coherent sheaf."
-     }
-
-document {
-     Key => {homomorphism',(homomorphism', Matrix)},
-     Headline => "get the element of Hom from a homomorphism",
-     Usage => "homomorphism' f",
-     Inputs => {
-	  "f" => {"of the form M --> N"},
-	  },
-     Outputs => {
-	  {"the map ", TT "R^1 --> Hom(M,N)", ", corresponding to the map ", TT "f", ""}
-	  },
-     EXAMPLE lines ///
-	  R = QQ[x,y,z]
-	  f = vars R ++ vars R
-	  g = homomorphism' f
-	  target g === Hom(source f, target f)
-	  ///,
-     PARA {
-	  "We can undo the process with ", TO "homomorphism", "."
-	  },      
-     EXAMPLE lines ///
-	  f' = homomorphism g
-     	  f === f'
-	  ///,
-     SeeAlso => {homomorphism}
-     }
-document {
-     Key => {homomorphism,(homomorphism, Matrix)},
-     Headline => "get the homomorphism from element of Hom",
-     Usage => "homomorphism f",
-     Inputs => {
-	  "f" => {"of the form Hom(M,N) <-- R^1, where Hom(M,N) has been
-	  previously computed, and R is the ring of f, M and N"},
-	  },
-     Outputs => {
-	  {"the ", TO "Matrix", " ", TT "M --> N", ", corresponding to the element ", TT "f", ""}
-	  },
-     EXAMPLE lines ///
-	  R = QQ[x,y,z,Degrees=>{2,3,1}]/(y^2-x^3)
-	  H = Hom(ideal(x,y), R^1)
-	  f = H_{1}
-	  g = homomorphism f
-	  ///,
-     "The source and target are what they should be.",
-     EXAMPLE lines ///
-	  source g === module ideal(x,y)
-	  target g === R^1
-	  ///,
-     PARA {
-	  "Except for a possible redistribution of degrees between the map and modules,
-	  we can undo the process with ", TO "homomorphism'", "."
-	  },      
-     EXAMPLE lines ///
-	  f' = homomorphism' g
-	  f === f'
-     	  f - f'
-     	  degree f, degree f'
-     	  degrees f, degrees f'
-	  ///,
-     PARA{
-	  "After ", TO2((minimalPresentation,Module),"pruning"), " a Hom module, one cannot use 
-	  homomorphism directly.  Instead, first apply the pruning map:"
-	  },
-     EXAMPLE lines ///
-          H1 = prune H
-	  homomorphism(H1.cache.pruningMap * H1_{1})
-          ///,
-     SeeAlso => {Hom,prune,random,basis}
      }
 
 -- Local Variables:

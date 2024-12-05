@@ -1,6 +1,39 @@
 #ifndef __vector_arithmetic_hpp__
 #define __vector_arithmetic_hpp__
 
+// #include <utility>                  // for swap
+// #include <assert.h>                 // for assert
+// #include <stddef.h>                 // for size_t
+// #include <iostream>                 // for operator<<, ostream, endl, basic_...
+// #include <variant>                  // for visit, variant
+// #include <vector>                   // for vector
+
+// #include "m2tbb.hpp"                // for null_mutex
+
+// #include "ARingElem.hpp"            // for ARingElem
+// #include "NCAlgebras/Range.hpp"     // for Range
+// #include "ZZp.hpp"                  // for Z_mod
+// #include "aring-glue.hpp"           // for ConcreteRing
+// #include "aring.hpp"                // for DummyRing, ring_GFFlintBig, ring_...
+// #include "buffer.hpp"               // for buffer
+// #include "f4/f4-mem.hpp"            // for F4Vec
+// #include "ring.hpp"                 // for Ring
+// #include "ringelem.hpp"             // for ring_elem
+
+// class CoefficientRingR;
+// class CoefficientRingZZp;
+// class MemoryBlock;
+// namespace M2 { class ARingGFFlint; }
+// namespace M2 { class ARingGFFlintBig; }
+// namespace M2 { class ARingGFGivaro; }
+// namespace M2 { class ARingGFM2; }
+// namespace M2 { class ARingQQGMP; }
+// namespace M2 { class ARingZZp; }
+// namespace M2 { class ARingZZpFFPACK; }
+// namespace M2 { class ARingZZpFlint; }
+
+
+
 #include "m2tbb.hpp"
 #include "NCAlgebras/Range.hpp"  // for Range
 #include "newdelete.hpp"         // for VECTOR
@@ -14,12 +47,9 @@
 class Ring;
 using ComponentIndex = int;
 
-// this is still deriving from our_new_delete, since this
-// class doesn't know whether mValue points to a std::vector or a VECTOR.
-// this issue persists in the Row struct in NCF4 as well.
 class ElementArray
 {
-  template<typename RingType, typename ElementArrayType> friend class ConcreteVectorArithmetic;
+  template<typename RingType> friend class ConcreteVectorArithmetic;
 
 public:
   ElementArray() : mValue(nullptr) {}
@@ -39,8 +69,17 @@ private:
   void* mValue;
 };
 
-template<typename RingType,
-         typename ElementArrayType = ElementArray>
+class VectorArithmeticStats
+{
+  mutable long mNumAdditions;
+public:
+  VectorArithmeticStats() : mNumAdditions(0) {}
+
+  void incrementNumAdditions() const { ++mNumAdditions; }
+  long numAdditions() const { return mNumAdditions; }
+};
+
+template<typename RingType>
 class ConcreteVectorArithmetic
 {
 public:
@@ -56,8 +95,9 @@ public:
  private:
   const Ring* mOriginalRing;
   const RingType* mRing;
+  mutable VectorArithmeticStats mStats;
 
-  ElementArrayContainer* elementArray(const ElementArrayType& f) const
+  ElementArrayContainer* elementArray(const ElementArray& f) const
   {
     return reinterpret_cast<ElementArrayContainer*>(f.getValue());
   }
@@ -66,11 +106,13 @@ public:
   ConcreteVectorArithmetic(const Ring* origR, const RingType* R) : mOriginalRing(origR), mRing(R) {}
 
   const Ring* ring() const { return mOriginalRing; }
+
+  const VectorArithmeticStats& stats() const {return mStats; }
   
   /////////////////////////////
   // Allocation/Deallocation //
   /////////////////////////////
-  ElementArrayType copyElementArray(const ElementArray& sparse) const
+  ElementArray copyElementArray(const ElementArray& sparse) const
   {
     auto& v = * elementArray(sparse);
     auto tempPtr = new ElementArrayContainer(v.size());
@@ -81,10 +123,10 @@ public:
 	mRing->init_set(d, v[n]);
         ++n;
       }
-    return ElementArrayType {tempPtr};    
+    return ElementArray {tempPtr};    
   }
 
-  ElementArrayType allocateElementArray(ComponentIndex nelems) const
+  ElementArray allocateElementArray(ComponentIndex nelems) const
   {
     auto tempPtr = new ElementArrayContainer(nelems);
     for (auto& d : *tempPtr)
@@ -92,10 +134,15 @@ public:
 	mRing->init(d);
 	mRing->set_zero(d);
       }
-    return ElementArrayType {tempPtr};    
+    return ElementArray {tempPtr};    
   }
 
-  void deallocateElementArray(ElementArrayType& coeffs) const
+  ElementArray allocateElementArray() const
+  {
+    return allocateElementArray(0);
+  }
+  
+  void deallocateElementArray(ElementArray& coeffs) const
   {
     auto& svec = * elementArray(coeffs);
     for (auto& e : svec) {
@@ -109,14 +156,14 @@ public:
   /// Linear Algebra /////
   ////////////////////////
 
-  size_t size(const ElementArrayType& coeffs) const
+  size_t size(const ElementArray& coeffs) const
   {
     return elementArray(coeffs)->size();
   }
 
-  void fillDenseArray(ElementArrayType& dense,
-                      const ElementArrayType& sparse,
-                      const Range<int>& comps) const
+  void fillDenseArray(ElementArray& dense,
+                      const ElementArray& sparse,
+                      const Range<const int>& comps) const
   {
     // Note: this function simply fills in the values coming from '(sparse, comps)'.
     //   Other values are not touched.
@@ -132,20 +179,52 @@ public:
     for (ComponentIndex i = 0; i < len; i++) mRing->set(dvec[comps[i]],svec[i]);
   }
 
-  void denseCancelFromSparse(ElementArrayType& dense,
-                             const ElementArrayType& sparse,
-                             const Range<int>& comps) const
+   void denseCancelFromSparse(ElementArray& dense,
+                             const ElementArray& sparse,
+                             const Range<const int>& comps) const
   {
     // ASSUMPTION: svec[0] == 1.
     auto& dvec = * elementArray(dense);
     auto& svec = * elementArray(sparse);
 
     typename RingType::Element a(*mRing,dvec[comps[0]]);
-    for (int i=0; i < comps.size(); ++i)
+    for (int i=1; i < comps.size(); ++i)
       mRing->subtract_multiple(dvec[comps[i]], a, svec[i]);
+    mRing->set_zero(dvec[comps[0]]);
   }
 
-  int denseNextNonzero(ElementArrayType& dense,
+  void denseCancelFromSparse(ElementArray& dense,
+                             const ElementArray& sparse,
+                             const Range<const int>& comps,
+                             ElementArray& result_multiplier) const
+  {
+    // ASSUMPTION: svec[0] == 1, comps.size() >= 1
+    auto& dvec = * elementArray(dense);
+    auto& svec = * elementArray(sparse);
+    auto& mults = * elementArray(result_multiplier);
+
+    FieldElement b;
+    mRing->init(b);
+    mRing->set(b, dvec[comps[0]]);
+
+    FieldElement one;
+    mRing->init(one);
+    mRing->set_from_long(one, 1);
+    if (not mRing->is_equal(svec[0], one))  // should be minus_one
+      mRing->negate(b, b);
+
+    for (int i=1; i < comps.size(); ++i)
+      {
+        mRing->subtract_multiple(dvec[comps[i]], b, svec[i]);
+        mStats.incrementNumAdditions();
+      }
+    mRing->set_zero(dvec[comps[0]]);
+
+    mRing->negate(b, b);
+    mults.push_back(b); // this transfers ownership of b.
+  }
+
+  int denseNextNonzero(ElementArray& dense,
                        int first,
                        int last) const
   {
@@ -162,8 +241,8 @@ public:
     return last + 1;
   }
 
-  void denseToSparse(ElementArrayType& dense,
-                     ElementArrayType& sparse, // output value: sets this value
+  void denseToSparse(ElementArray& dense,
+                     ElementArray& sparse, // output value: sets this value
                      Range<int>& comps, // output value: sets comps
                      int first,
                      int last,
@@ -180,8 +259,8 @@ public:
   }
 
   template<typename LockType>
-  void safeDenseToSparse(ElementArrayType& dense,
-                               ElementArrayType& sparse, // output value: sets this value
+  void safeDenseToSparse(ElementArray& dense,
+                               ElementArray& sparse, // output value: sets this value
                                Range<int>& comps, // output value: sets comps
                                int first,
                                int last,
@@ -213,8 +292,8 @@ public:
 	}
   }
 
-  void denseToSparse(ElementArrayType& dense,
-                           ElementArrayType& sparse, // output value: sets this value
+  void denseToSparse(ElementArray& dense,
+                           ElementArray& sparse, // output value: sets this value
                            int*& comps,
                            int first,
                            int last,
@@ -245,7 +324,7 @@ public:
 	}
   }
 
-  void setZeroInRange(ElementArrayType& dense,
+  void setZeroInRange(ElementArray& dense,
                       int first,
                       int last) const
   {
@@ -257,7 +336,7 @@ public:
       mRing->set_zero(dvec[i]);
   }
   
-  void makeMonic(ElementArrayType& sparse) const
+  void makeMonic(ElementArray& sparse) const
   {
     auto& svec = * elementArray(sparse);
 
@@ -269,7 +348,7 @@ public:
   }
 
   template<typename Container>
-  void appendToContainer(const ElementArrayType& sparse,
+  void appendToContainer(const ElementArray& sparse,
                          Container& c) const
   {
     auto& svec = * elementArray(sparse);
@@ -282,19 +361,30 @@ public:
   }
 
   template<typename Container>
-  ElementArrayType elementArrayFromContainer(const Container& c) const
+  ElementArray elementArrayFromContainer(const Container& c) const
   {
-    ElementArrayType sparse = allocateElementArray(c.size());
+    ElementArray sparse = allocateElementArray(c.size()); // initializes all elements
     auto& svec = * elementArray(sparse);
     for (auto i = 0; i < c.size(); ++i)
     {
-      mRing->init(svec[i]);
       mRing->from_ring_elem(svec[i], c[i]);
     }
     return sparse;
   }
 
-  ring_elem ringElemFromElementArray(const ElementArrayType& sparse,
+  template<typename Container>
+  ElementArray elementArrayFromContainerOfLongs(const Container& c) const
+  {
+    ElementArray sparse = allocateElementArray(c.size()); // initializes all elements
+    auto& svec = * elementArray(sparse); 
+    for (auto i = 0; i < c.size(); ++i)
+    {
+      mRing->set_from_long(svec[i], c[i]);
+    }
+    return sparse;
+  }
+
+  ring_elem ringElemFromElementArray(const ElementArray& sparse,
                                      int index) const
   {
     auto& svec = * elementArray(sparse);
@@ -303,13 +393,23 @@ public:
     return tmp;
   }
 
-  std::ostream& displayElementArray(std::ostream& o, const ElementArrayType& v) const
+  std::ostream& displayElement(std::ostream& o, const ElementArray& v, int index) const
   {
-    auto& svec = * elementArray(v);
+    auto& vec = * elementArray(v);
+
+    buffer b;
+    mRing->elem_text_out(b, vec[index], true, true, true);
+    o << b.str();
+    return o;
+  }
+  
+  std::ostream& displayElementArray(std::ostream& o, const ElementArray& v) const
+  {
+    auto& vec = * elementArray(v);
 
     bool first = true;
-    o << "[(" << svec.size() << ")";
-    for (const auto& a : svec)
+    o << "[(" << vec.size() << ")";
+    for (const auto& a : vec)
       {
         buffer b;
         mRing->elem_text_out(b, a, true, true, true);
@@ -322,12 +422,44 @@ public:
     o << "]" << std::endl;
     return o;
   }
+
+  std::ostream& displayAsDenseArray(std::ostream& o,
+                                    size_t len,
+                                    const ElementArray& v,
+                                    const Range<const int>& comps
+                                    ) const
+  {
+    auto& vec = * elementArray(v);
+    auto i = comps.cbegin();
+    auto c = vec.cbegin();
+    o << "[(" << vec.size() << ") ";
+    for (auto j = 0; j < len; ++j)
+      {
+        if (i == comps.cend() or *i != j)
+          o << ". ";
+        else
+          {
+            buffer b;
+            mRing->elem_text_out(b, *c, true, true, true);
+            o << b.str() << " ";
+            ++i;
+            ++c;
+          }
+      }
+    o << "]" << std::endl;
+    return o;
+  }
+
+  long to_modp_long(const ElementArray& coeffs, size_t loc) const
+  {
+    return 0; // DANGER WILL ROBINSON!
+  }
   
   ////////////////////////
   /// Append support /////
   ////////////////////////
   
-  void pushBackOne(ElementArrayType& coeffs) const
+  void pushBackOne(ElementArray& coeffs) const
   {
     auto& svec = * elementArray(coeffs);
     FieldElement one;
@@ -336,7 +468,7 @@ public:
     svec.emplace_back(one); // This grabs 'one' in cases where it is allocated...  I think...!
   }
 
-  void pushBackMinusOne(ElementArrayType& coeffs) const
+  void pushBackMinusOne(ElementArray& coeffs) const
   {
     auto& svec = * elementArray(coeffs);
     FieldElement minus_one;
@@ -345,8 +477,8 @@ public:
     svec.emplace_back(minus_one);
   }
 
-  void pushBackElement(ElementArrayType& coeffs,
-                       const ElementArrayType& take_from_here,
+  void pushBackElement(ElementArray& coeffs,
+                       const ElementArray& take_from_here,
                        size_t loc) const
   {
     auto& svec = * elementArray(coeffs);
@@ -357,8 +489,8 @@ public:
     svec.emplace_back(a);
   }
   
-  void pushBackNegatedElement(ElementArrayType& coeffs,
-                              const ElementArrayType& take_from_here,
+  void pushBackNegatedElement(ElementArray& coeffs,
+                              const ElementArray& take_from_here,
                               size_t loc) const
   {
     auto& svec = * elementArray(coeffs);
@@ -369,19 +501,78 @@ public:
     mRing->negate(a, a);
     svec.emplace_back(a);
   }
+
+  // We want to remove this function!
+  // TODO: Decide what to do with this function
+  void from_ring_elem(ElementArray& coeffs, ring_elem numer, ring_elem denom) const
+  // Appends numer/denom to coeffs array
+  {
+    auto& svec = * elementArray(coeffs);
+    FieldElement inumer;
+    mRing->init(inumer);
+    mRing->from_ring_elem(inumer, numer);
+    svec.emplace_back(inumer);
+  }
 };
 
-// `overloaded` construct (not standard until C++20)
-template<class... Ts> 
-struct overloaded : Ts... { using Ts::operator()...; };
+template<>
+inline long ConcreteVectorArithmetic<M2::ARingZZpFlint>::to_modp_long(const ElementArray& coeffs, size_t loc) const
+{
+  auto& svec = * elementArray(coeffs);
+  return mRing->coerceToLongInteger(svec[loc]);
+}
 
-template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+template<>
+inline long ConcreteVectorArithmetic<M2::ARingZZp>::to_modp_long(const ElementArray& coeffs, size_t loc) const
+{
+  auto& svec = * elementArray(coeffs);
+  return mRing->coerceToLongInteger(svec[loc]);
+}
+
+template<>
+inline long ConcreteVectorArithmetic<M2::ARingZZpFFPACK>::to_modp_long(const ElementArray& coeffs, size_t loc) const
+{
+  auto& svec = * elementArray(coeffs);
+  return mRing->coerceToLongInteger(svec[loc]);
+}
+
+template<>
+inline void ConcreteVectorArithmetic<M2::ARingQQGMP>::from_ring_elem(ElementArray& coeffs,
+                                                                     ring_elem numer,
+                                                                     ring_elem denom) const
+{
+  // TODO: this function ignores denom, this is non-intuitive and bug-prone.
+    // TODO: this will fail: input is alas ZZ integers... not QQ elements...
+    auto& svec = * elementArray(coeffs);
+    //ring_elem val = numer;
+    FieldElement inumer;
+    //FieldElement idenom;
+    mRing->init(inumer);
+    mRing->from_ring_elem(inumer, numer);
+    svec.emplace_back(inumer);
+
+  //   auto& svec = * elementArray(coeffs);
+  // ring_elem val = numer;
+  // FieldElement inumer;
+  // FieldElement idenom;
+  // mRing->init(inumer);
+  // mRing->from_ring_elem(numer, inumer);
+  // mRing->init(idenom);
+  // mRing->from_ring_elem(idenom, denom);
+  // if (not mRing->is_one(idenom))
+  //   mRing->divide(inumer, inumer, idenom);
+  
+}
+
+// `overloaded` construct (not standard until C++20)
+//template<class... Ts> 
+//struct overloaded : Ts... { using Ts::operator()...; };
+
+//template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
 // this is the dispatching class using std::variant
 class VectorArithmetic
 {
-  using ElementArrayType = ElementArray;
-
   // does the order of the variant types matter?
   using CVA_Type = std::variant<ConcreteVectorArithmetic<M2::ARingZZpFlint>*,
                                 ConcreteVectorArithmetic<M2::ARingGFFlintBig>*,
@@ -444,7 +635,7 @@ public:
         break;
       default:
         // dummy ring type for default
-	// throw an error here...
+        // throw an error here...
         std::cerr << "*** error! *** ring ID not found....!" << std::endl;
         mConcreteVector = new ConcreteVectorArithmetic<M2::DummyRing>();
       }
@@ -459,7 +650,7 @@ public:
   }
 
   // provide simple visitor interface to underlying std::variant types
-  size_t size(const ElementArrayType& coeffs) const {
+  size_t size(const ElementArray& coeffs) const {
     return std::visit([&](auto& arg) -> size_t { return arg->size(coeffs); }, mConcreteVector);
   }
   
@@ -467,45 +658,53 @@ public:
   // Allocation/Deallocation //
   /////////////////////////////
   /// Create a coefficient vector with room for `nelems` coefficients
-  ElementArrayType allocateElementArray(ComponentIndex nelems) const {
-    return std::visit([&](auto& arg) -> ElementArrayType { return arg->allocateElementArray(nelems);}, mConcreteVector);
+  ElementArray allocateElementArray(ComponentIndex nelems) const {
+    return std::visit([&](auto& arg) -> ElementArray { return arg->allocateElementArray(nelems);}, mConcreteVector);
   }
 
-  ElementArrayType copyElementArray(const ElementArray& sparse) const {
-    return std::visit([&](auto& arg) -> ElementArrayType { return arg->copyElementArray(sparse);}, mConcreteVector);
+  ElementArray allocateElementArray() const {
+    return std::visit([&](auto& arg) -> ElementArray { return arg->allocateElementArray();}, mConcreteVector);
   }
 
-  /// Create a coefficient vector with 0 elements.  Can be increased in size.
-  // ElementArrayType allocateElementArray() const = 0;
+  ElementArray copyElementArray(const ElementArray& sparse) const {
+    return std::visit([&](auto& arg) -> ElementArray { return arg->copyElementArray(sparse);}, mConcreteVector);
+  }
 
   /// Deallocate all the coefficients, and the array itself.
-  void deallocateElementArray(ElementArrayType& coeffs) const {
+  void deallocateElementArray(ElementArray& coeffs) const {
     std::visit([&](auto& arg) { arg->deallocateElementArray(coeffs); }, mConcreteVector);
   }
-  
+
   ////////////////////////
   /// Linear Algebra /////
   ////////////////////////
-  void fillDenseArray(ElementArrayType& dense,
-			   const ElementArrayType& coeffs,
-			   const Range<int>& comps) const {
+  void fillDenseArray(ElementArray& dense,
+			   const ElementArray& coeffs,
+			   const Range<const int>& comps) const {
     std::visit([&](auto& arg) { arg->fillDenseArray(dense,coeffs,comps); }, mConcreteVector);
   }
 
-  void denseCancelFromSparse(ElementArrayType& dense,
-                                const ElementArrayType& coeffs,
-                                const Range<int>& comps) const {
+  void denseCancelFromSparse(ElementArray& dense,
+                                const ElementArray& coeffs,
+                                const Range<const int>& comps) const {
     std::visit([&](auto& arg) { arg->denseCancelFromSparse(dense,coeffs,comps); }, mConcreteVector);
   }
 
-  int denseNextNonzero(ElementArrayType& dense,
+  void denseCancelFromSparse(ElementArray& dense,
+                             const ElementArray& coeffs,
+                             const Range<const int>& comps,
+                             ElementArray& result_multipler) const {
+    std::visit([&](auto& arg) { arg->denseCancelFromSparse(dense,coeffs,comps,result_multipler); }, mConcreteVector);
+  }
+  
+  int denseNextNonzero(ElementArray& dense,
                           int first,
                           int last) const {
     return std::visit([&](auto& arg) -> int { return arg->denseNextNonzero(dense,first,last); }, mConcreteVector);
   }
-
-  void denseToSparse(ElementArrayType& dense,
-                           ElementArrayType& coeffs, // sets coeffs
+  
+  void denseToSparse(ElementArray& dense,
+                           ElementArray& coeffs, // sets coeffs
                            Range<int>& comps, // sets comps
                            int first,
                            int last,
@@ -513,8 +712,8 @@ public:
     std::visit([&](auto& arg) { arg->denseToSparse(dense,coeffs,comps,first,last,monomialSpace); }, mConcreteVector);  
   }
 
-  void denseToSparse(ElementArrayType& dense,
-                           ElementArrayType& coeffs, // sets coeffs
+  void denseToSparse(ElementArray& dense,
+                           ElementArray& coeffs, // sets coeffs
                            int*& comps, // sets comps
                            int first,
                            int last,
@@ -523,8 +722,8 @@ public:
   }
 
   template<typename LockType>
-  void safeDenseToSparse(ElementArrayType& dense,
-                               ElementArrayType& coeffs, // sets coeffs
+  void safeDenseToSparse(ElementArray& dense,
+                               ElementArray& coeffs, // sets coeffs
                                Range<int>& comps, // sets comps
                                int first,
                                int last,
@@ -535,11 +734,11 @@ public:
     std::visit([&](auto& arg) { arg->template safeDenseToSparse<LockType>(dense,coeffs,comps,first,last,monomialSpace,lock); }, mConcreteVector);      
   }
 
-  void setZeroInRange(ElementArrayType& dense, int first, int last) const {
+  void setZeroInRange(ElementArray& dense, int first, int last) const {
     std::visit([&](auto& arg) { arg->setZeroInRange(dense, first, last); }, mConcreteVector);      
   }
   
-  void makeMonic(ElementArrayType& coeffs) const {
+  void makeMonic(ElementArray& coeffs) const {
     std::visit([&](auto& arg) { arg->makeMonic(coeffs); }, mConcreteVector);      
   }
 
@@ -548,55 +747,100 @@ public:
   /////////////////////////////
 
   template<class Container>
-  void appendToContainer(const ElementArrayType& coeffs,
+  void appendToContainer(const ElementArray& coeffs,
                                      Container& c) const {
     std::visit([&](auto& arg) { arg->template appendToContainer<Container>(coeffs, c); }, mConcreteVector);      
   }
 
   template<class Container>
-  ElementArrayType elementArrayFromContainer(const Container& c) const {
-    return std::visit([&](auto& arg) -> ElementArrayType { return arg->template elementArrayFromContainer<Container>(c); }, mConcreteVector);
+  ElementArray elementArrayFromContainer(const Container& c) const {
+    return std::visit([&](auto& arg) -> ElementArray { return arg->template elementArrayFromContainer<Container>(c); }, mConcreteVector);
   }
 
-  ring_elem ringElemFromElementArray(const ElementArrayType& coeffs,
+  template<class Container>
+  ElementArray elementArrayFromContainerOfLongs(const Container& c) const {
+    return std::visit([&](auto& arg) -> ElementArray { return arg->template elementArrayFromContainerOfLongs<Container>(c); }, mConcreteVector);
+  }
+  
+  ring_elem ringElemFromElementArray(const ElementArray& coeffs,
                                      int index) const {
     return std::visit([&](auto& arg) -> ring_elem { return arg->ringElemFromElementArray(coeffs,index); }, mConcreteVector);
   }
 
-  std::ostream& displayElementArray(std::ostream& o, const ElementArrayType& v) const
+  /////////////////////////////
+  /// (Debugging) Display /////
+  /////////////////////////////
+  
+  std::ostream& displayElement(std::ostream& o, const ElementArray& v, int index) const
+  {
+    return std::visit([&](auto& arg) -> std::ostream& { return arg->displayElement(o, v, index); }, mConcreteVector);
+  }
+
+  std::ostream& displayElementArray(std::ostream& o, const ElementArray& v) const
   {
     return std::visit([&](auto& arg) -> std::ostream& { return arg->displayElementArray(o, v); }, mConcreteVector);
   }
+  
+  std::ostream& displayAsDenseArray(std::ostream& o,
+                                    size_t len,
+                                    const ElementArray& v,
+                                    const Range<const int>& comps
+                                    ) const
+  {
+    return std::visit([&](auto& arg) -> std::ostream& { return arg->displayAsDenseArray(o, len, v, comps); }, mConcreteVector);
+  }
 
+  long getNumAdditions() const
+  {
+    return std::visit([&](auto& arg) -> long { return arg->mStats.numAdditions(); }, mConcreteVector);
+  }
+
+  long to_modp_long(const ElementArray& coeffs, size_t loc) const
+  {
+    return std::visit([&](auto& arg) -> long { return arg->to_modp_long(coeffs, loc); }, mConcreteVector);
+  }
+  
   //////////////////////////
   /// Append support   /////
   //////////////////////////
   
-  void pushBackOne(ElementArrayType& coeffs) const
+  void pushBackOne(ElementArray& coeffs) const
   {
     return std::visit([&](auto& arg) { arg->pushBackOne(coeffs); }, mConcreteVector);
   }
 
-  void pushBackMinusOne(ElementArrayType& coeffs) const
+  void pushBackMinusOne(ElementArray& coeffs) const
   {
     return std::visit([&](auto& arg) { arg->pushBackMinusOne(coeffs); }, mConcreteVector);
   }
 
-  void pushBackElement(ElementArrayType& coeffs,
-                       const ElementArrayType& take_from_here,
+  void pushBackElement(ElementArray& coeffs,
+                       const ElementArray& take_from_here,
                        size_t loc) const
   {
     return std::visit([&](auto& arg) { arg->pushBackElement(coeffs,take_from_here,loc); }, mConcreteVector);
   }
   
-  void pushBackNegatedElement(ElementArrayType& coeffs,
-                              const ElementArrayType& take_from_here,
+  void pushBackNegatedElement(ElementArray& coeffs,
+                              const ElementArray& take_from_here,
                               size_t loc) const
   {
     return std::visit([&](auto& arg) { arg->pushBackNegatedElement(coeffs,take_from_here,loc); }, mConcreteVector);
   }
 
-};
+  void from_ring_elem(ElementArray& coeffs,
+                              ring_elem numer,
+                              ring_elem denom_not_used_except_QQ
+                              ) const
+  {
+    return std::visit([&](auto& arg) { arg->from_ring_elem(coeffs,numer,denom_not_used_except_QQ); }, mConcreteVector);
+  }
+  
+  const VectorArithmeticStats& stats() const {
+    return std::visit([&](auto& arg) -> const VectorArithmeticStats& { return arg->stats(); }, mConcreteVector);
+  }
+  
+  };
 
 #endif
 

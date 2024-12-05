@@ -18,7 +18,7 @@ x_10*x_1^2+x_10*x_2^2+x_10*x_3^2+x_10*x_4^2+x_10*x_5^2+x_10*x_6^2+x_10*x_7^2+x_1
     	apply(exponents polys#i, t->(i,t))
     	);
     AR := CC[apply(ind,i->A_i)][gens R];
-    polysP := for i to #polys-1 list -- system with parameteric coefficients and same support 
+    polysP := for i to #polys-1 list -- system with parametric coefficients and same support 
     sum(exponents polys#i, t->A_(i,t)*AR_(t));
     polySystem transpose matrix {polysP}
     )

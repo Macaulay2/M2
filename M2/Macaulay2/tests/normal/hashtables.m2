@@ -1,4 +1,4 @@
-importFrom_Core {"BinaryPowerMethod"}
+importFrom_Core "BinaryPowerMethod"
 plus' = (x,y) -> ( z := x+y ; if z == 0 then continue ; z )
 Poly = new Type of HashTable
 assert( (one = new Poly from {1 => 1}) === new Poly from {1 => 1} )
@@ -25,6 +25,20 @@ assert( (r + new VirtualTally from tally {1,1,4}) === new VirtualTally from {4 =
 assert( class(tally{1,2,3}+set{3,4,5}) === Tally )
 assert( mutable( merge(new Type of List, new Type of Ring, first) ) )
 assert( class((new VirtualTally from {1 => -1, 2 => -2, 3 => -3}) + tally {1,2,3}) === VirtualTally )
+
+t = hashTable{(1, 1), (2, 1), (3, 2), (4, 3), (5, 5), (6, 8)}
+assert(selectKeys(t, odd) === hashTable {(1, 1), (3, 2), (5, 5)})
+assert(selectKeys(2, t, odd) === hashTable {(1, 1), (3, 2)})
+assert(selectValues(t, odd) === hashTable {(1, 1), (2, 1), (4, 3), (5, 5)})
+assert(selectValues(2, t, odd) === hashTable {(1, 1), (2, 1)})
+assert(select(t, odd) === hashTable {(1, 1), (2, 1), (4, 3), (5, 5)})
+assert(select(2, t, odd) === hashTable {(1, 1), (2, 1)})
+assert(selectPairs(t, (k,v) -> odd(k+v)) === hashTable {(2, 1), (3, 2), (4, 3)})
+assert(selectPairs(2, t, (k,v) -> odd(k+v)) === hashTable {(2, 1), (3, 2)})
+
+x = set(1..10)
+assert(select(x, odd) === set {1, 3, 5, 7, 9})
+assert(select(2, x, odd) == set {1, 3})
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test hashtables.out"

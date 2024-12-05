@@ -123,6 +123,7 @@ assert((pseudoWitnessSet(F, I, PW.witnessPointPairs, PW.imageSlice)).degree == 6
 ///
 
 TEST /// -- Orthogonal group O(n)
+-- no-capture-flag
 setRandomSeed 0
 n = 4
 R = CC[x_0..x_(n^2-1)]

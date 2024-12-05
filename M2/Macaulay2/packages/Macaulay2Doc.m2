@@ -12,8 +12,8 @@ newPackage ("Macaulay2Doc",
 	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
 	  },
      Keywords => {"Documentation"},
-     PackageExports => Core#"pre-installed packages",
-     HomePage => "http://www.math.uiuc.edu/Macaulay2/",
+     PackageExports => Core#"preloaded packages",
+     HomePage => "https://macaulay2.com/",
      Version => version#"VERSION")
 
 scan(pairs Core#"raw documentation", (k,v) -> (

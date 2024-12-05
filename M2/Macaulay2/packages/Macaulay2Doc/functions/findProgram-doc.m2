@@ -157,6 +157,7 @@ doc ///
       file, then @TT "name"@ should coincide with the name of this
       file.
     Example
+      -* no-capture-flag *-
       programPaths#"gfan" = "/path/to/gfan/"
       gfan = findProgram("gfan", "gfan _version --help", Verbose => true)
     Text

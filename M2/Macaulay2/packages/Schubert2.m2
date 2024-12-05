@@ -11,11 +11,11 @@ newPackage(
 	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
 	     {Name => "Charley Crissman", Email => "charleyc@math.berkeley.edu", HomePage => "http://math.berkeley.edu/~charleyc/"}
 	     },
-	HomePage => "http://www.math.uiuc.edu/Macaulay2/",
+	HomePage => "https://macaulay2.com/",
     	Headline => "characteristic classes for varieties without equations",
 	Keywords => {"Intersection Theory"},
         DebuggingMode => false,
-	PackageImports => {"SchurRings","PushForward"}
+	PackageImports => {"SchurRings","PushForward","Varieties"}
     	)
 
 schurVersion = value SchurRings.Options.Version
@@ -23,7 +23,7 @@ schurVersion = value SchurRings.Options.Version
 if  schurVersion < 0.5 then protect EorH
 
 export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety", "schubertCycle'", "schubertCycle", "ReturnType",
-     "AbstractVarietyMap", "adams", "Base", "blowup", "BundleRanks", "Bundles", "VarietyDimension", "Bundle",
+     "AbstractVarietyMap", "adams", "blowup", "BundleRanks", "Bundles", "VarietyDimension", "Bundle",
      "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassVariable", "ctop", "exceptionalDivisor", "FlagBundle",
      "flagBundle", "projectiveBundle'", "projectiveBundle", "abstractProjectiveSpace'", "abstractProjectiveSpace", "integral", "IntersectionRing",
      "intersectionRing", "Rank","PullBack", "ChernClassVariableTable",
@@ -503,7 +503,7 @@ ChernClassVariable .. ChernClassVariable := (a,b) -> (
 
 installMethod(symbol _, OO, RingElement, AbstractSheaf => (OO,D) -> (
 	  if D != 0 and degree D != {1} then error "expected a cycle class of degree 1 (a divisor class)";
-	  1 - OO_(variety D)(-D)))
+	  1 - OO_(variety ring D)(-D)))
 installMethod(symbol _, OO, AbstractVariety, AbstractSheaf => 
      (OO,X) -> (
 	  A := intersectionRing X;
@@ -1578,7 +1578,7 @@ AbstractSheaf * AbstractSheaf := AbstractSheaf => (
 	  else abstractSheaf(X, ChernCharacter => part(0,dim X,f*g)))
      ) @@ coerce
 
-Hom(AbstractSheaf, AbstractSheaf) := AbstractSheaf => (F,G) -> dual F ** G
+Hom(AbstractSheaf, AbstractSheaf) := AbstractSheaf => o -> (F,G) -> dual F ** G
 
 det AbstractSheaf := AbstractSheaf => opts -> (F) -> abstractSheaf(variety F, Rank => 1, ChernClass => 1 + part(1,ch F))
 
@@ -1746,7 +1746,7 @@ diagrams(ZZ,ZZ,ZZ) := (k,n,d) -> (--partitions of d of above form
 toSchubertBasis = method()
 toSchubertBasis(RingElement) := c -> (
      --by Charley Crissman
-     try G := variety c else error "expected an element of an intersection ring"; 
+     try G := variety ring c else error "expected an element of an intersection ring";
      (S,T,U) := schubertRing(G);
      T c
      )
@@ -1767,7 +1767,7 @@ schubertRing(FlagBundle) := G -> (
           (k,q) := toSequence(G.BundleRanks);
           P := diagrams(q,k);
           M := apply(P, i-> schubertCycle(i,G));
-          E := flatten entries basis(R);
+          E := flatten entries basis(R, Variables => 0 .. numgens R - 1);
           local T';
 	  T := transpose matrix apply (M, i -> apply(E, j-> coefficient(j,i))); --matrix converting from schu-basis 
                                                                  --to h-basis

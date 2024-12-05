@@ -225,7 +225,38 @@ commonEngineRingInitializations = (F) -> (
      *-
      )
 
------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+-- TODO improve this, or deprecate promote/lift(List,R,S)
+defaultDegMap := (R,S) -> (
+    n:=degreeLength S-degreeLength R;
+    if n==0 then identity
+    else if n<0 then d -> take(d,degreeLength S)
+    else d -> d|toList(n:0)
+    )
+
+-- automate promote
+setupPromote = method()
+setupPromote (Function,Ring,Ring,Function) := (f,R,S,degmap) -> (
+    promote(R,S) := (a,S) -> f a;
+    promote(List,R,S) := (m,R,S) -> apply(m,degmap);
+    promote(Module,R,S) := (M,R1,S1) -> S ** M;
+    promote(Matrix,R,S) := (m,R,S) -> map(promote(target m,S),promote(source m,S),applyTable(entries m,x->promote(x,S)));
+    promote(MutableMatrix,R,S) := (m,R,S) -> mutableMatrix applyTable(entries m,x->promote(x,S));
+    )
+setupPromote (Function,Ring,Ring) := (f,R,S) -> setupPromote(f,R,S,defaultDegMap(R,S));
+
+-- automate (to some extent) lift
+setupLift = method()
+setupLift (Function,Ring,Ring,Function) := (f,R,S,degmap) -> (
+    lift(R,S) := opts -> (a,S) -> if opts.Verify then f a else try f a;
+    lift(List,R,S) := opts -> (m,R,S) -> apply(m,degmap);
+    lift(Module,R,S) := opts -> (M,R,S) -> S ** M;
+    lift(Matrix,R,S) := opts -> (m,R,S) -> map(lift(target m,S),lift(source m,S),applyTable(entries m,x->lift(x,S)));
+    lift(MutableMatrix,R,S) := opts -> (m,R,S) -> mutableMatrix applyTable(entries m,x->lift(x,S));
+    )
+setupLift (Function,Ring,Ring) := (f,R,S) -> setupLift(f,R,S,defaultDegMap(R,S));
+
+    -----------------------------------------------------------------------------
 reduce := (r,s) -> (
      z := syz( matrix{{r,s}}, SyzygyLimit => 1 );
      a := z_(1,0);
@@ -237,10 +268,12 @@ reduce := (r,s) -> (
 	  );
      (a,b))
 
+-- printing
 expression EngineRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else expression toString R.RawRing -- should never be used
-texMath EngineRing := R -> texMath expression R
+
 toString EngineRing := toString @@ expression
-net EngineRing := net @@ expression
+net      EngineRing :=      net @@ expression
+texMath  EngineRing :=  texMath @@ expression
 
 ZZ _ EngineRing := 
 RR _ EngineRing :=
@@ -279,16 +312,17 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
 	    dim FractionField := F -> 0
      expression FractionField := F -> if hasAttribute(F,ReverseDictionary) then expression getAttribute(F,ReverseDictionary) else (expression frac) (expression last F.baseRings)
      describe FractionField := F -> Describe (expression frac) (describe last F.baseRings)
-     toExternalString FractionField := F -> toString describe F
 
 -- freduce := (f) -> (numerator f)/(denominator f)
 
 factoryAlmostGood = R -> (
-     k := coefficientRing R;
-     k === QQ or
-     k === ZZ or
-     instance(k,QuotientRing) and ambient k === ZZ and isPrime char k or
-     instance(k,GaloisField))
+    if instance(R,QuotientRing) then factoryAlmostGood ambient R
+    else if instance(R,PolynomialRing) then factoryAlmostGood coefficientRing R
+    else (R === QQ or
+     R === ZZ or
+     instance(R,GaloisField)
+     )
+ )
 factoryGood = R -> factoryAlmostGood R and not (options R).Inverses
 
 frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
@@ -326,6 +360,10 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      if R.?indexSymbols then F.indexSymbols = applyValues(R.indexSymbols, r -> promote(r,F));
      if R.?indexStrings then F.indexStrings = applyValues(R.indexStrings, r -> promote(r,F));
      if R.?numallvars then F.numallvars=R.numallvars;
+     scan(R.baseRings, S -> if S.?frac and not isPromotable(S.frac,F) then (
+	     setupPromote(a->fraction(promote(numerator a,R),promote(denominator a,R)),S.frac,F);
+	     setupLift(a->fraction(lift(numerator a,S),lift(denominator a,S)),F,S.frac);
+	     ));
      F)
 
 -- methods for all ring elements
@@ -459,9 +497,9 @@ promoteleftinexact = (f,g) -> (
 promoteleftexact = (f,g) -> (
      f = try promote(f,class g) else oops();
      (f,g))
-exchange = (x,y) -> (y,x)
-promoterightexact   = exchange @@ promoteleftexact   @@ exchange
-promoterightinexact = exchange @@ promoteleftinexact @@ exchange
+swap = (x,y) -> (y,x)
+promoterightexact   = swap @@ promoteleftexact   @@ swap
+promoterightinexact = swap @@ promoteleftinexact @@ swap
 
 divmod := R -> (f,g) -> (
      (q,r) := rawDivMod(raw f, raw g);
@@ -471,10 +509,10 @@ quotientRemainder(RingElement,RingElement) := (f,g) -> (
      S := ring g;
      m := quotientRemainder(R,S) := (
 	  if R === S then divmod R
-	  else if isMember(R,S.baseRings) then (
+	  else if isPromotable(R,S) then (
 	       (x,y) -> divmod(promote(x,S), y)
 	       )
-	  else if isMember(S,R.baseRings) then (
+	  else if isPromotable(S,R) then (
 	       (x,y) -> divmod(x, promote(y,R))
 	       )
 	  else error "expected pair to have a method for quotientRemainder"
@@ -497,10 +535,10 @@ RingElement % RingElement := RingElement => (f,g) -> (
 	  if R === S then (
 	       (x,y) -> new R from raw x % raw y
 	       )
-	  else if isMember(R,S.baseRings) then (
+	  else if isPromotable(R,S) then (
 	       (x,y) -> promote(x,S) % y
 	       )
-	  else if isMember(S,R.baseRings) then (
+	  else if isPromotable(S,R) then (
 	       (x,y) -> x % promote(y,R)
 	       )
 	  else error "expected pair to have a method for '%'"
@@ -520,10 +558,10 @@ RingElement // RingElement := RingElement => (f,g) -> (
 	  if R === S then (
 	       (x,y) -> new R from raw x // raw y
 	       )
-	  else if isMember(R,S.baseRings) then (
+	  else if isPromotable(R,S) then (
 	       (x,y) -> promote(x,S) // y
 	       )
-	  else if isMember(S,R.baseRings) then (
+	  else if isPromotable(S,R) then (
 	       (x,y) -> x // promote(y,R)
 	       )
 	  else error "expected pair to have a method for '//'"
@@ -541,10 +579,10 @@ RingElement - RingElement := RingElement => (f,g) -> (
 	  if R === S then (
 	       (x,y) -> new R from raw x - raw y
 	       )
-	  else if isMember(R,S.baseRings) then (
+	  else if isPromotable(R,S) then (
 	       (x,y) -> promote(x,S) - y
 	       )
-	  else if isMember(S,R.baseRings) then (
+	  else if isPromotable(S,R) then (
 	       (x,y) -> x - promote(y,R)
 	       )
 	  else error "expected pair to have a method for '-'"
@@ -562,10 +600,10 @@ RingElement * RingElement := RingElement => (f,g) -> (
 	  if R === S then (
 	       (x,y) -> new R from raw x * raw y
 	       )
-	  else if isMember(R,S.baseRings) then (
+	  else if isPromotable(R,S) then (
 	       (x,y) -> promote(x,S) * y
 	       )
-	  else if isMember(S,R.baseRings) then (
+	  else if isPromotable(S,R) then (
 	       (x,y) -> x * promote(y,R)
 	       )
 	  else error "expected pair to have a method for '*'"
@@ -583,10 +621,10 @@ RingElement + RingElement := RingElement => (f,g) -> (
 	  if R === S then (
 	       (x,y) -> new R from raw x + raw y
 	       )
-	  else if isMember(R,S.baseRings) then (
+	  else if isPromotable(R,S) then (
 	       (x,y) -> promote(x,S) + y
 	       )
-	  else if isMember(S,R.baseRings) then (
+	  else if isPromotable(S,R) then (
 	       (x,y) -> x + promote(y,R)
 	       )
 	  else error "expected pair to have a method for '+'"
@@ -608,10 +646,10 @@ RingElement == RingElement := (f,g) -> (
 	  if R === S then (
 	       (x,y) -> raw x === raw y
 	       )
-	  else if isMember(R,S.baseRings) then (
+	  else if isPromotable(R,S) then (
 	       (x,y) -> promote(x,S) == y
 	       )
-	  else if isMember(S,R.baseRings) then (
+	  else if isPromotable(S,R) then (
 	       (x,y) -> x == promote(y,R)
 	       )
 	  else error "expected pair to have a method for '=='"
@@ -627,10 +665,10 @@ RingElement / RingElement := RingElement => (f,g) -> (
 	       frac R; 
 	       (r,s) -> fraction (r,s)
 	       )
-	  else if isMember(R,S.baseRings) then (
+	  else if isPromotable(R,S) then (
 	       (x,y) -> promote(x,S) / y
 	       )
-	  else if isMember(S,R.baseRings) then (
+	  else if isPromotable(S,R) then (
 	       (x,y) -> x / promote(y,R)
 	       )
 	  else error "expected pair to have a method for '/'"

@@ -22,15 +22,16 @@ flagError := x -> (haderror = true; printerr("warning: ", x))
 
 noqname := (tag, x) -> (
     if instance(tag, IntermediateMarkUpType)
-    then warning(format toString x, " is an instance of an intermediate markup type ", format toString tag, " with no qname, appearing in hypertext during validation")
+    then warning concatenate(format toString x, " is an instance of an intermediate markup type ", format toString tag, " with no qname, appearing in hypertext during validation")
     else   error(format toString x, " is of an unrecognized type ", format toString tag, " with no qname, appearing in hypertext during validation"))
 
 -- see content.m2
 chk := (p, x) -> (
     c := class x;
     if c === Option or c === OptionTable or c === LITERAL then return;
-    if not c.?qname then return noqname(c, x);
-    if not validContent#(p.qname)#?(c.qname) and c.qname =!= "comment"
+    cqname := lookup(qname, c);
+    if cqname === null then return noqname(c, x);
+    if not validContent#(lookup(qname, p))#?cqname and cqname =!= "comment"
     then flagError("element of type ", toString p, " may not contain an element of type ", toString c))
 
 -----------------------------------------------------------------------------
@@ -40,8 +41,9 @@ chk := (p, x) -> (
 validate = method()
 validate(Type, BasicList) := (T, x) -> (
     haderror = false;
-    if not T.?qname then return noqname(T, x);
-    if not validContent#?(T.qname) then error("internal error: valid content for qname ", toString T, " not recorded yet");
+    Tqname := lookup(qname, T);
+    if Tqname === null then return noqname(T, x);
+    if not validContent#?Tqname then error("internal error: valid content for qname ", toString T, " not recorded yet");
     scan(x, e -> chk(T, e));
     if haderror then error("validation failed: ", x))
 

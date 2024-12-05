@@ -7,7 +7,7 @@ newPackage( "SectionRing",
      	       HomePage => "http://www.math.utah.edu/~bydlon/"
      	       }
 	  },
-     PackageImports => {"Divisor"},
+     PackageImports => {"Divisor", "Varieties"},
      Keywords => {"Commutative Algebra"},
      Headline => "the section ring of a Weil Divisor"
      )
@@ -369,6 +369,10 @@ doc ///
     SectionRing
   Headline
     computing the section ring of a Weil Divisor
+  Description
+    Text
+      This package provides a method for computing the section ring of a Weil
+      divisor.
 ///    
 
 doc ///

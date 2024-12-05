@@ -3,7 +3,7 @@
 
 -- TODO: compress (with CacheTable)
 
-newPackage select((
+newPackage(
      "SLPexpressions",
      Version => "1.21",
      Date => "Nov 2022",
@@ -36,7 +36,7 @@ newPackage select((
      --   but false after it is done
      --DebuggingMode => true
      DebuggingMode => false
-     ), x -> x =!= null)
+     )
 
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
@@ -121,6 +121,11 @@ declareVariable Symbol :=
 declareVariable IndexedVariable := g -> (g <- inputGate g) 
 declareVariable InputGate := g -> g
 declareVariable Thing := g -> error "defined only for a Symbol or an IndexedVariable" 
+-- syntactic sugar for declareVariable \ {symbols}
+vars IndexedVariable := x -> declareVariable x
+vars Symbol := x -> declareVariable x
+vars InputGate := x -> x
+InputGate .. InputGate := (A, B) -> value \ (A.Name .. B.Name)
 
 undeclareVariable = method()
 undeclareVariable InputGate := g -> 
@@ -208,8 +213,9 @@ Gate / Gate := (a,b) -> divideGate(a,b)
 ValueHashTable = new Type of MutableHashTable
 valueHashTable = method()
 valueHashTable (List,List) := (a,b) -> new ValueHashTable from apply(a,b,identity)
-			
-value (InputGate,ValueHashTable) := (g,h)-> if h#?g then h#g else h#g = (if isConstant g then g.Name else error "value for inputGate is not set")
+
+value (Gate,ValueHashTable) := (g,h) -> error "undefined for abstract type Gate"
+value (InputGate,ValueHashTable) := (g,h) -> if h#?g then h#g else h#g = (if isConstant g then g.Name else error "value for inputGate is not set")
 value (SumGate,ValueHashTable) :=  (g,h) -> if h#?g then h#g else h#g = (sum apply(g.Inputs, a->value(a,h)))
 value (ProductGate,ValueHashTable) := (g,h) -> if h#?g then h#g else h#g = (product apply(g.Inputs, a->value(a,h)))
 value (DetGate,ValueHashTable) := (g,h) -> if h#?g then h#g else h#g = (det matrix applyTable(g.Inputs, a->value(a,h)))

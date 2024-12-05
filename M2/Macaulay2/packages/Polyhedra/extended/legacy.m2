@@ -41,7 +41,7 @@ smallestFace(Matrix,Cone) := (p,C) -> (
      if contains(C,coneFromVData p) then (
 	  M := halfspaces C;
      	  N := hyperplanes C;
-     	  -- Selecting the half-spaces that fullfil equality for p
+     	  -- Selecting the half-spaces that fulfill equality for p
 	  -- and adding them to the hyperplanes
 	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == 0);
 	  N = N || M^pos;
@@ -111,7 +111,7 @@ imageFan (Matrix,Cone) := (M,C) -> (
 --   INPUT : '(P,Q)',  two polyhedra
 --  OUTPUT : 'C',  a Cone, the inner normal cone of P in the face Q
 -- COMMENT : 'Q' must be a face of P
-normalCone (Polyhedron,Polyhedron) := Cone => opts -> (P,Q) -> (
+normalCone (Polyhedron,Polyhedron) := Cone => {} >> opts -> (P,Q) -> (
      if not P.cache.?normalCone then P.cache.normalCone = new MutableHashTable;
      if not P.cache.normalCone#?Q then (
 	  -- Checking for input errors

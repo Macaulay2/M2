@@ -13,7 +13,6 @@ conjugate Number := identity
 toExternalString Number := simpleToString
 floor Number := x -> floor0(x)
 floor Constant := floor0 @@ numeric
-ceiling Constant :=
 ceiling Number := x -> - floor(-x)
 
 -----------------------------------------------------------------------------
@@ -58,10 +57,17 @@ abs ZZ := abs RR := abs RRi := abs CC := abs QQ := abs0
 abs Constant := abs @@ numeric
 
 lcm = method(Binary => true)
-lcm(ZZ,ZZ) := (f,g) -> abs f * (abs g // gcd(f,g))
-lcm(ZZ,QQ) := (f,g) -> abs f * (abs g / gcd(f,g))
-lcm(QQ,ZZ) := (f,g) -> abs f * (abs g / gcd(f,g))
-lcm(QQ,QQ) := (f,g) -> abs f * (abs g / gcd(f,g))
+installMethod(lcm, () -> 1)
+lcm(ZZ,ZZ) := (f,g) -> (
+    d := gcd(f, g);
+    if d == 0 then 0
+    else abs f * (abs g // d))
+lcm(ZZ,QQ) :=
+lcm(QQ,ZZ) :=
+lcm(QQ,QQ) := (f,g) -> (
+    d := gcd(f, g);
+    if d == 0 then 0_QQ
+    else abs f * (abs g / d))
 
 odd  = x -> 1 === x%2
 even = x -> 0 === x%2
@@ -91,6 +97,24 @@ changeBase(ZZ,     ZZ)     := String =>
 changeBase(String, ZZ)     := ZZ     => changeBase0
 changeBase(String, ZZ, ZZ) := String => (s, oldbase, newbase) -> (
     changeBase(changeBase(s, oldbase), newbase))
+
+-----------------------------------------------------------------------------
+-- AtomicInt
+-----------------------------------------------------------------------------
+
+AtomicInt.synonym = "atomic integer"
+
+scan({symbol +=, symbol -=, symbol &=, symbol |=, symbol ^^=},
+    op -> typicalValues#(op, AtomicInt) = ZZ)
+
+store = method()
+store(AtomicInt, ZZ) := atomicStore
+
+exchange = method()
+exchange(AtomicInt, ZZ) := atomicExchange
+
+compareExchange = method()
+compareExchange(AtomicInt, ZZ, ZZ) := atomicCompareExchange
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

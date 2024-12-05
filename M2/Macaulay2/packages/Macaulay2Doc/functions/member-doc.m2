@@ -23,3 +23,25 @@ doc ///
     positions
     Set
 ///
+
+doc ///
+  Key
+    (isMember,RingElement,Ideal)
+    (isMember,Number,Ideal)
+  Headline
+    test membership in an ideal
+  Usage
+    isMember(r,I)
+  Inputs
+    r:{RingElement,Number}
+    I:Ideal
+  Outputs
+    :Boolean -- whether r is in the ideal I
+  Description
+    Example
+      R = QQ[x,y,z]
+      I = ideal(-x^3 + y, x^2*y - z)
+      isMember(x*y^3 - z^2 + y^5 - z^3, I)
+      J = ideal(x*z - y, x*y + 2*z^2, y - z)
+      isMember(x^3*z - 2*y^2, J)
+///

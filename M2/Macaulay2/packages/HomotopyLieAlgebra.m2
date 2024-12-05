@@ -7,7 +7,8 @@ newPackage(
                     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "https://www.msri.org/~de"}
 		    },
                 DebuggingMode => false,
-		PackageExports => {"DGAlgebras"}
+		PackageExports => {"DGAlgebras"},
+		Keywords => {"Lie Groups and Lie Algebras"}
                 )                                      
 
 

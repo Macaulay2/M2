@@ -2487,7 +2487,7 @@ doc ///
       Text
          The normal elements in degree 2 are x^2, y^2 and z^2. The basis
 	 calculation shows x^2 and y^2 are normal forms in B. The normalElements
-	 method first checks all basis monomials using @ TO isNormal @. In this case
+	 method first checks all basis monomials using @ TO (isNormal, NCRingElement)@. In this case
 	 it finds x^2 and y^2 are normal and returns this information. However,  
 	 z^2 is not a normal form expression. The normal form of z^2 is x*y+y*x. In 
 	 the second phase of the calculation, the method returns generators of the
@@ -3448,7 +3448,7 @@ doc ///
    Description
       Text
          This method constructs a three dimensional Sklyanin algebra with parameters from
-	 the params list, and variables from varList (see @ HREF{"http:////arxiv.org//abs//1107.2953","here"} @).
+	 the params list, and variables from varList (see @ arXiv("1107.2953","here") @).
 	 If either list is not length three, then an error is thrown.  The generic 
 	 such algebra does not have a finite Groebner basis, so the optional parameter
 	 DegreeLimit has been defaulted to 5.  If only one list is provided, it is used

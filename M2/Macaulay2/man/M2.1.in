@@ -90,7 +90,7 @@ The documentation for \fIMacaulay2\fP is available locally starting in
 the package was installed.  The directory is available as the value of the \fIMacaulay2\fP variable
 prefixDirectory, but the best way to get to the documentation is to run the command \fIviewHelp\fP in \fIMacaulay2\fP.
 
-The home page for \fIMacaulay2\fP is \fBhttp://www.math.uiuc.edu/Macaulay2/\fR.
+The home page for \fIMacaulay2\fP is \fBhttps://macaulay2.com/\fR.
 
 .SH "AUTHOR"
 

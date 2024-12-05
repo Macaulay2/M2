@@ -39,7 +39,7 @@ bool LocalRing::initialize_local(const PolyRing *R, GBComputation *P)
       R->getCoefficients()
           ->cast_to_LocalRing()  // disallowed in x-relem.cpp
       ||
-      R->getMonoid()->getNonTermOrderVariables()->len >
+      R->getMonoid()->numNonTermOrderVariables() >
           0)  // disallowed in x-relem.cpp
     use_gcd_simplify = false;
   else
@@ -80,7 +80,7 @@ void LocalRing::simplify(local_elem *f) const
       x = f->numer;
       const RingElement *a = RingElement::make_raw(mRing, x);
       const RingElement *b = RingElement::make_raw(mRing, y);
-      const RingElement *c = rawGCDRingElement(a, b, NULL, false);
+      const RingElement *c = rawGCDRingElement(a, b, nullptr, false);
 
 #if 0
       // Debugging code
@@ -237,7 +237,7 @@ void LocalRing::lift_up(const Ring *R, const Matrix *m, Matrix *&result) const
         {
           const local_elem * f = ((*i)->coeff).get_local_elem();
           b = RingElement::make_raw(mRing, f->denom);
-          d = rawGCDRingElement(a, b, NULL, false);
+          d = rawGCDRingElement(a, b, nullptr, false);
 #if 0 // FIXME: GCD(8,2)=1 apparently ...
           // see https://github.com/Macaulay2/M2/issues/1958
           drelem(a);
@@ -385,9 +385,9 @@ void LocalRing::lower_content(ring_elem &c, const ring_elem g) const
   const RingElement *g1 = RingElement::make_raw(mRing, gf->numer);
   const RingElement *g2 = RingElement::make_raw(mRing, gf->denom);
 
-  c1 = rawGCDRingElement(c1, g1, NULL, false);
+  c1 = rawGCDRingElement(c1, g1, nullptr, false);
 
-  const RingElement *cc2 = rawGCDRingElement(c2, g2, NULL, false);
+  const RingElement *cc2 = rawGCDRingElement(c2, g2, nullptr, false);
   const RingElement *cc3 = (*c2) * (*g2);
   const RingElement *cc4 = (*cc3) / (*cc2);
 
@@ -407,16 +407,6 @@ bool LocalRing::is_homogeneous(const ring_elem a) const
   return true;
 }
 
-void LocalRing::degree(const ring_elem a, monomial d) const
-{
-  const local_elem *f = a.get_local_elem();
-  mRing->degree(f->numer, d);
-  monomial e = degree_monoid()->make_one();
-  mRing->degree(f->denom, e);
-  degree_monoid()->divide(d, e, d);
-  degree_monoid()->remove(e);
-}
-
 bool LocalRing::multi_degree(const ring_elem a, monomial d) const
 {
   const local_elem *f = a.get_local_elem();
@@ -429,7 +419,7 @@ bool LocalRing::multi_degree(const ring_elem a, monomial d) const
 }
 
 void LocalRing::degree_weights(const ring_elem,
-                               M2_arrayint,
+                               const std::vector<int> &,
                                int &lo,
                                int &hi) const
 {
@@ -441,7 +431,7 @@ void LocalRing::degree_weights(const ring_elem,
 ring_elem LocalRing::homogenize(const ring_elem a,
                                 int v,
                                 int deg,
-                                M2_arrayint wts) const
+                                const std::vector<int> &wts) const
 {
   int d1, d2, lo1, lo2;
   ring_elem top, bottom;
@@ -462,7 +452,9 @@ ring_elem LocalRing::homogenize(const ring_elem a,
   return ring_elem(result);
 }
 
-ring_elem LocalRing::homogenize(const ring_elem a, int v, M2_arrayint wts) const
+ring_elem LocalRing::homogenize(const ring_elem a,
+                                int v,
+                                const std::vector<int> &wts) const
 {
   const local_elem *f = a.get_local_elem();
   ring_elem top = mRing->homogenize(f->numer, v, wts);
@@ -739,7 +731,7 @@ extern "C" { // TODO: remove when this function is in e/interface
 Matrix *rawLiftLocalMatrix(const Ring *R, const Matrix *f)
 {
   const LocalRing *L = f->get_ring()->cast_to_LocalRing();
-  if (L == 0)
+  if (L == nullptr)
     {
       ERROR("expected an object over a local ring");
       return nullptr;
@@ -758,7 +750,7 @@ Matrix *rawLiftLocalMatrix(const Ring *R, const Matrix *f)
 M2_bool rawIsLocalUnit(const RingElement *f)
 {
   const LocalRing *L = f->get_ring()->cast_to_LocalRing();
-  if (L == 0)
+  if (L == nullptr)
     {
       ERROR("expected an object over a local ring");
       return false;

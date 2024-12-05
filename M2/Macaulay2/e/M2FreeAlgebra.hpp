@@ -50,6 +50,8 @@ public:
   virtual const M2FreeAlgebraOrQuotient * cast_to_M2FreeAlgebraOrQuotient()  const { return this; }
   virtual       M2FreeAlgebraOrQuotient * cast_to_M2FreeAlgebraOrQuotient()        { return this; }
 
+  bool is_commutative_ring() const { return false; }
+
 };
 
 class M2FreeAlgebra : public M2FreeAlgebraOrQuotient
@@ -120,7 +122,6 @@ public:
                                               const ring_elem f) const;
 
   virtual bool is_homogeneous(const ring_elem f) const;
-  virtual void degree(const ring_elem f, monomial d) const;
   virtual bool multi_degree(const ring_elem f, monomial d) const;
 
   virtual SumCollector *make_SumCollector() const;

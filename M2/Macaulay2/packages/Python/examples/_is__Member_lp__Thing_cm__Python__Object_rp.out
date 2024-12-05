@@ -1,0 +1,15 @@
+-- -*- M2-comint -*- hash: 16061367338054950412
+
+i1 : isMember(toPython 3, toPython {1, 2, 3})
+
+o1 = true
+
+i2 : isMember(toPython 4, toPython {1, 2, 3})
+
+o2 = false
+
+i3 : isMember(3, toPython {1, 2, 3})
+
+o3 = false
+
+i4 : 

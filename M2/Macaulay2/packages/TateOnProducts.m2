@@ -21,7 +21,7 @@ newPackage(
 	{ Name => "Yeongrak Kim",     	 Email => "kim@math.uni-sb.de",      HomePage => "http://sites.google.com/view/yeongrak/"}
 	},
     Keywords => {"Commutative Algebra"},
-    PackageImports => {"Truncations", "SVDComplexes"},
+    PackageImports => {"Truncations", "SVDComplexes", "Complexes"},
     PackageExports => {"SVDComplexes"},
     DebuggingMode => false
     )
@@ -489,7 +489,7 @@ cohomologyMatrix(ChainComplex,List,List) := (F,da,db) -> (
        --(b_1,b_2) sits in the north-east corner, the one corresponding to (a_1,a_2) in the south-west
        --corner.
      E:= ring F;
-     if not #unique degrees E==2 then error "works only for two factors";
+     if degreeLength E != 2 then error "cohomologyMatrix works only with a product of two projective spaces";
      L:=flatten apply(toList(min F..max F), k->
 	 apply(degrees F_k, deg->
 	     sum deg-k));
@@ -503,7 +503,7 @@ cohomologyMatrix(ChainComplex,List,List) := (F,da,db) -> (
      C
      )
 cohomologyMatrix(Module, List, List) := (M, low, high) -> (
-    if degreeLength M != 2 then error"this version works only with a product of two projective spaces.";
+    if degreeLength ring M != 2 then error "cohomologyMatrix works only with a product of two projective spaces";
     if #low !=2 or #high !=2 then error"expected degree lists of length 2";
     if not all(#low, i-> low_i<=high_i) then error"low should be less than high";
     C := tateResolution(M, low, high);
@@ -1130,8 +1130,6 @@ resolutionOfChainComplex ChainComplex := o -> C -> (
     chainComplexMap(C,F[-minC],comp)
     )
 
-
-minimize = method ()
 minimize ChainComplex := E ->(
     --To simplify the notation consider the complex C = E[min E] that
     --is shifted so that the first nonzero module is C_0.
@@ -1220,7 +1218,7 @@ minimize ChainComplex := o -> E ->(
     E'
     )
 *-
-isExact=method()
+--isExact=method()
 isExact(ChainComplex):=(C) -> (
    if (all((min C,max C), i -> (prune HH_i(C) == 0))) then true else false
 )

@@ -178,8 +178,13 @@ info HR := x -> concatenate(printWidth:"-")
 net  PRE  :=
 net   TT  :=
 net CODE  :=
+net SAMP  :=
 info TT   :=
+info SAMP :=
 info CODE :=  x -> horizontalJoin apply(noopts x,net)
+
+net  KBD :=
+info KBD := x -> formatNoEscaping toString horizontalJoin apply(noopts x,net)
 
 info PRE  := x ->
     wrap(printWidth, "-", concatenate apply(noopts x,toString @@ info))
@@ -293,7 +298,7 @@ info TOH := x -> (
 
 net TO  := x -> (
      if class x#0 === DocumentTag
-     then concatenate( "\"", format x#0, "\"", if x#?1 then x#1)
+     then concatenate(formatNoEscaping format x#0, if x#?1 then x#1)
      else horizontalJoin( "\"", net x#0, "\"", if x#?1 then x#1)
      )
 net TO2 := x -> format x#1

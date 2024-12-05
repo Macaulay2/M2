@@ -1,26 +1,64 @@
--- -*- coding: utf-8 -*-
+-*- coding: utf-8 -*-
 newPackage("DGAlgebras",
      Headline => "Data type for DG algebras",
-     Version => "1.1.0",
+     Version => "1.1.1--with fix of killCycles and new code and docs for displayBlockDiff and blockDiff",
      Date => "August 20, 2020",
      Authors => {
 	  {Name => "Frank Moore",
 	   HomePage => "http://www.math.wfu.edu/Faculty/Moore.html",
-	   Email => "moorewf@wfu.edu"}},
+	   Email => "moorewf@wfu.edu"}
+       },
      Keywords => {"Commutative Algebra"},
      DebuggingMode => false,
-     PackageExports => {"IntegralClosure"}
+     PackageExports => {"IntegralClosure", "Complexes"}
      )
-
-export {"DGAlgebra", "DGAlgebraMap", "dgAlgebraMap", "freeDGAlgebra", "setDiff", "natural", "cycles",
-	"getBasis", "koszulComplexDGA", "acyclicClosure", "toComplex", "toComplexMap", "liftToDGMap",
-        "killCycles", "getGenerators", "adjoinVariables", "deviations", "deviationsToPoincare", "expandGeomSeries", "zerothHomology",
-        "torMap", "homologyAlgebra", "torAlgebra", "maxDegree", "StartDegree", "EndDegree", "ringMap",
-	"isHomologyAlgebraTrivial", "findTrivialMasseyOperation", "findNaryTrivialMasseyOperation", "AssertWellDefined",
-	"isGolod", "isGolodHomomorphism", "GenDegreeLimit", "RelDegreeLimit", "TMOLimit",
-	"InitializeDegreeZeroHomology", "InitializeComplex", "isAcyclic", "getDegNModule",
-	"masseyTripleProduct","getBoundaryPreimage","homologyClass",
-	"homologyModule","dgAlgebraMultMap"
+export {"DGAlgebra", 
+        "DGAlgebraMap", 
+	"dgAlgebraMap", 
+	"freeDGAlgebra", 
+	"setDiff", 
+	"natural", 
+	"cycles",
+	"getBasis", 
+	"koszulComplexDGA", 
+	"acyclicClosure", 
+	"toComplex", 
+	"toComplexMap", 
+	"liftToDGMap",
+        "killCycles", 
+	"getGenerators", 
+	"adjoinVariables", 
+	"deviations", 
+	"deviationsToPoincare", 
+	"expandGeomSeries", 
+	"zerothHomology",
+        "torMap", 
+	"homologyAlgebra", 
+	"torAlgebra", 
+	"maxDegree", 
+	"StartDegree", 
+	"EndDegree", 
+	"ringMap",
+	"isHomologyAlgebraTrivial", 
+	"findTrivialMasseyOperation", 
+	"findNaryTrivialMasseyOperation", 
+	"AssertWellDefined",
+	"isGolod", 
+	"isGolodHomomorphism", 
+	"GenDegreeLimit", 
+	"RelDegreeLimit", 
+	"TMOLimit",
+	"InitializeDegreeZeroHomology", 
+	"InitializeComplex", 
+	"isAcyclic", 
+	"getDegNModule",
+	"masseyTripleProduct",
+	"getBoundaryPreimage",
+	 "homologyClass",
+	"homologyModule",
+	"dgAlgebraMultMap",
+	"displayBlockDiff",
+        "blockDiff"
 }
 
 -- Questions:
@@ -28,7 +66,7 @@ export {"DGAlgebra", "DGAlgebraMap", "dgAlgebraMap", "freeDGAlgebra", "setDiff",
 -- is there a way to make f act like a function for f a DGAlgebraMap?
 
 -- Things to do before version 2
--- [user v1.5] Change toComplex to chainComplex as per conversation with Dan on the M2 Google group (9/14/2010)
+-- [user v1.5] Change toComplex to complex as per conversation with Dan on the M2 Google group (9/14/2010)
 -- [functionality v1.5] Single degree homology(DGAlgebraMap,ZZ)
 -- [functionality v1.5] Lift a map from a semifree DGA to another DGA along a quism
 -- [functionality v1.5] Minimal Models
@@ -74,7 +112,7 @@ DGAlgebraMap = new Type of MutableHashTable
 globalAssignment DGAlgebraMap
 
 -- this command is in the core, but we need it here.
-spots  = C -> select(keys C, i -> class i === ZZ)
+-- spots  = C -> select(keys C, i -> class i === ZZ)
 
 -- Modify the standard output for a DGAlgebra
 net DGAlgebra := A -> (
@@ -165,7 +203,7 @@ getBasis (ZZ,DGAlgebra) := opts -> (homDegree,A) -> getBasis(homDegree,A.natural
 getBasis (ZZ,Ring) := opts -> (homDegree,R) -> (
    local retVal;
    myMap := map(R, R.cache.basisAlgebra);
-   tempList := (flatten entries basis(homDegree, R.cache.basisAlgebra, Limit => opts.Limit)) / myMap;
+   tempList := (flatten entries basis(homDegree, R.cache.basisAlgebra, Limit => opts.Limit, Variables => 0 .. numgens R-1)) / myMap;
    if tempList == {} then retVal = map((R)^1,(R)^0, 0) else
    (
       -- move this to an assert?
@@ -226,23 +264,26 @@ koszulComplexDGA Ideal := opts -> I -> (
 
 koszulComplexDGA List := opts -> ringElts -> koszulComplexDGA(ideal ringElts, opts);
 
-toComplex = method(TypicalValue=>ChainComplex)
+toComplex = method(TypicalValue=>Complex)
 toComplex DGAlgebra := A -> (
    maxDeg := maxDegree A;
    if maxDeg == infinity then error "Must specify an upper degree bound if an even generator exists.";
    toComplex(A,maxDeg)
 )
 
-toComplex (DGAlgebra,ZZ) := (A,n) -> chainComplex(apply(n, i -> polyDifferential(i+1,A)))
+toComplex (DGAlgebra,ZZ) := (A,n) -> complex(apply(n, i -> polyDifferential(i+1,A)))
 
 killCycles = method(TypicalValue=>DGAlgebra,Options => {StartDegree => 1, EndDegree => -1})
 killCycles DGAlgebra := opts -> A -> (
    -- for now, this will only work for DG algebras with H_0(A) = k
    retVal := 0;
-   endDegree := if opts.EndDegree == -1 then endDegree = opts.StartDegree else opts.EndDegree;
+   endDegree := if opts.EndDegree == -1 then opts.StartDegree else opts.EndDegree;
    if opts.StartDegree > endDegree then error "Starting degree is not less than or equal to ending degree.";
    n := opts.StartDegree;
    foundHomology := false;
+   if opts.StartDegree > endDegree then error "Starting degree is not less than or equal to ending degree.";
+   n = opts.StartDegree;
+   foundHomology = false;
    nthHomology := 0;
    while n <= endDegree and not foundHomology do (
       nthHomology = prune homology(n,A);
@@ -275,11 +316,11 @@ adjoinVariables (DGAlgebra, List) := (A,cycleList) -> (
    B
 )
 
-acyclicClosure = method(TypicalValue=>DGAlgebra,Options => {StartDegree => 1, EndDegree => -1})
+acyclicClosure = method(TypicalValue=>DGAlgebra,Options => {StartDegree => 1, EndDegree => 3})
 acyclicClosure DGAlgebra := opts -> A -> (
   n := opts.StartDegree;
   endDegree := 3;
-  if opts.EndDegree != -1 then endDegree = opts.EndDegree;
+  if opts.EndDegree != 3 then endDegree = opts.EndDegree;
   while n <= endDegree do (
      A = killCycles(A,StartDegree => n);
      n = n + 1;
@@ -392,11 +433,11 @@ getDegNModule (ZZ,Ring,Ring) := (n,R,A) -> (
 deviations = method(TypicalValue=>Tally,Options=>{DegreeLimit=>3})
 deviations Ring := opts -> R -> (
   --tally degrees torAlgebra(R,GenDegreeLimit=>opts.DegreeLimit)
-  kRes := res(coker vars R, LengthLimit => opts.DegreeLimit);
+  kRes := freeResolution(coker vars R, LengthLimit => opts.DegreeLimit);
   deviations kRes
 )
 
-deviations ChainComplex := opts -> C -> (
+deviations Complex := opts -> C -> (
   R := ring C;
   pSeries := poincareN C;
   degreesR := toList ((numgens degreesRing R):0);
@@ -472,7 +513,7 @@ torAlgebra Ring := opts -> R -> (
   n := 3;
   if opts.GenDegreeLimit != infinity then n = opts.GenDegreeLimit;
   baseRing := coefficientRing R;
-  kRes := res(coker vars R, LengthLimit => n);
+  kRes := freeResolution(coker vars R, LengthLimit => n);
   X := getSymbol("X");
   -- now build the degreeList and skewList out of the output from deviations
   RDevs := deviations(R,DegreeLimit=>opts.GenDegreeLimit);
@@ -755,15 +796,16 @@ homologyAlgebra DGAlgebra := opts -> A -> (
 --------- homologyModule code ----------------------
 
 --- this function takes a DGAlgebra A and a cycle z as input
---- it returns the ChainComplexMap corresponding to left multiplication
+--- it returns the ComplexMap corresponding to left multiplication
 --- by z
 dgAlgebraMultMap = method()
 dgAlgebraMultMap (DGAlgebra,RingElement) := (A,z) -> (
    R := A.ring;
    d := first degree z;
    cxA := toComplex A;
-   zChainMap := map(cxA,cxA ** R^(-(drop(degree z,1))),
-          i -> sub(last coefficients(z*getBasis(i,A),Monomials=>getBasis(i+d,A)), R),
+   cxA2 := cxA ** R^(-(drop(degree z,1)));
+   zChainMap := map(cxA,cxA2,
+          i -> map(cxA_(i+d), cxA2_i, sub(last coefficients(z*getBasis(i,A),Monomials=>getBasis(i+d,A)), R)),
 	  Degree=>d);
    -- uncomment the next line if you would like this function
    -- to check that the result is indeed a chain map.
@@ -791,7 +833,8 @@ moduleRelationsFromCycleAction (DGAlgebra,RingElement,Module) := (A,z,M) -> (
    pruneHM := prune HM;
    pruneZActionHM := prune HH(zCMtensM);
    -- ll for Loewy length
-   ll := #(spots pruneHM);
+   -- ll := #(spots pruneHM);
+   ll := length pruneHM + 1;
 
    -- at this point we have all the multiplication tables, but we need to put them
    -- together to get a module structure.  Since HM is finite dimensional, this is not
@@ -806,13 +849,15 @@ moduleRelationsFromCycleAction (DGAlgebra,RingElement,Module) := (A,z,M) -> (
 
    -- these commands ensure that the resulting matrix will have the right degrees
    -- over HA so that the result will be a graded module.
-   degsHMTarget := flatten apply(spots pruneHM, p -> apply(degrees pruneHM#p, d -> {p} | d));
-   degsHMSource := flatten apply(spots pruneHM, p -> apply(degrees pruneHM#p, d -> ({p} | d) + degree z));
+   (lo,hi) := concentration pruneHM;
+   degsHMTarget := flatten apply(toList(lo..hi), p -> apply(degrees pruneHM_p, d -> {p} | d));
+   degsHMSource := flatten apply(toList(lo..hi), p -> apply(degrees pruneHM_p, d -> ({p} | d) + degree z));
+   
    -- this function builds the blocks as mentioned above
    buildBlocks := (i,j) -> (
-       if j + first degree z != i then map(pruneHM#i,pruneHM#j,0)
-       else if not pruneZActionHM#?j then map(pruneHM#i,pruneHM#j,0)
-       else pruneZActionHM#j
+       if j + first degree z != i then map(pruneHM_i,pruneHM_j,0)
+       --else if not pruneZActionHM#?j then map(pruneHM_i,pruneHM_j,0)
+       else pruneZActionHM_j
        );
    -- use map to build the matrix (using the matrix constructor for block matrices)
    matActOfZ := map(HA^(-degsHMTarget),HA^(-degsHMSource),tensor(map(HA,R),matrix table(ll,ll,buildBlocks)));
@@ -1111,7 +1156,7 @@ isWellDefined DGAlgebraMap := f -> (
    all(apply(gens A.natural, x -> f.natural(A.diff(x)) == B.diff(f.natural(x))), identity)
 )
 
-toComplexMap = method(TypicalValue=>ChainComplexMap,Options=>{EndDegree=>-1,AssertWellDefined=>true})
+toComplexMap = method(TypicalValue=>ComplexMap,Options=>{EndDegree=>-1,AssertWellDefined=>true})
 toComplexMap DGAlgebraMap := opts -> f -> (
    A := source f;
    B := target f;
@@ -1202,7 +1247,7 @@ pushForward(RingMap,Matrix) := opts -> (f,M) -> (
    map(targetM, sourceM, (i,j) -> (entries MEntriesOverR#(i//sRank)#(j//sRank))#(i%sRank)#(j%sRank))
 )
 
-pushForward(RingMap,ChainComplex) := opts -> (f,C) -> chainComplex apply(0..((length C)-1), i -> pushForward(f,C.dd_(i+1),opts))
+pushForward(RingMap,Complex) := opts -> (f,C) -> complex toList apply(0..((length C)-1), i -> pushForward(f,C.dd_(i+1),opts))
 
 -- The function below will return HH(f) as a module map over HH_0(A) (provided HH_0(B)
 -- is a finite HH_0(A)-module). 
@@ -1312,6 +1357,114 @@ torMap RingMap := opts -> f -> (
    map(sTorAlg,rTorAlg,matrix{take(flatten entries matrix phi.natural,numgens A.natural) / sSub})
 )
 
+
+
+--------------------
+getVariableChunks = method()
+getVariableChunks DGAlgebra := A -> (
+   ns := values (tally (gens A.natural) / degree / first);
+   partSumNs := {0} | apply(#ns, i -> sum take(ns, i+1));
+   varsA := apply(#ns, i -> (gens A.natural)_(toList(partSumNs#i..partSumNs#(i+1)-1)));
+   varsA
+)
+
+chunkDegree = method()
+chunkDegree (RingElement,List) := (f,L) -> (sum apply(L, l -> degree(l,f)))*(first degree first L)
+
+getPhiMap = method()
+getPhiMap (DGAlgebra, List, List) := (A, inVec, outVec) -> (
+   if (sum inVec != sum outVec + 1) then return null;
+   varsA := getVariableChunks A;
+   h := #varsA;
+   if h != #inVec or h != #outVec then return null;
+   inBasis := tensor apply(h, i -> basis(inVec#i,A.natural,Variables => varsA#i));
+   outBasis := tensor apply(h, i -> basis(outVec#i,A.natural,Variables => varsA#i));
+   diffs := matrix {apply(flatten entries inBasis, m -> diff(A,m))};
+   tempM := sub(last coefficients(diffs, Monomials => outBasis), A.ring);
+   R := A.ring;
+   tempM = if not isHomogeneous A then tempM else (
+      sourceM := R^(-((flatten entries inBasis) / degree / (e -> drop(e,1))));
+      targetM := R^(-((flatten entries outBasis) / degree / (e -> drop(e,1))));
+      map(targetM,sourceM,tempM)
+   );
+   tempM
+)
+
+degreeVecs = method()
+degreeVecs (DGAlgebra,ZZ) := (A,d) -> (
+   varsA := getVariableChunks A;
+   basisA := flatten entries basis(d,A.natural);
+   sort unique apply(basisA, m -> apply(varsA, l -> chunkDegree(m,l)))
+)
+
+displayBlockDiff = method()
+displayBlockDiff (DGAlgebra, ZZ) := (A,d) -> (
+   M := blockDiff(A,d);
+   inputDegs := indices source M;
+   outputDegs := indices target M;
+   firstRow := {"."} | inputDegs;
+   myNet := {firstRow} | apply(outputDegs, o -> {o} | apply(inputDegs, i -> M^[o]_[i]));
+   netList(myNet,Alignment => Center)
+)
+
+blockDiff = method()
+blockDiff (DGAlgebra, ZZ) := (A,d) -> (
+   if A.cache#?"blockDiffs" and A.cache#"blockDiffs"#?d then return A.cache#"blockDiffs"#d;
+   inputDegs := degreeVecs(A,d);
+   outputDegs := degreeVecs(A,d-1);
+   tempM := table(#outputDegs, #inputDegs, (a,b) -> getPhiMap(A,inputDegs#b,outputDegs#a));
+   sourceMods := (first tempM) / source;
+   targetMods := tempM / first / target;
+   sourceM := directSum apply(#inputDegs, i -> inputDegs#i => sourceMods#i);
+   targetM := directSum apply(#outputDegs, i -> outputDegs#i => targetMods#i);
+   M := map(targetM,sourceM,matrix tempM);
+   if not A.cache#?"blockDiffs" then
+      A.cache#"blockDiffs" = new MutableHashTable from {};
+   A.cache#"blockDiffs"#d = M;
+   M
+)
+
+displayBlockDiff (DGAlgebra, Array, Array) := Matrix => (A, sour, tar) -> (
+    --tar: a list of mulit-indices occurring in the (i-1)-th step of the complex associated to A
+    --sour: a list of mulit-indices occurring in the (i)-th step of the complex associated to A
+    i := sum sour_0;
+    X := blockDiff(A,i);
+    X_sour^tar
+    )
+displayBlockDiff (DGAlgebra, List, List) := Matrix => (A, sour, tar) -> (
+    --tar: a  mulit-index occurring in the (i-1)-th step of the complex associated to A
+    --sour: a index occurring in the (i)-th step of the complex associated to A
+    i := sum sour;
+    X := blockDiff(A,i);
+    X_[sour]^[tar]
+    )
+displayBlockDiff (DGAlgebra,  VisibleList) := Matrix => (A, tar) -> (
+    --tar: a  mulit-index occurring in the (i-1)-th step of the complex associated to A
+    --let i = 1+ sum tar, and d = C.dd_i the i-th differential in the complex C = toComplex(A, i).
+    --this returns all the blocks in d whose target is the summand corresponding to tar.
+    t := tar;
+    if class tar === Sequence then t = new Array from {toList t};
+    if class tar === List then t = new Array from {t};
+    if class t =!= Array or class (t_0) =!= List then 
+        error "argument 1 should be a sequence, list or array of one element which is a list.";
+    i := 1+sum t_0;
+    X := blockDiff(A,i);
+    sour := new Array from indices source X;
+    X_sour^t
+    )
+///
+restart
+loadPackage("DGAlgebras", Reload => true)
+R = QQ[x,y,z]/(ideal(x^3,y^3,z^3,x*y*z))
+A = acyclicClosure(R,EndDegree => 2)
+L = indices source blockDiff(A,5)
+displayBlockDiff(A,  [{0,2,3}], [{1,0,3},{0,4,0}])
+displayBlockDiff(A,  {0,2,3}, {0,4,0})
+displayBlockDiff(A , (1,0,3))
+displayBlockDiff(A,  {1,0,3})
+displayBlockDiff(A,  [{1,0,3}])
+///
+
 --------------------
 -- Documentation  --
 --------------------
@@ -1326,6 +1479,8 @@ doc ///
   Description
     Text
       This package is used to define and manipulate DG algebras.
+  Contributors
+    Some documentation was added by Daniel Rostamloo and David Eisenbud.
   Subnodes
     "Basic operations on DG Algebras"
     "The Koszul complex as a DG Algebra"
@@ -1810,14 +1965,14 @@ doc ///
     toComplex
     (toComplex,DGAlgebra)
   Headline
-    Converts a DGAlgebra to a ChainComplex
+    Converts a DGAlgebra to a Complex
   Usage
     C = toComplex A or C = toComplex(A,n)
   Inputs
     A:DGAlgebra
   Outputs
-    C:ChainComplex
-      The DG algebra A as a ChainComplex
+    C:Complex
+      The DG algebra A as a Complex
   Description
     Example
       R = ZZ/101[x_1..x_10]
@@ -1833,15 +1988,15 @@ doc ///
   Key
     (toComplex,DGAlgebra,ZZ)
   Headline
-    Converts a DGAlgebra to a ChainComplex
+    Converts a DGAlgebra to a Complex
   Usage
     C = toComplex A or C = toComplex(A,n)
   Inputs
     A:DGAlgebra
     n:ZZ
   Outputs
-    C:ChainComplex
-      The DG algebra A as a ChainComplex
+    C:Complex
+      The DG algebra A as a Complex
   Description
     Example
       R = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3,d^3}
@@ -1865,7 +2020,8 @@ doc ///
     A:DGAlgebra
   Outputs
     B:DGAlgebra
-      The acyclic closure of the DG Algebra A up to homological degree provided in the EndDegree option (default value is 3).
+      The acyclic closure of the DG Algebra A up to homological degree 
+      provided in the EndDegree option (default value is 3).
   Description
     Example
       R = ZZ/101[a,b,c]/ideal{a^3,b^3,c^3}
@@ -2072,7 +2228,7 @@ doc ///
       R = ZZ/101[a,b,c,d]
       TorR = torAlgebra(R)
       S = R/ideal{a^3,b^3,c^3,d^5}
-      TorS = torAlgebra(S)
+      TorS = torAlgebra(S, GenDegreeLimit => 3)
     Text
       The above example calculates the Tor algebra of R and S up to degree 3, by default.  One can also specify the maximum degree
       to compute generators of the Tor algebra by specifying the GenDegreeLimit option.
@@ -2101,7 +2257,7 @@ doc ///
       HB = torAlgebra(R,S,GenDegreeLimit=>4,RelDegreeLimit=>8)
       numgens HB
       apply(5,i -> #(flatten entries getBasis(i,HB)))      
-      Mres = res(M, LengthLimit=>8)
+      Mres = freeResolution(M, LengthLimit=>8)
     Text
       Note that in this example, $Tor_*^R(S,k)$ has trivial multiplication, since the
       map from R to S is a Golod homomorphism by a theorem of Levin and Avramov.
@@ -2287,7 +2443,7 @@ doc ///
   Key
     deviations
     (deviations,Ring)
-    (deviations,ChainComplex)
+    (deviations,Complex)
     (deviations,RingElement,List)
   Headline
     Computes the deviations of the input ring, complex, or power series.
@@ -2299,7 +2455,7 @@ doc ///
     devTally:Tally
   Description
     Text
-      This command computes the deviations of a @ TO Ring @, a @ TO ChainComplex @, or a power series in the form of a @ TO RingElement @.
+      This command computes the deviations of a @ TO Ring @, a @ TO Complex @, or a power series in the form of a @ TO RingElement @.
       The deviations are the same as the degrees of the generators of the acyclic closure of R, or the degrees of the generators of the
       Tor algebra of R.  This function takes an option called Limit (default value 3) that specifies the largest deviation to compute.
     Example
@@ -2311,13 +2467,13 @@ doc ///
       T = ZZ/101[a,b]/ideal {a^2-b^3}
       deviations(T,DegreeLimit=>4)
     Text
-      Note that the deviations of T are not graded, since T is not graded.  When calling deviations on a ChainComplex, the
+      Note that the deviations of T are not graded, since T is not graded.  When calling deviations on a Complex, the
       zeroth free module must be cyclic, and this is checked.  The same goes for the case
       of a RingElement.
     Example
       R = ZZ/101[a,b,c,d]/ideal {a^3,b^3,c^3,d^3}
       A = degreesRing R
-      kRes = res coker vars R
+      kRes = freeResolution(coker vars R, LengthLimit => 4)
       pSeries = poincareN kRes
       devA = deviations(R,DegreeLimit=>5)
       devB = deviations(kRes,DegreeLimit=>5)
@@ -2348,7 +2504,7 @@ doc ///
       R = ZZ/101[a,b,c]/ideal{a^3,b^3,c^3}
       RDevs = deviations(R,DegreeLimit=>6)
       devPSeries = deviationsToPoincare(RDevs,DegreeLimit=>6)
-      pSeries = poincareN (res(coker vars R, LengthLimit=>6))
+      pSeries = poincareN (freeResolution(coker vars R, LengthLimit=>6))
       substitute(devPSeries,ring pSeries) == pSeries
 ///
 
@@ -2750,13 +2906,13 @@ doc ///
     [toComplexMap,AssertWellDefined]
     [toComplexMap,EndDegree]
   Headline
-    Construct the ChainComplexMap associated to a DGAlgebraMap
+    Construct the ComplexMap associated to a DGAlgebraMap
   Usage
     psi = toComplexMap phi
   Inputs
     phi:DGAlgebraMap
   Outputs
-    psi:ChainComplexMap
+    psi:ComplexMap
   Description
     Example
        R = ZZ/101[a,b,c]/ideal{a^3+b^3+c^3,a*b*c}
@@ -2856,12 +3012,12 @@ doc ///
     A:DGAlgebra
     z:RingElement
   Outputs
-    phi:ChainComplexMap
+    phi:ComplexMap
   Description
     Text
       If A is a DGAlgebra, and z is a cycle of A, then left multiplication of A by z gives
       a chain map from A to A.  This command converts A to a complex using @ TO toComplex @,
-      and constructs a @ TO ChainComplexMap @ that represents left multiplication by z.
+      and constructs a @ TO ComplexMap @ that represents left multiplication by z.
       This command is used to determine the module structure that is computed in
       @ TO homologyModule @.
     Example
@@ -2881,7 +3037,7 @@ doc ///
       One may then view the action of multiplication by the homology class of z upon
       taking the induced map in homology:
     Example
-      Hphi = prune HH(phi); (Hphi#0,Hphi#1,Hphi#2)
+      Hphi = prune HH(phi); (Hphi_0,Hphi_1,Hphi_2)
 ///
 
 doc ///
@@ -2943,9 +3099,11 @@ doc ///
   Headline
     Outputs the source of a DGAlgebraMap
   Usage
-    source phi
+    A = source phi
   Inputs
     phi:DGAlgebraMap
+  Outputs
+    A: DGAlgebra
 ///
 
 doc ///
@@ -2954,9 +3112,11 @@ doc ///
   Headline
     Outputs the target of a DGAlgebraMap
   Usage
-    target phi
+    A = target phi
   Inputs
     phi:DGAlgebraMap
+  Outputs
+    A: DGAlgebra
 ///
 
 doc ///
@@ -3026,9 +3186,12 @@ doc ///
   Key
     [acyclicClosure,StartDegree]
   Headline
-    Option to specify the degree to start computing the acyclic closure
+    Option to specify the degree to start computing the acyclic closure. 
   Usage
     acyclicClosure(...,StartDegree=>n)
+  Description 
+   Text
+    The default value is 1.
 ///
 
 doc ///
@@ -3037,7 +3200,21 @@ doc ///
   Headline
     Option to specify the degree to stop computing the acyclic closure
   Usage
-    acyclicClosure(...,EndDegree=>n)
+    A =  acyclicClosure(B,EndDegree=>n)
+  Inputs
+    B: DGAlgebra
+    n: ZZ
+  Description
+   Text
+    All generators of the acyclic closure will be found up to homological degree n.
+    Note that B can be an ordinary ring, a factor ring of a polynomial ring, treated as
+    a DGAlgebra generated in homological degree 0, as in the following example:
+    
+    The default value of EndDegree is 3.
+   Example
+    R = ZZ/101[x,y,z,w]/(ideal"x3,y3,z3,x2yz")
+    acyclicClosure R
+    acyclicClosure(R,EndDegree => 3)
 ///
 
 doc ///
@@ -3215,10 +3392,132 @@ doc ///
     phi:DGAlgebraMap
 ///
 
+doc///
+ Key 
+  displayBlockDiff
+  (displayBlockDiff, DGAlgebra, ZZ)
+  (displayBlockDiff, DGAlgebra, Array, Array)
+  (displayBlockDiff, DGAlgebra, List, List)
+  (displayBlockDiff, DGAlgebra, VisibleList)  
+ Headline
+  Shows natural decomposition of a map in the Tate resolution
+ Usage
+  displayBlockDiff (A, n)
+  displayBlockDiff (A, LA, LA)
+  displayBlockDiff (A, L, L)
+  displayBlockDiff (A, V)
+ Inputs
+  A:DGAlgebra
+   of the sort produced by @TO acyclicClosure@ or @TO killCycles@
+  n:ZZ
+  LA:Array
+     of the form [L] where L is a list representing a multi-index in the complex
+  L:List
+   of indices as above
+  V:VisibleList
+   a list, array or sequence representing a (single) multi-index in the complex defined by A
+ Description
+  Text
+   For example, consider the first five steps in the resolution of the residue field
+   in the following example:
+  Example
+   R = QQ[x,y,z]/(ideal(x^3,y^3,z^3,x*y*z))
+   G = betti freeResolution (coker vars R, LengthLimit => 5)
+  Text
+   It is a free graded-commutative divided power algebra on generator of each degree starting with 1.
+   We can compute the beginning of the complex corresponding to the first 3 factors with as
+  Example
+   A = acyclicClosure(R,EndDegree => 2)
+   F = toComplex(A, 5);
+   betti F
+   betti F
+  Text
+   Since we gave @TO acyclicClosure @ the EndDegree 2, the complex produced is exact up to
+   step 2; that is betti F and betti G agree up to the column 3. There are 3 chunks of generators
+   in A, of homological degrees 1,2,3. 
+  
+   From the betti table of F 
+   we see the three generators of the exterior algebra K as the linear part of the resolution.
+   The second strand, 4,12,12,4 is the tensor product of K with the 4 generators of A that have
+   homological degree 2 and correspond to the 4 generators of I; thus they have internal degree 3.
+   We also see that A has three generators in homological degree 3 and internal degree 5.
+   K multiplied by these generators accounts for 3,9,9 of the 3rd strand, while the symmetric
+   square of the 4 generators of homological degree 2,  account for 0,10,0 and the product of
+   these with the generators of degree 1 account for the remaining 0,0,30. Finally the 12
+   in the 4th row represents the product of the 4 generators of A in homological degree with
+   the 3 in degree 3.
+  
+   The native display of the differentials of this complex does not distinguish these pieces,
+   but displayBlockDiff allows one to look at them in various ways:
+  Example
+   F.dd_3
+   displayBlockDiff(A,3)
+  Text
+   Here the triples of numbers represent the number of factors from the generators of each of the three chunks of
+   variables: the first index gives the number from the Koszul complex, the second from the 4 variable in homological degree
+   2 and the third the number from the 3 variables of homological degree 3. Thus the sum of the
+   three indices is the homological degree. The sources of the blocks are listed on the top row, the targets
+   are given by the columns.
+   We can see the lists of indices of the source and target with
+    Example
+     indices source blockDiff(A,5)
+     indices target blockDiff(A,5)
+  Text
+   We can extract one or several blocks from F.dd_3 as follows:
+  Example
+   R = QQ[x,y,z]/(ideal(x^3,y^3,z^3,x*y*z))
+   A = acyclicClosure(R,EndDegree => 2)
+  Text
+   We can specify a lists of source and target degrees, either as lists representing an 
+   index for th source and an index for the target:
+  Example
+   displayBlockDiff(A,  {0,2,3}, {0,4,0})
+  Text
+   or as a pair of arrays of such lists
+  Example
+   displayBlockDiff(A,  [{0,2,3}], [{1,0,3},{0,4,0}])
+  Text
+   or look at all the blocks with a given target summand with:
+  Example
+   displayBlockDiff(A,  (1,0,3) )
+ SeeAlso
+  blockDiff
+  acyclicClosure
+///
+
+doc ///
+ Key
+  blockDiff
+  (blockDiff, DGAlgebra, ZZ)
+ Headline
+  prepares a map for display
+ Usage
+  X = blockDiff(A,n)
+ Inputs
+  A: DGAlgebra
+  n: ZZ
+ Outputs
+  X:Matrix
+   map between labeled direct sums
+ Description
+  Text
+   Use @TO displayBlockDiff@ to display the blocks in various ways.
+ SeeAlso
+  displayBlockDiff 
+///
+  
 -------------------------------
 --          Testing          --
 -------------------------------
+TEST ///
+R = QQ[x,y,z]/(ideal(x^3,y^3,z^3,x*y*z))
+A = acyclicClosure(R,EndDegree => 2)
+X = blockDiff(A,3)
+Y = blockDiff(A,2)
+--reconstruct a composite block:
+assert(0 == Y_[{2,0,0}]^[{1,0,0}] *X^[{2,0,0}]_[{1,2,0}] + Y_[{0,2,0}]^[{1,0,0}] *X^[{0,2,0}]_[{1,2,0}] )
 
+///
 TEST ///
 -- test 0 : isHomogeneous, toComplex, maxDegree
 R = ZZ/101[x,y,z]
@@ -3259,7 +3558,7 @@ assert(apply(maxDegree(A)+1, i -> prune HH_i(Add)) == {coker vars R,0,0,coker va
 TEST ///
 -- test 1 : differential tests
 R = ZZ/101[x,y,z, Degrees => {2,2,3}]
-kRes = res coker vars R
+kRes = freeResolution coker vars R
 kRes.dd_3
 A = koszulComplexDGA(R)
 d3 = A.dd_3
@@ -3310,7 +3609,7 @@ TorR1 = torAlgebra(R1,GenDegreeLimit=>4)
 devR1 = deviations(R1,DegreeLimit=>4)
 use R1
 M = coker matrix {{x^2*y^3*z^4}}
-Mres = res(M, LengthLimit => 7)
+Mres = freeResolution(M, LengthLimit => 7)
 R2 = QQ[x,y,z]/ideal{x^3,y^4,z^5,x^2*y^3*z^4}
 time TorR1R2 = torAlgebra(R1,R2,GenDegreeLimit=>5,RelDegreeLimit=>10)
 -- the multiplication is trivial, since the map R3 --> R4 is Golod
@@ -3486,20 +3785,27 @@ TEST ///
 S = QQ[x,y,z,u]
 I = ideal(u^3, x*y^2, (x+y)*z^2, x^2*u+z*u^2, y^2*u+x*z*u, y^2*z+y*z^2)
  -- you can see that the mult on the koszul homology will be trivial
-betti (A = res I)
+betti (A = freeResolution I)
 R = S/I
 assert(isHomologyAlgebraTrivial koszulComplexDGA R == true)
 assert(isGolod R == false)
 ///
 
-end
+end--
 
 -- How to install the package
+restart
+loadPackage("DGAlgebras", Reload =>true)
+restart
 uninstallPackage "DGAlgebras"
 restart
 installPackage "DGAlgebras"
+
+
 check "DGAlgebras"
 viewHelp DGAlgebras
+
+
 
 -- Below, we provide some of the examples used in development, unsupported
 -- and undocumented for the user.
@@ -3612,7 +3918,7 @@ devR1 = deviations R1
 devR2 = deviations R2
 poincR2 = deviationsToPoincare devR2
 coefficients(poincR2, Variables=>{first gens ring poincR2})
-res coker vars R2
+freeResolution coker vars R2
 R3 = ZZ/101[a,b,c,d,Degrees=>entries id_(ZZ^4)]/ideal{a^3,b^3,c^3,d^3,a^2*b^2*c^2*d^2}
 degrees R3
 devR3 = deviations R3
@@ -3685,7 +3991,7 @@ A = source M
 B = target M
 Mpush = pushForward(f,M)
 -- test functoriality of pushForward
-kSRes = res(coker matrix {{x,y,z,w}}, LengthLimit=>5)
+kSRes = freeResolution(coker matrix {{x,y,z,w}}, LengthLimit=>5)
 kSRes1push = pushForward(f,kSRes.dd_1)
 kSRes2push = pushForward(f,kSRes.dd_2)
 kSRes3push = pushForward(f,kSRes.dd_3)
@@ -3693,7 +3999,7 @@ kSRes1push*kSRes2push
 kSRes2push*kSRes3push
 prune homology(kSRes1push,kSRes2push)
 prune homology(kSRes2push,kSRes3push)
--- pushforward the ChainComplex
+-- pushforward the Complex
 kSResPush = pushForward(f,kSRes)
 prune HH kSResPush
 
@@ -3761,7 +4067,7 @@ HH g
 
 -- change of rings DGAlgebraMap currently does not work yet, since M2 expects
 -- matrices to be defined between free modules over the same ring.  Need to use
--- pushForward (for ChainComplex; not yet written) for this to work.
+-- pushForward (for Complex; not yet written) for this to work.
 restart
 loadPackage "DGAlgebras"
 R = ZZ/101[a,b,c]/ideal{a^2+b^2+c^2}
@@ -3945,7 +4251,7 @@ restart
 loadPackage "DGAlgebras"
 Q = QQ[a,b,c,d,e,f,g,h,i]
 I = ideal (h^2-a*i,g^2-c*h,f^2-e*g,e*f-b*h,e^2-d*g,d*e-a*h,d^2-c*e,c*g-a*h,c*d-b*f,c^2-a*g,b*d-a*f,b^2-a*c)
-res coker gens I
+freeResolution coker gens I
 oo.dd
 R = Q/I
 A = koszulComplexDGA(R)
@@ -3974,7 +4280,7 @@ debug DGAlgebras
 R = QQ[x,y,z,w]/ideal{x^3,y^4,z^5}
 A = acyclicClosure(R,EndDegree=>1)
 time Add = toComplex(A,20);
-time kRes = res(coker vars R, LengthLimit => 20)
+time kRes = freeResolution(coker vars R, LengthLimit => 20)
 
 -- Homology
 restart
@@ -3982,7 +4288,7 @@ loadPackage "DGAlgebras"
 R3 = QQ[x,y,z]/ideal{x^3,y^4,z^5}
 A3 = acyclicClosure(R3,EndDegree=>1)
 time apply(7, i -> time numgens prune homology(i,A3))
-time kRes = res(coker vars R3, LengthLimit=> 18)
+time kRes = freeResolution(coker vars R3, LengthLimit=> 18)
 time apply(17, i -> time HH_i(kRes));
 
 -- Tor algebras
@@ -3991,16 +4297,16 @@ loadPackage "DGAlgebras"
 R3 = QQ[x,y,z]/ideal{x^3,y^4,z^5}
 time TorR3 = torAlgebra(R3)
 apply(16, i -> hilbertFunction(i,TorR3))
-time res(coker vars R3, LengthLimit => 15)
+time freeResolution(coker vars R3, LengthLimit => 15)
 R4 = QQ[x,y,z]/ideal{x^3,y^4,z^5,x^2*y^3*z^4}
 TorR4 = torAlgebra(R4,GenDegreeLimit=>8)
 apply(10, i -> hilbertFunction(i,TorR4))
-res(coker vars R4, LengthLimit => 9)
+freeResolution(coker vars R4, LengthLimit => 9)
 TorR3R4 = torAlgebra(R3,R4,GenDegreeLimit=>4,RelDegreeLimit=>10)
 reduceHilbert hilbertSeries TorR3R4
 use R3
 R4mod = coker matrix {{x^2*y^3*z^4}}
-res(R4mod, LengthLimit => 6)
+freeResolution(R4mod, LengthLimit => 6)
 
 -- Acyclic closures
 restart
@@ -4203,3 +4509,84 @@ A = freeDGAlgebra(R,{{1},{1},{1},{3}})
 A.natural
 setDiff(A,{x,y,z,x*T_2*T_3-y*T_1*T_3+z*T_1*T_2})
 isHomogeneous(A)
+
+
+
+restart
+uninstallPackage "DGAlgebras"
+restart
+installPackage "DGAlgebras"
+check "DGAlgebras"
+debug needsPackage "DGAlgebras"
+loadPackage ("DGAlgebras", Reload => true)
+--load "blockDiff.m2"
+
+
+R = QQ[x,y,z]/(ideal(x^3,y^3,z^3,x*y*z))
+A = acyclicClosure(R,EndDegree => 2)
+displayBlockDiff(A,2)
+X = blockDiff(A,2)
+X^[{1,0,0}]_[{2,0,0}]
+X^[{1,0,0}]_[{0,2,0}]
+X = blockDiff(A,5)
+
+-- this is the differential returned by DGAlgebras by default
+polyDifferential(7,A)
+
+
+
+
+restart
+debug needsPackage "DGAlgebras"
+load "blockDiff.m2"
+
+R = QQ[x,y,z]/(ideal(x^3,y^3,z^3))
+A = acyclicClosure(R)
+
+-- another example
+R = QQ[x,y,z]/(ideal(x^3,y^3,z^3,x*y*z))
+A = acyclicClosure(R,EndDegree => 3)
+
+-- this displays the differential with headings corresponding to the (i,j) and (p,q)
+displayBlockDiff(A,7)
+-- this creates the matrix as a "matrix of matrices"
+elapsedTime X = blockDiff(A,9);
+-- which one may then select blocks using X^[...]_[...]
+X^[0]
+X^[0]_[0]
+-- this is the differential returned by DGAlgebras by default
+polyDifferential(7,A)
+
+
+--- most recent example:
+restart
+needsPackage "DGAlgebras"
+R = QQ[x,y,z]/(ideal(x^3,y^3,z^3,x*y*z))
+A = acyclicClosure(R,EndDegree => 2)
+displayBlockDiff(A,5)
+X = blockDiff(A,5)
+indices source X
+indices target X
+Y = X^[{1,0,3}]_[{0,2,3}]  -- works now!
+X^[{1,0,3},{0,4,0}]_[{0,2,3}]
+tar = [{1,0,3},{0,4,0}]
+sour = [{0,2,3}] 
+X_tar^sour
+isHomogeneous Y
+degrees source Y
+degrees target Y
+
+
+///
+R = QQ[x,y,z]/(ideal(x^3,y^3,z^3,x*y*z))
+A = acyclicClosure(R,EndDegree => 2)
+L = indices source blockDiff(A,5)
+displayBlockDiff(A,  [{0,2,3}], [{1,0,3},{0,4,0}])
+displayBlockDiff(A,  {0,2,3}, {0,4,0})
+displayBlockDiff(A,  {1,0,3})
+displayBlockDiff(A,  [{1,0,3}])
+
+///
+displayBlockDiff(DGAlgebra, BasicList) := (A,L) -> displayBlockDiff(A,L)
+
+new Array from [{1}]

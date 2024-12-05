@@ -20,24 +20,26 @@ newPackage(
     	Date => "May 10, 2013",
     	Authors => {
 	     {Name => "Brett Barwick", Email => "bbarwick@uscupstate.edu", HomePage => "http://faculty.uscupstate.edu/bbarwick/"},
-	     {Name => "Branden Stone", Email => "bstone@adelphi.edu", HomePage => "http://math.adelphi.edu/~bstone/"}
+	     {Name => "Branden Stone", Email => "branden.stone@gtri.gatech.edu", HomePage => "http://bstone.github.io/"}
 	     },
     	Headline => "the Quillen-Suslin algorithm for bases of projective modules",
 	Keywords => {"Commutative Algebra"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "Computing free bases for projective modules",
 	     "acceptance date" => "2013-09-18",
-	     "published article URI" => "http://www.j-sag.org/Volume5/jsag-5-2013.pdf",
-	     "published code URI" => "http://www.j-sag.org/Volume5/QuillenSuslin.m2",
-	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/GraphicalModels.m2",
+	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/QuillenSuslin.m2",
+	     "published article URI" => "https://msp.org/jsag/2013/5-1/p05.xhtml",
+	     "published article DOI" => "10.2140/jsag.2013.5.26",
+	     "published code URI" => "https://msp.org/jsag/2013/5-1/jsag-v5-n1-x05-code.zip",
 	     "release at publication" => "8a3b2962b97153977eeaf6f92b5f48e246dd8e69",	    -- git commit number in hex
 	     "version at publication" => "1.7",
 	     "volume number" => "5",
-	     "volume URI" => "http://j-sag.org/Volume5/"
+	     "volume URI" => "https://msp.org/jsag/2013/5-1/"
 	     },
-	PackageImports => {"MinimalPrimes"},
+        PackageExports => {"Complexes"},
+        PackageImports => {"MinimalPrimes"},
     	DebuggingMode => false
     	)
 
@@ -466,7 +468,7 @@ maxMinors(Matrix) := M -> (
 
 
 -- Method: trimResolution
--- Input: (Module,ChainComplex) -- projective module over a polynomial ring, given as a cokernel.  Also a free resolution of the module.
+-- Input: (Module,Complex) -- projective module over a polynomial ring, given as a cokernel.  Also a free resolution of the module.
 -- Output: (Matrix,Matrix) -- (Map from R^m -> R^n, Projection map from R^n -> P)
 -- Description:
 -- Given a projective module P which is presented as a cokernel,
@@ -476,7 +478,7 @@ maxMinors(Matrix) := M -> (
 -- "Applications of the Quillen-Suslin Theorem" (pg. 37)
 
 trimResolution = method()
-trimResolution(Module,ChainComplex) := (mp,F) -> (
+trimResolution(Module,Complex) := (mp,F) -> (
      local dd1; local dd2; local dd3; local dd3t; local ident;
      local mp; local p; local proj; local R; local T;
      
@@ -1457,7 +1459,7 @@ monicPolySubs(RingElement,List) := opts -> (f,varList) -> (
 	  print "The element had degree zero in the last variable.";
 	  degZeroSub = mutableMatrix vars R;
 	  degZeroSub = columnSwap(degZeroSub,last usedVarPosition,lastVarPosition);
-	  f = sub(f,degZeroSub); -- Interchange variables so that last varList is involved in f.  Now f has positive degree in last varList.
+	  f = sub(f,matrix degZeroSub); -- Interchange variables so that last varList is involved in f.  Now f has positive degree in last varList.
      );
      
      -- Now we enter the general algorithm.
@@ -1495,7 +1497,7 @@ monicPolySubs(RingElement,List) := opts -> (f,varList) -> (
      if degZeroSub =!= null then (
 	  print("degZeroSub: "|toString(degZeroSub));
 	  tempSub = columnSwap(tempSub,last usedVarPosition,lastVarPosition);
-	  tempInvSub = sub(tempInvSub,degZeroSub);
+	  tempInvSub = sub(matrix tempInvSub,matrix degZeroSub);
      );
      
      return (matrix tempSub,matrix tempInvSub);
@@ -1879,7 +1881,7 @@ qsIsomorphism(Module) := opts -> M -> (
      pruneMap = mp.cache.pruningMap;
      if verbosity >= 3 then print("qsIsomorphism: Constructing a free resolution of the minimal presentation.");
      
-     F = res mp;
+     F = freeResolution mp;
      -- If Macaulay2 already knows that the module is free, then just return the pruning map.
      if length F == 0 then (
 	  if verbosity >= 2 then print "qsIsomorphism: Macaulay2 already knows that this module is free.  Returning the pruning map.";

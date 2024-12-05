@@ -109,7 +109,7 @@ changeRing = H -> (
    phi := map(R,S,join(gens R,(numgens S - numgens R):0));
    prune (phi ** H)
    );
-Ext(Module,Ring) := (M,k) -> (
+Ext(Module,Ring) := o -> (M,k) -> (
    B := ring M;
    if ideal k != ideal vars B
    then error "expected the residue field of the module";
@@ -120,7 +120,7 @@ k = B/(x,y,z);
 use B;
 P = Ext(M,k);
 time oddPart P
-Ext(Ring,Module) := (k,M) -> (
+Ext(Ring,Module) := o -> (k,M) -> (
    B := ring M;
    if ideal k != ideal vars B
    then error "expected the residue field of the module";
@@ -135,7 +135,7 @@ poincareSeries2 = M -> (
    k := B/ideal vars B;
    P := Ext(M,k);
    h := hilbertSeries P;
-   T':= degreesRing P;
+   T':= degreesRing ring P;
    substitute(h, {T'_0=>t^-1,T'_1=>u^-1})
    );
 poincareSeries1 = M -> (
@@ -198,7 +198,7 @@ bassSeries2 = M -> (
    k := B/ideal vars B;
    I := Ext(k,M);
    h := hilbertSeries I;
-   T':= degreesRing I;
+   T':= degreesRing ring I;
    substitute(h, {T'_0=>t^-1, T'_1=>u})
    );
 bassSeries1 = M -> (
@@ -224,7 +224,7 @@ oddPart rH'
 extgenSeries2 = (M,N) -> (
    H := ext(M,N);
    h := hilbertSeries H;
-   T':= degreesRing H;
+   T':= degreesRing ring H;
    substitute(h, {T'_0=>t^-1,T'_1=>u^-1})
    );
 extgenSeries1 = (M,N) -> (

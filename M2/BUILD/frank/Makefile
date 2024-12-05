@@ -24,7 +24,34 @@ cmake-appleclang:
 		-GNinja \
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
 		-DBUILD_TESTING=on \
+		-DCMAKE_PREFIX_PATH="`brew --prefix libffi`" \
 		-DBUILD_DOCS=on \
+		-DBUILD_NATIVE=off \
+		../../../..
+
+cmake-clang:
+	echo "git branch is " $(BRANCH)
+	mkdir -p builds.tmp/cmake-clang
+	cd builds.tmp/cmake-clang; CC=/opt/homebrew/opt/llvm/bin/clang CXX=/opt/homebrew/opt/llvm/bin/clang++ cmake \
+		-GNinja \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DCMAKE_PREFIX_PATH="`brew --prefix libffi`" \
+		-DBUILD_DOCS=on \
+		-DBUILD_NATIVE=off \
+		../../../..
+
+cmake-appleclang-notbb:
+	echo "git branch is " $(BRANCH)
+	mkdir -p builds.tmp/cmake-appleclang-notbb
+	cd builds.tmp/cmake-appleclang-notbb; cmake \
+		-GNinja \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DCMAKE_PREFIX_PATH="`brew --prefix libffi`" \
+		-DBUILD_DOCS=on \
+		-DBUILD_NATIVE=off \
+		-DWITH_TBB=off \
 		../../../..
 
 cmake-debug-appleclang:
@@ -105,6 +132,17 @@ xcode:
 # Some possibly useful configure options
 # 		--build=x86_64-apple-darwin
 #       --enable-build-libraries="flint ntl"
+
+arm64-no-tbb-appleclang : always
+	mkdir -p builds.tmp/arm64-no-tbb-appleclang
+	cd builds.tmp/arm64-no-tbb-appleclang; ../../../../configure \
+		CPPFLAGS="-I`brew --prefix`/include" \
+		LDFLAGS="-L`brew --prefix`/lib" \
+		--disable-tbb \
+	        --with-boost-regex=boost_regex \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
 
 darwin64-appleclang : always
 	mkdir -p builds.tmp/darwin64-appleclang

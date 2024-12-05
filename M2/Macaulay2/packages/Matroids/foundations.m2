@@ -178,10 +178,11 @@ freePartPasture Pasture := List => P -> (
 
 hexTypes = method()
 hexTypes (Pasture, Boolean) := List => (P, doTally) -> (
-    A := presentation P.multiplicativeGroup;
+    -- A := presentation P.multiplicativeGroup;
     F3 := select(P.hexagons, h -> #unique flatten h == 1);
     D := select(P.hexagons - set F3, h -> any(h, p -> #unique p == 1));
-    H := select(P.hexagons - set F3 - set D, h -> (p := unique flatten h; #p == 2 and all(p, e -> 3*e % A == P.epsilon)));
+    -- H := select(P.hexagons - set F3 - set D, h -> (p := unique flatten h; #p == 2 and all(p, e -> 3*e % A == P.epsilon)));
+    H := select(P.hexagons - set D, h -> #unique flatten h == 2);
     U := P.hexagons - set F3 - set D - set H;
     if doTally then hashTable {("U", #U), ("D", #D), ("H", #H), ("F3", #F3)} else {U, D, H, F3}
 )
@@ -965,22 +966,6 @@ morphisms (Pasture, Pasture) := List => opts -> (P1, P2) -> (
 
 areIsomorphic (Pasture, Pasture) := Boolean => (P, P') -> #morphisms(P, P', FindOne => true, FindIso => true) > 0
 
-isoTypes = method()
-isoTypes List := List => L -> (
-    dbg := debugLevel;
-    debugLevel = 0;
-    isoClasses := {};
-    for P in L do (
-        isNewIsoClass := for c in isoClasses do if areIsomorphic(c, P) then break false;
-        if isNewIsoClass =!= false then (
-            isoClasses = append(isoClasses, P);
-            if dbg > 0 then << "\risoTypes: found new iso class, total is " << #isoClasses << flush;
-        );
-    );
-    debugLevel = dbg;
-    isoClasses
-)
-
 TEST /// -- P6, Q6
 P6 = matroid(toList(0..5), {{0,1,2}}, EntryMode => "nonbases")
 U26 = uniformMatroid_2 6
@@ -1475,7 +1460,19 @@ M = matroid(toList(0..<7), {{0,1,2},{0,3,4},{1,3,5},{2,4,5},{2,3,6}}, EntryMode 
 N = matroid(toList(0..<8), {{0,1,2,3},{0,1,4,5},{2,3,4,5},{0,1,6,7},{2,3,6,7},{4,5,6,7}}, EntryMode => "nonbases")
 GF 4; D = matrix{{1,0,0,1,a,1,0,a+1,1},{0,1,0,a,a,1,a,1,a+1},{0,0,1,0,1,1,1,1,1}}
 GF 4; D = matrix{{1,0,0,1,a+1,1,0,a,1},{0,1,0,a+1,a+1,1,a+1,1,a},{0,0,1,0,1,1,1,1,1}}
-M = matroid (matrix{{7:1}} || transpose matrix {{-3,0},{-3/4,-1},{3/2,-2},{-3/4,1},{3/2,2},{0,0},{3,0}}) -- Example 2.2 in paper
+M = matroid (matrix{{7:1}} || transpose matrix {{-3,0},{-3/4,-1},{3/2,-2},{-3/4,1},{3/2,2},{0,0},{3,0}}) -- Example in paper
+
+-- Example 3.4 in https://arxiv.org/pdf/math/0202294.pdf
+NSC = {{0,5,6,7},{1,4,5,7},{2,3,5,7},{0,2,4,7},{0,1,4,8},{0,2,3,8},{0,1,3,7},{2,4,5,6},{1,3,5,6},{0,1,2,5}}
+SC = select(subsets(9,5), S -> all(NSC, c -> not isSubset(c,S)));
+N = matroid(NSC | SC, EntryMode => "circuits")
+(isWellDefined N, betti ideal N)
+elapsedTime (hexTypes foundation N, pairTypes foundation N)
+FE = unique flatten flatten (foundation N).hexagons;
+z = FE#(position(FE, e -> e == 0))
+(#freePartPasture foundation N, #fundEltPartners (foundation N, z))
+-- In particular, when 1 is a fundamental element in a foundation, partners of 1 need not span (F_M)*
+
 V3 = pasture([x,y,z],"x+y,z-y,x*z+y^2");
 V5 = pasture([x,y],"x+y, x*y-y,x^2*y-1,-y^2");
 V7 = pasture([x,y],"-1,x+y,x^2+y^2");

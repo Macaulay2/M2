@@ -210,7 +210,7 @@ iCite String := S -> (
             "@misc{M2,\n",
             "  author = {Grayson, Daniel R. and Stillman, Michael E.},\n",
             "  title = {Macaulay2, a software system for research in algebraic geometry},\n",
-            "  howpublished = {Available at ", ///\///, "url{http://www.math.uiuc.edu/Macaulay2/}}\n",
+            "  howpublished = {Available at ", ///\///, "url{https://macaulay2.com/}}\n",
             "}\n",
             ))
     else
@@ -240,7 +240,7 @@ doc ///
           is a package for a powerful open-source mathematical software suite
           but it contains only one method and adds exactly zero computational
           ability to the platform. The one method, called @TO cite@, can be
-          called on any @HREF {"http://www.math.uiuc.edu/Macaulay2/",
+          called on any @HREF {"https://macaulay2.com/",
           "Macaulay2"}@ package and will return a bibtex citation for
           inclusion in a @HREF {"https://www.latex-project.org", "LaTeX"}@
           document. For example, a citation for this package can be obtained

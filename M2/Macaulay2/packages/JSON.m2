@@ -1,8 +1,8 @@
 newPackage(
     "JSON",
     Headline => "JSON encoding and decoding",
-    Version => "0.1",
-    Date => "August 31, 2022",
+    Version => "0.3",
+    Date => "September 14, 2024",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -10,6 +10,26 @@ newPackage(
     Keywords => {"System"},
     PackageImports => {"Parsing"},
     AuxiliaryFiles => true)
+
+---------------
+-- ChangeLog --
+---------------
+
+-*
+
+0.3 (2024-09-14, M2 1.24.11)
+* remove redundant Constant methods now that we can use inheritance
+* remove use of now-unsupported FileName option to TEST
+* update test after "format" bug fix
+
+0.2 (2024-01-24, M2 1.23)
+* use single-string version of exportFrom
+* use null coalescing operator in toJSON
+
+0.1 (2022-08-31, M2 1.21)
+* initial release
+
+*-
 
 export {
     "toJSON",
@@ -19,7 +39,7 @@ export {
     "ValueSeparator"
     }
 
-exportFrom_Parsing {"nil"}
+exportFrom_Parsing "nil"
 
 ----------------------------------------------------------------
 -- parser based on https://datatracker.ietf.org/doc/html/rfc8259
@@ -112,8 +132,7 @@ jsonEncoder = method()
 jsonEncoder OptionTable := o -> (
     e := JSONEncoder o;
     e.IndentLevel = 0;
-    if e.ValueSeparator === null then e.ValueSeparator = (
-	if e.Indent === null then ", " else ",");
+    e.ValueSeparator ??= if e.Indent === null then ", " else ",";
     e)
 
 toJSON = method(Options => {
@@ -130,9 +149,8 @@ toJSON(JSONEncoder, RR)      := o -> (e, x) -> format(0, x)
 toJSON(JSONEncoder, ZZ)      :=
 toJSON(JSONEncoder, Boolean) :=
 toJSON(JSONEncoder, Nothing) := o -> (e, x) -> toString x
-toJSON(JSONEncoder, QQ)       :=
-toJSON(JSONEncoder, Constant) :=  o -> (e, x) -> toJSON(e, numeric x)
-toJSON(JSONEncoder, Symbol) := o -> (e, x) -> (
+toJSON(JSONEncoder, Number)  := o -> (e, x) -> toJSON(e, numeric x)
+toJSON(JSONEncoder, Symbol)  := o -> (e, x) -> (
     if x === nil then "null" else error("unknown symbol"))
 
 maybeNewline = method()
@@ -345,8 +363,5 @@ for tst in sort select(tsts, f -> match("^y_", f)) do (
 close outfile
 ///
 
-TEST(currentPackage#"source directory" | "JSON/test-parse.m2",
-    FileName => true)
-
-TEST(currentPackage#"source directory" | "JSON/test-encode.m2",
-    FileName => true)
+TEST get(currentPackage#"auxiliary files" | "test-parse.m2")
+TEST get(currentPackage#"auxiliary files" | "test-encode.m2")

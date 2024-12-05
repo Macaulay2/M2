@@ -12,6 +12,7 @@ taskCreate(f:function(TaskCellBody):null,tb:TaskCellBody) ::=  Ccode(taskPointer
 
 export taskDone(tp:taskPointer) ::= Ccode(int, "taskDone(",tp,")")==1;
 export taskStarted(tp:taskPointer) ::=Ccode(int, "taskStarted(",tp,")")==1;
+export taskReady(tp:taskPointer) ::= Ccode(int, "taskReady(", tp, ")") == 1;
 pushTask(tp:taskPointer) ::=Ccode(void, "pushTask(",tp,")");
 taskResult(tp:taskPointer) ::=Ccode(voidPointer, "taskResult(",tp,")");
 export taskKeepRunning(tp:taskPointer) ::= Ccode(int, "taskKeepRunning(",tp,")")==1;
@@ -97,8 +98,12 @@ nextTaskSerialNumber():int := (
      taskSerialNumber = taskSerialNumber+1;		    -- race condition here, solve later
      taskSerialNumber);
 
+NoThreadsError() ::= buildErrorPacket("thread support has been disabled");
+
 createTask2(fun:Expr,arg:Expr):Expr :=(
      if !isFunction(fun) then return WrongArg(1,"a function");
+     if Ccode(bool, "!isThreadSupervisorInitialized()")
+     then return NoThreadsError();
      tc := TaskCell(TaskCellBody(nextHash(),nextTaskSerialNumber(),Ccode(taskPointer,"((void *)0)"), false, fun, arg, nullE ));
      blockingSIGINT();
      -- we are careful not to give the new thread the pointer tc, which we finalize:
@@ -170,6 +175,8 @@ setupfun("addCancelTask",addCancelTaskM2);
 
 schedule2(fun:Expr,arg:Expr):Expr := (
      if !isFunction(fun) then return WrongArg(1,"a function");
+     if Ccode(bool, "!isThreadSupervisorInitialized()")
+     then return NoThreadsError();
      tc := TaskCell(TaskCellBody(nextHash(),nextTaskSerialNumber(),Ccode(taskPointer,"((void *)0)"), false, fun, arg, nullE ));
      blockingSIGINT();
      -- we are careful not to give the new thread the pointer tc, which we finalize:
@@ -180,7 +187,7 @@ schedule2(fun:Expr,arg:Expr):Expr := (
 
 schedule1(task:TaskCell):Expr := (
      if taskStarted(task.body.task) then
-     WrongArg("A task that hasn't started")
+     WrongArg("a task that hasn't started")
      else (
      pushTask(task.body.task); 
      Expr(task)
@@ -202,8 +209,12 @@ setupfun("schedule",schedule);
 taskResult(e:Expr):Expr := (
      when e is c:TaskCell do
      if c.body.resultRetrieved then buildErrorPacket("task result already retrieved")
+     else if !taskReady(c.body.task)
+     then buildErrorPacket("task not scheduled yet")
      else if !taskKeepRunning(c.body.task) then buildErrorPacket("task canceled")
-     else if !taskDone(c.body.task) then buildErrorPacket("task not done yet")
+     else if !taskDone(c.body.task) then (
+	  Ccode(voidPointer, "waitOnTask(",c.body.task,")");
+	  taskResult(e))
      else (
 	  r := c.body.returnValue;
 	  c.body.returnValue = nullE;
@@ -217,6 +228,16 @@ setupfun("taskResult",taskResult);
 setupfun("setIOSynchronized",setIOSynchronized);
 setupfun("setIOUnSynchronized",setIOUnSynchronized);
 setupfun("setIOExclusive",setIOExclusive);
+
+export getIOThreadMode(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 0
+	then toExpr(getFileThreadMode(stdIO))
+	else WrongNumArgs(0, 1))
+    is f:file do toExpr(getFileThreadMode(f))
+    else WrongArg("a file or ()"));
+setupfun("getIOThreadMode", getIOThreadMode);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d pthread.o "

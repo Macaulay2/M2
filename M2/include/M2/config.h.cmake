@@ -4,28 +4,6 @@
 #ifndef _M2_CONFIG_H
 #define _M2_CONFIG_H
 
-// TODO: remove the following five? Currently they are hardcoded.
-// See https://gist.github.com/stalkerg/7a1e891a887b65823ef9.
-
-// one of: 'int' 'unsigned int' 'unsigned long long'
-/* type of arg 1 of accept() */
-#define ACCEPT_TYPE_ARG1 int
-
-// one of: 'struct sockaddr *' 'void *'
-/* type of arg 2 of accept() */
-#define ACCEPT_TYPE_ARG2 struct sockaddr *
-
-// one of: 'socklen_t *' 'size_t *' 'unsigned int *' 'int *'
-/* type of arg 3 of accept() */
-#define ACCEPT_TYPE_ARG3 socklen_t *
-
-// one of: 'int' 'unsigned long long'
-/* type of return value of accept() */
-#define ACCEPT_TYPE_RETURN int
-
-/* socket length type used by accept() */
-#define SOCKLEN_T socklen_t
-
 /* machine hardware type */
 #define ARCH "${CMAKE_SYSTEM_PROCESSOR}"
 
@@ -54,6 +32,12 @@
 /* whether factory was built with --enable-streamio */
 #cmakedefine FACTORY_STREAMIO 1
 
+/* whether we have the flint header file nmod.h */
+#cmakedefine HAVE_FLINT_NMOD_H 1
+
+/* whether we have the flint header file arb.h */
+#cmakedefine HAVE_FLINT_ARB_H 1
+
 /* whether frobby has frobby_version >=0.9.4 or constants::version <0.9.4 */
 #cmakedefine HAVE_FROBBY_VERSION 1
 
@@ -61,7 +45,7 @@
 #cmakedefine HAVE_FFI_GET_STRUCT_OFFSETS 1
 
 /* libffi version */
-#define LIBFFI_VERSION "${LIBFFI_VERSION}"
+#define FFI_VERSION "${FFI_VERSION}"
 
 // TODO: only used in Macaulay2/d/scclib.c. Still needed?
 /* whether getaddrinfo can handle numeric service (port) numbers */
@@ -326,9 +310,6 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS 1
-
-/* Whether we use MPIR (instead of GMP) */
-#cmakedefine01 USING_MPIR
 
 /* Whether we are building with tbb version >= 2021 */
 #cmakedefine WITH_TBB
