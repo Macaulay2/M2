@@ -117,6 +117,8 @@ Matrix == Matrix := (f,g) -> (
            target f == target g and 
            raw(super f * inducedMap(source f, source g)) === raw super g
     )
+Vector == Matrix := (v,m) -> matrix v == m
+Matrix == Vector := (m,v) -> m == matrix v
 
 Matrix == Number :=
 Matrix == RingElement := (m,f) -> m - f == 0		    -- slow!
