@@ -13,6 +13,33 @@ TEST /// -- twisted global section module
   assert(module Omega(1) === coker matrix(ring Cubic, {{-2*x_3, -2*x_2, -2*x_1}, {x_2, x_1, x_0}}))
 ///
 
+TEST /// -- twisted cubic curve
+  S = (ZZ/13)[x,y,z,w];
+  I = minors(2, matrix{{x,y,z}, {y,z,w}});
+  X = Proj(S/I);
+  Omega = cotangentSheaf X;
+  F = Omega ^** 3;
+  G = OO_X(-2);
+  -- note G is OO_(P^1)(-6)
+  assert(prune F === G);
+  maxRegs = max(regularity F.module, regularity G.module) + 1 -- 3
+  M = truncate(maxRegs, F.module, MinimalGenerators => false)
+  N = truncate(maxRegs, G.module, MinimalGenerators => false)
+  assert(prune sheaf M === prune F)
+  assert(prune sheaf N === G)
+  assert first isIsomorphic(M, N, Strict => true)
+///
+
+TEST ///
+  X = Spec ZZ/101[x,y]/(y^2-x^3)
+  assert(toString ring X == "(ZZ/101)[x..y]/(-x^3+y^2)")
+///
+
+TEST ///
+X = Proj(ZZ[x]/(2*x))
+assert(char X == 2)
+///
+
 end
 
 -- multigraded Proj
@@ -60,7 +87,6 @@ prune dual canonicalBundle X === OO_X(3)
 
 -- add tests for sheaves on Spec k
 -- TODO: define f^# for the map on SheafOfRings?
--- TODO: define M^~ for sheafification?
 
 -- TODO: ^++ for direct sums
 -- TODO: maps of sheaves?
@@ -233,7 +259,7 @@ F = sheaf module truncate(4, S)
 HH^0(F(>=3))
 prune F
 
-f = (sheafMap vars S) ** OO_X(1)
+f = (sheaf vars S) ** OO_X(1)
 g = Hom(module m^[4], matrix f)
 HH^0(OO_X(1))
 HH^0(g) =>

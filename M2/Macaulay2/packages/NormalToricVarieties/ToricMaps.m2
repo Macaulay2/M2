@@ -310,9 +310,8 @@ classGroup ToricMap := Matrix => (cacheValue symbol classGroup) (f -> (
     	X := source f;
     	Y := target f;
     	divisorMap := weilDivisorGroup f;
-    	map(classGroup X, classGroup Y, transpose (
-	    	(transpose (fromWDivToCl(X) * divisorMap)) // transpose fromWDivToCl(Y)
-	    	))
+	map(classGroup X, classGroup Y,
+	    fromWDivToCl Y \\ (fromWDivToCl X * divisorMap))
     	)
     )
 
@@ -332,9 +331,8 @@ picardGroup ToricMap := Matrix => (cacheValue symbol picardGroup) (f -> (
     	X := source f;
     	Y := target f;
     	divisorMap := cartierDivisorGroup f;
-    	map(classGroup X, classGroup Y, transpose (
-	    	(transpose (fromCDivToPic(X) * divisorMap)) // transpose fromCDivToPic(Y)
-	    	))
+	map(picardGroup X, picardGroup Y,
+	    fromCDivToPic Y \\ (fromCDivToPic X * divisorMap))
     	)
     )
 
@@ -395,11 +393,11 @@ inducedMap ToricMap := RingMap => o -> (cacheValue symbol inducedMap) (f -> (
     	Y := target f;
     	S := ring Y;
     	R := ring source f;
-    	m := picardGroup f; -- degree map
+	m := classGroup f; -- degree map
     	map(R, S, apply(numgens S, i -> (
 		    exps := entries pullback(f, Y_i);
 		    product(numgens R, j -> R_j^(exps#j)))),
-	    DegreeMap => (deg -> first entries (matrix{deg} * transpose m)))
+	    DegreeMap => (deg -> flatten entries(m * transpose matrix {deg})))
 	)
     )
 
