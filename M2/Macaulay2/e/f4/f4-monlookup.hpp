@@ -6,15 +6,13 @@
 #include "f4/moninfo.hpp"            // for MonomialInfo (ptr only), const_p...
 #include "f4/ntuple-monomial.hpp"    // for const_ntuple_monomial, ntuple_word
 #include "f4/varpower-monomial.hpp"  // for const_varpower_monomial, varpowe...
-#include "newdelete.hpp"             // for VECTOR, our_new_delete
 
 class buffer;
-class stash;
 
 template <typename Key>
-class F4MonomialLookupTableT : public our_new_delete
+class F4MonomialLookupTableT
 {
-  struct mi_node : public our_new_delete  // monomial ideal internal node ///
+  struct mi_node  // monomial ideal internal node ///
   {
     varpower_word var;
     varpower_word exp;
@@ -40,8 +38,7 @@ class F4MonomialLookupTableT : public our_new_delete
     }
   };
 
-  stash *mi_stash;
-  VECTOR(mi_node *) mis;
+  std::vector<mi_node *> mis;
   int count;
 
   int size_of_exp;  // in ints, size of exp0
@@ -61,12 +58,12 @@ class F4MonomialLookupTableT : public our_new_delete
 
   void find_all_divisors1(mi_node *mi,
                           const_ntuple_monomial exp,
-                          VECTOR(Key) & result_k) const;
+                          std::vector<Key>& result_k) const;
 
   void insert1(mi_node *&p, const_varpower_monomial m, Key k);
 
  public:
-  F4MonomialLookupTableT(int nvars, stash *mi_stash = nullptr);
+  F4MonomialLookupTableT(int nvars);
   ~F4MonomialLookupTableT();
 
   //  // Should we write these two routines?
@@ -98,11 +95,11 @@ class F4MonomialLookupTableT : public our_new_delete
 
   void find_all_divisors_vp(long comp,
                             const_varpower_monomial m,
-                            VECTOR(Key) & result_k) const;
+                            std::vector<Key> & result_k) const;
 
   void find_all_divisors_packed(const MonomialInfo *M,
                                 const_packed_monomial m,
-                                VECTOR(Key) & result_k) const;
+                                std::vector<Key> & result_k) const;
   // Search. Return a vector of all keys corresponding to
   // monomials which divide m.
 
@@ -121,9 +118,8 @@ class F4MonomialLookupTableT : public our_new_delete
   void debug_check() const;
 };
 
-void minimalize_varpower_monomials(const VECTOR(varpower_monomial) & elems,
-                                   VECTOR(int) & result_minimals,
-                                   stash *mi_stash = nullptr);
+void minimalize_varpower_monomials(const std::vector<varpower_monomial> & elems,
+                                   std::vector<int> & result_minimals);
 
 #endif
 
