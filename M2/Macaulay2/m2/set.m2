@@ -86,6 +86,7 @@ Set.synonym = "set"
 -- constructors, both compiled functions defined in d/sets.dd
 set VisibleList := Set => set
 new Set from List := Set => (X,x) -> set x
+set Set := identity
 
 -- set operations
 elements Set := List => keys

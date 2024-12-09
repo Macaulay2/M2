@@ -202,6 +202,7 @@ syz = method(TypicalValue => Matrix, Options => syzDefaults)
 -- rawGBSyzygies doesn't sort its columns, so we do that here
 syz              GroebnerBasis  := Matrix => o -> G -> map(ring G, rawsort rawGBSyzygies G.RawComputation)
 leadTerm         GroebnerBasis  := Matrix =>      G -> map(ring G, rawGBGetLeadTerms(raw G, -1))
+leadTerm     (ZZ,GroebnerBasis) := Matrix =>   (i,G)-> map(ring G, rawGBGetLeadTerms(raw G, i))
 getChangeMatrix  GroebnerBasis  := Matrix =>      G -> map(ring G, rawGBChangeOfBasis G.RawComputation)
 generators       GroebnerBasis  := Matrix => o -> G -> map(target unbag G.matrix, , rawGBGetMatrix G.RawComputation)
 -- rawGBMinimalGenerators doesn't sort its columns, so we do that here

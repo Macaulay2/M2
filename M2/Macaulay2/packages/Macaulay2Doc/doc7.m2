@@ -165,7 +165,7 @@ document {
      }
 
 document {
-     Key => (leadTerm, ZZ, Matrix),
+     Key => {(leadTerm, ZZ, Matrix), (leadTerm, ZZ, GroebnerBasis), (leadTerm, ZZ, Vector)},
      Headline => "get the matrix of lead polynomials of each column",
      Usage => "leadTerm(n,f)",
      Inputs => {"n", "f" => "in a polynomial ring"},

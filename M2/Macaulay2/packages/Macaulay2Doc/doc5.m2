@@ -179,7 +179,8 @@ document {
      }
 
 undocumented {
-     (NewFromMethod, Set, List)
+     (NewFromMethod, Set, List),
+     (set, Set)
      }
 
 document {

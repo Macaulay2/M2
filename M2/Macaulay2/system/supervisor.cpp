@@ -78,6 +78,10 @@ extern "C" {
     threadSupervisor->m_TargetNumThreads=maxNumThreads;
     threadSupervisor->initialize();
   }
+  char isThreadSupervisorInitialized(void)
+  {
+    return threadSupervisor->is_initialized;
+  }
   void pushTask(struct ThreadTask* task)
   {
     lock_guard<pthreadMutex> supLock(threadSupervisor->m_Mutex);
@@ -136,6 +140,13 @@ extern "C" {
     lock_guard<pthreadMutex> lock(task->m_Mutex);
 	// synchronizes-with the task's thread, avoids data races
     return task->m_Started;
+  }
+  int taskReady(struct ThreadTask *task)
+  {
+    if (!task)
+      return false;
+    lock_guard<pthreadMutex> lock(task->m_Mutex);
+    return task->m_ReadyToRun;
   }
   void* taskResult(struct ThreadTask* task)
   {
@@ -272,6 +283,7 @@ void ThreadSupervisor::initialize()
       m_Threads.push_back(thread);
       thread->start();
     }
+  is_initialized = true;
 }
 // done or canceled; task's mutex is locked by caller
 void ThreadSupervisor::_i_finished(struct ThreadTask* task)

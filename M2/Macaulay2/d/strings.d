@@ -64,7 +64,7 @@ export index(s:string,offset:int,c:char,d:char):int := (
      while i+1 < length(s) do if c == s.i && d==s.(i+1) then return i else i=i+1;
      -1);     
 
-utf8charlength(c0:char):int := (
+export utf8charlength(c0:char):int := (
     c := int(uchar(c0));
     if (c & 0x80) == 0 then 1
     else if (c & 0xe0) == 0xc0 then 2

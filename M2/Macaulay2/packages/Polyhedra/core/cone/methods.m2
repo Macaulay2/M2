@@ -64,14 +64,13 @@ minFace (Matrix,Cone) := (v,C) -> (
 --  OUTPUT : 'p',  a point given as a matrix 
 interiorVector = method(TypicalValue => Matrix)
 interiorVector Cone := C -> (
-     if dim C == 0 then map(ZZ^(ambDim C),ZZ^1,0)
+     Rm := rays C;
+     if numColumns Rm == 0 then map(ZZ^(ambDim C),ZZ^1,0)
      else (
-	  Rm := rays C;
 	  ones := matrix toList(numColumns Rm:{1});
 	  -- Take the sum of the rays
 	  iv := Rm * ones;
 	  transpose matrix apply(entries transpose iv, w -> (g := abs gcd w; apply(w, e -> e//g)))));
-
 
 --   INPUT : '(p,C)',  where 'p' is a point given by a matrix and 'C' is a Cone
 --  OUTPUT : 'true' or 'false'

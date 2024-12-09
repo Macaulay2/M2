@@ -432,6 +432,7 @@ Ideal = new Type of LeftIdeal
 Ideal.synonym = "ideal"
 
 ideal = method(Dispatch => Thing, TypicalValue => Ideal)
+ideal Ideal := identity
 
 expression LeftIdeal := (I) -> (expression ideal) unsequence apply(toSequence first entries generators I, expression)
 net LeftIdeal := (I) -> net expression I
@@ -544,6 +545,13 @@ Matrix % Ideal := Matrix => ((f,I) ->
 	  S := R/I;
 	  lift(promote(f,S),R))
      ) @@ samering
+
+Vector % Ideal := (v,I) -> new class v from {v#0%I}
+numgens Ideal := (I) -> numgens source generators I
+leadTerm Ideal := Ideal => (I) -> ideal leadTerm gb I
+leadTerm(ZZ,Ideal) := Matrix => (n,I) -> ideal leadTerm(n,gb I)
+jacobian Ideal := Matrix => (I) -> jacobian generators I
+Ideal _ List := (I,w) -> (module I)_w
 
 Vector % LeftIdeal := (v,I) -> new class v from {v#0%I}
 
