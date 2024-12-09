@@ -363,6 +363,7 @@ A = map(M, ZZ^1, {{1}})
 assert Equation(A + A, 0)
 assert Equation(A - A, 0)
 assert Equation(A, -A)
+assert Equation(A + 1, 1 + A)
 
 -- empty matrix
 scan({matrix {}, matrix(ZZ, {}), map(ZZ^0, ZZ^0, {}), map(ZZ^0,, {})}, A -> (
