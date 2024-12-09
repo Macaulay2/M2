@@ -160,7 +160,7 @@ Node
       of those hooks associated with @TT "key"@ or stored in @TT "store"@
   Description
     Example
-      hooks(intersect, Ideal, Ideal)
+      hooks(intersect, LeftIdeal, LeftIdeal)
       code 0
       hooks(quotient, Strategy => Iterate)
   SeeAlso

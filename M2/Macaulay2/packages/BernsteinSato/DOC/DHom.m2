@@ -4,14 +4,14 @@ document {
 	  TO [Dresolution,Strategy]
 }
 document {
-     Key => {DHom, (DHom,Module,Module), (DHom,Module,Module,List), (DHom,Ideal,Ideal)},
+     Key => {DHom, (DHom,Module,Module), (DHom,Module,Module,List), (DHom,LeftIdeal,LeftIdeal)},
      Headline=>"D-homomorphisms between holonomic D-modules",
      Usage => "DHom(M,N), DHom(M,N,w), DHom(I,J)",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
 	  "N" => Module => {"over the Weyl algebra ", EM "D"},
-	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
-	  "J" => Ideal => {"which represents the module ", EM "N = D/J"},
+	  "I" => LeftIdeal => {"which represents the module ", EM "M = D/I"},
+	  "J" => LeftIdeal => {"which represents the module ", EM "N = D/J"},
 	  "w" => List => "a positive weight vector"  
 	  },
      Outputs => { 
@@ -37,8 +37,8 @@ document {
 	  the restriction algorithm."},
      EXAMPLE lines ///
 	     W = QQ[x, D, WeylAlgebra=>{x=>D}]
-	     M = W^1/ideal(D-1)
-	     N = W^1/ideal((D-1)^2)
+	     M = coker gens ideal(D-1)
+	     N = coker gens ideal((D-1)^2)
 	     DHom(M,N)
 	     ///,
      Caveat => {"Input modules ", EM "M", ", ", EM "N", ", ", 
@@ -102,8 +102,8 @@ document {
 	  the restriction algorithm."},
      EXAMPLE lines ///
 	     W = QQ[x, D, WeylAlgebra=>{x=>D}]
-	     M = W^1/ideal(x*(D-1))
-	     N = W^1/ideal((D-1)^2)
+	     M = coker gens ideal(x*(D-1))
+	     N = coker gens ideal((D-1)^2)
 	     DExt(M,N)
 	     ///,
      Caveat =>{
@@ -115,12 +115,12 @@ document {
      }
 
 document {
-     Key => {Ddual, (Ddual,Module), (Ddual,Ideal)},
+     Key => {Ddual, (Ddual,Module), (Ddual,LeftIdeal)},
      Headline => "holonomic dual of a D-module",
      Usage => "Ddual M, Ddual I",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
-	  "I" => Ideal => {"which represents the module ", EM "M = D/I"}
+	  "I" => LeftIdeal => {"which represents the module ", EM "M = D/I"}
 	  },
      Outputs => {
 	  Module => {"the holonomic dual of ", EM "M"}
@@ -148,12 +148,12 @@ document {
 	  TO [Dresolution,Strategy]
 }
 document {
-     Key => {polynomialExt, (polynomialExt,Module), (polynomialExt,ZZ,Ideal), (polynomialExt,ZZ,Module), (polynomialExt,Ideal)},
+     Key => {polynomialExt, (polynomialExt,Module), (polynomialExt,ZZ,LeftIdeal), (polynomialExt,ZZ,Module), (polynomialExt,LeftIdeal)},
      Headline => "Ext groups between a holonomic module and a polynomial ring",
      Usage => "polynomialExt M, polynomialExt I; rationalFunctionExt(i,M), rationalFunctionExt(i,I)",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
-	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "I" => LeftIdeal => {"which represents the module ", EM "M = D/I"},
 	  "i" => ZZ => "nonnegative"  
 	  },
      Outputs => {
@@ -172,7 +172,7 @@ document {
 	  the restriction algorithm."},
      EXAMPLE lines ///
 	     W = QQ[x, D, WeylAlgebra=>{x=>D}]
-	     M = W^1/ideal(x^2*D^2)
+	     M = coker gens ideal(x^2*D^2)
 	     polynomialExt(M)
 	     ///,
      Caveat =>{"Does not yet compute explicit representations of
@@ -187,15 +187,15 @@ document {
 }
 
 document {
-     Key => {rationalFunctionExt, (rationalFunctionExt,Module), (rationalFunctionExt,ZZ,Ideal,RingElement), (rationalFunctionExt,ZZ,Ideal), 
-	  (rationalFunctionExt,Ideal,RingElement), (rationalFunctionExt,Ideal),(rationalFunctionExt,ZZ,Module,RingElement), 
+     Key => {rationalFunctionExt, (rationalFunctionExt,Module), (rationalFunctionExt,ZZ,LeftIdeal,RingElement), (rationalFunctionExt,ZZ,LeftIdeal), 
+	  (rationalFunctionExt,LeftIdeal,RingElement), (rationalFunctionExt,LeftIdeal),(rationalFunctionExt,ZZ,Module,RingElement), 
 	  (rationalFunctionExt,ZZ,Module), (rationalFunctionExt,Module,RingElement)},
      Headline => "Ext(holonomic D-module, polynomial ring localized at the singular locus)",
      Usage => "rationalFunctionExt M, rationalFunctionExt I; rationalFunctionExt(M,f), rationalFunctionExt(I,f);
                rationalFunctionExt(i,M), rationalFunctionExt(i,I); rationalFunctionExt(i,M,f), rationalFunctionExt(i,I,f)",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
-	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
+	  "I" => LeftIdeal => {"which represents the module ", EM "M = D/I"},
 	  "f" => RingElement => "a polynomial",
 	  "i" => ZZ => "nonnegative"  
 	  },
@@ -215,7 +215,7 @@ document {
 	  the restriction algorithm."},
      EXAMPLE lines ///
 	     W = QQ[x, D, WeylAlgebra=>{x=>D}]
-	     M = W^1/ideal(x*D+5)
+	     M = coker gens ideal(x*D+5)
 	     rationalFunctionExt M
 	     ///,
      Caveat =>{"Input modules M or D/I should be holonomic."},
@@ -226,9 +226,9 @@ doc ///
   Key
     polynomialSolutions
     (polynomialSolutions,Module)
-    (polynomialSolutions,Ideal,List)
+    (polynomialSolutions,LeftIdeal,List)
     (polynomialSolutions,Module,List)
-    (polynomialSolutions,Ideal)
+    (polynomialSolutions,LeftIdeal)
   Headline
     polynomial solutions of a holonomic system
   Usage
@@ -239,7 +239,7 @@ doc ///
   Inputs
     M:Module
       over the Weyl algebra $D$
-    I:Ideal
+    I:LeftIdeal
       holonomic ideal in the Weyl algebra $D$
     w:List
       a weight vector
@@ -292,11 +292,11 @@ document {
 doc ///
   Key
     rationalFunctionSolutions
-    (rationalFunctionSolutions,Ideal,List,List)
-    (rationalFunctionSolutions,Ideal,RingElement,List)
-    (rationalFunctionSolutions,Ideal,List)
-    (rationalFunctionSolutions,Ideal,RingElement)
-    (rationalFunctionSolutions,Ideal)
+    (rationalFunctionSolutions,LeftIdeal,List,List)
+    (rationalFunctionSolutions,LeftIdeal,RingElement,List)
+    (rationalFunctionSolutions,LeftIdeal,List)
+    (rationalFunctionSolutions,LeftIdeal,RingElement)
+    (rationalFunctionSolutions,LeftIdeal)
   Headline
     rational solutions of a holonomic system
   Usage
@@ -306,7 +306,7 @@ doc ///
     rationalFunctionSolutions(I,ff)
     rationalFunctionSolutions(I,ff,w)
   Inputs
-    I:Ideal
+    I:LeftIdeal
       holonomic ideal in the Weyl algebra @EM "D"@
     f:RingElement
       a polynomial

@@ -1,6 +1,6 @@
 -- -*- coding: utf-8 -*-
 document {
-     Key => (symbol _*,Ideal),
+     Key => (symbol _*,LeftIdeal),
      Headline => "get the list of generators of an ideal",
      Usage => "I_*",
      Inputs => {"I"},
@@ -15,7 +15,13 @@ document {
 
 document {
      Key => Ideal,
-     Headline => "the class of all ideals",
+     Headline => "the class of two-sided ideals",
+     SeeAlso => {"LeftIdeal", "ideals"}
+     }
+ 
+document {
+     Key => LeftIdeal,
+     Headline => "the class of left ideals",
      SeeAlso => "ideals",
      "For basic information about ideals in ", EM "Macaulay2", ", see ",
      TO "ideals", ".",
@@ -32,19 +38,19 @@ document {
   	  },
      "Common ways to get information about an ideal:",
      UL {
-	  TO (generators, Ideal),
-	  TO (symbol _*,Ideal),
-	  TO (isSubset, Ideal, Ideal),
+	  TO (generators, LeftIdeal),
+	  TO (symbol _*,LeftIdeal),
+	  TO (isSubset, LeftIdeal, LeftIdeal),
 	  TO "MinimalPrimes :: isPrime(Ideal)"
 	  },
      "Common operations on ideals:",
      UL {
-	  TO (symbol +,Ideal,Ideal),
+	  TO (symbol +,LeftIdeal,LeftIdeal),
 	  TO (symbol *,Ideal,Ideal),
-	  TO (symbol ==,Ideal,Ideal),
-	  TO (symbol ==,Ideal,ZZ),
+	  TO (symbol ==,LeftIdeal,LeftIdeal),
+	  TO (symbol ==,LeftIdeal,ZZ),
 	  TO (symbol ^,Ideal,ZZ),
-	  TO (trim, Ideal)
+	  TO (trim, LeftIdeal)
 	  },
      "Gröbner bases, normal forms, free resolutions",
      UL {
@@ -52,7 +58,7 @@ document {
 	  TO leadTerm,
 	  TO codim,
 	  TO dim,
-	  TO (symbol%,Matrix,Ideal),
+	  TO (symbol%,Matrix,LeftIdeal),
 	  TO resolution,
 	  TO betti
 	  },
@@ -106,12 +112,12 @@ document {
 	  "I = ideal(a,(t+1)*c) * ideal(a^2,b^2)"
 	  },
      "The generators produced are not generally minimal.  Use ",
-     TO (trim,Ideal), " or ", TO (mingens,Ideal), " to find a smaller
+     TO (trim,LeftIdeal), " or ", TO (mingens,LeftIdeal), " to find a smaller
      generating set.",
      SeeAlso => {"ideals"}
      }
 document {
-     Key => (symbol +,Ideal,Ideal),
+     Key => {(symbol +,LeftIdeal,LeftIdeal)},
      Headline => "sum of ideals",
      Usage => "I + J",
      Inputs => { "I", "J" => {"in the same ring as ", TT "I"}, },
@@ -123,7 +129,7 @@ document {
 	  "I = ideal(a,(t+1)*c) + ideal(a^2,b^2)"
 	  },
      "The generators produced are not generally minimal.  Use ",
-     TO (trim,Ideal), " or ", TO (mingens,Ideal), " to find a smaller
+     TO (trim,LeftIdeal), " or ", TO (mingens,LeftIdeal), " to find a smaller
      generating set.",
      EXAMPLE {
 	  "trim I"
@@ -144,7 +150,7 @@ document {
 	  "I^3"
 	  },
      "The generators produced are often not minimal.  Use ",
-     TO (trim,Ideal), " or ", TO (mingens,Ideal), " to find a smaller
+     TO (trim,LeftIdeal), " or ", TO (mingens,LeftIdeal), " to find a smaller
      generating set.",
      EXAMPLE {
 	  "trim I^3"

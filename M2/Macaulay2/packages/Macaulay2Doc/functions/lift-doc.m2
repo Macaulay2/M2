@@ -18,13 +18,13 @@ lift(MutableMatrix,type of RingElement)
 
 document { 
      Key => {lift,
-	  (lift,Ideal,RingElement),[lift,Verify],
+	  (lift,LeftIdeal,RingElement),[lift,Verify],
 	  (lift,Matrix,RingElement),
 	  (lift, CC, QQ),
 	  (lift, CC, RR_*),
 	  (lift, CC, ZZ),
-	  (lift, Ideal, QQ),
-	  (lift, Ideal, ZZ),
+	  (lift, LeftIdeal, QQ),
+	  (lift, LeftIdeal, ZZ),
 	  (lift,Matrix,CC_*,QQ),
 	  (lift,Matrix,CC_*,RR_*),
 	  (lift,Matrix,CC_*,ZZ),
@@ -52,14 +52,14 @@ document {
      Usage => "lift(f,R)",
      Inputs => {
 	  "f" => {"a ", TO2(RingElement,"ring element"), ", ",
-	       TO2(Ideal, "ideal"), ", or ", 
+	       TO2(LeftIdeal, "ideal"), ", or ", 
 	       TO2(Matrix, "matrix")},
 	  "R" => Ring,
 	  Verify => Boolean => {"whether to give an error message if lifting is not possible, or, alternatively, to return ", TO "null"}
 	  },
      Outputs => {
 	  {"a ", TO2(RingElement,"ring element"), ", ",
-	       TO2(Ideal, "ideal"), ", or ", 
+	       TO2(LeftIdeal, "ideal"), ", or ", 
 	       TO2(Matrix, "matrix"), ", over the ring ", TT "R"}
 	  },
      PARA {

@@ -11,7 +11,7 @@ i3 : Delta = ideal(Dx,Dy,Dz)
 
 o3 = ideal (Dx, Dy, Dz)
 
-o3 : Ideal of D
+o3 : LeftIdeal of D
 
 i4 : (Dx * x)^2
 
@@ -67,19 +67,19 @@ i10 : AnnFs(f)
 
 o10 = ideal (w*Dz - z*Dw, w*Dy - y*Dw, z*Dy - y*Dz, w*Dx - x*Dw, z*Dx - x*Dz, y*Dx - x*Dy, x*Dx + y*Dy + z*Dz + w*Dw - 2s)
 
-o10 : Ideal of QQ[x..z, w, Dx, Dy, Dz, Dw, s]
+o10 : LeftIdeal of QQ[x..z, w, Dx, Dy, Dz, Dw, s]
 
 i11 : L=ideal(x,y,Dz,Dw)
 
 o11 = ideal (x, y, Dz, Dw)
 
-o11 : Ideal of D
+o11 : LeftIdeal of D
 
 i12 : AnnIFs(L,f)
 
 o12 = ideal (y, x, w*Dz - z*Dw, z*Dz + w*Dw - 2s)
 
-o12 : Ideal of QQ[x..z, w, Dx, Dy, Dz, Dw, s]
+o12 : LeftIdeal of QQ[x..z, w, Dx, Dy, Dz, Dw, s]
 
 i13 : f
 
@@ -117,7 +117,7 @@ i18 : I1 = ideal((x*Dx)^2+1)
              2  2
 o18 = ideal(x Dx  + x*Dx + 1)
 
-o18 : Ideal of D1
+o18 : LeftIdeal of D1
 
 i19 : f1 = x;
 
@@ -175,7 +175,7 @@ i27 : D = QQ[x,y,z,Dx,Dy,Dz, WeylAlgebra => {x=>Dx, y=>Dy, z=>Dz}];
 
 i28 : Delta = ideal(Dx,Dy,Dz);
 
-o28 : Ideal of D
+o28 : LeftIdeal of D
 
 i29 : f=x^3+y^3+z^3;
 
@@ -217,7 +217,7 @@ i33 : D= QQ[x,y,z,u,v,w,Dx,Dy,Dz,Du,Dv,Dw, WeylAlgebra =>
 
 i34 : Delta=ideal(Dx,Dy,Dz,Du,Dv,Dw);
 
-o34 : Ideal of D
+o34 : LeftIdeal of D
 
 i35 : R=D^1/Delta;
 
@@ -268,11 +268,11 @@ o42 = -2
 
 i43 : Jfgh=ideal relations Rfgh.LocModule;
 
-o43 : Ideal of D
+o43 : LeftIdeal of D
 
 i44 : JH3=Jfgh+ideal(f^2,g,h);
 
-o44 : Ideal of D
+o44 : LeftIdeal of D
 
 i45 : JH3gb=gens gb JH3
 
@@ -283,7 +283,7 @@ o45 : Matrix D  <-- D
 
 i46 : testmTorsion = method();
 
-i47 : testmTorsion Ideal := (L) -> (
+i47 : testmTorsion LeftIdeal := (L) -> (
            LL = ideal generators gb L;
            n = numgens (ring (LL)) // 2;
            LLLL = ideal select(first entries gens LL, f->(
@@ -309,7 +309,7 @@ i52 : h=x*w-y*z;
 
 i53 : Delta=ideal(Dx,Dy,Dz,Dw);
 
-o53 : Ideal of D
+o53 : LeftIdeal of D
 
 i54 : R=D^1/Delta;
 
@@ -333,11 +333,11 @@ i57 : Rfgh=DlocalizeAll(Rfg.LocModule,h, Strategy => Oaku);
 
 i58 : Ifgh=ideal relations Rfgh.LocModule;
 
-o58 : Ideal of D
+o58 : LeftIdeal of D
 
 i59 : IH3=Ifgh+ideal(f,g,h);
 
-o59 : Ideal of D
+o59 : LeftIdeal of D
 
 i60 : IH3gb=gens gb IH3
 
@@ -348,7 +348,7 @@ o60 : Matrix D  <-- D
 
 i61 : findSocle = method();
 
-i62 : findSocle(Ideal, RingElement):= (L,P) -> (
+i62 : findSocle(LeftIdeal, RingElement):= (L,P) -> (
            createDpairs(ring(L));
            v=(ring L).dpairVars#0;
            myflag = true;
@@ -375,7 +375,7 @@ o64 : D
 
 i65 : findLength = method();
 
-i66 : findLength Ideal := (I) -> (   
+i66 : findLength LeftIdeal := (I) -> (   
            l = 0;
            while I != ideal 1_(ring I) do (
                 l = l + 1;
@@ -480,8 +480,8 @@ i89 : I = gkz(matrix{{1,2}}, {5})
 o89 = ideal (x D  + 2x D  - 5, D  - D )
               1 1     2 2       1    2
 
-o89 : Ideal of QQ[x ..x , D ..D ]
-                   1   2   1   2
+o89 : LeftIdeal of QQ[x ..x , D ..D ]
+                       1   2   1   2
 
 i90 : PolySols I
 

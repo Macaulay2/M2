@@ -38,7 +38,7 @@ document {
 
      EXAMPLE lines ///
 	W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]
-     	M = W^1/(ideal(x*Dx+1, Dy))
+     	M = coker gens ideal(x*Dx+1, Dy)
      	f = x^2-y^3
      	Mf = Dlocalize(M, f)
 	///,
@@ -61,7 +61,7 @@ document {
      " that computes the localization map.",
      EXAMPLE lines ///
 	W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]
-     	M = W^1/(ideal(x*Dx+1, Dy))
+     	M = coker gens ideal(x*Dx+1, Dy)
      	f = x^2-y^3
      	DlocalizeMap(M, f)
 	///,
@@ -105,7 +105,7 @@ doc ///
 	    $s$ such that (the images of) the generators of $M$ are $f^{-s}$ times the generators of $M_f$.
 	Example
 	    W = makeWeylAlgebra(QQ[x,y])
-	    M = W^1/ideal(x*dx + 1, dy)
+	    M = coker gens ideal(x*dx + 1, dy)
 	    f = x^2 - y^3
 	    Mfall = DlocalizeAll(M, f)
 	    gens image Mfall.LocMap == f^(-Mfall.GeneratorPower) * gens Mfall.LocModule

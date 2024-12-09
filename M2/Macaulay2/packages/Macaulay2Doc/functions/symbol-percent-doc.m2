@@ -6,11 +6,11 @@
 document { 
      Key => {
 	  "methods for normal forms and remainder",
-	  (symbol %, RingElement, Ideal),
+	  (symbol %, RingElement, LeftIdeal),
 	  (symbol %, RingElement, MonomialIdeal),
 	  (symbol %, RingElement, Matrix),
 	  (symbol %, RingElement, RingElement),
-	  (symbol %, Matrix, Ideal),
+	  (symbol %, Matrix, LeftIdeal),
 	  (symbol %, Matrix, MonomialIdeal),
 	  (symbol %, Matrix, RingElement),
 	  (symbol %, Matrix, Module),

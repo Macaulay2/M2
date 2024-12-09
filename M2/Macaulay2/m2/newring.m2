@@ -64,7 +64,7 @@ QuotientRing ** PolynomialRing :=
 PolynomialRing ** QuotientRing :=
 QuotientRing ** QuotientRing := (R,S) -> tensor(R,S)
 
-tensor(PolynomialRing, PolynomialRing) :=
+tensor(PolynomialRing, PolynomialRing) := 
 tensor(QuotientRing,   PolynomialRing) :=
 tensor(PolynomialRing, QuotientRing) :=
 tensor(QuotientRing,   QuotientRing) := monoidTensorDefaults >> optns -> (R, S) -> (
@@ -74,10 +74,17 @@ tensor(QuotientRing,   QuotientRing) := monoidTensorDefaults >> optns -> (R, S) 
      f := presentation R; A := ring f; M := monoid A; m := numgens M;
      g := presentation S; B := ring g; N := monoid B; n := numgens N;
      AB := k tensor(M, N, optns);
-     fg := substitute(f,(vars AB)_{0 .. m-1}) | substitute(g,(vars AB)_{m .. m+n-1});
-     -- forceGB fg;  -- if the monomial order chosen doesn't restrict, then this
-                     -- is an error!! MES
-     RS := AB/image fg;
+     -- need "if" below, since for non-commutative R or S `image fg` is a (zero) LeftIdeal
+     --   alt: need to prohibit tensoring non-commutative rings???
+     --   alt (future???): quotients of non-commutative rings would be allowed and
+     --                    `presentation R` then returns a potentially nontrivial two-sided ideal;
+     --                    e.g., WA with some commuting variables
+     RS := if class R === PolynomialRing and class S === PolynomialRing then AB else (
+	 fg := substitute(f,(vars AB)_{0 .. m-1}) | substitute(g,(vars AB)_{m .. m+n-1});
+	 -- forceGB fg;  -- if the monomial order chosen doesn't restrict, then this
+	 -- is an error!! MES
+	 AB/image fg
+	 );
      setupPromote map(RS,R,(vars AB)_{0 .. m-1});
      setupLift map(R,RS,generators A | toList(n:0));
      if S =!= R then (
@@ -135,6 +142,7 @@ coerce(Thing,Thing) := (x,Y) -> if instance(x,Y) then x else error("no method fo
 coerce(Ideal,Ring) := quotient @@ first
 coerce(Thing,Nothing) := (x,Nothing) -> null		    -- avoid using this one, to save time earlier
 coerce(Ring,Ideal) := (R,Ideal) -> ideal R		    -- avoid using this one, to save time earlier
+coerce(Ring,Ideal) := (R,LeftIdeal) -> ideal R		    -- avoid using this one, to save time earlier
 preprocessResultTemplate = (narrowers,r) -> (
      if instance(r,ZZ) then r = r:null;
      r = apply(sequence r,x -> if x === null then Thing else x);
@@ -195,7 +203,9 @@ triv := R -> (
 flattenRing Ring := opts -> R -> (
      resultTemplate := preprocessResultTemplate(1:Ring, opts.Result);
      k := opts.CoefficientRing;
-     if k === R or k === null and (R.?isBasic or isField R) then flatCoerce(R,resultTemplate,triv R)
+     if k === R or k === null and (R.?isBasic or isField R) and 
+     not isWeylAlgebra R -- for WeylAlgebra flatCoerce doesn't work as is, since R/I is not defined for a left ideal I 
+     then flatCoerce(R,resultTemplate,triv R)
      else unable())
 
 flattenRing GaloisField := opts -> (cacheValue (symbol flattenRing => opts)) (F -> (

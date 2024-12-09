@@ -46,7 +46,7 @@ Jfgh=ideal relations Rfgh.LocModule;
 JH3=Jfgh+ideal(f^2,g,h);
 JH3gb=gens gb JH3
 testmTorsion = method();
-testmTorsion Ideal := (L) -> (
+testmTorsion LeftIdeal := (L) -> (
      LL = ideal generators gb L;
      n = numgens (ring (LL)) // 2;
      LLLL = ideal select(first entries gens LL, f->(
@@ -71,7 +71,7 @@ Ifgh=ideal relations Rfgh.LocModule;
 IH3=Ifgh+ideal(f,g,h);
 IH3gb=gens gb IH3
 findSocle = method();
-findSocle(Ideal, RingElement):= (L,P) -> (
+findSocle(LeftIdeal, RingElement):= (L,P) -> (
      createDpairs(ring(L));
      v=(ring L).dpairVars#0;
      myflag = true;
@@ -86,7 +86,7 @@ findSocle(Ideal, RingElement):= (L,P) -> (
 D = ring JH3
 findSocle(JH3,1_D)
 findLength = method();
-findLength Ideal := (I) -> (   
+findLength LeftIdeal := (I) -> (   
      l = 0;
      while I != ideal 1_(ring I) do (
           l = l + 1;

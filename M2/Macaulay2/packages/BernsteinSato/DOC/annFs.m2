@@ -27,7 +27,7 @@ doc ///
 ///
 
 document {
-     Key => {(AnnIFs, Ideal,RingElement), AnnIFs}, 
+     Key => {(AnnIFs, LeftIdeal,RingElement), AnnIFs}, 
      Headline => "the annihilating ideal of f^s for an arbitrary D-module", 
      Usage => "AnnIFs(I,f)",
      Inputs => {
@@ -40,7 +40,7 @@ document {
 	       " (should contain no differential variables)"}
 	  },      
      Outputs => {
-	  Ideal => {"the annihilating ideal of ", TEX "A_n[f^{-1},s] f^s", " tensored with ",
+	  LeftIdeal => {"the annihilating ideal of ", TEX "A_n[f^{-1},s] f^s", " tensored with ",
 	       TEX "A_n/I", " over the ring of polynomials" }
 	  },
      EXAMPLE lines ///

@@ -2733,7 +2733,7 @@ EXAMPLE {"O = 0_(PP_(ZZ/101)^{2,1});",
 "X = random({2,1},O);",
 "Y = random({1,1},O);",
 "X * Y"},
-SeeAlso => {(symbol +,MultiprojectiveVariety,MultiprojectiveVariety),(symbol +,Ideal,Ideal),(⋂,List)}}
+SeeAlso => {(symbol +,MultiprojectiveVariety,MultiprojectiveVariety),(symbol +,LeftIdeal,LeftIdeal),(⋂,List)}}
 
 document {Key => {⋂,(⋂,List)}, 
 Headline => "intersection of multi-projective varieties", 

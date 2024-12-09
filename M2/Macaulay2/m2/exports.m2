@@ -217,6 +217,7 @@ export {
 	"Homogeneous",
 	"Homogeneous2",
 	"HorizontalSpace",
+	"LeftIdeal",
 	"Ideal",
 	"IgnoreExampleErrors",
 	"ImmutableType",

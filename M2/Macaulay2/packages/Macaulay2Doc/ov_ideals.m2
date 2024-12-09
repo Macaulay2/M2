@@ -181,7 +181,7 @@ document {
 	  "I*J",
 	  "I^2"
 	  },
-     "For more information see ", TO (symbol+,Ideal,Ideal), ", 
+     "For more information see ", TO (symbol+,LeftIdeal,LeftIdeal), ", 
      ", TO (symbol*,Ideal,Ideal), ", and ", TO (symbol^,Ideal,ZZ), "."
      }
 
@@ -191,7 +191,7 @@ document {
      (or quotient of a polynomial ring) is checked by comparing their 
      respective Groebner bases.",     
      SUBSECTION "equal and not equal",
-       "Use ", TO (symbol==,Ideal,Ideal), " to test if two ideals in 
+       "Use ", TO (symbol==,LeftIdeal,LeftIdeal), " to test if two ideals in 
        the same ring 
        are equal.",
        EXAMPLE {
@@ -203,7 +203,7 @@ document {
 	    },
 
      SUBSECTION "normal form with respect to a Groebner basis and membership",
-       "The function ", TO (symbol%,RingElement,Ideal), 
+       "The function ", TO (symbol%,RingElement,LeftIdeal), 
        " reduces an element with 
        respect to a Groebner basis of the ideal.", 
        EXAMPLE {
@@ -236,11 +236,11 @@ document {
 	    "S == 0"
 	    },
      SeeAlso => {
-	  (symbol==,Ideal,Ideal),
-	  (symbol==,Ideal,ZZ),
+	  (symbol==,LeftIdeal,LeftIdeal),
+	  (symbol==,LeftIdeal,ZZ),
 	  symbol!=,
-	  (symbol%,RingElement,Ideal),
-	  (isSubset,Ideal,Ideal),
+	  (symbol%,RingElement,LeftIdeal),
+	  (isSubset,LeftIdeal,LeftIdeal),
 	  "MinimalPrimes :: radicalContainment"
 	  }
      }     

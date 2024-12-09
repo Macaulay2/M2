@@ -135,13 +135,13 @@ complement Matrix := Matrix => (f) -> (
      else if instance(R,QuotientRing) then map(target f,,R ** complement lift(f,ambient R))
      else error "complement: expected matrix over affine ring or finitely generated ZZ-algebra")
 
+
 -----------------------------------------------------------------------------
 -- mingens and trim
 -----------------------------------------------------------------------------
-
 -- the method is declared in gb.m2
+mingens LeftIdeal  := Matrix => opts -> I -> mingens(module I, opts)
 -- TODO: the strategies should be separated
-mingens Ideal  := Matrix => opts -> I -> mingens(module I, opts)
 mingens Module := Matrix => opts -> M -> if isFreeModule M then generators M else cacheHooks(
     symbol mingens, M, (mingens, Module), (opts, M), (opts, M) -> (
 	if opts.Strategy === null then opts = opts ++ { Strategy => Complement };
@@ -170,8 +170,8 @@ trim = method (Options => { Strategy => null -* TODO: add DegreeLimit => {} *-})
 trim Ring         := Ring => o -> identity
 trim QuotientRing := Ring => o -> R -> quotient trim(ideal presentation R, o)
 
--- TODO: the strategies should be separated
-trim Ideal  := Ideal  => opts -> I -> ideal trim(module I, opts)
+trim LeftIdeal  := LeftIdeal  => opts -> I -> ideal trim(module I, opts)
+-- old or new version???: trim LeftIdeal  := LeftIdeal  => opts -> (cacheValue (symbol trim => opts)) ((I) -> ideal trim(module I, opts))
 trim Module := Module => opts -> M -> if isFreeModule M then M else cacheHooks(
     (symbol trim, opts), M, (trim, Module), (opts, M), (opts, M) -> (
 	if opts.Strategy === null then opts = opts ++ { Strategy => Complement };
@@ -399,12 +399,12 @@ RingElement % Matrix := (r,f) -> (
      else error "expected target of matrix to be free, and of rank 1"
      )
 
-RingElement % Ideal := (r,I) -> (
+RingElement % LeftIdeal := (r,I) -> (
      R := ring I;
      if ring r =!= R then error "expected ring element and ideal for the same ring";
      if r == 0 then return r;
      r % if isHomogeneous I and heft R =!= null then gb(I, DegreeLimit => degree r) else gb I)
-Number % Ideal := (r,I) -> (
+Number % LeftIdeal := (r,I) -> (
      R := ring I;
      r = promote(r,R);
      if r == 0 then return r;
@@ -434,7 +434,8 @@ indices Matrix := (f) -> rawIndices raw f
 support = method()
 support RingElement :=
 support Matrix      := f -> apply(try rawIndices raw f else {}, i -> (ring f)_i)
-support Ideal       := I -> support generators I
+support LeftIdeal   := I -> support generators I
+
 --------------------
 -- homogenization --
 --------------------
@@ -482,7 +483,7 @@ homogenize(Module,RingElement) := Module => (M,z) -> (
 	  if M.?generators then homogenize(generators gb M.generators,z),
 	  if M.?relations then homogenize(generators gb M.relations,z)))
 
-homogenize(Ideal,RingElement) := Ideal => (I,z) -> ideal homogenize(module I, z)
+homogenize(LeftIdeal,RingElement) := LeftIdeal => (I,z) -> ideal homogenize(module I, z)
 
 homogenize(Module,RingElement,List) := Module => (M,z,wts) -> (
      if isFreeModule M then M
@@ -673,7 +674,7 @@ newCoordinateSystem(PolynomialRing, Matrix) := (S,x) -> (
   ( map(S,R,vars S * toS n), map(R,S,vars R * n^(-1)) )
   )
 
-lift(Ideal,RingElement) := Ideal => opts -> (I,S) -> (
+lift(LeftIdeal,RingElement) := Ideal => opts -> (I,S) -> (
      -- provisional, just for quotient rings
      T := ring I;
      if T === S then I

@@ -47,6 +47,7 @@ override' := (def, opts) -> nonnull apply(keys def, key -> if opts#?key and opts
 ambient' = method()
 ambient' Module := Module => super
 ambient' Ideal  := Ideal  => I -> (if instance(I, MonomialIdeal) then monomialIdeal else ideal) 1_(ring I)
+ambient' LeftIdeal  := LeftIdeal  => I -> ideal 1_(ring I)
 
 -- TODO: remove this once the Ideal vs. MonomialIdeal dichotomy is resolved
 uniform' := L -> all(L, l -> instance(l, Ideal)) or uniform L
@@ -121,7 +122,7 @@ QuotientComputation = new Type of Computation
 QuotientComputation.synonym = "quotient computation"
 
 -- TODO: try to find a compatible context that can be used in the computation
-new QuotientContext from Sequence := (C, S) -> ( (A, B) := S; QuotientContext{ mingens B } )
+new QuotientContext from Sequence := (C, S) -> ( (A, B) := S; QuotientContext{ if instance(B,RingElement) then matrix{{B}} else mingens B } )
 new QuotientComputation from Sequence := (C, S) -> new QuotientComputation from {
     BasisElementLimit => (S#2).BasisElementLimit,
     DegreeLimit       => (S#2).DegreeLimit,
@@ -148,6 +149,9 @@ quotient(Ideal,  RingElement) := Ideal  => opts -> (I, f) -> quotient(I, ideal f
 Ideal  : Ideal                := Ideal  =>         (I, J) -> quotient(I, J)
 Ideal  : Number               :=
 Ideal  : RingElement          := Ideal  =>         (I, f) -> quotient(I, f)
+
+-- LeftIdeal
+quotient(LeftIdeal,  RingElement) := LeftIdeal  => opts -> (I, f) -> quotientHelper(I, f, (quotient, LeftIdeal, RingElement), opts)
 
 -- TODO: why is this the right thing to do?
 quotient(MonomialIdeal, RingElement) := MonomialIdeal => opts -> (I, f) -> (
@@ -181,19 +185,19 @@ quotientHelper = (A, B, key, opts) -> (
     -- this logic runs the strategies in order, or the specified strategy
     computation := (opts, container) -> (
 	if R =!= ring B then error "expected objects in the same ring";
-	if instance(B, RingElement) then B = ideal B;
-	if uniform' {A, B} and ambient' A != ambient' B
+	idealOrModuleB := if instance(B, RingElement) then ideal B else B;
+	if uniform' {A, idealOrModuleB} and ambient' A != ambient' idealOrModuleB
 	then error "expected objects to be contained in the same ambient object";
 	-- note: if B \subset A then A:B should be "everything", but computing
 	-- a gb for A can be slow, so isSubset' doesn't compute a gb
-	if isSubset'(B, A) then return if uniform' {A, B} then cast 1_R else ambient' A;
+	if isSubset'(idealOrModuleB, A) then return if uniform' {A, idealOrModuleB} then cast 1_R else ambient' A;
 	-- note: ideal(..A..) :         f    = A <==> f is nzd / A
 	-- note: ideal(..A..) : ideal(..B..) = A <==>
 	-- note: module(.A.)  : ideal(..B..) = A <==> B is not contained in any associated primes of A
 	-- TODO: can either of the above be efficiently checked?
 	-- TODO: module(.A.)  : module(.B.)  = ? <==> A \subset B
-	if instance(B, Ideal) then -- see the above TODO item
-	if isSubset'(ambient' A, B) then return A;
+	if instance(idealOrModuleB, Ideal) then -- see the above TODO item
+	if isSubset'(ambient' A, idealOrModuleB) then return A;
 	-- TODO: add speedup for when isSubset'(A, B), being cautious of (a3):(a3,bc) in kk[abc]/ac
 
 	-- TODO: what would adding {SyzygyLimit => opts.BasisElementLimit, BasisElementLimit => null} do?
@@ -260,6 +264,22 @@ algorithms#(quotient, Ideal, Ideal) = new MutableHashTable from {
 -- Installing hooks for Ideal : Ideal
 scan({Quotient, Iterate-*, Linear*-, Monomial}, strategy ->
     addHook(key := (quotient, Ideal, Ideal), algorithms#key#strategy, Strategy => strategy))
+
+-- Installing a hook for LeftIdeal : RingElement
+addHook(
+    (quotient, LeftIdeal, RingElement),
+    (opts, I, f) -> (
+	R := ring I;
+	g := syz gb(
+	    matrix{{f}} | gens I, 
+	    opts,
+	    Strategy   => LongPolynomial,
+	    Syzygies   => true,
+	    SyzygyRows => 1);
+	ideal g
+	),     
+    Strategy => Quotient
+    )
 
 --------------------------------------------------------------------
 -- Algorithms for Module : Ideal
