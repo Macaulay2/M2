@@ -468,6 +468,7 @@ euler LeftIdeal := I -> euler((ring I)^1/I)
 -- two-sided ideal expected
 RingElement * Ideal := Ideal => (r,I) -> ideal (r ** generators I)
 Ideal * RingElement := Ideal => (I,r) -> ideal ((generators I)**r)
+LeftIdeal * RingElement := Ideal => (I,r) -> ideal ((generators I)*r) -- staying away from ** 
 ZZ * Ideal := (r,I) -> ideal (r * generators I)
 Ideal * ZZ := (I,r) -> ideal (r * generators I)
 
@@ -503,6 +504,11 @@ LeftIdeal / LeftIdeal := Module => (I,J) -> module I / module J
 
 -- two-sided ideal expected
 Module / Ideal := Module => (M,J) -> M / (J * M)
+
+-- This function exist because there is a lot of user (package?) code 
+-- where `R^1/I` means R/I as a _left_ R-module and, in non-commutative setting,
+-- (however, R^1 is a currently a right module over R^{op}). 
+-- It is never used for `M/I` where M is not `R^1`. 
 Module / LeftIdeal := Module => (M,J) -> (
     if isFreeModule M and rank M == 1 
     then comodule J
