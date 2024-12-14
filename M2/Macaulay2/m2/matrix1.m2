@@ -414,15 +414,13 @@ Matrix#AfterPrint = Matrix#AfterNoPrint = f -> (
 
 -- precedence Matrix := x -> precedence symbol x
 
-image Matrix := Module => f -> (
-     if f.cache.?image then f.cache.image else f.cache.image = subquotient(f,)
-     )
-coimage Matrix := Module => f -> (
-     if f.cache.?coimage then f.cache.coimage else f.cache.coimage = cokernel inducedMap(source f, kernel f)
-     )
-cokernel Matrix := Module => m -> (
-     if m.cache.?cokernel then m.cache.cokernel else m.cache.cokernel = subquotient(,m)
-     )
+-- source and target are defined in modules.m2
+-- image caches f in M.cache.Monomials
+image    Matrix := Module => f -> f.cache.image    ??= subquotient(f, null)
+cokernel Matrix := Module => f -> f.cache.cokernel ??= subquotient(null, f)
+-- kernel is defined in pushforward.m2
+coimage  Matrix := Module => f -> f.cache.coimage  ??= cokernel inducedMap(source f, kernel f)
+-- homology is defined further down
 
 cokernel RingElement := Module => f -> cokernel matrix {{f}}
 image RingElement := Module => f -> image matrix {{f}}

@@ -96,7 +96,7 @@ redoMENU = contents -> (
 reverseOptionTable := null
 
 addro := (sym, meth) -> (
-    if not reverseOptionTable#?sym then reverseOptionTable#sym = new MutableHashTable;
+    reverseOptionTable#sym ??= new MutableHashTable;
     reverseOptionTable#sym#meth = true;)
 
 initializeReverseOptionTable := () -> (

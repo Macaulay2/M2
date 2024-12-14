@@ -618,7 +618,7 @@ addHook(Symbol,                  Function) := opts -> (key,        hook) -> addH
 addHook(Sequence,                Function) := opts -> (key,        hook) -> addHook(getHookStore(key, true), key, hook, opts)
 addHook(MutableHashTable, Thing, Function) := opts -> (store, key, hook) -> (
     -- this is the hashtable of Hooks for a specific key, which stores HookAlgorithms and HookPriority
-    if not store#?key then store#key = new MutableHashTable from {
+    store#key ??= new MutableHashTable from {
 	HookAlgorithms => new MutableHashTable, -- a mutable hash table "strategy key" => "strategy code"
 	HookPriority   => new MutableList};     -- a mutable list of strategy keys, in order
     store = store#key;
