@@ -972,7 +972,7 @@ doc ///
     extend
     (extend, Permutation, ZZ)
   Headline
-    rewrites a permutation as a permution on more symbols
+    rewrites a permutation as a permutation on more symbols
   Usage
     extend(w,n)
   Inputs
