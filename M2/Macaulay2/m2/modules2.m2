@@ -113,12 +113,12 @@ Ideal == ZZ := (I,n) -> (
 
 -----------------------------------------------------------------------------
 
-presentation(Module) := Matrix => M -> (
-     if M.cache.?presentation then M.cache.presentation else M.cache.presentation = (
+presentation Module := Matrix => M -> M.cache.presentation ??= (
 	  if M.?generators then (
 	       modulo( M.generators, if M.?relations then M.relations)
 	       )
-	  else relations M))
+    else relations M)
+
 -----------------------------------------------------------------------------  
 
 minimalPresentation(Module) := prune(Module) := Module => opts -> (cacheValue (symbol minimalPresentation => opts)) (M -> (
@@ -303,7 +303,7 @@ Module ^ Array := Matrix => (M,w) -> if M.cache#?(symbol ^,w) then M.cache#(symb
      if oldw =!= null then newcomps = apply(oldw,newcomps,(i,M) -> i => M); -- warning: duplicate entries in oldw will lead to inaccessible components
      map(directSum newcomps, M, (cover M)^(splice apply(w, i -> v#i))))
 
-Module _ Array := Matrix => (M,w) -> if M.cache#?(symbol _,w) then M.cache#(symbol _,w) else M.cache#(symbol _,w) = (
+Module _ Array := Matrix => (M, w) -> M.cache#(symbol _, w) ??= (
      -- we don't splice any more because natural indices include pairs (i,j).
      w = toList w;
      if not M.cache.?components then error "expected a direct sum module";

@@ -60,14 +60,11 @@ new Computation from HashTable := (C, T) -> new C from { Result => null }
 -- if there is a compatible computation stored in T.cache,
 -- returns the computation container, otherwise creates the entry:
 --   Context => Computation
+-- TODO: how should one look for other compatible contexts as well?
 fetchComputation = method(Options => true)
 fetchComputation(Type, HashTable,            Context) := Computation => true >> opts -> (C, T,    context) -> fetchComputation(C, T, T, context)
 fetchComputation(Type, HashTable, Sequence,  Context) :=
-fetchComputation(Type, HashTable, HashTable, Context) := Computation => true >> opts -> (C, T, X, context) -> (
-    -- TODO: look for other compatible contexts as well
-    -- TODO: use https://github.com/Macaulay2/M2/issues/1596 when it is implemented
-    if T.cache#?context then T.cache#context
-    else T.cache#context = new C from X)
+fetchComputation(Type, HashTable, HashTable, Context) := Computation => true >> opts -> (C, T, X, context) -> T.cache#context ??= new C from X
 
 -----------------------------------------------------------------------------
 -- isComputationDone

@@ -43,7 +43,7 @@ rep := (meth, opts, args) -> prepend_opts nonnull apply(args, arg ->
     else arg)
 
 symmetricAlgebra = method( Options => monoidDefaults )
-symmetricAlgebra Module := Ring => opts -> (cacheValue (symmetricAlgebra => opts)) (M -> (
+symmetricAlgebra Module := Ring => opts -> M -> M.cache#(symmetricAlgebra, opts) ??= (
 	k := ring M;
 	N := monoid rep(symmetricAlgebra, opts, [
 		Variables => () -> numgens M,
@@ -52,14 +52,13 @@ symmetricAlgebra Module := Ring => opts -> (cacheValue (symmetricAlgebra => opts
 	S := k N;
 	S  = S / ideal(vars S * promote(presentation M, S));
 	S.Module = M;
-	S))
+    S)
 
-symmetricAlgebra(Ring, Ring, Matrix) := RingMap => o -> (T, S, f) -> (
-    if f.cache#?(key := (symmetricAlgebra, T, S, f)) then f.cache#key else f.cache#key = (
+symmetricAlgebra(Ring, Ring, Matrix) := RingMap => o -> (T, S, f) -> f.cache#(symmetricAlgebra, T, S, f) ??= (
 	p := map(T, S, vars T * promote(cover f, T));
 	if f.cache.?inverse then p.cache.inverse = (
 	    map(S, T, vars S * promote(cover inverse f, S)));
-	p))
+    p)
 symmetricAlgebra                   Matrix  := RingMap => o ->        f  -> symmetricAlgebra(symmetricAlgebra target f, symmetricAlgebra source f, f)
 symmetricAlgebra(Nothing, Nothing, Matrix) := RingMap => o -> (T, S, f) -> symmetricAlgebra(symmetricAlgebra target f, symmetricAlgebra source f, f)
 symmetricAlgebra(Nothing, Ring,    Matrix) := RingMap => o -> (T, S, f) -> symmetricAlgebra(symmetricAlgebra target f, S, f)
@@ -70,8 +69,7 @@ symmetricAlgebra(Ring,    Nothing, Matrix) := RingMap => o -> (T, S, f) -> symme
 -----------------------------------------------------------------------------
 
 symmetricPower = method()
-symmetricPower(ZZ, Module) := Module => (p, M) -> (
-    if M.cache#?(key := (symmetricPower, p)) then M.cache#key else M.cache#key = (
+symmetricPower(ZZ, Module) := Module => (p, M) -> M.cache#(symmetricPower, p) ??= (
 	R := ring M;
 	if p   < 0 then R^0 else
 	if p === 0 then R^1 else
@@ -79,12 +77,11 @@ symmetricPower(ZZ, Module) := Module => (p, M) -> (
 	if isFreeModule M   then new Module from (R, rawSymmetricPower(p, raw M))
 	else coimage basis(p, symmetricAlgebra M,
 	    SourceRing => ring M, Degree => {p, degreeLength R:0})
-    ))
+    )
 symmetricPower(ZZ, Matrix) := Matrix => (i, m) -> map(ring m, rawSymmetricPower(i, raw m))
 
 exteriorPower = method(Options => { Strategy => null })
-exteriorPower(ZZ, Module) := Module => opts -> (p, M) -> (
-    if M.cache#?(exteriorPower, p) then M.cache#(exteriorPower, p) else M.cache#(exteriorPower, p) = (
+exteriorPower(ZZ, Module) := Module => opts -> (p, M) -> M.cache#(exteriorPower, p) ??= (
 	R := ring M;
 	if p   < 0 then R^0 else
 	if p === 0 then R^1 else
@@ -97,7 +94,7 @@ exteriorPower(ZZ, Module) := Module => opts -> (p, M) -> (
 	    h1 := m ** id_Fp1;
 	    h2 := wedgeProduct(1,p-1,F);
 	    cokernel(h2 * h1))
-    ))
+    )
 
 exteriorPower(ZZ, Matrix) := Matrix => opts -> (p, m) -> (
     R := ring m;
