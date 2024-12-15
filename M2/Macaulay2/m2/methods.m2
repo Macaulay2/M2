@@ -683,28 +683,9 @@ protect QuotientRingHook
 -- stashing or caching computed values for future reference in functions that take a mutable hash table as input
 -----------------------------------------------------------------------------
 
-CacheFunction = new Type of FunctionClosure
-CacheFunction.synonym = "a cache function"
-net CacheFunction := f -> "-*a cache function*-"
-cacheValue = key -> f -> new CacheFunction from (x -> (
-	  c := try x.cache else x.cache = new CacheTable;
-	  if c#?key then (
-	       val := c#key;
-	       if class val === CacheFunction then (
-		    remove(c,key);
-		    c#key = val x)
-	       else val
-	       )
-	  else c#key = f x))
-stashValue = key -> f -> new CacheFunction from (x -> (
-	  if x#?key then (
-	       val := x#key;
-	       if class val === CacheFunction then (
-		    remove(x,key);
-		    x#key = val x)
-	       else val
-	       )
-	  else x#key = f x))
+-- deprecated, but kept for backwards compatibility
+cacheValue = key -> f -> x -> ( try x.cache else x.cache = new CacheTable )#key ??= f(x)
+stashValue = key -> f -> x -> x#key ??= f(x)
 
 codeHelper#(functionBody (cacheValue null) null) = g -> {
      ("-- function f:", value (first localDictionaries g)#"f")
@@ -716,7 +697,7 @@ codeHelper#(functionBody (stashValue null) null) = g -> {
 -- helper for hookifying and caching methods
 -- if a cached value isn't found on X, runs the hooks, if none succeed, runs the default algorithm f
 -- TODO: simplify usage
-cacheHooks = (ckey, X, mkey, args, f) -> ((cacheValue ckey) (X -> tryHooks(mkey, args, f))) X
+cacheHooks = (ckey, X, mkey, args, f) -> (X -> X.cache#ckey ??= tryHooks(mkey, args, f)) X
 
 -----------------------------------------------------------------------------
 -- hypertext conversion

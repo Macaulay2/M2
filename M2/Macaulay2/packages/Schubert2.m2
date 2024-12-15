@@ -463,7 +463,7 @@ integral intersectionRing point := r -> if liftable(r,ZZ) then lift(r,ZZ) else l
 
 dim AbstractVariety := X -> X.dim
 chern = method(TypicalValue => RingElement)
-chern AbstractSheaf := (cacheValue ChernClass) (F -> expp F.ChernCharacter)
+chern AbstractSheaf := F -> F.cache.ChernClass ??= expp F.ChernCharacter
 chern(ZZ, AbstractSheaf) := (p,F) -> part(p,chern F)
 chern(ZZ, ZZ, AbstractSheaf) := List => (p,q,F) -> toList apply(p..q, i -> chern(i,F))
 
@@ -554,7 +554,7 @@ AbstractSheaf ^** QQ := AbstractSheaf ^** RingElement := AbstractSheaf => (E,n) 
 rank AbstractSheaf := RingElement => E -> E.cache.rank
 variety AbstractSheaf := AbstractVariety => E -> E.AbstractVariety
 
-tangentBundle FlagBundle := (stashValue TangentBundle) (FV -> tangentBundle FV.Base + tangentBundle FV.StructureMap)
+tangentBundle FlagBundle := FV -> FV.TangentBundle ??= tangentBundle FV.Base + tangentBundle FV.StructureMap
 
 assignable = v -> instance(v,Symbol) or null =!= lookup(symbol <-, class v)
 

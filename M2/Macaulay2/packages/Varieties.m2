@@ -639,9 +639,9 @@ cohomology(ZZ, ProjectiveVariety, CoherentSheaf) := Module => opts -> (p, X, F) 
 -- TODO: optimize caching: if HH^0(F>=b) is cached above, does this need to be cached?
 -- TODO: should F>=0 be hardcoded?
 minimalPresentation SheafOfRings  := prune SheafOfRings  := SheafOfRings  => opts -> identity
-minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opts -> F -> (
-    cacheHooks(symbol minimalPresentation, F, (minimalPresentation, CoherentSheaf), (opts, F),
-	(opts, F) -> (
+minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opts -> (
+    F -> F.cache#(symbol minimalPresentation => opts) ??= tryHooks(
+	(minimalPresentation, CoherentSheaf), (opts, F), (opts, F) -> (
 	    -- this is the default algorithm
 	    G := sheaf(F.variety, HH^0 F(>=0));
 	    G.cache.pruningMap = sheaf(F.variety, F.cache.SaturationMap);

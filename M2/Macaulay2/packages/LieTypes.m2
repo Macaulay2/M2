@@ -189,14 +189,6 @@ global variable names instead of the hash table contents.
 
 *-
 
-
--- hopefully will be integrated into Core: cache into i^th argument
-cacheValue' = (i,key) -> f -> new CacheFunction from ( x -> (
-c:=(x#i).cache;
-key':=replace(i,key,x);
-if c#?key' then c#key' else c#key'=f x
-) )
-
 -- helper functions for semisimple Lie algebras
 split := (w,L) -> ( -- split weight of semisimple algebra according to simple parts
     L=prepend(0,accumulate(plus,0,L)); -- why does accumulate suck
@@ -535,12 +527,12 @@ zeroModule = method(TypicalValue => LieAlgebraModule)
 zeroModule LieAlgebra := g -> new LieAlgebraModule from (g,{})
 
 
-LieAlgebraModule ^** ZZ := (cacheValue'(0,symbol ^**)) ((M,n) -> (
+LieAlgebraModule ^** ZZ := (M, n) -> M.cache#(symbol ^**, n) ??= (
 	if n<0 then "error nonnegative powers only";
     	if n==0 then trivialModule M#"LieAlgebra"
     	else if n==1 then M
     	else M**(M^**(n-1)) -- order matters for speed purposes
-    ))
+    )
 
 -*
 -- the implementation below seems more reasonable but it's actually slower in most circumstances
@@ -1133,19 +1125,19 @@ adams (ZZ,LieAlgebraModule) := (k,M) -> (
     else LieAlgebraModuleFromWeights(applyKeys(weightDiagram M, w -> k*w),g) -- primitive but works
 )
 
-symmetricPower(ZZ,LieAlgebraModule) := (cacheValue'(1,symmetricPower)) ((n,M) -> (
+symmetricPower(ZZ, LieAlgebraModule) := (n, M) -> M.cache#(symbol symmetricPower, n) ??= (
     if n<0 then error "nonnegative powers only";
     if n==0 then trivialModule M#"LieAlgebra"
     else if n==1 then M
     else (directSum apply(1..n, k -> adams(k,M) ** symmetricPower(n-k,M)))^(1/n)
-    ))
+    )
 
-exteriorPower(ZZ,LieAlgebraModule) := o -> (cacheValue'(1,exteriorPower)) ((n,M) -> (
+exteriorPower(ZZ, LieAlgebraModule) := o -> (n, M) -> M.cache#(symbol exteriorPower, n) ??= (
     if n<0 then error "nonnegative powers only";
     if n==0 then trivialModule M#"LieAlgebra"
     else if n==1 then M
     else (directSum apply(1..n, k -> (adams(k,M) ** exteriorPower(n-k,M))^((-1)^(k-1)) ))^(1/n)
-    ))
+    )
 
 LieAlgebraModule @ LieAlgebraModule := (M,M') -> new LieAlgebraModule from (
     M#"LieAlgebra" ++ M'#"LieAlgebra",

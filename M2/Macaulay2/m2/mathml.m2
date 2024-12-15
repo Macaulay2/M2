@@ -175,7 +175,6 @@ mathML MutableHashTable := x -> if x.?mathML then x.mathML else (
      if hasAttribute(x,ReverseDictionary) then mathML getAttribute(x,ReverseDictionary)
      else mrow ( mathML class x, nest("mtext",if #x > 0 then ("{...", toString(#x), "...}") else "{}" )))
 mathML BettiTally := v -> mtableML rawBettiTally v
-mathML CacheFunction := f -> mathML "-*a cache function*-"
 -- these are all provisional:
 mathML Ideal :=
 mathML ImmutableType :=
