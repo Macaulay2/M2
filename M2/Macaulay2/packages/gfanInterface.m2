@@ -753,7 +753,7 @@ gfanConvertToNewRing (PolynomialRing) := R1 -> (
   --produced by this method.
   R1Gens := gens R1;
   numDigits := length (toString (#R1Gens));
-  R2 := (coefficientRing R1) (for i in 1..#R1Gens list (
+  R2 := (coefficientRing R1) new Array from (for i in 1..#R1Gens list (
     value ("x" | demark ("",for i from 1 to numDigits-(length toString i) list "0") | toString i)
   ) );
   R2Gens := gens R2;
