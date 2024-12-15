@@ -96,7 +96,6 @@ export {
 	"CC",
 	"CC'",
 	"CacheExampleOutput",
-	"CacheFunction",
 	"CacheTable",
 	"CallLimit",
 	"CatalanConstant",

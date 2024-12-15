@@ -142,8 +142,8 @@ complement Matrix := Matrix => (f) -> (
 -- the method is declared in gb.m2
 -- TODO: the strategies should be separated
 mingens Ideal  := Matrix => opts -> I -> mingens(module I, opts)
-mingens Module := Matrix => opts -> M -> if isFreeModule M then generators M else cacheHooks(
-    symbol mingens, M, (mingens, Module), (opts, M), (opts, M) -> (
+mingens Module := Matrix => opts -> M -> M.cache.mingens ??= if isFreeModule M then generators M else tryHooks(
+    (mingens, Module), (opts, M), (opts, M) -> (
 	if opts.Strategy === null then opts = opts ++ { Strategy => Complement };
  	  mingb := m -> gb (m, StopWithMinimalGenerators=>true, Syzygies=>false, ChangeMatrix=>false);
 	  zr := f -> if f === null or f == 0 then null else f;
@@ -172,8 +172,8 @@ trim QuotientRing := Ring => o -> R -> quotient trim(ideal presentation R, o)
 
 -- TODO: the strategies should be separated
 trim Ideal  := Ideal  => opts -> I -> ideal trim(module I, opts)
-trim Module := Module => opts -> M -> if isFreeModule M then M else cacheHooks(
-    (symbol trim, opts), M, (trim, Module), (opts, M), (opts, M) -> (
+trim Module := Module => opts -> M -> M.cache#(symbol trim => opts) ??= if isFreeModule M then M else tryHooks(
+    (trim, Module), (opts, M), (opts, M) -> (
 	if opts.Strategy === null then opts = opts ++ { Strategy => Complement };
 	  -- we preserve the ambient free module of which M is subquotient and try to minimize the generators and relations
 	  --   without computing an entire gb
