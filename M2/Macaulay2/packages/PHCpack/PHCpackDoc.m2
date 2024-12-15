@@ -466,6 +466,7 @@ doc ///
   Key
     isWitnessSetMember
     (isWitnessSetMember,WitnessSet,AbstractPoint)
+    [isWitnessSetMember,Verbose]
   Headline
     tests whether a point belongs to a solution set
   Usage
@@ -474,6 +475,9 @@ doc ///
     W:WitnessSet
       positive dimensional, properly embedded with slack variables
     p:AbstractPoint
+    Verbose=>Boolean
+      whether additional output is wanted, including the
+      input and solution file names used by {\tt phc}.
   Outputs
     :Boolean
       true if p is a member of the solution set of W, 
@@ -495,29 +499,6 @@ doc ///
       V = numericalIrreducibleDecomposition (system);
       W = first V#4;
       isWitnessSetMember(W, point{{0,0,0,0,0,0}})
-      
-///;
-
--- options for isWitnessSetMember
-
-doc ///
-  Key
-    [isWitnessSetMember,Verbose]
-  Headline
-    option to specify whether additional output is wanted 
-  Usage
-    isWitnessSetMember(...,Verbose=>Boolean)
-  Description
-    Text
-       Use {\tt Verbose=>true} for additional output, which includes the 
-       input and solution file names used by {\tt phc}.  
-
-    Example
-      R = CC[x11,x22,x21,x12,x23,x13];
-      system = {x11*x22-x21*x12,x12*x23-x22*x13};
-      V = numericalIrreducibleDecomposition (system);
-      W = first V#4;
-      isWitnessSetMember(W, point{{0,0,0,0,0,0}})      
 ///;
 
 -----------------
