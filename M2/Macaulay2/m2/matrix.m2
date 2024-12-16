@@ -102,8 +102,10 @@ Matrix _ Sequence := RingElement => (m,ind) -> (
      else error "expected a sequence of length two"
      )
 
-Number == Matrix :=
-RingElement == Matrix := (r,m) -> m == r
+Number      == Matrix :=
+RingElement == Matrix :=
+Number      == Vector :=
+RingElement == Vector := (r,m) -> m == r
 
 Matrix == Matrix := (f,g) -> (
     if source f === source g
@@ -115,26 +117,34 @@ Matrix == Matrix := (f,g) -> (
            target f == target g and 
            raw(super f * inducedMap(source f, source g)) === raw super g
     )
+Vector == Matrix := (v,m) -> matrix v == m
+Matrix == Vector := (m,v) -> m == matrix v
 
 Matrix == Number :=
 Matrix == RingElement := (m,f) -> m - f == 0		    -- slow!
+Vector == Number      :=
+Vector == RingElement := (v,f) -> matrix v == f
 Matrix == ZZ := (m,i) -> if i === 0 then rawIsZero m.RawMatrix else m - i == 0
 
 Matrix + Matrix := Matrix => (
      (f,g) -> map(target f, source f, reduce(target f, raw f + raw g))
      ) @@ toSameRing
-Matrix + RingElement := (f,r) -> if r == 0 then f else f + r*id_(target f)
-RingElement + Matrix := (r,f) -> if r == 0 then f else r*id_(target f) + f
-Number + Matrix := (i,f) -> if i === 0 then f else i*id_(target f) + f
-Matrix + Number := (f,i) -> if i === 0 then f else f + i*id_(target f)
+Matrix + RingElement :=
+Matrix + Number      := (f,r) -> if r == 0 then f else f + r*id_(target f)
+RingElement + Matrix :=
+Number      + Matrix := (r,f) -> f + r
+Vector + Number := Vector + RingElement := (v,r) -> vector(matrix v + r)
+Number + Vector := RingElement + Vector := (r,v) -> vector(r + matrix v)
 
 Matrix - Matrix := Matrix => (
      (f,g) -> map(target f, source f, reduce(target f, raw f - raw g))
      ) @@ toSameRing
-Matrix - RingElement := (f,r) -> if r == 0 then f else f - r*id_(target f)
-RingElement - Matrix := (r,f) -> if r == 0 then -f else r*id_(target f) - f
-Number - Matrix := (i,f) -> if i === 0 then -f else i*id_(target f) - f
-Matrix - Number := (f,i) -> if i === 0 then f else f - i*id_(target f)
+Matrix - RingElement :=
+Matrix - Number      := (f,r) -> if r == 0 then f else f - r*id_(target f)
+RingElement - Matrix :=
+Number      - Matrix := (r,f) -> -f + r
+Vector - Number := Vector - RingElement := (v,r) -> vector(matrix v - r)
+Number - Vector := RingElement - Vector := (r,v) -> vector(r - matrix v)
 
 - Matrix := Matrix => f -> new Matrix from {
      symbol ring => ring f,
