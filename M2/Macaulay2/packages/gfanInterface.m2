@@ -4436,6 +4436,15 @@ doc///
 	 assert equalMPL(B,Bprime)
 	 ///
 
+-- TEST gfanConvertToNewRing x NCAlgebra (cf. #3600)
+	TEST ///
+	debug needsPackage "gfanInterface"
+	R = QQ[a];
+	gfanConvertToNewRing(R);
+	needsPackage "NCAlgebra";
+	gfanConvertToNewRing(R)
+	///
+
 	-- TEST gfanBuchberger
 	TEST ///
 	 equalMPL = (A,B) -> set transpose A === set transpose B
