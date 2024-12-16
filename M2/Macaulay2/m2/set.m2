@@ -183,9 +183,6 @@ fixedOperators = unique toList fixedOperators
 allOperators = unique toList allOperators
 
 protect Flexible
-protect Binary
-protect Prefix
-protect Postfix
 operatorAttributes = new MutableHashTable from apply(allOperators, op -> op => new MutableHashTable)
 scan((
 	  (binaryOperators,Binary),

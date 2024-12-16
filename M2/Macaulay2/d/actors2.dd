@@ -162,6 +162,7 @@ wrongTarget():Expr := buildErrorPacket("'new' expected a type of list or hash ta
 
 newClassParent(e:Expr,classs:HashTable,parent:HashTable,returned:bool):Expr := (
      -- same as below, but parent specified
+     if classs == keywordClass then return buildErrorPacket("invalid new Keyword (use makeKeyword)");
      basicType := basictype(classs);
      when e
      is Error do e
@@ -202,6 +203,7 @@ newClassParent(e:Expr,classs:HashTable,parent:HashTable,returned:bool):Expr := (
 	  else Expr(SpecialExpr(classs,e))));
 
 newClass(e:Expr,classs:HashTable,returned:bool):Expr := (
+     if classs == keywordClass then return buildErrorPacket("invalid new Keyword (use makeKeyword)");
      -- same as above, but no parent specified, so leave what s provided alone
      when e
      is Error do e
