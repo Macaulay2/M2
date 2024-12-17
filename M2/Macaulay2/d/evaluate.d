@@ -1236,16 +1236,37 @@ tryEval(c:Code):Expr := (
 	else tryEvalSuccess = true);
     p);
 
+nullify(c:Code):Expr := (
+    e := tryEval(c);
+    if tryEvalSuccess
+    then (
+	when e
+	is Nothing do e
+	else (
+	    f := lookup(Class(e), QuestionQuestionS);
+	    if f == nullE then e
+	    else applyEE(f, e)))
+    else nullE);
+
+nullCoalescion(lhs:Code,rhs:Code):Expr := (
+    e := nullify(lhs);
+    when e
+    is Nothing do eval(rhs)
+    else e);
+setup(QuestionQuestionS, nullify, nullCoalescion);
+
 augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
     when lookup(x.oper.word, augmentedAssignmentOperatorTable)
     is null do buildErrorPacket("unknown augmented assignment operator")
     is s:Symbol do (
 	-- evaluate the left-hand side first
 	lexpr := nullE;
-	if s.word.name === "??" -- null coalescion; ignore errors
+	if s.word.name === "??" -- x ??= y is treated like x ?? (x = y)
 	then (
-	    e := tryEval(x.lhs);
-	    if tryEvalSuccess then lexpr = e)
+	    e := nullify(x.lhs);
+	    when e
+	    is Nothing do nothing
+	    else return e)
 	else lexpr = eval(x.lhs);
 	left := evaluatedCode(lexpr, dummyPosition);
 	when left.expr is e:Error do return Expr(e) else nothing;
@@ -2090,25 +2111,6 @@ export notFun(a:Expr):Expr := if a == True then False else if a == False then Tr
 -- evaluate.d depends on hashtables.dd, so we use a pointer
 -- to evaluate methods in hashtables.dd before it is defined.
 applyEEEpointer = applyEEE;
-
-nullify(c:Code):Expr := (
-    e := tryEval(c);
-    if tryEvalSuccess
-    then (
-	when e
-	is Nothing do e
-	else (
-	    f := lookup(Class(e), QuestionQuestionS);
-	    if f == nullE then e
-	    else applyEE(f, e)))
-    else nullE);
-
-nullCoalescion(lhs:Code,rhs:Code):Expr := (
-    e := nullify(lhs);
-    when e
-    is Nothing do eval(rhs)
-    else e);
-setup(QuestionQuestionS, nullify, nullCoalescion);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d evaluate.o "

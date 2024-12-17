@@ -157,3 +157,7 @@ assert BinaryOperation(symbol ===, y ?? x, y)
 assert BinaryOperation(symbol ===, x ?? y, y)
 x ??= y
 assert BinaryOperation(symbol ===, x, y)
+
+-- issue #3612
+h = new HashTable from { symbol cache => new CacheTable };
+h.cache ??= new CacheTable
