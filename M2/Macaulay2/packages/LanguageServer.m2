@@ -8,7 +8,8 @@ newPackage(
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
     Keywords => {"System"},
-    PackageImports => {"JSON", "Parsing"}
+    PackageImports => {"JSON", "Parsing"},
+    AuxiliaryFiles => true
     )
 
 export {
