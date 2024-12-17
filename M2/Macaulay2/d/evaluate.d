@@ -1268,21 +1268,20 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	    is Nothing do nothing
 	    else return e)
 	else lexpr = eval(x.lhs);
-	left := evaluatedCode(lexpr, dummyPosition);
-	when left.expr is e:Error do return Expr(e) else nothing;
+	when lexpr is e:Error do return lexpr else nothing;
 	-- check if user-defined method exists
-	meth := lookup(Class(left.expr),
-	    Expr(SymbolClosure(globalFrame, x.oper)));
+	meth := lookup(Class(lexpr), Expr(SymbolClosure(globalFrame, x.oper)));
 	if meth != nullE then (
-	    rightexpr := eval(x.rhs);
-	    when rightexpr is e:Error do return(e) else nothing;
-	    r := applyEEE(meth, left.expr, rightexpr);
+	    rexpr := eval(x.rhs);
+	    when rexpr is e:Error do return rexpr else nothing;
+	    r := applyEEE(meth, lexpr, rexpr);
 	    when r
 	    is s:SymbolClosure do (
 		if s.symbol.word.name === "Default" then nothing
 		else return r)
 	    else return r);
 	-- if not, use default behavior
+	left := evaluatedCode(lexpr, codePosition(x.lhs));
 	when x.lhs
 	is y:globalMemoryReferenceCode do (
 	    r := s.binary(Code(left), x.rhs);
