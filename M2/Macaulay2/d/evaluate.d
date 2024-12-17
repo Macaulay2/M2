@@ -1285,15 +1285,15 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	when x.lhs
 	is y:globalMemoryReferenceCode do (
 	    r := s.binary(Code(left), x.rhs);
-	    when r is e:Error do Expr(e)
+	    when r is e:Error do r
 	    else globalAssignment(y.frameindex, x.info, r))
 	is y:localMemoryReferenceCode do (
 	    r := s.binary(Code(left), x.rhs);
-	    when r is e:Error do Expr(e)
+	    when r is e:Error do r
 	    else localAssignment(y.nestingDepth, y.frameindex, r))
 	is y:threadMemoryReferenceCode do (
 	    r := s.binary(Code(left), x.rhs);
-	    when r is e:Error do Expr(e)
+	    when r is e:Error do r
 	    else globalAssignment(y.frameindex, x.info, r))
 	is y:binaryCode do (
 	    r := Code(binaryCode(s.binary, Code(left), x.rhs, dummyPosition));
