@@ -1296,17 +1296,17 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	    when r is e:Error do r
 	    else globalAssignment(y.frameindex, x.info, r))
 	is y:binaryCode do (
-	    r := Code(binaryCode(s.binary, Code(left), x.rhs, dummyPosition));
+	    r := Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
 	    if y.f == DotS.symbol.binary || y.f == SharpS.symbol.binary
 	    then AssignElemFun(y.lhs, y.rhs, r)
 	    else InstallValueFun(CodeSequence(
 		    convertGlobalOperator(x.info), y.lhs, y.rhs, r)))
 	is y:adjacentCode do (
-	    r := Code(binaryCode(s.binary, Code(left), x.rhs, dummyPosition));
+	    r := Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
 	    InstallValueFun(CodeSequence(
 		    convertGlobalOperator(AdjacentS.symbol), y.lhs, y.rhs, r)))
 	is y:unaryCode do (
-	    r := Code(binaryCode(s.binary, Code(left), x.rhs, dummyPosition));
+	    r := Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
 	    UnaryInstallValueFun(convertGlobalOperator(x.info), y.rhs, r))
 	else buildErrorPacket(
 	    "augmented assignment not implemented for this code")));
