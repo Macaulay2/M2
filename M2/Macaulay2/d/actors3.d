@@ -2363,6 +2363,20 @@ scan(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("scan",scan);
 
+-- # typical value: scanPairs, Thing, Function, Nothing
+scanPairs(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 2 then (
+	    when a.0
+	    is o:HashTable do (
+		if o.Mutable then WrongArgImmutableHashTable(1)
+		else scanpairs(a.1, o))
+	    else scan(pairs(a.0), a.1))
+	else WrongNumArgs(2))
+    else WrongNumArgs(2));
+setupfun("scanPairs", scanPairs);
+
 nextPrime(e:Expr):Expr := (
      when e
      is x:ZZcell do toExpr(nextPrime(x.v - oneZZ))

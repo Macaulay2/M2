@@ -56,3 +56,6 @@ assert Equation(join([1, 2, 3], iterator {4, 5, 6}), [1, 2, 3, 4, 5, 6])
 assert Equation(toList pairs "foo", {(0, "f"), (1, "o"), (2, "o")})
 assert Equation(toList applyPairs("foo", (i, c) -> (c, i + 1)),
     {("f", 1), ("o", 2), ("o", 3)})
+x = 0
+scanPairs("foo", (i, c) -> x += i + first ascii c)
+assert Equation(x, 0 + 102 + 1 + 111 + 2 + 111)

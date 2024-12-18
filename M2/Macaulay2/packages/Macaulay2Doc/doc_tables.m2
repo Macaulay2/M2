@@ -394,12 +394,14 @@ doc ///
  Key
   scanPairs
   (scanPairs, HashTable, Function)
+  (scanPairs, Thing, Function)
  Headline
   apply a function to the pairs in a hash table
  Usage
   scanPairs(t, f)
  Inputs
-  t:HashTable
+  t:{HashTable, BasicList, Dictionary}
+    or any instance of a class with an @TO iterator@ method installed
   f:Function
  Description
   Text
@@ -410,7 +412,12 @@ doc ///
   Example
    t = hashTable {{1,8},{2,20},{3,4},{4,20}}
    scanPairs(t, (k,v) -> print (k+v))
-   scanPairs(t, (k,v) -> if v==20 then print k)   
+   scanPairs(t, (k,v) -> if v==20 then print k)
+  Text
+   If @CODE "t"@ is not a hash table, then @M2CODE "scan(pairs t, f)"@ is
+   called.
+  Example
+   scanPairs({4, 5, 6}, print)
  Caveat
   This function requires an immutable hash table.  To scan the pairs in
   a mutable hash table, use {\tt scan(pairs t, f)}.
