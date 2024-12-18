@@ -52,3 +52,5 @@ assert Equation(toList(iterator {1, 2, 3} | iterator {4, 5, 6}),
 assert Equation(join({1, 2, 3}, iterator {4, 5, 6}), {1, 2, 3, 4, 5, 6})
 assert Equation(join((1, 2, 3), iterator {4, 5, 6}), (1, 2, 3, 4, 5, 6))
 assert Equation(join([1, 2, 3], iterator {4, 5, 6}), [1, 2, 3, 4, 5, 6])
+
+assert Equation(toList pairs "foo", {(0, "f"), (1, "o"), (2, "o")})
