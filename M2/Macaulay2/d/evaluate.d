@@ -1710,7 +1710,7 @@ setup(LeftArrowS,assigntofun);
 idfun(e:Expr):Expr := e;
 setupfun("identity",idfun);
 -- # typical value: scanPairs, HashTable, Function, Nothing
-scanpairs(f:Expr,obj:HashTable):Expr := (	-- obj is not Mutable
+export scanpairs(f:Expr,obj:HashTable):Expr := (	-- obj is not Mutable
      foreach bucket in obj.table do (
 	  p := bucket;
 	  while true do (
@@ -1720,18 +1720,6 @@ scanpairs(f:Expr,obj:HashTable):Expr := (	-- obj is not Mutable
 	       p = p.next;
 	       ));
      nullE);
-scanpairsfun(e:Expr):Expr := (
-     when      e is a:Sequence do
-     if        length(a) == 2
-     then when a.0 is o:HashTable 
-     do
-     if	       o.Mutable
-     then      WrongArgImmutableHashTable()
-     else      scanpairs(a.1,o)
-     else      WrongArgHashTable(1)
-     else      WrongNumArgs(2)
-     else      WrongNumArgs(2));
-setupfun("scanPairs",scanpairsfun);
 
 mpre():Expr := buildErrorPacket("applyPairs: expected function to return null, a sequence of length 2, or an option x=>y");
 -- # typical value: applyPairs, HashTable, Function, HashTable
