@@ -68,6 +68,8 @@ removeHeader = (((n, s) -> substring(s, 0, n)) % (headerP @ contentP) :
 -- run language server --
 -------------------------
 
+-- TODO: instead of using debug level and logging to stderr, add an optional
+-- to log to a file
 verboseLog = (header, msg) -> if debugLevel > 0 then (
     stderr << stack(netList {header}, msg) << newline << endl)
 
