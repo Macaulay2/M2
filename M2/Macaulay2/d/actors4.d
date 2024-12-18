@@ -236,7 +236,7 @@ selectPairs(e:Expr):Expr := (
 	    when a.0
 	    is obj:HashTable do (
 		if obj.Mutable
-		then WrongArg(1, "an immutable hash table")
+		then WrongArgImmutableHashTable(1)
 		else selectPairs(obj.numEntries, obj, a.1))
 	    else WrongArgHashTable(1))
 	-- # typical value: selectPairs, ZZ, HashTable, Function, HashTable
@@ -248,7 +248,7 @@ selectPairs(e:Expr):Expr := (
 		    when a.1 is obj:HashTable
 		    do (
 			if obj.Mutable
-			then WrongArg(2, "an immutable hash table")
+			then WrongArgImmutableHashTable(2)
 			else selectPairs(toInt(n), obj, a.2))
 		    else WrongArgHashTable(2)))
 	    else WrongArgZZ(1))
@@ -298,7 +298,7 @@ any(f:Expr,e:Expr):Expr := (
      is b:List do Expr(any(f,b.v))
      is i:ZZcell do if isInt(i) then Expr(any(f,toInt(i))) else WrongArgSmallInteger(1)
      is c:HashTable do
-     if c.Mutable then WrongArg(1,"an immutable hash table") else
+     if c.Mutable then WrongArgImmutableHashTable(1) else
      Expr(any(f,c))
      else WrongArg("a list or a hash table"));
 any(f:Expr,a:Sequence,b:Sequence):Expr := (

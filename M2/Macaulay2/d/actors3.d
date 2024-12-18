@@ -82,7 +82,7 @@ override(e:Expr):Expr := (
 	  if length(args) == 2 then (
 	       when args.0
 	       is h:HashTable do (
-		    if h.Mutable then WrongArg("an immutable hash table")
+		    if h.Mutable then WrongArgImmutableHashTable()
 		    else when args.1 is v:Sequence do override(h,v,numOptions(v))
 		    else override(h,Sequence(args.1),if isOption(args.1) then 1 else 0)
 		    )
