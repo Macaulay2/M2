@@ -59,3 +59,6 @@ assert Equation(toList applyPairs("foo", (i, c) -> (c, i + 1)),
 x = 0
 scanPairs("foo", (i, c) -> x += i + first ascii c)
 assert Equation(x, 0 + 102 + 1 + 111 + 2 + 111)
+assert Equation(selectPairs(1..10, (i, x) -> even x),
+    ((1, 2), (3, 4), (5, 6), (7, 8), (9, 10)))
+assert Equation(selectPairs(2, 1..10, (i, x) -> even x), ((1, 2), (3, 4)))
