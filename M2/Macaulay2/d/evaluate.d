@@ -28,6 +28,7 @@ export iteratorS := setupvar("iterator", nullE);
 export nextS := setupvar("next", nullE);
 export applyIteratorS := setupvar("applyIterator", nullE);
 export joinIteratorsS := setupvar("joinIterators", nullE);
+export pairsIteratorS := setupvar("pairsIterator", nullE);
 
 eval(c:Code):Expr;
 applyEE(f:Expr,e:Expr):Expr;

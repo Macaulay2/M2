@@ -143,7 +143,7 @@ pairs(e:Expr):Expr := (
 	      provide Expr(Sequence(toExpr(i),o.i));
 	      i = i+1;)))
      is o:List do pairs(Expr(o.v))   -- # typical value: pairs, BasicList, List
-     else WrongArg("a hash table, a sequence, a list, or a raw polynomial"));
+     else applyEE(getGlobalVariable(pairsIteratorS), e)); -- # typical value: pairs, Thing, Iterator
 setupfun("pairs",pairs);
 
 -- operators
