@@ -104,7 +104,7 @@ values(e:Expr):Expr := (
      else WrongArg("a hash table or dictionary"));
 setupfun("values",values);
 
-pairs(e:Expr):Expr := (
+export pairs(e:Expr):Expr := (
      when e
      is oc:DictionaryClosure do (    -- # typical value: pairs, Dictionary, List
 	  o := oc.dictionary.symboltable;

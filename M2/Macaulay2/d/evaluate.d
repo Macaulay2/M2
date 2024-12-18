@@ -1735,7 +1735,7 @@ setupfun("scanPairs",scanpairsfun);
 
 mpre():Expr := buildErrorPacket("applyPairs: expected function to return null, a sequence of length 2, or an option x=>y");
 -- # typical value: applyPairs, HashTable, Function, HashTable
-mappairs(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
+export mappairs(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
      x := newHashTable(o.Class,o.parent);
      x.beingInitialized = true;
      foreach bucket in o.table do (
@@ -1763,18 +1763,6 @@ mappairs(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
 	       p = p.next;
 	       ));
      Expr(sethash(x,o.Mutable)));
-mappairsfun(e:Expr):Expr := (
-     when      e is a:Sequence do
-     if        length(a) == 2
-     then when a.0 is o:HashTable 
-     do
-     if        o.Mutable 
-     then      WrongArg("an immutable hash table")
-     else      mappairs(a.1,o)
-     else      WrongArgHashTable(1)
-     else      WrongNumArgs(2)
-     else      WrongNumArgs(2));
-setupfun("applyPairs",mappairsfun);
 
 -- # typical value: applyKeys, HashTable, Function, HashTable
 export mapkeys(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
