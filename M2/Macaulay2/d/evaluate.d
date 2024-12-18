@@ -1726,7 +1726,7 @@ scanpairsfun(e:Expr):Expr := (
      then when a.0 is o:HashTable 
      do
      if	       o.Mutable
-     then      WrongArg("an immutable hash table")
+     then      WrongArgImmutableHashTable()
      else      scanpairs(a.1,o)
      else      WrongArgHashTable(1)
      else      WrongNumArgs(2)
@@ -1825,7 +1825,7 @@ mapkeysfun(e:Expr):Expr := (
      then when a.0 is o:HashTable 
      do        
      if        o.Mutable
-     then      WrongArg("an immutable hash table")
+     then      WrongArgImmutableHashTable()
      else      if length(a) == 2 then mapkeys(a.1,o) else mapkeysmerge(a.1,o,a.2)
      else      WrongArgHashTable(1)
      else      WrongNumArgs(2,3)
@@ -1865,7 +1865,7 @@ mapvaluesfun(e:Expr):Expr := (
      then when a.0 is o:HashTable 
      do        
      if        o.Mutable
-     then      WrongArg("an immutable hash table")
+     then      WrongArgImmutableHashTable()
      else      mapvalues(a.1,o)
      else      WrongArgHashTable(1)
      else      WrongNumArgs(2)
@@ -2067,18 +2067,18 @@ combine(e:Expr):Expr := (
      is v:Sequence do
      if length(v) == 5 then (
         when v.0 is x:HashTable do
-        if x.Mutable then WrongArg(1,"an immutable hash table") else
+        if x.Mutable then WrongArgImmutableHashTable(1) else
         when v.1 is y:HashTable do
-        if y.Mutable then WrongArg(2,"an immutable hash table") else
+        if y.Mutable then WrongArgImmutableHashTable(2) else
         combine(v.2,v.3,v.4,x,y)
         else WrongArgHashTable(2)
         else WrongArgHashTable(1)
      )
      else if length(v) == 6 then (
         when v.0 is x:HashTable do
-        if x.Mutable then WrongArg(1,"an immutable hash table") else
+        if x.Mutable then WrongArgImmutableHashTable(1) else
         when v.1 is y:HashTable do
-        if y.Mutable then WrongArg(2,"an immutable hash table") else
+        if y.Mutable then WrongArgImmutableHashTable(2) else
         twistCombine(v.2,v.3,v.4,v.5,x,y)
         else WrongArgHashTable(2)
         else WrongArgHashTable(1)
