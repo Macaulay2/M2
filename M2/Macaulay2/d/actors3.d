@@ -2,6 +2,7 @@
 
 use evaluate;
 use actors;
+use actors2;
 use ballarith;
 
 isOption(e:Expr):bool := (
@@ -1894,6 +1895,22 @@ map(e:Expr):Expr := (
 	  else WrongNumArgs(2,3))
      else WrongNumArgs(2,3));
 setupfun("apply",map);
+
+applyPairs(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 2 then (
+	    when a.0
+	    is o:HashTable do (
+		if o.Mutable then WrongArgImmutableHashTable(1)
+		else mappairs(a.1, o))
+	    -- # typical value: applyPairs, BasicList, Function, List
+	    -- # typical value: applyPairs, Dictionary, Function, List
+	    -- # typical value: applyPairs, Thing, Function, Iterator
+	    else map(pairs(a.0), a.1))
+	else WrongNumArgs(2))
+    else WrongNumArgs(2));
+setupfun("applyPairs", applyPairs);
 
 -- # typical value: scan, ZZ, Function, Thing
 scan(n:int,f:Expr):Expr := (
