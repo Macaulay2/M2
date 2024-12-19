@@ -978,7 +978,7 @@ matchingFieldFromPermutationNoScaling(ZZ, ZZ, List) := opts -> (Lk, Ln, S) -> (
 -- 7) if not then d = d+1 and go back to step 2
 -- 8) reduce the matching field ideal gens modulo the full GB and check if the result is zero
 --
--- In the homgeneous case, it suffices to compute a GB up to degree limit d (step 1)
+-- In the homogeneous case, it suffices to compute a GB up to degree limit d (step 1)
 -- so we can forgo the while loop
 
 isToricDegeneration = method ()

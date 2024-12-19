@@ -946,9 +946,9 @@ document {
      },
      SUBSECTION "Orthogonalization Strategy",
      UL {
-  	  {"default -- Classical Gramm-Schmidt Orthogonalization, ",
+  	  {"default -- Classical Gram-Schmidt Orthogonalization, ",
      "This choice uses classical methods for computing
-     the Gramm-Schmidt othogonalization.
+     the Gram-Schmidt orthogonalization.
      It is fast but prone to stability problems.
      This strategy was first proposed by Schnorr and Euchner in the paper
      mentioned above.

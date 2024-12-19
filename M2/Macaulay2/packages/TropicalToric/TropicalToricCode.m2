@@ -31,7 +31,7 @@ refineMultiplicity (TropicalCycle, NormalToricVariety) := (T,X) ->(
 
 --input: normal toric varieties X,X' such that the identity on the lattices induces
 --       a toric map phi:X' -> X,
---       list mult of multiplcities of cones of X' of dimension k
+--       list mult of multiplicities of cones of X' of dimension k
 --output: list of degrees deg([Y'] * phi^*(V(sigma)), where [Y'] is the class of the cycle
 --        Y' in X' corresponding to the Minkowski weight given by mult.
 -- Note that here [Y'] * V(sigma') = mult_sigma' for every cone sigma' of X'.

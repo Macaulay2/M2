@@ -11,7 +11,7 @@ doc ///
     D:PolynomialRing  
   Outputs
      :Ideal
-      the toric ideal of the matrix $A$ in the polynomial ring of the partials inside of the Weyl algerba $D$.
+      the toric ideal of the matrix $A$ in the polynomial ring of the partials inside of the Weyl algebra $D$.
   Description
     Text 
       A $d \times n$ integer matrix $A$ determines a GKZ hypergeometric system of PDEs 

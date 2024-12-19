@@ -856,7 +856,7 @@ viewHelp TateOnProducts
 
 lastQuadrantComplex=method()
 lastQuadrantComplex(ChainComplex,List) := (C,c) -> (
-    -- c index of the lower corner of the complentary first quadrant
+    -- c index of the lower corner of the complementary first quadrant
     lastQuadrantComplex1(C,c-toList(#c:1)))
 
 
