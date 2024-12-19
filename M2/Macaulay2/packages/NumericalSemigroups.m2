@@ -2097,7 +2097,7 @@ Outputs
   degrees of a basis of T^1(semigroupRing L)
 Description
   Text
-   T^1(B) is the tangent space to the versal deformaion of
+   T^1(B) is the tangent space to the versal deformation of
    the ring B, and is finite dimensional when B has isolated
    singularity. If B = S/I is a Cohen presentation, then
    T^1(B) = coker Hom(Omega_S, B) -> Hom(I/I^2, B).
