@@ -235,6 +235,7 @@ directSummands Module := List => opts -> (cacheValue (symbol summands => opts.Ex
     if not isCommutative R and not isWeylAlgebra R then error "expected a commutative base ring";
     if 0 < debugLevel then printerr("splitting module of rank: ", toString rank M);
     if isFreeModule M then return apply(-degrees M, d -> R^{d});
+    --TODO: is there an easy way to check if rank = 1 and M torsionfree?
     if 1 < #components M then return flatten apply(components M, directSummands_opts); -- TODO: parallelize
     if opts.ExtendGroundField =!= null then (
 	L := opts.ExtendGroundField;
@@ -266,6 +267,7 @@ directSummands Module := List => opts -> (cacheValue (symbol summands => opts.Ex
 	    if h == id_M or h == 0 then false else (
 		if flag and K ** h != 0
 		then flag = false;
+                --TODO: is it worth asking if K**h is idempotent instead? (in graded/local case)
 		isIdempotent h))
 	);
     -- check if M is certifiably indecomposable
@@ -305,7 +307,7 @@ directSummands(Module, Module) := List => opts -> (L, M) -> (
     if 1 < #cachedSummands M then return sort flatten apply(cachedSummands M, N -> directSummands(L, N, opts));
     zdeg := degree 0_M;
     if isFreeModule L then(
-        B := smartBasis(zdeg, Hom(L, M, DegreeLimit => zdeg, MinimalGenerators => false));
+        B := smartBasis(zdeg, Hom(M, L, DegreeLimit => zdeg, MinimalGenerators => false));
         h := for i to opts.Tries - 1 do (
 	    b := homomorphism(B * random source B);
             if isSurjective b then break b);)
