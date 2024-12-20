@@ -51,8 +51,6 @@ take(BasicList,ZZ) := take(BasicList,List) := BasicList => take
 take(Thing,ZZ) := take(Thing,List) := List => take
 
 isMutable(Thing) := Boolean => isMutable
-hashTable List := HashTable => hashTable
-hashTable(Function,List) := HashTable => hashTable
 remove(MutableList,ZZ) := Nothing => remove
 remove(Database,String) := Nothing => remove
 remove(HashTable,Thing) := Nothing => remove

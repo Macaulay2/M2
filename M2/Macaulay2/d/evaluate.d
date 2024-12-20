@@ -28,6 +28,7 @@ export iteratorS := setupvar("iterator", nullE);
 export nextS := setupvar("next", nullE);
 export applyIteratorS := setupvar("applyIterator", nullE);
 export joinIteratorsS := setupvar("joinIterators", nullE);
+export pairsIteratorS := setupvar("pairsIterator", nullE);
 
 eval(c:Code):Expr;
 applyEE(f:Expr,e:Expr):Expr;
@@ -1709,7 +1710,7 @@ setup(LeftArrowS,assigntofun);
 idfun(e:Expr):Expr := e;
 setupfun("identity",idfun);
 -- # typical value: scanPairs, HashTable, Function, Nothing
-scanpairs(f:Expr,obj:HashTable):Expr := (	-- obj is not Mutable
+export scanpairs(f:Expr,obj:HashTable):Expr := (	-- obj is not Mutable
      foreach bucket in obj.table do (
 	  p := bucket;
 	  while true do (
@@ -1719,22 +1720,10 @@ scanpairs(f:Expr,obj:HashTable):Expr := (	-- obj is not Mutable
 	       p = p.next;
 	       ));
      nullE);
-scanpairsfun(e:Expr):Expr := (
-     when      e is a:Sequence do
-     if        length(a) == 2
-     then when a.0 is o:HashTable 
-     do
-     if	       o.Mutable
-     then      WrongArg("an immutable hash table")
-     else      scanpairs(a.1,o)
-     else      WrongArgHashTable(1)
-     else      WrongNumArgs(2)
-     else      WrongNumArgs(2));
-setupfun("scanPairs",scanpairsfun);
 
 mpre():Expr := buildErrorPacket("applyPairs: expected function to return null, a sequence of length 2, or an option x=>y");
 -- # typical value: applyPairs, HashTable, Function, HashTable
-mappairs(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
+export mappairs(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
      x := newHashTable(o.Class,o.parent);
      x.beingInitialized = true;
      foreach bucket in o.table do (
@@ -1762,18 +1751,6 @@ mappairs(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
 	       p = p.next;
 	       ));
      Expr(sethash(x,o.Mutable)));
-mappairsfun(e:Expr):Expr := (
-     when      e is a:Sequence do
-     if        length(a) == 2
-     then when a.0 is o:HashTable 
-     do
-     if        o.Mutable 
-     then      WrongArg("an immutable hash table")
-     else      mappairs(a.1,o)
-     else      WrongArgHashTable(1)
-     else      WrongNumArgs(2)
-     else      WrongNumArgs(2));
-setupfun("applyPairs",mappairsfun);
 
 -- # typical value: applyKeys, HashTable, Function, HashTable
 export mapkeys(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
@@ -1824,7 +1801,7 @@ mapkeysfun(e:Expr):Expr := (
      then when a.0 is o:HashTable 
      do        
      if        o.Mutable
-     then      WrongArg("an immutable hash table")
+     then      WrongArgImmutableHashTable()
      else      if length(a) == 2 then mapkeys(a.1,o) else mapkeysmerge(a.1,o,a.2)
      else      WrongArgHashTable(1)
      else      WrongNumArgs(2,3)
@@ -1864,7 +1841,7 @@ mapvaluesfun(e:Expr):Expr := (
      then when a.0 is o:HashTable 
      do        
      if        o.Mutable
-     then      WrongArg("an immutable hash table")
+     then      WrongArgImmutableHashTable()
      else      mapvalues(a.1,o)
      else      WrongArgHashTable(1)
      else      WrongNumArgs(2)
@@ -2066,18 +2043,18 @@ combine(e:Expr):Expr := (
      is v:Sequence do
      if length(v) == 5 then (
         when v.0 is x:HashTable do
-        if x.Mutable then WrongArg(1,"an immutable hash table") else
+        if x.Mutable then WrongArgImmutableHashTable(1) else
         when v.1 is y:HashTable do
-        if y.Mutable then WrongArg(2,"an immutable hash table") else
+        if y.Mutable then WrongArgImmutableHashTable(2) else
         combine(v.2,v.3,v.4,x,y)
         else WrongArgHashTable(2)
         else WrongArgHashTable(1)
      )
      else if length(v) == 6 then (
         when v.0 is x:HashTable do
-        if x.Mutable then WrongArg(1,"an immutable hash table") else
+        if x.Mutable then WrongArgImmutableHashTable(1) else
         when v.1 is y:HashTable do
-        if y.Mutable then WrongArg(2,"an immutable hash table") else
+        if y.Mutable then WrongArgImmutableHashTable(2) else
         twistCombine(v.2,v.3,v.4,v.5,x,y)
         else WrongArgHashTable(2)
         else WrongArgHashTable(1)

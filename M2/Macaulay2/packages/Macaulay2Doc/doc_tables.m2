@@ -233,16 +233,23 @@ doc ///
   (pairs, HashTable)
   (pairs, Dictionary)
   (pairs, BasicList)
+  (pairs, Thing)
  Headline
   list the pairs in a hash table, dictionary, or basic list
- Usage
-  pairs x
- Inputs
-  x:HashTable
-   or @TO Dictionary@ or @TO BasicList@
- Outputs
-  L:List
-   of all pairs {\tt (k, x#k)}
+ Synopsis
+  Usage
+   pairs x
+  Inputs
+   x:{HashTable, Dictionary, BasicList}
+  Outputs
+   L:List -- of all pairs @CODE "(k, x#k)"@
+ Synopsis
+  Usage
+   pairs x
+  Inputs
+   x:Thing -- an instance of a class with an @TO iterator@ method installed
+  Outputs
+   :Iterator
  Description
   Text
    If {\tt x} is a hash table or dictionary, the pairs consist of
@@ -267,6 +274,16 @@ doc ///
    L = {3, 5, 7};
    pairs L
    pairs {apple, banana, carrot}
+  Text
+   If @CODE "x"@ belongs to any other class, then @TO iterator@ is called
+   on it, and if successful, an @TO Iterator@ object is returned.
+  Example
+   pairs "foo"
+   toList oo
+   i = pairs Iterator(() -> 5)
+   next i
+   next i
+   next i
  Caveat
   As the first example illustrates, pairs are not necessarily listed in
   any particular order.
@@ -377,12 +394,14 @@ doc ///
  Key
   scanPairs
   (scanPairs, HashTable, Function)
+  (scanPairs, Thing, Function)
  Headline
   apply a function to the pairs in a hash table
  Usage
   scanPairs(t, f)
  Inputs
-  t:HashTable
+  t:{HashTable, BasicList, Dictionary}
+    or any instance of a class with an @TO iterator@ method installed
   f:Function
  Description
   Text
@@ -393,7 +412,12 @@ doc ///
   Example
    t = hashTable {{1,8},{2,20},{3,4},{4,20}}
    scanPairs(t, (k,v) -> print (k+v))
-   scanPairs(t, (k,v) -> if v==20 then print k)   
+   scanPairs(t, (k,v) -> if v==20 then print k)
+  Text
+   If @CODE "t"@ is not a hash table, then @M2CODE "scan(pairs t, f)"@ is
+   called.
+  Example
+   scanPairs({4, 5, 6}, print)
  Caveat
   This function requires an immutable hash table.  To scan the pairs in
   a mutable hash table, use {\tt scan(pairs t, f)}.

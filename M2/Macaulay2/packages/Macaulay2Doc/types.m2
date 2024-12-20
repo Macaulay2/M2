@@ -544,7 +544,10 @@ document {
      }
 
 document {
-     Key => {hashTable,(hashTable, List)},
+     Key => {
+	 hashTable,
+	 (hashTable, BasicList),
+	 (hashTable, Function, BasicList)},
      Headline => "make a hash table",
      TT "hashTable(h,v)", " -- produce a hash table from a list ", TT "v", " of key-value pairs, with an optional collision handler function ", TT "h", ".",
      PARA{},
