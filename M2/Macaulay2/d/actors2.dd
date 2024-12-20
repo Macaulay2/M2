@@ -142,7 +142,12 @@ export pairs(e:Expr):Expr := (
 	    while i < length(o) do (
 	      provide Expr(Sequence(toExpr(i),o.i));
 	      i = i+1;)))
-     is o:List do pairs(Expr(o.v))   -- # typical value: pairs, BasicList, List
+     -- # typical value: pairs, BasicList, List
+     is o:List do (
+	 r := pairs(Expr(o.v));
+	 when r
+	 is s:Sequence do list(o.Class, s, o.Mutable)
+	 else buildErrorPacket("internal error; expected a sequence"))
      else applyEE(getGlobalVariable(pairsIteratorS), e)); -- # typical value: pairs, Thing, Iterator
 setupfun("pairs",pairs);
 
