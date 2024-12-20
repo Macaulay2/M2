@@ -40,6 +40,8 @@ x = set(1..10)
 assert(select(x, odd) === set {1, 3, 5, 7, 9})
 assert(select(2, x, odd) == set {1, 3})
 
+assert(hashTable ((0, 1), (1, 2)) === hashTable {(0, 1), (1, 2)})
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test hashtables.out"
 -- End:
