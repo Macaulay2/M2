@@ -1,34 +1,27 @@
 --needsPackage "RationalPoints2"
 
+random Module := Vector => o -> M -> (
+    K := try coefficientRing ring M else ring M;
+    v := random(cover M ** K, module K, o);
+    vector inducedMap(M, , generators M * v))
+
 generalEndomorphism = method()
 generalEndomorphism Module := M -> (
-    R := ring M;
-    if isHomogeneous M and isHomogeneous R then(
-        A := Hom(M, M,
-	    DegreeLimit       => zdeg := degree 0_M,
-	    MinimalGenerators => false);
-        B := smartBasis(zdeg, A);
-        homomorphism(B * random(source B, R^1))
-        --TODO: this is only "random" over the base field; is that okay?
-    )
-    else(
-        --homomorphism sum for i from 0 to numgens A - 1 list sub(randomFieldElement K, R) * A_i
-        --line above is if we want random over the full field
-        randomHom(M,M)
-    )
+    zdeg := if isHomogeneous M then degree 0_M;
+    A := Hom(M, M,
+	DegreeLimit       => zdeg,
+	MinimalGenerators => false);
+    B := if isHomogeneous M then smartBasis(zdeg, A) else inducedMap(A, , gens A);
+    homomorphism(B * random cover source B)
 )
+
 generalEndomorphism CoherentSheaf := M -> generalEndomorphism module M
 
 -----NEW STUFF FOR INHOMOGENEOUS CASE-----
 
 --does same thing as general(Endo)morphism, but in inhomgeneous case
 randomHom = method()
-randomHom(Module, Module) := (M,N) -> (
-        R := ring M;
-        A := Hom(M, N,
-	    MinimalGenerators => false);
-        homomorphism sum for i from 0 to numgens A - 1 list (random(R^1,R^1))_(0,0) * A_i
-)
+randomHom(Module, Module) := (M,N) -> homomorphism random Hom(M, N, MinimalGenerators => false)
 
 isSplitSummand = method(Options => { Tries => 50 })
 

@@ -226,7 +226,7 @@ cachedSummands = { ExtendGroundField => null } >> o -> M -> (
 -- 2 => use Hom option DegreeLimit => 0
 -- 4 => use Hom option MinimalGenerators => false
 -- 8 => precompute Homs before looking for idempotents
-directSummands = method(Options => { Recursive => true, Tries => 0, Verbose => true, Strategy => 7, ExtendGroundField => null })
+directSummands = method(Options => { Recursive => true, Tries => 10, Verbose => true, Strategy => 7, ExtendGroundField => null })
 directSummands Module := List => opts -> (cacheValue (symbol summands => opts.ExtendGroundField)) (M -> sort(
     checkRecursionDepth();
     -- Note: rank does weird stuff if R is not a domain
@@ -310,7 +310,7 @@ directSummands(Module, Module) := List => opts -> (L, M) -> (
         B := smartBasis(zdeg, Hom(M, L, DegreeLimit => zdeg, MinimalGenerators => false));
         h := for i to opts.Tries - 1 do (
 	    b := homomorphism(B * random source B);
-            if isSurjective b then break b);)
+            if isSurjective b then break matrix{L_0}//b);)
     else(
         -- we look for a composition L -> M -> L which is the identity
         B = smartBasis(zdeg, Hom(L, M, DegreeLimit => zdeg, MinimalGenerators => false));
