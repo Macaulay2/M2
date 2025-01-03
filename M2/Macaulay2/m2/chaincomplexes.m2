@@ -15,6 +15,17 @@ union := (x,y) -> keys(set x + set y)
 intersection := (x,y) -> keys(set x * set y)
 
 -----------------------------------------------------------------------------
+-- Categories for which complexes are currently implemented in Macaulay2
+-----------------------------------------------------------------------------
+-- SheafMap and CoherentSheaf are added later in Varieties
+
+isMorphism Thing    := x -> false
+isMorphism Matrix   := f -> true
+
+isAbelianCategory Thing         := x -> false
+isAbelianCategory Module        := M -> true
+
+-----------------------------------------------------------------------------
 -- ChainComplex, ChainComplexMap, and Resolution type declarations and basic constructors
 -----------------------------------------------------------------------------
 
