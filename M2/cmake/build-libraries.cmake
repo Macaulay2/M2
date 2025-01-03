@@ -953,9 +953,10 @@ ExternalProject_Add(build-nauty
                       RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
   # TODO: put nauty programs in a folder?
-  INSTALL_COMMAND   ${CMAKE_STRIP} ${nauty_BINARIES}
+  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install includedir=${M2_HOST_PREFIX}/include/nauty
+          COMMAND   ${CMAKE_STRIP} ${nauty_BINARIES}
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/nauty
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different nauty.h ${M2_INSTALL_LICENSESDIR}/nauty
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different LICENSE-2.0.txt ${M2_INSTALL_LICENSESDIR}/nauty
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${nauty_BINARIES} ${M2_INSTALL_PROGRAMSDIR}/
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
