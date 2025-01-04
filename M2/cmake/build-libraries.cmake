@@ -511,7 +511,7 @@ ExternalProject_Add(build-msolve
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-#_ADD_COMPONENT_DEPENDENCY(libraries msolve "gmp;mpfr;flint" MSOLVE_FOUND)
+_ADD_COMPONENT_DEPENDENCY(programs msolve "gmp;mpfr;flint" MSOLVE_FOUND)
 
 
 # https://numpi.dm.unipi.it/software/mpsolve
