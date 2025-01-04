@@ -498,7 +498,7 @@ ExternalProject_Add(build-msolve
                       $<$<BOOL:${OpenMP_FOUND}>:--enable-openmp>
                       "CPPFLAGS=${CPPFLAGS} -I${GMP_INCLUDE_DIRS} -I${MPFR_INCLUDE_DIRS} -I${FLINT_INCLUDE_DIR}"
                       CFLAGS=${CFLAGS}
-                      "LDFLAGS=${LDFLAGS} -L${GMP_LIBRARY_DIRS} ${MPFR_LIBRARIES} ${FLINT_LIBRARIES}"
+		      "LDFLAGS=${LDFLAGS} -L${GMP_LIBRARY_DIRS} -L${MPFR_LIBRARIES} -L${FLINT_LIBRARIES}"
                       CC=${CMAKE_C_COMPILER}
 		      "OPENMP_CFLAGS=${OpenMP_C_FLAGS} ${OpenMP_C_LDLIBS}"
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
