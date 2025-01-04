@@ -225,6 +225,7 @@ GF(Ring) := GaloisField => opts -> (S) -> (
 	  );
      F.use = F -> var <- F_0;
      F.use F;
+     F.cache = new CacheTable;
      F / F := (x,y) -> if y == 0 then error "division by zero" else x // y;
      F % F := (x,y) -> if y == 0 then x else 0_F;
      F)
