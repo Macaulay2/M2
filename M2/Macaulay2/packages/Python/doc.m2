@@ -240,7 +240,7 @@ doc ///
       "PyRun_SimpleString"}@ from the Python C API.  Note that, unlike
       @TO "pythonValue"@, it has no return value.
     Example
-      runSimpleString "print('Hello, world!')"
+      runSimpleString "print('Hello, world!')" -* no-capture-flag *-
   SeeAlso
     pythonValue
 ///
