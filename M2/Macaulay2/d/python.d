@@ -67,30 +67,6 @@ PyObjectType(e:Expr):Expr := (
     else WrongArgPythonObject());
 setupfun("objectType",PyObjectType);
 
-PyObjectRichCompareBool(e1:Expr,e2:Expr,e3:Expr):Expr :=
-    when e1
-    is x:pythonObjectCell do
-	when e2
-	is y:pythonObjectCell do
-	    when e3
-	    is z:ZZcell do (
-		r := Ccode(int, "PyObject_RichCompareBool(",
-		    x.v, ", ", y.v, ", ",  toInt(z), ")");
-		if r == -1 then buildPythonErrorPacket()
-		else toExpr(r == 1))
-	    else WrongArgZZ(3)
-	is s:SpecialExpr do PyObjectRichCompareBool(e1, s.e, e3)
-	else WrongArgPythonObject(2)
-    is s:SpecialExpr do PyObjectRichCompareBool(s.e, e2, e3)
-    else WrongArgPythonObject(1);
-PyObjectRichCompareBool(e:Expr):Expr :=
-    when e
-    is a:Sequence do
-	if length(a) == 3 then PyObjectRichCompareBool(a.0, a.1, a.2)
-	else WrongNumArgs(3)
-    else WrongNumArgs(3);
-setupfun("pythonObjectRichCompareBool",PyObjectRichCompareBool);
-
 PyObjectHasAttrString(lhs:Expr,rhs:Expr):Expr :=
     when lhs
     is x:pythonObjectCell do

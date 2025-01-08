@@ -92,7 +92,6 @@ importFrom_Core {
     "pythonNone",
     "pythonObjectGetAttrString",
     "pythonObjectHasAttrString",
-    "pythonObjectRichCompareBool",
     "pythonObjectSetAttrString",
     "pythonObjectCall",
     "pythonObjectStr",
@@ -258,53 +257,43 @@ addPyToM2Function(
     "bool -> Boolean")
 value PythonObject := x -> runHooks((value, PythonObject), x)
 
--- Py_LT, Py_GT, and Py_EQ are #defines from /usr/include/python3.9/object.h
-PythonObject ? PythonObject := (x, y) ->
-    if pythonObjectRichCompareBool(x, y, -* Py_LT *- 0) then symbol < else
-    if pythonObjectRichCompareBool(x, y, -* Py_GT *- 4) then symbol > else
-    if pythonObjectRichCompareBool(x, y, -* Py_EQ *- 2) then symbol == else
-    incomparable
-PythonObject ? Thing := (x, y) -> x ? toPython y
-Thing ? PythonObject := (x, y) -> toPython x ? y
-
-PythonObject == PythonObject := (x, y) ->
-    pythonObjectRichCompareBool(x, y, -* Py_EQ *- 2)
-PythonObject == Thing := (x, y) -> x == toPython y
-Thing == PythonObject := (x, y) -> toPython x == y
-
-isimplemented = x -> value x@@"__class__"@@"__name__" != "NotImplementedType"
+-- binary operators
+operator = import "operator"
+truthy = value @@ (toFunction operator@@"truth")
 scan({
-	(symbol +, "add"),
-	(symbol -, "sub"),
-	(symbol *, "mul"),
-	(symbol @, "matmul"),
-	(symbol /, "truediv"),
-	(symbol //, "floordiv"),
-	(symbol %, "mod"),
-	(symbol ^, "pow"),
-	(symbol <<, "lshift"),
-	(symbol >>, "rshift"),
-	(symbol &, "and"),
-	(symbol |, "or"),
-	(symbol ^^, "xor"),
-	(symbol and, "and"),
-	(symbol or, "or"),
-	(symbol xor, "xor")},
-    (op, name) -> (
-	m := "__" | name | "__";
-	rm := "__r" | name | "__";
-	local r;
-	installMethod(op, PythonObject, PythonObject, (x, y) ->
-	    if hasattr(x, m) and isimplemented(r = x@@m y) then r else
-	    if hasattr(y, rm) and isimplemented(r = y@@rm x) then r else
-	    error("no method for ", format toString op));
-	installMethod(op, PythonObject, Thing, (x, y) ->
-	    (lookup(op, PythonObject, PythonObject))(x, toPython y));
-	installMethod(op, Thing, PythonObject, (x, y) ->
-	    (lookup(op, PythonObject, PythonObject))(toPython x, y))
-	)
-    )
+	(symbol +,  toFunction operator@@"add"),
+	(symbol -,  toFunction operator@@"sub"),
+	(symbol *,  toFunction operator@@"mul"),
+	(symbol @,  toFunction operator@@"matmul"),
+	(symbol /,  toFunction operator@@"truediv"),
+	(symbol //, toFunction operator@@"floordiv"),
+	(symbol %,  toFunction operator@@"mod"),
+	(symbol ^,  toFunction operator@@"pow"),
+	(symbol **, toFunction operator@@"pow"),
+	(symbol <<, toFunction operator@@"lshift"),
+	(symbol >>, toFunction operator@@"rshift"),
+	(symbol &,  toFunction operator@@"and_"),
+	(symbol |,  toFunction operator@@"or_"),
+	(symbol ^^, toFunction operator@@"xor"),
+	(symbol ==, value @@ (toFunction operator@@"eq")),
+	(symbol ?,  (x, y) -> (
+		if value operator@@"lt"(x, y) then symbol <
+		else if value operator@@"gt"(x, y) then symbol >
+		else if value operator@@"eq"(x, y) then symbol ==
+		else incomparable)),
+	-- TODO: if #3229 implemented, then simplify these
+	(symbol and, (x, y) -> if not truthy x then x else y),
+	(symbol or,  (x, y) -> if truthy x then x else y),
+	(symbol xor, (x, y) -> ( -- not a Python operator, but might as well
+		if      truthy x and not truthy y then x
+		else if truthy y and not truthy x then y
+		else toPython false))},
+    (op, f) -> (
+	installMethod(op, PythonObject, PythonObject, f);
+	installMethod(op, PythonObject, Thing,        f);
+	installMethod(op, Thing,        PythonObject, f)))
 
+-- augmented assignment
 scan({
 	(symbol +=, "iadd"),
 	(symbol -=, "isub"),
@@ -324,24 +313,24 @@ scan({
 	    if hasattr(x, m) then x@@m y
 	    else Default)))
 
--PythonObject := o -> o@@"__neg__"()
-+PythonObject := o -> o@@"__pos__"()
-abs PythonObject := o -> o@@"__abs__"()
-PythonObject~ := o -> o@@"__invert__"()
-
-?? PythonObject := x -> if x != pythonNone then x
+-- unary operators
+scan({
+	(symbol +,   toFunction operator@@"pos"),
+	(symbol -,   toFunction operator@@"neg"),
+	(symbol ??,  x -> if x != pythonNone then x),
+	(symbol not, toFunction operator@@"not_"),
+	(symbol ~,   toFunction operator@@"invert"),
+	(abs,        toFunction operator@@"abs"),
+	(iterator,   toFunction builtins@@"iter"),
+	(length,     value @@ (toFunction builtins@@"len")),
+	(next,       toFunction builtins@@"next"),
+	(round,      toFunction builtins@@"round")
+	},
+    (op, f) -> installMethod(op, PythonObject, f))
 
 PythonObject Thing := (o, x) -> (toFunction o) x
 
-length PythonObject := x -> value x@@"__len__"()
-
-next PythonObject := x -> x@@"__next__"();
-
-iterator PythonObject := x -> x@@"__iter__"()
-
-getitem = method()
-getitem(PythonObject, Thing) :=
-PythonObject_Thing := (x, i) -> x@@"__getitem__" toPython i
+PythonObject_Thing := toFunction operator@@"getitem"
 
 setitem = method()
 setitem(PythonObject, Thing, Thing) := (x, i, e) -> (
@@ -349,44 +338,27 @@ setitem(PythonObject, Thing, Thing) := (x, i, e) -> (
     null)
 PythonObject_Thing = setitem
 
-getattr = method()
-getattr(PythonObject, String) := pythonObjectGetAttrString
-PythonObject @@ Thing := (x, y) -> getattr(x, toString y)
-
-hasattr = method()
-hasattr(PythonObject, String) := pythonObjectHasAttrString
-
-setattr = method()
-setattr(PythonObject, String, Thing) := (x, y, e) ->
-    pythonObjectSetAttrString(x, y, toPython e)
-PythonObject @@ Thing = (x, y, e) -> setattr(x, toString y, e)
-
 isMember(Thing,        PythonObject) := (x, y) -> false
-isMember(PythonObject, PythonObject) := (x, y) -> value y@@"__contains__" x
+contains = operator@@"contains"
+isMember(PythonObject, PythonObject) := (x, y) -> value contains(y, x)
 
-quotientRemainder(PythonObject, PythonObject) := (x, y) -> (
-    qr := x@@"__divmod__" y;
+divmod = pythonValue "divmod"
+quotientRemainder(PythonObject, PythonObject) :=
+quotientRemainder(PythonObject, Thing)        :=
+quotientRemainder(Thing,        PythonObject) := (x, y) -> (
+    qr := divmod(x, y);
     (qr_0, qr_1))
-quotientRemainder(PythonObject, Thing) := (x, y
-    ) -> quotientRemainder(x, toPython y)
-quotientRemainder(Thing, PythonObject) := (x, y
-    ) -> quotientRemainder(toPython x, y)
 
-round(PythonObject, PythonObject) := (n, x) -> x@@"__round__" n
-round(ZZ, PythonObject) := (n, x) -> round(toPython n, x)
-round PythonObject := x -> round(pythonNone, x)
-truncate PythonObject := {} >> o -> x -> x@@"__trunc__"()
+importFrom(Core, "swap")
+round(PythonObject, PythonObject) :=
+round(PythonObject, Number)       :=
+round(ZZ,           PythonObject) := (toFunction builtins@@"round") @@ swap
 
--- __floor__ and __ceil__ were added for floats in Python 3.9
--- (https://bugs.python.org/issue38629), so we include backup definitions
--- for older versions
-if hasattr(pythonFloatFromDouble 1.0, "__floor__") then (
-    floor PythonObject := x -> x@@"__floor__"();
-    ceiling PythonObject := x -> x@@"__ceil__"()
-    ) else (
-    math := import "math";
-    floor PythonObject := toFunction math@@"floor";
-    ceiling PythonObject := toFunction math@@"ceil")
+math = import "math"
+truncate PythonObject := {} >> o -> toFunction math@@"trunc"
+floor PythonObject := toFunction math@@"floor"
+ceiling PythonObject := toFunction math@@"ceil"
+-- TODO: other stuff from math module? sin, cos, exp, etc?
 
 help#0 PythonObject := x -> toString x@@"__doc__"
 
