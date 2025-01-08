@@ -87,8 +87,8 @@ doc ///
     Text
       You can perform basic arithmetic on python objects.
     Example
-      x = pythonValue "5"
-      y = pythonValue "2"
+      x = toPython 5
+      y = toPython 2
       x + y
       x - y
       x * y
@@ -384,7 +384,7 @@ doc ///
       This is equivalent the Python @HREF {
       "https://docs.python.org/3/library/functions.html#len", "len"}@ function.
     Example
-      length pythonValue "'Hello, world!'"
+      length toPython "Hello, world!"
       length pythonValue "[1,2,3,4,5]"
 ///
 
@@ -555,7 +555,7 @@ doc ///
       "https://docs.python.org/3/library/functions.html#getattr", "getattr"}@
       function.
     Example
-      foo = pythonValue "'Hello, world!'"
+      foo = toPython "Hello, world!"
       (getattr(foo, "upper"))()
     Text
       In Python, "." is generally used as a shortcut for this function, but
@@ -585,7 +585,7 @@ doc ///
       "https://docs.python.org/3/library/functions.html#hasattr", "hasattr"}@
       function.
     Example
-      foo = pythonValue "'Hello, world!'"
+      foo = toPython "Hello, world!"
       hasattr(foo, "upper")
       hasattr(foo, "bar")
 ///
@@ -639,8 +639,8 @@ doc ///
       "https://docs.python.org/3/library/functions.html#type", "type"}@ function
       in Python.
     Example
-      objectType pythonValue "2"
-      objectType pythonValue "'Hello, world!'"
+      objectType toPython 2
+      objectType toPython "Hello, world!"
 ///
 
 doc ///
