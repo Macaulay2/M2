@@ -2,8 +2,6 @@
 this does not work unless M2 is compiled --with-python
 *-
 
-pythonPresent := Core#"private dictionary"#?"pythonRunString"
-
 newPackage("Python",
     Version => "0.6",
     Date => "January 28, 2024",
@@ -17,8 +15,7 @@ newPackage("Python",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
     Keywords => {"Interfaces"},
     AuxiliaryFiles => true,
-    CacheExampleOutput => true,
-    OptionalComponentsPresent => pythonPresent
+    OptionalComponentsPresent => Core#"private dictionary"#?"pythonRunString"
     )
 
 ---------------
@@ -62,13 +59,12 @@ newPackage("Python",
 
 *-
 
-verboseLog = if debugLevel > 0 then printerr else identity
-
-if pythonPresent then verboseLog "success: python is present" else (
-    verboseLog "warning: python is not present";
-    verboseLog "specify --with-python in `configure` options and recompile M2";
-    load "Python/no-python.m2";
-    load "Python/doc.m2";
+if not (options currentPackage).OptionalComponentsPresent
+then (
+    document {Key => "Python",
+	"Macaulay2 was built without Python support, so the Python package is ",
+	"not functional."};
+    printerr "warning; M2 was not compiled with Python support; ending";
     end)
 
 exportFrom_Core {

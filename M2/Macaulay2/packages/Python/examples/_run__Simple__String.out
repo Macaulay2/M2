@@ -1,6 +1,0 @@
--- -*- M2-comint -*- hash: 1331529053663
-
-i1 : runSimpleString "print('Hello, world!')"
-
-i2 : 
-Hello, world!
