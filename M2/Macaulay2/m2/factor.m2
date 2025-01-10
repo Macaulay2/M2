@@ -37,6 +37,7 @@ gcd(RingElement,RingElement) := RingElement => (r,s) -> (
 	       if s%a != 0 then error "can't find gcd in this ring";
 	       s // a))
      else notImplemented()))
+gcd RingElement := identity
 
 gcdCoefficients(RingElement,RingElement) := (f,g) -> (	    -- ??
      R := ring f;
@@ -52,6 +53,7 @@ lcm(RingElement,RingElement) := (f,g) -> (
     d := gcd(f, g);
     if d == 0 then d
     else f * (g // d))
+lcm RingElement := identity
 
 -----------------------------------------------------------------------------
 

@@ -148,7 +148,11 @@ document {
 	  (gcd, QQ, ZZ),
 	  (gcd, ZZ, ZZ),
 	  (gcd,RingElement,ZZ),
-	  (gcd,ZZ,RingElement)},
+	  (gcd,ZZ,RingElement),
+	  (gcd, ZZ),
+	  (gcd, QQ),
+	  (gcd, RingElement)
+	  },
      Headline => "greatest common divisor",
      Usage => "gcd(x,y,...)",
      Inputs => { "x" => ZZ, ", or ", ofClass QQ, ", or ",ofClass RingElement },
@@ -175,6 +179,9 @@ doc ///
     (lcm, ZZ, ZZ)
     (lcm,RingElement,ZZ)
     (lcm,ZZ,RingElement)
+    (lcm, ZZ)
+    (lcm, QQ)
+    (lcm, RingElement)
   Headline
     least common multiple
   Usage
