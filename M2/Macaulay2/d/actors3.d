@@ -2393,6 +2393,29 @@ gcd(x:Expr,y:Expr):Expr := (
 gcdfun(e:Expr):Expr := accumulate(plus0,plus1,gcd,e);
 setupfun("gcd0",gcdfun);
 
+gcdCoefficients(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 2 then (
+	    when a.0
+	    is x:ZZcell do (
+		when a.1
+		is y:ZZcell do (
+		    g := newZZmutable();
+		    s := newZZmutable();
+		    t := newZZmutable();
+		    Ccode(void, "mpz_gcdext(", g, ", ", s, ", ", t, ", ", x.v,
+			", ", y.v, ")");
+		    list(
+			Expr(ZZcell(moveToZZandclear(g))),
+			Expr(ZZcell(moveToZZandclear(s))),
+			Expr(ZZcell(moveToZZandclear(t)))))
+		else WrongArgZZ(2))
+	    else WrongArgZZ(1))
+	else WrongNumArgs(2))
+    else WrongNumArgs(2));
+setupfun("gcdCoefficients0", gcdCoefficients);
+
 binomial(e:Expr):Expr := (
     when e
     is a:Sequence do (
