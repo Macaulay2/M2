@@ -404,10 +404,36 @@ commguess = a -> (
     if n<=1 or (n==2 and liftable(pr#0#0,coefficientRing R)) then return; -- failed to factor
     Product pr
     )
+
+-- TESTS --------------------------------------------
+tst = method()
+tst RingElement := x -> ( f := factorWA x; f' := unique (value \ f); assert(#f' == 1 and f'#0 == x); #f )
+TEST ///
+importFrom(WeylAlgebras,"tst")
+R1=makeWA(QQ[x_1])
+A=(1+x_1)*(2+dx_1);
+p_12=A*(A-1)*(A-2); -- 11 facs (could be fewer if commutation of arbitrary factors is allowed)
+assert(tst p_12 == 11)
+///
+
+TEST ///
+importFrom(WeylAlgebras,"tst")
+R2=makeWA(QQ[x_1,x_2])
+h_1=(dx_1+1)^2*(dx_1+x_1*dx_2) -- 2 factorisations
+assert(tst h_1 == 2)
+p_3=(x_1*dx_2+x_2*dx_1)*(3+x_1*dx_1)*(4+x_2*dx_2) -- should give unique fac
+assert(tst p_3 == 1)
+///
+
+TEST ///
+importFrom(WeylAlgebras,"tst")
+R3=makeWA(QQ[x_1..x_3])
+h_3=x_1*x_2^2*x_3^3*dx_1*dx_2^2+x_2*x_3^3*dx_2 -- homogeneous -- 60 factorisations but really all of them are identical up to permutation of commuting parts
+assert(tst h_3 == 1)
+///
 end
 --
 
-tst = x -> ( f := factorWA x; f' := unique (value \ f); assert(#f' == 1 and f'#0 == x); #f )
 
 -- test cases
 R1=makeWA(QQ[x_1])
