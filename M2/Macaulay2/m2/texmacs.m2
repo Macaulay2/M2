@@ -5,7 +5,7 @@ needs "reals.m2"
 TeXmacsBegin = "\2"
 TeXmacsEnd   = "\5"
 fix := s -> replace("\2|\5","\33\\0",s)
-fixn := s -> concatenate between("\0", apply(separate("\0", s), fix))
+fixn := s -> concatenate between("\0", apply(separate("\\0", s), fix))
 red := p -> concatenate("<mstyle color=\"red\">",concatenate p,"</mstyle>")
 mathMode := s -> concatenate("<math xmlns=\"http://www.w3.org/1998/Math/MathML\">",concatenate s,"</math>")
 para := p -> concatenate("<p>",concatenate p,"</p>")
