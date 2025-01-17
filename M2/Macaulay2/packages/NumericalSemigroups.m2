@@ -461,7 +461,7 @@ apery List := HashTable => L -> (
     a := 0; -- number of keys already filled in A
     S := set L + set{0}; -- S will hold all the semigroup elmeents found, including 0
 
-    --now look for new Apery set elememts and semigroup elements until
+    --now look for new Apery set elements and semigroup elements until
     --all the keys have been filled.
     s := m;
     while a < m-1 do(
@@ -2097,7 +2097,7 @@ Outputs
   degrees of a basis of T^1(semigroupRing L)
 Description
   Text
-   T^1(B) is the tangent space to the versal deformaion of
+   T^1(B) is the tangent space to the versal deformation of
    the ring B, and is finite dimensional when B has isolated
    singularity. If B = S/I is a Cohen presentation, then
    T^1(B) = coker Hom(Omega_S, B) -> Hom(I/I^2, B).
@@ -2797,7 +2797,7 @@ Inputs
  g:ZZ
   genus
  m:ZZ
-  mutiplicity
+  multiplicity
  c:ZZ
   conductor
 Outputs

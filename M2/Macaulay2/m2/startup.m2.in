@@ -161,9 +161,7 @@ if firstTime then (
 
      Attributes = new MutableHashTable;
      -- values are hash tables with keys Symbol, String, Net (as symbols); replaces ReverseDictionary and PrintNames
-     setAttribute = (val,attr,x) -> (
-	  if Attributes#?val then Attributes#val else Attributes#val = new MutableHashTable
-	  )#attr = x;
+     setAttribute = (val,attr,x) -> ( Attributes#val ??= new MutableHashTable )#attr = x;
      hasAnAttribute = (val) -> Attributes#?val;
      hasAttribute = (val,attr) -> Attributes#?val and Attributes#val#?attr;
      getAttribute = (val,attr) -> Attributes#val#attr;

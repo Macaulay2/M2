@@ -604,7 +604,7 @@ poincare Complex := C -> (
 
 poincareN Complex := C -> (
     S := degreesRing ring C;
-    if not S.?poincareN then S.poincareN = (
+    R := S.poincareN ??= (
         s := getSymbol "S";
         t := getSymbol "T";
         ZZ (monoid[s, t_0 .. t_(degreeLength ring C - 1), 
@@ -612,7 +612,6 @@ poincareN Complex := C -> (
                 MonomialOrder => RevLex, 
                 Global => false])
         );
-    R := S.poincareN;
     (lo,hi) := concentration C;
     f := 0_R;
     for i from lo to hi do (
@@ -1089,7 +1088,7 @@ Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
     liftmap := null; -- given f : R^1 --> H, returns g : R^1 --> Hom(FM_i, N)
     invmap := null; -- given g : R^1 --> Hom(FM_i, N), returns f : R^1 --> H = Ext^i(M,N)
     Y := youngest(M.cache.cache,N.cache.cache);
-    if not Y#?(Ext,i,M,N) then Y#(Ext,i,M,N) = (
+    Y#(Ext,i,M,N) ??= (
         R := ring M;
         if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
         if R =!= ring N then error "expected modules over the same ring";
@@ -1134,8 +1133,7 @@ Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
         H.cache.formation = FunctionApplication { Ext, (i, M, N) };
         H.cache.Ext = (i,M,N);
         H
-        );
-    Y#(Ext,i,M,N)
+	)
     )
 
 yonedaExtension = method()

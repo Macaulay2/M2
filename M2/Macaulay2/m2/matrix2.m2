@@ -357,10 +357,7 @@ addHook((quotient, Matrix, Matrix), Strategy => Default, (opts, f, g) -> (
      -- now M is a quotient module, without explicit generators
      f' := matrix f;
      g' := matrix g;
-     G := (
-	  if g.cache#?"gb for quotient"
-	  then g.cache#"gb for quotient"
-	  else g.cache#"gb for quotient" = (
+     G := ( g.cache#"gb for quotient" ??= (
 	       if M.?relations 
 	       then gb(g' | relations M, ChangeMatrix => true, SyzygyRows => rank source g')
 	       else gb(g',               ChangeMatrix => true)));

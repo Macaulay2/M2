@@ -62,7 +62,7 @@ Hom(Matrix, Matrix) := Matrix => o -> (f, g) -> Hom(source f, g, o) * Hom(f, sou
 -----------------------------------------------------------------------------
 
 -- TODO: compare speed with Hom(M, R^1)
-dual Module := Module => {} >> o -> F -> if F.cache.?dual then F.cache.dual else F.cache.dual = (
+dual Module := Module => {} >> o -> F -> F.cache.dual ??= (
      if not isFreeModule F then kernel transpose presentation F
      else new Module from (ring F,rawDual raw F))
 

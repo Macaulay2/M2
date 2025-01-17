@@ -112,7 +112,10 @@ doc ///
       The null coalescing operator can be combined with
       @TO "augmented assignment"@ as a shortcut for
       @M2CODE "if x === null then x = y"@ and
-      @M2CODE "if not x#?i then x#i = y"@.
+      @M2CODE "if not x#?i then x#i = y"@.  Note that it behaves
+      slightly differently than other augmented assignment operators,
+      as @CODE "x ??= y"@ is treated like @CODE "x ?? (x = y)"@ rather
+      than @CODE "x = x ?? y"@.
     Example
       x = null
       x ??= 2

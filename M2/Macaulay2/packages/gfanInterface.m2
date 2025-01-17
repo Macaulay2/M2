@@ -753,7 +753,7 @@ gfanConvertToNewRing (PolynomialRing) := R1 -> (
   --produced by this method.
   R1Gens := gens R1;
   numDigits := length (toString (#R1Gens));
-  R2 := (coefficientRing R1) (for i in 1..#R1Gens list (
+  R2 := (coefficientRing R1) new Array from (for i in 1..#R1Gens list (
     value ("x" | demark ("",for i from 1 to numDigits-(length toString i) list "0") | toString i)
   ) );
   R2Gens := gens R2;
@@ -4435,6 +4435,15 @@ doc///
 	 Bprime = markedPolynomialList {{x^2, y^3},{x^2 + y^2, y^3 + x*y + y^2}}
 	 assert equalMPL(B,Bprime)
 	 ///
+
+-- TEST gfanConvertToNewRing x NCAlgebra (cf. #3600)
+	TEST ///
+	debug needsPackage "gfanInterface"
+	R = QQ[a];
+	gfanConvertToNewRing(R);
+	needsPackage "NCAlgebra";
+	gfanConvertToNewRing(R)
+	///
 
 	-- TEST gfanBuchberger
 	TEST ///

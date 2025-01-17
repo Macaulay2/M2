@@ -265,7 +265,9 @@ doc ///
 doc ///
   Key
     selectPairs
+    (selectPairs, BasicList, Function)
     (selectPairs, HashTable, Function)
+    (selectPairs, ZZ, BasicList, Function)
     (selectPairs, ZZ, HashTable, Function)
   Headline
     select a part of a hash table by pairs
@@ -274,10 +276,10 @@ doc ///
     selectPairs(n, x, f)
   Inputs
     n:ZZ
-    x:HashTable -- must be immutable
+    x:{HashTable, BasicList}
     f:Function
   Outputs
-    :HashTable
+    :{HashTable, BasicList}
       containing all (or @VAR "n"@, if it is given) key-value pairs
       (@VAR "k"@,@VAR "v"@) from @VAR "x"@ for which @CODE "f(k,v)"@ evaluates
       to true.
@@ -286,6 +288,14 @@ doc ///
       x = hashTable{(1, 2), (2, 4), (3, 6), (4, 8), (5, 10)}
       selectPairs(x, (k,v) -> odd(k + v))
       selectPairs(2, x, (k, v) -> odd(k + v))
+    Text
+      If @CODE "x"@ is not a hash table, then @M2CODE "select(pairs x, f)"@
+      (or @M2CODE "select(n, pairs x, f)"@) is called.
+    Example
+      selectPairs(toList(1..10), (i, x) -> even x)
+      selectPairs(3, toList(1..10), (i, x) -> even x)
+  Caveat
+    If @CODE "x"@ is a hash table, then it must be immutable.
   SeeAlso
     selectValues
     selectKeys

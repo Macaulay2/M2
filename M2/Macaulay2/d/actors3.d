@@ -2,6 +2,7 @@
 
 use evaluate;
 use actors;
+use actors2;
 use ballarith;
 
 isOption(e:Expr):bool := (
@@ -82,7 +83,7 @@ override(e:Expr):Expr := (
 	  if length(args) == 2 then (
 	       when args.0
 	       is h:HashTable do (
-		    if h.Mutable then WrongArg("an immutable hash table")
+		    if h.Mutable then WrongArgImmutableHashTable()
 		    else when args.1 is v:Sequence do override(h,v,numOptions(v))
 		    else override(h,Sequence(args.1),if isOption(args.1) then 1 else 0)
 		    )
@@ -1895,6 +1896,22 @@ map(e:Expr):Expr := (
      else WrongNumArgs(2,3));
 setupfun("apply",map);
 
+applyPairs(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 2 then (
+	    when a.0
+	    is o:HashTable do (
+		if o.Mutable then WrongArgImmutableHashTable(1)
+		else mappairs(a.1, o))
+	    -- # typical value: applyPairs, BasicList, Function, List
+	    -- # typical value: applyPairs, Dictionary, Function, List
+	    -- # typical value: applyPairs, Thing, Function, Iterator
+	    else map(pairs(a.0), a.1))
+	else WrongNumArgs(2))
+    else WrongNumArgs(2));
+setupfun("applyPairs", applyPairs);
+
 -- # typical value: scan, ZZ, Function, Thing
 scan(n:int,f:Expr):Expr := (
      if n <= 0 then return nullE;
@@ -2345,6 +2362,20 @@ scan(e:Expr):Expr := (
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
 setupfun("scan",scan);
+
+-- # typical value: scanPairs, Thing, Function, Nothing
+scanPairs(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 2 then (
+	    when a.0
+	    is o:HashTable do (
+		if o.Mutable then WrongArgImmutableHashTable(1)
+		else scanpairs(a.1, o))
+	    else scan(pairs(a.0), a.1))
+	else WrongNumArgs(2))
+    else WrongNumArgs(2));
+setupfun("scanPairs", scanPairs);
 
 nextPrime(e:Expr):Expr := (
      when e
