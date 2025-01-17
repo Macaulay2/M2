@@ -15,11 +15,28 @@ mtable := x -> concatenate(
      apply(x, row -> ( "<mtr>", apply(row, e -> ("<mtd>",e,"</mtd>",newline)), "</mtr>", newline ) ),
      "</mtable>", newline )
 fmt := x -> concatenate lines try mathML x else mathML toString x;
+po := () -> red concatenate("<mi>", interpreterDepth:"o", toString lineNumber,"</mi>")
 Thing#{TeXmacs,Print} = send := v -> (
-     po := red concatenate("<mi>o",toString lineNumber,"</mi>");
-     << tmhtml fixn mathMode mtable {{po,red "<mo>=</mo>",fmt v},{},{po,red "<mo>:</mo>",fmt class v}})
+     << tmhtml fixn mathMode mtable {{po(), red "<mo>=</mo>",fmt v}})
 Nothing#{TeXmacs,Print} = identity
 InexactNumber#{TeXmacs,Print} = v -> withFullPrecision ( () -> send v )
+
+tmAfterPrint = x -> (
+    << endl
+    << tmhtml fixn mathMode mtable {{po(), red "<mo>:</mo>",
+	    concatenate apply(deepSplice sequence x,
+		y -> if y =!= null then fmt y)}})
+
+Thing#{TeXmacs,AfterPrint} = x -> (
+    l := lookup(AfterPrint, class x);
+    if l === null then return;
+    s := l x;
+    if s =!= null then tmAfterPrint s)
+Thing#{TeXmacs,AfterNoPrint} = x -> (
+    l := lookup(AfterNoPrint, class x);
+    if l === null then return;
+    s := l x;
+    if s =!= null then tmAfterPrint s)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
