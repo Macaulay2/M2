@@ -144,6 +144,7 @@ mathML ChainComplex := C -> (
      s := sort spots C;
      if #s === 0 then mathML "0"
      else mtable transpose between({leftarrow,"",""}, toList apply(s#0 .. s#-1,i -> {mathML C_i,"",mathML i})))
+mathML MapExpression := x -> mrow {mathML x#0, leftarrow, mathML x#1}
 mathML Option := s -> concatenate("<mrow>",mathML s#0, doublerightarrow, mathML s#1, "</mrow>")
 mathML Type :=
 mathML ImmutableType := R -> if R.?mathML then R.mathML else mathML expression R
