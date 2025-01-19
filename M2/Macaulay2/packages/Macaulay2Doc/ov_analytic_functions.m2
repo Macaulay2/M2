@@ -20,6 +20,7 @@ Node
     :Special functions
       integrate
       abs
+      sign
       floor
       (floor, Number)
       ceiling
