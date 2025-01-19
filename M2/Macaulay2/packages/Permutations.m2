@@ -33,7 +33,6 @@ export {
     "isCDG",
     "foataBijection",
     "ord",
-    "sign",
     "isEven",
     "isOdd",
     "isDerangement",
@@ -327,7 +326,6 @@ ord Permutation := ZZ => w -> (
 
 -- see https://en.wikipedia.org/wiki/Parity_of_a_permutation for different ways
 -- to compute the sign or parity of a permutation
-sign = method()
 sign Permutation := ZZ => w -> (
     if even(#w - #(cycleDecomposition w)) then 1 else -1
 )

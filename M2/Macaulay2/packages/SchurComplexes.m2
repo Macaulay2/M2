@@ -251,7 +251,7 @@ homologicalDegree(HashTable,List,List) := (T,evengen,oddgen) -> sum for b in key
 ------Straightening algorithm
 
 --Inputs: U= List, V= permutation represented as a list. Outputs: sign of the induced permutation on the unmarked elements of U.
-sign = (U,V)-> (
+sgn = (U,V)-> (
     n:=#U;
     answer:=1;
     for i from 0 to n-2 do (
@@ -288,7 +288,7 @@ shuffle = (T, vio, downCol2, lambdaprime) -> (
     indicesofL:=toList (0..(#L-1));
     subsetsofLofsizetruncatedcol1:=subsets(indicesofL,#truncatedcol1);
     pairs1:=apply(subsetsofLofsizetruncatedcol1, x-> (x, indicesofL-(set x)));
-    signs:=apply(pairs1, x-> sign(L,join(x)));
+    signs:=apply(pairs1, x-> sgn(L,join(x)));
     outputlist:={}; 
     dividedContributions := for i from 0 to (#pairs1-1) list (
 	dividedContribution := 1; --contribution from divided power multiplication
