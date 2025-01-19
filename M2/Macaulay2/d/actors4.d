@@ -99,7 +99,7 @@ setupfun("setGroupID",setpgidfun);
 absfun(e:Expr):Expr := (
      when e
      is i:ZZcell do toExpr(abs(i.v))
-     is x:RRcell do toExpr(if sign(x.v) then -x.v else x.v)
+     is x:RRcell do toExpr(if signbit(x.v) then -x.v else x.v)
      is x:RRicell do toExpr(abs(x.v))
      is x:CCcell do toExpr(abs(x.v))
      is r:QQcell do toExpr(abs(r.v))

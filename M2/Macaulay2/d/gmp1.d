@@ -76,7 +76,7 @@ export format(
      sep:string,		     -- separator between mantissa and exponent
      x:RR						-- the number to format
      ) : array(string) := (	   -- return: ("-","132.456") or ("","123.456")
-     ng := sign(x);
+     ng := signbit(x);
      if isinf(x) then return array(string)(if ng then "-" else "","infinity");
      if isnan(x) then return array(string)(if ng then "-" else "","NotANumber");
      meaningful := int(floor(precision(x) / log2ten)) + 1;
@@ -177,9 +177,9 @@ tostringRRipointer = tostringRRi;
 
 
 export toExternalString(x:RR):string := (
-     if isinf(x) then return if x < 0 then "-infinity" else "infinity";
-     if isnan(x) then return if sign(x) then "-NotANumber" else "NotANumber";
-     ng := sign(x);
+     ng := signbit(x);
+     if isinf(x) then return if ng then "-infinity" else "infinity";
+     if isnan(x) then return if ng then "-NotANumber" else "NotANumber";
      if ng then x = -x;
      ex := long(0);
      s := getstr(ex, base, 0, x);
