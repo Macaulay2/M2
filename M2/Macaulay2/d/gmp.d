@@ -92,11 +92,10 @@ export min(x:ulong,y:ulong):ulong := if x<y then x else y;
 
 export max(x:ulong,y:ulong):ulong := if x<y then y else x;
 
-
-
-isPositive0(x:ZZ) ::=  1 == Ccode(int, "mpz_sgn(", x, ")");
-isZero0    (x:ZZ) ::=  0 == Ccode(int, "mpz_sgn(", x, ")");
-isNegative0(x:ZZ) ::= -1 == Ccode(int, "mpz_sgn(", x, ")");
+export sign(x:ZZ):int := Ccode(int, "mpz_sgn(", x, ")");
+isPositive0(x:ZZ) ::=  1 == sign(x);
+isZero0    (x:ZZ) ::=  0 == sign(x);
+isNegative0(x:ZZ) ::= -1 == sign(x);
 
 export isPositive(x:ZZ):bool := isPositive0(x);
 
