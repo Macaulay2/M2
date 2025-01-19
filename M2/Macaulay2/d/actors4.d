@@ -106,6 +106,17 @@ absfun(e:Expr):Expr := (
      else WrongArg("a number, real or complex"));
 setupfun("abs0",absfun);
 
+sign(e:Expr):Expr := (
+    when e
+    is x:ZZcell do toExpr(sign(x.v))
+    is x:QQcell do toExpr(sign(x.v))
+    is x:RRcell do toExpr(sign(x.v))
+    is x:CCcell do (
+	if isZero(x.v) then toExpr(toCC(0, 0, precision(x.v)))
+	else toExpr(x.v / abs(x.v)))
+    else WrongArg("a number, real or complex"));
+setupfun("sign0", sign);
+
 select(a:Sequence,f:Expr):Expr := (
      b := new array(bool) len length(a) do provide false;
      found := 0;
