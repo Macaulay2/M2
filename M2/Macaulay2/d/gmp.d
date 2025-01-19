@@ -644,8 +644,9 @@ export denominatorRef(x:QQmutable) ::= Ccode( ZZmutable, "mpq_denref(",  x, ")")
 
 export hash(x:QQ):hash_t := hash(numeratorRef(x))+1299841*hash(denominatorRef(x));
 
-isZero0    (x:QQ):bool :=  0 == Ccode(int, "mpq_sgn(",x,")");
-isNegative0(x:QQ):bool := -1 == Ccode(int, "mpq_sgn(",x,")");
+export sign(x:QQ):int := Ccode(int, "mpq_sgn(",x,")");
+isZero0    (x:QQ):bool :=  0 == sign(x);
+isNegative0(x:QQ):bool := -1 == sign(x);
 
 export isZero    (x:QQ):bool := isZero0(x);
 export isNegative(x:QQ):bool := isNegative0(x);
