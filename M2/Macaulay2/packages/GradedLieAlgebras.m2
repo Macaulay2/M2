@@ -72,7 +72,6 @@ export {
     "mbRing",
     "minimalModel",
     "normalForm",
-    "sign",
     "Signs",
     "weight",    
     "VectorSpace",
@@ -2464,8 +2463,6 @@ isignlocal(BasicList,LieAlgebra):=(x,L)->
 -- the sign of an element 
 -- in the Ext-algebra
 
-
-sign=method()
 sign(LieElement) := (x)->(
     L:=class x;
    -- xx:=normalForm(x);
