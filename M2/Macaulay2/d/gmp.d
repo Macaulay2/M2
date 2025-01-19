@@ -2576,9 +2576,7 @@ export yn(n:long,x:RR):RR := (
      Ccode( void, "mpfr_yn(", z, ",",n,",", x, ", MPFR_RNDN)" );
      moveToRRandclear(z));
 
-export sign(x:RR):bool := 0 != Ccode(int,"mpfr_signbit(",x,")");
-
-export sign(x:RRi):bool := 0 != Ccode(int,"mpfi_is_neg(",x,")");
+export signbit(x:RR):bool := 0 != Ccode(int,"mpfr_signbit(",x,")");
 
 -- complex transcendental functions
 
