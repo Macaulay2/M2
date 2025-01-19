@@ -57,6 +57,10 @@ abs = method()
 abs ZZ := abs RR := abs RRi := abs CC := abs QQ := abs0
 abs Constant := abs @@ numeric
 
+sign = method()
+sign Number := sign0
+sign Constant := sign @@ numeric
+
 lcm = method(Binary => true)
 installMethod(lcm, () -> 1)
 lcm(ZZ,ZZ) := (f,g) -> (
