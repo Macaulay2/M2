@@ -384,14 +384,14 @@ detectGrassmannian (QuotientRing) := (G) -> (
 
 duality = method(TypicalValue => RingMap); -- p. 94 [Gelfand, Kapranov, Zelevinsky - Discriminants, resultants, and multidimensional determinants, 1994]
 
-sign = (permutation) -> sub(product(subsets(0..#permutation-1,2),I->(permutation_(I_1)-permutation_(I_0))/(I_1-I_0)),ZZ); -- thanks to Nivaldo Medeiros 
+sgn = (permutation) -> sub(product(subsets(0..#permutation-1,2),I->(permutation_(I_1)-permutation_(I_0))/(I_1-I_0)),ZZ); -- thanks to Nivaldo Medeiros 
 tosequence = (L) -> if #L != 1 then toSequence L else L_0;
 
 duality(PolynomialRing) := (R) -> (  -- returns the map R:=G(k,P^n) ---> G(n-k-1,P^n*)
    (k,n,KK,p) := detectGrassmannian R; 
    G := ambient Grass(k,n,KK,Variable=>p);
    G' := ambient Grass(n-k-1,n,KK,Variable=>p);  
-   L := for U in subsets(set(0..n),n-k) list sign( (sort toList(set(0..n)-U)) | sort toList U)  *  (p_(tosequence sort toList(set(0..n)-U)))_G;
+   L := for U in subsets(set(0..n),n-k) list sgn( (sort toList(set(0..n)-U)) | sort toList U)  *  (p_(tosequence sort toList(set(0..n)-U)))_G;
    return(map(R,G,vars R) * map(G,G',L));
 );
 

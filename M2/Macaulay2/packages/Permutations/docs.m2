@@ -321,7 +321,7 @@ doc ///
   records
   trim
   saliances
-  sign
+  (sign, Permutation)
   (matrix, Permutation)
 ///
 
@@ -1209,13 +1209,13 @@ doc ///
     Text
       A permutation $p$ is {\em even} if it can be written as a product of an
       even number of transpositions. Equivalently, a permutation is even if its
-      @TO sign@ is $1$.
+      @TO2 {(sign, Permutation), "sign"}@ is $1$.
     Example
       p = permutation {3,1,2,5,4}
       isEven p
   SeeAlso
     isOdd
-    sign
+    (sign, Permutation)
 ///
 
 -- isOdd
@@ -1235,13 +1235,13 @@ doc ///
     Text
       A permutation $p$ is {\em odd} if it can be written as a product of an
       odd number of transpositions. Equivalently, a permutation is odd if its
-      @TO sign@ is $-1$.
+      @TO2 {(sign, Permutation), "sign"}@ is $-1$.
     Example
       p = permutation {3,1,2,5,4}
       isOdd p
   SeeAlso
     isEven
-    sign
+    (sign, Permutation)
 ///
 
 -- isWellDefined
@@ -1425,7 +1425,6 @@ doc ///
 -- sign
 doc ///
   Key
-    sign
     (sign, Permutation)
   Headline
     computes the sign of a permutation
