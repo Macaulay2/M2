@@ -855,10 +855,11 @@ export realPart(z:CC):RR := z.re;
 export imaginaryPart(z:CC):RR := z.im;
 
 -- warning: these routines just check the sign bit, and don't verify finiteness!
-isPositive0(x:RR) ::=  1 == Ccode(int, "mpfr_sgn(", x, ")");
-isNegative0(x:RR) ::= -1 == Ccode(int, "mpfr_sgn(", x, ")");
-isZero0    (x:RR) ::=  0 == Ccode(int, "mpfr_sgn(", x, ")");
-                                    
+export sign(x:RR):int := Ccode(int, "mpfr_sgn(", x, ")");
+isPositive0(x:RR) ::=  1 == sign(x);
+isNegative0(x:RR) ::= -1 == sign(x);
+isZero0    (x:RR) ::=  0 == sign(x);
+
 isPositive0(x:RRi) ::=  0 < Ccode(int, "mpfi_is_strictly_pos(", x, ")");
 isNegative0(x:RRi) ::=  0 < Ccode(int, "mpfi_is_strictly_neg(", x, ")");
 isZero0    (x:RRi) ::=  0 < Ccode(int, "mpfi_is_zero(", x, ")");
