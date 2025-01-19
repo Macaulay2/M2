@@ -1086,6 +1086,12 @@ assert( rawFareyApproximation(numeric pi, 10) == 22/7 )
 assert( rawFareyApproximation(numeric pi, 200) == 355/113 )
 assert( rawFareyApproximation(-pi, 10) == -22/7 )
 
+assert( sign 5 == 1 )
+assert( sign pi == 1 )
+assert( sign 0/1 == 0 )
+assert( sign(-3) == -1 )
+assert( sign(-5 * ii) == -ii )
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test numbers.out"
 -- End:
