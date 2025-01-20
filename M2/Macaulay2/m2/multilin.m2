@@ -125,6 +125,14 @@ wedgeProduct(ZZ, ZZ, Module) := Matrix => (p, q, M) -> (
      if isFreeModule M then map(ring M, rawWedgeProduct(p,q,raw M))
      else map(exteriorPower(p+q,M),exteriorPower(p,M)**exteriorPower(q,M),wedgeProduct(p,q,cover M)))
 
+-- TODO: document this
+-- TODO: generalize to wedgeCoproduct(p, q, M)
+comultiplication = method()
+comultiplication(ZZ, Module) := Matrix => (i, M) -> (
+    map(exteriorPower(i-1, M) ** M,
+	exteriorPower(i,   M),
+	transpose wedgeProduct(i-1, 1, cover M)))
+
 -----------------------------------------------------------------------------
 -- ideals of minors, permanents, and pfaffians
 -----------------------------------------------------------------------------
