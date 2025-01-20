@@ -17,11 +17,12 @@ toExternalString InfiniteNumber := x -> getAttribute(x,PrintNames)
 
 IndeterminateNumber = new Type of Number
 IndeterminateNumber.synonym = "indeterminate number"
-indeterminate = new IndeterminateNumber from {}
+indeterminate = new IndeterminateNumber from {"indeterminate"}
+NotANumber = new IndeterminateNumber from {"NotANumber"}
 setAttribute(indeterminate,ReverseDictionary,symbol indeterminate)
 toString         IndeterminateNumber :=
 net              IndeterminateNumber :=
-toExternalString IndeterminateNumber := x -> "indeterminate"
+toExternalString IndeterminateNumber := first
 texMath IndeterminateNumber := x -> texMath toString x
 numeric(ZZ, IndeterminateNumber) := (prec, x) -> (
     numeric(prec, 0) * numeric(prec, infinity))
