@@ -91,9 +91,11 @@ export {
 -- PZJ's factor
 load "./WeylAlgebras/factorWA.m2"
 export {
-    "factorWA",
+    "factorWeylAlgebra",
+    "factorWA" => "factorWeylAlgebra",
     "StopAfter",
-    "factorWA1",
+    "factorWeylAlgebra1",
+    "factorWA1" => "factorWeylAlgebra1",
     }
 
 --------------------------------------------------------------------------------
