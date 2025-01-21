@@ -174,23 +174,23 @@ combineFac = (z,y) -> (
         );
     debugPrint_2("combined ",z);
     z
-    )  -- used to be: L=L|(times\(fa**fb));
+    )
 
 
-factorWAcache = new CacheTable
-factorWA = method(Options=>{StopAfter=>infinity})
-factorWA RingElement := o -> a -> (
-    if factorWAcache#?a and factorWAcache#a#0>=o.StopAfter then return factorWAcache#a#1;
+factorWeylAlgebracache = new CacheTable
+factorWeylAlgebra = method(Options=>{StopAfter=>infinity})
+factorWeylAlgebra RingElement := o -> a -> (
+    if factorWeylAlgebracache#?a and factorWeylAlgebracache#a#0>=o.StopAfter then return factorWeylAlgebracache#a#1;
     debugPrint_1("factoring ",a);
     ret := x -> ( -- things to do before returning
         if class x =!= List then x = if class x === MutableHashTable then keys x else {x};
-        factorWAcache#a=(o.StopAfter,x);
+        factorWeylAlgebracache#a=(o.StopAfter,x);
 	x
         );
     R0:=ring a;
     if liftable(a,coefficientRing R0) then return ret Product{Power{a,1}};
     (cf,a'):=pullConstant a;
-    if cf!=1 then return ret apply(factorWA(a',o),x -> prepend(Power{promote(cf,R0),1},x));
+    if cf!=1 then return ret apply(factorWeylAlgebra(a',o),x -> prepend(Power{promote(cf,R0),1},x));
     n:=numgens R0//2;
     l:=listForm a;
     m:=max \ (transpose(first\l)); -- max degrees
@@ -211,7 +211,7 @@ factorWA RingElement := o -> a -> (
         debugPrint_1("partially commutative, factored as ",g);
         L#(Product{})=true;
         scan(g,f->(
-		f':=factorWA(f#0,o);
+		f':=factorWeylAlgebra(f#0,o);
 		LL:=new MutableHashTable;
 		scan(keys L, b -> scan(f', f'' -> (
 			    scan(f#1,i -> b=combineFac(b,f''));
@@ -245,9 +245,7 @@ factorWA RingElement := o -> a -> (
             if deg1#0>=deg2#0 or deg1#1>=deg2#1 then continue;
             e0:=first\(listForm fac1#0|listForm fac2#0);
             e1:=first\(listForm fac1#1|listForm fac2#1);
-            --ma:=select(s,x->deg x>deg1a and deg x<deg2a);
             ma:=select(s,x->deg x>deg1#0 and deg x<deg2#0 and all(e1,y->ss#?(x+y))); -- are these bounds optimal?
-            --mb:=select(s,x->deg x>deg1b and deg x<deg2b);
             mb:=select(s,x->deg x>deg1#1 and deg x<deg2#1 and all(e0,y->ss#?(x+y)));
             (#ma+#mb+1,fac1,fac2,ma,mb)
             )
@@ -264,8 +262,8 @@ factorWA RingElement := o -> a -> (
 	local cfb;
 	(cfb,pb')=pullConstant pb'; -- for optimisation purposes
 	L'=append(L',pb');
-	fa:=factorWA(cfb*pa',o);
-	fb:=factorWA(pb',o);
+	fa:=factorWeylAlgebra(cfb*pa',o);
+	fb:=factorWeylAlgebra(pb',o);
 	-- if (#fb==1 and #(fb#0)==1) then -- we can safely ignore factorisable pb' -- though doesn't seem to improve performance
 	debugPrint_1("adding to list ",fa," ",fb);
 	-- scan(fa, x -> L#(combineFac(precf x,fb#0))=true); -- same remark as above
@@ -323,8 +321,9 @@ factorWA RingElement := o -> a -> (
     else ret L -- a is reducible: return list of factorisations
     )
 
-factorWA1 = a -> first factorWA(a,StopAfter=>1) -- shortcut
+factorWeylAlgebra1 = a -> first factorWeylAlgebra(a,StopAfter=>1) -- shortcut
 
+-- needed because of https://github.com/Macaulay2/M2/issues/3513
 kernelFromRREF = m -> (
     r:=entries reducedRowEchelonForm m;
     -- TODO edge cases
@@ -407,7 +406,7 @@ commguess = a -> (
 
 -- TESTS --------------------------------------------
 tst = method()
-tst RingElement := x -> ( f := factorWA x; f' := unique (value \ f); assert(#f' == 1 and f'#0 == x); #f )
+tst RingElement := x -> ( f := factorWeylAlgebra x; f' := unique (value \ f); assert(#f' == 1 and f'#0 == x); #f )
 TEST ///
 importFrom(WeylAlgebras,"tst")
 R1=makeWA(QQ[x_1])
@@ -431,6 +430,75 @@ R3=makeWA(QQ[x_1..x_3])
 h_3=x_1*x_2^2*x_3^3*dx_1*dx_2^2+x_2*x_3^3*dx_2 -- homogeneous -- 60 factorisations but really all of them are identical up to permutation of commuting parts
 assert(tst h_3 == 1)
 ///
+
+-- DOCUMENTATION
+beginDocumentation()
+doc ///
+ Node
+  Key
+    factorWeylAlgebra
+    (factorWeylAlgebra,RingElement)
+    [factorWeylAlgebra,StopAfter]
+  Headline
+    factor a Weyl algebra element
+  Usage
+    factorWeylAlgebra r
+  Inputs
+    r:
+      the ring element
+    StopAfter=>Number
+      indicates how many factorisations should be computed, default infinity
+  Outputs
+    :List
+      a list of factorisations
+  Description
+    Text
+     Produces all the factorisations of the element @TT "r"@ of a Weyl algebra
+     (unless @TT "StopAfter"@ is set to a finite value, in which case the algorithm stops after that
+     many factorisations).
+    Example
+      R = makeWA(QQ[x])
+      factorWA(x^5*dx^2+7*x^4*dx+8*x^3-x*dx^2+dx)
+    Text
+     To reduce their number, two factorisations are considered equivalent if
+     they can be related by (1)	switching commuting irreducible factors or (2) switching
+     monomials and degree 0 factors; a normal order is chosen where commuting factors are sorted, and
+     monomials are pushed to the right/left if they're differential/not.
+    Text
+     @TT "factorWeylAlgebra"@ uses a variety of factorisation strategies, including the one
+     in ``Factoring linear partial differential operators in n variables'',
+     Mark Giesbrecht, Albert Heinle and Viktor Levandovskyy, Journal of Symbolic Computation
+     Volume 75, July–August 2016, Pages 127-148.
+  Caveat
+    The ring of r must have variables in the same order as those created by @TO "makeWeylAlgebra"@.
+  SeeAlso
+    factorWeylAlgebra1
+ Node
+  Key    
+    factorWeylAlgebra1
+  Headline    
+    give one factorisation of a Weyl algebra element
+  Usage
+    factorWeylAlgebra1 r
+  Inputs
+    r:
+      the ring element
+  Description
+    Text
+     Produces one possible factorisation of the element @TT "r"@ of a Weyl algebra.
+     This is a shortcut for @TO "factorWeylAlgebra"@ with optional argument @TT "StopAfter=>1"@.
+     Note that alternate strategies are used if only a finite number of factorisation is required,
+     so it may take much less time to compute, as on this example:
+    Example
+      R = makeWA(QQ[x,y])
+      u=dx^3+x^2-8; v=1/2*dx; U=u^2+4*v; V=u^3+3*(u*v+v*u);  -- V^2==U^3+8
+      factorWA1(U*V)     
+  SeeAlso
+    factorWeylAlgebra
+///
+
+
+
 end
 --
 
@@ -446,7 +514,7 @@ p_6=(dx_1+11)*(1-x_1^2) -- should give unique fac despite constant (here, sign) 
 A=(1+x_1)*(2+dx_1);
 p_12=A*(A-1)*(A-2); -- 11 facs, would be a lot less if we allowed commutation of *arbitrary* factors, not just irreducible ones.
 -- more importantly, shows that the commutative algebra approach won't give all factorisations, can only work with All=>false
--- also, w/o commguess factorWA(All=>false) gives a nicer answer :/
+-- also, w/o commguess factorWeylAlgebra(All=>false) gives a nicer answer :/
 p_13=A^2*(A-3)^2; -- takes forever w/o commguess
 u:=dx_1^3+x_1^2-8; v:=1/2*dx_1; U=u^2+4*v; V=u^3+3*(u*v+v*u);  -- Makar-Limanov example. V^2=U^3+8
 p_14=U*V; -- takes forever w/o commguess
