@@ -12,18 +12,18 @@ newPackage(
 	AuxiliaryFiles => true
     	)
 
-exportFrom_Core {"sendString", "receiveString", "numberOfProcesses", "myProcessNumber"}
+exportFrom_Core {"sendStringMPI", "receiveStringMPI", "interruptMPI", "numberOfProcesses", "myProcessNumber"}
 --exportMutable {}
 
 -- TO DO: implement these in the kernel
 export {"broadcastSend", "broadcastReceive"}
 
 broadcastSend = method()
-broadcastSend String := s -> for i from 1 to numberOfProcesses()-1 do sendString(s,i)
+broadcastSend String := s -> for i from 1 to numberOfProcesses()-1 do sendStringMPI(s,i)
 
 broadcastReceive = method()
 installMethod(broadcastReceive, 
-    () -> for i from 1 to numberOfProcesses()-1 list receiveString i)
+    () -> for i from 1 to numberOfProcesses()-1 list receiveStringMPI i)
 
 
 -* 
@@ -70,7 +70,7 @@ Possible use case:
   queue of tasks: input, output, status (processor, actual status). (e.g. doRandomBinomialIdealSearch(R, 1000)), tag a task (e.g. an index).
   list of completed tasks?
   indicator function: is a worker available? (mutable list of (string sent, or null)) (or three states...)
-    -- once we do receiveString(worker), we set this to null for that worked.
+    -- once we do receiveStringMPI(worker), we set this to null for that worked.
   freeWorker (returns null if none are free), or block+probe.
     block until one is free.
 
@@ -90,23 +90,23 @@ numberOfWorkers = numberOfProcesses()-1
 myID = myProcessNumber()
 notDone = true
 if myID!=master then while true do (
-    s := receiveString master;
+    s := receiveStringMPI master;
     << "-- " << myID << " received: " << s << endl;
     r := value s;
     << "-- " << myID << " result: " << r << endl;
-    sendString(toString r, master);
+    sendStringMPI(toString r, master);
     ) else (
-    addEndFunction(()->(for i from 1 to numberOfWorkers do sendString("exit 0",i); -*sleep 1*-));
+    addEndFunction(()->(for i from 1 to numberOfWorkers do sendStringMPI("exit 0",i); -*sleep 1*-));
     )
 
 -- write the code for master below
 for i from 1  to numberOfWorkers do ( 
     s = toString i | "+" | toString i;
     << "-- " << myID << " sent: " << s << endl;
-    sendString(s,i);
+    sendStringMPI(s,i);
     )
 for i from 1  to numberOfWorkers do ( 
-    r = receiveString i;
+    r = receiveStringMPI i;
     << "-- " << myID << " received: " << r << endl;
     )
 ///

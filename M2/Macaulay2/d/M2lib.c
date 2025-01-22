@@ -84,7 +84,18 @@ M2_string MPIreceiveString(int p) {
   return ret;
 }
 
-// nonblocking send 
+
+// nonblocking probe
+int MPIprobeInterrupt() {
+  int flag = 0;
+  int receive_tag;
+  MPI_Status status;
+  const int master = 0;
+  //!!! consider any integer message an interrupt???
+  return MPI_Iprobe(master, MPI_ANY_TAG, MPI_COMM_WORLD, &flag, &status);
+}
+
+// nonblocking send (needed???)
 int MPIsendStringNonblocking(M2_string s, int p) {
   char *t = M2_tocharstar(s);
   MPI_Request request;
@@ -93,6 +104,16 @@ int MPIsendStringNonblocking(M2_string s, int p) {
   GC_FREE(t); // is it OK to free? (Should be if MPI still refers to this... but does it?)  
   return ret;
 }
+
+// interrupt
+int MPIinterrupt(int p) {
+  int buffer;
+  const int MPI_INTERRUPT_TAG = 3210; //!!! is also in e/interrupted.cpp
+  int ret = MPI_Send(&buffer, 1, MPI_INT, p, MPI_INTERRUPT_TAG, MPI_COMM_WORLD);
+  // should remember "request" if e.g. need to check the completion 
+  return ret;
+}
+
 #endif
 // end MPI --------------------------------------------------------------------
 

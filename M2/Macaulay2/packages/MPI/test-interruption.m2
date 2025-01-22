@@ -1,7 +1,7 @@
 -* 
 Run on 4 "processors":
 
-mpirun -np 4 ./M2 --script MPI/master-worker-MPI.m2
+mpirun -np 4 ./M2 --script MPI/test-interruption.m2
 
 After the example is executed, the MASTER becomes interactive.
 *-
@@ -20,14 +20,8 @@ if myID!=master then while true do (
 addEndFunction(()->(for i from 1 to numberOfWorkers do sendStringMPI("exit 0",i); -*sleep 1*-));
 
 -- write the code for master below
-for i from 1  to numberOfWorkers do ( 
-    s = toString i | "+" | toString i;
-    << "-- " << myID << " sent: " << s << endl;
-    sendStringMPI(s,i);
-    )
-for i from 1  to numberOfWorkers do ( 
-    r = receiveStringMPI i;
-    << "-- " << myID << " received: " << r << endl;
-    )
-
-
+broadcastSend "Good'night"
+print broadcastReceive
+broadcastSend "sleep 10"
+for i from 1  to numberOfWorkers do interruptMPI i
+print broadcastReceive

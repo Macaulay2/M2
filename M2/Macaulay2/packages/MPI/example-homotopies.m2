@@ -16,21 +16,21 @@ T = for i from 1 to n list random(2, R) + random(1, R) + 1
 
 if myID!=master then ( -- WORKER part
     while true do (
-        s := receiveString master;
+        s := receiveStringMPI master;
         r := value s; 
-        sendString(toString r, master)
+        sendStringMPI(toString r, master)
      	) -- e.g., when s == "exit 0" the process quits
     )
 -- MASTER part 
 addEndFunction(()->broadcastSend "exit 0") 
 blockSize = #solsS//nWorkers + 1
 startTime := currentTime()
-for i from 1 to nWorkers do sendString(
+for i from 1 to nWorkers do sendStringMPI(
     "coordinates\\track(S,T,"|toString\\coordinates\take(
 	solsS,{(i-1)*blockSize, min(i*blockSize-1,#solsS-1)}
 	)|")", i)
 solsT = flatten for i from 1 to nWorkers list (
-    value receiveString i
+    value receiveStringMPI i
     )
 print("#solutions: "|#solsT)
 print("wall timing: " | (currentTime() - startTime) | " seconds") 

@@ -6,6 +6,7 @@ header "
 extern int MPInumberOfProcesses();
 extern int MPImyProcessNumber();
 extern int MPIsendString(M2_string s, int p);
+extern int MPIinterrupt(int p);
 extern M2_string MPIreceiveString(int p);
 ";
 
@@ -17,7 +18,7 @@ setupfun("myProcessNumber",myProcessNumber);
 
 -- input: (s,p) 
 --   sends string s to processor p 
-export sendString(e:Expr):Expr := ( 
+export sendStringMPI(e:Expr):Expr := ( 
     when e is seq:Sequence do
     if length(seq) != 2 then WrongNumArgs(2) else
     when seq.0 is s:stringCell do     
@@ -27,13 +28,22 @@ export sendString(e:Expr):Expr := (
     else WrongArgString(1)
     else WrongNumArgs(2)
     );
-setupfun("sendString",sendString);
+setupfun("sendStringMPI",sendStringMPI);
 
 -- input: p 
 --   receive a string from processor p 
-export receiveString(e:Expr):Expr := ( 
+export receiveStringMPI(e:Expr):Expr := ( 
     when e
     is p:ZZcell do toExpr(Ccode(string, "MPIreceiveString(", toInt(p), ")"))
     else WrongArgZZ()
     );
-setupfun("receiveString",receiveString);
+setupfun("receiveStringMPI",receiveStringMPI);
+
+-- input: p 
+--   interrupt process p
+export interruptMPI(e:Expr):Expr := ( 
+    when e
+    is p:ZZcell do toExpr(Ccode(int, "MPIinterrupt(", toInt(p), ")"))
+    else WrongArgZZ()
+    );
+setupfun("interruptMPI",interruptMPI);
