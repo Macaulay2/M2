@@ -60,8 +60,8 @@ mathML FunctionApplication := m -> (
      else concatenate (bigParenthesize mfun, bigParenthesize margs)
      )
 mathML MatrixExpression := x -> concatenate( "<mrow><mo>(</mo>", mtableML x, "<mo>)</mo></mrow>", newline )
-mathML Minus := v -> concatenate( "<mo>-</mo>", mathML v#0)
-mathML Divide := x -> concatenate("<mfrac><mrow>", mathML x#0,"</mrow>", mathML x#1, "</mfrac>")
+mathML Minus := v -> concatenate( "<mrow><mo>-</mo>", mathML v#0, "</mrow>")
+mathML Divide := x -> concatenate("<mfrac>", mathML x#0, mathML x#1, "</mfrac>")
 mathML OneExpression := x -> "<mn>1</mn>"
 mathML ZeroExpression := x -> "<mn>0</mn>"
 mathML Sum := v -> (
