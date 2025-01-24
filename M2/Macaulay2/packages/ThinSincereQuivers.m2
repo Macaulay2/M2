@@ -12,7 +12,7 @@ newPackage(
          HomePage => "http://patriciogallardo.com/"
         }
     },
-    PackageImports => {"Graphs", "Polyhedra", "LatticePolytopes"},
+    PackageImports => {"Graphs", "Polyhedra", "LatticePolytopes"}
 )
 export {
 -- Methods/Functions
@@ -102,7 +102,9 @@ toricQuiver(Matrix) := ToricQuiver => opts -> Q -> (
     );
     -- set Q to be unit valued to apply flow
     Q = matrix(for e in entries(Q) list(for x in e list(if abs(x) > 0 then x/abs(x) else 0)));
-    if any(sum entries abs Q, x -> x != 2) then (
+    Qp := matrix(for e in entries(Q) list(for x in e list abs x));
+    -- verify that each column in Q has 2 nonzero entries, which are -1 and 1.
+    if any(sum entries Qp, x -> x != 2) then (
         error "Matrix is not a graph incidence matrix";
     );
     if any(sum entries Q, x -> x != 0) then (
@@ -123,7 +125,9 @@ toricQuiver(Matrix) := ToricQuiver => opts -> Q -> (
 toricQuiver(Matrix, List) := ToricQuiver => opts -> (Q, F) -> (
     -- set Q to be unit valued to apply flow
     Q = matrix(for e in entries(Q) list(for x in e list(if abs(x) > 0 then x/abs(x) else 0)));
-    if any(sum entries abs Q, x -> x != 2) then (
+    Qp := matrix(for e in entries(Q) list(for x in e list abs x));
+    -- verify that each column in Q has 2 nonzero entries, which are -1 and 1.
+    if any(sum entries Qp, x -> x != 2) then (
         error "Matrix is not a graph incidence matrix";
     );
     if any(sum entries Q, x -> x != 0) then (
@@ -675,8 +679,13 @@ isWellDefined(ToricQuiver) := Boolean => Q -> (
         return false;
     );
     -- check that the incidence matrix is an actual incidence matrix
-    if incidenceMatrix(Q.Q1) != abs Q.IncidenceMatrix then (
-        print("error: Toric Quiver incidence matrix does not match the edge set");
+    Qp := matrix(for e in entries(Q.IncidenceMatrix) list(for x in e list abs x));
+    if any(sum entries Qp, x -> x != 2) then (
+        print("error: Matrix is not a graph incidence matrix");
+        return false;
+    );
+    if any(sum entries Q.IncidenceMatrix, x -> x != 0) then (
+        print("error: Matrix is not a graph incidence matrix");
         return false;
     );
     return true;
@@ -1178,7 +1187,7 @@ getWeights(Matrix) := List => Q -> (
 
 
 ------------------------------------------------------------
-threeVertexQuiver = method(Options => {Flow => "Canonical", Hieght => 10})
+threeVertexQuiver = method(Options => {Flow => "Canonical", Height => 10})
 threeVertexQuiver(List) := ToricQuiver => opts -> (numEdges) -> (
     if #numEdges != 3 then (
         print("error: need a list of 3 numbers, denoting the number of edges between each pair of vertices");
@@ -1205,8 +1214,8 @@ threeVertexQuiver(List) := ToricQuiver => opts -> (numEdges) -> (
 ------------------------------------------------------------
 wallType = method()
 wallType(List, Matrix) := Sequence => (Qp, Q) -> (
-    tp := number(sumList(Q^Qp, Axis => "Col") x -> x < 0);
-    tm := number(sumList(Q^Qp, Axis => "Col") x -> x > 0);
+    tp := number(sumList(Q^Qp, Axis => "Col"), x -> x < 0);
+    tm := number(sumList(Q^Qp, Axis => "Col"), x -> x > 0);
     (tp, tm)
 )
 wallType(List, ToricQuiver) := Sequence => (Qp, Q) -> (
@@ -1285,7 +1294,7 @@ edgesOutOfPoint = {Oriented => false} >> opts -> (p, E) -> (
         for i from 0 to #E - 1 list(e := E#i; if p != e#0 then (continue;) else (i, e))
     )
     else (
-        for i from 0 to #E - 1 list(e := E#i; if (not any(e, j -> j == p)) then (continue;) else (i, e))
+        for i from 0 to #E - 1 list(e := E#i; if (number(e, j -> j == p) < 1) then (continue;) else (i, e))
     )
 )
 
@@ -1578,9 +1587,8 @@ nonStableSubquivers(ToricQuiver) := opts -> Q -> (
 -- return the indices of the list l in order the values occur 
 -- in the sorted list sort(l)
 sortedIndices = (l) -> (
-    -- sortedVals := unique(sort(l));
-    -- flatten(for i in sortedVals list(positions(l, x -> x == i)))
-    apply(sort apply(pairs l, reverse), p -> p#1)
+    sortedVals := unique(sort(l));
+    flatten(for i in sortedVals list(positions(l, x -> x == i)))
 )
 
 -- Returns a spanning tree(the first one that is encountered) of 
@@ -1786,7 +1794,18 @@ multidoc ///
             the ToricQuiver datatype
         Description
             Text
-                The ToricQuiver data type is a type of Hash Table with the following keys: 
+                A toric quiver is an acyclic directed graph with edge set $Q_1$ and
+                vertices $Q_0$, equipped with a flow, which is a vector of values
+                associated to each edge of the graph, and a weight, which is a vector of
+                values associated to each vertex in the graph.
+                The weights are obtained from the flow and graph as the image of the incidence map, defined as follows:
+                $$
+                \text{inc}(\mathbf{w})(i)
+                := \sum_{a\in Q_1 \atop a^{+} = i} \mathbf{w}(a)
+                - \sum_{a\in Q_1 \atop a^{-} = i}
+                \mathbf{w}(a) \quad \text{ for all } i \in Q_0.
+                $$
+                The ToricQuiver data type is a type of Hash Table with the following keys:
             Text
                 @UL {
                     {TT "IncidenceMatrix:", "matrix representation of the connected graph underlying the quiver"},
@@ -1833,14 +1852,14 @@ multidoc ///
             M: Matrix 
                 of integers giving the connectivity structure of the quiver. If specified, this matrix should be a well-defined incidence matrix for the graph underlying the quiver
             T: ToricQuiver 
-            Height => ZZ
-                used in conjunction with the option {\tt Flow => Random} to set the upper limit of the random number generator
             Flow => String
                 that specifies the flow for the polytope. 
                 options are 
                 {\tt Default}, which takes the flow from values in the matrix, 
                 {\tt Canonical}, which sets the flow to 1 for each edge, and 
                 {\tt Random}, which assigns a random integer between 0 and {\tt Height} to each edge
+            Height => ZZ
+                used in conjunction with the option {\tt Flow => Random} to set the upper limit of the random number generator
         Outputs
             Q: ToricQuiver
         Description
@@ -1863,18 +1882,26 @@ multidoc ///
             Example
                 -- create a toric quiver from matrix
                 Q = toricQuiver matrix({{-1,-1,-1,-1},{1,1,0,0},{0,0,1,1}})
+            Example
                 -- create a toric quiver from matrix with specified flow
                 Q = toricQuiver(matrix({{-1,-1,-1,-1},{1,1,0,0},{0,0,1,1}}), {3, 1, 0, 5})
+            Example
                 -- create a toric quiver from a list of edges
                 Q = toricQuiver {{0,1},{0,1},{0,2},{0,2}}
+            Example
                 -- create a toric quiver from a list of edges and a flow
                 Q = toricQuiver ({{0,1},{0,1},{0,2},{0,2}}, {1,2,3,4})
+            Example
                 -- create a toric quiver from a matrix with keyword flow
                 Q = toricQuiver(matrix({{-1,-1,-1,-1},{1,1,0,0},{0,0,1,1}}), Flow => "Canonical")
+            Example
                 -- create a toric quiver from a matrix with random flow with values in the range [0, 10)
                 Q = toricQuiver(matrix({{-1,-1,-1,-1},{0,0,1,1},{1,1,0,0}}), Flow => "Random")
+            Example
                 -- create a toric quiver copied from another one
+                Q = toricQuiver(matrix({{-1,-1,-1,-1},{0,0,1,1},{1,1,0,0}}), Flow => "Random");
                 R = toricQuiver(Q)
+            Example
                 -- create a toric quiver copied from another, but with alternative flow
                 R = toricQuiver(Q, {1,2,3,4})
         SeeAlso
@@ -1899,7 +1926,7 @@ multidoc ///
                 {\tt K_{2,3}} with a random flow {\tt w} as follows:
 
             Example
-                Q0 = {{0,2},{0,3},{0,4},{1,2},{1,3},{1,4}}
+                Q0 = {{0,2},{0,3},{0,4},{1,2},{1,3},{1,4}};
                 Q = toricQuiver(Q0, Flow => "Random")
             Text
                 Alternatively, one can construct a toric quiver using any of the following constructions:
@@ -1950,11 +1977,13 @@ multidoc ///
             Text
                 The two methods corresponding to these ideas are referenced in the examples below. 
             Example
-                Q = bipartiteQuiver(2, 3)
+                Q = bipartiteQuiver(2, 3);
                 -- show the subquiver consisting of arross 0, 1 and 3, by removing all of the others
-                Q_{0,1,3}
+                SQ = Q_{0,1,3}
+            Example
+                Q = bipartiteQuiver(2,3);
                 -- show the subquiver consisting of arross 0, 1 and 3, by setting flow to 0 on all other arrows 
-                Q^{0,1,3}
+                SQ = Q^{0,1,3}
         SeeAlso
             (symbol ^, ToricQuiver, List)
             (symbol _, ToricQuiver, List)
@@ -1980,9 +2009,9 @@ multidoc ///
                 To retain the original quiver labels on the subquiver, see @TO2 {(symbol ^, ToricQuiver, List), "(symbol ^, ToricQuiver, List)"}@. 
             Example
                 -- create a quiver
-                Q = bipartiteQuiver(2, 3)
+                Q = bipartiteQuiver(2, 3);
                 -- extract the subquiver consisting of the arrows with indices 0, 1, 3
-                Q_{0,1,3}
+                SQ = Q_{0,1,3}
         SeeAlso
             (symbol ^, ToricQuiver, List)
     Node
@@ -2004,10 +2033,9 @@ multidoc ///
                 This method returns a the subquiver of the quiver {\tt Q} 
                 that is made up of the arrows in the list {\tt L}. 
             Example
-                -- create a quiver
-                Q = bipartiteQuiver(2, 3)
+                Q = bipartiteQuiver(2, 3);
                 -- extract the subquiver consisting of the arrows with indices 0, 1, 3
-                Q^{0,1,3}
+                SQ = Q^{0,1,3}
         SeeAlso
             (symbol _, ToricQuiver, List)
     Node
@@ -2027,14 +2055,13 @@ multidoc ///
                 This method takes two toric quivers and returns the 
                 boolean of the statement {\tt Q1} is equal to {\tt Q2}. 
             Example
-                Q = bipartiteQuiver(2, 3)
-                R = bipartiteQuiver(2, 2)
+                Q = bipartiteQuiver(2, 3);
+                R = bipartiteQuiver(2, 2);
                 -- check if the two quivers are the same
                 Q == R
             Example
-                -- create 2 quivers
-                Q = toricQuiver {{0, 2}, {0, 3}, {1, 2}, {1, 3}}
-                R = bipartiteQuiver(2, 2)
+                Q = toricQuiver {{0, 2}, {0, 3}, {1, 2}, {1, 3}};
+                R = bipartiteQuiver(2, 2);
                 -- check if the two quivers are the same
                 Q == R
         SeeAlso
@@ -2058,6 +2085,8 @@ multidoc ///
                 specify what form of flow to use. This input can be 
                 either a string with values {\tt Canonical} or {\tt Random}, 
                 or else a list of integer values. 
+            Height => ZZ
+                used in conjunction with the option {\tt Flow => Random} to set the upper limit of the random number generator
         Outputs
             Q: ToricQuiver
         Description
@@ -2068,8 +2097,10 @@ multidoc ///
             Example
                 -- create a bipartite quiver with 2 sources and 3 sinks
                 Q = bipartiteQuiver (2, 3)
+            Example
                 -- create a bipartite quiver with 2 sources and 3 sinks and a random flow
                 Q = bipartiteQuiver (2, 3, Flow => "Random")
+            Example
                 -- create a bipartite quiver with 2 sources and 3 sinks and a specified flow
                 Q = bipartiteQuiver (2, 3, Flow => {1, 2, 1, 3, 1, 4})
         SeeAlso
@@ -2091,6 +2122,8 @@ multidoc ///
                 specify what form of flow to use. This input can be 
                 either a string with values {\tt Canonical} or {\tt Random}, 
                 or else a list of integer values. 
+            Height => ZZ
+                used in conjunction with the option {\tt Flow => Random} to set the upper limit of the random number generator
         Outputs
             Q: ToricQuiver
         Description
@@ -2104,8 +2137,10 @@ multidoc ///
             Example
                 -- create a chain quiver with 3 vertices and 6 edges
                 Q = chainQuiver {1,2,3}
+            Example
                 -- create a chain quiver with 3 vertices and 6 edges and a random flow
                 Q = chainQuiver ({1,2,3}, Flow => "Random")
+            Example
                 -- create a chain quiver with 3 vertices and 6 edges and a specified flow
                 Q = chainQuiver ({1,2,3}, Flow => {1, 2, 1, 3, 1, 4})
         SeeAlso
@@ -2128,6 +2163,8 @@ multidoc ///
                 specify what form of flow to use. This input can be 
                 either a string with values {\tt Canonical} or {\tt Random}, 
                 or else a list of integer values. 
+            Height => ZZ
+                used in conjunction with the option {\tt Flow => Random} to set the upper limit of the random number generator
         Outputs
             Q: ToricQuiver
         Description
@@ -2137,8 +2174,10 @@ multidoc ///
             Example
                 -- create a quiver with 3 vertices and 6 edges
                 Q = threeVertexQuiver {1,2,3}
+            Example
                 -- create a quiver with 3 vertices and 6 edges and a random flow
                 Q = threeVertexQuiver ({1,2,3}, Flow => "Random")
+            Example
                 -- create a quiver with 3 vertices and 6 edges and a specified flow
                 Q = threeVertexQuiver ({1,2,3}, Flow => {1, 2, 1, 3, 1, 4})
         SeeAlso
@@ -2200,11 +2239,12 @@ multidoc ///
                 to this kernel and express the polytope on such basis. 
                 With basisForFlowPolytope Q, we calculate the basis for inc map from a spanning tree of it. 
                 If none is provided, then one is randomly chosen.
+
  
             Example
-                basisForFlowPolytope bipartiteQuiver(2,3)
+                basisForFlowPolytope bipartiteQuiver(2, 3)
             Example
-                basisForFlowPolytope ({0,1,4,5},  bipartiteQuiver(2,3))
+                basisForFlowPolytope ({0,1,4,5},  bipartiteQuiver(2, 3))
         SeeAlso
             flowPolytopeVertices
     Node
@@ -2232,9 +2272,7 @@ multidoc ///
                 }}@ 
 
             Example
-                -- create a quiver
                 Q = toricQuiver {{0,1},{0,2},{0,3},{1,2},{1,3},{2,3}};
-                -- calculate the set of cones for the quiver
                 CS = coneSystem Q
         SeeAlso
             flowPolytopeVertices
@@ -2268,15 +2306,15 @@ multidoc ///
                 so it is full dimensional. By default, the output lists the vertices within this vector space. To obtain the presentation in the original fiber, 
                 use {\tt Format => "FullBasis"}.    
             Example
-                flowPolytopeVertices(bipartiteQuiver(2, 3))
+                F = flowPolytopeVertices(bipartiteQuiver(2, 3))
             Text 
                 We can vary the weight of the quiver to define the flow polytope
             Example
-                flowPolytopeVertices({-3,-3,2,2,2}, bipartiteQuiver(2, 3))
+                F = flowPolytopeVertices({-3,-3,2,2,2}, bipartiteQuiver(2,3))
             Text 
                 The user can also recover the polytope $\Delta(Q,\theta)$ within the inverse of the corresponding inc map, that is within $inc^{-1}(\theta)$. 
             Example
-                flowPolytopeVertices( bipartiteQuiver(2, 3), Format => "FullBasis")
+                F = flowPolytopeVertices( bipartiteQuiver(2,3), Format => "FullBasis")
         SeeAlso
             basisForFlowPolytope
     Node
@@ -2308,9 +2346,7 @@ multidoc ///
                 The function incInverse calculates a vector in the preimage of such a map.    
             
             Example
-                -- create a toric quiver
                 Q = toricQuiver(bipartiteQuiver(2,3));
-                -- create a list of values for the 5 vertices in the quiver
                 th = {-5,-1,2,2,2};
                 -- calculate the preimage of the weight th for the quiver Q
                 incInverse(th, Q)
@@ -2379,17 +2415,18 @@ multidoc ///
                 rather than {\tt Q_S}) are considered as valid arrows. 
             Example
                 -- check if the subset {0, 2, 3} of the vertices of the quiver is closed under arrows
-                isClosedUnderArrows ({0, 2, 3}, bipartiteQuiver(2, 3))
-                -- check if the subset {2, 3, 4} of the vertices of the quiver is closed under arrows
-                isClosedUnderArrows ({2, 3, 4}, bipartiteQuiver(2, 3))
+                isClosedUnderArrows ({0, 2, 3}, bipartiteQuiver(2,3))
             Example
-                Q = threeVertexQuiver {1, 2, 3}
-                SQ = Q_{0,1}
+                -- check if the subset {2, 3, 4} of the vertices of the quiver is closed under arrows
+                isClosedUnderArrows ({2, 3, 4}, bipartiteQuiver(2,3))
+            Example
+                Q = threeVertexQuiver {1, 2, 3};
+                SQ = Q_{0,1};
                 -- check if the subquiver consisting of arrows {0, 1} is closed under arrows
                 isClosedUnderArrows (SQ, Q)
             Example
-                Q = threeVertexQuiver {1, 2, 3}
-                SQ = Q^{0,1}
+                Q = threeVertexQuiver {1, 2, 3};
+                SQ = Q^{0,1};
                 -- check if the subquiver consisting of arrows {0, 1} is closed under arrows
                 isClosedUnderArrows (SQ, Q)
         SeeAlso
@@ -2421,9 +2458,9 @@ multidoc ///
 		{\tt V} of the vertices of {\tt Q} that is also {\tt SQ}-successor closed, 
 		the sum of the weights associated to {\tt V} is nonnegative. 
             Example
-                isSemistable ({0, 1}, bipartiteQuiver(2, 3))
+                isSemistable ({0, 1}, bipartiteQuiver(2,3))
             Example
-                isSemistable ({0, 1, 3, 4, 5}, bipartiteQuiver(2, 3))
+                isSemistable ({0, 1, 3, 4, 5}, bipartiteQuiver(2,3))
             Example
                 -- create a quiver Q
                 Q = bipartiteQuiver(2, 3);
@@ -2468,8 +2505,11 @@ multidoc ///
             Example
                 isStable ({0, 1}, bipartiteQuiver(2, 3))
             Example
-                Q = bipartiteQuiver(2, 3)
-                S = first(subquivers(Q, Format => "quiver", AsSubquiver => true))
+                -- create a quiver
+                Q = bipartiteQuiver(2, 3);
+                -- extract a subquiver of the quiver
+                S = first(subquivers(Q, Format => "quiver", AsSubquiver => true));
+                -- check  if this subquiver is stable
                 isStable (S, Q)
         SeeAlso
     Node
@@ -2556,9 +2596,9 @@ multidoc ///
                 "Altmann, Klaus, and Duco van Straten. \"Smoothing of quiver varieties.\" manuscripta mathematica 129 (2009): 211-230."}}@ 
             Example
                 -- create a quiver
-                Q = bipartiteQuiver(2,3)
+                Q = bipartiteQuiver(2, 3);
                 -- create a list of weights corresponding to the arrows of Q
-                w = {-5,-1,2,2,2}
+                w = {-5,-1,2,2,2};
                 -- create a tight quiver with the same flow polytope
                 makeTight(w, Q)
         SeeAlso
@@ -2908,7 +2948,7 @@ multidoc ///
         Description
             Text
                 This method uses the {\tt interiorVector} method for a Cone from the {\tt Polyhedra}
-                package to generate a single internal poin for each of the cones in the input list {\tt QCS}.
+                package to generate a single internal point for each of the cones in the input list {\tt QCS}.
             Example
                 -- create a quiver
                 Q = toricQuiver {{0,1},{0,2},{0,3},{1,2},{1,3},{2,3}};
@@ -2937,14 +2977,14 @@ multidoc ///
         Description
             Text
                 This method uses the {\tt interiorVector} method for a Cone from the {\tt Polyhedra}
-                package to generate a single internal poin for each of the cones in the input list {\tt QCS}.
+                package to generate a single internal point for each of the cones in the input list {\tt QCS}.
             Example
                 -- create a quiver
                 Q = toricQuiver {{0,1},{0,2},{0,3},{1,2},{1,3},{2,3}};
                 -- compute the chamber decomposition into cones of the space of weights
                 CS = coneSystem Q;
                 -- extract a reference weight in the interior of each of the chambers of the cone system
-                referenceWeights CS
+                R = referenceWeights CS
         SeeAlso
             getWeights
             coneSystem
@@ -2999,7 +3039,7 @@ multidoc ///
                 This routine returns the set of spanning trees of the quiver {\tt Q} that are stable with respect to the provided weight {\tt th}.
             Example
                 -- create a quiver
-                Q = bipartiteQuiver(2,3);
+                Q = bipartiteQuiver(2, 3);
                 -- create a weight
                 th = {-3,-3,2,2,2};
                 -- calculate the set of spanning trees that are stable with respect to the weight th
@@ -3045,12 +3085,16 @@ multidoc ///
                 subquivers Q list all possible subquivers of Q.
             
             Example
-                Q = chainQuiver {2}
+                Q = chainQuiver {2};
                 subquivers Q
+            Example
+                Q = chainQuiver {2};
                 subquivers(Q, Format => "list")
             Example
                 subquivers bipartiteQuiver(2, 2)
+            Example
                 subquivers(bipartiteQuiver(2, 2), Format => "list")
+            Example
                 subquivers(bipartiteQuiver(2, 2), Format => "quiver", AsSubquiver => true)
         SeeAlso
             AsSubquiver
@@ -3121,7 +3165,7 @@ multidoc ///
                 $$
                 where for any arrow $a\in Q_1$, we denote its head as $a^{+} \in Q_0$ and its tail as $a^{-} \in Q_0$.
             Example
-                Q = bipartiteQuiver(2, 3, Flow => "Random")
+                Q = bipartiteQuiver(2, 3, Flow => "Random");
                 getWeights Q
         SeeAlso
             incInverse
@@ -3138,6 +3182,7 @@ multidoc ///
                 represented by only the vertices and arrows comprising the subquiver. 
             Example
                 subquivers(bipartiteQuiver(2, 2), Format => "quiver", AsSubquiver => true)
+            Example
                 subquivers(bipartiteQuiver(2, 2), Format => "quiver", AsSubquiver => false)
         SeeAlso
             subquivers
@@ -3151,8 +3196,10 @@ multidoc ///
             Example
                 -- create a toric quiver from a matrix with keyword flow
                 Q = toricQuiver(matrix({{-1,-1,-1,-1},{1,1,0,0},{0,0,1,1}}), Flow => "Canonical")
+            Example
                 -- create a toric quiver from a matrix with random flow
                 Q = toricQuiver(matrix({{-1,-1,-1,-1},{0,0,1,1},{1,1,0,0}}), Flow => "Random")
+            Example
                 -- create a bipartite quiver with a random flow
                 Q = bipartiteQuiver(2, 3, Flow => "Random")
         SeeAlso
@@ -3167,6 +3214,7 @@ multidoc ///
                 these subquivers are trivial, and are ignored. 
             Example
                 maximalNonstableSubquivers(bipartiteQuiver (2, 3), ReturnSingletons => true)
+            Example
                 maximalNonstableSubquivers(bipartiteQuiver (2, 3), ReturnSingletons => false)
         SeeAlso
             maximalNonstableSubquivers
