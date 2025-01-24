@@ -13,7 +13,6 @@ newPackage(
         }
     },
     PackageImports => {"Graphs", "Polyhedra", "LatticePolytopes"},
-    -- PackageExports => {"Graphs", "Polyhedra"}
 )
 export {
 -- Methods/Functions
@@ -30,7 +29,6 @@ export {
     "isSemistable",
     "isStable",
     "isTight",
-    "isWellDefined",
     "makeTight",
     "maxCodimensionUnstable",
     "maximalNonstableSubquivers",
@@ -313,7 +311,7 @@ basisForFlowPolytope ToricQuiver := Matrix => Q -> (
 
 
 ------------------------------------------------------------
-bipartiteQuiver = {Flow => "Canonical"} >> opts -> (a, b) -> (
+bipartiteQuiver = {Flow => "Canonical", Height => 10} >> opts -> (a, b) -> (
     if instance(opts.Flow, List) then (
         if #opts.Flow != a*b then (
             print("error: provided flow is not correct length.");
@@ -321,14 +319,14 @@ bipartiteQuiver = {Flow => "Canonical"} >> opts -> (a, b) -> (
         );
         toricQuiver(flatten(for ai from 0 to a - 1 list(for bi from 0 to b - 1 list({ai, a+bi}))), opts.Flow)
     ) else (
-        toricQuiver(flatten(for ai from 0 to a - 1 list(for bi from 0 to b - 1 list({ai, a+bi}))), Flow => opts.Flow)
+        toricQuiver(flatten(for ai from 0 to a - 1 list(for bi from 0 to b - 1 list({ai, a+bi}))), Flow => opts.Flow, Height => opts.Height)
     )
 )
 ------------------------------------------------------------
 
 
 ------------------------------------------------------------
-chainQuiver = {Flow => "Canonical"} >> opts -> (numEdges) -> (
+chainQuiver = {Flow => "Canonical", Height => 10} >> opts -> (numEdges) -> (
     Es := flatten for v from 0 to #numEdges - 1 list(
         numEs := numEdges#v;
         for j from 1 to numEs list({v, v+1})
@@ -340,7 +338,7 @@ chainQuiver = {Flow => "Canonical"} >> opts -> (numEdges) -> (
         );
         return toricQuiver(Es, opts.Flow)
     ) else (
-        return toricQuiver(Es, Flow => opts.Flow)
+        return toricQuiver(Es, Flow => opts.Flow, Height => opts.Height)
     )
 )
 ------------------------------------------------------------
@@ -979,7 +977,7 @@ potentialWalls(Matrix) := List => (Q) -> (
         ) else (
             -- restrict to only vertices/edgesin Qm
             mSums := sumList(Q^Qm, Axis => "Col");
-            connectsToQm := positions(entries transpose Q^Qm, x->any(#x, y->x#y!=0));
+            connectsToQm := positions(entries transpose Q^Qm, x -> any(x, v -> v != 0));
             -- find the edges that have head and tail in Qm
             QmEdgeIndices := for s in connectsToQm list(if (mSums_s == 0) then (s) else (continue;));
             Qp := asList(nvSet - set(Qm));
@@ -987,7 +985,7 @@ potentialWalls(Matrix) := List => (Q) -> (
 
             if isGraphConnected(Q^Qm_QmEdgeIndices) then (
                 pSums := sumList(Q^Qp, Axis => "Col");
-                connectsToQp := positions(entries transpose Q^Qp, x->any(#x, y->x#y!=0));
+                connectsToQp := positions(entries transpose Q^Qp, x -> any(x, v -> v != 0));
 
                 QpEdgeIndices := for s in connectsToQp list(if (pSums_s == 0) then (s) else (continue;));
                 if (#Qp < 2) or (isGraphConnected(Q^Qp_QpEdgeIndices)) then (
@@ -1180,7 +1178,7 @@ getWeights(Matrix) := List => Q -> (
 
 
 ------------------------------------------------------------
-threeVertexQuiver = method(Options => {Flow => "Canonical"})
+threeVertexQuiver = method(Options => {Flow => "Canonical", Hieght => 10})
 threeVertexQuiver(List) := ToricQuiver => opts -> (numEdges) -> (
     if #numEdges != 3 then (
         print("error: need a list of 3 numbers, denoting the number of edges between each pair of vertices");
@@ -1198,7 +1196,7 @@ threeVertexQuiver(List) := ToricQuiver => opts -> (numEdges) -> (
         );
         return toricQuiver(Es, opts.Flow)
     ) else (
-        return toricQuiver(Es, Flow => opts.Flow)
+        return toricQuiver(Es, Flow => opts.Flow, Height => opts.Height)
     )
 )
 ------------------------------------------------------------
@@ -1207,8 +1205,8 @@ threeVertexQuiver(List) := ToricQuiver => opts -> (numEdges) -> (
 ------------------------------------------------------------
 wallType = method()
 wallType(List, Matrix) := Sequence => (Qp, Q) -> (
-    tp := sum(for x in sumList(Q^Qp, Axis => "Col") list(if x < 0 then (1) else (continue;)));
-    tm := sum(for x in sumList(Q^Qp, Axis => "Col") list(if x > 0 then (1) else (continue;)));
+    tp := number(sumList(Q^Qp, Axis => "Col") x -> x < 0);
+    tm := number(sumList(Q^Qp, Axis => "Col") x -> x > 0);
     (tp, tm)
 )
 wallType(List, ToricQuiver) := Sequence => (Qp, Q) -> (
@@ -1287,7 +1285,7 @@ edgesOutOfPoint = {Oriented => false} >> opts -> (p, E) -> (
         for i from 0 to #E - 1 list(e := E#i; if p != e#0 then (continue;) else (i, e))
     )
     else (
-        for i from 0 to #E - 1 list(e := E#i; if (#positions(e, j -> j == p) < 1) then (continue;) else (i, e))
+        for i from 0 to #E - 1 list(e := E#i; if (not any(e, j -> j == p)) then (continue;) else (i, e))
     )
 )
 
@@ -1580,8 +1578,9 @@ nonStableSubquivers(ToricQuiver) := opts -> Q -> (
 -- return the indices of the list l in order the values occur 
 -- in the sorted list sort(l)
 sortedIndices = (l) -> (
-    sortedVals := unique(sort(l));
-    flatten(for i in sortedVals list(positions(l, x -> x == i)))
+    -- sortedVals := unique(sort(l));
+    -- flatten(for i in sortedVals list(positions(l, x -> x == i)))
+    apply(sort apply(pairs l, reverse), p -> p#1)
 )
 
 -- Returns a spanning tree(the first one that is encountered) of 
@@ -2005,6 +2004,7 @@ multidoc ///
                 This method returns a the subquiver of the quiver {\tt Q} 
                 that is made up of the arrows in the list {\tt L}. 
             Example
+                -- create a quiver
                 Q = bipartiteQuiver(2, 3)
                 -- extract the subquiver consisting of the arrows with indices 0, 1, 3
                 Q^{0,1,3}
@@ -2032,6 +2032,7 @@ multidoc ///
                 -- check if the two quivers are the same
                 Q == R
             Example
+                -- create 2 quivers
                 Q = toricQuiver {{0, 2}, {0, 3}, {1, 2}, {1, 3}}
                 R = bipartiteQuiver(2, 2)
                 -- check if the two quivers are the same
@@ -2199,7 +2200,6 @@ multidoc ///
                 to this kernel and express the polytope on such basis. 
                 With basisForFlowPolytope Q, we calculate the basis for inc map from a spanning tree of it. 
                 If none is provided, then one is randomly chosen.
-
  
             Example
                 basisForFlowPolytope bipartiteQuiver(2,3)
@@ -2232,7 +2232,9 @@ multidoc ///
                 }}@ 
 
             Example
+                -- create a quiver
                 Q = toricQuiver {{0,1},{0,2},{0,3},{1,2},{1,3},{2,3}};
+                -- calculate the set of cones for the quiver
                 CS = coneSystem Q
         SeeAlso
             flowPolytopeVertices
@@ -2306,7 +2308,9 @@ multidoc ///
                 The function incInverse calculates a vector in the preimage of such a map.    
             
             Example
+                -- create a toric quiver
                 Q = toricQuiver(bipartiteQuiver(2,3));
+                -- create a list of values for the 5 vertices in the quiver
                 th = {-5,-1,2,2,2};
                 -- calculate the preimage of the weight th for the quiver Q
                 incInverse(th, Q)
