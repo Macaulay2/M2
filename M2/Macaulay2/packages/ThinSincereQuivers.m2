@@ -391,7 +391,7 @@ coneSystem = Q -> (
                         TIJ := intersection(TI, TJ);
                         if (dim TIJ >= coneDim) then (
                             allEmpty = false;
-                            if not isMember(TIJ, addedTo) then (
+                            if not isIn(TIJ, addedTo) then (
                                 addedTo = addedTo | {TIJ};
                                 {TIJ, j}
                             ) else (continue;)
@@ -645,12 +645,12 @@ isTight(List, ToricQuiver) := Boolean => opts -> (F, Q) -> (
 isWellDefined(ToricQuiver) := Boolean => Q -> (
     -- check that the vertices are consecutive
     vertexRange := toList(0..#Q.Q0 - 1),
-    if any(Q.Q0, x -> not isMember(x, vertexRange)) then (
+    if any(Q.Q0, x -> not isIn(x, vertexRange)) then (
         print("error: Toric Quiver is missing vertices");
         return false;
     );
     -- check that each edge is defined in terms of two vertices
-    if any(Q.Q1, e -> (#e < 2) or (not (isMember(e#0, vertexRange) and isMember(e#1, vertexRange)))) then (
+    if any(Q.Q1, e -> (#e < 2) or (not (isIn(e#0, vertexRange) and isIn(e#1, vertexRange)))) then (
         print("error: edge is has invalid endpoint");
         return false;
     );
@@ -1438,6 +1438,11 @@ isGraphConnected = G -> (
     )
 )
 
+isIn = (v, l) -> (
+    p := positions(l, x -> x == v);
+    #p > 0
+)
+
 isMaximal = method()
 isMaximal(List, Matrix) := Boolean => (Qlist, Q) -> (
     returnVal := true;
@@ -1532,7 +1537,7 @@ primalUndirectedCycle = (G) -> (
 
                 for cE in cycle do (
                     for gI in asList(0..#G - 1) do (
-                        if isMember(gI, metEdges) then (
+                        if isIn(gI, metEdges) then (
                             continue;
                         ) else (
                             gE := G#gI;
