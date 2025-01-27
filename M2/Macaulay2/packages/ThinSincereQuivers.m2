@@ -48,6 +48,7 @@ export {
     "stableTrees",
     "subquivers",
     "threeVertexQuiver",
+    "wallQPlus",
     "wallType",
 -- Options
     "AsSubquiver",
@@ -1178,10 +1179,10 @@ subquivers ToricQuiver := opts -> Q -> (
 -- return ordered list of the weights for the vertices of quiver Q
 getWeights = method()
 getWeights(ToricQuiver) := List => Q -> (
-    Q.weights
+    return Q.weights
 )
 getWeights(Matrix) := List => Q -> (
-    sumList(entries(Q), Axis => "Row")
+    return sumList(entries(Q), Axis => "Row")
 )
 ------------------------------------------------------------
 
@@ -1212,14 +1213,26 @@ threeVertexQuiver(List) := ToricQuiver => opts -> (numEdges) -> (
 
 
 ------------------------------------------------------------
+wallQPlus = method()
+wallQPlus(Wall) := Sequence => W -> (
+    return W.Qplus
+)
+------------------------------------------------------------
+
+
+
+------------------------------------------------------------
 wallType = method()
 wallType(List, Matrix) := Sequence => (Qp, Q) -> (
     tp := number(sumList(Q^Qp, Axis => "Col"), x -> x < 0);
     tm := number(sumList(Q^Qp, Axis => "Col"), x -> x > 0);
-    (tp, tm)
+    return (tp, tm)
 )
 wallType(List, ToricQuiver) := Sequence => (Qp, Q) -> (
-    wallType(Qp, Q.IncidenceMatrix*diagonalMatrix(Q.flow))
+    return wallType(Qp, Q.IncidenceMatrix*diagonalMatrix(Q.flow))
+)
+wallType(Wall) := Sequence => W -> (
+    return W.WallType
 )
 ------------------------------------------------------------
 
@@ -1586,7 +1599,7 @@ nonStableSubquivers(ToricQuiver) := opts -> Q -> (
     );
     singletonUnstableSqs := for x in positions(Q.weights, x -> x <= 0) list ({x});
 
-    hashTable({NonSingletons => sqsWithArrows, Singletons => singletonUnstableSqs})
+    return hashTable({NonSingletons => sqsWithArrows, Singletons => singletonUnstableSqs})
 )
 
 -- return the indices of the list l in order the values occur 
@@ -1675,7 +1688,7 @@ subsetsClosedUnderArrows Matrix := List => (Q) -> (
     ))
 )
 subsetsClosedUnderArrows ToricQuiver := List => (Q) -> (
-    subsetsClosedUnderArrows(Q.IncidenceMatrix)
+    return subsetsClosedUnderArrows(Q.IncidenceMatrix)
 )
 
 -- add all elements of a list x together, and specify Axis (row/col) if x is actually a matrix or list of lists -- 
@@ -1714,7 +1727,7 @@ unstableSubquivers(ToricQuiver) := opts -> Q -> (
     );
     singletonUnstableSqs := for x in positions(Q.weights, x -> x < 0) list ({x});
 
-    hashTable({NonSingletons => sqsWithArrows, Singletons => singletonUnstableSqs})
+    return hashTable({NonSingletons => sqsWithArrows, Singletons => singletonUnstableSqs})
 )
 
 
@@ -3105,18 +3118,43 @@ multidoc ///
             AsSubquiver
     Node
         Key
+            wallQPlus
+            (wallQPlus, Wall)
+        Headline
+            get the partition of the set of vertices induced by a wall
+        Usage
+            wallQPlus (W)
+        Inputs
+            W: Wall
+        Outputs
+            QP: Sequence
+                of vertices contained in one of the two sets forming the partition induced by the wall W
+        Description
+            Text
+                Every wall can be represented uniquely by a partition of the vertices 
+                {\tt Q0} of {\tt Q} into two sets {\tt Qplus} and {\tt Qminus}. 
+                We denote the wall {\tt W} by the subset of vertices {\tt Qplus} used for defining it. 
+            Example
+                wallQPlus(first potentialWalls bipartiteQuiver(2, 3))
+        SeeAlso
+            wallType
+    Node
+        Key
             wallType
             (wallType, List, ToricQuiver)
             (wallType, List, Matrix)
+            (wallType, Wall)
         Headline
             get the type of a wall for a given quiver
         Usage
             wallType (Qplus, Q)
             wallType (Qplus, M)
+            wallType (W)
         Inputs
             Q: ToricQuiver
             M: Matrix
             Qplus: List
+            W: Wall
         Outputs
             WT: Sequence
                 having two nonnegative integer entries denoting the type of the wall
@@ -3133,7 +3171,7 @@ multidoc ///
 
             Text
                 This method is written to compute the wall type based on the incidence matrix,
-                in the case of a trivial flow, or the entire quiver.
+                in the case of a trivial flow, or the entire quiver. It will also return the type for a given wall.
 
             Example
                 wallType({0,2,3}, bipartiteQuiver(2, 3))
@@ -3141,6 +3179,8 @@ multidoc ///
                 wallType({0,2,3}, quiverIncidenceMatrix(bipartiteQuiver(2, 3)))
             Example
                 wallType({1,2,3}, chainQuiver({2,3,4}))
+            Example
+                wallType(first potentialWalls chainQuiver({2,3,4}))
         SeeAlso
     Node
         Key
