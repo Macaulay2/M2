@@ -48,12 +48,10 @@ export {
     "stableTrees",
     "subquivers",
     "threeVertexQuiver",
-    "wallQPlus",
     "wallType",
 -- Options
     "AsSubquiver",
     "Flow",
-    "Height",
     "ReturnSingletons",
 -- Quiver objects 
     "ToricQuiver",
@@ -98,7 +96,7 @@ toricQuiver = method(Options => {Flow => "Default", Height => 10})
 toricQuiver(Matrix) := ToricQuiver => opts -> Q -> (
     F := 0.5*sumList(for x in entries(Q) list(for y in x list(abs(y))), Axis => "Col");
     if opts.Flow == "Canonical" then (
-        F = toList(numColumns(Q):1);
+        F = asList(numColumns(Q):1);
     ) else if opts.Flow == "Random" then (
         F = for i in (0..#F - 1) list(random(opts.Height));
     );
@@ -141,7 +139,7 @@ toricQuiver(Matrix, List) := ToricQuiver => opts -> (Q, F) -> (
         IncidenceMatrix => Q_Qi,
         Q0 => toList(0..numRows(Q) - 1),
         Q1 => sort(graphEdges(Q, Oriented => true)),
-        flow => F_Qi,
+        flow => asList(F)_Qi,
         weights => sumList(entries(Q*diagonalMatrix(F)), Axis => "Row")
     }
 )
@@ -156,13 +154,13 @@ toricQuiver(ToricQuiver, List) := ToricQuiver => opts -> (Q, F) -> (
 -- construct ToricQuiver from list of edges
 toricQuiver(List) := ToricQuiver => opts -> E -> (
     Q := graphFromEdges(sort(E), Oriented => true);
-    F := toList(#E:1);
+    F := asList(#E:1);
     if opts.Flow == "Random" then (
         F = for i in (0..#E - 1) list(random(opts.Height));
     );
     new ToricQuiver from hashTable{
         IncidenceMatrix => Q,
-        Q0 => toList(0..numRows(Q) - 1),
+        Q0 => asList(0..numRows(Q) - 1),
         Q1 => E,
         flow => F,
         weights => sumList(entries(Q*diagonalMatrix(F)), Axis => "Row")
@@ -198,8 +196,8 @@ ToricQuiver ^ List := ToricQuiver => (TQ, L) -> (
       error "invalid range for subsetting quiver edges";
     };
     newFlow := TQ.flow;
-    Lc := toList(set(0..#TQ.flow - 1) - set(L));
-    for i in Lc do(newFlow = replace(i, 0, newFlow));
+    Lc := asList(set(0..#TQ.flow - 1) - set(L));
+    for i in Lc do(newFlow = replaceInList(i, 0, newFlow));
     toricQuiver(TQ.IncidenceMatrix, newFlow)
 )
 -- subquiver of a ToricQuiver by removing all vertices/arrows not in the subquiver
@@ -232,7 +230,7 @@ allSpanningTrees = (TQ) -> (
 
     --  edges of quiver Q represented as a list of tuples
     allEdges := graphEdges(Q, Oriented => true);
-    allNodes := toList(0..Q0-1);
+    allNodes := asList(0..Q0-1);
 
     trees := {};
     edgeIndices := {};
@@ -243,21 +241,21 @@ allSpanningTrees = (TQ) -> (
     d := Q1 - Q0 + 1;
     if d > 0 then (
         -- try removing every combination of d edges and see if result is a tree
-        dTuplesToRemove := combinations(d, toList(0..#allEdges-1), Replacement => false, Order => false);
+        dTuplesToRemove := combinations(d, asList(0..#allEdges-1), Replacement => false, Order => false);
         edgesKept := {};
         edgesRemoved := {};
 
         trees = for dTuple in dTuplesToRemove list (
-            edgeIndices = toList(set(0..#allEdges - 1) - set(dTuple));
+            edgeIndices = asList(set(0..#allEdges - 1) - set(dTuple));
             edgesKept = allEdges_edgeIndices;
             edgesRemoved = allEdges_dTuple;
 
             reducedG := transpose(matrix(for e in edgesKept list(
                 t := e#0;
                 h := e#1;
-                localE := toList(Q0:0);
-                localE = replace(h,  1, localE);
-                localE = replace(t, -1, localE);
+                localE := asList(Q0:0);
+                localE = replaceInList(h,  1, localE);
+                localE = replaceInList(t, -1, localE);
                 localE
             )));
             if numColumns(reducedG) > 1 then (
@@ -282,7 +280,7 @@ allSpanningTrees = (TQ) -> (
 -- to write the associated flow polytopes in. 
 basisForFlowPolytope = method()
 basisForFlowPolytope (List, ToricQuiver) := Matrix => (ST, Q) -> (
-    removedEdges := toList(set(0..#Q.Q1 - 1) - set(ST));
+    removedEdges := asList(set(0..#Q.Q1 - 1) - set(ST));
     es := ST | removedEdges;
 
     f := for i from 0 to #removedEdges - 1 list(
@@ -293,10 +291,10 @@ basisForFlowPolytope (List, ToricQuiver) := Matrix => (ST, Q) -> (
         fi := #es:0;
         for j in cycle do (
             if j >= 0 then (
-                fi = replace(edgeList#j, 1, fi)
+                fi = replaceInList(edgeList#j, 1, fi)
             ) else (
                 k := -(1 + j);
-                fi = replace(edgeList#k, -1, fi)
+                fi = replaceInList(edgeList#k, -1, fi)
             );
         );
         fi
@@ -404,7 +402,7 @@ coneSystem = Q -> (
             if allEmpty then (
                break;
             ) else (
-               lastList = currentList;
+               lastList = asList(currentList);
                ssets = ssets | apply(lastList, x -> rays x#0);
             );
         );
@@ -499,7 +497,7 @@ incInverse(List, ToricQuiver) := List => (th, tQ) -> (
     a = a * diagonalMatrix(nonzeroFlows);
     b := matrix(for t in th list {floor t}) **QQ;
     F := solve(a **QQ, b);
-    flatten entries F
+    flatten entries first asList F
 )
 ------------------------------------------------------------
 
@@ -556,14 +554,18 @@ isSemistable(List, ToricQuiver) := Boolean => (subQ, Q) -> (
     weights := Qweights_subQVertices;
 
     -- negative weights in Q_0 \ subQ_0
-    otherVertices := toList(set(0..#Qweights - 1) - set(subQVertices));
-    minWeight := sum(apply({0} | toList(Qweights_otherVertices), x -> if(x <= 0) then x else 0));
+    otherVertices := asList(set(0..#Qweights - 1) - set(subQVertices));
+    minWeight := sum(apply({0} | asList(Qweights_otherVertices), x -> if(x <= 0) then x else 0));
 
     subMat := Qcm_subQ;
     tSubMat := transpose(subMat);
     subMat = transpose(tSubMat_subQVertices);
 
-    sums := for subset in subsetsClosedUnderArrows(subMat) list(sumList(weights_subset));
+    sums := asList(
+        for subset in subsetsClosedUnderArrows(subMat) list(
+            sumList(weights_subset)
+        )
+    );
     all(sums, x -> x + minWeight >= 0)
 )
 isSemistable(ToricQuiver, ToricQuiver) := Boolean => (subQ, Q) -> (
@@ -588,14 +590,18 @@ isStable(List, ToricQuiver) := Boolean => (subQ, Q) -> (
     weights := Qweights_subQVertices;
 
     -- negative weights in Q_0 \ subQ_0
-    otherVertices := toList(set(0..#Qweights - 1) - set(subQVertices));
-    minWeight := sum(apply({0} | toList(Qweights_otherVertices), x -> if(x <= 0) then x else 0));
+    otherVertices := asList(set(0..#Qweights - 1) - set(subQVertices));
+    minWeight := sum(apply({0} | asList(Qweights_otherVertices), x -> if(x <= 0) then x else 0));
 
     subMat := Qcm_subQ;
     tSubMat := transpose(subMat);
     subMat = transpose(tSubMat_subQVertices);
 
-    sums := for subset in subsetsClosedUnderArrows(subMat) list(sumList(weights_subset));
+    sums := asList(
+        for subset in subsetsClosedUnderArrows(subMat) list(
+            sumList(weights_subset)
+        )
+    );
     all(sums, x -> x + minWeight > 0)
 )
 isStable(ToricQuiver, ToricQuiver) := Boolean => (subQ, Q) -> (
@@ -636,6 +642,7 @@ isTight(List, ToricQuiver) := Boolean => opts -> (F, Q) -> (
 
 
 ------------------------------------------------------------
+-- isWellDefined = method()
 isWellDefined(ToricQuiver) := Boolean => Q -> (
     -- check that the vertices are consecutive
     vertexRange := toList(0..#Q.Q0 - 1),
@@ -691,7 +698,7 @@ isWellDefined(ToricQuiver) := Boolean => Q -> (
 makeTight = (W, Q) -> (
     potentialF := incInverse(W, Q);
     k := entries generators kernel Q.IncidenceMatrix;
-    potentialF = potentialF + flatten entries transpose(matrix({sumList(k, Axis => "Row")}));
+    potentialF = potentialF + flatten entries first asList(transpose(matrix({sumList(k, Axis => "Row")})));
 
     -- this function calls itself recursively until a tight quiver is produced
     if isTight(Q, potentialF) then (
@@ -706,7 +713,7 @@ makeTight = (W, Q) -> (
         Qcm := graphFromEdges(Q.Q1, Oriented => true)*diagonalMatrix(potentialF);
         maxUnstSubs := maximalUnstableSubquivers(toricQuiver(Q.IncidenceMatrix, potentialF), ReturnSingletons => true);
         R := first(maxUnstSubs#NonSingletons);
-        Rvertices := toList set flatten Q.Q1_R;
+        Rvertices := asList set flatten Q.Q1_R;
         S := {};
 
         -- generate a connected subset of R0 that is closed under arrows and has weight sum <= 0
@@ -739,7 +746,7 @@ makeTight = (W, Q) -> (
 
         -- contract the arrow alpha to create a new quiver
         newRows := entries(Q.IncidenceMatrix);
-        newCols := drop(toList(0..#Q.Q1 - 1), {alpha, alpha});
+        newCols := drop(asList(0..#Q.Q1 - 1), {alpha, alpha});
         newM := matrix(for e in Q.Q0 list(
             if e == aMinus then (
                 nRs := sumList(Q.IncidenceMatrix^{aPlus, aMinus}, Axis => "Col");
@@ -811,7 +818,7 @@ maximalNonstableSubquivers = {Format => "list", ReturnSingletons => false} >> op
         containedSingletons := flatten for subQ1 in NonstableList#NonSingletons list (
             for x in Q.Q1_subQ1 list ({x})
         );
-        withoutArrows := toList(set(NonstableList#Singletons) - set(containedSingletons));
+        withoutArrows := asList(set(NonstableList#Singletons) - set(containedSingletons));
 
         hashTable {NonSingletons => withArrows, Singletons => withoutArrows}
     ) else (
@@ -843,7 +850,7 @@ maximalUnstableSubquivers = {Format => "list", ReturnSingletons => false} >> opt
         containedSingletons := flatten for subQ1 in unstableList#NonSingletons list (
             for x in Q.Q1_subQ1 list ({x})
         );
-        withoutArrows := toList(set(unstableList#Singletons) - set(containedSingletons));
+        withoutArrows := asList(set(unstableList#Singletons) - set(containedSingletons));
     
         hashTable {NonSingletons => withArrows, Singletons => withoutArrows}
     ) else (
@@ -869,14 +876,14 @@ mergeOnArrow(Matrix, ZZ, Matrix, ZZ) := ToricQuiver => (Q1, a1, Q2, a2) -> (
     nrow := Q1nr + Q2nr - 2;
     ncol := Q1nc + Q2nc - 1;
 
-    q1E := toList(graphEdges(Q1, Oriented => true))_a1;
-    q2E := toList(graphEdges(Q2, Oriented => true))_a2;
+    q1E := asList(graphEdges(Q1, Oriented => true))_a1;
+    q2E := asList(graphEdges(Q2, Oriented => true))_a2;
 
-    c1 := toList(join(drop(0..Q1nc - 1, {a1, a1}), {a1}));
-    c2 := toList(drop(0..Q2nc - 1, {a2, a2}));
+    c1 := asList(join(drop(0..Q1nc - 1, {a1, a1}), {a1}));
+    c2 := asList(drop(0..Q2nc - 1, {a2, a2}));
 
-    r1 := toList(join(toList(set(0..Q1nr - 1) - set(q1E)), q1E));
-    r2 := toList(join(q2E, toList(set(0..Q2nr - 1) - set(q2E))));
+    r1 := asList(join(asList(set(0..Q1nr - 1) - set(q1E)), q1E));
+    r2 := asList(join(q2E, asList(set(0..Q2nr - 1) - set(q2E))));
 
     Q1 = entries(Q1^r1)_c1;
     Q2 = entries(Q2^r2)_c2;
@@ -886,14 +893,14 @@ mergeOnArrow(Matrix, ZZ, Matrix, ZZ) := ToricQuiver => (Q1, a1, Q2, a2) -> (
         for row from 0 to nrow - 1 list(
             if row < (Q1nr - 2) then (
                 paddingSize = Q2nc - 1;
-                join(Q1_row, toList(paddingSize:0))
+                join(Q1_row, asList(paddingSize:0))
 
             ) else if row < Q1nr then (
                 join(Q1_row, Q2_(2 + row - Q1nr))
             ) else (
                 j := (row - Q1nr) + 2;
                 paddingSize = Q1nc;
-                toList(join(paddingSize:0, Q2_j))
+                asList(join(paddingSize:0, Q2_j))
             )
         )
     )
@@ -925,8 +932,8 @@ mergeOnVertex(Matrix, ZZ, Matrix, ZZ) := ToricQuiver => (Q1, v1, Q2, v2) -> (
     Q1cs := numColumns(Q1);
     Q2cs := numColumns(Q2);
 
-    i1 := toList(join(drop(0..numRows(Q1) - 1, {v1, v1}), {v1}));
-    i2 := toList(join({v2}, drop(0..numRows(Q2) - 1, {v2, v2})));
+    i1 := asList(join(drop(0..numRows(Q1) - 1, {v1, v1}), {v1}));
+    i2 := asList(join({v2}, drop(0..numRows(Q2) - 1, {v2, v2})));
 
     Q1 = entries(Q1^i1);
     Q2 = entries(Q2^i2);
@@ -936,13 +943,13 @@ mergeOnVertex(Matrix, ZZ, Matrix, ZZ) := ToricQuiver => (Q1, v1, Q2, v2) -> (
     toricQuiver matrix(
         for row in (0..nrow - 1) list(
             if row < (Q1rs - 1) then (
-                Q1_row | toList(paddingSize:0)
+                Q1_row | asList(paddingSize:0)
             ) else if (row < Q1rs) then (
                 Q1_row | Q2_0
             ) else (
                 r = row - (Q1rs - 1);
                 paddingSize = ncol - Q2cs;
-                toList(paddingSize:0) | Q2_r 
+                asList(paddingSize:0) | Q2_r 
             )
         )
     )
@@ -968,7 +975,7 @@ potentialWalls(Matrix) := List => (Q) -> (
 
     -- create list of possible Qminus
     Qms := flatten(for i from 1 to floor(nv/2) list (
-        combinations(i, toList(nvSet), Replacement => false, Order => false)
+        combinations(i, asList(nvSet), Replacement => false, Order => false)
     ));
 
     alreadyMet := set ();
@@ -983,7 +990,7 @@ potentialWalls(Matrix) := List => (Q) -> (
             connectsToQm := positions(entries transpose Q^Qm, x -> any(x, v -> v != 0));
             -- find the edges that have head and tail in Qm
             QmEdgeIndices := for s in connectsToQm list(if (mSums_s == 0) then (s) else (continue;));
-            Qp := toList(nvSet - set(Qm));
+            Qp := asList(nvSet - set(Qm));
             alreadyMet = alreadyMet + set ({Qp}) + set ({Qm});
 
             if isGraphConnected(Q^Qm_QmEdgeIndices) then (
@@ -1172,10 +1179,10 @@ subquivers ToricQuiver := opts -> Q -> (
 -- return ordered list of the weights for the vertices of quiver Q
 getWeights = method()
 getWeights(ToricQuiver) := List => Q -> (
-    return Q.weights
+    Q.weights
 )
 getWeights(Matrix) := List => Q -> (
-    return sumList(entries(Q), Axis => "Row")
+    sumList(entries(Q), Axis => "Row")
 )
 ------------------------------------------------------------
 
@@ -1206,26 +1213,16 @@ threeVertexQuiver(List) := ToricQuiver => opts -> (numEdges) -> (
 
 
 ------------------------------------------------------------
-wallQPlus = method()
-wallQPlus(Wall) := Sequence => W -> (
-    return W.Qplus
-)
-------------------------------------------------------------
-
-
-
-------------------------------------------------------------
 wallType = method()
 wallType(List, Matrix) := Sequence => (Qp, Q) -> (
+    -- tp := sum(for x in sumList(Q^Qp, Axis => "Col") list(if x < 0 then (1) else (continue;)));
+    -- tm := sum(for x in sumList(Q^Qp, Axis => "Col") list(if x > 0 then (1) else (continue;)));
     tp := number(sumList(Q^Qp, Axis => "Col"), x -> x < 0);
     tm := number(sumList(Q^Qp, Axis => "Col"), x -> x > 0);
-    return (tp, tm)
+    (tp, tm)
 )
 wallType(List, ToricQuiver) := Sequence => (Qp, Q) -> (
-    return wallType(Qp, Q.IncidenceMatrix*diagonalMatrix(Q.flow))
-)
-wallType(Wall) := Sequence => W -> (
-    return W.WallType
+    wallType(Qp, Q.IncidenceMatrix*diagonalMatrix(Q.flow))
 )
 ------------------------------------------------------------
 
@@ -1244,7 +1241,7 @@ adjacencyToIncidence = (A) -> (
 
 )
 
--- cast object x as a list, even when x is not an iterable
+-- cast object x as a list
 asList = x -> (
     if instance(x, List) then(
         return x
@@ -1309,9 +1306,9 @@ edgesOutOfPoint = {Oriented => false} >> opts -> (p, E) -> (
 existsOrientedCycle = (G) -> (
     retVal := false;
     E := graphEdges(G, Oriented => true);
-    V := toList(0..numRows(G)-1);
+    V := asList(0..numRows(G)-1);
     for firstV in V do (
-        visited := replace(firstV, 1, toList(#V:0));
+        visited := replaceInList(firstV, 1, asList(#V:0));
         result := findCycleDFS(firstV, visited, E);
         if result then (
             retVal = true;
@@ -1338,7 +1335,7 @@ findCycleDFS = (startV, visited, E) -> (
     retVal := false;
     edgesOut := edgesOutOfPoint(startV, E, Oriented => true);
     for edge in edgesOut do (
-        currentVisited := toList(visited);
+        currentVisited := asList(visited);
         edgeVerts := edge#1;
         endV := edgeVerts#1;
         if visited#endV == 1 then (
@@ -1346,7 +1343,7 @@ findCycleDFS = (startV, visited, E) -> (
             break;
         );
         if retVal then break;
-        currentVisited = replace(endV, 1, visited);
+        currentVisited = replaceInList(endV, 1, visited);
         retVal = findCycleDFS(endV, currentVisited, E);
     );
     retVal
@@ -1379,7 +1376,7 @@ graphEdges ToricQuiver := List => opts -> (G) -> (
 
 graphVertices = method();
 graphVertices Matrix := List => M -> (
-    toList(0..numRows(M) - 1)
+    asList(0..numRows(M) - 1)
 )
 graphVertices ToricQuiver := List => Q -> (
     Q.Q0
@@ -1397,7 +1394,7 @@ graphFromEdges = {Oriented => false} >> opts -> E -> (
     nVerts := max(flatten(E))+1;
     cols := for i in E list(
         row := (nVerts:0);
-        toList(replace(i#0, tailVal, replace(i#1, 1, row)))
+        asList(replaceInList(i#0, tailVal, replaceInList(i#1, 1, row)))
     );
     transpose(matrix(cols))
 )
@@ -1542,7 +1539,7 @@ primalUndirectedCycle = (G) -> (
                 metEdges := {};
 
                 for cE in cycle do (
-                    for gI in toList(0..#G - 1) do (
+                    for gI in asList(0..#G - 1) do (
                         if isIn(gI, metEdges) then (
                             continue;
                         ) else (
@@ -1568,18 +1565,21 @@ primalUndirectedCycle = (G) -> (
     );
 )
 
+replaceInList = (i, v, l) -> (
+    insert(i, v, drop(l, {i,i}))
+)
 
 nonStableSubquivers = method(Options => {Format => "list"})
 nonStableSubquivers(ToricQuiver) := opts -> Q -> (
     numArrows := #Q.Q1;
-    arrows := toList(0..numArrows - 1);
+    arrows := asList(0..numArrows - 1);
 
     L := flatten(for i from 1 to numArrows - 1 list (
         combinations(numArrows - i, arrows, Replacement => false, Order => false) 
     ));
 
     sqsWithArrows := for sQ in L list(
-        if not isStable(toList(sQ), Q) then (
+        if not isStable(asList(sQ), Q) then (
             if (opts.Format == "list") then (
                 sQ
             ) else (
@@ -1589,7 +1589,7 @@ nonStableSubquivers(ToricQuiver) := opts -> Q -> (
     );
     singletonUnstableSqs := for x in positions(Q.weights, x -> x <= 0) list ({x});
 
-    return hashTable({NonSingletons => sqsWithArrows, Singletons => singletonUnstableSqs})
+    hashTable({NonSingletons => sqsWithArrows, Singletons => singletonUnstableSqs})
 )
 
 -- return the indices of the list l in order the values occur 
@@ -1615,29 +1615,29 @@ spanningTree = (Q) -> (
 
     --  edges of quiver Q represented as a list of tuples
     allEdges := graphEdges(Q, Oriented => true);
-    allNodes := toList(0..Q0-1);
+    allNodes := asList(0..Q0-1);
 
     -- number of edges to remove from spanning tree
     d := Q1 - Q0 + 1;
 
     edgeIndices := {};
     if d > 0 then (
-        dTuplesToRemove := combinations(d, toList(0..#allEdges-1), Replacement => false, Order => false);
+        dTuplesToRemove := combinations(d, asList(0..#allEdges-1), Replacement => false, Order => false);
         edgesKept := {};
         edgesRemoved := {};
         foundTree := false;
 
         for dTuple in dTuplesToRemove do (
-            edgeIndices = toList(set(0..#allEdges - 1) - set(dTuple));
+            edgeIndices = asList(set(0..#allEdges - 1) - set(dTuple));
             edgesKept = allEdges_edgeIndices;
             edgesRemoved = allEdges_dTuple;
 
             reducedG := transpose(matrix(for e in edgesKept list(
                 t := e#0;
                 h := e#1;
-                localE := toList(Q0:0);
-                localE = replace(h,  1, localE);
-                localE = replace(t, -1, localE);
+                localE := asList(Q0:0);
+                localE = replaceInList(h,  1, localE);
+                localE = replaceInList(t, -1, localE);
                 localE
             )));
             if numColumns(reducedG) > 1 then (
@@ -1653,7 +1653,7 @@ spanningTree = (Q) -> (
             );
         );
         if foundTree then (
-            dTuple := toList(set(0..#allEdges - 1) - set(edgeIndices));
+            dTuple := asList(set(0..#allEdges - 1) - set(edgeIndices));
             return (edgeIndices, dTuple);
         ) else (
             return ({}, {});
@@ -1678,7 +1678,7 @@ subsetsClosedUnderArrows Matrix := List => (Q) -> (
     ))
 )
 subsetsClosedUnderArrows ToricQuiver := List => (Q) -> (
-    return subsetsClosedUnderArrows(Q.IncidenceMatrix)
+    subsetsClosedUnderArrows(Q.IncidenceMatrix)
 )
 
 -- add all elements of a list x together, and specify Axis (row/col) if x is actually a matrix or list of lists -- 
@@ -1692,7 +1692,7 @@ sumList = {Axis => "None"} >> opts -> x -> (
        s = flatten(for i in pivoted list(sumList(i)));
     )
     else (
-        s = sum(toList(x));
+        s = sum(asList(x));
     );
     return s
 )
@@ -1700,14 +1700,14 @@ sumList = {Axis => "None"} >> opts -> x -> (
 unstableSubquivers = method(Options => {Format => "list"})
 unstableSubquivers(ToricQuiver) := opts -> Q -> (
     numArrows := #Q.Q1;
-    arrows := toList(0..numArrows - 1);
+    arrows := asList(0..numArrows - 1);
 
     L := flatten(for i from 1 to numArrows - 1 list (
         combinations(numArrows - i, arrows, Replacement => false, Order => false) 
     ));
 
     sqsWithArrows := for sQ in L list(
-        if not isSemistable(toList(sQ), Q) then (
+        if not isSemistable(asList(sQ), Q) then (
             if (opts.Format == "list") then (
                 sQ
             ) else (
@@ -1717,7 +1717,7 @@ unstableSubquivers(ToricQuiver) := opts -> Q -> (
     );
     singletonUnstableSqs := for x in positions(Q.weights, x -> x < 0) list ({x});
 
-    return hashTable({NonSingletons => sqsWithArrows, Singletons => singletonUnstableSqs})
+    hashTable({NonSingletons => sqsWithArrows, Singletons => singletonUnstableSqs})
 )
 
 
@@ -1790,7 +1790,6 @@ multidoc ///
             samePolytope
             stableTrees
             subquivers
-            wallQPlus
             wallType
             getWeights
             AsSubquiver
@@ -1803,18 +1802,18 @@ multidoc ///
             the ToricQuiver datatype
         Description
             Text
-                A toric quiver is an acyclic directed graph with edge set $Q_1$ and
-                vertices $Q_0$, equipped with a flow, which is a vector of values
-                associated to each edge of the graph, and a weight, which is a vector of
+                A toric quiver is an acyclic directed graph with edge set $Q_1$ and 
+                vertices $Q_0$, equipped with a flow, which is a vector of values 
+                associated to each edge of the graph, and a weight, which is a vector of 
                 values associated to each vertex in the graph.
                 The weights are obtained from the flow and graph as the image of the incidence map, defined as follows:
                 $$
-                \text{inc}(\mathbf{w})(i)
-                := \sum_{a\in Q_1 \atop a^{+} = i} \mathbf{w}(a)
-                - \sum_{a\in Q_1 \atop a^{-} = i}
+                \text{inc}(\mathbf{w})(i) 
+                := \sum_{a\in Q_1 \atop a^{+} = i} \mathbf{w}(a)  
+                - \sum_{a\in Q_1 \atop a^{-} = i} 
                 \mathbf{w}(a) \quad \text{ for all } i \in Q_0.
                 $$
-                The ToricQuiver data type is a type of Hash Table with the following keys:
+                The ToricQuiver data type is a type of Hash Table with the following keys: 
             Text
                 @UL {
                     {TT "IncidenceMatrix:", "matrix representation of the connected graph underlying the quiver"},
@@ -1841,7 +1840,6 @@ multidoc ///
             (toricQuiver, ToricQuiver)
             (toricQuiver, ToricQuiver, List)
             [toricQuiver, Flow]
-            [toricQuiver, Height]
         Headline
             the toricQuiver constructor
         Usage
@@ -1862,7 +1860,7 @@ multidoc ///
             M: Matrix 
                 of integers giving the connectivity structure of the quiver. If specified, this matrix should be a well-defined incidence matrix for the graph underlying the quiver
             T: ToricQuiver 
-            Flow => String
+            Flow => 
                 that specifies the flow for the polytope. 
                 options are 
                 {\tt Default}, which takes the flow from values in the matrix, 
@@ -1907,9 +1905,6 @@ multidoc ///
             Example
                 -- create a toric quiver from a matrix with random flow with values in the range [0, 10)
                 Q = toricQuiver(matrix({{-1,-1,-1,-1},{0,0,1,1},{1,1,0,0}}), Flow => "Random")
-            Example
-                -- create a toric quiver from a matrix with random flow with values in the range [0, 200)
-                Q = toricQuiver(matrix({{-1,-1,-1,-1},{0,0,1,1},{1,1,0,0}}), Flow => "Random", Height => 201)
             Example
                 -- create a toric quiver copied from another one
                 Q = toricQuiver(matrix({{-1,-1,-1,-1},{0,0,1,1},{1,1,0,0}}), Flow => "Random");
@@ -1990,7 +1985,7 @@ multidoc ///
             Text
                 The two methods corresponding to these ideas are referenced in the examples below. 
             Example
-                Q = bipartiteQuiver(2, 3);
+                Q = bipartiteQuiver(2,3);
                 -- show the subquiver consisting of arross 0, 1 and 3, by removing all of the others
                 SQ = Q_{0,1,3}
             Example
@@ -2022,7 +2017,7 @@ multidoc ///
                 To retain the original quiver labels on the subquiver, see @TO2 {(symbol ^, ToricQuiver, List), "(symbol ^, ToricQuiver, List)"}@. 
             Example
                 -- create a quiver
-                Q = bipartiteQuiver(2, 3);
+                Q = bipartiteQuiver(2,3);
                 -- extract the subquiver consisting of the arrows with indices 0, 1, 3
                 SQ = Q_{0,1,3}
         SeeAlso
@@ -2046,7 +2041,7 @@ multidoc ///
                 This method returns a the subquiver of the quiver {\tt Q} 
                 that is made up of the arrows in the list {\tt L}. 
             Example
-                Q = bipartiteQuiver(2, 3);
+                Q = bipartiteQuiver(2,3);
                 -- extract the subquiver consisting of the arrows with indices 0, 1, 3
                 SQ = Q^{0,1,3}
         SeeAlso
@@ -2068,13 +2063,13 @@ multidoc ///
                 This method takes two toric quivers and returns the 
                 boolean of the statement {\tt Q1} is equal to {\tt Q2}. 
             Example
-                Q = bipartiteQuiver(2, 3);
-                R = bipartiteQuiver(2, 2);
+                Q = bipartiteQuiver(2,3);
+                R = bipartiteQuiver(2,2);
                 -- check if the two quivers are the same
                 Q == R
             Example
                 Q = toricQuiver {{0, 2}, {0, 3}, {1, 2}, {1, 3}};
-                R = bipartiteQuiver(2, 2);
+                R = bipartiteQuiver(2,2);
                 -- check if the two quivers are the same
                 Q == R
         SeeAlso
@@ -2083,7 +2078,6 @@ multidoc ///
         Key
             bipartiteQuiver
             [bipartiteQuiver, Flow]
-            [bipartiteQuiver, Height]
         Headline
             make a toric quiver on underlying bipartite graph
         Usage
@@ -2108,7 +2102,7 @@ multidoc ///
                 {\tt N} source vertices and {\tt M} sink vertices.
             Example
                 -- create a bipartite quiver with 2 sources and 3 sinks
-                Q = bipartiteQuiver (2, 3)
+                Q = bipartiteQuiver (2,3)
             Example
                 -- create a bipartite quiver with 2 sources and 3 sinks and a random flow
                 Q = bipartiteQuiver (2, 3, Flow => "Random")
@@ -2121,7 +2115,6 @@ multidoc ///
         Key
             chainQuiver
             [chainQuiver, Flow]
-            [chainQuiver, Height]
         Headline
             make a toric quiver on underlying graph in the form of a chain
         Usage
@@ -2161,7 +2154,6 @@ multidoc ///
             threeVertexQuiver
             (threeVertexQuiver, List)
             [threeVertexQuiver, Flow]
-            [threeVertexQuiver, Height]
         Headline
             make a toric quiver on underlying graph with three vertices and a specified number of edges between each
         Usage
@@ -2213,9 +2205,9 @@ multidoc ///
                 The algorithm performs a depth-first search on each vertex 
                 and checks if the result is a connected graph.
             Example
-                Q = bipartiteQuiver(2, 3)
+                Q = bipartiteQuiver(2,3);
                 -- calculate the spanning trees for the underlying graph of the quiver Q
-                allSpanningTrees(Q)
+                S = allSpanningTrees(Q)
         SeeAlso
             toricQuiver
     Node
@@ -2252,9 +2244,9 @@ multidoc ///
 
  
             Example
-                basisForFlowPolytope bipartiteQuiver(2, 3)
+                basisForFlowPolytope bipartiteQuiver(2,3)
             Example
-                basisForFlowPolytope ({0,1,4,5},  bipartiteQuiver(2, 3))
+                basisForFlowPolytope ({0,1,4,5},  bipartiteQuiver(2,3))
         SeeAlso
             flowPolytopeVertices
     Node
@@ -2316,7 +2308,7 @@ multidoc ///
                 so it is full dimensional. By default, the output lists the vertices within this vector space. To obtain the presentation in the original fiber, 
                 use {\tt Format => "FullBasis"}.    
             Example
-                F = flowPolytopeVertices(bipartiteQuiver(2, 3))
+                F = flowPolytopeVertices(bipartiteQuiver(2,3))
             Text 
                 We can vary the weight of the quiver to define the flow polytope
             Example
@@ -2382,7 +2374,7 @@ multidoc ///
             Text
                 This method determines whether a quiver is free from oriented cycles.
             Example
-                isAcyclic bipartiteQuiver(2, 3)
+                isAcyclic bipartiteQuiver(2,3)
             Example
                 isAcyclic toricQuiver matrix({{-1, 1, -1, -1}, {1, -1, 0, 0}, {0, 0, 1, 1}})
         SeeAlso
@@ -2473,9 +2465,9 @@ multidoc ///
                 isSemistable ({0, 1, 3, 4, 5}, bipartiteQuiver(2,3))
             Example
                 -- create a quiver Q
-                Q = bipartiteQuiver(2, 3);
+                Q = bipartiteQuiver(2,3);
                 -- extract a subquiver
-                S = first(subquivers(Q, Format => "quiver", AsSubquiver => true))
+                S = first(subquivers(Q, Format => "quiver", AsSubquiver => true));
                 -- check if the subquiver is semistable
                 isSemistable (S, Q)
         SeeAlso
@@ -2507,7 +2499,7 @@ multidoc ///
 		the sum of the weights associated to {\tt V} is positive. 
             Example
                 -- create a quiver
-                Q = bipartiteQuiver(2, 3);
+                Q = bipartiteQuiver(2,3);
                 -- extract a subquiver
                 P = Q^{0,1,4,5};
                 -- check if the subquiver is stable
@@ -2516,7 +2508,7 @@ multidoc ///
                 isStable ({0, 1}, bipartiteQuiver(2, 3))
             Example
                 -- create a quiver
-                Q = bipartiteQuiver(2, 3);
+                Q = bipartiteQuiver(2,3);
                 -- extract a subquiver of the quiver
                 S = first(subquivers(Q, Format => "quiver", AsSubquiver => true));
                 -- check  if this subquiver is stable
@@ -2553,7 +2545,7 @@ multidoc ///
                 has at most $|Q_1|-2$ arrows. This method determines if a toric quiver $Q$ is 
                 tight with respect to the vertex weights induced by its flow. 
             Example
-                isTight bipartiteQuiver(2, 3)
+                isTight bipartiteQuiver(2,3)
             Example
                 isTight bipartiteQuiver(2, 3, Flow => "Random")
             Example
@@ -2606,7 +2598,7 @@ multidoc ///
                 "Altmann, Klaus, and Duco van Straten. \"Smoothing of quiver varieties.\" manuscripta mathematica 129 (2009): 211-230."}}@ 
             Example
                 -- create a quiver
-                Q = bipartiteQuiver(2, 3);
+                Q = bipartiteQuiver(2,3);
                 -- create a list of weights corresponding to the arrows of Q
                 w = {-5,-1,2,2,2};
                 -- create a tight quiver with the same flow polytope
@@ -3049,7 +3041,7 @@ multidoc ///
                 This routine returns the set of spanning trees of the quiver {\tt Q} that are stable with respect to the provided weight {\tt th}.
             Example
                 -- create a quiver
-                Q = bipartiteQuiver(2, 3);
+                Q = bipartiteQuiver(2,3);
                 -- create a weight
                 th = {-3,-3,2,2,2};
                 -- calculate the set of spanning trees that are stable with respect to the weight th
@@ -3110,43 +3102,18 @@ multidoc ///
             AsSubquiver
     Node
         Key
-            wallQPlus
-            (wallQPlus, Wall)
-        Headline
-            get the partition of the set of vertices induced by a wall
-        Usage
-            wallQPlus (W)
-        Inputs
-            W: Wall
-        Outputs
-            QP: Sequence
-                of vertices contained in one of the two sets forming the partition induced by the wall W
-        Description
-            Text
-                Every wall can be represented uniquely by a partition of the vertices 
-                {\tt Q0} of {\tt Q} into two sets {\tt Qplus} and {\tt Qminus}. 
-                We denote the wall {\tt W} by the subset of vertices {\tt Qplus} used for defining it. 
-            Example
-                wallQPlus(first potentialWalls bipartiteQuiver(2, 3))
-        SeeAlso
-            wallType
-    Node
-        Key
             wallType
             (wallType, List, ToricQuiver)
             (wallType, List, Matrix)
-            (wallType, Wall)
         Headline
             get the type of a wall for a given quiver
         Usage
             wallType (Qplus, Q)
             wallType (Qplus, M)
-            wallType (W)
         Inputs
             Q: ToricQuiver
             M: Matrix
             Qplus: List
-            W: Wall
         Outputs
             WT: Sequence
                 having two nonnegative integer entries denoting the type of the wall
@@ -3163,7 +3130,7 @@ multidoc ///
 
             Text
                 This method is written to compute the wall type based on the incidence matrix,
-                in the case of a trivial flow, or the entire quiver. It will also return the type for a given wall.
+                in the case of a trivial flow, or the entire quiver.
 
             Example
                 wallType({0,2,3}, bipartiteQuiver(2, 3))
@@ -3171,8 +3138,6 @@ multidoc ///
                 wallType({0,2,3}, quiverIncidenceMatrix(bipartiteQuiver(2, 3)))
             Example
                 wallType({1,2,3}, chainQuiver({2,3,4}))
-            Example
-                wallType(first potentialWalls chainQuiver({2,3,4}))
         SeeAlso
     Node
         Key
@@ -3243,25 +3208,6 @@ multidoc ///
             toricQuiver
     Node
         Key
-            Height
-        Description
-            Text
-                This is an optional argument that can be positive integer values, which and which is 
-                used in quiver constructor methods when the optional argument for flow is set to 
-                random {\tt Flow => "Random"}. The {\tt Height} argument sets the maximum value for 
-                the integer-valued random numhber generator so that values in the flow are chosen 
-                from the interval {\tt [0, Height)}.
-            Example
-                -- create a toric quiver from a matrix with random flow with values in the interval [0, 10)
-                Q = toricQuiver(matrix({{-1,-1,-1,-1},{0,0,1,1},{1,1,0,0}}), Flow => "Random")
-            Example
-                -- create a toric quiver from a matrix with random flow with values in the interval [0, 100)
-                Q = toricQuiver(matrix({{-1,-1,-1,-1},{0,0,1,1},{1,1,0,0}}), Flow => "Random", Height => 100)
-        SeeAlso
-            Flow
-            toricQuiver
-    Node
-        Key
             ReturnSingletons
         Description
             Text
@@ -3277,6 +3223,7 @@ multidoc ///
 ///
 TEST ///
     testQuiverConstruction = Q -> (
+        print(isWellDefined Q);
         assert (isWellDefined(Q));
         AllSubquivers = subquivers(Q, Format => "list");
         EdgeSubsets = subsets(#quiverEdges(Q));
@@ -3334,3 +3281,6 @@ TEST ///
     assert (#potentialWalls Q > 0);
 ///
 end--
+
+
+
