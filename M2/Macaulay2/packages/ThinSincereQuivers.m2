@@ -3284,53 +3284,110 @@ TEST ///
     )
     Q = threeVertexQuiver {1,2,3};
     testQuiverConstruction(Q)
-
+///
+TEST ///
     Q = bipartiteQuiver(2, 2);
-    testQuiverConstruction(Q);
+    assert isWellDefined Q;
     assert (allSpanningTrees Q == {{1, 2, 3}, {0, 2, 3}, {0, 1, 3}, {0, 1, 2}});
+///
+TEST ///
+    Q = bipartiteQuiver(2, 2);
     assert (not isClosedUnderArrows({1, 2}, Q));
+///
+TEST ///
+    Q = bipartiteQuiver(2, 2);
     munsbs = maximalNonstableSubquivers(Q, ReturnSingletons => true)
     vals = flatten for key in keys(munsbs) list(munsbs#key)
     assert (vals === {{0}, {1}, {0, 1, 2}, {0, 1, 3}, {0, 2, 3}, {1, 2, 3}})
+///
+TEST ///
+    Q = bipartiteQuiver(2, 2);
     CS = coneSystem Q;
     rts = referenceWeights CS;
     assert (#CS == #rts);
-
+///
+TEST ///
     Q = bipartiteQuiver(2, 3);
-    testQuiverConstruction(Q)
+    assert isWellDefined Q;
     assert (#potentialWalls(Q) == 11)
+///
+TEST ///
+    Q = bipartiteQuiver(2, 3);
     assert isTight Q
+///
+TEST ///
+    Q = bipartiteQuiver(2, 3);
     assert (getWeights Q === {-3, -3, 2, 2, 2})
+///
+TEST ///
+    Q = bipartiteQuiver(2, 3);
     assert (flowPolytopeVertices Q == {{-1, 1}, {-1, 0}, {1, -1}, {0, -1}, {1, 0}, {0, 1}})
+///
+TEST ///
+    Q = bipartiteQuiver(2, 3);
     assert (entries basisForFlowPolytope Q === {{-1, 0}, {0, -1}, {1, 1}, {1, 0}, {0, 1}, {-1, -1}})
-    QConeSystem = coneSystem Q;
+///
+TEST ///
+    Q = bipartiteQuiver(2, 3);
     th = {-5, -1, 2, 2, 2};
-    F = incInverse(th, Q)
+    F = incInverse(th, Q);
     assert not isTight(F, Q)
     assert isAcyclic makeTight(th, Q);
+///
+TEST ///
+    Q = bipartiteQuiver(2, 3);
     assert not isSemistable({1, 2}, Q)
     assert isStable({1, 2, 3, 4}, Q)
+///
+TEST ///
+    Q = bipartiteQuiver(2, 3);
+    th = {-5, -1, 2, 2, 2};
     assert (stableTrees(th, Q) === {{0, 1, 2, 5}, {0, 1, 2, 4}, {0, 1, 2, 3}})
+///
+TEST ///
+    Q = bipartiteQuiver(2, 3);
     assert (maxCodimensionUnstable(Q) == 6)
+///
+TEST ///
+    Q = bipartiteQuiver(2, 3);
     assert (wallType({0,2,3}, Q) == (1, 2))
-
+///
+TEST ///
+    Q = bipartiteQuiver(2, 3);
     M = maximalUnstableSubquivers(Q);
     for v in values M do (
         assert (#v == 6)
     )
-
-    P = chainQuiver {2, 2}
+///
+TEST ///
+    testQuiverConstruction = Q -> (
+        assert (isWellDefined(Q));
+        AllSubquivers = subquivers(Q, Format => "list");
+        EdgeSubsets = subsets(#quiverEdges(Q));
+        assert (#AllSubquivers == #EdgeSubsets - 2);
+    )
+    P = chainQuiver {2, 2};
+    Q = chainQuiver {1, 2, 3};
     testQuiverConstruction(P)
-
-    Q = chainQuiver {1, 2, 3}
     testQuiverConstruction(Q)
+///
+TEST ///
+    P = chainQuiver {2, 2};
+    Q = chainQuiver {1, 2, 3};
     assert (mergeOnVertex(P, 2, Q, 0) == chainQuiver {2, 2, 1, 2, 3})
     assert (mergeOnArrow(P, 3, Q, 0) == chainQuiver {2, 2, 2, 3})
-
+///
+TEST ///
     Q = toricQuiver {{0, 1}, {0, 2}, {0, 3}, {1, 2}, {1, 3}, {2, 3}}
-    testQuiverConstruction(Q)
+    assert isWellDefined Q;
     assert (primitiveArrows Q === {0, 3, 5})
+///
+TEST ///
+    Q = toricQuiver {{0, 1}, {0, 2}, {0, 3}, {1, 2}, {1, 3}, {2, 3}}
     assert samePolytope({-3, 2, -1, 2}, {-2, 1, -2, 3}, Q)
+///
+TEST ///
+    Q = toricQuiver {{0, 1}, {0, 2}, {0, 3}, {1, 2}, {1, 3}, {2, 3}}
     assert (#potentialWalls Q > 0);
 ///
 end--
