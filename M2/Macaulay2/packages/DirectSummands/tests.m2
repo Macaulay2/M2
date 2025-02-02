@@ -61,6 +61,36 @@ TEST ///
   assert(8 == #summands M)
 ///
 
+TEST ///
+  debug needsPackage "DirectSummands"
+  n = 4
+  S = ZZ/11[x_0..x_(n-1)]
+  I = trim minors_2 matrix { S_*_{0..n-2}, S_*_{1..n-1}}
+  R = quotient I
+  C = res coker vars R
+  M = image C.dd_3
+  needsPackage "RationalPoints2"
+  h = generalEndomorphism M
+  rationalPoints ideal char h
+  -- TODO: does the kernel and cokernel of this give summands?
+  h' = h - 1 * id_(target h)
+  prune ker h'
+  prune coker h'
+  summands M
+///
+
+TEST ///
+  n = 3
+  S = (ZZ/2)[x_0..x_(n-1)]
+  R = quotient (ideal vars S)^3
+  F = res coker vars R
+  M = image F.dd_3
+  summands M
+  summands(image F.dd_1, M)
+  -- TODO: have a flag to test for twists of input summands as well
+  summands({image F.dd_1, coker vars R}, M)
+///
+
 TEST /// -- testing in char 0
   -- FIXME:
   --S = ZZ[x,y];

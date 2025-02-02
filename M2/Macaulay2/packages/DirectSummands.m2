@@ -227,7 +227,7 @@ cachedSummands = { ExtendGroundField => null } >> o -> M -> (
 -- 4 => use Hom option MinimalGenerators => false
 -- 8 => precompute Homs before looking for idempotents
 directSummands = method(Options => { Recursive => true, Tries => 10, Verbose => true, Strategy => 7, ExtendGroundField => null })
-directSummands Module := List => opts -> (cacheValue (symbol summands => opts.ExtendGroundField)) (M -> sort(
+directSummands Module := List => opts -> (cacheValue (symbol summands => opts.ExtendGroundField)) (M -> (
     checkRecursionDepth();
     -- Note: rank does weird stuff if R is not a domain
     -- Note: End does not work for WeylAlgebras or AssociativeAlgebras yet, nor does basis
@@ -276,20 +276,31 @@ directSummands Module := List => opts -> (cacheValue (symbol summands => opts.Ex
 	M.cache.Indecomposable = true; return {M} );
     -- TODO: parallelize
     h := if idem =!= null then homomorphism B_{idem} else try findIdempotent M;
-    -- TODO: add this when the maps M_[i] and M^[i] also work
+    -- TODO: add this when the maps M_[w] and M^[w] also work with subsets
     -- M.cache.components =
-    if h === null then {M} else nonzero flatten join(
+    if h === null then {M} else (
 	-- TODO: restrict End M to each summand and pass it on
 	-- TODO: could use 'compose' perhaps
-	-- TODO: can we check if M has multiple copies of M1 or M2 quickly?
-	M1 := prune image h;
-	M2 := prune coker h;
+	-- TODO: can we check if M has multiple copies of M0 or M1 quickly?
+	M0 := prune image h;
+	M1 := prune coker h;
+	-- TODO: can we keep homomorphisms?
+	--B0.cache.homomorphism = f -> map(M0, M0, adjoint'(p1 * f * inverse p0, M0, M0), Degree => first degrees source f + degree f);
+	M0comps := directSummands(M0, opts);
+	M1comps := directSummands(M1, opts);
 	-- Projection maps to the summands
-	--p1 := inverse M1.cache.pruningMap * map(image h, M, h);
-	--p2 := inverse M2.cache.pruningMap * map(coker h, M, h);
-	--B1.cache.homomorphism = f -> map(M1, M1, adjoint'(p1 * f * inverse p1, M1, M1), Degree => first degrees source f + degree f);
-	directSummands(M1, opts),
-	directSummands(M2, opts))
+	c := -1;
+	p0 := inverse M0.cache.pruningMap * inducedMap(image h, M, h);
+	p1 := inverse M1.cache.pruningMap * inducedMap(coker h, M);
+	if #M0comps > 1 then apply(#M0comps, i -> M.cache#(symbol ^, [c += 1]) = M0^[i] * p0) else M.cache#(symbol ^, [c += 1]) = p0;
+	if #M1comps > 1 then apply(#M1comps, i -> M.cache#(symbol ^, [c += 1]) = M1^[i] * p1) else M.cache#(symbol ^, [c += 1]) = p1;
+	-- Inclusion maps from the summands
+	-- TODO: will this always work?
+	scan(c + 1, i -> M.cache#(symbol _, [i]) = inverse M.cache#(symbol ^, [i]));
+	-- return the lists
+	-- TODO: why is this nonzero needed?
+	-- TODO: sort these, along with the projections
+	nonzero flatten join(M0comps, M1comps))
     ))
 
 -- TODO: if ExtendGroundField is given, change variety
