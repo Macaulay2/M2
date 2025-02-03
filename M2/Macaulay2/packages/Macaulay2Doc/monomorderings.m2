@@ -219,10 +219,9 @@ document {
      ordering we want all terms in which either of the first two
      variables appears to come before all of those terms in which
      the first two variables don't appear.  This particular ordering
-     accomplishes this by consulting first the graded reverse lexicographic
-     ordering ignoring all variables but the first two, and in case of
-     a tie, consulting the graded reverse lexicographic ordering of the
-     entire monomials.",
+     accomplishes this by consulting first the total degree of the first 
+     two variables, and in case of a tie, consulting the graded reverse 
+     lexicographic ordering of the entire monomials.",
      EXAMPLE {
 	 "R=ZZ/101[a,b,c,MonomialOrder=>Eliminate 2];",
 	 "(a+b+c+1)^2",
