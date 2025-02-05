@@ -590,6 +590,7 @@ doc ///
 	(depth,ProductGate)
 	(depth,SumGate)
 	countGates
+	(countGates, Gate)
 	(countGates, GateMatrix)
     Usage
         d = depth g
