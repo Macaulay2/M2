@@ -115,8 +115,9 @@ generateTypicalValues = (srcdir) -> (
     printerr("Generating typical values in ", relativizeFilename typicalValuesSource);
     outfile := openOut typicalValuesSource;
     for file in sort ddfiles do (
+	try src := get(srcdir | file) else continue;
 	comment := "-- typical values extracted from " | file;
-	srcstring := stack apply(pairs lines get(srcdir | file), (num, line) -> line | " -- " | file | ":" | num);
+	srcstring := stack apply(pairs lines src, (num, line) -> line | " -- " | file | ":" | num);
 	-- TODO: separate method key (\\1) and output type (\\2)
 	extracted := select(typicalValuesFormat | " -- (.*)$", "typval(\\1, \\2) -- \\3", toString srcstring);
 	extracted  = apply(extracted, line -> first select("(.*?)--(.*?)$", "\\1" | pad_(91-#line) "\t-- \\2", line));
