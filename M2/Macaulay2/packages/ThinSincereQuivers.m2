@@ -12,7 +12,8 @@ newPackage(
          HomePage => "http://patriciogallardo.com/"
         }
     },
-    PackageImports => {"Graphs", "Polyhedra", "LatticePolytopes"}
+    PackageImports => {"Graphs", "Polyhedra", "LatticePolytopes"},
+    Keywords => {"Toric Geometry"}
 )
 export {
 -- Methods/Functions
