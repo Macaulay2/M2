@@ -78,7 +78,9 @@ document {
 	  },
      Caveat => {"There is no check made if the given module 
 	  is graded over the base polynomial ring"},
-     SeeAlso => {"Dmodules::Dmodules",(cohomology,ZZ,SumOfTwists),(cohomology,ZZ,CoherentSheaf)}
+     SeeAlso => {"Dmodules::Dmodules",
+	 "Varieties::HH^ZZ SumOfTwists",
+	 "Varieties::HH^ZZ CoherentSheaf"}
      }
 
 document { 
