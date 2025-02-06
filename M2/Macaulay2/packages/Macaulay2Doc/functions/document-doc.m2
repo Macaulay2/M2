@@ -435,7 +435,7 @@ Node
       This option inserts the source code of the listed functions into a documentation page.
 
       As an example, here is the code for the @TT "SourceCode"@ part
-      of the documentation node for @TO (variety, SheafOfRings)@.
+      of the documentation node for @TO "Varieties::variety(SheafOfRings)"@.
     Code
       EXAMPLE { PRE ////SourceCode => {(variety, SheafOfRings)}//// }
   SeeAlso
