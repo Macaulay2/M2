@@ -24,20 +24,39 @@ smithNormalForm = method(
      	  KeepZeroes => true
 	  }
      )
-smithNormalForm Matrix := o -> (f) -> (
-    preSmithNormalForm(f, o)
-    -*
+smithNormalForm Matrix := o -> A -> (
+    (D,P,Q) := preSmithNormalForm(A, ChangeMatrix=>{true,true}, KeepZeroes=>true);
+    D = mutableMatrix D;
+    P = mutableMatrix P;
+    Q = mutableMatrix Q;
     -- get into a diagonal matrix
-    diagEntries = sort for i from 0 to numrows D -1 list D_(i,i) -- extract diagonal entries
-    diagMods = for i from 0 to #diagEntries-2 list diagEntries_i % diagEntries_(i+1) -- checks divisibility criterion
-    while any(diagMods, i-> i!= 0) do (
-	
-	)
-    --sort diagonal entries
-    --find 2 consecutive indices on diagonal missing divisibility criterion
-    --do transformation on correct side, run preSNF again
+    n := min(numRows D, numColumns D);
+    start'i := 0;
+    done := false;
+    while not done do (
+	i := position(start'i..(n-2),j->D_(j+1,j+1)!=0 and D_(j+1,j+1) % D_(j,j) != 0);	
+	print(start'i,i);
+	if i === null then (
+	    if start'i > 0 then start'i = 0 else done = true
+	    ) else (
+	    start'i = i + 1;
+	    P' := mutableMatrix map((ring P)^(numRows P));
+	    Q' := mutableMatrix map((ring Q)^(numRows Q));
+	    a := D_(i,i);
+	    b := D_(i+1,i+1);
+	    (g,e,f) := toSequence gcdCoefficients(a,b);
+	    D_(i,i) = g;
+	    D_(i+1,i+1) = lcm(a,b);
+	    rowAdd(P',i+1,e,i);
+	    rowAdd(P',i,1-a//g,i+1);
+	    rowAdd(P',i+1,-1,i);
+	    rowAdd(Q',i,f,i+1);
+	    rowAdd(Q',i+1,(a//g-1)*b//g,i);
+	    P = P'* P;
+	    Q = Q * transpose Q';
     )
-*-
+	);-- end while 
+    (matrix D, matrix P, matrix Q)
 )
 
 preSmithNormalForm = method(
@@ -47,6 +66,7 @@ preSmithNormalForm = method(
 	  }
      )
 preSmithNormalForm Matrix := o -> (f) -> (
+     pruneSyz := m -> generators gb(syz m, StopWithMinimalGenerators=>true, Syzygies=>false, ChangeMatrix=>false);
      if not isFreeModule source f or not isFreeModule target f then error "expected map between free modules";
      (tchg,schg,keepz) := (o.ChangeMatrix#0, o.ChangeMatrix#1,o.KeepZeroes);
      (tmat,smat) := (null,null);	-- null represents the identity, lazily
@@ -75,7 +95,7 @@ preSmithNormalForm Matrix := o -> (f) -> (
 	  if op then (
 	       if tchg then (
 	       	    chg := getChangeMatrix G;
-	       	    zer := mingens image syz G;
+	       	    zer := pruneSyz G;
 		    if keepz then (
 			 if tmat === null
 			 then (tmat,tzer) = (chg,zer)
@@ -87,7 +107,7 @@ preSmithNormalForm Matrix := o -> (f) -> (
 	  else (
 	       if schg then (
 	       	    chg = getChangeMatrix G;
-	       	    zer = mingens image syz G;
+	       	    zer = pruneSyz G;
 		    if keepz then (
 			 if smat === null
 			 then (smat, szer) = (chg, zer)
@@ -99,9 +119,6 @@ preSmithNormalForm Matrix := o -> (f) -> (
 	  g = transpose h;
 	  op = not op;
 	  count = count + 1;
-	  print g;
-	  print (tmat,tzer);
-	  print (smat,szer);
 	  );
      if op then g = transpose g;
      if tchg then (
