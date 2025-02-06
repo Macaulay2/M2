@@ -25,6 +25,28 @@ smithNormalForm = method(
 	  }
      )
 smithNormalForm Matrix := o -> (f) -> (
+    preSmithNormalForm(f, o)
+    -*
+    -- get into a diagonal matrix
+    diagEntries = sort for i from 0 to numrows D -1 list D_(i,i) -- extract diagonal entries
+    diagMods = for i from 0 to #diagEntries-2 list diagEntries_i % diagEntries_(i+1) -- checks divisibility criterion
+    while any(diagMods, i-> i!= 0) do (
+	
+	)
+    --sort diagonal entries
+    --find 2 consecutive indices on diagonal missing divisibility criterion
+    --do transformation on correct side, run preSNF again
+    )
+*-
+)
+
+preSmithNormalForm = method(
+     Options => {
+	  ChangeMatrix => {true, true},		    -- target, source
+     	  KeepZeroes => true
+	  }
+     )
+preSmithNormalForm Matrix := o -> (f) -> (
      if not isFreeModule source f or not isFreeModule target f then error "expected map between free modules";
      (tchg,schg,keepz) := (o.ChangeMatrix#0, o.ChangeMatrix#1,o.KeepZeroes);
      (tmat,smat) := (null,null);	-- null represents the identity, lazily
@@ -53,7 +75,7 @@ smithNormalForm Matrix := o -> (f) -> (
 	  if op then (
 	       if tchg then (
 	       	    chg := getChangeMatrix G;
-	       	    zer := syz G;
+	       	    zer := mingens image syz G;
 		    if keepz then (
 			 if tmat === null
 			 then (tmat,tzer) = (chg,zer)
@@ -65,7 +87,7 @@ smithNormalForm Matrix := o -> (f) -> (
 	  else (
 	       if schg then (
 	       	    chg = getChangeMatrix G;
-	       	    zer = syz G;
+	       	    zer = mingens image syz G;
 		    if keepz then (
 			 if smat === null
 			 then (smat, szer) = (chg, zer)
@@ -77,6 +99,9 @@ smithNormalForm Matrix := o -> (f) -> (
 	  g = transpose h;
 	  op = not op;
 	  count = count + 1;
+	  print g;
+	  print (tmat,tzer);
+	  print (smat,szer);
 	  );
      if op then g = transpose g;
      if tchg then (
@@ -102,8 +127,9 @@ smithNormalForm Matrix := o -> (f) -> (
      D := map(R^(numgens target g),,g);			    -- this makes D homogeneous, if possible
      P := if tchg then map(target D,target f,lift(tchange,R));
      Q := if schg then map(source f, source D,lift(schange,R));
-     unsequence nonnull ( D, P, Q ))
+     ( D, P, Q ))
 
+ 
 complementOkay = method()     -- modeled after isAffineRing, but allows ZZ, too
 complementOkay Ring := R -> isField R or R === ZZ
 complementOkay PolynomialRing := R -> (
@@ -369,7 +395,10 @@ addHook((quotient, Matrix, Matrix), Strategy => "Reflexive", (opts, f, g) -> if 
      -- now M is a quotient module, without explicit generators
      f' := matrix f;
      g' := matrix g;
-     G := ( g.cache#"gb for quotient" ??= (
+     G := (
+	  if g.cache#?"gb for quotient"
+	  then g.cache#"gb for quotient"
+	  else g.cache#"gb for quotient" = (
 	       if M.?relations 
 	       then gb(g' | relations M, ChangeMatrix => true, SyzygyRows => rank source g')
 	       else gb(g',               ChangeMatrix => true)));
