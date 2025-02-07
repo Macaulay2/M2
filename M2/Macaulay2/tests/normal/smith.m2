@@ -40,8 +40,14 @@ assert isHomogeneous minimalPresentation coker vars R
 assert isHomogeneous first smithNormalForm vars R
 
 chk = M -> (
+     -*
+     (D',P',Q') = preSmithNormalForm M;
+     *-
      (D,P,Q) = smithNormalForm M;
-     assert isHomogeneous D;
+     -*
+     (D',P',Q') / degrees
+     (D,P,Q) / degrees
+     *-
      assert( P*M*Q === D );
      assert( target P === target D );
      assert( target M === source P );
@@ -51,3 +57,4 @@ chk = M -> (
 chk vars R
 chk matrix {{x^5}}
 chk matrix {{x^5,x^7},{0,x^3}}
+chk matrix {{x^5,x^7,x^11},{x^2,x^3,x^3},{x^11,x^7,x^2}}
