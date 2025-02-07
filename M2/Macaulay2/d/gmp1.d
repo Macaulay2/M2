@@ -171,9 +171,10 @@ tostringRRipointer = tostringRRi;
 
 
 export toExternalString(x:RR):string := (
-     if isinf(x) then return if x < 0 then "-infinity" else "infinity";
-     if isnan(x) then return if sign(x) then "-NotANumber" else "NotANumber";
      ng := sign(x);
+     ngstr := if ng then "-" else "";
+     if isinf(x) then return ngstr + "infinity_" + tostring(precision(x));
+     if isnan(x) then return ngstr + "NotANumber_" + tostring(precision(x));
      if ng then x = -x;
      ex := long(0);
      s := getstr(ex, base, 0, x);
@@ -184,7 +185,7 @@ export toExternalString(x:RR):string := (
 	  );
      newlen := max(1,length(s) - nt);
      concatenate(array(string)(
-	       if ng then "-" else "",
+	       ngstr,
 	       ".",
 	       substr(s,0,newlen),
 	       "p",

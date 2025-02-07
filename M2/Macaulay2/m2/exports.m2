@@ -302,6 +302,7 @@ export {
 	"NewOfFromMethod",
 	"NewOfMethod",
 	"NoPrint",
+	"NotANumber",
 	"Nothing",
 	"Number",
 	"NumberedVerticalList",
