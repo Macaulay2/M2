@@ -33,6 +33,10 @@ createLanguageServer = file -> (
     addLifecycleMethods server;
     server)
 
+-- for debugging
+handleRequest(LSPServer, Thing) := (server, request) -> (
+    handleRequest(server.JSONRPCServer, request))
+
 ------------------------------------
 -- add header to outgoing message --
 ------------------------------------
