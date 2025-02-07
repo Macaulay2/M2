@@ -95,7 +95,7 @@ fachom2 = a -> (
     n:=numgens R0//2;
     (m,t):=theta a;
     R:=ring t;
-    shft := e -> map(R,R,apply(n,i->R_i+e#i));
+    shift := e -> map(R,R,apply(n,i->R_i+e#i));
     (facs, exps) := rawFactor raw t;
     facs=apply(facs,x->promote(x,R));
     c:=(facs#0)^(exps#0);
@@ -103,10 +103,10 @@ fachom2 = a -> (
     -- if any factor is θ_i+1 we need to split, as annoying as may be
     l:=apply(n,i->1+R_i);
     flatten apply(seqs (m_{0..n-1}+m_{n..2*n-1}), e -> (
-	    shft1:=shft apply(n,i->min(e#i-m#i,0));
-	    shft2:=shft apply(n,i->-max(e#i-m#i,0));
-	    facs1:=shft1\facs;
-	    facs2:=shft2\facs;
+	    shift1:=shift apply(n,i->min(e#i-m#i,0));
+	    shift2:=shift apply(n,i->-max(e#i-m#i,0));
+	    facs1:=shift1\facs;
+	    facs2:=shift2\facs;
 	    -- first the standard expressions
 	    lst := apply(seqs exps, e' -> ( -- e, e' are the set of exponents of the first of the two factors
 		    c*R0_(apply(n,i->min(m#i,e#i))) * product(#facs,i->facs1#i^(e'#i)) * R0_(toList(n:0)|apply(n,i->max(e#i-m#i,0))),
