@@ -4,10 +4,9 @@ ARGS = --script
 .NOTPARALLEL:
 
 MADEFILES = M2-symbols.el M2-emacs-help.txt M2-emacs.m2
-SRCFILES = M2-init.el M2-mode.el M2.el README.md
 
-all: @pre_emacsdir@ $(addprefix @pre_emacsdir@/, $(SRCFILES) $(MADEFILES))
-verify: $(addprefix @pre_emacsdir@/, $(SRCFILES) $(MADEFILES)) $(addprefix emacs/, $(SRCFILES) $(MADEFILES)); ls -lrt $^
+all: @pre_emacsdir@ $(addprefix @pre_emacsdir@/, $(MADEFILES))
+verify: $(addprefix @pre_emacsdir@/, $(MADEFILES)) $(addprefix emacs/, $(MADEFILES)); ls -lrt $^
 Makefile: @srcdir@/Makefile.in; cd ../..; ./config.status Macaulay2/editors/Makefile
 
 @pre_emacsdir@ :; @INSTALL@ -d "$@"
