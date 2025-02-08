@@ -228,7 +228,11 @@ document {
 	  (symbol +, Vector, Vector),
 	  (symbol +, Matrix, RingElement),
 	  (symbol +, RingElement, Matrix),
-	  (symbol +, ChainComplexMap, RingElement)
+	  (symbol +, ChainComplexMap, RingElement),
+	  (symbol +, Vector, Number),
+	  (symbol +, Vector, RingElement),
+	  (symbol +, Number, Vector),
+	  (symbol +, RingElement, Vector)
      	  },
      Headline => "a unary or binary operator, usually used for addition",
      Usage => "+y \n x+y",
@@ -319,7 +323,11 @@ document {
 	  (symbol -, Matrix),
 	  (symbol -, RingElement, Matrix),
 	  (symbol -, ChainComplexMap, RingElement),
-	  (symbol -, Vector, Vector)
+	  (symbol -, Vector, Vector),
+	  (symbol -, Vector, Number),
+	  (symbol -, Vector, RingElement),
+	  (symbol -, Number, Vector),
+	  (symbol -, RingElement, Vector)
 	  },
      Headline => "a unary or binary operator, usually used for negation or subtraction",
      Usage => "-y \n x-y",
