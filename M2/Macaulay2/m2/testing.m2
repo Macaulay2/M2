@@ -60,9 +60,13 @@ captureTestResult := (desc, teststring, pkg, usermode) -> (
     runString(teststring, pkg, usermode))
 
 loadTestDir := pkg -> (
-    -- TODO: prioritize reading the tests from topSrcdir | "Macaulay2/tests/normal" instead
-    testDir := pkg#"package prefix" |
-        replace("PKG", pkg#"pkgname", currentLayout#"packagetests");
+    testDir := (
+	-- prioritize Core tests from source repository
+	if (pkg === Core and topSrcdir =!= null and (
+		dir := minimizeFilename(topSrcdir | "Macaulay2/tests/normal/");
+		isDirectory dir)) then dir
+	else pkg#"package prefix" | replace("PKG", pkg#"pkgname",
+	    currentLayout#"packagetests"));
     pkg#"test directory loaded" =
     if fileExists testDir then (
         tmp := currentPackage;
