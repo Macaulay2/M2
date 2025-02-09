@@ -78,6 +78,7 @@ document {
 	      TO "creating a package",
 	      TO "writing documentation",
 	  "parallel programming ",
+	      TO "parallel programming with async and await",
 	      TO "parallel programming with threads and tasks",
      	  "system facilities",
 	      TO "system facilities",
