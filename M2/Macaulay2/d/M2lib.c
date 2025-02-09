@@ -107,9 +107,8 @@ int MPIsendStringNonblocking(M2_string s, int p) {
 
 // interrupt
 int MPIinterrupt(int p) {
-  int buffer;
   const int MPI_INTERRUPT_TAG = 3210; //!!! is also in e/interrupted.cpp
-  int ret = MPI_Send(&buffer, 1, MPI_INT, p, MPI_INTERRUPT_TAG, MPI_COMM_WORLD);
+  int ret = MPI_Send(NULL, 0, MPI_INT, p, MPI_INTERRUPT_TAG, MPI_COMM_WORLD);
   // should remember "request" if e.g. need to check the completion 
   return ret;
 }
