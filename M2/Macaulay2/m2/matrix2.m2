@@ -25,23 +25,21 @@ smithNormalForm = method(
 	  }
      )
 smithNormalForm Matrix := o -> A -> (
-    (D,P,Q) := preSmithNormalForm(A, ChangeMatrix=>{true,true}, KeepZeroes=>true);
-    D = mutableMatrix D;
-    P = mutableMatrix P;
-    Q = mutableMatrix Q;
+    (D',P,Q) := preSmithNormalForm(A,o);
+    D := mutableMatrix D';
     -- get into a diagonal matrix
     n := min(numRows D, numColumns D);
     start'i := 0;
     done := false;
+    P' := mutableMatrix map((ring D')^(numRows D'));
+    Q' := mutableMatrix map((ring D')^(numColumns D'));
     while not done do (
-	i := position(start'i..(n-2),j->D_(j+1,j+1)!=0 and D_(j+1,j+1) % D_(j,j) != 0);	
-	print(start'i,i);
-	if i === null then (
+	pos'i := position(start'i..(n-2),j->D_(j+1,j+1)!=0 and D_(j+1,j+1) % D_(j,j) != 0);	
+	if pos'i === null then (
 	    if start'i > 0 then start'i = 0 else done = true
 	    ) else (
+	    i := pos'i + start'i;
 	    start'i = i + 1;
-	    P' := mutableMatrix map((ring P)^(numRows P));
-	    Q' := mutableMatrix map((ring Q)^(numRows Q));
 	    a := D_(i,i);
 	    b := D_(i+1,i+1);
 	    (g,e,f) := toSequence gcdCoefficients(a,b);
@@ -52,11 +50,13 @@ smithNormalForm Matrix := o -> A -> (
 	    rowAdd(P',i+1,-1,i);
 	    rowAdd(Q',i,f,i+1);
 	    rowAdd(Q',i+1,(a//g-1)*b//g,i);
-	    P = P'* P;
-	    Q = Q * transpose Q';
     )
 	);-- end while 
-    (matrix D, matrix P, matrix Q)
+    P'' := matrix P';
+    Q'' := matrix Q';
+    if P =!= null then P = P'' * P;
+    if Q =!= null then Q = Q * transpose Q'';
+    unsequence nonnull (P'' * D' * transpose Q'', P, Q)
 )
 
 preSmithNormalForm = method(
