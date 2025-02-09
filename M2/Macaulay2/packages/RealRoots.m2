@@ -81,17 +81,6 @@ isArtinian (Ring) := Boolean => R->(
     dim R === 0
     )
 
-        
---Computes the sign of a real number
-sign = method()
-for A in {ZZ,QQ,RR} do
-sign (A) := ZZ => n->(
-     if n < 0 then -1 
-     else if n == 0 then 0
-     else if n > 0 then 1
-     )
-
-
 --Computes the sign of a real univariate polynomial at a given real number
 signAt = method()
 for A in {ZZ,QQ,RR} do

@@ -1081,6 +1081,11 @@ assert( not isANumber ((1/0.-1/0.) + 1*ii) )
 assert( not isANumber (1 + (ii/0.-ii/0.) ) )
 assert( not isANumber ((1 + ii/0.) - ii/0. ) )
 
+assert( sign 5 == 1 )
+assert( sign pi == 1 )
+assert( sign 0/1 == 0 )
+assert( sign(-3) == -1 )
+assert( sign(-5 * ii) == -ii )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test numbers.out"
