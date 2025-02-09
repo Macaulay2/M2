@@ -2172,6 +2172,9 @@ threadTest(e:Expr):Expr := (
      nullE);
 setupfun("threadTest",threadTest);
 
+getLastError(e:Expr):Expr := Expr(lastError);
+setupfun("lastError", getLastError);
+
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d actors5.o "
 -- End:

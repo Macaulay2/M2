@@ -868,6 +868,7 @@ export {
 	"kill",
 	"koszul",
 	"last",
+	"lastError",
 	"lcm",
 	"leadCoefficient",
 	"leadComponent",
