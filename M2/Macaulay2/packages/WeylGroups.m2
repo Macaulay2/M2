@@ -539,19 +539,19 @@ scalarProduct = method()
 --the scalar product of the i-th fundamental weight with the j-th
 scalarProduct(RootSystem,ZZ,ZZ) := (R,i,j) -> 
 	(
-	((R.CartanMatrixTrInv)_(j-1,i-1))*(R.RootNorms#(j-1))//2
+	((R.CartanMatrixTrInv)_(j-1,i-1))*(R.RootNorms#(j-1)) / 2
 	)
 
 --the scalar product of two general weights
 scalarProduct(RootSystem,Weight,Weight) := (R,u,v) -> 
 	(
-	sum apply(apply(entries((R.CartanMatrixTrInv)*u),entries(v),(x,y)->x*y),R.RootNorms,(x,y)->x*y)//2
+	sum apply(apply(entries((R.CartanMatrixTrInv)*u),entries(v),(x,y)->x*y),R.RootNorms,(x,y)->x*y) / 2
 	)
 
 --the scalar product of the i-th fundamental weight with a general weight
 scalarProduct(RootSystem,ZZ,Weight) := (R,i,v) -> 
 	(
-	(((R.CartanMatrixTrInv)*v)_(i-1))*(R.RootNorms#(i-1))//2
+	(((R.CartanMatrixTrInv)*v)_(i-1))*(R.RootNorms#(i-1)) / 2
 	)
 
 --the dual of a root evaluated at something 
