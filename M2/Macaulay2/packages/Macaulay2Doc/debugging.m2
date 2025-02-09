@@ -30,6 +30,40 @@ doc ///
     "dictionaryPath"
 ///
 
+doc ///
+Node
+  Key
+   "profile"
+    profileSummary
+   (profileSummary, Thing)
+   (profileSummary, String)
+    coverageSummary
+   (coverageSummary, Thing)
+   (coverageSummary, String)
+  Headline
+    profile a computation
+  Usage
+    profile f()
+    profileSummary f
+    coverageSummary f
+  Consequences
+    Item
+      The hash table @TT "ProfileTable"@ is updated with the profiling measurement data.
+  Description
+    Text
+      Running a computation with the @TT "profile"@ keyword enables the Macaulay2 profiler,
+      which measures and stores the frequency of particular instructions for aid in
+      analyzing and optimizing the computation.
+    Example
+      profile matrix table(4, 5, (i,j) -> i^j)
+    Text
+      Afterwards, running @TT "profileSummary"@ and @TT "coverageSummary"@ produces
+      easy to read tables summarizing the accumulated data so far in different ways.
+    Example
+      profileSummary
+      coverageSummary
+///
+
 document {
      Key => "step",
      Headline => "step by single lines in the debugger",
@@ -218,33 +252,6 @@ document {
      A single pair is a position, two form a range. The last pair is the central point of interest in that range."
      }
 
-
--*
-document {
-     Key => {profile,(profile, Function),(profile, String, Function)},
-     Headline => "profile a function",
-     TT "f = profile f", " -- replace a global function ", TT "f", " by a profiled version.",
-     PARA{},
-     "The new function is the same as the old one, except that when the new function is run, it will record the number of times it
-     is called and the total execution time.  Use the command ", TO "profileSummary", " to display the data recorded so far.",
-     EXAMPLE lines ///
-	  R = ZZ/31[x]
-	  f = (x^110+1)*(x^13+1)
-	  time factor f
-	  g = () -> factor f
-	  g = profile g
-	  h = profile("h", () -> factor f)
-	  for i to 10 do (g();h();h())
-	  profileSummary
-     ///}
-
-document {
-     Key => profileSummary,
-     Headline => "display profiling data",
-     TT "profileSummary", " -- a command that will display the data
-     accumulated by running functions produced with ", TO "profile", "."
-     }
-*-
 
 document {
      Key => uncurry,
