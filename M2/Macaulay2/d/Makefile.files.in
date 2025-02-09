@@ -109,6 +109,7 @@ else
 M2_SRCFILES += ffi.d
 endif
 # this one is last, because it contains the top level interpreter
+M2_DFILES += zmq.d
 M2_DFILES += interp.dd
 
 # should automate these dependencies

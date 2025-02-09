@@ -85,6 +85,8 @@ else()
   set(FFI_VERSION "not present")
 endif()
 
+find_package(czmq REQUIRED QUIET)
+
 ###############################################################################
 ## Platform dependent requirements:
 #   readline, history, termcap, ...

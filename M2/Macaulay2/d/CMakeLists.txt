@@ -94,6 +94,7 @@ set(DLIST
   boostmath.dd
   atomic2.d
   ffi.d		# removed unless WITH_FFI
+  zmq.d
   interp.dd	# this one is last, because it contains the top level interpreter
   version.dd
   )
@@ -146,7 +147,7 @@ add_library(M2-interpreter OBJECT ${CLIST} ${CXXLIST} ${TAGS}
   $<$<BOOL:${WITH_XML}>:xml-c.c xml-c.h>
   $<$<BOOL:${WITH_PYTHON}>:python-c.c>)
 
-target_link_libraries(M2-interpreter PRIVATE M2-supervisor Boost::regex
+target_link_libraries(M2-interpreter PRIVATE M2-supervisor Boost::regex czmq
   $<$<BOOL:${WITH_TBB}>:TBB::tbb>
   $<$<BOOL:${WITH_FFI}>:FFI::ffi>)
 
