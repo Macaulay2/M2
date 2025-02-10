@@ -69,6 +69,7 @@ loadTestDir := pkg -> (
 	    currentLayout#"packagetests"));
     pkg#"test directory loaded" =
     if fileExists testDir then (
+	printerr("loading tests from ", testDir);
         tmp := currentPackage;
         currentPackage = pkg;
 	scan(sort select(readDirectory testDir, file -> match("\\.m2$", file)),
