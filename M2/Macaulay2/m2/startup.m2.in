@@ -483,7 +483,14 @@ valueNotify := arg -> (
      value' arg)
 
 action2 := hashTable {
-     "--srcdir" => arg -> if phase == 2 then srcdirs = append(srcdirs, arg),
+     "--srcdir" => arg -> (
+	 if phase == 2 then (
+	     if isDirectory(arg | "/Macaulay2") then (
+		 srcdirs = append(srcdirs, arg);
+		 topSrcdir = realpath arg)
+	     else (
+		 stopIfError = true;
+		 error "--srcdir should contain a 'Macaulay2' subdirectory"))),
      "-E" => arg -> if phase == 3 then valueNotify arg,
      "-e" => arg -> if phase == 4 then valueNotify arg,
      "--print-width" => arg -> if phase == 3 then printWidth = value' arg,
