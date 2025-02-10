@@ -1408,6 +1408,8 @@ isDirectory(e:Expr):Expr := (
 	  filename := filename0.v;
 	  filename = expandFileName(filename);
 	  if !fileExists(filename) then return False;
+	  if filename.(length(filename) - 1) != '/'
+	  then filename = filename + "/";
 	  r := isDirectory(filename);
 	  if r == -1 then buildErrorPacket("can't see file '" + filename + "' : " + syserrmsg())
 	  else if r == 1 then True else False)
