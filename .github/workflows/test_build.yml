@@ -38,29 +38,29 @@ jobs:
           - autotools
           - cmake
         os:
-          - ubuntu-24.04
-          - macos-13
+          - ubuntu-latest
+          - macos-latest
         compiler:
           - default
         include:
           # This build tests Clang rather than AppleClang (keep)
           - build-system: cmake
-            os: macos-13 # TODO: switch to macos-14 for arm64 testing
-            compiler: clang-15
+            os: macos-latest 
+            compiler: clang
             cxx: clang++
             cc: clang
           # This build tests MPI
           - build-system: cmake
-            os: macos-12
+            os: macos-latest
             compiler: MPI
             cxx: clang++
             cc: clang
           - build-system: cmake
-            os: ubuntu-22.04
+            os: ubuntu-latest
             compiler: MPI
         exclude:
           - build-system: cmake
-            os: macos-13
+            os: macos-latest
             compiler: default
     steps:
       - uses: actions/checkout@v4
@@ -90,7 +90,7 @@ jobs:
           sudo add-apt-repository -y -n ppa:macaulay2/macaulay2
           sudo add-apt-repository -y -n ppa:savoury1/backports
           sudo apt-get update
-          sudo apt-get install -y -q --no-install-recommends clang-16 gfortran libtool-bin ninja-build yasm ccache
+          sudo apt-get install -y -q --no-install-recommends clang gfortran libtool-bin ninja-build yasm ccache
           sudo apt-get install -y -q --no-install-recommends liblzma-dev libboost-stacktrace-dev \
                   libncurses-dev libncurses5-dev libreadline-dev libeigen3-dev libopenblas-dev libxml2-dev \
                   libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libmpfi-dev libntl-dev gfan \
