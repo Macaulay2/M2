@@ -59,8 +59,8 @@ mathML FunctionApplication := m -> (
      then concatenate (mfun, bigParenthesize margs)
      else concatenate (bigParenthesize mfun, bigParenthesize margs)
      )
-mathML MatrixExpression := x -> concatenate( "<mrow><mo>(</mo>", mtableML x#0, "<mo>)</mo></mrow>", newline )
-mathML Minus := v -> concatenate( "<mo>-</mo>", mathML v#0)
+mathML MatrixExpression := x -> concatenate( "<mrow><mo>(</mo>", mtableML x, "<mo>)</mo></mrow>", newline )
+mathML Minus := v -> concatenate( "<mrow><mo>-</mo>", mathML v#0, "</mrow>")
 mathML Divide := x -> concatenate("<mfrac>", mathML x#0, mathML x#1, "</mfrac>")
 mathML OneExpression := x -> "<mn>1</mn>"
 mathML ZeroExpression := x -> "<mn>0</mn>"
@@ -144,6 +144,7 @@ mathML ChainComplex := C -> (
      s := sort spots C;
      if #s === 0 then mathML "0"
      else mtable transpose between({leftarrow,"",""}, toList apply(s#0 .. s#-1,i -> {mathML C_i,"",mathML i})))
+mathML MapExpression := x -> mrow {mathML x#0, leftarrow, mathML x#1}
 mathML Option := s -> concatenate("<mrow>",mathML s#0, doublerightarrow, mathML s#1, "</mrow>")
 mathML Type :=
 mathML ImmutableType := R -> if R.?mathML then R.mathML else mathML expression R

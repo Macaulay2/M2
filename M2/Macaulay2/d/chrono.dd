@@ -30,15 +30,17 @@ cpuTime(e:Expr):Expr := (
     else WrongNumArgs(0));
 setupfun("cpuTime", cpuTime);
 
-cpuTimer(c:Code):Sequence := (
+export cpuTimer(c:Code):Sequence := (
     T0 := cpuTime();
     ret := eval(c);
     T1 := cpuTime();
     Sequence(toExpr(T1 - T0), ret));
 
-wallTimer(c:Code):Sequence := (
+export wallTimer(c:Code):Sequence := (
     T0 := Ccode(Chrono, "std::chrono::steady_clock::now()");
-    ret := eval(c);
+    -- Note: here we intentionally call evalraw so
+    -- that evalprof can call this function safely.
+    ret := evalraw(c);
     T1 := Ccode(Chrono, "std::chrono::steady_clock::now()");
     dT := double(Ccode(uint64_t, "(", T1, " - ", T0, ").count()"));
     dT  = dT/1000000000.;
