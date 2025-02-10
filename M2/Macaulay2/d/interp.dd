@@ -9,7 +9,7 @@ use profiler;
 
 import dirname(s:string):string;
 
-dummyError := Error(dummyPosition,"dummy error message",nullE,false,dummyFrame);
+dummyError := buildError(dummyPosition,"dummy error message");
 
 export setupargv():void := (
      setupconst("commandLine",toExpr(argv));
@@ -166,7 +166,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			 then (
 			      msg := "syntax error: unmatched " + s.word.name;
 			      printErrorMessage(s,msg);
-			      if stopIfError || returnIfError then return Expr(Error(s.position,msg,nullE,false,dummyFrame));
+			      if stopIfError || returnIfError then return Expr(buildError(s.position,msg))
 			      )
 			 else (
 			      if localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols; returns false iff an error occurred

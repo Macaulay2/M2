@@ -46,7 +46,7 @@ export evalAllButTail(c:Code):Code := while true do c = (
 	  else if p == True then i.thenClause
 	  else if p == False then i.elseClause
 	  else (
-	       return Code(Error(codePosition(i.predicate),"expected true or false",nullE,false,dummyFrame));
+	       return Code(buildError(codePosition(i.predicate),"expected true or false"));
 	       dummyCode))
      is v:semiCode do (
 	  w := v.w;

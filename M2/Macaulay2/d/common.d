@@ -98,16 +98,16 @@ setup(commaS,dummyBinaryFun);
 threadLocal export errorDepth := ushort(0);
 export printErrorMessage0(c:Code,message:string):Error := (
      p := codePosition(c);
-     e := Error(p,message,nullE,false,dummyFrame);
+     e := buildError(p, message);
      if p.loadDepth >= errorDepth then printError(e);
      e);
 export printErrorMessageE(c:Code,message:string):Expr := (
      p := codePosition(c);
-     e := Error(p,message,nullE,false,dummyFrame);
+     e := buildError(p, message);
      if p.loadDepth >= errorDepth then printError(e);
      Expr(e));
 export printErrorMessageE(p:Position,message:string):Expr := ( -- for use when we have no code
-     e := Error(p,message,nullE,false,dummyFrame);
+     e := buildError(p, message);
      if p.loadDepth >= errorDepth then printError(e);
      Expr(e));
 export printErrorMessageE(c:Token,message:string):Expr := ( -- for use when we have no code
