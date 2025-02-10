@@ -549,6 +549,7 @@ export {
 	"clean",
 	"clearAll",
 	"clearEcho",
+	"clearLastError",
 	"clearOutput",
 	"close",
 	"closeIn",
