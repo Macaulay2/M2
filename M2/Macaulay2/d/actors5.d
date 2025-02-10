@@ -2172,7 +2172,10 @@ threadTest(e:Expr):Expr := (
      nullE);
 setupfun("threadTest",threadTest);
 
-getLastError(e:Expr):Expr := Expr(lastError);
+getLastError(e:Expr):Expr := Expr(
+    when lastError
+    is err:Error do seq(locate(err.position), toExpr(err.message))
+    else lastError);
 setupfun("lastError", getLastError);
 
 clearLastError(e:Expr):Expr := (lastError = nullE;nullE);

@@ -1343,8 +1343,8 @@ steppingFurther(c:Code):bool := steppingFlag && (
 
 handleError(c:Code,e:Expr):Expr := (
      when e is err:Error do (
-	  if SuppressErrors then return e;
-	  if err.message == returnMessage
+	  if SuppressErrors -- suppressed errors should still get a position
+	  || err.message == returnMessage
 	  || err.message == continueMessage || err.message == continueMessageWithArg
 	  || err.message == stepMessage || err.message == stepMessageWithArg
 	  || err.message == breakMessage
