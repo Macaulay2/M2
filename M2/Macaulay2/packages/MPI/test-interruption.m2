@@ -11,8 +11,9 @@ numberOfWorkers = numberOfProcesses()-1
 myID = myProcessNumber()
 notDone = true
 if myID!=master then while true do (
-    s := receiveStringMPI master;
-    << "-- " << myID << " received: " << s << endl;
+    (tag,s) := receiveStringMPI master;
+    << "-- " << myID << " received(tag): " << tag << endl;
+    << "-- " << myID << " received(str): " << s << endl;
     r := value s;
     << "-- " << myID << " result: " << r << endl;
     sendStringMPI(toString r, master);

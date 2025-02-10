@@ -11,14 +11,15 @@ numberOfWorkers = numberOfProcesses()-1
 myID = myProcessNumber()
 notDone = true
 if myID!=master then while true do (
-    s := receiveStringMPI master;
+    (tag,s) := receiveStringMPI master;
     << "-- " << myID << " received: " << s << endl;
-    r := try (value s);
+    local r;
+    try (r = value s) then err := false else (err = true; r = "!!!ERROR!!!");	
     << "-- " << myID << " result: " << r << endl;
-    sendStringMPI(toString r, master);
+    (if err then sendErrorMPI else sendStringMPI) (toString r, master);
     ) 
 addEndFunction(()->(for i from 1 to numberOfWorkers do sendStringMPI("exit 0",i); -*sleep 1*-));
 
 -- write the code for master below
 broadcastSend "error \"!!!\""
--- print broadcastReceive()
+print broadcastReceive()

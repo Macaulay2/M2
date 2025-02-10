@@ -22,16 +22,16 @@ if myID == master then (
     broadcast("I = "|toString I|";");
     sendStringMPI("groebnerBasis I",1);
     sendStringMPI("groebnerBasis(I,Strategy=>\"F4\")",2);
-    G1 = value receiveStringMPI 1;
-    G2 = value receiveStringMPI 2;
+    G1 = value last receiveStringMPI 1;
+    G2 = value last receiveStringMPI 2;
     assert(G1==G2);
 --     broadcast "end"
     ) else ( -- WORKER -------------------------------------------
     notDone := true;
     while notDone do (
-	s := receiveStringMPI master;
-	<< "-- " << myID << " received: " << s << endl;
-	notDone = (s!="end");
+	(tag,s) := receiveStringMPI master;
+	<< "-- " << myID << " received(tag): " << tag << endl;
+	<< "-- " << myID << " received(str): " << s << endl;
 	r := value s;
 	<< "-- " << myID << " result: " << r << endl;
 	sendStringMPI(toString r, master)

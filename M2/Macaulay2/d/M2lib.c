@@ -59,18 +59,19 @@ int MPImyProcessNumber() {
 }
 
 // blocking send 
-int MPIsendString(M2_string s, int p) {
+int MPIsendString(M2_string s, int p, int tag) {
   char *t = M2_tocharstar(s);
-  int ret = MPI_Send(t, strlen(t)+1, MPI_CHAR, p, 0 /*tag*/, MPI_COMM_WORLD);
+  int ret = MPI_Send(t, strlen(t)+1, MPI_CHAR, p, tag, MPI_COMM_WORLD);
   GC_FREE(t); 
   return ret;
 }
 
 // blocking receive
-M2_string MPIreceiveString(int p) {
+// note: if *tagPtr == MPI_ANY_TAG, it is changed into a received tag 
+M2_string MPIreceiveString(int p, int* tagPtr) {
   MPI_Status status;
   // Probe for an incoming message from process zero
-  MPI_Probe(p, 0/*tag*/, MPI_COMM_WORLD, &status);
+  MPI_Probe(p, *tagPtr, MPI_COMM_WORLD, &status);
   // When probe returns, the status object has the size and other
   // attributes of the incoming message. Get the message size
   int size;
@@ -78,9 +79,10 @@ M2_string MPIreceiveString(int p) {
   // Allocate a buffer to hold the incoming numbers
   char* s = (char*) malloc(sizeof(char) * size);
   // Now receive the message with the allocated buffer
-  MPI_Recv(s, size, MPI_CHAR, p, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+  MPI_Recv(s, size, MPI_CHAR, p, *tagPtr, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
   M2_string ret = M2_tostring(s);
   free(s);
+  *tagPtr = status.MPI_TAG;
   return ret;
 }
 
@@ -143,8 +145,8 @@ void clean_up(void) {
 #ifdef WITH_MPI
   int n = MPImyProcessNumber();
   if (n>0)
-      printf("MPI: Bye world from process %d out of %d processes\n",
-	     MPImyProcessNumber(), MPInumberOfProcesses());
+    printf("MPI: Bye world from process %d out of %d processes\n",
+	   MPImyProcessNumber(), MPInumberOfProcesses());
   MPI_Finalize();
 #endif
 }

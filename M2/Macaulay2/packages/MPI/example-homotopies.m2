@@ -16,7 +16,7 @@ T = for i from 1 to n list random(2, R) + random(1, R) + 1
 
 if myID!=master then ( -- WORKER part
     while true do (
-        s := receiveStringMPI master;
+        (tag,s) := receiveStringMPI master;
         r := value s; 
         sendStringMPI(toString r, master)
      	) -- e.g., when s == "exit 0" the process quits
@@ -30,7 +30,7 @@ for i from 1 to nWorkers do sendStringMPI(
 	solsS,{(i-1)*blockSize, min(i*blockSize-1,#solsS-1)}
 	)|")", i)
 solsT = flatten for i from 1 to nWorkers list (
-    value receiveStringMPI i
+    value last receiveStringMPI i
     )
 print("#solutions: "|#solsT)
 print("wall timing: " | (currentTime() - startTime) | " seconds") 

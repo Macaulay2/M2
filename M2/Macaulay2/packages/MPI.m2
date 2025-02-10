@@ -12,11 +12,23 @@ newPackage(
 	AuxiliaryFiles => true
     	)
 
-exportFrom_Core {"sendStringMPI", "receiveStringMPI", "interruptMPI", "numberOfProcesses", "myProcessNumber"}
+exportFrom_Core {"sendStringWithTagMPI", "receiveStringMPI", "interruptMPI", "numberOfProcesses", "myProcessNumber"}
 --exportMutable {}
 
 -- TO DO: implement these in the kernel
-export {"broadcastSend", "broadcastReceive"}
+export {"broadcastSend", "broadcastReceive", "sendStringMPI", "sendErrorMPI"}
+
+export {"MPIstringTag", "MPIerrorTag"}
+MPIstringTag = 1; MPIerrorTag = 2;
+protect symbol MPIstringTag
+protect symbol MPIerrorTag
+
+
+sendStringMPI = method()
+sendStringMPI (String,ZZ) := (s,p) -> sendStringWithTagMPI(s,p,MPIstringTag)
+
+sendErrorMPI = method()
+sendErrorMPI (String,ZZ) := (s,p) -> sendStringWithTagMPI(s,p,MPIerrorTag)
 
 broadcastSend = method()
 broadcastSend String := s -> for i from 1 to numberOfProcesses()-1 do sendStringMPI(s,i)
@@ -90,8 +102,9 @@ numberOfWorkers = numberOfProcesses()-1
 myID = myProcessNumber()
 notDone = true
 if myID!=master then while true do (
-    s := receiveStringMPI master;
-    << "-- " << myID << " received: " << s << endl;
+    (tag,s) := receiveStringMPI master;
+    << "-- " << myID << " received(tag): " << tag << endl;
+    << "-- " << myID << " received(str): " << s << endl;
     r := value s;
     << "-- " << myID << " result: " << r << endl;
     sendStringMPI(toString r, master);
