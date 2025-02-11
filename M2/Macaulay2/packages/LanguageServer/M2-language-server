@@ -52,7 +52,9 @@ while true; do
 done
 
 
-M2 --silent --srcdir ~/src/macaulay2/M2/M2 \
-   -e 'needsPackage "LanguageServer"'      \
+M2 --silent \
+   --stop \
+   -e 'clearEcho stdio' \
+   -e 'needsPackage("LanguageServer", FileName => "~/src/macaulay2/M2/M2/Macaulay2/packages/LanguageServer.m2")'      \
    -e "debugLevel = ${debug_level}"        \
    -e "runLanguageServer(${port})"

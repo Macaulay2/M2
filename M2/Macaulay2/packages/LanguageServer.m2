@@ -42,7 +42,7 @@ handleRequest(LSPServer, Thing) := (server, request) -> (
 ------------------------------------
 addHeader = msg -> concatenate(
     "Content-Length: ", toString length msg, "\r\n",
-    "application/vscode-jsonrpc; charset=utf-8\r\n",
+    "Content-Type: application/vscode-jsonrpc; charset=utf-8\r\n\r\n",
     msg)
 
 ----------------------------------------------------------------------
