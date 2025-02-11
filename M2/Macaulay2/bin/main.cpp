@@ -25,6 +25,10 @@
 #include <vector>
 #include <flint/flint.h> // for flint_set_abort
 
+#ifdef WITH_MPI
+#include <mpi.h>
+#endif
+
 /* ######################################################################### */
 
 JumpCell abort_jmp;
@@ -66,6 +70,24 @@ static void * GC_start_performance_measurement_0(void *) {
 
 int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[])
 {
+#ifdef WITH_MPI
+  // MPI preamble
+  // Initialize the MPI environment
+  if (MPI_Init(NULL, NULL) == MPI_SUCCESS) {
+    // Get the number of processes
+    int world_size;
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+  
+    // Get the rank of the process
+    int world_rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+
+    if (world_rank>0)
+      std::cout << "MPI: initialized process " << world_rank
+		<< " out of " << world_size << " processes" << std::endl;
+  }
+  #endif
+  
   /* find the number of environment variables defined */
   int envc = -1;
   while (env[++envc] != NULL) { /* iterate over environ until you hit NULL */ }
@@ -118,7 +140,7 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
     waitOnTask(interpTask);
   }
   return 0;
-}
+} //end// main
 
 /* ######################################################################### */
 

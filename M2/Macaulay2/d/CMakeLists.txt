@@ -88,6 +88,7 @@ set(DLIST
   threads.dd
   python.d	# removed unless WITH_PYTHON
   interface.dd interface2.d
+  mpi.d         # removed unless WITH_MPI
   monoid.dd
   monomial_ordering.dd
   texmacs.d
@@ -112,6 +113,9 @@ if(NOT WITH_PYTHON)
 endif()
 if(NOT WITH_FFI)
   list(REMOVE_ITEM DLIST ffi.d)
+endif()
+if(NOT WITH_MPI)
+  list(REMOVE_ITEM DLIST mpi.d)
 endif()
 
 ###############################################################################

@@ -9,15 +9,6 @@ const char *nullstringer(const char *s) {
   return *s ? s : NULL;
 }
 
-M2_string tostring2(const char const *s) /* identical to tostring! */
-{
-  int n = s ? strlen(s) : 0;
-  M2_string p = (M2_string)getmem_atomic(sizeofarray(p,n));
-  p->len = n;
-  memcpy(p->array,s,n);
-  return p;
-}
-
 M2_arrayint toarrayint(int n,int *p)
 {
   M2_arrayint z = (M2_arrayint)getmem_atomic(sizeofarray(z,n));
