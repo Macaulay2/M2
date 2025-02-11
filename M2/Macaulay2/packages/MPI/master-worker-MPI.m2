@@ -27,7 +27,7 @@ for i from 1  to numberOfWorkers do (
     )
 
 << "-- " << myID << " received (from all workers): " << endl;  
---<< broadcastReceive() << endl;
+<< broadcastReceive() << endl;
 
 
 

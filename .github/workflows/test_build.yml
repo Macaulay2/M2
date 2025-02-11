@@ -39,19 +39,19 @@ jobs:
           - cmake
         os:
           - ubuntu-latest
-          - macos-latest
+          - macos-13
         compiler:
           - default
         include:
           # This build tests Clang rather than AppleClang (keep)
           - build-system: cmake
-            os: macos-latest 
+            os: macos-13 
             compiler: clang
             cxx: clang++
             cc: clang
           # This build tests MPI
           - build-system: cmake
-            os: macos-latest
+            os: macos-13
             compiler: MPI
             cxx: clang++
             cc: clang
@@ -60,7 +60,7 @@ jobs:
             compiler: MPI
         exclude:
           - build-system: cmake
-            os: macos-latest
+            os: macos-13
             compiler: default
     steps:
       - uses: actions/checkout@v4
@@ -77,7 +77,7 @@ jobs:
           brew install --overwrite python
           brew install automake boost tbb ccache ctags texinfo llvm make ninja yasm libffi msolve
           brew install --only-dependencies macaulay2/tap/M2
-          brew install mpich
+          brew install openmpi
           brew link factory --force
 
 # ----------------------
@@ -96,7 +96,7 @@ jobs:
                   libgivaro-dev libboost-regex-dev fflas-ffpack libflint-dev libmps-dev libfrobby-dev \
                   libsingular-dev singular-data libcdd-dev cohomcalg topcom 4ti2 libnormaliz-dev normaliz coinor-csdp \
                   libnauty-dev nauty lrslib polymake pipx phcpack w3c-markup-validator libtbb-dev qepcad libomp-16-dev msolve
-          sudo apt-get install -y -q --no-install-recommends mpich libmpich-dev
+          sudo apt-get install -y -q --no-install-recommends openmpi-bin libopenmpi-dev
 
 # ----------------------
 #   Steps common to all build variants

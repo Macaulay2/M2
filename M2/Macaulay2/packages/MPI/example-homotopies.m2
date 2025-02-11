@@ -1,6 +1,5 @@
 -* 
 mpirun -np 4 ./M2 --script  MPI/example-homotopies.m2
-mpirun -np 4 ./M2 --q --stop --silent  MPI/example-homotopies.m2
 *-
 -- COMMON part
 needsPackage "MPI"
