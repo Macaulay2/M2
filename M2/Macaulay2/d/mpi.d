@@ -3,24 +3,13 @@ use struct;
 
 -- defined in M2lib.c
 header "
-#include \"M2/config.h\"
-#ifdef WITH_MPI
 #include \"mpi.h\"
-#endif
 int MPInumberOfProcesses();
 int MPImyProcessNumber();
 int MPIsendString(M2_string s, int p, int tag);
 int MPIinterrupt(int p);
 M2_string MPIreceiveString(int p, int* tagPtr);
 ";
-
-MPIanyTag := Ccode(int, "
-#ifdef WITH_MPI
-MPI_ANY_TAG
-#else
--1
-#endif
-");
 
 export numberOfProcesses(e:Expr):Expr := (
     when e is seq:Sequence do
@@ -58,7 +47,7 @@ setupfun("sendStringWithTagMPI",sendStringWithTagMPI);
 --   receive a string from processor p 
 export receiveStringMPI(e:Expr):Expr := ( 
     when e is p:ZZcell do (
-	tagInt := MPIanyTag;
+	tagInt := Ccode(int,"MPI_ANY_TAG");
 	message := toExpr(Ccode(string, "MPIreceiveString(", toInt(p), ",&", tagInt, ")"));
 	Expr(Sequence(toExpr(tagInt), message))
 	)

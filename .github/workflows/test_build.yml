@@ -211,8 +211,8 @@ jobs:
       - name: Run MPI test examples
         if: matrix.compiler == 'MPI'
         run: |
-          # mpirun -np 4 ./M2 --script ../../Macaulay2/packages/MPI/example-homotopies.m2
-          mpirun -np 4 ./M2 --script ../../Macaulay2/packages/MPI/master-worker-MPI.m2
+          # mpirun -np 4 --oversubscribe ./M2 --script ../../Macaulay2/packages/MPI/example-homotopies.m2
+          mpirun -np 4 --oversubscribe ./M2 --script ../../Macaulay2/packages/MPI/master-worker-MPI.m2
 
       - name: Run Tests using Autotools
         if: matrix.build-system == 'autotools' && runner.os == 'Linux' && matrix.compiler == 'default'

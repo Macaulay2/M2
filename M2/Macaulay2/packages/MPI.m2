@@ -1,16 +1,26 @@
 -- -*- coding: utf-8 -*-
+MPIPresent := Core#"private dictionary"#?"numberOfProcesses"
+
 newPackage(
 	"MPI",
-    	Version => "1.22", 
-    	Date => "May, 2023",
+    Version => "1.24.11", 
+    Date => "Feb, 2024",
     	Authors => {
 	     {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	     },
     	HomePage => "https://antonleykin.math.gatech.edu/",
     	Headline => "Message Passing Interface",
 	Keywords => {"Parallel computing"},
+    OptionalComponentsPresent => MPIPresent,
 	AuxiliaryFiles => true
     	)
+
+verboseLog = if debugLevel > 0 then printerr else identity    
+if MPIPresent then verboseLog "success: MPI is present" else (
+    verboseLog "warning: python is not present";
+    verboseLog "specify --with-MPI in `configure` options and recompile M2";
+    end
+    )
 
 exportFrom_Core {"sendStringWithTagMPI", "receiveStringMPI", "interruptMPI", "numberOfProcesses", "myProcessNumber"}
 --exportMutable {}
