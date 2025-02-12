@@ -107,7 +107,8 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 		    if debugLevel == 123 then stderr <<  "-- token read error" << endl;
 		    promptWanted = true;
 	       	    if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
-	       	    if stopIfError || returnIfError then return buildErrorPacket("--backtrace: token read error--");
+		    errpkt := buildErrorPacket("--backtrace: token read error--");
+		    if stopIfError || returnIfError then return errpkt;
 		    if isatty(file) || file.posFile.file.fulllines then flushToken(file);
 		    file.posFile.line = file.posFile.line + 1;
 		    file.posFile.column = ushort(0);
@@ -144,7 +145,8 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			 else (
 		    	      if debugLevel == 123 then stderr <<  "-- error during parsing" << endl;
 			      if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
-			      if stopIfError || returnIfError then return buildErrorPacket("--backtrace: parse error--");
+			      errpkt := buildErrorPacket("--backtrace: parse error--");
+			      if stopIfError || returnIfError then return errpkt;
 			      file.posFile.line = file.posFile.line + 1;
 			      file.posFile.column = ushort(0);
 			      );
@@ -165,8 +167,9 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			 if !(s.word == SemicolonW || s.word == NewlineW || s.word == wordEOC || s.word == wordEOF)
 			 then (
 			      msg := "syntax error: unmatched " + s.word.name;
-			      printErrorMessage(s,msg);
-			      if stopIfError || returnIfError then return Expr(buildError(s.position,msg))
+			      e := buildError(s.position, msg);
+			      printErrorMessage(e);
+			      if stopIfError || returnIfError then return Expr(e);
 			      )
 			 else (
 			      if localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols; returns false iff an error occurred
