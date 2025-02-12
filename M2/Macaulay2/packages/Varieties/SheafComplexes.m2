@@ -223,7 +223,7 @@ cohomology(ZZ, ProjectiveVariety, Complex) := Complex => opts -> (p, X, C) -> (
 
 -----------------------------------------------------------------------------
 
-euler Complex := C -> sum(-length C .. length C, i -> (-1)^i * euler C_i)
+euler Complex := C -> sum(pairs C.module, (i, M) -> (-1)^i * euler M)
 
 -----------------------------------------------------------------------------
 
