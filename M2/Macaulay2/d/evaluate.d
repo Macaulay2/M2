@@ -46,7 +46,7 @@ export evalAllButTail(c:Code):Code := while true do c = (
 	  else if p == True then i.thenClause
 	  else if p == False then i.elseClause
 	  else (
-	       return Code(Error(codePosition(i.predicate),"expected true or false",nullE,false,dummyFrame));
+	       return Code(buildError(codePosition(i.predicate),"expected true or false"));
 	       dummyCode))
      is v:semiCode do (
 	  w := v.w;
@@ -1343,8 +1343,8 @@ steppingFurther(c:Code):bool := steppingFlag && (
 
 handleError(c:Code,e:Expr):Expr := (
      when e is err:Error do (
-	  if SuppressErrors then return e;
-	  if err.message == returnMessage
+	  if SuppressErrors -- suppressed errors should still get a position
+	  || err.message == returnMessage
 	  || err.message == continueMessage || err.message == continueMessageWithArg
 	  || err.message == stepMessage || err.message == stepMessageWithArg
 	  || err.message == breakMessage
