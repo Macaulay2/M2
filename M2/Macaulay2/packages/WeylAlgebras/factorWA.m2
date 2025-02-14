@@ -470,7 +470,7 @@ doc ///
      Mark Giesbrecht, Albert Heinle and Viktor Levandovskyy, Journal of Symbolic Computation
      Volume 75, July–August 2016, Pages 127-148.
   Caveat
-    The ring of r must have variables in the same order as those created by @TO "makeWeylAlgebra"@.
+    The ring of @TT "r"@ must have variables in the same order as those created by @TO "makeWeylAlgebra"@.
   SeeAlso
     factorWeylAlgebra1
  Node
