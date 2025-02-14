@@ -1,9 +1,18 @@
 --needsPackage "RationalPoints2"
 
-random Module := Vector => o -> M -> (
-    K := try coefficientRing ring M else ring M;
-    v := random(cover M ** K, module K, o);
-    vector inducedMap(M, , generators M * v))
+-- give a random vector in a module over a local ring
+localRandom = (M, opts) -> (
+    R := ring M;
+    -- TODO: which coefficient ring do we want?
+    K := try coefficientRing R else R;
+    v := random(cover M ** K, module K, opts);
+    -- TODO: sub should be unnecessary, but see https://github.com/Macaulay2/M2/issues/3638
+    vector inducedMap(M, , generators M * sub(v, R)))
+
+random(ZZ,   Module) :=
+random(List, Module) := Vector => o -> (d, M) -> vector map(M, , random(cover M, (ring M)^{-d}, o))
+random       Module  := Vector => o ->     M  -> (
+    if isHomogeneous M then random(degree 1_(ring M), M, o) else localRandom(M, o))
 
 generalEndomorphism = method()
 generalEndomorphism Module := M -> (
@@ -134,6 +143,7 @@ findIdempotent(Module, ZZ) := opts -> (M, e) -> (
 	-- TODO: this seems too messy, what's the precise requirement?
 	-- maybe we should separate this in a different method
         --exactFlag := not( instance(F, InexactField) or isMember(coefficientRing ring Chi, {ZZ, QQ}));
+	--needsPackage "RationalPoints2"
         exactFlag := not( instance(F, InexactField));
         eigen := if not exactFlag then roots Chi else flatten rationalPoints ideal Chi;
 	-- if at most one eigenvalue is found then the module is probably indecomposable
