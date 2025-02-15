@@ -66,7 +66,6 @@ libraries/readline/Makefile
 libraries/tbb/Makefile
 libraries/topcom/Makefile
 Macaulay2/Makefile
-Macaulay2/README
 Macaulay2/packages/SCSCP/docinput/Makefile
 Macaulay2/c/Makefile
 Macaulay2/d/Makefile
