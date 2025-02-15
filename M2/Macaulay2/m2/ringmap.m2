@@ -221,8 +221,9 @@ tensor(RingMap, Matrix) := Matrix => {} >> opts -> (f, m) -> (
     map(f ** target m, f ** source m, f cover m))
 RingMap ** Matrix := Matrix => (f, m) -> tensor(f, m)
 
-VisibleList / RingMap := VisibleList => (v,f) -> apply(v,x -> f x)
-RingMap \ VisibleList := VisibleList => (f,v) -> apply(v,x -> f x)
+VisibleList / RingMap     := VisibleList => (v,f) -> apply(v,x -> f x)
+RingMap     \ VisibleList :=
+RingElement \ VisibleList := VisibleList => (f,v) -> apply(v,x -> f x)
 
 -----------------------------------------------------------------------------
 -- kernel

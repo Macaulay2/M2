@@ -125,6 +125,7 @@ document {
 	  (symbol \,SelfInitializingType,VisibleList),
 	  (symbol \,Command,VisibleList),
 	  (symbol \,RingMap,VisibleList),
+	  (symbol \,RingElement,VisibleList),
 	  (symbol \,Command,VirtualTally),
 	  (symbol /,VisibleList,SelfInitializingType),
 	  (symbol /,List,Command),
