@@ -2,8 +2,7 @@ This directory contains compilation instructions for various libraries and
 programs used by Macaulay2.  A library is code linked into the Macaulay2 binary
 "M2", whereas a program is code that runs separately or a library that gets
 linked into a program and does not get linked into M2.  The programs are
-distributed with their own licenses; we've made notes about that in the file
-../LICENSING-NOTES.
+distributed with their own licenses.
 
 Some of the libraries are sharable, so the various other makefiles takes care
 of adding the appropriate directories to the value of the environment variables
@@ -27,8 +26,6 @@ To add a new program:
        ../Macaulay2/packages/Macaulay2Doc/overview3.m2, with a link to it from
        the node called "Copyright and license".  Use the nodes for the other
        programs as models.  Describe the licensing model there.
-
-     - a licensing note to ../LICENSING-NOTES
 
 To add a new library:
 
@@ -59,5 +56,3 @@ To add a new library:
      - verify that the code of the library is licensed in such a way that we
        may link it our program and distribute the resulting binary under
        GNU GPL 3.
-
-     - add a licensing note to ../LICENSING-NOTES
