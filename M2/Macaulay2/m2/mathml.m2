@@ -110,32 +110,31 @@ mathML Sum := v -> (
 		    	 else mathML v#i),
 		    n:newline),
 	       "</mrow>",newline)))
+
 mathML Product := v -> (
-     n := # v;
-     if n === 0 then "<mn>1</mn>"
-     else if n === 1 then mathML v#0
-     else (
-     	  p := precedence v;
-	  seps := newClass(MutableList, (n+1) : "<mo>*</mo>");
-	  if n>1 and isNumber v#0 and startsWithSymbol v#1 then seps#1 = "<mo></mo>";
-     	  boxes := apply(#v,
-	       i -> (
-		    term := v#i;
-		    nterm := mathML term;
-	       	    if precedence term <= p then (
-			 seps#i = seps#(i+1) = "<mo></mo>";
-			 nterm = ("<mrow><mo>(</mo>", nterm, "<mo>)</mo></mrow>");
-			 );
-		    if class term === Power
-		    and not (term#1 === 1 or term#1 === ONE)
-		    or class term === Subscript then (
-			 seps#(i+1) = "<mo></mo>";
-			 );
-	       	    nterm));
-     	  seps#0 = seps#n = "";
-	  concatenate ("<mrow>", mingle (seps, boxes), "</mrow>")
-	  )
-     )
+    n := # v;
+    if n === 0 then mathML 1
+    else (
+	v = apply(v, x -> if class x === Power and (x#1 === 1 or x#1 === ONE) then x#0 else x);
+	p := precedence v;
+	nums := apply(v, x -> isNumber x or (class x === Power and isNumber x#0));
+	precs := apply(v, x -> precedence x <= p);
+	seps := apply (n-1, i->
+	    if nums#(i+1) then mo "&times;"
+	    else if (
+		class v#i =!= Power and
+		class v#i =!= Subscript and
+		not precs#i and
+		not precs#(i+1) and
+		(nums#i or class v#i === Symbol))
+	    then "<mspace width=\"0.1667em\"></mspace>"
+	    else "");
+	boxes := apply(n, i -> (
+		if precs#i and class v#i =!= Divide
+		then mathMLparen mathML v#i
+		else mathML v#i));
+	mrow concatenate splice mingle (boxes,seps)))
+
 mathMLparen = s -> concatenate("<mrow><mo>(</mo>",s,"<mo>)</mo></mrow>")
 mathML Boolean := i -> if i then "<mi>true</mi>" else "<mi>false</mi>"
 mathML Subscript := v -> concatenate("<msub>",mathML v#0,mathML v#1,"</msub>")
