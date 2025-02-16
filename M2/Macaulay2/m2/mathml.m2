@@ -59,7 +59,29 @@ mathML FunctionApplication := m -> (
      then concatenate (mfun, bigParenthesize margs)
      else concatenate (bigParenthesize mfun, bigParenthesize margs)
      )
-mathML MatrixExpression := x -> concatenate( "<mrow><mo>(</mo>", mtableML x, "<mo>)</mo></mrow>", newline )
+
+-- zero-width "phantom" element to make sure that degrees line up
+mphantom := x -> concatenate(
+    "<mpadded width=\"0px\"><mphantom>",
+    x,
+    "</mphantom></mpadded>")
+mathML MatrixExpression := x -> (
+    (opts, m) := matrixOpts x;
+    if all(m, r -> all(r, i -> class i === ZeroExpression))
+    then return mathML 0;
+    m = applyTable(m, mathML);
+    concatenate(
+	if opts.Degrees =!= null then (
+	    degs := mathML \ opts.Degrees#0;
+	    mtable apply(#m, i -> {degs#i | mphantom m#i})),
+	"<mo>(</mo>",
+	mtable (
+	    if opts.Degrees =!= null
+	    then apply(#m, i -> prepend(mphantom degs#i, m#i))
+	    else m),
+	"<mo>)</mo>",
+	newline))
+
 mathML Minus := v -> concatenate( "<mrow><mo>-</mo>", mathML v#0, "</mrow>")
 mathML Divide := x -> concatenate("<mfrac>", mathML x#0, mathML x#1, "</mfrac>")
 mathML OneExpression := x -> "<mn>1</mn>"
