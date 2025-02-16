@@ -551,7 +551,7 @@ toString'(Function, SparseMonomialVectorExpression) := (fmt,v) -> toString (
 MatrixExpression = new HeaderType of Expression
 MatrixExpression.synonym = "matrix expression"
 matrixOpts1 := new OptionTable from {Blocks=>null,Degrees=>null,MutableMatrix=>false};
-matrixOpts := m -> ( -- helper function
+matrixOpts = m -> ( -- helper function
     (opts,x) := override(matrixOpts1,toSequence m);
     (opts, if #x > 0 and class x#0 =!= List then { x } else toList x) -- because of #1548
     )
