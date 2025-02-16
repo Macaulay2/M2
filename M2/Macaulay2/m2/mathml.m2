@@ -11,7 +11,7 @@ nest := (tag,s) -> concatenate("<",tag,">",s,"</",tag,">")
 mo   := s -> nest("mo",s)
 mrow := s -> nest("mrow",s)
 mtable := x -> concatenate(
-     "<mtable align=\"baseline1\">", newline,
+     "<mtable columnalign=\"center\">", newline,
      apply(x, row -> ( "<mtr>", apply(row, e -> ("<mtd>",e,"</mtd>",newline)), "</mtr>", newline ) ),
      "</mtable>", newline )
 mtableML := x -> mtable applyTable(x,mathML)
