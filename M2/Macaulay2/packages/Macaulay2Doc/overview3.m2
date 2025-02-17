@@ -27,7 +27,7 @@ document {
      Key => {"Copyright and license", "copyright"},
      PARA {
 	  "Macaulay2, its object code, source code, and documentation,
-	  are copyright by Daniel R. Grayson and Michael E. Stillman.  We permit you to use it either
+	  are copyright by the Macaulay2 Authors.  We permit you to use it either
 	  under the terms of the GNU General Public License, version 2, as published by the Free Software Foundation, and as
 	  contained in the file ", TO "COPYING-GPL-2", " accompanying the program, or
 	  under the terms of the GNU General Public License, version 3, as published by the Free Software Foundation, and as
@@ -40,6 +40,11 @@ document {
      PARA {
       	  "Some free libraries have been compiled into (or linked with) Macaulay2, and some free programs, or packages
 	  of programs, with their libraries, have been compiled and distributed with Macaulay2."
+	  },
+     PARA {
+	  "See the file ",
+	  HREF("https://github.com/Macaulay2/M2/blob/master/M2/LICENSING-NOTES.md", "M2/LICENSING-NOTES.md"),
+	  " in the Macaulay2 source repository for more information."
 	  },
      PARA {
 	  "Run the command ", M2CODE "copyright", " to view this message."
