@@ -253,11 +253,14 @@ truncate Number := {} >> o -> x -> (
     else if x < 0 then ceiling x
     else 0) -- e.g., RRi's containing 0 as interior pt
 
-random RR := RR => opts -> x -> x * rawRandomRR precision x
+random RR := RR => opts -> x -> x * rawRandomRRUniform precision x
 random(RR,RR) := opts -> (x,y) -> x + random(y-x)
-RR'.random = opts -> R -> rawRandomRR R.precision
+RR'.random = opts -> R -> rawRandomRRUniform R.precision
 CC'.random = opts -> C -> rawRandomCC C.precision
 random RingFamily := opts -> R -> random(default R,opts)
+
+random QQ := QQ => opts -> x -> rawFareyApproximation(
+    random numeric x, opts.Height)
 
 -- algebraic operations and functions
 

@@ -63,6 +63,29 @@ Node
 
 Node
   Key
+    (random, QQ)
+  Headline
+    get a random rational number
+  Usage
+    random x
+  Inputs
+    x:QQ
+    Height => ZZ
+  Outputs
+    :QQ -- randomly chosen from the interval $[0, x]$
+  Description
+    Text
+      A random number is chosen from the uniform distribution on the interval
+      $[0, x]$ and then rounded (using the @wikipedia "Farey sequence"@) to the
+      nearest rational number with denominator bounded by the @CODE "Height"@
+      option.
+    Example
+      apply(10, i -> random(7_QQ, Height => 5))
+  SeeAlso
+    setRandomSeed
+
+Node
+  Key
     (random, Type)
   Headline
     get a random object of a type
@@ -77,8 +100,10 @@ Node
   Description
     Text
       If the @TT "Height"@ option specifies a number @TT "h"@ and @TT "T"@
-      is @TO "ZZ"@ then the integers returned are in the range @TT "[0, h)"@;
-      for @TO "QQ"@ the numerator and denominator are in the range @TT "[1, h]"@.
+      is @TO "ZZ"@ then the integers returned are in the range @TT "[0, h)"@.
+      If @TT "T"@ is @TO QQ@, then the results are drawn from the uniform
+      distribution on @TT "[0, h]"@ and rounded to the nearest rational number
+      with denominator bounded by @TT "h"@.
     Example
       random RR
       random CC_100
