@@ -27,7 +27,9 @@ addTest(String, FilePosition) := (str, loc) -> (
     n := #currentPackage#"test inputs";
     currentPackage#"test inputs"#n = TestInput {
 	"location" => loc,
-	"code" => str})
+	"code" => str,
+	"package" => currentPackage,
+	"number" => n})
 -- the following is not called by TEST, but called directly when we want to
 -- add a test from a file (used by loadTestDir)
 addTest String := filename -> addTest(get filename,
@@ -116,6 +118,9 @@ check(List, Package) := opts -> (L, pkg) -> (
 		stderr << locate inputs#k << " error:" << endl;
 		printerr getErrors(outfile errfile)));
 	error("test(s) #", demark(", ", toString \ first \ errorList), " of package ", toString pkg, " failed.")))
+check TestInput := opts -> t -> check({t#"number"}, t#"package", opts)
+check ZZ := opts -> n -> check(previousMethodsFound#n, opts)
+check List := opts -> T -> scan(T, t -> check(t, opts))
 
 checkAllPackages = () -> (
     tmp := argumentMode;
