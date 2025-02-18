@@ -27,7 +27,9 @@ addTest(String, FilePosition) := (str, loc) -> (
     n := #currentPackage#"test inputs";
     currentPackage#"test inputs"#n = TestInput {
 	"location" => loc,
-	"code" => concatenate("-- test source: ", toString loc, newline, str)})
+	"code" => concatenate("-- test source: ", toString loc, newline, str),
+	"package" => currentPackage,
+	"number" => n})
 -- the following is not called by TEST, but called directly when we want to
 -- add a test from a file (used by loadTestDir)
 addTest String := filename -> addTest(get filename,
@@ -122,6 +124,9 @@ check(List, Package) := opts -> (L, pkg) -> (
 	    apply(first \ errorList, i -> { "Test #"|i|".", toString locate tests_i pkg }));
 	error("repeat failed tests with:", newline,
 	    "  check({", demark(", ", toString \ first \ errorList), "}, ", format pkg#"pkgname", ")")))
+check TestInput := opts -> t -> check({t#"number"}, t#"package", opts)
+check ZZ := opts -> n -> check(previousMethodsFound#n, opts)
+check List := opts -> T -> scan(T, t -> check(t, opts))
 
 checkAllPackages = () -> (
     tmp := argumentMode;
