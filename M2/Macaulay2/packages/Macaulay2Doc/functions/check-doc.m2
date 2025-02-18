@@ -43,6 +43,9 @@ Node
     (check, ZZ, String)
     (check, List, Package)
     (check, List, String)
+    (check, List)
+    (check, TestInput)
+    (check, ZZ)
     [check, UserMode]
     [check, Verbose]
   Headline
@@ -52,8 +55,8 @@ Node
     check(i, pkg)
     check(L, pkg)
   Inputs
-    pkg:Package
-      or String, the package to test
+    pkg:{Package,String}
+      the package to test
     i:ZZ
       the index of a test to run
     L:List
@@ -79,19 +82,32 @@ Node
       One provides tests using the @TO symbol TEST@ function following the @TO beginDocumentation@ call in the source
       of the package.
 
-      Optionally, one can store all tests in a @TT "tests.m2"@ directory under the auxiliary subdirectory of
+      Optionally, one can store all tests in a @TT "tests.m2"@ file under the auxiliary subdirectory of
       the package and load the file from the main package source file.
 
-      For example, to run the tests for the @TO "LLLBases :: LLLBases"@ package (Lenstra-Lenstra-Lovasz bases), use:
-    CannedExample
-      needsPackage "LLLBases"
-      check_1 LLLBases
-      check LLLBases
+      For example, to run the tests for the @TO "FirstPackage::FirstPackage"@ package, use:
+    Example
+      needsPackage "FirstPackage" -* no-capture-flag *-
+      check_1 FirstPackage
+      check FirstPackage
     Text
       Alternatively, if the package is installed somewhere accessible, one can do the following.
-    CannedExample
-      check_1 "LLLBases"
-      check "LLLBases"
+    Example
+      check_1 "FirstPackage"
+      check "FirstPackage"
+    Text
+      A @TO TestInput@ object (or a list of such objects) can also be run directly.
+    Example
+      tests(1, "FirstPackage")
+      check oo
+      tests "FirstPackage"
+      check oo
+    Text
+      If only an integer is passed as an argument, then the test with that index from the last call to @TO tests@
+      is run.
+    Example
+      tests "FirstPackage"
+      check 1
   Caveat
     Currently, if the package was only partially loaded because the documentation was
     obtainable from a database (see @TO "beginDocumentation"@), then the package will be reloaded,
@@ -104,6 +120,7 @@ Node
     symbol TEST
     installPackage
     loadPackage
+    tests
 ///
 
 undocumented {(generateAssertions, List)}
