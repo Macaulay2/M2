@@ -18,7 +18,9 @@ ring NormalToricVariety := PolynomialRing => (
 	)
     );
 
-normalToricVariety Ring := NormalToricVariety => opts -> S -> variety S
+normalToricVariety Ring := NormalToricVariety => opts -> S -> (
+    if S.?variety and instance(S.variety, NormalToricVariety) then S.variety
+    else error "no normal toric variety associated with ring")
 
 ideal NormalToricVariety := Ideal => (
     cacheValue symbol ideal) (
@@ -52,14 +54,15 @@ sheaf (NormalToricVariety, Module) := CoherentSheaf => (X,M) -> (
 sheaf (NormalToricVariety, Ring) := SheafOfRings => (X,R) -> (
     if ring X =!= R then 
 	error "-- expected the ring of the variety";
-    new SheafOfRings from { 
+    -- TODO: simplify when https://github.com/Macaulay2/M2/issues/3351 is fixed
+    X.sheaf = X.sheaf ?? new SheafOfRings from {
       	symbol variety => X, 
       	symbol ring    => R
 	}
     );
-sheaf NormalToricVariety := X -> sheaf_X ring X
+sheaf NormalToricVariety := SheafOfRings => X -> sheaf_X ring X
 
-installMethod(symbol _, OO, NormalToricVariety, (OO,X) -> sheaf(X, ring X))
+installMethod(symbol _, OO, NormalToricVariety, SheafOfRings => (OO,X) -> sheaf(X, ring X))
 
 -- Add a new strategy as a hook
 addHook((minimalPresentation, CoherentSheaf), Strategy => symbol NormalToricVarieties, (opts, F) ->
@@ -71,7 +74,7 @@ addHook((minimalPresentation, CoherentSheaf), Strategy => symbol NormalToricVari
     	if N != 0 then M = M/N;
     	C := freeResolution M;
     	-- is there a better bound?
-    	a := max(1, max flatten flatten apply(length C +1, i -> degrees C_i));
+	a := max(1, max apply(length C + 1, i -> i + max flatten degrees C_i));
 	return sheaf(X, minimalPresentation Hom(B^[a], M)) )
     )
 
@@ -101,6 +104,17 @@ cotangentSheaf(List, NormalToricVariety) := CoherentSheaf => opts -> (a, X) -> (
     then X#(cotangentSheaf, a)
     else X#(cotangentSheaf, a) = tensor apply(#a, i -> pullback(X^[i], cotangentSheaf(a#i, Xs#i))))
 
+-- This additional hook is valid beyond toric varieties, but for toric varieties
+-- it essentially builds on `monomials ToricDivisor` for basis of the Cox ring.
+-- basis' calls rawHilbertBasis which uses a parallelized algorithm from Normaliz,
+-- hence is significantly faster than the standard algorithm in the engine.
+-- Note: this computation can't be interrupted without restarting M2,
+-- and the order of resulting monomials may be different.
+importFrom_Core "raw"
+importFrom_Truncations "basis'"
+addHook((basis, List, List, Module), Strategy => Toric,
+    (opts, lo, hi, M) -> if degreeLength ring M > 1 and lo === hi
+    and instance(variety ring M, NormalToricVariety) then raw basis'(lo, M, opts))
 
 -- THIS FUNCTION IS NOT EXPORTED.  Given a normal toric variety, this function
 -- creates a HashTable describing the cohomology of all twists of the
@@ -132,6 +146,7 @@ setupHHOO = X -> (
 	);
     -- create rings
     degS := degrees S; 
+    ClX := classGroup X;
     X.cache.rawHHOO = new HashTable from apply(d+1, 
 	i -> {i, apply(sigma#i, s -> (
 	  	    v := - degree product(n, 
@@ -140,7 +155,7 @@ setupHHOO = X -> (
 	  	    degT := apply(n, 
 	    		j -> if member(j,s#0) then -degS#j else degS#j
 			);
-	  	    T := (ZZ/2)(monoid [gens S, Degrees => degT]);
+		    T := (ZZ/2)(monoid [gens S, Degrees => degT, DegreeGroup => ClX]);
 	  	    {v,T,s#0,s#1}
 		    )
 		)
@@ -170,7 +185,7 @@ emsbound = (i, X, deg) -> (
     );
 
 cohomology (ZZ, NormalToricVariety, CoherentSheaf) := Module => opts -> (i,X,F) -> (
-    if ring F =!= ring X then 
+    if variety F =!= X then
     	error "-- expected a coherent sheaf on the toric variety";
     S := ring X;
     kk := coefficientRing S;

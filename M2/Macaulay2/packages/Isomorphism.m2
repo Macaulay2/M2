@@ -193,8 +193,7 @@ isIsomorphic(Module, Module) := Sequence => o ->  (N,M)->(
 	t2 := prune ker g == 0;
 	if t2 then (true, n1*g*(m1^-1)) else (false, null)
     )
-isIsomorphic(Matrix,Matrix) := Sequence => o -> (n,m) -> 
-           isIsomorphic(coker m, coker n)
+isIsomorphic(Matrix, Matrix) := Sequence => o -> (n, m) -> isIsomorphic(coker m, coker n, o)
 
 -*
 restart

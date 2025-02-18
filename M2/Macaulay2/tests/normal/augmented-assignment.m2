@@ -29,7 +29,7 @@ assert Equation(x, matrix{{1}, {2}})
 x |= matrix {{3}, {4}}
 assert Equation(x, matrix {{1, 3}, {2, 4}})
 x \\= matrix {{4, 3}, {2, 1}}
-assert Equation(x, matrix {{-5, -6}, {3, 3}})
+assert Equation(x, matrix {{-3, 3}, {-1, 1}})
 x = 1:(1)
 x ..= 1:(3)
 assert Equation(x, (1:(1), 1:(2), 1:(3)))
