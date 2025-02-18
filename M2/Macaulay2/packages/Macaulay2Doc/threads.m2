@@ -24,6 +24,7 @@ Node
   "maxAllowableThreads"
   Task
  SeeAlso
+  "parallel programming with async and await"
   "parallelism in engine computations"
   "elapsedTime"
  Description
@@ -494,4 +495,39 @@ Node
  SeeAlso
   "parallel programming with threads and tasks"
   cancelTask
+///
+
+doc ///
+Node
+  Key
+    "parallel programming with async and await"
+    "async"
+    "await"
+  Headline
+    async/await pattern for parallel programming
+  Description
+    Text
+      The @wikipedia "Async/await"@ pattern is syntax for turning asynchronous,
+      non-blocking functions parallel with simple additions. For example,
+      a sequential @TO apply@ loop can be turned parallel by adding two words.
+    Example
+      f = x -> (sleep 1; 2*x);
+      elapsedTime apply(3, f)
+      elapsedTime await apply(3, async f)
+    Text
+      It is also possible to parallelize arbitrary functions, as long as the
+      individual threads are independent and may be run in any order.
+    Example
+      g = async f;
+      elapsedTime all({ f 2, f 3, f 4 }, even)
+      elapsedTime all({ g 2, g 3, g 4 }, even @@ await)
+
+      elapsedTime any({ f 2, f 3, f 4 }, i -> i % 3 == 0)
+      elapsedTime any({ g 2, g 3, g 4 }, i -> (await i) % 3 == 0)
+
+      elapsedTime position({   2,   3,   4 }, i -> (f i) % 3 == 0)
+      elapsedTime position({ g 2, g 3, g 4 }, i -> (await i) % 3 == 0)
+  SeeAlso
+    "parallel programming with threads and tasks"
+    "parallelism in engine computations"
 ///
