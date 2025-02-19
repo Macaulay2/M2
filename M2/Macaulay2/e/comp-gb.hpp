@@ -49,6 +49,7 @@ class GBComputation : public Computation
                                   int max_degree,
                                   int algorithm,
                                   int strategy,
+                                  int numThreads,
                                   int max_reduction_count = 10);
   // Values for algorithm and strategy are documented in engine.h
   // Returns NULL if an error occurs

@@ -62,7 +62,6 @@ INTERFACE = \
 	gb-f4/PolynomialList \
 	gb-f4/SPairs \
 	f4/f4 \
-	f4/f4-mem \
 	f4/f4-monlookup \
 	f4/f4-computation \
 	f4/f4-spairs \

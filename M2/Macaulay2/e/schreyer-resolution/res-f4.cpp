@@ -581,15 +581,6 @@ void F4Res::gaussReduce()
   bool onlyConstantMaps = false;
   std::vector<bool> track(mReducers.size());
 
-#if defined(WITH_TBB)
-  //std::cout << "about to do parallel gauss_reduce" << std::endl;
-  using threadLocalDense_t = mtbb::enumerable_thread_specific<ElementArray>;
-  // create a dense array for each thread
-  threadLocalDense_t threadLocalDense([&]() { 
-    return mRing.vectorArithmetic().allocateElementArray(static_cast<ComponentIndex>(mColumns.size()));
-  });
-#endif
-  
   if (onlyConstantMaps)  // and not exterior algebra?
     {
       for (auto i = 0; i < mReducers.size(); i++)
@@ -601,6 +592,14 @@ void F4Res::gaussReduce()
         }
     }
 
+#if defined(WITH_TBB)
+  //std::cout << "about to do parallel gauss_reduce" << std::endl;
+  using threadLocalDense_t = mtbb::enumerable_thread_specific<ElementArray>;
+  // create a dense array for each thread
+  threadLocalDense_t threadLocalDense([&]() { 
+    return mRing.vectorArithmetic().allocateElementArray(static_cast<ComponentIndex>(mColumns.size()));
+  });
+  
   // Reduce to zero every spair. Recording creates the
   // corresponding syzygy, which is auto-reduced and correctly ordered.
 
@@ -609,7 +608,6 @@ void F4Res::gaussReduce()
   //  std::cout << "gauss_row size: " << mRing.vectorArithmetic().size(gauss_row) <<
   //  std::endl;
 
-#if defined(WITH_TBB)
   //size_t chunk_size = std::max(mSPairs.size() / (100*mFrame.getNumThreads()), (size_t) 1);
   //mFrame.getScheduler().execute([this,&chunk_size,&onlyConstantMaps,&track,&threadLocalDense] {
   mFrame.getScheduler().execute([this,&onlyConstantMaps,&track,&threadLocalDense] {
