@@ -366,7 +366,7 @@ inducedSimplicialChainComplexMap(AbstractSimplicialComplex,AbstractSimplicialCom
 	    if i == -1 then i => map(l_(-1),h_(-1),zero)
 	    else i => inducedKFaceSimplicialChainComplexMap(i,L,H));
             f := hashTable myKeys;
-            map(l,h,f);))
+            return map(l,h,f);))
 
 --  If H <= L then give the induced chain complex map
 --  for reduced simplicalChainComplexes.
@@ -382,7 +382,7 @@ inducedReducedSimplicialChainComplexMap(AbstractSimplicialComplex,AbstractSimpli
 	    if i == -1 then i => map(l_(-1),h_(-1),id_(h_(-1)))
 	    else i => inducedKFaceSimplicialChainComplexMap(i,L,H));
             f := hashTable myKeys;
-            map(l,h,f);))
+            return map(l,h,f);))
 --------------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------------- 
 -* Documentation section *-
