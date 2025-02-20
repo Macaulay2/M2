@@ -38,7 +38,7 @@ export {"AbstractSimplicialComplex", "abstractSimplicialComplex",
     "ambientAbstractSimplicialComplexSize",
     "ambientAbstractSimplicialComplex", "abstractSimplicialComplexFacets",
     "randomAbstractSimplicialComplex", "randomSubSimplicialComplex",
-    "inducedSimplicialChainComplexMap","inducedReducedSimplicialChainComplexMap" 
+    "inducedSimplicialChainComplexMap","inducedReducedSimplicialChainComplexMap", "Seed" 
     }
 
 -* Code section *-
@@ -164,25 +164,25 @@ abstractSimplicialComplex(ZZ,ZZ) := AbstractSimplicialComplex => (n,r) -> (
 
 -- Make a random subset of {1,...,n}.
 
-randomSubset = method()
+randomSubset = method(Options => {Seed => true})
 
 -- Make a random size random subset of [n] = {1,...,n}.
 
-randomSubset(ZZ) := List => (n) -> (
-     setRandomSeed(currentTime()); -- without doing this we will obtain very biased output
+randomSubset(ZZ) := List => o -> (n) -> (
+     if o.Seed == true then setRandomSeed(currentTime()); -- without doing this we will obtain very biased output
      k := random(1,n); 
      sort unique (for i from 1 to k list (random(1,n))))
 
 -- Make a random size r subset.
 
-randomSubset(ZZ,ZZ) := List => (n,r) -> (
-     setRandomSeed(currentTime()); -- without doing this we will obtain very biased output
+randomSubset(ZZ,ZZ) := List => o -> (n,r) -> (
+     if o.Seed == true then setRandomSeed(currentTime()); -- without doing this we will obtain very biased output
      sort unique (for i from 1 to r list (random(1,n))))
 
 -- Make a random subset of a given set.
 
-randomSubset(List) := List => (L) -> (
-     setRandomSeed(currentTime());  -- without doing this we will obtain very biased output
+randomSubset(List) := List => o -> (L) -> (
+     if o.Seed == true then setRandomSeed(currentTime());  -- without doing this we will obtain very biased output
      n := #L;
      k := random(0,n);
      mySubset := subsets(L,k);
@@ -192,20 +192,20 @@ randomSubset(List) := List => (L) -> (
 
 --  Make a "random" simplicial complex on {1,...,n}.
 
-randomAbstractSimplicialComplex = method()
+randomAbstractSimplicialComplex = method(Options => {Seed => true})
 
-randomAbstractSimplicialComplex(ZZ) := AbstractSimplicialComplex => (n) -> (
-     setRandomSeed(currentTime()); -- without doing this we will obtain very biased output
+randomAbstractSimplicialComplex(ZZ) := AbstractSimplicialComplex => o -> (n) -> (
+     if o.Seed == true then setRandomSeed(currentTime()); -- without doing this we will obtain very biased output
      listLength := 1 + random(2^n);
-     randomFaces := unique(for i from 1 to listLength list randomSubset(n));
+     randomFaces := unique(for i from 1 to listLength list randomSubset(n, Seed => o.Seed));
      abstractSimplicialComplex randomFaces)
 
 --  Make a random simplicial complex on [n] with dimension at most equal to r.
 
-randomAbstractSimplicialComplex(ZZ,ZZ) := AbstractSimplicialComplex =>(n,r) -> (
-     setRandomSeed(currentTime());  -- without doing this we will obtain very biased output
+randomAbstractSimplicialComplex(ZZ,ZZ) := AbstractSimplicialComplex => o -> (n,r) -> (
+     if o.Seed == true then setRandomSeed(currentTime());  -- without doing this we will obtain very biased output
      listLength := 1 + random(binomial(n,r));
-     randomFaces := unique(for i from 1 to listLength list randomSubset(n,r));
+     randomFaces := unique(for i from 1 to listLength list randomSubset(n,r, Seed => o.Seed));
      abstractSimplicialComplex randomFaces)
 
 --  Make the random complex Y_d(n,m) which has vertex set
@@ -215,8 +215,8 @@ randomAbstractSimplicialComplex(ZZ,ZZ) := AbstractSimplicialComplex =>(n,r) -> (
 --  Cohen-Lenstra heuristics for torsion in homology of random complexes
 --  (Kahle, M. and Lutz, F. H. and Newman, A. and Parsons, K.).
 
-randomAbstractSimplicialComplex(ZZ,ZZ,ZZ) := (n,m,d) -> (
-     setRandomSeed(currentTime()); -- without doing this we will obtain very biased output
+randomAbstractSimplicialComplex(ZZ,ZZ,ZZ) := AbstractSimplicialComplex => o -> (n,m,d) -> (
+     if o.Seed == true then setRandomSeed(currentTime()); -- without doing this we will obtain very biased output
      L := for i from 1 to n list i;
      dDimlSubsets := subsets(L,d+1);
      rdmFaces := for i from 1 to m list (dDimlSubsets#(random(binomial(n,d+1))));
@@ -225,12 +225,12 @@ randomAbstractSimplicialComplex(ZZ,ZZ,ZZ) := (n,m,d) -> (
  
 -- Make a random simplicial subcomplex.
 
-randomSubSimplicialComplex = method()
+randomSubSimplicialComplex = method(Options => {Seed => true})
 
-randomSubSimplicialComplex(AbstractSimplicialComplex) := AbstractSimplicialComplex => (K) -> (
-     setRandomSeed(currentTime());  -- without doing this we will obtain very biased output
+randomSubSimplicialComplex(AbstractSimplicialComplex) := AbstractSimplicialComplex => o -> (K) -> (
+     if o.Seed == true then setRandomSeed(currentTime());  -- without doing this we will obtain very biased output
      L := abstractSimplicialComplexFacets K;
-     abstractSimplicialComplex unique apply(L, i-> randomSubset(i)))
+     abstractSimplicialComplex unique apply(L, i-> randomSubset(i, Seed => o.Seed)))
 
 --------------------------------
 -- Ambient simplicial complex --
@@ -590,6 +590,8 @@ doc ///
 	     J = randomSubSimplicialComplex(K)
 	     inducedSimplicialChainComplexMap(K,J)
     SeeAlso
+        "randomAbstractSimplicialComplex"
+	"randomSubSimplicialComplex"
         "random"
 	"RandomIdeals"
 	"setRandomSeed"	     
@@ -664,6 +666,7 @@ doc ///
 	r : ZZ
 	m : ZZ
 	d : ZZ
+	Seed => Boolean
     Outputs
         : AbstractSimplicialComplex
     Description
@@ -671,14 +674,16 @@ doc ///
 	     Create a random abstract simplicial complex with vertices
 	     supported on a subset of $[n] = \{1,...,n\}$.  By default the
 	     method sets the random seed to the current time.  There is
-	     no need for the user to do this ahead of time.
+	     no need for the user to do this ahead of time.  There is an
+	     option to set the random seed to be false if desired by the user.
           Example
 	     K = randomAbstractSimplicialComplex(4)
+	     J = randomAbstractSimplicialComplex(4,Seed => false)
 	  Text
 	     Create a random simplicial complex on $[n]$ with dimension at
 	     most equal to r.
           Example
-	     L = randomAbstractSimplicialComplex(6,3)
+	     L = randomAbstractSimplicialComplex(6,3, Seed => false)
 	  Text
 	     Create the random complex $Y_d(n,m)$ which has vertex set
              $[n]$ and complete $(d − 1)$-skeleton, and has exactly m d-dimensional faces,
@@ -690,15 +695,19 @@ doc ///
 	     by  M. Kahle, F. H. Lutz, A. Newman, and K. Parsons [Exp. Math. vol. 29, no. 3 (2020)].
 	  Example
 	     M = randomAbstractSimplicialComplex(6,3,2)
+	     N = randomAbstractSimplicialComplex(6,3,2,Seed => false)
     SeeAlso
+        "randomSubSimplicialComplex"
         "random"
 	"RandomIdeals"
 	"setRandomSeed"
+	"Seed"
 ///
 
 doc ///
     Key
          randomSubSimplicialComplex
+	 (randomSubSimplicialComplex,AbstractSimplicialComplex)
 	 (randomSubSimplicialComplex,AbstractSimplicialComplex)
     Headline
           Create a random subsimplicial complex
@@ -706,15 +715,19 @@ doc ///
         randomSubSimplicialComplex(K)
     Inputs
         K : AbstractSimplicialComplex
+	Seed => Boolean
     Outputs
         : AbstractSimplicialComplex
     Description
           Text
 	     Creates a random subsimplicial complex of a given
-	     simplicial complex.
+	     simplicial complex.  By default, the random seed is
+	     set to be true.  
           Example
 	     K = randomAbstractSimplicialComplex(4)
 	     J = randomSubSimplicialComplex(K)
+    SeeAlso
+          "randomAbstractSimplicialComplex"
 ///
 
 doc ///
@@ -991,6 +1004,34 @@ doc ///
 	      	describe	      
 ///
 
+doc ///
+         Key
+           "Seed"
+         Headline
+	      name for an optional argument
+	 SeeAlso
+	      "randomAbstractSimplicialComplex"
+	      "randomSubSimplicialComplex"
+
+///	      
+
+doc ///
+          Key
+           [randomAbstractSimplicialComplex,Seed]
+	 SeeAlso
+	      "randomAbstractSimplicialComplex"
+	   
+
+///
+
+doc ///
+          Key
+           [randomSubSimplicialComplex,Seed]
+	 SeeAlso
+	      "randomSubSimplicialComplex"
+
+///
+
 -* Test section *-
 TEST /// -* [insert short title for this test] *-
 
@@ -1058,6 +1099,3 @@ uninstallPackage "AbstractSimplicialComplexes"
 installPackage("AbstractSimplicialComplexes", RemakeAllDocumentation => true)
 check "AbstractSimplicialComplexes"
 viewHelp"AbstractSimplicialComplexes"
-
-
-viewHelp"SimplicialComplexes"
