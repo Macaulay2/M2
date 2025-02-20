@@ -144,12 +144,12 @@ abstractSimplicialComplex(List) := AbstractSimplicialComplex => L -> (
 
 abstractSimplicialComplex(ZZ) := AbstractSimplicialComplex => (n) -> (
      L := for i from 1 to n list i;
-     return abstractSimplicialComplex({L}))
+     abstractSimplicialComplex({L}))
 
 --- Make the "r-skeleton" on [n] = {1,...n}.
 
 abstractSimplicialComplex(ZZ,ZZ) := AbstractSimplicialComplex => (n,r) -> (
-     return abstractSimplicialComplex subsets(for i from 1 to n list i,r))
+     abstractSimplicialComplex subsets(for i from 1 to n list i,r))
 
 ----------------------------------------
 -- Making random simplicial complexes --
@@ -200,7 +200,7 @@ randomAbstractSimplicialComplex(ZZ) := AbstractSimplicialComplex => o -> (n) -> 
      randomFaces := unique(for i from 1 to listLength list randomSubset(n, Seed => o.Seed));
      abstractSimplicialComplex randomFaces)
 
---  Make a random simplicial complex on [n] with dimension at most equal to r.
+--  Make a random simplicial complex on [n] with r-skeleton.
 
 randomAbstractSimplicialComplex(ZZ,ZZ) := AbstractSimplicialComplex => o -> (n,r) -> (
      if o.Seed == true then setRandomSeed(currentTime());  -- without this we will obtain very biased output
