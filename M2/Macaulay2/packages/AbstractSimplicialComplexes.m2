@@ -419,7 +419,7 @@ doc ///
         Text
            @SUBSECTION "An overview of this package"@
 	Text   
-           For an overview of you to use this package, see
+           For an overview of how to use this package, see
 	Text
 	   @UL {TO2("How to make abstract simplicial complexes","How to make abstract simplicial complexes"),
 	       TO2("How to make reduced and non-reduced simplicial chain complexes",
