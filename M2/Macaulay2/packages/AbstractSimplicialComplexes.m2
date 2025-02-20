@@ -562,12 +562,12 @@ doc ///
      Description
      	  Text	  
 	     In what follows we illustrate a collection of homological calculations that
-	     can be performed on random simplicial complexes.  
-          Text
-	     Create a random abstract simplicial complex with vertices supported on a
-	     subset of $[n] = \{1,...,n\}$.  The methods set the random seed to the
+	     can be performed on random simplicial complexes.  The methods set the random seed to the
 	     current time.  There is no need for the user to do this prior to calling
 	     the methods.
+          Text
+	     Create a random abstract simplicial complex with vertices supported on a
+	     subset of $[n] = \{1,...,n\}$.  
           Example
 	     K = randomAbstractSimplicialComplex(4)
 	     prune HH simplicialChainComplex K
