@@ -913,13 +913,13 @@ doc ///
 	     be facets.  Moreover, the elements of the faces need not be written 
 	     in lexicographic order.  When the input is an integer $n$, the output is the
 	     corresponding simplex on $[n]$.  When the input is a pair of integers, $(n,r)$ the output
-	     is the simplicial complex on $[n]$ with $r$-skeleton.
+	     is the simplicial complex on $[n]$ with complete $r$-skeleton.
 	  Example
 	       abstractSimplicialComplex({{1,2,3,4}})
 	       abstractSimplicialComplex({{4,1,2,3}, {3,2,5},{1,5}})
 	       abstractSimplicialComplex(4)
 	  Text
-	     The simplicial complex on $[n]$ with $r$-skeleton can be constructed
+	     The simplicial complex on $[n]$ with complete $r$-skeleton can be constructed
 	     as follows.
 	  Example
 	     abstractSimplicialComplex(4,2)
