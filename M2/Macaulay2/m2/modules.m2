@@ -172,6 +172,14 @@ new Module from Sequence := (Module,x) -> (
 vector(Module, Matrix) := (M, f) -> vector map(M,,entries f)
 vector(Module, List)   := (M, v) -> vector map(M,,apply(splice v, i -> {i}))
 vector(Module, RingElement) := vector(Module, Number) := (M, x) -> vector(M, {x})
+vector(Ring,       Matrix)      :=
+vector(RingFamily, Matrix)      := (R, f) -> vector(R^(numRows f), f)
+vector(Ring,       List)        :=
+vector(RingFamily, List)        := (R, v) -> vector(R^(#v), v)
+vector(Ring,       Number)      :=
+vector(Ring,       RingElement) :=
+vector(RingFamily, Number)      :=
+vector(RingFamily, RingElement) := (R, x) -> vector(R^1, {x})
 
 Module#id = M -> map(M, M, 1)
 raw Module := M -> M.RawFreeModule

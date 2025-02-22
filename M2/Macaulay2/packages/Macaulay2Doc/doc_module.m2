@@ -50,6 +50,14 @@ doc ///
     (vector, Matrix)
     (vector, Number)
     (vector, RingElement)
+    (vector, Ring, List)
+    (vector, Ring, Matrix)
+    (vector, Ring, Number)
+    (vector, Ring, RingElement)
+    (vector, RingFamily, List)
+    (vector, RingFamily, Matrix)
+    (vector, RingFamily, Number)
+    (vector, RingFamily, RingElement)
   Headline
     make a vector
   Usage
@@ -95,6 +103,14 @@ doc ///
       vector {1, 2, 3}
       vector {1, x, y}
       vector(R^3, {1, 2, 3})
+    Text
+      Alternatively, the ring $R$ may be provided instead of $M$, and the
+      resulting vector will be an element of the appropriate free module over
+      $R$.
+    Example
+      vector(QQ, {1, 2, 3})
+      vector(R, {1, 2, 3})
+      vector(R, 2)
 ///
 
 document {
