@@ -42,21 +42,6 @@ document {
      in Macaulay2 which return or use rings, see ", TO "Ring", "."
      }
 
-
-document { -- this node is used as an example in the node: Key
-     Key => "chain complexes",
-     "For additional common operations and a comprehensive list of all routines
-     in Macaulay2 which return or use chain complexes or maps between chain complexes, see ", 
-     TO "ChainComplex", " and ", TO "ChainComplexMap", ".",
-     Subnodes => {
-	  TO "free resolutions of modules",
-	  TO "extracting information from chain complexes",
-	  TO "making chain complexes by hand",
-	  TO "manipulating chain complexes",
-	  TO "maps between chain complexes",
-	  },
-     }
-
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

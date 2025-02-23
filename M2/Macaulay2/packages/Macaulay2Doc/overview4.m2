@@ -216,58 +216,6 @@ document {
      extent of the computation."
      }
 
-document {
-     Key => "computing resolutions",
-     "Use the function ", TO "resolution", ", often abbreviated as ", TT "res", ",
-     to compute a free resolution of a module.",
-     EXAMPLE {
-	  "R = QQ[x..z];",
-	  "M = cokernel vars R",
-	  "C = res M",
-	  },
-     "See ", TO "chain complexes", " for further details about how to handle
-     and examine the result.",
-     PARA{},
-     "A reference to the result is stored within the module ", TT "M", ", so that
-     requesting a computation of ", TT "res M", " a second time yields the formerly
-     computed result immediately.",
-     PARA{},
-     "If the computation is interrupted or discontinued after the skeleton 
-     has been successfully computed, then the partially completed
-     resolution is available as ", TT "M.cache.resolution", ", and can be
-     examined with ", TO "status", ".  The computation can be continued
-     with ", TT "res M", ".  Here is an example, with an alarm interrupting
-     the computation several times before it's complete.  (On my machine, 
-     the computation takes a total of 14 seconds.)  (Example code, such as
-     the code below, is run in such a way that interrupts stop the program,
-     so to prevent that, we set ", TO "handleInterrupts", " to ", TO "true", ".)",
-     PARA{},
-     EXAMPLE {
-	  "R = ZZ/2[a..d];",
-	  "M = coker random(R^4, R^{5:-3,6:-4});",
-	  "handleInterrupts = true",
-///(<< "-- computation started: " << endl;
- while true do try (
-     alarm 1;
-     time res M;
-     alarm 0;
-     << "-- computation complete" << endl;
-     status M.cache.resolution;
-     << res M << endl << endl;
-     break;
-     ) else (
-     << "-- computation interrupted" << endl;
-     status M.cache.resolution;
-     << "-- continuing the computation" << endl;
-     ))///
-	  },
-     "If the user has a chain complex in hand that is known to be a
-     projective resolution of ", TT "M", ", then it can be installed
-     with ", TT "M.cache.resolution = C", ".",
-     PARA{},
-     "There are various optional arguments associated with ", TO2(resolution, "res"), "
-     which allow detailed control over the progress of the computation."
-     }
 
 document { Key => "the debugger",
      "We have a Macaulay2 source file with a pair of functions in it that
