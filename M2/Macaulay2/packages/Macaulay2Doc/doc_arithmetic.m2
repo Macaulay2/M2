@@ -89,21 +89,21 @@ doc ///
     b:{RingElement, ZZ}
   Description
     Text
-      This returns a list of the form @CODE "{d, r, s}"@, where $d=\gcd(a, b)$
+      This returns a sequence of the form @CODE "(d, r, s)"@, where $d=\gcd(a, b)$
       and $r$ and $s$ are the minimal Bézout coefficients satisfying the
       equation $d = ar + bs$.
 
       It works for integers or elements of polynomial rings in one variable.
     Example
-      gcdCoefficients(46, 240)
+      (d, r, s) = gcdCoefficients(46, 240)
       gcd(46, 240)
-      46 * 47 + 240 * (-9)
+      46 * r + 240 * s
       R = ZZ/2[x]
       f = x^8 + x^4 + x^3 + x + 1
       g = x^6 + x^4 + x + 1
-      gcdCoefficients(f, g)
+      (d, r, s) = gcdCoefficients(f, g)
       gcd(f, g)
-      f * (x^5 + x^4 + x^3 + x^2 + 1) + g * (x^7 + x^6 + x^3 + x)
+      f * r + g * s
   SeeAlso
     gcd
 ///

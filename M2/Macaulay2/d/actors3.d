@@ -2406,7 +2406,7 @@ gcdCoefficients(e:Expr):Expr := (
 		    t := newZZmutable();
 		    Ccode(void, "mpz_gcdext(", g, ", ", s, ", ", t, ", ", x.v,
 			", ", y.v, ")");
-		    list(
+		    seq(
 			Expr(ZZcell(moveToZZandclear(g))),
 			Expr(ZZcell(moveToZZandclear(s))),
 			Expr(ZZcell(moveToZZandclear(t)))))

@@ -979,9 +979,8 @@ bezoutNumbers := (l1) -> (
 	if (mySize == 1) then ({1}) else (
 		l2 := take(l1, 2);
 		l3 := take(l1, -(mySize - 2));
-		temp := gcdCoefficients toSequence l2;
-		tempCoeff := take(temp, -2);
-		tempGCD := temp#0;
+		(tempGCD, r, s) := gcdCoefficients toSequence l2;
+		tempCoeff := {r, s};
 		recursiveList := bezoutNumbers(prepend(tempGCD, l3));
 		recursiveList2 := take(recursiveList, -(mySize-2));
 		newCoeff := recursiveList#0;
