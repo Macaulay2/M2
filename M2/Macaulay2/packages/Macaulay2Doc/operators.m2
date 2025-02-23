@@ -1,5 +1,7 @@
 load "./operators/dotdot.m2"
 load "./operators/caret.m2"
+load "./operators/shift.m2"
+load "./operators/comparison.m2"
 
 document {
      Key => Number,
@@ -282,3 +284,13 @@ doc ///
     symbol and
     symbol or
 ///
+
+document {
+     Key => symbol :,
+     Headline => "a binary operator, uses include repetition; ideal quotients",
+     }
+
+document {
+     Key => symbol ~,
+     Headline => "a unary postfix operator",
+     }

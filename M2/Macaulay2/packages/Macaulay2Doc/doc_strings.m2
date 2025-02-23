@@ -208,6 +208,18 @@ document {
      SeeAlso => {String, "///", ascii, utf8}
      }
 
+document {
+     Key => {concatenate,(concatenate, ZZ), (concatenate, BasicList), (concatenate, String), (concatenate, Nothing), (concatenate, Symbol)},
+     Headline => "join strings",
+     TT "concatenate(s,t,...,u)", " yields the concatenation of the strings s,t,...,u.",
+     PARA{},
+     "The arguments may also be lists or sequences of strings and symbols, in
+     which case they are concatenated recursively.  Additionally,
+     an integer may be used to represent a number of spaces, and ", TO "null", " will be represented by the empty string.",
+     EXAMPLE ///concatenate {"a",("s",3,"d",),"f"}///,
+     SeeAlso => { "String"} 
+     }
+
 undocumented {
     (stack, Net),
     (stack, Nothing),

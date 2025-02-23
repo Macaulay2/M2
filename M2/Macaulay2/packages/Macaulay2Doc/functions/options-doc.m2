@@ -2,6 +2,12 @@
 --- author(s):
 --- notes:
 
+document {
+    Key => {symbol =>,(symbol =>, Thing, Thing)},
+    Headline => "produce an Option",
+    TT "x => y", " a binary operator that produces a type of list called an ", TO "Option", "."
+}
+
 doc ///
 Node
   Key

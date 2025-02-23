@@ -7,12 +7,11 @@
 *-
 
 load "./doc.m2"
-load "./doc2.m2"
 load "./doc3.m2"
 load "./doc5.m2"
 load "./doc7.m2"
 load "./doc8.m2"
-load "./doc9.m2"
+load "./doc9.m2" -- ChainComplex methods, to be replaced
 load "./doc10.m2"
 load "./doc12.m2"
 load "./doc14.m2"
