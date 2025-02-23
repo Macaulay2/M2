@@ -615,7 +615,12 @@ document {
      }
 
 document {
-     Key => {"Weyl algebras", isWeylAlgebra},
+     Key => {
+	 "Weyl algebras",
+	 isWeylAlgebra,
+	(isWeylAlgebra, PolynomialRing),
+	(isWeylAlgebra, QuotientRing),
+	(isWeylAlgebra, Ring)},
      "A Weyl algebra is the non-commutative algebra of algebraic differential 
      operators on a polynomial ring.  To each variable ", TT "x", " corresponds 
      the operator ", TT "dx", " that differentiates with respect to that 
