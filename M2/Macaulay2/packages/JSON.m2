@@ -32,11 +32,15 @@ newPackage(
 *-
 
 export {
+    -- methods
     "toJSON",
     "fromJSON",
+
+    -- symbols
     "Indent",
+    "IndentLevel",
     "NameSeparator",
-    "ValueSeparator"
+    "ValueSeparator",
     }
 
 exportFrom_Parsing "nil"
@@ -124,75 +128,55 @@ fromJSON File   := fromJSON @@ get
 -- encoding --
 --------------
 
-JSONEncoder = new SelfInitializingType of MutableHashTable
-
-protect IndentLevel
-
-jsonEncoder = method()
-jsonEncoder OptionTable := o -> (
-    e := JSONEncoder o;
-    e.IndentLevel = 0;
-    e.ValueSeparator ??= if e.Indent === null then ", " else ",";
-    e)
-
 toJSON = method(Options => {
 	Indent         => null,
+	IndentLevel    => 0,
 	NameSeparator  => ": ",
 	ValueSeparator => null,
-	Sort           => false
-	})
+	Sort           => false})
 
-toJSON Thing := o -> x -> toJSON(jsonEncoder o, x)
-
-toJSON(JSONEncoder, String)  := o -> (e, x) -> format x
-toJSON(JSONEncoder, RR)      := o -> (e, x) -> format(0, x)
-toJSON(JSONEncoder, ZZ)      :=
-toJSON(JSONEncoder, Boolean) :=
-toJSON(JSONEncoder, Nothing) := o -> (e, x) -> toString x
-toJSON(JSONEncoder, Number)  := o -> (e, x) -> toJSON(e, numeric x)
-toJSON(JSONEncoder, Symbol)  := o -> (e, x) -> (
+toJSON String  := o -> format
+toJSON RR      := o -> format_0
+toJSON Number  := o -> format_0 @@ numeric
+toJSON ZZ      :=
+toJSON Boolean :=
+toJSON Nothing := o -> toString
+toJSON Symbol  := o -> x -> (
     if x === nil then "null" else error("unknown symbol"))
 
-maybeNewline = method()
-maybeNewline JSONEncoder := e -> if e.Indent === null then "" else newline
+maybeNewline = o -> if o.Indent === null then "" else newline
 
-indent = method()
-indent JSONEncoder := e -> (
-    if e.Indent === null then ""
-    else if instance(e.Indent, ZZ) then concatenate(e.IndentLevel * e.Indent)
-    else if instance(e.Indent, String) then concatenate(
-	e.IndentLevel : e.Indent)
+valuesep = o -> o.ValueSeparator ?? if o.Indent === null then ", " else ","
+
+indent = o -> (
+    if o.Indent === null then ""
+    else if instance(o.Indent, ZZ) then concatenate(o.IndentLevel * o.Indent)
+    else if instance(o.Indent, String) then concatenate(
+	o.IndentLevel : o.Indent)
     else error("expected indent level to be null, an integer, or a string"))
 
-incIndentLevel = method()
-incIndentLevel JSONEncoder := e -> e.IndentLevel = e.IndentLevel + 1
+demarkValues = (o, f) -> concatenate(
+    maybeNewline o,
+    (o ++= {IndentLevel => o.IndentLevel + 1}; indent o),
+    demark(valuesep o | maybeNewline o | indent o, f o),
+    maybeNewline o,
+    (o ++= {IndentLevel => o.IndentLevel - 1}; indent o))
 
-decIndentLevel = method()
-decIndentLevel JSONEncoder := e -> e.IndentLevel = e.IndentLevel - 1
-
-demarkValues = method()
-demarkValues(JSONEncoder, Function) := (e, f) -> concatenate(
-    maybeNewline e,
-    (incIndentLevel e; indent e),
-    demark(e.ValueSeparator | maybeNewline e | indent e, f()),
-    maybeNewline e,
-    (decIndentLevel e; indent e))
-
-toJSON(JSONEncoder, VisibleList):= o -> (e, L) -> (
+toJSON VisibleList := o -> L -> (
     if #L > 0 then concatenate(
 	"[",
-	demarkValues(e, () -> apply(L, x -> toJSON(e, x))),
+	demarkValues(o, o' -> apply(L, x -> toJSON(x, o'))),
 	"]")
     else "[]")
 
-toJSON(JSONEncoder, HashTable) := o -> (e, H) -> (
+toJSON HashTable := o -> H -> (
     if #H > 0 then concatenate(
 	"{",
-	demarkValues(e, () -> (if e.Sort then sort else identity) apply(
+	demarkValues(o, o' -> (if o.Sort then sort else identity) apply(
 		keys H, k -> concatenate(
-		    toJSON(e, toString k),
-		    e.NameSeparator,
-		    toJSON(e, H#k)))),
+		    toJSON toString k,
+		    o.NameSeparator,
+		    toJSON(H#k, o')))),
 	"}")
     else "{}")
 
@@ -217,8 +201,17 @@ doc ///
 doc ///
   Key
     toJSON
-    (toJSON,Thing)
+    (toJSON,Boolean)
+    (toJSON,HashTable)
+    (toJSON,Nothing)
+    (toJSON,Number)
+    (toJSON,RR)
+    (toJSON,String)
+    (toJSON,Symbol)
+    (toJSON,VisibleList)
+    (toJSON,ZZ)
     [toJSON,Indent]
+    [toJSON,IndentLevel]
     [toJSON,ValueSeparator]
     [toJSON,NameSeparator]
     [toJSON,Sort]
@@ -232,6 +225,7 @@ doc ///
   Inputs
     x:Thing
     Indent => {Nothing, ZZ, String} -- how much to indent
+    IndentLevel => ZZ -- current indentation level (intended for internal use)
     ValueSeparator => {Nothing, String} -- the string between values
     NameSeparator => String -- the string after names in object members
     Sort => Boolean -- whether to sort object members
