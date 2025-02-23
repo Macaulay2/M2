@@ -369,11 +369,10 @@ installInfo := (pkg, installPrefix, installLayout, verboseLog) -> (
     infotitle       := pkg#"pkgname";
     infobasename    := infotitle | ".info";
     infodir         := installPrefix | installLayout#"info";
-
-    verboseLog("making info file ", infodir | infobasename);
+    verboseLog("making info file ", minimizeFilename infodir | infobasename);
     makeDirectory infodir;
-    infofile := openOut(infodir | infobasename);
 
+    infofile := openOut(infodir | infobasename);
     infofile << " -*- coding: utf-8 -*- This is " << infobasename << ", produced by Macaulay2, version " << version#"VERSION" << endl << endl;
     infofile << "INFO-DIR-SECTION " << pkg.Options.InfoDirSection << endl;
     infofile << "START-INFO-DIR-ENTRY" << endl;
@@ -444,18 +443,14 @@ installHTML := (pkg, installPrefix, installLayout, verboseLog, rawDocumentationC
     nodes := packageTagList(pkg, topDocumentTag);
 
     htmlDirectory = replace("PKG", pkg#"pkgname", installLayout#"packagehtml");
-
-    makeDirectory(installPrefix | htmlDirectory);
     verboseLog("making html pages in ", minimizeFilename installPrefix | htmlDirectory);
+    makeDirectory(installPrefix | htmlDirectory);
+
+    -- TODO: are these two used anywhere? if not, remove them
     if pkg.Options.Certification =!= null then
     (installPrefix | htmlDirectory | ".Certification") << toExternalString pkg.Options.Certification << close;
     (installPrefix | htmlDirectory | ".Headline") << pkg.Options.Headline << close;
-    for n in (topFileName, indexFileName, tocFileName) do (
-	fn := installPrefix | htmlDirectory | n;
-	if fileExists fn then (
-	    verboseLog("creating empty html page ", minimizeFilename fn);
-	    fn << close)
-	else verboseLog("html page exists: ", minimizeFilename fn));
+
     scan(nodes, tag -> if not isUndocumented tag then (
 	    currentDocumentTag = tag; -- for debugging purposes
 	    fkey := format tag;
