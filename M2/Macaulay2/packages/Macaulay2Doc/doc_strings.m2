@@ -111,6 +111,7 @@ fghij"///,
 	  "functions for handling nets",
 	  TO horizontalJoin,
 	  TO pad,
+	  TO columnate,
 	  TO stack,
 	  TO unstack,
 	  "more information",
@@ -481,6 +482,101 @@ document { Key => toUpper,
      EXAMPLE lines ///
      	  toUpper "A b C d E f"
      ///}
+
+document {
+     Key => print,
+     Headline => "print something",
+	Usage => "print x",
+     TT "print x", " prints ", TT "x", " on the standard output followed by a 
+     new line.",
+	EXAMPLE {
+		///print "Hello world!"///
+		},
+     "The return value is ", TO "null", "."
+     }
+
+doc ///
+  Key
+    printerr
+  Headline
+    print something to stderr
+  Usage
+    printerr x
+  Inputs
+    x:{String,Net,BasicList}
+  Description
+    Text
+      Print @TT "x"@, each line prepended with @TT "--"@, to @TO
+      stderr@.  This is useful for displaying warning messages and
+      verbose logs.
+    Example
+      printerr "Hello, world!"
+      printerr("foo" || "bar")
+    Text
+      If @TT "x"@ is @ofClass BasicList@, then its elements are first
+      joined with @TO horizontalJoin@.
+    Example
+      printerr("foo", "bar")
+///
+
+doc ///
+  Key
+    pad
+    (pad, String, ZZ)
+    (pad, ZZ, String)
+    (pad, Net, ZZ)
+    (pad, ZZ, Net)
+  Headline
+    pad a string or net with spaces
+  Usage
+    pad(s,n)
+    pad(n,s)
+  Inputs
+    s:Net
+    n:ZZ
+  Description
+    Text
+      @TT "pad(s,n)"@ pads the string or net @TT "s"@ to length @TT
+      "n"@ with spaces on the right.
+
+      @TT "pad(n,s)"@ pads the string or net @TT "s"@ to length @TT
+      "n"@ with spaces on the left.
+    Example
+      pad(6, "foo")
+      pad("foo", 6) | "bar"
+///
+
+document {
+     Key => columnate,
+     Headline => "arrange strings in columns",
+     TT "columnate(w,s)", " -- arranges the strings in the list ", TT "s", " in
+     columns, returning a ", TO "Net", " suitable for output to a terminal 
+     with a linewidth of ", TT "w", ".",
+     PARA{},
+     EXAMPLE {
+	  "columnate(12, characters ascii (65 .. 90))",
+	  }
+     }
+
+document {
+     Key => {(symbol |, Net, Net),
+	  (symbol |, String, String),
+	  (symbol |, String, ZZ),
+	  (symbol |, ZZ, String)},
+     Headline => "join strings or nets",
+     TT "s|t", " -- concatenates strings or nets horizontally.", 
+     PARA{},
+     "The result is a string if the arguments are all strings, otherwise it
+     is a net.  The baselines of the nets are aligned.",
+     EXAMPLE {
+	  ///"abc" | "def"///,
+      	  ///x = "abc" || "ABC"///,
+      	  ///x|"x"|x///,
+	  },
+     "If one of the two arguments is an integer, it is converted to a string first.",
+     EXAMPLE ///"t = " | 333///,
+     SeeAlso => {horizontalJoin}
+     }
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

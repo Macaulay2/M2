@@ -633,7 +633,7 @@ document {
      PARA {
 	  "An easy way to get help or to report a bug is to use
 	  our google group web page at ", HREF "http://groups.google.com/group/macaulay2", ".
-	  These requests are automatically emailed to Dan Grayson and Mike Stillman, and they 
+	  These requests are automatically emailed to the developers, and they
      	  try to handle these requests quickly."
 	  }
      }

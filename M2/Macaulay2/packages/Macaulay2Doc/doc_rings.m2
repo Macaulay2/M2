@@ -32,6 +32,23 @@ document {
     SeeAlso => { "monoid" }
     }
 document {
+    Key => FlatMonoid,
+    Usage => "R.FlatMonoid",
+    Inputs => {
+	"R" => PolynomialRing
+    },
+    Outputs => {
+	GeneralOrderedMonoid => { "the flattened monoid in terms of which the polynomials 
+	    are expressed when the coefficient ring of R is itself a polynomial ring"
+	}
+    },
+    EXAMPLE lines ///
+    R = QQ[a,b][x]
+    R.FlatMonoid
+    ///,
+    SeeAlso => { flattenRing }
+}
+document {
     Key => MonoidElement,
     Headline => "the class of all monoid elements",
     SeeAlso => "monoid"}

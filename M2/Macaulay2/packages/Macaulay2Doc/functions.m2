@@ -1,5 +1,3 @@
-load "./groebner.m2"
-load "./monomorderings.m2"
 -- Collections organized by filename containing the source code
 load "./functions/regex-doc.m2"
 load "./functions/package-doc.m2"
@@ -245,6 +243,7 @@ load "./functions/sublists-doc.m2"
 load "./functions/submatrix-doc.m2"
 load "./functions/subquotient-doc.m2"
 load "./functions/subsets-doc.m2"
+load "./functions/substitute-doc.m2"
 load "./functions/substring-doc.m2"
 load "./functions/support-doc.m2"
 load "./functions/SVD-doc.m2"
