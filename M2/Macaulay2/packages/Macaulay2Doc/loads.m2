@@ -50,7 +50,6 @@ load "./repl.m2"
 load "./debugging.m2"
 
 load "./doc_arithmetic.m2"
-load "./doc_fano.m2"
 load "./doc_rings.m2"
 load "./doc_ringelement.m2"
 load "./doc_lists.m2"
