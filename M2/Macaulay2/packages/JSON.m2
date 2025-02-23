@@ -35,6 +35,7 @@ export {
     -- methods
     "toJSON",
     "fromJSON",
+    "json" => "toJSON",
 
     -- symbols
     "Indent",
@@ -233,7 +234,8 @@ doc ///
     :String -- containing JSON data
   Description
     Text
-      This method returns a string containing JSON data corresponding to the
+      This method (which is also available using its synonym @CODE "json"@)
+      returns a string containing JSON data corresponding to the
       given Macaulay2 thing.  If the @TT "Indent"@ option is @TT "null"@
       (the default), then there are no newlines or indentation.
     Example
