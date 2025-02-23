@@ -264,7 +264,6 @@ export {
 	"MakeHTML",
 	"MakeInfo",
 	"MakePDF",
-	"MakeLinks",
 	"Manipulator",
 	"MapExpression",
 	"Matrix",
