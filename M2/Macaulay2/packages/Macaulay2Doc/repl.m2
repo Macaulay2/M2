@@ -551,7 +551,7 @@ document { Key => listLocalSymbols,
 	       "This usage works only in the debugger, where ", TO "current", " has a non-null value."
 	       },
 	  EXAMPLE lines ///
-	  load "Macaulay2Doc/demo1.m2"
+	  load "Macaulay2Doc/demos/demo1.m2"
 	  g 2
 	  listLocalSymbols
 	  ///,
@@ -574,7 +574,7 @@ document { Key => listLocalSymbols,
 	       "This usage works only in the debugger, where ", TO "current", " has a non-null value."
 	       },
 	  EXAMPLE lines ///
-	  load "Macaulay2Doc/demo1.m2"
+	  load "Macaulay2Doc/demos/demo1.m2"
 	  g 2
 	  listLocalSymbols ZZ
 	  ///
@@ -1003,7 +1003,7 @@ document { Key => pseudocode,
 	  "It may be useful to look at code during debugging, as in the following demonstration."
 	  },
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo1.m2"
+     load "Macaulay2Doc/demos/demo1.m2"
      code g
      g 2
      code current
@@ -1025,7 +1025,7 @@ document { Key => disassemble,
 	  "It may be useful to disassemble code during debugging, as in the following demonstration."
 	  },
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo1.m2"
+     load "Macaulay2Doc/demos/demo1.m2"
      code g
      g 2
      code current
@@ -1039,7 +1039,7 @@ document { Key => "current",
      Outputs => { PseudocodeClosure => { "the pseudocode that produced an error, or ", TO "null", ", if none" } },
      "Use ", TO "value", " to evaluate the code again, for debugging purposes.",
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo1.m2"
+     load "Macaulay2Doc/demos/demo1.m2"
      code g
      g 2
      code current
@@ -1061,7 +1061,7 @@ document { Key => (value, Pseudocode),
 	  variable fixed the problem in the code, by executing just the offending line."
 	  },
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo1.m2"
+     load "Macaulay2Doc/demos/demo1.m2"
      g 2
      value current
      x = 11

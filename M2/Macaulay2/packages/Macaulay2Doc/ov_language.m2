@@ -643,7 +643,7 @@ document { Key => "continue",
 	  error to recur."
 	  },
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo1.m2"
+     load "Macaulay2Doc/demos/demo1.m2"
      code g
      g 2
      code f
@@ -694,7 +694,7 @@ document {
 	  "Here is an example of the use of ", TO "return", " as a debugger command."
 	  },
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo1.m2"
+     load "Macaulay2Doc/demos/demo1.m2"
      code g
      g 2
      code f
@@ -786,7 +786,7 @@ document {
 	  "Here is an example as a debugger command."
 	  },
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo1.m2"
+     load "Macaulay2Doc/demos/demo1.m2"
      g 2
      x
      break
