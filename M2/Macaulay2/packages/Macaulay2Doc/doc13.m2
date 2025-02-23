@@ -83,31 +83,6 @@ document { Key => unsequence,
      EXAMPLE { "unsequence (2:a)", "unsequence (1:a)", "unsequence (0:a)" },
      SeeAlso => sequence}
 
-document { Key => {permutations, (permutations, ZZ), (permutations, VisibleList)},
-     Headline => "produce all permutations of a list",
-     Usage => "permutations x",
-     Inputs => { "x" => { ofClass {VisibleList, ZZ} } },
-     Outputs => { { "a list of all the permutations of the visible list ", TT "x", ", or, if ", TT "x", " is an integer, of the list of
-	       integers from 0 through ", TT "n-1" 
-	       } },
-     EXAMPLE {
-	  "permutations {a,b,c,d}",
-	  "permutations 3"
-	  }
-     }
-
-document { Key => {uniquePermutations, (uniquePermutations, ZZ), (uniquePermutations, VisibleList)},
-     Headline => "produce all unique permutations of a list",
-     Usage => "uniquePermutations x",
-     Inputs => { "x" => { ofClass {VisibleList, ZZ} } },
-     Outputs => { { "a list of all distinct permutations of the visible list ", TT "x", ", or, if ", TT "x", " is an integer, of the list of
-	       integers from 0 through ", TT "n-1"
-	       } },
-     EXAMPLE {
-	  "uniquePermutations {a,b,a,b}",
-	  }
-     }
-
 document { Key => tutorial,
      Headline => "convert documentation from tutorial format",
      Usage => "tutorial x",

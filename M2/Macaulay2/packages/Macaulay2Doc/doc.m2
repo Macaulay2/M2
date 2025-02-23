@@ -343,6 +343,17 @@ document {
      SeeAlso =>{ "difference", "minus"}
      }
 
+document {
+    Key => (symbol -, Vector),
+    Headline => "negation of a Vector",
+    TT "-v", " -- the negation of ", TT "v",
+    PARA{},
+    EXAMPLE lines ///
+        v = vector {2,3,5,7}
+	- v
+    ///
+}
+
 undocumented {
      (symbol /, InfiniteNumber, InfiniteNumber),
      (symbol /, RingElement, Number),
