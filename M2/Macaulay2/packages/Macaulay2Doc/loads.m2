@@ -11,7 +11,6 @@
 *-
 
 load "./doc.m2"
-load "./doc1.m2"
 load "./doc2.m2"
 load "./doc3.m2"
 load "./doc4.m2"

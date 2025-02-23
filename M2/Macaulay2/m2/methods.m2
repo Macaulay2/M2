@@ -356,7 +356,7 @@ map = method(
 setupMethods(Dispatch => Thing, {transpose} )
 setupMethods(TypicalValue => Boolean,
      {isBorel, isWellDefined, isInjective, isSurjective, isUnit,
-	  isSubset,isHomogeneous, isIsomorphism, isField
+      isSubset, isHomogeneous, isField
 	  })
 setupMethods(TypicalValue => ZZ, {
 	binomial, char, degreeLength, depth, dim, euler, genus, height,

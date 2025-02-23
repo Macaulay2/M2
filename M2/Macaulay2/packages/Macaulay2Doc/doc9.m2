@@ -305,6 +305,18 @@ document {
      }
 
 document {
+     Key => {complete,(complete, GradedModule),(complete, ChainComplexMap)},
+     TT "complete C", " -- completely fills out the chain complex C by
+     calling upon the engine to provide the maps and modules computed
+     by ", TO "resolution", ".",
+     PARA{},
+     "This is mainly intended for developers of new routines for chain
+     complexes that have to make use of their internal structure.
+     Before running this routine, it is not possible to determine which
+     spots in a chain complex are actually occupied by modules or maps."
+     }
+
+document {
      Key => (complete, ChainComplex),
      Headline => "complete the internal parts",
      TT "complete C", " -- fills in the modules of a chain complex
