@@ -1,65 +1,5 @@
 --		Copyright 2006 by Daniel R. Grayson
 
-document {
-     Key => cacheValue,
-     Headline => "cache values of functions in their arguments",
-     Usage => "((cacheValue KEY) f) x",
-     Inputs => {
-	  "KEY",
-	  "f" => Function,
-	  "x" => {"an argument for ", TT "f", " that has ", ofClass CacheTable, " stored in it under ", TT "x.cache"}
-	  },
-     Outputs => {
-	  { TT "f x", " is returned, but the value is saved in ", TT "x.cache#KEY", " and not recomputed later.
-	       However, if the value found in ", TT "x.cache#KEY", " is ", ofClass CacheFunction, ", such as is
-	       returned by ", TT "(stashValue KEY) f", ", then the value of ", TT "x.cache#KEY x", " is returned instead, after
-	       first removing ", TT "x.cache#KEY", " from ", TT "x.cache", "." }
-	  },
-     EXAMPLE {
-	  "x = new HashTable from { val => 1000, cache => new CacheTable }",
-	  ///f = (t -> (print "hi there"; t.val^4))///,
-	  ///h = (cacheValue VALUE) f///,
-	  "h x",
-	  "h x",
-	  "peek'_2 x"
-	  },
-     SourceCode => { cacheValue },
-     SeeAlso => { stashValue }
-     }
-
-document {
-     Key => stashValue,
-     Headline => "stash values of functions in their arguments",
-     Usage => "((stashValue KEY) f) x",
-     Inputs => {
-	  "KEY",
-	  "f" => Function,
-	  "x" => MutableHashTable => { "an argument for ", TT "f" }
-	  },
-     Outputs => {
-	  { "The value of ", TT "f x", " is returned, but the value is saved in ", TT "x#KEY", " and not recomputed later.
-	       However, if the value found in ", TT "x#KEY", " is ", ofClass CacheFunction, ", such as is
-	       returned by ", TT "(stashValue KEY) f", ", then the value of ", TT "x#KEY x", " is returned instead, after
-	       first removing ", TT "x#KEY", " from ", TT "x", "."
-	       }
-	  },
-     EXAMPLE {
-	  "x = new MutableHashTable from { val => 1000 }",
-	  ///f = (t -> (print "hi there"; t.val^4))///,
-	  ///h = (stashValue VALUE) f///,
-	  "h x",
-	  "h x",
-	  "peek x"
-	  },
-     SourceCode => { stashValue },
-     SeeAlso => { cacheValue }
-     }
-
-document {
-     Key => CacheFunction,
-     Headline => "the class of cache functions",
-     "Functions of class ", TO "CacheFunction", " are created and used by ", TO "cacheValue", " and by ", TO "stashValue", "."
-     }
 
 undocumented {(generateAssertions, List)}
 document { Key => {generateAssertions,(generateAssertions, String)},
@@ -75,13 +15,6 @@ document { Key => {generateAssertions,(generateAssertions, String)},
      	  ///value \ unstack oo///
 	  }
      }
-document { Key => unsequence,
-     Headline => "extract the single element from a sequence of length 1",
-     Usage => "unsequence x",
-     Inputs => { "x" => Thing },
-     Outputs => { { TT "x#0", ", if ", TT "x", " is a sequence of length 1, otherwise ", TT "x", "" } },
-     EXAMPLE { "unsequence (2:a)", "unsequence (1:a)", "unsequence (0:a)" },
-     SeeAlso => sequence}
 
 document { Key => tutorial,
      Headline => "convert documentation from tutorial format",
@@ -97,30 +30,6 @@ R = QQ[x,y]
      	  "tutorial oo",
 	  "peek oo"
 	  }}
-document { Key => {round,(round,QQ),(round,RR),(round,ZZ,RR),(round,ZZ),
-	(round,CC),(round,Constant)},
-     Headline => "round a number",
-     SYNOPSIS (
-	  Usage => "round x",
-	  Inputs => { "x" => "a number" },
-	  Outputs => {{ "the integer nearest to ", TT "x" }},
-	  EXAMPLE lines ///
-	  round(-2.3)
-	  round(-2.3+5*ii)
-	  round(2/3)
-	  ///
-	  ),
-     SYNOPSIS (
-	  Usage => "round(n,x)",
-	  Inputs => { "n" => ZZ, "x" => RR },
-	  Outputs => {{ "the real number with just n decimal digits to the right of the decimal point nearest to ", TT "x" }},
-	  EXAMPLE lines ///
-	  round(2,1234.5678)
-	  round(-2,1234.5678)
-	  ///
-	  ),
-     SeeAlso => { floor, ceiling }
-     }
 
 undocumented {(isConstant, Number)}
 document { Key => {isConstant,(isConstant, RingElement)},
@@ -137,16 +46,6 @@ document { Key => {isConstant,(isConstant, RingElement)},
      SeeAlso => coefficientRing,
      SourceCode => (isConstant,RingElement)
      }
-document { Key => Partition,
-     Headline => "a type of list representing a partition of a natural number",
-     SeeAlso => { partitions, (conjugate,Partition) } }
-document { Key => (conjugate,Partition),
-     Headline => "conjugate a partition",
-     Usage => "conjugate p", Inputs => {"p"}, Outputs => {{"the conjugate of ", TT "p" }},
-     EXAMPLE lines ///
-     	  partitions 4
-	  conjugate \ oo
-     ///}
 document { Key => UpdateOnly,
      Headline => "only copies of newer files should replace files" }
 document { Key => Verbose,
@@ -167,46 +66,6 @@ document { Key => {ofClass,(ofClass, Type),(ofClass, ImmutableType),(ofClass, Li
 	  document { Key => foo, "We may need ", ofClass ZZ, " and ", ofClass HashTable, "." }
 	  help foo
      ///}
-
-document { Key => VerticalList,
-     Headline => "a type of visible self-initializing list that prints vertically",
-     Usage => "VerticalList x",
-     Inputs => { "x" => List },
-     Outputs => { VerticalList },
-     "All operations on lists apply to vertical lists, since they inherit from the type ", TO VisibleList, ".  The
-     only difference is the way that a vertical list is displayed vertically.",
-     EXAMPLE lines ///
-     	 a .. e
-	 v = VerticalList oo
-     	 v_1
-	 length v
-	 ///,
-     "One may get a normal list back from a vertical list as follows.",
-     EXAMPLE lines ///
-     	 toList v
-         ///,
-     SeeAlso => { NumberedVerticalList }
-     }
-
-document { Key => NumberedVerticalList,
-     Headline => "a type of visible self-initializing list that prints vertically",
-     Usage => "NumberedVerticalList x",
-     Inputs => { "x" => List },
-     Outputs => { NumberedVerticalList },
-     "All operations on lists apply to numbered vertical lists, since they inherit from the type ", TO VisibleList, ".  The
-     only difference is the way that a numbered vertical list is displayed vertically, with index numbers labelling the entries.",
-     EXAMPLE lines ///
-     	 a .. e
-	 v = NumberedVerticalList oo
-     	 v_1
-	 length v
-	 ///,
-     "One may get a normal list back from a vertical list as follows.",
-     EXAMPLE lines ///
-     	 toList v
-         ///,
-     SeeAlso => { VerticalList }
-     }
 
 document { Key => {NetFile,(symbol <<, NetFile, String),(symbol <<, NetFile, Net),(symbol SPACE,Manipulator,NetFile),(symbol <<,NetFile,Manipulator)},
      Headline => "the class of all net files",

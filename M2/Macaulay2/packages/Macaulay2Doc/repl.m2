@@ -1065,3 +1065,25 @@ document { Key => getGlobalSymbol,
 	  peek d
      ///
      }
+
+document {
+    Key => {
+	Command,
+	(symbol SPACE, Command, Thing)
+    },
+    Headline => "the class of all commands",
+    Usage => "Command g",
+    Inputs => { "g" => "a function or a string" },
+    Outputs => { { "a new command that will evaluate ", TT "g()", " if ", TT "g", " is a function, and will evaluate ", TT "run g", " if ", TT "g", " is a string" } },
+    "A command behaves as a function does if it is followed by an adjacent
+    expression that can serve as its argument or argument list.  In addition,
+    if it appears as the value of an expression typed by the user at top
+    level (i.e., not in a file), then it gets executed with empty argument list.",
+    EXAMPLE {
+	  "(f = Command ( () -> 2^30 );)",
+	  "f",
+	  "(c = Command \"date\";)",
+	  "c"
+	  },
+    SeeAlso => {"run", "AfterEval"}
+}

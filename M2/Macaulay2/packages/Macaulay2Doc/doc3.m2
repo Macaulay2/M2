@@ -211,17 +211,6 @@ document {
      ///
      }
 
-
-document {
-     Key => CacheTable,
-     Headline => "hash tables for caching",
-     "A type of mutable hash table designed for caching computed values that
-     could always be recomputed.  Cache tables are designed so their contents
-     will not participate in any comparisons by the strict comparison
-     operator ", TT "===", ".  To that end, any two cache tables with the same
-     class and parent are considered equal to each other and have hash code equal to 0."
-     }
-
 document { Key => {(numRows, Matrix),(numRows, MutableMatrix),numRows},
      Headline => "number of rows in a matrix or mutable matrix",
      Usage => "numRows m", Inputs => { "m" }, Outputs => {{ "the number of rows in ", TT "m" }}}
@@ -283,10 +272,6 @@ document { Key => {(mutableIdentity, Ring, ZZ),(mutableIdentity, RingFamily, ZZ)
      ///,
      SeeAlso => {mutableMatrix}
      }
-
-undocumented (pretty, Thing)
-document { Key => pretty,
-     Headline => "a pretty printer", "This function is experimental and under development." }
 
 document { Key => Bareiss,
      "This symbol is used as one of the permissible values for the strategy option in function dealing with determinants.",

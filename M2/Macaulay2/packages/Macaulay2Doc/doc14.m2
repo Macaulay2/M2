@@ -477,6 +477,10 @@ document { Key => {isInfinite, (isInfinite,Number), (isInfinite, Constant),
      SeeAlso => {isFinite, isANumber}
      }
 
+undocumented {
+    ((symbol _*, symbol =), RingFamily),
+}
+
 document {
      Key => (symbol _*,RingFamily),
      Usage => "R_*",

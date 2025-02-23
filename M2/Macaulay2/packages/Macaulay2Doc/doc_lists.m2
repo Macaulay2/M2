@@ -431,49 +431,56 @@ doc///
   Example
    any({3, 6, 7, 8}, even)
    all({3, 6, 7, 8}, even)
+
  SeeAlso
+  (symbol #?, BasicList, ZZ)
+ Subnodes
+  BasicList
+  VisibleList
+  MutableList
   (symbol #, BasicList)
   (symbol #, BasicList, ZZ)
-  (symbol #?, BasicList, ZZ)
   (symbol _, VisibleList, ZZ)
   (symbol _, VisibleList, List)
-  (symbol|,List,List)
+  (symbol |, List,List)
+  (apply,BasicList,Function)
+  (scan,BasicList,Function)
   (all,BasicList,Function)
   (any,BasicList,Function)
+  (select, BasicList, Function)
+  (fold, VisibleList, Function)
+  (accumulate, VisibleList, Function)
+  (position, VisibleList, Function)
+  (positions, VisibleList, Function)
+  number
+  table
+  join
   append
-  (apply,BasicList,Function)
+  prepend
+  insert
   between
-  deepSplice
   delete
   drop
-  first
-  flatten
-  fold
-  insert
-  join
-  last
-  mingle
-  number
-  pack
-  position
-  positions
-  prepend
-  reverse
-  rsort
-  same
-  (scan,BasicList,Function)
-  select
-  sort
-  splice
-  switch
-  table
   take
-  uniform
-  unique
+  first
+  last
+  flatten
+  splice
+  deepSplice
+  mingle
+  pack
+  reverse
   sequence
+  unsequence
+  sort
+  rsort
+  switch
   toList
   toSequence
-  unsequence
+  uniform
+  unique
+  same
+  runLengthEncode
 ///
 
 document {
@@ -508,7 +515,8 @@ document {
      Subnodes => {
 	  TO List,
 	  TO Sequence,
-	  TO Array
+	  TO Array,
+	  TO AngleBarList,
 	  }
      }
 
@@ -532,6 +540,50 @@ document {
      new List from [a,b,c]
      ///,
      PARA {"For an overview of lists and sequences, see ", TO "lists and sequences", "."},
+     Subnodes => {
+	 TO VerticalList,
+	 TO NumberedVerticalList
+     }
+}
+
+document { Key => VerticalList,
+     Headline => "a type of visible self-initializing list that prints vertically",
+     Usage => "VerticalList x",
+     Inputs => { "x" => List },
+     Outputs => { VerticalList },
+     "All operations on lists apply to vertical lists, since they inherit from the type ", TO VisibleList, ".  The
+     only difference is the way that a vertical list is displayed vertically.",
+     EXAMPLE lines ///
+	 a .. e
+	 v = VerticalList oo
+	 v_1
+	 length v
+	 ///,
+     "One may get a normal list back from a vertical list as follows.",
+     EXAMPLE lines ///
+	 toList v
+     ///,
+     SeeAlso => { NumberedVerticalList }
+     }
+
+document { Key => NumberedVerticalList,
+     Headline => "a type of visible self-initializing list that prints vertically",
+     Usage => "NumberedVerticalList x",
+     Inputs => { "x" => List },
+     Outputs => { NumberedVerticalList },
+     "All operations on lists apply to numbered vertical lists, since they inherit from the type ", TO VisibleList, ".  The
+     only difference is the way that a numbered vertical list is displayed vertically, with index numbers labelling the entries.",
+     EXAMPLE lines ///
+	 a .. e
+	 v = NumberedVerticalList oo
+	 v_1
+	 length v
+	 ///,
+     "One may get a normal list back from a vertical list as follows.",
+     EXAMPLE lines ///
+	 toList v
+     ///,
+     SeeAlso => { VerticalList }
      }
 
 document {
@@ -662,6 +714,16 @@ document {
      }
 
 document {
+    Key => unsequence,
+    Headline => "extract the single element from a sequence of length 1",
+    Usage => "unsequence x",
+    Inputs => { "x" => Thing },
+    Outputs => { { TT "x#0", ", if ", TT "x", " is a sequence of length 1, otherwise ", TT "x", "" } },
+    EXAMPLE { "unsequence (2:a)", "unsequence (1:a)", "unsequence (0:a)" },
+    SeeAlso => sequence
+}
+
+document {
      Key => MutableList,
      Headline => "the class of all mutable lists",
      PARA {"For an overview of lists and sequences, see ", TO "lists and sequences", "."},
@@ -678,6 +740,28 @@ document {
      SeeAlso => {"BasicList"}
      }
  
+document {
+    Key => {
+	runLengthEncode,
+       (runLengthEncode, VisibleList)
+    },
+    Headline => "run length encoding",
+    Usage => "runLengthEncode x",
+    Inputs => { "x" },
+    Outputs => {{ "a list equivalent to ", TT "x", ", in which runs and sequences have been expressed symbolically as ", TO2{Expression,"expressions"}}},
+    PARA {"The result is useful in printed displays, as a way of making them more compact. ",
+	"The original list can be recovered by applying ", TO "value", " to the elements of the result, and then using ", TO "deepSplice",
+	", provided that ", TT "x", " contains no entries that are sequences."},
+    EXAMPLE lines ///
+      x = {1,2,3,a,b,c,a,b,c,4,4,4,"asdf"};
+      y = runLengthEncode x
+      peek y
+      value \ y
+      deepSplice \\ oo
+      x === oo
+    ///,
+    SeeAlso => {BinaryOperation, Holder}
+}
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
