@@ -637,7 +637,6 @@ installPackage = method(
 	MakeHTML               => true,
 	MakeInfo               => true,
 	MakePDF                => false,
-	MakeLinks              => true,
 	-- until we get better dependency graphs between documentation
 	-- nodes, "false" here will confuse users
 	RemakeAllDocumentation => true,
