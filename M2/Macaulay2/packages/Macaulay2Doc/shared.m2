@@ -20,8 +20,21 @@ document { Key => isNormal,     methodstr, SeeAlso => {
 	"IntegralClosure::isNormal(Ring)",
 	"AssociativeAlgebras::isNormal(RingElement)",
 	} }
-document { Key => normalCone,      methodstr, SeeAlso => { "Polyhedra::normalCone(Polyhedron,Polyhedron)","ReesAlgebra::normalCone(Ideal)"} }
+document { Key => normalCone,   methodstr, SeeAlso => {
+	"Polyhedra::normalCone(Polyhedron,Polyhedron)",
+	"ReesAlgebra::normalCone(Ideal)",
+    } }
 
+document { Key => { isIsomorphism, (isIsomorphism, Matrix) },
+    Headline => "whether a map is an isomorphism",
+    Usage => "isIsomorphism f",
+    "Whether the map $f$ is an isomorphism.",
+    SeeAlso => {
+	"Cremona::isIsomorphism(RationalMap)",
+	"GradedLieAlgebras::isIsomorphism(LieAlgebraMap)",
+	"MultiprojectiveVarieties::isIsomorphism(MultirationalMap)",
+	"Varieties::isIsomorphism(SheafMap)",
+    } }
 
 document { Key => cone,
     Headline => "mapping cone or polyhedral cone",
