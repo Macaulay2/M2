@@ -1,9 +1,5 @@
--- should rewrite this to load all the m2 files there
--- perhaps write a "pathFind" routine so we can find files such as Macaulay2 on the path.
-
 -*
 -- TODO
-(isWeylAlgebra,Ring)
 (binomial,RingElement,ZZ)
 (rowRankProfile,MutableMatrix)
 (columnRankProfile,MutableMatrix)
@@ -18,8 +14,8 @@ load "./doc5.m2"
 load "./doc6.m2"
 load "./doc7.m2"
 load "./doc8.m2"
-load "./doc9.m2" -- has a ton of tests
-load "./doc10.m2" -- has a ton of tests
+load "./doc9.m2"
+load "./doc10.m2"
 load "./doc11.m2"
 load "./doc12.m2"
 load "./doc13.m2"
@@ -29,7 +25,6 @@ load "./doc15.m2"
 load "./changes.m2"
 
 load "./overviewA.m2"
-load "./overviewB.m2"
 load "./overviewC.m2"
 load "./overview2.m2"
 load "./overview3.m2"
