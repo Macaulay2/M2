@@ -1,3 +1,27 @@
+document { Key => {round,(round,QQ),(round,RR),(round,ZZ,RR),(round,ZZ),
+	(round,CC),(round,Constant)},
+     Headline => "round a number",
+     SYNOPSIS (
+	  Usage => "round x",
+	  Inputs => { "x" => "a number" },
+	  Outputs => {{ "the integer nearest to ", TT "x" }},
+	  EXAMPLE lines ///
+	  round(-2.3)
+	  round(-2.3+5*ii)
+	  round(2/3)
+	  ///
+	  ),
+     SYNOPSIS (
+	  Usage => "round(n,x)",
+	  Inputs => { "n" => ZZ, "x" => RR },
+	  Outputs => {{ "the real number with just n decimal digits to the right of the decimal point nearest to ", TT "x" }},
+	  EXAMPLE lines ///
+	  round(2,1234.5678)
+	  round(-2,1234.5678)
+	  ///
+	  ),
+     SeeAlso => { floor, ceiling }
+     }
 document {
      Key => {numeric,(numeric,Matrix),(numeric,ZZ,Matrix),
 	  (numeric, Vector),(numeric, ZZ, Vector),
