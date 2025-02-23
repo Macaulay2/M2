@@ -1,4 +1,5 @@
 load "./operators/dotdot.m2"
+load "./operators/caret.m2"
 
 document {
      Key => Number,

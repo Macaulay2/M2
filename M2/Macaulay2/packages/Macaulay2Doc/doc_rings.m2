@@ -67,6 +67,11 @@ document {
 	  },
      }
 document {
+    Key => Engine,
+    Headline => "specify whether a ring is handled by the engine",
+    TT "Engine", " -- a key for rings that yields the value ", TT "true", " if this
+    ring is supported by the ", TO "engine", "."}
+document {
     Key => EngineRing,
     Headline => "the class of rings handled by the engine",
     "The ", TO "engine", " handles most of the types of rings in the

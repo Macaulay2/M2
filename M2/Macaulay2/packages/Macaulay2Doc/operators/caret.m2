@@ -1,11 +1,31 @@
 -- -*- coding: utf-8 -*-
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+undocumented {
+     (symbol ^, InfiniteNumber, ZZ),
+     (symbol ^, InfiniteNumber, QQ),
+     (symbol ^, InfiniteNumber, RR),
+     (symbol ^, InfiniteNumber, InfiniteNumber),
+     (symbol ^, ZZ, InfiniteNumber),
+     (symbol ^, QQ, InfiniteNumber),
+     (symbol ^, RR, InfiniteNumber),
+     (symbol ^, Constant, Constant),
+     (symbol ^, Constant, RingFamily),
+     (symbol ^, Constant, InexactNumber),
+     (symbol ^, Constant, Number),
+     (symbol ^, InexactNumber, Constant),
+     (symbol ^, Number, Constant),
+     }
+
 document {
-     Key => Engine,
-     Headline => "specify whether a ring is handled by the engine",
-     TT "Engine", " -- a key for rings that yields the value ", TT "true", " if this
-     ring is supported by the ", TO "engine", "."}
+     Key => {symbol ^},
+     Headline => "a binary operator, usually used for powers",
+     Usage => "x ^ y",
+     PARA{},
+     "This operator is used for exponentiation, making free modules and sheaves, 
+     for shifting complexes left or right, for projection maps involving direct sums, 
+     and for making nets.",
+     }
 
 document {
      Key => {
@@ -156,48 +176,93 @@ document {
      }
 
 document {
-     Key => (symbol *, Matrix, Matrix),
-     Headline => "matrix multiplication",
-     Usage => "f * g",
-     Inputs => {"f", "g"},
-     Outputs => { Matrix },
-     "Multiplication of matrices corresponds to composition of maps, and when
-     the target ", TT "Q", "
-     of ", TT "g", " equals the source ", TT "P", " of ", TT "f", ", the
-     product ", TT "f*g", " is defined, its source is the source of ", 
-     TT "g", ", and its target is the target of ", TT "f", ".  ",
-     EXAMPLE {
-	  "R = QQ[a,b,c,x,y,z];",
-	  "f = matrix{{x},{y},{z}}",
-	  "g = matrix{{a,b,c}}",
-	  "f*g"
+     Key => {(symbol ^,Module,Array),
+       (symbol ^,ChainComplex,Array)},
+     Headline => "projection onto summand",
+     Usage => "M^[i,j,...,k]",
+     Inputs => {"M" => {"or ", ofClass ChainComplex},
+	  Nothing => {TT "[i,j,...,k]", ", an array of indices"}},
+     Outputs => {
+     	  Nothing => {ofClass Matrix, ", or ", ofClass ChainComplexMap}
 	  },
      PARA{},
-     "The degree of ",
-     TT "f*g", " is the sum of the degrees of ", TT "f", " and of ", TT "g",
-     ".",
+     "The module ", TT "M", " should be a direct sum, and the result is the map
+     obtained by projection onto the sum of the components numbered or named
+     ", TT "i, j, ..., k", ".  Free modules are regarded as direct sums of modules.",
      PARA{},
-     "The product is also defined when ", TT "P", " != ", TT "Q", ",
-     provided only that ", TT "P", " and ", TT "Q", " are free modules of the
-     same rank.  If the degrees of ", TT "P", " differ from the corresponding
-     degrees of ", TT "Q", " by the same degree ", TT "d", ", then the degree
-     of ", TT "f*g", " is adjusted by ", TT "d", " so it will have a good
-     chance to be homogeneous, and the target and source of ", TT "f*g", "
-     are as before.",
-     EXAMPLE {
-	  "target (f*g) == target f",
-	  "source (f*g) == source g",
-	  "isHomogeneous (f*g)",
-	  "degree(f*g)",
+     EXAMPLE lines ///
+	  M = ZZ^2 ++ ZZ^3
+      	  M^[0]
+      	  M^[1]
+      	  M^[1,0]
+	  ///,
+     PARA{},
+     "If the components have been given names (see ", TO directSum, "), use those instead.",
+     EXAMPLE lines ///
+	  R = QQ[a..d];
+	  M = (a => image vars R) ++ (b => coker vars R)
+	  M^[a]
+	  isWellDefined oo
+	  M^[b]
+	  isWellDefined oo
+	  isWellDefined(M^{2})
+	  ///,
+     PARA{},
+     "This works the same way for chain complexes.",
+     EXAMPLE lines ///
+	  C = res coker vars R
+	  D = (a=>C) ++ (b=>C)
+	  D^[a]
+	  ///,
+     SeeAlso => {directSum, (symbol ^,Matrix,Array), (symbol _,Module,Array),(symbol ^,Module,List)}
+     }
+
+document { 
+     Key => {
+	  (symbol ^, Matrix, Array),
+	  (symbol ^, ChainComplexMap, Array),
+	  (symbol ^, GradedModuleMap, Array)
 	  },
-     "Sometimes, it is useful to
-     make this a map of degree zero.  Use ", TO (map,Matrix), " for this purpose.",
-     EXAMPLE {
-	  "h = map(f*g,Degree=>0)",
-	  "degree h",
-	  "degrees source h"
+     Headline => "component of map corresponding to summand of target",
+     Usage => "F^[i,j,...,k]",
+     Inputs => {"F" => {"or ", ofClass{ChainComplexMap,GradedModuleMap}},
+	  Nothing => {TT "[i,j,...,k]", ", an array of indices"}},
+     Outputs => {
+     	  Nothing => ofClass{Matrix, ChainComplexMap, GradedModuleMap}
 	  },
-     SeeAlso => {(degree,Matrix),degrees}
+     "The target of the module or chain complex ", TT "F", " should be a 
+     direct sum, and the result is the component of this map 
+     corresponding to the sum of the components numbered or named
+     ", TT "i, j, ..., k", ".  Free modules are regarded as direct sums of modules.
+     In otherwords, this routine returns the map given by certain blocks of columns.",
+     EXAMPLE lines ///
+          R = ZZ[a..d];
+          F = (vars R) ++ ((vars R) ++ matrix{{a-1,b-3},{c,d}})
+	  F^[1]
+	  F_[1]^[1]
+          ///,
+     PARA{"If the components have been given names (see ", TO directSum, "), use those instead."},
+     EXAMPLE lines ///
+          G = (a=>R^2) ++ (b=>R^1)
+	  N = map(G,R^2, (i,j) -> (i+37*j)_R)
+	  N^[a]
+	  N^[b]
+     	  N = directSum(x1 => matrix{{a,b-1}}, x2 => matrix{{a-3,b-17,c-35}}, x3 => vars R)
+	  N^[x1,x3]
+	  ///,
+     PARA {"This works the same way for maps between chain complexes."},
+     SeeAlso => {(symbol^,Matrix,Array),(symbol_,Module,Array),directSum}
+     }
+
+document {
+     Key => (symbol ^, Module, List),
+     Headline => "projection onto summand",
+     TT "M^{i,j,k,...}", " -- provides the projection map from a free module
+     ", TT "M", " to the free module corresponding to the basis vectors whose
+     index numbers are listed.",
+     PARA{},
+     EXAMPLE "(ZZ^5)^{2,3}",
+     SeeAlso => {"_", Module, List}
      }
 
 -- Local Variables:

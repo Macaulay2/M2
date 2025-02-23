@@ -147,6 +147,51 @@ document {
      }
 
 document {
+     Key => (symbol *, Matrix, Matrix),
+     Headline => "matrix multiplication",
+     Usage => "f * g",
+     Inputs => {"f", "g"},
+     Outputs => { Matrix },
+     "Multiplication of matrices corresponds to composition of maps, and when
+     the target ", TT "Q", "
+     of ", TT "g", " equals the source ", TT "P", " of ", TT "f", ", the
+     product ", TT "f*g", " is defined, its source is the source of ", 
+     TT "g", ", and its target is the target of ", TT "f", ".  ",
+     EXAMPLE {
+	  "R = QQ[a,b,c,x,y,z];",
+	  "f = matrix{{x},{y},{z}}",
+	  "g = matrix{{a,b,c}}",
+	  "f*g"
+	  },
+     PARA{},
+     "The degree of ",
+     TT "f*g", " is the sum of the degrees of ", TT "f", " and of ", TT "g",
+     ".",
+     PARA{},
+     "The product is also defined when ", TT "P", " != ", TT "Q", ",
+     provided only that ", TT "P", " and ", TT "Q", " are free modules of the
+     same rank.  If the degrees of ", TT "P", " differ from the corresponding
+     degrees of ", TT "Q", " by the same degree ", TT "d", ", then the degree
+     of ", TT "f*g", " is adjusted by ", TT "d", " so it will have a good
+     chance to be homogeneous, and the target and source of ", TT "f*g", "
+     are as before.",
+     EXAMPLE {
+	  "target (f*g) == target f",
+	  "source (f*g) == source g",
+	  "isHomogeneous (f*g)",
+	  "degree(f*g)",
+	  },
+     "Sometimes, it is useful to
+     make this a map of degree zero.  Use ", TO (map,Matrix), " for this purpose.",
+     EXAMPLE {
+	  "h = map(f*g,Degree=>0)",
+	  "degree h",
+	  "degrees source h"
+	  },
+     SeeAlso => {(degree,Matrix),degrees}
+     }
+
+document {
      Key => symbol &,
      Headline => "a binary operator",
      }
@@ -533,25 +578,6 @@ document {
 document {
      Key => symbol \\,
      Headline => "a binary operator"
-     }
-
-undocumented {
-     (symbol ^, InfiniteNumber, ZZ),
-     (symbol ^, InfiniteNumber, QQ),
-     (symbol ^, InfiniteNumber, RR),
-     (symbol ^, ZZ, InfiniteNumber),
-     (symbol ^, QQ, InfiniteNumber),
-     (symbol ^, RR, InfiniteNumber),
-     }
-
-document {
-     Key => {symbol ^},
-     Headline => "a binary operator, usually used for powers",
-     Usage => "x ^ y",
-     PARA{},
-     "This operator is used for exponentiation, making free modules and sheaves, 
-     for shifting complexes left or right, for projection maps involving direct sums, 
-     and for making nets.",
      }
 
 document {
