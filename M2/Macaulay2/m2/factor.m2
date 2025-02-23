@@ -148,8 +148,6 @@ pseudoRemainder(RingElement,RingElement) := RingElement => (f,g) -> (
 
 -----------------------------------------------------------------------------
 
-inversePermutation = v -> ( w := new MutableList from #v:null; scan(#v, i -> w#(v#i)=i); toList w)
-
 -- We mimic the procedure for finding a finite field addition table used in the routine gf_get_table
 -- for building the file name in "gffilename", in the file BUILD_DIR/libraries/factory/build/factory/gfops.cc .
 -- Reminder: the contents of currentLayout are determined by the file ../d/startup.m2.in .
