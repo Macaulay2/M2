@@ -1,8 +1,8 @@
 newPackage(
     "JSON",
     Headline => "JSON encoding and decoding",
-    Version => "0.3",
-    Date => "September 14, 2024",
+    Version => "0.4",
+    Date => "February 24, 2025",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -17,6 +17,12 @@ newPackage(
 ---------------
 
 -*
+0.4 (2025-02-24, M2 1.25.05)
+* add "json" synonym for "toJSON"
+* remove JSONEncoder class
+* add several new toJSON methods (Thing, MutableHashTable, Hypertext)
+* set toJSON to Dispatch => Thing so it will work for short sequences
+* properly deal w/ escaped characters in fromJSON
 
 0.3 (2024-09-14, M2 1.24.11)
 * remove redundant Constant methods now that we can use inheritance
