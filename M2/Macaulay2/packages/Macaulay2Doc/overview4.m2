@@ -40,18 +40,6 @@ document {
      }
 
 document {
-     Key => "engine", 
-     "The engine is the part of the program that is dedicated to
-     performing the computation of Gröbner bases with Buchberger's
-     algorithm.  It is coded directly in C++ for speed.",
-     PARA{},
-     "The Macaulay2 engine provides fast polynomial and matrix operations,
-     and Gröbner bases, syzygies, Hilbert functions, resolutions and
-     other operations that we feel need to be implemented directly for
-     efficiency reasons.",
-     }
-
-document {
      Key => "diff and contract",
      "We may use the function ", TO "diff", " to differentiate polynomials:
      the first argument is the variable to differentiate with respect to,

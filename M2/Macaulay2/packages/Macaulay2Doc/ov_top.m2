@@ -23,6 +23,7 @@ Node
       "getting started"
     :Mathematical Objects
       "rings"
+      "monomial orderings"
       "ideals"
       "matrices"
       "substitution and maps between rings"
@@ -53,15 +54,9 @@ Node
       -- Mike wanted this: TO "frequently encountered problems"
       "replacements for commands and scripts from Macaulay"
       "how Macaulay2 finds its files"
+      "Developer's Corner"
     :Reference material
       "Type"
       "Function"
 ///
 
-document { Key => Core,
-     Headline => "the core part of Macaulay2",
-     PARA {
-     	  "This package contains the core functionality of Macaulay2, without the documentation,
-     	  which is in the package ", TO "Macaulay2Doc", "."
-	  }
-     }

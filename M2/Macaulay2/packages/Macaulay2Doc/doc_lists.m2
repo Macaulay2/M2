@@ -763,6 +763,23 @@ document {
     SeeAlso => {BinaryOperation, Holder}
 }
 
+document {
+     Key => {(symbol |, List, List),
+	  (symbol |, Array, Array),
+	  (symbol |, Sequence, Sequence)},
+     Headline => "join lists, sequences or arrays",
+     Usage => "v|w",
+     Inputs => {"v" => Nothing =>  {ofClass List, ", ",
+	       ofClass Array, ", or ",
+	       ofClass Sequence},
+	  "w" => Nothing => {"of the same type as ", TT "v"}},
+     Outputs => {
+	  Nothing => "The join of the lists, sequences or arrays."},
+     EXAMPLE "{1,2,3}|{4,5,6}",
+     EXAMPLE "(a,b,c)|(1,2)",
+     SeeAlso => {join}
+     }
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

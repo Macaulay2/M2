@@ -27,13 +27,12 @@ document {
      Subnodes => {
 	  TO "what is a Groebner basis?",
 	  TO "Groebner basis examples and applications",
-	  "fine control of Groebner basis computations",
+	  TO "fine control of a Groebner basis computation",
 	  TO "computing Groebner bases",
 	  -- Mike wanted this: TO "partial computation of a Groebner basis",
 	  -- Mike wanted this: TO "Hilbert driven Groebner basis",
 	  --TO "finding a Groebner basis",
 	  --TO "rings that are available for Groebner basis computations",
-	  --TO "fine control of a Groebner basis computation"
 	  }
      }
 
@@ -414,7 +413,12 @@ document {
 	  "poincare cokernel f = (1-T^3)*(1-T^3)*(1-T^5)*(1-T^6) -- cache poincare",
       	  "time betti gb f"
 	  },
-     "The computation turns out to be substantially faster."
+     "The computation turns out to be substantially faster.",
+     Subnodes => {
+	 TO gb,
+	 TO groebnerBasis,
+	 -- TODO: also add references to packages that compute GB
+     }
      }
 
 

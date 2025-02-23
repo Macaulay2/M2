@@ -548,18 +548,6 @@ document {
      }
 
 document {
-     Key =>  "Developer's Corner",
-     Subnodes => {
-	  TO "engine",
-	  }
-     }
-
--* -- Mike wanted this: 
-document { Key => "frequently encountered problems",
-     }
-*-
-
-document {
      Key => "specifying typical values",
      "For the purpose of constructing good documentation automatically, it
      is useful to specify the type of value typically returned by a function

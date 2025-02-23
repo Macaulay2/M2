@@ -1,167 +1,6 @@
 -- -*- coding: utf-8 -*-
 ----------- File Irena is Working on!  Taken from Mike.  ---------------------
 
-
-document {
-     Key => "polynomial rings",
-     "A polynomial ring can be created with the usual mathematical notation.",
-     EXAMPLE "ZZ[x,y,z]",
-     "If you try to construct this ring again, you will get a different
-     answer.  We use the strict comparison operator ", TO "===", " to
-     demonstrate this.",
-     EXAMPLE "ZZ[x,y,z]===ZZ[x,y,z]",
-     "Thus it is a good idea to assign a new ring to a variable for
-     future reference.",
-     EXAMPLE "R = QQ[a,b,c,d,e,f]",
-     "Notice that after assignment to a global variable, Macaulay2
-     knows the ring's name, and this name is used when printing the ring.",
-     EXAMPLE "R",
-     "The original description of the ring can be recovered
-     with ", TO "describe", ".",
-     EXAMPLE "describe R",
-     "Use the following subscript notation to obtain 0,1, or any multiple of 1,
-     as elements in the ring.",
-     EXAMPLE {
-	  "0_R",
-      	  "1_R",
-      	  "11_R",
-	  },
-     "Obtain the variables (generators) of the ring by subscripting the name of 
-     the ring.  As always in Macaulay2, indexing starts at 0.",
-     EXAMPLE "R_0^10+R_1^3+R_2",
-     "It is also possible to obtain the variables in a ring from strings
-     containing their names.",
-     EXAMPLE ///"a"_R^10+"b"_R^3+"c"_R///,
-     "The number of variables is provided by ", TO "numgens", ".",
-     EXAMPLE {
-	  "numgens R",
-      	  "apply(numgens R, i -> R_i^i)",
-      	  "sum(numgens R, i -> R_i^i)"
-	  },
-     "(See ", TO "apply", " and ", TO "sum", ".)  ",
-     "Use ", TO "generators", " to obtain a list of the variables of the ring.",
-     EXAMPLE "gens R",
-     "A matrix (with one row) containing the variables of the ring can be obtained
-     using ", TO (vars,Ring), ".",
-     EXAMPLE "vars R",
-     "The ", TO "index", " of a variable:",
-     EXAMPLE {
-	  "index x, index y, index z",
-	  },
-     "The coefficient ring can be recovered with ", TO "coefficientRing", ".",
-     EXAMPLE "coefficientRing R",
-
-     "An element of the coefficient ring can be promoted to the polynomial ring.",
-     EXAMPLE "promote(11/2,R)",
-     "Conversely, an element of the polynomial ring that is known to be a scalar
-     can be lifted back to the coefficient ring.",
-     EXAMPLE {
-	 "sc = (a-2)^2-a^2+4*a",
-	 "lift(sc,QQ)",
-	 },
-     "In programs, the function ", TO "liftable", " can be used to see whether
-     this is possible.",
-     EXAMPLE {
-	 "liftable(sc,QQ)",
-	 "liftable(c^3,QQ)",
-	 },
-     "A random homogeneous element can be obtained with ", TO "random", ".",
-     EXAMPLE "random(2,R)",
-
-     "A basis of the subspace of ring elements of a given degree can be obtained
-     in matrix form with ", TO "basis", ".",
-     EXAMPLE "basis(2,R)",
-
-     "We may construct polynomial rings over polynomial rings.",
-     EXAMPLE "R = ZZ[a,b,c][d,e,f];",
-     "When displaying an element of an iterated polynomial ring,
-     parentheses are used to organize the coefficients recursively, which
-     may themselves be polynomials.",
-     EXAMPLE "(a+d+1)^2",
-     "Internally, the polynomials in such towers are expressed in terms of a flattened monoid
-     containing all the variables, obtainable with the key ", TO "FlatMonoid", ".",
-
-     EXAMPLE "R.FlatMonoid",
-     "Variable names may be words.",
-     EXAMPLE {
-	  "QQ[rho,sigma,tau];",
-      	  "(rho - sigma)^2",
-	  },
-     "There are various other ways to specify the variables in a polynomial
-     ring.  A sequence of variables can be obtained as follows.",
-     EXAMPLE "ZZ[b..k];",
-     "In this example, if you had previously assigned either b or k a value that
-     was not a ring generator, then Macaulay2 would complain about this: it would
-     no longer understand what variables you wanted.  To get around this, we could
-     either do",
-     EXAMPLE "ZZ[symbol b .. symbol k];",
-     "or we may obtain the single-letter variables with ", TO "vars", ".",
-     EXAMPLE {
-	  "vars (0..4)",
-      	  "ZZ[vars (0..4),vars(26..30),vars 51]",
-	  },
-     "Subscripted variables can be used, provided the base for the subscripted
-     variable has not been used for something else.",
-     EXAMPLE "ZZ[t,p_0,p_1,q_0,q_1];",
-     "Sequences of subscripted variables can also be used.",
-     EXAMPLE {
-      	  "ZZ[p_(0,0) .. p_(2,1),q_0..q_5]",
-	  "(p_(0,0)+q_2-1)^2",
-	  },
-     "The subscripts can be much more general, but care is required when using
-     symbols as subscripts, for the symbols may acquire values later that would
-     interfere with your original use of them as symbols.  Thus you should
-     protect symbols that will be used in this way.",
-     EXAMPLE {
-	  "protect xx; protect yy; protect zz;",
-      	  "ZZ[ee_[xx],ee_[yy],ee_[zz]]",
-	  },
-     "A basis of the subspace of ring elements of a given degree can be obtained
-     in matrix form with ", TO "basis", ".",
-     EXAMPLE {
-	 "R = QQ[a,b,c,d,e,f];",
-	 "basis(2,R)"
-	 },
-     "The Hilbert series of a polynomial ring can be obtained.  Its power
-     series expansion is the generating function for the dimensions of the
-     degree ", TT "n", " parts.",
-     EXAMPLE "hilbertSeries R",
-     "We may use the option ", TO "Degrees", " to produce rings where the
-     generators have degrees other than 1.",
-     EXAMPLE {
-	 "S = ZZ/101[a,b,c,d,Degrees=>{1,2,3,4}]",
-	 "random(5,S)",
-	 "hilbertSeries S"
-	 },
-     "Some things to watch out for when using polynomial rings:",
-     UL {
-	  LI ("Defining a ring twice gives different rings, as far as Macaulay2 is concerned:
-     	       We use the strict comparison operator ", TO "===", " to demonstrate this.",     
-     	       EXAMPLE "ZZ[a,b,c] === ZZ[a,b,c]",
-     	       "Thus it is a good idea to assign a new ring to a variable for future reference."
-	       )
-       	  },
-     SeeAlso => {"heft vectors", "division in polynomial rings with monomials less than 1"}
-     }
-
-document {
-     Key => FlatMonoid,
-     Usage => "R.FlatMonoid",
-     Inputs => {
-	  "R" => PolynomialRing
-	  },
-     Outputs => {
-	  GeneralOrderedMonoid => { "the flattened monoid in terms of which the polynomials 
-	       are expressed when the coefficient ring of R is itself a polynomial ring"
-	       }
-	  },
-     EXAMPLE lines ///
-     R = QQ[a,b][x]
-     R.FlatMonoid
-     ///,
-     SeeAlso => { flattenRing }
-     }
-
 document {
      Key => "monomial orderings",
      "Every polynomial ring in Macaulay2 comes equipped with an ordering on
@@ -242,6 +81,7 @@ document {
 	  TO "examples of specifying alternate monomial orders",
 	  TO "monomial orders for free modules",
 	  TO "packing monomials for efficiency",
+	  TO "monoid",
       "Definitions of the specific monomial orders",
 	  TO "GRevLex",
 	  TO "Lex",
@@ -250,6 +90,7 @@ document {
 	  TO "Eliminate",
 	  TO "GroupLex",
 	  TO "GroupRevLex",
+	  TO "ProductOrder",
 	  TO "definition of product (block) orders",
 	  TO "RevLex",
 	  TO "NCLex",
@@ -807,69 +648,6 @@ document {
 	  S = QQ[a..d];
 	  (options S).MonomialOrder
      ///
-     }
-
-document {
-     Key => "graded and multigraded polynomial rings",
-     "It is possible to set up a polynomial ring so that the degree of an
-     element is a vector of integers.  For this, the option
-     ", TO "Degrees", " is used, together with a list of degrees for the
-     variables in the ring.  Each degree is itself a list of integers.  The
-     degrees given must all be of the same length, and length zero is
-     allowed, to get an ungraded ring.",
-     EXAMPLE {
-	  "R = ZZ/101[a,b,c,Degrees=>{{1,2},{2,1},{1,0}}]",
-      	  "describe R",
-	  },
-     EXAMPLE {
-	  "degree a",
-      	  "degree b^2",
-      	  "degree 0_R",
-      	  "degree 1_R",
-	  },
-     "A random element of bi-degree ", TT "{m,n}", " can be obtained with
-     ", TO "random", ".",
-     EXAMPLE "random({15,15},R)",
-     "The function ", TO "degree", " applied to a polynomial will
-     return the least upper bound of the degrees of its monomials.",
-     EXAMPLE "degree (a+b)",
-     "We may recover the number of integers in each degree list for our ring
-     as follows.",
-     EXAMPLE {
-	  "degreeLength R",
-      	  "degreeLength ZZ"
-	  },
-     "One restriction on degrees of variables is that the entries be small integer values, possibly
-     zero or negative.  The notion of small depends on the size of exponents one wants: the degree
-     of each monomial occurring should fit in a 32 bit integer (or 64 bit integer, on 64 bit machines).",
-     PARA{
-	 "Another restriction on degrees, at least if all the computational facilities of Macaulay2 are
-	 needed, is that a heft vector exists for them.  A heft vector is a list of integers whose length is
-	 the same as the length of the degrees (see ", TO degreeLength, "), such that its dot product with
-	 the degree of each variable is positive.  Heft vectors are computed automatically for you,
-	 as in the following example, or they may be provided by the user (see ", TO "Heft", ")."
-	 },
-    EXAMPLE lines ///
-	 R = QQ[a,b,c,Degrees=>{{1,0},{-2,1},{-3,1}}];
-	 random({1,1},R)
-	 basis({1,1},R)
-	 ///,
-     PARA {
-	  "The heft vector computed behind the scenes is available to the user."
-	  },
-     EXAMPLE lines ///
-     (options R).Heft
-     ///,
-     PARA {
-     	  "If the heft vector is not provided, many computations will work (e.g., Gröbner bases and computation of resolutions),
-	  but certain other operations (such as ", TT "basis", " and ", TT "random", ") will raise errors."
-	  },
-     Subnodes => {TO "heft vectors"}
-     }
-
-document {
-     Key => "graded modules",
-     -- Mike must have wanted a node with this name...
      }
 
 document {
