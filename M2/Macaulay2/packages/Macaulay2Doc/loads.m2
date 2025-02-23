@@ -15,7 +15,6 @@ load "./doc9.m2" -- ChainComplex methods, to be replaced
 load "./doc10.m2"
 load "./doc12.m2"
 load "./doc14.m2"
-load "./doc15.m2"
 
 load "./changes.m2"
 
@@ -48,6 +47,7 @@ load "./debugging.m2"
 load "./experimental.m2"
 
 load "./doc_arithmetic.m2"
+load "./doc_intervals.m2"
 load "./doc_rings.m2"
 load "./doc_ringelement.m2"
 load "./doc_lists.m2"
