@@ -630,8 +630,35 @@ document {
 	 }
      }
 
-document { Key => "backtrace",
+document {
+    Key => "backtrace",
      Headline => "whether a backtrace is displayed following an error message",
      Usage => "backtrace = false",
      Consequences => { "a backtrace will not displayed following an error message" }
+     }
+
+document {
+    Key => {
+	Bag,
+	(symbol ?,Bag,Bag)
+    },
+    Headline => "the class of all bags",
+    PARA "A bag can be used for enclosing something in a container to prevent it from being printed, in normal circumstances.
+    Any mutable list can be used for this purpose, but bags are designed for this purpose.  In comparison and sorting, they
+    are declared to be incomparable.",
+    SeeAlso => {unbag}
+}
+document {
+    Key => {
+	unbag,
+       (unbag, Bag)
+    },
+    Usage => "unbag y",
+    Inputs => { "y" },
+    Outputs => { { "the contents of ", TT "y" }},
+    EXAMPLE lines ///
+	  x = 100!
+	  y = Bag {x}
+	  unbag y
+     ///
      }
