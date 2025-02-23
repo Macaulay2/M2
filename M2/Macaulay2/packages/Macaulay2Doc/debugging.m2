@@ -80,7 +80,7 @@ document {
 	  as ", TT ///error "debug me"///, ", and start stepping from there, as in the following demonstration."
 	  },
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo2.m2"
+     load "Macaulay2Doc/demos/demo2.m2"
      code f
      f 0
      return

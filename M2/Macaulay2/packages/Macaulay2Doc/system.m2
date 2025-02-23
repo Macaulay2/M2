@@ -189,14 +189,14 @@ document {
 	       }
 	  },
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo3.m2"
+     load "Macaulay2Doc/demos/demo3.m2"
      get loadedFiles#(#loadedFiles-1)
      ///,
      PARA {
 	  "Here is an example of its use in the debugger."
 	  },
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo1.m2"
+     load "Macaulay2Doc/demos/demo1.m2"
      g 2
      end
      end
