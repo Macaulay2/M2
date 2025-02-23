@@ -57,6 +57,13 @@ document {
      TT "even x", " -- returns true or false, tells whether x is an even integer.",
      PARA{},
      "See also ", TO "odd", "."}
+document {
+    Key => zero,
+    Headline => "whether something is zero",
+    SourceCode => zero,
+    Usage => "zero x",
+    Inputs => { "x" },
+    Outputs => { { "whether ", TT "x", " is equal to 0" }}}
 
 document {
      Key => {realPart, (realPart,Number), (realPart,QQ), (realPart,ZZ),
@@ -118,3 +125,22 @@ document {
      SeeAlso => {(symbol %, ZZ, ZZ)}
      }
 
+undocumented {(isConstant, Number)}
+document {
+    Key => {
+	isConstant,
+       (isConstant, RingElement)
+    },
+    Headline => "whether a ring element is constant",
+    Usage => "isConstant f",
+    Inputs => { "f" },
+    Outputs => { { "whether f is constant, i.e., is in the coefficient ring" } },
+    EXAMPLE lines ///
+	  isConstant 3
+	  QQ[a,b][x,y];
+	  isConstant (x+a-x)
+	  isConstant x
+	  ///,
+    SeeAlso => coefficientRing,
+    SourceCode => (isConstant,RingElement)
+}

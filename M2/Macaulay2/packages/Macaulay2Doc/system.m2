@@ -1095,6 +1095,8 @@ document { Key => {(symlinkDirectory, String, String),symlinkDirectory,[symlinkD
      SeeAlso => { symlinkFile, copyDirectory }
      }
 
+document { Key => UpdateOnly,
+     Headline => "only copies of newer files should replace files" }
 document { Key => {(copyDirectory, String, String),copyDirectory,[copyDirectory, Exclude],[copyDirectory, UpdateOnly],[copyDirectory, FollowLinks],[copyDirectory, Verbose]},
      Usage => "copyDirectory(src,dst)",
      Inputs => {
