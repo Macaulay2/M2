@@ -20,7 +20,7 @@ tensor    = method(Options => true, Binary => true) -- tensor is left-associativ
 truncate = method(Options => true)
 
 isEmpty = method(TypicalValue => Boolean)
-isIsomorphism = method(TypicalValue => Boolean)
+
 isSmooth = method(TypicalValue => Boolean, Options => true)
 isVeryAmple = method(TypicalValue => Boolean, Options => true)
 

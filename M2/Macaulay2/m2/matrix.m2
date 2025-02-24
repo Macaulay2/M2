@@ -239,6 +239,7 @@ describe Matrix := m -> (
     )
 toExternalString Matrix := m -> toString describe m;
 
+isIsomorphism = method(TypicalValue => Boolean)
 isIsomorphism Matrix := f -> cokernel f == 0 and kernel f == 0
 
 isHomogeneous Matrix := (cacheValue symbol isHomogeneous) ( m -> ( isHomogeneous target m and isHomogeneous source m and rawIsHomogeneous m.RawMatrix ) )
