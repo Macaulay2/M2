@@ -9,6 +9,7 @@ newPackage(
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
     Keywords => {"System"},
     PackageImports => {"Parsing"},
+    PackageExports => {"Text"},
     AuxiliaryFiles => true)
 
 ---------------
@@ -147,6 +148,7 @@ toJSON Boolean :=
 toJSON Nothing := o -> toString
 toJSON Symbol  := o -> x -> (
     if x === nil then "null" else format toString x)
+toJSON Hypertext := o -> format @@ html
 
 maybeNewline = o -> if o.Indent === null then "" else newline
 
@@ -207,6 +209,7 @@ doc ///
     toJSON
     (toJSON,Boolean)
     (toJSON,HashTable)
+    (toJSON,Hypertext)
     (toJSON,MutableHashTable)
     (toJSON,Nothing)
     (toJSON,Number)
