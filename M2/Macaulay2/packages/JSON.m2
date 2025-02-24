@@ -85,9 +85,13 @@ unescapedP = Parser(c -> if c === null then null else (
 	if x < 0x20 or x == 0x22 or x == 0x5c or x > 0x10ffff
 	then null
 	else terminalParser c))
-charP = unescapedP | ("\\" @
+deformat = x -> (
+    if last x === "/" then "/"
+    else value concatenate("\"", x, "\""))
+escapedP = deformat % ("\\" @
     orP("\"", "\\", "/", "b", "f", "n", "r", "t",
 	andP("u", hexDigitP, hexDigitP, hexDigitP, hexDigitP)))
+charP = unescapedP | escapedP
 stringP = ((l, x, r) -> concatenate x) % andP("\"", *charP, "\"")
 
 -- objects
