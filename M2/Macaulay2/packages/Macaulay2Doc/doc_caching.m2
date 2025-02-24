@@ -2,6 +2,18 @@ undocumented {
     ((symbol SPACE, symbol =), Function, Thing),
 }
 
+document { Key => cache,
+    Headline => "a key under which to store cache tables",
+    SeeAlso => {CacheTable},
+    EXAMPLE lines ///
+     	  F = ZZ^3
+     	  peek F
+	  F.cache#Foo = Bar
+	  peek F
+	  peek F.cache
+	  F === ZZ^3
+    ///}
+
 document {
      Key => CacheTable,
      Headline => "hash tables for caching",

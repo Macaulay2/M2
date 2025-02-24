@@ -106,6 +106,17 @@ document {
      	  ///,
      SeeAlso => {frac, "polynomial rings"}
      }
+
+document {
+     Key => (symbol ^, RingMap, ZZ),
+     Headline => "power",
+     Usage => "x^n",
+     Inputs => { 
+	  "x" => { ofClass{RingMap} },
+	  "n" => ZZ
+	  },
+     Outputs => { {"the ", TT "n", "-th power of ", TT "x"} }
+     }
 document {
      Key => (symbol ^, Matrix, ZZ),
      Headline => "power",
@@ -135,6 +146,7 @@ document {
      	  ///,
      SeeAlso => {det}
      }
+
 document {
      Key => {(symbol ^, ChainComplex, ZZ)},
      Headline => "access member, cohomological degree",

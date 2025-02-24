@@ -21,7 +21,7 @@ document {
 	  },
      "Common ways to get information about modules:",
      UL {
-	  TT "ring Module",
+	  TO (ring, Module),
 	  TO (numgens, Module),
 	  TO (degrees, Module),
 	  TO (generators, Module),
@@ -103,13 +103,25 @@ document {
      in Macaulay2 which return or use modules, see ", TO Module, ".",
      Subnodes => {
 	  "construction of modules",
+	  TO Module,
 	  TO "free modules",
 	  TO "matrices to and from modules",
+	  TO "making modules from matrices",
 	  TO "submodules and quotients",
 	  TO "subquotient modules",
 
+	  "properties of modules",
+	  TO "manipulating modules",
+	  TO "computing syzygies",
+	  TO "extracting elements",
+	  TO "minimal presentations and generators",
+	  TO "equality and containment of modules",
+
 	  "homomorphisms (maps) between modules",
 	  TO "module homomorphisms",
+	  TO "maps between modules",
+	  TO "information about a map of modules",
+	  TO "constructing maps between modules",
 	  -- Mike wanted this: TO "canonical maps between modules",
 	  TO "right modules or left modules?",
 
@@ -859,3 +871,150 @@ document {
      Key => "Hom module",
      }
 *-
+document {
+    Key => "making modules from matrices",
+    "Let's make some matrices.",
+    EXAMPLE {
+	"R = ZZ/101[a..c];",
+	"f = vars R",
+    },
+    "We can easily compute a ", TO "kernel", ", ", TO "image", "
+    or ", TT "cokernel", ".",
+    EXAMPLE {
+	"ker f",
+	"coker f",
+	"image f",
+    },
+    "Every module is represented internally as a submodule of
+    a quotient module.  Such modules often appear in computations,
+    for example, when taking the direct sum of a quotient module and
+    a submodule.",
+    EXAMPLE {
+	"image f ++ coker f"
+    },
+    "We may use ", TO "subquotient", " to make such modules directly,
+    although it's usually more convenient to use other operations.  The
+    first argument is the matrix whose columns are the generators, and
+    the second argument is the matrix whose columns are the relations.",
+    EXAMPLE {
+	"M = subquotient(f, matrix {{a}})",
+	"prune M",
+    }
+}
+
+document {
+    Key => "manipulating modules",
+    "Suppose we have a module that is represented as an image of a
+    matrix, and we want to represent it as a cokernel of a matrix.
+    This task may be accomplished with ", TO "prune", ".",
+    EXAMPLE {
+	"R = QQ[x,y];",
+	"I = ideal vars R",
+	"M = image vars R",
+	"N = prune M",
+    },
+    "The isomorphism between them may be found under the key
+    ", TT "pruningMap", ".",
+    EXAMPLE {
+	"f = N.cache.pruningMap",
+	"isIsomorphism f",
+	"f^-1",
+    },
+    "The matrix form of ", TT "f", " looks nondescript, but the map
+    knows its source and target",
+    EXAMPLE {
+	"source f",
+	"target f",
+    },
+    "It's a 2 by 2 matrix because ", TT "M", " and ", TT "N", " are
+    both represented as modules with two generators.",
+    PARA{},
+    "Functions for finding related modules:",
+    UL {
+	TO "ambient",
+	TO "cover",
+	TO "super",
+    },
+    EXAMPLE {
+	"super M",
+	"cover N",
+    },
+    "Some simple operations on modules:",
+    UL {
+	TO (symbol ^, Module, ZZ),
+	TO (symbol ++, Module, Module),
+	TO (symbol **, Module, Module),
+    },
+    EXAMPLE {
+	"M ++ N",
+	"M ** N",
+    },
+    "Ideals and modules behave differently when making powers:",
+    EXAMPLE {
+	"M^3",
+	"I^3"
+    }
+}
+
+document {
+    Key => "maps between modules",			    -- map
+    "Maps between free modules are usually specified as matrices, as
+    described in the section on ", TO "matrices", ".  In this section 
+    we cover a few other techniques.",
+    PARA{},
+    "Let's set up a ring, a matrix, and a free module.",
+    EXAMPLE {
+	"R = ZZ/101[x,y,z];",
+	"f = vars R",
+	"M = R^4",
+    },
+    "We can use ", TO (symbol ^, Module,List), " and ", TO (symbol _, Module,List), "
+    to produce projection maps to quotient modules and injection maps 
+    from submodules corresponding to specified basis vectors.",
+    EXAMPLE {
+	"M^{0,1}",
+	"M_{2,3}",
+    },
+    PARA{},
+    "Natural maps between modules can be obtained with ", TO "inducedMap", "; the
+    first argument is the desired target, and the second is the source.",
+    EXAMPLE {
+	"inducedMap(source f, ker f)",
+	"inducedMap(coker f, target f)",
+    },
+}
+
+document {
+    Key => "computing syzygies",
+    "A syzygy among the columns of a matrix is, by definition, an
+    element of the kernel of the corresponding map between free modules,
+    and the easiest way to compute the syzygies applying the 
+    function ", TO "kernel", ".",
+    EXAMPLE {
+	"R = QQ[x..z];",
+	"f = vars R",
+	"K = kernel f",
+    },
+    "The answer is provided as a submodule of the source of ", TT "f", ".  The
+    function ", TO "super", " can be used to produce the module that ", TT "K", " is
+    a submodule of; indeed, this works for any module.",
+    EXAMPLE {
+	"L = super K",
+	"L == source f",
+    },
+    "The matrix whose columns are the generators of ", TT "K", ", lifted to
+    the ambient free module of ", TT "L", " if necessary, can be obtained 
+    with the function ", TO "generators", ", an abbreviation for which is
+    ", TT "gens", ".",
+    EXAMPLE {
+	"g = generators K",
+    },
+    "We can check at least that the columns of ", TT "g", " are syzygies 
+    of the columns of ", TT "f", " by checking that ", TT "f*g", " is zero.",
+    EXAMPLE {
+	"f*g",
+	"f*g == 0",
+    },
+    "Use the function ", TO "syz", " if you need detailed control over the
+    extent of the computation."
+}
