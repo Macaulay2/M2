@@ -656,21 +656,34 @@ export present(x:string):string := (
      fixesneeded := 0;
      foreach cc in x do (
 	  c := cc; 
-	  if c == char(0) || c == '\t' || c == '\b' || c == '\r' || c == '\"' || c == '\\' 
+	  if (c == '\0' ||
+	      c == '\"' ||
+	      c == '\\' ||
+	      c == '\a' ||
+	      c == '\b' ||
+	      c == '\e' ||
+	      c == '\f' ||
+	      c == '\n' ||
+	      c == '\r' ||
+	      c == '\t' ||
+	      c == '\v' )
 	  then fixesneeded = fixesneeded + 1 
 	  );
      if fixesneeded != 0 then (
 	  new string len length(x)+fixesneeded do foreach cc in x do (
 	       c := cc;
-	       if c == char(0) then (provide '\\'; provide '0';)
-	       else if c == '\r' then (provide '\\'; provide 'r';)
-	       else if c == '\b' then (provide '\\'; provide 'b';)
-	       else if c == '\t' then (provide '\\'; provide 't';)
+	       if      c == '\0' then (provide '\\'; provide '0')
+	       else if c == '\a' then (provide '\\'; provide 'a')
+	       else if c == '\b' then (provide '\\'; provide 'b')
+	       else if c == '\e' then (provide '\\'; provide 'e')
+	       else if c == '\f' then (provide '\\'; provide 'f')
+	       else if c == '\n' then (provide '\\'; provide 'n')
+	       else if c == '\r' then (provide '\\'; provide 'r')
+	       else if c == '\t' then (provide '\\'; provide 't')
+	       else if c == '\v' then (provide '\\'; provide 'v')
 	       else (
 		    if c == '\"' || c == '\\' then provide '\\';
-	       	    provide c;
-		    )
-	       ))
+		    provide c)))
      else x);
 
 export presentn(x:string):string := ( -- fix newlines and other special chars, also
