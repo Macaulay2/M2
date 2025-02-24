@@ -129,7 +129,9 @@ fromJSON File   := fromJSON @@ get
 -- encoding --
 --------------
 
-toJSON = method(Options => {
+toJSON = method(
+    Dispatch => Thing,
+    Options => {
 	Indent         => null,
 	IndentLevel    => 0,
 	NameSeparator  => ": ",
