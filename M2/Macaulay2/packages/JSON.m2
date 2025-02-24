@@ -138,6 +138,7 @@ toJSON = method(
 	ValueSeparator => null,
 	Sort           => false})
 
+toJSON Thing   := toJSON MutableHashTable := o -> format @@ toString
 toJSON String  := o -> format
 toJSON RR      := o -> format_0
 toJSON Number  := o -> format_0 @@ numeric
@@ -145,7 +146,7 @@ toJSON ZZ      :=
 toJSON Boolean :=
 toJSON Nothing := o -> toString
 toJSON Symbol  := o -> x -> (
-    if x === nil then "null" else error("unknown symbol"))
+    if x === nil then "null" else format toString x)
 
 maybeNewline = o -> if o.Indent === null then "" else newline
 
@@ -206,11 +207,13 @@ doc ///
     toJSON
     (toJSON,Boolean)
     (toJSON,HashTable)
+    (toJSON,MutableHashTable)
     (toJSON,Nothing)
     (toJSON,Number)
     (toJSON,RR)
     (toJSON,String)
     (toJSON,Symbol)
+    (toJSON,Thing)
     (toJSON,VisibleList)
     (toJSON,ZZ)
     [toJSON,Indent]
