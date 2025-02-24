@@ -45,12 +45,15 @@ document {
 	  "Run the command ", M2CODE "copyright", " to view this message."
 	  },
      Subnodes => {
+	"licenses",
+	TO "COPYING-GPL-2",
+	TO "COPYING-GPL-3",
 	  "libraries",
 	  TO "Singular-Factory",
 	  TO "frobby",
 	  TO "GNU MP",
 	  TO "MPFR",
-      TO "MPFI",
+	  TO "MPFI",
 	  TO "GC garbage collector",
 	  TO "LAPACK",
 	  TO "BLAS",
@@ -397,189 +400,6 @@ document {
      SeeAlso => "authors of Macaulay2 packages"
      }
 
--* -- Mike wanted this: 
-document {
-     Key => "preface",
-     }
-*-
-
-document {
-     Key => "prefixPath",
-     Headline => "absolute locations of Macaulay2 files",
-     PARA {
-	  "The absolute location of a Macaulay2 file can be obtained by concatenating three components: (a) the
-	  prefix, which is one of the members of the list ", TO "prefixPath", "; (b) the relative location of the directory
-	  containing the file, as recorded in the hash table ", TO "Layout", "; and (c) the base name of the file.
-	  The value of ", TO "prefixPath", " is used by ", TO "installPackage", " when determining how to direct
-	  documentation hyperlinks from one package to another."
-	  },
-     PARA {
-	  "The initial value of ", TO "prefixPath", " contains just the following two optional items.
-	  If the variable ", TO "prefixDirectory", " was
-	  given a non-null value initially or by a ", TT "-e", " command line argument,
-	  then it will be the last element of ", TO "prefixPath", ".  If the ", TT "-q", " 
-	  option was not given on the command line used to invoke Macaulay2, then the value of ", TT "applicationDirectory()|\"local/\"", "
-	  will be the first element of ", TO "prefixPath", ".  No attempt is made to synchronize the value of ", TO "prefixPath", "
-	  with the values of ", TO "prefixDirectory", " and of ", TT "applicationDirectory()", ", which may change."
-	  },
-     PARA {
-	  "When running a newly compiled version of Macaulay2, adding something like ", TT "-E 'prefixDirectory=\"/usr/\"'", " to
-	  the command line is a good way to direct hyperlinks created by ", TO "installPackage", " to the documentation provided by
-	  an older copy of Macaulay2 installed with the prefix ", TT "/usr/", ", and that, in turn, is easily done within
-	  emacs by the keystroke sequence ", TT "C-u f12", ", which offers you a chance to edit the command line."
-	  },
-     PARA {
-	  "The initial value of ", TO "prefixPath", " described above can be overridden by the user's ", TO "initialization file", ")."
-	  },
-     PARA {
-	  "The list ", TO "prefixPath", " should be distinguished from the list ", TO "path", ", which is used to locate files to be
-	  loaded, by functions such as ", TO "searchPath", ", ", TO "load", ", ", TO "loadPackage", ", and ", TO "needsPackage", "."
-	  },
-     PARA {
-	  "The following example shows the list of places where we might find the source code of a package called ", TT "Foo", "
-	  after it has been installed by ", TO "installPackage", "."
-	  },
-     EXAMPLE ///stack apply(prefixPath, p -> p | Layout#1#"packages" | "Foo.m2")///,
-     PARA {
-     	  "This example shows the list of places where we might reasonably find the html file documenting a
-	  function named ", TT "bar", " in a package called ", TT "Foo", "."
-	  },
-     EXAMPLE ///stack apply(prefixPath, p -> p | replace("PKG","Foo",Layout#1#"packagehtml") | "bar.html")///,
-     PARA {
-     	  "This example shows the list of places where we might reasonably find the info file documenting a
-	  package called ", TT "Foo", "."
-	  },
-     EXAMPLE ///stack apply(prefixPath, p -> p | Layout#1#"info" | "Foo.info")///,
-     SeeAlso => {"commandLine", "Invoking the program", applicationDirectory, "prefixDirectory", "path", searchPath, load, loadPackage, needsPackage}
-     }
-
-doc := new HashTable from {
-     "bin" => "executable files (M2)",
-     "common" => "architecture independent files",
-     "data" => "architecture independent data files",
-     "doc" => "documentation",
-     "docdir" => "documentation for Macaulay2 packages",
-     "emacs" => "emacs source files (*.el, *.elc)",
-     "exec" => "architecture dependent files",
-     "factory gftables" => "directory for files containing addition tables in small finite fields used by the library 'factory'",
-     "info" => "documentation in info form",
-     "lib" => "architecture dependent data and executable files",
-     "libraries" => "dynamically loadable libraries from third party packages linked with Macaulay2",
-     "man" => "man pages",
-     "package" => "additional source files for the Macaulay2 package PKG",
-     "packagecache" => "cached data files for the Macaulay2 package PKG",
-     "packagedoc" => "documentation for the Macaulay2 package PKG",
-     "packageexampleoutput" => "example output files for the Macaulay2 package PKG",
-     "packagehtml" => "html documentation for the Macaulay2 package PKG (*.html)",
-     "packageimages" => "images for the Macaulay2 package PKG (*.jpg)",
-     "packagelib" => "architecture dependent files for the Macaulay2 package PKG",
-     "packages" => "source files for Macaulay2 packages; this directory appears on the path",
-     "packagetests" => "test files for the Macaulay2 package PKG",
-     "programs" => "programs to be run by Macaulay2",
-     "program licenses" => "licenses for programs to be run by Macaulay2"
-     }
-assert( set keys Layout#1 === set keys Layout#2 )
-assert( set keys Layout#1 === set keys doc )
-
-document {
-     Key => {"currentLayout", "Layout"},
-     Headline => "relative locations of Macaulay2 files",
-     PARA {
-	  "Macaulay2 comes with a variety of types of files, and some of them are associated with a 
-	  particular Macaulay2 package.  The hash table ", TT "currentLayout", " is a translation 
-	  table from names, corresponding to the various types of files, to directory paths.  The
-	  directory paths are to be interpreted relative to the path stored in ", TO "prefixDirectory", ".  Each
-	  of the directories contained in the list ", TO "prefixPath", " has its own layout, which will be detected at runtime.
-	  Some of the strings contain ", TT "PKG", " as a substring, which should be replaced
-	  by the name of package whose files will be stored in that directory."
-	  },
-     PARA {
-	  "The hash table ", TO "Layout", " contains the two possible values for ", TO "currentLayout", ";
-	  corresponding to the two possible values for the ", TO [installPackage, SeparateExec], " option used with ", TO "installPackage", ".
-	  The hash table ", TT "Layout#2", " is used if architecture dependent files are to be stored in
-	  a directory tree separate from the one used for architecture independent files.  The hash table ", TT "Layout#1", "
-	  is used otherwise."
-	  },
-     PARA {
-	  "Basic Macaulay2 files are regarded as being associated
-	  with a special package called ", TT{"Core"}, ", and the corresponding documentation files
-	  are part of the package ", TT "Macaulay2Doc", "."
-     	  },
-     EXAMPLE {
-	  "Layout"
-	  },
-     "Here are the meanings of the keys used in ", TO "currentLayout", ".",
-     UL apply(sort pairs doc, (k,v) -> LI { TT format k, " : " | v}),
-     SeeAlso => {[installPackage,SeparateExec]}
-     }
-
-document {
-     Key => "mathematical examples",
-     "In this section we present some tutorials that aim to introduce
-     the user to some mathematical ways of using Macaulay2.  The tutorials
-     are relatively independent of each other, and each one introduces the use
-     of some features of Macaulay2 in a slow and leisurely way, assuming the
-     reader is already familiar with the mathematical concepts involved.  
-     ", TO "David Eisenbud", " joins us as a co-author of these tutorials.",
-     Subnodes => {
-	  TO "Tutorial: Elementary uses of Groebner bases",
-	  TO "Tutorial: Canonical Embeddings of Plane Curves and Gonality",
-	  TO "Tutorial: Fano varieties",
-	  TO "Tutorial: Divisors",
-	  }
-     }
-
-document {
-     Key => "basic commutative algebra",
-     "This section includes tutorials showing how to do
-     basic commutative algebra constructions in Macaulay2.
-     This section is being written by Mike Stillman, for use
-     with his Fall 2005 course: Math 634, Commutative algebra,
-     at Cornell University.  This course covers basic commutative
-     algebra, at the level of Atiyah-Macdonald, and Greuel-Pfister.",
-     PARA{},
-     "Macaulay2 examples corresponding to the Singular examples in the
-     book by Greuel-Pfister may also be found here.",
-     Subnodes => {
-	  TO "Elementary uses of Groebner bases I. Math 634 Fall 2005",
-	  TO "modules in Macaulay2",
-	  TO "M2SingularBook"
-	  }
-     }
-
-document {
-     Key => "specifying typical values",
-     "For the purpose of constructing good documentation automatically, it
-     is useful to specify the type of value typically returned by a function
-     or method.  For example, the function ", TO "isModule", " returns a boolean
-     value, and this is specified when creating the method function with the
-     option ", TO "TypicalValue", " as follows.",
-     PRE ///isModule = method(TypicalValue => Boolean)///,
-     PARA{},
-     "Other functions, such as ", TO "prune", ", return values of various types,
-     depending on the type of the arguments provided.  To install a
-     function ", TT "f", " as the handler for ", TT "prune", " applied to a matrix,
-     we would normally use the following statement.",
-     PRE ///prune Matrix := f///,
-     "To specify that the value typically returned is a matrix (of class ", TT "Matrix", "),
-     we replace ", TT "f", " by ", TT "Matrix => f", ", as follows.",
-     PRE ///prune Matrix := Matrix => f///,
-     "Here is the way our code looks.",
-     EXAMPLE "code(prune, Matrix)",
-     "The information is stored in the hash table ", TO "typicalValues", ", and can
-     be recovered like this.",
-     EXAMPLE "typicalValues#(prune,Matrix)",
-     PARA{},
-     "Warning: don't imagine that a definition of the form ",
-     PRE "f = t -> (...)",
-     "can be replaced with a declaration of the following form.",
-     PRE "f = X => t -> (...)",
-     "The difference here is that here we are using simple assignment, rather than
-     installing a method.  To document the return type is ", TT "X", " in this case, 
-     make an entry in ", TT "typicalValues", " directly.",
-     PRE "f = t -> (...)\ntypicalValues#f = X"
-     }
-
 document {
      Key => "The authors",
      PARA{},
@@ -685,68 +505,6 @@ document {
      Key => "Resources required",
      }
 *-
-
-document {
-     Key => "debugging",
-     "Macaulay2 has a debugger.",
-	UL{
-	TO "the debugger",
-	},
-	"Here are some other debugging tools.",
-     UL {
-	  TO "assert",
-	  TO "benchmark",
-	  TO "Browse::browse",
-	  TO "code",
-	  TO "current",
-	  TO "currentFileName",
-	  TO "pseudocode",
-	  TO "disassemble",
-	  TO "edit",
-	  TO "error",
-	  TO "errorDepth",
-	  TO "flagLookup",
-	  TO "listLocalSymbols",
-	  TO "listUserSymbols",
-     	  TO "locate",
-	  TO "methods",
-	  TO "on",
-	  TO "peek",
-	  TO "peek'",
-	  TO "profile",
-	  TO "shield",
-	  TO "showStructure",
-	  TO "showUserStructure",
-	  TO "try",
-	  TO "userSymbols"
-	  }
-     }
-
-document {
-     Key => "combinatorial functions",
-     UL {
-	  TO "binomial",
-	  TO "compositions",
-	  TO "partitions",
-	  TO "random",
-	  TO "subsets",
-	  TO "tally"
-	  }
-     }
-
-document {
-	Key => "handling hypertext",
-     "Output formatting routines:",
-     UL {
-	  TOH "html",
-	  TOH "mathML",
-	  TOH "tex",
-	  TOH "info",
-	  TOH "net"
-	  },
-	}
-
-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

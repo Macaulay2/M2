@@ -37,12 +37,10 @@ document {
 	      TO "hash tables",
      	  "expressions",
 	      TO "operators",
+	      TO "parsing precedence, in detail",
 	      TO "conditional execution",
-	      TO "while",
-	      TO "for",
-	      TO "mapping over hash tables",
+	      TO "control flow statements",
 	      TO "error handling",
-	      TO "catch",
 	  "functions",
 	      TO "using functions",
 	      TO "using functions with optional inputs",
@@ -52,17 +50,18 @@ document {
 	      TO "making functions with multiple return values",
 	      TO "making new functions with optional arguments",
 	      TO "using hooks",
-	      TO "code",
+	      --TO "code",
 	  "classes and types",
 	      TO "what a class is",
 	      TO "installing methods",
 	      TO "binary methods",
 	      TO "inheritance",
 	      TO "making new classes",
-	      TO "new",
-	      TO "printing and formatting for new classes",
 	      TO "making a new method function",
-	      TO "methods",
+	      --TO "methods",
+	  "debugging Macaulay2 programs",
+	      TO "debugging",
+	      TO "the debugger",
 	  "input and output",
 	      TO "printing to the screen",
 	      TO "reading files",
@@ -81,30 +80,13 @@ document {
 	      TO "parallel programming with threads and tasks",
      	  "system facilities",
 	      TO "system facilities",
-	  "debugging",
-	      TO "debugging",
+	  "developer's corner",
+	      TO "Core",
+	      TO "the engine of Macaulay2",
+	      TO "the interpreter of Macaulay2",
 	  }
      }
 ------------------------------------------------------------------
-document {
-     Key => "saving polynomials and matrices in files",
-     "Use the function ", TO "toString", " to convert polynomials, matrices, and other mathematical
-     objects to a linear format that can be saved in a file.",
-     EXAMPLE lines ///
-          R = QQ[x..z]
-	  p = (x-y-1)^3
-	  m = matrix {{x^2, x^2-y^2, x*y*z^7 }}
-	  M = image m
-	  f = temporaryFileName()
-	  f << toString (p,m,M) << close
-	  get f
-	  (p',m',M') = value get f
-	  p == p'
-	  m == m'
-	  M == M'
-	  removeFile f
-     ///
-     }
 document {
      Key => "variables",
      "Valid names for symbols may be constructed using letters, digits, and
@@ -558,6 +540,19 @@ document {
      }
 
 document {
+    Key => "control flow statements",
+    Subnodes => {
+	TO "for",
+	TO "while",
+	TO "list",
+	TO "do",
+	TO "break",
+	TO "continue",
+	TO "return",
+    }
+}
+
+document {
      Key => "conditional execution",
      Headline => "if-then-else statements",
      "The basic way to control the execution of code is with the ", TO "if", "
@@ -585,26 +580,8 @@ document {
      "There are a variety of predicate functions (such as ", TT "<", ", used above)
      that yield ", TT "true", " or ", TT "false", " and can be used as the predicate 
      in an ", TT "if", " expression.  For a list, see ", TO "Boolean", ".  Boolean
-     results may be combined with ", TO "not", ", ", TO "and", ", and ", TO "or", "."
-     }
-document {
-     Key => "then",
-     Headline => "condition testing",
-     TT "then", " a keyword used with ", TO "if", ".",
-	EXAMPLE {
-		"if 5 > 4 then 8 else 7"
-		},
-	SeeAlso => {"if", "else"}
-     }
-
-document {
-     Key => "else",
-     Headline => "condition testing",
-     TT "else", " a keyword used with ", TO "if", ".",
-	EXAMPLE {
-		"if 4 > 5 then 8 else 7"
-		},
-	SeeAlso => {"if", "then"}
+     results may be combined with ", TO "not", ", ", TO "and", ", and ", TO "or", ".",
+     Subnodes => TO "if"
      }
 document {
     Key => {"throw", "catch"},
@@ -652,12 +629,8 @@ document { Key => "continue",
      continue
      ///
      }
-document { Key => "when",
-     Headline => "a keyword",
-     "A keyword used in ", TO "for", " loops."
-     }
 document {
-     Key => "if",
+     Key => {"if", "then", "else"},
      Headline => "condition testing",
      TT "if p then x else y", " computes ", TT "p", ", which must yield the value ", TO "true", " 
      or ", TO "false", ".  If true, then the value of ", TT "x", " is provided,
@@ -711,21 +684,29 @@ document {
      }
 
 document {
-     Key => "from",
-     Headline => "loop control",
-     TT "from", " a keyword used with ", TO "for", " and ", TO "new", "."
-     }
-
-document {
-     Key => "to",
-     Headline => "loop control",
-     TT "to", " a keyword used with ", TO "for", "."
-     }
-
-document {
      Key => "do",
      Headline => "loop control",
      TT "do", " a keyword used with ", TO "while", ", and ", TO "for", "."
+     }
+
+document {
+     Key => "error handling",
+     Headline => "signalling and trapping errors",
+     "When an error occurs in your program, an error message will appear that
+     gives the name of the file, the line number, and the column number of
+     the code that provoked the error.",
+     PARA{},
+     "You may use the function ", TO "error", " in your programs to signal
+     errors.  Your error message will appear on the screen and execution
+     will be stopped.",
+     PARA{},
+     "The function ", TO "try", " can be used to catch an error before
+     execution is stopped and to continue or to try something else.",
+     Subnodes => {
+	  TO "error",
+	  TO "try",
+	  TO "throw",
+	  }
      }
 
 document {
@@ -841,12 +822,7 @@ document {
      ///,
      }
 
-document { Key => "in",
-     Headline => "a keyword used in for-loops",
-     SeeAlso => {"for"}
-     }
-
-document { Key => "for",
+document { Key => {"for", "in", "from", "to", "when"},
      Headline => "for loops",
      SYNOPSIS (
      	  Usage => "for i from m to n when p list x do z", 
@@ -1026,23 +1002,21 @@ document {
 	  "x#?4"
 	  },
      Subnodes => {
-	  "functions for manipulating hash tables",
-	  TO "copy",
+	  TO "HashTable",
+	  TO "MutableHashTable",
 	  TO "hashTable",
+	  TO "hashing",
+	  TO "hash",
+	  "functions for manipulating hash tables",
+	  TO "isMutable",
 	  TO "keys",
 	  TO "values",
 	  TO "pairs",
-	  TO "mutable",
+	  TO "copy",
 	  TO "remove",
-	  TO "applyKeys",
-	  TO "applyValues",
-	  TO "applyPairs",
 	  TO "merge",
 	  TO "combine",
-	  "more information",
-	  TO "hashing",
-	  TO "HashTable",
-	  TO "MutableHashTable"
+	  TO "mapping over hash tables",
 	  }
      }
 
@@ -1247,7 +1221,8 @@ document {
 	  f f [1,2,3]
 	  f f ([1,2,3])
 	  f (f [1,2,3])
-     ///
+     ///,
+     Subnodes => TO seeParsing
      }
 
 -- Local Variables:

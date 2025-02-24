@@ -33,6 +33,7 @@ document {
 	  TO "using Macaulay2 with emacs",
 	  TO "using Macaulay2 with TeXmacs",
 	  TO "a first Macaulay2 session",
+	  TO "how Macaulay2 finds its files",
 	  TO "reading the documentation",
 	  TO "getting help or reporting bugs",
 	  -- Mike wanted this: TO "what to read next??"
@@ -283,7 +284,8 @@ document { Key => "teaching your shell how to find M2",
      its files (because it knows about symbolic links).  (Don't use a hard link.)",
      SUBSECTION "what else to try",
      "If you fail to teach your shell how to find M2, then all is not lost.  We prefer
-     to run M2 within emacs, and it is enough to teach emacs how find M2.  See ", TO "teaching emacs how to find M2", "."
+     to run M2 within emacs, and it is enough to teach emacs how find M2.  See ", TO "teaching emacs how to find M2", ".",
+     Subnodes => TO "setup"
      }
 
 document { Key => "teaching emacs how to find M2-init.el",
@@ -442,7 +444,8 @@ PRE///    ;; .emacs file in your home directory
 	  typed in the above lines correctly into ", TT ".emacs", ".  If they look okay, then
 	  see ", TO "teaching emacs how to find M2-init.el", ", ", TO "teaching emacs how to find M2", ", and ",
 	  TO "teaching your shell how to find M2", "."
-	  }
+	  },
+     Subnodes => TO "setupEmacs"
      }
 
 document {
@@ -1116,8 +1119,119 @@ document {
      see ", TO "Layout", ".",
      Subnodes => {
 	  TO "Layout",
+	  TO "prefixPath",
      	  TO "prefixDirectory"
 	  }
+     }
+
+document {
+     Key => "prefixPath",
+     Headline => "absolute locations of Macaulay2 files",
+     PARA {
+	  "The absolute location of a Macaulay2 file can be obtained by concatenating three components: (a) the
+	  prefix, which is one of the members of the list ", TO "prefixPath", "; (b) the relative location of the directory
+	  containing the file, as recorded in the hash table ", TO "Layout", "; and (c) the base name of the file.
+	  The value of ", TO "prefixPath", " is used by ", TO "installPackage", " when determining how to direct
+	  documentation hyperlinks from one package to another."
+	  },
+     PARA {
+	  "The initial value of ", TO "prefixPath", " contains just the following two optional items.
+	  If the variable ", TO "prefixDirectory", " was
+	  given a non-null value initially or by a ", TT "-e", " command line argument,
+	  then it will be the last element of ", TO "prefixPath", ".  If the ", TT "-q", " 
+	  option was not given on the command line used to invoke Macaulay2, then the value of ", TT "applicationDirectory()|\"local/\"", "
+	  will be the first element of ", TO "prefixPath", ".  No attempt is made to synchronize the value of ", TO "prefixPath", "
+	  with the values of ", TO "prefixDirectory", " and of ", TT "applicationDirectory()", ", which may change."
+	  },
+     PARA {
+	  "When running a newly compiled version of Macaulay2, adding something like ", TT "-E 'prefixDirectory=\"/usr/\"'", " to
+	  the command line is a good way to direct hyperlinks created by ", TO "installPackage", " to the documentation provided by
+	  an older copy of Macaulay2 installed with the prefix ", TT "/usr/", ", and that, in turn, is easily done within
+	  emacs by the keystroke sequence ", TT "C-u f12", ", which offers you a chance to edit the command line."
+	  },
+     PARA {
+	  "The initial value of ", TO "prefixPath", " described above can be overridden by the user's ", TO "initialization file", ")."
+	  },
+     PARA {
+	  "The list ", TO "prefixPath", " should be distinguished from the list ", TO "path", ", which is used to locate files to be
+	  loaded, by functions such as ", TO "searchPath", ", ", TO "load", ", ", TO "loadPackage", ", and ", TO "needsPackage", "."
+	  },
+     PARA {
+	  "The following example shows the list of places where we might find the source code of a package called ", TT "Foo", "
+	  after it has been installed by ", TO "installPackage", "."
+	  },
+     EXAMPLE ///stack apply(prefixPath, p -> p | Layout#1#"packages" | "Foo.m2")///,
+     PARA {
+     	  "This example shows the list of places where we might reasonably find the html file documenting a
+	  function named ", TT "bar", " in a package called ", TT "Foo", "."
+	  },
+     EXAMPLE ///stack apply(prefixPath, p -> p | replace("PKG","Foo",Layout#1#"packagehtml") | "bar.html")///,
+     PARA {
+     	  "This example shows the list of places where we might reasonably find the info file documenting a
+	  package called ", TT "Foo", "."
+	  },
+     EXAMPLE ///stack apply(prefixPath, p -> p | Layout#1#"info" | "Foo.info")///,
+     SeeAlso => {"commandLine", "Invoking the program", applicationDirectory, "prefixDirectory", "path", searchPath, load, loadPackage, needsPackage}
+     }
+
+doc := new HashTable from {
+     "bin" => "executable files (M2)",
+     "common" => "architecture independent files",
+     "data" => "architecture independent data files",
+     "doc" => "documentation",
+     "docdir" => "documentation for Macaulay2 packages",
+     "emacs" => "emacs source files (*.el, *.elc)",
+     "exec" => "architecture dependent files",
+     "factory gftables" => "directory for files containing addition tables in small finite fields used by the library 'factory'",
+     "info" => "documentation in info form",
+     "lib" => "architecture dependent data and executable files",
+     "libraries" => "dynamically loadable libraries from third party packages linked with Macaulay2",
+     "man" => "man pages",
+     "package" => "additional source files for the Macaulay2 package PKG",
+     "packagecache" => "cached data files for the Macaulay2 package PKG",
+     "packagedoc" => "documentation for the Macaulay2 package PKG",
+     "packageexampleoutput" => "example output files for the Macaulay2 package PKG",
+     "packagehtml" => "html documentation for the Macaulay2 package PKG (*.html)",
+     "packageimages" => "images for the Macaulay2 package PKG (*.jpg)",
+     "packagelib" => "architecture dependent files for the Macaulay2 package PKG",
+     "packages" => "source files for Macaulay2 packages; this directory appears on the path",
+     "packagetests" => "test files for the Macaulay2 package PKG",
+     "programs" => "programs to be run by Macaulay2",
+     "program licenses" => "licenses for programs to be run by Macaulay2"
+     }
+assert( set keys Layout#1 === set keys Layout#2 )
+assert( set keys Layout#1 === set keys doc )
+
+document {
+     Key => {"currentLayout", "Layout"},
+     Headline => "relative locations of Macaulay2 files",
+     PARA {
+	  "Macaulay2 comes with a variety of types of files, and some of them are associated with a 
+	  particular Macaulay2 package.  The hash table ", TT "currentLayout", " is a translation 
+	  table from names, corresponding to the various types of files, to directory paths.  The
+	  directory paths are to be interpreted relative to the path stored in ", TO "prefixDirectory", ".  Each
+	  of the directories contained in the list ", TO "prefixPath", " has its own layout, which will be detected at runtime.
+	  Some of the strings contain ", TT "PKG", " as a substring, which should be replaced
+	  by the name of package whose files will be stored in that directory."
+	  },
+     PARA {
+	  "The hash table ", TO "Layout", " contains the two possible values for ", TO "currentLayout", ";
+	  corresponding to the two possible values for the ", TO [installPackage, SeparateExec], " option used with ", TO "installPackage", ".
+	  The hash table ", TT "Layout#2", " is used if architecture dependent files are to be stored in
+	  a directory tree separate from the one used for architecture independent files.  The hash table ", TT "Layout#1", "
+	  is used otherwise."
+	  },
+     PARA {
+	  "Basic Macaulay2 files are regarded as being associated
+	  with a special package called ", TT{"Core"}, ", and the corresponding documentation files
+	  are part of the package ", TT "Macaulay2Doc", "."
+     	  },
+     EXAMPLE {
+	  "Layout"
+	  },
+     "Here are the meanings of the keys used in ", TO "currentLayout", ".",
+     UL apply(sort pairs doc, (k,v) -> LI { TT format k, " : " | v}),
+     SeeAlso => {[installPackage,SeparateExec]}
      }
 
 -- Local Variables:

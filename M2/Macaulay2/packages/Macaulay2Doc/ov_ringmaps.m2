@@ -77,6 +77,9 @@ document {
 	  TO pushForward,
 	  TO (symbol **, RingMap, Module)
 	  },
+     Subnodes => {
+	 TO (symbol SPACE, RingMap, RingElement),
+         }
      }
 
 document {
@@ -361,18 +364,6 @@ document {
      }
 undocumented {
      (symbol SPACE, RingMap, Number)
-     }
-
-document {
-     Key => {"powers",
-	  (symbol ^,RingMap,ZZ)
-	  },
-     Usage => "x^n",
-     Inputs => { 
-	  "x" => { ofClass{RingMap} },
-	  "n" => ZZ
-	  },
-     Outputs => { {"the ", TT "n", "-th power of ", TT "x"} }
      }
 
 document {

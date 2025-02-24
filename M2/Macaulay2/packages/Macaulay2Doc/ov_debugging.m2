@@ -1,5 +1,84 @@
 -- TODO: (debug, ZZ)
 
+document {
+    Key => "debugging",
+    "Macaulay2 has a debugger.",
+    UL{
+	TO "the debugger",
+    },
+    "Here are some other debugging tools.",
+    Subnodes => {
+	TO "assert",
+	TO "benchmark",
+	TO "Browse::browse",
+	TO "code",
+	TO "current",
+	TO "currentFileName",
+	TO "pseudocode",
+	TO "disassemble",
+	TO "edit",
+	--TO "error",
+	TO "errorDepth",
+	TO "flagLookup",
+	TO "listLocalSymbols",
+	TO "listUserSymbols",
+	TO "locate",
+	TO "methods",
+	TO "on",
+	TO "peek",
+	TO "peek'",
+	TO "profile",
+	TO "shield",
+	TO "showStructure",
+	TO "showUserStructure",
+	TO "userSymbols"
+    },
+    SeeAlso => {
+	"error handling"
+    }
+}
+
+document {
+    Key => "the debugger",
+    "We have a Macaulay2 source file with a pair of functions in it that
+    we can use for demonstrating the debugger.  Let's load it so we can
+    run the functions in it.",
+    EXAMPLE "load \"Macaulay2Doc/demos/demo1.m2\"",
+    "We can see what functions were provided to us with ", TO "listUserSymbols", ".",
+    EXAMPLE "listUserSymbols",
+    "Let's peek at the code of the function ", TT "g", ".",
+    EXAMPLE "code g",
+    "We see that the function g calls a function ", TT "f", ", but ", TT "f", " is not visible to us
+    (because ", TT "f", " is a local variable).  In emacs' ", EM "Macaulay2 Interaction Mode", ", pressing
+    return (", TT "RET", " or ", TT "enter", ") after positioning the cursor on the output line displaying the file name and line number
+    will bring up the source code in a new buffer.",
+    PARA{"The first few times we use ", TT "g", ", it seems to work."},
+    EXAMPLE {"g 4", "g 3"},
+    "However, the following attempt results in an error, and the debugger starts up automatically.",
+    EXAMPLE "g 2",
+    "You may use ", TO "help", ", as instructed, to view the commands available in the debugger.
+    As suggested by the help display, we can use ", TO "listLocalSymbols", " to list the local symbols and their values.",
+    EXAMPLE "listLocalSymbols",
+    "We see that the value of ", TT "x", " is 0, and that explains the error message about division by zero.
+    The other local symbols are the ones defined in the body of the function ", TT "f", ", whose
+    code can now be displayed with ", TO "code", ".",
+    EXAMPLE "code f",
+    "We can use ", TO "step", " with argument 0 to bypass the current expression.",
+    EXAMPLE "step 0",
+    "If we decide the problem is one level up, we can use ", TT "end", " or the end-of-file character
+    (which often is CTRL-D) to quit this instance of the debugger.  In this case, the debugger will 
+    be entered again (triggered by the same error indication that caused it to be entered originally)
+    at the point inside the function ", TT "g", " from which the function ", TT "f", " was called.",
+    EXAMPLE "end",
+    "We can use ", TO "listLocalSymbols", " again to see the local variables of ", TT "g", ".",
+    EXAMPLE "listLocalSymbols",
+    "After we are done debugging, we can quit the debugger entirely and return to top level
+    with ", TO "break", ".",
+    EXAMPLE "break",
+    "The variable ", TO "errorDepth", " can be used to control how deep inside the code the debugger should be activated.",
+    SeeAlso => { "break", "end", "step", "continue", "return", "listLocalSymbols", "listUserSymbols", "code", "value", "pseudocode", "disassemble", "errorDepth" }
+}     
+
 doc ///
   Key
      debug

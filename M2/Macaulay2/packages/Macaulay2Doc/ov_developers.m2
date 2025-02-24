@@ -1,12 +1,3 @@
-document {
-    Key => "Developer's Corner",
-    Subnodes => {
-	TO "Core",
-	TO "the engine of Macaulay2",
-	TO "the interpreter of Macaulay2",
-    }
-}
-
 document { Key => Core,
     Headline => "the core of Macaulay2",
     PARA {

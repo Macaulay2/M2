@@ -60,6 +60,7 @@ Node
     "SimpleDoc :: SimpleDoc"
   Subnodes
     "hypertext list format"
+    "handling hypertext"
     document
     EXAMPLE
     SYNOPSIS
@@ -244,3 +245,15 @@ Node
     symbol TEST
     check
 ///
+
+document {
+    Key => "handling hypertext",
+    "Output formatting routines:",
+    Subnodes => {
+	TOH "html",
+	TOH "mathML",
+	TOH "tex",
+	TOH "info",
+	TOH "net"
+    }
+}

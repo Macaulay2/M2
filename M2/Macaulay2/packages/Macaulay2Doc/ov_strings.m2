@@ -160,7 +160,7 @@ document {
      "Warning: if so many characters are written to a file that an internal buffer
      is filled before the line ends or first net is seen, then the buffer will be 
      flushed, and writing a net subsequently will produce an unexpected result.",
-     Subnodes => TO \ {net, (width, Net), (height, Net), (depth, Net)}
+     Subnodes => TO \ {(width, Net), (height, Net), (depth, Net)}
      }
 
 document {

@@ -1,7 +1,10 @@
 load "./operators/dotdot.m2"
 load "./operators/caret.m2"
 load "./operators/shift.m2"
+load "./operators/equality.m2"
 load "./operators/comparison.m2"
+load "./operators/assignment.m2"
+load "./operators/augmented_assignment.m2"
 
 document {
      Key => Number,
@@ -266,6 +269,13 @@ document {
      SeeAlso =>{ "or", "not", "xor" }
      }
 
+document {
+     Key => "not",
+     Headline => "negation",
+     TT "not x", " -- yields the negation of x, which must be true or false.",
+     SeeAlso =>{ "and", "or" }
+     }
+
 doc ///
   Key
     symbol xor
@@ -293,4 +303,124 @@ document {
 document {
      Key => symbol ~,
      Headline => "a unary postfix operator",
+     }
+
+document {
+    Key => symbol SPACE, 
+    Headline => "blank operator; often used for function application, making polynomial rings",
+    SeeAlso =>(symbol SPACE, Function, Thing)		    -- not really a method
+}
+
+document {
+    Key => (symbol SPACE, Function, Thing),
+    Headline => "function application",
+    TT "f x", " -- yields the result of applying the function ", TT "f", " to ", TT "x", ".",
+}
+
+document {
+     Key => symbol ++,
+     Headline => "a binary operator, usually used for direct sum"
+     }
+
+document {
+     Key => symbol (*),
+     Headline => "a unary postfix operator, used for indicating a graded object"
+     }
+
+document {
+     Key => symbol ^*,
+     Headline => "a unary postfix operator, used for indicating pullback maps"
+     }
+
+document {
+     Key => symbol _*,
+     Headline => "a unary postfix operator, used for indicating pushforward maps"
+     }
+
+document {
+     Key => symbol ^!,
+     Headline => "a unary postfix operator, used for the upper shriek functor"
+     }
+
+document {
+     Key => symbol _!,
+     Headline => "a unary postfix operator, used for the lower shriek functor"
+     }
+
+document {
+     Key => symbol |_,
+     Headline => "a binary operator, used for restriction to a subset"
+     }
+
+document {
+     Key => symbol ^~,
+     Headline => "a unary postfix operator, used for sheafification"
+     }
+
+document {
+     Key => symbol _~,
+     Headline => "a unary postfix operator"
+     }
+
+apply({symbol ^>, symbol ^>=, symbol ^<, symbol ^<=, symbol _>, symbol _>=, symbol _<, symbol _<=},
+    symb -> document { Key => symb, Headline => "a binary operator, used for truncation" })
+
+document {
+     Key => symbol <==>,
+     Headline => "a binary operator"
+     }
+
+document {
+     Key => symbol ,,
+     Headline => "the comma, used for separating entries in a list or sequence"
+     }
+
+document {
+     Key => symbol ==>,
+     Headline => "a binary operator"
+     }
+
+document {
+     Key => symbol |-,
+     Headline => "a binary operator"
+     }
+
+document {
+     Key => symbol ===>,
+     Headline => "a binary operator"
+     }
+
+document {
+     Key => symbol <===,
+     Headline => "a unary and binary operator"
+     }
+
+document {
+     Key => symbol <==,
+     Headline => "a unary and binary operator"
+     }
+
+document {
+     Key => symbol @@,
+     Headline => "a binary operator"
+     }
+
+document {
+     Key => (symbol @@, Function, Function),
+     Headline => "composition of functions",
+     Usage => "f @@ g",
+     Inputs => { "f", "g" },
+     Outputs => {{ "the composite function of ", TT "f", " and ", TT "g", "." }},
+     EXAMPLE {
+	  "f = i -> i+1",
+	  "g = i -> i^2",
+	  "apply(0 .. 10, f @@ g)",
+	  "apply(0 .. 10, g @@ f)"
+	  }
+     }
+
+document {
+     Key => symbol @,
+     Headline => "a binary operator",
+     "This operator is right associative."
      }

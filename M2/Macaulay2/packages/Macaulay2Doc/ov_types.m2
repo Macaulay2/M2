@@ -1,4 +1,93 @@
 document {
+     Key => "what a class is",
+     "In Macaulay2 the behavior of a function depends heavily on the types
+     of the arguments it's presented with.  For example, the expression ", TT "x+y", "
+     means the sum if ", TT "x", " and ", TT "y", " are integers, but it
+     means the union if ", TT "x", " and ", TT "y", " are sets.  To implement this
+     in a clean fashion, we store the code for doing things with sets
+     in something called ", TO "Set", " and we store the code for doing things with integers
+     in something called ", TO "ZZ", ".  We say that each integer is an ", TO "instance", "
+     of ", TO "ZZ", ", and ", TO "ZZ", " is the ", TO "class", " (or type) of each 
+     integer.  The function ", TO "class", " provides the class of an object, and
+     the function ", TO "instance", " tells whether a given object is an
+     instance of a given class, or a subclass of it, and so on.",
+     PARA{},
+     EXAMPLE {
+	  "class 33",
+	  "instance(33,ZZ)",
+	  "instance(33,String)"
+	  },
+     "The corresponding mathematical idea is that ", TO "ZZ", " is the set of
+     all integers.",
+     PARA{},
+     "The class of all classes or types is called ", TO "Type", ".",
+     EXAMPLE {
+	  "instance(ZZ,Type)",
+	  "instance(33,Type)",
+	  },
+     "The class of all objects in the system is ", TO "Thing", ".",
+     EXAMPLE {
+	  "instance(33,Thing)",
+	  },
+     "Everything has a class, and every class has a ", TO "parent", ".  The 
+     parent class represents a broader class of objects, and is used to
+     contain code that applies to the broader class.  For example, ", TO "ZZ", "
+     is a ring, and every ring is also a type.",
+     EXAMPLE {
+	  "class ZZ",
+	  "parent class ZZ"
+	  },
+     "Types are implemented as hash tables -- it's a versatile way of storing
+     bits of code that are needed in various situations; the keys for the
+     hash table are constructed in a certain way from the function and the
+     types of its arguments whose details the user doesn't need to know.",
+     PARA{},
+     Subnodes => {
+	  TO "class",
+	  TO "parent",
+	  TO "instance",
+	  TO "ancestor",
+	  TO "ancestors",
+	  },
+     SeeAlso => { "uniform", "Thing", "Nothing", "Type", "MutableList", "MutableHashTable", "SelfInitializingType" }
+     }
+
+document {
+     Key => "making new classes",
+     "All new classes are made with the operator ", TO "new", ".
+     You may choose to implement the instances of your new class
+     either as basic lists or as hash tables, or you may even
+     base it on a subclass of ", TO "BasicList", " or a subclass of 
+     ", TO "HashTable", ", if you find a class that has some
+     of the methods you need already implemented.",
+     PARA{},
+     "As an example, we may wish to implement quaternions as lists
+     of four real numbers.  We know that lists already have a method
+     for addition that treats them as vectors, and we could use
+     the same code for addition of quaternions.",
+     EXAMPLE {
+	  "Qu = new Type of List",
+	  "w = new Qu from {1,2,3,4}",
+	  "w+w"
+	  },
+     "Now all we have to do is to install a method for multiplying
+     quaternions.",
+     EXAMPLE {
+	  "Qu * Qu := (x,y) -> new Qu from { 
+	  x#0*y#0 - x#1*y#1 - x#2*y#2 - x#3*y#3,
+	  x#0*y#1 + x#1*y#0 + x#2*y#3 - x#3*y#2,
+	  x#0*y#2 + x#2*y#0 + x#3*y#1 - x#1*y#3,
+	  x#0*y#3 + x#3*y#0 + x#1*y#2 - x#2*y#1
+	  };",
+     	  "w*w"
+	  },
+     Subnodes => {
+	 TO "new",
+	 TO "printing and formatting for new classes",
+     }
+}
+
+document {
      Key => "new",
      Headline => "new objects and new types",
      PARA {
@@ -228,6 +317,47 @@ document {
      }
 
 document {
+     Key => "printing and formatting for new classes",
+     "After making a new type, it's desirable to install methods
+     for displaying the instances of the new type in various formats.",
+     EXAMPLE {
+	  "Qu = new Type of List",
+	  "w = new Qu from {1,-2,0,4}",
+	  },
+     "For example, it's desirable to display the quaternion above
+     so it looks like a quaternion.  One way to achieve this is to install
+     first a method for creating an ", TO "Expression", " from a
+     quaternion, since there are methods already installed for converting
+     expressions to common forms of output, such as to nets, which are
+     used most commonly.",
+     EXAMPLE {
+	  ///expression Qu := z -> (
+	       expression z#0 +
+	       expression z#1 * expression "I" +
+	       expression z#2 * expression "J" +
+	       expression z#3 * expression "K");///,
+	  ///net Qu := z -> net expression z;///,
+	  ///toString Qu := z -> toString expression z;///,
+	  ///tex Qu := z -> tex expression z;///,
+	  ///html Qu := z -> html expression z;///,
+	  "w",
+	  "toString w",
+	  "tex w",
+	  "html w",
+     	  },
+     "Of course, now that we've decided that there should be certain
+     quaternions called ", TT "I", ", ", TT "J", ", and ", TT "K", ",
+     perhaps we should install them, too.",
+     EXAMPLE {
+	  "I = new Qu from {0,1,0,0}",
+	  "J = new Qu from {0,0,1,0}",
+	  "K = new Qu from {0,0,0,1}",
+	  "2*I + 5*J",
+	  "peek oo"
+	  }
+     }
+
+document {
      Key => newClass,
      Headline => "set the class and parent of an object",
      SYNOPSIS (
@@ -391,23 +521,6 @@ document {
      }
 
 document {
-     Key => copy,
-     Headline => "copy an object",
-     TT "copy x", " yields a copy of x.",
-     PARA{},
-     "If x is an hash table, array, list or sequence, then the elements are
-     placed into a new copy. If x is a hash table, the copy is mutable if
-     and only if x is.",
-     PARA{},
-     "It is not advisable to copy such things as modules and rings,
-     for: (1) the operations that have already been installed for them will return
-     values in the original object, rather than in the copy; and (2) the copy
-     operation is shallow, not copying keys and values that happen to be hash tables.",
-     PARA{},
-     SeeAlso => { "newClass" }
-     }
-
-document {
      Key => {instance,(instance, Thing, Type)},
      Headline => "whether something has a certain type",
      TT "instance(x,X)", " -- tells whether ", TT "x", " is an instance
@@ -523,274 +636,6 @@ document {
      TO "Command", " is an example of a self initializing type.",
      SeeAlso => {"HeaderType", "WrapperType"}
      }
-
-
-document {
-     Key => MutableHashTable,
-     Headline => "the class of all mutable hash tables",
-     PARA{},
-     "A mutable hash table is a type of hash table whose entries can be changed.",
-     PARA{},
-     "Normally the entries in a mutable hash table are not printed, to prevent
-     infinite loops in the printing routines.  To print them out, use
-     ", TO "peek", ".",
-     EXAMPLE {
-	  "x = new MutableHashTable",
-	  "scan(0 .. 30, i -> x#i = i^2)",
-	  "x # 20",
-	  "x #? 40",
-	  },
-     SeeAlso => "HashTable"
-     }
-
-document {
-     Key => {
-	 hashTable,
-	 (hashTable, BasicList),
-	 (hashTable, Function, BasicList)},
-     Headline => "make a hash table",
-     TT "hashTable(h,v)", " -- produce a hash table from a list ", TT "v", " of key-value pairs, with an optional collision handler function ", TT "h", ".",
-     PARA{},
-     "The pairs may be of the form ", TT "a=>b", ", ", TT "{a,b}", ",
-     or ", TT "(a,b)", ".",
-     PARA{},
-     "Missing entries in the list, represented by ", TO "null", ", will be silently
-     ignored.",
-     PARA{},
-     EXAMPLE {
-	  "x = hashTable {a=>b, c=>d, }",
-	  "x#a",
-	  "hashTable(plus, {(a,3),(b,4),(a,10)})"
-	  },
-     }
-
-document {
-     Key => ZZ,
-     Headline => "the class of all integers" }
-
-document {
-     Key => QQ,
-     Headline => "the class of all rational numbers",
-     EXAMPLE "1/2 + 3/5"}
-
-document {
-     Key => RR,
-     Headline => "the class of all real numbers",
-     "A real number is entered as a sequence of decimal digits with a point.  It is stored internally
-     as an arbitrary precision floating point number, using the ", TO "MPFR", " library.",
-     EXAMPLE "3.14159",
-     "The precision is measured in bits, is visible in the ring displayed on
-     the second of each pair of output lines, and can be recovered using ", TO "precision", ".",
-     EXAMPLE "precision 3.14159",
-     "For real numbers, the functions ", TO "class", " and ", TO "ring", " yield different
-     results.  That allows numbers of various precisions
-     to be used without creating a new ring for each precision.",
-     EXAMPLE {"class 3.1", "ring 3.1"},
-     "The precision can be specified on input by appending the letter ", TT "p", " and a positive number.",
-     EXAMPLE "3p300",
-     "An optional exponent (for the power of ten to multiply by) can be specified on input
-     by appending the letter ", TT "e", " and a number.",
-     EXAMPLE {"3e3", "-3e-3", "-3p111e-3"},
-     "Numbers that appear alone on an output line are displayed with all their meaningful digits.
-     (Specifying 100 bits of precision yields about 30 decimal digits of precision.)",
-     EXAMPLE {"1/3.","1/3p100", "100 * log(10,2)"},
-     "Numbers displayed inside more complicated objects are printed with the number of digits
-     specified by ", TO "printingPrecision", ".",
-     EXAMPLE {"printingPrecision","{1/3.,1/3p100}"},
-     "The notion of equality tested by ", TO "==", " amounts to equality of the internal binary digits.",
-     EXAMPLE {".5p100 == .5p30", ".2p100 == .2p30"},
-     "The notion of (strict) equality tested by ", TO "===", " also takes the precision into account.",
-     EXAMPLE {".5p100 === .5p30", ".2p100 === .2p30"},
-     "Perhaps surprisingly, the IEEE floating point standard also specifies that every number, including 0,
-     has a sign bit, and strict equality testing takes it into account, as it must do, because some arithmetic
-     and transcendental functions take it into account.",
-     EXAMPLE lines ///
-     0.
-     -0.
-     1/0.
-     1/-0.
-     log 0
-     csc (0.)
-     csc (-0.)
-     ///,
-     "Use ", TO "toExternalString", " to produce something that, when encountered as input, will reproduce
-     exactly what you had before.",
-     EXAMPLE lines ///
-	  x = {1/3.,1/3p100}
-	  x == {.333333, .333333}
-	  y = toExternalString x
-	  x === value y
-     ///,
-     "Transcendental constants and functions are available to high precision, with ", TO "numeric", ".",
-     EXAMPLE lines ///
-	  numeric pi
-	  numeric_200 pi
-	  Gamma oo
-	  ///,
-     SeeAlso => {toRR, numeric, precision, format, "printingPrecision", "printingAccuracy",
-	  "printingLeadLimit", "printingTrailLimit", "printingSeparator",
-	  "maxExponent", "minExponent"
-	  }
-     }
-
-document {
-     Key => RR',
-     Headline => "the parent class of all rings of real numbers",
-     PARA {
-	  "Floating point real numbers are treated in a special way.  Recall first to create a polynomial, one must
-	  first create a polynomial ring to contain it.  And then, the polynomial ring is the class of the polynomial."
-	  },
-     EXAMPLE lines ///
-     R = QQ[x,y,z]
-     x^2
-     class x^2
-     ///,
-     PARA {
-	  "Floating point real numbers, however, can be created directly, as follows, without creating a ring."
-	  },
-     EXAMPLE lines ///
-     r = 4.5
-     s = 4.3p300
-     ///,
-     PARA {
-	  "The floating point numbers created above have different precisions, and thus are regarded as being elements of 
-	  different rings, whose elements all have the same precision."
-	  },
-     EXAMPLE lines ///
-     precision r
-     precision s
-     ring r
-     ring s
-     ///,
-     PARA {
-	  "In order to make it convenient to define methods that apply to all such rings, those rings have a common
-	  parent, namely ", TT "RR'", ".  Notice that ", TT "RR'", " is printed in a special way."
-	  },
-     EXAMPLE lines ///
-     RR'
-     parent ring r     
-     parent ring s
-     parent ring s === RR'
-     ///
-     }
-
-document {
-     Key => CC,
-     Headline => "the class of all complex numbers",
-     "In Macaulay2, complex numbers are represented as floating point numbers, and so are
-     only approximate.  The symbol ", TO "ii", " represents the square root of -1 in many numeric
-     contexts.  A complex number is obtained by using the symbolic constant ", TO "ii", " or the conversion
-     functions ", TO "toCC", " and ", TO "numeric", ", in combination with real numbers (see ", TO "RR", ").
-     It is stored internally as a pair of arbitrary precision floating point real numbers, using
-     the ", TO "MPFR", " library.",
-     EXAMPLE {
-	  "z = 3-4*ii",
-	  "z^5",
-	  "1/z",
-	  "+ii",
-	  "numeric_200 ii",
-	  },
-     "Complex numbers are ordered lexicographically, mingled with real numbers.",
-     EXAMPLE {
-	  "sort {1+ii,2+ii,1-ii,2-ii,1/2,2.1,7/5}"
-	  },
-     "The precision is measured in bits, is visible in the ring displayed on
-     the second of each pair of output lines, and can be recovered using ", TO "precision", ".",
-     EXAMPLE "precision z",
-     "For complex numbers, the functions ", TO "class", " and ", TO "ring", " yield different
-     results.  That allows numbers of various precisions
-     to be used without creating a new ring for each precision.",
-     EXAMPLE {"class z", "ring z"},
-     "A computation involving numbers of different precisions has a result with the minimal precision occurring.
-     Numbers that appear alone on an output line are displayed with all their meaningful digits.
-     (Specifying 100 bits of precision yields about 30 decimal digits of precision.)",
-     EXAMPLE "3p100+2p90e3*ii",
-     "Numbers displayed inside more complicated objects are printed with the number of digits
-     specified by ", TO "printingPrecision", ".",
-     EXAMPLE {"printingPrecision","x = {1/3.*ii,1/3p100*ii}"},
-     "Use ", TO "toExternalString", " to produce something that, when encountered as input, will reproduce
-     exactly what you had before.",
-     EXAMPLE lines ///
-	  y = toExternalString x
-	  value y === x
-     ///,
-     Caveat => { "Currently, most transcendental functions are not implemented for complex arguments." },
-     SeeAlso => {"ii", toCC, toRR, numeric, precision, format, "printingPrecision", "printingAccuracy", "printingLeadLimit", "printingTrailLimit", "printingSeparator"}
-     }
-
-document {
-     Key => CC',
-     Headline => "the parent class of all rings of complex numbers",
-     PARA {
-	  "Floating point complex numbers are treated in a special way.  Recall first to create a polynomial, one must
-	  first create a polynomial ring to contain it.  And then, the polynomial ring is the class of the polynomial."
-	  },
-     EXAMPLE lines ///
-     R = QQ[x,y,z]
-     x^2
-     class x^2
-     ///,
-     PARA {
-	  "Floating point complex numbers, however, can be created directly, as follows, without creating a ring."
-	  },
-     EXAMPLE lines ///
-     r = 4.5 * ii
-     s = 4.3p300 * ii
-     ///,
-     PARA {
-	  "The floating point numbers created above have different precisions, and thus are regarded as being elements of 
-	  different rings, whose elements all have the same precision."
-	  },
-     EXAMPLE lines ///
-     precision r
-     precision s
-     ring r
-     ring s
-     ///,
-     PARA {
-	  "In order to make it convenient to define methods that apply to all such rings, those rings have a common
-	  parent, namely ", TT "CC'", ".  Notice that ", TT "CC'", " is printed in a special way."
-	  },
-     EXAMPLE lines ///
-     CC'
-     parent ring r     
-     parent ring s
-     parent ring s === CC'
-     ///
-     }
-
-undocumented {RRi'}
-
-document {
-     Key => RRi,
-     Headline => "the class of all real intervals",
-     "A real interval is entered as a pair of real numbers to the interval function.  It is stored internally as an arbitrary precision interval using the ", TO "MPFI", " library.",
-     EXAMPLE "interval(3.1415,3.1416)",
-     "The precision is measured in bits, is visible in the ring displayed on
-     the second of each pair of output lines, and can be recovered using ", TO "precision", ".",
-     EXAMPLE "precision interval(3.1415,3.1416)",
-     "For real intervals, the functions ", TO "class", " and ", TO "ring", " yield different
-     results.  That allows numbers of various precisions
-     to be used without creating a new ring for each precision.",
-     EXAMPLE {"class interval(3.1,3.5)", "ring interval(3.1,3.5)"},
-     "The precision can be specified on input by specifying the precision of both input ", TO "RR", " numbers.",
-     "Alternatively, the precision can be specified by including the option ", TT "Precision", ".",
-     EXAMPLE {"interval(2.5p100,3.2p1000)","interval(2.5,3.2,Precision=>200)"},
-     "Intervals can also be created using ", TO (span,Sequence), " to create the smallest interval containing the inputs.",
-     EXAMPLE {"span(2,Precision=>100)","span(2,3,interval(-1.5,-0.5),73)"},
-     "Operations using intervals are computed as sets so that the resulting intervals contain all possible outputs from pairs of points in input intervals.",
-     EXAMPLE {"interval(1,3)+interval(2,4)","interval(-1,1)*interval(2,3)","interval(0,1)-interval(0,1)","interval(1,2)/interval(1,2)"},
-     "The notion of equality tested by ", TO "==", " amounts to checking the equality of the endpoints of intervals.",
-     "The notion of equality tested by ", TO "===", " takes into account the precision of the inputs as well.",
-     EXAMPLE {"interval(1,3) == interval(1,3,Precision=>100)","interval(1,3) === interval(1,3,Precision=>100)","interval(1/3,1,Precision=>100)==interval(1/3,1,Precision=>1000)"},
-     "The notion of inequalities for intervals amounts to testing the inequality for all points in the intervals.  In particular, ",TO "<=", " is not the same as ",TO "<"," or ",TO "==",".",
-    EXAMPLE {"interval(1,2)<=interval(2,3)","interval(1,2)<=interval(1,2)", "interval(1,2)<interval(2,3)","interval(1,2)<interval(3,4)"},
-     "Transcendental functions on intervals produce intervals containing the image of the function on the interval.",
-     EXAMPLE {"exp(interval(2,4))","cos(interval(1,1.3))","sqrt(interval(2))"},
-     "Transcendental functions are available to high precision, with ", TO "numericInterval", ".",
-    EXAMPLE {"numericInterval(100,pi)","numericInterval_200 EulerConstant"},
-    SeeAlso => {toRRi, numericInterval, precision, interval, (span,Sequence), (span,List)}
-	  }
 
 document {
      Key => Vector,
