@@ -365,9 +365,9 @@ outfile = openOut(outdir | "/test-parse.m2")
 outfile << commentize  copyrightBanner << endl
 for tst in sort select(tsts, f -> match("^y_", f)) do (
     outfile << endl << commentize tst << endl;
-    json = get(testdir | "/" | tst);
+    testjson = get(testdir | "/" | tst);
     outfile << "assert BinaryOperation(symbol ===, fromJSON " <<
-    format json << ", " << toExternalString fromJSON json << ")" << endl)
+    format testjson << ", " << toExternalString fromJSON testjson << ")" << endl)
 close outfile
 ///
 
