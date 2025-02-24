@@ -292,6 +292,7 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 -- Handling operators
 -----------------------------------------------------------------------------
 
+-- e.g. symbol +
 getOperator := key -> if operator#?key then (
     op := toString key;
     if match("^[[:alpha:]]*$", op) then op = " " | op | " ";
@@ -366,7 +367,8 @@ getSynopsis := (key, tag, rawdoc) -> (
 	if rawdoc.?Consequences then DIV { "Consequences:", UL rawdoc.Consequences }};
     if #result > 0 then fixup UL result)
 
-getDefaultOptions := (nkey, opt) -> DIV ( -- e.g., [(res, Module), Strategy => FastNonminimal]
+-- e.g., [(res, Module), Strategy => FastNonminimal]
+getDefaultOptions := (nkey, opt) -> DIV (
     if instance(nkey, Sequence)
     and #methods nkey > 0       then fn := first nkey else
     if instance(nkey, Function) then fn  =       nkey;
@@ -401,7 +403,6 @@ getBody := (key, tag, rawdoc) -> (
 	HEADER1{ formatDocumentTag key, commentize getOption(rawdoc, Headline) },
 	if synopsis =!= null then DIV { SUBSECTION "Synopsis", synopsis },
 	getDescription(key, tag, rawdoc),
-	if instance(key, Array) then getDefaultOptions(key#0, key#1),
 	getOption(rawdoc, Acknowledgement),
 	getOption(rawdoc, Contributors),
 	getOption(rawdoc, References),
@@ -418,7 +419,8 @@ getBody := (key, tag, rawdoc) -> (
 	if instance(key, Array)    then (
 	    if instance(opt := key#1, Option)
 	    then documentationValue(opt#0, opt)
-	    else documentationValue(opt, value opt)),
+	    else documentationValue(opt, value opt),
+	    getDefaultOptions(key#0, key#1)),
 	getOption(rawdoc, Subnodes));
     currentHelpTag = null;
     result)
