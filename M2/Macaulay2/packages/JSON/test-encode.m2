@@ -71,3 +71,7 @@ assert Equation(toJSON Core, "\"Core\"")
 -- hypertext
 assert Equation(toJSON HREF("foo.html", "foo"),
     ///"<a href=\"foo.html\">foo</a>"///)
+
+-- control characters
+x = ascii(0..31) | "\\\""
+assert Equation(fromJSON toJSON x, x)
