@@ -15,10 +15,6 @@ export {"generateGrammar"}
 
 importFrom(Core, "sortBy")
 
--- TODO: Move these two elsewhere:
-Function and Function := (f, g) -> s -> f s and g s
-Function or  Function := (f, g) -> s -> f s or  g s
-
 is := X -> (name, symb) -> instance(value symb, X)
 
 isAlpha        := s -> match("^[[:alpha:]]+$", s)
