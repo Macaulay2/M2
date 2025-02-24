@@ -392,38 +392,52 @@ getDescription := (key, tag, rawdoc) -> (
 	else DIV { SUBSECTION "Description", desc })
     else DIV { COMMENT "empty documentation body" })
 
+-- Returns the contents of a documentation node prepared for JSON serialization
+getData = (key, tag, rawdoc) -> (
+    currentHelpTag = tag;
+    result := new HashTable from {
+	Headline        => ( formatDocumentTag key, commentize getOption(rawdoc, Headline) ),
+	"Synopsis"      => getSynopsis(key, tag, rawdoc),
+	Description     => getDescription(key, tag, rawdoc),
+	SourceCode      => getOption(rawdoc, SourceCode),
+	Acknowledgement => getOption(rawdoc, Acknowledgement),
+	Contributors    => getOption(rawdoc, Contributors),
+	References      => getOption(rawdoc, References),
+	Caveat          => getOption(rawdoc, Caveat),
+	SeeAlso         => getOption(rawdoc, SeeAlso),
+	Subnodes        => getOption(rawdoc, Subnodes),
+	-- this is so a "Ways to use" section is listed when multiple
+	-- method keys are documented together without the base function
+	"WaysToUse"     => DIV (
+	    if instance(key, Sequence) then (
+		documentationValue(, key)) else
+	    if instance(key, Symbol)   then (
+		documentationValue(key, value key),
+		getTechnical(key, value key)) else
+	    if instance(key, Array)    then (
+		if instance(opt := key#1, Option)
+		then documentationValue(opt#0, opt)
+		else documentationValue(opt, value opt),
+		getDefaultOptions(key#0, key#1))),
+    };
+    result = applyValues(result,  val -> fixup val);
+    result = selectValues(result, val -> val =!= null and val =!= () and val =!= DIV{});
+    currentHelpTag = null;
+    result)
+
 -- This is the overall template of a documentation page
 -- for specialized templates, see documentationValue above
 -- TODO: allow customizing the template for different output methods
 -- TODO: combine sections when multiple tags are being documented (e.g. strings and methods)
 getBody := (key, tag, rawdoc) -> (
-    currentHelpTag = tag;
-    synopsis := getSynopsis(key, tag, rawdoc);
-    result := fixup DIV nonnull splice (
-	HEADER1{ formatDocumentTag key, commentize getOption(rawdoc, Headline) },
-	if synopsis =!= null then DIV { SUBSECTION "Synopsis", synopsis },
-	getDescription(key, tag, rawdoc),
-	getOption(rawdoc, Acknowledgement),
-	getOption(rawdoc, Contributors),
-	getOption(rawdoc, References),
-	getOption(rawdoc, Caveat),
-	getOption(rawdoc, SourceCode),
-	getOption(rawdoc, SeeAlso),
-	-- this is so a "Ways to use" section is listed when multiple
-	-- method keys are documented together without the base function
-	if instance(key, Sequence) then (
-	    documentationValue(, key)) else
-	if instance(key, Symbol)   then (
-	    documentationValue(key, value key),
-	    getTechnical(key, value key)) else
-	if instance(key, Array)    then (
-	    if instance(opt := key#1, Option)
-	    then documentationValue(opt#0, opt)
-	    else documentationValue(opt, value opt),
-	    getDefaultOptions(key#0, key#1)),
-	getOption(rawdoc, Subnodes));
-    currentHelpTag = null;
-    result)
+    DIV nonnull splice (
+	data := getData(key, tag, rawdoc);
+	HEADER1 toList data.Headline,
+	apply(("Synopsis", Description, SourceCode, Acknowledgement,
+		Contributors, References, Caveat, SeeAlso, Subnodes, "WaysToUse"),
+	    section -> if data#?section then data#section)
+        )
+    )
 
 -----------------------------------------------------------------------------
 -- View help within Macaulay2
