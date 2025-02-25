@@ -62,27 +62,27 @@ captureTestResult := (desc, teststring, pkg, usermode) -> (
     runString(teststring, pkg, usermode))
 
 loadTestDir := pkg -> (
-    testDir := (
+    pkg#"test directory loaded" = true;
+    testDir := minimizeFilename(
 	-- prioritize Core tests from source repository
-	if (pkg === Core and topSrcdir =!= null and (
-		dir := minimizeFilename(topSrcdir | "Macaulay2/tests/normal/");
-		isDirectory dir)) then dir
-	else pkg#"package prefix" | replace("PKG", pkg#"pkgname",
-	    currentLayout#"packagetests"));
-    pkg#"test directory loaded" =
+	if pkg === Core then (
+	    if topSrcdir =!= null and (
+		dir := topSrcdir | "Macaulay2/tests/normal/";
+		isDirectory dir) then dir
+	    else Core#"source directory" | "tests/")
+	else pkg#"source directory" | pkg#"pkgname" | "/tests/");
     if fileExists testDir then (
 	printerr("loading tests from ", testDir);
-        tmp := currentPackage;
-        currentPackage = pkg;
+	tmp := currentPackage;
+	currentPackage = pkg;
 	scan(sort select(readDirectory testDir, file -> match("\\.m2$", file)),
 	    test -> addTest(testDir | test));
-        currentPackage = tmp;
-        true) else false)
+	currentPackage = tmp))
 
 tests = method()
 tests Package := pkg -> (
-    if not pkg#?"test directory loaded" then loadTestDir pkg;
     if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"pkgname", LoadDocumentation => true, Reload => true);
+    if not pkg#?"test directory loaded" then loadTestDir pkg;
     previousMethodsFound = new NumberedVerticalList from pkg#"test inputs"
     )
 tests String := pkg -> tests needsPackage(pkg, LoadDocumentation => true)
