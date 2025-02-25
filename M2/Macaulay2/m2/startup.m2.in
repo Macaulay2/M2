@@ -236,29 +236,24 @@ if firstTime then (
 	  or select("a+","$&","aaa aaaa") =!= {"aaa","aaaa"}
 	  then error "regex regular expression library not working";
 	  t := hashTable {
-	       "exec" => "${exec_prefix}/",
-	       "common" => "${prefix}/",
 	       "bin" => "@bindir@/",
-	       "lib" => "@libdir@/",
-	       "info" => "@infodir@/",
 	       "data" => "@datadir@/",
-	       "man" => "@mandir@/",
-	       "emacs" => "@emacsdir@/",
-	       "doc" => "@docdir@/",
-	       "packages" => "@packagesdir@/",
 	       "docdir" => "@docdir@/",
-	       "libraries" => "@librariesdir@/",
-	       "programs" => "@programsdir@/",
-	       "program licenses" => "@licensesdir@/",
-	       "package" => "@packagesdir@/PKG/",
+	       "emacs" => "@emacsdir@/",
 	       "factory gftables" =>  "@GFTABLESDIR@",
-	       "packagedoc" => "@docdir@/PKG/",
-	       "packageimages" => "@docdir@/PKG/images/",
-	       "packagetests" => "@docdir@/PKG/tests/",
-	       "packagehtml" => "@docdir@/PKG/html/",
+	       "info" => "@infodir@/",
+	       "lib" => "@libdir@/",
+	       "libraries" => "@librariesdir@/",
+	       "man" => "@mandir@/",
+	       "package" => "@packagesdir@/PKG/",
 	       "packagecache" => "@libm2dir@/PKG/cache/",
+	       "packagedoc" => "@docdir@/PKG/",
+	       "packageexampleoutput" => "@docdir@/PKG/example-output/",
+	       "packagehtml" => "@docdir@/PKG/html/",
 	       "packagelib" => "@libm2dir@/PKG/",
-	       "packageexampleoutput" => "@docdir@/PKG/example-output/"
+	       "packages" => "@packagesdir@/",
+	       "program licenses" => "@licensesdir@/",
+	       "programs" => "@programsdir@/"
 	       };
 	  Layout = hashTable {
 	       1 => applyValues( t, x -> replace("^\\$\\{(pre_)?(exec_)?prefix\\}/", "", x)),
