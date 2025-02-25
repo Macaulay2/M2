@@ -52,15 +52,6 @@ generateSymbols = () -> (
 
     if length symbols < 1500 then error "expected more entries for M2-symbols";
 
-    -- Check for invalid symbols
-    bad := select(symbols, (name, symb) -> not okay(name, symb));
-    if #bad > 0 then error(
-	"encountered symbol(s) that are not alphanumeric or have less than 2 characters:",
-	concatenate apply(bad, (name, symb) -> {
-		"\n\t",
-		-* TODO: symbolLocation name, ": here is the first use of ", *-
-		toString name}));
-
     -------------------------------------------------------------------------------
     -- Put the symbols into bins
     cachedSymbols.Symbol   = first \ select(symbols,
