@@ -51,7 +51,7 @@ examples ZZ := seeAbout_examples
 counter := 0
 next := () -> counter = counter + 1
 optTO := key -> (
-    tag := makeDocumentTag(key, Package => package key);
+    tag := makeDocumentTag(key, Package => package' key);
     ptag := getPrimaryTag tag;
     fkey := format tag;
     if currentHelpTag.?Key and instance(currentHelpTag.Key, Sequence) and currentHelpTag =!= ptag then return;
@@ -156,7 +156,7 @@ documentationValue(Symbol, Thing) := (S, X) -> ()
 -- e.g. Macaulay2Doc :: MethodFunction
 documentationValue(Symbol, Type)  := (S, T) -> (
     -- catch when an unexported type is documented; TODO: where should this be caught?
-    if package T === null then error("encountered unexported type ", toString T);
+    if package' T === null then error("encountered unexported type ", toString T);
     -- types that inherit from T
     b := smenu(toString \ subclasses T);
     -- constructors of T
@@ -387,7 +387,7 @@ getDefaultOptions := (nkey, opt) -> DIV (
 getDescription := (key, tag, rawdoc) -> (
     desc := getOption(rawdoc, Description);
     if desc =!= null and #desc > 0 then (
-	desc = processExamples(package tag, format tag, desc);
+	desc = processExamples(package' tag, format tag, desc);
 	if instance(key, String) then DIV { desc } -- overview key
 	else DIV { SUBSECTION "Description", desc })
     else DIV { COMMENT "empty documentation body" })
