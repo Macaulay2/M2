@@ -1950,12 +1950,9 @@ document {
 
 layoutMap := new HashTable from {
     "bin" => "executable files (M2)",
-    "common" => "architecture independent files",
     "data" => "architecture independent data files",
-    "doc" => "documentation",
     "docdir" => "documentation for Macaulay2 packages",
     "emacs" => "Emacs source files (*.el, *.elc)",
-    "exec" => "architecture dependent files",
     "factory gftables" => "directory for files containing addition tables in small finite fields used by the library 'factory'",
     "info" => "documentation in info form",
     "lib" => "architecture dependent data and executable files",
@@ -1966,12 +1963,10 @@ layoutMap := new HashTable from {
     "packagedoc" => "documentation for the Macaulay2 package PKG",
     "packageexampleoutput" => "example output files for the Macaulay2 package PKG",
     "packagehtml" => "html documentation for the Macaulay2 package PKG (*.html)",
-    "packageimages" => "images for the Macaulay2 package PKG (*.jpg)",
     "packagelib" => "architecture dependent files for the Macaulay2 package PKG",
     "packages" => "source files for Macaulay2 packages; this directory appears on the path",
-    "packagetests" => "test files for the Macaulay2 package PKG",
-    "programs" => "programs to be run by Macaulay2",
-    "program licenses" => "licenses for programs to be run by Macaulay2"
+    "program licenses" => "licenses for programs to be run by Macaulay2",
+    "programs" => "programs to be run by Macaulay2"
 }
 assert( set keys Layout#1 === set keys Layout#2 )
 assert( set keys Layout#1 === set keys layoutMap )
