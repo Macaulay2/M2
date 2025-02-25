@@ -60,9 +60,20 @@ generateSymbols = () -> (
     cachedSymbols.Type     = first \ select(symbols, isType);
     cachedSymbols.Function = first \ select(symbols, isFunction);
     cachedSymbols.Constant = sort join(
-	first \ select(symbols, isConst),
-	{"Node", "Item", "Example", "CannedExample", "Pre", "Code", "Tree",
-	    "Synopsis"}); -- SimpleDoc words
+	first \ select(symbols, isConst), {
+	    -- SimpleDoc docstring keywords -- keep updated
+	    -- NodeFunctions
+	    "Node",
+	    "Synopsis",
+	    -- DescriptionFunctions
+	    "CannedExample",
+	    "Code",
+	    "Example",
+	    "Pre",
+	    "Tree",
+	    -- ConsequenceFunctions
+	    "Item"
+	    });
     )
 
 -------------------------------------------------------------------------------
