@@ -23,6 +23,7 @@ newPackage(
 * add several new toJSON methods (Thing, MutableHashTable, Hypertext)
 * set toJSON to Dispatch => Thing so it will work for short sequences
 * properly deal w/ escaped characters in fromJSON
+* move tests to "tests" subdirectory
 
 0.3 (2024-09-14, M2 1.24.11)
 * remove redundant Constant methods now that we can use inheritance
@@ -367,7 +368,7 @@ Copyright 2016 Nicolas Seriot
 MIT License
 https://github.com/nst/JSONTestSuite"
 
-outfile = openOut(outdir | "/test-parse.m2")
+outfile = openOut(outdir | "/tests/parse.m2")
 outfile << commentize  copyrightBanner << endl
 for tst in sort select(tsts, f -> match("^y_", f)) do (
     outfile << endl << commentize tst << endl;
@@ -376,6 +377,3 @@ for tst in sort select(tsts, f -> match("^y_", f)) do (
     format testjson << ", " << toExternalString fromJSON testjson << ")" << endl)
 close outfile
 ///
-
-TEST get(currentPackage#"auxiliary files" | "test-parse.m2")
-TEST get(currentPackage#"auxiliary files" | "test-encode.m2")
