@@ -36,13 +36,12 @@ std::string_view next_line(std::string_view& str)
   return result;
 }
 
-
 // TODO: check for overflow
 // TODO: make a readCoefficient function
 //  it should be able to read arbitrary precision ints too...
 //  also maybe a set of variables for the coefficient ring
 //  and allow e.g.: (3*a+2)*x^2*y^3
-long readInteger(const std::string_view& str, size_t& begin_loc, size_t end_loc)
+long readInteger_long(const std::string_view& str, size_t& begin_loc, size_t end_loc)
 {
   // if str[0] is a digit, find the value, and increment str past the number.
   // if it is not: return 1, leave str unchanged.
@@ -57,6 +56,23 @@ long readInteger(const std::string_view& str, size_t& begin_loc, size_t end_loc)
 
   begin_loc = loc;
   return result;
+}
+
+// allocates memory to (and inits) an __mpz_struct
+void readInteger_mpz_t(mpz_t& result, const std::string_view& str, size_t& begin_loc, size_t end_loc)
+{
+  // if str[0] is a digit, find the value, and increment str past the number.
+  // if it is not: return 1, leave str unchanged.
+  if (not isdigit(str[begin_loc])) return 1;
+  mpz_set_ui(result, 0);
+  size_t loc = begin_loc;
+  while (loc < end_loc and isdigit(str[loc]))
+    {
+      mpz_mul_ui(result, result, 10);
+      mpz_add_ui(result, result, (str[loc] - '0'));
+      loc++;
+    }
+  begin_loc = loc;
 }
 
 int readIdentifier(const std::string_view& str, const IdentifierHash& map, size_t& begin_loc, size_t end_loc)
@@ -105,9 +121,8 @@ void parseBasicPoly(const std::string_view& str, const IdentifierHash& idenHash,
   size_t begin_loc = 0;
   size_t end_loc = str.size();
 
-  result.mCoefficients.clear();
-  result.mMonomials.clear();
-
+  result.clear();
+  
   if (end_loc > begin_loc and str[begin_loc] == '[')
     {
       ++begin_loc;
@@ -134,10 +149,12 @@ void parseBasicPoly(const std::string_view& str, const IdentifierHash& idenHash,
           ++begin_loc;
           sign = -1;
         }
-      long coeff = readInteger(str, begin_loc, end_loc); // defaults to 1 if no integer present.
+      mpz_t coeff;
+      mpz_init(coeff);
+      readInteger_mpz_t(coeff, str, begin_loc, end_loc); // defaults to 1 if no integer present.
 
-      if (sign == -1) coeff = -coeff;
-      result.mCoefficients.push_back(coeff);
+      if (sign == -1) mpz_neg(coeff,coeff);
+      result.mCoefficients.push_back(coeff); // do not clear(coeff) !
 
       // Now we read the monomial part.
       long loc = result.mMonomials.size(); // this is where the length field will go.
@@ -184,7 +201,7 @@ void parseBasicPoly(const std::string_view& str, const IdentifierHash& idenHash,
                 {
                   throw parsing_error("expected a digit at position " + std::to_string(begin_loc));
                 }
-              e = readInteger(str, begin_loc, end_loc);
+              e = readInteger_long(str, begin_loc, end_loc);
             }
           // if exponent is zero, don't add anything to monomial.
           if (e != 0)
