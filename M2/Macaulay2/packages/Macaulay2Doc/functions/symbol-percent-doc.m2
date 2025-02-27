@@ -3,6 +3,45 @@
 --- author(s): kummini, MES
 --- notes: 
 
+document {
+    Key => {
+	 symbol %,
+	(symbol %, ZZ, ZZ), -- only one defined in the interpreter
+	(symbol %, Number, Number),
+	(symbol %, Number, RingElement),
+	(symbol %, RingElement, Number),
+	(symbol %, InexactNumber, RingElement),
+	(symbol %, RingElement, InexactNumber),
+	(symbol %, List, RingElement),
+	(symbol %, List, Number),
+	},
+    Headline => "a binary operator, usually used for remainder and reduction",
+    Usage => "x % y",
+    "The usual meaning for this operator is remainder, or normal form with respect to a Gröbner basis.",
+    PARA{},
+    "For integers, the remainder is non-negative.",
+    EXAMPLE lines ///
+    1232132141242345 % 1000000
+    (-4) % 5
+    ///,
+    PARA{},
+    "In polynomial rings, the division algorithm is used.",
+    EXAMPLE lines ///
+    A = ZZ[a,b]
+    (3*a^3-a*b-4) % (5*a-b)
+    pseudoRemainder(3*a^3-a*b-4, 5*a-b)
+    B = QQ[a,b]
+    (3*a^3-a*b-4) % (5*a-b)
+    ///,
+    "In more complicated situations, Gröbner bases are usually needed.",
+    " See ", TO "methods for normal forms and remainder", ".",
+    SeeAlso => { remainder, remainder', pseudoRemainder, "//"},
+    Subnodes => {
+	TO "methods for normal forms and remainder",
+	TO (symbol %, Matrix, GroebnerBasis),
+	}
+    }
+
 document { 
      Key => {
 	  "methods for normal forms and remainder",
@@ -10,11 +49,15 @@ document {
 	  (symbol %, RingElement, MonomialIdeal),
 	  (symbol %, RingElement, Matrix),
 	  (symbol %, RingElement, RingElement),
+	  (symbol %, Vector, Ideal), -- TODO: add all Vector methods or remove this one?
 	  (symbol %, Matrix, Ideal),
 	  (symbol %, Matrix, MonomialIdeal),
 	  (symbol %, Matrix, RingElement),
-	  (symbol %, Matrix, Module),
-	  (symbol %, Matrix, Matrix)	  
+	  (symbol %, Matrix, Module), -- TODO: add all Module methods or remove this one?
+	  (symbol %, Matrix, Matrix),
+	  (symbol %, Number, Ideal),
+	  (symbol %, Number, MonomialIdeal),
+	  (symbol %, Number, Matrix),
 	  },
      Headline => "normal form of ring elements and matrices",
      SYNOPSIS(
@@ -84,6 +127,7 @@ document {
 document { 
      Key => {
 	  (symbol %, Matrix, GroebnerBasis),
+	  (symbol %, Number, GroebnerBasis),
 	  (symbol %, RingElement, GroebnerBasis)
 	  },
      Headline => "calculate the normal form of ring elements and 

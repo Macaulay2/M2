@@ -151,7 +151,7 @@ glynn Matrix := (M) -> (
 
       --need to divide in Glynn's formula
       --so can't be characteristic 2
-      perm=perm//2^(n-1);
+      perm = perm / 2^(n-1);
       perm
 )
 

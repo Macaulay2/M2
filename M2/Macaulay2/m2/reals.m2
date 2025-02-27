@@ -210,20 +210,8 @@ new CC from RawRingElement := (CCC,x) -> ( assert( CCC === CC ); rawToCC x)
 
 CC.InverseMethod = y -> conjugate y / y^2
 
-scan((QQ,RR,CC), F -> (
-	  F // F := (x,y) -> if y == 0 then 0_F else x/y;
-	  F % F := (x,y) -> if y == 0 then x else 0_F;
-	  F // ZZ := (x,y) -> x // y_F;
-	  F % ZZ := (x,y) -> x % y_F;
-	  ))
-
-scan((RR,CC), F -> (
-	  F // QQ := (x,y) -> x // y_F;
-	  F % QQ := (x,y) -> x % y_F;
-	  ))
-
-CC // RR := (x,y) -> x // y_CC;
-CC % RR := (x,y) -> x % y_CC;
+Number // Number := (x, y) -> promote(if y == 0 then 0 else floor(x / y), ring x)
+Number %  Number := (x, y) -> x - y * (x // y)
 
 -- functions
 realPart ZZ :=
