@@ -240,7 +240,6 @@ export {
 	"Iterator",
 	"Jacobian",
 	"Join",
-	"Jupyter",
 	"KeepFiles",
 	"KeepZeroes",
 	"Key",
