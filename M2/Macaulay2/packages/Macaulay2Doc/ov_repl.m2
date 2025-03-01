@@ -370,7 +370,7 @@ document {
      Headline => "the current top level mode",
      Usage => "topLevelMode = x",
      Inputs => {
-	  "x" => Symbol => {TO "TeXmacs", ", or ", TO "Standard", " or ", TO "WebApp", " or ", TO "Jupyter"}
+	  "x" => Symbol => {TO "TeXmacs", ", or ", TO "Standard", " or ", TO "WebApp"}
 	  },
      Consequences => {
 	  {"the interpreter will produce input and output prompts appropriate for the mode, and will
@@ -398,12 +398,6 @@ document {
      the use of the (currently developed) web app with (Ka)TeX output as front end.",
      SeeAlso => { Standard, Print, NoPrint, BeforePrint, AfterPrint,AfterNoPrint}
      }
-document {
-    Key => Jupyter,
-    Headline => "top level printing method used in the Jupyter kernel",
-    "The mode allows for a more semantic output, with input, STDOUT, value and class clearly delimited.",
-    SeeAlso => {Standard, TeXmacs, WebApp}
-    }
 
 document {
      Key => "shield",

@@ -411,10 +411,6 @@ CoherentSheaf#AfterPrint = F -> ("coherent sheaf on ", variety F,
     if M.?relations                   then (", quotient of ",    ambient F)
     )
 
--- used to be in m2/jupyter.m2
-CoherentSheaf#{Jupyter, AfterPrint} = F -> (
-    << "[CLS]" << endl; CoherentSheaf#{Standard,AfterPrint}(F) )
-
 -- used to be in m2/expressions.m2
 SheafExpression = new WrapperType of Expression;
 toString'(Function, SheafExpression) := (fmt,x) -> toString'(fmt,new FunctionApplication from { sheaf, x#0 })
