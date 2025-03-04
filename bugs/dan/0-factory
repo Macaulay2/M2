@@ -1,4 +1,0 @@
-Now that we use libcfmem, but patch it so it doesn't redefine operators new and
-delete, we no longer want to use it if we find at configure time.  We always
-want to use the patched version.  So maybe we just make libcfmem part of
-Macaulay2, using the svn mechanism for vendor branches.

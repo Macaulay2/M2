@@ -1,9 +1,0 @@
-we need different hash codes:
-
-i52 : hash createTask (() -> for i to 200000 do 0)
-
-o52 = 123459
-
-i53 : hash createTask (() -> for i to 200000 do 0)
-
-o53 = 123459

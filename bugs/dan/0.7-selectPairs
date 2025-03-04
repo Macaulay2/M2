@@ -1,6 +1,0 @@
-
-I like the idea of a select function that looks at keys.  We could call it
-selectPairs, and the user-provided selection function would be handed the pair
-(k,v).  I'll add it to my list of things to do for 1.4.
-
-(Idea due to Baptiste Calmes.)
