@@ -15,6 +15,102 @@ doc ///
       value pythonValue "[1, 2/3, 'foo', (1, 2, 3), {'foo' : 'bar'}]"
       math = import "math"
       math@@sqrt 2
+  SeeAlso
+    "Python tutorial: matplotlib"
+///
+
+doc ///
+  Key
+    "Python tutorial: matplotlib"
+  Description
+    Text
+      In this tutorial, we use @HREF{"https://matplotlib.org/", "matplotlib"}@
+      to plot the twisted cubic.
+
+      First, we import the necessary modules using @TO import@.  Note that
+      we can essentially replace the Python @CODE "import foo as bar"@ with
+      @CODE "bar = import \"foo\""@.
+    CannedExample
+      i2 : plt = import "matplotlib.pyplot"
+
+      o2 = <module 'matplotlib.pyplot' from
+           '/usr/lib/python3/dist-packages/matplotlib/pyplot.py'>
+
+      o2 : PythonObject of class module
+
+      i3 : np = import "numpy"
+
+      o3 = <module 'numpy' from '/usr/lib/python3/dist-packages/numpy/__init__.py'>
+
+      o3 : PythonObject of class module
+    Text
+      Next, we begin to create the various Python objects needed for our
+      plot.  This example is heavily inspired by the
+      @HREF{"https://matplotlib.org/stable/gallery/mplot3d/lines3d.html",
+	  "Parametric curve"}@ example in the matplotlib documentation.
+
+      Note that we basically replace the Python @CODE "foo.bar"@ with
+      @CODE "foo\x40\x40bar"@ (see @TO getattr@).  We need to be careful for
+      attributes that include underscores.  They must given as strings, i.e.,
+      delimited using quotes.  This is also the case for keyword arguments.
+    CannedExample
+      i4 : fig = plt@@figure()
+
+      o4 = Figure(640x480)
+
+      o4 : PythonObject of class matplotlib.figure.Figure
+
+      i5 : ax = fig@@"add_subplot"("projection" => "3d")
+
+      o5 = Axes3DSubplot(0.125,0.11;0.775x0.77)
+
+      o5 : PythonObject of class matplotlib.axes._subplots.Axes3DSubplot
+
+      i6 : t = np@@linspace(-10, 10, 100)
+
+      o6 = [-10.          -9.7979798   -9.5959596   -9.39393939  -9.19191919
+             -8.98989899  -8.78787879  -8.58585859  -8.38383838  -8.18181818
+             -7.97979798  -7.77777778  -7.57575758  -7.37373737  -7.17171717
+             -6.96969697  -6.76767677  -6.56565657  -6.36363636  -6.16161616
+             -5.95959596  -5.75757576  -5.55555556  -5.35353535  -5.15151515
+             -4.94949495  -4.74747475  -4.54545455  -4.34343434  -4.14141414
+             -3.93939394  -3.73737374  -3.53535354  -3.33333333  -3.13131313
+             -2.92929293  -2.72727273  -2.52525253  -2.32323232  -2.12121212
+             -1.91919192  -1.71717172  -1.51515152  -1.31313131  -1.11111111
+             -0.90909091  -0.70707071  -0.50505051  -0.3030303   -0.1010101
+              0.1010101    0.3030303    0.50505051   0.70707071   0.90909091
+              1.11111111   1.31313131   1.51515152   1.71717172   1.91919192
+              2.12121212   2.32323232   2.52525253   2.72727273   2.92929293
+              3.13131313   3.33333333   3.53535354   3.73737374   3.93939394
+              4.14141414   4.34343434   4.54545455   4.74747475   4.94949495
+              5.15151515   5.35353535   5.55555556   5.75757576   5.95959596
+              6.16161616   6.36363636   6.56565657   6.76767677   6.96969697
+              7.17171717   7.37373737   7.57575758   7.77777778   7.97979798
+              8.18181818   8.38383838   8.58585859   8.78787879   8.98989899
+              9.19191919   9.39393939   9.5959596    9.7979798   10.        ]
+
+      o6 : PythonObject of class numpy.ndarray
+    Text
+      Now we construct the twisted cubic.  Note that even though Python itself
+      uses @CODE "**"@ for exponentiation, we use @TO symbol ^@ for consistency
+      with the rest of Macaulay2.
+    CannedExample
+      i7 : ax@@plot(t, t^2, t^3)
+
+      o7 = [<mpl_toolkits.mplot3d.art3d.Line3D object at 0x78bdf578a000>]
+
+      o7 : PythonObject of class list
+    Text
+      Finally, we show our plot.  It will appear in a separate window.
+    CannedExample
+      i8 : plt@@show()
+
+      o8 = None
+
+      o8 : PythonObject of class NoneType
+    Text
+      @IMG("src" => Python#"auxiliary files" | "twisted-cubic.png",
+	  "alt" => "parametric plot of the twisted cubic")@
 ///
 
 doc ///
