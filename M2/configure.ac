@@ -1472,16 +1472,38 @@ AC_ARG_ENABLE(linbox,
     ENABLE_LINBOX=yes
     )
 
-AC_SUBST(ENABLE_FPLLL,no)
-AC_ARG_ENABLE(fplll,
-    [AS_HELP_STRING(--enable-fplll,[enable building the fplll library and linking with it])],
-    AC_DEFINE(HAVE_FPLLL,1,[whether we are linking with the fplll library])
-    BUILD_fplll=yes
-    ENABLE_FPLLL=yes
-    )
-    
 test $BUILD_linbox = yes && BUILTLIBS="-llinbox $BUILTLIBS"
-test $BUILD_fplll = yes && BUILTLIBS="-lfplll $BUILTLIBS"
+
+AC_LANG([C++])
+AC_ARG_WITH([fplll],
+    [AS_HELP_STRING([--with-fplll], [enable linking with the fplll library])])
+
+AS_IF([test "x$with_fplll" = "xyes"],
+    [AC_DEFINE([HAVE_FPLLL], [1],
+	[whether we are linking with the fplll library])
+     AS_IF([test "x$BUILD_fplll" = "xno"],
+         [AC_CHECK_HEADER([fplll.h],
+             [AC_MSG_CHECKING([for library containing lll_reduction])
+	      SAVELIBS=$LIBS
+	      LIBS="$LIBS -lfplll"
+	      AC_LINK_IFELSE(
+	         [AC_LANG_PROGRAM(
+	             [
+		      #include <fplll.h>
+		     ],
+		     [fplll::ZZ_mat<mpz_t> mat(2, 2);
+		      lll_reduction(mat, 0.99, 0.51, fplll::LM_WRAPPER,
+		                    fplll::FT_DEFAULT, 0, fplll::LLL_DEFAULT);
+		     ])],
+	         [AC_MSG_RESULT([-lfplll])],
+	         [LIBS=$SAVELIBS
+		  BUILD_fplll=yes
+	          AC_MSG_RESULT([no])])],
+             [BUILD_fplll=yes])
+	  AS_IF([test "x$BUILD_fplll" = "xyes"],
+	     [AC_MSG_NOTICE([fplll not found; will build])])])
+     AS_IF([test "x$BUILD_fplll" = "xyes"],
+         [BUILTLIBS="-lfplll $BUILTLIBS"])])
 
 SINGULARLIBS="-lfactory  "
 if test $BUILD_factory = no
