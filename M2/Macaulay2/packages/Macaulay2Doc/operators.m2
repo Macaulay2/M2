@@ -2,6 +2,8 @@ load "./operators/dotdot.m2"
 load "./operators/caret.m2"
 load "./operators/shift.m2"
 load "./operators/equality.m2"
+load "./operators/quotient.m2"
+load "./operators/division.m2"
 load "./operators/comparison.m2"
 load "./operators/assignment.m2"
 load "./operators/augmented_assignment.m2"
@@ -423,4 +425,79 @@ document {
      Key => symbol @,
      Headline => "a binary operator",
      "This operator is right associative."
+     }
+
+document {
+     Key => { (symbol /,VisibleList,Function),
+	  (symbol /,List,Function),
+	  (symbol \,Function,VisibleList),
+	  (symbol \,Function,VirtualTally),
+	  (symbol \,SelfInitializingType,VisibleList),
+	  (symbol \,Command,VisibleList),
+	  (symbol \,RingMap,VisibleList),
+	  (symbol \,Command,VirtualTally),
+	  (symbol /, List, SelfInitializingType),
+	  (symbol /,VisibleList,SelfInitializingType),
+	  (symbol /,List,Command),
+	  (symbol /, Set, Command),
+	  (symbol /, Set, Function),
+	  (symbol /,VirtualTally,Command),
+	  (symbol /,VirtualTally,Function),
+	  (symbol /,VisibleList,RingMap),
+	  (symbol /,VisibleList,Command),
+	  (symbol /,String,Command),
+	  (symbol /,String,Function),
+	  (symbol \,Command,String),
+	  (symbol \,Function,String)
+	  },
+     Headline => "apply a function to elements of a list",
+     Usage => "x/f\nf\\x",
+     Inputs => { "x" => Nothing => {ofClass{VisibleList,List,Sequence,Array,Tally,Set,String}}, "f" => Nothing => {ofClass{Function,Command,SelfInitializingType,RingMap}} },
+     Outputs => {{ "the list, tally, or set obtained by applying ", TT "f", " to each element of ", TT "x", "; it has the same type as ", TT "x", " has" }},
+     PARA {
+	  "The function ", TO "apply", " does the same thing."
+	  },
+     PARA {
+     	  "The operator ", TO "/", " is left associative, which means that ", TT "w / f / g", " is interpreted as ", TT "(w / f) / g", ".
+     	  The operator ", TO "\\", " is right associative, so ", TT ///g \ f \ w///, " is interpreted as ", TT ///g \ (f \ w)///, ".
+	  Both operators have parsing precedence lower than that of ", TO "@@", ", which means that the previous two expressions are equivalent to ", TT "w / g @@ f", "
+	  and ", TT "g @@ f \\ w", ", respectively. See ", TO "precedence of operators", "."
+	  },
+     EXAMPLE lines ///
+     	  f = x -> x+1
+	  g = x -> 2*x
+     	  g \ (1 .. 10)
+     	  (1 .. 10) / g
+     	  f \ g \ (1 .. 10)
+     	  f @@ g \ (1 .. 10)
+	  set (1 .. 10)
+	  g \ oo
+	  R = QQ[x];
+	  f = map(R,R,{x^2})
+	  f \ {x,x^2,x^3,x^4}
+     ///,
+     SourceCode => {(symbol /,VisibleList,Function)},
+     }
+
+document {
+     Key => { (symbol /,Ideal,Function),
+	  (symbol \,Function,Ideal)},
+     Headline => "apply a function to generators of an ideal",
+     Usage => "I/f\nf\\I",
+     Inputs => { "I","f"},
+     Outputs => {List => { "obtained by applying the function ", TT "f", " to each generator of ", TT "I"}},
+     PARA {
+     	  "The operator ", TO "/", " is left associative, which means that ", TT "w / f / g", " is interpreted as ", TT "(w / f) / g", ".
+     	  The operator ", TO "\\", " is right associative, so ", TT ///g \ f \ w///, " is interpreted as ", TT ///g \ (f \ w)///, ".
+	  Both operators have parsing precedence lower than that of ", TO "@@", ", which means that the previous two expressions are
+	  equivalent to ", TT "w / g @@ f", "
+	  and ", TT "g @@ f \\ w", ", respectively. See ", TO "precedence of operators", "."
+	  },
+     EXAMPLE lines ///
+     	  R = ZZ[a..d];
+	  I = ideal"abc-d3,ab-d-1,a2+b2+c3-14d-3"
+     	  I/size
+	  (f->f+a*b-1)\I
+	  I/leadTerm/support/set//sum
+     ///,
      }
