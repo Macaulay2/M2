@@ -66,7 +66,7 @@ jobs:
           brew config
           brew tap macaulay2/tap
           brew install --overwrite python
-          brew install automake boost tbb ccache ctags texinfo llvm make ninja yasm libffi msolve googletest
+          brew install automake boost tbb ccache ctags texinfo llvm make ninja yasm libffi msolve googletest fplll
           brew install --only-dependencies macaulay2/tap/M2
           brew link factory --force
 
@@ -85,7 +85,8 @@ jobs:
                   libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libmpfi-dev libntl-dev gfan \
                   libgivaro-dev libboost-regex-dev fflas-ffpack libflint-dev libmps-dev libfrobby-dev \
                   libsingular-dev singular-data libcdd-dev cohomcalg topcom 4ti2 libnormaliz-dev normaliz coinor-csdp \
-                  libnauty-dev nauty lrslib polymake pipx phcpack w3c-markup-validator libtbb-dev qepcad libomp-16-dev msolve
+                  libnauty-dev nauty lrslib polymake pipx phcpack w3c-markup-validator libtbb-dev qepcad libomp-16-dev \
+                  msolve libfplll-dev
 
 # ----------------------
 #   Steps common to all build variants
@@ -162,7 +163,7 @@ jobs:
             -L`brew --prefix libomp`/lib         \
             -L`brew --prefix readline`/lib"
           export F77=gfortran-14
-          ../../configure --enable-download --with-system-gc
+          ../../configure --enable-download --with-system-gc --with-fplll
 
       - name: Build Macaulay2 using Make
         if: matrix.build-system == 'autotools'
