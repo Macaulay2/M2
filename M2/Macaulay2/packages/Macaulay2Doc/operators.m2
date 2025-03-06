@@ -4,6 +4,7 @@ load "./operators/shift.m2"
 load "./operators/equality.m2"
 load "./operators/quotient.m2"
 load "./operators/division.m2"
+load "./operators/factoring.m2"
 load "./operators/comparison.m2"
 load "./operators/assignment.m2"
 load "./operators/augmented_assignment.m2"
@@ -501,3 +502,29 @@ document {
 	  I/leadTerm/support/set//sum
      ///,
      }
+
+document {
+    Key => {
+	(symbol //, Thing, Function),
+	(symbol //, Thing, Command),
+	(symbol //, Thing, SelfInitializingType),
+	(symbol \\, Function, Thing),
+	(symbol \\, Command, Thing),
+	(symbol \\, SelfInitializingType, Thing)
+    },
+    Headline => "apply a function",
+    Usage => "x // f\nf \\\\ x",
+    Inputs => { "x", "f" => Nothing => {ofClass{Function,Command,SelfInitializingType}}},
+    Outputs => {{ "the result of applying ", TT "f", " to ", TT "x", ", i.e., ", TT "f x" }},
+    SeeAlso => {(symbol /,VisibleList,Function)},
+    PARA {
+	"The parsing precedence of the operators ", TT "//", " and ", TT "\\\\", " is rather low, which makes
+	them useful for avoiding parentheses.  See ", TO "precedence of operators", "."
+    },
+    EXAMPLE lines ///
+     	  toList \\ sin \ ( 1 .. 5 )
+     	  ( 1 .. 5 ) / sin // toList
+	  (x -> (x,x)) \ (a,b,c,d)
+	  splice \\ (x -> (x,x)) \ (a,b,c,d)
+    ///
+    }
