@@ -384,6 +384,12 @@ doc ///
         t = format s
         u = value t
         u == s
+      Text
+        The characters that are escaped are double quotes, backslashes, and
+        all @wikipedia "control characters"@.  In particular, the outputted
+        string will be valid @wikipedia "JSON"@.
+      Example
+        format(ascii(0..31) | "\"\\")
   Synopsis
     Usage
       format(s,k,l,t,e,x)
