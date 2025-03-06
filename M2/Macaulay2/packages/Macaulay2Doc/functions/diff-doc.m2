@@ -162,3 +162,17 @@ document {
 	  TO (diff,ProjectiveHilbertPolynomial,ZZ)
 	  }
      }
+
+document {
+     Key => {(diff', Matrix, Matrix), diff'},
+     Headline => "differentiate a matrix by a matrix, the dual notion",
+     Usage => "h = diff'(m,n)",
+     Inputs => {
+	  "m" => {"a map ", TT "m : F <--- P", " between free modules of ranks f and p."},
+	  "n" => {"a map ", TT "n : G <--- Q", " between free modules of ranks g and q."}
+	  },
+     Outputs => {
+	  "h" => {"a matrix with the shape ", TT "h : F ** dual G <--- P ** dual Q", ", whose entry in the slot ", TT {"h", SUB "g*i+j,q*k+l"}, "
+	       is the result of differentiating ", TT {"n", SUB "j,l"}, ", by ", TT { "m", SUB "i,k" }}},
+     SeeAlso => {diff,"diff and contract"}
+     }

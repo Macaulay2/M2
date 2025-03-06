@@ -48,7 +48,6 @@ load "./doc10.m2"
 load "./doc12.m2"
 load "./doc14.m2"
 
-load "./overview4.m2"
 load "./doc_ideals.m2"
 load "./doc_module.m2"
 load "./doc_mutablematrices.m2"
