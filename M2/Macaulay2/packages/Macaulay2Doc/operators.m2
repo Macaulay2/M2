@@ -442,6 +442,8 @@ document {
 	  (symbol /,List,Command),
 	  (symbol /, Set, Command),
 	  (symbol /, Set, Function),
+	  (symbol \, Command, Set),
+	  (symbol \, Function, Set),
 	  (symbol /,VirtualTally,Command),
 	  (symbol /,VirtualTally,Function),
 	  (symbol /,VisibleList,RingMap),
