@@ -61,3 +61,16 @@ document {
      ///,
      SeeAlso => {(symbol %, Matrix, Matrix), generators, diff, substitute, quotient, remainder, quotientRemainder }
      }
+
+-- TODO: document these:
+-*
+doc ///
+Node
+  Key
+    (symbol \\, Matrix, Matrix)
+    (symbol \\, Matrix, Number)
+    (symbol \\, Number, Matrix)
+    (symbol \\, Matrix, RingElement)
+    (symbol \\, RingElement, Matrix)
+///
+*-
