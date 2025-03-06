@@ -1,27 +1,5 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
-document {
-     Key => {(symbol //,Thing,Function),(symbol \\,Function,Thing),
-	  (symbol //,Thing,Command),(symbol \\,Command,Thing),
-	  (symbol //,Thing,SelfInitializingType),(symbol \\,SelfInitializingType,Thing)
-	  },
-     Headline => "apply a function",
-     Usage => "x // f\nf \\\\ x",
-     Inputs => { "x", "f" => Nothing => {ofClass{Function,Command,SelfInitializingType}}},
-     Outputs => {{ "the result of applying ", TT "f", " to ", TT "x", ", i.e., ", TT "f x" }},
-     SeeAlso => {(symbol /,VisibleList,Function)},
-     PARA {
-	  "The parsing precedence of the operators ", TT "//", " and ", TT "\\\\", " is rather low, which makes
-	  them useful for avoiding parentheses.  See ", TO "precedence of operators", "."
-	  },
-     EXAMPLE lines ///
-     	  toList \\ sin \ ( 1 .. 5 )
-     	  ( 1 .. 5 ) / sin // toList
-	  (x -> (x,x)) \ (a,b,c,d)
-	  splice \\ (x -> (x,x)) \ (a,b,c,d)
-     ///
-     }
-
 document { Key => {(numRows, Matrix),(numRows, MutableMatrix),numRows},
      Headline => "number of rows in a matrix or mutable matrix",
      Usage => "numRows m", Inputs => { "m" }, Outputs => {{ "the number of rows in ", TT "m" }}}

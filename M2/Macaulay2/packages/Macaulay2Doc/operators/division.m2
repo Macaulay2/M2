@@ -16,6 +16,11 @@ undocumented {
     (symbol /, RingElement, Constant),
     (symbol /, RingElement, InexactNumber),
     (symbol /, RingElement, Number),
+    --
+    (symbol //, InexactNumber, RingElement),
+    (symbol //, InfiniteNumber, CC),
+    (symbol //, InfiniteNumber, InfiniteNumber),
+    (symbol //, RingElement, InexactNumber),
     -- TODO: automate these
     (symbol /, Expression, OneExpression),
     (symbol /, Holder, OneExpression),
@@ -76,6 +81,50 @@ document {
      },
      SeeAlso => { "//"}
      }
+
+document {
+    Key => {
+	 symbol //,
+	(symbol //, ZZ, ZZ),
+	(symbol //, CC, CC),
+	(symbol //, CC, QQ),
+	(symbol //, CC, RR),
+	(symbol //, CC, ZZ),
+	(symbol //, InfiniteNumber, Number),
+	(symbol //, InfiniteNumber, RR),
+	(symbol //, List, Number),
+	(symbol //, List, RingElement),
+	(symbol //, QQ, QQ),
+	(symbol //, Number, RingElement),
+	(symbol //, QQ, ZZ),
+	(symbol //, RingElement, Number),
+	(symbol //, RR, QQ),
+	(symbol //, RR, RR),
+	(symbol //, RR, ZZ),
+	(symbol //, Number, InfiniteNumber),
+	(symbol //, ZZ, MonomialIdeal)
+    },
+    Headline => "a binary operator, usually used for quotient",
+    Usage => "x // y",
+    "For ring elements in the integers, polynomial rings, and other rings,
+    there are two types of division:  exact division, whose result is often in a larger
+    field, such as the rationals or a function field, and division with remainder,
+    whose result is in the same ring.  In Macaulay2, '/' denotes the first kind of division, while
+    '//' denotes the latter kind.
+    The following example shows
+    the difference between ", TO "//", " and ", TO "/", ".",
+    EXAMPLE lines ///
+     	  4/2
+	  4//2
+    ///,
+    EXAMPLE lines ///
+     	  R = QQ[x];
+	  (x^2-3)//(x-1)
+	  (x^2-3)%(x-1)
+	  (x^2-3)/(x-1)
+    ///,
+    SeeAlso => { "/", "%" }
+    }
 
 doc ///
   Key
