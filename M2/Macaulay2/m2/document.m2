@@ -204,7 +204,10 @@ makeDocumentTag String      := opts -> key -> (
 -- TODO: can this be modified to fix the tag in-place? then we would only need to
 -- fix the tag in (validate, TO), rather than also in (info, TO) and (html, TO).
 fixup DocumentTag := DocumentTag => tag -> (
-    if (rawdoc := fetchAnyRawDocumentation tag) =!= null then rawdoc.DocumentTag else tag)
+    tag' := if (rawdoc := fetchAnyRawDocumentation tag) =!= null then rawdoc.DocumentTag else tag;
+    if package tag === package tag' then tag' else printerr("warning: ambiguous reference ",
+	format toString tag, " and ", format toString tag', " when processsing ", toString locate currentDocumentTag);
+    tag')
 
 -----------------------------------------------------------------------------
 -- formatting document tags
