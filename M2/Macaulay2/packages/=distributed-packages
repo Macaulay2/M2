@@ -176,6 +176,7 @@ Chordal
 Tropical
 SymbolicPowers
 Complexes
+OldChainComplexes
 GroebnerWalk
 RandomMonomialIdeals
 Matroids
