@@ -527,7 +527,7 @@ Node
     newRing
     (tensor, Ring, Ring)
     symmetricAlgebra
-    "Dmodules::makeWeylAlgebra"
+    "WeylAlgebras::makeWeylAlgebra"
 
 Node
   Key

@@ -24,7 +24,7 @@ export "taylor"
 export "taylorResolution"
 export "chainComplexMap"
 export "InitialDegree"
-export "minimize"
+--export "minimize"
 export "isMinimalChainComplex"
 export "extendFromMiddle"
 export "resolutionOfChainComplex"
@@ -484,7 +484,6 @@ nonzeroMax ChainComplex := (cacheValue symbol nonzeroMax)(C -> (
    complete C;
    max for i from min C to max C list if C_i == 0 then continue else i))
 
-minimize = method ()
 minimize ChainComplex := E ->(
     --To simplify the notation consider the complex C = E[min E] that
     --is shifted so that the first nonzero module is C_0.
@@ -1137,12 +1136,11 @@ document {
 	  betti source resolutionOfChainComplex C
 	  betti source cartanEilenbergResolution C
         SeeAlso
-	 minimize
+	 (minimize, ChainComplex)
      ///
 
 doc ///
    Key
-    minimize
     (minimize, ChainComplex)
    Headline
     minimal quotient complex of a free ChainComplex 

@@ -359,11 +359,10 @@ setupMethods(TypicalValue => Boolean,
       isSubset, isHomogeneous, isField
 	  })
 setupMethods(TypicalValue => ZZ, {
-	binomial, char, degreeLength, depth, dim, euler, genus, height,
+	binomial, char, degreeLength, depth, dim, height,
 	numgens, numColumns, numRows, pdim, rank, width})
-setupMethods(TypicalValue => List, {
-	degrees, eulers, genera})
 
+degrees = method(TypicalValue => List)
 length = method(TypicalValue => ZZ, Dispatch => Thing)
 codim = method( Options => true )
 
