@@ -82,6 +82,7 @@ document {
 	  TO (symbol ^, Ring, List),
 	  TO (vars, Ring),
 	  },
+     Subnodes => TO EngineRing,
      }
 document {
     Key => Engine,
@@ -105,7 +106,15 @@ document {
 	"a ring, in which case another top-level ring is formed as
 	an interface to the same underlying engine ring.",
 	"the handle of on engine ring"
-	}}
+	},
+    Subnodes => {
+        TO InexactField,
+	TO GaloisField,
+	TO FractionField,
+	TO PolynomialRing,
+	TO QuotientRing,
+        },
+    }
 document {
     Key => RingElement,
     Headline => "the class of all ring elements handled by the engine",

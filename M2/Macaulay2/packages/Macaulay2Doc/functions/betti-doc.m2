@@ -84,6 +84,8 @@ Node
       C.dd
   Contributors
     Hans-Christian von Bothmer donated the last feature.
+  Subnodes
+    MultigradedBettiTally
 ///
 
 ------------------
@@ -251,8 +253,6 @@ Node
     regularity
     pdim
   Subnodes
-    BettiTally
-    MultigradedBettiTally
     (multigraded, BettiTally)
     (betti, BettiTally)
     [betti, Minimize]

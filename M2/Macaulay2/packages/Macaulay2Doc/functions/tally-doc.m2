@@ -31,7 +31,11 @@ document {
      Key => Tally,
      Headline => "the class of all tally results",
      TT "Tally", " -- a class designed to hold tally results, i.e., multisets.",
-     SeeAlso => {VirtualTally}
+     SeeAlso => { Set },
+     Subnodes => {
+	 TO (symbol +, Tally, Tally),
+	 TO (symbol -, Tally, Tally),
+         }
      }
 
 document {
@@ -45,7 +49,18 @@ document {
 	  x-y
 	  x'-y'
      ///,
-     SeeAlso => { BettiTally }
+     Subnodes => {
+	 TO Tally,
+	 TO BettiTally,
+	 TO (symbol **, VirtualTally, VirtualTally),
+	 TO (symbol ^**, VirtualTally, ZZ),
+	 TO (symbol +, VirtualTally, VirtualTally),
+	 TO (symbol -, VirtualTally, VirtualTally),
+	 TO (symbol -, VirtualTally),
+	 TO (symbol _, VirtualTally, Thing),
+	 TO (product, VirtualTally),
+	 TO (sum, VirtualTally),
+         }
      }
 
 document {
@@ -62,6 +77,11 @@ document {
 	  },
      SeeAlso => {"Tally", "tally"}
      }
+
+-- TODO
+document {
+     Key => (symbol -, VirtualTally, VirtualTally),
+}
 
 document {
      Key => (symbol +, VirtualTally, VirtualTally),

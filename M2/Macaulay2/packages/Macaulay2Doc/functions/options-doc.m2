@@ -16,9 +16,9 @@ Node
     get options
   Subnodes
     Option
-    OptionTable
     (options, Function)
   SeeAlso
+    OptionTable
     Options
     method
     methods
