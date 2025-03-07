@@ -1,0 +1,39 @@
+Description: De-vendor cddlib
+Origin: (in part) https://sources.debian.org/src/topcom/1.1.2%2Bds-1.1/debian/patches/dont-build-libraries.patch/
+
+diff --git a/configure.ac b/configure.ac
+index 2372711..94a45ef 100644
+--- a/configure.ac
++++ topcom-1.1.2/configure.ac
+@@ -43,9 +43,6 @@ else
+   AC_MSG_NOTICE([... done])
+ fi
+ 
+-dnl Make libcddgmp:
+-make -C external cdd
+-
+ dnl Check for requests for third-party packages:
+ dnl Check for qsopt_ex:
+ AC_MSG_CHECKING(whether QSOpt_ex support was enabled)
+--- a/src-reg/Makefile.am
++++ topcom-1.1.2/src-reg/Makefile.am
+@@ -4,7 +4,7 @@ checkregularity_SOURCES = checkregularity.cc
+ 
+ LDADD           = ../lib-src/libTOPCOM.a \
+                   ../lib-src-reg/libCHECKREG.a \
+-                  ../external/lib/libcddgmp.a
++                  -lcddgmp
+ if USE_QSOPTEX
+ LDADD          += ../external/lib/libqsopt_ex.a
+ endif
+--- a/src/Makefile.am
++++ topcom-1.1.2/src/Makefile.am
+@@ -123,7 +123,7 @@ santos_22_triang_SOURCES           = santos_22_triang.cc
+ 
+ LDADD           = ../lib-src/libTOPCOM.a \
+                   ../lib-src-reg/libCHECKREG.a \
+-                  ../external/lib/libcddgmp.a
++                  -lcddgmp
+ if USE_QSOPTEX
+ LDADD          += ../external/lib/libqsopt_ex.a
+ endif
