@@ -646,8 +646,8 @@ _ADD_COMPONENT_DEPENDENCY(libraries fflas_ffpack gmp FFLAS_FFPACK_FOUND)
 
 # https://www.gnu.org/software/glpk/
 ExternalProject_Add(build-glpk
-  URL               https://ftp.gnu.org/gnu/glpk/glpk-4.65.tar.gz
-  URL_HASH          SHA256=4281e29b628864dfe48d393a7bedd781e5b475387c20d8b0158f329994721a10
+  URL               https://ftp.gnu.org/gnu/glpk/glpk-5.0.tar.gz
+  URL_HASH          SHA256=4a1013eebb50f728fc601bdd833b0b2870333c3b3e5a816eeba921d95bec6f15
   PREFIX            libraries/glpk
   SOURCE_DIR        libraries/glpk/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
