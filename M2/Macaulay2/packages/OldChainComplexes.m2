@@ -14,23 +14,19 @@ export {}
 -* Documentation section *-
 beginDocumentation()
 
+load "./OldChainComplexes/ov_chaincomplexes.m2"
 load "./OldChainComplexes/doc9.m2"
 
-///
+doc ///
 Key
   OldChainComplexes
 Headline
+  legacy chain complex code and doc
 Description
   Text
-  Tree
-  Example
-  CannedExample
-Acknowledgement
-Contributors
-References
-Caveat
-SeeAlso
-Subnodes
+    This package contains code we are moving from the Core.
+    The first part of the plan is to consolidate all legacy chain complex
+    code and doc in one package.  Later, we will make this not preloaded.
 ///
 
 ///
