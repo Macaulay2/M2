@@ -13,7 +13,10 @@ document {
      }
 
 document {
-     Key => (symbol _, Matrix, List),
+    Key => {
+	(symbol _, Matrix, List),
+	(symbol _, MutableMatrix, List),
+    },
      Headline => "select columns",
      Usage => "f_cols",
      Inputs => {
@@ -34,7 +37,10 @@ document {
      SeeAlso => {submatrix, (symbol ^, Matrix, List)}
      }
 document {
-     Key => (symbol ^, Matrix, List),
+    Key => {
+	(symbol ^, Matrix, List),
+	(symbol ^, MutableMatrix, List),
+    },
      Headline => "select rows",
      Usage => "f_rows",
      Inputs => {

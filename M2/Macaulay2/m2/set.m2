@@ -70,8 +70,7 @@ Tally ? ZZ := (x,i) -> x ? toTally i
 ZZ ? Tally := (i,x) -> toTally i ? x
 *-
 
-RingElement * VirtualTally := Number * VirtualTally := (i,v) -> if i==0 then new class v from {} else applyValues(v,y->y*i)
-RingElement * Tally := (i,v) -> lift(i,ZZ) * v
+Number * VirtualTally := (i,v) -> if i==0 then new class v from {} else applyValues(v,y->y*i)
 Number * Tally := (i,v) -> if i<=0 then new class v from {} else applyValues(v,y->y*i)
      
 sum VirtualTally := (w) -> sum(pairs w, (k,v) -> v * k)

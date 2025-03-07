@@ -1,3 +1,6 @@
+undocumented select(makeDocumentTag \ methods symbol ?,
+    m -> package m === Macaulay2Doc and not isUndocumented m and isMissingDoc m)
+
 document {
      Key => symbol <,
      Headline => "less than",
@@ -38,29 +41,7 @@ undocumented {
      (symbol <=, Thing, Thing),
      (symbol >=, Thing, Thing)
      }
-
-undocumented {
-     (symbol ?, TO2, TO2),
-     (symbol ?, TO2, TO),
-     (symbol ?, TO, TO2),
-     (symbol ?, TOH, TO2),
-     (symbol ?, TO2, TOH),
-     (symbol ?, TO, TO),
-     (symbol ?, String, DocumentTag),
-     (symbol ?, DocumentTag, String),
-     (symbol ?, TOH, TO),
-     (symbol ?, TO, TOH),
-     (symbol ?, InfiniteNumber, InfiniteNumber),
-     (symbol ?, DocumentTag, DocumentTag),
-     (symbol ?, Thing, InfiniteNumber),
-     (symbol ?, TOH, TOH),
-     (symbol ?, InfiniteNumber, Thing),
-     (symbol ?, ZZ, MonoidElement),
-     (symbol ?, MonoidElement, ZZ),
-     (symbol ?, RingElement, ZZ),
-     (symbol ?, ZZ, RingElement)
-     }
-
+    
 document {
      Key => {symbol ?,
      	  (symbol ?, Symbol, IndexedVariable),

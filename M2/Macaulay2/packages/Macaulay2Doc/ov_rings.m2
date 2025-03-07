@@ -49,10 +49,8 @@ document {
 	  TO "ZZ", 
 	  TO "QQ", 
 	  TO "RR",
-	  TO "RR'",
 	  TO "RRi",
 	  TO "CC",
-	  TO "CC'",
 	  },
      "The names of some of these rings are double letters so the corresponding symbols
      with single letters are preserved for use as variables.",
