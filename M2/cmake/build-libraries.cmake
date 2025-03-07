@@ -865,19 +865,18 @@ _ADD_COMPONENT_DEPENDENCY(programs gfan "gmp;cddlib" GFAN)
 # http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html
 # TODO: the shared library target doesn't work on Apple
 ExternalProject_Add(build-lrslib
-  URL               http://cgm.cs.mcgill.ca/~avis/C/lrslib/archive/lrslib-071.tar.gz
-  URL_HASH          SHA256=d3ea5636bfde3011d43c835773fabe131d9251197b6cc666a52d8caa3e1c7816
+  URL               https://cgm.cs.mcgill.ca/~avis/C/lrslib/archive/lrslib-073.tar.gz
+  URL_HASH          SHA256=c49a4ebd856183473d1d5a62785fcdfe1057d5d671d4b96f3a1250eb1afe4e83
   PREFIX            libraries/lrslib
   SOURCE_DIR        libraries/lrslib/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/lrslib/patch-071
   CONFIGURE_COMMAND true
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} lrs # all-shared
                       INCLUDEDIR=${GMP_INCLUDE_DIRS}
                       LIBDIR=${GMP_LIBRARY_DIRS}
                       CPPFLAGS=${CPPFLAGS}
-                      CFLAGS=${CFLAGS}
+                      "CFLAGS=${CFLAGS} -Ilrsarith-011"
                       LDFLAGS=${LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
                       RANLIB=${CMAKE_RANLIB}
