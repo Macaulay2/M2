@@ -59,7 +59,6 @@ libraries/msolve/Makefile
 libraries/nauty/Makefile
 libraries/normaliz/Makefile
 libraries/ntl/Makefile
-libraries/pari/Makefile
 libraries/polymake/Makefile
 libraries/readline/Makefile
 libraries/tbb/Makefile
