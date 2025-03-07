@@ -112,7 +112,44 @@ document {
 
 document {
     Key => Number,
-    Headline => "the class of all numbers" }
+    Headline => "the class of all numbers",
+    Subnodes => {
+	TO InfiniteNumber,
+	TO IndeterminateNumber,
+	TO InexactNumber,
+	TO InexactNumber'
+    }}
+
+document {
+    Key => InfiniteNumber,
+    Headline => "the class of all infinite numbers",
+    Subnodes => { TO infinity } }
+
+document {
+    Key => infinity,
+    Headline => "infinity" }
+
+document {
+    Key => IndeterminateNumber,
+    Headline => "the class of all indeterminate numbers",
+    "Indeterminate numbers result, for example, from multiplying 0 by infinity.
+    There is only one instance of this class.",
+    Subnodes => { TO indeterminate } }
+
+document {
+    Key => indeterminate,
+    Headline => "an indeterminate number",
+    TT "indeterminate", " -- a representation of an indeterminate number, ",
+    "such as might result from multiplying 0 by infinity." }
+
+document {
+    Key => InexactNumber,
+    "This type of number is intended to serve as a parent class for those types of numbers ",
+    "that are inexactly represented in the computer." }
+
+document {
+    Key => InexactNumber',
+    "This class is the common parent of the classes of complex fields and real fields." }
 
 document {
      Key => ZZ,
