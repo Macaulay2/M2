@@ -15,7 +15,7 @@ document {
 	  TO "extracting information about a matrix",
 	  TO "basic arithmetic of matrices",
 	  TO "concatenating matrices",
- 	  -- Mike wanted this: TO "submatrices",
+	  TO "submatrices",
 	  TO "diff and contract",
 	  "determinants and related computations",
 	  TO "rank of a matrix",
@@ -403,12 +403,19 @@ document {
        EXAMPLE "components r"
        }
 
--*
--- Mike wanted this: 
 document {
-     Key => "submatrices",
-     }
-*-
+    Key => "submatrices",
+    Subnodes => TO \ {
+	submatrix',
+	submatrixByDegrees,
+	(submatrix, Matrix, VisibleList),
+	(submatrix, Matrix, VisibleList, VisibleList),
+	(symbol _, Matrix, List),
+	(symbol ^, Matrix, List),
+	(symbol _, Matrix, Array),
+	(symbol ^, Matrix, Array)
+	},
+    }
 
 document {
      Key => "diff and contract",
