@@ -47,7 +47,6 @@ libraries/glpk/Makefile
 libraries/gmp/Makefile
 libraries/gtest/Makefile
 libraries/lapack/Makefile
-libraries/libtool/Makefile
 libraries/linbox/Makefile
 libraries/lrslib/Makefile
 libraries/mathic/Makefile
