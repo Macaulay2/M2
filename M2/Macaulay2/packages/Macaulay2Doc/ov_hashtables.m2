@@ -1,5 +1,88 @@
 --authors: Dan Grayson, Lily Silverstein
 
+document {
+    Key => "hash tables",
+    "A hash table is a data structure that can implement a function
+    whose domain is a finite set.  An element of the domain is called
+    a key.  The hash table stores the key-value pairs in such a way
+    that when presented with a key, the corresponding value can be
+    quickly recovered.",
+    PARA{},
+    "A dictionary could be implemented as a hash table: the keys would
+    be the words in the language, and the values could be the definitions
+    of the words.",
+    PARA{},
+    "A phone book could also be implemented as a hash table: the keys would
+    be the names of the subscribers, and the values could be the corresponding
+    phone numbers.  (We exclude the possibility of two subscribers with
+	the same name.)",
+    PARA{},
+    "As an example we implement a phone book.",
+    EXAMPLE {
+	  ///book = new HashTable from {
+     "Joe" => "344-5567",
+     "Sarah" => "567-4223",
+     "John" => "322-1456"}///,
+     },
+    "We use the operator ", TO "#", " to obtain values from the phone book.",
+    EXAMPLE ///book#"Sarah"///,
+    "The operator ", TO "#?", " can be used to tell us whether a given key
+    has an entry in the hash table.",
+    EXAMPLE ///book#?"Mary"///,
+    "We have implemented the notion of set via hash tables in which every value
+    is the number 1.",
+    EXAMPLE {
+	  "x = set {a,b,c,r,t}",
+	  "peek x",
+	  "x#?a",
+	  "x#?4",
+	  },
+    "There is a type of hash table that is mutable, i.e., a hash table
+    whose entries can be changed.  They are changed with assignment
+    statements of the form ", TT "x#key=value", ".",
+    EXAMPLE {
+	  ///x = new MutableHashTable;///,
+	  ///x#"Joe" = "344-5567";///,
+	  ///x#3 = {a,b,c};///,
+	  ///x#{1,2} = 44;///,
+	  ///x#3///,
+	  ///x#?4///,
+	  },
+    "When a mutable hash table is printed, its contents are not displayed.
+    This prevents infinite loops in printing routines.",
+    EXAMPLE "x",
+    "Use ", TO "peek", " to see the contents of a mutable hash table.",
+    EXAMPLE "peek x",
+    "A variant of ", TO "#", " is ", TO ".", ".  It takes only global symbols
+    as keys, and ignores their values.",
+    EXAMPLE {
+	  "p=4;",
+	  "x.p = 444;",
+	  "x.p",
+	  "x#?4"
+	  },
+    Subnodes => {
+	TO "HashTable",
+	TO "MutableHashTable",
+	TO "hashing",
+	TO "hash",
+	"constructing hash tables",
+	TO "hashTable",
+	TO "new HashTable from List",
+	"functions for manipulating hash tables",
+	TO "isMutable",
+	TO "keys",
+	TO "values",
+	TO "pairs",
+	TO "copy",
+	TO "remove",
+	TO "merge",
+	TO "combine",
+	TO "override",
+	TO "mapping over hash tables",
+        },
+    }
+
 doc///
  Key
   HashTable
@@ -230,6 +313,8 @@ document {
 	TO "selectKeys",
 	TO "selectValues",
 	TO "selectPairs",
+	TO (any, HashTable, Function),
+	TO (all, HashTable, Function),
     }
 }
 

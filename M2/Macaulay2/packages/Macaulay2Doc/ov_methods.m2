@@ -294,7 +294,10 @@ document {
 	  "f = x -> 2*x+1",
 	  "f 100"
 	  },
-     "The class of all functions is ", TO "Function", "."
+     "The class of all functions is ", TO "Function", ".",
+     Subnodes => {
+	 TO (options, Function),
+         },
      }
 
 document {

@@ -405,6 +405,7 @@ document {
 
 document {
     Key => "submatrices",
+    "Here are the ways to get a submatrix of a matrix.",
     Subnodes => TO \ {
 	submatrix',
 	submatrixByDegrees,

@@ -14,18 +14,12 @@ Node
     options
   Headline
     get options
-  Subnodes
-    Option
-    (options, Function)
   SeeAlso
-    OptionTable
-    Options
-    method
-    methods
-    methodOptions
-    MethodFunctionWithOptions
     (options, Monoid)
     (options, Package)
+    (options, Function)
+    OptionTable
+    Options
 
 Node
   Key
@@ -54,6 +48,7 @@ Node
   SeeAlso
     (NewFromMethod, HashTable, List)
     (symbol=>, Thing, Thing)
+  Subnodes
     options
 
 Node
@@ -82,5 +77,8 @@ Node
       methods intersect
       options 0
   SeeAlso
+    method
     methods
+    methodOptions
+    MethodFunctionWithOptions
 ///

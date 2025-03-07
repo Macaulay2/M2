@@ -217,7 +217,10 @@ document {
      SeeAlso => {(symbol _, Ring, ZZ), (symbol _, String, Ring), (use,Ring)}
      }
 document { 
-     Key => (symbol _, Ring, List),           -- make monomial
+     Key => {
+	 "get a monomial by exponent vector",
+	 (symbol _, Ring, List),
+     },
      Headline => "make a monomial from a list of exponents",
      Usage => "R_w",
      Inputs => {

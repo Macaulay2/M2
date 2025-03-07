@@ -103,7 +103,6 @@ document {
      in Macaulay2 which return or use modules, see ", TO Module, ".",
      Subnodes => {
 	  "construction of modules",
-	  TO Module,
 	  TO "free modules",
 	  TO "matrices to and from modules",
 	  TO "making modules from matrices",
@@ -118,6 +117,7 @@ document {
 	  TO "equality and containment of modules",
 
 	  "homomorphisms (maps) between modules",
+	  -- TODO: combine these
 	  TO "module homomorphisms",
 	  TO "maps between modules",
 	  TO "information about a map of modules",
@@ -254,8 +254,12 @@ document {
 	  },
      SeeAlso => {
 	  -- Mike wanted this: "multigraded polynomial rings",
-	  "graded modules"
+	  -- "graded modules"
 	  },
+     Subnodes => {
+	 TO (symbol ^, Ring, ZZ),
+	 TO (symbol ^, Ring, List),
+         },
      }
 
 document {
@@ -440,7 +444,7 @@ document {
 	  "prune M"
 	  },
      "For maps between modules, including between subquotient modules, see ", 
-     TO "homomorphisms (maps) between modules", ".",
+     TO "module homomorphisms", ".",
      SeeAlso => {
 	  (ambient,Module),
 	  (super,Module),
@@ -736,9 +740,7 @@ document {
      Key => "exterior power of a module",
 	"The ", TT "k","-th exterior power of a module ", TT "M"," is the ", TT "k", "-fold tensor product of ",
 	TT "M", " together with the equivalence relation:",
-	PRE ///
-	m_1 ** m_2 ** .. ** m_k = 0     if m_i = m_j for i != j
-	///,
+	"$m_1 \\otimes m_2 \\otimes \\cdots \\otimes m_k = 0$ if $m_i = m_j$ for $i != j$",
 	"If ", TT "M", " is a free ", TT "R", "-module of rank ", TT "n", ", then the ", TT "k", "-th exterior power of ", TT "M",
 	" is a free ", TT "R", "-module of rank ", TT "binomial(n,k)", ". Macaulay2 computes the ", TT "k", "-th
 	exterior power of a module ", TT "M", " with the command exteriorPower.",

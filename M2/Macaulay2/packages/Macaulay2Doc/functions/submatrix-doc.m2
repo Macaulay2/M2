@@ -59,7 +59,7 @@ undocumented {
 -- FIXME: these cannot be documented because of a bug in document.m2
 document {
      Key => {
-	  submatrix
+	  submatrix,
 --	 (submatrix, Matrix, Nothing, VisibleList),
 --	 (submatrix, Matrix, VisibleList, Nothing),
 	 (submatrix, Matrix, VisibleList, VisibleList),
