@@ -1,6 +1,6 @@
 HOMEPAGE = https://oneapi-src.github.io/oneTBB/
-VERSION = 2021.13.0
-URL = https://github.com/oneapi-src/oneTBB/archive/refs/tags
+VERSION = 2022.0.0
+URL = https://github.com/uxlfoundation/oneTBB/archive/refs/tags
 TARDIR = oneTBB-$(VERSION)
 TARFILE = v$(VERSION).tar.gz
 LICENSEFILES = README.md LICENSE.txt
