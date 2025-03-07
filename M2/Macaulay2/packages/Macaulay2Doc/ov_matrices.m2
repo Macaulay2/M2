@@ -230,7 +230,10 @@ document {
      }
 
 document {
-     Key => "basic arithmetic of matrices",
+    Key => {
+	"basic arithmetic of matrices",
+	(symbol==, Matrix, Matrix),
+    },
 
      SUBSECTION "+",
        "To add two matrices, use the ", TO "+", " operator.",

@@ -497,7 +497,25 @@ document {
 	  "L = new Type of BasicList",
 	  "x = new L from {a,b,c,d}",
 	  "join(x,x)"
-	  }
+	  },
+     "Here are the core types that inherit from ", TT "BasicList", ":",
+     Subnodes => TO \ {
+	 FilePosition,
+	 --Eliminate,
+	 Command,
+	 --VisibleList,
+	 --ProductOrder,
+	 URL,
+	 --MutableList,
+	 RingElement,
+	 --Time,
+	 Option,
+	 Vector,
+	 --Partition,
+	 Expression,
+	 Manipulator,
+	 IndexedVariable
+         },
      }
 
 document {

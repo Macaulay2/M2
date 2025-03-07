@@ -40,7 +40,7 @@ document {
 document {
      Key => AssociativeExpression,
      Headline => "the class of associative expressions",
-     Subnodes => TO \ { Sum, -*DirectSum,*- Product, -*TensorProduct,*- Equation },
+     Subnodes => TO \ { Sum, DirectSum, Product, TensorProduct, Equation },
      }
 
 document {
@@ -173,11 +173,11 @@ document {
      TT "Product", " is a type of ", TO "Expression", " representing a product."
      }
 
--- document {
---      Key => TensorProduct,
---      Headline => "the class of all tensor product expressions",
---      TT "TensorProduct", " is a type of ", TO "Expression", " representing a tensor product."
---      }
+document {
+     Key => TensorProduct,
+     Headline => "the class of all tensor product expressions",
+     TT "TensorProduct", " is a type of ", TO "Expression", " representing a tensor product."
+     }
 
 document {
      Key => SparseVectorExpression,
@@ -244,11 +244,11 @@ document {
      TT "Sum", " is a type of ", TO "Expression", " representing a sum."
      }
 
--- document {
---      Key => DirectSum,
---      Headline => "the class of all direct sum expressions",
---      TT "DirectSum", " is a type of ", TO "Expression", " representing a direct sum."
---      }
+document {
+     Key => DirectSum,
+     Headline => "the class of all direct sum expressions",
+     TT "DirectSum", " is a type of ", TO "Expression", " representing a direct sum."
+     }
 
 document {
      Key => {ScriptedFunctor,

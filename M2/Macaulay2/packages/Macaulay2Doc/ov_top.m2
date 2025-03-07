@@ -26,6 +26,7 @@ Node
       "ideals"
       "matrices"
       "modules"
+      "morphisms"
       "chain complexes"
       "Varieties :: Varieties"
     :Some Mathematical Computations

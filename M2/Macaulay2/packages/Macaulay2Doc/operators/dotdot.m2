@@ -1,9 +1,6 @@
 -- -*- coding: utf-8 -*-
 --		Copyright 1993-2009 by Daniel R. Grayson
 
-undocumented select(makeDocumentTag \ flatten apply({symbol .., symbol ..<}, methods),
-    m -> package m === Macaulay2Doc and not isUndocumented m and isMissingDoc m)
-
 document {
     Key => symbol .., 
      Headline => "a binary operator, used for sequences of consecutive items",
@@ -253,3 +250,7 @@ document { Key => (symbol ..<, RingElement, RingElement),
      plus oo
      ///
      }
+
+-- this should be at the end
+undocumented select(makeDocumentTag \ flatten apply({symbol .., symbol ..<}, methods),
+    m -> package m === Macaulay2Doc and not isUndocumented m and isMissingDoc m)

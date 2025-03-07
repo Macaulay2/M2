@@ -1,6 +1,3 @@
-undocumented select(makeDocumentTag \ methods symbol ?,
-    m -> package m === Macaulay2Doc and not isUndocumented m and isMissingDoc m)
-
 document {
      Key => symbol <,
      Headline => "less than",
@@ -98,3 +95,7 @@ document {
      TT "incomparable", " a symbol that may be returned by ", TO "?", "
      when the two things being compared are incomparable."
      }
+
+-- this should be at the end
+undocumented select(makeDocumentTag \ methods symbol ?,
+    m -> package m === Macaulay2Doc and not isUndocumented m and isMissingDoc m)

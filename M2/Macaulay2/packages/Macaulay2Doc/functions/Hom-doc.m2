@@ -66,6 +66,7 @@ Node
     homomorphism
     homomorphism'
     (Hom, Module, Matrix)
+    (Hom, Module, ChainComplex)
 
 Node
   Key

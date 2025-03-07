@@ -807,7 +807,10 @@ document {
 
 -- no links to this node
 document {
-     Key => "equality and containment of modules",
+    Key => {
+	"equality and containment of modules",
+	(symbol ==, Module, Module),
+    },
      "==, isSubset"
      }
 
