@@ -364,13 +364,6 @@ document {
 	  )
      }
 
-document { Key => InexactNumber,
-     PARA {
-	  "This type of number is intended to serve as a parent class for those types of numbers
-	  that are inexactly represented in the computer."
-	  }
-     }
-
 document {
      Key => Constant,
      PARA {
