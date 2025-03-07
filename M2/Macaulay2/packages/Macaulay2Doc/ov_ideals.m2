@@ -284,7 +284,7 @@ document {
 	    "mingens I",
 	    "trim I"
 	    },
- "The function ", TT "mingens", " is only well-defined for a 
+       "The function ", TT "mingens", " is only well-defined for a 
        homogeneous ideal or in a local ring.  However, one can still try to 
        get as small a generating set as possible and when it is implemented
        this function will be done by ", TT "trim", ".",
@@ -300,7 +300,10 @@ document {
 	    "R = QQ[a..d];",
 	    "I = monomialCurveIdeal(R,{1,2,3});",
 	    "toString I"
-	    }
+	    },
+     Subnodes => {
+         TO "generators of rings, ideals, and modules",
+         },
      }
 
 document {

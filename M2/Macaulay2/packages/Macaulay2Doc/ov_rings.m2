@@ -33,7 +33,8 @@ document {
 	  TO "symmetric algebras",
 	  TO "tensor products of rings",
 	  TO "Weyl algebras",
-	  -- TO "Schur rings", 
+	  TO "local rings",
+	  TO "Schur rings",
 	  TO "associative algebras",
        	  },
      PARA{},
@@ -639,6 +640,8 @@ document {
        	  },
      SeeAlso => {"heft vectors", "division in polynomial rings with monomials less than 1"},
      Subnodes => {
+	 TO "get a ring variable by index",
+	 TO "get a ring variable by name",
 	 TO "graded and multigraded polynomial rings",
 	 TO "monomial orderings",
          }
@@ -1182,6 +1185,18 @@ document {
     Key => "associative algebras",
     "Associative (i.e., not necessarily commutative) algebras are implemented in
     the ", TO "AssociativeAlgebras::AssociativeAlgebras", " package."
+    }
+
+document {
+    Key => "local rings",
+    "Localizations of polynomial rings with respect to prime ideals are implemented in
+    the ", TO "LocalRings::LocalRings", " package."
+    }
+
+document {
+    Key => "Schur rings",
+    "Representation rings of general linear groups and of symmetric groups are implemented in
+    the ", TO "SchurRings::SchurRings", " package."
     }
 
 -*

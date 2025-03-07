@@ -10,6 +10,7 @@ document {
 	  TO "inputting a matrix",
    	  TO "projections, inclusions, and permutations",
 	  TO "random and generic matrices",
+	  TO "mutable matrices",
 	  "operations involving matrices",
 	  TO "extracting information about a matrix",
 	  TO "basic arithmetic of matrices",

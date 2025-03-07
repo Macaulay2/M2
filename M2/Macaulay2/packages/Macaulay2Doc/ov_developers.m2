@@ -24,4 +24,7 @@ document {
     and Gröbner bases, syzygies, Hilbert functions, resolutions and
     other operations that we feel need to be implemented directly for
     efficiency reasons.",
+    Subnodes => {
+	TO "parallelism in engine computations",
+    },
 }

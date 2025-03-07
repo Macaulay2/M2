@@ -589,7 +589,7 @@ document {
      PARA{
 	  "Functions previously registered with ", TO "addEndFunction", " will
 	  be called before the current instance of the program terminates.  Then the program will be invoked
-	  afresh, as described in ", TO "Invoking the program", "."
+	  afresh, as described in ", TO "invoking the Macaulay2 program", "."
 	  }
      }
 
@@ -1865,7 +1865,7 @@ document { Key => "prefixDirectory",
 	  line option.  This will affect the value of ", TO "path", " and thus the locations of the files loaded initially.  Use the
 	  ", TT "--notify", " command line option to display the locations of files as they are loaded."
 	  },
-     SeeAlso => { "prefixPath", "Invoking the program" }
+     SeeAlso => { "prefixPath", "invoking the Macaulay2 program" }
      }
 document {
      Key => "rootPath",

@@ -14,8 +14,18 @@ Node
     options
   Headline
     get options
-  SeeAlso
+  Subnodes
     Option
+    OptionTable
+    (options, Function)
+  SeeAlso
+    Options
+    method
+    methods
+    methodOptions
+    MethodFunctionWithOptions
+    (options, Monoid)
+    (options, Package)
 
 Node
   Key
@@ -48,8 +58,8 @@ Node
 
 Node
   Key
-    (options, Command)
     (options, Function)
+    (options, Command)
     (options, Sequence)
     (options, ZZ)
   Headline

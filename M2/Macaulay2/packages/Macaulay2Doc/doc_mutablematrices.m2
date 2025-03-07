@@ -2,7 +2,7 @@ document {
      Key => "row and column operations",
      "The usual row and column operations apply to 
      mutable matrices.  These are:",
-     UL {
+     Subnodes => {
 	  TO rowAdd,
 	  TO rowSwap,
 	  TO rowPermute,
@@ -45,7 +45,11 @@ document {
 	  "mutableIdentity(RR_100,5)",
 	  "mutableMatrix(QQ,3,5)",
 	  "randomMutableMatrix(4,4,.5,100)"
-	  }
+	  },
+     Subnodes => {
+	 TO MutableMatrix,
+	 TO "row and column operations",
+         }
      }
 
 document {

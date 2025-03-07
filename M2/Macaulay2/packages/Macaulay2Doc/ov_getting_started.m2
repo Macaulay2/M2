@@ -24,6 +24,7 @@ document {
 	  "
 	  },
      Subnodes => {
+	  TO "invoking the Macaulay2 program",
 	  TO "checking your Macaulay2 installation",
 	  TO "finding the Macaulay2 files",
 	  TO "teaching M2 how to find its shared libraries",
@@ -809,7 +810,8 @@ document {
 	  generators.",
      PARA{},
      "We can use ", TO "betti", " to see the degrees involved in the Gröbner basis.",
-     EXAMPLE "betti gb j"
+     EXAMPLE "betti gb j",
+     Subnodes => { TO "initial help" }
      }
 
 
@@ -863,7 +865,7 @@ PRE ///f = () -> (
 }
 
 document {
-     Key => "Invoking the program",
+     Key => "invoking the Macaulay2 program",
      "On systems with a command line interface, the following commands
      can be used to start the program.  When the program starts up,
      the ", TO "initialization file", ", ", TT "init.m2", ", will be loaded.",
@@ -1151,7 +1153,7 @@ document {
 	  package called ", TT "Foo", "."
 	  },
      EXAMPLE ///stack apply(prefixPath, p -> p | Layout#1#"info" | "Foo.info")///,
-     SeeAlso => {"commandLine", "Invoking the program", applicationDirectory, "prefixDirectory", "path", searchPath, load, loadPackage, needsPackage}
+     SeeAlso => {"commandLine", "invoking the Macaulay2 program", applicationDirectory, "prefixDirectory", "path", searchPath, load, loadPackage, needsPackage}
      }
 
 doc := new HashTable from {

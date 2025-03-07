@@ -35,6 +35,7 @@ load "./ov_threads.m2"
 load "./ov_system.m2"
 load "./ov_repl.m2"
 load "./ov_developers.m2"
+load "./ov_parallelism.m2"
 load "./changes.m2"
 load "./macaulay.m2"
 

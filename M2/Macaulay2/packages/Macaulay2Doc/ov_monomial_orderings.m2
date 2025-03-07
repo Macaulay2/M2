@@ -79,6 +79,7 @@ document {
      PARA{},
      Subnodes => {
 	  TO "examples of specifying alternate monomial orders",
+	  TO "division in polynomial rings with monomials less than 1",
 	  TO "monomial orders for free modules",
 	  TO "packing monomials for efficiency",
 	  TO "monoid",
