@@ -163,6 +163,7 @@ jobs:
             -L`brew --prefix libomp`/lib         \
             -L`brew --prefix readline`/lib"
           export F77=gfortran-14
+          export FC=gfortran-14
           ../../configure --enable-download --with-system-gc --with-fplll
 
       - name: Build Macaulay2 using Make
