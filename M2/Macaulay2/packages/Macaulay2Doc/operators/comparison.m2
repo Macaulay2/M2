@@ -41,7 +41,17 @@ undocumented {
      (symbol <=, Thing, Thing),
      (symbol >=, Thing, Thing)
      }
-    
+
+document {
+    Key => (symbol <<, List, List),
+    Headline => "component-wise comparison of lists",
+    Usage => "L1 << L2",
+    Inputs => { "L1" => List, "L2" => List },
+    Outputs => { Boolean => "whether the first list is less than or equal to the second list in each component" },
+    SourceCode => (symbol <<, List, List),
+    SeeAlso => (symbol ?, List, List)
+    }
+
 document {
      Key => {symbol ?,
      	  (symbol ?, Symbol, IndexedVariable),

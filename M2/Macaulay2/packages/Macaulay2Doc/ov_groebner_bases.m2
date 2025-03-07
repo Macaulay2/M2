@@ -133,6 +133,7 @@ document {
        f = x^3+y^3+z^3
        f % I
        ///,
+     Subnodes => { TO "methods for normal forms and remainder" },
      SeeAlso => {"Gröbner bases", (symbol %, RingElement, Ideal)},
      }
 

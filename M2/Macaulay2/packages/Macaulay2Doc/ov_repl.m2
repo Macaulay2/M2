@@ -38,7 +38,7 @@ document {
      }
 
 document {
-     Key => "--",
+     Key => {"comments", "--", "-*", "*-"},
      Headline => "comment",
      Consequences => {"Macaulay2 ignores commented text"},
      "Use a double hyphen ", TT "--", " to introduce a comment in the text
@@ -48,6 +48,7 @@ document {
      for visibility.",
      EXAMPLE {
 	  "x = 1 -- this is a comment",
+	  "y = -* this is an enclosed comment *- 2"
 	  }
      }
 

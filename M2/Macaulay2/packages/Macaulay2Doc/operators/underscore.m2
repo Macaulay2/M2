@@ -14,7 +14,6 @@ undocumented {
      (symbol _, RingElement, Thing),
      (symbol _, MonoidElement, Thing),
      (symbol _, MonoidElement, Monoid),
-     (symbol _, String, Monoid),
      (symbol _, RingElement, MonoidElement),
      (symbol _, PolynomialRing, List),
      (symbol _, RingElement, RingElement), --coeff of monomials in polynomial -- deprecate or obsolete
@@ -127,7 +126,7 @@ document {
     Key => {
 	"get a ring variable by index",
 	(symbol _, Ring, ZZ),
-	(symbol _*, Monoid),
+	(symbol _, Monoid, ZZ),
     },
      Headline => "get a ring variable by index",
      Usage => "R_i",
@@ -155,7 +154,11 @@ document {
      SeeAlso => {generators, (symbol _, String, Ring)}
      }
 document { 
-     Key => (symbol _, String, Ring), -- ring variable by name
+    Key => {
+	"get a ring variable by name",
+	(symbol _, String, Ring),
+	(symbol _, String, Monoid),
+    },
      Headline => "get a ring variable by name",
      Usage => ///"x"_R///,
      Inputs => {
@@ -179,10 +182,14 @@ document {
 	  use R;
 	  x
 	  ///,
-     SeeAlso => {(symbol _, Ring, ZZ), (symbol _, Symbol, Ring), (use,Ring)}
+     SeeAlso => { (symbol _, Ring, ZZ), (use, Ring) },
+     Subnodes => {
+	 TO (symbol _, Symbol, Ring),
+	 TO (symbol _, IndexedVariable, Ring),
+         }
      }
 document { 
-     Key => {(symbol _, Symbol, Ring) },
+     Key => (symbol _, Symbol, Ring),
      Headline => "get a ring variable by name",
      Usage => ///x_R///,
      Inputs => {
@@ -308,11 +315,11 @@ document {
      Key => {"generators of rings, ideals, and modules",
 	  (symbol _, Ideal, ZZ),
 	  (symbol _, Module, ZZ),
-	  (symbol _, Monoid, ZZ),
 	  (symbol _, Matrix, ZZ),
 	  (symbol _*, Ring),
 	  (symbol _*, Ideal),
 	  (symbol _*, Module),
+	  (symbol _*, Monoid),
       },
      Headline => "",
      SYNOPSIS {

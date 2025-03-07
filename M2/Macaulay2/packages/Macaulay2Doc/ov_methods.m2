@@ -155,7 +155,12 @@ document {
      "where ", TT "( ... )", " represents suitable code for the operation at hand.",
      PARA{},
      "The routine for making new methods is ", TO "method", ".",
-     SeeAlso =>{"binary methods"}
+     SeeAlso =>{"binary methods"},
+     Subnodes => {
+	 TO "installing assignment methods",
+	 TO "installing augmented assignment methods",
+         TO installMethod,
+         },
      }
 
 document {
@@ -416,7 +421,11 @@ document {
 document {
      Key => OptionTable,
      Headline => "the class of hash tables for optional arguments",
-     SeeAlso => ">>" }
+     Subnodes => {
+	 TO (symbol >>, OptionTable, Function),
+	 TO (symbol ++, OptionTable, OptionTable),
+         }
+     }
 document {
      Key => {(symbol >>, OptionTable, Function),
 	  (symbol >>, List, Function),(symbol >>, Boolean, Function)},

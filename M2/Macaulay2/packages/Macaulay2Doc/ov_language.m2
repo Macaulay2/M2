@@ -30,6 +30,7 @@ document {
 
      Subnodes => {
 	      TO "variables",
+	      TO "comments",
 	  "basic data types",
 	      TO "numeric types",
 	      TO "strings and nets",
@@ -64,6 +65,7 @@ document {
 	      TO "the debugger",
 	  "input and output",
 	      TO "printing to the screen",
+	      TO "printing to a file",
 	      TO "reading files",
 	      TO "getting input from the user",
 	      TO "creating and writing files",
@@ -537,6 +539,9 @@ document {
 	  "f(3,7)",
 	  "f(5,11,a=>10^20)",
 	  },
+     Subnodes => {
+         TO "symbols used as the name or value of an optional argument",
+         },
      }
 
 document {

@@ -101,6 +101,7 @@ Node
     (monoid, Ring)
     FlatMonoid
     :Optional arguments
+    (options, Monoid)
     [monoid, Variables] -- and VariableBaseName
     [monoid, Local]     -- and Global
     [monoid, Inverses]
