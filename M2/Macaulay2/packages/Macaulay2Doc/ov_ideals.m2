@@ -7,6 +7,7 @@ document {
      ") is defined, ideals are constructed in the usual way
      by giving a set of generators.",
      Subnodes => {
+	 TO Ideal,
 	  TO "creating an ideal",
 	  "conversions",
 	  TO "ideals to and from matrices",
@@ -186,7 +187,12 @@ document {
      }
 
 document {
-     Key => "equality and containment",
+    Key => {
+	"equality and containment",
+	(symbol ==, Ideal, Ideal),
+	(symbol ==, Ideal, ZZ),
+	(symbol ==, ZZ, Ideal),
+    },
      "Equality and containment between two ideals in a polynomial ring 
      (or quotient of a polynomial ring) is checked by comparing their 
      respective Groebner bases.",     

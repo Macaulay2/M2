@@ -239,7 +239,6 @@ document {
 	  S_{1,1,1}
 	  S_{1,1,1,4}
 	  ///,
-     SeeAlso => {}
      }
 document { 
      Key => (symbol _, IndexedVariable, Ring), -- ring variable by name

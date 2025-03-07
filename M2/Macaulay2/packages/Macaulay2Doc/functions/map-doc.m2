@@ -11,7 +11,7 @@
 undocumented {(map, RingFamily, Thing, Thing),(map, Thing, RingFamily, Thing)}
 
 document {
-     Key => map,
+     Key => { map, "morphisms" },
      Headline => "make a map",
      Usage => "map(Y,X,d) or map(Y,X)",
      Inputs => {
@@ -51,7 +51,9 @@ document {
 	  TO (map,Ring,Ring,Matrix),
 	  "Creating a map between chain complexes",
 	  -- TO (map,ChainComplex,ChainComplex,ChainComplexMap),
-	  TO (map,ChainComplex,ChainComplex,Function)
+	  TO (map,ChainComplex,ChainComplex,Function),
+	  "The Hom module",
+	  TO Hom,
 	  }
      }
 document {
