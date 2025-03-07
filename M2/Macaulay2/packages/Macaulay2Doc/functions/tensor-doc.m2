@@ -418,13 +418,17 @@ Node
       f ** S
 ///
 
-doc ///
-Node
-  Key
-    (symbol**, List, List)
-  Headline
-    Cartesian product of two lists
-  Description
-    Example
-      {1, 2} ** {10, 20, 30}
-///
+document {
+    Key => (symbol ^**, Module, ZZ),
+    Headline => "tensor power",
+    Usage => "M^**i",
+    Inputs => { "M", "i" },
+    Outputs => {Module => { "the ", TT "i", "-th tensor power of ", TT "M"}},
+    "The second symmetric power of the canonical module of the rational quartic:",
+    EXAMPLE lines ///
+         R = QQ[a..d];
+         I = monomialCurveIdeal(R,{1,3,4})
+	 M = Ext^1(I,R^{-4})
+	 M^**2
+	 ///
+    }

@@ -1,5 +1,11 @@
+undocumented select(makeDocumentTag \ methods symbol ==,
+    m -> package m === Macaulay2Doc and not isUndocumented m and isMissingDoc m)
+
 document {
-     Key => {(symbol===,Thing,Thing), symbol ===},
+    Key => {
+	 symbol ===,
+	(symbol ===, Thing, Thing)
+    },
      Headline => "strict equality",
      Usage => "x === y",
      Inputs => { "x", "y" },
@@ -43,7 +49,10 @@ document {
      }
 
 document {
-     Key => {symbol =!=, (symbol=!=,Thing,Thing)},
+    Key => {
+	 symbol =!=,
+	(symbol =!=, Thing, Thing)
+    },
      Headline => "strict inequality",
      TT "x =!= y", " -- returns true or false depending on whether the expressions
      x and y are strictly unequal.",
@@ -52,7 +61,7 @@ document {
      }
 
 document {
-    Key => { symbol == },
+    Key => symbol ==,
      Headline => "equality",
      Usage => "x == y",
      PARA {

@@ -89,6 +89,7 @@ document {
 	(symbol -, RingElement, Number),
 	(symbol -, RingElement, RingElement),
 	(symbol -, Tally),
+	(symbol -, VirtualTally, VirtualTally),
 	(symbol -, Vector),
 	(symbol -, Vector, Vector),
     },

@@ -1,19 +1,5 @@
 -- -*- coding: utf-8 -*-
 document {
-     Key => (symbol _*,Ideal),
-     Headline => "get the list of generators of an ideal",
-     Usage => "I_*",
-     Inputs => {"I"},
-     Outputs => {{"the list of generators of ", TT "I"}},
-     EXAMPLE lines ///
-     R = QQ[a..c]
-     I = ideal (a,b,c);
-     J = I^2
-     J_*     
-     ///
-     }
-
-document {
      Key => Ideal,
      Headline => "the class of all ideals",
      SeeAlso => "ideals",

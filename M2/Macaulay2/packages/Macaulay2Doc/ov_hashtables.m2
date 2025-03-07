@@ -612,17 +612,20 @@ doc ///
 
 doc ///
  Key
+  (symbol #, List)
+  (symbol #, Sequence)
   (symbol #, BasicList)
-  (symbol #, HashTable)
-  (symbol #, Set)
   (symbol #, String)
+  (symbol #, Net)
+  (symbol #, HashTable)
+  (symbol #, Dictionary)
+  (symbol #, Set)
  Headline
-  length or cardinality
+  length or cardinality of a list, hash table, set, or string
  Usage
   #x
  Inputs
-  x:BasicList
-   HashTable, Set, or String
+  x:{List, HashTable, Set, String}
  Outputs
   :ZZ
    the length of {\tt x}
@@ -661,17 +664,20 @@ doc ///
 
 doc///
  Key
+  (symbol #, List, ZZ)
+  (symbol #, Sequence, ZZ)
   (symbol #, BasicList, ZZ)
   (symbol #, Database, String)
+  (symbol #, Dictionary, String)
   (symbol #, HashTable, Thing)
   (symbol #, String, ZZ)
+  (symbol #, Net, ZZ)
  Headline
   get value from list, hash table, database, or string
  Usage
   x#i
  Inputs
-  x:
-   a list, hash table, or string
+  x:{List, HashTable, Database, String}
   i:
    an index or key
  Description
@@ -718,17 +724,21 @@ doc///
 doc///
  Key
   symbol #?
+  (symbol #?, List, ZZ)
+  (symbol #?, Sequence, ZZ)
   (symbol #?, BasicList, ZZ)
   (symbol #?, Database, String)
+  (symbol #?, Dictionary, String)
   (symbol #?, HashTable, Thing)
   (symbol #?, String, ZZ)
+  (symbol #?, Net, ZZ)
+  (symbol #?, Nothing, Thing)
  Headline
   check existence of value in a list, hash table, database, or string
  Usage
   x#?i
  Inputs
-  x:
-   a list, hash table, or string
+  x:{List, HashTable, Database, String}
   i:
    an index or key
  Outputs
@@ -813,4 +823,3 @@ document {
 	  tables, options, Boolean values, and numbers."
 	  }
      }
-

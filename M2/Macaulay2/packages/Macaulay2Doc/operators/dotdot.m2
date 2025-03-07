@@ -1,16 +1,11 @@
 -- -*- coding: utf-8 -*-
 --		Copyright 1993-2009 by Daniel R. Grayson
 
-undocumented {
-     (symbol .., InfiniteNumber, InfiniteNumber),
-     (symbol .., ZZ, InfiniteNumber),
-     (symbol .., InfiniteNumber, ZZ),
-     (symbol ..<, InfiniteNumber, InfiniteNumber),
-     (symbol ..<, ZZ, InfiniteNumber),
-     (symbol ..<, InfiniteNumber, ZZ)
-     }
+undocumented select(makeDocumentTag \ flatten apply({symbol .., symbol ..<}, methods),
+    m -> package m === Macaulay2Doc and not isUndocumented m and isMissingDoc m)
 
-document { Key => symbol .., 
+document {
+    Key => symbol .., 
      Headline => "a binary operator, used for sequences of consecutive items",
      PARA{
 	  "The most confusing thing about this operator, in all its guises, is that it is not a syntactic

@@ -5,8 +5,6 @@ f Truncate
 
 nonnull := core "nonnull";
 headline := core "headline";
-isMissingDoc := core "isMissingDoc";
-isUndocumented := core "isUndocumented";
 
 opts := nonnull \\ options \ select(value \ values Core.Dictionary, f -> instance(f, Function));
 opts  = nonnull \\ options \ methods() | opts; -- e.g. catch DegreeLimit from [(minimalBetti, Ideal), DegreeLimit]

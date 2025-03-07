@@ -25,8 +25,6 @@ undocumented {
     (symbol *, RingElement, Constant),
     (symbol *, RingElement, InexactNumber),
     (symbol *, RingElement, Number),
-    (symbol *, RingElement, Tally),
-    (symbol *, RingElement, VirtualTally),
     (symbol *, String),
     (symbol *, ZZ, ChainComplexMap),
     (symbol *, ZZ, GradedModuleMap),

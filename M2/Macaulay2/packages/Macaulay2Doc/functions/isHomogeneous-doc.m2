@@ -2,16 +2,15 @@
 --- author(s): MES
 --- notes: some changes Sept 2018 LS
 
--*
--- TODO
-(isHomogeneous,Number)
-(isHomogeneous,PolynomialRing)
-(isHomogeneous,QuotientRing)
-*-
+undocumented {
+    (isHomogeneous, Number),
+}
 
 document { 
      Key => {isHomogeneous,
 	  (isHomogeneous,Ring),
+	  (isHomogeneous,QuotientRing),
+	  (isHomogeneous,PolynomialRing),
 	  (isHomogeneous,ChainComplexMap),
 	  (isHomogeneous,Matrix),
 	  (isHomogeneous,RingElement),

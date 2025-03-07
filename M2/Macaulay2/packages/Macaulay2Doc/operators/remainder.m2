@@ -3,6 +3,13 @@
 --- author(s): kummini, MES
 --- notes:
 
+undocumented {
+    (symbol %, List, Number),
+    (symbol %, List, RingElement),
+    (symbol %, InexactNumber, RingElement),
+    (symbol %, RingElement, InexactNumber),
+}
+
 document {
      Key => {
 	  "methods for normal forms and remainder",
@@ -10,6 +17,7 @@ document {
 	  (symbol %, RingElement, MonomialIdeal),
 	  (symbol %, RingElement, Matrix),
 	  (symbol %, RingElement, RingElement),
+	  (symbol %, Vector, Ideal),
 	  (symbol %, Matrix, Ideal),
 	  (symbol %, Matrix, MonomialIdeal),
 	  (symbol %, Matrix, RingElement),
