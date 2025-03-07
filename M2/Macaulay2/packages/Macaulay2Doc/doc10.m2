@@ -372,14 +372,7 @@ document { Key => InexactNumber,
      }
 
 document {
-     Key => { Constant,
-	  (symbol +,Constant,RingElement),
-	  (symbol +,RingElement,Constant),
-	  (symbol -,Constant,RingElement),
-	  (symbol -,RingElement,Constant),
-	  (symbol *,Constant,RingElement),
-	  (symbol *,RingElement,Constant),
-     	  },
+     Key => Constant,
      PARA {
 	  "A constant is a symbolic entity that can be approximated by a real or complex
 	  number to any desired accuracy.  It is converted to a numeric value of the

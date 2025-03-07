@@ -1,6 +1,10 @@
 load "./operators/dotdot.m2"
 load "./operators/caret.m2"
 load "./operators/shift.m2"
+load "./operators/plus.m2"
+load "./operators/minus.m2"
+load "./operators/times.m2"
+load "./operators/tensor.m2"
 load "./operators/equality.m2"
 load "./operators/quotient.m2"
 load "./operators/division.m2"
@@ -8,36 +12,6 @@ load "./operators/factoring.m2"
 load "./operators/comparison.m2"
 load "./operators/assignment.m2"
 load "./operators/augmented_assignment.m2"
-
-document {
-     Key => Number,
-     Headline => "the class of all numbers"
-     }
-
-document {
-     Key => plus,
-     Headline => "addition",
-     TT "plus(x,y,...)", " -- yields the sum of its arguments.",
-     PARA{},
-     "If there are no arguments, the answer is the integer 0."
-     }
-
-document {
-     Key => times,
-     Headline => "multiplication",
-	Usage => "times(x,y, ...)",
-     TT "times(x,y, ...)", " yields the product of its arguments.
-	If there are no arguments, the value is the integer 1."
-     }
-
-document {
-     Key => power,
-     Headline => "power",
-	Usage => "(x,n)",
-     TT "power(x,n)", " yields the ", TT "n", "-th power of ", TT "x", ".",
-     PARA{},
-     SeeAlso => "^"
-     }
 
 document {
      Key => {powermod,(powermod,ZZ,ZZ,ZZ)},
@@ -58,22 +32,6 @@ document {
 	  powermod(2,30000,100000000000000000000)
 	  powermod(2,3331333,3331333)
      ///
-     }
-
-document {
-     Key => difference,
-     Headline => "difference",
-	Usage => "difference(x,y)",
-     TT "difference(x,y)", " returns ", TT "x-y", "."
-     }
-
-document {
-     Key => minus,
-     Headline => "additive inverse",
-	Usage => "minus(x)",
-     TT "minus(x)", " yields ", TT "-x", ".",
-     PARA{},
-     "See also ", TO "difference", "."
      }
 
 document {
@@ -297,6 +255,79 @@ doc ///
     symbol and
     symbol or
 ///
+
+document {
+     Key => symbol \,
+     Headline => "a binary operator",
+     }
+
+document {
+     Key => symbol \\,
+     Headline => "a binary operator"
+     }
+
+document {
+     Key => {symbol !, (symbol !, ZZ), (symbol !, QQ), (symbol !, RR),(symbol !,Constant)},
+     Headline => "factorial",
+     Usage => "n!",
+     Inputs => {"n"=>ZZ},
+     Outputs => { ZZ => "n factorial, 1*2*3*...*n."},
+     EXAMPLE lines ///
+     	  30!
+     	  30.!
+	  30.01!
+     ///
+     }
+
+
+doc ///
+  Key
+    (symbol ~, ZZ)
+  Headline
+    logical not
+  Usage
+    n~
+  Inputs
+    n:ZZ
+  Outputs
+    :ZZ -- the bitwise complement of @TT "n"@
+  Description
+    Example
+      7~
+    Text
+      Note that @TT "~"@ has @TO2 {"precedence of operators",
+      "higher precedence"}@ than @TT "-"@, so enclose negative integers in
+      parentheses.
+    Example
+      (-12)~
+  SeeAlso
+    (symbol &, ZZ, ZZ)
+    (symbol |, ZZ, ZZ)
+    (symbol ^^, ZZ, ZZ)
+///
+
+document {
+    Key => symbol ||,
+    Headline => "a binary operator, often used for vertical concatenation"
+}
+
+document {
+    Key => symbol |, 
+    Headline => "a binary operator, often used for horizontal concatenation",
+    SeeAlso => {"||"}
+}
+
+document {
+    Key => (symbol |, ZZ, ZZ),
+    Headline => "logical or",
+    Usage => "m | n",
+    Inputs => {"m", "n"},
+    Outputs => {
+	ZZ => {"obtained from the bits of the integers ", TT "m", " and ", TT "n", " by logical 'or'."}
+    },
+    EXAMPLE "2^42 | 2^15 == 2^42 + 2^15",
+    SeeAlso => {(symbol &,ZZ,ZZ),(symbol ^^,ZZ,ZZ), (symbol ~, ZZ)}
+}
 
 document {
      Key => symbol :,

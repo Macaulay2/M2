@@ -21,15 +21,6 @@ undocumented {
     (symbol //, InfiniteNumber, CC),
     (symbol //, InfiniteNumber, InfiniteNumber),
     (symbol //, RingElement, InexactNumber),
-    -- TODO: automate these
-    (symbol /, Expression, OneExpression),
-    (symbol /, Holder, OneExpression),
-    (symbol /, Expression, Expression),
-    (symbol /, Expression, Holder),
-    (symbol /, Holder, Expression),
-    (symbol /, Holder, Holder),
-    (symbol /, Expression, Thing),
-    (symbol /, Thing, Expression),
 }
 
 document {
