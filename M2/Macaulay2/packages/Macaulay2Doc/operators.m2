@@ -8,10 +8,13 @@ load "./operators/tensor.m2"
 load "./operators/equality.m2"
 load "./operators/quotient.m2"
 load "./operators/division.m2"
+load "./operators/remainder.m2"
 load "./operators/factoring.m2"
 load "./operators/comparison.m2"
+load "./operators/underscore.m2"
 load "./operators/assignment.m2"
 load "./operators/augmented_assignment.m2"
+load "./operators/concatenate.m2"
 
 document {
      Key => {powermod,(powermod,ZZ,ZZ,ZZ)},
@@ -221,6 +224,24 @@ document {
      }
 
 document {
+    Key => symbol |,
+    Headline => "a binary operator, often used for horizontal concatenation",
+    SeeAlso => {"||"}
+}
+
+document {
+    Key => (symbol |, ZZ, ZZ),
+    Headline => "logical or",
+    Usage => "m | n",
+    Inputs => {"m", "n"},
+    Outputs => {
+	ZZ => {"obtained from the bits of the integers ", TT "m", " and ", TT "n", " by logical 'or'."}
+    },
+    EXAMPLE "2^42 | 2^15 == 2^42 + 2^15",
+    SeeAlso => {(symbol &,ZZ,ZZ),(symbol ^^,ZZ,ZZ), (symbol ~, ZZ)}
+}
+
+document {
      Key => "and",
      Headline => "conjunction",
      TT "t and u", " -- returns true if ", TT "t", " is true and ", TT "u", "
@@ -228,6 +249,24 @@ document {
      PARA{},
      "If ", TT "t", " is false, then the code in ", TT "u", " is not evaluated.",
      SeeAlso =>{ "or", "not", "xor" }
+     }
+
+document {
+     Key => symbol &,
+     Headline => "a binary operator",
+     }
+
+document {
+     Key => (symbol &, ZZ, ZZ),
+     Headline => "logical and",
+     Usage => "m & n",
+     Inputs => {"m", "n"},
+     Outputs => {
+	  ZZ => {"obtained from the bits of the
+	       integers ", TT "m", " and ", TT "n", " by logical 'and'."}
+	  },
+     EXAMPLE "(2^15 + 2^13 + 2^42) & (2^15 + 2^23 + 2^42) == 2^15 + 2^42",
+     SeeAlso => {(symbol |,ZZ,ZZ),(symbol ^^,ZZ,ZZ), (symbol ~, ZZ)}
      }
 
 document {
@@ -312,24 +351,6 @@ document {
 }
 
 document {
-    Key => symbol |, 
-    Headline => "a binary operator, often used for horizontal concatenation",
-    SeeAlso => {"||"}
-}
-
-document {
-    Key => (symbol |, ZZ, ZZ),
-    Headline => "logical or",
-    Usage => "m | n",
-    Inputs => {"m", "n"},
-    Outputs => {
-	ZZ => {"obtained from the bits of the integers ", TT "m", " and ", TT "n", " by logical 'or'."}
-    },
-    EXAMPLE "2^42 | 2^15 == 2^42 + 2^15",
-    SeeAlso => {(symbol &,ZZ,ZZ),(symbol ^^,ZZ,ZZ), (symbol ~, ZZ)}
-}
-
-document {
      Key => symbol :,
      Headline => "a binary operator, uses include repetition; ideal quotients",
      }
@@ -340,7 +361,7 @@ document {
      }
 
 document {
-    Key => symbol SPACE, 
+    Key => symbol SPACE,
     Headline => "blank operator; often used for function application, making polynomial rings",
     SeeAlso =>(symbol SPACE, Function, Thing)		    -- not really a method
 }
