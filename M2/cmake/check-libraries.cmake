@@ -178,7 +178,6 @@ endif()
 ###############################################################################
 ## TODO: Do we still want these libraries?
 #   fplll	Lattice algorithms using floating-point arithmetic	(uses gmp and mpfr)
-#   linbox	Exact computational linear algebra	(needs fflas and givaro)
 #   arb		arbitrary-precision ball arithmetic
 ## Requested by Greg Smith for future use:
 #   cddplus	Double Description Method

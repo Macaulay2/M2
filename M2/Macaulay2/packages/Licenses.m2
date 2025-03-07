@@ -73,8 +73,6 @@ licenseInfo = hashTable {
         },
     "gmp version" => hashTable {
         },
-    "linbox version" => hashTable {
-        },
     "mathic version" => hashTable {
 	 "1.0" => VerticalList {
 	      "LGPL 2 or later",
