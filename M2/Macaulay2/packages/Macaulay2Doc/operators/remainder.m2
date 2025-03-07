@@ -1,9 +1,9 @@
 -- -*- coding: utf-8 -*-
 --- status: DRAFT
 --- author(s): kummini, MES
---- notes: 
+--- notes:
 
-document { 
+document {
      Key => {
 	  "methods for normal forms and remainder",
 	  (symbol %, RingElement, Ideal),
@@ -14,17 +14,17 @@ document {
 	  (symbol %, Matrix, MonomialIdeal),
 	  (symbol %, Matrix, RingElement),
 	  (symbol %, Matrix, Module),
-	  (symbol %, Matrix, Matrix)	  
+	  (symbol %, Matrix, Matrix)
 	  },
      Headline => "normal form of ring elements and matrices",
      SYNOPSIS(
      	  Usage => "f % I",
      	  Inputs => { "f" => {ofClass{RingElement,Matrix}}, "I" => {ofClass {RingElement,Ideal,MonomialIdeal} }},
-     	  Outputs => { Matrix => {"the normal form of ", TT "f", " modulo the ideal ", TT "I", ".  
+	  Outputs => { Matrix => {"the normal form of ", TT "f", " modulo the ideal ", TT "I", ".
 		    The result is obtained by reducing each entry of ", TT "f", " modulo ", TT "I", "."} },
      ),
      PARA{
-	  "To reduce ", TT "f", " with respect to ", TT "I", 
+	  "To reduce ", TT "f", " with respect to ", TT "I",
 	  ", a (partial) Gröbner basis of ", TT "I", " is computed, unless
 	  it has already been done, or unless ", TT "I", " is ", ofClass {MonomialIdeal}, "."
 	  },
@@ -81,12 +81,12 @@ document {
      SeeAlso => {symbol %, "Gröbner bases", generators, (symbol %, Matrix, GroebnerBasis)},
      }
 
-document { 
+document {
      Key => {
 	  (symbol %, Matrix, GroebnerBasis),
 	  (symbol %, RingElement, GroebnerBasis)
 	  },
-     Headline => "calculate the normal form of ring elements and 
+     Headline => "calculate the normal form of ring elements and
           matrices using a (partially computed) Gröbner basis",
      Usage => "f % G",
      Inputs => { "f" => Nothing => {ofClass RingElement, ", or ",
@@ -94,7 +94,7 @@ document {
 	     "G"
 	     },
      Outputs => {
-	  Nothing => {"the normal form of ", TT "f", " with respect 
+	  Nothing => {"the normal form of ", TT "f", " with respect
 	       to the partially computed Gröbner basis ", TT "G"}
 	  },
      "In the following example, the seventh power of the trace of the matrix M
@@ -108,7 +108,7 @@ document {
      	  f = trace M
 	  G = gb(I, DegreeLimit=>3)
      	  f^7 % G == 0
-	  gb(I, DegreeLimit=>7)	  	  
+	  gb(I, DegreeLimit=>7)
 	  f^7 % G
 	  gb I
      ///,
@@ -121,4 +121,47 @@ document {
 	  status G
      ///,
      SeeAlso => {"methods for normal forms and remainder", "Gröbner bases", genericMatrix}
+     }
+
+document {
+    Key => {
+	 symbol %,
+	(symbol %, CC, CC),
+	(symbol %, CC, QQ),
+	(symbol %, CC, RR),
+	(symbol %, CC, ZZ),
+	(symbol %, Number, GroebnerBasis),
+	(symbol %, Number, Ideal),
+	(symbol %, Number, RingElement),
+	(symbol %, QQ, QQ),
+	(symbol %, QQ, ZZ),
+	(symbol %, RR, QQ),
+	(symbol %, RR, RR),
+	(symbol %, RR, ZZ),
+	(symbol %, RingElement, Number),
+	(symbol %, ZZ, MonomialIdeal),
+	(symbol %, ZZ, ZZ)
+    },
+     Headline => "a binary operator, usually used for remainder and reduction",
+     Usage => "x % y",
+     "The usual meaning for this operator is remainder, or normal form with respect
+     to a Gröbner basis.",
+     PARA{},
+     "For integers, the remainder is non-negative.",
+     EXAMPLE lines ///
+       1232132141242345 % 1000000
+       (-4)%5
+       ///,
+     PARA{},
+     "In polynomial rings, the division algorithm is used.",
+     EXAMPLE lines ///
+       A = ZZ[a,b]
+       (3*a^3-a*b-4) % (5*a-b)
+       pseudoRemainder(3*a^3-a*b-4, 5*a-b)
+       B = QQ[a,b]
+       (3*a^3-a*b-4) % (5*a-b)
+     ///,
+     "In more complicated situations, Gröbner bases are usually needed.  See ",
+     TO "methods for normal forms and remainder", ".",
+     SeeAlso => { remainder, remainder', pseudoRemainder, "//"}
      }
