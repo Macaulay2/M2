@@ -166,6 +166,7 @@ jobs:
             -L`brew --prefix readline`/lib       \
             -L/Library/Frameworks/Python.framework/Versions/${PYVERSION}/lib"
           export F77=gfortran-14
+          export FC=gfortran-14
           ../../configure --enable-download --with-system-gc --with-fplll
 
       - name: Build Macaulay2 using Make
