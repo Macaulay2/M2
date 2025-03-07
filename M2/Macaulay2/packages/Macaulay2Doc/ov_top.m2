@@ -54,5 +54,6 @@ Node
     :Reference material
       "Thing"
       "Type"
+      "ImmutableType"
       "Function"
 ///

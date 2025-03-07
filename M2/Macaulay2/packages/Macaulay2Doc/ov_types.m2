@@ -472,13 +472,18 @@ document {
 
 document {
      Key => Type,
-     Headline => "the class of all types",
-     "Everything in the system is classified, and the class that a thing
-     belongs to is a type.  A type is implemented as a hash table containing
-     method functions for its instances.",
+     Headline => "the class of all mutable types",
+     "Everything in the system is classified, and the class that a thing belongs to is a type. ",
+     "A type is implemented as a ", TO2(MutableHashTable, "mutable hash table"),
+     " containing method functions for its instances.",
      PARA{},
      "The list of types known to the system is displayed below.",
      Subnodes => {
+	 "mathematical mutable types",
+	 TO Monoid,
+	 TO Ring,
+	 TO RingFamily,
+	 "other mutable types",
 	 TO SelfInitializingType,
 	 TO WrapperType,
 	 TO HeaderType,
@@ -591,7 +596,7 @@ document {
      }
 
 document { Key => ImmutableType,
-     Headline => "the class of immutable types",
+     Headline => "the class of all immutable types",
      "All types are implemented as hash tables.  Most types are mutable, so that additional methods for handling their instances can be added
      at any time.  However, if a type has an ancestor where the methods can be stored, then mutability is not needed.",
      PARA{},
@@ -615,7 +620,13 @@ document { Key => ImmutableType,
      EXAMPLE lines ///
 	  ZZ^3_0 + ZZ^3_2
      ///,
-     SeeAlso => {showStructure,parent,class}
+     SeeAlso => {showStructure,parent,class},
+     PARA{},
+     "The list of immutable types known to the system is displayed below.",
+     Subnodes => {
+	 "mathematical immutable types",
+	 TO Module,
+         },
      }
 
 document {

@@ -94,10 +94,6 @@ Node
       QQ[x][y, Join => false]
       oo.FlatMonoid
   Subnodes
-    Monoid
-    OrderedMonoid
-    GeneralOrderedMonoid
-    MonoidElement
     (monoid, Ring)
     FlatMonoid
     :Optional arguments

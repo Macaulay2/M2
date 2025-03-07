@@ -640,8 +640,11 @@ document {
        	  },
      SeeAlso => {"heft vectors", "division in polynomial rings with monomials less than 1"},
      Subnodes => {
+	 TO (symbol SPACE, Ring, Array),
+	 TO (symbol SPACE, Ring, Monoid),
 	 TO "get a ring variable by index",
 	 TO "get a ring variable by name",
+	 TO "get a monomial by exponent vector",
 	 TO "graded and multigraded polynomial rings",
 	 TO "monomial orderings",
          }
@@ -778,7 +781,10 @@ document {
 	  "R = ZZ/101[x,y,z]/(x-y,y-z,z-x)",
       	  "trim R"
 	  },
-     "For more information see ", TO "QuotientRing", "."
+     "For more information see ", TO "QuotientRing", ".",
+     Subnodes => {
+	 TO (symbol /, Ring, Ideal),
+         },
      }
 
 document {
@@ -1190,7 +1196,11 @@ document {
 document {
     Key => "local rings",
     "Localizations of polynomial rings with respect to prime ideals are implemented in
-    the ", TO "LocalRings::LocalRings", " package."
+    the ", TO "LocalRings::LocalRings", " package.",
+    Subnodes => {
+	"alternative ways to construct a local ring",
+	TO (symbol SPACE, Ring, List),
+        },
     }
 
 document {

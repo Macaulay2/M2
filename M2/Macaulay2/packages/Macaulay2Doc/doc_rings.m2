@@ -4,7 +4,12 @@ document {
      "A monoid is a set with a multiplicative operation on
      it and an identity element.  A typical monoid is the set
      of monomials in a polynomial ring, which we consider to be
-     created before the polynomial ring is created."
+     created before the polynomial ring is created.",
+     Subnodes => {
+	 TO OrderedMonoid,
+	 TO GeneralOrderedMonoid,
+	 TO MonoidElement,
+         },
      }
 document {
     Key => OrderedMonoid,
@@ -82,8 +87,16 @@ document {
 	  TO (symbol ^, Ring, List),
 	  TO (vars, Ring),
 	  },
-     Subnodes => TO EngineRing,
+     Subnodes => {
+	 TO EngineRing,
+	 TO ring,
+        },
      }
+document {
+    Key => RingFamily,
+    "This family is used to contain classes that correspond to a family of similar rings with a default member.",
+    Subnodes => TO InexactFieldFamily,
+    }
 document {
     Key => Engine,
     Headline => "specify whether a ring is handled by the engine",
@@ -92,10 +105,9 @@ document {
 document {
     Key => EngineRing,
     Headline => "the class of rings handled by the engine",
-    "The ", TO "engine", " handles most of the types of rings in the
-    system.",
+    "Typically, ", TO "the engine of Macaulay2", " handles the rings in the system.",
     PARA{},
-    "The command ", TT "new Engine from x", " is not meant for general
+    "The command ", TT "new EngineRing from x", " is not meant for general
     users, and provides the developers with a way to create top-level
     rings corresponding to rings implemented in the engine.  Here ", TT "x", "
     may be:",
