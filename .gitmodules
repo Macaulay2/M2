@@ -12,7 +12,7 @@
 	ignore = all
 [submodule "M2/submodules/bdwgc"]
 	path = M2/submodules/bdwgc
-	url = https://github.com/Macaulay2/bdwgc.git
+	url = https://github.com/ivmai/bdwgc.git
 	ignore = all
 [submodule "M2/submodules/flint"]
 	path = M2/submodules/flint
