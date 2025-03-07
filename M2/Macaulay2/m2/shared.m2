@@ -5,6 +5,12 @@ needs "methods.m2"
 -- methods
 
 chi = method()
+euler  = method()
+eulers = method()
+genera = method()
+genus  = method()
+
+minimize = method()
 
 cone = method()
 rays = method(Options => true)

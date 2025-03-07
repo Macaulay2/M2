@@ -745,7 +745,9 @@ document {
 	       },
 	 LI { "functionality changed:",
 	      UL {
-		   LI { "The functions ", TO "associatedPrimes", ", ", TO "topComponents", ", and ", TO "removeLowestDimension", " have been moved to the
+		   LI { "The functions ", TO "PrimaryDecomposition::associatedPrimes", ", ",
+		       TO "PrimaryDecomposition::topComponents", ", and ",
+		       TO "PrimaryDecomposition::removeLowestDimension", " have been moved to the
 			 package ", TO "PrimaryDecomposition::PrimaryDecomposition", "." },
 		   LI { "The destinations of the links at the tops of the web pages portraying documentation nodes in a package have been
 			altered.  The links labeled ", TT "next", " and ", TT "previous", " have been interchanged with the links labelled ",
