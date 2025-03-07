@@ -830,7 +830,9 @@ AS_IF([test $BUILD_lapack = no],
          [AC_MSG_NOTICE([blas/lapack not found; will build])
           BUILD_lapack=yes])])
 AS_IF([test $BUILD_lapack = yes],
-    [BLAS_LIBS=-lrefblas
+    [dnl we need our patched FFLAS-FFPACK when no CBLAS
+     BUILD_fflas_ffpack=yes
+     BLAS_LIBS=-lrefblas
      LAPACK_LIBS=-llapack])
 AC_SUBST([LINALGLIBS], ["$LAPACK_LIBS $BLAS_LIBS"])
 
