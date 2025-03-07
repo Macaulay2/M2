@@ -406,6 +406,7 @@ getData = (key, tag, rawdoc) -> (
 	Caveat          => getOption(rawdoc, Caveat),
 	SeeAlso         => getOption(rawdoc, SeeAlso),
 	Subnodes        => getOption(rawdoc, Subnodes),
+	"Location"      => toString locate tag, -- for debugging
 	-- this is so a "Ways to use" section is listed when multiple
 	-- method keys are documented together without the base function
 	"WaysToUse"     => DIV (
