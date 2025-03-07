@@ -261,7 +261,8 @@ document {
 	  "making functions with a variable number of arguments",
 	  "making functions with multiple return values",
 	  "making new functions with optional arguments"
-	  }
+	  },
+     Subnodes => TO \ { FunctionClosure, CompiledFunction, CompiledFunctionClosure },
      }
 document {
      Key => "->",

@@ -39,7 +39,8 @@ document {
 
 document {
      Key => AssociativeExpression,
-     Headline => "the class of associative expressions"
+     Headline => "the class of associative expressions",
+     Subnodes => TO \ { Sum, -*DirectSum,*- Product, -*TensorProduct,*- Equation },
      }
 
 document {
@@ -50,7 +51,8 @@ document {
      is basic enough that the correct method for printing does not depend
      on its neighbors in the containing expression.  A negative number would
      not be basic enough for this purpose, since as a member of a sum, it would
-     require special treatment."
+     require special treatment.",
+     Subnodes => TO \ { Describe, OneExpression, Parenthesize, ZeroExpression },
      }
 
 document {
@@ -171,6 +173,12 @@ document {
      TT "Product", " is a type of ", TO "Expression", " representing a product."
      }
 
+-- document {
+--      Key => TensorProduct,
+--      Headline => "the class of all tensor product expressions",
+--      TT "TensorProduct", " is a type of ", TO "Expression", " representing a tensor product."
+--      }
+
 document {
      Key => SparseVectorExpression,
      Headline => "the class of all sparse vector expressions",
@@ -235,6 +243,12 @@ document {
      Headline => "the class of all sum expressions",
      TT "Sum", " is a type of ", TO "Expression", " representing a sum."
      }
+
+-- document {
+--      Key => DirectSum,
+--      Headline => "the class of all direct sum expressions",
+--      TT "DirectSum", " is a type of ", TO "Expression", " representing a direct sum."
+--      }
 
 document {
      Key => {ScriptedFunctor,

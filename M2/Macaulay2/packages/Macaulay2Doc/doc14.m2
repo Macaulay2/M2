@@ -333,7 +333,8 @@ document { Key => {CatalanConstant},
      PARA {"See ", wikipedia "Catalan's constant", "."}
      }
 document { Key => {RingFamily},
-     "This family is used to contain classes that correspond to a family of similar rings with a default member."
+     "This family is used to contain classes that correspond to a family of similar rings with a default member.",
+     Subnodes => TO InexactFieldFamily,
      }
 document { Key => {BesselJ,(BesselJ, ZZ, Number),(BesselJ,Number,Number)},
      Usage => "BesselJ(n,x)\nBesselJ_n x",

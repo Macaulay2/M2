@@ -76,7 +76,8 @@ document {
 	  },
      PARA{},
      "An ideal ", TT "I", " is an immutable object, so if you want to 
-     cache information about it, put it in the hash table ", TT "I.cache", "."
+     cache information about it, put it in the hash table ", TT "I.cache", ".",
+     Subnodes => TO MonomialIdeal,
      }
 document {
      Key => (symbol *,Ideal,Ideal),

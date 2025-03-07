@@ -26,6 +26,9 @@ doc///
   "."
   "#?"
   ".?"
+ Subnodes
+   VirtualTally
+   OptionTable
 ///
 
 document {
@@ -43,7 +46,10 @@ document {
 	"x # 20",
 	"x #? 40",
     },
-    SeeAlso => "HashTable"
+    SeeAlso => "HashTable",
+    Subnodes => {
+	TO CacheTable,
+    },
 }
 
 document {

@@ -477,7 +477,12 @@ document {
      belongs to is a type.  A type is implemented as a hash table containing
      method functions for its instances.",
      PARA{},
-     "The list of types known to the system is displayed below."
+     "The list of types known to the system is displayed below.",
+     Subnodes => {
+	 TO SelfInitializingType,
+	 TO WrapperType,
+	 TO HeaderType,
+         },
      }
 
 document {
@@ -487,14 +492,34 @@ document {
      includes numbers, strings, and lists.  More complicated things such as
      polynomials, groups, rings, and chain complexes are implemented
      as ", ITALIC "hash tables", ".  See ", TO "Type", " for information
-     about what types of things there are."
+     about what types of things there are.",
+     Subnodes => TO \ {
+	 --Net,
+	 NetFile,
+	 Boolean,
+	 Dictionary,
+	 Nothing,
+	 Database,
+	 --HashTable,
+	 --Task,
+	 SymbolBody,
+	 --BasicList,
+	 Number,
+	 File,
+	 --Function,
+	 AtomicInt,
+	 Symbol,
+	 Pseudocode,
+	 FunctionBody
      }
+}
 document {
      Key => Nothing,
      Headline => "the empty class",
      "This class is useful for representing the class of an argument
      that is missing.  It is also used as the parent for those things that
-     are not themselves types, i.e., which do not have instances."
+     are not themselves types, i.e., which do not have instances.",
+     Subnodes => { TO "null" },
      }
 
 document {
@@ -549,7 +574,8 @@ document {
 	  "x",
 	  "ab12"
 	  },
-     SeeAlso => {":="}
+     SeeAlso => {":="},
+     Subnodes => TO Keyword,
      }
 
 document {

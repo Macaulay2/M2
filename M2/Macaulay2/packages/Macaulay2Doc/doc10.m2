@@ -393,7 +393,8 @@ document { Key => InexactField,
      ring oo
      class oo
      parent oo
-     ///
+     ///,
+     Subnodes => { TO RealField, TO ComplexField },
      }
 
 document { Key => InexactFieldFamily,

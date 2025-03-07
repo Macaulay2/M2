@@ -52,6 +52,7 @@ Node
       -- Mike wanted this: TO "frequently encountered problems"
       "replacements for commands and scripts from Macaulay"
     :Reference material
+      "Thing"
       "Type"
       "Function"
 ///
