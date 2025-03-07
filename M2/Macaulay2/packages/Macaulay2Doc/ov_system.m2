@@ -1874,12 +1874,7 @@ document {
 	  String => "the path, as seen by external programs, to the root of the file system seen by Macaulay2"
 	  },
      PARA {
-	  "This string may be concatenated with an absolute path to get one understandable by external programs.
-	  Currently, this makes a difference only under Microsoft Windows with Cygwin, but there it's crucial
-	  for those external programs that are not part of Cygwin.  Fortunately, programs compiled under Cygwin
-	  know were to look for files whose paths start with something like ", TT "C:/", ", so it is safe
-	  always to concatenate with the value of ", TO "rootPath", ", even when it is unknown whether the
-	  external program has been compiled under Cygwin."
+	  "This string may be concatenated with an absolute path to get one understandable by external programs."
 	  },
      EXAMPLE lines ///
      fn = temporaryFileName()
@@ -1895,12 +1890,7 @@ document {
 	  String => "the path, as seen by an external browser, to the root of the file system seen by Macaulay2"
 	  },
      PARA {
-	  "This string may be concatenated with an absolute path to get one understandable by an external browser.
-	  Currently, this makes a difference only under Microsoft Windows with Cygwin, but there it's crucial
-	  for those external programs that are not part of Cygwin.  Fortunately, programs compiled under Cygwin
-	  know were to look for files whose paths start with something like ", TT "C:/", ", so it is safe
-	  always to concatenate with the value of ", TO "rootPath", ", even when it is unknown whether the
-	  external program has been compiled under Cygwin."
+	  "This string may be concatenated with an absolute path to get one understandable by an external browser."
 	  },
      EXAMPLE lines ///
      fn = temporaryFileName()
