@@ -18,6 +18,15 @@ undocumented {
      }
 
 document {
+    Key => power,
+    Headline => "power",
+    Usage => "(x,n)",
+    TT "power(x,n)", " yields the ", TT "n", "-th power of ", TT "x", ".",
+    PARA{},
+    SeeAlso => "^"
+}
+
+document {
      Key => {symbol ^},
      Headline => "a binary operator, usually used for powers",
      Usage => "x ^ y",

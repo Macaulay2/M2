@@ -111,6 +111,10 @@ document {
 }
 
 document {
+    Key => Number,
+    Headline => "the class of all numbers" }
+
+document {
      Key => ZZ,
      Headline => "the class of all integers" }
 

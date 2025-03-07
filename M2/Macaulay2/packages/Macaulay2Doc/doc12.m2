@@ -25,33 +25,6 @@ document {
      }
 
 document {
-     Key => (symbol -, List),
-     Headline => "negation of a vector",
-     Usage => "-v",
-     Inputs => { "v" => "a list interpreted as a vector" },
-     Outputs => {{"the negation of ", TT "v"}},
-     EXAMPLE "- {1,5,6}"
-     }
-
-document {
-     Key => (symbol +, List, List),
-     Headline => "sum of two vectors",
-     Usage => "v+w",
-     Inputs => { "v" => "a list interpreted as a vector", "w" => "a list interpreted as a vector" },
-     Outputs => {"the sum of the two vectors"},
-     EXAMPLE "{1,2,3} + {1,5,6}"
-     }
-
-document {
-     Key => (symbol -, List, List),
-     Headline => "difference of two vectors",
-     Usage => "v-w",
-     Inputs => { "v" => "a list interpreted as a vector", "w" => "a list interpreted as a vector" },
-     Outputs => {"the difference of the two vectors"},
-     EXAMPLE "{1,2,3} - {1,5,6}"
-     }
-
-document {
      Key => sum,
      Headline => "compute the sum",
      TT "sum", " provides the sum of the members of a list, set, 
@@ -130,17 +103,6 @@ document {
 	  },
      SeeAlso => "product"
      }
-document {
-     Key => (sum, Set),
-     Headline => "sum of elements",
-     TT "sum v", " yields the sum of the elements in the set ", TT "v", ".",
-     PARA{},
-     EXAMPLE {
-	  "a = set{1,100,10000}",
-      	  "sum a",
-	  },
-     SeeAlso => "sum"
-     }
 
 document {
      Key => product,
@@ -191,16 +153,6 @@ document {
      PARA{},
      EXAMPLE {
 	  "a = tally{2,2,2,2,2,3,3,3,5,5}",
-      	  "product a",
-	  },
-     SeeAlso => "product"
-     }
-document {
-     Key => (product, Set),
-     Headline => "product of elements",
-     TT "product v", " yields the product of the elements in the set ", TT "v", ".",
-     EXAMPLE {
-	  "a = set select(1..50, isPrime)",
       	  "product a",
 	  },
      SeeAlso => "product"
