@@ -129,7 +129,7 @@ net TreeNode   := x -> (
 
 toDoc := method()
 toDoc ForestNode := x -> if #x>0 then UL apply(toList x, y -> toDoc y)
-toDoc TreeNode   := x -> DIV nonnull { TOH checkIsTag x#0, toDoc x#1 }
+toDoc TreeNode   := x -> nonnull { TOH checkIsTag x#0, toDoc x#1 }
 
 traverse := method()
 traverse(ForestNode, Function) := (n, f) -> scan(n, t -> traverse(t, f))
@@ -242,6 +242,10 @@ indexButton    := (htmlDirectory, indexFileName) -> HREF {htmlDirectory | indexF
 tocButton      := (htmlDirectory, tocFileName)   -> HREF {htmlDirectory | tocFileName,   "toc"};
 pkgButton      := TO2 {"packages provided with Macaulay2", "Packages"};
 homeButton     := HREF {"https://macaulay2.com/", "Macaulay2"};
+searchBox      := LITERAL ///<form method="get" action="https://www.google.com/search">
+  <input placeholder="Search" type="text" name="q" value="">
+  <input type="hidden" name="q" value="site:macaulay2.com/doc">
+</form>///
 
 nextButton     := tag -> if NEXT#?tag then HREF { htmlFilename NEXT#tag, "next" }     else "next"
 prevButton     := tag -> if PREV#?tag then HREF { htmlFilename PREV#tag, "previous" } else "previous"
@@ -269,11 +273,7 @@ buttonBar := tag -> DIV {
 	    else if tag === "toc"
 	    then HREF {htmlDirectory | tocFileName, "Table of Contents"}
 	    else TO tag)},
-    DIV join({"class" => "right",
-	    LITERAL ///<form method="get" action="https://www.google.com/search">
-  <input placeholder="Search" type="text" name="q" value="">
-  <input type="hidden" name="q" value="site:macaulay2.com/doc">
-</form>///},
+    DIV join({"class" => "right", searchBox},
 	splice between_" | " {
 	    nextButton tag,
 	    prevButton tag,
