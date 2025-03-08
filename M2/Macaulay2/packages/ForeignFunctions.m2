@@ -18,8 +18,8 @@
 
 newPackage("ForeignFunctions",
     Headline => "foreign function interface",
-    Version => "0.4",
-    Date => "October 1, 2024",
+    Version => "0.5",
+    Date => "March 7, 2025",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -32,6 +32,9 @@ newPackage("ForeignFunctions",
 ---------------
 
 -*
+
+0.5 (2025-03-07, M2 1.25.05)
+* make LAPACK example canned since it may be a static library
 
 0.4 (2024-10-01, M2 1.24.11)
 * remove redundant Constant methods now that it's a subclass of Number
@@ -2208,8 +2211,12 @@ doc ///
       so we use @TO voidstar@ to represent them in our call to
       @TO foreignFunction@.  Since Macaulay2 is already linked against LAPACK,
       we don't need to worry about calling @TO openSharedLibrary@.
-    Example
-      dggglm = foreignFunction("dggglm_", void, toList(13:voidstar))
+    CannedExample
+      i1 : dggglm = foreignFunction("dggglm_", void, toList(13:voidstar))
+
+      o1 = dggglm_
+
+      o1 : ForeignFunction
     Text
       The parameters @CODE "n"@, @CODE "m"@ and @CODE "p"@ are exactly the
       numbers $n$, $m$, and $p$ above.  The parameters @CODE "A"@, @CODE "B"@,
@@ -2219,12 +2226,14 @@ doc ///
       helper methods to take care of this conversion.  The local variable
       @CODE "T"@ is a @TO ForeignArrayType@ created by
       @TO (symbol *, ZZ, ForeignType)@.
-    Example
-      toLAPACK = method();
-      toLAPACK Matrix := A -> (
-          T := (numRows A * numColumns A) * double;
-          T flatten entries transpose A);
-      toLAPACK Vector := toLAPACK @@ matrix;
+    CannedExample
+      i2 : toLAPACK = method();
+
+      i3 : toLAPACK Matrix := A -> (
+              T := (numRows A * numColumns A) * double;
+              T flatten entries transpose A);
+
+      i4 : toLAPACK Vector := toLAPACK @@ matrix;
     Text
       The parameters @CODE "ldA"@ and @CODE "ldB"@ are the "leading dimensions"
       of the arrays @CODE "A"@ and @CODE "B"@.  We will use $n$ for both.  The
@@ -2241,35 +2250,56 @@ doc ///
       with @TO info@) and @TO address@ to get pointers to the other integer
       arguments.  We also use @TO (symbol *, ForeignType, voidstar)@ to
       dereference @CODE "i"@ and determine whether the call was successful.
-    Example
-      generalLinearModel= method();
-      generalLinearModel(Matrix, Matrix, Vector) := (A, B, d) -> (
-          if numRows A != numRows B
-          then error "expected first two arguments to have the same number of rows";
-          n := numRows A;
-          m := numColumns A;
-          p := numColumns B;
-          x := getMemory(m * size double);
-          y := getMemory(p * size double);
-          lwork := n + m + p;
-          work := getMemory(lwork * size double);
-          i := getMemory int;
-          dggglm(address int n, address int m, address int p, toLAPACK A,
-              address int n, toLAPACK B, address int n, toLAPACK d, x, y, work,
-              address int lwork, i);
-          if value(int * i) != 0 then error("call to dggglm failed");
-          (vector value (m * double) x, vector value (p * double) y));
+    CannedExample
+      i5 : generalLinearModel= method();
+
+      i6 : generalLinearModel(Matrix, Matrix, Vector) := (A, B, d) -> (
+               if numRows A != numRows B
+               then error "expected first two arguments to have the same number of rows";
+               n := numRows A;
+               m := numColumns A;
+               p := numColumns B;
+               x := getMemory(m * size double);
+               y := getMemory(p * size double);
+               lwork := n + m + p;
+               work := getMemory(lwork * size double);
+               i := getMemory int;
+               dggglm(address int n, address int m, address int p, toLAPACK A,
+                   address int n, toLAPACK B, address int n, toLAPACK d, x, y, work,
+                   address int lwork, i);
+               if value(int * i) != 0 then error("call to dggglm failed");
+               (vector value (m * double) x, vector value (p * double) y));
     Text
       Finally, let's call this method and solve a constrained least squares
       problem.  This example is from
       @HREF{"https://doi.org/10.1080/01621459.1981.10477694",
 	  "Kourouklis, S., & Paige, \"A Constrained Least Squares Approach to
 	  the General Gauss-Markov Linear Model\""}@.
-    Example
-      A = matrix {{1, 2, 3}, {4, 1, 2}, {5, 6, 7}, {3, 4, 6}};
-      B = matrix {{1, 0, 0, 0}, {2, 3, 0, 0}, {4, 5, 1e-5, 0}, {7, 8, 9, 10}};
-      d = vector {1, 2, 3, 4};
-      generalLinearModel(A, B, d)
+    CannedExample
+      i7 : A = matrix {{1, 2, 3}, {4, 1, 2}, {5, 6, 7}, {3, 4, 6}};
+
+                    4       3
+      o7 : Matrix ZZ  <-- ZZ
+
+      i8 : B = matrix {{1, 0, 0, 0}, {2, 3, 0, 0}, {4, 5, 1e-5, 0}, {7, 8, 9, 10}};
+
+                      4         4
+      o8 : Matrix RR    <-- RR
+                    53        53
+
+      i9 : d = vector {1, 2, 3, 4};
+
+             4
+      o9 : ZZ
+
+      i10 : generalLinearModel(A, B, d)
+
+      o10 = (|   .3141  |, | .0296627 |)
+             | -.334417 |  | .0451036 |
+             |  .441691 |  | .0585128 |
+                           | .0650142 |
+
+      o10 : Sequence
 ///
 
 doc ///
