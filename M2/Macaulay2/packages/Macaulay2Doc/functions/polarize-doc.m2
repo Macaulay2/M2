@@ -8,7 +8,7 @@ doc ///
     (polarize, MonomialIdeal)
     [polarize, VariableBaseName]
   Headline
-    given a monomial ideal, computes the squarefree monomial ideal obtained via polarization
+    compute the polarization of a monomial ideal
   Usage
     polarize M
     polarize(M, VariableBaseName => "x")

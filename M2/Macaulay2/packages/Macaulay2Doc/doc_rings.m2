@@ -31,7 +31,7 @@ document {
     Key => GeneralOrderedMonoid,
     Headline => "the class of all ordered free commutative monoids",
     "This is the class of free monoids that can be handled by
-    the ", TO "engine", ".  Elements of such monoids are implemented
+    the ", TO "the engine of Macaulay2", ".  Elements of such monoids are implemented
     as instances of ", TO "MonoidElement", ".",
     PARA{},
     SeeAlso => { "monoid" }
@@ -101,7 +101,7 @@ document {
     Key => Engine,
     Headline => "specify whether a ring is handled by the engine",
     TT "Engine", " -- a key for rings that yields the value ", TT "true", " if this
-    ring is supported by the ", TO "engine", "."}
+    ring is supported by the ", TO "the engine of Macaulay2", "."}
 document {
     Key => EngineRing,
     Headline => "the class of rings handled by the engine",
@@ -130,7 +130,7 @@ document {
 document {
     Key => RingElement,
     Headline => "the class of all ring elements handled by the engine",
-    SeeAlso => "engine"}
+    SeeAlso => EngineRing}
 document {
     Key => PolynomialRing,
     Headline => "the class of all ordered monoid rings",

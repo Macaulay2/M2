@@ -187,7 +187,7 @@ document {
 
 document {
      Key => Boolean,
-     Headline => "the class of Boolean values",
+     Headline => "the class of boolean values",
      "Predicate functions return these as values, and the logical connectives
      expect to receive them as arguments.",
      PARA{},

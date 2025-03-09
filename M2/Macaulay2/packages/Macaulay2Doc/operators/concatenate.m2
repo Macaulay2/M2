@@ -81,7 +81,7 @@ document {
 
 document {
      Key => (symbol ||, Vector, Vector),
-     Headline => "join Vectors ",
+     Headline => "join vectors",
      Usage => "v || w",
 	Inputs => {"v", "w"},
 	Outputs => {

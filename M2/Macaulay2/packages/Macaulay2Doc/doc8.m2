@@ -225,7 +225,7 @@ document {
 
 document {
      Key => order,
-     Headline => "a key used internally ",
+     Headline => "a key used internally",
      TT "order", " -- used as a key inside finite fields under which is
      stored the number of elements in the field.  Intended for internal use only",
      PARA{},

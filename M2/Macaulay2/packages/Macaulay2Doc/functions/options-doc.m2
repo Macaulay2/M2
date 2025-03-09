@@ -4,7 +4,7 @@
 
 document {
     Key => {symbol =>,(symbol =>, Thing, Thing)},
-    Headline => "produce an Option",
+    Headline => "construct an option",
     TT "x => y", " a binary operator that produces a type of list called an ", TO "Option", "."
 }
 
@@ -58,7 +58,7 @@ Node
     (options, Sequence)
     (options, ZZ)
   Headline
-    get optional arguments and default values of functions and methods
+    get the optional arguments and default values of a function or method
   Usage
     options f
   Inputs

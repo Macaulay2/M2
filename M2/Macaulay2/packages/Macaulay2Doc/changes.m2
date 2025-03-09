@@ -2803,7 +2803,7 @@ document {
 	  with algebraic algorithms that mix symbolic and numeric techniques.  Basic
 	  transcendental functions are also provided, and pi is now a symbolic
 	  constant usable in numeric expressions of any precision.  An interface to
-	  lapack routines for singular value decomposition and eigenvectors is
+	  LAPACK routines for singular value decomposition and eigenvectors is
 	  provided (but they operate only with 53 bits of precision).
 	  "},
      PARA ///

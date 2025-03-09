@@ -189,7 +189,7 @@ doc ///
  Key
   [flattenRing, CoefficientRing] 
  Headline
-  optionally specify the desired coefficient ring of the flattened ring
+  specify the coefficient ring of the flattened ring
  Description
   Text
    Use this option to change the default behavior of @TO flattenRing@,
@@ -210,7 +210,7 @@ doc ///
  Key  
   [flattenRing, Result]
  Headline
-  optionally specify which output(s) to return (see Description for details)
+  specify which output(s) to return
  Description
   Text
    The @TO flattenRing@ documentation goes into much greater detail about the

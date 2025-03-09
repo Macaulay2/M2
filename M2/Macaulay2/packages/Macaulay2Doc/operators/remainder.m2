@@ -94,8 +94,7 @@ document {
 	  (symbol %, Matrix, GroebnerBasis),
 	  (symbol %, RingElement, GroebnerBasis)
 	  },
-     Headline => "calculate the normal form of ring elements and
-          matrices using a (partially computed) Gröbner basis",
+     Headline => "compute the normal form of a ring element or matrix using a Gröbner basis",
      Usage => "f % G",
      Inputs => { "f" => Nothing => {ofClass RingElement, ", or ",
 	       ofClass Matrix},

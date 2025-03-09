@@ -381,7 +381,7 @@ document {
 
 document {
      Key => GRevLex,
-     Headline => "graded reverse lexicographical monomial order.",
+     Headline => "graded reverse lexicographical monomial ordering",
      TEX /// The graded reverse lexicographic order is defined by: $x^A > x^B$ if either
      $degree(x^A) > degree(x^B)$ or $degree(x^A) = degree(x^B)$ and
      the LAST non-zero entry of the vector of integers $A-B$ is NEGATIVE. ///,
@@ -415,7 +415,7 @@ document {
 
 document {
      Key => Lex,
-     Headline => "lexicographical monomial order.",
+     Headline => "lexicographical monomial ordering",
      "The lexicographic order is defined by: $x^A > x^B$ if the FIRST
      non-zero entry of the vector of integers ", TT "A-B", " is POSITIVE.",
      EXAMPLE {
@@ -554,9 +554,8 @@ document {
 document {
      Key => ProductOrder,
      Headline => "product ordering",
-     TT "ProductOrder", "{n1, ..., nr} -- an optional argument of
-     ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
-     indicate that the monomial order is the product of r graded reverse lex
+     TT "ProductOrder", "{n1, ..., nr} -- an optional argument of ", TO "MonomialOrder",
+     " to indicate that the monomial order is the product of r graded reverse lex
      orders, each with n1, n2, ..., nr variables.",
      PARA{},
      "This syntax is left here for compatibility with previous
@@ -602,7 +601,8 @@ document {
      }
 
 document {
-     Key => "GroupRevLex",
+     Key => GroupRevLex,
+     Headline => "invert some variables with reverse lexicographical ordering",
      TT "MonomialOrder => GroupRevLex => n", " inverts the first ",
      TT "n", " variables in the polynomial ring.
      In the following example, ", TT "a^-1", " is in the ring,
@@ -617,7 +617,7 @@ document {
 
 document {
      Key => GroupLex,
-     Headline => "defines a ring where some variables are inverted",
+     Headline => "invert some variables with lexicographical ordering",
      TT "MonomialOrder => GroupLex => n", " inverts the first ",
      TT "n", " variables in the polynomial ring.
      In the following example, ", TT "a^-1", " is in the ring,
@@ -635,7 +635,7 @@ document {
 
 document {
      Key => NCLex,
-     Headline => "Non-commutative lexicographical order.",
+     Headline => "non-commutative lexicographical order",
      "This feature has not been implemented yet."
      }
 

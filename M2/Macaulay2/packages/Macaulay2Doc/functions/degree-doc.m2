@@ -149,7 +149,7 @@ doc ///
 Key
   (length, Module)
 Headline
-  Computes the length of a module
+  compute the length of a module
 Usage
   l = length M
 Inputs

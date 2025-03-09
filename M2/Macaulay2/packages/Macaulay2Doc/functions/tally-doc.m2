@@ -103,7 +103,7 @@ document {
 
 document {
      Key => (symbol -, VirtualTally),
-     Headline => "negation of a VirtualTally",
+     Headline => "negation of a virtual tally",
      TT "-x", " -- the negation of ", TT "x",
      PARA{},
      EXAMPLE {
