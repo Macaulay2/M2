@@ -996,6 +996,7 @@ document {
      "predicates",
 	  TO symbol and ,
 	  TO symbol or ,
+	  TO symbol xor ,
 	  TO symbol not ,
      "functions",
           TO symbol SPACE,
