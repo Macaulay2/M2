@@ -42,6 +42,7 @@ Node
       "IntegralClosure :: IntegralClosure"
       "PrimaryDecomposition :: primaryDecomposition"
       "combinatorial functions"
+      "analytical functions"
     :The Macaulay2 Language
       "The Macaulay2 language"
     :Packages
