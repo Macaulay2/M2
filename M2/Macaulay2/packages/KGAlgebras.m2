@@ -9,7 +9,7 @@ newPackage(
     },
     Headline => "A package for KG-algebras",
     Keywords => {"KG-algebra"},
-    DebuggingMode => true,
+    DebuggingMode => false,
     Reload=>true,
     PackageExports=>{"AssociativeAlgebras","InvariantRing","RealRoots"}
     )
