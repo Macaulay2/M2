@@ -6,7 +6,10 @@ document {
      associated with the symbol ", TO "Print", " is applied to perform the printing,
      unless the printing is to be suppressed, as indicated by a semicolon at the end
      of the statement, in which case the ", TO "NoPrint", " method is applied.",
-     Subnodes => {TO "capture"},
+     Subnodes => {
+	 TO "capture",
+	 TO "topLevelMode",
+         },
      SeeAlso => {
 	  "Print",
 	  "NoPrint",
@@ -377,7 +380,20 @@ document {
 	  {"the interpreter will produce input and output prompts appropriate for the mode, and will
 	       format output values appropriately"}
 	  },
-     PARA "This variable is intended for internal use only."
+     PARA "This variable is intended for internal use only.",
+     Subnodes => {
+	 "Keys for top level modes:",
+	 TO Standard,
+	 TO WebApp,
+	 TO TeXmacs,
+	 TO Jupyter,
+	 "Keys for mode-dependent printing methods:",
+	 TO Print,
+	 TO NoPrint,
+	 TO BeforePrint,
+	 TO AfterPrint,
+	 TO AfterNoPrint,
+         },
      }
 document {
      Key => Standard,
