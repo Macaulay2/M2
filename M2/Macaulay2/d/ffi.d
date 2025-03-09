@@ -679,3 +679,19 @@ ffiFunctionPointerAddress(e:Expr):Expr := (
 	else WrongArg(1, "a function"))
     else WrongNumArgs(2));
 setupfun("ffiFunctionPointerAddress", ffiFunctionPointerAddress);
+
+getMemory0(e:Expr):Expr := (
+    when e
+    is a:Sequence
+    do (
+	when a.0
+	is n:ZZcell do (
+	    if !isInt(n) then WrongArgSmallInteger(1)
+	    else when a.1
+	    is atomic:Boolean do (
+		if atomic.v then toExpr(getMemAtomic(toInt(n.v)))
+		else toExpr(getMem(toInt(n.v))))
+	    else WrongArgBoolean(2))
+	else WrongArgZZ(1))
+    else WrongNumArgs(2));
+setupfun("getMemory0", getMemory0);
