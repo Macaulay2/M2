@@ -40,11 +40,26 @@ document {
      ///,
      "The ring of a monomial ideal must be a commutative polynomial ring.  This ring must
      not be a skew commuting ring, and/or a quotient ring.",
+    Subnodes => {
+        TO (codim, MonomialIdeal),
+        TO (symbol -, MonomialIdeal, MonomialIdeal),
+        TO (dual, MonomialIdeal, List),
+        TO (dual, MonomialIdeal, RingElement),
+        TO (dual, MonomialIdeal),
+        TO (lcm, MonomialIdeal),
+        },
      }
 
 document {
      Key => monomialIdeal,
-     Headline => "make a monomial ideal"
+     Headline => "make a monomial ideal",
+    SeeAlso => {
+	"Classic::monomialIdeal(String)",
+        },
+    Subnodes => {
+	TO (monomialIdeal, Matrix),
+	TO (monomialIdeal, Ideal),
+        },
      }
 document {
      Key => {

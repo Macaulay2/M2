@@ -352,7 +352,13 @@ document {
      EXAMPLE {
 	  "Z = Proj(QQ[x_0..x_12]/(x_0^3+x_12^3))",
 	  "hilbertPolynomial Z"
-	  }
+	  },
+    Subnodes => {
+	TO (symbol SPACE, ProjectiveHilbertPolynomial, ZZ),
+        TO (degree, ProjectiveHilbertPolynomial),
+        TO (dim, ProjectiveHilbertPolynomial),
+        TO (hilbertSeries, ProjectiveHilbertPolynomial),
+        },
      }
 document {
      Key => (symbol SPACE, ProjectiveHilbertPolynomial, ZZ),

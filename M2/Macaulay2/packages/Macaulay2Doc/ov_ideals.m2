@@ -8,6 +8,7 @@ document {
      by giving a set of generators.",
      Subnodes => {
 	 TO Ideal,
+	 TO ideal,
 	  TO "creating an ideal",
 	  "conversions",
 	  TO "ideals to and from matrices",
@@ -164,7 +165,10 @@ document {
        polynomial of the module ", TT "I", " if the input 
        is ", TT "hilbertPolynomial I", ".",     
        PARA{}, "For basic information about working with 
-       modules see ", TO "modules", "."
+       modules see ", TO "modules", ".",
+    Subnodes => {
+	TO comodule,
+        },
      }
 
 document {

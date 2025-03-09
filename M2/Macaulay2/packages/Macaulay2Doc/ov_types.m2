@@ -510,7 +510,7 @@ document {
 	 --Database,
 	 --HashTable,
 	 --Task,
-	 SymbolBody,
+	 --SymbolBody,
 	 --BasicList,
 	 Number,
 	 File,
@@ -583,7 +583,24 @@ document {
 	  "ab12"
 	  },
      SeeAlso => {":="},
-     Subnodes => TO Keyword,
+     Subnodes => {
+	TO Keyword,
+	TO SymbolBody,
+	TO "symbol",
+	TO "global",
+	TO "local",
+	TO getSymbol,
+	TO getGlobalSymbol,
+	TO isGlobalSymbol,
+	TO protect,
+        TO (value, Symbol),
+	TO (findSynonyms, Symbol),
+        TO ((symbol _, symbol =), Symbol, Thing),
+        TO (symbol .., Symbol, Symbol),
+        TO (symbol ..<, Symbol, Symbol),
+        -- TO (symbol _, Symbol, Ring),
+        TO (symbol _, Symbol, Thing),
+        },
      }
 
 document {
@@ -624,12 +641,12 @@ document { Key => ImmutableType,
 	  ZZ^3_0 + ZZ^3_2
      ///,
      SeeAlso => {showStructure,parent,class},
-     PARA{},
-     "The list of immutable types known to the system is displayed below.",
-     Subnodes => {
-	 "mathematical immutable types",
-	 TO Module,
-         },
+     -- PARA{},
+     -- "The list of immutable types known to the system is displayed below.",
+     -- Subnodes => {
+     -- 	 "mathematical immutable types",
+     -- 	 TO Module,
+     --     },
      }
 
 document {
@@ -683,7 +700,13 @@ document {
      "If ", TT "R", " is a ring handled by the engine, and ", TT "M", " is a
      module over ", TT "R", ", then M is a subclass of Vector.",
      PARA{},
-     SeeAlso => {RingElement, Module, Matrix}}
+     SeeAlso => {RingElement, Module, Matrix},
+    Subnodes => {
+	TO (entries, Vector),
+        TO (symbol **, Vector, Vector),
+        TO (symbol ||, Vector, Vector),
+        },
+    }
 document {
      Key => Matrix,
      Headline => "the class of all matrices",
@@ -732,7 +755,57 @@ document {
 	  TO (image, Matrix),
 	  TO (kernel, Matrix),
 	  TO (homology, Matrix, Matrix),
-	  }}
+        },
+    -- TODO: merge these with the lists above
+    Subnodes => {
+	TO (leadTerm, Matrix),
+        TO (leadTerm, ZZ, Matrix),
+        TO (borel, Matrix),
+        TO (dual, Matrix),
+        TO (exteriorPower, ZZ, Matrix),
+        TO (trace, Matrix),
+        TO (modulo, Matrix, Matrix),
+        TO (complement, Matrix),
+        TO (extend, ChainComplex, ChainComplex, Matrix),
+        TO (resolution, Matrix),
+        TO (symbol **, Matrix, RingElement),
+        TO (ambient, Matrix),
+        TO (chainComplex, Matrix),
+        TO (contract, Matrix, Matrix),
+        TO (cover, Matrix),
+        TO (degrees, Matrix),
+        TO (diagonalMatrix, Matrix),
+        TO (symbol ++, Matrix, Matrix),
+        TO (markedGB, Matrix, Matrix),
+        TO (homology, Matrix, Matrix),
+        TO (inverse, Matrix),
+        TO (jacobian, Matrix),
+        TO (kernel, Matrix),
+        TO (koszul, Matrix),
+        TO (koszul, ZZ, Matrix),
+        TO (map, Ring, Matrix),
+        TO (minimalPresentation, Matrix),
+        TO (minors, ZZ, Matrix),
+        TO (pivots, Matrix),
+        TO (quotient, Matrix, GroebnerBasis),
+        TO (schreyerOrder, Matrix),
+        TO (smithNormalForm, Matrix),
+        TO (source, Matrix),
+        TO (syz, Matrix),
+        TO (target, Matrix),
+        TO (tensor, RingMap, Matrix),
+        TO (tensor, Matrix, Matrix),
+        TO (symbol **, Matrix, Ring),
+        TO (symbol ^, Matrix, ZZ),
+        TO (symbol |, Matrix, Matrix),
+        TO (symbol ||, Matrix, Matrix),
+        TO (symbol /, Matrix, Number),
+        TO (symbol //, Matrix, Matrix),
+        TO (symbol %, Matrix, GroebnerBasis),
+        TO (symbol *, Matrix, Matrix),
+        TO (symbol _, Matrix, Sequence),
+        },
+    }
 
 document {
      Key => Descent,

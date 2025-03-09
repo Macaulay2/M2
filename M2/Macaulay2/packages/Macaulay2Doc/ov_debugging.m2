@@ -43,7 +43,10 @@ document {
 	TO "shield",
 	TO "showStructure",
 	TO "showUserStructure",
-	TO "userSymbols"
+	TO "userSymbols",
+	TO "listSymbols",
+	TO "lookupCount",
+	TO "serialNumber",
     },
     SeeAlso => {
 	"error handling"

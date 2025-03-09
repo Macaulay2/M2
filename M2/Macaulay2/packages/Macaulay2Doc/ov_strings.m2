@@ -107,9 +107,12 @@ fghij"///,
 	  TO utf8,
 	  TO utf8substring,
 	  TO substring,
-	  TO (length, String),
+	  TO (value, String),
 	  TO (symbol _, String, ZZ),
 	  TO (symbol _, String, Sequence),
+	  TO (symbol .., String, String),
+	  TO (symbol ..<, String, String),
+	  TO (symbol ^, String, Sequence),
 	  "functions for handling nets",
 	  TO horizontalJoin,
 	  TO pad,
@@ -162,7 +165,15 @@ document {
      "Warning: if so many characters are written to a file that an internal buffer
      is filled before the line ends or first net is seen, then the buffer will be 
      flushed, and writing a net subsequently will produce an unexpected result.",
-     Subnodes => TO \ {(width, Net), (height, Net), (depth, Net)}
+    Subnodes => {
+	TO (width, Net),
+	TO (height, Net),
+	TO (depth, Net),
+	TO (length, Net),
+        TO (symbol ^, Net, ZZ),
+	TO (symbol ||, Net, Net),
+        TO (symbol |, Net, Net),
+        },
      }
 
 document {

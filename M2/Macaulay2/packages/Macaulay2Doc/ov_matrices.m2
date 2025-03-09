@@ -6,6 +6,8 @@ document {
      "In Macaulay2, each matrix is defined over a ring, (see ", TO "rings", "). 
      Matrices are perhaps the most common data type in Macaulay2.",
      Subnodes => {
+	 TO Matrix,
+	 TO matrix,
 	  "making matrices", 
 	  TO "inputting a matrix",
    	  TO "projections, inclusions, and permutations",

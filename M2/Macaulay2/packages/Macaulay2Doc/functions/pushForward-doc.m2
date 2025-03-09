@@ -11,7 +11,7 @@ document {
 	  [pushForward,DegreeLimit],
 	  [pushForward,PairLimit],
 	  },
-     Headline => "",
+     Headline => "compute the pushforward of a module along a ring map",
      Usage => "pushForward(F,M)",
      Inputs => {
 	  "F" => "a ring map F: R --> S, graded",
@@ -84,7 +84,10 @@ document {
      "Note: these examples are from the original Macaulay script by David Eisenbud.",
      Caveat => {"The module M must be homogeneous, as must R, S, and f.  If you need this
 	  function in more general situations, please write it and send it to the Macaulay2 authors, 
-	  or ask them to write it!"}
+	  or ask them to write it!"},
+     SeeAlso => {
+	 "PushForward::PushForward",
+         },
      }
 
 -- document { 

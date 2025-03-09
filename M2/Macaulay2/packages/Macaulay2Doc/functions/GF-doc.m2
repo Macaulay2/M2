@@ -67,3 +67,47 @@ document {
 	  )
      }
 
+document {
+     Key => PrimitiveElement,
+     Headline => "specify a primitive element",
+     TT "PrimitiveElement => g", " -- an option used with ", TO "GF", ".",
+     PARA{},
+     "The value can be a ring element providing a primitive element, or the
+     symbol ", TO "FindOne", " (the default) which specifies that
+     ", TO "GF", " should search for a primitive element."
+     }
+
+document {
+     Key => FindOne,
+     Headline => "find a primitive element",
+     TT "FindOne", " -- a value for the option ", TO "PrimitiveElement", "
+     to ", TO "GF", " which specifies that ", TO "GF", " should search 
+     for a primitive element."
+     }
+
+document {
+     Key => Variable,
+     Headline => "specify a name for a variable",
+     -- it is also used with integralClosure, but we should automate that
+     TT "Variable => x", " -- an option used with ", TO "GF", ", to specify
+     a symbol to be used as a name for the generator of the Galois field."
+     }
+
+document {
+     Key => isPrimitive,
+     Headline => "whether an element is a primitive element of a finite field",
+     TT "isPrimitive(f)", " -- Given an element ", TT "f", " in a quotient of a polynomial ring ",
+     TT "R", " over a finite field ", TT "K", "which is itself a finite field,
+      with the ring being finite dimensional over the field,
+     determine if ", TT "f", " generates the multiplicative group of this field.",
+     EXAMPLE { "R = ZZ/5[t]/(t^2+t+1);", "isPrimitive t", "isPrimitive (t-1)" }
+     }
+
+document {
+     Key => order,
+     Headline => "a key used internally",
+     TT "order", " -- used as a key inside finite fields under which is
+     stored the number of elements in the field.  Intended for internal use only",
+     PARA{},
+     SeeAlso => "GaloisField"
+     }

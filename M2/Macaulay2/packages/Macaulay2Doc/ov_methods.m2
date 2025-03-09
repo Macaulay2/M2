@@ -262,7 +262,15 @@ document {
 	  "making functions with multiple return values",
 	  "making new functions with optional arguments"
 	  },
-     Subnodes => TO \ { FunctionClosure, CompiledFunction, CompiledFunctionClosure },
+    Subnodes => {
+	TO FunctionClosure,
+	TO CompiledFunction,
+	TO CompiledFunctionClosure,
+	TO (symbol SPACE, Function, Thing),
+        TO (symbol @@, Function, Function),
+        TO (symbol _, Function, Thing),
+        TO (methodOptions, Function),
+        },
      }
 document {
      Key => "->",

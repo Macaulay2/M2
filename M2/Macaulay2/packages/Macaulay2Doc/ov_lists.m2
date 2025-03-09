@@ -451,6 +451,12 @@ doc///
     take
     first
     last
+  :Creating simple lists
+    -- for .. list
+    -- apply
+    (symbol .., ZZ, ZZ)
+    (symbol ..<, ZZ, ZZ)
+    (symbol :, ZZ, Thing)
   :Iterating over lists
     (symbol /, VisibleList, Function)
     (symbol //, VisibleList, Function)
@@ -458,6 +464,7 @@ doc///
     apply
     fold
     accumulate
+    ultimate
   :Searching in lists
     all
     any

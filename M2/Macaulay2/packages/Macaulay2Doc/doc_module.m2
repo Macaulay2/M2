@@ -1,9 +1,15 @@
 -- also includes: vector
--- TODO: (module, Ideal)
+
+undocumented (module, Module)
 
 document {
      Key => module,
-     Headline => "make or get a module"
+     Headline => "make or get a module",
+    Subnodes => {
+	TO (module, Ring),
+	-- TO (module, Ideal), -- TODO
+	TO (module, Vector),
+    },
      }
 
 document { Key => (module, Ring),

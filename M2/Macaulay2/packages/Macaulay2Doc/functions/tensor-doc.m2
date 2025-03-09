@@ -265,6 +265,8 @@ Node
   SeeAlso
     (tensor, Module, Module)
     (tensor, Matrix, Matrix)
+  Subnodes
+    tensorAssociativity
 
 Node
   Key
@@ -432,3 +434,17 @@ document {
 	 M^**2
 	 ///
     }
+
+document {
+    Key => {
+	 tensorAssociativity,
+	(tensorAssociativity, Module, Module, Module),
+	(tensorAssociativity, ChainComplex, ChainComplex, ChainComplex),
+	(tensorAssociativity, GradedModule, GradedModule, GradedModule)},
+    Headline => "associativity isomorphisms for tensor products",
+    TT "tensorAssociativity(A,B,C)", " -- produces the isomorphism from
+    A**(B**C) to (A**B)**C.",
+    PARA{},
+    "Currently implemented for modules, graded modules, and chain complexes.",
+    SeeAlso => {"ChainComplex", "Module"}
+}

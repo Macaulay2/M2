@@ -79,6 +79,10 @@ document {
 	  },
      Subnodes => {
 	 TO (symbol SPACE, RingMap, RingElement),
+        TO (kernel, RingMap),
+        TO (source, RingMap),
+        TO (target, RingMap),
+        TO (symbol ^, RingMap, ZZ),
          }
      }
 
