@@ -2,7 +2,13 @@ document {
      Key => sum,
      Headline => "compute the sum",
      TT "sum", " provides the sum of the members of a list, set,
-     or chain complex, optionally with a function applied to each one."
+     or chain complex, optionally with a function applied to each one.",
+     Subnodes => {
+	 TO (sum, List),
+	 TO (sum, ZZ, Function),
+	 TO (sum, VisibleList, Function),
+	 TO (sum, VisibleList, VisibleList, Function),
+         },
      }
 
 document {

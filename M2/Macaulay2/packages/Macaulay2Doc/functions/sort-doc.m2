@@ -7,7 +7,12 @@
 document { 
      Key => sort,
      Headline => "sort a list or columns of a matrix",
-     SeeAlso => {rsort, sortColumns, symbol<=, symbol?}
+     SeeAlso => {rsort, sortColumns, symbol<=, symbol?},
+     Subnodes => {
+	 TO (sort, List),
+	 TO (sort, Matrix),
+	 TO sortColumns,
+         },
      }
 document { 
      Key => (sort,Matrix),
@@ -42,7 +47,11 @@ document {
 	  "options sort",
 	  "sort(m, DegreeOrder=>null, MonomialOrder=>Descending)"
 	  },
-     SeeAlso => {sortColumns}
+     SeeAlso => {sortColumns},
+     Subnodes => {
+	 TO [sort, MonomialOrder],
+	 TO [sort, DegreeOrder],
+         },
      }
 document { 
      Key => {(sort,List)},

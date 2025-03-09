@@ -1,6 +1,8 @@
 -- -*- coding: utf-8 -*-
-document { Key => {(Grassmannian, ZZ, ZZ), 
-	  Grassmannian, 
+document {
+    Key => {
+	 Grassmannian,
+	(Grassmannian, ZZ, ZZ), 
 	  (Grassmannian, ZZ, ZZ, PolynomialRing),
 	  [Grassmannian, CoefficientRing],
 	  [Grassmannian, Variable]},
@@ -33,8 +35,9 @@ document { Key => {(Grassmannian, ZZ, ZZ),
      }
 
 document { 
-     Key => {(Schubert,ZZ,ZZ,VisibleList), 
-	  Schubert,
+    Key => {
+	 Schubert,
+	(Schubert,ZZ,ZZ,VisibleList), 
 	  [Schubert,CoefficientRing],
 	  [Schubert,Variable]},
      Headline => "compute the Plücker ideal of a Schubert variety",
