@@ -1,6 +1,13 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
 document {
+     Key => File,
+     Headline => "the class of all files",
+     "Files may be input files, output files, pipes, or sockets.
+     A list of currently open files may be obtained with ", TO "openFiles", ".",
+     }
+
+document {
      Key => "printing to the screen",
      "Use the operator ", TO "<<", " to print something to the screen.",
      EXAMPLE {
@@ -44,7 +51,11 @@ document {
 	  "43!",
 	  "truncateOutput infinity",
 	  "43!"
-	  }
+	  },
+     Subnodes => {
+         TO "stdio",
+         TO "stderr",
+         }
      }
 
 document {
@@ -294,9 +305,16 @@ document {
      Key => "file manipulation",
      Headline => "Unix file manipulation functions",
      Subnodes => {
-	  TO fileExists,
 	  TO isRegularFile,
 	  TO isDirectory,
+	  TO baseFilename,
+	  -- TODO: change FileName to Filename
+	  TO temporaryFileName,
+	  TO fileMode,
+	  TO fileExists,
+	  TO fileReadable,
+	  TO fileWritable,
+	  TO fileExecutable,
 	  TO fileTime, -- can use to get or set (currentTime)
 	  TO copyFile,
 	  TO moveFile,
@@ -305,14 +323,16 @@ document {
 	  TO symlinkFile,
 	  TO linkFile,
 	  TO readlink,
-	  TO mkdir,
+	  TO realpath,
+	  "Directories",
+	  TO currentDirectory,
+	  TO readDirectory,
 	  TO makeDirectory,
+	  TO mkdir,
+	  TO changeDirectory,
 	  TO copyDirectory,
 	  TO removeDirectory,
 	  TO symlinkDirectory,
-	  TO readDirectory,
-	  TO realpath,
-	  TO temporaryFileName
 	  }
      }
 
@@ -406,7 +426,13 @@ document {
      PARA{},
      "Another useful function is ", TO "wait", ", which can be used
      to wait for input to be available from any of a list of input
-     files."
+     files.",
+     Subnodes => {
+	 TO run,
+	 TO findProgram,
+	 TO runProgram,
+	 TO (symbol <<, Program, Thing),
+         },
      }
 
 document {
@@ -438,7 +464,42 @@ wait pid///,
 	  Then we use an ordinary input command, namely ", TO "get", ", to obtain the message.
 	  Finally, we ", TO "wait", " for the child process to finish, as we should."
 	  },
-     SeeAlso => { "openInOut", "openListener", "getWWW" }
+     SeeAlso => { getWWW },
+     Subnodes => {
+	 "Creating a socket",
+	 TO openListener,
+	 TO openIn,
+	 TO openInOut,
+	 TO openOut,
+	 TO openOutAppend,
+	 "Manipulating a socket",
+	 TO endl,
+	 TO flush,
+	 TO close,
+	 TO closeIn,
+	 TO closeOut,
+	 "Interacting a socket",
+	 TO get,
+	 TO getc,
+	 TO read,
+	 TO scanLines,
+	 TO fileLength,
+	 TO(height, File),
+	 TO(width, File),
+	 TO atEndOfFile,
+	 TO echoOn,
+	 TO echoOff,
+	 TO isOpen,
+	 TO isReady,
+	 TO isOutputFile,
+	 TO isInputFile,
+	 TO isListener,
+	 TO openFiles,
+	 TO connectionCount,
+	 -- TODO: combine:
+	 TO kill,
+	 TO(kill, ZZ),
+         },
      }
 
 -- Local Variables:

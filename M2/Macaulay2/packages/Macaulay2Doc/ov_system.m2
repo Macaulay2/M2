@@ -30,13 +30,37 @@ document {
 document {
     Key => "system facilities",
     Subnodes => {
+	"Input and output:",
+	  TO "printing to the screen",
+	  TO "printing to a file",
+	  TO "reading files",
+	  TO "getting input from the user",
+	  TO "creating and writing files",
+	  TO "saving polynomials and matrices in files",
+	  TO "two dimensional formatting",
+	  TO "file manipulation",
+	  TO "communicating with programs",
+	  TO "using sockets",
 	"Loading files:",
+	  TO "notify",
 	  TO "autoload",
 	  TO "initialization file",
 	  TO "input",
 	  TO "load",
 	  TO "needs",
 	  TO "end",
+	  TO "loadedFiles",
+	  TO "fileDictionaries",
+	  TO "fileExitHooks",
+	"Loading path:",
+	  TO "path",
+	  TO "rootURI",
+	  TO "rootPath",
+	  TO "homeDirectory",
+	  TO minimizeFilename,
+	  TO relativizeFilename,
+	  TO toAbsolutePath,
+	  TO searchPath,
 	"Echoing characters:",
 	  TO "clearEcho",
 	  TO "setEcho",
@@ -44,29 +68,37 @@ document {
 	  TO "top level loop", -- see repl.m2
 	  TO "restart",
 	  TO "addEndFunction",
-	"Interface to the operating system:",
-	  TO "alarm",
-	  TO "currentDirectory",
-	  TO "exec",
-	  TO "exit",
-	  TO "fork",
-	  TO "getenv",
-	  TO "processID",
-	  TO "path",
-	  TO "quit",
-	  TO "run",
-	  TO "sleep",
-	  TO "nanosleep",
+	"Timing computations:",
 	  TO "Time",
 	  TO "time",
 	  TO "timing",
 	  TO "elapsedTime",
 	  TO "elapsedTiming",
+	  TO "sleep",
+	  TO "nanosleep",
+	"Interface to the operating system:",
+	  TO "alarm",
+	  TO "exec",
+	  TO "exit",
+	  TO "fork",
+	  TO "getenv",
+	  TO "getWWW",
+	  TO "splitWWW",
+	  TO "processID",
+	  TO "quit",
 	  TO "wait",
+	  TO limitFiles,
+	  TO limitProcesses,
 	"Variables with information about the state of the current process:",
 	  TO "commandLine",
 	  TO "environment",
 	  TO "version",
+	"Working with databases:",
+	  TO Database,
+	  TO nextkey,
+	  TO openDatabase,
+	  TO openDatabaseOut,
+	  TO reorganize,
 	"Dealing with the garbage collector:",
 	  TO "collectGarbage",
 	  TO "registerFinalizer"
@@ -206,7 +238,14 @@ document {
      }
 document {
      Key => read,
-     Headline => "read from a file", }
+     Headline => "read from a file",
+    Subnodes => {
+	TO (read, Sequence),
+	TO (read, String),
+	TO (read, File),
+	TO (read, File, ZZ),
+        },
+    }
 document {
      Key => (read,Sequence),
      Usage => "read()",
@@ -978,26 +1017,6 @@ document {
 	  }
      }
 
-
-document {
-     Key => File,
-     Headline => "the class of all files",
-     "Files may be input files, output files, pipes, or sockets.
-     A list of currently open files may be obtained with ", TO "openFiles", ".",
-     DIV {
-	  "class" => "waystouse",
-	  SUBSECTION {"Functions operating on path names:"},
-	  UL {
-	       TO minimizeFilename,
-	       TO "path",
-	       TO relativizeFilename,
-	       TO searchPath,
-	       TO temporaryFileName,
-	       TO toAbsolutePath
-	       }
-	  }
-     }
-
 document {
      Key => connectionCount,
      Headline => "the number of connections",
@@ -1095,8 +1114,6 @@ document { Key => {(symlinkDirectory, String, String),symlinkDirectory,[symlinkD
      SeeAlso => { symlinkFile, copyDirectory }
      }
 
-document { Key => UpdateOnly,
-     Headline => "only copies of newer files should replace files" }
 document { Key => {(copyDirectory, String, String),copyDirectory,[copyDirectory, Exclude],[copyDirectory, UpdateOnly],[copyDirectory, FollowLinks],[copyDirectory, Verbose]},
      Usage => "copyDirectory(src,dst)",
      Inputs => {
@@ -1242,7 +1259,13 @@ document { Key => "fileDictionaries",
      Outputs => {{"the local dictionary in effect for the scope of the file loaded from the path ", TT "fn"}},
      }
 document { Key => fileMode,
-     Headline => "set or get file mode"
+     Headline => "set or get file mode",
+     Subnodes => {
+	  TO (fileMode, File),
+	  TO (fileMode, ZZ, File),
+	  TO (fileMode, String),
+	  TO (fileMode, ZZ, String),
+          },
      }
 document { Key => (fileMode,String),
      Headline => "get file mode",
