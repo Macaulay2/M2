@@ -95,7 +95,7 @@ document {
      }
 document { 
      Key => {(ideal,Ring), (ideal,QuotientRing)},
-     Headline => "returns the defining ideal",     
+     Headline => "get the defining ideal",
      Usage => "ideal R",
      Inputs => {
 	  "R"
@@ -122,7 +122,7 @@ document {
      }
 document { 
      Key => (ideal,MonomialIdeal),
-     Headline => "converts a monomial ideal to an ideal",     
+     Headline => "convert a monomial ideal to an ideal",
      Usage => "ideal I",
      Inputs => {
 	  "I"
@@ -147,7 +147,7 @@ document {
      }
 document { 
      Key => (ideal,Module),
-     Headline => "converts a module to an ideal",          
+     Headline => "convert a module to an ideal",
      Usage => "ideal M",
      Inputs => {
 	  "M" => "which is a submodule of a free module of rank 1"

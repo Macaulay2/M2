@@ -83,7 +83,7 @@ doc ///
     randomKRationalPoint
     (randomKRationalPoint,Ideal)
   Headline
-    Pick a random K rational point on the scheme X defined by I
+    pick a random K rational point on the scheme X defined by I
   Usage
     randomKRationalPoint I
   Inputs

@@ -79,12 +79,13 @@ SeeAlso
     midpoint
 ///
 
+-- TODO: combine with (intersection, RRi, RRi)
 doc ///
 Key
     (intersect, RRi)
     [(intersect, RRi), Precision]
 Headline
-    computes intersection of input intervals
+    intersection of input intervals
 Usage
     J = intersection(I,...)
     J = intersection(I,...,Precision => prec)
@@ -107,7 +108,7 @@ Key
     (intersection, RRi, RRi)
     [(intersection, RRi, RRi), Precision]
 Headline
-    computes intersection of input intervals
+    intersection of input intervals
 Usage
     K = intersection(I,J)
     K = intersection(I,J,Precision => prec)
@@ -324,7 +325,7 @@ Key
     (numericInterval, Constant)
     (numericInterval, ZZ, Constant)
 Headline
-    converts to an interval
+    convert a constant to an interval
 Usage
     I = numericInterval(c)
     I = numericInterval(prec,c)

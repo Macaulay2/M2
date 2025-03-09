@@ -72,7 +72,7 @@ document {
 	  ", ", 
 	  TO mutableIdentity,
      ").  
-     Certain operations over RR or CC are performed using the lapack library
+     Certain operations over RR or CC are performed using the LAPACK library
      and require dense encoding of matrices: ",
      TO "LUdecomposition", ", ", TO "SVD", ", ", TO "solve", ", ", TO "eigenvalues", ", ", TO "eigenvectors", ".",
      

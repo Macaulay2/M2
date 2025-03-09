@@ -40,7 +40,7 @@ document {
      }
 document { 
      Key => [forceGB, ChangeMatrix],
-     Headline => "inform Macaulay2 about the change of basis matrix from GB to generators",
+     Headline => "specify the change of basis matrix from a Gröbner basis to the generators of a module",
      Usage => "forceGB(...,ChangeMatrix=>m)",
      Inputs => { "m" => Matrix },
      Consequences => {

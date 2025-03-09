@@ -113,9 +113,9 @@ document {
 
 document {
      Key => symbol gbTrace,
-     Headline => "provide tracing output during various computations in the 	 engine.",
-     TT "gbTrace = n", " -- set the tracing level for the ", TO "engine", " to
-     level ", TT "n", ".  Meaningful values for the user ", TT "n", " are
+     Headline => "current engine computation tracing level",
+     TT "gbTrace = n", " -- set the tracing level for ", TO "the engine of Macaulay2", " to
+     level ", TT "n", ".  Meaningful values of ", TT "n", " for typical users are
      0, 1, 2, and 3.  Meaningful values for the developers are 4, 5, 8, 10, 11, and 100; the
      parity also has an effect when the value is at least 5.",
      PARA{},
@@ -131,7 +131,8 @@ document {
 	  "(7)     - 7 more S-pairs need to be reduced.",
 	  LI {"(8,9)   - 9 S-pairs, 8 predicted basis elements (", TO [gb,Hilbert], ")"},
 	  ".       - a minor has been computed, or something has happened while computing a resolution.",
-	  }
+	  },
+     SeeAlso => { "debugLevel", "engineDebugLevel" },
      }
 
 document {

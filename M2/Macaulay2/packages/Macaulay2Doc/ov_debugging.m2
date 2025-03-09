@@ -183,10 +183,12 @@ document { Key => "debuggingMode",
      Usage => "debuggingMode = true",
      Consequences => {{"the debugger will be entered when an error occurs"}}}
 document { Key => "debugLevel",
-     Headline => "current level debugging",
+     Headline => "current debugging level",
      Usage => "debugLevel = n",
      Inputs => {"n" => ZZ },
-     "Some M2 routines will display debugging information if ", TO "debugLevel", " is set to a value greater than 0."}
+     "Some M2 routines will display debugging information if ", TO "debugLevel", " is set to a value greater than 0.",
+    SeeAlso => { "gbTrace", "engineDebugLevel" },
+    }
 document { Key => "debugError",
      Headline => "a function to debug",
      Usage => "debugError()",

@@ -225,7 +225,7 @@ doc ///
     compareExchange
     (compareExchange, AtomicInt, ZZ, ZZ)
   Headline
-    compares and possibly exchanges the value of an atomic integer
+    compare and possibly exchange the value of an atomic integer
   Usage
     compareExchange(x, y, z)
   Inputs

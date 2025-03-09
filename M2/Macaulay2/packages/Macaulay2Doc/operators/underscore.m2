@@ -485,7 +485,7 @@ document {
 
 document { 
      Key => {(symbol _, ZZ, Module)},
-     Headline => "integers or zero element",
+     Headline => "get the zero vector in a module",
      Usage => "0_M",
      TT "0_M", " provides the zero element of the module ", TT "M", ".",
      PARA{

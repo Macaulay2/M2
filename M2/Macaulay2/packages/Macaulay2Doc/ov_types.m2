@@ -631,7 +631,7 @@ document { Key => ImmutableType,
 
 document {
      Key => serialNumber,
-     Headline => "serial number of a dictionary, task, symbol, mutable hash table, or mutable list, ",
+     Headline => "serial number of a dictionary, task, symbol, mutable hash table, or mutable list",
      Usage => "serialNumber x",
      Inputs => {"x"},
      Outputs => { ZZ => { "the serial number of ", TT "x" } },
@@ -680,7 +680,7 @@ document {
      "If ", TT "R", " is a ring handled by the engine, and ", TT "M", " is a
      module over ", TT "R", ", then M is a subclass of Vector.",
      PARA{},
-     SeeAlso => {"engine", "Module"}}
+     SeeAlso => {RingElement, Module, Matrix}}
 document {
      Key => Matrix,
      Headline => "the class of all matrices",

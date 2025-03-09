@@ -77,11 +77,6 @@ document {
      }
 
 document {
-     Key => LengthLimit,
-     Headline => "stop when the resolution reaches this length",
-     }
-
-document {
      Key => [resolution,LengthLimit],
      Headline => "stop when the resolution reaches this length",
      TT "LengthLimit", " -- keyword for an optional argument used with
@@ -136,13 +131,6 @@ document {
 	  },
      "All algorithms use induced monomial orders (Schreyer orders), since
      this makes an enormous improvement to the efficiency of the algorithm."
-     }
-
-document {
-     Key => SortStrategy,
-     Headline => "specify a strategy for sorting S-pairs",
-     TT "SortStrategy", " -- a keyword for an optional argument that
-     specifies the strategy to be used for sorting S-pairs."
      }
 
 document {
@@ -220,7 +208,7 @@ document {   -- This node is used as an example for the documentation node: Key,
 
 document {
      Key => (resolution, Matrix),
-     Headline => "given a module map represented by a matrix, produce a comparison map between resolutions of its source and target",
+     Headline => "compute the comparison map between resolutions of the source and target of a module map represented by a matrix",
      Usage => "resolution f",
      Inputs => { "f" => {"a module homomorphism ", TT "N <--- M"} },
      Outputs => { {"a chain map from a projective resolution of the source of ", TT "f", " to a resolution of the target of ", TT "f" } },
@@ -268,11 +256,11 @@ document {
      PARA{},
      "Options:",
      UL {
-	  {TO TotalPairs, " -- display the total number of S-pairs, default value ",
+	  {TT "TotalPairs", " -- display the total number of S-pairs, default value ",
 	       toString (options status).TotalPairs },
-	  {TO PairsRemaining, " -- display the number of S-pairs remaining, default value ",
+	  {TT "PairsRemaining", " -- display the number of S-pairs remaining, default value ",
 	       toString (options status).PairsRemaining},
-	  {TO Monomials, " -- display the number of monomials, default value ",
+	  {TT "Monomials", " -- display the number of monomials, default value ",
 	       toString (options status).Monomials}
 	  },
      EXAMPLE lines ///
@@ -281,38 +269,6 @@ document {
 	  status(D, TotalPairs => true, PairsRemaining => true, Monomials => true)
      ///
      }
-
-document {
-     Key => TotalPairs,
-     Headline => "whether to display the total number of S-pairs",
-     TT "TotalPairs", " -- an option for ", TO "status", " which specifies
-     whether to display the total number of S-pairs."
-     }
-
-document {
-     Key => PairsRemaining,
-     Headline => "whether to display the number of S-pairs remaining",
-     TT "PairsRemaining", " -- an option for ", TO "status", " which specifies
-     whether to display number of S-pairs remaining."
-     }
-
-document {
-     Key => Monomials,
-     Headline => "whether to display the number of monomial",
-     TT "Monomials", " -- an option for ", TO "status", " which specifies
-     whether to display the number of monomials."
-     }
-
-document {
-    Key => Precision,
-    Headline => "name of an optional argument.",
-}
-
-document {
-    Key => Unique,
-    Headline => "do not return repeated polynomial roots",
-    "A boolean", TO Boolean, ", to select whether to return repeated roots or not.",
-}
 
 document { Key => toRR,
      Headline => "convert to high-precision real number",

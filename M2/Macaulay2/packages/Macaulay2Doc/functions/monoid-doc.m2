@@ -443,7 +443,7 @@ Node
   Key
     [monoid, SkewCommutative]
   Headline
-    specify Skew commuting variables in the ring
+    specify skew commuting variables in the ring
   Usage
     monoid[e_0..e_3, SkewCommutative => true]
     monoid[u,v,x,y,  SkewCommutative => {u,v}]
