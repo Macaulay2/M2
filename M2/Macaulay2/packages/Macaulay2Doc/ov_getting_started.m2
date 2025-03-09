@@ -1102,7 +1102,9 @@ document {
      Subnodes => {
 	  TO "Layout",
 	  TO "prefixPath",
-     	  TO "prefixDirectory"
+	  TO "prefixDirectory",
+	  TO "applicationDirectory",
+	  TO "applicationDirectorySuffix",
 	  }
      }
 

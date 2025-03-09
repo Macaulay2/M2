@@ -504,7 +504,7 @@ document {
 	 Boolean,
 	 Dictionary,
 	 Nothing,
-	 Database,
+	 --Database,
 	 --HashTable,
 	 --Task,
 	 SymbolBody,

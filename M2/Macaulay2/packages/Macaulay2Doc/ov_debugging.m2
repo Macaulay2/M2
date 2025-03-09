@@ -8,17 +8,29 @@ document {
     },
     "Here are some other debugging tools.",
     Subnodes => {
+	TO "the debugger",
 	TO "assert",
 	TO "benchmark",
 	TO "Browse::browse",
 	TO "code",
 	TO "current",
+	TO "currentPosition",
+	TO "lineNumber", -- TODO: rename to currentLineNumber
+	TO "currentColumnNumber",
 	TO "currentFileName",
+	TO "currentFileDirectory",
+	-- TO "currentDirectory",
 	TO "pseudocode",
 	TO "disassemble",
 	TO "edit",
 	--TO "error",
 	TO "errorDepth",
+	TO "debugLevel",
+	-- TODO: should the next four move under "top level loop"?
+	TO "loadDepth",
+	TO "interpreterDepth",
+	TO "recursionDepth",
+	TO "recursionLimit",
 	TO "flagLookup",
 	TO "listLocalSymbols",
 	TO "listUserSymbols",
@@ -76,7 +88,10 @@ document {
     with ", TO "break", ".",
     EXAMPLE "break",
     "The variable ", TO "errorDepth", " can be used to control how deep inside the code the debugger should be activated.",
-    SeeAlso => { "break", "end", "step", "continue", "return", "listLocalSymbols", "listUserSymbols", "code", "value", "pseudocode", "disassemble", "errorDepth" }
+    SeeAlso => { "break", "end", "step", "continue", "return", "listLocalSymbols", "listUserSymbols", "code", "value", "pseudocode", "disassemble", "errorDepth" },
+    Subnodes => {
+	TO "step",
+    },
 }     
 
 doc ///
