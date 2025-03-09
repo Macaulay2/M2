@@ -51,6 +51,7 @@ doc ///
   subsets
  Subnodes
    Partition
+   (symbol _, Partition, ZZ)
    (conjugate, Partition)
 ///
 

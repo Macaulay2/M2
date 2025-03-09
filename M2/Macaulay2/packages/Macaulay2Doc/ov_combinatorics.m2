@@ -5,7 +5,6 @@ document {
 	TO "compositions",
 	TO "partitions",
 	TO "random",
-	TO "subsets",
-	TO "tally"
+	TO "Set",
     }
 }

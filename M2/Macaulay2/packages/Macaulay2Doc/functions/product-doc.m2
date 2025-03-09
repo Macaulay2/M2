@@ -1,7 +1,13 @@
 document {
      Key => product,
      TT "product", " provides the product of the members of a list or set,
-     optionally with a function applied to each one."
+     optionally with a function applied to each one.",
+     Subnodes => {
+	 TO (product, List),
+	 TO (product, ZZ, Function),
+	 TO (product, VisibleList, Function),
+	 TO (product, VisibleList, VisibleList, Function),
+         },
      }
 document {
      Key => (product, List),

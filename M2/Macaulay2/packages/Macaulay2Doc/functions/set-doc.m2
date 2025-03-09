@@ -64,7 +64,20 @@ document {
      PARA{},
      "A set is implemented as a ", TO HashTable, ", whose keys are the elements of the
      set, and whose values are all 1.  In particular, this means that two objects
-     are considered the same exactly when they are strictly equal, according to ", TO symbol===, "."
+     are considered the same exactly when they are strictly equal, according to ", TO symbol===, ".",
+     Subnodes => {
+	 TO set,
+	 TO elements,
+	 TO (symbol #?, Set, Thing),
+	 TO (symbol -, Set, Set),
+	 TO (union, Set, Set),
+	 TO (intersection, Set, Set),
+	 TO (symbol **, Set, Set),
+	 TO (sum, Set),
+	 TO (product, Set),
+	 TO (select, Set, Function),
+	 TO (isSubset, Set, Set),
+         },
      }
 
 document {
