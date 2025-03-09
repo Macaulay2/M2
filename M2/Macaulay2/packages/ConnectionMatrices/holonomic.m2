@@ -1,6 +1,6 @@
 --debug needsPackage "Dmodules"
 
--- modified version to keep the standard basis
+-- modified version of holonomic rank to keep the standard basis
 holonomicRank(List, Module) := (weightList, M) -> (
      W := ring M;
      createDpairs W;
