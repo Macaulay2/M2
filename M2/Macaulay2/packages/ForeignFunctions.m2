@@ -19,7 +19,7 @@
 newPackage("ForeignFunctions",
     Headline => "foreign function interface",
     Version => "0.5",
-    Date => "March 7, 2025",
+    Date => "March 8, 2025",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -33,8 +33,9 @@ newPackage("ForeignFunctions",
 
 -*
 
-0.5 (2025-03-07, M2 1.25.05)
+0.5 (2025-03-08, M2 1.25.05)
 * make LAPACK example canned since it may be a static library
+* move getMemory implementation to ffi.d so we can link bdwgc statically
 
 0.4 (2024-10-01, M2 1.24.11)
 * remove redundant Constant methods now that it's a subclass of Number
@@ -153,6 +154,7 @@ importFrom_Core {
     "ffiStructAddress",
     "ffiUnionType",
     "ffiFunctionPointerAddress",
+    "getMemory0",
     "registerFinalizerForPointer",
     "toExternalFormat"
     }
@@ -671,13 +673,10 @@ foreignSymbol(String, ForeignType) := (symb, T) -> dereference_T dlsym symb
 -- working with pointers --
 ---------------------------
 
-gcMalloc = foreignFunction("GC_malloc", voidstar, ulong)
-gcMallocAtomic = foreignFunction("GC_malloc_atomic", voidstar, ulong)
-
 getMemory = method(Options => {Atomic => false}, TypicalValue => voidstar)
 getMemory ZZ := o -> n -> (
-    if n <= 0 then error "expected positive number";
-    (if o.Atomic then gcMallocAtomic else gcMalloc) n)
+    if n <= 0 then error "expected positive number"
+    else voidstar getMemory0(n, o.Atomic))
 getMemory ForeignType := o -> T -> getMemory(size T, Atomic => isAtomic T)
 getMemory ForeignVoidType := o -> T -> error "can't allocate a void"
 
