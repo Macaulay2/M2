@@ -30,8 +30,8 @@ pfaffians(Ideal) := List => (I) -> (
 ----------------------------------------------------
 --connectionMatrix computes connection matrix of I
 ----------------------------------------------------
-connectionMatrix = method()
-connectionMatrix(Ideal) := List => (I) -> (
+diffConnectionMatrix = method()
+diffConnectionMatrix(Ideal) := List => (I) -> (
     P := pfaffians(I);
     R := ring P_0;
     var := gens R;
@@ -39,7 +39,7 @@ connectionMatrix(Ideal) := List => (I) -> (
 )
 
 -- allows for Pfaffian system P as input
-connectionMatrix(List) := List => (P) -> (
+diffConnectionMatrix(List) := List => (P) -> (
     R := ring P_0;
     var := gens R;
     sum((for i from 0 to length(var)-1 list var_i*P_i ))
