@@ -22,6 +22,10 @@ newPackage(
 export {
     -- "pfaffians" already exported by Core
     "normalForm",
+    "gaugeMatrix",
+    "gaugeTransform",
+    "diffConnectionMatrix",
+    "stdMon",
 }
 
 -- to access private methods from Core
@@ -47,6 +51,18 @@ load "./ConnectionMatrices/reduce.m2"
 --------------------------------------------------------------------
 
 load "./ConnectionMatrices/pfaffians.m2"
+
+--------------------------------------------------------------------
+-- Gauge matrix
+--------------------------------------------------------------------
+
+load "./ConnectionMatrices/gaugeMatrix.m2"
+
+--------------------------------------------------------------------
+-- change of basis
+--------------------------------------------------------------------
+
+load "./ConnectionMatrices/gaugeTransform.m2"
 
 --------------------------------------------------------------------
 -- Tests section

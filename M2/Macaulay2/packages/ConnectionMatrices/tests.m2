@@ -31,3 +31,32 @@ TEST /// -- ALS notes, Example 7.16
   -- o7 = {{-1} | 0            1               |, {-1} | (-1)/y    (-x)/y        |}
   --       {-1} | (-1)/(x2-xy) (-3x+y)/(x2-xy) |  {-1} | 1/(xy-y2) (x+y)/(xy-y2) |
 ///
+
+TEST ///
+-- Example from Overleaf
+w1 = {0,0,2,1};
+w2 = {0,0,1,2};
+
+D1 = makeWeylAlgebra(QQ[x,y],w1);
+D2 = makeWeylAlgebra(QQ[x,y],w2);
+
+-- Construct the ideal in the first Weyl algebra
+I = sub(ideal(x*dx^2-y*dy^2+2*dx-2*dy,x*dx+y*dy+1),D1);  -- Ex. 1.4
+-- Compute its holonomic rank
+assert(holonomicRank(I) == 2)
+
+-- Computing the Pfaffian system w.r.t. weight vector w1
+C1 = pfaffians(I);
+SM1 = stdMon(I);
+
+-- Computing the Pfaffian system w.r.t. weight vector w2
+C2 = pfaffians(sub(I,D2));
+SM2 = stdMon(sub(I,D2));
+
+-- Compute Groebner Basis
+G = flatten entries gens gb I;
+changeofvar = gaugeMatrix(G,SM1,SM2);
+
+-- Now transform the Pfaffian system C1 into the Pfaffian System C2 via Gauge transform
+assert(C2 == gaugeTransform(changeofvar,C1,D1)) -- TODO: Need to remove the weight information.   // Fails so far.
+///
