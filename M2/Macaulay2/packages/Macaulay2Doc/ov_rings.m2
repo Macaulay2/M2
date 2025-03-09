@@ -797,7 +797,12 @@ document {
 	  TO "//",
 	  TO "%",
 	  TO "terms",
+	  TO "someTerms",
+	  TO "part",
+	  TO "parts",
 	  TO "diff",
+	  TO "contract",
+	  TO "content",
 	  -- TO "f _ ZZ",
 	  -- TO "f _ monomial",
 	  TO "listForm",
@@ -947,6 +952,21 @@ document {
      polynomials, or rather, their lead monomials, stand with respect to each 
      other in the monomial ordering.",
      EXAMPLE "f ? g",
+     Subnodes => {
+	 TO monomials,
+	 TO coefficient,
+	 TO coefficients,
+	 TO content,
+	 TO exponents,
+	 TO indices,
+	 TO part,
+	 TO parts,
+	 TO someTerms,
+	 TO terms,
+	 TO topCoefficients,
+	 TO standardForm,
+	 TO listForm,
+         },
      }
 
 document {
@@ -971,7 +991,10 @@ document {
 	  "T#0",
       	  "T#0#0",
       	  "T#0#1",
-	  }
+	  },
+     Subnodes => {
+	 TO (roots, RingElement),
+         },
      }
 
 document {

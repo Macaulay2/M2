@@ -295,15 +295,14 @@ doc ///
 
 doc ///
   Key
-    (select, ZZ, Set, Function)
     (select, Set, Function)
+    (select, ZZ, Set, Function)
   Headline
     select a part of a set
   Usage
     select(x, f)
     select(n, x, f)
   Inputs
-    n:ZZ
     x:Set
     f:Function
   Outputs

@@ -7,10 +7,18 @@ document {
      reader is already familiar with the mathematical concepts involved.  
      ", TO "David Eisenbud", " joins us as a co-author of these tutorials.",
      Subnodes => {
+	 "Lessons:",
 	  TO "Tutorial: Elementary uses of Groebner bases",
 	  TO "Tutorial: Canonical Embeddings of Plane Curves and Gonality",
 	  TO "Tutorial: Fano varieties",
 	  TO "Tutorial: Divisors",
+	 "Examples:",
+	 TO monomialCurveIdeal,
+	 TO Grassmannian,
+	 TO Schubert,
+	 TO Fano,
+	 TO Tor,
+	 TO Ext,
 	  }
      }
 

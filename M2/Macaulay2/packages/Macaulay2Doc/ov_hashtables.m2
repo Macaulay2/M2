@@ -712,7 +712,7 @@ doc ///
   (symbol #, Dictionary)
   (symbol #, Set)
  Headline
-  length or cardinality of a list, hash table, set, or string
+  length or cardinality of a list, hash table, dictionary, set, or string
  Usage
   #x
  Inputs
@@ -764,7 +764,7 @@ doc///
   (symbol #, String, ZZ)
   (symbol #, Net, ZZ)
  Headline
-  get value from list, hash table, database, or string
+  get value from list, hash table, database, dictionary, or string
  Usage
   x#i
  Inputs
