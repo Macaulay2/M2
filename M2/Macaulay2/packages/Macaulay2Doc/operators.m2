@@ -225,7 +225,8 @@ document {
 document {
     Key => symbol |,
     Headline => "a binary operator, often used for horizontal concatenation",
-    SeeAlso => {"||"}
+    SeeAlso => {"||"},
+    Subnodes => { TO (symbol |, ZZ, ZZ) },
 }
 
 document {
@@ -253,6 +254,7 @@ document {
 document {
      Key => symbol &,
      Headline => "a binary operator",
+    Subnodes => { TO (symbol &, ZZ, ZZ) },
      }
 
 document {
@@ -357,6 +359,7 @@ document {
 document {
      Key => symbol ~,
      Headline => "a unary postfix operator",
+    Subnodes => { TO (symbol ~, ZZ) },
      }
 
 document {
