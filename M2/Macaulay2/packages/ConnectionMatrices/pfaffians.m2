@@ -1,12 +1,10 @@
---needs "holonomic.m2"
---needs "gbw-fixed.m2"
---needs "reduce.m2"
---importFrom_Core { "concatRows", "concatCols" }
-
 -- ToDO: Fix this -- write correct "integrability condition".
 -- checkSystem = (W, A) -> apply(toSequence \ subsets(numgens W // 2, 2), (i,j) -> A_i * A_j - A_j * A_i)
 
--- Given a D-ideal, compute its Pfaffian system
+
+----------------------------------------------------
+--pfaffians computes Pfaffian system for D-ideals
+----------------------------------------------------
 -- c.f. [Theorem 1.4.22, SST]
 pfaffians(Ideal) := List => (I) -> (
     D := ring I;
@@ -18,7 +16,6 @@ pfaffians(Ideal) := List => (I) -> (
     -- gb with respect to an elimination
     -- weight order tie broken by RevLex?
     G := gens gb I;
-    -- compute and cache the standard monomials
     r := holonomicRank(w, M := comodule I);
     if r === infinity then error "system is not finite dimensional";
     B := sub(M.cache#"basis", R);
@@ -30,7 +27,9 @@ pfaffians(Ideal) := List => (I) -> (
     (A/entries)/matrix
 )
 
--- get the summed up connection matrix
+----------------------------------------------------
+--connectionMatrix computes connection matrix of I
+----------------------------------------------------
 connectionMatrix = method()
 connectionMatrix(Ideal) := List => (I) -> (
     P := pfaffians(I);
@@ -39,13 +38,16 @@ connectionMatrix(Ideal) := List => (I) -> (
     sum((for i from 0 to length(var)-1 list var_i*P_i ))
 )
 
+-- allows for Pfaffian system P as input
 connectionMatrix(List) := List => (P) -> (
     R := ring P_0;
     var := gens R;
     sum((for i from 0 to length(var)-1 list var_i*P_i ))
 )
 
--- outputs standard monomials
+----------------------------------------------------
+--stdMon computes std monomials wrt. to weight order
+----------------------------------------------------
 stdMon = method()
 stdMon(Ideal) := (I) -> (
     D := ring I;
