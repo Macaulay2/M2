@@ -761,7 +761,7 @@ document {
 	  "compactMatrixForm = false;",
 	  "f"
 	  },
-      Caveat => {"This flag currently has no effect outside of ", TO "Standard"," output mode."}
+     SeeAlso => { "blockMatrixForm" },
      }
 
 document {
@@ -778,7 +778,8 @@ document {
 	  "f = random(M,M)",
 	  "blockMatrixForm = true;",
 	  "f"
-	  }
+	  },
+     SeeAlso => { "compactMatrixForm" },
      }
     
 

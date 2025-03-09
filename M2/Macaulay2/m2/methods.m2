@@ -359,8 +359,8 @@ setupMethods(TypicalValue => Boolean,
       isSubset, isHomogeneous, isField
 	  })
 setupMethods(TypicalValue => ZZ, {
-	binomial, char, degreeLength, depth, dim, height,
-	numgens, numColumns, numRows, pdim, rank, width})
+	binomial, char, degreeLength, dim,
+	numgens, numColumns, numRows, pdim, rank})
 
 degrees = method(TypicalValue => List)
 length = method(TypicalValue => ZZ, Dispatch => Thing)
@@ -412,12 +412,17 @@ cohomology = method( Options => {
 	  } )
 homology = method( Options => { } )
 
+width  = method(TypicalValue => ZZ)
+height = method(TypicalValue => ZZ)
+depth  = method(TypicalValue => ZZ)
+
 width File := fileWidth
 height File := fileHeight
 
 width Net := netWidth
 height Net := netHeight
 depth Net := netDepth
+length Net := n -> #n
 
 width String := stringWidth
 height String := s -> 1

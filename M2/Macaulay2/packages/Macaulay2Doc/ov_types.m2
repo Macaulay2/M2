@@ -354,7 +354,10 @@ document {
 	  "K = new Qu from {0,0,0,1}",
 	  "2*I + 5*J",
 	  "peek oo"
-	  }
+	  },
+     Subnodes => {
+	 TO expression,
+         },
      }
 
 document {

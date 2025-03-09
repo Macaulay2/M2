@@ -675,14 +675,16 @@ document { -- something should be said about the degrees
 	  "compactMatrixForm = true",
 	  "matrix{{x^2 + 3, x^4 + 1},{x^13 - 5, x^7 - 1}}"
 	  },
+     Subnodes => {
+	 TO "blockMatrixForm",
+	 TO "compactMatrixForm",
+         },
      }
 
 document {
      Key => "importing and exporting matrices",
-     
-     SUBSECTION "toString",
-
-     SUBSECTION "toExternalString"
+     TO "toString",
+     TO "toExternalString"
      }
 
 -- Local Variables:

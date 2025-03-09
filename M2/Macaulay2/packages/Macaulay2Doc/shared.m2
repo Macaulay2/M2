@@ -2,6 +2,14 @@
 
 methodstr := PARA { "This function is a method function, defined in the core so multiple packages can add methods to it." }
 
+document { Key => height, Headline => "height of an object", methodstr,
+    SeeAlso => { "Posets::height(Poset)" } }
+document { Key => depth,  Headline => "depth of an object",  methodstr,
+    SeeAlso => { "Depth::Depth", "SLPexpressions::SLPexpressions" } }
+document { Key => width,  Headline => "width of an object",  methodstr }
+document { Key => length, Headline => "length of an object", methodstr,
+    SeeAlso => { "Complexes::length(Complex)", "Permutations::length(Permutation)" } }
+
 document { Key => minimize,     methodstr, SeeAlso => { "Complexes::minimize(Complex)" } }
 document { Key => decompose,    methodstr, SeeAlso => { "MinimalPrimes::MinimalPrimes" } }
 document { Key => truncate,     methodstr, SeeAlso => { "Truncations::Truncations" } }

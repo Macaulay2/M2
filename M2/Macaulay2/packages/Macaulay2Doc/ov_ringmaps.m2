@@ -263,6 +263,7 @@ document {
 	       	    ///try substitute(f,vars R5) else "found error"///
         },
     Subnodes => {
+	TO(use, Ring),
 	TO lift,
 	TO promote,
         },

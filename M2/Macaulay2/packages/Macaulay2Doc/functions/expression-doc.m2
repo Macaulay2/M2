@@ -51,6 +51,7 @@ document {
 	  d == e
      ///,
      Subnodes => {
+	 TO hold,
 	 TO Table,
 	 TO Holder,
 	 TO Adjacent,

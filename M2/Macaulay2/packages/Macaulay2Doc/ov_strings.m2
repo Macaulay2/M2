@@ -105,7 +105,9 @@ fghij"///,
 	  TO lines,
 	  TO ascii,
 	  TO utf8,
+	  TO utf8substring,
 	  TO substring,
+	  TO (length, String),
 	  TO (symbol _, String, ZZ),
 	  TO (symbol _, String, Sequence),
 	  "functions for handling nets",
@@ -260,12 +262,7 @@ document {
      }
 
 document {
-     Key => width,
-     Headline => "width of a file or net"
-     }
-
-document {
-     Key => {height,(height,Net),(height,String)},
+     Key => {(height,Net),(height,String)},
      Headline => "height of a net",
      TT "height n", " -- the height of a net ", TT "n", ".",
      PARA{},
@@ -299,7 +296,7 @@ document { Key => (width,File),
      Outputs => { ZZ => {"the width of the window or terminal attached to the file ", TT "f", ", if any, else 0" }}}
 
 document {
-     Key => {depth,(depth, Net),(depth, String)},
+     Key => {(depth, Net),(depth, String)},
      Headline => "depth of a net",
      TT "depth n", " -- the depth of a net or string ", TT "n", ".",
      PARA{},
@@ -310,7 +307,10 @@ document {
      }
 
 document {
-     Key => (length, String),
+    Key => {
+	(length, String),
+	(length, Net),
+    },
      Headline => "length of a string",
      Usage => "n = length s",
      Inputs => { "s" },

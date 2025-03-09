@@ -253,6 +253,7 @@ document {
 	TOH "html",
 	TOH "mathML",
 	TOH "tex",
+	TOH "texMath",
 	TOH "info",
 	TOH "net"
     }
