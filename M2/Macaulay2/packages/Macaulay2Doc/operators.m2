@@ -561,6 +561,8 @@ document {
 
 document {
     Key => {
+	(symbol //, VisibleList, Function),
+	(symbol //, VisibleList, Command),
 	(symbol //, Thing, Function),
 	(symbol //, Thing, Command),
 	(symbol //, Thing, SelfInitializingType),
