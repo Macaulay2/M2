@@ -18,25 +18,22 @@ pfaffians(Ideal) := List => (I) -> (
     -- gb with respect to an elimination
     -- weight order tie broken by RevLex?
     G := gens gb I;
-    printerr "Grobner basis:";
-    printerr net G;
     -- compute and cache the standard monomials
     r := holonomicRank(w, M := comodule I);
     if r === infinity then error "system is not finite dimensional";
     B := sub(M.cache#"basis", R);
-    printerr "Standard monomials:";
-    printerr net B;
     A := apply(D.dpairVars#1,
 	dt -> transpose concatCols apply(flatten entries B,
 	    s -> last coefficients(
 		-- essentially compute: (dt * s) % G
 		normalForm(dt_R * s, first entries G), Monomials => B)));
-    A
+    (A/entries)/matrix
 )
 
+-- get the summed up connection matrix
 connectionMatrix = method()
-connectionMatrix(List,Ideal) := List => (w, I) -> (
-    P := pfaffians(w,I);
+connectionMatrix(Ideal) := List => (I) -> (
+    P := pfaffians(I);
     R := ring P_0;
     var := gens R;
     sum((for i from 0 to length(var)-1 list var_i*P_i ))
@@ -48,7 +45,7 @@ connectionMatrix(List) := List => (P) -> (
     sum((for i from 0 to length(var)-1 list var_i*P_i ))
 )
 
--- output standard monomials
+-- outputs standard monomials
 stdMon = method()
 stdMon(Ideal) := (I) -> (
     D := ring I;
