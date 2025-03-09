@@ -16,7 +16,20 @@ document {
 	  "R = QQ[x,y,z];",
 	  "matrix{{x,0,2},{1,2,y}}"
 	  },
-     "The ", TO map, " function provides other methods to define a matrix."
+     "The ", TO map, " function provides other methods to define a matrix.",
+     SeeAlso => {
+	 map,
+	 "Classic::matrix(String)",
+         },
+     Subnodes => {
+	 TO (matrix, List),
+	 TO (matrix, Ring, List),
+	 TO (matrix, Matrix),
+	 TO (matrix, MutableMatrix),
+	 TO (matrix, RingElement),
+	 TO (matrix, Vector),
+	 TO (matrix, RingMap),
+         },
      }
 
 document {

@@ -9,6 +9,18 @@ undocumented (ideal,Ideal)
 document { 
      Key => ideal,
      Headline => "make an ideal",
+    SeeAlso => {
+	"Classic::ideal(String)",
+        },
+    Subnodes => {
+	-- TODO: combine some of these
+	TO (ideal, List),
+	TO (ideal, Matrix),
+	TO (ideal, Module),
+	TO (ideal, MonomialIdeal),
+	TO (ideal, Ring),
+	TO (ideal, RingElement),
+        },
      }
 document { 
      Key => {(ideal,List), (ideal,Sequence)},

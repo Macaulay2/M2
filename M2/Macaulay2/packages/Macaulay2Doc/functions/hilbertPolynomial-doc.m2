@@ -13,7 +13,10 @@ document {
      extracting geometric information from the polynomial. The Hilbert
      polynomial of ", TT "P^i", " is ",  TT "z |--> binomial(z + i, i).",
      SeeAlso => {"degreesRing", "reduceHilbert", "poincare", "poincareN", 
-	  "hilbertSeries", "hilbertFunction"}
+	  "hilbertSeries", "hilbertFunction"},
+    Subnodes => {
+	TO ProjectiveHilbertPolynomial,
+        },
      } 
 
 document {

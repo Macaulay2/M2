@@ -9,6 +9,10 @@ document {
 	 TO OrderedMonoid,
 	 TO GeneralOrderedMonoid,
 	 TO MonoidElement,
+        TO (generators, Monoid),
+        TO (numgens, Monoid),
+        TO (tensor, Monoid, Monoid),
+        TO (vars, Monoid),
          },
      }
 document {
@@ -87,9 +91,25 @@ document {
 	  TO (symbol ^, Ring, List),
 	  TO (vars, Ring),
 	  },
+    -- TODO: merge these with the above
      Subnodes => {
 	 TO EngineRing,
 	 TO ring,
+        TO (isQuotientOf, Ring, Ring),
+        TO (isQuotientOf, Type, Ring),
+        TO (ambient, Ring),
+        TO (chainComplex, Ring),
+        TO (degree, Ring),
+        TO (degrees, Ring),
+        TO (diagonalMatrix, Ring, ZZ, ZZ, List),
+        TO (dim, Ring),
+        TO (generators, Ring),
+        TO (hilbertPolynomial, Ring),
+        TO (jacobian, Ring),
+        TO (minimalPresentation, Ring),
+        TO (numgens, Ring),
+        TO (toField, Ring),
+        TO (vars, Ring),
         },
      }
 document {
@@ -130,15 +150,37 @@ document {
 document {
     Key => RingElement,
     Headline => "the class of all ring elements handled by the engine",
-    SeeAlso => EngineRing}
+    SeeAlso => EngineRing,
+    Subnodes => {
+	TO (leadTerm, RingElement),
+        TO (leadTerm, ZZ, RingElement),
+        TO (quotientRemainder, RingElement, RingElement),
+        TO (degree, RingElement),
+        TO (degree, RingElement, RingElement),
+        TO (factor, RingElement),
+        TO (indices, RingElement),
+        TO (symbol ^, RingElement, ZZ),
+        TO (symbol /, RingElement, RingElement),
+        TO (symbol .., RingElement, RingElement),
+        TO (symbol ..<, RingElement, RingElement),
+        },
+    }
 document {
     Key => PolynomialRing,
     Headline => "the class of all ordered monoid rings",
     "Every element of a polynomial ring is also a ", TO "RingElement", ".",
-    SeeAlso => "polynomial rings"}
+    SeeAlso => "polynomial rings",
+    Subnodes => {
+	TO (hilbertSeries, PolynomialRing),
+        },
+    }
 document {
     Key => QuotientRing,
-    Headline => "the class of all quotient rings"
+    Headline => "the class of all quotient rings",
+    Subnodes => {
+        TO (codim, QuotientRing),
+        TO (presentation, PolynomialRing, QuotientRing),
+        },
     }
 document {
     Key => FractionField,
@@ -166,6 +208,14 @@ document {
 	TO lift
 	}
     }
+document {
+     Key => GaloisField,
+     Headline => "the class of all Galois fields",
+     Subnodes => {
+	 TO GF,
+         TO (ambient, GaloisField),
+         },
+     }
 
 document {
      Key => {(symbol SPACE, Ring, Array), (symbol SPACE,InexactFieldFamily, Array)},
@@ -211,7 +261,12 @@ document {
 	"(t_0 -  2*t_1)^3",
 	},
     "Warning: the values of the indexed variables ", TT "t_i", " are stored in a global location,
-    behind the scenes, so may not get garbage collected, even if ", TT "t", " is a local variable."
+    behind the scenes, so may not get garbage collected, even if ", TT "t", " is a local variable.",
+    Subnodes => {
+	TO (value, IndexedVariable),
+        TO (symbol .., IndexedVariable, IndexedVariable),
+        TO (symbol ..<, IndexedVariable, IndexedVariable),
+        },
     }
 
 undocumented {(NewFromMethod,IndexedVariableTable,Symbol)}

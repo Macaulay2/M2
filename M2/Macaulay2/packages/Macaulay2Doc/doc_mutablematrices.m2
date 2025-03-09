@@ -3,10 +3,12 @@ document {
      "The usual row and column operations apply to 
      mutable matrices.  These are:",
      Subnodes => {
+	  TO numRows,
 	  TO rowAdd,
 	  TO rowSwap,
 	  TO rowPermute,
 	  TO rowMult,
+	  TO numColumns,
 	  TO columnAdd,
 	  TO columnSwap,
 	  TO columnPermute,
@@ -48,7 +50,18 @@ document {
 	  },
      Subnodes => {
 	 TO MutableMatrix,
+	 TO mutableMatrix,
+	 TO (mutableMatrix, Ring, ZZ, ZZ),
+	 TO mutableIdentity,
+	 TO "MutableMatrix _ Sequence = Thing",
 	 TO "row and column operations",
+	 TO fillMatrix,
+	 TO (randomMutableMatrix, ZZ, ZZ, RR, ZZ),
+	 -- TODO: move these to linear algebra node?
+	 TO nullSpace,
+	 TO reducedRowEchelonForm,
+	 TO rowRankProfile,
+	 TO columnRankProfile,
          }
      }
 

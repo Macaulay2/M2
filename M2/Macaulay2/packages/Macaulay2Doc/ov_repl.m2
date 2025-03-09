@@ -8,6 +8,9 @@ document {
      of the statement, in which case the ", TO "NoPrint", " method is applied.",
      Subnodes => {
 	 TO "capture",
+	 TO "oo",
+	 TO "ooo",
+	 TO "oooo",
 	 TO "topLevelMode",
          },
      SeeAlso => {
@@ -957,7 +960,8 @@ document { Key => {Pseudocode, PseudocodeClosure},
      the function ", TO "value", " can evaluate it (bindings of values to local symbols
      are enclosed with the pseudocode), the operator ", TO "===", " can be used for equality testing,
      and when the debugger is activated after an error, the variable ", TO "current", " contains the pseudocode step whose execution produced the error.",
-     SeeAlso => { "disassemble" }
+     SeeAlso => { "disassemble" },
+     Subnodes => { TO (value, Pseudocode) },
      }
 document { Key => pseudocode,
      Headline => "produce the pseudocode for a function",

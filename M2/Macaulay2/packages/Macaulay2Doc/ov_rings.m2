@@ -152,7 +152,14 @@ document {
 
 document {
      Key => ZZ,
-     Headline => "the class of all integers" }
+     Headline => "the class of all integers",
+    Subnodes => {
+	-- TO (factor, ZZ),
+	TO (isPrime, ZZ),
+	TO (isPseudoprime, ZZ),
+	TO nextPrime,
+        },
+    }
 
 document {
      Key => QQ,
@@ -375,7 +382,19 @@ document {
      EXAMPLE {"exp(interval(2,4))","cos(interval(1,1.3))","sqrt(interval(2))"},
      "Transcendental functions are available to high precision, with ", TO "numericInterval", ".",
     EXAMPLE {"numericInterval(100,pi)","numericInterval_200 EulerConstant"},
-    SeeAlso => {toRRi, numericInterval, precision, interval, (span,Sequence), (span,List)}
+    SeeAlso => {toRRi, numericInterval, precision, interval, (span,Sequence), (span,List)},
+    Subnodes => {
+	TO toRRi,
+	TO interval,
+	TO (intersect, RRi),
+        TO (intersection, RRi, RRi),
+        TO (isMember, QQ, RRi),
+        TO (isEmpty, RRi),
+        TO (isSubset, RRi, RRi),
+	TO span, -- TODO: perhaps this should be shared
+	TO (span, List),
+	TO (span, Sequence),
+        },
 	  }
 
 document {

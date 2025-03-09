@@ -1,11 +1,15 @@
 --- status: draft
 --- author(s): Decker, Popescu
---- notes: 
+--- notes:
 
+-- TODO: combine some of these nodes
 document {
      Key => codim,
      Headline => "compute the codimension",
-     SeeAlso => {dim}
+     SeeAlso => {dim},
+    Subnodes => {
+	TO [(codim, Ideal), Generic],
+        },
      }
 
 document { 

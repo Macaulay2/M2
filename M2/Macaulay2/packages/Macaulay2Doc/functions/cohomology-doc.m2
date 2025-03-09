@@ -28,7 +28,10 @@ document {
      class ", TT "A", ", and ", TT "N", " be of
      class ", TT "B", ", then the method can be installed with ",
      PRE "     cohomology(ZZ, A, B) := opts -> (i,M,N) -> ...",
-     SeeAlso => {"homology", "HH", "ScriptedFunctor"}
+     SeeAlso => {"homology", "HH", "ScriptedFunctor"},
+     Subnodes => {
+	 TO (cohomology, ZZ, Module),
+         },
      }
 
 document { 
