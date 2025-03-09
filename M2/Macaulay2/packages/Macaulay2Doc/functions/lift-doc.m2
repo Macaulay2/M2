@@ -122,5 +122,9 @@ document {
      .0001^QQ
      .0001_QQ
      ///,
-     SeeAlso => {baseRings,liftable,promote,setupLift}
+     SeeAlso => { baseRings, promote },
+     Subnodes => {
+	TO liftable,
+	TO setupLift,
+        },
      }

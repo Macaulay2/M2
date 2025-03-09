@@ -125,6 +125,7 @@ document {
 	  }
      }
 
+-- TODO: mention lift and promote in this node
 document {
      Key => "working with multiple rings",   -- DOUBLE CHECK BEING DONE WITH THIS ONE!
      "Working with multiple rings is more subtle than simply
@@ -260,10 +261,12 @@ document {
 	       EXAMPLE {
 	       	    "substitute(f,vars R3)",
 	       	    ///try substitute(f,vars R5) else "found error"///
-	       	    }
-	       
-     	  
-     }
+        },
+    Subnodes => {
+	TO lift,
+	TO promote,
+        },
+    }
 
 document {
      Key => "basic construction, source and target of a ring map",
