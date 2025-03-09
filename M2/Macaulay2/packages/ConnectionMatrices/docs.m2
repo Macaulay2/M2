@@ -6,7 +6,7 @@ Key
     (normalForm, RingElement, RingElement)
     (normalForm, RingElement, List)
 Headline
-    computes normal form of an element with respect to a Groebner basis
+    computes normal form of an element in the Weyl algebra
 Usage
     normalForm(f,g)
     normalForm(f,G)
@@ -22,8 +22,8 @@ Outputs
         reduced form with respect to a list of elements in the Weyl algebra
 Description
   Text
-    This method computes the normal form of an elment f in the Weyl algebra D with repsect to another element in the D, or a whole list of such elements.
-    Usually this list is a Groebner basis for an left D-ideal.
+    This method computes the normal form of an elment f in the Weyl algebra D with respect to another element in the Weyl algebra, or a whole list of such elements.
+    Usually this list is a Groebner basis for a left D-ideal.
   Example
     w = {0,0,1,1};
     D = makeWA(QQ[x,y],w);
@@ -55,8 +55,8 @@ Outputs
       encoding the change of basis from B1 to B2
 Description
   Text
-    Let I be a D-module, a Groebner basis G with respect to some monomial ordering on D and a basis of standard monomials B1 for the quotient ring in the rational Weyl algebra.
-    Then this methods computes the change of basis matrix M over the rational Weyl algbra for another basis of the quotient.
+    Let I be a D-module, a Groebner basis G with respect to some monomial ordering on D and a basis of standard monomials B1 for the quotient of the rational Weyl algebra by the ideal.
+    Then this methods computes the change of basis matrix M over the rational Weyl algbra for going from B1 to another basis of the quotient.
   Example
     w1 = {0,0,2,1}; D1 = makeWeylAlgebra(QQ[x,y],w1);
     I = sub(ideal(x*dx^2-y*dy^2+2*dx-2*dy,x*dx+y*dy+1),D1);
@@ -88,10 +88,10 @@ Inputs
       the Weyl algebra
 Outputs
     L:List
-      the Pfaffian system P after the Gauge transform for each entry
+      the Pfaffian system P after the gauge transform for each entry
 Description
   Text
-    This method computes the Gauge transform for a Pfaffian system given a change of basis.
+    This method computes the gauge transform for a Pfaffian system given a change of basis.
   Example
     D = makeWeylAlgebra(QQ[x,y]);
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1); P = pfaffians(I);
@@ -123,9 +123,9 @@ Outputs
       the differential connection matrix
 Description
   Text
-    This method encodes the Pfaffian system, that is, its connection matrices in a single square matrix of size holonomic rank of the Pfaffian system.
+    This method encodes the Pfaffian system, i.e. its connection matrices in a single square matrix of size holonomic rank of the Pfaffian system.
     Its entries are differential one forms in the variables of the Weyl algebra.
-    We can obtain the regular connection matrices by multiplying with a differential.
+    We obtain the regular connection matrices by multiplying with a differential of the Weyl algebra.
   Example
     D = makeWeylAlgebra(QQ[x,y]);
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1); P = pfaffians(I);
