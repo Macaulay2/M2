@@ -71,4 +71,4 @@ restart
 -- I=ideal(P,Q)
 -- C = pfaffians I
 -- G = matrix{{x,0},{0,y}}
--- gauge(G,C,W)
+-- gaugeTransform(G,C,D)
