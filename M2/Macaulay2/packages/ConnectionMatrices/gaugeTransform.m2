@@ -1,3 +1,7 @@
+----------------------------------------------------
+-- some matrix differentiating tools
+----------------------------------------------------
+
 diffW=method();
 diffW(RingElement,RingElement) :=(P,f)->(
     DR := ring P;
@@ -7,7 +11,7 @@ diffW(RingElement,RingElement) :=(P,f)->(
     sub((P*sub(f,DR)) % partials,R)
 );
 
-
+-- quotient differentiating formula
 diffratW=method();
 -- Add check that P is degree 1 in derivation
 diffratW(RingElement,RingElement,RingElement) :=(P,f,g)->(
@@ -31,8 +35,12 @@ diffmatrixW(RingElement, Matrix) :=(P, M)->(
     matrix apply(lrows, a-> apply(a, b-> diffratW(toSequence({P}| toList convertEntry(b)))))
 );
 
--- gives the gauge transform of a pfaffians system for a given change of basis matrix
+----------------------------------------------------
+--gaugeTransform implements gauge transform formula
+----------------------------------------------------
+
 gaugeTransform = method();
+-- gives the gauge transform of a pfaffians system for a given change of basis matrix
 gaugeTransform(Matrix, List, PolynomialRing) := (G, C, W)->(
     G = sub(G, ring C#0);
     invG := inverse G;
