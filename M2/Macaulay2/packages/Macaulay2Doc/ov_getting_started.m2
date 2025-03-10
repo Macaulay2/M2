@@ -608,6 +608,7 @@ doc ///
   Subnodes
     about
     apropos
+    headlines
     help
     viewHelp
     infoHelp

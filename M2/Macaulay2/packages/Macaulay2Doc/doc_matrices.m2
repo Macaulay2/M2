@@ -1,4 +1,3 @@
-document {
     Key => Matrix,
     Headline => "the class of all matrices",
     "A matrix is a homomorphism between two modules, together with
@@ -49,12 +48,17 @@ document {
     },
     -- TODO: merge these with the lists above
     Subnodes => {
+	TO (entries, Matrix),
+	TO eigenvalues,
+	TO eigenvectors,
+	TO transpose,
+	TO dual,
+	TO support,
 	TO (leadTerm, Matrix),
 	TO (leadTerm, ZZ, Matrix),
 	TO leadComponent,
 	TO (borel, Matrix),
 	TO (dual, Matrix),
-	TO (trace, Matrix),
 	TO (modulo, Matrix, Matrix),
 	TO (complement, Matrix),
 	TO (extend, ChainComplex, ChainComplex, Matrix),
@@ -63,7 +67,7 @@ document {
 	TO (contract, Matrix, Matrix),
 	TO (cover, Matrix),
 	TO (degrees, Matrix),
-	TO (diagonalMatrix, Matrix),
+	TO diagonalMatrix,
 	TO (symbol ++, Matrix, Matrix),
 	TO (markedGB, Matrix, Matrix),
 	TO (homology, Matrix, Matrix),
@@ -73,7 +77,6 @@ document {
 	TO (koszul, ZZ, Matrix),
 	TO (map, Ring, Matrix),
 	TO (minimalPresentation, Matrix),
-	TO (minors, ZZ, Matrix),
 	TO (pivots, Matrix),
 	TO (quotient, Matrix, GroebnerBasis),
 	TO (smithNormalForm, Matrix),

@@ -191,25 +191,6 @@ document { Key => (symbol ||,GradedModuleMap,GradedModuleMap),
      ///
      }
 
-multidoc ///
-Node
-  Key
-    isFinitePrimeField
-  Headline
-    whether a ring is a finite prime field
-  Usage
-    isFinitePrimeField R
-  Inputs
-    R:Ring
-  Outputs
-    :Boolean
-     whether R is a finite prime field
-  Description
-    Example
-     isFinitePrimeField QQ
-     isFinitePrimeField (ZZ/101)
-///
-
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

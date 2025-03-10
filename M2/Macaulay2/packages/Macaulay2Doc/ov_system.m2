@@ -104,6 +104,7 @@ document {
 	  TO "version",
 	"Working with databases:",
 	  TO Database,
+	  TO firstkey,
 	  TO nextkey,
 	  TO openDatabase,
 	  TO openDatabaseOut,

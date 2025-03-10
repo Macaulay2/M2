@@ -43,7 +43,10 @@ document {
     Subnodes => {
 	TO monomialIdeal,
 	TO monomialSubideal,
-        TO (codim, MonomialIdeal),
+	TO (independentSets, MonomialIdeal),
+	TO (standardPairs, MonomialIdeal),
+	TO (polarize, MonomialIdeal),
+	TO (codim, MonomialIdeal),
         TO (symbol -, MonomialIdeal, MonomialIdeal),
         TO (dual, MonomialIdeal, List),
         TO (dual, MonomialIdeal, RingElement),

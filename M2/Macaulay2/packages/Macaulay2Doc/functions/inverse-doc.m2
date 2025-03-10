@@ -21,6 +21,8 @@ Node
       the inverse of @TT "f"@
   SourceCode
     (inverse, Matrix)
+  Subnodes
+    InverseMethod
 ///
 
 undocumented methods InverseMethod

@@ -44,6 +44,7 @@ Node
       --
       "arithmetic functions"
       "commutative algebra functions"
+      "homological algebra functions"
       "algebraic geometry functions"
       "combinatorial functions"
       "analytical functions"

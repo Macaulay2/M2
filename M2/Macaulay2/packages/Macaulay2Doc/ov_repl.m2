@@ -11,6 +11,7 @@ document {
 	 TO "oo",
 	 TO "ooo",
 	 TO "oooo",
+	 TO "OutputDictionary",
 	 TO "clearAll",
 	 TO "clearOutput",
 	 TO "topLevelMode",
@@ -949,10 +950,10 @@ document { Key => functionBody,
 	  f 1 === f 2
 	  functionBody f 1 === functionBody f 2
      ///,
-     SeeAlso => FunctionBody }
+     Subnodes => { TO FunctionBody, TO CompiledFunctionBody },
+}
 document { Key => FunctionBody,
-     Headline => "the class of function bodies",
-    Subnodes => TO functionBody }
+     Headline => "the class of function bodies" }
 
 document { Key => symbol OutputDictionary,
      Headline => "the dictionary for output values",

@@ -628,7 +628,15 @@ document {
 	 "minors(2,M,First => {{0,1},{1,2}}, Limit => 3)"
 	 },
      "The argument to the optional argument ", TO "First", " is the list of row and column positions
-     to use for the first minor.  Starting at this first minor, we then compute three minors."
+     to use for the first minor.  Starting at this first minor, we then compute three minors.",
+     Subnodes => {
+	 TO trace,
+	 TO minors,
+	 TO determinant,
+	 TO permanents,
+	 TO pfaffians,
+	 TO fittingIdeal,
+         },
      }
 
 document {
