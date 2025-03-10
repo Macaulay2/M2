@@ -15,7 +15,8 @@ isQuotientRing = method(TypicalValue => Boolean)
 isQuotientRing Ring := R -> false
 isQuotientRing QuotientRing := R -> true
 
-isFinitePrimeField = F -> isQuotientRing F and ambient F === ZZ and F.?char
+isFinitePrimeField = method(TypicalValue => Boolean)
+isFinitePrimeField Ring := F -> isQuotientRing F and ambient F === ZZ and F.?char
 
 isQuotientOf = method(TypicalValue => Boolean)
 isQuotientOf(Ring,Ring) := (R,S) -> false
