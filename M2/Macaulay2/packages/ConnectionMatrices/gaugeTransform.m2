@@ -2,8 +2,8 @@
 -- some matrix differentiating tools
 ----------------------------------------------------
 
-diffW=method();
-diffW(RingElement,RingElement) :=(P,f)->(
+diffWeyl=method();
+diffWeyl(RingElement,RingElement) :=(P,f)->(
     DR := ring P;
     R := ring f;
     createDpairs DR;
@@ -12,10 +12,10 @@ diffW(RingElement,RingElement) :=(P,f)->(
 );
 
 -- quotient differentiating formula
-diffratW=method();
+diffRationalWeyl=method();
 -- Add check that P is degree 1 in derivation
-diffratW(RingElement,RingElement,RingElement) :=(P,f,g)->(
-    (h1,h2) :=(g*diffW(P,f)-f*diffW(P,g),g^2);
+diffRationalWeyl(RingElement,RingElement,RingElement) :=(P,f,g)->(
+    (h1,h2) :=(g*diffWeyl(P,f)-f*diffWeyl(P,g),g^2);
     sub(h1, ring f)/sub(h2,ring f)
 );
 
@@ -29,10 +29,10 @@ convertEntry(RingElement) := (h)->(
 );
 
 --Differentiate matrix
-diffmatrixW = method();
-diffmatrixW(RingElement, Matrix) :=(P, M)->(
+diffMatrixWeyl = method();
+diffMatrixWeyl(RingElement, Matrix) :=(P, M)->(
     lrows := entries M;
-    matrix apply(lrows, a-> apply(a, b-> diffratW(toSequence({P}| toList convertEntry(b)))))
+    matrix apply(lrows, a-> apply(a, b-> diffRationalWeyl(toSequence({P}| toList convertEntry(b)))))
 );
 
 ----------------------------------------------------
@@ -47,7 +47,7 @@ gaugeTransform(Matrix, List, PolynomialRing) := (G, C, W)->(
     n := dim W//2;
     for i from 1 to n list(
         dxi := W_(n+i-1);
-        diffmatrixW(dxi, G)*invG + G*(C#(i-1))*invG
+        diffMatrixWeyl(dxi, G)*invG + G*(C#(i-1))*invG
     )
 );
 
