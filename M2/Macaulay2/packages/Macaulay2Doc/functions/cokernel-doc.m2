@@ -2,8 +2,18 @@
 --- author(s): Stillman
 --- notes: 
 
+doc ///
+Node
+  Key
+    cokernel
+  Headline
+    cokernel of a map
+  SeeAlso
+    target
+///
+
 document { 
-     Key => {cokernel,
+     Key => {
 	  (cokernel, ChainComplexMap), (cokernel, Matrix), (cokernel, GradedModuleMap), (cokernel, RingElement)},
      Headline => "cokernel of a map of modules, graded modules, or chaincomplexes",
      Usage => "cokernel f",

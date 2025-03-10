@@ -14,7 +14,21 @@ document {
 
 document {  -- This node is used as an example in the node: Key
      Key => resolution,
-     Headline => "projective resolution"
+     Headline => "projective resolution",
+     Subnodes => {
+	TO (resolution, Ideal),
+	TO (resolution, Matrix),
+	TO (resolution, Module),
+	TO [resolution, DegreeLimit],
+        TO [resolution, SyzygyLimit],
+        TO [resolution, PairLimit],
+        TO [resolution, StopBeforeComputation],
+        TO [resolution, LengthLimit],
+        TO [resolution, HardDegreeLimit],
+        TO [resolution, Strategy],
+        TO [resolution, SortStrategy],
+	TO [resolution, FastNonminimal]
+        },
      }
 document {
      Key => [resolution,DegreeLimit],

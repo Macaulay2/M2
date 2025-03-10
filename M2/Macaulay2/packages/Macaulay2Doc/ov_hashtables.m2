@@ -66,6 +66,7 @@ document {
 	TO "MutableHashTable",
 	TO "hashing",
 	TO "hash",
+	TO youngest,
 	"constructing hash tables",
 	TO "hashTable",
 	TO "new HashTable from List",
@@ -132,6 +133,8 @@ document {
     SeeAlso => "HashTable",
     Subnodes => {
 	TO CacheTable,
+	TO IndexedVariableTable,
+	TO Descent,
     },
 }
 

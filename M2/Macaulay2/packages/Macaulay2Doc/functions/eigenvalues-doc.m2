@@ -28,7 +28,8 @@ document {
      ///,
      "The LAPACK and Eigen libraries are used to compute eigenvectors of real and complex matrices.",
      Caveat => {"The eigenvalues are approximate."},
-     SeeAlso => {eigenvectors, SVD}
+     SeeAlso => {eigenvectors, SVD},
+     Subnodes => { TO [eigenvalues, Hermitian] },
      }
 document { 
      Key => [eigenvalues, Hermitian],

@@ -104,7 +104,11 @@ document {
 	  ///F = (a => ZZ^1) ++ (b => ZZ^2)///,
 	  ///F_[b]///,
 	  },
-     SeeAlso => {"++", "components", "indexComponents", "indices", formation}}
+     SeeAlso => {"++", "indices", formation},
+     Subnodes => {
+	 TO isDirectSum,
+	 TO components,
+     }}
 
 document {
      Key => {components,(components, GradedModuleMap),(components, Module),(components, Matrix),(components, GradedModule),(components, ChainComplexMap)},
@@ -115,7 +119,9 @@ document {
      TT "components M", " -- the list of components for a module ", TT "M", " which was
      formed as a direct sum, or ", TT "{M}", " if ", TT "M", " was not formed as a 
      direct sum.  Works also for homomorphism, chain complexes, and graded modules.",
-     SeeAlso => {"vector", "directSum", "++"}}
+     SeeAlso => {"vector", "directSum", "++"},
+     Subnodes => { TO indexComponents },
+     }
 
 -- TODO:
 -- document { 

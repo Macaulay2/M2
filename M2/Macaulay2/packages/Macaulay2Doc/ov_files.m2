@@ -53,8 +53,10 @@ document {
 	  "43!"
 	  },
      Subnodes => {
-         TO "stdio",
-         TO "stderr",
+	 TO print,
+	 TO printerr,
+	 TO pretty,
+	 TO "printWidth",
          }
      }
 
@@ -99,7 +101,12 @@ document {
 	  value get fn
 	  removeFile fn
      ///,
-     SeeAlso => { stdio, stderr, endl, close }
+     SeeAlso => { endl, flush, close },
+     Subnodes => {
+	 TO printString,
+         TO stdio,
+         TO stderr,
+         },
      }
 
 document {
@@ -496,9 +503,6 @@ wait pid///,
 	 TO isListener,
 	 TO openFiles,
 	 TO connectionCount,
-	 -- TODO: combine:
-	 TO kill,
-	 TO(kill, ZZ),
          },
      }
 

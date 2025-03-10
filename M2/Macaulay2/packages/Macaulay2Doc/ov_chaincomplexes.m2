@@ -9,6 +9,11 @@ document { -- this node is used as an example in the node: Key
 	  TO "making chain complexes by hand",
 	  TO "manipulating chain complexes",
 	  TO "maps between chain complexes",
+	  TO GradedModule,
+	  TO GradedModuleMap,
+	  TO ChainComplex,
+	  TO ChainComplexMap,
+	  TO Resolution,
 	  },
      }
 

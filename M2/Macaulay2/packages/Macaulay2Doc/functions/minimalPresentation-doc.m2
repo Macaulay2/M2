@@ -14,7 +14,10 @@ document {
 document { 
      Key => prune,
      Headline => "prune, e.g., compute a minimal presentation",
-     SeeAlso => {minimalPresentation}
+     SeeAlso => { minimalPresentation },
+     Subnodes => {
+	 TO "pruningMap",
+         },
      }
 
 document { 

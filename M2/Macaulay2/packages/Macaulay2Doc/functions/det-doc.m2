@@ -19,7 +19,8 @@ document {
 	  "N = genericMatrix(R,3,3)",
 	  "det N"
 	  },
-     SeeAlso => {exteriorPower, minors, permanents, pfaffians}     
+     SeeAlso => {exteriorPower, minors, permanents, pfaffians},
+     Subnodes => { TO [determinant, Strategy], TO Bareiss, TO Cofactor, TO Dynamic },
      }
 scan({det,minors,exteriorPower}, fn -> document { 
      Key => [fn, Strategy],
@@ -49,3 +50,15 @@ scan({det,minors,exteriorPower}, fn -> document {
      SeeAlso => select({det, exteriorPower, minors}, g -> g =!= fn)
      })
 
+document { Key => Bareiss,
+     "This symbol is used as one of the permissible values for the strategy option in function dealing with determinants.",
+     SeeAlso => {[exteriorPower,Strategy], [minors,Strategy], [det,Strategy]}
+     }
+document { Key => Cofactor,
+     "This symbol is used as one of the permissible values for the strategy option in function dealing with determinants.",
+     SeeAlso => {[exteriorPower,Strategy], [minors,Strategy], [det,Strategy]}
+     }
+document { Key => Dynamic,
+     "This symbol is used as one of the permissible values for the strategy option in function dealing with determinants.",
+     SeeAlso => {[exteriorPower,Strategy], [minors,Strategy], [det,Strategy]}
+     }

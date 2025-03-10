@@ -3,10 +3,15 @@
 --- author(s): 
 --- notes: 
 
-document { 
-     Key => kernel,
-     Headline => "kernel of a ringmap, matrix, or chain complex",
-     }
+doc ///
+Node
+  Key
+    kernel
+  Headline
+    kernel of a map
+  SeeAlso
+    source
+///
 
 document { 
      Key => (kernel,RingMap),
@@ -31,7 +36,8 @@ document {
      used to speed up the computations.",
      Caveat => {"It should be possible to interrupt the computation and restart it, but this has
 	  not yet been implemented."},
-     SeeAlso => {"substitution and maps between rings", "elimination of variables", monomialCurveIdeal}
+     SeeAlso => {"substitution and maps between rings", "elimination of variables", monomialCurveIdeal},
+     Subnodes => { TO [kernel, SubringLimit] },
      }
 document { 
      Key => {(kernel,ChainComplexMap),
@@ -82,3 +88,11 @@ document {
 	  -- Mike wanted this: "kernel, cokernel and image of a map of modules",
 	  genericSkewMatrix}
      }
+
+document {
+    Key => [kernel, SubringLimit],
+    Headline => "stop after finding enough elements of a subring",
+    TT "SubringLimit => n", " -- an option for ", TO "kernel", " which
+    causes the computation of the kernel of a ring map to stop after ", TT "n", "
+    elements have been discovered."
+}

@@ -16,6 +16,9 @@ doc ///
   Subnodes
     (NewFromMethod, AtomicInt, ZZ)
     (NewFromMethod, ZZ, AtomicInt)
+    store
+    exchange
+    compareExchange
     (symbol +=, AtomicInt)
     (symbol -=, AtomicInt)
     (symbol &=, AtomicInt)

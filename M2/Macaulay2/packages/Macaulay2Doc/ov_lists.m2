@@ -526,6 +526,7 @@ doc///
     unique
     runLengthEncode
     uniquePermutations
+    permutations
     subsets
 ///
 

@@ -3,7 +3,7 @@
 doc ///
    Key
      FastNonminimal
-     [res,FastNonminimal]
+     [resolution, FastNonminimal]
    Headline
      compute a non-minimal graded free resolution
    Usage

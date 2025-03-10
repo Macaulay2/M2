@@ -144,17 +144,35 @@ document {
 document {
     Key => InexactNumber,
     "This type of number is intended to serve as a parent class for those types of numbers ",
-    "that are inexactly represented in the computer." }
+    "that are inexactly represented in the computer.",
+    Subnodes => {
+	TO precision,
+	TO numeric,
+	TO round,
+	TO size2,
+	TO clean,
+	TO norm,
+        },
+    }
 
 document {
     Key => InexactNumber',
-    "This class is the common parent of the classes of complex fields and real fields." }
+    "This class is the common parent of the classes of complex fields and real fields.",
+    Subnodes => {
+	TO RR',
+	TO CC',
+	TO (symbol _*, RingFamily),
+        },
+    }
 
 document {
      Key => ZZ,
      Headline => "the class of all integers",
     Subnodes => {
 	-- TO (factor, ZZ),
+	TO zero,
+	TO even,
+	TO odd,
 	TO (isPrime, ZZ),
 	TO (isPseudoprime, ZZ),
 	TO nextPrime,
@@ -220,10 +238,15 @@ document {
 	  numeric_200 pi
 	  Gamma oo
 	  ///,
-     SeeAlso => {toRR, numeric, precision, format, "printingPrecision", "printingAccuracy",
+    SeeAlso => {numeric, precision, format, "printingPrecision", "printingAccuracy",
 	  "printingLeadLimit", "printingTrailLimit", "printingSeparator",
 	  "maxExponent", "minExponent"
-	  }
+	  },
+    Subnodes => {
+	TO toRR,
+	TO isReal,
+	TO isANumber,
+        },
      }
 
 document {
@@ -308,7 +331,13 @@ document {
 	  value y === x
      ///,
      Caveat => { "Currently, most transcendental functions are not implemented for complex arguments." },
-     SeeAlso => {"ii", toCC, toRR, numeric, precision, format, "printingPrecision", "printingAccuracy", "printingLeadLimit", "printingTrailLimit", "printingSeparator"}
+    SeeAlso => {"ii", toRR, numeric, precision, format, "printingPrecision", "printingAccuracy", "printingLeadLimit", "printingTrailLimit", "printingSeparator"},
+    Subnodes => {
+	TO toCC,
+	TO conjugate,
+	TO realPart,
+	TO imaginaryPart,
+        },
      }
 
 document {
@@ -386,6 +415,11 @@ document {
     Subnodes => {
 	TO toRRi,
 	TO interval,
+	TO diameter,
+	TO left,
+	TO right,
+	TO midpoint,
+	TO numericInterval,
 	TO (intersect, RRi),
         TO (intersection, RRi, RRi),
         TO (isMember, QQ, RRi),
@@ -421,8 +455,11 @@ document {
 	"To view this element as an element of ", TT "ZZ", " use the ", TO "lift", " command.",
 	EXAMPLE {
 	     "lift (17_R^-1, ZZ)"
-	     } 
-	}
+	     },
+    Subnodes => {
+	TO char,
+        },
+    }
 
 document {
      Key => "finite fields",
@@ -972,6 +1009,8 @@ document {
      other in the monomial ordering.",
      EXAMPLE "f ? g",
      Subnodes => {
+	 TO degree,
+	 TO homogenize,
 	 TO monomials,
 	 TO coefficient,
 	 TO coefficients,
@@ -983,6 +1022,10 @@ document {
 	 TO someTerms,
 	 TO terms,
 	 TO topCoefficients,
+	 TO leadCoefficient,
+	 TO leadMonomial,
+	 TO leadTerm,
+	 TO size,
 	 TO standardForm,
 	 TO listForm,
          },
@@ -1059,13 +1102,16 @@ document {
 	  },
      "Note that computations, such as Gröbner bases, over fraction fields can be quite slow.",
      SeeAlso => {
-	  frac,
-	  numerator,
-	  denominator,
 	  liftable,
 	  lift,
 	  (kernel,RingMap)
-	  }
+	  },
+    Subnodes => {
+	TO frac,
+	TO fraction,
+	TO numerator,
+	TO denominator,
+        },
      }
 
 document {
@@ -1113,7 +1159,11 @@ document {
 	  "matrix{{x}} * matrix{{y}}"
 	  },
      "You may compute Gröbner bases, syzygies, and form quotient rings of these skew
-     commutative rings."
+     commutative rings.",
+     Subnodes => {
+	 TO isSkewCommutative,
+	 TO antipode,
+         },
      }
 
 document {

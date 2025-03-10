@@ -183,6 +183,9 @@ doc ///
   "finite fields"
   "rings"
   "working with multiple rings"
+ Subnodes
+   [flattenRing, CoefficientRing]
+   [flattenRing, Result]
 ///
 
 doc ///

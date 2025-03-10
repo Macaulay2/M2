@@ -354,13 +354,17 @@ document {
      ///,
      SeeAlso => {
 	  leadTerm,
-	  (schreyerOrder,Matrix),
-	  (schreyerOrder,Module),
 	  gb,
 	  syz,
 	  resolution,
 	  betti
-	  }
+	  },
+     Subnodes => {
+	 -- TODO: combine these
+	  TO  schreyerOrder,
+	  TO (schreyerOrder,Matrix),
+	  TO (schreyerOrder,Module),
+          },
      }
 
 document {

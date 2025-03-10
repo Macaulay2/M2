@@ -44,8 +44,10 @@ document {
      PARA{},
      Subnodes => {
 	  TO "class",
+	  TO "synonym",
 	  TO "parent",
 	  TO "instance",
+	  TO "instances",
 	  TO "ancestor",
 	  TO "ancestors",
 	  },
@@ -311,9 +313,14 @@ document {
 	       new M
 	  ///
 	  ),
-     Subnodes => {
-	  TO "newClass"
-	  }
+    Subnodes => {
+	TO "of",
+	TO "newClass",
+	TO NewMethod,
+	TO NewOfMethod,
+	TO NewFromMethod,
+	TO NewOfFromMethod,
+        },
      }
 
 document {
@@ -702,6 +709,7 @@ document {
      PARA{},
      SeeAlso => {RingElement, Module, Matrix},
     Subnodes => {
+	TO vector,
 	TO (entries, Vector),
         TO (symbol **, Vector, Vector),
         TO (symbol ||, Vector, Vector),
@@ -760,14 +768,13 @@ document {
     Subnodes => {
 	TO (leadTerm, Matrix),
         TO (leadTerm, ZZ, Matrix),
+	TO leadComponent,
         TO (borel, Matrix),
         TO (dual, Matrix),
-        TO (exteriorPower, ZZ, Matrix),
         TO (trace, Matrix),
         TO (modulo, Matrix, Matrix),
         TO (complement, Matrix),
         TO (extend, ChainComplex, ChainComplex, Matrix),
-        TO (resolution, Matrix),
         TO (symbol **, Matrix, RingElement),
         TO (ambient, Matrix),
         TO (chainComplex, Matrix),
@@ -780,7 +787,6 @@ document {
         TO (homology, Matrix, Matrix),
         TO (inverse, Matrix),
         TO (jacobian, Matrix),
-        TO (kernel, Matrix),
         TO (koszul, Matrix),
         TO (koszul, ZZ, Matrix),
         TO (map, Ring, Matrix),
@@ -788,11 +794,11 @@ document {
         TO (minors, ZZ, Matrix),
         TO (pivots, Matrix),
         TO (quotient, Matrix, GroebnerBasis),
-        TO (schreyerOrder, Matrix),
         TO (smithNormalForm, Matrix),
         TO (source, Matrix),
         TO (syz, Matrix),
         TO (target, Matrix),
+	TO (compress, Matrix),
         TO (tensor, RingMap, Matrix),
         TO (tensor, Matrix, Matrix),
         TO (symbol **, Matrix, Ring),

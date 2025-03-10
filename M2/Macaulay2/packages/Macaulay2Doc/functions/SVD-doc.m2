@@ -48,7 +48,8 @@ document {
      norm \ ({S', U', V'}-{S, U, V})
      ///,
      "The SVD routine calls on the SVD algorithms in the LAPACK and eigen libraries.",
-     SeeAlso => {eigenvalues, eigenvectors, norm, clean, "printingAccuracy", "printingPrecision" }
+     SeeAlso => {eigenvalues, eigenvectors, norm, clean, "printingAccuracy", "printingPrecision" },
+     Subnodes => { TO [SVD, DivideConquer] },
      }
 document { 
      Key => [SVD, DivideConquer],

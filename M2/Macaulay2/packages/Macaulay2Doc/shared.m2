@@ -139,11 +139,3 @@ document {
 	-- add references to tensor methods installed in packages _other than Core_ here
 	}
     }
-
-document {
-     Key => Jacobian,
-     PARA {
-	  "This symbol is defined in the core so it can be used as the name of an optional argument by multiple packages."
-	  },
-     SeeAlso => { "ReesAlgebra::ReesAlgebra" }
-     }

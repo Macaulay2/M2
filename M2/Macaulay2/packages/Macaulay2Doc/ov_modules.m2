@@ -96,12 +96,12 @@ document {
 	  },
     -- TODO: merge these in the list above
     Subnodes => {
+	TO (symmetricAlgebra, Module),
+	TO (symmetricPower, ZZ, Module),
         TO (exteriorPower, ZZ, Module),
         TO (symbol +, Module, Module),
         TO (dual, Module),
         TO (symbol SPACE, Module, Array),
-        TO (resolution, Module),
-        TO (symbol **, GradedModule, Module),
         TO (ambient, Module),
         TO (super, Module),
         TO (cover, Module),
@@ -110,10 +110,8 @@ document {
         TO (dim, Module),
         TO (symbol ++, Module, Module),
         TO (factor, Module),
-        TO (generators, Module),
         TO (hilbertPolynomial, Module),
-        TO (inducedMap, Module, Module),
-        TO (inducedMap, Module, Module, Matrix),
+        TO inducedMap,
         TO (isSubset, Module, Module),
         TO (map, Module),
         TO (mingens, Module),
@@ -122,7 +120,6 @@ document {
         TO (pdim, Module),
         TO (presentation, Module),
         TO (pushForward, RingMap, Module),
-        TO (schreyerOrder, Module),
         TO (isSubquotient, Module, Module),
         TO (tensor, Module, Module),
         TO (symbol **, Module, Ring),
@@ -148,6 +145,7 @@ document {
      Subnodes => {
 	TO Module,
 	TO module,
+	TO isModule,
 	  "construction of modules",
 	  TO "free modules",
 	  TO "matrices to and from modules",
@@ -305,6 +303,7 @@ document {
      Subnodes => {
 	 TO (symbol ^, Ring, ZZ),
 	 TO (symbol ^, Ring, List),
+	 TO isFreeModule,
          },
      }
 
@@ -349,14 +348,19 @@ document {
      EXAMPLE {
 	  "presentation M",
 	  },
-     SeeAlso => {(cokernel,Matrix), 
-	  (image,Matrix), 
-	  (kernel,Matrix),
+     SeeAlso => {
 	  (generators,Module),
 	  (relations,Module),
 	  (presentation,Module)
 	  },
-}
+    Subnodes => {
+	TO (kernel, Matrix),
+	TO (cokernel, Matrix),
+	TO (image, Matrix),
+	TO (generators, Module),
+	TO (relations, Module),
+        },
+    }
 
 document {
      Key => "submodules and quotients",
@@ -395,7 +399,11 @@ document {
 	  "F/(x*F+y*F+R*F_2)"
 	  },
      "When constructing M/N, it is not necessary that M be a free module, or a quotient of a free
-     module.  In this case, we obtain a subquotient module, which we describe below."
+     module.  In this case, we obtain a subquotient module, which we describe below.",
+     Subnodes => {
+	 TO isSubmodule,
+	 TO isQuotientModule,
+         },
      }
 
 document {
@@ -496,10 +504,12 @@ document {
 	  (super,Module),
 	  (generators,Module),
 	  (relations,Module),
-	  subquotient,
 	  (trim,Module),
 	  (minimalPresentation,Module)
-	  }
+	  },
+    Subnodes => {
+	TO subquotient,
+        },
      }
 
 document {

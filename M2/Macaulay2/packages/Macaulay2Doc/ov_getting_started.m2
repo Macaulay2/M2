@@ -555,6 +555,7 @@ PARA{},
 toggle whether long lines are truncated or wrapped; initially they are truncated."
      }
 
+needsPackage "Schubert2" -- make the example below work before Schubert2 is installed
 doc ///
   Key
     "reading the documentation"
@@ -567,6 +568,7 @@ doc ///
       :Finding documentation nodes
         about
 	apropos
+	headlines
       :Accessing documentation nodes
         help
 	viewHelp
@@ -579,6 +581,7 @@ doc ///
       To begin, the @TO "about"@ method allows for searching all documentation nodes
       whose title or content contains a given string:
     Example
+      -- FIXME
       about "Horrocks-Mumford"
     Text
       The @TO "apropos"@ method is useful for finding all exported objects whose symbol

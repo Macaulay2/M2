@@ -89,6 +89,7 @@ document {
 	(symbol -, RingElement, Number),
 	(symbol -, RingElement, RingElement),
 	(symbol -, Tally),
+	(symbol -, List),
 	(symbol -, Vector),
 	(symbol -, Vector, Vector),
     },
@@ -112,15 +113,6 @@ document {
           "interval(-1,1)-interval(-1,1)"
      },
      SeeAlso =>{ "difference", "minus"}
-     }
-
-document {
-     Key => (symbol -, List),
-     Headline => "negation of a vector",
-     Usage => "-v",
-     Inputs => { "v" => "a list interpreted as a vector" },
-     Outputs => {{"the negation of ", TT "v"}},
-     EXAMPLE "- {1,5,6}"
      }
 
 document {

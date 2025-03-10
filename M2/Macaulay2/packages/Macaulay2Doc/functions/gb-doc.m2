@@ -149,6 +149,7 @@ document {
         TO (mingens, GroebnerBasis),
         TO (syz, GroebnerBasis),
         TO (target, GroebnerBasis),
+	TO (getChangeMatrix, GroebnerBasis),
         },
      }
 

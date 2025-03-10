@@ -19,6 +19,7 @@ Node
   setIOExclusive
   setIOSynchronized
   setIOUnSynchronized
+  getIOThreadMode
   "threadLocal"
   "allowableThreads"
   "maxAllowableThreads"

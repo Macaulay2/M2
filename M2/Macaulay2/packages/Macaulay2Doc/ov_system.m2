@@ -50,7 +50,6 @@ document {
 	  TO "needs",
 	  TO "end",
 	  TO "loadedFiles",
-	  TO "fileDictionaries",
 	  TO "fileExitHooks",
 	"Loading path:",
 	  TO "path",
@@ -74,6 +73,8 @@ document {
 	  TO "timing",
 	  TO "elapsedTime",
 	  TO "elapsedTiming",
+	  TO "cpuTime",
+	  TO "currentTime",
 	  TO "sleep",
 	  TO "nanosleep",
 	"Interface to the operating system:",
@@ -84,13 +85,21 @@ document {
 	  TO "getenv",
 	  TO "getWWW",
 	  TO "splitWWW",
+	  TO "httpHeaders",
+	  -- TO "threadID",
 	  TO "processID",
+	  TO "groupID",
+	  TO "setGroupID",
+	  -- TODO: combine:
+	  TO kill,
+	  TO(kill, ZZ),
 	  TO "quit",
 	  TO "wait",
 	  TO limitFiles,
 	  TO limitProcesses,
 	"Variables with information about the state of the current process:",
 	  TO "commandLine",
+	  TO "scriptCommandLine",
 	  TO "environment",
 	  TO "version",
 	"Working with databases:",
@@ -100,6 +109,7 @@ document {
 	  TO openDatabaseOut,
 	  TO reorganize,
 	"Dealing with the garbage collector:",
+	  TO "GCstats",
 	  TO "collectGarbage",
 	  TO "registerFinalizer"
 	  }
@@ -1252,12 +1262,6 @@ document { Key => Wrap,
      ///
      }
 
-document { Key => "fileDictionaries",
-     Headline => "local dictionaries for loaded files",
-     Usage => "fileDictionaries#fn",
-     Inputs => { "fn" => String },
-     Outputs => {{"the local dictionary in effect for the scope of the file loaded from the path ", TT "fn"}},
-     }
 document { Key => fileMode,
      Headline => "set or get file mode",
      Subnodes => {
