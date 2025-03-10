@@ -56,7 +56,7 @@ Outputs
 Description
   Text
     Let I be a D-module, a Groebner basis G with respect to some monomial ordering on D and a basis of standard monomials B1 for the quotient of the rational Weyl algebra by the ideal.
-    Then this methods computes the change of basis matrix M over the rational Weyl algbra for going from B1 to another basis of the quotient.
+    Then this methods computes the change of basis matrix over the rational Weyl algbra for going from B1 to another basis B2 of the quotient.
   Example
     w1 = {0,0,2,1}; D1 = makeWeylAlgebra(QQ[x,y],w1);
     I = sub(ideal(x*dx^2-y*dy^2+2*dx-2*dy,x*dx+y*dy+1),D1);
@@ -91,7 +91,7 @@ Outputs
       the Pfaffian system P after the gauge transform for each entry
 Description
   Text
-    This method computes the gauge transform for a Pfaffian system given a change of basis.
+    This method computes the gauge transform for a Pfaffian system given a change of basis matrix.
   Example
     D = makeWeylAlgebra(QQ[x,y]);
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1); P = pfaffians(I);
@@ -153,7 +153,7 @@ Outputs
       of standard monomials
 Description
   Text
-    This method computes the standard monomial which constitute a basis of the D-modules obtained from quotienting the rational Weyl algebra by the ideal.
+    This method computes the standard monomials which constitute a basis of the D-modules obtained from quotienting the rational Weyl algebra by an ideal.
   Example
     D = makeWeylAlgebra(QQ[x,y]);
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
