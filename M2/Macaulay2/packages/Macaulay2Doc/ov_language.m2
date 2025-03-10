@@ -933,6 +933,56 @@ document {
 	  }
      }
 
+document {
+    Key => Symbol,
+    Headline => "the class of all symbols",
+    "Symbols are entered as an alphabetic character followed by a
+    sequence of alphanumeric characters; case is significant.
+    The single symbol character ' is regarded as alphabetic, so that
+    symbols such as ", TT "x'", " may be used.",
+    PARA{},
+    "Symbols are used as names for values to be preserved, as indeterminates
+    in polynomial rings, and as keys in hash tables.  They may have
+    global scope, meaning they are visible from every line of code,
+    or local scope, with visibility restricted to a single file or
+    function body.",
+    EXAMPLE {
+	"x",
+	"ab12"
+    },
+    SeeAlso => {":="},
+    Subnodes => {
+	TO Keyword,
+	TO SymbolBody,
+	TO "symbol",
+	TO "global",
+	TO "local",
+	TO getSymbol,
+	TO getGlobalSymbol,
+	TO isGlobalSymbol,
+	TO protect,
+	TO (value, Symbol),
+	TO (findSynonyms, Symbol),
+	TO ((symbol _, symbol =), Symbol, Thing),
+	TO (symbol .., Symbol, Symbol),
+	TO (symbol ..<, Symbol, Symbol),
+	-- TO (symbol _, Symbol, Ring),
+	TO (symbol _, Symbol, Thing),
+    },
+}
+
+document {
+    Key => Keyword,
+    Headline => "the class of all keywords",
+    PARA {
+	"Keywords are symbols that are treated specially by the system while parsing user input.  Some of them,
+	such as ", TO "and", ", consist of alphanumeric characters and look just like
+	ordinary symbols.  Others, such as ", TO "==>", ", consist of special characters
+	and are called operators."
+    },
+    SeeAlso => {"precedence of operators"}
+}
+
 binaryOperators := core "binaryOperators"
 prefixOperators := core "prefixOperators"
 postfixOperators := core "postfixOperators"
