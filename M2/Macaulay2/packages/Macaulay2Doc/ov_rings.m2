@@ -113,6 +113,7 @@ document {
     Key => Number,
     Headline => "the class of all numbers",
     Subnodes => {
+	TO isANumber,
 	TO InfiniteNumber,
 	TO IndeterminateNumber,
 	TO InexactNumber,
@@ -122,7 +123,7 @@ document {
 document {
     Key => InfiniteNumber,
     Headline => "the class of all infinite numbers",
-    Subnodes => { TO infinity } }
+    Subnodes => { TO isFinite, TO isInfinite, TO infinity } }
 
 document {
     Key => infinity,
@@ -152,6 +153,8 @@ document {
 	TO size2,
 	TO clean,
 	TO norm,
+	TO "minExponent",
+	TO "maxExponent",
         },
     }
 
@@ -245,7 +248,6 @@ document {
     Subnodes => {
 	TO toRR,
 	TO isReal,
-	TO isANumber,
         },
      }
 
@@ -552,7 +554,8 @@ document {
      EXAMPLE "lift(k_0, ring T)",
      "We can even lift it back to the polynomial ring.",
      EXAMPLE "lift(k_0, ambient ring T)",
-     "For more information see ", TO "GaloisField", "."
+     "For more information see ", TO "GaloisField", ".",
+     Subnodes => TO isFinitePrimeField,
      }
 
 document {
@@ -696,8 +699,11 @@ document {
        	  },
      SeeAlso => {"heft vectors", "division in polynomial rings with monomials less than 1"},
      Subnodes => {
+	 TO isPolynomialRing,
 	 TO (symbol SPACE, Ring, Array),
 	 TO (symbol SPACE, Ring, Monoid),
+	 TO vars,
+	 TO(vars, List),
 	 TO "get a ring variable by index",
 	 TO "get a ring variable by name",
 	 TO "get a monomial by exponent vector",
@@ -840,6 +846,8 @@ document {
      "For more information see ", TO "QuotientRing", ".",
      Subnodes => {
 	 TO (symbol /, Ring, Ideal),
+	 TO isQuotientRing,
+	 TO isQuotientOf,
          },
      }
 
@@ -1011,11 +1019,13 @@ document {
      Subnodes => {
 	 TO degree,
 	 TO homogenize,
+	 TO weightRange,
 	 TO monomials,
 	 TO coefficient,
 	 TO coefficients,
 	 TO content,
 	 TO exponents,
+	 TO index,
 	 TO indices,
 	 TO part,
 	 TO parts,
@@ -1116,8 +1126,10 @@ document {
 
 document {
      Key => "finite field extensions",
-     UL {
-	  TO "toField",
+    Subnodes => {
+	TO isField,
+	TO toField,
+	TO isPrimitive,
 	  -- writeup under "toField" is a good start,
 	  -- needs an example
 	  }

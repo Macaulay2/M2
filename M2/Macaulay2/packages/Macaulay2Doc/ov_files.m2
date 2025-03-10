@@ -57,6 +57,7 @@ document {
 	 TO printerr,
 	 TO pretty,
 	 TO "printWidth",
+	 TO truncateOutput,
          }
      }
 

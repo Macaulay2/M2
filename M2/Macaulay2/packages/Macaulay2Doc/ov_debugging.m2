@@ -16,6 +16,7 @@ document {
 	TO "current",
 	TO "currentPosition",
 	TO "lineNumber", -- TODO: rename to currentLineNumber
+	TO "currentRowNumber",
 	TO "currentColumnNumber",
 	TO "currentFileName",
 	TO "currentFileDirectory",
@@ -36,6 +37,7 @@ document {
 	TO "debugError",
 	TO "errorDepth",
 	TO "debugLevel",
+	TO "engineDebugLevel",
 	TO "loadDepth",
 	TO "interpreterDepth",
 	TO "recursionDepth",

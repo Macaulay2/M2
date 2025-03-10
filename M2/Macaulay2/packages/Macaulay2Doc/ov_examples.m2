@@ -22,11 +22,14 @@ Node
     mod
     plus
     minus
+    difference
     times
     power
     powermod
-    gcd
     lcm
+    gcd
+    gcdCoefficients
+    factor
 
 Node
   Key
@@ -37,6 +40,7 @@ Node
     hilbertPolynomial
     syz
     koszul
+    regularity
     presentation
     resolution
     rank
@@ -46,10 +50,12 @@ Node
     depth -- contains link to package Depth
     height -- TODO
     length
-    Tor
-    Ext
-    HH
+    trim
     prune
+    minimize
+    minimalPresentation
+    tensor
+    directSum
     monomialCurveIdeal
     syzygyScheme
     isBorel
@@ -67,9 +73,17 @@ Node
     preimage
     pullback
     pushout
+    extend
+    nullhomotopy
     isInjective
     isSurjective
     isIsomorphism
+    inverse
+    ScriptedFunctor
+    id
+    HH
+    Tor
+    Ext
 
 Node
   Key

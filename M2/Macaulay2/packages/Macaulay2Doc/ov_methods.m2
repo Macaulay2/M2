@@ -161,6 +161,8 @@ document {
 	 TO "installing assignment methods",
 	 TO "installing augmented assignment methods",
          TO installMethod,
+	 TO "binary methods",
+	 TO "nullaryMethods",
          },
      }
 
@@ -274,6 +276,7 @@ document {
         TO (symbol @@, Function, Function),
         TO (symbol _, Function, Thing),
         TO (methodOptions, Function),
+	TO identity,
         },
      }
 document {

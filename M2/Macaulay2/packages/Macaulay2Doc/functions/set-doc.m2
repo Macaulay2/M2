@@ -68,6 +68,9 @@ document {
      Subnodes => {
 	 TO set,
 	 TO elements,
+	 TO union,
+	 TO intersect,
+	 TO intersection,
 	 TO (symbol #?, Set, Thing),
 	 TO (symbol -, Set, Set),
 	 TO (union, Set, Set),

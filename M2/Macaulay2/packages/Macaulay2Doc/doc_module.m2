@@ -96,6 +96,7 @@ document {
 	TO (symmetricAlgebra, Module),
 	TO (symmetricPower, ZZ, Module),
 	TO (exteriorPower, ZZ, Module),
+	TO (formation, Module)
 	TO (symbol +, Module, Module),
 	TO (dual, Module),
 	TO (symbol SPACE, Module, Array),

@@ -96,26 +96,25 @@ document {
 	 TO EngineRing,
 	 TO ring,
 	 TO isRing,
-        TO (isQuotientOf, Ring, Ring),
-        TO (isQuotientOf, Type, Ring),
         TO (ambient, Ring),
         TO (degree, Ring),
         TO (degrees, Ring),
-        TO (diagonalMatrix, Ring, ZZ, ZZ, List),
+        TO (numgens, Ring),
         TO (dim, Ring),
+        TO (vars, Ring),
         TO (generators, Ring),
         TO (hilbertPolynomial, Ring),
         TO (jacobian, Ring),
         TO (minimalPresentation, Ring),
-        TO (numgens, Ring),
-        TO (toField, Ring),
-        TO (vars, Ring),
         },
      }
 document {
     Key => RingFamily,
     "This family is used to contain classes that correspond to a family of similar rings with a default member.",
-    Subnodes => TO InexactFieldFamily,
+    Subnodes => {
+	TO InexactFieldFamily,
+	TO default,
+        },
     }
 document {
     Key => Engine,
@@ -140,6 +139,7 @@ document {
 	"the handle of on engine ring"
 	},
     Subnodes => {
+	TO Engine,
         TO InexactField,
 	TO GaloisField,
 	TO FractionField,

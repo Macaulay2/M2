@@ -524,8 +524,8 @@ document {
 	 --Function,
 	 AtomicInt,
 	 Symbol,
-	 Pseudocode,
-	 FunctionBody
+	 Pseudocode
+	 --FunctionBody
      }
 }
 document {

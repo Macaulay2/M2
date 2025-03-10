@@ -83,6 +83,7 @@ document {
         TO (source, RingMap),
         TO (target, RingMap),
         TO (symbol ^, RingMap, ZZ),
+	TO newCoordinateSystem,
          }
      }
 
@@ -270,6 +271,7 @@ document {
 	TO(use, Ring),
 	TO lift,
 	TO promote,
+	TO newRing, -- TODO: move?
         },
     }
 
