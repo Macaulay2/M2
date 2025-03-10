@@ -91,9 +91,8 @@ reduceOneStep(RingElement, RingElement) := (f, g) -> (
     -- eliminates leading term of f and restarts with the remainder
     )
 
---    -- TODO: Write function for Gröbner Basis
 normalForm = method()
--- weightorder, f in D, g in D, SST page 7
+-- f in D, g in D, SST page 7
 normalForm(RingElement, RingElement) := (f, g) -> (
     if f == 0 then return f;
     D := ring g;
@@ -144,11 +143,8 @@ normalForm(RingElement, List) := (f, G) -> (
     D := ring(G#0);
     w := (((options(D)).MonomialOrder)#1)#1;
     G = clearDenominators(G, D);
-
     useRecursiveVersion := false;
-
     -- iterated version:
-
     if useRecursiveVersion then (
         scan(G, g -> f = normalForm(f, g));
     ) else (
@@ -161,7 +157,6 @@ normalForm(RingElement, List) := (f, G) -> (
         );
     );
     f)
-
 end--
 
 --------------------------------------------------------
