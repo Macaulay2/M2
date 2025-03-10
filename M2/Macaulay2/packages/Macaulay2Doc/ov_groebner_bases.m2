@@ -418,6 +418,7 @@ document {
      Subnodes => {
 	 TO gb,
 	 TO groebnerBasis,
+	 TO forceGB,
 	 -- TODO: also add references to packages that compute GB
      }
      }

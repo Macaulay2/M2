@@ -263,9 +263,11 @@ Node
       degrees source f
       degrees source (f ** R^{-3})
   SeeAlso
+    adjoint
     (tensor, Module, Module)
     (tensor, Matrix, Matrix)
   Subnodes
+    flip
     tensorAssociativity
 
 Node

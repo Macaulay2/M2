@@ -1,5 +1,15 @@
+doc ///
+Node
+  Key
+    image
+  Headline
+    image of a map
+  SeeAlso
+    target
+///
+
 document {
-     Key => {image,(image, Matrix),(image, ChainComplexMap),(image, GradedModuleMap),(image, RingElement)},
+     Key => {(image, Matrix),(image, ChainComplexMap),(image, GradedModuleMap),(image, RingElement)},
      Headline => "image of a map",
      TT "image h", " -- yields the image of the homomorphism ", TT "h", ".",
      PARA{},

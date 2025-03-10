@@ -11,13 +11,14 @@ document {
 	 TO "oo",
 	 TO "ooo",
 	 TO "oooo",
+	 TO "clearAll",
+	 TO "clearOutput",
 	 TO "topLevelMode",
          },
      SeeAlso => {
 	  "Print",
 	  "NoPrint",
 	  "BeforePrint",
-	  "AfterEval",
 	  "AfterPrint",
 	  "AfterNoPrint"
 	  }
@@ -393,6 +394,7 @@ document {
 	 "Keys for mode-dependent printing methods:",
 	 TO Print,
 	 TO NoPrint,
+	 TO AfterEval,
 	 TO BeforePrint,
 	 TO AfterPrint,
 	 TO AfterNoPrint,
@@ -462,7 +464,15 @@ document { Key => {localDictionaries,(localDictionaries, Symbol), (localDictiona
 	  d#0#"y"
 	  value d#0#"y"
 	  peek localDictionaries()
-     ///
+     ///,
+     SeeAlso => { "fileDictionaries" },
+     }
+document { Key => "fileDictionaries",
+     Headline => "local dictionaries for loaded files",
+     Usage => "fileDictionaries#fn",
+     Inputs => { "fn" => String },
+     Outputs => {{"the local dictionary in effect for the scope of the file loaded from the path ", TT "fn"}},
+     SeeAlso => { "localDictionaries" },
      }
 
 document { Key => {listSymbols,(listSymbols, Dictionary), (listSymbols, List)},
@@ -724,7 +734,12 @@ document {
      EXAMPLE {
 	  "Core.Dictionary # \"sin\"",
 	  "Core.Dictionary #? \"sin\""
-	  }
+	  },
+    Subnodes => {
+	TO GlobalDictionary,
+	TO LocalDictionary,
+	TO(length, Dictionary),
+    }
      }
 
 document {
@@ -937,7 +952,7 @@ document { Key => functionBody,
      SeeAlso => FunctionBody }
 document { Key => FunctionBody,
      Headline => "the class of function bodies",
-     SeeAlso => functionBody }
+    Subnodes => TO functionBody }
 
 document { Key => symbol OutputDictionary,
      Headline => "the dictionary for output values",

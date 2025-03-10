@@ -1,5 +1,5 @@
 document {
-     Key => "mathematical examples",
+     Key => "mathematical tutorials",
      "In this section we present some tutorials that aim to introduce
      the user to some mathematical ways of using Macaulay2.  The tutorials
      are relatively independent of each other, and each one introduces the use
@@ -7,21 +7,87 @@ document {
      reader is already familiar with the mathematical concepts involved.  
      ", TO "David Eisenbud", " joins us as a co-author of these tutorials.",
      Subnodes => {
-	 "Lessons:",
 	  TO "Tutorial: Elementary uses of Groebner bases",
 	  TO "Tutorial: Canonical Embeddings of Plane Curves and Gonality",
 	  TO "Tutorial: Fano varieties",
 	  TO "Tutorial: Divisors",
-	 "Examples:",
-	 TO monomialCurveIdeal,
-	 TO Grassmannian,
-	 TO Schubert,
-	 TO Fano,
-	 TO Tor,
-	 TO Ext,
-	 TO HH,
 	  }
      }
+
+doc ///
+Node
+  Key
+    "arithmetic functions"
+  Subnodes
+    mod
+    plus
+    minus
+    times
+    power
+    powermod
+    gcd
+    lcm
+
+Node
+  Key
+    "commutative algebra functions"
+  Subnodes
+    hilbertFunction
+    hilbertSeries
+    hilbertPolynomial
+    syz
+    koszul
+    presentation
+    resolution
+    rank
+    dim
+    codim
+    pdim
+    depth -- contains link to package Depth
+    height -- TODO
+    length
+    Tor
+    Ext
+    HH
+    prune
+    monomialCurveIdeal
+    syzygyScheme
+    isBorel
+    isCommutative
+    isAffineRing
+
+Node
+  Key
+    "homological algebra functions"
+  Subnodes
+    kernel
+    cokernel
+    image
+    coimage
+    preimage
+    pullback
+    pushout
+    isInjective
+    isSurjective
+    isIsomorphism
+
+Node
+  Key
+    "algebraic geometry functions"
+  Subnodes
+    singularLocus
+    Grassmannian
+    Schubert
+    Fano
+    isNormal
+    isSmooth
+    isVeryAmple
+    randomKRationalPoint
+    euler
+    eulers
+    genus
+    genera
+///
 
 document {
      Key => "basic commutative algebra",

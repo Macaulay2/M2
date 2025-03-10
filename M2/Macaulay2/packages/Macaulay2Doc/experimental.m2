@@ -22,7 +22,11 @@ document {
 	  getNetFile f
 	  peek oo
 	  class \ ooo
-     ///
+     ///,
+     Subnodes => {
+	 TO newNetFile,
+	 TO getNetFile,
+     }
 }
 
 document {

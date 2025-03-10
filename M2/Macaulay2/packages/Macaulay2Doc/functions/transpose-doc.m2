@@ -12,7 +12,7 @@ document {
      Headline => "transpose a matrix or table",
      Usage => "transpose f",
      Inputs => {
-		"f" => { ofClass {Matrix, List}, "which is a table" }
+		"f" => { ofClass {Matrix, List}, " which is a table" }
 	  },
      Outputs => {
 	  Matrix => { "the transpose of ", TT "f" }	       

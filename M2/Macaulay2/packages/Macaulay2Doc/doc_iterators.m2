@@ -44,7 +44,7 @@ doc ///
       s = "Hello, world!"
       for c in s list c
       for c in s list c
-  SeeAlso
+  Subnodes
     iterator
     next
     StopIteration

@@ -19,6 +19,10 @@ document {
 	  TO "concatenating matrices",
 	  TO "submatrices",
 	  TO "diff and contract",
+	  "matrix decompositions",
+	  TO LUdecomposition,
+	  TO QRDecomposition,
+	  TO SVD,
 	  "determinants and related computations",
 	  TO "rank of a matrix",
 	  TO "determinants and minors",
@@ -131,7 +135,15 @@ document {
        size of the matrix.",
        EXAMPLE { 
 	    "genericSkewMatrix(S,u,3)"
-	    }     
+	    },
+    SeeAlso => {
+	(random, Module, Module),
+        },
+    Subnodes => {
+	TO genericMatrix,
+	TO genericSymmetricMatrix,
+	TO genericSkewMatrix,
+    }
      }
 
 document {
@@ -646,7 +658,8 @@ document {
 	 "N = transpose genericMatrix(S,y_(1,1),4,5)",
 	 "exteriorPower(3,M*N) == exteriorPower(3,M) * exteriorPower(3,N)"
 	 },
-     SeeAlso => "exterior power of a module"
+     SeeAlso => "exterior power of a module",
+     Subnodes => TO (exteriorPower, ZZ, Matrix),
      }
 
 document { -- something should be said about the degrees
@@ -680,7 +693,13 @@ document { -- something should be said about the degrees
      Subnodes => {
 	 TO "blockMatrixForm",
 	 TO "compactMatrixForm",
-         },
+	 TO "printingAccuracy",
+	 TO "printingLeadLimit",
+	 TO "printingPrecision",
+	 TO "printingSeparator",
+	 TO "printingTimeLimit",
+	 TO "printingTrailLimit ",
+},
      }
 
 document {

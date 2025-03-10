@@ -36,7 +36,8 @@ document {
      v
      ///,
      Caveat => {"The eigenvectors are approximate."},
-     SeeAlso => {eigenvalues, SVD}
+     SeeAlso => {eigenvalues, SVD},
+     Subnodes => { TO [eigenvectors, Hermitian] },
      }
 document { 
      Key => [eigenvectors, Hermitian],

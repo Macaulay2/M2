@@ -15,7 +15,9 @@ document {
      SeeAlso => {"degreesRing", "reduceHilbert", "poincare", "poincareN", 
 	  "hilbertSeries", "hilbertFunction"},
     Subnodes => {
+	TO [hilbertPolynomial, Projective],
 	TO ProjectiveHilbertPolynomial,
+	TO projectiveHilbertPolynomial,
         },
      } 
 

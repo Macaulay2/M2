@@ -9,6 +9,7 @@ document {
      Subnodes => {
 	 TO Ideal,
 	 TO ideal,
+	 TO isIdeal,
 	  TO "creating an ideal",
 	  "conversions",
 	  TO "ideals to and from matrices",

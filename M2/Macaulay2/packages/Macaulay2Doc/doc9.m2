@@ -29,10 +29,14 @@ document {
      ring should be installed with a statement like ", TT "M.ring = R", ".",
      SeeAlso => "GradedModuleMap",
     Subnodes => {
+	TO gradedModule,
 	TO (symbol SPACE, GradedModule, Array),
         TO (max, GradedModule),
         TO (min, GradedModule),
         TO (symbol **, GradedModule, GradedModule),
+        TO (symbol **, ChainComplex, GradedModule),
+        TO (symbol **, GradedModule, ChainComplex),
+        TO (symbol **, GradedModule, Module),
         TO (chainComplex, GradedModule),
         TO (length, GradedModule),
         },
@@ -43,6 +47,7 @@ document {
      Headline => "the class of all maps between graded modules",
      SeeAlso => "GradedModule",
     Subnodes => {
+	TO gradedModuleMap,
 	TO (symbol |, GradedModuleMap, GradedModuleMap),
         TO (symbol ||, GradedModuleMap, GradedModuleMap),
         TO (source, GradedModuleMap),
@@ -107,7 +112,12 @@ document {
 	  TO (Hom,ChainComplex,Module),
 	  TO (symbol SPACE, ChainComplex, Array)
 	  },
+     SeeAlso => {
+	 (map,ChainComplex,ChainComplex,Function),
+         },
      Subnodes => {
+	 TO chainComplex,
+	 -- TO (NewFromMethod, ChainComplex, Resolution),
         TO (complete, ChainComplex),
         TO (length, ChainComplex),
         TO (symbol ++, ChainComplex, ChainComplex),
@@ -117,8 +127,6 @@ document {
         TO (sum, ChainComplex),
         TO (NewMethod, ChainComplex),
         TO (symbol **, ChainComplex, ChainComplex),
-        TO (symbol **, ChainComplex, GradedModule),
-        TO (symbol **, GradedModule, ChainComplex),
         TO (symbol **, ChainComplex, Ring),
         TO (cohomology, ZZ, ChainComplex),
         TO (homology, ChainComplex),

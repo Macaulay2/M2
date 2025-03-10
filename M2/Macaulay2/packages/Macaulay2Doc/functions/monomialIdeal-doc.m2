@@ -41,6 +41,8 @@ document {
      "The ring of a monomial ideal must be a commutative polynomial ring.  This ring must
      not be a skew commuting ring, and/or a quotient ring.",
     Subnodes => {
+	TO monomialIdeal,
+	TO monomialSubideal,
         TO (codim, MonomialIdeal),
         TO (symbol -, MonomialIdeal, MonomialIdeal),
         TO (dual, MonomialIdeal, List),
@@ -264,7 +266,8 @@ document {
      PARA {
 	  "The computation is done by calling the ", TO "frobby", " library, written by B. H. Roune;
 	  setting ", TO "gbTrace", " to a positive value will cause a message to be printed when it is called."
-	  }
+	  },
+     Subnodes => { TO [(dual, MonomialIdeal), Strategy] },
      }
 
 document {

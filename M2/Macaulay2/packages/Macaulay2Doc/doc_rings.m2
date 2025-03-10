@@ -95,6 +95,7 @@ document {
      Subnodes => {
 	 TO EngineRing,
 	 TO ring,
+	 TO isRing,
         TO (isQuotientOf, Ring, Ring),
         TO (isQuotientOf, Type, Ring),
         TO (ambient, Ring),
@@ -152,6 +153,7 @@ document {
     Headline => "the class of all ring elements handled by the engine",
     SeeAlso => EngineRing,
     Subnodes => {
+	TO isUnit,
 	TO (leadTerm, RingElement),
         TO (leadTerm, ZZ, RingElement),
         TO (quotientRemainder, RingElement, RingElement),

@@ -563,7 +563,7 @@ document {
 	  default CC
      ///,
      "This function is used internally, and its implementation may change.",
-     SeeAlso => { "defaultPrecision" }
+     Subnodes => { TO "defaultPrecision" },
      }
 
 document { Key => "defaultPrecision",
@@ -588,6 +588,7 @@ undocumented {
 
 document {
      Key => (symbol _*,RingFamily),
+     Headline => "the common parent for rings in a family",
      Usage => "R_*",
      Inputs => {"R"},
      Outputs => {{"the common parent for the rings in the family ", TT "R"}},

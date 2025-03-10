@@ -198,7 +198,8 @@ document {
 	  TO "or",
 	  TO "xor",
 	  TO "if"
-	  }
+	  },
+     Subnodes => { TO true, TO false },
      }
 
 document {

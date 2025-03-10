@@ -158,20 +158,6 @@ document {
      }
 
 document {
-     Key => SubringLimit,
-     Headline => "stop after finding enough elements of a subring",
-     TT "SubringLimit", " -- an option for  ", TO "kernel", " and ", TO "gb", "
-     which can stop the computation after a certain number of basis elements in
-     a subring have been found.",
-     SeeAlso => "Gröbner bases"
-     }
-document {
-     Key => [kernel,SubringLimit],
-     TT "SubringLimit => n", " -- an option for ", TO "kernel", " which
-     causes the computation of the kernel of a ring map to stop after ", TT "n", "
-     elements have been discovered."
-     }
-document {
      Key => (dual, Matrix),
      Headline => "dual of a map",
      TT "dual f", " -- the dual (transpose) of a homomorphism."
@@ -294,7 +280,8 @@ document {
 document {
      Key => exteriorPower,
      Headline => "exterior power",
-     SeeAlso => {"minors", "det", "wedgeProduct"}
+     SeeAlso => {"minors", "det", "wedgeProduct"},
+     Subnodes => { TO [exteriorPower, Strategy] },
      }
 document {
      Key => {(trace, Matrix),trace},
@@ -327,18 +314,6 @@ document {
      TT "M + N", " -- the sum of two submodules.",
      PARA{},
      "The two modules should be submodules of the same module."
-     }
-document {
-     Key => Order,
-     Headline => "specify the order of a Hilbert series required",
-     TT "Order", " -- an optional argument used with ", TO "hilbertSeries", "
-     to specify the order of the series requested."
-     }
-document {
-     Key => Projective,
-     Headline => "whether to produce a projective Hilbert polynomial",
-     TT "Projective", " -- an optional argument used with ", TO "hilbertPolynomial", 
-     " to specify the way the Hilbert Polynomial is expressed."
      }
 document {
      Key => ProjectiveHilbertPolynomial,
