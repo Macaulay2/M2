@@ -24,7 +24,7 @@ pfaffians(Ideal) := List => (I) -> (
 	    s -> last coefficients(
 		-- essentially compute: (dt * s) % G
 		normalForm(dt_R * s, first entries G), Monomials => B)));
-    (A/entries)/matrix
+    apply((A/entries)/matrix, p ->sub(p,fractionField D))
 )
 
 -- gives the pfaffians system with respect to a new basis B
