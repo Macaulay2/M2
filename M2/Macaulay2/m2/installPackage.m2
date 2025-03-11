@@ -266,7 +266,7 @@ buttonBar := tag -> DIV {
 	BR {},
 	pkgButton, " » ",
 	SPAN if UP#?tag
-	then between(" > ", apply(upAncestors tag, i -> TO i))
+	then between(" » ", apply(upAncestors tag, i -> TO i))
 	else (TO topDocumentTag, " :: ",
 	    if tag === "index"
 	    then HREF {htmlDirectory | indexFileName, "Index"}
