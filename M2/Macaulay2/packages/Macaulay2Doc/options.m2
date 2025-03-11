@@ -31,9 +31,13 @@ scan(optionalValues - both,
     v -> document { Key => v, Headline => "value of an optional argument", -- if the headline is changed, change it above as well
 	"A symbol used as the value of an optional argument or strategy, for some function(s)." })
 
+-- Add a few special cases with individual documentation
+optionalNames  |= { }
+optionalValues |= { MinimalGenerators }
+
 -- Make sure orphan nodes above have a parent
 document { Key => "symbols used as the name or value of an optional argument",
     Subnodes => flatten {
-	"Symbols used as an option name or value",  TO \ toList both,
-	"Symbols used as an option name",  TO \ (optionalNames - both),
-	"Symbols used as an option value", TO \ (optionalValues - both)}}
+	"Symbols used as an option name or value",  TO \ sort toList both,
+	"Symbols used as an option name",  TO \ sort (optionalNames - both),
+	"Symbols used as an option value", TO \ sort (optionalValues - both)}}
