@@ -57,6 +57,9 @@ SM2 = stdMon(sub(I,D2));
 G = flatten entries gens gb I;
 changeofvar = gaugeMatrix(G,SM1,SM2);
 
+P' = gaugeTransform(changeofvar,C1,D1);
+P'' = apply(P', p-> sub(p, ring C2#0))
+
 -- Now transform the Pfaffian system C1 into the Pfaffian System C2 via Gauge transform
-assert(C2 == gaugeTransform(changeofvar,C1,D1)) -- TODO: Need to remove the weight information.   // Fails so far.
+assert(C2 == P'') -- TODO: Need to remove the weight information.   // Fails so far.
 ///
