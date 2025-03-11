@@ -277,6 +277,7 @@ document {
         TO (symbol _, Function, Thing),
         TO (methodOptions, Function),
 	TO identity,
+	TO notImplemented,
         },
      }
 document {

@@ -7,6 +7,7 @@ document {
      unless the printing is to be suppressed, as indicated by a semicolon at the end
      of the statement, in which case the ", TO "NoPrint", " method is applied.",
      Subnodes => {
+	 TO "value",
 	 TO "capture",
 	 TO "oo",
 	 TO "ooo",
@@ -299,7 +300,8 @@ document {
 	  { "at top level, whenever it is time to print an output value of type ", TT "X", ", the function ", TT "f", " will be called" }
 	  },
      "The function ", TT "f", " is responsible for printing the output prompt and for applying the ", TO "BeforePrint", " and ", TO "AfterPrint", " methods, if desired.",
-     EXAMPLE "code Thing#{Standard,Print}"
+     EXAMPLE "code Thing#{Standard,Print}",
+     Subnodes => { TO Wrap },
      }
 document {
      Key => NoPrint,

@@ -364,6 +364,7 @@ document {
 	  },
      Subnodes => {
 	 TO expression,
+	 TO describe,
          },
      }
 

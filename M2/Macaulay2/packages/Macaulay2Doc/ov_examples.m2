@@ -40,9 +40,17 @@ Node
     hilbertPolynomial
     syz
     koszul
+    eagonNorthcott
     regularity
     presentation
     resolution
+    quotient
+    quotient'
+    quotientRemainder
+    quotientRemainder'
+    remainder
+    remainder'
+    pseudoRemainder
     rank
     dim
     codim
@@ -52,6 +60,8 @@ Node
     length
     trim
     prune
+    numgens
+    mingens
     minimize
     minimalPresentation
     tensor
@@ -97,6 +107,7 @@ Node
     isSmooth
     isVeryAmple
     randomKRationalPoint
+    chi
     euler
     eulers
     genus

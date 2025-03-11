@@ -97,8 +97,12 @@ document {
 	 TO ring,
 	 TO isRing,
         TO (ambient, Ring),
+	TO (baseRing, Ring),
         TO (degree, Ring),
+	TO (degreeLength, Ring),
+	TO degrees,
         TO (degrees, Ring),
+	TO (degreesRing, Ring),
         TO (numgens, Ring),
         TO (dim, Ring),
         TO (vars, Ring),
@@ -106,6 +110,9 @@ document {
         TO (hilbertPolynomial, Ring),
         TO (jacobian, Ring),
         TO (minimalPresentation, Ring),
+	TO selectVariables,
+	TO flattenRing,
+	TO generators,
         },
      }
 document {
@@ -214,6 +221,7 @@ document {
      Headline => "the class of all Galois fields",
      Subnodes => {
 	 TO GF,
+	 TO order,
          TO (ambient, GaloisField),
          },
      }
@@ -267,6 +275,7 @@ document {
 	TO (value, IndexedVariable),
         TO (symbol .., IndexedVariable, IndexedVariable),
         TO (symbol ..<, IndexedVariable, IndexedVariable),
+	TO baseName,
         },
     }
 
