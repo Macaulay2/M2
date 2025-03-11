@@ -13,7 +13,10 @@ document {
      }
 
 document { 
-     Key => {[(codim,Ideal), Generic],[(codim,Module), Generic],
+    Key => {
+	[(codim, Ideal), Generic],
+	[(codim, MonomialIdeal), Generic],
+	[(codim, Module), Generic],
 	  [(codim,PolynomialRing), Generic],
 	  [(codim,QuotientRing), Generic]},
      Usage => "codim(...,Generic=>true)",

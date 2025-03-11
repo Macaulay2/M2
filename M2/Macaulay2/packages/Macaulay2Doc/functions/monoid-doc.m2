@@ -8,7 +8,6 @@ undocumented {
     (monoid, QuotientRing),
     }
 
--- TODO: document Constants => Boolean, whether to use rawTowerRing when making a monoid ring
 doc ///
 Node
   Key
@@ -35,8 +34,10 @@ Node
     DegreeMap        => Boolean -- see @TO [monoid, DegreeMap]@
     DegreeLift       => Boolean -- see @TO [monoid, DegreeLift]@
     DegreeRank       => ZZ      -- see @TO [monoid, DegreeRank]@
+    DegreeGroup      => Module  -- see @TO [monoid, DegreeGroup]@
     Heft             => List    -- see @TO [monoid, Heft]@
     Join             => Boolean -- see @TO [monoid, Join]@
+    Constants        => Boolean -- see @TO [monoid, Join]@
     MonomialOrder    => List    -- see @TO [monoid, MonomialOrder]@
     MonomialSize     => ZZ      -- see @TO [monoid, MonomialSize]@
     SkewCommutative  => Boolean -- see @TO [monoid, SkewCommutative]@
@@ -102,7 +103,7 @@ Node
     [monoid, Local]     -- and Global
     [monoid, Inverses]
     [monoid, Weights]
-    [monoid, Degrees]   -- and DegreeRank
+    [monoid, Degrees]   -- and DegreeRank, DegreeGroup
     [monoid, DegreeMap] -- and DegreeLift
     [monoid, Heft]
     [monoid, Join]
@@ -261,11 +262,13 @@ Node
   Key
     [monoid, Degrees]
     [monoid, DegreeRank]
+    [monoid, DegreeGroup]
   Headline
     specify the degrees of the variables
   Usage
     monoid[x,y,z, Degrees => {d1, d2, d3}]
     monoid[x,y,z, DegreeRank => r]
+    monoid[x,y,z, DegreeGroup => ZZ^2 ++ coker matrix 3]
   Description
     Text
       The @TT "Degrees"@ option specifies the degrees of the variables in the monoid.
@@ -285,6 +288,13 @@ Node
     Example
       QQ[a..f, DegreeRank => 3]
       transpose matrix degrees oo
+    Text
+      Finally, the @TT "DegreeGroup"@ option specifies the degree group of the monoid.
+      If provided, the value must be a $\ZZ$-module. If the @TT "Degrees"@ option is not
+      provided, the degrees of the variables are determined similar to the previous example.
+    Example
+      QQ[a..f, DegreeGroup => ZZ^2 ++ coker matrix 3]
+      degreeGroup oo
     Text
       This option may also be used when creating a new ring from an existing ring,
       creating a tensor product ring, or symmetric algebra.
@@ -372,6 +382,7 @@ Node
 Node
   Key
     [monoid, Join]
+    [monoid, Constants]
   Headline
     specify how to handle degrees in the coefficient ring
   Usage

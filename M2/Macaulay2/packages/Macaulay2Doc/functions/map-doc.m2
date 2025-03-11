@@ -232,7 +232,10 @@ document {
      	  "g2 = a ** matrix{{a,b}}",
 	  "degree g2",
 	  "isHomogeneous g2"
-	  }
+	  },
+    Subnodes => {
+	TO [map, Degree],
+        },
      }
 document {
      Key => (map,Module,Nothing,Matrix),
@@ -560,7 +563,7 @@ document {
 	  }
      }
 document { 
-     Key => {Degree, [map, Degree]},
+     Key => [map, Degree],
      Headline => "specify the degree of a map",
      Usage => "map(..., Degree=>d)",
      "Specifies that the degree of the map created should be ", TT "d", ". ",

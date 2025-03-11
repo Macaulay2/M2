@@ -14,8 +14,8 @@ L := {
     }
 undocumented L
 undocumented flatten table(L, {
-	DegreeLift, DegreeMap, DegreeRank, Degrees, Global, Heft,
-	Join, Local, MonomialOrder, MonomialSize, VariableBaseName,
+	DegreeLift, DegreeMap, DegreeRank, Degrees, DegreeGroup, Global, Heft,
+	Constants, Join, Local, MonomialOrder, MonomialSize, VariableBaseName,
 	Inverses, Variables, SkewCommutative, Weights, WeylAlgebra}, (m,o) -> [m, o])
 
 doc ///
@@ -25,10 +25,12 @@ Node
    [(tensor, Monoid, Monoid), DegreeLift]
    [(tensor, Monoid, Monoid), DegreeMap]
    [(tensor, Monoid, Monoid), DegreeRank]
+   [(tensor, Monoid, Monoid), DegreeGroup]
    [(tensor, Monoid, Monoid), Degrees]
    [(tensor, Monoid, Monoid), Global]
    [(tensor, Monoid, Monoid), Heft]
    [(tensor, Monoid, Monoid), Inverses]
+   [(tensor, Monoid, Monoid), Constants]
    [(tensor, Monoid, Monoid), Join]
    [(tensor, Monoid, Monoid), Local]
    [(tensor, Monoid, Monoid), MonomialOrder]
@@ -42,10 +44,12 @@ Node
    [(tensor, Ring, Ring), DegreeLift]
    [(tensor, Ring, Ring), DegreeMap]
    [(tensor, Ring, Ring), DegreeRank]
+   [(tensor, Ring, Ring), DegreeGroup]
    [(tensor, Ring, Ring), Degrees]
    [(tensor, Ring, Ring), Global]
    [(tensor, Ring, Ring), Heft]
    [(tensor, Ring, Ring), Inverses]
+   [(tensor, Ring, Ring), Constants]
    [(tensor, Ring, Ring), Join]
    [(tensor, Ring, Ring), Local]
    [(tensor, Ring, Ring), MonomialOrder]
@@ -80,9 +84,10 @@ Node
     Join             => Boolean -- overrides the corresponding option in {\tt A}; see @TO [monoid,Join]@
     DegreeMap        => Boolean -- overrides the corresponding option in {\tt A}; see @TO [monoid,DegreeMap]@
     DegreeLift       => Boolean -- overrides the corresponding option in {\tt A}; see @TO [monoid,DegreeLift]@
+    Constants        => Boolean -- ignored by this routine
     SkewCommutative  => Boolean -- ignored by this routine
-    Weights          => List    -- ignored by this routine
     WeylAlgebra      => List    -- ignored by this routine
+    Weights          => List    -- ignored by this routine
   Outputs
     C:{Ring,Monoid}
       tensor product of the monoids or rings

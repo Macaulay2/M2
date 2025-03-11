@@ -85,6 +85,7 @@ Node
      findHeft
     (findHeft, List)
     [findHeft, DegreeRank]
+    [findHeft, DegreeGroup]
   Headline
     find a heft vector for a list of degrees
   Usage

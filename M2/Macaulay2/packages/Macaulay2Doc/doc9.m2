@@ -352,6 +352,11 @@ document {
      ", TT "D", " in which ", TT "D_j", " is ", TT "C_(i+j)", "."
      }
 
+undocumented {
+    [(dual, ChainComplex), Strategy],
+    [(dual, ChainComplex), DegreeLimit],
+    [(dual, ChainComplex), MinimalGenerators],
+}
 document {
      Key => (dual, ChainComplex),
      Headline => "dual",

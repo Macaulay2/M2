@@ -83,7 +83,9 @@ SeeAlso
 doc ///
 Key
     (intersect, RRi)
+    (intersect, RRi, RRi)
     [(intersect, RRi), Precision]
+    [(intersect, RRi, RRi), Precision]
 Headline
     intersection of input intervals
 Usage
