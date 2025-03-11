@@ -60,7 +60,6 @@ document {
 	TO (extend, ChainComplex, ChainComplex, Matrix),
 	TO (symbol **, Matrix, RingElement),
 	TO (ambient, Matrix),
-	TO (chainComplex, Matrix),
 	TO (contract, Matrix, Matrix),
 	TO (cover, Matrix),
 	TO (degrees, Matrix),
