@@ -16,7 +16,7 @@ diffRationalWeyl=method();
 -- Add check that P is degree 1 in derivation
 diffRationalWeyl(RingElement,RingElement,RingElement) :=(P,f,g)->(
     (h1,h2) :=(g*diffWeyl(P,f)-f*diffWeyl(P,g),g^2);
-    R := fractionField ring f;
+    R := ring f;
     sub(h1, R)/sub(h2,R)
 );
 
