@@ -9,6 +9,7 @@ document {
     "Here are some other debugging tools.",
     Subnodes => {
 	TO "the debugger",
+	TO "debug",
 	TO "assert",
 	TO "generateAssertions",
 	TO "benchmark",
@@ -114,7 +115,6 @@ document {
 
 doc ///
   Key
-     debug
     (debug, Package)
   Headline
     open the private dictionary of a package
@@ -139,7 +139,10 @@ doc ///
       raw R
   SeeAlso
     export
+    exportFrom
+    importFrom
     "dictionaryPath"
+    (debug, GlobalDictionary)
 ///
 
 doc ///
