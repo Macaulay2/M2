@@ -37,7 +37,6 @@ document {
         TO (symbol **, ChainComplex, GradedModule),
         TO (symbol **, GradedModule, ChainComplex),
         TO (symbol **, GradedModule, Module),
-        TO (chainComplex, GradedModule),
         TO (length, GradedModule),
         },
      }

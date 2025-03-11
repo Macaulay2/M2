@@ -99,7 +99,6 @@ document {
         TO (isQuotientOf, Ring, Ring),
         TO (isQuotientOf, Type, Ring),
         TO (ambient, Ring),
-        TO (chainComplex, Ring),
         TO (degree, Ring),
         TO (degrees, Ring),
         TO (diagonalMatrix, Ring, ZZ, ZZ, List),
