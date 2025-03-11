@@ -928,7 +928,30 @@ assignNewFromFun(newclass:Code,newinitializer:Code,rhs:Code):Expr := (
 	  i := eval(newinitializer);
 	  when i is Error do i
 	  is ii:HashTable do installMethod(NewFromE,cc,ii,eval(rhs))
-     	  else printErrorMessageE(newinitializer,"expected a hash table"))
+	  is a:Sequence do (
+	      if length(a) == 2
+	      then (
+		  when a.0
+		  is T1:HashTable do
+		  when a.1
+		  is T2:HashTable do (
+		      installMethod(NewFromE, cc, T1, T2, eval(rhs)))
+		  else WrongArgHashTable(2)
+		  else WrongArgHashTable(1))
+	      else if length(a) == 3
+	      then (
+		  when a.0
+		  is T1:HashTable do
+		  when a.1
+		  is T2:HashTable do
+		  when a.2
+		  is T3:HashTable do (
+		      installMethod(NewFromE, cc, T1, T2, T3, eval(rhs)))
+		  else WrongArgHashTable(3)
+		  else WrongArgHashTable(2)
+		  else WrongArgHashTable(1))
+	      else WrongNumArgs(1, 3))
+     	  else printErrorMessageE(newinitializer,"expected 1 to 3 hash tables"))
      else printErrorMessageE(newclass,"expected a hash table as prospective class"));
 AssignNewFromFun = assignNewFromFun;
 setup(NewFromS,AssignNewFromFun);
