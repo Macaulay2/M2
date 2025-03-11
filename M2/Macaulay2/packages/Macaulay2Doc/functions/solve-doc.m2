@@ -1,5 +1,3 @@
--- TODO: [solve, Invertible]
-
 doc ///
    Key
      solve
@@ -8,6 +6,7 @@ doc ///
      [solve,MaximalRank]
      [solve,ClosestFit]
      [solve,Precision]
+     [solve, Invertible] -- TODO: document this
    Headline
      solve linear equation(s)
    Usage

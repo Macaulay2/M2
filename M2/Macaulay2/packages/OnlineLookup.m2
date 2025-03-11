@@ -143,6 +143,8 @@ multidoc ///
  Node
   Key
    isc
+   (isc, Constant)
+   (isc, Number)
    (isc, String)
    (isc, RR)
   Headline

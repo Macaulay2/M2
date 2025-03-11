@@ -109,6 +109,7 @@ RRi => { "an interval containing the square roots of the points of ", TT "I" }
 
 document {
      Key => {gcd,
+	 1:gcd,
 	  (gcd, List),
 	  (gcd, Sequence),
 	  (gcd, QQ, QQ),
@@ -139,6 +140,7 @@ document {
 doc ///
   Key
     lcm
+    1:lcm -- for lcm()
     (lcm, List)
     (lcm, Sequence)
     (lcm, QQ, QQ)

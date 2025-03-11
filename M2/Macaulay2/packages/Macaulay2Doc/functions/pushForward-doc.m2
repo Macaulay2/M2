@@ -10,6 +10,7 @@ document {
 	  [pushForward,StopBeforeComputation],
 	  [pushForward,DegreeLimit],
 	  [pushForward,PairLimit],
+	  [pushForward,Strategy],
 	  },
      Headline => "compute the pushforward of a module along a ring map",
      Usage => "pushForward(F,M)",

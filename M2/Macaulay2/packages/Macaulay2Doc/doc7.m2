@@ -158,11 +158,6 @@ document {
      }
 
 document {
-     Key => (dual, Matrix),
-     Headline => "dual of a map",
-     TT "dual f", " -- the dual (transpose) of a homomorphism."
-     }
-document {
      Key => {singularLocus, (singularLocus, Ideal), (singularLocus, Ring)},
      Headline => "singular locus",
      TT "singularLocus R", " -- produce the singular locus of a ring, which is assumed to be integral.",
@@ -320,6 +315,7 @@ document {
 	TO (symbol SPACE, ProjectiveHilbertPolynomial, ZZ),
         TO (degree, ProjectiveHilbertPolynomial),
         TO (dim, ProjectiveHilbertPolynomial),
+        TO (euler, ProjectiveHilbertPolynomial),
         TO (hilbertSeries, ProjectiveHilbertPolynomial),
         },
      }
@@ -346,15 +342,6 @@ document {
      of dimension n, but with its generator in degree -d.",
      PARA{},
      SeeAlso => "ProjectiveHilbertPolynomial"
-     }
-document {
-     Key => dual,
-     Headline => "dual module or map",
-     }
-document {
-     Key => (dual, Module),
-     Headline => "dual module",
-     TT "dual M", " -- the dual of a module."
      }
 
 -- Local Variables:

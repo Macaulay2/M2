@@ -2,20 +2,15 @@
 --- author(s): MES, DRG
 --- notes: BUG to fix
 
--*
--- TODO
-lift(Matrix,type of CC_*,type of CC_*)
-lift(Matrix,type of RR_*,type of RR_*)
-lift(Module,type of InexactNumber')
-lift(Module,type of InexactNumber)
-lift(Module,type of Number)
-lift(Module,type of RingElement)
-lift(MutableMatrix,type of InexactNumber')
-lift(MutableMatrix,type of InexactNumber)
-lift(MutableMatrix,type of Number)
-lift(MutableMatrix,type of RingElement)
-*-
+undocumented {
+    (lift, Matrix, RR_*, RR_*),
+    (lift, Matrix, CC_*, CC_*),
+    (lift, Matrix, InexactNumber),
+    (lift, Matrix, InexactNumber'),
+    (lift, Number, InexactNumber),
+}
 
+-- TODO: why is ^(Number,Ring,Verify=>...) showing as missing documentation?
 document { 
      Key => {lift,
 	  (lift,Ideal,RingElement),[lift,Verify],

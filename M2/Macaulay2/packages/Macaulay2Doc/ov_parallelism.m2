@@ -3,6 +3,7 @@ doc ///
      "parallelism in engine computations"
      "numTBBThreads"
      ParallelizeByDegree
+     [resolution, ParallelizeByDegree]
    Headline
      parallelism in engine computations
    Description

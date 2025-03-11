@@ -162,8 +162,8 @@ document {
     Key => InexactNumber',
     "This class is the common parent of the classes of complex fields and real fields.",
     Subnodes => {
-	TO RR',
-	TO CC',
+	TO "RR_*",
+	TO "CC_*",
 	TO (symbol _*, RingFamily),
         },
     }
@@ -253,7 +253,7 @@ document {
      }
 
 document {
-     Key => RR',
+     Key => "RR_*",
      Headline => "the parent class of all rings of real numbers",
      PARA {
 	  "Floating point real numbers are treated in a special way.  Recall first to create a polynomial, one must
@@ -344,7 +344,7 @@ document {
      }
 
 document {
-     Key => CC',
+     Key => "CC_*",
      Headline => "the parent class of all rings of complex numbers",
      PARA {
 	  "Floating point complex numbers are treated in a special way.  Recall first to create a polynomial, one must
@@ -384,7 +384,7 @@ document {
      ///
      }
 
-undocumented {RRi'}
+undocumented {"RRi_*"}
 
 document {
      Key => RRi,

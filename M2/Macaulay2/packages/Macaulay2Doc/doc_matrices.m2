@@ -80,7 +80,6 @@ document {
 	TO (map, Ring, Matrix),
 	TO (minimalPresentation, Matrix),
 	TO (pivots, Matrix),
-	TO (quotient, Matrix, GroebnerBasis),
 	TO (smithNormalForm, Matrix),
 	TO (source, Matrix),
 	TO (syz, Matrix),
