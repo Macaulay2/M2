@@ -465,6 +465,8 @@ doc///
     fold
     accumulate
     ultimate
+  :Creating iterators
+    Iterator
   :Searching in lists
     all
     any

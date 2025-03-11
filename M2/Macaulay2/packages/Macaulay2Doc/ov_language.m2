@@ -50,6 +50,7 @@ document {
 	      TO "making functions with a variable number of arguments",
 	      TO "making functions with multiple return values",
 	      TO "making new functions with optional arguments",
+	      TO "caching computation results",
 	      TO "using hooks",
 	      --TO "code",
 	  "classes and types",

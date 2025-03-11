@@ -24,6 +24,7 @@ document {
 	TO "pseudocode",
 	TO "disassemble",
 	TO "frames",
+	TO functionBody,
 	TO dictionary,
 	TO "dictionaryPath",
 	TO localDictionaries,
