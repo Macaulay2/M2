@@ -313,3 +313,17 @@ doc ///
    SeeAlso
      gb
 ///
+
+document {
+    Key => {
+	 getChangeMatrix,
+	(getChangeMatrix, GroebnerBasis)
+    },
+    Headline => "get the change of basis matrix",
+    TT "getChangeMatrix G", " -- for a Gröbner basis G, return the change of
+    basis matrix from the Gröbner basis to another generating set,
+    usually a minimal, or original, generating set.",
+    PARA{},
+    "The option ", TO "ChangeMatrix", " can be used with ", TO "gb",
+    " to enable the computation of the change of basis matrix."
+}

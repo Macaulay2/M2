@@ -51,6 +51,8 @@ document {
      Subnodes => {
 	 TO [sort, MonomialOrder],
 	 TO [sort, DegreeOrder],
+	 TO Ascending,
+	 TO Descending
          },
      }
 document { 
@@ -129,3 +131,17 @@ document {
 	  the elements of a list"},
      SeeAlso => {}
      }
+
+document {
+    Key => Ascending,
+    Headline => "specify ascending order",
+    TT "Ascending", " -- a symbol used as a value for optional
+    arguments ", TO "DegreeOrder", " and ", TO "MonomialOrder", "."
+}
+
+document {
+    Key => Descending,
+    Headline => "specify descending order",
+    TT "Descending", " -- a symbol used as a value for optional
+    arguments ", TO "DegreeOrder", " and ", TO "MonomialOrder", "."
+}
