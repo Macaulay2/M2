@@ -27,6 +27,21 @@ pfaffians(Ideal) := List => (I) -> (
     (A/entries)/matrix
 )
 
+-- gives the pfaffians system with respect to a new basis B
+pfaffians(List,Ideal) := (B,I)->(
+    W := ring I;
+    B1 := stdMon I;
+    GB := flatten entries gens gb I;
+    G := gaugeMatrix(GB,B1,B);
+    invG := inverse G;
+    n := dim W//2;
+    C := pfaffians I;
+    for i from 1 to n list(
+        dxi := W_(n+i-1);
+        diffMatrixWeyl(dxi, G)*invG + G*(C#(i-1))*invG
+    )
+)
+
 ----------------------------------------------------
 --connectionMatrix computes connection matrix of I
 ----------------------------------------------------
