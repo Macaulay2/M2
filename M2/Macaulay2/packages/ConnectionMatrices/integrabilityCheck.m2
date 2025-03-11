@@ -1,5 +1,3 @@
--- debug needsPackage "ConnectionMatrices"
-
 -- Basis List
 --
 -- Input:
@@ -51,7 +49,8 @@ integrabilityTerm = (D, A) ->
 --
 -- Output:
 -- Boolean,  whether (d - A ∧ ) defines an integrable connection.
-isIntegrable = (D,A) -> all(integrabilityTerm(D,A), zero); -- Check that each term is zero.
+isIntegrable = method()
+isIntegrable (PolynomialRing, List) := Boolean => (D,A) -> all(integrabilityTerm(D,A), zero); -- Check that each term is zero.
 
 end--
 restart
