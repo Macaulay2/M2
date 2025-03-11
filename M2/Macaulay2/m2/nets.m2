@@ -271,14 +271,14 @@ netList VisibleList := o -> (x) -> (
 -- TODO: move to debugging, except for Net?
 commentize = method(Dispatch => Thing)
 commentize Nothing   := s -> ""
-commentize BasicList := s -> commentize horizontalJoin s
+commentize BasicList := s -> commentize horizontalJoin apply(s, net)
 commentize String    := s -> concatenate(" -- ", between("\n -- ", separate s))
 commentize Net       := S -> (
     baseline := height S - if height S == -depth S then 0 else 1;
     (stack(commentize \ unstack S))^baseline)
 
 printerr = msg -> (stderr << commentize msg << endl;) -- always return null
-warning' = (n, msg) -> if debugLevel >= n then printerr("warning: ", horizontalJoin msg)
+warning' = (n, msg) -> if debugLevel >= n then printerr("warning: ", horizontalJoin apply(msg, net))
 warning  =     msg  -> warning'(1, msg)
 
 -- Local Variables:
