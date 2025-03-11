@@ -225,24 +225,33 @@ document {
 	  Usage => "new AA from C := (A,c) -> ...",
 	  Inputs => {
 	       "AA" => HashTable,
-	       "C" =>Type,
+	       "C" => {Type, Sequence} => {},
 	       { TT "(A,c) -> ...", ", a function of 2 arguments: ", TT "AA", " will be an ancestor of ", TT "A", ",
 		    and ", TT "C", " will be an ancestor of the class of ", TT "c", ".
-		    Alternatively, ", TT "A", " will be a type of ", TT "AA", " and ", TT "c", " will be an instance of ", TT "C", "." }
+		    Alternatively, ", TT "A", " will be a type of ", TT "AA", " and ", TT "c", " will be an instance of ", TT "C", ".
+		    If ", CODE "C", " is a sequence, then it must contain 2 or 3 types and the given function must have the form ",
+		    CODE "(A,c,d) -> ...", " or ", CODE "(A,c,d,e) -> ...", ", where ", CODE "c", " is an instance of ", CODE "C#0", ", ",
+		    CODE "d", " is an instance of ", CODE "C#1", ", and (if applicable) ", CODE "e", " is an instance of ",
+		    CODE "C#2", "."
+		    }
 	       },
 	  Consequences => {
 	       { "the function will be installed as the method for ", TT "new AA from C", ".  It will be stored under the key ", TT "(NewFromMethod,AA,C)", "
-		    in the younger of the hash tables ", TT "AA", " and ", TT "C", "." }
+		    in the younger of the hash tables ", TT "AA", " and ", TT "C", ".
+		    If ", CODE "C", " is a sequence, then it will be stored under the key ", CODE "(NewFromMethod,AA,C#0,C#1)",
+		    " or ", CODE "(NewFromMethod,AA,C#0,C#1,C#2)", ", depending on the length of ", CODE "C", " in the youngest of the hash tables."
+		    }
 	       },
 	  Outputs => {
 	       { "the function is returned as the value of the expression" }
 	       },
 	  PARA {
-	       "Let's use the class ", TT "M", " defined above, and introduce a method for creating lists of class ", TT "M", " from integers.  Then we use it
+	       "Let's use the class ", TT "M", " defined above, and introduce methods for creating lists of class ", TT "M", " from integers.  Then we use them
 	       in the subsection below."
 	       },
 	  EXAMPLE lines ///
 	       new M from ZZ := (M',i) -> 0 .. i
+	       new M from (ZZ,ZZ) := (M',i,j) -> splice(i:0 .. j)
 	  ///
 	  ),
      SYNOPSIS (
@@ -254,8 +263,10 @@ document {
 	       },
 	  Consequences => {
 	       { "the function previously installed as the method for ", TT "new A from C", " will be called with arguments ", TT "(A,c)", "." },
-	       { "if no such method has been installed, then ancestors of ", TT "A", " and ", TT "C", ", will be consulted, searching
-		    lexicographically for a method; see ", TO "inheritance", "." },
+	       { "if ", CODE "C", " is a sequence, then this method will be called with arguments ",
+		   CODE "(A,c#0,c#1)", " or ", CODE "A(c#0,c#1,c#2)", ", depending on its length."},
+	       { "if no such method has been installed, then ancestors of ", TT "A", " and ", TT "C", " (or its elements if it is a sequence),
+		   will be consulted, searching lexicographically for a method; see ", TO "inheritance", "." },
 	       { "if no method is found by searching the ancestors, then the function ", TT "(A,c) -> c", " will be used" },
 	       { "the value returned by the function, (or ", TT "c", ", if no method was found), will have
 		    its class set to ", TT "A", " and its parent retained; see ", TO "newClass" }
@@ -269,6 +280,7 @@ document {
 	  EXAMPLE lines ///
 	       n = new M from 13
 	       - n
+	       new M from (3,2)
 	  ///
 	  ),
      SYNOPSIS (
