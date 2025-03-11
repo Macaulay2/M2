@@ -347,7 +347,34 @@ newfromfun(newClassCode:Code,newInitCode:Code):Expr := (
 	       then newClass(applyEEE(method,Expr(classs),newInitExpr),classs,true)
 	       else (
 		    when newInitExpr
-		    is s:Sequence do newClass(newInitExpr,classs,false)
+		    is s:Sequence do (
+			if length(s) == 2
+			then (
+			    method = lookupTernaryMethod(
+				classs,
+				Class(s.0),
+				Class(s.1),
+				NewFromE);
+			    if method != nullE
+			    then newClass(
+				applyEEEE(method, Expr(classs), s.0, s.1),
+				classs, true)
+			    else newClass(newInitExpr, classs, false))
+			else if length(s) == 3
+			then (
+			    method = lookupQuaternaryMethod(
+				classs,
+				Class(s.0),
+				Class(s.1),
+				Class(s.2),
+				NewFromE);
+			    if method != nullE
+			    then newClass(
+				applyES(method,
+				    Sequence(Expr(classs), s.0, s.1, s.2)),
+				classs, true)
+			    else newClass(newInitExpr, classs, false))
+			else newClass(newInitExpr,classs,false))
 		    is p:List do (
 			 if p.Class == classs
 			 then Expr(if p.Mutable then copy(p) else p)
