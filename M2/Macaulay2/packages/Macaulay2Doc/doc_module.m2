@@ -96,12 +96,14 @@ document {
 	TO (symmetricAlgebra, Module),
 	TO (symmetricPower, ZZ, Module),
 	TO (exteriorPower, ZZ, Module),
-	TO (formation, Module)
+	TO (formation, Module),
 	TO (symbol +, Module, Module),
 	TO (dual, Module),
 	TO (symbol SPACE, Module, Array),
+	TO ambient,
 	TO (ambient, Module),
 	TO (super, Module),
+	TO cover,
 	TO (cover, Module),
 	TO (coverMap, Module),
 	TO (length, Module),
@@ -131,6 +133,7 @@ document {
 	TO (symbol _, Module, List),
 	TO (symbol _, ZZ, Module),
 	TO (symbol _, Module, Array),
+	TO truncate,
     },
 }
 

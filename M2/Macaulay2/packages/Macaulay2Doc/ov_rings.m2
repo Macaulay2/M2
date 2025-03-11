@@ -179,6 +179,7 @@ document {
 	TO (isPrime, ZZ),
 	TO (isPseudoprime, ZZ),
 	TO nextPrime,
+	TO changeBase,
         },
     }
 
@@ -460,6 +461,7 @@ document {
 	     },
     Subnodes => {
 	TO char,
+	TO getPrimeWithRootOfUnity,
         },
     }
 
@@ -702,6 +704,7 @@ document {
 	 TO isPolynomialRing,
 	 TO (symbol SPACE, Ring, Array),
 	 TO (symbol SPACE, Ring, Monoid),
+	 TO coefficientRing,
 	 TO vars,
 	 TO(vars, List),
 	 TO "get a ring variable by index",
@@ -1129,6 +1132,7 @@ document {
     Subnodes => {
 	TO isField,
 	TO toField,
+	TO getNonUnit,
 	TO isPrimitive,
 	  -- writeup under "toField" is a good start,
 	  -- needs an example

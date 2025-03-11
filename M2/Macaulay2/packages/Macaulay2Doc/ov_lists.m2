@@ -443,6 +443,7 @@ doc///
   :Information about lists
     (length, VisibleList)
     (symbol #, List)
+    isEmpty
   :Accessing list elements
     (symbol #, List, ZZ)
     (symbol _, VisibleList, ZZ)

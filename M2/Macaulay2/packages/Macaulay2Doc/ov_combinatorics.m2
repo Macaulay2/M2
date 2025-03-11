@@ -7,6 +7,9 @@ document {
 	TO "partitions",
 	TO "random",
 	TO "Set",
+	TO "rays",
+	TO "cone",
+	TO "normalCone",
 	TO "multidegree",
     }
 }

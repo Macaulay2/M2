@@ -84,6 +84,7 @@ document {
         TO (target, RingMap),
         TO (symbol ^, RingMap, ZZ),
 	TO newCoordinateSystem,
+	TO Degree,
          }
      }
 
@@ -272,6 +273,7 @@ document {
 	TO lift,
 	TO promote,
 	TO newRing, -- TODO: move?
+	TO commonRing,
         },
     }
 

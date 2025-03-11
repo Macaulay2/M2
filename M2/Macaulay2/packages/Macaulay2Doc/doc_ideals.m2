@@ -90,6 +90,7 @@ document {
         TO (codim, Ideal),
         TO (degree, Ideal),
         TO (dim, Ideal),
+	TO (generator, Ideal),
         TO (generators, Ideal),
         TO (hilbertPolynomial, Ideal),
         TO (hilbertSeries, Ideal),
@@ -102,8 +103,11 @@ document {
         TO (support, Ideal),
         TO (symbol /, Ideal, Function),
         TO (symbol /, Ideal, Ideal),
+	TO irreducibleCharacteristicSeries,
+	TO decompose,
         },
      }
+
 document {
      Key => (symbol *,Ideal,Ideal),
      Headline => "product of ideals",

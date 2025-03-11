@@ -110,13 +110,6 @@ document {
      }
 
 document {
-     Key => HardDegreeLimit,
-     Headline => "compute only up to this degree",
-     TT "HardDegreeLimit", " -- keyword for an optional argument that specifies
-     that information above a specified degree is to be discarded."
-     }
-
-document {
      Key => [resolution,HardDegreeLimit],
      TT "HardDegreeLimit", " -- keyword for an optional argument used with
      ", TO "resolution", ".",

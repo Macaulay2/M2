@@ -10,7 +10,6 @@ document {
 	  (gb,Ideal),
 	  (gb,Matrix),
 	  (gb,Module),
-	  [gb,Algorithm],
 	  [gb, BasisElementLimit],
 	  [gb,ChangeMatrix],
 	  [gb,CodimensionLimit],
@@ -25,15 +24,16 @@ document {
 	  [gb,SubringLimit],
 	  [gb,Syzygies],
 	  [gb,SyzygyLimit],
-	  [gb,SyzygyRows],[gb,MaxReductionCount],
-	  LinearAlgebra, Homogeneous2, Sugarless, Toric, UseSyzygies
+	[gb, SyzygyRows],
+	[gb, MaxReductionCount],
 	  },
      Headline => "compute a Gröbner basis",
      Usage => "gb I",
      Inputs => {
 	  "I" => "an ideal, module, or matrix",
-	  Algorithm => Symbol => {"possible values: ", TO "Homogeneous", ", ", TO "Inhomogeneous", ", ", TO "Homogeneous2", ", and ", TO "Sugarless", ".
-	       Experimental options include ", TO "LinearAlgebra", " and ", TO "Toric", "."},
+	  Algorithm => Symbol => { "possible values: ",
+	      TT "Homogeneous", ", ", TT "Inhomogeneous", ", ", TT "Homogeneous2", ", and ", TT "Sugarless", ". ",
+	      "Experimental options include ", TT "LinearAlgebra", " and ", TT "Toric", "."},
      	  BasisElementLimit => ZZ => "stop when this number of (nonminimal) Gröbner basis elements has been found",
 	  ChangeMatrix => Boolean => { 
 	       "whether to compute the change of basis matrix from Gröbner basis elements to original generators.  Use ", TO "getChangeMatrix", " to recover it."},
@@ -55,11 +55,11 @@ document {
 	    using or viewing partially computed Gröbner bases)",
 	  StopWithMinimalGenerators => Boolean => "whether to stop as soon as the minimal set (or a trimmed set, if not homogeneous or local) of generators is known.  Intended for internal use only",
 	  Strategy => {
-	       "either ", TO "LongPolynomial", ", ", TO "Sort", ", or a list of these.  ", TO "LongPolynomial", ": 
-	       use a geobucket data structure while reducing polynomials;
-	       ", TO "Sort", ": sort the S-pairs.
-	       Another symbol usable here is ", TT "UseSyzygies", ".
-	       Usually S-pairs are processed degree by degree in the order that they were constructed."},
+	       "either ", TO "LongPolynomial", ", ", TO "Sort", ", or a list of these.  ",
+	       TO "LongPolynomial", ": use a geobucket data structure while reducing polynomials; ",
+	       TT "Sort", ": sort the S-pairs by lead term (usually this is a bad idea). ",
+	       "Another symbol usable here is ", TT "UseSyzygies", ". ",
+	       "Usually S-pairs are processed degree by degree in the order that they were constructed."},
 	  SubringLimit => ZZ => "stop after this number of elements of the Gröbner basis lie in the first subring",
 	  Syzygies => Boolean => "whether to collect syzygies on the original generators during the computation.  Intended for internal use only",
 	  SyzygyLimit => ZZ => "stop when this number of non-zero syzygies has been found",
@@ -104,12 +104,42 @@ document {
      Subnodes => {
 	 TO GroebnerBasis,
 	 TO GroebnerBasisOptions,
+	 TO "Gröbner basis algorithms",
 	 -- Mike wanted this: installGroebner,
 	 TO gbSnapshot,
 	 TO gbRemove,
 	 TO "gbTrace",
+	 TO LongPolynomial,
          }
      }
+
+doc ///
+Node
+  Key
+    "Gröbner basis algorithms"
+    [gb, Algorithm]
+    LinearAlgebra
+    Homogeneous2
+    Sugarless
+    Toric
+    UseSyzygies
+  Usage
+    gb(I, Algorithm => ...)
+  Description
+    Tree
+      :Supported algorithms for @TO gb@
+        @TT "Homogeneous"@
+	@TT "Inhomogeneous"@
+	@TT "Homogeneous2"@
+	@TT "Sugarless"@
+      :Experimental algorithms for @TO gb@
+        @TT "LinearAlgebra"@
+	@TT "Toric"@
+  SeeAlso
+    groebnerBasis
+    markedGB
+    "FGLM::FGLM"
+///
 
 document {
      Key => symbol gbTrace,
@@ -181,37 +211,6 @@ document {
      Outputs => {
 	  GroebnerBasis => {"the resulting Gröbner basis"}
 	  }
-     }
-
-document {
-     Key => Sort,
-     Headline => "a Strategy option value",
-     TT "Sort", " -- a strategy used with the keyword ", TO "Strategy", ".",
-     PARA{},
-     "Indicates that the Gröbner basis should be sorted by lead term; usually
-     this is a bad idea.  Normally the basis is sorted only by degree. The
-     running time can change either for the good or bad.",
-     SeeAlso => {[gb,Strategy]}
-     }
-
-document {
-     Key => Homogeneous,
-     Headline => "a Strategy option value",
-     TT "Homogeneous", " -- a strategy used with the keyword ", TO "Strategy", ".",
-     PARA{},
-     "This is an alternate Gröbner basis algorithm that can be used if the submodule
-     is homogeneous, and the ring is a (quotient of) a polynomial ring over a field.",
-     SeeAlso => {[gb,Strategy]}
-     }
-
-document {
-     Key => Inhomogeneous,
-     Headline => "a Strategy option value",
-     TT "Inhomogeneous", " -- a strategy used with the keyword ", TO "Strategy", ".",
-     PARA{},
-     "This is the default Gröbner basis algorithm used if the submodule is
-     inhomogeneous, and the ring is a (quotient of) a polynomial ring over a field.",
-     SeeAlso => {[gb,Strategy]}
      }
 
 document {

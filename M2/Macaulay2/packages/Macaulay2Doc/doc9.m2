@@ -117,6 +117,9 @@ document {
      Subnodes => {
 	 TO chainComplex,
 	 -- TO (NewFromMethod, ChainComplex, Resolution),
+	TO dd,
+	TO status,
+	TO complete,
         TO (complete, ChainComplex),
         TO (length, ChainComplex),
         TO (symbol ++, ChainComplex, ChainComplex),

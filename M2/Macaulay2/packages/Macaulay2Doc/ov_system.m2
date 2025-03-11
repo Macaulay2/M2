@@ -82,6 +82,8 @@ document {
 	  TO "exec",
 	  TO "exit",
 	  TO "fork",
+	  TO "show",
+	  TO "pager",
 	  TO "getenv",
 	  TO "getWWW",
 	  TO "splitWWW",

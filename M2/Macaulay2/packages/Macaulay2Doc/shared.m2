@@ -22,7 +22,6 @@ document { Key => euler,        methodstr, SeeAlso => {
 document { Key => eulers,       methodstr }
 document { Key => genera,       methodstr }
 document { Key => genus,        methodstr }
-document { Key => isEmpty,      methodstr, SeeAlso => { "Polyhedra::Polyhedra",(isEmpty, RRi)} }
 document { Key => isSmooth,     methodstr, SeeAlso => {
 	"Divisor::isSmooth(Ideal)", "LatticePolytopes::isSmooth(Polyhedron)",
 	"Varieties::isSmooth(Variety)", "SpaceCurves::isSmooth(Curve)",
@@ -41,6 +40,10 @@ document { Key => normalCone,   methodstr, SeeAlso => {
 	"Polyhedra::normalCone(Polyhedron,Polyhedron)",
 	"ReesAlgebra::normalCone(Ideal)",
     } }
+
+document { Key => { isEmpty, (isEmpty, Thing) },
+    Headline => "whether an object is empty",
+    SeeAlso => { "Polyhedra::Polyhedra" } }
 
 document { Key => { isIsomorphism, (isIsomorphism, Matrix) },
     Headline => "whether a map is an isomorphism",

@@ -174,6 +174,7 @@ document {
      is filled before the line ends or first net is seen, then the buffer will be 
      flushed, and writing a net subsequently will produce an unexpected result.",
     Subnodes => {
+	TO width,
 	TO (width, Net),
 	TO (height, Net),
 	TO (depth, Net),

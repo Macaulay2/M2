@@ -1,3 +1,4 @@
+document {
     Key => Matrix,
     Headline => "the class of all matrices",
     "A matrix is a homomorphism between two modules, together with
@@ -48,6 +49,7 @@
     },
     -- TODO: merge these with the lists above
     Subnodes => {
+	TO isWellDefined,
 	TO (entries, Matrix),
 	TO eigenvalues,
 	TO eigenvectors,
@@ -95,5 +97,8 @@
 	TO (symbol %, Matrix, GroebnerBasis),
 	TO (symbol *, Matrix, Matrix),
 	TO (symbol _, Matrix, Sequence),
+	TO selectInSubring,
+	TO solve,
+	TO divideByVariable,
     },
 }

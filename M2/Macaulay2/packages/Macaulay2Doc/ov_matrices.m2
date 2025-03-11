@@ -667,7 +667,10 @@ document {
 	 "exteriorPower(3,M*N) == exteriorPower(3,M) * exteriorPower(3,N)"
 	 },
      SeeAlso => "exterior power of a module",
-     Subnodes => TO (exteriorPower, ZZ, Matrix),
+     Subnodes => {
+	 TO exteriorPower,
+	 TO(exteriorPower, ZZ, Matrix),
+         },
      }
 
 document { -- something should be said about the degrees
