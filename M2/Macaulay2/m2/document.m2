@@ -31,7 +31,7 @@ methodNames := set {NewFromMethod, NewMethod, NewOfFromMethod, NewOfMethod, id, 
 indefiniteArticle = s -> if match("[aeiouAEIOU]", s#0) and not match("^one ", s) then "an " else "a "
 indefinite        = s -> concatenate(indefiniteArticle s, s)
 
-enlist := x -> if instance(x, List) then x else {x}
+enlist := x -> if instance(x, List) then nonnull x else {x}
 
 -----------------------------------------------------------------------------
 -- verifying the document Key
@@ -605,7 +605,6 @@ getSourceCode :=  val         -> DIV {"class" => "waystouse",
 		c := code f;   if c === null then error("SourceCode: ", toString m, ": code for method not found");
 		reproduciblePaths toString net c))}}
 getSubnodes := val -> (
-    val = nonnull enlist val;
     if #val == 0 then error "encountered empty Subnodes list"
     else MENU apply(val, x -> fixup (
 	    if      instance(x, TOH)       then TO {x#0}
@@ -641,7 +640,7 @@ KeywordFunctions := new HashTable from {
     References      => val -> getSubsection(val, "References"),
     Caveat          => val -> getSubsection(val, "Caveat"),
     SeeAlso         => val -> getSubsection(UL (TO \ enlist val), "See also"),
-    Subnodes        => val -> getSubnodes val,
+    Subnodes        => val -> getSubnodes enlist val,
     SourceCode      => val -> getSourceCode val,
     ExampleFiles    => val -> getExampleFiles val,
     }
