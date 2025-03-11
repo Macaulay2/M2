@@ -10,6 +10,7 @@ document {
     Subnodes => {
 	TO "the debugger",
 	TO "assert",
+	TO "generateAssertions",
 	TO "benchmark",
 	TO "Browse::browse",
 	TO "code",
@@ -759,7 +760,7 @@ document {
     PARA "A bag can be used for enclosing something in a container to prevent it from being printed, in normal circumstances.
     Any mutable list can be used for this purpose, but bags are designed for this purpose.  In comparison and sorting, they
     are declared to be incomparable.",
-    SeeAlso => {unbag}
+    Subnodes => { TO unbag },
 }
 document {
     Key => {
