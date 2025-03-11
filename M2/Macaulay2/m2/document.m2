@@ -205,8 +205,9 @@ makeDocumentTag String      := opts -> key -> (
 -- fix the tag in (validate, TO), rather than also in (info, TO) and (html, TO).
 fixup DocumentTag := DocumentTag => tag -> (
     tag' := if (rawdoc := fetchAnyRawDocumentation tag) =!= null then rawdoc.DocumentTag else tag;
-    if package tag === package tag' then tag' else printerr("warning: ambiguous reference ",
-	format toString tag, " and ", format toString tag', " when processsing ", toString locate currentDocumentTag);
+    if package tag =!= package tag' then printerr("warning: ambiguous reference ",
+	format toString tag, " and ", format toString tag', " when processsing ",
+	toString locate currentDocumentTag);
     tag')
 
 -----------------------------------------------------------------------------
