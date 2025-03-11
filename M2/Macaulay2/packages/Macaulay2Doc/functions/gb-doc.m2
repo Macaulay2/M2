@@ -3,7 +3,7 @@
 --- author(s): 
 --- notes: 
 
-undocumented (NewFromMethod, GroebnerBasis, Sequence)
+undocumented (NewFromMethod, GroebnerBasis, Matrix, GroebnerBasisOptions, OptionTable)
 
 document { 
      Key => {gb,

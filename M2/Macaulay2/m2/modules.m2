@@ -156,18 +156,15 @@ isHomogeneous Vector := (v) -> isHomogeneous v#0
 Module = new Type of ImmutableType
 Module.synonym = "module"
 new Module from List := (Module,v) -> new Module of Vector from hashTable v
-new Module from Sequence := (Module,x) -> (
-     (R,rM) -> (
-	  assert instance(R,Ring);
-	  assert instance(rM,RawFreeModule);
-	  new Module of Vector from hashTable {
-     	       symbol cache => new CacheTable from { 
-		    cache => new MutableHashTable	    -- this hash table is mutable, hence has a hash number that can serve as its age
-		    },
-     	       symbol RawFreeModule => rM,
-     	       symbol ring => R,
-     	       symbol numgens => rawRank rM
-     	       })) x
+new Module from (Ring, RawFreeModule) := (Module, R, rM) -> (
+    new Module of Vector from hashTable {
+	symbol cache => new CacheTable from {
+	    cache => new MutableHashTable  -- this hash table is mutable, hence has a hash number that can serve as its age
+	    },
+	symbol RawFreeModule => rM,
+	symbol ring => R,
+	symbol numgens => rawRank rM
+	})
 
 vector(Module, Matrix) := (M, f) -> vector map(M,,entries f)
 vector(Module, List)   := (M, v) -> vector map(M,,apply(splice v, i -> {i}))
