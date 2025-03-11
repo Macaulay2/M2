@@ -63,3 +63,14 @@ P'' = apply(P', p-> sub(p, ring C2#0))
 -- Now transform the Pfaffian system C1 into the Pfaffian System C2 via Gauge transform
 assert(C2 == P'') -- TODO: Need to remove the weight information.   // Fails so far.
 ///
+
+TEST ///
+-- Any Pfaffian system coming from a D-ideal is integrable:
+
+D = makeWeylAlgebra(QQ[x,y], w = {0,0,1,2});
+I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
+A = pfaffians I;
+
+assert(isIntegrable(D,A));
+
+///

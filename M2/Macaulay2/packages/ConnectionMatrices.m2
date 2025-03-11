@@ -26,6 +26,7 @@ export {
     "gaugeTransform",
     "diffConnectionMatrix",
     "stdMon",
+    "isIntegrable"
 }
 
 -- to access private methods from Core
@@ -63,6 +64,12 @@ load "./ConnectionMatrices/gaugeMatrix.m2"
 --------------------------------------------------------------------
 
 load "./ConnectionMatrices/gaugeTransform.m2"
+
+--------------------------------------------------------------------
+-- Tools to check the integrability of a Pfaffian system
+--------------------------------------------------------------------
+
+load "./ConnectionMatrices/integrabilityCheck.m2"
 
 --------------------------------------------------------------------
 -- Tests section
