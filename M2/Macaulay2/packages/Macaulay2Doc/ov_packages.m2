@@ -35,11 +35,11 @@ Node
               })
   SeeAlso
     "packages"
-    "authors of Macaulay2 packages"
+    "The authors of Macaulay2 packages"
 
 Node
   Key
-    "authors of Macaulay2 packages"
+    "The authors of Macaulay2 packages"
   Description
     Text
       The following people have authored packages that are distributed with Macaulay2:
@@ -88,12 +88,9 @@ Node
       Many packages are distributed with Macaulay2, and others are available from
       the author's homepage.
 
-      To load a package, say @TT "FirstPackage"@, enter:
-    Pre
+      To load a package, say @TT "FirstPackage"@, use either of the following methods.
+    Example
       loadPackage "FirstPackage"
-    Text
-      or
-    Pre
       needsPackage "FirstPackage"
     Text
       For technical information about packages, see @TO Package@.

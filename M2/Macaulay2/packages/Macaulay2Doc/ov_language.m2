@@ -74,6 +74,11 @@ document {
 	      TO "Core",
 	      TO "the engine of Macaulay2",
 	      TO "the interpreter of Macaulay2",
+	  "reference material",
+	      TO Thing,
+	      TO Type,
+	      TO ImmutableType,
+	      TO Function,
 	  }
      }
 ------------------------------------------------------------------
