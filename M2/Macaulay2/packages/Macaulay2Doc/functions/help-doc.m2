@@ -300,6 +300,7 @@ Node
 Node
   Key
     headlines
+   (headlines, List)
   Headline
     display a table of documentation headlines
   Usage

@@ -278,7 +278,7 @@ document {
 	  },
      }
 document {
-     Key => {fittingIdeal,(fittingIdeal, ZZ, Module)},
+     Key => {fittingIdeal,(fittingIdeal, ZZ, Matrix),(fittingIdeal, ZZ, Module)},
      Headline => "Fitting ideal of a module",
      TT "fittingIdeal(i,M)", " -- the i-th Fitting ideal of the module M",
      PARA{},

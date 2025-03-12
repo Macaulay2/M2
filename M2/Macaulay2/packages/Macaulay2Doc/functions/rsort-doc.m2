@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => {rsort,(rsort,Matrix),(rsort,List)},
+     Key => {rsort,(rsort,Matrix),(rsort,List),(rsort, List, Function)},
      Headline => "sort a list or matrix in reverse order",
      "Same as ", TO "sort", " except that the elements or columns
      are placed in reverse order.",

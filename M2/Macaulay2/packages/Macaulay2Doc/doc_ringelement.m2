@@ -83,7 +83,7 @@ Node
   Description
     Text
       A monomial is represented by the list of its exponents.
-      A polynomial is represented by lists of pairs @TT "(m, c)"@x, one for each term,
+      A polynomial is represented by lists of pairs @TT "(m, c)"@, one for each term,
       where @TT "m"@ is a list of exponents for monomial, and @TT "c"@ is the coefficient.
     Example
       R = ZZ/101[x,y,z];
