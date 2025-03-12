@@ -1,7 +1,7 @@
 newPackage(
     "KGAlgebras",
     Version => "0.5",
-    Date => "February 19th, 2025",
+    Date => "March 11th, 2025",
     Authors => {
     {Name => "Daniel Koizumi", Email => "daniel.koizumi@utexas.edu"},
     {Name => "Moses Samuelson-Lynn", Email => "m.samuelsonlynn@utah.edu"},
@@ -9,7 +9,7 @@ newPackage(
     },
     Headline => "A package for group algebras",
     Keywords => {"Group Theory"},
-    DebuggingMode => true,
+    DebuggingMode => false,
     PackageExports=>{"AssociativeAlgebras","InvariantRing","RealRoots"}
     )
 export {"GroupRing","groupRing","meataxe", "SnGroup"}
@@ -27,15 +27,14 @@ groupRing (FiniteGroupAction, Ring) := (G,K) -> (
     groupElts := g_0 .. g_n; -- group elements
     FA := freeAlgebra(K,groupElts);
     use FA; -- make FA our working ring
-    multTableIdealGens := new MutableList;
+    multTableIdealGens := new MutableList from (n+1)^2:null;
     for i in 0 .. n do(
         for j in 0 .. n do( 
             productInv := position(matrixElts,M -> M==matrixElts#i * matrixElts#j);
             H := (FA_i)*(FA_j)-(FA_productInv);
-            multTableIdealGens##multTableIdealGens = H;
+            multTableIdealGens#((n+1)*i+j) = H;
         );
-    );
-    print multTableIdealGens;
+    ); 
     FA/ideal(toList multTableIdealGens) -- output
 );
 random(FreeAlgebraQuotient) := opt -> (S) -> (       
@@ -53,7 +52,7 @@ meataxe(FiniteGroupAction, FreeAlgebraQuotient,Ring) := (G,S,K) -> (
         for x in (flatten entries L#0) do(
             n := index(x);
             M = M + (group G)#n * sub((flatten entries L#1)#m,K);
-            m = m+1    
+            m = m + 1    
         ); --This for loop generates a matrix representing p using the matrix elements for G
         --Factors of the characteristic polynomial of M
         q := apply(factor characteristicPolynomial M, y-> value y); --Get an array containing the factors of the characteristic polynomial of the matrix M
@@ -72,7 +71,7 @@ meataxe(FiniteGroupAction, FreeAlgebraQuotient,Ring) := (G,S,K) -> (
             for m in 0 .. #apply(apply((entries (coefficients P)#0)#0,degree),x-> x#0)-1 do(
                 Mp=M^((apply(apply((entries (coefficients P)#0)#0,degree),x-> x#0))#m);
                 Mp=Mp*(apply((entries (coefficients P)#1),x-> x#0))#m;
-                MP = MP+Mp
+                MP=MP+Mp;
             );
             
 
@@ -159,7 +158,7 @@ doc ///
     Key
         meataxe        
     Headline
-        Boolean function implementing the meataxe algorithm determining the irreducibility of a finite group representation of a finite dimensional vector space. If the module is irreducible, returns true. Otherwise, the method returns a nontrivial submodule. 
+        Function implementing the meataxe algorithm determining irreducibility of a finite dimensional finite group representation.
     Usage
         T = meataxe(G,S,K)
     Inputs
@@ -171,7 +170,7 @@ doc ///
             The underlying field of the other parameters.
     Outputs
         T:Boolean
-            Returns true if the Meataxe algorithm states that the K[G]-module is irreducible. Returns false if the module is reducible. 
+            Returns true if the Meataxe algorithm states that the K[G]-module is irreducible. Returns a nontrivial submodule if the module is reducible. 
 ///
 TEST ///
         K = ZZ/3;
