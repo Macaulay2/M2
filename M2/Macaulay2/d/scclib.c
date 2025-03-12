@@ -614,14 +614,12 @@ M2_string system_readfile(int fd) {
 
 static const char *hostname_error_message;
 
-#if defined(HAVE_GETADDRINFO) && GETADDRINFO_WORKS
 static int set_addrinfo(struct addrinfo **addr, struct addrinfo *hints, char *hostname, char *service) {
      int ret;
      ret = getaddrinfo(hostname, service, hints /* thanks to Dan Roozemond for pointing out this was NULL before, causing problems */, addr);
      hostname_error_message = ret != 0 ? gai_strerror(ret) : NULL;
      return ret;
 }
-#endif
 
 #ifndef HAVE_HSTRERROR
 const char *hstrerror(int herrno) {
@@ -634,66 +632,6 @@ const char *hstrerror(int herrno) {
      default: return "unknown error";
      }
 }
-#endif
-
-#if !(defined(HAVE_GETADDRINFO) && GETADDRINFO_WORKS)
-int host_address(name)
-char *name;
-{
-#ifdef HAVE_SOCKET
-     if ('0' <= name[0] && name[0] <= '9') {
-     	  int s;
-	  s = inet_addr(name);	/* this function is obsolete, replaced by inet_aton(); we use it only if getaddrinfo is not available */
-	  if (s == ERROR) {
-	       hostname_error_message = "IP address translation failed";
-	       return ERROR;
-	  }
-	  return s;
-	  }
-     else {
-	  struct hostent *t;
-	  /* FIXME
-	  if (SETJMP(interrupt_jump)) {
-	       interrupt_jump_set = FALSE;
-	       return ERROR;
-	  }
-	  else interrupt_jump_set = TRUE; */
-	  t = gethostbyname(name); /* this function is obsolete because it doesn't handle IPv6; we use it only if getaddrinfo is not available */
-	  // interrupt_jump_set = FALSE;
-	  if (t == NULL) {
-	       hostname_error_message = hstrerror(h_errno);
-	       return ERROR;
-	  }
-	  else {
-	       return *(int *)t->h_addr;
-	  }
-     }
-#else
-     return ERROR;
-#endif
-     }
-
-int serv_address(name)
-char *name;
-{
-#ifdef HAVE_SOCKET
-     if ('0' <= name[0] && name[0] <= '9') {
-	  return htons(atoi(name));
-	  }
-     else {
-	  struct servent *t = getservbyname(name,"tcp");
-	  if (t == NULL) {
-	    errno = ENXIO;
-	    return ERROR;
-	  }
-	  else {
-	    return t->s_port;
-	  }
-     }
-#else
-     return ERROR;
-#endif
-     }
 #endif
 
 int system_acceptBlocking(int so) {
@@ -726,7 +664,6 @@ int system_acceptNonblocking(int so) {
 
 int openlistener(char *interface0, char *service) {
 #ifdef HAVE_SOCKET
-#if defined(HAVE_GETADDRINFO) && GETADDRINFO_WORKS
   struct addrinfo *addr = NULL;
   static struct addrinfo hints;	/* static so all parts get initialized to zero */
   int so;
@@ -738,19 +675,6 @@ int openlistener(char *interface0, char *service) {
   if (ERROR == bind(so,addr->ai_addr,addr->ai_addrlen) || ERROR == listen(so, INCOMING_QUEUE_LEN)) { freeaddrinfo(addr); close(so); return ERROR; }
   freeaddrinfo(addr); 
   return so;
-#else
-  int sa = serv_address(service);
-  int so = socket(AF_INET,SOCK_STREAM,0);
-  struct sockaddr_in addr;
-  addr.sin_family = PF_INET;
-  addr.sin_port = sa;
-  addr.sin_addr.s_addr = INADDR_ANY;
-  if (ERROR == so ||
-      ERROR == sa ||
-      ERROR == bind(so,(struct sockaddr*)&addr,sizeof addr) ||
-      ERROR == listen(so, INCOMING_QUEUE_LEN)) { close(so); return ERROR; }
-  return so;
-#endif
 #else
   return ERROR;
 #endif
@@ -764,7 +688,6 @@ int opensocket(char *host, char *service) {
   } else { interrupt_jump_set = TRUE; }
   */
 #ifdef HAVE_SOCKET
-#if defined(HAVE_GETADDRINFO) && GETADDRINFO_WORKS
   struct addrinfo *addr;
   int so;
   if (0 != set_addrinfo(&addr,NULL,host,service)) return ERROR;
@@ -774,28 +697,6 @@ int opensocket(char *host, char *service) {
   // interrupt_jump_set = FALSE;
   freeaddrinfo(addr);
   return so;
-#else
-  int sd = socket(AF_INET,SOCK_STREAM,0);
-  struct sockaddr_in addr;
-  int sa = serv_address(service);
-  if (sa == ERROR) {
-       /* strange but true, some systems don't list the common services:
-		u24% uname -a
-		SunOS u24.math.uiuc.edu 5.8 Generic_117350-34 sun4u sparc
-		u24% grep http /etc/services
-		u24% 
-       */
-       if (0 == strcmp(service,"http")) sa = 80;
-       else if (0 == strcmp(service,"https")) sa = 443;
-  }
-  addr.sin_family = PF_INET;
-  addr.sin_port = sa;
-  addr.sin_addr.s_addr = host_address(host);
-  if (ERROR == addr.sin_addr.s_addr ||
-      ERROR == sa ||
-      ERROR == connect(sd,(struct sockaddr *)&addr,sizeof(addr))) { close(sd); return ERROR; }
-  return sd;
-#endif
 #else
   return ERROR;
 #endif

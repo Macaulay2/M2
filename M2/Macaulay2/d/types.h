@@ -124,9 +124,6 @@ struct JumpCell
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>	    	/* needed for struct sockaddr_in */
 #endif
-#ifdef HAVE_ARPA_INET_H
-#include <arpa/inet.h>	   	/* needed for inet_addr() */
-#endif
 
 #ifdef HAVE_IO_H
 #include <io.h>
