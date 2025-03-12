@@ -48,16 +48,17 @@ pfaffians(List,Ideal) := (B,I)->(
 diffConnectionMatrix = method()
 diffConnectionMatrix(Ideal) := List => (I) -> (
     P := pfaffians(I);
-    R := ring P_0;
+    R := rationalWeylAlgebra(ring I);
     var := gens R;
     sum((for i from 0 to length(var)-1 list var_i*P_i ))
 )
 
+
 -- allows for Pfaffian system P as input
 diffConnectionMatrix(List) := List => (P) -> (
-    R := ring P_0;
+    R := rationalWeylAlgebra(makeWA(coefficientRing(ring P_0)[gens ring P_0]));
     var := gens R;
-    sum((for i from 0 to length(var)-1 list var_i*P_i ))
+    sum((for i from 0 to length(var)-1 list var_i*sub(P_i,R)))
 )
 
 ----------------------------------------------------
