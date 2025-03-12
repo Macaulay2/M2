@@ -55,8 +55,8 @@ Outputs
       encoding the change of basis from B1 to B2
 Description
   Text
-    Let I be a D-module, a Groebner basis G with respect to some monomial ordering on D and a basis of standard monomials B1 for the quotient of the rational Weyl algebra by the ideal.
-    Then this methods computes the change of basis matrix over the rational Weyl algbra for going from B1 to another basis B2 of the quotient.
+    Let I be a D-module, G a Groebner basis of I with respect to some monomial ordering on D and a B basis of standard monomials for the quotient of the rational Weyl algebra by the ideal.
+    Then this methods computes the change of basis matrix over the rational Weyl algbra for going from B to another basis of the quotient.
   Example
     w1 = {0,0,2,1}; D1 = makeWeylAlgebra(QQ[x,y],w1);
     I = sub(ideal(x*dx^2-y*dy^2+2*dx-2*dy,x*dx+y*dy+1),D1);
@@ -76,7 +76,7 @@ Key
     gaugeTransform
     (gaugeTransform, Matrix, List, PolynomialRing)
 Headline
-    computes the Gauge transform of a Pfaffian system
+    computes the gauge transform of a Pfaffian system
 Usage
     gaugeTransform(M, P, R)
 Inputs
@@ -88,7 +88,7 @@ Inputs
       the Weyl algebra
 Outputs
     L:List
-      the Pfaffian system P after the gauge transform for each entry
+      the Pfaffian system P after the gauge transform applied to each Pfaffian
 Description
   Text
     This method computes the gauge transform for a Pfaffian system given a change of basis matrix.
@@ -130,7 +130,6 @@ Description
     D = makeWeylAlgebra(QQ[x,y]);
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1); P = pfaffians(I);
     diffConnectionMatrix(P)
-    diffConnectionMatrix(I)
 Caveat
   Currently the output lives in the fraction field of the variables adjoin differentials, but this is not the correctly implemented rational Weyl algebra
 SeeAlso
