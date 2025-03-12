@@ -25,7 +25,8 @@ export {
     "gaugeMatrix",
     "gaugeTransform",
     "diffConnectionMatrix",
-    "stdMon"
+    "stdMon",
+    "epsilonFactorized",
 }
 
 -- to access private methods from Core
