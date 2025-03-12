@@ -37,7 +37,7 @@ document {
      }
 
 document {
-     Key => {abs,(abs, RR),(abs, CC),(abs, ZZ),(abs, QQ),(abs, RRi)},
+     Key => {abs,(abs, RR),(abs, CC),(abs, ZZ),(abs, QQ),(abs, RRi),(abs, Constant)},
      Headline => "absolute value function",
 	Usage => "abs x\nabs I",
 	Inputs => {

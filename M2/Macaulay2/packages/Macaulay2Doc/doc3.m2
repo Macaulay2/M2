@@ -71,7 +71,7 @@ document { Key => centerString,
          centerString(18,"asdf"||"qwer")
      ///}
 
-document { Key => info,
+document { Key => {info, (info, Nothing), (info, String)},
      Headline => "convert hypertext to info format",
      "This function is used internally when preparing documentation."
      }

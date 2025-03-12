@@ -94,7 +94,7 @@ document {
      }
 
 document {
-     Key => (symbol ^, RingElement, ZZ),
+     Key => {(symbol ^, RingElement, ZZ), (symbol ^, MonoidElement, ZZ)},
      Headline => "power",
      Usage => "f^n",
      Inputs => {"f", "n"},
@@ -127,7 +127,7 @@ document {
      Outputs => { {"the ", TT "n", "-th power of ", TT "x"} }
      }
 document {
-     Key => (symbol ^, Matrix, ZZ),
+     Key => {(symbol ^, Matrix, ZZ), (symbol ^, MutableMatrix, ZZ)},
      Headline => "power",
      Usage => "f^n",
      Inputs => {"f", "n"},

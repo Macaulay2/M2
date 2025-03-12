@@ -973,7 +973,7 @@ document {
 	       },
 	  LI { "new constants and operators:",		    -- get this with : git diff version-1.13 ../../m2/exports.m2
 	       UL {
-		    LI { "The symbol ", TO "Jupyter", " has been added." },
+		    LI { "The symbol ", TT "Jupyter", " has been added." },
 		    LI { "The type ", TO "MultigradedBettiTally", " has been added." },
 		    LI { "The function ", TO "multigraded", " has been added." }
 		    }

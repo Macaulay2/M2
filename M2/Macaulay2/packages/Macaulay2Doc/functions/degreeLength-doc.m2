@@ -24,14 +24,13 @@ doc ///
     :ZZ
       the length of a multidegree vector used as a degree of elements of @TT "A"@.
   Description
-    Text
-      Example
-	degreeLength ZZ
-	degreeLength(ZZ[])
-	degreeLength(ZZ[x])
-	degreeLength(ZZ[x, Degrees => {{1,2,3}}])
-	degreeLength(ZZ[x,y,z, DegreeRank => 3])
-	degreeLength(GF 9)
+    Example
+      degreeLength ZZ
+      degreeLength(ZZ[])
+      degreeLength(ZZ[x])
+      degreeLength(ZZ[x, Degrees => {{1,2,3}}])
+      degreeLength(ZZ[x,y,z, DegreeRank => 3])
+      degreeLength(GF 9)
   SeeAlso
     degree
     degreesRing
