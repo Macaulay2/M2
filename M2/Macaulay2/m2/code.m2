@@ -171,7 +171,7 @@ sequenceMethods := (T, F, tallyF) -> nonnull apply(pairs T, (key, func) -> if in
 -- Note: even though HypertextContainer is not an exported type,
 -- but (net, HypertextContainer) is callable through `net help()`
 -- However, (editMethod, String) is not callable as a method.
-isCallable = key -> all(key, e -> instance(e, Type) or isMember(package e, loadedPackages))
+isCallable = key -> all(key, e -> instance(e, Type) or isPackageLoaded toString package' e)
 
 methods = method(Dispatch => Thing, TypicalValue => NumberedVerticalList)
 methods Manipulator := M -> methods class M

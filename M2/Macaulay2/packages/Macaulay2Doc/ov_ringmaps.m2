@@ -77,16 +77,19 @@ document {
 	  TO pushForward,
 	  TO (symbol **, RingMap, Module)
 	  },
+     Subnodes => {
+	 TO (symbol SPACE, RingMap, RingElement),
+         }
      }
 
 document {
      Key => "substitution and maps between rings",
      HEADER2 "An overview",
      Subnodes => {
-     	  "Substitution",
 	  TO substitute,
+	  TO "substituting values for variables",
 	  TO "working with multiple rings",
-	  "Ring maps",
+	  TO "RingMap",
 	  TO "basic construction, source and target of a ring map",
 	  TO "evaluation and composition of ring maps",
 	  TO "kernel and coimage of a ring map",
@@ -359,3 +362,188 @@ document {
      -- if module and ring map are homogeneous, and Hilbert F is known,
      -- this is used in computing the kernel (or coimage).
      }
+undocumented {
+     (symbol SPACE, RingMap, Number)
+     }
+
+document {
+     Key => {(symbol SPACE, RingMap, RingElement),
+	  (symbol SPACE, RingMap, Ideal),
+	  (symbol SPACE, RingMap, Matrix),
+	  (symbol SPACE, RingMap, Vector),
+	  (symbol SPACE, RingMap, Module),
+	  (symbol SPACE, RingMap, ChainComplex)},
+     Headline => "apply a ring map",
+     Usage => "f X",
+     Inputs => {
+	  "f" => { "a ring map from ", TT "R", " to ", TT "S", "." },
+	  "X" => { ofClass Ideal, ", ",
+		   ofClass Matrix, ", ",
+		   ofClass Vector, ", ",
+		   ofClass Module, ", or ",
+		   ofClass ChainComplex}
+	  },
+     Outputs => {
+	  { "the image of X under the ring map f.  The result has the same type as
+	       X, except that its ring will be S."}
+	  },
+     "If ", TT "X", " is a module then it must be either free or a submodule of a free module.
+     If ", TT "X", " is a chain complex, then every module of ", TT "X", " must be free or a submodule of a free module.",
+     EXAMPLE lines ///
+	  R = QQ[x,y];
+	  S = QQ[t];
+	  f = map(S,R,{t^2,t^3})
+	  f (x+y^2)
+	  f image vars R
+	  f ideal (x^2,y^2)
+	  f resolution coker vars R
+	  ///,
+     Caveat => {"If the rings ", TT "R", " and ", TT "S", " have different degree monoids, then the degrees of the image
+        might need to be changed, since Macaulay2 sometimes doesn't have enough information to
+	determine the image degrees of elements of a free module."},
+     SeeAlso => {(symbol SPACE, RingElement, Sequence)}
+     }
+
+undocumented (symbol SPACE, RingElement, Array) -- TODO: eventually deprecate this
+
+doc ///
+Node
+  Key
+    (symbol SPACE, RingElement, Sequence)
+    (symbol SPACE, RingElement, Number)
+    (symbol SPACE, RingElement, RingElement)
+  Headline
+    evaluation of polynomials
+  Usage
+    f(a,b,c)
+  Inputs
+    f:RingElement
+    :Nothing
+      @TT "(a,b,c)"@, a sequence of numbers or ring elements
+  Outputs
+    r:RingElement
+      the result of evaluating @TT "f"@ at the provided values
+  Description
+    Example
+      R = QQ[x,y,z];
+      f = x^3 - y^2 + 999*z;
+      f(10,0,0)
+      f(0,1,0)
+      f(0,0,1)
+      f(10,1,-1)
+      x^3 * f(0,0,1)
+      f(0,0,x+y+z) / 999
+      f(z,y,x)
+      f(x,x,x)
+    Text
+      Note that giving fewer variables results in partial evaluation.
+    Example
+      f(10)
+      f(10,y,z)
+  SeeAlso
+    (symbol SPACE, RingMap, RingElement)
+///
+
+-- document {
+--      Key => NonLinear,
+--      Headline => "use the algorithm which doesn't assume that the ring map is linear",
+--      TT "Strategy => NonLinear", " -- an option value for the ", TO "Strategy", "
+--      option to ", TO "pushForward1", "."
+--      }
+
+-- document {
+--      Key => [pushForward1,StopBeforeComputation],
+--      Headline => "initialize but do not begin the computation",
+--      TT "StopBeforeComputation", " -- keyword for an optional argument used with
+--      ", TO "pushForward1", ".",
+--      PARA{},
+--      "Tells whether to start the computation, with the default value
+--      being ", TT "true", "."
+--      }
+-- 
+-- document {
+--      Key => [pushForward1,DegreeLimit],
+--      Headline => "compute only up to this degree",
+--      TT "DegreeLimit => n", " -- keyword for an optional argument used with
+--      ", TO "pushForward1", " which specifies that the computation should halt after dealing 
+--      with degree ", TT "n", ".",
+--      PARA{},
+--      "This option is relevant only for homogeneous matrices.",
+--      PARA{},
+--      "The maximum degree to which to compute is computed in terms of the
+--      degrees of the ring map, ", TT "f", ".  For example, if ", TT "f", "
+--      consists of cubics, then to find a quadratic relation, this option
+--      should be set to at least 6, by specifying, for example, ", 
+--      TT "DegreeLimit => 6", ".  The default is ", TT "infinity", ".",
+--      SeeAlso => {"pushForward1", "DegreeLimit"}
+--      }
+-- 
+-- 
+-- document {
+--      Key => [pushForward1,StopWithMinimalGenerators],
+--      Headline => "stop when minimal generators have been determined",
+--      TT "StopWithMinimalGenerators => true", " -- an option for ", TO "pushForward1", "
+--      that specifies that the computation should stop as soon as a
+--      complete list of minimal generators for the submodule or ideal has been
+--      determined.",
+--      PARA{},
+--      "The value provided is simply passed on to ", TO "gb", ": see 
+--      ", TO [gb,StopWithMinimalGenerators], " for details."
+--      }
+-- 
+-- document {
+--      Key => [pushForward1,PairLimit],
+--      Headline => "stop when this number of pairs is handled",
+--      TT "PairLimit => n", " -- keyword for an optional argument used with
+--      ", TO "pushForward1", ", which specifies that the computation should
+--      be stopped after a certain number of S-pairs have been reduced."
+--      }
+-- 
+-- document {
+--      Key => [pushForward1,MonomialOrder],
+--      Headline => "specify the elimination order to use in pushForward1",
+--      TT "MonomialOrder => x", " -- a keyword for an optional argument to ", TO "pushForward1", "
+--      which tells which monomial order to use for the Groebner basis computation
+--      involved.",
+--      PARA{},
+--      "Possible values:",
+--      UL {
+-- 	  (TT "MonomialOrder => EliminationOrder", " -- use the natural elimination order (the default)"),
+-- 	  (TT "MonomialOrder => ProductOrder", " -- use the product order"),
+-- 	  (TT "MonomialOrder => LexOrder", " -- use lexical order"),
+-- 	  },
+--      SeeAlso => "EliminationOrder"
+--      }
+-- 
+-- document {
+--      Key => [pushForward1,UseHilbertFunction],
+--      Headline => "whether to use knowledge of the Hilbert function",
+--      TT "UseHilbertFunction => true", " -- a keyword for an optional argument to
+--      ", TO "pushForward1", " which specifies whether to use the Hilbert function,
+--      if one has previously been computed.",
+--      PARA{},
+--      "The default is to use it if possible."
+--      }
+
+-- document {
+--      Key => [pushForward1,Strategy],
+--      Headline => "specify which algorithm to use in the computation",
+--      TT "pushForward1(f,M,Strategy => v)", " -- an option for ", TO pushForward1, " 
+--      which can be used to specify the strategy to be used in the computation.",
+--      PARA{},
+--      "The strategy option value ", TT "v", " should be one of the following.",
+--      UL {
+-- 	  TO "NonLinear",
+--      	  TO "Linear"
+-- 	  },
+--      PARA{},
+--      "The default is for the code to select the best strategy heuristically."
+--      }
+
+-- document {
+--      Key => EliminationOrder,
+--      Headline => "use the natural elimination order in a pushForward1 computation",
+--      TT "EliminationOrder", " -- a value for the ", TO "MonomialOrder", "
+--      option to ", TO "pushForward1", " which specifies the natural elimination
+--      order be used."
+--      }

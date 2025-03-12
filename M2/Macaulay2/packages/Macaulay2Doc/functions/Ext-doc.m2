@@ -1,10 +1,27 @@
 document {
-     Key => Ext,
-     Headline => "compute an Ext module"
-     }
+    Key => Ext,
+    Headline => "compute an Ext module",
+    SeeAlso => { tensor, Tor },
+    Subnodes => {
+	TO (Ext, Module, Module),
+	TO (Ext, ZZ, Module, Module),
+	TO (Ext, ZZ, Module, Matrix),
+	TO (Ext, ZZ, Matrix, Module),
+    }
+}
 
 document {
-     Key => {(Ext,Module,Module),(Ext,Ideal,Ideal),(Ext,Ideal,Module),(Ext,Ideal,Ring),(Ext,Module,Ideal),(Ext,Module,Ring)},
+    Key => {
+	(Ext, Module, Module),
+	(Ext, Module, Ideal),
+	(Ext, Module, Ring),
+	(Ext, Ideal, Module),
+	(Ext, Ideal, Ideal),
+	(Ext, Ideal, Ring),
+	(Ext, Ring, Module),
+	(Ext, Ring, Ideal),
+	(Ext, Ring, Ring),
+    },
      Headline => "total Ext module",
      Usage => "Ext(M,N)",
      Inputs => { "M" => {ofClass{Ideal,Ring}}, "N" => {ofClass{Ideal,Ring}}},
@@ -44,13 +61,17 @@ document {
      }
 
 document {
-     Key => {(Ext,ZZ,Module,Module),
-	  (Ext, ZZ, Ideal, Ideal),
-	  (Ext, ZZ, Ideal, Module),
-	  (Ext, ZZ, Module, Ideal),
-	  (Ext, ZZ, Ideal, Ring),
-	  (Ext, ZZ, Module, Ring)
-	  },
+    Key => {
+	(Ext, ZZ, Module, Module),
+	(Ext, ZZ, Module, Ideal),
+	(Ext, ZZ, Module, Ring),
+	(Ext, ZZ, Ideal, Module),
+	(Ext, ZZ, Ideal, Ideal),
+	(Ext, ZZ, Ideal, Ring),
+	(Ext, ZZ, Ring, Module),
+	(Ext, ZZ, Ring, Ideal),
+	(Ext, ZZ, Ring, Ring),
+    },
      Usage => "Ext^i(M,N)",
      Headline => "Ext module",
      Inputs => { "i", "M", "N" },
@@ -75,10 +96,11 @@ document {
      }
 
 document {
-     Key => {(Ext, ZZ, Matrix, Module),
-	  (Ext, ZZ, Matrix, Ideal),
-	  (Ext, ZZ, Matrix, Ring)
-	  },
+    Key => {
+	(Ext, ZZ, Matrix, Module),
+	(Ext, ZZ, Matrix, Ideal),
+	(Ext, ZZ, Matrix, Ring)
+    },
      Usage => "Ext^i(f,N)",
      Headline => "map between Ext modules",
      Inputs => { "i", "f" => "M1 --> M2", "N" },
@@ -102,9 +124,11 @@ document {
      }
 
 document {
-     Key => {(Ext, ZZ, Module, Matrix),
-	  (Ext, ZZ, Ideal, Matrix)
-	  },
+    Key => {
+	(Ext, ZZ, Module, Matrix),
+	(Ext, ZZ, Ideal,  Matrix),
+	(Ext, ZZ, Ring,   Matrix),
+    },
      Usage => "Ext^i(M,f)",
      Headline => "map between Ext modules",
      Inputs => { "i", "M", "f" => "N1 --> N2"},

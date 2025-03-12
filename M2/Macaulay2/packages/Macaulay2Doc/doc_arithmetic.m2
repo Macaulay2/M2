@@ -1,3 +1,27 @@
+document { Key => {round,(round,QQ),(round,RR),(round,ZZ,RR),(round,ZZ),
+	(round,CC),(round,Constant)},
+     Headline => "round a number",
+     SYNOPSIS (
+	  Usage => "round x",
+	  Inputs => { "x" => "a number" },
+	  Outputs => {{ "the integer nearest to ", TT "x" }},
+	  EXAMPLE lines ///
+	  round(-2.3)
+	  round(-2.3+5*ii)
+	  round(2/3)
+	  ///
+	  ),
+     SYNOPSIS (
+	  Usage => "round(n,x)",
+	  Inputs => { "n" => ZZ, "x" => RR },
+	  Outputs => {{ "the real number with just n decimal digits to the right of the decimal point nearest to ", TT "x" }},
+	  EXAMPLE lines ///
+	  round(2,1234.5678)
+	  round(-2,1234.5678)
+	  ///
+	  ),
+     SeeAlso => { floor, ceiling }
+     }
 document {
      Key => {numeric,(numeric,Matrix),(numeric,ZZ,Matrix),
 	  (numeric, Vector),(numeric, ZZ, Vector),
@@ -33,6 +57,13 @@ document {
      TT "even x", " -- returns true or false, tells whether x is an even integer.",
      PARA{},
      "See also ", TO "odd", "."}
+document {
+    Key => zero,
+    Headline => "whether something is zero",
+    SourceCode => zero,
+    Usage => "zero x",
+    Inputs => { "x" },
+    Outputs => { { "whether ", TT "x", " is equal to 0" }}}
 
 document {
      Key => {realPart, (realPart,Number), (realPart,QQ), (realPart,ZZ),
@@ -72,15 +103,42 @@ document {
 	  "conjugate 3"
 	  }
      }
-document {
-     Key => {gcdCoefficients,(gcdCoefficients, RingElement, RingElement),(gcdCoefficients, ZZ, ZZ)},
-     Headline => "gcd with coefficients",
-     TT "gcdCoefficients(a,b)", " -- returns ", TT "{d,r,s}", " so that
-     ", TT"a*r + b*s", " is the greatest common divisor ", TT "d", " of ", TT "a", "
-     and ", TT "b", ".",
-     PARA{},
-     "Works for integers or elements of polynomial rings in onve variable.",
-     SeeAlso => "gcd"}
+
+doc ///
+  Key
+    gcdCoefficients
+    (gcdCoefficients, RingElement, RingElement)
+    (gcdCoefficients, RingElement, ZZ)
+    (gcdCoefficients, ZZ, RingElement)
+    (gcdCoefficients, ZZ, ZZ)
+  Headline
+    greatest common divisor with coefficients
+  Usage
+    gcdCoefficients(a, b)
+  Inputs
+    a:{RingElement, ZZ}
+    b:{RingElement, ZZ}
+  Description
+    Text
+      This returns a sequence of the form @CODE "(d, r, s)"@, where $d=\gcd(a, b)$
+      and $r$ and $s$ are the minimal Bézout coefficients satisfying the
+      equation $d = ar + bs$.
+
+      It works for integers or elements of polynomial rings in one variable.
+    Example
+      (d, r, s) = gcdCoefficients(46, 240)
+      gcd(46, 240)
+      46 * r + 240 * s
+      R = ZZ/2[x]
+      f = x^8 + x^4 + x^3 + x + 1
+      g = x^6 + x^4 + x + 1
+      (d, r, s) = gcdCoefficients(f, g)
+      gcd(f, g)
+      f * r + g * s
+  SeeAlso
+    gcd
+///
+
 document {
      Key => mod,
      Headline => "reduce modulo an integer",
@@ -94,3 +152,22 @@ document {
      SeeAlso => {(symbol %, ZZ, ZZ)}
      }
 
+undocumented {(isConstant, Number)}
+document {
+    Key => {
+	isConstant,
+       (isConstant, RingElement)
+    },
+    Headline => "whether a ring element is constant",
+    Usage => "isConstant f",
+    Inputs => { "f" },
+    Outputs => { { "whether f is constant, i.e., is in the coefficient ring" } },
+    EXAMPLE lines ///
+	  isConstant 3
+	  QQ[a,b][x,y];
+	  isConstant (x+a-x)
+	  isConstant x
+	  ///,
+    SeeAlso => coefficientRing,
+    SourceCode => (isConstant,RingElement)
+}

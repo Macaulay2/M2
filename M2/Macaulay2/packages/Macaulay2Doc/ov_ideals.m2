@@ -7,6 +7,7 @@ document {
      ") is defined, ideals are constructed in the usual way
      by giving a set of generators.",
      Subnodes => {
+	 TO Ideal,
 	  TO "creating an ideal",
 	  "conversions",
 	  TO "ideals to and from matrices",
@@ -186,7 +187,12 @@ document {
      }
 
 document {
-     Key => "equality and containment",
+    Key => {
+	"equality and containment",
+	(symbol ==, Ideal, Ideal),
+	(symbol ==, Ideal, ZZ),
+	(symbol ==, ZZ, Ideal),
+    },
      "Equality and containment between two ideals in a polynomial ring 
      (or quotient of a polynomial ring) is checked by comparing their 
      respective Groebner bases.",     
@@ -284,7 +290,7 @@ document {
 	    "mingens I",
 	    "trim I"
 	    },
- "The function ", TT "mingens", " is only well-defined for a 
+       "The function ", TT "mingens", " is only well-defined for a 
        homogeneous ideal or in a local ring.  However, one can still try to 
        get as small a generating set as possible and when it is implemented
        this function will be done by ", TT "trim", ".",
@@ -300,7 +306,10 @@ document {
 	    "R = QQ[a..d];",
 	    "I = monomialCurveIdeal(R,{1,2,3});",
 	    "toString I"
-	    }
+	    },
+     Subnodes => {
+         TO "generators of rings, ideals, and modules",
+         },
      }
 
 document {

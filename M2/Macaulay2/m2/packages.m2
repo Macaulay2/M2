@@ -91,7 +91,7 @@ checkShadow := () -> (
 
 isOptionList := opts -> instance(opts, List) and all(opts, opt -> instance(opt, Option) and #opt == 2)
 
-isPackageLoaded := pkgname -> PackageDictionary#?pkgname and instance(value PackageDictionary#pkgname, Package)
+isPackageLoaded = pkgname -> PackageDictionary#?pkgname and instance(value PackageDictionary#pkgname, Package)
 
 -- TODO: make this local
 checkPackageName = title -> (
@@ -114,7 +114,7 @@ net      Package :=
 toString Package := pkg -> if pkg#?"pkgname" then pkg#"pkgname" else "-*package*-"
 texMath  Package := pkg -> texMath toString pkg
 options  Package := pkg -> pkg.Options
-methods  Package := memoize(pkg -> select(methods(), m -> package m === pkg))
+methods  Package := pkg -> select(methods(), m -> package' m === pkg)
 hypertext Package := SAMPc "constant"
 
 -- TODO: should this go elsewhere?
@@ -556,6 +556,9 @@ package HashTable  := x -> if hasAttribute(x, ReverseDictionary) then package ge
 package Dictionary := d -> (
     scan(unique prepend_currentPackage implicitlyLoadedPackages(),
 	pkg -> if pkg.Dictionary === d or pkg#"private dictionary" === d then break pkg))
+
+-- speeds up documentation generation by orders of magnitude
+package' = memoize package
 
 -- TODO: should this reset the values of exported mutable symbols?
 use Package := pkg -> (

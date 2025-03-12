@@ -25,12 +25,13 @@ Node
       "rings"
       "ideals"
       "matrices"
-      "substitution and maps between rings"
       "modules"
+      "morphisms"
       "chain complexes"
       "Varieties :: Varieties"
-      "Gröbner bases"
     :Some Mathematical Computations
+      "mathematical examples"
+      "Gröbner bases"
       "normal forms"
       -- Mike wanted this: TO "Hilbert functions"
       "elimination of variables"
@@ -48,20 +49,12 @@ Node
       "authors of Macaulay2 packages"
     :Appendix
       "changes to Macaulay2, by version"
-      "mathematical examples"
       "basic commutative algebra"
       -- Mike wanted this: TO "frequently encountered problems"
       "replacements for commands and scripts from Macaulay"
-      "how Macaulay2 finds its files"
     :Reference material
+      "Thing"
       "Type"
+      "ImmutableType"
       "Function"
 ///
-
-document { Key => Core,
-     Headline => "the core part of Macaulay2",
-     PARA {
-     	  "This package contains the core functionality of Macaulay2, without the documentation,
-     	  which is in the package ", TO "Macaulay2Doc", "."
-	  }
-     }

@@ -364,34 +364,8 @@ document {
 	  )
      }
 
-document { Key => InexactNumber,
-     PARA {
-	  "This type of number is intended to serve as a parent class for those types of numbers
-	  that are inexactly represented in the computer."
-	  }
-     }
-
 document {
-     Key => { Constant,
-	  (symbol /,Constant,Constant),
-	  (symbol /,Constant,InexactNumber),
-	  (symbol /,Constant,Number),
-	  (symbol /,InexactNumber,Constant),
-	  (symbol /,Number,Constant),
-	  (symbol ^,Constant,Constant),
-	  (symbol ^,Constant,InexactNumber),
-	  (symbol ^,Constant,Number),
-	  (symbol ^,InexactNumber,Constant),
-	  (symbol ^,Number,Constant),
-	  (symbol +,Constant,RingElement),
-	  (symbol +,RingElement,Constant),
-	  (symbol -,Constant,RingElement),
-	  (symbol -,RingElement,Constant),
-	  (symbol *,Constant,RingElement),
-	  (symbol *,RingElement,Constant),
-	  (symbol /,Constant,RingElement),
-	  (symbol /,RingElement,Constant)
-     	  },
+     Key => Constant,
      PARA {
 	  "A constant is a symbolic entity that can be approximated by a real or complex
 	  number to any desired accuracy.  It is converted to a numeric value of the
@@ -419,7 +393,8 @@ document { Key => InexactField,
      ring oo
      class oo
      parent oo
-     ///
+     ///,
+     Subnodes => { TO RealField, TO ComplexField },
      }
 
 document { Key => InexactFieldFamily,

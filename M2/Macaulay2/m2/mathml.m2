@@ -11,7 +11,7 @@ nest := (tag,s) -> concatenate("<",tag,">",s,"</",tag,">")
 mo   := s -> nest("mo",s)
 mrow := s -> nest("mrow",s)
 mtable := x -> concatenate(
-     "<mtable align=\"baseline1\">", newline,
+     "<mtable columnalign=\"center\">", newline,
      apply(x, row -> ( "<mtr>", apply(row, e -> ("<mtd>",e,"</mtd>",newline)), "</mtr>", newline ) ),
      "</mtable>", newline )
 mtableML := x -> mtable applyTable(x,mathML)
@@ -59,7 +59,29 @@ mathML FunctionApplication := m -> (
      then concatenate (mfun, bigParenthesize margs)
      else concatenate (bigParenthesize mfun, bigParenthesize margs)
      )
-mathML MatrixExpression := x -> concatenate( "<mrow><mo>(</mo>", mtableML x, "<mo>)</mo></mrow>", newline )
+
+-- zero-width "phantom" element to make sure that degrees line up
+mphantom := x -> concatenate(
+    "<mpadded width=\"0px\"><mphantom>",
+    x,
+    "</mphantom></mpadded>")
+mathML MatrixExpression := x -> (
+    (opts, m) := matrixOpts x;
+    if all(m, r -> all(r, i -> class i === ZeroExpression))
+    then return mathML 0;
+    m = applyTable(m, mathML);
+    concatenate(
+	if opts.Degrees =!= null then (
+	    degs := mathML \ opts.Degrees#0;
+	    mtable apply(#m, i -> {degs#i | mphantom m#i})),
+	"<mo>(</mo>",
+	mtable (
+	    if opts.Degrees =!= null
+	    then apply(#m, i -> prepend(mphantom degs#i, m#i))
+	    else m),
+	"<mo>)</mo>",
+	newline))
+
 mathML Minus := v -> concatenate( "<mrow><mo>-</mo>", mathML v#0, "</mrow>")
 mathML Divide := x -> concatenate("<mfrac>", mathML x#0, mathML x#1, "</mfrac>")
 mathML OneExpression := x -> "<mn>1</mn>"
@@ -88,32 +110,31 @@ mathML Sum := v -> (
 		    	 else mathML v#i),
 		    n:newline),
 	       "</mrow>",newline)))
+
 mathML Product := v -> (
-     n := # v;
-     if n === 0 then "<mn>1</mn>"
-     else if n === 1 then mathML v#0
-     else (
-     	  p := precedence v;
-	  seps := newClass(MutableList, (n+1) : "<mo>*</mo>");
-	  if n>1 and isNumber v#0 and startsWithSymbol v#1 then seps#1 = "<mo></mo>";
-     	  boxes := apply(#v,
-	       i -> (
-		    term := v#i;
-		    nterm := mathML term;
-	       	    if precedence term <= p then (
-			 seps#i = seps#(i+1) = "<mo></mo>";
-			 nterm = ("<mrow><mo>(</mo>", nterm, "<mo>)</mo></mrow>");
-			 );
-		    if class term === Power
-		    and not (term#1 === 1 or term#1 === ONE)
-		    or class term === Subscript then (
-			 seps#(i+1) = "<mo></mo>";
-			 );
-	       	    nterm));
-     	  seps#0 = seps#n = "";
-	  concatenate ("<mrow>", mingle (seps, boxes), "</mrow>")
-	  )
-     )
+    n := # v;
+    if n === 0 then mathML 1
+    else (
+	v = apply(v, x -> if class x === Power and (x#1 === 1 or x#1 === ONE) then x#0 else x);
+	p := precedence v;
+	nums := apply(v, x -> isNumber x or (class x === Power and isNumber x#0));
+	precs := apply(v, x -> precedence x <= p);
+	seps := apply (n-1, i->
+	    if nums#(i+1) then mo "&times;"
+	    else if (
+		class v#i =!= Power and
+		class v#i =!= Subscript and
+		not precs#i and
+		not precs#(i+1) and
+		(nums#i or class v#i === Symbol))
+	    then "<mspace width=\"0.1667em\"></mspace>"
+	    else "");
+	boxes := apply(n, i -> (
+		if precs#i and class v#i =!= Divide
+		then mathMLparen mathML v#i
+		else mathML v#i));
+	mrow concatenate splice mingle (boxes,seps)))
+
 mathMLparen = s -> concatenate("<mrow><mo>(</mo>",s,"<mo>)</mo></mrow>")
 mathML Boolean := i -> if i then "<mi>true</mi>" else "<mi>false</mi>"
 mathML Subscript := v -> concatenate("<msub>",mathML v#0,mathML v#1,"</msub>")

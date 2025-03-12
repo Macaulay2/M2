@@ -2,9 +2,18 @@
 
 methodstr := PARA { "This function is a method function, defined in the core so multiple packages can add methods to it." }
 
+document { Key => minimize,     methodstr, SeeAlso => { "Complexes::minimize(Complex)" } }
 document { Key => decompose,    methodstr, SeeAlso => { "MinimalPrimes::MinimalPrimes" } }
 document { Key => truncate,     methodstr, SeeAlso => { "Truncations::Truncations" } }
-document { Key => chi,          methodstr }
+document { Key => chi,          methodstr, SeeAlso => {
+	"Schubert2::chi(AbstractSheaf)", "NormalToricVarieties::chi(CoherentSheaf)" } }
+document { Key => euler,        methodstr, SeeAlso => {
+	"HyperplaneArrangements::HyperplaneArrangements",
+	"MultiprojectiveVarieties::euler(MultiprojectiveVariety)",
+	"Schubert2::euler(AbstractVariety)", "Varieties::Varieties" } }
+document { Key => eulers,       methodstr }
+document { Key => genera,       methodstr }
+document { Key => genus,        methodstr }
 document { Key => isEmpty,      methodstr, SeeAlso => { "Polyhedra::Polyhedra",(isEmpty, RRi)} }
 document { Key => isSmooth,     methodstr, SeeAlso => {
 	"Divisor::isSmooth(Ideal)", "LatticePolytopes::isSmooth(Polyhedron)",
@@ -20,8 +29,21 @@ document { Key => isNormal,     methodstr, SeeAlso => {
 	"IntegralClosure::isNormal(Ring)",
 	"AssociativeAlgebras::isNormal(RingElement)",
 	} }
-document { Key => normalCone,      methodstr, SeeAlso => { "Polyhedra::normalCone(Polyhedron,Polyhedron)","ReesAlgebra::normalCone(Ideal)"} }
+document { Key => normalCone,   methodstr, SeeAlso => {
+	"Polyhedra::normalCone(Polyhedron,Polyhedron)",
+	"ReesAlgebra::normalCone(Ideal)",
+    } }
 
+document { Key => { isIsomorphism, (isIsomorphism, Matrix) },
+    Headline => "whether a map is an isomorphism",
+    Usage => "isIsomorphism f",
+    "Whether the map $f$ is an isomorphism.",
+    SeeAlso => {
+	"Cremona::isIsomorphism(RationalMap)",
+	"GradedLieAlgebras::isIsomorphism(LieAlgebraMap)",
+	"MultiprojectiveVarieties::isIsomorphism(MultirationalMap)",
+	"Varieties::isIsomorphism(SheafMap)",
+    } }
 
 document { Key => cone,
     Headline => "mapping cone or polyhedral cone",
@@ -79,6 +101,17 @@ document {
     EXAMPLE ///code lookup(symbol intersect, Module)///,
      SeeAlso => { intersect }
      }
+
+undocumented { 1:union }
+document {
+    Key => { union, (union, List), (union, Sequence) },
+    Headline => "compute the union",
+    PARA { "This function returns the union of a list or sequence of compatible sets or varieties." },
+    SeeAlso => {
+	"NumericalAlgebraicGeometry::union(NumericalVariety,NumericalVariety)",
+	"Posets::union(Poset,Poset)",
+	}
+    }
 
 -- also see functions/tensor-doc.m2
 document {

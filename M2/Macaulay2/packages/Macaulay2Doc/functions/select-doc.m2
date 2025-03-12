@@ -116,50 +116,29 @@ document {
      }
 
 document { 
-     Key => {
-	 (select,HashTable,Function),
+    Key => {
 	 selectValues,
-	 (selectValues,HashTable,Function)},
-     Headline => "select part of a hash table",
-     Usage => "select(v,f)\nselectValues(v,f)",
-     Inputs => { "v", "f" => {"returning either ", TO "true", " or ", TO "false"} },
+	(selectValues, HashTable, Function),
+	(selectValues, ZZ, HashTable, Function),
+	(select, HashTable, Function),
+	(select, ZZ, HashTable, Function),
+    },
+     Headline => "select part of a hash table by values",
+     Usage => "selectValues(v,f)\nselectValues(n,v,f)",
+     Inputs => { "n" => ZZ, "v" => HashTable, "f" => {"returning either ", TO "true", " or ", TO "false"} },
      Outputs => {
 	  {"whose pairs are those key-value pairs ", TT "(k,w)", " of the hash table ", TT "v", " that
-	       yield ", TT "true", " when the function ", TT "f", " is applied to the value ", TT "w", "."}
+	       yield ", TT "true", " when the function ", TT "f", " is applied to the value ", TT "w", ".",
+	   "If ", TT "n", " is provided, at most ", TT "n", " pairs will be selected."}
 	  },
      "The hash table ", TT "v", " should be immutable: to scan the values in a mutable hash
      table, use ", TT "scan(values x, f)", ".",
      EXAMPLE {
 	  "x = new HashTable from { x => 1, y => 2, z => 3 }",
-	  "select(x,odd)"
-	  },
-     SeeAlso => {
-	 (select,ZZ,HashTable,Function),
-	 partition,
-	 selectKeys,
-	 selectPairs}
-     }
-
-document { 
-     Key => {
-	 (select,ZZ,HashTable,Function),
-	 (selectValues,ZZ,HashTable,Function)},
-     Headline => "select a limited number of pairs from a hash table",
-     Usage => "select(n,v,f)\nselectValues(n,v,f)",
-     Inputs => { "n", "v", "f" => {"returning either ", TO "true", " or ", TO "false"} },
-     Outputs => {
-	  {"whose pairs are those key-value pairs of the hash table ", TT "v", " that
-	       yield ", TT "true", " when the function ", TT "f", " is applied to the value,
-	       except that at most ", TT "n", " pairs will be selected"}
-	  },
-     "The hash table ", TT "v", " should be immutable: to scan the values in a mutable hash
-     table, use ", TT "scan(values x, f)", ".",
-     EXAMPLE {
-	  "x = new HashTable from { x => 1, y => 2, z => 3 }",
+	  "select(x,odd)",
 	  "select(1,x,odd)"
 	  },
      SeeAlso => {
-	 (select,HashTable,Function),
 	 partition,
 	 selectKeys,
 	 selectPairs}

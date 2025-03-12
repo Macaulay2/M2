@@ -211,7 +211,7 @@ document {
 	"> 4"
 	}}
 document {
-    Key => {(symbol >=, ZZ), (symbol >=, InfiniteNumber)},
+    Key => {(symbol >=, ZZ), (symbol >=, InfiniteNumber), (symbol >=, List)},
     Usage => "(>= d)",
     Inputs => { "d" },
     Outputs => {{"a special object of class ", TT "LowerBound", " used to represent the set of natural numbers at least as large as ", TT "d"}}

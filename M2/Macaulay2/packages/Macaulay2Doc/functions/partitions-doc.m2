@@ -48,8 +48,22 @@ doc ///
    for {\tt k}, it will cause an error.
  SeeAlso
   compositions
-  (conjugate, Partition)
-  Partition
   subsets
-  "combinatorial functions"
+ Subnodes
+   Partition
+   (conjugate, Partition)
 ///
+
+document {
+    Key => Partition,
+    Headline => "a type of list representing a partition of a natural number",
+    SeeAlso => { partitions, (conjugate,Partition) } }
+document {
+    Key => (conjugate, Partition),
+    Headline => "conjugate a partition",
+    Usage => "conjugate p", Inputs => {"p"}, Outputs => {{"the conjugate of ", TT "p" }},
+    EXAMPLE lines ///
+	  partitions 4
+	  conjugate \ oo
+    ///
+}

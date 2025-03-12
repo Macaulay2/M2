@@ -345,6 +345,7 @@ RingElement == Constant :=
 InexactNumber == Constant := (x,c) -> x == numeric(precision x,c)
 Constant ? Constant := (c,d) -> numeric c ? numeric d
 InexactNumber ? Constant := (x,c) -> x ? numeric(precision x,c)
+Constant ? InexactNumber := (c,x) -> numeric(precision x,c) ? x
 
 Constant _ Ring := (c,R) -> (
      prec := precision R;

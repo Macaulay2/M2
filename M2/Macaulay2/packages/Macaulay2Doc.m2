@@ -12,22 +12,27 @@ newPackage ("Macaulay2Doc",
 	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
 	  },
      Keywords => {"Documentation"},
-     PackageExports => Core#"preloaded packages",
      HomePage => "https://macaulay2.com/",
      Version => version#"VERSION")
 
-scan(pairs Core#"raw documentation", (k,v) -> (
-	  remove(Core#"raw documentation", k);
-	  Macaulay2Doc#"raw documentation"#k = v;
-	  ))
+-- a local way to use private global symbols from Core
+core = nm -> value Core#"private dictionary"#nm
+isMissingDoc = core "isMissingDoc"
+isUndocumented = core "isUndocumented"
 
 beginDocumentation()
 
--- a local way to use private global symbols from Core
-core = nm -> value Core#"private dictionary"#nm
-load "./Macaulay2Doc/loads.m2"				    -- the ./ makes it load from the current directory
-erase symbol core
+-- move undocumented nodes from Core here
+scan(keys Core#"raw documentation", key ->
+    Macaulay2Doc#"raw documentation"#key =
+    remove(Core#"raw documentation", key))
 
+-- load the full documentation
+load "./Macaulay2Doc/loads.m2"
+
+--------------------------------------------------------------------------------
+-- check to make sure the documentation doesn't leak symbols
+erase \ { symbol core, symbol isMissingDoc, symbol isUndocumented }
 if keys Macaulay2Doc#"private dictionary" =!= {} 
 then error splice (
      "global symbols inadvertently defined by package Macaulay2Doc: ", 

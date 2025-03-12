@@ -356,14 +356,13 @@ map = method(
 setupMethods(Dispatch => Thing, {transpose} )
 setupMethods(TypicalValue => Boolean,
      {isBorel, isWellDefined, isInjective, isSurjective, isUnit,
-	  isSubset,isHomogeneous, isIsomorphism, isField
+      isSubset, isHomogeneous, isField
 	  })
 setupMethods(TypicalValue => ZZ, {
-	binomial, char, degreeLength, depth, dim, euler, genus, height,
+	binomial, char, degreeLength, depth, dim, height,
 	numgens, numColumns, numRows, pdim, rank, width})
-setupMethods(TypicalValue => List, {
-	degrees, eulers, genera})
 
+degrees = method(TypicalValue => List)
 length = method(TypicalValue => ZZ, Dispatch => Thing)
 codim = method( Options => true )
 

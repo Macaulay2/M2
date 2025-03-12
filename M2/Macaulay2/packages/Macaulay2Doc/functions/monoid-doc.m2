@@ -94,7 +94,10 @@ Node
       QQ[x][y, Join => false]
       oo.FlatMonoid
   Subnodes
+    (monoid, Ring)
+    FlatMonoid
     :Optional arguments
+    (options, Monoid)
     [monoid, Variables] -- and VariableBaseName
     [monoid, Local]     -- and Global
     [monoid, Inverses]
@@ -524,7 +527,7 @@ Node
     newRing
     (tensor, Ring, Ring)
     symmetricAlgebra
-    "Dmodules::makeWeylAlgebra"
+    "WeylAlgebras::makeWeylAlgebra"
 
 Node
   Key

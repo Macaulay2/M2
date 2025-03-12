@@ -34,7 +34,7 @@ document {
 	  TO (degree,Ideal),
 	  TO (degree,Ring),
 	  TO (degree,Module),
-	  TO (degree,ProjectiveVariety)
+	  TO "Varieties::degree(ProjectiveVariety)"
 	  },
 	  HEADER3 "Degree of homomorphisms",
 	  UL {

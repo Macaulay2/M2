@@ -100,8 +100,14 @@ html Hypertext := x -> (
 	sequence ct) else x;
     pushIndentLevel 1;
     (head, prefix, suffix, tail) := (
-	if instance(x, HypertextContainer) then (concatenate(indentLevel:"  "), newline, concatenate(indentLevel:"  "), newline) else
+	if instance(x, HypertextVoid) and class x =!= BR
+	or instance(x, HypertextContainer) then (concatenate(indentLevel:"  "), newline, concatenate(indentLevel:"  "), newline) else
 	if instance(x, HypertextParagraph) then (concatenate(indentLevel:"  "), "", "", newline) else ("","","",""));
+    -- LI should look like a paragraph if it doesn't have any containers
+    if instance(x, LI) then (
+	if not any(x, e -> instance(e, HypertextContainer)) then prefix = suffix = "" else (
+	    if not instance(first x, HypertextContainer) then prefix = "";
+	    if not instance(last  x, HypertextContainer) then suffix = ""));
     popIndentLevel(1, if instance(x, HypertextVoid)
 	then concatenate(head, "<", qname, attr, ">", tail)
 	else concatenate(head, "<", qname, attr, ">", prefix,

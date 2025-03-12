@@ -325,7 +325,7 @@ topLevelPrompt():string := (
      if debugLevel == 123 then (
 	  p = "[" + tostring(promptcount) + "]  " + p;
 	  stderr <<  "-- topLevelPrompt:" 
-	  << " prompt = \"" << presentn(p) << "\""
+	  << " prompt = \"" << present(p) << "\""
 	  << endl;
 	  );
      promptcount = promptcount + 1;
