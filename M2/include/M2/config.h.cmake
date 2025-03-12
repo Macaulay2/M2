@@ -48,10 +48,6 @@
 #define FFI_VERSION "${FFI_VERSION}"
 
 // TODO: only used in Macaulay2/d/scclib.c. Still needed?
-/* whether getaddrinfo can handle numeric service (port) numbers */
-#cmakedefine GETADDRINFO_WORKS 1
-
-// TODO: only used in Macaulay2/d/scclib.c. Still needed?
 /* Define to 1 if you have the `accept' function. */
 #cmakedefine HAVE_ACCEPT 1
 
@@ -104,9 +100,6 @@
 // TODO: still using this?
 /* whether we are linking with the fplll library */
 #cmakedefine HAVE_FPLLL 1
-
-/* Define to 1 if you have the `getaddrinfo' function. */
-#cmakedefine HAVE_GETADDRINFO 1
 
 /* Define to 1 if you have the `getpgrp' function. */
 #cmakedefine HAVE_GETPGRP 1
