@@ -20,7 +20,6 @@ load "./ov_modules.m2"
 load "./ov_chaincomplexes.m2"
 load "./ov_examples.m2"
 load "./ov_groebner_bases.m2"
-load "./ov_combinatorics.m2"
 load "./ov_analytic_functions.m2"
 load "./ov_language.m2"
 load "./ov_strings.m2"
@@ -72,11 +71,11 @@ load "./M2-Singular-Book.m2"
 ld := fn -> tutorial get concatenate(currentFileDirectory,fn)
 
 document {
-     Key => "modules in Macaulay2",
+     Key => "Tutorial: Modules in Macaulay2",
      ld "tu_modules.m2"
      }
 document {
-     Key => "Tutorial: Elementary uses of Groebner bases",
+     Key => "Tutorial: Elementary uses of Gröbner bases",
      ld "tu_elementary.m2"
      }
 document {

@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 document {
      Key => "modules",
-     "Modules in Macaulay2 are implemented as ", TO "subquotient modules", ".  
+     "In Macaulay2, modules are implemented as ", TO "subquotient modules", ".
      Submodules and quotients of free modules are perhaps the most common and important
      modules, and subquotients form the smallest class of modules that naturally includes these cases.",
      PARA{},
