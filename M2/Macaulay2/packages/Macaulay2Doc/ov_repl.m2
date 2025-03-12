@@ -393,7 +393,6 @@ document {
 	 TO Standard,
 	 TO WebApp,
 	 TO TeXmacs,
-	 TO Jupyter,
 	 "Keys for mode-dependent printing methods:",
 	 TO Print,
 	 TO NoPrint,
