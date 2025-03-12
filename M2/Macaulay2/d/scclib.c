@@ -667,7 +667,7 @@ int openlistener(char *interface0, char *service) {
   struct addrinfo *addr = NULL;
   static struct addrinfo hints;	/* static so all parts get initialized to zero */
   int so;
-  hints.ai_family = PF_UNSPEC;
+  hints.ai_family = AF_UNSPEC;
   hints.ai_flags = AI_PASSIVE;
   if (0 != set_addrinfo(&addr,&hints,interface0,service)) return ERROR;
   so = socket(addr->ai_family,SOCK_STREAM,0);
