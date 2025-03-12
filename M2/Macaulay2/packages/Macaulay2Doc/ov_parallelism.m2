@@ -10,9 +10,9 @@ doc ///
      Text
        Some computations in the engine can run using multiple cores on
        your computer. Currently, this includes computation of minimal
-       betti diagrams, non-minimal resolutions, and Groebner bases of
+       betti diagrams, non-minimal resolutions, and Gröbner bases of
        2-sided ideals in associative algebras, all in the graded case,
-       over a finite field.  Also included is (one of the algorithms for) the computation of Groebner
+       over a finite field.  Also included is (one of the algorithms for) the computation of Gröbner
        bases in polynomial rings over finite fields, whether graded or not.
      Text
        The variable {\tt numTBBThreads} controls the number of cores used by Macaulay2.
@@ -54,7 +54,7 @@ doc ///
        I = ideal I_*;
        elapsedTime freeResolution(I, Strategy => Nonminimal)
      Text
-       Groebner bases (based on a linear algebra method, e.g.
+       Gröbner bases (based on a linear algebra method, e.g.
        Faugere's F4 algorithm, are also parallelized.  Note: the MGB
        Strategy of groebnerBasis is not currently parallelized.
      Example
@@ -69,9 +69,9 @@ doc ///
        I = ideal I_*;
        elapsedTime groebnerBasis(I, Strategy => "F4");
      Text
-       For Groebner basis computation in associative algebras,
-       ParallelizeByDegree is not relevant.  In this case, use {\tt
-       numTBBThreads} to control the amount of parallelism.
+       For Gröbner basis computation in associative algebras,
+       @TT "ParallelizeByDegree"@ is not relevant.  In this case, use
+       @TT "numTBBThreads"@ to control the amount of parallelism.
      Example
        needsPackage "AssociativeAlgebras"
        numTBBThreads = 0

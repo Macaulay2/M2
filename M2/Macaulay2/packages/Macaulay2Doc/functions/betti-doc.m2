@@ -148,7 +148,7 @@ Node
       multigraded B
   Synopsis
     Heading
-      Betti table of a Groebner basis
+      Betti table of a Gröbner basis
     Usage
       betti G
     Inputs
