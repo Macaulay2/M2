@@ -1125,6 +1125,7 @@ found and $msolve_min_version is required; will build])
          [AC_MSG_RESULT([no, will build])
           BUILD_msolve=yes])])
 
+AC_LANG([C++])
 AS_IF([test $BUILD_eigen = no],
   [AC_MSG_CHECKING([whether pkg-config provides flags for eigen])
    AS_IF([$PKG_CONFIG --exists eigen3],
