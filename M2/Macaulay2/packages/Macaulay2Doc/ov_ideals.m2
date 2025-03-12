@@ -200,7 +200,7 @@ document {
     },
      "Equality and containment between two ideals in a polynomial ring 
      (or quotient of a polynomial ring) is checked by comparing their 
-     respective Groebner bases.",     
+     respective Gröbner bases.",
      SUBSECTION "equal and not equal",
        "Use ", TO (symbol==,Ideal,Ideal), " to test if two ideals in 
        the same ring 
@@ -213,10 +213,10 @@ document {
 	    "I != J",
 	    },
 
-     SUBSECTION "normal form with respect to a Groebner basis and membership",
+     SUBSECTION "normal form with respect to a Gröbner basis and membership",
        "The function ", TO (symbol%,RingElement,Ideal), 
        " reduces an element with 
-       respect to a Groebner basis of the ideal.", 
+       respect to a Gröbner basis of the ideal.",
        EXAMPLE {
 	    "(1+a+a^3+a^4) % J"
 	    },
@@ -399,7 +399,7 @@ document {
      "To recover the generators of an ideal as a matrix, use ", TO "generators", ".",
      EXAMPLE "generators J",
      "Use the operator ", TT "%", " to reduce a ring element with respect to a
-     Groebner basis of the ideal.",
+     Gröbner basis of the ideal.",
      EXAMPLE "(1+a+a^3+a^4) % J",
      "Membership in the ideal may be tested by comparing the answer to 0 with ", TT "==", ".",
      EXAMPLE {

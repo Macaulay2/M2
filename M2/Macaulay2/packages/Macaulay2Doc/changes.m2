@@ -90,7 +90,7 @@ document {
 	LI { "new packages: ",
 	    UL {
 		LI { TO "AbstractSimplicialComplexes::AbstractSimplicialComplexes", ", a package by Nathan Grieve for abstract simplicial complexes, has been added." },
-		LI { TO "Msolve::Msolve", ", a package by Martin Helmer, Mike Stillman, and Anton Leykin for interfacing with the msolve library for solving multivariate polynomial systems using Groebner Bases, has been added." },
+		LI { TO "Msolve::Msolve", ", a package by Martin Helmer, Mike Stillman, and Anton Leykin for interfacing with the msolve library for solving multivariate polynomial systems using Gröbner Bases, has been added." },
 		LI { TO "MultigradedImplicitization::MultigradedImplicitization", ", a package by Joseph Cummings and Benjamin Hollering for solving implicitization problems using multigradings, has been added." },
 		LI { TO "NumericalSemigroups::NumericalSemigroups", ", a package by David Eisenbud and Frank-Olaf Schreyer for computing the Apery set and invariants of a numerical semigroup ring, has been added." },
 		LI { TO "Permutations::Permutations", ", a package by Sean Grate for functions for working with permutations, has been added." },
@@ -286,7 +286,7 @@ document {
 			 "and either a string or a list of strings as their second argument." },
 		    LI { TO "FLINT", " version 3 is now supported."},
 		    LI { SAMP "libatomic_ops", " has been dropped as a dependency and has been replaced with C11 and C++11 standard atomic operations." },
-            LI { "Some computations in the engine (e.g. minimal betti diagrams and Groebner bases over associative algebras), ",
+            LI { "Some computations in the engine (e.g. minimal betti diagrams and Gröbner bases over associative algebras), ",
                   "can now take advantage of multiple CPU cores, see ", TO "parallelism in engine computations", "."}
 		    }
 	       },
@@ -446,7 +446,7 @@ document {
 	  LI { "packages that have been published and certified:",
 	       UL {
 		    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
-		    LI { star, " ", TO "ThreadedGB::ThreadedGB", ", a package by Sonja Petrovic and Shahrzad Zelenberg, for computing a Groebner basis using the classical Buchberger algorithm with multiple threads, has been published." },
+		    LI { star, " ", TO "ThreadedGB::ThreadedGB", ", a package by Sonja Petrovic and Shahrzad Zelenberg, for computing a Gröbner basis using the classical Buchberger algorithm with multiple threads, has been published." },
 		    LI { star, " ", TO "MultiprojectiveVarieties::MultiprojectiveVarieties", ", a package by Giovanni Staglianò for multi-projective varieties, has been published." },
 		    }
 	       },
@@ -530,7 +530,7 @@ document {
 		    LI { TO "HomotopyLieAlgebra::HomotopyLieAlgebra", ", a package by David Eisenbud for homotopy Lie algebra, has been added." },
 		    LI { TO "TSpreadIdeals::TSpreadIdeals", ", a package by Luca Amata for t-spread ideals of a polynomial ring, has been added." },
 		    LI { TO "ExteriorModules::ExteriorModules", ", a package by Luca Amata and Marilena Crupi for monomial modules over exterior algebras, has been added." },
-            	    LI { TO "GroebnerStrata::GroebnerStrata", ", a package by Kristine Jones and Mike Stillman for working with Groebner families and subschemes of Hilbert schemes, has been added." },
+		    LI { TO "GroebnerStrata::GroebnerStrata", ", a package by Kristine Jones and Mike Stillman for working with Gröbner families and subschemes of Hilbert schemes, has been added." },
             	    LI { TO "QuaternaryQuartics::QuaternaryQuartics", ", a package by Kapustka, Kapustka, Ranestad, Schenck, Stillman and Yuan containing code and examples for their paper 'Quaternary Quartic Forms and Gorenstein Rings', has been added." },
 		    LI { TO "RealRoots::RealRoots", ", a package by Jordy Lopez, Kelly Maluccio, Frank Sottile, and Thomas Yahl for symbolically exploring, counting, and locating real solutions to polynomial systems, has been added." },
 		    LI { TO "K3Surfaces::K3Surfaces", ", a package by Michael Hoff and Giovanni Staglianò for explicit constructions of K3 surfaces, has been added." }
@@ -813,7 +813,7 @@ document {
 		    LI { TO "SparseResultants::SparseResultants", ", a package by Giovanni Staglianò for computations with sparse resultants, has been added." },
 		    LI { TO "DecomposableSparseSystems::DecomposableSparseSystems", ", a package by Taylor Brysiewicz, Jose Israel Rodriguez, Frank Sottile, and Thomas Yahl for solving decomposable sparse systems, has been added." },
 		    LI { TO "MixedMultiplicity::MixedMultiplicity", ", a package by Kriti Goel, Sudeshna Roy, and J. K. Verma for mixed multiplicities of ideals, has  been added." },
-		    LI { TO "ThreadedGB::ThreadedGB", ", a package by Sonja Petrovic, Sara Jamshidi Zelenberg, and Tanner Zielinski for computing a Groebner basis using the classical Buchberger algorithm with multiple threads, has been added." },
+		    LI { TO "ThreadedGB::ThreadedGB", ", a package by Sonja Petrovic, Sara Jamshidi Zelenberg, and Tanner Zielinski for computing a Gröbner basis using the classical Buchberger algorithm with multiple threads, has been added." },
 		    LI { TO "PencilsOfQuadrics::PencilsOfQuadrics", ", a package by Frank-Olaf Schreyer, David Eisenbud, and Yeongrak Kim for Clifford algebras of pencils of quadratic forms, has been added." },
 		    LI { TO "VectorGraphics::VectorGraphics", ", a package by Paul Zinn-Justin for producing scalable vector graphics, has been added." }
 		    }
@@ -943,7 +943,7 @@ document {
 		    LI { TO "DiffAlg::DiffAlg", ", a package by Manuel Dubinsky, Cesar Massri, Ariel Molinuevo, and Federico Quallbrunn, for computations with differential forms, has been added." },
 	       	    LI { TO "Quasidegrees::Quasidegrees", ", a package by Roberto Barrera for computing quasidegrees and graded local cohomology, has been added." },
 		    LI { TO "DeterminantalRepresentations::DeterminantalRepresentations", ", a package by Justin Chen and Papri Dey for computing determinantal representations, has been added." },
-		    LI { TO "FGLM::FGLM", ", a package by Dylan Peifer and Mahrud Sayrafi for computing Groebner bases via the algorithm of Faugère, Gianni, Lazard, and Mora, has been added." }
+		    LI { TO "FGLM::FGLM", ", a package by Dylan Peifer and Mahrud Sayrafi for computing Gröbner bases via the algorithm of Faugère, Gianni, Lazard, and Mora, has been added." }
 		    }
 	       },
      	  LI { "packages that have been published and certified:",
@@ -1123,10 +1123,10 @@ document {
 			 improvements: (1) it now works for input modules, not just ideals (there was a monomial order mismatch which
 			     would often cause it to fail), (2) multigraded and inhomogeneous ideals/modules are allowed, 
 			 (3) this function works over the exterior algebra as well (it has always done so, but that was not
-			     always realized), (4) it is possible to have M2 use an already created Groebner basis, instead of recomputing
+			     always realized), (4) it is possible to have M2 use an already created Gröbner basis, instead of recomputing
 			 one.  Use Strategy=>5 in the ", TO "resolution", " command, to tell the command that the 
-			 provided ideal has generators which already form a Groebner basis, not necessarily a reduced
-			 Groebner basis, or a quotient module, whose presentation matrix forms a Groebner basis.  
+			 provided ideal has generators which already form a Gröbner basis, not necessarily a reduced
+			 Gröbner basis, or a quotient module, whose presentation matrix forms a Gröbner basis.
 			 If the input is not, then this function can give incorrect answers or fail.  See ",
 			 TO "FastNonminimal", " for details and examples."
 			 },
@@ -1182,7 +1182,7 @@ document {
 	       	    LI { TO "Chordal::Chordal", ", a package by Diego Cifuentes and Pablo Parrilo for exploiting chordal structure, has been added." },
 	       	    LI { TO "CohomCalg::CohomCalg", ", a package by Mike Stillman for providing an interface to CohomCalg software for computing cohomology of torus invariant divisors on a toric variety, has been added." },
 	       	    LI { TO "Complexes::Complexes", ", a package by Gregory G. Smith and Mike Stillman for chain complexes, has been added." },
-	       	    LI { TO "GroebnerWalk::GroebnerWalk", ", a package by Dylan Peifer for computing Groebner bases via the Groebner walk, has been added." },
+		    LI { TO "GroebnerWalk::GroebnerWalk", ", a package by Dylan Peifer for computing Gröbner bases via the Gröbner walk, has been added." },
 	       	    LI { TO "Matroids::Matroids", ", a package by Justin Chen for computations with matroids, has been added." },
 		    LI { TO "NonminimalComplexes::NonminimalComplexes", ", a package by Frank Schreyer and Mike Stillman for obtaining the non-minimal strands of a non-minimal resolution of a homogeneous module, has been added." },
 	       	    LI { TO "NumericalImplicitization::NumericalImplicitization", ", a package by Justin Chen and Joe Kileel for computing invariants of images of polynomial maps, has been added." },
@@ -1421,7 +1421,7 @@ document {
 	       UL {
 	       	    LI { TO "ResidualIntersections::ResidualIntersections", ", a package by Katie Ansaldi, David Eisenbud, Robert Krone, and Jay Yang, for studying conditions associated to residual intersection theory, has been added." },
 	       	    LI { TO "Visualize::Visualize", ", a package by Brett Barwick, Thomas Enkosky, Branden Stone, and Jim Vallandingham, to help visualize algebraic objects in the browser using javascript, has been added." },
-		    LI { TO "EquivariantGB::EquivariantGB", ", a package by Chris Hillar, Robert Krone, and Anton Leykin for equivariant Groebner bases and related algorithms, has been added." },
+		    LI { TO "EquivariantGB::EquivariantGB", ", a package by Chris Hillar, Robert Krone, and Anton Leykin for equivariant Gröbner bases and related algorithms, has been added." },
 		    LI { TO "ExampleSystems::ExampleSystems", ", a package by Anton Leykin for examples of polynomial systems in numerical algebraic geometry, has been added." }
 	       	    -- LI { TO "::", ", a package by ... for ..., has been added." },
 	       	    }
@@ -1449,7 +1449,7 @@ document {
 	       UL {
 		   LI { "Some linear algebra functions, including ", TO LUdecomposition, ", ", TO "solve", ", ", TO "nullSpace", ", and  ", TO "columnRankProfile", ", ",
 		       " when presented with matrices over ", TO "ZZ", " would previously give occasional nonsensical answers.  These functions have been
-		       disabled for matrices over ", TO "ZZ", ".  However, ", TO "solve", " uses Groebner basis methods to solve a linear system, so did not suffer this problem.
+		       disabled for matrices over ", TO "ZZ", ".  However, ", TO "solve", " uses Gröbner basis methods to solve a linear system, so did not suffer this problem.
 		       Caveat: using these functions with a ring that is not a field, even if it runs, might give a nonsensical answer.
 		       This will be cleaned up in a later version."
 		       }
@@ -1680,9 +1680,9 @@ document {
 			 produces the element of Hom." },
 		    LI { "The new function ", TO "compose", " expresses composition of maps between modules as a bilinear map between Hom-modules." },
 		    LI { "Bracket powers of ideals (", TO (symbol ^,Ideal,Array), ") have been added, thanks to Frank Moore." },
-            LI { "Several bugs related to computing Groebner bases in polynomial rings over ZZ have been fixed.  ", TT "trim I", " in this case
-                now returns an ideal or module with a Groebner basis as generating set, as a minimal generating set isn't well-defined.  In a future release, we hope to 
-                provide a function to determine a smaller set of generators.  ", TT "mingens I", " also returns the Groebner basis matrix.  In a future release this
+            LI { "Several bugs related to computing Gröbner bases in polynomial rings over ZZ have been fixed.  ", TT "trim I", " in this case
+                now returns an ideal or module with a Gröbner basis as generating set, as a minimal generating set isn't well-defined.  In a future release, we hope to
+                provide a function to determine a smaller set of generators.  ", TT "mingens I", " also returns the Gröbner basis matrix.  In a future release this
                 function might be changed to give an error in cases where there is not a well-defined notion of minimal generators."}
 	  	    }
 	       },
@@ -1804,8 +1804,8 @@ document {
 --		    LI {TEX ///A new function 'ZZp p' has been added.  This is simply ZZ/p, but allows options: {\tt ZZp(p, Strategy=>"Flint")},
 --			{\tt ZZp(p, Strategy=>"Ffpack")}, {\tt ZZp(p, Strategy=>"Engine")}.///},
 		    LI {"Extensive changes to numerical algebraic geometry code in the engine"},
-            LI {"The ", TO "groebnerBasis", " function includes new experimental Groebner code, which is much faster in some cases."},
-		    -- LI {"mathicgb Groebner basis code is used when it applies.  Actually, right now this is not accurate:
+            LI {"The ", TO "groebnerBasis", " function includes new experimental Gröbner code, which is much faster in some cases."},
+		    -- LI {"mathicgb Gröbner basis code is used when it applies.  Actually, right now this is not accurate:
 		    -- 	it can be used, but is not done so automatically."},
 		    LI {"The {\tt Macaulay2/e} engine directory now compiles cleanly, with a few warning messages left."},
 		    LI {"The overall structure of base rings in Macaulay2 has been revamped, to allow faster code.  The downside is

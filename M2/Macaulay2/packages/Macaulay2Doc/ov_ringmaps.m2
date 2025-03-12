@@ -514,7 +514,7 @@ Node
 --      Key => [pushForward1,MonomialOrder],
 --      Headline => "specify the elimination order to use in pushForward1",
 --      TT "MonomialOrder => x", " -- a keyword for an optional argument to ", TO "pushForward1", "
---      which tells which monomial order to use for the Groebner basis computation
+--      which tells which monomial order to use for the Gröbner basis computation
 --      involved.",
 --      PARA{},
 --      "Possible values:",
