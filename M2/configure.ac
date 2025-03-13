@@ -369,9 +369,9 @@ AC_SEARCH_LIBS(hstrerror,resolv)
 AC_SEARCH_LIBS(dlopen,dl)
 AC_SEARCH_LIBS(gethostbyname,nsl)
 
-AC_CHECK_FUNCS([herror error clock_gettime hstrerror sync getpgrp setpgid fchmod pipe waitpid setrlimit alarm fork sigprocmask kill longjmp siglongjmp sigaction wait4 readlink lstat realpath mkdir link symlink fcntl personality ioctl])
-
-AC_SUBST(HAVE_PERSONALITY,$ac_cv_func_personality)
+AC_CHECK_FUNCS([herror hstrerror getprgp setpgid fchmod pipe waitpid setrlimit
+		fork sigprocmask kill sigaction readlink lstat realpath link
+		symlink fcntl])
 
 if test $host_os = mingw32
 then CPPFLAGS="$CPPFLAGS -D_POSIX" # arrange for SIGPIPE to get defined
