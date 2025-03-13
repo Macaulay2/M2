@@ -360,7 +360,6 @@ export pseudocodeClosureClass := newtypeof(pseudocodeClass);
 
 --Error Handling 
 export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,nullE,false,dummyFrame));
-export buildErrorPacketErrno(msg:string,errnum:int):Expr := buildErrorPacket( msg + ": " + strerror(errnum) );
 
 export quoteit(name:string):string := "'" + name + "'";
 export NotYet(desc:string):Expr := buildErrorPacket(desc + " not implemented yet");

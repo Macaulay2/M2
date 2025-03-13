@@ -109,8 +109,6 @@ import netstrerror(errcode:int):string;
 import acceptBlocking(sd:int):int;
 import acceptNonblocking(sd:int):int;
 import syserrmsg():string;				    -- uses errno
-import strerror():constcharstar;			    -- uses errno 
-export strerror(errnum:int):string := tostring(Ccode(constcharstar,"strerror(",errnum,")"));
 import atend(f:function():void):void;
 import run(command:string):int;
 export pipe(fildes:array(int)):int := Ccode(returns,"
