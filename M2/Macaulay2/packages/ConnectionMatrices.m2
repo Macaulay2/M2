@@ -27,6 +27,7 @@ export {
     "diffConnectionMatrix",
     "stdMon",
     "epsilonFactorized",
+    "isIntegrable",
 }
 
 -- to access private methods from Core
