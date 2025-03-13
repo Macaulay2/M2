@@ -47,10 +47,6 @@
 /* libffi version */
 #define FFI_VERSION "${FFI_VERSION}"
 
-// TODO: only used in Macaulay2/d/scclib.c. Still needed?
-/* Define to 1 if you have the `accept' function. */
-#cmakedefine HAVE_ACCEPT 1
-
 // TODO: only used in Macaulay2/d/interrupts.d. Still needed?
 /* Defined if you have the `alarm' function. */
 #cmakedefine HAVE_ALARM 1
@@ -189,9 +185,6 @@
 
 /* Define to 1 if you have the `sigprocmask' function. */
 #cmakedefine HAVE_SIGPROCMASK 1
-
-/* Define to 1 if you have the `socket' function. */
-#cmakedefine HAVE_SOCKET 1
 
 /* Define to 1 if you have the <stddef.h> header file. */
 #cmakedefine HAVE_STDDEF_H 1
