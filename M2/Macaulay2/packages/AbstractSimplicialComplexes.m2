@@ -22,14 +22,14 @@
 newPackage(
     "AbstractSimplicialComplexes",
     Version => "1.0",
-    Date => "20 February 2025",
+    Date => "12 March 2025",
     Headline => "Abstract Simplicial Complexes",
     Authors => {{ Name => "Nathan Grieve", Email => "nathan.m.grieve@gmail.com",
 	    HomePage => "https://sites.google.com/view/nathan-grieve"}},
     AuxiliaryFiles => false,
     DebuggingMode => false,
     PackageImports => {"Complexes"},
-    PackageExports => {},
+    PackageExports => {"Complexes"}, -- if we do not export Complexes then the a few checks fail
     Keywords => {"Combinatorial Commutative Algebra"}
     )
 
@@ -241,7 +241,9 @@ randomSubSimplicialComplex(AbstractSimplicialComplex) := AbstractSimplicialCompl
 ambientAbstractSimplicialComplexSize = method() 
 
 ambientAbstractSimplicialComplexSize(AbstractSimplicialComplex) := (K) -> (
-    max flatten(K_0))
+    L := flatten(K_0);
+    if L != { } then return(max L) else return(0) -- by default {{}} has size 0
+    )
 
 -- Return the underlying ambient simplex.
 
@@ -473,7 +475,7 @@ doc ///
      Key
      	  "How to make abstract simplicial complexes"
      Headline
-     	  Using the type AbstractSimplicialComplexes to represent abstract simplicial complexes
+     	  using the type AbstractSimplicialComplexes to represent abstract simplicial complexes
      Description
      	  Text	  
 	     The type AbstractSimplicialComplex is a data type for working with
@@ -510,7 +512,7 @@ doc ///
      Key
      	  "How to make reduced and non-reduced simplicial chain complexes"
      Headline
-     	  Simplicial homological constructors 
+     	  simplicial homological constructors 
      Description
           Text
 	     Let $K$ be an abstract simplicial complex on the vertex set $[n] = \{1\dots,n\}$.
@@ -540,7 +542,7 @@ doc ///
      Key
      	  "How to make subsimplical complexes and induced simplicial chain complex maps"
      Headline
-     	  Induced simplicial chain complex maps via subsimplicial complexes 
+     	  induced simplicial chain complex maps via subsimplicial complexes 
      Description
      	  Text	  
 	     Given a subsimplicial complex there are induced simplicial
@@ -558,7 +560,7 @@ doc ///
      Key
      	  "Calculations with random simplicial complexes"
      Headline
-     	  Homological calculations on random simplicial complexes
+     	  homological calculations on random simplicial complexes
      Description
      	  Text	  
 	     In what follows we illustrate a collection of homological calculations that
@@ -611,7 +613,7 @@ doc ///
      Key
      	  AbstractSimplicialComplex
      Headline
-     	  The type of all abstract simplicial complexes
+     	  the type of all abstract simplicial complexes
      Description
      	  Text	  
 	     The type AbstractSimplicialComplex is a data type for working
@@ -634,7 +636,7 @@ doc ///
     Key
 	 (symbol ==,AbstractSimplicialComplex,AbstractSimplicialComplex)
     Headline
-         Decide if two simplicial complexes are equal
+         decide if two simplicial complexes are equal
     Usage
         K == L
     Inputs
@@ -656,7 +658,7 @@ doc ///
 	 (randomAbstractSimplicialComplex,ZZ,ZZ)
 	 (randomAbstractSimplicialComplex,ZZ,ZZ,ZZ)
     Headline
-          Create a random abstract simplicial complex
+          create a random abstract simplicial complex
     Usage
         randomAbstractSimplicialComplex(n)
 	randomAbstractSimplicialComplex(n,r)
@@ -679,6 +681,14 @@ doc ///
           Example
 	     K = randomAbstractSimplicialComplex(4)
 	     J = randomAbstractSimplicialComplex(4,Seed => false)
+	  Text
+	     Even if the user desires to set the random seed to false
+	     so that the random seed will not be set internally within
+	     the method it is advisable to set the random seed adhead
+	     of time prior to calling the method.
+	  Example
+	    setRandomSeed(currentTime());
+	    J = randomAbstractSimplicialComplex(4,Seed => false)
 	  Text
 	     Create a random simplicial complex on $[n]$ with dimension at
 	     most equal to r.
@@ -711,7 +721,7 @@ doc ///
 	 (randomSubSimplicialComplex,AbstractSimplicialComplex)
 	 (randomSubSimplicialComplex,AbstractSimplicialComplex)
     Headline
-          Create a random subsimplicial complex
+          create a random subsimplicial complex
     Usage
         randomSubSimplicialComplex(K)
     Inputs
@@ -736,7 +746,7 @@ doc ///
      	  ambientAbstractSimplicialComplex
 	  (ambientAbstractSimplicialComplex,AbstractSimplicialComplex)
      Headline
-     	  The ambient simplex
+     	  the ambient simplex
      Usage
           ambientAbstractSimplicialComplex(K)
      Inputs
@@ -760,7 +770,7 @@ doc ///
      	  ambientAbstractSimplicialComplexSize
 	  (ambientAbstractSimplicialComplexSize,AbstractSimplicialComplex)
      Headline
-     	  The ambient simplex size
+     	  the ambient simplex size
      Usage
          ambientAbstractSimplicialComplex(K)
      Inputs
@@ -783,7 +793,7 @@ doc ///
      	  inducedSimplicialChainComplexMap
 	  (inducedSimplicialChainComplexMap,AbstractSimplicialComplex,AbstractSimplicialComplex)
      Headline
-     	  Induced maps that arise via inclusions of abstract simplicial complexes
+     	  the induced maps that arise via inclusions of abstract simplicial complexes
      Usage
           inducedSimplicialChainComplexMap(K,L)
      Inputs
@@ -815,7 +825,7 @@ doc ///
      	  inducedReducedSimplicialChainComplexMap
 	  (inducedReducedSimplicialChainComplexMap,AbstractSimplicialComplex,AbstractSimplicialComplex)
      Headline
-     	  Induced maps that arise via inclusions of abstract simplicial complexes
+     	  the induced maps that arise via inclusions of abstract simplicial complexes
      Usage
          inducedReducedSimplicialChainComplexMap(K,L)
      Inputs
@@ -847,7 +857,7 @@ doc ///
      	  reducedSimplicialChainComplex
 	  (reducedSimplicialChainComplex,AbstractSimplicialComplex)
      Headline
-     	  The reduced homological chain complex that is determined by an abstract simplicial complex
+     	  the reduced homological chain complex that is determined by an abstract simplicial complex
      Usage
          reducedSimplicialChainComplex(K)
      Inputs
@@ -869,7 +879,7 @@ doc ///
      	  simplicialChainComplex
 	  (simplicialChainComplex,AbstractSimplicialComplex)
      Headline
-     	  The non-reduced homological chain complex that is determined by an abstract simplicial complex
+     	  the non-reduced homological chain complex that is determined by an abstract simplicial complex
      Usage
          simplicialChainComplex(K)
      Inputs
@@ -893,7 +903,7 @@ doc ///
 	  (abstractSimplicialComplex,ZZ)
 	  (abstractSimplicialComplex,ZZ,ZZ)
      Headline
-     	  The AbstractSimplicialComplex that is determined by an abstract simplicial complex
+     	  the AbstractSimplicialComplex that is determined by an abstract simplicial complex
      Usage
          abstractSimplicialComplex(l)
 	 abstractSimplicialComplex(n)
@@ -929,7 +939,7 @@ doc ///
      Key
      	  (symbol _, AbstractSimplicialComplex, ZZ)
      Headline
-     	  The $k$ faces of a simplicial complex
+     	  the $k$ faces of a simplicial complex
      Usage
        K_k
      Inputs
@@ -956,7 +966,7 @@ doc ///
           abstractSimplicialComplexFacets 
           (abstractSimplicialComplexFacets, AbstractSimplicialComplex)
      Headline
-     	  The facets of a simplicial complex
+     	  the facets of a simplicial complex
      Usage
          abstractSimplicialComplexFacets(K)
      Inputs
@@ -976,7 +986,7 @@ doc ///
      Key
           (dim, AbstractSimplicialComplex)
      Headline
-     	  The dimension of a simplicial complex
+     	  the dimension of a simplicial complex
      Usage
           dim(K)
      Inputs
@@ -1013,7 +1023,6 @@ doc ///
 	 SeeAlso
 	      "randomAbstractSimplicialComplex"
 	      "randomSubSimplicialComplex"
-
 ///	      
 
 doc ///
@@ -1021,8 +1030,6 @@ doc ///
            [randomAbstractSimplicialComplex,Seed]
 	 SeeAlso
 	      "randomAbstractSimplicialComplex"
-	   
-
 ///
 
 doc ///
@@ -1030,7 +1037,6 @@ doc ///
            [randomSubSimplicialComplex,Seed]
 	 SeeAlso
 	      "randomSubSimplicialComplex"
-
 ///
 
 -* Test section *-
@@ -1086,6 +1092,52 @@ assert(K = randomAbstractSimplicialComplex(6);
 assert(K = randomAbstractSimplicialComplex(6);
      J = randomSubSimplicialComplex(K);
      isWellDefined inducedSimplicialChainComplexMap(K,J))
+
+-- a complex of tests for abstractSimplicalComplex
+
+assert(abstractSimplicialComplex(0) == abstractSimplicialComplex({{}}))
+assert(abstractSimplicialComplex(1) == abstractSimplicialComplex({{1}}))
+assert(abstractSimplicialComplex(3) == abstractSimplicialComplex({{1},{2},{3},{1,2},{1,3},{2,3},{1,2,3}}))
+ 
+-- a couple of tests for simplicialChainComplex
+
+assert(K = abstractSimplicialComplex({{}});
+     simplicialChainComplex(K) == 0)
+
+assert(K = abstractSimplicialComplex(2);
+    C = complex hashTable { 1 => map(ZZ^2,ZZ^1,matrix(ZZ,{{-1},{1}}))};
+simplicialChainComplex(K) == C)
+
+-- a couple of tests for reducedSimplicialChainComplex
+
+assert(K = abstractSimplicialComplex({{}});
+    reducedSimplicialChainComplex(K) == complex hashTable {-1 => map(ZZ^0,ZZ^1,zero)})
+assert(K = abstractSimplicialComplex(2);
+C = reducedSimplicialChainComplex(K);
+c = complex hashTable { -1 => map(ZZ^0,ZZ^1,zero), 0 => map(ZZ^1,ZZ^2,matrix(ZZ,{{1,1}})), 1 => map(ZZ^2,ZZ^1,matrix(ZZ,{{-1},{1}}))};
+C == c)
+
+-- a test for ambientAbstractSimplicialComplexSize
+
+assert(K = abstractSimplicialComplex({{1,2},{1,3,5},{3,5},{4,8,9},{8,9}});
+     ambientAbstractSimplicialComplexSize(K) == 9)
+assert(K = abstractSimplicialComplex({{}});
+    ambientAbstractSimplicialComplexSize(K) == 0)
+
+-- a test for ambientAbstractSimplicialComplex
+
+assert(K = abstractSimplicialComplex({{1,2},{1,3,5},{3,5}});
+    n = ambientAbstractSimplicialComplexSize(K);
+    ambientAbstractSimplicialComplex(K) == abstractSimplicialComplex(n))
+assert(ambientAbstractSimplicialComplex(abstractSimplicialComplex({{}}))
+    == abstractSimplicialComplex(0))
+
+-- a couple of tests for abstractSimplicialComplexFacets
+assert(K = abstractSimplicialComplex({{}});
+      abstractSimplicialComplexFacets(K) == {{}})
+assert(K = abstractSimplicialComplex({{1,2},{1,2,3,5},{1,2,3,4}});
+     abstractSimplicialComplexFacets(K) ==  {{1, 2, 3, 4}, {1, 2, 3, 5}})
+assert(abstractSimplicialComplexFacets(abstractSimplicialComplex(4)) == {{1,2,3,4}})
 ///
 
 end--
@@ -1100,3 +1152,6 @@ uninstallPackage "AbstractSimplicialComplexes"
 installPackage("AbstractSimplicialComplexes", RemakeAllDocumentation => true)
 check "AbstractSimplicialComplexes"
 viewHelp"AbstractSimplicialComplexes"
+
+
+
