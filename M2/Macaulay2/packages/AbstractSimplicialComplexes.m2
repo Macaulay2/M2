@@ -22,7 +22,7 @@
 newPackage(
     "AbstractSimplicialComplexes",
     Version => "1.0",
-    Date => "12 March 2025",
+    Date => "13 March 2025",
     Headline => "Abstract Simplicial Complexes",
     Authors => {{ Name => "Nathan Grieve", Email => "nathan.m.grieve@gmail.com",
 	    HomePage => "https://sites.google.com/view/nathan-grieve"}},
@@ -1077,7 +1077,7 @@ assert(M = abstractSimplicialComplex {{1}};
      L = abstractSimplicialComplex {{}};
      isWellDefined inducedReducedSimplicialChainComplexMap(M,L))
 
--- a test for random abstract simplicial complexes
+-- a test for randomAbstractSimplicialComplex
 -- reducedSimplicialChainComplexes
 -- and inducedReducedSimplicialChainComplexMap
 
@@ -1085,7 +1085,7 @@ assert(K = randomAbstractSimplicialComplex(6);
      J = randomSubSimplicialComplex(K);
      isWellDefined inducedReducedSimplicialChainComplexMap(K,J))
 
--- a test for random abstract simplicial complexes
+-- a test for randomSubSimplicialComplex
 -- simplicialChainComplexes
 -- and reducedSimplicialChainComplexMap
 
