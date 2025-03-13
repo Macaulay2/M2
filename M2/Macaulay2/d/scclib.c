@@ -670,18 +670,43 @@ M2_string system_netstrerror(int errcode) {
 #define INCOMING_QUEUE_LEN 10
 
 int openlistener(char *interface0, char *service) {
-  struct addrinfo *addr = NULL;
-  static struct addrinfo hints;	/* static so all parts get initialized to zero */
+  struct addrinfo *addr, *p, hints;
   int so, r;
+
+  addr = NULL;
+  p = NULL;
+  memset(&hints, 0, sizeof(hints));
+
   hints.ai_family = AF_UNSPEC;
+  hints.ai_socktype = SOCK_STREAM;
   hints.ai_flags = AI_PASSIVE;
   r = getaddrinfo(interface0, service, &hints, &addr);
   if (r != 0)
     return r + ERROR; /* see note above system_netstrerror */
-  so = socket(addr->ai_family,SOCK_STREAM,0);
-  if (ERROR == so) { freeaddrinfo(addr); return ERROR; }
-  if (ERROR == bind(so,addr->ai_addr,addr->ai_addrlen) || ERROR == listen(so, INCOMING_QUEUE_LEN)) { freeaddrinfo(addr); close(so); return ERROR; }
-  freeaddrinfo(addr); 
+
+  for (p = addr; p != NULL; p = p->ai_next) {
+    so = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+    if (so == ERROR)
+      continue;
+
+    if (bind(so, p->ai_addr, p->ai_addrlen) == ERROR) {
+      close(so);
+      continue;
+    }
+
+    break;
+  }
+
+  freeaddrinfo(addr);
+
+  if (p == NULL)
+    return ERROR;
+
+  if (listen(so, INCOMING_QUEUE_LEN) == ERROR) {
+    close(so);
+    return ERROR;
+  }
+
   return so;
 }
 
@@ -692,16 +717,39 @@ int opensocket(char *host, char *service) {
     return ERROR;
   } else { interrupt_jump_set = TRUE; }
   */
-  struct addrinfo *addr;
+  struct addrinfo *addr, *p, hints;
   int so, r;
-  r = getaddrinfo(host, service, NULL, &addr);
+
+  addr = NULL;
+  p = NULL;
+  memset(&hints, 0, sizeof(hints));
+
+  hints.ai_family = AF_UNSPEC;
+  hints.ai_socktype = SOCK_STREAM;
+  r = getaddrinfo(host, service, &hints, &addr);
   if (r != 0)
     return r + ERROR;  /* see note above system_netstrerror */
-  so = socket(addr->ai_family,SOCK_STREAM,0);
-  if (ERROR == so) { freeaddrinfo(addr); return ERROR; }
-  if (ERROR == connect(so,addr->ai_addr,addr->ai_addrlen)) { freeaddrinfo(addr); close(so); return ERROR; }
+
+  for (p = addr; p != NULL; p = p->ai_next) {
+    so = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+    if (so == ERROR)
+      continue;
+
+    if (connect(so, p->ai_addr, p->ai_addrlen) == ERROR) {
+      close(so);
+      continue;
+    }
+
+    break;
+  }
+
+
   // interrupt_jump_set = FALSE;
   freeaddrinfo(addr);
+
+  if (p == NULL)
+    return ERROR;
+
   return so;
 }
 
