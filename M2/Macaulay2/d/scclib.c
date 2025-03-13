@@ -626,20 +626,16 @@ const char *hstrerror(int herrno) {
 #endif
 
 int system_acceptBlocking(int so) {
-#ifdef HAVE_ACCEPT
   struct sockaddr_in addr;
   socklen_t addrlen = sizeof addr;
 #ifdef HAVE_FCNTL
   fcntl(so,F_SETFL,0);
 #endif
   return accept(so,(struct sockaddr*)&addr,&addrlen);
-#else
-  return ERROR;
-#endif
 }
 
 int system_acceptNonblocking(int so) {
-#if defined(HAVE_SOCKET) && defined(HAVE_FCNTL)
+#if defined(HAVE_FCNTL)
   struct sockaddr_in addr;
   socklen_t addrlen = sizeof addr;
   int sd;
@@ -674,7 +670,6 @@ M2_string system_netstrerror(int errcode) {
 #define INCOMING_QUEUE_LEN 10
 
 int openlistener(char *interface0, char *service) {
-#ifdef HAVE_SOCKET
   struct addrinfo *addr = NULL;
   static struct addrinfo hints;	/* static so all parts get initialized to zero */
   int so, r;
@@ -688,9 +683,6 @@ int openlistener(char *interface0, char *service) {
   if (ERROR == bind(so,addr->ai_addr,addr->ai_addrlen) || ERROR == listen(so, INCOMING_QUEUE_LEN)) { freeaddrinfo(addr); close(so); return ERROR; }
   freeaddrinfo(addr); 
   return so;
-#else
-  return ERROR;
-#endif
 }
 
 int opensocket(char *host, char *service) {
@@ -700,7 +692,6 @@ int opensocket(char *host, char *service) {
     return ERROR;
   } else { interrupt_jump_set = TRUE; }
   */
-#ifdef HAVE_SOCKET
   struct addrinfo *addr;
   int so, r;
   r = getaddrinfo(host, service, NULL, &addr);
@@ -712,9 +703,6 @@ int opensocket(char *host, char *service) {
   // interrupt_jump_set = FALSE;
   freeaddrinfo(addr);
   return so;
-#else
-  return ERROR;
-#endif
 }
 
 int system_opensocket(M2_string host,M2_string serv) {
