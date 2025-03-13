@@ -612,15 +612,6 @@ M2_string system_readfile(int fd) {
      return s;
 }
 
-static const char *hostname_error_message;
-
-static int set_addrinfo(struct addrinfo **addr, struct addrinfo *hints, char *hostname, char *service) {
-     int ret;
-     ret = getaddrinfo(hostname, service, hints /* thanks to Dan Roozemond for pointing out this was NULL before, causing problems */, addr);
-     hostname_error_message = ret != 0 ? gai_strerror(ret) : NULL;
-     return ret;
-}
-
 #ifndef HAVE_HSTRERROR
 const char *hstrerror(int herrno) {
      switch(herrno) {
@@ -660,16 +651,38 @@ int system_acceptNonblocking(int so) {
 #endif
 }
 
+/* openlistener and opensocket might encounter errors in getaddrinfo, which
+   doesn't use errno, or in various other functions that do.
+   To keep these straight, we return the following:
+
+   * ERROR (#defined as -1 in types.h) when errno is set so we know when
+     to call strerror(errno)
+
+   * r + ERROR when getaddrinfo raises an error (r = getaddrinfo ret value)
+     so we can recover r before calling gai_strerror by subtracting ERROR
+
+   The following function determines the error message:
+*/
+
+M2_string system_netstrerror(int errcode) {
+  if (errcode == ERROR || errcode - ERROR == EAI_SYSTEM)
+    return M2_tostring(strerror(errno));
+  else
+    return M2_tostring(gai_strerror(errcode - ERROR));
+}
+
 #define INCOMING_QUEUE_LEN 10
 
 int openlistener(char *interface0, char *service) {
 #ifdef HAVE_SOCKET
   struct addrinfo *addr = NULL;
   static struct addrinfo hints;	/* static so all parts get initialized to zero */
-  int so;
+  int so, r;
   hints.ai_family = AF_UNSPEC;
   hints.ai_flags = AI_PASSIVE;
-  if (0 != set_addrinfo(&addr,&hints,interface0,service)) return ERROR;
+  r = getaddrinfo(interface0, service, &hints, &addr);
+  if (r != 0)
+    return r + ERROR; /* see note above system_netstrerror */
   so = socket(addr->ai_family,SOCK_STREAM,0);
   if (ERROR == so) { freeaddrinfo(addr); return ERROR; }
   if (ERROR == bind(so,addr->ai_addr,addr->ai_addrlen) || ERROR == listen(so, INCOMING_QUEUE_LEN)) { freeaddrinfo(addr); close(so); return ERROR; }
@@ -689,8 +702,10 @@ int opensocket(char *host, char *service) {
   */
 #ifdef HAVE_SOCKET
   struct addrinfo *addr;
-  int so;
-  if (0 != set_addrinfo(&addr,NULL,host,service)) return ERROR;
+  int so, r;
+  r = getaddrinfo(host, service, NULL, &addr);
+  if (r != 0)
+    return r + ERROR;  /* see note above system_netstrerror */
   so = socket(addr->ai_family,SOCK_STREAM,0);
   if (ERROR == so) { freeaddrinfo(addr); return ERROR; }
   if (ERROR == connect(so,addr->ai_addr,addr->ai_addrlen)) { freeaddrinfo(addr); close(so); return ERROR; }
@@ -729,11 +744,6 @@ int system_errno(void) {
 }
 
 char const *system_strerror(void) {
-     if (hostname_error_message) {
-	  char const *msg = hostname_error_message;
-	  hostname_error_message = NULL;
-	  return msg;
-     }
      if (errno > 0) {
 	  char const *msg = strerror(errno);
 	  errno = 0;

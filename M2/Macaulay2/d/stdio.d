@@ -233,7 +233,9 @@ opensocket(filename:string,input:bool,output:bool,listener:bool):(file or errmsg
      sd := NOFD;
      if length(host0) == 0 || listener then (
 	  so = openlistener(host0,serv);
-     	  if so == ERROR then return (file or errmsg)(errmsg("can't open listener : "+syserrmsg()));
+	  if so < 0
+	  then return (file or errmsg)(
+	      errmsg("can't open listener: " + netstrerror(so)));
 	  if input || output then (
 	       sd = acceptBlocking(so);
      	       if sd == ERROR then (
@@ -244,8 +246,9 @@ opensocket(filename:string,input:bool,output:bool,listener:bool):(file or errmsg
 	  )
      else (
 	  sd = opensocket(host0,serv);
-     	  if sd == ERROR then return (file or errmsg)(errmsg("can't open socket : "+syserrmsg()));
-	  );
+	  if sd < 0
+	  then return (file or errmsg)(
+	      errmsg("can't open socket: " + netstrerror(sd))));
      (file or errmsg)(addfile(newFile(filename, 0,
 	  false, "",
 	  listener, so, NOFD, if listener then 0 else 1,

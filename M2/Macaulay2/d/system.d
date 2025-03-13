@@ -105,6 +105,7 @@ import openout(filename:string):int;
 import openoutappend(filename:string):int;
 import opensocket(host:string,serv:string):int;
 import openlistener(interface:string,serv:string):int;
+import netstrerror(errcode:int):string;
 import acceptBlocking(sd:int):int;
 import acceptNonblocking(sd:int):int;
 import syserrmsg():string;				    -- uses errno
