@@ -421,6 +421,8 @@ hypertext VerticalList         := x -> if #x==0 then SPAN{"{}"} else UL append(a
 hypertext NumberedVerticalList := x -> if #x==0 then SPAN{"{}"} else OL append(apply(x, y -> new LI from hold y),"style"=>"display:inline-table")
 hypertext RawObject := hypertext @@ net
 
+unique Hypertext := x -> new class x from unique toList x
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
