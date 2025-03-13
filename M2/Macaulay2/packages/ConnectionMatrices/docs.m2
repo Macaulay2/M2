@@ -162,3 +162,41 @@ Caveat
 SeeAlso
 
 ///
+
+
+doc ///
+Key
+    isIntegrable
+    (isIntegrable, PolynomialRing, List)
+    (isIntegrable, List)
+Headline
+    verifies that the connection matrices describe an integrable connection
+Usage
+    isIntegrable(D,A)
+    isIntegrable(A)
+Inputs
+    D:PolynomialRing
+      the Weyl algebra
+    A:List
+      of matrices constituting the Pfaffian system
+Outputs
+    p:Boolean
+      whether [A_i,A_j] = dx_i(A_j) - dx_j(A_i) for all i,j
+Description
+  Text
+    A Pfaffian system consisting of n matrices A_i in Mat_r(k(x_1..x_n)), describing n differential equations
+      dx_i(vec(f)) = A_i * vec(f) (for all i),
+    comes from an integrable connection if its matrices satisfy
+      [A_i,A_j] = dx_i(A_j) - dx_j(A_i) for all i,j.
+    This is the case, in particular, when they come from a D-module, respectively from a D-ideal.
+  Example
+    D = makeWeylAlgebra(QQ[x,y], w = {0,0,1,2});
+    I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
+    A = pfaffians I;
+    assert(isIntegrable(D,A))
+    assert(isIntegrable(A))
+Caveat
+  The matrices need to be defined over fractionField(D).
+SeeAlso
+
+///

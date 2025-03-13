@@ -52,6 +52,16 @@ integrabilityTerm = (D, A) ->
 isIntegrable = method()
 isIntegrable (PolynomialRing, List) := Boolean => (D,A) -> all(integrabilityTerm(D,A), zero); -- Check that each term is zero.
 
+-- Infering the polynomial base ring from A_0:
+isIntegrable List := Boolean => A -> (
+    assert(class(ring A_0) === FractionField);
+    assert(class(baseRing ring A_0) === PolynomialRing);
+
+    D := makeWeylAlgebra(baseRing ring A_0);
+    isIntegrable(D,A)
+)
+
+
 end--
 restart
 needs "./integrabilityCheck.m2"
