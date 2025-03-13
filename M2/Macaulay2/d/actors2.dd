@@ -476,6 +476,11 @@ openOut(filename:Expr):Expr := (
 setupfun("openOut",openOut);
 openOutAppend(filename:Expr):Expr := (
      when filename
+     -- # typical value: openOutAppend, File, File
+     is f:file do (
+	  when openOut(f)
+	  is g:file do Expr(g)
+	  is m:errmsg do buildErrorPacket(m.message))
      -- # typical value: openOutAppend, String, File
      is f:stringCell do (
 	  when openOutAppend(f.v)
