@@ -166,6 +166,35 @@ SeeAlso
 
 doc ///
 Key
+    isEpsilonFactorized
+    (isEpsilonFactorized, List)
+    (isEpsilonFactorized, Matrix)
+Headline
+    checks if a Pfaffian (system) is in epsilon-factorized form
+Usage
+    epsilonFactorized(P)
+    epsilonFactorized(M)
+Inputs
+    P:List
+      Pfaffian system
+    M:Matrix
+      Pfaffian matrix
+Outputs
+    b:boolean
+Description
+  Text
+    This method returns true if the Pfaffian (system) is written in epsilon factorized form.
+  Example
+
+Caveat
+  Currently the output lives in the fraction field of the variables adjoin differentials, but this is not the correctly implemented rational Weyl algebra
+SeeAlso
+
+///
+
+
+doc ///
+Key
     isIntegrable
     (isIntegrable, PolynomialRing, List)
     (isIntegrable, List)
