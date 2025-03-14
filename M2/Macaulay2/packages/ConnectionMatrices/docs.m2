@@ -167,25 +167,32 @@ SeeAlso
 doc ///
 Key
     isEpsilonFactorized
-    (isEpsilonFactorized, List)
-    (isEpsilonFactorized, Matrix)
+    (isEpsilonFactorized, List, RingElement)
+    (isEpsilonFactorized, Matrix, RingElement)
 Headline
     checks if a Pfaffian (system) is in epsilon-factorized form
 Usage
-    epsilonFactorized(P)
-    epsilonFactorized(M)
+    isEpsilonFactorized(P,r)
+    isEpsilonFactorized(M,r)
 Inputs
     P:List
       Pfaffian system
     M:Matrix
-      Pfaffian matrix
+      a single Pfaffian
+    r:RingElement
+      parameter which factorization property should be tested
 Outputs
     b:boolean
 Description
   Text
     This method returns true if the Pfaffian (system) is written in epsilon factorized form.
   Example
-
+    D = makeWA(frac(QQ[e,DegreeRank=>0])[x]);
+    I = ideal(P = x*(1-x)*dx^2 - e*(1-x)*dx);
+    P = pfaffians I; SM = stdMon(I);
+    B = {sub(1,D),sub(1/e,D)*dx}; GB = flatten entries groebnerBasis(I); G = gaugeMatrix(GB,SM,B);
+    gaugeTransform(G,P,D)
+    isEpsilonFactorized(gaugeTransform(G,P,D),e)
 Caveat
   Currently the output lives in the fraction field of the variables adjoin differentials, but this is not the correctly implemented rational Weyl algebra
 SeeAlso
