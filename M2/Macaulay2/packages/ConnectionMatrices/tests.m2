@@ -74,3 +74,17 @@ A = pfaffians I;
 assert(isIntegrable(D,A));
 
 ///
+
+TEST ///
+-- Using parameters
+-- Example equation (11) from https://arxiv.org/pdf/2410.14757     (MODIFIED from above, with frac(QQ[e]))
+w = {0,0,0,1,1,1};
+D = makeWeylAlgebra(frac(QQ[e,DegreeRank=>0])[x,y,z],w);
+delta1 = (x^2-z^2)*dx^2+2*(1-e)*x*dx-e*(1-e);
+delta2 = (y^2-z^2)*dy^2+2*(1-e)*y*dy-e*(1-e);
+delta3 = (x+z)*(y+z)*dx*dy-e*(x+z)*dx-e*(y+z)*dy+e^2;
+h = x*dx+y*dy+z*dz-2*e;
+I = ideal(delta1+delta3, delta2+delta3,h);
+r = holonomicRank I;                                        -- CORRECT: Outputs 4 as holonomic rank.
+asserts(r == 4)
+///
