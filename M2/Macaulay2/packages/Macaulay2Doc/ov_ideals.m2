@@ -1,5 +1,4 @@
 -- -*- coding: utf-8 -*-
--- -*- coding: utf-8 -*-
 document {
      Key => "ideals",
      HEADER2 "An overview",     
