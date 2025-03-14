@@ -2215,7 +2215,7 @@ document {
 			 },
 		    LI {
 			 "The functions used with ", TO "merge", " and ", TO "combine", " now have a way to indicate that the resulting
-			 hashtable should have no entry corresponding to the current key."
+			 hash table should have no entry corresponding to the current key."
 			 }
 		    }
 	       }
