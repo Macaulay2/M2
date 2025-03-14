@@ -56,9 +56,9 @@ gaugeTransform(Matrix, List, PolynomialRing) := (G, C, W)->(
 --epsilonFactorized checks if the system is in epsilon-factorized form
 ----------------------------------------------------
 
-epsilonFactorized = method();
+isEpsilonFactorized = method();
 -- checks factorization for a whole Pfaffian system
-epsilonFactorized(List,RingElement) := (P,e) -> (
+isEpsilonFactorized(List,RingElement) := (P,e) -> (
     EF := true;
     for p in P do (
         if p % e == 0 then continue
@@ -68,7 +68,7 @@ epsilonFactorized(List,RingElement) := (P,e) -> (
 )
 
 -- checks factorization for a single Pfaffian
-epsilonFactorized(List,RingElement) := (P,e) -> (
+isEpsilonFactorized(List,RingElement) := (P,e) -> (
     EF := true;
     for p in P do (
         if p % e == 0 then continue
