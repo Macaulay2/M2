@@ -189,10 +189,8 @@ Description
   Example
     D = makeWA(frac(QQ[e,DegreeRank=>0])[x]);
     I = ideal(P = x*(1-x)*dx^2 - e*(1-x)*dx);
-    P = pfaffians I; SM = stdMon(I);
-    B = {sub(1,D),sub(1/e,D)*dx}; GB = flatten entries groebnerBasis(I); G = gaugeMatrix(GB,SM,B);
-    gaugeTransform(G,P,D)
-    isEpsilonFactorized(gaugeTransform(G,P,D),e)
+    B = {sub(1,D),sub(1/e,D)*dx}; P = pfaffians(B,I)
+    isEpsilonFactorized(P,e)
 Caveat
   Currently the output lives in the fraction field of the variables adjoin differentials, but this is not the correctly implemented rational Weyl algebra
 SeeAlso
