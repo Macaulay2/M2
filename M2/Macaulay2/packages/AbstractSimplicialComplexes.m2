@@ -29,7 +29,6 @@ newPackage(
     AuxiliaryFiles => false,
     DebuggingMode => false,
     PackageImports => {"Complexes"},
-    PackageExports => {"Complexes"}, -- if we do not export Complexes then a few checks fail
     Keywords => {"Combinatorial Commutative Algebra"}
     )
 
@@ -1040,7 +1039,10 @@ doc ///
 ///
 
 -* Test section *-
-TEST /// -* [insert short title for this test] *-
+
+TEST /// -- a collection of tests are included below --
+
+needsPackage"Complexes"  -- in order for some tests to run properly the Complexes package needs to be imported 
 
 -- a test for the exported function/methods
 -- abstractSimplicialComplex
