@@ -427,6 +427,7 @@ export setStdError(f:file):void := ( stdError = f; setGlobalVariable(stderrS, Ex
 openfilesfun(e:Expr):Expr := (
     when e
     is a:Sequence do (
+	-- typical value: openFiles, List
 	if length(a) == 0 then (
 	    n := 0;
 	    ff := openfiles;
