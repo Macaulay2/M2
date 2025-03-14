@@ -13,7 +13,7 @@
 
 needs "system.m2" -- for chkrun
 needs "document.m2"
-needs "installPackage.m2" -- TODO: can this be removed?
+needs "installPackage.m2" -- for topFileName
 
 -----------------------------------------------------------------------------
 -- Local variables
@@ -75,6 +75,7 @@ smenuCLASS := s -> ul (last \ sort \\ nonnull \\ optTOCLASS \ toList s)
 
 -- this is a simplified version of submenu in SimpleDoc
 -- used in html.m2 and format.m2
+-- TODO: this seems to be very slow
 redoMENU = contents -> (
     contents = deepApply'(contents, identity, item -> instance(item, BasicList) and not isLink item);
     DIV prepend(
