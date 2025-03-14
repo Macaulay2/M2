@@ -31,17 +31,7 @@ fileMode(ZZ,File) := fileMode
 fileMode(ZZ,String) := fileMode
 get File := get String := String => get
 getc File := String => getc
-isInputFile(File) := Boolean => isInputFile
-isListener(File) := Boolean => isListener
-isOpen(Database) := Boolean => isOpen
-isOpen(File) := Boolean => isOpen
-isOutputFile(File) := Boolean => isOutputFile
 linkFile(String,String) := Nothing => linkFile
-openIn String := File => openIn
-openInOut String := openInOut File := File => openInOut
-openListener String := File => openListener
-openOut String := File => openOut
-openOutAppend String := File => openOutAppend
 kill File := Nothing => kill
 kill ZZ := Nothing => kill
 read File := String => read
