@@ -240,13 +240,9 @@ M2_arrayint system_waitNoHang(M2_arrayint pids)
      M2_arrayint z = (M2_arrayint)getmem_atomic(sizeofarray(z,n));
      z->len = n;
      for (int i=0; i<n; i++) {
-	  #ifdef HAVE_WAITPID
 	      int status = 0, ret = waitpid(pid[i],&status,WNOHANG);
 	      z->array[i] =
 		ret == ERROR ? -1 : fix_status(status);
-	  #else
-	      z->array[i] = -1;                                            /* not implemented */
-	  #endif
      }
      return z;
 }
