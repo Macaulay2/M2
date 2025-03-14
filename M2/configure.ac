@@ -369,7 +369,7 @@ AC_SEARCH_LIBS(hstrerror,resolv)
 AC_SEARCH_LIBS(dlopen,dl)
 AC_SEARCH_LIBS(gethostbyname,nsl)
 
-AC_CHECK_FUNCS([herror hstrerror getprgp setpgid fchmod pipe waitpid setrlimit
+AC_CHECK_FUNCS([herror hstrerror getprgp setpgid fchmod pipe setrlimit
 		fork sigprocmask kill sigaction readlink lstat realpath link
 		symlink fcntl])
 

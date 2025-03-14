@@ -216,9 +216,6 @@
 /* Defined if you have the <regex.h> header file. */
 #cmakedefine HAVE_REGEX_H 1
 
-/* Define to 1 if you have the `waitpid' function. */
-#cmakedefine HAVE_WAITPID 1
-
 /* issue (flavor) of operating system, if any */
 #define ISSUE "${ISSUE}"
 

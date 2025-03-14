@@ -130,13 +130,9 @@ import strcmp(s:string,t:string):int;
 import strnumcmp(s:string,t:string):int;
 import randomint():int;
 export wait(pid:int):int := Ccode(returns, "
-     #ifdef HAVE_WAITPID
       int status;
       if (waitpid(pid,&status,0) == -1) return -1;
       return status;
-     #else
-      return -1;
-     #endif
      ");
 import waitNoHang(pid:array(int)):array(int);
 import select(s:array(int)):array(int);
