@@ -26,7 +26,7 @@ export {
     "gaugeTransform",
     "diffConnectionMatrix",
     "stdMon",
-    "epsilonFactorized",
+    "isEpsilonFactorized",
     "isIntegrable",
 }
 
