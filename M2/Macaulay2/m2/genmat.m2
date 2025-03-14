@@ -163,7 +163,20 @@ random(Module, Module) := Matrix => opts -> (F,G) -> (
 				   r)))));
 	  map(F, G, applyTable(degreesTable, k -> (randomElement k)()))))
 
-random Module := Vector => o -> M -> vector(generators M * random(cover M, module ring M, o))
+-- give a random vector in a module over a local (non-homogeneous) ring
+localRandom = (M, opts) -> (
+    R := ring M;
+    -- TODO: which coefficient ring do we want?
+    K := try coefficientRing R else R;
+    v := random(cover M ** K, module K, opts);
+    -- TODO: sub should be unnecessary, but
+    -- see https://github.com/Macaulay2/M2/issues/3638
+    vector inducedMap(M, , generators M * substitute(v, R)))
+
+random(ZZ,   Module) :=
+random(List, Module) := Vector => o -> (d, M) -> vector map(M, , random(cover M, (ring M)^{-d}, o))
+random       Module  := Vector => o ->     M  -> (
+    if isHomogeneous M then random(degree 1_(ring M), M, o) else localRandom(M, o))
 
 random(ZZ,   Ideal) := RingElement => opts -> (d, I) -> random({d}, I, opts)
 random(List, Ideal) := -* RingElement or List => *- opts -> (L, I) -> (

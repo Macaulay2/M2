@@ -9,8 +9,9 @@ TEST ///
   X = Proj S;
   I = monomialCurveIdeal(S,{1,3,4})
   N = S^1/I;
-  assert(Ext^1(OO_X,N~(>= 0)) == prune truncate(0,Ext^1(truncate(2,S^1),N)))
-  assert(Ext^1(OO_X,N~(>= 0)) != prune truncate(0,Ext^1(truncate(1,S^1),N)))
+  assert(Ext^1(OO_X,N^~(>=-1)) == prune truncate(-1,Ext^1(truncate(1,S^1),N)))
+  assert(Ext^1(OO_X,N^~(>= 0)) == prune truncate(0,Ext^1(truncate(2,S^1),N)))
+  assert(Ext^1(OO_X,N^~(>= 0)) != prune truncate(0,Ext^1(truncate(1,S^1),N)))
 
   -- Example 4.2: locally free sheaves and global Ext.
   S = ZZ/32003[u,v,w,x,y,z];

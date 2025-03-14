@@ -18,9 +18,11 @@ undocumented {
     (symbol /, RingElement, Number),
     --
     (symbol //, InexactNumber, RingElement),
-    (symbol //, InfiniteNumber, CC),
-    (symbol //, InfiniteNumber, InfiniteNumber),
     (symbol //, RingElement, InexactNumber),
+    (symbol //, InfiniteNumber, RR),
+    (symbol //, InfiniteNumber, CC),
+    (symbol //, InfiniteNumber, Number),
+    (symbol //, InfiniteNumber, InfiniteNumber),
 }
 
 document {
@@ -81,18 +83,17 @@ document {
 	(symbol //, CC, QQ),
 	(symbol //, CC, RR),
 	(symbol //, CC, ZZ),
-	(symbol //, InfiniteNumber, Number),
-	(symbol //, InfiniteNumber, RR),
-	(symbol //, List, Number),
-	(symbol //, List, RingElement),
 	(symbol //, QQ, QQ),
-	(symbol //, Number, RingElement),
 	(symbol //, QQ, ZZ),
-	(symbol //, RingElement, Number),
 	(symbol //, RR, QQ),
 	(symbol //, RR, RR),
 	(symbol //, RR, ZZ),
 	(symbol //, Number, InfiniteNumber),
+	(symbol //, Number, RingElement),
+	(symbol //, RingElement, Number),
+	(symbol //, RingElement, RingElement),
+	(symbol //, List, Number),
+	(symbol //, List, RingElement),
 	(symbol //, ZZ, MonomialIdeal)
     },
     Headline => "a binary operator, usually used for quotient",

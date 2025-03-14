@@ -4,9 +4,6 @@ needs "matrix.m2"
 needs "modules.m2"
 needs "quotient.m2"
 
-plurals := hashTable { "matrix" => "matrices" }
-pluralize := s -> if plurals#?s then plurals#s else s|"s"
-pluralsynonym := T -> try pluralize T.synonym else "objects of class "|toString T;
 notsamering := (X,Y) -> (
      if X === Y then error("expected ",pluralsynonym X, " for the same ring")
      else error("expected ",X.synonym," and ",Y.synonym," for the same ring"))
@@ -178,25 +175,22 @@ concatBlocks = mats -> (
 Matrix.matrix = options -> (f) -> concatBlocks f
 
 commonRing = method()
-trythese := rings -> ring try sum apply(rings, R -> 0_R) else error "common ring not found"
-commonRing List := f -> (
-     f = flatten f;
-     if #f == 0 then return ZZ;
-     types := unique apply(f, class);
-     if # types === 1 and instance(types#0,Ring) then return types#0;
-     rings := if all(types, T -> instance(T,Ring)) then types else unique apply(f,ring);
-     ring try sum apply(rings, R -> 0_R) else error "common ring not found")
+commonRing List := L -> (
+    rings := unique apply(flatten L, ring);
+    if #rings === 0 then ZZ      else
+    if #rings === 1 then rings#0 else
+    ring try sum apply(rings, R -> 0_R) else error "common ring not found")
 
-matrixTable := opts -> (f) -> (
+matrixTable = opts -> (f) -> (
      R := commonRing f;
      havemat := false;
-     f = applyTable(f, x -> (
-	       if instance(x,Matrix) then havemat = true
-	       else if not ( instance(x,RingElement) or instance(x,Number) )
-	       then error "expected numbers, ring elements, and matrices";
-	       promote(x,R)));
-     if not havemat then return map(R^#f,, f, opts);
+     f = applyTable(f,
+	 x -> if isMorphism x then (havemat = true; promote(x, R))
+	 else if instance(x, RingElement) or instance(x, Number) then promote(x, R)
+	 else error "expected numbers, ring elements, and matrices");
+     if not havemat then return map(R^#f, , f, opts);
      types := unique apply(flatten f, class);
+     -- Note: we use Matrix.matrix here, which is different from Matrix#matrix
      if # types === 1 and types#0 .?matrix then return ( types#0 .matrix opts)(f);
      f = apply(f, row -> new MutableList from row);
      m := #f;
@@ -274,20 +268,16 @@ matrix(Matrix) := Matrix => opts -> (m) -> (
 
 matrix RingElement := matrix Number := opts -> r -> matrix({{r}}, opts)
 
-matrix(List) := Matrix => opts -> (m) -> (
-     if #m === 0 then return matrix(ZZ, {});
-     mm := apply(splice m,splice);
-     if #mm === 0 then error "expected nonempty list";
-     types := unique apply(mm,class);
-     if #types === 1 then (
-	  type := types#0;
-	  if instance(type,Module) then matrix { apply(mm, v -> new Matrix from v) }
-	  else if ancestor(List, type) then (
-	       if isTable mm then (matrixTable opts)(mm)
-	       else error "expected rows all to be the same length"
-	       )
-	  else error "expected a table of ring elements or matrices, or a list of elements of the same module")
-     else error "expected a table of ring elements or matrices, or a list of elements of the same module")
+matrix List := Matrix => opts -> L -> (
+    if #L === 0 then return matrix(ZZ, {});
+    L = apply(splice L, splice); -- TODO: is this deepSplice?
+    if not uniform L and not isTable L
+    then error "expected a list of vectors or a table of entries or maps";
+    -- construct a matrix by concatenating column vectors
+    if instance(L#0, Vector) then matrix { apply(L, matrix) } else
+    -- construct a matrix from a table of entries or maps
+    if isTable L then (matrixTable opts)(L)
+    else error "expected a rows all to be the same length")
 
 align := g -> (
      -- generator and relation maps can just as well have a nonzero degree

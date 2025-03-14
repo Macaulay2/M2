@@ -246,6 +246,10 @@ isHomogeneous Matrix := (cacheValue symbol isHomogeneous) ( m -> ( isHomogeneous
 
 isWellDefined Matrix := f -> matrix f * presentation source f % presentation target f == 0
 
+-----------------------------------------------------------------------------
+-- directSum and friends
+-----------------------------------------------------------------------------
+
 ggConcatCols := (tar,src,mats) -> (
      map(tar,src,if mats#0 .?RingMap then mats#0 .RingMap,rawConcatColumns (raw\mats),Degree => if same(degree \ mats) then degree mats#0)
      )
@@ -319,28 +323,29 @@ indices HashTable := X -> (
      else error "expected an object with components"
      )
 
+-- This is used for methods like directSum or pullback/pushout
+-- which accept an arbitrary list of objects of the same type.
+applyUniformMethod = (symb, name) -> args -> (
+    if #args === 0 then error("expected at least one argument for ", name);
+    type := if uniform args then class args#0 else error("expected uniform objects for ", name);
+    meth := lookup(symb, type) ?? error("no method for ", name, " of ", pluralsynonym type);
+    if (Y := youngest args) =!= null and Y.?cache
+    then Y.cache#(symb, args) ??= meth args else meth args)
+
 directSum List := args -> directSum toSequence args
-directSum Sequence := args -> (
-    if #args === 0 then error "expected more than 0 arguments";
-    type := if uniform args then class args#0 else error "incompatible objects in direct sum";
-    meth := lookup(symbol directSum, type);
-    if meth === null then error "no method for direct sum";
-    Y := youngest args;
-    key := (directSum, args);
-    if Y === null or not Y.?cache then meth args else
-    if Y.cache#?key then Y.cache#key else Y.cache#key = meth args)
+directSum Sequence := applyUniformMethod(symbol directSum, "direct sum")
 
 -- Number.directSum = v -> directSum apply(v, a -> matrix{{a}})
 
 Option ++ Option := directSum
 directSum Option := o -> directSum(1 : o)
 Option.directSum = args -> (
-     if #args === 0 then error "expected more than 0 arguments";
+     if #args === 0 then error "expected at least one argument";
      objects := apply(args,last);
      labels  := toList args/first;
      type := if uniform objects then class objects#0 else error "incompatible objects in direct sum";
      meth := lookup(symbol directSum, type);
-     if meth === null then error "no method for direct sum";
+     if meth === null then error("no method for direct sum of ", pluralsynonym type);
      M := meth objects;
      M.cache.indices = labels;
      ic := M.cache.indexComponents = new HashTable from apply(#labels, i -> labels#i => i);

@@ -34,6 +34,9 @@ isNormal = method()
 
 normalCone = method(Options => true)
 
+isMorphism = method(TypicalValue => Boolean)
+isAbelianCategory = method(TypicalValue => Boolean)
+
 -- symbols
 
 protect Base
