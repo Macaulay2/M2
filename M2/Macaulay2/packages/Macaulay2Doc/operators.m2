@@ -212,15 +212,42 @@ document {
      }
 
 -- TODO: implement or/and for ZZ
-document {
-     Key => "or",
-     Headline => "disjunction",
-     TT "t or u", " -- returns true if ", TT "t", " is true or ", TT "u", "
-     is true.",
-     PARA{},
-     "If ", TT "t", " is true, then the code in ", TT "u", " is not evaluated.",
-     SeeAlso =>{ "and", "not", "xor" }
-     }
+doc ///
+  Key
+     symbol or
+    (symbol or, Boolean, Boolean)
+    (symbol or, Function, Function)
+  Headline
+    disjunction
+  Usage
+    t or u
+  Inputs
+    t:{Boolean, Function}
+    u:{Boolean, Function}
+  Outputs
+    :{Boolean, Function}
+  Description
+    Text
+      If @CODE "t"@ or @CODE "u"@ are booleans, then @M2CODE "t or u"@
+      returns true if either is true.
+    Example
+      even 7 or isPrime 7
+    Text
+      If @CODE "t"@ is true, then the code in @CODE "u"@ is not evaluated.
+    Example
+      even 6 or 1/0
+    Text
+      If they are both functions that return booleans, then the return value is
+      also a function.
+    Example
+      isEvenOrPrime = even or isPrime
+      isEvenOrPrime 7
+      isEvenOrPrime 9
+  SeeAlso
+    symbol and
+    symbol not
+    symbol xor
+///
 
 document {
     Key => symbol |,
@@ -240,15 +267,38 @@ document {
     SeeAlso => {(symbol &,ZZ,ZZ),(symbol ^^,ZZ,ZZ), (symbol ~, ZZ)}
 }
 
-document {
-     Key => "and",
-     Headline => "conjunction",
-     TT "t and u", " -- returns true if ", TT "t", " is true and ", TT "u", "
-     is true.",
-     PARA{},
-     "If ", TT "t", " is false, then the code in ", TT "u", " is not evaluated.",
-     SeeAlso =>{ "or", "not", "xor" }
-     }
+doc ///
+  Key
+     symbol and
+    (symbol and, Boolean, Boolean)
+    (symbol and, Function, Function)
+  Headline
+    conjunction
+  Usage
+    t and u
+  Inputs
+    t:{Boolean, Function}
+    u:{Boolean, Function}
+  Outputs
+    :{Boolean, Function}
+  Description
+    Text
+      If both @CODE "t"@ and @CODE "u"@ are booleans, then @M2CODE "t and u"@
+      returns true if both are true.
+    Example
+      even 2 and isPrime 2
+    Text
+      If they are both functions that return booleans, then the return value is
+      also a function.
+    Example
+      isEvenPrime = isPrime and even
+      isEvenPrime 2
+      isEvenPrime 3
+  SeeAlso
+    symbol or
+    symbol not
+    symbol xor
+///
 
 document {
      Key => symbol &,
@@ -268,30 +318,67 @@ document {
      SeeAlso => {(symbol |,ZZ,ZZ),(symbol ^^,ZZ,ZZ), (symbol ~, ZZ)}
      }
 
-document {
-     Key => "not",
-     Headline => "negation",
-     TT "not x", " -- yields the negation of x, which must be true or false.",
-     SeeAlso =>{ "and", "or" }
-     }
+doc ///
+  Key
+    symbol not
+  Headline
+    negation
+  Usage
+    not x
+  Inputs
+    x:{Boolean, Function}
+  Outputs
+    :{Boolean, Function}
+  Description
+    Text
+      If @CODE "x"@ is a boolean, then @M2CODE "not x"@ returns true
+      if @CODE "x"@ is false and vice versa.
+    Example
+      not isPrime 4
+    Text
+      If @CODE "x"@ is a function that returns a boolean, then the return value
+      is also a function.
+    Example
+      isNotPrime = not isPrime
+      isNotPrime 4
+      isNotPrime 5
+  SeeAlso
+    symbol and
+    symbol or
+    symbol xor
+///
 
 doc ///
   Key
-    symbol xor
+     symbol xor
     (symbol xor, Boolean, Boolean)
+    (symbol xor, Function, Function)
   Headline
     exclusive disjunction
   Usage
     t xor u
   Inputs
-    t:Boolean
-    u:Boolean
+    t:{Boolean, Function}
+    u:{Boolean, Function}
   Outputs
-    :Boolean
-      equivalent to @TT "t and not u or not t and u"@
+    :{Boolean, Function}
+  Description
+    Text
+      If @CODE "t"@ and @CODE "u"@ are booleans, then @M2CODE "t xor u"@
+      returns true if exactly one of them is true.
+    Example
+      even 7 xor isPrime 7
+    Text
+      If they are both functions than return booleans, then the return value is
+      also a function.
+    Example
+      isEvenXorPrime = even xor isPrime
+      isEvenXorPrime 7
+      isEvenXorPrime 2
   SeeAlso
     symbol and
     symbol or
+    symbol not
 ///
 
 document {
