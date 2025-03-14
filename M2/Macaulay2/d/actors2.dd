@@ -425,20 +425,26 @@ export setStdIO   (f:file):void := ( stdIO    = f; setGlobalVariable(stdioS,  Ex
 export setStdError(f:file):void := ( stdError = f; setGlobalVariable(stderrS, Expr(stdError)));
 
 openfilesfun(e:Expr):Expr := (
-     n := 0;
-     ff := openfiles;
-     while true do (
-	  when ff
-	  is null do break
-	  is f:FileCell do (n=n+1; ff=f.next;));
-     v := new Sequence len n do (
-	  ff = openfiles;
-	  while true do (
-	       when ff
-	       is null do break
-	       is f:FileCell do (provide f.file; ff=f.next;));
-	  );
-     list(v));
+    when e
+    is a:Sequence do (
+	-- typical value: openFiles, List
+	if length(a) == 0 then (
+	    n := 0;
+	    ff := openfiles;
+	    while true do (
+		when ff
+		is null do break
+		is f:FileCell do (n=n+1; ff=f.next;));
+	    v := new Sequence len n do (
+		ff = openfiles;
+		while true do (
+		    when ff
+		    is null do break
+		    is f:FileCell do (provide f.file; ff=f.next;));
+		);
+	    list(v))
+	else WrongNumArgs(0))
+    else WrongNumArgs(0));
 setupfun("openFiles",openfilesfun);
 openIn(filename:Expr):Expr := (
      when filename
