@@ -442,79 +442,87 @@ openfilesfun(e:Expr):Expr := (
 setupfun("openFiles",openfilesfun);
 openIn(filename:Expr):Expr := (
      when filename
+     -- # typical value: openIn, File, File
      is f:file do (
 	  when openIn(f)
 	  is g:file do Expr(g)
 	  is m:errmsg do buildErrorPacket(m.message))
+     -- # typical value: openIn, String, File
      is f:stringCell do (
 	  when openIn(f.v)
 	  is g:file do Expr(g)
 	  is m:errmsg do buildErrorPacket(m.message))
-     is Error do filename
-     else WrongArgString());
+     else WrongArg("a file or string"));
 setupfun("openIn",openIn);
 openOut(filename:Expr):Expr := (
      when filename
+     -- # typical value: openOut, File, File
      is f:file do (
 	  when openOut(f)
 	  is g:file do Expr(g)
 	  is m:errmsg do buildErrorPacket(m.message))
+     -- # typical value: openOut, String, File
      is f:stringCell do (
 	  when openOut(f.v)
 	  is g:file do Expr(g)
 	  is m:errmsg do buildErrorPacket(m.message))
-     is Error do filename
      else WrongArgString());
 setupfun("openOut",openOut);
 openOutAppend(filename:Expr):Expr := (
      when filename
+     -- # typical value: openOutAppend, String, File
      is f:stringCell do (
 	  when openOutAppend(f.v)
 	  is g:file do Expr(g)
 	  is m:errmsg do buildErrorPacket(m.message))
-     is Error do filename
      else WrongArgString());
 setupfun("openOutAppend",openOutAppend);
 openInOut(filename:Expr):Expr := (
      when filename
+     -- # typical value: openInOut, File, File
      is f:file do (
 	  when openInOut(f)
 	  is g:file do Expr(g)
 	  is m:errmsg do buildErrorPacket(m.message))
+     -- # typical value: openInOut, String, File
      is f:stringCell do (
 	  when openInOut(f.v)
 	  is g:file do Expr(g)
 	  is m:errmsg do buildErrorPacket(m.message))
-     is Error do filename
      else WrongArgString());
 setupfun("openInOut",openInOut);
 openListener(filename:Expr):Expr := (
      when filename
+     -- # typical value: openListener, String, File
      is f:stringCell do (
 	  when openListener(f.v)
 	  is g:file do Expr(g)
 	  is m:errmsg do buildErrorPacket(m.message))
-     is Error do filename
      else WrongArgString());
 setupfun("openListener",openListener);
 isOpen(e:Expr):Expr := (
      when e
+     -- # typical value: isOpen, File, Boolean
      is f:file do toExpr(f.listener || f.input || f.output)
+     -- # typical value: isOpen, Database, Boolean
      is x:Database do toExpr(x.isopen)
      else WrongArg("a file or database"));
 setupfun("isOpen",isOpen);
 isInputFile(e:Expr):Expr := (
      when e
+     -- # typical value: isInputFile, File, Boolean
      is f:file do toExpr(f.input)
      else False);
 setupfun("isInputFile",isInputFile);
 isOutputFile(e:Expr):Expr := (
      when e
+     -- # typical value: isOutputFile, File, Boolean
      is f:file do toExpr(f.output)
      else False);
 setupfun("isOutputFile",isOutputFile);
 isListener(e:Expr):Expr := (
      when e
+     -- # typical value: isListener, File, Boolean
      is f:file do toExpr(f.listener)
      else False);
 setupfun("isListener",isListener);
