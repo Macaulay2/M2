@@ -293,6 +293,11 @@ deepApply' = (L, f, g) -> flatten if g L then toList apply(L, e -> deepApply'(e,
 deepApply  = (L, f) ->  deepApply'(L, f, e -> instance(e, BasicList))
 deepScan   = (L, f) -> (deepApply'(L, f, e -> instance(e, BasicList));) -- not memory efficient
 
+deepSelect = method()
+deepSelect(BasicList, Type)     := (L, T) -> deepSelect(L, e -> instance(e, T))
+deepSelect(BasicList, Function) := (L, f) -> nonnull deepApply'(L,
+    e -> if f e then e, e -> instance(e, BasicList) and not f e)
+
 -----------------------------------------------------------------------------
 -- Tables (nested lists)
 -----------------------------------------------------------------------------
