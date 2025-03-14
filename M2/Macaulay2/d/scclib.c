@@ -219,19 +219,25 @@ int system_strnumcmp(M2_string s,M2_string t) {
 }
 
 int fix_status(int status) {
-     /* We can't handle status codes bigger than 127 if the shell intervenes. */
-     return
-       status == ERROR ? ERROR :
-       WIFSIGNALED(status) ?					  /* whether the process died due to a signal */
-       WTERMSIG(status) + (WCOREDUMP(status) ? 128 : 0) :	  /* signal number n, plus 128 if core was dumped */
-       WIFEXITED(status) ?					  /* whether the process exited */
-       (
-	    ((WEXITSTATUS(status) & 0x80) != 0) ?                 /* whether /bin/sh indicates a signal in a command */
-	    (WEXITSTATUS(status) & 0x7f) :			  /* the signal number */
-	    (WEXITSTATUS(status) << 8)				  /* status code times 256 */
-	    ) :
-       -2;						  	  /* still running (or stopped) */
-     }
+  /* We can't handle status codes bigger than 127 if the shell intervenes. */
+  if (status == ERROR)
+    return ERROR;
+  else if (WIFSIGNALED(status)) {                              /* whether the process died due to a signal */
+#ifdef WCOREDUMP
+    return WTERMSIG(status) + (WCOREDUMP(status) ? 128 : 0);   /* signal number n, plus 128 if core was dumped */
+#else
+    return WTERMSIG(status);
+#endif
+  }
+  else if (WIFEXITED(status)) {                                /* whether the process exited */
+    if ((WEXITSTATUS(status) & 0x80) != 0)                     /* whether /bin/sh indicates a signal in a command */
+      return WEXITSTATUS(status) & 0x7f;                       /* the signal number */
+    else
+      return WEXITSTATUS(status) << 8;                         /* status code times 256 */
+  }
+  else
+    return -2;                                                 /* still running (or stopped) */
+}
 
 M2_arrayint system_waitNoHang(M2_arrayint pids)
 {
