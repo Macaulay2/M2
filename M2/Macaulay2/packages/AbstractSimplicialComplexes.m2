@@ -29,7 +29,7 @@ newPackage(
     AuxiliaryFiles => false,
     DebuggingMode => false,
     PackageImports => {"Complexes"},
-    PackageExports => {"Complexes"}, -- if we do not export Complexes then the a few checks fail
+    PackageExports => {"Complexes"}, -- if we do not export Complexes then a few checks fail
     Keywords => {"Combinatorial Commutative Algebra"}
     )
 
@@ -242,7 +242,7 @@ ambientAbstractSimplicialComplexSize = method()
 
 ambientAbstractSimplicialComplexSize(AbstractSimplicialComplex) := (K) -> (
     L := flatten(K_0);
-    if L != { } then return(max L) else return(0) -- by default {{}} has size 0
+    if L != { } then max L else 0 -- by default {{}} has size 0
     )
 
 -- Return the underlying ambient simplex.
