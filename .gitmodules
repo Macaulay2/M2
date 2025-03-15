@@ -12,7 +12,7 @@
 	url = https://github.com/Macaulay2/bdwgc.git
 [submodule "M2/submodules/flint"]
 	path = M2/submodules/flint
-	url = https://github.com/Macaulay2/flint2.git
+	url = https://github.com/flintlib/flint
 [submodule "M2/submodules/frobby"]
 	path = M2/submodules/frobby
 	url = https://github.com/Macaulay2/frobby.git
