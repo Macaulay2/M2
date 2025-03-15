@@ -358,7 +358,7 @@ ExternalProject_Add(build-flint
   INSTALL_COMMAND   ${CMAKE_COMMAND} --install . ${strip_setting}
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/flint
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/submodules/flint/README.md ${M2_INSTALL_LICENSESDIR}/flint
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/submodules/flint/LICENSE ${M2_INSTALL_LICENSESDIR}/flint
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/submodules/flint/COPYING ${M2_INSTALL_LICENSESDIR}/flint
   TEST_COMMAND      ${CMAKE_COMMAND} . -DBUILD_TESTING=ON
        COMMAND      ${CMAKE_COMMAND} --build .
        COMMAND      ${CMAKE_COMMAND} --build . --target test
