@@ -37,6 +37,7 @@ CONFIGOPTIONS += --disable-omalloc --enable-streamio
 CONFIGOPTIONS += --includedir='$(LIBRARIESDIR)/include/'
 CONFIGOPTIONS += --disable-shared
 CONFIGOPTIONS += --without-Singular
+CONFIGOPTIONS += --datadir=@pre_packagesdir@/Core # for gftables
 
 ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-assertions 
