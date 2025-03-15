@@ -108,6 +108,7 @@ TEST ///
   f | f
   f_1
   f^10
+  -- TODO: find a non-kludgy solution for this
   assert(f - f == 0)
   assert(f == 1)
   x_1 * f
