@@ -281,6 +281,7 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 	    DIV { "class" => "exports",
 		fixup UL {
 		    if #b > 0 then LI {"Types",                  smenu b},
+		    -- FIXME: this line is displayed empty for Truncations
 		    if #a > 0 then LI {"Functions and commands", smenu a},
 		    if #m > 0 then LI {"Methods",                smenu m},
 		    if #c > 0 then LI {"Symbols",                smenu c},
@@ -324,6 +325,7 @@ getOperator := key -> if operator#?key then (
 	))
 
 -- TODO: expand this
+-- TODO: add location of symbol definition and documentation
 getTechnical := (S, s) -> DIV nonnull ( "class" => "waystouse",
     SUBSECTION "For the programmer",
     fixup PARA deepSplice {
@@ -388,7 +390,8 @@ getDescription := (key, tag, rawdoc) -> (
     desc := getOption(rawdoc, Description);
     if desc =!= null and #desc > 0 then (
 	desc = processExamples(package' tag, format tag, desc);
-	if instance(key, String) then DIV { desc } -- overview key
+	if instance(key, String) -- overview key
+	or instance(key, Package) then DIV { desc }
 	else DIV { SUBSECTION "Description", desc })
     else DIV { COMMENT "empty documentation body" })
 
