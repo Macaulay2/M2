@@ -344,10 +344,8 @@ document {
      G.-M. Greuel, R. Stobbe, G. Pfister, H. Schoenemann, and J. Schmidt,
      University of Kaiserslautern, Macaulay2 incorporates ", TT "Singular-Factory", ",
      version ", version#"factory version", ", a free library of polynomial routines
-     that provides for factorization of polynomials.  It is available at 
-     ", HREF "ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory"," and at 
-     ", HREF "http://www.mathematik.uni-kl.de/ftp/pub/Math/Singular/SOURCES", ".  It
-     is part of ", TT "Singular", ", whose home page is ", HREF "http://www.singular.uni-kl.de/", ".",
+     that provides for factorization of polynomials.  It is part of ",
+     TT "Singular", ", whose home page is ", HREF "https://www.singular.uni-kl.de/", ".",
      PARA{},
      "The following important routines call upon it:",
      UL {
