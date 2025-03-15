@@ -19,6 +19,10 @@ N = image vars R
 v = vector(N, {1, 2, 3})
 w = vector(N, {4, 5, 6})
 assert Equation(v, vector map(N,, {{1}, {2}, {3}}))
+assert Equation(v, matrix v)
+assert Equation(matrix v, v)
+
+assert zero vector {0, 0, 0}
 
 -- module operations
 assert Equation(+v, v)
