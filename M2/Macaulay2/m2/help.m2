@@ -448,6 +448,7 @@ help = method(Dispatch => Thing)
 help DocumentTag := tag -> (
     rawdoc := fetchAnyRawDocumentation tag;
     rawtag := if rawdoc =!= null then rawdoc.DocumentTag else tag;
+    -- TODO: if the symbol is not defined, perhaps call 'about'?
     getBody(tag.Key, rawtag, rawdoc))
 
 help Sequence := key -> (
@@ -579,6 +580,7 @@ matchfun := (re, db) -> key -> (
 about = method(Options => {Body => false})
 about Type     :=
 about Symbol   :=
+about ScriptedFunctor :=
 about Function := o -> f -> about("\\b" | toString f | "\\b", o)
 about String   := o -> re -> lastabout = (
     packagesSeen := new MutableHashTable;
