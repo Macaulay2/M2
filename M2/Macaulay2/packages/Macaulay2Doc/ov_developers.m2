@@ -3,6 +3,9 @@ document { Key => Core,
     PARA {
 	"This package contains the core functionality of Macaulay2, without the documentation,
 	which is in the package ", TO "Macaulay2Doc", "."
+    },
+    Subnodes => {
+	TO "how Macaulay2 finds its files",
     }
 }
 

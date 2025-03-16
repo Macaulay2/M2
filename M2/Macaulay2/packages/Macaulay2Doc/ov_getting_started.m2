@@ -1,45 +1,36 @@
 -- -*- coding: utf-8 -*-
 -- Nodes for the getting started section of the overview
 
-document {
-     Key => "getting started",
-     PARA {
-	  "To get a good idea of what you will be able to do with Macaulay2, see
-	  the package ", TO2{ "BeginningMacaulay2::BeginningMacaulay2", "BeginningMacaulay2" }, "."
-	  },
-     PARA {
-	  "Macaulay2 is available from our web page ", 
-	  HREF "https://macaulay2.com/",
-	  ".  There you will find online documentation, 
-	  the source code, and precompiled versions
-	  for MacOSX, Linux, Microsoft Windows, and for 
-	  various unix boxes."
-	  },
-     PARA {
-	  "After you or your system administrator has installed
-	  Macaulay2, use the information here to set up the emacs
-	  interface (the recommended way to run Macaulay2),
-	  bookmark the html documentation, and to try to
-	  run Macaulay2.
-	  "
-	  },
-     Subnodes => {
-	  TO "invoking the Macaulay2 program",
-	  TO "checking your Macaulay2 installation",
-	  TO "finding the Macaulay2 files",
-	  TO "teaching M2 how to find its shared libraries",
-	  TO "teaching your shell how to find M2",
-	  TO "moving or copying the Macaulay2 files",
-	  TO "running Macaulay2 in a terminal window",
-	  TO "using Macaulay2 with emacs",
-	  TO "using Macaulay2 with TeXmacs",
-	  TO "a first Macaulay2 session",
-	  TO "how Macaulay2 finds its files",
-	  TO "reading the documentation",
-	  TO "getting help or reporting bugs",
-	  -- Mike wanted this: TO "what to read next??"
-	  }
-     }
+doc ///
+Node
+  Key
+    "setting up Macaulay2"
+  Description
+    Text
+      -- TODO: move this somewhere else
+      -- To get a good idea of what you will be able to do with Macaulay2,
+      -- see @TO2("BeginningMacaulay2::BeginningMacaulay2", "Beginning Macaulay2")@.
+      Macaulay2 is available from our web page @HREF{"https://macaulay2.com"}@.
+      There you will find the online documentation, the source code, and precompiled versions
+      for MacOSX, several Linux distributions, and instructions for various other systems.
+
+      For developers, detailed information about building Macaulay2 from source is available
+      on GitHub at @HREF{"https://github.com/Macaulay2/M2/wiki"}@.
+
+      Once Macaulay2 is installed on your system, use the information here to set up
+      the Emacs interface (the recommended way to run Macaulay2), bookmark the html documentation,
+      and start your first Macaulay2 session.
+    Tree
+      > "invoking the Macaulay2 program"
+      > "checking your Macaulay2 installation"
+      > "finding the Macaulay2 files"
+      > "teaching M2 how to find its shared libraries"
+      > "teaching your shell how to find M2"
+      > "running Macaulay2 in a terminal window"
+      > "using Macaulay2 with emacs"
+      > "using Macaulay2 with TeXmacs"
+      -- Mike wanted this: "what to read next??"
+///
 
 document {
      Key => "using Macaulay2 with TeXmacs",
@@ -154,19 +145,6 @@ document {
 	  "setting up the Macaulay2 emacs interface",
 	  "using Macaulay2 with emacs"	  
 	  }
-     }
-
-document { Key => "moving or copying the Macaulay2 files",
-     "It is important, if you want to move or copy the Macaulay2 files, to move or
-     copy the entire directory tree, so their relative locations do not change.",
-     PARA{},
-     "When ", TT "M2", " starts up, it locates the files it needs (such as ", TT "setup.m2", "),
-     by first locating ", TT "M2", " and then traversing the directory tree it expects to find ", TT "M2", " in.  If you copy
-     or move just ", TT "M2", " (or ", TT "M2.exe", ", under windows) to some other directory, then 
-     that traversal will not be successful.",
-     PARA{},
-     "There are other ways to arrange for ", TT "M2", " to be on your PATH: with a symbolic link, or
-     by adding a directory name to the PATH; see ", TT "teaching your shell how to find M2", "."     
      }
 
 document { Key => "finding the Macaulay2 files",

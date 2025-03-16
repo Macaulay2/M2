@@ -10,11 +10,18 @@ Node
     Code
       IMG ("src" => replace("PKG", "Style", currentLayout#"package") | "9planets.gif", "alt" => "image of nine planets")
     Text
-      Macaulay2 is a software system devoted to supporting research in algebraic geometry and commutative algebra,
-      developed with funding from the National Science Foundation. We are eager to help new users get started with it.
+      Macaulay2 is an interpreted, dynamically typed programming language designed to
+      support research in commutative algebra, algebraic geometry and related fields.
+      All components of the language are open sourced, including over two hundred
+      contributed packages, and generously funded by the National Science Foundation.
     Tree
-      :For the New User
-        > "getting started"
+      :Getting Started
+	> "setting up Macaulay2"
+	> "a first Macaulay2 session"
+	> "reading the documentation"
+	> "getting help or reporting bugs"
+	-- TODO: "contributing to Macaulay2"
+      :Mathematical Tutorials
 	-- In this section we present some tutorials that aim to introduce
 	-- the user to some mathematical ways of using Macaulay2.  The tutorials
 	-- are relatively independent of each other, and each one introduces the use
