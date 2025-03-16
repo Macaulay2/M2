@@ -80,7 +80,7 @@ document {
 		    LI ("mc -- ", "not documented yet"),
 		    LI ("min -- ", TO "min"),
 		    LI ("modulo -- ", TO "modulo"),
-		    LI ("monitor -- ", TO "using Macaulay2 with emacs"),
+		    LI ("monitor -- ", TO "using Macaulay2 with Emacs"),
 		    LI ("monitoring -- ", "not documented yet"),
 		    LI ("monoms -- ", "not documented yet"),
 		    LI ("monprimes -- ", "not documented yet"),
@@ -393,9 +393,9 @@ document {
      allowed.",
      
      HEADER3 "commands",
-     "Using Macaulay2 in emacs, type the first few letters of a command,
-     then hit <TAB>. The list of all commands starting with those letters
-     will be displayed, or if there is only one, emacs will complete the typing
+     "Using Macaulay2 in Emacs, type the first few letters of a command,
+     then hit ", KBD "Tab", ". The list of all commands starting with those letters
+     will be displayed, or if there is only one, Emacs will complete the typing
      for you.",
 
      HEADER3 "compress <matrix> <result matrix>",

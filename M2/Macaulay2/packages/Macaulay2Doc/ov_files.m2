@@ -41,7 +41,7 @@ document {
      of computational progress to the user.",
      EXAMPLE ///scan(0 .. 20, i -> << "." << flush)///,
      PARA{},
-     "If long lines get displayed too slowly, such as in emacs, then the user may choose
+     "If long lines get displayed too slowly, such as in Emacs, then the user may choose
      to put a line such as ", TT "truncateOutput 100", " into an ", TO "initialization file", ".
      Time is still spent creating the wide output that is eventually truncated.",
      EXAMPLE {

@@ -80,7 +80,7 @@ document {
     "Let's peek at the code of the function ", TT "g", ".",
     EXAMPLE "code g",
     "We see that the function g calls a function ", TT "f", ", but ", TT "f", " is not visible to us
-    (because ", TT "f", " is a local variable).  In emacs' ", EM "Macaulay2 Interaction Mode", ", pressing
+    (because ", TT "f", " is a local variable).  In Emacs' ", EM "Macaulay2 Interaction Mode", ", pressing
     return (", TT "RET", " or ", TT "enter", ") after positioning the cursor on the output line displaying the file name and line number
     will bring up the source code in a new buffer.",
     PARA{"The first few times we use ", TT "g", ", it seems to work."},
@@ -673,7 +673,7 @@ document {
      PARA{
 	  "The name of the user's preferred editor is take from the environment
 	  variable ", TT "EDITOR", ".  If X is running and the editor is not
-	  emacs, then the editor is started in a new ", TT "xterm", " window."
+	  Emacs, then the editor is started in a new ", TT "xterm", " window."
 	  },
      PARA{
 	  "For an interactive example, try ", TT "edit(dim,Module)", ".",
