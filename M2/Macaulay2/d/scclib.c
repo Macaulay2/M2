@@ -781,6 +781,34 @@ int system_openlistener(M2_string interface0,M2_string serv) {
      return sd;
      }
 
+int system_getpeername(int sockfd, M2_string host, M2_string serv) {
+  struct sockaddr addr;
+  socklen_t addrlen;
+  int i, r;
+  char hostbuf[NI_MAXHOST], servbuf[NI_MAXSERV];
+
+  addrlen = sizeof addr;
+  r = getpeername(sockfd, &addr, &addrlen);
+  if (r == ERROR)
+    return ERROR;
+
+  r = getnameinfo(&addr, addrlen, hostbuf, sizeof hostbuf,
+		  servbuf, sizeof servbuf, 0);
+  if (r != 0)
+    return r + ERROR; /* see note above system_netstrerror */
+
+  for (i = 0; hostbuf[i] != '\0'; i++) {}
+  host->len = i;
+
+  for (i = 0; servbuf[i] != '\0'; i++) {}
+  serv->len = i;
+
+  memcpy(host->array, hostbuf, host->len);
+  memcpy(serv->array, servbuf, serv->len);
+
+  return 0;
+}
+
 int system_errno(void) {
   return 
 #ifdef HAVE_HERROR

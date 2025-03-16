@@ -4,6 +4,8 @@ use evaluate;
 use struct;
 use sets;
 
+header "#include <netdb.h>"; -- for NI_MAXHOST and NI_MAXSERV
+
 dbmfirst(e:Expr):Expr := (
      when e
      is f:Database do dbmfirst(f)
@@ -510,6 +512,20 @@ isListener(e:Expr):Expr := (
      is f:file do toExpr(f.listener)
      else False);
 setupfun("isListener",isListener);
+getPeerName(e:Expr):Expr := (
+    when e
+    -- # typical value: getPeerName, File, Sequence
+    is f:file do (
+	if f.input then (
+	    host := new string len Ccode(int, "NI_MAXHOST") do provide ' ';
+	    serv := new string len Ccode(int, "NI_MAXSERV") do provide ' ';
+	    r := getpeername(f.infd, host, serv);
+	    if r < 0 then buildErrorPacket(
+		"can't get peer name: " + netstrerror(r))
+	    else seq(toExpr(host), toExpr(serv)))
+	else WrongArg("an input file"))
+    else WrongArg("a file"));
+setupfun("getPeerName", getPeerName);
 
 header "
     #if WITH_MYSQL
