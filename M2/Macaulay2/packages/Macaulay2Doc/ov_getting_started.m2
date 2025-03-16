@@ -208,16 +208,16 @@ doc ///
 
     Tree
       :Finding documentation nodes
-        about
-	apropos
-	headlines
+	> about
+	> apropos
+	> headlines
       :Accessing documentation nodes
-        help
-	viewHelp
-	infoHelp
-	(symbol?, Symbol)
+	> help
+	> viewHelp
+	> infoHelp
+	> (symbol ?, Symbol)
       :Getting other information from documentation
-        examples
+	> examples
 
     Text
       To begin, the @TO "about"@ method allows for searching all documentation nodes
@@ -248,14 +248,6 @@ doc ///
       The documentation for most functions comes with example code.
       You can obtain the text of this example code using @TO "examples"@.
   Subnodes
-    about
-    apropos
-    headlines
-    help
-    viewHelp
-    infoHelp
-    (symbol?, Symbol)
-    examples
     "initial help"
 ///
 
