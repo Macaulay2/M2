@@ -108,6 +108,7 @@ import openlistener(interface:string,serv:string):int;
 import netstrerror(errcode:int):string;
 import acceptBlocking(sd:int):int;
 import acceptNonblocking(sd:int):int;
+import getpeername(sockd:int,host:string,serv:string):int;
 import syserrmsg():string;				    -- uses errno
 import atend(f:function():void):void;
 import run(command:string):int;
