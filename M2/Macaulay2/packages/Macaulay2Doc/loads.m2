@@ -11,6 +11,7 @@
 load "./ov_top.m2"
 load "./ov_preface.m2"
 load "./ov_getting_started.m2"
+load "./ov_first_session.m2"
 load "./ov_rings.m2"
 load "./ov_monomial_orderings.m2"
 load "./ov_ringmaps.m2"
