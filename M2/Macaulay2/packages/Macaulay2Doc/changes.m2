@@ -290,7 +290,7 @@ document {
                   "can now take advantage of multiple CPU cores, see ", TO "parallelism in engine computations", "."}
 		    }
 	       },
-	  LI { "emacs updates:",
+	  LI { "Emacs updates:",
 	       UL {
 	            LI { "Indentation in the Macaulay2 major mode is now more consistent with other Emacs majors modes.  For example, it now respects ",
 			 "the Electric Indent minor mode.  In particular, it is possible to toggle whether code is automatically indented after pressing ",
@@ -371,7 +371,7 @@ document {
 			 "slightly modified."}
 	       }
 	  },
-	  LI { "emacs updates:",
+	  LI { "Emacs updates:",
 	       UL {
 		    LI { "Several new functions have been added to for sending code to an M2 process, and the code that is sent is now highlighted briefly as a ",
 			 "visual indicator.  Refer to the \"Macaulay2\" dropdown menu in Emacs for more."},
@@ -799,7 +799,7 @@ document {
      UL {
 	 LI { "functionality added:",
 	      UL {
-		   LI { "The location of Macaulay2's emacs files has changed from ", TT "site-lisp", " to ", TT "site-lisp/Macaulay2", ", so
+		   LI { "The location of Macaulay2's Emacs files has changed from ", TT "site-lisp", " to ", TT "site-lisp/Macaulay2", ", so
 			users, after installing this version of Macaulay2, may once again need to run ", TO "setupEmacs", " (or ", TO "setup", ")."
 			}
 		   }
@@ -1137,7 +1137,7 @@ document {
 			 },
 		    LI {
 			 "We have removed the feature where typing an extra empty line ends multiline 
-			 input in a terminal window or emacs buffer.
+			 input in a terminal window or Emacs buffer.
 			 This will make it easier to feed input from a file into the interpreter with
 			 F-11 and encounter the same behavior, since in files we have permit empty lines.
 			 This change was requested at our Leipzig workshop, with Q2 at ",
@@ -1280,7 +1280,7 @@ document {
      	  LI { "functionality changed:",
      	       UL {
      	       	    LI {
-			 "The format for multi-line (un-nested) block comments has been changed from ", TT "{* ... *}", " to ", TT "-* ... *-", " so emacs can colorize 
+			 "The format for multi-line (un-nested) block comments has been changed from ", TT "{* ... *}", " to ", TT "-* ... *-", " so Emacs can colorize
 			 the comments correctly.  The (deprecated) old style will be recognized by M2 for a while."
 			 }
 		    }
@@ -2372,7 +2372,7 @@ document {
 			 after the handler set a flag.  This necessitated reworking the handling of interrupts
 			 by the top level interpreter, which will now respond to them immediately.
 			 When the readline library is active and reading user input (such as
-			 when the emacs interface to Macaulay2 is not used), interrupts are handled just by it."
+			 when the Emacs interface to Macaulay2 is not used), interrupts are handled just by it."
 			 },
 		    LI { TO "currentDirectory", " is now a function rather than a string constant, in order to postpone signalling 
 			 an error if a component of the path to the current working directory no longer exists."
@@ -2701,7 +2701,7 @@ document {
 			 },
 		    LI {
 			 "The cross reference hyperlinks in the info form of the documentation have been improved,
-			 but we recommend reading it in emacs with ", TT "M-x info", ", configuring the emacs
+			 but we recommend reading it in Emacs with ", KBD "M-x info", ", configuring the Emacs
 			 variable ", TT "Info-hide-note-references", " so its value is ", TT "hide", ".
 			 See ", TO "reading the documentation", "."
 			 },
@@ -2718,7 +2718,7 @@ document {
 			 },
 		    LI {
 			 "Unicode, encoded in ", TT "utf-8", " format, is supported in documentation pages, both in html form and in 
-			 emacs info form: 你好."
+			 Emacs info form: 你好."
 			 },
 		    LI {
 			 "When an error occurs within a string being evaluated with ", TO "value", ", the 
@@ -2753,9 +2753,9 @@ document {
 			 that provides exactly the same real number when promoted."
 			 },
 		    LI {
-			 "The emacs commands ", TT "M-x M2", ", bound to ", TT "f12", ", and ", TT "M2-send-to-program", ", 
-			 bound to ", TT "f11", ", have some new capability.  
-     	       	    	 With prefix argument ", TT "C-u C-u", " to ", TT "M-x M2", ", the tag from which the buffer name is constructed (by
+			 "The Emacs commands ", KBD "M-x M2", ", bound to ", KBD "F12", ", and ", TT "M2-send-to-program",
+			 ", bound to ", KBD "F11", ", have some new capability.
+			 With prefix argument ", KBD "C-u C-u", " to ", KBD "M-x M2", ", the tag from which the buffer name is constructed (by
 			 prepending and appending asterisks) can be entered in the minibuffer.
 		         With a prefix argument to ", TT "M2-send-to-program", ", the name of
 			 the buffer to which this and future uses of the command (in this buffer) should

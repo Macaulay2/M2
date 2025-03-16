@@ -469,9 +469,9 @@ document {
 
 	  SUBSECTION "Partially computed Gröbner bases",
 	       "Suppose that you have computed part of a Gröbner basis.  For
-	       example, you may have interrupted the computation using CTRL-C
-	       (typing 'c' while holding the CTRL key down, in emacs, you have to
-	       type CTRL-C twice), or you may have given options requesting only
+	       example, you may have interrupted the computation using ", KBD "Ctrl-C",
+	       " (typing ", KBD "C", " while holding the ", KBD "Ctrl", " key down, in Emacs, you have to
+	       type ", KBD "Ctrl-C", " twice), or you may have given options requesting only
 	       partial computation.",
      	       EXAMPLE {
 		    "R = ZZ/32003[a..e];",

@@ -37,7 +37,7 @@ Node
     Text
       Because some answers can be very long, it is a good idea to run the program in a window that does
       not wrap output lines, and allows the user to scroll left horizontally to see the rest of the
-      output.  (See @TO "using Macaulay2 with emacs"@.)
+      output.  (See @TO "using Macaulay2 with Emacs"@.)
     Example
       100!
     Text
