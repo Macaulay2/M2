@@ -86,5 +86,5 @@ delta3 = (x+z)*(y+z)*dx*dy-e*(x+z)*dx-e*(y+z)*dy+e^2;
 h = x*dx+y*dy+z*dz-2*e;
 I = ideal(delta1+delta3, delta2+delta3,h);
 r = holonomicRank I;                                        -- CORRECT: Outputs 4 as holonomic rank.
-asserts(r == 4)
+assert(r == 4)
 ///
