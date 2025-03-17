@@ -223,21 +223,21 @@ doc ///
       To begin, the @TO "about"@ method allows for searching all documentation nodes
       whose title or content contains a given string:
     Example
-      -- FIXME
       about "Horrocks-Mumford"
     Text
       The @TO "apropos"@ method is useful for finding all exported objects whose symbol
-      matches the given regular expression:
+      matches the given regular expression, and can be combined with the @TO "headlines"@
+      method to display a table with each symbol and its documentation headline:
     Example
-      apropos "(H|h)ilbert"
+      headlines apropos "(H|h)ilbert"
     Text
       While in Macaulay2, type @TO "help"@ to get the documentation on a topic or function,
       or type @TO "viewHelp"@ to open @TT "~/.Macaulay2/index.html"@, which contains a list
       of all installed packages, in your default web browser.
 
-      For help on a specific topic, e.g., the Jacobian function, use @TT "viewHelp jacobian"@
-      or @TT "viewHelp \"jacobian\""@, or if you want the documentation for Jacobian of an
-      Ideal, use @TT "viewHelp (jacobian, Ideal)"@ or @TT "viewHelp \"jacobian(Ideal)\""@.
+      For help on a specific topic, e.g., the Jacobian function, use @KBD "viewHelp jacobian"@
+      or @KBD "viewHelp \"jacobian\""@, or if you want the documentation for Jacobian of an
+      Ideal, use @KBD "viewHelp (jacobian, Ideal)"@ or @KBD "viewHelp \"jacobian(Ideal)\""@.
       Using @TO "help"@ instead of @TO "viewHelp"@ results in the help text appearing
       in your Macaulay2 session.
 
@@ -247,6 +247,8 @@ doc ///
 
       The documentation for most functions comes with example code.
       You can obtain the text of this example code using @TO "examples"@.
+  SeeAlso
+    "writing documentation"
   Subnodes
     "initial help"
 ///
