@@ -383,13 +383,13 @@ Node
       please reach out through one of the following channels. You can also ask for help
       with using Macaulay2 in your research or find ways to contribute to Macaulay2.
     Code
-      TABLE {
-	  { HREF{"https://github.com/Macaulay2/M2/issues", "GitHub issue tracker"},
-	      " -- report bugs and request features here" },
-	  { HREF{"https://macaulay2.zulipchat.com", "Zulip server"},
-	      " -- online collaboration and discussion" },
-	  { HREF{"https://groups.google.com/group/macaulay2", "Mailing list"},
-	      " -- Google Group for announcements" },
+      UL {
+	  LI { HREF{"https://github.com/Macaulay2/M2/issues", "GitHub Issues"},
+	      " -- for reporting bugs and requesting features" },
+	  LI { HREF{"https://macaulay2.zulipchat.com", "Zulip server"},
+	      " -- for online collaboration and discussions" },
+	  LI { HREF{"https://groups.google.com/group/macaulay2", "Google Group"},
+	      " -- for announcements and general questions" },
       }
 ///
 
