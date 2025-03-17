@@ -343,25 +343,26 @@ _ADD_COMPONENT_DEPENDENCY(libraries ntl gmp NTL_FOUND)
 ExternalProject_Add(build-flint
   PREFIX            libraries/flint
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/flint
-  BINARY_DIR        libraries/flint/build
-  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
-                    -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
-                    -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
-                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-                    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-                    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-                    -DCMAKE_C_FLAGS=${CFLAGS}
-                    -DCMAKE_CXX_FLAGS=${CXXFLAGS}
-                    -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
-                    -DIPO_SUPPORTED=OFF # TODO: because of clang; see https://github.com/wbhart/flint2/issues/644
-                    -DWITH_NTL=ON
-  INSTALL_COMMAND   ${CMAKE_COMMAND} --install . ${strip_setting}
+  BUILD_IN_SOURCE   ON
+  CONFIGURE_COMMAND ./bootstrap.sh &&
+                    ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
+                    ${shared_setting}
+                    "CPPFLAGS=${CPPFLAGS} -I${GMP_INCLUDE_DIRS}"
+                    CFLAGS=${CFLAGS}
+                    CXXFLAGS=${CXXFLAGS}
+                    "LDFLAGS=${LDFLAGS} -L${GMP_LIBRARY_DIRS}"
+                    CC=${CMAKE_C_COMPILER}
+                    CXX=${CMAKE_CXX_COMPILER}
+                    AR=${CMAKE_AR}
+                    OBJDUMP=${CMAKE_OBJDUMP}
+                    STRIP=${CMAKE_STRIP}
+                    RANLIB=${CMAKE_RANLIB}
+  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
+  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/flint
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/submodules/flint/README.md ${M2_INSTALL_LICENSESDIR}/flint
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/submodules/flint/COPYING ${M2_INSTALL_LICENSESDIR}/flint
-  TEST_COMMAND      ${CMAKE_COMMAND} . -DBUILD_TESTING=ON
-       COMMAND      ${CMAKE_COMMAND} --build .
-       COMMAND      ${CMAKE_COMMAND} --build . --target test
+  TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
