@@ -73,6 +73,41 @@ SeeAlso
 
 doc ///
 Key
+    pfaffianSystem
+    (pfaffianSystem, Ideal)
+    (pfaffianSystem, List, Ideal)
+Headline
+    computes a Pfaffian system associated to I with respect to a basis of standard monomials of I
+Usage
+    pfaffianSystem(I)
+    pfaffianSystem(B, I)
+Inputs
+    I:Ideal
+      D-ideal
+    B:List
+      a basis of standard monomials for I
+Outputs
+    L:List
+      the Pfaffian system of matrices in fractionField(ring I)
+Description
+  Text
+    Let I be an ideal in the Weyl algebra D_n and B a basis over fractionField(D) for R_n/R_nI.
+    The i'th matrix in Pfaffian system encodes the action of dx_i on R_n/R_n I with respect to the basis B.
+
+    If a basis is not provided by the user, a basis of standard monomials will be chosen with regards to the weighted
+    Lex order of the Weyl algebra.
+  Example
+    D = makeWeylAlgebra(QQ[x,y], w = {0,0,2,1})
+    I = ideal (x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1)
+    P = pfaffians(I)
+Caveat
+
+SeeAlso
+
+///
+
+doc ///
+Key
     gaugeTransform
     (gaugeTransform, Matrix, List, PolynomialRing)
 Headline

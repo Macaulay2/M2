@@ -21,6 +21,7 @@ newPackage(
 
 export {
     -- "pfaffians" already exported by Core
+    "pfaffianSystem",
     "normalForm",
     "gaugeMatrix",
     "gaugeTransform",

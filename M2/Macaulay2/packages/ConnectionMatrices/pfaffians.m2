@@ -1,5 +1,9 @@
--- ToDO: Fix this -- write correct "integrability condition".
--- checkSystem = (W, A) -> apply(toSequence \ subsets(numgens W // 2, 2), (i,j) -> A_i * A_j - A_j * A_i)
+----------------------------------------------------
+--- Method Handles for the Macaulay Package: ------
+
+pfaffianSystem = method()
+pfaffianSystem (Ideal) := List => (I) -> pfaffians(I)
+pfaffianSystem (List, Ideal) := List => (B,I)-> pfaffians(B,I)
 
 
 ----------------------------------------------------
