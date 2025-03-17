@@ -21,6 +21,8 @@ Node
 	> "reading the documentation"
 	> "getting help or reporting bugs"
 	-- TODO: "contributing to Macaulay2"
+	-- Macaulay2 is an open source project, and we welcome programming contributions of all kinds.
+        > "packages provided with Macaulay2"
       :Mathematical Tutorials
 	-- In this section we present some tutorials that aim to introduce
 	-- the user to some mathematical ways of using Macaulay2.  The tutorials
@@ -51,15 +53,11 @@ Node
         > "analytic functions"
       :Reference Manual
         > "The Macaulay2 language"
-      :Packages
-        > "packages provided with Macaulay2"
     Tree
       :Appendix
         > "changes to Macaulay2, by version"
        -- Mike wanted this: TO "frequently encountered problems"
         > "replacements for commands and scripts from Macaulay"
-       -- TODO: node to be written, will point to our book, Hal's book, Mike's Arizona notes, Sage, etc:
-        > "Other sources of information about Macaulay2"
   Acknowledgement
    Tree
     > "Acknowledgements"
@@ -92,7 +90,20 @@ Node
       - Eliana Duarte
       - Lars Kastner
       - Kinsun Lee
-  --References
+  References
+    -- TODO: node to be written, will point to our book, Hal's book, Mike's Arizona notes, Sage, etc:
+    @UL {
+	LI { HREF{"Macaulay2.com", "https://macaulay2.com/"}, " website, for online documentation, binary distributions, etc." },
+	LI { SPAN "Computations in algebraic geometry with Macaulay2,
+	    Algorithms and Computations in Mathematics (No. 8),
+	    edited by David Eisenbud, Daniel R. Grayson, Michael E. Stillman, and Bernd Sturmfels,
+	    Springer-Verlag, 2001, ISBN 3-540-42230-7." },
+	LI { SPAN "Computational Algebraic Geometry,
+	    London Mathematical Society Student Texts (No. 58),
+	    by Hal Schenck,
+	    Cambridge University Press, 2003
+	    ISBN: 0-521-53650-2." }
+    }@
 ///
 
 end--
