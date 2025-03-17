@@ -85,6 +85,7 @@ reduceOneStep(RingElement, RingElement) := (f, g) -> (
     f - fcoef / gcoef * sub(ddmon * g, R)
     )
 
+-- Normal form with respect to single element g.
 normalForm = method()
 -- f in D, g in D, SST page 7
 normalForm(RingElement, RingElement) := (f, g) -> (
@@ -133,7 +134,7 @@ sub' = (g, D) -> if instance(g, D) then g else sum(listForm g,
 
 clearDenominators = (G, D) -> apply(G, g -> if instance(g, D) then g else sub'(g * lcm(denominator \ last \ listForm g), D))
 
-normalForm = method()
+-- Normal Form w.r.t. a Groebner Basis
 normalForm(RingElement, List) := (f, G) -> (
     if f == 0 then return f;
     D := ring(G#0);
