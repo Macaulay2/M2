@@ -82,8 +82,14 @@ export install(name:string,word:Word):Word := (
      foreach ch in name do node = install(node,int(ch));     
      node.word = word;
      word);
+
+-- setLastError defined in actors5.d
+dummysetLastError(position:Position, message:string):void := nothing;
+export setLastErrorpointer := dummysetLastError;
+
 makeLexError(position:Position, message:string):void := (
     printErrorMessage(position, message);
+    setLastErrorpointer(position, message);
     empty(tokenbuf));
 
 newPosition(file:PosFile, line:ushort, column:ushort):Position := Position(
