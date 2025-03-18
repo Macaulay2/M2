@@ -61,14 +61,17 @@ isEpsilonFactorized = method();
 isEpsilonFactorized(List,RingElement) := (P,e) -> (
     lst := new MutableList;
     for p in P do (
-        lst#(#lst) = lstOfDegrees(p,e);
+        tmp  := lstOfDegrees(p,e);
+        lst#(#lst) = tmp;
+        if #tmp == 0 then return false;
     );
-    lstdeg := toList lst;
+    lstdeg := flatten toList lst;
     all(lstdeg, x -> x == first lstdeg)
 )
 
 isEpsilonFactorized(Matrix,RingElement) := (M,e) -> (
     lstdeg := lstOfDegrees(M,e);
+    if #lstdeg == 0 then return false;
     all(lstdeg, x -> x == first lstdeg)
 )
 
@@ -77,9 +80,18 @@ lstOfDegrees = (M,e) -> (
     R := QQ[gens ring e, Degrees => d];
     F := frac(R);
     Mlst := select(flatten entries M, x -> x != 0);
-    lstdeg := for m in Mlst list degree sub(m,F);
-    lstdeg
+    if #Mlst == 0 then return {{0}};
+    lst := new MutableList;
+    for m in Mlst do (
+        if isHomogeneous(numerator sub(m,F)) == true and isHomogeneous(denominator sub(m,F)) == true then (
+            lst#(#lst) = degree (numerator sub(m,F)) - degree(denominator sub(m,F));
+        )
+        else return {};
+    );
+    toList lst
 )
+
+
 
 
 end--
