@@ -1,16 +1,14 @@
 ----------------------------------------------------
 --- Method Handles for the Macaulay Package: ------
 
-pfaffianSystem = method()
-pfaffianSystem (Ideal) := List => (I) -> pfaffians(I)
-pfaffianSystem (List, Ideal) := List => (B,I)-> pfaffians(B,I)
+connectionMatrices = method()
 
 
 ----------------------------------------------------
 --pfaffians computes Pfaffian system for D-ideals
 ----------------------------------------------------
 -- c.f. [Theorem 1.4.22, SST]
-pfaffians(Ideal) := List => (I) -> (
+connectionMatrices(Ideal) := List => (I) -> (
     D := ring I;
     createDpairs D;
     w := (((options(D)).MonomialOrder)#1)#1;
@@ -32,14 +30,14 @@ pfaffians(Ideal) := List => (I) -> (
 )
 
 -- gives the pfaffians system with respect to a new basis B
-pfaffians(List,Ideal) := (B,I)->(
+connectionMatrices(List,Ideal) := (B,I)->(
     W := ring I;
-    B1 := stdMon I;
+    B1 := standardMonomials I;
     GB := flatten entries gens gb I;
     G := gaugeMatrix(GB,B1,B);
     invG := inverse G;
     n := dim W//2;
-    C := pfaffians I;
+    C := connectionMatrices I;
     for i from 1 to n list(
         dxi := W_(n+i-1);
         diffMatrixWeyl(dxi, G)*invG + G*(C#(i-1))*invG
@@ -49,27 +47,27 @@ pfaffians(List,Ideal) := (B,I)->(
 ----------------------------------------------------
 --connectionMatrix computes connection matrix of I
 ----------------------------------------------------
-diffConnectionMatrix = method()
-diffConnectionMatrix(Ideal) := List => (I) -> (
+connectionMatrix = method()
+connectionMatrix(Ideal) := List => (I) -> (
     P := pfaffians(I);
     R := rationalWeylAlgebra(ring I);
     var := gens R;
-    sum((for i from 0 to length(var)-1 list var_i*P_i ))
+    net(sum((for i from 0 to length(var)-1 list var_i*P_i )))
 )
 
 
 -- allows for Pfaffian system P as input
-diffConnectionMatrix(List) := List => (P) -> (
+connectionMatrix(List) := List => (P) -> (
     R := rationalWeylAlgebra(makeWA(coefficientRing(ring P_0)[gens ring P_0]));
     var := gens R;
-    sum((for i from 0 to length(var)-1 list var_i*sub(P_i,R)))
+    net(sum((for i from 0 to length(var)-1 list var_i*sub(P_i,R))))
 )
 
 ----------------------------------------------------
 --stdMon computes std monomials wrt. to weight order
 ----------------------------------------------------
-stdMon = method()
-stdMon(Ideal) := (I) -> (
+standardMonomials = method()
+standardMonomials(Ideal) := (I) -> (
     D := ring I;
     w := (((options(D)).MonomialOrder)#1)#1;
     M := comodule I;
@@ -208,7 +206,7 @@ delta3 = (x+z)*(y+z)*dx*dy-e*(x+z)*dx-e*(y+z)*dy+e^2
 h = x*dx+y*dy+z*dz-2*e
 I = ideal(delta1+delta3, delta2+delta3,h)
 r = holonomicRank I;                                        -- CORRECT: Outputs 4 as holonomic rank.
-P = pfaffians I;                                            -- (old: ERROR:  reduce.m2:38:54:(3):[4]: error: not implemented yet: fraction fields of polynomial rings over rings other than ZZ, QQ, or a finite field)
+P = connectionMatrices I;                                            -- (old: ERROR:  reduce.m2:38:54:(3):[4]: error: not implemented yet: fraction fields of polynomial rings over rings other than ZZ, QQ, or a finite field)
 
 --------------------------------------------------------
 

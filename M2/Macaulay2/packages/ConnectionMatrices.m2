@@ -21,12 +21,12 @@ newPackage(
 
 export {
     -- "pfaffians" already exported by Core
-    "pfaffianSystem",
+    "connectionMatrices",
     "normalForm",
     "gaugeMatrix",
     "gaugeTransform",
-    "diffConnectionMatrix",
-    "stdMon",
+    "connectionMatrix",
+    "standardMonomials",
     "isEpsilonFactorized",
     "isIntegrable",
 }

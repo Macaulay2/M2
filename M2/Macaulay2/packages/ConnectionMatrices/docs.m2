@@ -60,9 +60,9 @@ Description
   Example
     w1 = {0,0,2,1}; D1 = makeWeylAlgebra(QQ[x,y],w1);
     I = sub(ideal(x*dx^2-y*dy^2+2*dx-2*dy,x*dx+y*dy+1),D1);
-    SM1 = stdMon(I);
+    SM1 = standardMonomials(I);
     w2 = {0,0,1,2}; D2 = makeWeylAlgebra(QQ[x,y],w2);
-    SM2 = stdMon(sub(I,D2));
+    SM2 = standardMonomials(sub(I,D2));
     G = flatten entries gens gb I;
     gaugeMatrix(G,SM1,SM2)
 Caveat
@@ -73,14 +73,14 @@ SeeAlso
 
 doc ///
 Key
-    pfaffianSystem
-    (pfaffianSystem, Ideal)
-    (pfaffianSystem, List, Ideal)
+    connectionMatrices
+    (connectionMatrices, Ideal)
+    (connectionMatrices, List, Ideal)
 Headline
     computes a Pfaffian system associated to I with respect to a basis of standard monomials of I
 Usage
-    pfaffianSystem(I)
-    pfaffianSystem(B, I)
+    connectionMatrices(I)
+    connectionMatrices(B, I)
 Inputs
     I:Ideal
       D-ideal
@@ -99,7 +99,7 @@ Description
   Example
     D = makeWeylAlgebra(QQ[x,y], w = {0,0,2,1})
     I = ideal (x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1)
-    A = pfaffianSystem(I)
+    A = connectionMatrices(I)
 Caveat
 
 SeeAlso
@@ -130,7 +130,7 @@ Description
   Example
     D = makeWeylAlgebra(QQ[x,y]);
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
-    A = pfaffians(I);
+    A = connectionMatrices(I);
     M = matrix{{x,0},{0,y}};
     gaugeTransform(M,A,D)
 Caveat
@@ -141,14 +141,14 @@ SeeAlso
 
 doc ///
 Key
-    diffConnectionMatrix
-    (diffConnectionMatrix, Ideal)
-    (diffConnectionMatrix, List)
+    connectionMatrix
+    (connectionMatrix, Ideal)
+    (connectionMatrix, List)
 Headline
     computes the differential connection matrix
 Usage
-    diffConnectionMatrix(I)
-    diffConnectionMatrix(A)
+    connectionMatrix(I)
+    connectionMatrix(A)
 Inputs
     I:Ideal
       of the Weyl algebra
@@ -165,8 +165,8 @@ Description
   Example
     D = makeWeylAlgebra(QQ[x,y]);
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
-    A = pfaffians(I);
-    diffConnectionMatrix(A)
+    A = connectionMatrices(I);
+    connectionMatrix(A)
 Caveat
   Currently the output lives in the fraction field of the variables adjoin differentials, but this is not the correctly implemented rational Weyl algebra
 SeeAlso
@@ -175,12 +175,12 @@ SeeAlso
 
 doc ///
 Key
-    stdMon
-    (stdMon, Ideal)
+    standardMonomials
+    (standardMonomials, Ideal)
 Headline
     computes the standard monomials for a D-ideal
 Usage
-    stdMon(I)
+    standardMonomials(I)
 Inputs
     I:Ideal
       of the Weyl algebra
@@ -193,7 +193,7 @@ Description
   Example
     D = makeWeylAlgebra(QQ[x,y]);
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
-    stdMon(I)
+    standardMonomials(I)
 Caveat
   Currently the output lives in the fraction field of the variables adjoin differentials, but this is not the correctly implemented rational Weyl algebra
 SeeAlso
@@ -227,7 +227,7 @@ Description
     D = makeWeylAlgebra(frac(QQ[e,DegreeRank=>0])[x]);
     I = ideal(x*(1-x)*dx^2 - e*(1-x)*dx);
     B = {sub(1,D),sub(1/e,D)*dx};
-    A = pfaffians(B,I)
+    A = connectionMatrices(B,I)
     isEpsilonFactorized(A,e)
 SeeAlso
 
@@ -262,7 +262,7 @@ Description
   Example
     D = makeWeylAlgebra(QQ[x,y], w = {0,0,1,2});
     I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
-    A = pfaffians I;
+    A = connectionMatrices I;
     assert(isIntegrable(D,A))
     assert(isIntegrable(A))
 Caveat
