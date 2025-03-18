@@ -268,15 +268,6 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 	    SUBSECTION "Version",
 	    PARA { "This documentation describes version ", BOLD pkg.Options.Version, " of ",
 		if pkg#"pkgname" === "Macaulay2Doc" then "Macaulay2" else pkg#"pkgname", "." }},
-	if pkg#"pkgname" =!= "Macaulay2Doc" then DIV {
-	    SUBSECTION "Source code",
-	    PARA { "The source code from which this documentation is derived is in the file ",
-		HREF { if installLayout =!= null then installLayout#"packages" | fn else pkg#"source file", fn }, ".",
-		if pkg#?"auxiliary files" then (
-		    " The auxiliary files accompanying it are in the directory ",
-		    HREF { if installLayout =!= null then installLayout#"packages" | pkg#"pkgname" | "/" else pkg#"auxiliary files", pkg#"pkgname" | "/" }, ".")
-		}
-	    },
 	if pkg#"pkgname" =!= "Macaulay2Doc" and #e + #m > 0 then DIV {
 	    SUBSECTION "Exports",
 	    DIV { "class" => "exports",
@@ -291,9 +282,23 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 	    }))
 
 -----------------------------------------------------------------------------
--- Handling operators
+-- Details for developers
 -----------------------------------------------------------------------------
 
+linkToFile := (src, fn, pos) -> HREF { if installLayout === null then src else installLayout#"packages" | fn, fn | pos };
+
+-- TODO: support more objects
+getSource = method()
+getSource(Symbol, Thing)   := (S, x) -> null
+getSource(Symbol, Package) := (S, pkg) -> (
+    -- TODO: for packages, should we link to the location on GitHub instead?
+    ", defined in ", linkToFile(pkg#"source file", pkg#"pkgname" | ".m2", ""),
+    if pkg#?"auxiliary files" then (
+	", with auxiliary files in ",
+	linkToFile(pkg#"auxiliary files", pkg#"pkgname" | "/", ""))
+    )
+
+-- Handling operators
 -- e.g. symbol +
 getOperator := key -> if operator#?key then (
     op := toString key;
@@ -326,15 +331,15 @@ getOperator := key -> if operator#?key then (
 	))
 
 -- TODO: expand this
--- TODO: add location of symbol definition and documentation
 getTechnical := (S, s) -> DIV nonnull ( "class" => "waystouse",
     SUBSECTION "For the programmer",
     fixup PARA deepSplice {
-	"The object ", TO S, " is ", ofClass class s,
+	"The object ", TO S, " is ", ofClass class s, getSource(S, s),
 	if parent s =!= Nothing then (
 	    f := drop(ancestors s, 1);
-	    if #f > 1 then ", with ancestor classes " else if #f == 1 then ", with ancestor class " else ", with no ancestor class.",
-	    toSequence between(" < ", f / (T -> TO T))),
+	    if #f == 1 then ", with ancestor class "   else
+	    if #f >= 2 then ", with ancestor classes " else ", with no ancestor class.",
+	    toSequence between(" < ", TO \ f)),
 	"."},
     getOperator S)
 
