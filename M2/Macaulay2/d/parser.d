@@ -184,6 +184,7 @@ accumulate(e:ParseTree,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      );
 makeParseError(token:Token, message:string):ParseTree := (
      printErrorMessage(token, message);
+     setLastErrorpointer(token.position, message);
      errorTree);
 export errorunary(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      makeParseError(token1,"syntax error at '" + token1.word.name + "'"));

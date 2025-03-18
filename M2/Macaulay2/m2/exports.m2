@@ -1338,6 +1338,7 @@ exportMutable {
 	"handleInterrupts",
 	"homeDirectory",
 	"interpreterDepth",
+	"lastError",
 	"lastMatch",
 	"lineNumber",
 	"loadDepth",

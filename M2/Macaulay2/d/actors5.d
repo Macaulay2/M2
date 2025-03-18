@@ -1813,6 +1813,9 @@ export StandardE := Expr(StandardS);
 export topLevelMode := Expr(StandardS);
 topLevelModeS := dummySymbol;
 
+threadLocal lastError := nullE;
+lastErrorS := dummySymbol;
+
 initialRandomSeed := zeroZZ;
 initialRandomHeight := toInteger(10);
 
@@ -1847,7 +1850,8 @@ syms := SymbolSequence(
      (  handleInterruptsS = setupvar("handleInterrupts",toExpr(handleInterrupts));  handleInterruptsS  ),
      (  printWidthS = setupvar("printWidth",toExpr(printWidth));  printWidthS  ),
      (  notifyS = setupvar("notify",toExpr(notify));  notifyS  ),
-     (  topLevelModeS = setupvar("topLevelMode",topLevelMode); topLevelModeS  )
+     (  topLevelModeS = setupvar("topLevelMode",topLevelMode); topLevelModeS  ),
+     (  lastErrorS = setupvarThread("lastError", lastError); lastErrorS )
      );
 
 export setDebuggingMode(b:bool):void := (
@@ -1886,6 +1890,17 @@ export sethandleInterrupts(b:bool):void := (
      handleInterruptsSetup(b);
      setGlobalVariable(handleInterruptsS,toExpr(b));
      );
+setLastError(position:Position, message:string):void := (
+    if !(
+	message == returnMessage   ||
+	message == continueMessage || message == continueMessageWithArg ||
+	message == stepMessage     || message == stepMessageWithArg     ||
+	message == breakMessage)
+    then (
+	lastError = seq(locate(position), toExpr(message));
+	setGlobalVariable(lastErrorS, lastError)));
+setLastErrorpointer = setLastError;
+
 threadLocal resetvars := (
      -- These are the thread local variables that got re-initialized in tokens.d:
      -- Actually, this is no good!  If the user assigns to one of these variables, the "top level" version
@@ -1909,6 +1924,21 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 	  else when s.1
 	  is Nothing do (
 	       if sym === debuggerHookS then (debuggerHook = s.1; e)
+	       else if sym === lastErrorS then (lastError = s.1; e)
+	       else buildErrorPacket(msg))
+	  is a:Sequence do (
+	       if sym === lastErrorS then (
+		   if length(a) == 2 then (
+		       when a.0
+		       is p:List
+		       do (
+			   if p.Class == filePositionClass then (
+			       when a.1
+			       is msg:stringCell do (lastError = s.1; e)
+			       else WrongArgString(2))
+			   else WrongArg(1, "a file position"))
+		       else WrongArg(1, "a file position"))
+		   else WrongNumArgs(2))
 	       else buildErrorPacket(msg))
 	  is b:Boolean do (
 	       n := b.v;

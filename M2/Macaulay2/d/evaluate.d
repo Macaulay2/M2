@@ -1585,7 +1585,14 @@ export evalraw(c:Code):Expr := (
 	       	    tmp)
 	       else AngleBarList(r)
 	       ));
-     when e is Error do handleError(c,e) else e);
+     when e is Error
+     do (
+	 f := handleError(c,e);
+	 when f is err:Error
+	 do setLastErrorpointer(err.position, err.message)
+	 else nothing;
+	 f)
+     else e);
 
 export evalexcept(c:Code):Expr := (
      -- printErrorMessage(codePosition(c),"--evaluating: "+present(tostring(c)));
