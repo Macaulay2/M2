@@ -122,7 +122,11 @@ Node
     remainder
     quotient'
     (symbol //, Matrix, Matrix)
+///
 
+undocumented apply({BasisElementLimit, PairLimit, DegreeLimit}, opt -> [quotient', opt])
+
+doc ///
 Node
   Key
     quotient'
