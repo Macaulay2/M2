@@ -59,23 +59,28 @@ gaugeTransform(Matrix, List, PolynomialRing) := (G, C, W)->(
 isEpsilonFactorized = method();
 -- checks factorization for a whole Pfaffian system
 isEpsilonFactorized(List,RingElement) := (P,e) -> (
-    EF := true;
+    lst := new MutableList;
     for p in P do (
-        if p % e == 0 then continue
-        else EF = false
+        lst#(#lst) = lstOfDegrees(p,e);
     );
-    EF
+    lstdeg := toList lst;
+    all(lstdeg, x -> x == first lstdeg)
 )
 
--- checks factorization for a single Pfaffian
-isEpsilonFactorized(List,RingElement) := (P,e) -> (
-    EF := true;
-    for p in P do (
-        if p % e == 0 then continue
-        else EF = false
-    );
-    EF
+isEpsilonFactorized(Matrix,RingElement) := (M,e) -> (
+    lstdeg := lstOfDegrees(M,e);
+    all(lstdeg, x -> x == first lstdeg)
 )
+
+lstOfDegrees = (M,e) -> (
+    d := {{1}} | toList((dim ring e - 1):{0});
+    R := QQ[gens ring e, Degrees => d];
+    F := frac(R);
+    Mlst := select(flatten entries M, x -> x != 0);
+    lstdeg = for m in Mlst list degree sub(m,F);
+    lstdeg
+)
+
 
 end--
 restart
