@@ -5,7 +5,7 @@ TEST /// -- ALS notes, Example 7.16
   -- TODO: add assertions
 
   -- i2 : D = makeWeylAlgebra(QQ[x,y], w = {0,0,2,1});
-  -- i3 : A = pfaffians(w, I = ideal (x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1)) -- doesn't commute
+  -- i3 : A = connectionMatrices(ideal (x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1)) -- doesn't commute
   -- Grobner basis:
   -- | xdx+ydy+1 ydxdy+ydy^2+dx+dy xydy^2-y2dy^2+xdy-3ydy-1 |
   -- Standard monomials:
@@ -47,11 +47,11 @@ assert(holonomicRank(I) == 2)
 
 -- Computing the Pfaffian system w.r.t. weight vector w1
 C1 = pfaffians(I);
-SM1 = stdMon(I);
+SM1 = standardMonomials(I);
 
 -- Computing the Pfaffian system w.r.t. weight vector w2
 C2 = pfaffians(sub(I,D2));
-SM2 = stdMon(sub(I,D2));
+SM2 = standardMonomials(sub(I,D2));
 
 -- Compute Groebner Basis
 G = flatten entries gens gb I;
