@@ -213,24 +213,22 @@ Usage
     isEpsilonFactorized(M,r)
 Inputs
     A:List
-      Pfaffian system
+      of connection matrices
     M:Matrix
-      a single Pfaffian
+      a connection matrix
     r:RingElement
-      parameter which factorization property should be tested
+      parameter for which the factorization property should be tested
 Outputs
-    b:boolean
+    b:Boolean
 Description
   Text
-    This method returns true if the Pfaffian (system) is written in epsilon factorized form.
+    This method returns true if the (system of) connection matrices is written in epsilon factorized form.
   Example
     D = makeWeylAlgebra(frac(QQ[e,DegreeRank=>0])[x]);
     I = ideal(x*(1-x)*dx^2 - e*(1-x)*dx);
     B = {sub(1,D),sub(1/e,D)*dx};
     A = pfaffians(B,I)
     isEpsilonFactorized(A,e)
-Caveat
-  Currently the output lives in the fraction field of the variables adjoin differentials, but this is not the correctly implemented rational Weyl algebra
 SeeAlso
 
 ///
@@ -253,7 +251,7 @@ Inputs
       of matrices constituting the Pfaffian system
 Outputs
     p:Boolean
-      whether [A_i,A_j] = dx_i(A_j) - dx_j(A_i) for all i,j
+      whether $[A_i,A_j] = \partial_i(A_j) - \partial_j(A_i)$ for all $i,j$
 Description
   Text
     A Pfaffian system consisting of n matrices A_i in Mat_r(k(x_1..x_n)), describing n differential equations
@@ -268,7 +266,7 @@ Description
     assert(isIntegrable(D,A))
     assert(isIntegrable(A))
 Caveat
-  The matrices need to be defined over fractionField(D).
+  The matrices need to be defined over @TT "fractionField(D)"@.
 SeeAlso
 
 ///
