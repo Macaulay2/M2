@@ -22,7 +22,17 @@ Node
 	> "getting help or reporting bugs"
 	-- TODO: "contributing to Macaulay2"
 	-- Macaulay2 is an open source project, and we welcome programming contributions of all kinds.
+      :Reference Manual
+        > "The Macaulay2 language"
         > "packages provided with Macaulay2"
+      :Mathematical Objects
+        > "rings"
+        > "ideals"
+        > "matrices"
+        > "modules"
+        > @TO2(map, "morphisms")@
+        > @TO2("Complexes :: Complexes", "chain complexes")@ (also see @TO2("chain complexes", "legacy version")@)
+        > @TO2("Varieties :: Varieties", "varieties and sheaves")@
       :Mathematical Tutorials
 	-- In this section we present some tutorials that aim to introduce
 	-- the user to some mathematical ways of using Macaulay2.  The tutorials
@@ -36,14 +46,6 @@ Node
 	> "Tutorial: Canonical Embeddings of Plane Curves and Gonality"
 	> "Tutorial: Fano varieties"
 	> "Tutorial: Divisors"
-      :Mathematical Objects
-        > "rings"
-        > "ideals"
-        > "matrices"
-        > "modules"
-        > @TO2(map, "morphisms")@
-        > @TO2("Complexes :: Complexes", "chain complexes")@ (also see @TO2("chain complexes", "legacy version")@)
-        > @TO2("Varieties :: Varieties", "varieties and sheaves")@
       :Mathematical Computations
         > "elementary arithmetic"
         > "commutative algebra"
@@ -51,8 +53,6 @@ Node
         > "algebraic geometry"
         > "combinatorics"
         > "analytic functions"
-      :Reference Manual
-        > "The Macaulay2 language"
     Tree
       :Appendix
         > "changes to Macaulay2, by version"
