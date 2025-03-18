@@ -472,14 +472,8 @@ lookup(t:Token,forcedef:bool,thread:bool):void := (
      	  is entry:Symbol do (
 	       t.entry = entry;
 	       if entry.position == tempPosition then entry.position = t.position;
-	       if entry.flagLookup then (
-		    printErrorMessage(t,"flagged symbol encountered");
-		    HadError=true;
-		    );
-	       if thread && !entry.thread then (
-		    printErrorMessage(t,"symbol already present, but not thread local");
-		    HadError=true;
-		    );
+	       if entry.flagLookup then makeErrorTree(t,"flagged symbol encountered");
+	       if thread && !entry.thread then makeErrorTree(t,"symbol already present, but not thread local");
 	       )
      	  else (
 	       if forcedef
@@ -495,9 +489,7 @@ lookup(t:Token,forcedef:bool,thread:bool):void := (
 		    t.dictionary = globalDictionary; -- undefined variables are defined as global
 		    t.entry = makeSymbol(t.word,t.position,globalDictionary,thread,locallyCreated);
 		    )
-	       else (
-	       	    printErrorMessage(t,"undefined symbol " + t.word.name);
-	       	    HadError=true;))));
+	       else makeErrorTree(t,"undefined symbol " + t.word.name))));
 lookup(t:Token):void := lookup(t,true,false);
 lookuponly(t:Token):void := lookup(t,false,false);
 -----------------------------------------------------------------------------
