@@ -87,7 +87,7 @@ Inputs
     B:List
       a basis of standard monomials for I
 Outputs
-    L:List
+    A:List
       the Pfaffian system of matrices in fractionField(ring I)
 Description
   Text
@@ -95,11 +95,11 @@ Description
     The i'th matrix in Pfaffian system encodes the action of dx_i on R_n/R_n I with respect to the basis B.
 
     If a basis is not provided by the user, a basis of standard monomials will be chosen with regards to the weighted
-    Lex order of the Weyl algebra.
+    Lex order (dx_1 > .. > dx_n > x_1 > .. > x_n) of the Weyl algebra.
   Example
     D = makeWeylAlgebra(QQ[x,y], w = {0,0,2,1})
     I = ideal (x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1)
-    P = pfaffians(I)
+    A = pfaffianSystem(I)
 Caveat
 
 SeeAlso
@@ -113,13 +113,13 @@ Key
 Headline
     computes the gauge transform of a Pfaffian system
 Usage
-    gaugeTransform(M, P, R)
+    gaugeTransform(M, A, D)
 Inputs
     M:Matrix
       change of basis matrix
-    P:List
+    A:List
       Pfaffian system, i.e. a list of matrices
-    R:Ring
+    D:Ring
       the Weyl algebra
 Outputs
     L:List
@@ -129,9 +129,10 @@ Description
     This method computes the gauge transform for a Pfaffian system given a change of basis matrix.
   Example
     D = makeWeylAlgebra(QQ[x,y]);
-    I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1); P = pfaffians(I);
+    I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
+    A = pfaffians(I);
     M = matrix{{x,0},{0,y}};
-    gaugeTransform(M,P,D)
+    gaugeTransform(M,A,D)
 Caveat
   Currently the output lives in the fraction field of the variables adjoin differentials, but this is not the correctly implemented rational Weyl algebra
 SeeAlso
@@ -147,11 +148,11 @@ Headline
     computes the differential connection matrix
 Usage
     diffConnectionMatrix(I)
-    diffConnectionMatrix(P)
+    diffConnectionMatrix(A)
 Inputs
     I:Ideal
       of the Weyl algebra
-    P:List
+    A:List
       Pfaffian system, i.e. a list of connection matrices
 Outputs
     M:Matrix
@@ -163,8 +164,9 @@ Description
     We obtain the regular connection matrices by multiplying with a differential of the Weyl algebra.
   Example
     D = makeWeylAlgebra(QQ[x,y]);
-    I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1); P = pfaffians(I);
-    diffConnectionMatrix(P)
+    I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
+    A = pfaffians(I);
+    diffConnectionMatrix(A)
 Caveat
   Currently the output lives in the fraction field of the variables adjoin differentials, but this is not the correctly implemented rational Weyl algebra
 SeeAlso
@@ -207,10 +209,10 @@ Key
 Headline
     checks if a Pfaffian (system) is in epsilon-factorized form
 Usage
-    isEpsilonFactorized(P,r)
+    isEpsilonFactorized(A,r)
     isEpsilonFactorized(M,r)
 Inputs
-    P:List
+    A:List
       Pfaffian system
     M:Matrix
       a single Pfaffian
@@ -222,10 +224,11 @@ Description
   Text
     This method returns true if the Pfaffian (system) is written in epsilon factorized form.
   Example
-    D = makeWA(frac(QQ[e,DegreeRank=>0])[x]);
-    I = ideal(P = x*(1-x)*dx^2 - e*(1-x)*dx);
-    B = {sub(1,D),sub(1/e,D)*dx}; P = pfaffians(B,I)
-    isEpsilonFactorized(P,e)
+    D = makeWeylAlgebra(frac(QQ[e,DegreeRank=>0])[x]);
+    I = ideal(x*(1-x)*dx^2 - e*(1-x)*dx);
+    B = {sub(1,D),sub(1/e,D)*dx};
+    A = pfaffians(B,I)
+    isEpsilonFactorized(A,e)
 Caveat
   Currently the output lives in the fraction field of the variables adjoin differentials, but this is not the correctly implemented rational Weyl algebra
 SeeAlso
