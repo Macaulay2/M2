@@ -40,14 +40,7 @@ assert isHomogeneous minimalPresentation coker vars R
 assert isHomogeneous first smithNormalForm vars R
 
 chk = M -> (
-     -*
-     (D',P',Q') = preSmithNormalForm M;
-     *-
      (D,P,Q) = smithNormalForm M;
-     -*
-     (D',P',Q') / degrees
-     (D,P,Q) / degrees
-     *-
      assert( P*M*Q === D );
      assert( target P === target D );
      assert( target M === source P );
@@ -58,3 +51,17 @@ chk vars R
 chk matrix {{x^5}}
 chk matrix {{x^5,x^7},{0,x^3}}
 chk matrix {{x^5,x^7,x^11},{x^2,x^3,x^3},{x^11,x^7,x^2}}
+
+
+--this test would have failed before 2025
+M = matrix{{4,0},{0,6}};
+snfM = matrix{{2,0},{0,12}};
+assert(first smithNormalForm M == snfM)
+
+--this test also would have failed before 2025
+--issue related to calling syz vs trim gens syz
+--this example used to output a 2x2 matrix, which was wrong
+
+R = QQ[x]
+h = matrix{{x^3+1},{x^2+1}}
+chk h
