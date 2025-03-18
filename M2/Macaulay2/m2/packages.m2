@@ -581,6 +581,12 @@ debug GlobalDictionary := dict -> (
     if not isMember(dict, dictionaryPath) then dictionaryPath = prepend(dict, dictionaryPath);
     checkShadow())
 
+locate Package := pkg -> NumberedVerticalList nonnull (
+    pkgaux := if not pkg#?"auxiliary files" then {}
+    else select(values loadedFiles, match_(pkg#"auxiliary files"));
+    -- TODO: somehow keep track of the number of lines of each file
+    apply(prepend(pkg#"source file", pkgaux), file -> new FilePosition from (file, 0, 0)))
+
 -----------------------------------------------------------------------------
 -- evaluateWithPackage
 -----------------------------------------------------------------------------
