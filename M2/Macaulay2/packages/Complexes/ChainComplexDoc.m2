@@ -1782,7 +1782,7 @@ doc ///
             assert isQuasiIsomorphism(augmentationMap F, Concentration => (0,4))
         Text
             Even though minimal resolutions are not generally defined,
-            the @TO minimize@ method will often produce a smaller
+            the @TO (minimize, Complex)@ method will often produce a smaller
             resolution.
         Example        
             mF = minimize F
@@ -3386,7 +3386,6 @@ doc ///
 doc ///
     Key
         (minimize, Complex)
-        minimize
         minimizingMap
     Headline
         a quasi-isomorphic complex whose terms have minimal rank

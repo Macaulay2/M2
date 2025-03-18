@@ -108,11 +108,15 @@ static bool doubleq(char *p, unsigned int n) {
 
 static char escaped(char c){
      switch(c){
-     	  case 'b': return '\b';
-     	  case 't': return '\t';
-	  case 'n': return '\n';
+	  case '0': return '\0';
+	  case 'a': return '\a';
+	  case 'b': return '\b';
+	  case 'e': return '\e';
 	  case 'f': return '\f';
+	  case 'n': return '\n';
 	  case 'r': return '\r';
+	  case 't': return '\t';
+	  case 'v': return '\v';
 	  default : return c;
 	  }
      }

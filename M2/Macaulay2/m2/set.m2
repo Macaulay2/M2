@@ -70,8 +70,7 @@ Tally ? ZZ := (x,i) -> x ? toTally i
 ZZ ? Tally := (i,x) -> toTally i ? x
 *-
 
-RingElement * VirtualTally := Number * VirtualTally := (i,v) -> if i==0 then new class v from {} else applyValues(v,y->y*i)
-RingElement * Tally := (i,v) -> lift(i,ZZ) * v
+Number * VirtualTally := (i,v) -> if i==0 then new class v from {} else applyValues(v,y->y*i)
 Number * Tally := (i,v) -> if i<=0 then new class v from {} else applyValues(v,y->y*i)
      
 sum VirtualTally := (w) -> sum(pairs w, (k,v) -> v * k)
@@ -148,6 +147,10 @@ Function \ Set := Set => (f,x) -> applyKeys(x,f,(i,j)->1)
 permutations = method()
 permutations VisibleList := VisibleList => x -> if #x <= 1 then {x} else flatten apply(#x, i -> apply(permutations drop(x,{i,i}), t -> prepend(x#i,t)))
 permutations ZZ := List => n -> permutations toList (0 .. n-1)
+
+inversePermutation = method()
+inversePermutation VisibleList := VisibleList => v -> (
+    w := new MutableList from #v:null; scan(#v, i -> w#(v#i)=i); toList w )
 
 uniquePermutations = method()
 uniquePermutations VisibleList := VisibleList => x -> if #x <= 1 then {x} else (

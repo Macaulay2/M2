@@ -1,10 +1,33 @@
-document {
-    Key => Tor,
-    Headline => "Tor module"
-    }
+undocumented {
+    (Tor, ZZ, Matrix, Module),
+    (Tor, ZZ, Matrix, Ideal),
+    (Tor, ZZ, Matrix, Ring),
+    (Tor, ZZ, Module, Matrix),
+    (Tor, ZZ, Ideal,  Matrix),
+    (Tor, ZZ, Ring,   Matrix),
+}
 
 document {
-    Key => {(Tor,ZZ,Module,Module),(Tor,ZZ,Module,Ring),(Tor,ZZ,Ideal,Ideal),(Tor,ZZ,Ideal,Module),(Tor,ZZ,Module,Ideal),(Tor,ZZ,Ideal,Ring)},
+    Key => Tor,
+    Headline => "Tor module",
+    SeeAlso => { Hom, Ext },
+    Subnodes => {
+	TO (Tor, ZZ, Module, Module),
+    }
+}
+
+document {
+    Key => {
+	(Tor, ZZ, Module, Module),
+	(Tor, ZZ, Module, Ideal),
+	(Tor, ZZ, Module, Ring),
+	(Tor, ZZ, Ideal, Module),
+	(Tor, ZZ, Ideal, Ideal),
+	(Tor, ZZ, Ideal, Ring),
+	(Tor, ZZ, Ring, Module),
+	(Tor, ZZ, Ring, Ideal),
+	(Tor, ZZ, Ring, Ring),
+    },
     Headline => "compute a Tor module",
     Usage => "Tor_i(M,N)",
     Inputs => { "i", "M", "N" },

@@ -98,10 +98,10 @@ adjustComputation Computation := true >> opts -> container -> container.Result
 -----------------------------------------------------------------------------
 
 -- perform the computation, or return the cached result
-cacheComputation = method(TypicalValue => CacheFunction, Options => true)
+cacheComputation = method(Options => true)
 -- the default method only sets the Result in the container
 -- Note: this function takes advantage of FunctionClosures by modifying the container
-cacheComputation Computation := CacheFunction => true >> opts -> container -> new CacheFunction from (
+cacheComputation Computation := Function => true >> opts -> container -> (
     algorithm -> (
 	if isComputationDone(opts, container) then ( cacheHit container;
 	    adjustComputation(opts, container))

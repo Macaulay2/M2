@@ -7,7 +7,7 @@ doc ///
   (drop, BasicList, ZZ)
   (drop, BasicList, List)
  Headline
-  drop some elements from a list or sequence.
+  drop some elements from a list or sequence
  Usage
   drop(L, i)
   drop(L, {j,k})

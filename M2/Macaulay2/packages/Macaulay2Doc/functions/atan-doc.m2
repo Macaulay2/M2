@@ -23,7 +23,7 @@ document {
 
 document { 
      Key => {atan,(atan,RR),(atan,CC),(atan, RRi)},
-     Headline => "compute the arctangent of a number ",
+     Headline => "compute the arctangent of a number",
      Usage => "atan x\natan I",
      Inputs => { "x" => RR, "I" => RRi},
      Outputs => {

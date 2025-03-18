@@ -6,6 +6,12 @@ R = QQ[x,y,z]
 assert Equation(vector x, vector matrix {{x}})
 assert Equation(vector {x, y, z}, vector matrix {{x}, {y}, {z}})
 
+v = vector matrix {{1_R}}
+assert Equation(vector(R, matrix {{1}}), v)
+assert Equation(vector(R, {1}), v)
+assert Equation(vector(R, 1), v)
+assert Equation(vector(R, 1_R), v)
+
 M = image transpose vars R
 assert Equation(vector(M, 1), vector map(M,, {{1}}))
 

@@ -271,10 +271,26 @@ inducedTruncationMap = (G, F, f) -> (
 truncate(List, Matrix) := Matrix => truncateModuleOpts >> opts -> (degs, f) -> (
     inducedTruncationMap(truncate(degs, target f, opts), truncate(degs, source f, opts), f))
 
+-- TODO: document these
+truncate(ZZ,      ZZ,   Matrix) :=
+truncate(Nothing, ZZ,   Matrix) :=
+truncate(Nothing, List, Matrix) :=
+truncate(List,    List, Matrix) := Matrix => truncateModuleOpts >> opts -> (tardegs, srcdegs, f) -> (
+    -- Given a graded map f, truncate source f, possibly higher than target f,
+    -- then return the map induced by f and the two inclusions
+    -- TODO: benchmark to make sure the inducedMaps are not computing unnecessary gb
+    if tardegs === null then return f * inducedMap(source f, truncate(srcdegs, source f, opts));
+    -- TODO: assert that srcdegs >= tardegs with respect to the cone of truncation
+    inducedTruncationMap(truncate(tardegs, target f, opts),  truncate(srcdegs, source f, opts), f))
+
 --------------------------------------------------------------------
 
 truncate(InfiniteNumber, Thing) := truncateModuleOpts >> o -> (d, M) -> (
-    if d === -infinity then M else error "unexpected degree for truncation")
+    if d === -infinity then M else (ring M)^0)
+
+-- TODO: implement union types in M2 and simplify stuff like this
+truncate(Nothing,        InfiniteNumber, Matrix) :=
+truncate(InfiniteNumber, InfiniteNumber, Matrix) := lookup(truncate, List, List, Matrix)
 
 --------------------------------------------------------------------
 -- basis using basisPolyhedron (experimental)

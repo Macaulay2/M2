@@ -120,7 +120,8 @@ runFile = (inf, inputhash, outf, tmpf, pkg, announcechange, usermode, examplefil
      cmd = cmd | readmode(ArgSilent,      "--silent");
      cmd = cmd | readmode(ArgStop,        "--stop");
      cmd = cmd | readmode(ArgPrintWidth,  "--print-width " | ArgPrintWidthN);
-     cmd = cmd | concatenate apply(srcdirs, d -> (" --srcdir ", format d));
+     cmd = cmd | concatenate apply(srcdirs, d -> (" --srcdir ",
+	     format relativizeFilename(rundir, d)));
      -- TODO: fix capture, add preloaded packages to Macaulay2Doc, then delete the following two lines
      needsline := concatenate(" -e 'needsPackage(",format pkgname,",Reload=>true,FileName=>",format pkg#"source file",")'");
      cmd = cmd | if not isMember(pkgname, {"Macaulay2Doc", "Core", "User"}) then needsline else "";

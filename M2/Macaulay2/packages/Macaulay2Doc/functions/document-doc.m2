@@ -435,7 +435,7 @@ Node
       This option inserts the source code of the listed functions into a documentation page.
 
       As an example, here is the code for the @TT "SourceCode"@ part
-      of the documentation node for @TO (variety, SheafOfRings)@.
+      of the documentation node for @TO "Varieties::variety(SheafOfRings)"@.
     Code
       EXAMPLE { PRE ////SourceCode => {(variety, SheafOfRings)}//// }
   SeeAlso
@@ -662,3 +662,43 @@ Node
       f BasicList := x -> 3
       undocumented { f, (f,List) }
 ///
+
+document {
+    Key => tutorial,
+    Headline => "convert documentation from tutorial format",
+    Usage => "tutorial x",
+    Inputs => { "x" => String => "documentation in tutorial format" },
+    Outputs => {{ "documentation in hypertext format" }},
+    PARA { "Some of the Macaulay2 documentation is written in this format." },
+    EXAMPLE {
+	"///-- We can compute $(x+y)^3$ as follows.
+	R = QQ[x,y]
+	(x+y)^3
+	///",
+	"tutorial oo",
+	"peek oo"
+    }}
+
+document {
+    Key => {
+	ofClass,
+       (ofClass, Type),
+       (ofClass, ImmutableType),
+       (ofClass, List)
+    },
+    Headline => "English phrases for types",
+    Usage => "ofClass T",
+    Inputs => { "T" => Nothing => {ofClass{Type,ImmutableType,List}, " of types"} },
+    Outputs => { Sequence => { "an English phrase in hypertext, using a synonym for each type, ",
+	    "together with appropriate indefinite articles, and, if a list is presented, the word ",
+	    EM "or", " as a conjunction at the end" }},
+    PARA { "When viewed in html, words in the phrase hot link(s) to the documentation node(s) for the class(es)." },
+    EXAMPLE lines ///
+          ofClass class 3
+	  peek oo
+	  ofClass Ring
+	  needsPackage "Text"
+	  SPAN ofClass {HashTable, ProjectiveVariety}
+	  document { Key => foo, "We may need ", ofClass ZZ, " and ", ofClass HashTable, "." }
+	  help foo
+     ///}

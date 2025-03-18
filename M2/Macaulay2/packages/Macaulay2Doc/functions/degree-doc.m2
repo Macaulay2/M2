@@ -34,7 +34,7 @@ document {
 	  TO (degree,Ideal),
 	  TO (degree,Ring),
 	  TO (degree,Module),
-	  TO (degree,ProjectiveVariety)
+	  TO "Varieties::degree(ProjectiveVariety)"
 	  },
 	  HEADER3 "Degree of homomorphisms",
 	  UL {
@@ -104,6 +104,7 @@ document {
      }
 document { 
      Key => (degree,Module),
+     Headline => "get the degree of a module",
      Usage => "degree M",
      Inputs => {
 	  "M" => "over a polynomial ring or quotient of a polynomial ring, over a field k"
@@ -149,7 +150,7 @@ doc ///
 Key
   (length, Module)
 Headline
-  Computes the length of a module
+  compute the length of a module
 Usage
   l = length M
 Inputs

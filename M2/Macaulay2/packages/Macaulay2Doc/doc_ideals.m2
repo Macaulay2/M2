@@ -1,19 +1,5 @@
 -- -*- coding: utf-8 -*-
 document {
-     Key => (symbol _*,Ideal),
-     Headline => "get the list of generators of an ideal",
-     Usage => "I_*",
-     Inputs => {"I"},
-     Outputs => {{"the list of generators of ", TT "I"}},
-     EXAMPLE lines ///
-     R = QQ[a..c]
-     I = ideal (a,b,c);
-     J = I^2
-     J_*     
-     ///
-     }
-
-document {
      Key => Ideal,
      Headline => "the class of all ideals",
      SeeAlso => "ideals",
@@ -90,8 +76,38 @@ document {
 	  },
      PARA{},
      "An ideal ", TT "I", " is an immutable object, so if you want to 
-     cache information about it, put it in the hash table ", TT "I.cache", "."
+     cache information about it, put it in the hash table ", TT "I.cache", ".",
+    Subnodes => {
+	TO MonomialIdeal,
+	TO isMonomialIdeal,
+	TO isSquareFree,
+	TO (symbol *, Ideal, Ideal),
+        TO (symbol +, Ideal, Ideal),
+        TO (symbol ^, Ideal, ZZ),
+        TO (symbol ^, Ideal, Array),
+        TO (leadTerm, Ideal),
+        TO (leadTerm, ZZ, Ideal),
+        TO (codim, Ideal),
+        TO (degree, Ideal),
+        TO (dim, Ideal),
+	TO (generator, Ideal),
+        TO (generators, Ideal),
+        TO (hilbertPolynomial, Ideal),
+        TO (hilbertSeries, Ideal),
+        TO (intersect, Ideal, Ideal),
+        TO (isSubset, Ideal, Ideal),
+        TO (jacobian, Ideal),
+        TO (isMember, RingElement, Ideal),
+        TO (minimalPresentation, Ideal),
+        TO (numgens, Ideal),
+        TO (support, Ideal),
+        TO (symbol /, Ideal, Function),
+        TO (symbol /, Ideal, Ideal),
+	TO irreducibleCharacteristicSeries,
+	TO decompose,
+        },
      }
+
 document {
      Key => (symbol *,Ideal,Ideal),
      Headline => "product of ideals",

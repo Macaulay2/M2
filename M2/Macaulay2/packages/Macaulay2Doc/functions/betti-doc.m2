@@ -84,6 +84,8 @@ Node
       C.dd
   Contributors
     Hans-Christian von Bothmer donated the last feature.
+  Subnodes
+    MultigradedBettiTally
 ///
 
 ------------------
@@ -198,7 +200,7 @@ Node
         betti coker matrix{{x^3, x*y^2}, {y*x^2, y^3}}
         betti coker map(S^{0,-1}, , matrix{{x^2, y}, {y^3, x^2}})
       Text
-        Also see @TO (betti, CoherentSheaf)@.
+        Also see @TO "Varieties::betti(CoherentSheaf)"@.
   Synopsis
     Heading
       Betti diagram showing the degrees of generators of a homogeneous ideal
@@ -251,8 +253,6 @@ Node
     regularity
     pdim
   Subnodes
-    BettiTally
-    MultigradedBettiTally
     (multigraded, BettiTally)
     (betti, BettiTally)
     [betti, Minimize]

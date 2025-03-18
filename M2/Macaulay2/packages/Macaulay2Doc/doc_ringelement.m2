@@ -132,7 +132,7 @@ document {
      Key => {coefficients,
 	  (coefficients,Matrix),(coefficients,RingElement),
 	  [coefficients,Monomials],[coefficients,Variables]},
-     Headline => "monomials and their coefficients",
+     Headline => "get the monomials and coefficients of a polynomial or matrix",
      Usage => "(M,C) = coefficients f",
      Inputs => {
 	  "f" => {"a one-row ", TO "Matrix", " with ", TT "n", " columns, say, or a ", TO "RingElement", ", to

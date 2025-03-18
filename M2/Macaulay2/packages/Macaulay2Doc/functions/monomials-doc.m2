@@ -24,7 +24,8 @@ document {
      EXAMPLE {
 	  "monomials(m, Variables=>{x,y})"
 	  },
-     SeeAlso => {coefficients}
+     SeeAlso => {coefficients},
+     Subnodes => { TO [monomials, Variables] },
      }
 document { 
      Key => [monomials, Variables],

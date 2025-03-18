@@ -6,6 +6,12 @@ document {
      Key => chainComplex,
      Headline => "make a chain complex",
      TT "chainComplex", " -- a method for creating chain complexes.",
+    Subnodes => {
+	 TO (chainComplex, Ring),
+	 TO (chainComplex, List),
+	 TO (chainComplex, Matrix),
+	 TO (chainComplex, GradedModule),
+         },
      }
 
 document { Key => (chainComplex,Ring), Headline => "make an empty chain complex over a ring",

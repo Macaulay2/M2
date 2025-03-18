@@ -11,7 +11,11 @@ document {
      "Note that the series is provided as a type of expression called
      a ", TO "Divide", ".",
      SeeAlso => {"degreesRing", "reduceHilbert", "poincare",
-	  "poincareN", "hilbertPolynomial", "hilbertFunction"}
+	  "poincareN", "hilbertPolynomial", "hilbertFunction"},
+     Subnodes => {
+	 TO [hilbertSeries, Order],
+	 TO [hilbertSeries, Reduce],
+         },
      }
 
 document { 

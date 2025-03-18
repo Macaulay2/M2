@@ -37,5 +37,5 @@ document {
 	  "The entire chain of base rings can be obtained under the key ", TO "baseRings", "."
 	  },
      EXAMPLE "T.baseRings",
-     SeeAlso => { baseRings }
+     Subnodes => { TO "baseRings" },
      }

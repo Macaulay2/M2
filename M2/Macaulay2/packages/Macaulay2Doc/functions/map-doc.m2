@@ -11,7 +11,7 @@
 undocumented {(map, RingFamily, Thing, Thing),(map, Thing, RingFamily, Thing)}
 
 document {
-     Key => map,
+     Key => { map, "morphisms" },
      Headline => "make a map",
      Usage => "map(Y,X,d) or map(Y,X)",
      Inputs => {
@@ -31,6 +31,9 @@ document {
      "See also the function ", TO matrix, ", which focuses on creating new matrices from
      rectangular arrays of ring elements or matrices.",
      Subnodes => {
+	 "Getting information about a map",
+	 TO source,
+	 TO target,
 	  "Creating a map (matrix) between modules",
 	  TO (map,Module,Module,Function),
 	  TO (map,Module,Module,List), 
@@ -51,7 +54,10 @@ document {
 	  TO (map,Ring,Ring,Matrix),
 	  "Creating a map between chain complexes",
 	  -- TO (map,ChainComplex,ChainComplex,ChainComplexMap),
-	  TO (map,ChainComplex,ChainComplex,Function)
+	  TO (map,ChainComplex,ChainComplex,Function),
+	  "The Hom and End modules",
+	  TO Hom,
+	  TO End,
 	  }
      }
 document {
@@ -226,7 +232,10 @@ document {
      	  "g2 = a ** matrix{{a,b}}",
 	  "degree g2",
 	  "isHomogeneous g2"
-	  }
+	  },
+    Subnodes => {
+	TO [map, Degree],
+        },
      }
 document {
      Key => (map,Module,Nothing,Matrix),
@@ -554,7 +563,7 @@ document {
 	  }
      }
 document { 
-     Key => {Degree, [map, Degree]},
+     Key => [map, Degree],
      Headline => "specify the degree of a map",
      Usage => "map(..., Degree=>d)",
      "Specifies that the degree of the map created should be ", TT "d", ". ",

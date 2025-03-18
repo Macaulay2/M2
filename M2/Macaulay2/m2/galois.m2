@@ -7,6 +7,9 @@ needs "polyrings.m2"
 GaloisField = new Type of EngineRing
 GaloisField.synonym = "Galois field"
 
+isField GaloisField := F -> true
+isFinitePrimeField GaloisField := F -> F.degree == 1
+
 expression GaloisField := F -> if hasAttribute(F,ReverseDictionary) then expression getAttribute(F,ReverseDictionary) else (expression GF) (expression F.order)
 describe GaloisField := F -> Describe (expression GF) (expression F.order)
 

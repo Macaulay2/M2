@@ -102,7 +102,7 @@ Node
    (EXAMPLE, String)
    (EXAMPLE, VisibleList)
   Headline
-    hypertext EXAMPLE item
+    construct a hypertext item from a Macaulay2 input string
   Usage
     EXAMPLE x
   Inputs

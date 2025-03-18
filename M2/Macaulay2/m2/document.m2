@@ -31,7 +31,7 @@ methodNames := set {NewFromMethod, NewMethod, NewOfFromMethod, NewOfMethod, id, 
 indefiniteArticle = s -> if match("[aeiouAEIOU]", s#0) and not match("^one ", s) then "an " else "a "
 indefinite        = s -> concatenate(indefiniteArticle s, s)
 
-enlist := x -> if instance(x, List) then x else {x}
+enlist := x -> if instance(x, List) then nonnull x else {x}
 
 -----------------------------------------------------------------------------
 -- verifying the document Key
@@ -163,12 +163,12 @@ makeDocumentTag' := opts -> key -> (
     else  if isMember(fkey, allPackages())   then fkey
     -- for these three types, the method package actually calls
     -- makeDocumentTag, so we can't use it, and need workarounds:
-    else  if instance(nkey, Array)           then youngest toSequence(package \ splice nkey)
+    else  if instance(nkey, Array)           then youngest toSequence(package' \ splice nkey)
     else  if instance(nkey, String)          then currentPackage -- FIXME
     -- Note: make sure Schubert2 can document (symbol SPACE, OO, RingElement)
-    else  if instance(nkey, Sequence)        then youngest (package \ splice nkey)
-    else  if (pkg' := package nkey) =!= null then pkg'
-    else  if (pkg'  = package fkey) =!= null then pkg';
+    else  if instance(nkey, Sequence)        then youngest (package' \ splice nkey)
+    else  if (pkg' := package' nkey) =!= null then pkg'
+    else  if (pkg'  = package' fkey) =!= null then pkg';
     -- If not detected, signal an error and failover to currentPackage
     if pkg === null then (
 	if currentDocumentTag === null   then error("makeDocumentTag: package cannot be determined: ", nkey) else
@@ -204,7 +204,11 @@ makeDocumentTag String      := opts -> key -> (
 -- TODO: can this be modified to fix the tag in-place? then we would only need to
 -- fix the tag in (validate, TO), rather than also in (info, TO) and (html, TO).
 fixup DocumentTag := DocumentTag => tag -> (
-    if (rawdoc := fetchAnyRawDocumentation tag) =!= null then rawdoc.DocumentTag else tag)
+    tag' := if (rawdoc := fetchAnyRawDocumentation tag) =!= null then rawdoc.DocumentTag else tag;
+    if package tag =!= package tag' then printerr("warning: ambiguous reference ",
+	format toString tag, " and ", format toString tag', " when processsing ",
+	toString locate currentDocumentTag);
+    tag')
 
 -----------------------------------------------------------------------------
 -- formatting document tags
@@ -419,7 +423,7 @@ hasDocumentation = key -> null =!= fetchAnyRawDocumentation makeDocumentTag(key,
 locate DocumentTag := tag -> new FilePosition from (
     rawdoc := fetchAnyRawDocumentation tag;
     if rawdoc =!= null then (
-	pkg := package rawdoc.DocumentTag;
+	pkg := package' rawdoc.DocumentTag;
 	src := minimizeFilename(pkg#"source directory" | rawdoc#"filename");
 	src, rawdoc#"linenum", 0)
     else (currentFileName, currentRowNumber(), currentColumnNumber()))
@@ -494,7 +498,7 @@ processSignature := (tag, fn) -> (type0, item) -> (
 	opts := getOptionDefaultValues optbase;
 	if opts === true then opts = new OptionTable from { optsymb => null };
 	if not opts#?optsymb then error("symbol ", optsymb, " is not the name of an optional argument for function ", toExternalString optbase);
-	opttag := getPrimaryTag makeDocumentTag([optbase, optsymb], Package => package tag);
+	opttag := getPrimaryTag makeDocumentTag([optbase, optsymb], Package => package' tag);
 	name := if tag === opttag then TT toString optsymb else TO2 { opttag, toString optsymb };
 	type  = if type =!= null and type =!= Nothing then ofClass type else TT "..."; -- type Nothing is treated as above
 	maybeformat := if instance(opts#optsymb, String) then format else identity;
@@ -601,7 +605,6 @@ getSourceCode :=  val         -> DIV {"class" => "waystouse",
 		c := code f;   if c === null then error("SourceCode: ", toString m, ": code for method not found");
 		reproduciblePaths toString net c))}}
 getSubnodes := val -> (
-    val = nonnull enlist val;
     if #val == 0 then error "encountered empty Subnodes list"
     else MENU apply(val, x -> fixup (
 	    if      instance(x, TOH)       then TO {x#0}
@@ -637,7 +640,7 @@ KeywordFunctions := new HashTable from {
     References      => val -> getSubsection(val, "References"),
     Caveat          => val -> getSubsection(val, "Caveat"),
     SeeAlso         => val -> getSubsection(UL (TO \ enlist val), "See also"),
-    Subnodes        => val -> getSubnodes val,
+    Subnodes        => val -> getSubnodes enlist val,
     SourceCode      => val -> getSourceCode val,
     ExampleFiles    => val -> getExampleFiles val,
     }

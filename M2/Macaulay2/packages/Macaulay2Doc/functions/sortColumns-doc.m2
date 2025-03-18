@@ -34,7 +34,11 @@ document {
       	  "s = sortColumns(f,DegreeOrder => Descending)",
       	  "f_s"
 	  },
-     SeeAlso => {sort}
+     SeeAlso => {sort},
+     Subnodes => {
+	 TO [sortColumns, MonomialOrder],
+	 TO [sortColumns, DegreeOrder],
+         },
      }
 document { 
      Key => [sortColumns, MonomialOrder],

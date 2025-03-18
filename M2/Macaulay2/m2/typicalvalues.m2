@@ -6,7 +6,12 @@
 needs "methods.m2"
 needs "lists.m2"
 
+-- TODO: are these used in the documentation?
+-- TODO: how to find all missing keywords?
+-- TODO: is there a better place for these?
 typicalValues#(symbol timing) = Time
+typicalValues#(symbol elapsedTiming) = Time
+typicalValues#(symbol threadLocal) = Symbol
 typicalValues#(symbol local) = Symbol
 typicalValues#(symbol global) = Symbol
 typicalValues#(symbol symbol) = Symbol
@@ -110,16 +115,18 @@ generateTypicalValues = (srcdir) -> (
     printerr("Generating typical values in ", relativizeFilename typicalValuesSource);
     outfile := openOut typicalValuesSource;
     for file in sort ddfiles do (
+	try src := get(srcdir | file) else continue;
 	comment := "-- typical values extracted from " | file;
-	srcstring := stack apply(pairs lines get(srcdir | file), (num, line) -> line | " -- " | file | ":" | num);
+	srcstring := stack apply(pairs lines src, (num, line) -> line | " -- " | file | ":" | num);
 	-- TODO: separate method key (\\1) and output type (\\2)
 	extracted := select(typicalValuesFormat | " -- (.*)$", "typval(\\1, \\2) -- \\3", toString srcstring);
 	extracted  = apply(extracted, line -> first select("(.*?)--(.*?)$", "\\1" | pad_(91-#line) "\t-- \\2", line));
 	if 0 < #extracted then outfile << comment << endl << stack extracted << endl);
-    close outfile)
+    outfile << "-- DONE: generated based on " | version#"git description" << endl << close)
 
--- if missing, tvalues.m2 is regenerated directly
-if not fileExists typicalValuesSource then generateTypicalValues(currentFileDirectory | "../d/")
+-- if missing or not successfully generated, tvalues.m2 is regenerated directly
+if not fileExists typicalValuesSource or not match("-- DONE", get typicalValuesSource)
+then generateTypicalValues(currentFileDirectory | "../d/")
 
 -----------------------------------------------------------------------------
 -- numerical functions that will be wrapped

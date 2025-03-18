@@ -656,44 +656,35 @@ export present(x:string):string := (
      fixesneeded := 0;
      foreach cc in x do (
 	  c := cc; 
-	  if c == char(0) || c == '\t' || c == '\b' || c == '\r' || c == '\"' || c == '\\' 
-	  then fixesneeded = fixesneeded + 1 
+	  if (c == '\"' ||
+	      c == '\\' ||
+	      c == '\b' ||
+	      c == '\f' ||
+	      c == '\n' ||
+	      c == '\r' ||
+	      c == '\t' )
+	  then fixesneeded = fixesneeded + 1
+	  else if 0 <= c && c < 32 then fixesneeded = fixesneeded + 5
 	  );
      if fixesneeded != 0 then (
 	  new string len length(x)+fixesneeded do foreach cc in x do (
 	       c := cc;
-	       if c == char(0) then (provide '\\'; provide '0';)
-	       else if c == '\r' then (provide '\\'; provide 'r';)
-	       else if c == '\b' then (provide '\\'; provide 'b';)
-	       else if c == '\t' then (provide '\\'; provide 't';)
+	       -- control characters understood by JSON
+	       if      c == '\b' then (provide '\\'; provide 'b')
+	       else if c == '\f' then (provide '\\'; provide 'f')
+	       else if c == '\n' then (provide '\\'; provide 'n')
+	       else if c == '\r' then (provide '\\'; provide 'r')
+	       else if c == '\t' then (provide '\\'; provide 't')
+	       else if 0 <= c && c < 32
+	       then ( -- escape all other control characters as \u00xy
+		   provide '\\'; provide 'u'; provide '0'; provide '0';
+		   if c < 16 then provide '0' else provide '1';
+		   lastdigit := c % 16;
+		   if lastdigit < 10 then provide '0' + lastdigit
+		   else provide 'a' + lastdigit - 10)
 	       else (
 		    if c == '\"' || c == '\\' then provide '\\';
-	       	    provide c;
-		    )
-	       ))
-     else x);
-
-export presentn(x:string):string := ( -- fix newlines and other special chars, also
-     fixesneeded := 0;
-     foreach cc in x do (
-	  c := cc; 
-	  if c < char(32) || c == '\"' || c == '\\'
-	  then fixesneeded = fixesneeded + 1 
-	  );
-     if fixesneeded != 0 then (
-	  new string len length(x)+fixesneeded do foreach cc in x do (
-	       c := cc;
-	       if c == char(0) then (provide '\\'; provide '0';)
-	       else if c == '\r' then (provide '\\'; provide 'r';)
-	       else if c == '\n' then (provide '\\'; provide 'n';)
-	       else if c == '\b' then (provide '\\'; provide 'b';)
-	       else if c == '\t' then (provide '\\'; provide 't';)
-	       else if c < char(32) then (provide '\\'; provide '?';)
-	       else (
-		    if c == '\"' || c == '\\' then provide '\\';
-	       	    provide c;
-		    )
-	       ))
+		    provide c)))
      else x);
 
 export filbuf(o:file):int := (

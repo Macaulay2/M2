@@ -42,5 +42,4 @@ doc ///
  SeeAlso
   partitions
   subsets
-  "combinatorial functions"
 ///

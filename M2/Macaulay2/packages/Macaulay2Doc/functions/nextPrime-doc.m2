@@ -35,8 +35,10 @@ doc ///
        the exponent of the root of unity
     r1: ZZ
        tentative root of unity
-    Range => Sequence
-      of integers (a,b)
+    Range => "(a,b)"
+      specifying an integral interval in which we search for a prime number with desired properties.
+      If $b < a + 2*\log a$ an error message will be returned.
+
   Outputs
      p: ZZ
           a prime in the specified range. The default range is $(10^4,3*10^4)$
@@ -56,26 +58,6 @@ doc ///
        r^12%p==1, r^6%p==1, r^4%p==1
   SeeAlso
     nextPrime
-    Range
-///
-
-doc ///
-  Key
-    Range 
-  Headline
-     can be assigned a integral interval
-  Usage
-    getPrimeWithRootOfUnity(p,r,Range=>(a,b))
-  Inputs
-    a: ZZ
-    b: ZZ
-  Description
-    Text
-       Specifies an integral interval in which we search for a prime number with desired properties.
-       If $b< a+2*log a$ an error message will be returned. The default value is $(10^4,3*10^4)$
-  SeeAlso
-    nextPrime
-    getPrimeWithRootOfUnity
 ///
 
 doc ///
@@ -83,7 +65,7 @@ doc ///
     randomKRationalPoint
     (randomKRationalPoint,Ideal)
   Headline
-    Pick a random K rational point on the scheme X defined by I
+    pick a random K rational point on the scheme X defined by I
   Usage
     randomKRationalPoint I
   Inputs

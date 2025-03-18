@@ -5,7 +5,7 @@ star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldSta
 document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
-	  -- TO "changes made for the next release",
+	  TO "changes made for the next release",
 	  TO "changes, 1.24.11",
 	  TO "changes, 1.24.05",
 	  TO "changes, 1.23",
@@ -64,8 +64,18 @@ changesHelper List := opt -> pkgnames -> (
 	    << ".\" },"
 	    << endl)))
 
--- document {
---     Key => "changes made for the next release"}
+document {
+    Key => "changes made for the next release",
+    UL {
+	LI { "functionality changed in a way that could break code:",
+	    UL {
+		LI { "The method ", TO (symbol\\, Matrix, Matrix), " is now a shortcut for ", TO (quotient', Matrix, Matrix), ". ",
+		    "The previous functionality is still available via ", TO (symbol//, Matrix, Matrix), ", which is a shortcut for ",
+		    TO (quotient, Matrix, Matrix), ". Additionally, both methods now work for maps of non-free modules."}
+		}
+	    }
+	}
+    }
 
 document {
     Key => "changes, 1.24.11",
@@ -357,7 +367,7 @@ document {
 		    LI { "Raising a matrix to the 0th power will now raise an error if the ", TO source, " and ", TO target, " do not agree."},
 		    LI { "The value of a class's ", TT "1", " key (used internally for getting multiplicative identities) should now be a function that takes ",
 			 "an instance of the class and returns the multiplicative identity rather than the multiplicative identity itself."},
-		    LI { "The function ", TO urlEncode, " has been moved from the ", TO OnlineLookup, " package to ", TO Core, ", and its behavior has been ",
+		    LI { "The function ", TO urlEncode, " has been moved from the ", TO "OnlineLookup::OnlineLookup", " package to ", TO Core, ", and its behavior has been ",
 			 "slightly modified."}
 	       }
 	  },
@@ -745,7 +755,9 @@ document {
 	       },
 	 LI { "functionality changed:",
 	      UL {
-		   LI { "The functions ", TO "associatedPrimes", ", ", TO "topComponents", ", and ", TO "removeLowestDimension", " have been moved to the
+		   LI { "The functions ", TO "PrimaryDecomposition::associatedPrimes", ", ",
+		       TO "PrimaryDecomposition::topComponents", ", and ",
+		       TO "PrimaryDecomposition::removeLowestDimension", " have been moved to the
 			 package ", TO "PrimaryDecomposition::PrimaryDecomposition", "." },
 		   LI { "The destinations of the links at the tops of the web pages portraying documentation nodes in a package have been
 			altered.  The links labeled ", TT "next", " and ", TT "previous", " have been interchanged with the links labelled ",
@@ -1026,7 +1038,7 @@ document {
 	       },
 	  LI { "new constants and operators:",		    -- get this with : git diff version-1.9.2 ../../m2/exports.m2
 	       UL {
-		    LI { "The type ", TO "Describe", ", ", TO "MapExpression", ", ", TO "MatrixDegreeExpression", ", ", TO "SheafExpression", ", and ", TO "VectorExpression", "
+		    LI { "The type ", TO "Describe", ", ", TO "MapExpression", ", ", TT "MatrixDegreeExpression", ", ", TT "SheafExpression", ", and ", TO "VectorExpression", "
 			 have been added." },
 		    LI { "The top level mode ", TO "WebApp", " has been added." },
 		    LI { "The function ", TT "htmlWithTex", " has been added." },
@@ -2791,7 +2803,7 @@ document {
 	  with algebraic algorithms that mix symbolic and numeric techniques.  Basic
 	  transcendental functions are also provided, and pi is now a symbolic
 	  constant usable in numeric expressions of any precision.  An interface to
-	  lapack routines for singular value decomposition and eigenvectors is
+	  LAPACK routines for singular value decomposition and eigenvectors is
 	  provided (but they operate only with 53 bits of precision).
 	  "},
      PARA ///

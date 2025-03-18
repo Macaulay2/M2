@@ -27,7 +27,7 @@ document {
      }
 document { 
      Key => (source,ChainComplexMap),
-     Headline => " find the source of a map of chain complexes",
+     Headline => "find the source of a map of chain complexes",
      Usage => "source f",
      Inputs => {
 		"f" => ChainComplexMap

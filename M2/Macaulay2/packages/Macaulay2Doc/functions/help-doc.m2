@@ -174,8 +174,10 @@ Node
     (symbol?, Symbol)
     (symbol?, ScriptedFunctor)
     (symbol?, Function)
+    --(symbol?, Command)
     (symbol?, Keyword)
     (symbol?, Package)
+    --(symbol?, Thing)
     (symbol?, Type)
   Headline
     view brief documentation of a symbol

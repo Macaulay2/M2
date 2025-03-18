@@ -1,7 +1,13 @@
 document {
      Key => inducedMap,
      Headline => "compute an induced map",
-     SeeAlso => "inducesWellDefinedMap"
+     Subnodes => {
+	 TO (inducedMap, Module, Module),
+	 TO (inducedMap, Module, Module, Matrix),
+	 TO [inducedMap, Degree],
+	 TO [inducedMap, Verify],
+	 TO inducesWellDefinedMap,
+     }
      }
 document {
      Key => [inducedMap,Degree],

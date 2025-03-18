@@ -1,9 +1,150 @@
 -- also includes: vector
--- TODO: (module, Ideal)
+
+undocumented (module, Module)
+
+document {
+    Key => Module,
+    Headline => "the class of all modules",
+    PARA{},
+    "For basic information about modules in ", EM "Macaulay2", ", see ", TO "modules", ".",
+    PARA{},
+    "Common ways to make a module:",
+    UL {
+	TO (symbol ^, Ring, ZZ),
+	TO (symbol ^, Ring, List),
+	TO (cokernel, Matrix),
+	TO (image, Matrix),
+	TO (kernel, Matrix),
+    },
+    "Common ways to get information about modules:",
+    UL {
+	TO (ring, Module),
+	TO (numgens, Module),
+	TO (degrees, Module),
+	TO (generators, Module),
+	TO (relations, Module),
+	TO "isFreeModule",
+	TO (isHomogeneous, Module),
+    },
+    "Numerical information about a module:",
+    UL {
+	TO (codim, Module),
+	TO (dim, Module),
+	TO (rank, Module)
+    },
+    "Submodules, quotients, and subquotient modules:",
+    UL {
+	TO (ambient, Module),
+	TO (cover, Module),
+	TO (super, Module),
+	TO (symbol /, Module, Module),
+	TO (subquotient, Matrix, Matrix),
+	TO (isSubset, Module, Module),
+    },
+    "Common operations on modules:",
+    UL {
+	TO (symbol +, Module, Module),
+	TO (symbol ==, Module, Module),
+	TO (symbol ++, Module, Module),
+	TO (symbol ^, Module, List),
+	TO (symbol **, Module, Module),
+	TO (symbol ^**, Module, ZZ),
+	TO (symbol _, Module, List),
+    },
+    "Minimalization:",
+    UL {
+	TO (mingens,Module),
+	TO (trim,Module),
+	TO (minimalPresentation,Module)
+    },
+    "Graded modules:",
+    UL {
+	TO basis,
+	TO "Truncations::truncate(ZZ,Module)",
+	TO (degree, Module),
+	TO "Varieties::genera(Module)",
+	TO (hilbertSeries, Module),
+	TO (hilbertFunction, ZZ, Module),
+	TO (poincare, Module),
+	TO (regularity, Module),
+    },
+    "Annihilators, quotients and Gröbner bases:",
+    UL {
+	TO (gb, Module),
+	TO "Saturation::Ideal : Ideal",
+	TO "Saturation::annihilator(Module)",
+	TO "Saturation::saturate(Module,Ideal)",
+    },
+    "Common homological computations:",
+    UL {
+	TO (res, Module),
+	TO (pdim, Module),
+	TO "Hom",
+	TO (homomorphism,Matrix),
+	TO (Ext,ZZ,Module,Module),
+	TO (Tor,ZZ,Module,Module),
+	TO (cohomology,ZZ,Module),
+	TO (homology, Matrix, Matrix),
+	TO (fittingIdeal, ZZ, Module),
+    },
+    "Multilinear algebra:",
+    UL {
+	TO (exteriorPower,ZZ,Module),
+    },
+    -- TODO: merge these in the list above
+    Subnodes => {
+	TO (symmetricAlgebra, Module),
+	TO (symmetricPower, ZZ, Module),
+	TO (exteriorPower, ZZ, Module),
+	TO (formation, Module),
+	TO (symbol +, Module, Module),
+	TO (dual, Module),
+	TO (symbol SPACE, Module, Array),
+	TO ambient,
+	TO (ambient, Module),
+	TO (super, Module),
+	TO cover,
+	TO (cover, Module),
+	TO (coverMap, Module),
+	TO (length, Module),
+	TO (dim, Module),
+	TO (symbol ++, Module, Module),
+	TO (factor, Module),
+	TO (hilbertPolynomial, Module),
+	TO inducedMap,
+	TO (isSubset, Module, Module),
+	TO (map, Module),
+	TO (mingens, Module),
+	TO (minimalPresentation, Module),
+	TO (numgens, Module),
+	TO (pdim, Module),
+	TO (presentation, Module),
+	TO (pushForward, RingMap, Module),
+	TO (isSubquotient, Module, Module),
+	TO (tensor, Module, Module),
+	TO (symbol **, Module, Ring),
+	TO (tensor, Matrix, Module),
+	TO (symbol ^**, Module, ZZ),
+	TO (wedgeProduct, ZZ, ZZ, Module),
+	TO (symbol ^, Module, ZZ),
+	TO (symbol ^, Module, Array),
+	TO (symbol ^, Module, List),
+	TO (symbol /, Module, Module),
+	TO (symbol _, Module, List),
+	TO (symbol _, ZZ, Module),
+	TO (symbol _, Module, Array),
+	TO truncate,
+    },
+}
 
 document {
      Key => module,
-     Headline => "make or get a module"
+     Headline => "make or get a module",
+    Subnodes => {
+	TO (module, Ring),
+	-- TO (module, Ideal), -- TODO
+	TO (module, Vector),
+    },
      }
 
 document { Key => (module, Ring),
@@ -39,6 +180,21 @@ document {
      PARA{},
      SeeAlso => {"generators","subquotient"}}
 
+document {
+    Key => Vector,
+    Headline => "the class of all elements of modules that are handled by the engine",
+    "If ", TT "R", " is a ring handled by the engine, and ", TT "M", " is a
+    module over ", TT "R", ", then M is a subclass of Vector.",
+    PARA{},
+    SeeAlso => {RingElement, Module, Matrix},
+    Subnodes => {
+	TO vector,
+	TO (entries, Vector),
+	TO (symbol **, Vector, Vector),
+	TO (symbol ||, Vector, Vector),
+    },
+}
+
 doc ///
   Key
     vector
@@ -50,6 +206,14 @@ doc ///
     (vector, Matrix)
     (vector, Number)
     (vector, RingElement)
+    (vector, Ring, List)
+    (vector, Ring, Matrix)
+    (vector, Ring, Number)
+    (vector, Ring, RingElement)
+    (vector, RingFamily, List)
+    (vector, RingFamily, Matrix)
+    (vector, RingFamily, Number)
+    (vector, RingFamily, RingElement)
   Headline
     make a vector
   Usage
@@ -95,6 +259,14 @@ doc ///
       vector {1, 2, 3}
       vector {1, x, y}
       vector(R^3, {1, 2, 3})
+    Text
+      Alternatively, the ring $R$ may be provided instead of $M$, and the
+      resulting vector will be an element of the appropriate free module over
+      $R$.
+    Example
+      vector(QQ, {1, 2, 3})
+      vector(R, {1, 2, 3})
+      vector(R, 2)
 ///
 
 document {

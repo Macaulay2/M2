@@ -51,7 +51,7 @@ examples ZZ := seeAbout_examples
 counter := 0
 next := () -> counter = counter + 1
 optTO := key -> (
-    tag := makeDocumentTag(key, Package => package key);
+    tag := makeDocumentTag(key, Package => package' key);
     ptag := getPrimaryTag tag;
     fkey := format tag;
     if currentHelpTag.?Key and instance(currentHelpTag.Key, Sequence) and currentHelpTag =!= ptag then return;
@@ -156,7 +156,7 @@ documentationValue(Symbol, Thing) := (S, X) -> ()
 -- e.g. Macaulay2Doc :: MethodFunction
 documentationValue(Symbol, Type)  := (S, T) -> (
     -- catch when an unexported type is documented; TODO: where should this be caught?
-    if package T === null then error("encountered unexported type ", toString T);
+    if package' T === null then error("encountered unexported type ", toString T);
     -- types that inherit from T
     b := smenu(toString \ subclasses T);
     -- constructors of T
@@ -292,6 +292,7 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 -- Handling operators
 -----------------------------------------------------------------------------
 
+-- e.g. symbol +
 getOperator := key -> if operator#?key then (
     op := toString key;
     if match("^[[:alpha:]]*$", op) then op = " " | op | " ";
@@ -366,7 +367,8 @@ getSynopsis := (key, tag, rawdoc) -> (
 	if rawdoc.?Consequences then DIV { "Consequences:", UL rawdoc.Consequences }};
     if #result > 0 then fixup UL result)
 
-getDefaultOptions := (nkey, opt) -> DIV ( -- e.g., [(res, Module), Strategy => FastNonminimal]
+-- e.g., [(res, Module), Strategy => FastNonminimal]
+getDefaultOptions := (nkey, opt) -> DIV (
     if instance(nkey, Sequence)
     and #methods nkey > 0       then fn := first nkey else
     if instance(nkey, Function) then fn  =       nkey;
@@ -385,43 +387,58 @@ getDefaultOptions := (nkey, opt) -> DIV ( -- e.g., [(res, Module), Strategy => F
 getDescription := (key, tag, rawdoc) -> (
     desc := getOption(rawdoc, Description);
     if desc =!= null and #desc > 0 then (
-	desc = processExamples(package tag, format tag, desc);
+	desc = processExamples(package' tag, format tag, desc);
 	if instance(key, String) then DIV { desc } -- overview key
 	else DIV { SUBSECTION "Description", desc })
     else DIV { COMMENT "empty documentation body" })
+
+-- Returns the contents of a documentation node prepared for JSON serialization
+getData = (key, tag, rawdoc) -> (
+    currentHelpTag = tag;
+    result := new HashTable from {
+	Headline        => ( formatDocumentTag key, commentize getOption(rawdoc, Headline) ),
+	"Synopsis"      => getSynopsis(key, tag, rawdoc),
+	Description     => getDescription(key, tag, rawdoc),
+	SourceCode      => getOption(rawdoc, SourceCode),
+	Acknowledgement => getOption(rawdoc, Acknowledgement),
+	Contributors    => getOption(rawdoc, Contributors),
+	References      => getOption(rawdoc, References),
+	Caveat          => getOption(rawdoc, Caveat),
+	SeeAlso         => getOption(rawdoc, SeeAlso),
+	Subnodes        => getOption(rawdoc, Subnodes),
+	"Location"      => toString locate tag, -- for debugging
+	-- this is so a "Ways to use" section is listed when multiple
+	-- method keys are documented together without the base function
+	"WaysToUse"     => DIV (
+	    if instance(key, Sequence) then (
+		documentationValue(, key)) else
+	    if instance(key, Symbol)   then (
+		documentationValue(key, value key),
+		getTechnical(key, value key)) else
+	    if instance(key, Array)    then (
+		if instance(opt := key#1, Option)
+		then documentationValue(opt#0, opt)
+		else documentationValue(opt, value opt),
+		getDefaultOptions(key#0, key#1))),
+    };
+    result = applyValues(result,  val -> fixup val);
+    result = selectValues(result, val -> val =!= null and val =!= () and val =!= DIV{});
+    currentHelpTag = null;
+    result)
 
 -- This is the overall template of a documentation page
 -- for specialized templates, see documentationValue above
 -- TODO: allow customizing the template for different output methods
 -- TODO: combine sections when multiple tags are being documented (e.g. strings and methods)
 getBody := (key, tag, rawdoc) -> (
-    currentHelpTag = tag;
-    synopsis := getSynopsis(key, tag, rawdoc);
-    result := fixup DIV nonnull splice (
-	HEADER1{ formatDocumentTag key, commentize getOption(rawdoc, Headline) },
-	if synopsis =!= null then DIV { SUBSECTION "Synopsis", synopsis },
-	getDescription(key, tag, rawdoc),
-	if instance(key, Array) then getDefaultOptions(key#0, key#1),
-	getOption(rawdoc, Acknowledgement),
-	getOption(rawdoc, Contributors),
-	getOption(rawdoc, References),
-	getOption(rawdoc, Caveat),
-	getOption(rawdoc, SourceCode),
-	getOption(rawdoc, SeeAlso),
-	-- this is so a "Ways to use" section is listed when multiple
-	-- method keys are documented together without the base function
-	if instance(key, Sequence) then (
-	    documentationValue(, key)) else
-	if instance(key, Symbol)   then (
-	    documentationValue(key, value key),
-	    getTechnical(key, value key)) else
-	if instance(key, Array)    then (
-	    if instance(opt := key#1, Option)
-	    then documentationValue(opt#0, opt)
-	    else documentationValue(opt, value opt)),
-	getOption(rawdoc, Subnodes));
-    currentHelpTag = null;
-    result)
+    DIV nonnull splice (
+	data := getData(key, tag, rawdoc);
+	HEADER1 toList data.Headline,
+	apply(("Synopsis", Description, SourceCode, Acknowledgement,
+		Contributors, References, Caveat, SeeAlso, Subnodes, "WaysToUse"),
+	    section -> if data#?section then data#section)
+        )
+    )
 
 -----------------------------------------------------------------------------
 -- View help within Macaulay2

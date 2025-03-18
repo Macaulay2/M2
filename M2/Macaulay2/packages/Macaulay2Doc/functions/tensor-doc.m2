@@ -14,8 +14,8 @@ L := {
     }
 undocumented L
 undocumented flatten table(L, {
-	DegreeLift, DegreeMap, DegreeRank, Degrees, Global, Heft,
-	Join, Local, MonomialOrder, MonomialSize, VariableBaseName,
+	DegreeLift, DegreeMap, DegreeRank, Degrees, DegreeGroup, Global, Heft,
+	Constants, Join, Local, MonomialOrder, MonomialSize, VariableBaseName,
 	Inverses, Variables, SkewCommutative, Weights, WeylAlgebra}, (m,o) -> [m, o])
 
 doc ///
@@ -25,10 +25,12 @@ Node
    [(tensor, Monoid, Monoid), DegreeLift]
    [(tensor, Monoid, Monoid), DegreeMap]
    [(tensor, Monoid, Monoid), DegreeRank]
+   [(tensor, Monoid, Monoid), DegreeGroup]
    [(tensor, Monoid, Monoid), Degrees]
    [(tensor, Monoid, Monoid), Global]
    [(tensor, Monoid, Monoid), Heft]
    [(tensor, Monoid, Monoid), Inverses]
+   [(tensor, Monoid, Monoid), Constants]
    [(tensor, Monoid, Monoid), Join]
    [(tensor, Monoid, Monoid), Local]
    [(tensor, Monoid, Monoid), MonomialOrder]
@@ -42,10 +44,12 @@ Node
    [(tensor, Ring, Ring), DegreeLift]
    [(tensor, Ring, Ring), DegreeMap]
    [(tensor, Ring, Ring), DegreeRank]
+   [(tensor, Ring, Ring), DegreeGroup]
    [(tensor, Ring, Ring), Degrees]
    [(tensor, Ring, Ring), Global]
    [(tensor, Ring, Ring), Heft]
    [(tensor, Ring, Ring), Inverses]
+   [(tensor, Ring, Ring), Constants]
    [(tensor, Ring, Ring), Join]
    [(tensor, Ring, Ring), Local]
    [(tensor, Ring, Ring), MonomialOrder]
@@ -80,9 +84,10 @@ Node
     Join             => Boolean -- overrides the corresponding option in {\tt A}; see @TO [monoid,Join]@
     DegreeMap        => Boolean -- overrides the corresponding option in {\tt A}; see @TO [monoid,DegreeMap]@
     DegreeLift       => Boolean -- overrides the corresponding option in {\tt A}; see @TO [monoid,DegreeLift]@
+    Constants        => Boolean -- ignored by this routine
     SkewCommutative  => Boolean -- ignored by this routine
-    Weights          => List    -- ignored by this routine
     WeylAlgebra      => List    -- ignored by this routine
+    Weights          => List    -- ignored by this routine
   Outputs
     C:{Ring,Monoid}
       tensor product of the monoids or rings
@@ -263,8 +268,12 @@ Node
       degrees source f
       degrees source (f ** R^{-3})
   SeeAlso
+    adjoint
     (tensor, Module, Module)
     (tensor, Matrix, Matrix)
+  Subnodes
+    flip
+    tensorAssociativity
 
 Node
   Key
@@ -418,13 +427,31 @@ Node
       f ** S
 ///
 
-doc ///
-Node
-  Key
-    (symbol**, List, List)
-  Headline
-    Cartesian product of two lists
-  Description
-    Example
-      {1, 2} ** {10, 20, 30}
-///
+document {
+    Key => (symbol ^**, Module, ZZ),
+    Headline => "tensor power",
+    Usage => "M^**i",
+    Inputs => { "M", "i" },
+    Outputs => {Module => { "the ", TT "i", "-th tensor power of ", TT "M"}},
+    "The second symmetric power of the canonical module of the rational quartic:",
+    EXAMPLE lines ///
+         R = QQ[a..d];
+         I = monomialCurveIdeal(R,{1,3,4})
+	 M = Ext^1(I,R^{-4})
+	 M^**2
+	 ///
+    }
+
+document {
+    Key => {
+	 tensorAssociativity,
+	(tensorAssociativity, Module, Module, Module),
+	(tensorAssociativity, ChainComplex, ChainComplex, ChainComplex),
+	(tensorAssociativity, GradedModule, GradedModule, GradedModule)},
+    Headline => "associativity isomorphisms for tensor products",
+    TT "tensorAssociativity(A,B,C)", " -- produces the isomorphism from
+    A**(B**C) to (A**B)**C.",
+    PARA{},
+    "Currently implemented for modules, graded modules, and chain complexes.",
+    SeeAlso => {"ChainComplex", "Module"}
+}

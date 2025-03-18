@@ -88,6 +88,16 @@ export {
     "makeCyclic",
     }
 
+-- PZJ's factor
+load "./WeylAlgebras/factorWA.m2"
+export {
+    "factorWeylAlgebra",
+    "factorWA" => "factorWeylAlgebra",
+    "StopAfter",
+    "factorWeylAlgebra1",
+    "factorWA1" => "factorWeylAlgebra1",
+    }
+
 --------------------------------------------------------------------------------
 
 scan({"Local", "Global"}, nm -> assert (isGlobalSymbol nm and value getGlobalSymbol nm === getGlobalSymbol nm))

@@ -1084,6 +1084,8 @@ setupfun("connectionCount", connectionCount);
 format(e:Expr):Expr := (
      when e
      is s:stringCell do toExpr("\"" + present(s.v) + "\"")
+     is ZZcell do e
+     is QQcell do e
      is RRcell do format(Expr(Sequence(e)))
      is RRicell do format(Expr(Sequence(e)))
      is CCcell do format(Expr(Sequence(e)))
@@ -1105,6 +1107,8 @@ format(e:Expr):Expr := (
 	  is Nothing do nothing else return WrongArgZZ(4);
 	  if n > 5 then when args.4 is p:stringCell do sep = p.v else return WrongArgString(5);
 	  when args.(n-1)
+	  is x:ZZcell do toExpr(concatenate(format(s,ac,l,t,sep,toRR(x.v,defaultPrecision))))
+	  is x:QQcell do toExpr(concatenate(format(s,ac,l,t,sep,toRR(x.v,defaultPrecision))))
 	  is x:RRcell do toExpr(concatenate(format(s,ac,l,t,sep,x.v)))
 	  is z:CCcell do toExpr(format(s,ac,l,t,sep,false,false,z.v))
 	  else WrongArgRR(n)
