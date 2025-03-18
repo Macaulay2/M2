@@ -704,6 +704,7 @@ document {
 	  TO "error",
 	  TO "try",
 	  TO "throw",
+	  TO "Macaulay2Doc::lastError" -- TODO: why do we need to specify pkg?
 	  }
      }
 
