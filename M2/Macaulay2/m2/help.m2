@@ -343,6 +343,20 @@ getTechnical := (S, s) -> DIV nonnull ( "class" => "waystouse",
 	"."},
     getOperator S)
 
+getLocation := tag -> if tag =!= null then (
+    pkg := package tag;
+    docpos := locate tag;
+    linepos := ":" | docpos#1 | ":" | docpos#2;
+    docfile := toAbsolutePath docpos#0;
+    filename := replace(pkg#"source directory", "", docfile);
+    HR{},
+    DIV ( "class" => "waystouse",
+	fixup PARA (
+	    "The source of this document is in ",
+	    linkToFile(docfile, filename, linepos), ".")
+        )
+    )
+
 -----------------------------------------------------------------------------
 -- helper functions for help
 -----------------------------------------------------------------------------
@@ -430,7 +444,8 @@ getData = (key, tag, rawdoc) -> (
 		if instance(opt := key#1, Option)
 		then documentationValue(opt#0, opt)
 		else documentationValue(opt, value opt),
-		getDefaultOptions(key#0, key#1))),
+		getDefaultOptions(key#0, key#1)),
+	    getLocation tag),
     };
     result = applyValues(result,  val -> fixup val);
     result = selectValues(result, val -> val =!= null and val =!= () and val =!= DIV{});
