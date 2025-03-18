@@ -90,6 +90,18 @@ Node
       - Eliana Duarte
       - Lars Kastner
       - Kinsun Lee
+      -- the following contributors don't appear in git history
+      -- but have been credited in various documentation files.
+      - Sorin Popescu
+      - Manoj Kummini
+      - L. Gold
+      - Amelia Taylor
+      - Giulio Caviglia
+      - Gregory G. Smith
+      - Wolfram Decker
+      - Jonah Blasiak
+      - Josephine Yu
+      - Irena Peeva
   References
     -- TODO: node to be written, will point to our book, Hal's book, Mike's Arizona notes, Sage, etc:
     @UL {
