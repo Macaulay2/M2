@@ -77,7 +77,7 @@ lstOfDegrees = (M,e) -> (
     R := QQ[gens ring e, Degrees => d];
     F := frac(R);
     Mlst := select(flatten entries M, x -> x != 0);
-    lstdeg = for m in Mlst list degree sub(m,F);
+    lstdeg := for m in Mlst list degree sub(m,F);
     lstdeg
 )
 
