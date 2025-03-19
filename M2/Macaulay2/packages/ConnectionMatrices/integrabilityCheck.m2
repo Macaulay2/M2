@@ -57,10 +57,12 @@ isIntegrable List := Boolean => A -> (
     assert(class(ring A_0) === FractionField);
     assert(class(baseRing ring A_0) === PolynomialRing);
 
-    D := makeWeylAlgebra(baseRing ring A_0);
-    isIntegrable(D,A)
-)
+    R := baseRing ring A_0;
+    assert((numgens R) == #A); -- Length of the list must match the number of generators.
 
+    D := makeWeylAlgebra(R);
+    isIntegrable(D, A)
+)
 
 end--
 restart
@@ -71,8 +73,12 @@ needs "./integrabilityCheck.m2"
 
 D = makeWeylAlgebra(QQ[x,y], w = {0,0,1,2});
 I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
-A = pfaffians I;
+A = connectionMatrices I;
 
 assert(isIntegrable(D,A))
 
 ----------------------------------------------
+
+-- If the Weyl Algebra is to be inferred
+M = | 0            1               |, | (-1)/y    (-x)/y        |}
+      | (-1)/(x2-xy) (-3x+y)/(x2-xy) |  | 1/(xy-y2) (x+y)/(xy-y2) |
