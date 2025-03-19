@@ -40,7 +40,6 @@ if not firstTime then debug Core -- we need access to the private symbols (we re
 toString := value' getGlobalSymbol if firstTime then "simpleToString" else "toString"
 
 local exe
-local topBuilddir
 
 -- this next bit has to be *parsed* after the "debug" above, to prevent the symbols from being added to the User dictionary
 if firstTime then (
