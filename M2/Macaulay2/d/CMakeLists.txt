@@ -146,7 +146,8 @@ add_library(M2-interpreter OBJECT ${CLIST} ${CXXLIST} ${TAGS}
   $<$<BOOL:${WITH_XML}>:xml-c.c xml-c.h>
   $<$<BOOL:${WITH_PYTHON}>:python-c.c>)
 
-target_link_libraries(M2-interpreter PRIVATE M2-supervisor Boost::regex
+target_link_libraries(M2-interpreter PRIVATE M2-supervisor
+  Boost::boost # boost_regex is now header-only, so we don't link Boost::regex
   $<$<BOOL:${WITH_TBB}>:TBB::tbb>
   $<$<BOOL:${WITH_FFI}>:FFI::ffi>)
 
