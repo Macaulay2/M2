@@ -65,7 +65,7 @@ assert(C2 == P'') -- TODO: Need to remove the weight information.   // Fails so 
 ///
 
 TEST ///
--- Any Pfaffian system coming from a D-ideal is integrable:
+-- A connection coming from a D-ideal is integrable:
 
 D = makeWeylAlgebra(QQ[x,y], w = {0,0,1,2});
 I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
@@ -76,8 +76,40 @@ assert(isIntegrable(D,A));
 ///
 
 TEST ///
+-- Constant coefficient matrices that don't commute can't come from an integrable system.
+S = QQ[x,y];
+R = frac(S);
+
+A_0 = sub(matrix {{0,1}, {1,0}}, R);
+A_1 = sub(matrix {{2,0}, {0,3}}, R);
+
+-- Since entries are constants, it will essentially check whether the matrices commute.
+-- And that is not the case.
+assert(isIntegrable({A_0, A_1}) == false);
+///
+
+
+TEST ///
+-- Check that the integrability test also works in the parametric case:
+
+-- Based on equation (11) from https://arxiv.org/pdf/2410.14757
+w = {0,0,0,1,1,1};
+D = makeWeylAlgebra(frac(QQ[e,DegreeRank=>0])[x,y,z],w);
+delta1 = (x^2-z^2)*dx^2+2*(1-e)*x*dx-e*(1-e);
+delta2 = (y^2-z^2)*dy^2+2*(1-e)*y*dy-e*(1-e);
+delta3 = (x+z)*(y+z)*dx*dy-e*(x+z)*dx-e*(y+z)*dy+e^2;
+h = x*dx+y*dy+z*dz-2*e;
+
+I = ideal(delta1+delta3, delta2+delta3,h);
+A = connectionMatrices I;
+
+assert(isIntegrable(A))
+///
+
+
+TEST ///
 -- Using parameters
--- Example equation (11) from https://arxiv.org/pdf/2410.14757     (MODIFIED from above, with frac(QQ[e]))
+-- Example equation (11) from https://arxiv.org/pdf/2410.14757
 w = {0,0,0,1,1,1};
 D = makeWeylAlgebra(frac(QQ[e,DegreeRank=>0])[x,y,z],w);
 delta1 = (x^2-z^2)*dx^2+2*(1-e)*x*dx-e*(1-e);
@@ -85,6 +117,6 @@ delta2 = (y^2-z^2)*dy^2+2*(1-e)*y*dy-e*(1-e);
 delta3 = (x+z)*(y+z)*dx*dy-e*(x+z)*dx-e*(y+z)*dy+e^2;
 h = x*dx+y*dy+z*dz-2*e;
 I = ideal(delta1+delta3, delta2+delta3,h);
-r = holonomicRank I;                                        -- CORRECT: Outputs 4 as holonomic rank.
+r = holonomicRank I;
 assert(r == 4)
 ///
