@@ -526,6 +526,22 @@ getPeerName(e:Expr):Expr := (
 	else WrongArg("an input file"))
     else WrongArg("a file"));
 setupfun("getPeerName", getPeerName);
+getSocketName(e:Expr):Expr := (
+    when e
+    -- # typical value: getSocketName, File, Sequence
+    is f:file do (
+	fd := 0;
+	if f.listener then fd = f.listenerfd
+	else if f.output then fd = f.outfd
+	else return WrongArg("a listener or output file");
+	host := new string len Ccode(int, "NI_MAXHOST") do provide ' ';
+	serv := new string len Ccode(int, "NI_MAXSERV") do provide ' ';
+	r := getsockname(fd, host, serv);
+	if r < 0 then buildErrorPacket(
+	    "can't get socket name: " + netstrerror(r))
+	else seq(toExpr(host), toExpr(serv)))
+    else WrongArg("a file"));
+setupfun("getSocketName", getSocketName);
 
 header "
     #if WITH_MYSQL

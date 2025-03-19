@@ -733,6 +733,7 @@ export {
 	"getNonUnit",
 	"getPeerName",
 	"getPrimeWithRootOfUnity",
+	"getSocketName",
 	"getSymbol",
 	"getWWW",
 	"getc",
