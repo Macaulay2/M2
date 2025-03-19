@@ -781,14 +781,18 @@ int system_openlistener(M2_string interface0,M2_string serv) {
      return sd;
      }
 
-int system_getpeername(int sockfd, M2_string host, M2_string serv) {
+int getpeerorsockname(int sockfd, M2_string host, M2_string serv, int peer) {
   struct sockaddr addr;
   socklen_t addrlen;
   int i, r;
   char hostbuf[NI_MAXHOST], servbuf[NI_MAXSERV];
 
   addrlen = sizeof addr;
-  r = getpeername(sockfd, &addr, &addrlen);
+  if (peer)
+    r = getpeername(sockfd, &addr, &addrlen);
+  else
+    r = getsockname(sockfd, &addr, &addrlen);
+
   if (r == ERROR)
     return ERROR;
 
@@ -807,6 +811,14 @@ int system_getpeername(int sockfd, M2_string host, M2_string serv) {
   memcpy(serv->array, servbuf, serv->len);
 
   return 0;
+}
+
+int system_getpeername(int sockfd, M2_string host, M2_string serv) {
+  return getpeerorsockname(sockfd, host, serv, 1);
+}
+
+int system_getsockname(int sockfd, M2_string host, M2_string serv) {
+  return getpeerorsockname(sockfd, host, serv, 0);
 }
 
 int system_errno(void) {
