@@ -4,11 +4,7 @@ document {
 	  [smithNormalForm,ChangeMatrix],
 	  [smithNormalForm,KeepZeroes]
 	  },
-<<<<<<< HEAD
      Headline => "smith normal form for a matrix over a PID",
-=======
-     Headline => "compute the Smith normal form of a matrix over the integers or a PID",
->>>>>>> e3edfa575d7d909bd792f371f1210e582891f079
      Usage => "(D,P,Q) = smithNormalForm M\n(D,P) = smithNormalForm(M,ChangeMatrix=>{true,false})\n(D,Q) = smithNormalForm(M,ChangeMatrix=>{false,true})\nD = smithNormalForm(M,ChangeMatrix=>{false,false})\n",
      Inputs => {
 	  "M",
@@ -22,7 +18,7 @@ document {
 	  "Q" => Matrix => "invertible (right) change of basis matrix"
 	  },
      "This function produces a diagonal matrix ", TT "D", ", and invertible matrices ", TT "P", " and ", TT "Q", " such that
-     ", TT "D = PMQ", "with diagonal entries ", TT "d1, d2, ..., dn", " of ", TT "D", " satisfying ", TT "d1|d2|...|dn.", ".",
+     ", TT "D = PMQ", "with diagonal entries ", TT "d1, d2, ..., dn", " of ", TT "D", " satisfying ", TT "d1|d2|...|dn.",
      EXAMPLE lines ///
 	 M = matrix{{1,2,3},{1,34,45},{2213,1123,6543},{0,0,0}}
 	 (D,P,Q) = smithNormalForm M
