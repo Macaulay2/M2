@@ -242,8 +242,7 @@ document {
 		    }},
 	  "The first line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
-               -* no-capture-flag *-
-	       String * String = peek;
+	       String * String = peek; -* no-capture-flag *-
 	       "left" * "right" = "value"
 	  ///,
 	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay2."
@@ -517,8 +516,7 @@ document {
 		    }},
 	  "The first line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
-              -* no-capture-flag *-
-	       String * String := peek;
+	       String * String := peek; -* no-capture-flag *-
 	       "left" * "right"
 	  ///,
 	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay2."
