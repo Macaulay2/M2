@@ -76,7 +76,10 @@ isEpsilonFactorized(Matrix,RingElement) := (M,e) -> (
 )
 
 lstOfDegrees = (M,e) -> (
-    d := {{1}} | toList((dim ring e - 1):{0});
+    -- Read off the "exponents" of e, to single it out from the generators
+    d := (if (class ring e === FractionField) then (exponents numerator e) else (assert(class ring e === PolynomialRing); exponents e))#0;
+
+    -- Create new ring, where only e has degree 1, rest 0.
     R := QQ[gens ring e, Degrees => d];
     F := frac(R);
     Mlst := select(flatten entries M, x -> x != 0);

@@ -225,7 +225,7 @@ Inputs
     M:Matrix
       a connection matrix
     r:RingElement
-      parameter for which the factorization property should be tested
+      variable for which the factorization property should be tested
 Outputs
     b:Boolean
 Description

@@ -1,4 +1,34 @@
+-------------------------------------------------------
+--
+-- ConnectionMatrices - Test Suite
+--
+-- Structure:
+--   1) Worked out, complete examples
+--   2) Functionality tests for each exported methods
+-------------------------------------------------------
+
+-------------------------------------------------------
+--
+-- 1) Complete Examples
+--
+-------------------------------------------------------
+
+TEST ///
+-- Using parameters
+-- Example equation (11) from https://arxiv.org/pdf/2410.14757
+w = {0,0,0,1,1,1};
+D = makeWeylAlgebra(frac(QQ[e,DegreeRank=>0])[x,y,z],w);
+delta1 = (x^2-z^2)*dx^2+2*(1-e)*x*dx-e*(1-e);
+delta2 = (y^2-z^2)*dy^2+2*(1-e)*y*dy-e*(1-e);
+delta3 = (x+z)*(y+z)*dx*dy-e*(x+z)*dx-e*(y+z)*dy+e^2;
+h = x*dx+y*dy+z*dz-2*e;
+I = ideal(delta1+delta3, delta2+delta3,h);
+r = holonomicRank I;
+assert(r == 4)
+///
+
 TEST /// -- ALS notes, Example 7.16
+
   D = makeWeylAlgebra(QQ[x,y], w = {0,0,1,2});
   I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1); -- doesn't commute
   A = connectionMatrices I;
@@ -32,6 +62,8 @@ TEST /// -- ALS notes, Example 7.16
   --       {-1} | (-1)/(x2-xy) (-3x+y)/(x2-xy) |  {-1} | 1/(xy-y2) (x+y)/(xy-y2) |
 ///
 
+
+
 TEST ///
 -- Example from Overleaf
 w1 = {0,0,2,1};
@@ -64,6 +96,54 @@ P'' = apply(P', p-> sub(p, ring C2#0));
 assert(C2 == P'') -- TODO: Need to remove the weight information.   // Fails so far.
 ///
 
+-------------------------------------------------------
+--
+-- 2) Functionality tests of (exported) methods
+--
+-------------------------------------------------------
+
+--
+-- isEpsilonFactorized
+--
+
+TEST ///
+-- Example
+
+R = frac(QQ[x,y]);
+
+M = matrix {{y, y^2}, {(y+1)/((y-1)*(y-2)), 1/(y + y^2)}};
+assert(isEpsilonFactorized(M, x));
+///
+
+TEST ///
+-- Non-Example
+
+R = frac(QQ[x,y]);
+M = matrix {{y, y^2}, {(y+1)/((y-1)*(y-2)), 1/(y + y^2)}};
+
+assert(not isEpsilonFactorized(M, y));
+///
+
+TEST ///
+-- Example
+R = frac(QQ[x,y]);
+M = matrix {{x^2*y, y}, {y*x + y / (x^2 +1), 0}};
+
+assert(isEpsilonFactorized(M, y));
+///
+
+TEST ///
+-- Matrix of zeros is factorized with respect to any variable
+R = frac(QQ[x,y]);
+M = matrix {{0,0}, {0,0}};
+
+assert(isEpsilonFactorized(M, x) and isEpsilonFactorized(M, y));
+///
+
+--
+-- isIntegrable
+--
+
 TEST ///
 -- A connection coming from a D-ideal is integrable:
 
@@ -88,7 +168,6 @@ A_1 = sub(matrix {{2,0}, {0,3}}, R);
 assert(isIntegrable({A_0, A_1}) == false);
 ///
 
-
 TEST ///
 -- Check that the integrability test also works in the parametric case:
 
@@ -106,17 +185,6 @@ A = connectionMatrices I;
 assert(isIntegrable(A))
 ///
 
-
-TEST ///
--- Using parameters
--- Example equation (11) from https://arxiv.org/pdf/2410.14757
-w = {0,0,0,1,1,1};
-D = makeWeylAlgebra(frac(QQ[e,DegreeRank=>0])[x,y,z],w);
-delta1 = (x^2-z^2)*dx^2+2*(1-e)*x*dx-e*(1-e);
-delta2 = (y^2-z^2)*dy^2+2*(1-e)*y*dy-e*(1-e);
-delta3 = (x+z)*(y+z)*dx*dy-e*(x+z)*dx-e*(y+z)*dy+e^2;
-h = x*dx+y*dy+z*dz-2*e;
-I = ideal(delta1+delta3, delta2+delta3,h);
-r = holonomicRank I;
-assert(r == 4)
-///
+--
+-- Tests on
+--
