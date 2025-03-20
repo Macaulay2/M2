@@ -463,7 +463,7 @@ hasMinor = method(Options => {Strategy => "flats"})
 hasMinor (Matroid, Matroid) := Boolean => opts -> (M, N) -> (
 	(n, m) := (#N.groundSet, #M.groundSet);
 	if n > m or rank N > rank M or #bases N > #bases M then return false;
-	if n == m then return M == N;
+	if n == m then return areIsomorphic(M,N);
 	if opts.Strategy === "flats" and isSimple N then (
 		v := fVector N;
 		truncatedLattice := select(flats(M, rank N, "corank"), f -> rank_M f >= rank M - rank N);
