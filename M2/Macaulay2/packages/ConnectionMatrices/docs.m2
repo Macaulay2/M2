@@ -1,10 +1,18 @@
---end--
+doc ///
+Node
+  Key
+    ConnectionMatrices
+  Headline
+    Pfaffian systems and integrable connections
+  SeeAlso
+    "HolonomicSystems::HolonomicSystems"
+///
 
 doc ///
 Key
     normalForm
-    (normalForm, RingElement, RingElement)
-    (normalForm, RingElement, List)
+   (normalForm, RingElement, RingElement)
+   (normalForm, RingElement, List)
 Headline
     computes normal form of an element in the Weyl algebra
 Usage
@@ -16,14 +24,14 @@ Inputs
     g:RingElement
         in the Weyl algebra
     G:List
-        of elements in the Weyl algbra
+        of elements in the Weyl algebra
 Outputs
     normalForm:RingElement
         reduced form with respect to a list of elements in the Weyl algebra
 Description
   Text
-    This method computes the normal form of an elment f in the Weyl algebra D with respect to another element in the Weyl algebra, or a whole list of such elements.
-    Usually this list is a Groebner basis for a left D-ideal.
+    This method computes the normal form of an element $f$ in the Weyl algebra $D$ with respect to another element in the Weyl algebra, or a whole list of such elements.
+    Usually this list is a Gröbner basis for a left $D$-ideal.
   Example
     w = {0,0,1,1};
     D = makeWA(QQ[x,y],w);
@@ -45,7 +53,7 @@ Usage
     gaugeMatrix(G, B1, B2)
 Inputs
     G:List
-      of Groebner basis elements
+      of Gröbner basis elements
     B1:List
       of standard monomial basis
     B2:List
@@ -55,8 +63,8 @@ Outputs
       encoding the change of basis from B1 to B2
 Description
   Text
-    Let I be a D-module, G a Groebner basis of I with respect to some monomial ordering on D and a B basis of standard monomials for the quotient of the rational Weyl algebra by the ideal.
-    Then this methods computes the change of basis matrix over the rational Weyl algbra for going from B to another basis of the quotient.
+    Let $I$ be a $D$-module, $G$ a Gröbner basis of $I$ with respect to some monomial ordering on $D$ and a $B$ basis of standard monomials for the quotient of the rational Weyl algebra by the ideal.
+    This methods computes the change of basis matrix over the rational Weyl algebra for going from $B$ to another basis of the quotient.
   Example
     w1 = {0,0,2,1}; D1 = makeWeylAlgebra(QQ[x,y],w1);
     I = sub(ideal(x*dx^2-y*dy^2+2*dx-2*dy,x*dx+y*dy+1),D1);
@@ -83,7 +91,7 @@ Usage
     connectionMatrices(B, I)
 Inputs
     I:Ideal
-      D-ideal
+      $D$-ideal
     B:List
       a basis of standard monomials for I
 Outputs
@@ -91,11 +99,11 @@ Outputs
       the Pfaffian system of matrices in fractionField(ring I)
 Description
   Text
-    Let I be an ideal in the Weyl algebra D_n and B a basis over fractionField(D) for R_n/R_nI.
-    The i'th matrix in Pfaffian system encodes the action of dx_i on R_n/R_n I with respect to the basis B.
+    Let $I$ be an ideal in the Weyl algebra $D_n$ and $B$ a basis over fractionField(D) for $R_n/R_nI$.
+    The $i$-th matrix in Pfaffian system encodes the action of $\partial_i$ on $R_n/R_nI$ with respect to the basis $B$.
 
     If a basis is not provided by the user, a basis of standard monomials will be chosen with regards to the weighted
-    Lex order (dx_1 > .. > dx_n > x_1 > .. > x_n) of the Weyl algebra.
+    Lex order $(\partial_1 > \cdots > \partial_n > x_1 > \cdots > x_n)$ on the Weyl algebra.
   Example
     D = makeWeylAlgebra(QQ[x,y], w = {0,0,2,1})
     I = ideal (x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1)
@@ -123,7 +131,7 @@ Inputs
       the Weyl algebra
 Outputs
     L:List
-      the Pfaffian system P after the gauge transform applied to each Pfaffian
+      the Pfaffian system $P$ after the gauge transform applied to each Pfaffian
 Description
   Text
     This method computes the gauge transform for a Pfaffian system given a change of basis matrix.
@@ -178,7 +186,7 @@ Key
     standardMonomials
     (standardMonomials, Ideal)
 Headline
-    computes the standard monomials for a D-ideal
+    computes the standard monomials for a $D$-ideal
 Usage
     standardMonomials(I)
 Inputs
@@ -189,7 +197,7 @@ Outputs
       of standard monomials
 Description
   Text
-    This method computes the standard monomials which constitute a basis of the D-modules obtained from quotienting the rational Weyl algebra by an ideal.
+    This method computes the standard monomials which constitute a basis of the $D$-modules obtained from taking the quotient of the rational Weyl algebra by an ideal.
   Example
     D = makeWeylAlgebra(QQ[x,y]);
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
@@ -258,7 +266,7 @@ Description
       dx_i(vec(f)) = A_i * vec(f) (for all i),
     comes from an integrable connection if its matrices satisfy
       [A_i,A_j] = dx_i(A_j) - dx_j(A_i) for all i,j.
-    This is the case, in particular, when they come from a D-module, respectively from a D-ideal.
+    This is the case, in particular, when they come from a $D$-module, respectively from a $D$-ideal.
   Example
     D = makeWeylAlgebra(QQ[x,y], w = {0,0,1,2});
     I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
@@ -270,3 +278,10 @@ Caveat
 SeeAlso
 
 ///
+
+end--
+
+uninstallPackage "ConnectionMatrices"
+restart
+installPackage "ConnectionMatrices"
+viewHelp "ConnectionMatrices"
