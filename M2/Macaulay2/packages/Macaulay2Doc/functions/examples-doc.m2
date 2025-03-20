@@ -46,7 +46,8 @@ Node
     Text
       Certain examples or tests might not be compatible with @TT "capture"@. In such cases,
       use the string @CODE "-* no-capture-flag *-"@ somewhere within @TT "str"@ so that the
-      code is run in a separate Macaulay2 subprocess instead.
+      code is run in a separate Macaulay2 subprocess instead.  In examples, this string
+      should not go on its own line or the documentation will be garbled.
   SeeAlso
     check
     examples

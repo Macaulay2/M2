@@ -27,8 +27,7 @@ Node
     Text
       This function allows access to the local symbols of a any loaded file.
     Example
-      -* no-capture-flag *-
-      load "Macaulay2Doc/demos/demo1.m2"
+      load "Macaulay2Doc/demos/demo1.m2" -* no-capture-flag *-
       listUserSymbols
       debug "Macaulay2Doc/demos/demo1.m2"
       listUserSymbols
