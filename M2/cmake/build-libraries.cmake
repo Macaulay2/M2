@@ -505,6 +505,7 @@ ExternalProject_Add(build-msolve
   INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/msolve
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/msolve
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different msolve ${M2_INSTALL_PROGRAMSDIR}/
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
@@ -997,6 +998,7 @@ ExternalProject_Add(build-normaliz
   INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/normaliz
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/normaliz
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different source/normaliz ${M2_INSTALL_PROGRAMSDIR}/
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
