@@ -3,7 +3,7 @@ Node
   Key
     ConnectionMatrices
   Headline
-    Pfaffian systems and integrable connections
+    Connection matrices associated to $D$-ideals.
   SeeAlso
     "HolonomicSystems::HolonomicSystems"
 ///
