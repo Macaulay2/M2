@@ -32,9 +32,7 @@ connectionMatrices(Ideal) := List => (I) -> (
 -- gives the pfaffians system with respect to a new basis B
 connectionMatrices(List,Ideal) := (B,I)->(
     W := ring I;
-    B1 := standardMonomials I;
-    GB := flatten entries gens gb I;
-    G := gaugeMatrix(GB,B1,B);
+    G := gaugeMatrix(I,B);
     invG := inverse G;
     n := dim W//2;
     C := connectionMatrices I;

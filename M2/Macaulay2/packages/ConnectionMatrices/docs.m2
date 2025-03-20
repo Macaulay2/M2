@@ -46,21 +46,22 @@ SeeAlso
 doc ///
 Key
     gaugeMatrix
-    (gaugeMatrix, List, List, List)
+    (gaugeMatrix, List, List)
+    (gaugeMatrix, Ideal, List)
 Headline
-    computes change of basis matrix from old standard monomial basis to a new one
+    computes change of basis matrix of a D-ideal or a Groebner basis of a D-ideal wrt. to a new basis
 Usage
-    gaugeMatrix(G, B1, B2)
+    gaugeMatrix(G, B)
 Inputs
+    I:Ideal
+      of the Weyl algebra
     G:List
       of Gröbner basis elements
-    B1:List
-      of standard monomial basis
-    B2:List
-      of standard monomial basis
+    B:List
+      of standard monomials
 Outputs
     M:Matrix
-      encoding the change of basis from B1 to B2
+      encoding the change of basis wrt. to B
 Description
   Text
     Let $I$ be a $D$-module, $G$ a Gröbner basis of $I$ with respect to some monomial ordering on $D$ and a $B$ basis of standard monomials for the quotient of the rational Weyl algebra by the ideal.
@@ -72,7 +73,7 @@ Description
     w2 = {0,0,1,2}; D2 = makeWeylAlgebra(QQ[x,y],w2);
     SM2 = standardMonomials(sub(I,D2));
     G = flatten entries gens gb I;
-    gaugeMatrix(G,SM1,SM2)
+    gaugeMatrix(G,SM2)
 Caveat
   Currently the output lives in the fraction field of the variables, but this is not the correctly implemented rational Weyl algebra
 SeeAlso

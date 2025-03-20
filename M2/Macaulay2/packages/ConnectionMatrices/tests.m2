@@ -28,10 +28,10 @@ assert(holonomicRank(I) == 4);
 -- Gauge transform to e-factorized form:
 P = connectionMatrices I;
 G = flatten entries gens gb I;
-SM1 = standardMonomials I;
 
 B2 = {1,dx,dy,dx*dy};
-changeofvar = gaugeMatrix(G,SM1,B2);
+changeofvar = gaugeMatrix(G,B2);
+assert(changeofvar == gaugeMatrix(I,B2));
 P2 = gaugeTransform(changeofvar,P,D);
 
 changeVar = transpose((1/(2*z*e^2))*matrix({{2*z*e^2, -e^2*(x-z), -e^2*(y-z), -e^2*(x+y)},{0,e*(x^2-z^2),0,e*(x+y)*(x+z)},{0,0,e*(y^2-z^2),e*(x+y)*(y+z)},{0,0,0,-(x+y)*(x+z)*(y+z)}}));
@@ -100,13 +100,13 @@ SM2 = standardMonomials(sub(I,D2));
 
 -- Compute Groebner Basis
 G = flatten entries gens gb I;
-changeofvar = gaugeMatrix(G,SM1,SM2);
+changeofvar = gaugeMatrix(G,SM2);
 
 P' = gaugeTransform(changeofvar,C1,D1);
 P'' = apply(P', p-> sub(p, ring C2#0));
 
 -- Now transform the Pfaffian system C1 into the Pfaffian System C2 via Gauge transform
-assert(C2 == P'') -- TODO: Need to remove the weight information.   // Fails so far.
+assert(C2 == P'')
 ///
 
 -------------------------------------------------------

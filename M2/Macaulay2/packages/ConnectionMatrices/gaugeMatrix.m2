@@ -2,9 +2,11 @@
 --gaugeMatrix computes change of basis matrix
 ----------------------------------------------------
 gaugeMatrix = method();
--- G old Groebner basis, old standard monomials, new standard monomials
-gaugeMatrix(List, List, List) := (G, stdMon, newStdMon) -> (
-  D := ring G#0;
+-- I D-ideal, new standard monomials
+gaugeMatrix(Ideal, List) := (I, newStdMon) -> (
+  D := ring I;
+  G := flatten entries gens gb I;
+  stdMon := standardMonomials(I);
   -- obtain weight ordering from D
   w := (((options(D)).MonomialOrder)#1)#1;
   gaugeMat := mutableMatrix map((fractionField D)^(length newStdMon), (fractionField D)^(length stdMon),0);
@@ -25,3 +27,9 @@ gaugeMatrix(List, List, List) := (G, stdMon, newStdMon) -> (
   );
   matrix gaugeMat
 );
+
+-- G Groebner basis for a D-ideal, new standard monomials
+gaugeMatrix(List,List) := (G, newStdMon) -> (
+  D := ring G#0;
+  gaugeMatrix(ideal(G),newStdMon)
+)
