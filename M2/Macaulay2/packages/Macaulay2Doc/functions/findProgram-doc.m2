@@ -137,11 +137,10 @@ doc ///
       file, then @TT "name"@ should coincide with the name of this
       file.
     Example
-      -* no-capture-flag *-
-      programPaths#"gfan" = "/path/to/gfan/"
+      programPaths#"gfan" = "/path/to/gfan/" -* no-capture-flag *-
       gfan = findProgram("gfan", "gfan _version --help", Verbose => true)
     Text
-      If @TT "cmd"@ is not provided, then @TT "cmd"@ is run with the common
+      If @TT "cmd"@ is not provided, then @TT "name"@ is run with the common
       @TT "--version"@ command line option.
     Example
       findProgram "normaliz"
