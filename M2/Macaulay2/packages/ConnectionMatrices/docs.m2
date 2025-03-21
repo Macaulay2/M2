@@ -175,7 +175,7 @@ Description
     A = connectionMatrices(I);
     connectionMatrix(A)
 Caveat
-  Currently the output lives in the fraction field of the variables adjoin differentials, but this is not the correctly implemented rational Weyl algebra
+  The output is purely for visualizing purposes.
 SeeAlso
 
 ///
