@@ -3,14 +3,6 @@ undocumented {
     (symbol -, ProjectiveHilbertPolynomial),
     (symbol -, ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
     (symbol -, ProjectiveHilbertPolynomial, ZZ),
-    (symbol -, ChainComplexMap),
-    (symbol -, ChainComplexMap, ChainComplexMap),
-    (symbol -, ChainComplexMap, RingElement),
-    (symbol -, RingElement, ChainComplexMap),
-    (symbol -, GradedModuleMap),
-    (symbol -, GradedModuleMap, GradedModuleMap),
-    (symbol -, GradedModuleMap, RingElement),
-    (symbol -, RingElement, GradedModuleMap),
 }
 
 document {

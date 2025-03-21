@@ -156,55 +156,15 @@ document {
      SeeAlso => {det}
      }
 
-document {
-     Key => {(symbol ^, ChainComplex, ZZ)},
-     Headline => "access member, cohomological degree",
-     Usage => "C^n",
-     Inputs => {"C", "n"},
-     Outputs => {
-     	  Module => {"The ", TT "(-n)", "-th component ", TT "C_(-n)", " of ", TT "C"}
-	  },
-     "Subscripts refer to homological degree, and superscripts refer to cohomological degree.
-     It is only a matter of notation: ", TT "C_(-n)", " is always the same as ", TT "C^n", ".",
-     EXAMPLE lines ///
-     	  R = QQ[x,y,z];
-	  C = res coker vars R
-	  C = dual C
-	  C^2
-	  C^2 == C_(-2)
-     	  ///,
-     SeeAlso => {ChainComplex, (symbol^, ChainComplex, Array)}
-     }
-document {
-     Key => {(symbol ^, ChainComplexMap, ZZ),
-	  (symbol ^, GradedModuleMap, ZZ)},
-     Headline => "iterated composition",
-     Usage => "f^n",
-     Inputs => {"f" => {"or a ", ofClass GradedModuleMap}, "n"},
-     Outputs => {
-     	  ChainComplexMap => {"the composite ", TT "f o f o ... o f", " (", TT "n", " times)"}
-	  },
-     "If ", TT "f", " is a ", TO GradedModuleMap, ", then so is the result.",
-     PARA{},
-     "One use of this function is to determine if a chain complex is well-defined.  
-     The chain complex will be well-defined if the square of the differential is zero.",
-     EXAMPLE lines ///
-     	  R = QQ[x,y,z];
-	  C = res coker vars R
-	  C.dd^2 == 0
-     	  ///,
-     SeeAlso => {ChainComplex}
-     }
 
 document {
-     Key => {(symbol ^,Module,Array),
-       (symbol ^,ChainComplex,Array)},
+     Key => {(symbol ^,Module,Array)},
      Headline => "projection onto summand",
      Usage => "M^[i,j,...,k]",
-     Inputs => {"M" => {"or ", ofClass ChainComplex},
+     Inputs => {"M",
 	  Nothing => {TT "[i,j,...,k]", ", an array of indices"}},
      Outputs => {
-     	  Nothing => {ofClass Matrix, ", or ", ofClass ChainComplexMap}
+     	  Nothing => {ofClass Matrix}
 	  },
      PARA{},
      "The module ", TT "M", " should be a direct sum, and the result is the map
@@ -241,17 +201,15 @@ document {
 document { 
      Key => {
 	  (symbol ^, Matrix, Array),
-	  (symbol ^, ChainComplexMap, Array),
-	  (symbol ^, GradedModuleMap, Array)
 	  },
      Headline => "component of map corresponding to summand of target",
      Usage => "F^[i,j,...,k]",
-     Inputs => {"F" => {"or ", ofClass{ChainComplexMap,GradedModuleMap}},
+     Inputs => {"F",
 	  Nothing => {TT "[i,j,...,k]", ", an array of indices"}},
      Outputs => {
-     	  Nothing => ofClass{Matrix, ChainComplexMap, GradedModuleMap}
+     	  Nothing => ofClass{Matrix}
 	  },
-     "The target of the module or chain complex ", TT "F", " should be a 
+     "The target of the matrix ", TT "F", " should be a 
      direct sum, and the result is the component of this map 
      corresponding to the sum of the components numbered or named
      ", TT "i, j, ..., k", ".  Free modules are regarded as direct sums of modules.

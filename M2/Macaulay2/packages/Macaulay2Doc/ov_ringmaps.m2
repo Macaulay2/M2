@@ -383,23 +383,21 @@ document {
 	  (symbol SPACE, RingMap, Matrix),
 	  (symbol SPACE, RingMap, Vector),
 	  (symbol SPACE, RingMap, Module),
-	  (symbol SPACE, RingMap, ChainComplex)},
+      },
      Headline => "apply a ring map",
      Usage => "f X",
      Inputs => {
 	  "f" => { "a ring map from ", TT "R", " to ", TT "S", "." },
 	  "X" => { ofClass Ideal, ", ",
 		   ofClass Matrix, ", ",
-		   ofClass Vector, ", ",
-		   ofClass Module, ", or ",
-		   ofClass ChainComplex}
+		   ofClass Vector, ", or ",
+		   ofClass Module}
 	  },
      Outputs => {
 	  { "the image of X under the ring map f.  The result has the same type as
 	       X, except that its ring will be S."}
 	  },
-     "If ", TT "X", " is a module then it must be either free or a submodule of a free module.
-     If ", TT "X", " is a chain complex, then every module of ", TT "X", " must be free or a submodule of a free module.",
+     "If ", TT "X", " is a module then it must be either free or a submodule of a free module.",
      EXAMPLE lines ///
 	  R = QQ[x,y];
 	  S = QQ[t];
@@ -407,7 +405,6 @@ document {
 	  f (x+y^2)
 	  f image vars R
 	  f ideal (x^2,y^2)
-	  f resolution coker vars R
 	  ///,
      Caveat => {"If the rings ", TT "R", " and ", TT "S", " have different degree monoids, then the degrees of the image
         might need to be changed, since Macaulay2 sometimes doesn't have enough information to
