@@ -596,7 +596,7 @@ document {
 	  "C = resolution M",
 	  "C.dd_3"
 	  },
-     "For more information about chain complexes and resolutions, see ", TO "chain complexes",
+     "For more information about chain complexes and resolutions, see ", TO "Complexes :: Complexes",
      " and ", TO "computing resolutions", ".",
      SUBSECTION "betti numbers",
      "Use ", TO2{(betti,GradedModule),"betti"}, " to display the graded betti numbers of ", TT "M", ".",

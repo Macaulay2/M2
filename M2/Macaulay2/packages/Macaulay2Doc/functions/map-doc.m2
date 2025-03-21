@@ -4,7 +4,6 @@
 
 -*
 -- TODO
-(map,ChainComplex,ChainComplex,ChainComplexMap)
 (map,GaloisField,GaloisField)
 *-
 
@@ -25,8 +24,7 @@ document {
 	  },
      "The function ", TT "map", " provides a general mechanism for constructing a map
      (homomorphism) between rings (", ofClass RingMap, "), modules (", ofClass Matrix,
-     "), chain complexes (", ofClass ChainComplexMap, "), 
-      or between objects in other categories.",
+     "), or between objects in other categories.",
      PARA{},
      "See also the function ", TO matrix, ", which focuses on creating new matrices from
      rectangular arrays of ring elements or matrices.",
@@ -52,12 +50,16 @@ document {
 	  TO (map,Ring,Ring),
 	  TO (map,Ring,Ring,List),
 	  TO (map,Ring,Ring,Matrix),
-	  "Creating a map between chain complexes",
-	  -- TO (map,ChainComplex,ChainComplex,ChainComplexMap),
-	  TO (map,ChainComplex,ChainComplex,Function),
+	  -- "Creating a map between chain complexes",
+	  -- TO "Complexes :: map(Complex,Complex,ComplexMap)",
+	  -- TO "Complexes :: map(Complex,Complex,Function)",
+	  -- TO "Complexes :: map(Complex,Complex,HashTable)",
+	  -- TO "Complexes :: map(Complex,Complex,List)",
+	  -- TO "Complexes :: map(Complex,Complex,ZZ)",
 	  "The Hom and End modules",
 	  TO Hom,
 	  TO End,
+	  -- TODO: also add mention inducedMap, etc.
 	  }
      }
 document {
@@ -540,27 +542,6 @@ document {
 	  "kernel F"
 	  },
      SeeAlso => {"substitution and maps between rings",(map,Ring,Ring,Matrix)}
-     }
-document {
-     Key => {(map,ChainComplex,ChainComplex,Function),
-	  (map,GradedModule,GradedModule,Function)},
-     Headline => "make a map of chain complexes",
-     Usage => "map(C,D,f) or map(C,D,f,Degree=>d)",
-     Inputs => { "C", "D", "f" => {"a function such that ", TT "f(i)", " is a matrix ", TT "D_i --> C_(i+d)"}
-	  },
-     Outputs => {
-	  ChainComplexMap => {"a map of chain complexes ", TT "D --> C"}
-	  },
-     "If the degree d is not given, then d=0 is assumed.",
-     PARA{},
-     "The function ", TT "f", " is called only for those indices that represent spots
-     occupied in both the source and target chain complexes.",
-     Caveat => {"This function does not check that the maps ", TT "f(i)",
-	  " commute with the differential of the chain complexes."},
-     SeeAlso => {
-	  extend,
-	  "ChainComplex"
-	  }
      }
 document { 
      Key => [map, Degree],

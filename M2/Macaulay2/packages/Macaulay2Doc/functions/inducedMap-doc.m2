@@ -32,7 +32,7 @@ document {
      }
 
 document {
-     Key => {(inducedMap, Module, Module),(inducedMap, ChainComplex, ChainComplex)},
+     Key => {(inducedMap, Module, Module)},
      Headline => "compute the map induced by the identity",
      Usage => "inducedMap(M,N)",
      Inputs => { "M", "N" },

@@ -11,11 +11,9 @@ document {
 	  (isHomogeneous,Ring),
 	  (isHomogeneous,QuotientRing),
 	  (isHomogeneous,PolynomialRing),
-	  (isHomogeneous,ChainComplexMap),
 	  (isHomogeneous,Matrix),
 	  (isHomogeneous,RingElement),
 	  (isHomogeneous,Module),
-	  (isHomogeneous,ChainComplex),
 	  (isHomogeneous,RingMap),
 	  (isHomogeneous,Vector),
 	  (isHomogeneous,Ideal)},
@@ -27,10 +25,9 @@ document {
 	       TO Vector, ", ",
 	       TO Matrix, ", ",
 	       TO Ideal, ", ",
-	       TO Module, ", ",
-	       TO RingMap, ", ",
-	       TO ChainComplex, ", or ",
-	       TO ChainComplexMap}
+	       TO Module, ", or ",
+	       TO RingMap
+               }
 	  },
      Outputs => {
 	  Boolean => {"whether ", TT "x", " is homogeneous."}
