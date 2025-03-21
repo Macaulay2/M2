@@ -13,7 +13,7 @@ gaugeMatrix(Ideal, List) := (I, newStdMon) -> (
   -- rows are indexed by new std monomials
   for rowIndex from 0 to length(newStdMon)-1 do
   (
-    -- compute normalForm of new std monomials wrt. gb G
+    -- compute normalForm of new std monomials wrt. gb of I
     reducedWRTG := normalForm(sub(newStdMon#rowIndex,D),G);
     coeffsReduced := coefficients reducedWRTG;
     for j from 0 to length(flatten entries coeffsReduced_0)-1 do

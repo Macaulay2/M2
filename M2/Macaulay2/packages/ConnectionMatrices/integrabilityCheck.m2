@@ -1,11 +1,5 @@
 -- Basis List
---
--- Input:
--- i : Index
--- n : Length
---
--- Output:
--- List, k -> 1 if k == i else 0
+--returns a list of length n with k -> 1 if k == i else 0
 basisList := (i,n) -> (
     M := mutableMatrix(ZZ, 1, n); -- of zeros.
     M_(0,i) = 1;
@@ -13,24 +7,12 @@ basisList := (i,n) -> (
 );
 
 -- Differential Variable
---
--- Input:
--- D : WeylAlgebra
--- i : Index
---
--- Output:
--- dx_i : Element in D
+-- for Weyl-algebra D and index i get dx_i in D
 diffVariable = (D, i) -> D_(basisList((numgens D // 2) + i, numgens D));
 
 -- Integrability Term
---
--- Input:
--- D : WeylAlgebra
--- A : PfaffianSystem
---
--- Output:
--- List, (i < j) -> [A_i, A_j] - (d_i(A_j) - d_j(A_i))
-integrabilityTerm = (D, A) ->
+-- D Weyl algebra and A system of connection matrices, returns list of (i < j) -> [A_i, A_j] - (d_i(A_j) - d_j(A_i))
+integrabilityTerm = (D, A) -> (
     apply(
         toSequence \ subsets(numgens D // 2, 2), (i,j) -> (
             commutator := A_i * A_j - A_j * A_i;
@@ -40,15 +22,11 @@ integrabilityTerm = (D, A) ->
             dA - commutator
         )
     )
+)
 
--- Integrability Check
---
--- Input:
--- D : WeylAlgebra
--- A : PfaffianSystem
---
--- Output:
--- Boolean,  whether (d - A ∧ ) defines an integrable connection.
+--------------------------------------------------------------------------
+--isIntegrable: checks whether (d - A ∧ ) defines an integrable connection
+--------------------------------------------------------------------------
 isIntegrable = method()
 isIntegrable (PolynomialRing, List) := Boolean => (D,A) -> all(integrabilityTerm(D,A), zero); -- Check that each term is zero.
 
@@ -63,22 +41,3 @@ isIntegrable List := Boolean => A -> (
     D := makeWeylAlgebra(R);
     isIntegrable(D, A)
 )
-
-end--
-restart
-needs "./integrabilityCheck.m2"
-
-----------------------------------------------
--- Example Usage --
-
-D = makeWeylAlgebra(QQ[x,y], w = {0,0,1,2});
-I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
-A = connectionMatrices I;
-
-assert(isIntegrable(D,A))
-
-----------------------------------------------
-
--- If the Weyl Algebra is to be inferred
-M = | 0            1               |, | (-1)/y    (-x)/y        |}
-      | (-1)/(x2-xy) (-3x+y)/(x2-xy) |  | 1/(xy-y2) (x+y)/(xy-y2) |

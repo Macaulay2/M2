@@ -1,5 +1,3 @@
---debug needsPackage "Dmodules"
-
 -- modified version of holonomic rank to keep the standard basis
 holonomicRank(List, Module) := (weightList, M) -> (
      W := ring M;
@@ -30,4 +28,5 @@ holonomicRank(List, Module) := (weightList, M) -> (
      B := try M.cache#"basis" = sub(cover basis(redI, Variables => gens R), matrix {W.dpairVars#1});
      if 0 == redI  then 0 else
      if B === null then infinity
-     else numgens source B)
+     else numgens source B
+)

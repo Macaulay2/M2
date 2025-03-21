@@ -13,7 +13,6 @@ diffWeyl(RingElement,RingElement) :=(P,f)->(
 
 -- quotient differentiating formula
 diffRationalWeyl=method();
--- Add check that P is degree 1 in derivation
 diffRationalWeyl(RingElement,RingElement,RingElement) :=(P,f,g)->(
     (h1,h2) :=(g*diffWeyl(P,f)-f*diffWeyl(P,g),g^2);
     R := ring f;
@@ -37,7 +36,7 @@ diffMatrixWeyl(RingElement, Matrix) :=(P, M)->(
 );
 
 ----------------------------------------------------
---gaugeTransform implements gauge transform formula
+--gaugeTransform: implements gauge transform formula
 ----------------------------------------------------
 
 gaugeTransform = method();
@@ -53,11 +52,11 @@ gaugeTransform(Matrix, List, PolynomialRing) := (G, C, W)->(
 );
 
 ----------------------------------------------------
---epsilonFactorized checks if the system is in epsilon-factorized form
+--epsilonFactorized: checks if the system is in epsilon-factorized form
 ----------------------------------------------------
 
 isEpsilonFactorized = method();
--- checks factorization for a whole Pfaffian system
+-- checks factorization for a whole system of connection matrices
 isEpsilonFactorized(List,RingElement) := (P,e) -> (
     lst := new MutableList;
     for p in P do (
@@ -69,12 +68,15 @@ isEpsilonFactorized(List,RingElement) := (P,e) -> (
     all(lstdeg, x -> x == first lstdeg)
 )
 
+--checks factorization for single connection matrix
 isEpsilonFactorized(Matrix,RingElement) := (M,e) -> (
     lstdeg := lstOfDegrees(M,e);
     if #lstdeg == 0 then return false;
     all(lstdeg, x -> x == first lstdeg)
 )
 
+
+-- extract list of degrees with vars set to 0
 lstOfDegrees = (M,e) -> (
     -- Read off the "exponents" of e, to single it out from the generators
     d := (if (class ring e === FractionField) then (exponents numerator e) else (assert(class ring e === PolynomialRing); exponents e))#0;
@@ -93,28 +95,3 @@ lstOfDegrees = (M,e) -> (
     );
     toList lst
 )
-
-
-
-
-end--
-restart
--- debug needsPackage "Dmodules"
--- debug needsPackage "WeylAlgebras"
--- needs "changeofbasis.m2"
-
-
--- W = makeWA(QQ[x,y])
--- P = dx
--- f = x^2
--- g = 3*y^5
--- diffratW(P,f,g)
-
--- needs "pfaffians.m2"
--- W = QQ[x,y,dx,dy, WeylAlgebra =>{x=>dx,y=>dy}]
--- P=x*dx^2-y*dy^2+2*dx-2*dy
--- Q=x*dx+y*dy+1
--- I=ideal(P,Q)
--- C = pfaffians I
--- G = matrix{{x,0},{0,y}}
--- gaugeTransform(G,C,D)

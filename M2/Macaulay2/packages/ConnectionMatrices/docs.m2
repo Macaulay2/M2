@@ -86,7 +86,7 @@ Key
     (connectionMatrices, Ideal)
     (connectionMatrices, List, Ideal)
 Headline
-    computes a Pfaffian system associated to I with respect to a basis of standard monomials of I
+    computes a system of connection matrices associated to I with respect to a basis of standard monomials of I
 Usage
     connectionMatrices(I)
     connectionMatrices(B, I)
@@ -101,7 +101,7 @@ Outputs
 Description
   Text
     Let $I$ be an ideal in the Weyl algebra $D_n$ and $B$ a basis over fractionField(D) for $R_n/R_nI$.
-    The $i$-th matrix in Pfaffian system encodes the action of $\partial_i$ on $R_n/R_nI$ with respect to the basis $B$.
+    The $i$-th matrix in system of connection matrices encodes the action of $\partial_i$ on $R_n/R_nI$ with respect to the basis $B$.
 
     If a basis is not provided by the user, a basis of standard monomials will be chosen with regards to the weighted
     Lex order $(\partial_1 > \cdots > \partial_n > x_1 > \cdots > x_n)$ on the Weyl algebra.
@@ -112,7 +112,7 @@ Description
 Caveat
 
 SeeAlso
-
+See Theorem 1.4.22 in SST.
 ///
 
 doc ///
@@ -186,13 +186,17 @@ doc ///
 Key
     standardMonomials
     (standardMonomials, Ideal)
+    (standardMonomials, List)
 Headline
     computes the standard monomials for a $D$-ideal
 Usage
     standardMonomials(I)
+    standardMonomials(G)
 Inputs
     I:Ideal
       of the Weyl algebra
+    G:List
+      of generators of the Gröbner basis of an ideal in the Weyl algbra
 Outputs
     L:List
       of standard monomials
