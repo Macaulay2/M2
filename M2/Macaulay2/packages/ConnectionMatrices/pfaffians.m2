@@ -45,7 +45,7 @@ connectionMatrix = method()
 
 -- D-ideal as an input
 connectionMatrix(Ideal) := List => (I) -> (
-    P := pfaffians(I);
+    P := connectionMatrices(I);
     R := rationalWeylAlgebra(ring I);
     var := gens R;
     net(sum((for i from 0 to length(var)-1 list var_i*P_i )))

@@ -111,8 +111,6 @@ Description
     A = connectionMatrices(I)
 Caveat
 
-SeeAlso
-See Theorem 1.4.22 in SST.
 ///
 
 doc ///
