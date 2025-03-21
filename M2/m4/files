@@ -48,8 +48,6 @@ libraries/glpk/Makefile
 libraries/gmp/Makefile
 libraries/gtest/Makefile
 libraries/lapack/Makefile
-libraries/libtool/Makefile
-libraries/linbox/Makefile
 libraries/lrslib/Makefile
 libraries/mathic/Makefile
 libraries/mathicgb/Makefile
@@ -61,7 +59,6 @@ libraries/msolve/Makefile
 libraries/nauty/Makefile
 libraries/normaliz/Makefile
 libraries/ntl/Makefile
-libraries/pari/Makefile
 libraries/polymake/Makefile
 libraries/readline/Makefile
 libraries/tbb/Makefile

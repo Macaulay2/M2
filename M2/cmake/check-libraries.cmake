@@ -153,7 +153,7 @@ pkg_search_module(GIVARO	IMPORTED_TARGET	givaro>=4.1.1)
 # TODO: add FindModules for these two as well
 
 set(LIBRARY_OPTIONS
-  Eigen3 BDWGC MPFR MPFI NTL Flint Factory Frobby cddlib MPSolve
+  Eigen3 BDWGC MPFR MPFI NTL Flint Factory Frobby cddlib MPSolve MSolve
   GTest GLPK Givaro FFLAS_FFPACK Normaliz)
 
 ###############################################################################
@@ -178,7 +178,6 @@ endif()
 ###############################################################################
 ## TODO: Do we still want these libraries?
 #   fplll	Lattice algorithms using floating-point arithmetic	(uses gmp and mpfr)
-#   linbox	Exact computational linear algebra	(needs fflas and givaro)
 #   arb		arbitrary-precision ball arithmetic
 ## Requested by Greg Smith for future use:
 #   cddplus	Double Description Method

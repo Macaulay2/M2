@@ -9,7 +9,7 @@
 	url = https://github.com/Macaulay2/mathicgb
 [submodule "M2/submodules/bdwgc"]
 	path = M2/submodules/bdwgc
-	url = https://github.com/Macaulay2/bdwgc.git
+	url = https://github.com/ivmai/bdwgc.git
 [submodule "M2/submodules/flint"]
 	path = M2/submodules/flint
 	url = https://github.com/Macaulay2/flint2.git

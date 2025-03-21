@@ -1,14 +1,13 @@
 # http://www.netlib.org/lapack/
 # documentation: http://www.netlib.org/lapack/lug/
-#URL = http://www.netlib.org/lapack
-URL = https://macaulay2.com/Downloads/OtherSourceCode
+URL = https://github.com/Reference-LAPACK/lapack/archive/refs/tags/
 
-VERSION = 3.9.0
+VERSION = 3.12.1
 
-TARFILE = lapack-$(VERSION).tgz
+TARFILE = v$(VERSION).tar.gz
 CONFIGURECMD = cp make.inc.example make.inc
-# see lapack-3.1.1/make.inc for the build option combinations:
-BUILDOPTIONS = PLAT= FORTRAN="@FC@" OPTS="-O2 -g" NOOPT= LOADER="@FC@" RANLIB=@RANLIB@ LOADOPTS="$(LDFLAGS)"
+# see lapack-$(VERSION)/make.inc for the build option combinations:
+BUILDOPTIONS = FC="@FC@" RANLIB=@RANLIB@
 CHECKOPTIONS = $(BUILDOPTIONS)
 ifeq (@FC@,gfortran)
 BUILDOPTIONS += TIMER=INT_ETIME 

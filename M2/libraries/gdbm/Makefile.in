@@ -1,8 +1,7 @@
 LICENSEFILES = COPYING
 
-# URL = ftp://ftp.gnu.org/gnu/gdbm
-URL = https://macaulay2.com/Downloads/OtherSourceCode
-VERSION = 1.9.1
+URL = https://ftp.gnu.org/gnu/gdbm
+VERSION = 1.24
 
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared --enable-static

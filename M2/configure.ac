@@ -612,7 +612,7 @@ AC_SUBST(BUILTLIBS)
 #    (Programs linked by this configure script are linked with the options in LIBS.  This allows libraries
 #    dependent on previously detected libraries to be detected by tests that involve linking.
 
-AC_SUBST(LIBLIST, " gc gdbm gmp mpfr mpfi normaliz readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll givaro fflas_ffpack linbox gtest tbb memtailor mathic mathicgb eigen ")
+AC_SUBST(LIBLIST, " gc gdbm gmp mpfr mpfi normaliz readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll givaro fflas_ffpack gtest tbb memtailor mathic mathicgb eigen ")
 # The list LIBLIST is the list of libraries that might be used and linked into M2.
 
 AC_SUBST(PROGLIST, "4ti2 gfan csdp nauty cddplus lrslib gftables topcom cohomcalg msolve")
@@ -645,8 +645,6 @@ AC_SUBST(PROGLIST, "4ti2 gfan csdp nauty cddplus lrslib gftables topcom cohomcal
 #    normaliz is used by the package Normaliz
 #    gfan is used by the packages gfanInterface and StatePolytope
 #    4ti2 is used by the package FourTiTwo
-#    linbox is provided as an option for experimentation
-#    linbox needs fflas_ffpack and givaro
 #    givaro uses gmp
 #    fflas_ffpack needs givaro and lapack, but fflas_ffpack is just source code, so we don't *have* to build it
 #    flint depends on gmp and mpfr
@@ -678,7 +676,7 @@ PKGNAME_fflas_ffpack=fflas-ffpack
 #############################################################################
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpfr mpfi readline ntl gftables factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox 4ti2 gfan normaliz csdp nauty cddplus lrslib msolve)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpfr mpfi readline ntl gftables factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack 4ti2 gfan normaliz csdp nauty cddplus lrslib msolve)]),
     [for i in $enableval
      do case " $LIBLIST $PROGLIST " in
 	    *" $i "*) 
@@ -831,7 +829,9 @@ AS_IF([test $BUILD_lapack = no],
          [AC_MSG_NOTICE([blas/lapack not found; will build])
           BUILD_lapack=yes])])
 AS_IF([test $BUILD_lapack = yes],
-    [BLAS_LIBS=-lrefblas
+    [dnl we need our patched FFLAS-FFPACK when no CBLAS
+     BUILD_fflas_ffpack=yes
+     BLAS_LIBS=-lrefblas
      LAPACK_LIBS=-llapack])
 AC_SUBST([LINALGLIBS], ["$LAPACK_LIBS $BLAS_LIBS"])
 
@@ -1436,24 +1436,36 @@ AC_SUBST(ULIMIT_S,yes)
 ( ulimit -v 2000 2>/dev/null) || ULIMIT_V=no
 ( ulimit -s 2000 2>/dev/null) || ULIMIT_S=no
 
-AC_SUBST(ENABLE_LINBOX,no)
-AC_ARG_ENABLE(linbox,
-    [AS_HELP_STRING(--enable-linbox,enable building the linbox library and linking with it)],
-    AC_DEFINE(HAVE_LINBOX,1,[whether we are linking with the linbox library])
-    BUILD_linbox=yes
-    ENABLE_LINBOX=yes
-    )
+AC_LANG([C++])
+AC_ARG_WITH([fplll],
+    [AS_HELP_STRING([--with-fplll], [enable linking with the fplll library])])
 
-AC_SUBST(ENABLE_FPLLL,no)
-AC_ARG_ENABLE(fplll,
-    [AS_HELP_STRING(--enable-fplll,[enable building the fplll library and linking with it])],
-    AC_DEFINE(HAVE_FPLLL,1,[whether we are linking with the fplll library])
-    BUILD_fplll=yes
-    ENABLE_FPLLL=yes
-    )
-    
-test $BUILD_linbox = yes && BUILTLIBS="-llinbox $BUILTLIBS"
-test $BUILD_fplll = yes && BUILTLIBS="-lfplll $BUILTLIBS"
+AS_IF([test "x$with_fplll" = "xyes"],
+    [AC_DEFINE([HAVE_FPLLL], [1],
+	[whether we are linking with the fplll library])
+     AS_IF([test "x$BUILD_fplll" = "xno"],
+         [AC_CHECK_HEADER([fplll.h],
+             [AC_MSG_CHECKING([for library containing lll_reduction])
+	      SAVELIBS=$LIBS
+	      LIBS="$LIBS -lfplll"
+	      AC_LINK_IFELSE(
+	         [AC_LANG_PROGRAM(
+	             [
+		      #include <fplll.h>
+		     ],
+		     [fplll::ZZ_mat<mpz_t> mat(2, 2);
+		      lll_reduction(mat, 0.99, 0.51, fplll::LM_WRAPPER,
+		                    fplll::FT_DEFAULT, 0, fplll::LLL_DEFAULT);
+		     ])],
+	         [AC_MSG_RESULT([-lfplll])],
+	         [LIBS=$SAVELIBS
+		  BUILD_fplll=yes
+	          AC_MSG_RESULT([no])])],
+             [BUILD_fplll=yes])
+	  AS_IF([test "x$BUILD_fplll" = "xyes"],
+	     [AC_MSG_NOTICE([fplll not found; will build])])])
+     AS_IF([test "x$BUILD_fplll" = "xyes"],
+         [BUILTLIBS="-lfplll $BUILTLIBS"])])
 
 SINGULARLIBS="-lfactory  "
 if test $BUILD_factory = no
