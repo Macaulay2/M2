@@ -4,7 +4,7 @@
 --
 -- Structure:
 --   1) Worked out, complete examples
---   2) Functionality tests for each exported methods
+--   2) Functionality tests for each exported method
 -------------------------------------------------------
 
 -------------------------------------------------------
@@ -151,6 +151,12 @@ R = frac(QQ[x,y]);
 M = matrix {{0,0}, {0,0}};
 
 assert(isEpsilonFactorized(M, x) and isEpsilonFactorized(M, y));
+///
+
+TEST ///
+-- Trivial example of non-factorized (numerator not homogeneous)
+R = frac(QQ[x]);
+M = matrix {{(x+1)/x}}
 ///
 
 --
