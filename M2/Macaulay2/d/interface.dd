@@ -51,18 +51,30 @@ export rawRandomZZ(e:Expr):Expr := (
      is maxN:ZZcell do toExpr(Ccode(ZZ, "rawRandomInteger(", maxN.v, ")"))
      else WrongArgZZ());
 setupfun("rawRandomZZ",rawRandomZZ);
+export rawFareyApproximation(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) != 2 then return WrongNumArgs(2);
+	when a.0
+	is x:RRcell do (
+	    when a.1
+	    is hgt:ZZcell do toExpr(Ccode(QQ,
+		    "rawFareyApproximation(", x.v, ", ", hgt.v, ")"))
+	    else WrongArgZZ(2))
+	else WrongArgRR(1))
+    else WrongNumArgs(2));
+setupfun("rawFareyApproximation", rawFareyApproximation);
 export rawRandomQQ(e:Expr):Expr := (
      when e
-     is Nothing do toExpr(Ccode(QQ, "rawRandomQQ(", "0)"))
-     is ht:ZZcell do toExpr(Ccode(QQ, "rawRandomQQ(", ht.v, ")"))
+     is ht:ZZcell do toExpr(Ccode(QQorNull, "rawRandomQQ(", ht.v, ")"))
      else WrongArgZZ());
 setupfun("rawRandomQQ",rawRandomQQ);
-export rawRandomRR(e:Expr):Expr := (
+export rawRandomRRUniform(e:Expr):Expr := (
      when e
      is prec:ZZcell do if !isULong(prec.v) then WrongArgSmallInteger() 
-     else toExpr(Ccode(RR, "rawRandomRR(", toULong(prec.v), ")"))
+     else toExpr(Ccode(RR, "rawRandomRRUniform(", toULong(prec.v), ")"))
      else WrongArgZZ());
-setupfun("rawRandomRR",rawRandomRR);
+setupfun("rawRandomRRUniform",rawRandomRRUniform);
 export rawRandomRRNormal(e:Expr):Expr := (
      when e
      is prec:ZZcell do if !isULong(prec.v) then WrongArgSmallInteger()
