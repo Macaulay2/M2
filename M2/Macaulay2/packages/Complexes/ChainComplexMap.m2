@@ -518,24 +518,36 @@ canonicalTruncation(ComplexMap,InfiniteNumber,InfiniteNumber) :=
 canonicalTruncation(ComplexMap,ZZ,Nothing) := 
 canonicalTruncation(ComplexMap,Nothing,ZZ) := ComplexMap => (f,lo,hi) -> canonicalTruncation(f, (lo,hi))
 
-part(List, ComplexMap) := ComplexMap => (deg, f) -> (
-    R := ring f;
-    A := coefficientRing R;
-    psi := map(A,R, DegreeMap => degR -> take(degR, - degreeLength A));
-    C := part(deg, source f);
-    D := part(deg, target f);
+truncateMatrixOpts := options(truncate, List, Matrix)
+truncate(ZZ,   ComplexMap) :=
+truncate(List, ComplexMap) := ComplexMap => truncateMatrixOpts >> opts -> (degs, f) -> (
     d := degree f;
-    map(D, C, i -> map(D_(i+d), C_i, psi matrix basis(deg, f_i)), Degree => d)
-    )
-part(ZZ, ComplexMap) := ComplexMap => (deg, f) -> part({deg}, f)
+    C := truncate(degs, source f, opts);
+    D := if source f === target f then C else truncate(degs, target f, opts);
+    map(D, C, i -> inducedTruncationMap(D_(i+d), C_i, f_i), Degree => d))
 
-truncate(List, ComplexMap) := ComplexMap => {} >> opts -> (e, f) -> (
-    C := truncate(e, source f);
-    D := truncate(e, target f);
+--------------------------------------------------------------------
+-- basis -----------------------------------------------------------
+--------------------------------------------------------------------
+-- returns the induced complex map between the graded components of
+-- the source and target complexes in the given degree, over the
+-- same ring as the input (as opposed to its coefficient ring)
+-- TODO: also define basis given a degree range and infinite ranges
+basis(ZZ,   ComplexMap) :=
+basis(List, ComplexMap) := ComplexMap => opts -> (deg, f) -> (
     d := degree f;
-    map(D, C, i -> map(D_(i+d), C_i, truncate(e, f_i)), Degree => d)
-    )
-truncate(ZZ, ComplexMap) := ComplexMap => {} >> opts -> (e, f) -> truncate({e}, f)
+    C := basis(deg, source f, opts);
+    D := if source f === target f then C else basis(deg, target f, opts);
+    map(D, C, i -> inducedBasisMap(D_(i+d), C_i, f_i), Degree => d))
+
+--------------------------------------------------------------------
+-- part ------------------------------------------------------------
+--------------------------------------------------------------------
+-- returns the induced complex map between the graded component of
+-- the source and target complexes in the given degree, but as a map
+-- over the coefficient ring instead
+part(ZZ,   ComplexMap) :=
+part(List, ComplexMap) := ComplexMap => (deg, f) -> (residueMap ring f) cover' basis(deg, f)
 
 --------------------------------------------------------------------
 -- homology --------------------------------------------------------
