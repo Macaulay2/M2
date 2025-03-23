@@ -9,6 +9,10 @@
 
 #include <readline/readline.h>
 #include <readline/history.h>
+#ifdef WITH_MPI
+#include <mpi.h>
+#endif
+#include <stdio.h>
 
 extern struct JumpCell abort_jmp;
 extern struct JumpCell interrupt_jmp;
@@ -39,6 +43,81 @@ void system_cpuTime_init(void) {
   startTime = system_cpuTime();
 }
 
+// begin MPI ------------------------------------------------------------------
+#ifdef WITH_MPI
+int MPInumberOfProcesses() {
+  int world_size;
+  MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+  return world_size;
+}
+
+int MPImyProcessNumber() {
+  int world_rank;
+  if (MPI_Comm_rank(MPI_COMM_WORLD, &world_rank) != MPI_SUCCESS)
+    world_rank = -1;
+  return world_rank;
+}
+
+// blocking send 
+int MPIsendString(M2_string s, int p, int tag) {
+  char *t = M2_tocharstar(s);
+  int ret = MPI_Send(t, strlen(t)+1, MPI_CHAR, p, tag, MPI_COMM_WORLD);
+  GC_FREE(t); 
+  return ret;
+}
+
+// blocking receive
+// note: if *tagPtr == MPI_ANY_TAG, it is changed into a received tag 
+M2_string MPIreceiveString(int p, int* tagPtr) {
+  MPI_Status status;
+  // Probe for an incoming message from process zero
+  MPI_Probe(p, *tagPtr, MPI_COMM_WORLD, &status);
+  // When probe returns, the status object has the size and other
+  // attributes of the incoming message. Get the message size
+  int size;
+  MPI_Get_count(&status, MPI_CHAR, &size);
+  // Allocate a buffer to hold the incoming numbers
+  char* s = (char*) malloc(sizeof(char) * size);
+  // Now receive the message with the allocated buffer
+  MPI_Recv(s, size, MPI_CHAR, p, *tagPtr, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+  M2_string ret = M2_tostring(s);
+  free(s);
+  *tagPtr = status.MPI_TAG;
+  return ret;
+}
+
+
+// nonblocking probe
+int MPIprobeInterrupt() {
+  int flag = 0;
+  int receive_tag;
+  MPI_Status status;
+  const int master = 0;
+  //!!! consider any integer message an interrupt???
+  return MPI_Iprobe(master, MPI_ANY_TAG, MPI_COMM_WORLD, &flag, &status);
+}
+
+// nonblocking send (needed???)
+int MPIsendStringNonblocking(M2_string s, int p) {
+  char *t = M2_tocharstar(s);
+  MPI_Request request;
+  int ret = MPI_Isend(t, strlen(t)+1, MPI_CHAR, p, 0 /*tag*/, MPI_COMM_WORLD, &request);
+  // should remember "request" if e.g. need to check the completion 
+  GC_FREE(t); // is it OK to free? (Should be if MPI still refers to this... but does it?)  
+  return ret;
+}
+
+// interrupt
+int MPIinterrupt(int p) {
+  const int MPI_INTERRUPT_TAG = 3210; //!!! is also in e/interrupted.cpp
+  int ret = MPI_Send(NULL, 0, MPI_INT, p, MPI_INTERRUPT_TAG, MPI_COMM_WORLD);
+  // should remember "request" if e.g. need to check the completion 
+  return ret;
+}
+
+#endif
+// end MPI --------------------------------------------------------------------
+
 double system_threadTime(void) {
   struct timespec t;
   int err = clock_gettime(CLOCK_THREAD_CPUTIME_ID, &t);
@@ -62,6 +141,13 @@ void clean_up(void) {
 #endif
 #ifndef NDEBUG
   trap();
+#endif
+#ifdef WITH_MPI
+  int n = MPImyProcessNumber();
+  if (n>0)
+    printf("MPI: Bye world from process %d out of %d processes\n",
+	   MPImyProcessNumber(), MPInumberOfProcesses());
+  MPI_Finalize();
 #endif
 }
 

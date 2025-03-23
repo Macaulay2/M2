@@ -46,4 +46,14 @@ cmake-build-with-brew:
 	cmake --build cmake --target install-packages
 	cmake --build cmake --target M2-emacs
 
+cmake-build-with-mpi:
+	MPICH_CC=clang MPICH_CXX=clang++ CC=mpicc CXX=mpicxx \
+	cmake -GNinja -S../.. -BMPI -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$(OPT_PREFIX)" -DWITH_MPI=ON
+	cmake --build MPI --target M2-core
+	cd MPI
+	mpirun -np 4 ./M2 --script ../../../Macaulay2/packages/MPI/example-homotopies.m2
+	mpirun -np 4 ./M2 --script ../../../Macaulay2/packages/MPI/example2.m2
+	mpirun -np 4 ./M2 --script ../../../Macaulay2/packages/MPI/master-worker-MPI.m2
+
+
 #TODO: can we skip building factory? use FTABLESDIR=/usr/share/factory/ 
