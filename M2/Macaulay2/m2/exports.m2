@@ -1138,6 +1138,7 @@ export {
 	"showStructure",
 	"showTex",
 	"showUserStructure",
+	"sign",
 	"sin",
 	"singularLocus",
 	"sinh",
