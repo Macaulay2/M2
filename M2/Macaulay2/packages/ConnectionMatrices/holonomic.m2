@@ -1,18 +1,18 @@
 -- modified version of holonomic rank to keep the standard basis
-holonomicRank(List, Module) := (weightList, M) -> (
+-- see Lemma 1.4.11 in SST
+holonomicRank(List, Module) := (w, M) -> (
      W := ring M;
      createDpairs W;
      n := #(W.dpairInds#0);
      m := numgens W;
      presM := presentation M;
-     -- get weight vectors for the order filtration refined
-     -- by lex on the derivatives
-     --weightList := { apply(m, i -> if member(i, W.dpairInds#1) then 1 else 0 ) };
+     -- get weight vectors for the order filtration
+     -- refined by lex on the derivatives
+     --w := { apply(m, i -> if member(i, W.dpairInds#1) then 1 else 0 ) };
      -- ring equipped with the new order
      tempW := (coefficientRing W)(monoid [W_*,
 	  WeylAlgebra => W.monoid.Options.WeylAlgebra,
-	  MonomialOrder => {
-	      Eliminate 2, Weights => weightList, Lex }]);
+	  MonomialOrder => WeightThenEliminationOrder w]);
      WtotempW := map (tempW, W, vars tempW);
      -- commutative ring of derivative variables
      Rvars := symbol Rvars;
