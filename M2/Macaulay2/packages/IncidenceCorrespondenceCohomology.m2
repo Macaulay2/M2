@@ -16,8 +16,8 @@ newPackage(
 		  Email => "ereed4@nd.edu", 
 		  HomePage => "https://sites.google.com/view/ethan-reed/home"}
 	    },
-    	Headline => "Cohomology on the incidence corresponce, bundle of principal parts, and lefschetz properties for monomial complete intersections",
-	Keywords => {"Character formulas", "cohomology of line bundles", "incidence correspondence"," Lefschetz properties", "principal parts", "Han--Monsky representation ring"}
+    	Headline => "Cohomology on the incidence correspondence, bundle of principal parts, and Lefschetz properties",
+	Keywords => {"incidence correspondence"," Lefschetz properties", "principal parts bundles", "Han--Monsky representation ring"}
 	--Certification => {
 	  --   "journal name" => "",
 	    -- "journal URI" => "",
@@ -68,16 +68,16 @@ export {--option
 boundq = (p, n) ->(
     counter := 0; q := 1;
     while n >= q do (counter = counter + 1; q = p*q);
-    return counter
+    counter
     )
 
 --Input:
 --a list of integers
 --Output:
 --the list with the integers shifted by -n
-singleshiftn = (list1, n) ->(
-    return (for i from 0 to (#list1-1) list (list1#i-n))
-    )
+
+singleshiftn = (list1, n) ->(for i from 0 to (#list1-1) list (list1#i-n))
+    
 
 --Input:
 --a list of lists of three integers list3 and an integer n
@@ -86,9 +86,8 @@ singleshiftn = (list1, n) ->(
 --the list with the first entries (internal degrees) shifted by -n
 --This function will be used in multidegreeSplit() to adjust factors due to tensoring by O(-n)
 
-shiftn = (list3, n) ->(
-    return (for i from 0 to (#list3-1) list ({list3#i#0-n, list3#i#1, list3#i#2}))
-    )
+shiftn = (list3, n) ->(for i from 0 to (#list3-1) list ({list3#i#0-n, list3#i#1, list3#i#2}))
+    
 
 --Input: 
 --list3 a list of lists of three integers, a power of a prime q = p^d, and integers a,det1
@@ -105,7 +104,7 @@ tensorfqa = (list3, q, a, det1) ->(
     newlist := flatten for i from 0 to (#fqa -1) list(
         for j from 0 to #list3-1 list ({list3#j#0, list3#j#1+fqa#i#0+det1, list3#j#2+fqa#i#1+det1})
 	);
-    return newlist
+    newlist
     )
 
 --Input:
@@ -304,7 +303,7 @@ Compare = (list1, list2) ->(
     if (#list1 == #list2)
     then for i from 0 to #list1-1 do (if list2#i>list1#i then bool = false)
     else bool = false;
-    return bool
+    bool
     )
 
 ---Input:
@@ -326,7 +325,7 @@ Comult = (S,d,r) -> (
 	then multi(for k from 0 to ((# gens S)-1) list comps1#j#k-comps2#i#k)*product(for k from 0 to ((# gens S)-1) list ((gens S)#k)^((comps1#j#k)-(comps2#i#k)))
 	else 0 
 	);
-    return  map(S^#comps2, S^#comps1, fun)
+    map(S^#comps2, S^#comps1, fun)
     )
 
 --Input:
@@ -503,7 +502,7 @@ boundNim = (L) ->(
 	counter = counter - 1; 
 	a = sum for i from 0 to #L-1 list L#i//(2^counter)
 	);
-    return counter
+    counter
     )
 
 --auxiliary function
@@ -690,9 +689,9 @@ hasWLP(ZZ, List) := opts -> (p, L) -> (
         tuples = append(tuples, {s+1});
         return tuples;)
     else( -- recursive case
-    	for i from 2 to s+n//n do ( -- loop over possible values of the first component (from 1 to s)
+    	for i from 2 to (s+n)//n do ( -- loop over possible values of the first component (from 1 to s)
             subTuples := select(nTuples(n - 1, s - i+1), x -> x#0>=i); -- recursively generate (n-1)-tuples that sum to (s-i +n) and that the fist component is not less then i
-            iTuples := for j from 0 to #subTuples -1 list  {i}| subTuples#j;-- append i as the first component to each sub-tuple
+            iTuples := apply(subTuples, x -> {i}|x);-- append i as the first component to each sub-tuple
             tuples = tuples | iTuples;
     	    );
 	return tuples;))
@@ -829,11 +828,8 @@ hasSLP(ZZ, List) := opts -> (p, L) -> (
 --Input: prime integer p, and list of non-negative integers less than p list1
 --list1 corresponds to a positive integer written in base p
 --Output: the corresponding integer now in base 10
-basep10 = (p, list1) ->(
-    if list1 == {}
-    then return 0
-    else return(sum(for i from 0 to #list1-1 list list1#i*p^(#list1-1-i)))
-    )
+basep10 = (p, list1) ->(sum(for i from 0 to #list1-1 list list1#i*p^(#list1-1-i)))
+    
 
 
 --Input: prime integer p and an integer num
@@ -844,7 +840,7 @@ base10p = (p, num) ->(
     list1 := {};
     num1 := num;
     for i from 0 to counter-1 do (list1 = append(list1, num1//p^(counter-1-i)); num1 = num1%p^(counter-1-i));
-    return list1
+    list1
     )
 
 --q-truncated Schur functor code
@@ -892,18 +888,17 @@ hqd = (q, d, R) ->(
 --Output: If R is a polynomial ring, then the function outputs the q-truncated Schur polynomial for (a,b)
 --where the q=0 is intrepreted to be not truncated
 --If R=n an integer then, the output is the sum of the coefficients of the monomial terms in this polynomial
-sqab = (q,a, b, R) ->(
-    return (hqd(q, a, R)*hqd(q, b, R)-hqd(q, a+1, R)*hqd(q, b-1, R))
-    )
+
+sqab = (q,a, b, R) ->(hqd(q, a, R)*hqd(q, b, R)-hqd(q, a+1, R)*hqd(q, b-1, R))
+    
 
 --Input: prime integer p, positive integer d, integer e
 --and R=n or R = ZZ[x_1..x_n] either a positive integer or a polynomial ring
 --Output: If R is a polynomial ring, then the function outputs 
 --the character Psi_{(a,b)} used in Theorem 1.1
 --If R=n an integer then, the output is the sum of the coefficients of the monomial terms in this polynomial
-psipab = (p, d, e, R) -> (
-    return sum for i from 0 to (d//p+1) list sqab(p,e+i*p, d-i*p,R)
-    )
+
+psipab = (p, d, e, R) -> (sum for i from 0 to (d//p+1) list sqab(p,e+i*p, d-i*p,R))
 
 --Inputs: q = p^e a power of a prime integer p
 --and R=n or R = ZZ[x_1..x_n] either a positive integer or a polynomial ring
@@ -1031,7 +1026,7 @@ Deltad = (d) -> (
 		)
 	    )
 	);
-    return delta
+    delta
     )
 
 --User function
