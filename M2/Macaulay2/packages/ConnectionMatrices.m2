@@ -12,7 +12,7 @@ newPackage(
 	{ Name => "Nicolas Weiss",           Email => "nicolas.weiss@mis.mpg.de",           HomePage => "" },
 	{ Name => "Franzesca Zaffalon",      Email => "francesca.zaffalon@mis.mpg.de",      HomePage => "" }
     },
-    Headline => "Pfaffian systems and integrable systems",
+    Headline => "Connection Matrices of D-Ideals and Integrable Systems",
     Keywords => { "D-modules" },
     PackageExports => { "Dmodules" },
     AuxiliaryFiles => true,
@@ -20,7 +20,6 @@ newPackage(
 )
 
 export {
-    -- "pfaffians" already exported by Core
     "connectionMatrices",
     "normalForm",
     "gaugeMatrix",
@@ -50,7 +49,7 @@ load "./ConnectionMatrices/holonomic.m2"
 load "./ConnectionMatrices/reduce.m2"
 
 --------------------------------------------------------------------
--- Pfaffian systems
+-- Connection Matrices
 --------------------------------------------------------------------
 
 load "./ConnectionMatrices/pfaffians.m2"
@@ -68,7 +67,7 @@ load "./ConnectionMatrices/gaugeMatrix.m2"
 load "./ConnectionMatrices/gaugeTransform.m2"
 
 --------------------------------------------------------------------
--- Tools to check the integrability of a Pfaffian system
+-- Tools to check the integrability of a system of connection matrices
 --------------------------------------------------------------------
 
 load "./ConnectionMatrices/integrabilityCheck.m2"

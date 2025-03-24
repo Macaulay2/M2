@@ -3,7 +3,7 @@ Node
   Key
     ConnectionMatrices
   Headline
-    Connection matrices associated to $D$-ideals.
+    System of connection matrices associated to $D$-ideals.
   SeeAlso
     "HolonomicSystems::HolonomicSystems"
 ///
@@ -97,10 +97,10 @@ Inputs
       a basis of standard monomials for I
 Outputs
     A:List
-      the Pfaffian system of matrices in fractionField(ring I)
+      the system of connection matrices of $I$ in @TT "fractionField(ring I)"@
 Description
   Text
-    Let $I$ be an ideal in the Weyl algebra $D_n$ and $B$ a basis over fractionField(D) for $R_n/R_nI$.
+    Let $I$ be an ideal in the Weyl algebra $D_n$ and $B$ a basis over @TT "fractionField(D)"@ for $R_n/R_nI$.
     The $i$-th matrix in system of connection matrices encodes the action of $\partial_i$ on $R_n/R_nI$ with respect to the basis $B$.
 
     If a basis is not provided by the user, a basis of standard monomials will be chosen with regards to the weighted
@@ -118,22 +118,22 @@ Key
     gaugeTransform
     (gaugeTransform, Matrix, List, PolynomialRing)
 Headline
-    computes the gauge transform of a Pfaffian system
+    computes the gauge transform of a system of connection matrices
 Usage
     gaugeTransform(M, A, D)
 Inputs
     M:Matrix
       change of basis matrix
     A:List
-      Pfaffian system, i.e. a list of matrices
+      a system of connection matrices
     D:Ring
       the Weyl algebra
 Outputs
     L:List
-      the Pfaffian system $P$ after the gauge transform applied to each Pfaffian
+      the system of connection matrices $\widetilde{A}_i = M A_i M^{-1} + (\partial_i \bullet M)M^{-1}$ after the gauge transform.
 Description
   Text
-    This method computes the gauge transform for a Pfaffian system given a change of basis matrix.
+    This method computes the gauge transform for system of connection matrices given a change of basis matrix.
   Example
     D = makeWeylAlgebra(QQ[x,y]);
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
@@ -160,15 +160,15 @@ Inputs
     I:Ideal
       of the Weyl algebra
     A:List
-      Pfaffian system, i.e. a list of connection matrices
+      a system of connection matrices
 Outputs
     M:Matrix
       the differential connection matrix
 Description
   Text
-    This method encodes the Pfaffian system, i.e. its connection matrices in a single square matrix of size holonomic rank of the Pfaffian system.
+    This method encodes the system connection matrices in a single square matrix of size holonomic rank of the underlying $D$-module.
     Its entries are differential one forms in the variables of the Weyl algebra.
-    We obtain the regular connection matrices by multiplying with a differential of the Weyl algebra.
+    We obtain the system of connection matrices by multiplying with a differential of the Weyl algebra.
   Example
     D = makeWeylAlgebra(QQ[x,y]);
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
@@ -218,22 +218,22 @@ Key
     (isEpsilonFactorized, List, RingElement)
     (isEpsilonFactorized, Matrix, RingElement)
 Headline
-    checks if a Pfaffian (system) is in epsilon-factorized form
+    checks if a system of connection matrices is in epsilon-factorized form
 Usage
-    isEpsilonFactorized(A,r)
-    isEpsilonFactorized(M,r)
+    isEpsilonFactorized(A,eps)
+    isEpsilonFactorized(M,eps)
 Inputs
     A:List
-      of connection matrices
+      a system of connection matrices
     M:Matrix
       a connection matrix
-    r:RingElement
+    eps:RingElement
       variable for which the factorization property should be tested
 Outputs
     b:Boolean
 Description
   Text
-    This method returns true if the (system of) connection matrices is written in epsilon factorized form.
+    This method returns true if the system of connection matrices allows to factor out @TT "eps"@
   Example
     D = makeWeylAlgebra(frac(QQ[e,DegreeRank=>0])[x]);
     I = ideal(x*(1-x)*dx^2 - e*(1-x)*dx);
@@ -251,7 +251,7 @@ Key
     (isIntegrable, PolynomialRing, List)
     (isIntegrable, List)
 Headline
-    verifies that the connection matrices describe an integrable connection
+    verifies that the system of connection matrices describe an integrable connection
 Usage
     isIntegrable(D,A)
     isIntegrable(A)
@@ -259,13 +259,13 @@ Inputs
     D:PolynomialRing
       the Weyl algebra
     A:List
-      of matrices constituting the Pfaffian system
+      a system of connection matrices
 Outputs
     p:Boolean
       whether $[A_i,A_j] = \partial_i(A_j) - \partial_j(A_i)$ for all $i,j$
 Description
   Text
-    A Pfaffian system consisting of n matrices A_i in Mat_r(k(x_1..x_n)), describing n differential equations
+    A list of n matrices A_i in Mat_r(k(x_1..x_n)), describing n differential equations
       dx_i(vec(f)) = A_i * vec(f) (for all i),
     comes from an integrable connection if its matrices satisfy
       [A_i,A_j] = dx_i(A_j) - dx_j(A_i) for all i,j.

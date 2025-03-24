@@ -40,7 +40,7 @@ diffMatrixWeyl(RingElement, Matrix) :=(P, M)->(
 ----------------------------------------------------
 
 gaugeTransform = method();
--- gives the gauge transform of a pfaffians system for a given change of basis matrix
+-- gives the gauge transform of a system of connection matrices w.r.t. a given change of basis matrix.
 gaugeTransform(Matrix, List, PolynomialRing) := (G, C, W)->(
     G = sub(G, ring C#0);
     invG := inverse G;
