@@ -74,7 +74,7 @@ boundq = (p, n) ->(
 --Input:
 --a list of integers
 --Output:
---the list with the intgers shifted by -n
+--the list with the integers shifted by -n
 singleshiftn = (list1, n) ->(
     return (for i from 0 to (#list1-1) list (list1#i-n))
     )
@@ -109,7 +109,7 @@ tensorfqa = (list3, q, a, det1) ->(
     )
 
 --Input:
---prime p (or p = 0), and intgers d,r
+--prime p (or p = 0), and integers d,r
 --Optional Input
 --Multidegrees boolean value defaulted to false
 --Output: 
@@ -143,7 +143,7 @@ splittingFdr2 = (p,d,r) ->(
     if (r<=0) then return {};
     --In this case the bundle is D^dU \otimes O
     if (d<r) then(return (for i from 0 to d list 0));
-    --In thise case the splitting agrees with the characteristic 0 case
+    --In this case the splitting agrees with the characteristic 0 case
     if (d<p) then return (for i from 0 to r-1 list (-(d-r+1)));
     --The rest of the function is using Theorem 3.2
     --We first compute some relevant quantities
@@ -228,7 +228,7 @@ multidegreesplit = (p, d, r) ->(
 
 
 --Input:
---prime p, and intgers m,k
+--prime p, and integers m,k
 --Optional Input
 --Multidegrees boolean value defaulted to false
 --Output: 
@@ -518,7 +518,7 @@ theta = (q,x) -> (
 )
 
 --------------------------------------------------------
----- Weak Lefschetz Propery (WLP)----------------------
+---- Weak Lefschetz Property (WLP)----------------------
 --------------------------------------------------------
 
 --auxiliary function
@@ -595,7 +595,7 @@ directWLP = (p,L) -> (
     l := sum for i to n-1 list x_i;		     
     L2 := append(L1,l);
     B := T/ideal(L2); -- B=A/lA
-    degree B == Sperner -- Check if the dimention of B as k-vector space is equal to the Sperner number of A
+    degree B == Sperner -- Check if the dimension of B as k-vector space is equal to the Sperner number of A
     )
 
 
@@ -618,7 +618,7 @@ hasWLP = method( Options => {UseConjecture => true, GorensteinAlg => false, Mono
 
 hasWLP(ZZ, List) := opts -> (p, L) -> (
 	 if #L <= 2 or p == 0 then return true --up to 2 variables and in char 0 the WLP always holds
-	 else if p == 2 then char2WLP(L) --the case p=2 is treated seperatly, using  Theorem 8.1 [KMRR,24]
+	 else if p == 2 then char2WLP(L) --the case p=2 is treated separately, using  Theorem 8.1 [KMRR,24]
 	     else (
 	     	 if not(opts.UseConjecture) then directWLP(p,L) --check WLP using the Sperner number
 	     	 else hmWLP(p,L) --check WLP using the Han-Monsky multiplication
@@ -691,7 +691,7 @@ hasWLP(ZZ, List) := opts -> (p, L) -> (
         return tuples;)
     else( -- recursive case
     	for i from 2 to s+n//n do ( -- loop over possible values of the first component (from 1 to s)
-            subTuples := select(nTuples(n - 1, s - i+1), x -> x#0>=i); -- recursively generate (n-1)-tuples that sum to (s-i +n) and that the fist componet is not less then i
+            subTuples := select(nTuples(n - 1, s - i+1), x -> x#0>=i); -- recursively generate (n-1)-tuples that sum to (s-i +n) and that the fist component is not less then i
             iTuples := for j from 0 to #subTuples -1 list  {i}| subTuples#j;-- append i as the first component to each sub-tuple
             tuples = tuples | iTuples;
     	    );
@@ -711,7 +711,7 @@ monomialCIsWithoutWLP(ZZ, ZZ, ZZ) := opts -> (p, n, s) -> (
 )
 
 --------------------------------------------------------
----- Strong Lefschetz Propery (SLP)----------------------
+---- Strong Lefschetz Property (SLP)----------------------
 -------------------------------------------------------
 
 --auxiliary function
@@ -849,7 +849,7 @@ base10p = (p, num) ->(
 
 --q-truncated Schur functor code
 
---The following code is used to compute certain characters or the sum of the coefficients of monomials for those characterss
+--The following code is used to compute certain characters or the sum of the coefficients of monomials for those characters
 
 --Input: q = p^e a power of an integer prime or q = 0, positive integer d,
 --and R=n or R = ZZ[x_1..x_n] either a positive integer or a polynomial ring
@@ -896,7 +896,7 @@ sqab = (q,a, b, R) ->(
     return (hqd(q, a, R)*hqd(q, b, R)-hqd(q, a+1, R)*hqd(q, b-1, R))
     )
 
---Input: prime integer p, poistive integer d, integer e
+--Input: prime integer p, positive integer d, integer e
 --and R=n or R = ZZ[x_1..x_n] either a positive integer or a polynomial ring
 --Output: If R is a polynomial ring, then the function outputs 
 --the character Psi_{(a,b)} used in Theorem 1.1
@@ -926,7 +926,7 @@ qFrob = (q, R) -> (
 --third entry is a positive integer d, fourth entry is an integer e (These entries correspond to the
 --sheaf D^d Omega(d+e)), and the fifth entry is a positive integer which is the number of variables in the
 --character ring (or the dimension of the corresponding projective space minus 1)
---Optional Inputs: polynomial ring R = ZZ[x_1..x_n] (ring of charaters)
+--Optional Inputs: polynomial ring R = ZZ[x_1..x_n] (ring of characters)
 --and FindCharacter boolean value defaulted to false
 --Output: If FindCharacter is false and a polynomial ring R is not inputted, then the dimension of the cohomology
 --group H^i(D^d Omega(d+e)) where Omega is the cotangent sheaf of projective space P^{n-1} over a field of characteristic p
@@ -1036,7 +1036,7 @@ Deltad = (d) -> (
 
 --User function
 --Input: non-negative integer i,  d, integer e, 
---Optional Inputs: polynomial ring R = ZZ[x_1..x_n] (ring of charaters) or an integer n the number of variables
+--Optional Inputs: polynomial ring R = ZZ[x_1..x_n] (ring of characters) or an integer n the number of variables
 --and FindCharacter boolean value defaulted to false
 --Output: If FindCharacter is false and a polynomial ring R is not inputted, then the dimension of the cohomology
 --group H^i(D^d Omega(d+e)) where Omega is the cotangent sheaf of projective space P^{n-1} over a field of characteristic 2
@@ -1119,7 +1119,7 @@ det1 = (nR) -> (
 --third entry is an integer a, fourth entry is an integer b (These entries correspond to the
 --sheaf line bundle j^*(O(a) \boxtimes O(b)), and the fifth entry is a positive integer which is the number of variables in the
 --character ring (or the dimension of vector space defining the partial flag variety)
---Optional Inputs: Laurent polynomial ring R = ZZ[x_1..x_n, x_1^{-1}..x_n^{-1}] (ring of charaters)
+--Optional Inputs: Laurent polynomial ring R = ZZ[x_1..x_n, x_1^{-1}..x_n^{-1}] (ring of characters)
 --and FindCharacter boolean value defaulted to false
 --Output: If FindCharacter is false and a laurent polynomial ring R is not inputted, then the dimension of the cohomology
 --group H^i(j^*(O(a) \boxtimes O(b))) where j is the inclusion of the incidence correspondence
@@ -1142,8 +1142,8 @@ incidenceCohomology(List, PolynomialRing) := opts ->(l, R) ->(
 
 
 
---This is an auxillary function used to run the recursion to calculate the cohomology of line bundles on the incidence correspondence
---The inputs and outputs are as desribed for incidenceCohomology with the exception that nR can be either n or R as described there
+--This is an auxiliary function used to run the recursion to calculate the cohomology of line bundles on the incidence correspondence
+--The inputs and outputs are as described for incidenceCohomology with the exception that nR can be either n or R as described there
 incidenceCohomology2 = (i,p,a,b,nR) ->(
     --initialize n to the number of variables of nR or to nR.
     n:=0;
@@ -1710,7 +1710,7 @@ doc ///
   C = incidenceCohomology(L, R)
  Inputs
   L: List
-   List of integers {i,p,a,b,n} List of integers {i,p,a,b,n} where i is the cohomological degree, p is the characteristic of the field, the couple (a,b) indicates the line bundle $\mathcal{O}_X(a,b)$ on the incidence correspondence $X\subseteq \mathbb{P}\times \mathbb{P}^\vee$, and $n$ is the dimention of $\mathbb{P} +1
+   List of integers {i,p,a,b,n} List of integers {i,p,a,b,n} where i is the cohomological degree, p is the characteristic of the field, the couple (a,b) indicates the line bundle $\mathcal{O}_X(a,b)$ on the incidence correspondence $X\subseteq \mathbb{P}\times \mathbb{P}^\vee$, and $n$ is the dimension of $\mathbb{P} +1
   R: PolynomialRing
    Laurent polynomial ring, ambient ring for the character of the cohomology group, i.e. ZZ[x_1..x_n,x_1^{-1}..x_n^{-1}] where n-1 is the dimension of projective space
  Outputs
@@ -1880,7 +1880,7 @@ TEST/// -- Test 13
 ///
 
 --------------------------------------------------------------------------------
---Tests for the Lefschetz Properies --------------------------------------------
+--Tests for the Lefschetz Properties --------------------------------------------
 --------------------------------------------------------------------------------
 
 
@@ -1932,8 +1932,8 @@ TEST /// -- Test 20
     s=15;
     d=(s+1)//2;
     e=s//2;
-    ex=exponents recursiveDividedCohomology({1,p,d,e,n}, FindCharacter => true); --list the exponents of the charater of H^i(P^{n-1}, D^d Omega(d+e))
-    S= for i from 0 to #ex-1 list apply(ex#i, j->j+1); -- this must corrispond to n-tuples (a_1,....,a_n) such  k[x_1,...,x_n]/(x_1^{a_1}, …, x_n^{a_n}) does not have the WLP
+    ex=exponents recursiveDividedCohomology({1,p,d,e,n}, FindCharacter => true); --list the exponents of the character of H^i(P^{n-1}, D^d Omega(d+e))
+    S= for i from 0 to #ex-1 list apply(ex#i, j->j+1); -- this must correspond to n-tuples (a_1,....,a_n) such  k[x_1,...,x_n]/(x_1^{a_1}, …, x_n^{a_n}) does not have the WLP
     result= select(S, x -> x#0>1 and x_1>=x_0 and x#2>=x#1);--we restric to 2<=a_1<= ....<= a_n 
 assert(isSubset(monomialCIsWithoutWLP(p,n,s), result) and isSubset(result, monomialCIsWithoutWLP(p,n,s)))
 ///
@@ -1945,8 +1945,8 @@ TEST /// -- Test 21
     s=20;
     d=(s+1)//2;
     e=s//2;
-    ex=exponents recursiveDividedCohomology({1,p,d,e,n}, FindCharacter => true); --list the exponents of the charater of H^i(P^{n-1}, D^d Omega(d+e))
-    S= for i from 0 to #ex-1 list apply(ex#i, j->j+1); -- this must corrispond to n-tuples (a_1,....,a_n) such  k[x_1,...,x_n]/(x_1^{a_1}, …, x_n^{a_n}) does not have the WLP
+    ex=exponents recursiveDividedCohomology({1,p,d,e,n}, FindCharacter => true); --list the exponents of the character of H^i(P^{n-1}, D^d Omega(d+e))
+    S= for i from 0 to #ex-1 list apply(ex#i, j->j+1); -- this must correspond to n-tuples (a_1,....,a_n) such  k[x_1,...,x_n]/(x_1^{a_1}, …, x_n^{a_n}) does not have the WLP
     result= select(S, x -> x#0>1 and x_1>=x_0 and x#2>=x#1 and x#3>=x#2); --we restric to 2<=a_1<= ....<= a_n 
 assert(isSubset(monomialCIsWithoutWLP(p,n,s), result) and isSubset(result, monomialCIsWithoutWLP(p,n,s)))
 ///
@@ -1957,8 +1957,8 @@ TEST /// -- Test 22
     s=23;
     d=(s+1)//2;
     e=s//2;
-    ex=exponents recursiveDividedCohomology({1,p,d,e,n}, FindCharacter => true);--list the exponents of the charater of H^i(P^{n-1}, D^d Omega(d+e))
-    S= for i from 0 to #ex-1 list apply(ex#i, j->j+1); -- this must corrispond to n-tuples (a_1,....,a_n) such  k[x_1,...,x_n]/(x_1^{a_1}, …, x_n^{a_n}) does not have the WLP
+    ex=exponents recursiveDividedCohomology({1,p,d,e,n}, FindCharacter => true);--list the exponents of the character of H^i(P^{n-1}, D^d Omega(d+e))
+    S= for i from 0 to #ex-1 list apply(ex#i, j->j+1); -- this must correspond to n-tuples (a_1,....,a_n) such  k[x_1,...,x_n]/(x_1^{a_1}, …, x_n^{a_n}) does not have the WLP
     result= select(S, x -> x#0>1 and x_1>=x_0 and x#2>=x#1 and x#3>=x#2);--we restric to 2<=a_1<= ....<= a_n 
 assert(isSubset(monomialCIsWithoutWLP(p,n,s), result) and isSubset(result, monomialCIsWithoutWLP(p,n,s, UseConjecture =>false)))
 ///
