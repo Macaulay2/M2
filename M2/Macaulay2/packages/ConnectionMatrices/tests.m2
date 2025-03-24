@@ -204,6 +204,14 @@ A = connectionMatrices I;
 assert(isIntegrable(A))
 ///
 
+TEST /// -- tests for fractionField
+  debug needsPackage "ConnectionMatrices"
+  assert(3 == numgens fractionField makeWA(QQ[x,y,z]))
+  assert(4 == numgens fractionField makeWA((QQ[e, DegreeRank => 0])[x,y,z]))
+  assert(7 == numgens fractionField makeWA(((QQ[a,b,c, DegreeRank => 0])[e, DegreeRank => 0])[x,y,z]))
+  assert(7 == numgens fractionField makeWA((frac(QQ[a,b,c, DegreeRank => 0])[e, DegreeRank => 0])[x,y,z]))
+///
+
 --
 -- Tests on
 --

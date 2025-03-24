@@ -10,7 +10,9 @@ WeightThenEliminationOrder = w -> join( { Weights => w },
     apply(flatten reverse pack_(#w//2) entries id_(ZZ^(#w)), w' -> Weights => w'))
 --D = QQ[x,y,dx,dy, WeylAlgebra => {x=>dx, y=>dy}, MonomialOrder => WeightThenEliminationOrder {0,0,1,1}]
 --D = QQ[x,y,dx,dy, WeylAlgebra => {x=>dx, y=>dy}, MonomialOrder => WeightThenLexicographicOrder {0,0,1,1}]
---1 + dx + dy + dx^2 + dx*dy + dy^2 + x*(1 + dx + dy + dx^2 + dx*dy + dy^2)-- Weyl Algebra with monomial order given by the weighted lexicographic elimination order
+--1 + dx + dy + dx^2 + dx*dy + dy^2 + x*(1 + dx + dy + dx^2 + dx*dy + dy^2)
+
+-- Weyl Algebra with monomial order given by the weighted lexicographic elimination order
 makeWeylAlgebra(PolynomialRing, List) := opts -> (R, w) -> (
     coordVars := gens R;
     diffVars := apply(coordVars, i -> value("symbol d" | toString(i)) );
@@ -28,13 +30,24 @@ makeWeylAlgebra(PolynomialRing) := opts -> R -> (
     W := makeWeylAlgebra(R, w);
     W)
 
--- Fraction field K(x) of a Weyl algebra K[x,dx]/(...)
+-- TODO: fix in Core
+baseName' = x -> try baseName x else baseName' lift(x, baseRing ring x)
 
-fractionField = memoize(D -> if class(coefficientRing(D)) === FractionField then (
-                    frac(coefficientRing(coefficientRing(D))[(gens coefficientRing D) | (drop(gens D, - (numgens D)//2))])
-                )
-                else frac extractVarsAlgebra(D)
-);
+-- Fraction field K(x) of a Weyl algebra K[x,dx]/(...)
+-- TODO: implement this as frac(D)
+fractionField = memoize(D -> (
+    -- given frac(QQ[e])[a,b,c][x,y,dx,dy])
+    if not isWeylAlgebra D then return frac D;
+    -- {{x, y}, {dx, dy}, {}}
+    createDpairs D;
+    -- find the ultimate coefficient ring (in this case QQ)
+    K := ultimate(coefficientRing, D);
+    L := generators(D, CoefficientRing => K) - set D.dpairVars#1;
+    F := frac(K[Variables => L / baseName']);
+    F.dpairVars = D.dpairVars;
+    -- TODO: think of a better name
+    F#"OriginalWeylAlgebra" = D;
+    F))
 
 -- Graded associative ring of the rational Weyl algebra
 -- Used for bookkeeping elements in R
