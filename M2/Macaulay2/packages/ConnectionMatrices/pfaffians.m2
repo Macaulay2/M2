@@ -14,9 +14,11 @@ connectionMatrices(Ideal) := List => (I) -> (
     R := rationalWeylAlgebra(D);
     -- gb with respect to an elimination order
     G := gens gb I;
+    if debugLevel > 0 then printerr("Grobner basis: ", net G);
     r := holonomicRank(w, M := comodule I);
     if r === infinity then error "system is not finite dimensional";
     B := sub(M.cache#"basis", R);
+    if debugLevel > 0 then printerr("Standard monomials: ", net B);
     A := apply(D.dpairVars#1,
 	dt -> transpose concatCols apply(flatten entries B,
 	    s -> last coefficients(
@@ -67,6 +69,7 @@ standardMonomials = method()
 -- D-ideal as an input
 standardMonomials(Ideal) := (I) -> (
     D := ring I;
+    if not isWeylAlgebra D then error "expected left ideal in a Weyl algebra";
     w := (((options(D)).MonomialOrder)#1)#1;
     M := comodule I;
     r := holonomicRank(w, M);
