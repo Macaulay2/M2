@@ -19,7 +19,7 @@ diffRationalWeyl(RingElement,RingElement,RingElement) :=(P,f,g)->(
     sub(h1, R)/sub(h2,R)
 );
 
--- Convert entries of Pfaffian to fractions
+-- Convert entries of connection matrices to fractions
 convertEntry = method();
 convertEntry(RingElement) := (h)->(
     if coefficientRing(ring h) === QQ then subRing := ring h

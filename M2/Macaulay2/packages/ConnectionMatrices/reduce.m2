@@ -167,7 +167,7 @@ end--
 restart
 
 needs "reduce.m2"
--- Examples for testing with Pfaffian matrices
+-- Examples for testing with connection matrices
 -- Example 1.3: w = (0,0,2,1)
 D = makeWeylAlgebra(QQ[x,y], w = {0,0,2,1});
 I = ideal(x*dx^2-y*dy^2+dx-dy,x*dx+y*dy+1)
