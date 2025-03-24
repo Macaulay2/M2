@@ -7,7 +7,6 @@ newPackage(
 	{ Name => "Joris Koefler",           Email => "joris.koefler@mis.mpg.de",           HomePage => "" },
 	{ Name => "Mahrud Sayrafi",          Email => "mahrud@fields.utoronto.ca",          HomePage => "" },
 	{ Name => "Anna-Laura Sattelberger", Email => "anna-laura.sattelberger@mis.mpg.de", HomePage => "" },
-	{ Name => "Carlos Rodriguez",        Email => "carlos.rodriguez@mis.mpg.de",        HomePage => "" },
 	{ Name => "Hendrik Schroeder",       Email => "h.schroeder@tu-berlin.de",           HomePage => "" },
 	{ Name => "Nicolas Weiss",           Email => "nicolas.weiss@mis.mpg.de",           HomePage => "" },
 	{ Name => "Franzesca Zaffalon",      Email => "francesca.zaffalon@mis.mpg.de",      HomePage => "" }
