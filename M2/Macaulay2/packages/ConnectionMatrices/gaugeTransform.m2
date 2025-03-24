@@ -41,15 +41,20 @@ diffMatrixWeyl(RingElement, Matrix) :=(P, M)->(
 
 gaugeTransform = method();
 -- gives the gauge transform of a system of connection matrices w.r.t. a given change of basis matrix.
-gaugeTransform(Matrix, List, PolynomialRing) := (G, C, W)->(
-    G = sub(G, ring C#0);
-    invG := inverse G;
-    n := dim W//2;
+gaugeTransform(Matrix, List, PolynomialRing) := (M, A, D)->(
+    M = sub(M, ring A#0);
+    invM := inverse M;
+    n := dim D//2;
     for i from 1 to n list(
-        dxi := W_(n+i-1);
-        diffMatrixWeyl(dxi, G)*invG + G*(C#(i-1))*invG
+        dxi := D_(n+i-1);
+        diffMatrixWeyl(dxi, M)*invM + M*(A#(i-1))*invM
     )
 );
+-- Infering the Weyl algebra to perform the gauge transform in:
+gaugeTransform(Matrix, List) := (M,A)->(
+    D := inferWeylAlgebra(ring A#0);
+    gaugeTransform(M,A,D)
+)
 
 ----------------------------------------------------
 --epsilonFactorized: checks if the system is in epsilon-factorized form

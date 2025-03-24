@@ -49,6 +49,19 @@ fractionField = memoize(D -> (
     F#"OriginalWeylAlgebra" = D;
     F))
 
+-- Infering the WeylAlgebra from the fraction field
+-- TODO: Make this more standard
+inferWeylAlgebra = F -> (
+    if class F === FractionField then (
+        return try F#"OriginalWeylAlgebra" else makeWeylAlgebra(baseRing F)
+    );
+    if class F === PolynomialRing then (
+        return makeWeylAlgebra(F)
+    );
+    error "Can't infer Weyl algebra from ring that is neither a fraction field nor a polynomial ring."
+)
+
+
 -- Graded associative ring of the rational Weyl algebra
 -- Used for bookkeeping elements in R
 rationalWeylAlgebra = memoize((D) -> (

@@ -32,11 +32,9 @@ isIntegrable (PolynomialRing, List) := Boolean => (D,A) -> all(integrabilityTerm
 
 -- Infering the polynomial base ring from A_0:
 isIntegrable List := Boolean => A -> (
-    assert(class(ring A_0) === FractionField);
-    assert(class(baseRing ring A_0) === PolynomialRing);
 
-    -- Recover the WeylAlgebra if it is stored, else construct.
-    D := try (ring A_0)#"OriginalWeylAlgebra" else makeWeylAlgebra(baseRing ring A_0);
+    D := inferWeylAlgebra(ring A_0); -- Infers the WeylAlgebra if stored as option.
+
     assert(numgens D // 2 == #A); -- Length of the list must match the number of generators.
     isIntegrable(D, A)
 )

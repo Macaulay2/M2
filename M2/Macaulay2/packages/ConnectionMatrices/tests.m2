@@ -32,10 +32,10 @@ G = flatten entries gens gb I;
 B2 = {1,dx,dy,dx*dy};
 changeofvar = gaugeMatrix(G,B2);
 assert(changeofvar == gaugeMatrix(I,B2));
-P2 = gaugeTransform(changeofvar,P,D);
+P2 = gaugeTransform(changeofvar,P);
 
 changeVar = transpose((1/(2*z*e^2))*matrix({{2*z*e^2, -e^2*(x-z), -e^2*(y-z), -e^2*(x+y)},{0,e*(x^2-z^2),0,e*(x+y)*(x+z)},{0,0,e*(y^2-z^2),e*(x+y)*(y+z)},{0,0,0,-(x+y)*(x+z)*(y+z)}}));
-P3 = gaugeTransform(changeVar,P2,D);
+P3 = gaugeTransform(changeVar,P2);
 
 assert(isEpsilonFactorized(P3,e));
 ///
@@ -204,6 +204,10 @@ A = connectionMatrices I;
 assert(isIntegrable(A))
 ///
 
+--
+-- fractionField
+--
+
 TEST /// -- tests for fractionField
   debug needsPackage "ConnectionMatrices"
   assert(3 == numgens fractionField makeWA(QQ[x,y,z]))
@@ -213,5 +217,11 @@ TEST /// -- tests for fractionField
 ///
 
 --
--- Tests on
+-- inferWeylAlgbra
 --
+TEST /// -- Check that inferred WeylAlgebra equals provided WeylAlgebra
+  debug needsPackage "ConnectionMatrices"
+  D = makeWA(frac(QQ[e, DegreeRank => 0])[x,y]);
+  F = fractionField(D);
+  assert(D === inferWeylAlgebra(F))
+///
