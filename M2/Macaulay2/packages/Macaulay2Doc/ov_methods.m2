@@ -412,7 +412,6 @@ undocumented {
      (NewFromMethod, TO, List),
      (NewFromMethod, TO2, List),
      (NewFromMethod, TOH, List),
-     (NewFromMethod, Module, Sequence),
      (NewFromMethod, TO2, Sequence),
      (NewFromMethod, Matrix, MutableMatrix),
      (NewFromMethod, Matrix, Vector),
