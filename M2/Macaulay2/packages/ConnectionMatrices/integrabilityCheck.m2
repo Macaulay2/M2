@@ -35,9 +35,7 @@ isIntegrable List := Boolean => A -> (
     assert(class(ring A_0) === FractionField);
     assert(class(baseRing ring A_0) === PolynomialRing);
 
-    R := baseRing ring A_0;
-    assert((numgens R) == #A); -- Length of the list must match the number of generators.
-
-    D := makeWeylAlgebra(R);
+    D := (ring A_0)#"OriginalWeylAlgebra";
+    assert(numgens D // 2 == #A); -- Length of the list must match the number of generators.
     isIntegrable(D, A)
 )
