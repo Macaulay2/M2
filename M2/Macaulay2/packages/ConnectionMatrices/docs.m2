@@ -109,7 +109,7 @@ Description
   Text
     More interesting examples arising from physics can also be handled. For example, the connection matrices of the annihilating $D_3$-ideal of a correlation function in cosmology can be computed as follows.
   Example
-    D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x,y,z]);
+    D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x,y,z],w={0,0,0,1,1,1});
     delta1 = (x^2-z^2)*dx^2+2*(1-eps)*x*dx-eps*(1-eps);
     delta2 = (y^2-z^2)*dy^2+2*(1-eps)*y*dy-eps*(1-eps);
     delta3 = (x+z)*(y+z)*dx*dy-eps*(x+z)*dx-eps*(y+z)*dy+eps^2;
@@ -151,7 +151,7 @@ Description
     The following example comes from the annihilating $D_n$-ideal
     of a correlation function in cosmology.
   Example
-    D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x,y,z])
+    D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x,y,z],{0,0,0,1,1,1})
     delta1 = (x^2-z^2)*dx^2+2*(1-eps)*x*dx-eps*(1-eps);
     delta2 = (y^2-z^2)*dy^2+2*(1-eps)*y*dy-eps*(1-eps);
     delta3 = (x+z)*(y+z)*dx*dy-eps*(x+z)*dx-eps*(y+z)*dy+eps^2;
@@ -263,7 +263,7 @@ Description
     the annihilating $D_n$-ideal
     of a correlation function in cosmology.
   Example
-    D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x,y,z])
+    D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x,y,z],{0,0,0,1,1,1})
     delta1 = (x^2-z^2)*dx^2+2*(1-eps)*x*dx-eps*(1-eps);
     delta2 = (y^2-z^2)*dy^2+2*(1-eps)*y*dy-eps*(1-eps);
     delta3 = (x+z)*(y+z)*dx*dy-eps*(x+z)*dx-eps*(y+z)*dy+eps^2;
