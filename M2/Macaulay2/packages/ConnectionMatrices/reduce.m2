@@ -27,7 +27,7 @@ makeWeylAlgebra(PolynomialRing, List) := opts -> (R, v) -> (
 -- Weyl Algebra with non-weighted lexicographic elimination order
 makeWeylAlgebra(PolynomialRing) := opts -> R -> (
     n := length(gens R);
-    w := (for i from 1 to n list 0)|(for i from 1 to n list 1);
+    w := (for i from 1 to 2*n list 0);
     W := makeWeylAlgebra(R, w);
     W)
 

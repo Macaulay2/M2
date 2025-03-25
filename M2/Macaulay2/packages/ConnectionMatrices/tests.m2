@@ -13,7 +13,7 @@
 --
 -------------------------------------------------------
 
-TEST ///
+TEST ///-- test 0
 -- Example equation (11) from https://arxiv.org/pdf/2410.14757
 v = {1,1,1};
 D = makeWeylAlgebra(frac(QQ[e,DegreeRank=>0])[x,y,z],v);
@@ -40,7 +40,8 @@ P3 = gaugeTransform(changeVar,P2);
 assert(isEpsilonFactorized(P3,e));
 ///
 
-TEST /// -- ALS notes, Example 7.16
+TEST ///-- test 1
+-- ALS notes, Example 7.16
 
   D = makeWeylAlgebra(QQ[x,y], v = {1,2});
   I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1); -- doesn't commute
@@ -77,7 +78,7 @@ TEST /// -- ALS notes, Example 7.16
 
 
 
-TEST ///
+TEST /// -- test 2
 -- Example from Overleaf
 v1 = {2,1};
 v2 = {1,2};
@@ -119,7 +120,7 @@ assert(C2 == P'')
 -- isEpsilonFactorized
 --
 
-TEST ///
+TEST /// -- test 3
 -- Example
 
 R = frac(QQ[x,y]);
@@ -128,7 +129,7 @@ M = matrix {{y, y^2}, {(y+1)/((y-1)*(y-2)), 1/(y + y^2)}};
 assert(isEpsilonFactorized(M, x));
 ///
 
-TEST ///
+TEST /// -- test 4
 -- Non-Example
 
 R = frac(QQ[x,y]);
@@ -137,7 +138,7 @@ M = matrix {{y, y^2}, {(y+1)/((y-1)*(y-2)), 1/(y + y^2)}};
 assert(not isEpsilonFactorized(M, y));
 ///
 
-TEST ///
+TEST /// -- test 5
 -- Example
 R = frac(QQ[x,y]);
 M = matrix {{x^2*y, y}, {y*x + y / (x^2 +1), 0}};
@@ -145,7 +146,7 @@ M = matrix {{x^2*y, y}, {y*x + y / (x^2 +1), 0}};
 assert(isEpsilonFactorized(M, y));
 ///
 
-TEST ///
+TEST /// -- test 6
 -- Matrix of zeros is factorized with respect to any variable
 R = frac(QQ[x,y]);
 M = matrix {{0,0}, {0,0}};
@@ -153,7 +154,7 @@ M = matrix {{0,0}, {0,0}};
 assert(isEpsilonFactorized(M, x) and isEpsilonFactorized(M, y));
 ///
 
-TEST ///
+TEST /// -- test 7
 -- Trivial example of non-factorized (numerator not homogeneous)
 R = frac(QQ[x]);
 M = matrix {{(x+1)/x}}
@@ -163,7 +164,7 @@ M = matrix {{(x+1)/x}}
 -- isIntegrable
 --
 
-TEST ///
+TEST /// -- test 8
 -- A connection coming from a D-ideal is integrable:
 
 D = makeWeylAlgebra(QQ[x,y], v = {1,2});
@@ -174,7 +175,7 @@ assert(isIntegrable(D,A));
 
 ///
 
-TEST ///
+TEST /// -- test 9
 -- Constant coefficient matrices that don't commute can't come from an integrable system.
 S = QQ[x,y];
 R = frac(S);
@@ -187,7 +188,7 @@ A_1 = sub(matrix {{2,0}, {0,3}}, R);
 assert(isIntegrable({A_0, A_1}) == false);
 ///
 
-TEST ///
+TEST /// -- test 10
 -- Check that the integrability test also works in the parametric case:
 
 -- Based on equation (11) from https://arxiv.org/pdf/2410.14757
@@ -208,18 +209,20 @@ assert(isIntegrable(A))
 -- fractionField
 --
 
-TEST /// -- tests for fractionField
+TEST /// -- test 11
+  -- tests for fractionField
   debug needsPackage "ConnectionMatrices"
-  assert(3 == numgens fractionField makeWA(QQ[x,y,z]))
-  assert(4 == numgens fractionField makeWA((QQ[e, DegreeRank => 0])[x,y,z]))
-  assert(7 == numgens fractionField makeWA(((QQ[a,b,c, DegreeRank => 0])[e, DegreeRank => 0])[x,y,z]))
-  assert(7 == numgens fractionField makeWA((frac(QQ[a,b,c, DegreeRank => 0])[e, DegreeRank => 0])[x,y,z]))
+  assert(3 == numgens fractionField makeWeylAlgebra(QQ[x,y,z]))
+  assert(4 == numgens fractionField makeWeylAlgebra((QQ[e, DegreeRank => 0])[x,y,z]))
+  assert(7 == numgens fractionField makeWeylAlgebra(((QQ[a,b,c, DegreeRank => 0])[e, DegreeRank => 0])[x,y,z]))
+  assert(7 == numgens fractionField makeWeylAlgebra((frac(QQ[a,b,c, DegreeRank => 0])[e, DegreeRank => 0])[x,y,z]))
 ///
 
 --
 -- inferWeylAlgbra
 --
-TEST /// -- Check that inferred WeylAlgebra equals provided WeylAlgebra
+TEST /// -- test 12
+ -- Check that inferred WeylAlgebra equals provided WeylAlgebra
   debug needsPackage "ConnectionMatrices"
   D = makeWA(frac(QQ[e, DegreeRank => 0])[x,y]);
   F = fractionField(D);
