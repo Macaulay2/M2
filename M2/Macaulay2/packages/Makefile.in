@@ -91,7 +91,7 @@ unmark-$1: ; rm -rf  @pre_libm2dir@/$1/.installed
 	ls -l $1-temporary
 	rm -rf $1-temporary
 	if [ -e @pre_infodir@/$1.info ]; then \
-		install-info --info-dir=@pre_infodir@ @pre_infodir@/$1.info; fi
+		@INSTALL_INFO@ --info-dir=@pre_infodir@ @pre_infodir@/$1.info; fi
 	@ [ "${IgnoreExampleErrors}" = true -o -f $$@ ] || (echo error: file $$@ not made by installPackage >&2; false)
 check-info::@pre_infodir@/$1.info.errors
 @pre_infodir@/$1.info.errors: @pre_infodir@/$1.info
@@ -136,7 +136,6 @@ validate-html:
 
 ## here is the list of other files to install along with Macaulay2
 @pre_packagesdir@/%.m2 : %.m2 ; @INSTALL_DATA@ $^ $@
-.NOTPARALLEL:
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/packages RemakeAllDocumentation=false IgnoreExampleErrors=false Verbose=false debugLevel=0"
 # End:

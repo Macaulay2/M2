@@ -28,7 +28,7 @@ const CoefficientRingR *Ring::getCoefficientRingR() const
 
 void Ring::initialize_ring(long P0,
                            const PolynomialRing *DR,
-                           const M2_arrayint heft_vec)
+                           const std::vector<int> &heft_vector)
 {
   // Remember: if this is a poly ring, the ring is K[M].
   // If this is a basic routine, K = this, M = trivial monoid.
@@ -38,7 +38,7 @@ void Ring::initialize_ring(long P0,
     degree_ring = PolyRing::get_trivial_poly_ring();
   else
     degree_ring = DR;
-  heft_vector = heft_vec;
+  mHeftVector = heft_vector;
 
   _non_unit = ZERO_RINGELEM;
   _isfield = 0;
@@ -358,19 +358,24 @@ ring_elem Ring::divide_by_expvector(const_exponents exp, const ring_elem a) cons
   return a;
 }
 
-ring_elem Ring::homogenize(const ring_elem f, int, int deg, M2_arrayint) const
+ring_elem Ring::homogenize(const ring_elem f,
+                           int,
+                           int deg,
+                           const std::vector<int> &) const
 {
   if (deg != 0) ERROR("homogenize: no homogenization exists");
   return f;
 }
 
-ring_elem Ring::homogenize(const ring_elem f, int, M2_arrayint) const
+ring_elem Ring::homogenize(const ring_elem f,
+                           int,
+                           const std::vector<int> &) const
 {
   return f;
 }
 
 bool Ring::is_homogeneous(const ring_elem) const { return true; }
-void Ring::degree(const ring_elem, monomial d) const { degree_monoid()->one(d); }
+
 bool Ring::multi_degree(const ring_elem f, monomial d) const
 // returns true iff f is homogeneous
 {
@@ -378,10 +383,14 @@ bool Ring::multi_degree(const ring_elem f, monomial d) const
   return true;
 }
 
-void Ring::degree_weights(const ring_elem, M2_arrayint, int &lo, int &hi) const
+void Ring::degree_weights(const ring_elem,
+                          const std::vector<int> &,
+                          int &lo,
+                          int &hi) const
 {
   lo = hi = 0;
 }
+
 int Ring::index_of_var(const ring_elem a) const { return -1; }
 M2_arrayint Ring::support(const ring_elem a) const
 {

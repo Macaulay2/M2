@@ -83,18 +83,18 @@ rawBettiTally = v -> (
     minrow := min fi;
     maxrow := max fi;
     v = table(toList (minrow .. maxrow), toList (mincol .. maxcol), (i,j) -> if v#?(i,j) then v#(i,j) else 0);
-    leftside := splice {"", "total:", apply(minrow .. maxrow, i -> toString i | ":")};
+    leftside := splice {, "total:", apply(minrow .. maxrow, i -> RowExpression{ i, symbol :} )};
     totals := apply(transpose v, sum);
     v = prepend(totals,v);
-    v = applyTable(v, bt -> if bt === 0 then "." else toString bt);
-    v = prepend(toString \ toList (mincol .. maxcol), v);
+    v = applyTable(v, bt -> if bt === 0 then symbol . else bt);
+    v = prepend(toList (mincol .. maxcol), v);
     v = apply(leftside,v,prepend);
     v)
 
 rawMultigradedBettiTally = B -> (
     if keys B == {} then return 0;
     N := max apply(pairs B, (key, n) -> ((i,d,h) := key; length d));
-    R := ZZ[vars(0..N-1), MonomialOrder => Lex, Inverses => true];
+    R := ZZ(monoid[vars(0..N-1), MonomialOrder => Lex, Inverses => true]);
     H := new MutableHashTable;
     (rows, cols) := ({}, {});
     scan(pairs B,
@@ -106,7 +106,7 @@ rawMultigradedBettiTally = B -> (
 		m := n * R_d;
 		if H#?key then H#key = H#key + m else H#key = m;
 		) else (
-		s := toString n | ":" | toString d;
+		s := hold n : d;
 		if H#?i then H#i = H#i | {s} else H#i = {s};
 		);
 	    ));
@@ -115,30 +115,37 @@ rawMultigradedBettiTally = B -> (
 	T := table(toList (0 .. length rows - 1), toList (0 .. length cols - 1),
 	    (i,j) -> if H#?(rows#i,cols#j) then H#(rows#i,cols#j) else 0);
 	-- Making the table
-	xAxis := toString \ cols;
-	yAxis := (i -> toString i | ":") \ rows;
-	T = applyTable(T, n -> if n === 0 then "." else toString raw n);
+	xAxis := cols;
+	yAxis := (i -> RowExpression{ i, symbol :}) \ rows;
+--	T = applyTable(T, n -> if n === 0 then symbol . else raw n);
+	T = applyTable(T, n -> if n === 0 then symbol . else n);
 	T = prepend(xAxis, T);
-	T = apply(prepend("", yAxis), T, prepend);
+	T = apply(prepend(, yAxis), T, prepend);
 	) else (
 	T = table(max((keys H)/(j -> #H#j)), sort keys H,
-	    (i,k) -> if i < #H#k then H#k#i else null);
-	T = prepend(toString \ sort keys H, T);
+	    (i,k) -> if i < #H#k then H#k#i);
+	T = prepend(sort keys H, T);
 	);
     T)
 
+toStringn := x -> if x===null then "" else toString x
 net            BettiTally := B -> netList(rawBettiTally B,            Alignment => Right, HorizontalSpace => 1, BaseRow => 1, Boxes => false)
-net MultigradedBettiTally := B -> netList(rawMultigradedBettiTally B, Alignment => Right, HorizontalSpace => 1, BaseRow => 1, Boxes => false)
+net MultigradedBettiTally := B -> netList(applyTable(rawMultigradedBettiTally B,toStringn), Alignment => Right, HorizontalSpace => 1, BaseRow => 1, Boxes => false)
+
+texMathn := method()
+texMathn Nothing := x -> ""
+texMathn String := s -> "\\text{"|s|"}" -- minor variation, no tt
+texMathn Thing := texMath
 
 texMath BettiTally := v -> (
     v = rawBettiTally v;
-    v = join({prepend(2, drop(v#0, 1)), prepend("\\text{total:}\n  ", drop(v#1, 1))}, drop(v, 2));
-    v = between("\\\\\n", apply(v, row -> concatenate between(" & ", row)));
+--    v = join({prepend("  ", drop(v#0, 1)), prepend("\\text{total:}\n  ", drop(v#1, 1))}, drop(v, 2));
+    v = between("\\\\\n", apply(v, row -> concatenate between(" & ", apply(row,texMathn))));
     concatenate("\\begin{matrix}", newline, v, newline, "\\end{matrix}"))
 texMath MultigradedBettiTally := v -> (
     v = rawMultigradedBettiTally v;
-    v = if compactMatrixForm then prepend(prepend(2, drop(v#0, 1)), drop(v, 1)) else v;
-    v = between("\\\\\n", apply(v, row -> concatenate between(" & ", row)));
+    v = if compactMatrixForm then prepend(prepend(, drop(v#0, 1)), drop(v, 1)) else v;
+    v = between("\\\\\n", apply(v, row -> concatenate between(" & ", apply(row,texMathn))));
     concatenate("\\begin{matrix}", newline, v, newline, "\\end{matrix}"))
 
 -----------------------------------------------------------------------------
@@ -200,17 +207,20 @@ minimalBetti = method(
     Options => {
 	DegreeLimit => null,
 	LengthLimit => infinity,
-	Weights => null
+	Weights => null,
+    ParallelizeByDegree => false -- currently: only used over primes fields of positive characteristic
 	})
+minimalBetti Ideal  := BettiTally => opts -> I -> minimalBetti(comodule I, opts)
 minimalBetti Module := BettiTally => opts -> M -> (
     R := ring M;
+    weights := heftvec(opts.Weights, heft R);
     degreelimit := resolutionDegreeLimit(R, opts.DegreeLimit);
     lengthlimit := resolutionLengthLimit(R, opts.LengthLimit);
     -- check to see if a cached resolution is sufficient
     cacheKey := ResolutionContext{};
     if M.cache#?cacheKey and isComputationDone(C := M.cache#cacheKey,
 	DegreeLimit => degreelimit, LengthLimit => lengthlimit)
-    then return betti(C.Result.Resolution, Weights => opts.Weights);
+    then return betti(C.Result, Weights => weights);
     -- if not, compute a fast non-minimal resolution
     -- the following line is because we need to make sure we have the resolution
     -- either complete, or one more than the desired minimal betti numbers.
@@ -227,7 +237,7 @@ minimalBetti Module := BettiTally => opts -> M -> (
     -- First, we need to comppute the non-minimal resolution to one further step.
     if instance(opts.LengthLimit, ZZ) then lengthlimit = lengthlimit + 1;
     C = resolution(M,
-	StopBeforeComputation => true, FastNonminimal => true,
+	StopBeforeComputation => true, FastNonminimal => true, ParallelizeByDegree => opts.ParallelizeByDegree,
 	DegreeLimit => degreelimit, LengthLimit => lengthlimit);
     rC := if C.?Resolution and C.Resolution.?RawComputation then C.Resolution.RawComputation
     -- TODO: when can this error happen?
@@ -237,13 +247,9 @@ minimalBetti Module := BettiTally => opts -> M -> (
     --
     B := unpackEngineBetti rawMinimalBetti(rC,
 	if opts.DegreeLimit =!= null     then {opts.DegreeLimit} else {},
-	if opts.LengthLimit =!= infinity then {opts.LengthLimit} else {});
-    betti(B, Weights => heftvec(opts.Weights, heft R))
-    )
-minimalBetti Ideal := BettiTally => opts -> I -> minimalBetti(
-    if I.cache.?quotient then I.cache.quotient
-    else I.cache.quotient = cokernel generators I, opts
-    )
+	if opts.LengthLimit =!= infinity then {opts.LengthLimit} else {}
+        );
+    betti(B, Weights => weights))
 
 -----------------------------------------------------------------------------
 

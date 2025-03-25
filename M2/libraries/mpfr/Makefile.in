@@ -1,9 +1,8 @@
 #############################################################################
 
-VERSION = 4.0.2
+VERSION = 4.2.1
 LICENSEFILES = README COPYING.LESSER
-TARFILE = $(LIBNAME)-$(VERSION).tar.xz
-TAROPTIONS = --xz
+TARFILE = $(LIBNAME)-$(VERSION).tar.gz
 
 #############################################################################
 CONFIGOPTIONS += --disable-thread-safe
@@ -24,8 +23,7 @@ CONFIGOPTIONS += --disable-thread-safe
 #############################################################################
 
 RELAX = yes
-# URL = http://www.mpfr.org/mpfr-$(VERSION)
-URL = http://macaulay2.com/Downloads/OtherSourceCode
+URL = https://www.mpfr.org/mpfr-$(VERSION)
 
 ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-assert

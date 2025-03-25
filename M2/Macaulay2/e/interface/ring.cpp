@@ -40,7 +40,8 @@
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-#include <flint/fq_nmod.h>
+#include <flint/fmpz.h>     // for fmpz_t, fmpz_init, fmpz_set_si
+#include <flint/fq_nmod.h>  // for _fq_nmod_ctx_init_conway, fq_nm...
 #pragma GCC diagnostic pop
 
 unsigned int rawRingHash(const Ring *R) { return R->hash(); }

@@ -21,12 +21,29 @@ new LabelList from String := (T,s) -> (
     if #l==1 then characters s else select(l,c->c!="")
     )
 new LabelList from List := (T,l) -> apply(l,toString)
-texMath LabelList := s -> concatenate between("\\,",s)
+texMath LabelList := s -> concatenate between("\\,",apply(s,a->if a==="_" then "\\_" else a))
 net LabelList := toString LabelList := s -> concatenate between(" ",s)
+toExternalString LabelList := s -> toExternalString toString s
+-- ordering of labels
+ordTable = hashTable (
+    apply(19,i->toString(i/2) => i/2)
+    | apply(4,i-> (toString (i+1)|toString i)=>i+1/2)
+    | apply(10,i->"↘"|toString i => i)
+    | { "odd" => 10 }
+    | apply(10,i->"↗"|toString i => i+11)
+    )
+ord = s -> try ordTable#s else error "Invalid label"
 -- inversion number of a string
-inversion = method()
-inversion LabelList := p -> sum(#p-1,i->sum(i+1..#p-1,j->if p_i>p_j then 1 else 0))
-inversion String := s -> inversion new LabelList from s
+inversion = method(Options=>{Separation=>null})
+inversion LabelList := o -> p -> (
+    if member("_",p) then (
+	if o.Separation===null then error "need to specify Separation";
+	sep:=toString(o.Separation+if instance(o.Separation,QQ) then 0 else if any(p,a->a!="_" and first ascii a-48<o.Separation) then 1/2 else -1/2);
+	p=apply(p,a->if a=="_" then sep else a);
+	);
+    sum(#p-1,i->sum(i+1..#p-1,j->if ord p_i>ord p_j then 1 else 0))
+    )
+inversion String := o -> s -> inversion (new LabelList from s,o)
 
 -- a simple function that seems like it should already exist
 basisCoeffs = x -> lift(last coefficients(x, Monomials => basis ring x), (ring x).BaseRing)
@@ -43,18 +60,6 @@ expandElem := (P,vrs,els) -> (
     Q := P - C * product(#vrs, i -> (elem(i+1,vrs))^(ee#i));
     sub(C,ring first els) * product(#vrs, i -> (els#i)^(ee#i)) + expandElem(Q,vrs,els)
     )
-
--- automate promotion
-promoteFromMap = method()
-promoteFromMap (Ring,Ring,RingMap) := (R,S,f) -> (
-    promote(R,S) := (a,S1) -> f a;
-    promote(Matrix,R,S) :=
-    promote(MutableMatrix,R,S) := -- doesn't work, cf https://github.com/Macaulay2/M2/issues/2192
-    promote(Module,R,S) := (M,R1,S1) -> f M;
---    promote(List,R,S) := (L,R1,S1) -> f\L; -- TODO put back!!!!!!!!!!
-    S.baseRings = prepend(R,S.baseRings); -- temporary -- until promotability test improved in enginering.m2
-    )
-promoteFromMap (Ring,Ring) := (R,S) -> promoteFromMap(R,S,map(S,R))
 
 tautoClass = method(Dispatch=>{Thing,Thing,Type},Options=>true); -- "Chern classes" -- renamed tautoClass to avoid confusion with motivic classes
 zeroSection = method(Dispatch=>{Type},Options=>true) -- note the {}
@@ -97,18 +102,18 @@ pushforwardToPointFromCotangent=method(); -- pushforward to a point from K(T^*(G
 q := getSymbol "q"; zbar := getSymbol "zbar";
 FK_-1 = frac(factor(ZZ (monoid[q,zbar,DegreeRank=>0]))); -- same as FK_1, really but diff variable name
 FK_0 = frac(factor(ZZ (monoid[q,DegreeRank=>0])));
-promoteFromMap(FK_0,FK_-1);
+setupPromote(FK_0,FK_-1);
 
 h := getSymbol "h"; ybar := getSymbol "ybar";
 FH_-1 = frac(factor(ZZ (monoid[h,ybar]))); -- same as FH_1, really but diff variable name
 FH_0 = frac(factor(ZZ (monoid[h])));
-promoteFromMap(FH_0,FH_-1);
+setupPromote(FH_0,FH_-1);
 
 defineFK = n -> (
     if not FK#?n then (
         z := getSymbol "z"; -- q := getSymbol "q";
         FK_n = frac(factor(ZZ (monoid[q,z_1..z_n,DegreeRank=>0,MonomialOrder=>{Weights=>{n+1:1},RevLex}])));
-        promoteFromMap(FK_0,FK_n);
+        setupPromote(FK_0,FK_n);
         );
     FK#n
     )
@@ -117,7 +122,7 @@ defineFH = n -> (
     if not FH#?n then (
         y := getSymbol "y"; -- h := getSymbol "h";
         FH_n = frac(factor(ZZ (monoid[h,y_1..y_n,MonomialOrder=>{Weights=>{n+1:1},Weights=>{1,n:0},RevLex}])));
-        promoteFromMap(FH_0,FH_n);
+        setupPromote(FH_0,FH_n);
         );
     FH#n
     )
@@ -132,6 +137,7 @@ defineB = (FF,n,Kth,Equiv) -> ( -- TODO remove FF
             -if Equiv then elem(k,drop(gens FF,1)) else if Kth then binomial(n,k) else 0);
 	BB := BB0/J;
 	BBs#(n,Kth,Equiv) = BB;
+	if Equiv then setupPromote(map(BB,if Kth then FK_0 else FH_0,{FF_0}));
 	);
     BBs#(n,Kth,Equiv)
     )
@@ -241,7 +247,6 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
         );
     if curCotOpts.Presentation === Borel then (
 	BB := defineB(FF,n,curCotOpts.Ktheory,curCotOpts.Equivariant);
-	if curCotOpts.Equivariant then promoteFromMap(FF0,BB,map(BB,FF0,{FF_0})); -- TODO move elsewhere
 	x := getSymbol "x";
 	-- Chern classes
 	inds := splice apply(d+1, i -> apply(1..dimdiffs#i,j->(j,i)));
@@ -261,13 +266,10 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	R1 := FF monoid new Array from args;
 	f := map(BB,R1,e\inds);
 	AA := R1 / kernel f;
-	if curCotOpts.Equivariant then promoteFromMap(FF0,AA,map(AA,FF0,{FF_0}));
-	promoteFromMap(AA,BB,f*map(R1,AA));
+	if curCotOpts.Equivariant then setupPromote(map(AA,FF0,{FF_0}));
+	setupPromote(f*map(R1,AA));
 	-- reverse transformation
-	lift(Module,BB,AA) := opts -> (v,b,AA) -> vector apply(entries v,x->lift(x,AA));
-	lift(Matrix,BB,AA) := opts -> (m,b,AA) -> matrix applyTable(entries m,x->lift(x,AA));
-	lift (BB,AA) := opts -> (b,AA) -> (
-	    if d == n-1 then return (map(AA,BB,gens AA)) b; -- special case of full flag
+	setupLift( if #(unique dims) == n+1 then map(AA,BB,gens AA) else b -> ( -- special case of full flag
 	    AB := FF monoid (BB.generatorSymbols | AA.generatorSymbols); -- no using it
 	    b = sub(b,AB);
 	    -- scan(d+1,i->b=expandElem(b,toList(AB_(dims#i)..AB_(dims#(i+1)-1)),toList(AB_(n+dims#i)..AB_(n+dims#(i+1)-1))));
@@ -275,7 +277,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    v := seq -> apply(toList seq, j -> AB_j);
 	    scan(d+1,i->b=expandElem(b,v(dims#i..dims#(i+1)-1),v(n+dims#i..n+dims#(i+1)-1)));
 	    sub(b,AA)
-	    );
+	    ),BB,AA);
 	--
 	tautoClass (ZZ,ZZ,AA) := { Partial => true} >> o -> (j,i,AA) -> if o.Partial then AA_(dims#i+j-1) else e (j,i);
 	zeroSection AA := { Partial => true} >> o -> (cacheValue (zeroSection,o.Partial)) (if o.Partial then AA -> lift(zeroSection(AA,Partial=>false),AA)

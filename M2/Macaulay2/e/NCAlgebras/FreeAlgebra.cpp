@@ -750,7 +750,7 @@ ring_elem FreeAlgebra::eval(const RingMap *map,
   for (auto i = f.cbegin(); i != f.cend(); ++i)
     {
       vp.clear();
-      monoid().getMonomial(i.monom(), vp);
+      monoid().getMonomialReversed(i.monom(), vp);
       ring_elem g = map->eval_term(coefficientRing(), i.coeff(), vp.data(), first_var, numVars());
       H->add(g);
     }
@@ -833,11 +833,6 @@ bool FreeAlgebra::is_homogeneous(const Poly& f) const
   degreeMonoid().remove(e);
   degreeMonoid().remove(degf);
   return result;
-}
-
-void FreeAlgebra::degree(const Poly& f, monomial d) const
-{
-  multi_degree(f, d);
 }
 
 bool FreeAlgebra::multi_degree(const Poly& f,

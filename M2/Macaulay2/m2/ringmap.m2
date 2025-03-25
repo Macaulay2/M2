@@ -14,8 +14,6 @@ needs "mutablemat.m2"
 -- should do something about the degree map here
 degmap0 := n -> ( d := toList ( n : 0 ); e -> d )
 
-workable = f -> try (f(); true) else false
-
 -----------------------------------------------------------------------------
 -- RingMap type declarations and basic methods
 -----------------------------------------------------------------------------
@@ -85,7 +83,7 @@ map(Ring, Ring, Matrix)  := RingMap => opts -> (R, S, m) -> (
 		    " into a degree of length ", toString degreeLength R);
 	       opts.DegreeMap
 	       )
-	  else if workable (() -> promote({},S,R)) then (d -> first promote({d},S,R))
+	  else if (pr:=lookup(promote,List,S,R)) =!= null then (d -> first pr({d},S,R))
 	  else if degreeLength R === degreeLength S then identity
 	  else if degreeLength S === 0 or degreeLength R === 0 then degmap0 degreeLength R
 	  else (
@@ -125,7 +123,7 @@ map(Ring, Ring, Matrix)  := RingMap => opts -> (R, S, m) -> (
 	  else if r < n then error ("encountered values for ", toString r, " variables, but expected ", toString n)
 	  else if r == n then (
 	       if numgens A > 0 then (
-		    if A === R or isMember(A, R.baseRings) then (
+		    if A === R or isPromotable(A, R) then (
 			 -- we can promote
 			 mE = mE | promote(vars A, R);
 			 if instance(A,GaloisField) and A.rawGaloisField then (
@@ -213,7 +211,9 @@ RingMap Module := Module => (f, M) -> (
 -- misc
 tensor(RingMap, Module) := Module => {} >> opts -> (f, M) -> (
     if source f =!= ring M then error "expected module over source ring";
-    cokernel f presentation M);
+    subquotient(f ambient M,
+	if M.?generators then f M.generators,
+	if M.?relations  then f M.relations))
 RingMap ** Module := Module => (f, M) -> tensor(f, M)
 
 tensor(RingMap, Matrix) := Matrix => {} >> opts -> (f, m) -> (
@@ -221,8 +221,8 @@ tensor(RingMap, Matrix) := Matrix => {} >> opts -> (f, m) -> (
     map(f ** target m, f ** source m, f cover m))
 RingMap ** Matrix := Matrix => (f, m) -> tensor(f, m)
 
-List / RingMap := List => (v,f) -> apply(v,x -> f x)
-RingMap \ List := List => (f,v) -> apply(v,x -> f x)
+VisibleList / RingMap := VisibleList => (v,f) -> apply(v,x -> f x)
+RingMap \ VisibleList := VisibleList => (f,v) -> apply(v,x -> f x)
 
 -----------------------------------------------------------------------------
 -- kernel
@@ -264,10 +264,10 @@ algorithms#(kernel, RingMap) = new MutableHashTable from {
 		    j := 0;
 		    while j < i do (
 			 images#j = apply(images#j, s -> s*a);
-			 j = j+1;
+			 j += 1;
 			 );
 		    images#i = apply(images#i, s -> s*b);
-		    i = i+1;
+		    i += 1;
 		    );
 	       images = toList images;
 	       commonDenominator := images#0#1;
@@ -357,7 +357,7 @@ preimage(RingMap, Ideal) := Ideal => (f, J) -> (
 
 preimage(Matrix, Module) := (f, M) -> (
     T := target f;
-    g := map(T/M, T);
+    g := inducedMap(T/M, T);
     kernel(g * f))
 
 coimage RingMap := QuotientRing => f -> f.source / kernel f
@@ -387,7 +387,7 @@ RingMap * RingMap := RingMap => (g,f) -> (
 RingMap#1 = f -> (
     if source f =!= target f then error "expected source and target to agree"
     else id_(target f))
-RingMap ^ ZZ := BinaryPowerMethod
+RingMap ^ ZZ := RingMap => BinaryPowerMethod
 
 -----------------------------------------------------------------------------
 
@@ -443,24 +443,24 @@ substitute(Matrix,ZZ) := Matrix => (m,i) -> (
 sub2 = (S,R,v) -> (				   -- S is the target ring or might be null, meaning target ring not known yet
      commonzero := if S === null then 0 else 0_S;  -- the 0 element of the target ring
      local dummy;
-     g := generators R;
      A := R;
-     while try (A = if instance(A,FractionField) then frac coefficientRing A else coefficientRing A; true) else false
-     do g = join(g, generators A);
-     h := new MutableHashTable;
-     for i from 0 to #g-1 do h#(g#i) = if h#?(g#i) then (h#(g#i),i) else 1:i;
-     h = new HashTable from apply(pairs h, (x,i) -> (x,deepSplice i));
-     m := new MutableList from (#g:symbol dummy);
+    -- a list, containing variables of R and its base rings
+    (g, gs) := flatten \ toSequence transpose while A =!= ZZ list {generators A, if A.?generatorSymbols then A.generatorSymbols else {}} do try (
+        A = if instance(A, FractionField) then frac coefficientRing A else coefficientRing A) else break;
+    -- a hash table, consisting of pairs (generator symbol) => (indices)
+    h := new MutableHashTable;
+    -- a list, eventually containing the targets of each generator
+    m := new MutableList from apply(pairs gs, (i, x) -> ( h#x = if h#?x then append(h#x, i) else 1:i; symbol dummy ));
      for opt in v do (
 	  if class opt =!= Option or #opt =!= 2 then error "expected a list of options";
-	  x := opt#0;
+	  x := baseName opt#0;
 	  y := opt#1;
 	  if instance(y, Constant) then y = numeric y;
 	  if not instance(y,RingElement) and not instance(y,Number) then error "expected substitution values to be ring elements or numbers";
 	  if S === null
 	  then try commonzero = commonzero + 0_(ring y) else error "expected substitution values to be in compatible rings"
 	  else try y = promote(y,S) else error "expected to be able to promote value to target ring";
-	  if not h#?x and ((try x=promote(x,R))===null or not h#?x) then error( "expected ", toString x, " to be a generator of ", toString R );
+	  try x_R else error( "expected ", toString x, " to be a generator of ", toString R );
 	  for i in h#x do (
 	       if m#i =!= symbol dummy and m#i =!= y then error "multiple destinations specified for a generator";
 	       m#i = y;
@@ -503,7 +503,19 @@ substitute(Ideal,Option) := (I,v) -> (sub2(,ring I,{v})) I
 substitute(Vector,Option) := (f,v) -> (sub2(,ring f,{v})) f
 substitute(RingElement,Option) := (f,v) -> (sub2(,ring f,{v})) f
 
-RingElement Array := (r,v) -> substitute(r,matrix {toList v})
+-----------------------------------------------------------------------------
+-- Syntactic sugar for polynomial evaluation
+-----------------------------------------------------------------------------
+
+RingElement Array := -- TODO: eventually deprecate this
+RingElement Sequence := (f, v) -> (
+    R := ring f;
+    n := if R.?numallvars then R.numallvars else numgens R;
+    if #v > n
+    then error("encountered values for ", #v, " variables, but expected at most ", n)
+    else substitute(f, apply(#v, i -> R_i => v#i)))
+-- this will make f(a) work as expected
+RingElement Number := RingElement RingElement := (f, n) -> f(1:n)
 
 -----------------------------------------------------------------------------
 -- inverse
@@ -542,7 +554,7 @@ map(Module,Module,RingMap,RawMatrix) := opts -> (M,N,p,f) -> (
 	  symbol cache => new CacheTable
 	  })
 map(Module,Nothing,RingMap,RawMatrix) := Matrix => o -> (M,N,p,f) -> (
-     d := degreeLength M;
+    d := degreeLength ring M;
      degs := pack(d,degrees source f);
      deg := o.Degree;
      if deg =!= null then degs = apply(degs, dg -> dg - deg);
@@ -554,6 +566,18 @@ map(Module,Module,RingMap,Matrix) := Matrix => o -> (M,N,p,f) -> map(M,N,p,raw f
 map(Module,Module,RingMap,List) := Matrix => o -> (M,N,p,f) -> map(M,N,p,map(M,ring M ** N,f),o)
 map(Module,Nothing,RingMap,List) := Matrix => o -> (M,N,p,f) -> map(M,N,p,map(M,,f),o)
 map(Module,RingMap) := Matrix => o -> (M,p) -> map(M,,p,map(M,cover M,1),o)
+
+--
+setupPromote (RingMap,Ring,Ring,Function) := lookup(setupPromote,Function,Ring,Ring,Function)
+setupPromote (RingMap,Ring,Ring) := (f,R,S) -> setupPromote(f,R,S,f.cache.DegreeMap)
+-- note that promote(Module,R,S) := (M,R,S) -> f ** M would make more sense, but promote only works with free modules anyway
+setupPromote RingMap := f -> setupPromote(f,source f,target f)
+setupPromote (Ring,Ring) := (R,S) -> setupPromote map(S,R)
+
+setupLift (RingMap,Ring,Ring) := (f,R,S) -> -- f is a partial inverse to the promote map
+    setupLift( a -> ( b := f a; if promote(b,R) == a then b else error "cannot lift" ), R,S,f.cache.DegreeMap);
+
+setupLift RingMap := f -> setupLift(f,source f,target f)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -3,55 +3,43 @@ needs "code.m2"
 needs "run.m2"
 
 -----------------------------------------------------------------------------
--- Local utilities
------------------------------------------------------------------------------
-
-sourceFileStamp = (filename, linenum) -> concatenate(
-    pos := new FilePosition from (toAbsolutePath filename, linenum, 1);
-    concatenate("--", toString pos, ": location of test code"));
-
------------------------------------------------------------------------------
 -- TestInput
 -----------------------------------------------------------------------------
 TestInput = new SelfInitializingType of HashTable
-new TestInput from Sequence := (T, S) -> TestInput {
-    "filename" => S_0,
-    "line number" => S_1,
-    "code" => concatenate(sourceFileStamp(S_0, S_1), newline, S_2)}
 TestInput.synonym = "test input"
 
-code TestInput := T -> T#"code"
-locate TestInput := T -> new FilePosition from (T#"filename",
-    T#"line number" - depth net code T, 1,
-    T#"line number", 1,,)
-toString TestInput := toString @@ locate
-net TestInput := T -> "-*TestInput[" | toString T | "]*-"
+code TestInput := code @@ locate
+toString TestInput := T -> T#"code"
+locate TestInput := T -> T#"location"
+net TestInput := lookup(net, Function)
+precedence TestInput := lookup(precedence, Function)
 editMethod TestInput := editMethod @@ locate
+capture TestInput := opt -> T -> capture(toString T, opt)
 
 -----------------------------------------------------------------------------
 -- TEST
 -----------------------------------------------------------------------------
 
-TEST = method(Options => {FileName => false})
-TEST List   := opts -> testlist   -> apply(testlist, test -> TEST(test, opts))
-TEST String := opts -> teststring -> (
-    n := currentPackage#"test number";
-    currentPackage#"test inputs"#n = TestInput if opts.FileName then (
-        testCode := get teststring;
-        (minimizeFilename teststring, depth net testCode + 1, testCode)
-        ) else
-        (minimizeFilename currentFileName, currentRowNumber(), teststring);
-    currentPackage#"test number" = n + 1;)
+-- TEST is a keyword that takes an object as input and determines its
+-- location.  It then passes the object and its location to addTest.
+addTest = method()
+addTest(String, FilePosition) := (str, loc) -> (
+    n := #currentPackage#"test inputs";
+    currentPackage#"test inputs"#n = TestInput {
+	"location" => loc,
+	"code" => str})
+-- the following is not called by TEST, but called directly when we want to
+-- add a test from a file (used by loadTestDir)
+addTest String := filename -> addTest(get filename,
+    new FilePosition from(filename, 1, 1))
 -- TODO: support test titles
-TEST(String, String) := (title, teststring) -> (
-    n := currentPackage#"test number"; () -> check(n - 1, currentPackage))
 
 -----------------------------------------------------------------------------
 -- check
 -----------------------------------------------------------------------------
 
 checkmsg := (verb, desc) ->
-    stderr << commentize pad(pad(verb, 10) | desc, 72) << flush;
+    stderr << commentize pad(pad(verb, 10) | desc, printWidth - 36) << flush;
 
 captureTestResult := (desc, teststring, pkg, usermode) -> (
     stdio << flush; -- just in case previous timing information hasn't been flushed yet
@@ -72,16 +60,20 @@ captureTestResult := (desc, teststring, pkg, usermode) -> (
     runString(teststring, pkg, usermode))
 
 loadTestDir := pkg -> (
-    -- TODO: prioritize reading the tests from topSrcdir | "Macaulay2/tests/normal" instead
-    testDir := pkg#"package prefix" |
-        replace("PKG", pkg#"pkgname", currentLayout#"packagetests");
+    testDir := (
+	-- prioritize Core tests from source repository
+	if (pkg === Core and topSrcdir =!= null and (
+		dir := minimizeFilename(topSrcdir | "Macaulay2/tests/normal/");
+		isDirectory dir)) then dir
+	else pkg#"package prefix" | replace("PKG", pkg#"pkgname",
+	    currentLayout#"packagetests"));
     pkg#"test directory loaded" =
     if fileExists testDir then (
+	printerr("loading tests from ", testDir);
         tmp := currentPackage;
         currentPackage = pkg;
-        TEST(sort apply(select(readDirectory testDir, file ->
-            match("\\.m2$", file)), test -> testDir | test),
-            FileName => true);
+	scan(sort select(readDirectory testDir, file -> match("\\.m2$", file)),
+	    test -> addTest(testDir | test));
         currentPackage = tmp;
         true) else false)
 
@@ -89,7 +81,7 @@ tests = method()
 tests Package := pkg -> (
     if not pkg#?"test directory loaded" then loadTestDir pkg;
     if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"pkgname", LoadDocumentation => true, Reload => true);
-    previousMethodsFound = new HashTable from pkg#"test inputs"
+    previousMethodsFound = new NumberedVerticalList from pkg#"test inputs"
     )
 tests String := pkg -> tests needsPackage(pkg, LoadDocumentation => true)
 tests(ZZ, Package) := tests(ZZ, String) := (i, pkg) -> (tests pkg)#i
@@ -109,19 +101,19 @@ check(List, Package) := opts -> (L, pkg) -> (
     tmp := previousMethodsFound;
     inputs := tests pkg;
     previousMethodsFound = tmp;
-    testKeys := if L == {} then keys inputs else L;
+    testKeys := if L == {} then toList(0..#inputs-1) else L;
     if #testKeys == 0 then printerr("warning: ", toString pkg,  " has no tests");
     --
     errorList := for k in testKeys list (
 	    if not inputs#?k then error(pkg, " has no test #", k);
-	    teststring := code inputs#k;
+	    teststring := inputs#k#"code";
 	    desc := "check(" | toString k | ", " | format pkg#"pkgname" | ")";
 	    ret := elapsedTime captureTestResult(desc, teststring, pkg, usermode);
 	    if not ret then (k, temporaryFilenameCounter - 2) else continue);
     outfile := errfile -> temporaryDirectory() | errfile | ".tmp";
     if #errorList > 0 then (
 	if opts.Verbose then apply(errorList, (k, errfile) -> (
-		stderr << toString inputs#k << " error:" << endl;
+		stderr << locate inputs#k << " error:" << endl;
 		printerr getErrors(outfile errfile)));
 	error("test(s) #", demark(", ", toString \ first \ errorList), " of package ", toString pkg, " failed.")))
 

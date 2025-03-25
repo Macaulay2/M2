@@ -453,7 +453,7 @@ void ResF4MonomialLookupTableT<Key>::debug_out(int disp) const
   for (typename VECTOR(mi_node *)::const_iterator i = mis.begin();
        i != mis.end();
        i++)
-    if (*i != nullptr) do_tree(*i, 0, 0, disp);
+    if (*i != NULL) do_tree(*i, 0, 0, disp);
   buffer o;
   o << "list nodes     = " << nlists << newline;
   o << "internal nodes = " << nnodes << newline;
@@ -514,7 +514,7 @@ void ResF4MonomialLookupTableT<Key>::debug_check() const
        i != mis.end();
        i++)
     {
-      if (*i != nullptr) nfound += debug_check(*i, nullptr);
+      if (*i != NULL) nfound += debug_check(*i, nullptr);
     }
   assert(count / 2 == nfound);
 }

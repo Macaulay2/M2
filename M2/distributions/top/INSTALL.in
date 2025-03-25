@@ -2,7 +2,7 @@
 	    by Daniel R. Grayson <dan@math.uiuc.edu>
 	 and Michael E. Stillman <mike@math.cornell.edu>
 
-	available from http://www.math.uiuc.edu/Macaulay2/
+	available from https://macaulay2.com/
 
 Welcome to Macaulay2!
 
@@ -26,7 +26,7 @@ in a cygwin bash command shell.
 
 In your browser, visit the web page at
 
-     http://www.math.uiuc.edu/Macaulay2/Downloads/
+     https://macaulay2.com/Downloads/
 
 and download the appropriate pair of files for your architecture and operating
 system.  (Actually, if you are reading this file, you have already done this

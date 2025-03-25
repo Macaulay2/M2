@@ -180,7 +180,7 @@ ring_elem PolyRingQuotient::invert(const ring_elem f) const
       if (!getAmbientRing()->is_unit(ret->get_value())) return from_long(0);
       return u1->get_value();
     }
-  else if (M_->getNonTermOrderVariables()->len == 0)
+  else if (M_->numNonTermOrderVariables() == 0)
     return ann(from_long(1), f);
   else
     {

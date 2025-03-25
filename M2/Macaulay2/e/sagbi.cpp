@@ -301,7 +301,7 @@ Matrix *sagbi::subduct1(int numparts,
 // //   // degrees of new variables: coming from 'degs'
 // //   // This routine should handle the case where R is a quotient poly ring, or R is just K.
 // //   const ring *K = R->getCoefficientRing();
-// //   degree_monoid *D = R->degree_monoid();
+// //   auto D = R->degree_monoid();
 // //   monorder mo =
 // //   mon_info mi =
 // //   monoid *M =

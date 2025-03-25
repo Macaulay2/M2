@@ -10,7 +10,6 @@ document {
 	  (gb,Ideal),
 	  (gb,Matrix),
 	  (gb,Module),
-	  [gb,Algorithm],
 	  [gb, BasisElementLimit],
 	  [gb,ChangeMatrix],
 	  [gb,CodimensionLimit],
@@ -25,15 +24,16 @@ document {
 	  [gb,SubringLimit],
 	  [gb,Syzygies],
 	  [gb,SyzygyLimit],
-	  [gb,SyzygyRows],[gb,MaxReductionCount],
-	  LinearAlgebra, Homogeneous2, Sugarless, Toric, UseSyzygies
+	[gb, SyzygyRows],
+	[gb, MaxReductionCount],
 	  },
      Headline => "compute a Gröbner basis",
      Usage => "gb I",
      Inputs => {
 	  "I" => "an ideal, module, or matrix",
-	  Algorithm => Symbol => {"possible values: ", TO "Homogeneous", ", ", TO "Inhomogeneous", ", ", TO "Homogeneous2", ", and ", TO "Sugarless", ".
-	       Experimental options include ", TO "LinearAlgebra", " and ", TO "Toric", "."},
+	  Algorithm => Symbol => { "possible values: ",
+	      TT "Homogeneous", ", ", TT "Inhomogeneous", ", ", TT "Homogeneous2", ", and ", TT "Sugarless", ". ",
+	      "Experimental options include ", TT "LinearAlgebra", " and ", TT "Toric", "."},
      	  BasisElementLimit => ZZ => "stop when this number of (nonminimal) Gröbner basis elements has been found",
 	  ChangeMatrix => Boolean => { 
 	       "whether to compute the change of basis matrix from Gröbner basis elements to original generators.  Use ", TO "getChangeMatrix", " to recover it."},
@@ -55,11 +55,11 @@ document {
 	    using or viewing partially computed Gröbner bases)",
 	  StopWithMinimalGenerators => Boolean => "whether to stop as soon as the minimal set (or a trimmed set, if not homogeneous or local) of generators is known.  Intended for internal use only",
 	  Strategy => {
-	       "either ", TO "LongPolynomial", ", ", TO "Sort", ", or a list of these.  ", TO "LongPolynomial", ": 
-	       use a geobucket data structure while reducing polynomials;
-	       ", TO "Sort", ": sort the S-pairs.
-	       Another symbol usable here is ", TT "UseSyzygies", ".
-	       Usually S-pairs are processed degree by degree in the order that they were constructed."},
+	       "either ", TO "LongPolynomial", ", ", TO "Sort", ", or a list of these.  ",
+	       TO "LongPolynomial", ": use a geobucket data structure while reducing polynomials; ",
+	       TT "Sort", ": sort the S-pairs by lead term (usually this is a bad idea). ",
+	       "Another symbol usable here is ", TT "UseSyzygies", ". ",
+	       "Usually S-pairs are processed degree by degree in the order that they were constructed."},
 	  SubringLimit => ZZ => "stop after this number of elements of the Gröbner basis lie in the first subring",
 	  Syzygies => Boolean => "whether to collect syzygies on the original generators during the computation.  Intended for internal use only",
 	  SyzygyLimit => ZZ => "stop when this number of non-zero syzygies has been found",
@@ -97,22 +97,55 @@ document {
      matrix {{y}} // gb(M,ChangeMatrix=>true)
      ///,
      SeeAlso => {
-	  "Gröbner bases",
 	  groebnerBasis,
 	  (generators,GroebnerBasis),
-	  "gbTrace",
 	  poincare,
-	  -- Mike wanted this: installGroebner,
-	  gbSnapshot,
-	  gbRemove
-	  }
+	  },
+     Subnodes => {
+	 TO GroebnerBasis,
+	 TO GroebnerBasisOptions,
+	 TO "Gröbner basis algorithms",
+	 -- Mike wanted this: installGroebner,
+	 TO gbSnapshot,
+	 TO gbRemove,
+	 TO "gbTrace",
+	 TO LongPolynomial,
+         }
      }
+
+doc ///
+Node
+  Key
+    "Gröbner basis algorithms"
+    [gb, Algorithm]
+    LinearAlgebra
+    Homogeneous2
+    Sugarless
+    Toric
+    UseSyzygies
+  Usage
+    gb(I, Algorithm => ...)
+  Description
+    Tree
+      :Supported algorithms for @TO gb@
+        @TT "Homogeneous"@
+	@TT "Inhomogeneous"@
+	@TT "Homogeneous2"@
+	@TT "Sugarless"@
+      :Experimental algorithms for @TO gb@
+        @TT "LinearAlgebra"@
+	@TT "Toric"@
+  SeeAlso
+    groebnerBasis
+    markedGB
+    "FGLM::FGLM"
+///
 
 document {
      Key => symbol gbTrace,
-     Headline => "provide tracing output during various computations in the 	 engine.",
-     TT "gbTrace = n", " -- set the tracing level for the ", TO "engine", " to
-     level ", TT "n", ".  Meaningful values for the user ", TT "n", " are
+     Headline => "current engine computation tracing level",
+     TT "gbTrace = n", " -- set the tracing level for ", TO "the engine of Macaulay2", " to
+     level ", TT "n", ".  Meaningful values of ", TT "n", " for typical users are
      0, 1, 2, and 3.  Meaningful values for the developers are 4, 5, 8, 10, 11, and 100; the
      parity also has an effect when the value is at least 5.",
      PARA{},
@@ -128,7 +161,8 @@ document {
 	  "(7)     - 7 more S-pairs need to be reduced.",
 	  LI {"(8,9)   - 9 S-pairs, 8 predicted basis elements (", TO [gb,Hilbert], ")"},
 	  ".       - a minor has been computed, or something has happened while computing a resolution.",
-	  }
+	  },
+     SeeAlso => { "debugLevel", "engineDebugLevel" },
      }
 
 document {
@@ -138,7 +172,15 @@ document {
      computation, and several associated matrices. Normally you don't
      need to refer to these objects directly, as many operations on
      matrices and modules create them, and refer to them.  For more
-     information, see ", TO "Gröbner bases", "."
+     information, see ", TO "Gröbner bases", ".",
+    Subnodes => {
+	TO returnCode,
+	TO (generators, GroebnerBasis),
+        TO (mingens, GroebnerBasis),
+        TO (syz, GroebnerBasis),
+        TO (target, GroebnerBasis),
+	TO (getChangeMatrix, GroebnerBasis),
+        },
      }
 
 document {
@@ -172,37 +214,6 @@ document {
      }
 
 document {
-     Key => Sort,
-     Headline => "a Strategy option value",
-     TT "Sort", " -- a strategy used with the keyword ", TO "Strategy", ".",
-     PARA{},
-     "Indicates that the Gröbner basis should be sorted by lead term; usually
-     this is a bad idea.  Normally the basis is sorted only by degree. The
-     running time can change either for the good or bad.",
-     SeeAlso => {[gb,Strategy]}
-     }
-
-document {
-     Key => Homogeneous,
-     Headline => "a Strategy option value",
-     TT "Homogeneous", " -- a strategy used with the keyword ", TO "Strategy", ".",
-     PARA{},
-     "This is an alternate Gröbner basis algorithm that can be used if the submodule
-     is homogeneous, and the ring is a (quotient of) a polynomial ring over a field.",
-     SeeAlso => {[gb,Strategy]}
-     }
-
-document {
-     Key => Inhomogeneous,
-     Headline => "a Strategy option value",
-     TT "Inhomogeneous", " -- a strategy used with the keyword ", TO "Strategy", ".",
-     PARA{},
-     "This is the default Gröbner basis algorithm used if the submodule is
-     inhomogeneous, and the ring is a (quotient of) a polynomial ring over a field.",
-     SeeAlso => {[gb,Strategy]}
-     }
-
-document {
      Key => LongPolynomial,
      Headline => "a Strategy option value",
      TT "LongPolynomial", " -- a strategy used with the keyword ", TO "Strategy", ".",
@@ -230,3 +241,88 @@ document {
 --       	  "gb(I, PairLimit => 3)"
 -- 	  }
 --      }
+
+doc ///
+   Key
+     groebnerBasis
+     (groebnerBasis,Ideal)
+     (groebnerBasis,Module)
+     (groebnerBasis,Matrix)
+     [groebnerBasis,Strategy]
+   Headline
+     Gröbner basis, as a matrix
+   Usage
+     M = groebnerBasis I
+     M = groebnerBasis(I, Strategy=>"MGB")
+     M = groebnerBasis(I, Strategy=>"F4")
+   Inputs
+     I:Ideal
+       or a module or a matrix (in which case the result is the Groebner basis of the submodule
+         generated by the columns)
+     Strategy => String
+       If not given, use the default algorithm.  If given, value must be "MGB"
+       or "F4", and the result is experimental
+     "MGBOptions" => List
+       For internal use only.  Warning: the interface is likely to change.
+   Outputs
+     M:Matrix
+       The matrix whose columns are the generators of the Groebner basis of {\tt I}.
+       In the non-local monomial order case, the result is auto-reduced, and sorted.
+   Description
+    Text
+      With no {\tt Strategy} option, this just calls @TO "gb"@.
+    Example
+      R = QQ[a..d]
+      M = groebnerBasis random(R^1,R^{4:-2});
+      netList (ideal M)_*
+    Text
+      With a {\tt Strategy} option, the code is experimental, subject to
+      interface changes, and might have bugs.  So use at your own
+      risk!  However, it appears to work correctly and is often very
+      fast, in cases where it applies.  If you encounter any bugs,
+      please let us know!
+
+      If either {\tt "MGB"} (MGB stands for mathicGB, the name of the package used),
+      or {\tt "F4"} is given for the Strategy, then 
+      experimental code (written by Bjarke Roune and M. Stillman) is used.
+      The plan is for this to become the default version for Groebner bases in later
+      versions of Macaulay2.  But for now, it is experimental.
+      
+      These strategies only work for ideals in polynomial rings over a finite field ZZ/p.
+      In other cases, either an error will be given, or the current default Groebner
+      basis algorithm will be used.
+    Example
+      R = ZZ/101[a..e]
+      I = ideal sub(random(R^1, R^{4:-2}), e=>1);
+      netList I_*
+      gbI = ideal groebnerBasis(I, Strategy=>"MGB");
+      netList gbI_*
+    Text
+      Also implemented is a Faugere-like algorithm that is sometimes much faster
+      (but also sometimes takes a large amount of memory).
+    Example
+      gbTrace=1
+      gbI = ideal groebnerBasis(I, Strategy=>"F4");
+      netList gbI_*
+   Caveat
+     (1) The MGB and F4 options are experimental, work only over a finite field of char $< 2^{32}$, not over
+     quotient rings, and not over exterior or Weyl algebras.  However, these versions can be much
+     faster when they apply. (2) The experimental versions do not stash their results into the ideal
+     or module. (3) The experimental version only works for ideals currently.
+   SeeAlso
+     gb
+///
+
+document {
+    Key => {
+	 getChangeMatrix,
+	(getChangeMatrix, GroebnerBasis)
+    },
+    Headline => "get the change of basis matrix",
+    TT "getChangeMatrix G", " -- for a Gröbner basis G, return the change of
+    basis matrix from the Gröbner basis to another generating set,
+    usually a minimal, or original, generating set.",
+    PARA{},
+    "The option ", TO "ChangeMatrix", " can be used with ", TO "gb",
+    " to enable the computation of the change of basis matrix."
+}

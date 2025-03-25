@@ -1,3 +1,5 @@
+// @M2BANNER@
+
 Prism.languages.m2 =
 Prism.languages.macaulay2 = {
     'comment': [

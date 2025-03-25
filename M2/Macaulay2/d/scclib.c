@@ -10,7 +10,7 @@
 
 #include "../system/supervisorinterface.h"
 
-extern void M2_stack_trace();
+extern void profiler_stacktrace(int);
 
 void
 fatal(const char *s,...)   {
@@ -23,7 +23,7 @@ fatal(const char *s,...)   {
 #ifndef NDEBUG
      trap();
 #endif
-     M2_stack_trace();
+     profiler_stacktrace(0);
      exit(1);
      }
 
@@ -543,32 +543,32 @@ int system_unlink(M2_string name) {
 }
 
 int system_link(M2_string oldfilename,M2_string newfilename) {
-  char *old = M2_tocharstar(oldfilename);
-  char *new = M2_tocharstar(newfilename);
+  char *oldf = M2_tocharstar(oldfilename);
+  char *newf = M2_tocharstar(newfilename);
   int r = 
     #ifdef HAVE_LINK
-    link(old,new)
+    link(oldf, newf)
     #else
     -1
     #endif
     ;
-  freemem(old);
-  freemem(new);
+  freemem(oldf);
+  freemem(newf);
   return r;
 }
 
 int system_symlink(M2_string oldfilename,M2_string newfilename) {
-  char *old = M2_tocharstar(oldfilename);
-  char *new = M2_tocharstar(newfilename);
+  char *oldf = M2_tocharstar(oldfilename);
+  char *newf = M2_tocharstar(newfilename);
   int r = 
     #ifdef HAVE_SYMLINK
-    symlink(old,new)
+    symlink(oldf, newf)
     #else
     -1
     #endif
     ;
-  freemem(old);
-  freemem(new);
+  freemem(oldf);
+  freemem(newf);
   return r;
 }
 

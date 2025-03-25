@@ -26,16 +26,17 @@ document {
      eigenvalues(M, Hermitian=>true)
      class \ oo
      ///,
-     "The lapack and eigen libraries are used to compute eigenvectors of real and complex matrices.",
+     "The LAPACK and Eigen libraries are used to compute eigenvectors of real and complex matrices.",
      Caveat => {"The eigenvalues are approximate."},
-     SeeAlso => {eigenvectors, SVD}
+     SeeAlso => {eigenvectors, SVD},
+     Subnodes => { TO [eigenvalues, Hermitian] },
      }
 document { 
      Key => [eigenvalues, Hermitian],
-     Headline => "Hermitian=>true means assume the matrix is symmetric or Hermitian",
+     Headline => "whether to assume the matrix is symmetric or Hermitian",
      Usage => "eigenvalues(M, Hermitian=>true)",
      Consequences => {
-	  "The resulting matrix of eigenvalues is defined over RR, not CC."
+	  "The resulting list of eigenvalues is defined over RR, not CC."
 	  },     
      Caveat => {"The internal routine uses a different algorithm, only considering the
 	  upper triangular elements.  So if the matrix is not symmetric or Hermitian,

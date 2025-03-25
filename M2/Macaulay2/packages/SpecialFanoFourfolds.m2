@@ -19,7 +19,21 @@ newPackage(
     PackageImports => {"PrimaryDecomposition"},
     PackageExports => {"MultiprojectiveVarieties"},
     DebuggingMode => false,
-    Reload => false
+    Reload => false,
+    Certification => {
+	"journal name" => "Journal of Software for Algebra and Geometry",
+	"journal URI" => "https://msp.org/jsag/",
+	"article title" => "The SpecialFanoFourfolds package in Macaulay2",
+	"acceptance date" => "2024-04-14",
+	"published article URI" => "https://msp.org/jsag/2024/14-1/p12.xhtml",
+	"published article DOI" => "10.2140/jsag.2024.14.111",
+	"published code URI" => "https://msp.org/jsag/2024/14-1/jsag-v14-n1-x12-SpecialFanoFourfolds.m2",
+	"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/SpecialFanoFourfolds.m2",
+	"release at publication" => "67f7b2f777314d7f85c02a661d8e54f9d2c5e8d3",
+	"version at publication" => "2.7.1",
+	"volume number" => "14",
+	"volume URI" => "https://msp.org/jsag/2024/14-1/"
+	}
 )
 
 requiredMultiprojectiveVarietiesVersion := "2.7.1";
@@ -525,9 +539,9 @@ map HodgeSpecialSurface := o -> S -> (
 );
 curve = method();
 curve HodgeSpecialSurface := U -> first U#"CurveContainedInTheSurface";
-discriminant HodgeSpecialSurface := o -> S -> (
+discriminant HodgeSpecialSurface := ZZ => o -> S -> (
     if S.cache#?(curve S,"discriminantSurface") then return last S.cache#(curve S,"discriminantSurface");
-    if not member(o.Algorithm, {"Poisson", 1, 2}) then error "the Algorithm option accepts the values 1 and 2";
+    if not member(o.Algorithm, {null, 1, 2}) then error "the Algorithm option accepts the values 1 and 2";
     C := curve S;
     if dim C != 1 then error "expected a Hodge-special surface";
     if o.Algorithm === 2 then return discriminant2 S;
@@ -2699,8 +2713,8 @@ mapDefinedByDivisor = method();
 mapDefinedByDivisor (QuotientRing,VisibleList) := (R,D) -> rationalMap(R,new Tally from apply(select(D,l -> last l > 0),d -> first d => last d));
 mapDefinedByDivisor (MultiprojectiveVariety,VisibleList) := (X,D) -> rationalMap(X,new Tally from apply(select(D,l -> last l > 0),d -> first d => last d));
 
-isSmooth = method(TypicalValue => Boolean); -- sufficient conditions for smoothness ('Y' is assumed to be equidimensional)
-isSmooth EmbeddedProjectiveVariety := (cacheValue "isSmooth") (Y -> (
+-- sufficient conditions for smoothness ('Y' is assumed to be equidimensional)
+isSmooth EmbeddedProjectiveVariety := {} >> o -> (cacheValue "isSmooth") (Y -> (
     if Y.cache#?"singularLocus" or Y.cache#?"nonSaturatedSingularLocus" then return (dim singLocus Y == -1);
     X := fitVariety Y;
     isXsm := dim singLocus X == -1;
@@ -3161,9 +3175,6 @@ PARA{"The general type of Gushel-Mukai fourfold (called ",EM "ordinary",") can b
 PARA{"An object of the class ", TO SpecialGushelMukaiFourfold, " is basically represented by a couple ", TEX///(S,X)///, ", where ", TEX///$X$///, " is a Gushel-Mukai fourfold and ", TEX///$S$///, " is a surface contained in ", TEX///$X$///, ".  The main constructor for the objects of the class is the function ", TO specialGushelMukaiFourfold,"."},
 SeeAlso => {(discriminant,SpecialGushelMukaiFourfold)}}
 
-typValDisc := typicalValues#discriminant;
-typicalValues#discriminant = ZZ;
-
 document {Key => {(discriminant, SpecialCubicFourfold), (discriminant, HodgeSpecialFourfold)}, 
 Headline => "discriminant of a special cubic fourfold", 
 Usage => "discriminant X", 
@@ -3181,8 +3192,6 @@ Outputs => {ZZ => {"the discriminant of ", TEX///$X$///}},
 PARA{"This function applies a formula given in Section 7 of the paper ", HREF{"https://arxiv.org/abs/1302.1398", "Special prime Fano fourfolds of degree 10 and index 2"}, ", obtaining the data required through the functions ", TO cycleClass, ", ", TO EulerCharacteristic, " and ", TO Euler, " (the option ", TT "Algorithm", " allows you to select the method)."}, 
 EXAMPLE {"X = specialGushelMukaiFourfold \"tau-quadric\";", "time discriminant X"}, 
 SeeAlso => {(discriminant, SpecialCubicFourfold)}} 
-
-typicalValues#discriminant = typValDisc;
 
 undocumented{(expression, SpecialGushelMukaiFourfold), (describe, SpecialGushelMukaiFourfold)} 
 

@@ -4,7 +4,7 @@ document {
 	  [smithNormalForm,ChangeMatrix],
 	  [smithNormalForm,KeepZeroes]
 	  },
-     Headline => "smith normal form for a matrix over ZZ or a PID",
+     Headline => "compute the Smith normal form of a matrix over the integers or a PID",
      Usage => "(D,P,Q) = smithNormalForm M\n(D,P) = smithNormalForm(M,ChangeMatrix=>{true,false})\n(D,Q) = smithNormalForm(M,ChangeMatrix=>{false,true})\nD = smithNormalForm(M,ChangeMatrix=>{false,false})\n",
      Inputs => {
 	  "M",

@@ -1,8 +1,8 @@
-AC_INIT([Macaulay2],[m4_esyscmd_s([cat VERSION])],[Macaulay2@math.uiuc.edu],[Macaulay2],[http://macaulay2.com/])
+AC_INIT([Macaulay2],[m4_esyscmd_s([cat VERSION])],[https://github.com/Macaulay2/M2/issues],[Macaulay2],[https://macaulay2.com/])
 AC_MSG_NOTICE([configuring Macaulay2 version $PACKAGE_VERSION])
-AC_CONFIG_SRCDIR(INSTALL)
+AC_CONFIG_SRCDIR([VERSION])
 AC_CONFIG_HEADERS(include/M2/config.h)
-AC_CONFIG_FILES(m4_include(config/files))
+AC_CONFIG_FILES(m4_include(m4/files))
 AC_SUBST(CONFIGURED_FILES,"$ac_config_files")
 AC_SUBST(CONFIG_ARGS,"$ac_configure_args")
 echo "'$0' $ac_configure_args" > config.args
@@ -10,16 +10,15 @@ C_CONFIG_ARGS=` echo "$ac_configure_args" | sed -e 's=\\\\=\\\\\\\\=g' -e 's=\\"
 AC_DEFINE_UNQUOTED(CONFIG_ARGS,"$C_CONFIG_ARGS",arguments used for configure)
 AC_SUBST(CONFIG_CMD,"'$0' $ac_configure_args")
 
-AC_CONFIG_MACRO_DIR([config])	dnl can't get this to work
-m4_include(config/ax_compare_version.m4)
-m4_include(config/ax_prog_cc_for_build.m4)
-m4_include(config/ax_func_accept_argtypes.m4)
-m4_include(config/relpaths.m4)
-m4_include(config/gtest.m4)
-m4_include(config/openmp.m4)
-m4_include(config/search-libraries.m4)
-m4_include(config/ax_boost_base.m4)
-m4_include(config/ax_boost_regex.m4)
+m4_include(m4/ax_compare_version.m4)
+m4_include(m4/ax_recursive_eval.m4)
+m4_include(m4/gtest.m4)
+m4_include(m4/openmp.m4)
+m4_include(m4/search-libraries.m4)
+m4_include(m4/ax_boost_base.m4)
+m4_include(m4/ax_boost_regex.m4)
+m4_include(m4/ax_blas.m4)
+m4_include(m4/ax_lapack.m4)
 
 dnl define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 
@@ -96,6 +95,9 @@ then if test -f /usr/bin/sw_vers
      elif test -f /usr/bin/lsb_release
      then ISSUE_FLAVOR=`lsb_release -s --id`
           ISSUE_RELEASE=`lsb_release -s --release`
+	  if test $ISSUE_RELEASE = n/a
+	  then ISSUE_RELEASE=`lsb_release -s --codename`
+	  fi
      elif test -f /etc/os-release
      then ISSUE_FLAVOR=`. /etc/os-release ; echo $ID`
           ISSUE_RELEASE=`. /etc/os-release ; echo $VERSION_ID`
@@ -118,7 +120,7 @@ then if test -f /usr/bin/sw_vers
 	 "debian"|"Debian"*) ISSUE_FLAVOR=Debian ;;
          "ubuntu"|"Ubuntu") ISSUE_FLAVOR=Ubuntu ;;
 	 "FedoraCore"*) ISSUE_FLAVOR=FedoraCore ;;
-	 "Fedora"*) ISSUE_FLAVOR=Fedora ;;
+	 "fedora"|"Fedora"*) ISSUE_FLAVOR=Fedora ;;
 	 "RedHatEnterprise"*) ISSUE_FLAVOR=RedHatEnterprise ;;
 	 "RedHat"*) ISSUE_FLAVOR=RedHat ;;
 	 "Scientific"*) ISSUE_FLAVOR="ScientificLinux" ;;
@@ -126,6 +128,8 @@ then if test -f /usr/bin/sw_vers
 	 *"openSUSE") ISSUE_FLAVOR=openSUSE ;;
 	 "SUSE LINUX") ISSUE_FLAVOR=SuseLinux ;;
 	 "arch") ISSUE_FLAVOR=ArchLinux ; ISSUE_RELEASE=none ;;
+	 "rocky") ISSUE_FLAVOR=RockyLinux ;;
+	 "almalinux") ISSUE_FLAVOR=AlmaLinux ;;
 	 "") AC_MSG_ERROR([issue not found]) ;;
 	 *)  AC_MSG_NOTICE([unrecognized issue: $ISSUE_FLAVOR]) ;;
      esac
@@ -151,8 +155,6 @@ AC_MSG_NOTICE([operating system information:
    OS    = $OS
    ISSUE = $ISSUE])
 
-AC_CONFIG_AUX_DIR(config)
-
 AC_CHECK_PROGS(MAKE,gmake make,false)
 AC_CHECK_PROGS(PKG_CONFIG,pkg-config,false)
 if test $PKG_CONFIG = false; then AC_MSG_ERROR(pkg-config is required); fi
@@ -167,6 +169,14 @@ AC_CHECK_PROGS(OBJDUMP,objdump,false)
 AC_CHECK_PROGS(OBJCOPY,objcopy,false)
 AC_CHECK_PROGS(LDD,ldd,false)
 AC_CHECK_PROGS(GIT,git,false)
+AC_CHECK_PROGS(PATCH,patch,false)
+AS_IF([test $PATCH = false], AC_MSG_ERROR([patch is required]))
+AC_CHECK_PROGS(WHICH,which,false) dnl used by 4ti2
+AS_IF([test $WHICH = false], AC_MSG_ERROR([which is required]))
+AC_CHECK_PROGS(CMP,cmp,false)
+AS_IF([test $CMP = false],
+    AC_MSG_ERROR([cmp is required (try installing 'diffutils' package)]))
+AC_CHECK_PROGS([CMAKE], [cmake], [false])
 
 AC_CHECK_TOOL(AR,ar,false)
 AC_CHECK_TOOL(AS,as,false)
@@ -220,7 +230,12 @@ elif test "$DOCUMENTATION" = yes
 then DOCUMENTATION="html info"
 else for DOCTYPE in $DOCUMENTATION
     do case $DOCTYPE in
-            html|info|pdf)
+            html|pdf)
+                ;;
+            info)
+                AC_CHECK_PROGS([INSTALL_INFO], [install-info], [false])
+                AS_IF([test $INSTALL_INFO = false],
+                    AC_MSG_ERROR([install-info is required]))
                 ;;
             *)
                 AC_MSG_ERROR([unknown documentation type ($DOCTYPE); expected html, info, or pdf])
@@ -230,13 +245,6 @@ else for DOCTYPE in $DOCUMENTATION
 fi
 
 AC_SUBST(DOCUMENTATION)
-
-dnl deprecated in 1.22
-dnl TODO: remove this completely after 1.22 is released
-AC_ARG_ENABLE([syntax-highlighting],
-    [AS_HELP_STRING([--enable-syntax-highlighting],
-	[this option is deprecated; syntax highlight is always enabled.])],
-    [AC_MSG_WARN([the --enable-syntax-highlighting option is deprecated; syntax highlighting is always enabled.])])
 
 AC_CANONICAL_HOST()
 AC_SUBST(ARCH,$build_cpu)
@@ -265,9 +273,15 @@ AC_PROG_CXX()			# set CXXFLAGS before this
 AC_SUBST(GXX)			# gets set to yes or no by AC_PROG_CXX
 
 AC_PROG_YACC()
-if test "$YACC" = byacc
-then AC_MSG_ERROR([byacc found, but leads to a crash in scc1: install bison instead])
-fi
+AS_IF([test "$YACC" != "bison -y"], [AC_MSG_ERROR([bison is required])])
+
+dnl TODO: once autoconf 2.70 is available everyowhere, use the following:
+dnl AC_PROG_LEX([noyywrap])
+dnl the pre-2.70 version w/o arguments is deprecated and gives a warning
+m4_version_prereq([2.70],
+    [AC_PROG_LEX([noyywrap])],
+    [AC_PROG_LEX()])
+AS_IF([test "$LEX" != "flex"], [AC_MSG_ERROR([flex is required])])
 
 AC_PROG_RANLIB()
 AC_PROG_INSTALL()
@@ -339,39 +353,7 @@ AC_SUBST(SIZEOF_INT_P,$ac_cv_sizeof_int_p)
 AC_CHECK_SIZEOF([long])
 AC_SUBST(SIZEOF_LONG,$ac_cv_sizeof_long)
 
-dnl Now we make the 32 bit / 64 bit choice explicit, because config.guess may guess it's a 32 bit system even though gcc compiles
-dnl 64 bit object code by default, and then mpir's configure script (versions 1.2.1 and 1.3.0-rc1) gets confused.
-dnl if test "$GCC" = yes
-dnl then if test "$SIZEOF_INT_P" = 4
-dnl      then case " $CC $CFLAGS " in
-dnl      	    *" -m32 "*) ;;
-dnl 	    *) CC="$CC -m32" ;;
-dnl 	  esac
-dnl      fi
-dnl      if test "$SIZEOF_INT_P" = 8
-dnl      then case " $CC $CFLAGS " in
-dnl      	    *" -m64 "*) ;;
-dnl 	    *) CC="$CC -m64" ;;
-dnl 	  esac
-dnl      fi
-dnl fi
-dnl if test "$GXX" = yes
-dnl then if test "$SIZEOF_INT_P" = 4
-dnl      then case " $CXX $CFLAGS " in
-dnl      	    *" -m32 "*) ;;
-dnl 	    *) CXX="$CXX -m32" ;;
-dnl 	  esac
-dnl      fi
-dnl      if test "$SIZEOF_INT_P" = 8
-dnl      then case " $CXX $CFLAGS " in
-dnl      	    *" -m64 "*) ;;
-dnl 	    *) CXX="$CXX -m64" ;;
-dnl 	  esac
-dnl      fi
-dnl fi
-
-AC_CHECK_HEADERS_ONCE([sys/time.h])
-AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h time.h sys/wait.h sys/resource.h io.h linux/personality.h stddef.h stdint.h inttypes.h elf.h execinfo.h stdlib.h syscall.h sys/types.h sys/stat.h unistd.h math.h pthread.h assert.h alloca.h malloc.h dlfcn.h)
+AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h time.h sys/wait.h sys/resource.h io.h linux/personality.h stddef.h elf.h execinfo.h syscall.h math.h pthread.h assert.h alloca.h malloc.h dlfcn.h)
 AC_CHECK_HEADERS(winsock2.h) dnl used with ws2_32.dll under mingw64
 dnl winsock2.h should be included before including windows.h
 dnl  pthread.h includes windows.h
@@ -388,32 +370,9 @@ AC_SEARCH_LIBS(hstrerror,resolv)
 AC_SEARCH_LIBS(dlopen,dl)
 AC_SEARCH_LIBS(gethostbyname,nsl)
 
-AC_SUBST(ENABLE_TBB,yes)  AC_ARG_ENABLE(tbb, AS_HELP_STRING(--disable-tbb,disable use of the tbb (threaded building blocks) library), ENABLE_TBB=$enableval)
-if test $ENABLE_TBB = yes
-then AC_DEFINE(WITH_TBB,1,[whether the tbb library has been enabled by the builder])
-     AC_SUBST(LIBTBB)		dnl LIBTBB is usually set to -ltbb
-     AC_LANG(C++)
-     AC_CHECK_HEADER(tbb/tbb.h,
-	[AC_SEARCH_LIBS(TBB_runtime_interface_version,"tbb",
-	   LIBTBB=$ac_cv_search_TBB_runtime_interface_version,
-	   [AC_MSG_ERROR([tbb library not found])])],
-	 [AC_MSG_ERROR([tbb include file (tbb.h) not found])])
-     AC_RUN_IFELSE([AC_LANG_SOURCE([[
-		#include <stdio.h>
-		#define TBB_SUPPRESS_DEPRECATED_MESSAGES 1
-		#include <tbb/tbb.h>
-		int main () {
-		  printf("tbb version %d.%d found\n", TBB_VERSION_MAJOR, TBB_VERSION_MINOR);
-		  return 0;
-		}
- 	     ]])])
-fi
-
 AC_CHECK_FUNCS([herror error clock_gettime getaddrinfo hstrerror sync getpgrp setpgid fchmod pipe waitpid setrlimit alarm fork sigprocmask kill longjmp siglongjmp sigaction wait4 readlink lstat realpath mkdir link symlink socket accept fcntl personality ioctl])
 
 AC_SUBST(HAVE_PERSONALITY,$ac_cv_func_personality)
-
-AC_DEFINE_UNQUOTED(SOCKLEN_T,[`echo "$ac_cv_func_accept_arg3" | sed 's/ \*$//'`],[socket length type used by accept()])
 
 if test $host_os = mingw32
 then CPPFLAGS="$CPPFLAGS -D_POSIX" # arrange for SIGPIPE to get defined
@@ -463,27 +422,6 @@ if test "$enable_altivec" = yes
 then LDFLAGS="$LDFLAGS -faltivec"
      CFLAGS="CFLAGS -faltivec"
      CXXFLAGS="$CXXFLAGS -faltivec"
-fi
-
-AC_PROG_FC()			dnl check for Fortran compiler presence
-USE_FCLIBS=unspecified
-AC_ARG_ENABLE(fc-lib-ldflags,
-    AS_HELP_STRING(--disable-fc-lib-ldflags,[do not use extra libraries for linking with Fortran (the default under Cygwin)]),
-    USE_FCLIBS=$enableval)
-
-if test "$USE_FCLIBS" = unspecified
-then if test "$ISSUE" = Cygwin
-     then USE_FCLIBS=no
-          AC_MSG_NOTICE([by default under Cygwin, not adding linker flags to link with Fortran libraries])
-     else USE_FCLIBS=yes
-          AC_MSG_NOTICE([by default, adding linker flags to link with Fortran libraries])
-     fi
-fi
-
-if test "$FC"
-then AC_FC_DUMMY_MAIN()
-     AC_FC_WRAPPERS()
-     AC_FC_LIBRARY_LDFLAGS()
 fi
 
 dnl if test "$PTHREADS" = yes
@@ -566,16 +504,10 @@ case $COMPRESS in
     *) AC_MSG_ERROR(unrecognized option for enable-compress) ;;
 esac
 
-AC_SUBST(GIT_DESCRIPTION)
-# TODO: currently finds the last commit that changed the VERSION file
-# but ideally it should get the last release commit instead
-NEW_COMMITS=`$GIT rev-list $($GIT rev-list -1 HEAD $srcdir/VERSION)..HEAD --count`
-GIT_COMMIT=`$GIT describe --dirty --always --match HEAD`
-if test "$NEW_COMMITS-$GIT_COMMIT" = "-"
-then GIT_DESCRIPTION=version-$PACKAGE_VERSION-unknown
-else GIT_DESCRIPTION=version-$PACKAGE_VERSION-$NEW_COMMITS-$GIT_COMMIT
-fi
-AC_DEFINE_UNQUOTED(GIT_DESCRIPTION,"$GIT_DESCRIPTION",[summary of git status])
+AC_SUBST([GIT_DESCRIPTION],
+         [`$GIT describe --tags --dirty || echo release-$PACKAGE_VERSION`])
+AC_SUBST([GIT_BRANCH],
+         [`$GIT branch --show-current`])
 
 AC_SUBST(DEB,no)
 AC_ARG_ENABLE(deb,  AS_HELP_STRING(--enable-deb,prepare a *.deb package (for debian, ubuntu, ...)), DEB=$enableval)
@@ -680,31 +612,25 @@ AC_SUBST(BUILTLIBS)
 #    (Programs linked by this configure script are linked with the options in LIBS.  This allows libraries
 #    dependent on previously detected libraries to be detected by tests that involve linking.
 
-AC_SUBST(LIBLIST, " atomic_ops gc gdbm gmp mpir mpfr mpfi readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll linbox gtest ")
+AC_SUBST(LIBLIST, " gc gdbm gmp mpfr mpfi normaliz readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll givaro fflas_ffpack linbox gtest tbb memtailor mathic mathicgb eigen ")
 # The list LIBLIST is the list of libraries that might be used and linked into M2.
 
-AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom cohomcalg")
+AC_SUBST(PROGLIST, "4ti2 gfan csdp nauty cddplus lrslib topcom cohomcalg msolve")
 # The list PROGLIST is the list of programs and libraries for them that are distributed with M2.
 #     Initially, we offer no option for not compiling some of them.
-
-AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack givaro ")
-
-# The list SUBLIST is the list of submodules that might be used and linked into M2.
 
 # These three lists reflect dependencies, with prerequisites listed first, including the following dependencies:
 #    mathicgb needs mathic and memtailor
 #    mathic needs memtailor
-#    gc needs atomic_ops (and sometimes includes it)
 #    factory needs flint, ntl and gmp; it includes and installs gftables, so doesn't need it separately
 #    libfac has been replaced by code in factory
 #    lapack includes blas, makes both libblas and liblapack
-#    mpir is a plug-in replacement for gmp and can provide libgmp and libgmpxx, too.
-#    mpfr needs gmp (or mpir
+#    mpfr needs gmp
 #    	  mpfr puts pointers to gmp numbers in thread local variables, unless
 # 	  specially configured, so we shouldn't tell gmp to use libgc (we used to do that)
-#    ntl needs gmp (or mpir)
+#    ntl needs gmp
 #    4ti2 needs glpk
-#    glpk needs gmp (or mpir)
+#    glpk needs gmp
 #    topcom depends on cddlib
 #    gfan needs cddlib
 #    cddlib uses gmp
@@ -723,9 +649,7 @@ AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack givaro ")
 #    linbox needs fflas_ffpack and givaro
 #    givaro uses gmp
 #    fflas_ffpack needs givaro and lapack, but fflas_ffpack is just source code, so we don't *have* to build it
-#    mpir is used by givaro
-#    mpir and mpfr are used by fplll
-#    flint depends on gmp (or mpir) and mpfr
+#    flint depends on gmp and mpfr
 #    frobby depends on gmp
 #    mpfi needs mpfr
 
@@ -737,7 +661,7 @@ AC_SUBST(FILE_PREREQS)
 # even if the option "--disable-building" is specified:
 BUILD_ALWAYS=""
 
-for i in $LIBLIST $SUBLIST $PROGLIST
+for i in $LIBLIST $PROGLIST
 do eval BUILD_$i=no
 done
 
@@ -754,9 +678,9 @@ PKGNAME_fflas_ffpack=fflas-ffpack
 #############################################################################
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr mpfi readline ntl gftables factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpfr mpfi readline ntl factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox 4ti2 gfan normaliz csdp nauty cddplus lrslib msolve)]),
     [for i in $enableval
-     do case " $LIBLIST $SUBLIST $PROGLIST " in
+     do case " $LIBLIST $PROGLIST " in
 	    *" $i "*) 
 	        eval BUILD_$i=yes 
 		BUILD_ALWAYS="$BUILD_ALWAYS $i"
@@ -820,71 +744,43 @@ else if test $SHARED = no -a $TRY_STATIC = yes
      fi
 fi
 
-# mpir and gmp serve the same purpose
 AC_SUBST(LIBS_GMP)
 AC_LANG(C)
 AC_CHECK_HEADER(gmp.h, FOUND_gmp=yes ,FOUND_gmp=no )
-AC_CHECK_HEADER(mpir.h,FOUND_mpir=yes,FOUND_mpir=no)
-dnl Remark: both gmp.h and mpir.h are surrounded by 
-dnl 	#ifndef __GMP_H__
-dnl 	#endif
-dnl , so only one can be loaded.  Similarly for gmpxx.h and mpirxx.h.  However, the contents of
-dnl the files differ.  For example, mpf_cmp_z is defined only in gmp.h.
-AC_SUBST(PREFERRED_INTEGER_PACKAGE,gmp)
-AC_ARG_WITH(integer-package,
-		AS_HELP_STRING(--with-integer-package=[mpir|gmp],specify the big integer package to use (mpir or gmp)),
-		if ! test $withval = mpir -o $withval = gmp
-		then AC_MSG_ERROR([big integer package option: invalid value: $withval])
-		fi
-		PREFERRED_INTEGER_PACKAGE=$withval)
-if test $BUILD_gmp = yes -a $BUILD_mpir = yes
-then AC_MSG_ERROR([refusing to build both mpir and gmp, since the are interchangeable])
-fi
-AC_MSG_CHECKING([whether to use gmp or mpir])
-if test "$PREFERRED_INTEGER_PACKAGE" = mpir
-then USING_MPIR=1
-     AC_MSG_RESULT([using mpir])
-     AC_DEFINE(USING_MPIR,1,[Whether we use MPIR (instead of GMP)])
-     if test "$FOUND_mpir" = no
-     then BUILD_mpir=yes
-          LIBS_GMP="-lmpirxx -lmpir"
-          BUILTLIBS="$LIBS_GMP $BUILTLIBS"
-     else if test $SHARED = no -a $TRY_STATIC = yes
-          then SEARCH_LIBRARIES(__gmpz_init,"/usr/lib/libmpirxx.a /usr/lib/libmpir.a" "/usr/local/lib/libmpirxx.a /usr/local/lib/libmpir.a",,
-					    [AC_MSG_ERROR([libmpir.a not found])])
-	  else SEARCH_LIBRARIES(__gmpz_init,"-lmpirxx -lmpir",,[AC_MSG_ERROR([libmpir not found])])
-	  fi
-	  if test "none required" != "$ac_cv_search___gmpz_init"
-	  then LIBS_GMP=$ac_cv_search___gmpz_init
-	  fi
+if test "$FOUND_gmp" = no
+then BUILD_gmp=yes
+     LIBS_GMP="-lgmpxx -lgmp"
+     BUILTLIBS="$LIBS_GMP $BUILTLIBS"
+else AC_LANG(C)
+     if test $SHARED = no -a $TRY_STATIC = yes
+     then SEARCH_LIBRARIES(__gmpz_init,"/usr/lib/libgmpxx.a /usr/lib/libgmp.a" "/usr/local/lib/libgmpxx.a /usr/local/lib/libgmp.a",,
+	  [AC_MSG_ERROR([libgmp.a not found])])
+     else SEARCH_LIBRARIES(__gmpz_init,"-lgmpxx -lgmp",,[AC_MSG_ERROR([libgmp not found])])
      fi
-else USING_MPIR=0		# i.e., using gmp
-     AC_MSG_RESULT([using gmp])
-     AC_DEFINE(USING_MPIR,0,[Whether we use MPIR (instead of GMP)])
-     if test "$FOUND_gmp" = no
-     then BUILD_gmp=yes
-     	  LIBS_GMP="-lgmpxx -lgmp"
-          BUILTLIBS="$LIBS_GMP $BUILTLIBS"
-     else AC_LANG(C)
-	  if test $SHARED = no -a $TRY_STATIC = yes
-          then SEARCH_LIBRARIES(__gmpz_init,"/usr/lib/libgmpxx.a /usr/lib/libgmp.a" "/usr/local/lib/libgmpxx.a /usr/local/lib/libgmp.a",,
-					    [AC_MSG_ERROR([libgmp.a not found])])
-	  else SEARCH_LIBRARIES(__gmpz_init,"-lgmpxx -lgmp",,[AC_MSG_ERROR([libgmp not found])])
-	  fi
-	  if test "none required" != "$ac_cv_search___gmpz_init"
-	  then LIBS_GMP=$ac_cv_search___gmpz_init
-	  fi
-	  dnl By the way: with Hombebrew on the Mac gmp comes with package configuration:
-	  dnl $ pkg-config gmp --cflags
-	  dnl -I/usr/local/Cellar/gmp/6.2.0/include
-	  dnl $ pkg-config gmp --libs
-	  dnl -L/usr/local/Cellar/gmp/6.2.0/lib -lgmp
+     if test "none required" != "$ac_cv_search___gmpz_init"
+     then LIBS_GMP=$ac_cv_search___gmpz_init
      fi
 fi
-AC_SUBST(USING_MPIR)
 
-AC_LANG(C)
-AC_CHECK_HEADER(mpfr.h,,BUILD_mpfr=yes)
+AC_LANG([C])
+AS_IF([test $BUILD_mpfr = no],
+    [AC_CHECK_HEADER([mpfr.h],
+        dnl need mpfr >= 4 for mpfr_nrandom, mpfr_beta, mpfr_gamma_inc
+        [AC_MSG_CHECKING([for mpfr version])
+         AC_RUN_IFELSE(
+            [AC_LANG_PROGRAM([
+                #include <stdio.h>
+                #include <mpfr.h>
+                ], [
+                puts(MPFR_VERSION_STRING);
+                if (MPFR_VERSION_MAJOR < 4)
+                  return 1;
+                else
+                  return 0;])],,
+            [AC_MSG_NOTICE([mpfr >= 4 required; will build])
+             BUILD_mpfr=yes])],
+        [AC_MSG_NOTICE([mpfr headers not found; will build])
+         BUILD_mpfr=yes])])
 if test $BUILD_mpfr = yes
 then BUILTLIBS="-lmpfr $BUILTLIBS"
 else if test $SHARED = no -a $TRY_STATIC = yes
@@ -905,7 +801,7 @@ else if test $SHARED = no -a $TRY_STATIC = yes
      fi
 fi
 
-# including mpsolve (requires gmp or mpir) 
+# including mpsolve (requires gmp)
 AC_LANG(C)
 AC_CHECK_HEADER(mps/mps.h,LIBS="-lmps $LIBS",BUILD_mpsolve=yes)
 if test $BUILD_mpsolve = yes
@@ -926,27 +822,43 @@ else if test $SHARED = no -a $TRY_STATIC = yes
      fi
 fi
 
-AC_MSG_CHECKING([whether givaro library is installed])
-AC_SUBST(BUILD_givaro)
-if $PKG_CONFIG --exists givaro
-then AC_MSG_RESULT(yes)
-     LIBS="`$PKG_CONFIG --libs givaro` $LIBS"
-     CPPFLAGS="$CPPFLAGS `$PKG_CONFIG --cflags-only-I givaro`"
-     AC_MSG_CHECKING([whether givaro has isUnit or isunit])
-     AC_LANG([C++])
-     AC_COMPILE_IFELSE(
-	 [AC_LANG_PROGRAM( [ #include <givaro/gfq.h>
-	 		     ],
-	 		   [ class Givaro::GFqDom<long int> foo; foo.isunit(0) ])],
-	 [AC_MSG_RESULT([isunit]); AC_DEFINE([HAVE_GIVARO_isunit], [1],[whether givaro has isunit])],
-	 [AC_MSG_RESULT([isUnit]); AC_DEFINE([HAVE_GIVARO_isunit], [0],[whether givaro has isunit])])
-else AC_MSG_RESULT(no)
-     AC_DEFINE([HAVE_GIVARO_isunit], [0],[whether givaro has isunit])
-     BUILD_givaro=yes
-fi
-if test $BUILD_givaro = yes
-then BUILTLIBS="-lgivaro $BUILTLIBS"
-fi
+AC_PROG_FC
+AC_FC_LIBRARY_LDFLAGS
+AS_IF([test $BUILD_lapack = no],
+    [AX_BLAS
+     AX_LAPACK
+     AS_IF([test $ax_blas_ok = no -o $ax_lapack_ok = no],
+         [AC_MSG_NOTICE([blas/lapack not found; will build])
+          BUILD_lapack=yes])])
+AS_IF([test $BUILD_lapack = yes],
+    [BLAS_LIBS=-lrefblas
+     LAPACK_LIBS=-llapack])
+AC_SUBST([LINALGLIBS], ["$LAPACK_LIBS $BLAS_LIBS"])
+
+AS_IF([test $BUILD_givaro = no],
+    [AC_LANG([C++])
+     AC_CHECK_HEADER([givaro/givinteger.h],
+        [AC_MSG_CHECKING([whether givaro library is installed])
+         SAVELIBS=$LIBS
+         LIBS="$LIBS -lgivaro"
+         AC_LINK_IFELSE(
+             [AC_LANG_PROGRAM([
+                 #include <givaro/givinteger.h>
+                 ], [
+                 Givaro::Integer a;])],
+             [AC_MSG_RESULT([yes])],
+             [AC_MSG_RESULT([no; will build])
+              LIBS=$SAVELIBS
+              BUILD_givaro=yes])],
+        [AC_MSG_NOTICE([givaro headers not found; will build])
+         BUILD_givaro=yes])])
+AS_IF([test $BUILD_givaro = yes], [BUILTLIBS="-lgivaro $BUILTLIBS"])
+
+AS_IF([test $BUILD_fflas_ffpack = no],
+    [AC_LANG([C++])
+     AC_CHECK_HEADER([fflas-ffpack/fflas-ffpack.h],,
+        [AC_MSG_NOTICE([fflas-ffpack not found; will build])
+         BUILD_fflas_ffpack=yes])])
 
 # We add these directories to the end, so the user can override this by setting CPPFLAGS.
 # /cddlib/ is more modern than /cdd/
@@ -999,12 +911,29 @@ then AC_LANG(C)
 	  then SEARCH_LIBRARIES(_fmpz_mod_mul1,/usr/lib/libflint.a /usr/local/lib/libflint.a,,
 					       [AC_MSG_ERROR([libflint.a not found])])
 	  else AC_SEARCH_LIBS(_fmpz_mod_mul1,"flint",,[AC_MSG_ERROR([libflint not found])])
+	       AC_SEARCH_LIBS([arb_init], [arb flint-arb],,
+	                      [AC_MSG_ERROR([Arb not found])])
+	       AC_SEARCH_LIBS([arb_hypgeom_erfinv],,,
+	                      [AC_MSG_ERROR([Arb found but too old])])
+	       dnl Arb headers were moved to flint subdir w/ FLINT 3.0
+	       AC_CHECK_HEADERS([arb.h],,
+		   [AC_CHECK_HEADERS([flint/arb.h],,
+		       [AC_MSG_ERROR([Arb headers not found])])])
 	  fi,
 	  AC_MSG_RESULT([no])
 	  BUILD_flint=yes)
+      AC_CHECK_HEADERS([flint/nmod.h]) dnl only present in flint >= 2.9.0
 fi
 if test $BUILD_flint = yes
 then BUILTLIBS="-lflint $BUILTLIBS -lm"
+     AC_DEFINE([HAVE_FLINT_NMOD_H])
+     AC_DEFINE([HAVE_FLINT_ARB_H])
+     AS_IF([test $BUILD_gmp = no],
+         [AC_SEARCH_LIBS([__gmpn_gcd_11], [gmp], [],
+             [AC_MSG_WARN([flint requires __gmp_gcd_11, so we will build gmp])
+              BUILD_gmp=yes
+              LIBS_GMP="-lgmpxx -lgmp"
+              BUILTLIBS="$LIBS_GMP $BUILTLIBS"])])
 fi
 
 dnl debian: 4ti2-
@@ -1016,7 +945,7 @@ PATH="/usr/lib/4ti2/bin:/usr/lib64/4ti2/bin:$PATH"
 FOUND_4ti2=no
 for fourti2_prefix in "" "4ti2-" "4ti2_"
 do
-    if command -v ${fourti2_prefix}circuits
+    if command -v ${fourti2_prefix}circuits > /dev/null
     then AC_MSG_RESULT([yes, using prefix "$fourti2_prefix"])
          FILE_PREREQS="$FILE_PREREQS `command -v ${fourti2_prefix}circuits`"
          FOUND_4ti2=yes
@@ -1030,7 +959,7 @@ fi
 PATH=$SAVE
 
 AC_MSG_CHECKING(whether the package cohomcalg is installed)
-if command -v cohomcalg
+if command -v cohomcalg > /dev/null
 then if test "$OS" = Darwin -a "$DMG" = yes
      then # On the Mac, we have no way (yet) to install prerequisite homebrew packages:
           # the user just copies a directory tree to /Applications.  Change this when
@@ -1046,7 +975,7 @@ else AC_MSG_RESULT([no, will build])
 fi
 
 AC_MSG_CHECKING(whether the package gfan is installed)
-if command -v gfan
+if command -v gfan > /dev/null
 then gfan_version=`gfan _version | head -2 | tail -1 | sed 's/gfan//'`
      AX_COMPARE_VERSION([$gfan_version], [ge], [0.6],
           [AC_MSG_RESULT([yes])
@@ -1060,7 +989,7 @@ else AC_MSG_RESULT([no, will build])
 fi
 
 AC_MSG_CHECKING(whether the package lrs is installed)
-if command -v lrs
+if command -v lrs > /dev/null
 then if test "$OS" = Darwin -a "$DMG" = yes
      then # On the Mac, we have no way (yet) to install prerequisite homebrew packages:
           # the user just copies a directory tree to /Applications.  Change this when
@@ -1075,24 +1004,56 @@ else AC_MSG_RESULT([no, will build])
 fi
 
 AC_MSG_CHECKING(whether the package csdp is installed)
-if command -v csdp
+if command -v csdp > /dev/null
 then AC_MSG_RESULT([yes])
      FILE_PREREQS="$FILE_PREREQS `command -v csdp`"
 else AC_MSG_RESULT([no, will build])
      BUILD_csdp=yes
 fi
 
-AC_MSG_CHECKING(whether the package normaliz is installed)
-if command -v normaliz
-then normaliz_version=`normaliz --version | head -1 | cut -d " " -f 2`
-     AX_COMPARE_VERSION([$normaliz_version], [ge], [2.11],
-          [AC_MSG_RESULT([yes])
-           FILE_PREREQS="$FILE_PREREQS `command -v normaliz`"],
-          [AC_MSG_RESULT([yes, but < 2.11, will build])
-           BUILD_normaliz=yes])
-else AC_MSG_RESULT([no, will build])
-     BUILD_normaliz=yes
-fi
+AC_DEFUN([CHECK_NMZ_PACKAGE],
+    [AC_RUN_IFELSE(
+        [AC_LANG_PROGRAM([
+	    #include <libnormaliz/nmz_config.h>
+	    ], [
+	    #ifdef $1
+	      return 0;
+	    #else
+	      return 1;
+	    #endif
+	    ])],
+	[LIBS="$LIBS $2"])])
+
+AS_IF([test $BUILD_normaliz = no],
+    [AC_MSG_CHECKING(whether the package normaliz is installed)
+     AS_IF([command -v normaliz > /dev/null],
+	 [normaliz_version=`normaliz --version | head -1 | cut -d " " -f 2`
+	  AX_COMPARE_VERSION([$normaliz_version], [ge], [2.11],
+	      [AC_MSG_RESULT([yes])
+	       AC_MSG_CHECKING([for libnormaliz])
+	       AC_LANG(C++)
+	       SAVELIBS=$LIBS
+	       LIBS="$LIBS -lnormaliz -lgmp -lgmpxx"
+	       CHECK_NMZ_PACKAGE([ENFNORMALIZ], [-leantic -leanticxx])
+	       CHECK_NMZ_PACKAGE([NMZ_COCOA], [-lcocoa])
+	       CHECK_NMZ_PACKAGE([NMZ_NAUTY], [-lnauty])
+	       AC_LINK_IFELSE(
+		   [AC_LANG_PROGRAM([
+		       #include <libnormaliz/cone.h>
+		       ],
+		       [libnormaliz::Cone<long long>()])],
+		   [AC_MSG_RESULT([yes])
+		    FILE_PREREQS="$FILE_PREREQS `command -v normaliz`"],
+		   [AC_MSG_RESULT([no, will build])
+		    BUILD_normaliz=yes
+		    LIBS=$SAVELIBS])],
+	      [AC_MSG_RESULT([yes, but < 2.11, will build])
+	       BUILD_normaliz=yes])],
+        [AC_MSG_RESULT([no, will build])
+         BUILD_normaliz=yes])])
+
+AS_IF([test $BUILD_normaliz = yes],
+    [BUILTLIBS="-lnormaliz $OPENMP_CXXFLAGS $OPENMP_LIBS $BUILTLIBS"])
 
 if test "$BUILD_nauty" = no
 then dnl debian/fedora: nauty-
@@ -1100,7 +1061,7 @@ then dnl debian/fedora: nauty-
      FOUND_nauty=no
      for nauty_prefix in "" "nauty-"
      do
-	 if command -v ${nauty_prefix}complg
+	 if command -v ${nauty_prefix}complg > /dev/null
 	 then
      dnl check if #1408 is a problem
 	     if ${nauty_prefix}biplabg < /dev/null 2>/dev/null
@@ -1133,7 +1094,7 @@ AC_MSG_CHECKING(whether the package topcom is installed)
 FOUND_topcom=no
 for topcom_prefix in "" "topcom-"
 do
-    if command -v ${topcom_prefix}points2finetriangs
+    if command -v ${topcom_prefix}points2finetriangs > /dev/null
     then AC_MSG_RESULT([yes, using prefix "$topcom_prefix"])
          FILE_PREREQS="$FILE_PREREQS `command -v ${topcom_prefix}points2finetriangs`"
          FOUND_topcom=yes
@@ -1145,15 +1106,37 @@ then AC_MSG_RESULT([no, will build])
      BUILD_topcom=yes
 fi
 
-AC_MSG_CHECKING([whether eigen3 library is installed])
-if $PKG_CONFIG --exists eigen3
-then CFO=`$PKG_CONFIG --cflags-only-other eigen3`
-     CFI=`$PKG_CONFIG --cflags-only-I eigen3`
-     CXXFLAGS="$CXXFLAGS $CFO"
-     CPPFLAGS="$CPPFLAGS $CFI"
-     AC_MSG_RESULT([yes, with flags $CFI $CFO])
-else AC_MSG_ERROR(eigen library not found)
-fi
+AS_IF([test $BUILD_msolve = no],
+    [AC_MSG_CHECKING([whether msolve is installed])
+     AS_IF([command -v msolve > /dev/null],
+         [AS_IF([msolve -V > /dev/null 2>&1],
+             [msolve_actual_version=$(msolve -V)
+              dnl keep in sync with msolveMinimumVersion in Msolve.m2
+              msolve_min_version=0.7.0
+              AX_COMPARE_VERSION(
+                  [$msolve_actual_version], [ge], [$msolve_min_version],
+                  [AC_MSG_RESULT([yes])
+                   FILE_PREREQS="$FILE_PREREQS `command -v msolve`"],
+                  [AC_MSG_RESULT([yes, but version $msolve_actual_version was \
+found and $msolve_min_version is required; will build])
+                   BUILD_msolve=yes])],
+             [AC_MSG_RESULT([yes, but cannot detect version; will build])
+              BUILD_msolve=yes])],
+         [AC_MSG_RESULT([no, will build])
+          BUILD_msolve=yes])])
+
+AS_IF([test $BUILD_eigen = no],
+  [AC_MSG_CHECKING([whether pkg-config provides flags for eigen])
+   AS_IF([$PKG_CONFIG --exists eigen3],
+      [CFO=`$PKG_CONFIG --cflags-only-other eigen3`
+       CFI=`$PKG_CONFIG --cflags-only-I eigen3`
+       CXXFLAGS="$CXXFLAGS $CFO"
+       CPPFLAGS="$CPPFLAGS $CFI"
+       AC_MSG_RESULT([yes, $CFI $CFO])],
+      [AC_MSG_RESULT([no])])
+   AC_CHECK_HEADER([Eigen/SVD],,
+      [AC_MSG_NOTICE([eigen is not installed; will build])
+       BUILD_eigen=yes])])
 
 AC_LANG(C++)
 AC_CHECK_HEADER(NTL/version.h,,BUILD_ntl=yes)
@@ -1186,11 +1169,19 @@ dnl factory needs to know:
 AC_SUBST(BUILD_ntl)
 
 AC_LANG(C++)
-AC_CHECK_HEADER(frobby.h,LIBS="-lfrobby $LIBS",BUILD_frobby=yes)
+AC_CHECK_HEADER([frobby.h],
+    [LIBS="-lfrobby $LIBS"],
+    dnl check /usr/include/frobby (e.g., on Fedora)
+    [SAVECPPFLAGS="$CPPFLAGS"
+     CPPFLAGS="$CPPFLAGS -I/usr/include/frobby"
+     AS_UNSET([ac_cv_header_frobby_h])
+     AC_CHECK_HEADER([frobby.h],
+         [LIBS="-lfrobby $LIBS"],
+         [CPPFLAGS="$SAVECPPFLAGS"
+          BUILD_frobby=yes])])
 if test $BUILD_frobby = yes
 then BUILTLIBS="-lfrobby $BUILTLIBS"
-    dnl uncomment this to [1] when frobby is built from a submodule (?)
-    dnl AC_DEFINE([HAVE_FROBBY_VERSION], [0], [whether frobby has frobby_version])
+    AC_DEFINE([HAVE_FROBBY_VERSION], [1], [whether frobby has frobby_version])
 else
     AC_MSG_CHECKING([whether frobby has frobby_version])
     AC_COMPILE_IFELSE(
@@ -1263,6 +1254,41 @@ then AC_MSG_NOTICE(readline library will be compiled)
      BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
 fi
 
+AC_SUBST([ENABLE_TBB], [yes])
+AC_ARG_ENABLE([tbb],
+    [AS_HELP_STRING([--disable-tbb],
+        [disable use of the tbb (threaded building blocks) library])],
+    [ENABLE_TBB=$enableval])
+AS_IF([test $ENABLE_TBB = yes],
+    [AC_DEFINE([WITH_TBB], [1],
+        [whether the tbb library has been enabled by the builder])
+     AC_LANG([C++])
+     AS_IF([test $BUILD_tbb = no],
+        [AC_CHECK_HEADER([tbb/tbb.h],
+           [AC_SEARCH_LIBS([TBB_runtime_interface_version], [tbb],
+               [AC_MSG_CHECKING([for tbb version])
+                AC_RUN_IFELSE(
+                   [AC_LANG_PROGRAM([
+                       #include <stdio.h>
+                       #define TBB_SUPPRESS_DEPRECATED_MESSAGES 1
+                       #include <tbb/tbb.h>
+                       ], [
+                       printf("%d.%d\n", TBB_VERSION_MAJOR, TBB_VERSION_MINOR);
+                       if (TBB_VERSION_MAJOR < 2020)
+                         return 1;
+                       else
+                         return 0;])],,
+                   [AC_MSG_NOTICE([tbb >= 2020 required; will build])
+                    BUILD_tbb=yes])],
+               [AC_MSG_NOTICE([tbb library not found; will build])
+                 BUILD_tbb=yes])],
+           [AC_MSG_NOTICE([tbb include file (tbb.h) not found; will build])
+            BUILD_tbb=yes])])])
+AS_IF([test $BUILD_tbb = yes],
+    [BUILTLIBS="-ltbb $BUILTLIBS"
+     AS_IF([test $CMAKE = false],
+        [AC_MSG_ERROR([cmake is required to build tbb])])])
+
 AC_ARG_WITH([system-memtailor],
     [AS_HELP_STRING([--with-system-memtailor],
 	[use system memtailor instead of building git submodule])],,
@@ -1271,9 +1297,12 @@ if test $with_system_memtailor = no
 then
     BUILD_memtailor=yes
     BUILTLIBS="-lmemtailor $BUILTLIBS"
+    BUILD_ALWAYS="$BUILD_ALWAYS memtailor"
 else AC_LANG(C++)
     AC_SEARCH_LIBS(MEMTAILOR_VERSION_STRING,memtailor,,BUILD_memtailor=yes)
     AC_CHECK_HEADER(memtailor.h,,BUILD_memtailor=yes)
+    AS_IF([test $BUILD_memtailor = yes],
+          [AC_MSG_WARN([memtailor not found, will build])])
 fi
 
 AC_ARG_WITH([system-mathic],
@@ -1284,9 +1313,12 @@ if test $with_system_mathic = no
 then
     BUILD_mathic=yes
     BUILTLIBS="-lmathic $BUILTLIBS"
+    BUILD_ALWAYS="$BUILD_ALWAYS mathic"
 else AC_LANG(C++)
     AC_SEARCH_LIBS(MATHIC_VERSION_STRING,mathic,,BUILD_mathic=yes)
     AC_CHECK_HEADER(mathic.h,,BUILD_mathic=yes)
+    AS_IF([test $BUILD_mathic = yes],
+          [AC_MSG_WARN([mathic not found, will build])])
 fi
 
 AC_ARG_WITH([system-mathicgb],
@@ -1297,9 +1329,13 @@ if test $with_system_mathicgb = no
 then
     BUILD_mathicgb=yes
     BUILTLIBS="-lmathicgb $BUILTLIBS"
+    BUILD_ALWAYS="$BUILD_ALWAYS mathicgb"
 else AC_LANG(C++)
     AC_SEARCH_LIBS(MATHICGB_VERSION_STRING,mathicgb,,BUILD_mathicgb=yes)
     AC_CHECK_HEADER(mathicgb.h,,BUILD_mathicgb=yes)
+    AC_CHECK_HEADER(mathicgb/mtbb.hpp,,BUILD_mathicgb=yes)
+    AS_IF([test $BUILD_mathicgb = yes],
+          [AC_MSG_WARN([mathicgb not found, will build])])
 fi
 
 if test $BUILD_gtest = no
@@ -1320,10 +1356,13 @@ else
 fi
 AC_SUBST(GTEST_PATH)
 
-AC_SUBST(PYTHON,no)
+AC_SUBST([PYTHON])
 AC_ARG_WITH(python, AS_HELP_STRING(--with-python@<:@=3.x@:>@.,
     [link with libpython. If the version number is not specified, then the
-     system's default version will be detected.]), PYTHON=$withval)
+     system's default version will be detected.  Use --without-python to turn
+     off Python support.]),
+    [PYTHON=$withval],
+    [PYTHON=yes])
 if test $PYTHON != no
 then AC_DEFINE(WITH_PYTHON,1,[whether we are linking with the python library])
     if test $PYTHON = yes
@@ -1383,7 +1422,8 @@ fi
 AX_BOOST_REGEX
 LIBS="$LIBS $BOOST_REGEX_LIB"
 
-AC_CHECK_HEADERS([boost/math/special_functions.hpp], [],
+AC_CHECK_HEADERS([boost/math/special_functions.hpp],
+    [AC_CHECK_HEADERS([boost/math/tools/atomic.hpp])],
     [AC_MSG_ERROR([Boost Math Toolkit not available])])
 AC_SEARCH_LIBS([ldexpq], [quadmath])
 
@@ -1395,31 +1435,6 @@ AC_SUBST(ULIMIT_S,yes)
 ( ulimit -m 2000 2>/dev/null) || ULIMIT_M=no
 ( ulimit -v 2000 2>/dev/null) || ULIMIT_V=no
 ( ulimit -s 2000 2>/dev/null) || ULIMIT_S=no
-
-if test $BUILD_atomic_ops = no
-then AC_MSG_CHECKING(whether package atomic_ops is provided)
-     if [ pkg-config --exists atomic_ops ]
-     then AC_MSG_RESULT(yes)
-	  CPPFLAGS="`pkg-config --cflags-only-I atomic_ops | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
-     else AC_MSG_RESULT([no, will be built from downloaded sources])
-          BUILD_atomic_ops=yes
-     fi
-fi
-
-# test for fflas_ffpack
-if test $BUILD_fflas_ffpack = no
-then AC_MSG_CHECKING([for fflas_ffpack library, version at least 2])
-     if command -v fflas-ffpack-config && test "`fflas-ffpack-config --decimal-version`" -gt 20000
-     then AC_MSG_RESULT(found)
-          FFLAS_FFPACK_CXXFLAGS=$(for x in $(fflas-ffpack-config --cflags 2>&1) ; do case $x in (-I*) /bin/echo -n "$x " ;; esac done)
-	  AC_MSG_NOTICE([adding fflas_ffpack flags $FFLAS_FFPACK_CXXFLAGS])
-          M2_CXXFLAGS="$M2_CXXFLAGS $FFLAS_FFPACK_CXXFLAGS"
-	  LIBS="$LIBS `fflas-ffpack-config --libs`" dnl note: this might add "-Xpreprocessor -fopenmp" to LIBS, and that will confuse libtool
-	  LIBS=`echo $LIBS | sed 's/-Xpreprocessor -fopenmp//'`
-     else AC_MSG_RESULT(not found, will build)
-          BUILD_fflas_ffpack=yes
-     fi
-fi
 
 AC_SUBST(ENABLE_LINBOX,no)
 AC_ARG_ENABLE(linbox,
@@ -1475,10 +1490,8 @@ AC_ARG_VAR([GFTABLESDIR],
     [path to gftables directory if factory is already installed])
 if test $BUILD_factory = yes
 then
-    BUILD_gftables=yes
     GFTABLESDIR="${datadir}/Macaulay2/Core/factory/"
 else
-    BUILD_gftables=no
     if test x$GFTABLESDIR = x
     then
 	if test $FACTORY_NAME = factory
@@ -1488,7 +1501,7 @@ else
 	    GFTABLESDIR="`$PKG_CONFIG --variable=prefix $FACTORY_NAME`/share/singular/factory/"
 	fi
     fi
-    adl_RECURSIVE_EVAL([$GFTABLESDIR], [GFTABLESDIR])
+    AX_RECURSIVE_EVAL([$GFTABLESDIR], [GFTABLESDIR])
     AC_CHECK_FILE([${GFTABLESDIR}gftables/961],,
 	[AC_MSG_ERROR([could not find gftables but we are not building factory; try specifying the directory with GFTABLESDIR])])
     FILE_PREREQS="$FILE_PREREQS ${GFTABLESDIR}gftables/961"
@@ -1512,105 +1525,6 @@ then
 	 AC_DEFINE([FACTORY_STREAMIO], [0])])
 else AC_DEFINE([FACTORY_STREAMIO], [1], [whether factory was built with --enable-streamio])
 fi
-
-AC_SUBST(LINALGLIBS)
-
-# we need to do the fortran library testing last, in case AC_SEARCH_LIBS adds
-# one of them to $LIBS, making it impossible to check for the presence of C or
-# C++ libraries.  (I'm not sure why putting -llapack on the gcc command line
-# needlessly causes the library to be linked against.)
-FORTRANUSED=no
-if test $BUILD_lapack = yes
-then if test $USE_FCLIBS != no
-     then LIBS="$FCLIBS $LIBS"
-     fi
-else lapack_found=no
-     blas_found=no
-     AC_MSG_CHECKING([whether the Accelerate framework for lapack is available])
-     LINALGLIBS="-framework Accelerate"
-     SAVELIBS=$LIBS LIBS="$LINALGLIBS $LIBS"
-     AC_LANG(C)
-     AC_LINK_IFELSE(
-	 [AC_LANG_PROGRAM(,[sgemv_();dgetrf_();])],
-	 [USE_FCLIBS=no; blas_found=yes; lapack_found=yes; AC_MSG_RESULT(yes)],
-	 [LINALGLIBS= LIBS=$SAVELIBS; AC_MSG_RESULT(no)])
-     if test $blas_found = no
-     then AC_MSG_CHECKING([whether package blas is provided (by pkg-config)])
-	  if pkg-config --exists blas
-	  then AC_MSG_RESULT(yes)
-	       blas_found=yes
-	       BLASLIBS=`pkg-config --libs blas`
-	       LIBS="$BLASLIBS $LIBS"
-	       CPPFLAGS="`pkg-config --cflags-only-I blas | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
-	       AC_SEARCH_LIBS(sgemv_,,,AC_MSG_ERROR(blas function sgemv_ not found with $BLASLIBS))
-	  else AC_MSG_RESULT(no)
-	  fi
-     fi
-     if test $lapack_found = no
-     then AC_MSG_CHECKING([whether package lapack is provided (by pkg-config)])
-	  if pkg-config --exists lapack
-	  then AC_MSG_RESULT(yes)
-	       lapack_found=yes
-	       LAPACKLIBS="`pkg-config --libs lapack`"
-	       LIBS="$LAPACKLIBS $LIBS"
-	       CPPFLAGS="`pkg-config --cflags-only-I lapack | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
-	       AC_SEARCH_LIBS(dgetrf_,,,AC_MSG_ERROR(lapack function dgetrf_ not found with $LAPACKLIBS))
-	  else AC_MSG_RESULT(no)
-	  fi
-     fi
-     if test $USE_FCLIBS != no
-     then LIBS="$FCLIBS $LIBS"; added_fclibs=yes
-     fi
-     if test $blas_found = no
-     then AC_SEARCH_LIBS(sgemv_,refblas blas f77blas atlcblas,
-                         blas_found=yes
-			 if test "none required" != "$ac_cv_search_sgemv_"
-			 then BLASLIBS=$ac_cv_search_sgemv_
-			 fi
-			 )
-          # we've been told that both f77blas and atlcblas are needed.  If so, fix this somehow.
-     fi
-     if test $lapack_found = no
-     then AC_SEARCH_LIBS(dgetrf_,lapack atllapack,
-	  		 lapack_found=yes
-			 if test "none required" != "$ac_cv_search_dgetrf_"
-			 then LAPACKLIBS=$ac_cv_search_dgetrf_
-			 fi
-			 )
-     fi
-     if test $blas_found = no -o $lapack_found = no
-     then BUILD_lapack=yes
-          LINALGLIBS="$LINALGLIBS -llapack -lrefblas"
-     else LINALGLIBS="$LINALGLIBS $LAPACKLIBS $BLASLIBS"
-     fi
-fi
-
-if test $BUILD_lapack = yes
-then if test $added_fclibs != yes
-     then LIBS="$FCLIBS $LIBS"
-     fi
-     LINALGLIBS="$LINALGLIBS -llapack -lrefblas"
-     dnl we'll need the fortran compiler to be present to compile lapack
-     FORTRANUSED=yes
-     if test "$FC" = ""
-     then AC_MSG_ERROR([no fortran compiler found (FC not set)])
-     else AC_MSG_NOTICE(using fortran compiler $FC)
-     fi
-fi
-
-dnl This code doesn't seem to be needed, and it wasn't ever working, anyway:
-dnl if test $BUILD_lapack = yes
-dnl then # test whether the fortran compiler can handle lapack, which, starting with
-dnl      # version 3.2, requires fortran 90, not fortran 77
-dnl     AC_LANG(Fortran)
-dnl     AC_MSG_CHECKING([whether the fortran compiler is modern enough for lapack])
-dnl     AC_COMPILE_IFELSE([intrinsic maxloc], dnl this is said to be a Fortran 90 feature
-dnl 	AC_MSG_RESULT(yes),
-dnl 	AC_MSG_RESULT(no))
-dnl fi
-
-test "$USE_FCLIBS" = no && FCLIBS=
-test "$FORTRANUSED" = no && FCLIBS=
 
 AC_LANG(C)
 
@@ -1683,12 +1597,12 @@ AS_IF([test x$with_libffi != xno ],
        AC_SEARCH_LIBS([ffi_call], [ffi], [],
 	   [AC_MSG_ERROR([libffi not found or not linkable])])
        AC_CHECK_FUNCS([ffi_get_struct_offsets])
-       LIBFFI_VERSION=$(pkg-config --modversion libffi)],
+       FFI_VERSION=$(pkg-config --modversion libffi)],
       [AC_MSG_RESULT([no])
        AC_MSG_ERROR([install libffi or use --without-libffi option])])],
-    [LIBFFI_VERSION="not present"])
+    [FFI_VERSION="not present"])
 AC_SUBST([LIBFFI], [$with_libffi])
-AC_DEFINE_UNQUOTED([LIBFFI_VERSION], ["$LIBFFI_VERSION"], [libffi version])
+AC_DEFINE_UNQUOTED([FFI_VERSION], ["$FFI_VERSION"], [libffi version])
 
 # after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()
 SAVELIBS=$LIBS
@@ -1732,12 +1646,6 @@ AC_SUBST(BUILDLIBLIST)
 for i in $LIBLIST
 do eval t=\$BUILD_$i
    test "$t" = yes && BUILDLIBLIST="$BUILDLIBLIST $i"
-done
-
-AC_SUBST(BUILDSUBLIST)
-for i in $SUBLIST
-do eval t=\$BUILD_$i
-   test "$t" = yes && BUILDSUBLIST="$BUILDSUBLIST $i"
 done
 
 AC_SUBST(BUILDPROGLIST)
@@ -1876,6 +1784,21 @@ AC_LINK_IFELSE([AC_LANG_SOURCE([int main() {}])],
 rm -f conftest.mapfile
 LDFLAGS=$SAVE
 
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81358
+AC_MSG_CHECKING([whether we need to link with -latomic])
+AC_LANG([C++])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([
+	#include <atomic>
+	], [std::atomic<int64_t> x; x++])],
+	[AC_MSG_RESULT([no])],
+	[LIBS="$LIBS -latomic"
+	 AC_LINK_IFELSE([AC_LANG_PROGRAM([
+		#include <atomic>
+		], [std::atomic<int64_t> x; x++])],
+		[AC_MSG_RESULT([yes])],
+		[AC_MSG_RESULT([error])
+		 AC_MSG_ERROR([unable to handle 64-bit atomics])])])
+
 AC_SUBST(DUMPDATAFILE,Macaulay2-$ARCH-data)
 
 test "$MEMDEBUG" = yes && M2_CPPFLAGS="$M2_CPPFLAGS -DMEMDEBUG"
@@ -1904,7 +1827,6 @@ AC_SUBST(DESC,$PACKAGE_VERSION-$host_cpu-$OS-$REL)
 # by the 'configure' script, will be simply "alpha".
 
 AC_MSG_NOTICE([using BUILDLIBLIST  = $BUILDLIBLIST])
-AC_MSG_NOTICE([using BUILDSUBLIST  = $BUILDSUBLIST])
 AC_MSG_NOTICE([using BUILDPROGLIST = $BUILDPROGLIST])
 AC_MSG_NOTICE([using BUILDLIST     = $BUILDLIST])
 AC_MSG_NOTICE([using BUILD_ALWAYS  = $BUILD_ALWAYS])
@@ -1925,12 +1847,11 @@ AC_MSG_NOTICE([using FC                = $FC])
 AC_MSG_NOTICE([using AR                = $AR])
 AC_MSG_NOTICE([using RANLIB            = $RANLIB])
 AC_MSG_NOTICE([using LDFLAGS           = $LDFLAGS])
-AC_MSG_NOTICE([using BLASLIBS          = $BLASLIBS])
-AC_MSG_NOTICE([using LAPACKLIBS        = $LAPACKLIBS])
+AC_MSG_NOTICE([using BLAS_LIBS         = $BLAS_LIBS])
+AC_MSG_NOTICE([using LAPACK_LIBS       = $LAPACK_LIBS])
 AC_MSG_NOTICE([using LIBS_GDBM         = $LIBS_GDBM])
 AC_MSG_NOTICE([using LIBS_GLPK         = $LIBS_GLPK])
 AC_MSG_NOTICE([using LIBS_GMP          = $LIBS_GMP])
-AC_MSG_NOTICE([using CC_FOR_BUILD      = $CC_FOR_BUILD])
 AC_MSG_NOTICE([with  ISSUE             = $ISSUE])
 AC_MSG_NOTICE([with  NODENAME          = $NODENAME])
 AC_MSG_NOTICE([with  OS REL            = $OS $REL])
@@ -1938,7 +1859,7 @@ AC_MSG_NOTICE([with  ARCH              = $ARCH])
 AC_MSG_NOTICE([with  OPTIMIZE          = $OPTIMIZE])
 AC_MSG_NOTICE([with  DEBUG             = $DEBUG])
 AC_MSG_NOTICE([with  GIT_DESCRIPTION   = $GIT_DESCRIPTION])
-AC_MSG_NOTICE([with  USING_MPIR        = $USING_MPIR])
+AC_MSG_NOTICE([with  GIT_BRANCH        = $GIT_BRANCH])
 AC_MSG_NOTICE([with  DOCUMENTATION     = $DOCUMENTATION])
 
 subset() {
@@ -2046,7 +1967,7 @@ done
 prefix=$save_prefix
 exec_prefix=$save_exec_prefix
 
-if test $BUILD_gftables = no
+if test $BUILD_factory = no
 then PRE_GFTABLESDIR="$GFTABLESDIR"
 else
 PRE_GFTABLESDIR="$pre_datadir/Macaulay2/Core/factory/"

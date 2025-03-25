@@ -1,10 +1,12 @@
 -- -*- coding: utf-8 -*-
-document { Key => {(Grassmannian, ZZ, ZZ), 
-	  Grassmannian, 
+document {
+    Key => {
+	 Grassmannian,
+	(Grassmannian, ZZ, ZZ), 
 	  (Grassmannian, ZZ, ZZ, PolynomialRing),
 	  [Grassmannian, CoefficientRing],
 	  [Grassmannian, Variable]},
-     Headline => "the Grassmannian of linear subspaces of a vector space",
+     Headline => "compute the ideal of the Grassmannian of linear subspaces of a vector space",
      Usage => "Grassmannian(k,r)\nGrassmannian(k,r,R)",
      Inputs => { 
 	  "k", 
@@ -33,11 +35,12 @@ document { Key => {(Grassmannian, ZZ, ZZ),
      }
 
 document { 
-     Key => {(Schubert,ZZ,ZZ,VisibleList), 
-	  Schubert,
+    Key => {
+	 Schubert,
+	(Schubert,ZZ,ZZ,VisibleList), 
 	  [Schubert,CoefficientRing],
 	  [Schubert,Variable]},
-     Headline => "find the Plücker ideal of a Schubert variety",
+     Headline => "compute the Plücker ideal of a Schubert variety",
      Usage => "Schubert(k,n,sigma)",
      Inputs => { 
 	  "k", 
@@ -63,3 +66,51 @@ document {
      ///,
      SeeAlso => {"Grassmannian","pfaffians"}
      }
+
+document {
+    Key => {
+	Fano,
+       (Fano, ZZ, Ideal),
+       (Fano, ZZ, Ideal, Ring)},
+    Headline => "compute the ideal of a Fano scheme in the Grassmannian",
+    SYNOPSIS (
+	Heading => "Fano scheme",
+	Usage => "Fano(k,I)",
+	Inputs => {
+	    "k" => {"a positive integer less than ", TT "r"},
+	    "I" => {"an ideal representing a variety in projective ", TT "r", "-space"},
+	},
+	Outputs => {"the ideal of a Fano scheme in the Grassmannian"},
+	"Given an ideal ", TT "I", " representing a projective variety ", TT "X", "
+	in ", TT "P^r", ", a positive integer k<r, and optionally a
+	ring ", TT "GR", " with (exactly) ", TT "r+1", " choose ", TT "k+1", " variables,
+	representing the ambient space of the Grassmannian of
+	k-planes in ", TT "P^r", ", this routine returns the ideal in
+	", TT "GR", " of the Fano scheme that parametrizes the k-planes
+	lying on ", TT "X", ".  If the optional third argument is not
+	present, the routine fabricates its own ring,
+	and returns an ideal in it."
+    ),
+    SYNOPSIS (
+	Usage => "Fano(k,I,GR)",
+	Inputs => {
+	    "k" => {"a positive integer less than ", TT "r"},
+	    "I" => {"an ideal representing a variety in projective ", TT "r", "-space"},
+	    "GR" => {}
+	},
+	Outputs => {"the ideal of a Fano scheme in the Grassmannian"},
+	"Given an ideal ", TT "I", " representing a projective variety ", TT "X", "
+	in ", TT "P^r", ", a positive integer k<r, and optionally a
+	ring ", TT "GR", " with (exactly) ", TT "r+1", " choose ", TT "k+1", " variables,
+	representing the ambient space of the Grassmannian of
+	k-planes in ", TT "P^r", ", this routine returns the ideal in
+	", TT "GR", " of the Fano scheme that parametrizes the k-planes
+	lying on ", TT "X", ".  If the optional third argument is not
+	present, the routine fabricates its own ring,
+	and returns an ideal in it."
+    ),
+    SeeAlso => {
+	Grassmannian,
+	"Tutorial: Fano varieties"
+    }
+}

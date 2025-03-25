@@ -1,76 +1,71 @@
--- should rewrite this to load all the m2 files there
--- perhaps write a "pathFind" routine so we can find files such as Macaulay2 on the path.
-
 -*
 -- TODO
-(isWeylAlgebra,Ring)
 (binomial,RingElement,ZZ)
 (rowRankProfile,MutableMatrix)
 (columnRankProfile,MutableMatrix)
 (nullSpace,MutableMatrix)
 *-
 
-load "./doc.m2"
-load "./doc1.m2"
-load "./doc2.m2"
-load "./doc3.m2"
-load "./doc4.m2"
-load "./doc5.m2"
-load "./doc6.m2"
-load "./doc7.m2"
-load "./doc8.m2"
-load "./doc9.m2" -- has a ton of tests
-load "./doc10.m2" -- has a ton of tests
-load "./doc11.m2"
-load "./doc12.m2"
-load "./doc13.m2"
-load "./doc14.m2"
-load "./doc15.m2"
-
-load "./changes.m2"
-
-load "./overviewA.m2"
-load "./overviewB.m2"
-load "./overviewC.m2"
-load "./overview2.m2"
-load "./overview3.m2"
-load "./overview4.m2"
-load "./macaulay.m2"
-load "./overview_packages.m2"
-load "./overview_doc.m2"
-load "./doc_ideals.m2"
-load "./overview_modules.m2"
-load "./doc_module.m2"
-load "./doc_mutablematrices.m2"
-load "./doc_ringmaps.m2"
-load "./doc_assignment.m2"
-
+-- Each section is loaded in order of
+-- appearance in the table of contents
 load "./ov_top.m2"
+load "./ov_preface.m2"
 load "./ov_getting_started.m2"
-load "./ov_ideals.m2"
+load "./ov_rings.m2"
+load "./ov_monomial_orderings.m2"
 load "./ov_ringmaps.m2"
+load "./ov_ideals.m2"
 load "./ov_matrices.m2"
+load "./ov_modules.m2"
+load "./ov_chaincomplexes.m2"
+load "./ov_examples.m2"
+load "./ov_groebner_bases.m2"
+load "./ov_combinatorics.m2"
+load "./ov_analytic_functions.m2"
 load "./ov_language.m2"
+load "./ov_strings.m2"
+load "./ov_lists.m2"
+load "./ov_hashtables.m2"
+load "./ov_types.m2"
+load "./ov_methods.m2"
+load "./ov_caching.m2"
+load "./ov_debugging.m2"
 load "./ov_files.m2"
-load "./threads.m2"
-load "./system.m2"
-load "./repl.m2"
-load "./debugging.m2"
+load "./ov_packages.m2"
+load "./ov_documentation.m2"
+load "./ov_threads.m2"
+load "./ov_system.m2"
+load "./ov_repl.m2"
+load "./ov_developers.m2"
+load "./ov_parallelism.m2"
+load "./changes.m2"
+load "./macaulay.m2"
+
+load "./doc3.m2"
+load "./doc7.m2"
+load "./doc9.m2" -- ChainComplex methods, to be replaced
+load "./doc10.m2"
+load "./doc12.m2"
+load "./doc14.m2"
+
+load "./doc_rings.m2"
+load "./doc_ideals.m2"
+load "./doc_matrices.m2"
+load "./doc_mutablematrices.m2"
+load "./doc_module.m2"
+
+load "./experimental.m2"
 
 load "./doc_arithmetic.m2"
-load "./doc_fano.m2"
-load "./doc_rings.m2"
+load "./doc_intervals.m2"
 load "./doc_ringelement.m2"
-load "./doc_lists.m2"
-load "./doc_strings.m2"
-load "./doc_tables.m2"
-load "./operators.m2"
 load "./functions.m2"
+load "./operators.m2"
 load "./shared.m2"
-load "./types.m2"
-load "./methods.m2"
 load "./doc_iterators.m2"
+load "./doc_atomic.m2"
 load "./options.m2" -- this must come last
+load "./undocumented.m2"
 
 load "./M2-Singular-Book.m2"
 

@@ -1,25 +1,57 @@
 newPackage(
     "JSON",
     Headline => "JSON encoding and decoding",
-    Version => "0.1",
-    Date => "August 31, 2022",
+    Version => "0.4",
+    Date => "February 24, 2025",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
     Keywords => {"System"},
     PackageImports => {"Parsing"},
+    PackageExports => {"Text"},
     AuxiliaryFiles => true)
 
+---------------
+-- ChangeLog --
+---------------
+
+-*
+0.4 (2025-02-24, M2 1.25.05)
+* add "json" synonym for "toJSON"
+* remove JSONEncoder class
+* add several new toJSON methods (Thing, MutableHashTable, Hypertext)
+* set toJSON to Dispatch => Thing so it will work for short sequences
+* properly deal w/ escaped characters in fromJSON
+
+0.3 (2024-09-14, M2 1.24.11)
+* remove redundant Constant methods now that we can use inheritance
+* remove use of now-unsupported FileName option to TEST
+* update test after "format" bug fix
+
+0.2 (2024-01-24, M2 1.23)
+* use single-string version of exportFrom
+* use null coalescing operator in toJSON
+
+0.1 (2022-08-31, M2 1.21)
+* initial release
+
+*-
+
 export {
+    -- methods
     "toJSON",
     "fromJSON",
+    "json" => "toJSON",
+
+    -- symbols
     "Indent",
+    "IndentLevel",
     "NameSeparator",
-    "ValueSeparator"
+    "ValueSeparator",
     }
 
-exportFrom_Parsing {"nil"}
+exportFrom_Parsing "nil"
 
 ----------------------------------------------------------------
 -- parser based on https://datatracker.ietf.org/doc/html/rfc8259
@@ -59,9 +91,13 @@ unescapedP = Parser(c -> if c === null then null else (
 	if x < 0x20 or x == 0x22 or x == 0x5c or x > 0x10ffff
 	then null
 	else terminalParser c))
-charP = unescapedP | ("\\" @
+deformat = x -> (
+    if last x === "/" then "/"
+    else value concatenate("\"", x, "\""))
+escapedP = deformat % ("\\" @
     orP("\"", "\\", "/", "b", "f", "n", "r", "t",
 	andP("u", hexDigitP, hexDigitP, hexDigitP, hexDigitP)))
+charP = unescapedP | escapedP
 stringP = ((l, x, r) -> concatenate x) % andP("\"", *charP, "\"")
 
 -- objects
@@ -104,77 +140,59 @@ fromJSON File   := fromJSON @@ get
 -- encoding --
 --------------
 
-JSONEncoder = new SelfInitializingType of MutableHashTable
-
-protect IndentLevel
-
-jsonEncoder = method()
-jsonEncoder OptionTable := o -> (
-    e := JSONEncoder o;
-    e.IndentLevel = 0;
-    if e.ValueSeparator === null then e.ValueSeparator = (
-	if e.Indent === null then ", " else ",");
-    e)
-
-toJSON = method(Options => {
+toJSON = method(
+    Dispatch => Thing,
+    Options => {
 	Indent         => null,
+	IndentLevel    => 0,
 	NameSeparator  => ": ",
 	ValueSeparator => null,
-	Sort           => false
-	})
+	Sort           => false})
 
-toJSON Thing := o -> x -> toJSON(jsonEncoder o, x)
+toJSON Thing   := toJSON MutableHashTable := o -> format @@ toString
+toJSON String  := o -> format
+toJSON RR      := o -> format_0
+toJSON Number  := o -> format_0 @@ numeric
+toJSON ZZ      :=
+toJSON Boolean :=
+toJSON Nothing := o -> toString
+toJSON Symbol  := o -> x -> (
+    if x === nil then "null" else format toString x)
+toJSON Hypertext := o -> format @@ html
 
-toJSON(JSONEncoder, String)  := o -> (e, x) -> format x
-toJSON(JSONEncoder, RR)      := o -> (e, x) -> format(0, x)
-toJSON(JSONEncoder, ZZ)      :=
-toJSON(JSONEncoder, Boolean) :=
-toJSON(JSONEncoder, Nothing) := o -> (e, x) -> toString x
-toJSON(JSONEncoder, QQ)       :=
-toJSON(JSONEncoder, Constant) :=  o -> (e, x) -> toJSON(e, numeric x)
-toJSON(JSONEncoder, Symbol) := o -> (e, x) -> (
-    if x === nil then "null" else error("unknown symbol"))
+maybeNewline = o -> if o.Indent === null then "" else newline
 
-maybeNewline = method()
-maybeNewline JSONEncoder := e -> if e.Indent === null then "" else newline
+valuesep = o -> o.ValueSeparator ?? if o.Indent === null then ", " else ","
 
-indent = method()
-indent JSONEncoder := e -> (
-    if e.Indent === null then ""
-    else if instance(e.Indent, ZZ) then concatenate(e.IndentLevel * e.Indent)
-    else if instance(e.Indent, String) then concatenate(
-	e.IndentLevel : e.Indent)
+indent = o -> (
+    if o.Indent === null then ""
+    else if instance(o.Indent, ZZ) then concatenate(o.IndentLevel * o.Indent)
+    else if instance(o.Indent, String) then concatenate(
+	o.IndentLevel : o.Indent)
     else error("expected indent level to be null, an integer, or a string"))
 
-incIndentLevel = method()
-incIndentLevel JSONEncoder := e -> e.IndentLevel = e.IndentLevel + 1
+demarkValues = (o, f) -> concatenate(
+    maybeNewline o,
+    (o ++= {IndentLevel => o.IndentLevel + 1}; indent o),
+    demark(valuesep o | maybeNewline o | indent o, f o),
+    maybeNewline o,
+    (o ++= {IndentLevel => o.IndentLevel - 1}; indent o))
 
-decIndentLevel = method()
-decIndentLevel JSONEncoder := e -> e.IndentLevel = e.IndentLevel - 1
-
-demarkValues = method()
-demarkValues(JSONEncoder, Function) := (e, f) -> concatenate(
-    maybeNewline e,
-    (incIndentLevel e; indent e),
-    demark(e.ValueSeparator | maybeNewline e | indent e, f()),
-    maybeNewline e,
-    (decIndentLevel e; indent e))
-
-toJSON(JSONEncoder, VisibleList):= o -> (e, L) -> (
+toJSON VisibleList := o -> L -> (
     if #L > 0 then concatenate(
 	"[",
-	demarkValues(e, () -> apply(L, x -> toJSON(e, x))),
+	demarkValues(o, o' -> apply(L, x -> toJSON(x, o'))),
 	"]")
     else "[]")
 
-toJSON(JSONEncoder, HashTable) := o -> (e, H) -> (
+toJSON HashTable := o -> H -> (
     if #H > 0 then concatenate(
 	"{",
-	demarkValues(e, () -> (if e.Sort then sort else identity) apply(
+	demarkValues(o, o' -> (if o.Sort then sort else identity) apply(
 		keys H, k -> concatenate(
-		    toJSON(e, toString k),
-		    e.NameSeparator,
-		    toJSON(e, H#k)))),
+		    toJSON toString k,
+		    o.NameSeparator,
+		    toJSON(H#k, o')))),
 	"}")
     else "{}")
 
@@ -199,8 +217,20 @@ doc ///
 doc ///
   Key
     toJSON
+    (toJSON,Boolean)
+    (toJSON,HashTable)
+    (toJSON,Hypertext)
+    (toJSON,MutableHashTable)
+    (toJSON,Nothing)
+    (toJSON,Number)
+    (toJSON,RR)
+    (toJSON,String)
+    (toJSON,Symbol)
     (toJSON,Thing)
+    (toJSON,VisibleList)
+    (toJSON,ZZ)
     [toJSON,Indent]
+    [toJSON,IndentLevel]
     [toJSON,ValueSeparator]
     [toJSON,NameSeparator]
     [toJSON,Sort]
@@ -214,6 +244,7 @@ doc ///
   Inputs
     x:Thing
     Indent => {Nothing, ZZ, String} -- how much to indent
+    IndentLevel => ZZ -- current indentation level (intended for internal use)
     ValueSeparator => {Nothing, String} -- the string between values
     NameSeparator => String -- the string after names in object members
     Sort => Boolean -- whether to sort object members
@@ -221,7 +252,8 @@ doc ///
     :String -- containing JSON data
   Description
     Text
-      This method returns a string containing JSON data corresponding to the
+      This method (which is also available using its synonym @CODE "json"@)
+      returns a string containing JSON data corresponding to the
       given Macaulay2 thing.  If the @TT "Indent"@ option is @TT "null"@
       (the default), then there are no newlines or indentation.
     Example
@@ -339,14 +371,11 @@ outfile = openOut(outdir | "/test-parse.m2")
 outfile << commentize  copyrightBanner << endl
 for tst in sort select(tsts, f -> match("^y_", f)) do (
     outfile << endl << commentize tst << endl;
-    json = get(testdir | "/" | tst);
+    testjson = get(testdir | "/" | tst);
     outfile << "assert BinaryOperation(symbol ===, fromJSON " <<
-    format json << ", " << toExternalString fromJSON json << ")" << endl)
+    format testjson << ", " << toExternalString fromJSON testjson << ")" << endl)
 close outfile
 ///
 
-TEST(currentPackage#"source directory" | "JSON/test-parse.m2",
-    FileName => true)
-
-TEST(currentPackage#"source directory" | "JSON/test-encode.m2",
-    FileName => true)
+TEST get(currentPackage#"auxiliary files" | "test-parse.m2")
+TEST get(currentPackage#"auxiliary files" | "test-encode.m2")

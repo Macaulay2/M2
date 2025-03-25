@@ -6,105 +6,62 @@
 needs "methods.m2"
 needs "lists.m2"
 
-typicalValues#class = Type
-typicalValues#parent = Type
+-- TODO: are these used in the documentation?
+-- TODO: how to find all missing keywords?
+-- TODO: is there a better place for these?
 typicalValues#(symbol timing) = Time
+typicalValues#(symbol elapsedTiming) = Time
+typicalValues#(symbol threadLocal) = Symbol
 typicalValues#(symbol local) = Symbol
 typicalValues#(symbol global) = Symbol
 typicalValues#(symbol symbol) = Symbol
 typicalValues#(symbol ?) = Boolean
 
 dummy := x -> error("dummy method function called")
-installMethod(symbol #?, HashTable, Thing, Boolean => x -> (dummy x;))
-installMethod(symbol #?, Set, Thing, Boolean => x -> (dummy x;))
-installMethod(symbol #?, Database, String, Boolean => x -> (dummy x;))
-installMethod(symbol #?, BasicList, ZZ, Boolean => x -> (dummy x;))
-installMethod(symbol #?, String, ZZ, Boolean => x -> (dummy x;))
-installMethod(symbol #, HashTable, Thing, Thing => x -> (dummy x;))
-installMethod(symbol #, Database, String, String => x -> (dummy x;))
-installMethod(symbol #, String, ZZ, Thing => x -> (dummy x;))
-installMethod(symbol #, BasicList, ZZ, Thing => x -> (dummy x;))
 
--- installMethod(symbol #, File, ZZ => x -> (dummy x;))
-installMethod(symbol #, Set, ZZ => x -> (dummy x;))
-installMethod(symbol #, HashTable, ZZ => x -> (dummy x;))
-installMethod(symbol #, BasicList, ZZ => x -> (dummy x;))
-installMethod(symbol #, String, ZZ => x -> (dummy x;))
-
-installMethod(symbol <, Thing, Thing, Boolean => x -> (dummy x;))
-installMethod(symbol <=, Thing, Thing, Boolean => x -> (dummy x;))
-installMethod(symbol =!=, Thing, Thing, Boolean => x -> (dummy x;))
-installMethod(symbol ===, Thing, Thing, Boolean => x -> (dummy x;))
-installMethod(symbol =>, Thing, Thing, Option => x -> (dummy x;))
-installMethod(symbol >, Thing, Thing, Boolean => x -> (dummy x;))
-installMethod(symbol >=, Thing, Thing, Boolean => x -> (dummy x;))
-
-installMethod(symbol .., ZZ, ZZ, Sequence => x -> (dummy x;))
-installMethod(symbol ..<, ZZ, ZZ, Sequence => x -> (dummy x;))
-ancestor(Type,Type) := Boolean => ancestor
-any(ZZ,Function) := any(BasicList,Function) := any(BasicList,BasicList,Function) := any(HashTable,Function) := Boolean => any
 append(BasicList,Thing) := BasicList => append
 prepend(Thing,BasicList) := BasicList => prepend
-apply(BasicList,Function) := BasicList => apply
-apply(BasicList,BasicList,Function) := BasicList => apply
-apply(BasicList,String,Function) := Sequence => apply
-apply(String,Function) := Sequence => apply
-apply(String,BasicList,Function) := Sequence => apply
-apply(String,String,Function) := Sequence => apply
-apply(ZZ,Function) := List => apply
-apply(Thing,Function) := Iterator => apply
-applyKeys(HashTable,Function) := HashTable => applyKeys
-applyKeys(HashTable,Function,Function) := HashTable => applyKeys
-applyPairs(HashTable,Function) := HashTable => applyPairs
-applyValues(HashTable,Function) := HashTable => applyValues
+
 atEndOfFile(File) := Boolean => atEndOfFile
+echoOff File := Nothing => echoOff
+echoOn File := Nothing => echoOn
+fileMode(File) := fileMode
+fileMode(String) := ZZ => fileMode
+fileMode(ZZ,File) := fileMode
+fileMode(ZZ,String) := fileMode
+get File := get String := String => get
+getc File := String => getc
 isInputFile(File) := Boolean => isInputFile
 isListener(File) := Boolean => isListener
-isOpen(File) := Boolean => isOpen
 isOpen(Database) := Boolean => isOpen
+isOpen(File) := Boolean => isOpen
 isOutputFile(File) := Boolean => isOutputFile
-isMutable(Thing) := Boolean => isMutable
-instance(Thing,Type) := Boolean => instance
-concatenate Nothing := concatenate String := concatenate Symbol := concatenate ZZ := concatenate BasicList := String => concatenate
+linkFile(String,String) := Nothing => linkFile
+openIn String := File => openIn
+openInOut String := openInOut File := File => openInOut
+openListener String := File => openListener
+openOut String := File => openOut
+openOutAppend String := File => openOutAppend
+kill File := Nothing => kill
+kill ZZ := Nothing => kill
+read File := String => read
+read(File,ZZ) := String => read
+read Sequence := String => read
+read String := String => read
+getenv String := String => getenv
+
 deepSplice BasicList := BasicList => deepSplice
 drop(BasicList,ZZ) := drop(BasicList,List) := BasicList => drop
 take(BasicList,ZZ) := take(BasicList,List) := BasicList => take
-take(Thing,ZZ) := List => take
-get File := get String := String => get
-getc File := String => getc
-getenv String := String => getenv
-hashTable List := HashTable => hashTable
-hashTable(Function,List) := HashTable => hashTable
-typicalValues#horizontalJoin = Net
-horizontalJoin BasicList := Net => horizontalJoin
-unstack Net := List => unstack
-localDictionaries Function := List => localDictionaries
-localDictionaries Symbol := List => localDictionaries
-localDictionaries Pseudocode := List => localDictionaries
-localDictionaries Dictionary := List => localDictionaries
-values HashTable := List => values
-merge(HashTable,HashTable,Function) := HashTable => merge
-mergePairs(BasicList,BasicList,Function) := BasicList => mergePairs
-mingle BasicList := List => mingle
+take(Thing,ZZ) := take(Thing,List) := List => take
+
+isMutable(Thing) := Boolean => isMutable
+remove(MutableList,ZZ) := Nothing => remove
+remove(Database,String) := Nothing => remove
+remove(HashTable,Thing) := Nothing => remove
 openDatabase String := Database => openDatabase
 openDatabaseOut String := Database => openDatabaseOut
-openIn String := File => openIn
-openOut String := File => openOut
-openOutAppend String := File => openOutAppend
-openInOut String := openInOut File := File => openInOut
-openListener String := File => openListener
-pack(BasicList,ZZ) := List => pack
-pack(ZZ,BasicList) := List => pack
-pack(String,ZZ) := List => pack
-pack(ZZ,String) := List => pack
-reverse BasicList := BasicList => reverse
-reverse String := String => reverse
-set VisibleList := Set => set
-tally VisibleList := Tally => tally
-tally String := Tally => tally
-splice BasicList := BasicList => splice
-typicalValues#stack = Net
-stack BasicList := Net => stack
+
 substring(String,ZZ) := String => substring
 substring(String,ZZ,ZZ) := String => substring
 substring(ZZ,String) := String => substring
@@ -113,46 +70,8 @@ substring(ZZ,ZZ,String) := String => substring
 toSequence BasicList :=
 toSequence String    :=
 toSequence Thing     := Sequence => toSequence
-ascii String := List => ascii
-ascii List := String => ascii
-remove(MutableList,ZZ) := Nothing => remove
-remove(Database,String) := Nothing => remove
-remove(HashTable,Thing) := Nothing => remove
-echoOff File := Nothing => echoOff
-echoOn File := Nothing => echoOn
-
--- close File := File =>
---      f -> close f		    -- this code is bypassed by built-in compiled code
-
--- closeIn File := File =>
---      f -> closeIn f		    -- this code is bypassed by built-in compiled code
--- closeOut File := File =>
---      f -> closeOut f		    -- this code is bypassed by built-in compiled code
-
-kill File := Nothing => kill
-kill ZZ := Nothing => kill
-read File := String => read
-read (File,ZZ) := String => read
-read Sequence := String => read
-read String := String => read
-Function Thing := Thing => x -> (dummy x;)
-scan(BasicList,Function) := Nothing => scan
-scan(BasicList,BasicList,Function) := Nothing => scan
-scan(ZZ,Function) := Nothing => scan
-scan(Thing,Function) := Nothing => scan
-scanPairs(HashTable,Function) := Nothing => scanPairs
 lines(String,String) := List => lines
 lines String := List => lines
-linkFile(String,String) := Nothing => linkFile
-fileMode(String) := ZZ => fileMode
-fileMode(ZZ,File) := fileMode
-fileMode(File) := fileMode
-fileMode(ZZ,String) := fileMode
-frames(Sequence) := frames
-frames(Symbol) := frames
-frames(Function) := frames
-frames(Pseudocode) := frames
-powermod(ZZ,ZZ,ZZ) := ZZ => powermod
 
 chk := (type,key) -> if type#?key then (
      stderr << "-- method already installed:" << endl
@@ -182,8 +101,34 @@ typval4k-*(Keyword,Type,Type,Type)*- := (f,X,Y,Z) -> (
      installMethod(f, X, Y, Z => x -> (dummy x;))
      )
 
-if isMember("--no-tvalues", commandLine) then end
+-----------------------------------------------------------------------------
+-- This function generates the file "tvalues.m2" from the files ../d/*.d
+-- The file "tvalues.m2" should be distributed with binary distributions
 
+typicalValuesSource := prefixDirectory | replace("PKG", "Core", currentLayout#"package") | "tvalues.m2"
+typicalValuesFormat := "-- # typical value: *(.*?), ([^ ]*) *"
+
+generateTypicalValues = (srcdir) -> (
+    if not fileExists srcdir then error "unable to find the source code for the interpreter";
+    printerr("Extracting typical values from ", relativizeFilename srcdir);
+    ddfiles := select(readDirectory srcdir, file -> match("\\.dd?$", file));
+    printerr("Generating typical values in ", relativizeFilename typicalValuesSource);
+    outfile := openOut typicalValuesSource;
+    for file in sort ddfiles do (
+	try src := get(srcdir | file) else continue;
+	comment := "-- typical values extracted from " | file;
+	srcstring := stack apply(pairs lines src, (num, line) -> line | " -- " | file | ":" | num);
+	-- TODO: separate method key (\\1) and output type (\\2)
+	extracted := select(typicalValuesFormat | " -- (.*)$", "typval(\\1, \\2) -- \\3", toString srcstring);
+	extracted  = apply(extracted, line -> first select("(.*?)--(.*?)$", "\\1" | pad_(91-#line) "\t-- \\2", line));
+	if 0 < #extracted then outfile << comment << endl << stack extracted << endl);
+    outfile << "-- DONE: generated based on " | version#"git description" << endl << close)
+
+-- if missing or not successfully generated, tvalues.m2 is regenerated directly
+if not fileExists typicalValuesSource or not match("-- DONE", get typicalValuesSource)
+then generateTypicalValues(currentFileDirectory | "../d/")
+
+-----------------------------------------------------------------------------
 -- numerical functions that will be wrapped
 redefs := hashTable apply({acos, agm, asin, atan, atan2, Beta, cos, cosh, cot, coth, csc, csch, Digamma, eint, erf, erfc, exp, expm1, Gamma, inverseErf, inverseRegularizedBeta, inverseRegularizedGamma, log, log1p, regularizedBeta, regularizedGamma, sec, sech, sin, sinh, sqrt, tan, tanh, zeta},
     f -> f => method());
@@ -207,61 +152,43 @@ typval = x -> (
 	 f := redefs#f';
 	 args := drop(drop(x,-1),1);
 	 installMethod append(prepend(f,args),last x => f');
-	 if args === sequence RR then variants#(f,Number) = variants#(f,Constant) = f' @@ numeric
+	 if args === sequence RR then variants#(f,Number) = f' @@ numeric
 	 else if #args === 2 then (
-	     if args#0 === RR then variants#(f,Number,args#1) = variants#(f,Constant,args#1) = (x,y) -> f'(numeric_(precision y) x,y);
-	     if args#1 === RR then variants#(f,args#0,Number) = variants#(f,args#0,Constant) = (x,y) -> f'(x,numeric_(precision x) y);
-	     if args === (RR,RR) then variants#(f,Number,Number) = variants#(f,Number,Constant) = variants#(f,Constant,Number) = variants#(f,Constant,Constant) = (x,y) -> f'(numeric x,numeric y); -- phew
+	     if args#0 === RR then variants#(f,Number,args#1) = (x,y) -> f'(numeric_(precision y) x,y);
+	     if args#1 === RR then variants#(f,args#0,Number) = (x,y) -> f'(x,numeric_(precision x) y);
+	     if args === (RR,RR) then variants#(f,Number,Number) = (x,y) -> f'(numeric x,numeric y); -- phew
 	     )
 	 else if #args === 3 then (
 	     if args#0 === RR then
 		 variants#(f, Number,   args#1, args#2) =
-		 variants#(f, Constant, args#1, args#2) =
-		 (x,y,z) -> f'((numeric_min(precision y, precision z)) x, y, z);
+		 (x,y,z) -> f'(numeric(min(precision y, precision z), x), y, z);
 	     if args#1 === RR then
 		 variants#(f, args#0, Number,   args#2) =
-		 variants#(f, args#0, Constant, args#2) =
-		 (x,y,z) -> f'(x, (numeric_min(precision x, precision z)) y, z);
+		 (x,y,z) -> f'(x, numeric(min(precision x, precision z), y), z);
 	     if args#2 === RR then
 		 variants#(f, args#0, args#1, Number)   =
-		 variants#(f, args#0, args#1, Constant) =
-		 (x,y,z) -> f'(x, y, (numeric_min(precision x, precision y)) z);
+		 (x,y,z) -> f'(x, y, numeric(min(precision x, precision y), z));
 	     if args#0 === RR and args#1 === RR then
 		 variants#(f, Number,   Number,   args#2) =
-		 variants#(f, Number,   Constant, args#2) =
-		 variants#(f, Constant, Number,   args#2) =
-		 variants#(f, Constant, Constant, args#2) =
 		 (x,y,z) ->
 		     f'(numeric_(precision z) x, numeric_(precision z) y, z);
 	     if args#0 === RR and args#2 === RR then
 	         variants#(f, Number,   args#1, Number)   =
-		 variants#(f, Number,   args#1, Constant) =
-		 variants#(f, Constant, args#1, Number)   =
-		 variants#(f, Constant, args#1, Constant) =
 		 (x,y,z) ->
 		     f'(numeric_(precision y) x, y, numeric_(precision y) z);
 	     if args#1 === RR and args#2 === RR then
 		 variants#(f, args#0, Number,   Number)   =
-		 variants#(f, args#0, Number,   Constant) =
-		 variants#(f, args#0, Constant, Number)   =
-		 variants#(f, args#0, Constant, Constant) =
 		 (x,y,z) ->
 		     f'(x, numeric_(precision x) y, numeric_(precision x) z);
 	     if args === (RR, RR, RR) then
 		 variants#(f, Number,   Number,   Number)   =
-		 variants#(f, Number,   Number,   Constant) =
-		 variants#(f, Number,   Constant, Number)   =
-		 variants#(f, Number,   Constant, Constant) =
-		 variants#(f, Constant, Number,   Number)   =
-		 variants#(f, Constant, Number,   Constant) =
-		 variants#(f, Constant, Constant, Number)   =
-		 variants#(f, Constant, Constant, Constant) =
 		 (x,y,z) -> f'(numeric x, numeric y, numeric z);
 	     );
 	 )
      )
 
-load "tvalues.m2"
+-- tvalues.m2 is loaded here
+load typicalValuesSource
 
 scanPairs(redefs, (k,v) -> globalAssign(baseName k,v))
 scanPairs(new HashTable from variants, (args,f) -> (

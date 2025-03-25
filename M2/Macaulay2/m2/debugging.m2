@@ -42,7 +42,7 @@ on = { CallLimit => 100000, Name => null, GenerateAssertions => false } >> opts 
      fb := functionBody f;
      calldepth := 0;
      totaltime := 0.;
-     if not callCount#?fb then callCount#fb = 0;
+     callCount#fb ??= 0;
      limit := opts.CallLimit;
      if not instance(f, Function) then error("expected a function");
      fn := if opts.Name =!= null then opts.Name else try toString f else "-*function*-";
@@ -135,7 +135,7 @@ show1(Sequence,Function) := show1(List,Function) := (types,pfun) -> (
 --	  if hasAttribute(v,PrintNet) then v = getAttribute(v,PrintNet) else
 --	  if hasAttribute(v,PrintNames) then v = getAttribute(v,PrintNames) else
 --	  if hasAttribute(v,ReverseDictionary) then v = getAttribute(v,ReverseDictionary);
-	  if w#?v then w#v else w#v = new Descent
+	  w#v ??= new Descent
 	  );
      scan(types, install);
      world)
@@ -149,7 +149,6 @@ allValues = () -> unique join(flatten(values \ dictionaryPath), select(getAttrib
 	  ))
 showStructure = Command(types -> show1(if types === () then justTypes allValues() else types, parent))
 showClassStructure = Command(types -> show1(if types === () then allThingsWithNames allValues() else types, class))
-ancestors = X -> while true list (local Z; if Z === Thing then break ; Z = X; X = parent X; Z)
 -----------------------------------------------------------------------------
 
 typicalValues#frame = MutableList
@@ -205,7 +204,8 @@ clearAll = Command (() -> (
 	  ))
 
 generateAssertions = method(TypicalValue => Net)
-generateAssertions String := s -> generateAssertions select(lines s, x -> not match("^[[:space:]]*(--.*)?$",x))
+generateAssertions String := s -> generateAssertions select(
+    lines replace("-\\*(.|\n)*?\\*-", "", s), x -> not match("^[[:space:]]*(--.*)?$",x))
 generateAssertions List := y -> (
      nogens := {PolynomialRing, QuotientRing,Function};
      good := t -> (
@@ -233,16 +233,17 @@ generateAssertions List := y -> (
 	       else lin
 	       )))^-1
 
-currentPosition = () -> new FilePosition from { currentFileName, currentRowNumber(), currentColumnNumber() }
-
-FilePosition = new Type of BasicList
+-- FilePosition = new Type of BasicList -- defined in d
 FilePosition.synonym = "file position"
+toExternalString FilePosition :=
 toString FilePosition :=
 net FilePosition := p -> concatenate(
-    p#0,":",toString p#1,":",toString p#2,
+    if match(" ", p#0) then format p#0 else p#0,
+    ":",toString p#1,":",toString p#2,
     if #p>3 then ("-",toString p#3,":",toString p#4),
 --    if #p>5 then (" (",toString p#5,":",toString p#6,")")
     )
+currentPosition = () -> new FilePosition from { currentFileName, currentRowNumber(), currentColumnNumber() }
 
 locate' = locate -- defined in d/actors4.d
 locate = method(Dispatch => Thing, TypicalValue => FilePosition)
@@ -251,11 +252,12 @@ locate FunctionBody:=
 locate Function    :=
 locate Pseudocode  :=
 locate Sequence    :=
-locate Symbol      := FilePosition => x -> if (x':=locate' x) =!= null then new FilePosition from x'
+locate Symbol      := FilePosition => locate'
+locate Command     := FilePosition => C -> locate'(C#0)
 locate List        := List     => x -> apply(x, locate)
 protect symbol locate
 
-
+sortByLocation = sortBy(toString @@ locate)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

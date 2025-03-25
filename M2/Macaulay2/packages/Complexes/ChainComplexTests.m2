@@ -1062,17 +1062,19 @@ TEST ///
   kk = ZZ/101
   S = kk[a..d]
   I = ideal"a2-bc,ab-cd"
-  C = freeResolution(I, FastNonminimal=>true)
+  C = freeResolution(I, Strategy => Nonminimal)
   dd^C
   minC = minimize C
   minC.dd
+  assert isQuasiIsomorphism minC.cache.minimizingMap
 
   kk = ZZ/101  
   S = kk[a..e]
   F = random(3,S)
   I = inverseSystem F
-  C = freeResolution(I, FastNonminimal=>true)
+  C = freeResolution(I, Strategy => Nonminimal)
   minC = minimize C
+  assert isQuasiIsomorphism minC.cache.minimizingMap
   betti minC  
   minimize(C ++ C[9])
 ///
@@ -1132,33 +1134,35 @@ TEST ///
   needsPackage "Complexes"
 *-
   -- TODO: this test does not work, as the free resolutions take too long to complete.
-  -- add this test back in once Strategy => 4, or FastNonminimal => true works.
+  -- add this test back in once Strategy => Nonminimal works.
   kk = ZZ/32003
   S = kk[a..e]
   F = random(3,S)
   I = inverseSystem F
-  C = freeResolution(I, FastNonminimal=>true)
-  elapsedTime minimize C
+  C = freeResolution(I, Strategy => Nonminimal)
+  minC = minimize C
+  assert isQuasiIsomorphism minC.cache.minimizingMap
 
   S = kk[vars(0..8)]
   F = random(3,S)
   I = inverseSystem F;
-  C = freeResolution(I, FastNonminimal=>true)
-  ---- elapsedTime minimize C  -- very slow TODO: fix this
+  C = freeResolution(I, Strategy => Nonminimal)
+  -- elapsedTime minC = minimize C  -- very slow TODO: fix this
+  -- assert isQuasiIsomorphism minC.cache.minimizingMap
 
   -- good benchmark test:
   kk = ZZ/32003
   S = kk[vars(0..6)]
   F = random(3,S)
   I = inverseSystem F;
-  C = freeResolution(I, FastNonminimal=>true)
+  C = freeResolution(I, Strategy => Nonminimal)
   ---- elapsedTime minimize C  -- very slow, TODO: fix this
 -*
   needsPackage "PruneComplex"  
   needsPackage "ChainComplexExtras"
-  C' = res(I, FastNonminimal=>true)
+  C' = chainComplex freeResolution(I, Strategy => Nonminimal)
   elapsedTime pruneComplex(C', UnitTest=>isScalar) -- 17.7 sec on my MBP
-  C'' = res(ideal I_*, FastNonminimal=>true)  
+  C'' = chainComplex freeResolution(ideal I_*, Strategy => Nonminimal)  
   elapsedTime minimize C''  -- very slow, TODO: fix this
 *-  
 ///
@@ -1340,30 +1344,33 @@ TEST ///
   g1 = randomComplexMap(CJ, CI, Cycle=>true)
   g2 = randomComplexMap(CK, CJ, Cycle=>true)
   assert isWellDefined g1
-  assert isCommutative g1
+  assert isComplexMorphism g1
   assert isWellDefined g2
-  assert isCommutative g2
+  assert isComplexMorphism g2
   fCI = resolutionMap CI
   fCJ = resolutionMap CJ
   fCK = resolutionMap CK
   g = g2 * g1;
   assert isWellDefined g
-  assert isCommutative g
+  assert isComplexMorphism g
   g1' = liftMapAlongQuasiIsomorphism(g1 * fCI, fCJ);
   g2' = liftMapAlongQuasiIsomorphism(g2 * fCJ, fCK);
   assert isWellDefined g1'
-  assert isCommutative g1'
+  assert isComplexMorphism g1'
   assert isWellDefined g2'
-  assert isCommutative g2'
+  assert isComplexMorphism g2'
   g' = liftMapAlongQuasiIsomorphism(g * fCI, fCK);
+  assert isWellDefined g'
+  assert isComplexMorphism g'
   diffg' = g2' * g1' - g';
   assert isNullHomotopic diffg'
-  h = nullHomotopy diffg';
+  h = nullHomotopy diffg'
   assert isWellDefined h
-  assert isNullHomotopyOf(h, diffg')
+  assert(degree h == 1)
+  debugLevel = 1
+  assert isNullHomotopyOf(h, diffg') -- MES FAILURE #38
   diffg'_-1 -- just to see the nontrivial-ness of the differentials
 ///
-
 
 TEST ///
 -*
@@ -2002,10 +2009,12 @@ TEST ///
   restart
   needsPackage "Complexes"
 *-
-
   S = ZZ/101[a..d, Degrees=>{2:{1,0},2:{0,1}}]
   B = ideal(a,b) * ideal(c,d)
-  Ext^1(B, S)
+  E = Ext^1(B, S)
+  C = yonedaExtension map(E, , matrix random cover E)
+  assert(C_0 == module B)
+  assert(C_2 == module S)
   F = random({1,2}, S)
   f = map(S^1, S^{-degree F}, {{F}})
   assert isHomogeneous f
@@ -2209,4 +2218,168 @@ needsPackage "Complexes"
   X = complex({map(R^1,R^2,matrix{{1_R,1_R}})})
   resolution X
   resolution(minimize X)
+///
+
+TEST ///
+-*
+  restart
+  needsPackage "Complexes"
+*-
+  S = ZZ/101[x,y]
+  K2 = koszulComplex{x,y}
+
+  H = Hom(K2, K2)
+  ZH0 = ker H.dd_0
+  numgens ZH0
+
+  f = ZH0_{0}
+  assert(target super f == H_0)
+  assert(target super f === H_0) -- warning: this target is missing direct sum information.
+  g = homomorphism(0, f, H)  -- the corresponding complex morphism K2 --> K2 FAILS
+  assert isWellDefined g
+  assert(source g == K2)
+  assert(target g == K2)
+  assert(g == id_K2)
+  -- original reason for this test:
+  -- target f is H_0, except it doesn't have the stashed direct sum components...
+///
+
+TEST ///
+-*
+  restart
+  needsPackage "Complexes";
+*-
+  C = koszulComplex{1,3,5}
+  assert isWellDefined(3*id_C)
+
+  C = koszulComplex{1_QQ,3,5}
+  assert isWellDefined(3*id_C)
+  assert isWellDefined((3/2)*id_C)
+  
+  S = ZZ[]
+  C = koszulComplex{1_S,3,5}
+  assert isWellDefined(3*id_C)
+  
+  C = koszulComplex{1_RR,3,5}
+  assert isWellDefined C
+  --assert isWellDefined(3*id_C) -- FAILS: TODO: get isCommutative RR_53, etc to work
+
+  C = koszulComplex{1_(RR_100),3,5}
+  assert isWellDefined C 
+  -- assert isWellDefined(3*id_C) -- FAILS
+
+  S = ZZ/11
+  C = koszulComplex{1_S,3,5}
+  assert isWellDefined(3*id_C) 
+
+  -- here is where we first noticed this bug.
+  needsPackage "SimplicialComplexes";
+  S = ZZ[a,b,c]
+  T = ZZ[a,b,c,d,e,f]
+  use S
+  D = simplicialComplex {a*b, b*c, a*c} -- triangle
+  use T
+  E = simplicialComplex {a*b*d*e, a*b*d*f, a*b*e*f,
+      a*c*d*e, a*c*d*f, a*c*e*f,
+      b*c*d*e, b*c*d*f, b*c*e*f}
+  use T
+  alpha = map(E, D, {a,b,c})
+  beta = map(E, D, {d,e,f})
+  assert isWellDefined alpha
+  assert isWellDefined beta
+  phi = complex alpha
+  psi = complex beta
+  prune HH phi
+  prune HH psi
+  isNullHomotopic phi
+  assert isNullHomotopic (phi-psi)
+  nullHomotopy phi
+  assert isNullHomotopyOf(oo, phi) 
+///
+
+TEST ///
+-*
+  restart
+  needsPackage "Complexes";
+*-
+  S = ZZ/32003[a,b,c,x,y,z, Degrees => {3:{1,0}, 3:{0,1}}]
+  Kt = (t) -> koszulComplex{a^t, b^t, c^t}
+  Ls = (s) -> koszulComplex{x^s, y^s, z^s}
+  F = Kt 1 ** Ls 1
+  B = ideal(a,b,c) * ideal(x,y,z)
+  G = res B
+  betti G
+  prune HH F
+  prune HH G
+  -- want to construct the subcomplex of F that doesn't have any terms in degree 0.
+///
+
+TEST ///
+-*
+  restart
+  needsPackage "Complexes";
+*-
+  S = ZZ/101[a..e, Degrees=>{2:{1,0},3:{0,1}}]/(e^3)
+  h = a*c^2 + a*c*d + b*d^2;
+  I = (ideal(a,b) * ideal(c,d))^[2]
+  g = map(S^1/h, S^1, 1)
+  f = map(S^1, S^{-degree h}, {{h}})
+  assert isShortExactSequence(g,f)
+  delta = connectingExtMap(S^1/I, g, f, LengthLimit => 5)
+  assert isWellDefined delta
+  assert(degree delta == 0)            
+  assert(source delta_(-1) == Ext^1(comodule I, S^1/h))
+  assert(target delta_(-1) == Ext^2(comodule I, S^{{-1,-2}}))
+  delta_-2
+  delta_-1
+  g1 = Hom(S^1/I, g)
+
+  F = freeResolution(S^1/I, LengthLimit => 5)
+  g' = Hom(F, g)
+  f' = Hom(F, f)
+  LES = longExactSequence(g', f')
+  assert all(3, i -> dd^LES_(3*(i+1)) == delta_(i+1))
+  assert(HH LES == 0)
+
+  -- another test
+  S = ZZ/101[a..e]/(e^3);
+  I = ideal(c^3-b*d^2, b*c-a*d)
+  J = ideal(a*c^2-b^2*d, b^3-a^2*c)
+  g = map(S^1/(I+J), S^1/I ++ S^1/J, {{1,1}})
+  f = map(S^1/I ++ S^1/J, S^1/intersect(I,J), {{1},{-1}})
+  assert isShortExactSequence(g,f)
+  delta = connectingExtMap(g, f, S^1, LengthLimit => 5)
+  assert isWellDefined delta
+  assert(source delta_-2 == Ext^2(comodule intersect(I,J), S))
+  assert(target delta_-2 == Ext^3(comodule (I+J), S))
+
+  (g',f') = horseshoeResolution(g,f, LengthLimit => 5);
+  assert isShortExactSequence(g',f')
+  LES' = longExactSequence(Hom(f', S^1), Hom(g', S^1));
+  assert(HH LES' == 0)
+  assert all(-6..6, i -> dd^LES'_(3*(i+1)) == delta_i)
+  
+  F = freeResolution(S^1/I, LengthLimit => 5)
+  g' = Hom(F, g)
+  f' = Hom(F, f)
+  LES = longExactSequence(g', f')
+  assert all(3, i -> dd^LES'_(-3*(i+1)) == delta_(-i-2)) -- note that contravariance shifts the indexing...
+  assert(HH LES == 0)
+///
+
+TEST ///
+  k = ZZ/101
+  R = k[a..e]
+  I = inverseSystem random(4, R);
+  C = freeResolution(I, Strategy => Nonminimal)
+  C5 = constantStrand(C, 5)
+  assert isWellDefined C5
+  assert(ring C5 === k)
+  C7 = constantStrand(C, {7})
+  assert isWellDefined C7
+  assert(ring C7 === k)
+  C12 = constantStrand(C, 12)
+  assert isWellDefined C12
+  C9 = constantStrand(C, 9)
+  assert isWellDefined C9
 ///

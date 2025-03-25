@@ -31,7 +31,8 @@ newPackage (
   CacheExampleOutput => true,
   PackageImports => {"LexIdeals","MinimalPrimes"},
   OptionalComponentsPresent => scipPresent := run "type scip >/dev/null 2>&1" === 0,
-  DebuggingMode => false
+  DebuggingMode => false,
+  Keywords => {"Commutative Algebra"}
 )
 
 -------------
@@ -134,7 +135,7 @@ oldCodim = lookup(codim, MonomialIdeal);
 oldDegree = lookup(degree, MonomialIdeal);
 loadSCIPCodimAndDegree = method();
 installMethod(loadSCIPCodimAndDegree,() -> (
-  codim MonomialIdeal := {} >> opts -> m -> ((cacheValue symbol codim) codimensionIP) m;
+  codim MonomialIdeal := options oldCodim >> opts -> m -> ((cacheValue symbol codim) codimensionIP) m;
   degree MonomialIdeal := m -> ((cacheValue symbol degree) degreeIP) m;
 ));
 loadBuiltinCodimAndDegree = method();

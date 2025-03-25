@@ -1,10 +1,10 @@
 -- -*- coding: utf-8 -*-
 -- licensed under GPL v2 or any later version
 
-newPackage select((
+newPackage(
      "NumericalAlgebraicGeometry",
-     Version => "1.21",
-     Date => "Nov 2022",
+     Version => "1.24",
+     Date => "May 2024",
      Headline => "numerical algebraic geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
@@ -24,18 +24,19 @@ newPackage select((
      DebuggingMode => false,
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
-	  "journal URI" => "http://j-sag.org/",
+	  "journal URI" => "https://msp.org/jsag/",
 	  "article title" => "Numerical Algebraic Geometry",
 	  "acceptance date" => "2011-05-20",
-	  "published article URI" => "http://j-sag.org/Volume3/jsag-2-2011.pdf",
-	  "published code URI" => "http://j-sag.org/Volume3/NumericalAlgebraicGeometry.tar",
+	  "published article URI" => "https://msp.org/jsag/2011/3-1/p02.xhtml",
+	  "published article DOI" => "10.2140/jsag.2011.3.5",
+	  "published code URI" => "https://msp.org/jsag/2011/3-1/jsag-v3-n1-x02-code.zip",
 	  "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/NumericalAlgebraicGeometry.m2",
 	  "release at publication" => "c3a7ec33ee30195c2a8a15eef3456b2f27d73bf3",
 	  "version at publication" => "1.4",
 	  "volume number" => "3",
-	  "volume URI" => "http://j-sag.org/Volume3/"
+	  "volume URI" => "https://msp.org/jsag/2011/3-1/"
 	  }
-     ), x -> x =!= null)
+    )
 
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
@@ -388,27 +389,8 @@ randomOrthonormalCols = method() -- return a random m-by-n matrix with orthonorm
 randomOrthonormalCols(ZZ,ZZ) := (m,n) -> 
 if m<n or n<1 then error "wrong input" else (randomUnitaryMatrix m)_(toList(0..n-1))
 
-squareUp = method() -- squares up a polynomial system (presented as a one-column matrix)
-squareUp PolySystem := P -> if P.?SquaredUpSystem then P.SquaredUpSystem else squareUp(P, P.NumberOfVariables)
-squareUp (PolySystem,ZZ) := (P,n) -> (
-    m := P.NumberOfPolys;
-    if m<=n then "overdetermined system expected";
-    C := coefficientRing ring P;
-    M := if class C === ComplexField then sub(randomOrthonormalRows(n,m), C) else random(C^n,C^m);
-    squareUp(P,M)
-    )
-squareUp(PolySystem,Matrix) := (P,M) -> (
-    P.SquareUpMatrix = M;
-    P.SquaredUpSystem = polySystem (sub(M,ring P)*P.PolyMap) -- should work without sub!!!
-    )
 
-squareUpMatrix = method()
-squareUpMatrix PolySystem := P -> if P.?SquareUpMatrix then P.SquareUpMatrix else (
-    n := P.NumberOfVariables;
-    C := coefficientRing ring P;
-    map(C^n)
-    ) 
-
+load "./NumericalAlgebraicGeometry/systems.m2"
 load "./NumericalAlgebraicGeometry/BSS-certified.m2"
 load "./NumericalAlgebraicGeometry/0-dim-methods.m2"
 load "./NumericalAlgebraicGeometry/witness-set.m2"
@@ -578,6 +560,7 @@ installPackage("Style")
 installPackage("NumericalAlgebraicGeometry")
 
 installPackage ("NumericalAlgebraicGeometry", MakeDocumentation=>false)
+restart
 check "NumericalAlgebraicGeometry"
 
 -- Local Variables:

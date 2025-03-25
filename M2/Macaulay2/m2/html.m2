@@ -38,7 +38,6 @@ KaTeX := () -> (
       });
     </script>
     <style>.katex { font-size: 1em; }</style>
-    <link href="%PATH%/contrib/copy-tex.min.css" rel="stylesheet" type="text/css">
     <script defer="defer" src="%PATH%/contrib/copy-tex.min.js"></script>
     <script defer="defer" src="%PATH%/contrib/render-a11y-string.min.js"></script>///;
     LITERAL replace("%PATH%", katexPath, katexTemplate | newline))
@@ -55,6 +54,8 @@ defaultCharset := () -> META { "http-equiv" => "Content-Type", "content" => "tex
 
 defaultHEAD = title -> HEAD splice { TITLE title, defaultCharset(), defaultStylesheet(), KaTeX(),
     SCRIPT {"src" => getStyleFile "prism.js", ""},
+    SCRIPT {"var current_version = '", version#"VERSION", "';"},
+    SCRIPT {"src" => getStyleFile "version-select.js"},
     LINK {
 	"rel" => "icon", "type" => "image/x-icon",
 	"href" => getStyleFile "icon.gif"}}
@@ -93,12 +94,20 @@ html Hypertext := x -> (
     attr := "";
     cont := if T.?Options then (
 	(op, ct) := override(options T, toSequence x);
-	scanPairs(op, (key, val) -> if val =!= null then attr = " " | key | "=" | format val | attr);
+	scanPairs(op, (key, val) -> (
+		if val =!= null
+		then attr = " " | key | "=" | format toString val | attr));
 	sequence ct) else x;
     pushIndentLevel 1;
     (head, prefix, suffix, tail) := (
-	if instance(x, HypertextContainer) then (concatenate(indentLevel:"  "), newline, concatenate(indentLevel:"  "), newline) else
+	if instance(x, HypertextVoid) and class x =!= BR
+	or instance(x, HypertextContainer) then (concatenate(indentLevel:"  "), newline, concatenate(indentLevel:"  "), newline) else
 	if instance(x, HypertextParagraph) then (concatenate(indentLevel:"  "), "", "", newline) else ("","","",""));
+    -- LI should look like a paragraph if it doesn't have any containers
+    if instance(x, LI) then (
+	if not any(x, e -> instance(e, HypertextContainer)) then prefix = suffix = "" else (
+	    if not instance(first x, HypertextContainer) then prefix = "";
+	    if not instance(last  x, HypertextContainer) then suffix = ""));
     popIndentLevel(1, if instance(x, HypertextVoid)
 	then concatenate(head, "<", qname, attr, ">", tail)
 	else concatenate(head, "<", qname, attr, ">", prefix,
@@ -169,8 +178,6 @@ html TO2  := x -> (
 -- html'ing non Hypertext
 ----------------------------------------------------------------------------
 
-html Nothing := x -> "null"
-
 html Monoid :=
 html RingFamily :=
 html Ring :=
@@ -185,7 +192,7 @@ show Hypertext := x -> (
     fn := temporaryFileName() | ".html";
     addEndFunction( () -> if fileExists fn then removeFile fn );
     fn << html HTML { defaultHEAD "Macaulay2 Output", BODY {x}} << endl << close;
-    show new URL from replace(" ", "%20", rootURI | realpath fn)) -- TODO: urlEncode might need to replace more characters
+    show URL urlEncode(rootURI | realpath fn))
 show URL := url -> (
     cmd := { getViewer("WWWBROWSER", "firefox"), url#0 }; -- TODO: silence browser messages, perhaps with "> /dev/null"
     if fork() == 0 then (

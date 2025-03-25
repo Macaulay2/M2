@@ -9,6 +9,7 @@ cmake:
 	cd builds.tmp/$@; cmake \
 		-GNinja \
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DCMAKE_PREFIX_PATH="`brew --prefix libomp`" \
 		-DBUILD_TESTING=on \
 		-DBUILD_DOCS=on \
 		../../../..

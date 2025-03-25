@@ -3,17 +3,17 @@
 #ifndef _dmat_qq_flint_hpp_
 #define _dmat_qq_flint_hpp_
 
+#include <assert.h>            // for assert
+#include <utility>             // for swap
+#include "aring-qq-flint.hpp"  // for ARingQQFlint
+
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-#include <flint/arith.h>
-#include <flint/nmod_mat.h>
-#include <flint/fmpq_mat.h>
+#include <flint/fmpq_mat.h>  // for fmpq_mat_t, fmpq_mat_entry, fmpq_mat_init, fmpq_ma...
 #pragma GCC diagnostic pop
-
-#include "aring-qq-flint.hpp"
 
 template <typename ACoeffRing>
 class DMat;

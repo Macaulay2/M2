@@ -1,9 +1,9 @@
 VPATH = @srcdir@
 LDFLAGS = -L$(BUILTLIBPATH)/lib
 CPPFLAGS = -I$(BUILTLIBPATH)/include
-SYSTEM_MEMTAILOR = $(if $(filter memtailor, @BUILDSUBLIST@),no,yes)
-SYSTEM_MATHIC    = $(if $(filter mathic   , @BUILDSUBLIST@),no,yes)
-SYSTEM_MATHICGB  = $(if $(filter mathicgb , @BUILDSUBLIST@),no,yes)
+SYSTEM_MEMTAILOR = $(if $(filter memtailor, @BUILDLIBLIST@),no,yes)
+SYSTEM_MATHIC    = $(if $(filter mathic   , @BUILDLIBLIST@),no,yes)
+SYSTEM_MATHICGB  = $(if $(filter mathicgb , @BUILDLIBLIST@),no,yes)
 include ../include/config.Makefile
 check: clean-and-config
 clean:; rm -rf tmp
@@ -18,7 +18,8 @@ check-config:
 	    @abs_top_srcdir@/configure						\
 	    PKG_CONFIG_PATH=$(BUILTLIBPATH)/lib/pkgconfig:$(PKG_CONFIG_PATH)	\
 	    GFTABLESDIR=@PRE_GFTABLESDIR@					\
-	    LDFLAGS="@BUILTLIBS@ $(LDFLAGS)"					\
+	    LDFLAGS="$(LDFLAGS)"						\
+	    LIBS="@BUILTLIBS@"							\
 	    --with-gtest-source-path="@GTEST_PATH@"				\
 	    CPPFLAGS="$(CPPFLAGS)"						\
 	    CC="$(CC)"								\

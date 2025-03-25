@@ -357,7 +357,7 @@ void NCF4::autoreduceByLastElement()
 {
   if (mGroebner.size() <= 1) return;
   const Poly& lastPoly = *(mGroebner[mGroebner.size()-1]);
-  const Monom& leadMon = lastPoly.cbegin().monom();
+  Monom leadMon = lastPoly.cbegin().monom();
   for (auto fPtr = mGroebner.begin(); fPtr != mGroebner.end() - 1; ++fPtr)
   {
     ring_elem foundCoeff = getCoeffOfMonom(**fPtr,leadMon);

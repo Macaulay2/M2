@@ -13,14 +13,17 @@
 #include "freemod.hpp"
 #include "interface/NAG.h"
 #include "interface/gmp-util.h"
+#include "interface/monoid.h"
 #include "mat.hpp"
 #include "matrix-con.hpp"
 #include "matrix.hpp"
-#include "monoid.hpp"
 #include "mutablemat-defs.hpp"
 #include "relem.hpp"
 #include "ring.hpp"
 #include "ringelem.hpp"
+#include "BasicPolyList.hpp"
+#include "BasicPolyListParser.hpp"
+//#include "matrix-io.hpp"
 
 namespace M2 { class ARingCC; }
 
@@ -28,9 +31,10 @@ const FreeModule *IM2_Matrix_get_target(const Matrix *M) { return M->rows(); }
 const FreeModule *IM2_Matrix_get_source(const Matrix *M) { return M->cols(); }
 int IM2_Matrix_n_rows(const Matrix *M) { return M->n_rows(); }
 int IM2_Matrix_n_cols(const Matrix *M) { return M->n_cols(); }
+
 M2_arrayint IM2_Matrix_get_degree(const Matrix *M)
 {
-  return M->degree_monoid()->to_arrayint(M->degree_shift());
+  return to_degree_vector(M->get_ring()->degree_monoid(), M->degree_shift());
 }
 
 M2_string IM2_Matrix_to_string(const Matrix *M)
@@ -207,6 +211,34 @@ const Matrix /* or null */ *IM2_Matrix_random(
   return Matrix::random(R, r, c, fraction_non_zero, special_type);
 }
 
+const Matrix* /* or null */ rawMatrixReadMsolveString(const Ring* R, M2_string contents)
+{
+  try
+    {
+      std::string str = string_M2_to_std(contents);// TODO: this does a full copy.  Perhaps we just have readMsolveIdealContents take a string_view?
+      auto Fs = parseMsolveFromString(str);
+      return toMatrix(R->make_FreeModule(1), Fs);
+    } catch (const exc::engine_error& e)
+    {
+      ERROR(e.what());
+      return nullptr;
+    }
+}
+
+const Matrix* /* or null */ rawMatrixReadMsolveFile(const Ring* R, M2_string filename)
+{
+  try
+    {
+      std::string str = string_M2_to_std(filename);
+      auto Fs = parseMsolveFile(str);
+      return toMatrix(R->make_FreeModule(1), Fs);
+    } catch (const exc::engine_error& e)
+    {
+      ERROR(e.what());
+      return nullptr;
+    }
+}
+
 /////////////////////////////////////////////////////////////////////
 M2_bool IM2_Matrix_is_zero(const Matrix *M) { return M->is_zero(); }
 int  // 1 = true, 0 = false, -1 = error
@@ -244,7 +276,7 @@ const Matrix /* or null */ *IM2_Matrix_concat(const engine_RawMatrixArray Ms)
       for (unsigned int i = 0; i < n; i++)
         {
           const Matrix *M = Ms->array[i];
-          if (F->get_ring() != M->get_ring())
+          if (R != M->get_ring())
             {
               ERROR("matrix concat: different base rings");
               return nullptr;
@@ -539,7 +571,7 @@ const Matrix /* or null */ *IM2_Matrix_homogenize(const Matrix *M,
                                                   int var,
                                                   M2_arrayint wts)
 {
-  return M->homogenize(var, wts);
+  return M->homogenize(var, M2_arrayint_to_stdvector<int>(wts));
 }
 
 const Matrix /* or null */ *rawCoefficients(M2_arrayint vars,

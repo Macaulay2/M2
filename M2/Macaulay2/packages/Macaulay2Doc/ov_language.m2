@@ -30,6 +30,7 @@ document {
 
      Subnodes => {
 	      TO "variables",
+	      TO "comments",
 	  "basic data types",
 	      TO "numeric types",
 	      TO "strings and nets",
@@ -37,12 +38,10 @@ document {
 	      TO "hash tables",
      	  "expressions",
 	      TO "operators",
+	      TO "parsing precedence, in detail",
 	      TO "conditional execution",
-	      TO "while",
-	      TO "for",
-	      TO "mapping over hash tables",
+	      TO "control flow statements",
 	      TO "error handling",
-	      TO "catch",
 	  "functions",
 	      TO "using functions",
 	      TO "using functions with optional inputs",
@@ -51,28 +50,18 @@ document {
 	      TO "making functions with a variable number of arguments",
 	      TO "making functions with multiple return values",
 	      TO "making new functions with optional arguments",
+	      TO "caching computation results",
 	      TO "using hooks",
-	      TO "code",
+	      --TO "code",
 	  "classes and types",
 	      TO "what a class is",
 	      TO "installing methods",
-	      TO "binary methods",
 	      TO "inheritance",
 	      TO "making new classes",
-	      TO "new",
-	      TO "printing and formatting for new classes",
 	      TO "making a new method function",
-	      TO "methods",
-	  "input and output",
-	      TO "printing to the screen",
-	      TO "reading files",
-	      TO "getting input from the user",
-	      TO "creating and writing files",
-	      TO "saving polynomials and matrices in files",
-	      TO "two dimensional formatting",
-	      TO "file manipulation",
-	      TO "communicating with programs",
-	      TO "using sockets",
+	      --TO "methods",
+	  "debugging Macaulay2 programs",
+	      TO "debugging",
      	  "packages",
 	      TO "packages",
 	      TO "creating a package",
@@ -81,30 +70,13 @@ document {
 	      TO "parallel programming with threads and tasks",
      	  "system facilities",
 	      TO "system facilities",
-	  "debugging",
-	      TO "debugging",
+	  "developer's corner",
+	      TO "Core",
+	      TO "the engine of Macaulay2",
+	      TO "the interpreter of Macaulay2",
 	  }
      }
 ------------------------------------------------------------------
-document {
-     Key => "saving polynomials and matrices in files",
-     "Use the function ", TO "toString", " to convert polynomials, matrices, and other mathematical
-     objects to a linear format that can be saved in a file.",
-     EXAMPLE lines ///
-          R = QQ[x..z]
-	  p = (x-y-1)^3
-	  m = matrix {{x^2, x^2-y^2, x*y*z^7 }}
-	  M = image m
-	  f = temporaryFileName()
-	  f << toString (p,m,M) << close
-	  get f
-	  (p',m',M') = value get f
-	  p == p'
-	  m == m'
-	  M == M'
-	  removeFile f
-     ///
-     }
 document {
      Key => "variables",
      "Valid names for symbols may be constructed using letters, digits, and
@@ -149,6 +121,7 @@ document {
 	  TO "viewing the symbols defined so far",
 	  TO "subscripted variables",
 	  TO "numbered variables",
+	  TO "augmented assignment"
 	  }
      }
 document {
@@ -554,7 +527,23 @@ document {
 	  "f(3,7)",
 	  "f(5,11,a=>10^20)",
 	  },
+     Subnodes => {
+         TO "symbols used as the name or value of an optional argument",
+         },
      }
+
+document {
+    Key => "control flow statements",
+    Subnodes => {
+	TO "for",
+	TO "while",
+	TO "list",
+	TO "do",
+	TO "break",
+	TO "continue",
+	TO "return",
+    }
+}
 
 document {
      Key => "conditional execution",
@@ -584,39 +573,20 @@ document {
      "There are a variety of predicate functions (such as ", TT "<", ", used above)
      that yield ", TT "true", " or ", TT "false", " and can be used as the predicate 
      in an ", TT "if", " expression.  For a list, see ", TO "Boolean", ".  Boolean
-     results may be combined with ", TO "not", ", ", TO "and", ", and ", TO "or", "."
+     results may be combined with ", TO "not", ", ", TO "and", ", and ", TO "or", ".",
+     Subnodes => TO "if"
      }
 document {
-     Key => "then",
-     Headline => "condition testing",
-     TT "then", " a keyword used with ", TO "if", ".",
-	EXAMPLE {
-		"if 5 > 4 then 8 else 7"
-		},
-	SeeAlso => {"if", "else"}
-     }
-
-document {
-     Key => "else",
-     Headline => "condition testing",
-     TT "else", " a keyword used with ", TO "if", ".",
-	EXAMPLE {
-		"if 4 > 5 then 8 else 7"
-		},
-	SeeAlso => {"if", "then"}
-     }
-document { Key => "catch",
-     Headline => "catch a thrown exception", SeeAlso => {"throw"},
-     Usage => "catch c",
-     Outputs => {{"the value obtained by evaluating the code ", TT "c", ", or, if a ", TO "throw", " was executed during the evaluation of ", TT "c", ",
-	       the argument given to ", TO "throw", "."}},
-     EXAMPLE lines ///
-          catch scan(0..10, i -> if i == 5 then throw 18 else print i)
-     ///}
-document { Key => "throw",
-     Headline => "throw an exception", SeeAlso => {"catch"},
-     Usage => "throw x", 
-     Consequences => {{"the flow of control is passed to the surrounding ", TO "catch", ", and ", TT "x", " is returned as its value"}},
+    Key => {"throw", "catch"},
+    Headline => "throw and catch exceptions",
+    Usage => "catch c\nthrow x",
+    Outputs => {{
+	    TT "catch", " returns the value obtained by evaluating the code ", TT "c",
+	    ", or, if a ", TT "throw", " was executed during the evaluation of ", TT "c",
+	    ", the argument given to ", TT "throw", "."}},
+    Consequences => {{
+	    TT "throw", " passes the flow of control to the surrounding ", TT "catch",
+	    ", and ", TT "x", " is returned as its value"}},
      EXAMPLE lines ///
           catch scan(0..10, i -> if i == 5 then throw 18 else print i)
      ///}
@@ -643,7 +613,7 @@ document { Key => "continue",
 	  error to recur."
 	  },
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo1.m2"
+     load "Macaulay2Doc/demos/demo1.m2"
      code g
      g 2
      code f
@@ -652,12 +622,8 @@ document { Key => "continue",
      continue
      ///
      }
-document { Key => "when",
-     Headline => "a keyword",
-     "A keyword used in ", TO "for", " loops."
-     }
 document {
-     Key => "if",
+     Key => {"if", "then", "else"},
      Headline => "condition testing",
      TT "if p then x else y", " computes ", TT "p", ", which must yield the value ", TO "true", " 
      or ", TO "false", ".  If true, then the value of ", TT "x", " is provided,
@@ -694,7 +660,7 @@ document {
 	  "Here is an example of the use of ", TO "return", " as a debugger command."
 	  },
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo1.m2"
+     load "Macaulay2Doc/demos/demo1.m2"
      code g
      g 2
      code f
@@ -711,21 +677,29 @@ document {
      }
 
 document {
-     Key => "from",
-     Headline => "loop control",
-     TT "from", " a keyword used with ", TO "for", " and ", TO "new", "."
-     }
-
-document {
-     Key => "to",
-     Headline => "loop control",
-     TT "to", " a keyword used with ", TO "for", "."
-     }
-
-document {
      Key => "do",
      Headline => "loop control",
      TT "do", " a keyword used with ", TO "while", ", and ", TO "for", "."
+     }
+
+document {
+     Key => "error handling",
+     Headline => "signalling and trapping errors",
+     "When an error occurs in your program, an error message will appear that
+     gives the name of the file, the line number, and the column number of
+     the code that provoked the error.",
+     PARA{},
+     "You may use the function ", TO "error", " in your programs to signal
+     errors.  Your error message will appear on the screen and execution
+     will be stopped.",
+     PARA{},
+     "The function ", TO "try", " can be used to catch an error before
+     execution is stopped and to continue or to try something else.",
+     Subnodes => {
+	  TO "error",
+	  TO "try",
+	  TO "throw",
+	  }
      }
 
 document {
@@ -743,6 +717,10 @@ document {
      "The return value is the value returned by ", TT "y", " or ", TT "z", ", as the case may be.",
      PARA{},
      "The clause '", TT "then y", "' may be omitted, in which case the return value is the value returned by ", TT "x", ", if there is no error or alarm.",
+     PARA{},
+     "The clause '", TT "else z", "' may be omitted,
+     in which case the return value is the value returned by ", TT "y", ",
+     unless an error or alarm occurs, in which case ", TO "null", " is returned.",
      PARA{},
      "The clauses '", TT "then y else z", "' may both be omitted, in which case the return value is the value returned by ", TT "x", ", unless an error or
      alarm occurs, in which case ", TO "null", " is returned.",
@@ -782,7 +760,7 @@ document {
 	  "Here is an example as a debugger command."
 	  },
      EXAMPLE lines ///
-     load "Macaulay2Doc/demo1.m2"
+     load "Macaulay2Doc/demos/demo1.m2"
      g 2
      x
      break
@@ -837,12 +815,7 @@ document {
      ///,
      }
 
-document { Key => "in",
-     Headline => "a keyword used in for-loops",
-     SeeAlso => {"for"}
-     }
-
-document { Key => "for",
+document { Key => {"for", "in", "from", "to", "when"},
      Headline => "for loops",
      SYNOPSIS (
      	  Usage => "for i from m to n when p list x do z", 
@@ -961,86 +934,66 @@ document {
      }
 
 document {
-     Key => "hash tables",
-     "A hash table is a data structure that can implement a function
-     whose domain is a finite set.  An element of the domain is called
-     a key.  The hash table stores the key-value pairs in such a way
-     that when presented with a key, the corresponding value can be
-     quickly recovered.",
-     PARA{},
-     "A dictionary could be implemented as a hash table: the keys would
-     be the words in the language, and the values could be the definitions
-     of the words.",
-     PARA{},
-     "A phone book could also be implemented as a hash table: the keys would
-     be the names of the subscribers, and the values could be the corresponding
-     phone numbers.  (We exclude the possibility of two subscribers with
-     the same name.)",
-     PARA{},
-     "As an example we implement a phone book.",
-     EXAMPLE {
-	  ///book = new HashTable from {
-     "Joe" => "344-5567",
-     "Sarah" => "567-4223",
-     "John" => "322-1456"}///,
-     	  },
-     "We use the operator ", TO "#", " to obtain values from the phone book.",
-     EXAMPLE ///book#"Sarah"///,
-     "The operator ", TO "#?", " can be used to tell us whether a given key
-     has an entry in the hash table.",
-     EXAMPLE ///book#?"Mary"///,
-     "We have implemented the notion of set via hash tables in which every value
-     is the number 1.",
-     EXAMPLE {
-	  "x = set {a,b,c,r,t}",
-	  "peek x",
-	  "x#?a",
-	  "x#?4",
-	  },
-     "There is a type of hash table that is mutable, i.e., a hash table
-     whose entries can be changed.  They are changed with assignment 
-     statements of the form ", TT "x#key=value", ".",
-     EXAMPLE {
-	  ///x = new MutableHashTable;///,
-	  ///x#"Joe" = "344-5567";///,
-	  ///x#3 = {a,b,c};///,
-	  ///x#{1,2} = 44;///,
-	  ///x#3///,
-	  ///x#?4///,
-	  },
-     "When a mutable hash table is printed, its contents are not displayed.  
-     This prevents infinite loops in printing routines.",
-     EXAMPLE "x",
-     "Use ", TO "peek", " to see the contents of a mutable hash table.",
-     EXAMPLE "peek x",
-     "A variant of ", TO "#", " is ", TO ".", ".  It takes only global symbols
-     as keys, and ignores their values.",
-     EXAMPLE {
-	  "p=4;",
-	  "x.p = 444;",
-	  "x.p",
-	  "x#?4"
-	  },
-     Subnodes => {
-	  "functions for manipulating hash tables",
-	  TO "copy",
-	  TO "hashTable",
-	  TO "keys",
-	  TO "values",
-	  TO "pairs",
-	  TO "mutable",
-	  TO "remove",
-	  TO "applyKeys",
-	  TO "applyValues",
-	  TO "applyPairs",
-	  TO "merge",
-	  TO "combine",
-	  "more information",
-	  TO "hashing",
-	  TO "HashTable",
-	  TO "MutableHashTable"
-	  }
-     }
+    Key => Symbol,
+    Headline => "the class of all symbols",
+    "Symbols are entered as an alphabetic character followed by a
+    sequence of alphanumeric characters; case is significant.
+    The single symbol character ' is regarded as alphabetic, so that
+    symbols such as ", TT "x'", " may be used.",
+    PARA{},
+    "Symbols are used as names for values to be preserved, as indeterminates
+    in polynomial rings, and as keys in hash tables.  They may have
+    global scope, meaning they are visible from every line of code,
+    or local scope, with visibility restricted to a single file or
+    function body.",
+    EXAMPLE {
+	"x",
+	"ab12"
+    },
+    SeeAlso => {
+	":=",
+	"<-",
+	"threadLocal",
+    },
+    Subnodes => {
+	TO Keyword,
+	TO SymbolBody,
+	TO "symbol",
+	TO "global",
+	TO "local",
+	TO getSymbol,
+	TO getGlobalSymbol,
+	TO isGlobalSymbol,
+	TO erase,
+	TO protect,
+	TO (value, Symbol),
+	TO (findSynonyms, Symbol),
+	TO "globalAssign",
+	TO "globalAssignFunction",
+	TO "GlobalAssignHook",
+	TO "globalAssignment",
+	TO "globalAssignmentHooks",
+	TO "globalReleaseFunction",
+	TO "GlobalReleaseHook",
+	TO ((symbol _, symbol =), Symbol, Thing),
+	TO (symbol .., Symbol, Symbol),
+	TO (symbol ..<, Symbol, Symbol),
+	-- TO (symbol _, Symbol, Ring),
+	TO (symbol _, Symbol, Thing),
+    },
+}
+
+document {
+    Key => Keyword,
+    Headline => "the class of all keywords",
+    PARA {
+	"Keywords are symbols that are treated specially by the system while parsing user input.  Some of them,
+	such as ", TO "and", ", consist of alphanumeric characters and look just like
+	ordinary symbols.  Others, such as ", TO "==>", ", consist of special characters
+	and are called operators."
+    },
+    SeeAlso => {"precedence of operators"}
+}
 
 binaryOperators := core "binaryOperators"
 prefixOperators := core "prefixOperators"
@@ -1048,6 +1001,7 @@ postfixOperators := core "postfixOperators"
 flexibleBinaryOperators := core "flexibleBinaryOperators"
 flexiblePrefixOperators := core "flexiblePrefixOperators"
 flexiblePostfixOperators := core "flexiblePostfixOperators"
+augmentedAssignmentOperators := core "augmentedAssignmentOperators"
 allOperators := core "allOperators"
 getParsing := core "getParsing"
 
@@ -1066,13 +1020,14 @@ document {
      PARA {
 	  "Of those, the ones for which users may install new methods are ",
 	  "the binary operators ",
-	  between_" " apply(sort toList flexibleBinaryOperators, s -> TO {s}),
+	  between_" " apply(sort toList join(flexibleBinaryOperators,
+		  augmentedAssignmentOperators), s -> TO {s}),
 	  " , the unary prefix operators ",
 	  between_" " apply(sort toList flexiblePrefixOperators, s -> TO {s}),
 	  " , and the unary postfix operators ",
 	  between_" " apply(sort toList flexiblePostfixOperators, s -> TO {s}),
 	  " ."},
-     Subnodes => {
+     Subnodes => splice {
      "assignment",
 	  TO symbol = ,
 	  TO symbol := ,
@@ -1091,6 +1046,7 @@ document {
      "predicates",
 	  TO symbol and ,
 	  TO symbol or ,
+	  TO symbol xor ,
 	  TO symbol not ,
      "functions",
           TO symbol SPACE,
@@ -1129,16 +1085,36 @@ document {
           TO symbol || ,
           TO symbol @ ,
           TO symbol ^^ ,
+          TO symbol ?? ,
           TO symbol |- ,
           TO symbol <==> ,
           TO symbol ===> ,
           TO symbol ==> ,
           TO symbol <=== ,
           TO symbol <== ,
+          TO symbol ^<,
+          TO symbol ^<=,
+          TO symbol ^>,
+          TO symbol ^>=,
+          TO symbol _<,
+          TO symbol _<=,
+          TO symbol _>,
+          TO symbol _>=,
+          TO symbol _~,
+     "operators used for functors",
+          TO symbol ^~,
+          TO symbol ^!,
+          TO symbol ^*,
+          TO symbol _!,
+          TO symbol _*,
+          TO symbol |_,
      "built in operators" ,
 	  TO symbol => ,
           TO symbol , ,
           TO symbol ;,
+     "augmented assignment",
+	 toSequence apply(sort toList augmentedAssignmentOperators,
+	     op -> TO op),
      "further information",
           TO "precedence of operators",
 	  TO "operatorAttributes"
@@ -1237,7 +1213,8 @@ document {
 	  f f [1,2,3]
 	  f f ([1,2,3])
 	  f (f [1,2,3])
-     ///
+     ///,
+     Subnodes => TO seeParsing
      }
 
 -- Local Variables:

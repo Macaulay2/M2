@@ -255,7 +255,8 @@ Matrix *ChineseRemainder::CRA(const Matrix *f,
                               mpz_srcptr vn,
                               mpz_srcptr mn)
 {
-  if (f->get_ring() != g->get_ring())
+  auto R = f->get_ring();
+  if (R != g->get_ring())
     {
       ERROR("matrices have different base rings");
       return nullptr;
@@ -267,8 +268,8 @@ Matrix *ChineseRemainder::CRA(const Matrix *f,
       return nullptr;
     }
 
-  const PolyRing *R = f->get_ring()->cast_to_PolyRing();
-  if (R == nullptr)
+  const PolyRing *S = R->cast_to_PolyRing();
+  if (S == nullptr)
     {
       ERROR("expected polynomial ring over ZZ");
       return nullptr;
@@ -278,19 +279,19 @@ Matrix *ChineseRemainder::CRA(const Matrix *f,
   const FreeModule *G = f->cols();
   const int *deg;
 
-  if (!f->rows()->is_equal(g->rows())) F = R->make_FreeModule(f->n_rows());
+  if (!f->rows()->is_equal(g->rows())) F = S->make_FreeModule(f->n_rows());
 
-  if (!f->cols()->is_equal(g->cols())) G = R->make_FreeModule(f->n_cols());
+  if (!f->cols()->is_equal(g->cols())) G = S->make_FreeModule(f->n_cols());
 
-  if (EQ == f->degree_monoid()->compare(f->degree_shift(), g->degree_shift()))
+  if (EQ == R->degree_monoid()->compare(f->degree_shift(), g->degree_shift()))
     deg = f->degree_shift();
   else
-    deg = f->degree_monoid()->make_one();
+    deg = R->degree_monoid()->make_one();
 
   MatrixConstructor mat(F, G, deg);
   for (int i = 0; i < f->n_cols(); i++)
     {
-      vec u = CRA(R, f->elem(i), g->elem(i), um, vn, mn);
+      vec u = CRA(S, f->elem(i), g->elem(i), um, vn, mn);
       mat.set_column(i, u);
     }
   return mat.to_matrix();

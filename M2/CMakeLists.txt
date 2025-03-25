@@ -14,11 +14,12 @@
 ##  6. cmake --install BUILD/cmake
 ###############################################################################
 
-## Requires CMake version 3.15 and is tested with 3.19
-cmake_minimum_required(VERSION 3.15...3.19)
-cmake_policy(VERSION 3.14)
+## Requires CMake version 3.24 and is tested with 3.30
+cmake_minimum_required(VERSION 3.24...3.30)
+cmake_policy(VERSION 3.24)
+cmake_policy(SET CMP0096 NEW) # preserve leading zeros in version number
 
-## Use the C++17 standard
+## Use the C++20 standard
 set(CMAKE_CXX_STANDARD 17)
 ## Use the C11 (C0X) standard
 set(CMAKE_C_STANDARD 11)
@@ -57,7 +58,7 @@ file(STRINGS VERSION VERSION)
 project(Macaulay2
   VERSION	${VERSION}
   DESCRIPTION	"A software system for algebraic geometry research"
-  HOMEPAGE_URL	http://macaulay2.com # contact: Macaulay2@math.uiuc.edu
+  HOMEPAGE_URL	https://macaulay2.com # contact: macaulay2@googlegroups.com
   LANGUAGES	C CXX)
 
 ###############################################################################

@@ -340,7 +340,7 @@ TEST /// -- test of truncationPolyhedron with Nef option
   N = nefGenerators dP6
 
   A = effGenerators S -- generates the effective cone
-  P = truncationPolyhedron(A, {0,0,0,0}, Nef => nefCone dP6)
+  P = truncationPolyhedron(A, {0,0,0,0}, Cone => nefCone dP6)
   Q = truncationPolyhedron(A, {0,0,0,0})
   assert(#hilbertBasis cone P == 13)
   assert(#hilbertBasis cone Q == 10)
@@ -358,6 +358,25 @@ TEST /// -- test of truncationPolyhedron with Nef option
   assert(HH_0 D == M1 and HH_1 D == 0 and HH_2 D == 0) -- good, fixed in v1.0
 ///
 
+TEST /// -- test of inducedTruncationMap
+  debug needsPackage "Truncations"
+  S = QQ[x,y,z]
+  gbTrace = 2
+  M = image map(S^3, , {{x}, {y}, {z}})
+  f = inducedMap(S^3, M)
+  (tar, src) = (truncate(2, S^3), truncate(2, M))
+  g = inducedTruncationMap(tar, src, f)
+  assert isWellDefined g
+  assert(g   === truncate(2, f))
+  assert(tar === target g)
+  assert(src === source g)
+///
+
+TEST /// -- test of subtruncate
+  M = module(QQ[x,y])
+  assert(truncate(1, 2, id_M) == map(truncate(1, M), truncate(2, M), {{y, 0, 0}, {0, y, x}}))
+///
+
 end--
 
 restart
@@ -369,18 +388,18 @@ needsPackage "Truncations"
 S = ZZ/32003[x_0,x_1,y_0,y_1,z_0..z_2, Degrees => {2:{1,0,0},2:{0,1,0},3:{0,0,1}}]
 
 n = 11 -- 78 twists
-elapsedTime truncate(compositions(3, n), S, MinimalGenerators => false); -- 10s -> 7.3s
+elapsedTime truncate(compositions(3, n), S, MinimalGenerators => false); -- 10s -> 7.3s -> 4.6s
 elapsedTime truncate(compositions(3, n), S, MinimalGenerators => false); -- 2.8s -> 0.2s, GOOD
 elapsedTime truncate(compositions(3, n), S); -- (28.8 ->) 7.8s -> 5.6s -> 0.19s GOOD
 elapsedTime truncate(compositions(3, n), S); -- (16.8 ->) 7.7s -> 5.4s -> 0.18s GOOD
 elapsedTime truncate(compositions(3, n), S^3, MinimalGenerators => false); -- 8.5s -> 0.6s, GOOD
 elapsedTime truncate(compositions(3, n), S^3, MinimalGenerators => false); -- 6.6s -> 0.5s GOOD
 
-elapsedTime truncate(compositions(3, n), S^3); -- (67s ->) 61s -> 72s -> 7.3s
+elapsedTime truncate(compositions(3, n), S^3); -- (67s ->) 61s -> 72s -> 7.3s -> 0.5s
 elapsedTime truncate(compositions(3, n), S^3); -- (54s ->) 60s -> 60s -> 0.4s GOOD
 
 n = 15 -- 136 twists
-elapsedTime truncate(compositions(3, n), S, MinimalGenerators => false); -- 31s -> 23.8s
+elapsedTime truncate(compositions(3, n), S, MinimalGenerators => false); -- 31s -> 23.8s -> 11.8
 elapsedTime truncate(compositions(3, n), S, MinimalGenerators => false); -- 0.8s GOOD
 elapsedTime truncate(compositions(3, n), S); -- (?? ->) >3min -> 0.8s GOOD
 elapsedTime truncate(compositions(3, n), S); -- (?? ->) >3min -> 0.7s GOOD

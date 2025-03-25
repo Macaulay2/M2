@@ -13,8 +13,8 @@ genericMatrix = method(TypicalValue => Matrix)
 genericMatrix(Ring,ZZ,ZZ) := (R,nrows,ncols) -> genericMatrix(R,R_0,nrows,ncols)
 genericMatrix(Ring,RingElement,ZZ,ZZ) := (R,first,nrows,ncols) -> (
      first = getIndex(R,first);
-     if not instance(nrows,ZZ) or not instance(ncols,ZZ) or nrows < 0 or ncols < 0
-     then error "expected nonnegative integers";
+     if nrows < 1 or ncols < 1
+     then error "expected positive integers";
      if first + nrows * ncols > numgens R
      then error "not enough variables in this ring";
      matrix table(nrows, ncols, (i,j)->R_(first + i + nrows*j)))
@@ -22,7 +22,10 @@ genericMatrix(Ring,RingElement,ZZ,ZZ) := (R,first,nrows,ncols) -> (
 genericSkewMatrix = method(TypicalValue => Matrix)
 genericSkewMatrix(Ring,ZZ) := (R,n) -> genericSkewMatrix(R,R_0,n)
 genericSkewMatrix(Ring,RingElement,ZZ) := (R,first,n) -> (
+     if n < 1 then error "expected a positive integer";
      first = getIndex(R,first);
+     if numgens R - first < binomial(n, 2)
+     then error "not enough variables in this ring";
      vars := new MutableHashTable;
      nextvar := first;
      scan(0..n-1, 
@@ -36,7 +39,10 @@ genericSkewMatrix(Ring,RingElement,ZZ) := (R,first,n) -> (
 genericSymmetricMatrix = method(TypicalValue => Matrix)
 genericSymmetricMatrix(Ring,ZZ) := (R,n) -> genericSymmetricMatrix(R,R_0,n)
 genericSymmetricMatrix(Ring,RingElement,ZZ) := (R,first,n) -> (
+     if n < 1 then error "expected a positive integer";
      first = getIndex(R,first);
+     if numgens R - first < binomial(n + 1, 2)
+     then error "not enough variables in this ring";
      vars := new MutableHashTable;
      nextvar := first;
      scan(0..n-1, i -> scan(i..n-1, j -> (
@@ -66,18 +72,18 @@ random(List,Ring) := RingElement => opts -> (deg,R) -> (
 
 random(ZZ,Ring) := RingElement => opts -> (n,R) -> random({n},R,opts)
 
+other := (i, m) -> (i + random m) % m
 randomMR := opts -> (F,G) -> (
      R := ring F;
      m := numgens F;
      n := numgens G;
      k := min(m,n);
-     d1 := toList ( degreeLength F : 1 );
-     d0 := toList ( degreeLength F : 0 );
+     d1 := toList ( degreeLength R : 1 );
+     d0 := toList ( degreeLength R : 0 );
      f := id_(R^k);
      if m>k then f = f || random(R^(toList( m-k : d1 )), R^n, opts)
      else if n > k then f = f | random(R^m, R^(toList (n-k : -d1)), opts);
      f = mutableMatrix f;
-     other := (i,m) -> (i + random(m-1)) % m;
      if m>k then (
 	  for i to k-1 do rowAdd(f, i, random(d0,R,opts), random(k,m-1));
 	  for i to k-1 do rowSwap(f, i, other(i,m)))
@@ -107,7 +113,8 @@ randomMR := opts -> (F,G) -> (
      map(F,G,new Matrix from f))
 
 random(Module, Module) := Matrix => opts -> (F,G) -> (
-     if not isFreeModule F or not isFreeModule G then error "random: expected free modules";
+    if not isFreeModule F or not isFreeModule G
+    then return map(F, G, random(cover F, cover G, opts));
      R := ring F;
      if R =!= ring G then error "modules over different rings";
      if opts.MaximalRank then return (randomMR opts)(F,G);
@@ -156,6 +163,21 @@ random(Module, Module) := Matrix => opts -> (F,G) -> (
 				   r)))));
 	  map(F, G, applyTable(degreesTable, k -> (randomElement k)()))))
 
+-- give a random vector in a module over a local (non-homogeneous) ring
+localRandom = (M, opts) -> (
+    R := ring M;
+    -- TODO: which coefficient ring do we want?
+    K := try coefficientRing R else R;
+    v := random(cover M ** K, module K, opts);
+    -- TODO: sub should be unnecessary, but
+    -- see https://github.com/Macaulay2/M2/issues/3638
+    vector inducedMap(M, , generators M * substitute(v, R)))
+
+random(ZZ,   Module) :=
+random(List, Module) := Vector => o -> (d, M) -> vector map(M, , random(cover M, (ring M)^{-d}, o))
+random       Module  := Vector => o ->     M  -> (
+    if isHomogeneous M then random(degree 1_(ring M), M, o) else localRandom(M, o))
+
 random(ZZ,   Ideal) := RingElement => opts -> (d, I) -> random({d}, I, opts)
 random(List, Ideal) := -* RingElement or List => *- opts -> (L, I) -> (
     m := generators I;
@@ -166,6 +188,44 @@ random(List, Ideal) := -* RingElement or List => *- opts -> (L, I) -> (
     if isListOfListsOfIntegers L then     first entries(m * random(source m, (ring I)^(-L), opts))
     else if isListOfIntegers L then first first entries(m * random(source m, (ring I)^{-L}, opts))
     else error("expected a list of integers or a list of lists of integers"))
+
+------------------------------------
+-- Code donated by Frank Schreyer --
+------------------------------------
+
+randomKRationalPoint = method()
+randomKRationalPoint Ideal := I -> (
+     R:=ring I;
+     if char R == 0 then error "expected a finite ground field";
+     if not class R === PolynomialRing then error "expected an ideal in a polynomial ring";
+     if not isHomogeneous I then error "expected a homogeneous ideal";
+     n:=dim I;
+     if n<=1 then error "expected a positive dimensional scheme";
+     c:=codim I;
+     Rs:=R;
+     Re:=R;
+     f:=I;
+     if not c==1 then (
+         -- projection onto a hypersurface
+         parametersystem:=ideal apply(n,i->R_(i+c));
+         if not dim(I+parametersystem)== 0 then return print "make coordinate change";
+         kk:=coefficientRing R;
+         Re=kk(monoid[apply(dim R,i->R_i),MonomialOrder => Eliminate (c-1)]);
+         rs:=(entries selectInSubring(1,vars Re))_0;
+         Rs=kk(monoid[rs]);
+         f=ideal substitute(selectInSubring(1, generators gb substitute(I,Re)),Rs);
+         if not degree I == degree f then return print "make coordinate change"
+         );
+     H:=0;pts:=0;pts1:=0;trial:=1;pt:=0;ok:=false;
+     while (
+         H=ideal random(Rs^1,Rs^{dim Rs-2:-1});
+         pts=decompose (f+H);
+         pts1=select(pts,pt-> degree pt==1 and dim pt ==1);
+         ok=( #pts1>0);
+         if ok then (pt=saturate(substitute(pts1_0,R)+I);ok==(degree pt==1 and dim pt==0));
+         not ok) do (trial=trial+1);
+     pt
+     )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

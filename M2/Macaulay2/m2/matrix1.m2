@@ -4,16 +4,13 @@ needs "matrix.m2"
 needs "modules.m2"
 needs "quotient.m2"
 
-plurals := hashTable { "matrix" => "matrices" }
-pluralize := s -> if plurals#?s then plurals#s else s|"s"
-pluralsynonym := T -> try pluralize T.synonym else "objects of class "|toString T;
 notsamering := (X,Y) -> (
      if X === Y then error("expected ",pluralsynonym X, " for the same ring")
      else error("expected ",X.synonym," and ",Y.synonym," for the same ring"))
 nottosamering := (X,Y) -> (
      if X === Y then error("expected ",pluralsynonym X, " for compatible rings")
      else error("expected ",X.synonym," and ",Y.synonym," for compatible rings"))
-samering := (M,N) -> if ring M === ring N then (M,N) else notsamering(class M,class N)
+samering = (M,N) -> if ring M === ring N then (M,N) else notsamering(class M,class N)
 tosamering := (M,N) -> if ring M === ring N then (M,N) else (
      z := try 0_(ring M) + 0_(ring N) else nottosamering(class M,class N);
      (promote(M,ring z),promote(N,ring z)))
@@ -84,7 +81,8 @@ map(Module,Module,Matrix) := Matrix => o -> (M,N,f) -> (
 	  R := ring M;
 	  deg := if o.Degree === null then (degreeLength R : 0) else o.Degree;
 	  deg = degreeCheck(deg,R);
-	  map(M,N,reduce(M,rawMatrixRemake2(raw cover M, raw cover N, deg, raw f,0)))))
+	  g := rawMatrixRemake2(raw cover M, raw cover N, deg, raw f, 0);
+	  map(M, N, if M =!= f.target then reduce(M, g) else g)))
 
 -- combine the one above with the one below
 map(Module,ZZ,List) := 
@@ -95,8 +93,7 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
      local k;
      if N === null then (
 	  k = R;
-	  if #p === 0 then error "expected non-empty list of entries for matrix";
-	  rankN = #p#0;
+	  rankN = if #p === 0 then 0 else #p#0;
 	  )
      else if class N === ZZ then (
 	  k = R;
@@ -178,25 +175,22 @@ concatBlocks = mats -> (
 Matrix.matrix = options -> (f) -> concatBlocks f
 
 commonRing = method()
-trythese := rings -> ring try sum apply(rings, R -> 0_R) else error "common ring not found"
-commonRing List := f -> (
-     f = flatten f;
-     if #f == 0 then return ZZ;
-     types := unique apply(f, class);
-     if # types === 1 and instance(types#0,Ring) then return types#0;
-     rings := if all(types, T -> instance(T,Ring)) then types else unique apply(f,ring);
-     ring try sum apply(rings, R -> 0_R) else error "common ring not found")
+commonRing List := L -> (
+    rings := unique apply(flatten L, ring);
+    if #rings === 0 then ZZ      else
+    if #rings === 1 then rings#0 else
+    ring try sum apply(rings, R -> 0_R) else error "common ring not found")
 
-matrixTable := opts -> (f) -> (
+matrixTable = opts -> (f) -> (
      R := commonRing f;
      havemat := false;
-     f = applyTable(f, x -> (
-	       if instance(x,Matrix) then havemat = true
-	       else if not ( instance(x,RingElement) or instance(x,Number) )
-	       then error "expected numbers, ring elements, and matrices";
-	       promote(x,R)));
-     if not havemat then return map(R^#f,, f, opts);
+     f = applyTable(f,
+	 x -> if isMorphism x then (havemat = true; promote(x, R))
+	 else if instance(x, RingElement) or instance(x, Number) then promote(x, R)
+	 else error "expected numbers, ring elements, and matrices");
+     if not havemat then return map(R^#f, , f, opts);
      types := unique apply(flatten f, class);
+     -- Note: we use Matrix.matrix here, which is different from Matrix#matrix
      if # types === 1 and types#0 .?matrix then return ( types#0 .matrix opts)(f);
      f = apply(f, row -> new MutableList from row);
      m := #f;
@@ -269,25 +263,21 @@ matrixTable := opts -> (f) -> (
 matrix(Matrix) := Matrix => opts -> (m) -> (
      if isFreeModule target m and isFreeModule source m and (not opts.Degree =!= null or degree m === opts.Degree or degree m === {opts.Degree} )
      then m
-     else map(cover target m, cover source m, m, Degree => if opts.Degree =!= null then opts.Degree else degree m)
+     else map(cover target m, cover source m, raw m, Degree => if opts.Degree =!= null then opts.Degree else degree m)
      )
 
 matrix RingElement := matrix Number := opts -> r -> matrix({{r}}, opts)
 
-matrix(List) := Matrix => opts -> (m) -> (
-     if #m === 0 then error "expected nonempty list";
-     mm := apply(splice m,splice);
-     if #mm === 0 then error "expected nonempty list";
-     types := unique apply(mm,class);
-     if #types === 1 then (
-	  type := types#0;
-	  if instance(type,Module) then matrix { apply(mm, v -> new Matrix from v) }
-	  else if ancestor(List, type) then (
-	       if isTable mm then (matrixTable opts)(mm)
-	       else error "expected rows all to be the same length"
-	       )
-	  else error "expected a table of ring elements or matrices, or a list of elements of the same module")
-     else error "expected a table of ring elements or matrices, or a list of elements of the same module")
+matrix List := Matrix => opts -> L -> (
+    if #L === 0 then return matrix(ZZ, {});
+    L = apply(splice L, splice); -- TODO: is this deepSplice?
+    if not uniform L and not isTable L
+    then error "expected a list of vectors or a table of entries or maps";
+    -- construct a matrix by concatenating column vectors
+    if instance(L#0, Vector) then matrix { apply(L, matrix) } else
+    -- construct a matrix from a table of entries or maps
+    if isTable L then (matrixTable opts)(L)
+    else error "expected a rows all to be the same length")
 
 align := g -> (
      -- generator and relation maps can just as well have a nonzero degree
@@ -341,7 +331,7 @@ subquotient(Matrix,Nothing) := (subgens,null) -> (
 subquotient(Matrix,Matrix) := (subgens,relns) -> (
      R := ring relns;
      E := target subgens;
-     if E != target relns then error "expected maps with the same target"; -- we used to have =!=, but Schreyer orderings of free modules are discarded by "syz"
+     if E =!= target relns then error "expected maps with the same target";
      rE := E.RawFreeModule;
      n := rawRank rE;
      if n == 0 then new Module from (R,rE)
@@ -383,10 +373,17 @@ tensor(Matrix, Matrix) := Matrix => {} >> opts -> ((f, g) -> (
      samering(target f,target g);
      samering(source f,source g);
      R := ring target f;
+     if f === id_(R^1) then return g;
+     if g === id_(R^1) then return f;
      map(target f ** target g, 
 	  source f ** source g, 
 	  map(R, f.RawMatrix ** g.RawMatrix),
 	  Degree => degree f + degree g))) @@ toSameRing
+
+Matrix ** Module := Matrix => (f, M) -> tensor(f, id_M)
+Module ** Matrix := Matrix => (M, f) -> tensor(id_M, f)
+tensor(Matrix, Module) := Matrix => {} >> o -> (f, M) -> tensor(f, id_M)
+tensor(Module, Matrix) := Matrix => {} >> o -> (M, f) -> tensor(id_M, f)
 
 Matrix ** Number := (f,r) -> r * f
 Number ** Matrix := (r,f) -> r * f
@@ -397,23 +394,23 @@ Number ** RingElement :=
 RingElement ** Number := 
 RingElement ** RingElement := (r,s) -> matrix {{r}} ** matrix {{s}}
 
--- Matrix#AfterPrint = Matrix#AfterNoPrint = f -> (class f, " ", new MapExpression from {target f,source f})
 Matrix#AfterPrint = Matrix#AfterNoPrint = f -> (
     class f,
-    if isFreeModule target f and isFreeModule source f then  (" ", new MapExpression from {target f,source f})
+    (
+	(tar, src) := apply((target f, source f), M -> moduleAbbrv(M, null));
+	if tar =!= null and src =!= null
+	then (" ", new MapExpression from expression \ {tar, src}))
     )
 
 -- precedence Matrix := x -> precedence symbol x
 
-image Matrix := Module => f -> (
-     if f.cache.?image then f.cache.image else f.cache.image = subquotient(f,)
-     )
-coimage Matrix := Module => f -> (
-     if f.cache.?coimage then f.cache.coimage else f.cache.coimage = cokernel inducedMap(source f, kernel f)
-     )
-cokernel Matrix := Module => m -> (
-     if m.cache.?cokernel then m.cache.cokernel else m.cache.cokernel = subquotient(,m)
-     )
+-- source and target are defined in modules.m2
+-- image caches f in M.cache.Monomials
+image    Matrix := Module => f -> f.cache.image    ??= subquotient(f, null)
+cokernel Matrix := Module => f -> f.cache.cokernel ??= subquotient(null, f)
+-- kernel is defined in pushforward.m2
+coimage  Matrix := Module => f -> f.cache.coimage  ??= cokernel inducedMap(source f, kernel f)
+-- homology is defined further down
 
 cokernel RingElement := Module => f -> cokernel matrix {{f}}
 image RingElement := Module => f -> image matrix {{f}}
@@ -422,6 +419,7 @@ Ideal = new Type of HashTable
 Ideal.synonym = "ideal"
 
 ideal = method(Dispatch => Thing, TypicalValue => Ideal)
+ideal Ideal := identity
 
 expression Ideal := (I) -> (expression ideal) unsequence apply(toSequence first entries generators I, expression)
 net Ideal := (I) -> net expression I
@@ -433,9 +431,6 @@ isIdeal Ideal := I -> true
 isHomogeneous Ideal := (I) -> isHomogeneous generators I
 
 degrees Ideal := I -> degrees source generators I
--- TODO: deprecate these
-degreeLength Ideal := I -> degreeLength ring I
-degreesRing Ideal := I -> degreesRing ring I
 
 promote(Ideal,Number) := 
 promote(Ideal,RingElement) := (I,R) -> ideal promote(generators I, R)
@@ -508,8 +503,8 @@ Matrix % Ideal := Matrix => ((f,I) ->
      ) @@ samering
 Vector % Ideal := (v,I) -> new class v from {v#0%I}
 numgens Ideal := (I) -> numgens source generators I
-leadTerm Ideal := Matrix => (I) -> leadTerm generators gb I
-leadTerm(ZZ,Ideal) := Matrix => (n,I) -> leadTerm(n,generators gb I)
+leadTerm Ideal := Ideal => (I) -> ideal leadTerm gb I
+leadTerm(ZZ,Ideal) := Matrix => (n,I) -> ideal leadTerm(n,gb I)
 jacobian Ideal := Matrix => (I) -> jacobian generators I
 Ideal _ List := (I,w) -> (module I)_w
 
@@ -534,6 +529,10 @@ Ideal == Ideal := (I,J) -> (
 Ideal == Module := (I,M) -> module I == M
 Module == Ideal := (M,I) -> M == module I
 
+isSubset(Module, Ideal) :=
+isSubset(Ideal, Module) :=
+isSubset(Ideal, Ideal)  := (I, J) -> isSubset(module I, module J)
+
 ideal Matrix := Ideal => (f) -> (
      R := ring f;
      if not isFreeModule target f or not isFreeModule source f 
@@ -549,11 +548,9 @@ ideal Matrix := Ideal => (f) -> (
 	  );
      new Ideal from { symbol generators => f, symbol ring => R, symbol cache => new CacheTable } )
 
-ideal Module := Ideal => (M) -> (
-     F := ambient M;
-     if isSubmodule M and rank F === 1 then ideal generators M
-     else error "expected a submodule of a free module of rank 1"
-     )
+ideal Module := Ideal => M -> if isIdeal M then ideal generators M else (
+    error "expected a submodule of a free module of rank 1")
+
 idealPrepare = method()
 idealPrepare RingElement := 
 idealPrepare Number := identity
@@ -599,14 +596,7 @@ homology(Matrix,Matrix) := Module => opts -> (g,f) -> (
 	       );
 	  subquotient(h, if N.?relations then f | N.relations else f)))
 
-Hom(Matrix,Module) := Matrix => (f,N) -> inducedMap(Hom(source f,N),Hom(target f,N),transpose cover f ** N,Verify=>false)
-Hom(Module,Matrix) := Matrix => (M,g) -> inducedMap(Hom(M,target g),Hom(M,source g),dual cover M ** g,Verify=>false)
-Hom(Matrix,Matrix) := Matrix => (f,g) -> Hom(source f,g) * Hom(f,source g)
-
-dual(Matrix) := Matrix => {} >> o -> f -> (
-     R := ring f;
-     Hom(f,R^1)
-     )
+-----------------------------------------------------------------------------
 
      -- i%m gives an error message if the module is not free, but i//m doesn't, so we can't use this code in inverse Matrix to check invertibility:
      -- if i % m != 0 then error "matrix not invertible";

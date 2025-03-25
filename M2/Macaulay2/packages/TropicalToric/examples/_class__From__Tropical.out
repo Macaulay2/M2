@@ -1,0 +1,18 @@
+-- -*- M2-comint -*- hash: 11190724559016551355
+
+i1 : X = toricProjectiveSpace 3;
+
+i2 : R = QQ[x_1 .. x_3];
+
+i3 : I = ideal(x_1+x_2+x_3+1,x_1+2*x_2-x_3+4);
+
+o3 : Ideal of R
+
+i4 : classFromTropical(X,I)
+
+o4 = X
+      {0, 1}
+
+o4 : ToricCycle on X
+
+i5 : 

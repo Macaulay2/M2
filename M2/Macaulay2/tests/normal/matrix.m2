@@ -357,6 +357,23 @@ assert Equation(1 + ii || A, matrix {{1 + ii, 0}, {0, 1 + ii}, {1, 2}, {2, 3}})
 assert Equation(x || A, map(R^4, R^{{-1}, {-1}},
 	matrix {{x, 0}, {0, x}, {1, 2}, {2, 3}}))
 
+-- issue #3012
+M = comodule ideal 2
+A = map(M, ZZ^1, {{1}})
+assert Equation(A + A, 0)
+assert Equation(A - A, 0)
+assert Equation(A, -A)
+
+-- empty matrix
+scan({matrix {}, matrix(ZZ, {}), map(ZZ^0, ZZ^0, {}), map(ZZ^0,, {})}, A -> (
+	    assert Equation(numRows A, 0);
+	    assert Equation(numColumns A, 0);
+	    assert Equation(source A, ZZ^0);
+	    assert Equation(target A, ZZ^0)))
+
+-- issue #3456
+assert Equation(matrix {{ii}}, matrix {{numeric ii}})
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test matrix.out"
 -- End:

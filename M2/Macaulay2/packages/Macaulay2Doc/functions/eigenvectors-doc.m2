@@ -4,7 +4,7 @@
 
 document { 
      Key => {eigenvectors, (eigenvectors,Matrix), (eigenvectors,MutableMatrix)},
-     Headline => "find eigenvectors of a matrix over RR or CC",
+     Headline => "find eigenvectors of a matrix over real or complex numbers",
      Usage => "(eigvals, eigvecs) = eigenvectors M",
      Inputs => {
 	  "M" => Matrix => {"or a ", TO MutableMatrix, " over ", TO RR, " or ", TO CC, ", which is
@@ -15,7 +15,7 @@ document {
 	  "eigvecs" => Matrix => {" or ", ofClass MutableMatrix, ", if ", TT "M", " is one),
 	       whose columns are the corresponding eigenvectors of ", TT "M"}
 	  },
-     "The resulting matrix is over ", TO "CC", ", and contains the eigenvectors of ", TT "M", ".  The lapack and eigen
+     "The resulting matrix is over ", TO "CC", ", and contains the eigenvectors of ", TT "M", ".  The LAPACK and Eigen
      libraries are used to compute eigenvectors of real and complex matrices.",
      PARA{},
      "Recall that if ", TT "v", " is a non-zero vector such that ", TT "Mv = av", ", for a scalar a, then
@@ -36,18 +36,19 @@ document {
      v
      ///,
      Caveat => {"The eigenvectors are approximate."},
-     SeeAlso => {eigenvalues, SVD}
+     SeeAlso => {eigenvalues, SVD},
+     Subnodes => { TO [eigenvectors, Hermitian] },
      }
 document { 
      Key => [eigenvectors, Hermitian],
-     Headline => "Hermitian=>true means assume the matrix is symmetric or Hermitian",
+     Headline => "whether to assume the matrix is symmetric or Hermitian",
      Usage => "eigenvectors(M, Hermitian=>true)",
      Consequences => {
-	  "The resulting matrix of eigenvalues is defined over RR, not CC, and, if the 
+	  "The resulting list of eigenvalues is defined over RR, not CC, and, if the
 	  original matrix is defined over RR, the matrix of eigenvalues is too."
 	  },     
      Caveat => {"The internal routine uses a different algorithm, only considering the
 	  upper triangular elements.  So if the matrix is not symmetric or Hermitian,
 	  the routine will give incorrect results."},
-     SeeAlso => {eigenvectors}
+     SeeAlso => {eigenvalues}
      }

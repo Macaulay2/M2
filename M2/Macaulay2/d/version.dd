@@ -63,6 +63,8 @@ header "
    #endif
 
    #include <Eigen/Core>
+
+   #include <libnormaliz/version.h>
    ";
 
 header "
@@ -79,17 +81,6 @@ gcversion():constcharstar := Ccode(returns,"
      if (micro == 0xff) snprintf(buf,40,\"%d.%d\", major, minor);
      else snprintf(buf,40,\"%d.%d.%d\", major, minor, micro);
      return buf");
-
-header "#include <atomic_ops.h>";
-atomicopsversion():constcharstar := Ccode(returns,"
-#ifdef AO_VERSION_MICRO
-     static char buf[40];
-     snprintf(buf,40,\"%d.%d.%d\",AO_VERSION_MAJOR, AO_VERSION_MINOR, AO_VERSION_MICRO);
-     return buf
-#else
-     return \"version number not available\"
-#endif
-");
 
 header "#include <fflas-ffpack/config.h>";
 ffpackVersion():constcharstar := Ccode(constcharstar,"__FFLASFFPACK_PACKAGE_VERSION");
@@ -109,10 +100,6 @@ factoryversion():constcharstar := Ccode(returns,"
      ");
 
 header "#include <readline/readline.h>";
-readlineversion():constcharstar := Ccode(returns,"
-     static char buf[8];
-     snprintf(buf, 8, \"%d.%d\", (rl_readline_version>>8)&0xff, rl_readline_version&0xff );
-     return buf");
 
 header "#include <gdbm.h>";
 gdbmversion():constcharstar := Ccode(returns, "return gdbm_version");
@@ -166,7 +153,6 @@ setupconst("version", Expr(toHashTable(Sequence(
    "configure arguments" => Ccode(constcharstar,"CONFIG_ARGS"),
    "compile time" => Ccode(constcharstar,"timestamp"),
    "compile node name" => Ccode(constcharstar,"NODENAME"),
-   "atomic_ops version" => atomicopsversion(),
    "gc version" => gcversion(),
    "mysql version" => Ccode(constcharstar,"
 	  #if WITH_MYSQL
@@ -185,23 +171,11 @@ setupconst("version", Expr(toHashTable(Sequence(
 	#endif
 	"),
    "gdbm version" => gdbmversion(),
-   "gmp version" => Ccode(constcharstar,"
-	  #if USING_MPIR
-	       \"not present\"
-	  #else
-	       __gmp_version
-	  #endif
-	  "),
-   "mpir version" => Ccode(constcharstar,"
-	#if USING_MPIR
-	     __mpir_version
-	#else
-	     \"not present\"
-	#endif
-	"),
+   "gmp version" => Ccode(constcharstar,"__gmp_version"),
+   "normaliz version" => Ccode(constcharstar,"stringize(NMZ_VERSION)"),
    "ntl version" => Ccode(constcharstar,"NTL_VERSION"),
    "frobby version" => Ccode(constcharstar,"frobby_version"),
-   "flint version" => Ccode(constcharstar,"flint_version"),
+   "flint version" => Ccode(constcharstar,"FLINT_VERSION"),
    "scscp version" => Ccode(constcharstar,"
 	 #ifdef HAVE_SCSCP
 	   stringize(SCSCP_VERSION_MAJOR) \".\" stringize(SCSCP_VERSION_MINOR) \".\" stringize(SCSCP_VERSION_PATCH)
@@ -214,7 +188,7 @@ setupconst("version", Expr(toHashTable(Sequence(
    "mathic version" => Ccode(constcharstar,"MATHIC_VERSION_STRING"),
    "mathicgb version" => Ccode(constcharstar,"MATHICGB_VERSION_STRING"),
    "factory version" => factoryversion(),
-   "readline version" => readlineversion(),
+   "readline version" => Ccode(constcharstar,"stringize(RL_VERSION_MAJOR) \".\" stringize(RL_VERSION_MINOR)"),
    "mpfr version" => Ccode(constcharstar,"MPFR_VERSION_STRING"),
    "mpfi version" => Ccode(constcharstar,"MPFI_VERSION_STRING"),
    "tbb version" => Ccode(constcharstar,"
@@ -229,7 +203,7 @@ setupconst("version", Expr(toHashTable(Sequence(
        stringize(EIGEN_WORLD_VERSION) \".\"
        stringize(EIGEN_MAJOR_VERSION) \".\"
        stringize(EIGEN_MINOR_VERSION)"),
-   "libffi version" => Ccode(constcharstar, "LIBFFI_VERSION"),
+   "libffi version" => Ccode(constcharstar, "FFI_VERSION"),
    "M2 suffix" => Ccode(constcharstar,"M2SUFFIX"),
    "executable extension" => Ccode(constcharstar,"EXEEXT"),
    "M2 name" => Ccode(constcharstar," \"M2\" M2SUFFIX EXEEXT "),
@@ -238,8 +212,9 @@ setupconst("version", Expr(toHashTable(Sequence(
    "packages" => Ccode(constcharstar,"DISTRIBUTED_PACKAGES"),
    "build" => Ccode(constcharstar,"buildsystemtype"),
    "host" => Ccode(constcharstar,"hostsystemtype"),
-   "git description" => Ccode(constcharstar,"GIT_DESCRIPTION")
-   ))));
+   "git description" => Ccode(constcharstar, "PACKAGE_VERSION \"-bin\""),
+   "git branch"      => "version.m2 not found"
+   )))).Protected = false; -- "git description" and "git branch" will be added in m2/version.m2
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d version.o "

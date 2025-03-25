@@ -2,13 +2,10 @@
 --- author(s): MES
 --- notes: 
 
--- TODO: (liftable,CC,RR'), (liftable, RRi, QQ),(liftable, RRi, RR),(liftable, RRi, ZZ)
-
 undocumented {(liftable, Number, Number), (liftable, Number, RingElement), 
      (liftable, RingElement, Number), (liftable, RingElement, RingElement),
-     (liftable, QQ, QQ), (liftable, QQ, ZZ),
-     (lift, Matrix, InexactNumber),
-     (lift,Matrix,InexactNumber'),(lift, Number, InexactNumber),
+     (liftable, QQ, ZZ),
+     (liftable, CC, RR_*),
      (liftable, Number, InexactNumber),
      (liftable, RRi, QQ),(liftable, RRi, RR),(liftable, RRi, ZZ)}
 

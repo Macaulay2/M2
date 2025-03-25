@@ -9,7 +9,7 @@ document {
 	  },
      PARA {
 	  "Macaulay2 is available from our web page ", 
-	  HREF "http://www.math.uiuc.edu/Macaulay2/",
+	  HREF "https://macaulay2.com/",
 	  ".  There you will find online documentation, 
 	  the source code, and precompiled versions
 	  for MacOSX, Linux, Microsoft Windows, and for 
@@ -24,6 +24,7 @@ document {
 	  "
 	  },
      Subnodes => {
+	  TO "invoking the Macaulay2 program",
 	  TO "checking your Macaulay2 installation",
 	  TO "finding the Macaulay2 files",
 	  TO "teaching M2 how to find its shared libraries",
@@ -33,6 +34,7 @@ document {
 	  TO "using Macaulay2 with emacs",
 	  TO "using Macaulay2 with TeXmacs",
 	  TO "a first Macaulay2 session",
+	  TO "how Macaulay2 finds its files",
 	  TO "reading the documentation",
 	  TO "getting help or reporting bugs",
 	  -- Mike wanted this: TO "what to read next??"
@@ -194,26 +196,6 @@ document { Key => "finding the Macaulay2 files",
      PRE ///     i1 : prefixDirectory
 
      o1 = /foo/bar/ ///,
-     "If you are running M2 and emacs under cygwin on a Windows computer, then that
-     can prevent special difficulties: see ", TO "finding your files under cygwin", "."
-     }
-
-document { Key => "finding your files under cygwin",
-     "In Microsoft Windows, most people run programs by pulling down menus or by clicking on icons
-     that have been carefully placed there by install programs.  Thus the idea of a
-     ", EM "path", " along which to search for programs (such as a browser) is no longer useful in Windows.",
-     PARA{},
-     "On my computer the browser program ", TT "firefox.exe", " is in the following directory.",
-     PRE ///    C:/Program Files/Mozilla Firefox///,
-     "But M2 is a Cygwin program, and it lives in a different world, where paths to
-     files don't ever start out with something like ", TT "C:", ".  In that world, firefox's
-     directory is known instead as:",
-     PRE ///     /cygdrive/c/Program Files/Mozilla Firefox///,
-     "Conversely, the root directory, known in the Cygwin world as ", TT "/", ", could be located
-     anywhere in the Windows world.  On my machine it is at",
-     PRE ///     C:/cygwin///,
-     "Use the ", TT "df", " command or the ", TT "mount", " command in a cygwin command shell window to determine
-     that path: it is the file system on which ", TT "/", " is mounted."
      }
 
 document { Key => "teaching your shell how to find M2",
@@ -283,7 +265,8 @@ document { Key => "teaching your shell how to find M2",
      its files (because it knows about symbolic links).  (Don't use a hard link.)",
      SUBSECTION "what else to try",
      "If you fail to teach your shell how to find M2, then all is not lost.  We prefer
-     to run M2 within emacs, and it is enough to teach emacs how find M2.  See ", TO "teaching emacs how to find M2", "."
+     to run M2 within emacs, and it is enough to teach emacs how find M2.  See ", TO "teaching emacs how to find M2", ".",
+     Subnodes => TO "setup"
      }
 
 document { Key => "teaching emacs how to find M2-init.el",
@@ -442,7 +425,8 @@ PRE///    ;; .emacs file in your home directory
 	  typed in the above lines correctly into ", TT ".emacs", ".  If they look okay, then
 	  see ", TO "teaching emacs how to find M2-init.el", ", ", TO "teaching emacs how to find M2", ", and ",
 	  TO "teaching your shell how to find M2", "."
-	  }
+	  },
+     Subnodes => TO "setupEmacs"
      }
 
 document {
@@ -476,7 +460,7 @@ document {
 	  "Working with two buffers",
 	  "Sending lines or selected text to Macaulay2 using the f11 key",
 	  "Command completion with TAB",
-	  "Horizontal scrolling with f3,f4,f5,f6,f7"
+	  "Horizontal scrolling with f3 and f4"
 	  },
      PARA {"Before starting, note that when we say to type M-x M2, what we really mean is: press the x key while holding down the meta key (on Macs this is either
 	  the option key or the apple key, depending on how your emacs is set up); type M2; and then press the return (or enter) key after that.  Similarly, C-c
@@ -493,10 +477,7 @@ document {
 	  keys are not operable.  In that case press ", TT "C-c m", " instead. 
        	  Another
           reason may be that you have not installed Macaulay2 properly - the startup
-	  script (", TT "M2", " or ", TT "M2.bat", ") should be on your path.
-	  A third reason may be that you are in Windows-98 and are using anti-virus 
-	  software such as ", TT "Dr. Solomon's", ", which can interfere with emacs 
-	  when it tries to run a subprocess."
+	  script (", TT "M2", " or ", TT "M2.bat", ") should be on your path."
 	  },
      PARA {
      	  "You may use ", TT "C-x o", " freely to switch from one window to the other.
@@ -505,24 +486,32 @@ document {
 	  important, as it informs emacs to use the Macaulay2 mode).
 	  Paste the following text into a buffer.  If you wish, save the file using C-x C-s."
 	  },
-     PRE ///    R = QQ[x,y,z]
+     PRE M2CODE ///    R = QQ[x,y,z]
     f = symmetricPower(2,vars R)
     M = cokernel f
     C = resolution M
     betti C///,
      PARA {     
      "Position the cursor on the first line of code, and press the ", TT "f11", " function 
-	  key repeatedly to present each line to Macaulay2.  If you select several lines 
+	  key (or ", TT "C-<return>", ") repeatedly to present each line to Macaulay2.  If you select several lines 
 	  using the mouse, then pressing f11 will present the entire selection to
 	  Macaulay2.  Try this on some of these lines."
 	  },
+     PARA {"Here are some other useful keybindings:"},
+     UL {
+	 LI {TT "C-c C-j", ": send the current line"},
+	 LI {TT "C-c C-r", ": send the current region"},
+	 LI {TT "C-c C-b", ": send the entire buffer"},
+	 LI {TT "C-c C-<up>", ": send everything before the point"},
+	 LI {TT "C-c C-<down>", ": send everything after the point"},
+	 LI {TT "C-c C-p", ": send the current paragraph"}},
      HR{},
 "Now go to the very end of the ", TT "*M2*", " buffer with ", TT "M->", " and 
 experiment with keyword completion.  Type ", TT "reso", " and then press the 
 ", TT "TAB", " key.  Notice how the word is completed to ", TT "resolution", "
 for you.  Delete the word with ", TT "M-DEL", ", type ", TT "res", "
 and then press the ", TT "TAB", " key.  The possible completions are displayed 
-in a window.  Switch to it with the ", TT "F8", " key, move to the desired 
+in a window.  Switch to it with ", TT "M-x switch-to-completions", ", move to the desired 
 completion, select it with the ", TT "RETURN", " key, and then return to the 
 ", TT "*M2*", " buffer with ", TT "C-x o", ".  Alternatively, if you have a
 mouse, use the middle button to select the desired completion. (On the mac, hold down the
@@ -539,7 +528,7 @@ slightly to change it before pressing return.",
      "Now let's see how we can handle wide and tall Macaulay2 output.  Execute the
      following line of code (put it in your foo.m2 buffer, and then press f11)",
      PARA{},
-     PRE ///printWidth=0; random(R^20,R^{6:-2})///,
+     PRE M2CODE ///printWidth=0; random(R^20,R^{6:-2})///,
      "Setting printWidth to zero removes line wrapping in the buffer, sometimes useful to 
      view large matrices.",
 PARA{},
@@ -547,8 +536,8 @@ PARA{},
 around to the next line, simply disappear off the right side of the screen,
 as indicated by the dollar signs or little arrows in the rightmost column.  Switch to the
 other window and practice scrolling up and down with ", TT "M-v", " and ", TT "C-v", ", 
-and scrolling left and right with the function key ", TT "F3", " (or ", TT "C-c <", ") 
-and the function key ", TT "LinearAlgebra", " (or ", TT "C-c >", ").  In modern emacs implementations
+and scrolling left and right with the function key ", TT "F3", " (or ", TT "C-x <", ") 
+and the function key ", TT "F4", " (or ", TT "C-x >", ").  In modern emacs implementations
 where mouse clicking works, click on the arrow to scroll in that direction.  In
 these versions of emacs, typing C-e, or C-a to get at the end or beginning of the line
 also horizontally scrolls the text to that position.  Older emacs tend to need
@@ -557,15 +546,16 @@ Notice how the use of
 ", TT "C-e", " to go to the end of the line
 sends the cursor to the dollar sign at the right hand side of the screen;
 that's where the cursor will appear whenever you go to a position off the
-screen to the right.  Then use the ", TT "f2", " function key (or ", TT "C-c .", ") to 
+screen to the right.  Then use the ", TT "f2", " function key (or ", TT "C-S-c .", ") to 
 scroll the text so the cursor appears at the center of the screen.  Use ", TT "C-a", " to 
 move to the beginning of the line and then the ", TT "f2", " function key 
-(or ", TT "C-c .", ") to bring the left margin back into view.",
+(or ", TT "C-S-c .", ") to bring the left margin back into view.",
 PARA{},
-"You may use the ", TT "f5", " function key or (or ", TT "C-c ?", ") to 
+"You may use ", TT "C-S-c SPC", " to
 toggle whether long lines are truncated or wrapped; initially they are truncated."
      }
 
+needsPackage "Schubert2" -- make the example below work before Schubert2 is installed
 doc ///
   Key
     "reading the documentation"
@@ -578,6 +568,7 @@ doc ///
       :Finding documentation nodes
         about
 	apropos
+	headlines
       :Accessing documentation nodes
         help
 	viewHelp
@@ -590,6 +581,7 @@ doc ///
       To begin, the @TO "about"@ method allows for searching all documentation nodes
       whose title or content contains a given string:
     Example
+      -- FIXME
       about "Horrocks-Mumford"
     Text
       The @TO "apropos"@ method is useful for finding all exported objects whose symbol
@@ -616,6 +608,7 @@ doc ///
   Subnodes
     about
     apropos
+    headlines
     help
     viewHelp
     infoHelp
@@ -628,7 +621,7 @@ document {
      PARA {
 	  "An easy way to get help or to report a bug is to use
 	  our google group web page at ", HREF "http://groups.google.com/group/macaulay2", ".
-	  These requests are automatically emailed to Dan Grayson and Mike Stillman, and they 
+	  These requests are automatically emailed to the developers, and they
      	  try to handle these requests quickly."
 	  }
      }
@@ -821,7 +814,8 @@ document {
 	  generators.",
      PARA{},
      "We can use ", TO "betti", " to see the degrees involved in the Gröbner basis.",
-     EXAMPLE "betti gb j"
+     EXAMPLE "betti gb j",
+     Subnodes => { TO "initial help" }
      }
 
 
@@ -875,7 +869,7 @@ PRE ///f = () -> (
 }
 
 document {
-     Key => "Invoking the program",
+     Key => "invoking the Macaulay2 program",
      "On systems with a command line interface, the following commands
      can be used to start the program.  When the program starts up,
      the ", TO "initialization file", ", ", TT "init.m2", ", will be loaded.",
@@ -974,7 +968,7 @@ document {
      TO "teaching emacs how to find M2", ".",
      PARA{},
      "You may wish to bind the emacs function ", TT "M2-send-to-program", "
-     to a global keystroke for ease of use; this is done automatically for
+     to a global keystroke for ease of use; this is done automatically
      in Macaulay2 buffers.  For example, the following emacs code
      will bind it to the function key ", TT "f11", ".",
      PARA{},
@@ -987,7 +981,7 @@ document {
      the cursor on the first line of code, and press the ", TT "f11", " function 
      key repeatedly to present each line to Macaulay2.",
      PARA{},
-     PRE ///i1 : R = ZZ/101[x,y,z]
+     PRE M2CODE ///i1 : R = ZZ/101[x,y,z]
      i2 : f = symmetricPower(2,vars R)
      i3 : M = cokernel f
      i4 : C = resolution M
@@ -1111,8 +1105,121 @@ document {
      see ", TO "Layout", ".",
      Subnodes => {
 	  TO "Layout",
-     	  TO "prefixDirectory"
+	  TO "prefixPath",
+	  TO "prefixDirectory",
+	  TO "applicationDirectory",
+	  TO "applicationDirectorySuffix",
 	  }
+     }
+
+document {
+     Key => "prefixPath",
+     Headline => "absolute locations of Macaulay2 files",
+     PARA {
+	  "The absolute location of a Macaulay2 file can be obtained by concatenating three components: (a) the
+	  prefix, which is one of the members of the list ", TO "prefixPath", "; (b) the relative location of the directory
+	  containing the file, as recorded in the hash table ", TO "Layout", "; and (c) the base name of the file.
+	  The value of ", TO "prefixPath", " is used by ", TO "installPackage", " when determining how to direct
+	  documentation hyperlinks from one package to another."
+	  },
+     PARA {
+	  "The initial value of ", TO "prefixPath", " contains just the following two optional items.
+	  If the variable ", TO "prefixDirectory", " was
+	  given a non-null value initially or by a ", TT "-e", " command line argument,
+	  then it will be the last element of ", TO "prefixPath", ".  If the ", TT "-q", " 
+	  option was not given on the command line used to invoke Macaulay2, then the value of ", TT "applicationDirectory()|\"local/\"", "
+	  will be the first element of ", TO "prefixPath", ".  No attempt is made to synchronize the value of ", TO "prefixPath", "
+	  with the values of ", TO "prefixDirectory", " and of ", TT "applicationDirectory()", ", which may change."
+	  },
+     PARA {
+	  "When running a newly compiled version of Macaulay2, adding something like ", TT "-E 'prefixDirectory=\"/usr/\"'", " to
+	  the command line is a good way to direct hyperlinks created by ", TO "installPackage", " to the documentation provided by
+	  an older copy of Macaulay2 installed with the prefix ", TT "/usr/", ", and that, in turn, is easily done within
+	  emacs by the keystroke sequence ", TT "C-u f12", ", which offers you a chance to edit the command line."
+	  },
+     PARA {
+	  "The initial value of ", TO "prefixPath", " described above can be overridden by the user's ", TO "initialization file", ")."
+	  },
+     PARA {
+	  "The list ", TO "prefixPath", " should be distinguished from the list ", TO "path", ", which is used to locate files to be
+	  loaded, by functions such as ", TO "searchPath", ", ", TO "load", ", ", TO "loadPackage", ", and ", TO "needsPackage", "."
+	  },
+     PARA {
+	  "The following example shows the list of places where we might find the source code of a package called ", TT "Foo", "
+	  after it has been installed by ", TO "installPackage", "."
+	  },
+     EXAMPLE ///stack apply(prefixPath, p -> p | Layout#1#"packages" | "Foo.m2")///,
+     PARA {
+     	  "This example shows the list of places where we might reasonably find the html file documenting a
+	  function named ", TT "bar", " in a package called ", TT "Foo", "."
+	  },
+     EXAMPLE ///stack apply(prefixPath, p -> p | replace("PKG","Foo",Layout#1#"packagehtml") | "bar.html")///,
+     PARA {
+     	  "This example shows the list of places where we might reasonably find the info file documenting a
+	  package called ", TT "Foo", "."
+	  },
+     EXAMPLE ///stack apply(prefixPath, p -> p | Layout#1#"info" | "Foo.info")///,
+     SeeAlso => {"commandLine", "invoking the Macaulay2 program", applicationDirectory, "prefixDirectory", "path", searchPath, load, loadPackage, needsPackage}
+     }
+
+doc := new HashTable from {
+     "bin" => "executable files (M2)",
+     "common" => "architecture independent files",
+     "data" => "architecture independent data files",
+     "doc" => "documentation",
+     "docdir" => "documentation for Macaulay2 packages",
+     "emacs" => "emacs source files (*.el, *.elc)",
+     "exec" => "architecture dependent files",
+     "factory gftables" => "directory for files containing addition tables in small finite fields used by the library 'factory'",
+     "info" => "documentation in info form",
+     "lib" => "architecture dependent data and executable files",
+     "libraries" => "dynamically loadable libraries from third party packages linked with Macaulay2",
+     "man" => "man pages",
+     "package" => "additional source files for the Macaulay2 package PKG",
+     "packagecache" => "cached data files for the Macaulay2 package PKG",
+     "packagedoc" => "documentation for the Macaulay2 package PKG",
+     "packageexampleoutput" => "example output files for the Macaulay2 package PKG",
+     "packagehtml" => "html documentation for the Macaulay2 package PKG (*.html)",
+     "packageimages" => "images for the Macaulay2 package PKG (*.jpg)",
+     "packagelib" => "architecture dependent files for the Macaulay2 package PKG",
+     "packages" => "source files for Macaulay2 packages; this directory appears on the path",
+     "packagetests" => "test files for the Macaulay2 package PKG",
+     "programs" => "programs to be run by Macaulay2",
+     "program licenses" => "licenses for programs to be run by Macaulay2"
+     }
+assert( set keys Layout#1 === set keys Layout#2 )
+assert( set keys Layout#1 === set keys doc )
+
+document {
+     Key => {"currentLayout", "Layout"},
+     Headline => "relative locations of Macaulay2 files",
+     PARA {
+	  "Macaulay2 comes with a variety of types of files, and some of them are associated with a 
+	  particular Macaulay2 package.  The hash table ", TT "currentLayout", " is a translation 
+	  table from names, corresponding to the various types of files, to directory paths.  The
+	  directory paths are to be interpreted relative to the path stored in ", TO "prefixDirectory", ".  Each
+	  of the directories contained in the list ", TO "prefixPath", " has its own layout, which will be detected at runtime.
+	  Some of the strings contain ", TT "PKG", " as a substring, which should be replaced
+	  by the name of package whose files will be stored in that directory."
+	  },
+     PARA {
+	  "The hash table ", TO "Layout", " contains the two possible values for ", TO "currentLayout", ";
+	  corresponding to the two possible values for the ", TO [installPackage, SeparateExec], " option used with ", TO "installPackage", ".
+	  The hash table ", TT "Layout#2", " is used if architecture dependent files are to be stored in
+	  a directory tree separate from the one used for architecture independent files.  The hash table ", TT "Layout#1", "
+	  is used otherwise."
+	  },
+     PARA {
+	  "Basic Macaulay2 files are regarded as being associated
+	  with a special package called ", TT{"Core"}, ", and the corresponding documentation files
+	  are part of the package ", TT "Macaulay2Doc", "."
+     	  },
+     EXAMPLE {
+	  "Layout"
+	  },
+     "Here are the meanings of the keys used in ", TO "currentLayout", ".",
+     UL apply(sort pairs doc, (k,v) -> LI { TT format k, " : " | v}),
+     SeeAlso => {[installPackage,SeparateExec]}
      }
 
 -- Local Variables:

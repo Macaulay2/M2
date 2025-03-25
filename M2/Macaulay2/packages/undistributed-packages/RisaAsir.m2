@@ -67,7 +67,6 @@ Headline
   an interface to the Risa/Asir website and system
 Description
   Text
-  Example
 Caveat
 SeeAlso
 ///

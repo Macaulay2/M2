@@ -4,7 +4,12 @@
 
 undocumented{(isField, InexactField)}
 document { 
-     Key => {isField, (isField, EngineRing), (isField, Ring)},
+    Key => {
+	 isField,
+	(isField, Ring),
+	(isField, EngineRing),
+	(isField, GaloisField),
+    },
      Headline => "whether something is a field",
      Usage => "isField R",
      Inputs => {
@@ -33,4 +38,25 @@ document {
 	  },
      SeeAlso => {toField, FractionField, GaloisField, QuotientRing, isUnit}
      }
+
+doc ///
+Node
+  Key
+    isFinitePrimeField
+   (isFinitePrimeField, Ring)
+   (isFinitePrimeField, GaloisField)
+  Headline
+    whether a ring is a finite prime field
+  Usage
+    isFinitePrimeField R
+  Inputs
+    R:Ring
+  Outputs
+    :Boolean
+     whether R is a finite prime field
+  Description
+    Example
+     isFinitePrimeField QQ
+     isFinitePrimeField (ZZ/101)
+///
 

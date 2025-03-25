@@ -4,28 +4,6 @@
 #ifndef _M2_CONFIG_H
 #define _M2_CONFIG_H
 
-// TODO: remove the following five? Currently they are hardcoded.
-// See https://gist.github.com/stalkerg/7a1e891a887b65823ef9.
-
-// one of: 'int' 'unsigned int' 'unsigned long long'
-/* type of arg 1 of accept() */
-#define ACCEPT_TYPE_ARG1 int
-
-// one of: 'struct sockaddr *' 'void *'
-/* type of arg 2 of accept() */
-#define ACCEPT_TYPE_ARG2 struct sockaddr *
-
-// one of: 'socklen_t *' 'size_t *' 'unsigned int *' 'int *'
-/* type of arg 3 of accept() */
-#define ACCEPT_TYPE_ARG3 socklen_t *
-
-// one of: 'int' 'unsigned long long'
-/* type of return value of accept() */
-#define ACCEPT_TYPE_RETURN int
-
-/* socket length type used by accept() */
-#define SOCKLEN_T socklen_t
-
 /* machine hardware type */
 #define ARCH "${CMAKE_SYSTEM_PROCESSOR}"
 
@@ -54,6 +32,12 @@
 /* whether factory was built with --enable-streamio */
 #cmakedefine FACTORY_STREAMIO 1
 
+/* whether we have the flint header file nmod.h */
+#cmakedefine HAVE_FLINT_NMOD_H 1
+
+/* whether we have the flint header file arb.h */
+#cmakedefine HAVE_FLINT_ARB_H 1
+
 /* whether frobby has frobby_version >=0.9.4 or constants::version <0.9.4 */
 #cmakedefine HAVE_FROBBY_VERSION 1
 
@@ -61,7 +45,7 @@
 #cmakedefine HAVE_FFI_GET_STRUCT_OFFSETS 1
 
 /* libffi version */
-#define LIBFFI_VERSION "${LIBFFI_VERSION}"
+#define FFI_VERSION "${FFI_VERSION}"
 
 // TODO: only used in Macaulay2/d/scclib.c. Still needed?
 /* whether getaddrinfo can handle numeric service (port) numbers */
@@ -73,14 +57,14 @@
 
 // TODO: only used in Macaulay2/d/interrupts.d. Still needed?
 /* Defined if you have the `alarm' function. */
-#cmakedefine HAVE_ALARM
+#cmakedefine HAVE_ALARM 1
 
 // TODO: used a few places, what is it for?
 /* Define to 1 if you have `alloca', as a function or macro. */
 #cmakedefine HAVE_ALLOCA 1
 
 /* Defined if you have <alloca.h> and it should be used (not on Ultrix). */
-#cmakedefine HAVE_ALLOCA_H
+#cmakedefine HAVE_ALLOCA_H 1
 
 // TODO: only used in Macaulay2/d/types.h. Still needed?
 /* Define to 1 if you have the <arpa/inet.h> header file. */
@@ -92,10 +76,10 @@
 
 // TODO: only used in Macaulay2/d/M2lib.c. Still needed?
 /* Defined if you have the `clock_gettime' function. */
-#cmakedefine HAVE_CLOCK_GETTIME
+#cmakedefine HAVE_CLOCK_GETTIME 1
 
 /* Defined if you have the <dlfcn.h> header file. */
-#cmakedefine HAVE_DLFCN_H
+#cmakedefine HAVE_DLFCN_H 1
 
 // TODO: remove?
 /* Define to 1 if you have the <elf.h> header file. */
@@ -226,7 +210,7 @@
 #cmakedefine HAVE_STDLIB_H 1
 
 /* Defined if you have the <strings.h> header file. */
-#cmakedefine HAVE_STRINGS_H
+#cmakedefine HAVE_STRINGS_H 1
 
 /* Define to 1 if you have the <string.h> header file. */
 #cmakedefine HAVE_STRING_H 1
@@ -244,10 +228,10 @@
 #cmakedefine HAVE_SYS_IOCTL_H 1
 
 /* Defined if you have the <sys/mman.h> header file. */
-#cmakedefine HAVE_SYS_MMAN_H
+#cmakedefine HAVE_SYS_MMAN_H 1
 
 /* Defined if you have the <sys/resource.h> header file. */
-#cmakedefine HAVE_SYS_RESOURCE_H
+#cmakedefine HAVE_SYS_RESOURCE_H 1
 
 /* Define to 1 if you have the <sys/socket.h> header file. */
 #cmakedefine HAVE_SYS_SOCKET_H 1
@@ -256,7 +240,7 @@
 #cmakedefine HAVE_SYS_STAT_H 1
 
 /* Defined if you have the <sys/time.h> header file. */
-#cmakedefine HAVE_SYS_TIME_H
+#cmakedefine HAVE_SYS_TIME_H 1
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #cmakedefine HAVE_SYS_TYPES_H 1
@@ -271,10 +255,10 @@
 #cmakedefine HAVE_TIME_H 1
 
 /* Defined if you have the <unistd.h> header file. */
-#cmakedefine HAVE_UNISTD_H
+#cmakedefine HAVE_UNISTD_H 1
 
 /* Defined if you have the <regex.h> header file. */
-#cmakedefine HAVE_REGEX_H
+#cmakedefine HAVE_REGEX_H 1
 
 /* Define to 1 if you have the `wait4' function. */
 #cmakedefine HAVE_WAIT4 1
@@ -326,9 +310,6 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS 1
-
-/* Whether we use MPIR (instead of GMP) */
-#cmakedefine01 USING_MPIR
 
 /* Whether we are building with tbb version >= 2021 */
 #cmakedefine WITH_TBB

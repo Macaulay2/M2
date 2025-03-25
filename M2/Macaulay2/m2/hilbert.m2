@@ -85,13 +85,13 @@ poincare Module := M -> (
     error("no applicable strategy for computing poincare over ", toString ring M))
 
 addHook((poincare, Module), Strategy => Default, M -> (
-	new degreesRing M from rawHilbert raw leadTerm gb -* presentation cokernel ?? *- presentation M))
+	new degreesRing ring M from rawHilbert raw leadTerm gb presentation M))
 
 -- manually installs the numerator of the reduced Hilbert series for the module
 storefuns#poincare = method()
 storefuns#poincare(Ideal,  RingElement) := (I, hf) -> storefuns#poincare(comodule I, hf)
 storefuns#poincare(Matrix, RingElement) := (m, hf) -> storefuns#poincare(cokernel m, hf)
-storefuns#poincare(Module, RingElement) := (M, hf) -> M.cache.poincare = substitute(hf, degreesRing M)
+storefuns#poincare(Module, RingElement) := (M, hf) -> M.cache.poincare = substitute(hf, degreesRing ring M)
 
 -- TODO: deprecate this
 installHilbertFunction = storefuns#poincare
@@ -137,7 +137,7 @@ multidegree Module := M -> (
     error("no applicable strategy for computing multidegree of modules over ", toString ring M))
 
 addHook((multidegree, Module), Strategy => Default, M -> (
-    A := degreesRing M;
+    A := degreesRing ring M;
     if (c := codim M) === infinity then return 0_A;
     onem := map(A, A, apply(generators A, t -> 1 - t));
     part(c, numgens A:1, onem numerator poincare M))
@@ -316,7 +316,7 @@ hilbertSeries Module := opts -> M -> (
 	    if ord == ord2 then return ser else
 	    if ord  < ord2 then return part(, ord-1, hft, ser));
 	if M.cache#?exactKey or M.cache#?reducedKey then (
-	    if not M.cache#?reducedKey then M.cache#reducedKey = reduceHilbert M.cache#exactKey;
+	    M.cache#reducedKey ??= reduceHilbert M.cache#exactKey;
 	    return last(M.cache#approxKey = (ord, truncateSeries(ord, hft, M.cache#reducedKey))))
 	    )
     else error "hilbertSeries: option Order expected infinity or an integer";
@@ -381,3 +381,7 @@ addHook((hilbertFunction, List, Module), Strategy => Default, (L, M) -> (
     f := hilbertSeries(M, Order => 1 + sum(h, L, times));
     U := monoid ring f;
     coefficient(U_L, f)))
+
+hilbertFunction Ring   :=
+hilbertFunction Ideal  :=
+hilbertFunction Module := M -> d -> hilbertFunction(d, M)

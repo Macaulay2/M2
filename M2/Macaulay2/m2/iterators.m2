@@ -1,3 +1,6 @@
+needs "classes.m2"
+needs "methods.m2"
+
 -- originally defined (as null) in evaluate.d
 iterator = method(Dispatch => Thing)
 next = method()
@@ -7,7 +10,8 @@ Iterator.synonym = "iterator"
 
 iterator Iterator := identity
 next Iterator := iter -> iter()
-net Iterator := iter -> (
+
+net Iterator := iter -> if hasAttribute(iter,ReverseDictionary) then net getAttribute(iter,ReverseDictionary) else (
     x := if not (first frames iter)#?0 then () else first first frames iter;
     net FunctionApplication(iterator,
 	(if instance(x, String) then format else identity) x))
@@ -19,7 +23,7 @@ iterator String      := x -> Iterator (
 	if i >= #x then StopIteration
 	else (
 	    r := x#i;
-	    i = i + 1;
+	    i += 1;
 	    r)))
 
 toList Thing := x -> for y in x list y
@@ -56,8 +60,16 @@ joinIterators = a -> (
 		    r := next iters#i;
 		    r === StopIteration)
 		do (
-		    i = i + 1;
+		    i += 1;
 		    if i >= n then return StopIteration);
 		r))))
 
 Iterator | Iterator := (x, y) -> joinIterators(x, y)
+
+pairsIterator = x -> Iterator (
+    iter := iterator x;
+    i := 0;
+    () -> (
+	y := next iter;
+	if y === StopIteration then StopIteration
+	else (i, (i += 1; y))))

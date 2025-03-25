@@ -8,12 +8,14 @@ export threadLocal stderr := BasicFile(null()); -- this is safe for other thread
 i():varstring := when stderr is v:varstring do v else (t := newvarstring(200); stderr = t; t);
 export (stderr:BasicFile) << (x:char) : BasicFile := i()<<x;
 export (stderr:BasicFile) << (x:string) : BasicFile := i()<<x;
-flush(stderr:BasicFile):int := write(2,takestring(i()));
+
 export BasicManipulator := {fun:function(BasicFile):int};
 export (bf:BasicFile) << (m:BasicManipulator) : int := m.fun(bf);
-export basicFlush := BasicManipulator(flush);
-endl(stderr:BasicFile):int := stderr << newline << basicFlush;
-export basicEndl := BasicManipulator(endl);
+flushfun(stderr:BasicFile):int := write(2,takestring(i()));
+export basicFlush := BasicManipulator(flushfun);
+endlfun(stderr:BasicFile):int := stderr << newline << basicFlush;
+export basicEndl := BasicManipulator(endlfun);
+
 putdigit(o:BasicFile,x:int):void := o << (x + if x<10 then '0' else 'a'-10) ;
 putneg(o:BasicFile,x:int):void := (
      if x<0 then (

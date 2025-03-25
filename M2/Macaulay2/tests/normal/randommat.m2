@@ -31,3 +31,6 @@ assert isIsomorphism random(R^4,R^4,MaximalRank=>true)
 assert isInjective random(R^6,R^3,MaximalRank=>true)
 assert isSurjective random(R^3,R^6,MaximalRank=>true)
 
+assert(random(ZZ^2, ZZ^2, MaximalRank => true) - id_(ZZ^2) != 0)
+assert(random(QQ^2, QQ^2, MaximalRank => true) - id_(QQ^2) != 0)
+assert(random(R^2,  R^2,  MaximalRank => true) - id_(R^2)  != 0)

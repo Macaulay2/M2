@@ -148,6 +148,12 @@ beginDocumentation()
 doc ///
  Key
    RandomPlaneCurves
+ Headline
+   random plane curves
+ Description
+   Text
+    This package generates random nodal plane curves and provides related
+    methods.
 ///
 
 doc ///

@@ -11,6 +11,7 @@ Node
    (locate, Pseudocode)
    (locate, Function)
    (locate, FunctionBody)
+   (locate, Command)
    (locate, Nothing)
    (locate, List)
    (locate, ZZ)
