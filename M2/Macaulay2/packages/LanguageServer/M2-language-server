@@ -1,0 +1,8 @@
+#!/bin/sh
+
+/home/profzoom/src/macaulay2/M2/M2/BUILD/build/usr-dist/x86_64-Linux-Ubuntu-24.04/bin/M2 --silent \
+   --stop \
+   -e 'needsPackage "LanguageServer"' \
+   -e 'server = new LSPServer'       \
+   -e 'setLogger(server, x -> null)'   \
+   -e 'start server'
