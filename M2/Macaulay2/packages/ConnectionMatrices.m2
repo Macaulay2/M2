@@ -9,7 +9,7 @@ newPackage(
 	{ Name => "Anna-Laura Sattelberger", Email => "anna-laura.sattelberger@mis.mpg.de", HomePage => "" },
 	{ Name => "Hendrik Schroeder",       Email => "h.schroeder@tu-berlin.de",           HomePage => "" },
 	{ Name => "Nicolas Weiss",           Email => "nicolas.weiss@mis.mpg.de",           HomePage => "" },
-	{ Name => "Franzesca Zaffalon",      Email => "francesca.zaffalon@mis.mpg.de",      HomePage => "" }
+	{ Name => "Francesca Zaffalon",      Email => "francesca.zaffalon@mis.mpg.de",      HomePage => "" }
     },
     Headline => "Connection Matrices of D-Ideals and Integrable Systems",
     Keywords => { "D-modules" },
