@@ -211,6 +211,7 @@ assert(isIntegrable(A))
 
 TEST /// -- test 11
   -- tests for fractionField
+  -* no-capture-flag *-
   debug needsPackage "ConnectionMatrices"
   assert(3 == numgens fractionField makeWeylAlgebra(QQ[x,y,z]))
   assert(4 == numgens fractionField makeWeylAlgebra((QQ[e, DegreeRank => 0])[x,y,z]))
