@@ -106,16 +106,16 @@ Description
     D = makeWeylAlgebra(QQ[x,y], v = {2,1})
     I = ideal (x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1)
     A = connectionMatrices(I)
-  Text
-    More interesting examples arising from physics can also be handled. For example, the connection matrices of the annihilating $D_3$-ideal of a correlation function in cosmology can be computed as follows.
-  Example
-    D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x,y,z]);
-    delta1 = (x^2-z^2)*dx^2+2*(1-eps)*x*dx-eps*(1-eps);
-    delta2 = (y^2-z^2)*dy^2+2*(1-eps)*y*dy-eps*(1-eps);
-    delta3 = (x+z)*(y+z)*dx*dy-eps*(x+z)*dx-eps*(y+z)*dy+eps^2;
-    h = x*dx+y*dy+z*dz-2*eps;
-    I = ideal(delta1+delta3, delta2+delta3,h);
-    A = connectionMatrices({1,dx,dy,dx*dy},I)
+  -- Text
+  --   More interesting examples arising from physics can also be handled. For example, the connection matrices of the annihilating $D_3$-ideal of a correlation function in cosmology can be computed as follows.
+  -- Example
+  --   D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x,y,z],{1,1,1});
+  --   delta1 = (x^2-z^2)*dx^2+2*(1-eps)*x*dx-eps*(1-eps);
+  --   delta2 = (y^2-z^2)*dy^2+2*(1-eps)*y*dy-eps*(1-eps);
+  --   delta3 = (x+z)*(y+z)*dx*dy-eps*(x+z)*dx-eps*(y+z)*dy+eps^2;
+  --   h = x*dx+y*dy+z*dz-2*eps;
+  --   I = ideal(delta1+delta3, delta2+delta3,h);
+  --   A = connectionMatrices({1,dx,dy,dx*dy},I)
 ///
 
 doc ///
@@ -145,21 +145,21 @@ Description
     A = connectionMatrices(I);
     M = matrix{{x,0},{0,y}};
     gaugeTransform(M,A,D)
-  Text
-    It is also possible to compute the gauge transform of a
-    system of connection matrices contatining paramenters.
-    The following example comes from the annihilating $D_n$-ideal
-    of a correlation function in cosmology.
-  Example
-    D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x,y,z])
-    delta1 = (x^2-z^2)*dx^2+2*(1-eps)*x*dx-eps*(1-eps);
-    delta2 = (y^2-z^2)*dy^2+2*(1-eps)*y*dy-eps*(1-eps);
-    delta3 = (x+z)*(y+z)*dx*dy-eps*(x+z)*dx-eps*(y+z)*dy+eps^2;
-    h = x*dx+y*dy+z*dz-2*eps;
-    I = ideal(delta1+delta3, delta2+delta3,h)
-    A = connectionMatrices({1,dx,dy,dx*dy},I)
-    changeVar = transpose((1/(2*z*eps^2))*matrix({{2*z*eps^2, -eps^2*(x-z), -eps^2*(y-z), -eps^2*(x+y)},{0,eps*(x^2-z^2),0,eps*(x+y)*(x+z)},{0,0,eps*(y^2-z^2),eps*(x+y)*(y+z)},{0,0,0,-(x+y)*(x+z)*(y+z)}}));
-    A2 = gaugeTransform(changeVar,A,D)
+  -- Text
+  --   It is also possible to compute the gauge transform of a
+  --   system of connection matrices contatining paramenters.
+  --   The following example comes from the annihilating $D_n$-ideal
+  --   of a correlation function in cosmology.
+  -- Example
+  --   D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x,y,z],{1,1,1})
+  --   delta1 = (x^2-z^2)*dx^2+2*(1-eps)*x*dx-eps*(1-eps);
+  --   delta2 = (y^2-z^2)*dy^2+2*(1-eps)*y*dy-eps*(1-eps);
+  --   delta3 = (x+z)*(y+z)*dx*dy-eps*(x+z)*dx-eps*(y+z)*dy+eps^2;
+  --   h = x*dx+y*dy+z*dz-2*eps;
+  --   I = ideal(delta1+delta3, delta2+delta3,h)
+  --   A = connectionMatrices({1,dx,dy,dx*dy},I)
+  --   changeVar = transpose((1/(2*z*eps^2))*matrix({{2*z*eps^2, -eps^2*(x-z), -eps^2*(y-z), -eps^2*(x+y)},{0,eps*(x^2-z^2),0,eps*(x+y)*(x+z)},{0,0,eps*(y^2-z^2),eps*(x+y)*(y+z)},{0,0,0,-(x+y)*(x+z)*(y+z)}}));
+  --   A2 = gaugeTransform(changeVar,A,D)
 SeeAlso
 
 ///
@@ -258,21 +258,21 @@ Description
     A = connectionMatrices(B,I)
     isEpsilonFactorized(A,eps)
   Text
-    In many examples coming from physics it is important to check
-    this factorization property. The following example arises as
-    the annihilating $D_n$-ideal
-    of a correlation function in cosmology.
-  Example
-    D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x,y,z])
-    delta1 = (x^2-z^2)*dx^2+2*(1-eps)*x*dx-eps*(1-eps);
-    delta2 = (y^2-z^2)*dy^2+2*(1-eps)*y*dy-eps*(1-eps);
-    delta3 = (x+z)*(y+z)*dx*dy-eps*(x+z)*dx-eps*(y+z)*dy+eps^2;
-    h = x*dx+y*dy+z*dz-2*eps;
-    I = ideal(delta1+delta3, delta2+delta3,h)
-    A = connectionMatrices({1,dx,dy,dx*dy},I)
-    changeVar = transpose((1/(2*z*eps^2))*matrix({{2*z*eps^2, -eps^2*(x-z), -eps^2*(y-z), -eps^2*(x+y)},{0,eps*(x^2-z^2),0,eps*(x+y)*(x+z)},{0,0,eps*(y^2-z^2),eps*(x+y)*(y+z)},{0,0,0,-(x+y)*(x+z)*(y+z)}}));
-    A2 = gaugeTransform(changeVar,A,D)
-    isEpsilonFactorized(A2,eps)
+  --   In many examples coming from physics it is important to check
+  --   this factorization property. The following example arises as
+  --   the annihilating $D_n$-ideal
+  --   of a correlation function in cosmology.
+  -- Example
+  --   D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x,y,z],{1,1,1})
+  --   delta1 = (x^2-z^2)*dx^2+2*(1-eps)*x*dx-eps*(1-eps);
+  --   delta2 = (y^2-z^2)*dy^2+2*(1-eps)*y*dy-eps*(1-eps);
+  --   delta3 = (x+z)*(y+z)*dx*dy-eps*(x+z)*dx-eps*(y+z)*dy+eps^2;
+  --   h = x*dx+y*dy+z*dz-2*eps;
+  --   I = ideal(delta1+delta3, delta2+delta3,h)
+  --   A = connectionMatrices({1,dx,dy,dx*dy},I)
+  --   changeVar = transpose((1/(2*z*eps^2))*matrix({{2*z*eps^2, -eps^2*(x-z), -eps^2*(y-z), -eps^2*(x+y)},{0,eps*(x^2-z^2),0,eps*(x+y)*(x+z)},{0,0,eps*(y^2-z^2),eps*(x+y)*(y+z)},{0,0,0,-(x+y)*(x+z)*(y+z)}}));
+  --   A2 = gaugeTransform(changeVar,A,D)
+  --   isEpsilonFactorized(A2,eps)
 SeeAlso
 
 ///
