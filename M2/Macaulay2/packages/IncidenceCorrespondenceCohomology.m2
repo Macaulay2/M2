@@ -17,7 +17,7 @@ newPackage(
 		  HomePage => "https://sites.google.com/view/ethan-reed/home"}
 	    },
     	Headline => "Cohomology on the incidence correspondence, bundle of principal parts, and Lefschetz properties",
-	Keywords => {"incidence correspondence"," Lefschetz properties", "principal parts bundles", "Han--Monsky representation ring"}
+	Keywords => {"Algebraic Geometry", "Commutative Algebra", "Flag Varieties"}
 	--Certification => {
 	  --   "journal name" => "",
 	    -- "journal URI" => "",
@@ -676,25 +676,22 @@ hasWLP(ZZ, List) := opts -> (p, L) -> (
      	     return j==0;)))
 
 
+
+
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 -- auxiliary function
 -- Input: integers n,s 
 -- output:list of n-tuples (a_1,....,a_n) such that a_1+.......+a_n-n=s and 2<=a_1<= ....<= a_n
-   
-   nTuples = (n, s) -> (
-    tuples:= {}; -- initialize an empty list to store the tuples
-    -- base case
-    if n == 1 then (
-        tuples = append(tuples, {s+1});
-        return tuples;)
-    else( -- recursive case
-    	for i from 2 to (s+n)//n do ( -- loop over possible values of the first component (from 1 to s)
-            subTuples := select(nTuples(n - 1, s - i+1), x -> x#0>=i); -- recursively generate (n-1)-tuples that sum to (s-i +n) and that the fist component is not less then i
-            iTuples := apply(subTuples, x -> {i}|x);-- append i as the first component to each sub-tuple
-            tuples = tuples | iTuples;
-    	    );
-	return tuples;))
+
+
+nTuples = (n, s) -> (
+    if n == 1 then {{s + 1}}
+    else flatten apply(toList(2..(s+n)//n), i -> (
+	    subTuples := select(nTuples(n - 1, s - i+1), x -> x#0>=i); -- recursively generate (n-1)-tuples that sum to (s-i +n) and that the fist component is not less then i
+	    apply(subTuples, x -> {i}|x)) -- append i as the first component to each sub-tuple
+	))
 
 
 -- user function:  this function lists all the monomial CI of socle degree s that fail the WLP 
@@ -708,6 +705,9 @@ monomialCIsWithoutWLP(ZZ, ZZ, ZZ) := opts -> (p, n, s) -> (
     L:=nTuples(n,s);--list of n-tuples (a_1,....,a_n) such that a_1+.......+a_n-n=s and 2<=a_1<= ....<= a_n
     select(L, x -> not hasWLP(p, x,opts))
 )
+
+
+
 
 --------------------------------------------------------
 ---- Strong Lefschetz Property (SLP)----------------------
@@ -802,8 +802,7 @@ hasSLP(ZZ, List) := opts -> (p, L) -> (
 		    else (
 			d:=L1#0;
 			d0:=d%p;
-			if sum L -n-(d-1)<=min{p-d0,d0} then true 
-			else  false
+			sum L -n-(d-1)<=min{p-d0,d0}
 			    )
 			)
 		    )
@@ -1777,35 +1776,30 @@ doc ///
 
 
 TEST /// -- Test 0
-    needsPackage("IncidenceCorrespondenceCohomology")
     debug(IncidenceCorrespondenceCohomology)
     R=ZZ/5[x,y, Degrees=>{{1,-1,0},{1,0,-1}}]
     assert((tally degrees Hom(gradedFdr(R,4,3),R))-(tally splittingFdr(5,4,3, Multidegree=>true))==0)
 ///
 
 TEST /// -- Test 1
-    needsPackage("IncidenceCorrespondenceCohomology")
     debug(IncidenceCorrespondenceCohomology)
     R=ZZ/3[x,y, Degrees=>{{1,-1,0},{1,0,-1}}]
     assert((tally degrees Hom(gradedFdr(R,5,6),R))-(tally splittingFdr(3,5,6, Multidegree=>true))==0)
 ///
 
 TEST /// -- Test 2
-    needsPackage("IncidenceCorrespondenceCohomology")
     debug(IncidenceCorrespondenceCohomology)
     R=ZZ/3[x,y, Degrees=>{{1,-1,0},{1,0,-1}}]
     assert((tally degrees Hom(gradedFdr(R,15,6),R))-(tally splittingFdr(3,15,6, Multidegree=>true))==0)
 ///
 
 TEST /// -- Test 3
-    needsPackage("IncidenceCorrespondenceCohomology")
     debug(IncidenceCorrespondenceCohomology)
     R=ZZ/3[x,y, Degrees=>{{1,-1,0},{1,0,-1}}]
     assert((tally degrees Hom(gradedFdr(R,13,6),R))-(tally splittingFdr(3,13,6, Multidegree=>true))==0)
 ///
 
 TEST /// -- Test 4
-    needsPackage("IncidenceCorrespondenceCohomology")
     debug(IncidenceCorrespondenceCohomology)    
     R=ZZ/3[x,y, Degrees=>{{1,-1,0},{1,0,-1}}]
     assert((tally degrees Hom(gradedFdr(R,7,6),R))-(tally splittingFdr(3,7,6,Multidegree=>true))==0)
@@ -1813,35 +1807,31 @@ TEST /// -- Test 4
 
 
 TEST /// --Test 5
-    needsPackage("HanMonsky")
     debug(IncidenceCorrespondenceCohomology)
     R=ZZ/5[x,y]
     assert((tally flatten degrees Hom(Fdr(R,4,3),R))-(tally splittingFdr(5,4,3))==0)
 ///
 
 TEST /// --Test 6
-    needsPackage("IncidenceCorrespondenceCohomology")
     debug(IncidenceCorrespondenceCohomology)
     R=ZZ/3[x,y]
     assert((tally flatten degrees Hom(Fdr(R,5,6),R))-(tally splittingFdr(3,5,6))==0)
 ///
 
 TEST ///  --Test 7
-    needsPackage("IncidenceCorrespondenceCohomology")
     debug(IncidenceCorrespondenceCohomology)
     R=ZZ/3[x,y]
     assert((tally flatten degrees Hom(Fdr(R,15,6),R))-(tally splittingFdr(3,15,6))==0)
 ///
 
 TEST /// --Test 8
-    needsPackage("IncidenceCorrespondenceCohomology")
     debug(IncidenceCorrespondenceCohomology)
     R=ZZ/3[x,y]
     assert((tally flatten degrees Hom(Fdr(R,13,6),R))-(tally splittingFdr(3,13,6))==0)
 ///
 
 TEST /// --Test 9
-    debug needsPackage("IncidenceCorrespondenceCohomology")
+    debug(IncidenceCorrespondenceCohomology)
     R=ZZ/3[x,y]
     assert((tally flatten degrees Hom(Fdr(R,7,6),R))-(tally splittingFdr(3,7,6))==0)
 ///
@@ -1867,7 +1857,7 @@ TEST/// -- Test 12
 
 
 TEST/// -- Test 13
-  debug needsPackage("IncidenceCorrespondenceCohomology")
+  debug (IncidenceCorrespondenceCohomology)
   p = 3;
   L = {5,6};
   H = hanMonsky(p, L);
