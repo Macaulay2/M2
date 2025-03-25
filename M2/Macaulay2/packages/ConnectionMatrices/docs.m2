@@ -108,10 +108,6 @@ Description
     A = connectionMatrices(I)
   Text
     More interesting examples arising from physics can also be handled. For example, the connection matrices of the annihilating $D$-ideal of a correlation function in cosmology can be computed as follows.
-  Example
-
-Caveat
-
 ///
 
 doc ///
@@ -228,7 +224,7 @@ Inputs
       parameter for which the factorization property should be tested
 Outputs
     b:Boolean
-      @TT "true"@ or @TT "false"
+      @TT "true"@ or @TT "false"@
 Description
   Text
     This method returns true if the system of connection matrices factors out (a power of) @TT "eps"@, such that the resulting matrices are independent of @TT "eps"@.
