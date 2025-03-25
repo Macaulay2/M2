@@ -64,7 +64,7 @@ Outputs
       encoding the change of basis wrt. to B
 Description
   Text
-    Let $I$ be a $D$-ideal, $G$ a Gröbner basis of $I$ with respect to some elimination term order on $D_n$ and a $B$ basis of $R_n/R_nI$.
+    Let $I$ be a $D_n$-ideal, $G$ a Gröbner basis of $I$ with respect to some elimination term order on $D_n$ and a $B$ basis of $R_n/R_nI$.
     This methods computes the matrix which encodes the change of basis from the set of standard monomials of $R_nI$ to the basis $B$.
   Example
     w1 = {0,0,2,1}; D1 = makeWeylAlgebra(QQ[x,y],w1);
@@ -107,7 +107,7 @@ Description
     I = ideal (x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1)
     A = connectionMatrices(I)
   Text
-    More interesting examples arising from physics can also be handled. For example, the connection matrices of the annihilating $D$-ideal of a correlation function in cosmology can be computed as follows.
+    More interesting examples arising from physics can also be handled. For example, the connection matrices of the annihilating $D_3$-ideal of a correlation function in cosmology can be computed as follows.
   Example
     D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x,y,z]);
     delta1 = (x^2-z^2)*dx^2+2*(1-eps)*x*dx-eps*(1-eps);
@@ -203,7 +203,7 @@ Key
     (standardMonomials, Ideal)
     (standardMonomials, List)
 Headline
-    computes the standard monomials for a $D$-ideal
+    computes the standard monomials for a $D_n$-ideal
 Usage
     standardMonomials(I)
     standardMonomials(G)
@@ -300,7 +300,7 @@ Description
   Text
     Checks whether a list of $n$ matrices $A_i$ in $Mat_{m\times m}(k(x_1..x_n))$ satisfy
     $[A_i,A_j] = dx_i(A_j) - dx_j(A_i)$ for all $i,j$.
-    This is the case, in particular, when they come from a $D$-module, respectively from a $D$-ideal.
+    This is the case, in particular, when they come from a $D_n$-module, respectively from a $D_n$-ideal.
   Example
     D = makeWeylAlgebra(QQ[x,y], w = {0,0,1,2});
     I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
