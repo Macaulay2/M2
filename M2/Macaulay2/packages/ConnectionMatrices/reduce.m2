@@ -24,12 +24,13 @@ makeWeylAlgebra(PolynomialRing, List) := opts -> (R, v) -> (
     if opts.SetVariables then use W;
     W)
 
--- Weyl Algebra with non-weighted lexicographic elimination order
-makeWeylAlgebra(PolynomialRing) := opts -> R -> (
-    n := length(gens R);
-    w := (for i from 1 to 2*n list 0);
-    W := makeWeylAlgebra(R, w);
-    W)
+-- This causes a crash
+-- -- Weyl Algebra with non-weighted lexicographic elimination order
+-- makeWeylAlgebra(PolynomialRing) := opts -> R -> (
+--     n := length(gens R);
+--     w := (for i from 1 to 2*n list 0);
+--     W := makeWeylAlgebra(R, w);
+--     W)
 
 -- TODO: fix in Core
 baseName' = x -> try baseName x else baseName' lift(x, baseRing ring x)
