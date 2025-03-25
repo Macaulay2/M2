@@ -2,18 +2,19 @@ needsPackage "Dmodules"
 
 -- Orders
 -- Weighted lexicographic order x_1 > .. > x_n > dx_1 > .. > dx_n (Not an elimination order)
-WeightThenLexicographicOrder = v -> join( { Weights => (for i from 1 to #v list 0)|v },
-    apply(entries id_(ZZ^(2*#v)), w' -> Weights => w'))
+WeightThenLexicographicOrder = w -> join( { Weights => w },
+    apply(entries id_(ZZ^(#w)), w' -> Weights => w'))
 
 -- Weighted lexicographic elimination order dx_1 > .. > dx_n > x_1 > .. > x_n
-WeightThenEliminationOrder = v -> join( { Weights => (for i from 1 to #v list 0)|v },
-    apply(flatten reverse pack_(#v) entries id_(ZZ^(2*#v)), w' -> Weights => w'))
+WeightThenEliminationOrder = w -> join( { Weights => w },
+    apply(flatten reverse pack_(#w//2) entries id_(ZZ^(#w)), w' -> Weights => w'))
 --D = QQ[x,y,dx,dy, WeylAlgebra => {x=>dx, y=>dy}, MonomialOrder => WeightThenEliminationOrder {0,0,1,1}]
 --D = QQ[x,y,dx,dy, WeylAlgebra => {x=>dx, y=>dy}, MonomialOrder => WeightThenLexicographicOrder {0,0,1,1}]
 --1 + dx + dy + dx^2 + dx*dy + dy^2 + x*(1 + dx + dy + dx^2 + dx*dy + dy^2)
 
 -- Weyl Algebra with monomial order given by the weighted lexicographic elimination order
-makeWeylAlgebra(PolynomialRing, List) := opts -> (R, w) -> (
+makeWeylAlgebra(PolynomialRing, List) := opts -> (R, v) -> (
+    w := (for i from 1 to #v list 0)|v;
     coordVars := gens R;
     diffVars := apply(coordVars, i -> value("symbol d" | toString(i)) );
     allVars := join(coordVars, diffVars);
@@ -26,7 +27,7 @@ makeWeylAlgebra(PolynomialRing, List) := opts -> (R, w) -> (
 -- Weyl Algebra with non-weighted lexicographic elimination order
 makeWeylAlgebra(PolynomialRing) := opts -> R -> (
     n := length(gens R);
-    w := for i from 1 to n list 1;
+    w := (for i from 1 to n list 0)|(for i from 1 to n list 1);
     W := makeWeylAlgebra(R, w);
     W)
 
