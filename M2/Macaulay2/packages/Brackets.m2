@@ -649,7 +649,7 @@ Description
     \displaystyle\sum_{\sigma \mid \text{is shuffle}} 
     \operatorname{sgn}(\sigma ) [a_{\sigma (1)}, \ldots , a_{\sigma (d-k)}, b_1, \ldots , b_k],
     \]
-    where the sum is taken over {\it shuffle permutations} with resepect to the split $(d-k, j + k -d).$
+    where the sum is taken over {\it shuffle permutations} with respect to the split $(d-k, j + k -d).$
     These are the permutations $\sigma : [j] \to [j]$ satisfying $\sigma (1) < \sigma (2) < \ldots  < \sigma (d-k)$ and $\sigma (d-k +1) < \sigma (d-k+2) < \cdots < \sigma (j).$
     Extending $\mathbb{F}$-linearly, the shuffle product defines an associative, skew-commutative multiplication.
     
