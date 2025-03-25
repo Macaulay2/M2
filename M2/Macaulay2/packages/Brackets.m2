@@ -100,7 +100,7 @@ bracketRing (VisibleList, ZZ) := o -> (vectorSymbols, d) -> (
     )
 bracketRing (ZZ, ZZ) := o -> (n, d) -> bracketRing(toList(1..n), d, o)
 -- printing for BracketRing
-net BracketRing := B -> net((symbol B)_(B#numcols, B#numrows))
+net BracketRing := B -> net((symbol B)_(B#numrows, B#numcols))
 -- getters for BracketRing
 numrows BracketRing := B -> B#numrows 
 numcols BracketRing := B -> B#numcols 
