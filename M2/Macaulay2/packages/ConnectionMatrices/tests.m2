@@ -15,8 +15,8 @@
 
 TEST ///
 -- Example equation (11) from https://arxiv.org/pdf/2410.14757
-w = {0,0,0,1,1,1};
-D = makeWeylAlgebra(frac(QQ[e,DegreeRank=>0])[x,y,z],w);
+v = {1,1,1};
+D = makeWeylAlgebra(frac(QQ[e,DegreeRank=>0])[x,y,z],v);
 delta1 = (x^2-z^2)*dx^2+2*(1-e)*x*dx-e*(1-e);
 delta2 = (y^2-z^2)*dy^2+2*(1-e)*y*dy-e*(1-e);
 delta3 = (x+z)*(y+z)*dx*dy-e*(x+z)*dx-e*(y+z)*dy+e^2;
@@ -42,12 +42,12 @@ assert(isEpsilonFactorized(P3,e));
 
 TEST /// -- ALS notes, Example 7.16
 
-  D = makeWeylAlgebra(QQ[x,y], w = {0,0,1,2});
+  D = makeWeylAlgebra(QQ[x,y], v = {1,2});
   I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1); -- doesn't commute
   A = connectionMatrices I;
   -- TODO: add assertions
 
-  -- i2 : D = makeWeylAlgebra(QQ[x,y], w = {0,0,2,1});
+  -- i2 : D = makeWeylAlgebra(QQ[x,y], v = {2,1});
   -- i3 : A = connectionMatrices(ideal (x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1)) -- doesn't commute
   -- Grobner basis:
   -- | xdx+ydy+1 ydxdy+ydy^2+dx+dy xydy^2-y2dy^2+xdy-3ydy-1 |
@@ -56,7 +56,7 @@ TEST /// -- ALS notes, Example 7.16
   -- o3 = {{-1} | (-1)/x       (-y)/x         |, {-1} | 0         1               |}
   --       {-1} | (-1)/(x2-xy) (-x-y)/(x2-xy) |  {-1} | 1/(xy-y2) (-x+3y)/(xy-y2) |
 
-  -- i4 : D = makeWeylAlgebra(QQ[x,y], w = {0,0,1,1});
+  -- i4 : D = makeWeylAlgebra(QQ[x,y], v = {1,1});
   -- i5 : A = connectionMatrices(w, I = ideal (x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1)) -- doesn't commute
   -- Grobner basis:
   -- | xdx+ydy+1 ydxdy+ydy^2+dx+dy xydy^2-y2dy^2+xdy-3ydy-1 |
@@ -65,7 +65,7 @@ TEST /// -- ALS notes, Example 7.16
   -- o5 = {{-1} | (-1)/x       (-y)/x         |, {-1} | 0         1               |}
   --       {-1} | (-1)/(x2-xy) (-x-y)/(x2-xy) |  {-1} | 1/(xy-y2) (-x+3y)/(xy-y2) |
 
-  -- i6 : D = makeWeylAlgebra(QQ[x,y], w = {0,0,1,2});
+  -- i6 : D = makeWeylAlgebra(QQ[x,y], v = {1,2});
   -- i7 : A = connectionMatrices(w, I = ideal (x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1)) -- doesn't commute
   -- Grobner basis:
   -- | ydy+xdx+1 xdxdy+xdx^2+dy+dx x2dx^2-xydx^2+3xdx-ydx+1 |
@@ -79,11 +79,11 @@ TEST /// -- ALS notes, Example 7.16
 
 TEST ///
 -- Example from Overleaf
-w1 = {0,0,2,1};
-w2 = {0,0,1,2};
+v1 = {2,1};
+v2 = {1,2};
 
-D1 = makeWeylAlgebra(QQ[x,y],w1);
-D2 = makeWeylAlgebra(QQ[x,y],w2);
+D1 = makeWeylAlgebra(QQ[x,y],v1);
+D2 = makeWeylAlgebra(QQ[x,y],v2);
 
 -- Construct the ideal in the first Weyl algebra
 I = sub(ideal(x*dx^2-y*dy^2+2*dx-2*dy,x*dx+y*dy+1),D1);  -- Ex. 1.4
@@ -166,7 +166,7 @@ M = matrix {{(x+1)/x}}
 TEST ///
 -- A connection coming from a D-ideal is integrable:
 
-D = makeWeylAlgebra(QQ[x,y], w = {0,0,1,2});
+D = makeWeylAlgebra(QQ[x,y], v = {1,2});
 I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
 A = connectionMatrices I;
 
@@ -191,8 +191,8 @@ TEST ///
 -- Check that the integrability test also works in the parametric case:
 
 -- Based on equation (11) from https://arxiv.org/pdf/2410.14757
-w = {0,0,0,1,1,1};
-D = makeWeylAlgebra(frac(QQ[e,DegreeRank=>0])[x,y,z],w);
+v = {1,1,1};
+D = makeWeylAlgebra(frac(QQ[e,DegreeRank=>0])[x,y,z],v);
 delta1 = (x^2-z^2)*dx^2+2*(1-e)*x*dx-e*(1-e);
 delta2 = (y^2-z^2)*dy^2+2*(1-e)*y*dy-e*(1-e);
 delta3 = (x+z)*(y+z)*dx*dy-e*(x+z)*dx-e*(y+z)*dy+e^2;

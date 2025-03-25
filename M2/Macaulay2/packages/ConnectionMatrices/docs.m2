@@ -33,8 +33,8 @@ Description
     This method computes the normal form of an element $P$ in the Weyl algebra $D_n$ with respect to another element in the Weyl algebra, or a whole list of such elements.
     The reduction step is carried out over the rational Weyl algebra $R_n$.
   Example
-    w = {0,0,1,1};
-    D = makeWA(QQ[x,y],w);
+    v = {1,1};
+    D = makeWA(QQ[x,y],v);
     P = dx^2 ; Q = x*dx+1;
     normalForm(P, Q)
 Caveat
@@ -67,10 +67,10 @@ Description
     Let $I$ be a $D_n$-ideal, $G$ a Gröbner basis of $I$ with respect to some elimination term order on $D_n$ and a $B$ basis of $R_n/R_nI$.
     This methods computes the matrix which encodes the change of basis from the set of standard monomials of $R_nI$ to the basis $B$.
   Example
-    w1 = {0,0,2,1}; D1 = makeWeylAlgebra(QQ[x,y],w1);
+    w1 = {2,1}; D1 = makeWeylAlgebra(QQ[x,y],w1);
     I = sub(ideal(x*dx^2-y*dy^2+2*dx-2*dy,x*dx+y*dy+1),D1);
     SM1 = standardMonomials(I);
-    w2 = {0,0,1,2}; D2 = makeWeylAlgebra(QQ[x,y],w2);
+    w2 = {1,2}; D2 = makeWeylAlgebra(QQ[x,y],w2);
     SM2 = standardMonomials(sub(I,D2));
     G = flatten entries gens gb I;
     gaugeMatrix(G,SM2)
@@ -103,13 +103,13 @@ Description
     If no basis is provided by the user, the basis is chosen to be the set of standard monomials of a Gröbner basis on $R_nI$ with regards to the weighted
     Lex order $(\partial_1 > \cdots > \partial_n > x_1 > \cdots > x_n)$ on the Weyl algebra.
   Example
-    D = makeWeylAlgebra(QQ[x,y], w = {0,0,2,1})
+    D = makeWeylAlgebra(QQ[x,y], v = {2,1})
     I = ideal (x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1)
     A = connectionMatrices(I)
   Text
     More interesting examples arising from physics can also be handled. For example, the connection matrices of the annihilating $D_3$-ideal of a correlation function in cosmology can be computed as follows.
   Example
-    D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x,y,z],w={0,0,0,1,1,1});
+    D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x,y,z]);
     delta1 = (x^2-z^2)*dx^2+2*(1-eps)*x*dx-eps*(1-eps);
     delta2 = (y^2-z^2)*dy^2+2*(1-eps)*y*dy-eps*(1-eps);
     delta3 = (x+z)*(y+z)*dx*dy-eps*(x+z)*dx-eps*(y+z)*dy+eps^2;
@@ -151,7 +151,7 @@ Description
     The following example comes from the annihilating $D_n$-ideal
     of a correlation function in cosmology.
   Example
-    D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x,y,z],{0,0,0,1,1,1})
+    D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x,y,z])
     delta1 = (x^2-z^2)*dx^2+2*(1-eps)*x*dx-eps*(1-eps);
     delta2 = (y^2-z^2)*dy^2+2*(1-eps)*y*dy-eps*(1-eps);
     delta3 = (x+z)*(y+z)*dx*dy-eps*(x+z)*dx-eps*(y+z)*dy+eps^2;
@@ -263,7 +263,7 @@ Description
     the annihilating $D_n$-ideal
     of a correlation function in cosmology.
   Example
-    D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x,y,z],{0,0,0,1,1,1})
+    D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x,y,z])
     delta1 = (x^2-z^2)*dx^2+2*(1-eps)*x*dx-eps*(1-eps);
     delta2 = (y^2-z^2)*dy^2+2*(1-eps)*y*dy-eps*(1-eps);
     delta3 = (x+z)*(y+z)*dx*dy-eps*(x+z)*dx-eps*(y+z)*dy+eps^2;
@@ -302,7 +302,7 @@ Description
     $[A_i,A_j] = dx_i(A_j) - dx_j(A_i)$ for all $i,j$.
     This is the case, in particular, when they come from a $D_n$-module, respectively from a $D_n$-ideal.
   Example
-    D = makeWeylAlgebra(QQ[x,y], w = {0,0,1,2});
+    D = makeWeylAlgebra(QQ[x,y], v = {1,2});
     I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
     A = connectionMatrices I;
     assert(isIntegrable(D,A))
