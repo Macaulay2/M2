@@ -33,7 +33,6 @@
 #include "schreyer-resolution/res-schreyer-frame.hpp"     // for SchreyerFrame
 #include "schreyer-resolution/res-schreyer-order.hpp"     // for ResSchreyer...
 #include "timing.hpp"                                     // for timer, seconds
-#include <gmp.h>                                          // for mpz_clear
 #include <cstdlib>                                        // for exit, size_t
 #include <chrono>                                         // for common_type...
 #include <iostream>                                       // for operator<<

@@ -774,6 +774,7 @@ logorfun(lhs:Code,rhs:Code):Expr := (
      when left
      is Error do left
      else (
+	  -- # typical value: symbol or, Boolean, Boolean, Boolean
 	  if left == True then True
 	  else if left == False then (
 	       right := eval(rhs);
@@ -794,6 +795,7 @@ logandfun(lhs:Code,rhs:Code):Expr := (
      when a
      is Error do a
      else (
+	  -- # typical value: symbol and, Boolean, Boolean, Boolean
 	  if a == False then False
 	  else if a == True then (
 	       b := eval(rhs);
@@ -809,6 +811,7 @@ export notFun(rhs:Code):Expr := (
      a := eval(rhs);
      when a
      is Error do a
+     -- # typical value: symbol not, Boolean, Boolean
      else if a == True then False
      else if a == False then True
      else unarymethod(a,notS));

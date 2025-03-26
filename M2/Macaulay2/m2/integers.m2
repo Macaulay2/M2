@@ -92,6 +92,11 @@ ZZ & ZZ := ZZ => lookup(symbol &, ZZ, ZZ)
 ZZ ^^ ZZ := bitxorfun
 Boolean xor Boolean := (x, y) -> x and not y or not x and y
 
+Function and Function := (f, g) -> s -> f s and g s
+Function or  Function := (f, g) -> s -> f s or  g s
+Function xor Function := (f, g) -> s -> f s xor g s
+not Function := f -> s -> not f s
+
 ZZ~ := bitnotfun
 
 changeBase = method()

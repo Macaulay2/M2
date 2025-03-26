@@ -8,7 +8,6 @@
 #include "newdelete.hpp"              // for our_new_delete
 #include "ringelem.hpp"               // for ring_elem
 
-#include <gmp.h>                      // for mpz_srcptr, mpq_srcptr
 #include <vector>                     // for vector
 
 class Ring;
