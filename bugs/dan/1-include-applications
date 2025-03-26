@@ -1,6 +1,0 @@
-Why not treat applications such as polymake, Normaliz, etc., as libraries, and just
-download them, compile them, and include them in the distribution?
-
-The configure script could detect whether the programs exist already, and find out
-what package they came from, so as to construct the dependencies properly.  But
-most of these aren't packaged yet.

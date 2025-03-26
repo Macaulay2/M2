@@ -1,15 +1,0 @@
-What's this all about?
-
-    ubuntu64$ sudo dpkg --install /home/dan/M2/1.3.1/BUILD/dan/builds.tmp/ubuntu64.production/Macaulay2-1.3.1-common.deb
-    [sudo] password for dan: 
-    (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 191820 files and directories currently installed.)
-    Preparing to replace macaulay2-common 1.2 (using .../Macaulay2-1.3.1-common.deb) ...
-    Ignoring install-info called from maintainer script
-    The package macaulay2-common should be rebuild with new debhelper to get trigger support
-    Ignoring install-info called from maintainer script
-    The package macaulay2-common should be rebuild with new debhelper to get trigger support
-    Ignoring install-info called from maintainer script
-    The package macaulay2-common should be rebuild with new debhelper to get trigger support
-    Ignoring install-info called from maintainer script
-    The package macaulay2-common should be rebuild with new debhelper to get trigger support
-    ...
