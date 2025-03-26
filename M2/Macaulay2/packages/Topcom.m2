@@ -964,21 +964,21 @@ doc ///
   Key
     ConnectedToRegular
   Headline
-    an optional argument used in some functions in the Topcom interfacce package
+    an optional argument used in some functions in the Topcom interface package
 ///
 
 doc ///
   Key
     Fine
   Headline
-    an optional argument used in some functions in the Topcom interfacce package
+    an optional argument used in some functions in the Topcom interface package
 ///
 
 doc ///
   Key
     RegularOnly
   Headline
-    an optional argument used in some functions in the Topcom interfacce package
+    an optional argument used in some functions in the Topcom interface package
 ///
 
 
