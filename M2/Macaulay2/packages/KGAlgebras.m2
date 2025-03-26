@@ -7,7 +7,7 @@ newPackage(
     {Name => "Moses Samuelson-Lynn", Email => "m.samuelsonlynn@utah.edu"},
     {Name => "Toshi Mowery", Email => "tosmow@gmail.com"}
     },
-    Headline => "A package for group algebras",
+    Headline => "An implementation of group algebras",
     Keywords => {"Group Theory"},
     DebuggingMode => false,
     PackageExports=>{"AssociativeAlgebras","InvariantRing","RealRoots"}
@@ -95,7 +95,7 @@ meataxe(FiniteGroupAction, FreeAlgebraQuotient,Ring) := (G,S,K) -> (
                 return image M2;
             );
             if dim N == (degree(P))#0 then (
-                                return true;
+                                return image M2;
                         );
                         
         );
@@ -178,7 +178,7 @@ TEST ///
         L= {matrix {{0,1},{1,0}},matrix {{2,0},{0,1}},matrix {{0,1},{2,0}},matrix {{1,0},{0,1}}};
         G = finiteAction(L,R);
         KG = groupRing(G,K);
-        assert ( meataxe(G,KG,K));
+        assert (rank meataxe(G,KG,K) == 2);
 /// 
 TEST ///
         K = ZZ/3;
