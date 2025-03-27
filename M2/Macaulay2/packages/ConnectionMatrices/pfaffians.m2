@@ -10,6 +10,9 @@ connectionMatrices = method()
 -- gives connection matrices for a D-ideal
 -- c.f. [Theorem 1.4.22, SST]
 connectionMatrices Ideal := List => I -> I.cache.connectionMatrices ??= (
+
+    -- Todo: Assert that I is an ideal in the Weyl algebra.
+
     D := ring I;
     createDpairs D;
     -- TODO: this might not always be correct,
@@ -35,15 +38,9 @@ connectionMatrices Ideal := List => I -> I.cache.connectionMatrices ??= (
 
 -- gives the system of connection matrices with respect to a new basis B
 connectionMatrices(List,Ideal) := (B,I)->(
-    W := ring I;
-    G := gaugeMatrix(I,B);
-    invG := inverse G;
-    n := dim W//2;
-    C := connectionMatrices I;
-    for i from 1 to n list(
-        dxi := W_(n+i-1);
-        diffMatrixWeyl(dxi, G)*invG + G*(C#(i-1))*invG
-    )
+    g := gaugeMatrix(I,B);
+    A := connectionMatrices I;
+    gaugeTransform(g, A)
 )
 
 ----------------------------------------------------
