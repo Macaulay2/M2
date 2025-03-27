@@ -44,13 +44,13 @@ Node
     Text
       Example 1.2.9 [SST, pp. 39] computes the connection matrices (also known as the Pfaffian system)
       for this system with constants $a=1/2,b=1/2,c=1$. Using the @TO connectionMatrices@ function,
-      we can find the system for arbitrary constants:.
+      we can find the system for arbitrary constants.
     Example
       A = connectionMatrices I;
       isIntegrable A
       netList(Boxes => false, VerticalSpace => 1, apply(4, i -> i+1 => A#i))
     Text
-      Substituting the constants in Example 1.2.9, we note that example contains a misprint:
+      Substituting the constants in Example 1.2.9, we note that example contains a misprint.
     -- Example
     --   -- Example 1.4.23 in SST, pp. 39
     --   netList(Boxes => false, VerticalSpace => 1,
