@@ -42,7 +42,7 @@ diffMatrixWeyl(RingElement, Matrix) :=(P, M)->(
 gaugeTransform = method();
 -- gives the gauge transform of a system of connection matrices w.r.t. a given change of basis matrix.
 gaugeTransform(Matrix, List, PolynomialRing) := (M, A, D)->(
-    if not(all(A, x -> ring x === ring first A)) or not(frac(ring M) === ring first A) then error "expected matrices over the same ring";
+    if not same apply(A, ring) or frac(ring M) =!= ring first A then error "expected matrices over the same ring";
     --if not()  then error "expected matrix in a different Weyl algebra";
     M = sub(M, ring A#0);
     invM := inverse M;
@@ -54,7 +54,7 @@ gaugeTransform(Matrix, List, PolynomialRing) := (M, A, D)->(
 );
 -- Infering the Weyl algebra to perform the gauge transform in:
 gaugeTransform(Matrix, List) := (M,A)->(
-    if not(all(A, x -> ring x === ring first A)) or not(frac(ring M) === ring first A) then error "expected matrices over the same ring";
+    if not same apply(A, ring) or frac(ring M) =!= ring first A then error "expected matrices over the same ring";
     D := inferWeylAlgebra(ring A#0);
     --if not(makeWA(ring M, (((options(D)).MonomialOrder)#1)#1) === D)  then error "expected matrix in a different Weyl algebra";
     gaugeTransform(M,A,D)
@@ -67,8 +67,8 @@ gaugeTransform(Matrix, List) := (M,A)->(
 isEpsilonFactorized = method();
 -- checks factorization for a whole system of connection matrices
 isEpsilonFactorized(List,RingElement) := (P,e) -> (
-    if not(all(P, x -> ring x === ring first P)) then error "expected matrices over the same ring";
-    if (ring e === ring first P) then error "expected element in the ring of the matrices";
+    if not same apply(P, ring) then error "expected matrices over the same ring";
+    if ring e =!= ring first P then error "expected element in the ring of the matrices";
     lst := new MutableList;
     for p in P do (
         tmp  := lstOfDegrees(p,e);
@@ -81,7 +81,7 @@ isEpsilonFactorized(List,RingElement) := (P,e) -> (
 
 --checks factorization for single connection matrix
 isEpsilonFactorized(Matrix,RingElement) := (M,e) -> (
-    if (ring e === ring M) then error "expected element in the ring of the matrices";
+    if ring e =!= ring M then error "expected element in the ring of the matrices";
     lstdeg := lstOfDegrees(M,e);
     if #lstdeg == 0 then return false;
     all(lstdeg, x -> x == first lstdeg)
