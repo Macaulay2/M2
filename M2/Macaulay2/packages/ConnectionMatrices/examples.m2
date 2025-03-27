@@ -3,7 +3,7 @@ Key
     "examples from physics"
 Description
   Text
-    The following $D$-ideal corresponds to the $D$-ideal behind the cosmological correlator of the two-site chain as in Equation (11) in [FPSW25].
+    The following $D$-ideal corresponds to the $D$-ideal behind the cosmological correlator of the two-site chain as in Equation (11) in [FPSW].
   Example
     v = {1,1,1};
     D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x,y,z],v);
@@ -29,7 +29,7 @@ Description
 
     assert(isEpsilonFactorized(Peps,eps));
 References
-  See the example in equation (11) from https://arxiv.org/pdf/2410.14757
+  C. Fevola, G. L. Pimentel, A.-L. S, and T. Westerdijk. Algebraic Approaches to Cosmological Integrals. Preprint arXiv:2410.14757. To appear in {\em Le Matematiche}.
 SeeAlso
 
 ///
