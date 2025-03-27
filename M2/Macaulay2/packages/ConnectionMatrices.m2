@@ -1,39 +1,41 @@
 newPackage(
     "ConnectionMatrices",
-    Version => "0.1",
+    Version => "1.0",
     Date => "March 2025",
     Authors => {
 	{ Name => "Paul Goerlach",           Email => "paul.goerlach@ovgu.de",              HomePage => "" },
 	{ Name => "Joris Koefler",           Email => "joris.koefler@mis.mpg.de",           HomePage => "" },
-	{ Name => "Mahrud Sayrafi",          Email => "mahrud@fields.utoronto.ca",          HomePage => "" },
+	{ Name => "Mahrud Sayrafi",          Email => "mahrud@fields.utoronto.ca",          HomePage => "https://math.umn.edu/~mahrud/" },
 	{ Name => "Anna-Laura Sattelberger", Email => "anna-laura.sattelberger@mis.mpg.de", HomePage => "" },
 	{ Name => "Hendrik Schroeder",       Email => "h.schroeder@tu-berlin.de",           HomePage => "" },
 	{ Name => "Nicolas Weiss",           Email => "nicolas.weiss@mis.mpg.de",           HomePage => "" },
 	{ Name => "Francesca Zaffalon",      Email => "francesca.zaffalon@mis.mpg.de",      HomePage => "" }
     },
-    Headline => "Connection Matrices of D-Ideals and Integrable Systems",
+    Headline => "connection matrices and integrable systems from D-ideals",
     Keywords => { "D-modules" },
     PackageExports => { "Dmodules" },
     AuxiliaryFiles => true,
-    DebuggingMode => true,
+    DebuggingMode => false,
 )
 
 export {
-    "connectionMatrices",
+    -- see ConnectionMatrices/reduce.m2
     "normalForm",
-    "gaugeMatrix",
-    "gaugeTransform",
-    "connectionMatrix",
+    -- see ConnectionMatrices/pfaffians.m2
     "standardMonomials",
-    "isEpsilonFactorized",
+    "connectionMatrices",
+    "connectionMatrix",
+    -- see ConnectionMatrices/integrabilityCheck.m2
     "isIntegrable",
+    -- see ConnectionMatrices/gaugeMatrix.m2
+    "gaugeMatrix",
+    -- see ConnectionMatrices/gaugeTransform.m2
+    "gaugeTransform",
+    "isEpsilonFactorized",
 }
 
--- to access private methods from Core
-importFrom_Core { "concatRows", "concatCols" }
-
 -- to access private methods from Dmodules
-debug Dmodules
+--debug Dmodules
 
 --------------------------------------------------------------------
 -- contains changes to Dmodules method holonomicRank

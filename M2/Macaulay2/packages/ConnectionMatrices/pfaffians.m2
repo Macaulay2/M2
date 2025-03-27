@@ -2,6 +2,9 @@
 --connectionMatrices: computes system of connection matrices
 ------------------------------------------------------------
 
+-- to access private methods from Core
+importFrom_Core { "concatCols" }
+
 connectionMatrices = method()
 
 -- gives connection matrices for a D-ideal
