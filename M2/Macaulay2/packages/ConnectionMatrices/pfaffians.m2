@@ -21,6 +21,7 @@ connectionMatrices Ideal := List => I -> I.cache.connectionMatrices ??= (
     -- this acts as the associated graded ring of rational Weyl algebra
     R := rationalWeylAlgebra D;
     F := baseFractionField D;
+    f := map(F, R);
     -- gb with respect to an elimination order
     G := gens gb I;
     if debugLevel > 0 then printerr("Grobner basis: ", net G);
@@ -28,12 +29,11 @@ connectionMatrices Ideal := List => I -> I.cache.connectionMatrices ??= (
     if r === infinity then error "system is not finite dimensional";
     B := sub(M.cache#"basis", R);
     if debugLevel > 0 then printerr("Standard monomials: ", net B);
-    A := apply(D.dpairVars#1,
+    apply(D.dpairVars#1,
 	dt -> transpose concatCols apply(flatten entries B,
-	    s -> last coefficients(
+	    s -> f last coefficients(
 		-- computes (dt * s) % G
-		normalForm(dt_R * s, first entries G), Monomials => B)));
-    apply((A/entries)/matrix, p -> sub(p, F))
+		normalForm(dt_R * s, first entries G), Monomials => B)))
 )
 
 -- gives the system of connection matrices with respect to a new basis B
@@ -65,8 +65,9 @@ connectionMatrix(List) := List => (P) -> (
     K := coefficientRing(ring P_0);
     D := makeWA(K(monoid[gens ring P_0]));
     R := rationalWeylAlgebra D;
+    f := map(R, ring P_0);
     var := gens R;
-    net(sum((for i from 0 to length(var)-1 list var_i*sub(P_i,R))))
+    net sum(numgens R, i -> var_i * f(P_i))
 )
 
 ----------------------------------------------------------------
