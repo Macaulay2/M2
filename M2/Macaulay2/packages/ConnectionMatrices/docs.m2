@@ -10,8 +10,8 @@ Node
       Systems of homogeneous, linear partial differential equations (PDEs)
       with polynomial coefficients are encoded by left ideals in the Weyl algebra, denoted
       $$ D_n=\CC[x_1,\ldots,x_n]\langle \partial_1,\ldots,\partial_n \rangle. $$
-      Such systems can be systematically written as a first-order matrix system known as a ``Pfaffian system'' or ``connection form,''
-      by utilizing Gröbner bases in the Weyl algebra [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, pp. 37].
+      Such systems can be systematically written as a first-order matrix system known as a "Pfaffian system" or "connection form,"
+      by utilizing Gröbner bases in the Weyl algebra [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, p. 37].
       The systematic computation of connection matrices requires Gröbner basis computations in the rational Weyl algebra
       $$ R_n=\CC(x_1,\ldots,x_n)\langle \partial_1,\ldots,\partial_n \rangle. $$
     Tree
