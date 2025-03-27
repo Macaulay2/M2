@@ -25,7 +25,7 @@ Node
         gaugeMatrix
         gaugeTransform
 	isEpsilonFactorized
-      :Testing integrability of a system of connection matrices
+      :Testing integrability of a list of matrices
         isIntegrable
     Text
       As an example, consider the GKZ system representing the Gauss hypergeometric function
