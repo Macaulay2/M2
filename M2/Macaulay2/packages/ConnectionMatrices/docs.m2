@@ -45,7 +45,7 @@ Node
       holonomicRank({0,0,0,0,0,0,0}, comodule I)
       standardMonomials I
     Text
-      Example 1.2.9 [SST, pp. 39] computes the connection matrices (also known as the Pfaffian system)
+      [SST, Example 1.4.23] computes the connection matrices (also known as the Pfaffian system)
       for this system with constants $a=1/2,b=1/2,c=1$. Using the @TO connectionMatrices@ function,
       we can find the system for arbitrary constants.
     Example
