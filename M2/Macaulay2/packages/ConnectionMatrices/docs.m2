@@ -69,7 +69,7 @@ Node
       UL apply(4, i -> concatenate_("$A_"|i+1|"=") substring_1 tex sub(A#i, {a => 1/2, b => 1/2, c => 1}))
   References
     Most algorithms in this package can be found in the book
-    {\em Gröbner deformations of Hypergeometric Differential Equations} by Saito, Sturmfels and Takayama,
+    {\em Gröbner deformations of Hypergeometric Differential Equations} by M. Saito, B. Sturmfels, and N. Takayama (published by Springer, 2000),
     cited here as [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@].
   SeeAlso
     "Dmodules :: Dmodules"
