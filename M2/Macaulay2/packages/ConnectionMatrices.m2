@@ -22,7 +22,7 @@ export {
     -- see ConnectionMatrices/reduce.m2
     "normalForm",
     "baseFractionField",
-    -- see ConnectionMatrices/pfaffians.m2
+    -- see ConnectionMatrices/connectionMatrices.m2
     "standardMonomials",
     "connectionMatrices",
     "connectionMatrix",
@@ -54,7 +54,7 @@ load "./ConnectionMatrices/reduce.m2"
 -- Connection Matrices
 --------------------------------------------------------------------
 
-load "./ConnectionMatrices/pfaffians.m2"
+load "./ConnectionMatrices/connectionMatrices.m2"
 
 --------------------------------------------------------------------
 -- change of basis
