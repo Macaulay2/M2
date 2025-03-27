@@ -48,6 +48,7 @@ flattenBaseMonoid = (K, D) -> (
 -- Fraction field K(x) of a Weyl algebra K[x,dx]/(...)
 -- TODO: implement this as frac(D) for Weyl algebras
 baseFractionField = method()
+baseFractionField FractionField  := FractionField => identity
 baseFractionField PolynomialRing := FractionField => D -> D.baseFractionField ??= (
     -- given frac(QQ[e])[a,b,c][x,y,dx,dy]
     -- extract frac(QQ[x,y,a,b,c,e])

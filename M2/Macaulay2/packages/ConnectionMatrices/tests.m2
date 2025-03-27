@@ -34,6 +34,7 @@ changeofvar = gaugeMatrix(G,B2);
 assert(changeofvar == gaugeMatrix(I,B2));
 P2 = gaugeTransform(changeofvar,P);
 
+F = baseFractionField D
 changeVar = transpose((1/(2*z*e^2))*matrix({{2*z*e^2, -e^2*(x-z), -e^2*(y-z), -e^2*(x+y)},{0,e*(x^2-z^2),0,e*(x+y)*(x+z)},{0,0,e*(y^2-z^2),e*(x+y)*(y+z)},{0,0,0,-(x+y)*(x+z)*(y+z)}}));
 P3 = gaugeTransform(changeVar,P2);
 
@@ -149,7 +150,7 @@ assert(isEpsilonFactorized(M, y));
 TEST /// -- test 6
 -- Matrix of zeros is factorized with respect to any variable
 R = frac(QQ[x,y]);
-M = matrix {{0,0}, {0,0}};
+M = matrix(R, {{0,0}, {0,0}});
 
 assert(isEpsilonFactorized(M, x) and isEpsilonFactorized(M, y));
 ///
