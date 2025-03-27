@@ -3,9 +3,83 @@ Node
   Key
     ConnectionMatrices
   Headline
-    Writing $D$-ideals in connection form.
+    writing and working with $D$-ideals in connection form
+  Description
+    Text
+      -- excerpt from the paper
+      Systems of homogeneous, linear partial differential equations (PDEs)
+      with polynomial coefficients are encoded by left ideals in the Weyl algebra, denoted
+      $$ D_n=\CC[x_1,\ldots,x_n]\langle \partial_1,\ldots,\partial_n \rangle. $$
+      Such systems can be systematically written as a first-order matrix system known as a "Pfaffian system" or "connection form",
+      by utilizing Gröbner bases in the Weyl algebra [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, pp. 37].
+      The systematic computation of connection matrices requires Gröbner basis computations in the rational Weyl algebra
+      $$ R_n=\CC(x_1,\ldots,x_n)\langle \partial_1,\ldots,\partial_n \rangle. $$
+    Tree
+      :Working with the rational Weyl algebra
+        normalForm
+	standardMonomials
+      :Computing and displaying $D$-ideals in connection form
+        connectionMatrices
+        connectionMatrix
+      :Changing basis of a system of connection matrices
+        gaugeMatrix
+        gaugeTransform
+	isEpsilonFactorized
+      :Testing integrability of a system of connection matrices
+        isIntegrable
+    Text
+      As an example, consider the GKZ system representing the Gauss hypergeometric function
+      (c.f. Examples 1.2.9 [SST, pp. 14]).
+    Example
+      -- Example 1.2.9 in SST, pp. 14
+      D = makeWeylAlgebra(QQ[a,b,c, DegreeRank => 0][x_1..x_4]);
+      I = ideal(
+	  dx_2*dx_3 - dx_1*dx_4,
+	  x_1*dx_1 - x_4*dx_4 + 1 - c,
+	  x_2*dx_2 + x_4*dx_4 + a,
+	  x_3*dx_3 + x_4*dx_4 + b);
+      -- TODO: make it so we don't need to specify these weights
+      holonomicRank({0,0,0,0,0,0,0}, comodule I)
+      standardMonomials I
+    Text
+      Example 1.2.9 [SST, pp. 39] computes the connection matrices (also known as the Pfaffian system)
+      for this system with constants $a=1/2,b=1/2,c=1$. Using the @TO connectionMatrices@ function,
+      we can find the system for arbitrary constants:.
+    Example
+      A = connectionMatrices I;
+      isIntegrable A
+      netList(Boxes => false, VerticalSpace => 1, apply(4, i -> i+1 => A#i))
+    Text
+      Substituting the constants in Example 1.2.9, we note that example contains a misprint:
+    -- Example
+    --   -- Example 1.4.23 in SST, pp. 39
+    --   netList(Boxes => false, VerticalSpace => 1,
+    -- 	  apply(4, i -> i+1 => sub(A#i, {a => 1/2, b => 1/2, c => 1})))
+    Code
+      D = makeWeylAlgebra(QQ[a,b,c, DegreeRank => 0][x_1..x_4]);
+      I = ideal(
+	  dx_2*dx_3 - dx_1*dx_4,
+	  x_1*dx_1 - x_4*dx_4 + 1 - c,
+	  x_2*dx_2 + x_4*dx_4 + a,
+	  x_3*dx_3 + x_4*dx_4 + b);
+      A = connectionMatrices I;
+      UL apply(4, i -> concatenate_("$A_"|i+1|"=") substring_1 tex sub(A#i, {a => 1/2, b => 1/2, c => 1}))
+  References
+    Most algorithms in this package can be found in the book
+    {\em Gröbner deformations of Hypergeometric Differential Equations} by Saito, Sturmfels and Takayama,
+    cited here as [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@].
   SeeAlso
     "Dmodules :: Dmodules"
+    "HolonomicSystems :: HolonomicSystems"
+  Subnodes
+    normalForm
+    standardMonomials
+    connectionMatrices
+    connectionMatrix
+    gaugeMatrix
+    gaugeTransform
+    isEpsilonFactorized
+    isIntegrable
 ///
 
 doc ///
@@ -37,6 +111,8 @@ Description
     D = makeWA(QQ[x,y],v);
     P = dx^2 ; Q = x*dx+1;
     normalForm(P, Q)
+References
+  See Theorem 1.1.7 [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, pp. 7].
 Caveat
   Currently, the output lives in the fraction field of the variables, but this is not encoded as an element of the rational Weyl algebra
 SeeAlso
@@ -116,23 +192,27 @@ Description
   --   h = x*dx+y*dy+z*dz-2*eps;
   --   I = ideal(delta1+delta3, delta2+delta3,h);
   --   A = connectionMatrices({1,dx,dy,dx*dy},I)
+References
+  For more details, see [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, pp. 37-40].
 ///
 
 doc ///
 Key
     gaugeTransform
     (gaugeTransform, Matrix, List, PolynomialRing)
+    (gaugeTransform, Matrix, List)
 Headline
     computes the gauge transform of a system of connection matrices
 Usage
     gaugeTransform(M, A, D)
+    gaugeTransform(M, A)
 Inputs
     M:Matrix
       change of basis matrix
     A:List
       a system of connection matrices
     D:Ring
-      the Weyl algebra
+      the Weyl algebra (if omitted, it will be inferred from first element of @TT "A"@)
 Outputs
     L:List
       the system of connection matrices $\widetilde{A}_i = M A_i M^{-1} + (\partial_i \bullet M)M^{-1}$ after the gauge transformation with respect to $M$.
