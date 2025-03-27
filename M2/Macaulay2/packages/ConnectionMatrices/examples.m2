@@ -1,6 +1,6 @@
 doc ///
 Key
-    "examples from physics"
+    "Examples from particle physics and cosmology"
 Description
   Text
     The following $D$-ideal corresponds to the $D$-ideal behind the cosmological correlator of the two-site chain as in Equation (11) in [FPSW].
@@ -29,14 +29,17 @@ Description
 
     assert(isEpsilonFactorized(Peps,eps));
 References
-  C. Fevola, G. L. Pimentel, A.-L. S, and T. Westerdijk. Algebraic Approaches to Cosmological Integrals. Preprint arXiv:2410.14757. To appear in {\em Le Matematiche}.
+[FPSW]  C. Fevola, G. L. Pimentel, A.-L. Sattelberger, and T. Westerdijk. Algebraic Approaches to Cosmological Integrals. Preprint arXiv:2410.14757. To appear in {\em Le Matematiche}.
+
+[HPSZ] J. Henn, E. Pratt, A.-L. Sattelberger, and S. Zoia. $D$-Module Techniques for Solving Differential Equations behind Feynman Integrals. Letters in Mathematical Physics, 114(28), 2024.
+
 SeeAlso
 
 ///
 
 doc ///
 Key
-    "examples from GKZ systems"
+    "A GKZ system"
 Description
   Text
       Consider the GKZ system representing the Gauss hypergeometric function
