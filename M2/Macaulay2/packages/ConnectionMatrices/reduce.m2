@@ -46,7 +46,7 @@ fractionField = memoize(D -> (
     -- find the ultimate coefficient ring (in this case QQ)
     K := ultimate(coefficientRing, D);
     L := generators(D, CoefficientRing => K) - set D.dpairVars#1;
-    F := frac(K[Variables => L / baseName']);
+    F := frac(K(monoid[Variables => L / baseName']));
     F.dpairVars = D.dpairVars;
     -- TODO: think of a better name
     F#"OriginalWeylAlgebra" = D;
