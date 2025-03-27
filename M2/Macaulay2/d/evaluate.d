@@ -1343,8 +1343,9 @@ steppingFurther(c:Code):bool := steppingFlag && (
 
 handleError(c:Code,e:Expr):Expr := (
      when e is err:Error do (
-	  if SuppressErrors then return e;
-	  if err.message == returnMessage
+	  p := codePosition(c);
+	  if SuppressErrors
+	  || err.message == returnMessage
 	  || err.message == continueMessage || err.message == continueMessageWithArg
 	  || err.message == stepMessage || err.message == stepMessageWithArg
 	  || err.message == breakMessage
@@ -1353,10 +1354,9 @@ handleError(c:Code,e:Expr):Expr := (
 	  then (
 	       -- an error message that is really being used to transfer control must be passed up the line
 	       -- the position is plugged in just in case it's unhandled
-	       if err.position == dummyPosition then err.position = codePosition(c);
+	       if err.position == dummyPosition then err.position = p;
 	       return e;
 	       );
-	  p := codePosition(c);
 	  clearAllFlags();
 	  clearAlarm();
 	  if p.loadDepth >= errorDepth && !err.position === p then (
@@ -1585,7 +1585,14 @@ export evalraw(c:Code):Expr := (
 	       	    tmp)
 	       else AngleBarList(r)
 	       ));
-     when e is Error do handleError(c,e) else e);
+     when e is Error
+     do (
+	 f := handleError(c,e);
+	 when f is err:Error
+	 do setLastErrorpointer(err.position, err.message)
+	 else nothing;
+	 f)
+     else e);
 
 export evalexcept(c:Code):Expr := (
      -- printErrorMessage(codePosition(c),"--evaluating: "+present(tostring(c)));
