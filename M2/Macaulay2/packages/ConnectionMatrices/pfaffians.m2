@@ -12,9 +12,12 @@ connectionMatrices = method()
 connectionMatrices Ideal := List => I -> I.cache.connectionMatrices ??= (
     D := ring I;
     createDpairs D;
+    -- TODO: this might not always be correct,
+    -- why was the method that accepted w removed?
     w := (((options(D)).MonomialOrder)#1)#1;
     -- this acts as the associated graded ring of rational Weyl algebra
-    R := rationalWeylAlgebra(D);
+    R := rationalWeylAlgebra D;
+    F := baseFractionField D;
     -- gb with respect to an elimination order
     G := gens gb I;
     if debugLevel > 0 then printerr("Grobner basis: ", net G);
@@ -27,7 +30,7 @@ connectionMatrices Ideal := List => I -> I.cache.connectionMatrices ??= (
 	    s -> last coefficients(
 		-- computes (dt * s) % G
 		normalForm(dt_R * s, first entries G), Monomials => B)));
-    apply((A/entries)/matrix, p ->sub(p,fractionField D))
+    apply((A/entries)/matrix, p -> sub(p, F))
 )
 
 -- gives the system of connection matrices with respect to a new basis B
@@ -59,7 +62,12 @@ connectionMatrix(Ideal) := List => (I) -> (
 
 -- allows for a system of connection matrices as input
 connectionMatrix(List) := List => (P) -> (
-    R := rationalWeylAlgebra(makeWA(coefficientRing(ring P_0)[gens ring P_0]));
+    -- TODO: does this not suffice?
+    --R := ring A#0;
+    --D := R#"OriginalWeylAlgebra"
+    K := coefficientRing(ring P_0);
+    D := makeWA(K(monoid[gens ring P_0]));
+    R := rationalWeylAlgebra D;
     var := gens R;
     net(sum((for i from 0 to length(var)-1 list var_i*sub(P_i,R))))
 )
@@ -70,7 +78,7 @@ connectionMatrix(List) := List => (P) -> (
 standardMonomials = method()
 
 -- D-ideal as an input
-standardMonomials(Ideal) := (I) -> (
+standardMonomials Ideal := I -> (
     D := ring I;
     if not isWeylAlgebra D then error "expected left ideal in a Weyl algebra";
     w := (((options(D)).MonomialOrder)#1)#1;
@@ -78,10 +86,8 @@ standardMonomials(Ideal) := (I) -> (
     r := holonomicRank(w, M);
     B := sub(M.cache#"basis", D);
     return flatten entries B;
-);
-
--- GB of a D-ideal as an input
-standardMonomials(List) := (G) -> (
-    D := ring (G#0);
-    standardMonomials(ideal G)
 )
+
+-- TODO: does it matter that G is a GB?
+-- GB of a D-ideal as an input
+standardMonomials List := G -> standardMonomials ideal G

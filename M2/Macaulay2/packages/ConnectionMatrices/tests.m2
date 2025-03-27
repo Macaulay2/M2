@@ -206,16 +206,16 @@ assert(isIntegrable(A))
 ///
 
 --
--- fractionField
+-- baseFractionField
 --
 
 TEST /// -- test 11
-  -- tests for fractionField
+  -- tests for baseFractionField
   debug needsPackage "ConnectionMatrices"
-  assert(3 == numgens fractionField makeWeylAlgebra(QQ[x,y,z]))
-  assert(4 == numgens fractionField makeWeylAlgebra((QQ[e, DegreeRank => 0])[x,y,z]))
-  assert(7 == numgens fractionField makeWeylAlgebra(((QQ[a,b,c, DegreeRank => 0])[e, DegreeRank => 0])[x,y,z]))
-  assert(7 == numgens fractionField makeWeylAlgebra((frac(QQ[a,b,c, DegreeRank => 0])[e, DegreeRank => 0])[x,y,z]))
+  assert(3 == numgens baseFractionField makeWeylAlgebra(QQ[x,y,z]))
+  assert(4 == numgens baseFractionField makeWeylAlgebra((QQ[e, DegreeRank => 0])[x,y,z]))
+  assert(7 == numgens baseFractionField makeWeylAlgebra(((QQ[a,b,c, DegreeRank => 0])[e, DegreeRank => 0])[x,y,z]))
+  assert(7 == numgens baseFractionField makeWeylAlgebra((frac(QQ[a,b,c, DegreeRank => 0])[e, DegreeRank => 0])[x,y,z]))
 ///
 
 --
@@ -225,6 +225,6 @@ TEST /// -- test 12
  -- Check that inferred WeylAlgebra equals provided WeylAlgebra
   debug needsPackage "ConnectionMatrices"
   D = makeWA(frac(QQ[e, DegreeRank => 0])[x,y]);
-  F = fractionField(D);
+  F = baseFractionField(D);
   assert(D === inferWeylAlgebra(F))
 ///

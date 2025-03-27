@@ -90,7 +90,7 @@ lstOfDegrees = (M,e) -> (
     else error "expected matrices over a fraction field or rational Weyl algebra";
 
     -- Create new ring, where only e has degree 1, rest 0.
-    F := frac newRing(baseRing fractionField R, Degrees => d);
+    F := frac newRing(baseRing baseFractionField R, Degrees => d);
     Mlst := select(flatten entries M, x -> x != 0);
     if #Mlst == 0 then return {{0}};
     lst := new MutableList;

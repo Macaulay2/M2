@@ -34,23 +34,31 @@ makeWeylAlgebra(PolynomialRing) := opts -> R -> (
     W)
 
 -- TODO: fix in Core
+-- R = frac(QQ[x])[y]; baseName x_R
 baseName' = x -> try baseName x else baseName' lift(x, baseRing ring x)
 
+flattenBaseMonoid = (K, D) -> (
+    -- given QQ and frac(QQ[e])[a,b,c][x,y,dx,dy]
+    -- extract monoid[x,y,a,b,c,e]
+    createDpairs D; -- e.g. {{x, y}, {dx, dy}, {}}
+    -- extract generators all the way to K, remove differentials
+    L := generators(D, CoefficientRing => K) - set D.dpairVars#1;
+    monoid[Variables => L / baseName'])
+
 -- Fraction field K(x) of a Weyl algebra K[x,dx]/(...)
--- TODO: implement this as frac(D)
-fractionField = memoize(D -> (
-    -- given frac(QQ[e])[a,b,c][x,y,dx,dy])
+-- TODO: implement this as frac(D) for Weyl algebras
+baseFractionField = method()
+baseFractionField PolynomialRing := FractionField => D -> D.baseFractionField ??= (
+    -- given frac(QQ[e])[a,b,c][x,y,dx,dy]
+    -- extract frac(QQ[x,y,a,b,c,e])
     if not isWeylAlgebra D then return frac D;
-    -- {{x, y}, {dx, dy}, {}}
-    createDpairs D;
     -- find the ultimate coefficient ring (in this case QQ)
     K := ultimate(coefficientRing, D);
-    L := generators(D, CoefficientRing => K) - set D.dpairVars#1;
-    F := frac(K(monoid[Variables => L / baseName']));
+    F := frac K flattenBaseMonoid_K D;
     F.dpairVars = D.dpairVars;
     -- TODO: think of a better name
     F#"OriginalWeylAlgebra" = D;
-    F))
+    F)
 
 -- Infering the WeylAlgebra from the fraction field
 -- TODO: Make this more standard
@@ -70,13 +78,11 @@ inferWeylAlgebra = F -> (
 rationalWeylAlgebra = memoize((D) -> (
     createDpairs D;
     w := (((options(D)).MonomialOrder)#1)#1;
-    R := fractionField(D);
+    R := baseFractionField(D);
     (R)(monoid[D.dpairVars#1,
 	    MonomialOrder => WeightThenLexicographicOrder last pack_(#w//2) w ]))
 )
 --            MonomialOrder => { Weights => w } ]))
-
-
 
 -- reduce the lead term in rational Weyl algebra R
 reduceOneStep = method()
@@ -85,7 +91,7 @@ reduceOneStep(RingElement, RingElement) := (f, g) -> (
     D := ring g;
     w := (((options(D)).MonomialOrder)#1)#1;
     n := numgens D // 2;
-    F := fractionField D;
+    F := baseFractionField D;
     R := rationalWeylAlgebra(D);
     if R =!= ring f then f = sub(f, R);
     f0 := leadTerm(f);
@@ -122,7 +128,7 @@ normalForm(RingElement, RingElement) := (f, g) -> (
     D := ring g;
     w := (((options(D)).MonomialOrder)#1)#1;
     n := numgens D // 2;
-    F := fractionField D;
+    F := baseFractionField D;
     R := rationalWeylAlgebra(D);
     if R =!= ring f then f = sub(f, R);
     f0 := leadTerm(f);

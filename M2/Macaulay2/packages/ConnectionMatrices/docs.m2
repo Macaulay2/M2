@@ -121,6 +121,30 @@ SeeAlso
 
 doc ///
 Key
+    baseFractionField
+   (baseFractionField, PolynomialRing)
+Headline
+    extracts the fraction field of the base polynomial ring of a Weyl algebra
+Usage
+    baseFractionField D
+Inputs
+    D:PolynomialRing
+        a Weyl algebra
+Outputs
+    :FractionField
+        the fraction field of the base polynomial ring of @TT "D"@
+Description
+  Text
+    Several functions in this package return an object over the fraction field of the base
+    polynomial ring of a Weyl algebra. This function extracts that ring.
+  Example
+    D = makeWA(frac(QQ[e])[a,b,c, DegreeRank => 0][x,y]);
+    baseFractionField D
+    gens oo
+///
+
+doc ///
+Key
     gaugeMatrix
     (gaugeMatrix, List, List)
     (gaugeMatrix, Ideal, List)
@@ -171,10 +195,10 @@ Inputs
       a basis of $R_n/R_nI$
 Outputs
     A:List
-      the system of connection matrices of $I$ in @TT "fractionField(ring I)"@
+      the system of connection matrices of $I$ over @TO2{baseFractionField, TT "baseFractionField(ring I)"}@
 Description
   Text
-    Let $I$ be an ideal in the Weyl algebra $D_n$ and $B$ a basis over @TT "fractionField(D)"@ for $R_n/R_nI$.
+    Let $I$ be an ideal in the Weyl algebra $D_n$ and $B$ a basis over @TO2{baseFractionField, TT "baseFractionField(D)"}@ for $R_n/R_nI$.
 
     If no basis is provided by the user, the basis is chosen to be the set of standard monomials of a Gröbner basis on $R_nI$ with regards to the weighted
     Lex order $(\partial_1 > \cdots > \partial_n > x_1 > \cdots > x_n)$ on the Weyl algebra.
@@ -238,7 +262,7 @@ Description
   --   h = x*dx+y*dy+z*dz-2*eps;
   --   I = ideal(delta1+delta3, delta2+delta3,h)
   --   A = connectionMatrices({1,dx,dy,dx*dy},I)
-  --   R = fractionField D
+  --   R = baseFractionField D
   --   changeVar = transpose((1/(2*z*eps^2))*matrix({{2*z*eps^2, -eps^2*(x-z), -eps^2*(y-z), -eps^2*(x+y)},{0,eps*(x^2-z^2),0,eps*(x+y)*(x+z)},{0,0,eps*(y^2-z^2),eps*(x+y)*(y+z)},{0,0,0,-(x+y)*(x+z)*(y+z)}}));
   --   A2 = gaugeTransform(changeVar,A,D)
 SeeAlso
@@ -351,7 +375,7 @@ Description
   --   h = x*dx+y*dy+z*dz-2*eps;
   --   I = ideal(delta1+delta3, delta2+delta3,h)
   --   A = connectionMatrices({1,dx,dy,dx*dy},I)
-  --   R = fractionField D
+  --   R = baseFractionField D
   --   changeVar = transpose((1/(2*z*eps^2))*matrix({{2*z*eps^2, -eps^2*(x-z), -eps^2*(y-z), -eps^2*(x+y)},{0,eps*(x^2-z^2),0,eps*(x+y)*(x+z)},{0,0,eps*(y^2-z^2),eps*(x+y)*(y+z)},{0,0,0,-(x+y)*(x+z)*(y+z)}}));
   --   A2 = gaugeTransform(changeVar,A,D)
   --   isEpsilonFactorized(A2,eps)
@@ -390,7 +414,7 @@ Description
     assert(isIntegrable(D,A))
     assert(isIntegrable(A))
 Caveat
-  The matrices need to be defined over the field of rational functions @TT "fractionField(D)"@.
+  The matrices need to be defined over the field of rational functions @TO2{baseFractionField, TT "baseFractionField(D)"}@.
 SeeAlso
 
 ///

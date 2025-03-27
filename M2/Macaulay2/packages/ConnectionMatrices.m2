@@ -21,6 +21,7 @@ newPackage(
 export {
     -- see ConnectionMatrices/reduce.m2
     "normalForm",
+    "baseFractionField",
     -- see ConnectionMatrices/pfaffians.m2
     "standardMonomials",
     "connectionMatrices",

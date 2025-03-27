@@ -5,11 +5,12 @@ gaugeMatrix = method();
 -- I D-ideal, new standard monomials
 gaugeMatrix(Ideal, List) := (I, newStdMon) -> (
   D := ring I;
+  F := baseFractionField D;
   G := flatten entries gens gb I;
   stdMon := standardMonomials(I);
   -- obtain weight ordering from D
   w := (((options(D)).MonomialOrder)#1)#1;
-  gaugeMat := mutableMatrix map((fractionField D)^(length newStdMon), (fractionField D)^(length stdMon),0);
+  gaugeMat := mutableMatrix map(F^(length newStdMon), F^(length stdMon),0);
   -- rows are indexed by new std monomials
   for rowIndex from 0 to length(newStdMon)-1 do
   (
@@ -22,7 +23,7 @@ gaugeMatrix(Ideal, List) := (I, newStdMon) -> (
       -- sorts matrix according to the orderd std monomial basis
       monomialToFind := sub((flatten entries coeffsReduced_0)#j,D);
       colIndex := position(stdMon, i->sub(i,D) == monomialToFind);
-      gaugeMat_(rowIndex,colIndex) = sub((flatten entries coeffsReduced_1)#j, fractionField D);
+      gaugeMat_(rowIndex,colIndex) = sub((flatten entries coeffsReduced_1)#j, F);
     );
   );
   matrix gaugeMat
