@@ -187,7 +187,7 @@ Key
     (connectionMatrices, Ideal)
     (connectionMatrices, Ideal, List)
 Headline
-    computes the connection matrices of a $D$-ideal $I$ for a choosen basis
+    computes the connection matrices of a $D$-ideal $I$ for a chosen basis
 Usage
     connectionMatrices(I)
     connectionMatrices(I, B)
