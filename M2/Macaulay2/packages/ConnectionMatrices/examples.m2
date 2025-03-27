@@ -3,7 +3,7 @@ Key
     "examples from physics"
 Description
   Text
-    The following D-ideal corresponds to the GKZ system for the two-site chain of cosmologial correlators, see Figure 1 in https://arxiv.org/pdf/2410.14757.
+    The following $D$-ideal corresponds to the $D$-ideal behind the cosmological correlator of the two-site chain as in Equation (11) in [FPSW25].
   Example
     v = {1,1,1};
     D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x,y,z],v);
