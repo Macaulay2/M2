@@ -88,7 +88,6 @@ gaugeTransform = method();
 -- gives the gauge transform of a system of connection matrices w.r.t. a given change of basis matrix.
 gaugeTransform(Matrix, List, PolynomialRing) := (M, A, D)->(
     if not same apply(A, ring) or frac(ring M) =!= ring first A then error "expected matrices over the same ring";
-    --if not()  then error "expected matrix in a different Weyl algebra";
     M = sub(M, ring A#0);
     invM := inverse M;
     n := dim D//2;
@@ -101,7 +100,6 @@ gaugeTransform(Matrix, List, PolynomialRing) := (M, A, D)->(
 gaugeTransform(Matrix, List) := (M,A)->(
     if not same apply(A, ring) or frac(ring M) =!= ring first A then error "expected matrices over the same ring";
     D := inferWeylAlgebra(ring A#0);
-    --if not(makeWA(ring M, (((options(D)).MonomialOrder)#1)#1) === D)  then error "expected matrix in a different Weyl algebra";
     gaugeTransform(M,A,D)
 )
 
