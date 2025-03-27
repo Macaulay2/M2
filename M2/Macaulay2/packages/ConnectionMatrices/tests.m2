@@ -45,12 +45,13 @@ TEST ///-- test 1
 -- ALS notes, Example 7.16
 
   D = makeWeylAlgebra(QQ[x,y], v = {1,2});
-  I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1); -- doesn't commute
+  I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
   A = connectionMatrices I;
-  -- TODO: add assertions
+
+  assert(holonomicRank(I) == 2);
 
   -- i2 : D = makeWeylAlgebra(QQ[x,y], v = {2,1});
-  -- i3 : A = connectionMatrices(ideal (x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1)) -- doesn't commute
+  -- i3 : A = connectionMatrices(ideal (x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1))
   -- Grobner basis:
   -- | xdx+ydy+1 ydxdy+ydy^2+dx+dy xydy^2-y2dy^2+xdy-3ydy-1 |
   -- Standard monomials:
@@ -59,7 +60,7 @@ TEST ///-- test 1
   --       {-1} | (-1)/(x2-xy) (-x-y)/(x2-xy) |  {-1} | 1/(xy-y2) (-x+3y)/(xy-y2) |
 
   -- i4 : D = makeWeylAlgebra(QQ[x,y], v = {1,1});
-  -- i5 : A = connectionMatrices(w, I = ideal (x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1)) -- doesn't commute
+  -- i5 : A = connectionMatrices(w, I = ideal (x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1))
   -- Grobner basis:
   -- | xdx+ydy+1 ydxdy+ydy^2+dx+dy xydy^2-y2dy^2+xdy-3ydy-1 |
   -- Standard monomials:
@@ -68,7 +69,7 @@ TEST ///-- test 1
   --       {-1} | (-1)/(x2-xy) (-x-y)/(x2-xy) |  {-1} | 1/(xy-y2) (-x+3y)/(xy-y2) |
 
   -- i6 : D = makeWeylAlgebra(QQ[x,y], v = {1,2});
-  -- i7 : A = connectionMatrices(w, I = ideal (x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1)) -- doesn't commute
+  -- i7 : A = connectionMatrices(w, I = ideal (x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1))
   -- Grobner basis:
   -- | ydy+xdx+1 xdxdy+xdx^2+dy+dx x2dx^2-xydx^2+3xdx-ydx+1 |
   -- Standard monomials:
@@ -230,4 +231,16 @@ TEST /// -- test 12
   D = makeWA(frac(QQ[e, DegreeRank => 0])[x,y]);
   F = baseFractionField(D);
   assert(D === inferWeylAlgebra(F))
+///
+
+--
+-- holonomicRank
+--
+TEST /// -- test 13
+-- Check that holonomic rank doesn't depend on the choice of positive weight.
+
+  D = makeWeylAlgebra(QQ[x,y], v = {1,2});
+  I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
+
+  assert same apply({{0,0,1,2}, {0,0,5,100}, {0,0,17,3}}, w -> holonomicRank(w, comodule I));
 ///
