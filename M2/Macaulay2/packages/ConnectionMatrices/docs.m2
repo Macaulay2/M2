@@ -55,7 +55,7 @@ Key
    (normalForm, RingElement, RingElement)
    (normalForm, RingElement, List)
 Headline
-    computes the normal form of an element in the Weyl algebra
+    computes the normal form within the rational Weyl algebra
 Usage
     normalForm(P,Q)
     normalForm(P,G)
@@ -65,10 +65,10 @@ Inputs
     Q:RingElement
         in the Weyl algebra
     G:List
-        of elements in the Weyl algebra (tipically a Gröbner basis of a $D_n$-ideal)
+        of elements in the Weyl algebra (typically a Gröbner basis of a $D_n$-ideal)
 Outputs
     normalForm:RingElement
-        reduced form with respect to a list of elements in the Weyl algebra
+        normalForm, computed in rational Weyl algebra with respect to a list of elements in the Weyl algebra
 Description
   Text
     This method computes the normal form of an element $P$ in the Weyl algebra $D_n$ with respect to another element in the Weyl algebra, or a whole list of such elements.
@@ -81,7 +81,7 @@ Description
 References
   See Theorem 1.1.7 [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, pp. 7].
 Caveat
-  Currently, the output lives in the fraction field of the variables, but this is not encoded as an element of the rational Weyl algebra
+  Currently, the output lives @TO2{baseFractionField, TT "baseFractionField D"}@ adjoin the differential variables in a COMMUTATIVE way.
 SeeAlso
 
 ///
