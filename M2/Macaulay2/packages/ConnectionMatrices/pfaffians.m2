@@ -9,7 +9,7 @@ connectionMatrices = method()
 
 -- gives connection matrices for a D-ideal
 -- c.f. [Theorem 1.4.22, SST]
-connectionMatrices(Ideal) := List => (I) -> (
+connectionMatrices Ideal := List => I -> I.cache.connectionMatrices ??= (
     D := ring I;
     createDpairs D;
     w := (((options(D)).MonomialOrder)#1)#1;
