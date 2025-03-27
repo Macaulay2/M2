@@ -1,7 +1,7 @@
 doc ///
 Key
     "Examples from particle physics and cosmology"
-    "Examples from particle physics and cosmology"
+    "examples from physics"
 Description
   Text
     The following $D$-ideal corresponds to the $D$-ideal behind the cosmological correlator of the two-site chain as in Equation (11) in [FPSW].
@@ -41,7 +41,7 @@ SeeAlso
 doc ///
 Key
     "A GKZ system"
-    "A GKZ system"
+    "examples from GKZ systems"
 Description
   Text
       Consider the GKZ system representing the Gauss hypergeometric function
