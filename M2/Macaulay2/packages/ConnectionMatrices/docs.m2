@@ -247,7 +247,8 @@ Description
     D = makeWeylAlgebra(QQ[x,y]);
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
     A = connectionMatrices(I);
-    M = matrix{{x,0},{0,y}};
+    F = baseFractionField D;
+    M = matrix(F, {{x,0},{0,y}});
     gaugeTransform(M,A,D)
   -- Text
   --   It is also possible to compute the gauge transform of a

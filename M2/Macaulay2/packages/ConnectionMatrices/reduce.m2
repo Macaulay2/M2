@@ -73,7 +73,6 @@ inferWeylAlgebra = F -> (
     error "Can't infer Weyl algebra from ring that is neither a fraction field nor a polynomial ring."
 )
 
-
 -- Graded associative ring of the rational Weyl algebra
 -- Used for bookkeeping elements in R
 rationalWeylAlgebra = memoize((D) -> (
@@ -83,7 +82,6 @@ rationalWeylAlgebra = memoize((D) -> (
     (R)(monoid[D.dpairVars#1,
 	    MonomialOrder => WeightThenLexicographicOrder last pack_(#w//2) w ]))
 )
---            MonomialOrder => { Weights => w } ]))
 
 -- reduce the lead term in rational Weyl algebra R
 reduceOneStep = method()
