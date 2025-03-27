@@ -1,7 +1,7 @@
 doc ///
 Key
     "Examples from particle physics and cosmology"
-    "examples from physics"
+    "Examples from particle physics and cosmology"
 Description
   Text
     The following $D$-ideal corresponds to the $D$-ideal behind the cosmological correlator of the two-site chain as in Equation (11) in [FPSW].
@@ -41,11 +41,11 @@ SeeAlso
 doc ///
 Key
     "A GKZ system"
-    "examples from GKZ systems"
+    "A GKZ system"
 Description
   Text
       Consider the GKZ system representing the Gauss hypergeometric function
-      as in [SST, Example 1.2.9]).
+      as in [SST, Example 1.2.9].
   Example
     -- Example 1.2.9 in SST, pp. 14
     D = makeWeylAlgebra(QQ[a,b,c, DegreeRank => 0][x_1..x_4]);
@@ -54,7 +54,7 @@ Description
     holonomicRank({0,0,0,0,0,0,0}, comodule I)
     standardMonomials I
   Text
-    [SST, Example 1.4.23] computes the connection matrices (also known as the Pfaffian system)
+    [SST, Example 1.4.23] computes the connection matrices
     for this system with constants $a=1/2,b=1/2,c=1$. Using the @TO connectionMatrices@ function,
     we can find the system for arbitrary constants.
   Example
@@ -77,5 +77,5 @@ Description
       A = connectionMatrices I;
       UL apply(4, i -> concatenate_("$A_"|i+1|"=") substring_1 tex sub(A#i, {a => 1/2, b => 1/2, c => 1}))
 References
-  [SST] M. Saito, B. Sturmfels, and N. Takayama. {\em Gröbner Deformations of Hypergeometric Differential Equations}. Volume 6 of Algorithms and Computation in Mathematics. Springer, 2000.
+  [SST] M. Saito, B. Sturmfels, and N. Takayama. {\em Gröbner Deformations of Hypergeometric Differential Equations}. Volume 6 of {\em Algorithms and Computation in Mathematics}. Springer, 2000.
 ///
