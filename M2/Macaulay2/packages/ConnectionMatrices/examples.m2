@@ -39,7 +39,7 @@ Key
     "examples from GKZ systems"
 Description
   Text
-      As an example, consider the GKZ system representing the Gauss hypergeometric function
+      Consider the GKZ system representing the Gauss hypergeometric function
       as in [SST, Example 1.2.9]).
   Example
     -- Example 1.2.9 in SST, pp. 14
