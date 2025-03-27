@@ -9,17 +9,19 @@
 // TODO: Fix int/Strategy discrepancy.  Make a ComputationStrategy type in util.hpp or comp-gb.hpp?
 auto createGBF4Interface(const Matrix *inputMatrix,
                          const std::vector<int>& variableWeights, // what is this, do we need it?
-                         int strategy // do we need this?
+                         int strategy, // do we need this?
+                         int numThreads
                          ) -> GBComputation*
 {
-  return newf4::createGBF4Interface(inputMatrix, variableWeights, newf4::Strategy::Normal);  
+  return newf4::createGBF4Interface(inputMatrix, variableWeights, newf4::Strategy::Normal, numThreads);  
 }
 
 namespace newf4 {
 
 auto createGBF4Interface(const Matrix *inputMatrix,
                          const std::vector<int>& variableWeights, // what is this, do we need it?
-                         Strategy strategy // do we need this?
+                         Strategy strategy, // do we need this?
+                         int numThreads
                          ) -> GBComputation*
 {
   const PolynomialRing* R = inputMatrix->get_ring()->cast_to_PolynomialRing();
@@ -29,7 +31,8 @@ auto createGBF4Interface(const Matrix *inputMatrix,
   auto C = new GBF4Interface(R,
                              inputMatrix,
                              variableWeights,
-                             strategy);
+                             strategy,
+                             numThreads);
   return C;
 }
 
@@ -37,7 +40,8 @@ auto createGBF4Interface(const Matrix *inputMatrix,
 GBF4Interface::GBF4Interface(const PolynomialRing* originalRing,
                              const Matrix* inputMatrix,
                              const std::vector<int>& variableWeights,
-                             Strategy strategy
+                             Strategy strategy,
+                             int numThreads
                              )
     : mOriginalRing(originalRing),
       mFreeModule(inputMatrix->rows()),
@@ -56,7 +60,8 @@ GBF4Interface::GBF4Interface(const PolynomialRing* originalRing,
                              const FreeModule* freeModule,
                              const BasicPolyList& basicPolyList,
                              const std::vector<int>& variableWeights,
-                             Strategy strategy
+                             Strategy strategy,
+                             int numThreads
                              )
     : mOriginalRing(originalRing),
       mFreeModule(freeModule),

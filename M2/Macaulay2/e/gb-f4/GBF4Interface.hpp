@@ -10,7 +10,8 @@ class Matrix;
 
 auto createGBF4Interface(const Matrix *inputMatrix,
                          const std::vector<int>& variableWeights, // what is this, do we need it?
-                         int strategy
+                         int strategy,
+                         int numThreads
                          ) -> GBComputation*;
 
 namespace newf4 {
@@ -21,7 +22,8 @@ enum class Strategy { Normal };
 
 auto createGBF4Interface(const Matrix *inputMatrix,
                          const std::vector<int>& variableWeights, // what is this, do we need it?
-                         Strategy strategy // do we need this?
+                         Strategy strategy, // do we need this?
+                         int numThreads
                          ) -> GBComputation*;
 void populateComputation(const Matrix* M, GBF4Computation& C);
   
@@ -43,14 +45,16 @@ public:
   GBF4Interface(const PolynomialRing* originalRing,
                 const Matrix* inputMatrix,
                 const std::vector<int>& variableWeights,
-                Strategy strategy
+                Strategy strategy,
+                int numThreads
                 );
 
   GBF4Interface(const PolynomialRing* originalRing,
                 const FreeModule* freeModule,
                 const BasicPolyList& basicPolyList,
                 const std::vector<int>& variableWeights,
-                Strategy strategy
+                Strategy strategy,
+                int numThreads
                 );
 
   ~GBF4Interface() override;
