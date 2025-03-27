@@ -1,5 +1,9 @@
 beginDocumentation()
 
+--------------------
+-- top-level-node --
+--------------------
+
 doc ///
   Key
     Python
@@ -17,11 +21,15 @@ doc ///
       math@@sqrt 2
   Subnodes
     :tutorials
-    "Python tutorial: matplotlib"
     "Python tutorial: creating a virtual environment and installing NumPy"
+    "Python tutorial: matplotlib"
     :classes
     PythonObject
 ///
+
+---------------
+-- tutorials --
+---------------
 
 doc ///
   Key
@@ -204,115 +212,774 @@ doc ///
 	  "alt" => "parametric plot of the twisted cubic")@
 ///
 
+-- TODO: more tutorials!
+
+------------------
+-- PythonObject --
+------------------
+
 doc ///
   Key
     PythonObject
+  Headline
+    a Python object
+  Description
+    Text
+      In Macaulay2, all Python objects have the class @CODE "PythonObject"@.
+      Their Python classes are displayed after they are printed.
+    Example
+      toPython 3
+      toPython "foo"
+  Subnodes
+    :arithmetic operators
+    (symbol +,  PythonObject, PythonObject)
+    (symbol -,  PythonObject, PythonObject)
+    (symbol *,  PythonObject, PythonObject)
+    (symbol @,  PythonObject, PythonObject)
+    (symbol /,  PythonObject, PythonObject)
+    (symbol //, PythonObject, PythonObject)
+    (symbol %,  PythonObject, PythonObject)
+    (symbol ^,  PythonObject, PythonObject)
+    :bitwise operators
+    (symbol <<, PythonObject, PythonObject)
+    (symbol >>, PythonObject, PythonObject)
+    (symbol &,  PythonObject, PythonObject)
+    (symbol |,  PythonObject, PythonObject)
+    (symbol ^^, PythonObject, PythonObject)
+    (symbol ~,  PythonObject)
+    :logical operators
+    (symbol and, PythonObject, PythonObject)
+    (symbol or,  PythonObject, PythonObject)
+    (symbol xor, PythonObject, PythonObject)
+    (symbol not, PythonObject)
+    :comparison operators
+    (symbol ?, PythonObject, PythonObject)
+    (symbol ==, PythonObject, PythonObject)
+///
+
+--------------------------
+-- arithmetic operators --
+--------------------------
+
+doc ///
+  Key
     (symbol +, PythonObject, PythonObject)
     (symbol +, PythonObject, Thing)
     (symbol +, Thing, PythonObject)
+    (symbol +, PythonObject)
+  Headline
+    add Python objects
+  Usage
+    x + y
+  Inputs
+    x:PythonObject
+    y:PythonObject
+  Outputs
+    :PythonObject -- the sum of x and y
+  Description
+    Text
+      Add two Python objects.
+    Example
+      toPython 2 + toPython 3
+    Text
+      If one of the arguments is a Macaulay2 object, then it is first converted
+      to a Python object before adding.
+    Example
+      toPython 4 + 5
+      6 + toPython 7
+    Text
+      It may also be used as a unary method.
+    Example
+      +toPython 6
+///
+
+doc ///
+  Key
     (symbol -, PythonObject, PythonObject)
     (symbol -, PythonObject, Thing)
     (symbol -, Thing, PythonObject)
+    (symbol -, PythonObject)
+  Headline
+    subtract Python objects
+  Usage
+    x - y
+  Inputs
+    x:PythonObject
+    y:PythonObject
+  Outputs
+    :PythonObject -- the difference of x and y
+  Description
+    Text
+      Subtract two Python objects.
+    Example
+      toPython 2 - toPython 3
+    Text
+      If one of the arguments is a Macaulay2 object, then it is first converted
+      to a Python object before subtracting.
+    Example
+      toPython 4 - 5
+      6 - toPython 7
+    Text
+      It may also be used as a unary method.
+    Example
+      -toPython 6
+///
+
+doc ///
+  Key
     (symbol *, PythonObject, PythonObject)
     (symbol *, PythonObject, Thing)
     (symbol *, Thing, PythonObject)
+  Headline
+    multiply Python objects
+  Usage
+    x * y
+  Inputs
+    x:PythonObject
+    y:PythonObject
+  Outputs
+    :PythonObject -- the product of x and y
+  Description
+    Text
+      Multiply two Python objects.
+    Example
+      toPython 2 * toPython 3
+    Text
+      If one of the arguments is a Macaulay2 object, then it is first converted
+      to a Python object before multiplying.
+    Example
+      toPython 4 * 5
+      6 * toPython 7
+  SeeAlso
+    (symbol @, PythonObject, PythonObject)
+///
+
+doc ///
+  Key
     (symbol @, PythonObject, PythonObject)
     (symbol @, PythonObject, Thing)
     (symbol @, Thing, PythonObject)
+  Headline
+    matrix multiplication of Python objects
+  Usage
+    x @ y
+  Inputs
+    x:PythonObject
+    y:PythonObject
+  Outputs
+    :PythonObject -- the product of x and y as matrices
+  Description
+    Text
+      Multiply two Python objects as matrices.
+    CannedExample
+      i2 : np = import "numpy";
+
+      i3 : a = np@@array {{1, 0}, {0, 1}}
+
+      o3 = [[1 0]
+            [0 1]]
+
+      o3 : PythonObject of class numpy.ndarray
+
+      i4 : b = np@@array {{4, 1}, {2, 2}}
+
+      o4 = [[4 1]
+            [2 2]]
+
+      o4 : PythonObject of class numpy.ndarray
+
+      i5 : a @ b
+
+      o5 = [[4 1]
+            [2 2]]
+
+      o5 : PythonObject of class numpy.ndarray
+    Text
+      In Macaulay2, the @CODE "*"@ operator is used for matrix multiplication,
+      but in Python, this results in componentwise multiplication.
+    CannedExample
+      i6 : a * b
+
+      o6 = [[4 0]
+            [0 2]]
+
+      o6 : PythonObject of class numpy.ndarray
+  SeeAlso
+    (symbol *, PythonObject, PythonObject)
+///
+
+doc ///
+  Key
     (symbol /, PythonObject, PythonObject)
     (symbol /, PythonObject, Thing)
     (symbol /, Thing, PythonObject)
+  Headline
+    true division of Python objects
+  Usage
+    x / y
+  Inputs
+    x:PythonObject
+    y:PythonObject
+  Outputs
+    :PythonObject -- the true quotient of x and y
+  Description
+    Text
+      Divide two Python objects, giving the "true" quotient, e.g., when dividing
+      two integers, the result will be a float.
+    Example
+      toPython 5 / toPython 3
+    Text
+      If one of the arguments is a Macaulay2 object, then it is first converted
+      to a Python object before dividing.
+    Example
+      toPython 9 / 5
+      11 / toPython 7
+  SeeAlso
+    (symbol //, PythonObject, PythonObject)
+///
+
+-- TODO: document the different behavior between //, %, and quotientRemainder
+-- for Python v. Macaulay2
+doc ///
+  Key
     (symbol //, PythonObject, PythonObject)
     (symbol //, PythonObject, Thing)
     (symbol //, Thing, PythonObject)
+  Headline
+    floor division of Python objects
+  Usage
+    x // y
+  Inputs
+    x:PythonObject
+    y:PythonObject
+  Outputs
+    :PythonObject -- the floor quotient of x and y
+  Description
+    Text
+      Divide two Python objects, giving the "floor" quotient, e.g., when
+      dividing two integers, the result is the quotient using Euclidean
+      division.
+    Example
+      toPython 5 // toPython 3
+    Text
+      If one of the arguments is a Macaulay2 object, then it is first converted
+      to a Python object before dividing.
+    Example
+      toPython 9 // 5
+      11 // toPython 7
+  SeeAlso
+    (symbol /, PythonObject, PythonObject)
+    (symbol %, PythonObject, PythonObject)
+///
+
+doc ///
+  Key
     (symbol %, PythonObject, PythonObject)
     (symbol %, PythonObject, Thing)
     (symbol %, Thing, PythonObject)
+  Headline
+    the modulo operator for Python objects
+  Usage
+    x % y
+  Inputs
+    x:PythonObject
+    y:PythonObject
+  Outputs
+    :PythonObject -- the remainder when x is divided by y
+  Description
+    Text
+      Perform the modulo operator on Python objects.
+    Example
+      toPython 5 % toPython 3
+    Text
+      If one of the arguments is a Macaulay2 object, then it is first converted
+      to a Python object before dividing.
+    Example
+      toPython 9 % 5
+      11 % toPython 7
+  SeeAlso
+    (symbol //, PythonObject, PythonObject)
+///
+
+doc ///
+  Key
     (symbol ^, PythonObject, PythonObject)
     (symbol ^, PythonObject, Thing)
     (symbol ^, Thing, PythonObject)
+    (symbol **, PythonObject, PythonObject)
+    (symbol **, PythonObject, Thing)
+    (symbol **, Thing, PythonObject)
+  Headline
+    exponentiation of Python objects
+  Usage
+    x ^ y
+  Inputs
+    x:PythonObject
+    y:PythonObject
+  Outputs
+    :PythonObject -- x raised to the y power
+  Description
+    Text
+      Raise one Python object to the power of another.
+    Example
+      (toPython 2)^(toPython 3)
+    Text
+      In addition to the Macaulay2-style @CODE "^"@, this operation is also
+      available using the Python-style @CODE "**"@.
+    Example
+      toPython 2 ** toPython 3
+    Text
+      Note that parentheses were not necessary in the latter case since
+      @CODE "**"@ has much lower precedence than @CODE "^"@.
+
+      If one of the arguments is a Macaulay2 object, then it is first converted
+      to a Python object before exponentiating.
+    Example
+      (toPython 2)^3
+      4^(toPython 5)
+  Caveat
+    In Python, the @CODE "^"@ operator corresponds to the bitwise xor operation.
+    We use @CODE "^^"@ in this case for consistency with the rest of Macaulay2.
+  SeeAlso
+    (symbol ^^, PythonObject, PythonObject)
+///
+
+-----------------------
+-- bitwise operators --
+-----------------------
+
+doc ///
+  Key
     (symbol <<, PythonObject, PythonObject)
     (symbol <<, PythonObject, Thing)
     (symbol <<, Thing, PythonObject)
+  Headline
+    the left shift operator for Python objects
+  Usage
+    x << y
+  Inputs
+    x:PythonObject
+    y:PythonObject
+  Outputs
+    :PythonObject -- the result of shifting x left by y
+  Description
+    Text
+      Perform the left shift operator on Python objects.
+    Example
+      toPython 1 << toPython 3
+    Text
+      If one of the arguments is a Macaulay2 object, then it is first converted
+      to a Python object before shifting.
+    Example
+      toPython 1 << 4
+      1 << toPython 5
+  SeeAlso
+    (symbol >>, PythonObject, PythonObject)
+///
+
+doc ///
+  Key
     (symbol >>, PythonObject, PythonObject)
     (symbol >>, PythonObject, Thing)
     (symbol >>, Thing, PythonObject)
+  Headline
+    the right shift operator for Python objects
+  Usage
+    x >> y
+  Inputs
+    x:PythonObject
+    y:PythonObject
+  Outputs
+    :PythonObject -- the result of shifting x right by y
+  Description
+    Text
+      Perform the right shift operator on Python objects.
+    Example
+      toPython 128 >> toPython 3
+    Text
+      If one of the arguments is a Macaulay2 object, then it is first converted
+      to a Python object before shifting.
+    Example
+      toPython 256 >> 5
+      16384 >> toPython 4
+  SeeAlso
+    (symbol <<, PythonObject, PythonObject)
+///
+
+doc ///
+  Key
     (symbol &, PythonObject, PythonObject)
     (symbol &, PythonObject, Thing)
     (symbol &, Thing, PythonObject)
+  Headline
+    bitwise conjunction of Python objects
+  Usage
+    x & y
+  Inputs
+    x:PythonObject
+    y:PythonObject
+  Outputs
+    :PythonObject -- bitwise conjunction of x and y
+  Description
+    Text
+      Perform the bitwise conjunction ("and") operation on Python objects.
+    Example
+      toPython 6 & toPython 3
+    Text
+      If one of the arguments is a Macaulay2 object, then it is first converted
+      to a Python object.
+    Example
+      toPython 14 & 7
+      14 & toPython 7
+  SeeAlso
+    (symbol |, PythonObject, PythonObject)
+    (symbol ^^, PythonObject, PythonObject)
+    (symbol ~, PythonObject)
+    (symbol and, PythonObject, PythonObject)
+///
+
+doc ///
+  Key
     (symbol |, PythonObject, PythonObject)
     (symbol |, PythonObject, Thing)
     (symbol |, Thing, PythonObject)
+  Headline
+    bitwise disjunction of Python objects
+  Usage
+    x | y
+  Inputs
+    x:PythonObject
+    y:PythonObject
+  Outputs
+    :PythonObject -- bitwise disjunction of x and y
+  Description
+    Text
+      Perform the bitwise disjunction ("or") operation on Python objects.
+    Example
+      toPython 6 or toPython 3
+    Text
+      If one of the arguments is a Macaulay2 object, then it is first converted
+      to a Python object.
+    Example
+      toPython 14 | 7
+      14 | toPython 7
+  SeeAlso
+    (symbol &, PythonObject, PythonObject)
+    (symbol ^^, PythonObject, PythonObject)
+    (symbol ~, PythonObject)
+    (symbol or, PythonObject, PythonObject)
+///
+
+doc ///
+  Key
     (symbol ^^, PythonObject, PythonObject)
     (symbol ^^, PythonObject, Thing)
     (symbol ^^, Thing, PythonObject)
+  Headline
+    bitwise exclusive disjunction of Python objects
+  Usage
+    x ^^ y
+  Inputs
+    x:PythonObject
+    y:PythonObject
+  Outputs
+    :PythonObject -- bitwise exclusive disjunction of x and y
+  Description
+    Text
+      Perform the bitwise exclusive disjunction ("xor") operation on Python
+      objects.
+    Example
+      toPython 6 | toPython 3
+    Text
+      If one of the arguments is a Macaulay2 object, then it is first converted
+      to a Python object.
+    Example
+      toPython 14 ^^ 7
+      14 ^^ toPython 7
+  Caveat
+    In Python, the @CODE "^"@ operator corresponds to the bitwise xor operation.
+    We use @CODE "^^"@ in this case for consistency with the rest of Macaulay2.
+    The @CODE "^"@ operator is used for exponentiation.
+  SeeAlso
+    (symbol &, PythonObject, PythonObject)
+    (symbol |, PythonObject, PythonObject)
+    (symbol ~, PythonObject)
+    (symbol xor, PythonObject, PythonObject)
+    (symbol ^, PythonObject, PythonObject)
+///
+
+doc ///
+  Key
+    (symbol ~, PythonObject)
+  Headline
+    bitwise negation of a python object
+  Usage
+    x~
+  Inputs
+    x:PythonObject
+  Outputs
+    :PythonObject -- the bitwise negation of x
+  Description
+    Text
+      This operation negates each bit.  For integers, this is equivalent to
+      CODE "-x - 1".  Unlike Python, @CODE "~"@ is a postfix unary operator
+      in Macaulay2.
+    Example
+      (toPython 5)~
+  SeeAlso
+    (symbol &, PythonObject, PythonObject)
+    (symbol |, PythonObject, PythonObject)
+    (symbol ^^, PythonObject, PythonObject)
+    (symbol not, PythonObject)
+///
+
+-----------------------
+-- logical operators --
+-----------------------
+
+doc ///
+  Key
     (symbol and, PythonObject, PythonObject)
     (symbol and, PythonObject, Thing)
     (symbol and, Thing, PythonObject)
+  Headline
+    logical conjunction of Python objects
+  Usage
+    x and y
+  Inputs
+    x:PythonObject
+    y:PythonObject
+  Outputs
+    :PythonObject -- logical conjunction of x and y
+  Description
+    Text
+      Perform the logical conjunction ("and") operation on Python objects.
+    Example
+      toPython true and toPython true
+    Text
+      If one of the arguments is a Macaulay2 object, then it is first converted
+      to a Python object.
+    Example
+      toPython true and false
+      false and toPython true
+    Text
+      Unlike Macaulay2, Python supports using @CODE "and"@ with non-boolean
+      objects.  In this case, the first argument is returned if it is "falsy".
+      Otherwise, the second argument is returned.
+    Example
+      toPython 0 and toPython "foo"
+      toPython 5 and toPython "bar"
+    Text
+      In Python, when the first argument is falsy, then is is returned
+      immediately without evaluating the second argument.  This is known as
+      "short-circuiting".  However, in Macaulay2, both arguments are evaluated
+      before the Python conjunction method is called.
+    Example
+      stopIfError = false
+      toPython 0 and 1/0
+    Text
+      However, if the first argument is the Macaulay2 @TO false@ object, then
+      short-cicuiting will occur.
+    Example
+     false and pythonValue "1/0"
+  SeeAlso
+    (symbol or, PythonObject, PythonObject)
+    (symbol xor, PythonObject, PythonObject)
+    (symbol not, PythonObject)
+    (symbol &, PythonObject, PythonObject)
+///
+
+doc ///
+  Key
     (symbol or, PythonObject, PythonObject)
     (symbol or, PythonObject, Thing)
     (symbol or, Thing, PythonObject)
+  Headline
+    logical disjunction of Python objects
+  Usage
+    x or y
+  Inputs
+    x:PythonObject
+    y:PythonObject
+  Outputs
+    :PythonObject -- logical disjunction of x and y
+  Description
+    Text
+      Perform the logical disjunction ("or") operation on Python objects.
+    Example
+      toPython true or toPython true
+    Text
+      If one of the arguments is a Macaulay2 object, then it is first converted
+      to a Python object.
+    Example
+      toPython true or false
+      false or toPython true
+    Text
+      Unlike Macaulay2, Python supports using @CODE "or"@ with non-boolean
+      objects.  In this case, the first argument is returned if it is "truthy".
+      Otherwise, the second argument is returned.
+    Example
+      toPython 0 or toPython "foo"
+      toPython 5 or toPython "bar"
+    Text
+      In Python, when the first argument is truthy, then is is returned
+      immediately without evaluating the second argument.  This is known as
+      "short-circuiting".  However, in Macaulay2, both arguments are evaluated
+      before the Python disjunction method is called.
+    Example
+      stopIfError = false
+      toPython 1 or 1/0
+    Text
+      However, if the first argument is the Macaulay2 @TO true@ object, then
+      short-cicuiting will occur.
+    Example
+     true or pythonValue "1/0"
+  SeeAlso
+    (symbol or, PythonObject, PythonObject)
+    (symbol xor, PythonObject, PythonObject)
+    (symbol not, PythonObject)
+    (symbol &, PythonObject, PythonObject)
+///
+
+doc ///
+  Key
     (symbol xor, PythonObject, PythonObject)
     (symbol xor, PythonObject, Thing)
     (symbol xor, Thing, PythonObject)
-    (symbol ==, PythonObject, PythonObject)
-    (symbol ==, PythonObject, Thing)
-    (symbol ==, Thing, PythonObject)
+  Headline
+    logical exclusive disjunction of Python objects
+  Usage
+    x xor y
+  Inputs
+    x:PythonObject
+    y:PythonObject
+  Outputs
+    :PythonObject -- logical exclusive disjunction of x and y
+  Description
+    Text
+      Perform the logical exclusive disjunction ("xor") operation on Python
+      objects.
+    Example
+      toPython true xor toPython true
+    Text
+      If one of the arguments is a Macaulay2 object, then it is first converted
+      to a Python object.
+    Example
+      toPython true xor false
+      false xor toPython true
+    Text
+      Unlike Macaulay2, Python supports using @CODE "xor"@ with non-boolean
+      objects. If exactly one of the arguments is truthy, then it will return
+      that argument.  Otherwise, it will return @CODE "False"@.
+    Example
+      toPython 0 xor toPython "foo"
+      toPython 5 xor toPython ""
+      toPython 6 xor toPython "bar"
+  SeeAlso
+    (symbol or, PythonObject, PythonObject)
+    (symbol and, PythonObject, PythonObject)
+    (symbol not, PythonObject)
+    (symbol ^^, PythonObject, PythonObject)
+///
+
+doc ///
+  Key
+    (symbol not, PythonObject)
+  Headline
+    logical negation of a python object
+  Usage
+    not x
+  Inputs
+    x:PythonObject
+  Outputs
+    :PythonObject -- the logical negation of x
+  Description
+    Text
+      Perform the logical negation ("not") operation on a Python object.
+    Example
+      not toPython true
+      not toPython false
+    Text
+      Unlike Macaulay2, Python supports using @CODE "not"@ with non-boolean
+      objects. It will return @CODE "False"@ if the argument is truthy and
+      @CODE "True"@ if it is falsy.
+    Example
+      not toPython 0
+      not toPython "foo"
+  SeeAlso
+    (symbol or, PythonObject, PythonObject)
+    (symbol and, PythonObject, PythonObject)
+    (symbol xor, PythonObject, PythonObject)
+    (symbol ~, PythonObject)
+///
+
+--------------------------
+-- comparison operators --
+--------------------------
+
+doc ///
+  Key
     (symbol ?, PythonObject, PythonObject)
     (symbol ?, PythonObject, Thing)
     (symbol ?, Thing, PythonObject)
-    (symbol +, PythonObject)
-    (symbol -, PythonObject)
   Headline
-    a python object
+    compare Python objects
+  Usage
+    x ? y
+  Inputs
+    x:PythonObject
+    y:PythonObject
+  Outputs
+    :Symbol -- <, >, ==, or @TO incomparable@
   Description
     Text
-      This type corresponds to all objects of the @TT
-      HREF{"https://docs.python.org/3/c-api/structures.html#c.PyObject",
-      "PyObject"}@ type in the Python C API, and in particular all of the
-      types that users are familiar with from the Python language itself.
-    Text
-      You can perform basic arithmetic on python objects.
+      Compare two Python objects.  The result is one of the following symbols:
+      @TO symbol <@, @TO symbol >@, @TO symbol ==@, or @TO incomparable@.
     Example
-      x = toPython 5
-      y = toPython 2
-      x + y
-      x - y
-      x * y
-      x / y
+      toPython 2 ? toPython 3
     Text
-      You can also compare them.
+      If one of the arguments is a Macaulay2 object, then it is first converted
+      to a Python object before comparing.
     Example
-      x > y
-      x == y
+      toPython 4 ? 4
+      7 ? toPython 6
     Text
-      You can also perform operations on python objects and Macaulay2 things.
-      The results will be returned as python objects.
+      This method is used by the comparison operators @TO symbol <@,
+      @TO symbol >@, @TO symbol <=@, and @TO symbol >=@.
     Example
-      x + 2
+      toPython 2 < toPython 3
+      4 >= toPython 5
+  SeeAlso
+    (symbol ==, PythonObject, PythonObject)
+///
+
+doc ///
+  Key
+    (symbol ==, PythonObject, PythonObject)
+    (symbol ==, PythonObject, Thing)
+    (symbol ==, Thing, PythonObject)
+  Headline
+    equality of Python objects
+  Usage
+    x == y
+  Inputs
+    x:PythonObject
+    y:PythonObject
+  Outputs
+    :Boolean -- whether x and y are equal
+  Description
     Text
-      Note that many keywords in Macaulay2 are mapped to a certain
-      dunder method in Python.  In particular,
-    Code
-      UL {
-        LI {TT "+", " → ", TT "__add__", " (binary), ",
-	    TT "__pos__", " (unary)"},
-        LI {TT "-", " → ", TT "__sub__", " (binary), ",
-	    TT "__neg__", " (unary)"},
-        LI {TT "*", " → ", TT "__mul__"},
-	LI {TT "@", " → ", TT "__matmul__"},
-        LI {TT "/", " → ", TT "__truediv__"},
-        LI {TT "//", " → ", TT "__floordiv__"},
-        LI {TT "%", " → ", TT "__mod__"},
-        LI {TT "^", " → ", TT "__pow__"},
-        LI {TT "<<", " → ", TT "__lshift__"},
-        LI {TT ">>", " → ", TT "__rshift__"},
-        LI {TT "&", " → ", TT "__and__"},
-        LI {TT "|", " → ", TT "__or__"},
-        LI {TT "^^", " → ", TT "__xor__"},
-        LI {TT "and", " → ", TT "__and__"},
-        LI {TT "or", " → ", TT "__or__"},
-        LI {TT "xor", " → ", TT "__xor__"}}
+      Determine whether two Python objects are equal.
+    Example
+      toPython 2 == toPython 3
+    Text
+      If one of the arguments is a Macaulay2 object, then it is first converted
+      to a Python object before comparing.
+    Example
+      toPython 4 == 4
+      7 == toPython 6
+  SeeAlso
+    (symbol ?, PythonObject, PythonObject)
 ///
 
 doc ///
@@ -530,24 +1197,6 @@ doc ///
       "https://docs.python.org/3/library/functions.html#abs", "abs"}@ function.
     Example
       abs toPython(-12)
-///
-
-doc ///
-  Key
-    (symbol ~, PythonObject)
-  Headline
-    bitwise not of a python object
-  Usage
-    x~
-  Inputs
-    x:PythonObject
-  Outputs
-    :PythonObject -- the bitwise not of @TT "x"@
-  Description
-    Text
-      This calls Python's special @TT "__invert__"@ method.
-    Example
-      (toPython 5)~
 ///
 
 doc ///
