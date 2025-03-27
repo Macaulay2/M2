@@ -18,6 +18,7 @@ Node
       :Working with the rational Weyl algebra
         normalForm
 	standardMonomials
+	baseFractionField
       :Computing and displaying $D$-ideals in connection form
         connectionMatrices
         connectionMatrix
@@ -27,6 +28,8 @@ Node
 	isEpsilonFactorized
       :Testing integrability of a list of matrices
         isIntegrable
+      :Examples
+        "examples from physics"
     Text
       As an example, consider the GKZ system representing the Gauss hypergeometric function
       (c.f. Examples 1.2.9 [SST, pp. 14]).

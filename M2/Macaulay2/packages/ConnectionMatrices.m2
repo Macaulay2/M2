@@ -80,6 +80,7 @@ load "./ConnectionMatrices/tests.m2"
 
 beginDocumentation()
 load "./ConnectionMatrices/docs.m2"
+load "./ConnectionMatrices/examples.m2"
 
 end--
 
