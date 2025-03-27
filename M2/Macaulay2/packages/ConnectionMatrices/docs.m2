@@ -238,6 +238,7 @@ Description
   --   h = x*dx+y*dy+z*dz-2*eps;
   --   I = ideal(delta1+delta3, delta2+delta3,h)
   --   A = connectionMatrices({1,dx,dy,dx*dy},I)
+  --   R = fractionField D
   --   changeVar = transpose((1/(2*z*eps^2))*matrix({{2*z*eps^2, -eps^2*(x-z), -eps^2*(y-z), -eps^2*(x+y)},{0,eps*(x^2-z^2),0,eps*(x+y)*(x+z)},{0,0,eps*(y^2-z^2),eps*(x+y)*(y+z)},{0,0,0,-(x+y)*(x+z)*(y+z)}}));
   --   A2 = gaugeTransform(changeVar,A,D)
 SeeAlso
@@ -350,6 +351,7 @@ Description
   --   h = x*dx+y*dy+z*dz-2*eps;
   --   I = ideal(delta1+delta3, delta2+delta3,h)
   --   A = connectionMatrices({1,dx,dy,dx*dy},I)
+  --   R = fractionField D
   --   changeVar = transpose((1/(2*z*eps^2))*matrix({{2*z*eps^2, -eps^2*(x-z), -eps^2*(y-z), -eps^2*(x+y)},{0,eps*(x^2-z^2),0,eps*(x+y)*(x+z)},{0,0,eps*(y^2-z^2),eps*(x+y)*(y+z)},{0,0,0,-(x+y)*(x+z)*(y+z)}}));
   --   A2 = gaugeTransform(changeVar,A,D)
   --   isEpsilonFactorized(A2,eps)
