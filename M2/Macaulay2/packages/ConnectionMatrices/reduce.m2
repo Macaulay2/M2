@@ -14,7 +14,8 @@ WeightThenEliminationOrder = w -> join( { Weights => w },
 
 -- Weyl Algebra with monomial order given by the weighted lexicographic elimination order
 makeWeylAlgebra(PolynomialRing, List) := opts -> (R, v) -> (
-    w := (for i from 1 to #v list 0)|v;
+    n := length(gens R);
+    if length(v)==n then w := ((for i from 1 to #v list 0)|v) else if length(v)== 2*n then w = v else error "expected a weight of length n or 2n";
     coordVars := gens R;
     diffVars := apply(coordVars, i -> value("symbol d" | toString(i)) );
     allVars := join(coordVars, diffVars);
