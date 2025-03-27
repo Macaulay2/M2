@@ -182,12 +182,12 @@ doc ///
 Key
     connectionMatrices
     (connectionMatrices, Ideal)
-    (connectionMatrices, List, Ideal)
+    (connectionMatrices, Ideal, List)
 Headline
     computes the connection matrices of a $D$-ideal $I$ for a choosen basis
 Usage
     connectionMatrices(I)
-    connectionMatrices(B, I)
+    connectionMatrices(I, B)
 Inputs
     I:Ideal
       $D_n$-ideal
@@ -215,7 +215,7 @@ Description
   --   delta3 = (x+z)*(y+z)*dx*dy-eps*(x+z)*dx-eps*(y+z)*dy+eps^2;
   --   h = x*dx+y*dy+z*dz-2*eps;
   --   I = ideal(delta1+delta3, delta2+delta3,h);
-  --   A = connectionMatrices({1,dx,dy,dx*dy},I)
+  --   A = connectionMatrices(I, {1,dx,dy,dx*dy})
 References
   For more details, see [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, pp. 37-40].
 ///
@@ -262,7 +262,7 @@ Description
   --   delta3 = (x+z)*(y+z)*dx*dy-eps*(x+z)*dx-eps*(y+z)*dy+eps^2;
   --   h = x*dx+y*dy+z*dz-2*eps;
   --   I = ideal(delta1+delta3, delta2+delta3,h)
-  --   A = connectionMatrices({1,dx,dy,dx*dy},I)
+  --   A = connectionMatrices(I, {1,dx,dy,dx*dy})
   --   R = baseFractionField D
   --   changeVar = transpose((1/(2*z*eps^2))*matrix({{2*z*eps^2, -eps^2*(x-z), -eps^2*(y-z), -eps^2*(x+y)},{0,eps*(x^2-z^2),0,eps*(x+y)*(x+z)},{0,0,eps*(y^2-z^2),eps*(x+y)*(y+z)},{0,0,0,-(x+y)*(x+z)*(y+z)}}));
   --   A2 = gaugeTransform(changeVar,A,D)
@@ -317,7 +317,7 @@ Inputs
     I:Ideal
       of the Weyl algebra
     G:List
-      of the elements of a Gröbner basis of an ideal in the Weyl algebra
+      of generators of the ideal
 Outputs
     L:List
       of standard monomials
@@ -361,7 +361,7 @@ Description
     D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x]);
     I = ideal(x*(1-x)*dx^2 - eps*(1-x)*dx);
     B = {sub(1,D),sub(1/eps,D)*dx};
-    A = connectionMatrices(B,I)
+    A = connectionMatrices(I, B)
     isEpsilonFactorized(A,eps)
   Text
   --   In many examples coming from physics it is important to check
@@ -375,7 +375,7 @@ Description
   --   delta3 = (x+z)*(y+z)*dx*dy-eps*(x+z)*dx-eps*(y+z)*dy+eps^2;
   --   h = x*dx+y*dy+z*dz-2*eps;
   --   I = ideal(delta1+delta3, delta2+delta3,h)
-  --   A = connectionMatrices({1,dx,dy,dx*dy},I)
+  --   A = connectionMatrices(I, {1,dx,dy,dx*dy})
   --   R = baseFractionField D
   --   changeVar = transpose((1/(2*z*eps^2))*matrix({{2*z*eps^2, -eps^2*(x-z), -eps^2*(y-z), -eps^2*(x+y)},{0,eps*(x^2-z^2),0,eps*(x+y)*(x+z)},{0,0,eps*(y^2-z^2),eps*(x+y)*(y+z)},{0,0,0,-(x+y)*(x+z)*(y+z)}}));
   --   A2 = gaugeTransform(changeVar,A,D)

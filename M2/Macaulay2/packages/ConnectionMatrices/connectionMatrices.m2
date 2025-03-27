@@ -11,12 +11,12 @@ connectionMatrices = method()
 -- c.f. [Theorem 1.4.22, SST]
 connectionMatrices Ideal := List => I -> I.cache.connectionMatrices ??= (
 
-    -- Todo: Assert that I is an ideal in the Weyl algebra.
+    if not isWeylAlgebra (ring I) then error "expected left ideal in a Weyl algebra";
 
     D := ring I;
     createDpairs D;
-    -- TODO: this might not always be correct,
-    -- why was the method that accepted w removed?
+
+    -- TODO: Change holonomic Rank, so it only takes ideal and infers the order from it.
     w := (((options(D)).MonomialOrder)#1)#1;
     -- this acts as the associated graded ring of rational Weyl algebra
     R := rationalWeylAlgebra D;
@@ -37,7 +37,7 @@ connectionMatrices Ideal := List => I -> I.cache.connectionMatrices ??= (
 )
 
 -- gives the system of connection matrices with respect to a new basis B
-connectionMatrices(List,Ideal) := (B,I)->(
+connectionMatrices(Ideal, List) := (I, B)->(
     g := gaugeMatrix(I,B);
     A := connectionMatrices I;
     gaugeTransform(g, A)
@@ -64,6 +64,13 @@ connectionMatrix(List) := List => (P) -> (
     --D := R#"OriginalWeylAlgebra"
     K := coefficientRing(ring P_0);
     D := makeWA(K(monoid[gens ring P_0]));
+
+    -- Check all are over the same ring.
+    if not same apply(P, ring) then error "expected matrices over the same ring";
+
+    -- Check that length of list == #differential variables
+    if not numgens D // 2 == #P then error "number of differential variables needs to match length of the list of matrices";
+
     R := rationalWeylAlgebra D;
     f := map(R, ring P_0);
     var := gens R;
@@ -86,6 +93,5 @@ standardMonomials Ideal := I -> (
     return flatten entries B;
 )
 
--- TODO: does it matter that G is a GB?
--- GB of a D-ideal as an input
+-- List of generators of ideal as input
 standardMonomials List := G -> standardMonomials ideal G
