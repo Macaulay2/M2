@@ -145,6 +145,8 @@ infty := prec -> 1/toRR(prec,0)
 numeric InfiniteNumber := infinity -> infinity#0 * infty defaultPrecision
 numeric(ZZ, InfiniteNumber) := (prec,infinity) -> infinity#0 * infty prec
 
+Number_ZZ := (x, p) -> numeric(p, x)
+
 ZZ _ RealField :=
 QQ _ RealField :=
 RR _ RealField := (x,R) -> toRR(R.precision,x)
