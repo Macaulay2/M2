@@ -29,7 +29,7 @@ assert(holonomicRank(I) == 4);
 P = connectionMatrices I;
 G = flatten entries gens gb I;
 
-B2 = {1,dx,dy,dx*dy};
+B2 = {1_D,dx,dy,dx*dy};
 changeofvar = gaugeMatrix(G,B2);
 assert(changeofvar == gaugeMatrix(I,B2));
 P2 = gaugeTransform(changeofvar,P);

@@ -4,8 +4,16 @@
 gaugeMatrix = method();
 -- I D-ideal, new standard monomials
 gaugeMatrix(Ideal, List) := (I, newStdMon) -> (
+
+  if not isWeylAlgebra (ring I) then error "expected left ideal in a Weyl algebra";
+
+  if not isWeylAlgebra (ring first newStdMon) then "expected elements of list to be in Weyl algebra";
+
+  if not same apply(newStdMon, ring) then error "expected elements of the list to be in the same Weyl algebra";
+
   D := ring I;
   F := baseFractionField D;
+
   G := flatten entries gens gb I;
   stdMon := standardMonomials(I);
   -- obtain weight ordering from D
@@ -15,7 +23,7 @@ gaugeMatrix(Ideal, List) := (I, newStdMon) -> (
   for rowIndex from 0 to length(newStdMon)-1 do
   (
     -- compute normalForm of new std monomials wrt. gb of I
-    reducedWRTG := normalForm(sub(newStdMon#rowIndex,D),G);
+    reducedWRTG := normalForm(newStdMon#rowIndex,G);
     coeffsReduced := coefficients reducedWRTG;
     for j from 0 to length(flatten entries coeffsReduced_0)-1 do
     --runs through (d-)monomial support of the reduced element
