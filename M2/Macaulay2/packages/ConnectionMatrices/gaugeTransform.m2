@@ -83,12 +83,14 @@ isEpsilonFactorized(Matrix,RingElement) := (M,e) -> (
 
 -- extract list of degrees with vars set to 0
 lstOfDegrees = (M,e) -> (
-    -- Read off the "exponents" of e, to single it out from the generators
-    d := (if (class ring e === FractionField) then (exponents numerator e) else (assert(class ring e === PolynomialRing); exponents e))#0;
+    R := ring M;
+    -- Read off the "exponents" of e in R, to single it out from the generators
+    d := if instance(R, FractionField)  then first exponents numerator e_R
+    else if instance(R, PolynomialRing) then first exponents e_R
+    else error "expected matrices over a fraction field or rational Weyl algebra";
 
     -- Create new ring, where only e has degree 1, rest 0.
-    R := QQ[gens ring e, Degrees => d];
-    F := frac(R);
+    F := frac newRing(baseRing fractionField R, Degrees => d);
     Mlst := select(flatten entries M, x -> x != 0);
     if #Mlst == 0 then return {{0}};
     lst := new MutableList;
