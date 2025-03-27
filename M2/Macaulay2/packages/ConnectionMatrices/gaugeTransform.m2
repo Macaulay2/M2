@@ -37,7 +37,7 @@ gaugeMatrix(Ideal, List) := (I, newStdMon) -> (
   matrix gaugeMat
 );
 
--- G Groebner basis for a D-ideal, new standard monomials
+-- G a generating set for a D-ideal, new standard monomials
 gaugeMatrix(List,List) := (G, newStdMon) -> (
   D := ring G#0;
   gaugeMatrix(ideal(G),newStdMon)

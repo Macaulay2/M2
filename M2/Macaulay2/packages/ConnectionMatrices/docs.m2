@@ -123,7 +123,7 @@ Inputs
     I:Ideal
       of the Weyl algebra
     G:List
-      of the elements of a Gröbner basis of $I$
+      of generators for $I$
     B:List
       a basis of $R_n/R_nI$ over the field of rational functions
 Outputs
@@ -131,7 +131,7 @@ Outputs
       encoding the change of basis wrt. to B
 Description
   Text
-    Let $I$ be a $D_n$-ideal, $G$ a Gröbner basis of $I$ with respect to some elimination term order on $D_n$ and a $B$ basis of $R_n/R_nI$.
+    Let $I = D_n\langle G\rangle$ be a $D_n$-ideal, $B$ basis of $R_n/R_nI$.
     This methods computes the matrix which encodes the change of basis from the set of standard monomials of $R_nI$ to the basis $B$.
   Example
     w1 = {2,1}; D1 = makeWeylAlgebra(QQ[x,y],w1);
@@ -139,8 +139,7 @@ Description
     SM1 = standardMonomials(I);
     w2 = {1,2}; D2 = makeWeylAlgebra(QQ[x,y],w2);
     SM2 = standardMonomials(sub(I,D2));
-    G = flatten entries gens gb I;
-    gaugeMatrix(G,SM2)
+    gaugeMatrix(I,SM2)
 SeeAlso
 
 ///
