@@ -320,23 +320,6 @@ Description
     B = {sub(1,D),sub(1/eps,D)*dx};
     A = connectionMatrices(I, B)
     isEpsilonFactorized(A,eps)
-  Text
-  --   In many examples coming from physics it is important to check
-  --   this factorization property. The following example arises as
-  --   the annihilating $D_n$-ideal
-  --   of a correlation function in cosmology.
-  -- Example
-  --   D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x,y,z],{1,1,1})
-  --   delta1 = (x^2-z^2)*dx^2+2*(1-eps)*x*dx-eps*(1-eps);
-  --   delta2 = (y^2-z^2)*dy^2+2*(1-eps)*y*dy-eps*(1-eps);
-  --   delta3 = (x+z)*(y+z)*dx*dy-eps*(x+z)*dx-eps*(y+z)*dy+eps^2;
-  --   h = x*dx+y*dy+z*dz-2*eps;
-  --   I = ideal(delta1+delta3, delta2+delta3,h)
-  --   A = connectionMatrices(I, {1,dx,dy,dx*dy})
-  --   R = baseFractionField D
-  --   changeVar = transpose((1/(2*z*eps^2))*matrix({{2*z*eps^2, -eps^2*(x-z), -eps^2*(y-z), -eps^2*(x+y)},{0,eps*(x^2-z^2),0,eps*(x+y)*(x+z)},{0,0,eps*(y^2-z^2),eps*(x+y)*(y+z)},{0,0,0,-(x+y)*(x+z)*(y+z)}}));
-  --   A2 = gaugeTransform(changeVar,A,D)
-  --   isEpsilonFactorized(A2,eps)
 SeeAlso
 
 ///
@@ -376,10 +359,3 @@ Caveat
 SeeAlso
 
 ///
-
-end--
-
-uninstallPackage "ConnectionMatrices"
-restart
-installPackage "ConnectionMatrices"
-viewHelp "ConnectionMatrices"
