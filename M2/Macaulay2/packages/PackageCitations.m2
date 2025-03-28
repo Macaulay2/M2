@@ -27,11 +27,15 @@
 --  Release 0.1 (2017 03)
 --      NEW:
 --          A method for obtaining a bibtex citation for a Macaulay2 package.
+--
+--  Release 0.2 (2025 03)
+--      NEW:
+--          Add citeAs method for overriding default citation info
 -- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 newPackage (
     "PackageCitations",
-    Version => "0.1",
-    Date => "2017 03 28",
+    Version => "0.2",
+    Date => "March 28, 2025",
     Authors => {{
         Name => "Aaron Dall",
         Email => "aaronmdall -at- gmail.com",
@@ -42,7 +46,8 @@ newPackage (
     )
 
 export {
-    "cite"
+    "cite",
+    "citeAs",
     --"hasGoodHeadline",  -- internal method
     --"quotesToTex",  -- internal method
     --"wrapTexStrings",  -- internal method
@@ -146,6 +151,7 @@ headlineToTex Package := P -> (
 -- the cite method
 iCite = method (TypicalValue => String)
 iCite Package := P -> (
+    if P#?"citation" then return P#"citation";
     T := P#"pkgname"; -- package title
     V := concatenate("Version~", P#Options#Version); -- package version
     isInternalPackage := member(T, separate (" ", version#"packages"));
@@ -220,6 +226,10 @@ iCite String := S -> (
 
 -- The cite command
 cite = new Command from (T -> if T === () then iCite "M2" else iCite T)
+
+citeAs = method()
+citeAs(String, Package) := (s, pkg) -> (pkg#"citation" = s;)
+citeAs String := s -> citeAs(s, currentPackage)
 
 ------------------------
 -- End of source code --
@@ -316,8 +326,49 @@ doc ///
     SeeAlso
         PackageCitations
 ///
+
+doc ///
+  Key
+     citeAs
+    (citeAs, String)
+    (citeAs, String, Package)
+  Headline
+    add citation information for package
+  Usage
+    citeAs(s, pkg)
+  Inputs
+    s:String -- BibTeX citation information
+    pkg:Package
+  Description
+    Text
+      This overrides the default citation information returned by @TO cite@
+      for @CODE "pkg"@, or if omitted, the current package.
+    Example
+      newPackage("Foo", PackageImports => {"PackageCitations"})
+      citeAs ////@article{example,
+        author = {Doe, John},
+        title = {The Foo package for Macaulay2},
+        journal = {The Journal of Documentation Examples},
+        year = {2025},
+        volume = {17},
+        number = {3},
+        pages = {123--127}
+      }////
+      endPackage "Foo"
+      cite Foo
+///
+
 -- End exported documentation --
 -- Begin Tests --
+TEST ///
+newPackage("Foo", PackageImports => {"PackageCitations"})
+citeAs "foo"
+endPackage "Foo"
+assert Equation(cite Foo, "foo")
+citeAs("bar", Foo)
+assert Equation(cite Foo, "bar")
+///
+
 -- End Tests --
 end
 
