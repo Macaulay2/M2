@@ -27,6 +27,6 @@ holonomicRank(List, Module) := (w, M) -> (
      -- Note: we don't compute dim redI, because coefficientRing W might nonzero dimension
      B := try M.cache#"basis" = sub(cover basis(redI, Variables => gens R), matrix {W.dpairVars#1});
      if 0 == redI  then 0 else
-     if B === null then infinity
+     if B === null then error "expected ideal with finite holonomic rank"
      else numgens source B
 )
