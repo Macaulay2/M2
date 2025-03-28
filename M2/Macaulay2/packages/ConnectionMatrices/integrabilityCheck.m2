@@ -35,6 +35,6 @@ isIntegrable List := Boolean => A -> (
 
     D := inferWeylAlgebra(ring A_0); -- Infers the WeylAlgebra if stored as option.
 
-    assert(numgens D // 2 == #A); -- Length of the list must match the number of generators.
+    if not numgens D // 2 == #A then error "length doesn't match number of differential variables.";
     isIntegrable(D, A)
 )
