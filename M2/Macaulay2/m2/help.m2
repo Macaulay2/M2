@@ -264,6 +264,13 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 		    "."}}
 	    ),
 	DIV {
+	    cite := value (needsPackage "PackageCitations").Dictionary#"cite";
+	    SUBSECTION "Citation",
+	    PARA "Please cite this package as:",
+	    TABLE {"class" => "examples",
+		TR TD PRE prepend("class" => "language-bib",
+		    CODE cite pkg)}},
+	DIV {
 	    SUBSECTION "Version",
 	    PARA { "This documentation describes version ", BOLD pkg.Options.Version, " of ",
 		if pkg#"pkgname" === "Macaulay2Doc" then "Macaulay2" else pkg#"pkgname", "." }},
