@@ -172,16 +172,6 @@ Description
     D = makeWeylAlgebra(QQ[x,y], v = {2,1})
     I = ideal (x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1)
     A = connectionMatrices(I)
-  -- Text
-  --   More interesting examples arising from physics can also be handled. For example, the connection matrices of the annihilating $D_3$-ideal of a correlation function in cosmology can be computed as follows.
-  -- Example
-  --   D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x,y,z],{1,1,1});
-  --   delta1 = (x^2-z^2)*dx^2+2*(1-eps)*x*dx-eps*(1-eps);
-  --   delta2 = (y^2-z^2)*dy^2+2*(1-eps)*y*dy-eps*(1-eps);
-  --   delta3 = (x+z)*(y+z)*dx*dy-eps*(x+z)*dx-eps*(y+z)*dy+eps^2;
-  --   h = x*dx+y*dy+z*dz-2*eps;
-  --   I = ideal(delta1+delta3, delta2+delta3,h);
-  --   A = connectionMatrices(I, {1,dx,dy,dx*dy})
 References
   For more details, see [@HREF("https://link.springer.com/book/10.1007/978-3-662-04112-3","SST")@, pp. 37-40].
 ///
