@@ -208,7 +208,7 @@ iCite String := S -> (
     if S === "M2" then return (
         concatenate (
             "@misc{M2,\n",
-            "  author = {Grayson, Daniel R. and Stillman, Michael E.},\n",
+            "  author = {{The Authors of} M2},\n",
             "  title = {Macaulay2, a software system for research in algebraic geometry},\n",
             "  howpublished = {Available at ", ///\///, "url{https://macaulay2.com/}}\n",
             "}\n",
