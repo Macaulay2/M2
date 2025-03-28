@@ -63,6 +63,7 @@ addStartFunction( () -> (
 	       	    hd := "with packages: ";
 	       	    stderr << hd << wrap(printWidth-#hd, concatenate between_", " sort apply(relevant,toString)) << endl;
 		    );
+	       stderr << "Type `help` to see useful commands" << endl;
 	       if topLevelMode === TeXmacs then stderr << TeXmacsEnd << flush;
 	       );
 	  )
