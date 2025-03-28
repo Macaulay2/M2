@@ -98,7 +98,11 @@ TEST /// -- testing in char 0
   S = QQ[x,y];
   assert(2 == #summands coker matrix "x,y; y,x")
   assert(1 == #summands coker matrix "x,y;-y,x")
+  -- restart
+  debug needsPackage "DirectSummands"
   S = QQ[a,b,c,d];
+  M = coker matrix "a,b,c,d;d,a,b,c;c,d,a,b;b,c,d,a"
+  findIdempotent M
   -- TODO: can we make sure the last block remains symmetric?
   assert(3 == #summands coker matrix "a,b,c,d;d,a,b,c;c,d,a,b;b,c,d,a")
   K = toField(QQ[i]/(i^2+1));
@@ -146,5 +150,30 @@ needsPackage "DirectSummands"
   assert(length summands prune sheaf(module TP ** R) == rank TP)
   assert(length summands sheaf(module TP ** R) == length summands prune sheaf(module TP ** R))
 ///
+
+///
+  debug needsPackage "DirectSummands"
+  kk = ZZ/13
+  S = kk[x,y,z]
+  R = S/(x*z-y^2)
+  L = summands frobeniusPushforward(1, R);
+  L = summands S^30000;
+  elapsedTime isomorphismTally L
+  elapsedTime tallySummands L
+  set(last \ isomorphismTally summands frobeniusPushforward(1,R)) == set{12,13}
+///
+
+
+///
+  debug needsPackage "DirectSummands"
+  kk = ZZ/11
+  S = kk[x,y,z,Degrees=>{5,1,5}]
+  R = S/(x*z-y^10)
+  L = summands frobeniusPushforward(1, R);
+  elapsedTime isomorphismTally L;
+  elapsedTime tallySummands L;
+  set(last \ isomorphismTally summands frobeniusPushforward(1,R)) == set{12,13}
+///
+
 
 load "./large-tests.m2"

@@ -14,34 +14,27 @@ random(List, Module) := Vector => o -> (d, M) -> vector map(M, , random(cover M,
 random       Module  := Vector => o ->     M  -> (
     if isHomogeneous M then random(degree 1_(ring M), M, o) else localRandom(M, o))
 
-generalEndomorphism = method()
-generalEndomorphism Module := M -> (
+generalEndomorphism = method(Options => options random)
+generalEndomorphism Module := Matrix => o -> M -> (
     zdeg := if isHomogeneous M then degree 0_M;
     A := Hom(M, M,
 	DegreeLimit       => zdeg,
 	MinimalGenerators => false);
     B := if isHomogeneous M then smartBasis(zdeg, A) else inducedMap(A, , gens A);
-    homomorphism(B * random cover source B)
-)
-
-generalEndomorphism CoherentSheaf := M -> generalEndomorphism module M
+    homomorphism(B * random(source B, o)))
+-- the sheaf needs to be pruned to prevent missing endomorphisms
+generalEndomorphism CoherentSheaf := SheafMap => o -> F -> sheaf generalEndomorphism(module prune F, o)
 
 -----NEW STUFF FOR INHOMOGENEOUS CASE-----
 
---does same thing as general(Endo)morphism, but in inhomgeneous case
-randomHom = method()
-randomHom(Module, Module) := (M,N) -> homomorphism random Hom(M, N, MinimalGenerators => false)
-
-isSplitSummand = method(Options => { Tries => 50 })
-
+findSplitInclusion = method(Options => { Tries => 50 })
 --tests if M is a split summand of N
-isSplitSummand(Module,Module) := opts -> (M,N) -> (
+findSplitInclusion(Module, Module) := opts -> (M, N) -> (
     h := for i to opts.Tries - 1 do (
-        b := randomHom(M,N);
-        c := randomHom(N,M);
+        b := homomorphism random Hom(M, N, MinimalGenerators => false);
+        c := homomorphism random Hom(N, M, MinimalGenerators => false);
         if isIsomorphism(c * b) then break b);
-    if h === null then return "not known" else return h
-)
+    if h === null then return "not known" else return h)
 
 findIdem' = method(Options => { Tries=>500 })
 findIdem' Module      := opts ->  M     -> findIdem'(M, fieldExponent ring M,opts)
@@ -60,7 +53,7 @@ findIdem'(Module,ZZ) := opts -> (M,e) -> (
         opers := flatten for y in eigen list (
 	    if p == 0 then (f - y*id_M) else (
 		for j from 0 to e list largePower'(p, j+1, largePower(p, l, f - y*id_M))));
-        idem := position(opers, g -> isSplitSummand(image g, source g) =!= null and g != id_M and K ** g != 0 and prune ker g != 0);
+        idem := position(opers, g -> findSplitInclusion(image g, source g) =!= null and g != id_M and K ** g != 0 and prune ker g != 0);
         if idem =!= null then (
 	    if 1 < debugLevel then printerr("found idempotent after ", toString c, " attempts.");
 	    return opers_idem));

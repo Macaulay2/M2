@@ -39,6 +39,8 @@ export {
     -- methods
     "directSummands", "summands" => "directSummands",
     "findIdempotent", "findIdem" => "findIdempotent",
+    "findSplitInclusion",
+    "isomorphismTally",
     -- symbols
     "ExtendGroundField",
     "Indecomposable",
@@ -81,7 +83,7 @@ submatrixByDegrees(Matrix, Sequence) := (m, degs) -> (
     row := if tar =!= null then positions(degrees target m, deg -> member(deg, tar));
     submatrix(m, row, col))
 
--- TODO: perhaps also take degree into account
+-- this defines sorting on modules and sheaves
 CoherentSheaf ? CoherentSheaf :=
 Module ? Module := (M, N) -> if rank M != rank N then rank M ? rank N else degrees M ? degrees N
 
@@ -136,17 +138,51 @@ checkRecursionDepth = () -> if recursionDepth() > recursionLimit - 20 then print
     "Warning: the recursion depth limit may need to be extended; use `recursionLimit = N`")
 
 module Module := identity
+
+-- FIXME in the Core:
+isiso = lookup(isIsomorphic, Module, Module)
+isIsomorphic(Module, Module) := Sequence => o -> (M, N) -> (
+    -- TODO: in the free case, handle the Strict => false option, too
+    if isFreeModule M and isFreeModule N then (
+	if set degrees M == set degrees N then return ( true, null )); -- FIXME: give the map
+    (isiso o)(M, N))
+
+isIsomorphic' = method(Options => options isIsomorphic ++ { Tries => 10 })
+isIsomorphic'(Module, Module) := opts -> (M, N) -> (
+    opts' := selectKeys(opts, k -> (options isIsomorphic)#?k);
+    -- TODO: parallelize
+    any(opts.Tries, i -> first isIsomorphic(M, N, opts')))
+
 -- TODO: speed this up
 -- TODO: implement isIsomorphic for sheaves
-unique' = L -> (
-    L = new MutableList from module \ L;
+-- TODO: add strict option
+tallySummands = L -> tally (
+    opts := Homogeneous => all(L, isHomogeneous);
+    L  = new MutableList from module \ L;
     b := new MutableList from #L : true;
-    for k to 5 do -- arbitrary, just to make sure isIsomorphic doesn't fail because of bad randomness
-    for i to #L-2 do for j from i+1 to #L-1 do if b#j then (
-	if isIsomorphic(L#i, L#j) then ( b#j = false; L#j = L#i ));
+    for i to #L-2 do if b#i then for j from i+1 to #L-1 do if b#j then (
+	if isIsomorphic'(L#i, L#j, opts)
+	then ( b#j = false; L#j = L#i ));
     new List from L)
 
-tally' := L -> tally unique' L
+isomorphismTally = method()
+isomorphismTally List := L -> (
+    if not uniform L then error "expected list of elements of the same type";
+    if not (class L_0 === Module or class L_0 === CoherentSheaf ) then error "expected list of modules or sheaves";
+    opts := Homogeneous => all(L, isHomogeneous);
+    --L = new MutableList from L;
+    j := 0;
+    while j < #L list (
+	i := j + 1;
+	c := 1;
+	while i < #L do (
+	    if isIsomorphic'(L#j, L#i, opts)
+	    then (
+		L = drop(L, {i, i});
+		c = c + 1)
+	    else i = i + 1);
+	j = j + 1;
+	(L#(j-1), c)))
 
 -----------------------------------------------------------------------------
 -----------------------------------------------------------------------------
@@ -319,44 +355,51 @@ directSummands(Module, Module) := List => opts -> (L, M) -> (
     zdeg := degree 0_M;
     if isFreeModule L then(
         B := smartBasis(zdeg, Hom(M, L, DegreeLimit => zdeg, MinimalGenerators => false));
+        --h := for i from 0 to numcols B - 1 do( if isSurjective(b := homomorphism B_{i}) then break matrix{L_0}//b);
         h := for i to opts.Tries - 1 do (
 	    b := homomorphism(B * random source B);
             if isSurjective b then break matrix{L_0}//b);)
     else(
         -- we look for a composition L -> M -> L which is the identity
         B = smartBasis(zdeg, Hom(L, M, DegreeLimit => zdeg, MinimalGenerators => false));
+        if numcols B == 0 then return {M};
         C := smartBasis(zdeg, Hom(M, L, DegreeLimit => zdeg, MinimalGenerators => false));
+        if numcols C == 0 then return {M};
         -- attempt to find a random isomorphism
         h = for i to opts.Tries - 1 do (
 	    b := homomorphism(B * random source B);
 	    c := homomorphism(C * random source C);
+            --TODO: change isIsomorphism to isSurjective?
 	    if isIsomorphism(c * b) then break b);
+        --is it worth doing the following lines? when does the random strategy above fail?
         if h === null then h = (
 	    if opts.Strategy & 8 == 8 then (
 	        -- precomputing the Homs can sometimes be a good strategy
 	        Bhoms := apply(numcols B, i -> homomorphism B_{i});
-	        Choms := apply(numcols C, i -> homomorphism C_{i});
+	        Choms := select(apply(numcols C, i -> homomorphism C_{i}), j -> isSurjective j);
 	        pos := position'(Choms, Bhoms,
 		    (c, b) -> isIsomorphism(c * b));
 	        if pos =!= null then last pos)
 	    else (
 	        -- and sometimes too memory intensive
 	        ind := position'(numcols C, numcols B,
-		    (c, b) -> isIsomorphism(homomorphism C_{c} * homomorphism B_{b}));
+                    --how to skip c if homomorphism C_{c} is not surjective?
+		    (c, b) -> isSurjective homomorphism C_{c} and isIsomorphism(homomorphism C_{c} * homomorphism B_{b}));
 	        if ind =!= null then homomorphism B_{last ind})););
     if h === null then return {M};
     if 0 < debugLevel then stderr << concatenate(rank L : ".") << flush;
     -- TODO: can we detect multiple summands of L at once?
-    sort flatten join({L}, if not opts.Recursive then {coker h}
-	else directSummands(L, coker h, opts)))
+    sort flatten join({L}, if not opts.Recursive then {prune coker h}
+	else directSummands(L, prune coker h, opts)))
 
 directSummands(CoherentSheaf, CoherentSheaf) := List => opts -> (L, G) -> apply(
     directSummands(module L, module G, opts), N -> sheaf(variety L, N))
 
 -- attempt to peel off summands from a given list of modules
 directSummands(List, CoherentSheaf) :=
-directSummands(List, Module) := List => opts -> (Ls, M) -> fold(Ls, {M},
-    (L, LL) -> join(drop(LL, -1), directSummands(L, last LL, opts)))
+directSummands(List, Module) := List => opts -> (Ls, M) -> sort (
+    if 1 < #cachedSummands M then flatten apply(cachedSummands M, N -> directSummands(Ls, N, opts))
+    else fold(Ls, {M}, (L, LL) -> join(drop(LL, -1), directSummands(L, last LL, opts))))
 
 --
 isDefinitelyIndecomposable = method()
