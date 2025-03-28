@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- hash: 18002316241657736360
-/home/ayah/M2/M2/BUILD/build/usr-dist/x86_64-Linux-Ubuntu-24.04/bin/M2-binary: /home/linuxbrew/.linuxbrew/lib/libmpfi.so.0: no version information available (required by /home/ayah/M2/M2/BUILD/build/usr-dist/x86_64-Linux-Ubuntu-24.04/bin/M2-binary)
 
 i1 : R = QQ[a..d];
 

@@ -42,7 +42,7 @@ smithNormalForm Matrix := o -> A -> (
 	    start'i = i + 1;
 	    a := D_(i,i);
 	    b := D_(i+1,i+1);
-	    (g,e,f) := toSequence gcdCoefficients(a,b);
+	    (g,e,f) := gcdCoefficients(a,b);
 	    D_(i,i) = g;
 	    D_(i+1,i+1) = lcm(a,b);
 	    rowAdd(P',i+1,e,i);

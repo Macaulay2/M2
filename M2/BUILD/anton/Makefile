@@ -3,19 +3,17 @@ always:
 
 BRANCH := $(shell git branch --contains | grep '^\* ' | sed -e s=^..== -e s=/=.=g )
 
-
 cmake:
 	echo "git branch is " $(BRANCH)
 	mkdir -p builds.tmp/$@
 	cd builds.tmp/$@; cmake \
 		-GNinja \
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
-		-DCMAKE_PREFIX_PATH="`brew --prefix libffi`;`brew --prefix`;`brew --prefix libomp`" \
-		-DBUILD_NATIVE=off \
-		-DCMAKE_INSTALL_PREFIX=`pwd`/installed \
+		-DCMAKE_PREFIX_PATH="`brew --prefix libomp`" \
 		-DBUILD_TESTING=on \
-		-DBUILD_DOCS=off \
+		-DBUILD_DOCS=on \
 		../../../..
+#		-DLINTING=on
 
 auto:
 	echo "git branch is " $(BRANCH)
