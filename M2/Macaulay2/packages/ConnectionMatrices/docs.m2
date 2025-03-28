@@ -3,7 +3,7 @@ Node
   Key
     ConnectionMatrices
   Headline
-    writing and working with $D$-ideals in connection form
+    writing $D$-ideals in connection form
   Description
     Text
       -- excerpt from the paper
@@ -11,7 +11,7 @@ Node
       with polynomial coefficients are encoded by left ideals in the Weyl algebra, denoted
       $$ D_n=\CC[x_1,\ldots,x_n]\langle \partial_1,\ldots,\partial_n \rangle. $$
       Such systems can be systematically written as a first-order matrix system known as a "Pfaffian system" or "connection form,"
-      by utilizing Gröbner bases in the Weyl algebra [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, p. 37].
+      by utilizing Gröbner bases in the Weyl algebra [@HREF("https://link.springer.com/book/10.1007/978-3-662-04112-3","SST")@, p. 37].
       The systematic computation of connection matrices requires Gröbner basis computations in the rational Weyl algebra
       $$ R_n=\CC(x_1,\ldots,x_n)\langle \partial_1,\ldots,\partial_n \rangle. $$
     Tree
@@ -34,7 +34,7 @@ Node
   References
     Most algorithms in this package can be found in the book
     {\em Gröbner deformations of Hypergeometric Differential Equations} by M. Saito, B. Sturmfels, and N. Takayama (published by Springer, 2000),
-    cited here as [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@].
+    cited here as [@HREF("https://link.springer.com/book/10.1007/978-3-662-04112-3","SST")@].
   SeeAlso
     "Dmodules :: Dmodules"
     "HolonomicSystems :: HolonomicSystems"
@@ -79,9 +79,9 @@ Description
     P = dx^2 ; Q = x*dx+1;
     normalForm(P, Q)
 References
-  See Theorem 1.1.7 [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, pp. 7].
+  See [@HREF("https://link.springer.com/book/10.1007/978-3-662-04112-3","SST")@, Theorem 1.1.7].
 Caveat
-  Currently, the output lives @TO2{baseFractionField, TT "baseFractionField D"}@ adjoin the differential variables in a COMMUTATIVE way.
+  The output lives in the commutative ring @TO2{baseFractionField, TT "baseFractionField D"}@, where the partial differentials are adjoint as commuting variables.
 SeeAlso
 
 ///
@@ -183,7 +183,7 @@ Description
   --   I = ideal(delta1+delta3, delta2+delta3,h);
   --   A = connectionMatrices(I, {1,dx,dy,dx*dy})
 References
-  For more details, see [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, pp. 37-40].
+  For more details, see [@HREF("https://link.springer.com/book/10.1007/978-3-662-04112-3","SST")@, pp. 37-40].
 ///
 
 doc ///
@@ -208,7 +208,8 @@ Outputs
       the system of connection matrices $\widetilde{A}_i = M A_i M^{-1} + (\partial_i \bullet M)M^{-1}$ after the gauge transformation with respect to $M$.
 Description
   Text
-    This method computes the gauge transform of the system of connection matrices for a given change of basis.
+    This method computes the gauge transform of a system of connection matrices for a given invertible matrix that encodes a change of basis.
+
   Example
     D = makeWeylAlgebra(QQ[x,y]);
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
@@ -290,7 +291,7 @@ Outputs
 Description
   Text
     This method computes the standard monomials of a Gröbner basis of $R_nI$ with respect
-    to the order $\prec'$ on $R_n$ that is induced by the order $\prec$ of the Weyl algebra $D_n$.
+    to the order $\prec'$ on $R_n$ which is induced by the order $\prec$ of the Weyl algebra $D_n$.
   Example
     D = makeWeylAlgebra(QQ[x,y]);
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
@@ -306,7 +307,7 @@ Key
     (isEpsilonFactorized, List, RingElement)
     (isEpsilonFactorized, Matrix, RingElement)
 Headline
-    checks if a system of connection matrices is in epsilon-factorized form
+    checks whether a system of connection matrices is in epsilon-factorized form
 Usage
     isEpsilonFactorized(A,eps)
     isEpsilonFactorized(M,eps)
