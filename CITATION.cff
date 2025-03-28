@@ -1,10 +1,7 @@
 ---
 cff-version: 1.2.0
 authors:
-  - family-names: Grayson
-    given-names: Daniel R.
-  - family-names: Stillman
-    given-names: Michael E.
+  - name: The Macaulay2 Authors
 title: Macaulay2, a software system for research in algebraic geometry
 url: https://macaulay2.com/
 
