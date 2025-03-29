@@ -1,7 +1,7 @@
 doc ///
 Key
-    "Examples from particle physics and cosmology"
-    "examples from physics"
+    "Example from cosmology"
+    "example from cosmology"
 Description
   Text
     The following $D$-ideal corresponds to the $D$-ideal behind the cosmological correlator of the two-site chain as in Equation (11) in [FPSW].
@@ -20,9 +20,9 @@ Description
   Text
     Then, we compute the system in connection form and verify that it meets the integrability conditions.
   Example
-    elapsedTime P = connectionMatrices I;
-    elapsedTime assert isIntegrable P
-    netList P
+    elapsedTime A = connectionMatrices I;
+    elapsedTime assert isIntegrable A
+    netList A
   Text
     Next, we use @TO2(gaugeMatrix, "gauge matrix")@ for changing base to a base given by
     suitable set of standard monomials, and compute the @TO2(gaugeTransform, "gauge transform")@
@@ -31,9 +31,9 @@ Description
     F = baseFractionField D;
     B = {1_D,dx,dy,dx*dy};
     elapsedTime g = gaugeMatrix(I, B);
-    elapsedTime P1 = gaugeTransform(g, P);
-    elapsedTime assert isIntegrable P1
-    netList P1
+    elapsedTime A1 = gaugeTransform(g, A);
+    elapsedTime assert isIntegrable A1
+    netList A1
   Text
     Now we are ready to perform the gauge transform from this basis to the $\epsilon$-factorized form.
   Example
@@ -42,27 +42,55 @@ Description
 	    {0, ϵ*(x^2-z^2), 0, ϵ*(x+y)*(x+z)},
 	    {0, 0, ϵ*(y^2-z^2), ϵ*(x+y)*(y+z)},
 	    {0, 0, 0, -(x+y)*(x+z)*(y+z)}})
-    elapsedTime P2 = gaugeTransform(changeEps, P1);
-    elapsedTime assert isIntegrable P2
-    netList P2
+    elapsedTime A2 = gaugeTransform(changeEps, A1);
+    elapsedTime assert isIntegrable A2
+    netList A2
   Text
     Finally, we verify that only the last system is in the $\epsilon$-factorized form using @TO isEpsilonFactorized@.
   Example
-    assert isEpsilonFactorized(P2, ϵ)
-    assert not isEpsilonFactorized(P1, ϵ)
-    assert not isEpsilonFactorized(P, ϵ)
+    assert isEpsilonFactorized(A2, ϵ)
+    assert not isEpsilonFactorized(A1, ϵ)
+    assert not isEpsilonFactorized(A, ϵ)
 References
   [@HREF("https://arxiv.org/pdf/2410.14757","FPSW")@]  C. Fevola, G. L. Pimentel, A.-L. Sattelberger, and T. Westerdijk. Algebraic Approaches to Cosmological Integrals. Preprint arXiv:2410.14757. To appear in {\em Le Matematiche}.
+SeeAlso
+  "Example from particle physics"
+  "A GKZ system"
+///
 
+doc///
+Key
+    "Example from particle physics"
+    "example from particle physics"
+Description
+  Text
+    Consider the annihilating $D$-ideal of a massless one-loop triangle Feynman integral, appearing in Equation (5.14) in [HPSZ].
+  Example
+    D = makeWeylAlgebra(QQ[x,y],{1,1});
+    Q1 = x^2*dx^2+2*x*y*dx*dy+(y-1)*y*dy^2+3*x*dx+(3*y-1)*dy+1;
+    Q2 = x*dx^2-y*dy^2+dx-dy;
+    I = ideal(Q1,Q2);
+  Text
+    We can check that the ideal has holonomic rank $4$ and compute the standard monomials of the Gröbner basis of $RI$.
+  Example
+    assert( 4 == holonomicRank I)
+    standardMonomials I
+  Text
+    Finally, we can compute the connection matrices.
+  Example
+    elapsedTime A = connectionMatrices I;
+    netList A
+References
   [@HREF("https://link.springer.com/article/10.1007/s11005-024-01835-7","HPSZ")@] J. Henn, E. Pratt, A.-L. Sattelberger, and S. Zoia. $D$-Module Techniques for Solving Differential Equations behind Feynman Integrals. {\em Letters in Mathematical Physics}, 114(28), 2024.
 SeeAlso
+  "Example from cosmology"
   "A GKZ system"
 ///
 
 doc ///
 Key
     "A GKZ system"
-    "examples from GKZ systems"
+    "example from GKZ systems"
 Description
   Text
       Consider the GKZ system representing the Gauss hypergeometric function
@@ -97,5 +125,6 @@ Description
 References
   [@HREF("https://link.springer.com/book/10.1007/978-3-662-04112-3","SST")@] M. Saito, B. Sturmfels, and N. Takayama. {\em Gröbner Deformations of Hypergeometric Differential Equations}. Volume 6 of {\em Algorithms and Computation in Mathematics}. Springer, 2000.
 SeeAlso
-  "Examples from particle physics and cosmology"
+  "Example from cosmology"
+  "Example from particle physics"
 ///

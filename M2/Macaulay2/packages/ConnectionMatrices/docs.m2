@@ -29,8 +29,9 @@ Node
       :Testing integrability of a list of matrices
         isIntegrable
       :Examples
-        "examples from physics"
-        "examples from GKZ systems"
+        "example from cosmology"
+        "example from particle physics"
+        "example from GKZ systems"
   References
     Most algorithms in this package can be found in the book
     {\em Gröbner Deformations of Hypergeometric Differential Equations} by M. Saito, B. Sturmfels, and N. Takayama (published by Springer, 2000),
@@ -48,8 +49,9 @@ Node
     gaugeTransform
     isEpsilonFactorized
     isIntegrable
-    "examples from physics"
-    "examples from GKZ systems"
+    "example from cosmology"
+    "example from particle physics"
+    "example from GKZ systems"
 ///
 
 doc ///
@@ -147,7 +149,7 @@ Description
 SeeAlso
   standardMonomials
   gaugeTransform
-  "Examples from particle physics and cosmology"
+  "Example from cosmology"
 ///
 
 doc ///
@@ -218,7 +220,7 @@ Description
     It is also possible to compute the gauge transform of a system of connection matrices containing parameters.
 SeeAlso
   gaugeMatrix
-  "Examples from particle physics and cosmology"
+  "Example from cosmology"
 ///
 
 doc ///
