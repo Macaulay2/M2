@@ -9,8 +9,7 @@
 ###############################################################################
 ## Some miscellaneous instructions
 
-# Generate README and copy the copyright license in usr-dist
-configure_file(README.in ${M2_DIST_PREFIX}/${M2_INSTALL_DOCDIR}/README @ONLY)
+# Copy the copyright license in usr-dist
 file(COPY LAYOUT COPYING-GPL-2 COPYING-GPL-3 DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DOCDIR})
 
 # eg: Style Macaulay2Doc ...
