@@ -41,9 +41,11 @@ PyInitialize(e:Expr):Expr := (
     else WrongNumArgs(0));
 setupfun("pythonInitialize", PyInitialize);
 
-import RunSimpleString(s:string):int;
 PyRunSimpleString(e:Expr):Expr := (
-     when e is s:stringCell do if 0 == RunSimpleString(s.v) then nullE else buildPythonErrorPacket()
+     when e is s:stringCell do (
+	 if Ccode(int, "PyRun_SimpleString(", tocharstar(s.v), ")") == 0
+	 then nullE
+	 else buildPythonErrorPacket())
      else WrongArgString());
 setupfun("runSimpleString",PyRunSimpleString);
 

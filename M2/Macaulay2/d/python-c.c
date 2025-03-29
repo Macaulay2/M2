@@ -3,13 +3,6 @@
 
 #include <gmp.h>
 
-int python_RunSimpleString(M2_string s) {
-  char *t = M2_tocharstar(s);
-  int ret = PyRun_SimpleString(t);
-  GC_FREE(t);
-  return ret;
-}
-
 PyObject *globals, *locals;
 
 static void init() {
