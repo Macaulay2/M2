@@ -3,7 +3,8 @@
     "build": "webpack"
   },
   "dependencies": {
-    "prismjs": "^1.29.0"
+    "prismjs": "^1.29.0",
+    "prismjs-bibtex": "^2.1.0"
   },
   "devDependencies": {
     "css-loader": "^7.1.2",
