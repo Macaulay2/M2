@@ -7,30 +7,25 @@ gaugeMatrix(List,  List) := (G, newStdMons) -> (
     -- G a Groebner basis for a D-ideal,
     -- newStdMons a list of new standard monomials
     D := ring G#0;
+    n := #newStdMons; -- should be holonomicRank ideal G, checked later
     D1 := ring newStdMons#0;
     if not isWeylAlgebra D     then error "expected a Gröbner basis for a left ideal in a Weyl algebra";
     if not isWeylAlgebra D1    then error "expected a list of standard monomials in a Weyl algebra";
     if not same apply(newStdMons, ring)
     or not same apply(G, ring) then error "expected generators and standard monomials in the same Weyl algebra";
-
+    -- this acts as the associated graded ring of rational Weyl algebra
+    R := rationalWeylAlgebra D;
+    -- normal forms of the new standard monomials wrt G, in R
+    L1 := matrix { apply(newStdMons, mon -> normalForm(mon, G)) };
     -- a basis of R_n/R_nI wrt the current monomial order
-    L0 := apply(standardMonomials G, mon -> sub(mon, D));
-    -- normal forms of the new standard monomials wrt G
-    L1 := apply(newStdMons, mon -> normalForm(mon, G));
-    -- create a zero matrix that will be populated
-    F := baseFractionField D;
-    m := mutableMatrix(F, #L1, #L0);
-    -- rows are indexed by new standard monomials
-    for r to #L1 - 1 do (
-	(monoms, coeffs) := coefficients L1#r;
-	monoms = flatten entries sub(monoms, D);
-	coeffs = flatten entries sub(coeffs, F);
-	for j to #monoms - 1 do (
-	    c := position(L0, mon -> mon == monoms#j);
-	    m_(r, c) = sub(coeffs#j, F);
-	);
-    );
-    matrix m
+    L0 := matrix { apply(standardMonomials G, mon -> sub(mon, R)) };
+    -- check that there are enough new standard monomials
+    if numcols L0 != numcols L1 then error "expected as many standard monomials as the holonomic rank of the ideal";
+    -- rows indexed by new standard monomials in L1
+    -- cols indexed by old standard monomials in L0
+    g := transpose last coefficients(L1, Monomials => L0);
+    -- lift to the coefficient field of R
+    lift(g, baseFractionField D)
 )
 
 ----------------------------------------------------
