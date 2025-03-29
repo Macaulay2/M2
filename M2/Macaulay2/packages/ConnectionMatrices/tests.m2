@@ -14,38 +14,7 @@
 -------------------------------------------------------
 
 TEST ///-- test 0
-  -- Example equation (11) from https://arxiv.org/pdf/2410.14757
-  w = {1,1,1};
-  D = makeWeylAlgebra(frac(QQ[e, DegreeRank => 0])[x,y,z], w);
-  delta1 = (x^2-z^2)*dx^2+2*(1-e)*x*dx-e*(1-e);
-  delta2 = (y^2-z^2)*dy^2+2*(1-e)*y*dy-e*(1-e);
-  delta3 = (x+z)*(y+z)*dx*dy-e*(x+z)*dx-e*(y+z)*dy+e^2;
-  h = x*dx+y*dy+z*dz-2*e;
-  I = ideal(delta1+delta3, delta2+delta3,h);
-
-  assert(holonomicRank I == 4);
-
-  -- Gauge transform to e-factorized form:
-  P = connectionMatrices I;
-  -- Check that the integrability test also works in the parametric case:
-  assert isIntegrable P
-
-  G = flatten entries gens gb I;
-  B2 = {1_D,dx,dy,dx*dy};
-  changeofvar = gaugeMatrix(G,B2);
-  assert(changeofvar == gaugeMatrix(I,B2));
-  P2 = gaugeTransform(changeofvar,P);
-
-  F = baseFractionField D
-  c = 1/(2*z*e^2)
-  changeVar = c * transpose matrix {
-      {2*z*e^2, -e^2*(x-z),  -e^2*(y-z),  -e^2*(x+y)},
-      {0, e*(x^2-z^2), 0, e*(x+y)*(x+z)},
-      {0, 0, e*(y^2-z^2), e*(x+y)*(y+z)},
-      {0, 0, 0, -(x+y)*(x+z)*(y+z)}};
-  P3 = gaugeTransform(changeVar, P2);
-
-  assert isEpsilonFactorized(P3,e);
+  -- now moved to an example
 ///
 
 TEST ///-- test 1
