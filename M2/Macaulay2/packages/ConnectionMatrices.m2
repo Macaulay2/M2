@@ -103,31 +103,22 @@ connectionMatrix = method()
 
 -- D-ideal as an input
 connectionMatrix Ideal := Net => I -> (
-    P := connectionMatrices(I);
-    R := rationalWeylAlgebra(ring I);
-    var := gens R;
-    net(sum((for i from 0 to length(var)-1 list var_i*P_i )))
+    P := connectionMatrices I;
+    R := rationalWeylAlgebra ring I;
+    net sum(P, gens R, (Px, dx) -> Px * dx)
 )
 
-
--- allows for a system of connection matrices as input
+-- a system of connection matrices as input
 connectionMatrix List := Net => P -> (
-    -- TODO: does this not suffice?
-    --R := ring A#0;
-    --D := R#"OriginalWeylAlgebra"
-    K := coefficientRing(ring P_0);
-    D := makeWA(K(monoid[gens ring P_0]));
-
+    F := ring P#0;
+    D := inferWeylAlgebra F;
+    R := rationalWeylAlgebra D;
     -- Check all are over the same ring.
     if not same apply(P, ring) then error "expected matrices over the same ring";
-
     -- Check that length of list == #differential variables
-    if not numgens D // 2 == #P then error "number of differential variables needs to match length of the list of matrices";
-
-    R := rationalWeylAlgebra D;
-    f := map(R, ring P_0);
-    var := gens R;
-    net sum(numgens R, i -> var_i * f(P_i))
+    if not numgens R == #P     then error "expected the same number of matrices as there are differential variables";
+    f := map(R, F);
+    net sum(P, gens R, (Px, dx) -> f(Px) * dx)
 )
 
 -----------------------------------------------------------------
