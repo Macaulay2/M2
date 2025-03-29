@@ -113,35 +113,39 @@ Description
 doc ///
 Key
     gaugeMatrix
-    (gaugeMatrix, List, List)
-    (gaugeMatrix, Ideal, List)
+   (gaugeMatrix, List, List)
+   (gaugeMatrix, Ideal, List)
 Headline
-    computes base changes over the field of rational functions
+    computes the base change over the field of rational functions
 Usage
     gaugeMatrix(G, B)
 Inputs
     I:Ideal
       of the Weyl algebra
     G:List
-      of generators for $I$
+      of generators of a Gröbner basis for $I$
     B:List
-      a basis of $R_n/R_nI$ over the field of rational functions
+      of standard monomials for $I$,
+      i.e. any basis of $R_n/R_nI$ over the field of rational functions
 Outputs
     M:Matrix
-      encoding the change of basis wrt. to B
+      encoding the change of basis with regard to to $B$
 Description
   Text
     Let $I = D_n\langle G\rangle$ be a $D_n$-ideal, $B$ basis of $R_n/R_nI$.
     This methods computes the matrix which encodes the change of basis from the set of standard monomials of $R_nI$ to the basis $B$.
   Example
-    w1 = {2,1}; D1 = makeWeylAlgebra(QQ[x,y],w1);
-    I = sub(ideal(x*dx^2-y*dy^2+2*dx-2*dy,x*dx+y*dy+1),D1);
-    SM1 = standardMonomials(I);
-    w2 = {1,2}; D2 = makeWeylAlgebra(QQ[x,y],w2);
-    SM2 = standardMonomials(sub(I,D2));
-    gaugeMatrix(I,SM2)
+    D1 = makeWeylAlgebra(QQ[x, y], w1 = {2, 1});
+    I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
+    SM1 = standardMonomials I
+    --
+    D2 = makeWeylAlgebra(QQ[x, y], w2 = {1, 2});
+    SM2 = standardMonomials sub(I, D2)
+    gaugeMatrix(I, SM2)
 SeeAlso
-
+  standardMonomials
+  gaugeTransform
+  "Examples from particle physics and cosmology"
 ///
 
 doc ///
