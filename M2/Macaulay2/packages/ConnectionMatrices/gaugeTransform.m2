@@ -1,46 +1,36 @@
 ----------------------------------------------------
---gaugeMatrix computes change of basis matrix
+-- gaugeMatrix computes change of basis matrix
 ----------------------------------------------------
 gaugeMatrix = method();
--- I D-ideal, new standard monomials
-gaugeMatrix(Ideal, List) := (I, newStdMon) -> (
+gaugeMatrix(Ideal, List) := (I, newStdMons) -> gaugeMatrix(flatten entries gens gb I, newStdMons)
+gaugeMatrix(List,  List) := (G, newStdMons) -> (
+    -- G a Groebner basis for a D-ideal,
+    -- newStdMons a list of new standard monomials
+    D := ring G#0;
+    D1 := ring newStdMons#0;
+    if not isWeylAlgebra D     then error "expected a Gröbner basis for a left ideal in a Weyl algebra";
+    if not isWeylAlgebra D1    then error "expected a list of standard monomials in a Weyl algebra";
+    if not same apply(newStdMons, ring)
+    or not same apply(G, ring) then error "expected generators and standard monomials in the same Weyl algebra";
 
-  if not isWeylAlgebra (ring I) then error "expected left ideal in a Weyl algebra";
-
-  if not isWeylAlgebra (ring first newStdMon) then "expected elements of list to be in Weyl algebra";
-
-  if not same apply(newStdMon, ring) then error "expected elements of the list to be in the same Weyl algebra";
-
-  D := ring I;
-  F := baseFractionField D;
-
-  G := flatten entries gens gb I;
-  stdMon := standardMonomials(I);
-  -- obtain weight ordering from D
-  w := (((options(D)).MonomialOrder)#1)#1;
-  gaugeMat := mutableMatrix map(F^(length newStdMon), F^(length stdMon),0);
-  -- rows are indexed by new std monomials
-  for rowIndex from 0 to length(newStdMon)-1 do
-  (
-    -- compute normalForm of new std monomials wrt. gb of I
-    reducedWRTG := normalForm(newStdMon#rowIndex,G);
-    coeffsReduced := coefficients reducedWRTG;
-    for j from 0 to length(flatten entries coeffsReduced_0)-1 do
-    --runs through (d-)monomial support of the reduced element
-    (
-      -- sorts matrix according to the orderd std monomial basis
-      monomialToFind := sub((flatten entries coeffsReduced_0)#j,D);
-      colIndex := position(stdMon, i->sub(i,D) == monomialToFind);
-      gaugeMat_(rowIndex,colIndex) = sub((flatten entries coeffsReduced_1)#j, F);
+    -- a basis of R_n/R_nI wrt the current monomial order
+    L0 := apply(standardMonomials G, mon -> sub(mon, D));
+    -- normal forms of the new standard monomials wrt G
+    L1 := apply(newStdMons, mon -> normalForm(mon, G));
+    -- create a zero matrix that will be populated
+    F := baseFractionField D;
+    m := mutableMatrix(F, #L1, #L0);
+    -- rows are indexed by new standard monomials
+    for r to #L1 - 1 do (
+	(monoms, coeffs) := coefficients L1#r;
+	monoms = flatten entries sub(monoms, D);
+	coeffs = flatten entries sub(coeffs, F);
+	for j to #monoms - 1 do (
+	    c := position(L0, mon -> mon == monoms#j);
+	    m_(r, c) = sub(coeffs#j, F);
+	);
     );
-  );
-  matrix gaugeMat
-);
-
--- G a generating set for a D-ideal, new standard monomials
-gaugeMatrix(List,List) := (G, newStdMon) -> (
-  D := ring G#0;
-  gaugeMatrix(ideal(G),newStdMon)
+    matrix m
 )
 
 ----------------------------------------------------
