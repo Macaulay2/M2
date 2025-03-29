@@ -24,9 +24,9 @@ Description
     elapsedTime assert isIntegrable P
     netList P
   Text
-    Next, we use @TO2(gaugeMatrix, "Gauge matrix")@ for changing base to a base given by
-    suitable set of standard monomials, and compute the @TO2(gaugeTransform, "Gauge transform")@
-    with respect to this Gauge matrix.
+    Next, we use @TO2(gaugeMatrix, "gauge matrix")@ for changing base to a base given by
+    suitable set of standard monomials, and compute the @TO2(gaugeTransform, "gauge transform")@
+    with respect to this gauge matrix.
   Example
     F = baseFractionField D;
     B = {1_D,dx,dy,dx*dy};
@@ -35,7 +35,7 @@ Description
     elapsedTime assert isIntegrable P1
     netList P1
   Text
-    Now we are ready to perform the Gauge transform from this basis to the $\epsilon$-factorized form.
+    Now we are ready to perform the gauge transform from this basis to the $\epsilon$-factorized form.
   Example
     changeEps = transpose((1/(2*z*ϵ^2)) * matrix {
 	    {2*z*ϵ^2, -ϵ^2*(x-z), -ϵ^2*(y-z), -ϵ^2*(x+y)},

@@ -89,7 +89,7 @@ TEST /// -- test 2
   C1'' = apply(C1', p -> sub(p, R));
 
   -- Now transform the system of connection matrices C1 into
-  -- the system of connection matrices C2 via Gauge transform
+  -- the system of connection matrices C2 via gauge transform
   -- TODO: the degrees seem to differ, is this desirable or not?
   assert(matrix \ entries \ C2 == matrix \ entries \ C1'')
 ///
