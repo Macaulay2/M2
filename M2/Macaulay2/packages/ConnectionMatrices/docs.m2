@@ -33,7 +33,7 @@ Node
         "examples from GKZ systems"
   References
     Most algorithms in this package can be found in the book
-    {\em Gröbner deformations of Hypergeometric Differential Equations} by M. Saito, B. Sturmfels, and N. Takayama (published by Springer, 2000),
+    {\em Gröbner Deformations of Hypergeometric Differential Equations} by M. Saito, B. Sturmfels, and N. Takayama (published by Springer, 2000),
     cited here as [@HREF("https://link.springer.com/book/10.1007/978-3-662-04112-3","SST")@].
   SeeAlso
     "Dmodules :: Dmodules"
@@ -41,12 +41,15 @@ Node
   Subnodes
     normalForm
     standardMonomials
+    baseFractionField
     connectionMatrices
     connectionMatrix
     gaugeMatrix
     gaugeTransform
     isEpsilonFactorized
     isIntegrable
+    "examples from physics"
+    "examples from GKZ systems"
 ///
 
 doc ///
@@ -57,8 +60,8 @@ Key
 Headline
     computes the normal form within the rational Weyl algebra
 Usage
-    normalForm(P,Q)
-    normalForm(P,G)
+    normalForm(P, Q)
+    normalForm(P, G)
 Inputs
     P:RingElement
         in the Weyl algebra
@@ -74,16 +77,15 @@ Description
     This method computes the normal form of an element $P$ in the Weyl algebra $D_n$ with respect to another element in the Weyl algebra, or a whole list of such elements.
     The reduction step is carried out over the rational Weyl algebra $R_n$.
   Example
-    v = {1,1};
-    D = makeWA(QQ[x,y],v);
+    D = makeWA(QQ[x,y], {1,1});
     P = dx^2 ; Q = x*dx+1;
     normalForm(P, Q)
 References
   See [@HREF("https://link.springer.com/book/10.1007/978-3-662-04112-3","SST")@, Theorem 1.1.7].
 Caveat
-  The output lives in the commutative ring @TO2{baseFractionField, TT "baseFractionField D"}@, where the partial differentials are adjoint as commuting variables.
-SeeAlso
-
+  Due to technical limitations, the output lives in the graded associative algebra of the rational Weyl algebra,
+  which is a commutative ring over the @TO2{baseFractionField, "base fraction field"}@ of $D$ where
+  the partial differentials are adjoined as commuting variables.
 ///
 
 doc ///
@@ -95,8 +97,7 @@ Headline
 Usage
     baseFractionField D
 Inputs
-    D:PolynomialRing
-        a Weyl algebra
+    D:"a Weyl algebra"
 Outputs
     :FractionField
         the fraction field of the base polynomial ring of @TT "D"@
@@ -138,6 +139,7 @@ Description
     D1 = makeWeylAlgebra(QQ[x, y], w1 = {2, 1});
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
     SM1 = standardMonomials I
+    F = baseFractionField D1;
     --
     D2 = makeWeylAlgebra(QQ[x, y], w2 = {1, 2});
     SM2 = standardMonomials sub(I, D2)
@@ -156,7 +158,7 @@ Key
 Headline
     computes the connection matrices of a $D_n$-ideal $I$ for a chosen basis
 Usage
-    connectionMatrices(I)
+    connectionMatrices I
     connectionMatrices(I, B)
 Inputs
     I:Ideal
@@ -165,17 +167,18 @@ Inputs
       a basis of $R_n/R_nI$
 Outputs
     A:List
-      the system of connection matrices of $I$ over @TO2{baseFractionField, TT "baseFractionField(ring I)"}@
+      the system of connection matrices of $I$ over the @TO2{baseFractionField, "base fraction field"}@ of $D_n$
 Description
   Text
-    Let $I$ be an ideal in the Weyl algebra $D_n$ and $B$ a basis over @TO2{baseFractionField, TT "baseFractionField(D)"}@ for $R_n/R_nI$.
-
-    If no basis is provided by the user, the basis is chosen to be the set of standard monomials of a Gröbner basis on $R_nI$ with regards to the weighted
-    Lex order $(\partial_1 > \cdots > \partial_n > x_1 > \cdots > x_n)$ on the Weyl algebra.
+    Let $I$ be an ideal in the Weyl algebra $D_n$ and $B$ a basis for $R_n/R_nI$ over the
+    @TO2{baseFractionField, "base fraction field"}@ of $D_n$. If no basis is provided by the user,
+    the basis is chosen to be the set of standard monomials of a Gröbner basis on $R_nI$ with
+    regards to the weighted Lex order $(\partial_1 > \cdots > \partial_n > x_1 > \cdots > x_n)$
+    on the Weyl algebra.
   Example
-    D = makeWeylAlgebra(QQ[x,y], v = {2,1})
+    D = makeWeylAlgebra(QQ[x,y], {2, 1})
     I = ideal (x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1)
-    A = connectionMatrices(I)
+    A = connectionMatrices I
 References
   For more details, see [@HREF("https://link.springer.com/book/10.1007/978-3-662-04112-3","SST")@, pp. 37-40].
 ///
@@ -207,28 +210,15 @@ Description
   Example
     D = makeWeylAlgebra(QQ[x,y]);
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
-    A = connectionMatrices(I);
+    A = connectionMatrices I;
     F = baseFractionField D;
-    M = matrix(F, {{x,0},{0,y}});
-    gaugeTransform(M,A,D)
-  -- Text
-  --   It is also possible to compute the gauge transform of a
-  --   system of connection matrices contatining paramenters.
-  --   The following example comes from the annihilating $D_n$-ideal
-  --   of a correlation function in cosmology.
-  -- Example
-  --   D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x,y,z],{1,1,1})
-  --   delta1 = (x^2-z^2)*dx^2+2*(1-eps)*x*dx-eps*(1-eps);
-  --   delta2 = (y^2-z^2)*dy^2+2*(1-eps)*y*dy-eps*(1-eps);
-  --   delta3 = (x+z)*(y+z)*dx*dy-eps*(x+z)*dx-eps*(y+z)*dy+eps^2;
-  --   h = x*dx+y*dy+z*dz-2*eps;
-  --   I = ideal(delta1+delta3, delta2+delta3,h)
-  --   A = connectionMatrices(I, {1,dx,dy,dx*dy})
-  --   R = baseFractionField D
-  --   changeVar = transpose((1/(2*z*eps^2))*matrix({{2*z*eps^2, -eps^2*(x-z), -eps^2*(y-z), -eps^2*(x+y)},{0,eps*(x^2-z^2),0,eps*(x+y)*(x+z)},{0,0,eps*(y^2-z^2),eps*(x+y)*(y+z)},{0,0,0,-(x+y)*(x+z)*(y+z)}}));
-  --   A2 = gaugeTransform(changeVar,A,D)
+    M = matrix(F, {{x,0}, {0,y}});
+    gaugeTransform(M, A, D)
+  Text
+    It is also possible to compute the gauge transform of a system of connection matrices containing parameters.
 SeeAlso
-
+  gaugeMatrix
+  "Examples from particle physics and cosmology"
 ///
 
 doc ///
@@ -239,15 +229,15 @@ Key
 Headline
     computes the connection matrix
 Usage
-    connectionMatrix(I)
-    connectionMatrix(A)
+    connectionMatrix I
+    connectionMatrix A
 Inputs
     I:Ideal
       of the Weyl algebra
     A:List
       a system of connection matrices
 Outputs
-    M:Matrix
+    :Net
       the connection matrix
 Description
   Text
@@ -256,12 +246,11 @@ Description
   Example
     D = makeWeylAlgebra(QQ[x,y]);
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
-    A = connectionMatrices(I);
-    connectionMatrix(A)
+    connectionMatrix I
 Caveat
   The output is purely for visualizing purposes.
 SeeAlso
-
+  connectionMatrices
 ///
 
 doc ///
@@ -272,8 +261,8 @@ Key
 Headline
     computes the standard monomials for a $D_n$-ideal
 Usage
-    standardMonomials(I)
-    standardMonomials(G)
+    standardMonomials I
+    standardMonomials G
 Inputs
     I:Ideal
       of the Weyl algebra
@@ -289,9 +278,11 @@ Description
   Example
     D = makeWeylAlgebra(QQ[x,y]);
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
-    standardMonomials(I)
+    standardMonomials I
+    holonomicRank I
 SeeAlso
-
+  "Dmodules::holonomicRank"
+  gaugeMatrix
 ///
 
 
@@ -301,7 +292,7 @@ Key
     (isEpsilonFactorized, List, RingElement)
     (isEpsilonFactorized, Matrix, RingElement)
 Headline
-    checks whether a system of connection matrices is in epsilon-factorized form
+    checks whether a system of connection matrices is in $\epsilon$-factorized form
 Usage
     isEpsilonFactorized(A,eps)
     isEpsilonFactorized(M,eps)
@@ -317,15 +308,16 @@ Outputs
       @TT "true"@ or @TT "false"@
 Description
   Text
-    This method returns true if the system of connection matrices factors out (a power of) @TT "eps"@, such that the resulting matrices are independent of @TT "eps"@.
+    This method returns true if the system of connection matrices factors out (a power of) @TT "eps"@,
+    such that the resulting matrices are independent of @TT "eps"@.
   Example
-    D = makeWeylAlgebra(frac(QQ[eps,DegreeRank=>0])[x]);
-    I = ideal(x*(1-x)*dx^2 - eps*(1-x)*dx);
-    B = {sub(1,D),sub(1/eps,D)*dx};
-    A = connectionMatrices(I, B)
-    isEpsilonFactorized(A,eps)
+    D = makeWeylAlgebra(frac(QQ[ϵ])[x]);
+    I = ideal(x*(1-x)*dx^2 - ϵ*(1-x)*dx);
+    A = connectionMatrices(I, {1_D, 1/ϵ*dx})
+    isEpsilonFactorized(A, ϵ)
 SeeAlso
-
+  isIntegrable
+  gaugeTransform
 ///
 
 
@@ -337,11 +329,10 @@ Key
 Headline
     checks whether a list of matrices fulfills the integrability conditions
 Usage
-    isIntegrable(D,A)
-    isIntegrable(A)
+    isIntegrable(D, A)
+    isIntegrable A
 Inputs
-    D:PolynomialRing
-      the Weyl algebra
+    D:"a Weyl algebra"
     A:List
       a system of matrices
 Outputs
@@ -353,13 +344,14 @@ Description
     $[A_i,A_j] = dx_i(A_j) - dx_j(A_i)$ for all $i,j$.
     This is the case, in particular, when they come from a $D_n$-module, respectively from a $D_n$-ideal.
   Example
-    D = makeWeylAlgebra(QQ[x,y], v = {1,2});
+    D = makeWeylAlgebra(QQ[x,y], {1, 2});
     I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
     A = connectionMatrices I;
-    assert(isIntegrable(D,A))
-    assert(isIntegrable(A))
+    assert isIntegrable(D, A)
+    assert isIntegrable A
 Caveat
-  The matrices need to be defined over the field of rational functions @TO2{baseFractionField, TT "baseFractionField(D)"}@.
+  The matrices need to be defined over the @TO2{baseFractionField, "base fraction field"}@ of $D$.
 SeeAlso
-
+  connectionMatrices
+  isEpsilonFactorized
 ///

@@ -7,7 +7,7 @@ Description
     The following $D$-ideal corresponds to the $D$-ideal behind the cosmological correlator of the two-site chain as in Equation (11) in [FPSW].
   Example
     w = {1,1,1};
-    D = makeWeylAlgebra(frac(QQ[ϵ, DegreeRank => 0])[x,y,z], w);
+    D = makeWeylAlgebra(frac(QQ[ϵ])[x,y,z], w);
     delta1 = (x^2-z^2)*dx^2+2*(1-ϵ)*x*dx-ϵ*(1-ϵ);
     delta2 = (y^2-z^2)*dy^2+2*(1-ϵ)*y*dy-ϵ*(1-ϵ);
     delta3 = (x+z)*(y+z)*dx*dy-ϵ*(x+z)*dx-ϵ*(y+z)*dy+ϵ^2;
@@ -68,9 +68,9 @@ Description
       Consider the GKZ system representing the Gauss hypergeometric function
       as in [@HREF("https://link.springer.com/book/10.1007/978-3-662-04112-3","SST")@, Example 1.2.9].
   Example
-    D = makeWeylAlgebra(QQ[a,b,c, DegreeRank => 0][x_1..x_4]);
+    D = makeWeylAlgebra(frac(QQ[a,b,c])[x_1..x_4]);
     I = ideal(dx_2*dx_3 - dx_1*dx_4,x_1*dx_1 - x_4*dx_4 + 1 - c,x_2*dx_2 + x_4*dx_4 + a,x_3*dx_3 + x_4*dx_4 + b);
-    holonomicRank({0,0,0,0,0,0,0}, comodule I)
+    assert(2 == holonomicRank I)
     standardMonomials I
   Text
     [@HREF("https://link.springer.com/book/10.1007/978-3-662-04112-3","SST")@, Example 1.4.23] computes the connection matrices
@@ -84,9 +84,9 @@ Description
     Substituting the constants, we note that example in [SST] contains a small misprint.
   Example
     netList(Boxes => false, VerticalSpace => 1,
-    apply(4, i -> i+1 => sub(A#i, {a => 1/2, b => 1/2, c => 1})))
+	apply(4, i -> i+1 => sub(A#i, {a => 1/2, b => 1/2, c => 1})))
   Code
-      D := makeWeylAlgebra(QQ[a,b,c, DegreeRank => 0][x_1..x_4]);
+      D := makeWeylAlgebra(frac(QQ[a,b,c])[x_1..x_4]);
       I := ideal(
 	  dx_2*dx_3 - dx_1*dx_4,
 	  x_1*dx_1 - x_4*dx_4 + 1 - c,

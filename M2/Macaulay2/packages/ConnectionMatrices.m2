@@ -102,7 +102,7 @@ connectionMatrices(Ideal, List) := (I, B)->(
 connectionMatrix = method()
 
 -- D-ideal as an input
-connectionMatrix(Ideal) := List => (I) -> (
+connectionMatrix Ideal := Net => I -> (
     P := connectionMatrices(I);
     R := rationalWeylAlgebra(ring I);
     var := gens R;
@@ -111,7 +111,7 @@ connectionMatrix(Ideal) := List => (I) -> (
 
 
 -- allows for a system of connection matrices as input
-connectionMatrix(List) := List => (P) -> (
+connectionMatrix List := Net => P -> (
     -- TODO: does this not suffice?
     --R := ring A#0;
     --D := R#"OriginalWeylAlgebra"
