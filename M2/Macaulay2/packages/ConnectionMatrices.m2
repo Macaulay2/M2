@@ -62,18 +62,14 @@ connectionMatrices = method()
 -- gives connection matrices for a D-ideal
 -- c.f. [Theorem 1.4.22, SST]
 connectionMatrices Ideal := List => I -> I.cache.connectionMatrices ??= (
-
-    if not isWeylAlgebra (ring I) then error "expected left ideal in a Weyl algebra";
-
     D := ring I;
-    createDpairs D;
-
+    if not isWeylAlgebra D then error "expected left ideal in a Weyl algebra";
     -- TODO: Change holonomic Rank, so it only takes ideal and infers the order from it.
     w := (((options(D)).MonomialOrder)#1)#1;
     -- this acts as the associated graded ring of rational Weyl algebra
     R := rationalWeylAlgebra D;
     F := baseFractionField D;
-    f := map(F, R);
+    RtoF := map(F, R);
     -- gb with respect to an elimination order
     G := gens gb I;
     if debugLevel > 0 then printerr("Grobner basis: ", net G);
@@ -81,11 +77,11 @@ connectionMatrices Ideal := List => I -> I.cache.connectionMatrices ??= (
     if r === infinity then error "system is not finite dimensional";
     B := sub(M.cache#"basis", R);
     if debugLevel > 0 then printerr("Standard monomials: ", net B);
-    apply(D.dpairVars#1,
+    apply(generators R, -- loops over the differentials
 	dt -> transpose concatCols apply(flatten entries B,
-	    s -> f last coefficients(
+	    s -> RtoF last coefficients(
 		-- computes (dt * s) % G
-		normalForm(dt_R * s, first entries G), Monomials => B)))
+		normalForm(dt * s, first entries G), Monomials => B)))
 )
 
 -- gives the system of connection matrices with respect to a new basis B
