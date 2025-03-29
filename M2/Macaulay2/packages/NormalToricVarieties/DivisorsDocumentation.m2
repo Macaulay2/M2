@@ -1688,6 +1688,7 @@ doc ///
         (cartierDivisorGroup,NormalToricVariety)
         (isSimplicial,NormalToricVariety)
         (isCartier,ToricDivisor)
+	(isQQFano, NormalToricVariety)
 ///	
 
 
@@ -1942,9 +1943,59 @@ doc ///
         "finding attributes and properties"   
         (toricDivisor, NormalToricVariety)
         (isAmple, ToricDivisor)
+	(isQQFano, NormalToricVariety)
         (smoothFanoToricVariety, ZZ, ZZ)
 ///
 
+doc ///
+    Key
+       (isQQFano, NormalToricVariety)
+        isQQFano
+    Headline
+        whether a normal toric variety is $\QQ$-Fano
+    Usage
+        isQQFano X
+    Inputs
+        X : NormalToricVariety
+    Outputs
+        : Boolean
+	    that is @TO true@ if the normal toric variety is $\QQ$-Fano
+    Description
+	Text
+	    A normal toric variety is $\QQ$-Fano if its anticanonical divisor $K_X$,
+	    namely the sum of all the torus-invariant irreducible divisors,
+	    is $\QQ$-Cartier and some positive integer multiple of $-K_X$ is
+	    Cartier and ample. This is equivalent to saying that the polyhedron
+	    associated to the anticanonical divisor contains the origin.
+	Text
+	    Weighted projective spaces are $\QQ$-Fano.
+	Example
+	    X = weightedProjectiveSpace {1,1,3};
+	    assert not isFano X
+	    assert isQQFano X
+	    K = toricDivisor X
+	    isQQCartier K
+	    isCartier K
+	    isCartier(3*K)
+	    isAmple(-K)
+	    isAmple(-3*K)
+	    interiorLatticePoints polytope(-K)
+	Text
+	    All Hirzebruch surfaces are $\QQ$-Fano.
+	Example
+	    apply(5, t -> isFano hirzebruchSurface t)
+	    apply(5, t -> isQQFano hirzebruchSurface t)
+	Text
+	    To avoid duplicate computations, the attribute is cached in the
+	    normal toric variety.
+    SeeAlso
+	"finding attributes and properties"
+	(toricDivisor, NormalToricVariety)
+	(isFano, NormalToricVariety)
+	(isAmple, ToricDivisor)
+	(isCartier, ToricDivisor)
+	(isQQCartier, ToricDivisor)
+///
 
 ------------------------------------------------------------------------------
 -- Polyhedral features of a toric divisor
@@ -1967,8 +2018,7 @@ doc ///
             Cartier divisor is a lattice polytope.  Given a torus-invariant
             Cartier divisor on a normal toric variety, this method returns an
             integer matrix whose columns correspond to the vertices of the
-            associated lattice polytope.  For a non-effective Cartier divisor,
-            this methods returns @TO null@.  When the divisor is ample,
+	    associated lattice polytope. When the divisor is ample,
             the normal fan the corresponding polytope equals the fan
             associated to the normal toric variety.
         Text
@@ -1976,7 +2026,7 @@ doc ///
 	    a point, or a triangle.
         Example  
     	    PP2 = toricProjectiveSpace 2;
-    	    assert (null === vertices (-PP2_0))
+	    assert (vertices (-PP2_0) == 0)
     	    vertices (0*PP2_0)
     	    assert isAmple PP2_0
     	    V1 = vertices (PP2_0)
@@ -2031,14 +2081,13 @@ doc ///
   	    Cartier divisor is a lattice polytope.  Given a torus-invariant
   	    Cartier divisor on a normal toric variety, this method returns an
   	    integer matrix whose columns correspond to the lattices points
-  	    contained in the associated polytope.  For a non-effective Cartier
-  	    divisor, this method returns @TO null@.
+	    contained in the associated polytope.
         Text  
             On the projective plane, the associate polytope is either empty, a
    	    point, or a triangle.
         Example
             PP2 = toricProjectiveSpace 2;
-    	    assert (null === vertices (-PP2_0))
+	    assert (vertices (-PP2_0) == 0)
     	    latticePoints (0*PP2_0)
     	    assert isAmple PP2_0
     	    V1 = latticePoints (PP2_0)
