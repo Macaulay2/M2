@@ -13,6 +13,7 @@ newPackage("Python",
 	{Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
+    Configuration => {"executable" => null},
     Keywords => {"Interfaces"},
     AuxiliaryFiles => true,
     OptionalComponentsPresent => Core#"private dictionary"#?"pythonRunString"
@@ -115,7 +116,9 @@ export { "pythonHelp", "context", "Preprocessor", "toPython",
 
 exportMutable { "val", "eval", "valuestring", "stmt", "expr", "dict", "symbols", "stmtexpr"}
 
-pythonInitialize()
+pythonInitialize (
+    (options currentPackage).Configuration#"executable" ??
+    get "!command -v python3 | tr -d '\n'")
 
 pythonHelp = Command (() -> pythonValue ///help()///)
 
@@ -207,6 +210,7 @@ PythonObject @@ Thing = (x, y, e) -> setattr(x, toString y, e)
 
 import = method()
 import(String) := pythonImportImportModule
+builtins = import "builtins"
 
 toFunction = method()
 toFunction PythonObject := x -> y -> (
@@ -229,7 +233,7 @@ addPyToM2Function(List, Function, String) := (types, f, desc) ->
     addHook((value, PythonObject),
 	x -> if isMember(toString (objectType x)@@"__name__", types) then f x,
 	Strategy => desc)
-isinstance = value @@ (toFunction pythonValue "isinstance")
+isinstance = value @@ (toFunction builtins@@"isinstance")
 addPyToM2Function(PythonObject, Function, String) := (type, f, desc) -> (
     addHook((value, PythonObject),
 	x -> if isinstance(x, type) then f x,
@@ -347,14 +351,13 @@ setitem(PythonObject, Thing, Thing) := (x, i, e) -> (
 PythonObject_Thing = setitem
 
 isMember(Thing,        PythonObject) := (x, y) -> false
-contains = operator@@"contains"
-isMember(PythonObject, PythonObject) := (x, y) -> value contains(y, x)
+isMember(PythonObject, PythonObject) := (x, y) -> (
+    value operator@@"contains"(y, x))
 
-divmod = pythonValue "divmod"
 quotientRemainder(PythonObject, PythonObject) :=
 quotientRemainder(PythonObject, Thing)        :=
 quotientRemainder(Thing,        PythonObject) := (x, y) -> (
-    qr := divmod(x, y);
+    qr := builtins@@"divmod"(x, y);
     (qr_0, qr_1))
 
 importFrom(Core, "swap")
@@ -406,6 +409,7 @@ TEST ///
 -----------
 -- value --
 -----------
+builtins = import "builtins"
 checkInM2 = x -> assert BinaryOperation(symbol ===, value toPython x, x)
 checkInM2 true
 checkInM2 5
@@ -418,20 +422,20 @@ checkInM2 set {1, 3, 5, 7, 9}
 checkInM2 hashTable {"a" => 1, "b" => 2, "c" => 3}
 checkInM2 null
 assert BinaryOperation(symbol ===,
-    value pythonValue "frozenset([1, 3, 5, 7, 9])", set {1, 3, 5, 7, 9})
+    value builtins@@frozenset {1, 3, 5, 7, 9}, set {1, 3, 5, 7, 9})
 
 checkInPython = x -> (y := pythonValue x; assert Equation(toPython value y, y))
 checkInPython "True"
 checkInPython "5"
 checkInPython "3.14159"
-checkInPython "complex(1, 2)"
 checkInPython "'foo'"
 checkInPython "(1, 3, 5, 7, 9)"
 checkInPython "[1, 3, 5, 7, 9]"
 checkInPython "{1, 3, 5, 7, 9}"
 checkInPython "{'a': 1, 'b': 2, 'c': 3}"
 checkInPython "None"
-assert Equation((value pythonValue "abs")(-1), pythonValue "1")
+assert Equation(builtins@@complex(1, 2), toPython(1 + 2*ii))
+assert Equation((value builtins@@abs)(-1), pythonValue "1")
 assert Equation((toPython sqrt) 2, toPython sqrt 2)
 ///
 

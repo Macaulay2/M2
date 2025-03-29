@@ -3,7 +3,9 @@ use common;
 use util;
 use evaluate;
 
-header "#include <Python.h>";
+declarations "#include <Python.h>";
+
+PyStatus := arithmeticType "PyStatus";
 
 WrongArgPythonObject():Expr := WrongArg("a python object");
 WrongArgPythonObject(n:int):Expr := WrongArg(n,"a python object");
@@ -31,14 +33,19 @@ toExpr(r:pythonObjectOrNull):Expr := (
 	x.hash = h;
 	Expr(x)));
 
+import Initialize(exec:charstar):PyStatus;
 PyInitialize(e:Expr):Expr := (
     when e
-    is a:Sequence do (
-	if length(a) == 0 then (
-	    Ccode(void, "Py_Initialize()");
-	    nullE)
-	else WrongNumArgs(0))
-    else WrongNumArgs(0));
+    is s:stringCell do (
+	if Ccode(int, "Py_IsInitialized()") != 0
+	then (
+	    if Ccode(int, "Py_FinalizeEx()") == -1
+	    then return buildErrorPacket("failed to finalize Python"));
+	status := Initialize(tocharstar(expandFileName(s.v)));
+	if Ccode(int, "PyStatus_Exception(", status, ")") != 0
+	then buildErrorPacket(tostring(Ccode(constcharstar, status,".err_msg")))
+	else nullE)
+    else WrongArgString());
 setupfun("pythonInitialize", PyInitialize);
 
 PyRunSimpleString(e:Expr):Expr := (

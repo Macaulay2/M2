@@ -359,7 +359,8 @@ doc ///
       "Python counterpart"}@.  In particular, @TT "i"@ is an iterator
       for the iterable object @TT "x"@.
     Example
-      x = pythonValue "range(3)"
+      builtins = import "builtins"
+      x = builtins@@range 3
       i = iterator x
   SeeAlso
     (next, PythonObject)
@@ -381,7 +382,8 @@ doc ///
       "Python counterpart"}@.  In particular, it retrieves the next item
       from an iterator.
     Example
-      x = pythonValue "range(3)"
+      builtins = import "builtins"
+      x = builtins@@range 3
       i = iterator x
       next i
       next i
@@ -417,7 +419,8 @@ doc ///
     Text
       Optional arguments can be provided using options.
     Example
-      int = toFunction pythonValue "int"
+      builtins = import "builtins"
+      int = toFunction builtins@@int
       int("deadbeef", "base" => 16)
     Text
       If a python object and a Macaulay2 thing are separated by a space, then
@@ -510,9 +513,8 @@ doc ///
       hooks value
     Text
       If no conversion can be done, then @TT "x"@ is returned.
-    Example
-      pythonValue "int"
-      value oo
+--    Example
+--      TODO
     Text
       Users may add additional hooks using @TO "addHook"@ or the
       convenience function @TO "addPyToM2Function"@.

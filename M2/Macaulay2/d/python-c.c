@@ -3,6 +3,23 @@
 
 #include <gmp.h>
 
+PyStatus python_Initialize(char *executable)
+{
+  PyConfig config;
+  PyStatus status;
+
+  PyConfig_InitIsolatedConfig(&config);
+  status = PyConfig_SetBytesString(&config, &config.executable, executable);
+  if (PyStatus_Exception(status))
+    goto exception;
+
+  status = Py_InitializeFromConfig(&config);
+
+exception:
+  PyConfig_Clear(&config);
+  return status;
+}
+
 PyObject *globals, *locals;
 
 static void init() {
