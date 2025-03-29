@@ -111,7 +111,9 @@ export { "pythonHelp", "context", "Preprocessor", "toPython",
     "pythonValue",
     "setattr",
     "setitem",
-    "toFunction"
+    "toFunction",
+    "setupVirtualEnvironment",
+    "pipInstall"
 }
 
 exportMutable { "val", "eval", "valuestring", "stmt", "expr", "dict", "symbols", "stmtexpr"}
@@ -402,6 +404,22 @@ toPython Function := f -> (
 	    if instance(m2args, Sequence) and #m2args == 1
 	    then m2args = m2args#0;
 	    toPython f m2args)))
+
+--------------------------
+-- virtual environments --
+--------------------------
+
+setupVirtualEnvironment = method()
+setupVirtualEnvironment String := dir -> (
+    if fileExists dir then error(dir, " already exists");
+    venv := try import "venv" else error("venv module not found");
+    builder := venv@@"EnvBuilder"("with_pip" => true);
+    builder@@"create" realpath dir;)
+
+pipInstall = method()
+pipInstall String := pkg -> (
+    py := value (import "sys")@@"executable";
+    if run(py | " -m pip install " | pkg) != 0 then error "pip install failed")
 
 load "Python/doc.m2"
 
