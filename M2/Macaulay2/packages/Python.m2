@@ -197,6 +197,18 @@ context String := opts -> init -> (
 	  })
 Context String := (c,s) -> c.stmtexpr s
 
+getattr = method()
+getattr(PythonObject, String) := pythonObjectGetAttrString
+PythonObject @@ Thing := (x, y) -> getattr(x, toString y)
+
+hasattr = method()
+hasattr(PythonObject, String) := pythonObjectHasAttrString
+
+setattr = method()
+setattr(PythonObject, String, Thing) := (x, y, e) ->
+    pythonObjectSetAttrString(x, y, toPython e)
+PythonObject @@ Thing = (x, y, e) -> setattr(x, toString y, e)
+
 import = method()
 import(String) := pythonImportImportModule
 
@@ -221,12 +233,19 @@ addPyToM2Function(List, Function, String) := (types, f, desc) ->
     addHook((value, PythonObject),
 	x -> if isMember(toString (objectType x)@@"__name__", types) then f x,
 	Strategy => desc)
+isinstance = value @@ (toFunction pythonValue "isinstance")
+addPyToM2Function(PythonObject, Function, String) := (type, f, desc) -> (
+    addHook((value, PythonObject),
+	x -> if isinstance(x, type) then f x,
+	Strategy => desc))
 
 addHook((value, PythonObject),
     x -> if toString (objectType x)@@"__name__"  != "NoneType" then x,
     Strategy => "unknown -> PythonObject")
+
 addPyToM2Function({"function", "builtin_function_or_method", "method-wrapper"},
     toFunction, "function -> FunctionClosure")
+
 dictToHashTable = x -> hashTable for key in x list value key => value x_key
 addPyToM2Function("Counter", x -> new Tally from dictToHashTable x,
     "Counter -> Tally")
@@ -237,20 +256,13 @@ addPyToM2Function("list", pyListToM2List, "list -> List")
 addPyToM2Function({"tuple", "range"}, toSequence @@ pyListToM2List,
     "tuple -> Sequence")
 addPyToM2Function("str", toString, "str -> String")
-addPyToM2Function(
-    {"complex", "complex64", "complex128", "complex256"},
+
+numbers = import "numbers"
+addPyToM2Function(numbers@@"Complex",
     x -> toCC(pythonFloatAsDouble x@@"real", pythonFloatAsDouble x@@"imag"),
     "complex -> CC")
-addPyToM2Function(
-    {"float", "float16", "float32", "float64", "float128"},
-    pythonFloatAsDouble,
-    "float -> RR")
-pyInt = toFunction pythonValue "int"
-addPyToM2Function(
-    {"int", "int8", "uint8", "int16", "uint16", "int32", "uint32",
-	"int64", "uint64", "longlong", "ulonglong"},
-    pythonLongAsLong @@ pyInt,
-    "int -> ZZ")
+addPyToM2Function(numbers@@"Real", pythonFloatAsDouble, "float -> RR")
+addPyToM2Function(numbers@@"Integral", pythonLongAsLong, "int -> ZZ")
 addPyToM2Function(
     {"bool", "bool_"},
     x -> toString x == "True",
