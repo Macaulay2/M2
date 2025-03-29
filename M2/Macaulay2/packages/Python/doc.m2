@@ -15,8 +15,96 @@ doc ///
       value pythonValue "[1, 2/3, 'foo', (1, 2, 3), {'foo' : 'bar'}]"
       math = import "math"
       math@@sqrt 2
-  SeeAlso
+  Subnodes
+    :tutorials
     "Python tutorial: matplotlib"
+    "Python tutorial: creating a virtual environment and installing NumPy"
+    :classes
+    PythonObject
+///
+
+doc ///
+  Key
+    "Python tutorial: creating a virtual environment and installing NumPy"
+  Description
+    Text
+      In this tutorial, we demonstrate how to create a Python virtual
+      environment and install the @HREF("https://numpy.org", "numpy")@
+      module within it. A virtual environment allows us to isolate
+      Python packages from the system-wide installation, ensuring that
+      dependencies do not interfere with other projects.
+
+      @HEADER2 "Step 1: Create a Virtual Environment"@
+
+      First, we choose a directory where we want to create our virtual
+      environment. We then call @TO setupVirtualEnvironment@ with that
+      directory. This command initializes a new virtual environment,
+      which includes a dedicated Python interpreter and an isolated
+      package installation directory.
+    CannedExample
+      i2 : dir = temporaryFileName()
+
+      o2 = /tmp/M2-2158442-1/0
+
+      i3 : setupVirtualEnvironment dir
+    Text
+      @HEADER2 "Step 2: Reload the Python Package with the Virtual Environment"@
+
+      To ensure that the Python interface uses the newly created
+      virtual environment, we reload the Python package while
+      specifying the virtual environment’s Python interpreter. This is
+      done by setting the "executable" configuration option to point
+      to the @CODE "python3"@ binary inside our virtual environment.
+    CannedExample
+      i4 : loadPackage("Python", Reload => true,
+               Configuration => {"executable" => dir | "/bin/python3"})
+
+      o4 = Python
+
+      o4 : Package
+    Text
+      At this point, all Python commands will use the virtual
+      environment's interpreter rather than the system-wide Python
+      installation.
+
+      @HEADER2 "Step 3: Install NumPy"@
+
+      Next, we install the NumPy module using @TO pipInstall@. This
+      downloads and installs NumPy into the virtual environment.
+    CannedExample
+      i5 : pipInstall "numpy"
+      Collecting numpy
+        Downloading numpy-2.2.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (62 kB)
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 62.0/62.0 kB 2.5 MB/s eta 0:00:00
+
+      Downloading numpy-2.2.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (16.1 MB)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.1/16.1 MB 47.9 MB/s eta 0:00:00
+
+      Installing collected packages: numpy
+      Successfully installed numpy-2.2.4
+    Text
+      Once this step completes, NumPy is fully installed and ready for use.
+
+      @HEADER2 "Step 4: Import and Use NumPy"@
+
+      Now that NumPy is installed, we can import it and perform
+      numerical computations.
+    CannedExample
+      i6 : np = import "numpy"
+
+      o6 = <module 'numpy' from '/tmp/M2-2158442-1/0/lib/python3.12/site-packages/
+           numpy/__init__.py'>
+
+      o6 : PythonObject of class module
+    Text
+      To verify that NumPy is working correctly, we perform matrix multiplication using NumPy arrays:
+    CannedExample
+      i7 : np@@array {{1, 2}, {3, 4}} @ np@@array {{5, 6}, {7, 8}}
+
+      o7 = [[19 22]
+            [43 50]]
+
+      o7 : PythonObject of class numpy.ndarray
 ///
 
 doc ///
