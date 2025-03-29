@@ -14,43 +14,52 @@
 -------------------------------------------------------
 
 TEST ///-- test 0
--- Example equation (11) from https://arxiv.org/pdf/2410.14757
-v = {1,1,1};
-D = makeWeylAlgebra(frac(QQ[e,DegreeRank=>0])[x,y,z],v);
-delta1 = (x^2-z^2)*dx^2+2*(1-e)*x*dx-e*(1-e);
-delta2 = (y^2-z^2)*dy^2+2*(1-e)*y*dy-e*(1-e);
-delta3 = (x+z)*(y+z)*dx*dy-e*(x+z)*dx-e*(y+z)*dy+e^2;
-h = x*dx+y*dy+z*dz-2*e;
-I = ideal(delta1+delta3, delta2+delta3,h);
+  -- Example equation (11) from https://arxiv.org/pdf/2410.14757
+  w = {1,1,1};
+  D = makeWeylAlgebra(frac(QQ[e, DegreeRank => 0])[x,y,z], w);
+  delta1 = (x^2-z^2)*dx^2+2*(1-e)*x*dx-e*(1-e);
+  delta2 = (y^2-z^2)*dy^2+2*(1-e)*y*dy-e*(1-e);
+  delta3 = (x+z)*(y+z)*dx*dy-e*(x+z)*dx-e*(y+z)*dy+e^2;
+  h = x*dx+y*dy+z*dz-2*e;
+  I = ideal(delta1+delta3, delta2+delta3,h);
 
-assert(holonomicRank(I) == 4);
+  assert(holonomicRank I == 4);
 
--- Gauge transform to e-factorized form:
-P = connectionMatrices I;
-G = flatten entries gens gb I;
+  -- Gauge transform to e-factorized form:
+  P = connectionMatrices I;
+  -- Check that the integrability test also works in the parametric case:
+  assert isIntegrable P
 
-B2 = {1_D,dx,dy,dx*dy};
-changeofvar = gaugeMatrix(G,B2);
-assert(changeofvar == gaugeMatrix(I,B2));
-P2 = gaugeTransform(changeofvar,P);
+  G = flatten entries gens gb I;
+  B2 = {1_D,dx,dy,dx*dy};
+  changeofvar = gaugeMatrix(G,B2);
+  assert(changeofvar == gaugeMatrix(I,B2));
+  P2 = gaugeTransform(changeofvar,P);
 
-F = baseFractionField D
-changeVar = transpose((1/(2*z*e^2))*matrix({{2*z*e^2, -e^2*(x-z), -e^2*(y-z), -e^2*(x+y)},{0,e*(x^2-z^2),0,e*(x+y)*(x+z)},{0,0,e*(y^2-z^2),e*(x+y)*(y+z)},{0,0,0,-(x+y)*(x+z)*(y+z)}}));
-P3 = gaugeTransform(changeVar,P2);
+  F = baseFractionField D
+  c = 1/(2*z*e^2)
+  changeVar = c * transpose matrix {
+      {2*z*e^2, -e^2*(x-z),  -e^2*(y-z),  -e^2*(x+y)},
+      {0, e*(x^2-z^2), 0, e*(x+y)*(x+z)},
+      {0, 0, e*(y^2-z^2), e*(x+y)*(y+z)},
+      {0, 0, 0, -(x+y)*(x+z)*(y+z)}};
+  P3 = gaugeTransform(changeVar, P2);
 
-assert(isEpsilonFactorized(P3,e));
+  assert isEpsilonFactorized(P3,e);
 ///
 
 TEST ///-- test 1
--- ALS notes, Example 7.16
-
-  D = makeWeylAlgebra(QQ[x,y], v = {1,2});
+  -- ALS notes, Example 7.16
+  D = makeWeylAlgebra(QQ[x,y], w = {1,2});
   I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
+  assert(holonomicRank I == 2);
+
+  R = baseFractionField D
   A = connectionMatrices I;
+  assert(A_0 == map(R^{2:{1}},R^{{0}, {1}},{{0, 1}, {(-1)/(x^2-x*y), (-3*x+y)/(x^2-x*y)}}))
+  assert(A_1 == map(R^{2:{1}},R^{{0}, {1}},{{(-1)/y, (-x)/y}, {1/(x*y-y^2), (x+y)/(x*y-y^2)}}))
 
-  assert(holonomicRank(I) == 2);
-
-  -- i2 : D = makeWeylAlgebra(QQ[x,y], v = {2,1});
+  -- i2 : D = makeWeylAlgebra(QQ[x,y], w = {2,1});
   -- i3 : A = connectionMatrices(ideal (x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1))
   -- Grobner basis:
   -- | xdx+ydy+1 ydxdy+ydy^2+dx+dy xydy^2-y2dy^2+xdy-3ydy-1 |
@@ -59,7 +68,7 @@ TEST ///-- test 1
   -- o3 = {{-1} | (-1)/x       (-y)/x         |, {-1} | 0         1               |}
   --       {-1} | (-1)/(x2-xy) (-x-y)/(x2-xy) |  {-1} | 1/(xy-y2) (-x+3y)/(xy-y2) |
 
-  -- i4 : D = makeWeylAlgebra(QQ[x,y], v = {1,1});
+  -- i4 : D = makeWeylAlgebra(QQ[x,y], w = {1,1});
   -- i5 : A = connectionMatrices(w, I = ideal (x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1))
   -- Grobner basis:
   -- | xdx+ydy+1 ydxdy+ydy^2+dx+dy xydy^2-y2dy^2+xdy-3ydy-1 |
@@ -68,7 +77,7 @@ TEST ///-- test 1
   -- o5 = {{-1} | (-1)/x       (-y)/x         |, {-1} | 0         1               |}
   --       {-1} | (-1)/(x2-xy) (-x-y)/(x2-xy) |  {-1} | 1/(xy-y2) (-x+3y)/(xy-y2) |
 
-  -- i6 : D = makeWeylAlgebra(QQ[x,y], v = {1,2});
+  -- i6 : D = makeWeylAlgebra(QQ[x,y], w = {1,2});
   -- i7 : A = connectionMatrices(w, I = ideal (x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1))
   -- Grobner basis:
   -- | ydy+xdx+1 xdxdy+xdx^2+dy+dx x2dx^2-xydx^2+3xdx-ydx+1 |
@@ -79,39 +88,41 @@ TEST ///-- test 1
 ///
 
 
-
 TEST /// -- test 2
--- Example from Overleaf
-v1 = {2,1};
-v2 = {1,2};
+  -- Example from Overleaf
+  w1 = {2,1};
+  w2 = {1,2};
 
-D1 = makeWeylAlgebra(QQ[x,y],v1);
-D2 = makeWeylAlgebra(QQ[x,y],v2);
+  D1 = makeWeylAlgebra(QQ[x,y], w1);
+  D2 = makeWeylAlgebra(QQ[x,y], w2);
 
--- Construct the ideal in the first Weyl algebra
-I = sub(ideal(x*dx^2-y*dy^2+2*dx-2*dy,x*dx+y*dy+1),D1);  -- Ex. 1.4
--- Compute its holonomic rank
-assert(holonomicRank(I) == 2)
+  -- Construct the ideal in the first Weyl algebra
+  I = sub(ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1), D1);  -- Ex. 1.4
+  -- Compute its holonomic rank
+  assert(holonomicRank I == 2)
 
--- Computing the system of connection matrices w.r.t. weight vector w1
-C1 = connectionMatrices(I);
-SM1 = standardMonomials(I);
+  -- Computing the system of connection matrices w.r.t. weight vector w1
+  C1 = connectionMatrices I;
+  SM1 = standardMonomials I;
 
--- Computing the system of connection matrices w.r.t. weight vector w2
-C2 = connectionMatrices(sub(I,D2));
-SM2 = standardMonomials(sub(I,D2));
+  -- Computing the system of connection matrices w.r.t. weight vector w2
+  C2 = connectionMatrices sub(I, D2);
+  SM2 = standardMonomials sub(I, D2);
 
--- Compute Groebner Basis
-G = flatten entries gens gb I;
-changeofvar = gaugeMatrix(G,SM2);
+  R = baseFractionField D2
+  -- TODO: this should work once frac acts like baseFractionField
+  -- assert(R === baseFractionField D1)
 
-P' = gaugeTransform(changeofvar,C1,D1);
-P'' = apply(P', p-> sub(p, ring C2#0));
+  -- Compute Groebner Basis
+  G = flatten entries gens gb I;
+  changeofvar = gaugeMatrix(G, SM2);
+  C1' = gaugeTransform(changeofvar, C1, D1);
+  C1'' = apply(C1', p -> sub(p, R));
 
--- Now transform the system of connection matrices C1 into the system of connection matrices C2 via Gauge transform
--- FIXME: why are the degrees different?
---assert(C2 == P'')
-assert(matrix \ entries \ C2 == matrix \ entries \ P'')
+  -- Now transform the system of connection matrices C1 into
+  -- the system of connection matrices C2 via Gauge transform
+  -- TODO: the degrees seem to differ, is this desirable or not?
+  assert(matrix \ entries \ C2 == matrix \ entries \ C1'')
 ///
 
 -------------------------------------------------------
@@ -120,127 +131,68 @@ assert(matrix \ entries \ C2 == matrix \ entries \ P'')
 --
 -------------------------------------------------------
 
---
--- isEpsilonFactorized
---
+TEST /// -- test 3: isEpsilonFactorized
+  -- Example
+  R = frac(QQ[x,y]);
+  M = matrix {{y, y^2}, {(y+1)/((y-1)*(y-2)), 1/(y + y^2)}};
+  assert isEpsilonFactorized(M, x);
 
-TEST /// -- test 3
--- Example
+  -- Non-Example
+  R = frac(QQ[x,y]);
+  M = matrix {{y, y^2}, {(y+1)/((y-1)*(y-2)), 1/(y + y^2)}};
+  assert not isEpsilonFactorized(M, y);
 
-R = frac(QQ[x,y]);
+  -- Example
+  R = frac(QQ[x,y]);
+  M = matrix {{x^2*y, y}, {y*x + y / (x^2 +1), 0}};
+  assert isEpsilonFactorized(M, y);
 
-M = matrix {{y, y^2}, {(y+1)/((y-1)*(y-2)), 1/(y + y^2)}};
-assert(isEpsilonFactorized(M, x));
+  -- Matrix of zeros is factorized with respect to any variable
+  R = frac(QQ[x,y]);
+  M = matrix(R, {{0,0}, {0,0}});
+  assert(isEpsilonFactorized(M, x) and isEpsilonFactorized(M, y));
+
+  -- Trivial example of non-factorized (numerator not homogeneous)
+  R = frac(QQ[x]);
+  M = matrix {{(x+1)/x}}
+  assert not isEpsilonFactorized(M, x)
 ///
 
-TEST /// -- test 4
--- Non-Example
+TEST /// -- test 4: isIntegrable
+  -- A connection coming from a D-ideal is integrable:
+  D = makeWeylAlgebra(QQ[x,y], w = {1,2});
+  I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
+  A = connectionMatrices I;
+  assert(isIntegrable(D,A));
 
-R = frac(QQ[x,y]);
-M = matrix {{y, y^2}, {(y+1)/((y-1)*(y-2)), 1/(y + y^2)}};
-
-assert(not isEpsilonFactorized(M, y));
+  -- Constant coefficient matrices that don't commute can't come from an integrable system.
+  S = QQ[x,y];
+  R = frac S;
+  A0 = sub(matrix {{0,1}, {1,0}}, R);
+  A1 = sub(matrix {{2,0}, {0,3}}, R);
+  -- Since entries are constants, it will essentially check whether the matrices commute.
+  -- And that is not the case.
+  assert(isIntegrable({A0, A1}) == false);
 ///
 
-TEST /// -- test 5
--- Example
-R = frac(QQ[x,y]);
-M = matrix {{x^2*y, y}, {y*x + y / (x^2 +1), 0}};
-
-assert(isEpsilonFactorized(M, y));
-///
-
-TEST /// -- test 6
--- Matrix of zeros is factorized with respect to any variable
-R = frac(QQ[x,y]);
-M = matrix(R, {{0,0}, {0,0}});
-
-assert(isEpsilonFactorized(M, x) and isEpsilonFactorized(M, y));
-///
-
-TEST /// -- test 7
--- Trivial example of non-factorized (numerator not homogeneous)
-R = frac(QQ[x]);
-M = matrix {{(x+1)/x}}
-///
-
---
--- isIntegrable
---
-
-TEST /// -- test 8
--- A connection coming from a D-ideal is integrable:
-
-D = makeWeylAlgebra(QQ[x,y], v = {1,2});
-I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
-A = connectionMatrices I;
-
-assert(isIntegrable(D,A));
-
-///
-
-TEST /// -- test 9
--- Constant coefficient matrices that don't commute can't come from an integrable system.
-S = QQ[x,y];
-R = frac(S);
-
-A_0 = sub(matrix {{0,1}, {1,0}}, R);
-A_1 = sub(matrix {{2,0}, {0,3}}, R);
-
--- Since entries are constants, it will essentially check whether the matrices commute.
--- And that is not the case.
-assert(isIntegrable({A_0, A_1}) == false);
-///
-
-TEST /// -- test 10
--- Check that the integrability test also works in the parametric case:
-
--- Based on equation (11) from https://arxiv.org/pdf/2410.14757
-v = {1,1,1};
-D = makeWeylAlgebra(frac(QQ[e,DegreeRank=>0])[x,y,z],v);
-delta1 = (x^2-z^2)*dx^2+2*(1-e)*x*dx-e*(1-e);
-delta2 = (y^2-z^2)*dy^2+2*(1-e)*y*dy-e*(1-e);
-delta3 = (x+z)*(y+z)*dx*dy-e*(x+z)*dx-e*(y+z)*dy+e^2;
-h = x*dx+y*dy+z*dz-2*e;
-
-I = ideal(delta1+delta3, delta2+delta3,h);
-A = connectionMatrices I;
-
-assert(isIntegrable(A))
-///
-
---
--- baseFractionField
---
-
-TEST /// -- test 11
+TEST /// -- test 5: baseFractionField
   -- tests for baseFractionField
   debug needsPackage "ConnectionMatrices"
   assert(3 == numgens baseFractionField makeWeylAlgebra(QQ[x,y,z]))
   assert(4 == numgens baseFractionField makeWeylAlgebra((QQ[e, DegreeRank => 0])[x,y,z]))
   assert(7 == numgens baseFractionField makeWeylAlgebra(((QQ[a,b,c, DegreeRank => 0])[e, DegreeRank => 0])[x,y,z]))
   assert(7 == numgens baseFractionField makeWeylAlgebra((frac(QQ[a,b,c, DegreeRank => 0])[e, DegreeRank => 0])[x,y,z]))
-///
 
---
--- inferWeylAlgbra
---
-TEST /// -- test 12
- -- Check that inferred WeylAlgebra equals provided WeylAlgebra
-  debug needsPackage "ConnectionMatrices"
+  -- Check that inferred WeylAlgebra equals provided WeylAlgebra
   D = makeWA(frac(QQ[e, DegreeRank => 0])[x,y]);
-  F = baseFractionField(D);
-  assert(D === inferWeylAlgebra(F))
+  F = baseFractionField D;
+  assert(D === inferWeylAlgebra F)
 ///
 
---
--- holonomicRank
---
-TEST /// -- test 13
--- Check that holonomic rank doesn't depend on the choice of positive weight.
-
-  D = makeWeylAlgebra(QQ[x,y], v = {1,2});
+TEST /// -- test 6: holonomicRank
+  -- Check that holonomic rank doesn't depend on the choice of positive weight.
+  D = makeWeylAlgebra(QQ[x,y], w = {1,2});
   I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
-
-  assert same apply({{0,0,1,2}, {0,0,5,100}, {0,0,17,3}}, w -> holonomicRank(w, comodule I));
+  assert same apply({{0,0,1,2}, {0,0,5,100}, {0,0,17,3}},
+      w -> holonomicRank(w, comodule I));
 ///
