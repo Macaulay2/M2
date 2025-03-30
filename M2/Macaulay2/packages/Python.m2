@@ -200,7 +200,12 @@ PythonObject @@  Thing  = (x, y, e) -> (
 
 import = method()
 import(String) := pythonImportImportModule
-builtins = import "builtins"
+-- import modules we'll use
+builtins = pythonImportImportModule "builtins"
+math     = pythonImportImportModule "math"
+numbers  = pythonImportImportModule "numbers"
+operator = pythonImportImportModule "operator"
+sys      = pythonImportImportModule "sys"
 
 toFunction = method()
 toFunction PythonObject := x -> y -> (
@@ -247,7 +252,6 @@ addPyToM2Function({"tuple", "range"}, toSequence @@ pyListToM2List,
     "tuple -> Sequence")
 addPyToM2Function("str", toString, "str -> String")
 
-numbers = import "numbers"
 addPyToM2Function(numbers@@"Complex",
     x -> toCC(pythonFloatAsDouble x@@"real", pythonFloatAsDouble x@@"imag"),
     "complex -> CC")
@@ -260,7 +264,6 @@ addPyToM2Function(
 value PythonObject := x -> runHooks((value, PythonObject), x)
 
 -- binary operators
-operator = import "operator"
 truthy = value @@ (toFunction operator@@"truth")
 importFrom(Core, "swap")
 scan({
@@ -353,7 +356,6 @@ round(ZZ,           PythonObject) := (toFunction builtins@@"round") @@ swap
 -- math module --
 -----------------
 
-math = import "math"
 -- unary methods
 scan({
 	acos,
