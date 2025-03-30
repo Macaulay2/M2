@@ -1396,17 +1396,16 @@ doc ///
 
 doc ///
   Key
-    hasattr
-    (hasattr, PythonObject, String)
+    (symbol @@?, PythonObject, Thing)
   Headline
     whether a python object has an attribute
   Usage
-    hasattr(x, y)
+    x @@? y
   Outputs
     :Boolean -- whether @TT "y"@ is an attribute of @TT "x"@
   Inputs
     x:PythonObject
-    y:String
+    y:Thing
   Description
     Text
       This is equivalent to the Python @HREF{
@@ -1414,8 +1413,8 @@ doc ///
       function.
     Example
       foo = toPython "Hello, world!"
-      hasattr(foo, "upper")
-      hasattr(foo, "bar")
+      foo@@?upper
+      foo@@?bar
 ///
 
 doc ///

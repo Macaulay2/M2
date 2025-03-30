@@ -104,7 +104,6 @@ importFrom_Core {
 
 export { "pythonHelp", "context", "Preprocessor", "toPython",
     "addPyToM2Function",
-    "hasattr",
     "import",
     "pythonValue",
     "toFunction",
@@ -194,12 +193,9 @@ context String := opts -> init -> (
 	  })
 Context String := (c,s) -> c.stmtexpr s
 
-PythonObject @@ Thing := (x, y) -> pythonObjectGetAttrString(x, toString y)
-
-hasattr = method()
-hasattr(PythonObject, String) := pythonObjectHasAttrString
-
-PythonObject @@ Thing = (x, y, e) -> (
+PythonObject @@  Thing := (x, y) -> pythonObjectGetAttrString(x, toString y)
+PythonObject @@? Thing := (x, y) -> pythonObjectHasAttrString(x, toString y)
+PythonObject @@  Thing  = (x, y, e) -> (
     pythonObjectSetAttrString(x, toString y, toPython e))
 
 import = method()
@@ -316,7 +312,7 @@ scan({
 	(symbol ^^=, "ixor")},
     (op, name) -> installMethod(op, PythonObject, (x, y) -> (
 	    m := "__" | name | "__";
-	    if hasattr(x, m) then x@@m y
+	    if x@@?m then x@@m y
 	    else Default)))
 
 -- unary operators
@@ -662,7 +658,7 @@ ChildPythonObject = new Type of PythonObject
 x = new ChildPythonObject from toPython 5
 y = new ChildPythonObject from toPython 10
 assert BinaryOperation(symbol <, x, y)
-assert hasattr(x, "__abs__")
+assert x@@?"__abs__"
 assert Equation(x@@"__abs__"(), 5)
 assert Equation(toString x, "5")
 assert Equation(value x, 5)
