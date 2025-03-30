@@ -262,6 +262,7 @@ value PythonObject := x -> runHooks((value, PythonObject), x)
 -- binary operators
 operator = import "operator"
 truthy = value @@ (toFunction operator@@"truth")
+importFrom(Core, "swap")
 scan({
 	(symbol +,  toFunction operator@@"add"),
 	(symbol -,  toFunction operator@@"sub"),
@@ -283,6 +284,7 @@ scan({
 		else if value operator@@"gt"(x, y) then symbol >
 		else if value operator@@"eq"(x, y) then symbol ==
 		else incomparable)),
+	(isMember,  value @@ (toFunction operator@@"contains") @@ swap),
 	-- TODO: if #3229 implemented, then simplify these
 	(symbol and, (x, y) -> if not truthy x then x else y),
 	(symbol or,  (x, y) -> if truthy x then x else y),
@@ -337,17 +339,12 @@ PythonObject_Thing = (x, i, e) -> (
     operator@@"setitem"(x, i, e);
     e)
 
-isMember(Thing,        PythonObject) := (x, y) -> false
-isMember(PythonObject, PythonObject) := (x, y) -> (
-    value operator@@"contains"(y, x))
-
 quotientRemainder(PythonObject, PythonObject) :=
 quotientRemainder(PythonObject, Thing)        :=
 quotientRemainder(Thing,        PythonObject) := (x, y) -> (
     qr := builtins@@"divmod"(x, y);
     (qr_0, qr_1))
 
-importFrom(Core, "swap")
 round(PythonObject, PythonObject) :=
 round(PythonObject, Number)       :=
 round(ZZ,           PythonObject) := (toFunction builtins@@"round") @@ swap
@@ -684,7 +681,7 @@ assert Equation(abs toPython(-3), 3)
 -- __contains__
 assert isMember(toPython 3, toPython {1, 2, 3})
 assert not isMember(toPython 4, toPython {1, 2, 3})
-assert not isMember(3, toPython {1, 2, 3})
+assert isMember(3, toPython {1, 2, 3})
 
 -- divmod
 assert Equation(quotientRemainder(toPython 1234, toPython 456), (2, 322))

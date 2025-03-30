@@ -1466,29 +1466,38 @@ doc ///
 
 doc ///
   Key
-    (isMember, Thing, PythonObject)
     (isMember, PythonObject, PythonObject)
+    (isMember, PythonObject, Thing)
+    (isMember, Thing, PythonObject)
   Headline
     test membership in a python object
   Usage
-    isMember(e, x)
+    isMember(x, y)
   Inputs
-    e:Thing
     x:PythonObject
+    y:PythonObject
   Outputs
-    :Boolean -- whether @TT "e"@ is in @TT "x"@
+    :Boolean -- whether x is in y
   Description
     Text
-      This calls Python's @TT "__contains__"@ method, which is equivalent
-      to using the Python @TT "in"@ keyword.
+      This tests whether @CODE "x"@ is a member of @CODE "y"@.  This is
+      equivalent to @CODE "x in y"@ in Python.
     Example
       isMember(toPython 3, toPython {1, 2, 3})
       isMember(toPython 4, toPython {1, 2, 3})
     Text
-      Note that testing a non-Python object for membership will always return
-      @TT "false"@.
+      If one of the arguments is a Macaulay2 object, then it is first converted
+      to a Python object before testing for membership.
     Example
-      isMember(3, toPython {1, 2, 3})
+      isMember(toPython 3, {1, 2, 3})
+      isMember(4, toPython {1, 2, 3})
+    Text
+      When used with dictionaries, which are Python's equivalent of Macaulay2
+      hash tables, the keys are tested for membership.  In this sense, it is
+      like the Macaulay2 @TO symbol #?@ and @TO symbol .?@ operators.
+    Example
+      isMember("foo", toPython hashTable {"foo" => "bar"})
+      isMember("bar", toPython hashTable {"foo" => "bar"})
 ///
 
 doc ///
