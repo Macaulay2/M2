@@ -562,20 +562,19 @@ doc ///
 doc ///
   Key
     toPython
-    (toPython,Boolean)
-    (toPython,CC)
-    (toPython,Constant)
-    (toPython,Function)
-    (toPython,HashTable)
-    (toPython,Nothing)
-    (toPython,PythonObject)
-    (toPython,QQ)
-    (toPython,RR)
-    (toPython,Sequence)
-    (toPython,Set)
-    (toPython,String)
-    (toPython,VisibleList)
-    (toPython,ZZ)
+    (toPython, Boolean)
+    (toPython, CC)
+    (toPython, Function)
+    (toPython, HashTable)
+    (toPython, Nothing)
+    (toPython, Number)
+    (toPython, PythonObject)
+    (toPython, RR)
+    (toPython, Sequence)
+    (toPython, Set)
+    (toPython, String)
+    (toPython, VisibleList)
+    (toPython, ZZ)
   Headline
     convert Macaulay2 things to Python objects
   Usage

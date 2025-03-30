@@ -367,21 +367,77 @@ round(PythonObject, PythonObject) :=
 round(PythonObject, Number)       :=
 round(ZZ,           PythonObject) := (toFunction builtins@@"round") @@ swap
 
+-----------------
+-- math module --
+-----------------
+
 math = import "math"
-truncate PythonObject := {} >> o -> toFunction math@@"trunc"
-floor PythonObject := toFunction math@@"floor"
-ceiling PythonObject := toFunction math@@"ceil"
--- TODO: other stuff from math module? sin, cos, exp, etc?
+-- unary methods
+scan({
+	acos,
+	acosh,
+	asin,
+	asinh,
+	atan,
+	atanh,
+	cos,
+	cosh,
+	erf,
+	erfc,
+	exp,
+	expm1,
+	floor,
+	log,
+	log1p,
+	sin,
+	sinh,
+	sqrt,
+	tan,
+	tanh
+	},
+    f -> installMethod(f, PythonObject, toFunction math@@f))
+
+scan({
+	(ceiling,  "ceil"),
+	(symbol !, "factorial"),
+	(Gamma,    "gamma")
+	},
+    (m2f, pyf) -> installMethod(m2f, PythonObject, toFunction math@@pyf))
+
+isFinite   PythonObject := value @@ (toFunction math@@"isfinite")
+isInfinite PythonObject := value @@ (toFunction math@@"isinf")
+truncate   PythonObject := {} >> o -> toFunction math@@"trunc"
+
+-- binary methods
+scan({
+	atan2,
+	gcd,
+	lcm,
+	remainder
+	},
+    f -> (
+	g := toFunction math@@f;
+	installMethod(f, PythonObject, PythonObject, g);
+	installMethod(f, PythonObject, Thing,        g);
+	installMethod(f, Thing,        PythonObject, g)))
+scan({
+	(binomial, "comb"),
+	(lngamma,  "lgamma")
+	},
+    (m2f, pyf) -> (
+	g := toFunction math@@pyf;
+	installMethod(m2f, PythonObject, PythonObject, g);
+	installMethod(m2f, PythonObject, Thing,        g);
+	installMethod(m2f, Thing,        PythonObject, g)))
 
 help#0 PythonObject := x -> toString x@@"__doc__"
 
 toPython = method(Dispatch => Thing)
 toPython RR := pythonFloatFromDouble
-toPython QQ := toPython @@ toRR
 toPython CC := x -> pythonComplexFromDoubles(realPart x, imaginaryPart x)
 toPython ZZ := pythonLongFromLong
+toPython Number := toPython @@ numeric
 toPython Boolean := x -> if x then pythonTrue else pythonFalse
-toPython Constant := x -> toPython(x + 0)
 toPython String := pythonUnicodeFromString
 toPython Sequence := x -> pythonTupleNew \\ toPython \ x
 toPython VisibleList := L -> (
