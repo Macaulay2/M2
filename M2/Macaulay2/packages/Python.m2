@@ -428,6 +428,7 @@ toPython ZZ := pythonLongFromLong
 toPython Number := toPython @@ numeric
 toPython Boolean := x -> if x then pythonTrue else pythonFalse
 toPython String := pythonUnicodeFromString
+toPython Symbol := toPython @@ toString
 toPython Sequence := x -> pythonTupleNew \\ toPython \ x
 toPython VisibleList := L -> (
     n := #L;
