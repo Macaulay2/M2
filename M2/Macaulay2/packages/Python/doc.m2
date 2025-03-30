@@ -138,9 +138,12 @@ doc ///
 	  "Parametric curve"}@ example in the matplotlib documentation.
 
       Note that we basically replace the Python @CODE "foo.bar"@ with
-      @CODE "foo\x40\x40bar"@ (see @TO getattr@).  We need to be careful for
-      attributes that include underscores.  They must given as strings, i.e.,
-      delimited using quotes.  This is also the case for keyword arguments.
+      @CODE "foo\x40\x40bar"@
+      (see @TO (symbol \@\@, PythonObject, Thing)@).
+      -- TODO: rework this -- we don't need so many quotes
+      We need to be careful for attributes that include underscores.
+      They must given as strings, i.e., delimited using quotes.  This
+      is also the case for keyword arguments.
     CannedExample
       i4 : fig = plt@@figure()
 
@@ -314,13 +317,10 @@ doc ///
 
 doc ///
   Key
-    getitem
-    (getitem, PythonObject, Thing)
     (symbol _, PythonObject, Thing)
   Headline
     get elements of python sequences
   Usage
-    getitem(x, y)
     x_y
   Inputs
     x:PythonObject
@@ -329,30 +329,25 @@ doc ///
    :PythonObject
   Description
     Text
-      You may access elements of python sequences using @TT "getitem"@
-      or the shortcut @TT "_"@.  This is equivalent to square brackets
-      (@TT "[]"@) in Python. For example, this works for lists.
+      You may access elements of python sequences using @TT "_"@.
+      This is equivalent to square brackets (@TT "[]"@) in Python. For
+      example, this works for lists.
     Example
       x = pythonValue "[1,2,3,4]"
-      getitem(x, 0)
       x_1
     Text
       It also works for dictionaries.
     Example
       x = pythonValue "{'spam':1,'eggs':2}"
-      getitem(x, "spam")
       x_"eggs"
 ///
 
 doc ///
   Key
-    setitem
-    (setitem, PythonObject, Thing, Thing)
     ((symbol _, symbol =), PythonObject, Thing)
   Headline
     set elements of mutable python sequences
   Usage
-    setitem(x, y, e)
     x_y = e
   Inputs
     x:PythonObject
@@ -360,17 +355,17 @@ doc ///
     e:Thing
   Description
     Text
-      You may set elements of mutable python sequences using @TT "setitem"@
-      or the shortcut @TT "_"@.  This is equivalent to square brackets
-      (@TT "[]"@) in Python. For example, this works for lists.
+      You may set elements of mutable python sequences using @TT "_"@.
+      This is equivalent to square brackets (@TT "[]"@) in Python. For
+      example, this works for lists.
     Example
-      x = pythonValue "[1,2,3,4]"
-      setitem(x, 0, 5)
+      x = toPython {1, 2, 3, 4}
+      x_0 = 5
       x
     Text
       It also works for dictionaries.
     Example
-      x = pythonValue "{'spam':1,'eggs':2}"
+      x = toPython hashTable {"spam" => 1, "eggs" => 2}
       x_"ham" = 3
       x
 ///
@@ -712,43 +707,42 @@ doc ///
       "PyImport_ImportModule"}@ and returns an imported Python module.
     Text
       Once imported, the statements and definitions from the module are
-      available using @TO "getattr"@.
+      available using @TO (symbol \@\@, PythonObject, Thing)@.
     Example
       math = import "math"
-      getattr(math, "pi")
+      math@@pi
       math@@sqrt 2
 ///
 
 doc ///
   Key
-    getattr
-    (getattr, PythonObject, String)
     (symbol @@, PythonObject, Thing)
   Headline
     get an attribute of a python object
   Usage
-    getattr(x, y)
     x@@y
   Inputs
     x:PythonObject
-    y:String
+    y:Thing
   Outputs
     :PythonObject
   Description
     Text
-      This is equivalent to the Python @HREF{
-      "https://docs.python.org/3/library/functions.html#getattr", "getattr"}@
-      function.
+      Get an attribute of a Python object.  In Python, the @CODE "."@
+      operator is used.  However, this operator has a special meaning
+      in Macaulay2 and cannot be overloaded.  Since @CODE "\@\@"@ has
+      similar precedence, it is used instead.
     Example
       foo = toPython "Hello, world!"
-      (getattr(foo, "upper"))()
+      foo@@upper()
     Text
-      In Python, "." is generally used as a shortcut for this function, but
-      it is not easily overloadable in Macaulay2.  Instead, @TT "\@\@"@ may
-      be used for this purpose, as its precedence is similar to "."  In
-      this case, @TT "y"@  need not be a string.
+      Note that @TO toString@ is called on @CODE "y"@ before it is used.
+      Therefore, symbols and functions may be used as well as strings.
+      Sometimes, however, it is necessary to use quotes, e.g., when using
+      special "dunder" methods with double underscores.  These would
+      result in a Macaulay2 syntax error if left unquoted.
     Example
-      foo@@lower()
+      foo@@"__len__"()
 ///
 
 doc ///
@@ -777,17 +771,14 @@ doc ///
 
 doc ///
   Key
-    setattr
-    (setattr, PythonObject, String, Thing)
     ((symbol @@, symbol =), PythonObject, Thing)
   Headline
     set an attribute of a python object
   Usage
-    setattr(x, y, e)
     x@@y = e
   Inputs
     x:PythonObject
-    y:String
+    y:Thing
     e:Thing
   Description
     Text
@@ -795,16 +786,13 @@ doc ///
       "https://docs.python.org/3/library/functions.html#setattr", "setattr"}@
       function.  Note that @TT "e"@ is converted to a Python object using
       @TO "toPython"@.
-    Example
-      math = import "math"
-      setattr(math, "pi", 22/7) -* no-capture-flag *-
-      math@@pi
-    Text
+
       As with @TO "getattr"@, when using the shortcut @TT "\@\@"@, @TT "y"@
       need not be a string.
     Example
-      math@@e = 19/7
-      math@@e
+      math = import "math"
+      math@@pi = 22/7 -* no-capture-flag *-
+      math@@pi
 ///
 
 doc ///

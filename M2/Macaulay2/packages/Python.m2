@@ -104,13 +104,9 @@ importFrom_Core {
 
 export { "pythonHelp", "context", "Preprocessor", "toPython",
     "addPyToM2Function",
-    "getattr",
-    "getitem",
     "hasattr",
     "import",
     "pythonValue",
-    "setattr",
-    "setitem",
     "toFunction",
     "setupVirtualEnvironment",
     "pipInstall"
@@ -198,17 +194,13 @@ context String := opts -> init -> (
 	  })
 Context String := (c,s) -> c.stmtexpr s
 
-getattr = method()
-getattr(PythonObject, String) := pythonObjectGetAttrString
-PythonObject @@ Thing := (x, y) -> getattr(x, toString y)
+PythonObject @@ Thing := (x, y) -> pythonObjectGetAttrString(x, toString y)
 
 hasattr = method()
 hasattr(PythonObject, String) := pythonObjectHasAttrString
 
-setattr = method()
-setattr(PythonObject, String, Thing) := (x, y, e) ->
-    pythonObjectSetAttrString(x, y, toPython e)
-PythonObject @@ Thing = (x, y, e) -> setattr(x, toString y, e)
+PythonObject @@ Thing = (x, y, e) -> (
+    pythonObjectSetAttrString(x, toString y, toPython e))
 
 import = method()
 import(String) := pythonImportImportModule
@@ -345,12 +337,9 @@ scan({
 PythonObject Thing := (o, x) -> (toFunction o) x
 
 PythonObject_Thing := toFunction operator@@"getitem"
-
-setitem = method()
-setitem(PythonObject, Thing, Thing) := (x, i, e) -> (
-    x@@"__setitem__"(i, e);
-    null)
-PythonObject_Thing = setitem
+PythonObject_Thing = (x, i, e) -> (
+    operator@@"setitem"(x, i, e);
+    e)
 
 isMember(Thing,        PythonObject) := (x, y) -> false
 isMember(PythonObject, PythonObject) := (x, y) -> (
