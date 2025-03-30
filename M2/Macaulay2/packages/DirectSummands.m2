@@ -196,6 +196,8 @@ coneComp = (C, u, v) -> (
 
 -- TODO: add this as a strategy to basis
 smartBasis = (deg, M) -> (
+    -- TODO: try splitting coker {{a, b^3}, {-b^3, a}} over ZZ/32003[a..b]/(a^2+b^6)
+    if M == 0 then return map(M, 0, 0);
     if instance(deg, ZZ) then deg = {deg};
     degs := if #deg == 1 then select(unique degrees M, d -> d <= deg) else (
 	-- FIXME: in the multigraded case sometimes just using basis is faster:
@@ -270,9 +272,10 @@ directSummands Module := List => opts -> (cacheValue (symbol summands => opts.Ex
     R := ring M;
     if not isCommutative R and not isWeylAlgebra R then error "expected a commutative base ring";
     if 0 < debugLevel then printerr("splitting module of rank: ", toString rank M);
-    if isFreeModule M then return apply(-degrees M, d -> R^{d});
     --TODO: is there an easy way to check if rank = 1 and M torsionfree?
     if 1 < #components M then return flatten apply(components M, directSummands_opts); -- TODO: parallelize
+    if isFreeModule M then return apply(toList pairs(-degrees M), (i, d) -> (
+	    M.cache#(symbol ^, [i]) = transpose (M.cache#(symbol _, [i]) = matrix M_i); R^{d}));
     if opts.ExtendGroundField =!= null then (
 	L := opts.ExtendGroundField;
 	L  = if instance(L, ZZ)   then GF(char R, L)

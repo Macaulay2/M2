@@ -175,5 +175,28 @@ needsPackage "DirectSummands"
   set(last \ isomorphismTally summands frobeniusPushforward(1,R)) == set{12,13}
 ///
 
+TEST ///
+  restart
+  errorDepth=2
+  debug needsPackage "DirectSummands"
+  -- TODO: ARRGGAGGGHHHH GF is fucking up 'a'
+  R = ZZ/101[a,b, Degrees => {6,2}]/(a^2+b^6)
+  assert(2 == #summands coker matrix {{a, b^3}, {-b^3, a}})
+  R = ZZ/32003[a,b, Degrees => {6,2}]/(a^2+b^6)
+  assert(1 == #summands coker matrix {{a, b^3}, {-b^3, a}})
+  assert(2 == #summands(coker matrix {{a, b^3}, {-b^3, a}}, ExtendGroundField => 2))
+  R = ZZ/32003[a,b]/(a^2+b^6)
+  assert(1 == #summands coker matrix {{a, b^3}, {-b^3, a}})
+  assert(2 == #summands(coker matrix {{a, b^3}, {-b^3, a}}, ExtendGroundField => 2))
+  R = GF(32003, 2)[a,b, Degrees => {6,2}]/(a^2+b^6)
+  assert(2 == #summands coker matrix {{a, b^3}, {-b^3, a}})
+
+  R = GF(32003, 2)[a,b]/(a^2+b^6)
+  assert(2 == #summands coker matrix {{a, b^3}, {-b^3, a}})
+
+  M = coker matrix {{a, b^3}, {-b^3, a}}
+  findIdempotent M
+  summands(M, ExtendGroundField => 2)
+///
 
 load "./large-tests.m2"
