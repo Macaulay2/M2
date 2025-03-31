@@ -53,7 +53,7 @@ Description
 References
   [@HREF("https://arxiv.org/pdf/2410.14757","FPSW")@]  C. Fevola, G. L. Pimentel, A.-L. Sattelberger, and T. Westerdijk. Algebraic Approaches to Cosmological Integrals. Preprint arXiv:2410.14757. To appear in {\em Le Matematiche}.
 
-  [@HREF("https://arxiv.org/pdf/2312.05303", "A-HBHJLP")@]   N. Arkani-Hamed, D. Baumann, A. Hillman, A. Joyce, H. Lee, and G. L. Pimentel. Differential Equations for Cosmological Correlators. Preprint arXiv:2312.05303.
+  [@HREF("https://arxiv.org/pdf/2312.05303", "AHBHJLP")@]   N. Arkani-Hamed, D. Baumann, A. Hillman, A. Joyce, H. Lee, and G. L. Pimentel. Differential Equations for Cosmological Correlators. Preprint arXiv:2312.05303.
 SeeAlso
   "example from particle physics"
   "example from GKZ systems"
