@@ -28,7 +28,7 @@ MutableMatrix *IM2_MutableMatrix_identity(const Ring *R,
 {
   if (n < 0)
     {
-      ERROR("expected non-negative integer");
+      ERROR("expected nonnegative integer");
       return nullptr;
     }
   size_t nrows = static_cast<size_t>(n);
@@ -40,8 +40,11 @@ MutableMatrix /* or null */ *IM2_MutableMatrix_make(const Ring *R,
                                                     int ncols,
                                                     M2_bool is_dense)
 {
-  assert(nrows >= 0);
-  assert(ncols >= 0);
+  if (nrows < 0 || ncols < 0) {
+    ERROR("expected nonnegative integers");
+    return nullptr;
+  }
+
   size_t nr = static_cast<size_t>(nrows);
   size_t nc = static_cast<size_t>(ncols);
   //  return R->makeMutableMatrix(nr,nc,is_dense);

@@ -2371,7 +2371,7 @@ export rawMutableIdentity(e:Expr):Expr := (
      when s.0 is R:RawRingCell do
      when s.1 is nrows:ZZcell do if !isInt(nrows) then WrongArgSmallInteger(2) else
      when s.2 is preferDense:Boolean do
-     toExpr(Ccode(RawMutableMatrix, 
+     toExpr(Ccode(RawMutableMatrixOrNull,
 	       "IM2_MutableMatrix_identity(", 
 	       R.p, ",",
 	       toInt(nrows), ",",
@@ -2396,7 +2396,7 @@ export rawMutableMatrix(e:Expr):Expr := (
      when s.1 is nrows:ZZcell do if !isInt(nrows) then WrongArgSmallInteger(2) else
      when s.2 is ncols:ZZcell do if !isInt(ncols) then WrongArgSmallInteger(3) else
      when s.3 is preferDense:Boolean do
-     toExpr(Ccode(RawMutableMatrix, 
+     toExpr(Ccode(RawMutableMatrixOrNull,
 	       "IM2_MutableMatrix_make(", 
 	       R.p, ",",
 	       toInt(nrows), ",",
