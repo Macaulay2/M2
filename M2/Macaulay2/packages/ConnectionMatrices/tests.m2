@@ -13,12 +13,8 @@
 --
 -------------------------------------------------------
 
-TEST ///-- test 0
-  -- now moved to an example
-///
+TEST /// -- ALS notes, Example 7.16
 
-TEST ///-- test 1
-  -- ALS notes, Example 7.16
   D = makeWeylAlgebra(QQ[x,y], w = {1,2});
   I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
   assert(holonomicRank I == 2);
@@ -57,8 +53,8 @@ TEST ///-- test 1
 ///
 
 
-TEST /// -- test 2
-  -- Example from Overleaf
+TEST /// -- Example from Overleaf
+
   w1 = {2,1};
   w2 = {1,2};
 
@@ -100,7 +96,8 @@ TEST /// -- test 2
 --
 -------------------------------------------------------
 
-TEST /// -- test 3: isEpsilonFactorized
+TEST /// -- isEpsilonFactorized
+
   -- Example
   R = frac(QQ[x,y]);
   M = matrix {{y, y^2}, {(y+1)/((y-1)*(y-2)), 1/(y + y^2)}};
@@ -127,7 +124,8 @@ TEST /// -- test 3: isEpsilonFactorized
   assert not isEpsilonFactorized(M, x)
 ///
 
-TEST /// -- test 4: isIntegrable
+TEST /// -- isIntegrable
+
   -- A connection coming from a D-ideal is integrable:
   D = makeWeylAlgebra(QQ[x,y], w = {1,2});
   I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
@@ -144,7 +142,8 @@ TEST /// -- test 4: isIntegrable
   assert(isIntegrable({A0, A1}) == false);
 ///
 
-TEST /// -- test 5: baseFractionField
+TEST /// -- baseFractionField
+
   -- tests for baseFractionField
   debug needsPackage "ConnectionMatrices"
   assert(3 == numgens baseFractionField makeWeylAlgebra(QQ[x,y,z]))
@@ -158,7 +157,8 @@ TEST /// -- test 5: baseFractionField
   assert(D === inferWeylAlgebra F)
 ///
 
-TEST /// -- test 6: holonomicRank
+TEST /// -- holonomicRank
+
   -- Check that holonomic rank doesn't depend on the choice of positive weight.
   D = makeWeylAlgebra(QQ[x,y], w = {1,2});
   I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
