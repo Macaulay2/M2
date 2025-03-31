@@ -40,7 +40,7 @@ Description
 	    {2*z*ϵ^2, -ϵ^2*(x-z), -ϵ^2*(y-z), -ϵ^2*(x+y)},
 	    {0, ϵ*(x^2-z^2), 0, ϵ*(x+y)*(x+z)},
 	    {0, 0, ϵ*(y^2-z^2), ϵ*(x+y)*(y+z)},
-	    {0, 0, 0, -(x+y)*(x+z)*(y+z)}})
+	    {0, 0, 0, -(x+y)*(x+z)*(y+z)}});
     elapsedTime A2 = gaugeTransform(changeEps, A1);
     elapsedTime assert isIntegrable A2
     netList A2
@@ -108,9 +108,9 @@ Description
     netList(Boxes => false, VerticalSpace => 1, apply(4, i -> i+1 => A#i))
   Text
     Substituting the constants, we note that example in [SST] contains a small misprint.
-  Example
-    netList(Boxes => false, VerticalSpace => 1,
-	apply(4, i -> i+1 => sub(A#i, {a => 1/2, b => 1/2, c => 1})))
+  -- Example
+  --   netList(Boxes => false, VerticalSpace => 1,
+  -- 	apply(4, i -> i+1 => sub(A#i, {a => 1/2, b => 1/2, c => 1})))
   Code
       D := makeWeylAlgebra(frac(QQ[a,b,c])[x_1..x_4]);
       I := ideal(

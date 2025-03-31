@@ -54,6 +54,9 @@ load "./ConnectionMatrices/normalForm.m2"
 -- connectionMatrices: computes system of connection matrices
 -------------------------------------------------------------
 
+-- borrowed from Varieties: twists don't make sense on connection matrices, so we remove them
+dehomogenizeMatrix = f -> (R := ring f; map(R^(numRows f), R^(numColumns f), f))
+
 -- to access private methods from Core
 importFrom_Core { "concatCols" }
 
@@ -78,7 +81,7 @@ connectionMatrices Ideal := List => I -> I.cache.connectionMatrices ??= (
     B := sub(M.cache#"basis", R);
     if debugLevel > 0 then printerr("Standard monomials: ", net B);
     apply(generators R, -- loops over the differentials
-	dt -> transpose concatCols apply(flatten entries B,
+	dt -> dehomogenizeMatrix transpose concatCols apply(flatten entries B,
 	    s -> RtoF last coefficients(
 		-- computes (dt * s) % G
 		normalForm(dt * s, first entries G), Monomials => B)))
