@@ -1,3 +1,7 @@
+assert(try 1/0 else lastError#1 == "division by zero")
+lastError = null
+assert(lastError === null)
+
 stderr << "--testing the error messages must be done manually" << endl
 end
 
