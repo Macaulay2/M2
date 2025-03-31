@@ -25,8 +25,8 @@ TEST ///-- test 1
 
   R = baseFractionField D
   A = connectionMatrices I;
-  assert(A_0 == map(R^{2:{1}},R^{{0}, {1}},{{0, 1}, {(-1)/(x^2-x*y), (-3*x+y)/(x^2-x*y)}}))
-  assert(A_1 == map(R^{2:{1}},R^{{0}, {1}},{{(-1)/y, (-x)/y}, {1/(x*y-y^2), (x+y)/(x*y-y^2)}}))
+  assert(A_0 == map(R^2, R^2 ,{{0, 1}, {(-1)/(x^2-x*y), (-3*x+y)/(x^2-x*y)}}))
+  assert(A_1 == map(R^2, R^2,{{(-1)/y, (-x)/y}, {1/(x*y-y^2), (x+y)/(x*y-y^2)}}))
 
   -- i2 : D = makeWeylAlgebra(QQ[x,y], w = {2,1});
   -- i3 : A = connectionMatrices(ideal (x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1))
