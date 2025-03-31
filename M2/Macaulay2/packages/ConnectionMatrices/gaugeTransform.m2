@@ -68,23 +68,20 @@ diffMatrixWeyl(RingElement, Matrix) := (P, M) -> (
 --gaugeTransform: implements gauge transform formula
 ----------------------------------------------------
 
-gaugeTransform = method();
--- gives the gauge transform of a system of connection matrices w.r.t. a given change of basis matrix.
-gaugeTransform(Matrix, List, PolynomialRing) := (M, A, D)->(
-    if not same apply(A, ring) or frac(ring M) =!= ring first A then error "expected matrices over the same ring";
-    M = sub(M, ring A#0);
+-- gives the gauge transform of a system of connection
+-- matrices w.r.t. a given change of basis matrix.
+gaugeTransform = method()
+gaugeTransform(Matrix, List)                 := (M, A)    -> gaugeTransform(M, A, inferWeylAlgebra ring A#0)
+gaugeTransform(Matrix, List, PolynomialRing) := (M, A, D) -> (
+    F := ring A#0;
+    if not same apply(A, ring) then error "expected matrices over the same ring";
+    if F =!= baseFractionField D
+    or F =!= baseFractionField ring M
+    then error "expected matrices over the fraction field of the rational Weyl algebra";
+    M = sub(M, F);
     invM := inverse M;
-    n := dim D//2;
-    for i from 1 to n list(
-        dxi := D_(n+i-1);
-        diffMatrixWeyl(dxi, M)*invM + M*(A#(i-1))*invM
-    )
-);
--- Infering the Weyl algebra to perform the gauge transform in:
-gaugeTransform(Matrix, List) := (M,A)->(
-    if not same apply(A, ring) or frac(ring M) =!= ring first A then error "expected matrices over the same ring";
-    D := inferWeylAlgebra(ring A#0);
-    gaugeTransform(M,A,D)
+    createDpairs D;
+    apply(D.dpairVars#1, A, (dxi, Ai) -> diffMatrixWeyl(dxi, M) * invM + M * Ai * invM)
 )
 
 -----------------------------------------------------------------------
