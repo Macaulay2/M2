@@ -108,6 +108,7 @@ export {
     -- methods
     "addPyToM2Function",
     "import",
+    "installNumPyMethods",
     "pipInstall",
     "pythonHelp",
     "pythonRunScript",
@@ -501,6 +502,27 @@ pipInstall = method()
 pipInstall String := pkg -> (
     py := value (import "sys")@@"executable";
     if run(py | " -m pip install " | pkg) != 0 then error "pip install failed")
+
+-------------------
+-- NumPy methods --
+-------------------
+
+installNumPyMethods = () -> (
+    if not ZZ#"safe to import numpy"
+    then error "importing numpy would crash M2; restart first";
+    np := import "numpy";
+    toPython Matrix        :=
+    toPython Vector        :=
+    toPython MutableMatrix := (toFunction np@@"array") @@ entries;
+    addPyToM2Function("ndarray",
+	x -> (
+	    if x@@"ndim" == 0
+	    then value x_()
+	    else if x@@"ndim" == 1
+	    then vector(value \ toList x)
+	    else if x@@"ndim" == 2
+	    then matrix apply(toList x, row -> value \ toList row)),
+	    "ndarray -> Matrix/Vector");)
 
 load "Python/doc.m2"
 
