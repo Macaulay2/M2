@@ -31,6 +31,7 @@ gaugeMatrix(List,  List) := (G, newStdMons) -> (
 ----------------------------------------------------
 -- some matrix differentiating tools
 ----------------------------------------------------
+-- TODO: calling 'sub' repeatedly is slow
 
 diffWeyl = method()
 diffWeyl(RingElement, RingElement) := (P, f) -> (
@@ -49,19 +50,12 @@ diffRationalWeyl(RingElement, RingElement, RingElement) := (P, f, g) -> (
     sub(h1, R) / sub(h2, R)
 )
 
--- Convert entries of connection matrices to fractions
-convertEntry = method()
-convertEntry RingElement := h -> (
-    frach := sub(h, baseFractionField ring h);
-    (numerator frach, denominator frach)
-)
-
--- Differentiate matrix
+-- Differentiate matrix (assumes no differentials in the matrix)
 diffMatrixWeyl = method()
 diffMatrixWeyl(RingElement, Matrix) := (P, M) -> (
-    matrix apply(entries M,
-	row -> apply(row,
-	    h -> diffRationalWeyl splice(P, convertEntry h)))
+    DtoF := map(baseFractionField ring M, ring M);
+    matrix applyTable(entries M,
+	h -> ( h' := DtoF h; diffRationalWeyl(P, numerator h', denominator h') ))
 )
 
 ----------------------------------------------------
