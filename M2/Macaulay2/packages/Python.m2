@@ -69,28 +69,29 @@ then (
     end)
 
 exportFrom_Core {
-    "runSimpleString",
     "PythonObject",
-    "objectType"}
+    "objectType",
+    "runSimpleString",
+    }
 
 importFrom_Core {
     "pythonComplexFromDoubles",
     "pythonDictNew",
     "pythonDictSetItem",
     "pythonFalse",
+    "pythonFloatAsDouble",
+    "pythonFloatFromDouble",
     "pythonImportImportModule",
     "pythonInitialize",
     "pythonListNew",
     "pythonListSetItem",
     "pythonLongAsLong",
     "pythonLongFromLong",
-    "pythonFloatAsDouble",
-    "pythonFloatFromDouble",
     "pythonNone",
+    "pythonObjectCall",
     "pythonObjectGetAttrString",
     "pythonObjectHasAttrString",
     "pythonObjectSetAttrString",
-    "pythonObjectCall",
     "pythonObjectStr",
     "pythonRunStringEval",
     "pythonRunStringFile",
@@ -100,19 +101,27 @@ importFrom_Core {
     "pythonUnicodeAsUTF8",
     "pythonUnicodeFromString",
     "pythonWrapM2Function",
-    "toExternalFormat"
+    "toExternalFormat",
 }
 
-export { "pythonHelp", "context", "Preprocessor", "toPython",
+export {
+    -- methods
     "addPyToM2Function",
     "import",
-    "pythonValue",
-    "toFunction",
-    "setupVirtualEnvironment",
     "pipInstall",
-    "pythonRunScript"
+    "pythonHelp",
+    "pythonRunScript",
+    "pythonValue",
+    "setupVirtualEnvironment",
+    "toFunction",
+    "toPython",
+
+    -- TODO: do we still need these?
+    "context",
+    "Preprocessor",
 }
 
+-- TODO: do we still need these?
 exportMutable { "val", "eval", "valuestring", "stmt", "expr", "dict", "symbols", "stmtexpr"}
 
 pythonInitialize (
