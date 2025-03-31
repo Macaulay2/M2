@@ -33,30 +33,28 @@ gaugeMatrix(List,  List) := (G, newStdMons) -> (
 ----------------------------------------------------
 -- TODO: calling 'sub' repeatedly is slow
 
+-- Differentiate function or matrix
 diffWeyl = method()
 diffWeyl(RingElement, RingElement) := (P, f) -> (
-    DR := ring P;
+    D := ring P;
     R := ring f;
-    createDpairs DR;
-    partials := ideal( DR.dpairVars_1);
-    sub((P*sub(f,DR)) % partials,R)
+    createDpairs D;
+    partials := ideal D.dpairVars_1;
+    sub((P * sub(f, D)) % partials, R)
 )
 
 -- quotient differentiating formula
 diffRationalWeyl = method()
+diffRationalWeyl(RingElement, RingElement) := (P, f) -> (
+    F := baseFractionField ring P;
+    if ring f =!= F then f = sub(f, F);
+    diffRationalWeyl(P, numerator f, denominator f))
 diffRationalWeyl(RingElement, RingElement, RingElement) := (P, f, g) -> (
-    (h1, h2) := (g * diffWeyl(P, f) - f * diffWeyl(P, g), g^2);
-    R := ring f;
-    sub(h1, R) / sub(h2, R)
-)
-
--- Differentiate matrix (assumes no differentials in the matrix)
-diffMatrixWeyl = method()
-diffMatrixWeyl(RingElement, Matrix) := (P, M) -> (
-    DtoF := map(baseFractionField ring M, ring M);
-    matrix applyTable(entries M,
-	h -> ( h' := DtoF h; diffRationalWeyl(P, numerator h', denominator h') ))
-)
+    F := baseFractionField ring P;
+    h := g * diffWeyl(P, f) - f * diffWeyl(P, g);
+    sub(h, F) / sub(g^2, F))
+diffRationalWeyl(RingElement, Matrix) := (P, M) -> (
+    matrix applyTable(entries M, diffRationalWeyl_P))
 
 ----------------------------------------------------
 --gaugeTransform: implements gauge transform formula
@@ -75,7 +73,7 @@ gaugeTransform(Matrix, List, PolynomialRing) := (M, A, D) -> (
     M = sub(M, F);
     invM := inverse M;
     createDpairs D;
-    apply(D.dpairVars#1, A, (dxi, Ai) -> diffMatrixWeyl(dxi, M) * invM + M * Ai * invM)
+    apply(D.dpairVars#1, A, (dxi, Ai) -> diffRationalWeyl(dxi, M) * invM + M * Ai * invM)
 )
 
 -----------------------------------------------------------------------
