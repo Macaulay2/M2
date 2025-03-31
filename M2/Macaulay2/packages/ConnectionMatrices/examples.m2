@@ -1,6 +1,5 @@
 doc ///
 Key
-    "Example from cosmology"
     "example from cosmology"
 Description
   Text
@@ -54,13 +53,12 @@ Description
 References
   [@HREF("https://arxiv.org/pdf/2410.14757","FPSW")@]  C. Fevola, G. L. Pimentel, A.-L. Sattelberger, and T. Westerdijk. Algebraic Approaches to Cosmological Integrals. Preprint arXiv:2410.14757. To appear in {\em Le Matematiche}.
 SeeAlso
-  "Example from particle physics"
-  "A GKZ system"
+  "example from particle physics"
+  "example from GKZ systems"
 ///
 
 doc///
 Key
-    "Example from particle physics"
     "example from particle physics"
 Description
   Text
@@ -73,23 +71,23 @@ Description
   Text
     We can check that the ideal has holonomic rank $4$ and compute the standard monomials of the Gröbner basis of $RI$.
   Example
-    assert( 4 == holonomicRank I)
+    assert( 4 == holonomicRank I )
     standardMonomials I
   Text
     Finally, we can compute the connection matrices.
   Example
     elapsedTime A = connectionMatrices I;
+    elapsedTime assert isIntegrable A
     netList A
 References
   [@HREF("https://link.springer.com/article/10.1007/s11005-024-01835-7","HPSZ")@] J. Henn, E. Pratt, A.-L. Sattelberger, and S. Zoia. $D$-Module Techniques for Solving Differential Equations behind Feynman Integrals. {\em Letters in Mathematical Physics}, 114(28), 2024.
 SeeAlso
-  "Example from cosmology"
-  "A GKZ system"
+  "example from cosmology"
+  "example from GKZ systems"
 ///
 
 doc ///
 Key
-    "A GKZ system"
     "example from GKZ systems"
 Description
   Text
@@ -125,6 +123,6 @@ Description
 References
   [@HREF("https://link.springer.com/book/10.1007/978-3-662-04112-3","SST")@] M. Saito, B. Sturmfels, and N. Takayama. {\em Gröbner Deformations of Hypergeometric Differential Equations}. Volume 6 of {\em Algorithms and Computation in Mathematics}. Springer, 2000.
 SeeAlso
-  "Example from cosmology"
-  "Example from particle physics"
+  "example from cosmology"
+  "example from particle physics"
 ///

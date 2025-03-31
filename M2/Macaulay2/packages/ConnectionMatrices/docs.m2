@@ -93,6 +93,7 @@ Caveat
 doc ///
 Key
     baseFractionField
+   (baseFractionField, FractionField)
    (baseFractionField, PolynomialRing)
 Headline
     extracts the fraction field of the base polynomial ring of a Weyl algebra
@@ -149,7 +150,7 @@ Description
 SeeAlso
   standardMonomials
   gaugeTransform
-  "Example from cosmology"
+  "example from cosmology"
 ///
 
 doc ///
@@ -220,7 +221,7 @@ Description
     It is also possible to compute the gauge transform of a system of connection matrices containing parameters.
 SeeAlso
   gaugeMatrix
-  "Example from cosmology"
+  "example from cosmology"
 ///
 
 doc ///
