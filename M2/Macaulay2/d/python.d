@@ -56,9 +56,42 @@ PyRunSimpleString(e:Expr):Expr := (
      else WrongArgString());
 setupfun("runSimpleString",PyRunSimpleString);
 
-import RunString(s:string):pythonObjectOrNull;
-PyRunString(e:Expr):Expr := when e is s:stringCell do toExpr(RunString(s.v)) else WrongArgString();
-setupfun("pythonRunString",PyRunString);
+PyRunStringEval(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 2 then (
+	    when a.0
+	    is s:stringCell do (
+		when a.1
+		is o:pythonObjectCell do toExpr(
+		    Ccode(pythonObjectOrNull,
+			"PyRun_String(", tocharstar(s.v), ", Py_eval_input, ",
+			o.v, ", NULL)"))
+		else WrongArgPythonObject(2))
+	    else WrongArgString(1))
+	else WrongNumArgs(1, 2))
+    else WrongNumArgs(1, 2));
+setupfun("pythonRunStringEval", PyRunStringEval);
+
+PyRunStringFile(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 2 then (
+	    when a.0
+	    is s:stringCell do (
+		when a.1
+		is o:pythonObjectCell do (
+		    r := Ccode(pythonObjectOrNull,
+			"PyRun_String(", tocharstar(s.v), ", Py_file_input, ",
+			o.v, ", NULL)");
+		    when r
+		    is null do return buildPythonErrorPacket()
+		    else Expr(o))
+		else WrongArgPythonObject(2))
+	    else WrongArgString(1))
+	else WrongNumArgs(1, 2))
+    else WrongNumArgs(1, 2));
+setupfun("pythonRunStringFile", PyRunStringFile);
 
 import Main():int;
 PyMain(e:Expr):Expr := toExpr(Main());

@@ -16,7 +16,7 @@ newPackage("Python",
     Configuration => {"executable" => null},
     Keywords => {"Interfaces"},
     AuxiliaryFiles => true,
-    OptionalComponentsPresent => Core#"private dictionary"#?"pythonRunString"
+    OptionalComponentsPresent => Core#"private dictionary"#?"pythonTrue"
     )
 
 ---------------
@@ -92,7 +92,8 @@ importFrom_Core {
     "pythonObjectSetAttrString",
     "pythonObjectCall",
     "pythonObjectStr",
-    "pythonRunString",
+    "pythonRunStringEval",
+    "pythonRunStringFile",
     "pythonSetNew",
     "pythonTrue",
     "pythonTupleNew",
@@ -108,7 +109,8 @@ export { "pythonHelp", "context", "Preprocessor", "toPython",
     "pythonValue",
     "toFunction",
     "setupVirtualEnvironment",
-    "pipInstall"
+    "pipInstall",
+    "pythonRunScript"
 }
 
 exportMutable { "val", "eval", "valuestring", "stmt", "expr", "dict", "symbols", "stmtexpr"}
@@ -134,11 +136,24 @@ PythonObject#AfterPrint = x -> (
      t = replace("<([a-z]+) '(.*)'>"," of \\1 \\2",t);
      (PythonObject, t))
 
-pythonValue = method(Dispatch => Thing)
-pythonValue String := s -> (
+pythonValue = method(
+    Dispatch => Thing,
+    Options => {Global => null})
+pythonValue String := o -> s -> (
     if debugLevel > 0 then printerr("python command: ", s);
-    pythonRunString s)
-pythonValue Sequence := S -> pythonValue \\ concatenate \\ toString \ S
+    pythonRunStringEval(s, toPython o.Global ?? pythonDictNew()))
+pythonValue Sequence := o -> s -> pythonValue(concatenate \\ toString \ s, o)
+
+pythonRunScript = method(
+    Dispatch => Thing,
+    Options => {Global => null})
+pythonRunScript String := o -> s -> (
+    if debugLevel > 0 then printerr("python command: ", s);
+    r := pythonRunStringFile(s, toPython o.Global ?? pythonDictNew());
+    r@@"pop" "__builtins__"; -- keep the output sane
+    r)
+pythonRunScript Sequence := o -> s -> pythonRunScript(
+    concatenate \\ toString \ s, o)
 
 numContexts = 0
 nextContext = method()
@@ -771,6 +786,15 @@ x = toPython null
 y = toPython 2
 assert Equation(x ?? y, y)
 assert Equation(y ?? x, y)
+///
+
+TEST ///
+-- pythonValue & pythonRunScript
+r = pythonRunScript "x = 5"
+x = pythonValue("x + 2", Global => r)
+r = pythonRunScript("x += 5", Global => hashTable{"x" => x})
+x = pythonValue("x + 7", Global => r)
+assert Equation(x, 19)
 ///
 
 -- not part of default testsuite since it requires numpy

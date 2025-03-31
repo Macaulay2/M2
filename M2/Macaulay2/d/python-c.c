@@ -20,22 +20,6 @@ exception:
   return status;
 }
 
-PyObject *globals, *locals;
-
-static void init() {
-  if (!globals) {
-#if 0    
-    globals = PyEval_GetGlobals(); /* this returns null because no frame is currently executing */
-#elif 1
-    globals = PyDict_New();
-    PyDict_SetItemString(globals, "__builtins__", PyEval_GetBuiltins());
-#else
-    globals = PyDict_New();
-    PyRun_String("import __builtin__ as __builtins__",Py_eval_input, globals, locals);
-#endif
-  }
-}
-
 /**************
  * exceptions *
  **************/
@@ -47,14 +31,6 @@ int python_ErrOccurred(void) {
 		return -1;
 	} else
 		return (PyErr_Occurred() != NULL);
-}
-
-PyObject *python_RunString(M2_string s) {
-  char *t = M2_tocharstar(s);
-  init();
-  PyObject *ret = PyRun_String(t,Py_eval_input,globals,locals);
-  GC_FREE(t);
-  return ret;
 }
 
 int python_Main() {
