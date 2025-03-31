@@ -86,7 +86,7 @@ References
   See [@HREF("https://link.springer.com/book/10.1007/978-3-662-04112-3","SST")@, Theorem 1.1.7].
 Caveat
   Due to technical limitations, the output lives in the graded associative algebra of the rational Weyl algebra,
-  which is a commutative ring over the @TO2{baseFractionField, "base fraction field"}@ of $D$ where
+  which is a commutative ring over the @TO2{baseFractionField, "base fraction field"}@ of $D_n$ where
   the partial differentials are adjoined as commuting variables.
 ///
 
@@ -341,8 +341,8 @@ Outputs
       whether $[A_i,A_j] = \partial_i(A_j) - \partial_j(A_i)$ for all $i,j$
 Description
   Text
-    Checks whether a list of $n$ matrices $A_i$ in $Mat_{m\times m}(k(x_1..x_n))$ satisfy
-    $[A_i,A_j] = dx_i(A_j) - dx_j(A_i)$ for all $i,j$.
+    Checks whether a list of $n$ matrices $A_i$ in $\operatorname{Mat}_{m\times m}(k(x_1..x_n))$ satisfy
+    $[A_i,A_j] = \partial_i(A_j) - \partial_j(A_i)$ for all $i,j$.
     This is the case, in particular, when they come from a $D_n$-module, respectively from a $D_n$-ideal.
   Example
     D = makeWeylAlgebra(QQ[x,y], {1, 2});
@@ -351,7 +351,7 @@ Description
     assert isIntegrable(D, A)
     assert isIntegrable A
 Caveat
-  The matrices need to be defined over the @TO2{baseFractionField, "base fraction field"}@ of $D$.
+  The matrices need to be defined over the @TO2{baseFractionField, "base fraction field"}@ of $D_n$.
 SeeAlso
   connectionMatrices
   isEpsilonFactorized
