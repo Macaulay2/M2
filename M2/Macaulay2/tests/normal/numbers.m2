@@ -177,9 +177,16 @@ assert( ring(1p44+ii) === CC_44 )
 assert( round 3.4 === 3 )
 assert( round 3.5 === 4 )
 assert( round 4.5 === 4 )
+assert( round toRRi(exp 1, numeric pi) === 3 )
+assert( round pi === 3 )
 assert( round_1 .34 === .3 )
 assert( round_1 .35 === .4 )
 assert( round_1 .45 === .4 )
+assert( round_2 (1/3) == 0.33 )
+assert( round_2 pi === 3.14 )
+assert( round_2 toRRi(exp 1, numeric pi) === toRRi(2.72, 3.14) )
+assert( round_2 toCC(exp 1, numeric pi) === toCC(2.72, 3.14) )
+
 setRandomSeed 4
 assert( apply(20,i -> random 100) === {47, 38, 51, 74, 28, 50, 44, 25, 72, 16, 41, 61, 76, 89, 28, 27, 77, 34, 26, 57} ) -- version 1.1
 
