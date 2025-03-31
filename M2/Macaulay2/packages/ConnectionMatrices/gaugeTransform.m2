@@ -50,13 +50,11 @@ diffRationalWeyl(RingElement,RingElement,RingElement) :=(P,f,g)->(
 );
 
 -- Convert entries of connection matrices to fractions
-convertEntry = method();
-convertEntry(RingElement) := (h)->(
-    if coefficientRing(ring h) === QQ then subRing := ring h
-        else subRing = coefficientRing ring h;
-    frach := sub(h, subRing);
+convertEntry = method()
+convertEntry RingElement := h -> (
+    frach := sub(h, baseFractionField ring h);
     (numerator frach, denominator frach)
-);
+)
 
 --Differentiate matrix
 diffMatrixWeyl = method();
