@@ -4,7 +4,7 @@
 --
 -- Structure:
 --   1) Worked out, complete examples
---   2) Functionality tests for each exported method
+--   2) Functionality tests for (exported) methods
 -------------------------------------------------------
 
 -------------------------------------------------------
@@ -164,4 +164,45 @@ TEST /// -- holonomicRank
   I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
   assert same apply({{0,0,1,2}, {0,0,5,100}, {0,0,17,3}},
       w -> holonomicRank(w, comodule I));
+///
+
+TEST /// -- Testing the elimination lex order
+
+-- Not specifying the weight should give us the non-weighted elimination lex, i.e. the lex on:
+--  dx > dy > x > y
+D = makeWeylAlgebra(QQ[x,y]);
+
+-- Monomials in elimination lex order
+Plist =  {dx^2, y*dx, dy^2, x*dy, x^2, x*y, y^2, 1};
+P =  sum Plist
+
+Q = P;
+for i in 0..#Plist-1 do (
+  lt = leadTerm Q;
+  assert(lt == Plist#i);
+
+  Q = Q - lt;
+)
+assert(Q == 0);
+
+///
+
+TEST /// -- Testing the (1,2) weighted elimination lex order
+
+-- Elimination lex breaking ties on {0,0,1,2} weight (w.r.t. x,y,dx,dy)
+D = makeWeylAlgebra(QQ[x,y], {1,2});
+
+-- Monomials in elimination lex order
+Plist =  { dy^2,    dx^2, x*dy,    y*dx,    x^2, x*y, y^2, 1};
+P =  sum Plist
+
+Q = P;
+for i in 0..#Plist-1 do (
+  lt = leadTerm Q;
+  assert(lt == Plist#i);
+
+  Q = Q - lt;
+)
+assert(Q == 0);
+
 ///
