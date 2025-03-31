@@ -310,6 +310,10 @@ scan({
 		else if value operator@@"eq"(x, y) then symbol ==
 		else incomparable)),
 	(isMember,  value @@ (toFunction operator@@"contains") @@ swap),
+	(quotientRemainder, (x, y) -> (
+		qr := builtins@@"divmod"(x, y);
+		(qr_0, qr_1))),
+	(round, (x, y) -> builtins@@"round"(y, x)),
 	-- TODO: if #3229 implemented, then simplify these
 	(symbol and, (x, y) -> if not truthy x then x else y),
 	(symbol or,  (x, y) -> if truthy x then x else y),
@@ -363,16 +367,6 @@ PythonObject_Thing := toFunction operator@@"getitem"
 PythonObject_Thing = (x, i, e) -> (
     operator@@"setitem"(x, i, e);
     e)
-
-quotientRemainder(PythonObject, PythonObject) :=
-quotientRemainder(PythonObject, Thing)        :=
-quotientRemainder(Thing,        PythonObject) := (x, y) -> (
-    qr := builtins@@"divmod"(x, y);
-    (qr_0, qr_1))
-
-round(PythonObject, PythonObject) :=
-round(PythonObject, Number)       :=
-round(ZZ,           PythonObject) := (toFunction builtins@@"round") @@ swap
 
 -----------------
 -- math module --

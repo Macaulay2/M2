@@ -1531,8 +1531,9 @@ doc ///
 
 doc ///
   Key
-    (round, ZZ, PythonObject)
     (round, PythonObject, PythonObject)
+    (round, PythonObject, Thing)
+    (round, Thing, PythonObject)
     (round, PythonObject)
   Headline
     round a python object
@@ -1540,7 +1541,7 @@ doc ///
     round(n, x)
     round x
   Inputs
-    n:ZZ
+    n:PythonObject
     x:PythonObject
   Outputs
     :PythonObject
