@@ -4,7 +4,7 @@ basisList := (i,n) -> (
     M := mutableMatrix(ZZ, 1, n); -- of zeros.
     M_(0,i) = 1;
     (entries M)_0
-);
+)
 
 -- Differential Variable
 -- for Weyl-algebra D and index i get dx_i in D

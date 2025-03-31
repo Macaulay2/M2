@@ -209,13 +209,11 @@ Outputs
 Description
   Text
     This method computes the gauge transform of a system of connection matrices for a given invertible matrix that encodes a change of basis.
-
   Example
     D = makeWeylAlgebra(QQ[x,y]);
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
     A = connectionMatrices I;
-    F = baseFractionField D;
-    M = matrix(F, {{x,0}, {0,y}});
+    M = matrix {{x,0}, {0,y}};
     gaugeTransform(M, A, D)
   Text
     It is also possible to compute the gauge transform of a system of connection matrices containing parameters.

@@ -1,7 +1,7 @@
 ----------------------------------------------------
 -- gaugeMatrix computes change of basis matrix
 ----------------------------------------------------
-gaugeMatrix = method();
+gaugeMatrix = method()
 gaugeMatrix(Ideal, List) := (I, newStdMons) -> gaugeMatrix(flatten entries gens gb I, newStdMons)
 gaugeMatrix(List,  List) := (G, newStdMons) -> (
     -- G a Groebner basis for a D-ideal,
@@ -32,22 +32,22 @@ gaugeMatrix(List,  List) := (G, newStdMons) -> (
 -- some matrix differentiating tools
 ----------------------------------------------------
 
-diffWeyl=method();
-diffWeyl(RingElement,RingElement) :=(P,f)->(
+diffWeyl = method()
+diffWeyl(RingElement, RingElement) := (P, f) -> (
     DR := ring P;
     R := ring f;
     createDpairs DR;
     partials := ideal( DR.dpairVars_1);
     sub((P*sub(f,DR)) % partials,R)
-);
+)
 
 -- quotient differentiating formula
-diffRationalWeyl=method();
-diffRationalWeyl(RingElement,RingElement,RingElement) :=(P,f,g)->(
-    (h1,h2) :=(g*diffWeyl(P,f)-f*diffWeyl(P,g),g^2);
+diffRationalWeyl = method()
+diffRationalWeyl(RingElement, RingElement, RingElement) := (P, f, g) -> (
+    (h1, h2) := (g * diffWeyl(P, f) - f * diffWeyl(P, g), g^2);
     R := ring f;
-    sub(h1, R)/sub(h2,R)
-);
+    sub(h1, R) / sub(h2, R)
+)
 
 -- Convert entries of connection matrices to fractions
 convertEntry = method()
@@ -88,9 +88,9 @@ gaugeTransform(Matrix, List, PolynomialRing) := (M, A, D) -> (
 --epsilonFactorized: checks if the system is in epsilon-factorized form
 -----------------------------------------------------------------------
 
-isEpsilonFactorized = method();
+isEpsilonFactorized = method()
 -- checks factorization for a whole system of connection matrices
-isEpsilonFactorized(List,RingElement) := (P,e) -> (
+isEpsilonFactorized(List, RingElement) := (P,e) -> (
     e = e_(ring first P);
     if not same apply(P, ring) then error "expected matrices over the same ring";
      lst := new MutableList;
@@ -104,7 +104,7 @@ isEpsilonFactorized(List,RingElement) := (P,e) -> (
 )
 
 --checks factorization for single connection matrix
-isEpsilonFactorized(Matrix,RingElement) := (M,e) -> (
+isEpsilonFactorized(Matrix, RingElement) := (M,e) -> (
     e = e_(ring M);
     lstdeg := lstOfDegrees(M,e);
     if #lstdeg == 0 then return false;
@@ -113,7 +113,7 @@ isEpsilonFactorized(Matrix,RingElement) := (M,e) -> (
 
 
 -- extract list of degrees with vars set to 0
-lstOfDegrees = (M,e) -> (
+lstOfDegrees = (M, e) -> (
     R := ring M;
     -- Read off the "exponents" of e in R, to single it out from the generators
     d := if instance(R, FractionField)  then first exponents numerator e_R
