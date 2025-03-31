@@ -56,12 +56,13 @@ convertEntry RingElement := h -> (
     (numerator frach, denominator frach)
 )
 
---Differentiate matrix
-diffMatrixWeyl = method();
-diffMatrixWeyl(RingElement, Matrix) :=(P, M)->(
-    lrows := entries M;
-    matrix apply(lrows, a-> apply(a, b-> diffRationalWeyl(toSequence({P}| toList convertEntry(b)))))
-);
+-- Differentiate matrix
+diffMatrixWeyl = method()
+diffMatrixWeyl(RingElement, Matrix) := (P, M) -> (
+    matrix apply(entries M,
+	row -> apply(row,
+	    h -> diffRationalWeyl splice(P, convertEntry h)))
+)
 
 ----------------------------------------------------
 --gaugeTransform: implements gauge transform formula
