@@ -27,7 +27,7 @@ scan(core "augmentedAssignmentOperators", op -> (
 	document {
 	    Key => op,
 	    Headline => "augmented assignment for " | binop,
-	    Usage => "x " | toString op | "y",
+	    Usage => "x " | toString op | " y",
 	    "In most cases, ", SAMP ("x " | toString op | " y"),
 	    " is equivalent to ", SAMP("x = x " | binop | " y"),
 	    ", unless a method is installed for the class of ",

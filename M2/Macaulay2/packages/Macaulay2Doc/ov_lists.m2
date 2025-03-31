@@ -852,7 +852,7 @@ document {
 	  (symbol |, Array, Array),
 	  (symbol |, Sequence, Sequence)},
      Headline => "join lists, sequences or arrays",
-     Usage => "v|w",
+     Usage => "v | w",
      Inputs => {"v" => Nothing =>  {ofClass List, ", ",
 	       ofClass Array, ", or ",
 	       ofClass Sequence},
