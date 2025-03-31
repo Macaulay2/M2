@@ -311,6 +311,7 @@ scan({
 		else if value operator@@"eq"(x, y) then symbol ==
 		else incomparable)),
 	(isMember,  value @@ (toFunction operator@@"contains") @@ swap),
+	(delete,    (x, y) -> (operator@@"delitem"(x, y);)),
 	(quotientRemainder, (x, y) -> (
 		qr := builtins@@"divmod"(x, y);
 		(qr_0, qr_1))),
@@ -770,6 +771,11 @@ assert Equation(floor(-e), -3)
 -- mail.ceil
 assert Equation(ceiling e, 3)
 assert Equation(ceiling(-e), -2)
+
+-- del
+x = toPython hashTable {"foo" => "bar"}
+delete(x, "foo")
+assert Equation(x, hashTable {})
 
 -- help
 x = help (import "math")@@cos
