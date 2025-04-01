@@ -191,10 +191,15 @@ import String := pythonImportImportModule
 -- import modules we'll use
 ast      = import "ast"
 builtins = import "builtins"
+abc      = import "collections.abc"
 math     = import "math"
 numbers  = import "numbers"
 operator = import "operator"
 sys      = import "sys"
+
+-------------------------------------
+-- Python -> M2 conversion methods --
+-------------------------------------
 
 toFunction = method()
 toFunction PythonObject := x -> y -> (
@@ -210,42 +215,66 @@ toFunction PythonObject := x -> y -> (
     if debugLevel > 0 then printerr("output: ", toString r);
     r)
 
-addPyToM2Function = method()
-addPyToM2Function(String, Function, String) := (type, f, desc) ->
-    addPyToM2Function({type}, f, desc)
-addPyToM2Function(List, Function, String) := (types, f, desc) ->
-    addHook((value, PythonObject),
-	x -> if isMember(typename x, types) then f x,
-	Strategy => desc)
 isinstance = value @@ (toFunction builtins@@"isinstance")
-addPyToM2Function(PythonObject, Function, String) := (type, f, desc) -> (
+checktype = method()
+checktype(PythonObject, String)       := (x, type) -> typename x == type
+checktype(PythonObject, PythonObject) := isinstance
+
+-- remove hooks when reloading package
+importFrom(Core, "Hooks")
+remove(PythonObject, Hooks)
+
+addPyToM2Function = method()
+addPyToM2Function(String,       Function, String) :=
+addPyToM2Function(PythonObject, Function, String) := (type, f, desc) ->
+    addPyToM2Function({type}, f, desc)
+addPyToM2Function(List, Function, String) := (types, f, desc) -> (
     addHook((value, PythonObject),
-	x -> if isinstance(x, type) then f x,
+	x -> if any(types, type -> checktype(x, type)) then f x,
 	Strategy => desc))
 
 addHook((value, PythonObject),
     x -> if toString (objectType x)@@"__name__"  != "NoneType" then x,
     Strategy => "unknown -> PythonObject")
 
-addPyToM2Function({"function", "builtin_function_or_method", "method-wrapper"},
-    toFunction, "function -> FunctionClosure")
-
+addPyToM2Function(
+    abc@@"Callable",
+    toFunction,
+    "collections.abc.Callable -> FunctionClosure")
 dictToHashTable = x -> hashTable for key in x list value key => value x_key
-addPyToM2Function("Counter", x -> new Tally from dictToHashTable x,
-    "Counter -> Tally")
-addPyToM2Function({"dict", "defaultdict"}, dictToHashTable, "dict -> HashTable")
+addPyToM2Function(
+    abc@@"Mapping",
+    dictToHashTable,
+    "collections.abc.Mapping -> HashTable")
 pyListToM2List = x -> for y in x list value y
-addPyToM2Function({"set", "frozenset"}, set @@ pyListToM2List, "set -> Set")
-addPyToM2Function("list", pyListToM2List, "list -> List")
-addPyToM2Function({"tuple", "range"}, toSequence @@ pyListToM2List,
-    "tuple -> Sequence")
-addPyToM2Function("str", toString, "str -> String")
-
-addPyToM2Function(numbers@@"Complex",
+addPyToM2Function(
+    abc@@"Set",
+    set @@ pyListToM2List,
+    "collections.abc.Set -> Set")
+addPyToM2Function(
+    abc@@"Sequence",
+    toSequence @@ pyListToM2List,
+    "collections.abc.Sequence -> Sequence")
+addPyToM2Function(
+    abc@@"MutableSequence",
+    pyListToM2List,
+    "collections.abc.MutableSequence -> List")
+addPyToM2Function(
+    "str",
+    toString,
+    "str -> String")
+addPyToM2Function(
+    numbers@@"Complex",
     x -> toCC(pythonFloatAsDouble x@@"real", pythonFloatAsDouble x@@"imag"),
-    "complex -> CC")
-addPyToM2Function(numbers@@"Real", pythonFloatAsDouble, "float -> RR")
-addPyToM2Function(numbers@@"Integral", pythonLongAsLong, "int -> ZZ")
+    "numbers.Complex -> CC")
+addPyToM2Function(
+    numbers@@"Real",
+    pythonFloatAsDouble,
+    "numbers.Real -> RR")
+addPyToM2Function(
+    numbers@@"Integral",
+    pythonLongAsLong,
+    "numbers.Integral -> ZZ")
 addPyToM2Function(
     {"bool", "bool_"},
     x -> toString x == "True",
