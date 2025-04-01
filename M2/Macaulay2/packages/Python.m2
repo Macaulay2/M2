@@ -121,9 +121,14 @@ export {
     "toPython",
 }
 
-pythonInitialize (
-    (options currentPackage).Configuration#"executable" ??
+executable = ((options currentPackage).Configuration#"executable" ??
     get "!command -v python3 | tr -d '\n'")
+
+-- raise an error if we try initializing with a new Python executable
+-- store the information in ZZ since it will persist when reloading
+if ZZ#?"Python executable" and ZZ#"Python executable" != executable
+then error "can't reload package with a new python executable; restart first"
+pythonInitialize(ZZ#"Python executable" = executable)
 
 pythonHelp = Command (() -> pythonValue ///help()///)
 
@@ -166,13 +171,20 @@ PythonObject @@? Thing := (x, y) -> pythonObjectHasAttrString(x, toString y)
 PythonObject @@  Thing  = (x, y, e) -> (
     pythonObjectSetAttrString(x, toString y, toPython e))
 
+------------
+-- import --
+------------
+
+import = method()
+import String := pythonImportImportModule
+
 -- import modules we'll use
-ast      = pythonImportImportModule "ast"
-builtins = pythonImportImportModule "builtins"
-math     = pythonImportImportModule "math"
-numbers  = pythonImportImportModule "numbers"
-operator = pythonImportImportModule "operator"
-sys      = pythonImportImportModule "sys"
+ast      = import "ast"
+builtins = import "builtins"
+math     = import "math"
+numbers  = import "numbers"
+operator = import "operator"
+sys      = import "sys"
 
 toFunction = method()
 toFunction PythonObject := x -> y -> (
@@ -442,30 +454,6 @@ toPython Function := f -> (
 	    then m2args = m2args#0;
 	    toPython f m2args)))
 
-------------
--- import --
-------------
-
--- hacky workaround for https://github.com/numpy/numpy/issues/8097
--- we store the following in ZZ#"safe to import numpy" (since ZZ will persist
--- after reloading the package):
--- * true:  numpy hasn't been imported yet
--- * false: numpy has been imported
--- if we restart the package when it's false, then print a warning
--- TODO: raise an error instead of crashing (maybe sys.meta_path?)
-
-if not ZZ#?"safe to import numpy" then ZZ#"safe to import numpy" = true
-if not ZZ#"safe to import numpy" then printerr(
-    "warning: Python was re-initialized after numpy was imported" ||
-    "M2 will crash if numpy is imported again" ||
-    "restart M2 to fix this issue")
-
-import = method()
-import String := m -> (
-    r := pythonImportImportModule m;
-    if isMember("numpy", sys@@"modules") then ZZ#"safe to import numpy" = false;
-    r)
-
 --------------------------
 -- virtual environments --
 --------------------------
@@ -487,8 +475,6 @@ pipInstall String := pkg -> (
 -------------------
 
 installNumPyMethods = () -> (
-    if not ZZ#"safe to import numpy"
-    then error "importing numpy would crash M2; restart first";
     np := import "numpy";
     toPython Matrix        :=
     toPython Vector        :=

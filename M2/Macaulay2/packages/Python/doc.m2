@@ -50,6 +50,8 @@ doc ///
       which includes a dedicated Python interpreter and an isolated
       package installation directory.
     CannedExample
+      i1 : needsPackage "Python";
+
       i2 : dir = temporaryFileName()
 
       o2 = /tmp/M2-2158442-1/0
@@ -58,18 +60,23 @@ doc ///
     Text
       @HEADER2 "Step 2: Reload the Python Package with the Virtual Environment"@
 
+      Next we restart Macaulay2 so we can initialize the Python binary in
+      the new virtual environment.
+    Example
+      i4 : restart
+    Text
       To ensure that the Python interface uses the newly created
-      virtual environment, we reload the Python package while
+      virtual environment, we load the Python package while
       specifying the virtual environment’s Python interpreter. This is
       done by setting the "executable" configuration option to point
       to the @CODE "python3"@ binary inside our virtual environment.
     CannedExample
-      i4 : loadPackage("Python", Reload => true,
-               Configuration => {"executable" => dir | "/bin/python3"})
+      i1 : loadPackage("Python", Configuration => {
+               "executable" => "/tmp/M2-2158442-1/0/bin/python3"})
 
-      o4 = Python
+      o1 = Python
 
-      o4 : Package
+      o1 : Package
     Text
       At this point, all Python commands will use the virtual
       environment's interpreter rather than the system-wide Python
@@ -80,7 +87,7 @@ doc ///
       Next, we install the NumPy module using @TO pipInstall@. This
       downloads and installs NumPy into the virtual environment.
     CannedExample
-      i5 : pipInstall "numpy"
+      i2 : pipInstall "numpy"
       Collecting numpy
         Downloading numpy-2.2.4-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (62 kB)
            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 62.0/62.0 kB 2.5 MB/s eta 0:00:00
@@ -98,21 +105,21 @@ doc ///
       Now that NumPy is installed, we can import it and perform
       numerical computations.
     CannedExample
-      i6 : np = import "numpy"
+      i3 : np = import "numpy"
 
-      o6 = <module 'numpy' from '/tmp/M2-2158442-1/0/lib/python3.12/site-packages/
+      o3 = <module 'numpy' from '/tmp/M2-2158442-1/0/lib/python3.12/site-packages/
            numpy/__init__.py'>
 
-      o6 : PythonObject of class module
+      o3 : PythonObject of class module
     Text
       To verify that NumPy is working correctly, we perform matrix multiplication using NumPy arrays:
     CannedExample
-      i7 : np@@array {{1, 2}, {3, 4}} @ np@@array {{5, 6}, {7, 8}}
+      i4 : np@@array {{1, 2}, {3, 4}} @ np@@array {{5, 6}, {7, 8}}
 
-      o7 = [[19 22]
+      o4 = [[19 22]
             [43 50]]
 
-      o7 : PythonObject of class numpy.ndarray
+      o4 : PythonObject of class numpy.ndarray
 ///
 
 doc ///

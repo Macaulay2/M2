@@ -39,10 +39,7 @@ import Initialize(exec:charstar):PyStatus;
 PyInitialize(e:Expr):Expr := (
     when e
     is s:stringCell do (
-	if Ccode(int, "Py_IsInitialized()") != 0
-	then (
-	    if Ccode(int, "Py_FinalizeEx()") == -1
-	    then return buildErrorPacket("failed to finalize Python"));
+	if Ccode(int, "Py_IsInitialized()") != 0 then return nullE;
 	status := Initialize(tocharstar(expandFileName(s.v)));
 	if Ccode(int, "PyStatus_Exception(", status, ")") != 0
 	then buildErrorPacket(tostring(Ccode(constcharstar, status,".err_msg")))
