@@ -13,43 +13,76 @@
 --
 -------------------------------------------------------
 
-TEST /// -- ALS notes, Example 7.16
+TEST /// -- ALS notes, Example 7.16 (1)
 
   D = makeWeylAlgebra(QQ[x,y], w = {1,2});
   I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
-  assert(holonomicRank I == 2);
+  assert(holonomicRank(w, comodule I) == 2);
+
+  -- Check entries of G are sorted smallest to largest
+  G = flatten entries gens gb I;
+  assert(G == {y*dy+x*dx+1, x^2*dx^2-x*y*dx^2+3*x*dx-y*dx+1, x*dx*dy+x*dx^2+dy+dx });
 
   R = baseFractionField D
   A = connectionMatrices I;
   assert(A_0 == map(R^2, R^2, {{0, 1}, {(-1)/(x^2-x*y), (-3*x+y)/(x^2-x*y)}}))
   assert(A_1 == map(R^2, R^2, {{(-1)/y, (-x)/y}, {1/(x*y-y^2), (x+y)/(x*y-y^2)}}))
 
-  -- i2 : D = makeWeylAlgebra(QQ[x,y], w = {2,1});
-  -- i3 : A = connectionMatrices(ideal (x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1))
-  -- Grobner basis:
-  -- | xdx+ydy+1 ydxdy+ydy^2+dx+dy xydy^2-y2dy^2+xdy-3ydy-1 |
-  -- Standard monomials:
-  -- | 1 dy |
-  -- o3 = {{-1} | (-1)/x       (-y)/x         |, {-1} | 0         1               |}
-  --       {-1} | (-1)/(x2-xy) (-x-y)/(x2-xy) |  {-1} | 1/(xy-y2) (-x+3y)/(xy-y2) |
+  use D;
+  SM = standardMonomials I;
+  assert(SM == {1, dx});
 
-  -- i4 : D = makeWeylAlgebra(QQ[x,y], w = {1,1});
-  -- i5 : A = connectionMatrices(w, I = ideal (x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1))
-  -- Grobner basis:
-  -- | xdx+ydy+1 ydxdy+ydy^2+dx+dy xydy^2-y2dy^2+xdy-3ydy-1 |
-  -- Standard monomials:
-  -- | 1 dy |
-  -- o5 = {{-1} | (-1)/x       (-y)/x         |, {-1} | 0         1               |}
-  --       {-1} | (-1)/(x2-xy) (-x-y)/(x2-xy) |  {-1} | 1/(xy-y2) (-x+3y)/(xy-y2) |
-
-  -- i6 : D = makeWeylAlgebra(QQ[x,y], w = {1,2});
-  -- i7 : A = connectionMatrices(w, I = ideal (x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1))
   -- Grobner basis:
   -- | ydy+xdx+1 xdxdy+xdx^2+dy+dx x2dx^2-xydx^2+3xdx-ydx+1 |
-  -- Standard monomials:
-  -- | 1 dx |
-  -- o7 = {{-1} | 0            1               |, {-1} | (-1)/y    (-x)/y        |}
-  --       {-1} | (-1)/(x2-xy) (-3x+y)/(x2-xy) |  {-1} | 1/(xy-y2) (x+y)/(xy-y2) |
+
+///
+
+TEST /// -- ALS notes, Example 7.16 (2)
+
+  D = makeWeylAlgebra(QQ[x,y], w = {2,1});
+  I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
+  assert(holonomicRank(w, comodule I) == 2);
+
+  R = baseFractionField D;
+  A = connectionMatrices I;
+  G = flatten entries gens gb I;
+
+  SM = standardMonomials I;
+  assert(SM == {1, dy});
+
+  -- Check entries of GB, make sure G is sorted smallest to largest.
+  use D;
+
+  assert(G == {x*y*dy^2-y^2*dy^2+x*dy-3*y*dy-1, x*dx+y*dy+1, y*dx*dy+y*dy^2+dx+dy });
+
+  -- Check entries of connection matrices
+  use R;
+  assert(A_0 == map(R^2, R^2, {{-1/x, -y/x}, {-1/(x^2-x*y), (-x-y)/(x^2-x*y)}}));
+  assert(A_1 == map(R^2, R^2, {{0, 1}, {1/(x*y-y^2), (-x+3*y)/(x*y-y^2)}}));
+///
+
+
+TEST /// -- ALS notes, Example 7.16 (3)
+  D = makeWeylAlgebra(QQ[x,y], w = {1,1});
+  I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
+  assert(holonomicRank(w, comodule I) == 2);
+
+  R = baseFractionField D;
+  A = connectionMatrices I;
+  G = flatten entries gens gb I;
+
+  SM = standardMonomials I;
+  assert(SM == {1, dy});
+
+  -- Check entries of GB, make sure G is sorted smallest to largest.
+  use D;
+
+  assert(G == {x*dx+y*dy+1, x*y*dy^2-y^2*dy^2+x*dy-3*y*dy-1, y*dx*dy+y*dy^2+dx+dy });
+
+  -- Check entries of connection matrices
+  use R;
+  assert(A_0 == map(R^2, R^2, {{-1/x, -y/x}, {-1/(x^2-x*y), (-x-y)/(x^2-x*y)}}));
+  assert(A_1 == map(R^2, R^2, {{0, 1}, {1/(x*y-y^2), (-x+3*y)/(x*y-y^2)}}));
 ///
 
 
