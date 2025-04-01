@@ -15,6 +15,7 @@ newPackage("Python",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
     Configuration => {"executable" => null},
     Keywords => {"Interfaces"},
+    PackageImports => {"Text"},
     AuxiliaryFiles => true,
     OptionalComponentsPresent => Core#"private dictionary"#?"pythonTrue"
     )
@@ -141,11 +142,13 @@ describe PythonObject := x -> Describe FunctionApplication(pythonValue,
     expression x@@"__repr__"())
 toExternalString PythonObject := toExternalFormat @@ describe
 
+typename = x -> (
+    T := objectType x;
+    m := toString T@@"__module__";
+    (if m == "builtins" then "" else (m | ".")) | toString T@@"__qualname__")
+
 PythonObject.synonym = "python object"
-PythonObject#AfterPrint = x -> (
-     t := toString objectType x;
-     t = replace("<([a-z]+) '(.*)'>"," of \\1 \\2",t);
-     (PythonObject, t))
+PythonObject#AfterPrint = x -> (PythonObject, " of class ", typename x)
 
 pythonValue = method(
     Dispatch => Thing,
@@ -205,7 +208,7 @@ addPyToM2Function(String, Function, String) := (type, f, desc) ->
     addPyToM2Function({type}, f, desc)
 addPyToM2Function(List, Function, String) := (types, f, desc) ->
     addHook((value, PythonObject),
-	x -> if isMember(toString (objectType x)@@"__name__", types) then f x,
+	x -> if isMember(typename x, types) then f x,
 	Strategy => desc)
 isinstance = value @@ (toFunction builtins@@"isinstance")
 addPyToM2Function(PythonObject, Function, String) := (type, f, desc) -> (
@@ -418,6 +421,22 @@ new PythonContext from String := (T, s) -> (
     T {symbol Dictionary => dict})
 
 PythonContext String := (ctx, s) -> stmtexpr(s, ctx.Dictionary)
+PythonContext_String := (ctx, key) -> ctx.Dictionary_key
+
+importFrom(Core, "Abbreviate")
+listSymbols PythonObject := x -> (
+    if not isinstance(x, builtins@@"dict")
+    then error "expected a dictionary"
+    else TABLE prepend(
+	apply({"symbol", "class", "value"}, s -> TH {s}),
+	apply(toList x,
+	    symb -> (
+		val := x_symb;
+		apply({
+			symb,
+			typename val,
+			Abbreviate {val}}, s-> TD {s})))))
+listSymbols PythonContext := ctx -> listSymbols ctx.Dictionary
 
 -------------------------------------
 -- M2 -> Python conversion methods --
