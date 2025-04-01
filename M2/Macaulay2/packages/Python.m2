@@ -413,6 +413,7 @@ PythonContext String := (ctx, s) -> stmtexpr(s, ctx.Dictionary)
 
 toPython = method(Dispatch => Thing)
 toPython RR := pythonFloatFromDouble
+toPython RRi := pythonFloatFromDouble @@ midpoint
 toPython CC := x -> pythonComplexFromDoubles(realPart x, imaginaryPart x)
 toPython ZZ := pythonLongFromLong
 toPython Number := toPython @@ numeric
