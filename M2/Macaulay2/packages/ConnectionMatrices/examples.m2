@@ -1,9 +1,9 @@
 doc ///
 Key
-    "example from cosmology"
+    "Cosmological correlator for the 2-site chain"
 Description
   Text
-    The following $D$-ideal corresponds to the $D$-ideal behind the cosmological correlator of the two-site chain as in Equation (11) in [FPSW].
+    Differential equations for correlation functions in cosmology are studied in [ABHJLP]. Therein, a basis of master integrals is constructed from the underlying hyperplane arrangement via canonical forms in the setup of positive geometries, and results in a matrix differential equation for the cosmological correlator that is in $\varepsilon$-factorized form. For the $2$-site chain (mathematically, the path graph on $2$ vertices), the underlying $D$-ideal was investigated in [FPSW]. We here revisit this $D$-ideal, $I=\langle \nabla_1+\nalba_3,\nabla_2+\nabla_3,H\rangle (see Equation (11) in [FPSW]), and carry out the gauge transformation to write the connection matrices in $\varepsilon$-factorized form. This form is especially useful, as it allows for the construction of formal power series solutions in the variable $\varepsilon$ of such systems via the ``path-ordered exponential formalism.’’
   Example
     w = {1,1,1};
     D = makeWeylAlgebra(frac(QQ[ϵ])[x,y,z], w);
@@ -53,18 +53,18 @@ Description
 References
   [@HREF("https://arxiv.org/pdf/2410.14757","FPSW")@]  C. Fevola, G. L. Pimentel, A.-L. Sattelberger, and T. Westerdijk. Algebraic Approaches to Cosmological Integrals. Preprint arXiv:2410.14757. To appear in {\em Le Matematiche}.
 
-  [@HREF("https://arxiv.org/pdf/2312.05303", "AHBHJLP")@]   N. Arkani-Hamed, D. Baumann, A. Hillman, A. Joyce, H. Lee, and G. L. Pimentel. Differential Equations for Cosmological Correlators. Preprint arXiv:2312.05303.
+  [@HREF("https://arxiv.org/pdf/2312.05303", "ABHJLP")@]   N. Arkani-Hamed, D. Baumann, A. Hillman, A. Joyce, H. Lee, and G. L. Pimentel. Differential Equations for Cosmological Correlators. Preprint arXiv:2312.05303.
 SeeAlso
-  "example from particle physics"
-  "example from GKZ systems"
+  "Massless one-loop triangle Feynman diagram"
+  "Gauss' hypergeometric function"
 ///
 
 doc///
 Key
-    "example from particle physics"
+    "Massless one-loop triangle Feynman diagram"
 Description
   Text
-    Consider the annihilating $D$-ideal of a massless one-loop triangle Feynman integral, appearing in Equation (5.14) in [HPSZ].
+    Consider the annihilating $D$-ideal of a massless one-loop triangle Feynman integral, appearing in Equation (5.14) in [HPSZ]. In what follows, we write this system of PDEs in connection form.
   Example
     D = makeWeylAlgebra(QQ[x,y],{1,1});
     Q1 = x^2*dx^2+2*x*y*dx*dy+(y-1)*y*dy^2+3*x*dx+(3*y-1)*dy+1;
@@ -84,13 +84,13 @@ Description
 References
   [@HREF("https://link.springer.com/article/10.1007/s11005-024-01835-7","HPSZ")@] J. Henn, E. Pratt, A.-L. Sattelberger, and S. Zoia. $D$-Module Techniques for Solving Differential Equations behind Feynman Integrals. {\em Letters in Mathematical Physics}, 114(28), 2024.
 SeeAlso
-  "example from cosmology"
-  "example from GKZ systems"
+  "Cosmological correlator for the 2-site chain"
+  "Gauss' hypergeometric function"
 ///
 
 doc ///
 Key
-    "example from GKZ systems"
+    "Gauss' hypergeometric function"
 Description
   Text
       Consider the GKZ system representing the Gauss hypergeometric function
@@ -125,6 +125,6 @@ Description
 References
   [@HREF("https://link.springer.com/book/10.1007/978-3-662-04112-3","SST")@] M. Saito, B. Sturmfels, and N. Takayama. {\em Gröbner Deformations of Hypergeometric Differential Equations}. Volume 6 of {\em Algorithms and Computation in Mathematics}. Springer, 2000.
 SeeAlso
-  "example from cosmology"
-  "example from particle physics"
+  "Cosmological correlator for the 2-site chain"
+  "Massless one-loop triangle Feynman diagram"
 ///

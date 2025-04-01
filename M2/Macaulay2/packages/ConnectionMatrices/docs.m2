@@ -29,13 +29,12 @@ Node
       :Testing integrability of a list of matrices
         isIntegrable
       :Examples
-        "example from cosmology"
-        "example from particle physics"
-        "example from GKZ systems"
+        "Cosmological correlator for the 2-site chain"
+        "Massless one-loop triangle Feynman diagram"
+        "Gauss' hypergeometric function"
   References
-    Most algorithms in this package can be found in the book
-    {\em Gröbner Deformations of Hypergeometric Differential Equations} by M. Saito, B. Sturmfels, and N. Takayama (published by Springer, 2000),
-    cited here as [@HREF("https://link.springer.com/book/10.1007/978-3-662-04112-3","SST")@].
+    The main reference for our algorithms is the book [@HREF("https://link.springer.com/book/10.1007/978-3-662-04112-3","SST")@] M. Saito, B. Sturmfels, and N. Takayama
+    {\em Gröbner Deformations of Hypergeometric Differential Equations}, volume 6 of {\em Algorithms and Computation in Mathematics.} Springer, 2000.
   SeeAlso
     "Dmodules :: Dmodules"
     "HolonomicSystems :: HolonomicSystems"
@@ -49,9 +48,9 @@ Node
     gaugeTransform
     isEpsilonFactorized
     isIntegrable
-    "example from cosmology"
-    "example from particle physics"
-    "example from GKZ systems"
+    "Cosmological correlator for the 2-site chain"
+    "Massless one-loop triangle Feynman diagram"
+    "Gauss' hypergeometric function"
 ///
 
 doc ///
@@ -150,7 +149,7 @@ Description
 SeeAlso
   standardMonomials
   gaugeTransform
-  "example from cosmology"
+  "Cosmological correlator for the 2-site chain"
 ///
 
 doc ///
@@ -219,7 +218,7 @@ Description
     It is also possible to compute the gauge transform of a system of connection matrices containing parameters.
 SeeAlso
   gaugeMatrix
-  "example from cosmology"
+  "Cosmological correlator for the 2-site chain"
 ///
 
 doc ///
