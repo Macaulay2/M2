@@ -3,7 +3,17 @@ Key
     "Cosmological correlator for the 2-site chain"
 Description
   Text
-    Differential equations for correlation functions in cosmology are studied in [ABHJLP]. Therein, a basis of master integrals is constructed from the underlying hyperplane arrangement via canonical forms in the setup of positive geometries, and results in a matrix differential equation for the cosmological correlator that is in $\varepsilon$-factorized form. For the $2$-site chain (mathematically, the path graph on $2$ vertices), the underlying $D$-ideal was investigated in [FPSW]. We here revisit this $D$-ideal, $I=\langle \nabla_1+\nalba_3,\nabla_2+\nabla_3,H\rangle (see Equation (11) in [FPSW]), and carry out the gauge transformation to write the connection matrices in $\varepsilon$-factorized form. This form is especially useful, as it allows for the construction of formal power series solutions in the variable $\varepsilon$ of such systems via the ``path-ordered exponential formalism.’’
+    Differential equations for correlation functions in cosmology are studied in [ABHJLP].
+    Therein, a basis of master integrals is constructed from the underlying hyperplane arrangement
+    via canonical forms in the setup of positive geometries, which results in a matrix differential
+    equation for the cosmological correlator that is in $\varepsilon$-factorized form.
+    For the $2$-site chain (mathematically, the path graph on $2$ vertices), the underlying
+    $D$-ideal was investigated in [FPSW].
+
+    Here we revisit the $D$-ideal $I = \langle \nabla_1+\nabla_3,\nabla_2+\nabla_3,H\rangle$ (see Equation (11) in [FPSW]),
+    and carry out the gauge transformation to write the connection matrices in $\varepsilon$-factorized form.
+    This form is especially useful, as it allows for the construction of formal power series solutions
+    in the variable $\varepsilon$ of such systems via the ``path-ordered exponential formalism.’’
   Example
     w = {1,1,1};
     D = makeWeylAlgebra(frac(QQ[ϵ])[x,y,z], w);
