@@ -15,7 +15,9 @@ import ErrOccurred():int;
 buildPythonErrorPacket():Expr := (
     e := ErrOccurred();
     if e == 1 then (
-	if !SuppressErrors then Ccode(void, "PyErr_Print()");
+	if !SuppressErrors
+	then Ccode(void, "PyErr_Print()")
+	else Ccode(void, "PyErr_Clear()");
 	buildErrorPacket("python error"))
     else if e == -1 then StopIterationE
     else nullE);
