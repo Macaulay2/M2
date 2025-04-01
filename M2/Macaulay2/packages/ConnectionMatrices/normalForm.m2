@@ -12,8 +12,10 @@ WeightThenEliminationOrder = w -> join( { Weights => w },
 
 -- Weyl Algebra with monomial order given by the weighted lexicographic elimination order
 makeWeylAlgebra(PolynomialRing, List) := opts -> (R, v) -> (
-    n := length(gens R);
-    if length(v)==n then w := ((for i from 1 to #v list 0)|v) else if length(v)== 2*n then w = v else error "expected a weight of length n or 2n";
+    n := numgens R;
+    w := if #v == n   then toList(#v:0) | v
+    else if #v == 2*n then v
+    else error("expected a weight of length ", n, " or ", 2*n);
     coordVars := gens R;
     diffVars := apply(coordVars, i -> value("symbol d" | toString(i)) );
     allVars := join(coordVars, diffVars);
@@ -61,14 +63,12 @@ baseFractionField PolynomialRing := FractionField => D -> D.baseFractionField ??
 
 -- Infering the WeylAlgebra from the fraction field
 -- TODO: Make this more standard
+-- Warning: this may forget the weight order!
 inferWeylAlgebra = F -> (
-    if class F === FractionField then (
-        return try F#"OriginalWeylAlgebra" else makeWeylAlgebra(baseRing F)
-    );
-    if class F === PolynomialRing then (
-        return makeWeylAlgebra(F)
-    );
-    error "Can't infer Weyl algebra from ring that is neither a fraction field nor a polynomial ring."
+    if instance(F, FractionField)  then (
+	try F#"OriginalWeylAlgebra" else makeWeylAlgebra baseRing F) else
+    if instance(F, PolynomialRing) then makeWeylAlgebra F
+    else error "can't infer a Weyl algebra from ring that is neither a fraction field nor a polynomial ring."
 )
 
 -- Graded associative ring of the rational Weyl algebra

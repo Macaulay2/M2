@@ -119,7 +119,6 @@ TEST /// -- Example from Overleaf
 
   -- Now transform the system of connection matrices C1 into
   -- the system of connection matrices C2 via gauge transform
-  -- TODO: the degrees seem to differ, is this desirable or not?
   assert(C2 == C1'')
 ///
 
