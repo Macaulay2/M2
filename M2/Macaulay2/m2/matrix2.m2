@@ -24,7 +24,49 @@ smithNormalForm = method(
      	  KeepZeroes => true
 	  }
      )
-smithNormalForm Matrix := o -> (f) -> (
+smithNormalForm Matrix := o -> A -> (
+    (D',P,Q) := preSmithNormalForm(A,o);
+    D := mutableMatrix D';
+    -- get into a diagonal matrix
+    n := min(numRows D, numColumns D);
+    start'i := 0;
+    done := false;
+    P' := mutableMatrix map((ring D')^(numRows D'));
+    Q' := mutableMatrix map((ring D')^(numColumns D'));
+    while not done do (
+	pos'i := position(start'i..(n-2),j->D_(j+1,j+1)!=0 and D_(j+1,j+1) % D_(j,j) != 0);	
+	if pos'i === null then (
+	    if start'i > 0 then start'i = 0 else done = true
+	    ) else (
+	    i := pos'i + start'i;
+	    start'i = i + 1;
+	    a := D_(i,i);
+	    b := D_(i+1,i+1);
+	    (g,e,f) := gcdCoefficients(a,b);
+	    D_(i,i) = g;
+	    D_(i+1,i+1) = lcm(a,b);
+	    rowAdd(P',i+1,e,i);
+	    rowAdd(P',i,1-a//g,i+1);
+	    rowAdd(P',i+1,-1,i);
+	    rowAdd(Q',i,f,i+1);
+	    rowAdd(Q',i+1,(a//g-1)*b//g,i);
+    )
+	);-- end while 
+    P'' := matrix P';
+    Q'' := matrix Q';
+    if P =!= null then P = P'' * P;
+    if Q =!= null then Q = Q * transpose Q'';
+    unsequence nonnull (P'' * D' * transpose Q'', P, Q)
+)
+
+preSmithNormalForm = method(
+     Options => {
+	  ChangeMatrix => {true, true},		    -- target, source
+     	  KeepZeroes => true
+	  }
+     )
+preSmithNormalForm Matrix := o -> (f) -> (
+     pruneSyz := m -> generators gb(syz m, StopWithMinimalGenerators=>true, Syzygies=>false, ChangeMatrix=>false);
      if not isFreeModule source f or not isFreeModule target f then error "expected map between free modules";
      (tchg,schg,keepz) := (o.ChangeMatrix#0, o.ChangeMatrix#1,o.KeepZeroes);
      (tmat,smat) := (null,null);	-- null represents the identity, lazily
@@ -53,7 +95,7 @@ smithNormalForm Matrix := o -> (f) -> (
 	  if op then (
 	       if tchg then (
 	       	    chg := getChangeMatrix G;
-	       	    zer := syz G;
+	       	    zer := pruneSyz G;
 		    if keepz then (
 			 if tmat === null
 			 then (tmat,tzer) = (chg,zer)
@@ -65,7 +107,7 @@ smithNormalForm Matrix := o -> (f) -> (
 	  else (
 	       if schg then (
 	       	    chg = getChangeMatrix G;
-	       	    zer = syz G;
+	       	    zer = pruneSyz G;
 		    if keepz then (
 			 if smat === null
 			 then (smat, szer) = (chg, zer)
@@ -102,8 +144,9 @@ smithNormalForm Matrix := o -> (f) -> (
      D := map(R^(numgens target g),,g);			    -- this makes D homogeneous, if possible
      P := if tchg then map(target D,target f,lift(tchange,R));
      Q := if schg then map(source f, source D,lift(schange,R));
-     unsequence nonnull ( D, P, Q ))
+     ( D, P, Q ))
 
+ 
 complementOkay = method()     -- modeled after isAffineRing, but allows ZZ, too
 complementOkay Ring := R -> isField R or R === ZZ
 complementOkay PolynomialRing := R -> (
@@ -365,7 +408,10 @@ addHook((quotient, Matrix, Matrix), Strategy => "Reflexive", (opts, f, g) -> if 
      -- now M is a quotient module, without explicit generators
      f' := matrix f;
      g' := matrix g;
-     G := ( g.cache#"gb for quotient" ??= (
+     G := (
+	  if g.cache#?"gb for quotient"
+	  then g.cache#"gb for quotient"
+	  else g.cache#"gb for quotient" = (
 	       if M.?relations 
 	       then gb(g' | relations M, ChangeMatrix => true, SyzygyRows => rank source g')
 	       else gb(g',               ChangeMatrix => true)));
