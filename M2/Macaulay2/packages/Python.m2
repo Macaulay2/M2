@@ -120,6 +120,10 @@ export {
     "setupVirtualEnvironment",
     "toFunction",
     "toPython",
+
+    -- symbols
+    "KeepBuiltins",
+
 }
 
 executable = ((options currentPackage).Configuration#"executable" ??
@@ -155,16 +159,16 @@ pythonValue = method(
     Options => {Global => null})
 pythonValue String := o -> s -> (
     if debugLevel > 0 then printerr("python command: ", s);
-    pythonRunStringEval(s, toPython o.Global ?? pythonDictNew()))
+    pythonRunStringEval(s, toPython(o.Global ?? pythonDictNew())))
 pythonValue Sequence := o -> s -> pythonValue(concatenate \\ toString \ s, o)
 
 pythonRunScript = method(
     Dispatch => Thing,
-    Options => {Global => null})
+    Options => {Global => null, KeepBuiltins => false})
 pythonRunScript String := o -> s -> (
     if debugLevel > 0 then printerr("python command: ", s);
-    r := pythonRunStringFile(s, toPython o.Global ?? pythonDictNew());
-    r@@"pop" "__builtins__"; -- keep the output sane
+    r := pythonRunStringFile(s, toPython(o.Global ?? pythonDictNew()));
+    if not o.KeepBuiltins then delete(r, "__builtins__");
     r)
 pythonRunScript Sequence := o -> s -> pythonRunScript(
     concatenate \\ toString \ s, o)
