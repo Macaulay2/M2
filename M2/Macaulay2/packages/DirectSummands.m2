@@ -60,6 +60,7 @@ importFrom_Core {
     "raw", "rawReshape",
     "rawNumberOfColumns",
     "rawNumberOfRows",
+    "sortBy",
     }
 
 -----------------------------------------------------------------------------
@@ -139,13 +140,25 @@ checkRecursionDepth = () -> if recursionDepth() > recursionLimit - 20 then print
 
 module Module := identity
 
--- FIXME in the Core:
+-- give an isomorphism between two free modules with same degrees
+-- FIXME: because of https://github.com/Macaulay2/M2/issues/3719,
+-- this might not give the most "natural" isomorphism
+isisofree = o -> (M, N0) -> (
+    (d1, d2) := (degrees M, degrees N0);
+    if #d1 =!= #d2 then return (false, null);
+    if o.Strict then N := N0 else d2 = degrees(
+	N = N0 ** (ring N0)^(min d2 - min d1));
+    if sort d1 != sort d2 then return (false, null);
+    p1 := first \ (sortBy last) toList pairs d1;
+    p2 := first \ (sortBy last) toList pairs d2;
+    (true, map(M, N0, id_N^p2 // id_M^p1)))
+
+-- TODO: move to isIsomorphism
 isiso = lookup(isIsomorphic, Module, Module)
 isIsomorphic(Module, Module) := Sequence => o -> (M, N) -> (
-    -- TODO: in the free case, handle the Strict => false option, too
-    if isFreeModule M and isFreeModule N then (
-	if set degrees M == set degrees N then return ( true, null )); -- FIXME: give the map
-    (isiso o)(M, N))
+    if isFreeModule M and isFreeModule N
+    then (isisofree o)(M, N)
+    else (isiso o)(M, N))
 
 isIsomorphic' = method(Options => options isIsomorphic ++ { Tries => 10 })
 isIsomorphic'(Module, Module) := opts -> (M, N) -> (
