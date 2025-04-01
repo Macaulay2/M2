@@ -124,6 +124,9 @@ export {
     -- symbols
     "KeepBuiltins",
 
+    -- objects
+    -- TODO: anything else that would be good to export?
+    "builtins",
 }
 
 executable = ((options currentPackage).Configuration#"executable" ??
@@ -518,7 +521,6 @@ TEST ///
 -----------
 -- value --
 -----------
-builtins = import "builtins"
 checkInM2 = x -> assert BinaryOperation(symbol ===, value toPython x, x)
 checkInM2 true
 checkInM2 5
