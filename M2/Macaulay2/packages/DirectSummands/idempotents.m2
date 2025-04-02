@@ -41,7 +41,7 @@ findIdem' Module      := opts ->  M     -> findIdem'(M, fieldExponent ring M,opt
 findIdem'(Module,ZZ) := opts -> (M,e) -> (
     R := ring M;
     p := char R;
-    F := ultimate(coefficientRing, R);
+    F := groundField R;
     K := quotient ideal gens R;
     l := if p == 0 then e else max(e, ceiling log_p numgens M);
     L := infinity;
@@ -68,17 +68,14 @@ findIdem'(Module,ZZ) := opts -> (M,e) -> (
 
 ---------------------
 
--- TODO: this needs improvement to work over RR, QQ, GF, FractionField, etc.
 -- e.g. given a tower such as K[x][y]/I, returns K
-baseField = method()
-baseField GaloisField := identity
-baseField FractionField := identity -- FIXME: does this always work?
-baseField QuotientRing := R -> try baseField coefficientRing R else R
-baseField Ring := R -> try ( coefficientRing first flattenRing R ) else R
+-- TODO: use in localRandom?
+groundField = method()
+groundField Ring := R -> ultimate(K -> if isField K then K else coefficientRing K, R)
 
 -- e.g. given a field isomorphic to GF(p,e), returns e
 fieldExponent = R -> (
-    L := baseField R;
+    L := groundField R;
     (p, e) := (char L, 1);
     if p == 0 then return e;
     a := L_0; -- primitive element of L
@@ -89,7 +86,7 @@ fieldExponent = R -> (
 char Matrix := A -> (
     if numRows A != numColumns A then error "expected a square matrix";
     b := symbol b;
-    T := (baseField ring A)(monoid[b]);
+    T := (groundField ring A)(monoid[b]);
     B := sub(cover A, T);
     I := id_(source B);
     det(B - T_0 * I))
@@ -108,8 +105,6 @@ largePower' = (p,l,M) -> (
     N := M;
     (largePower(p,l-1,M))^(p-1) * largePower'(p,l-1,M))
 
-coefficientRing' = K -> if isField K then K else coefficientRing K
-
 lift(CC, CC_*) := opts -> (r, C) -> numeric(precision C, r)
 
 -- adjust as needed LOL
@@ -121,7 +116,7 @@ findIdempotent Module      := opts ->  M     -> findIdempotent(M, fieldExponent 
 findIdempotent(Module, ZZ) := opts -> (M, e) -> (
     R := ring M;
     p := char R;
-    F := ultimate(coefficientRing', R);
+    F := groundField R;
     K := quotient ideal gens R;
     V := K ** M;
     l := if p == 0 then e else max(e, ceiling log_p numgens M);
