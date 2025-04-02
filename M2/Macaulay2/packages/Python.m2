@@ -235,7 +235,7 @@ addPyToM2Function(List, Function, String) := (types, f, desc) -> (
 	Strategy => desc))
 
 addHook((value, PythonObject),
-    x -> if toString (objectType x)@@"__name__"  != "NoneType" then x,
+    x -> ??x,
     Strategy => "unknown -> PythonObject")
 
 addPyToM2Function(
