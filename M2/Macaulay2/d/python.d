@@ -187,6 +187,13 @@ setupconst("pythonTrue",
     Expr(pythonObjectCell(Ccode(pythonObject, "Py_True"), hash_t(1))));
 setupconst("pythonFalse",
     Expr(pythonObjectCell(Ccode(pythonObject, "Py_False"), hash_t(0))));
+PyObjectIsTrue(e:Expr):Expr := (
+    when e
+    is x:pythonObjectCell do (
+	r := Ccode(int, "PyObject_IsTrue(", x.v, ")");
+	toExpr(r == 1))
+    else WrongArgPythonObject());
+setupfun("pythonObjectIsTrue", PyObjectIsTrue);
 
 ----------
 -- ints --

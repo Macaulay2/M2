@@ -92,6 +92,7 @@ importFrom_Core {
     "pythonObjectCall",
     "pythonObjectGetAttrString",
     "pythonObjectHasAttrString",
+    "pythonObjectIsTrue",
     "pythonObjectSetAttrString",
     "pythonObjectStr",
     "pythonRunStringEval",
@@ -215,7 +216,7 @@ toFunction PythonObject := x -> y -> (
     if debugLevel > 0 then printerr("output: ", toString r);
     r)
 
-isinstance = value @@ (toFunction builtins@@"isinstance")
+isinstance = pythonObjectIsTrue @@ (toFunction builtins@@"isinstance")
 checktype = method()
 checktype(PythonObject, String)       := (x, type) -> typename x == type
 checktype(PythonObject, PythonObject) := isinstance
@@ -276,13 +277,13 @@ addPyToM2Function(
     pythonLongAsLong,
     "numbers.Integral -> ZZ")
 addPyToM2Function(
-    {"bool", "bool_"},
-    x -> toString x == "True",
+    {builtins@@"bool", "numpy.bool_"},
+    pythonObjectIsTrue,
     "bool -> Boolean")
 value PythonObject := x -> runHooks((value, PythonObject), x)
 
 -- binary operators
-truthy = value @@ (toFunction operator@@"truth")
+truthy = x -> pythonObjectIsTrue toPython x
 importFrom(Core, "swap")
 scan({
 	(symbol +,  toFunction operator@@"add"),
@@ -299,13 +300,13 @@ scan({
 	(symbol &,  toFunction operator@@"and_"),
 	(symbol |,  toFunction operator@@"or_"),
 	(symbol ^^, toFunction operator@@"xor"),
-	(symbol ==, value @@ (toFunction operator@@"eq")),
+	(symbol ==, pythonObjectIsTrue @@ (toFunction operator@@"eq")),
 	(symbol ?,  (x, y) -> (
-		if value operator@@"lt"(x, y) then symbol <
-		else if value operator@@"gt"(x, y) then symbol >
-		else if value operator@@"eq"(x, y) then symbol ==
+		if pythonObjectIsTrue operator@@"lt"(x, y) then symbol <
+		else if pythonObjectIsTrue operator@@"gt"(x, y) then symbol >
+		else if pythonObjectIsTrue operator@@"eq"(x, y) then symbol ==
 		else incomparable)),
-	(isMember,  value @@ (toFunction operator@@"contains") @@ swap),
+	(isMember,  pythonObjectIsTrue @@ (toFunction operator@@"contains") @@ swap),
 	(delete,    (x, y) -> (operator@@"delitem"(x, y);)),
 	(quotientRemainder, (x, y) -> (
 		qr := builtins@@"divmod"(x, y);
@@ -352,7 +353,7 @@ scan({
 	(symbol ~,   toFunction operator@@"invert"),
 	(abs,        toFunction operator@@"abs"),
 	(iterator,   toFunction builtins@@"iter"),
-	(length,     value @@ (toFunction builtins@@"len")),
+	(length,     pythonLongAsLong @@ (toFunction builtins@@"len")),
 	(next,       toFunction builtins@@"next"),
 	(round,      toFunction builtins@@"round")
 	},
@@ -401,8 +402,8 @@ scan({
 	},
     (m2f, pyf) -> installMethod(m2f, PythonObject, toFunction math@@pyf))
 
-isFinite   PythonObject := value @@ (toFunction math@@"isfinite")
-isInfinite PythonObject := value @@ (toFunction math@@"isinf")
+isFinite   PythonObject := pythonObjectIsTrue @@ (toFunction math@@"isfinite")
+isInfinite PythonObject := pythonObjectIsTrue @@ (toFunction math@@"isinf")
 truncate   PythonObject := {} >> o -> toFunction math@@"trunc"
 
 -- binary methods
@@ -522,7 +523,7 @@ setupVirtualEnvironment String := dir -> (
 
 pipInstall = method()
 pipInstall String := pkg -> (
-    py := value (import "sys")@@"executable";
+    py := toString (import "sys")@@"executable";
     if run(py | " -m pip install " | pkg) != 0 then error "pip install failed")
 
 -------------------
@@ -534,7 +535,8 @@ installNumPyMethods = () -> (
     toPython Matrix        :=
     toPython Vector        :=
     toPython MutableMatrix := (toFunction np@@"array") @@ entries;
-    addPyToM2Function("ndarray",
+    addPyToM2Function(
+	np@@"ndarray",
 	x -> (
 	    if x@@"ndim" == 0
 	    then value x_()
@@ -542,7 +544,7 @@ installNumPyMethods = () -> (
 	    then vector(value \ toList x)
 	    else if x@@"ndim" == 2
 	    then matrix apply(toList x, row -> value \ toList row)),
-	    "ndarray -> Matrix/Vector");)
+	"numpy.ndarray -> Matrix/Vector");)
 
 load "Python/doc.m2"
 
