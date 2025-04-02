@@ -403,7 +403,8 @@ scan({
 scan({
 	(ceiling,  "ceil"),
 	(symbol !, "factorial"),
-	(Gamma,    "gamma")
+	(Gamma,    "gamma"),
+	(lngamma,  "lgamma")
 	},
     (m2f, pyf) -> installMethod(m2f, PythonObject, toFunction math@@pyf))
 
@@ -424,14 +425,17 @@ scan({
 	installMethod(f, PythonObject, Thing,        g);
 	installMethod(f, Thing,        PythonObject, g)))
 scan({
-	(binomial, "comb"),
-	(lngamma,  "lgamma")
+	(binomial, "comb")
 	},
     (m2f, pyf) -> (
 	g := toFunction math@@pyf;
 	installMethod(m2f, PythonObject, PythonObject, g);
 	installMethod(m2f, PythonObject, Thing,        g);
 	installMethod(m2f, Thing,        PythonObject, g)))
+
+log(PythonObject, PythonObject) :=
+log(PythonObject, Thing)        :=
+log(Thing,        PythonObject) := (toFunction math@@log) @@ swap
 
 help#0 PythonObject := x -> toString x@@"__doc__"
 
