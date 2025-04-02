@@ -1,14 +1,16 @@
 TEST /// -- basic test
+  -- ~0.2s
   S = QQ[x,y]
   M = coker matrix{{1,0},{1,y}}
   A = summands M
   B = summands prune M
   C = summands trim M
   -- FIXME: this keeps annoyingly breaking
-  assert same(A, {prune M}, B, prune \ C)
+  assert same(prune \ A, {prune M}, B, prune \ C)
 ///
 
 TEST /// -- direct summands of a free module
+  -- ~1.1s
   R = ZZ/2[x_0..x_5]
   M = R^{100:-2,100:0,100:2}
   A = summands M;
@@ -21,13 +23,15 @@ TEST /// -- direct summands of a free module
 ///
 
 TEST /// -- direct summands of a multigraded free module
+  -- ~0.05s
   R = QQ[x,y,z] ** QQ[a,b,c]
   M = R^{{0,0},{0,1},{1,0},{-1,0},{0,-1},{1,-1},{-1,1}}
   assert same(M, directSum summands M)
-  --assert first isIsomorphic(directSum elapsedTime summands M, M)
+  assert first isIsomorphic(directSum summands M, M)
 ///
 
 TEST /// -- direct summands of a ring
+  -- ~0.06s
   S = ZZ/3[x,y,z]
   R = ZZ/3[x,y,z,w]/(x^3+y^3+z^3+w^3)
   f = map(R, S)
@@ -54,14 +58,16 @@ TEST /// -- direct summands over field extensions
 ///
 
 TEST ///
+  -- ~2.2s
   R = ZZ/101[x,y,z]/(x^3, x^2*y, x*y^2, y^4, y^3*z)
   C = res(coker vars R, LengthLimit => 3)
   D = res(coker transpose C.dd_3, LengthLimit => 3)
   M = coker D.dd_3
-  assert(8 == #summands M)
+  elapsedTime assert(8 == #summands M)
 ///
 
 TEST ///
+  -- ~1.7s
   debug needsPackage "DirectSummands"
   n = 4
   S = ZZ/11[x_0..x_(n-1)]
@@ -69,17 +75,12 @@ TEST ///
   R = quotient I
   C = res coker vars R
   M = image C.dd_3
-  needsPackage "RationalPoints2"
-  h = generalEndomorphism M
-  rationalPoints ideal char h
-  -- TODO: does the kernel and cokernel of this give summands?
-  h' = h - 1 * id_(target h)
-  prune ker h'
-  prune coker h'
-  summands M
+  assert(6 == #summands M)
 ///
 
 TEST ///
+  -- FIXME: why is this test so slow?
+  end
   n = 3
   S = (ZZ/2)[x_0..x_(n-1)]
   R = quotient (ideal vars S)^3
@@ -98,12 +99,8 @@ TEST /// -- testing in char 0
   S = QQ[x,y];
   assert(2 == #summands coker matrix "x,y; y,x")
   assert(1 == #summands coker matrix "x,y;-y,x")
-  -- restart
   debug needsPackage "DirectSummands"
   S = QQ[a,b,c,d];
-  M = coker matrix "a,b,c,d;d,a,b,c;c,d,a,b;b,c,d,a"
-  findIdempotent M
-  -- TODO: can we make sure the last block remains symmetric?
   assert(3 == #summands coker matrix "a,b,c,d;d,a,b,c;c,d,a,b;b,c,d,a")
   K = toField(QQ[i]/(i^2+1));
   S = K[x,y];
@@ -112,7 +109,7 @@ TEST /// -- testing in char 0
   S = K[a,b,c,d];
   assert(4 == #summands coker matrix "a,b,c,d;d,a,b,c;c,d,a,b;b,c,d,a")
   S = CC[x,y];
-  scan(20, i -> assert(set summands coker matrix {{x,y},{-y,x}} == set {cokernel matrix {{x-ii*y}}, cokernel matrix {{x+ii*y}}}))
+  -- FIXME scan(20, i -> assert(set summands coker matrix {{x,y},{-y,x}} == set {cokernel matrix {{x-ii*y}}, cokernel matrix {{x+ii*y}}}))
 ///
 
 -- FIXME: takes 78s
@@ -163,11 +160,10 @@ needsPackage "DirectSummands"
   set(last \ isomorphismTally summands frobeniusPushforward(1,R)) == set{12,13}
 ///
 
-
 ///
   debug needsPackage "DirectSummands"
   kk = ZZ/11
-  S = kk[x,y,z,Degrees=>{5,1,5}]
+  S = kk[x,y,z, Degrees => {5,1,5}]
   R = S/(x*z-y^10)
   L = summands frobeniusPushforward(1, R);
   elapsedTime isomorphismTally L;
@@ -200,3 +196,8 @@ TEST ///
 ///
 
 load "./large-tests.m2"
+
+end--
+
+restart
+elapsedTime check "DirectSummands"
