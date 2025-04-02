@@ -24,6 +24,7 @@ newPackage(
 	 Email    => "sashahbc@gmail.com"}
 	},
     Headline => "computations involving pushforwards and higher direct images of toric maps",
+    Keywords => {"Toric Geometry"},
     DebuggingMode => false,
     PackageExports => {"NormalToricVarieties","Complexes"},
     PackageImports => {"FourierMotzkin"}
