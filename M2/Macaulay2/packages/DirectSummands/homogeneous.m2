@@ -17,26 +17,14 @@ findProjectors Module := opts -> M -> (
 	-- (i.e. without passing to frac R), hence we can
 	-- compute the eigenvalues by going to the field
 	f0 := sub(K ** f, F);
-	-- to be used as a suggestion in the error
-	-- TODO: expand for characteristic zero
-	L = extField { char f0 }; -- about 25% of computation
 	-- finding eigenvalues would be faster if the matrix
 	-- was put in Jordan form first, but this is easier...
 	eigen := eigenvalues' f0; -- about 25% of computation
-	if #eigen <= 1 then continue;
-	-- TODO: n is sufficient but usually too large
-	-- we need the maximum sum of multiplicities of an eigenvalue
-	-- TODO: worth using largePower?
-	-*
-	netList(projs = for y in eigen list (f - y * id_M)^n)
-	(f - eigen#0 * id_M)^n
-	(f - eigen#1 * id_M)^n
-	netList(injs = apply(projs, pr -> inducedMap(M, ker pr)))
-	projs#0
-	projs#1
-	image injs#0
-	image injs#1
-	*-
+	if #eigen <= 1 then (
+	    -- to be used as a suggestion in the error
+	    -- TODO: expand for characteristic zero
+	    L = extField { char f0 };
+	    continue);
 	return for y in eigen list (f - y * id_M)^n
     );
     -- TODO: skip the "Try passing" line if the field is large enough, e.g. L === K
@@ -47,29 +35,28 @@ findProjectors Module := opts -> M -> (
 summandsFromProjectors = method(Options => { Tries => 50 })
 summandsFromProjectors Module := opts -> M -> (
     if degree M <= 1 then return {M};
+    -- maps M -> M whose (co)kernel is a (usually indecomposable) summand
     projs := try findProjectors(M, Tries => opts.Tries) else return {M};
+    -- assert(0 == intersect apply(projs, ker));
+    -- maps M_i -> M from the kernel summands
     injs := apply(projs, pr -> inducedMap(M, ker pr));
-    iota := matrix { injs };
     -- assert(0 == intersect apply(injs, image));
-    -- assert same { numcols mingens M - numcols mingens coker iota,
-    -- 	sum(projs, f -> numcols mingens kernel f),
-    -- 	sum(injs,  f -> numcols mingens image  f) };
-    L1 := flatten for pr in projs list (
-	-- inducedMap(M, ker pr)
-	N := prune ker pr;
-	Ncomps := summandsFromProjectors(N, opts);
-	-- TODO: Projection maps to the summands
-	--c := -1;
-	--p := inverse N.cache.pruningMap * inducedMap(ker pr, N, ??);
-	--if #Ncomps > 1 then apply(#Ncomps, i -> M.cache#(symbol ^, [c += 1]) = N^[i] * p) else M.cache#(symbol ^, [c += 1]) = p;
-	-- Inclusion maps from the summands
-	-- TODO: will this always work?
-	--scan(c + 1, i -> M.cache#(symbol _, [i]) = inverse M.cache#(symbol ^, [i]));
-	Ncomps);
-    N := prune coker iota;
-    L2 := if N != 0 then summandsFromProjectors(N, opts) else {};
-    join(L1, L2)
-)
+    -- the map \bigoplus M_i -> M, whose cokernel is the complement of M_i
+    iota := matrix { injs };
+    -- assert first isIsomorphic(M, coker iota ++ directSum(coker \ projs));
+    c := -1;
+    comps := flatten for pr in append(projs, iota) list (
+	N := prune coker pr;
+	L := nonzero summandsFromProjectors(N, opts);
+	-- Projection maps to the summands
+	p := inverse N.cache.pruningMap * inducedMap(coker pr, M);
+	if #L > 1 then apply(#L, i ->
+	    M.cache#(symbol ^, [c += 1]) = N^[i] * p)
+	else M.cache#(symbol ^, [c += 1]) = p;
+	L);
+    -- Inclusion maps from the summands
+    scan(c + 1, i -> M.cache#(symbol _, [i]) = inverse M.cache#(symbol ^, [i]));
+    comps)
 
 end--
 
@@ -80,8 +67,10 @@ debug needsPackage "DirectSummands"
   C = res(coker vars R, LengthLimit => 3)
   D = res(coker transpose C.dd_3, LengthLimit => 3)
   M = coker D.dd_3
-  summands M
-  elapsedTime profile summands M;
-  profileSummary "DirectSum"
-  elapsedTime assert(8 == #summands M)
-  isIsomorphic(M, directSum summands M)
+  elapsedTime L = summands M
+  assert first isIsomorphic(M, directSum M)
+  assert(8 == #L)
+  assert all(8, i -> same { M, target M_[i], source M^[i] }
+      and same { L#i, target M^[i], source M_[i] })
+  --elapsedTime profile summands M;
+  --profileSummary "DirectSum"
