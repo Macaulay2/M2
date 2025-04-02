@@ -523,7 +523,7 @@ setupVirtualEnvironment String := dir -> (
 
 pipInstall = method()
 pipInstall String := pkg -> (
-    py := toString (import "sys")@@"executable";
+    py := toString sys@@"executable";
     if run(py | " -m pip install " | pkg) != 0 then error "pip install failed")
 
 -------------------
