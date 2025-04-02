@@ -70,8 +70,10 @@ importFrom_Core {
 -- helpers for computing Frobenius pushforwards of modules and sheaves
 -- TODO: move to PushForward package?
 load "./DirectSummands/frobenius.m2"
--- helpers for finding random idempotents of a module
+-- helpers for finding random idempotents of a module for the local case
 load "./DirectSummands/idempotents.m2"
+-- helpers for finding random projectors of a module for the graded case
+load "./DirectSummands/homogeneous.m2"
 
 -----------------------------------------------------------------------------
 -- Things to move to the Core
@@ -302,6 +304,9 @@ directSummands Module := List => opts -> (cacheValue (symbol summands => opts.Ex
 	L = directSummands(apply(-unique degrees M, d -> R^{d}), M, opts);
 	if 0 < debugLevel then stderr << endl << " -- split off " << #L - 1 << " summands!" << endl;
 	if 1 < #L then return directSummands(directSum L, opts));
+    --
+    -- TODO: should this happen now, or after the indecomposability check?
+    if isHomogeneous M then return summandsFromProjectors M;
     --
     K := coker vars R;
     zdeg := degree 0_M;

@@ -81,7 +81,7 @@ fieldExponent = R -> (
     e)
 
 -- finds the characteristic polynomial of a matrix mod the maximal ideal
-char Matrix := A -> (
+char Matrix := A -> A.cache.char ??= (
     if numRows A != numColumns A then error "expected a square matrix";
     b := symbol b;
     T := (groundField ring A)(monoid[b]);
