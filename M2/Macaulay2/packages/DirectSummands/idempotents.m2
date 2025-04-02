@@ -41,14 +41,12 @@ findIdem' Module      := opts ->  M     -> findIdem'(M, fieldExponent ring M,opt
 findIdem'(Module,ZZ) := opts -> (M,e) -> (
     R := ring M;
     p := char R;
-    F := groundField R;
     K := quotient ideal gens R;
     l := if p == 0 then e else max(e, ceiling log_p numgens M);
     L := infinity;
     for c to opts.Tries - 1 do (
         f := generalEndomorphism M;
-        Chi := char f;
-        eigen := if instance(F, InexactField) then roots Chi else flatten rationalPoints ideal Chi;
+	eigen := eigenvalues' f;
 	if #eigen <= 1 then continue;
         opers := flatten for y in eigen list (
 	    if p == 0 then (f - y*id_M) else (
@@ -91,6 +89,12 @@ char Matrix := A -> (
     I := id_(source B);
     det(B - T_0 * I))
 
+eigenvalues' = A -> (
+    Chi := char A;
+    F := groundField ring A;
+    if instance(F, InexactField) then roots Chi
+    else flatten rationalPoints ideal Chi)
+
 largePower = (p,l,M) -> (
     if p^l < 2^30 then return M^(p^l);
     --should have this line check for monomial size of ambient ring also
@@ -119,23 +123,24 @@ findIdempotent(Module, ZZ) := opts -> (M, e) -> (
     F := groundField R;
     K := quotient ideal gens R;
     V := K ** M;
+    exactFlag := not instance(F, InexactField);
     l := if p == 0 then e else max(e, ceiling log_p numgens M);
     L := infinity;
     for c to opts.Tries - 1 do (
         f := generalEndomorphism M;
 	fm := K ** f;
         Chi := char f;
-	K' := if instance(F, InexactField) then F else try extField {Chi};
+	K' := if not exactFlag then F else try extField {Chi};
         --TODO: remember different L to extend to; right now the L you return at the end may not be large enough
         if p != 0 then L = min(L, K'.order) else L = K';
 	-- TODO: this seems too messy, what's the precise requirement?
 	-- maybe we should separate this in a different method
         --exactFlag := not( instance(F, InexactField) or isMember(coefficientRing ring Chi, {ZZ, QQ}));
 	--needsPackage "RationalPoints2"
-        exactFlag := not( instance(F, InexactField));
+	-- TODO: replace with eigenvalues'?
         eigen := if not exactFlag then roots Chi else flatten rationalPoints ideal Chi;
 	-- if at most one eigenvalue is found then the module is probably indecomposable
-	if not exactFlag and #eigen <= 1  then continue;
+	if not exactFlag and #eigen <= 1 then continue;
 	if exactFlag and p!= 0 and #eigen <= 1 and L == F.order then continue;
         --TODO: add check for when the field is QQ
 	-- we only want eigen values in F
