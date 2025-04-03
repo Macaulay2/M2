@@ -1,6 +1,6 @@
 needsPackage "RationalPoints2"
 
-findProjectors = method(Options => { Tries => null })
+findProjectors = method(Options => DirectSummandsOptions)
 findProjectors Module := opts -> M -> (
     R := ring M;
     p := char R;
@@ -36,11 +36,11 @@ findProjectors Module := opts -> M -> (
 	ExtendGroundField => ", if p != 0 then ("GF " | toString L) else toString L))
 
 -- TODO: this should take the same options as summands
-summandsFromProjectors = method(Options => { Tries => null })
+summandsFromProjectors = method(Options => DirectSummandsOptions)
 summandsFromProjectors Module := opts -> M -> (
     if degree M <= 1 then return {M};
     -- maps M -> M whose (co)kernel is a (usually indecomposable) summand
-    projs := try findProjectors(M, Tries => opts.Tries) else return {M};
+    projs := try findProjectors(M, opts) else return {M};
     -- assert(0 == intersect apply(projs, ker));
     -- maps M_i -> M from the kernel summands
     injs := apply(projs, pr -> inducedMap(M, ker pr));

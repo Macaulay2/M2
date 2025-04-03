@@ -66,6 +66,20 @@ importFrom_Core {
 -* Code section *-
 -----------------------------------------------------------------------------
 
+-- defined here and used in idempotents.m2 and homogeneous.m2
+DirectSummandsOptions = new OptionTable from {
+    ExtendGroundField => null, -- a field extension or integer e for GF(p, e)
+    Limit             => null, -- used in directSummands(Module, Module)
+    Strategy          => 7,    -- Strategy is a bitwise sum of the following:
+    -- 1  => use degrees of generators as heuristic to peel off line bundles first
+    -- 2  => use Hom option DegreeLimit => 0
+    -- 4  => use Hom option MinimalGenerators => false
+    -- 8  => precompute Homs before looking for idempotents
+    -- 16 => use summandsFromIdempotents even in graded case
+    Tries             => 10,   -- used in randomized algorithms
+    Verbose           => true, -- whether to print extra debugging info
+}
+
 -- helpers for computing Frobenius pushforwards of modules and sheaves
 -- TODO: move to PushForward package?
 load "./DirectSummands/frobenius.m2"
@@ -273,17 +287,7 @@ cachedSummands = { ExtendGroundField => null } >> o -> M -> (
 -- TODO: add option to provide a general endomorphism or idempotent
 -- TODO: when splitting over a field extension, use cached splitting over summands
 -- TODO: cache the inclusion maps
-directSummands = method(Options => {
-	ExtendGroundField => null, -- a field extension or integer e for GF(p, e)
-	Limit             => null, -- used in directSummands(Module, Module)
-	Strategy          => 7,    -- Strategy is a bitwise sum of the following:
-	-- 1 => use degrees of generators as heuristic to peel off line bundles first
-	-- 2 => use Hom option DegreeLimit => 0
-	-- 4 => use Hom option MinimalGenerators => false
-	-- 8 => precompute Homs before looking for idempotents
-	Tries             => 10,   -- used in directSummands(Module, Module)
-	Verbose           => true, -- whether to print extra debugging info
-    })
+directSummands = method(Options => DirectSummandsOptions)
 directSummands Module := List => opts -> (cacheValue (symbol summands => opts.ExtendGroundField)) (M -> (
     checkRecursionDepth();
     -- Note: rank does weird stuff if R is not a domain
@@ -309,9 +313,6 @@ directSummands Module := List => opts -> (cacheValue (symbol summands => opts.Ex
 	if 0 < debugLevel then stderr << endl << " -- split off " << #L - 1 << " summands!" << endl;
 	if 1 < #L then return directSummands(directSum L, opts));
     --
-    -- TODO: should this happen now, or after the indecomposability check?
-    if isHomogeneous M then return summandsFromProjectors M;
-    --
     K := coker vars R;
     zdeg := degree 0_M;
     -- TODO: make "elapsedTime" contingent on verbosity
@@ -320,6 +321,9 @@ directSummands Module := List => opts -> (cacheValue (symbol summands => opts.Ex
 	DegreeLimit       => if opts.Strategy & 2 == 2 then zdeg,
 	MinimalGenerators => if opts.Strategy & 4 == 4 then false);
     B := smartBasis(zdeg, A);
+    -- TODO: where should indecomposability check happen?
+    -- for now it's here, but once we figure out random endomorphisms
+    -- without computing Hom, this would need to move.
     -- FIXME: this currently does not find _all_ idempotents
     flag := true; -- whether all non-identity homomorphisms are zero mod m
     -- TODO: 10k columns for F_*(OO_X) on Gr(2,4) over ZZ/3 take a long time
@@ -329,41 +333,17 @@ directSummands Module := List => opts -> (cacheValue (symbol summands => opts.Ex
 	    if h == id_M or h == 0 then false else (
 		if flag and K ** h != 0
 		then flag = false;
-                --TODO: is it worth asking if K**h is idempotent instead? (in graded/local case)
-		isIdempotent h))
-	);
+		-- TODO: is it worth asking if K**h is idempotent instead? (in graded/local case)
+		isIdempotent h)));
+    if idem =!= null then B = B_{idem};
     -- check if M is certifiably indecomposable
     if flag then (
 	if 0 < debugLevel then printerr("\t... certified indecomposable!");
 	M.cache.Indecomposable = true; return {M} );
-    -- TODO: parallelize
-    h := if idem =!= null then homomorphism B_{idem} else try findIdempotent M;
-    -- TODO: add this when the maps M_[w] and M^[w] also work with subsets
-    -- M.cache.components =
-    if h === null then {M} else (
-	-- TODO: restrict End M to each summand and pass it on
-	-- TODO: could use 'compose' perhaps
-	-- TODO: can we check if M has multiple copies of M0 or M1 quickly?
-	M0 := prune image h;
-	M1 := prune coker h;
-	-- TODO: can we keep homomorphisms?
-	--B0.cache.homomorphism = f -> map(M0, M0, adjoint'(p1 * f * inverse p0, M0, M0), Degree => first degrees source f + degree f);
-	M0comps := directSummands(M0, opts);
-	M1comps := directSummands(M1, opts);
-	-- Projection maps to the summands
-	c := -1;
-	p0 := inverse M0.cache.pruningMap * inducedMap(image h, M, h);
-	p1 := inverse M1.cache.pruningMap * inducedMap(coker h, M);
-	if #M0comps > 1 then apply(#M0comps, i -> M.cache#(symbol ^, [c += 1]) = M0^[i] * p0) else M.cache#(symbol ^, [c += 1]) = p0;
-	if #M1comps > 1 then apply(#M1comps, i -> M.cache#(symbol ^, [c += 1]) = M1^[i] * p1) else M.cache#(symbol ^, [c += 1]) = p1;
-	-- Inclusion maps from the summands
-	-- TODO: will this always work?
-	scan(c + 1, i -> M.cache#(symbol _, [i]) = inverse M.cache#(symbol ^, [i]));
-	-- return the lists
-	-- TODO: why is this nonzero needed?
-	-- TODO: sort these, along with the projections
-	nonzero flatten join(M0comps, M1comps))
-    ))
+    --
+    if isHomogeneous M
+    then summandsFromProjectors(M, opts)
+    else summandsFromIdempotents(M, B, opts)))
 
 -- TODO: if ExtendGroundField is given, change variety
 -- TODO: when ExtendGroundField is given, the variety will change!

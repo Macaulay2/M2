@@ -117,7 +117,7 @@ lift(CC, CC_*) := opts -> (r, C) -> numeric(precision C, r)
 findErrorMargin = m -> ceiling(log_10 2^(precision ring m))
 
 --TODO: findIdem right now will fail if K is not L[a]/f(a); in general, will need to find a primitive element first
-findIdempotent = method(Options => { Tries => 50 })
+findIdempotent = method(Options => DirectSummandsOptions)
 findIdempotent Module      := opts ->  M     -> findIdempotent(M, fieldExponent ring M,opts)
 findIdempotent(Module, ZZ) := opts -> (M, e) -> (
     R := ring M;
@@ -168,3 +168,42 @@ findIdempotent CoherentSheaf := opts -> M -> findIdempotent(module M,opts)
 potentialExtension = method()
 potentialExtension Module := M -> extField {char generalEndomorphism M}
 potentialExtension CoherentSheaf := M -> potentialExtension module M
+
+summandsFromIdempotents = method(Options => DirectSummandsOptions)
+summandsFromIdempotents Module := opts -> M -> (
+    zdeg := degree 0_M;
+    -- TODO: make "elapsedTime" contingent on verbosity
+    if debugLevel > 1 then printerr "computing Hom module";
+    A := Hom(M, M, -- most time consuming step
+	DegreeLimit       => if opts.Strategy & 2 == 2 then zdeg,
+	MinimalGenerators => if opts.Strategy & 4 == 4 then false);
+    B := smartBasis(zdeg, A);
+    summandsFromIdempotents(M, B, opts))
+
+summandsFromIdempotents(Module, Matrix) := opts -> (M, B) -> (
+    h := if numcols B == 1 then homomorphism B_{0}
+    else try findIdempotent(M, opts) else return {M};
+    -- TODO: add this when the maps M_[w] and M^[w] also work with subsets
+    -- M.cache.components =
+    -- TODO: restrict End M to each summand and pass it on
+    -- TODO: could use 'compose' perhaps
+    -- TODO: can we check if M has multiple copies of M0 or M1 quickly?
+    M0 := prune image h;
+    M1 := prune coker h;
+    -- TODO: can we keep homomorphisms?
+    --B0.cache.homomorphism = f -> map(M0, M0, adjoint'(p1 * f * inverse p0, M0, M0), Degree => first degrees source f + degree f);
+    M0comps := directSummands(M0, opts);
+    M1comps := directSummands(M1, opts);
+    -- Projection maps to the summands
+    c := -1;
+    p0 := inverse M0.cache.pruningMap * inducedMap(image h, M, h);
+    p1 := inverse M1.cache.pruningMap * inducedMap(coker h, M);
+    if #M0comps > 1 then apply(#M0comps, i -> M.cache#(symbol ^, [c += 1]) = M0^[i] * p0) else M.cache#(symbol ^, [c += 1]) = p0;
+    if #M1comps > 1 then apply(#M1comps, i -> M.cache#(symbol ^, [c += 1]) = M1^[i] * p1) else M.cache#(symbol ^, [c += 1]) = p1;
+    -- Inclusion maps from the summands
+    -- TODO: will this always work?
+    scan(c + 1, i -> M.cache#(symbol _, [i]) = inverse M.cache#(symbol ^, [i]));
+    -- return the lists
+    -- TODO: why is this nonzero needed?
+    -- TODO: sort these, along with the projections
+    nonzero flatten join(M0comps, M1comps))
