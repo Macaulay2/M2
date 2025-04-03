@@ -14,6 +14,8 @@ Node
       by utilizing Gröbner bases in the Weyl algebra [@HREF("https://link.springer.com/book/10.1007/978-3-662-04112-3","SST")@, p. 37].
       The systematic computation of connection matrices requires Gröbner basis computations in the rational Weyl algebra
       $$ R_n=\CC(x_1,\ldots,x_n)\langle \partial_1,\ldots,\partial_n \rangle. $$
+
+      The theoretical foundations of our algorithms is described the companion paper to this package, available at @arXiv "2504.01362"@.
     Tree
       :Working with the rational Weyl algebra
         normalForm
@@ -35,6 +37,9 @@ Node
   References
     The main reference for our algorithms is the book [@HREF("https://link.springer.com/book/10.1007/978-3-662-04112-3","SST")@] M. Saito, B. Sturmfels, and N. Takayama
     {\em Gröbner Deformations of Hypergeometric Differential Equations}, volume 6 of {\em Algorithms and Computation in Mathematics.} Springer, 2000.
+  Acknowledgement
+    Work on this package began at the workshop {\it Macaulay2 in the Sciences} held at MPI-MiS in Leipzig in November 2024.
+    Devlin Mallory and Carlos Gustavo Rodriguez Fernandez contributed to the development of this package during the workshop.
   SeeAlso
     "Dmodules :: Dmodules"
     "HolonomicSystems :: HolonomicSystems"
