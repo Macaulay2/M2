@@ -15,8 +15,8 @@
 ---------------------------------------------------------------------------
 newPackage(
     "DirectSummands",
-    Version => "0.1",
-    Date => "25 Oct 2023",
+    Version => "0.2",
+    Date => "April 1st 2025",
     Headline => "decompositions of modules and coherent sheaves",
     Authors => {
 	{ Name => "Devlin Mallory", Email => "malloryd@math.utah.edu", HomePage => "https://math.utah.edu/~malloryd/"},
@@ -274,12 +274,17 @@ cachedSummands = { ExtendGroundField => null } >> o -> M -> (
 -- TODO: add option to provide a general endomorphism or idempotent
 -- TODO: when splitting over a field extension, use cached splitting over summands
 -- TODO: cache the inclusion maps
--- Strategies:
--- 1 => use degrees of generators as heuristic to peel off line bundles first
--- 2 => use Hom option DegreeLimit => 0
--- 4 => use Hom option MinimalGenerators => false
--- 8 => precompute Homs before looking for idempotents
-directSummands = method(Options => { Recursive => true, Tries => 10, Verbose => true, Strategy => 7, ExtendGroundField => null })
+directSummands = method(Options => {
+	ExtendGroundField => null, -- a field extension or integer e for GF(p, e)
+	Recursive         => true, -- used in directSummands(Module, Module)
+	Strategy          => 7,    -- Strategy is a bitwise sum of the following:
+	-- 1 => use degrees of generators as heuristic to peel off line bundles first
+	-- 2 => use Hom option DegreeLimit => 0
+	-- 4 => use Hom option MinimalGenerators => false
+	-- 8 => precompute Homs before looking for idempotents
+	Tries             => 10,   -- used in directSummands(Module, Module)
+	Verbose           => true, -- whether to print extra debugging info
+    })
 directSummands Module := List => opts -> (cacheValue (symbol summands => opts.ExtendGroundField)) (M -> (
     checkRecursionDepth();
     -- Note: rank does weird stuff if R is not a domain
@@ -374,13 +379,14 @@ directSummands(Module, Module) := List => opts -> (L, M) -> (
     if rank L  >= rank M then return {M};
     if 1 < #cachedSummands M then return sort flatten apply(cachedSummands M, N -> directSummands(L, N, opts));
     zdeg := degree 0_M;
-    if isFreeModule L then(
-        B := smartBasis(zdeg, Hom(M, L, DegreeLimit => zdeg, MinimalGenerators => false));
-        --h := for i from 0 to numcols B - 1 do( if isSurjective(b := homomorphism B_{i}) then break matrix{L_0}//b);
-        h := for i to opts.Tries - 1 do (
+    if isFreeModule L then (
+	B := smartBasis(zdeg, Hom(M, L, DegreeLimit => zdeg, MinimalGenerators => false));
+	-- Previous alternative:
+	-- h := for i from 0 to numcols B - 1 do ( isSurjective(b := homomorphism B_{i}) ...)
+	h := for i to opts.Tries - 1 do (
 	    b := homomorphism(B * random source B);
-            if isSurjective b then break matrix{L_0}//b);)
-    else(
+	    if isSurjective b then break matrix {L_0} // b))
+    else (
         -- we look for a composition L -> M -> L which is the identity
         B = smartBasis(zdeg, Hom(L, M, DegreeLimit => zdeg, MinimalGenerators => false));
         if numcols B == 0 then return {M};

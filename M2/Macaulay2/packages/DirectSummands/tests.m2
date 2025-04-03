@@ -39,8 +39,8 @@ TEST /// -- direct summands of a ring
   assert(M == S^{0,-1,-2})
 ///
 
--- FIXME: takes 13s, which is more than it used to
 TEST /// -- direct summands over field extensions
+  -- ~9s
   debug needsPackage "DirectSummands"
   R = (ZZ/7)[x,y,z]/(x^3+y^3+z^3);
   X = Proj R;
@@ -51,6 +51,7 @@ TEST /// -- direct summands over field extensions
   elapsedTime B = smartBasis({0}, A); -- ~0.03s
   *-
   -- if this test fails, check if "try findIdempotent M" if hiding any unexpected errors
+  -- FIXME: this is slow because random homomorphisms shouldn't be over the extended field
   elapsedTime assert({1, 2, 2, 2} == rank \ summands M) -- 2.28s
   elapsedTime assert({1, 2, 2, 2} == rank \ summands(M, ExtendGroundField => GF 7)) -- 2.87s -> 2.05
   elapsedTime assert({1, 2, 2, 2} == rank \ summands(M, ExtendGroundField => GF(7, 3))) -- 3.77s -> 2.6
@@ -112,16 +113,19 @@ TEST /// -- testing in char 0
   -- FIXME scan(20, i -> assert(set summands coker matrix {{x,y},{-y,x}} == set {cokernel matrix {{x-ii*y}}, cokernel matrix {{x+ii*y}}}))
 ///
 
--- FIXME: takes 78s
 TEST ///
-  --tests largepowers
   K = ZZ/7
   R = K[x,y,z]/(x^3+y^3+z^3)
   X = Proj R
-  M1 = summands(frobeniusPushforward(1, OO_X), ExtendGroundField => 2)
-  M2 = frobeniusPushforward(1, M1#1)
-  L = potentialExtension M2
-  findIdem changeBaseField(L, M2)
+  F1 = frobeniusPushforward(1, OO_X)
+  L1 = summands(F1, ExtendGroundField => 2)
+  assert(7 == #L1)
+  F2 = frobeniusPushforward(1, L1#1)
+  L = potentialExtension F2
+  -- tests largepowers, but is very slow
+  -- findIdem changeBaseField(L, F2)
+  -- TODO: is 7 correct here?
+  assert(7 == #summands changeBaseField(L, F2))
 ///
 
 ///

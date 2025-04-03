@@ -21,6 +21,7 @@ generalEndomorphism Module := Matrix => o -> M -> (
 	DegreeLimit       => zdeg,
 	MinimalGenerators => false);
     B := if isHomogeneous M then smartBasis(zdeg, A) else inducedMap(A, , gens A);
+    -- TODO: we need to pass an option to random to limit the coefficient field
     homomorphism(B * random(source B, o)))
 -- the sheaf needs to be pruned to prevent missing endomorphisms
 generalEndomorphism CoherentSheaf := SheafMap => o -> F -> sheaf generalEndomorphism(module prune F, o)
