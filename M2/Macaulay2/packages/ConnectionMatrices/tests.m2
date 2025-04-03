@@ -6,6 +6,8 @@
 --   1) Worked out, complete examples
 --   2) Functionality tests for (exported) methods
 -------------------------------------------------------
+-- Link to course notes containing a few examples below:
+-- https://alsattelberger.de/wp-content/uploads/2024/12/introductionalgebraicanalysis.pdf
 
 -------------------------------------------------------
 --
@@ -13,7 +15,7 @@
 --
 -------------------------------------------------------
 
-TEST /// -- ALS notes, Example 7.16 (1)
+TEST /// -- course notes, Example 7.16 (1)
 
   D = makeWeylAlgebra(QQ[x,y], w = {1,2});
   I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
@@ -37,7 +39,7 @@ TEST /// -- ALS notes, Example 7.16 (1)
 
 ///
 
-TEST /// -- ALS notes, Example 7.16 (2)
+TEST /// -- course notes, Example 7.16 (2)
 
   D = makeWeylAlgebra(QQ[x,y], w = {2,1});
   I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
@@ -62,7 +64,7 @@ TEST /// -- ALS notes, Example 7.16 (2)
 ///
 
 
-TEST /// -- ALS notes, Example 7.16 (3)
+TEST /// -- course notes, Example 7.16 (3)
   D = makeWeylAlgebra(QQ[x,y], w = {1,1});
   I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
   assert(holonomicRank(w, comodule I) == 2);

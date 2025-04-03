@@ -29,13 +29,11 @@ integrabilityTerm = (D, A) -> (
 --isIntegrable: checks whether (d - A ∧ ) defines an integrable connection
 --------------------------------------------------------------------------
 isIntegrable = method()
-isIntegrable (PolynomialRing, List) := Boolean => (D,A) -> all(integrabilityTerm(D,A), zero); -- Check that each term is zero.
-
--- Infering the polynomial base ring from A_0:
+isIntegrable(PolynomialRing, List) := Boolean => (D, A) -> (
+    all(integrabilityTerm(D, A), zero)) -- check that each term is zero
 isIntegrable List := Boolean => A -> (
-
-    D := inferWeylAlgebra(ring A_0); -- Infers the WeylAlgebra if stored as option.
-
+    -- Infers the WeylAlgebra if stored as option.
+    D := inferWeylAlgebra(ring A_0);
     if not numgens D // 2 == #A then error "length doesn't match number of differential variables.";
     isIntegrable(D, A)
 )
