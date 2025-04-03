@@ -44,7 +44,6 @@ export {
     -- symbols
     "ExtendGroundField",
     "Indecomposable",
-    "Recursive",
     "Tries",
     -- frobenius methods
     "frobeniusMap",
@@ -276,7 +275,7 @@ cachedSummands = { ExtendGroundField => null } >> o -> M -> (
 -- TODO: cache the inclusion maps
 directSummands = method(Options => {
 	ExtendGroundField => null, -- a field extension or integer e for GF(p, e)
-	Recursive         => true, -- used in directSummands(Module, Module)
+	Limit             => null, -- used in directSummands(Module, Module)
 	Strategy          => 7,    -- Strategy is a bitwise sum of the following:
 	-- 1 => use degrees of generators as heuristic to peel off line bundles first
 	-- 2 => use Hom option DegreeLimit => 0
@@ -370,14 +369,25 @@ directSummands Module := List => opts -> (cacheValue (symbol summands => opts.Ex
 directSummands CoherentSheaf := List => opts -> F -> apply(directSummands(module F, opts), N -> sheaf'(variety F, N))
 
 -- tests whether L (perhaps a line bundle) is a summand of M
--- Recursive => true (default) attempts to peel as many copies of L as possible
+-- Limit => N _recommends_ stopping after peeling N summands of L
 -- FIXME: it's not guaranteed to work, e.g. on X_4 over ZZ/2
+-- TODO: cache projection/inclusion maps
 -- TODO: cache this
 directSummands(Module, Module) := List => opts -> (L, M) -> (
     checkRecursionDepth();
     if ring L =!= ring M then error "expected objects over the same ring";
     if rank L  >= rank M then return {M};
+    n := opts.Limit ?? numgens M;
     if 1 < #cachedSummands M then return sort flatten apply(cachedSummands M, N -> directSummands(L, N, opts));
+    if 1 < n then (
+	-- TODO: can we detect multiple summands of L at once?
+	comps := new MutableList from {M};
+	for i to n - 1 do (
+	    LL := directSummands(L, M, opts, Limit => 1);
+	    if #LL == 1 then return sort toList comps;
+	    comps#(#comps-1) = L;
+	    comps##comps = M = LL#1)
+    );
     zdeg := degree 0_M;
     if isFreeModule L then (
 	B := smartBasis(zdeg, Hom(M, L, DegreeLimit => zdeg, MinimalGenerators => false));
@@ -415,9 +425,7 @@ directSummands(Module, Module) := List => opts -> (L, M) -> (
 	        if ind =!= null then homomorphism B_{last ind})););
     if h === null then return {M};
     if 0 < debugLevel then stderr << concatenate(rank L : ".") << flush;
-    -- TODO: can we detect multiple summands of L at once?
-    sort flatten join({L}, if not opts.Recursive then {prune coker h}
-	else directSummands(L, prune coker h, opts)))
+    {L, prune coker h})
 
 directSummands(CoherentSheaf, CoherentSheaf) := List => opts -> (L, G) -> apply(
     directSummands(module L, module G, opts), N -> sheaf(variety L, N))
