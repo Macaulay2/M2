@@ -1,6 +1,6 @@
 needsPackage "RationalPoints2"
 
-findProjectors = method(Options => { Tries => 50 })
+findProjectors = method(Options => { Tries => null })
 findProjectors Module := opts -> M -> (
     R := ring M;
     p := char R;
@@ -10,7 +10,8 @@ findProjectors Module := opts -> M -> (
     L := null;
     -- TODO: sort the degrees to make finding eigenvalues faster?
     -- degs := unique sort degrees M;
-    for c to opts.Tries - 1 do (
+    tries := opts.Tries ?? ceiling(0.1 + 50 / log p);
+    for c to tries - 1 do (
 	f := generalEndomorphism M; -- about 20% of computation
 	-- eigenvalues of f must be over the field,
 	-- and we can prove that f can be diagonalized over R
@@ -23,6 +24,9 @@ findProjectors Module := opts -> M -> (
 	if #eigen <= 1 then (
 	    -- to be used as a suggestion in the error
 	    -- TODO: expand for characteristic zero
+	    -- TODO: is there any way to tell if the module is indecomposable here?
+	    -- e.g. based on the characteristic polynomial factoring completely
+	    -- but having a single root only?
 	    L = extField { char f0 };
 	    continue);
 	return for y in eigen list (f - y * id_M)^n
@@ -32,7 +36,7 @@ findProjectors Module := opts -> M -> (
 	ExtendGroundField => ", if p != 0 then ("GF " | toString L) else toString L))
 
 -- TODO: this should take the same options as summands
-summandsFromProjectors = method(Options => { Tries => 50 })
+summandsFromProjectors = method(Options => { Tries => null })
 summandsFromProjectors Module := opts -> M -> (
     if degree M <= 1 then return {M};
     -- maps M -> M whose (co)kernel is a (usually indecomposable) summand
