@@ -315,10 +315,11 @@ directSummands Module := List => opts -> (cacheValue (symbol summands => opts.Ex
     K := coker vars R;
     zdeg := degree 0_M;
     -- TODO: make "elapsedTime" contingent on verbosity
-    elapsedTime A := Hom(M, M, -- most time consuming step
+    if debugLevel > 1 then printerr "computing Hom module";
+    A := Hom(M, M, -- most time consuming step
 	DegreeLimit       => if opts.Strategy & 2 == 2 then zdeg,
 	MinimalGenerators => if opts.Strategy & 4 == 4 then false);
-    elapsedTime B := smartBasis(zdeg, A);
+    B := smartBasis(zdeg, A);
     -- FIXME: this currently does not find _all_ idempotents
     flag := true; -- whether all non-identity homomorphisms are zero mod m
     -- TODO: 10k columns for F_*(OO_X) on Gr(2,4) over ZZ/3 take a long time

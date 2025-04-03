@@ -48,6 +48,8 @@ summandsFromProjectors Module := opts -> M -> (
     -- the map \bigoplus M_i -> M, whose cokernel is the complement of M_i
     iota := matrix { injs };
     -- assert first isIsomorphic(M, coker iota ++ directSum(coker \ projs));
+    if 0 < debugLevel then printerr("splitting ", toString(#projs+1),
+	" summands of ranks ", toString apply(injs, i -> degree source i));
     c := -1;
     comps := flatten for pr in append(projs, iota) list (
 	N := prune coker pr;
@@ -61,20 +63,3 @@ summandsFromProjectors Module := opts -> M -> (
     -- Inclusion maps from the summands
     scan(c + 1, i -> M.cache#(symbol _, [i]) = inverse M.cache#(symbol ^, [i]));
     comps)
-
-end--
-
-restart
-debug needsPackage "DirectSummands"
-  -- ~2.2s
-  R = ZZ/101[x,y,z]/(x^3, x^2*y, x*y^2, y^4, y^3*z)
-  C = res(coker vars R, LengthLimit => 3)
-  D = res(coker transpose C.dd_3, LengthLimit => 3)
-  M = coker D.dd_3
-  elapsedTime L = summands M
-  assert first isIsomorphic(M, directSum M)
-  assert(8 == #L)
-  assert all(8, i -> same { M, target M_[i], source M^[i] }
-      and same { L#i, target M^[i], source M_[i] })
-  --elapsedTime profile summands M;
-  --profileSummary "DirectSum"

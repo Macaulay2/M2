@@ -17,6 +17,7 @@ random       Module  := Vector => o ->     M  -> (
 generalEndomorphism = method(Options => options random)
 generalEndomorphism Module := Matrix => o -> M -> (
     zdeg := if isHomogeneous M then degree 0_M;
+    if debugLevel > 1 then printerr "computing Hom module";
     A := Hom(M, M,
 	DegreeLimit       => zdeg,
 	MinimalGenerators => false);
