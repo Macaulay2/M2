@@ -15,6 +15,7 @@ Dmodules
 WeylAlgebras
 HolonomicSystems
 BernsteinSato
+ConnectionMatrices
 Depth
 Elimination
 GenericInitialIdeal
