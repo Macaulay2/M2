@@ -1355,6 +1355,9 @@ AS_IF([test "x$BUILD_gtest" = "xno"],
          LIBS=$SAVELIBS],
         [AC_MSG_NOTICE([gtest headers not found; will build])
          BUILD_gtest=yes])])
+AS_IF([test "x$BUILD_gtest" = "xyes"],
+     AS_IF([test "x$CMAKE" = "xfalse"],
+        [AC_MSG_ERROR([cmake is required to build gtest])]))
 
 AC_SUBST([PYTHON])
 AC_ARG_WITH(python, AS_HELP_STRING(--with-python@<:@=3.x@:>@.,
