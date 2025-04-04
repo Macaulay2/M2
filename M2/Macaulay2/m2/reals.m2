@@ -241,12 +241,14 @@ conjugate Constant := conjugate @@ numeric
 
 isConstant Number := i -> true
 
-round RR := round CC := round0
-round Constant := round0 @@ numeric
+round Number := round0 @@ numeric
 round(ZZ,RR) := (n,x) -> (
      prec := precision x;
      p := (toRR(prec,10))^n;
      toRR(prec,round(x*p)/p))
+round(ZZ, CC) := (n, x) -> toCC(round(n, realPart x), round(n, imaginaryPart x))
+round(ZZ, RRi) := (n, x) -> toRRi(round(n, left x), round(n, right x))
+round(ZZ, Number) := (n, x) -> round(n, numeric x)
 
 truncate Number := {} >> o -> x -> (
     if x >= 0 then floor x

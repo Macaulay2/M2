@@ -1,5 +1,13 @@
-document { Key => {round,(round,QQ),(round,RR),(round,ZZ,RR),(round,ZZ),
-	(round,CC),(round,Constant)},
+document {
+    Key => {
+	 round,
+	(round, Number),
+	(round, QQ),
+	(round, ZZ),
+	(round, ZZ, CC),
+	(round, ZZ, Number),
+	(round, ZZ, RR),
+	(round, ZZ, RRi)},
      Headline => "round a number",
      SYNOPSIS (
 	  Usage => "round x",
