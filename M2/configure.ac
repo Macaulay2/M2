@@ -1405,9 +1405,17 @@ then AC_DEFINE(WITH_PYTHON,1,[whether we are linking with the python library])
 	print(get_config_var('CONFINCLUDEPY'))"`
     CPPFLAGS="$CPPFLAGS -I$PYTHON_INCLUDE_DIR"
     AC_CHECK_HEADER(Python.h,,AC_MSG_ERROR(Python.h not found))
-    AC_SEARCH_LIBS(Py_Initialize,
-	python${PYTHON_VERSION} python${PYTHON_VERSION}m,,
-	AC_MSG_ERROR(libpython not found))
+    AC_SEARCH_LIBS([Py_Initialize],
+	[python${PYTHON_VERSION} python${PYTHON_VERSION}m],,
+	[PYTHON_LIBDIR=`$PYTHON_BIN -c \
+	    "from sysconfig import get_config_var; \
+	    print(get_config_var('LIBDIR'))"`
+	 AC_MSG_NOTICE([adding -L$PYTHON_LIBDIR to LDFLAGS and trying again...])
+	 AS_UNSET([ac_cv_search_Py_Initialize])
+	 LDFLAGS="$LDFLAGS -L$PYTHON_LIBDIR"
+	 AC_SEARCH_LIBS([Py_Initialize],
+	     [python${PYTHON_VERSION} python${PYTHON_VERSION}m],,
+	     [AC_MSG_ERROR(libpython not found)])])
 fi
 
 dnl boost 1.65 was the first release containing the stacktrace library
