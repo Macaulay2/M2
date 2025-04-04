@@ -66,7 +66,7 @@ jobs:
           brew config
           brew tap macaulay2/tap
           brew install --overwrite python
-          brew install automake boost tbb ccache ctags texinfo llvm make ninja yasm libffi msolve
+          brew install automake boost tbb ccache ctags texinfo llvm make ninja yasm libffi msolve googletest
           brew install --only-dependencies macaulay2/tap/M2
           brew link factory --force
 
