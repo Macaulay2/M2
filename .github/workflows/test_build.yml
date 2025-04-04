@@ -155,15 +155,12 @@ jobs:
         if: matrix.build-system == 'autotools'
         run: |
           ../../autogen.sh
-          export PYVERSION=`python3 -c "from sys import version_info; \
-            print(f'{version_info.major}.{version_info.minor}')"`
           export CPPFLAGS="-I`brew --prefix`/include \
             -I`brew --prefix libomp`/include         \
             -I`brew --prefix readline`/include"
           export  LDFLAGS="-L`brew --prefix`/lib \
             -L`brew --prefix libomp`/lib         \
-            -L`brew --prefix readline`/lib       \
-            -L/Library/Frameworks/Python.framework/Versions/${PYVERSION}/lib"
+            -L`brew --prefix readline`/lib"
           export F77=gfortran-14
           ../../configure --enable-download --with-system-gc
 
