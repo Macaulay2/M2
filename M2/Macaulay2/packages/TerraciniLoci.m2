@@ -31,8 +31,8 @@
 
 newPackage("TerraciniLoci",
     Headline => "Terracini loci of projective varieties",
-    Version => "0.2",
-    Date => "October 19, 2024",
+    Version => "0.3",
+    Date => "March 28, 2025",
     Authors => {
 	{
 	    Name => "Francesco Galuppi",
@@ -52,13 +52,28 @@ newPackage("TerraciniLoci",
     PackageImports => {
 	"CorrespondenceScrolls",
 	"FastMinors",
-	"MinimalPrimes"})
+	"MinimalPrimes",
+	"PackageCitations",
+	})
+
+citeAs ///@misc{galuppi2023geometrynonemptyterraciniloci,
+  title={Geometry of first nonempty Terracini loci},
+  author={Francesco Galuppi and Pierpaola Santarsiero and Douglas A. Torrance and Ettore Teixeira Turatti},
+  year={2023},
+  eprint={2311.09067},
+  archivePrefix={arXiv},
+  primaryClass={math.AG},
+  url={https://arxiv.org/abs/2311.09067},
+}///
 
 ---------------
 -- ChangeLog --
 ---------------
 
 -*
+
+0.3 (2025-03-28, M2 1.25.05)
+* add citation information
 
 0.2 (2024-10-19, M2 1.24.11)
 * stop exporting "Threads" symbol from FastMinors; now exported by Core
