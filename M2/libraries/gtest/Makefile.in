@@ -2,8 +2,7 @@
 SUBMODULE = true
 LIBNAME = googletest
 VERSION = 1.11.0
-CONFIGURECMD = :
-BUILDCMD = :
+CONFIGURECMD = cmake . -DCMAKE_INSTALL_PREFIX=$(PREFIX) -DBUILD_GMOCK=OFF
 
 LICENSEFILES = LICENSE
 URL = https://macaulay2.com/Downloads/OtherSourceCode
@@ -11,8 +10,6 @@ MLIMIT = 1400000
 VLIMIT = 1400000
 TLIMIT = 400
 
-
-INSTALLCMD = $(MKDIR_P) $(BUILTLIBPATH)/include && rm -rf $(BUILTLIBPATH)/include/gtest && ln -s ../../libraries/gtest/$(BUILDDIR)/googletest $(BUILTLIBPATH)/include/gtest
 CHECKTARGET = .
 
 include ../Makefile.library

@@ -20,7 +20,6 @@ check-config:
 	    GFTABLESDIR=@PRE_GFTABLESDIR@					\
 	    LDFLAGS="$(LDFLAGS)"						\
 	    LIBS="@BUILTLIBS@"							\
-	    --with-gtest-source-path="@GTEST_PATH@"				\
 	    CPPFLAGS="$(CPPFLAGS)"						\
 	    CC="$(CC)"								\
 	    CXX="$(CXX)"							\
