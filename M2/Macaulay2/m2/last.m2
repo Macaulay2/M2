@@ -28,7 +28,18 @@ Number.Wrap = x -> wr("",x)
 if instance(PythonObject,Type) then PythonObject.Wrap = x -> wr("",x) else protect PythonObject
 QQ.Wrap = x -> wr("=",x)
 
-ignoreP := set { "Core", "Classic", "Parsing", "SimpleDoc" }
+ignoreP := set nonnull {
+    "Classic",
+    "ConwayPolynomials",
+    "Core",
+    "LLLBases",
+    "PackageCitations",
+    "Parsing",
+    "Saturation",
+    "SimpleDoc",
+    "TangentCone",
+    "Truncations",
+    }
 mentionQ := p -> not ignoreP#?(toString p)
 
 addStartFunction(
@@ -63,6 +74,7 @@ addStartFunction( () -> (
 	       	    hd := "with packages: ";
 	       	    stderr << hd << wrap(printWidth-#hd, concatenate between_", " sort apply(relevant,toString)) << endl;
 		    );
+	       stderr << "Try 'help', 'copyright', or 'cite' to get started." << endl;
 	       if topLevelMode === TeXmacs then stderr << TeXmacsEnd << flush;
 	       );
 	  )
