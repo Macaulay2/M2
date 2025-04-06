@@ -1,32 +1,5 @@
 --needsPackage "RationalPoints2"
 
--- give a random vector in a module over a local ring
-localRandom = (M, opts) -> (
-    R := ring M;
-    -- TODO: which coefficient ring do we want?
-    K := try coefficientRing R else R;
-    v := random(cover M ** K, module K, opts);
-    -- TODO: sub should be unnecessary, but see https://github.com/Macaulay2/M2/issues/3638
-    vector inducedMap(M, , generators M * sub(v, R)))
-
-random(ZZ,   Module) :=
-random(List, Module) := Vector => o -> (d, M) -> vector map(M, , random(cover M, (ring M)^{-d}, o))
-random       Module  := Vector => o ->     M  -> (
-    if isHomogeneous M then random(degree 1_(ring M), M, o) else localRandom(M, o))
-
-generalEndomorphism = method(Options => options random)
-generalEndomorphism Module := Matrix => o -> M -> (
-    zdeg := if isHomogeneous M then degree 0_M;
-    if debugLevel > 1 then printerr "computing Hom module";
-    A := Hom(M, M,
-	DegreeLimit       => zdeg,
-	MinimalGenerators => false);
-    B := if isHomogeneous M then smartBasis(zdeg, A) else inducedMap(A, , gens A);
-    -- TODO: we need to pass an option to random to limit the coefficient field
-    homomorphism(B * random(source B, o)))
--- the sheaf needs to be pruned to prevent missing endomorphisms
-generalEndomorphism CoherentSheaf := SheafMap => o -> F -> sheaf generalEndomorphism(module prune F, o)
-
 -----NEW STUFF FOR INHOMOGENEOUS CASE-----
 
 findSplitInclusion = method(Options => { Tries => 50 })

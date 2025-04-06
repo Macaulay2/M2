@@ -243,6 +243,38 @@ smartBasis = (deg, M) -> (
     M'.cache.homomorphism = M.cache.homomorphism;
     basis(deg, M')) -- caching this globally causes issues!
 
+-- matrix of degree zero generators of End M
+gensEnd0 = M -> M.cache#"End0" ??= (
+    -- TODO: need to pass options from Hom + choose the coefficient field
+    zdeg := if isHomogeneous M then degree 0_M;
+    A := Hom(M, M,
+	DegreeLimit       => zdeg,
+	MinimalGenerators => false);
+    if isHomogeneous M
+    then smartBasis(zdeg, A)
+    else inducedMap(A, , gens A))
+
+-- give a random vector in a module over a local ring
+localRandom = (M, opts) -> (
+    R := ring M;
+    -- TODO: which coefficient ring do we want?
+    K := try coefficientRing R else R;
+    v := random(cover M ** K, module K, opts);
+    -- TODO: sub should be unnecessary, but see https://github.com/Macaulay2/M2/issues/3638
+    vector inducedMap(M, , generators M * sub(v, R)))
+
+random(ZZ,   Module) :=
+random(List, Module) := Vector => o -> (d, M) -> vector map(M, , random(cover M, (ring M)^{-d}, o))
+random       Module  := Vector => o ->     M  -> (
+    if isHomogeneous M then random(degree 1_(ring M), M, o) else localRandom(M, o))
+
+generalEndomorphism = method(Options => options random)
+generalEndomorphism Module := Matrix => o -> M -> (
+    homomorphism((B := gensEnd0 M) * random(source B, o)))
+-- the sheaf needs to be pruned to prevent missing endomorphisms
+generalEndomorphism CoherentSheaf := SheafMap => o -> F -> (
+    sheaf generalEndomorphism(module prune F, o))
+
 -----------------------------------------------------------------------------
 -----------------------------------------------------------------------------
 
