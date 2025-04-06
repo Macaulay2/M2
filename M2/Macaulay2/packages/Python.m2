@@ -139,7 +139,7 @@ if ZZ#?"Python executable" and ZZ#"Python executable" != executable
 then error "can't reload package with a new python executable; restart first"
 pythonInitialize(ZZ#"Python executable" = executable)
 
-pythonHelp = Command (() -> pythonValue ///help()///)
+pythonHelp = Command (() -> builtins@@help())
 
 expression PythonObject := expression @@ pythonUnicodeAsUTF8 @@ pythonObjectStr
 toString PythonObject := toString @@ expression
