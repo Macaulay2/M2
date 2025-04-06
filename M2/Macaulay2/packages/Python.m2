@@ -475,6 +475,11 @@ listSymbols PythonObject := x -> (
 			Abbreviate {val}}, s-> TD {s})))))
 listSymbols PythonContext := ctx -> listSymbols ctx.Dictionary
 
+use PythonContext := ctx -> (
+    scan(ctx.Dictionary, key -> (
+	    if not match("_", toString key)
+	    then getSymbol toString key <- ctx.Dictionary_key)))
+
 -------------------------------------
 -- M2 -> Python conversion methods --
 -------------------------------------
