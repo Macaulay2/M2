@@ -928,11 +928,28 @@ then BUILTLIBS="-lflint $BUILTLIBS -lm"
      AC_DEFINE([HAVE_FLINT_NMOD_H])
      AC_DEFINE([HAVE_FLINT_ARB_H])
      AS_IF([test $BUILD_gmp = no],
-         [AC_SEARCH_LIBS([__gmpn_gcd_11], [gmp], [],
-             [AC_MSG_WARN([flint requires __gmp_gcd_11, so we will build gmp])
-              BUILD_gmp=yes
-              LIBS_GMP="-lgmpxx -lgmp"
-              BUILTLIBS="$LIBS_GMP $BUILTLIBS"])])
+         [AC_LANG([C])
+          AC_MSG_CHECKING([if gmp >= 6.2.1 (needed to build flint)])
+          AC_RUN_IFELSE(
+              [AC_LANG_PROGRAM([
+                   #include <gmp.h>
+                   ], [
+                   #if (__GNU_MP_VERSION            < 6) || \
+                       (__GNU_MP_VERSION           == 6  && \
+                        __GNU_MP_VERSION_MINOR      < 2) || \
+                       (__GNU_MP_VERSION           == 6  && \
+                        __GNU_MP_VERSION_MINOR     == 2  && \
+                        __GNU_MP_VERSION_PATCHLEVEL < 1)
+                     return 1;
+                   #else
+                     return 0;
+                   #endif
+                   ])],
+              [AC_MSG_RESULT([yes])],
+              [AC_MSG_RESULT([no; will build gmp])
+                  BUILD_gmp=yes
+                  LIBS_GMP="-lgmpxx -lgmp"
+                  BUILTLIBS="$LIBS_GMP $BUILTLIBS"])])
 fi
 
 dnl debian: 4ti2-
