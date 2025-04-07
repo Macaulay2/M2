@@ -535,21 +535,31 @@ pipInstall String := pkg -> (
 -- NumPy methods --
 -------------------
 
+-- we can't guarantee that numpy is available at startup, so we install dummy
+-- methods initially, and replace them once the user calls installNumPyMethods
+toPython Matrix        :=
+toPython Vector        :=
+toPython MutableMatrix := x -> error "call 'installNumPyMethods()' first"
+
+np = null
 installNumPyMethods = () -> (
-    np := import "numpy";
-    toPython Matrix        :=
-    toPython Vector        :=
-    toPython MutableMatrix := (toFunction np@@"array") @@ entries;
-    addPyToM2Function(
-	np@@"ndarray",
-	x -> (
-	    if x@@"ndim" == 0
-	    then value x_()
-	    else if x@@"ndim" == 1
-	    then vector(value \ toList x)
-	    else if x@@"ndim" == 2
-	    then matrix apply(toList x, row -> value \ toList row)),
-	"numpy.ndarray -> Matrix/Vector");)
+    if np === null then (
+	np = import "numpy";
+	toPython Matrix        :=
+	toPython Vector        :=
+	toPython MutableMatrix := (toFunction np@@"array") @@ entries;
+	addPyToM2Function(
+	    np@@"ndarray",
+	    x -> (
+		if x@@"ndim" == 0
+		then value x_()
+		else if x@@"ndim" == 1
+		then vector(value \ toList x)
+		else if x@@"ndim" == 2
+		then matrix apply(toList x, row -> value \ toList row)),
+	    "numpy.ndarray -> Matrix/Vector");
+	PythonObject#"numpy methods installed" = true);
+    np)
 
 load "Python/doc.m2"
 
@@ -875,16 +885,15 @@ x = pythonValue("x + 7", Global => r)
 assert Equation(x, 19)
 ///
 
--- not part of default testsuite since it requires numpy
-///
+TEST ///
 -----------
 -- NumPy --
 -----------
-np = import "numpy"
+try np = installNumPyMethods() else end -- skip if numpy not present
 
--- @ (__matmul__ operator)
-v = np@@array {1, 2, 3}
-w = np@@array {4, 5, 6}
+-- @ (matmul operator)
+v = toPython vector {1, 2, 3}
+w = toPython vector {4, 5, 6}
 assert Equation(v @ w, 32)
 
 -- scalar types
