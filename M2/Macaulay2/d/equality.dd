@@ -246,7 +246,11 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	  else False
 	  )
      is Database do False
-     is pythonObjectCell do False
+     is x:pythonObjectCell do (
+	 when rhs
+	 is y:pythonObjectCell do (
+	     if Ccode(bool, x.v, " == ", y.v) then True else False)
+	 else False)
      is xmlNodeCell do False				    -- unimplemented
      is xmlAttrCell do False				    -- unimplemented
      is TaskCell do False
