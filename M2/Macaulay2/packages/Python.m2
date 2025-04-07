@@ -156,7 +156,7 @@ typename = x -> (
     (if m == "builtins" then "" else (m | ".")) | toString T@@"__qualname__")
 
 PythonObject.synonym = "python object"
-PythonObject#AfterPrint = x -> (PythonObject, " of class ", typename x)
+PythonObject.AfterPrint = x -> (PythonObject, " of class ", typename x)
 
 pythonValue = method(
     Dispatch => Thing,
