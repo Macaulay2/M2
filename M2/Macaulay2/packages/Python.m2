@@ -334,6 +334,7 @@ scan({
 	(symbol //=, "ifloordiv"),
 	(symbol %=, "imod"),
 	(symbol ^=, "ipow"),
+	(symbol **=, "ipow"),
 	(symbol <<=, "ilshift"),
 	(symbol >>=, "irshift"),
 	(symbol &=, "iand"),
