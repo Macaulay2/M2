@@ -396,13 +396,13 @@ Number ** RingElement :=
 RingElement ** Number := 
 RingElement ** RingElement := (r,s) -> matrix {{r}} ** matrix {{s}}
 
-Matrix#AfterPrint = Matrix#AfterNoPrint = f -> (
+Matrix.AfterPrint = Matrix.AfterNoPrint = f -> (
     class f,
     (
-	(tar, src) := apply((target f, source f), M -> moduleAbbrv(M, null));
+	(tar, src) := apply((target f, source f), moduleAbbrv);
 	if tar =!= null and src =!= null
-	then (" ", new MapExpression from expression \ {tar, src}))
-    )
+	then (" ", MapExpression(tar, src))
+    ))
 
 -- precedence Matrix := x -> precedence symbol x
 

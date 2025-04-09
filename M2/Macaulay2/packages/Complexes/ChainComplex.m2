@@ -427,7 +427,7 @@ Complex#id = (C) -> (
     result
     )
 
-importFrom(Core, {"moduleAbbrv"})
+importFrom(Core, "short")
 net Complex := C -> (
      (lo,hi) := C.concentration;
      if lo > hi then 
@@ -438,7 +438,7 @@ net Complex := C -> (
      else
          horizontalJoin between(" <-- ", 
              for i from lo to hi list
-                 stack (net moduleAbbrv(C_i, C_i), " ", net i))
+                 stack (net short C_i, " ", net i))
      )
 
 texUnder := (x,y) -> "\\underset{\\vphantom{\\Bigg|}"|y|"}{"|x|"}"
@@ -474,12 +474,12 @@ texMath Complex := String => C -> (
     else (
         concatenate for i from lo to hi list (
             if i === lo then 
-                texUnder(texMath moduleAbbrv(C_i, C_i),i) 
+                texUnder(texMath short C_i, i) 
             else (
                 "\\,\\xleftarrow{\\scriptsize " 
                 | texMatrixShort dd^C_i 
                 | "}\\," 
-                | texUnder(texMath moduleAbbrv(C_i, C_i),i)
+                | texUnder(texMath short C_i, i)
                 )
             )
         )
