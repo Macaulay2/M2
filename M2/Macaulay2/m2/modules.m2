@@ -88,14 +88,7 @@ toString Vector := v -> toString expression v
 texMath Vector := v -> texMath expression v
 --html Vector := v -> html expression v
 
--- helper for Matrix#AfterPrint and Vector#AfterPrint
-moduleAbbrv = (M, abbrv) -> (
-    if isFreeModule M then M
-    else if hasAttribute(M, ReverseDictionary)
-    then getAttribute(M, ReverseDictionary)
-    else abbrv)
-
-Vector#AfterPrint = Vector#AfterNoPrint = v -> moduleAbbrv(module v, Vector)
+Vector.AfterPrint = Vector.AfterNoPrint = v -> moduleAbbrv module v ?? Vector
 
 ring Vector := v -> ring class v
 module Vector := v -> target v#0
@@ -246,6 +239,14 @@ expression Module := M -> (
 toString Module := M -> toString expression M
 net Module := M -> net expression M
 texMath Module := M -> texMath expression M
+
+-- returns null if can't shorten (free module or assigned to variable)
+moduleAbbrv = M -> (
+    if isFreeModule M then expression M
+    else if hasAttribute(M, ReverseDictionary)
+    then getAttribute(M, ReverseDictionary))
+
+short Module := M -> moduleAbbrv M ?? expression M
 
 describe Module := M -> Describe (
      if M.?relations
