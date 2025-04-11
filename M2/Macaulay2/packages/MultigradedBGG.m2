@@ -1257,3 +1257,9 @@ L = stronglyLinearStrand(M)
 assert(L == koszulComplex {x_1})
 ///
 
+TEST ///
+  S = QQ[x,y]
+  K = koszulComplex vars S
+  assert(differential foldComplex(K, 0) == map(S^{{0}, 2:{-1}, {-2}},S^{{0}, 2:{-1}, {-2}},{{0, x, y, 0}, {0, 0, 0, -y}, {0, 0, 0, x}, {0, 0, 0, 0}}))
+  assert(differential foldComplex(dual K, 0) == map(S^{{2}, 2:{1}, {0}},S^{{2}, 2:{1}, {0}},{{0, -y, x, 0}, {0, 0, 0, x}, {0, 0, 0, y}, {0, 0, 0, 0}}))
+///
