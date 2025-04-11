@@ -386,6 +386,8 @@ scan({
 	exp,
 	expm1,
 	floor,
+	gcd,
+	lcm,
 	log,
 	log1p,
 	sin,
