@@ -30,7 +30,9 @@ new MutableMatrix from Matrix := (typeofMutableMatrix,m) -> map(ring m,rawMutabl
 
 mutableMatrix = method(Options => {Dense => true}, TypicalValue=>MutableMatrix)
 mutableMatrix Matrix := o -> m -> map(ring m, rawMutableMatrix(raw m, o.Dense))
-mutableMatrix List := o -> m -> (m1 := matrix m; map(ring m1, rawMutableMatrix(raw m1, o.Dense)))
+mutableMatrix(Ring,List) := o -> (R, m) -> mutableMatrix(matrix(R, m), o)
+mutableMatrix(RingFamily,List) := o -> (R, m) -> mutableMatrix(default R, m, o)
+mutableMatrix List := o -> m -> mutableMatrix(matrix m, o)
 mutableMatrix MutableMatrix := o -> (m) -> map(ring m, rawMutableMatrix(raw m, o.Dense))
 mutableMatrix(Ring,ZZ,ZZ) := o -> (R,nrows,ncols) -> map(R,rawMutableMatrix(raw R,nrows,ncols,o.Dense))
 mutableMatrix(RingFamily,ZZ,ZZ) := o -> (R,nrows,ncols) -> mutableMatrix(default R,nrows,ncols,o)

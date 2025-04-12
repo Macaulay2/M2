@@ -65,3 +65,5 @@ assert try ( mutableMatrix(ZZ, -1, -1); false ) else true
 assert try ( mutableMatrix(ZZ, -1,  1); false ) else true
 assert try ( mutableMatrix(ZZ,  1, -1); false ) else true
 assert try ( mutableIdentity(ZZ, -1);   false ) else true
+
+assert(ring mutableMatrix(ZZ/101, {{1,2,3}}) === ZZ/101)
