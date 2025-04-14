@@ -142,7 +142,7 @@ find_package(EAntic	2.0.0 QUIET) # only needed when libnormaliz.so needs it
 find_package(MSolve	0.7.0)
 find_package(Frobby	0.9.0)
 find_package(CDDLIB)  # 0.94m?
-find_package(GTest	1.10)
+find_package(GTest	1.16)
 #find_package(Memtailor 1.0.0)
 #find_package(Mathic    1.0.0)
 #find_package(Mathicgb  1.0.0)
