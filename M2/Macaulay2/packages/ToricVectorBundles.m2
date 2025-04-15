@@ -2723,7 +2723,7 @@ document {
      }
 
 document {
-     Key => {deltaE, (deltaE,ToricVectorBundleKlyachko)},
+     Key => {deltaE, (deltaE,ToricVectorBundle)},
      Headline => " the polytope of possible degrees that give non zero cohomology",
      Usage => " P = deltaE E",
      Inputs => {
