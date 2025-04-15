@@ -1,16 +1,15 @@
 newPackage(
           "Brackets",
           Version => "0.1",
-          Date => "June 7, 2023",
+          Date => "April 15, 2025",
           Headline => "Brackets, Grassmann-Cayley Algebra, and Projective Geometry",
           Authors => {
 	      { Name => "Dalton Bidleman", Email => "deb0036@auburn.edu", HomePage => ""},
-	      { Name => "Tim Duff", Email => "timduff@uw.edu", HomePage => "https://timduff35.github.io/timduff35/"},
+	      { Name => "Tim Duff", Email => "tduff@missouri.edu", HomePage => "https://timduff35.github.io/timduff35/"},
 	      { Name => "Jack Kendrick", Email => "jackgk@uw.edu", HomePage => ""},
-	      { Name => "Thomas Yahl", Email => "thomasjyahl@tamu.edu", HomePage => "tjyahl.github.io"},
 	      { Name => "Michael Zeng", Email => "zengrf@uw.edu", HomePage => ""}		      
 	      },
-	  PackageImports => {"SubalgebraBases"},
+	  PackageImports => {},
           AuxiliaryFiles => false,
           DebuggingMode => true
           )
@@ -42,9 +41,9 @@ AbstractGCRing Array := (G, A) -> (
     new AbstractGCRing from {ring => R A, cache => new CacheTable from {}}
     )
 
--- class declaration for BracketRing
+-- class declaration and constructors for BracketRing
 BracketRing = new Type of AbstractGCRing
--- constructor
+
 bracketRing = method(Options => {Strategy => GroebnerBasis, CoefficientRing => QQ,Variables=>{}})
 bracketRing AbstractGCRing := G -> error "not implemented"
 bracketRing (VisibleList, ZZ) := o -> (vectorSymbols, d) -> (
@@ -62,39 +61,13 @@ bracketRing (VisibleList, ZZ) := o -> (vectorSymbols, d) -> (
     lookupTable := new HashTable from apply(binomial(n, d), i -> increment bracketIndices#i => (gens S)#(numgens R+i));
     I := ideal apply(minorsX, bracketVariables, (m, b) -> sub(m, S) - b_S);
     ret := new BracketRing from {numrows => n, numcols => d, ring => S, ideal => I, table => lookupTable, cache => new CacheTable from {}};
+    local G;
     if o#Strategy === GroebnerBasis then (
-	-- TODO: it's likely more efficient to apply forceGB to a known Groebner basis (Plücker relations? van der Waerden syzygies?)
-	-- TODO: allow computing with SubalgebraBases instead of Groebner bases
-
-	G := groebnerBasis I;
+	-- TODO: allow computing with SubalgebraBases instead of Groebner bases, or pre-cooked Grassmannian GB (needs correct monomial order...)
+	G = groebnerBasis I;
 	ret.cache#gb = G;
 	ret.cache#syz = selectInSubring(1, G);
-
 	) 
-   
-    else if o#Strategy === Grassmannian then (
-	-- use the function "Grassmannian" to simplify construction of R, I, etc, above
-	    G := Grassmannian(d - 1, #vectorSymbols - 1);
-      B := bracketRing(#vectorSymbols, d);
-      GB := apply(
-        gens ring G, 
-        v -> (
-            S := last baseName v;
-            A := [new Array from apply(S, i -> i + 1)];
-            A_B;
-            )
-        );
-      ret.cache#gb = GB;
-	    --ret.cache#syz = selectInSubring(1, GB);
-	)
-
-    else if o#Strategy === "vanDerWaerden" then (
-	error "not implemented";
-	)
-    else if o#Strategy === sagbi then (
-	-- use SubalgebraBases package
-	error "not implemented";
-	)
     else error "Strategy option not recognized";
     ret
     )
@@ -110,10 +83,10 @@ bracketRing BracketRing := o -> B -> B
 ZZ _ AbstractGCRing := (k, G) -> sub(k, ring G)
 matrix BracketRing := o -> B -> transpose genericMatrix(ring B,numcols B, numrows B)
 
--- class declaration for GCAlgebra
+-- class declaration and constructors for GCAlgebra
 GCAlgebra = new Type of AbstractGCRing
 gc = method(Options => {Strategy => GroebnerBasis,CoefficientRing => QQ})
--- constructor
+
 gc (VisibleList, ZZ) := o -> (vectorSymbols, d) -> (
     n := # vectorSymbols;
     (inputMode, vectorVariables) := (
@@ -137,9 +110,9 @@ net GCAlgebra := Gnd -> (
     )
 numgens AbstractGCRing := Gnd -> numgens ring Gnd
 
-
 GCExpression = new Type of HashTable
 Bracket = new Type of GCExpression
+
 -- pretty printing
 net GCExpression := b -> (
     r := b#RingElement;
@@ -172,14 +145,8 @@ coefficients GCExpression := o -> a -> (
 	R2 := coefficientRing R1;
 	(m, c) := coefficients sub(a#RingElement, (coefficientRing R2)[gens R1][gens R2]);
 	(m, matrix(G, apply(flatten entries c, e -> {e_G})))
-	) else error "not implemented"
--*
-    R2 := coefficientRing R1;
-    R3 := coefficientRing R2;
-    if not isPolynomialRing R3 then error "expected GC ring with extra variables";
-    (m, c) := flatten \ entries \ coefficients sub(a#RingElement, R3[gens R1, SkewCommutative=>true][gens R2]);
-    (m, c)
-    *-
+	)
+    else error "not implemented"
 )
 
 bracketRing GCExpression := o -> b -> bracketRing ring b
@@ -258,7 +225,7 @@ extensorToBracket GCExpression := A -> (
     Bnd := bracketRing A;
     local ret;
     if elemA == 0 then ret = 0 else (
-	assert(first degree elemA == numcols bracketRing A); -- isTopDegree?
+	assert(first degree elemA == numcols bracketRing A);
 	S := extensorSupportIndices A;
 	ret = (leadCoefficient elemA) * sub(Bnd#table#S, ring elemA)
 	);
@@ -276,7 +243,6 @@ shuffleProduct = (A, B) -> (
     elemA := A#RingElement;
     suppA := support elemA;
     sum(shuffles, sigma -> (
-	    -- compute the result of the shuffle product
 	    bracketCoeff := extensorToBracket((leadCoefficient A#RingElement) * product(0..d-k-1, i -> suppA#(sigma#i)) * B);
 	    mon := product(d-k..j-1, i -> suppA#(sigma#i));
 	    ret := (sgn sigma) * bracketCoeff * mon;
@@ -285,11 +251,7 @@ shuffleProduct = (A, B) -> (
 	)
     )
 
-GCExpression _ GCAlgebra := (b, G) -> (
-    if not instance(G, BracketRing) then ( -- else, see next function
-	if ring b === G then b else error "GCExpression belongs to a different ring"
-	)
-    )
+GCExpression _ GCAlgebra := (b, G) -> if (not instance(G, BracketRing) and ring b === G) then b else error "GCExpression belongs to a different ring"
 
 GCExpression _ BracketRing := (b, B) -> (
     assert(B === bracketRing b);
@@ -313,7 +275,7 @@ RingElement ^ GCExpression := (f, g) -> (f_(ring g)) ^ g
 
 normalForm = method()
 normalForm GCExpression := b -> (
-    assert(instance(ring b, BracketRing)); -- should we eventually allow for Grassmann Cayley algebra elements here too?
+    assert(instance(ring b, BracketRing));
     B := bracketRing b;
     I := ideal bracketRing b;
     r := b#RingElement;
@@ -403,7 +365,6 @@ entries GCMatrix := M -> (
 
 undocumented {AbstractGCRing, (net, GCAlgebra)}
 
--* Documentation section *-
 beginDocumentation()
 
 doc ///
@@ -427,7 +388,7 @@ Description
       The classical bracket ring $B_{n,d}$ is the image of this map.
       This is the homogeneous coordinate ring of the Grassmannian of $(n-1)$-dimensional planes in $\mathbb{P}^{d-1}$ under its Plücker embedding.
 Acknowledgement
-  We thank all project contributors, the organizers of the 2023 Macaulay2 workshop in Minneapolis, IMA staff, and acknowledge support from the National Science Foundation grant DMS 2302476.
+  We thank Thomas Yahl for helpful contributions, and the organizers of the 2023 Macaulay2 workshop in Minneapolis, IMA staff, and acknowledge support from the National Science Foundation grant DMS 2302476.
 References
   Sturmfels, Bernd. {\it Algorithms in invariant theory}. Springer Science & Business Media, 2008.
 ///
@@ -704,8 +665,8 @@ Description
 ///
 
 
--* Test section *-
-TEST /// -* Sturmfels Example 3.1.10 *-
+TEST ///
+-* Sturmfels Example 3.1.10 *-
 B = bracketRing(6, 3)
 T = [1 4 5]_B * [1 5 6]_B * [2 3 4]_B
 n = normalForm T 
@@ -713,17 +674,20 @@ assert(net n == "[256]*[145]*[134]-[356]*[145]*[124]+[456]*[145]*[123]")
 -- Note: this is the same normal form Sturmfels gives, but monomials and their exponents are reverse-sorted
 ///
 
-TEST /// -* Sturmfels Example 3.3.3 *-
+TEST ///
+-* Sturmfels Example 3.3.3 *-
 G = gc(a..f, 3)
 A = (a * d)_G
 B = (b * e)_G
 AB = A ^ B 
 C = (c * f)_G
-D = AB ^ C -- Output "2*[bde]*[acf]-2*[cdf]*[abe]" is consistent with the book's answer up to sorting and sign.
+D = AB ^ C
+-- Note: Output "2*[bde]*[acf]-2*[cdf]*[abe]" is consistent with the book's answer up to sorting and sign.
 assert(net D == "2*[bde]*[acf]-2*[cdf]*[abe]")
 ///
 
-TEST /// -* Desargues' Theorem*-
+TEST ///
+-* Desargues' Theorem*-
 G = gc(a..f,3)
 abLine = (a * b)_G
 deLine = (d * e)_G
@@ -747,7 +711,8 @@ assert(net f2#2 == "[bdf]*[ace]-[bef]*[acd]-[cdf]*[abe]-[def]*[abc]")
 ///
 
 
-TEST ///--simple colinearity condition
+TEST ///
+--simple colinearity condition
 B = bracketRing(a..c,3)
 X = matrix B
 f = toBracketPolynomial(det X,B)
@@ -755,7 +720,8 @@ assert(net f == "[abc]")
 ///
 
 
-TEST ///--6 points lie on a conic
+TEST ///
+--condition for 6 points to lie on a conic
 B = bracketRing(6,3)
 X = matrix B
 C = fold(apply(0..5,i->basis(2,ring X,Variables => (entries X)#i)),(a,b)->a||b)
@@ -765,7 +731,8 @@ assert(net f == "-[456]*[236]*[135]*[124]+[356]*[246]*[145]*[123]")
 ///
 
 
-TEST ///--Sturmfels 3.2.10 example
+TEST ///
+--Sturmfels 3.2.10 example
 B = bracketRing(toList(a..f),2)
 X = matrix B
 
@@ -776,7 +743,8 @@ assert(net F' == "-[cf]*[be]*[ad]-[df]*[be]*[ac]+[ef]*[bd]*[ac]+[df]*[ce]*[ab]-[
 ///
 
 
-TEST ///--Sturmfels 3.2 problem 2 (4 points in P^1 that lie on a cubic, two must be equal)
+TEST ///
+--Sturmfels 3.2 problem 2 (4 points in P^1 that lie on a cubic, two must be equal)
 B = bracketRing(4,2)
 X = matrix B
 P = matrix apply(4,i->flatten entries basis(3,ring B,Variables=>(entries X)#i))
@@ -785,14 +753,16 @@ assert(net toBracketPolynomial(f,B) == "[34]*[24]^2*[13]^2*[12]-[34]^2*[24]*[13]
 ///
 
 
-TEST ///--Sturmfels 3.1 problem 2 (determinant of a GC matrix)
+TEST ///
+--Sturmfels 3.1 problem 2 (determinant of a GC matrix)
 B = bracketRing(6,3)
 M = matrix(B, for i from 4 to 6 list {[1 2 i]_B, [1 i 3]_B, [i 2 3]_B})
 normalForm (det M)
 assert(net normalForm (det M) == "-[456]*[123]^2")
 ///
 
-TEST /// -* Pascal's Theorem*-
+TEST ///
+-* Pascal's Theorem*-
 G = gc(a .. f, 3) -- generate the GC Algebra generated by the 1-extensors a..f 
 gens --G create a list containing just the extensors
 B = bracketRing G; -- define the bracketRing of G
@@ -813,8 +783,6 @@ q2 = p1 * p2 * p3 -- Span of p1, p2, p3. q = 0 if the points are collinear.
 normalForm q2 === (-1) * q1 -- True! So, a,b,c,d,e,f lie on a single quadric if and only if p1, p2, p3 are collinear.
 assert(net normalForm q2 == "[def]*[bcf]*[ace]*[abd]-[cef]*[bdf]*[ade]*[abc]")
 ///
-
-
 
 end--
 
@@ -845,3 +813,16 @@ Glu = G [l, u]
 restart
 needsPackage "Brackets"
 B = bracketRing(8,4)
+
+-- chow Monte Carlo
+restart
+needsPackage "Brackets"
+B = bracketRing(4,2)
+X = matrix B
+u = X_{0}
+v = X_{1}
+
+chowMatrix = (u||matrix{{0},{0}}) | (matrix{{0}}||u||matrix{{0}}) | (matrix{{0},{0}}||u) | (v||matrix{{0},{0}}) | (matrix{{0}}||v||matrix{{0}}) | (matrix{{0},{0}}||v) 
+chowForm = toBracketPolynomial(det chowMatrix, B)
+matrix(B, flatten entries X)
+det matrix(B, {{[1 2]_B,[1 3]_B,[1 4]_B},{[1 3]_B, [1 4]_B + [2 3]_B, [2 4]_B}, {[1 4]_B, [2 4]_B, [3 4]_B}})
