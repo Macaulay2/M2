@@ -675,10 +675,11 @@ deltaE = method()
 
 --   INPUT : 'tvb',  a ToricVectorBundle
 --  OUTPUT : a Polyhedron
-deltaE ToricVectorBundleKaneyama := (cacheValue symbol deltaE)( tvb -> (
+deltaE ToricVectorBundle := (cacheValue symbol deltaE)( tvb -> (
      	  if not isComplete tvb#"ToricVariety" then error("The toric variety needs to be complete.");
      	  n := tvb#"dimension of the variety";
-          -- Extracting necessary data
+          if instance(tvb,ToricVectorBundleKaneyama) then (
+	  -- Extracting necessary data
           raylist := rays tvb;
           rl := #raylist;
           k := tvb#"rank of the vector bundle";
@@ -706,19 +707,8 @@ deltaE ToricVectorBundleKaneyama := (cacheValue symbol deltaE)( tvb -> (
 		    	      if isCompact P and (not isEmpty P) then vertices P else continue)));
      	       -- Make a matrix of all the vertices in L
      	       M = matrix {L};
-     	       convexHull M))
-
-
-
-
-
-
-
-
-
-deltaE ToricVectorBundleKlyachko := (cacheValue symbol deltaE)( tvb -> (
-     	  if not isComplete tvb#"ToricVariety" then error("The toric variety needs to be complete.");
-     	  n := tvb#"dimension of the variety";
+     	       convexHull M)
+	else (
           -- Extracting necessary data
           rayTable := tvb#"rayTable";
           l := #rayTable;
@@ -726,7 +716,7 @@ deltaE ToricVectorBundleKlyachko := (cacheValue symbol deltaE)( tvb -> (
 		      sset1 := select(subsets(rays tvb,n), s -> rank matrix {s} == n);
   		      convexHull matrix {apply(sset1, s -> (
 		 		     M := transpose matrix {apply(s, r -> (-r | r) || (fMT#r))};
-		 		     vertices polyhedronFromHData(M_{0..n-1},M_{n})))}))
+		 		     vertices polyhedronFromHData(M_{0..n-1},M_{n})))})))
 
 
 --   INPUT : '(tvb1,tvb2)',  two ToricVectorBundle over the same Fan
