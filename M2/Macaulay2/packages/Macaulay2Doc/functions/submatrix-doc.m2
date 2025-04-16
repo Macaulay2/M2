@@ -26,6 +26,7 @@ document {
     Key => {
 	(symbol ^, Matrix, List),
 	(symbol ^, MutableMatrix, List),
+	(symbol ^, Vector, List),
     },
      Headline => "select rows",
      Usage => "f_rows",

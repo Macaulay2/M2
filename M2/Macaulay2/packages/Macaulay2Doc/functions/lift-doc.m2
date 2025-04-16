@@ -8,13 +8,28 @@ undocumented {
     (lift, Matrix, InexactNumber),
     (lift, Matrix, InexactNumber'),
     (lift, Number, InexactNumber),
+    (lift, Module, InexactNumber'),
+    (lift, Module, InexactNumber),
+    (lift, MutableMatrix, InexactNumber'),
+    (lift, MutableMatrix, InexactNumber),
+    (lift, Vector, InexactNumber'),
+    (lift, Vector, InexactNumber),
+    (lift, IndexedVariable, MonoidElement),
+    (lift, Module, Number),
+    (lift, MutableMatrix, Number),
+    (lift, RingElement, MonoidElement),
+    (lift, Vector, Number),
 }
+
 
 -- TODO: why is ^(Number,Ring,Verify=>...) showing as missing documentation?
 document { 
      Key => {lift,
 	  (lift,Ideal,RingElement),[lift,Verify],
 	  (lift,Matrix,RingElement),
+	  (lift, MutableMatrix, RingElement),
+	  (lift, Module, RingElement),
+	  (lift, Vector, RingElement),
 	  (lift, CC, QQ),
 	  (lift, CC, RR_*),
 	  (lift, CC, ZZ),

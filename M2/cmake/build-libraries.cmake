@@ -485,8 +485,8 @@ endif()
 
 # https://github.com/algebraic-solving/msolve
 ExternalProject_Add(build-msolve
-  URL               https://github.com/algebraic-solving/msolve/archive/refs/tags/v0.7.3.tar.gz
-  URL_HASH          SHA256=b82bf7dfe1fb7d3064ecf95e0d0a01334820b09b1107368ca9b4d05ba9ee1241
+  URL               https://github.com/algebraic-solving/msolve/archive/refs/tags/v0.7.5.tar.gz
+  URL_HASH          SHA256=e88368abfd1e1918329ff9444164ca0e304835794fec68d192a63c845ae63128
   PREFIX            libraries/msolve
   SOURCE_DIR        libraries/msolve/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -505,6 +505,7 @@ ExternalProject_Add(build-msolve
   INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/msolve
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/msolve
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different msolve ${M2_INSTALL_PROGRAMSDIR}/
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
@@ -997,6 +998,7 @@ ExternalProject_Add(build-normaliz
   INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/normaliz
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/normaliz
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different source/normaliz ${M2_INSTALL_PROGRAMSDIR}/
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON

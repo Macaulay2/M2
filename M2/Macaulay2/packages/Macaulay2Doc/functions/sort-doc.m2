@@ -2,8 +2,6 @@
 --- author(s): 
 --- notes: 
 
--- TODO: (sort,List,Function)
-
 document { 
      Key => sort,
      Headline => "sort a list or columns of a matrix",
@@ -56,7 +54,7 @@ document {
          },
      }
 document { 
-     Key => {(sort,List)},
+     Key => {(sort,List), (sort, List, Function)},
      Headline => "sort a list",
      Usage => "sort v",
      Inputs => { "v" },

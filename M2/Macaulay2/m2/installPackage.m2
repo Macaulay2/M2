@@ -249,7 +249,8 @@ homeButton     := HREF {"https://macaulay2.com/", "Macaulay2"};
 searchBox      := LITERAL ///<form method="get" action="https://www.google.com/search">
   <input placeholder="Search" type="text" name="q" value="">
   <input type="hidden" name="q" value="site:macaulay2.com/doc">
-</form>///
+</form>
+///
 
 nextButton     := tag -> if NEXT#?tag then HREF { htmlFilename NEXT#tag, "next" }     else "next"
 prevButton     := tag -> if PREV#?tag then HREF { htmlFilename PREV#tag, "previous" } else "previous"
@@ -258,8 +259,8 @@ backwardButton := tag -> ( b := BACKWARD tag; if b =!= null then HREF { htmlFile
 upButton       := tag -> if   UP#?tag then HREF { htmlFilename   UP#tag, "up" } else "up"
 topButton      := tag -> if tag =!= topDocumentTag then topNodeButton(htmlDirectory, topFileName) else "top"
 
-upAncestors := tag -> reverse(
-    n := 0; prepend(tag, while UP#?tag and n < 20 list (n = n+1; tag = UP#tag)))
+upAncestors := tag -> unique prepend(topDocumentTag,
+    fold(1..5, {tag}, (i, prev) -> prepend(UP#(prev#0) ?? break prev, prev)))
 
 -- TODO: revamp this using Bootstrap
 buttonBar := tag -> DIV {

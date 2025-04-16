@@ -3,6 +3,7 @@
 doc ///
  Key
   compositions
+  (compositions, ZZ)
   (compositions, ZZ, ZZ)
  Headline
   list the compositions of an integer
@@ -12,7 +13,7 @@ doc ///
   k:ZZ
    a nonnegative integer, the number of parts in each composition
   n:ZZ
-   a nonnegative integer, the sum of each composition
+   a nonnegative integer, the sum of each composition (if omitted, assumed to be also $k$)
  Outputs
   :List
    of all ordered lists of {\tt k} nonnegative integers 

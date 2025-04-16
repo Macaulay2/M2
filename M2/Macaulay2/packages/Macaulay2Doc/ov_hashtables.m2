@@ -210,7 +210,7 @@ document {
 	       disadvantage of this approach would be that a hash table in
 	       which many mutable things appear as keys would have all of those
 	       key-value pairs appearing in the same bucket, so that access
-	       to this hashtable would be slow.  (Each bucket is implemented
+	       to this hash table would be slow.  (Each bucket is implemented
 	       as a linear list, and searching a long linear list is slow.)"
 	       },
 	  {
@@ -229,7 +229,7 @@ document {
 	       the things to be different, too.)  The offsetting advantage is
 	       that a hash table in which many mutable things appear as keys would
 	       typically have the key-value pairs distributed among the buckets,
-	       so that access to this hashtable would be fast."
+	       so that access to this hash table would be fast."
 	       }
 	  },
      PARA{},

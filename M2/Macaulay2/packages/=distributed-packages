@@ -15,6 +15,7 @@ Dmodules
 WeylAlgebras
 HolonomicSystems
 BernsteinSato
+ConnectionMatrices
 Depth
 Elimination
 GenericInitialIdeal
@@ -277,4 +278,6 @@ Msolve
 Permutations
 SCMAlgebras
 NumericalSemigroups
+IncidenceCorrespondenceCohomology
+ToricHigherDirectImages
 Brackets

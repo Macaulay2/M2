@@ -269,7 +269,7 @@ document {
      }
 
 document {
-     Key => {unstack,(unstack, Net)},
+     Key => {unstack,(unstack, Net),(unstack, String)},
      Headline => "list the rows of a net",
      TT "unstack x", " -- produces a list of strings, each containing the
      characters in one row of the ", TT "Net", " ", TT "x", ".",

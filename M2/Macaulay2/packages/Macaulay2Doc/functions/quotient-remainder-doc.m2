@@ -122,7 +122,11 @@ Node
     remainder
     quotient'
     (symbol //, Matrix, Matrix)
+///
 
+undocumented apply({BasisElementLimit, PairLimit, DegreeLimit}, opt -> [quotient', opt])
+
+doc ///
 Node
   Key
     quotient'
@@ -244,7 +248,7 @@ document { Key => {remainder,(remainder, Matrix, GroebnerBasis), (remainder, Mat
      }
 
 document { Key => {remainder',(remainder', Matrix, Matrix)},
-     Headline => "matrix quotient and remainder (opposite)",
+     Headline => "matrix remainder (opposite)",
      Usage => "r = remainder'(f,g)",
      Inputs => { "f" => Matrix, "g" => {ofClass{GroebnerBasis,Matrix}, ", with the same source as ", TT "f"}},
      Outputs => {

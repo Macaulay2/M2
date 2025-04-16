@@ -73,21 +73,6 @@ set(M2_TEST_TEMPLATE    [[debug Core \; argumentMode = @ArgumentMode@ \; check(@
 set(M2_INFO_TEMPLATE    [["info-"|"@package@" << #@package@#"test inputs" << close]]) # ignore the color
 set(M2_CHECK_TEMPLATE   [[check("@package@", UserMode=>false, Verbose=>$<IF:$<BOOL:${VERBOSE}>,true,false>)]])
 
-# TODO: simplify
-set(M2_DOC_TEMPLATE [[installPackage("@package@",
-  Verbose                => $<IF:$<BOOL:${VERBOSE}>,true,false>,
-  RerunExamples          => ${RerunExamples},
-  CheckDocumentation     => ${CheckDocumentation},
-  IgnoreExampleErrors    => ${IgnoreExampleErrors},
-  RemakeAllDocumentation => ${RemakeAllDocumentation},
-  InstallPrefix          => "${M2_DIST_PREFIX}/",
-  UserMode               => false,
-  SeparateExec           => true,
-  DebuggingMode          => true,
-  MakeHTML               => false,
-  MakeInfo               => false,
-  MakePDF                => true)]])
-
 #################################################################################
 ## Declare all targets: {install,check,all,uninstall}-{packages,PACKAGE}
 
@@ -160,7 +145,6 @@ foreach(package IN LISTS PACKAGES)
   _M2_STRING_CONFIGURE(M2_CHECK_TEMPLATE   M2_CHECK_STRING)
   _M2_STRING_CONFIGURE(M2_NEED_TEMPLATE    M2_NEED_STRING)
   _M2_STRING_CONFIGURE(M2_INFO_TEMPLATE    M2_INFO_STRING)
-  _M2_STRING_CONFIGURE(M2_DOC_TEMPLATE     M2_DOC_STRING TRUE)
 
   ###############################################################################
   ## Enable USES_TERMINAL only for Macaulay2Doc and EngineTests

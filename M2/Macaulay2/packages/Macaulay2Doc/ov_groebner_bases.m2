@@ -1,20 +1,20 @@
 -- -*- coding: utf-8 -*-
 --- status: DRAFT
---- author(s): kummini 
---- notes: 
+--- author(s): kummini
+--- notes:
 
 document {
      Key => "Gröbner bases",
-     "A Groebner basis is a specific generating set for an ideal or submodule, often
+     "A Gröbner basis is a specific generating set for an ideal or submodule, often
      used to compute other information, such as numerical invariants, operations such as
-     intersections and ideal quotients, syzygies, etc.  In Macaulay2, Groebner bases
-     are computed behind the scenes when needed, and the Groebner basis is cached 
+     intersections and ideal quotients, syzygies, etc.  In Macaulay2, Gröbner bases
+     are computed behind the scenes when needed, and the Gröbner basis is cached
      in case it is needed later.",
      PARA{},
      "See ", TO GroebnerBasis, " for additional common operations and a comprehensive list of all routines
-     in Macaulay2 which either take Groebner bases as arguments, or return one.",
+     in Macaulay2 which either take Gröbner bases as arguments, or return one.",
      PARA{},
-     "In Macaulay2, Groebner bases may be computed for ideals and submodules over the 
+     "In Macaulay2, Gröbner bases may be computed for ideals and submodules over the
      following rings:",
      UL {
 	  {TO ZZ, " -- Hermite normal form"},
@@ -23,7 +23,7 @@ document {
 	  "quotients of such rings",
 	  "Weyl algebras"
 	  },
-     "Groebner bases of ideals in polynomial rings over other polynomial rings are also allowed.",
+     "Gröbner bases of ideals in polynomial rings over other polynomial rings are also allowed.",
      Subnodes => {
 	  TO "what is a Groebner basis?",
 	  TO "Groebner basis examples and applications",
@@ -36,7 +36,7 @@ document {
 	  }
      }
 
-document { 
+document {
      Key => "Groebner basis examples and applications",
      Subnodes => {
 	  TO "simple Groebner basis computations over various rings",
@@ -49,8 +49,8 @@ document {
 
 document {
      Key => "simple Groebner basis computations over various rings",
-     "For a definition of Groebner basis, see ", TO "what is a Groebner basis?", ".",
-     SUBSECTION "A first Groebner basis",
+     "For a definition of Gröbner basis, see ", TO "what is a Groebner basis?", ".",
+     SUBSECTION "A first Gröbner basis",
      SUBSECTION "Weight vectors and non-strict monomial orders",
         "The monomial order may be given by a weight vector (see ", TO "monomial orderings", "),",
         EXAMPLE lines ///
@@ -66,14 +66,14 @@ document {
 	monomial ideal, may be obtained
 	by selecting only the first part of the monomial order while finding the lead term matrix:",
         EXAMPLE "leadTerm(1,I)",
-     SUBSECTION "Groebner basis over the integers",
-     TEX ///A strong Groebner basis of an ideal $I \subset{} ZZ[x_1,...,x_n]$ is a set $G$
+     SUBSECTION "Gröbner basis over the integers",
+     TEX ///A strong Gröbner basis of an ideal $I \subset{} ZZ[x_1,...,x_n]$ is a set $G$
      of elements of $I$ such that,
-     if $cm$ is any lead term of $I$ ($c$ a coefficient, and $m$ a monomial), 
+     if $cm$ is any lead term of $I$ ($c$ a coefficient, and $m$ a monomial),
      then there is an element of $G$ whose lead term divides
      $cm$.///,
      PARA{},
-     "Macaulay2 computes such strong Groebner bases over ZZ.",
+     "Macaulay2 computes such strong Gröbner bases over ZZ.",
      EXAMPLE lines ///
        R = ZZ[x,y]
        F = y^2-(x^3+3*x+5)
@@ -83,27 +83,27 @@ document {
        factor 174
        ///,
      TEX ///This elliptic curve is smooth for all primes $p \neq 2, 3, 29$.///,
-     SUBSECTION "Groebner basis over a quotient ring",
-	"The lead terms of the Groebner basis generate all possible lead terms
+     SUBSECTION "Gröbner basis over a quotient ring",
+	"The lead terms of the Gröbner basis generate all possible lead terms
 	modulo the lead terms of the quotient ideal.",
      	EXAMPLE lines ///
      	  R = QQ[a..d]/(a^2+b^2+c^2+d^2-1)
 	  I = ideal(a*b*c*d)
 	  gens gb I
           ///,
-     SUBSECTION "A Groebner basis over a skew-commutative ring",
-	"The lead terms of the Groebner basis generate all possible lead terms,
-	as in the commutative case.  Essentially the same algorithm is applicable 
+     SUBSECTION "A Gröbner basis over a skew-commutative ring",
+	"The lead terms of the Gröbner basis generate all possible lead terms,
+	as in the commutative case.  Essentially the same algorithm is applicable
 	in this case.",
      	EXAMPLE lines  ///
           R = QQ[a..d,SkewCommutative=>true]
 	  I = ideal(a*b-c*d)
 	  gens gb I
           ///,
-     SUBSECTION "Groebner basis over polynomial rings over polynomial rings",
+     SUBSECTION "Gröbner basis over polynomial rings over polynomial rings",
         "For such rings, we may imagine a polynomial ring over a base field, or
-	over the integers, possibly modulo some ideal.  The resulting Groebner 
-	basis is this one.  The monomial order is a product order, with the 
+	over the integers, possibly modulo some ideal.  The resulting Gröbner
+	basis is this one.  The monomial order is a product order, with the
 	variables in the outermost polynomial ring the most expensive.",
         EXAMPLE lines ///
 	  A = QQ[s,c]/(s^2+c^2-1)
@@ -112,13 +112,13 @@ document {
 	  gens gb I
 	  leadTerm oo
 	  ///,
-     SUBSECTION "A Groebner basis of a submodule",
+     SUBSECTION "A Gröbner basis of a submodule",
      }
 
 document {
      Key => "normal forms",
      TEX ///Let $R = k[x_1, ..., x_n]$ be a polynomial ring over a field k,
-	and let $I \subset{} R$ be an ideal. Let $\{g_1, ..., g_t\}$ be a Groebner
+	and let $I \subset{} R$ be an ideal. Let $\{g_1, ..., g_t\}$ be a Gröbner
 	basis for $I$. For any $f \in{} R$, there is a unique `remainder' $r \in{} R$ such
 	that no term of $r$ is divisible by the leading term of any $g_i$ and such
 	that $f-r$ belongs to $I$. This polynomial $r$ is sometimes called the normal
@@ -141,11 +141,11 @@ document {
 -- needsPackage "Elimination"
 document {
      Key => "elimination of variables",
-     TEX "Let's consider the problem of finding the polynomial relation 
+     TEX "Let's consider the problem of finding the polynomial relation
      of the three polynomials $x = s^3+st+1$, $y = t^3+3t^2+t$, and $z = st^3$.
-     The first method we use is to compute a Groebner basis using an elimination
+     The first method we use is to compute a Gröbner basis using an elimination
      order
-     which eliminates the variables s,t, and then select those Groebner basis
+     which eliminates the variables s,t, and then select those Gröbner basis
      elements that do not involve the variables s and t.",
      EXAMPLE lines ///
        R = QQ[s,t,x,y,z, MonomialOrder=>Eliminate 2];
@@ -163,7 +163,7 @@ document {
        time G = eliminate(I,{s,t})
        ans2 = G_0
        ///,
-     "Sometimes giving the variables different degrees will speed up the 
+     "Sometimes giving the variables different degrees will speed up the
      computations.  Here, we set the degrees of x, y, and z to be the total
      degrees.",
      EXAMPLE lines ///
@@ -195,7 +195,7 @@ document {
      "This is the fastest method in this case.",
      PARA{},
      "These answers should all be the same (with the possible exception of the last),
-     but are they?  They live in different rings, so we cannot compare them 
+     but are they?  They live in different rings, so we cannot compare them
      directly.  Instead, let's move them to the ring B, and then remove duplicates.",
      EXAMPLE lines ///
           L = {ans1,ans2,ans3,ans4,ans5};
@@ -215,13 +215,13 @@ document {
      }
 document {
      Key => "what is a Groebner basis?",
-	"A Groebner basis is a specific generating set of an ideal or submodule
+	"A Gröbner basis is a specific generating set of an ideal or submodule
 	over a polynomial ring. It is not minimal in general, but has extremely
 	nice properties; it is reasonably easy to extract information about
-	the ideal or submodule from a Groebner basis. We first describe Groebner
+	the ideal or submodule from a Gröbner basis. We first describe Gröbner
 	bases in the important special case of an ideal in a polynomial ring. We
-	will then describe Groebner bases of submodules, and over more general
-	rings.", 
+	will then describe Gröbner bases of submodules, and over more general
+	rings.",
 	PARA{},
      TEX ///Let $R = k[x_1, ..., x_n]$ be a polynomial ring over a field $k$,
 	and let $I \subset R$ be an ideal.  A {\it monomial order}
@@ -229,7 +229,7 @@ document {
 	conditions: (1) $m > 1$, for every monomial $m \neq 1$, and (2) the order is
 	multiplicative: $m > n$ implies that $mp > np$, for all monomials $m$, $n$, $p$.///,
      PARA{},
-	"In Macaulay2, each ring has a monomial order (also called a term order) 
+	"In Macaulay2, each ring has a monomial order (also called a term order)
 	associated with it.  The default monomial order is ", TT "GRevLex", ". See
 	", TO "monomial orderings", " for more information.",
 	PARA{},
@@ -238,10 +238,10 @@ document {
      EXAMPLE {
 	  "R = ZZ/1277[a..d]",
     	  "F = 5*a^3 + d^2 + a*d + b*c + 1",
-	  "leadTerm F"          
+	  "leadTerm F"
      },
      TEX ///For an ideal $I \subset R$, the initial ideal $in(I)$ is the ideal
-	generated by the leading terms of the elements in I. A Groebner basis for
+	generated by the leading terms of the elements in I. A Gröbner basis for
 	I is a set of generators for I whose leading terms generate $in(I)$.///,
 	PARA{},
      EXAMPLE {
@@ -253,7 +253,7 @@ document {
 	"The above example also shows that the leading terms of any set of
 	generators of I do not necessarily generate in(I).",
 	PARA{},
-	"A Groebner basis for an ideal depends on the monomial ordering used in
+	"A Gröbner basis for an ideal depends on the monomial ordering used in
 	the ring .",
      EXAMPLE {
 	  "R = ZZ/1277[x,y, MonomialOrder => Lex];",
@@ -266,24 +266,24 @@ document {
 
 document {
      Key => "computing Groebner bases",
-	"Groebner bases are computed with the ", TT "gb", " command; see ", 
+	"Gröbner bases are computed with the ", TT "gb", " command; see ",
 	TO "gb", ". It returns an object of class ", TT "GroebnerBasis", ".",
 	EXAMPLE {
 	  "R = ZZ/1277[x,y];",
     	  "I = ideal(x^3 - 2*x*y, x^2*y - 2*y^2 + x);",
 	  "g = gb I"
      },
-	"To get the polynomials in the Groebner basis, use ", TT "gens",
+	"To get the polynomials in the Gröbner basis, use ", TT "gens",
      EXAMPLE {
 		"gens g",
 		},
 
 	PARA{},
-	"How do we control the computation of Groebner bases? If we are working
-	with homogeneous ideals, we may stop the computation of a Groebner basis
+	"How do we control the computation of Gröbner bases? If we are working
+	with homogeneous ideals, we may stop the computation of a Gröbner basis
 	after S-polynomials up to a certain degree have been handled, with the
 	option ", TO "DegreeLimit", ". (This is meaningful only in homogeneous
-	cases.)",     
+	cases.)",
      EXAMPLE {
 		   "R = ZZ/1277[x,y,z,w];",
       	  "I = ideal(x*y-z^2,y^2-w^2);",
@@ -298,9 +298,9 @@ document {
 		  "gens g3",
 	  },
      PARA{},
-     "The second computation advances the state of the Groebner
+     "The second computation advances the state of the Gröbner
      basis object started by the first, and the two results are
-     exactly the same Groebner basis object.",
+     exactly the same Gröbner basis object.",
      EXAMPLE {
 	  "g2",
 	  "g2 === g3"
@@ -341,7 +341,7 @@ document {
 	  "transpose gens gb (I, SubringLimit => 1)",
 	  },
      PARA{},
-     "Sometimes a Groebner basis computation can seem to last forever.  An ongoing     
+     "Sometimes a Gröbner basis computation can seem to last forever.  An ongoing
      visual display of its progress can be obtained with ", TO "gbTrace", ".",
      EXAMPLE {
 	  "gbTrace = 3",
@@ -363,18 +363,18 @@ document {
     {5}   ready to reduce S-polynomials of degree 5
     (1)   there is 1 more S-polynomial
      o    an S-polynomial reduced to zero and has been discarded
-///,     
+///,
      PARA{},
      "Let's turn off the tracing.",
      EXAMPLE {
 	  "gbTrace = 0"
 	  },
      PARA{},
-     "Each of the operations dealing with Groebner bases may be
+     "Each of the operations dealing with Gröbner bases may be
      interrupted or stopped (by typing CTRL-C).  The computation
      is continued by re-issuing the same command.  Alternatively, the
      command can be issued with the option ", TT "StopBeforeComputation => true", ".
-     It will stop immediately, and return a Groebner basis object that can
+     It will stop immediately, and return a Gröbner basis object that can
      be inspected with ", TO2(generators, "gens"), " or ", TO "syz", ".
      The computation can be continued later.",
 	EXAMPLE {
@@ -384,17 +384,17 @@ document {
 		   "gens g"
 	},
      PARA{},
-     "The function ", TO "forceGB", " can be used to create a Groebner
-     basis object with a specified Groebner basis.  No computation is
-     performed to check whether the specified basis is a Groebner
+     "The function ", TO "forceGB", " can be used to create a Gröbner
+     basis object with a specified Gröbner basis.  No computation is
+     performed to check whether the specified basis is a Gröbner
      basis.",
      PARA{},
      "If the Poincare polynomial (or Hilbert function) for a homogeneous
      submodule ", TT "M", " is known, you can speed up the computation of a
-     Groebner basis by informing the system.  This is done by storing
+     Gröbner basis by informing the system.  This is done by storing
      the Poincare polynomial in ", TT "M.cache.poincare", ".",
      PARA{},
-     "As an example, we compute the Groebner basis of a random ideal,
+     "As an example, we compute the Gröbner basis of a random ideal,
      which is almost certainly a complete intersection, in which
      case we know the Hilbert function already.",
      EXAMPLE {
@@ -405,11 +405,11 @@ document {
 	  },
      "The matrix was randomly chosen, and we'd like to use the same one
      again, but this time with a hint about the Hilbert function, so first
-     we must erase the memory of the Groebner basis computed above.",
+     we must erase the memory of the Gröbner basis computed above.",
      EXAMPLE {
 	  "remove(f.cache,{false,0})",
 	  },
-     "Now we provide the hint and compute the Groebner basis anew.",
+     "Now we provide the hint and compute the Gröbner basis anew.",
      EXAMPLE {
 	  "poincare cokernel f = (1-T^3)*(1-T^3)*(1-T^5)*(1-T^6) -- cache poincare",
       	  "time betti gb f"
@@ -426,17 +426,17 @@ document {
 
 -- document {
 --      Key => "What is a Groebner basis?",
---      "A Groebner basis is a specific generating set
---      of an ideal or submodule over a polynomial ring, not usually minimal, 
---      which has extremely nice properties, from which 
+--      "A Gröbner basis is a specific generating set
+--      of an ideal or submodule over a polynomial ring, not usually minimal,
+--      which has extremely nice properties, from which
 --      it is reasonably easy to extract information about the ideal or submodule.",
---      "We first define and describe Groebner bases in the important special case
+--      "We first define and describe Gröbner bases in the important special case
 --      of an ideal in a polynomial ring.  We then
---      describe Groebner bases of submodules, and over more general rings.",
+--      describe Gröbner bases of submodules, and over more general rings.",
 --      PARA{},
 --      TEX "Let $R = k[x_1, ..., x_n]$ be a polynomial ring, over a field k,
 --      and let I \\subset R be an ideal.  A term order on R is, by definition, a total
---      order, >,  on the monomials of R, which satisfies two conditions: (1) 
+--      order, >,  on the monomials of R, which satisfies two conditions: (1)
 --      m > 1, for every monomial m \\neq 1, and (2) the order is multiplicative:
 --      m > n implies that mp > np, for all monomials m,n,p.",
 --      PARA{},
@@ -459,29 +459,29 @@ document {
 -- 	  "substitute(F,R)"},
 --      "Given a term order, the lead monomial is the term whose monomial is greatest
 --      in this order.",
---      EXAMPLE "leadTerm F"          
+--      EXAMPLE "leadTerm F"
 --      }
 
 document {
      Key => "fine control of a Groebner basis computation",
-     "Sometimes a Groebner basis computation doesn't finish quickly enough.  If so
+     "Sometimes a Gröbner basis computation doesn't finish quickly enough.  If so
      then this section might be of use. THIS PAGE IS UNDER CONSTRUCTION.",
-     
-	  SUBSECTION "Partially computed Groebner bases",
-	       "Suppose that you have computed part of a Groebner basis.  For
-	       example, you may have interrupted the computation using CTRL-C 
-	       (typing 'c' while holding the CTRL key down, in emacs, you have to 
+
+	  SUBSECTION "Partially computed Gröbner bases",
+	       "Suppose that you have computed part of a Gröbner basis.  For
+	       example, you may have interrupted the computation using CTRL-C
+	       (typing 'c' while holding the CTRL key down, in emacs, you have to
 	       type CTRL-C twice), or you may have given options requesting only
 	       partial computation.",
      	       EXAMPLE {
 		    "R = ZZ/32003[a..e];",
 	            "I = ideal(random(3,R),random(3,R),random(3,R))",
 	            "gens gb(I,PairLimit=>7);"},
-	       "Get the Groebner basis object:",
+	       "Get the Gröbner basis object:",
 	       EXAMPLE {
 		    "g = gb(I,StopBeforeComputation => true);",
 	       	    "leadTerm gens g"},
-	       "We can make a Groebner basis snapshot by using StopBeforeComputation, or ", TO gbSnapshot, ":",
+	       "We can make a Gröbner basis snapshot by using StopBeforeComputation, or ", TO gbSnapshot, ":",
 	       EXAMPLE lines ///
 		    gens gb(I,StopBeforeComputation => true)
 	            leadTerm gbSnapshot(I)

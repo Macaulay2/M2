@@ -5,6 +5,7 @@ doc///
  Key
   unique
   (unique, VisibleList)
+  (unique, Hypertext)
  Headline
   eliminate duplicates from a list
  Usage

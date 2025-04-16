@@ -32,7 +32,9 @@ KaTeX := () -> (
           { left: "\\[", right: "\\]", display: true},
           { left: "$",   right: "$",   display: false},
           { left: "\\(", right: "\\)", display: false}
-      ], ignoredTags = ["tt", "script", "noscript", "style", "textarea", "pre", "code", "option"];
+      ], ignoredTags = [
+	  "kbd", "var", "samp", "script", "noscript",
+	  "style", "textarea", "pre", "code", "option" ];
       document.addEventListener("DOMContentLoaded", function() {
         renderMathInElement(document.body, { delimiters: delimiters, macros: macros, ignoredTags: ignoredTags, trust: true });
       });

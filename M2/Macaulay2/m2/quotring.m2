@@ -38,7 +38,6 @@ degreesMonoid QuotientRing := (cacheValue degreesMonoid) (S -> degreesMonoid amb
 degreeLength QuotientRing := S -> degreeLength ambient S
 degreeGroup  QuotientRing := S -> degreeGroup  ambient S
 
-vars QuotientRing := (cacheValue vars) (S -> map(S^1,, table (1, numgens S, (i,j) -> S_j)))
 degrees QuotientRing := R -> degrees ambient R
 
 precision QuotientRing := precision @@ ambient

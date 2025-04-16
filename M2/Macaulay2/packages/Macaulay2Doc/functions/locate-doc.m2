@@ -13,6 +13,7 @@ Node
    (locate, FunctionBody)
    (locate, Command)
    (locate, Nothing)
+   (locate, Package)
    (locate, List)
    (locate, ZZ)
   Headline

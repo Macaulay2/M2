@@ -63,7 +63,7 @@ document {
 
 document {
      Key => {"operatorAttributes"},
-     Headline => "a hashtable with information about Macaulay2 operators",
+     Headline => "a hash table with information about Macaulay2 operators",
      Usage => "operatorAttributes",
      Outputs => {{ "an experimental hash table that give information about ", TO "operators", " in the Macaulay2 language" }},
      "Meanings of the symbols used:",
@@ -155,7 +155,16 @@ document {
      ///,
      SeeAlso => {mutable, "try"}
      }
-document { Key => {frames,(frames, Symbol), (frames, Sequence), (frames, PseudocodeClosure), (frames, FunctionClosure)},
+document {
+    Key => {
+	frames,
+	(frames, Symbol),
+	(frames, Sequence),
+	(frames, PseudocodeClosure),
+	(frames, FunctionClosure),
+	(frames, CompiledFunction),
+	(frames, CompiledFunctionClosure),
+    },
      Headline => "get the frames associated to a closure",
      Usage => "frames f",
      Inputs => { "f" => {"() or ", ofClass{Symbol,Function,PseudocodeClosure}}},
@@ -1012,7 +1021,14 @@ document { Key => pseudocode,
      disassemble current
      ///
      }
-document { Key => disassemble,
+document {
+    Key => {
+	 disassemble,
+	(disassemble, FunctionBody),
+	(disassemble, FunctionClosure),
+	(disassemble, Pseudocode),
+	(disassemble, PseudocodeClosure),
+    },
      Headline => "disassemble a pseudocode or function",
      Usage => "disassemble c",
      Inputs => { "c" => ofClass{Function, Pseudocode} },
