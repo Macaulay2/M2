@@ -1060,7 +1060,7 @@ phi = map(Y,X,matrix{{1,0}})
 assert(isWellDefined phi)
 D = {0,-2,0,0,0,-2,1,0}
 HT = computeEigencharacters(phi,1,D);
-assert((sortBy entries) keys HT == {matrix{{0},{1}}, matrix{{0},{-1}}})
+assert(set keys HT == set {matrix{{0},{1}}, matrix{{0},{-1}}})
 ///
 
 end--
