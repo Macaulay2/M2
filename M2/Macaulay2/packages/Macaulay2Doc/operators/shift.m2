@@ -19,7 +19,11 @@ document {
      Key => symbol >>,
      Headline => "a binary operator, used for bit shifting or attaching optional inputs to functions",
      SeeAlso => { (symbol >>, OptionTable, Function) },
-     Subnodes => { TO "right shift" }
+     Subnodes => { TO "right shift" },
+     Caveat => {"Because ", CODE ">>", " has the same precedence as ",
+	 TO symbol := , ", it is not possible to use the syntax ",
+	 CODE "X >> Y := f", " to install a method for this operator.  ",
+	 "Instead, ", TO installMethod, " should be used directly"}
      }
 
 document {
