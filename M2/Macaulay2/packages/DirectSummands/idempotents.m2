@@ -1,50 +1,63 @@
 --needsPackage "RationalPoints2"
 
------NEW STUFF FOR INHOMOGENEOUS CASE-----
+-----------------------------------------------------------------------------
+-- helpers that should probably move to Core
+-----------------------------------------------------------------------------
 
-findSplitInclusion = method(Options => { Tries => 50 })
---tests if M is a split summand of N
-findSplitInclusion(Module, Module) := opts -> (M, N) -> (
-    h := for i to opts.Tries - 1 do (
-        b := homomorphism random Hom(M, N, MinimalGenerators => false);
-        c := homomorphism random Hom(N, M, MinimalGenerators => false);
-        if isIsomorphism(c * b) then break b);
-    if h === null then return "not known" else return h)
+-- same as flatten(Matrix), but doesn't bother homogenizing the result
+--flatten' = m -> map(R := ring m, rawReshape(m = raw m, raw R^1, raw R^(rawNumberOfColumns m * rawNumberOfRows m)))
 
-findIdem' = method(Options => { Tries=>500 })
-findIdem' Module      := opts ->  M     -> findIdem'(M, fieldExponent ring M,opts)
-findIdem'(Module,ZZ) := opts -> (M,e) -> (
-    R := ring M;
-    p := char R;
-    K := quotient ideal gens R;
-    l := if p == 0 then e else max(e, ceiling log_p numgens M);
-    L := infinity;
-    for c to opts.Tries - 1 do (
-        f := generalEndomorphism M;
-	eigen := eigenvalues' f;
-	if #eigen <= 1 then continue;
-        opers := flatten for y in eigen list (
-	    if p == 0 then (f - y*id_M) else (
-		for j from 0 to e list largePower'(p, j+1, largePower(p, l, f - y*id_M))));
-        idem := position(opers, g -> findSplitInclusion(image g, source g) =!= null and g != id_M and K ** g != 0 and prune ker g != 0);
-        if idem =!= null then (
-	    if 1 < debugLevel then printerr("found idempotent after ", toString c, " attempts.");
-	    return opers_idem));
-)
+leadCoefficient Number := x -> x
+leadMonomial    Number := x -> 0
 
---ONLY IF WE NEED THE FULL BASE FIELD:
---randomFieldElement = method()
---randomFieldElement(Ring) := K -> (
---    gensK := numgens first flattenRing K;
---    (random(K^1,K^1))_(0,0) + sum for i from 0 to gensK - 1 list (random(K^1,K^1))_(0,0) * K_i
---)
+-- not strictly speaking the "lead" coefficient, but the first nonzero coefficient
+leadCoefficient Matrix := RingElement => m -> if zero m then 0 else (
+    for c to numcols m - 1 do for r to numrows m - 1 do (
+	if not zero m_(r,c) then return leadCoefficient m_(r,c)))
 
----------------------
+-- not strictly speaking the "lead" monomial, but the first nonzero monomial
+leadMonomial Matrix := RingElement => m -> if zero m then 0 else (
+    for c to numcols m - 1 do for r to numrows m - 1 do (
+	if not zero m_(r,c) then return leadMonomial m_(r,c)))
+
+-- used to be called reduceScalar
+reduceCoefficient = m -> if zero m then m else (
+    map(target m, source m, cover m // leadCoefficient m))
+
+reduceMonomial = m -> if zero m then m else (
+    map(target m, source m, cover m // leadMonomial m))
+
+-- hacky things for CC
+-- TODO: move to Core, also add conjugate Matrix, realPart, imaginaryPart, etc.
+conjugate RingElement := x -> sum(listForm x, (e, c) -> conjugate c * (ring x)_e)
+magnitude = x -> x * conjugate x
+isZero = x -> if not instance(F := ultimate(coefficientRing, ring x), InexactField) then x == 0 else (
+    leadCoefficient magnitude x < 2^(-precision F))
+
+-- borrowed from Varieties as hack to get around
+-- https://github.com/Macaulay2/M2/issues/3407
+flattenMorphism = f -> (
+    g := presentation ring f;
+    S := ring g;
+    -- TODO: sometimes lifting to ring g is enough, how can we detect this?
+    -- TODO: why doesn't lift(f, ring g) do this automatically?
+    map(target f ** S, source f ** S, lift(cover f, S)) ** cokernel g)
+
+-- reduceCoefficient is a kludge to handle the case when h^2 = ah
+isIdempotent = h -> reduceCoefficient(h^2) == reduceCoefficient h
+isWeakIdempotent = h -> all(flatten entries flattenMorphism(reduceCoefficient(h^2) - reduceCoefficient h), isZero)
+--isWeakIdempotent = h -> isZero det cover flattenMorphism(reduceCoefficient(h^2) - reduceCoefficient h)
+
+-----------------------------------------------------------------------------
 
 -- e.g. given a tower such as K[x][y]/I, returns K
 -- TODO: use in localRandom?
 groundField = method()
 groundField Ring := R -> ultimate(K -> if isField K then K else coefficientRing K, R)
+
+potentialExtension = method()
+potentialExtension Module := M -> extField {char generalEndomorphism M}
+potentialExtension CoherentSheaf := M -> potentialExtension module M
 
 -- e.g. given a field isomorphic to GF(p,e), returns e
 fieldExponent = R -> (
@@ -89,13 +102,18 @@ lift(CC, CC_*) := opts -> (r, C) -> numeric(precision C, r)
 -- adjust as needed LOL
 findErrorMargin = m -> ceiling(log_10 2^(precision ring m))
 
+-----------------------------------------------------------------------------
+-- findIdempotents
+-----------------------------------------------------------------------------
+
 --TODO: findIdem right now will fail if K is not L[a]/f(a); in general, will need to find a primitive element first
 findIdempotent = method(Options => DirectSummandsOptions)
-findIdempotent Module      := opts ->  M     -> findIdempotent(M, fieldExponent ring M,opts)
-findIdempotent(Module, ZZ) := opts -> (M, e) -> (
+findIdempotent CoherentSheaf := opts -> M -> findIdempotent(module M, opts)
+findIdempotent Module        := opts -> M -> (
     R := ring M;
     p := char R;
     F := groundField R;
+    e := fieldExponent R;
     K := quotient ideal gens R;
     V := K ** M;
     exactFlag := not instance(F, InexactField);
@@ -136,26 +154,44 @@ findIdempotent(Module, ZZ) := opts -> (M, e) -> (
     error("no idempotent found after ", toString opts.Tries, " attempts. Try passing
 	ExtendGroundField => ", if p != 0 then ("GF " | toString L) else toString L))
 
-findIdempotent CoherentSheaf := opts -> M -> findIdempotent(module M,opts)
+protect Idempotents
 
-potentialExtension = method()
-potentialExtension Module := M -> extField {char generalEndomorphism M}
-potentialExtension CoherentSheaf := M -> potentialExtension module M
+-- only tries to find an idempotent among the generators of End_0(M)
+-- which is in general unlikely to be successful, but it often works!
+-- returns a pair: (idempotent or null, whether M is certified indecomposable)
+findBasicIdempotent = M -> (
+    M.cache.Idempotents ??= {};
+    if 0 < #M.cache.Idempotents
+    then return (first M.cache.Idempotents, false);
+    R := ring M;
+    B := gensEnd0 M;
+    K := coker vars R;
+    -- whether all non-identity endomorphisms are zero mod m
+    -- if this remains true till the end, the module is
+    -- certifiably indecomposable.
+    certified := true;
+    -- TODO: searching over 10k generators for F_*(OO_X)
+    -- on Gr(2,4) even over ZZ/3 takes a very long time
+    -- TODO: parallelized this and break on first success
+    idemp := scan(numcols B, c -> (
+	    h := homomorphism B_{c};
+	    if zero h or h == id_M
+	    or zero(hm := h ** K) then return;
+	    certified = false;
+	    if isWeakIdempotent hm then break h));
+    if idemp =!= null then M.cache.Idempotents ??= { idemp };
+    (idemp, certified))
 
 summandsFromIdempotents = method(Options => DirectSummandsOptions)
 summandsFromIdempotents Module := opts -> M -> (
-    zdeg := degree 0_M;
-    -- TODO: make "elapsedTime" contingent on verbosity
-    if debugLevel > 1 then printerr "computing Hom module";
-    A := Hom(M, M, -- most time consuming step
-	DegreeLimit       => if opts.Strategy & 2 == 2 then zdeg,
-	MinimalGenerators => if opts.Strategy & 4 == 4 then false);
-    B := smartBasis(zdeg, A);
-    summandsFromIdempotents(M, B, opts))
-
-summandsFromIdempotents(Module, Matrix) := opts -> (M, B) -> (
-    h := if numcols B == 1 then homomorphism B_{0}
+    M.cache.Idempotents ??= {};
+    h := if 0 < #M.cache.Idempotents then M.cache.Idempotents
     else try findIdempotent(M, opts) else return {M};
+    summandsFromIdempotents(M, h, opts))
+
+-- FIXME: handle the case when multiple idempotents are given
+summandsFromIdempotents(Module, List)   := opts -> (M, idems) -> summandsFromIdempotents(M, idems#0, opts)
+summandsFromIdempotents(Module, Matrix) := opts -> (M, h) -> (
     -- TODO: add this when the maps M_[w] and M^[w] also work with subsets
     -- M.cache.components =
     -- TODO: restrict End M to each summand and pass it on

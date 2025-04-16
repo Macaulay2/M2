@@ -5,13 +5,9 @@
 --
 -- TODO :
 -- 1. implement over Dmodules and other non-commutative rings
--- 2. try to find all irreducible idempotents from End M using representation theory
--- 3. cache maps to the summands
--- 4. rewrite (isDirectSum, Module)
--- 5. implement diagonalize for matrices (and later, complexes)
--- 6. restrict and pass End to the summands
--- 7. check for isomorphic summands
--- 8. make summands work over ZZ (currently rank fails)
+-- 2. implement diagonalize for matrices (and later, complexes)
+-- 3. find a way to restrict and pass End to the summands
+-- 4. make summands work over ZZ (currently rank fails)
 ---------------------------------------------------------------------------
 newPackage(
     "DirectSummands",
@@ -41,9 +37,9 @@ export {
     "findIdempotent", "findIdem" => "findIdempotent",
     "findSplitInclusion",
     "isomorphismTally",
+    "isIndecomposable",
     -- symbols
     "ExtendGroundField",
-    "Indecomposable",
     "Tries",
     -- frobenius methods
     "frobeniusMap",
@@ -59,6 +55,7 @@ importFrom_Core {
     "raw", "rawReshape",
     "rawNumberOfColumns",
     "rawNumberOfRows",
+    "tryHooks",
     "sortBy",
     }
 
@@ -72,8 +69,8 @@ DirectSummandsOptions = new OptionTable from {
     Limit             => null, -- used in directSummands(Module, Module)
     Strategy          => 7,    -- Strategy is a bitwise sum of the following:
     -- 1  => use degrees of generators as heuristic to peel off line bundles first
-    -- 2  => use Hom option DegreeLimit => 0
-    -- 4  => use Hom option MinimalGenerators => false
+    -- 2  => check generators of End_0 as heuristic for finding idempotents
+    -- 4  => unused
     -- 8  => precompute Homs before looking for idempotents
     -- 16 => use summandsFromIdempotents even in graded case
     Tries             => 10,   -- used in randomized algorithms
@@ -153,6 +150,10 @@ nonnull = x -> select(x, i -> i =!= null)
 checkRecursionDepth = () -> if recursionDepth() > recursionLimit - 20 then printerr(
     "Warning: the recursion depth limit may need to be extended; use `recursionLimit = N`")
 
+-----------------------------------------------------------------------------
+-- things to move to Isomorphism package
+-----------------------------------------------------------------------------
+
 module Module := identity
 
 -- give an isomorphism between two free modules with same degrees
@@ -213,6 +214,7 @@ isomorphismTally List := L -> (
 	(L#(j-1), c)))
 
 -----------------------------------------------------------------------------
+-- methods for finding general endomorphisms of degree zero
 -----------------------------------------------------------------------------
 
 importFrom_Truncations { "effGenerators" }
@@ -243,7 +245,8 @@ smartBasis = (deg, M) -> (
     M'.cache.homomorphism = M.cache.homomorphism;
     basis(deg, M')) -- caching this globally causes issues!
 
--- matrix of degree zero generators of End M
+-- matrix of (degree zero) generators of End M
+-- TODO: rename this
 gensEnd0 = M -> M.cache#"End0" ??= (
     -- TODO: need to pass options from Hom + choose the coefficient field
     zdeg := if isHomogeneous M then degree 0_M;
@@ -276,38 +279,8 @@ generalEndomorphism CoherentSheaf := SheafMap => o -> F -> (
     sheaf generalEndomorphism(module prune F, o))
 
 -----------------------------------------------------------------------------
+-- directSummands
 -----------------------------------------------------------------------------
-
--- same as flatten(Matrix), but doesn't bother homogenizing the result
-flatten' = m -> map(R := ring m, rawReshape(m = raw m, raw R^1, raw R^(rawNumberOfColumns m * rawNumberOfRows m)))
-
--- not strictly speaking the "lead" coefficient
-leadCoefficient Matrix := RingElement => m -> for c to numcols m - 1 do for r to numrows m - 1 do (
-    if not zero m_(r,c) then return leadCoefficient m_(r,c))
-
--- hacky things for CC
--- TODO: move to Core, also add conjugate Matrix, realPart, imaginaryPart, etc.
-conjugate RingElement := x -> sum(listForm x, (e, c) -> conjugate c * (ring x)_e)
-magnitude = x -> x * conjugate x
-isZero = x -> if not instance(F := ultimate(coefficientRing, ring x), InexactField) then x == 0 else (
-    leadCoefficient magnitude x < 2^(-precision F))
-
--- borrowed from Varieties as hack to get around
--- https://github.com/Macaulay2/M2/issues/3407
-flattenMorphism = f -> (
-    g := presentation ring f;
-    S := ring g;
-    -- TODO: sometimes lifting to ring g is enough, how can we detect this?
-    -- TODO: why doesn't lift(f, ring g) do this automatically?
-    map(target f ** S, source f ** S, lift(cover f, S)) ** cokernel g)
-
-leadCoefficient Number := identity
-
--- this is a kludge to handle the case when h^2 = ah
-reduceScalar = m -> if m == 0 then m else map(target m, source m, cover m // leadCoefficient m)
-isIdempotent = h -> reduceScalar(h^2) == reduceScalar h
-isWeakIdempotent = h -> all(flatten entries flattenMorphism(reduceScalar(h^2) - reduceScalar h), isZero)
---isWeakIdempotent = h -> isZero det cover flattenMorphism(reduceScalar(h^2) - reduceScalar h)
 
 -- TODO: can we return cached summands from the closest field extension?
 -- all cached keys: select(keys M.cache, k -> instance(k, Option) and k#0 === symbol directSummands)
@@ -345,37 +318,20 @@ directSummands Module := List => opts -> (cacheValue (symbol summands => opts.Ex
 	if 0 < debugLevel then stderr << endl << " -- split off " << #L - 1 << " summands!" << endl;
 	if 1 < #L then return directSummands(directSum L, opts));
     --
-    K := coker vars R;
-    zdeg := degree 0_M;
-    -- TODO: make "elapsedTime" contingent on verbosity
-    if debugLevel > 1 then printerr "computing Hom module";
-    A := Hom(M, M, -- most time consuming step
-	DegreeLimit       => if opts.Strategy & 2 == 2 then zdeg,
-	MinimalGenerators => if opts.Strategy & 4 == 4 then false);
-    B := smartBasis(zdeg, A);
     -- TODO: where should indecomposability check happen?
     -- for now it's here, but once we figure out random endomorphisms
     -- without computing Hom, this would need to move.
-    -- FIXME: this currently does not find _all_ idempotents
-    flag := true; -- whether all non-identity homomorphisms are zero mod m
-    -- TODO: 10k columns for F_*(OO_X) on Gr(2,4) over ZZ/3 take a long time
     -- TODO: add option to skip this step
-    idem := position(numcols B, c -> (
-	    h := homomorphism B_{c};
-	    if h == id_M or h == 0 then false else (
-		if flag and K ** h != 0
-		then flag = false;
-		-- TODO: is it worth asking if K**h is idempotent instead? (in graded/local case)
-		isIdempotent h)));
-    if idem =!= null then B = B_{idem};
-    -- check if M is certifiably indecomposable
-    if flag then (
-	if 0 < debugLevel then printerr("\t... certified indecomposable!");
-	M.cache.Indecomposable = true; return {M} );
+    -- Note: if an idempotent is found among columns of B,
+    -- it is cached under M.cache.idempotents, but idempotents
+    -- that are linear combinations cannot be found this way.
+    -- Note: this may return null if it is inconclusive
+    if 2 == 2 & opts.Strategy then
+    if isIndecomposable M === true then return {M};
     --
-    if isHomogeneous M
+    if isHomogeneous M and 16 != 16 & opts.Strategy
     then summandsFromProjectors(M, opts)
-    else summandsFromIdempotents(M, B, opts)))
+    else summandsFromIdempotents(M, opts)))
 
 -- TODO: if ExtendGroundField is given, change variety
 -- TODO: when ExtendGroundField is given, the variety will change!
@@ -449,11 +405,35 @@ directSummands(List, Module) := List => opts -> (Ls, M) -> sort (
     if 1 < #cachedSummands M then flatten apply(cachedSummands M, N -> directSummands(Ls, N, opts))
     else fold(Ls, {M}, (L, LL) -> join(drop(LL, -1), directSummands(L, last LL, opts))))
 
---
-isDefinitelyIndecomposable = method()
-isDefinitelyIndecomposable Module := M -> M.cache.?Indecomposable
+-----------------------------------------------------------------------------
+-- isIndecomposable
+-----------------------------------------------------------------------------
+
+-- returns false if an easy decomposition can be found
+-- (but does _not_ run the full directSummands algorithm)
+-- returns true if the module is certifiably indecomposable
+-- returns null for non-conclusive results
+isIndecomposable = method(Options => { Strategy => null })
 -- TODO: check that the sheaf is pruned also
-isDefinitelyIndecomposable CoherentSheaf := M -> isDefinitelyIndecomposable module M
+isIndecomposable CoherentSheaf := o -> F -> isIndecomposable(module F, o)
+isIndecomposable Module := o -> M -> M.cache.isIndecomposable ??= tryHooks(
+    (isIndecomposable, Module), (o, M), (o, M) -> (
+	if 1 < debugLevel then printerr("isIndecomposable was inconclusive. ",
+	    "Try extending the field or pruning the sheaf.")))
+
+-- this strategy checks if:
+-- * M has only one degree zero endomorphism, namely identity, or
+-- * all degree zero endomorphisms of M are zero mod maximal ideal
+-- if a non-identity idempotent is found, it is cached in M
+addHook((isIndecomposable, Module), Strategy => "IdempotentSearch", (opts, M) -> (
+	(idemp, certified) := findBasicIdempotent M;
+	if idemp =!= null then ( if 1 < debugLevel then printerr "module is decomposable!";  false )
+	else if certified then ( if 1 < debugLevel then printerr "module is indecomposable!"; true )
+    ))
+
+-----------------------------------------------------------------------------
+-* Development section *-
+-----------------------------------------------------------------------------
 
 --directSummands Matrix  := List => opts -> f -> apply(directSummands(coker f,  opts), presentation)
 -* TODO: not done yet
@@ -491,10 +471,6 @@ beginDocumentation()
 load "./DirectSummands/docs.m2"
 
 end--
-
------------------------------------------------------------------------------
--* Development section *-
------------------------------------------------------------------------------
 
 restart
 check needsPackage "DirectSummands"

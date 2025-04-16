@@ -1,3 +1,12 @@
+-- TODO:
+-- [x] example that is indecomposable
+-- [ ] example that decomposes after field extension
+-- [ ] example over ZZ, ZZ[i]/(i^2+1), QQ, QQ[i]/(i^2+1), GF, RR, CC?
+-- [ ] graded example
+-- [ ] local example
+-- [ ] example of passing hints of summands
+-- [ ] example of isIndecomposable
+
 doc ///
 Node
   Key
@@ -21,7 +30,7 @@ Node
       assert(2 == rank FHM)
       -- initially ~30s for End(FHM), ~110s for basis; ~35s in ZZ/2; now down to ~1s total!
       assert({FHM} == summands FHM)
-      assert FHM.cache.Indecomposable
+      assert FHM.cache.isIndecomposable
   Acknowledgement
     The authors thank the organizers of the @HREF{"https://aimath.org/pastworkshops/macaulay2efie.html",
 	"Macaulay2 workshop at AIM"}@, where significant progress on this package was made.

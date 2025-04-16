@@ -35,12 +35,29 @@ findProjectors Module := opts -> M -> (
     error("no projector found after ", toString opts.Tries, " attempts. Try passing
 	ExtendGroundField => ", if p != 0 then ("GF " | toString L) else toString L))
 
--- TODO: this should take the same options as summands
+-- TODO: can this be useful?
+findBasicProjectors = M -> (
+    R := ring M;
+    F := groundField R;
+    K := quotient ideal gens R;
+    n := numgens M;
+    B := gensEnd0 M;
+    for c to numcols B - 1 do (
+	f := homomorphism B_{c};
+	if f == id_M then return;
+	f0 := sub(K ** f, F);
+	eigen := eigenvalues' f0;
+	if #eigen > 1 then return for y in eigen list (f - y * id_M)^n);
+    {})
+
 summandsFromProjectors = method(Options => DirectSummandsOptions)
 summandsFromProjectors Module := opts -> M -> (
     if degree M <= 1 then return {M};
     -- maps M -> M whose (co)kernel is a (usually indecomposable) summand
     projs := try findProjectors(M, opts) else return {M};
+    summandsFromProjectors(M, projs, opts))
+
+summandsFromProjectors(Module, List) := opts -> (M, projs) -> (
     -- assert(0 == intersect apply(projs, ker));
     -- maps M_i -> M from the kernel summands
     injs := apply(projs, pr -> inducedMap(M, ker pr));
