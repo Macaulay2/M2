@@ -12,7 +12,7 @@ newPackage(
 	  PackageImports => {},
           AuxiliaryFiles => false,
           DebuggingMode => false,
-	  Keywords => "classical invariant theory and Grassmann-Cayley algebras"
+	  Keywords => {"Projective Algebraic Geometry"}
           )
 
 export {"AbstractGCRing", "bracketRing", "BracketRing", "GCAlgebra", "normalForm", "gc", "toBracketPolynomial", "GCExpression"}
