@@ -638,9 +638,11 @@ pushInfoLevel :=  n -> (
     infoLevel = infoLevel + n; n)
 popInfoLevel  := (n, s) -> (infoLevel = infoLevel - n; s)
 
+debugHooksLevel = debugLevel
+
 -- This function is mainly used by runHooks, printing a line like this:
  -- (quotient,Ideal,Ideal) with Strategy => Monomial from -*Function[../../Macaulay2/packages/Saturation.m2:196:30-205:82]*-
-debugInfo = (func, key, strategy, infoLevel) -> if debugLevel > infoLevel then printerr(
+debugInfo = (func, key, strategy, infoLevel) -> if debugHooksLevel > infoLevel then printerr(
     toString key, if strategy =!= null then (" with Strategy => ", toString strategy), " from ", toString func)
 
 -- run a single hook
@@ -656,7 +658,7 @@ runHooks(Symbol,                  Thing) := true >> opts -> (key,        args) -
 runHooks(Sequence,                Thing) := true >> opts -> (key,        args) -> runHooks(getHookStore(key, false), key, args, opts)
 runHooks(MutableHashTable, Thing, Thing) := true >> opts -> (store, key, args) -> (
     store = if store#?key then store#key else (
-	if debugLevel > 1 then printerr("runHooks: no hooks installed for ", toString key); return );
+	if debugHooksLevel > 1 then printerr("runHooks: no hooks installed for ", toString key); return );
     alg := if opts.?Strategy then opts.Strategy;
     type := class alg;
     -- if Strategy is not given, run through all available hooks
