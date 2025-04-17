@@ -1,6 +1,6 @@
 needsPackage "RationalPoints2"
 
-findProjectors = method(Options => DirectSummandsOptions)
+findProjectors = method(Options => DirectSummandsOptions ++ { "SplitSurjection" => null })
 findProjectors Module := opts -> M -> (
     R := ring M;
     p := char R;
@@ -8,11 +8,14 @@ findProjectors Module := opts -> M -> (
     K := quotient ideal gens R;
     n := numgens M;
     L := null;
+    -- this is used in generalEndomorphism
+    -- to avoid recomputing the Hom module
+    surj := opts#"SplitSurjection" ?? id_M;
     -- TODO: sort the degrees to make finding eigenvalues faster?
     -- degs := unique sort degrees M;
     tries := opts.Tries ?? ceiling(0.1 + 50 / log p);
     for c to tries - 1 do (
-	f := generalEndomorphism M; -- about 20% of computation
+	f := generalEndomorphism(M, surj); -- about 20% of computation
 	-- eigenvalues of f must be over the field,
 	-- and we can prove that f can be diagonalized over R
 	-- (i.e. without passing to frac R), hence we can
@@ -50,7 +53,7 @@ findBasicProjectors = M -> (
 	if #eigen > 1 then return for y in eigen list (f - y * id_M)^n);
     {})
 
-summandsFromProjectors = method(Options => DirectSummandsOptions)
+summandsFromProjectors = method(Options => options findProjectors)
 summandsFromProjectors Module := opts -> M -> (
     if degree M <= 1 then return {M};
     -- maps M -> M whose (co)kernel is a (usually indecomposable) summand
@@ -65,14 +68,18 @@ summandsFromProjectors(Module, List) := opts -> (M, projs) -> (
     -- the map \bigoplus M_i -> M, whose cokernel is the complement of M_i
     iota := matrix { injs };
     -- assert first isIsomorphic(M, coker iota ++ directSum(coker \ projs));
+    -- this is a split surjection from a module whose
+    -- degree zero endomorphisms have already been computed
+    surj := opts#"SplitSurjection" ?? id_M;
     if 0 < debugLevel then printerr("splitting ", toString(#projs+1),
-	" summands of ranks ", toString apply(injs, i -> degree source i));
+	" summands of ranks ", toString apply(injs, i -> rank source i));
     c := -1;
     comps := flatten for pr in append(projs, iota) list (
 	N := prune coker pr;
-	L := nonzero summandsFromProjectors(N, opts);
-	-- Projection maps to the summands
 	p := inverse N.cache.pruningMap * inducedMap(coker pr, M);
+	if not (source(p * surj)).cache#?"End0" then error "something went wrong";
+	L := nonzero summandsFromProjectors(N, opts, "SplitSurjection" => p * surj);
+	-- Projection maps to the summands
 	if #L > 1 then apply(#L, i ->
 	    M.cache#(symbol ^, [c += 1]) = N^[i] * p)
 	else M.cache#(symbol ^, [c += 1]) = p;

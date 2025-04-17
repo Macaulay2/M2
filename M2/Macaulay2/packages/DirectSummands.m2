@@ -250,9 +250,11 @@ smartBasis = (deg, M) -> (
 gensEnd0 = M -> M.cache#"End0" ??= (
     -- TODO: need to pass options from Hom + choose the coefficient field
     zdeg := if isHomogeneous M then degree 0_M;
-    A := Hom(M, M,
+    if 0 < debugLevel then stderr << " -- computing Hom module ... " << flush;
+    elapsedTime A := Hom(M, M,
 	DegreeLimit       => zdeg,
 	MinimalGenerators => false);
+    if 0 < debugLevel then stderr << "done!" << endl;
     if isHomogeneous M
     then smartBasis(zdeg, A)
     else inducedMap(A, , gens A))
@@ -277,6 +279,13 @@ generalEndomorphism Module := Matrix => o -> M -> (
 -- the sheaf needs to be pruned to prevent missing endomorphisms
 generalEndomorphism CoherentSheaf := SheafMap => o -> F -> (
     sheaf generalEndomorphism(module prune F, o))
+
+-- given N and a split surjection pr:M -> N,
+-- we use precomputed endomorphisms of M
+-- to produce a general endomorphism of N
+generalEndomorphism(Module, Matrix) := Matrix => o -> (M, pr) -> (
+    pr * generalEndomorphism source pr * inverse pr)
+-- Note: we may not be able to invert a split inclusion.
 
 -----------------------------------------------------------------------------
 -- directSummands
