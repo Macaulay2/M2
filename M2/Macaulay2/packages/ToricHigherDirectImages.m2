@@ -42,6 +42,7 @@ export {
     }
 
 importFrom(NormalToricVarieties, {"outerNormals", "rawHHOO"})
+importFrom(Core, {"sortBy"})
 
 ------------------------------------------------------------------------------
 -- CODE
@@ -421,7 +422,7 @@ HDIComplex (ToricMap, ZZ, List) := (phi, i, D) -> (
     -- NOTE: since we're going to take cohomology in the i-th position, we only need
     -- the terms in degrees i-1, i, and i+1, which saves a lot of work.
     -- the parameter j is tracking these terms.
-    directSum for mu in keys eigenchars list (
+    directSum for mu in (sortBy entries) keys eigenchars list (
     	(Dmu,Emu) := eigenchars#mu;
 	-- this hashtable keeps track of the non-zero terms of the complex.
         nonzerow := new MutableHashTable from hashTable for j from -1 to 1 list j => {};
@@ -1035,7 +1036,7 @@ RD1 = HDI(phi,0,D)
 assert(RD1 == 0)
 RD2 = prune HDI(phi,1,D)
 Q = ring RD2
-assert(presentation RD2 == matrix {{y_1,0},{0,y_1^2},{0,0}})
+assert(presentation RD2 == matrix {{0,0},{0,y_1^2},{y_1,0}})
 RD3 = HDI(phi,2,D)
 assert(RD3 == 0)
 ///
@@ -1059,8 +1060,7 @@ phi = map(Y,X,matrix{{1,0}})
 assert(isWellDefined phi)
 D = {0,-2,0,0,0,-2,1,0}
 HT = computeEigencharacters(phi,1,D);
-chars = keys HT
-assert(set chars == set {matrix{{0},{1}}, matrix{{0},{-1}}})
+assert(set keys HT == set {matrix{{0},{1}}, matrix{{0},{-1}}})
 ///
 
 end--
