@@ -318,6 +318,8 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	  else if ismathoperator(peek2(file)) then (
 	       for i from 1 to utf8charlength(char(ch))
 	       do tokenbuf << char(getc(file));
+	       if peek(file) == int('=') -- augmented assignment operator
+	       then tokenbuf << char(getc(file));
 	       return Token(makeUniqueWord(takestring(tokenbuf), parseWORD),
 		   newPosition(file, line, column), globalDictionary, dummySymbol, sawNewline))
 	  else if isalpha(ch) then ( -- valid symbols are an alpha (letters, any unicode) followed by any number of alphanum (alpha, digit, dollar, prime)
