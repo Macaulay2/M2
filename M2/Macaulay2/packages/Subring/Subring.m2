@@ -10,8 +10,7 @@ newPackage(
         {Name => "Miranda Moore", Email => "moor2340@umn.edu"},
         {Name => "Christopher O'Neill", Email => "cdoneill@sdsu.edu"}},
     Headline => "a package for subrings",
-    Keywords => {"Documentation"},
-    DebuggingMode => true
+    Keywords => {"Commutative Algebra"},
     )
 
 

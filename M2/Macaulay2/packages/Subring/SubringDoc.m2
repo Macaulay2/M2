@@ -279,7 +279,7 @@ doc ///
     S = subring g;
     subringGenerators(S)
    Text
-    This method is also accessable through the generators method,
+    This method is also accessible through the generators method,
     and thus through the shortened gens method.
    Example
     R = QQ[x,y];
