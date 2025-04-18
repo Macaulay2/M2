@@ -366,6 +366,7 @@ export TaskCell := {+ body:TaskCellBody };
 export pointerCell := {+ v:voidPointer };
 
 export atomicIntCell := {+ v:atomicField, hash:hash_t };
+export mutexCell := {+ v:ThreadMutex, hash:hash_t };
 
 export Expr := (
      CCcell or
@@ -423,7 +424,8 @@ export Expr := (
      TaskCell or 
      fileOutputSyncState or
      pointerCell or
-     atomicIntCell
+     atomicIntCell or
+     mutexCell
      );
 
 --Unique True expression
