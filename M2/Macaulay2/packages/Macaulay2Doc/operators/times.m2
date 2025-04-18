@@ -196,3 +196,8 @@ document {
 	  },
      SeeAlso => {(degree,Matrix),degrees}
      }
+
+document {
+    Key => symbol ·,
+    Headline => "a binary operator, usually used for dot product",
+}
