@@ -139,24 +139,6 @@ tonelliShanks = (n, p) -> (
 	t = (t * c) % p;
 	r = (r * b) % p))
 
------------------------------------------------------------------------------
--- AtomicInt
------------------------------------------------------------------------------
-
-AtomicInt.synonym = "atomic integer"
-
-scan({symbol +=, symbol -=, symbol &=, symbol |=, symbol ^^=},
-    op -> typicalValues#(op, AtomicInt) = ZZ)
-
-store = method()
-store(AtomicInt, ZZ) := atomicStore
-
-exchange = method()
-exchange(AtomicInt, ZZ) := atomicExchange
-
-compareExchange = method()
-compareExchange(AtomicInt, ZZ, ZZ) := atomicCompareExchange
-
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
