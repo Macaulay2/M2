@@ -1037,6 +1037,7 @@ tostringfun(e:Expr):Expr := (
 	Ccode(void, "sprintf((char *)", buf, "->array, \"%d\", ", load(x.v), ")");
 	Ccode(void, buf, "->len = strlen((char *)", buf, "->array)");
 	toExpr(buf))
+    is x:mutexCell do toExpr("<<a mutex>>")
 );
 setupfun("simpleToString",tostringfun);
 

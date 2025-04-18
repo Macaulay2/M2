@@ -259,6 +259,10 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	 when rhs
 	 is y:atomicIntCell do if x == y then True else False
 	 else False)
+     is x:mutexCell do (
+	 when rhs
+	 is y:mutexCell do if x == y then True else False
+	 else False)
      );
 
 -- Local Variables:
