@@ -536,6 +536,7 @@ document {
 	 File,
 	 --Function,
 	 AtomicInt,
+	 Mutex,
 	 Symbol,
 	 Pseudocode
 	 --FunctionBody
