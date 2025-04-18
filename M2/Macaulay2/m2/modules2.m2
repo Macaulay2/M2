@@ -113,12 +113,12 @@ Ideal == ZZ := (I,n) -> (
 
 -----------------------------------------------------------------------------
 
-presentation(Module) := Matrix => M -> (
-     if M.cache.?presentation then M.cache.presentation else M.cache.presentation = (
+presentation Module := Matrix => M -> M.cache.presentation ??= (
 	  if M.?generators then (
 	       modulo( M.generators, if M.?relations then M.relations)
 	       )
-	  else relations M))
+    else relations M)
+
 -----------------------------------------------------------------------------  
 
 minimalPresentation(Module) := prune(Module) := Module => opts -> (cacheValue (symbol minimalPresentation => opts)) (M -> (
@@ -285,6 +285,7 @@ Module _ ZZ := Vector => (M,i) -> (
      p = map(M,R^1,p,Degree => d);
      new target p from {p})
 -----------------------------------------------------------------------------
+-- TODO: is caching here wise? There are 2^(#comps) many possibilities
 Module ^ Array := Matrix => (M,w) -> if M.cache#?(symbol ^,w) then M.cache#(symbol ^,w) else M.cache#(symbol ^,w) = (
      -- we don't splice any more because natural indices include pairs (i,j).
      w = toList w;
@@ -303,7 +304,7 @@ Module ^ Array := Matrix => (M,w) -> if M.cache#?(symbol ^,w) then M.cache#(symb
      if oldw =!= null then newcomps = apply(oldw,newcomps,(i,M) -> i => M); -- warning: duplicate entries in oldw will lead to inaccessible components
      map(directSum newcomps, M, (cover M)^(splice apply(w, i -> v#i))))
 
-Module _ Array := Matrix => (M,w) -> if M.cache#?(symbol _,w) then M.cache#(symbol _,w) else M.cache#(symbol _,w) = (
+Module _ Array := Matrix => (M, w) -> M.cache#(symbol _, w) ??= (
      -- we don't splice any more because natural indices include pairs (i,j).
      w = toList w;
      if not M.cache.?components then error "expected a direct sum module";
@@ -326,27 +327,32 @@ Module ^ List := Matrix => (M, rows) -> submatrix(map(cover M, M, id_M), rows,)
 Module _ List := Matrix => (M, cols) -> submatrix(map(M, cover M, id_M), cols)
 -----------------------------------------------------------------------------
 
--- TODO: also implement for a longer lists of matrices or other types of map
 pullback = method(Options => true)
-pullback(Matrix, Matrix) := Module => {} >> o -> (f, g) -> (
-    if target f =!= target g then error "expected maps with the same target";
-    h := f | -g;
+pullback List := Module => {} >> o -> applyUniformMethod(symbol pullback, "pullback")
+pullback(Matrix, Matrix) := Module => {} >> o -> (f, g) -> pullback {f, g}
+
+Matrix.pullback = args -> (
+    if not same apply(args, target) then error "expected morphisms with the same target";
+    h := concatCols args;
     P := kernel h;
     S := source h;
-    P.cache.pullbackMaps = {
-	map(source f, S, S^[0], Degree => - degree f) * inducedMap(S, P),
-	map(source g, S, S^[1], Degree => - degree g) * inducedMap(S, P)};
+    P.cache.formation = FunctionApplication (pullback, args);
+    P.cache.pullbackMaps = apply(#args,
+	i -> map(source args#i, S, S^[i], Degree => - degree args#i) * inducedMap(S, P));
     P)
 
 pushout = method()
-pushout(Matrix, Matrix) := Module => (f, g) -> (
-    if source f =!= source g then error "expected maps with the same source";
-    h := f || -g;
+pushout List := Module => applyUniformMethod(symbol pushout, "pushout")
+pushout(Matrix, Matrix) := Module => (f, g) -> pushout {f, g}
+
+Matrix.pushout = args -> (
+    if not same apply(args, source) then error "expected morphisms with the same source";
+    h := concatRows args;
     P := cokernel h;
     T := target h;
-    P.cache.pushoutMaps = {
-	inducedMap(P, T) * map(T, target f, T_[0], Degree => - degree f),
-	inducedMap(P, T) * map(T, target g, T_[1], Degree => - degree g)};
+    P.cache.formation = FunctionApplication (pushout, args);
+    P.cache.pushoutMaps = apply(#args,
+	i -> inducedMap(P, T) * map(T, target args#i, T_[i], Degree => - degree args#i));
     P)
 
 -- Local Variables:

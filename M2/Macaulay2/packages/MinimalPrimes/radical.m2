@@ -149,7 +149,7 @@ unmixedradical = I -> (
 	    J := minors(size,dR);
 	    --
 	    g1 := leadTerm generators gb presentation R;
-	    g1 = g1 | lift(leadTerm J, B);
+	    g1 = g1 | lift(generators leadTerm J, B);
 	    --
 	    if c < codim ideal g1 then size = size + 1 else (
 		-- we would like the next line to read:

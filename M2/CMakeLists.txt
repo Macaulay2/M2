@@ -58,7 +58,7 @@ file(STRINGS VERSION VERSION)
 project(Macaulay2
   VERSION	${VERSION}
   DESCRIPTION	"A software system for algebraic geometry research"
-  HOMEPAGE_URL	http://macaulay2.com # contact: Macaulay2@math.uiuc.edu
+  HOMEPAGE_URL	https://macaulay2.com # contact: macaulay2@googlegroups.com
   LANGUAGES	C CXX)
 
 ###############################################################################

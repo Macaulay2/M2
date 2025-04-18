@@ -8,7 +8,7 @@ newPackage(
                 },
     Headline => "monomial modules over exterior algebras",
     DebuggingMode => false,
-    PackageExports=>{"ExteriorIdeals"},
+    PackageExports=>{"ExteriorIdeals", "Complexes"},
     Keywords => {"Commutative Algebra"},
     Certification => {
          "journal name" => "The Journal of Software for Algebra and Geometry",
@@ -459,7 +459,7 @@ O
 -------------------------------------------------------------------------------------------
 -- compute the (minimal) Betti numbers of M
 ----------------------------------------------------------------------------------------------
-minimalBettiNumbers Module := M -> betti res image mingens M 
+minimalBettiNumbers Module := opts -> M -> betti freeResolution(image mingens M, opts)
 
 
 -------------------------------------------------------------------------------------------
@@ -471,8 +471,8 @@ initialModule Module := M -> image monomials leadTerm gens gb M
 -------------------------------------------------------------------------------------------
 -- compute the Bass numbers of M
 ----------------------------------------------------------------------------------------------
-bassNumbers = method(TypicalValue=>BettiTally)
-bassNumbers Module := M -> sum(minimalBettiNumbers\ann\getIdeals M)  
+bassNumbers = method(TypicalValue=>BettiTally, Options => options minimalBettiNumbers)
+bassNumbers Module := BettiTally => opts -> M -> sum(ann\getIdeals M, a -> minimalBettiNumbers(a, opts))
 
 ---------------------------------------------
 ---------------------------------------------
@@ -889,8 +889,9 @@ document {
 document {
      Key => {(minimalBettiNumbers,Module)},
      Headline => "compute the minimal Betti numbers of a given graded module",
-     Usage => "minimalBettiNumbers M",
-     Inputs => {"M" => {"a graded module over an exterior algebra"}
+     Usage => "minimalBettiNumbers(M, LengthLimit => lim)",
+     Inputs => {"M" => {"a graded module over an exterior algebra"},
+         LengthLimit => ZZ => { "only compute enough to determine the Betti table up to and including the column labelled ", TT "lim"}
       },
      Outputs => {BettiTally => {"the Betti table of the module ", TT "M", " computed using its minimal generators"}},
      "If ", TT"M", " is a graded finitely generated module over an exterior algebra ", TT "E", ", we denote by ", TEX///$\beta_{i,j}(M)=\dim_K\mathrm{Tor}_{i}^{E}(M,K)_j$///, " the graded Betti numbers of ", TT "M", ".",
@@ -905,7 +906,7 @@ document {
            M_2=createModule({J,I_2},F)
            M_1==M_2
            betti M_1==betti M_2
-           minimalBettiNumbers M_1==minimalBettiNumbers M_2
+           minimalBettiNumbers(M_1, LengthLimit => 5) == minimalBettiNumbers(M_2, LengthLimit => 5)
       ///
      }
  
@@ -931,10 +932,11 @@ document {
      }
  
 document {
-     Key => {bassNumbers,(bassNumbers,Module)},
+     Key => {bassNumbers,(bassNumbers,Module),[bassNumbers,LengthLimit]},
      Headline => "compute the Bass numbers of a given graded module",
-     Usage => "bassNumbers M",
-     Inputs => {"M" => {"a graded module over an exterior algebra"}
+     Usage => "bassNumbers(M, LengthLimit => lim)",
+     Inputs => {"M" => {"a graded module over an exterior algebra"},
+         LengthLimit => ZZ => { "only compute enough to determine the Bass table up to and including the column labelled ", TT "lim"}
       },
      Outputs => {BettiTally => {"the Bass table of the module ", TT "M", " computed using its minimal generators"}},
      "If ", TT"M", " is a graded finitely generated module over an exterior algebra ", TT "E", ", we denote by ", TEX///$\beta_{i,j}(M)=\dim_K\mathrm{Tor}_{i}^{E}(M,K)_j$///, " the graded Betti numbers of ", TT "M", " and by ", TEX///$\mu_{i,j}(M) = \dim_K \mathrm{Ext}_E^i(K, M)_j$///, " the graded Bass numbers of ", TT "M", ". Let ", TEX///$M^\ast$///, " be the right (left) ", TEX///$E$///, "-module ", TEX///$\mathrm{Hom}_E(M,E).$///, " The duality between projective and injective resolutions implies the following relation between the graded Bass numbers of a module and the graded Betti numbers of its dual: ", TEX///$\beta_{i,j}(M) = \mu_{i,n-j}(M^\ast)$///, ", for all ", TEX///$i, j.$///,
@@ -945,7 +947,7 @@ document {
            I_1=ideal(e_1*e_2,e_1*e_3,e_2*e_3)
            I_2=ideal(e_1*e_2,e_1*e_3)
            M=createModule({I_1,I_2},F)
-           bassNumbers M
+           bassNumbers(M, LengthLimit => 5)
       ///
      }
      
@@ -1189,7 +1191,7 @@ M_1=createModule({I_1,I_2},F)
 J=ideal(join(flatten entries gens I_1,{e_1*e_2*e_3}))
 M_2=createModule({J,I_2},F)
 assert(M_1==M_2)
-assert(minimalBettiNumbers M_1==minimalBettiNumbers M_2)
+assert(minimalBettiNumbers(M_1, LengthLimit => 5) == minimalBettiNumbers(M_2, LengthLimit => 5))
 ///
 
 ----------------------------
@@ -1215,7 +1217,7 @@ F=E^{0,0}
 I_1=ideal(e_1*e_2,e_1*e_3,e_2*e_3)
 I_2=ideal(e_1*e_2,e_1*e_3)
 M=createModule({I_1,I_2},F)
-t=bassNumbers M
+t=bassNumbers(M, LengthLimit => 5)
 assert(t#(1,{2},2)==4)
 assert(t#(4,{5},5)==34)
 assert(t#(5,{6},6)==50)

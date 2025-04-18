@@ -22,6 +22,9 @@ Node
    (saturate, Vector, Ideal)
    (saturate, Vector, RingElement)
    [saturate, MinimalGenerators]
+   [saturate, BasisElementLimit]
+   [saturate, DegreeLimit]
+   [saturate, PairLimit]
   Headline
     saturation of ideal or submodule
   Usage
@@ -35,6 +38,9 @@ Node
       specifies the algorithm
     MinimalGenerators=>Boolean
       indicates whether the output should be @TO2 {trim, "trimmed"}@
+    BasisElementLimit => ZZ -- passed onto @TO [gb, BasisElementLimit]@
+    DegreeLimit => List     -- passed onto @TO [gb, DegreeLimit]@
+    PairLimit => ZZ         -- passed onto @TO [gb, PairLimit]@
   Outputs
     :{Ideal,Module}
       the saturation $I:J^\infty = \{f | f J^N\subset I \text{ for some } N>0\}$

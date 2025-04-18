@@ -5,7 +5,11 @@
 document { 
      Key => diagonalMatrix,
      Headline => "make a diagonal matrix",
-     SeeAlso => {"matrices"}
+    SeeAlso => {"matrices"},
+    Subnodes => {
+	TO (diagonalMatrix, Matrix),
+        TO (diagonalMatrix, Ring, ZZ, ZZ, List),
+        },
      }
 
 document { 

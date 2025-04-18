@@ -3263,7 +3263,6 @@ doc ///
 -- union
 doc ///
     Key
-        union
         (union,Poset,Poset)
         (symbol +,Poset,Poset)
     Headline

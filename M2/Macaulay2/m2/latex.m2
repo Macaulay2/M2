@@ -126,7 +126,8 @@ keywordTexMath = applyKeys(hashTable { -- both unary and binary keywords
 	symbol ||  => "\\mid\\mid",
 	symbol ^** => "{}^{\\otimes}", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
 	symbol _*  => "{}_*", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
-	symbol ^*  => "{}^*" -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
+	symbol ^*  => "{}^*", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
+	symbol ·   => "\\cdot",
 	},symbolBody)
 
 bbLetters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -141,7 +142,8 @@ texMathLiteralTable := merge(texLiteralTable,
 	"𝔩" => "\\mathfrak{l}","𝔪" => "\\mathfrak{m}","𝔫" => "\\mathfrak{n}","𝔬" => "\\mathfrak{o}","𝔭" => "\\mathfrak{p}","𝔮" => "\\mathfrak{q}","𝔯" => "\\mathfrak{r}","𝔰" => "\\mathfrak{s}","𝔱" => "\\mathfrak{t}","𝔲" => "\\mathfrak{u}","𝔳" => "\\mathfrak{v}",
 	"𝔴" => "\\mathfrak{w}","𝔵" => "\\mathfrak{x}","𝔶" => "\\mathfrak{y}","𝔷" => "\\mathfrak{z}","𝔄" => "\\mathfrak{A}","𝔅" => "\\mathfrak{B}","𝔆" => "\\mathfrak{C}","𝔇" => "\\mathfrak{D}","𝔈" => "\\mathfrak{E}","𝔉" => "\\mathfrak{F}","𝔊" => "\\mathfrak{G}",
 	"𝔋" => "\\mathfrak{H}","𝔌" => "\\mathfrak{I}","𝔍" => "\\mathfrak{J}","𝔎" => "\\mathfrak{K}","𝔏" => "\\mathfrak{L}","𝔐" => "\\mathfrak{M}","𝔑" => "\\mathfrak{N}","𝔒" => "\\mathfrak{O}","𝔓" => "\\mathfrak{P}","𝔔" => "\\mathfrak{Q}","𝔕" => "\\mathfrak{R}",
-	"𝔖" => "\\mathfrak{S}","𝔗" => "\\mathfrak{T}","𝔘" => "\\mathfrak{U}","𝔙" => "\\mathfrak{V}","𝔚" => "\\mathfrak{W}","𝔛" => "\\mathfrak{X}","𝔜" => "\\mathfrak{Y}","𝔝" => "\\mathfrak{Z}"
+	"𝔖" => "\\mathfrak{S}","𝔗" => "\\mathfrak{T}","𝔘" => "\\mathfrak{U}","𝔙" => "\\mathfrak{V}","𝔚" => "\\mathfrak{W}","𝔛" => "\\mathfrak{X}","𝔜" => "\\mathfrak{Y}","𝔝" => "\\mathfrak{Z}",
+	"×" => "\\times", "÷" => "\\div", "±" => "\\pm",
 	},last)
 texMathLiteral = texLiteral1 texMathLiteralTable
 -- TODO: expand and document this behavior

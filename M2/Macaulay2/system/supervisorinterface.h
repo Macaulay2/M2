@@ -45,6 +45,10 @@ extern "C" {
   **/
   extern int taskStarted(struct ThreadTask* task);
   /**
+     Returns 1 if the task is ready to run, 0 otherwise
+  **/
+  extern int taskReady(struct ThreadTask* task);
+  /**
      Returns the taskResult if finished, NULL otherwise
   **/
   extern void* taskResult(struct ThreadTask* task);
@@ -71,6 +75,7 @@ extern "C" {
   void createThreadGCMemory();
   extern void delThread(pthread_t thread);
   extern void initializeThreadSupervisor();
+  extern char isThreadSupervisorInitialized(void);
   /**
      Set the maximum number of allowable threads
   **/

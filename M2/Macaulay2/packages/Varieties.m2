@@ -7,11 +7,12 @@
 --  - 2001: Global Ext is implemented by Greg Smith (see ae0cef36)
 --  - 2023: SheafMap is implemented at AIM.
 --  - 2024: Varieties is added as a package (see 0f1c1485)
+--          Complexes of sheaves are implemented at workshop in Utah
 ---------------------------------------------------------------------------
 newPackage(
     "Varieties",
-    Date     => "29 Jan 2024",
-    Version  => "0.2",
+    Date     => "28 Feb 2025",
+    Version  => "0.3",
     Keywords => { "Algebraic Geometry", "Homological Algebra" },
     Headline => "routines for working with affine and projective varieties and coherent sheaves on them",
     Authors  => {
@@ -29,17 +30,24 @@ newPackage(
 	    HomePage => "https://www.mast.queensu.ca/~ggsmith"},
 	{   Name => "Keller VandeBogert",
 	    Email => "kvandebo@nd.edu",
-	    HomePage => "https://sites.google.com/view/kellervandebogert/home"}
+	    HomePage => "https://sites.google.com/view/kellervandebogert/home"},
+	{   Name => "John Cobb",
+	    Email => "jdcobb3@gmail.com",
+	    HomePage => "https://johndcobb.github.io"}
 	},
     PackageExports => {
+--	"Complexes",
 	"Saturation",
 	"Truncations",
 	},
     PackageImports => {
+	"Isomorphism",
+--	"Complexes",
 	},
     AuxiliaryFiles => true
     )
 
+-- Note: more symbols are exported in Varieties/SheafMaps.m2
 export {
     -- Types
     "Variety",
@@ -60,21 +68,27 @@ export {
     "tangentSheaf",
     "cotangentSheaf",
     "canonicalBundle",
+    "idealSheaf",
     "isProjective",
+    "isLocallyFree",
     -- Functors
     "hh", -- TODO: should this be defined in Core?
     "OO",
+    "RHom",
     -- Symbols
     "GlobalSectionLimit",
     "SaturationMap",
     "TorsionFree",
+    -- "TruncateDegree",
     }
 
 importFrom_Core {
     "getAttribute", "hasAttribute", "ReverseDictionary",
     "applyMethod", "applyMethod''", "functorArgs",
     "toString'", "expressionValue", "unhold", -- TODO: prune these
-    "tryHooks", "cacheHooks",
+    "concatBlocks", "concatCols", "concatRows",
+    "addHook", "tryHooks", "cacheHooks",
+    "isMorphism", "isAbelianCategory",
     "BinaryPowerMethod",
     }
 
@@ -115,7 +129,7 @@ ProjectiveVariety.synonym = "projective variety"
 -- constructors
 Spec = method(TypicalValue => AffineVariety)
 Spec Ring := (stashValue symbol Spec) (R ->
-    new AffineVariety from {
+    R.variety = new AffineVariety from {
 	symbol ring => R,
 	symbol cache => new CacheTable
 	}
@@ -123,7 +137,7 @@ Spec Ring := (stashValue symbol Spec) (R ->
 
 Proj = method(TypicalValue => ProjectiveVariety)
 Proj Ring := (stashValue symbol Proj) (R ->
-    new ProjectiveVariety from {
+    R.variety = new ProjectiveVariety from {
 	symbol ring => if isHomogeneous R then R else error "Proj: expected a homogeneous ring",
 	symbol cache => new CacheTable
 	}
@@ -147,20 +161,24 @@ ProjectiveVariety/Thing := ProjectiveVariety => (X, I) -> Proj((ring X)/I) -- TO
     AffineVariety Array :=     AffineVariety => (X, M) -> Spec((ring X) M)
 ProjectiveVariety Array := ProjectiveVariety => (X, M) -> Proj((ring X) M)
 
+-- true for standard graded polynomial rings
+isStandardGraded = R -> unique degrees R === {{1}}
+
 -- Note: this can be specialized for other types of varieties.
 isWellDefined Variety := X -> (
     R := ring X;
     true -- TODO: isWellDefined R
     -- data type checks
-    and assert'(set keys X === set { symbol ring, symbol cache },
+    and assert'(isSubset(keys X, { symbol ring, symbol sheaf, symbol cache }),
 	"the hash table does not have the expected keys")
     and assert'(
 	instance(X.ring, Ring) and
 	instance(X.cache, CacheTable),
 	"the hash table does not have the expected values")
     -- mathematical checks
-    and assert'(not isProjective X or isHomogeneous R,
-	"coordinate ring of a projective variety should be homogeneous")
+    -- TODO: support non-graded rings (e.g. ZZ, QQ, etc.) and nonstandard gradings
+    and assert'(not isProjective X or isStandardGraded R,
+	"coordinate ring of a projective variety should be homogeneous and generated in degree 1")
     )
 
 -- basic methods
@@ -172,7 +190,7 @@ dim     AffineVariety := X -> dim ring X
 dim ProjectiveVariety := X -> dim ring X - 1 -- TODO: - Picard rank instead?
 
 char     AffineVariety := X -> char ring X
-char ProjectiveVariety := X -> char(ring X / saturate ideal X) -- TODO: saturate with respect to B?
+char ProjectiveVariety := X -> char quotient saturate ideal X -- TODO: saturate with respect to B?
 
 -- TODO: should these be defined, but return 0 for an AffineVariety?
 degree ProjectiveVariety := X -> degree ring X
@@ -186,7 +204,6 @@ ambient     AffineVariety :=     AffineVariety => X -> Spec ambient ring X
 ambient ProjectiveVariety := ProjectiveVariety => X -> Proj ambient ring X
 
 -- arithmetic ops
--- TODO: document
 AffineVariety     **     AffineVariety :=     AffineVariety => (X, Y) -> Spec(ring X ** ring Y)
 AffineVariety     ** Ring              :=     AffineVariety => (X, R) -> X ** Spec R
 -- TODO: uncomment when Proj works with multigraded rings
@@ -194,18 +211,16 @@ AffineVariety     ** Ring              :=     AffineVariety => (X, R) -> X ** Sp
 --ProjectiveVariety ** Ring              := ProjectiveVariety => (X, R) -> X ** Proj R
 
 -- property checks
--- TODO: document
 isProjective = method(TypicalValue => Boolean)
 isProjective Variety           := X -> false
 isProjective ProjectiveVariety := X -> true
--- TODO: isSmooth
+
+isSmooth Variety := {} >> o -> X -> 1 == ideal singularLocus X
 
 -- This method returns either a Variety, an AbstractVariety (from Schubert2),
 -- a NormalToricVariety, or any other variety stashed in R.variety.
--- TODO: instead of an error, return Proj R when there is no variety,
--- then replace Proj ring M in code for sheaf with variety ring M
 variety = method(TypicalValue => Variety)
-variety Ring  := S -> if S.?variety then S.variety else error "no variety associated with ring"
+variety Ring  := S -> if S.?variety then S.variety else Proj S
 variety Ideal := I -> Proj quotient I -- TODO: should this be Spec or Proj?
 
 assertSameVariety = Fs -> if not same apply(Fs, variety) then error "expected objects on the same variety"
@@ -243,28 +258,33 @@ checkProjective := X -> if not isProjective X then error "expected a coherent sh
 -- SheafOfRings and CoherentSheaf type declarations and basic constructors
 -----------------------------------------------------------------------------
 
-SheafOfRings = new Type of HashTable
+-- TODO: is this a good idea for fixing type errors?
+SheafOfRings = new Type of Ring
 SheafOfRings.synonym = "sheaf of rings"
 
 CoherentSheaf = new Type of HashTable
 CoherentSheaf.synonym = "coherent sheaf"
+CoherentSheaf.GlobalAssignHook = globalAssignFunction
+CoherentSheaf.GlobalReleaseHook = globalReleaseFunction
 
 -- see Varieties/SheafMaps.m2
 CoherentSheaf#id = F -> map(F, F, id_(module F))
+CoherentSheaf#0  = X -> (sheaf X)^0
 
 -- constructors
 sheaf = method()
 -- TODO: sheaf Ring and sheaf Module should return a sheaf over variety of the ring rather than Proj,
 -- and if a variety doesn't already exist then either Proj or Spec should be defined and cached.
-sheaf Ring := Ring ~ := SheafOfRings =>     R  -> sheaf(Proj R, R)
+sheaf Ring := Ring^~ := SheafOfRings =>     R  -> sheaf(variety R, R)
 sheaf Variety        := SheafOfRings =>  X     -> sheaf(X, ring X)
 sheaf(Variety, Ring) := SheafOfRings => (X, R) -> (
     if ring X =!= R then error "sheaf: expected ring of the variety";
-    new SheafOfRings from { symbol variety => X, symbol ring => R } )
+    -- TODO: simplify when https://github.com/Macaulay2/M2/issues/3351 is fixed
+    X.sheaf = X.sheaf ?? new SheafOfRings from { symbol variety => X, symbol ring => R } )
 
 -- TODO: should the module of a sheaf be fixed, or should it be allowed to change?
 -- TODO: https://github.com/Macaulay2/M2/issues/1358
-sheaf Module := Module ~ := CoherentSheaf =>     M  -> sheaf(Proj ring M, M)
+sheaf Module := Module^~ := CoherentSheaf =>     M  -> sheaf(variety ring M, M)
 sheaf(Variety, Module)   := CoherentSheaf => (X, M) -> (
     if M.cache#?(sheaf, X) then return M.cache#(sheaf, X);
     M.cache#(sheaf, X) = (
@@ -278,19 +298,28 @@ sheaf(Variety, Module)   := CoherentSheaf => (X, M) -> (
 	))
 
 -- TODO: consider adding IdealSheaf or SheafOfIdeals type
--- sheaf Ideal := Ideal ~ := CoherentSheaf => I -> sheaf(Proj ring M, I)
+sheaf Ideal := Ideal^~ := CoherentSheaf =>     I  -> sheaf(variety ring I, module I)
+sheaf(Variety, Ideal)  := CoherentSheaf => (X, I) -> sheaf(X,              module I)
+
+-- TODO: remove by M2 1.25
+tildeWarn = true
+Thing~ := x -> (if tildeWarn then (tildeWarn = false; printerr "Note: M~ is deprecated; use M^~ or sheaf instead."); x^~)
 
 OO = new ScriptedFunctor from {
      subscript => X -> applyMethod((symbol _,     OO, class X), (OO, X)),
      argument  => X -> applyMethod((symbol SPACE, OO, class X), (OO, X)),
      }
 OO.texMath = ///{\mathcal O}///
-installMethod(symbol_, OO, Variety, (OO, X) -> sheaf(X, ring X))
+installMethod(symbol_, OO, Variety, SheafOfRings => (OO, X) -> sheaf(X, ring X))
+
+isWellDefined SheafOfRings := O -> O.variety.ring === O.ring and isWellDefined O.variety
+isCommutative SheafOfRings := O -> isCommutative O.ring
 
 isWellDefined CoherentSheaf := F -> (
     M := module F;
     X := variety F;
-    true -- TODO: isWellDefined M and isWellDefined X
+    true -- TODO: isWellDefined M
+    and isWellDefined X
     -- data type checks
     and assert'(set keys F === set { symbol variety, symbol module, symbol cache },
 	"the hash table does not have the expected keys")
@@ -311,7 +340,7 @@ variety SheafOfRings  :=
 variety CoherentSheaf := F -> F.variety
 
 ring SheafOfRings  :=
-ring CoherentSheaf := F -> ring F.variety
+ring CoherentSheaf := SheafOfRings => F -> sheaf variety F
 
 module SheafOfRings  := Module => F -> module F.ring
 module CoherentSheaf := Module => F -> F.module
@@ -333,15 +362,16 @@ euler   CoherentSheaf := F -> tryHooks((euler, CoherentSheaf), F, euler @@ modul
 eulers  CoherentSheaf := F -> eulers  module F
 genus   CoherentSheaf := F -> genus   module F
 genera  CoherentSheaf := F -> genera  module F
-pdim    CoherentSheaf := F -> pdim    module F
+-- TODO: this is incorrect in higher picard rank
+pdim    CoherentSheaf := F -> tryHooks((pdim,  CoherentSheaf), F, pdim  @@ module)
 
 hilbertPolynomial CoherentSheaf := opts -> F -> hilbertPolynomial(module F, opts)
 
 -- twist and powers
 -- TODO: sheaf should dehomogenize modules on Affine varieties
 SheafOfRings(ZZ)   := SheafOfRings  Sequence := CoherentSheaf => (O, a) -> O^1(a)
-CoherentSheaf(ZZ)  := CoherentSheaf Sequence := CoherentSheaf => (F, a) -> sheaf(F.variety, F.module ** (ring F)^{splice{a}})
-SheafOfRings  ^ ZZ := SheafOfRings  ^ List   := CoherentSheaf => (O, n) -> sheaf(O.variety, (ring O)^n)
+CoherentSheaf(ZZ)  := CoherentSheaf Sequence := CoherentSheaf => (F, a) -> F ** (ring F)^{splice{a}}
+SheafOfRings  ^ ZZ := SheafOfRings  ^ List   := CoherentSheaf => (O, n) -> sheaf(O.variety, (ring variety O)^n)
 CoherentSheaf ^ ZZ := CoherentSheaf ^ List   := CoherentSheaf => (F, n) -> sheaf(F.variety, F.module^n)
 dual CoherentSheaf := CoherentSheaf => options(dual, Module) >> o -> F -> sheaf(F.variety, dual(F.module, o))
 
@@ -352,7 +382,13 @@ dual CoherentSheaf := CoherentSheaf => options(dual, Module) >> o -> F -> sheaf(
 -- TODO: benchmark different strategies
 CoherentSheaf == CoherentSheaf := Boolean => (F, G) -> hilbertPolynomial F === hilbertPolynomial G and module prune F == module prune G
 CoherentSheaf == ZZ            := Boolean => (F, z) -> if z == 0 then dim module F <= 0 else error "attempted to compare sheaf to nonzero integer"
+CoherentSheaf == Module        := Boolean => (F, M) -> F == sheaf M
+Module        == CoherentSheaf := Boolean => (M, F) -> sheaf M == F
 ZZ            == CoherentSheaf := Boolean => (z, F) -> F == z
+-- isIsomorphic is defined in SheafMaps.m2 because we return the isomorphism as well
+
+-- use for sorting a list
+CoherentSheaf ? CoherentSheaf := lookup(symbol ?, Module, Module)
 
 -- arithmetic ops
 CoherentSheaf.directSum = args -> (
@@ -369,13 +405,20 @@ CoherentSheaf  / Ideal         := CoherentSheaf => (F, I) -> sheaf(F.variety, F.
 Ideal * CoherentSheaf          := CoherentSheaf => (I, F) -> sheaf(F.variety, I * F.module)
 directSum CoherentSheaf        := CoherentSheaf =>  F     -> CoherentSheaf.directSum(1 : F)
 
-components CoherentSheaf := List => F -> if F.cache.?components then F.cache.components else {F}
+components CoherentSheaf := List => (cacheValue symbol components) (F -> apply(components module F, N -> sheaf(F.variety, N)))
+
+-*
+component(CoherentSheaf, Thing) := (F, k) -> (
+    if not F.cache.?indexComponents then error "expected Sheaf to be a direct sum with indexed components";
+    if not F.cache.indexComponents#?k then error("expected "|toString k|" to be the index of a component");
+    (components F)#(F.cache.indexComponents#k))
+*-
 
 -- multilinear ops
 -- TODO: document
 determinant        CoherentSheaf  := CoherentSheaf => o ->     F  -> exteriorPower(rank F, F, o)
 exteriorPower (ZZ, CoherentSheaf) := CoherentSheaf => o -> (i, F) -> sheaf(F.variety,  exteriorPower(i, F.module, o))
-symmetricPower(ZZ, CoherentSheaf) := CoherentSheaf => o -> (i, F) -> sheaf(F.variety, symmetricPower(i, F.module, o))
+symmetricPower(ZZ, CoherentSheaf) := CoherentSheaf =>      (i, F) -> sheaf(F.variety, symmetricPower(i, F.module))
 
 annihilator CoherentSheaf := Ideal => o -> F -> annihilator(module F, o)
 
@@ -410,10 +453,6 @@ CoherentSheaf#AfterPrint = F -> ("coherent sheaf on ", variety F,
     if M.?generators                  then (", subsheaf of ",    ambient F) else
     if M.?relations                   then (", quotient of ",    ambient F)
     )
-
--- used to be in m2/jupyter.m2
-CoherentSheaf#{Jupyter, AfterPrint} = F -> (
-    << "[CLS]" << endl; CoherentSheaf#{Standard,AfterPrint}(F) )
 
 -- used to be in m2/expressions.m2
 SheafExpression = new WrapperType of Expression;
@@ -469,6 +508,13 @@ flattenMorphism = f -> (
     -- TODO: sometimes lifting to ring g is enough, how can we detect this?
     -- TODO: why doesn't lift(f, ring g) do this automatically?
     map(target f ** S, source f ** S, lift(cover f, S)) ** cokernel g)
+-*
+flattenComplex = C -> (
+    (lo, hi) := C.concentration;
+    if lo === hi
+    then complex(flattenModule C_lo, Base => lo)
+    else complex applyValues(C.dd.map, flattenMorphism))
+*-
 
 -- TODO: this is called twice
 -- TODO: implement for multigraded ring
@@ -491,7 +537,7 @@ killH0 := -*(cacheValue symbol TorsionFree)*- (M -> if (H0 := saturate(0*M)) == 
 -- NOTE: this may have elements in degrees below bound as well, is that a bug?
 twistedGlobalSectionsModule = (F, bound) -> (
     -- compute global sections module Gamma_(d >= bound)(X, F(d))
-    A := ring F;
+    A := ring variety F;
     -- FIXME: this line, as opposed to
     --  cokernel presentation module F
     -- breaks the test added in 975d780470.
@@ -554,19 +600,21 @@ cohomology(ZZ,                    SumOfTwists) := Module => opts -> (p,    S) ->
 cohomology(ZZ, ProjectiveVariety, SumOfTwists) := Module => opts -> (p, X, S) -> (
     checkVariety(X, S);
     (F, b) := (S#0, S#1#0);
-    if not F.cache.?HH    then F.cache.HH = new MutableHashTable;
-    if F.cache.HH#?(p, b) then F.cache.HH#(p, b) else F.cache.HH#(p, b) =
-    if p == 0 then twistedGlobalSectionsModule(F, b) else HH^(p+1)(module F, Degree => b))
+    F.cache.HH        ??= new MutableHashTable;
+    -- TODO: when p>0, HH^p(F(*)) gives a "not implemented yet" error
+    F.cache.HH#(p, b) ??= if p == 0
+    then twistedGlobalSectionsModule(F, b)
+    else HH^(p+1)(module F, Degree => b))
 
 -- HH^p(X, F)
 cohomology(ZZ,                    CoherentSheaf) := Module => opts -> (p,    F) -> cohomology(p, variety F, F, opts)
 cohomology(ZZ,     AffineVariety, CoherentSheaf) := Module => opts -> (p, X, F) -> (
     checkVariety(X, F);
-    if p == 0 then module F else (ring F)^0)
+    if p == 0 then module F else (ring X)^0)
 cohomology(ZZ, ProjectiveVariety, CoherentSheaf) := Module => opts -> (p, X, F) -> (
     checkVariety(X, F);
-    if not F.cache.?HH then F.cache.HH = new MutableHashTable;
-    if F.cache.HH#?p   then return F.cache.HH#p;
+    F.cache.HH   ??= new MutableHashTable;
+    if F.cache.HH#?p then return F.cache.HH#p;
     -- TODO: only need basis(0, G) in the end, is this too much computation?
     G := if p == 0 then twistedGlobalSectionsModule(F, 0) -- HH^0 F(>=0)
     else (
@@ -580,7 +628,7 @@ cohomology(ZZ, ProjectiveVariety, CoherentSheaf) := Module => opts -> (p, X, F) 
 	-- singularities, Cohen–Macaulay schemes, not just smooth schemes.
 	-- TODO: check that X is proper (or at least finite type)
 	Ext^(n-p)(M, w));
-    k := coefficientRing ring F;
+    k := coefficientRing ring X;
     F.cache.HH#p = k^(rank source basis(0, G)))
 
 -----------------------------------------------------------------------------
@@ -591,12 +639,12 @@ cohomology(ZZ, ProjectiveVariety, CoherentSheaf) := Module => opts -> (p, X, F) 
 -- TODO: optimize caching: if HH^0(F>=b) is cached above, does this need to be cached?
 -- TODO: should F>=0 be hardcoded?
 minimalPresentation SheafOfRings  := prune SheafOfRings  := SheafOfRings  => opts -> identity
-minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opts -> F -> (
-    cacheHooks(symbol minimalPresentation, F, (minimalPresentation, CoherentSheaf), (opts, F),
-	(opts, F) -> (
+minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opts -> (
+    F -> F.cache#(symbol minimalPresentation => opts) ??= tryHooks(
+	(minimalPresentation, CoherentSheaf), (opts, F), (opts, F) -> (
 	    -- this is the default algorithm
 	    G := sheaf(F.variety, HH^0 F(>=0));
-	    G.cache.pruningMap = sheafMap F.cache.SaturationMap;
+	    G.cache.pruningMap = sheaf(F.variety, F.cache.SaturationMap);
 	    G)))
 
 -----------------------------------------------------------------------------
@@ -623,9 +671,12 @@ cotangentSheaf(ZZ, ProjectiveVariety) := opts -> (i, X) -> exteriorPower(i, cota
 tangentSheaf = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
 tangentSheaf ProjectiveVariety := opts -> X -> dual cotangentSheaf(X, opts)
 
+idealSheaf = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
+idealSheaf ProjectiveVariety := opts -> X -> sheaf ideal (ring X).relations
+
 -- TODO: document
 canonicalBundle = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
-canonicalBundle ProjectiveVariety := opts -> X -> determinant(cotangentSheaf(X, opts), Strategy => opts.Strategy)
+canonicalBundle ProjectiveVariety := opts -> X -> dual dual determinant(cotangentSheaf(X, opts), Strategy => opts.Strategy)
 
 -----------------------------------------------------------------------------
 -- singularLocus
@@ -640,6 +691,19 @@ singularLocus ProjectiveVariety := ProjectiveVariety => X -> (
      Proj(A / saturate (minors(codim(R,Generic=>true), jacobian f) + ideal f)))
 
 -----------------------------------------------------------------------------
+-- isLocallyFree
+-----------------------------------------------------------------------------
+
+isLocallyFree = method(TypicalValue => Boolean)
+isLocallyFree SumOfTwists   := S -> isLocallyFree S#0
+isLocallyFree SheafOfRings  := O -> true
+isLocallyFree CoherentSheaf := F -> (
+    if (d := rank F) == 0 then return F == 0;
+    if isFreeModule module F then return true;
+    dim fittingIdeal(d,   module F) <= 0
+    and fittingIdeal(d-1, module F) == ideal 0_(ring variety F))
+
+-----------------------------------------------------------------------------
 -- Sheaf Hom and Ext
 -----------------------------------------------------------------------------
 
@@ -647,8 +711,8 @@ sheafHom = method(TypicalValue => CoherentSheaf, Options => options Hom)
 sheafHom(SheafOfRings, SheafOfRings)  :=
 sheafHom(SheafOfRings, CoherentSheaf) :=
 sheafHom(CoherentSheaf, SheafOfRings)  :=
-sheafHom(CoherentSheaf, CoherentSheaf) := CoherentSheaf => o -> (F, G) -> (
-    assertSameVariety(F, G); sheaf(variety F, Hom(module F, module G, o)))
+sheafHom(CoherentSheaf, CoherentSheaf) := CoherentSheaf => opts -> (F, G) -> (
+    assertSameVariety(F, G); sheaf(variety F, Hom(module F, module G, opts)))
 
 sheafExt = new ScriptedFunctor from {
     superscript => i -> new ScriptedFunctor from {
@@ -671,22 +735,21 @@ sheafExt(ZZ, CoherentSheaf, CoherentSheaf) := CoherentSheaf => options Ext.argum
 -- See documentation of Ext^ZZ(CoherentSheaf,CoherentSheaf) for examples.
 -----------------------------------------------------------------------------
 
+protect TruncateDegree
+-- TODO: implement Ext with DegreeLimit as an optimization
 Ext(ZZ, SheafOfRings,  SumOfTwists) :=
 Ext(ZZ, CoherentSheaf, SumOfTwists) := Module => opts -> (m,F,G') -> (
     assertSameVariety(F, G');
     X := variety F;
     checkProjective X;
     checkVariety(X, F);
-     -- depends on truncate methods
-     needsPackage "Truncations";
      G := G'#0;
      e := G'#1#0;
      M := module F;
      N := module G;
      R := ring M;
-     local E;
-     if dim M === 0 or m < 0 then E = R^0
-     else (
+    r := -infinity;
+    E := if dim M === 0 or m < 0 then R^0 else (
           l := min(dim N, m);
 	  P := resolution flattenModule N;
 	  p := length P;
@@ -694,22 +757,30 @@ Ext(ZZ, CoherentSheaf, SumOfTwists) := Module => opts -> (m,F,G') -> (
 	  -- global Ext is composition of sheaf Ext and cohomology
 	  -- so we compute it as a Grothendieck spectral sequence
 	  -- in this case, it degenerates
-	  if p < n-l then E = Ext^m(M, N, opts)
-	  else (
+	if p < n-l then Ext^m(M, N, opts) else (
 	       a := max apply(n-l..p,j -> (max degrees P_j)#0-j);
-	       r := a-e-m+1;
-	       E = Ext^m(truncate(r,M), N, opts)));
-     if (min degrees E) === infinity then E
-     else if (min degrees E)#0 > e then minimalPresentation E
-     else minimalPresentation truncate(e,E))
+	    r = a+e-m+1;
+	    Ext^m(truncate(r, M), N, opts)));
+    -- When MinimalGenerators => false is given, we don't truncate
+    -- or prune E because the majority of uses of this function are
+    -- for computing Ext of sheaves, in which case only basis(0, E)
+    -- is needed and truncation is an unnecessary computation.
+    E = if opts.MinimalGenerators then prune truncate(e, E) else E;
+    -- This is the degree at which M was truncated, which
+    -- is used later for computing the Yoneda extension.
+    E.cache.TruncateDegree = r;
+    E)
 
 Ext(ZZ, SheafOfRings, SheafOfRings)  :=
 Ext(ZZ, SheafOfRings, CoherentSheaf) :=
 Ext(ZZ, CoherentSheaf, SheafOfRings)  :=
 Ext(ZZ, CoherentSheaf, CoherentSheaf) := Module => opts -> (n,F,G) -> (
-     E := Ext^n(F,G(>=0),opts);
-     k := coefficientRing ring E;
-     k^(rank source basis(0,E)))
+    E := Ext^n(F, G(>=0), opts ++ { MinimalGenerators => false });
+    k := coefficientRing ring E;
+    V := k^(rank source basis(0, E));
+    V.cache.formation = FunctionApplication { Ext, (n, F, G) };
+    V.cache.TruncateDegree = E.cache.TruncateDegree;
+    V)
 
 -----------------------------------------------------------------------------
 -- hh: Hodge decomposition
@@ -748,24 +819,27 @@ euler ProjectiveVariety := X -> (
 -- Subpackages
 -----------------------------------------------------------------------------
 
-load "Varieties/SheafMaps.m2"
+load "./Varieties/SheafMaps.m2"
+--load "./Varieties/SheafComplexes.m2"
 
 -----------------------------------------------------------------------------
 -- Tests
 -----------------------------------------------------------------------------
 
-TEST ///
-  X = Spec ZZ/101[x,y]/(y^2-x^3)
-///
-
-needs "./Varieties/tests.m2"
-needs "./Varieties/tests-functors.m2"
+load "./Varieties/tests-varieties.m2"
+load "./Varieties/tests-sheaves.m2"
+load "./Varieties/tests-functors.m2"
+load "./Varieties/tests-maps.m2"
+--load "./Varieties/tests-complexes.m2"
 
 -----------------------------------------------------------------------------
 -- Documentation
 -----------------------------------------------------------------------------
 
 beginDocumentation()
+
+-- TODO: move this to core?
+syn = type -> TO2 {type, synonym type}
 
 -- TODO: move "Tutorial: Fano varieties" and "Tutorial: Divisors" here
 -- TODO: "fibers of a map between varieties"
@@ -805,14 +879,14 @@ Node
     SheafMap
 ///
 
-needs "./Varieties/doc-varieties.m2"
-needs "./Varieties/doc-sheaves.m2"
-needs "./Varieties/doc-functors.m2"
-needs "./Varieties/euler-doc.m2"
-needs "./Varieties/genus-doc.m2"
-needs "./Varieties/genera-doc.m2"
-needs "./Varieties/tangentSheaf-doc.m2"
-needs "./Varieties/cotangentSheaf-doc.m2"
+load "./Varieties/doc-varieties.m2"
+load "./Varieties/doc-sheaves.m2"
+load "./Varieties/doc-maps.m2"
+--load "./Varieties/doc-complexes.m2"
+load "./Varieties/doc-functors.m2"
+load "./Varieties/euler-doc.m2"
+load "./Varieties/genus-doc.m2"
+load "./Varieties/genera-doc.m2"
 
 -----------------------------------------------------------------------------
 -- Development
@@ -822,9 +896,33 @@ end--
 
 uninstallPackage "Varieties"
 restart
-installPackage "Varieties"
+loadPackage("Truncations", FileName => currentDirectory() | "Truncations.m2", Reload => true)
+loadPackage("Complexes",   FileName => currentDirectory() | "Complexes.m2",   Reload => true)
+debug loadPackage("Varieties",   FileName => currentDirectory() | "Varieties.m2",   Reload => true, LoadDocumentation => true)
+installPackage("Varieties",   FileName => currentDirectory() | "Varieties.m2")
 viewHelp "Varieties"
 
 restart
 debug needsPackage "Varieties"
 check "Varieties"
+
+
+Q = QQ[x_1..x_3];
+X = Proj Q;
+K = koszulComplex vars Q;
+sK = sheaf K
+G = sheaf freeResolution ideal(x_1^2+x_2^2)
+RHom(OO_X^1, sK)
+RHom(OO_X^1, G)
+S := coker G.dd_1
+HH^0 S
+RHom(G, sK)
+Ext^2(OO_X^1, sK(-3))
+Ext^0 (OO_X^1, G(3))
+RHom(OO_X^1, G(2))
+RHom(OO_X^1, G, 3)
+RHom(sK, G, 0)
+RHom(sK, OO_X^1,0)
+RHom(S, OO_X^1(3))
+F = eulerSequence X
+Ext^0 (OO_X^1, F(2))

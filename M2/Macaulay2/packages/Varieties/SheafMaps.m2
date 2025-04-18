@@ -3,23 +3,50 @@ export {
     "SheafMap",
     -- Methods
     "sheafMap",
-    "isLiftable",
---    "yonedaSheafExtension",
+--  "isLiftable",
+    "yonedaSheafExtension",
+--  "yonedaSheafExtension'",
+    "cotangentSurjection",
+    "eulerSequence",
+    "idealSheafSequence",
+    "embeddedToAbstract",
+    "ExtLongExactSequence",
     }
+
+-----------------------------------------------------------------------------
+-- Local utilities
+-----------------------------------------------------------------------------
+
+-- given a graded map, truncate only the source
+-- and return the inclusion composed with the map
+subtruncate = { MinimalGenerators => false } >> opts -> (degs, f) -> truncate(, degs, f, opts)
+
+-- given a list of sheaf maps with matching targets,
+-- truncate only the sources of the corresponding
+-- matrices until they all have the same source
+autotruncate = { MinimalGenerators => false } >> opts -> L -> (
+    deg := max apply(L, f -> f.degree);
+    apply(L, f -> subtruncate(deg, f.map, opts)))
 
 -----------------------------------------------------------------------------
 -- SheafHom type declarations and basic constructors
 -----------------------------------------------------------------------------
 
 SheafMap = new Type of HashTable
-SheafMap.synonym = "Morphism of Sheaves"
+SheafMap.synonym = "morphism of sheaves"
+
+-- Temporarily moved here
+importFrom_Core { "isMorphism", "isAbelianCategory" }
+isMorphism SheafMap := isAbelianCategory CoherentSheaf := x -> true
 
 -- TODO: if over affine variety, dehomogenize the maps
 map(CoherentSheaf, CoherentSheaf, Matrix) := SheafMap => opts -> (G, F, phi) -> (
     if variety G =!= variety F then error "expected sheaves over the same variety";
     if not instance(variety F, ProjectiveVariety) then error "maps of sheaves not yet implemented on other varieties";
     deg := if opts.Degree =!= null then opts.Degree else min flatten degrees source phi;
+    phi  = if module G =!= target phi then inducedMap(module G, target phi) * phi else phi;
     new SheafMap from {
+	symbol variety => variety F,
         symbol source => F,
         symbol target => G,
         symbol degree => deg,
@@ -28,35 +55,61 @@ map(CoherentSheaf, CoherentSheaf, Matrix) := SheafMap => opts -> (G, F, phi) -> 
         }
     )
 
+map(CoherentSheaf, Nothing, Matrix) := SheafMap => opts -> (F, null, psi) -> map(F, sheaf(variety F, source psi), psi, opts)
+map(Nothing, CoherentSheaf, Matrix) := SheafMap => opts -> (null, G, psi) -> map(sheaf(variety G, target psi), G, psi, opts)
+
+-- TODO: accept a list of lists instead of matrix
+
 -- when phi is constructed by truncation >= d
-map(CoherentSheaf, CoherentSheaf, Matrix, ZZ) := SheafMap => opts -> (G, F, phi, d) -> (
-    newPhi := inducedMap(module G, target phi) * phi;
-    map(G, F, newPhi, Degree => d))
+map(CoherentSheaf, CoherentSheaf, Matrix, ZZ)             := SheafMap => opts -> (G, F, phi, d) -> map(G, F, phi, Degree => d)
 map(CoherentSheaf, CoherentSheaf, Matrix, InfiniteNumber) := SheafMap => opts -> (G, F, phi, d) -> (
     if d === -infinity then map(G, F, phi) else error "unexpected degree for map of sheaves")
 -- TODO: support map(F, F, 1) and map(F, G, 0) for identity and zero maps
+map(CoherentSheaf, CoherentSheaf, ZZ)                     := SheafMap => opts -> (G, F, n)      -> (
+    if n === 0 then sheaf map(module G, module F, 0) else
+    if F === G then n * id_G else
+    error "expected 0 or source and target equal")
+map(CoherentSheaf, CoherentSheaf, SheafMap)               := SheafMap => opts -> (G,F,phi)      -> sheaf map(G,F,matrix phi)
+map(CoherentSheaf, Module, ZZ) := SheafMap => opts -> (F, M, n) -> (
+    if n === 0 then sheaf map(module F, M, 0) else
+    if M === module F then n * id_F else
+    error "expected 0 or source and target equal")
+map(Module, CoherentSheaf, ZZ) := SheafMap => opts -> (M, F, n) -> (
+    if n === 0 then sheaf map(M, module F, 0) else
+    if M === module F then n * id_F else
+    error "expected 0 or source and target equal")
+sheaf SheafMap             := SheafMap =>  phi        -> sheaf matrix phi
+sheaf Matrix := Matrix^~   := SheafMap =>  phi        -> sheaf(variety ring phi, phi)
+sheaf(Matrix, ZZ)          := SheafMap => (phi, d)    -> sheaf(variety ring phi, phi, d)
+sheaf(Variety, Matrix)     := SheafMap => (X, phi)    -> map(sheaf_X target phi, sheaf_X source phi, phi)
+sheaf(Variety, Matrix, ZZ) := SheafMap => (X, phi, d) -> map(sheaf_X target phi, sheaf_X source phi,
+    truncate(d, phi, MinimalGenerators => false), d)
 
-sheafMap = method()
-sheafMap Matrix      := SheafMap =>  phi     -> map(sheaf target phi, sheaf source phi, phi)
-sheafMap(Matrix, ZZ) := SheafMap => (phi, d) -> map(sheaf target phi, sheaf source phi, truncate(d, phi), d)
+-- TODO: remove by M2 1.25
+sheafMapWarn = true
+sheafMap = x -> (if sheafMapWarn then (sheafMapWarn = false; printerr "Note: sheafMap is deprecated; use sheaf instead."); sheaf x)
+
+random(CoherentSheaf, CoherentSheaf) := SheafMap => o -> (F, G) -> map(F, G, random(F.module, G.module, o))
 
 isWellDefined SheafMap := f -> (
     (G, F) := (target f, source f);
     X := variety f;
-    d := degree f;
+    d := f.degree;
     all({ G, F, matrix f }, isWellDefined)
     -- data type checks
-    and assert'(set keys f === set { symbol source, symbol target, symbol degree, symbol map, symbol cache },
+    and assert'(set keys f === set {
+	    symbol variety, symbol source, symbol target,
+	    symbol degree,  symbol map,    symbol cache },
 	"the hash table does not have the expected keys")
     and assert'(
 	instance(f.source, CoherentSheaf) and
 	instance(f.target, CoherentSheaf) and
 	instance(f.cache, CacheTable) and
 	instance(f.map, Matrix) and
-	instance(f.degree, ZZ),
+	(instance(f.degree, ZZ) or f.degree == infinity),
 	"the hash table does not have the expected values")
     -- mathematical checks
-    and assert'(ring f === ring X,
+    and assert'(ring matrix f === ring X,
 	"underlying matrix and variety do not have the same ring")
     and assert'(same {X, variety F, variety G},
 	"underlying variety does not match that of the source and target")
@@ -68,41 +121,125 @@ isWellDefined SheafMap := f -> (
 	"source of the sheaf map does not match the source of the underlying matrix")
     and assert'(d >= min flatten degrees F, -- maybe not strictly necessary
 	"expected the degree of the sheaf map to be at least as high as the degrees of the source")
-    and assert'(try ( isWellDefined map(module G, truncate(d, module F), matrix f) ) else false,
+    and assert'(try ( isWellDefined map(module G, F' := truncate(d, module F, MinimalGenerators => false),
+	 -- TODO: should we use F' here or truncation of source matrix f?
+         matrix f * inducedMap(source matrix f, F') ) ) else false,
 	"expected the matrix to induce a map between a truncation of the underlying modules")
     )
 
 -- basic methods
 source  SheafMap := CoherentSheaf => f -> f.source
 target  SheafMap := CoherentSheaf => f -> f.target
-variety SheafMap := Variety       => f -> f.source.variety
-ring    SheafMap := Ring          => f -> f.map.ring
-matrix  SheafMap := Matrix => opts -> f -> f.map
-degree  SheafMap := ZZ => f -> f.degree
+variety SheafMap := Variety       => f -> f.variety
+ring    SheafMap := SheafOfRings  => f -> sheaf f.variety
+matrix  SheafMap := Matrix   => o -> f -> f.map
+-- TODO: does this make sense, or should all sheaf maps be degree zero?
+degree  SheafMap := ZZ            => f -> degree f.map
+-- TODO: add a method that returns f.degree
 
-ker     SheafMap := CoherentSheaf => opts -> phi -> (sheaf ker matrix phi)
-image   SheafMap := CoherentSheaf => phi -> (sheaf image matrix phi)
-coimage SheafMap := CoherentSheaf => phi -> (sheaf coimage matrix phi)
-coker   SheafMap := CoherentSheaf => phi -> (sheaf coker matrix phi)
+image    SheafMap := CoherentSheaf =>         f -> sheaf(f.variety, image    matrix f)
+kernel   SheafMap := CoherentSheaf => opts -> f -> sheaf(f.variety, kernel   matrix f)
+coimage  SheafMap := CoherentSheaf =>         f -> sheaf(f.variety, coimage  matrix f)
+cokernel SheafMap := CoherentSheaf =>         f -> sheaf(f.variety, cokernel matrix f)
 
--- TODO: is sheafMap sufficient here, or should we specify source/target/degree?
-cover   SheafMap := SheafMap => f -> sheafMap cover   matrix f
-ambient SheafMap := SheafMap => f -> sheafMap ambient matrix f
-super   SheafMap := SheafMap => f -> sheafMap super   matrix f
+isSurjective SheafMap := Boolean => f -> coker f == 0
 
--- TODO: add SheafMap == SheafMap
-SheafMap == ZZ := Boolean => (f, z) -> image f == z
-ZZ == SheafMap := Boolean => (z, f) -> image f == z
+-- TODO: is sheaf sufficient here, or should we specify source/target/degree?
+cover   SheafMap := SheafMap => f -> sheaf(f.variety, cover   matrix f)
+ambient SheafMap := SheafMap => f -> sheaf(f.variety, ambient matrix f)
+super   SheafMap := SheafMap => f -> sheaf(f.variety, super   matrix f)
+
+SheafMap == SheafMap := Boolean => (psi, phi) -> psi === phi or (
+    target psi == target phi and source psi == source phi and matrix prune psi == matrix prune phi)
+    -- TODO: this can fails because the truncated source and target modules
+    -- may be only isomorphic. What should we use isIsomorphic in this case?
+    -- What do we expect from == and isIsomorphic for sheaf maps?
+    -- f := if psi.cache.?minimalPresentation then psi.cache.minimalPresentation.map else psi.map;
+    -- g := if phi.cache.?minimalPresentation then phi.cache.minimalPresentation.map else phi.map;
+    -- if f == g then return true;
+    -- r := 1 + max(
+    -- 	regularity target f, regularity source f,
+    -- 	regularity target g, regularity source g);
+    -- truncate(r, f, MinimalGenerators => false) == truncate(r, g, MinimalGenerators => false))
+
+SheafMap == ZZ := Boolean => (f, n) -> ( if n === 0 then image f == n else matrix(prune f) == n)
+ZZ == SheafMap := Boolean => (n, f) -> f == n
 
 isIsomorphism SheafMap := Boolean => f -> ker f == 0 and coker f == 0
 
+isIsomorphic(CoherentSheaf, CoherentSheaf) := Sequence => o -> (F, G) -> (
+    M := module prune F;
+    N := module prune G;
+    -- TODO: isIsomorphic should check === first
+    if M === N then return (true, id_F);
+    (ret, isom) := isIsomorphic(M, N, o, Strict => true);
+    (ret, if ret then sheaf(F.variety, isom)))
+
+-- TODO: perhaps better would be to construct random
+-- maps F --> G and check their kernel and cokernel.
+isIsomorphic(CoherentSheaf, CoherentSheaf) := Sequence => o -> (F, G) -> (
+    -- Note: sometimes calling isIsomorphic(prune F, prune G) is faster,
+    -- but we will leave it to the user to decide if that is the case.
+    -- Check if F and G are already pruned or if their minimal presentation is cached
+    M := if F.cache.?pruningMap then F.module else try F.cache.minimalPresentation.module;
+    N := if G.cache.?pruningMap then G.module else try G.cache.minimalPresentation.module;
+    -- Otherwise, we will compare truncated modules representing them, which works in general.
+    if M === null or N === null then (M, N) = (
+	-- TODO: using regularity in won't suffice in the multigraded case,
+	-- and multigradedRegularity may not be optimal. What should methods
+	-- that truncate the base module do instead?
+	r := 1 + max(regularity F.module, regularity G.module);
+	truncate(r, F.module, MinimalGenerators => false),
+	truncate(r, G.module, MinimalGenerators => false));
+    -- TODO: isIsomorphic should check === first
+    if M === N then return (true, id_F);
+    (ret, isom) := isIsomorphic(M, N, o, Strict => true);
+    (ret, if ret then sheaf(F.variety, isom)))
+
+isIsomorphic(SheafMap, SheafMap) := Sequence => o -> (psi, phi) -> isIsomorphic(coker phi, coker psi, o)
+
+-- arithmetic ops
+- SheafMap := f -> map(target f, source f, -matrix f)
+ZZ * SheafMap := RingElement * SheafMap := (r, f) -> map(target f, source f, r * matrix f)
+SheafMap * ZZ := SheafMap * RingElement := (f, r) -> r * f
+SheafMap + SheafMap := (f, g) -> map(target f, source f, sum autotruncate {f, g})
+SheafMap - SheafMap := (f, g) -> f + (-g)
+
 -- composition
-SheafMap * SheafMap := SheafMap => (phi, psi) -> (
-    d := degree phi; e := degree psi;
+SheafMap * SheafMap := SheafMap => (f, g) -> (
+    (d, e) := (f.degree, g.degree);
+    (m, n) := (matrix f, matrix g);
+    if d < e then
+    m = truncate(d, m, MinimalGenerators => false);
+    n = truncate(d, n, MinimalGenerators => false);
     if d >= e
-    then map(target phi, source psi, matrix phi * truncate(d, matrix psi))
-    else map(target phi, source psi, truncate(d, matrix phi) * truncate(d, matrix psi), d)
-    )
+    then map(target f, source g, m * inducedMap(source m, target n) * n)
+    else map(target f, source g, m * inducedMap(source m, target n) * n, d))
+
+-- factoring
+-- Note: when f and g are endomorphisms, the sources and targets all agree,
+-- so we need quotient and quotient' to distinguish them.
+SheafMap // SheafMap := SheafMap => (f, g) -> quotient(f, g)
+SheafMap \\ SheafMap := SheafMap => (g, f) -> quotient'(f, g)
+
+-- TODO: should we replace quotient with factor instead?
+-- TODO: add assertLevel which causes these assertions to run
+quotient(SheafMap, SheafMap) := SheafMap => opts -> (f, g) -> (
+    -- given f: A-->C and g: B-->C, then find (f//g): A-->B such that g o (f//g) = f
+    --if target f =!= target g then error "quotient: expected sheaf maps with the same target";
+    --assert(homomorphism' f % image Hom(source f, g) == 0)
+    map(source g, source f, quotient(matrix f, matrix g, opts)))
+
+quotient'(SheafMap, SheafMap) := SheafMap => opts -> (f, g) -> (
+    -- given f: A-->C and g: A-->B, then find (g\\f): B-->C such that (g\\f) o g = f
+    --if source f != source g then error "quotient': expected sheaf maps with the same source";
+    --assert(homomorphism' f % image Hom(g, target f) == 0)
+    map(target f, target g, quotient'(autotruncate(f, g), opts)))
+
+-- base change
+-- FIXME: this is a kludge; should we define Section as the parent of SheafOfRings?
+promote(SheafMap, Nothing)     := SheafMap => (f, O) -> if O === ring f         then f else error "base change of maps of sheaves is not yet implemented"
+promote(SheafMap, RingElement) := SheafMap => (f, R) -> if R === ring variety f then f else error "base change of maps of sheaves is not yet implemented"
 
 -- printing
 -- TODO: use abbreviations for source and target
@@ -131,7 +268,7 @@ isLiftable(Matrix, Matrix) := (phi, eta) -> (
 isLiftable(SheafMap, ZZ) := (shphi, d) -> (
     phi := matrix shphi;
     M := module source shphi;
-    eta := inducedMap(truncate(d, M), source phi);
+    eta := inducedMap(truncate(d, M, MinimalGenerators => false), source phi);
     isLiftable(phi, eta))
 
 --if phi is in the image of Hom(eta,target phi), this code
@@ -139,7 +276,7 @@ isLiftable(SheafMap, ZZ) := (shphi, d) -> (
 lift' = method()
 lift'(Matrix, Matrix) := Matrix => (phi, eta) -> (
     newPhi := homomorphism' phi;
-    homomorphism(newPhi // Hom(eta, target phi))
+    homomorphism(newPhi // Hom(eta, target phi, MinimalGenerators => true))
     )
 
 --lifts a sheaf map shphi represented by a module map
@@ -147,18 +284,20 @@ lift'(Matrix, Matrix) := Matrix => (phi, eta) -> (
 --the same morphism of sheaves, if possible
 --WARNING: this method does not actually verify if the lift is possible
 lift'(SheafMap,ZZ) := SheafMap => (shphi,e) -> (
-    d := degree shphi;
+    d := shphi.degree;
     phi := matrix shphi;
     M := module source shphi;
-    eta := inducedMap(truncate(e,M),source phi);
-    sheafMap(lift'(phi, eta), e))
+    eta := inducedMap(truncate(e, M, MinimalGenerators => false), source phi);
+    sheaf(lift'(phi, eta), e))
 
 --lifts a sheaf map shphi represented by a module map
 --phi : M(\geq d) --> N to a map M(\geq e) --> N that represents
 --the same morphism of sheaves, for the smallest possible value of e
 --WARNING: this method does not actually verify if the lift is possible
 lift SheafMap := SheafMap => o -> shphi -> (
-    d := degree shphi;
+    -- TODO: what should happen when shphi is zero?
+    if shphi == 0 then return shphi;
+    d := shphi.degree;
     M := module source shphi;
     m := min flatten degrees M;
     while isLiftable(shphi,d-1) and d > m do d = d-1;
@@ -170,9 +309,9 @@ lift SheafMap := SheafMap => o -> shphi -> (
     )*-
 
 -- TODO: this needs to be improved: there are more inducedMap methods to add
-inducedMap(CoherentSheaf, CoherentSheaf) := SheafMap => opts -> (G, F) -> map(G, F, inducedMap(module G, module F, opts))
--- TODO: what should this operation be?
--- inducedMap(CoherentSheaf, CoherentSheaf, SheafMap)
+inducedMap(CoherentSheaf, CoherentSheaf)           := SheafMap => opts -> (G, F) -> inducedMap(G, F, id_(ambient G), opts)
+inducedMap(CoherentSheaf, CoherentSheaf, SheafMap) := SheafMap => opts -> (G, F, f) -> map(G, F,
+    inducedMap(module G, truncate(f.degree, module F), matrix f, opts))
 
 -----------------------------------------------------------------------------
 -- Direct sums and components
@@ -195,13 +334,22 @@ SheafMap ++ SheafMap := SheafMap => (phi, psi) -> directSum(phi, psi)
 components SheafMap := List => phi -> if phi.cache.?components then phi.cache.components else {phi}
 
 -----------------------------------------------------------------------------
--- Tensors
+-- Tensors and exterior/symmetric powers
 -----------------------------------------------------------------------------
 -- TODO: take care of the case when the rings are different
-tensor(SheafMap, SheafMap) := SheafMap => (phi, psi) -> (
+-- FIXME: the source and target sheaves are not correct in this version
+tensor(SheafMap, SheafMap) := SheafMap => (phi, psi) -> sheaf(matrix phi ** matrix psi)
+-- tensor(SheafMap, SheafMap) := SheafMap => (phi, psi) -> (
+--     map(target phi ** target psi,
+-- 	source phi ** source psi,
+-- 	matrix phi ** matrix psi))
+
+--possible fix for ill-definedness of tensor product
+-*tensor(SheafMap, SheafMap) := SheafMap => (phi, psi) -> (
+    (F,G,d,e) := (module source phi, module source psi, phi.degree, psi.degree);
     map(target phi ** target psi,
-	source phi ** source psi,
-	matrix phi ** matrix psi))
+	sheaf truncate(d + e, F ** G, MinimalGenerators => false),
+	truncate(d + e, matrix phi ** matrix psi), d + e))*-
 
 SheafMap ** SheafMap      := SheafMap => (phi, psi) -> tensor(phi, psi)
 SheafMap ** CoherentSheaf := SheafMap => (phi,   F) -> tensor(phi, id_F)
@@ -210,12 +358,23 @@ CoherentSheaf ** SheafMap := SheafMap => (F,   phi) -> tensor(id_F, phi)
 SheafMap ** SheafOfRings  := SheafMap => (phi, O) -> phi ** (O^1)
 SheafOfRings ** SheafMap  := SheafMap => (O, phi) -> (O^1) ** phi
 
+SheafMap^** ZZ := SheafMap => (f, n) -> BinaryPowerMethod(f, n, tensor,
+    f -> id_((sheaf variety f)^1),
+    f -> error "SheafMap ^** ZZ: expected non-negative integer")
+
+-- TODO: move to Core
+Matrix  ^** ZZ := Matrix   => (f, n) -> BinaryPowerMethod(f, n, tensor,
+    f -> id_(module ring f),
+    f -> error "Matrix ^** ZZ: expected non-negative integer")
+
 -- twist notation
 SheafMap(ZZ) := SheafMap => (phi, d) -> phi ** OO_(variety phi)^1(d)
 
--- FIXME: this fails if the target is truncated
--- TODO: would f -> Hom(f, sheaf variety f) work?
-dual  SheafMap := SheafMap => options(dual, Matrix) >> o -> f -> map(dual source f, dual target f, dual(matrix f, o))
+-- TODO: can we also make the target to be the dual of the original source?
+dual SheafMap := SheafMap => options(dual, Matrix) >> o -> f -> map(null, dual target f, dual(matrix f, o))
+
+exteriorPower (ZZ, SheafMap) := SheafMap => o -> (d, phi) -> sheaf(phi.variety,  exteriorPower(d, matrix phi, o))
+symmetricPower(ZZ, SheafMap) := SheafMap =>      (d, phi) -> sheaf(phi.variety, symmetricPower(d, matrix phi))
 
 -----------------------------------------------------------------------------
 -- inverse
@@ -226,17 +385,15 @@ SheafMap.InverseMethod = (cacheValue symbol inverse) (f -> (
     g := matrix f;
     -- truncate the underlying map so it is an isomorphism
     -- TODO: make this more efficient, e.g. look at degrees of ann coker g
-    e := (regularity ker g, regularity coker g);
-    -- TODO: this is kudgy, but maybe it works?
-    h := try inverse g else inverse inducedMap(
-	truncate(e#1   + 1, target g),
-	truncate(max e + 1, source g), g);
+    e := max(regularity ker g, regularity coker g);
+    -- TODO: this is kludgy, but maybe it works?
+    h := try inverse g else inverse truncate(e + 1, g);
     -- then invert and sheafify the new map
     -- We want:
     -- source f ==  target h
     -- target f === source h
-    map(source f, sheaf(X, source h),
-	inducedMap(source g, target h) * h, e#1 + 1))
+    map(sheaf_X source g, sheaf_X source h,
+	inducedMap(source g, target h) * h, e + 1))
     )
 
 SheafMap#1 = f -> (
@@ -265,65 +422,26 @@ Hom(CoherentSheaf, CoherentSheaf) := Module => opts -> (F, G) -> (
     -- the previous method as a faster strategy.
     F' := prune F;
     G' := prune G;
-    H := prune sheafHom(F', G', opts, DegreeLimit => 0);
+    -- TODO: add DegreeLimit => 0 for efficiency again,
+    -- but this causes inverse f to fail in some cases.
+    H := prune sheafHom(F', G', opts);
     f := matrix H.cache.pruningMap;
     -- Note: we prune F and G so that f is an isomorphism of modules,
     -- otherwise there may be morphisms in H that do not correspond
     -- to a morphism between the underlying modules of F and G.
     phi := F'.cache.pruningMap;
     psi := G'.cache.pruningMap^-1;
-    -- FIXME: there's still a bug here where truncation
-    -- strangely flips the rows; see the failing test.
     B := basis(0, module H);
     g := inverse f * B;
-    V := source moveToField B;
-    V.cache.homomorphism = h -> psi * sheafMap homomorphism(g * h) * phi;
+    V := part(0, source B);
+    V.cache.homomorphism = h -> psi * sheaf(phi.variety, homomorphism(g * h)) * phi;
     V.cache.formation = FunctionApplication { Hom, (F, G) };
+    V.cache.Ext = (0, F, G);
     V)
 
-TEST ///
-  S = QQ[a..d];
-  X = Proj S;
-  I = ideal(a,b^3*c,b^4);
-  F = sheaf module I;
-  assert isWellDefined F
-  H = Hom(F, OO_X^1/F);
-  assert(QQ^15 === H)
-  checkHoms = i -> (
-      h := homomorphism H_{i};
-      assert isWellDefined h;
-      assert(source h === F);
-      assert(target h === OO_X^1/F);
-      -- FIXME: fails due to the basis/truncate bug below
-      --assert(homomorphism' h === H_{i});
-      -- TODO: remove this when the above works:
-      assert(target homomorphism' h === H);
-      assert(source homomorphism' h === QQ^1);
-      )
-  scan(15, checkHoms)
-  --
-  H = prune sheafHom(F, OO_X^1/F)
-  f = H.cache.pruningMap
-  g = f^-1
-  -- FIXME:
-  prune(g * f) === prune id_(target g)
-  prune(f * g) === prune id_(target f)
-///
-
-///
--- here's the core of the bug mentioned above:
-restart
-needsPackage "Truncations"
-S = QQ[x,y,z]
-A = S^{1}
-B = truncate(0, A)
-M = image basis(0, A) -- image {-1} | x y z |
-N = image basis(0, B) -- image {-1} | z y x |
-inducedMap(M, N) -- anti-digonal
-///
-
 -- Note: homomorphism(Matrix) is defined to use V.cache.homomorphism
-homomorphism' SheafMap := o -> h -> moveToField basis(0, homomorphism'(matrix h, o))
+-- TODO: target should have Hom info cached
+homomorphism' SheafMap := o -> h -> part(0, homomorphism'(matrix h, o))
 
 -----------------------------------------------------------------------------
 -- homology
@@ -334,32 +452,27 @@ homology(SheafMap, SheafMap) := CoherentSheaf => opts -> (g, f) -> (
     if g == 0 then return cokernel f;
     if f == 0 then return kernel g;
     g = lift g;
-    d := degree g;
-    M := source f;
-    N := target f;
-    P := target g;
+    d := g.degree;
+    M := module source f;
+    N := module target f;
     X := variety f;
     if variety g =!= X then error "expected sheaf maps on the same variety";
     -- Note: we use =!= to avoid pruning the sheaves
     -- we also don't verify g * f == 0 for the same reason
-    if source g =!= N then error "expected sheaf maps to be composable";
+    if module source g =!= N then error "expected sheaf maps to be composable";
+    -- not sure why MinimalGenerators => false was relevant in line below, so we took it out
     -- truncate matrix f to match the degree of the source of g
-    f = inducedMap(truncate(d, module N), module M, matrix f);
+    f = inducedMap(truncate(d, N, MinimalGenerators => false), M, matrix f);
     sheaf(X, homology(matrix g, f, opts)))
 
 -----------------------------------------------------------------------------
 -- Prune
 -----------------------------------------------------------------------------
 
--- TODO: is there a better way to do this?
-moveToField = f -> (
-    kk := coefficientRing ring f;
-    map(kk^(numrows f), kk^(numcols f), sub(cover f, kk)))
-
 cohomology(ZZ,                    SheafMap) := Matrix => opts -> (p,    f) -> cohomology(p, variety f, f, opts)
 cohomology(ZZ, ProjectiveVariety, SheafMap) := Matrix => opts -> (p, X, f) -> (
     -- TODO: need to base change to the base field
-    if p == 0 then moveToField basis(0, matrix prune f) else (
+    if p == 0 then part(0, matrix prune f) else (
 	-- pushforward F to a projective space first
 	g := flattenMorphism matrix f;
 	A := ring g;
@@ -369,7 +482,7 @@ cohomology(ZZ, ProjectiveVariety, SheafMap) := Matrix => opts -> (p, X, f) -> (
 	-- using Serre duality for coherent sheaves on schemes with mild
 	-- singularities, Cohen–Macaulay schemes, not just smooth schemes.
 	-- TODO: check that X is proper (or at least finite type)
-	transpose moveToField basis(0, Ext^(n-p)(g, w)))
+	transpose part(0, Ext^(n-p)(g, w)))
     )
 
 --Some questions:
@@ -405,7 +518,87 @@ Ext(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f) -> (
 	a2 := max apply(n - l2 .. p2, j -> (max degrees P2_j)#0 - j);
 	r := max(a1, a2) - e - m + 1;
 	M = truncate(r, M));
-    moveToField basis(0, Ext^m(M, matrix f, opts)))
+    part(0, Ext^m(M, matrix f, opts)))
+
+-*
+-- internal method for modules only
+-- TODO: move this to Complexes?
+ExtLES = method(Options => {LengthLimit => null})
+ExtLES(Module, Matrix, Matrix) := ComplexMap => opts -> (M, g, f) -> (
+    F := freeResolution(M, opts);
+    longExactSequence(Hom(F, g), Hom(F, f)))
+ExtLES(Matrix, Matrix, Module) := ComplexMap => opts -> (g, f, N) -> (
+    (g', f') := horseshoeResolution(g, f, opts);
+    G := freeResolution(N, opts);
+    -- TODO: the indexing on opts.Concentration needs to be negated
+    longExactSequence(Hom(f', G), Hom(g', G)))
+*-
+
+--TODO: RHom(ZZ, SheafComplex, SheafComplex)
+--TODO: TorLongExactSequence
+
+-- Given f: G -> H, leading to SES 0 -> ker f -> G -> im f -> 0 and F a sheaf,
+-- this method returns the long exact sequence in cohomology;
+-- the concentration argument will give Ext^(lo) -> ... -> Ext^(hi)
+-*
+ExtLongExactSequence = method(Options => {Concentration => null})
+ExtLongExactSequence(CoherentSheaf, SheafMap)           := Matrix => opts -> (F, f) ->
+    ExtLongExactSequence(F, inducedMap(image f, source f, f), inducedMap(source f, ker f), opts)
+ExtLongExactSequence(CoherentSheaf, SheafMap, SheafMap) := Matrix => opts -> (F, f, g) -> (
+    d := dim variety F;
+    e := 0; -- this is a sum of twists bound
+    (lo, hi) := if opts.Concentration =!= null then opts.Concentration else (0, d);
+    if not instance(variety F, ProjectiveVariety)
+    then error "expected sheaves on a projective variety";
+    if target g =!= source f then error "expected target g = source f";
+    M := module F;
+    -- 0 <— N1 <— N2 < — N3 <— 0
+    N2 := module source f;
+    N1 := module target f;
+    N3 := module source g;
+    R := ring M;
+    if not isAffineRing R
+    then error "expected sheaves on a variety over a field";
+    l := max(
+	l1 := min(dim N1, max(hi, 0)),
+	l2 := min(dim N2, max(hi, 0)),
+	l3 := min(dim N3, max(hi, 0)));
+    P1 := resolution flattenModule N1;
+    P2 := resolution flattenModule N2;
+    P3 := resolution flattenModule N3;
+    p := max(
+	p1 := length P1,
+	p2 := length P2,
+	p3 := length P3);
+    n := dim ring P1 - 1;
+    -- in the first case the spectral sequence degenerates
+    if p >= n-l then (
+	-- the "regularity" between n-l and p indices
+	a1 := max apply(n - l1 .. p1, j -> (max degrees P1_j)#0 - j);
+	a2 := max apply(n - l2 .. p2, j -> (max degrees P2_j)#0 - j);
+	a3 := max apply(n - l3 .. p3, j -> (max degrees P3_j)#0 - j);
+	r := max(a1, a2, a3) - e - hi + 1;
+        --need to truncate M in a way related to invariants of ker f
+        --probably just add in l3, P3, etc., take max as above
+	M = truncate(r, M, MinimalGenerators => false));
+    -- TODO: can we truncate at the regularity of homology(f,g) instead?
+    reg := 1 + max(regularity coker matrix f, regularity ker matrix g);
+    -- TODO: verify the Base of the complex
+    -- TODO: should lo be used somewhere?
+    part_0 ExtLES(M,
+	truncate(reg,    matrix f, MinimalGenerators => false),
+	subtruncate(reg, matrix g, MinimalGenerators => false),
+	LengthLimit => hi + 1))
+
+-- Given f: G -> H, leading to SES 0 -> ker f -> G -> im f -> 0 and F a sheaf,
+-- this returns the connecting homomorphism Ext^i(F, im f) -> Ext^(i+1)(F, ker f)
+connectingExtMap(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f0) -> (
+    f := inducedMap(image f0, source f0, f0);
+    g := inducedMap(source f, ker f);
+    h := ExtLongExactSequence(F, f, g,
+	Concentration => (m, m + 1));
+    h.dd_(-3*m))
+*-
 
 -----------------------------------------------------------------------------
 -- Yoneda Ext
@@ -413,115 +606,108 @@ Ext(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f) -> (
 
 -*
 yonedaSheafExtension = method()
--- TODO: should be a complex of sheaf maps
--- FIXME: should get d, F, G from E := target f = Ext^d(F, G)
-yonedaSheafExtension(List, Complex, Matrix) := List => (L, C, f) -> (
-    -- -f-> -g->
+yonedaSheafExtension Matrix := Complex => f -> (
     E := target f; -- Ext^d(F,G)
-    (d,F,G) := toSequence L; -- E.cache.Ext;
+    (d, F, G) := if (try first formation E) === Ext then last formation E
+    else error "expected target of map to be an Ext^d(F,G) module";
     X := variety F;
-    assert(d == 1); -- TODO
-    M := module F;
-    --C := freeResolution(M, LengthLimit => d+1);
-    K := sheaf(X, image C.dd_1);
-    i := inducedMap(sheaf(X, C_0), K);
+    r := E.cache.TruncateDegree;
+    M := truncate(r, module F, MinimalGenerators => false);
+    E' := Ext^d(M, module G);
+    f' := basis(0, E') * f;
+    C := yonedaExtension f';
+    complex apply(d + 1, i -> sheaf_X C.dd_(i+1)))
+*-
+
+--yonedaSheafExtension' = method(Options => options Ext.argument)
+--yonedaSheafExtension' Complex := Matrix => opts -> C -> ()
+
+///
+    C := freeResolution(, LengthLimit => d+1)
+    inducedMap(G, sheaf(X, C_d))
+    -- K := sheaf(X, image C.dd_d);
+    -- i := inducedMap(sheaf(X, C_(d-1)), K);
     -- TODO: need connecting map here
-    c := map(E, Hom(K, G), 1);
+    -- c := map(E, Hom(K, G), ); -- ???
     -- FIXME: cheating here
     b := homomorphism f;
     P := pushout(i, b);
     -- TODO: add this constructor
-    i1 := map(module P, C_0, matrix first P.cache.pushoutMaps);
-    i2 := map(P, G, map(module P, module G, matrix last P.cache.pushoutMaps));
-    p1 := map(F, P, map(module F, module P, transpose cover i1 // transpose cover (augmentationMap C)_0));
+    i1 := map-- depends on truncate methods
+    (module P, C_0, matrix first P.cache.pushoutMaps);
+    i2 := map(P, G, matrix last P.cache.pushoutMaps);
+    p1 := map(F, P, transpose cover i1 // transpose cover (augmentationMap C)_0);
     (p1, i2))
-*-
-
--*
-TEST ///
-  S = QQ[x,y,z]
-  X = Proj S
-  d = 1
-  F = tangentSheaf X
-  G = OO_X^1
-  -- TODO: this is what we want
-  --E = Ext^1(F, G)
-  --f = E_{0}
-  -- 0 <-- T_X <-- O_X(1)^3 <-- O_X <-- 0
-  --(p, i) = yonedaSheafExtension f
-  C = freeResolution(module F, LengthLimit => d+1);
-  K = sheaf(X, image C.dd_1);
-  H = Hom(K, G)
-  -- this is what we have:
-  (p, i) = prune \ yonedaSheafExtension({1, F, G}, C, matrix random H)
-  assert(source i === G)
-  assert(target i === source p)
-  assert(target p == F) -- TODO: do we want it to be ===?
-  assert(0 == p * i)
-  assert(0 == homology(p, i))
-  assert(0 == ker i)
-  assert(0 == coker p)
 ///
-*-
 
 -----------------------------------------------------------------------------
 -- Prune
 -----------------------------------------------------------------------------
 
 -- Consider the sequence 0 -> m^[p] -> S -> S/m^[p] -> 0 and apply Hom(-,M)
-minimalPresentation SheafMap :=
-prune SheafMap := SheafMap => opts -> f -> (
+prune SheafMap := minimalPresentation SheafMap := SheafMap => opts -> (cacheValue symbol minimalPresentation) (f -> (
     (G, F) := (target f, source f);
+    if f == 0 then return map(prune G, prune F, 0);
     prune G; prune F; -- these are pruned just to populate cached data
     -- F.cache.TorsionFree = M/H^0_B(M)
-    g := inducedMap(G.cache.TorsionFree, truncate(degree f, F.cache.TorsionFree), matrix f);
-    p := max(G.cache.GlobalSectionLimit, F.cache.GlobalSectionLimit);
+    g := inducedMap(G.cache.TorsionFree, truncate(f.degree, F.cache.TorsionFree, MinimalGenerators => false), matrix f);
+    -- TODO: verify that f.degree is always sufficient here
+    p := max(G.cache.GlobalSectionLimit, F.cache.GlobalSectionLimit) + max(0, f.degree);
     -- TODO: substitute with appropriate irrelevant ideal
-    Bp := module (ideal vars ring F)^[p];
-    lift sheafMap prune Hom(Bp, g))
+    Bp := module (ideal vars ring variety F)^[p];
+    lift sheaf(f.variety, prune Hom(Bp, g)))
+    )
 
 -----------------------------------------------------------------------------
 -- Things to move to the Core
 -----------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------
--- pullback and pushout
+-- pullback and pushout and concatenation
 -----------------------------------------------------------------------------
 
--- TODO: also for a list of matrices
-pullback(SheafMap, SheafMap) := CoherentSheaf => {} >> o -> (f, g) -> (
+SheafMap |  SheafMap := SheafMap => SheafMap.concatCols = maps -> map(
+    target maps#0, directSum apply(maps, source), concatCols apply(maps, matrix))
+SheafMap || SheafMap := SheafMap => SheafMap.concatRows = maps -> map(
+    directSum apply(maps, target), source maps#0, concatRows autotruncate maps)
+
+SheafMap.concatBlocks = maps -> SheafMap.concatRows apply(maps, SheafMap.concatCols)
+-- Note: this is (symbol matrix, SheafMap), not (matrix, SheafMap)!
+SheafMap.matrix = opts -> SheafMap.concatBlocks
+
+-- TODO: the code for pullback and pushout of matrices is categorical,
+-- so we should use e.g. lookup(pullback, Matrix, Matrix) here verbatim
+
+pullback(SheafMap, SheafMap) := CoherentSheaf => {} >> o -> (f, g) -> pullback {f, g}
+SheafMap.pullback = args -> (
     -- TODO: use != instead
-    if target f =!= target g then error "expected maps with the same target";
-    h := map(target f, source f ++ source g, matrix f | -matrix g);
+    if not same apply(args, target) then error "expected morphisms with the same target";
+    h := map(target args#0, directSum apply(args, source), concatCols apply(args, matrix));
     P := ker h;
     S := source h;
-    P.cache.pullbackMaps = {
-	S^[0] * inducedMap(S, P),
-	S^[1] * inducedMap(S, P)};
+    P.cache.formation = FunctionApplication (pullback, args);
+    P.cache.pullbackMaps = apply(#args, i -> S^[i] * inducedMap(S, P));
     P)
 
--- TODO: also for a list of matrices
-pushout(SheafMap, SheafMap) := CoherentSheaf => (f, g) -> (
+pushout(SheafMap, SheafMap) := CoherentSheaf => (f, g) -> pushout {f, g}
+SheafMap.pushout = args -> (
     -- TODO: use != here instead
-    if source matrix f =!= source matrix g then error "expected maps with the same source";
-    h := map(target f ++ target g, source f, matrix f || -matrix g);
+    if not same apply(args, source) then error "expected morphisms with the same source";
+    h := map(directSum apply(args, target), source args#0, concatRows autotruncate args);
     P := coker h;
     T := target h;
-    P.cache.pushoutMaps = {
-	inducedMap(P, T) * T_[0],
-	inducedMap(P, T) * T_[1]};
+    P.cache.formation = FunctionApplication (pushout, args);
+    P.cache.pushoutMaps = apply(#args, i -> inducedMap(P, T) * T_[i]);
     P)
 
 trans := (C,v) -> (
+    -- TODO: should C_[0] (or C_[0,0], etc.) always work, even if the object isn't a direct sum?
+    if 1 == #components C then error "expected a direct sum of coherent sheaves";
+    w := toList v;
     if C.cache.?indexComponents then (
-	    Ci := C.cache.indexComponents;
-	    apply(v, i -> if Ci#?i then Ci#i else error "expected an index of a component of the direct sum"))
-    else (
-        if not C.cache.?components then error "expected a direct sum of coherent sheaves";
-	    Cc := C.cache.components;
-	    apply(v, i -> if not Cc#?i then error "expected an index of a component of the direct sum");
-	    v)
-    )
+	Ci := C.cache.indexComponents;
+	apply(w, i -> if Ci#?i then Ci#i else error "expected an index of a component of the direct sum"))
+    else try C.cache.components_w then v else error "expected an index of a component of the direct sum")
 
 CoherentSheaf _ Array := SheafMap => (F, v) -> (
     v = trans(F,v);
@@ -533,314 +719,54 @@ CoherentSheaf ^ Array := SheafMap => (F, v) -> (
     G := directSum apply(toList v, j -> F.cache.components#j);
     map(G, F, (cover module F)^v))
 
-- SheafMap := phi -> map(target phi, source phi, -matrix phi)
-
-TEST ///
-  debug Varieties
-  X = Proj(QQ[x,y,z])
-  F = OO_X^1 ++ OO_X^1
-  assert(prune pullback(F_[0], F_[1]) == 0)
-  assert(prune pushout(F^[0], F^[1]) == 0)
-///
-
--- TODO:
--- pullback(SheafMap, SheafMap) := CoherentSheaf => ...
--- pushout(SheafMap, SheafMap) := CoherentSheaf => ...
-
-TEST ///
-  debug Varieties
-  S = QQ[x,y,z]
-  M = S^1 ++ S^1
-  assert(prune pullback(M_[0], M_[1]) == 0)
-  assert(prune pushout(M^[0], M^[1]) == 0)
-///
-
 -----------------------------------------------------------------------------
--- Tests
+-- Common maps and complexes of sheaves
 -----------------------------------------------------------------------------
 
-TEST ///
-  S = QQ[x_1..x_3];
-  X = Proj S;
-  phi1 = vars S
-  G = sheaf target phi1
-  F = sheaf source phi1
-  shphi = map(G,F,phi1)
-  peek shphi
-  assert(source shphi === OO_X^3(-1))
-  assert(target shphi === OO_X^1)
-  assert(degree shphi ===1)
-  phi = truncate(3,phi1);
-  shphi2 = map(G,F,phi,3)
-  assert(source shphi2 === OO_X^3(-1))
-  assert(target shphi2 === OO_X^1)
-  assert(degree shphi2 === 3)
-  -- FIXME: the assertion for dual fails!
-  shphi3 = map(sheaf target phi,F,phi,3)
-  assert isWellDefined shphi3
-  --assert isWellDefined dual shphi3
-  assert(degree shphi3 === 3)
-  assert(degree dual shphi3 === 0)
-  -- FIXME: first assertion fails (unless degree 3 is specified)
-  shphi4 = map(G, sheaf source phi, phi)
-  --assert isWellDefined shphi4
-  assert isWellDefined dual shphi4
-  assert(degree shphi4 === 3)
-  assert(degree dual shphi4 === 0)
-///
+end--
 
-TEST ///
-  S = QQ[x_1..x_3];
-  X = Proj S;
-  phi = vars S;
-  psi = (transpose phi)**S^{1:-2}
-  shphi = sheafMap(phi)
-  assert(matrix entries shphi.map == matrix {{x_1, x_2, x_3}})
-  shpsi = sheafMap(psi)
-  shphi*shpsi
-  shphi3 = sheafMap(phi,3)
-  shphi3*shpsi
-///
+-- TODO: Beilinson resolution of the diagonal for PP^n
 
-TEST /// -- tests for cached saturation map M --> Gamma_* sheaf M
-  S = QQ[x_1..x_4];
-  X = Proj S
-  -- zero sheaf
-  N = sheaf coker vars S
-  assert(N == 0)
-  -- structure sheaf
-  F = sheaf truncate(4,S^1)
-  assert(F == OO_X^1)
-  G = prune F
-  h = G.cache.pruningMap
-  assert(inverse h * h === id_F)
-  --assert(h * inverse h === id_G) -- FIXME
-  assert isIsomorphism h
-  assert isIsomorphism inverse h
-  assert(prune h === id_G)
-  assert(prune inverse h === id_G)
-  -- cotangent bundle
-  Omega = sheaf ker vars S;
-  pOmega = prune Omega
-  pMap = pOmega.cache.pruningMap
-  assert(prune inverse pMap === id_pOmega)
-  assert(source pMap === Omega)
-  assert(target pMap === pOmega)
-  sMap = Omega.cache.SaturationMap
-  assert(source sMap === module Omega)
-  assert(target sMap === module pOmega)
+eulerSequence = method()
+-- TODO: should return a complex of sheaves
+eulerSequence ProjectiveVariety := Complex => X -> (
+    -- Given a projective variety X \subset PP^n, returns the two maps
+    -- 0 <-- OO_X^1 <-- OO_X^(n+1)(-1) <-- Omega_PP^n|X <-- 0
+    complex { sheaf_X vars(S := ring X), sheaf_X inducedMap(source vars S, ker vars S) })
 
-  F = sheaf comodule intersect(ideal(x_1,x_2,x_3), ideal(x_3,x_4))
-  pF = prune F
-  sMap = F.cache.SaturationMap
-  assert(source sMap === module F)
-  assert(target sMap === module pF)
-///
+cotangentSurjection = method()
+cotangentSurjection ProjectiveVariety := SheafMap => (cacheValue symbol cotangentSurjection) (X -> (
+    -- Given a projective variety X \subset PP^n,
+    -- returns the surjection Omega_P^n|X -> Omega_X
+    C := eulerSequence X;
+    OmegaX := cotangentSheaf(X, MinimalGenerators => false);
+    OmegaPX := C_2;
+    if gens module OmegaX != gens module OmegaPX then error "different generators";
+    p := (sheaf inducedMap(coker relations module OmegaX, ambient module OmegaX)) * inducedMap(ambient OmegaPX, OmegaPX);
+    inducedMap(image p, source p)))
 
-TEST ///
-  S = QQ[x_1..x_4];
-  -- TODO: add assertions
-  F = sheaf comodule intersect(ideal(x_1,x_2), ideal(x_3,x_4))
-  pF = prune F
-  F = sheaf S^{5} / intersect(ideal(x_1,x_2), ideal(x_3,x_4))
-  pF = prune F
-  F = sheaf S^{5} / intersect(ideal(x_1,x_2,x_3), ideal(x_3,x_4))
-  pF = prune F
-  sMap = F.cache.SaturationMap
-  shsMap = sheafMap sMap
-  lift shsMap
-  F = sheaf comodule intersect(ideal(x_1,x_2), ideal(x_3,x_4))
-  pF = prune F
-  sMap = F.cache.SaturationMap
-  pF.module.cache.pruningMap
-  peek F.module.cache
-  shsMap = sheafMap(sMap,4)
-  lift shsMap
-///
+cotangentSequence = method();
+cotangentSequence ProjectiveVariety := Complex => X -> (
+    p := cotangentSurjection X;
+    i := inducedMap(source p, ker p);
+    complex {p, i}
+    )
 
-TEST ///
-  S = QQ[x_0..x_2];
-  X = Proj S
-  --TODO: check if things have already been pruned
-  f = sheafMap(truncate(2,vars S))
-  prune f
-  assert all(4, i -> HH^i(f) == Ext^i(OO_X^1, f))
-  assert all(4, i -> HH^i(f(1)) == Ext^i(OO_X^1(-1), f))
-  
-  F = sheaf coker (vars S)_{0,2}
-  assert(Ext^2(F, f) == matrix(QQ, {{0, 1, 0}}))
-  assert(source Ext^2(F, f) == Ext^2(F, source f))
-  assert(target Ext^2(F, f) == Ext^2(F, target f))
+embeddedToAbstract = method()
+embeddedToAbstract(ProjectiveVariety) := Matrix => (cacheValue symbol embeddedToAbstract) (X -> (
+     g := dual cotangentSurjection X;
+     h := inducedMap(coker g, target g);
+     connectingExtMap(0, OO_X^1, h, LengthLimit=>2)))
 
-  f = sheafMap vars S ** OO_X(1)
-  assert(HH^0 f == id_(QQ^3))
-  f = sheafMap vars S ** OO_X(-2)
-  assert(source HH^2 f == HH^2 source f)
-  assert(target HH^2 f == HH^2 target f)
-  f = sheafMap vars S ** OO_X(-3)
-  assert(source HH^2 f == HH^2 source f)
-  assert(target HH^2 f == HH^2 target f)
-
-  kk = ZZ/101
-  S = kk[x_0..x_3]
-  X = Proj S
-  K = dual ker vars S
-  f = prune sheafMap dual wedgeProduct(1,1,K)
-  --needsPackage "BGG"
-  --cohomologyTable(source f, -5,5)
-  assert(source HH^2 f == HH^2 source f)
-  assert(target HH^2 f == HH^2 target f)
-  assert(HH^2 f == matrix(kk, {{2}}))
-  assert(HH^3 f == 0)
-  
-  kk = ZZ/2
-  S = kk[x_0..x_2]
-  X = Proj S
-  K = ker vars S
-  f = prune sheafMap wedgeProduct(1,1,K)
-  assert(HH^2 f == 1)
-  assert(HH^3 f == 0)
-
-  S = QQ[x_0..x_3]
-  R = S/ideal(x_0*x_1 - x_2*x_3)
-  X = Proj R
-  f = sheafMap vars R ** OO_X(2)
-  HH^0 f
-///
-
-TEST ///
-  kk = ZZ/17
-  S = kk[x_0..x_3]
-  j = inducedMap (ambient ker vars S, ker vars S)
-  I = ideal random(3, S)
-  R = quotient I; X = Proj R;
-  F = sheaf coker (vars R)_{1,3} -- skyscraper sheaf
-  phi = jacobian R;
-  psi = sheafMap( phi // (j**R))
-  OmegaX = coker psi;
-  OmegaPX = target psi;
-  a = inducedMap(OmegaX, OmegaPX)
-  b = dual a
-  HH^1(b)
-  rank HH^2(psi)
-  apply(3, i -> Ext^i(F, psi))
-  Ext^2(F, psi)
-  HH^2(psi)
-///
-
-/// -- TODO: re-enable
-  S = kk[x,y,z]
-  R = S/ideal(x)
-  f = vars R
-  f' = flattenMorphism f
-  target f' == flattenModule target f
-  source f' == flattenModule source f
-///
-
-TEST ///
-  -- testing homology(SheafMap, SheafMap)
-  S = QQ[x,y,z]
-  g = sheafMap(koszul_2 vars S, 4)
-  g == 0 -- FIXME: this doesn't work with something I did
-  f = sheafMap koszul_3 vars S
-  assert(0 == prune homology(g, f))
-
-  g = sheafMap koszul_1 vars S
-  f = sheafMap koszul_3 vars S * g(-3)
-  assert(0 != prune homology(g(-1), f))
-
-  S = QQ[x,y]
-  g = sheafMap koszul_1 vars S
-  f = sheafMap koszul_2 vars S * g(-2)
-  assert(0 == prune homology(g, f))
-///
-
-TEST ///
-  -- testing SheafMap == ZZ
-  S = QQ[x,y]
-  f = map(coker matrix{{x^2,y^2}}, , {{x}});
-  assert(f != 0)
-  g = sheafMap f;
-  assert(g == 0)
-///
-
-TEST ///
-  -- testing homomorphism and homomorphism'
-  S = QQ[x,y,z]
-  X = Proj S
-  --
-  F = sheaf module truncate(3, S)
-  G = F(1)
-  H = Hom(F, G)
-  v = random(H, QQ^1)
-  h = homomorphism v
-  assert(source h === F)
-  assert(target h === G)
-  assert(homomorphism' h === v)
-  assert(sub(last coefficients matrix prune h, QQ) === v)
-  --
-  F = OO_X^1
-  G = sheaf truncate(0, S^{1})
-  H = Hom(F, G)
-  v = random(H, QQ^1)
-  h = homomorphism v
-  assert(source h === F)
-  assert(target h === G)
-  -- assert(homomorphism' h === v) -- FIXME: why is the matrix reversed?
-///
-
-TEST ///
-  -- testing inverse
-  S = QQ[x,y,z]
-  X = Proj S
-  f = map(OO_X^1, OO_X^1, truncate(2, id_(S^1)), 2)
-  assert isWellDefined inverse f
-  assert isIsomorphism(f * inverse f)
-  assert isIsomorphism(inverse f * f)
-  -- assert(prune(inverse f * f) === id_(OO_X^1)) -- FIXME
-  assert(prune(f * inverse f) === id_(OO_X^1))
-  --
-  f = map(sheaf truncate(2, S^1), OO_X^1, truncate(2, id_(S^1)), 2)
-  -- assert isWellDefined inverse f -- FIXME
-  assert isIsomorphism(f * inverse f)
-  assert isIsomorphism(inverse f * f)
-  -- assert(prune(inverse f * f) === id_(OO_X^1)) -- FIXME
-  assert(prune(f * inverse f) === id_(OO_X^1))
-  --
-  f = map(OO_X^1, sheaf truncate(2, S^1), truncate(2, id_(S^1)), 2)
-  assert isWellDefined inverse f
-  assert isIsomorphism(f * inverse f)
-  assert isIsomorphism(inverse f * f)
-  assert(prune(inverse f * f) === id_(OO_X^1))
-  assert(prune(f * inverse f) === id_(OO_X^1))
-  --
-  f = map(sheaf truncate(2, S^1), sheaf truncate(2, S^1), truncate(2, id_(S^1)), 2)
-  assert isWellDefined inverse f
-  assert isIsomorphism(f * inverse f)
-  assert isIsomorphism(inverse f * f)
-  assert(prune(inverse f * f) === id_(OO_X^1))
-  assert(prune(f * inverse f) === id_(OO_X^1))
-///
-
------------------------------------------------------------------------------
--- Documentation
------------------------------------------------------------------------------
-
--*
-beginDocumentation()
-
-doc ///
-  Key
-    SheafMaps
-  Headline
-    a package for computing with morphisms of sheaves
-  Description
-    Text
-      ToDo
-  Subnodes
-    sheafMap
-///
-*-
+idealSheafSequence = method()
+idealSheafSequence ProjectiveVariety := Complex => X -> (
+    -- Given a projective variety X \subset PP^n, returns the sequence
+    -- 0 -> I_X -> OO_P -> OO_P/I_X -> 0
+    IX := idealSheaf(X);
+    i := inducedMap(ambient IX, IX);
+    p := inducedMap(coker i, ambient IX);
+    complex {p, i}
+    )
 
 -----------------------------------------------------------------------------
 -- Development
@@ -863,17 +789,17 @@ shphi = map(G,F,phi1)
 peek shphi
 assert(source shphi === OO_X^3(-1))
 assert(target shphi === OO_X^1)
-assert(degree shphi ===1)
+assert(shphi.degree ===1)
 
 S = QQ[x_1..x_3];
 X = Proj S;
 phi = vars S;
 psi = (transpose phi)**S^{1:-2}
-shphi = sheafMap(phi)
+shphi = sheaf(phi)
 assert(matrix entries shphi.map == matrix {{x_1, x_2, x_3}})
-shpsi = sheafMap(psi)
+shpsi = sheaf(psi)
 shphi*shpsi
-shphi3 = sheafMap(phi,3)
+shphi3 = sheaf(phi,3)
 shphi3*shpsi
 phii = matrix oo
 eta = inducedMap(truncate(2,source phii),truncate(3,source phii))

@@ -15,6 +15,7 @@ ring Matrix := f -> (
      if R =!= S then error "expected module map with source and target over the same ring";
      if f.?RingMap then error "expected module map with no ring map";
      R)
+-- FIXME: can't set the typical output type because Module isn't defined yet!
 source Matrix := f -> f.source
 target Matrix := f -> f.target
 
@@ -98,6 +99,7 @@ Vector#AfterPrint = Vector#AfterNoPrint = v -> moduleAbbrv(module v, Vector)
 ring Vector := v -> ring class v
 module Vector := v -> target v#0
 leadTerm Vector := v -> new class v from leadTerm v#0
+leadTerm (ZZ, Vector) := (n,v) -> new class v from leadTerm(n,v#0)
 degree Vector := v -> (
      f := ambient v#0;
      first degrees source map(target f,,f))
@@ -170,6 +172,14 @@ new Module from Sequence := (Module,x) -> (
 vector(Module, Matrix) := (M, f) -> vector map(M,,entries f)
 vector(Module, List)   := (M, v) -> vector map(M,,apply(splice v, i -> {i}))
 vector(Module, RingElement) := vector(Module, Number) := (M, x) -> vector(M, {x})
+vector(Ring,       Matrix)      :=
+vector(RingFamily, Matrix)      := (R, f) -> vector(R^(numRows f), f)
+vector(Ring,       List)        :=
+vector(RingFamily, List)        := (R, v) -> vector(R^(#v), v)
+vector(Ring,       Number)      :=
+vector(Ring,       RingElement) :=
+vector(RingFamily, Number)      :=
+vector(RingFamily, RingElement) := (R, x) -> vector(R^1, {x})
 
 Module#id = M -> map(M, M, 1)
 raw Module := M -> M.RawFreeModule

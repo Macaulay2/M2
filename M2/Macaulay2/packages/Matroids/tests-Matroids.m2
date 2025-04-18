@@ -93,6 +93,10 @@ M4 = matroid K4
 assert(toString tuttePolynomial M4 === "x^3+y^3+3*x^2+4*x*y+3*y^2+2*x+2*y")
 assert(tutteEvaluate(M4, 2, 1) === 38)
 assert(getRepresentation M4 === K4)
+B={{0,1,2},{0,1,3},{0,1,4},{0,1,5},{0,2,3},{0,2,5},{0,3,4},{0,4,5},{1,2,3},{1,2,4},{1,3,5},{1,4,5},{2,3,4},{2,3,5},{2,4,5},{3,4,5}}
+altM = matroid(toList(0..5),B)
+assert(areIsomorphic(altM, M4))
+assert(hasMinor(altM,M4))
 A = random(ZZ^3,ZZ^5)
 assert(getRepresentation matroid A === A)
 ///

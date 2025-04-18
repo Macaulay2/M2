@@ -201,8 +201,9 @@ resolutionObjectInEngine = (opts, M, matM) -> (
             );
         complex maps
         );
-    
-    RO.compute(opts.LengthLimit, opts.DegreeLimit);
+
+    if not opts.StopBeforeComputation then
+        RO.compute(opts.LengthLimit, opts.DegreeLimit);
     RO.complex(opts.LengthLimit)
     )
 
@@ -691,7 +692,8 @@ minimalBetti Module := BettiTally => opts -> M -> (
 	nvars := # generators(R, CoefficientRing => A);
 	lengthlimit = nvars + if A === ZZ then 1 else 0;
         );
-    C = freeResolution(M, DegreeLimit => degreelimit, LengthLimit => lengthlimit + 1, Strategy => Nonminimal);
+    C = freeResolution(M, DegreeLimit => degreelimit, LengthLimit => lengthlimit + 1,
+        Strategy => Nonminimal, StopBeforeComputation => true);
     rC := M.cache.ResolutionObject.RawComputation;
     B := unpackEngineBetti rawMinimalBetti(rC,
         if opts.DegreeLimit === infinity then {} else

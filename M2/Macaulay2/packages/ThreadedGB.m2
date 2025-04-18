@@ -49,7 +49,6 @@ manualLCM = (f,g) -> (
 
 export {
     "tgb",
-    "minimize",
     "reduce",
     "Minimal",
     "LineageTable"
@@ -167,7 +166,7 @@ tgb (Ideal) := MutableHashTable => o -> (I) -> (
 -- this method returns a minimal Groebner basis.
 -- Keys of non-minimal elements are retained within the hashtable (H#those=null).
 ---------------------------------------------------------------------------------------------
-minimize = method(TypicalValue => LineageTable)
+--minimize = method(TypicalValue => LineageTable)
 minimize(LineageTable) := LineageTable => (H) -> (
     -- nothing to do if gens gb == {1}:
     if H#?"trivial" then (
@@ -456,11 +455,11 @@ doc ///
       In the example above, the S-polynomial S(f0,f1) didn't reduce to zero, hence the remainder was added to the
       output with key (0,1). The additional two S-polynomials reduced and the process ended.
   SeeAlso
-    minimize
+    (minimize, LineageTable)
     reduce
   Caveat
     Due to threads running in parallel, it can happen that there are redundant elements in the final
-    Gr\"obner basis. However these can be easily removed using @TO minimize@, for example.
+    Gr\"obner basis. However these can be easily removed using @TO (minimize, LineageTable)@, for example.
     
     Also, {\tt  allowableThreads} needs to be set to an integer larger than 1, prior to calling @TO tgb@.
     Otherwise, errors may occur. It may be a good idea to reset allowableThreads to 1 after the threaded computations are done. 
@@ -483,7 +482,6 @@ doc ///
 ///
 doc ///
   Key
-    minimize
     (minimize, LineageTable)
   Headline
     turn a Gr\"obner basis computed using threaded Gr\"obner bases into a minimal one
@@ -674,8 +672,6 @@ installPackage("ThreadedGB", RemakeAllDocumentation=>true, RerunExamples=>true)
 loadPackage("ThreadedGB",Reload=>true)
 viewHelp tgb
 viewHelp "ThreadedGB"
-viewHelp minimize
+viewHelp (minimize, LineageTable)
 installPackage("ThreadedGB")
 check ThreadedGB
-
-
