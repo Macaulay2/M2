@@ -64,6 +64,7 @@ load "./operators.m2"
 load "./shared.m2"
 load "./doc_iterators.m2"
 load "./doc_atomic.m2"
+load "./doc_mutex.m2"
 load "./options.m2" -- this must come last
 load "./undocumented.m2"
 
