@@ -320,25 +320,6 @@ pack(ZZ, BasicList) := List => pack'
 pack(String,    ZZ) :=
 pack(BasicList, ZZ) := List => (L, n) -> pack'(n, L)
 
------------------------------------------------------------------------------
-
-parallelApplyRaw = (L, f) ->
-     -- 'reverse's to minimize thread switching in 'taskResult's:
-     reverse (taskResult \ reverse apply(L, e -> schedule(f, e)));
-parallelApply = method(Options => {Strategy => null})
-parallelApply(BasicList, Function) := o -> (L, f) -> (
-     if o.Strategy === "raw" then return parallelApplyRaw(L, f);
-     n := #L;
-     numThreads := min(n + 1, maxAllowableThreads);
-     oldAllowableThreads := allowableThreads;
-     if allowableThreads < numThreads then allowableThreads = numThreads;
-     numChunks := 3 * numThreads;
-     res := if n <= numChunks then toList parallelApplyRaw(L, f) else
-	  flatten parallelApplyRaw(pack(L, ceiling(n / numChunks)), chunk -> apply(chunk, f));
-     allowableThreads = oldAllowableThreads;
-     res);
-
-
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
