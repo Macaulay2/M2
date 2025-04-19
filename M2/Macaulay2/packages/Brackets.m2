@@ -15,7 +15,7 @@ newPackage(
 	  Keywords => {"Projective Algebraic Geometry"}
           )
 
-export {"AbstractGCRing", "bracketRing", "BracketRing", "GCAlgebra", "normalForm", "gc", "toBracketPolynomial", "GCExpression"}
+export {"Brackets", "AbstractGCRing", "bracketRing", "BracketRing", "GCAlgebra", "normalForm", "gc", "toBracketPolynomial", "GCExpression"}
 
 -* Code section *-
 
