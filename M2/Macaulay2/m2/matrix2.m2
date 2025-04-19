@@ -296,6 +296,7 @@ modulo(Matrix,Matrix)  := Matrix => options -> (m,n) -> (
      then map(L,source f,f)			    -- it can happen that L has a Schreier order, and we want to preserve that exactly
      else f)
 
+-- TODO: make this work between non-free modules
 quotientRemainder'(Matrix, Matrix) := Matrix => (f, g) -> (
     L := source f;
     M := target f;
@@ -351,8 +352,11 @@ quotient(Matrix, Matrix) := Matrix => opts -> (f, g) -> (
 addHook((quotient, Matrix, Matrix), Strategy => Default,
     -- Note: this strategy only works if the remainder is zero, i.e.:
     -- homomorphism' f % image Hom(source f, g) == 0
-    -- TODO: should we pass MinimalGenerators => false to Hom and homomorphism'?
-    (opts, f, g) -> map(source g, source f, homomorphism(homomorphism' f // Hom(source f, g))))
+    (opts, f, g) -> (
+	opts = new OptionTable from {
+	    DegreeLimit       => opts.DegreeLimit,
+	    MinimalGenerators => opts.MinimalGenerators };
+	map(source g, source f, homomorphism(homomorphism'(f, opts) // Hom(source f, g, opts)))))
 
 -- FIXME: this is still causing unreasonable slow downs, e.g. for (large m) // (scalar)
 addHook((quotient, Matrix, Matrix), Strategy => "Reflexive", (opts, f, g) -> if f == 0 or isFreeModule source f then (
@@ -396,8 +400,11 @@ quotient'(Matrix, Matrix) := Matrix => opts -> (f, g) -> (
 addHook((quotient', Matrix, Matrix), Strategy => Default,
     -- Note: this strategy only works if the remainder is zero, i.e.:
     -- homomorphism' f % image Hom(g, target f) == 0
-    -- TODO: should we pass MinimalGenerators => false to Hom and homomorphism'?
-    (opts, f, g) -> map(target f, target g, homomorphism(homomorphism' f // Hom(g, target f))))
+    (opts, f, g) -> (
+	opts = new OptionTable from {
+	    DegreeLimit       => opts.DegreeLimit,
+	    MinimalGenerators => opts.MinimalGenerators };
+	map(target f, target g, homomorphism(homomorphism'(f, opts) // Hom(g, target f, opts)))))
 
 addHook((quotient', Matrix, Matrix), Strategy => "Reflexive",
     (opts, f, g) -> if all({source f, target f, source g, target g}, isFreeModule) then dual quotient(dual f, dual g, opts))
