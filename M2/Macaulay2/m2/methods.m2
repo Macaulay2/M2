@@ -271,7 +271,7 @@ setupMethods((), {
 	  koszul, target, source,
 	  getChangeMatrix, cover, coverMap, super, terms,
 	  cokernel, coimage, comodule, image, someTerms, scanKeys, scanValues,
-	  substitute, complete, ambient, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
+	  substitute, complete, ambient, remainder, quotientRemainder, remainder', quotientRemainder',
 	  coefficients, monomials, size, sum, product, nullhomotopy, module, raw,
 	  content, leadTerm, leadCoefficient, leadMonomial, components,
 	  assign, realPart, imaginaryPart, conjugate,
@@ -356,14 +356,13 @@ map = method(
 setupMethods(Dispatch => Thing, {transpose} )
 setupMethods(TypicalValue => Boolean,
      {isBorel, isWellDefined, isInjective, isSurjective, isUnit,
-	  isSubset,isHomogeneous, isIsomorphism, isField
+      isSubset, isHomogeneous, isField
 	  })
 setupMethods(TypicalValue => ZZ, {
-	binomial, char, degreeLength, depth, dim, euler, genus, height,
-	numgens, numColumns, numRows, pdim, rank, width})
-setupMethods(TypicalValue => List, {
-	degrees, eulers, genera})
+	binomial, char, degreeLength, dim,
+	numgens, numColumns, numRows, pdim, rank})
 
+degrees = method(TypicalValue => List)
 length = method(TypicalValue => ZZ, Dispatch => Thing)
 codim = method( Options => true )
 
@@ -413,12 +412,17 @@ cohomology = method( Options => {
 	  } )
 homology = method( Options => { } )
 
+width  = method(TypicalValue => ZZ)
+height = method(TypicalValue => ZZ)
+depth  = method(TypicalValue => ZZ)
+
 width File := fileWidth
 height File := fileHeight
 
 width Net := netWidth
 height Net := netHeight
 depth Net := netDepth
+length Net := n -> #n
 
 width String := stringWidth
 height String := s -> 1
@@ -618,7 +622,7 @@ addHook(Symbol,                  Function) := opts -> (key,        hook) -> addH
 addHook(Sequence,                Function) := opts -> (key,        hook) -> addHook(getHookStore(key, true), key, hook, opts)
 addHook(MutableHashTable, Thing, Function) := opts -> (store, key, hook) -> (
     -- this is the hashtable of Hooks for a specific key, which stores HookAlgorithms and HookPriority
-    if not store#?key then store#key = new MutableHashTable from {
+    store#key ??= new MutableHashTable from {
 	HookAlgorithms => new MutableHashTable, -- a mutable hash table "strategy key" => "strategy code"
 	HookPriority   => new MutableList};     -- a mutable list of strategy keys, in order
     store = store#key;
@@ -679,28 +683,9 @@ protect QuotientRingHook
 -- stashing or caching computed values for future reference in functions that take a mutable hash table as input
 -----------------------------------------------------------------------------
 
-CacheFunction = new Type of FunctionClosure
-CacheFunction.synonym = "a cache function"
-net CacheFunction := f -> "-*a cache function*-"
-cacheValue = key -> f -> new CacheFunction from (x -> (
-	  c := try x.cache else x.cache = new CacheTable;
-	  if c#?key then (
-	       val := c#key;
-	       if class val === CacheFunction then (
-		    remove(c,key);
-		    c#key = val x)
-	       else val
-	       )
-	  else c#key = f x))
-stashValue = key -> f -> new CacheFunction from (x -> (
-	  if x#?key then (
-	       val := x#key;
-	       if class val === CacheFunction then (
-		    remove(x,key);
-		    x#key = val x)
-	       else val
-	       )
-	  else x#key = f x))
+-- deprecated, but kept for backwards compatibility
+cacheValue = key -> f -> x -> ( try x.cache else x.cache = new CacheTable )#key ??= f(x)
+stashValue = key -> f -> x -> x#key ??= f(x)
 
 codeHelper#(functionBody (cacheValue null) null) = g -> {
      ("-- function f:", value (first localDictionaries g)#"f")
@@ -712,7 +697,7 @@ codeHelper#(functionBody (stashValue null) null) = g -> {
 -- helper for hookifying and caching methods
 -- if a cached value isn't found on X, runs the hooks, if none succeed, runs the default algorithm f
 -- TODO: simplify usage
-cacheHooks = (ckey, X, mkey, args, f) -> ((cacheValue ckey) (X -> tryHooks(mkey, args, f))) X
+cacheHooks = (ckey, X, mkey, args, f) -> (X -> X.cache#ckey ??= tryHooks(mkey, args, f)) X
 
 -----------------------------------------------------------------------------
 -- hypertext conversion

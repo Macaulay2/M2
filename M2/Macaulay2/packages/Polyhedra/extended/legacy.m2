@@ -112,14 +112,13 @@ imageFan (Matrix,Cone) := (M,C) -> (
 --  OUTPUT : 'C',  a Cone, the inner normal cone of P in the face Q
 -- COMMENT : 'Q' must be a face of P
 normalCone (Polyhedron,Polyhedron) := Cone => {} >> opts -> (P,Q) -> (
-     if not P.cache.?normalCone then P.cache.normalCone = new MutableHashTable;
-     if not P.cache.normalCone#?Q then (
+    P.cache.normalCone ??= new MutableHashTable;
+    P.cache.normalCone#Q ??= (
 	  -- Checking for input errors
 	  if not isFace(Q,P) then error("The second polyhedron must be a face of the first one");
 	  p := interiorPoint Q;
-	  P.cache.normalCone#Q = dualCone coneFromVData affineImage(P,-p));
-     P.cache.normalCone#Q)
-
+	dualCone coneFromVData affineImage(P, -p))
+    )
 
 
 --   INPUT : 'M',  a Matrix

@@ -64,6 +64,24 @@ document {
 	  D = GF C
 	  map(B,D,{a^2})
 	  ///
-	  )
+	  ),
      }
 
+document {
+     Key => isPrimitive,
+     Headline => "whether an element is a primitive element of a finite field",
+     TT "isPrimitive(f)", " -- Given an element ", TT "f", " in a quotient of a polynomial ring ",
+     TT "R", " over a finite field ", TT "K", "which is itself a finite field,
+      with the ring being finite dimensional over the field,
+     determine if ", TT "f", " generates the multiplicative group of this field.",
+     EXAMPLE { "R = ZZ/5[t]/(t^2+t+1);", "isPrimitive t", "isPrimitive (t-1)" }
+     }
+
+document {
+     Key => order,
+     Headline => "a key used internally",
+     TT "order", " -- used as a key inside finite fields under which is
+     stored the number of elements in the field.  Intended for internal use only",
+     PARA{},
+     SeeAlso => "GaloisField"
+     }

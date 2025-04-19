@@ -10,6 +10,19 @@ ancestors' = T -> unique join({T}, while (T = class  T) =!= Type  list T, {Type}
 
 -- TODO: make this TT toString X later?
 synonym = X -> if X.?synonym then X.synonym else "object of class " | toString X
+-- TODO: find a more permanent solution
+plurals = new MutableHashTable from {
+    "body"       => "bodies",
+    "dictionary" => "dictionaries",
+    "matrix"     => "matrices",
+    "sheaf"      => "sheaves",
+    "variety"    => "varieties",
+    }
+pluralize = s -> demark_" " append(
+    drop(ws := separate_" " s, -1),
+    if  plurals#?(last ws)
+    then plurals#(last ws) else last ws | "s")
+pluralsynonym = T -> if T.?synonym then pluralize T.synonym else "objects of class " | toString T
 
 Time.synonym = "timing result"
 Boolean.synonym = "Boolean value"
@@ -71,18 +84,21 @@ Command Thing := (x,y) -> x#0 y
 
 -- Now some extra stuff:
 
-Command   \ VisibleList := VisibleList => (f,v) -> apply(v,i -> f i)
+apply(Thing, Command)   := VisibleList => (v,f) -> apply(v, i -> f i)
+Command   \ VisibleList :=
 Function  \ VisibleList := VisibleList => (f,v) -> apply(v,f)
-Command   \ String      := Sequence    => (f,s) -> apply(s,c -> f c)
+Command   \ String      :=
 Function  \ String      := Sequence    => (f,s) -> apply(s,f)
 Command  \\ Thing       := 
 Function \\ Thing       := VisibleList => (f,v) -> f v
+       List /  Command  :=
        List /  Function :=        List => (v,f) -> apply(v,f) -- just because of conflict with List / Thing!
-       List /  Command  :=        List => (v,f) -> apply(v,i -> f i)
-VisibleList /  Command  := VisibleList => (v,f) -> apply(v,i -> f i)
+VisibleList /  Command  :=
 VisibleList /  Function := VisibleList => (v,f) -> apply(v,f)
-     String /  Command  := Sequence    => (s,f) -> apply(s,c -> f c)
+     String /  Command  :=
      String /  Function := Sequence    => (s,f) -> apply(s,f)
+VisibleList // Command  := -- here to make documentation easier
+VisibleList // Function := -- here to make documentation easier
       Thing // Command  := 
       Thing // Function := VisibleList => (v,f) -> f v
 

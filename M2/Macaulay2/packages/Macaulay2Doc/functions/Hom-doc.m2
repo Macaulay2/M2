@@ -66,6 +66,7 @@ Node
     homomorphism
     homomorphism'
     (Hom, Module, Matrix)
+    (Hom, Module, ChainComplex)
 
 Node
   Key
@@ -242,6 +243,12 @@ Node
 
 -----------------------------------------------------------------------------
 
+undocumented {
+    [adjoint, Strategy],
+    [adjoint, DegreeLimit],
+    [adjoint, MinimalGenerators],
+}
+
 doc ///
 Node
   Key
@@ -309,6 +316,28 @@ Node
     (Hom, Module, Module)
     (tensor, Module, Module)
 ///
+
+-----------------------------------------------------------------------------
+
+undocumented {
+    [(dual, Matrix), Strategy],
+    [(dual, Matrix), DegreeLimit],
+    [(dual, Matrix), MinimalGenerators],
+}
+document {
+    Key => dual,
+    Headline => "dual module or map",
+}
+document {
+    Key => (dual, Module),
+    Headline => "dual module",
+    TT "dual M", " -- the dual of a module."
+}
+document {
+    Key => (dual, Matrix),
+    Headline => "dual of a map",
+    TT "dual f", " -- the dual (transpose) of a homomorphism."
+}
 
 -----------------------------------------------------------------------------
 

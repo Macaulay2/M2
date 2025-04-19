@@ -18,37 +18,43 @@ doc ///
   Description
     Text
       Various ways to get help:
-
-      @UL {
-          (TT "help \"Macaulay2\"",          " -- displays the base of the online documentation tree."),
-          (TT "help X",                      " -- displays the online documentation for ", TT "X", "."),
-          (TT "help methods T",              " -- displays help messages about the methods that take an object of class ", TT "T", "as input."),
-          (TT "help methods res",            " -- displays help messages about various uses the function ", TT "res", "."),
-          (TT "help methods symbol **",      " -- displays help messages about various uses and meanings of the operator ", TT "**", "."),
-          (TT "help methods (map, Module)",  " -- displays help messages about various ways to use the function ", TT "map", " and a module."),
-          (TT "help methods (symbol **, T)", " -- displays help messages about various ways to use the operator ", TT "**", " and an object of class ", TT "T", "."),
-          (TT "help methods (X, Y)",         " -- displays help messages about the methods usable with an object of class ", TT "X", " and an object of class ", TT "Y", "."),
-          (TT "help apropos \"hilbert\"",    " -- displays help messages about all functions whose name contains the string ", TT "hilbert", "."),
-          (TT "help about X",                " -- displays documentation nodes from all installed packages whose keys contain ", TT "X", "."),
-          (TT "help about(X, Body => true)", " -- displays documentation nodes from all installed packages whose keys or contents contain ", TT "X", ".")
-          }@
-
+    Code
+      TABLE {
+	  { M2CODE "help",			  { " -- display the ", TO "initial help" }},
+	  { M2CODE "help \"Macaulay2\"",	  { " -- display the top of the documentation tree" }},
+          { M2CODE "help \"matrices\"",           { " -- display an overview of matrices in Macaulay2" }},
+	  { M2CODE "help X",                      { " -- display the documentation node whose key is ", TT "X" }},
+	  { M2CODE "help res",                    { " -- documentation for the function ", TO "res", " and ways to use it" }},
+          { M2CODE "help(res, Module)",           { " -- documentation for the method ", TO (res, Module) }},
+	  { M2CODE "help Module",                 { " -- documentation for the type ", TO "Module", " and methods that take one as input" }},
+	  { M2CODE "help symbol **",              { " -- documentation for the operator ", TO "**", " and its various uses and meanings" }},
+          { M2CODE "help(symbol **, Ring, Ring)", { " -- documentation for the method ", TO (symbol **, Ring, Ring) }},
+          { M2CODE "help[gb, DegreeLimit]",       { " -- documentation for the optional argument ", TO [gb, DegreeLimit] }},
+	  { M2CODE "help methods(map, Module)",   { " -- documentation for various ways to use the function ", TO "map", " and a module" }},
+	  { M2CODE "help methods(symbol **, T)",  { " -- documentation for various ways to use the operator ", TO "**", " and an object of class ", TT "T" }},
+	  { M2CODE "help methods(X, Y)",          { " -- documentation for the methods that take an object of class ", TT "X", " and an object of class ", TT "Y" }},
+	  { M2CODE "help apropos \"hilbert\"",    { " -- documentation about all functions whose name contains the string ", TT "hilbert" }},
+	  { M2CODE "help about X",                { " -- documentation nodes from all installed packages whose keys contain ", TT "X" }},
+	  { M2CODE "help about(X, Body => true)", { " -- documentation nodes from all installed packages whose keys or contents contain ", TT "X" }},
+      }
+    Text
       The @TT "help"@ command is used to display online documentation, as in the following suggestions.
-      Use @TO viewHelp@ to display the corresponding documentation in your web browser.
-
-      @UL {
-          TT "help",
-          TT "help ideal",
-          TT "help(ideal, List)"
-          }@
-
+    Code
+      TABLE {
+	  { M2CODE "help" },
+          { M2CODE "help ideal" },
+          { M2CODE "help(ideal, List)" },
+      }
+    Text
       Some other potential help topics:
-
-      @UL {
-          TT "help \"monomial orderings\"",
-          TT "help \"Gröbner bases\"",
-          TT "help \"multigraded polynomial rings\""
-          }@
+    Code
+      TABLE {
+	  { M2CODE "help \"monomial orderings\"" },
+          { M2CODE "help \"Gröbner bases\"" },
+          { M2CODE "help \"graded and multigraded polynomial rings\"" },
+      }
+    Text
+      Use @TO viewHelp@ to display the corresponding documentation in your web browser.
   SeeAlso
     "initial help"
     (symbol?, Symbol)
@@ -79,25 +85,27 @@ doc ///
     Item
       The given documentation page is displayed using the function @TO show@
       which opens the page in the default web browser.
+    Item
+      If no argument is given to @TT "viewHelp"@, then @TT "~/.Macaulay2/index.html"@ opens,
+      which contains a list of all packages installed locally.
   Description
     Text
-      If no argument is given to @TT "viewHelp"@ then the top page of your local html documentation is displayed.
-
       Some example uses:
-
-      @UL {
-          (TT "viewHelp",                            " -- top of local copy of the documentation, including installed packages"),
-          (TT "viewHelp \"Macaulay2\"",              " -- top of Macaulay2 doc"),
-          (TT "viewHelp ideal",                      " -- online doc for the 'ideal' function"),
-          (TT "viewHelp \"matrices\"",               " -- overview of matrices in Macaulay2"),
-          (TT "viewHelp (ideal, List)",              " -- online doc for ideal(List) method"),
-          (TT "viewHelp (diff, Matrix, Matrix)",     " -- online doc for the diff function taking two matrices as arguments"),
-          (TT "viewHelp [gb, DegreeLimit]",          " -- view doc for the optional argument DegreeLimit to gb function"),
-          (TT "viewHelp (symbol**, Matrix, Matrix)", " -- view doc for Matrix**Matrix")
-          }@
+    Code
+      TABLE {
+	  { M2CODE "viewHelp",                        { " -- open the list of local packages and their documentation" }},
+          { M2CODE "viewHelp \"Macaulay2\"",          { " -- open the top of the online documentation tree" }},
+          { M2CODE "viewHelp \"matrices\"",           { " -- open an overview of matrices in Macaulay2" }},
+	  { M2CODE "viewHelp X",                      { " -- open the documentation node whose key is ", TT "X" }},
+          { M2CODE "viewHelp ideal",                  { " -- documentation for the function ", TO ideal, " and ways to use it" }},
+          { M2CODE "viewHelp(ideal, List)",           { " -- documentation for the method ", TO (ideal, List) }},
+          { M2CODE "viewHelp[gb, DegreeLimit]",       { " -- documentation for the optional argument ", TO [gb, DegreeLimit] }},
+          { M2CODE "viewHelp(symbol **, Ring, Ring)", { " -- documentation for the method ", TO (symbol **, Ring, Ring) }},
+      }
   Caveat
     The @TO help@ command allows other possible arguments, such as @TT "help methods ideal"@,
-    but for @TT "viewHelp"@ the argument @TT "X"@ must refer to only one web page.
+    but for @TT "viewHelp"@ the argument must refer to only one web page.
+    Note that the Safari browser may prevent loading of the style files for the online documentation.
   SeeAlso
     infoHelp
     help
@@ -108,7 +116,7 @@ doc ///
 
 doc ///
   Key
-    infoHelp
+     infoHelp
     (infoHelp, Thing)
     (infoHelp, DocumentTag)
   Headline
@@ -121,39 +129,41 @@ doc ///
       a descriptor for a documentation node (see below for examples)
   Consequences
     Item
-      The given documentation page is displayed using info, if you are running Macaulay2 in a terminal window.
+      The given documentation page is displayed within a terminal window using the command @TT "info"@.
+    Item
       If you are running Macaulay2 in Emacs, then the page is opened in another window using Info mode.
+    Item
       If no argument is given to @TT "infoHelp"@, then the top node of the Macaulay2 documentation is displayed.
   Description
     Text
       Some example uses:
-
-      @UL {
-          (TT "infoHelp \"Macaulay2\"",              " -- top of Macaulay2 doc"),
-          (TT "infoHelp ideal",                      " -- online doc for the 'ideal' function"),
-          (TT "infoHelp \"matrices\"",               " -- overview of matrices in Macaulay2"),
-          (TT "infoHelp (ideal, List)",              " -- online doc for ideal(List) method"),
-          (TT "infoHelp (diff, Matrix, Matrix)",     " -- online doc for the diff function taking two matrices as arguments"),
-          (TT "infoHelp [gb, DegreeLimit]",          " -- view doc for the optional argument DegreeLimit to gb function"),
-          (TT "infoHelp (symbol**, Matrix, Matrix)", " -- view doc for Matrix**Matrix")
-          }@
-
+    Code
+      TABLE {
+	  { M2CODE "infoHelp",                        { " -- open the top of the online documentation tree" }},
+	  { M2CODE "infoHelp \"Macaulay2\"",          { " -- open the top of the online documentation tree" }},
+	  { M2CODE "infoHelp \"matrices\"",           { " -- open an overview of matrices in Macaulay2" }},
+	  { M2CODE "infoHelp X",                      { " -- open the documentation node whose key is ", TT "X" }},
+	  { M2CODE "infoHelp ideal",                  { " -- documentation for the function ", TO ideal, " and ways to use it" }},
+	  { M2CODE "infoHelp(ideal, List)",           { " -- documentation for the method ", TO (ideal, List) }},
+	  { M2CODE "infoHelp[gb, DegreeLimit]",       { " -- documentation for the optional argument ", TO [gb, DegreeLimit] }},
+	  { M2CODE "infoHelp(symbol **, Ring, Ring)", { " -- documentation for the method ", TO (symbol **, Ring, Ring) }},
+      }
+    Text
       While in the @TT "info"@ program, there are many ways to navigate and search.
       Besides the arrow keys to move around on the page, here is a list of the most useful key strokes:
-
-      @UL {
-          (TT "?", " -- display information about all of the possible keystrokes"),
-          (TT "q", " -- quit info, return to Macaulay2"),
-          (TT "n", " -- go to the next documentation node"),
-          (TT "p", " -- go to the previous node"),
-          (TT "m", " -- follow the menu link"),
-          (TT "r", " -- follow a cross-reference"),
-          (TT "l", " -- go to the last node visited"),
-          }@
-
+    Code
+      TABLE {
+	  { TT "?", " -- information about all of the possible keystrokes" },
+	  { TT "q", " -- quit info, return to Macaulay2" },
+	  { TT "n", " -- go to the next documentation node" },
+	  { TT "p", " -- go to the previous node" },
+	  { TT "m", " -- follow the menu link" },
+	  { TT "r", " -- follow a cross-reference" },
+	  { TT "l", " -- go to the last node visited" },
+      }
   Caveat
     The @TO help@ command allows other possible arguments, such as @TT "help methods ideal"@,
-    but @TT "infoHelp"@ requires that the argument @TT "s"@ refer to only one documentation page.
+    but @TT "infoHelp"@ requires that the argument refer to only one documentation page.
 
     @HEADER2 "Viewing Info files in Emacs"@
 
@@ -174,8 +184,10 @@ Node
     (symbol?, Symbol)
     (symbol?, ScriptedFunctor)
     (symbol?, Function)
+    --(symbol?, Command)
     (symbol?, Keyword)
     (symbol?, Package)
+    --(symbol?, Thing)
     (symbol?, Type)
   Headline
     view brief documentation of a symbol
@@ -183,21 +195,20 @@ Node
     Text
       A question mark followed by a symbol representing a function, type, option name, or package
       prints a brief, compact list of various ways to use the given symbol.
-
-      @UL {
-          (TT "? Tally",    " -- displays brief information about ways to use objects of class ", TT "Tally", "."),
-          (TT "? betti",    " -- displays brief information about ways to use the function ", TT "betti", "."),
-          (TT "? Weights",  " -- displays brief information about ways to use the option ", TT "Weights", "."),
-          (TT "? Package",  " -- displays brief information about the package ", TT "Package", "."),
-          (TT "? symbol>>", " -- displays brief information about ways to use the operator ", TT ">>", "."),
-          (TT "? HH",       " -- displays brief information about ways to use the scripted functor ", TT "HH", ".")
-          }@
-
+    Code
+      TABLE {
+	  { M2CODE "? BGG",	  { " -- brief information about the package ", TO "BGG::BGG" }},
+	  { M2CODE "? Tally",	  { " -- brief information about ways to use objects of class ", TO "Tally" }},
+	  { M2CODE "? betti",	  { " -- brief information about ways to use the function ", TO "betti" }},
+	  { M2CODE "? Weights",	  { " -- brief information about ways to use the option ", TO "Weights" }},
+	  { M2CODE "? symbol >>", { " -- brief information about ways to use the operator ", TO ">>" }},
+	  { M2CODE "? HH",	  { " -- brief information about ways to use the scripted functor ", TT "HH" }},
+      }
+    Text
       If the object is defined by the user, brief information about the object and its class are printed.
 
       When using Macaulay2 in Emacs, moving the cursor to each line of the output beginning with
-      @TT "*"@ and pressing Enter results in showing the full documentation node corresponding to that line.
-
+      @TT "'*'"@ and pressing Enter results in showing the full documentation node corresponding to that line.
   SeeAlso
     "initial help"
     methods
@@ -298,6 +309,7 @@ Node
 Node
   Key
     headlines
+   (headlines, List)
   Headline
     display a table of documentation headlines
   Usage
@@ -327,41 +339,33 @@ doc ///
 Node
   Key
     "initial help"
+  Headline
+    Welcome to Macaulay2
   Description
     Text
-      Welcome to Macaulay2
-
-      Try entering '2+2' at your next input prompt, which begins with @TT "i"@.
-      The two output prompts begin with @TT "o"@.  The first one, with the
-      equal sign, '=', gives the value computed from your input, and the second one, with
-      the colon, ':', tells what type of thing the value is.
-
+      Try entering @KBD "2+1.5"@ at your next input prompt, which begins with @KBD "i"@ (e.g. @KBD "i2 : "@). @BR()@
+      The two output prompts begin with @KBD "o"@.
+    Code
+      UL{ LI{"the first one, for instance ", KBD "o2 = ", ", gives the value computed from your input;"},
+	  LI{"the second one, for instance ", KBD "o2 : ", ", tells what type of thing the value is."} }
+    Text
       Type one of these commands to get started reading the documentation:
-
-      @M2CODE ////copyright                         -- the copyright////@
-
-      @M2CODE ////help "Macaulay2"                  -- top node of the documentation.////@
-
-      @M2CODE ////help "reading the documentation"  -- ////@
-
-      @M2CODE ////help "getting started"            -- ////@
-
-      @M2CODE ////help "a first Macaulay2 session"  -- ////@
-
-      @M2CODE ////help x                            -- show documentation for x////@
-
-      @M2CODE ////help about x                      -- show documentation about x////@
-
-      @M2CODE ////help about (x,Body=>true)         -- show documentation mentioning x////@
-
-      @M2CODE ////? f                               -- display brief documentation for a function f////@
-
-      @M2CODE ////printWidth = 80                   -- set print width to 80 characters////@
-
-      @M2CODE ////viewHelp                          -- view documentation in a browser////@
-
-      @M2CODE ////viewHelp x                        -- view documentation on x in browser////@
-
+    Code
+      TABLE {
+	  { M2CODE "copyright", 			 "-- the copyright" },
+	  { M2CODE "help \"Macaulay2\"", 		 "-- top node of the documentation." },
+	  { M2CODE "help \"reading the documentation\"", "" },
+	  { M2CODE "help \"getting started\"", 		 "" },
+	  { M2CODE "help \"a first Macaulay2 session\"", "" },
+	  { M2CODE "help coker", 			 "-- show documentation for coker" },
+	  { M2CODE "help about Ext", 			 "-- show documentation about Ext" },
+	  { M2CODE "help about(\"Yoneda\", Body=>true)", "-- show documentation mentioning \"Yoneda\"" },
+	  { M2CODE "printWidth = 80", 			 "-- set print width to 80 characters" },
+	  { M2CODE "viewHelp", 				 "-- view documentation in a browser" },
+	  { M2CODE "viewHelp coker", 			 "-- view documentation for coker in browser" },
+	  { M2CODE "? hilbertFunction", 		 "-- display brief documentation about Hilbert functions" },
+      }
+    Text
       To read the documentation in info form, in case you happen to be running Macaulay2 in a
       terminal window, replace @TO "help"@ by @TO "infoHelp"@ in any of the commands above.
 ///

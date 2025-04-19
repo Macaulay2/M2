@@ -494,8 +494,8 @@ isComputationDone MultigradedRegularityComputation := Boolean => options multigr
 
 cacheHit := type -> if debugLevel > 0 then printerr("Cache hit on a ", synonym type, "! 🎉");
 
-cacheComputation = method(TypicalValue => CacheFunction, Options => true)
-cacheComputation MultigradedRegularityComputation := CacheFunction => options multigradedRegularity >> opts -> container -> new CacheFunction from (
+cacheComputation = method(Options => true)
+cacheComputation MultigradedRegularityComputation := options multigradedRegularity >> opts -> container -> (
     -- this function takes advantage of FunctionClosures by modifying the container
     computation -> (
         if isComputationDone(opts, container) then ( cacheHit class container; container.Result ) else

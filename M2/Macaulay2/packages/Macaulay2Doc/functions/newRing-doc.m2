@@ -11,9 +11,11 @@ Node
     [newRing, DegreeLift]
     [newRing, DegreeMap]
     [newRing, DegreeRank]
+    [newRing, DegreeGroup]
     [newRing, Degrees]
     [newRing, Global]
     [newRing, Heft]
+    [newRing, Constants]
     [newRing, Inverses]
     [newRing, Join]
     [newRing, Local]
@@ -42,6 +44,7 @@ Node
     DegreeRank       => ZZ      -- see @TO [monoid, DegreeRank]@
     Heft             => List    -- see @TO [monoid, Heft]@
     Join             => Boolean -- see @TO [monoid, Join]@
+    Constants        => Boolean -- see @TO [monoid, Join]@
     MonomialOrder    => List    -- see @TO [monoid, MonomialOrder]@
     MonomialSize     => ZZ      -- see @TO [monoid, MonomialSize]@
     SkewCommutative  => Boolean -- see @TO [monoid, SkewCommutative]@

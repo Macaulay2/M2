@@ -3,6 +3,15 @@ use common;
 use util;
 use hashtables;
 
+-- debugger is not defined until interp.dd
+-- so we use a pointer and populate it later.
+dummydebugger(f:Frame,c:Code):Expr := nullE;
+export debuggerpointer := dummydebugger;
+
+-- enters the debugger (defined in interp.dd) at that spot
+breakpoint(c:Code):Expr := debuggerpointer(localFrame, c);
+setupop(breakpointS, breakpoint);
+
 export tostring(c:Code):string := (
     when c
     is x:nullCode    do "(null)"

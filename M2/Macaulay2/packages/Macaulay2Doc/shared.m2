@@ -2,10 +2,26 @@
 
 methodstr := PARA { "This function is a method function, defined in the core so multiple packages can add methods to it." }
 
+document { Key => height, Headline => "height of an object", methodstr,
+    SeeAlso => { "Posets::height(Poset)" } }
+document { Key => depth,  Headline => "depth of an object",  methodstr,
+    SeeAlso => { "Depth::Depth", "SLPexpressions::SLPexpressions" } }
+document { Key => width,  Headline => "width of an object",  methodstr }
+document { Key => length, Headline => "length of an object", methodstr,
+    SeeAlso => { "Complexes::length(Complex)", "Permutations::length(Permutation)" } }
+
+document { Key => minimize,     methodstr, SeeAlso => { "Complexes::minimize(Complex)" } }
 document { Key => decompose,    methodstr, SeeAlso => { "MinimalPrimes::MinimalPrimes" } }
 document { Key => truncate,     methodstr, SeeAlso => { "Truncations::Truncations" } }
-document { Key => chi,          methodstr }
-document { Key => isEmpty,      methodstr, SeeAlso => { "Polyhedra::Polyhedra",(isEmpty, RRi)} }
+document { Key => chi,          methodstr, SeeAlso => {
+	"Schubert2::chi(AbstractSheaf)", "NormalToricVarieties::chi(CoherentSheaf)" } }
+document { Key => euler,        methodstr, SeeAlso => {
+	"HyperplaneArrangements::HyperplaneArrangements",
+	"MultiprojectiveVarieties::euler(MultiprojectiveVariety)",
+	"Schubert2::euler(AbstractVariety)", "Varieties::Varieties" } }
+document { Key => eulers,       methodstr }
+document { Key => genera,       methodstr }
+document { Key => genus,        methodstr }
 document { Key => isSmooth,     methodstr, SeeAlso => {
 	"Divisor::isSmooth(Ideal)", "LatticePolytopes::isSmooth(Polyhedron)",
 	"Varieties::isSmooth(Variety)", "SpaceCurves::isSmooth(Curve)",
@@ -20,8 +36,25 @@ document { Key => isNormal,     methodstr, SeeAlso => {
 	"IntegralClosure::isNormal(Ring)",
 	"AssociativeAlgebras::isNormal(RingElement)",
 	} }
-document { Key => normalCone,      methodstr, SeeAlso => { "Polyhedra::normalCone(Polyhedron,Polyhedron)","ReesAlgebra::normalCone(Ideal)"} }
+document { Key => normalCone,   methodstr, SeeAlso => {
+	"Polyhedra::normalCone(Polyhedron,Polyhedron)",
+	"ReesAlgebra::normalCone(Ideal)",
+    } }
 
+document { Key => { isEmpty, (isEmpty, Thing) },
+    Headline => "whether an object is empty",
+    SeeAlso => { "Polyhedra::Polyhedra" } }
+
+document { Key => { isIsomorphism, (isIsomorphism, Matrix) },
+    Headline => "whether a map is an isomorphism",
+    Usage => "isIsomorphism f",
+    "Whether the map $f$ is an isomorphism.",
+    SeeAlso => {
+	"Cremona::isIsomorphism(RationalMap)",
+	"GradedLieAlgebras::isIsomorphism(LieAlgebraMap)",
+	"MultiprojectiveVarieties::isIsomorphism(MultirationalMap)",
+	"Varieties::isIsomorphism(SheafMap)",
+    } }
 
 document { Key => cone,
     Headline => "mapping cone or polyhedral cone",
@@ -80,6 +113,17 @@ document {
      SeeAlso => { intersect }
      }
 
+undocumented { 1:union }
+document {
+    Key => { union, (union, List), (union, Sequence) },
+    Headline => "compute the union",
+    PARA { "This function returns the union of a list or sequence of compatible sets or varieties." },
+    SeeAlso => {
+	"NumericalAlgebraicGeometry::union(NumericalVariety,NumericalVariety)",
+	"Posets::union(Poset,Poset)",
+	}
+    }
+
 -- also see functions/tensor-doc.m2
 document {
     Key => { tensor, (tensor, List), (tensor, Sequence) },
@@ -98,11 +142,3 @@ document {
 	-- add references to tensor methods installed in packages _other than Core_ here
 	}
     }
-
-document {
-     Key => Jacobian,
-     PARA {
-	  "This symbol is defined in the core so it can be used as the name of an optional argument by multiple packages."
-	  },
-     SeeAlso => { "ReesAlgebra::ReesAlgebra" }
-     }

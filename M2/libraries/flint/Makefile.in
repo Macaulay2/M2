@@ -2,14 +2,14 @@ SUBMODULE = true
 # LIBNAME = flint2
 HOMEPAGE = http://flintlib.org
 # git://github.com/wbhart/flint2.git
-VERSION = 3.0.0
+VERSION = 3.2.1
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PARALLEL = yes
 
 # Many other tests keep failing, so disable them all:
 CHECKTARGET = .
 
-LICENSEFILES = LICENSE
+LICENSEFILES = COPYING
 ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-assert
 CFLAGS += -O0 -fno-unroll-loops 
