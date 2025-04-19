@@ -31,13 +31,13 @@ findProjectors Module := opts -> M -> (
 	    -- TODO: is there any way to tell if the module is indecomposable here?
 	    -- e.g. based on the characteristic polynomial factoring completely
 	    -- but having a single root only?
-	    L = extField { char f0 };
+	    if L === null then L = extField { char f0 };
 	    continue);
 	return for y in eigen list (f - y * id_M)^n
     );
-    -- TODO: skip the "Try passing" line if the field is large enough, e.g. L === K
-    error("no projector found after ", tries, " attempts. Try passing
-	ExtendGroundField => ", if p != 0 then ("GF " | toString L) else toString L))
+    -- TODO: skip the "Try using" line if the field is large enough, e.g. L === K
+    error("no idempotent found after ", tries, " attempts. ",
+	"Try using changeBaseField with ", if p != 0 then ("GF " | toString L) else toString L))
 
 -- TODO: can this be useful?
 findBasicProjectors = M -> (

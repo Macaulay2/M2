@@ -14,12 +14,12 @@ TEST /// -- direct summands of a free module
   R = ZZ/2[x_0..x_5]
   M = R^{100:-2,100:0,100:2}
   A = summands M;
-  B = summands(M, ExtendGroundField => 2);
-  C = summands(M, ExtendGroundField => 4);
-  D = summands(M, ExtendGroundField => ZZ/101);
-  E = summands(M, ExtendGroundField => GF(2,2));
+  B = summands changeBaseField(2, M);
+  C = summands changeBaseField(4, M);
+  D = summands changeBaseField(GF 101, M);
+  E = summands changeBaseField(GF(2,2), M);
   assert same(M, directSum A)
-  assert same(A, B, C, D, E)
+  assert same apply({A, B, C, D, E}, length)
 ///
 
 TEST /// -- direct summands of a multigraded free module
@@ -52,15 +52,13 @@ TEST /// -- direct summands over field extensions
   -- if this test fails, check if "try findIdempotent M" if hiding any unexpected errors
   -- FIXME: this is slow because random homomorphisms shouldn't be over the extended field
   elapsedTime assert({1, 2, 2, 2} == rank \ summands M) -- 2.28s
-  elapsedTime assert({1, 2, 2, 2} == rank \ summands(M, ExtendGroundField => GF 7)) -- 2.87s -> 2.05
-  elapsedTime assert({1, 2, 2, 2} == rank \ summands(M, ExtendGroundField => GF(7, 3))) -- 3.77s -> 2.6
-  elapsedTime assert(toList(7:1)  == rank \ summands(M, ExtendGroundField => GF(7, 2))) -- 2.18s -> 0.47
+  elapsedTime assert({1, 2, 2, 2} == rank \ summands changeBaseField(GF 7, M)) -- 2.87s -> 2.05
+  elapsedTime assert({1, 2, 2, 2} == rank \ summands changeBaseField(GF(7, 3), M)) -- 3.77s -> 2.6
+  elapsedTime assert(toList(7:1)  == rank \ summands changeBaseField(GF(7, 2), M)) -- 2.18s -> 0.47
 ///
 
 TEST ///
--- ~1.1s
-restart
-debug needsPackage "DirectSummands"
+  -- ~1.1s
   R = ZZ/32003[x,y,z]/(x^3, x^2*y, x*y^2, y^4, y^3*z)
   C = res(coker vars R, LengthLimit => 3)
   D = res(coker transpose C.dd_3, LengthLimit => 3)
@@ -89,20 +87,6 @@ TEST ///
       and M^[i] * M_[i] == id_(L#i))
 ///
 
-TEST ///
-  -- FIXME: why is this test so slow?
-  end
-  n = 3
-  S = (ZZ/2)[x_0..x_(n-1)]
-  R = quotient (ideal vars S)^3
-  F = res coker vars R
-  M = image F.dd_3
-  summands M
-  summands(image F.dd_1, M)
-  -- TODO: have a flag to test for twists of input summands as well
-  summands({image F.dd_1, coker vars R}, M)
-///
-
 TEST /// -- testing in char 0
   -- FIXME:
   --S = ZZ[x,y];
@@ -124,18 +108,23 @@ TEST /// -- testing in char 0
 ///
 
 TEST ///
+  debug needsPackage "DirectSummands"
   K = ZZ/7
   R = K[x,y,z]/(x^3+y^3+z^3)
   X = Proj R
-  F1 = frobeniusPushforward(1, OO_X)
-  L1 = summands(F1, ExtendGroundField => 2)
-  assert(7 == #L1)
-  F2 = frobeniusPushforward(1, L1#1)
+  --
+  F1 = frobeniusPushforward(1, OO_X);
+  elapsedTime assert({1, 2, 2, 2} == rank \ summands F1) -- 2s
+  elapsedTime L1 = summands changeBaseField(2, F1); -- 5s
+  assert(toList(7:1) == rank \ L1)
+  --
+  F2 = frobeniusPushforward(1, L1#1);
+  elapsedTime assert({7} == rank \ summands F2) -- 2s
   L = potentialExtension F2
-  -- tests largepowers, but is very slow
-  -- findIdem changeBaseField(L, F2)
-  -- TODO: is 7 correct here?
-  assert(7 == #summands changeBaseField(L, F2))
+  elapsedTime L2 = summands changeBaseField(L, F2); -- 14s
+  assert(toList(7:1) == rank \ L2)
+  -- tests largepowers, but is very slow:
+  -- findIdempotent changeBaseField(L, F2)
 ///
 
 TEST ///
@@ -151,6 +140,7 @@ TEST ///
 ///
 
 ///
+  restart
   debug needsPackage "DirectSummands"
   kk = ZZ/13
   S = kk[x,y,z]
@@ -170,7 +160,7 @@ TEST ///
   set(last \ isomorphismTally summands frobeniusPushforward(1,R)) == set{12,13}
 ///
 
-TEST ///
+///
   restart
   errorDepth=2
   debug needsPackage "DirectSummands"
@@ -179,10 +169,10 @@ TEST ///
   assert(2 == #summands coker matrix {{a, b^3}, {-b^3, a}})
   R = ZZ/32003[a,b, Degrees => {6,2}]/(a^2+b^6)
   assert(1 == #summands coker matrix {{a, b^3}, {-b^3, a}})
-  assert(2 == #summands(coker matrix {{a, b^3}, {-b^3, a}}, ExtendGroundField => 2))
+  assert(2 == #summands changeBaseField(2, coker matrix {{a, b^3}, {-b^3, a}}))
   R = ZZ/32003[a,b]/(a^2+b^6)
   assert(1 == #summands coker matrix {{a, b^3}, {-b^3, a}})
-  assert(2 == #summands(coker matrix {{a, b^3}, {-b^3, a}}, ExtendGroundField => 2))
+  assert(2 == #summands changeBaseField(2, coker matrix {{a, b^3}, {-b^3, a}}))
   R = GF(32003, 2)[a,b, Degrees => {6,2}]/(a^2+b^6)
   assert(2 == #summands coker matrix {{a, b^3}, {-b^3, a}})
 
@@ -191,7 +181,7 @@ TEST ///
 
   M = coker matrix {{a, b^3}, {-b^3, a}}
   findIdempotent M
-  summands(M, ExtendGroundField => 2)
+  summands changeBaseField(2, M)
 ///
 
 load "./large-tests.m2"
@@ -199,4 +189,4 @@ load "./large-tests.m2"
 end--
 
 restart
-elapsedTime check "DirectSummands"
+elapsedTime check "DirectSummands" -- ~48s

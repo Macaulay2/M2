@@ -30,6 +30,19 @@ TEST ///
 ///
 
 ///
+  -- FIXME: why is this test so slow?
+  n = 3
+  S = (ZZ/2)[x_0..x_(n-1)]
+  R = quotient (ideal vars S)^3
+  F = res coker vars R
+  M = image F.dd_3
+  summands M
+  summands(image F.dd_1, M)
+  -- TODO: have a flag to test for twists of input summands as well
+  summands({image F.dd_1, coker vars R}, M)
+///
+
+///
   -- c.f. https://github.com/Macaulay2/M2/issues/3738#issuecomment-2816840279
   restart
   debug needsPackage "DirectSummands"

@@ -155,9 +155,9 @@ findIdempotent Module        := opts -> M -> (
 	    -- for inexact fields, we compose the idempotent until the determinant is zero
 	    if instance(F, InexactField) then idem = idem ^ (findErrorMargin idem);
 	    return idem));
-    -- TODO: skip the "Try passing" line if the field is large enough, e.g. L === K
-    error("no idempotent found after ", tries, " attempts. Try passing
-	ExtendGroundField => ", if p != 0 then ("GF " | toString L) else toString L))
+    -- TODO: skip the "Try using" line if the field is large enough, e.g. L === K
+    error("no idempotent found after ", tries, " attempts. ",
+	"Try using changeBaseField with ", if p != 0 then ("GF " | toString L) else toString L))
 
 protect Idempotents
 

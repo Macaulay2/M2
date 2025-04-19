@@ -39,7 +39,6 @@ export {
     "isomorphismTally",
     "isIndecomposable",
     -- symbols
-    "ExtendGroundField",
     "Tries",
     -- frobenius methods
     "frobeniusMap",
@@ -65,16 +64,15 @@ importFrom_Core {
 
 -- defined here and used in idempotents.m2 and homogeneous.m2
 DirectSummandsOptions = new OptionTable from {
-    ExtendGroundField => null, -- a field extension or integer e for GF(p, e)
     Limit             => null, -- used in directSummands(Module, Module)
     Strategy          => 7,    -- Strategy is a bitwise sum of the following:
     -- 1  => use degrees of generators as heuristic to peel off line bundles first
     -- 2  => check generators of End_0 as heuristic for finding idempotents
-    -- 4  => unused
+    -- 4  => whether we are splitting coherent sheaves, so skip line bundles
     -- 8  => precompute Homs before looking for idempotents
     -- 16 => use summandsFromIdempotents even in graded case
     Tries             => null, -- see defaultNumTries below
-    Verbose           => true, -- whether to print extra debugging info
+    Verbose           => false -- whether to print extra debugging info
 }
 
 -- the default number of attempts for randomized algorithms
@@ -105,12 +103,18 @@ submatrixByDegrees(Matrix, Sequence) := (m, degs) -> (
 CoherentSheaf ? CoherentSheaf :=
 Module ? Module := (M, N) -> if rank M != rank N then rank M ? rank N else degrees M ? degrees N
 
--- TODO: move to Core
 position(ZZ, Function) := o -> (n, f) -> position(0..n-1, f)
 -- TODO: this is different from position(List,List,Function)
 position' = method()
 position'(VisibleList, VisibleList, Function) := (B, C, f) -> for b in B do for c in C do if f(b, c) then return (b, c)
 position'(ZZ,          ZZ,          Function) := (B, C, f) -> position'(0..B-1, 0..C-1, f)
+
+char SheafOfRings := O -> char variety O
+
+GF'ZZ'ZZ = memoize (lookup(GF, ZZ, ZZ)) (options GF)
+GF'Ring  = memoize (lookup(GF, Ring))   (options GF)
+GF(ZZ, ZZ) := GaloisField => opts -> GF'ZZ'ZZ
+GF(Ring)   := GaloisField => opts -> GF'Ring
 
 -- TODO: what generality should this be in?
 -- WANT:
@@ -124,13 +128,17 @@ PolynomialRing ** GaloisField := (R, L) -> (
     quotient sub(ideal A, L monoid A))
 
 changeBaseField = method()
-changeBaseField(GaloisField, Module) := (L, M) -> (
+-- TODO: add more automated methods, e.g. where minors of the presentation factor
+changeBaseField(ZZ, Module) :=
+changeBaseField(ZZ, CoherentSheaf)   := (e, M) -> changeBaseField(GF(char ring M, e), M)
+changeBaseField(GaloisField, Module) := (L, M) -> M.cache#(symbol changeBaseField, L) ??= (
     S := first flattenRing(ring M, CoefficientRing => null);
     K := coefficientRing S;
-    if class K =!= GaloisField then (
+    if class K =!= GaloisField then return (
         R0 := quotient sub(ideal S, L monoid S);
-        return directSum apply(components M,
-	    N -> coker sub(presentation N, R0)));
+	M' := directSum apply(cachedSummands M,
+	    N -> coker sub(presentation N, R0));
+        M.cache#(symbol changeBaseField, L) = M');
     -- don't needlessly create new rings:
     if K.order === L.order then return M;
     i0 := map(L, K);
@@ -138,7 +146,7 @@ changeBaseField(GaloisField, Module) := (L, M) -> (
     i1 := map(LS, ring ideal S, gens LS | { i0 K_0 });
     R := quotient i1 ideal S;
     i := map(R, S, i1);
-    directSum apply(components M, N -> i ** N))
+    directSum apply(cachedSummands M, N -> i ** N))
 
 -- TODO: come up with a better way to extend ground field of a variety
 -- TODO: does this also need to be used for frobenius pushforward?
@@ -174,7 +182,6 @@ isisofree = o -> (M, N0) -> (
     p2 := first \ (sortBy last) toList pairs d2;
     (true, map(M, N0, id_N^p2 // id_M^p1)))
 
--- TODO: move to isIsomorphism
 isiso = lookup(isIsomorphic, Module, Module)
 isIsomorphic(Module, Module) := Sequence => o -> (M, N) -> (
     if isFreeModule M and isFreeModule N
@@ -301,7 +308,10 @@ inverse' = method(Options => options Hom)
 inverse' Matrix := opts -> g -> g.cache.inverse' ??= (
     -- two options:  id_(target g) // g  or  g \\ id_(source g)
     -- we use the latter, because gensEnd0 source g is cached.
-    quotient'(id_(source g), g, opts))
+    -- quotient'(id_(source g), g, opts))
+    -- FIXME: we have to use the slower options because the above fails,
+    -- e.g. https://github.com/Macaulay2/M2/issues/3738#issuecomment-2816840279
+    quotient(id_(target g), g, opts))
 
 -- given N and a split surjection pr:M -> N,
 -- we use precomputed endomorphisms of M
@@ -323,57 +333,42 @@ generalEndomorphism(Module, Matrix) := Matrix => o -> (N, pr) -> (
 
 -- TODO: can we return cached summands from the closest field extension?
 -- all cached keys: select(keys M.cache, k -> instance(k, Option) and k#0 === symbol directSummands)
-cachedSummands = { ExtendGroundField => null } >> o -> M -> (
-    M.cache#(symbol summands => o.ExtendGroundField) ?? components M)
+cachedSummands = M -> M.cache.summands ?? components M
 
 -- Note: M may need to be extended to a field extensions
--- TODO: add option to provide a general endomorphism or idempotent
 -- TODO: when splitting over a field extension, use cached splitting over summands
--- TODO: cache the inclusion maps
 directSummands = method(Options => DirectSummandsOptions)
-directSummands Module := List => opts -> (cacheValue (symbol summands => opts.ExtendGroundField)) (M -> (
+directSummands Module := List => opts -> M -> M.cache.summands ??= (
     checkRecursionDepth();
     -- Note: rank does weird stuff if R is not a domain
     -- Note: End does not work for WeylAlgebras or AssociativeAlgebras yet, nor does basis
     R := ring M;
     if not isCommutative R and not isWeylAlgebra R then error "expected a commutative base ring";
-    if 0 < debugLevel then printerr("splitting module of rank: ", toString rank M);
-    --TODO: is there an easy way to check if rank = 1 and M torsionfree?
-    if 1 < #components M then return flatten apply(components M, directSummands_opts); -- TODO: parallelize
-    if isFreeModule M then return apply(toList pairs(-degrees M), (i, d) -> (
-	    M.cache#(symbol ^, [i]) = transpose (M.cache#(symbol _, [i]) = matrix M_i); R^{d}));
-    if opts.ExtendGroundField =!= null then (
-	L := opts.ExtendGroundField;
-	L  = if instance(L, ZZ)   then GF(char R, L)
-	else if instance(L, Ring) then L else error "expected an integer or a ground field";
-	M = changeBaseField(L, directSum cachedSummands M);
-	R = ring M);
+    if opts.Verbose then printerr("splitting module of rank: ", toString rank M);
+    -- TODO: is there an easy way to check if rank = 1 and M torsionfree?
+    -- TODO: extend the cached inclusion and projection maps to the summands
+    if isDirectSum  M then return M.cache.summands = flatten apply(components M, directSummands_opts);
+    if isFreeModule M then return M.cache.summands = apply(numgens M, i -> target(M.cache#(symbol ^, [i]) = M^{i}));
     -- Attempt to peel off line bundles by observing the degrees of generators
     if opts.Strategy & 1 == 1 then (
-	opts = opts ++ { Strategy => opts.Strategy ^^ 1 }; -- so we only try this once
-	if 0 < debugLevel then stderr << " -- peeling off rank 1 summands: " << flush;
-	L = directSummands(apply(-unique degrees M, d -> R^{d}), M, opts);
-	if 0 < debugLevel then stderr << endl << " -- split off " << #L - 1 << " summands!" << endl;
-	if 1 < #L then return directSummands(directSum L, opts));
-    --
+	if opts.Verbose then stderr << " -- peeling off rank 1 summands: " << flush;
+	L := directSummands(apply(-unique degrees M, d -> R^{d}), M, opts);
+	if 1 < #L then return M.cache.summands =
+	directSummands(directSum L, opts, Strategy => opts.Strategy ^^ 1));
     -- TODO: where should indecomposability check happen?
     -- for now it's here, but once we figure out random endomorphisms
     -- without computing Hom, this would need to move.
-    -- TODO: add option to skip this step
     -- Note: if an idempotent is found among columns of B,
     -- it is cached under M.cache.idempotents, but idempotents
     -- that are linear combinations cannot be found this way.
     -- Note: this may return null if it is inconclusive
-    if 2 == 2 & opts.Strategy then
-    if isIndecomposable M === true then return {M};
-    --
-    if isHomogeneous M and 16 != 16 & opts.Strategy
-    then summandsFromProjectors(M, opts)
-    else summandsFromIdempotents(M, opts)))
+    if opts.Strategy & 2  == 2  and isIndecomposable M === true then { M } else
+    if opts.Strategy & 16 != 16 and isHomogeneous M
+    then summandsFromProjectors(M, opts)   -- see DirectSummands/homogeneous.m2
+    else summandsFromIdempotents(M, opts)) -- see DirectSummands/idempotents.m2
 
--- TODO: if ExtendGroundField is given, change variety
--- TODO: when ExtendGroundField is given, the variety will change!
-directSummands CoherentSheaf := List => opts -> F -> apply(directSummands(module prune F, opts), N -> sheaf'(variety F, N))
+directSummands CoherentSheaf := List => opts -> F -> apply(
+    directSummands(module prune F, opts), N -> sheaf(variety F, N))
 
 -- tests whether L (perhaps a line bundle) is a summand of M
 -- Limit => N _recommends_ stopping after peeling N summands of L
@@ -386,7 +381,7 @@ directSummands(Module, Module) := List => opts -> (L, M) -> (
     if rank L  >= rank M then return {M};
     n := opts.Limit ?? numgens M;
     tries := opts.Tries ?? defaultNumTries char ring M;
-    if 1 < #cachedSummands M then return sort flatten apply(cachedSummands M, N -> directSummands(L, N, opts));
+    if 1 < #cachedSummands M then return flatten apply(cachedSummands M, N -> directSummands(L, N, opts));
     if 1 < n then (
 	-- TODO: can we detect multiple summands of L at once?
 	comps := new MutableList from {M};
@@ -432,7 +427,7 @@ directSummands(Module, Module) := List => opts -> (L, M) -> (
 		    (c, b) -> isSurjective homomorphism C_{c} and isIsomorphism(homomorphism C_{c} * homomorphism B_{b}));
 	        if ind =!= null then homomorphism B_{last ind})););
     if h === null then return {M};
-    if 0 < debugLevel then stderr << concatenate(rank L : ".") << flush;
+    if opts.Verbose then stderr << concatenate(rank L : ".") << flush;
     {L, prune coker h})
 
 directSummands(CoherentSheaf, CoherentSheaf) := List => opts -> (L, G) -> apply(
