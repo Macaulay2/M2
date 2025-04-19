@@ -41,7 +41,6 @@ TEST /// -- direct summands of a ring
 
 TEST /// -- direct summands over field extensions
   -- ~9s
-  debug needsPackage "DirectSummands"
   R = (ZZ/7)[x,y,z]/(x^3+y^3+z^3);
   X = Proj R;
   M = module frobeniusPushforward(1, OO_X);
@@ -59,24 +58,35 @@ TEST /// -- direct summands over field extensions
 ///
 
 TEST ///
-  -- ~2.2s
-  R = ZZ/101[x,y,z]/(x^3, x^2*y, x*y^2, y^4, y^3*z)
+-- ~1.1s
+restart
+debug needsPackage "DirectSummands"
+  R = ZZ/32003[x,y,z]/(x^3, x^2*y, x*y^2, y^4, y^3*z)
   C = res(coker vars R, LengthLimit => 3)
   D = res(coker transpose C.dd_3, LengthLimit => 3)
   M = coker D.dd_3
-  elapsedTime assert(8 == #summands M)
+  elapsedTime L = summands M
+  assert(8 == #L)
+  assert all(L, isHomogeneous)
+  assert first isIsomorphic(M, directSum L)
+  assert all(8, i -> same { M, target M_[i], source M^[i] }
+      and same { L#i, target M^[i], source M_[i] })
+  --elapsedTime profile summands M;
+  --profileSummary "DirectSum"
 ///
 
 TEST ///
   -- ~1.7s
-  debug needsPackage "DirectSummands"
   n = 4
-  S = ZZ/11[x_0..x_(n-1)]
+  S = ZZ/32003[x_0..x_(n-1)]
   I = trim minors_2 matrix { S_*_{0..n-2}, S_*_{1..n-1}}
   R = quotient I
   C = res coker vars R
-  M = image C.dd_3
-  assert(6 == #summands M)
+  M = prune image C.dd_3
+  elapsedTime L = summands M
+  assert(6 == #L)
+  all(6, i -> isWellDefined M^[i] and isWellDefined M_[i]
+      and M^[i] * M_[i] == id_(L#i))
 ///
 
 TEST ///
@@ -128,28 +138,16 @@ TEST ///
   assert(7 == #summands changeBaseField(L, F2))
 ///
 
-///
-  -- from David's email: reaches recursion limit overnight
-  needsPackage "DirectSummands"
-  kk = ZZ/101
-  S = kk[x,y,z]
-  I = monomialIdeal(x^4,x*y,y^4,x*z,y^2*z,z^4)
-  R = S/I
-  F = res(coker vars R, LengthLimit => 5)
-  M = coker F.dd_5;
-  debugLevel = 1
-  elapsedTime L5 = summands M;
-///
-
-///
-needsPackage "DirectSummands"
+TEST ///
   kk = ZZ/101
   S = kk[x,y,z]
   P = Proj S
-  TP = tangentSheaf P
+  T = tangentSheaf P
   R = S/(x*y-z^2)
-  assert(length summands prune sheaf(module TP ** R) == rank TP)
-  assert(length summands sheaf(module TP ** R) == length summands prune sheaf(module TP ** R))
+  M = module T ** R
+  -- the module doesn't split, but the sheaf does
+  assert(1 == length summands M)
+  assert(2 == length summands sheaf M)
 ///
 
 ///
@@ -162,10 +160,7 @@ needsPackage "DirectSummands"
   elapsedTime isomorphismTally L
   elapsedTime tallySummands L
   set(last \ isomorphismTally summands frobeniusPushforward(1,R)) == set{12,13}
-///
 
-///
-  debug needsPackage "DirectSummands"
   kk = ZZ/11
   S = kk[x,y,z, Degrees => {5,1,5}]
   R = S/(x*z-y^10)

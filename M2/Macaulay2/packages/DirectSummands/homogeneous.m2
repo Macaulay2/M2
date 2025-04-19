@@ -13,9 +13,10 @@ findProjectors Module := opts -> M -> (
     surj := opts#"SplitSurjection" ?? id_M;
     -- TODO: sort the degrees to make finding eigenvalues faster?
     -- degs := unique sort degrees M;
-    tries := opts.Tries ?? ceiling(0.1 + 50 / log p);
+    tries := opts.Tries ?? defaultNumTries p;
     for c to tries - 1 do (
 	f := generalEndomorphism(M, surj); -- about 20% of computation
+	if f == 0 then continue;
 	-- eigenvalues of f must be over the field,
 	-- and we can prove that f can be diagonalized over R
 	-- (i.e. without passing to frac R), hence we can
@@ -35,7 +36,7 @@ findProjectors Module := opts -> M -> (
 	return for y in eigen list (f - y * id_M)^n
     );
     -- TODO: skip the "Try passing" line if the field is large enough, e.g. L === K
-    error("no projector found after ", toString opts.Tries, " attempts. Try passing
+    error("no projector found after ", tries, " attempts. Try passing
 	ExtendGroundField => ", if p != 0 then ("GF " | toString L) else toString L))
 
 -- TODO: can this be useful?
@@ -77,13 +78,12 @@ summandsFromProjectors(Module, List) := opts -> (M, projs) -> (
     comps := flatten for pr in append(projs, iota) list (
 	N := prune coker pr;
 	p := inverse N.cache.pruningMap * inducedMap(coker pr, M);
-	if not (source(p * surj)).cache#?"End0" then error "something went wrong";
-	L := nonzero summandsFromProjectors(N, opts, "SplitSurjection" => p * surj);
+	L := nonzero summandsFromProjectors(N, opts,
+	    "SplitSurjection" => p * surj);
 	-- Projection maps to the summands
 	if #L > 1 then apply(#L, i ->
 	    M.cache#(symbol ^, [c += 1]) = N^[i] * p)
 	else M.cache#(symbol ^, [c += 1]) = p;
+	-- Inclusion maps are computed on-demand
 	L);
-    -- Inclusion maps from the summands
-    scan(c + 1, i -> M.cache#(symbol _, [i]) = inverse M.cache#(symbol ^, [i]));
     comps)

@@ -107,7 +107,7 @@ findErrorMargin = m -> ceiling(log_10 2^(precision ring m))
 -----------------------------------------------------------------------------
 
 --TODO: findIdem right now will fail if K is not L[a]/f(a); in general, will need to find a primitive element first
-findIdempotent = method(Options => DirectSummandsOptions)
+findIdempotent = method(Options => DirectSummandsOptions ++ { "SplitSurjection" => null })
 findIdempotent CoherentSheaf := opts -> M -> findIdempotent(module M, opts)
 findIdempotent Module        := opts -> M -> (
     R := ring M;
@@ -119,8 +119,13 @@ findIdempotent Module        := opts -> M -> (
     exactFlag := not instance(F, InexactField);
     l := if p == 0 then e else max(e, ceiling log_p numgens M);
     L := infinity;
-    for c to opts.Tries - 1 do (
-        f := generalEndomorphism M;
+    -- this is used in generalEndomorphism
+    -- to avoid recomputing the Hom module
+    surj := opts#"SplitSurjection" ?? id_M;
+    tries := opts.Tries ?? defaultNumTries p;
+    for c to tries - 1 do (
+        f := generalEndomorphism(M, surj);
+	if f == 0 then continue;
 	fm := K ** f;
         Chi := char f;
 	K' := if not exactFlag then F else try extField {Chi};
@@ -151,7 +156,7 @@ findIdempotent Module        := opts -> M -> (
 	    if instance(F, InexactField) then idem = idem ^ (findErrorMargin idem);
 	    return idem));
     -- TODO: skip the "Try passing" line if the field is large enough, e.g. L === K
-    error("no idempotent found after ", toString opts.Tries, " attempts. Try passing
+    error("no idempotent found after ", tries, " attempts. Try passing
 	ExtendGroundField => ", if p != 0 then ("GF " | toString L) else toString L))
 
 protect Idempotents
@@ -182,7 +187,7 @@ findBasicIdempotent = M -> (
     if idemp =!= null then M.cache.Idempotents ??= { idemp };
     (idemp, certified))
 
-summandsFromIdempotents = method(Options => DirectSummandsOptions)
+summandsFromIdempotents = method(Options => options findIdempotent)
 summandsFromIdempotents Module := opts -> M -> (
     M.cache.Idempotents ??= {};
     h := if 0 < #M.cache.Idempotents then M.cache.Idempotents
@@ -194,25 +199,25 @@ summandsFromIdempotents(Module, List)   := opts -> (M, idems) -> summandsFromIde
 summandsFromIdempotents(Module, Matrix) := opts -> (M, h) -> (
     -- TODO: add this when the maps M_[w] and M^[w] also work with subsets
     -- M.cache.components =
-    -- TODO: restrict End M to each summand and pass it on
-    -- TODO: could use 'compose' perhaps
+    -- this is a split surjection from a module whose
+    -- degree zero endomorphisms have already been computed
+    surj := opts#"SplitSurjection" ?? id_M;
     -- TODO: can we check if M has multiple copies of M0 or M1 quickly?
     M0 := prune image h;
     M1 := prune coker h;
-    -- TODO: can we keep homomorphisms?
-    --B0.cache.homomorphism = f -> map(M0, M0, adjoint'(p1 * f * inverse p0, M0, M0), Degree => first degrees source f + degree f);
-    M0comps := directSummands(M0, opts);
-    M1comps := directSummands(M1, opts);
-    -- Projection maps to the summands
-    c := -1;
+    if M0 == 0 or M1 == 0 then return {M};
+    if 0 < debugLevel then printerr("splitting 2 summands of ranks ",
+	toString {rank M0, rank M1});
     p0 := inverse M0.cache.pruningMap * inducedMap(image h, M, h);
     p1 := inverse M1.cache.pruningMap * inducedMap(coker h, M);
+    M0comps := summandsFromIdempotents(M0, opts, "SplitSurjection" => p0 * surj);
+    M1comps := summandsFromIdempotents(M1, opts, "SplitSurjection" => p1 * surj);
+    -- Projection maps to the summands
+    c := -1;
     if #M0comps > 1 then apply(#M0comps, i -> M.cache#(symbol ^, [c += 1]) = M0^[i] * p0) else M.cache#(symbol ^, [c += 1]) = p0;
     if #M1comps > 1 then apply(#M1comps, i -> M.cache#(symbol ^, [c += 1]) = M1^[i] * p1) else M.cache#(symbol ^, [c += 1]) = p1;
-    -- Inclusion maps from the summands
-    -- TODO: will this always work?
-    scan(c + 1, i -> M.cache#(symbol _, [i]) = inverse M.cache#(symbol ^, [i]));
+    -- Inclusion maps are computed on-demand
     -- return the lists
     -- TODO: why is this nonzero needed?
     -- TODO: sort these, along with the projections
-    nonzero flatten join(M0comps, M1comps))
+    flatten join(M0comps, M1comps))

@@ -73,9 +73,14 @@ DirectSummandsOptions = new OptionTable from {
     -- 4  => unused
     -- 8  => precompute Homs before looking for idempotents
     -- 16 => use summandsFromIdempotents even in graded case
-    Tries             => 10,   -- used in randomized algorithms
+    Tries             => null, -- see defaultNumTries below
     Verbose           => true, -- whether to print extra debugging info
 }
+
+-- the default number of attempts for randomized algorithms
+-- e.g. 145 tries in char 2, 10 in char 32003, and 1 in char 0
+defaultNumTries = p -> ceiling(0.1 + 100 / log p)
+--apply({2, 32003, 0}, defaultNumTries)
 
 -- helpers for computing Frobenius pushforwards of modules and sheaves
 -- TODO: move to PushForward package?
@@ -250,8 +255,8 @@ smartBasis = (deg, M) -> (
 gensEnd0 = M -> M.cache#"End0" ??= (
     -- TODO: need to pass options from Hom + choose the coefficient field
     zdeg := if isHomogeneous M then degree 0_M;
-    if 0 < debugLevel then stderr << " -- computing Hom module ... " << flush;
-    elapsedTime A := Hom(M, M,
+    if 0 < debugLevel then stderr << " -- computing End module ... " << flush;
+    A := Hom(M, M,
 	DegreeLimit       => zdeg,
 	MinimalGenerators => false);
     if 0 < debugLevel then stderr << "done!" << endl;
@@ -280,11 +285,36 @@ generalEndomorphism Module := Matrix => o -> M -> (
 generalEndomorphism CoherentSheaf := SheafMap => o -> F -> (
     sheaf generalEndomorphism(module prune F, o))
 
+-- overwrite the existing hook, to be updated in Core
+addHook((quotient', Matrix, Matrix), Strategy => Default,
+    -- Note: this strategy only works if the remainder is zero, i.e.:
+    -- homomorphism' f % image Hom(g, target f) == 0
+    (opts, f, g) -> (
+	opts = new OptionTable from {
+	    DegreeLimit       => opts.DegreeLimit,
+	    MinimalGenerators => opts.MinimalGenerators };
+	map(target f, target g, homomorphism(homomorphism'(f, opts) // Hom(g, target f, opts)))))
+
+-- FIXME: inverse may fail for a general split surjection:
+-- c.f. https://github.com/Macaulay2/M2/issues/3738
+inverse' = method(Options => options Hom)
+inverse' Matrix := opts -> g -> g.cache.inverse' ??= (
+    -- two options:  id_(target g) // g  or  g \\ id_(source g)
+    -- we use the latter, because gensEnd0 source g is cached.
+    quotient'(id_(source g), g, opts))
+
 -- given N and a split surjection pr:M -> N,
 -- we use precomputed endomorphisms of M
 -- to produce a general endomorphism of N
-generalEndomorphism(Module, Matrix) := Matrix => o -> (M, pr) -> (
-    pr * generalEndomorphism source pr * inverse pr)
+generalEndomorphism(Module, Matrix) := Matrix => o -> (N, pr) -> (
+    -- assert(N === target pr);
+    --return generalEndomorphism(N, o);
+    inc := inverse'(pr,
+	DegreeLimit => degree 0_N,
+	-- FIXME: setting this to false sometimes
+	-- produces non-well-defined inverses
+	MinimalGenerators => true);
+    pr * generalEndomorphism(source pr, o) * inc)
 -- Note: we may not be able to invert a split inclusion.
 
 -----------------------------------------------------------------------------
@@ -294,8 +324,7 @@ generalEndomorphism(Module, Matrix) := Matrix => o -> (M, pr) -> (
 -- TODO: can we return cached summands from the closest field extension?
 -- all cached keys: select(keys M.cache, k -> instance(k, Option) and k#0 === symbol directSummands)
 cachedSummands = { ExtendGroundField => null } >> o -> M -> (
-    if  M.cache#?(symbol summands => o.ExtendGroundField)
-    then M.cache#(symbol summands => o.ExtendGroundField) else components M)
+    M.cache#(symbol summands => o.ExtendGroundField) ?? components M)
 
 -- Note: M may need to be extended to a field extensions
 -- TODO: add option to provide a general endomorphism or idempotent
@@ -344,7 +373,7 @@ directSummands Module := List => opts -> (cacheValue (symbol summands => opts.Ex
 
 -- TODO: if ExtendGroundField is given, change variety
 -- TODO: when ExtendGroundField is given, the variety will change!
-directSummands CoherentSheaf := List => opts -> F -> apply(directSummands(module F, opts), N -> sheaf'(variety F, N))
+directSummands CoherentSheaf := List => opts -> F -> apply(directSummands(module prune F, opts), N -> sheaf'(variety F, N))
 
 -- tests whether L (perhaps a line bundle) is a summand of M
 -- Limit => N _recommends_ stopping after peeling N summands of L
@@ -356,6 +385,7 @@ directSummands(Module, Module) := List => opts -> (L, M) -> (
     if ring L =!= ring M then error "expected objects over the same ring";
     if rank L  >= rank M then return {M};
     n := opts.Limit ?? numgens M;
+    tries := opts.Tries ?? defaultNumTries char ring M;
     if 1 < #cachedSummands M then return sort flatten apply(cachedSummands M, N -> directSummands(L, N, opts));
     if 1 < n then (
 	-- TODO: can we detect multiple summands of L at once?
@@ -371,7 +401,7 @@ directSummands(Module, Module) := List => opts -> (L, M) -> (
 	B := smartBasis(zdeg, Hom(M, L, DegreeLimit => zdeg, MinimalGenerators => false));
 	-- Previous alternative:
 	-- h := for i from 0 to numcols B - 1 do ( isSurjective(b := homomorphism B_{i}) ...)
-	h := for i to opts.Tries - 1 do (
+	h := for i to tries - 1 do (
 	    b := homomorphism(B * random source B);
 	    if isSurjective b then break matrix {L_0} // b))
     else (
@@ -381,7 +411,7 @@ directSummands(Module, Module) := List => opts -> (L, M) -> (
         C := smartBasis(zdeg, Hom(M, L, DegreeLimit => zdeg, MinimalGenerators => false));
         if numcols C == 0 then return {M};
         -- attempt to find a random isomorphism
-        h = for i to opts.Tries - 1 do (
+        h = for i to tries - 1 do (
 	    b := homomorphism(B * random source B);
 	    c := homomorphism(C * random source C);
             --TODO: change isIsomorphism to isSurjective?
@@ -406,7 +436,7 @@ directSummands(Module, Module) := List => opts -> (L, M) -> (
     {L, prune coker h})
 
 directSummands(CoherentSheaf, CoherentSheaf) := List => opts -> (L, G) -> apply(
-    directSummands(module L, module G, opts), N -> sheaf(variety L, N))
+    directSummands(module prune L, module prune G, opts), N -> sheaf(variety L, N))
 
 -- attempt to peel off summands from a given list of modules
 directSummands(List, CoherentSheaf) :=
@@ -423,8 +453,7 @@ directSummands(List, Module) := List => opts -> (Ls, M) -> sort (
 -- returns true if the module is certifiably indecomposable
 -- returns null for non-conclusive results
 isIndecomposable = method(Options => { Strategy => null })
--- TODO: check that the sheaf is pruned also
-isIndecomposable CoherentSheaf := o -> F -> isIndecomposable(module F, o)
+isIndecomposable CoherentSheaf := o -> F -> isIndecomposable(module prune F, o)
 isIndecomposable Module := o -> M -> M.cache.isIndecomposable ??= tryHooks(
     (isIndecomposable, Module), (o, M), (o, M) -> (
 	if 1 < debugLevel then printerr("isIndecomposable was inconclusive. ",
@@ -439,6 +468,18 @@ addHook((isIndecomposable, Module), Strategy => "IdempotentSearch", (opts, M) ->
 	if idemp =!= null then ( if 1 < debugLevel then printerr "module is decomposable!";  false )
 	else if certified then ( if 1 < debugLevel then printerr "module is indecomposable!"; true )
     ))
+
+-----------------------------------------------------------------------------
+-- Split inclusions
+-----------------------------------------------------------------------------
+
+-- these are computed on-demand from the cached split surjection
+oldinclusions = lookup(symbol_, Module, Array)
+Module _ Array := Matrix => (M, w) -> M.cache#(symbol _, w) ??= (
+    if not M.cache#?(symbol ^, w) then oldinclusions(M, w)
+    else inverse'(M.cache#(symbol ^, w),
+	DegreeLimit       => degree 0_M,
+	MinimalGenerators => true))
 
 -----------------------------------------------------------------------------
 -* Development section *-
