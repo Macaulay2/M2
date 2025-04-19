@@ -191,7 +191,10 @@ needsPackage String  := opts -> pkgname -> (
     and (opts.FileName === null or
 	realpath opts.FileName == realpath pkg#"source file")
     and pkg.PackageIsLoaded
-    then use value PackageDictionary#pkgname
+    then (
+	if any(packageFiles pkg, file -> fileTime file > filesLoaded#file)
+	then loadPackage(pkgname, opts ++ {Reload => true})
+	else use pkg)
     else loadPackage(pkgname, opts))
 
 -- used as the default loadOptions in newPackage
@@ -581,11 +584,15 @@ debug GlobalDictionary := dict -> (
     if not isMember(dict, dictionaryPath) then dictionaryPath = prepend(dict, dictionaryPath);
     checkShadow())
 
-locate Package := pkg -> NumberedVerticalList nonnull (
-    pkgaux := if not pkg#?"auxiliary files" then {}
-    else select(values loadedFiles, match_(pkg#"auxiliary files"));
+packageFiles = pkg -> (
+    pkgaux := (
+	if not pkg#?"auxiliary files" then {}
+	else select(values loadedFiles, match_(pkg#"auxiliary files")));
+    prepend(realpath pkg#"source file", pkgaux))
+
+locate Package := pkg -> NumberedVerticalList (
     -- TODO: somehow keep track of the number of lines of each file
-    apply(prepend(pkg#"source file", pkgaux), file -> new FilePosition from (file, 0, 0)))
+    apply(packageFiles pkg, file -> new FilePosition from (file, 0, 0)))
 
 -----------------------------------------------------------------------------
 -- evaluateWithPackage
