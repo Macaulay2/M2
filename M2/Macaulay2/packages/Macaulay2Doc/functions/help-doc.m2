@@ -368,4 +368,21 @@ Node
     Text
       To read the documentation in info form, in case you happen to be running Macaulay2 in a
       terminal window, replace @TO "help"@ by @TO "infoHelp"@ in any of the commands above.
+
+      To get BibTeX code for citing Macaulay2 or one of its packages, type one
+      of the following commands.
+    Code
+      TABLE {
+	  { M2CODE "cite",                               "-- how to cite Macaulay2" },
+	  { M2CODE "cite \"FirstPackage\"",              "-- how to cite a package" }
+      }
+    Text
+      To get information about the startup of Macaulay2, type one of the
+      following commands.
+    Code
+      TABLE {
+	  { M2CODE "loadedPackages",                            "-- a list of the currently loaded packages" },
+	  { M2CODE "help \"packages provided with Macaulay2\"", "-- a list of all the available packages" },
+	  { M2CODE "help \"initialization file \"",             "-- show documentation about the file init.m2" }
+      }
 ///
