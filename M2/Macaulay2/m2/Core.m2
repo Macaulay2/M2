@@ -112,9 +112,15 @@ loadPath := (path, filename, loadfun, notify) -> (
 
 load  = filename -> (loadPath(path, filename, simpleLoad, notify);)
 input = filename -> (loadPath(path, filename, simpleInput, false);)
-needs = filename -> if not filesLoaded#?filename then load filename else (
-     (filepath, filetime) := filesLoaded#filename;
-     if filetime < fileTime filepath then load filepath)
+
+simpleNeeds = filename -> (
+    filename = realpath toAbsolutePath filename;
+    if not filesLoaded#?filename
+    then simpleLoad filename
+    else (
+	if filesLoaded#filename < fileTime filename
+	then simpleLoad filename))
+needs = filename -> (loadPath(path, filename, simpleNeeds, notify);)
 
 -----------------------------------------------------------------------------
 -- Setup persistent history
