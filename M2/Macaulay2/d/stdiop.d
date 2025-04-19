@@ -81,6 +81,7 @@ export relativizeFilename(filename:string):string := (
      r := getcwd();
      if length(r) == 0 then filename else relativizeFilename(r,filename));
 export minimizeFilename(filename:string):string := (
+     filename = expandFileName(filename);
      a := relativizeFilename(filename);
      b := absoluteFilename(filename);
      c := if length(a) <= length(b) then a else b;
