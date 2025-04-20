@@ -36,7 +36,7 @@ export tostring(c:Code):string := (
     --
     is x:localAssignmentCode     do concatenate(array(string)("(local-assign ",  tostring(x.frameindex), " ", tostring(x.nestingDepth), " ", tostring(x.rhs), ")"))
     is x:globalAssignmentCode    do concatenate(array(string)("(global-assign ", x.lhs.word.name,        " ",                                tostring(x.rhs), ")"))
-    is x:augmentedAssignmentCode do concatenate(array(string)("(augmented-assign ", x.oper.word.name, " ", tostring(x.lhs), " ", tostring(x.rhs), " ", x.info.word.name, ")"))
+    is x:augmentedAssignmentCode do concatenate(array(string)("(augmented-assign ", x.oper.word.name, " ", tostring(x.lhs), " ", tostring(x.rhs), ")"))
     is x:parallelAssignmentCode  do (
 	n := length(x.nestingDepth);
 	concatenate(array(string)(

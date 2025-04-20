@@ -1293,7 +1293,7 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	is y:globalMemoryReferenceCode do (
 	    r := s.binary(Code(left), x.rhs);
 	    when r is e:Error do r
-	    else globalAssignment(y.frameindex, x.info, r))
+	    else globalAssignment(y.var.frameindex, y.var, r))
 	is y:localMemoryReferenceCode do (
 	    r := s.binary(Code(left), x.rhs);
 	    when r is e:Error do r
@@ -1301,20 +1301,20 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	is y:threadMemoryReferenceCode do (
 	    r := s.binary(Code(left), x.rhs);
 	    when r is e:Error do r
-	    else globalAssignment(y.frameindex, x.info, r))
+	    else globalAssignment(y.var.frameindex, y.var, r))
 	is y:binaryCode do (
 	    r := Code(binaryCode(s, Code(left), x.rhs, x.position));
 	    if y.oper == DotS.symbol || y.oper == SharpS.symbol
 	    then AssignElemFun(y.lhs, y.rhs, r)
 	    else InstallValueFun(CodeSequence(
-		    convertGlobalOperator(x.info), y.lhs, y.rhs, r)))
+		    convertGlobalOperator(y.oper), y.lhs, y.rhs, r)))
 	is y:adjacentCode do (
 	    r := Code(binaryCode(s, Code(left), x.rhs, x.position));
 	    InstallValueFun(CodeSequence(
 		    convertGlobalOperator(AdjacentS.symbol), y.lhs, y.rhs, r)))
 	is y:unaryCode do (
 	    r := Code(binaryCode(s, Code(left), x.rhs, x.position));
-	    UnaryInstallValueFun(convertGlobalOperator(x.info), y.rhs, r))
+	    UnaryInstallValueFun(convertGlobalOperator(y.oper), y.rhs, r))
 	else buildErrorPacket(
 	    "augmented assignment not implemented for this code")));
 
