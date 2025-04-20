@@ -296,7 +296,16 @@ generalEndomorphism Module := Matrix => o -> M -> (
 generalEndomorphism CoherentSheaf := SheafMap => o -> F -> (
     sheaf generalEndomorphism(module prune F, o))
 
--- overwrite the existing hook, to be updated in Core
+-- overwrite two existing hooks, to be updated in Core
+addHook((quotient, Matrix, Matrix), Strategy => Default,
+    -- Note: this strategy only works if the remainder is zero, i.e.:
+    -- homomorphism' f % image Hom(source f, g) == 0
+    (opts, f, g) -> (
+	opts = new OptionTable from {
+	    DegreeLimit       => opts.DegreeLimit,
+	    MinimalGenerators => opts.MinimalGenerators };
+	map(source g, source f, homomorphism(homomorphism'(f, opts) // Hom(source f, g, opts)))))
+
 addHook((quotient', Matrix, Matrix), Strategy => Default,
     -- Note: this strategy only works if the remainder is zero, i.e.:
     -- homomorphism' f % image Hom(g, target f) == 0
@@ -306,30 +315,52 @@ addHook((quotient', Matrix, Matrix), Strategy => Default,
 	    MinimalGenerators => opts.MinimalGenerators };
 	map(target f, target g, homomorphism(homomorphism'(f, opts) // Hom(g, target f, opts)))))
 
+importFrom_Core {"Hooks", "HookPriority"}
+Matrix.Hooks#(quotient,  Matrix, Matrix).HookPriority = drop(Matrix.Hooks#(quotient,  Matrix, Matrix).HookPriority, -1)
+Matrix.Hooks#(quotient', Matrix, Matrix).HookPriority = drop(Matrix.Hooks#(quotient', Matrix, Matrix).HookPriority, -1)
+
+-- left inverse of a split injection
+-- TODO: figure out if we can ever do this without computing End source g
+leftInverse = inverse' = method(Options => options Hom)
+leftInverse Matrix := opts -> g -> g.cache.leftInverse ??= quotient'(id_(source g), g, opts)
+
+-- right inverse of a split surjection
 -- FIXME: inverse may fail for a general split surjection:
 -- c.f. https://github.com/Macaulay2/M2/issues/3738
-inverse' = method(Options => options Hom)
-inverse' Matrix := opts -> g -> g.cache.inverse' ??= (
-    -- two options:  id_(target g) // g  or  g \\ id_(source g)
-    -- we use the latter, because gensEnd0 source g is cached.
-    -- quotient'(id_(source g), g, opts))
-    -- FIXME: we have to use the slower options because the above fails,
-    -- e.g. https://github.com/Macaulay2/M2/issues/3738#issuecomment-2816840279
-    quotient(id_(target g), g, opts))
+-- TODO: figure out if we can ever do this without computing End target g
+rightInverse = method(Options => options Hom)
+rightInverse Matrix := opts -> g -> g.cache.rightInverse ??= quotient(id_(target g), g, opts)
+
+-- given N and a split injection inc:N -> M,
+-- we use precomputed endomorphisms of M
+-- to produce a general endomorphism of N
+generalEndomorphism(Matrix, Nothing, Matrix) := Matrix => o -> (N, null, inc) -> (
+    -- assert(N === source inc);
+    inv := leftInverse(inc,
+	DegreeLimit => degree 0_N,
+	-- FIXME: setting this to false sometimes
+	-- produces non-well-defined inverses
+	MinimalGenerators => true);
+    inc * generalEndomorphism(target inc, o) * inv)
 
 -- given N and a split surjection pr:M -> N,
 -- we use precomputed endomorphisms of M
 -- to produce a general endomorphism of N
 generalEndomorphism(Module, Matrix) := Matrix => o -> (N, pr) -> (
     -- assert(N === target pr);
-    --return generalEndomorphism(N, o);
-    inc := inverse'(pr,
+    -- TODO: currently this still computed End_0(N)
+    -- figure out a way to compute the inverse without doing so
+    inv := rightInverse(pr,
 	DegreeLimit => degree 0_N,
 	-- FIXME: setting this to false sometimes
 	-- produces non-well-defined inverses
 	MinimalGenerators => true);
+    pr * generalEndomorphism(source pr, o) * inv)
+
+generalEndomorphism(Module, Matrix, Nothing) := Matrix => o -> (N, pr, null) -> generalEndomorphism(N, pr, o)
+generalEndomorphism(Module, Matrix, Matrix)  := Matrix => o -> (N, pr, inc) -> (
+    -- assert(N === target pr and source pr === target inc and N === source inc);
     pr * generalEndomorphism(source pr, o) * inc)
--- Note: we may not be able to invert a split inclusion.
 
 -----------------------------------------------------------------------------
 -- directSummands
@@ -491,7 +522,7 @@ findSplitInclusion(Module, Module) := opts -> (M, N) -> (
 oldinclusions = lookup(symbol_, Module, Array)
 Module _ Array := Matrix => (M, w) -> M.cache#(symbol _, w) ??= (
     if not M.cache#?(symbol ^, w) then oldinclusions(M, w)
-    else inverse'(M.cache#(symbol ^, w),
+    else rightInverse(M.cache#(symbol ^, w),
 	DegreeLimit       => degree 0_M,
 	MinimalGenerators => true))
 
