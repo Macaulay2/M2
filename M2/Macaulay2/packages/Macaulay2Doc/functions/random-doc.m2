@@ -107,7 +107,8 @@ Node
     Example
       random RR
       random CC_100
-      tally for i to 100 list random GF 11
+      kk = GF 11
+      tally for i to 100 list random kk
       random GF(2,40)
   SeeAlso
     setRandomSeed
