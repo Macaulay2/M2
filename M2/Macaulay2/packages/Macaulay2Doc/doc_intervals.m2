@@ -79,7 +79,6 @@ SeeAlso
     midpoint
 ///
 
--- TODO: combine with (intersection, RRi, RRi)
 doc ///
 Key
     (intersect, RRi)
@@ -89,8 +88,8 @@ Key
 Headline
     intersection of input intervals
 Usage
-    J = intersection(I,...)
-    J = intersection(I,...,Precision => prec)
+    J = intersect(I,...)
+    J = intersect(I,...,Precision => prec)
 Inputs
     I:RRi
     Precision => ZZ
@@ -102,30 +101,6 @@ Description
     Returns the intersection of any number of input intervals.
 SeeAlso
     intersect
-    (intersection, RRi, RRi)
-///
-
-doc ///
-Key
-    (intersection, RRi, RRi)
-    [(intersection, RRi, RRi), Precision]
-Headline
-    intersection of input intervals
-Usage
-    K = intersection(I,J)
-    K = intersection(I,J,Precision => prec)
-Inputs
-    I:RRi
-    J:RRi
-    Precision => ZZ
-        specifies the desired precision of the output, a value of {\tt -1} uses the minimum precision of the inputs.
-Outputs
-    K:RRi
-Description
-  Text
-    Returns the intersection of the two input intervals or an empty interval if they do not intersect.
-SeeAlso
-    (intersect,RRi)
 ///
 
 doc ///

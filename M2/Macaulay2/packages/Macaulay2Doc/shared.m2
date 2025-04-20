@@ -92,26 +92,21 @@ document {
     PARA {     
 	"This function calculates the intersection of a list or sequence of compatible objects."
 	},
-    SeeAlso => {
-	-- add references to intersect methods installed in packages _other than Core_ here
-        intersection,
-	"M0nbar::M0nbar",
-	"NAGtypes::NAGtypes",
-	"Polyhedra::Polyhedra"
-	}
-    }
-
-document {
-     Key => intersection,
-     Headline => "compute an intersection",
     PARA{
 	"When a more efficient algorithm is available for computing the intersection of all inputs
 	simultaneously rather than iteratively, for instance for intersecting ", TO Module, "s,
 	a specialized function that takes a list or sequence may be installed on ", TT "(symbol intersect, Type)", "."
 	},
     EXAMPLE ///code lookup(symbol intersect, Module)///,
-     SeeAlso => { intersect }
-     }
+    PARA {
+	"This function may also be called using the synonym ", M2CODE "intersection", "."},
+    SeeAlso => {
+	-- add references to intersect methods installed in packages _other than Core_ here
+	"M0nbar::M0nbar",
+	"NAGtypes::NAGtypes",
+	"Polyhedra::Polyhedra"
+	}
+    }
 
 undocumented { 1:union }
 document {

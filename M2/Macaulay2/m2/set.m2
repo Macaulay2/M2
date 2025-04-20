@@ -100,7 +100,7 @@ Set * Set := Set => (x,y) -> (
      then set select(keys x, k -> y#?k)
      else set select(keys y, k -> x#?k)
      )
-intersect(Set, Set) := intersection(Set, Set) := Set => {} >> o -> (x,y) -> x*y
+intersect(Set, Set) := Set => {} >> o -> (x,y) -> x*y
 
 Set - Set := Set => (x,y) -> applyPairs(x, (i,v) -> if not y#?i then (i,v))
 List - Set := List => (x,y) -> select(x, i -> not y#?i)
