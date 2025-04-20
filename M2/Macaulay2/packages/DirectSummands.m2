@@ -287,7 +287,11 @@ random       Module  := Vector => o ->     M  -> (
 
 generalEndomorphism = method(Options => options random)
 generalEndomorphism Module := Matrix => o -> M -> (
-    homomorphism((B := gensEnd0 M) * random(source B, o)))
+    B := gensEnd0 M;
+    r := if isHomogeneous M
+    then random(source B, o)
+    else localRandom(source B, o);
+    homomorphism(B * r))
 -- the sheaf needs to be pruned to prevent missing endomorphisms
 generalEndomorphism CoherentSheaf := SheafMap => o -> F -> (
     sheaf generalEndomorphism(module prune F, o))
@@ -347,6 +351,7 @@ directSummands Module := List => opts -> M -> M.cache.summands ??= (
     if opts.Verbose then printerr("splitting module of rank: ", toString rank M);
     -- TODO: is there an easy way to check if rank = 1 and M torsionfree?
     -- TODO: extend the cached inclusion and projection maps to the summands
+    if rank cover M <= 1 then return M.cache.summands = { M.cache.isIndecomposable = true; M };
     if isDirectSum  M then return M.cache.summands = flatten apply(components M, directSummands_opts);
     if isFreeModule M then return M.cache.summands = apply(numgens M, i -> target(M.cache#(symbol ^, [i]) = M^{i}));
     -- Attempt to peel off line bundles by observing the degrees of generators
@@ -464,9 +469,23 @@ addHook((isIndecomposable, Module), Strategy => "IdempotentSearch", (opts, M) ->
 	else if certified then ( if 1 < debugLevel then printerr "module is indecomposable!"; true )
     ))
 
+-- TODO
+--addHook((isIndecomposable, Module), Strategy => TorsionFree, (opts, M) -> (
+--	if isTorsionFree M and isDomain M
+--	and degree M // degree R <= 1 then return true))
+
 -----------------------------------------------------------------------------
 -- Split inclusions
 -----------------------------------------------------------------------------
+
+findSplitInclusion = method(Options => { Tries => 50 })
+--tests if M is a split summand of N
+findSplitInclusion(Module, Module) := opts -> (M, N) -> (
+    h := for i to opts.Tries - 1 do (
+        b := homomorphism random Hom(M, N, MinimalGenerators => false);
+        c := homomorphism random Hom(N, M, MinimalGenerators => false);
+        if isIsomorphism(c * b) then break b);
+    if h === null then return "not known" else return h)
 
 -- these are computed on-demand from the cached split surjection
 oldinclusions = lookup(symbol_, Module, Array)
