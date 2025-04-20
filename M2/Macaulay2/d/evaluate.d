@@ -1187,36 +1187,34 @@ globalAssignment(frameindex:int,t:Symbol,newvalue:Expr):Expr := ( -- frameID = 0
      vals.frameindex = newvalue;
      newvalue);
 
-assignment(nestingDepth:int,frameindex:int,t:Symbol,newvalue:Expr):Expr := (
-     if nestingDepth == -1
-     then globalAssignment(frameindex,t,newvalue)
-     else localAssignment(nestingDepth,frameindex,newvalue));
-
 globalAssignmentFun(x:globalAssignmentCode):Expr := (
      t := x.lhs;
      newvalue := eval(x.rhs);
      when newvalue is Error do return newvalue else nothing;
      globalAssignment(t.frameindex,t,newvalue));
 
+ParallelAssignmentError(n:int):Expr := buildErrorPacket(
+    "parallel assignment: expected a sequence of " + tostring(n) + " values");
 parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
-     syms := x.lhs;
-     nestingDepth := x.nestingDepth;
-     frameindex := x.frameindex;
-     nlhs := length(frameindex);
-     foreach sym in syms do if sym.Protected then return buildErrorPacket("assignment to protected variable '" + sym.word.name + "'");
-     value := eval(x.rhs);
-     when value 
-     is Error do return value 
-     is values:Sequence do 
-     if nlhs == length(values) then (
-	  for i from 0 to nlhs-1 do (
-	       r := assignment(nestingDepth.i,frameindex.i,syms.i,values.i);
-	       when r is Error do return r else nothing;
-	       );
-	  value
-	  )
-     else buildErrorPacket("parallel assignment: expected a sequence of " + tostring(nlhs) + " values")
-     else buildErrorPacket("parallel assignment: expected a sequence of " + tostring(nlhs) + " values"));
+    nlhs := length(x.lhs);
+    value := eval(x.rhs);
+    when value is Error do return value else nothing;
+    -- (x) = y should behave just like x = y
+    if nlhs == 1 then value = seq(value);
+    when value
+    is values:Sequence do (
+	if nlhs == length(values)
+	then Expr(new Sequence len nlhs at i do provide (
+		when x.lhs.i
+		is y:globalMemoryReferenceCode do (
+		    globalAssignment(y.var.frameindex, y.var, values.i))
+		is y:localMemoryReferenceCode do (
+		    localAssignment(y.nestingDepth, y.frameindex, values.i))
+		is y:threadMemoryReferenceCode do (
+		    globalAssignment(y.var.frameindex, y.var, values.i))
+		else nullE)) -- TODO: handle other cases
+	else ParallelAssignmentError(nlhs))
+    else ParallelAssignmentError(nlhs));
 
 -- helper function used when evaluating tryCode and by null coalescion
 -- tryEvalSuccess is true unless an (non-interrupting) error occurred
