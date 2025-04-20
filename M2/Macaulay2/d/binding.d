@@ -110,7 +110,7 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary,thread:bool,l
 	       word, 
 	       word.hash + 9898989, 
 	       position,
-	       dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
+	       dummyUnaryFun,dummyBinaryFun,
 	       dictionary.frameID, 
 	       frameindex,
 	       1,				-- first lookup is now

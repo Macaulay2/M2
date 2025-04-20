@@ -189,7 +189,7 @@ export convert0(e:ParseTree):Code := (
 		rhs := convertGlobalOperator(token);
 		-- TODO: is this check necessary?
 		if token.word.typecode == TCid
-		then Code(binaryCode(b.Operator.entry.binary, convert(b.lhs), rhs, pos))
+		then Code(binaryCode(b.Operator.entry, convert(b.lhs), rhs, pos))
 		else dummyCode -- should not occur
 		)
 	    else dummyCode -- should not occur
@@ -261,7 +261,7 @@ export convert0(e:ParseTree):Code := (
 		if n.newParent      == dummyTree then
 		if n.newInitializer == dummyTree
 		-- e.g. new ChainComplex := ChainComplex => T -> ...
-		then Code(binaryCode(AssignNewFun,
+		then Code(binaryCode(NewS.symbol,
 			convert(n.newClass),
 			convert(b.rhs), pos))
 		-- e.g. new Set from List := Set => ...
@@ -300,13 +300,13 @@ export convert0(e:ParseTree):Code := (
 	      else Code(augmentedAssignmentCode(
 		      b.Operator.entry, convert(b.lhs), convert(b.rhs), dummySymbol, pos))
 		      )
-	  else Code(binaryCode(b.Operator.entry.binary, convert(b.lhs), convert(b.rhs), pos))
+	  else Code(binaryCode(b.Operator.entry, convert(b.lhs), convert(b.rhs), pos))
 	  )
     is u:Unary do (
 	if u.Operator.word == CommaW     then Code(sequenceCode(makeCodeSequence(e, CommaW),     pos)) else
 	if u.Operator.word == SemicolonW then Code(semiCode(    makeCodeSequence(e, SemicolonW), pos))
-	else Code(unaryCode(u.Operator.entry.unary, convert(u.rhs), pos)))
-    is u:Postfix do Code(unaryCode(u.Operator.entry.postfix, convert(u.lhs), pos))
+	else Code(unaryCode(u.Operator.entry, convert(u.rhs), pos)))
+    is u:Postfix do Code(unaryCode(u.Operator.entry, convert(u.lhs), pos))
     is q:Quote do (
 	  token := q.rhs;
 	  sym := token.entry;
