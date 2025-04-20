@@ -200,9 +200,8 @@ export catchCode := {+ code:Code, position:Position };
 
 export SymbolSequence := array(Symbol);
 export parallelAssignmentCode := {+
-     nestingDepth:array(int), -- spots corresponding to global and thread variables are filled with -1
-     frameindex:array(int),
-     lhs:SymbolSequence, -- spots corresponding to local variables are filled with dummySymbol
+     colon:bool, -- := or =
+     lhs:CodeSequence,
      rhs:Code,
      position:Position};
 

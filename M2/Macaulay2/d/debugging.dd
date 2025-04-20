@@ -37,16 +37,8 @@ export tostring(c:Code):string := (
     is x:localAssignmentCode     do concatenate(array(string)("(local-assign ",  tostring(x.frameindex), " ", tostring(x.nestingDepth), " ", tostring(x.rhs), ")"))
     is x:globalAssignmentCode    do concatenate(array(string)("(global-assign ", x.lhs.word.name,        " ",                                tostring(x.rhs), ")"))
     is x:augmentedAssignmentCode do concatenate(array(string)("(augmented-assign ", x.oper.word.name, " ", tostring(x.lhs), " ", tostring(x.rhs), ")"))
-    is x:parallelAssignmentCode  do (
-	n := length(x.nestingDepth);
-	concatenate(array(string)(
-		"(parallel-assign (", between(" ",
-		    new array(string) len n do
-		    for i from 0 to n-1 do
-		    if x.lhs.i == dummySymbol
-		    then provide concatenate(array(string)("(", tostring(x.frameindex.i), " ", tostring(x.nestingDepth.i), ")"))
-		    else provide join("'", x.lhs.i.word.name)),
-		") ", tostring(x.rhs), ")")))
+    is x:parallelAssignmentCode  do concatenate(array(string)("(parallel-assign ( ", if x.colon then ":=" else "=", " (",
+	    between(" ", new array(string) len length(x.lhs) do foreach s in x.lhs do provide tostring(s)), ") ", tostring(x.rhs), ")"))
     -- TODO: what is an example that yields this?
     is x:evaluatedCode do concatenate(array(string)("(expr ", tostring(hash(x.expr)), ")"))
     --
@@ -115,13 +107,8 @@ export toList(c:Code):Expr := (
     is x:localAssignmentCode     do list(toExpr("local-assign"),   toExpr(x.frameindex),       toExpr(x.nestingDepth),   seq(toExpr(x.rhs)))
     is x:globalAssignmentCode    do list(toExpr("global-assign"),    Expr(SymbolBody(x.lhs)),  toExpr(x.lhs.frameindex), seq(toExpr(x.rhs)))
     is x:augmentedAssignmentCode do list(toExpr("augmented-assign"), Expr(SymbolBody(x.oper)), seq(toExpr(x.lhs), toExpr(x.rhs)))
-    is x:parallelAssignmentCode  do list(toExpr("parallel-assign"), seq(
-	    Expr(new Sequence len length(x.nestingDepth) do
-		for i from 0 to length(x.nestingDepth) - 1 do
-		if x.lhs.i == dummySymbol
-		then provide seq(toExpr(x.frameindex.i),    toExpr(x.nestingDepth.i))
-		else provide seq(Expr(SymbolBody(x.lhs.i)), toExpr(x.lhs.i.frameindex))),
-	    toExpr(x.rhs)))
+    is x:parallelAssignmentCode  do list(toExpr("parallel-assign"), Expr(SymbolBody(if x.colon then ColonEqualS.symbol else EqualS.symbol)),
+	Expr(new Sequence len length(x.lhs) do foreach s in x.lhs do provide toExpr(s)), toExpr(x.rhs))
     -- used along augmentedAssignmentCode
     is x:evaluatedCode do toExpr(tostring(c))
     --
