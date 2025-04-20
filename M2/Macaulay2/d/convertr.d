@@ -167,6 +167,11 @@ export convert0(e:ParseTree):Code := (
 	    is t:Token       do convertTokenAssignment(t, b.rhs)
 	    -- e.g. (x,y,z) = (...)
 	    is p:Parentheses do convertParallelAssignment(false, p, b.rhs)
+	    is p:EmptyParentheses do Code(parallelAssignmentCode(
+		    false,
+		    CodeSequence(),
+		    convert(b.rhs),
+		    combinePositionR(p.left.position, treePosition(b.rhs))))
 	    -- Note: usable, but not used anywhere yet
 	    is u:Unary   do convertUnaryInstallCode(UnaryInstallValueFun,
 		convertGlobalOperator(u.Operator), convert(u.rhs), convert(b.rhs), pos)
@@ -203,6 +208,11 @@ export convert0(e:ParseTree):Code := (
 	    is t:Token       do convertTokenAssignment(t, b.rhs)
 	    -- e.g. (x,y,z) := (...)
 	    is p:Parentheses do convertParallelAssignment(true, p, b.rhs)
+	    is p:EmptyParentheses do Code(parallelAssignmentCode(
+		    true,
+		    CodeSequence(),
+		    convert(b.rhs),
+		    combinePositionR(p.left.position, treePosition(b.rhs))))
 	    -- e.g. - Matrix := ...
 	    -- TODO: can #T be implemented here?
 	    is u:Unary   do convertUnaryInstallCode(UnaryInstallMethodFun,
