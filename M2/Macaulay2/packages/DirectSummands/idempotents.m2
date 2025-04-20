@@ -106,7 +106,8 @@ findErrorMargin = m -> ceiling(log_10 2^(precision ring m))
 -- findIdempotents
 -----------------------------------------------------------------------------
 
---TODO: findIdem right now will fail if K is not L[a]/f(a); in general, will need to find a primitive element first
+-- TODO: findIdem right now will fail if K is not L[a]/f(a);
+-- in general, will need to find a primitive element first
 findIdempotent = method(Options => DirectSummandsOptions ++ { "SplitSurjection" => null })
 findIdempotent CoherentSheaf := opts -> M -> findIdempotent(module M, opts)
 findIdempotent Module        := opts -> M -> (
@@ -116,48 +117,45 @@ findIdempotent Module        := opts -> M -> (
     e := fieldExponent R;
     K := quotient ideal gens R;
     V := K ** M;
-    exactFlag := not instance(F, InexactField);
+    inexactFlag := instance(F, InexactField);
     l := if p == 0 then e else max(e, ceiling log_p numgens M);
-    L := infinity;
+    L := null;
     -- this is used in generalEndomorphism
     -- to avoid recomputing the Hom module
     surj := opts#"SplitSurjection" ?? id_M;
     tries := opts.Tries ?? defaultNumTries p;
     for c to tries - 1 do (
-        f := generalEndomorphism(M, surj);
-	if f == 0 then continue;
-	fm := K ** f;
-        Chi := char f;
-	K' := if not exactFlag then F else try extField {Chi};
-        --TODO: remember different L to extend to; right now the L you return at the end may not be large enough
-        if p != 0 then L = min(L, K'.order) else L = K';
-	-- TODO: this seems too messy, what's the precise requirement?
-	-- maybe we should separate this in a different method
-        --exactFlag := not( instance(F, InexactField) or isMember(coefficientRing ring Chi, {ZZ, QQ}));
-	--needsPackage "RationalPoints2"
-	-- TODO: replace with eigenvalues'?
-        eigen := if not exactFlag then roots Chi else flatten rationalPoints ideal Chi;
-	-- if at most one eigenvalue is found then the module is probably indecomposable
-	if not exactFlag and #eigen <= 1 then continue;
-	if exactFlag and p!= 0 and #eigen <= 1 and L == F.order then continue;
-        --TODO: add check for when the field is QQ
-	-- we only want eigen values in F
+	f := generalEndomorphism(M, surj);
+	fm := sub(K ** cover f, F);
+	if fm == 0 then continue;
+	-- if at most one eigenvalue is found the module is probably indecomposable,
+	-- unless the characteristic polynomial has odd degree, then one is enough.
+	eigen := eigenvalues' fm;
+	-- we only want eigenvalues in F
 	eigen = nonnull apply(eigen, y -> try lift(y, F));
-	if #eigen == 0 then continue;
+	if #eigen <= 1 then (
+	    -- to be used as a suggestion in the error
+	    -- TODO: expand for inexact fields
+	    if L === null and not inexactFlag then L = try extField { char fm };
+	    -- if char fm doesn't factor over F, or if it fully factors
+	    -- but has only one eigenvalue, we can't find an idempotent
+	    if #eigen == 1 and F === L
+	    or #eigen == 0 then continue);
+	-- try to find idempotens from eigenvalues
         opers := flatten for y in eigen list (
 	    if p == 0 then (1, f - y*id_M, fm - y*id_V) else (
 		for j from 0 to e list (j, f - y*id_M, largePower'(p, j+1, largePower(p, l, fm - y*id_V)))));
-	idem := position(opers, (j, g, g') -> isWeakIdempotent g' and not isSurjective g' and g' != 0);
+	idem := position(opers, (j, g, gm) -> isWeakIdempotent gm and not isSurjective gm and gm != 0);
         if idem =!= null then (
-	    (j, g, g') := opers_idem;
-	    if 1 < debugLevel then printerr("found idempotent after ", toString c, " attempts.");
-	    idem = (if p != 0 then largePower'(p, j+1, largePower(p, l, g)) else g);
+	    (j, g, gm) := opers_idem;
+	    idem = if p == 0 then g else largePower'(p, j+1, largePower(p, l, g));
 	    -- for inexact fields, we compose the idempotent until the determinant is zero
-	    if instance(F, InexactField) then idem = idem ^ (findErrorMargin idem);
+	    if inexactFlag then idem = idem ^ (findErrorMargin idem);
 	    return idem));
     -- TODO: skip the "Try using" line if the field is large enough, e.g. L === K
+    -- TODO: if L is still null, chane the error
     error("no idempotent found after ", tries, " attempts. ",
-	"Try using changeBaseField with ", if p != 0 then ("GF " | toString L) else toString L))
+	"Try using changeBaseField with ", toString L))
 
 protect Idempotents
 
@@ -181,21 +179,27 @@ findBasicIdempotent = M -> (
     idemp := scan(numcols B, c -> (
 	    h := homomorphism B_{c};
 	    if zero h or h == id_M
-	    or zero(hm := h ** K) then return;
+	    or zero(hm := K ** cover h) then return;
 	    certified = false;
 	    if isWeakIdempotent hm then break h));
     if idemp =!= null then M.cache.Idempotents ??= { idemp };
     (idemp, certified))
 
+-- this is essentially the Meat-Axe algorithm,
+-- but the process for finding an idempotent for
+-- a module over a polynomial ring makes it distict.
 summandsFromIdempotents = method(Options => options findIdempotent)
 summandsFromIdempotents Module := opts -> M -> (
+    if rank cover M <= 1 then return {M};
     M.cache.Idempotents ??= {};
     idems := if 0 < #M.cache.Idempotents then M.cache.Idempotents
     else try findIdempotent(M, opts) else return {M};
     summandsFromIdempotents(M, idems, opts))
 
+-- keep close to summandsFromProjectors
 summandsFromIdempotents(Module, Matrix) := opts -> (M, h) -> summandsFromIdempotents(M, {h}, opts)
 summandsFromIdempotents(Module, List)   := opts -> (M, idems) -> (
+    checkRecursionDepth();
     -- maps M_i -> M from the kernel summands
     injs := apply(idems, h -> inducedMap(M, ker h));
     -- assert(0 == intersect apply(injs, image));
@@ -220,5 +224,6 @@ summandsFromIdempotents(Module, List)   := opts -> (M, idems) -> (
 	else M.cache#(symbol ^, [c += 1]) = p;
 	-- Inclusion maps are computed on-demand
 	L);
+    --M.cache.Idempotents = apply(c, i -> M.cache#(symbol ^, [i]));
     -- TODO: sort these, along with the projections
     comps)

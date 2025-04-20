@@ -39,6 +39,20 @@ TEST /// -- direct summands of a ring
   assert(M == S^{0,-1,-2})
 ///
 
+TEST /// -- direct summands of a finite dimensional algebra
+  R = ZZ/101[x]/x^3
+  T = R/x
+  f = map(R, T)
+  -- FIXME: pushforward is wrong in this case
+  --assert(3 == #summands pushForward_f R^1)
+  --needsPackage "PushForward"
+  --assert(3 == #summands pushFwd_f R^1)
+  f = map(R, prune T)
+  assert(3 == #summands pushForward_f R^1)
+  f = map(R, ZZ/101)
+  assert(3 == #summands pushForward_f R^1)
+///
+
 TEST /// -- direct summands over field extensions
   -- ~9s
   R = (ZZ/7)[x,y,z]/(x^3+y^3+z^3);
@@ -105,6 +119,28 @@ TEST /// -- testing in char 0
   assert(4 == #summands coker matrix "a,b,c,d;d,a,b,c;c,d,a,b;b,c,d,a")
   S = CC[x,y];
   -- FIXME scan(20, i -> assert(set summands coker matrix {{x,y},{-y,x}} == set {cokernel matrix {{x-ii*y}}, cokernel matrix {{x+ii*y}}}))
+///
+
+TEST /// -- testing inhomogeneous
+  debug needsPackage "DirectSummands"
+  S = GF(2,2)[x,y,z];
+  -- homogeneous baseline, used as control
+  M = coker matrix matrix"x,y,z;y,z,x;z,x,y"
+  assert(3 == #summands M)
+  assert(3 == #summandsFromIdempotents M)
+  assert(3 == #summandsFromProjectors M)
+  --
+  M = coker matrix matrix"1,y,z;y,1,x;z,x,1"
+  assert(2 == #summands M)
+  assert(2 == #summandsFromIdempotents M)
+  -- assert(3 == #summandsFromProjectors M) -- TODO: why does this return 3?
+  --
+  -- FIXME:
+  S = QQ[x,y,z];
+  M = coker matrix matrix"x,y,z;y,z,x;z,x,y"
+  M = coker matrix matrix"1,y,z;y,1,x;z,x,1"
+  -- findBasicIdempotent M
+  -- findIdempotent M
 ///
 
 TEST ///
