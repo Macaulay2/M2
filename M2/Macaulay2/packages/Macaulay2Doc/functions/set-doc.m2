@@ -70,11 +70,10 @@ document {
 	 TO elements,
 	 TO union,
 	 TO intersect,
-	 TO intersection,
 	 TO (symbol #?, Set, Thing),
 	 TO (symbol -, Set, Set),
 	 TO (union, Set, Set),
-	 TO (intersection, Set, Set),
+	 TO (intersect, Set, Set),
 	 TO (symbol **, Set, Set),
 	 TO (sum, Set),
 	 TO (product, Set),
@@ -156,7 +155,6 @@ document {
 
 document {
      Key => {
-	 (intersection, Set, Set),
 	 (intersect, Set, Set),
 	 (symbol *, Set, Set)},
      Headline => "set intersection",
