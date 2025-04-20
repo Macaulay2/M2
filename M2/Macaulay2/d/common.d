@@ -45,10 +45,6 @@ export codePosition(c:Code):Position := ( -- TODO retire
     is f:Error                     do f.position
     );
 
-export setuppostfix(e:SymbolClosure,fn:unop):void := (
-     unopNameList = unopNameListCell(fn,e.symbol,unopNameList);
-     e.symbol.postfix = fn;
-     );
 export setup(e:SymbolClosure,fn:binop):void := (
      binopNameList = binopNameListCell(fn,e.symbol,binopNameList);
      e.symbol.binary = fn;

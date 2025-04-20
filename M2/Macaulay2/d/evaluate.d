@@ -1303,17 +1303,17 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	    when r is e:Error do r
 	    else globalAssignment(y.frameindex, x.info, r))
 	is y:binaryCode do (
-	    r := Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
-	    if y.f == DotS.symbol.binary || y.f == SharpS.symbol.binary
+	    r := Code(binaryCode(s, Code(left), x.rhs, x.position));
+	    if y.oper == DotS.symbol || y.oper == SharpS.symbol
 	    then AssignElemFun(y.lhs, y.rhs, r)
 	    else InstallValueFun(CodeSequence(
 		    convertGlobalOperator(x.info), y.lhs, y.rhs, r)))
 	is y:adjacentCode do (
-	    r := Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
+	    r := Code(binaryCode(s, Code(left), x.rhs, x.position));
 	    InstallValueFun(CodeSequence(
 		    convertGlobalOperator(AdjacentS.symbol), y.lhs, y.rhs, r)))
 	is y:unaryCode do (
-	    r := Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
+	    r := Code(binaryCode(s, Code(left), x.rhs, x.position));
 	    UnaryInstallValueFun(convertGlobalOperator(x.info), y.rhs, r))
 	else buildErrorPacket(
 	    "augmented assignment not implemented for this code")));
@@ -1423,8 +1423,8 @@ export evalraw(c:Code):Expr := (
 		    buildErrorPacket("unknown exception")
 		    ))
 	  else when c
-	  is u:unaryCode do u.f(u.rhs)
-	  is b:binaryCode do b.f(b.lhs,b.rhs)
+	  is u:unaryCode do u.oper.unary(u.rhs)
+	  is b:binaryCode do b.oper.binary(b.lhs,b.rhs)
 	  is b:adjacentCode do (
 	       left := eval(b.lhs);
 	       when left

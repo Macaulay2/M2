@@ -54,8 +54,8 @@ export tostring(c:Code):string := (
     is x:tryCode   do concatenate(array(string)("(try ",   tostring(x.code), " ",            tostring(x.thenClause), " ",       tostring(x.elseClause), ")"))
     is x:catchCode do concatenate(array(string)("(catch ", tostring(x.code), ")"))
     --
-    is x:unaryCode    do concatenate(array(string)("(1-OP ", getUnopName(x.f).word.name,   " ", tostring(x.rhs), ")"))
-    is x:binaryCode   do concatenate(array(string)("(2-OP ", getBinopName(x.f).word.name,  " ", tostring(x.lhs),  " ", tostring(x.rhs), ")"))
+    is x:unaryCode    do concatenate(array(string)("(1-OP ", x.oper.word.name,   " ", tostring(x.rhs), ")"))
+    is x:binaryCode   do concatenate(array(string)("(2-OP ", x.oper.word.name,  " ", tostring(x.lhs),  " ", tostring(x.rhs), ")"))
     is x:ternaryCode  do concatenate(array(string)("(3-OP ", getTernopName(x.f).word.name, " ", tostring(x.arg1), " ", tostring(x.arg2), " ", tostring(x.arg3), ")"))
     is x:multaryCode  do concatenate(array(string)("(OP ",   getMultopName(x.f).word.name, " ",
 	    between(" ", new array(string) len length(x.args) do foreach c in x.args do provide tostring(c)), ")"))
@@ -129,8 +129,8 @@ export toList(c:Code):Expr := (
     is x:tryCode   do list(toExpr("try"),   seq(toExpr(x.code),      list(toExpr("then"), toExpr(x.thenClause)), list(toExpr("else"), toExpr(x.elseClause))))
     is x:catchCode do list(toExpr("catch"), seq(toExpr(x.code)))
     --
-    is x:unaryCode   do list(toExpr("1-OP"), Expr(SymbolBody(getUnopName(x.f))),   seq(toExpr(x.rhs)))
-    is x:binaryCode  do list(toExpr("2-OP"), Expr(SymbolBody(getBinopName(x.f))),  seq(toExpr(x.lhs),  toExpr(x.rhs)))
+    is x:unaryCode   do list(toExpr("1-OP"), Expr(SymbolBody(x.oper)),   seq(toExpr(x.rhs)))
+    is x:binaryCode  do list(toExpr("2-OP"), Expr(SymbolBody(x.oper)),  seq(toExpr(x.lhs),  toExpr(x.rhs)))
     is x:ternaryCode do list(toExpr("3-OP"), Expr(SymbolBody(getTernopName(x.f))), seq(toExpr(x.arg1), toExpr(x.arg2), toExpr(x.arg3)))
     is x:multaryCode do list(toExpr("OP"),   Expr(SymbolBody(getMultopName(x.f))),
 	Expr(new Sequence len length(x.args) do foreach c in x.args do provide toExpr(c)))

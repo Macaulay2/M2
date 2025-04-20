@@ -74,7 +74,6 @@ export Symbol := {		    -- symbol table entry for a symbol
      hash:hash_t,		    --   based on the hash code of word, unchanging
      position:Position,	    	    --   the position where the definition was made
      unary:unop,
-     postfix:unop,
      binary:binop,
      frameID:int,		    -- seqno of frame for dictionary containing it
 				    -- 0 for the globalFrame
@@ -221,8 +220,8 @@ export nullCode := {+};
 export realCode := {+x:RR,position:Position};
 export integerCode := {+x:ZZ,position:Position};
 export stringCode := {+x:string,position:Position};
-export unaryCode := {+f:unop,rhs:Code,position:Position};
-export binaryCode := {+f:binop,lhs:Code,rhs:Code,position:Position};
+export unaryCode := {+oper:Symbol,rhs:Code,position:Position};
+export binaryCode := {+oper:Symbol,lhs:Code,rhs:Code,position:Position};
 export adjacentCode := {+lhs:Code,rhs:Code,position:Position};
 export whileDoCode := {+predicate:Code,doClause:Code,position:Position};
 export whileListCode := {+predicate:Code,listClause:Code,position:Position};
