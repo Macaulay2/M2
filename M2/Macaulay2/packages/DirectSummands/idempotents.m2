@@ -215,6 +215,7 @@ summandsFromIdempotents(Module, List)   := opts -> (M, idems) -> (
     comps := flatten for pr in append(idems, iota) list (
 	-- TODO: can we check if M has multiple copies of N quickly?
 	N := prune coker pr;
+	if N == 0 then continue;
 	p := inverse N.cache.pruningMap * inducedMap(coker pr, M);
 	L := nonzero summandsFromIdempotents(N, opts,
 	    "SplitSurjection" => p * surj);

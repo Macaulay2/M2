@@ -85,6 +85,7 @@ summandsFromProjectors(Module, List) := opts -> (M, projs) -> (
 	toString prepend_(rank coker iota) apply(injs, i -> rank source i));
     comps := flatten for pr in append(projs, iota) list (
 	N := prune coker pr;
+	if N == 0 then continue;
 	p := inverse N.cache.pruningMap * inducedMap(coker pr, M);
 	L := nonzero summandsFromProjectors(N, opts,
 	    "SplitSurjection" => p * surj);
