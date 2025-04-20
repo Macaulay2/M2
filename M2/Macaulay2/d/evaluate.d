@@ -1462,9 +1462,9 @@ export evalraw(c:Code):Expr := (
 		    );
 	       if r.frameindex>=length(f.values) then buildErrorPacket("frame error")
 	       else return f.values.(r.frameindex))
-	  is r:globalMemoryReferenceCode do return globalFrame.values.(r.frameindex)
+	  is r:globalMemoryReferenceCode do return globalFrame.values.(r.var.frameindex)
 	  is r:threadMemoryReferenceCode do return (
-	       i := r.frameindex;
+	       i := r.var.frameindex;
 	       v := threadFrame.values;
 	       if i < length(v) then v.i else nullE)
 	  is x:localAssignmentCode do (

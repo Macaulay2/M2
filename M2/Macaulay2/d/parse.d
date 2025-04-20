@@ -175,11 +175,11 @@ export localMemoryReferenceCode := {+
      position:Position
      };
 export globalMemoryReferenceCode := {+
-     frameindex:int,
+     var:Symbol,
      position:Position
      };
 export threadMemoryReferenceCode := {+
-     frameindex:int,
+     var:Symbol,
      position:Position,
      x:void						    -- just to distinguish it
      };
