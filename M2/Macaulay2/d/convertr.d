@@ -288,17 +288,17 @@ export convert0(e:ParseTree):Code := (
 	  then (
 	      when b.lhs
 	      is a:Adjacent do Code(augmentedAssignmentCode(
-		      b.Operator.entry, convert(b.lhs), convert(b.rhs), AdjacentS.symbol, pos))
+		      b.Operator.entry, convert(b.lhs), convert(b.rhs), pos))
 	      is o:Unary do Code(augmentedAssignmentCode(
-		      b.Operator.entry, convert(b.lhs), convert(b.rhs), o.Operator.entry, pos))
+		      b.Operator.entry, convert(b.lhs), convert(b.rhs), pos))
 	      is o:Postfix do Code(augmentedAssignmentCode(
-		      b.Operator.entry, convert(b.lhs), convert(b.rhs), o.Operator.entry, pos))
+		      b.Operator.entry, convert(b.lhs), convert(b.rhs), pos))
 	      is o:Binary do Code(augmentedAssignmentCode(
-		      b.Operator.entry, convert(b.lhs), convert(b.rhs), o.Operator.entry, pos))
+		      b.Operator.entry, convert(b.lhs), convert(b.rhs), pos))
 	      is t:Token do Code(augmentedAssignmentCode(
-		      b.Operator.entry, convert(b.lhs), convert(b.rhs), t.entry, pos))
+		      b.Operator.entry, convert(b.lhs), convert(b.rhs), pos))
 	      else Code(augmentedAssignmentCode(
-		      b.Operator.entry, convert(b.lhs), convert(b.rhs), dummySymbol, pos))
+		      b.Operator.entry, convert(b.lhs), convert(b.rhs), pos))
 		      )
 	  else Code(binaryCode(b.Operator.entry, convert(b.lhs), convert(b.rhs), pos))
 	  )

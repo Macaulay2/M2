@@ -219,7 +219,6 @@ export augmentedAssignmentCode := {+
     oper:Symbol,
     lhs:Code,
     rhs:Code,
-    info:Symbol, -- variable name or operator
     position:Position};
 
 -- code that's already been evaluated; needed for augmented assignment
