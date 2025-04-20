@@ -57,43 +57,6 @@ makeCodeSequence(e:ParseTree,separator:Word):CodeSequence := (
      v := new CodeSequence len CodeSequenceLength(e,separator) do provide dummyCode;
      fillCodeSequence(e,v,length(v),separator);
      v);
-SymbolSequenceLength(e:ParseTree):int := (
-     i := 0;
-     while true do (
-     	  when e
-	  is p:Parentheses do e = p.contents
-     	  is b:Binary do (
-	       i = i+1;
-	       e = b.lhs;
-	       )
-	  else (					    -- should be the first token
-	       i = i+1;
-	       return i;
-	       )
-	  )
-     );
-makeSymbolSequence(e:ParseTree):SymbolSequence := (	    -- but replace local symbols by dummySymbol
-     m := SymbolSequenceLength(e);
-     v := new SymbolSequence len m do provide dummySymbol;
-     while true do (
-     	  when e
-	  is p:Parentheses do e = p.contents
-     	  is b:Binary do (
-	       when b.rhs is t:Token do (
-		    m = m-1;
-		    v.m = t.entry;
-		    )
-	       else nothing;				    -- shouldn't happen
-	       e = b.lhs;
-	       )
-	  is t:Token do (
-	       m = m-1;
-	       v.m = t.entry;
-	       break;
-	       )
-	  else break;					    -- shouldn't happen
-	  );
-     v);
 
 nestingDepth(frameID:int,d:Dictionary):int := (
      if frameID == 0 then return -1;
@@ -138,15 +101,11 @@ convertTokenAssignment(token:Token, rhs:ParseTree):Code := (
 	    nestingDepth(sym.frameID, token.dictionary), sym.frameindex, val, pos))
     );
 
-convertParallelAssignment(par:Parentheses,rhs:ParseTree,d:Dictionary):Code := (
-    syms := makeSymbolSequence(ParseTree(par)); -- silly -- rethink
+convertParallelAssignment(colon:bool, par:Parentheses, rhs:ParseTree):Code := (
+    lhs := makeCodeSequence(par.contents, CommaW);
     vals := convert(rhs);
     pos := combinePositionR(par.left.position, treePosition(rhs));
-    n := length(syms);
-    nd := new array(int) len n do foreach x in syms do provide nestingDepth(x.frameID, d); -- rethink dictionary
-    fr := new array(int) len n do foreach x in syms do provide x.frameindex;
-    foreach x in syms do if x.frameID != 0 then x = dummySymbol;
-    Code(parallelAssignmentCode(nd, fr, syms, vals, pos))
+    Code(parallelAssignmentCode(colon, lhs, vals, pos))
     );
 
 export convertGlobalOperator(oper:Token):Code := Code(globalSymbolClosureCode(oper.entry, oper.position));
@@ -207,7 +166,7 @@ export convert0(e:ParseTree):Code := (
 	    -- e.g. x = ...
 	    is t:Token       do convertTokenAssignment(t, b.rhs)
 	    -- e.g. (x,y,z) = (...)
-	    is p:Parentheses do convertParallelAssignment(p, b.rhs, b.Operator.dictionary)
+	    is p:Parentheses do convertParallelAssignment(false, p, b.rhs)
 	    -- Note: usable, but not used anywhere yet
 	    is u:Unary   do convertUnaryInstallCode(UnaryInstallValueFun,
 		convertGlobalOperator(u.Operator), convert(u.rhs), convert(b.rhs), pos)
@@ -243,7 +202,7 @@ export convert0(e:ParseTree):Code := (
 	    -- e.g. x := ...
 	    is t:Token       do convertTokenAssignment(t, b.rhs)
 	    -- e.g. (x,y,z) := (...)
-	    is p:Parentheses do convertParallelAssignment(p, b.rhs, b.Operator.dictionary)
+	    is p:Parentheses do convertParallelAssignment(true, p, b.rhs)
 	    -- e.g. - Matrix := ...
 	    -- TODO: can #T be implemented here?
 	    is u:Unary   do convertUnaryInstallCode(UnaryInstallMethodFun,
