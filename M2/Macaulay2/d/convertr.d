@@ -123,8 +123,8 @@ convertTokenReference(token:Token):Code := (
     else (
 	if var.frameID == 0 then
 	if var.thread
-	then Code(threadMemoryReferenceCode(var.frameindex, pos))
-	else Code(globalMemoryReferenceCode(var.frameindex, pos))
+	then Code(threadMemoryReferenceCode(var, pos))
+	else Code(globalMemoryReferenceCode(var, pos))
 	else Code(localMemoryReferenceCode(nestingDepth(var.frameID, token.dictionary), var.frameindex, pos)))
     );
 
