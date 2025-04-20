@@ -61,6 +61,7 @@ summandsFromProjectors Module := opts -> M -> (
     projs := try findProjectors(M, opts) else return {M};
     summandsFromProjectors(M, projs, opts))
 
+summandsFromProjectors(Module, Matrix) := opts -> (M, pr) -> summandsFromProjectors(M, {pr}, opts)
 summandsFromProjectors(Module, List) := opts -> (M, projs) -> (
     -- assert(0 == intersect apply(projs, ker));
     -- maps M_i -> M from the kernel summands
@@ -72,9 +73,9 @@ summandsFromProjectors(Module, List) := opts -> (M, projs) -> (
     -- this is a split surjection from a module whose
     -- degree zero endomorphisms have already been computed
     surj := opts#"SplitSurjection" ?? id_M;
-    if 0 < debugLevel then printerr("splitting ", toString(#projs+1),
-	" summands of ranks ", toString apply(injs, i -> rank source i));
     c := -1;
+    if opts.Verbose then printerr("splitting summands of ranks ",
+	toString prepend_(rank coker iota) apply(injs, i -> rank source i));
     comps := flatten for pr in append(projs, iota) list (
 	N := prune coker pr;
 	p := inverse N.cache.pruningMap * inducedMap(coker pr, M);
@@ -86,4 +87,5 @@ summandsFromProjectors(Module, List) := opts -> (M, projs) -> (
 	else M.cache#(symbol ^, [c += 1]) = p;
 	-- Inclusion maps are computed on-demand
 	L);
+    -- TODO: sort these, along with the projections
     comps)

@@ -190,34 +190,35 @@ findBasicIdempotent = M -> (
 summandsFromIdempotents = method(Options => options findIdempotent)
 summandsFromIdempotents Module := opts -> M -> (
     M.cache.Idempotents ??= {};
-    h := if 0 < #M.cache.Idempotents then M.cache.Idempotents
+    idems := if 0 < #M.cache.Idempotents then M.cache.Idempotents
     else try findIdempotent(M, opts) else return {M};
-    summandsFromIdempotents(M, h, opts))
+    summandsFromIdempotents(M, idems, opts))
 
--- FIXME: handle the case when multiple idempotents are given
-summandsFromIdempotents(Module, List)   := opts -> (M, idems) -> summandsFromIdempotents(M, idems#0, opts)
-summandsFromIdempotents(Module, Matrix) := opts -> (M, h) -> (
-    -- TODO: add this when the maps M_[w] and M^[w] also work with subsets
-    -- M.cache.components =
+summandsFromIdempotents(Module, Matrix) := opts -> (M, h) -> summandsFromIdempotents(M, {h}, opts)
+summandsFromIdempotents(Module, List)   := opts -> (M, idems) -> (
+    -- maps M_i -> M from the kernel summands
+    injs := apply(idems, h -> inducedMap(M, ker h));
+    -- assert(0 == intersect apply(injs, image));
+    -- the map \bigoplus M_i -> M, whose cokernel is the complement of M_i
+    iota := matrix { injs };
+    -- assert first isIsomorphic(M, coker iota ++ directSum(coker \ idems));
     -- this is a split surjection from a module whose
     -- degree zero endomorphisms have already been computed
     surj := opts#"SplitSurjection" ?? id_M;
-    -- TODO: can we check if M has multiple copies of M0 or M1 quickly?
-    M0 := prune image h;
-    M1 := prune coker h;
-    if M0 == 0 or M1 == 0 then return {M};
-    if 0 < debugLevel then printerr("splitting 2 summands of ranks ",
-	toString {rank M0, rank M1});
-    p0 := inverse M0.cache.pruningMap * inducedMap(image h, M, h);
-    p1 := inverse M1.cache.pruningMap * inducedMap(coker h, M);
-    M0comps := summandsFromIdempotents(M0, opts, "SplitSurjection" => p0 * surj);
-    M1comps := summandsFromIdempotents(M1, opts, "SplitSurjection" => p1 * surj);
-    -- Projection maps to the summands
     c := -1;
-    if #M0comps > 1 then apply(#M0comps, i -> M.cache#(symbol ^, [c += 1]) = M0^[i] * p0) else M.cache#(symbol ^, [c += 1]) = p0;
-    if #M1comps > 1 then apply(#M1comps, i -> M.cache#(symbol ^, [c += 1]) = M1^[i] * p1) else M.cache#(symbol ^, [c += 1]) = p1;
-    -- Inclusion maps are computed on-demand
-    -- return the lists
-    -- TODO: why is this nonzero needed?
+    if opts.Verbose then printerr("splitting summands of ranks ",
+	toString prepend_(rank coker iota) apply(injs, i -> rank source i));
+    comps := flatten for pr in append(idems, iota) list (
+	-- TODO: can we check if M has multiple copies of N quickly?
+	N := prune coker pr;
+	p := inverse N.cache.pruningMap * inducedMap(coker pr, M);
+	L := nonzero summandsFromIdempotents(N, opts,
+	    "SplitSurjection" => p * surj);
+	-- Projection maps to the summands
+	if #L > 1 then apply(#L, i ->
+	    M.cache#(symbol ^, [c += 1]) = N^[i] * p)
+	else M.cache#(symbol ^, [c += 1]) = p;
+	-- Inclusion maps are computed on-demand
+	L);
     -- TODO: sort these, along with the projections
-    flatten join(M0comps, M1comps))
+    comps)
