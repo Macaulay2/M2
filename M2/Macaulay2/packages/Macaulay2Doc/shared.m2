@@ -102,9 +102,9 @@ document {
 	"This function may also be called using the synonym ", M2CODE "intersection", "."},
     SeeAlso => {
 	-- add references to intersect methods installed in packages _other than Core_ here
-	"M0nbar::M0nbar",
-	"NAGtypes::NAGtypes",
-	"Polyhedra::Polyhedra"
+	"M0nbar::intersect",
+	"NAGtypes::intersect(PolySpace,PolySpace)",
+	"Polyhedra::intersect"
 	}
     }
 
