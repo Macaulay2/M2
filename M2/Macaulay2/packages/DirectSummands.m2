@@ -188,11 +188,23 @@ isIsomorphic(Module, Module) := Sequence => o -> (M, N) -> (
     then (isisofree o)(M, N)
     else (isiso o)(M, N))
 
-isIsomorphic' = method(Options => options isIsomorphic ++ { Tries => 10 })
+protect Isomorphisms
+isIsomorphic' = method(Options => options isIsomorphic ++ { Tries => null })
 isIsomorphic'(Module, Module) := opts -> (M, N) -> (
+    M.cache.Isomorphisms ??= new MutableHashTable;
+    if M.cache.Isomorphisms#?N then return true;
+    tries := opts.Tries ?? defaultNumTries char ring M;
     opts' := selectKeys(opts, k -> (options isIsomorphic)#?k);
     -- TODO: parallelize
-    any(opts.Tries, i -> first isIsomorphic(M, N, opts')))
+    for c to tries - 1 do (
+	(bool, isom) := isIsomorphic(M, N, opts');
+	if bool then ( M.cache.Isomorphisms#N = isom; return true ));
+    false)
+
+isomorphism = method(Options => options isIsomorphic ++ { Tries => null })
+isomorphism(Module, Module) := Matrix => o -> (M, N) -> (
+    if not isIsomorphic'(M, N, o) then error "modules not isomorphic";
+    M.cache.Isomorphisms#N)
 
 -- TODO: speed this up
 -- TODO: implement isIsomorphic for sheaves
@@ -363,48 +375,87 @@ generalEndomorphism(Module, Matrix, Matrix)  := Matrix => o -> (N, pr, inc) -> (
     pr * generalEndomorphism(source pr, o) * inc)
 
 -----------------------------------------------------------------------------
--- directSummands
+-- helpers for splitting and caching projection maps
 -----------------------------------------------------------------------------
+
+findSplitInclusion = method(Options => { Tries => 50 })
+--tests if M is a split summand of N
+findSplitInclusion(Module, Module) := opts -> (M, N) -> (
+    h := for i to opts.Tries - 1 do (
+        b := homomorphism random Hom(M, N, MinimalGenerators => false);
+        c := homomorphism random Hom(N, M, MinimalGenerators => false);
+        if isIsomorphism(c * b) then break b);
+    if h === null then return "not known" else return h)
+
+-- helper for splitting a free module and setting the split surjections
+splitFreeModule = (M, opts) -> apply(numgens M, i -> target(M.cache#(symbol ^, [i]) = M^{i}))
+
+-- helper for splitting free summands by observing the degrees of generators
+splitFreeSummands = (M, opts) -> M.cache#"FreeSummands" = (
+    if opts.Verbose then stderr << " -- splitting free summands: " << flush;
+    directSummands(R := ring M; apply(-unique degrees M, d -> R^{d}), M, opts))
+
+-- helper for splitting a module with known components
+-- (in particular, the components may also have summands)
+-- TODO: can we sort the summands here?
+splitComponents = (M, comps, splitfunc) -> (
+    n := #comps;
+    c := -1; -- summand counter
+    projs := apply(n, i -> M^[i]);
+    flatten apply(comps, projs, (N, p) -> (
+	L := splitfunc N;
+	-- Projection maps to the summands
+	if #L > 1 then apply(#L, i ->
+	    M.cache#(symbol ^, [c += 1]) = N^[i] * p)
+	else M.cache#(symbol ^, [c += 1]) = p;
+	-- Inclusion maps are computed on-demand
+	L)))
+
+-- these are computed on-demand from the cached split surjection
+oldinclusions = lookup(symbol_, Module, Array)
+Module _ Array := Matrix => (M, w) -> M.cache#(symbol _, w) ??= (
+    if not M.cache#?(symbol ^, w) then oldinclusions(M, w)
+    else rightInverse(M.cache#(symbol ^, w),
+	DegreeLimit       => degree 0_M,
+	MinimalGenerators => true))
 
 -- TODO: can we return cached summands from the closest field extension?
 -- all cached keys: select(keys M.cache, k -> instance(k, Option) and k#0 === symbol directSummands)
 cachedSummands = M -> M.cache.summands ?? components M
+
+-----------------------------------------------------------------------------
+-- directSummands
+-----------------------------------------------------------------------------
 
 -- Note: M may need to be extended to a field extensions
 -- TODO: when splitting over a field extension, use cached splitting over summands
 directSummands = method(Options => DirectSummandsOptions)
 directSummands Module := List => opts -> M -> M.cache.summands ??= (
     checkRecursionDepth();
-    -- Note: rank does weird stuff if R is not a domain
-    -- Note: End does not work for WeylAlgebras or AssociativeAlgebras yet, nor does basis
+    strategy := opts.Strategy;
     R := ring M;
+    -- Note: End does not work for WeylAlgebras or AssociativeAlgebras yet, nor does basis
     if not isCommutative R and not isWeylAlgebra R then error "expected a commutative base ring";
+    -- Note: rank does weird stuff if R is not a domain
     if opts.Verbose then printerr("splitting module of rank: ", toString rank M);
-    -- TODO: is there an easy way to check if rank = 1 and M torsionfree?
-    -- TODO: extend the cached inclusion and projection maps to the summands
     if rank cover M <= 1 then return M.cache.summands = { M.cache.isIndecomposable = true; M };
-    if isDirectSum  M then return M.cache.summands = flatten apply(components M, directSummands_opts);
-    if isFreeModule M then return M.cache.summands = apply(numgens M, i -> target(M.cache#(symbol ^, [i]) = M^{i}));
-    -- Attempt to peel off line bundles by observing the degrees of generators
-    if opts.Strategy & 1 == 1 then (
-	if opts.Verbose then stderr << " -- peeling off rank 1 summands: " << flush;
-	L := directSummands(apply(-unique degrees M, d -> R^{d}), M, opts);
-	if 1 < #L then return M.cache.summands =
-	directSummands(directSum L, opts, Strategy => opts.Strategy ^^ 1));
+    if isDirectSum  M    then return M.cache.summands = splitComponents(M, components M, directSummands_opts);
+    if isFreeModule M    then return M.cache.summands = splitFreeModule(M, opts);
+    if strategy & 1 == 1 then return M.cache.summands = (
+	directSummands(directSum splitFreeSummands(M, opts), opts, Strategy => strategy - 1));
     -- TODO: where should indecomposability check happen?
     -- for now it's here, but once we figure out random endomorphisms
     -- without computing Hom, this would need to move.
-    -- Note: if an idempotent is found among columns of B,
-    -- it is cached under M.cache.idempotents, but idempotents
-    -- that are linear combinations cannot be found this way.
     -- Note: this may return null if it is inconclusive
-    if opts.Strategy & 2  == 2  and isIndecomposable M === true then { M } else
-    if opts.Strategy & 16 != 16 and isHomogeneous M
+    if strategy & 2  == 2  and isIndecomposable M === true then { M } else
+    if strategy & 16 != 16 and isHomogeneous M
     then summandsFromProjectors(M, opts)   -- see DirectSummands/homogeneous.m2
     else summandsFromIdempotents(M, opts)) -- see DirectSummands/idempotents.m2
 
 directSummands CoherentSheaf := List => opts -> F -> apply(
     directSummands(module prune F, opts), N -> sheaf(variety F, N))
+
+-----------------------------------------------------------------------------
 
 -- tests whether L (perhaps a line bundle) is a summand of M
 -- Limit => N _recommends_ stopping after peeling N summands of L
@@ -504,27 +555,6 @@ addHook((isIndecomposable, Module), Strategy => "IdempotentSearch", (opts, M) ->
 --addHook((isIndecomposable, Module), Strategy => TorsionFree, (opts, M) -> (
 --	if isTorsionFree M and isDomain M
 --	and degree M // degree R <= 1 then return true))
-
------------------------------------------------------------------------------
--- Split inclusions
------------------------------------------------------------------------------
-
-findSplitInclusion = method(Options => { Tries => 50 })
---tests if M is a split summand of N
-findSplitInclusion(Module, Module) := opts -> (M, N) -> (
-    h := for i to opts.Tries - 1 do (
-        b := homomorphism random Hom(M, N, MinimalGenerators => false);
-        c := homomorphism random Hom(N, M, MinimalGenerators => false);
-        if isIsomorphism(c * b) then break b);
-    if h === null then return "not known" else return h)
-
--- these are computed on-demand from the cached split surjection
-oldinclusions = lookup(symbol_, Module, Array)
-Module _ Array := Matrix => (M, w) -> M.cache#(symbol _, w) ??= (
-    if not M.cache#?(symbol ^, w) then oldinclusions(M, w)
-    else rightInverse(M.cache#(symbol ^, w),
-	DegreeLimit       => degree 0_M,
-	MinimalGenerators => true))
 
 -----------------------------------------------------------------------------
 -* Development section *-

@@ -65,8 +65,6 @@ summandsFromProjectors Module := opts -> M -> (
     projs := try findProjectors(M, opts) else return {M};
     summandsFromProjectors(M, projs, opts))
 
-isomorphism = (M, N) -> try last isIsomorphic(M, N)
-
 -- keep close to summandsFromIdempotents
 -- this algorithm is more efficient as it has a significant
 -- chance of splitting the module in a single iteration.
@@ -87,22 +85,18 @@ summandsFromProjectors(Module, List) := opts -> (M, ends) -> (
     (pr0, inc0) := opts#"Splitting" ?? (id_M, id_M);
     if opts.Verbose then printerr("splitting summands of ranks ",
 	toString apply(injs, i -> rank source i));
-    c := -1;
-    comps := flatten for n to #ends list (
+    c := -1; -- component counter
+    comps := for n to #ends list (
 	(pr, inc) := (projs#n, injs#n);
 	(N0, K0) := (target pr, source inc);
 	if (N := prune N0) == 0 then continue;
 	iso := try isomorphism(K0, N0);
 	p := inverse N.cache.pruningMap * pr;
 	i := try inc * iso * N.cache.pruningMap;
-	L := nonzero summandsFromProjectors(N, opts,
-	    "Splitting" => (p * pr0, try inc0 * i));
-	-- Projection maps to the summands
-	if #L > 1 then apply(#L, i ->
-	    M.cache#(symbol ^, [c += 1]) = N^[i] * p)
-	else M.cache#(symbol ^, [c += 1]) = p;
-	-- Inclusion maps are computed on-demand
-	L);
+	M.cache#(symbol ^, [c += 1]) = p; -- temporary
+	N.cache.components = summandsFromProjectors(N,
+	    opts, "Splitting" => (p * pr0, try inc0 * i));
+	N);
     --M.cache.Idempotents = apply(c, i -> M.cache#(symbol ^, [i]));
-    -- TODO: sort these, along with the projections
-    comps)
+    -- Finally, call a helper to add splitting maps
+    splitComponents(M, comps, components))
