@@ -53,8 +53,7 @@ frobeniusTwist(ZZ, Ring) := Ring => (e, S) -> (
     if char S == 0 or k_0 == 1 then return S;
     if not S.?cache then S.cache = new CacheTable;
     -- FIMXE: towers of pushforwards
-    if S.cache#?(symbol FrobeniusTwist, e) then S.cache#(symbol FrobeniusTwist, e)
-    else S.cache#(symbol FrobeniusTwist, e) = (
+    S.cache#(symbol FrobeniusTwist, e) ??= (
 	F := frobeniusTwistMap(e, ring ideal S);
 	quotient F ideal S))
 frobeniusTwist(ZZ, Ideal) := Ideal => (e, I) -> frobeniusTwist(e, module I)
@@ -93,30 +92,21 @@ frobeniusPushforward = method()
 frobeniusPushforward(ZZ, Ring)    := (e, R) -> frobeniusPushforward(e, module R)
 frobeniusPushforward(ZZ, Ideal)   := (e, I) -> frobeniusPushforward(e, quotient I)
 -- TODO: cache in a way that the second pushforward is the same as applying pushforward twice
-frobeniusPushforward(ZZ, Module)  := (e, M) -> (
-    if  M.cache#?(FrobeniusPushforward, e)
-    then M.cache#(FrobeniusPushforward, e)
-    else M.cache#(FrobeniusPushforward, e) = (
+frobeniusPushforward(ZZ, Module)  := (e, M) -> M.cache#(FrobeniusPushforward, e) ??= (
     f := presentation myPushForward(
 	frobeniusMap(e, ring M),
 	frobeniusTwist(e, M));
     if not isHomogeneous f then coker f
-    else directSum apply(decomposeFrobeniusPresentation(e, f), coker)))
+    else directSum apply(decomposeFrobeniusPresentation(e, f), coker))
 --
-frobeniusPushforward(ZZ, Matrix)  := (e, f) -> (
-    if  f.cache#?(FrobeniusPushforward, e)
-    then f.cache#(FrobeniusPushforward, e)
-    else f.cache#(FrobeniusPushforward, e) = (
+frobeniusPushforward(ZZ, Matrix)  := (e, f) -> f.cache#(FrobeniusPushforward, e) ??= (
     g := myPushForward(
 	frobeniusMap(e, ring f),
 	frobeniusTwist(e, f));
     if not isHomogeneous g then g
-    else directSum decomposeFrobeniusPresentation(e, g)))
+    else directSum decomposeFrobeniusPresentation(e, g))
 
-frobeniusPushforward(ZZ, SheafMap)  := (e, f) -> (
-    if  f.cache#?(FrobeniusPushforward, e)
-    then f.cache#(FrobeniusPushforward, e)
-    else f.cache#(FrobeniusPushforward, e) = (
+frobeniusPushforward(ZZ, SheafMap)  := (e, f) -> f.cache#(FrobeniusPushforward, e) ??= (
     --if not(isFreeModule module source f and isFreeModule module target f) then error "expected a map between free modules";
     g := myPushForward(
 	frobeniusMap(e, ring matrix f),
@@ -132,16 +122,11 @@ frobeniusPushforward(ZZ, SheafMap)  := (e, f) -> (
     (sPrestardegs, sPressrcdegs) := toSequence(-degrees sourcePres // p^e);
     Fgsource := sheaf coker map(R^sPrestardegs, R^sPressrcdegs, sub(sourcePres, R));
     sheaf map(module Fgtarget, module Fgsource, sub(cover Fg, R)))
-)
-
 
 --frobeniusPushforward(ZZ, Complex) := (e, C) -> () -- TODO
 
 frobeniusPushforward(ZZ, SheafOfRings)  := (e, N0) -> frobeniusPushforward(e, N0^1) -- TODO: is this cached?
-frobeniusPushforward(ZZ, CoherentSheaf) := (e, N) -> (
-    if  N.cache#?(FrobeniusPushforward, e)
-    then N.cache#(FrobeniusPushforward, e)
-    else N.cache#(FrobeniusPushforward, e) = (
+frobeniusPushforward(ZZ, CoherentSheaf) := (e, N) -> N.cache#(FrobeniusPushforward, e) ??= if e == 1 then (
     R := ring variety N;
     p := char R;
     FN := first components frobeniusPushforward(e, module N);
@@ -151,23 +136,21 @@ frobeniusPushforward(ZZ, CoherentSheaf) := (e, N) -> (
     Fmatrix := sub(presentation FN, R);
     (tardegs, srcdegs) := toSequence(-degrees Fmatrix // p^e);
     -- TODO: how long does this take? is it worth caching?
-    sheaf prune coker map(R^tardegs, R^srcdegs, Fmatrix))
-    )
+    sheaf prune coker map(R^tardegs, R^srcdegs, Fmatrix)) else (
+    frobeniusPushforward(1, frobeniusPushforward(e-1, N)))
+
 
 protect FrobeniusPullback
 frobeniusPullback = method()
 --frobeniusPullback(Thing, ZZ)  := (T, e) -> frobeniusPullback(e, T)
-frobeniusPullback(ZZ, Module) := (e, M) -> (
-    if  M.cache#?(FrobeniusPullback, e)
-    then M.cache#(FrobeniusPullback, e)
-    else M.cache#(FrobeniusPullback, e) = (
+frobeniusPullback(ZZ, Module) := (e, M) -> M.cache#(FrobeniusPullback, e) ??= (
 	R := ring M;
 	p := char R;
 	F := frobeniusMap(R, e);
 	R0 := source F;
 	A := presentation M;
 	A0 := sub(A, R0);
-	coker(F ** map(R0^(-(p^e) * degrees target A0), , A0))))
+	coker(F ** map(R0^(-(p^e) * degrees target A0), , A0)))
 frobeniusPullback(ZZ, CoherentSheaf) := (e, F) -> sheaf frobeniusPullback(e, module F)
 
 end--
