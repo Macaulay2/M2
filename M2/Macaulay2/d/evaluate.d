@@ -1323,10 +1323,49 @@ nullCoalescion(lhs:Code,rhs:Code):Expr := (
     else e);
 setup(QuestionQuestionS, nullify, nullCoalescion);
 
+-- TODO: is there a better way to declare this?
+augmentedAssignmentFun(c:augmentedAssignmentCode):Expr;
+header "static parse_Expr augmentedAssignmentFun(parse_augmentedAssignmentCode c);";
+augmentedParallelAssignmentFun(oper:Symbol, lhs:CodeSequence, rhs:Code):Expr:= (
+    n := length(lhs);
+    rexpr := eval(rhs);
+    when rexpr
+    is Error do return rexpr else nothing;
+    if n == 1 then rexpr = seq(rexpr);
+    when rexpr
+    is rvals:Sequence do (
+	if length(rvals) == n then (
+	    pos := codePosition(rhs);
+	    e := nullE;
+	    result := new Sequence len n at i do provide (
+		when e is Error do nullE
+		else (
+		    r := augmentedAssignmentFun(augmentedAssignmentCode(oper,
+			    lhs.i, Code(evaluatedCode(rvals.i, pos)), pos));
+		    when r is Error do (
+			e = r;
+			nullE)
+		    else r));
+	    when e
+	    is Error do e
+	    else if n == 1 then result.0 else Expr(result)))
+    else ParallelAssignmentError(n));
+
 augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
     when lookup(x.oper.word, augmentedAssignmentOperatorTable)
     is null do buildErrorPacket("unknown augmented assignment operator")
     is s:Symbol do (
+	-- parallel assignment?
+	when x.lhs
+	is y:sequenceCode do (
+	    return augmentedParallelAssignmentFun(x.oper, y.x, x.rhs))
+	is y:listCode do (
+	    return augmentedParallelAssignmentFun(x.oper, y.y, x.rhs))
+	is y:arrayCode do (
+	    return augmentedParallelAssignmentFun(x.oper, y.z, x.rhs))
+	is y:angleBarListCode do (
+	    return augmentedParallelAssignmentFun(x.oper, y.t, x.rhs))
+	else nothing;
 	-- evaluate the left-hand side first
 	lexpr := nullE;
 	if s.word.name === "??" -- x ??= y is treated like x ?? (x = y)
@@ -1349,33 +1388,32 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 		else return r)
 	    else return r);
 	-- if not, use default behavior
-	left := evaluatedCode(lexpr, codePosition(x.lhs));
+	c := Code(binaryCode(s, Code(evaluatedCode(lexpr, codePosition(x.lhs))),
+		x.rhs, x.position));
 	when x.lhs
 	is y:globalMemoryReferenceCode do (
-	    r := s.binary(Code(left), x.rhs);
-	    when r is e:Error do r
+	    r := eval(c);
+	    when r is Error do r
 	    else globalAssignment(y.var.frameindex, y.var, r))
 	is y:localMemoryReferenceCode do (
-	    r := s.binary(Code(left), x.rhs);
-	    when r is e:Error do r
+	    r := eval(c);
+	    when r is Error do r
 	    else localAssignment(y.nestingDepth, y.frameindex, r))
 	is y:threadMemoryReferenceCode do (
-	    r := s.binary(Code(left), x.rhs);
-	    when r is e:Error do r
+	    r := eval(c);
+	    when r is Error do r
 	    else globalAssignment(y.var.frameindex, y.var, r))
 	is y:binaryCode do (
-	    r := Code(binaryCode(s, Code(left), x.rhs, x.position));
 	    if y.oper == DotS.symbol || y.oper == SharpS.symbol
-	    then AssignElemFun(y.lhs, y.rhs, r)
+	    then AssignElemFun(y.lhs, y.rhs, c)
 	    else InstallValueFun(CodeSequence(
-		    convertGlobalOperator(y.oper), y.lhs, y.rhs, r)))
+		    convertGlobalOperator(y.oper), y.lhs, y.rhs, c)))
 	is y:adjacentCode do (
-	    r := Code(binaryCode(s, Code(left), x.rhs, x.position));
 	    InstallValueFun(CodeSequence(
-		    convertGlobalOperator(AdjacentS.symbol), y.lhs, y.rhs, r)))
+		    convertGlobalOperator(AdjacentS.symbol), y.lhs, y.rhs, c)))
 	is y:unaryCode do (
-	    r := Code(binaryCode(s, Code(left), x.rhs, x.position));
-	    UnaryInstallValueFun(convertGlobalOperator(y.oper), y.rhs, r))
+	    UnaryInstallValueFun(convertGlobalOperator(y.oper), y.rhs, c))
+	is nullCode do nullE -- for use w/ parallel assignment
 	else buildErrorPacket(
 	    "augmented assignment not implemented for this code")));
 
