@@ -24,7 +24,9 @@ findProjectors Module := opts -> M -> (
 	f0 := sub(K ** cover f, F);
 	-- finding eigenvalues would be faster if the matrix
 	-- was put in Jordan form first, but this is easier...
-	eigen := eigenvalues' f0; -- about 25% of computation
+	-- TODO: computing eigenvalues over coefficient field
+	-- would significantly speed up this step
+	eigen := eigenvalues'' f0; -- about 25% of computation
 	if #eigen <= 1 then (
 	    -- to be used as a suggestion in the error
 	    -- TODO: is there any way to tell if the module is indecomposable here?
@@ -36,7 +38,7 @@ findProjectors Module := opts -> M -> (
 	return for y in eigen list (f - y * id_M)^n
     );
     -- TODO: skip the "Try using" line if the field is large enough, e.g. L === K
-    -- TODO: if L is still null, chane the error
+    -- TODO: if L is still null, change the error
     error("no idempotent found after ", tries, " attempts. ",
 	"Try using changeBaseField with ", toString L))
 
@@ -56,7 +58,7 @@ findBasicProjectors = M -> (
     {})
 
 -- this algorithm does not depend on finding idempotents,
--- hence it is distict from the Meat-Axe algorithm.
+-- hence it is distinct from the Meat-Axe algorithm.
 summandsFromProjectors = method(Options => options findProjectors)
 summandsFromProjectors Module := opts -> M -> (
     if rank cover M <= 1 then return {M};
@@ -90,6 +92,7 @@ summandsFromProjectors(Module, List) := opts -> (M, ends) -> (
 	(pr, inc) := (projs#n, injs#n);
 	(N0, K0) := (target pr, source inc);
 	if (N := prune N0) == 0 then continue;
+	-- TODO: can we check if M has multiple copies of N quickly?
 	iso := try isomorphism(K0, N0);
 	p := inverse N.cache.pruningMap * pr;
 	i := try inc * iso * N.cache.pruningMap;

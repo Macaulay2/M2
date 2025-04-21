@@ -75,13 +75,27 @@ char Matrix := A -> A.cache.char ??= (
     T := (groundField ring A)(monoid[b]);
     B := sub(cover A, T);
     I := id_(source B);
-    det(B - T_0 * I))
+    -- TODO: this is a major step in large examples
+    det(B - T_0 * I, Strategy => Bareiss))
 
 eigenvalues' = A -> (
     Chi := char A;
     F := groundField ring A;
     if instance(F, InexactField) then roots Chi
     else flatten rationalPoints ideal Chi)
+
+fieldElements = method()
+fieldElements QuotientRing := ZZp -> toList(0..char ZZp - 1)
+fieldElements GaloisField  := GFq -> prepend_(0_GFq) apply(GFq.order - 1, i -> GFq_0^i)
+fieldElements' = memoize fieldElements -- FIXME: don't cache globally
+
+-- dumb search over finite fields ...
+eigenvalues'' = A -> (
+    R := ring A;
+    p := char R;
+    I := id_(target A);
+    if p == 0 or p > 1000 then return eigenvalues' A;
+    select(fieldElements' groundField R, e -> zero det(A - e * I)))
 
 largePower = (p,l,M) -> (
     if p^l < 2^30 then return M^(p^l);
@@ -130,7 +144,7 @@ findIdempotent Module        := opts -> M -> (
 	if fm == 0 then continue;
 	-- if at most one eigenvalue is found the module is probably indecomposable,
 	-- unless the characteristic polynomial has odd degree, then one is enough.
-	eigen := eigenvalues' fm;
+	eigen := eigenvalues'' fm;
 	-- we only want eigenvalues in F
 	eigen = nonnull apply(eigen, y -> try lift(y, F));
 	if #eigen <= 1 then (
@@ -153,7 +167,7 @@ findIdempotent Module        := opts -> M -> (
 	    if inexactFlag then idem = idem ^ (findErrorMargin idem);
 	    return idem));
     -- TODO: skip the "Try using" line if the field is large enough, e.g. L === K
-    -- TODO: if L is still null, chane the error
+    -- TODO: if L is still null, change the error
     error("no idempotent found after ", tries, " attempts. ",
 	"Try using changeBaseField with ", toString L))
 
@@ -187,7 +201,7 @@ findBasicIdempotent = M -> (
 
 -- this is essentially the Meat-Axe algorithm,
 -- but the process for finding an idempotent for
--- a module over a polynomial ring makes it distict.
+-- a module over a polynomial ring makes it distinct.
 summandsFromIdempotents = method(Options => options findIdempotent)
 summandsFromIdempotents Module := opts -> M -> (
     if rank cover M <= 1 then return {M};
