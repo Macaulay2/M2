@@ -31,7 +31,8 @@ Node
       of a hook will be passed on to it. Otherwise it will be ignored.
     Example
       foo ZZ := true >> opts -> args -> runHooks((foo, ZZ), args, opts);
-      debugLevel = 1
+      importFrom_Core "debugHooksLevel"
+      debugHooksLevel = 1
       assert( foo 1 == 15 )
       assert( foo(2, b => 9) == 10 )
       assert( foo 3 == 24 )
