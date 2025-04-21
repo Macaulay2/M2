@@ -285,7 +285,8 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 -- Details for developers
 -----------------------------------------------------------------------------
 
-linkToFile := (src, fn, pos) -> HREF { if installLayout === null then src else installLayout#"packages" | fn, fn | pos };
+-- temporarily disabled because sometime the links are broken
+linkToFile := (src, fn, pos) -> TT { fn | pos } -- HREF { if installLayout === null then src else installLayout#"packages" | fn, fn | pos };
 
 -- TODO: support more objects
 getSource = method()
