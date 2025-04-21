@@ -8,6 +8,9 @@
 -- 2. implement diagonalize for matrices (and later, complexes)
 -- 3. find a way to restrict and pass End to the summands
 -- 4. make summands work over ZZ (currently rank fails)
+-- 5. compute a general endomorphism without computing End
+-- 6. speed up computing eigenvalues over ZZ/p and GF(q)
+-- 7. once an indecomposable summand is found, call summands(N, M)
 ---------------------------------------------------------------------------
 newPackage(
     "DirectSummands",
@@ -360,7 +363,7 @@ generalEndomorphism(Matrix, Nothing, Matrix) := Matrix => o -> (N, null, inc) ->
 -- to produce a general endomorphism of N
 generalEndomorphism(Module, Matrix) := Matrix => o -> (N, pr) -> (
     -- assert(N === target pr);
-    -- TODO: currently this still computed End_0(N)
+    -- TODO: currently this still computes End_0(N)
     -- figure out a way to compute the inverse without doing so
     inv := rightInverse(pr,
 	DegreeLimit => degree 0_N,
@@ -419,8 +422,7 @@ Module _ Array := Matrix => (M, w) -> M.cache#(symbol _, w) ??= (
 	DegreeLimit       => degree 0_M,
 	MinimalGenerators => true))
 
--- TODO: can we return cached summands from the closest field extension?
--- all cached keys: select(keys M.cache, k -> instance(k, Option) and k#0 === symbol directSummands)
+-- TODO: can we return cached summands from the closest subfield?
 cachedSummands = M -> M.cache.summands ?? components M
 
 -----------------------------------------------------------------------------
@@ -428,7 +430,6 @@ cachedSummands = M -> M.cache.summands ?? components M
 -----------------------------------------------------------------------------
 
 -- Note: M may need to be extended to a field extensions
--- TODO: when splitting over a field extension, use cached splitting over summands
 directSummands = method(Options => DirectSummandsOptions)
 directSummands Module := List => opts -> M -> M.cache.summands ??= (
     checkRecursionDepth();
