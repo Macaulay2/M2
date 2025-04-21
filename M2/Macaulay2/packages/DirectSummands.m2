@@ -11,8 +11,8 @@
 ---------------------------------------------------------------------------
 newPackage(
     "DirectSummands",
-    Version => "0.2",
-    Date => "April 1st 2025",
+    Version => "0.3",
+    Date => "April 20th 2025",
     Headline => "decompositions of modules and coherent sheaves",
     Authors => {
 	{ Name => "Devlin Mallory", Email => "malloryd@math.utah.edu", HomePage => "https://math.utah.edu/~malloryd/"},
@@ -28,7 +28,7 @@ newPackage(
 	"Varieties",
 	},
     AuxiliaryFiles => true,
-    DebuggingMode => true
+    DebuggingMode => false
     )
 
 export {
@@ -391,7 +391,7 @@ findSplitInclusion(Module, Module) := opts -> (M, N) -> (
 splitFreeModule = (M, opts) -> apply(numgens M, i -> target(M.cache#(symbol ^, [i]) = M^{i}))
 
 -- helper for splitting free summands by observing the degrees of generators
-splitFreeSummands = (M, opts) -> M.cache#"FreeSummands" = (
+splitFreeSummands = (M, opts) -> M.cache#"FreeSummands" ??= (
     if opts.Verbose then stderr << " -- splitting free summands: " << flush;
     directSummands(R := ring M; apply(-unique degrees M, d -> R^{d}), M, opts))
 
