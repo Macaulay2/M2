@@ -41,3 +41,15 @@ TEST ///
   -- TODO: have a flag to test for twists of input summands as well
   summands({image F.dd_1, coker vars R}, M)
 ///
+
+///
+  restart
+  debug needsPackage "DirectSummands"
+  K = GF(9)
+  K = ZZ/7
+  R = K[b]
+  f = random(R^95, R^95);
+  elapsedTime select(7, i -> 0 == det(f - i * id_(target f))) -- only 33s for 250x250 over ZZ/7
+  elapsedTime select(K.order, i -> 0 == det(f - K_0^i * id_(target f))) -- only 33s for 250x250 over ZZ/7
+  scan(20, n -> elapsedTime eigenvalues' random(R^(n+5), R^(n+5)));
+///
