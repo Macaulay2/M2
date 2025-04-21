@@ -105,7 +105,7 @@ Node
   References
     -- TODO: node to be written, will point to our book, Hal's book, Mike's Arizona notes, Sage, etc:
     @UL {
-	LI { HREF{"Macaulay2.com", "https://macaulay2.com/"}, " website, for online documentation, binary distributions, etc." },
+	LI { HREF{"https://macaulay2.com/", "Macaulay2.com"}, " website, for online documentation, binary distributions, etc." },
 	LI { SPAN "Computations in algebraic geometry with Macaulay2,
 	    Algorithms and Computations in Mathematics (No. 8),
 	    edited by David Eisenbud, Daniel R. Grayson, Michael E. Stillman, and Bernd Sturmfels,
