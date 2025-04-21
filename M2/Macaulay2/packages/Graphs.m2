@@ -393,14 +393,14 @@ vertices Digraph := List => D -> D#(symbol vertexSet)
 -------------------------------------------
 
 displayGraph = method()
-displayGraph (String, String, Digraph) := (dotfilename, jpgfilename, G) -> (
+displayGraph (String, String, Digraph) := (dotfilename, pngfilename, G) -> (
      writeDotFile(dotfilename, G);
-     runcmd(graphs'DotBinary  | " -Tjpg " | dotfilename | " -o " | jpgfilename);
-     show URL("file://" | toAbsolutePath jpgfilename);
+     runcmd(graphs'DotBinary  | " -Tpng " | dotfilename | " -o " | pngfilename);
+     show URL("file://" | toAbsolutePath pngfilename);
      )
 displayGraph (String, Digraph) := (dotfilename, G) -> (
-     jpgfilename := temporaryFileName() | ".jpg";
-     displayGraph(dotfilename, jpgfilename, G);
+     pngfilename := temporaryFileName() | ".png";
+     displayGraph(dotfilename, pngfilename, G);
      )
 displayGraph Digraph := G -> (
      dotfilename := temporaryFileName() | ".dot";
@@ -2119,13 +2119,13 @@ doc ///
     Headline
         displays a digraph or graph using Graphviz
     Usage
-        displayGraph(dotFileName,jpgFileName,G)
+        displayGraph(dotFileName,pngFileName,G)
         displayGraph(dotFileName,G)
         displayGraph G
     Inputs
         G:Digraph
         dotFileName:String
-        jpgFileName:String
+        pngFileName:String
     Description
         Text
             Displays a digraph or graph using Graphviz
