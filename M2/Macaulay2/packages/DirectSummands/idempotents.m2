@@ -108,7 +108,7 @@ findErrorMargin = m -> ceiling(log_10 2^(precision ring m))
 
 -- TODO: findIdem right now will fail if K is not L[a]/f(a);
 -- in general, will need to find a primitive element first
-findIdempotent = method(Options => DirectSummandsOptions ++ { "SplitSurjection" => null })
+findIdempotent = method(Options => DirectSummandsOptions ++ { "Splitting" => null })
 findIdempotent CoherentSheaf := opts -> M -> findIdempotent(module M, opts)
 findIdempotent Module        := opts -> M -> (
     R := ring M;
@@ -122,10 +122,10 @@ findIdempotent Module        := opts -> M -> (
     L := null;
     -- this is used in generalEndomorphism
     -- to avoid recomputing the Hom module
-    surj := opts#"SplitSurjection" ?? id_M;
+    (pr, inc) := opts#"Splitting" ?? (id_M, id_M);
     tries := opts.Tries ?? defaultNumTries p;
     for c to tries - 1 do (
-	f := generalEndomorphism(M, surj);
+	f := generalEndomorphism(M, pr, inc);
 	fm := sub(K ** cover f, F);
 	if fm == 0 then continue;
 	-- if at most one eigenvalue is found the module is probably indecomposable,
@@ -198,27 +198,34 @@ summandsFromIdempotents Module := opts -> M -> (
 
 -- keep close to summandsFromProjectors
 summandsFromIdempotents(Module, Matrix) := opts -> (M, h) -> summandsFromIdempotents(M, {h}, opts)
-summandsFromIdempotents(Module, List)   := opts -> (M, idems) -> (
+summandsFromIdempotents(Module, List)   := opts -> (M, ends) -> (
     checkRecursionDepth();
-    -- maps M_i -> M from the kernel summands
-    injs := apply(idems, h -> inducedMap(M, ker h));
+    -- maps from kernel summands and to cokernel summands
+    injs  := apply(ends, h -> inducedMap(M, ker h));
+    projs := apply(ends, h -> inducedMap(coker h, M));
+    -- composition of all endomorphisms is the complement
+    comp := product ends;
+    injs  = append(injs,  inducedMap(M, image comp));
+    projs = append(projs, inducedMap(image comp, M, comp));
+    -- assert(0 == intersect apply(ends, ker));
     -- assert(0 == intersect apply(injs, image));
-    -- the map \bigoplus M_i -> M, whose cokernel is the complement of M_i
-    iota := matrix { injs };
-    -- assert first isIsomorphic(M, coker iota ++ directSum(coker \ idems));
-    -- this is a split surjection from a module whose
-    -- degree zero endomorphisms have already been computed
-    surj := opts#"SplitSurjection" ?? id_M;
-    c := -1;
+    -- assert first isIsomorphic(M, directSum apply(projs, target));
+    -- this is the splitting (surjection, inclusion) of M to a module
+    -- whose degree zero endomorphisms have already been computed.
+    (pr0, inc0) := opts#"Splitting" ?? (id_M, id_M);
     if opts.Verbose then printerr("splitting summands of ranks ",
-	toString prepend_(rank coker iota) apply(injs, i -> rank source i));
-    comps := flatten for pr in append(idems, iota) list (
+	toString apply(injs, i -> rank source i));
+    c := -1;
+    comps := flatten for n to #ends list (
+	(pr, inc) := (projs#n, injs#n);
+	(N0, K0) := (target pr, source inc);
+	if (N := prune N0) == 0 then continue;
 	-- TODO: can we check if M has multiple copies of N quickly?
-	N := prune coker pr;
-	if N == 0 then continue;
-	p := inverse N.cache.pruningMap * inducedMap(coker pr, M);
+	iso := isomorphism(K0, N0);
+	p := inverse N.cache.pruningMap * pr;
+	i := try inc * iso * N.cache.pruningMap;
 	L := nonzero summandsFromIdempotents(N, opts,
-	    "SplitSurjection" => p * surj);
+	    "Splitting" => (p * pr0, try inc0 * i));
 	-- Projection maps to the summands
 	if #L > 1 then apply(#L, i ->
 	    M.cache#(symbol ^, [c += 1]) = N^[i] * p)

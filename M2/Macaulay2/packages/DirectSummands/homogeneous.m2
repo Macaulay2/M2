@@ -1,6 +1,6 @@
 needsPackage "RationalPoints2"
 
-findProjectors = method(Options => DirectSummandsOptions ++ { "SplitSurjection" => null })
+findProjectors = method(Options => DirectSummandsOptions ++ { "Splitting" => null })
 findProjectors Module := opts -> M -> (
     R := ring M;
     p := char R;
@@ -10,12 +10,12 @@ findProjectors Module := opts -> M -> (
     L := null;
     -- this is used in generalEndomorphism
     -- to avoid recomputing the Hom module
-    surj := opts#"SplitSurjection" ?? id_M;
+    (pr, inc) := opts#"Splitting" ?? (id_M, id_M);
     -- TODO: sort the degrees to make finding eigenvalues faster?
     -- degs := unique sort degrees M;
     tries := opts.Tries ?? defaultNumTries p;
     for c to tries - 1 do (
-	f := generalEndomorphism(M, surj); -- about 20% of computation
+	f := generalEndomorphism(M, pr, inc); -- about 20% of computation
 	if f == 0 then continue;
 	-- eigenvalues of f are necessarily over the field,
 	-- and we can prove that f can be diagonalized over R
@@ -65,30 +65,38 @@ summandsFromProjectors Module := opts -> M -> (
     projs := try findProjectors(M, opts) else return {M};
     summandsFromProjectors(M, projs, opts))
 
+isomorphism = (M, N) -> try last isIsomorphic(M, N)
+
 -- keep close to summandsFromIdempotents
 -- this algorithm is more efficient as it has a significant
 -- chance of splitting the module in a single iteration.
 summandsFromProjectors(Module, Matrix) := opts -> (M, pr) -> summandsFromProjectors(M, {pr}, opts)
-summandsFromProjectors(Module, List) := opts -> (M, projs) -> (
-    -- assert(0 == intersect apply(projs, ker));
-    -- maps M_i -> M from the kernel summands
-    injs := apply(projs, pr -> inducedMap(M, ker pr));
+summandsFromProjectors(Module, List) := opts -> (M, ends) -> (
+    -- maps from kernel summands and to cokernel summands
+    injs  := apply(ends, h -> inducedMap(M, ker h));
+    projs := apply(ends, h -> inducedMap(coker h, M));
+    -- composition of all endomorphisms is the complement
+    comp := product ends;
+    injs  = append(injs,  inducedMap(M, image comp));
+    projs = append(projs, inducedMap(image comp, M, comp));
+    -- assert(0 == intersect apply(ends, ker));
     -- assert(0 == intersect apply(injs, image));
-    -- the map \bigoplus M_i -> M, whose cokernel is the complement of M_i
-    iota := matrix { injs };
-    -- assert first isIsomorphic(M, coker iota ++ directSum(coker \ projs));
-    -- this is a split surjection from a module whose
-    -- degree zero endomorphisms have already been computed
-    surj := opts#"SplitSurjection" ?? id_M;
-    c := -1;
+    -- assert first isIsomorphic(M, directSum apply(projs, target));
+    -- this is the splitting (surjection, inclusion) of M to a module
+    -- whose degree zero endomorphisms have already been computed.
+    (pr0, inc0) := opts#"Splitting" ?? (id_M, id_M);
     if opts.Verbose then printerr("splitting summands of ranks ",
-	toString prepend_(rank coker iota) apply(injs, i -> rank source i));
-    comps := flatten for pr in append(projs, iota) list (
-	N := prune coker pr;
-	if N == 0 then continue;
-	p := inverse N.cache.pruningMap * inducedMap(coker pr, M);
+	toString apply(injs, i -> rank source i));
+    c := -1;
+    comps := flatten for n to #ends list (
+	(pr, inc) := (projs#n, injs#n);
+	(N0, K0) := (target pr, source inc);
+	if (N := prune N0) == 0 then continue;
+	iso := try isomorphism(K0, N0);
+	p := inverse N.cache.pruningMap * pr;
+	i := try inc * iso * N.cache.pruningMap;
 	L := nonzero summandsFromProjectors(N, opts,
-	    "SplitSurjection" => p * surj);
+	    "Splitting" => (p * pr0, try inc0 * i));
 	-- Projection maps to the summands
 	if #L > 1 then apply(#L, i ->
 	    M.cache#(symbol ^, [c += 1]) = N^[i] * p)

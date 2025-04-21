@@ -23,11 +23,13 @@ TEST /// -- direct summands of a free module
 ///
 
 TEST /// -- direct summands of a multigraded free module
+  debug needsPackage "DirectSummands"
   -- ~0.05s
   R = QQ[x,y,z] ** QQ[a,b,c]
-  M = R^{{0,0},{0,1},{1,0},{-1,0},{0,-1},{1,-1},{-1,1}}
+  M = R^{{1, 0}, {1, -1}, {0, 0}, {-1, 0}}
   assert same(M, directSum summands M)
-  assert first isIsomorphic(directSum summands M, M)
+  assert same(M, directSum sort summandsFromProjectors M)
+  assert same(M, directSum sort summandsFromIdempotents M)
 ///
 
 TEST /// -- direct summands of a ring
@@ -35,8 +37,9 @@ TEST /// -- direct summands of a ring
   S = ZZ/3[x,y,z]
   R = ZZ/3[x,y,z,w]/(x^3+y^3+z^3+w^3)
   f = map(R, S)
+  -- TODO: find a non-F-split example
   M = pushForward(f, module R)
-  assert(M == S^{0,-1,-2})
+  assert(summands M == {S^{0}, S^{-1}, S^{-2}})
 ///
 
 TEST /// -- direct summands of a finite dimensional algebra
