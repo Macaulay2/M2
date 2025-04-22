@@ -20,6 +20,7 @@ load "./OldChainComplexes/from-kernel-doc.m2"
 load "./OldChainComplexes/from-symbol-underscore-doc.m2" -- TODO: tease out modules vs complexes?
 load "./OldChainComplexes/from-caret.m2"
 load "./OldChainComplexes/from-map-doc.m2"
+load "./OldChainComplexes/resolution-doc.m2"
   -- TODO: setting C_3 = ... no longer allowed!
 
 doc ///
