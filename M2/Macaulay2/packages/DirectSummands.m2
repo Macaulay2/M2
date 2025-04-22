@@ -36,11 +36,15 @@ newPackage(
 
 export {
     -- methods
+    "isIndecomposable",
     "directSummands", "summands" => "directSummands",
     "findIdempotent", "findIdem" => "findIdempotent",
+    "findProjectors",
     "findSplitInclusion",
+    "generalEndomorphism",
     "isomorphismTally",
-    "isIndecomposable",
+    "tallySummands",
+    "isomorphism",
     -- symbols
     "Tries",
     -- frobenius methods
