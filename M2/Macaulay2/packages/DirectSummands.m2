@@ -274,6 +274,7 @@ smartBasis = (deg, M) -> (
 
 -- matrix of (degree zero) generators of End M
 -- TODO: rename this
+-- also see gensHom0
 gensEnd0 = M -> M.cache#"End0" ??= (
     -- TODO: need to pass options from Hom + choose the coefficient field
     zdeg := if isHomogeneous M then degree 0_M;
@@ -395,7 +396,6 @@ splitFreeModule = (M, opts) -> apply(numgens M, i -> target(M.cache#(symbol ^, [
 
 -- helper for splitting free summands by observing the degrees of generators
 splitFreeSummands = (M, opts) -> M.cache#"FreeSummands" ??= (
-    if opts.Verbose then stderr << " -- splitting free summands: " << flush;
     directSummands(R := ring M; apply(-unique degrees M, d -> R^{d}), M, opts))
 
 -- helper for splitting a module with known components
@@ -466,54 +466,65 @@ directSummands CoherentSheaf := List => opts -> F -> apply(
 directSummands(Module, Module) := List => opts -> (L, M) -> (
     checkRecursionDepth();
     if ring L =!= ring M then error "expected objects over the same ring";
-    if rank L  >= rank M then return {M};
-    n := opts.Limit ?? numgens M;
+    if rank L  >  rank M then return {M};
+    limit := opts.Limit ?? numgens M;
     tries := opts.Tries ?? defaultNumTries char ring M;
     if 1 < #cachedSummands M then return flatten apply(cachedSummands M, N -> directSummands(L, N, opts));
-    if 1 < n then (
-	-- TODO: can we detect multiple summands of L at once?
+    if 1 < limit then (
+	if opts.Verbose then stderr << " -- splitting free summands: " << flush;
 	comps := new MutableList from {M};
-	for i to n - 1 do (
+	comps = for i to limit - 1 do (
 	    LL := directSummands(L, M, opts, Limit => 1);
-	    if #LL == 1 then return sort toList comps;
+	    if #LL == 1 then break sort toList comps;
 	    comps#(#comps-1) = L;
-	    comps##comps = M = LL#1)
+	    comps##comps = M = LL#1);
+	if opts.Verbose then stderr << endl << flush;
+	return comps
     );
     zdeg := degree 0_M;
+    -- TODO: can we detect multiple summands of L at once?
+    -- perhaps find a projector onto a summand with several copies?
+    gensHom0 := (N, M) -> (
+	H := Hom(N, M,
+	    DegreeLimit => zdeg,
+	    MinimalGenerators => false);
+	smartBasis(zdeg, H));
     if isFreeModule L then (
-	B := smartBasis(zdeg, Hom(M, L, DegreeLimit => zdeg, MinimalGenerators => false));
+	B := gensHom0(M, L); if numcols B == 0 then return {M};
 	-- Previous alternative:
-	-- h := for i from 0 to numcols B - 1 do ( isSurjective(b := homomorphism B_{i}) ...)
+	-- h := for i from 0 to numcols B - 1 do (
+	--     isSurjective(b := homomorphism B_{i}) ...)
 	h := for i to tries - 1 do (
 	    b := homomorphism(B * random source B);
 	    if isSurjective b then break matrix {L_0} // b))
     else (
         -- we look for a composition L -> M -> L which is the identity
-        B = smartBasis(zdeg, Hom(L, M, DegreeLimit => zdeg, MinimalGenerators => false));
-        if numcols B == 0 then return {M};
-        C := smartBasis(zdeg, Hom(M, L, DegreeLimit => zdeg, MinimalGenerators => false));
-        if numcols C == 0 then return {M};
+	B  = gensHom0(L, M); if numcols B == 0 then return {M};
+	C := gensHom0(M, L); if numcols C == 0 then return {M};
         -- attempt to find a random isomorphism
         h = for i to tries - 1 do (
 	    b := homomorphism(B * random source B);
 	    c := homomorphism(C * random source C);
             --TODO: change isIsomorphism to isSurjective?
 	    if isIsomorphism(c * b) then break b);
-        --is it worth doing the following lines? when does the random strategy above fail?
         if h === null then h = (
+	    -- TODO: is it worth doing the following lines? when does the random strategy above fail?
+	    printerr "summands got to this part, it's probably useful!";
 	    if opts.Strategy & 8 == 8 then (
 	        -- precomputing the Homs can sometimes be a good strategy
-	        Bhoms := apply(numcols B, i -> homomorphism B_{i});
-	        Choms := select(apply(numcols C, i -> homomorphism C_{i}), j -> isSurjective j);
-	        pos := position'(Choms, Bhoms,
-		    (c, b) -> isIsomorphism(c * b));
+		-- TODO: confirm that this injectivity check is worthwhile and not slow
+		Bhoms := select(apply(numcols B, i -> homomorphism B_{i}), isInjective);
+		Choms := select(apply(numcols C, i -> homomorphism C_{i}), isSurjective);
+		pos := position'(Choms, Bhoms, (c, b) -> isIsomorphism(c * b));
 	        if pos =!= null then last pos)
 	    else (
 	        -- and sometimes too memory intensive
-	        ind := position'(numcols C, numcols B,
-                    --how to skip c if homomorphism C_{c} is not surjective?
-		    (c, b) -> isSurjective homomorphism C_{c} and isIsomorphism(homomorphism C_{c} * homomorphism B_{b}));
-	        if ind =!= null then homomorphism B_{last ind})););
+	        ind := position'(numcols C, numcols B, (c, b) ->
+		    isSurjective homomorphism C_{c}
+		    and isInjective homomorphism B_{b}
+		    and isIsomorphism(homomorphism C_{c} * homomorphism B_{b}));
+	        if ind =!= null then homomorphism B_{last ind})
+	));
     if h === null then return {M};
     if opts.Verbose then stderr << concatenate(rank L : ".") << flush;
     {L, prune coker h})
