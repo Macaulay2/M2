@@ -15,7 +15,7 @@ CPPFLAGS := -I. -I@srcdir@  -I@srcdir@/..  $(CPPFLAGS) \
 CXXFLAGS += -std=gnu++17 -Wno-sign-conversion #-Wno-unused-local-typedefs -coverage
 
 # note: on some machines, gcc can't find -lstdc++
-LOADLIBES += @BUILTLIBS@ @LINALGLIBS@ @LIBS@ @FCLIBS@ -pthread -lgtest
+LOADLIBES += @BUILTLIBS@ @LINALGLIBS@ @LIBS@ @FCLIBS@ -lgtest -pthread
 
 .PHONY: place_into_lib runtests
 
