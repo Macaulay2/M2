@@ -1343,7 +1343,7 @@ AS_IF([test "x$BUILD_gtest" = "xno"],
      AC_CHECK_HEADER([gtest/gtest.h],
         [AC_MSG_CHECKING([whether gtest library is installed])
          SAVELIBS=$LIBS
-         LIBS="$LIBS -lgtest"
+         LIBS="-lgtest $LIBS"
          AC_LINK_IFELSE(
              [AC_LANG_PROGRAM([
                  #include <gtest/gtest.h>
