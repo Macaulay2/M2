@@ -85,7 +85,7 @@ eigenvalues' = A -> (
     else flatten rationalPoints ideal Chi)
 
 fieldElements = method()
-fieldElements QuotientRing := ZZp -> toList(0..char ZZp - 1)
+fieldElements QuotientRing := ZZp -> apply(ZZp.order, i -> i_ZZp)
 fieldElements GaloisField  := GFq -> prepend_(0_GFq) apply(GFq.order - 1, i -> GFq_0^i)
 fieldElements' = memoize fieldElements -- FIXME: don't cache globally
 
