@@ -93,9 +93,10 @@ fieldElements' = memoize fieldElements -- FIXME: don't cache globally
 eigenvalues'' = A -> (
     R := ring A;
     p := char R;
+    F := groundField R;
     I := id_(target A);
-    if p == 0 or p > 1000 then return eigenvalues' A;
-    select(fieldElements' groundField R, e -> zero det(A - e * I)))
+    if p == 0 or not F.?order or F.order > 1000 then return eigenvalues' A;
+    select(fieldElements' F, e -> zero det(A - e * I)))
 
 largePower = (p,l,M) -> (
     if p^l < 2^30 then return M^(p^l);
