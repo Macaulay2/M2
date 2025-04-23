@@ -66,7 +66,7 @@ preSmithNormalForm = method(
 	  }
      )
 preSmithNormalForm Matrix := o -> (f) -> (
-     pruneSyz := m -> generators gb(syz m, StopWithMinimalGenerators=>true, Syzygies=>false, ChangeMatrix=>false);
+     pruneSyz := m -> generators gb(syz m, Syzygies=>false, ChangeMatrix=>false);
      if not isFreeModule source f or not isFreeModule target f then error "expected map between free modules";
      (tchg,schg,keepz) := (o.ChangeMatrix#0, o.ChangeMatrix#1,o.KeepZeroes);
      (tmat,smat) := (null,null);	-- null represents the identity, lazily
@@ -119,7 +119,7 @@ preSmithNormalForm Matrix := o -> (f) -> (
 	  g = transpose h;
 	  op = not op;
 	  count = count + 1;
-	  );
+	  ); -- end while
      if op then g = transpose g;
      if tchg then (
 	  if tmat === null
@@ -141,10 +141,17 @@ preSmithNormalForm Matrix := o -> (f) -> (
 	       else schange = smat));
      g = lift(g,R);
      -- D == P f Q ;
-     D := map(R^(numgens target g),,g);			    -- this makes D homogeneous, if possible
-     P := if tchg then map(target D,target f,lift(tchange,R));
-     Q := if schg then map(source f, source D,lift(schange,R));
-     ( D, P, Q ))
+     D := if not keepz then map(R^(numgens target g),,g) else (
+	 m := numgens target f;
+	 n := numgens source f;
+	 m' := numgens target g;
+	 n' := numgens source g;
+	 (map(R^m',R^n',g) | map(R^m',R^(n-n'),0)) || map(R^(m-m'),R^n,0) 
+	 );			    -- this makes D homogeneous, if possible
+     P := if tchg then map(target D, target f, lift(tchange,R));
+     Q := if schg then map(source f, source D, lift(schange,R));
+     ( D, P, Q )
+     )
 
  
 complementOkay = method()     -- modeled after isAffineRing, but allows ZZ, too
