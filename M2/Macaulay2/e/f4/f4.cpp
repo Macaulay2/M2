@@ -627,7 +627,11 @@ void F4GB::gauss_reduce(bool diagonalize)
     return mVectorArithmetic->allocateElementArray(ncols);
   });
   
-  //std::cout << "mNumThreads: " << mNumThreads << std::endl; TODO: where to display this info
+  if (M2_gbTrace >= 2) {
+    // TODO: where to display this info
+    std::cout << "Number of Threads Used: " << mNumThreads << std::endl; 
+  }
+  
   mScheduler.execute([&] {
     mtbb::parallel_for(mtbb::blocked_range<int>{0, INTSIZE(spair_rows)},
                        [&](const mtbb::blocked_range<int>& r)
