@@ -23,8 +23,8 @@ document {
 	 M = matrix{{1,2,3},{1,34,45},{2213,1123,6543},{0,0,0}}
 	 (D,P,Q) = smithNormalForm M
 	 D == P * M * Q
-	 (D,P) = smithNormalForm(M, ChangeMatrix=>{true,false})
-	 D = smithNormalForm(M, ChangeMatrix=>{false,false}, KeepZeroes=>true)
+	 (D,P) = smithNormalForm(M, ChangeMatrix=>{true,false}, KeepZeroes=>false)
+	 D = smithNormalForm(M, ChangeMatrix=>{false,false})
      ///,
      PARA{
 	  "This function is the underlying routine used by ", TO minimalPresentation,

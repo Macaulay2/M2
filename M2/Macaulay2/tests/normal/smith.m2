@@ -65,3 +65,12 @@ assert(first smithNormalForm M == snfM)
 R = QQ[x]
 h = matrix{{x^3+1},{x^2+1}}
 chk h
+
+-- this is the beginning of `examples "smithNormalForm"`
+M = matrix{{1,2,3},{1,34,45},{2213,1123,6543},{0,0,0}}
+(D,P,Q) = smithNormalForm M
+assert(D == P * M * Q)
+(D,P) = smithNormalForm(M, ChangeMatrix=>{true,false}, KeepZeroes=>false)
+assert(numrows D == 3)
+D = smithNormalForm(M, ChangeMatrix=>{false,false})
+assert(numrows D == numrows M and numcols D == numcols M)
