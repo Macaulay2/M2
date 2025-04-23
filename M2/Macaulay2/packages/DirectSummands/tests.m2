@@ -189,10 +189,13 @@ TEST /// -- testing inhomogeneous
   assert(3 == #summandsFromIdempotents M)
   assert(3 == #summandsFromProjectors M)
   --
+  -- FIXME: broken when using multiple idempotents at once
   M = coker matrix matrix"1,y,z;y,1,x;z,x,1"
   assert(2 == #summands M)
   assert(2 == #summandsFromIdempotents M)
-  -- assert(3 == #summandsFromProjectors M) -- TODO: why does this return 3?
+  R = S_(ideal vars S)
+  M = coker matrix matrix"1,y,z;y,1,x;z,x,1"
+  assert(1 == #summands M)
   --
   -- FIXME:
   S = QQ[x,y,z];

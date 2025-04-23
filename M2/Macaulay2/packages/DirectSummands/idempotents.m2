@@ -117,6 +117,15 @@ lift(CC, CC_*) := opts -> (r, C) -> numeric(precision C, r)
 -- adjust as needed LOL
 findErrorMargin = m -> ceiling(log_10 2^(precision ring m))
 
+-- TODO: move to LocalRings?
+residueField = method()
+residueField Ring      := R -> quotient ideal vars R
+residueField LocalRing := R -> target R.residueMap
+
+residueMap' = method()
+residueMap' Ring      := R -> map(quotient ideal vars R, R, vars R % ideal vars R)
+residueMap' LocalRing := R -> map(quotient ideal R.maxIdeal, R, vars baseRing R % R.maxIdeal)
+
 -----------------------------------------------------------------------------
 -- findIdempotents
 -----------------------------------------------------------------------------
@@ -130,7 +139,7 @@ findIdempotents Module        := opts -> M -> (
     p := char R;
     F := groundField R;
     e := fieldExponent R;
-    K := quotient ideal gens R;
+    K := residueMap' R;
     V := K ** M;
     inexactFlag := instance(F, InexactField);
     l := if p == 0 then e else max(e, ceiling log_p numgens M);
@@ -190,8 +199,12 @@ findBasicIdempotent = M -> (
     if 0 < #M.cache.Idempotents
     then return (first M.cache.Idempotents, false);
     R := ring M;
+    K := residueMap' R;
+    -- FIXME: this may not be correct
+    if instance(R, LocalRing) then (
+	M = liftUp M;
+	K = residueMap' ring M);
     B := gensEnd0 M;
-    K := coker vars R;
     -- whether all non-identity endomorphisms are zero mod m
     -- if this remains true till the end, the module is
     -- certifiably indecomposable.

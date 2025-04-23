@@ -28,7 +28,8 @@ newPackage(
 	"PushForward",     -- only for frobenius.m2
 	"RationalPoints2", -- for rationalPoints in findIdempotents
 	"Truncations",     -- for effGenerators
-	"Varieties",
+	"LocalRings",      -- for the local examples
+	"Varieties",       -- for the geometric examples
 	},
     AuxiliaryFiles => true,
     DebuggingMode => false
@@ -310,12 +311,15 @@ random       Module  := Vector => o ->     M  -> (
     if isHomogeneous M then random(degree 1_(ring M), M, o) else localRandom(M, o))
 
 generalEndomorphism = method(Options => options random)
-generalEndomorphism Module := Matrix => o -> M -> (
+generalEndomorphism Module := Matrix => o -> M0 -> (
+    R := ring M0;
+    -- TODO: avoid this hack for local rings
+    M := if instance(R, LocalRing) then liftUp M0 else M0;
     B := gensEnd0 M;
     r := if isHomogeneous M
     then random(source B, o)
     else localRandom(source B, o);
-    homomorphism(B * r))
+    R ** homomorphism(B * r))
 -- the sheaf needs to be pruned to prevent missing endomorphisms
 generalEndomorphism CoherentSheaf := SheafMap => o -> F -> (
     sheaf generalEndomorphism(module prune F, o))
