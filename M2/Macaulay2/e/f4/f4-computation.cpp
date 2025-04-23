@@ -32,6 +32,16 @@ GBComputation *createF4GB(const Matrix *m,
 {
   const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
   const Ring *K = R->getCoefficients();
+  if (not m->is_homogeneous())
+    {
+      ERROR("expected homogeneous input for Algorithm => LinearAlgebra groebner basis");
+      return nullptr;
+    }
+  if (not K->isFinitePrimeField() and not K->isGaloisField())
+    {
+      ERROR("expected coefficient ring to be a finite field for Algorithm => LinearAlgebra groebner basis");
+      return nullptr;
+    }
   auto vectorArithmetic = new VectorArithmetic(K);
   // TODO: code here used to detect whether R, K is a valid ring here
 
