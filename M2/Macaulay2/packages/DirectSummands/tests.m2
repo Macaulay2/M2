@@ -180,7 +180,7 @@ TEST /// -- testing in char 0
   -- FIXME scan(20, i -> assert(set summands coker matrix {{x,y},{-y,x}} == set {cokernel matrix {{x-ii*y}}, cokernel matrix {{x+ii*y}}}))
 ///
 
-TEST /// -- testing inhomogeneous
+TEST /// -- testing inhomogeneous examples
   debug needsPackage "DirectSummands"
   S = GF(2,2)[x,y,z];
   -- homogeneous baseline, used as control
@@ -189,20 +189,22 @@ TEST /// -- testing inhomogeneous
   assert(3 == #summandsFromIdempotents M)
   assert(3 == #summandsFromProjectors M)
   --
-  -- FIXME: broken when using multiple idempotents at once
+  -- TODO: this is locally zero, but can we diagonalize it?
   M = coker matrix matrix"1,y,z;y,1,x;z,x,1"
-  assert(2 == #summands M)
-  assert(2 == #summandsFromIdempotents M)
+  assert(summands M == {M})
+  assert(summandsFromIdempotents M == {M})
   R = S_(ideal vars S)
   M = coker matrix matrix"1,y,z;y,1,x;z,x,1"
-  assert(1 == #summands M)
+  assert(summands M == {M})
+  assert(summandsFromIdempotents M == {M})
   --
-  -- FIXME:
   S = QQ[x,y,z];
   M = coker matrix matrix"x,y,z;y,z,x;z,x,y"
+  assert(summands M == {M})
+  assert(summandsFromIdempotents M == {M})
   M = coker matrix matrix"1,y,z;y,1,x;z,x,1"
-  -- findBasicIdempotent M
-  -- findIdempotents M
+  assert(summands M == {M})
+  assert(summandsFromIdempotents M == {M})
 ///
 
 TEST ///

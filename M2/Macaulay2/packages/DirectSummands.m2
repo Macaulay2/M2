@@ -108,6 +108,12 @@ submatrixByDegrees(Matrix, Sequence) := (m, degs) -> (
     row := if tar =!= null then positions(degrees target m, deg -> member(deg, tar));
     submatrix(m, row, col))
 
+-- rankWarn = true
+-- rank' = M -> if groundField ring M =!= ZZ then rank M else try rank M else (
+--     if rankWarn then ( rankWarn = false;
+-- 	printerr "warning: rank over integers is not well-defined; returning zero");
+--     0)
+
 -- this defines sorting on modules and sheaves
 CoherentSheaf ? CoherentSheaf :=
 Module ? Module := (M, N) -> if rank M != rank N then rank M ? rank N else degrees M ? degrees N
@@ -168,6 +174,19 @@ sheaf' = (X, M) -> try sheaf(X, M) else (
     error "extension of the coefficient field of the base variety is not implemented")
 
 changeBaseField(GaloisField, CoherentSheaf) := (L, F) -> sheaf'(variety F, changeBaseField(L, module F))
+
+importFrom_Varieties "flattenModule"
+prune' = method()
+prune' Module := M0 -> M0.cache.prune' ??= (
+    M := prune M0;
+    R := ring M;
+    if isHomogeneous M0
+    or instance(R, LocalRing) then return M;
+    S := ambient R;
+    MS := flattenModule M;
+    Sm := localRing(S, ideal gens S);
+    MSm := prune(MS ** Sm);
+    R ** liftUp MSm)
 
 nonzero = x -> select(x, i -> i != 0)
 nonnull = x -> select(x, i -> i =!= null)
@@ -428,9 +447,9 @@ splitComponents = (M, comps, splitfunc) -> (
 
 splitComponentsBasic = (M, ends, opts) -> (
     -- the coker of each idempotent gives a summand, while
-    L1 := prune \ apply(ends, coker);
+    L1 := prune' \ apply(ends, coker);
     -- the image of their composition is the complement.
-    L2 := prune \ { image product ends };
+    L2 := prune' \ { image product ends };
     -- TODO: call something like summands(L, M) here?
     flatten apply(nonzero join(L1, L2), summands_opts))
 
@@ -455,6 +474,7 @@ directSummands Module := List => opts -> M -> M.cache.summands ??= (
     checkRecursionDepth();
     strategy := opts.Strategy;
     R := ring M;
+    if prune' M == 0 then return { M };
     -- Note: End does not work for WeylAlgebras or AssociativeAlgebras yet, nor does basis
     if not isCommutative R and not isWeylAlgebra R then error "expected a commutative base ring";
     -- Note: rank does weird stuff if R is not a domain
@@ -550,7 +570,7 @@ directSummands(Module, Module) := List => opts -> (L, M) -> (
     );
     (pr, inc) := if h =!= null then h else return {M};
     if opts.Verbose then stderr << concatenate(rank L : ".") << flush;
-    N = prune coker inc;
+    N = prune' coker inc;
     iso := inverse N.cache.pruningMap;
     M.cache#(symbol ^, [0]) = pr;
     M.cache#(symbol ^, [1]) = iso * inducedMap(coker inc, M);

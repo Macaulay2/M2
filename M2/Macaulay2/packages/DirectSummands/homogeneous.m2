@@ -63,7 +63,7 @@ summandsFromProjectors = method(Options => options findProjectors)
 summandsFromProjectors Module := opts -> M -> (
     if not isHomogeneous M then error "expected homogeneous module";
     if opts.Verbose then printerr "splitting summands using projectors";
-    if rank cover M <= 1 then return {M};
+    if rank cover M <= 1 or prune' M == 0 then return {M};
     -- TODO: if M.cache.Idempotents is nonempty, should we use it here?
     -- maps M -> M whose (co)kernel is a (usually indecomposable) summand
     projs := try findProjectors(M, opts) else return {M};
@@ -97,7 +97,7 @@ summandsFromProjectors(Module, List) := opts -> (M, ends) -> (
     comps := for n to #ends list (
 	(pr, inc) := (projs#n, injs#n);
 	(N0, K0) := (target pr, source inc);
-	if (N := prune N0) == 0 then continue;
+	if (N := prune' N0) == 0 then continue;
 	-- TODO: can we check if M has multiple copies of N quickly?
 	iso := try isomorphism(K0, N0);
 	p := inverse N.cache.pruningMap * pr;

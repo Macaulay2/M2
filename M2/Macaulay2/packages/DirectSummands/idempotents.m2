@@ -227,7 +227,7 @@ findBasicIdempotent = M -> (
 summandsFromIdempotents = method(Options => options findIdempotents)
 summandsFromIdempotents Module := opts -> M -> (
     if opts.Verbose then printerr "splitting summands using idempotents";
-    if rank cover M <= 1 then return {M};
+    if rank cover M <= 1 or prune' M == 0 then return {M};
     M.cache.Idempotents ??= {};
     idems := if 0 < #M.cache.Idempotents then M.cache.Idempotents
     else try findIdempotents(M, opts) else return {M};
@@ -259,7 +259,7 @@ summandsFromIdempotents(Module, List)   := opts -> (M, ends) -> (
     comps := for n to #ends list (
 	(pr, inc) := (projs#n, injs#n);
 	(N0, K0) := (target pr, source inc);
-	if (N := prune N0) == 0 then continue;
+	if (N := prune' N0) == 0 then continue;
 	-- TODO: can we check if M has multiple copies of N quickly?
 	iso := try isomorphism(K0, N0);
 	p := inverse N.cache.pruningMap * pr;
