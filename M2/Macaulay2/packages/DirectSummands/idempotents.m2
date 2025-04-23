@@ -123,9 +123,9 @@ findErrorMargin = m -> ceiling(log_10 2^(precision ring m))
 
 -- TODO: findIdem right now will fail if K is not L[a]/f(a);
 -- in general, will need to find a primitive element first
-findIdempotent = method(Options => DirectSummandsOptions ++ { "Splitting" => null })
-findIdempotent CoherentSheaf := opts -> M -> findIdempotent(module M, opts)
-findIdempotent Module        := opts -> M -> (
+findIdempotents = method(Options => DirectSummandsOptions)
+findIdempotents CoherentSheaf := opts -> M -> findIdempotents(module M, opts)
+findIdempotents Module        := opts -> M -> (
     R := ring M;
     p := char R;
     F := groundField R;
@@ -138,6 +138,7 @@ findIdempotent Module        := opts -> M -> (
     -- this is used in generalEndomorphism
     -- to avoid recomputing the Hom module
     (pr, inc) := opts#"Splitting" ?? (id_M, id_M);
+    limit := opts.Limit ?? numgens M;
     tries := opts.Tries ?? defaultNumTries p;
     for c to tries - 1 do (
 	f := generalEndomorphism(M, pr, inc);
@@ -157,20 +158,27 @@ findIdempotent Module        := opts -> M -> (
 	    if #eigen == 1 and F === L
 	    or #eigen == 0 then continue);
 	-- try to find idempotens from eigenvalues
-        opers := flatten for y in eigen list (
-	    if p == 0 then (1, f - y*id_M, fm - y*id_V) else (
-		for j from 0 to e list (j, f - y*id_M, largePower'(p, j+1, largePower(p, l, fm - y*id_V)))));
-	idem := position(opers, (j, g, gm) -> isWeakIdempotent gm and not isSurjective gm and gm != 0);
-        if idem =!= null then (
-	    (j, g, gm) := opers_idem;
-	    idem = if p == 0 then g else largePower'(p, j+1, largePower(p, l, g));
-	    -- for inexact fields, we compose the idempotent until the determinant is zero
-	    if inexactFlag then idem = idem ^ (findErrorMargin idem);
-	    return idem));
+	isUsable := gm -> isWeakIdempotent gm and not isSurjective gm and gm != 0;
+	largePow := (j, g) -> largePower'(p, j+1, largePower(p, l, g));
+	-- TODO: use limit here
+        idems := nonnull flatten for y in eigen list (
+	    if p > 0 then for j from 0 to e do (
+		if isUsable largePow(j, fm - y*id_V) then break (j, f - y*id_M))
+	    else if isUsable(fm - y*id_V) then (1, f - y*id_M));
+	idems = select(idems, (j, f) -> image f != 0 and coker f != 0);
+	if #idems == 0 then continue;
+	return apply(idems, (j, g) -> (
+		idem := if p == 0 then g else largePow(j, g);
+		-- for inexact fields, we compose the idempotent until the determinant is zero
+		if inexactFlag then idem = idem ^ (findErrorMargin idem);
+		idem)));
     -- TODO: skip the "Try using" line if the field is large enough, e.g. L === K
     -- TODO: if L is still null, change the error
     error("no idempotent found after ", tries, " attempts. ",
 	"Try using changeBaseField with ", toString L))
+
+-- for backwards compatibility
+findIdempotent = options findIdempotents >> opts -> M -> first findIdempotents(M, opts)
 
 protect Idempotents
 
@@ -203,19 +211,22 @@ findBasicIdempotent = M -> (
 -- this is essentially the Meat-Axe algorithm,
 -- but the process for finding an idempotent for
 -- a module over a polynomial ring makes it distinct.
-summandsFromIdempotents = method(Options => options findIdempotent)
+summandsFromIdempotents = method(Options => options findIdempotents)
 summandsFromIdempotents Module := opts -> M -> (
     if opts.Verbose then printerr "splitting summands using idempotents";
     if rank cover M <= 1 then return {M};
     M.cache.Idempotents ??= {};
     idems := if 0 < #M.cache.Idempotents then M.cache.Idempotents
-    else try findIdempotent(M, opts) else return {M};
+    else try findIdempotents(M, opts) else return {M};
     summandsFromIdempotents(M, idems, opts))
 
 -- keep close to summandsFromProjectors
 summandsFromIdempotents(Module, Matrix) := opts -> (M, h) -> summandsFromIdempotents(M, {h}, opts)
 summandsFromIdempotents(Module, List)   := opts -> (M, ends) -> (
     checkRecursionDepth();
+    -- in some examples, we use barebones splitComponentsBasic
+    if opts.Strategy & 4 == 4 or not isHomogeneous M
+    then return splitComponentsBasic(M, ends, opts);
     -- maps from kernel summands and to cokernel summands
     injs  := apply(ends, h -> inducedMap(M, ker h));
     projs := apply(ends, h -> inducedMap(coker h, M));

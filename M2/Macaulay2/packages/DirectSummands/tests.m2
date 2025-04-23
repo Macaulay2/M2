@@ -1,3 +1,9 @@
+///
+restart
+debug needsPackage "DirectSummands"
+errorDepth = 2
+///
+
 TEST /// -- basic test
   -- ~0.2s
   S = QQ[x,y]
@@ -66,7 +72,7 @@ TEST /// -- direct summands over field extensions
   elapsedTime B = basis({0}, A); -- ~0.23s
   elapsedTime B = smartBasis({0}, A); -- ~0.03s
   *-
-  -- if this test fails, check if "try findIdempotent M" if hiding any unexpected errors
+  -- if this test fails, check if "try findIdempotents M" if hiding any unexpected errors
   -- FIXME: this is slow because random homomorphisms shouldn't be over the extended field
   elapsedTime assert({1, 2, 2, 2} == rank \ summands M) -- 2.28s
   elapsedTime assert({1, 2, 2, 2} == rank \ summands changeBaseField(GF 7, M)) -- 2.87s -> 2.05
@@ -95,6 +101,9 @@ TEST /// -- testing the local case
   -- D_4^1 singularity
   R = k[x,y,z]/(x^2*y + x*y^2 + x*y*z + z^2)
   M = frobeniusPushforward(1, R)
+  errorDepth=2
+  --elapsedTime summands(M, Verbose => true);
+  --elapsedTime summandsFromIdempotents(M, Verbose => true);
   -- TODO
   -- the structure is significantly altered by homogenizing it
   -- simpler example: nodal cubic in affine vs projective plane
@@ -190,7 +199,7 @@ TEST /// -- testing inhomogeneous
   M = coker matrix matrix"x,y,z;y,z,x;z,x,y"
   M = coker matrix matrix"1,y,z;y,1,x;z,x,1"
   -- findBasicIdempotent M
-  -- findIdempotent M
+  -- findIdempotents M
 ///
 
 TEST ///
@@ -219,10 +228,10 @@ TEST ///
   F2 = frobeniusPushforward(1, L1#1);
   elapsedTime assert({7} == rank \ summands F2) -- 2s
   L = potentialExtension F2
-  elapsedTime L2 = summands changeBaseField(L, F2); -- 14s projectors, 85s idempotents
+  elapsedTime L2 = summands changeBaseField(L, F2); -- projectors 14s, idempotents 85s->45s
   assert(toList(7:1) == rank \ L2)
   -- tests largepowers, but is very slow:
-  -- findIdempotent changeBaseField(L, F2)
+  -- findIdempotents changeBaseField(L, F2)
 ///
 
 ///
@@ -266,7 +275,7 @@ TEST ///
   assert(2 == #summands coker matrix {{a, b^3}, {-b^3, a}})
 
   M = coker matrix {{a, b^3}, {-b^3, a}}
-  findIdempotent M
+  findIdempotents M
   summands changeBaseField(2, M)
 ///
 

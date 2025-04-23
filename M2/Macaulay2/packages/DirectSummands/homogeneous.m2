@@ -1,6 +1,6 @@
 needsPackage "RationalPoints2"
 
-findProjectors = method(Options => DirectSummandsOptions ++ { "Splitting" => null })
+findProjectors = method(Options => DirectSummandsOptions)
 findProjectors Module := opts -> M -> (
     R := ring M;
     p := char R;
@@ -61,6 +61,7 @@ findBasicProjectors = M -> (
 -- hence it is distinct from the Meat-Axe algorithm.
 summandsFromProjectors = method(Options => options findProjectors)
 summandsFromProjectors Module := opts -> M -> (
+    if not isHomogeneous M then error "expected homogeneous module";
     if opts.Verbose then printerr "splitting summands using projectors";
     if rank cover M <= 1 then return {M};
     -- TODO: if M.cache.Idempotents is nonempty, should we use it here?
@@ -73,6 +74,10 @@ summandsFromProjectors Module := opts -> M -> (
 -- chance of splitting the module in a single iteration.
 summandsFromProjectors(Module, Matrix) := opts -> (M, pr) -> summandsFromProjectors(M, {pr}, opts)
 summandsFromProjectors(Module, List) := opts -> (M, ends) -> (
+    checkRecursionDepth();
+    -- in some examples, we use barebones splitComponentsBasic
+    if opts.Strategy & 4 == 4 or not isHomogeneous M
+    then return splitComponentsBasic(M, ends, opts);
     -- maps from kernel summands and to cokernel summands
     injs  := apply(ends, h -> inducedMap(M, ker h));
     projs := apply(ends, h -> inducedMap(coker h, M));

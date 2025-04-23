@@ -26,7 +26,7 @@ newPackage(
 	"Isomorphism",     -- for isIsomorphic
 	"Polyhedra",       -- for coneFromVData and coneComp
 	"PushForward",     -- only for frobenius.m2
-	"RationalPoints2", -- for rationalPoints in findIdempotent
+	"RationalPoints2", -- for rationalPoints in findIdempotents
 	"Truncations",     -- for effGenerators
 	"Varieties",
 	},
@@ -38,8 +38,8 @@ export {
     -- methods
     "isIndecomposable",
     "directSummands", "summands" => "directSummands",
-    "findIdempotent", "findIdem" => "findIdempotent",
     "findProjectors",
+    "findIdempotents", "findIdem" => "findIdempotents",
     "findSplitInclusion",
     "generalEndomorphism",
     "isomorphismTally",
@@ -72,12 +72,13 @@ importFrom_Core {
 -- defined here and used in idempotents.m2 and homogeneous.m2
 DirectSummandsOptions = new OptionTable from {
     Limit             => null, -- used in directSummands(Module, Module)
-    Strategy          => 7,    -- Strategy is a bitwise sum of the following:
+    Strategy          => 3,    -- Strategy is a bitwise sum of the following:
     -- 1  => use degrees of generators as heuristic to peel off line bundles first
     -- 2  => check generators of End_0 as heuristic for finding idempotents
-    -- 4  => whether we are splitting coherent sheaves, so skip line bundles
+    -- 4  => use splitComponentsBasic, skips computing splitting maps
     -- 8  => precompute Homs before looking for idempotents
     -- 16 => use summandsFromIdempotents even in graded case
+    "Splitting"       => null,
     Tries             => null, -- see defaultNumTries below
     Verbose           => false -- whether to print extra debugging info
 }
@@ -411,15 +412,23 @@ splitFreeSummands = (M, opts) -> M.cache#"FreeSummands" ??= (
 splitComponents = (M, comps, splitfunc) -> (
     n := #comps;
     c := -1; -- summand counter
-    projs := if 1 < n then apply(n, i -> M^[i]) else { id_M };
+    projs := if 1 < n then apply(n, i -> try M^[i]) else { id_M };
     flatten apply(comps, projs, (N, p) -> (
 	L := splitfunc N;
 	-- Projection maps to the summands
-	if #L > 1 then apply(#L, i ->
+	try if #L > 1 then apply(#L, i ->
 	    M.cache#(symbol ^, [c += 1]) = N^[i] * p)
 	else M.cache#(symbol ^, [c += 1]) = p;
 	-- Inclusion maps are computed on-demand
 	L)))
+
+splitComponentsBasic = (M, ends, opts) -> (
+    -- the coker of each idempotent gives a summand, while
+    L1 := prune \ apply(ends, coker);
+    -- the image of their composition is the complement.
+    L2 := prune \ { image product ends };
+    -- TODO: call something like summands(L, M) here?
+    flatten apply(nonzero join(L1, L2), summands_opts))
 
 -- these are computed on-demand from the cached split surjection
 oldinclusions = lookup(symbol_, Module, Array)

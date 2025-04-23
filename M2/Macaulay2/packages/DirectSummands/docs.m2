@@ -60,7 +60,7 @@ Node
       L = summands M
       assert first isIsomorphic(M, directSum L)
   SeeAlso
-    findIdempotent
+    findIdempotents
 ///
 
 -- Template:
