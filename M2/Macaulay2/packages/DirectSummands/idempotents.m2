@@ -205,6 +205,7 @@ findBasicIdempotent = M -> (
 -- a module over a polynomial ring makes it distinct.
 summandsFromIdempotents = method(Options => options findIdempotent)
 summandsFromIdempotents Module := opts -> M -> (
+    if opts.Verbose then printerr "splitting summands using idempotents";
     if rank cover M <= 1 then return {M};
     M.cache.Idempotents ??= {};
     idems := if 0 < #M.cache.Idempotents then M.cache.Idempotents

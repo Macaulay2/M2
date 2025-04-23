@@ -116,6 +116,9 @@ position' = method()
 position'(VisibleList, VisibleList, Function) := (B, C, f) -> for b in B do for c in C do if f(b, c) then return (b, c)
 position'(ZZ,          ZZ,          Function) := (B, C, f) -> position'(0..B-1, 0..C-1, f)
 
+scan' = method()
+scan'(VisibleList, VisibleList, Function) := (B, C, f) -> for b in B do for c in C do f(b,c)
+
 char SheafOfRings := O -> char variety O
 
 GF'ZZ'ZZ = memoize (lookup(GF, ZZ, ZZ)) (options GF)
@@ -408,7 +411,7 @@ splitFreeSummands = (M, opts) -> M.cache#"FreeSummands" ??= (
 splitComponents = (M, comps, splitfunc) -> (
     n := #comps;
     c := -1; -- summand counter
-    projs := apply(n, i -> M^[i]);
+    projs := if 1 < n then apply(n, i -> M^[i]) else { id_M };
     flatten apply(comps, projs, (N, p) -> (
 	L := splitfunc N;
 	-- Projection maps to the summands
@@ -447,7 +450,8 @@ directSummands Module := List => opts -> M -> M.cache.summands ??= (
     if isDirectSum  M    then return M.cache.summands = splitComponents(M, components M, directSummands_opts);
     if isFreeModule M    then return M.cache.summands = splitFreeModule(M, opts);
     if strategy & 1 == 1 then return M.cache.summands = (
-	directSummands(directSum splitFreeSummands(M, opts), opts, Strategy => strategy - 1));
+	splitComponents(M, splitFreeSummands(M, opts),
+	    directSummands_(opts, Strategy => strategy - 1)));
     -- TODO: where should indecomposability check happen?
     -- for now it's here, but once we figure out random endomorphisms
     -- without computing Hom, this would need to move.
@@ -470,20 +474,26 @@ directSummands CoherentSheaf := List => opts -> F -> apply(
 directSummands(Module, Module) := List => opts -> (L, M) -> (
     checkRecursionDepth();
     if ring L =!= ring M then error "expected objects over the same ring";
-    if rank L  >  rank M then return {M};
+    if rank L  >  rank M
+    or rank L  >= rank M and isFreeModule M then return {M};
     limit := opts.Limit ?? numgens M;
     tries := opts.Tries ?? defaultNumTries char ring M;
     if 1 < #cachedSummands M then return flatten apply(cachedSummands M, N -> directSummands(L, N, opts));
     if 1 < limit then (
-	if opts.Verbose then stderr << " -- splitting free summands: " << flush;
+	N := M;
+	M.cache#(symbol ^, [0]) = id_M;
+	if opts.Verbose then stderr << " -- splitting summands of degree " << degrees L << ": " << flush;
 	comps := new MutableList from {M};
-	comps = for i to limit - 1 do (
-	    LL := directSummands(L, M, opts, Limit => 1);
-	    if #LL == 1 then break sort toList comps;
-	    comps#(#comps-1) = L;
-	    comps##comps = M = LL#1);
+	for i to limit - 1 do (
+	    pr := M.cache#(symbol ^, [#comps-1]);
+	    LL := directSummands(L, N, opts, Limit => 1);
+	    if #LL == 1 then break;
+	    M.cache#(symbol ^, [#comps])   = N^[1] * pr;
+	    M.cache#(symbol ^, [#comps-1]) = N^[0] * pr;
+	    comps#(#comps-1) = L; -- === LL#0
+	    comps##comps = N = LL#1);
 	if opts.Verbose then stderr << endl << flush;
-	return comps
+	return toList comps
     );
     zdeg := degree 0_M;
     -- TODO: can we detect multiple summands of L at once?
@@ -493,45 +503,45 @@ directSummands(Module, Module) := List => opts -> (L, M) -> (
 	    DegreeLimit => zdeg,
 	    MinimalGenerators => false);
 	smartBasis(zdeg, H));
-    if isFreeModule L then (
-	B := gensHom0(M, L); if numcols B == 0 then return {M};
+    h := catch if isFreeModule L then (
+	C := gensHom0(M, L); if numcols C == 0 then return {M};
 	-- Previous alternative:
-	-- h := for i from 0 to numcols B - 1 do (
-	--     isSurjective(b := homomorphism B_{i}) ...)
-	h := for i to tries - 1 do (
-	    b := homomorphism(B * random source B);
-	    if isSurjective b then break matrix {L_0} // b))
+	-- h := for i from 0 to numcols C - 1 do (
+	--     isSurjective(c := homomorphism C_{i}) ...)
+	for i to tries - 1 do (
+	    c := homomorphism(C * random source C);
+	    if isSurjective c then throw (c, rightInverse c)))
     else (
         -- we look for a composition L -> M -> L which is the identity
-	B  = gensHom0(L, M); if numcols B == 0 then return {M};
-	C := gensHom0(M, L); if numcols C == 0 then return {M};
+	B := gensHom0(L, M); if numcols B == 0 then return {M};
+	C  = gensHom0(M, L); if numcols C == 0 then return {M};
         -- attempt to find a random isomorphism
-        h = for i to tries - 1 do (
+        for i to tries - 1 do (
 	    b := homomorphism(B * random source B);
 	    c := homomorphism(C * random source C);
             --TODO: change isIsomorphism to isSurjective?
-	    if isIsomorphism(c * b) then break b);
-        if h === null then h = (
-	    -- TODO: is it worth doing the following lines? when does the random strategy above fail?
-	    printerr "summands got to this part, it's probably useful!";
-	    if opts.Strategy & 8 == 8 then (
-	        -- precomputing the Homs can sometimes be a good strategy
-		-- TODO: confirm that this injectivity check is worthwhile and not slow
-		Bhoms := select(apply(numcols B, i -> homomorphism B_{i}), isInjective);
-		Choms := select(apply(numcols C, i -> homomorphism C_{i}), isSurjective);
-		pos := position'(Choms, Bhoms, (c, b) -> isIsomorphism(c * b));
-	        if pos =!= null then last pos)
-	    else (
-	        -- and sometimes too memory intensive
-	        ind := position'(numcols C, numcols B, (c, b) ->
-		    isSurjective homomorphism C_{c}
-		    and isInjective homomorphism B_{b}
-		    and isIsomorphism(homomorphism C_{c} * homomorphism B_{b}));
-	        if ind =!= null then homomorphism B_{last ind})
-	));
-    if h === null then return {M};
+	    if isIsomorphism(c * b) then throw (c, b));
+	-- TODO: is it worth doing the following lines? when does the random strategy above fail?
+	printerr "summands got to this part, it's probably useful!";
+	if opts.Strategy & 8 == 8 then (
+	    -- precomputing the Homs can sometimes be a good strategy
+	    -- TODO: confirm that this injectivity check is worthwhile and not slow
+	    Bhoms := select(apply(numcols B, i -> homomorphism B_{i}), isInjective);
+	    Choms := select(apply(numcols C, i -> homomorphism C_{i}), isSurjective);
+	    scan'(Choms, Bhoms, (c, b) -> if isIsomorphism(c * b) then throw (c, b)))
+	-- but sometimes too memory intensive
+	else scan'(numcols C, numcols B, (ci, bi) ->
+	    if isSurjective(c := homomorphism C_{ci})
+	    and isInjective(b := homomorphism B_{bi})
+	    and isIsomorphism(c * b) then throw (c, b))
+    );
+    (pr, inc) := if h =!= null then h else return {M};
     if opts.Verbose then stderr << concatenate(rank L : ".") << flush;
-    {L, prune coker h})
+    N = prune coker inc;
+    iso := inverse N.cache.pruningMap;
+    M.cache#(symbol ^, [0]) = pr;
+    M.cache#(symbol ^, [1]) = iso * inducedMap(coker inc, M);
+    {L, N})
 
 directSummands(CoherentSheaf, CoherentSheaf) := List => opts -> (L, G) -> apply(
     directSummands(module prune L, module prune G, opts), N -> sheaf(variety L, N))
@@ -540,7 +550,7 @@ directSummands(CoherentSheaf, CoherentSheaf) := List => opts -> (L, G) -> apply(
 directSummands(List, CoherentSheaf) :=
 directSummands(List, Module) := List => opts -> (Ls, M) -> sort (
     if 1 < #cachedSummands M then flatten apply(cachedSummands M, N -> directSummands(Ls, N, opts))
-    else fold(Ls, {M}, (L, LL) -> join(drop(LL, -1), directSummands(L, last LL, opts))))
+    else fold(Ls, {M}, (L, LL) -> splitComponents(M, LL, directSummands_(opts, L))))
 
 -----------------------------------------------------------------------------
 -- isIndecomposable

@@ -61,6 +61,7 @@ findBasicProjectors = M -> (
 -- hence it is distinct from the Meat-Axe algorithm.
 summandsFromProjectors = method(Options => options findProjectors)
 summandsFromProjectors Module := opts -> M -> (
+    if opts.Verbose then printerr "splitting summands using projectors";
     if rank cover M <= 1 then return {M};
     -- TODO: if M.cache.Idempotents is nonempty, should we use it here?
     -- maps M -> M whose (co)kernel is a (usually indecomposable) summand

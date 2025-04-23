@@ -75,6 +75,53 @@ TEST /// -- direct summands over field extensions
 ///
 
 TEST ///
+  debug needsPackage "DirectSummands"
+  K = GF(7, 2)
+  R = K[x..z]/(x^3+y^3+z^3)
+  M = coker map(R^{6:{-1}}, R^{6:{-2}}, {
+	  {(-a-2)*z, -2*y, (-a+1)*y, 0, x, (-2*a+1)*z},
+	  {(2*a+3)*y, 0, x, (a+2)*z, (3*a-3)*z, y},
+	  {x, (3*a-2)*z, (-a+2)*z, (-2*a+1)*y, (2*a-3)*y, 0},
+	  {(2*a-1)*z, (a+1)*y, (-3*a+1)*y, x, 0, (-2*a-1)*z},
+	  {(-a+3)*y, x, 0, (-2*a-2)*z, z, -3*a*y},
+	  {0, a*z, -2*z, (a-3)*y, (2*a-1)*y, x}})
+  assert({1,1} == rank \ summandsFromProjectors M)
+  assert({1,1} == rank \ summandsFromIdempotents M)
+///
+
+TEST /// -- testing the local case
+  debug needsPackage "DirectSummands"
+  k = ZZ/2
+  -- D_4^1 singularity
+  R = k[x,y,z]/(x^2*y + x*y^2 + x*y*z + z^2)
+  M = frobeniusPushforward(1, R)
+  -- TODO
+  -- the structure is significantly altered by homogenizing it
+  -- simpler example: nodal cubic in affine vs projective plane
+  k = ZZ/2
+  R = k[x,y,z,h]/(x^2*y + x*y^2 + x*y*z + z^2*h)
+  M = frobeniusPushforward(1, R)
+  elapsedTime assert(toList(8:1) == rank \ summandsFromProjectors M)  -- 6s
+  elapsedTime assert(toList(8:1) == rank \ summandsFromIdempotents M) -- 10s
+  --
+  end
+  -- FIXME: these don't finish???
+  R = k[x,y]/(x^2-y^3-y^2)
+  M = frobeniusPushforward(1, R)
+  elapsedTime assert(toList(4:1) == rank \ summandsFromProjectors(M, Verbose => true))
+  assert(toList(4:1) == rank \ summandsFromIdempotents M)
+  R = k[x,y,z]/(x^2*z-y^3-y^2*z)
+  assert(toList(4:1) == rank \ summandsFromProjectors M)
+  assert(toList(4:1) == rank \ summandsFromIdempotents M)
+///
+
+TEST /// -- Grassmannian example
+  X = Proj quotient Grassmannian(1, 3, CoefficientRing => ZZ/3);
+  elapsedTime F = frobeniusPushforward(1, OO_X); -- <1s in char 2 & 3
+  elapsedTime assert(splice{65:1, 8:2} == rank \ summands F) -- ~8s
+///
+
+TEST ///
   -- ~1.1s
   R = ZZ/32003[x,y,z]/(x^3, x^2*y, x*y^2, y^4, y^3*z)
   C = res(coker vars R, LengthLimit => 3)
@@ -147,6 +194,18 @@ TEST /// -- testing inhomogeneous
 ///
 
 TEST ///
+  kk = ZZ/101
+  S = kk[x,y,z]
+  P = Proj S
+  T = tangentSheaf P
+  R = S/(x*y-z^2)
+  M = module T ** R
+  -- the module doesn't split, but the sheaf does
+  assert(1 == length summands M)
+  assert(2 == length summands sheaf M)
+///
+
+TEST ///
   debug needsPackage "DirectSummands"
   K = ZZ/7
   R = K[x,y,z]/(x^3+y^3+z^3)
@@ -160,22 +219,10 @@ TEST ///
   F2 = frobeniusPushforward(1, L1#1);
   elapsedTime assert({7} == rank \ summands F2) -- 2s
   L = potentialExtension F2
-  elapsedTime L2 = summands changeBaseField(L, F2); -- 14s
+  elapsedTime L2 = summands changeBaseField(L, F2); -- 14s projectors, 85s idempotents
   assert(toList(7:1) == rank \ L2)
   -- tests largepowers, but is very slow:
   -- findIdempotent changeBaseField(L, F2)
-///
-
-TEST ///
-  kk = ZZ/101
-  S = kk[x,y,z]
-  P = Proj S
-  T = tangentSheaf P
-  R = S/(x*y-z^2)
-  M = module T ** R
-  -- the module doesn't split, but the sheaf does
-  assert(1 == length summands M)
-  assert(2 == length summands sheaf M)
 ///
 
 ///
