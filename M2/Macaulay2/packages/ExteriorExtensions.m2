@@ -215,7 +215,7 @@ exteriorExtension (ZZ, ZZ, Symbol, Ring) := (pow, nvars, e, KK) -> (
   -- Input:
   -- matrix mat
   -- Output:
-  -- netlist labled table of powerRanks of blocks of powers of mat
+  -- netlist labeled table of powerRanks of blocks of powers of mat
   prettyBlockPowerRanks2 := mat -> netList ({apply(blockNames, xx ->
   	    concatenate(concatenate("g", toString (xx#0)), toString (xx#1)))|{toString("total")}} | blockPowerRanks2 mat);
   extensionAlg.prettyBlockPowerRanks =prettyBlockPowerRanks2;
@@ -342,7 +342,7 @@ Description
   Text
     This module sets the functions and parameters that make the required algebra.
     It constructs a natural graded algebra \(\mathfrak{a}\), with \(\mathfrak{a}_0 =  \mathfrak{sl}_n\), and  \(\mathfrak{a}_1= \bigwedge^k \mathbb{C}^n\), and \(\mathfrak{a}_i\) for \(i>1\) defined as needed to make the algebra closed.
-    Provides some functionalitity for comptuations with the algebra. Sometimes we build a known algebra. Let's see how this might work.
+    Provides some functionalitity for computations with the algebra. Sometimes we build a known algebra. Let's see how this might work.
 
   Example
     ea24 = exteriorExtension(2, 4, QQ)
@@ -575,7 +575,7 @@ Description
     ea.powerRanks A
 
   Text
-    The list outputs the rank of each power. Thes are invariants of the element x in ad(x).
+    The list outputs the rank of each power. These are invariants of the element x in ad(x).
 ///
 
 doc ///
@@ -595,7 +595,7 @@ Description
     ea.powerTraces A
 
   Text
-    The list outputs the trace of each power until the power ranks stabilize, or until the power is equal to the dimension of the algebra. Thes are invariants of the element x in ad(x).
+    The list outputs the trace of each power until the power ranks stabilize, or until the power is equal to the dimension of the algebra. These are invariants of the element x in ad(x).
 
   Example
     ea = exteriorExtension(3, 9, QQ);
@@ -740,7 +740,7 @@ Description
     ea.prettyBlockPowerRanks(A)
 
   Text
-    This computes a list of ranks of blocks for each power of a matrix representation of an adjoint operator for ExteriorExtensions and displayes it as a pretty table.
+    This computes a list of ranks of blocks for each power of a matrix representation of an adjoint operator for ExteriorExtensions and displays it as a pretty table.
 
 SeeAlso
   blockPowerRanks
