@@ -526,22 +526,28 @@ auto F4GB::macaulayMatrixStats() const -> MacaulayMatrixStats
 
 void F4GB::MacaulayMatrixStats::display(buffer& o)
 {
-  std::ostringstream s;
-  
-  s << "Quad matrix sizes" << std::endl;
-  s << "sizes of quad matrix" << std::endl;
-  s << std::setw(11) << " " << std::setw(11) << mTopAndLeft << std::setw(11) << mRight << std::endl;
-  s << std::setw(11) << mTopAndLeft << std::setw(11) << "A" << std::setw(11) << "B" << std::endl;
-  s << std::setw(11) << mBottom << std::setw(11) << "C" << std::setw(11) << "D" << std::endl;
-  s << std::endl;
+  if (M2_gbTrace >= 2)
+    {
+      std::ostringstream s;
 
-  s << "Quad matrix entries (no diagona on A)" << std::endl;
-  s << std::setw(11) << " " << std::setw(11) << mTopAndLeft << std::setw(11) << mRight << std::endl;
-  s << std::setw(11) << mTopAndLeft << std::setw(11) << mAEntries << std::setw(11) << mBEntries << std::endl;
-  s << std::setw(11) << mBottom << std::setw(11) << mCEntries << std::setw(11) <<  mDEntries << std::endl;
-  s << std::endl;
-  
-  o << s.str().c_str();
+      s << "Quad matrix sizes" << std::endl;
+      s << "sizes of quad matrix" << std::endl;
+      s << std::setw(11) << " " << std::setw(11) << mTopAndLeft << std::setw(11) << mRight << std::endl;
+      s << std::setw(11) << mTopAndLeft << std::setw(11) << "A" << std::setw(11) << "B" << std::endl;
+      s << std::setw(11) << mBottom << std::setw(11) << "C" << std::setw(11) << "D" << std::endl;
+      s << std::endl;
+
+      if (M2_gbTrace >= 5)
+        {
+          s << "Quad matrix entries (no diagonal on A)" << std::endl;
+          s << std::setw(11) << " " << std::setw(11) << mTopAndLeft << std::setw(11) << mRight << std::endl;
+          s << std::setw(11) << mTopAndLeft << std::setw(11) << mAEntries << std::setw(11) << mBEntries << std::endl;
+          s << std::setw(11) << mBottom << std::setw(11) << mCEntries << std::setw(11) <<  mDEntries << std::endl;
+          s << std::endl;
+        }
+      
+      o << s.str().c_str();
+    }
 }
 
 void F4GB::MacaulayMatrixStats::display()
@@ -620,7 +626,8 @@ void F4GB::gauss_reduce(bool diagonalize)
   threadLocalDense_t threadLocalDense([&]() { 
     return mVectorArithmetic->allocateElementArray(ncols);
   });
-  std::cout << "mNumThreads: " << mNumThreads << std::endl;
+  
+  //std::cout << "mNumThreads: " << mNumThreads << std::endl; TODO: where to display this info
   mScheduler.execute([&] {
     mtbb::parallel_for(mtbb::blocked_range<int>{0, INTSIZE(spair_rows)},
                        [&](const mtbb::blocked_range<int>& r)
@@ -656,7 +663,8 @@ void F4GB::gauss_reduce(bool diagonalize)
   mParallelGaussTime += (t1-t0).seconds();
 #endif 
 
-  std::cout << "About to do serial loop, n_newpivots = " << n_newpivots << std::endl;
+  if (M2_gbTrace >= 2)
+    std::cout << "About to do serial loop, n_newpivots = " << n_newpivots << std::endl;
   t0 = mtbb::tick_count::now();
   ElementArray gauss_row { mVectorArithmetic->allocateElementArray(ncols) };
   for (auto i = 0; i < spair_rows.size(); i++)
@@ -1026,9 +1034,12 @@ void F4GB::do_spairs()
         }
     }
   new_GB_elements();
-  fprintf(stderr, " finding new spair time             = %g\n",  mNewSPairTime - oldNewSPair);
-  fprintf(stderr, " number of spairs in queue          = %zu\n", mSPairSet.numberOfSPairs());
-  fprintf(stderr, " insert new gb time                 = %g\n",  mInsertGBTime - oldInsertNewGB - (mNewSPairTime - oldNewSPair));
+  if (M2_gbTrace >= 2)
+    {
+      fprintf(stderr, " finding new spair time             = %g\n",  mNewSPairTime - oldNewSPair);
+      fprintf(stderr, " number of spairs in queue          = %zu\n", mSPairSet.numberOfSPairs());
+      fprintf(stderr, " insert new gb time                 = %g\n",  mInsertGBTime - oldInsertNewGB - (mNewSPairTime - oldNewSPair));
+    }
   
   int ngb = INTSIZE(mGroebnerBasis);
   if (M2_gbTrace >= 1)
