@@ -122,7 +122,7 @@ checkAllPackages = () -> (
     argumentMode = defaultMode - SetCaptureErr - SetUlimit -
 	if noinitfile then 0 else ArgQ;
     fails := for pkg in sort separate(" ", version#"packages") list (
-	stderr << HEADER1 pkg << endl;
+	stderr << HEADER2 pkg << endl;
 	if runString("check(" | format pkg | ", Verbose => true)",
 	    Core, false) then continue else pkg) do stderr << endl;
     argumentMode = tmp;

@@ -773,7 +773,7 @@ installPackage Package := opts -> pkg -> (
 
 	if 0 < numExampleErrors then verboseLog stack apply(readDirectory exampleOutputDir,
 	    file -> if match("\\.errors$", file) then stack {
-		file, concatenate(width file : "*"), getErrors(exampleOutputDir | file)});
+		file, concatenate(width file : "="), getErrors(exampleOutputDir | file)});
 
 	if not opts.IgnoreExampleErrors then checkForErrors pkg;
 
