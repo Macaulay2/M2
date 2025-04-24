@@ -6,8 +6,7 @@ newPackage(
     Authors => {
 	{Name => "Luke Oeding", Email => "oeding@auburn.edu", HomePage => "http://webhome.auburn.edu/~lao0004/"}}, 
     Headline => "Builds an algebra extending an exterior algebra", 
-    Keywords => {"Lie Algebras, Jordan Decomposition, Tensor invariants"}, 
-    DebuggingMode => true
+    Keywords => {"Lie Groups and Lie Algebras"},
     )
 export {
 "ExteriorExtension", 
