@@ -96,32 +96,32 @@ TEST ///
 ///
 
 TEST /// -- testing the local case
+  -- the structure is significantly altered by homogenizing modules
+  -- simpler example: nodal cubic in affine vs projective plane
   debug needsPackage "DirectSummands"
   k = ZZ/2
   -- D_4^1 singularity
   R = k[x,y,z]/(x^2*y + x*y^2 + x*y*z + z^2)
   M = frobeniusPushforward(1, R)
-  errorDepth=2
-  --elapsedTime summands(M, Verbose => true);
-  --elapsedTime summandsFromIdempotents(M, Verbose => true);
-  -- TODO
-  -- the structure is significantly altered by homogenizing it
-  -- simpler example: nodal cubic in affine vs projective plane
+  -- uses a basic idem
+  elapsedTime assert(toList(4:1) == rank \ summands M) -- ~2s
+  elapsedTime assert(toList(4:1) == rank \ summandsFromIdempotents M) -- ~0s
+  --
   k = ZZ/2
   R = k[x,y,z,h]/(x^2*y + x*y^2 + x*y*z + z^2*h)
   M = frobeniusPushforward(1, R)
-  elapsedTime assert(toList(8:1) == rank \ summandsFromProjectors M)  -- 6s
-  elapsedTime assert(toList(8:1) == rank \ summandsFromIdempotents M) -- 10s
+  elapsedTime assert(toList(8:1) == rank \ summands M) -- <2s
+  --elapsedTime assert(toList(8:1) == rank \ summandsFromProjectors M)  -- 6s
+  --elapsedTime assert(toList(8:1) == rank \ summandsFromIdempotents M) -- 10s
   --
-  end
-  -- FIXME: these don't finish???
+  k = ZZ/2
   R = k[x,y]/(x^2-y^3-y^2)
   M = frobeniusPushforward(1, R)
-  elapsedTime assert(toList(4:1) == rank \ summandsFromProjectors(M, Verbose => true))
-  assert(toList(4:1) == rank \ summandsFromIdempotents M)
+  elapsedTime assert({1,1} == rank \ summands M) -- 3s
+  --
   R = k[x,y,z]/(x^2*z-y^3-y^2*z)
-  assert(toList(4:1) == rank \ summandsFromProjectors M)
-  assert(toList(4:1) == rank \ summandsFromIdempotents M)
+  M = frobeniusPushforward(1, R)
+  elapsedTime assert(toList(4:1) == rank \ summands M) -- <2s
 ///
 
 TEST /// -- Grassmannian example
@@ -239,25 +239,23 @@ TEST ///
   -- findIdempotents changeBaseField(L, F2)
 ///
 
-///
-  restart
+TEST ///
   debug needsPackage "DirectSummands"
   kk = ZZ/13
   S = kk[x,y,z]
   R = S/(x*z-y^2)
-  L = summands frobeniusPushforward(1, R);
-  L = summands S^30000;
-  elapsedTime isomorphismTally L
-  elapsedTime tallySummands L
-  set(last \ isomorphismTally summands frobeniusPushforward(1,R)) == set{12,13}
-
+  M = module frobeniusPushforward(1, OO_(Proj R));
+  elapsedTime L = summands(M, Verbose => true);
+  elapsedTime assert({1,12} == last \ isomorphismTally L);
+  elapsedTime L = summands(S^3000, Verbose => true);
+  elapsedTime assert({3000} == last \ isomorphismTally L);
+  -- nonstandard graded case
   kk = ZZ/11
   S = kk[x,y,z, Degrees => {5,1,5}]
   R = S/(x*z-y^10)
-  L = summands frobeniusPushforward(1, R);
-  elapsedTime isomorphismTally L;
-  elapsedTime tallySummands L;
-  set(last \ isomorphismTally summands frobeniusPushforward(1,R)) == set{12,13}
+  M = module frobeniusPushforward(1, OO_(Proj R));
+  elapsedTime L = summands(M, Verbose => true);
+  elapsedTime assert({1,2,2,2,2,2} == last \ isomorphismTally L);
 ///
 
 ///

@@ -174,7 +174,8 @@ findIdempotents Module        := opts -> M -> (
 	    if p > 0 then for j from 0 to e do (
 		if isUsable largePow(j, fm - y*id_V) then break (j, f - y*id_M))
 	    else if isUsable(fm - y*id_V) then (1, f - y*id_M));
-	idems = select(idems, (j, f) -> image f != 0 and coker f != 0);
+	idems = select(idems, (j, f) ->
+	    prune' image f != 0 and prune' coker f != 0 and prune' image f != M);
 	if #idems == 0 then continue;
 	return apply(idems, (j, g) -> (
 		idem := if p == 0 then g else largePow(j, g);
@@ -194,10 +195,9 @@ protect Idempotents
 -- only tries to find an idempotent among the generators of End_0(M)
 -- which is in general unlikely to be successful, but it often works!
 -- returns a pair: (idempotent or null, whether M is certified indecomposable)
-findBasicIdempotent = M -> (
+findBasicIdempotents = options findIdempotents >> opts -> M -> (
     M.cache.Idempotents ??= {};
-    if 0 < #M.cache.Idempotents
-    then return (first M.cache.Idempotents, false);
+    if 0 < #M.cache.Idempotents then return (M.cache.Idempotents, false);
     R := ring M;
     K := residueMap' R;
     -- FIXME: this may not be correct
@@ -218,8 +218,10 @@ findBasicIdempotent = M -> (
 	    or zero(hm := K ** cover h) then return;
 	    certified = false;
 	    if isWeakIdempotent hm then break h));
-    if idemp =!= null then M.cache.Idempotents ??= { idemp };
-    (idemp, certified))
+    if idemp =!= null then (
+	if opts.Verbose then printerr "splitting summands using a basic idempotent";
+	M.cache.Idempotents |= { idemp });
+    (M.cache.Idempotents, certified))
 
 -- this is essentially the Meat-Axe algorithm,
 -- but the process for finding an idempotent for
@@ -228,9 +230,9 @@ summandsFromIdempotents = method(Options => options findIdempotents)
 summandsFromIdempotents Module := opts -> M -> (
     if opts.Verbose then printerr "splitting summands using idempotents";
     if rank cover M <= 1 or prune' M == 0 then return {M};
-    M.cache.Idempotents ??= {};
-    idems := if 0 < #M.cache.Idempotents then M.cache.Idempotents
-    else try findIdempotents(M, opts) else return {M};
+    idems := try M.cache.Idempotents else {};
+    if 0 == #idems then try
+    idems = findIdempotents(M, opts) else return {M};
     summandsFromIdempotents(M, idems, opts))
 
 -- keep close to summandsFromProjectors

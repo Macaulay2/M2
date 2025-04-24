@@ -423,7 +423,7 @@ findSplitInclusion(Module, Module) := opts -> (M, N) -> (
     if h === null then return "not known" else return h)
 
 -- helper for splitting a free module and setting the split surjections
-splitFreeModule = (M, opts) -> apply(numgens M, i -> target(M.cache#(symbol ^, [i]) = M^{i}))
+splitFreeModule = (M, opts) -> components directSum apply(R := ring M; -degrees M, deg -> R^{deg})
 
 -- helper for splitting free summands by observing the degrees of generators
 splitFreeSummands = (M, opts) -> M.cache#"FreeSummands" ??= (
@@ -605,7 +605,7 @@ isIndecomposable Module := o -> M -> M.cache.isIndecomposable ??= tryHooks(
 -- * all degree zero endomorphisms of M are zero mod maximal ideal
 -- if a non-identity idempotent is found, it is cached in M
 addHook((isIndecomposable, Module), Strategy => "IdempotentSearch", (opts, M) -> (
-	(idemp, certified) := findBasicIdempotent M;
+	(idemp, certified) := findBasicIdempotents(M, opts);
 	if idemp =!= null then ( if 1 < debugLevel then printerr "module is decomposable!";  false )
 	else if certified then ( if 1 < debugLevel then printerr "module is indecomposable!"; true )
     ))
