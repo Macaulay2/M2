@@ -303,6 +303,8 @@ getOperator := key -> if operator#?key then (
 		"The user may install ", TO "Macaulay2Doc :: binary methods", " for handling such expressions with code such as"},
 	    PRE if key === symbol SPACE
 	    then "         X Y := (x,y) -> ..."
+	    else if (getParsing key)#0 <= (getParsing symbol :=)#0
+	    then "        (X "|op|" Y) := (x,y) -> ..."
 	    else "         X "|op|" Y := (x,y) -> ...",
 	    PARA {"where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the class of ", TT "y", "."}},
 	if key === symbol ?? then { -- can't install binary methods
