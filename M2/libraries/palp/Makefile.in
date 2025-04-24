@@ -1,0 +1,18 @@
+HOMEPAGE = http://hep.itp.tuwien.ac.at/~kreuzer/CY/CYpalp.html
+URL = http://hep.itp.tuwien.ac.at/~kreuzer/CY/palp/
+VERSION = 2.21
+SHA256SUM = 7e4a7bf219998a844c0bcce0a176e49d0743cb4b505a0e195329bf2ec196ddd7
+
+CONFIGURECMD = :
+BUILDTARGET = all-dims
+INSTALLCMD = :
+PROGRAMS = *.x
+LICENSEFILES = COPYING
+
+include ../Makefile.library
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/palp/Makefile
+
+# Local Variables:
+# mode: makefile-gmake
+# compile-command: "make -C $M2BUILDDIR/libraries/palp "
+# End:

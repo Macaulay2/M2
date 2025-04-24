@@ -45,6 +45,7 @@ libraries/msolve/Makefile
 libraries/nauty/Makefile
 libraries/normaliz/Makefile
 libraries/ntl/Makefile
+libraries/palp/Makefile
 libraries/polymake/Makefile
 libraries/readline/Makefile
 libraries/tbb/Makefile
