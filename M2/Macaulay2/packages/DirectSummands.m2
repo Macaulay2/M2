@@ -593,7 +593,7 @@ directSummands(List, Module) := List => opts -> (Ls, M) -> sort (
 -- (but does _not_ run the full directSummands algorithm)
 -- returns true if the module is certifiably indecomposable
 -- returns null for non-conclusive results
-isIndecomposable = method(Options => { Strategy => null })
+isIndecomposable = method(Options => { Strategy => null, Verbose => false })
 isIndecomposable CoherentSheaf := o -> F -> isIndecomposable(module prune F, o)
 isIndecomposable Module := o -> M -> M.cache.isIndecomposable ??= tryHooks(
     (isIndecomposable, Module), (o, M), (o, M) -> (
@@ -606,8 +606,8 @@ isIndecomposable Module := o -> M -> M.cache.isIndecomposable ??= tryHooks(
 -- if a non-identity idempotent is found, it is cached in M
 addHook((isIndecomposable, Module), Strategy => "IdempotentSearch", (opts, M) -> (
 	(idemp, certified) := findBasicIdempotents(M, opts);
-	if idemp =!= null then ( if 1 < debugLevel then printerr "module is decomposable!";  false )
-	else if certified then ( if 1 < debugLevel then printerr "module is indecomposable!"; true )
+	if #idemp > 0 then ( if opts.Verbose then printerr "module is decomposable!";  false ) else
+	if certified  then ( if opts.Verbose then printerr "module is indecomposable!"; true )
     ))
 
 -- TODO
