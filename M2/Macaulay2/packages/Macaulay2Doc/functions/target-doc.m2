@@ -11,7 +11,7 @@ document {
      }
 document { 
      Key => (target,ChainComplexMap),
-     Headline => " find the target of a map of chain complexes",
+     Headline => "find the target of a map of chain complexes",
      Usage => "target f",
      Inputs => {
 		"f" => ChainComplexMap

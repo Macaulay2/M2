@@ -349,17 +349,17 @@ testRank = (R) -> (
             assert(rank M == j);
         ))
 
-makeMatrixWithColumnRankProfile = (R, nrows, ncols, profile) -> (
-    -- profile is a list of column indices (so each entry should be in range [0,ncols-1])
+makeMatrixWithColumnRankProfile = (R, nrows, ncols, prof) -> (
+    -- prof is a list of column indices (so each entry should be in range [0,ncols-1])
     A := first randomFullRank(R, nrows);
     B := mutableMatrix(R, nrows, ncols);
     -- now set B with random values
-    for p from 0 to #profile-1 do B_(p,profile#p) = 1_R;
+    for p from 0 to #prof-1 do B_(p,prof#p) = 1_R;
     rk := 1;
-    profile = append(profile, ncols);
-    for i from 1 to #profile - 1 do (
-        -- set all entries in rows 0..rk in columns profile#(i-1) to profile#i-1 to random values
-        for r from 0 to rk-1 do for c from profile#(i-1)+1 to profile#i - 1 do B_(r,c) = random R;
+    prof = append(prof, ncols);
+    for i from 1 to #prof - 1 do (
+        -- set all entries in rows 0..rk in columns prof#(i-1) to prof#i-1 to random values
+        for r from 0 to rk-1 do for c from prof#(i-1)+1 to prof#i - 1 do B_(r,c) = random R;
         rk = rk+1;
         );
     A*B

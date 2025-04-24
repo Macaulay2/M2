@@ -198,6 +198,15 @@ setup(AmpersandS,ampersandfun);
 hathatfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,HatHatS);
 setup(HatHatS,hathatfun);
 
+interpunctfun(lhs:Code, rhs:Code):Expr := binarymethod(lhs, rhs, InterpunctS);
+setup(InterpunctS, interpunctfun);
+
+boxtimesfun(lhs:Code, rhs:Code):Expr := binarymethod(lhs, rhs, BoxTimesS);
+setup(BoxTimesS, boxtimesfun);
+
+shuffleproductfun(lhs:Code, rhs:Code):Expr := binarymethod(lhs, rhs, ShuffleProductS);
+setup(ShuffleProductS, shuffleproductfun);
+
 Tildefun(rhs:Code):Expr := unarymethod(rhs,TildeS);
 setuppostfix(TildeS,Tildefun);
 
@@ -1399,6 +1408,8 @@ isDirectory(e:Expr):Expr := (
 	  filename := filename0.v;
 	  filename = expandFileName(filename);
 	  if !fileExists(filename) then return False;
+	  if filename.(length(filename) - 1) != '/'
+	  then filename = filename + "/";
 	  r := isDirectory(filename);
 	  if r == -1 then buildErrorPacket("can't see file '" + filename + "' : " + syserrmsg())
 	  else if r == 1 then True else False)
@@ -1578,23 +1589,24 @@ fillnodes(n:LexNode):void := (
 fillnodes(baseLexNode);
 setupconst("operatorNames",Expr(operatorNames));
 
+createSymbol(w:Word, d:Dictionary, s:string):Expr := (
+    if !isvalidsymbol(s) then buildErrorPacket("invalid symbol")
+    else if d.Protected then (
+	buildErrorPacket("attempted to create symbol in protected dictionary"))
+    else (
+	t := makeSymbol(w, tempPosition, d);
+	globalFrame.values.(t.frameindex)));
+
 getglobalsym(d:Dictionary,s:string):Expr := (
      w := makeUniqueWord(s,parseWORD);
      when lookup(w,d.symboltable) is x:Symbol do Expr(SymbolClosure(globalFrame,x))
-     is null do (
-          if !isvalidsymbol(s) then return buildErrorPacket("invalid symbol");
-	  if d.Protected then return buildErrorPacket("attempted to create symbol in protected dictionary");
-	  t := makeSymbol(w,tempPosition,d);
-	  globalFrame.values.(t.frameindex)));
+     is null do createSymbol(w, d, s));
 
 getglobalsym(s:string):Expr := (
      w := makeUniqueWord(s,parseWORD);
      when globalLookup(w)
      is x:Symbol do Expr(SymbolClosure(if x.thread then threadFrame else globalFrame,x))
-     is null do (
-	  if globalDictionary.Protected then return buildErrorPacket("attempted to create symbol in protected dictionary");
-	  t := makeSymbol(w,tempPosition,globalDictionary);
-	  globalFrame.values.(t.frameindex)));
+     is null do createSymbol(w, globalDictionary, s));
 
 getGlobalSymbol(e:Expr):Expr := (
      when e 
@@ -1741,8 +1753,10 @@ storeInHashTable(
      Expr(newCompiledFunction(storeGlobalDictionaries)));
 
 getcwdfun(e:Expr):Expr := (				    -- this has to be a function, because getcwd may fail
-     when e is s:Sequence do
-     if length(s) == 0 then cwd() else WrongNumArgs(0)
+    when e is s:Sequence do if length(s) != 0 then WrongNumArgs(0) else (
+	dir := getcwd();
+	if dir != "" then Expr(stringCell(dir))
+	else buildErrorPacket("can't get current working directory: " + syserrmsg()))
      else WrongNumArgs(0));
 setupfun("currentDirectory",getcwdfun);
 
@@ -1984,7 +1998,7 @@ setupconst("fileDictionaries",Expr(fileDictionaries));
 
 export newStaticLocalDictionaryClosure(filename:string):DictionaryClosure := (
      d := newStaticLocalDictionaryClosure();
-     storeInHashTable(fileDictionaries,toExpr(filename),Expr(d));
+     storeInHashTable(fileDictionaries,toExpr(relativizeFilename(filename)),Expr(d));
      d);
 
 fileMode(e:Expr):Expr := (

@@ -2,6 +2,17 @@
 --"For a projective varieties and coherent sheaves, the functionality is not yet implemented."
 -- TODO: what would this mean?
 
+undocumented {
+    SheafExpression,
+    -- TODO: document some of these
+    (symbol ^,  CoherentSheaf, Array),
+    (symbol _,  CoherentSheaf, Array),
+    (symbol ?,  CoherentSheaf, CoherentSheaf),
+    (symbol ==, CoherentSheaf, CoherentSheaf),
+    (symbol ==, CoherentSheaf, ZZ),
+    (symbol ==, ZZ, CoherentSheaf),
+    }
+
 document {
     Key => "coherent sheaves",
     "The main reason to implement algebraic varieties is support the
@@ -131,7 +142,9 @@ document {
      ///}
 
 document {
-    Key => (symbol ^, SheafOfRings, List),
+    Key => {
+	(symbol ^, SheafOfRings, List),
+	(symbol ^, SheafOfRings, ZZ)},
     Headline => "make a graded free coherent sheaf",
     Usage => "M = R^{i,j,k,...}",
     Inputs => {"R",
@@ -155,7 +168,7 @@ document {
     SeeAlso => {OO, Proj, degrees, "graded and multigraded polynomial rings"}}
 
 document {
-    Key => (sheaf, Variety, Module),
+    Key => {(sheaf, Variety, Module), (sheaf, Variety, Ideal)},
     Headline => "make a coherent sheaf",
     Usage => "sheaf(X,M)",
     Inputs => {"X","M"},
@@ -167,9 +180,9 @@ document {
     }
 
 document {
-    Key => {(sheaf, Module),(symbol ~, Module)},
+    Key => {(sheaf, Module), (sheaf, Ideal), (symbol^~, Module), (symbol^~, Ideal)},
     Headline => "make a coherent sheaf",
-    Usage => "sheaf M\nM~",
+    Usage => "sheaf M\nM^~",
     Inputs => {"M" => "homogeneous" },
     Outputs => {{ "the coherent sheaf on a projective variety ", TT "X", " corresponding to ", TT "M" }},
     EXAMPLE lines ///
@@ -177,23 +190,83 @@ document {
       X = Proj R
       M = R^{1,2,3}
       sheaf M
-      M~
+      M^~
     ///
     }
 
 document {
-    Key => {(sheaf, Ring),(symbol ~, Ring)},
+    Key => {(sheaf, Ring),(symbol^~, Ring)},
     Headline => "make a coherent sheaf of rings",
-    Usage => "sheaf R\nR~",
+    Usage => "sheaf R\nR^~",
     Inputs => {"R"},
     Outputs => {{"the coherent sheaf on a projective variety ", TT "X", " corresponding to ", TT "M"}},
     EXAMPLE lines ///
       R = QQ[x,y,z];
       X = Proj R
       sheaf R
-      R~
+      R^~
     ///
     }
+
+-*
+doc ///
+  Key
+    sheaf
+    (sheaf, Module)
+    (sheaf, Ideal)
+    (symbol ~, Module)
+    (symbol ~, Ideal)
+  Headline
+    the coherent sheaf associated to a finitely presented graded module over a graded ring
+  Usage
+    sheaf M
+  Inputs
+    M:Module
+      or @TO Ideal@, a finitely presented graded module over the ring associated to some projective variety
+  Outputs
+    :CoherentSheaf
+      $\mathcal F$, the coherent sheaf on projective space associated to the module $M$
+  Description
+   Text
+     Given a finitely presented graded module over a homogeneous ring $R$, one may always form a coherent
+     sheaf on Proj$(R)$. This method formally constructs such an object in Macaulay2. The main difference
+     between such sheaves in the affine versus projective case is that any truncation of a module will determine
+     the same sheaf on Proj$(R)$. To obtain the simplest (from a readability perspective) use the @TO (prune, CoherentSheaf)@
+     method.
+   Text
+     In the following example, we demonstrate the fact that Macaulay2 will consider different truncations
+     of a module as representing the same sheaf.
+   Example
+     X = Proj (Q = QQ[x..z])
+     F = sheaf ker vars Q
+     isWellDefined F
+     F' = sheaf truncate(3, module F)
+     module F == module F'
+     F == F'
+     prune F'
+   Text
+     As demonstrated in the above, in order to reobtain the module representing the sheaf, use the @TO module@ command.
+     Since such sheaves are determined only up to truncation, any module with finite length should determine
+     the 0 sheaf:
+   Example
+     G = sheaf coker symmetricPower(4, vars Q)
+     G == 0
+   Text
+     This method also works when the input is an ideal instead of a sheaf:
+   Example
+     m = ideal vars Q;
+     H = sheaf m^4
+     prune H --it "untruncates" the representing module
+  Caveat
+    Note that in Macaulay2, a coherent sheaf is completely determined by the data of its underlying module, and
+    this data is stored rather primitively. It does not keep track of any kind of patching data on associated affine
+    coverings since, computationally, such data is unnecessary.
+  SeeAlso
+    (sheaf, Matrix)
+    (cohomology, ZZ, CoherentSheaf)
+    (cohomology, ZZ, SheafMap)
+///
+*-
 
 -- TODO: perhaps combine these nodes in SumOfTwists?
 document {
@@ -211,7 +284,7 @@ document {
 	"> 4"
 	}}
 document {
-    Key => {(symbol >=, ZZ), (symbol >=, InfiniteNumber)},
+    Key => {(symbol >=, ZZ), (symbol >=, InfiniteNumber), (symbol >=, List)},
     Usage => "(>= d)",
     Inputs => { "d" },
     Outputs => {{"a special object of class ", TT "LowerBound", " used to represent the set of natural numbers at least as large as ", TT "d"}}
@@ -223,35 +296,238 @@ document {
     Outputs => { { "a special object of class ", TT "LowerBound", " used to represent the set of natural numbers larger than ", TT "d" } }
     }
 
+doc ///
+Node
+  Key
+    canonicalBundle
+   (canonicalBundle, ProjectiveVariety)
+   [canonicalBundle, MinimalGenerators]
+   [canonicalBundle, Strategy]
+  Headline
+    the canonical bundle of a projective variety
+  Usage
+    canonicalBundle X
+  Inputs
+    X:ProjectiveVariety
+    MinimalGenerators => Boolean
+      whether to @TO prune@ the result before returning it. The default value is true.
+  Outputs
+    :CoherentSheaf
+  Description
+    Text
+      This method computes the canonical bundle of a projective variety $X$. Recall that the canonical
+      bundle of a normal variety is the reflexive hull (aka the double dual) of the top exterior power of the cotangent sheaf $\Omega_X$ on a variety.
+    Text
+      An example --the example should be Serre duality and arithmetic genus computation
+    Example
+      Q = QQ[x_1..x_4];
+      X = Proj Q
+      omega = canonicalBundle X
+      for i to 3 list HH^i (tangentSheaf X)(-1)
+      for i to 3 list HH^i (dual( (tangentSheaf X)(-1)) ** omega)
+      --I = ideal(x_2*x_3-x_1*x_4,x_3^3-x_2*x_4^2,x_1*x_3^2-x_2^2*x_4,x_2^3-x_1^2*x_3
+      --ideal(x_3^2-x_2*x_4,x_2*x_3-x_1*x_4,x_2^2-x_1*x_3)
+      Y = Proj(Q/(x_1^5+x_2^5+x_3^5+x_4^5))
+      isSmooth Y
+      omega' = canonicalBundle Y
+      C = cotangentSheaf(2,Y)
+      for i to 2 list HH^i (C)
+      for i to 2 list HH^i ((dual C) ** omega') --dual
+    Text
+      We can use this to see the difference between the top exterior power of the cotangent bundle of Z and its reflexive hull.
+    Example
+      Z = Proj(Q/(x_1^2*x_2 - x_3^2*x_4))
+      isSmooth Z
+      for i to 2 list HH^i canonicalBundle Z
+      for i to 2 list HH^i det cotangentSheaf Z
+    Text
+      Recall that the arithmetic genus is given by the number of global sections of the canonical bundle.
+      Projective space has genus 0 in general, and smooth elliptic curves have genus 1. We verify the elliptic curve
+      case in an example:
+    Example
+      R = QQ[x..z]/(y^3 - y*z^2 - x^3)
+      E = Proj R
+      for i to 1 list HH^i canonicalBundle E
+  Caveat
+      This method does not check that the input variety $X$ is normal, but rather always returns the reflexive hull of the top exterior power of the cotangent sheaf.
+  SeeAlso
+    cotangentSheaf
+    
+Node
+  Key
+    tangentSheaf
+   (tangentSheaf, ProjectiveVariety)
+   [tangentSheaf, MinimalGenerators]
+   [tangentSheaf, Strategy]
+  Headline
+    tangent sheaf of a projective variety
+  Usage
+    tangentSheaf X
+  Inputs
+    X:ProjectiveVariety
+    MinimalGenerators => Boolean
+      whether to @TO prune@ the result before returning it. The default value is true.
+  Outputs
+    :CoherentSheaf
+  Description
+    Text
+      This method computes the tangent sheaf of the projective variety $X$. It is computed by taking
+      the dual of the @TO cotangentSheaf@.
+    Text
+      Tangent sheaf of the projective plane:
+    Example
+      P2 = Proj QQ[a,b,c]
+      TP = tangentSheaf P2
+      HH^0(TP(-1))
+      HH^1(TP(-3))
+    Text
+      Tangent sheaf of a plane nodal and cuspidal curve:
+    Example
+      N = Proj QQ[a,b,c]/(b^2*c-a^2*(a+c))
+      TN = tangentSheaf N
+      HH^0(TN), HH^1(TN)
+      C = Proj QQ[a,b,c]/(b^2*c-a^3)
+      TC = tangentSheaf C
+      HH^0(TC), HH^1(TC)
+      --- TODO: update this once we can compute the kernel
+      --- of HH^0(phi) for a sheaf map phi: F -> G
+  SeeAlso
+    idealSheaf
+    cotangentSheaf
+    ProjectiveVariety
+
+Node
+  Key
+    cotangentSheaf
+   (cotangentSheaf, ProjectiveVariety)
+   [cotangentSheaf, MinimalGenerators]
+   [cotangentSheaf, Strategy]
+  Headline
+    cotangent sheaf of a projective variety
+  Usage
+    cotangentSheaf X
+  Inputs
+    X:ProjectiveVariety
+    MinimalGenerators => Boolean
+      whether to @TO prune@ the result before returning it
+  Outputs
+    :CoherentSheaf
+  Description
+    Text
+      This method computes the cotangent sheaf of the projective variety $X$. The method used is to
+      take the middle homology of the sequence associated to the Jacobian: --finish
+    Text
+      As an example we verify the Gauss-Bonnet theorem on a plane quartic curve:
+    Example
+      X = Proj QQ[x,y,z]/(x^4+y^4+z^4)
+      genus X
+      omega = cotangentSheaf X
+      degree omega
+  SeeAlso
+    idealSheaf
+    tangentSheaf
+    cotangentSurjection
+--    (cotangentSheaf, ZZ, ProjectiveVariety)
+    ProjectiveVariety
+
+Node
+  Key
+    idealSheaf
+   (idealSheaf, ProjectiveVariety)
+  Headline
+    ideal sheaf of a projective variety
+  Usage
+    idealSheaf X
+  Inputs
+    X:ProjectiveVariety
+    MinimalGenerators => Boolean
+      whether to @TO prune@ the result before returning it. Default value is true.
+  Outputs
+    :CoherentSheaf
+  Description
+    Text
+      This method computes the ideal sheaf of the projective variety $X$
+    Text
+      As an example, consider the projective variety defined by the equation $x^4 + y^4 + z^4 = 0$. The ideal sheaf of this variety is computed.
+    Example
+      X = Proj QQ[x,y,z]/(x^4+y^4+z^4)
+      I = idealSheaf X
+      rho = inducedMap((ambient I)/I, ambient I) --induced inclusion of ideal sheaf into structure sheaf of ambient ring
+      for i to 2 list HH^i(image rho)
+  SeeAlso
+    cotangentSheaf
+    ProjectiveVariety
+
+Node
+  Key
+    (cotangentSheaf, ZZ, ProjectiveVariety)
+  Headline
+    exterior powers of the cotangent sheaf of a projective variety
+  Usage
+    cotangentSheaf(p, X)
+  Inputs
+    p:ZZ
+    X:ProjectiveVariety
+    MinimalGenerators => Boolean
+      whether to @TO prune@ the result before returning it
+  Outputs
+    :CoherentSheaf
+  Description
+    Text
+      This function computes the $p$-th exterior power of the @TO2 {cotangentSheaf, "cotangent sheaf"}@
+      of a projective variety $X$, usually denoted $\Omega_X^p$.
+    Text
+      As an example we compute $h^{1,1}$ on a K3 surface (a quartic in projective threespace):
+    Example
+      K3 = Proj QQ[x_0..x_3]/(x_0^4+x_1^4+x_2^4+x_3^4-11*x_0*x_1*x_2*x_3)
+      omega1 = cotangentSheaf(1, K3);
+      HH^1(omega1)
+    Text
+      As a second example we compute @TO2 {(hh, Sequence, ProjectiveVariety), "Hodge numbers"}@
+      of the Fermat quintic in projective fourspace:
+    Example
+      FermatQuintic = Proj QQ[x_0..x_4]/(x_0^5+x_1^5+x_2^5+x_3^5+x_4^5)
+      omega1 = cotangentSheaf(1, FermatQuintic);
+      HH^1(omega1)
+      HH^2(omega1)
+      omega2 = cotangentSheaf(2, FermatQuintic);
+      HH^1(omega2)
+      HH^2(omega2)
+  SeeAlso
+    cotangentSheaf
+    ProjectiveVariety
+    (hh, Sequence, ProjectiveVariety)
+///
+
+
+
 -----------------------------------------------------------------------------
 -- Basic methods for sheaves
 -----------------------------------------------------------------------------
 
--- TODO: combine these two
-document {
-    Key => (variety, CoherentSheaf),
-    TT "variety F", " -- produce the variety over which a coherent sheaf is defined.",
-    PARA{},
-    EXAMPLE {
-	"X = Proj(QQ[x,y,z])",
-	"OO_X(3)",
-	"variety oo"
-	}
-    }
--- TODO: check that documentation of SourceCode shows correct code
-document { 
-    Key => (variety, SheafOfRings),
-    Usage => "variety O",
-    Inputs => { "O" },
-    Outputs => { { "the variety over which O is a quasicoherent sheaf of rings" } },
-    EXAMPLE lines ///
-      X = Proj(QQ[x..z])
-      O = OO_X
-      variety O
-    ///,
-    SourceCode => {(variety, SheafOfRings)}
-    }
--- TODO: (variety, SumOfTwists)
+doc ///
+Node
+  Key
+    (variety, CoherentSheaf)
+    (variety, SheafOfRings)
+    (variety, SumOfTwists)
+    (variety, SheafMap)
+    variety
+  Headline
+    the underlying variety over which a coherent sheaf or morphism is defined.
+  Usage
+    variety F
+  Inputs
+    F:{CoherentSheaf,SheafOfRings,SumOfTwists,SheafMap}
+  Outputs
+    :Variety
+  Description
+    Example
+      X = Proj QQ[x,y,z]
+      variety OO_X
+      variety OO_X(3)
+      variety id_(OO_X(3))
+///
 
 doc ///
 Node
@@ -259,6 +535,7 @@ Node
     (ring, CoherentSheaf)
     (ring, SheafOfRings)
     (ring, SumOfTwists)
+    (ring, SheafMap)
   Headline
     the coordinate ring of the underlying variety
 ///
@@ -293,9 +570,60 @@ document {
     }
 -- TODO: should (module, SumOfTwists) return HH^0(F) or module F?
 
--- TODO: [(codim, CoherentSheaf), Generic]
+doc ///
+Node
+  Key
+    (isWellDefined, CoherentSheaf)
+  Headline
+    whether a coherent sheaf is well-defined
+  Usage
+    isWellDefined F
+  Inputs
+    F:CoherentSheaf
+  Outputs
+    :Boolean
+--  Description
+--    Text
+--    Example
+  SeeAlso
+    (isWellDefined, Variety)
+--    (isWellDefined, Module)
+
+Node
+  Key
+    isLocallyFree
+   (isLocallyFree, SumOfTwists)
+   (isLocallyFree, SheafOfRings)
+   (isLocallyFree, CoherentSheaf)
+  Headline
+    whether a coherent sheaf is locally free
+  Usage
+    isLocallyFree F
+  Inputs
+    F:{SumOfTwists,SheafOfRings,CoherentSheaf}
+  Outputs
+    :Boolean
+  Description
+    Text
+      This method determines whether a coherent sheaf $\mathcal F$ on $X$ is locally free;
+      i.e. there is an open cover of $X$ such that $\mathcal F(U)$ for each patch $U\subset X$ is a free $\mathcal O_X(U)$-module.
+    Example
+      X = Proj QQ[x,y,z]
+      isLocallyFree OO_X
+      isLocallyFree OO_X^{1,2,3}
+      F = cotangentSheaf X
+      isLocallyFree F
+    Text
+      Internally, the algorithm uses a computation of @TO2 {fittingIdeal, "fitting ideals"}@.
+  SourceCode
+    (isLocallyFree, CoherentSheaf)
+  SeeAlso
+    fittingIdeal
+    isFreeModule
+///
+
 document {
-    Key => {(codim, CoherentSheaf)},
+    Key => {(codim, CoherentSheaf), [(codim, CoherentSheaf), Generic]},
     Headline => "codimension of the support of a coherent sheaf on a projective variety",
     Usage => "codim F",
     Inputs => {"F" => {"a coherent sheaf over a ", TO "ProjectiveVariety", TT " X"}},
@@ -316,8 +644,43 @@ document {
     SeeAlso => {(dim,Module)}
     }
 
--- TODO: (rank, CoherentSheaf)
--- TODO: (degrees, CoherentSheaf)
+doc ///
+Node
+  Key
+    (rank, CoherentSheaf)
+  Headline
+    rank of a coherent sheaf
+  Usage
+    rank F
+  Inputs
+    F:CoherentSheaf
+  Outputs
+    :ZZ
+--  Description
+--    Text
+--    Example
+  SeeAlso
+    (rank, Module)
+    (degree, Module)
+    (degree, Ring)
+
+Node
+  Key
+    (degrees, CoherentSheaf)
+  Headline
+    degrees of a coherent sheaf
+  Usage
+    degrees F
+  Inputs
+    F:CoherentSheaf
+  Outputs
+    :List
+--  Description
+--    Text
+--    Example
+  SeeAlso
+    (degrees, Module)
+///
 
 document {
     Key => (numgens, CoherentSheaf),
@@ -395,16 +758,63 @@ document {
 	"pdim S"}
     }
 
--- TODO: is this necessary here, or should it go back to engine?
-document {
-    Key => SheafExpression,
-    Headline => "the class of sheaf expressions",
-    TT "SheafExpression", " is a type of ", TO "Expression", " representing
-    the sheaf associated to a given ring or module.",
-    PARA{},
-    }
-
-
+doc ///
+Node
+  Key
+    (minimalPresentation, CoherentSheaf)
+    (prune,               CoherentSheaf)
+    (minimalPresentation, SheafMap)
+    (prune,               SheafMap)
+  Headline
+    minimal presentation of a coherent sheaf or sheaf map
+  Usage
+    prune F
+  Inputs
+    F:CoherentSheaf
+  Outputs
+    :CoherentSheaf
+      a sheaf represented by the depth 2-ification of the original representative module
+  Description
+    Text
+      Given a sheaf $\mathcal F$ represented by some module $M$, there are always isomorphisms
+      $$H^i (X , \mathcal{F}) = H^i_{\mathfrak{m}} (M)_0 \quad \text{for} \ i > 0,$$
+      where $\mathfrak{m}$ denotes the irrelevant ideal. When $i = 0$ the best one can say in general
+      is that there is an exact sequence
+      $$0 \to H^0_{\mathfrak{m}} (M) \to \bigoplus_{d \geq 0} H^0 (X , \mathfrak{F}(d)) \to M \to H^1_{\mathfrak{m}} (M) \to 0.$$
+      Thus, the prune command for a coherent sheaf computes a graded module $M'$ representing the same
+      sheaf $\mathca{F}$, but such that there is an honest isomorphism
+      $$M' \cong \bigoplus_{d \geq 0} H^0 (X , \mathcal{F} (d)).$$
+      In other words, the prune command computes a module with depth at least 2 that represents the same sheaf $\mathcal{F}$.
+    Example
+      Q = QQ[x..z]; --KELLER: do example
+    Text
+      The pruning isomorphism of sheaves is cached with the key {\tt pruningMap}. It is an isomorphism of sheaves
+      that is essentially never represented by an isomorphism of the underlying modules (at least in interesting cases).
+    Example
+      Q = QQ[x..z] -- DO example of accessing the pruning map
+    Text
+      Pruning also applies in a functorial way to morphisms of sheaves. 
+    Text
+      The method for computing the pruned representative proceeds with a few steps: first, the representative module
+      $M$ is replaced by $M / H^0_{\mathfrak{m}} (M)$, which kills any torsion. Next, since $M$ is now torsion-free, we have
+      an equality $\operatorname{Hom}_S (N , M) = 0$ for any module $N$ with finite length. Thus, we can choose
+      a large formal Frobenius power $\mathfrak{m}^{[m]} = (x_1^m , \dots , x_n^m)$ of the maximal ideal so that $\operatorname{Hom}_S (\mathfrak{m}^{[m]} , M)$
+      has depth at least $2$. Applying the functor $\operatorname{Hom}_S ( - , M)$ to the short exact sequence
+      $$0 \to \mathfrak{m}^{[m]} \to S \to S / \mathfrak{m}^{[m]} \to 0$$
+      yields a short exact sequence
+      $$0 \to \operatorname{Hom}_S (\mathfrak{m}^{[m]} , M) \to M \to \operatorname{Ext}^1_S (S / \mathfrak{m}^{[m]} , M) \to 0.$$
+      The induced map $\operatorname{Hom}_S (\mathfrak{m}^{[m]} , M) \to M$ is not an isomorphism of modules,
+      but sheafifies to an isomorphism since the cokernel has finite length. This induced sheaf map is the pruning map,
+      and the new representative is the sheaf associated to the module $\operatorname{Hom}_R (\mathfrak{m}^{[m]} , M)$.
+    Text
+      For morphisms, the above process can be made compatible with maps without much difficulty, since one only
+      needs to conjugate the map by the pruning maps to get an induced map on the pruned representatives.
+  Caveat
+    Since the pruning operation for sheaves tends to be much more involved, one should be careful
+    about the fact that pruning sheaves at every step of a computation may slow cause significant slowdowns.
+  SeeAlso
+    prune
+///
 -* TODO: this is a piece of the documentation of (prune, Module)
 -- (minimalPresentation, CoherentSheaf), (prune, CoherentSheaf)
      "This function also works when ", TT "M", " is ", ofClass{GradedModule,ChainComplex,CoherentSheaf}, ",
@@ -412,7 +822,7 @@ document {
      EXAMPLE lines ///
 	  I = ideal(a^2,b^3,c^4,d^7)
      	  X = Proj R
-	  J = (module I)~
+	  J = I^~
 	  minimalPresentation J
      ///,
 *-
@@ -445,11 +855,10 @@ document {
     }
 
 -- TODO: should this move up, next to SheafOfRings ^ List?
--- TODO: CoherentSheaf ^ List
 document {
     Key => {
 	(symbol ^, CoherentSheaf, ZZ),
-	(symbol ^, SheafOfRings, ZZ)},
+	(symbol ^, CoherentSheaf, List)},
     Headline => "direct sum",
     Usage => "F^n",
     Inputs => {"F" => {", or a ", ofClass SheafOfRings}, "n"},
@@ -463,9 +872,9 @@ document {
     ///,
     SeeAlso => {Proj, sheaf}
     }
--- TODO: (symbol ^, CoherentSheaf, List)
 
 -- TODO: (directSum, CoherentSheaf)?
+--this should be updated to mention the caching of components that now occurs
 document {
     Key => (symbol ++, CoherentSheaf, CoherentSheaf),
     Headline => "direct sum of coherent sheaves",
@@ -542,6 +951,8 @@ document {
 
 -- TODO: (symmetricPower, ZZ, CoherentSheaf)
 
+
+--Should the output of this be of type CoherentSheaf instead?
 doc ///
 Node
   Key

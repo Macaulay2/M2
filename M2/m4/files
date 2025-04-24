@@ -42,7 +42,6 @@ libraries/frobby/Makefile
 libraries/gc/Makefile
 libraries/gdbm/Makefile
 libraries/gfan/Makefile
-libraries/gftables/Makefile
 libraries/givaro/Makefile
 libraries/glpk/Makefile
 libraries/gmp/Makefile

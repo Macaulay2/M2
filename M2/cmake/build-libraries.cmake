@@ -211,8 +211,8 @@ _ADD_COMPONENT_DEPENDENCY(libraries bdwgc "" BDWGC_FOUND)
 # NOTE: mpfr puts pointers to gmp numbers in thread local variables, unless
 # specially configured, so we shouldn't tell gmp to use libgc (we used to do that)
 ExternalProject_Add(build-mpfr
-  URL               https://www.mpfr.org/mpfr-current/mpfr-4.1.0.tar.xz
-  URL_HASH          SHA256=0c98a3f1732ff6ca4ea690552079da9c597872d30e96ec28414ee23c95558a7f
+  URL               https://www.mpfr.org/mpfr-current/mpfr-4.2.1.tar.xz
+  URL_HASH          SHA256=277807353a6726978996945af13e52829e3abd7a9a5b7fb2793894e18f1fcbb2
   PREFIX            libraries/mpfr
   SOURCE_DIR        libraries/mpfr/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -343,25 +343,26 @@ _ADD_COMPONENT_DEPENDENCY(libraries ntl gmp NTL_FOUND)
 ExternalProject_Add(build-flint
   PREFIX            libraries/flint
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/flint
-  BINARY_DIR        libraries/flint/build
-  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
-                    -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
-                    -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
-                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-                    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-                    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-                    -DCMAKE_C_FLAGS=${CFLAGS}
-                    -DCMAKE_CXX_FLAGS=${CXXFLAGS}
-                    -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
-                    -DIPO_SUPPORTED=OFF # TODO: because of clang; see https://github.com/wbhart/flint2/issues/644
-                    -DWITH_NTL=ON
-  INSTALL_COMMAND   ${CMAKE_COMMAND} --install . ${strip_setting}
+  BUILD_IN_SOURCE   ON
+  CONFIGURE_COMMAND ./bootstrap.sh &&
+                    ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
+                    ${shared_setting}
+                    "CPPFLAGS=${CPPFLAGS} -I${GMP_INCLUDE_DIRS}"
+                    CFLAGS=${CFLAGS}
+                    CXXFLAGS=${CXXFLAGS}
+                    "LDFLAGS=${LDFLAGS} -L${GMP_LIBRARY_DIRS}"
+                    CC=${CMAKE_C_COMPILER}
+                    CXX=${CMAKE_CXX_COMPILER}
+                    AR=${CMAKE_AR}
+                    OBJDUMP=${CMAKE_OBJDUMP}
+                    STRIP=${CMAKE_STRIP}
+                    RANLIB=${CMAKE_RANLIB}
+  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
+  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/flint
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/submodules/flint/README.md ${M2_INSTALL_LICENSESDIR}/flint
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/submodules/flint/LICENSE ${M2_INSTALL_LICENSESDIR}/flint
-  TEST_COMMAND      ${CMAKE_COMMAND} . -DBUILD_TESTING=ON
-       COMMAND      ${CMAKE_COMMAND} --build .
-       COMMAND      ${CMAKE_COMMAND} --build . --target test
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/submodules/flint/COPYING ${M2_INSTALL_LICENSESDIR}/flint
+  TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
@@ -376,8 +377,8 @@ _ADD_COMPONENT_DEPENDENCY(libraries flint "gmp;mpfr;ntl" FLINT_FOUND)
 # https://service.mathematik.uni-kl.de/ftp/pub/Math/Singular/Factory/
 # TODO: what is ftmpl_inst.o?
 ExternalProject_Add(build-factory
-  URL               https://www.singular.uni-kl.de/ftp/pub/Math/Factory/factory-4.4.0.tar.gz
-  URL_HASH          SHA256=baf31159578463e26bf18ec68ec901228d79a819866dd96c02d85c73dfbaf030
+  URL               https://macaulay2.com/Downloads/OtherSourceCode/factory-4.4.1.tar.gz
+  URL_HASH          SHA256=345ec8ab2481135d18244e2a2ff6bc16e812a39a9eb5ac5d578956d8e0526e6e
   PREFIX            libraries/factory
   SOURCE_DIR        libraries/factory/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -484,8 +485,8 @@ endif()
 
 # https://github.com/algebraic-solving/msolve
 ExternalProject_Add(build-msolve
-  URL               https://github.com/algebraic-solving/msolve/archive/refs/tags/v0.7.3.tar.gz
-  URL_HASH          SHA256=b82bf7dfe1fb7d3064ecf95e0d0a01334820b09b1107368ca9b4d05ba9ee1241
+  URL               https://github.com/algebraic-solving/msolve/archive/refs/tags/v0.7.5.tar.gz
+  URL_HASH          SHA256=e88368abfd1e1918329ff9444164ca0e304835794fec68d192a63c845ae63128
   PREFIX            libraries/msolve
   SOURCE_DIR        libraries/msolve/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -497,19 +498,20 @@ ExternalProject_Add(build-msolve
                       $<$<BOOL:${OpenMP_FOUND}>:--enable-openmp>
                       "CPPFLAGS=${CPPFLAGS} -I${GMP_INCLUDE_DIRS} -I${MPFR_INCLUDE_DIRS} -I${FLINT_INCLUDE_DIR}"
                       CFLAGS=${CFLAGS}
-                      "LDFLAGS=${LDFLAGS} -L${GMP_LIBRARY_DIRS} ${MPFR_LIBRARIES} ${FLINT_LIBRARIES}"
+		      "LDFLAGS=${LDFLAGS} -L${GMP_LIBRARY_DIRS} -L${MPFR_LIBRARIES} -L${FLINT_LIBRARIES}"
                       CC=${CMAKE_C_COMPILER}
 		      "OPENMP_CFLAGS=${OpenMP_C_FLAGS} ${OpenMP_C_LDLIBS}"
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
   INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/msolve
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/msolve
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different msolve ${M2_INSTALL_PROGRAMSDIR}/
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-#_ADD_COMPONENT_DEPENDENCY(libraries msolve "gmp;mpfr;flint" MSOLVE_FOUND)
+_ADD_COMPONENT_DEPENDENCY(programs msolve "gmp;mpfr;flint" MSOLVE_FOUND)
 
 
 # https://numpi.dm.unipi.it/software/mpsolve
@@ -951,9 +953,10 @@ ExternalProject_Add(build-nauty
                       RANLIB=${CMAKE_RANLIB}
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
   # TODO: put nauty programs in a folder?
-  INSTALL_COMMAND   ${CMAKE_STRIP} ${nauty_BINARIES}
+  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install includedir=${M2_HOST_PREFIX}/include/nauty
+          COMMAND   ${CMAKE_STRIP} ${nauty_BINARIES}
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/nauty
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different nauty.h ${M2_INSTALL_LICENSESDIR}/nauty
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different LICENSE-2.0.txt ${M2_INSTALL_LICENSESDIR}/nauty
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${nauty_BINARIES} ${M2_INSTALL_PROGRAMSDIR}/
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
@@ -996,6 +999,7 @@ ExternalProject_Add(build-normaliz
   INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/normaliz
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/normaliz
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different source/normaliz ${M2_INSTALL_PROGRAMSDIR}/
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON

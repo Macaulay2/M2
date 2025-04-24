@@ -13,6 +13,17 @@ doc ///
     between $-2^{31}$ and $2^{31} - 1$.
   SeeAlso
     "parallel programming with threads and tasks"
+  Subnodes
+    (NewFromMethod, AtomicInt, ZZ)
+    (NewFromMethod, ZZ, AtomicInt)
+    store
+    exchange
+    compareExchange
+    (symbol +=, AtomicInt)
+    (symbol -=, AtomicInt)
+    (symbol &=, AtomicInt)
+    (symbol |=, AtomicInt)
+    (symbol ^^=, AtomicInt)
 ///
 
 doc ///
@@ -225,7 +236,7 @@ doc ///
     compareExchange
     (compareExchange, AtomicInt, ZZ, ZZ)
   Headline
-    compares and possibly exchanges the value of an atomic integer
+    compare and possibly exchange the value of an atomic integer
   Usage
     compareExchange(x, y, z)
   Inputs

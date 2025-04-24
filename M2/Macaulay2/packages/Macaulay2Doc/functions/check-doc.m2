@@ -105,3 +105,22 @@ Node
     installPackage
     loadPackage
 ///
+
+undocumented {(generateAssertions, List)}
+document {
+    Key => {
+	generateAssertions,
+       (generateAssertions, String)
+    },
+    Headline => "generate assert statements from experimental input",
+    Usage => "generateAssertions x",
+    Inputs => { "x" => { "a string whose non-comment non-blank lines are Macaulay2 expressions to be evaluated" } },
+    Outputs => { { "a net whose lines are assert statements that assert that the expressions evaluate to the expected value, just computed" }},
+    EXAMPLE {
+	"generateAssertions ///
+	2+2
+	2^20
+	///",
+	///value \ unstack oo///
+    }
+}

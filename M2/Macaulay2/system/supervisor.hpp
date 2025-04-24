@@ -143,6 +143,7 @@ struct ThreadSupervisor
   gc_set(int*) m_ThreadLocalIdPtrSet;
   ///initialize
   void initialize();
+  bool is_initialized = false;
   ///thread local id's
   int m_ThreadLocalIdCounter;
   void* m_LocalThreadMemory;

@@ -255,17 +255,19 @@ export toHashTable(v:Sequence):Expr := (
      Expr(sethash(o,false)));
 toHashTable(e:Expr):Expr := (
      when e
+     -- # typical value: hashTable, BasicList, HashTable
      is w:List do toHashTable(w.v)
      is s:Sequence do (
-	  if length(s) != 2 then return WrongNumArgs(1,2);
-	  when s.0
-	  is FunctionClosure do nothing
-	  is CompiledFunction do nothing
-	  is CompiledFunctionClosure do nothing
-	  else return WrongArg(1,"a function");
-	  when s.1 is w:List do toHashTableWithCollisionHandler(w.v,s.0)
-	  else WrongArg(2,"a list"))
-     else WrongArg("a list"));
+	  if length(s) == 2 then (
+	      if isFunction(s.0) then (
+		  when s.1
+		  -- # typical value: hashTable, Function, BasicList, HashTable
+		  is w:Sequence do toHashTableWithCollisionHandler(w, s.0)
+		  is w:List do toHashTableWithCollisionHandler(w.v, s.0)
+		  else WrongArg(2, "a list or sequence"))
+	      else toHashTable(s))
+	  else toHashTable(s))
+     else WrongArg("a list or sequence"));
 setupfun("hashTable",toHashTable);
 
 copy(table:array(KeyValuePair)):array(KeyValuePair) := (

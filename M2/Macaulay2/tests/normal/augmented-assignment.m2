@@ -29,7 +29,7 @@ assert Equation(x, matrix{{1}, {2}})
 x |= matrix {{3}, {4}}
 assert Equation(x, matrix {{1, 3}, {2, 4}})
 x \\= matrix {{4, 3}, {2, 1}}
-assert Equation(x, matrix {{-5, -6}, {3, 3}})
+assert Equation(x, matrix {{-3, 3}, {-1, 1}})
 x = 1:(1)
 x ..= 1:(3)
 assert Equation(x, (1:(1), 1:(2), 1:(3)))
@@ -157,3 +157,7 @@ assert BinaryOperation(symbol ===, y ?? x, y)
 assert BinaryOperation(symbol ===, x ?? y, y)
 x ??= y
 assert BinaryOperation(symbol ===, x, y)
+
+-- issue #3612
+h = new HashTable from { symbol cache => new CacheTable };
+h.cache ??= new CacheTable

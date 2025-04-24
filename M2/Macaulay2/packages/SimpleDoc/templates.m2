@@ -29,6 +29,7 @@ packagetemplate = "newPackage(
     Date => \"\",
     Headline => \"\",
     Authors => {{ Name => \"\", Email => \"\", HomePage => \"\"}},
+    Keywords => {\"\"},
     AuxiliaryFiles => false,
     DebuggingMode => false
     )

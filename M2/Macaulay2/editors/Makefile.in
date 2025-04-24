@@ -38,7 +38,8 @@ highlightjs/%: @srcdir@/highlightjs/% highlightjs
 	cp $< $@
 
 clean:
-	rm -rf @pre_emacsdir@/* atom emacs highlightjs prism pygments vim
+	rm -rf @pre_emacsdir@/* atom emacs highlightjs prism pygments vim \
+		Macaulay2Web textmate
 
 else
 clean:

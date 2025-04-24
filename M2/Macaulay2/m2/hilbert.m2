@@ -316,7 +316,7 @@ hilbertSeries Module := opts -> M -> (
 	    if ord == ord2 then return ser else
 	    if ord  < ord2 then return part(, ord-1, hft, ser));
 	if M.cache#?exactKey or M.cache#?reducedKey then (
-	    if not M.cache#?reducedKey then M.cache#reducedKey = reduceHilbert M.cache#exactKey;
+	    M.cache#reducedKey ??= reduceHilbert M.cache#exactKey;
 	    return last(M.cache#approxKey = (ord, truncateSeries(ord, hft, M.cache#reducedKey))))
 	    )
     else error "hilbertSeries: option Order expected infinity or an integer";

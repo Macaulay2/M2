@@ -147,19 +147,12 @@ GroebnerBasis.synonym = "Gröbner basis"
 GroebnerBasisOptions = new Type of OptionTable
 GroebnerBasisOptions.synonym = "Gröbner basis options"
 
--- m:    a Matrix
--- type: an GroebnerBasisOptions
--- opts: an OptionTable
 -- TODO: document this
-new GroebnerBasis from Sequence := (GB, S) -> (
-    (m, type, opts) := if #S === 3 then S else error "GroebnerBasis: expected three initial values";
-    -- TODO: implement recursive type checking
-    if not instance(m, Matrix) or not instance(type, GroebnerBasisOptions) or not instance(opts, OptionTable)
-    then error "GroebnerBasis: expected a sequence of type (Matrix, GroebnerBasisOptions, OptionTable)";
+new GroebnerBasis from (Matrix, GroebnerBasisOptions, OptionTable) := (GB, m, type, opts) -> (
     if flagInhomogeneity and not isHomogeneous m then error "internal error: gb: inhomogeneous matrix flagged";
     -- initialize the toplevel container
     G := new GroebnerBasis;
-    if debugLevel > 5 then registerFinalizer(G, "gb (new GroebnerBasis from Sequence)");
+    if debugLevel > 5 then registerFinalizer(G, "gb (new GroebnerBasis from (Matrix, GroebnerBasisOptions, OptionTable))");
     G.ring = ring m;
     G.matrix = Bag {m};
     G.target = target m;
@@ -202,6 +195,7 @@ syz = method(TypicalValue => Matrix, Options => syzDefaults)
 -- rawGBSyzygies doesn't sort its columns, so we do that here
 syz              GroebnerBasis  := Matrix => o -> G -> map(ring G, rawsort rawGBSyzygies G.RawComputation)
 leadTerm         GroebnerBasis  := Matrix =>      G -> map(ring G, rawGBGetLeadTerms(raw G, -1))
+leadTerm     (ZZ,GroebnerBasis) := Matrix =>   (i,G)-> map(ring G, rawGBGetLeadTerms(raw G, i))
 getChangeMatrix  GroebnerBasis  := Matrix =>      G -> map(ring G, rawGBChangeOfBasis G.RawComputation)
 generators       GroebnerBasis  := Matrix => o -> G -> map(target unbag G.matrix, , rawGBGetMatrix G.RawComputation)
 -- rawGBMinimalGenerators doesn't sort its columns, so we do that here
@@ -311,7 +305,7 @@ gb = method(TypicalValue => GroebnerBasis, Options => gbDefaults)
 gb Ideal  := GroebnerBasis => opts -> I -> gb (module I, opts)
 gb Module := GroebnerBasis => opts -> M -> (
     if M.?relations then (
-	if not M.cache#?"full gens" then M.cache#"full gens" = generators M | relations M;
+	M.cache#"full gens" ??= generators M | relations M;
 	gb(M.cache#"full gens", opts, SyzygyRows => numgens source generators M))
     else gb(generators M, opts))
 gb Matrix := GroebnerBasis => opts -> m -> (

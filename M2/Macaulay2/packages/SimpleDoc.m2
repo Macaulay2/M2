@@ -66,6 +66,8 @@ applySplit = (functionTable, textlines) -> apply(splitByIndent(textlines, false)
 	functionTable#key(textlines_{s+1..e}, getLinenum textlines#s)))
 
 -- Mapping tables for evaluating docstring keywords
+-- When adding a new keyword that isn't already an exported symbol,
+-- add it to the list of constants for syntax highlighting in Style.m2
 NodeFunctions = new HashTable from {
     "Node"            => (textlines, keylinenum) -> new Node from nodeCheck(applySplit(NodeFunctions, textlines), keylinenum),
     "Key"             => (textlines, keylinenum) -> Key             => getKeys(textlines, keylinenum),

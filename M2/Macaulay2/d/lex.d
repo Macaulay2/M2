@@ -315,9 +315,15 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	       return Token(
 		    if file.file.fulllines then wordEOC else NewlineW,
 		    newPosition(file, line, column), globalDictionary, dummySymbol, sawNewline))
-	  else if isalpha(ch) then ( -- valid symbols are an alpha (letters, any unicode except 226) followed by any number of alphanum (alpha, digit, dollar, prime)
+	  else if ismathoperator(peek2(file)) then (
+	       for i from 1 to utf8charlength(char(ch))
+	       do tokenbuf << char(getc(file));
+	       return Token(makeUniqueWord(takestring(tokenbuf), parseWORD),
+		   newPosition(file, line, column), globalDictionary, dummySymbol, sawNewline))
+	  else if isalpha(ch) then ( -- valid symbols are an alpha (letters, any unicode) followed by any number of alphanum (alpha, digit, dollar, prime)
 	       tokenbuf << char(getc(file));
-	       while isalnum(peek(file)) do tokenbuf << char(getc(file));
+	       while isalnum(peek(file)) && !ismathoperator(peek2(file))
+	       do tokenbuf << char(getc(file));
 	       return Token(makeUniqueWord(takestring(tokenbuf), parseWORD),
 		   newPosition(file, line, column), globalDictionary, dummySymbol, sawNewline))
 	  else if isdigit(ch) || ch==int('.') && isdigit(peek(file,1)) then (
@@ -390,7 +396,8 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	       	    if int('.') == c then printWarningMessage(position(file),"character '"+char(c)+"' immediately following floating point number");
 		    );
 	       c = peek(file);
-	       if isalpha(c) then printWarningMessage(position(file),"character '"+char(c)+"' immediately following number");
+	       if isalpha(c) && !ismathoperator(peek2(file))
+	       then printWarningMessage(position(file),"character '"+char(c)+"' immediately following number");
 	       s := takestring(tokenbuf);
 	       return Token(Word(s,typecode,hash_t(0), parseWORD),
 		   newPosition(file, line, column), globalDictionary, dummySymbol, sawNewline))
@@ -409,12 +416,6 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 		    return errorToken
 		    )
 	       is word:Word do return Token(word,
-		   newPosition(file, line, column), globalDictionary, dummySymbol, sawNewline))
-	  else if ch == 226 then ( -- unicode math symbols
-	       tokenbuf << char(getc(file));
-	       tokenbuf << char(getc(file));
-	       tokenbuf << char(getc(file));
-	       return Token(makeUniqueWord(takestring(tokenbuf), parseWORD),
 		   newPosition(file, line, column), globalDictionary, dummySymbol, sawNewline))
 	  else (
 	       when recognize(file)
