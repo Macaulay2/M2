@@ -6,6 +6,7 @@
 #include "poly.hpp"
 #include "matrix.hpp"
 #include "matrix-con.hpp"
+#include <gmpxx.h>
 
 #if 0
 // Example of the calls used to create an ideal (one rowed matrix), over a poly ring
@@ -44,7 +45,7 @@ class MatrixStream
   }  // This will return null before idealDone() is called.
 
   // Fields required for the general stream interface (see mathicgb::mathicgb.h)
-  typedef int Coefficient;
+  using Coefficient = mpz_class;
   // typedef long Coefficient;
   // typedef size_t VarIndex;
   typedef int VarIndex;

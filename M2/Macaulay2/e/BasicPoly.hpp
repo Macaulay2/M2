@@ -8,11 +8,12 @@
 #include <iosfwd>
 #include <string>
 #include <unordered_map>
-  
+#include <gmpxx.h>
+
 class BasicPoly
 {
 public:
-  std::vector<mpz_t> mCoefficients;
+  std::vector<mpz_class> mCoefficients;
   std::vector<int> mComponents; // if zero length: all components are 0.
   std::vector<int> mMonomials; // a concatenated list of varpower monomials.  Each first entry is its length.
 

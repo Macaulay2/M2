@@ -384,6 +384,19 @@ public:
     return sparse;
   }
 
+  template<typename Container>
+  ElementArray elementArrayFromContainerOf_mpz_class(const Container& c) const
+  {
+    ElementArray sparse = allocateElementArray(c.size()); // initializes all elements
+    auto& svec = * elementArray(sparse); 
+    for (auto i = 0; i < c.size(); ++i)
+    {
+      __mpz_struct* x = const_cast<__mpz_struct*>(c[i].get_mpz_t());
+      mRing->set_from_mpz(svec[i], x);
+    }
+    return sparse;
+  }
+
   ring_elem ringElemFromElementArray(const ElementArray& sparse,
                                      int index) const
   {
@@ -762,6 +775,11 @@ public:
     return std::visit([&](auto& arg) -> ElementArray { return arg->template elementArrayFromContainerOfLongs<Container>(c); }, mConcreteVector);
   }
   
+  template<class Container>
+  ElementArray elementArrayFromContainerOf_mpz_class(const Container& c) const {
+    return std::visit([&](auto& arg) -> ElementArray { return arg->template elementArrayFromContainerOf_mpz_class<Container>(c); }, mConcreteVector);
+  }
+
   ring_elem ringElemFromElementArray(const ElementArray& coeffs,
                                      int index) const {
     return std::visit([&](auto& arg) -> ring_elem { return arg->ringElemFromElementArray(coeffs,index); }, mConcreteVector);

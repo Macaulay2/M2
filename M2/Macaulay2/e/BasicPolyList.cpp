@@ -40,7 +40,7 @@ void BasicPolyListStreamCollector::appendExponent(VarIndex index, Exponent expon
   mValue[mCurrentPoly].mMonomials[mSizeEntryInMonomial] += 2;
 }
 
-void BasicPolyListStreamCollector::appendTermDone(Coefficient coefficient)
+void BasicPolyListStreamCollector::appendTermDone(const Coefficient& coefficient)
 {
   mValue[mCurrentPoly].mCoefficients[mCurrentTerm] = coefficient;
 }
