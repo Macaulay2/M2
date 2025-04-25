@@ -106,6 +106,7 @@ export {
 	"ChainComplexMap",
 	"ChangeMatrix",
 	"CheckDocumentation",
+	"Citation",
 	"ClosestFit",
 	"CodimensionLimit",
 	"CoefficientRing",

@@ -88,6 +88,7 @@ NodeFunctions = new HashTable from {
     "Acknowledgement" => (textlines, keylinenum) -> Acknowledgement => DIV markup(textlines, keylinenum),
     "Contributors"    => (textlines, keylinenum) -> Contributors    => DIV markup(textlines, keylinenum),
     "References"      => (textlines, keylinenum) -> References      => DIV markup(textlines, keylinenum),
+    "Citation"        => (textlines, keylinenum) -> Citation        => DIV markup(textlines, keylinenum),
     "Caveat"          => (textlines, keylinenum) -> Caveat          => DIV markup(textlines, keylinenum),
     "SeeAlso"         => (textlines, keylinenum) -> SeeAlso         => apply(getNonempty textlines, value),
     "Subnodes"        => (textlines, keylinenum) -> Subnodes        => submenu(textlines, keylinenum),

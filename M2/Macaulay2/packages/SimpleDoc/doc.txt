@@ -225,15 +225,17 @@ Node
         { TOH Acknowledgement, BR{},
           TOH Contributors, BR{},
           TOH References,
+          TOH Citation,
             PARA {
                 "The text in these sections is parsed and rendered similar to the ",
                 TO Text, " subsection and can be used to acknowledge funding sources,
-                collaborators, and non-author contributors, or to provide references.
+                collaborators, and non-author contributors, or to provide references
+		or a preferred style citing the package in academic papers.
 		You can also use the ", TT "Tree", " keyword in the first line of this
 		section and use the nested tree structure described above." }},
         { TOH Caveat,
             PARA {
-                "The text in these sections is parsed and rendered similar to the ",
+                "The text in this section is parsed and rendered similar to the ",
                 TO Text, " subsection and can be used to inform users of potential
                 limits of the implementation."}},
         { TOH SeeAlso,
