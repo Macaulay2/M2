@@ -429,6 +429,7 @@ getData = (key, tag, rawdoc) -> (
 	Acknowledgement => getOption(rawdoc, Acknowledgement),
 	Contributors    => getOption(rawdoc, Contributors),
 	References      => getOption(rawdoc, References),
+	Citation        => getOption(rawdoc, Citation),
 	Caveat          => getOption(rawdoc, Caveat),
 	SeeAlso         => getOption(rawdoc, SeeAlso),
 	Subnodes        => getOption(rawdoc, Subnodes),
@@ -461,8 +462,8 @@ getBody := (key, tag, rawdoc) -> (
     DIV nonnull splice (
 	data := getData(key, tag, rawdoc);
 	HEADER1 toList data.Headline,
-	apply(("Synopsis", Description, SourceCode, Acknowledgement,
-		Contributors, References, Caveat, SeeAlso, Subnodes, "WaysToUse"),
+	apply(("Synopsis", Description, SourceCode, Acknowledgement, Contributors,
+		References, Citation, Caveat, SeeAlso, Subnodes, "WaysToUse"),
 	    section -> if data#?section then data#section)
         )
     )
