@@ -361,6 +361,9 @@ pruneComplex(List, ZZ) := opts -> (mComplex, nsteps) -> (
         ) do pruneUnit(mComplex, n, first unit, pruningMorph, PruningMap => opts.PruningMap, UnitTest => opts.UnitTest);
     (mComplex, pruningMorph)
     )
+-- for backwards compatibility; to be removed
+pruneComplex ChainComplex      := opts ->  C          -> pruneComplex(C, -1, opts)
+pruneComplex(ChainComplex, ZZ) := opts -> (C, nsteps) -> pruneComplex(complex C, -1, opts)
 
 enginePruneComplex = method(Options => options pruneComplex) -- ++ {...}
 enginePruneComplex List      := opts ->  C          -> enginePruneComplex(C, -1, opts)
