@@ -4,8 +4,8 @@
 
 void BasicPoly::clear()
 {
-  for (mpz_t& num : mCoefficients) 
-    mpz_clear(num);  
+  // for (auto& num : mCoefficients) 
+  //   mpz_clear(num);  
   mCoefficients.clear();
   mComponents.clear();
   mMonomials.clear();
