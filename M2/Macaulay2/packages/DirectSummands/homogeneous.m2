@@ -27,7 +27,9 @@ findProjectors Module := opts -> M -> (
 	-- TODO: computing eigenvalues over coefficient field
 	-- would significantly speed up this step
 	eigen := eigenvalues'' f0; -- about 25% of computation
-	if #eigen <= 1 then (
+	projs := select(for y in eigen list (f - y * id_M)^n,
+	    g -> not zero g and not isInjective g);
+	if #projs < 1 then (
 	    -- to be used as a suggestion in the error
 	    -- TODO: is there any way to tell if the module is indecomposable here?
 	    -- e.g. based on the characteristic polynomial factoring completely
@@ -35,7 +37,7 @@ findProjectors Module := opts -> M -> (
 	    -- TODO: expand for inexact fields
 	    if L === null and not instance(F, InexactField) then L = extField { char f0 };
 	    continue);
-	return for y in eigen list (f - y * id_M)^n
+	return projs
     );
     -- TODO: skip the "Try using" line if the field is large enough, e.g. L === K
     -- TODO: if L is still null, change the error
