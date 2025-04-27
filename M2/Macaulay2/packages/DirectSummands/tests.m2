@@ -261,6 +261,29 @@ TEST ///
   elapsedTime assert({1,2,2,2,2,2} == last \ isomorphismTally L);
 ///
 
+TEST ///
+  kk = ZZ/13
+  R = kk[x,y]
+  m = matrix {{x, 2*y}, {-y, x}}
+  assert(1 == # summands coker m)
+  assert(2 == # summands coker(m ++ m))
+  assert(2 == # summands changeBaseField_2 coker m)
+  assert(4 == # summands changeBaseField_2 coker(m ++ m))
+  --
+  kk = ZZ/32003
+  R = kk[x,y]
+  m = matrix {{x, y}, {-y, x}}
+  assert(1 == # summands coker m)
+  -- FIXME: this seems to almost always fail!!!
+  --assert(2 == # summands coker(m ++ m))
+  assert(2 == # summands changeBaseField_2 coker m)
+  assert(4 == # summands changeBaseField_2 coker(m ++ m))
+  end--
+  findProjectors(coker(m ++ m), Tries => 100)
+  factor char generalEndomorphism(coker m ++ coker m)
+  eigenvalues'' generalEndomorphism(coker m ++ coker m)
+///
+
 ///
   restart
   errorDepth=2
