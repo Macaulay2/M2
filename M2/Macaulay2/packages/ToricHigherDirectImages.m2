@@ -494,7 +494,7 @@ HDI (ToricMap, ZZ, Module) := Module => (phi, i, D) -> (
     if not isFreeModule D then error("-- module is not free");
     if rank D != 1 then error("-- module is not rank one");
     -- this chooses a divisor to represent the twist.
-    inp := flatten entries( (inverse fromCDivToPic source phi) * transpose matrix degrees D );
+    inp := -flatten entries( (inverse fromCDivToPic source phi) * transpose matrix degrees D );
     HDI(phi, i, inp)
     )
 HDI (ToricMap, ZZ, CoherentSheaf) := Module => (phi, i, D) -> sheaf(target phi, HDI(phi, i, module D))
@@ -919,7 +919,7 @@ doc ///
 	    phi = map(Z, X, matrix {{0,-1},{1,0}});
 	    M = (ring X)^{{-6,3}};
 	    RM = prune phi_*^0 M
-	    L = OO_X(6,-3);
+	    L = sheaf_X M;
 	    RL = prune phi_*^1 L
 	    annihilator RL
     SeeAlso
@@ -1061,6 +1061,23 @@ assert(isWellDefined phi)
 D = {0,-2,0,0,0,-2,1,0}
 HT = computeEigencharacters(phi,1,D);
 assert(set keys HT == set {matrix{{0},{1}}, matrix{{0},{-1}}})
+///
+
+TEST ///
+X = smoothFanoToricVariety(4,13);
+f = (nefRayContractions X)_1;
+Y = target f;
+D = {-1,-1,-1,-1,-1,-1,-1};
+D' = toricDivisor X
+L = OO D'
+assert(f_*^0 D == 0)
+assert(f_*^1 D == 0)
+assert(f_*^0 D == f_*^0 D')
+assert(f_*^1 D == f_*^1 D')
+assert(f_*^2 D == f_*^2 D')
+assert(f_*^0 D == module f_*^0 L)
+assert(f_*^1 D == module f_*^1 L)
+assert(f_*^2 D == module f_*^2 L)
 ///
 
 end--
