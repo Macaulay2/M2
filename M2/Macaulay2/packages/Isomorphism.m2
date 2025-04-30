@@ -127,7 +127,7 @@ protect Isomorphisms
 
 -- currently we cache isomorphisms ONLY in the source
 setIsomorphism = (N, M, f, o) -> (
-    o = { o.Strict, -- TODO: or all(degree f, zero),
+    o = { o.Strict or all(degree f, zero),
 	o.Homogeneous or isHomogeneous f };
     M.cache.Isomorphisms ??= new MutableHashTable;
     M.cache.Isomorphisms#(N, o) = f;
@@ -153,18 +153,21 @@ getIsomorphism = (N, M, o) -> (
 hasIsomorphism = (N, M, o) -> null =!= getIsomorphism(N, M, o)
 
 -- give an isomorphism between two free modules with same degrees
--- FIXME: because of https://github.com/Macaulay2/M2/issues/3719,
--- this might not give the most "natural" isomorphism
 isIsomorphismFree = (N, M0, o) -> (
-    if rank N != rank M0 then return false else
-    if not o.Homogeneous then return setIsomorphism(N, M0, map(N, M0, 1), o);
+    if rank N != rank M0 then return false;
     (d1, d2) := (degrees N, degrees M0);
+    diffdegs := min d2 - min d1;
     if o.Strict then M := M0 else d2 = degrees(
-	M = M0 ** (ring M0)^{min d2 - min d1});
-    if sort d1 != sort d2 then return false;
+	M = M0 ** (ring M0)^{diffdegs});
+    if sort d1 != sort d2 then
+    return if o.Homogeneous then false
+    else setIsomorphism(N, M0, map(N, M0, 1), o);
+    -- FIXME: because of https://github.com/Macaulay2/M2/issues/3719,
+    -- this might not give the most "natural" isomorphism
     p1 := first \ (sortBy last) toList pairs d1;
     p2 := first \ (sortBy last) toList pairs d2;
-    setIsomorphism(N, M0, map(N, M0, id_M^p2 // id_N^p1 -* TODO: Degree => d2 *-), o))
+    setIsomorphism(N, M0, map(N, M0, id_M^p2 // id_N^p1,
+	    Degree => -diffdegs), o))
 
 isIsomorphic = method(
     TypicalValue => Boolean,
@@ -627,6 +630,48 @@ TEST ///
   assert isIsomorphic(B1,B1)
   assert not isIsomorphic(A,B1)
   assert not isIsomorphic(A1,B1)
+///
+
+TEST ///
+  debug Isomorphism
+  R = QQ[x,y, DegreeRank => 2]
+  M = R^{{1,1}, {0,1}}
+  N = R^{{0,1}, {1,1}}
+  assert isIsomorphic(N, M, Strict => false, Homogeneous => false)
+  assert(map(N, M, {{0, 1}, {1, 0}}) === M.cache.Isomorphisms#(N, {true, true}))
+  f = isomorphism(N, M,     Strict => false, Homogeneous => false)
+  assert isWellDefined f
+  assert isHomogeneous f
+  assert(source f === M)
+  assert(target f === N)
+  assert(degree f == {0,0})
+  assert isIsomorphic(N, M, Strict => false, Homogeneous => true)
+  assert isIsomorphic(N, M, Strict => true,  Homogeneous => false)
+  assert isIsomorphic(N, M, Strict => true,  Homogeneous => true)
+  f' = isomorphism(M, N,    Strict => false, Homogeneous => false)
+  assert(map(M, N, {{0, 1}, {1, 0}}) === f')
+  assert(1 == #M.cache.Isomorphisms)
+
+  M = R^{{1,1}, {0,1}}
+  N = R^{{0,1}, {1,1}} ** R^{{2,2}}
+  assert isIsomorphic(N, M, Strict => false, Homogeneous => false)
+  f = isomorphism(N, M,     Strict => false, Homogeneous => false)
+  assert same(f, map(N, M, {{0, 1}, {1, 0}}, Degree => {-2,-2}), M.cache.Isomorphisms#(N, {false, true}))
+  assert isWellDefined f
+  assert isHomogeneous f
+  assert(source f === M)
+  assert(target f === N)
+  assert(degree f == {-2,-2})
+  assert isIsomorphic(N, M, Strict => false, Homogeneous => true)
+  assert isIsomorphic(N, M, Strict => true,  Homogeneous => false)
+  f = isomorphism(N, M,     Strict => true,  Homogeneous => false)
+  assert same(f, map(N, M, {{1, 0}, {0, 1}}), M.cache.Isomorphisms#(N, {true, false}))
+  assert isWellDefined f
+  assert not isHomogeneous f
+  assert(source f === M)
+  assert(target f === N)
+  assert not isIsomorphic(N, M, Strict => true, Homogeneous => true)
+  assert(2 == #M.cache.Isomorphisms)
 ///
 
 end--
