@@ -326,3 +326,248 @@ document {
     "The option ", TO "ChangeMatrix", " can be used with ", TO "gb",
     " to enable the computation of the change of basis matrix."
 }
+
+-- Tests for different variants
+
+TEST /// -- basics of Algorithm => LinearAlgebra
+  I = ideal vars(QQ[x])
+  assert try (elapsedTime gb(I, Algorithm => LinearAlgebra); false) else true
+
+  R = ZZ/32003[x]
+  I = ideal vars R
+  elapsedTime result = gens (G = gb(I, Algorithm => LinearAlgebra));
+  assert(result == vars R)
+
+  assert try(getChangeMatrix G; false) else true
+  assert try(mingens G; false) else true
+  assert try(syz G; false) else true
+  assert try(a // G; false) else true
+  assert try(a % G; false) else true
+  assert(numcols leadTerm G == 1) -- doesn't work yet. FAILS
+  assert(numcols gens G == 1)
+///
+
+TEST /// -- Algorithm => LinearAlgebra, over finite field.
+  kk = ZZ/101;
+  R1 = kk[a..g, MonomialSize=>8];
+  setRandomSeed 42
+  J1 = ideal random(R1^1, R1^{-4,-4,-5,-5});
+  elapsedTime gbC = flatten entries gens (G = gb(ideal J1_*, Algorithm => LinearAlgebra));
+  elapsedTime gbB = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
+  assert(sort gbC == gbB) -- TODO: orde rshould be the same!!
+
+  -- TODO: is it ok to check Msolve while we do this?
+  needsPackage "Msolve"
+  elapsedTime gbD = flatten entries msolveGB(ideal J1_*, Threads => 8); -- slowest, due to translation, or what?
+  assert(gbD == gbB)
+
+  assert try(getChangeMatrix G; false) else true
+  assert try(mingens G; false) else true
+  assert try(syz G; false) else true
+  assert try(a // G; false) else true
+  assert try(a % G; false) else true
+  assert(numcols leadTerm G == 1) -- doesn't work yet. FAILS
+  assert(numcols gens G == 78)
+///
+
+TEST /// -- Algorithm => LinearAlgebra, over prime finite field.
+  kk = ZZ/101;
+  R1 = kk[a..g, MonomialSize=>8];
+  setRandomSeed 42
+  J1 = ideal random(R1^1, R1^{-4,-4,-5,-5});
+  elapsedTime gbC = flatten entries gens (G = gb(ideal J1_*, Algorithm => LinearAlgebra));
+  elapsedTime gbB = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
+  assert(sort gbC == gbB) -- TODO: orde rshould be the same!!
+
+  -- TODO: is it ok to check Msolve while we do this?
+  needsPackage "Msolve"
+  elapsedTime gbD = flatten entries msolveGB(ideal J1_*, Threads => 8); -- slowest, due to translation, or what?
+  assert(gbD == gbB)
+
+  assert try(getChangeMatrix G; false) else true
+  assert try(mingens G; false) else true
+  assert try(syz G; false) else true
+  assert try(a // G; false) else true
+  assert try(a % G; false) else true
+  assert(numcols leadTerm G == 1) -- doesn't work yet. FAILS
+  assert(numcols gens G == 78)
+///
+
+TEST /// -- Algorithm => LinearAlgebra, over non-prime finite field.
+  kk = GF 125;
+  R1 = kk[a..g, MonomialSize=>8];
+  setRandomSeed 42
+  J1 = ideal random(R1^1, R1^{-4,-4,-5,-5});
+  
+  elapsedTime gbC = flatten entries gens gb(ideal J1_*, DegreeLimit => 10);
+  elapsedTime gbB = flatten entries gens (G = gb(ideal J1_*, Algorithm => LinearAlgebra, DegreeLimit => 10));
+  assert(gbC == sort gbB) -- TODO: make sure gbB is sorted!
+
+  -- the following appears to hang. BUG!! It should say it can't do it.
+  --try(groebnerBasis(ideal J1_*, Strategy => "F4"); false) else true -- BUG: this should be disallowed...!
+  needsPackage "Msolve"
+  elapsedTime try(msolveGB(ideal J1_*, Threads => 8); false) else true -- correctly gives error
+///
+
+-*
+  restart
+*-
+TEST /// -- hilbert driven gb computation, for default, Algorithn => LinearAlgebra
+  setRandomSeed 42
+  kk = ZZ/101
+  R1 = kk[a..g, MonomialSize=>8];
+  K1 = ideal (a^4, b^4, c^4, d^4)
+  hfJ = poincare K1
+  J1 = ideal random(R1^1, R1^{-4, -4, -4, -4});
+  elapsedTime gbA = flatten entries gens gb(ideal J1_*, Hilbert => hfJ);
+  elapsedTime gbB = flatten entries gens gb(ideal J1_*,
+                                          Algorithm => LinearAlgebra,
+					  Hilbert => hfJ);
+  elapsedTime gbB2 = flatten entries gens gb(ideal J1_*,
+                                          Algorithm => LinearAlgebra);
+  elapsedTime gbC = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
+  assert(gbA == sort gbB)
+  assert(gbB == gbB2)
+  assert(gbA == gbC)
+  assert(sort gbB == gbC)
+
+  needsPackage "Msolve"
+  elapsedTime gbD = flatten entries msolveGB(ideal J1_*, Threads => 8); -- correctly gives error
+
+  assert(gbA == gbD)
+///
+
+-*
+  restart
+*-
+TEST /// -- GB over quotient rings
+  setRandomSeed 42
+  kk = ZZ/101
+  R1 = kk[a,b,c,d,e,f]/ideal(a^2 - b*c)
+  J1 = ideal random(R1^1, R1^{-2,-2,-3,-3});
+  elapsedTime gbA = flatten entries gens gb(ideal J1_*);
+  elapsedTime gbB = flatten entries gens gb(ideal J1_*,
+      Algorithm => LinearAlgebra); -- BUG: INCORRECT
+  elapsedTime gbC = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4"); 
+  assert(gbA == sort gbB) -- fails
+  assert(sort gbA == sort gbC) -- because it falls back to working version
+  #gbA
+  #gbB
+  #gbC
+
+  needsPackage "Msolve"
+  assert try(msolveGB(ideal J1_*, Threads => 8); false) else true -- correctly gives error
+///
+
+
+-*
+  restart
+*-
+TEST /// -- exterior algebra
+  kk = ZZ/101
+  R1 = kk[a,b,c,d,e,f, SkewCommutative=>true]
+  setRandomSeed 42
+  J1 = ideal random(R1^1, R1^{-2,-2,-2,-2});
+  elapsedTime gbA = flatten entries gens gb(J1);
+  elapsedTime gbB = flatten entries gens gb(ideal J1_*, Algorithm => LinearAlgebra); -- BUG!!
+  elapsedTime gbC = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
+  --assert(gbA == gbB)
+  --assert(gbA == gbC)
+  --assert(gbA == gbD)
+
+  needsPackage "Msolve" -- BUG!!
+  assert try(msolveGB(ideal J1_*, Threads => 8); false) else true -- shoulg give error!
+  gbD = flatten entries msolveGB(ideal J1_*, Threads => 8);-- is this correct?! NO!!  What is going on? I think it is substituting back into R1, getting mostly zeros...
+  #gbA
+  #gbD
+
+  R2 = kk[a,b,c,d,e,f]
+  J2 = sub(J1, R2)
+  gbA2 = flatten entries gens gb(ideal J2_*);
+  gbB2 = flatten entries gens gb(ideal J2_*, Algorithm => LinearAlgebra);
+  gbD2 = flatten entries msolveGB(ideal J2_*);
+  assert(gbA2 == sort gbB2)
+  assert(gbA2 == gbD2)
+
+  ideal for f in gbD2 list sub(f, R1)
+///
+
+-*
+  restart
+*-
+TEST /// -- nonstandard grading
+  kk = ZZ/101;
+  R1 = kk[a..f, MonomialOrder => {GRevLex => {1,1,1,1,1,1}}, Degrees => {1,2,3,4,4,4}];
+  setRandomSeed 42
+  J1 = ideal random(R1^1, R1^{-5, -5, -5, -5});
+  elapsedTime gbA = flatten entries gens gb(J1);
+  elapsedTime gbB = flatten entries gens gb(ideal J1_*, Algorithm => LinearAlgebra); -- BUG!
+  elapsedTime gbC = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
+  needsPackage "Msolve"
+  elapsedTime gbD = flatten entries msolveGB(ideal J1_*, Verbosity => 2, Threads => 8);
+  #gbA == 12
+  #gbA == #gbB  -- fails!! gbB is wrong!
+  #gbA == #gbC
+  #gbA == #gbD
+  assert(gbA == sort gbB) -- fails
+  assert(gbA == gbC)
+  assert(gbA == gbD)
+  assert(sort gbA == gbA)
+///
+
+-*
+  restart
+*-
+TEST /// -- GB's of modules
+  -- default order: grevlex, followed by position up
+  R1 = ZZ/101[vars(0..7)]
+  assert(leadTerm matrix{{a},{a}} == matrix{{0},{a}})
+
+  m1 = genericMatrix(R1, a, 2, 3)
+  elapsedTime gbA = gens (gb m1);
+  m1 = genericMatrix(R1, a, 2, 3)
+  elapsedTime gbB = gens (G = gb(m1, Algorithm => LinearAlgebra)); -- BUG: wrong order
+
+  assert(gbA == gbB _ (sortColumns gbB))
+
+  m1 = genericMatrix(R1, a, 2, 3)
+  elapsedTime gbC = groebnerBasis(m1, Strategy => "F4"); -- BUG: just wrong
+
+  m1 = genericMatrix(R1, a, 2, 3)
+  elapsedTime gbC = groebnerBasis(m1, Strategy => "MGB"); -- BUG: just wrong
+
+  R2 = ZZ/101[vars(0..7), MonomialOrder => {Position => Up}]
+  m2 = genericMatrix(R2, a, 2, 3)
+  elapsedTime gbC = groebnerBasis(m2, Strategy => "MGB"); -- BUG: just wrong
+
+
+  assert(leadTerm matrix{{a},{a}} == matrix{{0},{a}})
+
+  -- note: msolveGB only works for ideals, doesn't take a matrix or Module, in any case.
+///
+
+-*
+  restart
+*-
+TEST /// -- different monomial orders
+///
+
+-*
+  restart
+*-
+TEST /// -- Weyl algebras
+///
+
+
+-*
+  restart
+*-
+TEST /// -- multigradings
+///
+
+-*
+  restart
+*-
+TEST /// -- restarting GB's after stopping for some reason
+///
+

@@ -791,6 +791,7 @@ const Matrix *rawMGB(
       if (not P->getCoefficientRing()->isFinitePrimeField())
         {
           ERROR("coefficients for mathic gb computation must be a prime field");
+          return nullptr;
         }
       int charac = static_cast<int>(P->characteristic());
       int nvars = P->n_vars();
