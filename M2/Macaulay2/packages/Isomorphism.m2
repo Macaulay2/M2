@@ -365,6 +365,10 @@ Node
       If this test is passed, the program uses a variant of the Hom command
       to compute a random map of minimal possible degree from M to N,
       and checks whether this is surjective and injective.
+      If @TT "Tries => n"@ is provided, this is attempted $n$ times,
+      otherwise a heuristic based on the characteristic of the field is used
+      to determine the number of attempts to make (1 in characteristic zero,
+      ~10 in characteristic 32003, and ~150 in characteristic 2).
 
       In the inhomogeneous case (or with Homogeneous => false) the random map is
       a random linear combination of the generators of the module of homomorphisms.
