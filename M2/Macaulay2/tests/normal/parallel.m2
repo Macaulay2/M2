@@ -105,6 +105,7 @@ assert Equation(z, 9)
 -- (x) = y should behave like x = y
 assert Equation((x) = 5, 5)
 assert Equation((x) += 2, 7)
+assert Equation((x) = 1:6, 6) -- except when the RHS is a sequence of length 1
 
 -- 0-length LHS
 assert Equation(()  = (), ())
