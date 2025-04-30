@@ -45,6 +45,8 @@ protect Jacobian
 
 protect Iterate
 
+protect Strict
+
 protect Threads
 
 protect Tries
