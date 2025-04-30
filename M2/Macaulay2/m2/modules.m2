@@ -15,6 +15,7 @@ ring Matrix := f -> (
      if R =!= S then error "expected module map with source and target over the same ring";
      if f.?RingMap then error "expected module map with no ring map";
      R)
+-- FIXME: can't set the typical output type because Module isn't defined yet!
 source Matrix := f -> f.source
 target Matrix := f -> f.target
 
@@ -155,22 +156,27 @@ isHomogeneous Vector := (v) -> isHomogeneous v#0
 Module = new Type of ImmutableType
 Module.synonym = "module"
 new Module from List := (Module,v) -> new Module of Vector from hashTable v
-new Module from Sequence := (Module,x) -> (
-     (R,rM) -> (
-	  assert instance(R,Ring);
-	  assert instance(rM,RawFreeModule);
-	  new Module of Vector from hashTable {
-     	       symbol cache => new CacheTable from { 
-		    cache => new MutableHashTable	    -- this hash table is mutable, hence has a hash number that can serve as its age
-		    },
-     	       symbol RawFreeModule => rM,
-     	       symbol ring => R,
-     	       symbol numgens => rawRank rM
-     	       })) x
+new Module from (Ring, RawFreeModule) := (Module, R, rM) -> (
+    new Module of Vector from hashTable {
+	symbol cache => new CacheTable from {
+	    cache => new MutableHashTable  -- this hash table is mutable, hence has a hash number that can serve as its age
+	    },
+	symbol RawFreeModule => rM,
+	symbol ring => R,
+	symbol numgens => rawRank rM
+	})
 
 vector(Module, Matrix) := (M, f) -> vector map(M,,entries f)
 vector(Module, List)   := (M, v) -> vector map(M,,apply(splice v, i -> {i}))
 vector(Module, RingElement) := vector(Module, Number) := (M, x) -> vector(M, {x})
+vector(Ring,       Matrix)      :=
+vector(RingFamily, Matrix)      := (R, f) -> vector(R^(numRows f), f)
+vector(Ring,       List)        :=
+vector(RingFamily, List)        := (R, v) -> vector(R^(#v), v)
+vector(Ring,       Number)      :=
+vector(Ring,       RingElement) :=
+vector(RingFamily, Number)      :=
+vector(RingFamily, RingElement) := (R, x) -> vector(R^1, {x})
 
 Module#id = M -> map(M, M, 1)
 raw Module := M -> M.RawFreeModule

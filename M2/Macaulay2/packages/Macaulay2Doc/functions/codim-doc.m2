@@ -1,15 +1,22 @@
 --- status: draft
 --- author(s): Decker, Popescu
---- notes: 
+--- notes:
 
+-- TODO: combine some of these nodes
 document {
      Key => codim,
      Headline => "compute the codimension",
-     SeeAlso => {dim}
+     SeeAlso => {dim},
+    Subnodes => {
+	TO [(codim, Ideal), Generic],
+        },
      }
 
 document { 
-     Key => {[(codim,Ideal), Generic],[(codim,Module), Generic],
+    Key => {
+	[(codim, Ideal), Generic],
+	[(codim, MonomialIdeal), Generic],
+	[(codim, Module), Generic],
 	  [(codim,PolynomialRing), Generic],
 	  [(codim,QuotientRing), Generic]},
      Usage => "codim(...,Generic=>true)",

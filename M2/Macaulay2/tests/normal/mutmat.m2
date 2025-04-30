@@ -59,3 +59,9 @@ Q = mutableMatrix id_(R^2)_P
 assert(L_(0, 1) == 0)
 assert(U_(1, 0) == 0)
 assert(Q * L * U == M)
+
+-- issue #3709 (these used to crash M2)
+assert try ( mutableMatrix(ZZ, -1, -1); false ) else true
+assert try ( mutableMatrix(ZZ, -1,  1); false ) else true
+assert try ( mutableMatrix(ZZ,  1, -1); false ) else true
+assert try ( mutableIdentity(ZZ, -1);   false ) else true

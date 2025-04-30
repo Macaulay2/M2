@@ -65,3 +65,11 @@ joinIterators = a -> (
 		r))))
 
 Iterator | Iterator := (x, y) -> joinIterators(x, y)
+
+pairsIterator = x -> Iterator (
+    iter := iterator x;
+    i := 0;
+    () -> (
+	y := next iter;
+	if y === StopIteration then StopIteration
+	else (i, (i += 1; y))))

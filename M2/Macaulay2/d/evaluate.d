@@ -4,6 +4,11 @@ use hashtables;
 use convertr;
 use debugging;
 
+-- evalprof is not defined until profiler.dd
+-- so we use a pointer and populate it later.
+dummyevalprof(c:Code):Expr := nullE;
+export evalprofpointer := dummyevalprof;
+
 export globalAssignmentHooks := newHashTableWithHash(mutableHashTableClass,nothingClass);
 setupconst("globalAssignmentHooks",Expr(globalAssignmentHooks));
 export threadLocal evalSequenceHadError := false;
@@ -14,6 +19,7 @@ threadLocal errorreturn := nullE;
 threadLocal recycleBin := new array(Frame) len 20 do provide dummyFrame;
 export trace := false;
 threadLocal export backtrace := true;
+threadLocal export profiling := false;
 threadLocal lastCode := dummyCode;
 threadLocal lastCodePosition := Position("",ushort(0),ushort(0),ushort(0),ushort(0),ushort(0),ushort(0),ushort(0));
 export chars := new array(Expr) len 256 do (
@@ -28,6 +34,7 @@ export iteratorS := setupvar("iterator", nullE);
 export nextS := setupvar("next", nullE);
 export applyIteratorS := setupvar("applyIterator", nullE);
 export joinIteratorsS := setupvar("joinIterators", nullE);
+export pairsIteratorS := setupvar("pairsIterator", nullE);
 
 eval(c:Code):Expr;
 applyEE(f:Expr,e:Expr):Expr;
@@ -1248,59 +1255,110 @@ tryEval(c:Code):Expr := (
 	else tryEvalSuccess = true);
     p);
 
+nullify(c:Code):Expr := (
+    e := tryEval(c);
+    if tryEvalSuccess
+    then (
+	when e
+	is Nothing do e
+	else (
+	    f := lookup(Class(e), QuestionQuestionS);
+	    if f == nullE then e
+	    else applyEE(f, e)))
+    else nullE);
+
+nullCoalescion(lhs:Code,rhs:Code):Expr := (
+    e := nullify(lhs);
+    when e
+    is Nothing do eval(rhs)
+    else e);
+setup(QuestionQuestionS, nullify, nullCoalescion);
+
 augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
     when lookup(x.oper.word, augmentedAssignmentOperatorTable)
     is null do buildErrorPacket("unknown augmented assignment operator")
     is s:Symbol do (
 	-- evaluate the left-hand side first
 	lexpr := nullE;
-	if s.word.name === "??" -- null coalescion; ignore errors
+	if s.word.name === "??" -- x ??= y is treated like x ?? (x = y)
 	then (
-	    e := tryEval(x.lhs);
-	    if tryEvalSuccess then lexpr = e)
+	    e := nullify(x.lhs);
+	    when e
+	    is Nothing do nothing
+	    else return e)
 	else lexpr = eval(x.lhs);
-	left := evaluatedCode(lexpr, dummyPosition);
-	when left.expr is e:Error do return Expr(e) else nothing;
+	when lexpr is e:Error do return lexpr else nothing;
 	-- check if user-defined method exists
-	meth := lookup(Class(left.expr),
-	    Expr(SymbolClosure(globalFrame, x.oper)));
+	meth := lookup(Class(lexpr), Expr(SymbolClosure(globalFrame, x.oper)));
 	if meth != nullE then (
-	    rightexpr := eval(x.rhs);
-	    when rightexpr is e:Error do return(e) else nothing;
-	    r := applyEEE(meth, left.expr, rightexpr);
+	    rexpr := eval(x.rhs);
+	    when rexpr is e:Error do return rexpr else nothing;
+	    r := applyEEE(meth, lexpr, rexpr);
 	    when r
 	    is s:SymbolClosure do (
 		if s.symbol.word.name === "Default" then nothing
 		else return r)
 	    else return r);
 	-- if not, use default behavior
-	r:=nullE;
-	f:=s.binary; if f==dummyBinaryFun then
-	r=binarymethod(Code(left),x.rhs,SymbolClosure(globalFrame,s))
-	else
-	r=f(Code(left),x.rhs);
-	when r is e:Error do Expr(e) else (
+--      -- TODO reinstate -- user-defined augmented keywords
+--    	r:=nullE;
+--    	f:=s.binary; if f==dummyBinaryFun then
+--    	r=binarymethod(Code(left),x.rhs,SymbolClosure(globalFrame,s))
+--    	else
+--    	r=f(Code(left),x.rhs);
+--    	when r is e:Error do Expr(e) else (
+--    	when x.lhs
+--    	is y:globalMemoryReferenceCode do globalAssignment(y.frameindex, x.info, r)
+--    	is y:localMemoryReferenceCode do localAssignment(y.nestingDepth, y.frameindex, r)
+--    	is y:threadMemoryReferenceCode do globalAssignment(y.frameindex, x.info, r)
+--    	is y:binaryCode do (
+--               if y.f == DotS.symbol.binary || y.f == SharpS.symbol.binary
+--               then AssignElemFun(y.lhs, y.rhs, Code(evaluatedCode(r,dummyPosition)))
+--    	   else if y.f == unarymethodCode then UnaryInstallValueFun(convertGlobalOperator(x.info), y.lhs, Code(evaluatedCode(r,dummyPosition))) -- y.rhs redundant
+--               else InstallValueFun(CodeSequence(
+--                       convertGlobalOperator(x.info), y.lhs, y.rhs, Code(evaluatedCode(r,dummyPosition))))) -- y.f redundant
+--    	is y:ternaryCode do ( -- TODO check binarymethodCode?
+--               InstallValueFun(CodeSequence(
+--                       convertGlobalOperator(x.info), y.arg1, y.arg2, Code(evaluatedCode(r,dummyPosition))))) -- y.arg3 redundant -- combine with previous case?
+--            is y:adjacentCode do (
+--               InstallValueFun(CodeSequence(
+--                       convertGlobalOperator(AdjacentS.symbol), y.lhs, y.rhs, Code(evaluatedCode(r,dummyPosition)))))
+--            is y:unaryCode do (
+--               UnaryInstallValueFun(convertGlobalOperator(x.info), y.rhs, Code(evaluatedCode(r,dummyPosition))))
+--
+	left := evaluatedCode(lexpr, codePosition(x.lhs));
+        r := nullE;
 	when x.lhs
-	is y:globalMemoryReferenceCode do globalAssignment(y.frameindex, x.info, r)
-	is y:localMemoryReferenceCode do localAssignment(y.nestingDepth, y.frameindex, r)
-	is y:threadMemoryReferenceCode do globalAssignment(y.frameindex, x.info, r)
-	is y:binaryCode do (
-           if y.f == DotS.symbol.binary || y.f == SharpS.symbol.binary
-           then AssignElemFun(y.lhs, y.rhs, Code(evaluatedCode(r,dummyPosition)))
-	   else if y.f == unarymethodCode then UnaryInstallValueFun(convertGlobalOperator(x.info), y.lhs, Code(evaluatedCode(r,dummyPosition))) -- y.rhs redundant
-           else InstallValueFun(CodeSequence(
-                   convertGlobalOperator(x.info), y.lhs, y.rhs, Code(evaluatedCode(r,dummyPosition))))) -- y.f redundant
-	is y:ternaryCode do ( -- TODO check binarymethodCode?
-           InstallValueFun(CodeSequence(
-                   convertGlobalOperator(x.info), y.arg1, y.arg2, Code(evaluatedCode(r,dummyPosition))))) -- y.arg3 redundant -- combine with previous case?
-        is y:adjacentCode do (
-           InstallValueFun(CodeSequence(
-                   convertGlobalOperator(AdjacentS.symbol), y.lhs, y.rhs, Code(evaluatedCode(r,dummyPosition)))))
-        is y:unaryCode do (
-           UnaryInstallValueFun(convertGlobalOperator(x.info), y.rhs, Code(evaluatedCode(r,dummyPosition))))
+	is y:globalMemoryReferenceCode do (
+	    if s.binary==dummyBinaryFun then r=binarymethod(Code(left),x.rhs,SymbolClosure(globalFrame,s))
+	    else r=s.binary(Code(left),x.rhs);
+	    when r is e:Error do r
+	    else globalAssignment(y.frameindex, x.info, r))
+	is y:localMemoryReferenceCode do (
+	    if s.binary==dummyBinaryFun then r=binarymethod(Code(left),x.rhs,SymbolClosure(globalFrame,s))
+	    else r=s.binary(Code(left),x.rhs);
+	    when r is e:Error do r
+	    else localAssignment(y.nestingDepth, y.frameindex, r))
+	is y:threadMemoryReferenceCode do (
+	    if s.binary==dummyBinaryFun then r=binarymethod(Code(left),x.rhs,SymbolClosure(globalFrame,s))
+	    else r=s.binary(Code(left),x.rhs);
+	    when r is e:Error do r
+	    else globalAssignment(y.frameindex, x.info, r))
+	is y:binaryCode do (  -- TODO fix
+	    c := Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
+	    if y.f == DotS.symbol.binary || y.f == SharpS.symbol.binary
+	    then AssignElemFun(y.lhs, y.rhs, c)
+	    else InstallValueFun(CodeSequence(
+		    convertGlobalOperator(x.info), y.lhs, y.rhs, c)))
+	is y:adjacentCode do (  -- TODO fix
+	    c := Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
+	    InstallValueFun(CodeSequence(
+		    convertGlobalOperator(AdjacentS.symbol), y.lhs, y.rhs, c)))
+	is y:unaryCode do ( -- TODO fix
+	    c := Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
+	    UnaryInstallValueFun(convertGlobalOperator(x.info), y.rhs, c))
 	else buildErrorPacket(
-	    "augmented assignment not implemented for this code")
-	    )));
+	    "augmented assignment not implemented for this code")));
 
 -----------------------------------------------------------------------------
 steppingFurther(c:Code):bool := steppingFlag && (
@@ -1350,9 +1408,7 @@ handleError(c:Code,e:Expr):Expr := (
 	       if !err.printed || backtrace && localFrame != oldReportFrame then (
 		    if debuggingMode && !stopIfError && (! (p.filename === "stdio")) then (
 			 if !err.printed then printError(err);
-			 printErrorMessage(err.position,"--entering debugger (type help to see debugger commands)");
-			 z := debuggerFun(localFrame,c);
-			 -- printErrorMessage(err.position,"--leaving debugger");
+			 z := debuggerpointer(localFrame,c);
 			 when z is z:Error do (
 			      if z.message == breakMessage then buildErrorPacket(unwindMessage)
 			      else if z.message == returnMessage then (
@@ -1383,28 +1439,10 @@ handleError(c:Code,e:Expr):Expr := (
 	       e))
      else e);
 
-header "extern void M2_stack_push(char*);";
-header "extern void M2_stack_pop();";
-header "extern void M2_stack_trace();";
-stacktrace(e:Expr):Expr := (
-    Ccode(void,"M2_stack_trace()"); e );
-setupfun("stacktrace",stacktrace);
-
-evalprof(c:Code):Expr;
-evalraw(c:Code):Expr;
 export eval(c:Code):Expr := (
-    if Ccode(bool,"PROFILING == 1")
-    then Ccode(Expr,"evaluate_evalprof(",c,")")
-    else Ccode(Expr,"evaluate_evalraw(",c,")"));
-export evalprof(c:Code):Expr := (
-    when c is f:semiCode do ( -- what makes semiCode special?
-        -- printErrorMessage(codePosition(c),"--evaluating a semiCode");
-        -- TODO: how to get f.name?
-        Ccode(void,"M2_stack_push(",tocharstar(tostring(codePosition(c))),")");
-        e := evalraw(c);
-        Ccode(void,"M2_stack_pop()");
-        e)
-    else evalraw(c));
+    if profiling -- see evalprof in profiling.dd
+    then Ccode(Expr, "evaluate_evalprofpointer(", c, ")")
+    else Ccode(Expr, "evaluate_evalraw(", c, ")"));
 export evalraw(c:Code):Expr := (
     -- # typical value: symbol SPACE, Function, Thing, Thing
      -- better would for cancellation requests to set exceptionFlag:
@@ -1700,7 +1738,7 @@ setup(LeftArrowS,assigntofun);
 idfun(e:Expr):Expr := e;
 setupfun("identity",idfun);
 -- # typical value: scanPairs, HashTable, Function, Nothing
-scanpairs(f:Expr,obj:HashTable):Expr := (	-- obj is not Mutable
+export scanpairs(f:Expr,obj:HashTable):Expr := (	-- obj is not Mutable
      foreach bucket in obj.table do (
 	  p := bucket;
 	  while true do (
@@ -1710,22 +1748,10 @@ scanpairs(f:Expr,obj:HashTable):Expr := (	-- obj is not Mutable
 	       p = p.next;
 	       ));
      nullE);
-scanpairsfun(e:Expr):Expr := (
-     when      e is a:Sequence do
-     if        length(a) == 2
-     then when a.0 is o:HashTable 
-     do
-     if	       o.Mutable
-     then      WrongArg("an immutable hash table")
-     else      scanpairs(a.1,o)
-     else      WrongArgHashTable(1)
-     else      WrongNumArgs(2)
-     else      WrongNumArgs(2));
-setupfun("scanPairs",scanpairsfun);
 
 mpre():Expr := buildErrorPacket("applyPairs: expected function to return null, a sequence of length 2, or an option x=>y");
 -- # typical value: applyPairs, HashTable, Function, HashTable
-mappairs(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
+export mappairs(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
      x := newHashTable(o.Class,o.parent);
      x.beingInitialized = true;
      foreach bucket in o.table do (
@@ -1753,18 +1779,6 @@ mappairs(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
 	       p = p.next;
 	       ));
      Expr(sethash(x,o.Mutable)));
-mappairsfun(e:Expr):Expr := (
-     when      e is a:Sequence do
-     if        length(a) == 2
-     then when a.0 is o:HashTable 
-     do
-     if        o.Mutable 
-     then      WrongArg("an immutable hash table")
-     else      mappairs(a.1,o)
-     else      WrongArgHashTable(1)
-     else      WrongNumArgs(2)
-     else      WrongNumArgs(2));
-setupfun("applyPairs",mappairsfun);
 
 -- # typical value: applyKeys, HashTable, Function, HashTable
 export mapkeys(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
@@ -1815,7 +1829,7 @@ mapkeysfun(e:Expr):Expr := (
      then when a.0 is o:HashTable 
      do        
      if        o.Mutable
-     then      WrongArg("an immutable hash table")
+     then      WrongArgImmutableHashTable()
      else      if length(a) == 2 then mapkeys(a.1,o) else mapkeysmerge(a.1,o,a.2)
      else      WrongArgHashTable(1)
      else      WrongNumArgs(2,3)
@@ -1855,7 +1869,7 @@ mapvaluesfun(e:Expr):Expr := (
      then when a.0 is o:HashTable 
      do        
      if        o.Mutable
-     then      WrongArg("an immutable hash table")
+     then      WrongArgImmutableHashTable()
      else      mapvalues(a.1,o)
      else      WrongArgHashTable(1)
      else      WrongNumArgs(2)
@@ -2057,18 +2071,18 @@ combine(e:Expr):Expr := (
      is v:Sequence do
      if length(v) == 5 then (
         when v.0 is x:HashTable do
-        if x.Mutable then WrongArg(1,"an immutable hash table") else
+        if x.Mutable then WrongArgImmutableHashTable(1) else
         when v.1 is y:HashTable do
-        if y.Mutable then WrongArg(2,"an immutable hash table") else
+        if y.Mutable then WrongArgImmutableHashTable(2) else
         combine(v.2,v.3,v.4,x,y)
         else WrongArgHashTable(2)
         else WrongArgHashTable(1)
      )
      else if length(v) == 6 then (
         when v.0 is x:HashTable do
-        if x.Mutable then WrongArg(1,"an immutable hash table") else
+        if x.Mutable then WrongArgImmutableHashTable(1) else
         when v.1 is y:HashTable do
-        if y.Mutable then WrongArg(2,"an immutable hash table") else
+        if y.Mutable then WrongArgImmutableHashTable(2) else
         twistCombine(v.2,v.3,v.4,v.5,x,y)
         else WrongArgHashTable(2)
         else WrongArgHashTable(1)
@@ -2101,25 +2115,6 @@ export notFun(a:Expr):Expr := if a == True then False else if a == False then Tr
 -- evaluate.d depends on hashtables.dd, so we use a pointer
 -- to evaluate methods in hashtables.dd before it is defined.
 applyEEEpointer = applyEEE;
-
-nullify(c:Code):Expr := (
-    e := tryEval(c);
-    if tryEvalSuccess
-    then (
-	when e
-	is Nothing do e
-	else (
-	    f := lookup(Class(e), QuestionQuestionS);
-	    if f == nullE then e
-	    else applyEE(f, e)))
-    else nullE);
-
-nullCoalescion(lhs:Code,rhs:Code):Expr := (
-    e := nullify(lhs);
-    when e
-    is Nothing do eval(rhs)
-    else e);
-setup(QuestionQuestionS, nullify, nullCoalescion);
 
 binarymethod1=binarymethodCode;
 unarymethod1=unarymethodCode;

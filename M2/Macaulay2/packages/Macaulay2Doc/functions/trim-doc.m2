@@ -27,17 +27,16 @@ Node
     Example
       needsPackage "Truncations"
       R = ZZ/101[x_0..x_4]
-      I = truncate(8, monomialCurveIdeal(R,{1,4,5,9}));
-      time gens gb I;
-      time J1 = saturate(I);
-      time J = saturate(I, MinimalGenerators => false);
+      I = monomialCurveIdeal(R, {1,4,5,9});
+      time J = truncate(8, I, MinimalGenerators => false);
+      time K = truncate(8, I, MinimalGenerators => true);
       numgens J
-      numgens J1
+      numgens K
   SeeAlso
+    "Truncations::truncate(ZZ,Ideal)"
     "Saturation :: quotient(Ideal,Ideal)"
     "Saturation :: saturate(Ideal,Ideal)"
     monomialCurveIdeal
-    "Truncations::truncate(ZZ,Ideal)"
 
 -- this is the old version
 Node

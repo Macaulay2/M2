@@ -389,6 +389,8 @@ export WrongArgMatrix(n:int):Expr := WrongArg(n,"a raw matrix");
 export WrongArgMatrix():Expr := WrongArg("a raw matrix");
 export WrongArgHashTable():Expr := WrongArg("a hash table");
 export WrongArgHashTable(n:int):Expr := WrongArg(n, "a hash table");
+export WrongArgImmutableHashTable():Expr := WrongArg("an immutable hash table");
+export WrongArgImmutableHashTable(n:int):Expr := WrongArg(n, "an immutable hash table");
 export ArgChanged(name:string,n:int):Expr := (
      buildErrorPacket(quoteit(name) + " expected argument " + tostring(n)
 	  + " not to change its type during execution"));

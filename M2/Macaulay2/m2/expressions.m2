@@ -551,7 +551,7 @@ toString'(Function, SparseMonomialVectorExpression) := (fmt,v) -> toString (
 MatrixExpression = new HeaderType of Expression
 MatrixExpression.synonym = "matrix expression"
 matrixOpts1 := new OptionTable from {Blocks=>null,Degrees=>null,MutableMatrix=>false};
-matrixOpts := m -> ( -- helper function
+matrixOpts = m -> ( -- helper function
     (opts,x) := override(matrixOpts1,toSequence m);
     (opts, if #x > 0 and class x#0 =!= List then { x } else toList x) -- because of #1548
     )
@@ -1156,13 +1156,9 @@ texMath VectorExpression := v -> (
 
 -----------------------------------------------------------------------------
 print =  x -> (
-    c := class x;
-    while not c#?{topLevelMode,print} do (
-	if c === Thing then (<< net x << endl; return); -- default
-	c = parent c;
-	);
-    c#{topLevelMode,print} x
-    )
+    f := lookup({topLevelMode, print}, class x);
+    if f === null then << net x << endl -- default
+    else f x;)
 -----------------------------------------------------------------------------
 
 File << Thing := File => (o,x) -> printString(o,net x)

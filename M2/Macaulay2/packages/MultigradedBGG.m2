@@ -1,6 +1,6 @@
 newPackage("MultigradedBGG",
-    Version => "1.1",
-    Date => "5 June 2023",
+    Version => "1.2",
+    Date => "11 April 2025",
     Headline => "the multigraded BGG correspondence and differential modules",
     Authors => {
 	{Name => "Maya Banks",         	     Email => "mdbanks@wisc.edu",      HomePage => "https://sites.google.com/wisc.edu/mayabanks" },
@@ -8,7 +8,7 @@ newPackage("MultigradedBGG",
 	{Name => "Tara Gomes",	    	     Email => "gomes072@umn.edu",      HomePage => "https://cse.umn.edu/math/tara-gomes" },
 	{Name => "Prashanth Sridhar",	     Email => "pzs0094@auburn.edu",    HomePage => "https://sites.google.com/view/prashanthsridhar/home"},
 	{Name => "Eduardo Torres Davila",    Email => "torre680@umn.edu",      HomePage => "https://etdavila10.github.io/" },
-	{Name => "Sasha	Zotine",    	     Email => "18az45@queensu.ca",     HomePage => "https://sites.google.com/view/szotine/home" }
+	{Name => "Sasha	Zotine",    	     Email => "zotinea@mcmaster.ca",   HomePage => "https://sites.google.com/view/szotine/home" }
     },
     PackageExports => {"NormalToricVarieties", "Complexes"},
     Keywords => {"Commutative Algebra"}
@@ -285,6 +285,9 @@ toricRR = method();
 toricRR(Module,List) := (N,L) ->(
     M := coker presentation N;
     S := ring M;
+    grade := #(degrees S)_0;
+    if L === {} then error "--expected non-empty list of degrees";
+    if any(L, l -> #l != grade) then error("--expected each multidegree to be of length " | grade); 
     if not isCommutative S then error "--base ring is not commutative";
     if heft S === null then error "--need a heft vector for polynomial ring";
     -- we need to modify L so that the "quotient" differential is well-defined
@@ -403,6 +406,11 @@ doc ///
       toricRR
       toricLL
       stronglyLinearStrand
+   References
+       Text
+       [1] @HREF{"https://arxiv.org/pdf/2202.00402v4","Linear strands of multigraded free resolutions"}@ (with Daniel Erman), Mathematische Annalen 390 (2024), 2707–2725
+       [2] @HREF{"https://arxiv.org/pdf/2108.03345v3","Tate resolutions on toric varieties"}@ (with Daniel Erman), Journal of the European Mathematical Society, published online (2024)
+
 ///
 
 doc ///
@@ -564,7 +572,7 @@ doc ///
    Headline
       converts a square zero matrix into a differential module
    Usage
-      differentialModule(f)cczx
+      differentialModule(f)
    Inputs
       f : Matrix
           representing a module map with the same source and target
@@ -922,6 +930,18 @@ doc ///
 	 N2 = toricRR(S^1, L2);
 	 phi = map(ring N2, ring N1, gens ring N2)
 	 assert(phi N1.dd_0 - N2.dd_0 == 0)
+      Text
+	 One can compute sheaf cohomology over weighted projective spaces using the multigraded BGG correspondence,
+	 A detailed explanation can be found in Example 3.3 of the paper accompanying this package. 
+      Example
+         X = weightedProjectiveSpace {1,1,2};
+	 S = ring X;
+	 M = coker matrix{{x_0, x_1}};
+	 D = toricRR(M, for i from 0 to 4 list {i})
+	 F = resDM(D, 3)
+	 F.dd_0
+	 kk = coker vars ring F_0;
+	 sum flatten entries basis({-2,-1}, Hom(kk, F_0)) == rank HH^0(X, sheaf(M**S^{{-2}}))
    Caveat
        A heft vector is necessary for the computation to produce a well-defined differential module.
    SeeAlso

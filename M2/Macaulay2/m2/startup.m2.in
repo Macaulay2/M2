@@ -40,7 +40,6 @@ if not firstTime then debug Core -- we need access to the private symbols (we re
 toString := value' getGlobalSymbol if firstTime then "simpleToString" else "toString"
 
 local exe
-local topBuilddir
 
 -- this next bit has to be *parsed* after the "debug" above, to prevent the symbols from being added to the User dictionary
 if firstTime then (
@@ -161,9 +160,7 @@ if firstTime then (
 
      Attributes = new MutableHashTable;
      -- values are hash tables with keys Symbol, String, Net (as symbols); replaces ReverseDictionary and PrintNames
-     setAttribute = (val,attr,x) -> (
-	  if Attributes#?val then Attributes#val else Attributes#val = new MutableHashTable
-	  )#attr = x;
+     setAttribute = (val,attr,x) -> ( Attributes#val ??= new MutableHashTable )#attr = x;
      hasAnAttribute = (val) -> Attributes#?val;
      hasAttribute = (val,attr) -> Attributes#?val and Attributes#val#?attr;
      getAttribute = (val,attr) -> Attributes#val#attr;
@@ -485,7 +482,14 @@ valueNotify := arg -> (
      value' arg)
 
 action2 := hashTable {
-     "--srcdir" => arg -> if phase == 2 then srcdirs = append(srcdirs, arg),
+     "--srcdir" => arg -> (
+	 if phase == 2 then (
+	     if isDirectory(arg | "/Macaulay2") then (
+		 srcdirs = append(srcdirs, arg);
+		 topSrcdir = realpath arg)
+	     else (
+		 stopIfError = true;
+		 error "--srcdir should contain a 'Macaulay2' subdirectory"))),
      "-E" => arg -> if phase == 3 then valueNotify arg,
      "-e" => arg -> if phase == 4 then valueNotify arg,
      "--print-width" => arg -> if phase == 3 then printWidth = value' arg,

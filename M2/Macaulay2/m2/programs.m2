@@ -89,18 +89,21 @@ findProgram(String, List) := opts -> (name, cmds) -> (
 	instance(opts.MinimumVersion, Sequence) and
 	class \ opts.MinimumVersion === (String, String)) then
 	error "expected MinimumVersion to be a sequence of two strings";
-    pathsToTry := fixPath \ join(
+    pathsToTry := fixPath \ nonnull flatten {
 	-- try user-configured path first
-	if programPaths#?name then {programPaths#name} else {},
+	if programPaths#?name then programPaths#name,
 	-- now try M2-installed path
-	{prefixDirectory | currentLayout#"programs"},
+	prefixDirectory | currentLayout#"programs",
 	-- any additional paths specified by the caller
-	opts.AdditionalPaths,
+	 opts.AdditionalPaths,
 	-- try PATH
-	if getenv "PATH" == "" then {} else apply(separate(":", getenv "PATH"),
+	if getenv "PATH" =!= "" then apply(
+	    separate(":", getenv "PATH"),
 	    dir -> if dir == "" then "." else dir),
 	-- try directory containing M2-binary
-	{bindir});
+	bindir,
+	-- try usr-host/bin
+	if topBuilddir =!= null then topBuilddir | "usr-host/bin"};
     prefixes := {(".*", "")} | opts.Prefix;
     errorCode := didNotFindProgram;
     versionFound := "0.0";

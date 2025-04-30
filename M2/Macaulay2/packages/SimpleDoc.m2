@@ -1,10 +1,9 @@
 -- -*- coding: utf-8 -*-
 -- TODO: add linter
--- TODO: make Tree entries automatically join the Subnodes
 newPackage(
     "SimpleDoc",
-    Version => "1.2",
-    Date => "May 18, 2020",
+    Version => "1.3",
+    Date => "March 13, 2025",
     Headline => "a simple documentation function",
     Authors => {
 	{ Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "https://faculty.math.illinois.edu/~dan/" },
@@ -27,6 +26,7 @@ importFrom_Core { "currentDocumentTag" }
 -- The class of processed documentation nodes
 Node = new IntermediateMarkUpType of Hypertext
 Node.synonym = "processed documentation node"
+net Node := node -> netList toList node
 
 topLinenum = 0 -- for debugging
 
@@ -37,12 +37,12 @@ doc String := str -> (
     -- hopefully the "doc" line, but may be off by one
     topLinenum = if fileExists str then 0 else currentRowNumber() - #lines docstring - 2;
     parsed := toDoc(NodeFunctions, docstring);
-    document \ (
-	if all(parsed, elt -> instance(elt, Node)) then apply(parsed, node -> toList node)
-	else if not any(parsed, elt -> instance(elt, Node)) then {parsed}
-	else error("expected either a documentation node or a list of documentation nodes")))
+    if not any(parsed, elt -> instance(elt, Node)) then return { document parsed };
+    if     all(parsed, elt -> instance(elt, Node)) then return apply(parsed, document);
+    error("expected either a documentation node or a list of documentation nodes"))
 
 -- Setup synonyms
+document Node   := opts -> document @@ toList
 document String := opts -> doc
 multidoc = doc
 
@@ -66,6 +66,8 @@ applySplit = (functionTable, textlines) -> apply(splitByIndent(textlines, false)
 	functionTable#key(textlines_{s+1..e}, getLinenum textlines#s)))
 
 -- Mapping tables for evaluating docstring keywords
+-- When adding a new keyword that isn't already an exported symbol,
+-- add it to the list of constants for syntax highlighting in Style.m2
 NodeFunctions = new HashTable from {
     "Node"            => (textlines, keylinenum) -> new Node from nodeCheck(applySplit(NodeFunctions, textlines), keylinenum),
     "Key"             => (textlines, keylinenum) -> Key             => getKeys(textlines, keylinenum),
@@ -101,7 +103,7 @@ DescriptionFunctions = new HashTable from {
     "Example"       => (textlines, keylinenum) -> getExample(textlines, keylinenum, false),
     "CannedExample" => (textlines, keylinenum) -> getExample(textlines, keylinenum, true),
     "Text"          => (textlines, keylinenum) -> DIV markup(textlines, keylinenum),
-    "Tree"          => (textlines, keylinenum) -> menu(textlines, keylinenum),
+    "Tree"          => (textlines, keylinenum) -> DIV menu(textlines, keylinenum),
     "Pre"           => (textlines, keylinenum) -> PRE reassemble(min\\getIndent\textlines, textlines),
     "Code"          => (textlines, keylinenum) -> getCode(textlines, keylinenum),
     }
@@ -165,6 +167,9 @@ render = (text, keylinenum) -> (
     if instance(parsed, List) and #parsed == 1 then first parsed else parsed)
 
 markup = (textlines, keylinenum) -> (
+    if textlines === {} then return {};
+    -- if the first line is just "Tree", interpret the rest of the section as a structured tree list.
+    if "Tree" === textlines#0#0 then return submenu(drop(textlines, 1), keylinenum + 1);
     textline := makeTextline("", if #textlines == 0 then "unknown" else getLinenum textlines#0 - 1);
     textlines = prepend(textline, textlines);
     intervals := splitByIndent(textlines, true);
@@ -202,14 +207,27 @@ items = (textlines, keylinenum) -> apply(splitByIndent(textlines, false), (s, e)
 	if ps#0 != "" then result = (if match("=>", line) then value else identity) ps#0 => result;
 	result))
 
+-- used for a single entry in a tree, which is either a @...@ block or a document key
+entry = (text, keylinenum) -> if match("^@", text) then render(text, keylinenum) else TOH value text
+
+EntryFunctions = new HashTable from {
+    "* " => (line, num) -> SPAN("class" => "link",    entry(substring(2, line), num)), -- TO link entry
+    "> " => (line, num) -> SPAN("class" => "subnode", entry(substring(2, line), num)), -- subnode entry
+    "- " => (line, num) -> SPAN("class" => "text",   render(substring(2, line), num)), --    text entry
+    }
+
 -- used for making manus within the description
 submenu = (textlines, keylinenum) -> (
     textlines = select(textlines, textline -> 0 < length getText textline);
     if #textlines == 1 then return (
 	line := getText textlines#0;
+	num := getLinenum textlines#0;
+	lt := line_(0,2);
 	if line === "" then null
+	-- TODO: deprecate the first two
 	else if match("^:", line) then {render(substring(1, line), getLinenum textlines#0)}
 	else if match("^@", line) then {render(line, getLinenum textlines#0)}
+	else if EntryFunctions#?lt then { EntryFunctions#lt(line, num) }
 	else TOH value getText textlines#0);
     intervals := splitByIndent(textlines, false);
     UL flatten apply(intervals, (s, e) ->
@@ -226,14 +244,14 @@ menu = (textlines, keylinenum) -> (
     if not match("^(:|@)", getText textlines#0)
     then textlines = prepend(makeTextline(":Menu", keylinenum), textlines);
     intervals := splitByIndent(textlines, false);
-    DIV apply(intervals, (s, e) ->
+    apply(intervals, (s, e) ->
 	sublists(textlines_{s..e},
 	    line -> getIndent line > getIndent textlines_s,
 	    section -> (
 		result := submenu(section, getLinenum section#0);
-		if not instance(result, UL) then
-		if #result == 1 then UL{result} else UL result else result),
-	    line -> HEADER3 submenu({line}, getLinenum line))))
+		if instance(result, UL) then result else
+		if #result == 1 then UL{result} else UL result),
+	    line -> HEADER4 submenu({line}, getLinenum line))))
 
 -- reassemble textlines into a docstring
 reassemble = (indent, textlines) -> concatenate between(newline,

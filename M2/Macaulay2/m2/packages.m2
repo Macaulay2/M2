@@ -91,7 +91,7 @@ checkShadow := () -> (
 
 isOptionList := opts -> instance(opts, List) and all(opts, opt -> instance(opt, Option) and #opt == 2)
 
-isPackageLoaded := pkgname -> PackageDictionary#?pkgname and instance(value PackageDictionary#pkgname, Package)
+isPackageLoaded = pkgname -> PackageDictionary#?pkgname and instance(value PackageDictionary#pkgname, Package)
 
 -- TODO: make this local
 checkPackageName = title -> (
@@ -114,7 +114,7 @@ net      Package :=
 toString Package := pkg -> if pkg#?"pkgname" then pkg#"pkgname" else "-*package*-"
 texMath  Package := pkg -> texMath toString pkg
 options  Package := pkg -> pkg.Options
-methods  Package := memoize(pkg -> select(methods(), m -> package m === pkg))
+methods  Package := pkg -> select(methods(), m -> package' m === pkg)
 hypertext Package := SAMPc "constant"
 
 -- TODO: should this go elsewhere?
@@ -243,6 +243,7 @@ newPackage String := opts -> pkgname -> (
     -- TODO: add a general type checking mechanism
     scan({Certification, Configuration}, name -> if opts#name =!= null and not isOptionList opts#name then
 	error("newPackage: expected ", toString name, " option to be a list of options"));
+    opts = first override(opts, ( Authors => nonnull opts.Authors ));
     if opts.Authors =!= null and any(opts.Authors, author -> not isOptionList author)
     then error("newPackage: expected Authors option to be a list of zero or more lists of options");
     if opts.Authors =!= null and any(opts.Authors, author -> (
@@ -557,6 +558,9 @@ package Dictionary := d -> (
     scan(unique prepend_currentPackage implicitlyLoadedPackages(),
 	pkg -> if pkg.Dictionary === d or pkg#"private dictionary" === d then break pkg))
 
+-- speeds up documentation generation by orders of magnitude
+package' = memoize package
+
 -- TODO: should this reset the values of exported mutable symbols?
 use Package := pkg -> (
     scan(nonnull pkg.Options.PackageExports, needsPackage);
@@ -566,10 +570,22 @@ use Package := pkg -> (
     if pkg.?use then pkg.use pkg else pkg)
 
 debug ZZ      := i   -> debugWarningHashcode = i
-debug Package := pkg -> (
-    dict := pkg#"private dictionary";
+debug String  := file -> debug fileDictionaries#(relativizeFilename file)
+debug Package := pkg  -> debug pkg#"private dictionary"
+-- TODO: debug(Function) for accessing the local dictionary of a function closure
+debug LocalDictionary  := dict -> (
+    -- FIXME: this works, but the original location of the symbols is lost
+    apply(pairs dict, (str, symb) -> globalAssign(getSymbol str, value symb));
+    checkShadow())
+debug GlobalDictionary := dict -> (
     if not isMember(dict, dictionaryPath) then dictionaryPath = prepend(dict, dictionaryPath);
     checkShadow())
+
+locate Package := pkg -> NumberedVerticalList nonnull (
+    pkgaux := if not pkg#?"auxiliary files" then {}
+    else select(values loadedFiles, match_(pkg#"auxiliary files"));
+    -- TODO: somehow keep track of the number of lines of each file
+    apply(prepend(pkg#"source file", pkgaux), file -> new FilePosition from (file, 0, 0)))
 
 -----------------------------------------------------------------------------
 -- evaluateWithPackage

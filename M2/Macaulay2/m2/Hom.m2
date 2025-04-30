@@ -26,6 +26,8 @@ Hom(Module, Ideal)  := Module => opts -> (M, N) -> Hom(module M, module N, opts)
 Hom(Module, Module) := Module => opts -> (M, N) -> (
     -- TODO: take advantage of cached results with higher e
     e := opts.DegreeLimit;
+    if e === {} then e = null;
+    if e === 0  then e = degree 0_M;
     -- M.cache is a hashless (hence ageless) CacheTable, but
     -- M.cache.cache is a MutableHashTable, hence has an age.
     Y := youngest(M.cache.cache, N.cache.cache);
@@ -46,7 +48,6 @@ addHook((Hom, Module, Module), Strategy => Syzygies, (opts, M, N) -> (
     e := opts.DegreeLimit;
     -- TODO: any other cases which should be excluded?
     if e === null then return null;
-    if e === 0 then e = degree 0_M;
     A := presentation M; (G, F) := (target A, source A); -- M <-- G <-- F
     B := presentation N; (L, K) := (target B, source B); -- N <-- L <-- K
     piN := inducedMap(N, L, generators N);
@@ -62,7 +63,7 @@ Hom(Matrix, Matrix) := Matrix => o -> (f, g) -> Hom(source f, g, o) * Hom(f, sou
 -----------------------------------------------------------------------------
 
 -- TODO: compare speed with Hom(M, R^1)
-dual Module := Module => {} >> o -> F -> if F.cache.?dual then F.cache.dual else F.cache.dual = (
+dual Module := Module => {} >> o -> F -> F.cache.dual ??= (
      if not isFreeModule F then kernel transpose presentation F
      else new Module from (ring F,rawDual raw F))
 

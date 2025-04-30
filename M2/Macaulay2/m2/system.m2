@@ -77,6 +77,7 @@ sampleInitFile := ///-- This is a sample init.m2 file provided with Macaulay2.
 
 readmeFile := ///Welcome to Macaulay2!
 
+-- TODO: move this to a node titled "application directory"
 This directory is used to contain data and code specific to Macaulay2.  For
 example, your initialization file, init.m2, is in this directory, and is
 automatically loaded upon startup of Macaulay2, unless you use the "-q" option.

@@ -129,7 +129,7 @@ net TreeNode   := x -> (
 
 toDoc := method()
 toDoc ForestNode := x -> if #x>0 then UL apply(toList x, y -> toDoc y)
-toDoc TreeNode   := x -> DIV nonnull { TOH checkIsTag x#0, toDoc x#1 }
+toDoc TreeNode   := x -> nonnull { TOH checkIsTag x#0, toDoc x#1 }
 
 traverse := method()
 traverse(ForestNode, Function) := (n, f) -> scan(n, t -> traverse(t, f))
@@ -154,9 +154,13 @@ makeTree := (parent, graph, visits, node) -> (
 -- node (typically topDocumentTag) appearing in the beginning
 orphanNodes := (parent, graph) -> (
     nonLeaves := set keys graph - set flatten values graph;
+    nonLeafKeys := sort(keys nonLeaves - set { parent });
+    -- forcing Macaulay2Doc to a higher standard
+    action := if currentPackage#"pkgname" == "Macaulay2Doc" then error else warning;
     if not nonLeaves#?parent then error("installPackage: top node ", parent, " cannot be a subnode");
-    if #nonLeaves > 1 then warning("installPackage: found ", toString(#nonLeaves - 1),
-	" documentation node(s) not listed as a subnode");
+    if #nonLeaves > 1 then action("installPackage: found ", #nonLeafKeys,
+	" documentation node(s) not listed as a subnode: ", newline,
+	toString wrap_printWidth demark_", " apply(nonLeafKeys, format));
     unique prepend(parent, sort keys nonLeaves))
 
 makeForest := (graph, visits) -> (
@@ -203,13 +207,15 @@ assembleTree := (pkg, nodes) -> (
     graph = new HashTable from apply(nodes, tag -> (
 	    checkIsTag tag;
 	    fkey := format tag;
-	    if  pkg#"raw documentation"#?fkey
-	    and pkg#"raw documentation"#fkey.?Subnodes then (
-		subnodes := pkg#"raw documentation"#fkey.Subnodes;
-		subnodes  = select(deepApply(subnodes, identity), DocumentTag);
-		subnodes  = select(fixup \ subnodes, node -> package node === pkg);
-		tag => getPrimaryTag \ subnodes)
-	    else tag => {}));
+	    rawdoc := pkg#"raw documentation"#fkey ?? ();
+	    content := apply({Description, Acknowledgement,
+		    Contributors, References, Caveat}, key -> try rawdoc#key);
+	    sublinks := deepSelect(content,
+		e -> try e#0 === ("class" => "subnode") else false);
+	    subnodes := rawdoc.Subnodes ?? ();
+	    subnodes  = deepSelect(join(sublinks, subnodes), DocumentTag);
+	    subnodes  = select(fixup \ subnodes, node -> package node === pkg);
+	    tag => getPrimaryTag \ subnodes));
     -- build the forest
     tableOfContents := makeForest(graph, visits);
     -- signal errors
@@ -217,11 +223,11 @@ assembleTree := (pkg, nodes) -> (
 	scan(keys visits#"missing",
 	    node -> (
 		printerr("error: missing reference(s) to subnode documentation: ", format node);
-		printerr("  Parent nodes: ", demark_", " (format \ unique visits#"parents"#node))));
+		printerr("\t", net TABLE apply(unique visits#"parents"#node, tag -> { locate tag, format tag }))));
 	scan(keys visits#"repeated",
 	    node -> (
 		printerr("error: repeated references to subnode documentation: ", format node);
-		printerr("  Parent nodes: ", demark_", " (format \ unique visits#"parents"#node))));
+		printerr("\t", net TABLE apply(unique visits#"parents"#node, tag -> { locate tag, format tag }))));
 	error("installPackage: error in assembling the documentation tree"));
     -- build the navigation links
     buildLinks tableOfContents;
@@ -242,6 +248,11 @@ indexButton    := (htmlDirectory, indexFileName) -> HREF {htmlDirectory | indexF
 tocButton      := (htmlDirectory, tocFileName)   -> HREF {htmlDirectory | tocFileName,   "toc"};
 pkgButton      := TO2 {"packages provided with Macaulay2", "Packages"};
 homeButton     := HREF {"https://macaulay2.com/", "Macaulay2"};
+searchBox      := LITERAL ///<form method="get" action="https://www.google.com/search">
+  <input placeholder="Search" type="text" name="q" value="">
+  <input type="hidden" name="q" value="site:macaulay2.com/doc">
+</form>
+///
 
 nextButton     := tag -> if NEXT#?tag then HREF { htmlFilename NEXT#tag, "next" }     else "next"
 prevButton     := tag -> if PREV#?tag then HREF { htmlFilename PREV#tag, "previous" } else "previous"
@@ -250,8 +261,8 @@ backwardButton := tag -> ( b := BACKWARD tag; if b =!= null then HREF { htmlFile
 upButton       := tag -> if   UP#?tag then HREF { htmlFilename   UP#tag, "up" } else "up"
 topButton      := tag -> if tag =!= topDocumentTag then topNodeButton(htmlDirectory, topFileName) else "top"
 
-upAncestors := tag -> reverse(
-    n := 0; prepend(tag, while UP#?tag and n < 20 list (n = n+1; tag = UP#tag)))
+upAncestors := tag -> unique prepend(topDocumentTag,
+    fold(1..5, {tag}, (i, prev) -> prepend(UP#(prev#0) ?? break prev, prev)))
 
 -- TODO: revamp this using Bootstrap
 buttonBar := tag -> DIV {
@@ -262,18 +273,14 @@ buttonBar := tag -> DIV {
 	BR {},
 	pkgButton, " » ",
 	SPAN if UP#?tag
-	then between(" > ", apply(upAncestors tag, i -> TO i))
+	then between(" » ", apply(upAncestors tag, i -> TO i))
 	else (TO topDocumentTag, " :: ",
 	    if tag === "index"
 	    then HREF {htmlDirectory | indexFileName, "Index"}
 	    else if tag === "toc"
 	    then HREF {htmlDirectory | tocFileName, "Table of Contents"}
 	    else TO tag)},
-    DIV join({"class" => "right",
-	    LITERAL ///<form method="get" action="https://www.google.com/search">
-  <input placeholder="Search" type="text" name="q" value="">
-  <input type="hidden" name="q" value="site:macaulay2.com/doc">
-</form>///},
+    DIV join({"class" => "right", searchBox},
 	splice between_" | " {
 	    nextButton tag,
 	    prevButton tag,
@@ -369,11 +376,10 @@ installInfo := (pkg, installPrefix, installLayout, verboseLog) -> (
     infotitle       := pkg#"pkgname";
     infobasename    := infotitle | ".info";
     infodir         := installPrefix | installLayout#"info";
-
-    verboseLog("making info file ", infodir | infobasename);
+    verboseLog("making info file ", minimizeFilename infodir | infobasename);
     makeDirectory infodir;
-    infofile := openOut(infodir | infobasename);
 
+    infofile := openOut(infodir | infobasename);
     infofile << " -*- coding: utf-8 -*- This is " << infobasename << ", produced by Macaulay2, version " << version#"VERSION" << endl << endl;
     infofile << "INFO-DIR-SECTION " << pkg.Options.InfoDirSection << endl;
     infofile << "START-INFO-DIR-ENTRY" << endl;
@@ -444,18 +450,14 @@ installHTML := (pkg, installPrefix, installLayout, verboseLog, rawDocumentationC
     nodes := packageTagList(pkg, topDocumentTag);
 
     htmlDirectory = replace("PKG", pkg#"pkgname", installLayout#"packagehtml");
-
-    makeDirectory(installPrefix | htmlDirectory);
     verboseLog("making html pages in ", minimizeFilename installPrefix | htmlDirectory);
+    makeDirectory(installPrefix | htmlDirectory);
+
+    -- TODO: are these two used anywhere? if not, remove them
     if pkg.Options.Certification =!= null then
     (installPrefix | htmlDirectory | ".Certification") << toExternalString pkg.Options.Certification << close;
     (installPrefix | htmlDirectory | ".Headline") << pkg.Options.Headline << close;
-    for n in (topFileName, indexFileName, tocFileName) do (
-	fn := installPrefix | htmlDirectory | n;
-	if fileExists fn then (
-	    verboseLog("creating empty html page ", minimizeFilename fn);
-	    fn << close)
-	else verboseLog("html page exists: ", minimizeFilename fn));
+
     scan(nodes, tag -> if not isUndocumented tag then (
 	    currentDocumentTag = tag; -- for debugging purposes
 	    fkey := format tag;
@@ -637,7 +639,6 @@ installPackage = method(
 	MakeHTML               => true,
 	MakeInfo               => true,
 	MakePDF                => false,
-	MakeLinks              => true,
 	-- until we get better dependency graphs between documentation
 	-- nodes, "false" here will confuse users
 	RemakeAllDocumentation => true,

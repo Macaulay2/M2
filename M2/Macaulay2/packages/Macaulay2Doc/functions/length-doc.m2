@@ -1,9 +1,4 @@
 document {
-    Key => length,
-    Headline => "length of an object"
-    }
-
-document {
     Key => (length, Dictionary),
     Headline => "length of a dictionary",
     Usage => "n = length d",

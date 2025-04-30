@@ -3,44 +3,16 @@
 --- notes: 
 
 document { 
-     Key => transpose,
-     Headline => "transpose a table or a matrix", 
---      Usage => "",
---      Inputs => {
--- 	  },
---      Outputs => {
--- 	  },
---      Consequences => {
--- 	  },     
-	 "The function ", TT "transpose", " transposes a matrix, a map of chain
-	 complexes or a table.",
---      EXAMPLE {
--- 	  },
---      Caveat => {},
---      SeeAlso => {}
-     }
-document { 
-     Key => (transpose,List),
-     Headline => " transposes a table",
-     Usage => "transpose T",
-     Inputs => {
-		"T" => List => {"which must be a ", TO "table"}
-	  },
-     Outputs => { 
-		{"the transpose of the table ", TT "T", ""}
-	  },
-     "Here is an example.",
-     EXAMPLE {,
-		"transpose{{a, b, c},{d, e, f}}"
-	}
-     }
-
-document { 
-     Key => {(transpose,Matrix),(transpose,MutableMatrix)},
-     Headline => "transpose a matrix",
+     Key => {
+	 transpose,
+	(transpose, Matrix),
+	(transpose, MutableMatrix),
+	(transpose, List),
+    },
+     Headline => "transpose a matrix or table",
      Usage => "transpose f",
      Inputs => {
-		"f" => Matrix
+		"f" => { ofClass {Matrix, List}, " which is a table" }
 	  },
      Outputs => {
 	  Matrix => { "the transpose of ", TT "f" }	       
@@ -48,8 +20,10 @@ document {
      "Here is an example.",
      EXAMPLE {
 		"S = ZZ/10007[x,y,z];",
-		"f = matrix{{x^3,x*y^2},{y*x^2,y^3}}",
+		"f = matrix{{x^3,x*y^2,x},{y*x^2,y^3,y}}",
+		"entries f",
 		"g = transpose f",
+		"transpose entries f"
 		},
 	"The output of ", TT "transpose", " is a map between the duals of the
 	original source and target free modules. See:",
