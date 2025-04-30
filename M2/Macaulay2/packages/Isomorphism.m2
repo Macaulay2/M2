@@ -122,36 +122,61 @@ checkDegrees(Matrix, Matrix) := Sequence => o-> (m,n) -> checkDegrees(target m, 
 defaultNumTries = p -> ceiling(0.1 + 100 / log p)
 --apply({2, 32003, 0}, defaultNumTries)
 
+-- key to cache known isomorphisms
+protect Isomorphisms
+
+-- currently we cache isomorphisms ONLY in the source
+setIsomorphism = (N, M, f, o) -> (
+    o = { o.Strict, -- TODO: or all(degree f, zero),
+	o.Homogeneous or isHomogeneous f };
+    M.cache.Isomorphisms ??= new MutableHashTable;
+    M.cache.Isomorphisms#(N, o) = f;
+    true)
+
+-- we check isomorphisms cached in source OR target
+getIsomorphism = (N, M, o) -> (
+    if M.cache.?Isomorphisms then
+    for isom in keys M.cache.Isomorphisms do (
+	(N', o') := isom;
+	if N' === N
+	and ( not o.Strict      or o.Strict      and o'#0 )
+	and ( not o.Homogeneous or o.Homogeneous and o'#1 )
+	then return M.cache.Isomorphisms#isom);
+    if N.cache.?Isomorphisms then
+    for isom in keys N.cache.Isomorphisms do (
+	(M', o') := isom;
+	if M' === M
+	and ( not o.Strict      or o.Strict      and o'#0 )
+	and ( not o.Homogeneous or o.Homogeneous and o'#1 )
+	then return inverse N.cache.Isomorphisms#isom))
+
+hasIsomorphism = (N, M, o) -> null =!= getIsomorphism(N, M, o)
+
 -- give an isomorphism between two free modules with same degrees
 -- FIXME: because of https://github.com/Macaulay2/M2/issues/3719,
 -- this might not give the most "natural" isomorphism
 isIsomorphismFree = (N, M0, o) -> (
-    if rank N != rank M0 then return (false, null) else
-    if not o.Homogeneous then return (true, map(N, M0, 1));
+    if rank N != rank M0 then return false else
+    if not o.Homogeneous then return setIsomorphism(N, M0, map(N, M0, 1), o);
     (d1, d2) := (degrees N, degrees M0);
     if o.Strict then M := M0 else d2 = degrees(
 	M = M0 ** (ring M0)^{min d2 - min d1});
-    if sort d1 != sort d2 then return (false, null);
+    if sort d1 != sort d2 then return false;
     p1 := first \ (sortBy last) toList pairs d1;
     p2 := first \ (sortBy last) toList pairs d2;
-    (true, map(N, M0, id_M^p2 // id_N^p1)))
+    setIsomorphism(N, M0, map(N, M0, id_M^p2 // id_N^p1 -* TODO: Degree => d2 *-), o))
 
--- key to cache known isomorphisms
-protect Isomorphisms
-
-isIsomorphic = method(Options => {
+isIsomorphic = method(
+    TypicalValue => Boolean,
+    Options => {
 	Homogeneous => true,  -- if false, allow an inhomogeneous isomorphism
 	Strict      => false, -- forces strict equality of degrees
 	Verbose     => false,
 	Tries       => null,  -- number of attempts at generating a random map
     })
-isIsomorphic(Module, Module) := Sequence => o -> (N, M) -> (
+isIsomorphic(Module, Module) := Boolean => o -> (N, M) -> (
     -- returns a pair (false, null) or (true, f), where f is an isomorphism M --> N.
-    if M === N then return (true, id_M);
-    --
-    M.cache.Isomorphisms ??= new MutableHashTable;
-    if M.cache.Isomorphisms#?N then
-    return (true, M.cache.Isomorphisms#N);
+    if M === N or hasIsomorphism(N, M, o) then return true;
     --
     S := ring M;
     if S =!= ring N then error "expected objects over the same ring";
@@ -160,11 +185,8 @@ isIsomorphic(Module, Module) := Sequence => o -> (N, M) -> (
     return isIsomorphismFree(N, M, o);
     --
     tries := o.Tries ?? defaultNumTries char S;
-    if tries > 1 then (
-	for c to tries - 1 do (
-	    (bool, isom) := isIsomorphic(N, M, o, Tries => 1);
-	    if bool then return (true, M.cache.Isomorphisms#N = isom));
-	return (false, null));
+    if tries > 1 then return any(tries,
+	i -> isIsomorphic(N, M, o, Tries => 1));
     --
         if o.Homogeneous == true and 
 	        not (isHomogeneous M and isHomogeneous N) then 
@@ -190,13 +212,13 @@ isIsomorphic(Module, Module) := Sequence => o -> (N, M) -> (
 	--handle the cases where one of M,N is 0
 	isZM1 := target m ==0;
 	isZN1 := target n ==0;	
-    	if isZM1 =!= isZN1 then return (false, null );
-	if isZM1 and isZN1 then return (true, map(N,M,0));
+	if isZM1 =!= isZN1 then return false;
+	if isZM1 and isZN1 then return setIsomorphism(N, M, map(N, M, 0), o);
 
 	-- from now on, M1 and N1 are nonzero and pruned
 	if o.Homogeneous then (
 	df := checkDegrees (N1,M1,Verbose => o.Verbose, Strict => o.Strict);
-	if class df_1 =!= List  then return (false, null));
+	if class df_1 =!= List  then return false);
 	--now there is a chance at an isomorphism up to shift, 
 	--and df is the degree diff.
 
@@ -216,17 +238,14 @@ isIsomorphic(Module, Module) := Sequence => o -> (N, M) -> (
 	kmodule := coker vars S;
 	gbar := kmodule ** g;
 
-	t1 := prune coker gbar == 0;
-	if t1 == false then return (false, null);
-	
-	t2 := prune ker g == 0;
-	if t2 then (true, n1*g*(m1^-1)) else (false, null)
+	if coker gbar != 0 or kernel g != 0 then false else (
+	    setIsomorphism(N, M, n1*g*(m1^-1), o))
     )
-isIsomorphic(Matrix, Matrix) := Sequence => o -> (n, m) -> isIsomorphic(coker m, coker n, o)
+isIsomorphic(Matrix, Matrix) := Boolean => o -> (n, m) -> isIsomorphic(coker m, coker n, o)
 
 isomorphism = method(Options => options isIsomorphic)
 isomorphism(Module, Module) := Matrix => o -> (N, M) -> (
-    if first isIsomorphic(N, M, o) then M.cache.Isomorphisms#N
+    if isIsomorphic(N, M, o) then getIsomorphism(N, M, o)
     else error "modules are not isomorphic")
 
 -----------------------------------------------------------------------------
@@ -354,8 +373,7 @@ Node
     Strict      => Boolean
     Tries       => ZZ  -- the number of attempts at generating random map
   Outputs
-    :Sequence
-      (true, Matrix) or (false, null)
+    :Boolean -- whether the modules are isomorphic
   Description
     Text
       In case both modules are homogeneous the program first uses @TO checkDegrees@
@@ -373,36 +391,40 @@ Node
       In the inhomogeneous case (or with Homogeneous => false) the random map is
       a random linear combination of the generators of the module of homomorphisms.
 
-      If the output has the form (true, g), then g is guaranteed to be an
-      isomorphism. If the output is (false, null), then the
-      conclusion of non-isomorphism is only probabilistic.
+      If the output is false, then the conclusion of non-isomorphism is only probabilistic.
+      If the output is true, then as certificate an isomorphism $M \to N$ is cached
+      in the module and can be retried using the @TO isomorphism@ method.
     Example
-      setRandomSeed 0
       S = ZZ/32003[x_0..x_3]
       m = random(S^3, S^{4:-2});
-      A = random(target m, target m)
-      B = random(source m, source m)
-      m' = A*m*B;
-      isIsomorphic (S^{-3}**coker m, coker m)
-      isIsomorphic (S^{-3}**coker m, coker m, Strict => true)
-      isIsomorphic (coker m, coker m')
+      A = random(target m, target m);
+      B = random(source m, source m);
+      N = coker(A*m*B);
+      M = coker m;
+      assert isIsomorphic(S^{-3} ** M, M)
+      assert not isIsomorphic(S^{-3} ** M, M, Strict => true)
+      isIsomorphic(N, M)
+      isomorphism(N, M)
     Text
-      The following example checks two of the well-known isomorphism
-      in homological algebra.
+      The following examples checks two well-known isomorphisms in homological algebra.
     Example
-      setRandomSeed 0
       S = ZZ/32003[x_0..x_3]
-      I = monomialCurveIdeal(S,{1,3,5})
-      codim I
-      W = Ext^2(S^1/I, S^1)
-      W' = Hom(S^1/I, S^1/(I_0,I_1) )
-      isIsomorphic(W,W')
+      I = monomialCurveIdeal(S, {1,3,5})
+      c = codim I
+      W = Ext^c(S^1/I, S^1)
+      H = Hom(S^1/I, S^1/(I_0,I_1))
+      isIsomorphic(W, H)
+      isomorphism(W, H)
+    Example
       mm = ideal gens S
-      (isIsomorphic(Tor_1(W, S^1/(mm^3)), Tor_1(S^1/(mm^3), W)))_0
+      T1 = Tor_1(W, S^1/(mm^3))
+      T2 = Tor_1(S^1/(mm^3), W)
+      elapsedTime isIsomorphic(T1, T2)
+      elapsedTime isomorphism(T1, T2)
   Caveat
     A negative result means that a random choice of homomorphism
     was not an isomorphism; especially when the ground field is small,
-    this may not be definitive.
+    this may not be definitive. Passing @TT "Tries => N"@ may be helpful.
   SeeAlso
     checkDegrees
 
@@ -430,6 +452,8 @@ Node
   Description
     Text
       This method retrieves the isomorphism between the given modules.
+      Note that this isomorphism is already cached if a previous call
+      to @TO isIsomorphic@ returned true, but otherwise that function is called.
     Example
       S = ZZ/32003[x_0..x_3]
       m = random(S^3, S^{4:-2});
@@ -456,7 +480,7 @@ TEST ///
   B = random(source m, source m)
   m' = A*m*B
   assert(checkDegrees (S^{-3}**coker m, coker m') == (true, {3}))
-  assert((isIsomorphic (S^{-3}**coker m, coker m'))_0 == true)
+  assert isIsomorphic (S^{-3}**coker m, coker m')
 ///
 
 TEST ///
@@ -466,7 +490,6 @@ TEST ///
   m = matrix{{x,y}}
   n = matrix{{x^2, y^2}}
 
-  setRandomSeed 0
   assert all flatten for a from -2 to 2 list for b from -2 to 2 list (
       M := S^{a}**(n++m);
       N := S^{b}**(m++n);
@@ -477,13 +500,12 @@ TEST ///
 
 TEST ///
 -- the inhomogeneous case
-  setRandomSeed 0
   S = ZZ/101[a,b, Degrees => {{1,0},{0,1}}]
   C = S^{{1,1}, {2,3}}
   C' = S^{{1,1}, {2,4}}
-  assert not first isIsomorphic(C, C')
-  (t,g) = isIsomorphic(C,C', Homogeneous => false)
-  assert t
+  assert not isIsomorphic(C, C')
+  assert isIsomorphic(C,C', Homogeneous => false)
+  g = isomorphism(C,C', Homogeneous => false)
   assert isWellDefined g
   assert(source g == C')
   assert(target g == C)
@@ -493,15 +515,14 @@ TEST ///
 
 TEST ///
 -- the non-minimally presented case
-  setRandomSeed 0
   S = ZZ/101[a,b]
   m = map(S^{2}++S^1, S^{2}++S^{-1}, {{1,0},{0,a}})
   C = coker m
   a = random(target m, target m)
   b = random(source m, source m)
   C' = coker(a*m*b)
-  (t,g) = isIsomorphic(C,C')
-  assert t
+  assert isIsomorphic(C,C')
+  g = isomorphism(C,C')
   assert isWellDefined g
   assert(source g == C')
   assert(target g == C)
@@ -511,7 +532,6 @@ TEST ///
 
 TEST ///
 -- checkDegrees
-  setRandomSeed 0
   S = ZZ/101[a,b, Degrees => {{1,0},{0,1}}]
   A = S^{{2,1}}
   B = S^{{1,1}}
@@ -553,8 +573,8 @@ TEST ///
   n =2
   M = module(trim W^n)
   N = Hom(M, R^1);
-  (t,g) = isIsomorphic (N, M);
-  assert t
+  assert isIsomorphic(N, M)
+  g = isomorphism(N, M)
   assert isWellDefined g
   assert(source g == M)
   assert(target g == N)
@@ -595,17 +615,18 @@ TEST ///
   C1 = coker (a = random(B1^3, S^{2:-{3,3}, -{4,5}}))
   C2 = coker (matrix random(S^3, S^3)*matrix a*matrix random(S^3,S^3))
 
-  assert try ( isIsomorphic(C1,C2); false) else true
-  assert first isIsomorphic(C1,C2, Homogeneous => false)
-  assert first isIsomorphic(C2,C1, Homogeneous => false)
-  assert isIsomorphism last isIsomorphic(C1,C2)
+  assert try ( isIsomorphic(C1,C2); false ) else true
+  assert isIsomorphic(C1,C2, Homogeneous => false)
+  assert isIsomorphic(C2,C1, Homogeneous => false)
+  assert isIsomorphism isomorphism(C1,C2, Homogeneous => false)
+  assert try ( isomorphism(C1,C2); false ) else true
 
-  assert first isIsomorphic(A1, A2)
-  assert isIsomorphism last isIsomorphic(A1,A2)
-  assert first isIsomorphic(A,A)
-  assert first isIsomorphic(B1,B1)
-  assert not first isIsomorphic(A,B1)
-  assert not first isIsomorphic(A1,B1)
+  assert isIsomorphic(A1, A2)
+  assert isIsomorphism isomorphism(A1,A2)
+  assert isIsomorphic(A,A)
+  assert isIsomorphic(B1,B1)
+  assert not isIsomorphic(A,B1)
+  assert not isIsomorphic(A1,B1)
 ///
 
 end--
