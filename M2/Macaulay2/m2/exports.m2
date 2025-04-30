@@ -419,6 +419,7 @@ export {
 	"Toric",
 	"Torsion",
 	"TotalPairs",
+	"Tries",
 	"Truncate",
 	"Type",
 	"TypicalValue",

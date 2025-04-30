@@ -73,7 +73,6 @@ export{
   "symmetricKernel", 
   "versalEmbedding",
   "whichGm",
-  "Tries",
   "jacobianDual",
   "symmetricAlgebraIdeal",
   "expectedReesIdeal",
@@ -872,7 +871,6 @@ doc ///
 doc ///
   Key
     [minimalReduction, Tries]
-    Tries
   Headline
     Set the number of random tries to compute a minimal reduction
   Usage
@@ -1648,7 +1646,7 @@ doc ///
       routine checks rigorously that the output ideal is a reduction, and tries
       probabilistically again if it is not. If it cannot find a minimal reduction after
       a certain number of tries, it returns an error. The number of tries defaults
-      to 20, but can be set with the optional argument @TO Tries@.
+      to 20, but can be set with the optional argument @TO [minimalReduction, Tries]@.
 
       To say that $I$ is integrally dependent on $J$ means that
       $JI^k = I^{k+1}$ for some non-negative integer $k$.  The smallest $k$ with this
