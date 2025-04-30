@@ -180,7 +180,9 @@ document {
 	       (x,y) = f 9
 	       x
 	       y
-	  ///
+	  ///,
+	  PARA {"Multiple assignment may also be used for other uses of ", CODE "=",
+	      " such as assigning to elements of mutable lists and hash tables and using/installing assignment methods."}
 	  },
      SYNOPSIS {
 	  Heading => "assignment to an element of a mutable list",
@@ -482,13 +484,7 @@ document {
 	  Consequences => {
 	       { "new local variables ", TT "x", ", ", TT "y", ", ", TT "z", ", ... are created" },
 	       { "the expressions c,d,e,... are assigned to the variables x,y,z,..., respectively, as above." },
-	       { "If the left hand side has more elements than the right hand side, then the extra symbols on the left side are given the value ", TO "null", "." },
-	       { "If the left hand side has fewer elements than the right hand side, then the last symbol on the left hand side is given
-     		    as value a sequence containing the trailing elements of the right hand side." 
-		    },
-	       { "If the right hand side is not a sequence, then it is assigned to the first symbol on the left, and the remaining symbols are assigned the
-		    value ", TO "null", "."
-		    }
+	       { "the number of expressions must match the number of variables." }
 	       },
 	  PARA "Multiple assignment effectively means that functions can return multiple values usefully.",
 	  EXAMPLE lines ///
@@ -496,7 +492,8 @@ document {
 	       (r,s) := f 9
 	       r
 	       s
-	  ///
+	  ///,
+	  PARA {"Multiple assignment may also be used for other uses of ", CODE ":=", " such as method installation."},
 	  },
      SYNOPSIS {
 	  Heading => "installing methods for binary operators",

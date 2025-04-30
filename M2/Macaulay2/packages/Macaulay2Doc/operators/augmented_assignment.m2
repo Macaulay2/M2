@@ -18,6 +18,12 @@ doc ///
     Example
       importFrom(Core, "augmentedAssignmentOperators");
       augmentedAssignmentOperators
+    Text
+      Multiple augmented assignment is also supported.
+    Example
+     (x,y) = (3, 4)
+     (x,y) += (5, 6)
+     (x,y)
   SeeAlso
     "installing augmented assignment methods"
 ///
