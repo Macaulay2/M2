@@ -134,6 +134,9 @@ checkDegrees(B,B)
 defaultNumTries = p -> ceiling(0.1 + 100 / log p)
 --apply({2, 32003, 0}, defaultNumTries)
 
+-- key to cache known isomorphisms
+protect Isomorphisms
+
 isIsomorphic = method(Options => {
 	Homogeneous => true,  -- if false, allow an inhomogeneous isomorphism
 	Strict      => false, -- forces strict equality of degrees
@@ -142,12 +145,15 @@ isIsomorphic = method(Options => {
     })
 isIsomorphic(Module, Module) := Sequence => o -> (N, M) -> (
     -- returns a pair (false, null) or (true, f), where f is an isomorphism M --> N.
+    M.cache.Isomorphisms ??= new MutableHashTable;
+    if M.cache.Isomorphisms#?N then
+    return (true, M.cache.Isomorphisms#N);
     S := ring M;
     tries := o.Tries ?? defaultNumTries char S;
     if tries > 1 then (
 	for c to tries - 1 do (
 	    (bool, isom) := isIsomorphic(N, M, o, Tries => 1);
-	    if bool then return (true, isom));
+	    if bool then return (true, M.cache.Isomorphisms#N = isom));
 	return (false, null));
     --
         if o.Homogeneous == true and 
