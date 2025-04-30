@@ -213,37 +213,6 @@ isIsomorphic(Module, Module) := Sequence => o -> (N, M) -> (
     )
 isIsomorphic(Matrix, Matrix) := Sequence => o -> (n, m) -> isIsomorphic(coker m, coker n, o)
 
--*
-restart
-loadPackage("Isomorphism", Reload =>true)
-*-
-///
-setRandomSeed 0
-S = ZZ/32003[a,b,Degrees => {{1,0},{0,1}}]
-B1 = S^{{1,1}}
-B = S^{{1,1}, {2,3}}
-A = coker random(B, S^{2:-{3,3}})
-A1 = coker (a = random(B1^3, S^{2:-{3,3}}))
-A2 = coker (random(target a, target a)*a*random(source a,source a))
-C1 = coker (a = random(B1^3, S^{2:-{3,3}, -{4,5}}))
-C2 = coker (matrix random(S^3, S^3)*matrix a*matrix random(S^3,S^3))
-
---isIsomorphic(C1,C2) -- gives an error because C2 is not homogeneous
-assert((isIsomorphic(C1,C2, Homogeneous => false))_0 ==true)
-isIsomorphic(C1,C2, Homogeneous => false) -- this should be true!
-
-isIsomorphic(C1,C1, Homogeneous => false) -- this should be true!
-
-
-assert((isIsomorphic(A1,A2))_0 == true)
-assert(coker ((isIsomorphic(A1,A2))_1) == 0)
-assert((isIsomorphic (A,A))_0 == true)
-assert((isIsomorphic(B1,B1))_0 == true)
-assert((isIsomorphic(A,B1))_0 == false)
-assert((isIsomorphic(A1,B1, Verbose => true))_0 === false)
-///
-
-
 -* Documentation section *-
 beginDocumentation()
 
@@ -550,6 +519,29 @@ TEST ///
   assert(checkDegrees(A,B) == (true, {0,0}))
   assert(checkDegrees(A,C) == (false, ))
   assert(checkDegrees(B,C) == (false, ))
+///
+
+TEST ///
+  S = ZZ/32003[a,b,Degrees => {{1,0},{0,1}}]
+  B1 = S^{{1,1}}
+  B = S^{{1,1}, {2,3}}
+  A = coker random(B, S^{2:-{3,3}})
+  A1 = coker (a = random(B1^3, S^{2:-{3,3}}))
+  A2 = coker (random(target a, target a)*a*random(source a,source a))
+  C1 = coker (a = random(B1^3, S^{2:-{3,3}, -{4,5}}))
+  C2 = coker (matrix random(S^3, S^3)*matrix a*matrix random(S^3,S^3))
+
+  assert try ( isIsomorphic(C1,C2); false) else true
+  assert first isIsomorphic(C1,C2, Homogeneous => false)
+  assert first isIsomorphic(C2,C1, Homogeneous => false)
+  assert isIsomorphism last isIsomorphic(C1,C2)
+
+  assert first isIsomorphic(A1, A2)
+  assert isIsomorphism last isIsomorphic(A1,A2)
+  assert first isIsomorphic(A,A)
+  assert first isIsomorphic(B1,B1)
+  assert not first isIsomorphic(A,B1)
+  assert not first isIsomorphic(A1,B1)
 ///
 
 end--
