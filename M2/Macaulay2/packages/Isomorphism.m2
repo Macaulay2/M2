@@ -1,13 +1,13 @@
 newPackage(
     "Isomorphism",
-    Version => "1.0",
-    Date => "April 27, 2022",
-    Headline => "Probabilistic test of isomorphism between modules",
-    Authors => {{Name => "David Eisenbud", 
-                  Email => "de@msri.org", 
-                  HomePage => "http://www.msri.org/~de"}
-                  },
-    Keywords => {"Commutative Algebra", "Homological Algebra", "Projective Algebraic Geometry"},
+    Version => "2.0",
+    Date => "April 30, 2025",
+    Headline => "probabilistic test of isomorphism between modules",
+    Authors => {
+	{ Name => "David Eisenbud", Email => "de@berkeley.edu", HomePage => "https://eisenbud.github.io" },
+	{ Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",  HomePage => "https://mahrud.github.io" }
+    },
+    Keywords => {"Commutative Algebra", "Homological Algebra"},
     DebuggingMode => false
     )
 
@@ -278,7 +278,7 @@ Node
     isomorphism
     checkDegrees
   Contributors
-    Mike Stillman
+    Mike Stillman and Devlin Mallory contributed to this package.
 
 Node
   Key
