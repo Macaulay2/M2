@@ -13,6 +13,7 @@ newPackage(
 
 export {
     "isIsomorphic",
+    "isomorphism",
     "checkDegrees",
     }
 
@@ -113,7 +114,7 @@ checkDegrees(Module, Module) := Sequence => o -> (A,B) -> (
 checkDegrees(Matrix, Matrix) := Sequence => o-> (m,n) -> checkDegrees(target m, target n, o)
 
 -----------------------------------------------------------------------------
--- isIsomorphism
+-- isIsomorphism and isomorphism
 -----------------------------------------------------------------------------
 
 -- the default number of attempts for randomized algorithms
@@ -223,6 +224,11 @@ isIsomorphic(Module, Module) := Sequence => o -> (N, M) -> (
     )
 isIsomorphic(Matrix, Matrix) := Sequence => o -> (n, m) -> isIsomorphic(coker m, coker n, o)
 
+isomorphism = method(Options => options isIsomorphic)
+isomorphism(Module, Module) := Matrix => o -> (N, M) -> (
+    if first isIsomorphic(N, M, o) then M.cache.Isomorphisms#N
+    else error "modules are not isomorphic")
+
 -----------------------------------------------------------------------------
 -* Documentation section *-
 -----------------------------------------------------------------------------
@@ -242,6 +248,7 @@ Node
       and test whether these are surjections.
   SeeAlso
     isIsomorphic
+    isomorphism
     checkDegrees
   Contributors
     Mike Stillman
@@ -394,6 +401,43 @@ Node
     this may not be definitive.
   SeeAlso
     checkDegrees
+
+Node
+  Key
+    isomorphism
+   (isomorphism, Module, Module)
+   [isomorphism, Verbose]
+   [isomorphism, Homogeneous]
+   [isomorphism, Strict]
+   [isomorphism, Tries]
+  Headline
+    retrieve an isomorphism of modules
+  Usage
+    f = isomorphism(N, M)
+  Inputs
+    M:Module
+    N:Module
+    Homogeneous => Boolean -- if false, allow an inhomogeneous isomorphism
+    Verbose     => Boolean -- whether to print debugging information
+    Strict      => Boolean -- whether to force strict equality of degrees
+    Tries       => ZZ      -- the number of attempts at generating random map
+  Outputs
+    f:Matrix -- an isomorphism $M \to N$
+  Description
+    Text
+      This method retrieves the isomorphism between the given modules.
+    Example
+      S = ZZ/32003[x_0..x_3]
+      m = random(S^3, S^{4:-2});
+      A = random(target m, target m);
+      B = random(source m, source m);
+      N = coker(A*m*B);
+      M = coker m;
+      f = isomorphism(N, M)
+      isIsomorphism f
+  SeeAlso
+    isIsomorphic
+    isIsomorphism
 ///
 
 -----------------------------------------------------------------------------
