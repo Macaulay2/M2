@@ -403,18 +403,20 @@ TEST /// -*getting the degree shift right*-
    assert((isIsomorphic (S^{-3}**coker m, coker m'))_0 == true)
 ///
 
-TEST///--getting the degrees right in matrixHom
-debug needsPackage "Isomorphism"
-S = ZZ/101[x,y]
-m = matrix{{x,y}}
-n = matrix{{x^2, y^2}}
+TEST ///
+  -- testing randomMinimalDegreeHomomorphism
+  debug needsPackage "Isomorphism"
+  S = ZZ/101[x,y]
+  m = matrix{{x,y}}
+  n = matrix{{x^2, y^2}}
 
-setRandomSeed 0
-assert(all(flatten for a from -2 to 2 list for b from -2 to 2 list(
-a = -2;b=2;
-(v, diffdegs) = checkDegrees (S^{a}**(m++m),S^{b}**(m++m));
-((prune coker randomMinimalDegreeHomomorphism(S^{a}**(m++m),S^{b}**(m++m),-diffdegs_0) == 0))
-), t -> t))
+  setRandomSeed 0
+  assert all flatten for a from -2 to 2 list for b from -2 to 2 list (
+      M := S^{a}**(n++m);
+      N := S^{b}**(m++n);
+      (v, diffdegs) = checkDegrees(M, N);
+      0 == coker randomMinimalDegreeHomomorphism(M, N, -diffdegs_0)
+  )
 ///
 
 TEST///--the inhomogeneous case
