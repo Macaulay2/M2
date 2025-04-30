@@ -355,7 +355,7 @@ TEST /// -- Algorithm => LinearAlgebra, over finite field.
   J1 = ideal random(R1^1, R1^{-4,-4,-5,-5});
   elapsedTime gbC = flatten entries gens (G = gb(ideal J1_*, Algorithm => LinearAlgebra));
   elapsedTime gbB = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
-  assert(sort gbC == gbB) -- TODO: orde rshould be the same!!
+  assert(sort gbC == gbB) -- TODO: order should be the same!!
 
   -- TODO: is it ok to check Msolve while we do this?
   needsPackage "Msolve"

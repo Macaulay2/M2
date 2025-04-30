@@ -173,6 +173,57 @@ class ColumnsSorter
   ~ColumnsSorter() {}
 };
 
+class GBSorter
+{
+ public:
+  typedef MonomialInfo::value monomial;
+  typedef int value;
+
+ private:
+  const MonomialInfo *M;
+  //  const coefficient_matrix *mat;
+  const gb_array& gb;
+
+  static long ncmps;
+  static long ncmps0;
+ public:
+  int compare(value a, value b)
+  {
+    //    ncmps ++;
+    return M->compare_grevlex(gb[a]->f.monoms, gb[b]->f.monoms);
+    // return (M->*(M->compare))(mat->columns[a].monom,mat->columns[b].monom);
+
+    //    return (M->*compareFcn)(col[a].monom,col[b].monom);
+    //    return (M->*compareFcn)(mat->columns[a].monom,mat->columns[b].monom);
+    //    return
+    //    M->compare_grevlex(mat->columns[a].monom,mat->columns[b].monom);
+  }
+
+  bool operator()(value a, value b)
+  {
+    // ncmps0 ++;
+    return (M->compare_grevlex(gb[a]->f.monoms, gb[b]->f.monoms) == GT); // GT: want to sort in increasing order...
+    //    return (M->*(M->compare))(mat->columns[a].monom,mat->columns[b].monom)
+    //    == LT;
+  }
+
+  GBSorter(const MonomialInfo *M0, const gb_array& gb0)
+      : M(M0),
+        gb(gb0)
+  {
+  }
+
+  long ncomparisons() const { return ncmps; }
+  long ncomparisons0() const { return ncmps0; }
+  void reset_ncomparisons()
+  {
+    ncmps0 = 0;
+    ncmps = 0;
+  }
+
+  ~GBSorter() {}
+};
+
 class PreSPairSorter
 {
  public:

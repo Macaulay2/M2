@@ -419,7 +419,7 @@ groebnerBasis Matrix := opts -> x -> (
 	-- use engineMGB
 	generators forceGB engineMGB(x, mgbopts))
     else (
-        if opts.Strategy === "F4" or opts.Strategy === "MBG" then (
+        if opts.Strategy === "F4" or opts.Strategy === "MGB" then (
             << "warning: cannot use MGB or F4 option with this ring, falling back to default" << endl;
             );
         generators gb x
