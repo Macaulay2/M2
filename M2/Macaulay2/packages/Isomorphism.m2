@@ -67,7 +67,7 @@ randomMinimalDegreeHomomorphism(Matrix, Matrix, ZZ) := Matrix => (n,m,d) -> (
     p := positions(degrees source h, e -> e == -{d});
     hp := h_p;
     a := hp*random(source (hp), S^{d}); --represents general map of degree -diffdegs
-    map(coker n, coker m, matrix reshape(N0, M0, a))
+    map(coker n, coker m, matrix reshape(N0, M0, a), Degree => -d)
     )
 
 -----------------------------------------------------------------------------
@@ -169,6 +169,9 @@ isIsomorphismFree = (N, M0, o) -> (
     setIsomorphism(N, M0, map(N, M0, id_M^p2 // id_N^p1,
 	    Degree => -diffdegs), o))
 
+-- TODO: hookify and split into strategies, then add strategies that:
+-- - check if pruning of the modules is cached already
+-- - check if Hilbert polynomial, regularity, dimension, etc. are known
 isIsomorphic = method(
     TypicalValue => Boolean,
     Options => {
@@ -236,7 +239,9 @@ isIsomorphic(Module, Module) := Boolean => o -> (N, M) -> (
 	if #sH == 0 then return false;
     	g = sum(sH, f-> random(kk)*homomorphism matrix f)
 	);
-        
+
+    if o.Homogeneous and not isHomogeneous g then return false;
+
 	--test g to see if it's surjective:
 	kmodule := coker vars S;
 	gbar := kmodule ** g;
@@ -638,8 +643,8 @@ TEST ///
   M = R^{{1,1}, {0,1}}
   N = R^{{0,1}, {1,1}}
   assert isIsomorphic(N, M, Strict => false, Homogeneous => false)
-  assert(map(N, M, {{0, 1}, {1, 0}}) === M.cache.Isomorphisms#(N, {true, true}))
   f = isomorphism(N, M,     Strict => false, Homogeneous => false)
+  assert same(f, map(N, M, {{0, 1}, {1, 0}}), M.cache.Isomorphisms#(N, {true, true}))
   assert isWellDefined f
   assert isHomogeneous f
   assert(source f === M)
@@ -649,7 +654,7 @@ TEST ///
   assert isIsomorphic(N, M, Strict => true,  Homogeneous => false)
   assert isIsomorphic(N, M, Strict => true,  Homogeneous => true)
   f' = isomorphism(M, N,    Strict => false, Homogeneous => false)
-  assert(map(M, N, {{0, 1}, {1, 0}}) === f')
+  assert same(f', map(M, N, {{0, 1}, {1, 0}}), inverse f)
   assert(1 == #M.cache.Isomorphisms)
 
   M = R^{{1,1}, {0,1}}
