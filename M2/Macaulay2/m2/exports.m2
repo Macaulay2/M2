@@ -391,6 +391,7 @@ export {
 	"StopIteration",
 	"StopWithMinimalGenerators",
 	"Strategy",
+	"Strict",
 	"String",
 	"Subnodes",
 	"SubringLimit",

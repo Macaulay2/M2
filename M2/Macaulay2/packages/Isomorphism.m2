@@ -14,8 +14,6 @@ newPackage(
 export {
     "isIsomorphic",
     "checkDegrees",
-    --
-    "Strict" -- option for checkDegrees making the homogeneous case preserve degrees.
     }
     
 
@@ -69,7 +67,10 @@ isDegreeListZero = L ->
    all(L, s -> 
            all(s,  e-> e === 0)); 
 
-checkDegrees = method(Options =>{Verbose =>false, Strict =>false})
+checkDegrees = method(Options => {
+	Verbose => false,
+	Strict  => false, -- make the homogeneous case preserve degrees
+    })
 checkDegrees(Module, Module) := Sequence => o -> (A,B) -> (
     v := o.Verbose;
     S := ring A;
@@ -128,7 +129,11 @@ d = checkDegrees(A,B1)
 checkDegrees(B,B)
 ///
 
-isIsomorphic = method(Options =>{Homogeneous => true, Verbose => false, Strict =>false})
+isIsomorphic = method(Options => {
+	Homogeneous => true,
+	Verbose     => false,
+	Strict      => false, -- forces strict equality of degrees
+    })
 isIsomorphic(Module, Module) := Sequence => o ->  (N,M)->(
     --returns a pair (false, null) or (true, f), or where f is an isomorphism 
     --f: M to N.
@@ -252,7 +257,6 @@ Key
  (checkDegrees,Module,Module)
  (checkDegrees,Matrix,Matrix)
  [checkDegrees, Verbose]
- [checkDegrees, Strict] 
 Headline
  compares the degrees of generators of two modules
 Usage
@@ -300,12 +304,12 @@ Description
    checkDegrees(B',B,Strict=>true)   
 SeeAlso
  isIsomorphic
- Strict
+ [checkDegrees, Strict]
 ///
 
 doc ///
 Key
- Strict
+ [checkDegrees, Strict]
 Headline
  Forces strict equality of degrees
 Usage
