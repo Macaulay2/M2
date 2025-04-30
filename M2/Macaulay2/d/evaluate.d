@@ -1194,7 +1194,7 @@ globalAssignmentFun(x:globalAssignmentCode):Expr := (
      globalAssignment(t.frameindex,t,newvalue));
 
 ParallelAssignmentError(n:int):Expr := buildErrorPacket(
-    "parallel assignment: expected a sequence of " + tostring(n) + " values");
+    "parallel assignment: expected a sequence of " + tostring(n) + " value(s)");
 ParallelAssignmentErrorAt(n:int):Expr := buildErrorPacket(
     "parallel assignment: failure at argument " + tostring(n));
 parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
@@ -1202,7 +1202,12 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
     value := eval(x.rhs);
     when value is Error do return value else nothing;
     -- (x) = y should behave just like x = y
-    if nlhs == 1 then value = seq(value);
+    if nlhs == 1 then (
+	when value is a:Sequence do (
+	    -- unless y is a sequence of length 1, then it behaves like x = y#0
+	    if length(a) == 1 then nothing
+	    else value = ParallelAssignmentError(1))
+	else value = seq(value));
     when value
     is values:Sequence do (
 	if nlhs == length(values) then (
