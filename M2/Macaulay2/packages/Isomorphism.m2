@@ -15,7 +15,10 @@ export {
     "isIsomorphic",
     "checkDegrees",
     }
-    
+
+importFrom_Core {
+    "sortBy",
+}
 
 -* Code section *-
 
@@ -134,6 +137,20 @@ checkDegrees(B,B)
 defaultNumTries = p -> ceiling(0.1 + 100 / log p)
 --apply({2, 32003, 0}, defaultNumTries)
 
+-- give an isomorphism between two free modules with same degrees
+-- FIXME: because of https://github.com/Macaulay2/M2/issues/3719,
+-- this might not give the most "natural" isomorphism
+isIsomorphismFree = (N, M0, o) -> (
+    if rank N != rank M0 then return (false, null) else
+    if not o.Homogeneous then return (true, map(N, M0, 1));
+    (d1, d2) := (degrees N, degrees M0);
+    if o.Strict then M := M0 else d2 = degrees(
+	M = M0 ** (ring M0)^{min d2 - min d1});
+    if sort d1 != sort d2 then return (false, null);
+    p1 := first \ (sortBy last) toList pairs d1;
+    p2 := first \ (sortBy last) toList pairs d2;
+    (true, map(N, M0, id_M^p2 // id_N^p1)))
+
 -- key to cache known isomorphisms
 protect Isomorphisms
 
@@ -145,10 +162,18 @@ isIsomorphic = method(Options => {
     })
 isIsomorphic(Module, Module) := Sequence => o -> (N, M) -> (
     -- returns a pair (false, null) or (true, f), where f is an isomorphism M --> N.
+    if M === N then return (true, id_M);
+    --
     M.cache.Isomorphisms ??= new MutableHashTable;
     if M.cache.Isomorphisms#?N then
     return (true, M.cache.Isomorphisms#N);
+    --
     S := ring M;
+    if S =!= ring N then error "expected objects over the same ring";
+    --
+    if isFreeModule M and isFreeModule N then
+    return isIsomorphismFree(N, M, o);
+    --
     tries := o.Tries ?? defaultNumTries char S;
     if tries > 1 then (
 	for c to tries - 1 do (
@@ -553,7 +578,3 @@ restart
 installPackage "Isomorphism"
 check "Isomorphism"
 viewHelp "Isomorphism"
-restart
-
-
-
