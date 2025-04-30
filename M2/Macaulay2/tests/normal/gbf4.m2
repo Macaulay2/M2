@@ -12,28 +12,33 @@
 -- Other observations:
 -- giving wrong HF in standard algorithm crashes the system
 
--- Some tests for LinearAlgebra variant
-I = ideal vars(QQ[x])
-assert try (elapsedTime gb(I, Algorithm => LinearAlgebra); false) else true
+----------------------------------------------
+-- Test: QQ coefficients ---------------------
+----------------------------------------------
 
-R = ZZ/32003[x]
-I = ideal vars R
-elapsedTime result = gens gb(I, Algorithm => LinearAlgebra);
-assert(result == vars R)
+----------------------------------------------
+-- Test: Quasi-homogeneous -------------------
+----------------------------------------------
 
-kk = ZZ/101;
-R1 = kk[a..g, MonomialSize=>8];
-J1 = ideal random(R1^1, R1^{-5,-5,-5,-6});
-elapsedTime gens gb(ideal J1_*, Algorithm => LinearAlgebra);
-elapsedTime groebnerBasis(ideal J1_*, Strategy => "F4");
+----------------------------------------------
+-- Test: Inhomogeneous     -------------------
+----------------------------------------------
 
-kk = GF 125;
-R1 = kk[a..g, MonomialSize=>8];
-J1 = ideal random(R1^1, R1^{-5,-5,-5,-5});
-elapsedTime gbA = flatten entries gens gb(ideal J1_*, DegreeLimit => 10);
-elapsedTime gbB = flatten entries gens gb(ideal J1_*, Algorithm => LinearAlgebra, DegreeLimit => 10);
---elapsedTime groebnerBasis(ideal J1_*, Strategy => "F4"); -- BUG: this should be disallowed...!
-assert(gbA == sort gbB) -- TODO: make sure gbB is sorted!
+----------------------------------------------
+-- Test: Other monomial orders ---------------
+----------------------------------------------
+
+----------------------------------------------
+-- Test: Quotient rings    -------------------
+----------------------------------------------
+
+----------------------------------------------
+-- Test: Skew commuting    -------------------
+----------------------------------------------
+
+----------------------------------------------
+-- Test: Weyl Algebrta     -------------------
+----------------------------------------------
 
 -- GB for lex order
 restart
@@ -96,44 +101,5 @@ assert(gbA == gbD)
 assert(sort gbA == gbA)
 assert(sort gbB == gbA) -- true.  So GB is correct, but is in incorrect order.
 
--- exterior algebra
--- restart
-kk = ZZ/101
-R1 = kk[a,b,c,d,e,f, SkewCommutative=>true]
-setRandomSeed 42
-J1 = ideal random(R1^1, R1^{-2,-2,-2,-2});
-elapsedTime gbA = flatten entries gens gb(J1);
-elapsedTime gbB = flatten entries gens gb(ideal J1_*, Algorithm => LinearAlgebra);
-elapsedTime gbC = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
-assert(gbA == gbB) -- fails, gbB seems to compute over polynomial ring instead...
-assert(gbA == gbC)
-assert(gbA == gbD)
 
--- hilbert driven gb computation
---restart
-setRandomSeed 42
-kk = ZZ/101
-R1 = kk[a..g, MonomialSize=>8];
-K1 = ideal (a^5,b^5,c^5,d^5,e^5)
-hfJ = poincare K1
-J1 = ideal random(R1^1, R1^{-5,-5,-5,-5,-5});
-elapsedTime gbA = flatten entries gens gb(ideal J1_*, Hilbert => hfJ);
-elapsedTime gbB = flatten entries gens gb(ideal J1_*,
-                                          Algorithm => LinearAlgebra,
-					  Hilbert => hfJ);
-elapsedTime gbC = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
--- assert(gbA == sort gbB) 
-assert(sort gbB == gbC)
-
--- GB over a quotient ring
--- restart
-setRandomSeed 42
-kk = ZZ/101
-R1 = kk[a,b,c,d,e,f]/ideal(a^2 - b*c)
-J1 = ideal random(R1^1, R1^{-5,-5,-5,-5});
-elapsedTime gbA = flatten entries gens gb(ideal J1_*);
-elapsedTime gbB = flatten entries gens gb(ideal J1_*,
-                                          Algorithm => LinearAlgebra);
-elapsedTime gbC = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
-assert(gbA == sort gbB) -- fails
 

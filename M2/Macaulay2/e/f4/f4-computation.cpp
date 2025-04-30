@@ -32,30 +32,29 @@ GBComputation *createF4GB(const Matrix *m,
 {
   const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
   const Ring *K = R->getCoefficients();
+
+  // TODO: code here used to detect whether R, K is a valid ring here
   if (not m->is_homogeneous())
     {
-      ERROR("expected homogeneous input for Algorithm => LinearAlgebra groebner basis");
+      ERROR("expected homogeneous input for `Algorithm => LinearAlgebra` groebner basis");
       return nullptr;
     }
   if (not K->isFinitePrimeField() and not K->isGaloisField())
     {
-      ERROR("expected coefficient ring to be a finite field for Algorithm => LinearAlgebra groebner basis");
+      ERROR("expected coefficient ring to be a finite field for `Algorithm => LinearAlgebra` groebner basis");
       return nullptr;
     }
   auto vectorArithmetic = new VectorArithmetic(K);
-  // TODO: code here used to detect whether R, K is a valid ring here
 
-  GBComputation *G;
-  G = new F4Computation(vectorArithmetic,
-                        m,
-                        collect_syz,
-                        n_rows_to_keep,
-                        gb_weights,
-                        strategy,
-                        use_max_degree,
-                        max_degree,
-                        numThreads);
-  return G;
+  return new F4Computation(vectorArithmetic,
+                           m,
+                           collect_syz,
+                           n_rows_to_keep,
+                           gb_weights,
+                           strategy,
+                           use_max_degree,
+                           max_degree,
+                           numThreads);
 }
 
 F4Computation::F4Computation(const VectorArithmetic* VA,
@@ -126,14 +125,30 @@ const Matrix /* or null */ *F4Computation::get_mingens()
 //       mat.append(mOriginalRing->translate_gbvector_to_vec(_F, (*i)->g.f));
 //   return mat.to_matrix();
 #endif
+  ERROR("Minimal generators for all `Algorithm => LinearAlgebra` Groebner bases not computed");
   return nullptr;
 }
 
-const Matrix /* or null */ *F4Computation::get_change() { return nullptr; }
-const Matrix /* or null */ *F4Computation::get_syzygies() { return nullptr; }
-const Matrix /* or null */ *F4Computation::get_initial(int nparts) { return nullptr; }
+const Matrix /* or null */ *F4Computation::get_change()
+{
+  ERROR("Change of basis matrix for all `Algorithm => LinearAlgebra` Groebner bases not computed");
+  return nullptr;
+}
+
+const Matrix /* or null */ *F4Computation::get_syzygies()
+{
+  ERROR("Syzygies for `Algorithm => LinearAlgebra` Groebner bases not computed");
+  return nullptr;
+}
+
+const Matrix /* or null */ *F4Computation::get_initial(int nparts)
+{
+  return nullptr;
+}
+
 const Matrix /* or null */ *F4Computation::matrix_remainder(const Matrix *m)
 {
+  ERROR("No special algorithm for computing matrix remainder for `Algorithm => LinearAlgebra");
   return nullptr;
 }
 
@@ -144,7 +159,7 @@ M2_bool F4Computation::matrix_lift(
 {
   *result_remainder = nullptr;
   *result_quotient = nullptr;
-  ERROR("rawGBMatrixLift not implemented for LinearAlgebra GB's yets");
+  ERROR("No special algorithm for computing matrix remainder and lift for `Algorithm => LinearAlgebra");  
   return false;
 }
 
@@ -153,12 +168,14 @@ int F4Computation::contains(const Matrix *m)
 // Otherwise return the index of the first column that
 // does not reduce to zero.
 {
+  ERROR("No special algorithm for computing containment for `Algorithm => LinearAlgebra");  
   return 0;
 }
 
 int F4Computation::complete_thru_degree() const
 // The computation is complete up through this degree.
 {
+  // TODO!
   return 0;
 }
 

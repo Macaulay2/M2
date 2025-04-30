@@ -57,26 +57,13 @@ struct pre_spair
   bool are_disjoint;
 };
 
-// old spair type (linked list-style container)
-//struct spair
-//{
-//  spair *next;
-//  spair_type type;
-//  int deg; /* sugar degree of this spair */
-//  int i;
-//  int j;
-//  monomial_word lcm[1];  // packed_monomial
-//};
-
 struct spair
 {
 public:
-  // spair *next;
   SPairType type;
   int deg; /* sugar degree of this spair */
   int i;
   int j;
-  // monomial_word lcm[1];  // packed_monomial
   monomial_word* lcm;  // pointer to a monomial space
   
   spair() : type(SPairType::Retired),deg(INT_MIN),i(-1),j(-1),lcm(nullptr) {}
@@ -92,7 +79,6 @@ struct gbelem
   gbelem_type minlevel;
 };
 
-// typedef VECTOR(gbelem *) gb_array;
 typedef std::vector<gbelem *> gb_array;
 
 struct sparse_row
@@ -123,8 +109,6 @@ struct column_elem
 
 struct coefficient_matrix
 {
-  //typedef VECTOR(row_elem) row_array;
-  //typedef VECTOR(column_elem) column_array;
   typedef std::vector<row_elem> row_array;
   typedef std::vector<column_elem> column_array;
 
