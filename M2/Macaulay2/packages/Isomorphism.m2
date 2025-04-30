@@ -22,6 +22,10 @@ importFrom_Core {
 
 -* Code section *-
 
+-----------------------------------------------------------------------------
+-- randomMinimalDegreeHomomorphism
+-----------------------------------------------------------------------------
+
 randomMinimalDegreeHomomorphism=method()
 randomMinimalDegreeHomomorphism(Matrix, Matrix, ZZ) := Matrix => (n,m,d) -> (
     --m,n homogeneous, minimal over a ring with degree length 1 (this restridd
@@ -65,10 +69,12 @@ randomMinimalDegreeHomomorphism(Matrix, Matrix, ZZ) := Matrix => (n,m,d) -> (
     map(coker n, coker m, matrix reshape(N0, M0, a))
     )
 
-isDegreeListZero = L -> 
--- test whether a list of lists has all entries of entries 0
-   all(L, s -> 
-           all(s,  e-> e === 0)); 
+-----------------------------------------------------------------------------
+-- checkDegrees
+-----------------------------------------------------------------------------
+
+-- test whether a list of lists has all zero entries
+isDegreeListZero = L -> all(L, s -> all(s, e -> e === 0))
 
 checkDegrees = method(Options => {
 	Verbose => false,
@@ -105,6 +111,10 @@ checkDegrees(Module, Module) := Sequence => o -> (A,B) -> (
 	(false, null)
     )
 checkDegrees(Matrix, Matrix) := Sequence => o-> (m,n) -> checkDegrees(target m, target n, o)
+
+-----------------------------------------------------------------------------
+-- isIsomorphism
+-----------------------------------------------------------------------------
 
 -- the default number of attempts for randomized algorithms
 -- e.g. 145 tries in char 2, 10 in char 32003, and 1 in char 0
@@ -213,198 +223,196 @@ isIsomorphic(Module, Module) := Sequence => o -> (N, M) -> (
     )
 isIsomorphic(Matrix, Matrix) := Sequence => o -> (n, m) -> isIsomorphic(coker m, coker n, o)
 
+-----------------------------------------------------------------------------
 -* Documentation section *-
+-----------------------------------------------------------------------------
+
 beginDocumentation()
 
 doc ///
-Key
- Isomorphism
-Headline
- Probabilistic test for isomorphism
-Description
-  Text
-   Two modules are isomorphic if there is a surjection in each direction.
-   These routines produce random combinations of the generators of Hom
-   and test whether these are surjections.
-SeeAlso
- isIsomorphic
- checkDegrees
-Contributors
- Mike Stillman
+Node
+  Key
+    Isomorphism
+  Headline
+    probabilistic test for isomorphism of modules
+  Description
+    Text
+      Two modules are isomorphic if there is a surjection in each direction.
+      These routines produce random combinations of the generators of @TO Hom@
+      and test whether these are surjections.
+  SeeAlso
+    isIsomorphic
+    checkDegrees
+  Contributors
+    Mike Stillman
+
+Node
+  Key
+    checkDegrees
+   (checkDegrees, Module, Module)
+   (checkDegrees, Matrix, Matrix)
+   [checkDegrees, Verbose]
+  Headline
+    compares the degrees of generators of two modules
+  Usage
+    d = checkDegrees(N,M)
+    d = checkDegrees(n,m)
+  Inputs
+    N:Module
+    n:Matrix -- presentation of N
+    M:Module
+    m:Matrix -- presentation of M
+  Outputs
+    d:Sequence
+      (Boolean, a degree in the ring of M and N)
+  Description
+    Text
+      This is to be used with @TO isIsomorphic@.
+
+      The routine compares the sorted lists of degrees of generators of the two modules;
+      the degreeLength (can be anything).
+      If the numbers of generators of M,N are different, the modules are not isomorphic,
+      and the routine returns (false, null).
+
+      If the numbers are the same, and all the corresponding degrees pairs differ
+      by the same amount (so that the modules might become isomorphic after a shift,
+      then if Strict => false (the default)
+      the output (true, e) tells how to adjust the modules to make the degrees equal:
+      either tensor N with (ring N)^{e} or tensor M with (ring M)^{-e}.
+
+      If Strict => true, then the output is (false, null) unless
+      the offset e is 0.
+    Example
+      S = ZZ/101[a,b,Degrees => {{1,0},{0,1}}]
+      A = S^{{2,1}}
+      B = S^{{1,1}}
+      B' = S^{{3,3}}**B
+      C = S^{{1,1}, {2,3}}
+      checkDegrees(A,B)
+      checkDegrees(A,C)
+
+      d = checkDegrees(B',B)
+      degrees (S^{d_1}**B') == degrees B
+      degrees (B') == degrees (S^{-d_1}**B)
+      checkDegrees(B',B,Strict=>true)
+  SeeAlso
+    isIsomorphic
+    [checkDegrees, Strict]
+
+Node
+  Key
+    [checkDegrees, Strict]
+  Headline
+    forces strict equality of degrees
+  Usage
+    d = checkDegrees(N, M, Strict =>true)
+  Description
+    Text
+      Used with Strict=>false, the default,
+      checkDegrees(N,M) returns (true, deg) if
+      degrees M and degrees N are equal up to a shift d.
+      With Strict => true the degree lists must be equal.
+    Example
+      S = ZZ/101[a,b,Degrees => {{1,0},{0,1}}]
+      B = S^{{1,1}}
+      B' = S^{{3,3}}**B
+      d = checkDegrees(B',B)
+      degrees (S^{d_1}**B') == degrees B
+      degrees (B') == degrees (S^{-d_1}**B)
+      checkDegrees(B',B,Strict=>true)
+  SeeAlso
+    checkDegrees
+
+Node
+  Key
+    isIsomorphic
+   (isIsomorphic, Module, Module)
+   (isIsomorphic, Matrix, Matrix)
+   [isIsomorphic, Verbose]
+   [isIsomorphic, Homogeneous]
+   [isIsomorphic, Strict]
+   [isIsomorphic, Tries]
+  Headline
+    probabilistic test for isomorphism of modules
+  Usage
+    t = isIsomorphic(N, M)
+    t = isIsomorphic(n, m)
+  Inputs
+    M:Module
+    m:Matrix -- presentation of M
+    N:Module
+    n:Matrix -- presentation of N
+    Homogeneous => Boolean
+    Verbose     => Boolean
+    Strict      => Boolean
+    Tries       => ZZ  -- the number of attempts at generating random map
+  Outputs
+    :Sequence
+      (true, Matrix) or (false, null)
+  Description
+    Text
+      In case both modules are homogeneous the program first uses @TO checkDegrees@
+      to see whether an isomorphism is possible. This may be an isomorphism up to shift
+      if Strict => false (the default) or on the nose if Strict => true.
+
+      If this test is passed, the program uses a variant of the Hom command
+      to compute a random map of minimal possible degree from M to N,
+      and checks whether this is surjective and injective.
+
+      In the inhomogeneous case (or with Homogeneous => false) the random map is
+      a random linear combination of the generators of the module of homomorphisms.
+
+      If the output has the form (true, g), then g is guaranteed to be an
+      isomorphism. If the output is (false, null), then the
+      conclusion of non-isomorphism is only probabilistic.
+    Example
+      setRandomSeed 0
+      S = ZZ/32003[x_0..x_3]
+      m = random(S^3, S^{4:-2});
+      A = random(target m, target m)
+      B = random(source m, source m)
+      m' = A*m*B;
+      isIsomorphic (S^{-3}**coker m, coker m)
+      isIsomorphic (S^{-3}**coker m, coker m, Strict => true)
+      isIsomorphic (coker m, coker m')
+    Text
+      The following example checks two of the well-known isomorphism
+      in homological algebra.
+    Example
+      setRandomSeed 0
+      S = ZZ/32003[x_0..x_3]
+      I = monomialCurveIdeal(S,{1,3,5})
+      codim I
+      W = Ext^2(S^1/I, S^1)
+      W' = Hom(S^1/I, S^1/(I_0,I_1) )
+      isIsomorphic(W,W')
+      mm = ideal gens S
+      (isIsomorphic(Tor_1(W, S^1/(mm^3)), Tor_1(S^1/(mm^3), W)))_0
+  Caveat
+    A negative result means that a random choice of homomorphism
+    was not an isomorphism; especially when the ground field is small,
+    this may not be definitive.
+  SeeAlso
+    checkDegrees
 ///
 
-doc ///
-Key
- checkDegrees
- (checkDegrees,Module,Module)
- (checkDegrees,Matrix,Matrix)
- [checkDegrees, Verbose]
-Headline
- compares the degrees of generators of two modules
-Usage
- d = checkDegrees(N,M)
- d = checkDegrees(n,m) 
-Inputs
- N:Module
- n:Matrix
-  presentation of N
- M:Module
- m:Matrix
-  presentation of M
-Outputs
- d:Sequence
-  (Boolean, a degree in the ring of M and N)
-Description
-  Text
-   This is to be used with @TO isIsomorphic@.
-   
-   The routine compares the sorted lists of degrees of generators of the two modules;
-   the degreeLength (can be anything).
-   If the numbers of generators of M,N are different, the modules are not isomorphic,
-   and the routine returns (false, null).
-
-   If the numbers are the same, and all the corresponding degrees pairs differ
-   by the same amount (so that the modules might become isomorphic after a shift, 
-   then if Strict => false (the default)
-   the output (true, e) tells how to adjust the modules to make the degrees equal:
-   either tensor N with (ring N)^{e} or tensor M with (ring M)^{-e}.
-   
-   If Strict => true, then the output is (false, null) unless
-   the offset e is 0.
-  Example
-   S = ZZ/101[a,b,Degrees => {{1,0},{0,1}}]
-   A = S^{{2,1}}
-   B = S^{{1,1}}
-   B' = S^{{3,3}}**B
-   C = S^{{1,1}, {2,3}}
-   checkDegrees(A,B)
-   checkDegrees(A,C)
-
-   d = checkDegrees(B',B)
-   degrees (S^{d_1}**B') == degrees B
-   degrees (B') == degrees (S^{-d_1}**B)
-   checkDegrees(B',B,Strict=>true)   
-SeeAlso
- isIsomorphic
- [checkDegrees, Strict]
-///
-
-doc ///
-Key
- [checkDegrees, Strict]
-Headline
- Forces strict equality of degrees
-Usage
- d = checkDegrees(N,M, Strict =>true)
-Description
- Text
-   Used with Strict=>false, the default, 
-   checkDegrees(N,M) returns (true, deg) if 
-   degrees M and degrees N are equal up to a shift d.
-   With Strict => true the degree lists must be equal.
- Example
-     S = ZZ/101[a,b,Degrees => {{1,0},{0,1}}]
-     B = S^{{1,1}}
-     B' = S^{{3,3}}**B
-     d = checkDegrees(B',B)
-     degrees (S^{d_1}**B') == degrees B
-     degrees (B') == degrees (S^{-d_1}**B)
-     checkDegrees(B',B,Strict=>true)   
-SeeAlso
- checkDegrees
-///
-
-
-doc ///
-Key
- isIsomorphic
- (isIsomorphic, Module, Module)
- (isIsomorphic, Matrix, Matrix) 
- [isIsomorphic, Verbose]
- [isIsomorphic, Homogeneous]
- [isIsomorphic, Strict] 
- [isIsomorphic, Tries]
-Headline
- Probabilistic test for isomorphism of modules
-Usage
- t = isIsomorphic (N,M)
- t = isIsomorphic (n,m) 
-Inputs
- M:Module
- m:Matrix
-  presentation of M
- N:Module
- n:Matrix
-  presentation of N
- Homogeneous => Boolean
- Verbose => Boolean
- Strict => Boolean 
- Tries => ZZ            -- the number of attempts at generating random map
-Outputs
- t:Sequence
-  (Boolean, Matrix) or (Boolean, null)
-Description
-  Text
-   In case both modules are homogeneous the program first uses @TO checkDegrees@
-   to see whether an isomorphism is possible. This may be an isomorphism up to shift
-   if Strict => false (the default) or on the nose if Strict => true.
-   
-   If this test is passed, the program uses a variant of the Hom command
-   to compute a random map of minimal possible degree from M to N,
-   and checks whether this is surjective and injective.
-   
-   In the inhomogeneous case (or with Homogeneous => false) the random map is
-   a random linear combination of the generators of the module of homomorphisms.
-
-   If the output has the form (true, g), then g is guaranteed to be an
-   isomorphism. If the output is (false, null), then the
-   conclusion of non-isomorphism is only probabilistic.
-   
-  Example
-   setRandomSeed 0
-   S = ZZ/32003[x_0..x_3]     
-   m = random(S^3, S^{4:-2});
-   A = random(target m, target m)
-   B = random(source m, source m)
-   m' = A*m*B;
-   isIsomorphic (S^{-3}**coker m, coker m)
-   isIsomorphic (S^{-3}**coker m, coker m, Strict => true)
-   isIsomorphic (coker m, coker m')
-  Text   
-   The following example checks two of the well-known isomorphism
-   in homological algebra.
-  Example
-   setRandomSeed 0
-   S = ZZ/32003[x_0..x_3]   
-   I = monomialCurveIdeal(S,{1,3,5})
-   codim I
-   W = Ext^2(S^1/I, S^1)
-   W' = Hom(S^1/I, S^1/(I_0,I_1) )
-   isIsomorphic(W,W')   
-   mm = ideal gens S
-   (isIsomorphic(Tor_1(W, S^1/(mm^3)), Tor_1(S^1/(mm^3), W)))_0
-Caveat
-   A negative result means that a random choice of homomorphism
-   was not an isomorphism; especially when the ground field is small,
-   this may not be definitive.
-SeeAlso
- checkDegrees
-///
-
+-----------------------------------------------------------------------------
 -* Test section *-
+-----------------------------------------------------------------------------
 
-TEST /// -*getting the degree shift right*-
-   S = ZZ/32003[x_1..x_3]
-   m = random(S^3, S^{4:-2})
-   A = random(target m, target m)
-   B = random(source m, source m)
-   m' = A*m*B
-   assert(checkDegrees (S^{-3}**coker m, coker m') == (true, {3}))
-   assert((isIsomorphic (S^{-3}**coker m, coker m'))_0 == true)
+TEST ///
+-- getting the degree shift right
+  S = ZZ/32003[x_1..x_3]
+  m = random(S^3, S^{4:-2})
+  A = random(target m, target m)
+  B = random(source m, source m)
+  m' = A*m*B
+  assert(checkDegrees (S^{-3}**coker m, coker m') == (true, {3}))
+  assert((isIsomorphic (S^{-3}**coker m, coker m'))_0 == true)
 ///
 
 TEST ///
-  -- testing randomMinimalDegreeHomomorphism
+-- testing randomMinimalDegreeHomomorphism
   debug needsPackage "Isomorphism"
   S = ZZ/101[x,y]
   m = matrix{{x,y}}
@@ -419,85 +427,91 @@ TEST ///
   )
 ///
 
-TEST///--the inhomogeneous case
-   setRandomSeed 0
-   S = ZZ/101[a,b,Degrees => {{1,0},{0,1}}]
-C = S^{{1,1}, {2,3}}
-C' = S^{{1,1}, {2,4}}
-assert((isIsomorphic(C,C'))_0 == false)
-(t,g) = isIsomorphic(C,C', Homogeneous => false)
-assert(t==true)
-assert(isWellDefined g)
-assert(source g == C')
-assert(target g == C)
-assert(coker g == 0)
-assert(ker g == 0)
+TEST ///
+-- the inhomogeneous case
+  setRandomSeed 0
+  S = ZZ/101[a,b, Degrees => {{1,0},{0,1}}]
+  C = S^{{1,1}, {2,3}}
+  C' = S^{{1,1}, {2,4}}
+  assert not first isIsomorphic(C, C')
+  (t,g) = isIsomorphic(C,C', Homogeneous => false)
+  assert t
+  assert isWellDefined g
+  assert(source g == C')
+  assert(target g == C)
+  assert( coker g == 0)
+  assert(kernel g == 0)
 ///
 
-TEST/// -- the non-minimally presented case
-   setRandomSeed 0
-      S = ZZ/101[a,b]
-C = coker (m = map(S^{2}++S^1, S^{2}++S^{-1}, matrix"1,0;0,a"))
-a = random(target m, target m)
-b = random(source m, source m)
-C' = coker (a*m*b)
-(t,g) = isIsomorphic(C,C')
-assert(t==true)
-assert(isWellDefined g)
-assert(source g == C')
-assert(target g == C)
-assert(coker g == 0)
-assert(ker g == 0)
+TEST ///
+-- the non-minimally presented case
+  setRandomSeed 0
+  S = ZZ/101[a,b]
+  m = map(S^{2}++S^1, S^{2}++S^{-1}, {{1,0},{0,a}})
+  C = coker m
+  a = random(target m, target m)
+  b = random(source m, source m)
+  C' = coker(a*m*b)
+  (t,g) = isIsomorphic(C,C')
+  assert t
+  assert isWellDefined g
+  assert(source g == C')
+  assert(target g == C)
+  assert( coker g == 0)
+  assert(kernel g == 0)
 ///
 
-TEST /// -* checkDegrees *-
-   setRandomSeed 0
-   S = ZZ/101[a,b,Degrees => {{1,0},{0,1}}]
-   A = S^{{2,1}}
-   B = S^{{1,1}}
-   B' = S^{{3,3}}**B
-   C = S^{{1,1}, {2,3}}
+TEST ///
+-- checkDegrees
+  setRandomSeed 0
+  S = ZZ/101[a,b, Degrees => {{1,0},{0,1}}]
+  A = S^{{2,1}}
+  B = S^{{1,1}}
+  B' = S^{{3,3}}**B
+  C = S^{{1,1}, {2,3}}
 
-   checkDegrees(A,B)
-   assert(checkDegrees(A,B) ==(true,{-1,0}))
-   assert(checkDegrees(A,C) == (false,null))
-   
-   d = checkDegrees(B',B)
-   assert(degrees (S^{d_1}**B') == degrees B)
-   assert(degrees (B') == degrees (S^{-d_1}**B))
-   assert(checkDegrees(B',B,Strict=>true) == (false, null))
+  checkDegrees(A,B)
+  assert(checkDegrees(A,B) == (true, {-1,0}))
+  assert(checkDegrees(A,C) == (false, null))
+
+  d = checkDegrees(B',B)
+  assert(degrees B  == degrees(S^{d_1}**B'))
+  assert(degrees B' == degrees(S^{-d_1}**B))
+  assert(checkDegrees(B',B, Strict => true) == (false, null))
 ///
 
-TEST///-*"isIsomorphic"*-
-needsPackage "Points"
-canonicalIdeal = method()
-canonicalIdeal Ideal := Ideal => I ->(
-    S := ring I;
-    R := S/I;
-    F := res I;
-    omega := coker sub(transpose F.dd_(length F), R);
-    H := Hom(omega,R^1);
-    deg := max degrees source gens H;
-    g := (gens H)*random(source gens H, R^-deg);
-    trim sub(ideal g,R) ---canonical ideal of a 1-dim ring.
-)
+TEST ///
+-- isIsomorphic
+  needsPackage "Points"
+  canonicalIdeal = method()
+  canonicalIdeal Ideal := Ideal => I ->(
+      S := ring I;
+      R := S/I;
+      F := res I;
+      omega := coker sub(transpose F.dd_(length F), R);
+      H := Hom(omega,R^1);
+      deg := max degrees source gens H;
+      g := (gens H)*random(source gens H, R^-deg);
+      trim sub(ideal g,R) ---canonical ideal of a 1-dim ring.
+  )
 
-kk=ZZ/32003
-S = kk[x,y,z]
+  kk = ZZ/32003
+  S = kk[x,y,z]
 
-d = 15
-I = points randomPointsMat(S,d);
-elapsedTime W = canonicalIdeal I;
-R = ring W;
-n =2
-M = module(trim W^n)
-N = Hom(M, R^1)
-g = (isIsomorphic (N,M))_1;
-assert (isWellDefined g)
-assert(source g == M)
-assert(target g == N)
-assert(coker g == 0)
-assert(ker g == 0)
+  d = 15
+  I = points randomPointsMat(S,d);
+  elapsedTime W = canonicalIdeal I;
+  R = ring W;
+  n =2
+  M = module(trim W^n)
+  N = Hom(M, R^1);
+  (t,g) = isIsomorphic (N, M);
+  assert t
+  assert isWellDefined g
+  assert(source g == M)
+  assert(target g == N)
+  assert( coker g == 0)
+  assert(kernel g == 0)
 ///
 
 TEST ///
@@ -548,9 +562,12 @@ TEST ///
 
 end--
 
+-----------------------------------------------------------------------------
 -* Development section *-
+-----------------------------------------------------------------------------
+
 uninstallPackage "Isomorphism"
 restart
-installPackage "Isomorphism"
 check "Isomorphism"
+installPackage "Isomorphism"
 viewHelp "Isomorphism"
