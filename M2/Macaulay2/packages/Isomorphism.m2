@@ -129,22 +129,30 @@ d = checkDegrees(A,B1)
 checkDegrees(B,B)
 ///
 
+-- the default number of attempts for randomized algorithms
+-- e.g. 145 tries in char 2, 10 in char 32003, and 1 in char 0
+defaultNumTries = p -> ceiling(0.1 + 100 / log p)
+--apply({2, 32003, 0}, defaultNumTries)
+
 isIsomorphic = method(Options => {
-	Homogeneous => true,
-	Verbose     => false,
+	Homogeneous => true,  -- if false, allow an inhomogeneous isomorphism
 	Strict      => false, -- forces strict equality of degrees
+	Verbose     => false,
+	Tries       => null,  -- number of attempts at generating a random map
     })
-isIsomorphic(Module, Module) := Sequence => o ->  (N,M)->(
-    --returns a pair (false, null) or (true, f), or where f is an isomorphism 
-    --f: M to N.
-    --if an inhomogeneous iso is to be allowed, use the option
-    --Homogeneous => false
-        v := o.Verbose;
-	
+isIsomorphic(Module, Module) := Sequence => o -> (N, M) -> (
+    -- returns a pair (false, null) or (true, f), where f is an isomorphism M --> N.
+    S := ring M;
+    tries := o.Tries ?? defaultNumTries char S;
+    if tries > 1 then (
+	for c to tries - 1 do (
+	    (bool, isom) := isIsomorphic(N, M, o, Tries => 1);
+	    if bool then return (true, isom));
+	return (false, null));
+    --
         if o.Homogeneous == true and 
 	        not (isHomogeneous M and isHomogeneous N) then 
 	        error"inputs not homogeneous";
-    	S := ring M;
 	resS := S/(ideal gens S);
 
     	m := presentation M;
@@ -341,6 +349,7 @@ Key
  [isIsomorphic, Verbose]
  [isIsomorphic, Homogeneous]
  [isIsomorphic, Strict] 
+ [isIsomorphic, Tries]
 Headline
  Probabilistic test for isomorphism of modules
 Usage
@@ -356,6 +365,7 @@ Inputs
  Homogeneous => Boolean
  Verbose => Boolean
  Strict => Boolean 
+ Tries => ZZ            -- the number of attempts at generating random map
 Outputs
  t:Sequence
   (Boolean, Matrix) or (Boolean, null)
