@@ -106,32 +106,6 @@ checkDegrees(Module, Module) := Sequence => o -> (A,B) -> (
     )
 checkDegrees(Matrix, Matrix) := Sequence => o-> (m,n) -> checkDegrees(target m, target n, o)
 
-///
-restart
-loadPackage "Isomorphism"
-S = ZZ/101[a,b,Degrees => {{1,0},{0,1}}]
-A = S^{{2,1}}
-B1 = S^{{1,1}}
-B = S^{{1,1}, {2,3}}
-d = checkDegrees(A,B, Verbose => true)
-assert(d == (false,null))
-d = checkDegrees(A,B1)
-B' = S^{{3,3}}**B
-d = checkDegrees(B',B)
-e = checkDegrees(S^{d_1}**B', B)
-e = checkDegrees(B', S^{-d_1}**B)
-assert (e_0 == true)
----
-S = ZZ/101[a,b,Degrees => {{1,0},{0,1}}]
-B1 = S^{{1,1}}
-B = S^{{1,1}, {2,3}}
-A = coker random(B, S^{2:-{2,2}})
-B = A
-checkDegrees(A,B)
-d = checkDegrees(A,B1)
-checkDegrees(B,B)
-///
-
 -- the default number of attempts for randomized algorithms
 -- e.g. 145 tries in char 2, 10 in char 32003, and 1 in char 0
 defaultNumTries = p -> ceiling(0.1 + 100 / log p)
@@ -447,11 +421,8 @@ Caveat
 SeeAlso
  checkDegrees
 ///
+
 -* Test section *-
--*
-restart
-loadPackage "Isomorphism"
-*-
 
 TEST /// -*getting the degree shift right*-
    S = ZZ/32003[x_1..x_3]
@@ -462,14 +433,6 @@ TEST /// -*getting the degree shift right*-
    assert(checkDegrees (S^{-3}**coker m, coker m') == (true, {3}))
    assert((isIsomorphic (S^{-3}**coker m, coker m'))_0 == true)
 ///
-
--*
-restart
-uninstallPackage "Isomorphism"
-restart
-installPackage "Isomorphism"
-loadPackage "Isomorphism"
-*-
 
 TEST///--getting the degrees right in matrixHom
 debug needsPackage "Isomorphism"
@@ -534,9 +497,6 @@ TEST /// -* checkDegrees *-
    assert(checkDegrees(B',B,Strict=>true) == (false, null))
 ///
 
-
-
-
 TEST///-*"isIsomorphic"*-
 needsPackage "Points"
 canonicalIdeal = method()
@@ -569,6 +529,28 @@ assert(coker g == 0)
 assert(ker g == 0)
 ///
 
+TEST ///
+  S = ZZ/101[a,b, Degrees => {{1,0},{0,1}}]
+  A = S^{{2,1}}
+  B1 = S^{{1,1}}
+  B = S^{{1,1}, {2,3}}
+  d = checkDegrees(A,B, Verbose => true)
+  assert(d == (false, null))
+  d = checkDegrees(A,B1)
+  B' = S^{{3,3}}**B
+  d = checkDegrees(B',B)
+  e = checkDegrees(S^{d_1}**B', B)
+  e = checkDegrees(B', S^{-d_1}**B)
+  assert (e_0 == true)
+  ---
+  S = ZZ/101[a,b, Degrees => {{1,0},{0,1}}]
+  C = S^{{1,1}}
+  B = S^{{1,1}, {2,3}}
+  A = coker random(B, S^{2:-{2,2}})
+  assert(checkDegrees(A,B) == (true, {0,0}))
+  assert(checkDegrees(A,C) == (false, ))
+  assert(checkDegrees(B,C) == (false, ))
+///
 
 end--
 
