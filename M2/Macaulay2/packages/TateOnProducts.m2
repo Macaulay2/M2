@@ -72,7 +72,7 @@ export {
     "directImageComplex",
     "actionOnDirectImage",
     --the following could all be part of ChainComplexExtras
-    "isIsomorphic",
+    --"isIsomorphic",
 --    "prependZeroMap",
 --    "appendZeroMap",
 --    "removeZeroTrailingTerms",
@@ -2386,24 +2386,26 @@ ring (sour^[j])
 isDegreeZeroSurjection := method()
 isDegreeZeroSurjection(Module,Module) := (A,B)->(
     --tests a random degree 0 map to see whether its a surjection
-    H := Hom(A,B);
-    B0 := basis(0,H); -- this seems to be total degree 0 in case of degreeLength>1
+    z := degree 0_A;
+    H := Hom(A, B, DegreeLimit => z);
+    B0 := basis(z, H);
     f := homomorphism(B0*random(source B0, (ring B0)^1));
     coker f == 0)
 
-isIsomorphic = method()
-isIsomorphic(Module,Module) := (A,B) -> (
-    --tests random degree 0 maps A->B, B->A and returns true
-    --if both are surjective.
-    if not(isHomogeneous A and isHomogeneous B) then 
-	  error"not implemented for inhomogeneous modules";
-    Ap := prune A;
-    Bp := prune B;
-    dA := set flatten degrees source gens Ap;
-    dB := set flatten degrees source gens Bp;
-    if dA =!= dB then false else    
-    isDegreeZeroSurjection(Ap,Bp) and isDegreeZeroSurjection(Bp,Ap)
-    )
+-- This is now replaced and improved in Isomorphism package
+-- isIsomorphic = method()
+-- isIsomorphic(Module,Module) := o -> (A,B) -> (
+--     --tests random degree 0 maps A->B, B->A and returns true
+--     --if both are surjective.
+--     if not(isHomogeneous A and isHomogeneous B) then 
+-- 	  error"not implemented for inhomogeneous modules";
+--     Ap := prune A;
+--     Bp := prune B;
+--     dA := set flatten degrees source gens Ap;
+--     dB := set flatten degrees source gens Bp;
+--     if dA =!= dB then false else    
+--     isDegreeZeroSurjection(Ap,Bp) and isDegreeZeroSurjection(Bp,Ap)
+--     )
 
 
 
@@ -3887,33 +3889,33 @@ document {
     PARA{}, "Acknowledgement: The work of Yeongrak Kim and Frank-Olaf Schreyer was supported by Project I.6 
     of the SFB-TRR 195 ''Symbolic Tools in Mathematics and their Application'' of the German Research Foundation (DFG)."
    }
-doc ///
-   Key
-    isIsomorphic
-    (isIsomorphic,Module,Module)
-   Headline
-    probabilistic test for homogeneous isomorphism
-   Usage
-    v = isIsomorphic(A,B)
-   Inputs
-    A:Module
-    B:Module
-   Outputs
-    v:Boolean
-   Description
-    Text
-     First checks that the generator degrees are the same. Then
-     computes a random degree 0 map A --> B and B --> A, 
-     and returns true iff both are surjections.
-    Example
-     S = ZZ/11[a,b]
-     M = coker random(S^{-2,0,1,2}, S^{3:-3})
-     N = coker (random(cover M, cover M)*presentation M)
-     tally apply(100, j->isIsomorphic(M,N))
-   Caveat
-    If the function returns true then the modules ARE isomorphic. But if it returns false
-    they may be isomorphic anyway.
-///
+-- doc ///
+--    Key
+--     isIsomorphic
+--     (isIsomorphic,Module,Module)
+--    Headline
+--     probabilistic test for homogeneous isomorphism
+--    Usage
+--     v = isIsomorphic(A,B)
+--    Inputs
+--     A:Module
+--     B:Module
+--    Outputs
+--     v:Boolean
+--    Description
+--     Text
+--      First checks that the generator degrees are the same. Then
+--      computes a random degree 0 map A --> B and B --> A, 
+--      and returns true iff both are surjections.
+--     Example
+--      S = ZZ/11[a,b]
+--      M = coker random(S^{-2,0,1,2}, S^{3:-3})
+--      N = coker (random(cover M, cover M)*presentation M)
+--      tally apply(100, j->isIsomorphic(M,N))
+--    Caveat
+--     If the function returns true then the modules ARE isomorphic. But if it returns false
+--     they may be isomorphic anyway.
+-- ///
 
 
 doc ///
