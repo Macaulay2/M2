@@ -341,9 +341,9 @@ TEST ///
   X = Proj S
   M = truncate(1, S^1)
   F = sheaf M
-  --elapsedTime assert first isIsomorphic(M, module F); -- 3.6s --NOW DOES NOT FINISH
-  --elapsedTime assert first isIsomorphic(OO_X^1, F)    -- 8.4s -> 3.1s --NOW DOES NOT FINISH
-  elapsedTime assert first isIsomorphic(OO_X^1, prune F)
+  --elapsedTime assert isIsomorphic(M, module F); -- 3.6s --NOW DOES NOT FINISH
+  --elapsedTime assert isIsomorphic(OO_X^1, F)    -- 8.4s -> 3.1s --NOW DOES NOT FINISH
+  elapsedTime assert isIsomorphic(OO_X^1, prune F)
 ///
 
 
@@ -438,7 +438,7 @@ TEST ///
   X = Proj R
   f = cotangentSurjection X
   assert isWellDefined f
-  assert(first isIsomorphic(prune ker f, sheaf(J/J^2**R)))
+  assert isIsomorphic(prune ker f, sheaf(J/J^2**R))
 ///
 
 
