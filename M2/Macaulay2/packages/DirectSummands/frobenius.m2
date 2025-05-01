@@ -1,4 +1,3 @@
-
 --needsPackage "PushForward"
 --needsPackage "Polyhedra" -- for lattice points
 --needsPackage "Complexes"
@@ -10,6 +9,10 @@ myPushForward = (f, M) -> (
     -- pushForward(f, M)
     -- pushForward(f, M, UseHilbertFunction => false)
     )
+
+-----------------------------------------------------------------------------
+-* Frobenius pushforwards *-
+-----------------------------------------------------------------------------
 
 protect FrobeniusRing
 protect FrobeniusFormation
@@ -74,17 +77,7 @@ frobeniusMap(ZZ, Ring) := (e, R) -> (
     map(Re := frobeniusTwist(e, R), frobeniusRing(e, R),
 	apply(gens Re, g -> g^((char R)^e))))
 
-decomposeFrobeniusPresentation = (e, f) -> (
-    p := char ring f;
-    tardegrees := degrees target f;
-    srcdegrees := degrees source f;
-    cube := flatten \ entries \ latticePoints hypercube(degreeLength ring f, 0, p^e - 1);
-    tarclasses := apply(cube, i -> positions(tardegrees, deg -> deg % p^e == i));
-    srcclasses := apply(cube, i -> positions(srcdegrees, deg -> deg % p^e == i));
-    -- sorts the degrees of source and column
-    tarclasses = apply(tarclasses, ell -> ell_(last \ sort \\ reverse \ toList pairs tardegrees_ell));
-    srcclasses = apply(srcclasses, ell -> ell_(last \ sort \\ reverse \ toList pairs srcdegrees_ell));
-    apply(tarclasses, srcclasses, (tarclass, srcclass) -> submatrix(f, tarclass, srcclass)))
+decomposeFrobeniusPresentation = (e, f) -> decomposePushforwardPresentation((char ring f)^e, f)
 
 protect FrobeniusPushforward
 frobeniusPushforward = method()
@@ -98,7 +91,7 @@ frobeniusPushforward(ZZ, Module)  := (e, M) -> M.cache#(FrobeniusPushforward, e)
 	frobeniusTwist(e, M));
     if not isHomogeneous f then coker f
     else directSum apply(decomposeFrobeniusPresentation(e, f), coker))
---
+
 frobeniusPushforward(ZZ, Matrix)  := (e, f) -> f.cache#(FrobeniusPushforward, e) ??= (
     g := myPushForward(
 	frobeniusMap(e, ring f),
@@ -125,7 +118,10 @@ frobeniusPushforward(ZZ, SheafMap)  := (e, f) -> f.cache#(FrobeniusPushforward, 
 
 --frobeniusPushforward(ZZ, Complex) := (e, C) -> () -- TODO
 
-frobeniusPushforward(ZZ, SheafOfRings)  := (e, N0) -> frobeniusPushforward(e, N0^1) -- TODO: is this cached?
+frobeniusPushforward(ZZ, SheafOfRings)  := (e, O) -> (
+    X := variety O;
+    X.cache.FrobeniusPushforward   ??= new MutableHashTable;
+    X.cache.FrobeniusPushforward#e ??= frobeniusPushforward(e, O^1))
 frobeniusPushforward(ZZ, CoherentSheaf) := (e, N) -> N.cache#(FrobeniusPushforward, e) ??= if e == 1 then (
     R := ring variety N;
     p := char R;
@@ -138,7 +134,6 @@ frobeniusPushforward(ZZ, CoherentSheaf) := (e, N) -> N.cache#(FrobeniusPushforwa
     -- TODO: how long does this take? is it worth caching?
     sheaf prune coker map(R^tardegs, R^srcdegs, Fmatrix)) else (
     frobeniusPushforward(1, frobeniusPushforward(e-1, N)))
-
 
 protect FrobeniusPullback
 frobeniusPullback = method()

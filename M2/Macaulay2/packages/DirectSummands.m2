@@ -94,6 +94,7 @@ defaultNumTries = p -> ceiling(0.1 + 100 / log p)
 
 -- helpers for computing Frobenius pushforwards of modules and sheaves
 -- TODO: move to PushForward package?
+load "./DirectSummands/pushforward2.m2"
 load "./DirectSummands/frobenius.m2"
 -- helpers for finding random idempotents of a module for the local case
 load "./DirectSummands/idempotents.m2"
