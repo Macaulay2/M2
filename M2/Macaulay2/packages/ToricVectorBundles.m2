@@ -68,7 +68,7 @@ export {"ToricVectorBundle",
      "addBaseChange", 
      "addDegrees", 
      "addFiltration", 
-     "areIsomorphic", 
+     "areIsomorphic",
      "base",
      "cartierIndex",
      "charts",
@@ -81,7 +81,7 @@ export {"ToricVectorBundle",
      "filtration", 
      "findWeights", 
      "isGeneral", 
-     "isomorphism", 
+     --"isomorphism", 
      "isVectorBundle", 
      "randomDeformation",
      "regCheck", 
@@ -523,8 +523,8 @@ areIsomorphic (ToricVectorBundleKlyachko,ToricVectorBundleKlyachko) := (T1,T2) -
 -- PURPOSE : Obtaining the isomorphism if two vector bundles are isomorphic
 --   INPUT : '(T1,T2)',  two ToricVectorBundleKlyachko
 --  OUTPUT : The isomorphism, if they are isomorphic, otherwise an error
-isomorphism = method(TypicalValue => Matrix)
-isomorphism (ToricVectorBundleKlyachko,ToricVectorBundleKlyachko) := (T1,T2) -> (
+--isomorphism = method(TypicalValue => Matrix)
+isomorphism (ToricVectorBundleKlyachko,ToricVectorBundleKlyachko) := o -> (T1,T2) -> (
      if not areIsomorphic(T1,T2) then error("The bundles are not isomorphic");
      T1.cache.isoMatrix#T2)				
 
@@ -2403,9 +2403,9 @@ document {
 	  " areIsomorphic(E,F)"
 	  },
      
-     PARA{}, "To obtain the isomorphism, if two bundles are isomorphic use ",TO isomorphism,".",
+     PARA{}, "To obtain the isomorphism, if two bundles are isomorphic use ",TO (isomorphism,ToricVectorBundleKlyachko,ToricVectorBundleKlyachko),".",
      
-     SeeAlso => {isomorphism,base,filtration,details},
+     SeeAlso => {(isomorphism,ToricVectorBundleKlyachko,ToricVectorBundleKlyachko),base,filtration,details},
      
      Caveat => {"If ",TT "E"," and ",TT "F"," are defined over different rings (e.g. ",TT "QQ"," and ",TT "ZZ",") then ",TT "areIsomorphic(E,F)"," will return ",TT "false",". Likewise, if the bundles are only defined over ",TT "ZZ",", the function will check for an isomorphism of the filtrations over ",TT "ZZ","."}
      }
@@ -3152,7 +3152,7 @@ document {
      }
 
 document {
-     Key => {isomorphism, (isomorphism,ToricVectorBundleKlyachko,ToricVectorBundleKlyachko)},
+     Key => {(isomorphism,ToricVectorBundleKlyachko,ToricVectorBundleKlyachko)},
      Headline => " the isomorphism if the two bundles are isomorphic",
      Usage => " M = isomorphism(E,F)",
      Inputs => {
@@ -3630,7 +3630,7 @@ document {
 	  },
      
      SeeAlso => {areIsomorphic,
-	  isomorphism}
+	  (isomorphism,ToricVectorBundleKlyachko,ToricVectorBundleKlyachko)}
      
      }
 
