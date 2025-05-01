@@ -43,7 +43,7 @@ Description
   Text
     @UL {
         TO "Generation of all SCT (simple, connected, 2-connected) graphs on small numbers of vertices",
-        TO "Checking the codimension and irreducible decomposion of the IG ideal",
+        TO "Checking the codimension and irreducible decomposition of the IG ideal",
         TO "SCT graphs with exotic solutions",
         TO "Example 4.1: unique graph on 8 vertices with exotic solutions and no induced cycle of length at least 5",
         TO "Example 4.2: a K5 and pentagon glued along an edge",
@@ -710,7 +710,7 @@ doc ///
 
 doc ///
   Key
-    "Checking the codimension and irreducible decomposion of the IG ideal"
+    "Checking the codimension and irreducible decomposition of the IG ideal"
   Headline
     generating all SCT graphs on n vertices
   Description
