@@ -167,13 +167,15 @@ ZZ == SheafMap := Boolean => (n, f) -> f == n
 
 isIsomorphism SheafMap := Boolean => f -> ker f == 0 and coker f == 0
 
-isIsomorphic(CoherentSheaf, CoherentSheaf) := Sequence => o -> (F, G) -> (
-    M := module prune F;
-    N := module prune G;
-    -- TODO: isIsomorphic should check === first
-    if M === N then return (true, id_F);
-    (ret, isom) := isIsomorphic(M, N, o, Strict => true);
-    (ret, if ret then sheaf(F.variety, isom)))
+isIsomorphic(CoherentSheaf, CoherentSheaf) := Boolean => o -> (F, G) -> (
+    F === G or isIsomorphic(module prune F, module prune G, o,
+	Strict => true, Homogeneous => true))
+
+isomorphism(CoherentSheaf, CoherentSheaf) := SheafMap => o -> (F, G) -> (
+    if not isIsomorphic(F, G, o) then error "sheaves are not isomorphic"
+    -- TODO: should the source and target be set to F and G?
+    else sheaf(F.variety, isomorphism(module prune F, module prune G, o,
+	Strict => true, Homogeneous => true)))
 
 -- TODO: perhaps better would be to construct random
 -- maps F --> G and check their kernel and cokernel.

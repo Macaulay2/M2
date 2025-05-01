@@ -27,7 +27,7 @@ TEST /// -- twisted cubic curve
   N = truncate(maxRegs, G.module, MinimalGenerators => false)
   assert(prune sheaf M === prune F)
   assert(prune sheaf N === G)
-  assert first isIsomorphic(M, N, Strict => true)
+  assert isIsomorphic(M, N, Strict => true)
 ///
 
 TEST ///
