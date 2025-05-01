@@ -228,17 +228,17 @@ isIsomorphic(Module, Module) := Boolean => o -> (N, M) -> (
 	--now there is a chance at an isomorphism up to shift, 
 	--and df is the degree diff.
 
-	--compute an appropriate random map g
-	if o.Homogeneous and degreeLength S == 1 then
-	g := randomMinimalDegreeHomomorphism(n,m, -df_1_0) else (
+    --compute an appropriate random map g
+    g := if o.Homogeneous and degreeLength S == 1
+    then randomMinimalDegreeHomomorphism(n, m, -df_1_0)
+    else (
         H := Hom(M1,N1);       
 	kk := ultimate(coefficientRing, S);
-	if o.Homogeneous === true then
-	      sH := select(H_*, f-> degree f == -df_1) else 
-	      sH = H_*;
+	sH := if not o.Homogeneous then H_*
+	else select(H_*, f -> degree f == df_1);
 	if #sH == 0 then return false;
     	g = sum(sH, f-> random(kk)*homomorphism matrix f)
-	);
+    );
 
     if o.Homogeneous and not isHomogeneous g then return false;
 
@@ -677,6 +677,90 @@ TEST ///
   assert(target f === N)
   assert not isIsomorphic(N, M, Strict => true, Homogeneous => true)
   assert(2 == #M.cache.Isomorphisms)
+///
+
+TEST ///
+  debug Isomorphism
+  R = QQ[x,y]
+  M = coker map(R^{{1}, {0}}, , {{x},{0}})
+  N = coker map(R^{{0}, {1}}, , {{0},{x}})
+  assert isIsomorphic(N, M, Strict => false, Homogeneous => false)
+  f = isomorphism(N, M,     Strict => false, Homogeneous => false)
+  -- TODO: ideally, if a homogeneous isomorphism _can_ be found, we should find it
+  --assert(f === M.cache.Isomorphisms#(N, {true, true}))
+  assert isWellDefined f
+  --assert isHomogeneous f
+  assert(source f === M)
+  assert(target f === N)
+  assert(degree f == {0})
+  assert isIsomorphic(N, M, Strict => false, Homogeneous => true)
+  assert isIsomorphic(N, M, Strict => true,  Homogeneous => false)
+  assert isIsomorphic(N, M, Strict => true,  Homogeneous => true)
+  f' = isomorphism(M, N,    Strict => false, Homogeneous => false)
+  assert(inverse f === f')
+  --assert(1 == #M.cache.Isomorphisms)
+
+  N = N ** R^{{2}}
+  assert isIsomorphic(N, M, Strict => false, Homogeneous => false)
+  f = isomorphism(N, M,     Strict => false, Homogeneous => false)
+  --assert(f === M.cache.Isomorphisms#(N, {false, true}))
+  assert isWellDefined f
+  --assert isHomogeneous f
+  assert(source f === M)
+  assert(target f === N)
+  --assert(degree f == {-2})
+  assert isIsomorphic(N, M, Strict => false, Homogeneous => true)
+  assert isIsomorphic(N, M, Strict => true,  Homogeneous => false)
+  f = isomorphism(N, M,     Strict => true,  Homogeneous => false)
+  assert same(f, M.cache.Isomorphisms#(N, {true, false}))
+  assert isWellDefined f
+  assert not isHomogeneous f
+  assert(source f === M)
+  assert(target f === N)
+  assert not isIsomorphic(N, M, Strict => true, Homogeneous => true)
+  --assert(2 == #M.cache.Isomorphisms)
+///
+
+TEST ///
+  debug Isomorphism
+  R = QQ[x,y, DegreeRank => 2]
+  M = coker map(R^{{1,1}, {0,1}}, , {{x},{0}})
+  N = coker map(R^{{0,1}, {1,1}}, , {{0},{x}})
+  assert isIsomorphic(N, M, Strict => false, Homogeneous => false)
+  f = isomorphism(N, M,     Strict => false, Homogeneous => false)
+  -- TODO: ideally, if a homogeneous isomorphism _can_ be found, we should find it
+  --assert(f === M.cache.Isomorphisms#(N, {true, true}))
+  assert isWellDefined f
+  --assert isHomogeneous f
+  assert(source f === M)
+  assert(target f === N)
+  assert(degree f == {0,0})
+  assert isIsomorphic(N, M, Strict => false, Homogeneous => true)
+  assert isIsomorphic(N, M, Strict => true,  Homogeneous => false)
+  assert isIsomorphic(N, M, Strict => true,  Homogeneous => true)
+  f' = isomorphism(M, N,    Strict => false, Homogeneous => false)
+  assert(inverse f === f')
+  --assert(1 == #M.cache.Isomorphisms)
+
+  N = N ** R^{{2,2}}
+  assert isIsomorphic(N, M, Strict => false, Homogeneous => false)
+  f = isomorphism(N, M,     Strict => false, Homogeneous => false)
+  --assert(f === M.cache.Isomorphisms#(N, {false, true}))
+  assert isWellDefined f
+  --assert isHomogeneous f
+  assert(source f === M)
+  assert(target f === N)
+  --assert(degree f == {-2,-2})
+  assert isIsomorphic(N, M, Strict => false, Homogeneous => true)
+  assert isIsomorphic(N, M, Strict => true,  Homogeneous => false)
+  f = isomorphism(N, M,     Strict => true,  Homogeneous => false)
+  assert same(f, M.cache.Isomorphisms#(N, {true, false}))
+  assert isWellDefined f
+  assert not isHomogeneous f
+  assert(source f === M)
+  assert(target f === N)
+  assert not isIsomorphic(N, M, Strict => true, Homogeneous => true)
+  --assert(2 == #M.cache.Isomorphisms)
 ///
 
 end--
