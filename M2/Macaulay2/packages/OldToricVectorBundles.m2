@@ -35,7 +35,7 @@ newPackage("OldToricVectorBundles",
 	 },
     DebuggingMode => false,
     PackageImports => {"Varieties"},
-    PackageExports => {"OldPolyhedra"}
+    PackageExports => {"Isomorphism", "OldPolyhedra"}
     )
 
 -- Check version compatibility of Polyhedra
