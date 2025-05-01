@@ -181,6 +181,8 @@ isIsomorphic(CoherentSheaf, CoherentSheaf) := Boolean => o -> (F, G) -> (
     then (( G.cache.Isomorphisms ??= new MutableHashTable )#F = (M, N); true)
     else false)
 
+-- TODO: check if F and G are vector bundles first, and if so compare their double duals
+
 -- TODO: perhaps better would be to construct random
 -- maps F --> G and check their kernel and cokernel.
 isIsomorphic(CoherentSheaf, CoherentSheaf) := Boolean => o -> (F, G) -> F === G or (
