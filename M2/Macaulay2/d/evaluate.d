@@ -1206,8 +1206,16 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
 	when value is a:Sequence do (
 	    -- unless y is a sequence of length 1, then it behaves like x = y#0
 	    if length(a) == 1 then nothing
-	    else value = ParallelAssignmentError(1))
+	    else return ParallelAssignmentError(1))
+	is a:List do (
+	    if length(a.v) == 1 then nothing
+	    else return ParallelAssignmentError(1))
 	else value = seq(value));
+    klass := sequenceClass;
+    when value is a:List do (
+	value = Expr(a.v);
+	klass = a.Class)
+    else nothing;
     when value
     is values:Sequence do (
 	if nlhs == length(values) then (
@@ -1280,7 +1288,10 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
 		    else r));
 	    when e
 	    is Error do e
-	    else if nlhs == 1 then result.0 else Expr(result))
+	    else if nlhs == 1 then result.0
+	    else (
+		if klass == sequenceClass then Expr(result)
+		else list(klass, result)))
 	else ParallelAssignmentError(nlhs))
     else ParallelAssignmentError(nlhs));
 

@@ -112,6 +112,16 @@ assert Equation(()  = (), ())
 assert Equation(() := (), ())
 assert Equation(() += (), ())
 
+-- other types of list on RHS
+assert Equation((x, y, z) = {1, 2, 3}, {1, 2, 3})
+assert Equation((x, y, z), (1, 2, 3))
+assert Equation((x, y, z) = [4, 5, 6], [4, 5, 6])
+assert Equation((x, y, z), (4, 5, 6))
+assert Equation((x, y, z) = <|7, 8, 9|>, <|7, 8, 9|>)
+assert Equation((x, y, z), (7, 8, 9))
+assert Equation((x) = {10}, 10)
+assert Equation(x, 10)
+
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test parallel.out"
