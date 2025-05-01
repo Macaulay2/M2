@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------
 -- PURPOSE : QuillenSuslin package for Macaulay2 provides the ability to 
--- compute a free basis for a projective module over a polynomial ring 
+-- compute a free basis for a projective moadule over a polynomial ring 
 -- with coefficients in Q, Z or Z/p for a prime integer p. 
 --
 -- Copyright (C) 2013 Brett Barwick and Branden Stone
@@ -327,7 +327,7 @@ laurentCoeffList(RingElement,RingElement) := (f,var) -> (
 -- entries.
 
 laurentNormalize = method()
-laurentNormalize(Matrix,RingElement) := (f,var) -> (
+laurentNormalize(Matrix,RingElement) := (f',var) -> (
      local D; local degSeqList; local denom; local denomDegSeq;
      local dotList; local E; local Etemp; local f2; local f3; local j;
      local invSubList; local invSubs; local invSubs1; local invSubs2;
@@ -338,15 +338,16 @@ laurentNormalize(Matrix,RingElement) := (f,var) -> (
      local phi; local phiD; 
      
      
-     R = ring f;
-     S = frac((coefficientRing ring f)(monoid [gens ring f]));
+     R = ring f';
+     S = frac((coefficientRing ring f')(monoid [gens ring f']));
    
      phi = map(S,R); 
-     f = phi f;
+     f := phi f';
      var = phi var;
    
      varList = gens S;
      usedVars = unique support f_(0,0); -- Need to use 'unique support' since for a rational function, the 'support' command returns the concatenation of the support of the numerator and the support of the denominator.
+     if #usedVars == 0 then return (map source f', vars R, vars R);
      if not member(var,usedVars) then error "Error: Expected the given variable to be in the support of the first polynomial.";
      if numcols f < 2 then error "Error: Expected the given row to have at least 2 columns.";
      -- The following code creates a list of lists where each interior list is the degree vector of a term of
