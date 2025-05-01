@@ -156,7 +156,7 @@ TEST ///
   assert(#G5s == 11)
 
   I0 = oscQuadrics(G5s_0, R)
-  -- TODO: the order of generators is different since we are soring vertices.
+  -- TODO: the order of generators is different since we are sorting vertices.
   --  change the code to allow setting any oscillator to 0.
   -- ans0 = ideal(-x_2*y_4+x_4*y_2+y_2,-y_2-y_3,-x_3*y_1+x_1*y_3+y_3,-x_1*y_4+x_4*y_1+x_3*y_1-x_1*y_3,x_1*y_4+x_2*y_4-x_4*y_1-x_4*y_2)
   -- assert(gens I0 ==  gens ans0)
