@@ -27,7 +27,7 @@ importFrom_Core {
 -- things to move to Core
 -----------------------------------------------------------------------------
 
---leadCoefficient Number := x -> x
+leadCoefficient Number := x -> x
 
 -- not strictly speaking the "lead" coefficient, but the first nonzero coefficient
 leadCoefficient' = m -> if zero m then 0 else (
@@ -232,6 +232,10 @@ isIsomorphic(Module, Module) := Boolean => o -> (N, M) -> (
 
     (M1, m, isoM) := minimization M;
     (N1, n, isoN) := minimization N;
+
+    -- this should catch ZZ-modules
+    if M1 === N1 then return setIsomorphism(N, M,
+	isoN * inverse isoM, o);
 
 	--handle the cases where one of M,N is 0
 	isZM1 := target m ==0;
@@ -793,6 +797,13 @@ TEST ///
   N = image C.dd_2
   M = ker C.dd_1
   assert isIsomorphic(N, M)
+///
+
+TEST ///
+  M = ZZ^1 ++ coker(2 * id_(ZZ^1))
+  N = coker(2 * id_(ZZ^1)) ++ ZZ^1
+  assert isIsomorphic(N, M)
+  assert(isomorphism(N, M) == map(N, M, {{0, 1}, {1, 0}}))
 ///
 
 end--
