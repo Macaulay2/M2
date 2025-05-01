@@ -106,9 +106,7 @@ TEST ///
 ///
 
 TEST ///
-  --restart
   debugLevel=1
-  needsPackage "Msolve";
   R = QQ[x..z,t]
   K = ideal(x^6+y^6+x^4*z*t+z^3,36*x^5+60*y^5+24*x^3*z*t,
       -84*x^5+10*x^4*t-56*x^3*z*t+30*z^2,-84*y^5-6*x^4*t-18*z^2,
@@ -116,9 +114,18 @@ TEST ///
   errorDepth=2
   W1 = msolveEliminate(R_0, K, Verbosity => 1)
   W2 = eliminate(R_0, K)
-  sub(W1, R) == W2
+  assert(sub(W1, R) == W2)
 ///
 
+/// 
+kk = QQ
+R1 = kk[a..f, MonomialSize=>8];
+setRandomSeed 42
+J1 = ideal random(R1^1, R1^{-2,-2,-3,-3}, Height=>100);
+elapsedTime gbC = flatten entries gens (G = gb(ideal J1_*));
+gbMsolve = flatten entries msolveGB ideal J1_*;
+assert(gbC == gbMsolve)
+///
 end
 
 restart
