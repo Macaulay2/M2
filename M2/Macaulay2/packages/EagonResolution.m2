@@ -1519,8 +1519,6 @@ assert (golodBetti (coker vars R,b) == betti H)
 -- TODO: PLACE INTO M2 CORE
 --SOME USEFUL INTERNAL FUNCTIONS
 --    "compositions"
---    "isDegreeZeroSurjection",
---    "isIsomorphic"
 -*
 compositions(ZZ,ZZ,ZZ) := (nparts, k, maxelem) -> (
     -- nparts is the number of terms
@@ -1541,32 +1539,6 @@ compositions(ZZ,ZZ,ZZ) := (nparts, k, maxelem) -> (
      compositionn = null;
      result
      );
-
-isDegreeZeroSurjection := method()
-isDegreeZeroSurjection(Module,Module) := Boolean => (A,B) -> (
-    --tests a random degree 0 map f:A --> B to see whether its a surjection, 
-    --and returns the answer. If "true" and  o.Verbose == true then returns f.
-    H := Hom(A,B);
-    B0 := basis(0,H); -- this seems to be total degree 0 in case of degreeLength>1
-    f := homomorphism(B0*random(source B0, (ring B0)^1));
-    coker f == 0
-)
-
--- the following function works for modules in the graded case.
--- and produces (only) graded isomorphisms.
-isIsomorphic = method()
-isIsomorphic(Module,Module) := (A,B) -> (
-    --tests random degree 0 maps A->B, B->A and returns true
-    --if both are surjective.
-    if not(isHomogeneous A and isHomogeneous B) then 
-	  error"not implemented for inhomogeneous modules";
-    Ap := prune A;
-    Bp := prune B;
-    dA := set flatten degrees source gens Ap;
-    dB := set flatten degrees source gens Bp;
-    if dA =!= dB then return false;
-    degreeZeroSurjection(Ap,Bp) =!= null and degreeZeroSurjection(Bp,Ap) =!= null
-    )
 *-
 
 TEST/// --test of degreeZeroSurjection

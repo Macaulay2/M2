@@ -27,6 +27,8 @@ importFrom_Core {
 -- randomMinimalDegreeHomomorphism
 -----------------------------------------------------------------------------
 
+-- also see degreeZeroSurjection from EagonResolution
+-- and isDegreeZeroSurjection and the (deprecated) isIsomorphic in TateOnProducts
 randomMinimalDegreeHomomorphism=method()
 randomMinimalDegreeHomomorphism(Matrix, Matrix, ZZ) := Matrix => (n,m,d) -> (
     --m,n homogeneous, minimal over a ring with degree length 1 (this restridd
