@@ -167,19 +167,19 @@ ZZ == SheafMap := Boolean => (n, f) -> f == n
 
 isIsomorphism SheafMap := Boolean => f -> ker f == 0 and coker f == 0
 
-isIsomorphic(CoherentSheaf, CoherentSheaf) := Boolean => o -> (F, G) -> (
-    F === G or isIsomorphic(module prune F, module prune G, o,
-	Strict => true, Homogeneous => true))
+importFrom_Isomorphism "Isomorphisms"
 
-isomorphism(CoherentSheaf, CoherentSheaf) := SheafMap => o -> (F, G) -> (
-    if not isIsomorphic(F, G, o) then error "sheaves are not isomorphic"
-    -- TODO: should the source and target be set to F and G?
-    else sheaf(F.variety, isomorphism(module prune F, module prune G, o,
-	Strict => true, Homogeneous => true)))
+isIsomorphic(CoherentSheaf, CoherentSheaf) := Boolean => o -> (F, G) -> (
+    if F === G then return true;
+    (M, N) := (module prune F, module prune G);
+    if isIsomorphic(M, N, o, Strict => true, Homogeneous => true)
+    then ( G.cache.Isomorphisms ??= new MutableHashTable )#F = (M, N)
+    else false)
 
 -- TODO: perhaps better would be to construct random
 -- maps F --> G and check their kernel and cokernel.
-isIsomorphic(CoherentSheaf, CoherentSheaf) := Sequence => o -> (F, G) -> (
+isIsomorphic(CoherentSheaf, CoherentSheaf) := Sequence => o -> (F, G) -> F === G or (
+    if F === G then return true;
     -- Note: sometimes calling isIsomorphic(prune F, prune G) is faster,
     -- but we will leave it to the user to decide if that is the case.
     -- Check if F and G are already pruned or if their minimal presentation is cached
@@ -193,10 +193,17 @@ isIsomorphic(CoherentSheaf, CoherentSheaf) := Sequence => o -> (F, G) -> (
 	r := 1 + max(regularity F.module, regularity G.module);
 	truncate(r, F.module, MinimalGenerators => false),
 	truncate(r, G.module, MinimalGenerators => false));
-    -- TODO: isIsomorphic should check === first
-    if M === N then return (true, id_F);
-    (ret, isom) := isIsomorphic(M, N, o, Strict => true);
-    (ret, if ret then sheaf(F.variety, isom)))
+    if isIsomorphic(M, N, o, Strict => true, Homogeneous => true)
+    then ( G.cache.Isomorphisms ??= new MutableHashTable )#F = (M, N)
+    else false)
+
+isomorphism(CoherentSheaf, CoherentSheaf) := SheafMap => o -> (F, G) -> (
+    if F === G then id_F else if isIsomorphic(F, G, o,
+	Strict => true, Homogeneous => true)
+    -- TODO: should the source and target be set to F and G?
+    then isomorphism splice(G.cache.Isomorphisms#F,
+	Strict => true, Homogeneous => true)
+    else error "sheaves are not isomorphic")
 
 isIsomorphic(SheafMap, SheafMap) := Sequence => o -> (psi, phi) -> isIsomorphic(coker phi, coker psi, o)
 
