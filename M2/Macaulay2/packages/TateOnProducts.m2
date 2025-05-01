@@ -22,7 +22,7 @@ newPackage(
 	},
     Keywords => {"Commutative Algebra"},
     PackageImports => {"Truncations", "SVDComplexes", "Complexes"},
-    PackageExports => {"SVDComplexes"},
+    PackageExports => {"Isomorphism", "SVDComplexes"},
     DebuggingMode => false
     )
 
