@@ -24,6 +24,23 @@ importFrom_Core {
 -* Code section *-
 
 -----------------------------------------------------------------------------
+-- things to move to Core
+-----------------------------------------------------------------------------
+
+--leadCoefficient Number := x -> x
+
+-- not strictly speaking the "lead" coefficient, but the first nonzero coefficient
+leadCoefficient' = m -> if zero m then 0 else (
+    for c to numcols m - 1 do for r to numrows m - 1 do (
+	if not zero m_(r,c) then return leadCoefficient m_(r,c)))
+
+-- divides by the coefficient of the leading term
+reduceCoefficient = m -> if zero m then m else (
+    c := leadCoefficient' m;
+    if not isField ring c then return m;
+    map(target m, source m, cover m // c, Degree => degree m))
+
+-----------------------------------------------------------------------------
 -- randomMinimalDegreeHomomorphism
 -----------------------------------------------------------------------------
 
@@ -129,6 +146,7 @@ protect Isomorphisms
 
 -- currently we cache isomorphisms ONLY in the source
 setIsomorphism = (N, M, f, o) -> (
+    f = reduceCoefficient f;
     o = { o.Strict or all(degree f, zero),
 	o.Homogeneous or isHomogeneous f };
     M.cache.Isomorphisms ??= new MutableHashTable;
