@@ -27,12 +27,13 @@ importFrom_Core {
 -- things to move to Core
 -----------------------------------------------------------------------------
 
-leadCoefficient Number := x -> x
-
+leadCoefficient' = method()
+leadCoefficient' Number      := x -> x
+leadCoefficient' RingElement := x -> try leadCoefficient x else x
 -- not strictly speaking the "lead" coefficient, but the first nonzero coefficient
-leadCoefficient' = m -> if zero m then 0 else (
+leadCoefficient' Matrix      := m -> if zero m then 0 else (
     for c to numcols m - 1 do for r to numrows m - 1 do (
-	if not zero m_(r,c) then return leadCoefficient m_(r,c)))
+	if not zero m_(r,c) then return leadCoefficient' m_(r,c)))
 
 -- divides by the coefficient of the leading term
 reduceCoefficient = m -> if zero m then m else (
@@ -192,7 +193,9 @@ isIsomorphismFree = (N, M0, o) -> (
 -- returns a minimization M1, presented as
 -- a cokernel of m, and an isomorphism back to M
 minimization = M -> (
-    k := quotient ideal vars ring M;
+    R := ring M;
+    k := if isField R then R
+    else quotient ideal vars R;
     m := presentation M;
     iso := if m ** k == 0
     then map(M, M1 := coker m, 1)
@@ -275,6 +278,7 @@ isIsomorphic(Matrix, Matrix) := Boolean => o -> (n, m) -> isIsomorphic(coker m, 
 
 isomorphism = method(Options => options isIsomorphic)
 isomorphism(Module, Module) := Matrix => o -> (N, M) -> (
+    if M === N then id_M else
     if isIsomorphic(N, M, o) then getIsomorphism(N, M, o)
     else error "modules are not isomorphic")
 
@@ -548,6 +552,16 @@ TEST ///
   S = ZZ/101[a,b]
   m = map(S^{2}++S^1, S^{2}++S^{-1}, {{1,0},{0,a}})
   C = coker m
+  --
+  C' = C
+  assert isIsomorphic(C,C')
+  g = isomorphism(C,C')
+  assert isWellDefined g
+  assert(source g == C')
+  assert(target g == C)
+  assert( coker g == 0)
+  assert(kernel g == 0)
+  --
   a = random(target m, target m)
   b = random(source m, source m)
   C' = coker(a*m*b)
@@ -804,6 +818,23 @@ TEST ///
   N = coker(2 * id_(ZZ^1)) ++ ZZ^1
   assert isIsomorphic(N, M)
   assert(isomorphism(N, M) == map(N, M, {{0, 1}, {1, 0}}))
+///
+
+TEST ///
+  N = coker matrix{{0,1},{1,0}}
+  M = coker matrix{{1,0},{0,0}}
+  M' = coker matrix{{0,0},{0,1}}
+  scan({ ZZ, ZZ/2, QQ, GF 4, RR, CC }, k -> (
+	  printerr toString k;
+	  assert isIsomorphic(M ** k, M' ** k);
+	  assert isIsomorphism isomorphism(M ** k, M' ** k);
+	  assert not isIsomorphic(M ** k, N ** k);
+	  S := k[x];
+	  printerr toString S;
+	  assert isIsomorphic(M ** S, M' ** S);
+	  assert isIsomorphism isomorphism(M ** S, M' ** S);
+	  assert not isIsomorphic(M ** S, N ** S);
+      ))
 ///
 
 end--
