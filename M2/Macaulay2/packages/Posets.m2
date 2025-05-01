@@ -26,6 +26,7 @@ newPackage(
             },
         DebuggingMode => false,
         PackageExports => {
+	    "Isomorphism",
             "SimplicialComplexes",
             "Graphs",
             "FourTiTwo",
@@ -101,7 +102,7 @@ export {
     "augmentPoset",
     "diamondProduct",
     "dropElements",
-    "isomorphism",
+  --"isomorphism",
   --"product",
     "removeIsomorphicPosets",
   --"union",
@@ -571,8 +572,7 @@ dropElements (Poset, Function) := Poset => (P, f) -> dropElements(P, select(P.Gr
 Poset - List := dropElements
 
 -- Inspired by Stembridge's Maple Package
-isomorphism = method()
-isomorphism (Poset, Poset) := HashTable => (P, Q) -> (
+isomorphism (Poset, Poset) := HashTable => o -> (P, Q) -> (
     -- Test for a quick bail-out (also puts the covering relations in the cache).
     if #P_* != #Q_* or #coveringRelations P != #coveringRelations Q then return null;
     -- Partition the vertices based on (#leq, #geq, #covering, #coveredBy).
@@ -2768,7 +2768,7 @@ doc ///
         (symbol _, Poset, ZZ)
         (symbol _, Poset, List)
         indexLabeling
-        isomorphism
+	(isomorphism, Poset, Poset)
         naturalLabeling
 ///
 
@@ -3062,7 +3062,7 @@ doc ///
             B == divisorPoset (2*3*5*7)
             B == divisorPoset (2^2*3*5)
     SeeAlso
-        isomorphism
+        (isomorphism, Poset, Poset)
         removeIsomorphicPosets
 ///
 
@@ -3167,7 +3167,6 @@ doc ///
 -- isomorphism
 doc ///
     Key
-        isomorphism
         (isomorphism,Poset,Poset)
     Headline
         computes an isomorphism between isomorphic posets
@@ -3256,7 +3255,7 @@ doc ///
             removeIsomorphicPosets L
     SeeAlso
         areIsomorphic
-        isomorphism
+        (isomorphism, Poset, Poset)
         Posets
 ///
 

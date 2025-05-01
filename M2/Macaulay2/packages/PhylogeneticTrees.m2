@@ -18,6 +18,7 @@ newPackage(
 	  },
      Keywords => {"Applied Algebraic Geometry"},
      PackageImports => {
+	 "Isomorphism",	 
 	  "FourTiTwo"
 	  },
      PackageExports => {
@@ -73,7 +74,7 @@ export {
     "rootedTrees",
     "rootedBinaryTrees",
     "unlabeledTrees",
-    "isIsomorphic"
+    --"isIsomorphic"
     }
 protect \ {Group, Automorphisms, AList, Buckets}
 --------------------------------------------------------------------
@@ -550,8 +551,8 @@ isIsomorphicRooted(LeafTree,Set,LeafTree,Set) := (T1,v1,T2,v2) -> (
     AHU(G1,v1) == AHU(G2,v2)
     )
 
-isIsomorphic = method()
-isIsomorphic(LeafTree,LeafTree) := (T1,T2) -> (
+--isIsomorphic = method()
+isIsomorphic(LeafTree,LeafTree) := o -> (T1,T2) -> (
     if #(leaves T1) != #(leaves T2) or #(edges T1) != #(edges T2) then return false;
     C1 := center graph T1;
     C2 := center graph T2;
@@ -1846,7 +1847,6 @@ doc///
 -- isIsomorphic
 doc///
     Key
-        isIsomorphic
 	(isIsomorphic,LeafTree,LeafTree)
     Headline
         check isomorphism of two tree

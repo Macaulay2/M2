@@ -772,7 +772,7 @@ getIsos (Matroid, Matroid) := List => (M, N) -> (
 	) else select(permutations(e), p -> all(C, c -> member(c/(i -> p#i), D)))
 )
 
-isomorphism (Matroid, Matroid) := HashTable => (M, N) -> ( -- assumes (M, N) satisfy "Could be isomorphic" by quickIsomorphismTest
+isomorphism (Matroid, Matroid) := HashTable => o -> (M, N) -> ( -- assumes (M, N) satisfy "Could be isomorphic" by quickIsomorphismTest
 	if M == N then return hashTable apply(#M_*, i -> (i, i));
 	-------------------------------
 	-- DFS: 9/12/23
