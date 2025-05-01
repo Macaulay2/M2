@@ -11,6 +11,8 @@
 -- 5. compute a general endomorphism without computing End
 -- 6. speed up computing eigenvalues over ZZ/p and GF(q)
 -- 7. once an indecomposable summand is found, call summands(N, M)
+-- 8. add option to split over a field extension
+-- 9. add Atlantic City, Las Vegas, or Monte Carlo style strategies?
 ---------------------------------------------------------------------------
 newPackage(
     "DirectSummands",
@@ -55,6 +57,7 @@ export {
     "frobeniusPushforward",
     "frobeniusTwist",
     "potentialExtension",
+    "extendGroundField" => "changeBaseField",
     "changeBaseField"
     }
 
@@ -140,17 +143,21 @@ GF(Ring)   := GaloisField => opts -> GF'Ring
 --   R ** S to change coefficient ring
 -- TODO: can you change the ground field but keep the tower structure?
 QuotientRing   ** GaloisField :=
-PolynomialRing ** GaloisField := (R, L) -> (
+PolynomialRing ** GaloisField := (R, L) -> R.cache#(map, L, R) ??= (
     -- TODO: in general we may want to keep part of the ring tower
     A := first flattenRing(R, CoefficientRing => null);
     quotient sub(ideal A, L monoid A))
+
+changeBaseMap = method()
+changeBaseMap(Ring, Ring) := (L, S) -> S.cache#(map, L, S) ??= map(quotient sub(ideal S, L monoid S), S)
 
 changeBaseField = method()
 -- TODO: add more automated methods, e.g. where minors of the presentation factor
 changeBaseField(ZZ, Module) :=
 changeBaseField(ZZ, CoherentSheaf)   := (e, M) -> changeBaseField(GF(char ring M, e), M)
 changeBaseField(GaloisField, Module) := (L, M) -> M.cache#(symbol changeBaseField, L) ??= (
-    S := first flattenRing(ring M, CoefficientRing => null);
+    S := first flattenRing(ring M,
+	CoefficientRing => null);
     K := coefficientRing S;
     if class K =!= GaloisField then return (
         R0 := quotient sub(ideal S, L monoid S);
@@ -165,6 +172,19 @@ changeBaseField(GaloisField, Module) := (L, M) -> M.cache#(symbol changeBaseFiel
     R := quotient i1 ideal S;
     i := map(R, S, i1);
     directSum apply(cachedSummands M, N -> i ** N))
+
+changeBaseField(Ring, Module) := (L, M) -> M.cache#(symbol changeBaseField, L) ??= (
+    S := first flattenRing(ring M,
+	CoefficientRing => null);
+    psi := changeBaseMap(L, S);
+    directSum apply(cachedSummands M,
+	N -> coker(psi ** presentation N)))
+
+changeBaseField(Ring, Matrix) := (L, f) -> f.cache#(symbol changeBaseField, L) ??= (
+    S := first flattenRing(ring f,
+	CoefficientRing => null);
+    psi := changeBaseMap(L, S);
+    psi ** f)
 
 -- TODO: come up with a better way to extend ground field of a variety
 -- TODO: does this also need to be used for frobenius pushforward?
@@ -537,6 +557,9 @@ directSummands(Module, Module) := List => opts -> (L, M) -> (
 	    MinimalGenerators => false);
 	smartBasis(zdeg, H));
     h := catch if isFreeModule L then (
+	-- TODO: for the case of line bundle summands,
+	-- is it faster if we compute all of Hom and check
+	-- for line bundles of any degree all at once?
 	C := gensHom0(M, L); if numcols C == 0 then return {M};
 	-- Previous alternative:
 	-- h := for i from 0 to numcols C - 1 do (
