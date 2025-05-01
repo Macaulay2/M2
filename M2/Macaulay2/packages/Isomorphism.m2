@@ -171,6 +171,18 @@ isIsomorphismFree = (N, M0, o) -> (
     setIsomorphism(N, M0, map(N, M0, id_M^p2 // id_N^p1,
 	    Degree => -diffdegs), o))
 
+-- returns a minimization M1, presented as
+-- a cokernel of m, and an isomorphism back to M
+minimization = M -> (
+    k := quotient ideal vars ring M;
+    m := presentation M;
+    iso := if m ** k == 0
+    then map(M, M1 := coker m, 1)
+    else (
+	m = presentation(M1 = prune M);
+	M1.cache.pruningMap);
+    (M1, m, iso))
+
 -- TODO: hookify and split into strategies, then add strategies that:
 -- - check if pruning of the modules is cached already
 -- - check if Hilbert polynomial, regularity, dimension, etc. are known
@@ -196,26 +208,12 @@ isIsomorphic(Module, Module) := Boolean => o -> (N, M) -> (
     if tries > 1 then return any(tries,
 	i -> isIsomorphic(N, M, o, Tries => 1));
     --
-        if o.Homogeneous == true and 
-	        not (isHomogeneous M and isHomogeneous N) then 
-	        error"inputs not homogeneous";
-	resS := S/(ideal gens S);
+    if o.Homogeneous == true and not (
+	isHomogeneous M and isHomogeneous N)
+    then error "inputs not homogeneous";
 
-    	m := presentation M;
-
-	if m**resS == 0 then 
-	    (M1 := M; 
-	     m1 := map(M, coker m, 1)) else
-	     (m = presentation (M1 = prune M);
-	     m1 = M1.cache.pruningMap
-    	     );--iso from M1 to M
-	 
-    	n := presentation N;
-	if n**resS == 0 then 
-	    (N1 := N;
-	    n1 := map(N,coker n, 1)) else
-	    (n = presentation (N1 = prune N);
-	    n1 = N1.cache.pruningMap); --iso from N1 to N
+    (M1, m, isoM) := minimization M;
+    (N1, n, isoN) := minimization N;
 
 	--handle the cases where one of M,N is 0
 	isZM1 := target m ==0;
@@ -248,8 +246,8 @@ isIsomorphic(Module, Module) := Boolean => o -> (N, M) -> (
 	kmodule := coker vars S;
 	gbar := kmodule ** g;
 
-	if coker gbar != 0 or kernel g != 0 then false else (
-	    setIsomorphism(N, M, n1*g*(m1^-1), o))
+    if coker gbar != 0 or kernel g != 0 then false
+    else setIsomorphism(N, M, isoN * g * inverse isoM, o)
     )
 isIsomorphic(Matrix, Matrix) := Boolean => o -> (n, m) -> isIsomorphic(coker m, coker n, o)
 
@@ -763,6 +761,20 @@ TEST ///
   assert(target f === N)
   assert not isIsomorphic(N, M, Strict => true, Homogeneous => true)
   --assert(2 == #M.cache.Isomorphisms)
+///
+
+TEST ///
+  R = ZZ/101[x,y,z,w];
+  C = res coker vars R
+  N = image C.dd_2
+  M = ker C.dd_1
+  assert isIsomorphic(N, M)
+
+  R = ZZ/101[x,y,z,w, Degrees => {2:{1,0},2:{0,1}}];
+  C = res coker vars R
+  N = image C.dd_2
+  M = ker C.dd_1
+  assert isIsomorphic(N, M)
 ///
 
 end--
