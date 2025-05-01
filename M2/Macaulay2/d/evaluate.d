@@ -1194,9 +1194,9 @@ globalAssignmentFun(x:globalAssignmentCode):Expr := (
      globalAssignment(t.frameindex,t,newvalue));
 
 ParallelAssignmentError(n:int):Expr := buildErrorPacket(
-    "parallel assignment: expected a sequence of " + tostring(n) + " value(s)");
+    "parallel assignment expected a sequence of length " + tostring(n));
 ParallelAssignmentErrorAt(n:int):Expr := buildErrorPacket(
-    "parallel assignment: failure at argument " + tostring(n));
+    "parallel assignment failure at argument " + tostring(n));
 parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
     nlhs := length(x.lhs);
     value := eval(x.rhs);
