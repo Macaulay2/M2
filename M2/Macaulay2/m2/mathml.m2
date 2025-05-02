@@ -10,7 +10,7 @@ moen := name -> concatenate("<mo>&",name,";</mo>")
 nest := (tag,s) -> concatenate("<",tag,">",s,"</",tag,">")
 mo   := s -> nest("mo",s)
 mrow := s -> nest("mrow",s)
-mtable := x -> concatenate(
+mtable = x -> concatenate(
      "<mtable columnalign=\"center\">", newline,
      apply(x, row -> ( "<mtr>", apply(row, e -> ("<mtd>",e,"</mtd>",newline)), "</mtr>", newline ) ),
      "</mtable>", newline )
@@ -155,16 +155,11 @@ mathML Expression := x -> error("mathML conversion for expression class ", toStr
 mathML LITERAL := x -> concatenate x
 
 -- see texmacs source file HTMLsymbol.scm for these names:
-leftarrow := moen "larr"
+leftarrow = moen "larr"
 doublerightarrow := moen "rArr"
 leftbrace := mo "{"
 rightbrace := mo "}"
 
-mathML ChainComplex := C -> (
-     complete C;
-     s := sort spots C;
-     if #s === 0 then mathML "0"
-     else mtable transpose between({leftarrow,"",""}, toList apply(s#0 .. s#-1,i -> {mathML C_i,"",mathML i})))
 mathML MapExpression := x -> mrow {mathML x#0, leftarrow, mathML x#1}
 mathML Option := s -> concatenate("<mrow>",mathML s#0, doublerightarrow, mathML s#1, "</mrow>")
 mathML Type :=
@@ -184,9 +179,6 @@ mathML MutableMatrix :=
 mathML OptionTable :=
 mathML ProjectiveHilbertPolynomial :=
 mathML RingMap :=
-mathML ChainComplexMap :=
-mathML GradedModule :=
-mathML GradedModuleMap :=
 mathML GroebnerBasis :=
 mathML IndexedVariableTable :=
 mathML Package :=

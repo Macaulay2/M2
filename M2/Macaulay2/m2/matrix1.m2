@@ -4,6 +4,19 @@ needs "matrix.m2"
 needs "modules.m2"
 needs "quotient.m2"
 
+-----------------------------------------------------------------------------
+-- Categories for which complexes are currently implemented in Macaulay2
+-----------------------------------------------------------------------------
+-- SheafMap and CoherentSheaf are added later in Varieties
+
+isMorphism Thing    := x -> false
+isMorphism Matrix   := f -> true
+
+isAbelianCategory Thing         := x -> false
+isAbelianCategory Module        := M -> true
+
+-----------------------------------------------------------------------------
+
 notsamering := (X,Y) -> (
      if X === Y then error("expected ",pluralsynonym X, " for the same ring")
      else error("expected ",X.synonym," and ",Y.synonym," for the same ring"))

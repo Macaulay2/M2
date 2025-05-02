@@ -59,6 +59,9 @@ tensor(Module, Module) := Module => {} >> opts -> (M, N) -> (
      T.cache.formation = FunctionApplication (tensor, (M,N));
      T)
 
+tensorAssociativity = method()
+tensorAssociativity(Module, Module, Module) := Matrix => (A, B, C) -> map((A ** B) ** C, A ** (B ** C), 1)
+
 -- TODO: this is undocumented and only works correctly in a specific case.
 -- can its goal be accomplished differently?
 Option ** Option := (x,y) -> (

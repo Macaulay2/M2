@@ -1,24 +1,8 @@
 --		Copyright 1995 by Daniel R. Grayson
 
-needs "basis.m2"
-needs "gateway.m2" -- for ScriptedFunctor
-needs "matrix1.m2"
-needs "modules.m2"
-needs "Hom.m2"
-
--- TODO: should this be fixed for all Ext methods,
--- or should they each have their own options?
-ExtOptions = new OptionTable from {
-    MinimalGenerators => true
-     }
-
-Ext = new ScriptedFunctor from {
-    superscript => i -> new ScriptedFunctor from {
-	-- Ext^1(F, G)
-	argument => ExtOptions >> opts -> X -> applyMethodWithOpts''(Ext, functorArgs(i, X), opts)
-	},
-    argument => ExtOptions >> opts -> X -> applyMethodWithOpts''(Ext, X, opts)
-    }
+importFrom_Core {
+    "generatorSymbols",
+}
 
 -- TODO: Ext^i(R, S) should work as well
 Ext(ZZ, Ring, Ring)   :=

@@ -68,11 +68,6 @@ genmat.m2
 multilin.m2
 pushforward.m2
 Hom.m2
-ext.m2
-tor.m2
-gradedmodules.m2
-chaincomplexes.m2
-res.m2
 betti.m2
 monideal.m2
 intersect.m2
