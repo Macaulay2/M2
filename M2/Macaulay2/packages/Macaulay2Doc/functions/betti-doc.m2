@@ -21,7 +21,6 @@ Node
     (symbol ++, BettiTally, BettiTally)
     (symbol SPACE, BettiTally, Array)
     (symbol SPACE, BettiTally, ZZ)
-    -- (symbol ^, Ring, BettiTally)
   Headline
     the class of all Betti tallies
   Description
@@ -71,17 +70,6 @@ Node
       (1/2) * t
       2 * oo
       lift(oo,ZZ)
-    Text
-      Given a ring $R$, a chain complex with zero maps over $R$ that has a prescribed Betti table can be
-      constructed. Negative entries are ignored and rational entries produce an error. Multigraded rings
-      work only if the Betti tally contains degrees of the correct degree length.
-    Example
-      R = QQ[x,y]
-      C = R^t
-      betti C
-      C.dd
-  Contributors
-    Hans-Christian von Bothmer donated the last feature.
   Subnodes
     MultigradedBettiTally
 

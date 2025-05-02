@@ -52,6 +52,9 @@ Node
         The entry in column @TT "j"@ in the row labelled @TT "i"@ is the number of basis elements of
         (weighted) degree @TT "i+j"@ in the free module @TT " C_j"@. When the chain complex is the
         resolution of a module the entries are the total and the graded Betti numbers of the module.
+  Subnodes
+    [betti, Minimize]
+    (symbol ^, Ring, BettiTally)
 
 Node
    Key
@@ -93,4 +96,33 @@ Node
      betti
      resolution
      [resolution, FastNonminimal]
+
+Node
+  Key
+    (symbol ^, Ring, BettiTally)
+  Headline
+    construct a chain complex with prescribed Betti table
+  Usage
+    R^t
+  Inputs
+    R:Ring
+    t:BettiTally
+  Outputs
+    C:ChainComplex -- whose Betti table matches {\tt t}
+  Description
+    Text
+      Given a ring $R$, a chain complex with zero maps over $R$ that has a prescribed Betti table can be
+      constructed. Negative entries are ignored and rational entries produce an error. Multigraded rings
+      work only if the Betti tally contains degrees of the correct degree length.
+    Example
+      R = QQ[x,y]
+      t = new BettiTally from { (0,{0},0) => 1, (1,{1},1) => 2, (2,{3},3) => 3, (2,{4},4) => 4 }
+      C = R^t
+      betti C
+      C.dd
+  Contributors
+    Hans-Christian von Bothmer implemented this feature.
+  SeeAlso
+    betti
+    BettiTally
 ///
