@@ -33,6 +33,8 @@ indefinite        = s -> concatenate(indefiniteArticle s, s)
 
 enlist := x -> if instance(x, List) then nonnull x else {x}
 
+errorLocation := () -> minimizeFilename toString currentPosition()
+
 -----------------------------------------------------------------------------
 -- verifying the document Key
 -----------------------------------------------------------------------------
@@ -41,15 +43,18 @@ enlist := x -> if instance(x, List) then nonnull x else {x}
 verifyKey = method(Dispatch => Thing)
 verifyKey Thing    := key -> key
 verifyKey Sequence := key -> ( -- e.g., (res, Module) or (symbol **, Module, Module)
-    if      #key == 0 then error "documentation key () encountered"
+    if      #key == 0 then error("documentation key () encountered at ", errorLocation())
     else if #key == 1 and not instance(key#0, Function)
     then if signalDocumentationError key
-    then printerr("error: documentation key ", format toString key, " encountered, but ", format toString key#0, " is not a function")
+    then printerr("error: documentation key ", format toString key,
+	" encountered at ", errorLocation(), " but ", format toString key#0, " is not a function")
     else if #key  > 1
     and not any({Keyword, Command, Function, ScriptedFunctor}, type -> instance(key#0, type)) and not methodNames#?(key#0)
     and not (instance(key#0, Sequence) and 2 == #key#0 and key#0#1 === symbol= and instance(key#0#0, Keyword))
     then if signalDocumentationError key
-    then printerr("error: documentation key ", format toString key, " encountered, but ", format toString key#0, " is not a function, command, scripted functor, or keyword");
+    then printerr("error: documentation key ", format toString key,
+	" encountered at ", errorLocation(), " but ", format toString key#0,
+	" is not a function, command, scripted functor, or keyword");
     --
     if  isUnaryAssignmentOperator key           -- e.g., ((?, =), Type), or (?, =)
     or isBinaryAssignmentOperator key then true -- e.g., ((?, =), Type, Type)
@@ -61,7 +66,8 @@ verifyKey Sequence := key -> ( -- e.g., (res, Module) or (symbol **, Module, Mod
 	else false) then null
     else if #key > 1 and instance(key#0, Command) then verifyKey prepend(key#0#0, drop(key, 1))
     else if signalDocumentationError key
-    then printerr("error: documentation key for ", format formatDocumentTag key, " encountered, but no method installed"))
+    then printerr("error: documentation key for ", format formatDocumentTag key,
+	" encountered at ", errorLocation(), " but no method installed"))
 verifyKey Array    := key -> (
     (nkey, opt) := (key#0, key#1);                    -- e.g., [(res, Module), Strategy]
     if instance(opt,  Option)   then opt = first opt; -- e.g., [(res, Module), Strategy => FastNonminimal]
