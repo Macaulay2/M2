@@ -118,7 +118,7 @@ document {
 	 TO chainComplex,
 	 -- TO (NewFromMethod, ChainComplex, Resolution),
 	TO dd,
-	TO status,
+	TO (status, ChainComplex),
 	TO complete,
         TO (complete, ChainComplex),
         TO (length, ChainComplex),

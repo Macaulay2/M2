@@ -29,6 +29,7 @@ Node
   Subnodes
     cache
     memoize
+    status
 
 Node
   Key

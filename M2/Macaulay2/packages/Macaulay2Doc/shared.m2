@@ -159,3 +159,16 @@ doc ///
     "Polyhedra::directProduct(Fan,Fan)"
     "Graphs::directProduct(Graph,Graph)"
 ///
+
+document {
+    Key => status,
+    Headline => "get the status of a computation",
+    SeeAlso => {
+	(status, GroebnerBasis),
+	"OldChainComplexes :: status(ChainComplex)",
+	"SubalgebraBases :: status(SAGBIBasis)",
+	"SumsOfSquares :: status(SDPResult)",
+	-- this one is used in a different sense
+	-- "NAGtypes :: status(AbstractPoint)",
+    },
+}
