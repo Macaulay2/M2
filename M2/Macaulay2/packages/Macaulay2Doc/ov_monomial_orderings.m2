@@ -356,7 +356,7 @@ document {
 	  leadTerm,
 	  gb,
 	  syz,
-	  resolution,
+	  "OldChainComplexes :: resolution",
 	  betti
 	  },
      Subnodes => {

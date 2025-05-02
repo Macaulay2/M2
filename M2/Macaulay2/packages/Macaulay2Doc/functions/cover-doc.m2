@@ -17,7 +17,7 @@ document {
      }
 
 document {
-     Key => {(cover, Module), (cover, GradedModule)},
+     Key => (cover, Module),
      Headline => "get the covering free module",
      Usage => "F = cover M",
      Inputs => {"M"},

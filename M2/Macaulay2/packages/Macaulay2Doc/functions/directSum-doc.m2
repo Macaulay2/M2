@@ -9,7 +9,10 @@ undocumented {
      }
 
 document {
-     Key => {isDirectSum,(isDirectSum, ChainComplex),(isDirectSum, GradedModule),(isDirectSum, Module)},
+    Key => {
+	isDirectSum,
+       (isDirectSum, Module),
+    },
      Headline => "whether something is a direct sum",
      "Works for modules, graded modules, etc.  The components of the sum
      can be recovered with ", TO "components", ".",
@@ -24,8 +27,6 @@ document {
 document {
      Key => {
 	  (symbol ++,Module,Module),
-	  (symbol ++,Module,GradedModule),
-	  (symbol ++,GradedModule,Module)
 	  },
      Headline => "direct sum of modules",
      TT "M++N", " -- computes the direct sum of two modules (or coherent sheaves).",
@@ -48,7 +49,6 @@ document {
 document {
      Key => {
 	  (symbol ++,Matrix,Matrix),
-	  (symbol ++,GradedModuleMap,GradedModuleMap),
 	  (symbol ++,RingElement,Matrix),
 	  (symbol ++,Matrix,RingElement),
 	  (symbol ++,RingElement,RingElement)
@@ -72,10 +72,15 @@ document {
      SeeAlso => {directSum, (symbol |, Matrix, Matrix), (symbol ||, Matrix, Matrix)}}
 
 document {
-     Key => {directSum,
-	  (directSum, Module),(directSum, ChainComplex),(directSum, GradedModule),
-	  (directSum, List),(directSum, Matrix),(directSum, Option),(directSum, Sequence),
-	  (symbol++, Option, Option)},
+    Key => {
+	directSum,
+       (directSum, Module),
+       (directSum, Matrix),
+       (directSum, List),
+       (directSum, Option),
+       (directSum, Sequence),
+       (symbol++, Option, Option)
+    },
      Headline => "direct sum of modules or maps",
      TT "directSum(M,N,...)", " -- forms the direct sum of matrices or modules.",
      PARA{
@@ -111,7 +116,11 @@ document {
      }}
 
 document {
-     Key => {components,(components, GradedModuleMap),(components, Module),(components, Matrix),(components, GradedModule),(components, ChainComplexMap)},
+    Key => {
+	components,
+       (components, Module),
+       (components, Matrix),
+    },
      Headline => "list the components of a direct sum",
      TT "components x", " -- produces a list of the components of an element of a 
      free module.",

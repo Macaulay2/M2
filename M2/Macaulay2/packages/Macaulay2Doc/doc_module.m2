@@ -66,7 +66,7 @@ document {
 	TO (hilbertSeries, Module),
 	TO (hilbertFunction, ZZ, Module),
 	TO (poincare, Module),
-	TO (regularity, Module),
+	TO "OldChainComplexes :: regularity(Module)",
     },
     "Annihilators, quotients and Gröbner bases:",
     UL {
@@ -77,12 +77,12 @@ document {
     },
     "Common homological computations:",
     UL {
-	TO (res, Module),
-	TO (pdim, Module),
+	TO "OldChainComplexes :: resolution(Module)",
+	TO "OldChainComplexes :: pdim(Module)",
 	TO "Hom",
 	TO (homomorphism,Matrix),
-	TO (Ext,ZZ,Module,Module),
-	TO (Tor,ZZ,Module,Module),
+	TO "OldChainComplexes :: Ext^ZZ(Module,Module)",
+	TO "OldChainComplexes :: Tor_ZZ(Module,Module)",
 	TO (cohomology,ZZ,Module),
 	TO (homology, Matrix, Matrix),
 	TO (fittingIdeal, ZZ, Module),
@@ -99,7 +99,7 @@ document {
 	TO (formation, Module),
 	TO (symbol +, Module, Module),
 	TO (dual, Module),
-	TO (symbol SPACE, Module, Array),
+	TO "OldChainComplexes :: Module Array",
 	TO ambient,
 	TO (ambient, Module),
 	TO (super, Module),
@@ -117,7 +117,7 @@ document {
 	TO (mingens, Module),
 	TO (minimalPresentation, Module),
 	TO (numgens, Module),
-	TO (pdim, Module),
+	TO "OldChainComplexes :: pdim(Module)",
 	TO (presentation, Module),
 	TO (pushForward, RingMap, Module),
 	TO (isSubquotient, Module, Module),
@@ -268,13 +268,3 @@ doc ///
       vector(R, {1, 2, 3})
       vector(R, 2)
 ///
-
-document {
-     Key => {super,(super, GradedModule),(super, Matrix),(super, Module),(super,Vector)},
-     Headline => "get the ambient module",
-     TT "super M", " -- yields the module that the module ", TT "M", " is a submodule of.",
-     BR{},
-     TT "super f", " -- if ", TT "f", " is a map whose target is a submodule 
-     of ", TT "M", ", yields the composite of ", TT "f", " with the inclusion into ", TT "M", ".",
-     PARA{},
-     SeeAlso => { "cover", "ambient" }}

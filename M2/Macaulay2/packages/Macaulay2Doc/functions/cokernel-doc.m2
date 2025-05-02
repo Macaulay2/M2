@@ -14,10 +14,12 @@ Node
 
 document { 
      Key => {
-	  (cokernel, ChainComplexMap), (cokernel, Matrix), (cokernel, GradedModuleMap), (cokernel, RingElement)},
+	 (cokernel, Matrix),
+	 (cokernel, RingElement)
+     },
      Headline => "cokernel of a map of modules, graded modules, or chaincomplexes",
      Usage => "cokernel f",
-     Inputs => { { TT "f : A --> B", ofClass { Matrix, ChainComplexMap, RingElement, GradedModuleMap } } },
+     Inputs => { { TT "f : A --> B", ofClass { Matrix, RingElement } } },
      Outputs => { {"the object ", TT "B/(image f)"} },
      PARA{ TT "coker", " is a synonym for ", TT "cokernel", "." },
      PARA{ "The generators of the cokernel are provided by the generators of the target

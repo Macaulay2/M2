@@ -91,66 +91,6 @@ document {
      ///
      }
 
-document {
-     Key => (max,GradedModule),
-     Usage => "max C",
-     Inputs => { "C" },
-     Outputs => {
-	  ZZ => {"the maximum index of a component, possibly zero, of the graded module ", TT "C" }
-	  },
-     EXAMPLE lines ///
-     R = QQ[a..e]
-     C = res coker vars R
-     max C
-     dual C
-     max dual C
-     ///,
-     SeeAlso => {(min,GradedModule)}
-     }
-
-document {
-     Key => (min,GradedModule),
-     Usage => "max C",
-     Inputs => { "C" },
-     Outputs => {
-	  ZZ => {"the minimum index of a component, possibly zero, of the graded module ", TT "C" }
-	  },
-     EXAMPLE lines ///
-     R = QQ[a..e]
-     C = res coker vars R
-     min C
-     dual C
-     min dual C
-     ///,
-     SeeAlso => {(max,GradedModule)}
-     }
-
-document { Key => (symbol **,GradedModule,GradedModule),
-     Usage => "C ** D",
-     Inputs => {"C","D"},
-     Outputs => {{"the tensor product of ", TT "C", " with ", TT "D"}},
-     EXAMPLE lines ///
-     C = gradedModule(ZZ^1,ZZ^6,ZZ^2)
-     C ** C
-     betti oo
-     ///
-     }
-
-document { Key => {(symbol **,GradedModule,Module),(symbol **,Module,GradedModule)},
-     Usage => "C ** M",
-     Inputs => {"C","M"},
-     Outputs => {{"the tensor product of ", TT "C", " with ", TT "M"}},
-     EXAMPLE lines ///
-     C = gradedModule(ZZ^1,ZZ^6,ZZ^2)
-     C ** ZZ^3
-     betti oo
-     ///,
-     PARA {"It also works the other way around."},
-     EXAMPLE lines ///
-     ZZ^3 ** C
-     ///
-     }
-
 document { Key => (symbol **,Matrix,RingElement),
      Usage => "f ** r",
      Inputs => {"f","r"},
@@ -168,26 +108,6 @@ document { Key => (symbol **,Matrix,RingElement),
      h = f * y^7
      degrees g
      degrees h
-     ///
-     }
-
-document { Key => (symbol |,GradedModuleMap,GradedModuleMap),
-     Usage => "f|g",
-     Inputs => {"f","g"},
-     Outputs => {{"the map of graded modules whose component in degree ", TT "i", " is ", TT "f_i|g_i", " see ", TO (symbol |, Matrix, Matrix)}},
-     EXAMPLE lines ///
-     f = gradedModuleMap( matrix "1;2", matrix "2,3" )
-     f|f
-     ///
-     }
-
-document { Key => (symbol ||,GradedModuleMap,GradedModuleMap),
-     Usage => "f||g",
-     Inputs => {"f","g"},
-     Outputs => {{"the map of graded modules whose component in degree ", TT "i", " is ", TT "f_i||g_i", " see ", TO (symbol ||, Matrix, Matrix)}},
-     EXAMPLE lines ///
-     f = gradedModuleMap( matrix "1;2", matrix "2,3" )
-     f||f
      ///
      }
 

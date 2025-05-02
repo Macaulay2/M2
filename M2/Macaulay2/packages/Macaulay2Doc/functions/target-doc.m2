@@ -10,29 +10,6 @@ document {
      SeeAlso => {source}
      }
 document { 
-     Key => (target,ChainComplexMap),
-     Headline => "find the target of a map of chain complexes",
-     Usage => "target f",
-     Inputs => {
-		"f" => ChainComplexMap
-	  },
-     Outputs => {
-		{"the target chain complex of ", TT "f"}
-	  },
-	"In the example below, we have a map between two modules and extend it to
-	a map between projective resolutions of the two modules. Then ", 
-	TT "target",  " gives the target of the map of chain complexes.",
-     EXAMPLE {
-	  "R = ZZ[x,y,z];",
-	  "M = R^1/(x,y,z);",
-	  "N = R^1/(x^2,y^2,x*y*z,z^2);",
-	  "g = map(N,M,x*y);",
-	  "f = res g;",
-	  "target f"
-	  },
-	"(That was an expensive way of resolving ", TT "N", ".)",
-     }
-document { 
      Key => (target,GroebnerBasis),
      Headline => "find target of a Gröbner basis",
      Usage => "target g",
@@ -65,14 +42,6 @@ document {
 	  "N = R^1/(x^2,y^2,x*y*z,z^2);",
 	  "g = map(N,M,x*y);",
 	  "target g",
-	  },
-     }
-document { 
-     Key => (target,GradedModuleMap),
-     Headline => "find the target of a map of graded modules",
-     Usage => "target f",
-     Inputs => {
-		"f"
 	  },
      }
 document { 

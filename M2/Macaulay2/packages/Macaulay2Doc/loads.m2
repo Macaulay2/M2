@@ -43,7 +43,6 @@ load "./macaulay.m2"
 
 load "./doc3.m2"
 load "./doc7.m2"
-load "./doc10.m2"
 load "./doc12.m2"
 load "./doc14.m2"
 

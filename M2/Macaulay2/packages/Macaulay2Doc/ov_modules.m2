@@ -590,7 +590,7 @@ document {
           "poincare' M",
 	  },
      SUBSECTION "free resolutions",
-     "The minimal free resolution ", TT "C", " is computed using ", TO (resolution,Module), ".  
+     "The minimal free resolution ", TT "C", " is computed using ", TO "OldChainComplexes :: resolution(Module)", ".
      The specific matrices are obtained by indexing ", TT "C.dd", ".",
      EXAMPLE {
 	  "C = resolution M",
@@ -599,7 +599,8 @@ document {
      "For more information about chain complexes and resolutions, see ", TO "Complexes :: Complexes",
      " and ", TO "computing resolutions", ".",
      SUBSECTION "betti numbers",
-     "Use ", TO2{(betti,GradedModule),"betti"}, " to display the graded betti numbers of ", TT "M", ".",
+     "Use ", TO2{"OldChainComplexes :: betti(GradedModule)","betti"},
+     " to display the graded betti numbers of ", TT "M", ".",
      EXAMPLE "betti C",
      "This table should be interpreted as follows: the number in the ", 
      TT "i", "-th row and ", TT "j", "-th column (indices starting at 0),
@@ -613,7 +614,7 @@ document {
 	 TO "Varieties::genera(Module)",
 	 TO (hilbertSeries, Module),
 	 TO poincare,
-	 TO poincareN,
+	 TO "OldChainComplexes :: poincareN",
 	 TO reduceHilbert,
 	 TO betti,
 	 }

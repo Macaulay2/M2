@@ -31,7 +31,7 @@ Node
         > "matrices"
         > "modules"
         > @TO2(map, "morphisms")@
-        > @TO2("Complexes :: Complexes", "chain complexes")@ (also see @TO2("chain complexes", "legacy version")@)
+        > @TO2("Complexes :: Complexes", "chain complexes")@ (also see @TO2("OldChainComplexes :: OldChainComplexes", "legacy version")@)
         > @TO2("Varieties :: Varieties", "varieties and sheaves")@
       :Mathematical Tutorials
 	-- In this section we present some tutorials that aim to introduce

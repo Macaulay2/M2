@@ -39,7 +39,7 @@ document {
 	  TO codim,
 	  TO dim,
 	  TO (symbol%,Matrix,Ideal),
-	  TO resolution,
+	  TO "Complexes :: freeResolution",
 	  TO betti
 	  },
      "Numeric information about homogeneous ideals",
