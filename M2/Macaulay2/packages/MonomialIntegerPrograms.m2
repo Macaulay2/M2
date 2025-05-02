@@ -945,7 +945,7 @@ doc ///
    bettiTablesWithHilbertFunction({1, 4, 7, 10, 13}, S, SquareFree => true, GradedBettis => {0, 2, 3, 1, 0})
  SeeAlso
   monomialIdealsWithHilbertFunction
-  "OldChainComplexes :: (betti, GradedModule)"
+  betti
   BettiTally
   HashTable
   tally

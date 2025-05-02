@@ -314,13 +314,13 @@ Description
 	  A great deal of subtle information about a module is visible using
 	  free resolutions. For an example, we begin
 	  by turning $R/I$ into a module. Here the code @ TT "R^1" @ produces the free module of
-	  rank 1 over $R$, and @ TO2 {"OldChainComplexes :: (resolution,Module)", "res"} @ computes a free resolution:
+	  rank 1 over $R$, and @ TO2 {"OldChainComplexes :: resolution(Module)", "res"} @ computes a free resolution:
      Example
 	  M=R^1/I
 	  Mres = res M
      Text
 	  To get more precise information about {\tt Mres},
-	  we could compute its Betti table with @ TO2{"OldChainComplexes :: (betti,GradedModule)", "betti"} @:
+	  we could compute its Betti table with @TO betti@:
      Example
 	  betti Mres
      Text
@@ -341,9 +341,8 @@ Description
 	  resolution has degree $3+2=5$.
 
 	  Commonly computed homological invariants
-	  such as @ TO2 { "OldChainComplexes :: (pdim,Module)", "projective dimension" } @ and @
-          TO2 {"OldChainComplexes :: (regularity,Module)",
-	  "regularity"} @ are (also) available directly:
+	  such as @ TO2 { pdim, "projective dimension" } @
+	  and @ TO2 { regularity, "regularity"} @ are (also) available directly:
      Example
 	  pdim M
 	  regularity M
@@ -452,7 +451,7 @@ Description
      Example
 	  saturate K
      Text
-	  We have just seen the @ TO saturate @ function in its most
+	  We have just seen the @TO "Saturation :: saturate"@ function in its most
 	  common use: to saturate with respect to the maximal ideal.
 	  but we can also find the saturation of any ideal with
 	  respect to another:
