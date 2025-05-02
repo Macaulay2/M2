@@ -1327,7 +1327,7 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 --               UnaryInstallValueFun(convertGlobalOperator(x.info), y.rhs, Code(evaluatedCode(r,dummyPosition))))
 --
 	left := evaluatedCode(lexpr, codePosition(x.lhs));
-        r := nullE;
+        r := nullE; c := Code(nullCode());
 	when x.lhs
 	is y:globalMemoryReferenceCode do (
 	    if s.binary==dummyBinaryFun then r=binarymethod(Code(left),x.rhs,SymbolClosure(globalFrame,s))
@@ -1344,18 +1344,31 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	    else r=s.binary(Code(left),x.rhs);
 	    when r is e:Error do r
 	    else globalAssignment(y.frameindex, x.info, r))
-	is y:binaryCode do (  -- TODO fix
-	    c := Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
+	is y:binaryCode do (
+	    if s.word.name === "??" then c=x.rhs -- should ?? be treated separately earlier?
+	    else if s.binary==dummyBinaryFun then c=Code(ternaryCode(binarymethodCode, Code(left), x.rhs, globalSymbolClosureCode(s, dummyPosition), x.position))
+	    else c=Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
 	    if y.f == DotS.symbol.binary || y.f == SharpS.symbol.binary
 	    then AssignElemFun(y.lhs, y.rhs, c)
+	    else if y.f == unarymethodCode then UnaryInstallValueFun(convertGlobalOperator(x.info), y.lhs, c)
 	    else InstallValueFun(CodeSequence(
 		    convertGlobalOperator(x.info), y.lhs, y.rhs, c)))
-	is y:adjacentCode do (  -- TODO fix
-	    c := Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
+	is y:ternaryCode do (
+	    if s.word.name === "??" then c=x.rhs -- should ?? be treated separately earlier?
+	    else if s.binary==dummyBinaryFun then c=Code(ternaryCode(binarymethodCode, Code(left), x.rhs, globalSymbolClosureCode(s, dummyPosition), x.position))
+	    else c=Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
+	    InstallValueFun(CodeSequence(
+		    convertGlobalOperator(x.info), y.arg1, y.arg2, c)))
+	is y:adjacentCode do (
+	    if s.word.name === "??" then c=x.rhs -- should ?? be treated separately earlier?
+	    else if s.binary==dummyBinaryFun then c=Code(ternaryCode(binarymethodCode, Code(left), x.rhs, globalSymbolClosureCode(s, dummyPosition), x.position))
+	    else c=Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
 	    InstallValueFun(CodeSequence(
 		    convertGlobalOperator(AdjacentS.symbol), y.lhs, y.rhs, c)))
-	is y:unaryCode do ( -- TODO fix
-	    c := Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
+	is y:unaryCode do (
+	    if s.word.name === "??" then c=x.rhs -- should ?? be treated separately earlier?
+	    else if s.binary==dummyBinaryFun then c=Code(ternaryCode(binarymethodCode, Code(left), x.rhs, globalSymbolClosureCode(s, dummyPosition), x.position))
+	    else c=Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
 	    UnaryInstallValueFun(convertGlobalOperator(x.info), y.rhs, c))
 	else buildErrorPacket(
 	    "augmented assignment not implemented for this code")));
