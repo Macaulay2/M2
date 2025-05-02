@@ -14,8 +14,8 @@ document {
        (isDirectSum, Module),
     },
      Headline => "whether something is a direct sum",
-     "Works for modules, graded modules, etc.  The components of the sum
-     can be recovered with ", TO "components", ".",
+     "Works for modules, chain complexes, etc.
+     The components of the sum can be recovered with ", TO "components", ".",
      EXAMPLE lines ///
      	  isDirectSum ZZ^6
 	  F = ZZ^2 ++ ZZ^3
@@ -126,8 +126,8 @@ document {
      free module.",
      BR{},
      TT "components M", " -- the list of components for a module ", TT "M", " which was
-     formed as a direct sum, or ", TT "{M}", " if ", TT "M", " was not formed as a 
-     direct sum.  Works also for homomorphism, chain complexes, and graded modules.",
+     formed as a direct sum, or ", TT "{M}", " if ", TT "M", " was not formed as a direct sum.
+     Works also for matrices, chain complexes, etc.",
      SeeAlso => {"vector", "directSum", "++"},
      Subnodes => { TO indexComponents },
      }

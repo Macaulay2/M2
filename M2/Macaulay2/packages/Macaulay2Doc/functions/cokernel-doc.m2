@@ -17,7 +17,7 @@ document {
 	 (cokernel, Matrix),
 	 (cokernel, RingElement)
      },
-     Headline => "cokernel of a map of modules, graded modules, or chaincomplexes",
+     Headline => "cokernel of a map of modules",
      Usage => "cokernel f",
      Inputs => { { TT "f : A --> B", ofClass { Matrix, RingElement } } },
      Outputs => { {"the object ", TT "B/(image f)"} },
