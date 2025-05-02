@@ -37,7 +37,7 @@ Node
     syz
     koszul
     "OldChainComplexes :: eagonNorthcott"
-    "OldChainComplexes :: regularity"
+    regularity
     presentation
     "OldChainComplexes :: resolution"
     quotient
