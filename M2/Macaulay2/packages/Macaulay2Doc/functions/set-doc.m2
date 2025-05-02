@@ -1,6 +1,5 @@
 undocumented {
     (NewFromMethod, Set, List),
-    (set, Set)
 }
 
 document {

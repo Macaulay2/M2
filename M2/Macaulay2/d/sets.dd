@@ -19,6 +19,7 @@ makeSet(e:Expr):Expr := (
      is v:Sequence do makeSet(v)
      is w:List do if ancestor(w.Class,visibleListClass) then makeSet(w.v)
      else WrongArg("a visible list")
+     is h:HashTable do makeSet(keys(h))
      else WrongArg("a visible list"));
 setupfun("set",makeSet);
 
