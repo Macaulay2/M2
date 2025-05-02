@@ -8,6 +8,7 @@ newPackage("Matroids",
 	Headline => "computations with matroids",
 	Keywords => {"Matroids"},
 	HomePage => "https://github.com/jchen419/Matroids-M2",
+	PackageImports => {"OldChainComplexes"},
 	PackageExports => {"Graphs", "Posets"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",

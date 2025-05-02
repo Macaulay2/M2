@@ -20,6 +20,7 @@ newPackage(
         },
     Headline => "pruning chain complexes over polynomial and local rings",
     Keywords => {"Commutative Algebra", "Homological Algebra"},
+    PackageImports => {"OldChainComplexes"},
     PackageExports => {"Complexes"},
     AuxiliaryFiles => true
     )
