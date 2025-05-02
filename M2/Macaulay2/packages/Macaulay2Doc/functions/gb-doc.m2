@@ -26,6 +26,7 @@ document {
 	  [gb,SyzygyLimit],
 	[gb, SyzygyRows],
 	[gb, MaxReductionCount],
+	(status, GroebnerBasis),
 	  },
      Headline => "compute a Gröbner basis",
      Usage => "gb I",

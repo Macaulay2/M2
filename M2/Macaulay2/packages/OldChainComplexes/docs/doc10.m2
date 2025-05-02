@@ -250,8 +250,13 @@ document { -- This node is used as an example in the documentation nodes: Inputs
      }
 
 document {
-     Key => {status,(status, GroebnerBasis),(status, Resolution),(status, ChainComplex),
-	  [status, TotalPairs],[status, Monomials],[status, PairsRemaining]},
+    Key => {
+	(status, ChainComplex),
+	(status, Resolution),
+	[status, TotalPairs],
+	[status, Monomials],
+	[status, PairsRemaining]
+    },
      Headline => "status of a resolution computation",
      TT "status C", " -- displays the status of the computation of a
      chain complex ", TT "C", " constructed by application of ", TO "resolution", " to
