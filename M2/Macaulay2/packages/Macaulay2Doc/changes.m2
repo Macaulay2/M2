@@ -5,7 +5,8 @@ star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldSta
 document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
-	  TO "changes made for the next release",
+--	  TO "changes made for the next release",
+	  TO "changes, 1.25.05",
 	  TO "changes, 1.24.11",
 	  TO "changes, 1.24.05",
 	  TO "changes, 1.23",
@@ -64,8 +65,14 @@ changesHelper List := opt -> pkgnames -> (
 	    << ".\" },"
 	    << endl)))
 
+-*
 document {
-    Key => "changes made for the next release",
+    Key => "changes made for the next release"
+    }
+*-
+
+document {
+    Key => "changes, 1.25.05",
     UL {
 	LI { BOLD "upcoming breaking changes:",
 	    UL {
@@ -76,6 +83,13 @@ document {
 		    reporting any bugs via email or ", HREF{"https://github.com/Macaulay2/M2/issues/3778", "GitHub"}, "." },
 	    }
 	},
+	LI { "packages that have been published and certified:",
+	    UL {
+		LI { star, " ", TO "AbstractSimplicialComplexes::AbstractSimplicialComplexes", ", a package by Nathan Grieve for abstract simplicial complexes, has been published." },
+		LI { star, " ", TO "ForeignFunctions::ForeignFunctions", ", a package by Doug Torrance providing a foreign function interface, has been published." },
+		LI { star, " ", TO "RealRoots::RealRoots", ", a package by Jordy Lopez Garcia, Kelly Maluccio, Frank Sottile, and Thomas Yahl for symbolically exploring, counting, and locating real solutions to general polynomial systems, has been published." }
+		}
+	    },
 	LI { "new packages:",
 	    UL {
 		LI { "The package ", TO "OldChainComplexes::OldChainComplexes", " has been added to preserve the existing
