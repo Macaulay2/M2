@@ -26,7 +26,6 @@ newPackage(
 	    -- "published article URI" => "",
 	    -- "published article DOI" => "",
 	    -- "published code URI" => "",
-	    -- "repository code URI" => "",
 	    -- "release at publication" => "",	    
 	    -- "version at publication" => "",
 	    -- "volume number" => "",

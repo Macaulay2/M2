@@ -89,7 +89,6 @@ Certification => {
      "published article URI" => "https://msp.org/jsag/2019/9-2/p01.xhtml",
      "published article DOI" => "10.2140/jsag.2019.9.89",
      "published code URI" => "https://msp.org/jsag/2019/9-2/jsag-v9-n2-x01-TestIdeals.zip",
-     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/TestIdeals.m2",
      "release at publication" => "fa98bdf2587243ef3e7e3042cac7cd9fc90fb6fc",	    -- git commit number in hex
      "version at publication" => "1.01",
      "volume number" => "9",

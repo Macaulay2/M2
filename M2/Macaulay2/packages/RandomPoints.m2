@@ -25,7 +25,6 @@ newPackage(
 		    "published article URI" => "https://msp.org/jsag/2023/13-1/p03.xhtml",
 		    "published article DOI" => "10.2140/jsag.2023.13.33",
 		    "published code URI" => "https://msp.org/jsag/2023/13-1/jsag-v13-n1-x03-RandomPoints.m2",
-		    "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/RandomPoints.m2",
 		    "release at publication" => "ae946e7b4ba5d4d16f3cf8b3ddfef75086ba0559",
 		    "version at publication" => "1.5.3",
 		    "volume number" => "13",

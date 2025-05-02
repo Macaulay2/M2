@@ -23,7 +23,6 @@ newPackage(
 	     "published article URI" => "https://msp.org/jsag/2018/8-1/p03.xhtml",
 	     "published article DOI" => "10.2140/jsag.2018.8.21",
 	     "published code URI" => "https://msp.org/jsag/2018/8-1/jsag-v8-n1-x03-Resultants.m2",
-	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Resultants.m2",
 	     "release at publication" => "61c93a6aaf9d6bf0dd11440339145703ce3d824b",	    -- git commit number in hex
 	     "version at publication" => "1.2.1",
 	     "volume number" => "8",

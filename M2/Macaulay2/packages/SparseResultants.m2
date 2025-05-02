@@ -24,7 +24,6 @@ newPackage(
 	     "published article URI" => "https://msp.org/jsag/2021/11-1/p07.xhtml",
 	     "published article DOI" => "10.2140/jsag.2021.11.61",
 	     "published code URI" => "https://msp.org/jsag/2021/11-1/jsag-v11-n1-x07-SparseResultants.m2",
-	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/SparseResultants.m2",
 	     "release at publication" => "4b0b826f08857b22cf17aebf9c56257ff44d8946",	    -- git commit number in hex
 	     "version at publication" => "1.1",
 	     "volume number" => "11",
