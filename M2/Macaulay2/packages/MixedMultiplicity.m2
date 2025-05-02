@@ -41,7 +41,6 @@ newPackage(
 	"published article URI" => "https://msp.org/jsag/2023/13-1/p01.xhtml",
 	"published article DOI" => "10.2140/jsag.2023.13.1",
 	"published code URI" => "https://msp.org/jsag/2023/13-1/jsag-v13-n1-x01-MixedMultiplicity.m2",
-	"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/MixedMultiplicity.m2",
 	"release at publication" => "23c0f53e78831d43a978c61ccdc0cddef35efae7",
 	"version at publication" => "3.0",
 	"volume number" => "13",

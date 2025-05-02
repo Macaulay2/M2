@@ -249,7 +249,9 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 	    cert  = new HashTable from cert;
 	    -- TODO: compare with the one in installPackage.m2
 	    star := IMG { "src" => replace("PKG", "Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star"};
-	    commit := replace("(?<=/blob/)master", toString cert#"release at publication", cert#"repository code URI");
+	    commit := concatenate(
+		"https://github.com/Macaulay2/M2/blob/",
+		cert#"release at publication", "/M2/Macaulay2/packages/", fn);
 	    DIV {
 		SUBSECTION {"Certification ", star},
 		PARA {

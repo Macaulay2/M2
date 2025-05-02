@@ -40,7 +40,6 @@ newPackage( "FrobeniusThresholds",
 	 "published article URI" => "https://msp.org/jsag/2021/11-1/p04.xhtml",
 	 "published article DOI" => "10.2140/jsag.2021.11.25",
 	 "published code URI" => "https://msp.org/jsag/2021/11-1/jsag-v11-n1-x04-FrobeniusThresholds.m2",
-	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/....m2",
 	 "release at publication" => "eb4b9b426546bee5d4997afcc2b353421a30719d",	    -- git commit number in hex
 	 "version at publication" => "2.1",
 	 "volume number" => "11",

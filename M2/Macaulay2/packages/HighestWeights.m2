@@ -34,7 +34,6 @@ newPackage(
 	  "published article URI" => "https://msp.org/jsag/2015/7-1/p03.xhtml",
 	  "published article DOI" => "10.2140/jsag.2015.7.9",
 	  "published code URI" => "https://msp.org/jsag/2015/7-1/jsag-v7-n1-x03-HW.zip",
-	  "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/HighestWeights.m2",
 	  "release at publication" => "a434adb94f76f9be38131f87745867b0d7925405",	    -- git commit number in hex
 	  "version at publication" => "0.6.5",
 	  "volume number" => "7",

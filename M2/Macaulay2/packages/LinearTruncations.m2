@@ -18,7 +18,6 @@ newPackage(
 	 "published article URI" => "https://msp.org/jsag/2022/12-1/p02.xhtml",
 	 "published article DOI" => "10.2140/jsag.2022.12.11",
 	 "published code URI" => "https://msp.org/jsag/2022/12-1/jsag-v12-n1-x02-LinearTruncations.m2",
-	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/LinearTruncations.m2",
 	 "release at publication" => "c1b72330821054c17b07c574649d98ac577cb3af",	    -- git commit number in hex
 	 "version at publication" => "1.0",
 	 "volume number" => "12",
