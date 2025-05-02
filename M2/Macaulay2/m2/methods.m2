@@ -727,7 +727,7 @@ protect Prefix
 protect Postfix
 protect Precedence
 protect Syntax
-keywordOptions := new OptionTable from { Precedence => symbol *, Syntax => Binary }
+keywordOptions := new OptionTable from { Precedence => symbol *, Syntax => {Prefix,Binary} }
 syntaxOptions:=set {Binary,Prefix,Postfix,{Binary,Prefix},{Prefix,Binary}}
 new Keyword from Sequence := (T,S) -> (
     (o,s) := override(keywordOptions,S);

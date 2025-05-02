@@ -28,8 +28,7 @@ export makeKeywordFun(e:Expr):Expr := (
         is b1:Boolean do
 	when seq.3
 	is b2:Boolean do (
-	   validSymbol:=isvalidsymbol(s.v) && length(s.v)>1;
-	   if !validSymbol && !isvalidkeyword(s.v) then buildErrorPacket("invalid keyword") else (
+	   if !isvalidkeyword(s.v) then buildErrorPacket("invalid keyword") else (
 	   u:=errorunary;
 	   t:=errorbinary;
 	   prec:=toInt(p);
@@ -42,7 +41,7 @@ export makeKeywordFun(e:Expr):Expr := (
 	   w:=makeUniqueWord(s.v, parseinfo(prec,bprec,uprec,parsefuns(u,t)));
 	   when globalLookup(w) is x:Symbol do buildErrorPacket("symbol already in use")
 	   else (
-	   if !validSymbol then install(s.v,w);  -- install only needed for nonstandard symbols
+	   install(s.v,w);
 	   Expr(makeKeyword(w)))
 	))
 	else WrongArg(4,"a boolean")
@@ -52,7 +51,7 @@ export makeKeywordFun(e:Expr):Expr := (
      )
      else WrongNumArgs(4)
     );
-setupfun("makeKeyword",makeKeywordFun).Protected = false; -- will be overloaded in m2/methods.m2
+setupfun("makeKeyword",makeKeywordFun);
 
 -- doublePointerfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,DoubleArrowS);
 optionFun(lhs:Code,rhs:Code):Expr := (

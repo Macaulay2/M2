@@ -47,16 +47,18 @@ if Cremona.Options.Version < requiredCremonaVersion then (
     error("required Cremona package version "|requiredCremonaVersion|" or newer");
 );
 
+scan({"⋂","⋃","∏"},a->new Keyword from a)
 export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections", "projectionMaps", "fiberProduct", 
        "EmbeddedProjectiveVariety", "linearlyNormalEmbedding", "linearSpan", "tangentSpace", "coneOfLines", "sectionalGenus", "sumUp",
        "MultirationalMap", "multirationalMap", "baseLocus", "degreeSequence", "inverse2", "toRationalMap",
-       "∏","⋂","⋃","PP",
+       "PP",
        "ambientVariety",
        "GrassmannianVariety", "GG", "schubertCycle", "cycleClass",
        "segreEmbedding",
        "quadricFibration",
        "WeightedProjectiveVariety","WeightedRationalMap",
-       "RAT"}
+       "RAT",
+       "⋂","⋃","∏"}
 
 debug Cremona;
 debug SparseResultants;
@@ -654,7 +656,7 @@ coordinates = (cacheValue "coordinates") (p -> (
 
 MultiprojectiveVariety ** MultiprojectiveVariety := (X,Y) -> productVars(X,Y);
 
-∏ = method();
+--∏ = method();
 ∏ List := L -> productVars L;
 
 quotientRingMem = memoize(I -> (ring I)/I); -- this makes the product strict associative
@@ -696,9 +698,11 @@ ZZ * MultiprojectiveVariety := (n,X) -> (
     makeSubvariety(projectiveVariety gens saturate (idealOfSubvariety X)^n,ambientVariety X)
 );
 
+
+
 MultiprojectiveVariety + MultiprojectiveVariety := (X,Y) -> ⋃ {X,Y};
 
-⋃ = method();
+--⋃ = method();
 ⋃ List := L -> (
     if not(#L>0 and all(L,X -> instance(X,MultiprojectiveVariety))) then error "expected a list of multi-projective varieties"; 
     if #L == 1 then return first L;
@@ -723,7 +727,7 @@ MultiprojectiveVariety \\ MultiprojectiveVariety := (X,Y) -> (
 
 MultiprojectiveVariety * MultiprojectiveVariety := (X,Y) -> ⋂ {X,Y};
 
-⋂ = method();
+--⋂ = method();
 ⋂ List := L -> (
     if not(#L>0 and all(L,X -> instance(X,MultiprojectiveVariety))) then error "expected a list of multi-projective varieties"; 
     if #L == 1 then return first L;
@@ -859,7 +863,7 @@ linearSpan EmbeddedProjectiveVariety := (cacheValue "linearSpan") (X -> (
 linearSpan List := L -> (
     if #L == 0 then error "expected a nonempty list";
     if not all(L,X -> instance(X,EmbeddedProjectiveVariety)) then error "expected a list of embedded projective varieties";
-    linearSpan ⋃ L
+    linearSpan (⋃ L)
 );
 
 sectionalGenus = method();
@@ -2693,9 +2697,9 @@ EXAMPLE {"PP(ZZ/101);",
 "X = projectiveVariety ideal(random({2,1},ring PP^{2,1}),random({1,1},ring PP^{2,1}));", 
 "Y = projectiveVariety ideal random({1,1,1},ring PP^{1,2,1});",
 "X ** Y"},
-SeeAlso => {fiberProduct,(symbol ^,MultiprojectiveVariety,ZZ),(∏,List)}}
+SeeAlso => {fiberProduct,(symbol ^,MultiprojectiveVariety,ZZ),(symbol ∏,List)}}
 
-document {Key => {∏,(∏,List)}, 
+document {Key => {symbol ∏,(symbol ∏,List)}, 
 Headline => "product of multi-projective varieties", 
 Usage => "∏ {X,Y,Z,...}", 
 Inputs => {{ofClass List," ",TT"{X,Y,Z,...}"," of ",TO2{MultiprojectiveVariety,"multi-projective varieties"}}}, 
@@ -2733,9 +2737,9 @@ EXAMPLE {"O = 0_(PP_(ZZ/101)^{2,1});",
 "X = random({2,1},O);",
 "Y = random({1,1},O);",
 "X * Y"},
-SeeAlso => {(symbol +,MultiprojectiveVariety,MultiprojectiveVariety),(symbol +,Ideal,Ideal),(⋂,List)}}
+SeeAlso => {(symbol +,MultiprojectiveVariety,MultiprojectiveVariety),(symbol +,Ideal,Ideal),(symbol ⋂,List)}}
 
-document {Key => {⋂,(⋂,List)}, 
+document {Key => {symbol ⋂,(symbol ⋂,List)}, 
 Headline => "intersection of multi-projective varieties", 
 Usage => "⋂ {X,Y,Z,...}", 
 Inputs => {{ofClass List," ",TT"{X,Y,Z,...}"," of ",TO2{MultiprojectiveVariety,"multi-projective varieties"}}}, 
@@ -2761,9 +2765,9 @@ EXAMPLE {"O = 0_(PP_(ZZ/101)^{2,1});",
 "Y = random({1,1},O);",
 "Z = X + Y;",
 ///assert(Z \ X == Y and Z \ Y == X)///},
-SeeAlso => {(symbol \,MultiprojectiveVariety,MultiprojectiveVariety),(symbol *,MultiprojectiveVariety,MultiprojectiveVariety),(intersect,List),(⋃,List)}}
+SeeAlso => {(symbol \,MultiprojectiveVariety,MultiprojectiveVariety),(symbol *,MultiprojectiveVariety,MultiprojectiveVariety),(intersect,List),(symbol ⋃,List)}}
 
-document {Key => {⋃,(⋃,List)}, 
+document {Key => {symbol ⋃,(symbol ⋃,List)}, 
 Headline => "union of multi-projective varieties", 
 Usage => "⋃ {X,Y,Z,...}", 
 Inputs => {{ofClass List," ",TT"{X,Y,Z,...}"," of ",TO2{MultiprojectiveVariety,"multi-projective varieties"}}}, 
@@ -3781,10 +3785,10 @@ Key => {linearSpan,(linearSpan,EmbeddedProjectiveVariety),(linearSpan,List)},
 Headline => "the linear span of an embedded projective variety", 
 Usage => "linearSpan X", 
 Inputs => {"X" => EmbeddedProjectiveVariety => {" (resp., a list of ",TO2{EmbeddedProjectiveVariety,"embedded projective varieties"},")"}},
-Outputs => {EmbeddedProjectiveVariety => {"the linear span of ",TT"X"," (resp., of the ",TO2{(⋃,List),"union"}," of the members of ",TT"X",")"}},
+Outputs => {EmbeddedProjectiveVariety => {"the linear span of ",TT"X"," (resp., of the ",TO2{(symbol ⋃,List),"union"}," of the members of ",TT"X",")"}},
 EXAMPLE {"P = PP_(ZZ/333331)^7;",
 "S = apply(3,i -> point P)",
-"L = linearSpan ⋃ S;",
+"L = linearSpan (⋃ S);",
 "assert(L == linearSpan S)",
 "assert(dim L == 2 and degree L == 1)"}}
 

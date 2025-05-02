@@ -16,7 +16,7 @@ SPECIAL := 1024;
 SPACE := WHITE | NEWLINE;
 ALPHA := UPPER | LOWER;
 ALNUM := ALPHA | DIGIT | ALNUMEXTRA;
-NOTKW := ALNUM | SPACE | QUOTE | SPECIAL;
+NOTKW := DIGIT | SPACE | QUOTE | SPECIAL;
 
 foreach c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"  do setchartype(c,UPPER);
 foreach c in "abcdefghijklmnopqrstuvwxyz"  do setchartype(c,LOWER);
@@ -74,8 +74,6 @@ ismathoperator(c1:char, c2:char):bool := (
 export isvalidsymbol(s:string):bool := (
      if length(s)==0 then return false; -- duh
      if !isalpha(s.0) then return false;
-     if ismathoperator(s.0, s.1) && length(s) == utf8charlength(s.0)
-     then return true;
      for i from 0 to length(s) - 1 do (
 	 if !isalnum(s.i) || ismathoperator(s.i, s.(i + 1))
 	 then return false);
@@ -83,9 +81,12 @@ export isvalidsymbol(s:string):bool := (
 
 export isvalidkeyword(s:string):bool := (
      if length(s)==0 then return false;
+     if ismathoperator(s.0, s.1) && length(s) == utf8charlength(s.0) then return true;
+     if isvalidsymbol(s) then return false; -- for now, do not allow user to create alphanumeric keywords
      for i from 0 to length(s) - 1 do (
          if isnotkw(s.i) then return false;
 	 if i<length(s)-1 then (
+	   if ismathoperator(s.i, s.(i + 1)) then return false;
 	   if s.i=='-' && (s.(i+1)=='*' || s.(i+1)=='-') then return false;
 	   if s.i=='*' && s.(i+1)=='-' then return false;
 	   if i<length(s)-2 then (

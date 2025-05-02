@@ -1284,7 +1284,7 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	then (
 	    e := nullify(x.lhs);
 	    when e
-	    is Nothing do nothing
+	    is Nothing do nothing -- TODO: treat here separately by calling ordinary =
 	    else return e)
 	else lexpr = eval(x.lhs);
 	when lexpr is e:Error do return lexpr else nothing;
@@ -1300,47 +1300,24 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 		else return r)
 	    else return r);
 	-- if not, use default behavior
---      -- TODO reinstate -- user-defined augmented keywords
---    	r:=nullE;
---    	f:=s.binary; if f==dummyBinaryFun then
---    	r=binarymethod(Code(left),x.rhs,SymbolClosure(globalFrame,s))
---    	else
---    	r=f(Code(left),x.rhs);
---    	when r is e:Error do Expr(e) else (
---    	when x.lhs
---    	is y:globalMemoryReferenceCode do globalAssignment(y.frameindex, x.info, r)
---    	is y:localMemoryReferenceCode do localAssignment(y.nestingDepth, y.frameindex, r)
---    	is y:threadMemoryReferenceCode do globalAssignment(y.frameindex, x.info, r)
---    	is y:binaryCode do (
---               if y.f == DotS.symbol.binary || y.f == SharpS.symbol.binary
---               then AssignElemFun(y.lhs, y.rhs, Code(evaluatedCode(r,dummyPosition)))
---    	   else if y.f == unarymethodCode then UnaryInstallValueFun(convertGlobalOperator(x.info), y.lhs, Code(evaluatedCode(r,dummyPosition))) -- y.rhs redundant
---               else InstallValueFun(CodeSequence(
---                       convertGlobalOperator(x.info), y.lhs, y.rhs, Code(evaluatedCode(r,dummyPosition))))) -- y.f redundant
---    	is y:ternaryCode do ( -- TODO check binarymethodCode?
---               InstallValueFun(CodeSequence(
---                       convertGlobalOperator(x.info), y.arg1, y.arg2, Code(evaluatedCode(r,dummyPosition))))) -- y.arg3 redundant -- combine with previous case?
---            is y:adjacentCode do (
---               InstallValueFun(CodeSequence(
---                       convertGlobalOperator(AdjacentS.symbol), y.lhs, y.rhs, Code(evaluatedCode(r,dummyPosition)))))
---            is y:unaryCode do (
---               UnaryInstallValueFun(convertGlobalOperator(x.info), y.rhs, Code(evaluatedCode(r,dummyPosition))))
---
 	left := evaluatedCode(lexpr, codePosition(x.lhs));
         r := nullE; c := Code(nullCode());
 	when x.lhs
 	is y:globalMemoryReferenceCode do (
-	    if s.binary==dummyBinaryFun then r=binarymethod(Code(left),x.rhs,SymbolClosure(globalFrame,s))
+	    if s.word.name === "??" then r=eval(x.rhs) -- should ?? be treated separately earlier?
+	    else if s.binary==dummyBinaryFun then r=binarymethod(Code(left),x.rhs,SymbolClosure(globalFrame,s))
 	    else r=s.binary(Code(left),x.rhs);
 	    when r is e:Error do r
 	    else globalAssignment(y.frameindex, x.info, r))
 	is y:localMemoryReferenceCode do (
-	    if s.binary==dummyBinaryFun then r=binarymethod(Code(left),x.rhs,SymbolClosure(globalFrame,s))
+	    if s.word.name === "??" then r=eval(x.rhs) -- should ?? be treated separately earlier?
+	    else if s.binary==dummyBinaryFun then r=binarymethod(Code(left),x.rhs,SymbolClosure(globalFrame,s))
 	    else r=s.binary(Code(left),x.rhs);
 	    when r is e:Error do r
 	    else localAssignment(y.nestingDepth, y.frameindex, r))
 	is y:threadMemoryReferenceCode do (
-	    if s.binary==dummyBinaryFun then r=binarymethod(Code(left),x.rhs,SymbolClosure(globalFrame,s))
+	    if s.word.name === "??" then r=eval(x.rhs) -- should ?? be treated separately earlier?
+	    else if s.binary==dummyBinaryFun then r=binarymethod(Code(left),x.rhs,SymbolClosure(globalFrame,s))
 	    else r=s.binary(Code(left),x.rhs);
 	    when r is e:Error do r
 	    else globalAssignment(y.frameindex, x.info, r))

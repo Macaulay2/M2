@@ -1246,10 +1246,14 @@ net Set := net @@ expression
 texMath Set := texMath @@ expression
 
 -- shortening expressions
-cdots=⋯:=symbol ⋯
-ddots=⋱:=symbol ⋱
-vdots=⋮:=symbol ⋮
-ldots=…:=symbol …
+Dots = new Type of Symbol
+cdots=new Dots from symbol cdots
+ddots=new Dots from symbol ddots
+vdots=new Dots from symbol vdots
+ldots=new Dots from symbol ldots
+texMath Dots := x -> "\\" | simpleToString x -- note that \vdots has bad spacing in ordinary LaTeX
+toString Dots := x -> "..."
+net Dots := x -> if x === vdots then "."||"."||"." else if x === ddots then ".  "||" . "||"  ." else "..."
 -- used e.g. in chaincomplexes.m2
 shortLength := 8
 shortStringLength := 3*shortLength

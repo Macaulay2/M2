@@ -14,9 +14,7 @@ export hashTable := (
      len 7313			-- just a convenient prime number
      do provide null()
      );
-export makeUniqueWord(s:string,p:parseinfo):Word := ( -- note that p is parseinfo *only if* new word created
-
-     h := hash(s);
+export findWord(s:string,h:hash_t):(null or Word) := (
      hashCode := h%length(hashTable);
      hashList := hashTable.hashCode;
      while true do
@@ -27,9 +25,19 @@ export makeUniqueWord(s:string,p:parseinfo):Word := ( -- note that p is parseinf
 	  then return hashCell.word;
 	  hashList = hashCell.next;
 	  );
-     newWord := Word(s,TCid,h,p);
-     hashTable.hashCode = WordListCell(newWord,hashTable.hashCode);
-     newWord);
+     NULL
+);
+export findWord(s:string):(null or Word) := findWord(s,hash(s));
+export makeUniqueWord(s:string,p:parseinfo):Word := ( -- note that p is parseinfo *only if* new word created
+     h := hash(s);
+     when findWord(s,h)
+       is word:Word do return word
+       is null do (
+            newWord := Word(s,TCid,h,p);
+	    hashCode := h%length(hashTable);
+     	    hashTable.hashCode = WordListCell(newWord,hashTable.hashCode);
+     	    newWord)
+);
 
 export NewlineW := Word("-*dummy word for newline*-",TCnone,hash_t(0),newParseinfo());	    	  -- filled in by keywords.d
 export equal(t:ParseTree,w:Word):bool := (
@@ -301,7 +309,7 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	       -- while true do (ch2 := getc(file); if ch2 == EOF || ch2 == ERROR || ch2 == int('\n') then break;);
      	       return errorToken;
 	       );
-	  if rc == DEPRECATED then (
+	  if rc == DEPRECATED then ( -- I don't think this even works any more
 	       printErrorMessage(file.filename,swline,swcolumn,"encountered disabled block comment syntax {* ... *} beginning here");
      	       return errorToken;
 	       );
@@ -319,8 +327,12 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	  else if ismathoperator(peek2(file)) then (
 	       for i from 1 to utf8charlength(char(ch))
 	       do tokenbuf << char(getc(file));
-	       return Token(makeUniqueWord(takestring(tokenbuf), parseWORD),
-		   newPosition(file, line, column), globalDictionary, dummySymbol, sawNewline))
+	       when findWord(takestring(tokenbuf))
+	         is w:Word do return Token(w, newPosition(file, line, column), globalDictionary, dummySymbol, sawNewline)
+		 is null do (
+		      printErrorMessage(file.filename,swline,swcolumn,"undefined math operator");
+     	              return errorToken;
+		 ))
 	  else if isalpha(ch) then ( -- valid symbols are an alpha (letters, any unicode) followed by any number of alphanum (alpha, digit, dollar, prime)
 	       tokenbuf << char(getc(file));
 	       while isalnum(peek(file)) && !ismathoperator(peek2(file))
