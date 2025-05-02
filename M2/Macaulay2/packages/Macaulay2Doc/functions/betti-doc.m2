@@ -218,7 +218,7 @@ Node
   Subnodes
     (multigraded, BettiTally)
     (betti, BettiTally)
-    "OldChainComplexes :: [betti, Minimize]"
+    "OldChainComplexes :: betti(...,Minimize=>...)"
     "OldChainComplexes :: minimalBetti"
 
 Node

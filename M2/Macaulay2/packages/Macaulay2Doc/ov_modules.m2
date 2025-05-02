@@ -597,7 +597,7 @@ document {
 	  "C.dd_3"
 	  },
      "For more information about chain complexes and resolutions, see ", TO "Complexes :: Complexes",
-     " and ", TO "computing resolutions", ".",
+     " and ", TO "OldChainComplexes :: computing resolutions", ".",
      SUBSECTION "betti numbers",
      "Use ", TO betti, " to display the graded betti numbers of ", TT "M", ".",
      EXAMPLE "betti C",
