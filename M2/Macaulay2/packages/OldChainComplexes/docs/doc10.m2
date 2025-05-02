@@ -149,7 +149,7 @@ document {
      }
 
 document {   -- This node is used as an example for the documentation node: Key, Usage
-     Key => (resolution,Module),
+     Key => (resolution, Module),
      Headline => "compute a free resolution of a module",
      Usage => "resolution M\nres M",
      Inputs => { "M" },

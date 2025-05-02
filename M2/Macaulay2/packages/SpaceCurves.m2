@@ -14,6 +14,7 @@ newPackage(
 	      },
         Headline => "space curves",
 	Keywords => {"Examples and Random Objects"},
+        PackageImports => {"OldChainComplexes"},
         DebuggingMode => false,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",

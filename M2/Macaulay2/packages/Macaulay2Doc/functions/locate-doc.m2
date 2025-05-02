@@ -40,11 +40,11 @@ Node
       If {\tt f} is a sequence, then @TO "lookup"@ is applied first,
       and the location of the resulting function is provided.
     Example
-      locate(resolution, Module)
+      locate(jacobian, Matrix)
     Text
       In particular, the output of @TO "methods"@ can be used as an input to @TT "locate"@.
     Example
-      locate methods resolution
+      locate methods jacobian
       methods doc
       locate 0
       peek oo
