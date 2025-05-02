@@ -29,7 +29,20 @@ newPackage(
     AuxiliaryFiles => false,
     DebuggingMode => false,
     PackageImports => {"Complexes"},
-    Keywords => {"Combinatorial Commutative Algebra"}
+    Keywords => {"Combinatorial Commutative Algebra"},
+    Certification => {
+	"journal name" => "Journal of Software for Algebra and Geometry",
+	"journal URI" => "https://msp.org/jsag/",
+	"article title" => "Abstract simplicial complexes in Macaulay2",
+	"acceptance date" => "2025-04-14",
+	"published article URI" => "https://msp.org/jsag/2025/15-1/p03.xhtml",
+	"published article DOI" => "10.2140/jsag.2025.15.29",
+	"published code URI" => "https://msp.org/jsag/2025/15-1/jsag-v15-n1-x03-AbstractSimplicialComplexes.m2",
+	"release at publication" => "5b79022404cef1d070584115c819d4436be7bcee",
+	"version at publication" => "1.0",
+	"volume number" => "15",
+	"volume URI" => "https://msp.org/jsag/2025/15-1/"
+	}
     )
 
 export {"AbstractSimplicialComplex", "abstractSimplicialComplex",
