@@ -2,6 +2,7 @@
 
 needs "monoids.m2"  -- for degreesMonoid
 needs "reals.m2" -- for inexact number
+needs "gateway.m2" -- for id
 
 -----------------------------------------------------------------------------
 -- Matrix

@@ -97,10 +97,8 @@ storefuns#poincare(Module, RingElement) := (M, hf) -> M.cache.poincare = substit
 installHilbertFunction = storefuns#poincare
 
 -----------------------------------------------------------------------------
--- pdim, dim, degree, multidegree, length
+-- dim, degree, multidegree, length
 -----------------------------------------------------------------------------
-
-pdim Module := M -> length resolution minimalPresentation M
 
 dim Ideal  := I -> dim comodule I
 dim Module := M -> if (c := codim M) === infinity then -1 else dim ring M - c

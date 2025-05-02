@@ -41,6 +41,7 @@ newPackage(
 	"Truncations",
 	},
     PackageImports => {
+	"OldChainComplexes",
 	"Isomorphism",
 --	"Complexes",
 	},

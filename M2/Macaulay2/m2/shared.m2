@@ -17,6 +17,9 @@ rays = method(Options => true)
 
 decompose = method(Options => true)
 
+-- TODO: change options to true?
+extend = method(Options => {Verify => true})
+
 union = method(Binary => true)
 intersect = method(Options => true, Binary => true) -- an associative binary method
 

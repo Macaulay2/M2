@@ -4,9 +4,26 @@
 -- 2. replace Resolution with ResolutionComputation
 -- 3. integrate with the Complexes package
 
-needs "chaincomplexes.m2"
-needs "computations.m2"
-needs "max.m2"
+importFrom_Core {
+    "baseRing'",
+    "resolutionLengthLimit",
+    "resolutionDegreeLimit",
+    "Context",
+    "Computation",
+    "cacheComputation",
+    "fetchComputation",
+    "isComputationDone",
+    "updateComputation",
+    "rawKernelOfGB",
+    "flagInhomogeneity",
+    "rawStartComputation",
+    "rawGBSetStop",
+    "rawResolution",
+    "rawStatus1",
+    "degreeToHeft",
+    "rawGBBetti",
+    "FreeAlgebraQuotient",
+}
 
 -----------------------------------------------------------------------------
 -- Local variables
@@ -23,23 +40,6 @@ resLog := x -> if gbTrace > 0 then printerr x
 inf := t -> if t === infinity then -1 else t
 
 spots := C -> select(keys C, i -> instance(i, ZZ))
-
-baseRing' := R -> ultimate(coefficientRing, R) -- Note: different from first R.baseRings
-
-resolutionLengthLimit = (R, lengthLimit) -> (
-    if lengthLimit == infinity then (
-	A := baseRing' R;
-	nvars := # generators(R, CoefficientRing => A);
-	nvars + 1 + if A === ZZ then 1 else 0)
-    else lengthLimit )
-
--- also used by Saturation
-resolutionDegreeLimit = (R, degreeLimit) -> (
-    degreeLimit = if degreeLimit =!= null      then  degreeLimit  else {};
-    degreeLimit = if instance(degreeLimit, ZZ) then {degreeLimit} else degreeLimit;
-    if #degreeLimit == degreeLength R and all(degreeLimit, d -> instance(d, ZZ))
-    or #degreeLimit == 0 then degreeLimit
-    else error "expected DegreeLimit or HardDegreeLimit to be a valid degree, multidegree, or null")
 
 -----------------------------------------------------------------------------
 -- helpers for resolution

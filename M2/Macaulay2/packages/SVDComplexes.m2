@@ -22,6 +22,7 @@ newPackage(
             },
         Headline => "SVD (singular value decomposition) of a complex over the reals and related functions",
 	Keywords => {"Homological Algebra", "Commutative Algebra"},
+	PackageImports => {"OldChainComplexes"},
 	PackageExports => {"LLLBases"},
         DebuggingMode => false
         )
@@ -49,7 +50,7 @@ export {
 -- Some basic functions that should not be here --
 -- Move these to the core? -----------------------
 --------------------------------------------------
-debug Core
+importFrom_OldChainComplexes "spots"
 
 concentration = method()
 concentration ChainComplex := C -> (

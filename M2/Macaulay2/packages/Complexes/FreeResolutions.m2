@@ -29,6 +29,7 @@ importFrom_Core {
     "raw",
     "degreeToHeft", 
     "rawBetti", 
+    "rawMinimalBetti",
     "rawStartComputation", 
     "rawGBSetStop", 
     "rawStatus1", 
@@ -36,10 +37,14 @@ importFrom_Core {
     "rawResolution",
     "rawResolutionGetFree", 
     "rawResolutionGetMatrix",
+    "generatorSymbols",
     "hasNoQuotients",
     "Computation"
     }
 
+importFrom_"OldChainComplexes" {
+    "unpackEngineBetti",
+}
 ResolutionObject = new Type of MutableHashTable
 ResolutionObject.synonym = "resolution object"
 toString ResolutionObject := C -> toString raw C
@@ -535,7 +540,6 @@ addHook((freeResolution, Module), resolutionOverZZ, Strategy => OverZZ)
 addHook((freeResolution, Module), resolutionOverField, Strategy => OverField)
 
 
-debug Core
 cechComplex = method()
 cechComplex MonomialIdeal := Complex => B -> (
     if not isSquareFree B then error "expected squarefree monomial ideal";

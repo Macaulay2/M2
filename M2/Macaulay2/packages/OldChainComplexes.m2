@@ -3,14 +3,50 @@ newPackage(
     Version => "0.1",
     Date => "7 March 2025",
     Headline => "consolidating legacy chain complex code",
-    Authors => {{ Name => "", Email => "", HomePage => ""}},
+    Authors => { -* { Name => "", Email => "", HomePage => ""}*- },
+    Keywords => {"Homological Algebra"},
     AuxiliaryFiles => true,
     DebuggingMode => false
-    )
+)
 
-export {}
+export {
+    "ChainComplex",
+    "ChainComplexMap",
+    "GradedModule",
+    "GradedModuleMap",
+    "Resolution",
+    "chainComplex",
+    "eagonNorthcott",
+    "gradedModule",
+    "gradedModuleMap",
+    "minimalBetti",
+    "poincareN",
+    "resolution", "res" => "resolution",
+    "syzygyScheme",
+}
 
+importFrom_Core {
+    "raw",
+    "storefuns",
+    "leftarrow",
+    "mtable",
+}
 
+-----------------------------------------------------------------------------
+
+needs "./OldChainComplexes/gradedmodules.m2"
+needs "./OldChainComplexes/chaincomplexes.m2"
+needs "./OldChainComplexes/res.m2"
+needs "./OldChainComplexes/betti.m2"
+needs "./OldChainComplexes/Ext.m2"
+needs "./OldChainComplexes/Tor.m2"
+
+-----------------------------------------------------------------------------
+
+-- used to be in hilbert.m2
+pdim Module := M -> length resolution minimalPresentation M
+
+-----------------------------------------------------------------------------
 -* Documentation section *-
 beginDocumentation()
 
@@ -56,7 +92,9 @@ Caveat
 SeeAlso
 ///
 
+-----------------------------------------------------------------------------
 -* Test section *-
+
 TEST /// -* [insert short title for this test] *-
 -- test code and assertions here
 -- may have as many TEST sections as needed
@@ -64,7 +102,9 @@ TEST /// -* [insert short title for this test] *-
 
 end--
 
+-----------------------------------------------------------------------------
 -* Development section *-
+
 restart
 debug needsPackage "OldChainComplexes"
 check "OldChainComplexes"
