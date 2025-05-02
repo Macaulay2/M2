@@ -241,7 +241,7 @@ visualize(Ideal) := commonVisOpts|{VisTemplate => basePath |"Visualize/templates
 	
 	-- changed gens to leadTerm so if there's a non monomial ideal
 	-- it will return the initial ideal
-	arrayList = apply( flatten entries leadTerm J, m -> flatten exponents m);	
+	arrayList = apply((leadTerm J)_*, m -> flatten exponents m);
 	arrayList = toArray arrayList;
 	arrayString = toString arrayList;
 	
@@ -264,7 +264,7 @@ visualize(Ideal) := commonVisOpts|{VisTemplate => basePath |"Visualize/templates
 	    
     	arrayList = apply(flatten entries basis(0,infinity, R/J), m -> flatten exponents m );
     	arrayList = toArray arrayList;
-	newArrayList = apply(flatten entries leadTerm J, m -> flatten exponents m );
+	newArrayList = apply((leadTerm J)_*, m -> flatten exponents m );
     	newArrayList = toArray newArrayList;
     	arrayString = toString arrayList;
      	newArrayString = toString newArrayList;
