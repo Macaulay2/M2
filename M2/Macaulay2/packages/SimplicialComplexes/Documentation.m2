@@ -2905,7 +2905,7 @@ doc ///
     	"Working with associated chain complexes"
 	(coefficientRing, SimplicialComplex)
 	(boundaryMap, ZZ, SimplicialComplex)
-	(resolution, Ideal)
+	(freeResolution, Ideal)
 	(homology, Complex)
 ///
 

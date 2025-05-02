@@ -10,6 +10,7 @@ newPackage(
         },
     Headline => "cellular resolutions of monomial ideals",
     AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
+    PackageImports => {"OldChainComplexes"},
     PackageExports => {"Polyhedra", "SimplicialComplexes", "Posets"},
     Keywords => {"Commutative Algebra"}
     )

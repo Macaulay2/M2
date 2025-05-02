@@ -12,7 +12,7 @@ newPackage(
 	CacheExampleOutput => true,
 	AuxiliaryFiles => true,
 	PackageExports => {"AdjointIdeal"},
-	PackageImports => {"MapleInterface"}
+	PackageImports => {"OldChainComplexes", "MapleInterface"}
     	)
 
 -- For information see documentation key "Parametrization" below.

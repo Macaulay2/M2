@@ -7,6 +7,7 @@ Authors => {{Name => "Luca Amata", Email => "lamata@unime.it", HomePage => "http
            },
 Headline => "t-spread ideals of a polynomial ring",
 Keywords => {"Commutative Algebra"},
+PackageImports => {"OldChainComplexes"},
 DebuggingMode => false
 )
 

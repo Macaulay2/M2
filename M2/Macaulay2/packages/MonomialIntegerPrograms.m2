@@ -29,7 +29,7 @@ newPackage (
       },
   AuxiliaryFiles => true,
   CacheExampleOutput => true,
-  PackageImports => {"LexIdeals","MinimalPrimes"},
+  PackageImports => {"OldChainComplexes", "LexIdeals","MinimalPrimes"},
   OptionalComponentsPresent => scipPresent := run "type scip >/dev/null 2>&1" === 0,
   DebuggingMode => false,
   Keywords => {"Commutative Algebra"}
@@ -945,7 +945,7 @@ doc ///
    bettiTablesWithHilbertFunction({1, 4, 7, 10, 13}, S, SquareFree => true, GradedBettis => {0, 2, 3, 1, 0})
  SeeAlso
   monomialIdealsWithHilbertFunction
-  (betti,GradedModule)
+  "OldChainComplexes :: (betti, GradedModule)"
   BettiTally
   HashTable
   tally

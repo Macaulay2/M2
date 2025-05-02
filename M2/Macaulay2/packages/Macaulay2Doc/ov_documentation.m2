@@ -161,8 +161,8 @@ Node
       titles that are simply invented by the author. Others have titles that are manufactured in a certain way
       from the aspect of the program being documented, for the sake of uniformity.
 
-      For example, the title of the node describing resolutions of modules is @TT format "resolution Module"@.
-      The corresponding key is @TT "(resolution, Module)"@, and it is the job of the function @TO makeDocumentTag@
+      For example, the title of the node describing e.g. the jacobian of a matrix is @TT format "jacobian Matrix"@.
+      The corresponding key is @TT "(jacobian, Matrix)"@, and it is the job of the function @TO makeDocumentTag@
       to convert keys to titles.
 
     Tree
