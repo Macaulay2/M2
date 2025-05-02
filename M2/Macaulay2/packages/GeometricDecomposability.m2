@@ -287,7 +287,7 @@ isGVD(Ideal) := Boolean => opts -> I -> (
 
 --------------------------------------------------------------------------------
 
--- [KR, Definition 2.11]
+-- [KR, Definition 2.11], checked using [KR, Proposition 2.14]
 isLexCompatiblyGVD = method(
         Options => {
                 CheckCM => "always", 
@@ -299,6 +299,39 @@ isLexCompatiblyGVD = method(
                 }
         )
 isLexCompatiblyGVD(Ideal, List) := Boolean => opts -> (I, indetOrder) -> (
+        if not instance(opts.CheckCM, String) then (
+                error "value of CheckCM must be a string";
+                ) else (
+                if not isSubset({opts.CheckCM}, {"always", "once", "never"}) then error ///unknown value of CheckCM, options are "once" (default), "always", "never"///;
+                );
+
+        printIf(opts.Verbose, "I = " | toString I);
+
+        -- compute initial ideal with respect to the given lex order
+        R := ring I;
+        cr := coefficientRing R;
+        allVariables := join(indetOrder,  gens R - set indetOrder);  -- extend the lex order by appending any missing variables
+        lexRing := (cr) monoid([allVariables, MonomialOrder=>Lex]);  
+        initIdeal := ideal leadTerm sub(I, lexRing);
+
+        recursiveLexGVD(initIdeal, indetOrder, 
+                CheckCM=>opts.CheckCM, CheckUnmixed=>opts.CheckUnmixed, 
+                IsIdealHomogeneous=>true, IsIdealUnmixed=>opts.IsIdealUnmixed,
+                UniversalGB=>true, Verbose=>opts.Verbose
+                )
+        )
+
+recursiveLexGVD = method(
+        Options => {
+                CheckCM => "always", 
+                CheckUnmixed => true, 
+                IsIdealHomogeneous => false, 
+                IsIdealUnmixed => false, 
+                UniversalGB => false, 
+                Verbose => false
+                }
+        )
+recursiveLexGVD(Ideal, List) := Boolean => opts -> (I, indetOrder) -> (
         if not instance(opts.CheckCM, String) then (
                 error "value of CheckCM must be a string";
                 ) else (
@@ -360,7 +393,7 @@ isLexCompatiblyGVD(Ideal, List) := Boolean => opts -> (I, indetOrder) -> (
         -- if are here, then NisGVD is true
         CisGVD := isLexCompatiblyGVD(C, remainingOrder, CheckCM=>CMTable#(opts.CheckCM), CheckUnmixed=>opts.CheckUnmixed, IsIdealHomogeneous=>x, IsIdealUnmixed=>true, UniversalGB=>opts.UniversalGB, Verbose=>opts.Verbose);
         return CisGVD;
-        )
+)
 
 --------------------------------------------------------------------------------
 
@@ -1262,6 +1295,13 @@ doc///
                                 I = ideal(y*(z*s - x^2), y*w*r, w*r*(z^2 + z*x + w*r + s^2));
 				isLexCompatiblyGVD(I, {x,y,z,w,r,s})
 				isLexCompatiblyGVD(I, {s,x,w,y,r,z}, Verbose=>true)
+                        Text
+                                In view of [KR, Proposition 2.14], we check whether the initial ideal ${\rm in}_<(I)$ is $<$-compatibly
+                                geometrically vertex decomposable.
+                                Heuristically, one should expect this check to be quicker than the definition [KR, Definition 2.11] 
+                                since checking unmixedness (that is, computing a primary decomposition) is in general faster for monomial ideals.
+                                
+                        
                 References
 		        [KR] Patricia Klein and Jenna Rajchgot. Geometric vertex decomposition and
                         liaison. Forum Math. Sigma, 9 (2021) Paper No. e70, 23pp.
