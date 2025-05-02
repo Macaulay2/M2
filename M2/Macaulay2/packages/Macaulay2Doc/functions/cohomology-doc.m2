@@ -24,19 +24,6 @@ document {
      }
 
 document { 
-     Key => (cohomology,ZZ,ChainComplexMap),
-     Headline => "cohomology of a chain complex map",
-     Usage => "HH^i f",
-     Inputs => {"i","f"
-	  },
-     Outputs => {Matrix=>{"the ", TT "i", 
-	       "-th cohomology map induced by the chain complex map ", TT "f"}
-	  },
-     "The command provides the map on the ", TT "i", "-th cohomology module
-     induced by a map ", TT "f", " of chain complexes.",
-     SeeAlso => {"cohomology", "HH", "ChainComplex"}
-     }
-document { 
      Key => (cohomology,ZZ,Module),
      Headline => "local cohomology of a module",
      Usage => "HH^i(M)",
@@ -75,32 +62,3 @@ document {
 	 "Varieties::HH^ZZ CoherentSheaf"}
      }
 
-document { 
-     Key => (cohomology,ZZ,ChainComplex),
-     Headline => "cohomology of a chain complex",
-     Usage => "HH^i C",
-     Inputs => {"i"=> ZZ, "C" => ChainComplex
-	  	  },
-     Outputs => {Module => {"HH^i C", " -- homology at the i-th spot of the chain complex ", TT "C", "."}
-	  },
-     "By definition, this is the same as computing HH_(-i) C.",
-     PARA{},
-     EXAMPLE {
-           "R = ZZ/101[x,y]",
-           "C = chainComplex(matrix{{x,y}},matrix{{x*y},{-x^2}})",
-           "M = HH^1 C",
-           "prune M"
-            },
-     PARA{},
-     "Here is another example computing simplicial cohomology
-     (for a hollow tetrahedron):",
-     EXAMPLE {
-	  "needsPackage \"SimplicialComplexes\"",
-	  "R = QQ[a..d]",
-          "D = simplicialComplex {a*b*c,a*b*d,a*c*d,b*c*d}",
-          "C = complex D",  
-          "HH_2 C",
-	  "prune oo"
-	  },
-     SeeAlso => {"GradedModule", "HH"}
-     }

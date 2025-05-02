@@ -4,8 +4,6 @@
 
 -*
 -- TODO
-degree(ChainComplexMap)
-degree(GradedModuleMap)
 degree(Matrix)
 *-
 
@@ -39,8 +37,7 @@ document {
 	  HEADER3 "Degree of homomorphisms",
 	  UL {
 	  TO (degree,Matrix),
-	  TO (degree,ChainComplexMap),
-	  TO (degree,GradedModuleMap)
+	  -- TO "OldChainComplexes :: degree(ChainComplexMap)",
 	  },
      SeeAlso => {degreeLength, degreesRing
 	  -- Mike wanted this: , "multigraded polynomial rings"

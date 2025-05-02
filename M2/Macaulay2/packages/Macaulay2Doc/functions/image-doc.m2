@@ -9,7 +9,9 @@ Node
 ///
 
 document {
-     Key => {(image, Matrix),(image, ChainComplexMap),(image, GradedModuleMap),(image, RingElement)},
+    Key => {
+	(image, Matrix),
+	(image, RingElement)},
      Headline => "image of a map",
      TT "image h", " -- yields the image of the homomorphism ", TT "h", ".",
      PARA{},

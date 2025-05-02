@@ -135,12 +135,10 @@ document { Key => pruningMap,
      "This symbol is used as a key for storing results in modules, by ", TO "minimalPresentation", "."
      }
 document { 
-     Key => {(minimalPresentation,Module),
-	  (minimalPresentation, GradedModule),(minimalPresentation, GradedModuleMap),
-	  (minimalPresentation, ChainComplex),(minimalPresentation, ChainComplexMap),
-	  (prune,Module),
-	  (prune, GradedModule),(prune, GradedModuleMap),
-	  (prune, ChainComplex),(prune, ChainComplexMap)},
+    Key => {
+	(minimalPresentation,Module),
+	(prune,Module),
+    },
      Headline => "minimal presentation of a module",
      Usage => "N = minimalPresentation M",
      Inputs => {

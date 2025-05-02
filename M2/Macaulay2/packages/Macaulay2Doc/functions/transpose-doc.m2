@@ -37,25 +37,3 @@ document {
 	 },
       SeeAlso => {dual}
      }
-document { 
-     Key => (transpose,ChainComplexMap),
-     Headline => "transpose a map of chain complexes",
-     Usage => "transpose f",
-     Inputs => {
-		"f" => ChainComplexMap
-	  },
-     Outputs => {
-	  ChainComplexMap => { "the transpose of ", TT "f" }	       
-	  },
-	"The output of ", TT "transpose", " is a map from the duals of the
-	original source and target free modules. See the degree of the target
-	module in the following example",
-	EXAMPLE {
-		   "S = ZZ/10007[x,y,z];",
-		   "F = res ideal vars S;",
-		   "F.dd",
-		   "transpose F.dd"
-	  },
-	"Note that ", TT "M2", " treats the differentials of a chain complex map
-	as map of degree -1."
-	}

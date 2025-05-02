@@ -2,10 +2,6 @@ document {
     Key => {
 	formation,
        (formation, Module),
-       (formation, ChainComplex),
-       (formation, ChainComplexMap),
-       (formation, GradedModule),
-       (formation, GradedModuleMap)
     },
     Headline => "recover the methods used to make a module",
     Usage => "formation M",

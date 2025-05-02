@@ -3,7 +3,6 @@ doc ///
      "parallelism in engine computations"
      "numTBBThreads"
      ParallelizeByDegree
-     [resolution, ParallelizeByDegree]
    Headline
      parallelism in engine computations
    Description
@@ -20,7 +19,7 @@ doc ///
        of cores (often the maximum available).  Note that the default
        behavior is to use multiple cores.
 
-       In @TO "minimalBetti"@, and in @TO "Complexes::freeResolution"@
+       In @TO "OldChainComplexes::minimalBetti"@, and in @TO "Complexes::freeResolution"@
        with the {\tt Strategy => Nonminimal} option, more aggressive
        parallelism that sometimes uses a lot of memory but can
        sometimes produce answers in less time can be enabled using the
@@ -82,8 +81,8 @@ doc ///
        numTBBThreads = 1
        elapsedTime NCGB(I, 22);
    SeeAlso
-     minimalBetti
-     resolution
+     "OldChainComplexes::minimalBetti"
+     "OldChainComplexes::resolution"
      "Complexes::freeResolution"
      groebnerBasis
      "AssociativeAlgebras::NCGB"
