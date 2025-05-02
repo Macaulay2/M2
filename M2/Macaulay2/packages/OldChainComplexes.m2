@@ -34,12 +34,12 @@ importFrom_Core {
 
 -----------------------------------------------------------------------------
 
-needs "./OldChainComplexes/gradedmodules.m2"
-needs "./OldChainComplexes/chaincomplexes.m2"
-needs "./OldChainComplexes/res.m2"
-needs "./OldChainComplexes/betti.m2"
-needs "./OldChainComplexes/Ext.m2"
-needs "./OldChainComplexes/Tor.m2"
+load "./OldChainComplexes/gradedmodules.m2"
+load "./OldChainComplexes/chaincomplexes.m2"
+load "./OldChainComplexes/res.m2"
+load "./OldChainComplexes/betti.m2"
+load "./OldChainComplexes/Ext.m2"
+load "./OldChainComplexes/Tor.m2"
 
 -----------------------------------------------------------------------------
 

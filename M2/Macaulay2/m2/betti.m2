@@ -18,7 +18,10 @@ nonzeroKeys = x -> select(keys x, k -> x#k != 0)
 -- called from OldChainComplexes
 baseRing' = R -> ultimate(coefficientRing, R) -- Note: different from first R.baseRings
 
--- called in several places
+-----------------------------------------------------------------------------
+-- unexported helper functions used in several packages
+-----------------------------------------------------------------------------
+
 resolutionLengthLimit = (R, lengthLimit) -> (
     if lengthLimit == infinity then (
 	A := baseRing' R;
@@ -33,6 +36,19 @@ resolutionDegreeLimit = (R, degreeLimit) -> (
     if #degreeLimit == degreeLength R and all(degreeLimit, d -> instance(d, ZZ))
     or #degreeLimit == 0 then degreeLimit
     else error "expected DegreeLimit or HardDegreeLimit to be a valid degree, multidegree, or null")
+
+unpackEngineBetti = w -> (
+    -- w is the result of e.g. rawGBBetti.
+    -- this is an array of ints, of the form:
+    -- [lodegree, hidegree, len, b(lodegree,0), b(lodegree,1), ..., b(lodegree,len), ... b(hidegree,len)]
+    (lo, hi, len) := (w#0, w#1, w#2);
+    w = pack(len+1, drop(w, 3));
+    w = flatten table(toList(lo .. hi), toList(0 .. len),
+	(i,j) -> ((j, {i+j}, i+j), w#(i-lo)#j)); -- no weight option used here
+    new BettiTally from select(w, (k,v) -> v != 0))
+
+-- used in EngineTests
+rawBetti = (computation, type) -> unpackEngineBetti rawGBBetti(computation, type)
 
 -----------------------------------------------------------------------------
 -- BettiTally type declarations and basic constructors

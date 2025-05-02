@@ -428,7 +428,8 @@ TEST ///
 -*  
   restart
 *-  
-  debug Core -- for the key resolutionNonminimal
+  debug OldChainComplexes -- for the key resolutionNonminimal
+
   kk = ZZ/32003
   R = kk[a..d]
 

@@ -37,14 +37,12 @@ importFrom_Core {
     "rawResolution",
     "rawResolutionGetFree", 
     "rawResolutionGetMatrix",
+    "unpackEngineBetti",
     "generatorSymbols",
     "hasNoQuotients",
     "Computation"
     }
 
-importFrom_"OldChainComplexes" {
-    "unpackEngineBetti",
-}
 ResolutionObject = new Type of MutableHashTable
 ResolutionObject.synonym = "resolution object"
 toString ResolutionObject := C -> toString raw C
