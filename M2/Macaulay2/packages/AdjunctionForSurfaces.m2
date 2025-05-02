@@ -24,6 +24,7 @@ newPackage(
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/"}                 
 	         },
     	Headline => "Adjunction for Surfaces",
+        PackageImports => {"OldChainComplexes"},
 	Keywords => {"Projective Algebraic Geometry"}
     	)
 

@@ -50,6 +50,7 @@ pdim Module := M -> length resolution minimalPresentation M
 -* Documentation section *-
 beginDocumentation()
 
+load "./OldChainComplexes/docs/docs.m2"
 load "./OldChainComplexes/docs/chainComplex-doc.m2"
 load "./OldChainComplexes/docs/eagonNorthcott-doc.m2"
 load "./OldChainComplexes/docs/Ext-doc.m2"

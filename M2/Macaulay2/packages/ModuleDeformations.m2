@@ -11,7 +11,7 @@ newPackage(
 	          Email => "hovinen@math.uni-hannover.de"}},
      Headline => "versal deformations of maximal Cohen-Macaulay modules",
      Keywords => {"Deformation Theory"},
-     PackageImports => { "Truncations" },
+     PackageImports => { "OldChainComplexes", "Truncations" },
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	  "journal URI" => "https://msp.org/jsag/",

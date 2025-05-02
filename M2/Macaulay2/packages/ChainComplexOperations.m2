@@ -6,6 +6,7 @@
                          Email => "de@msri.org"}},
                Headline => "sym2, wedge2, chi2 of a ChainComplex",
 	       Keywords => {"Homological Algebra"},
+               PackageExports => {"OldChainComplexes"},
                DebuggingMode => false
                )
 
