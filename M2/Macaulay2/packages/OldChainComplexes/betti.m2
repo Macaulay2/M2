@@ -14,6 +14,7 @@
 
 importFrom_Core {
     "rawMinimalBetti",
+    "unpackEngineBetti",
 }
 
 -----------------------------------------------------------------------------
@@ -23,19 +24,6 @@ importFrom_Core {
 -- local function for selecting and computing the appropriate heft
 heftfun := wt -> d -> sum( min(#wt, #d), i -> wt#i * d#i )
 heftvec := (wt1, wt2) -> if wt1 =!= null then wt1 else if wt2 =!= null then wt2 else {}
-
-unpackEngineBetti = w -> (
-    -- w is the result of e.g. rawGBBetti.
-    -- this is an array of ints, of the form:
-    -- [lodegree, hidegree, len, b(lodegree,0), b(lodegree,1), ..., b(lodegree,len), ... b(hidegree,len)]
-    (lo, hi, len) := (w#0, w#1, w#2);
-    w = pack(len+1, drop(w, 3));
-    w = flatten table(toList(lo .. hi), toList(0 .. len),
-	(i,j) -> ((j, {i+j}, i+j), w#(i-lo)#j)); -- no weight option used here
-    new BettiTally from select(w, (k,v) -> v != 0))
-
--- used in EngineTests
-rawBetti = (computation, type) -> unpackEngineBetti rawGBBetti(computation, type)
 
 -----------------------------------------------------------------------------
 -- betti

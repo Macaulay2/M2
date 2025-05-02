@@ -22,6 +22,7 @@ importFrom_Core {
     "rawStatus1",
     "degreeToHeft",
     "rawGBBetti",
+    "rawBetti",
     "FreeAlgebraQuotient",
 }
 
