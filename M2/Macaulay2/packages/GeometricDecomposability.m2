@@ -2093,7 +2093,7 @@ assert(not isGVD I)
 
 
 TEST///  -- Toric ideal of the complete bipartite graph K_{3,2}; GVD by [CDSRVT, Theorem 5.8]
-loadPackage "Quasidegrees";
+needsPackage "Quasidegrees";
 R = QQ[e_1..e_6];
 A = matrix{
         {1,0,0,1,0,0},
@@ -2108,7 +2108,7 @@ assert(isGVD I)
 
 
 TEST///  -- Toric ideal of the graph constructed by connecting two triangles by a bridge of length 2
-loadPackage "Quasidegrees";
+needsPackage "Quasidegrees";
 R = QQ[e_1..e_8];
 A = matrix{
         {1, 0, 1, 0, 0, 0, 0, 0},
