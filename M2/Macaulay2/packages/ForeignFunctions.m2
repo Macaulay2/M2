@@ -24,7 +24,20 @@ newPackage("ForeignFunctions",
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
-    Keywords => {"Interfaces"}
+    Keywords => {"Interfaces"},
+    Certification => {
+	"journal name" => "Journal of Software for Algebra and Geometry",
+	"journal URI" => "https://msp.org/jsag/",
+	"article title" => "ForeignFunctions package for Macaulay2",
+	"acceptance date" => "2024-12-17",
+	"published article URI" => "https://msp.org/jsag/2025/15-1/p01.xhtml",
+	"published article DOI" => "10.2140/jsag.2025.15.1",
+	"published code URI" => "https://msp.org/jsag/2025/15-1/jsag-v15-n1-x01-ForeignFunctions.m2",
+	"release at publication" => "cb15bd0bfacf92ada65b6d0f6161625c1efaba9d",
+	"version at publication" => "0.4",
+	"volume number" => "15",
+	"volume URI" => "https://msp.org/jsag/2025/15-1/"
+	}
     )
 
 ---------------
