@@ -73,10 +73,9 @@ export {
 --------------------------------------------------------------------------------
 
 findLexCompatiblyGVDOrders = method(
-        TypicalValue => List, 
         Options => {CheckUnmixed => true}
         )
-findLexCompatiblyGVDOrders(Ideal) := opts -> I -> (
+findLexCompatiblyGVDOrders(Ideal) := List => opts -> I -> (
         if isGVDBaseCase I then (
                 return permutations gens ring I;
                 );
@@ -97,7 +96,6 @@ findLexCompatiblyGVDOrders(Ideal) := opts -> I -> (
 --------------------------------------------------------------------------------
 
 findOneStepGVD = method(
-        TypicalValue => List, 
         Options => {
                 CheckUnmixed => true, 
                 OnlyDegenerate => false,
@@ -107,7 +105,7 @@ findOneStepGVD = method(
                 Verbose => false
                 }
         )
-findOneStepGVD(Ideal) := opts -> I -> (
+findOneStepGVD(Ideal) := List => opts -> I -> (
         -- returns a list of indeterminates for which there exists a one-step geometric vertex decomposition
 
         if opts.OnlyDegenerate and opts.OnlyNondegenerate then (
@@ -150,13 +148,12 @@ findOneStepGVD(Ideal) := opts -> I -> (
 --------------------------------------------------------------------------------
 
 getGVDIdeal = method(
-        TypicalValue => List, 
         Options => {
                 CheckUnmixed => true,
                 UniversalGB => false
                 }
         )
-getGVDIdeal(Ideal, List) := opts -> (I, L) -> (
+getGVDIdeal(Ideal, List) := List => opts -> (I, L) -> (
         CNs := new HashTable from {
                 "C" => oneStepGVDCyI,
                 "N" => oneStepGVDNyI
@@ -169,10 +166,9 @@ getGVDIdeal(Ideal, List) := opts -> (I, L) -> (
 
 -- [KMY, Section 2.1]
 initialYForms = method(
-        TypicalValue => Ideal,
         Options => {UniversalGB => false}
         )
-initialYForms(Ideal, RingElement) := opts -> (I, y) -> (
+initialYForms(Ideal, RingElement) := Ideal => opts -> (I, y) -> (
         givenRing := ring I;
 
         -- set up the ring
@@ -199,8 +195,8 @@ initialYForms(Ideal, RingElement) := opts -> (I, y) -> (
 
 --------------------------------------------------------------------------------
 
-isGeneratedByIndeterminates = method(TypicalValue => Boolean)
-isGeneratedByIndeterminates(Ideal) := I -> (
+isGeneratedByIndeterminates = method()
+isGeneratedByIndeterminates(Ideal) := Boolean => I -> (
         R := ring I;
         indeterminates := gens R;
         gensI := first entries gens I;
@@ -211,7 +207,6 @@ isGeneratedByIndeterminates(Ideal) := I -> (
 
 -- [KR, Definition 2.7]
 isGVD = method(
-        TypicalValue => Boolean, 
         Options => {
                 CheckCM => "always", 
                 CheckUnmixed => true, 
@@ -221,7 +216,7 @@ isGVD = method(
                 Verbose => false
                 }
         )
-isGVD(Ideal) := opts -> I -> (
+isGVD(Ideal) := Boolean => opts -> I -> (
 
         if not instance(opts.CheckCM, String) then (
                 error "value of CheckCM must be a string";
@@ -294,7 +289,6 @@ isGVD(Ideal) := opts -> I -> (
 
 -- [KR, Definition 2.11]
 isLexCompatiblyGVD = method(
-        TypicalValue => Boolean, 
         Options => {
                 CheckCM => "always", 
                 CheckUnmixed => true, 
@@ -304,7 +298,7 @@ isLexCompatiblyGVD = method(
                 Verbose => false
                 }
         )
-isLexCompatiblyGVD(Ideal, List) := opts -> (I, indetOrder) -> (
+isLexCompatiblyGVD(Ideal, List) := Boolean => opts -> (I, indetOrder) -> (
         if not instance(opts.CheckCM, String) then (
                 error "value of CheckCM must be a string";
                 ) else (
@@ -370,8 +364,8 @@ isLexCompatiblyGVD(Ideal, List) := opts -> (I, indetOrder) -> (
 
 --------------------------------------------------------------------------------
 
-isUnmixed = method(TypicalValue => Boolean)
-isUnmixed(Ideal) := I -> (
+isUnmixed = method()
+isUnmixed(Ideal) := Boolean => I -> (
         R := ring I;
         D := primaryDecomposition I;
         
@@ -388,8 +382,7 @@ isUnmixed(Ideal) := I -> (
 --------------------------------------------------------------------------------
 
 -- [KR, Definition 4.6]
-isWeaklyGVD = method(
-        TypicalValue => Boolean, 
+isWeaklyGVD = method( 
         Options => {
                 CheckUnmixed => true, 
                 IsIdealUnmixed => false,
@@ -397,7 +390,7 @@ isWeaklyGVD = method(
                 Verbose => false
                 }
         )
-isWeaklyGVD(Ideal) := opts -> I -> (
+isWeaklyGVD(Ideal) := Boolean => opts -> I -> (
         R := ring I;
         printIf(opts.Verbose, "I = " | toString I);
 
@@ -454,8 +447,7 @@ isWeaklyGVD(Ideal) := opts -> I -> (
 
 --------------------------------------------------------------------------------
 
-oneStepGVD = method(
-        TypicalValue => Sequence, 
+oneStepGVD = method( 
         Options => {
                 CheckDegenerate => false, 
                 CheckUnmixed => true, 
@@ -463,7 +455,7 @@ oneStepGVD = method(
                 Verbose => false
                 }
         )
-oneStepGVD(Ideal, RingElement) := opts -> (I, y) -> (
+oneStepGVD(Ideal, RingElement) := Sequence => opts -> (I, y) -> (
 
         -- set up the rings
         indeterminates := switch(0, index y, gens ring y);
@@ -517,25 +509,23 @@ oneStepGVD(Ideal, RingElement) := opts -> (I, y) -> (
 
 --------------------------------------------------------------------------------
 
-oneStepGVDCyI = method(
-        TypicalValue => Ideal, 
+oneStepGVDCyI = method( 
         Options => {
                 CheckUnmixed => true,
                 UniversalGB => false
                 }
         )
-oneStepGVDCyI(Ideal, RingElement) := opts -> (I, y) -> (oneStepGVD(I, y, CheckUnmixed=>opts.CheckUnmixed, UniversalGB=>opts.UniversalGB))_1;
+oneStepGVDCyI(Ideal, RingElement) := Ideal => opts -> (I, y) -> (oneStepGVD(I, y, CheckUnmixed=>opts.CheckUnmixed, UniversalGB=>opts.UniversalGB))_1;
 
 --------------------------------------------------------------------------------
 
-oneStepGVDNyI = method(
-        TypicalValue => Ideal, 
+oneStepGVDNyI = method( 
         Options => {
                 CheckUnmixed => true,
                 UniversalGB => false
                 }
         )
-oneStepGVDNyI(Ideal, RingElement) := opts -> (I, y) -> (oneStepGVD(I, y, CheckUnmixed=>opts.CheckUnmixed, UniversalGB=>opts.UniversalGB))_2;
+oneStepGVDNyI(Ideal, RingElement) := Ideal => opts -> (I, y) -> (oneStepGVD(I, y, CheckUnmixed=>opts.CheckUnmixed, UniversalGB=>opts.UniversalGB))_2;
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -543,8 +533,8 @@ oneStepGVDNyI(Ideal, RingElement) := opts -> (I, y) -> (oneStepGVD(I, y, CheckUn
 --** METHODS (Hidden from users, not exported)
 
 
-areGensSquarefreeInY = method(TypicalValue => Boolean)
-areGensSquarefreeInY(List, RingElement) := (L, y) -> (
+areGensSquarefreeInY = method()
+areGensSquarefreeInY(List, RingElement) := Boolean => (L, y) -> (
         -- L a list of polynomials (e.g., generators of some ideal), and y an indeterminate in the ring
         -- returns true if and only if ideal(L) is squarefre in y, that is, if y^2 does not divide any term of any of the polynomials
 
@@ -553,8 +543,8 @@ areGensSquarefreeInY(List, RingElement) := (L, y) -> (
 
 
 -- check if C_{y, I} and N_{y, I} form a degenerate (or not) geometric vertex decomposition
-degeneracyCheck = method(TypicalValue => String)
-degeneracyCheck(Ideal, Ideal) := (C, N) -> (
+degeneracyCheck = method()
+degeneracyCheck(Ideal, Ideal) := String => (C, N) -> (
         -- degenerate if C == 1 or radical C == radical N
         if C == 1 then return "degenerate";
 
@@ -567,8 +557,8 @@ degeneracyCheck(Ideal, Ideal) := (C, N) -> (
         )
 
 
-getQ = method(TypicalValue => RingElement)
-getQ(RingElement, RingElement) := (f, y) -> (
+getQ = method()
+getQ(RingElement, RingElement) := RingElement => (f, y) -> (
         -- f is of the form q*y^d+r, return q  (where y^d does not divide any term of r and y does not divide any term of q)
         L := terms f;  -- this preserves the coefficient (and hence sign) of each term
         yDegrees := L / degree_y;
@@ -577,14 +567,14 @@ getQ(RingElement, RingElement) := (f, y) -> (
         )
 
 
-isGVDBaseCase = method(TypicalValue => Boolean)
-isGVDBaseCase(Ideal) := I -> (
+isGVDBaseCase = method()
+isGVDBaseCase(Ideal) := Boolean => I -> (
         return (I == 1 or I == 0 or isGeneratedByIndeterminates(I));
         )
 
 
-isIdealSquarefreeInY = method(TypicalValue => Boolean)
-isIdealSquarefreeInY(Ideal, RingElement) := (I, y) -> (
+isIdealSquarefreeInY = method()
+isIdealSquarefreeInY(Ideal, RingElement) := Boolean => (I, y) -> (
         -- returns true if and only if I is squarefree in y, that is: if and only if
         -- y^2 does not divide any term of a Grobner basis of I with respect to a y-compatible monomial order 
         -- we use lex with y > all other variables
@@ -601,22 +591,22 @@ isIdealSquarefreeInY(Ideal, RingElement) := (I, y) -> (
         )
 
 
-intersectLists = method(TypicalValue => List)
-intersectLists(List) := L -> (
+intersectLists = method()
+intersectLists(List) := List => L -> (
         -- L is a list of lists
         S := for l in L list (set l);
         return toList fold(intersectSets, S)
         )
 
 
-intersectSets = method(TypicalValue => Set)
-intersectSets(Set, Set) := (S1, S2) -> (
+intersectSets = method()
+intersectSets(Set, Set) := Set => (S1, S2) -> (
         return S1 * S2;
         )
 
 
-inTruncatedList = method(TypicalValue => Boolean)
-inTruncatedList(List, List) := (L, LL) -> (
+inTruncatedList = method()
+inTruncatedList(List, List) := Boolean => (L, LL) -> (
         -- LL is a list of lists
         -- return True if: for some list l of length n in LL, the first n terms of L are exactly l
         for l in LL do (
@@ -640,8 +630,8 @@ isSquarefreeInY(RingElement, RingElement) := (m, y) -> (
 
 -- determine whether the one-step geometric vertex decomposition holds
 -- uses [KR, Lemmas 2.6 and 2.12]
-isValidOneStep = method(TypicalValue => Boolean)
-isValidOneStep(List, RingElement) := (G, y) -> (
+isValidOneStep = method()
+isValidOneStep(List, RingElement) := Boolean => (G, y) -> (
         -- G is a list, whose elements form a reduced Gröbner basis
 
         -- analyze the powers of y appearing in the Gröbner basis
@@ -653,8 +643,8 @@ isValidOneStep(List, RingElement) := (G, y) -> (
         )
 
 
-isValidOneStepFromUGB = method(TypicalValue => Boolean)
-isValidOneStepFromUGB(List, Ideal, Ideal, RingElement) := (G, C, N, y) -> (
+isValidOneStepFromUGB = method()
+isValidOneStepFromUGB(List, Ideal, Ideal, RingElement) := Boolean => (G, C, N, y) -> (
         -- G is a UGB for the ideal I it generates; C = C_{y, I} and N_{y, I}
         -- the previous check may not work for UGBs because it requires the GB to be reduced
         currentRing := ring y;
@@ -666,8 +656,8 @@ isValidOneStepFromUGB(List, Ideal, Ideal, RingElement) := (G, C, N, y) -> (
         )
 
 
-lexOrderHelper = method(TypicalValue => List, Options => {CheckUnmixed => true})
-lexOrderHelper(List, List) := opts -> (idealList, order) -> (
+lexOrderHelper = method(Options => {CheckUnmixed => true})
+lexOrderHelper(List, List) := List => opts -> (idealList, order) -> (
         -- remove ideals that are trivially GVD
         nontrivialIdeals := select(idealList, i -> not isGVDBaseCase i);
         -- if there are none left, return the order
@@ -695,8 +685,8 @@ lexOrderHelper(List, List) := opts -> (idealList, order) -> (
         )
 
 
-sumGenerators = method(TypicalValue => List)
-sumGenerators(Ideal) := I -> (
+sumGenerators = method()
+sumGenerators(Ideal) := List => I -> (
         -- returns a list {I1, I2} where I = I1 + I2 and (support I1) and (support I2) are disjoint,
         -- if no such I1 and I2 exist, then {I} is returned
         -- only uses the given generators of I (does not compute a minimal generating set)
@@ -725,7 +715,6 @@ sumGenerators(Ideal) := I -> (
         )
 
 
-
 printIf = method()
 printIf(Boolean, String) := (bool, str) -> (
         if bool then print str;
@@ -743,8 +732,8 @@ printIf(Boolean, String) := (bool, str) -> (
                 )
 
 
-unmixedCheck = method(TypicalValue => Boolean)
-unmixedCheck(Ideal, Ideal, Boolean) := (C, N, verb) -> (
+unmixedCheck = method()
+unmixedCheck(Ideal, Ideal, Boolean) := Boolean => (C, N, verb) -> (
 
         CisCM := isHomogeneous C and (pdim((ring C)^1/C) == codim C);
         NisCM := isHomogeneous N and (pdim((ring N)^1/N) == codim N);
