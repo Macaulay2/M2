@@ -727,18 +727,18 @@ protect Prefix
 protect Postfix
 protect Precedence
 protect Syntax
-makeKeyword'=makeKeyword
-makeKeyword=method(TypicalValue => Keyword, Options => { Precedence => symbol *, Syntax => Binary })
+keywordOptions := new OptionTable from { Precedence => symbol *, Syntax => Binary }
 syntaxOptions:=set {Binary,Prefix,Postfix,{Binary,Prefix},{Prefix,Binary}}
-makeKeyword String := o -> s -> (
-    pr:=if instance(o.Precedence,Symbol) then (getParsing o.Precedence)#0 else if instance(o.Precedence,ZZ) then o.Precedence else error "incorrect Symbol option";
+new Keyword from Sequence := (T,S) -> (
+    (o,s) := override(keywordOptions,S);
+    pr:=if instance(o.Precedence,Symbol) then (getParsing o.Precedence)#0 else if instance(o.Precedence,ZZ) then o.Precedence else error "incorrect Precedence option";
     if not isMember(o.Syntax,syntaxOptions) then error "incorrect Syntax option";
-    makeKeyword'(s,
+    makeKeyword(s,
     pr,
     o.Syntax === Binary or (class o.Syntax === List and isMember(Binary,o.Syntax)),
     o.Syntax === Prefix or (class o.Syntax === List and isMember(Prefix,o.Syntax))
     ))
-
+new Keyword from String := (T,s) -> new T from sequence s
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

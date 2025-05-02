@@ -893,7 +893,6 @@ export {
 	"lookup",
 	"lookupCount",
 	"makeDirectory",
-	"makeKeyword",
 	"makeDocumentTag",
 	"makePackageIndex",
 	"map",
