@@ -24,7 +24,7 @@ doc ///
 	  { M2CODE "help \"Macaulay2\"",	  { " -- display the top of the documentation tree" }},
           { M2CODE "help \"matrices\"",           { " -- display an overview of matrices in Macaulay2" }},
 	  { M2CODE "help X",                      { " -- display the documentation node whose key is ", TT "X" }},
-	  { M2CODE "help res",                    { " -- documentation for the function ", TO "res", " and ways to use it" }},
+	  { M2CODE "help res",                    { " -- documentation for the function ", TO "OldChainComplexes :: res", " and ways to use it" }},
           { M2CODE "help(res, Module)",           { " -- documentation for the method ", TO "OldChainComplexes :: resolution(Module)" }},
 	  { M2CODE "help Module",                 { " -- documentation for the type ", TO "Module", " and methods that take one as input" }},
 	  { M2CODE "help symbol **",              { " -- documentation for the operator ", TO "**", " and its various uses and meanings" }},

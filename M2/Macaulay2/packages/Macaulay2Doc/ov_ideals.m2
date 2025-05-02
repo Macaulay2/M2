@@ -151,7 +151,7 @@ document {
 
      SUBSECTION "modules versus ideals for computations",
        "Some functions in Macaulay2 try to make an informed decision 
-       about ideal and modules.  For example, if ", TO "resolution", " is
+       about ideal and modules.  For example, if ", TO "OldChainComplexes :: resolution", " is
        given an ideal ", TT "I", ", it will compute a resolution of
        the module ", TT "R^1/I", ", as in the following example.",
        EXAMPLE {
@@ -439,7 +439,7 @@ document {
      the underlying module is used.  Here are some examples where the quotient 
      module is used.",
      PARA{},
-     "A free resolution of ", TT "R^1/I", " can be obtained with ", TO "resolution", ".",
+     "A free resolution of ", TT "R^1/I", " can be obtained with ", TO "OldChainComplexes :: resolution", ".",
      EXAMPLE "resolution I",
      "The Krull dimension or codimension of the support of the quotient module can
      be obtained.",

@@ -147,7 +147,7 @@ Node
 
     Text
       If one is documenting an optional argument to a function, then the key
-      has a different form still, as in @TO "OldChainComplexes :: [resolution, SyzygyLimit]"@.
+      has a different form still, as in @TO "OldChainComplexes :: resolution(...,SyzygyLimit=>...)"@.
     Code
       EXAMPLE { PRE ////Key => {[resolution, SyzygyLimit]}//// }
 
