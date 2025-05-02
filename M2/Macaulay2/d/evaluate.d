@@ -1438,8 +1438,11 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 		else return r)
 	    else return r);
 	-- if not, use default behavior
-	c := Code(binaryCode(s, Code(evaluatedCode(lexpr, codePosition(x.lhs))),
-		x.rhs, x.position));
+	c := (
+	    if s.word.name === "??" then x.rhs
+	    else Code(binaryCode(s,
+		    Code(evaluatedCode(lexpr, codePosition(x.lhs))),
+		    x.rhs, x.position)));
 	when x.lhs
 	is y:globalMemoryReferenceCode do (
 	    r := eval(c);
