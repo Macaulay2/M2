@@ -39,7 +39,10 @@ export makeKeywordFun(e:Expr):Expr := (
 	   if b2.v then (u=unaryop; uprec=prec);
 	   ) else t=postfixop;
 	   w:=makeUniqueWord(s.v, parseinfo(prec,bprec,uprec,parsefuns(u,t)));
-	   when globalLookup(w) is x:Symbol do buildErrorPacket("symbol already in use")
+	   when globalLookup(w) is x:Symbol do (
+	   	stderr << "warning: keyword already in use" << endl;
+		globalFrame.values.(x.frameindex)
+		)
 	   else (
 	   install(s.v,w);
 	   Expr(makeKeyword(w)))
