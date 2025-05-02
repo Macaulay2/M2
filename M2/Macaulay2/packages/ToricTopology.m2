@@ -28,7 +28,7 @@ newPackage(
     		{Name => "Alexander I. Suciu", Email => "a.suciu@neu.edu"}
 		},  
         Keywords => {"Toric Geometry"},
-     	PackageImports => { "SimplicialComplexes" },
+     	PackageImports => { "OldChainComplexes", "SimplicialComplexes" },
     	Headline => "toric topology"
     	)
 

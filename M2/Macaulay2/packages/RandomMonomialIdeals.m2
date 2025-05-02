@@ -49,7 +49,7 @@ newPackage(
 	},
     	Headline => "Erdos-Renyi-type random monomial ideals",
 	Keywords => {"Examples and Random Objects"},
-     	PackageImports => { "Depth", "BoijSoederberg", "Serialization" },
+     	PackageImports => { "OldChainComplexes", "Depth", "BoijSoederberg", "Serialization" },
     	DebuggingMode => false,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",

@@ -10,7 +10,7 @@ newPackage(
 			   HomePage =>"https://www.math.uni-sb.de/ag/schreyer"}},
 	Headline=> "general canonical curves of genus <= 15 over fields with small characteristic",
 	Keywords => {"Examples and Random Objects"},
-	PackageImports => {"Elimination","Truncations","Complexes"}
+	PackageImports => {"OldChainComplexes", "Elimination","Truncations","Complexes"}
 	)
     
 export{"isSmoothCurve",

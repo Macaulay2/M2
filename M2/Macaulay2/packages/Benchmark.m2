@@ -8,7 +8,7 @@ newPackage (
 	  },
      Keywords => {"Miscellaneous"},
      HomePage => "https://macaulay2.com/",
-     PackageImports => {"XML"},
+     PackageImports => {"OldChainComplexes", "XML"},
      Version => "1.0"
      )
 

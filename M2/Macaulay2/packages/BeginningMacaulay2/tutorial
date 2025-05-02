@@ -341,7 +341,8 @@ Description
 	  resolution has degree $3+2=5$.
 
 	  Commonly computed homological invariants
-	  such as @ TO2 { (pdim,Module), "projective dimension" } @ and @ TO2 {(regularity,Module),
+	  such as @ TO2 { "OldChainComplexes :: (pdim,Module)", "projective dimension" } @ and @
+          TO2 {"OldChainComplexes :: (regularity,Module)",
 	  "regularity"} @ are (also) available directly:
      Example
 	  pdim M

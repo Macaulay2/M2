@@ -10,6 +10,7 @@ newPackage(
 	  {Name => "Lily Silverstein", Email => "lsilverstein@cpp.edu", HomePage => "https://www.cpp.edu/faculty/lsilverstein/"}
 	  },
      Headline => "some additional ChainComplex Functions",
+     PackageExports => {"OldChainComplexes"},
      Keywords => {"Homological Algebra"},
      DebuggingMode =>false
      )
