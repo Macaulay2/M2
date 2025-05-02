@@ -181,7 +181,7 @@ toStandardForm(Matrix) := Matrix => A -> (
 
 toStandardForm(Matrix, Matrix) := Sequence => (A, c) -> (
     -- input: matrix A corresponding to constraints Ax <= b and matrix c corresponding to objective function cx
-    -- output: matrix A' and matrix c' corresopnding to constraints A'x' = b and objective function c'x'
+    -- output: matrix A' and matrix c' corresponding to constraints A'x' = b and objective function c'x'
     
     if numRows c > 1 and numColumns c > 1 then error("expected a one-dimensional matrix as the second argument");
     
@@ -191,7 +191,7 @@ toStandardForm(Matrix, Matrix) := Sequence => (A, c) -> (
 
 toStandardForm(Matrix, List) := Sequence => (A, c) -> (
     -- input: matrix A corresponding to constraints Ax <= b and list c corresponding to objective function cx
-    -- output: matrix A' and list c' corresopnding to constraints A'x' = b and objective function c'x'
+    -- output: matrix A' and list c' corresponding to constraints A'x' = b and objective function c'x'
     (toStandardForm A, join(c, (numRows A):0))
 )
 
