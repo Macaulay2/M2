@@ -409,3 +409,53 @@ document {
      ///,
      SeeAlso => {"heft vectors", "polynomial rings", degreesRing}
      }
+
+document { Key => InexactField,
+     Headline => "the class of inexact fields",
+     PARA {
+	  "An inexact field is one whose elements are real or complex numbers,
+	  represented floating point approximations of varying accuracy or precision."
+	  },
+     EXAMPLE lines ///
+     numeric_100 pi
+     ring oo
+     class oo
+     parent oo
+     ///,
+     Subnodes => { TO RealField, TO ComplexField },
+     }
+
+document { Key => InexactFieldFamily,
+     Headline => "the class of all families of inexact fields",
+     PARA {
+	  "All real numbers have the same class, ", TO "RR", ", but the rings they
+	  belong to depends on the number of binary digits of precision used
+	  to represent them.  Similarly for complex numbers, which all belong
+	  to the class ", TO "CC", ".  Thus ", TO "RR", " and ", TO "CC", " are regarded not as inexact
+	  fields, but as families of inexact fields."
+	  },
+     EXAMPLE lines ///
+     x = 1/3.
+     class x
+     ring x
+     x = 1/3.p200
+     class x
+     ring x
+     ///,
+     SeeAlso => { InexactField }
+     }
+
+document { Key => RealField,
+     Headline => "the class of all real fields",
+     PARA { "A real number ring is a ring whose elements are real numbers of variable precision." }
+     }
+
+undocumented {
+     (NewOfFromMethod,ComplexField,Nothing,ZZ),
+     (NewOfFromMethod,RealField,Nothing,ZZ)
+     }
+
+document { Key => ComplexField,
+     Headline => "the class of all complex fields",
+     PARA { "A complex number ring is a ring whose elements are complex numbers of variable precision." }
+     }
