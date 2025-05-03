@@ -49,12 +49,12 @@ Node
     Example
       4*5;
     Text
-      The output from the previous line can be obtained with @TO oo@, even if a semicolon prevented it
+      The output from the previous line can be obtained with @TO "oo"@, even if a semicolon prevented it
       from being printed.
     Example
       oo
     Text
-      Lines before that can be obtained with @TO ooo@ and @TO oooo@. Alternatively, the symbol labeling an
+      Lines before that can be obtained with @TO "ooo"@ and @TO "oooo"@. Alternatively, the symbol labeling an
       output line can be used to retrieve the value, as in the following example.
     Example
       o5 + 1
