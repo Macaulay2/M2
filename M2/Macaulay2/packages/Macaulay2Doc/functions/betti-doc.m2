@@ -207,7 +207,7 @@ Node
     (multigraded, BettiTally)
     (betti, BettiTally)
     "OldChainComplexes :: betti(...,Minimize=>...)"
-    "OldChainComplexes :: minimalBetti"
+    minimalBetti
 
 Node
   Key
@@ -243,6 +243,18 @@ Node
     "heft vectors"
     MultigradedBettiTally
     multigraded
+///
+
+-----------
+
+doc ///
+   Key
+      minimalBetti
+   Headline
+     minimal betti numbers of (the minimal free resolution of) a homogeneous ideal or module
+   SeeAlso
+     "OldChainComplexes :: minimalBetti(Ideal)"
+     --"Complexes :: minimalBetti
 ///
 
 -----------

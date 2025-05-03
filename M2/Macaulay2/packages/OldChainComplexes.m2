@@ -14,13 +14,9 @@ export {
     "ChainComplexMap",
     "GradedModule",
     "GradedModuleMap",
-    "Resolution",
+    --"Resolution", -- exported in chaincomplexes.m2
     "chainComplex",
-    "eagonNorthcott",
-    "gradedModule",
     "gradedModuleMap",
-    "minimalBetti",
-    "poincareN",
     "resolution", "res" => "resolution",
     "syzygyScheme",
 }

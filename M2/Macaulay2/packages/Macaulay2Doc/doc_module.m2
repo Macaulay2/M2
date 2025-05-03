@@ -138,6 +138,15 @@ document {
 }
 
 document {
+    Key => gradedModule,
+    Headline => "make a graded module",
+    SeeAlso => {
+	"Complexes :: gradedModule(Complex)",
+	"OldChainComplexes :: gradedModule(List)",
+    },
+}
+
+document {
      Key => module,
      Headline => "make or get a module",
     Subnodes => {

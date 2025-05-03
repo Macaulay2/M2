@@ -34,11 +34,14 @@ getMinorsStrategy := (R, m, strat) -> RawMinorsStrategyCodes#strat ?? (
     else error "'Strategy' keyword must be 'Cofactor', 'Bareiss' or 'Dynamic")
 
 -----------------------------------------------------------------------------
--- koszul
+-- koszul and eagonNorthcott
 -----------------------------------------------------------------------------
+-- more methods are installed in Complexes and OldChainComplexes
 
 koszul = method()
 koszul(ZZ, Matrix) := Matrix => (i, m) -> map(ring m, rawKoszul(i, raw m))
+
+eagonNorthcott = method()
 
 -----------------------------------------------------------------------------
 -- symmetricAlgebra

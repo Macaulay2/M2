@@ -284,6 +284,8 @@ setupMethods((), {
       minimize
 	  })
 
+gradedModule = method(Dispatch => Thing)
+
 assert = method()
 assert Thing := x -> assert' x
 

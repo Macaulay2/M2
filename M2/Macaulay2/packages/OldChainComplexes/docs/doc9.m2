@@ -55,7 +55,12 @@ document {
      }
 
 document {
-     Key => {gradedModule,(gradedModule, Module), (gradedModule, List), (gradedModule, Sequence), (gradedModule, ChainComplex)},
+    Key => {
+	(gradedModule, List),
+	(gradedModule, Module),
+	(gradedModule, Sequence),
+	(gradedModule, ChainComplex),
+    },
      Headline => "make a graded module",
      Usage => "gradedModule v",
      Inputs => { "v" => List => "a module, or a list or sequence of modules" },

@@ -303,8 +303,6 @@ Module ** GradedModule := GradedModule => (M,C) -> (
      scan(spots C, i -> D#i = M ** C#i);
      D)
 
-gradedModule = method(Dispatch => Thing)
-
 gradedModule Sequence := gradedModule List := GradedModule => modules -> (
      C := new GradedModule;
      R := C.ring = ring modules#0;

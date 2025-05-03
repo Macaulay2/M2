@@ -51,6 +51,12 @@ unpackEngineBetti = w -> (
 rawBetti = (computation, type) -> unpackEngineBetti rawGBBetti(computation, type)
 
 -----------------------------------------------------------------------------
+-- this is here because currently both Complexes and OldChainComplexes use it
+
+Resolution = new Type of MutableHashTable
+Resolution.synonym = "resolution"
+
+-----------------------------------------------------------------------------
 -- BettiTally type declarations and basic constructors
 -----------------------------------------------------------------------------
 
@@ -196,6 +202,16 @@ betti Module        := opts -> M -> betti(presentation M, opts)
 betti BettiTally    := opts -> B -> if opts.Weights === null then B else (
     heftfn := heftfun opts.Weights;
     applyKeys(B, (i,d,h) -> (i,d,heftfn d)))
+
+
+minimalBetti = method(
+    TypicalValue => BettiTally,
+    Options => {
+	DegreeLimit         => null,
+	LengthLimit         => infinity,
+	ParallelizeByDegree => false, -- currently: only used over primes fields of positive characteristic
+	Weights             => null,
+    })
 
 -----------------------------------------------------------------------------
 

@@ -44,6 +44,7 @@ document {
 	  TO "Saturation :: module quotients, saturation, and annihilator",
 
 	  "graded modules",
+	  TO gradedModule,
 	  TO "Hilbert functions and free resolutions",
 	  -- Mike wanted this: TO "degrees of elements and free modules",
 	  -- Mike wanted this: TO "degree and multiplicity of a module",
@@ -613,7 +614,7 @@ document {
 	 TO "Varieties::genera(Module)",
 	 TO (hilbertSeries, Module),
 	 TO poincare,
-	 TO "OldChainComplexes :: poincareN",
+	 TO poincareN,
 	 TO reduceHilbert,
 	 TO betti,
 	 }

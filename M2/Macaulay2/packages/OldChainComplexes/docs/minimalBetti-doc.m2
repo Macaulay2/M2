@@ -1,6 +1,5 @@
 doc ///
    Key
-      minimalBetti
      (minimalBetti,Ideal)
      (minimalBetti,Module)
      [minimalBetti,DegreeLimit]
