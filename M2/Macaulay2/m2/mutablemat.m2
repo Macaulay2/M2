@@ -109,6 +109,9 @@ numRows(MutableMatrix) := (m) -> rawNumberOfRows raw m
 numColumns(RawMutableMatrix) := (m) -> rawNumberOfColumns m
 numColumns(MutableMatrix) := (m) -> rawNumberOfColumns raw m
 
+target MutableMatrix := Module => m -> (ring m)^(numRows m)
+source MutableMatrix := Module => m -> (ring m)^(numColumns m)
+
 rowSwap = method()
 rowSwap(RawMutableMatrix,ZZ,ZZ) := (m,i,j) -> (rawMatrixRowSwap(m,i,j);m)
 rowSwap(MutableMatrix,ZZ,ZZ) := (m,i,j) -> (rawMatrixRowSwap(raw m,i,j);m)

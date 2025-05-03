@@ -27,7 +27,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => (target,Matrix),
+     Key => {(target,Matrix), (target,MutableMatrix)},
      Headline => "find the target module of matrix",
      Usage => "target f",
      Inputs => {
