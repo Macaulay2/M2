@@ -18,8 +18,8 @@
 
 newPackage(
 	"Visualize",
-	Version => "1.6",
-	Date => "October 28, 2024",
+	Version => "1.7",
+	Date => "May 3, 2025",
     	Authors => {       
      	     {Name => "Brett Barwick", Email => "bbarwick@uscupstate.edu", HomePage => "http://faculty.uscupstate.edu/bbarwick/"},	     
 	     {Name => "Thomas Enkosky", Email => "tomenk@bu.edu", HomePage => "http://math.bu.edu/people/tomenk/"},	     
@@ -62,6 +62,16 @@ export {
      "closePort"
 }
 
+---------------
+-- ChangeLog --
+---------------
+
+-*
+
+1.7 (2025-05-03, M2 1.25.05)
+* update for leadTerm changes
+
+*-
 
 ------------------------------------------------------------
 -- Global Variables
