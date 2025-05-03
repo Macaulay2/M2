@@ -3,6 +3,11 @@
 --- author(s): 
 --- notes: 
 
+undocumented {
+    [kernel, DegreeLimit],
+    [kernel, Strategy],
+}
+
 doc ///
 Node
   Key
