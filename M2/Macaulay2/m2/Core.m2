@@ -2,6 +2,29 @@
 -- The source code of Macaulay2 is contained in multiple files,
 -- all contained in the subdirectory "Macaulay2/".
 
+-- newPackage is called in packages.m2!
+CorePackage = (
+    "Core",
+    Date     => version#"compile time",
+    Version  => version#"VERSION",
+    Headline => "a computer algebra system designed to support algebraic geometry",
+    HomePage => "https://Macaulay2.com/",
+    Authors => {
+	{   Name => "Daniel R. Grayson",
+	    Email => "dan@math.uiuc.edu",
+	    HomePage => "http://www.math.uiuc.edu/~dan/"
+	},
+	{   Name => "Michael E. Stillman",
+	    Email => "mike@math.cornell.edu",
+	    HomePage => "https://math.cornell.edu/michael-e-stillman"
+	}
+    },
+    DebuggingMode => debuggingMode,
+    Reload => true,
+)
+
+-----------------------------------------------------------------------------
+
 if notify then printerr("reading ", minimizeFilename currentFileName)
 
 if class Core =!= Symbol
@@ -143,6 +166,40 @@ loads := minimizeFilename concatenate(currentFileDirectory, "loadsequence")
 if notify then printerr("about to read ", loads)
 scan(select("^\\w+\\.m2", "$&", get loads), needs)
 if notify then printerr("read ", loads)
+
+-----------------------------------------------------------------------------
+-- Core officially becomes a package
+-----------------------------------------------------------------------------
+
+newPackage CorePackage
+
+needs "exports.m2"
+
+if prefixDirectory =!= null then
+Core#"package prefix" = prefixDirectory
+
+Core#"preloaded packages" = nonnull {
+    "Classic",
+    "ConwayPolynomials",
+    "Elimination",
+    "IntegralClosure",
+    "InverseSystems",
+    "Isomorphism",
+    "LLLBases",
+    "MinimalPrimes",
+    "OldChainComplexes",
+    "OnlineLookup",
+    "PackageCitations",
+    "PrimaryDecomposition",
+    "ReesAlgebra",
+    "Saturation",
+    "SimpleDoc",
+    "TangentCone",
+    "Varieties",
+}
+
+undocumented keys undocumentedkeys
+undocumentedkeys = null
 
 corepath' := corepath
 userpath' := userpath

@@ -193,7 +193,7 @@ load typicalValuesSource
 scanPairs(redefs, (k,v) -> globalAssign(baseName k,v))
 scanPairs(new HashTable from variants, (args,f) -> (
 	installMethod append(args,f);
-	undocumented args;
+	undocumented' args;
 	))
 
 nilp := x -> (  -- degree of nilpotency

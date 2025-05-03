@@ -445,39 +445,6 @@ exportFrom(Package, List) := (P, x) -> export \\ toString \ importFrom(P, x)
 exportFrom(String,  String) :=
 exportFrom(Package, String) := (P, x) -> exportFrom(P, {x})
 
----------------------------------------------------------------------
--- Here is where Core officially becomes a package
--- TODO: is this line necessary? when does it ever run?
-addStartFunction( () -> if prefixDirectory =!= null then Core#"package prefix" = prefixDirectory )
-newPackage("Core",
-     Authors => {
-	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"},
-	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
-	  },
-     DebuggingMode => debuggingMode,
-     Reload => true,
-     HomePage => "https://macaulay2.com/",
-     Version => version#"VERSION",
-     Headline => "A computer algebra system designed to support algebraic geometry")
-Core#"preloaded packages" = {
-    "Elimination",
-    "LLLBases",
-    "IntegralClosure",
-    "PrimaryDecomposition",
-    "MinimalPrimes",
-    "Saturation",
-    "Classic",
-    "TangentCone",
-    "ReesAlgebra",
-    "ConwayPolynomials",
-    "InverseSystems",
-    "SimpleDoc",
-    "OnlineLookup",
-    "OldChainComplexes",
-    "Isomorphism",
-    "Varieties",
-    "PackageCitations"}
-
 protect PackageIsLoaded
 
 endPackage = method()

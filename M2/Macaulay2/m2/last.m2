@@ -86,6 +86,8 @@ addStartFunction( () -> if version#"gc version" < "7.0" then error "expected lib
 copyright = new Command from(() -> help "Copyright and license")
 if fullCopyright then addStartFunction(() -> print copyright())
 
+undocumented' = x -> error "late use of function undocumented'"
+
 unexportedSymbols = () -> hashTable apply(pairs Core#"private dictionary", (n,s) -> if not Core.Dictionary#?n then (s => class value s => value s))
 Function.GlobalReleaseHook = (X,x) -> (
      if dictionary X =!= User#"private dictionary" then warningMessage(X," redefined");
