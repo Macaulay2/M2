@@ -55,14 +55,7 @@ betti GradedModule := opts -> C -> (
 -- minimalBetti
 -----------------------------------------------------------------------------
 
-minimalBetti = method(
-    TypicalValue => BettiTally,
-    Options => {
-	DegreeLimit => null,
-	LengthLimit => infinity,
-	Weights => null,
-    ParallelizeByDegree => false -- currently: only used over primes fields of positive characteristic
-	})
+-- method is defined in m2/betti.m2
 minimalBetti Ideal  := BettiTally => opts -> I -> minimalBetti(comodule I, opts)
 minimalBetti Module := BettiTally => opts -> M -> (
     R := ring M;

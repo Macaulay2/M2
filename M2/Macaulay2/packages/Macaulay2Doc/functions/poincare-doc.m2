@@ -142,4 +142,13 @@ Node
     reduceHilbert
     selectInSubring
     "Elimination::Elimination"
+
+Node
+  Key
+    poincareN
+  Headline
+    assemble degrees into polynomial
+  SeeAlso
+    "Complexes :: poincareN(Complex)"
+    "OldChainComplexes :: poincareN(ChainComplex)"
 ///

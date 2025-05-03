@@ -43,6 +43,8 @@ importFrom_Core {
     "Computation"
     }
 
+importFrom_Core "Resolution"
+
 ResolutionObject = new Type of MutableHashTable
 ResolutionObject.synonym = "resolution object"
 toString ResolutionObject := C -> toString raw C

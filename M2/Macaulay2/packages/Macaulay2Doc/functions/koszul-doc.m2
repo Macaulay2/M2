@@ -55,3 +55,18 @@ document {
      SeeAlso => {}
      }
 ///
+
+doc ///
+Node
+  Key
+    eagonNorthcott
+  Headline
+    Eagon-Northcott complex of a matrix of linear forms
+  Description
+    Text
+      The Eagon-Northcott complex is an explicit chain complex that gives a minimal projective
+      resolution of the cokernel of the matrix maximal minors of a generic matrix of linear forms.
+  SeeAlso
+    "OldChainComplexes :: eagonNorthcott(Matrix)"
+    koszul
+///

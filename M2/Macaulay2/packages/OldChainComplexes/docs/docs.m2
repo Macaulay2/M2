@@ -400,7 +400,6 @@ Node
 
 Node
   Key
-     poincareN
     (poincareN, ChainComplex)
   Headline
     assemble degrees into polynomial

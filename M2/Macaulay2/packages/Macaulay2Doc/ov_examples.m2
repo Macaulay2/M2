@@ -36,7 +36,7 @@ Node
     hilbertPolynomial
     syz
     koszul
-    "OldChainComplexes :: eagonNorthcott"
+    eagonNorthcott
     regularity
     presentation
     "OldChainComplexes :: resolution"

@@ -96,6 +96,11 @@ storefuns#poincare(Module, RingElement) := (M, hf) -> M.cache.poincare = substit
 -- TODO: deprecate this
 installHilbertFunction = storefuns#poincare
 
+-- TODO: make poincareN return in variables of (degreesRing R)[S],
+-- so that sub(poincareN C, S => -1) == poincare C holds
+-- Note: poincareN methods are installed in Complexes and OldChainComplexes
+poincareN = method(TypicalValue => RingElement)
+
 -----------------------------------------------------------------------------
 -- dim, degree, multidegree, length
 -----------------------------------------------------------------------------
