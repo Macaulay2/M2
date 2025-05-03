@@ -755,11 +755,6 @@ undocumented Thing := key -> if key =!= null then (
 	    "linenum"          => currentRowNumber()
 	    }))
 
--- somehow, this is the very first method called by the Core!!
-undocumented keys undocumentedkeys
-undocumentedkeys = null
-undocumented' = x -> error "late use of function undocumented'"
-
 -----------------------------------------------------------------------------
 -- SYNOPSIS
 -----------------------------------------------------------------------------
