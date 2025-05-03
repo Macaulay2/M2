@@ -15,10 +15,24 @@ ulimit := utest "-c unlimited" | utest "-t 700" | utest "-m 850000" | utest "-s 
 M2statusRegexp := "^--status:"
 statusLines := file -> select(lines file, s -> match(M2statusRegexp,s))
 
+testLocation := inf -> (
+    infcontents := get inf;
+    -- TODO: is this feature ever used?
+    scan(statusLines infcontents, printerr);
+    m := regex("^-- test source: ([^\n]+)", infcontents);
+    if m =!= null then substring(m#1, infcontents)
+    else toString new FilePosition from (inf, 0, 1))
+
 M2errorRegexp := "^[^:\n]+:[0-9]+:[0-9]+:(\\([0-9]+\\)):\\[[0-9]+\\]: "
 aftermatch := (pat,str) -> (
     m := regex(pat,str);
     if m === null then "" else substring(m#0#0,str))
+
+logLocation := tmpf -> concatenate(
+    toString new FilePosition from (tmpf, 0, 1),
+    ":(" | loadDepth | ")",
+    ":[" | recursionDepth() | "]",
+    ": ", aftermatch(M2errorRegexp, get tmpf))
 
 describeReturnCode := r -> (
     if r % 256 == 0 then "exited with status code " | toString (r // 256)
@@ -128,7 +142,6 @@ runFile = (inf, inputhash, outf, tmpf, pkg, announcechange, usermode, examplefil
      cmd = cmd | readmode(SetInputFile,   "<" | format inf);
      cmd = cmd | readmode(SetOutputFile,  ">>" | format toAbsolutePath tmpf);
      cmd = cmd | readmode(SetCaptureErr,  "2>&1");
-     if debugLevel > 0 then stderr << endl << cmd << endl;
      for fn in examplefiles do copyFile(fn,rundir | baseFilename fn);
      r := run cmd;
      if r == 0 then (
@@ -136,21 +149,18 @@ runFile = (inf, inputhash, outf, tmpf, pkg, announcechange, usermode, examplefil
 	  moveFile(tmpf,outf);
 	  return true;
 	  );
-     if debugLevel == 0 then stderr << endl;
-     stderr << cmd << endl;
-     stderr << (new FilePosition from (tmpf, 0, 1)) << ":(" << loadDepth << "):[" << recursionDepth() << "]: (output file) error: Macaulay2 " << describeReturnCode r << endl;
-     stderr << aftermatch(M2errorRegexp,get tmpf);
-     infcontents := get inf;
-     stderr << (new FilePosition from (inf, 0, 1)) << ": (input file)" << endl;
-     scan(statusLines infcontents, x -> stderr << x << endl);
-     m := regex("^--([^\n]+): location of test code", infcontents);
-     if m =!= null then stderr << (
-	 substring(m#1, infcontents)) << ": (location of test code)" << endl;
-     if # findFiles rundir == 1
-     then removeDirectory rundir
+     -- print debugging info
+     printerr "running failed, too!";
+     printerr("error log:  " | logLocation tmpf);
+     printerr("test input: " | testLocation inf);
+     if debugLevel > 0 then
+     stderr << commentize "full command:" << endl << cmd << endl;
+     stderr << pad("*** error: M2 " | describeReturnCode r, printWidth - 32) << flush;
+     -- cleanup run directory
+     if # findFiles rundir == 1 then removeDirectory rundir
      else stderr << rundir << ": error: files remain in temporary run directory after program exits abnormally" << endl;
-     stderr << "M2: *** Error " << (if r<256 then r else r//256) << endl;
-     if r == 2 then error "interrupted";
+     -- detect user interrupts
+     if r // 256 == 2 then error "interrupted";
      numExampleErrors += 1;
      return false;
      )

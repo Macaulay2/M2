@@ -27,7 +27,7 @@ addTest(String, FilePosition) := (str, loc) -> (
     n := #currentPackage#"test inputs";
     currentPackage#"test inputs"#n = TestInput {
 	"location" => loc,
-	"code" => str})
+	"code" => concatenate("-- test source: ", toString loc, newline, str)})
 -- the following is not called by TEST, but called directly when we want to
 -- add a test from a file (used by loadTestDir)
 addTest String := filename -> addTest(get filename,
@@ -115,7 +115,10 @@ check(List, Package) := opts -> (L, pkg) -> (
 	if opts.Verbose then apply(errorList, (k, errfile) -> (
 		stderr << locate inputs#k << " error:" << endl;
 		printerr getErrors(outfile errfile)));
-	error("test(s) #", demark(", ", toString \ first \ errorList), " of package ", toString pkg, " failed.")))
+	printerr("Summary: ", toString(#errorList), " test(s) failed in package ", pkg#"pkgname", ":");
+	printerr net TABLE apply(first \ errorList, i -> { "Test #"|i|".", toString locate tests_i pkg });
+	error("repeat failed tests with:", newline,
+	    "  check({", demark(", ", toString \ first \ errorList), "}, ", format pkg#"pkgname", ")")))
 
 checkAllPackages = () -> (
     tmp := argumentMode;
