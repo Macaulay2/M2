@@ -578,6 +578,28 @@ Ideal ^ Array := (I, e) -> (
    ideal phi generators I
 )
 
+-----------------------------------------------------------------------------
+-- kernel and homology
+-----------------------------------------------------------------------------
+
+kernel = method(Options => {
+	DegreeLimit  => {},
+	Strategy     => {},
+	SubringLimit => infinity, -- stop after finding enough elements of a subring
+    })
+kernel Matrix := Module => opts -> g -> g.cache.kernel ??= if g == 0 then source g else tryHooks(
+    (kernel, Matrix), (opts, g), (opts, g) -> (
+	-- this is the default algorithm
+	-- compare with homology below
+	N := source g;
+	P := target g;
+	g = matrix g;
+	if P.?generators then g = P.generators * g;
+	h := modulo(g, if P.?relations then P.relations);
+	if N.?generators then h = N.generators * h;
+	subquotient(h, if N.?relations then N.relations)))
+kernel RingElement := Module => opts -> f -> kernel(matrix {{f}}, opts)
+
 homology(Matrix,Matrix) := Module => opts -> (g,f) -> (
      if g == 0 then cokernel f
      else if f == 0 then kernel g

@@ -228,7 +228,6 @@ RingMap \ VisibleList := VisibleList => (f,v) -> apply(v,x -> f x)
 -- kernel
 -----------------------------------------------------------------------------
 
-kernel = method(Options => { SubringLimit => infinity })
 kernel RingMap := Ideal => opts -> (cacheValue (symbol kernel => opts)) (f -> (
     (F, R) := (target f, source f);
     if 0_F == 1_F then return ideal 1_R;
