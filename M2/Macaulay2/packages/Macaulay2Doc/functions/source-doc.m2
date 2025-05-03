@@ -27,7 +27,7 @@ document {
      }
 
 document { 
-     Key => (source,Matrix),
+     Key => {(source,Matrix), (source,MutableMatrix)},
      Headline => "find the source module of matrix",
      Usage => "source f",
      Inputs => {

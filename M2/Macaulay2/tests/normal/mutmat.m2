@@ -67,3 +67,8 @@ assert try ( mutableMatrix(ZZ,  1, -1); false ) else true
 assert try ( mutableIdentity(ZZ, -1);   false ) else true
 
 assert(ring mutableMatrix(ZZ/101, {{1,2,3}}) === ZZ/101)
+
+-- target and source
+M = mutableMatrix {{1, 2, 3}, {4, 5, 6}}
+assert Equation(target M, ZZ^2)
+assert Equation(source M, ZZ^3)
