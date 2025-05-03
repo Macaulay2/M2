@@ -358,7 +358,6 @@ document {
      SeeAlso => { "recursionLimit" }
      }
 
-
 document {
      Key => FilePosition,
      Headline => "the class of all file positions",
@@ -369,6 +368,10 @@ document {
      A single pair is a position, two form a range. The last pair is the central point of interest in that range."
      }
 
+undocumented {
+    (symbol |, FilePosition, String),
+    (symbol |, String, FilePosition),
+}
 
 document {
      Key => uncurry,

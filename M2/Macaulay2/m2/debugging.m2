@@ -233,8 +233,14 @@ generateAssertions List := y -> (
 	       else lin
 	       )))^-1
 
+-----------------------------------------------------------------------------
+-- FilePosition and currentPosition
+-----------------------------------------------------------------------------
+
 -- FilePosition = new Type of BasicList -- defined in d
 FilePosition.synonym = "file position"
+
+-- TODO: add FilePosition(String, ZZ, ZZ) and FilePosition(String)
 toExternalString FilePosition :=
 toString FilePosition :=
 net FilePosition := p -> concatenate(
@@ -243,7 +249,15 @@ net FilePosition := p -> concatenate(
     if #p>3 then ("-",toString p#3,":",toString p#4),
 --    if #p>5 then (" (",toString p#5,":",toString p#6,")")
     )
+
+String | FilePosition := (s, p) -> s | toString p
+FilePosition | String := (p, s) -> toString p | s
+
 currentPosition = () -> new FilePosition from { currentFileName, currentRowNumber(), currentColumnNumber() }
+
+-----------------------------------------------------------------------------
+-- locate
+-----------------------------------------------------------------------------
 
 locate' = locate -- defined in d/actors4.d
 locate = method(Dispatch => Thing, TypicalValue => FilePosition)
