@@ -39,10 +39,12 @@ template <typename T>
 const RingElement* MutableMat<T>::determinant() const
 {
   ring_elem det;
-  typename T::Element a(mat.ring());
+  typename T::ElementType a;
+  mat.ring().init(a);
   MatrixOps::determinant(mat, a);
   //  MatrixOps::BasicLinAlg<MatType>::determinant(mat, a);
   mat.ring().to_ring_elem(det, a);
+  mat.ring().clear(a);
   return RingElement::make_raw(get_ring(), det);
 }
 
@@ -187,6 +189,7 @@ M2_arrayintOrNull MutableMat<T>::rankProfile(bool row_profile) const
 template <typename T>
 M2_arrayintOrNull MutableMat<T>::LU(MutableMatrix* L, MutableMatrix* U) const
 {
+  //  std::cout << "MutableMat<T>::LU\n";
   T* L1 = L->coerce<T>();
   T* U1 = U->coerce<T>();
   if (L1 == 0 or U1 == 0)

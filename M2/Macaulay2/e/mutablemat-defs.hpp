@@ -94,20 +94,18 @@ Matrix* toMatrix(const Ring* R, const DMat<CoeffRing>& A)
   MatrixConstructor result(F, ncols);
   if (nrows == 0 || ncols == 0) return result.to_matrix();
 
-  for (int c = 0; c < ncols; c++)
-    {
-      int r = 0;
-      auto end = A.columnEnd(c);
-      for (auto j = A.columnBegin(c); not(j == end); ++j, ++r)
-        {
-          if (not A.ring().is_zero(*j))
+  for (int r = 0; r < nrows; ++r)
+    for (int c = 0; c < ncols; ++c)
+      {
+        const typename CoeffRing::ElementType & a = A.entry(r,c);
+        if (not A.ring().is_zero(a))
             {
-              ring_elem a;
-              A.ring().to_ring_elem(a, *j);
-              result.set_entry(r, c, a);
+              ring_elem ra;
+              A.ring().to_ring_elem(ra, a);
+              result.set_entry(r, c, ra);
             }
-        }
-    }
+      }        
+
   result.compute_column_degrees();
   return result.to_matrix();
 }

@@ -263,6 +263,7 @@ bool DMatLinAlg<RingType>::matrixPLU(std::vector<size_t>& P, Mat& L, Mat& U)
 {
   const Mat& LU = mLUObject.LUinPlace();
 
+  //  std::cout << "calling matrixPLU generic\n";  
   setUpperLower(LU, L, U);
   P = mLUObject.permutation();
   return mLUObject.signOfPermutation();

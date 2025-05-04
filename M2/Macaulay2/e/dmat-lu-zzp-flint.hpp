@@ -39,6 +39,7 @@ class DMatLinAlg<M2::ARingZZpFlint>
 
   void matrixPLU(std::vector<size_t>& P, Mat& L, Mat& U)
   {
+    //    std::cout << "calling matrixPLU zzp-flint\n";
     Mat LU(mMatrix);  // copy
     mp_limb_signed_t* perm = newarray_atomic(mp_limb_signed_t, LU.numRows());
     nmod_mat_lu(perm, LU.nmod_mat(), false);
