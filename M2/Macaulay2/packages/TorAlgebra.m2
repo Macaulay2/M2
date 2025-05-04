@@ -11,7 +11,7 @@ newPackage ( "TorAlgebra",
 	},
     Headline => "classification of local rings based on multiplication in homology",
     Keywords => {"Homological Algebra"},
-    PackageImports => {"LocalRings"},
+    PackageImports => { "OldChainComplexes", "LocalRings" },
     Certification => { -- this package was certified under its old name, "CodepthThree"
 	 "journal name" => "The Journal of Software for Algebra and Geometry",
 	 "journal URI" => "https://msp.org/jsag/",
