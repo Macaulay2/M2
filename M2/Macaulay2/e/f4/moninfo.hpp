@@ -10,6 +10,8 @@
 #include "newdelete.hpp"                  // for our_new_delete
 #include "skew.hpp"                       // for SkewMultiplication
 
+#include <iostream>
+
 #if 0
 #include <M2/config.h>                    // for HAVE_STDINT_H
 #include <cstdio>
@@ -48,16 +50,17 @@ class MonomialInfo : public our_new_delete
   monomial_word *hashfcn;  // array 0..nvars-1 of hash values for each variable
   monomial_word mask;
 
-  int firstvar;  // = 2, if no weight vector, otherwise 2 + nweights
-  int nweights;  // number of weight vector values placed.  These should all be
+  // Monomial order and placement info
+  int firstvar;  // = 2, if no weight vector, otherwise 2 + mNumWeights
+  int mNumWeights;  // number of weight vector values placed.  These should all be
                  // positive values?
-  M2_arrayint weight_vectors;  // array 0..nweights of array 0..nvars-1 of longs
-
-  // monomial format: [hashvalue, component, pack1, pack2, ..., packr]
-  // other possible:
-  //    [hashvalue, len, component, v1, v2, ..., vr] each vi is potentially
-  //    packed too.
-  //    [hashvalue, component, wt1, ..., wtr, pack1, ..., packr]
+  std::vector<int> mWeightVectors;  // array 0..mNumWeights of array 0..nvars-1 of longs
+  bool mTieBreakerIsRevLex; // true yes, false, tie break is Lex.
+  int mPositionUp; // currently ignored
+  int mComponentLoc; // currently ignored
+  
+  // monomial format:
+  //    [hashvalue, component, wt1, ..., wts, exp0, ..., exp(r-1)]
 
   mutable unsigned long ncalls_compare;
   mutable unsigned long ncalls_mult;
@@ -123,8 +126,8 @@ class MonomialInfo : public our_new_delete
         if (e[i] > 0) result[0] += hashfcn[i] * e[i];
       }
 
-    int *wt = weight_vectors->array;
-    for (int j = 0; j < nweights; j++, wt += nvars)
+    const int *wt = mWeightVectors.data();
+    for (int j = 0; j < mNumWeights; j++, wt += nvars)
       {
         long val = 0;
         for (int i = 0; i < nvars; i++)
@@ -141,14 +144,14 @@ class MonomialInfo : public our_new_delete
                 const_packed_monomial m,
                 int *skewvars) const
   {
-    return skew->skew_vars(m + 2 + nweights, skewvars);
+    return skew->skew_vars(m + 2 + mNumWeights, skewvars);
   }
 
   int skew_mult_sign(const SkewMultiplication *skew,
                      const_packed_monomial m,
                      const_packed_monomial n) const
   {
-    return skew->mult_sign(m + 2 + nweights, n + 2 + nweights);
+    return skew->mult_sign(m + 2 + mNumWeights, n + 2 + mNumWeights);
   }
 
   bool one(long comp, packed_monomial result) const
@@ -169,7 +172,7 @@ class MonomialInfo : public our_new_delete
     // Unpack the monomial m.
     ncalls_to_expvector++;
     result_comp = m[1];
-    m += 2 + nweights;
+    m += 2 + mNumWeights;
     for (int i = 0; i < nvars; i++) *result++ = *m++;
     return true;
   }
@@ -231,8 +234,8 @@ class MonomialInfo : public our_new_delete
           result[0] += e * hashfcn[v];
       }
 
-    int *wt = weight_vectors->array;
-    for (int j = 0; j < nweights; j++, wt += nvars)
+    const int *wt = mWeightVectors.data();
+    for (int j = 0; j < mNumWeights; j++, wt += nvars)
       {
         long val = 0;
         for (index_varpower_monomial i = m; i.valid(); ++i)
@@ -335,6 +338,7 @@ class MonomialInfo : public our_new_delete
 
   void showAlpha(const_packed_monomial m) const;
 
+
   int compare_grevlex(const_packed_monomial m, const_packed_monomial n) const
   {
     ncalls_compare++;
@@ -411,7 +415,7 @@ class MonomialInfo : public our_new_delete
     ncalls_compare++;
     const_packed_monomial m1 = m + 2;
     const_packed_monomial n1 = n + 2;
-    for (int i = 0; i < nweights; i++)
+    for (int i = 0; i < mNumWeights; i++)
       {
         varpower_word cmp = *m1++ - *n1++;
         if (cmp > 0) return -1;
@@ -431,8 +435,64 @@ class MonomialInfo : public our_new_delete
     return 0;
   }
 
-  int (MonomialInfo::*compare)(const_packed_monomial m,
-                               const_packed_monomial n) const;
+  /// compare:
+  // returns LT, EQ, GT:
+  // LT if m < n in the monomial order
+  // GT if m > n
+  // otherwise EQ
+  int compare(const_packed_monomial m,
+              const_packed_monomial n) const
+  {
+    ncalls_compare++;
+    const_packed_monomial m1 = m + 2;
+    const_packed_monomial n1 = n + 2;
+    for (int i = 0; i < mNumWeights; i++)
+      {
+        varpower_word cmp = *m1++ - *n1++;
+        if (cmp > 0) return GT;
+        if (cmp < 0) return LT;
+      }
+    if (mTieBreakerIsRevLex)
+      {
+        m1 = m + nslots;
+        n1 = n + nslots;
+        for (int i = nvars - 1; i >= 0; i--)
+          {
+            varpower_word cmp = *--m1 - *--n1;
+            if (cmp < 0) return GT;
+            if (cmp > 0) return LT;
+          }
+      } else {
+          m1 = m + firstvar;
+          n1 = n + firstvar;
+          for (int i = 0; i < nvars; ++i)
+            {
+              varpower_word cmp = *m1++ - *n1++;
+              if (cmp > 0) return GT;
+              if (cmp < 0) return LT;
+            }
+    }
+    
+    monomial_word cmp = m[1] - n[1];
+    if (cmp < 0) return LT;
+    if (cmp > 0) return GT;
+    return EQ;
+  }
+
+  int compareVerbose(const_packed_monomial m,
+              const_packed_monomial n) const
+  {
+    std::cout << "comparing: ";
+    show(m);
+    std::cout << "and ";
+    show(n);
+    int result = compare(m, n);
+    std::cout << " result: " << result << std::endl;
+    return result;
+  }
+  
+  // int (MonomialInfo::*compare)(const_packed_monomial m,
+  //                              const_packed_monomial n) const;
 
   bool unnecessary1(const_packed_monomial m,
                     const_packed_monomial p1,

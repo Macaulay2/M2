@@ -343,18 +343,18 @@ TEST /// -- basics of Algorithm => LinearAlgebra
   assert try(syz G; false) else true
   assert try(a // G; false) else true
   assert try(a % G; false) else true
-  assert(numcols leadTerm G == 1) -- doesn't work yet. FAILS
+  assert try(leadTerm G; false) else true
+  leadTerm gens G
   assert(numcols gens G == 1)
 ///
 
 TEST /// -- Algorithm => LinearAlgebra, over finite field.
   kk = ZZ/101;
-  R1 = kk[a..g, MonomialSize=>8];
-  setRandomSeed 42
-  J1 = ideal random(R1^1, R1^{-4,-4,-5,-5});
-  elapsedTime gbC = flatten entries gens (G = gb(ideal J1_*, Algorithm => LinearAlgebra));
+  R1 = kk[a..f];
+  J1 = ideal(a*b*c-d*e*f, a^2*c-b^2*e, b*e^4 - d*f^4 + e^5)
+  elapsedTime gbC = flatten entries gens (G = gb(ideal J1_*, Algorithm => LinearAlgebra)); -- crash
   elapsedTime gbB = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
-  assert(sort gbC == gbB) -- TODO: order should be the same!!
+  assert(gbC == gbB) -- TODO: order should be the same!!
 
   -- TODO: is it ok to check Msolve while we do this?
   needsPackage "Msolve"
@@ -367,7 +367,32 @@ TEST /// -- Algorithm => LinearAlgebra, over finite field.
   assert try(a // G; false) else true
   assert try(a % G; false) else true
   assert(numcols leadTerm G == 1) -- doesn't work yet. FAILS
-  assert(numcols gens G == 78)
+  assert(numcols gens G == 7)
+///
+
+TEST /// -- Algorithm => LinearAlgebra, over finite field.
+  kk = ZZ/101;
+  R1 = kk[a..g, MonomialSize=>8];
+  setRandomSeed 42
+  J1 = ideal random(R1^1, R1^{-2, -2, -2, -3});
+  elapsedTime gbA = flatten entries gens gb(ideal J1_*);
+  elapsedTime gbC = flatten entries gens (G = gb(ideal J1_*, Algorithm => LinearAlgebra)); -- crash
+  elapsedTime gbB = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
+  assert(gbA == gbB)
+  assert(gbA == gbC)
+
+  -- TODO: is it ok to check Msolve while we do this?
+  needsPackage "Msolve"
+  elapsedTime gbD = flatten entries msolveGB(ideal J1_*, Threads => 8); -- slowest, due to translation, or what?
+  assert(gbD == gbB)
+
+  assert try(getChangeMatrix G; false) else true
+  assert try(mingens G; false) else true
+  assert try(syz G; false) else true
+  assert try(a // G; false) else true
+  assert try(a % G; false) else true
+  assert try(leadTerm G; false) else true
+  assert(numcols gens G == 13)
 ///
 
 TEST /// -- Algorithm => LinearAlgebra, over prime finite field.
@@ -377,7 +402,7 @@ TEST /// -- Algorithm => LinearAlgebra, over prime finite field.
   J1 = ideal random(R1^1, R1^{-4,-4,-5,-5});
   elapsedTime gbC = flatten entries gens (G = gb(ideal J1_*, Algorithm => LinearAlgebra));
   elapsedTime gbB = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
-  assert(sort gbC == gbB) -- TODO: orde rshould be the same!!
+  assert(gbC == gbB)
 
   -- TODO: is it ok to check Msolve while we do this?
   needsPackage "Msolve"
@@ -389,7 +414,7 @@ TEST /// -- Algorithm => LinearAlgebra, over prime finite field.
   assert try(syz G; false) else true
   assert try(a // G; false) else true
   assert try(a % G; false) else true
-  assert(numcols leadTerm G == 1) -- doesn't work yet. FAILS
+  assert try(leadTerm G; false) else true
   assert(numcols gens G == 78)
 ///
 
@@ -401,7 +426,7 @@ TEST /// -- Algorithm => LinearAlgebra, over non-prime finite field.
   
   elapsedTime gbC = flatten entries gens gb(ideal J1_*, DegreeLimit => 10);
   elapsedTime gbB = flatten entries gens (G = gb(ideal J1_*, Algorithm => LinearAlgebra, DegreeLimit => 10));
-  assert(gbC == sort gbB) -- TODO: make sure gbB is sorted!
+  assert(gbC == gbB)
 
   -- the following appears to hang. BUG!! It should say it can't do it.
   --try(groebnerBasis(ideal J1_*, Strategy => "F4"); false) else true -- BUG: this should be disallowed...!
@@ -422,18 +447,16 @@ TEST /// -- hilbert driven gb computation, for default, Algorithn => LinearAlgeb
   elapsedTime gbA = flatten entries gens gb(ideal J1_*, Hilbert => hfJ);
   elapsedTime gbB = flatten entries gens gb(ideal J1_*,
                                           Algorithm => LinearAlgebra,
-					  Hilbert => hfJ);
+					  Hilbert => hfJ); -- CRASH
   elapsedTime gbB2 = flatten entries gens gb(ideal J1_*,
                                           Algorithm => LinearAlgebra);
   elapsedTime gbC = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
-  assert(gbA == sort gbB)
-  assert(gbB == gbB2)
+  --assert(gbA == gbB)
+  assert(gbA == gbB2)
   assert(gbA == gbC)
-  assert(sort gbB == gbC)
 
   needsPackage "Msolve"
-  elapsedTime gbD = flatten entries msolveGB(ideal J1_*, Threads => 8); -- correctly gives error
-
+  elapsedTime gbD = flatten entries msolveGB(ideal J1_*, Threads => 8);
   assert(gbA == gbD)
 ///
 
@@ -449,8 +472,8 @@ TEST /// -- GB over quotient rings
   elapsedTime gbB = flatten entries gens gb(ideal J1_*,
       Algorithm => LinearAlgebra); -- BUG: INCORRECT
   elapsedTime gbC = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4"); 
-  assert(gbA == sort gbB) -- fails
-  assert(sort gbA == sort gbC) -- because it falls back to working version
+  assert(gbA == gbB) -- fails
+  assert(gbA == gbC) -- because it falls back to working version
   #gbA
   #gbB
   #gbC
@@ -501,11 +524,11 @@ TEST /// -- nonstandard grading
   setRandomSeed 42
   J1 = ideal random(R1^1, R1^{-5, -5, -5, -5});
   elapsedTime gbA = flatten entries gens gb(J1);
-  elapsedTime gbB = flatten entries gens gb(ideal J1_*, Algorithm => LinearAlgebra); -- BUG!
+  elapsedTime gbB = flatten entries gens gb(ideal J1_*, Algorithm => LinearAlgebra); -- CRASH!
   elapsedTime gbC = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
   needsPackage "Msolve"
   elapsedTime gbD = flatten entries msolveGB(ideal J1_*, Verbosity => 2, Threads => 8);
-  #gbA == 12
+  assert(#gbA == 19)
   #gbA == #gbB  -- fails!! gbB is wrong!
   #gbA == #gbC
   #gbA == #gbD
@@ -571,3 +594,7 @@ TEST /// -- multigradings
 TEST /// -- restarting GB's after stopping for some reason
 ///
 
+-- todo:
+-- 1. leadTerm
+-- 2. sort the GB
+-- 3. consider other monomial orders

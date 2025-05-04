@@ -840,7 +840,7 @@ const Matrix *rawMGB(
 
       if (component_is_before_row >= 0)
         configuration.setComponentBefore(component_is_before_row);
-      configuration.setComponentsAscending(component_direction == 1);
+      configuration.setComponentsAscending(component_direction == 1); // BUG: what if descending??
 
 #if 0
     // Debug information
@@ -848,6 +848,8 @@ const Matrix *rawMGB(
     for (size_t i=0; i<mat.size(); i++) printf("%d ", mat[i]);
     printf("\n");
     printf("  Base=%d\n", base_is_revlex);
+    printf("  ComponentBefore=%d\n", component_is_before_row);
+    std::cout << "componentBefore: " << configuration.componentBefore() << std::endl;
 #endif
 
       mgb::GroebnerInputIdealStream input(configuration);

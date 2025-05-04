@@ -84,7 +84,7 @@ F4Computation::F4Computation(const VectorArithmetic* VA,
                    max_degree,
                    numThreads);
 
-  F4toM2Interface::from_M2_matrix(mVectorArithmetic, mMonoid, m, gb_weights, mF4GB->get_generators());
+  F4toM2Interface::from_M2_matrix(mVectorArithmetic, mMonoid, m, mF4GB->get_generators());
   mF4GB->new_generators(0, m->n_cols() - 1);
 }
 
@@ -104,11 +104,23 @@ Computation /* or null */ *F4Computation::set_hilbert_function(
 const Matrix /* or null */ *F4Computation::get_gb()
 {
   const gb_array &gb = mF4GB->get_gb();
-  MatrixConstructor result(mFreeModule, 0);
-  for (int i = 0; i < gb.size(); i++)
+  GBSorter C(mMonoid, gb);
+  auto gbsize = gb.size();
+  int *gb_order = new int[gbsize];
+  for (int i = 0; i < gbsize; i++)
     {
+      gb_order[i] = i;
+    }
+
+  std::stable_sort(gb_order, gb_order + gbsize, C);
+
+  // Order: increasing in monomial order
+  MatrixConstructor result(mFreeModule, 0);
+  for (int i = 0; i < gbsize; i++)
+    {
+      int which = gb_order[i];
       vec v = F4toM2Interface::to_M2_vec(
-          mVectorArithmetic, mMonoid, gb[i]->f, mFreeModule);
+        mVectorArithmetic, mMonoid, gb[which]->f, mFreeModule);
       result.append(v);
     }
   return result.to_matrix();
@@ -116,15 +128,6 @@ const Matrix /* or null */ *F4Computation::get_gb()
 
 const Matrix /* or null */ *F4Computation::get_mingens()
 {
-#if 0
-//   MatrixConstructor mat(_F,0);
-//   for (VECTOR(gbelem *)::iterator i = gb.begin();
-//        i != gb.end();
-//        i++)
-//     if ((*i)->minlevel == ELEM_POSSIBLE_MINGEN)
-//       mat.append(mOriginalRing->translate_gbvector_to_vec(_F, (*i)->g.f));
-//   return mat.to_matrix();
-#endif
   ERROR("Minimal generators for all `Algorithm => LinearAlgebra` Groebner bases not computed");
   return nullptr;
 }
@@ -143,6 +146,7 @@ const Matrix /* or null */ *F4Computation::get_syzygies()
 
 const Matrix /* or null */ *F4Computation::get_initial(int nparts)
 {
+  ERROR("Lead terms for `Algorithm => LinearAlgebra`: use `leadTerm gens gb` instead of `leadTerm gb`");
   return nullptr;
 }
 
