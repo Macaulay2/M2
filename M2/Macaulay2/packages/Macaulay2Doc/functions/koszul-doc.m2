@@ -6,8 +6,27 @@ document {
      Key => koszul,
      Headline => "Koszul complex or specific matrix in the Koszul complex",
      "Returns either the entire Koszul complex, or a specific matrix in the Koszul complex.",
-     SeeAlso => {"OldChainComplexes :: eagonNorthcott"}
+     SeeAlso => {eagonNorthcott}
      }
+
+document { 
+     Key => (koszul,Matrix),
+     Headline => "the Koszul complex",
+     Usage => "g = koszul f",
+     Inputs => {
+             "f" => {"a ", TT "1", " by ", TT "n", " matrix"},
+     },
+     Outputs => {
+          "g" => { "the Koszul complex of the matrix ", TT "f"}
+     },
+     EXAMPLE lines ///
+          R = QQ[x_1..x_4];
+          f = matrix{{x_1..x_4}}
+	  C = koszul f
+	  C.dd^2
+     ///,
+     SeeAlso => {eagonNorthcott}
+   }
 
 document { 
      Key => (koszul,ZZ,Matrix),
@@ -54,19 +73,4 @@ document {
      },
      SeeAlso => {}
      }
-///
-
-doc ///
-Node
-  Key
-    eagonNorthcott
-  Headline
-    Eagon-Northcott complex of a matrix of linear forms
-  Description
-    Text
-      The Eagon-Northcott complex is an explicit chain complex that gives a minimal projective
-      resolution of the cokernel of the matrix maximal minors of a generic matrix of linear forms.
-  SeeAlso
-    "OldChainComplexes :: eagonNorthcott(Matrix)"
-    koszul
 ///

@@ -1,6 +1,21 @@
+needs "shared.m2"  -- for isMorphism
 needs "gateway.m2" -- for ScriptedFunctor
 needs "matrix1.m2" -- for Ideal
 needs "modules.m2" -- for Module
+
+-----------------------------------------------------------------------------
+-- Categories for which complexes are currently implemented in Macaulay2
+-----------------------------------------------------------------------------
+-- SheafMap and CoherentSheaf are added later in Varieties
+
+-- note: this is also used matrix(List)
+isMorphism Thing    := x -> false
+isMorphism Matrix   := f -> true
+
+isAbelianCategory Thing         := x -> false
+isAbelianCategory Module        := M -> true
+
+Module Array := (M, v) -> missingPackage "either Complexes or OldChainComplexes"
 
 -----------------------------------------------------------------------------
 -- Ext

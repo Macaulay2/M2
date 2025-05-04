@@ -117,8 +117,11 @@ Ring ^ BettiTally := ChainComplex => (R,B) -> (
     F)
 
 -----------------------------------------------------------------------------
--- regularity
+-- pdim and regularity
 -----------------------------------------------------------------------------
+
+-- used to be in hilbert.m2, now in betti.m2
+pdim Module := M -> length resolution minimalPresentation M
 
 regularity ChainComplex := opts -> C -> regularity betti(C, opts)
 regularity        Ideal := opts -> I -> (

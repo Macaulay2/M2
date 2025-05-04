@@ -13,8 +13,6 @@ needs "modules2.m2"
 -- Local utilities
 -----------------------------------------------------------------------------
 
-nonzeroKeys = x -> select(keys x, k -> x#k != 0)
-
 -- called from OldChainComplexes
 baseRing' = R -> ultimate(coefficientRing, R) -- Note: different from first R.baseRings
 
@@ -199,6 +197,7 @@ betti = method(TypicalValue => BettiTally, Options => { Weights => null, Minimiz
 betti GroebnerBasis := opts -> G -> betti(generators G, opts)
 betti Ideal         := opts -> I -> betti(generators I, opts)
 betti Module        := opts -> M -> betti(presentation M, opts)
+betti Matrix        := opts -> f -> missingPackage "either Complexes or OldChainComplexes"
 betti BettiTally    := opts -> B -> if opts.Weights === null then B else (
     heftfn := heftfun opts.Weights;
     applyKeys(B, (i,d,h) -> (i,d,heftfn d)))
@@ -212,6 +211,9 @@ minimalBetti = method(
 	ParallelizeByDegree => false, -- currently: only used over primes fields of positive characteristic
 	Weights             => null,
     })
+
+minimalBetti Ideal  :=
+minimalBetti Module := o -> M -> missingPackage "either Complexes or OldChainComplexes"
 
 -----------------------------------------------------------------------------
 
@@ -262,7 +264,12 @@ hilbertSeries(ZZ, BettiTally) := o -> (n,B) -> (
 -- pdim and regularity
 -----------------------------------------------------------------------------
 
+nonzeroKeys = x -> select(keys x, k -> x#k != 0)
+
+pdim Module     := M -> missingPackage "either Complexes or OldChainComplexes"
 pdim BettiTally := B -> if #(s := first \ nonzeroKeys B) > 0 then max s - min s else 0
 
 regularity = method(TypicalValue => ZZ, Options => { Weights => null })
-regularity   BettiTally := opts -> B -> max apply(nonzeroKeys betti(B, opts), (i,d,h) -> h-i)
+regularity Ideal      :=
+regularity Module     := o -> M -> missingPackage "either Complexes or OldChainComplexes"
+regularity BettiTally := o -> B -> max apply(nonzeroKeys betti(B, o), (i, d, h) -> h-i)

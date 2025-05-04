@@ -146,7 +146,10 @@ document {
      }
 
 document {
-     Key => {complete,(complete, GradedModule),(complete, ChainComplexMap)},
+    Key => {
+	(complete, GradedModule),
+	(complete, ChainComplexMap),
+    },
      TT "complete C", " -- completely fills out the chain complex C by
      calling upon the engine to provide the maps and modules computed
      by ", TO "resolution", ".",
@@ -220,9 +223,6 @@ document {
         },
      }
 
-
-document { Key => {extend},
-     Headline => "extend a module map to a chain map, if possible" }
 document {
      Key => {(extend,ChainComplex,ChainComplex,Matrix),[extend,Verify]},
      Usage => "extend(D,C,f0)",
@@ -488,16 +488,6 @@ document {
      TT "f ** g", " -- tensor product of two maps of chain complexes.",
      SeeAlso => "ChainComplexMap"
      }
-
-document {
-     Key => (symbol SPACE, Module, Array),
-     Headline => "make a chain complex from a module",
-     TT "M[n]", " -- create a chain complex with the module M concentrated
-     in degree -n.",
-     PARA{},
-     SeeAlso => "ChainComplex"
-     }
-
 
 document {
      Key => (dual,ChainComplexMap),

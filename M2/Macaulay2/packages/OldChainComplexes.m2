@@ -38,11 +38,6 @@ load "./OldChainComplexes/Ext.m2"
 load "./OldChainComplexes/Tor.m2"
 
 -----------------------------------------------------------------------------
-
--- used to be in hilbert.m2
-pdim Module := M -> length resolution minimalPresentation M
-
------------------------------------------------------------------------------
 -* Documentation section *-
 beginDocumentation()
 
@@ -57,11 +52,8 @@ load "./OldChainComplexes/docs/doc10.m2"
 -- method docs
 load "./OldChainComplexes/docs/betti-doc.m2"
 load "./OldChainComplexes/docs/chainComplex-doc.m2"
-load "./OldChainComplexes/docs/eagonNorthcott-doc.m2"
 load "./OldChainComplexes/docs/kernel-doc.m2"
 load "./OldChainComplexes/docs/map-doc.m2"
-load "./OldChainComplexes/docs/minimalBetti-doc.m2"
-load "./OldChainComplexes/docs/pdim-doc.m2"
 load "./OldChainComplexes/docs/regularity-doc.m2"
 load "./OldChainComplexes/docs/resolution-doc.m2"
   -- TODO: setting C_3 = ... no longer allowed!

@@ -1,5 +1,6 @@
 document {
     Key => {
+	 eagonNorthcott,
 	(eagonNorthcott, Matrix)
     },
     Headline => "Eagon-Northcott complex of a matrix of linear forms",

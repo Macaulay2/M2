@@ -77,6 +77,7 @@ Node
   Key
     betti
    (betti, Ideal)
+   (betti, Matrix)
    (betti, Module)
    (betti, GroebnerBasis)
   Headline
@@ -143,23 +144,23 @@ Node
         G = gb ideal(x^3+y^3, x*y^4);
         gens G
         betti G
-  -- Synopsis
-  --   Heading
-  --     Betti diagram showing the degrees of the target and source of a map
-  --   Usage
-  --     betti f
-  --   Inputs
-  --     f:Matrix
-  --     Weights=>List
-  --   Outputs
-  --     :BettiTally
-  --       a diagram showing the degrees of the generators of the source and target modules of @TT "f"@
-  --   Description
-  --     Text
-  --       The diagram ignores the degree of the map itself.
-  --     Example
-  --       S = ZZ/10007[x,y];
-  --       betti matrix {{x^3, x*y^2}, {y*x, y^2}}
+  Synopsis
+    Heading
+      Betti diagram showing the degrees of the target and source of a map
+    Usage
+      betti f
+    Inputs
+      f:Matrix
+      Weights=>List
+    Outputs
+      :BettiTally
+        a diagram showing the degrees of the generators of the source and target modules of @TT "f"@
+    Description
+      Text
+        The diagram ignores the degree of the map itself.
+      Example
+        S = ZZ/10007[x,y];
+        betti matrix {{x^3, x*y^2}, {y*x, y^2}}
   Synopsis
     Heading
       Betti diagram showing the degrees of generators and relations of a homogeneous module
@@ -200,6 +201,7 @@ Node
         betti I
         betti comodule I
   SeeAlso
+    minimalBetti
     multigraded
     regularity
     pdim
@@ -243,18 +245,6 @@ Node
     "heft vectors"
     MultigradedBettiTally
     multigraded
-///
-
------------
-
-doc ///
-   Key
-      minimalBetti
-   Headline
-     minimal betti numbers of (the minimal free resolution of) a homogeneous ideal or module
-   SeeAlso
-     "OldChainComplexes :: minimalBetti(Ideal)"
-     --"Complexes :: minimalBetti
 ///
 
 -----------

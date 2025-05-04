@@ -10,6 +10,7 @@ eulers = method()
 genera = method()
 genus  = method()
 
+complete = method()
 minimize = method()
 
 cone = method()

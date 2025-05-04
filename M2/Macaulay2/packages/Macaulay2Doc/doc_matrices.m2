@@ -75,7 +75,7 @@ document {
 	TO (homology, Matrix, Matrix),
 	TO (inverse, Matrix),
 	TO (jacobian, Matrix),
-	TO "OldChainComplexes :: koszul(Matrix)",
+	TO (koszul, Matrix),
 	TO (koszul, ZZ, Matrix),
 	TO (map, Ring, Matrix),
 	TO (minimalPresentation, Matrix),

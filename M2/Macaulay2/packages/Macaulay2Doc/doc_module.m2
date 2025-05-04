@@ -66,7 +66,7 @@ document {
 	TO (hilbertSeries, Module),
 	TO (hilbertFunction, ZZ, Module),
 	TO (poincare, Module),
-	TO "OldChainComplexes :: regularity(Module)",
+	TO (regularity, Module),
     },
     "Annihilators, quotients and Gröbner bases:",
     UL {
@@ -78,7 +78,7 @@ document {
     "Common homological computations:",
     UL {
 	TO "OldChainComplexes :: resolution(Module)",
-	TO "OldChainComplexes :: pdim(Module)",
+	TO (pdim, Module),
 	TO "Hom",
 	TO (homomorphism,Matrix),
 	TO (Ext,ZZ,Module,Module),
@@ -99,7 +99,7 @@ document {
 	TO (formation, Module),
 	TO (symbol +, Module, Module),
 	TO (dual, Module),
-	TO "OldChainComplexes :: Module Array",
+	TO (symbol SPACE, Module, Array),
 	TO ambient,
 	TO (ambient, Module),
 	TO (super, Module),
@@ -117,7 +117,7 @@ document {
 	TO (mingens, Module),
 	TO (minimalPresentation, Module),
 	TO (numgens, Module),
-	TO "OldChainComplexes :: pdim(Module)",
+	TO (pdim, Module),
 	TO (presentation, Module),
 	TO (pushForward, RingMap, Module),
 	TO (isSubquotient, Module, Module),
@@ -177,6 +177,18 @@ document { Key => (module, Vector),
 	  module v
 	  class v
      ///}
+
+
+document {
+    Key => (symbol SPACE, Module, Array),
+    Headline => "make a chain complex from a module",
+    TT "M[n]", " -- create a chain complex with the module M concentrated in degree -n.",
+    PARA{},
+    SeeAlso => {
+	"Complexes :: Complex",
+	"OldChainComplexes :: ChainComplex",
+    },
+}
 
 document {
      Key => {relations,(relations, Module)},

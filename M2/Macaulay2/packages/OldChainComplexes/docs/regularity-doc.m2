@@ -6,8 +6,6 @@
 doc ///
 Node
   Key
-    (regularity, Ideal)
-    (regularity, Module)
     (regularity, ChainComplex)
   Headline
     compute the Castelnuovo-Mumford regularity
@@ -15,7 +13,7 @@ Node
     r = regularity C
     r = regularity(C, Weights => w)
   Inputs
-    C:{Ideal,Module,ChainComplex}
+    C:ChainComplex
     Weights=>List -- a weight vector @TT "w"@, see @TO [betti, Weights]@
   Outputs
     r:ZZ

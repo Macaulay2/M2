@@ -3,41 +3,20 @@
 doc ///
 Node
   Key
-   (betti, Matrix)
    (betti, GradedModule)
    (betti, ChainComplex)
   Headline
-    the class of all Betti tallies
-  Synopsis
-    Heading
-      Betti diagram showing the degrees of the target and source of a map
-    Usage
-      betti f
-    Inputs
-      f:Matrix
-      Weights=>List
-    Outputs
-      :BettiTally
-        a diagram showing the degrees of the generators of the source and target modules of @TT "f"@
-    Description
-      Text
-        The diagram ignores the degree of the map itself.
-      Example
-        S = ZZ/10007[x,y];
-        betti matrix {{x^3, x*y^2}, {y*x, y^2}}
-  Synopsis
-    Heading
-      Betti diagram showing the of degrees in a graded module or chain complex
-    Usage
+    Betti diagram showing the of degrees in a graded module or chain complex
+  Usage
       betti C
-    Inputs
+  Inputs
       C:{GradedModule,ChainComplex}
       Weights=>List
       Minimize=>Boolean
-    Outputs
+  Outputs
       :BettiTally
         showing the degrees of the generators of the modules in @TT "C"@
-    Description
+  Description
       Text
         The diagram can be used to determine the degrees of the entries in the matrices of the differentials
         in a chain complex (which is a type of graded module) provided they are homogeneous maps of degree 0.
