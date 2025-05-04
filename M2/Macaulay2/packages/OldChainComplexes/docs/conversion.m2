@@ -27,7 +27,9 @@ doc ///
             R = ZZ/32003[a..d];
             I = monomialCurveIdeal(R, {1,2,3})
             M = R^1/I
+            needsPackage "OldChainComplexes"
             C = resolution M
+            needsPackage "Complexes"
             D = complex C
             D1 = freeResolution M
             assert(D == D1)
@@ -75,7 +77,9 @@ doc ///
             R = ZZ/32003[a..d];
             I = monomialCurveIdeal(R, {1,2,3})
             M = R^1/I
+            needsPackage "OldChainComplexes"
             C = resolution M
+            needsPackage "Complexes"
             D = freeResolution M
             C1 = chainComplex D
             assert(C == C1)
@@ -119,8 +123,10 @@ doc ///
             R = ZZ/32003[a..d];
             I = monomialCurveIdeal(R, {1,2,3})
             M = R^1/I
+            needsPackage "OldChainComplexes"
             C = resolution M
             f = C.dd
+            needsPackage "Complexes"
             g = complex f
             isWellDefined g
             D = freeResolution M
@@ -130,7 +136,9 @@ doc ///
             maps between chain complexes agree.
         Example
             J = ideal vars R
+            needsPackage "OldChainComplexes"
             C1 = resolution(R^1/J)
+            needsPackage "Complexes"
             D1 = freeResolution(R^1/J)
             f = extend(C1, C, matrix{{1_R}})
             g = complex f
@@ -170,7 +178,9 @@ doc ///
             R = ZZ/101[a..d];
             I = monomialCurveIdeal(R, {1,2,3})
             M = R^1/I
+            needsPackage "Complexes"
             D = freeResolution M
+            needsPackage "OldChainComplexes"
             C = resolution M
             g = D.dd
             f = chainComplex g
@@ -179,7 +189,9 @@ doc ///
             We construct a random morphism of chain complexes.
         Example
             J = ideal vars R
+            needsPackage "OldChainComplexes"
             C1 = resolution(R^1/J)
+            needsPackage "Complexes"
             D1 = freeResolution(R^1/J)
             g = randomComplexMap(D1, D, Cycle => true)
             f = chainComplex g
