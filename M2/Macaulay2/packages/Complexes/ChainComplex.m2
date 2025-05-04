@@ -1050,11 +1050,7 @@ resolutionMap Complex := ComplexMap => opts -> C -> resolutionMapPrivate(C, fals
 epicResolutionMap = method(Options => options freeResolution)
 epicResolutionMap Complex := ComplexMap => opts -> C -> resolutionMapPrivate(C, true, opts)
 
-resolution Complex := opts -> C -> (
-    -- TODO: remove this hack once resolution doesn't have FastNonminimal anymore and is defined in Complexes).
-    opts1 := new OptionTable from for k in keys opts list if k === FastNonminimal then continue else k => opts#k;
-    source resolutionMap(C, opts1)
-    )
+freeResolution Complex := opts -> C -> source resolutionMap(C, opts)
 
 augmentationMap = method()
 augmentationMap Complex := ComplexMap => 

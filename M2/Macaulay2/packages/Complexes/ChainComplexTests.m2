@@ -913,7 +913,7 @@ TEST ///
   assert(coker f == 0)
   assert(kernel HH f == 0)
   assert(cokernel HH f == 0)
-  assert(resolution C == source f)
+  assert(freeResolution C == source f)
 ///
 
 TEST ///
@@ -1097,9 +1097,9 @@ TEST ///
   assert(coker f == 0)
   assert(kernel HH f == 0)
   assert(cokernel HH f == 0)
-  assert(resolution C == source f)
+  assert(freeResolution C == source f)
   assert(isFree source f)
-  D = resolution C
+  D = freeResolution C
   prune HH C
 
   MD = minimize D;
@@ -1115,7 +1115,7 @@ TEST ///
 
   I = ideal"b2-ac,c2-bd,bcd-ad2"
   C = Hom(freeResolution I, R^1/I)
-  elapsedTime D = resolution C;
+  elapsedTime D = freeResolution C;
   
   C1 = complex for i from -2 to 0 list dd^D_i
   isWellDefined C1
@@ -2206,7 +2206,7 @@ needsPackage "Complexes"
 *-
   R = QQ[x];
   X = complex(R^1) ++ complex(R^1)[-2]
-  resolution X
+  freeResolution X
 ///
 
 TEST ///
@@ -2216,8 +2216,8 @@ needsPackage "Complexes"
 *-
   R = QQ[x];
   X = complex({map(R^1,R^2,matrix{{1_R,1_R}})})
-  resolution X
-  resolution(minimize X)
+  freeResolution X
+  freeResolution(minimize X)
 ///
 
 TEST ///
