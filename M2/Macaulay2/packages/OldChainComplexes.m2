@@ -59,8 +59,6 @@ load "./OldChainComplexes/docs/doc9.m2"
 load "./OldChainComplexes/docs/doc10.m2"
 
 -- method docs
-load "./OldChainComplexes/docs/Ext-doc.m2"
-load "./OldChainComplexes/docs/Tor-doc.m2"
 load "./OldChainComplexes/docs/betti-doc.m2"
 load "./OldChainComplexes/docs/chainComplex-doc.m2"
 load "./OldChainComplexes/docs/eagonNorthcott-doc.m2"

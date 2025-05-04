@@ -68,6 +68,7 @@ genmat.m2
 multilin.m2
 pushforward.m2
 Hom.m2
+complexes.m2
 betti.m2
 monideal.m2
 intersect.m2

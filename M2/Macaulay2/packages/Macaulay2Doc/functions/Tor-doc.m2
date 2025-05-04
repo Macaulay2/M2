@@ -10,7 +10,11 @@ undocumented {
 document {
     Key => Tor,
     Headline => "Tor module",
-    SeeAlso => { Hom, Ext },
+    SeeAlso => {
+	tensor,
+	"Complexes :: Tor_ZZ(Matrix,Module)",
+	"Complexes :: Tor_ZZ(Module,Matrix)",
+	Hom, Ext },
     Subnodes => {
 	TO (Tor, ZZ, Module, Module),
     }
