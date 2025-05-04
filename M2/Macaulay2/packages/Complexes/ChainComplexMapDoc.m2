@@ -99,7 +99,7 @@ doc ///
     Description
         Text
             @UL {
-                TO (resolution, Complex),
+                TO (freeResolution, Complex),
                 TO (resolutionMap, Complex),
                 TO (isShortExactSequence, ComplexMap, ComplexMap),
                 TO (isQuasiIsomorphism, ComplexMap),
@@ -1784,7 +1784,7 @@ doc ///
         Text
             To avoid recomputation, this method caches its value.
     SeeAlso
-        (resolution, Complex)
+        (freeResolution, Complex)
         (freeResolution, Module)
         (isQuasiIsomorphism, ComplexMap)
 ///
@@ -3218,7 +3218,7 @@ doc ///
             assert isIsomorphism HH_1 f
         Text
             XXX TODO. Free resolutions of complexes produce quasi 
-            isomorphisms. (use example to doc of (resolution, Complex)).
+            isomorphisms. (use example to doc of (freeResolution, Complex)).
         Example
             D = complex{random(S^2, S^{-3,-3,-4})}
             prune HH D

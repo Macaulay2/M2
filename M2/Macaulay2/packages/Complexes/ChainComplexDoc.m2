@@ -58,7 +58,7 @@ doc ///
 	Text
     	    @UL {
                 TO (freeResolution, Module),
-                TO (resolution, Complex),
+                TO (freeResolution, Complex),
                 TO (homology, Complex)
             }@
     	Text
@@ -1106,7 +1106,7 @@ doc ///
         "Making chain complexes"
         (augmentationMap, Complex)
         (cone, ComplexMap)
-        (resolution, Complex)
+        (freeResolution, Complex)
         (resolutionMap, Complex)
         (betti, Complex)
 ///
@@ -3231,7 +3231,7 @@ doc ///
 
 doc ///
     Key
-        (resolution, Complex)
+        (freeResolution, Complex)
     Headline
         minimal free resolution of a complex
     Usage
@@ -3452,7 +3452,7 @@ doc ///
             prune HH D == prune HH CJ
    SeeAlso
        freeResolution
-       (resolution, Complex)
+       (freeResolution, Complex)
        (resolutionMap, Complex)
        (minimalPresentation, Complex)
 ///
