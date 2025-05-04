@@ -331,6 +331,9 @@ algorithms#(resolution, Module) = new MutableHashTable from {
 	if ZZ =!= baseRing' ring M then return null;
 	resolutionBySyzygies(opts, M)),
 
+    "LLL" => (opts, M) -> (
+	if ring M === ZZ then chainComplex compress LLL presentation M),
+
     "Homogenization" => resolutionByHomogenization,
 
     "Schreyer" => resolutionBySchreyerFrame,
@@ -343,7 +346,7 @@ algorithms#(resolution, Module)#ZZ =
 algorithms#(resolution, Module)#RR = algorithms#(resolution, Module)#Number
 
 -- Installing hooks for resolution
-scan({"Schreyer", "Syzygies", "Homogenization", "ZZ-module", Engine, ZZ, RR}, strategy ->
+scan({"Schreyer", "Syzygies", "Homogenization", "ZZ-module", Engine, ZZ, RR, "LLL"}, strategy ->
     addHook(key := (resolution, Module), algorithms#key#strategy, Strategy => strategy))
 
 -----------------------------------------------------------------------------
