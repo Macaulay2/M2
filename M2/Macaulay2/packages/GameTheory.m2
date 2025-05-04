@@ -2079,13 +2079,13 @@ doc ///
     spohnCI(PR, X, Stmts, PlayerNames)
   Inputs
     PR:Ring 
-      The probability ring (must be created with @TO probabilityRing@)
+      the probability ring (must be created with @TO probabilityRing@)
     X:List 
-      The n tensors defining the game 
+      the n tensors defining the game 
     G:Graph
-      The graph specifying the conditional independence conditions
+      the graph specifying the conditional independence conditions
     Stmts:List
-      A list of lists {L1,L2,L3} corresponding to the relation "L1 and L2 are conditionally independent given L3".    
+      a list of lists {L1,L2,L3} corresponding to the relation "L1 and L2 are conditionally independent given L3".    
     PlayerNames:List
       the ordered list of players - the names of the random variables in the conditional independence
       statements or vertices of the graph. If PlayerNames is omitted, the players
