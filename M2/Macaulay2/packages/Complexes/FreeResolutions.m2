@@ -539,6 +539,10 @@ addHook((freeResolution, Module), resolutionInEngine, Strategy => Engine)
 addHook((freeResolution, Module), resolutionOverZZ, Strategy => OverZZ)
 addHook((freeResolution, Module), resolutionOverField, Strategy => OverField)
 
+-- TODO: compare this with the OverZZ strategy above
+addHook((freeResolution, Module), Strategy => symbol LLL,
+    (o, M) -> if ring M === ZZ then complex compress LLL presentation M)
+
 
 cechComplex = method()
 cechComplex MonomialIdeal := Complex => B -> (

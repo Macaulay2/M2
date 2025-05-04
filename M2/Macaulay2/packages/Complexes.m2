@@ -13,7 +13,7 @@ newPackage(
             }},
     Headline => "beta testing new version of chain complexes",
     Keywords => {"Homological Algebra"},
-    PackageImports => { "OldChainComplexes" },
+    PackageImports => { "OldChainComplexes", "LLLBases" },
     PackageExports => { "Truncations" },
     AuxiliaryFiles => true
     )
