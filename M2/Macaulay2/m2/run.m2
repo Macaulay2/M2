@@ -149,8 +149,9 @@ runFile = (inf, inputhash, outf, tmpf, pkg, announcechange, usermode, examplefil
 	  moveFile(tmpf,outf);
 	  return true;
 	  );
+     if gotarg "--check" then if r // 255 == 2 then exit 1 else return false;
      -- print debugging info
-     printerr "running failed, too!";
+     printerr "running failed";
      printerr("error log:  " | logLocation tmpf);
      printerr("test input: " | testLocation inf);
      if debugLevel > 0 then
