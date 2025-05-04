@@ -127,38 +127,26 @@ class ColumnsSorter
 
  private:
   const MonomialInfo *M;
-  //  const coefficient_matrix *mat;
   const coefficient_matrix::column_array &cols;
 
   static long ncmps;
   static long ncmps0;
-  //  int (MonomialInfo::*compareFcn)(const monomial_word *, const monomial_word
-  //  *) const;
  public:
   int compare(value a, value b)
   {
     //    ncmps ++;
-    return M->compare_grevlex(cols[a].monom, cols[b].monom);
-    // return (M->*(M->compare))(mat->columns[a].monom,mat->columns[b].monom);
-
-    //    return (M->*compareFcn)(col[a].monom,col[b].monom);
-    //    return (M->*compareFcn)(mat->columns[a].monom,mat->columns[b].monom);
-    //    return
-    //    M->compare_grevlex(mat->columns[a].monom,mat->columns[b].monom);
+    return M->compare(cols[a].monom, cols[b].monom);
   }
 
   bool operator()(value a, value b)
   {
-    // ncmps0 ++;
-    return (M->compare_grevlex(cols[a].monom, cols[b].monom) == LT);
-    //    return (M->*(M->compare))(mat->columns[a].monom,mat->columns[b].monom)
-    //    == LT;
+    int newret = M->compare(cols[a].monom, cols[b].monom);
+    return (newret == GT);
   }
 
   ColumnsSorter(const MonomialInfo *M0, const coefficient_matrix *mat0)
       : M(M0),
-        /* mat(mat0), */ cols(
-            mat0->columns) /* , compareFcn(&MonomialInfo::compare_grevlex) */
+        cols(mat0->columns)
   {
   }
 
@@ -181,7 +169,6 @@ class GBSorter
 
  private:
   const MonomialInfo *M;
-  //  const coefficient_matrix *mat;
   const gb_array& gb;
 
   static long ncmps;
@@ -190,21 +177,12 @@ class GBSorter
   int compare(value a, value b)
   {
     //    ncmps ++;
-    return M->compare_grevlex(gb[a]->f.monoms, gb[b]->f.monoms);
-    // return (M->*(M->compare))(mat->columns[a].monom,mat->columns[b].monom);
-
-    //    return (M->*compareFcn)(col[a].monom,col[b].monom);
-    //    return (M->*compareFcn)(mat->columns[a].monom,mat->columns[b].monom);
-    //    return
-    //    M->compare_grevlex(mat->columns[a].monom,mat->columns[b].monom);
+    return M->compare(gb[a]->f.monoms, gb[b]->f.monoms);
   }
 
   bool operator()(value a, value b)
   {
-    // ncmps0 ++;
-    return (M->compare_grevlex(gb[a]->f.monoms, gb[b]->f.monoms) == GT); // GT: want to sort in increasing order...
-    //    return (M->*(M->compare))(mat->columns[a].monom,mat->columns[b].monom)
-    //    == LT;
+    return (M->compare(gb[a]->f.monoms, gb[b]->f.monoms) == LT); // LT: sort in increasing order...
   }
 
   GBSorter(const MonomialInfo *M0, const gb_array& gb0)

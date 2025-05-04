@@ -44,7 +44,7 @@ F4GB::F4GB(const VectorArithmetic* VA,
     : mVectorArithmetic(VA),
       mMonomialInfo(M0),
       mFreeModule(F0),
-      weights(weights0),
+      mWeights(weights0),
       component_degrees(nullptr),  // need to put this in
       n_pairs_computed(0),
       n_reduction_steps(0),
@@ -114,11 +114,30 @@ F4GB::~F4GB()
   delete_gb_array(mGroebnerBasis);
 }
 
+void F4GB::poly_set_degrees(const GBF4Polynomial &f,
+                            int &deg_result,
+                            int &alpha) const
+{
+  const monomial_word *w = f.monoms;
+  monomial_word leaddeg = mMonomialInfo->monomial_weight(w, mWeights);
+  monomial_word deg = leaddeg;
+
+  for (int i = 1; i < f.len; i++)
+    {
+      w = w + mMonomialInfo->monomial_size(w);
+      monomial_word degi = mMonomialInfo->monomial_weight(w, mWeights);
+      if (degi > deg) deg = degi;
+    }
+  alpha = static_cast<int>(deg - leaddeg);
+  deg_result = static_cast<int>(deg);
+}
+
 void F4GB::new_generators(int lo, int hi)
 {
   for (int i = lo; i <= hi; i++)
     {
       gbelem *g = mGenerators[i];
+      poly_set_degrees(g->f, g->deg, g->alpha);
       if (g->f.len == 0) continue;
       mSPairSet.insert_generator(g->deg, g->f.monoms, i);
     }
@@ -309,8 +328,6 @@ void F4GB::reorder_columns()
 
   // sort the columns
 
-  //int *column_order = Mem->components.allocate(ncols);
-  //int *ord = Mem->components.allocate(ncols);
   int *column_order = new int[ncols];
   int *ord = new int[ncols];
 
@@ -328,8 +345,14 @@ void F4GB::reorder_columns()
 
   if (M2_gbTrace >= 2) fprintf(stderr, "ncomparisons = ");
 
+  // std::cout << "-- before sort --" << std::endl;
+  // show_column_info();
+  
   std::stable_sort(column_order, column_order + ncols, C);
 
+  // std::cout << "-- after sort --" << std::endl;  
+  // show_column_info();
+  
   clock_t end_time0 = clock();
   if (M2_gbTrace >= 2) fprintf(stderr, "%ld, ", C.ncomparisons0());
   double nsecs0 = (double)(end_time0 - begin_time0) / CLOCKS_PER_SEC;
@@ -1252,6 +1275,7 @@ void F4GB::show_row_info() const
 
 void F4GB::show_column_info() const
 {
+  mMonomialInfo->show();
   // Debugging routine
   for (int i = 0; i < mat->columns.size(); i++)
     {

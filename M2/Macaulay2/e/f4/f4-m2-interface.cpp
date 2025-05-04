@@ -79,7 +79,6 @@ void F4toM2Interface::poly_set_degrees(const VectorArithmetic* VA,
 void F4toM2Interface::from_M2_matrix(const VectorArithmetic* VA,
                                      const MonomialInfo *MI,
                                      const Matrix *m,
-                                     M2_arrayint wts,
                                      gb_array &result_polys)
 {
   const FreeModule *F = m->rows();
@@ -87,7 +86,7 @@ void F4toM2Interface::from_M2_matrix(const VectorArithmetic* VA,
     {
       gbelem *g = new gbelem;
       from_M2_vec(VA, MI, F, m->elem(i), g->f);
-      if (wts != nullptr) poly_set_degrees(VA, MI, wts, g->f, g->deg, g->alpha);
+      //      if (wts != nullptr) poly_set_degrees(VA, MI, wts, g->f, g->deg, g->alpha);
       result_polys.push_back(g);
     }
 }

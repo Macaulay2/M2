@@ -93,7 +93,7 @@ class F4GB : public our_new_delete
   const VectorArithmetic* mVectorArithmetic;
   const MonomialInfo *mMonomialInfo;
   const FreeModule *mFreeModule;
-  M2_arrayint weights;  // The length of this is the number of variables, each
+  M2_arrayint mWeights;  // The length of this is the number of variables, each
                         // entry is positive.
   M2_arrayint component_degrees;  // Degree of each free module element.
   // Also need Schreyer order info sometimes
@@ -225,6 +225,10 @@ private:
 
   void insert_gb_element(row_elem &r);
 
+  void poly_set_degrees(const GBF4Polynomial &f,
+                        int &deg_result,
+                        int &alpha) const; // private: used in new_generators
+  
  public:
   F4GB(const VectorArithmetic* VA,
        const MonomialInfo *MI,
