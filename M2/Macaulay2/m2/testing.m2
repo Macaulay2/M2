@@ -113,10 +113,13 @@ check(List, Package) := opts -> (L, pkg) -> (
     outfile := errfile -> temporaryDirectory() | errfile | ".tmp";
     if #errorList > 0 then (
 	if opts.Verbose then apply(errorList, (k, errfile) -> (
+		stderr << concatenate(printWidth:"=") << endl;
 		stderr << locate inputs#k << " error:" << endl;
 		printerr getErrors(outfile errfile)));
+	stderr << concatenate(printWidth:"=") << endl;
 	printerr("Summary: ", toString(#errorList), " test(s) failed in package ", pkg#"pkgname", ":");
-	printerr net TABLE apply(first \ errorList, i -> { "Test #"|i|".", toString locate tests_i pkg });
+	printerr netList(Boxes => false, HorizontalSpace => 2,
+	    apply(first \ errorList, i -> { "Test #"|i|".", toString locate tests_i pkg }));
 	error("repeat failed tests with:", newline,
 	    "  check({", demark(", ", toString \ first \ errorList), "}, ", format pkg#"pkgname", ")")))
 
