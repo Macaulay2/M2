@@ -9,7 +9,15 @@ document { Key => depth,  Headline => "depth of an object",  methodstr,
 document { Key => width,  Headline => "width of an object",  methodstr }
 document { Key => length, Headline => "length of an object", methodstr,
     SeeAlso => { "Complexes::length(Complex)", "Permutations::length(Permutation)" } }
+document { Key => extend, Headline => "extend an object",    methodstr,
+    SeeAlso => {
+	"Permutations :: extend(Permutation,ZZ)",
+	"Complexes :: extend(Complex,Complex,Matrix)",
+	"OldChainComplexes :: extend(ChainComplex,ChainComplex,Matrix)",
+    },
+}
 
+document { Key => complete,     methodstr, SeeAlso => { "OldChainComplexes::complete(ChainComplex)" } }
 document { Key => minimize,     methodstr, SeeAlso => { "Complexes::minimize(Complex)" } }
 document { Key => decompose,    methodstr, SeeAlso => { "MinimalPrimes::MinimalPrimes" } }
 document { Key => truncate,     methodstr, SeeAlso => { "Truncations::Truncations" } }

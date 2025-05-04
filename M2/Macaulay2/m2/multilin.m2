@@ -40,8 +40,10 @@ getMinorsStrategy := (R, m, strat) -> RawMinorsStrategyCodes#strat ?? (
 
 koszul = method()
 koszul(ZZ, Matrix) := Matrix => (i, m) -> map(ring m, rawKoszul(i, raw m))
+koszul Matrix := -* ChainComplex => *- m -> missingPackage "OldChainComplexes"
 
 eagonNorthcott = method()
+eagonNorthcott Matrix := -* ChainComplex => *- m -> missingPackage "OldChainComplexes"
 
 -----------------------------------------------------------------------------
 -- symmetricAlgebra

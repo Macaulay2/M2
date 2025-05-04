@@ -6,8 +6,10 @@
 doc ///
 Node
   Key
-    regularity
-   [regularity, Weights]
+     regularity
+    (regularity, Ideal)
+    (regularity, Module)
+    [regularity, Weights]
   Headline
     compute the Castelnuovo-Mumford regularity
   Usage
