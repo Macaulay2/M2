@@ -59,6 +59,8 @@ nonempty = x -> select(x, i -> i =!= "")
 undocumentedkeys = new MutableHashTable
 undocumented' = key -> undocumentedkeys#key = true
 
+missingPackage = pkg -> error("this method is not available until ", pkg, " is loaded")
+
 -- a first-in last-out list of symbol values
 -- TODO: move to the interpreter and make thread-safe
 varstack = new MutableHashTable

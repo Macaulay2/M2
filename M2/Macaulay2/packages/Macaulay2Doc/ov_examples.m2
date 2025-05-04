@@ -88,8 +88,8 @@ Node
     ScriptedFunctor
     id
     HH
-    "OldChainComplexes :: Tor"
-    "OldChainComplexes :: Ext"
+    Tor
+    Ext
 
 Node
   Key

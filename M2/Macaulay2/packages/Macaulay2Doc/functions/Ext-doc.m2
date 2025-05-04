@@ -1,7 +1,7 @@
 document {
     Key => Ext,
     Headline => "compute an Ext module",
-    SeeAlso => { tensor, Tor },
+    SeeAlso => { Hom, tensor, Tor },
     Subnodes => {
 	TO (Ext, Module, Module),
 	TO (Ext, ZZ, Module, Module),
@@ -92,8 +92,16 @@ document {
      Ext^i(R^1/I,N) rather than Ext^(i-1)(I,N).  The latter first computes a presentation 
      of the ideal I, and then a free resolution of that.  For many examples, the
      difference in time and space required can be very large.",
-     SeeAlso => {resolution,Tor,Hom,monomialCurveIdeal,(Ext,ZZ,Matrix,Module),(Ext,ZZ,Module,Matrix)}
+     SeeAlso => {
+	 "Complexes :: freeResolution",
+	 "OldChainComplexes :: resolution",
+	 Tor,
+	 Hom,
+	 monomialCurveIdeal,
+	 (Ext,ZZ,Matrix,Module),
+	 (Ext,ZZ,Module,Matrix),
      }
+}
 
 document {
     Key => {
@@ -120,8 +128,14 @@ document {
 	  target g == Ext^2(M2,R)
 	  Ext^3(f,R)
           ///,
-     SeeAlso => {resolution,Tor,Hom,(Ext,ZZ,Module,Module)}
+     SeeAlso => {
+	 "Complexes :: freeResolution",
+	 "OldChainComplexes :: resolution",
+	 Tor,
+	 Hom,
+	 (Ext,ZZ,Module,Module)
      }
+}
 
 document {
     Key => {
@@ -149,5 +163,12 @@ document {
      -- 	  target g == Ext^2(M,target f)
      -- 	  Ext^3(f,R)
      --      ///,
-     SeeAlso => {resolution,Tor,Hom,(Ext,ZZ,Module,Module),(Ext,ZZ,Matrix,Module)}
+     SeeAlso => {
+	 "Complexes :: freeResolution",
+	 "OldChainComplexes :: resolution",
+	 Tor,
+	 Hom,
+	 (Ext,ZZ,Module,Module),
+	 (Ext,ZZ,Matrix,Module)
      }
+}

@@ -1,23 +1,6 @@
 --		Copyright 1995 by Daniel R. Grayson
 
--- see packages/Complexes/Tor.m2 for Tor(ZZ, Module, Matrix) and Tor(ZZ, Matrix, Module)
-Tor(ZZ, Module, Matrix) := Matrix => opts -> (i, J, f) -> notImplemented()
-Tor(ZZ, Matrix, Module) := Matrix => opts -> (i, J, f) -> notImplemented()
-
-Tor(ZZ, Ring,  Matrix) :=
-Tor(ZZ, Ideal, Matrix) := opts -> (i,M,f) -> Tor_i(module M, f, opts)
-Tor(ZZ, Matrix, Ring)  :=
-Tor(ZZ, Matrix, Ideal) := opts -> (i,f,N) -> Tor_i(f, module N, opts)
-
--- TODO: Tor_i(R, S) should work as well
-Tor(ZZ, Ring, Ring)   :=
-Tor(ZZ, Ring, Ideal)  :=
-Tor(ZZ, Ring, Module) :=
-Tor(ZZ, Ideal, Ring)   :=
-Tor(ZZ, Ideal, Ideal)  :=
-Tor(ZZ, Ideal, Module) :=
-Tor(ZZ, Module, Ring)   :=
-Tor(ZZ, Module, Ideal)  := Module => opts -> (i,M,N) -> Tor_i(module M, module N, opts)
+-- also see Complexes/Tor.m2
 Tor(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
      if ring M =!= ring N then error "expected the same ring";
      R := ring M;
@@ -37,7 +20,3 @@ Tor(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
 	       if b#?(i+1) 
 	       then error "internal error"
 	       else C_i ** N)))
-
--- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
--- End:

@@ -4,15 +4,6 @@ importFrom_Core {
     "generatorSymbols",
 }
 
--- TODO: Ext^i(R, S) should work as well
-Ext(ZZ, Ring, Ring)   :=
-Ext(ZZ, Ring, Ideal)  :=
-Ext(ZZ, Ring, Module) :=
-Ext(ZZ, Ideal, Ring)   :=
-Ext(ZZ, Ideal, Ideal)  :=
-Ext(ZZ, Ideal, Module) :=
-Ext(ZZ, Module, Ring)   :=
-Ext(ZZ, Module, Ideal)  := Module => opts -> (i,M,N) -> Ext^i(module M, module N, opts)
 Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
      R := ring M;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
@@ -33,8 +24,6 @@ Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
 	    then kernel Hom(b_(i+1), N, opts)
 	    else Hom(C_i, N, opts))))
 
-Ext(ZZ, Matrix, Ring)   :=
-Ext(ZZ, Matrix, Ideal)  := Matrix => opts -> (i,f,N) -> Ext^i(f, module N, opts)
 Ext(ZZ, Matrix, Module) := Matrix => opts -> (i,f,N) -> (
      R := ring f;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
@@ -52,8 +41,6 @@ Ext(ZZ, Matrix, Module) := Matrix => opts -> (i,f,N) -> (
 
 -- TODO: is this correct?
 -- c.f. https://github.com/Macaulay2/M2/issues/246
-Ext(ZZ, Ring,   Matrix) :=
-Ext(ZZ, Ideal,  Matrix) := Matrix => opts -> (i,N,f) -> Ext^i(module N, f, opts)
 Ext(ZZ, Module, Matrix) := Matrix => opts -> (i,N,f) -> (
      R := ring f;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
@@ -76,15 +63,7 @@ Ext(ZZ, Module, Matrix) := Matrix => opts -> (i,N,f) -> (
 --  but we also get rid of the fudge factor entirely, depending instead on automatic
 --  computation of the heft vector
 
--- TODO: Ext(R, S) should work as well
-Ext(Ring, Ring)   :=
-Ext(Ring, Ideal)  :=
-Ext(Ring, Module) :=
-Ext(Ideal, Ring)   :=
-Ext(Ideal, Ideal)  :=
-Ext(Ideal, Module) :=
-Ext(Module, Ring)   :=
-Ext(Module, Ideal)  := Module => opts -> (M, N) -> Ext(module M, module N, opts)
+-- also see Complexes/Ext.m2
 Ext(Module, Module) := Module => opts -> (M, N) -> (
     -- c.f. caching in Hom(Module,Module)
     cacheModule := youngest(M.cache.cache, N.cache.cache);
@@ -177,7 +156,3 @@ Ext(Module, Module) := Module => opts -> (M, N) -> (
   prune' := if opts.MinimalGenerators then prune else identity;
   cacheModule#cacheKey =
   prune' homology(DeltaBar,DeltaBar))
-
--- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
--- End:
