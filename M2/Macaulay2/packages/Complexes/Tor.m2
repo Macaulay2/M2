@@ -1,6 +1,29 @@
 -- Currently, the definition of Tor is provided by the Core.
 -- We anticipate migrating that code and def to this file (June 2021).
 
+-- duplicated from OldChainComplexes/Tor.m2
+-- TODO: documentation is still in Macaulay2Doc
+Tor(ZZ, Module, Module) := Module => opts -> (i, M, N) -> (
+    R := ring M;
+    if not isCommutative R then error "'Tor' not implemented yet for noncommutative rings.";
+    if R =!= ring N then error "expected modules over the same ring";
+    if i  <  0 then R^0 else
+    if i === 0 then M ** N
+    else (
+	C := freeResolution(M, LengthLimit => i+1);
+	N = minimalPresentation N;
+	b := dd^C;
+	if b#?i then (
+	    if b#?(i+1)
+	    then homology(b_i ** N, b_(i+1) ** N)
+	    else kernel(b_i ** N))
+	else (
+	    if b#?(i+1)
+	    then error "internal error"
+	    else C_i ** N)
+	)
+    )
+
 Tor(ZZ, Matrix, Module) := Matrix => opts -> (i,f,N) -> (
     R := ring f;
     if not isCommutative R then error "'Tor' not implemented yet for noncommutative rings.";
