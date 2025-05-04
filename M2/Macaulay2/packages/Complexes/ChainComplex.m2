@@ -1089,7 +1089,7 @@ minimize Complex := C -> (
 --------------------------------------------------------------------
 -- Yoneda ext ------------------------------------------------------
 --------------------------------------------------------------------
--- WARNING: this function replaces the one in m2/ext.m2
+
 Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
     H := null; -- result
     liftmap := null; -- given f : R^1 --> H, returns g : R^1 --> Hom(FM_i, N)
