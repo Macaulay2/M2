@@ -5,7 +5,7 @@ newPackage(
     Headline => "consolidating legacy chain complex code",
     Authors => { -* { Name => "", Email => "", HomePage => ""}*- },
     Keywords => {"Homological Algebra"},
-    PackageImports => { "Complexes", "LLLBases" },
+    PackageImports => { "LLLBases" },
     AuxiliaryFiles => true,
     DebuggingMode => false
 )
