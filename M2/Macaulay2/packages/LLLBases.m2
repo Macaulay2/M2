@@ -5,7 +5,6 @@ newPackage("LLLBases",
      Authors => {{Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"}},
      Headline => "Lenstra-Lenstra-Lovasz bases",
      Keywords => {"Algebraic Number Theory", "Linear Algebra"},
-     PackageImports => { "OldChainComplexes" },
      DebuggingMode => false
      )
 
@@ -755,9 +754,6 @@ gcdLLL List := options -> (s) -> (
      if options.Strategy === Hermite
      then bgcdLLL(s,options.Threshold)
      else agcdLLL(s,options.Threshold))
-
-addHook((resolution, Module), Strategy => symbol LLL,
-    (o,M) -> if ring M === ZZ then chainComplex compress LLL presentation M)
 
 addHook((minimalPresentation, Module), Strategy => symbol LLL,
     (o, M) -> (
