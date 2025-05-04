@@ -332,32 +332,20 @@ template <typename RT>
 void mult(const DMat<RT>& A, const DMat<RT>& B, DMat<RT>& result_product)
 {
   // printf("entering dmat mult\n");
-  typedef typename RT::ElementType ElementType;
-  typedef typename DMat<RT>::ConstIterator ConstIterator;
-
   assert(A.numColumns() == B.numRows());
   assert(A.numRows() == result_product.numRows());
   assert(B.numColumns() == result_product.numColumns());
 
-  ElementType* result = result_product.array();
-
   typename RT::Element tmp(A.ring());
-  // WARNING: this routine expects the result matrix to be in ROW MAJOR ORDER
   for (size_t i = 0; i < A.numRows(); i++)
     for (size_t j = 0; j < B.numColumns(); j++)
       {
-        ConstIterator i1 = A.rowBegin(i);
-        ConstIterator iend = A.rowEnd(i);
-        ConstIterator j1 = B.columnBegin(j);
-
-        while (i1 != iend)
+        auto& val = result_product.entry(i,j);
+        for (size_t k = 0; k < A.numColumns(); ++k)
           {
-            A.ring().mult(tmp, *i1, *j1);
-            A.ring().add(*result, *result, tmp);
-            ++i1;
-            ++j1;
+            A.ring().mult(tmp, A.entry(i,k), B.entry(k,j));
+            A.ring().add(val, val, tmp);
           }
-        result++;
       }
 }
 
@@ -372,32 +360,20 @@ template <typename RT>
 void subtractMultipleTo(DMat<RT>& C, const DMat<RT>& A, const DMat<RT>& B)
 // C = C - A*B
 {
-  typedef typename RT::ElementType ElementType;
-  typedef typename DMat<RT>::ConstIterator ConstIterator;
-
   assert(A.numColumns() == B.numRows());
   assert(A.numRows() == C.numRows());
   assert(B.numColumns() == C.numColumns());
 
-  ElementType* result = C.array();
-
   typename RT::Element tmp(A.ring());
-  // WARNING: this routine expects the result matrix to be in ROW MAJOR ORDER
   for (size_t i = 0; i < A.numRows(); i++)
     for (size_t j = 0; j < B.numColumns(); j++)
       {
-        ConstIterator i1 = A.rowBegin(i);
-        ConstIterator iend = A.rowEnd(i);
-        ConstIterator j1 = B.columnBegin(j);
-
-        while (i1 != iend)
+        auto& val = C.entry(i,j);
+        for (size_t k = 0; k < A.numColumns(); ++k)
           {
-            A.ring().mult(tmp, *i1, *j1);
-            A.ring().subtract(*result, *result, tmp);
-            ++i1;
-            ++j1;
+            A.ring().mult(tmp, A.entry(i,k), B.entry(k,j));
+            A.ring().subtract(val, val, tmp);
           }
-        result++;
       }
 }
 
@@ -1179,16 +1155,20 @@ inline bool QR(const DMatCC& A, DMatCC& Q, DMatCC& R, bool return_QR)
 
 inline void clean(gmp_RR epsilon, DMatRR& mat)
 {
-  auto p = mat.array();
-  size_t len = mat.numRows() * mat.numColumns();
-  for (size_t i = 0; i < len; i++, ++p) mat.ring().zeroize_tiny(epsilon, *p);
+  for (size_t r = 0; r < mat.numRows(); ++r)
+    for (size_t c = 0; c < mat.numColumns(); ++c)
+      {
+        mat.ring().zeroize_tiny(epsilon, mat.entry(r,c));
+      }
 }
 
 inline void increase_norm(gmp_RRmutable norm, const DMatRR& mat)
 {
-  auto p = mat.array();
-  size_t len = mat.numRows() * mat.numColumns();
-  for (size_t i = 0; i < len; i++, ++p) mat.ring().increase_norm(norm, *p);
+  for (size_t r = 0; r < mat.numRows(); ++r)
+    for (size_t c = 0; c < mat.numColumns(); ++c)
+      {
+        mat.ring().increase_norm(norm, mat.entry(r,c));
+      }
 }
 
 ////////
@@ -1264,16 +1244,20 @@ inline bool SVD(const DMatCC& A,
 
 inline void clean(gmp_RR epsilon, DMatCC& mat)
 {
-  auto p = mat.array();
-  size_t len = mat.numRows() * mat.numColumns();
-  for (size_t i = 0; i < len; i++, ++p) mat.ring().zeroize_tiny(epsilon, *p);
+  for (size_t r = 0; r < mat.numRows(); ++r)
+    for (size_t c = 0; c < mat.numColumns(); ++c)
+      {
+        mat.ring().zeroize_tiny(epsilon, mat.entry(r,c));
+      }
 }
 
 inline void increase_norm(gmp_RRmutable norm, const DMatCC& mat)
 {
-  auto p = mat.array();
-  size_t len = mat.numRows() * mat.numColumns();
-  for (size_t i = 0; i < len; i++, ++p) mat.ring().increase_norm(norm, *p);
+  for (size_t r = 0; r < mat.numRows(); ++r)
+    for (size_t c = 0; c < mat.numColumns(); ++c)
+      {
+        mat.ring().increase_norm(norm, mat.entry(r,c));
+      }
 }
 
 /////////
@@ -1324,16 +1308,20 @@ inline bool SVD(const DMatRRR& A,
 
 inline void clean(gmp_RR epsilon, DMatRRR& mat)
 {
-  auto p = mat.array();
-  size_t len = mat.numRows() * mat.numColumns();
-  for (size_t i = 0; i < len; i++, ++p) mat.ring().zeroize_tiny(epsilon, *p);
+  for (size_t r = 0; r < mat.numRows(); ++r)
+    for (size_t c = 0; c < mat.numColumns(); ++c)
+      {
+        mat.ring().zeroize_tiny(epsilon, mat.entry(r,c));
+      }
 }
 
 inline void increase_norm(gmp_RRmutable norm, const DMatRRR& mat)
 {
-  auto p = mat.array();
-  size_t len = mat.numRows() * mat.numColumns();
-  for (size_t i = 0; i < len; i++, ++p) mat.ring().increase_norm(norm, *p);
+  for (size_t r = 0; r < mat.numRows(); ++r)
+    for (size_t c = 0; c < mat.numColumns(); ++c)
+      {
+        mat.ring().increase_norm(norm, mat.entry(r,c));
+      }
 }
 
 /////////
@@ -1384,17 +1372,22 @@ inline bool SVD(const DMatCCC& A,
 
 inline void clean(gmp_RR epsilon, DMatCCC& mat)
 {
-  auto p = mat.array();
-  size_t len = mat.numRows() * mat.numColumns();
-  for (size_t i = 0; i < len; i++, ++p) mat.ring().zeroize_tiny(epsilon, *p);
+  for (size_t r = 0; r < mat.numRows(); ++r)
+    for (size_t c = 0; c < mat.numColumns(); ++c)
+      {
+        mat.ring().zeroize_tiny(epsilon, mat.entry(r,c));
+      }
 }
 
 inline void increase_norm(gmp_RRmutable norm, const DMatCCC& mat)
 {
-  auto p = mat.array();
-  size_t len = mat.numRows() * mat.numColumns();
-  for (size_t i = 0; i < len; i++, ++p) mat.ring().increase_norm(norm, *p);
+  for (size_t r = 0; r < mat.numRows(); ++r)
+    for (size_t c = 0; c < mat.numColumns(); ++c)
+      {
+        mat.ring().increase_norm(norm, mat.entry(r,c));
+      }
 }
+
 };  // namespace MatrixOps
 
 #endif

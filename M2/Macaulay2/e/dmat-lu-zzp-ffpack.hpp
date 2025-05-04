@@ -46,6 +46,8 @@ class DMatLinAlg<M2::ARingZZpFFPACK>
 
   void matrixPLU(std::vector<size_t>& P, Mat& L, Mat& U)
   {
+    //    std::cout << "calling matrixPLU ffpack\n";
+    
     DMatLUinPlace<RingType> C(mLU);
 
     const Mat& LU = C.LUinPlace();

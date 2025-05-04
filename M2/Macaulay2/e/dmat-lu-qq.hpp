@@ -66,7 +66,7 @@ class DMatLinAlg<M2::ARingQQ>
 
   void matrixPLU(std::vector<size_t>& P, Mat& L, Mat& U)
   {
-    // printf("dmat lu qq PLU\n");
+    //    std::cout << "calling matrixPLU FlintQQ\n";
     FlintQQMat A(mInputMatrix);
     FlintZZMat LU(A.numRows(), A.numColumns());
     fmpz_t den, den2;
@@ -75,11 +75,14 @@ class DMatLinAlg<M2::ARingQQ>
     mp_limb_signed_t* perm = newarray_atomic(mp_limb_signed_t, LU.numRows());
     for (long i = 0; i < LU.numRows(); i++) perm[i] = i;
     fmpq_mat_get_fmpz_mat_matwise(LU.value(), den, A.value());
-    fmpz_mat_fflu(LU.value(),
+    int rk = fmpz_mat_fflu(LU.value(),
                   den2,
                   perm,
                   LU.value(),
                   0);  // the 0 means do not abort if rank is not maximal
+    fmpz_mat_print_pretty(LU.value());
+    fmpz_print(den2);
+    //    std::cout << "rank = " << rk << std::endl;
     P.resize(0);
     for (long i = 0; i < LU.numRows(); i++) P.push_back(perm[i]);
     freemem(perm);
