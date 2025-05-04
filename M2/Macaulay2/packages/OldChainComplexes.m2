@@ -5,7 +5,7 @@ newPackage(
     Headline => "consolidating legacy chain complex code",
     Authors => { -* { Name => "", Email => "", HomePage => ""}*- },
     Keywords => {"Homological Algebra"},
-    PackageImports => { "LLLBases" },
+    PackageImports => { "Complexes", "LLLBases" },
     AuxiliaryFiles => true,
     DebuggingMode => false
 )
@@ -27,16 +27,24 @@ importFrom_Core {
     "storefuns",
     "leftarrow",
     "mtable",
+    "isPackageLoaded",
 }
 
 -----------------------------------------------------------------------------
 
 load "./OldChainComplexes/gradedmodules.m2"
 load "./OldChainComplexes/chaincomplexes.m2"
+
 load "./OldChainComplexes/res.m2"
 load "./OldChainComplexes/betti.m2"
 load "./OldChainComplexes/Ext.m2"
 load "./OldChainComplexes/Tor.m2"
+
+-----------------------------------------------------------------------------
+
+-- ChainComplex to Complex conversion code
+if isPackageLoaded "Complexes" then
+  load "./OldChainComplexes/conversion.m2"
 
 -----------------------------------------------------------------------------
 -* Documentation section *-
@@ -62,6 +70,10 @@ load "./OldChainComplexes/docs/resolution-doc.m2"
 -- operator docs
 load "./OldChainComplexes/docs/caret-doc.m2"
 load "./OldChainComplexes/docs/underscore-doc.m2"
+
+-- ChainComplex to Complex conversion docs
+if isPackageLoaded "Complexes" then
+  load "./OldChainComplexes/docs/conversion.m2"
 
 doc ///
 Key
