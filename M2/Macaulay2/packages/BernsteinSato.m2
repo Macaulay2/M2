@@ -11,6 +11,7 @@ newPackage(
     Keywords => {"D-modules"},
     PackageExports => { "WeylAlgebras", "HolonomicSystems" },
     PackageImports => {
+	"OldChainComplexes",
 	"PrimaryDecomposition",
 	"ReesAlgebra",
 	"Elimination",
