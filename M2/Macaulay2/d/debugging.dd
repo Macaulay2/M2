@@ -148,7 +148,7 @@ export toList(c:Code):Expr := (
         when x.arg3 is s:globalSymbolClosureCode do list(toExpr("2-OP"), Expr(SymbolBody(s.symbol)), seq(toExpr(x.arg1), toExpr(x.arg2)))
 	else nullE
 	)
-        else list(toExpr("3X-OP"), Expr(SymbolBody(getTernopName(x.f))), seq(toExpr(x.arg1), toExpr(x.arg2), toExpr(x.arg3)))
+        else list(toExpr("3-OP"), Expr(SymbolBody(getTernopName(x.f))), seq(toExpr(x.arg1), toExpr(x.arg2), toExpr(x.arg3)))
     is x:multaryCode do list(toExpr("OP"),   Expr(SymbolBody(getMultopName(x.f))),
 	Expr(new Sequence len length(x.args) do foreach c in x.args do provide toExpr(c)))
     is x:adjacentCode do list(toExpr("adjacent"), seq(toExpr(x.lhs), toExpr(x.rhs)))
