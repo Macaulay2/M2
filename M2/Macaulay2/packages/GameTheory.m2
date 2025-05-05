@@ -2041,7 +2041,7 @@ doc ///
     Text
       The Verbose=>true option prints the progress of each step in the saturation process -
       a message is printed after saturating the ideal $V$, the conditional independence ideal $I$,
-      and the sum $V + I$ with respect to each hyperplane of the probablity simplex.
+      and the sum $V + I$ with respect to each hyperplane of the probability simplex.
     Example
       FF = ZZ/32003;
       d = {2,3,2};
@@ -2151,7 +2151,7 @@ doc ///
       The Verbose=>true option prints the progress of each step in the saturation process -
       a message is printed after saturating the ideal of the Spohn variety $V$, the conditional
       independence ideal $I$, and the sum $V + I$ with respect to each hyperplane of the
-      probablity simplex.
+      probability simplex.
     Example
       FF = ZZ/32003;
       d = {2,3,2};
