@@ -31,7 +31,7 @@ newPackage(
          Email => "cz2922@ic.ac.uk",
          HomePage => "https://www.felixzhao.com/"}
    },
-   Headline => "A package for computing equilibria in game theory",
+   Headline => "computing equilibria in game theory",
    Keywords => {"Game Theory","Equilibria","Nash","Correlated","Dependency","Spohn","Conditional Independence"},
    PackageExports => {"Polyhedra","GraphicalModels"},
    PackageImports => {"Polyhedra"}
