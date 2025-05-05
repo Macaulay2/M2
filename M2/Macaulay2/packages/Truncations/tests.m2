@@ -296,9 +296,12 @@ TEST /// -- cf. Maclagan-Smith 2004, Example 5.2
   assert(basis(first degrees I, M) == 0)
   assert(basis'(degrees I, M) == 0)
   -- truncating a chain complex
+  needsPackage "Complexes"
   C = res M
-  D = chainComplex apply(1 .. length C, i -> truncate({0,0}, C.dd_i));
+  D = complex apply(1 .. length C, i -> truncate({0,0}, C.dd_i));
   assert(HH_0 D == M and HH_1 D == 0 and HH_2 D == 0) -- good, fixed in v1.0
+  D = truncate(d, complex C)
+  assert(HH_0 D == M1 and HH_1 D == 0 and HH_2 D == 0)
 ///
 
 TEST /// -- ideal of 10 points on Hirzebruch surface of type 3
@@ -327,12 +330,16 @@ TEST /// -- ideal of 10 points on Hirzebruch surface of type 3
   assert(M4 == M1) -- good, fixed in v1.0
 
   -- truncating a chain complex
+  needsPackage "Complexes"
   C = res M0
-  D = chainComplex apply(1 .. length C, i -> truncate(d, C.dd_i));
+  D = complex apply(toList(1 .. length C), i -> truncate(d, C.dd_i));
   assert(HH_0 D == M4 and HH_1 D == 0 and HH_2 D == 0) -- good, fixed in v1.0
+  D = truncate(d, C)
+  assert(HH_0 D == M1 and HH_1 D == 0 and HH_2 D == 0)
 ///
 
 TEST /// -- test of truncationPolyhedron with Nef option
+  needsPackage "Complexes"
   debug needsPackage "Truncations"
   needsPackage "NormalToricVarieties"
   dP6 = smoothFanoToricVariety(2, 4)
@@ -350,12 +357,15 @@ TEST /// -- test of truncationPolyhedron with Nef option
   d = {0,0,0,1}; assert(truncate({0,0,0,0}, S^{-d}) == image(map(S^{-d}, S^{{0, -1, 0, 0}, {0, 0, -1, -1}}, {{S_5, S_3}})))
 
   -- truncating a chain complex
+  needsPackage "Complexes"
   d = {0,2,0,2}
   M0 = coker map(S^1, S^{{0, 0, -1, -1}, {0, -2, 0, -2}}, {{3*S_0*S_1+2*S_3*S_4,S_1^2*S_2^2*S_4^2+2*S_1*S_2*S_4^3*S_5+2*S_4^4*S_5^2}})
   M1 = truncate(d, M0)
   assert(hilbertPolynomial(dP6, M0) == 2)
-  C = res M0; D = chainComplex apply(1 .. length C, i -> truncate(d, C.dd_i));
+  C = res M0; D = complex apply(toList(1 .. length C), i -> truncate(d, C.dd_i));
   assert(HH_0 D == M1 and HH_1 D == 0 and HH_2 D == 0) -- good, fixed in v1.0
+  D = truncate(d, C)
+  assert(HH_0 D == M1 and HH_1 D == 0 and HH_2 D == 0)
 ///
 
 TEST /// -- test of inducedTruncationMap

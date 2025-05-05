@@ -214,7 +214,10 @@ Node
       g2 = truncate({1,1}, C.dd_2)
       g3 = truncate({1,1}, C.dd_3)
       g4 = truncate({1,1}, C.dd_4)
-      D = chainComplex {g1, g2, g3, g4}
+      needsPackage "Complexes"
+      D = complex {g1, g2, g3, g4}
+      D' = truncate({1,1}, freeResolution I)
+      assert(D == D')
     Text
       This functor is exact.
     Example
