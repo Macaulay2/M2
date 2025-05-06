@@ -586,6 +586,7 @@ heftfun = (wt1,wt2) -> (
      else d -> 0
      )
 
+betti Matrix  := opts -> f -> betti(complex f, opts)
 betti Complex := opts -> C -> (
     heftfn := heftfun(opts.Weights, heft ring C);
     (lo,hi) := C.concentration;
@@ -593,6 +594,16 @@ betti Complex := opts -> C -> (
         apply(pairs tally degrees C_i, (d,n) -> (i,d,heftfn d) => n)
         )
     )
+
+pdim Module := M -> length freeResolution minimalPresentation M
+
+regularity Ideal  := opts -> I -> (
+    if I == 0 then -infinity else if I == 1 then 0
+    else 1 + regularity betti(freeResolution comodule I, opts))
+
+regularity Module := opts -> M -> (
+    if not isHomogeneous M then error "regularity: expected homogeneous module";
+    regularity betti(freeResolution minimalPresentation M, opts))
 
 regularity Complex := opts -> C -> (
     if numgens degreesRing ring C =!= 1 then 
