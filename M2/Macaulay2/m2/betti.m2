@@ -10,30 +10,8 @@ needs "hilbert.m2"
 needs "modules2.m2"
 
 -----------------------------------------------------------------------------
--- Local utilities
------------------------------------------------------------------------------
-
--- called from OldChainComplexes
-baseRing' = R -> ultimate(coefficientRing, R) -- Note: different from first R.baseRings
-
------------------------------------------------------------------------------
 -- unexported helper functions used in several packages
 -----------------------------------------------------------------------------
-
-resolutionLengthLimit = (R, lengthLimit) -> (
-    if lengthLimit == infinity then (
-	A := baseRing' R;
-	nvars := # generators(R, CoefficientRing => A);
-	nvars + 1 + if A === ZZ then 1 else 0)
-    else lengthLimit )
-
--- also used by Saturation
-resolutionDegreeLimit = (R, degreeLimit) -> (
-    degreeLimit = if degreeLimit =!= null      then  degreeLimit  else {};
-    degreeLimit = if instance(degreeLimit, ZZ) then {degreeLimit} else degreeLimit;
-    if #degreeLimit == degreeLength R and all(degreeLimit, d -> instance(d, ZZ))
-    or #degreeLimit == 0 then degreeLimit
-    else error "expected DegreeLimit or HardDegreeLimit to be a valid degree, multidegree, or null")
 
 unpackEngineBetti = w -> (
     -- w is the result of e.g. rawGBBetti.
@@ -47,12 +25,6 @@ unpackEngineBetti = w -> (
 
 -- used in EngineTests
 rawBetti = (computation, type) -> unpackEngineBetti rawGBBetti(computation, type)
-
------------------------------------------------------------------------------
--- this is here because currently both Complexes and OldChainComplexes use it
-
-Resolution = new Type of MutableHashTable
-Resolution.synonym = "resolution"
 
 -----------------------------------------------------------------------------
 -- BettiTally type declarations and basic constructors
