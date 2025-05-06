@@ -266,6 +266,11 @@ isWellDefined Complex := Boolean => C -> (
     true
     )
 
+Module Array := Complex => (M, v) -> (
+    if  length v =!= 1  then error "expected array of length 1";
+    if class v#0 =!= ZZ then error "expected [n] with n an integer";
+    complex(M, Base => v#0))
+
 Complex _ ZZ := Module => (C,i) -> if C.module#?i then C.module#i else (ring C)^0
 Complex ^ ZZ := Module => (C,i) -> C_(-i)
 
