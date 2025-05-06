@@ -249,10 +249,6 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 	    cert  = new HashTable from cert;
 	    -- TODO: compare with the one in installPackage.m2
 	    star := IMG { "src" => replace("PKG", "Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star"};
-	    commit := concatenate(
-		"https://github.com/Macaulay2/M2/blob/",
-		cert#"release at publication", "/M2/Macaulay2/packages/",
-		(cert#"legacy name" ?? pkg#"pkgname") | ".m2");
 	    DIV {
 		SUBSECTION {"Certification ", star},
 		PARA {
@@ -266,8 +262,7 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 		                HREF{cert#"published article URI",  cert#"article title"},
 		    " (DOI: ",  HREF{"https://doi.org/" | cert#"published article DOI", cert#"published article DOI"},
 		    "). That version can be obtained",
-		    " from ",   HREF{cert#"published code URI", "the journal"}, " or",
-		    " from ",   HREF{commit, SPAN{"the ", EM "Macaulay2", " source code repository"}},
+		    " from ",   HREF{cert#"published code URI", "the journal"},
 		    "."}}
 	    ),
 	DIV {
