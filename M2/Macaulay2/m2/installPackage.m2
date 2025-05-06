@@ -543,6 +543,8 @@ generateExampleResults := (pkg, rawDocumentationCache, exampleDir, exampleOutput
 	    toString cachehash);
 	samehash);
 
+    errorList := new MutableList;
+
     usermode := if opts.UserMode === null then not noinitfile else opts.UserMode;
     scan(pairs pkg#"example inputs", (fkey, inputs) -> (
 	    inpf  := inpfn  fkey; -- input file
@@ -568,8 +570,15 @@ generateExampleResults := (pkg, rawDocumentationCache, exampleDir, exampleOutput
 		desc, demark_newline inputs, pkg,
 		inpf, outf, errf, data,
 		inputhash, changeFunc fkey,
-		usermode) then (possiblyCache(outf, outf', fkey))();
+		usermode) then (possiblyCache(outf, outf', fkey))()
+	    else errorList##errorList = fkey;
 	    storeExampleOutput(pkg, fkey, outf, verboseLog)));
+
+    if #errorList > 0 then (
+	stderr << concatenate(printWidth:"=") << endl;
+	printerr("Summary: ", toString(#errorList), " example(s) failed in package ", pkg#"pkgname", ":");
+	printerr netList(Boxes => false, HorizontalSpace => 2,
+	    apply(toList errorList, fkey -> { fkey, locate makeDocumentTag fkey })));
 
     -- check for obsolete example output files and remove them
     if chkdoc then (
