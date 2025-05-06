@@ -1,7 +1,11 @@
 --------------------------------------------------------------------
 -- interface code to legacy types ----------------------------------
 --------------------------------------------------------------------
-importFrom_"Complexes" { "Complex", "ComplexMap", "complex", "concentration" }
+if isPackageLoaded "OldChainComplexes" then
+  importFrom_"OldChainComplexes" { "ChainComplex", "ChainComplexMap", "chainComplex" }
+
+if isPackageLoaded "Complexes" then
+  importFrom_"Complexes" { "Complex", "ComplexMap", "complex", "concentration" }
 
 chainComplex Complex := ChainComplex => (cacheValue symbol ChainComplex) (C -> (
     (lo,hi) := concentration C;
