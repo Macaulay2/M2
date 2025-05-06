@@ -34,9 +34,9 @@ makeSet(e:Expr):Expr := (
      when e
      is v:Sequence do makeSet(v)
      is w:List do if ancestor(w.Class,visibleListClass) then makeSet(w.v)
-     else WrongArg("a visible list")
+     else WrongArg("a visible list or a hash table")
      is h:HashTable do makeSet(h)
-     else WrongArg("a visible list"));
+     else WrongArg("a visible list or a hash table"));
 setupfun("set",makeSet);
 
 -- object is beingInitialized:
