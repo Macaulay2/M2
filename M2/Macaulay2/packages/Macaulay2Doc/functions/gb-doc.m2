@@ -523,6 +523,7 @@ TEST /// -- nonstandard grading
   R1 = kk[a..f, MonomialOrder => {GRevLex => {1,1,1,1,1,1}}, Degrees => {1,2,3,4,4,4}];
   setRandomSeed 42
   J1 = ideal random(R1^1, R1^{-5, -5, -5, -5});
+  assert isHomogeneous J1
   elapsedTime gbA = flatten entries gens gb(J1);
   elapsedTime gbB = flatten entries gens gb(ideal J1_*, Algorithm => LinearAlgebra); -- CRASH!
   elapsedTime gbC = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
@@ -572,7 +573,72 @@ TEST /// -- GB's of modules
 -*
   restart
 *-
+TEST /// -- inhomgeneity. Algorithm => LinearAlgebra, over finite field.
+  kk = ZZ/101;
+  R1 = kk[a..g, MonomialSize=>8];
+  setRandomSeed 42
+  J1 = ideal (random(2, R1) + random(3, R1), random(2, R1) - 1)
+  elapsedTime gbA = flatten entries gens gb(ideal J1_*);
+  elapsedTime gbC = flatten entries gens (G = gb(ideal J1_*, Algorithm => LinearAlgebra)); -- gives error, as it should
+  elapsedTime gbB = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
+  assert(gbA == gbB)
+  --assert(gbA == gbC)
+
+  -- TODO: is it ok to check Msolve while we do this?
+  needsPackage "Msolve"
+  elapsedTime gbD = flatten entries msolveGB(ideal J1_*, Threads => 8); -- slowest, due to translation, or what?
+  assert(gbD == gbB)
+///
+
+-*
+  restart
+*-
 TEST /// -- different monomial orders
+  kk = ZZ/101;
+  R1 = kk[a..g, MonomialSize=>8];
+  M = genericSymmetricMatrix(R1, 3)
+  J1 = minors(2, M)
+
+  -- grevlex
+  elapsedTime gbA = flatten entries gens gb(ideal J1_*);
+  elapsedTime gbC = flatten entries gens gb(ideal J1_*, Algorithm => LinearAlgebra);
+  elapsedTime gbB = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
+  assert(gbA == gbB)
+  assert(gbA == gbC)
+  LT1 = leadTerm J1
+
+  -- lex
+  R1 = kk[a..g, MonomialOrder => Lex];
+  J1 = sub(J1, R1)
+  elapsedTime gbA = flatten entries gens gb(ideal J1_*);
+  elapsedTime gbC = flatten entries gens gb(ideal J1_*, Algorithm => LinearAlgebra);
+  elapsedTime gbB = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
+  assert(gbA == gbB)
+  assert(gbA == gbC)
+  LT2 = leadTerm J1
+  assert(LT2 != sub(LT1, R1))
+
+  -- product order
+  R1 = kk[a..g, MonomialOrder => {3,4}];
+  J1 = sub(J1, R1)
+  elapsedTime gbA = flatten entries gens gb(ideal J1_*);
+  elapsedTime gbC = flatten entries gens gb(ideal J1_*, Algorithm => LinearAlgebra);
+  elapsedTime gbB = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
+  assert(gbA == gbB)
+  assert(gbA == gbC)
+  LT3 = leadTerm J1
+  assert(LT3 != sub(LT1, R1))
+
+  -- product order
+  R1 = kk[a..g, MonomialOrder => {Lex => 3, GRevLex => {1,2,3,4}}];
+  J1 = sub(J1, R1)
+  elapsedTime gbA = flatten entries gens gb(ideal J1_*);
+  elapsedTime gbC = flatten entries gens gb(ideal J1_*, Algorithm => LinearAlgebra);
+  elapsedTime gbB = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
+  assert(gbA == gbB)
+  assert(gbA == gbC)
+  LT4 = leadTerm J1
+  assert(LT3 != sub(LT1, R1))
 ///
 
 -*
