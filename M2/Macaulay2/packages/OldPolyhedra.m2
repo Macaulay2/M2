@@ -21,6 +21,7 @@ newPackage("OldPolyhedra",
 	 "published article DOI" => "10.2140/jsag.2009.1.11",
 	 "published code URI" => "https://msp.org/jsag/2009/1-1/jsag-v1-n1-x03-code.zip",
 	 "release at publication" => "c065ec7651789907627333018dc7d675968639e4", -- git commit number in hex
+	 "legacy name" => "Polyhedra",
 	 "version at publication" => "1.0.5",
 	 "volume number" => "1",
 	 "volume URI" => "https://msp.org/jsag/2009/1-1/"

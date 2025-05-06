@@ -9,6 +9,7 @@
 		"published article URI" => "",
 		"published article DOI" => "",
 		"published code URI" => "",
+		"legacy name" => "",             -- if renamed since published
 		"release at publication" => "",  -- git commit number in hex
 		"version at publication" => "",
 		"volume number" => "13",
