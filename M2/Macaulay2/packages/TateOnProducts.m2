@@ -21,7 +21,7 @@ newPackage(
 	{ Name => "Yeongrak Kim",     	 Email => "kim@math.uni-sb.de",      HomePage => "http://sites.google.com/view/yeongrak/"}
 	},
     Keywords => {"Commutative Algebra"},
-    PackageImports => {"Truncations", "Complexes", "OldChainComplexes"},
+    PackageImports => {"Truncations", "OldChainComplexes"},
     PackageExports => {"Isomorphism", "SVDComplexes"},
     DebuggingMode => false
     )
@@ -1219,7 +1219,7 @@ minimize ChainComplex := o -> E ->(
     )
 *-
 --isExact=method()
-isExact(ChainComplex):=(C) -> (
+isExact(ChainComplex) := {} >> o -> (C) -> (
    if (all((min C,max C), i -> (prune HH_i(C) == 0))) then true else false
 )
 

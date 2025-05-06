@@ -33,6 +33,8 @@ truncate = method(Options => true)
 isEmpty = method(TypicalValue => Boolean)
 isEmpty Thing := x -> #x == 0
 
+isExact = method(TypicalValue => Boolean, Options => true)
+
 isSmooth = method(TypicalValue => Boolean, Options => true)
 isVeryAmple = method(TypicalValue => Boolean, Options => true)
 

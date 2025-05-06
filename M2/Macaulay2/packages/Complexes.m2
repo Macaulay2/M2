@@ -43,7 +43,6 @@ export {
     "koszulComplex",
     "longExactSequence",
     "isComplexMorphism",
-    "isExact",
     "isFree", -- TODO: move to Core, use for freemodules too
     "isQuasiIsomorphism",
     "isNullHomotopic",

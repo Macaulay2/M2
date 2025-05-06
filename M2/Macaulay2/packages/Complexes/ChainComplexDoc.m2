@@ -3491,12 +3491,11 @@ doc ///
 
 doc ///
    Key
-     isExact
-     (isExact, Complex)
-     (isExact, Complex, InfiniteNumber, InfiniteNumber)
-     (isExact, Complex, InfiniteNumber, Number)
-     (isExact, Complex, Number, InfiniteNumber)
      (isExact, Complex, Number, Number)
+     (isExact, Complex, Number, InfiniteNumber)
+     (isExact, Complex, InfiniteNumber, Number)
+     (isExact, Complex, InfiniteNumber, InfiniteNumber)
+     (isExact, Complex)
    Headline
      whether a complex is exact
    Usage
