@@ -23,6 +23,8 @@ export {
     -- types
     "Complex",
     "ComplexMap",
+    "GradedModule" => "Complex",
+    "GradedModuleMap" => "ComplexMap",
     -- functions/methods
     "augmentationMap",
     "canonicalMap",
