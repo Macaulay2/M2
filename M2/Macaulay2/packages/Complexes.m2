@@ -77,6 +77,10 @@ export {
     "UseTarget"
     }
 
+importFrom_Core {
+    "isPackageLoaded",
+}
+
 -- keys into the type `Complex`
 protect modules
 
@@ -123,6 +127,12 @@ load "./Complexes/Tor.m2"
 load "./Complexes/Ext.m2"
 
 --------------------------------------------------------------------
+-- interface code to legacy types ----------------------------------
+--------------------------------------------------------------------
+if isPackageLoaded "OldChainComplexes" then
+  load "./OldChainComplexes/conversion.m2"
+
+--------------------------------------------------------------------
 -- package documentation -------------------------------------------
 --------------------------------------------------------------------
 beginDocumentation()
@@ -139,6 +149,12 @@ undocumented{
 
 load "./Complexes/ChainComplexDoc.m2"
 load "./Complexes/ChainComplexMapDoc.m2"
+
+--------------------------------------------------------------------
+-- documentation for legacy type conversion ------------------------
+--------------------------------------------------------------------
+if isPackageLoaded "OldChainComplexes" then
+  load "./OldChainComplexes/docs/conversion.m2"
 
 --------------------------------------------------------------------
 -- package tests ---------------------------------------------------
