@@ -10,6 +10,7 @@ document {
     "The Eagon-Northcott complex is an explicit chain complex that gives a minimal projective
     resolution of the cokernel of the matrix maximal minors of a generic matrix of linear forms.",
     EXAMPLE lines ///
+          needsPackage "OldChainComplexes"
      	  R = QQ[a..z]
 	  f = genericMatrix(R,3,5)
 	  M = coker gens minors_3 f
