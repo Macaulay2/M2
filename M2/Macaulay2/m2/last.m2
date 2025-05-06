@@ -55,7 +55,7 @@ addStartFunction( () -> (
 addStartFunction( () -> (
 	  if not nobanner then (
 	       if topLevelMode === TeXmacs then stderr << TeXmacsBegin << "verbatim:";
-	       stderr << "Type `help` to see useful commands" << endl;
+	       print SPAN("Type ", KBD M2CODE "help", " to see useful commands");
 	       if topLevelMode === TeXmacs then stderr << TeXmacsEnd << flush;
 	       );
 	  )
