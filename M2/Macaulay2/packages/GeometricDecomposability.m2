@@ -316,6 +316,7 @@ isLexCompatiblyGVD(Ideal, List) := Boolean => opts -> (I, indetOrder) -> (
 
         printIf(opts.Verbose, "initial ideal = " | toString initIdeal);
 
+        -- run recursive definition [KR, Definition 2.11] on the initial ideal [KR, Proposition 2.14]
         recursiveLexGVD(initIdeal, indetOrder, 
                 CheckCM=>opts.CheckCM, CheckUnmixed=>opts.CheckUnmixed, 
                 IsIdealHomogeneous=>true, IsIdealUnmixed=>opts.IsIdealUnmixed,
@@ -323,6 +324,7 @@ isLexCompatiblyGVD(Ideal, List) := Boolean => opts -> (I, indetOrder) -> (
                 )
         )
 
+-- recursive definition of <-compatibly geometrically vertex decomposable [KR, Definition 2.11]
 recursiveLexGVD = method(
         Options => {
                 CheckCM => "always", 
