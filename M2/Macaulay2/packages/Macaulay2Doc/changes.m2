@@ -67,6 +67,21 @@ changesHelper List := opt -> pkgnames -> (
 document {
     Key => "changes made for the next release",
     UL {
+	LI { BOLD "upcoming breaking changes:",
+	    UL {
+		LI { "Beginning in the 1.25.11 release, current routines involving chain complexes and graded modules
+		    will be superseded by new functorial homological algebra routines in the ", TO "Complexes::Complexes",
+		    " package. Users and package developers are encouraged to preview the upcoming changes by adding ",
+		    TT "HomologicalAlgebraPackage = \"Complexes\"", " to their ", TO "initialization file", " and
+		    reporting any bugs via email or ", HREF{"https://github.com/Macaulay2/M2/issues/3778", "GitHub"}, "." },
+	    }
+	},
+	LI { "new packages:",
+	    UL {
+		LI { "The package ", TO "OldChainComplexes::OldChainComplexes", " has been added to preserve the existing
+		    functionality of chain complexes, graded modules, and resolutions for backwards compatibility." },
+		}
+	    },
 	LI { "functionality changed in a way that could break code:",
 	    UL {
 		LI { "The method ", TO "Isomorphism :: isIsomorphism", " now only returns true or false. ",
