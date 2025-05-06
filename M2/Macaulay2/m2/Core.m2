@@ -189,7 +189,6 @@ Core#"preloaded packages" = nonnull {
     "Isomorphism",
     "LLLBases",
     "MinimalPrimes",
-    "OldChainComplexes",
     "OnlineLookup",
     "PackageCitations",
     "PrimaryDecomposition",
@@ -199,6 +198,8 @@ Core#"preloaded packages" = nonnull {
     "TangentCone",
     "Varieties",
 }
+
+addStartFunction( () -> Core#"preloaded packages" = prepend(HomologicalAlgebraPackage, Core#"preloaded packages") )
 
 undocumented keys undocumentedkeys
 undocumentedkeys = null
