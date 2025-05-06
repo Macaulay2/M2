@@ -12,11 +12,13 @@ newPackage("WeylAlgebras",
      Keywords => {"D-modules"},
      DebuggingMode => false,
      PackageImports => {
-	 "OldChainComplexes",
 	 "PrimaryDecomposition",
 	 "ReesAlgebra",
 	 "Elimination",
 	 "FourTiTwo"
+         },
+     PackageExports => {
+	 "OldChainComplexes",
 	 }
      )
 
