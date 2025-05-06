@@ -663,7 +663,7 @@ doc ///
 
      For more theoretical details see 
      J. Boehm: Rational parametrization of rational curves,
-     @HREF"http://www.math.uni-sb.de/ag/schreyer/jb/diplom%20janko%20boehm.pdf"@.
+     @HREF"https://agag-jboehm.math.rptu.de/~boehm/diplom%20janko%20boehm.pdf"@.
 
 
      {\bf Key user functions:}
