@@ -116,8 +116,8 @@ Node
   Usage
     isSupportedInZeroLocus_B M
   Inputs
-    M:Module
     B:Ideal
+    M:{Ideal,Module,GradedModule}
   Outputs
     :Boolean
       true if $M$ (or $R^1/I$, if an ideal of $R$ is given) is supported only on the zero locus of $B$;
@@ -125,7 +125,7 @@ Node
   Description
     Text
       Given an module $M$ and an ideal $B$, {\tt isSupportedInZeroLocus} checks whether $\mathrm{ann}(M):B^\infty=R$.
-      If it is, {\tt isSupportedInZeroLocus} returns true otherwise it returns false. If the first argument is an ideal,
+      If it is, {\tt isSupportedInZeroLocus} returns true otherwise it returns false. If the second argument is an ideal,
       $M = R^1/I$ is taken as the module.
     Example
       S = ZZ/32003[x_0..x_4, Degrees=>{2:{1,0}, 3:{0,1}}];
