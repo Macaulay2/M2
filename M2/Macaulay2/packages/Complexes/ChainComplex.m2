@@ -364,12 +364,14 @@ Complex.directSum = args -> (
         complex maps
         );
     D.cache.components = toList args;
+    D.cache.formation = FunctionApplication { directSum, args };
     D    
     )
 Complex ++ Complex := Complex => (C,D) -> directSum(C,D)
 directSum Complex := C -> directSum(1 : C)
 
 components Complex := C -> if C.cache.?components then C.cache.components else {C}
+formation  Complex := C -> if C.cache.?formation  then C.cache.formation
 
 trans := (C,v) -> (
     if C.cache.?indexComponents then (
