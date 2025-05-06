@@ -16,6 +16,7 @@
 #include "ring.hpp"                // for Ring
 #include "ringelem.hpp"            // for vec
 #include "text-io.hpp"             // for emit
+#include "util.hpp"                // for M2_arrayint_to_stdvector
 #include "VectorArithmetic.hpp"    // for VectorArithmetic, ElementArray
 
 class Computation;
@@ -70,8 +71,20 @@ F4Computation::F4Computation(const VectorArithmetic* VA,
     mVectorArithmetic(VA)
 {
   mOriginalRing = m->get_ring()->cast_to_PolynomialRing();
+
+  std::vector<int> heftDegrees = M2_arrayint_to_stdvector<int> (gb_weights);
+  std::vector<int> moduleHeftDegrees;
+  for (int j = 0; j < mFreeModule->rank(); ++j)
+    {
+      moduleHeftDegrees.push_back(mFreeModule->primary_degree(j));
+      
+    }
+  std::cout << "Module Heft Degrees: " << moduleHeftDegrees << std::endl;
+  
   mMonoid = new MonomialInfo(mOriginalRing->n_vars(),
-                        mOriginalRing->getMonoid()->getMonomialOrdering());
+                             mOriginalRing->getMonoid()->getMonomialOrdering(),
+                             heftDegrees,
+                             moduleHeftDegrees);
 
   mF4GB = new F4GB(mVectorArithmetic,
                    mMonoid,

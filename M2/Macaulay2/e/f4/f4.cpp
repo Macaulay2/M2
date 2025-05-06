@@ -44,7 +44,6 @@ F4GB::F4GB(const VectorArithmetic* VA,
     : mVectorArithmetic(VA),
       mMonomialInfo(M0),
       mFreeModule(F0),
-      mWeights(weights0),
       component_degrees(nullptr),  // need to put this in
       n_pairs_computed(0),
       n_reduction_steps(0),
@@ -119,13 +118,13 @@ void F4GB::poly_set_degrees(const GBF4Polynomial &f,
                             int &alpha) const
 {
   const monomial_word *w = f.monoms;
-  monomial_word leaddeg = mMonomialInfo->monomial_weight(w, mWeights);
+  monomial_word leaddeg = mMonomialInfo->monomial_heft(w);
   monomial_word deg = leaddeg;
 
   for (int i = 1; i < f.len; i++)
     {
       w = w + mMonomialInfo->monomial_size(w);
-      monomial_word degi = mMonomialInfo->monomial_weight(w, mWeights);
+      monomial_word degi = mMonomialInfo->monomial_heft(w);
       if (degi > deg) deg = degi;
     }
   alpha = static_cast<int>(deg - leaddeg);
