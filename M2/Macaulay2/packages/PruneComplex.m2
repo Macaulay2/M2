@@ -20,8 +20,8 @@ newPackage(
         },
     Headline => "pruning chain complexes over polynomial and local rings",
     Keywords => {"Commutative Algebra", "Homological Algebra"},
-    PackageImports => {"OldChainComplexes"},
-    PackageExports => {"Complexes"},
+    -- the latter is needed to get the documentation of FastNonminimal to work
+    PackageExports => {"Complexes", "OldChainComplexes"},
     AuxiliaryFiles => true
     )
 
