@@ -2418,6 +2418,7 @@ assert(sort entries transpose vertices P == sort expectedVerts)
 ///
 
 TEST ///
+debug needsPackage "GameTheory"
 Q = simplex 3;  -- a tetrahedron should just return that unchanged
 assert(directProductList {Q} === Q)
 ///
