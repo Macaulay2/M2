@@ -314,6 +314,8 @@ isLexCompatiblyGVD(Ideal, List) := Boolean => opts -> (I, indetOrder) -> (
         lexRing := (cr) monoid([allVariables, MonomialOrder=>Lex]);  
         initIdeal := ideal leadTerm sub(I, lexRing);
 
+        printIf(opts.Verbose, "initial ideal = " | toString initIdeal);
+
         recursiveLexGVD(initIdeal, indetOrder, 
                 CheckCM=>opts.CheckCM, CheckUnmixed=>opts.CheckUnmixed, 
                 IsIdealHomogeneous=>true, IsIdealUnmixed=>opts.IsIdealUnmixed,
@@ -387,11 +389,11 @@ recursiveLexGVD(Ideal, List) := Boolean => opts -> (I, indetOrder) -> (
         printIf(opts.Verbose, "-- N = " | toString N);
 
         -- check N first, same reasoning as in isGVD
-        NisGVD := isLexCompatiblyGVD(N, remainingOrder, CheckCM=>CMTable#(opts.CheckCM), CheckUnmixed=>opts.CheckUnmixed, IsIdealHomogeneous=>x, IsIdealUnmixed=>true, UniversalGB=>opts.UniversalGB, Verbose=>opts.Verbose);
+        NisGVD := recursiveLexGVD(N, remainingOrder, CheckCM=>CMTable#(opts.CheckCM), CheckUnmixed=>opts.CheckUnmixed, IsIdealHomogeneous=>x, IsIdealUnmixed=>true, UniversalGB=>opts.UniversalGB, Verbose=>opts.Verbose);
         if not NisGVD then return false;
 
         -- if are here, then NisGVD is true
-        CisGVD := isLexCompatiblyGVD(C, remainingOrder, CheckCM=>CMTable#(opts.CheckCM), CheckUnmixed=>opts.CheckUnmixed, IsIdealHomogeneous=>x, IsIdealUnmixed=>true, UniversalGB=>opts.UniversalGB, Verbose=>opts.Verbose);
+        CisGVD := recursiveLexGVD(C, remainingOrder, CheckCM=>CMTable#(opts.CheckCM), CheckUnmixed=>opts.CheckUnmixed, IsIdealHomogeneous=>x, IsIdealUnmixed=>true, UniversalGB=>opts.UniversalGB, Verbose=>opts.Verbose);
         return CisGVD;
 )
 
