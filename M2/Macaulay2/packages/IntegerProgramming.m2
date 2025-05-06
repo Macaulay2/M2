@@ -8,8 +8,7 @@ newPackage(
         Email => "mike.cummings@uwaterloo.ca",
         HomePage => "https://mikecummings.ca"
     }},
-    Keywords => {"Applied Algebraic Geometry"},
-    DebuggingMode => true
+    Keywords => {"Applied Algebraic Geometry"}
 )
 
 export {
