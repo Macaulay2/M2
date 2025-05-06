@@ -62,6 +62,7 @@ Node
     minimalPresentation
     tensor
     directSum
+    directProduct
     monomialCurveIdeal
     syzygyScheme
     isBorel

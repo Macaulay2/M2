@@ -131,8 +131,8 @@ doc ///
          (vertices P1,rays P1)
 
       Text
-         Furthermore, we can take the direct product (@TO directProduct@) of
-         two cones.
+         Furthermore, we can take the direct product
+         (@TO (directProduct, Cone, Cone)@) of two cones.
 
       Example
          C8 = C * C1

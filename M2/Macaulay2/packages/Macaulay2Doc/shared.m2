@@ -137,3 +137,26 @@ document {
 	-- add references to tensor methods installed in packages _other than Core_ here
 	}
     }
+
+doc ///
+  Key
+     directProduct
+    (directProduct, List)
+    (directProduct, Sequence)
+  Headline
+    direct product
+  Description
+    Text
+      This function calculates the direct product of a list or sequence of
+      compatible objects.
+
+      This is a binary method, meaning it is defined for two inputs but can
+      accept more. When three or more arguments are given, the direct product is
+      evaluated from left to right: the direct product of the first two inputs
+      is computed, then the result is used to compute the direct product with
+      the third input, and so on.
+  SeeAlso
+    "Polyhedra::directProduct(Cone,Cone)"
+    "Polyhedra::directProduct(Fan,Fan)"
+    "Graphs::directProduct(Graph,Graph)"
+///

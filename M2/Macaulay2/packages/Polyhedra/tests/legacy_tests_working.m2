@@ -267,6 +267,7 @@ F1 = normalFan hypercube 1;
 F2 = normalFan hypercube 2;
 F3 = normalFan hypercube 3;
 assert(F3 == directProduct(F1,F2))
+assert(directProduct(F1, F1, F1) == F3)
 ///
 
 -- Test 41

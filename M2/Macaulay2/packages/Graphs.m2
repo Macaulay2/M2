@@ -1367,7 +1367,6 @@ cartesianProduct(Graph, Graph) := Graph => (G, H) -> (
     graph(V, E, EntryMode => "edges")
     )
 
--- the 'directProduct' method is defined in 'Polyhedra'
 directProduct(Graph,Graph) := Graph => (G, H) -> (
     V := toList(set vertexSet G ** set vertexSet H);
     E := flatten for u in V list for v in V list
