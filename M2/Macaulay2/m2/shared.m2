@@ -22,6 +22,8 @@ intersect = method(Options => true, Binary => true) -- an associative binary met
 
 tensor    = method(Options => true, Binary => true) -- tensor is left-associative
 
+directProduct = method(Binary => true)
+
 truncate = method(Options => true)
 
 isEmpty = method(TypicalValue => Boolean)

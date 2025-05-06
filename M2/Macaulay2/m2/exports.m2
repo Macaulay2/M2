@@ -632,6 +632,7 @@ export {
 	"diff'",
 	"difference",
 	"dim",
+	"directProduct",
 	"directSum",
 	"disassemble",
 	"dismiss",

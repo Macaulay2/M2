@@ -84,7 +84,6 @@ export {
    "affinePreimage", 
    "bipyramid", 
    "ccRefinement", 
-   "directProduct",
    "dualCone", 
    "faceFan", 
    "imageFan", 
