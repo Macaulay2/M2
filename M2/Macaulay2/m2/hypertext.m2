@@ -169,7 +169,7 @@ PRE        = new MarkUpType of HypertextParagraph
 -- Tables
 TABLE      = new MarkUpType of HypertextContainer
 TR         = new MarkUpType of HypertextContainer
-TD         = new MarkUpType of Hypertext
+TD         = new MarkUpType of HypertextContainer
 TH         = new MarkUpType of TD
 
 -- Misc
@@ -420,6 +420,8 @@ hypertext Net := n -> PRE {
 hypertext VerticalList         := x -> if #x==0 then SPAN{"{}"} else UL append(apply(x, y -> new LI from hold y),"style"=>"display:inline-table")
 hypertext NumberedVerticalList := x -> if #x==0 then SPAN{"{}"} else OL append(apply(x, y -> new LI from hold y),"style"=>"display:inline-table")
 hypertext RawObject := hypertext @@ net
+
+unique Hypertext := x -> new class x from unique toList x
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

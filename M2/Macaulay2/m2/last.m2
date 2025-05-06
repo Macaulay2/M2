@@ -28,9 +28,6 @@ Number.Wrap = x -> wr("",x)
 if instance(PythonObject,Type) then PythonObject.Wrap = x -> wr("",x) else protect PythonObject
 QQ.Wrap = x -> wr("=",x)
 
-ignoreP := set { "Core", "Classic", "Parsing", "SimpleDoc" }
-mentionQ := p -> not ignoreP#?(toString p)
-
 addStartFunction(
      () -> (
 	  if class value getGlobalSymbol "User" =!= Package then (
@@ -58,11 +55,7 @@ addStartFunction( () -> (
 addStartFunction( () -> (
 	  if not nobanner then (
 	       if topLevelMode === TeXmacs then stderr << TeXmacsBegin << "verbatim:";
-	       relevant := select(loadedPackages,mentionQ);
-	       if #relevant > 0 then (
-	       	    hd := "with packages: ";
-	       	    stderr << hd << wrap(printWidth-#hd, concatenate between_", " sort apply(relevant,toString)) << endl;
-		    );
+	       stderr << "Type `help` to see useful commands" << endl;
 	       if topLevelMode === TeXmacs then stderr << TeXmacsEnd << flush;
 	       );
 	  )

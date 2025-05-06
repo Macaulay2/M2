@@ -4460,7 +4460,6 @@ doc ///
     Key
 	(cohomology, ZZ, SimplicialComplex, SimplicialComplex)
 	[(cohomology, ZZ, SimplicialComplex, SimplicialComplex), Degree]
-	[cohomology, Degree]
     Headline
     	compute the relative homology of two simplicial complexes
     Usage

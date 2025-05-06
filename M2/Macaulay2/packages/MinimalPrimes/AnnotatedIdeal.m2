@@ -145,7 +145,7 @@ ideal AnnotatedIdeal := Ideal => (cacheValue "CachedIdeal") (I -> (
 -- TODO: is this still needed?
 ideal AnnotatedIdeal := (I) -> (
     --F := product unique join(I.Linears / (x -> x#1),I.Inverted);
-    if not I#?"CachedIdeal" then I#"CachedIdeal" = (
+    I#"CachedIdeal" ??= (
        F := product unique (I.Linears / (x -> x#1));
        I1 := ideal(I.Linears/last);
        I2 := if I.?IndependentSet then (
@@ -158,9 +158,7 @@ ideal AnnotatedIdeal := (I) -> (
        I3 := if numgens I1 === 0 then I2 else if numgens I2 === 0 then I1 else I1+I2;
        --if F == 1 then I3 else saturate(I3, F)
        if F == 1 then I3 else mySat(I3, F)
-    );
-    I#"CachedIdeal"
-)
+    ))
 *-
 
 isSubset(Ideal, AnnotatedIdeal) := (I, J) -> isSubset(I, ideal J) -- naive attempt first...

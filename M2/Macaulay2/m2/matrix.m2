@@ -102,8 +102,10 @@ Matrix _ Sequence := RingElement => (m,ind) -> (
      else error "expected a sequence of length two"
      )
 
-Number == Matrix :=
-RingElement == Matrix := (r,m) -> m == r
+Number      == Matrix :=
+RingElement == Matrix :=
+Number      == Vector :=
+RingElement == Vector := (r,m) -> m == r
 
 Matrix == Matrix := (f,g) -> (
     if source f === source g
@@ -115,26 +117,34 @@ Matrix == Matrix := (f,g) -> (
            target f == target g and 
            raw(super f * inducedMap(source f, source g)) === raw super g
     )
+Vector == Matrix := (v,m) -> matrix v == m
+Matrix == Vector := (m,v) -> m == matrix v
 
 Matrix == Number :=
 Matrix == RingElement := (m,f) -> m - f == 0		    -- slow!
+Vector == Number      :=
+Vector == RingElement := (v,f) -> matrix v == f
 Matrix == ZZ := (m,i) -> if i === 0 then rawIsZero m.RawMatrix else m - i == 0
 
 Matrix + Matrix := Matrix => (
      (f,g) -> map(target f, source f, reduce(target f, raw f + raw g))
      ) @@ toSameRing
-Matrix + RingElement := (f,r) -> if r == 0 then f else f + r*id_(target f)
-RingElement + Matrix := (r,f) -> if r == 0 then f else r*id_(target f) + f
-Number + Matrix := (i,f) -> if i === 0 then f else i*id_(target f) + f
-Matrix + Number := (f,i) -> if i === 0 then f else f + i*id_(target f)
+Matrix + RingElement :=
+Matrix + Number      := (f,r) -> if r == 0 then f else f + r*id_(target f)
+RingElement + Matrix :=
+Number      + Matrix := (r,f) -> f + r
+Vector + Number := Vector + RingElement := (v,r) -> vector(matrix v + r)
+Number + Vector := RingElement + Vector := (r,v) -> vector(r + matrix v)
 
 Matrix - Matrix := Matrix => (
      (f,g) -> map(target f, source f, reduce(target f, raw f - raw g))
      ) @@ toSameRing
-Matrix - RingElement := (f,r) -> if r == 0 then f else f - r*id_(target f)
-RingElement - Matrix := (r,f) -> if r == 0 then -f else r*id_(target f) - f
-Number - Matrix := (i,f) -> if i === 0 then -f else i*id_(target f) - f
-Matrix - Number := (f,i) -> if i === 0 then f else f - i*id_(target f)
+Matrix - RingElement :=
+Matrix - Number      := (f,r) -> if r == 0 then f else f - r*id_(target f)
+RingElement - Matrix :=
+Number      - Matrix := (r,f) -> -f + r
+Vector - Number := Vector - RingElement := (v,r) -> vector(matrix v - r)
+Number - Vector := RingElement - Vector := (r,v) -> vector(r - matrix v)
 
 - Matrix := Matrix => f -> new Matrix from {
      symbol ring => ring f,
@@ -239,11 +249,16 @@ describe Matrix := m -> (
     )
 toExternalString Matrix := m -> toString describe m;
 
+isIsomorphism = method(TypicalValue => Boolean)
 isIsomorphism Matrix := f -> cokernel f == 0 and kernel f == 0
 
 isHomogeneous Matrix := (cacheValue symbol isHomogeneous) ( m -> ( isHomogeneous target m and isHomogeneous source m and rawIsHomogeneous m.RawMatrix ) )
 
 isWellDefined Matrix := f -> matrix f * presentation source f % presentation target f == 0
+
+-----------------------------------------------------------------------------
+-- directSum and friends
+-----------------------------------------------------------------------------
 
 ggConcatCols := (tar,src,mats) -> (
      map(tar,src,if mats#0 .?RingMap then mats#0 .RingMap,rawConcatColumns (raw\mats),Degree => if same(degree \ mats) then degree mats#0)
@@ -318,28 +333,29 @@ indices HashTable := X -> (
      else error "expected an object with components"
      )
 
+-- This is used for methods like directSum or pullback/pushout
+-- which accept an arbitrary list of objects of the same type.
+applyUniformMethod = (symb, name) -> args -> (
+    if #args === 0 then error("expected at least one argument for ", name);
+    type := if uniform args then class args#0 else error("expected uniform objects for ", name);
+    meth := lookup(symb, type) ?? error("no method for ", name, " of ", pluralsynonym type);
+    if (Y := youngest args) =!= null and Y.?cache
+    then Y.cache#(symb, args) ??= meth args else meth args)
+
 directSum List := args -> directSum toSequence args
-directSum Sequence := args -> (
-    if #args === 0 then error "expected more than 0 arguments";
-    type := if uniform args then class args#0 else error "incompatible objects in direct sum";
-    meth := lookup(symbol directSum, type);
-    if meth === null then error "no method for direct sum";
-    Y := youngest args;
-    key := (directSum, args);
-    if Y === null or not Y.?cache then meth args else
-    if Y.cache#?key then Y.cache#key else Y.cache#key = meth args)
+directSum Sequence := applyUniformMethod(symbol directSum, "direct sum")
 
 -- Number.directSum = v -> directSum apply(v, a -> matrix{{a}})
 
 Option ++ Option := directSum
 directSum Option := o -> directSum(1 : o)
 Option.directSum = args -> (
-     if #args === 0 then error "expected more than 0 arguments";
+     if #args === 0 then error "expected at least one argument";
      objects := apply(args,last);
      labels  := toList args/first;
      type := if uniform objects then class objects#0 else error "incompatible objects in direct sum";
      meth := lookup(symbol directSum, type);
-     if meth === null then error "no method for direct sum";
+     if meth === null then error("no method for direct sum of ", pluralsynonym type);
      M := meth objects;
      M.cache.indices = labels;
      ic := M.cache.indexComponents = new HashTable from apply(#labels, i -> labels#i => i);

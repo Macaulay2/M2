@@ -11,7 +11,7 @@ CONFIGOPTIONS += --disable-thread-safe
 
 RELAX = yes
 # shut down Oct, 2021 -- URL = https://gforge.inria.fr/frs/download.php/file/37331
-URL = http://macaulay2.com/Downloads/OtherSourceCode
+URL = https://macaulay2.com/Downloads/OtherSourceCode
 
 ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-assert

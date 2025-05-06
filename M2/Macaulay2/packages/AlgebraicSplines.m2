@@ -928,7 +928,7 @@ orient = method()
 
 orient(Ideal):=List=> I->(
     LT:= leadTerm I;
-    reverse sort flatten apply(flatten entries LT,f-> support f)
+    reverse sort flatten apply(LT_*,f-> support f)
     )
 
 ------------------------------------------

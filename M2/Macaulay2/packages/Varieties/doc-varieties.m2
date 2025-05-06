@@ -70,7 +70,7 @@ document {
     ///
     }
 
-document { Key => variety, Headline => "get the variety" }
+-- document { Key => variety, Headline => "get the variety" }
 -- for (variety, CoherentSheaf), etc. see doc-sheaves.m2
 document { 
     Key => (variety, Ideal),
@@ -150,6 +150,24 @@ document {
     SeeAlso => {ring, (ideal,Ring), Spec, AffineVariety, Proj, ProjectiveVariety}
     }
 
+doc ///
+Node
+  Key
+    (isWellDefined, Variety)
+  Headline
+    whether a variety is well-defined
+  Usage
+    isWellDefined X
+  Inputs
+    X:Variety
+  Outputs
+    :Boolean
+      whether $X$ is a well-defined affine or projective variety
+--  Description
+--    Text
+--    Example
+///
+
 -- TODO: [(codim, Variety), Generic]
 document {
     Key => (codim, Variety),
@@ -217,13 +235,130 @@ document {
      "Returns the characteristic of the corresponding ring."
      }
 
--- TODO: (ambient, AffineVariety), (ambient, ProjectiveVariety)
--- TODO: (singularLocus, AffineVariety), (singularLocus, ProjectiveVariety)
+doc ///
+Node
+  Key
+    (ambient,     AffineVariety)
+    (ambient, ProjectiveVariety)
+  Headline
+    the ambient affine or projective space of an embedded variety
+  Usage
+    ambient X
+  Inputs
+    X:{AffineVariety,ProjectiveVariety}
+  Outputs
+    :{AffineVariety,ProjectiveVariety}
+      which is either an affine space or projective space where $X$ lies
+--  Description
+--    Text
+--    Example
+  SeeAlso
+    (ambient, Ring)
+
+Node
+  Key
+    (singularLocus,     AffineVariety)
+    (singularLocus, ProjectiveVariety)
+  Headline
+    the locus of singular points in a variety
+  Usage
+    singularLocus X
+  Inputs
+    X:{AffineVariety,ProjectiveVariety}
+  Outputs
+    :{AffineVariety,ProjectiveVariety}
+  Description
+    Text
+      The singular locus of a variety is the set of singular points of some variety $X$. Geometrically
+      it is the intersection of the points in the variety $X$ with the points at which the associated
+      jacobian matrix does not have maximal rank. Algebraically, this corresponds to the variety
+      defined the ideal obtained by taking the sum of the defining ideal of $X$ and the maximal minors
+      of the Jacobian matrix. In the projective case, one should also saturate to make sure the ideal
+      defines a reduced object.
+    Example
+      R = QQ[x,y]/(x^3 - y^2);
+      X = Spec R
+      S = singularLocus X
+      codim S
+      trim ideal ring S
+    Text
+      In the projective case, there may be additional irrelevant components that we would like to saturate
+      away:
+    Example
+      Q = QQ[x,y]/(x^2*y);
+      Y = Proj(Q)
+      S' = singularLocus Y
+      I = ideal ring S'
+      J = minors(1,jacobian ideal Q) + ideal Q
+      primaryDecomposition J
+    Text
+      As we see in the above, without saturating there is an irrelevant component arising
+      from the ideal $(x^2 , y)$ that disappears upon saturating. 
+  SeeAlso
+    (singularLocus, Ring)
+///
+
 
 -----------------------------------------------------------------------------
 -- Methods specific to projective varieties
 -----------------------------------------------------------------------------
 -- for euler, genus, and genera see their respective documentation pages
+
+doc ///
+Node
+  Key
+    isProjective
+   (isProjective, Variety)
+   (isProjective, ProjectiveVariety)
+  Headline
+    whether a variety is projective
+  Usage
+    isProjective X
+  Inputs
+    X:Variety
+  Outputs
+    :Boolean
+  Description
+    Text
+      This method essentially returns whether $X$ was defined using @TO Proj@ or @TO Spec@.
+    Example
+      S = QQ[x,y,z]
+      isProjective Proj S
+      isProjective Spec S
+  Caveat
+    This method does absolutely no well-definedness checks and is very primitive. To check well-definedness
+    use @TO isWellDefined@ instead.
+  SeeAlso
+    "NormalToricVarieties::isProjective(NormalToricVariety)"
+///
+
+
+--Comment about this code: isn't it sufficient to just check that the quotient by the
+--jacobian + the original ideal has finite length? Using the singularLocus command to do this
+--adds an additional saturation computation that seems unnecessary
+doc ///
+Node
+  Key
+   (isSmooth, Variety)
+  Headline
+    whether a variety is smooth
+  Usage
+    isSmooth X
+  Inputs
+    X:Variety
+  Outputs
+    :Boolean
+  Description
+    Text
+      An affine variety $X$ is smooth if the @TO2 (singularLocus, "singular locus")@ of $X$ is empty,
+      while a projective variety is smooth if the singular locus is supported at the origin.
+    Example
+      R = quotient minors_2 genericMatrix(QQ[x,y,z,w], 2, 2)
+      isSmooth Proj R
+      isSmooth Spec R
+  SeeAlso
+    "NormalToricVarieties::isSmooth(NormalToricVariety)"
+///
 
 document {
     Key => (degree, ProjectiveVariety),
@@ -278,16 +413,41 @@ document {
 -- Arithmetic operations
 -----------------------------------------------------------------------------
 
-document {
-    Key => {(symbol **, AffineVariety, Ring)},
-    Usage => "X ** R",
-    Inputs => {"X","R"},
-    Outputs => {{"the tensor product of ", TT "X", " with ", TT "R"}},
-    EXAMPLE lines ///
-      X = Spec(QQ[x,y])
-      Y = X ** (QQ[t])
-      describe Y
-    ///
-    }
-
--- TODO: (symbol **, AffineVariety, AffineVariety), etc.
+doc ///
+Node
+  Key
+    (symbol **, AffineVariety, AffineVariety)
+    (symbol **, AffineVariety, Ring)
+  Headline
+    Cartesian product of two affine varieties
+  Synopsis
+    Usage
+      X ** Y
+    Inputs
+      X:AffineVariety
+      Y:AffineVariety
+    Outputs
+      :AffineVariety
+	the Cartesian product $X \times Y$
+    Description
+      Example
+	X = Spec QQ[x,y]
+	Y = X ** X
+	describe Y
+  Synopsis
+    Usage
+      X ** R
+    Inputs
+      X:AffineVariety
+      R:Ring
+    Outputs
+      :AffineVariety
+	the Cartesian product $X \times \mathrm{Spec} R$
+    Description
+      Example
+	Z = X ** QQ[t]
+	describe Z
+  Caveat
+    Cartesian products of non-affine varieties are not yet implemented in this package,
+    but see @TO "NormalToricVarieties::cartesianProduct(NormalToricVariety)"@ for another implementation.
+///

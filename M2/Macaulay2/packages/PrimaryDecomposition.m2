@@ -261,9 +261,7 @@ ass0 = I -> (
     J := dual I;
     M := first entries generators J;
     H := new MutableHashTable;
-    scan(M, m -> (
-	    s := rawIndices raw m;
-	    if not H#?s then H#s = true));
+    scan(M, m -> H#(rawIndices raw m) ??= true);
     inds := sort apply(keys H, ind -> (#ind, ind));
     apply(inds, s -> s#1))
 

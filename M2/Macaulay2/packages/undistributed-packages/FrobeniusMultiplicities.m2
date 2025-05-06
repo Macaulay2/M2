@@ -176,7 +176,7 @@ tiSeq(Module,ZZ,ZZ) := List =>(M,i,n) ->(
 
 
 tiSeq(Ring,ZZ,ZZ) := List =>(A,i,n) ->(
-     k = module A / ideal vars A;
+     k := module A / ideal vars A;
      tiSeq(k,i,n)
      )
 
@@ -294,8 +294,7 @@ document {
 -----------------------------------------------------------------------------
 
 document {
-     Key => {tensorF,
-	  (tensorF, Module, ZZ, ZZ)
+     Key => {(tensorF, Module, ZZ, ZZ)
 	  },
      Headline => "computes the complex F^n(C) where C is the free resolution of M (with LengthLimit set to i+1) and where F^n is the nth iteration of the Frobenius functor",
      Usage => "tensorF(M,i,n)",

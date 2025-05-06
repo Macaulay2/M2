@@ -9,6 +9,7 @@ Node
     (capture, Net)
     (capture, List)
     (capture, String)
+    (capture, TestInput)
     [capture, UserMode]
     [capture, PackageExports]
   Headline
@@ -16,7 +17,7 @@ Node
   Usage
     (err, output) := capture str
   Inputs
-    str:{Net,List,String}
+    str:{Net,List,String,TestInput}
       the Macaulay2 code to be evaluated
     UserMode=>Boolean
       indicates whether currently loaded packages and exported symbols
@@ -57,6 +58,7 @@ Node
     (examples, Thing)
     (examples, ZZ)
     (examples, List)
+    (examples, DocumentTag)
   Headline
     list the examples in documentation
   Usage
@@ -102,7 +104,7 @@ Node
    (EXAMPLE, String)
    (EXAMPLE, VisibleList)
   Headline
-    hypertext EXAMPLE item
+    construct a hypertext item from a Macaulay2 input string
   Usage
     EXAMPLE x
   Inputs

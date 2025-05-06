@@ -66,7 +66,7 @@ jobs:
           brew config
           brew tap macaulay2/tap
           brew install --overwrite python
-          brew install automake boost tbb ccache ctags texinfo llvm make ninja yasm libffi msolve
+          brew install automake boost tbb ccache ctags texinfo llvm make ninja yasm libffi msolve googletest
           brew install --only-dependencies macaulay2/tap/M2
           brew link factory --force
 
@@ -155,11 +155,12 @@ jobs:
         if: matrix.build-system == 'autotools'
         run: |
           ../../autogen.sh
-          export PYVERSION=`python3 -c "from sys import version_info; \
-            print(f'{version_info.major}.{version_info.minor}')"`
-          export CPPFLAGS="-I`brew --prefix`/include -I`brew --prefix libomp`/include"
-          export  LDFLAGS="-L`brew --prefix`/lib -L`brew --prefix libomp`/lib \
-            -L/Library/Frameworks/Python.framework/Versions/${PYVERSION}/lib"
+          export CPPFLAGS="-I`brew --prefix`/include \
+            -I`brew --prefix libomp`/include         \
+            -I`brew --prefix readline`/include"
+          export  LDFLAGS="-L`brew --prefix`/lib \
+            -L`brew --prefix libomp`/lib         \
+            -L`brew --prefix readline`/lib"
           export F77=gfortran-14
           ../../configure --enable-download --with-system-gc
 
@@ -205,7 +206,7 @@ jobs:
               make validate-html
             else
             # otherwise, just validate HTML docs for packages that have been updated
-              PACKAGES=$(git diff --stat origin/development HEAD -- ../../Macaulay2/packages/ | grep -Po "(?<=Macaulay2/packages/)[^/\.]*(?=\.m2|/)" | uniq | xargs)
+              PACKAGES=$(git diff --stat origin/development HEAD -- ../../Macaulay2/packages/ | grep -Po "(?<=Macaulay2/packages/)[^/\.]*(?=\.m2|/)" | uniq | sed 's/undistributed-packages//g' | xargs)
               make validate-html PACKAGES="$PACKAGES"
             fi
           else

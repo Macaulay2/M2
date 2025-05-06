@@ -1,4 +1,4 @@
-decompose Ideal := (I) -> if I.cache.?decompose then I.cache.decompose else I.cache.decompose = (
+decompose Ideal := (I) -> I.cache.decompose ??= (
      R := ring I;
      if isQuotientRing R then (
 	  A := ultimate(ambient, R);
