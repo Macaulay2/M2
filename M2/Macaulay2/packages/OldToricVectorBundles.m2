@@ -28,6 +28,7 @@ newPackage("OldToricVectorBundles",
 	 "published article DOI" => "10.2140/jsag.2010.2.11",
 	 "published code URI" => "https://msp.org/jsag/2010/2-1/jsag-v2-n1-x03-code.zip",
 	 "release at publication" => "314a1e7a1a5f612124f23e2161c58eabeb491f46",
+	 "legacy name" => "ToricVectorBundles",
 	 "version at publication" => "1.0",
 	 "volume number" => "2",
 	 "volume URI" => "https://msp.org/jsag/2010/2-1/"

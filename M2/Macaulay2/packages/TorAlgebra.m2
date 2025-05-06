@@ -21,6 +21,7 @@ newPackage ( "TorAlgebra",
 	 "published article URI" => "https://msp.org/jsag/2014/6-1/p01.xhtml",
 	 "published code URI" => "https://msp.org/jsag/2014/6-1/jsag-v6-n1-x01-code.zip",
 	 "release at publication" => "4b2e83cd591e7dca954bc0dd9badbb23f61595c0",
+	 "legacy name" => "CodepthThree",
 	 "version at publication" => "1.0",
 	 "volume number" => "6",
 	 "volume URI" => "https://msp.org/jsag/2014/6-1/"

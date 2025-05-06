@@ -251,11 +251,15 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 	    star := IMG { "src" => replace("PKG", "Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star"};
 	    commit := concatenate(
 		"https://github.com/Macaulay2/M2/blob/",
-		cert#"release at publication", "/M2/Macaulay2/packages/", fn);
+		cert#"release at publication", "/M2/Macaulay2/packages/",
+		(cert#"legacy name" ?? pkg#"pkgname") | ".m2");
 	    DIV {
 		SUBSECTION {"Certification ", star},
 		PARA {
-		    "Version ", BOLD cert#"version at publication", " of this package was accepted for publication",
+		    "Version ", BOLD cert#"version at publication", " of this package",
+		    if cert#?"legacy name"
+		    then (" (under the name \"", cert#"legacy name", "\")"),
+		    " was accepted for publication",
 		    " in ",     HREF{cert#"volume URI", "volume " | cert#"volume number"},
 		    " of ",     HREF{cert#"journal URI",            cert#"journal name"},
 		    " on ",          cert#"acceptance date", ", in the article ",
