@@ -311,19 +311,19 @@ isFree Complex := Boolean => C -> (
     all(lo..hi, i -> isFreeModule C_i)
     )
 
-isExact = method()
+--isExact = method()
 isExact(Complex, Number, Number) := 
 isExact(Complex, Number, InfiniteNumber) := 
 isExact(Complex, InfiniteNumber, Number) := 
-isExact(Complex, InfiniteNumber, InfiniteNumber) := Boolean => (C, lo, hi) -> (
+isExact(Complex, InfiniteNumber, InfiniteNumber) := Boolean => {} >> o -> (C, lo, hi) -> (
     (loC,hiC) := concentration C;
     lo = max(lo,loC);
     hi = min(hi, hiC);
     all(lo..hi, i -> kernel dd^C_i == image dd^C_(i+1))
     )
-isExact Complex := Boolean => C -> (
+isExact Complex := Boolean => {} >> o -> C -> (
     (lo,hi) := concentration C;
-    isExact(C, lo, hi)
+    isExact(C, lo, hi, o)
     )
 
 sum Complex := Module => C -> (

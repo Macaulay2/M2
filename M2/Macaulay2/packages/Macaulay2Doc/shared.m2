@@ -30,6 +30,9 @@ document { Key => euler,        methodstr, SeeAlso => {
 document { Key => eulers,       methodstr }
 document { Key => genera,       methodstr }
 document { Key => genus,        methodstr }
+document { Key => isExact,      methodstr, SeeAlso => {
+	"ChainComplexExtras :: isExact(ChainComplex)",
+	"Complexes :: isExact(Complex)" } }
 document { Key => isSmooth,     methodstr, SeeAlso => {
 	"Divisor::isSmooth(Ideal)", "LatticePolytopes::isSmooth(Polyhedron)",
 	"Varieties::isSmooth(Variety)", "SpaceCurves::isSmooth(Curve)",

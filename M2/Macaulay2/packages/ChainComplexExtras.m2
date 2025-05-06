@@ -15,7 +15,6 @@ newPackage(
      DebuggingMode =>false
      )
 
-export "isExact"
 export "isChainComplex"
 export "isChainComplexMap"
 export "isQuasiIsomorphism"
@@ -288,8 +287,8 @@ chainComplexMap(ChainComplex,ChainComplex,List):= o -> (D,C,maps) -> (
    F
 )
 
-isExact=method(Options => {LengthLimit => infinity})
-isExact(ChainComplex):= o -> (C) -> (
+--isExact=method(Options => {LengthLimit => infinity})
+isExact(ChainComplex):= { LengthLimit => infinity } >> o -> (C) -> (
    if all((min C,min(max C,o.LengthLimit)), i -> (prune HH_i(C) == 0)) then true else false
 )
 
@@ -806,7 +805,7 @@ document {
      }
 
 document {
-     Key => {isExact, (isExact,ChainComplex)},
+     Key => {(isExact,ChainComplex)},
      Headline => "Test to see if the ChainComplex is exact.",
      Usage => "isExact(F)",
      Inputs => {
@@ -996,11 +995,11 @@ doc ///
      isQuasiIsomorphism(m, LengthLimit=> 10)
      isQuasiIsomorphism(m, LengthLimit => 12)
    SeeAlso
-    isExact
+    (isExact, ChainComplex)
 ///
 doc ///
    Key
-    [isExact,LengthLimit]
+    [(isExact, ChainComplex),LengthLimit]
    Headline
     Option to check exactness only up to a particular homological degree
    Usage
