@@ -8,7 +8,12 @@
 #include <cstdlib>                        // for rand
 #include <iostream>
 
-MonomialInfo::MonomialInfo(int nvars0, const MonomialOrdering *mo)
+MonomialInfo::MonomialInfo(int nvars0,
+                           const MonomialOrdering *mo,
+                           const std::vector<int>& heftDegrees,
+                           const std::vector<int>& moduleHeftDegrees)
+  : mHeftDegrees(heftDegrees),
+    mModuleHeftDegrees(moduleHeftDegrees)
 {
   nvars = nvars0;
   hashfcn = new monomial_word[nvars];
@@ -67,15 +72,15 @@ MonomialInfo::~MonomialInfo()
   delete [] hashfcn; 
 }
 
-monomial_word MonomialInfo::monomial_weight(const_packed_monomial m,
-                                            const M2_arrayint wts) const
+monomial_word MonomialInfo::monomial_heft(const_packed_monomial m) const
 {
   ncalls_weight++;
   const_packed_monomial m1 = m + firstvar;
-  int top = wts->len;
-  int *n = wts->array;
-  monomial_word sum = 0;
-  for (int j = top; j > 0; --j) sum += *m1++ * *n++;
+  monomial_word sum = mModuleHeftDegrees[get_component(m)];
+  for (int j = 0; j < mHeftDegrees.size(); ++j)
+    {
+      sum += mHeftDegrees[j] * m1[j];
+    }
   return sum;
 }
 

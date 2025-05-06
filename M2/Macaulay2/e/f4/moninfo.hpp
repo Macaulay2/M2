@@ -54,7 +54,13 @@ class MonomialInfo : public our_new_delete
   int firstvar;  // = 2, if no weight vector, otherwise 2 + mNumWeights
   int mNumWeights;  // number of weight vector values placed.  These should all be
                  // positive values?
+
   std::vector<int> mWeightVectors;  // array 0..mNumWeights of array 0..nvars-1 of longs
+  std::vector<int> mHeftDegrees;  // heft degree of each variable (dot product of the
+                                  // heft vector with the (multi)degree of the
+                                  // corresponding variable.
+  std::vector<int> mModuleHeftDegrees;  // heft degree of each generator of free module
+  
   bool mTieBreakerIsRevLex; // true yes, false, tie break is Lex.
   int mPositionUp; // currently ignored
   int mComponentLoc; // currently ignored
@@ -81,7 +87,10 @@ class MonomialInfo : public our_new_delete
   typedef const_packed_monomial const_monomial;
   typedef monomial value;
 
-  MonomialInfo(int nvars, const MonomialOrdering *mo);
+  MonomialInfo(int nvars,
+               const MonomialOrdering *mo,
+               const std::vector<int>& heftDegrees,
+               const std::vector<int>& moduleHeftDegrees);
 
   virtual ~MonomialInfo();
 
@@ -331,8 +340,7 @@ class MonomialInfo : public our_new_delete
     return check_monomial(result);
   }
 
-  monomial_word monomial_weight(const_packed_monomial m,
-                                const M2_arrayint wts) const;
+  monomial_word monomial_heft(const_packed_monomial m) const;
 
   void show(const_packed_monomial m) const;
 
@@ -611,7 +619,7 @@ class MonomialInfo : public our_new_delete
                       int &deg_result,
                       bool &are_disjoint) const
   {
-    varpower_word deg = 0;
+    varpower_word deg = mModuleHeftDegrees[get_component(a)];
     // sets result, deg, are_disjoint
     ncalls_quotient_as_vp++;
     are_disjoint = true;
@@ -627,7 +635,7 @@ class MonomialInfo : public our_new_delete
           {
             *r++ = i;
             *r++ = c;
-            deg += c;
+            deg += c * mHeftDegrees[i];
             len++;
           }
       }

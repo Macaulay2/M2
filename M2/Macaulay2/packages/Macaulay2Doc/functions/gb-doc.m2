@@ -355,7 +355,7 @@ TEST /// -- Algorithm => LinearAlgebra, over finite field.
   J1 = ideal(a*b*c-d*e*f, a^2*c-b^2*e, b*e^4 - d*f^4 + e^5)
   elapsedTime gbC = flatten entries gens (G = gb(ideal J1_*, Algorithm => LinearAlgebra)); -- crash
   elapsedTime gbB = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
-  assert(gbC == gbB) -- TODO: order should be the same!!
+  assert(gbC == gbB)
 
   -- TODO: is it ok to check Msolve while we do this?
   needsPackage "Msolve"
@@ -367,7 +367,7 @@ TEST /// -- Algorithm => LinearAlgebra, over finite field.
   assert try(syz G; false) else true
   assert try(a // G; false) else true
   assert try(a % G; false) else true
-  assert(numcols leadTerm G == 1) -- doesn't work yet. FAILS
+  assert try(leadTerm G; false) else true
   assert(numcols gens G == 7)
 ///
 
@@ -523,21 +523,20 @@ TEST /// -- nonstandard grading
   kk = ZZ/101;
   R1 = kk[a..f, MonomialOrder => {GRevLex => {1,1,1,1,1,1}}, Degrees => {1,2,3,4,4,4}];
   setRandomSeed 42
+
+  dotprod = (c,d) -> sum( min(#c, #d), i -> c#i * d#i )
+  apply(degrees R1, d -> dotprod(d, heft R1))
+  
   J1 = ideal random(R1^1, R1^{-5, -5, -5, -5});
   assert isHomogeneous J1
   elapsedTime gbA = flatten entries gens gb(J1);
-  elapsedTime gbB = flatten entries gens gb(ideal J1_*, Algorithm => LinearAlgebra); -- CRASH!
+  elapsedTime gbB = flatten entries gens gb(ideal J1_*, Algorithm => LinearAlgebra);
   elapsedTime gbC = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
   needsPackage "Msolve"
   elapsedTime gbD = flatten entries msolveGB(ideal J1_*, Verbosity => 2, Threads => 8);
-  assert(#gbA == 19)
-  #gbA == #gbB  -- fails!! gbB is wrong!
-  #gbA == #gbC
-  #gbA == #gbD
-  assert(gbA == sort gbB) -- fails
+  assert(gbA == gbB)
   assert(gbA == gbC)
   assert(gbA == gbD)
-  assert(sort gbA == gbA)
 ///
 
 -*
@@ -551,9 +550,9 @@ TEST /// -- GB's of modules
   m1 = genericMatrix(R1, a, 2, 3)
   elapsedTime gbA = gens (gb m1);
   m1 = genericMatrix(R1, a, 2, 3)
-  elapsedTime gbB = gens (G = gb(m1, Algorithm => LinearAlgebra)); -- BUG: wrong order
+  elapsedTime gbB = gens (G = gb(m1, Algorithm => LinearAlgebra));
 
-  assert(gbA == gbB _ (sortColumns gbB))
+  assert(gbA == gbB)
 
   m1 = genericMatrix(R1, a, 2, 3)
   elapsedTime gbC = groebnerBasis(m1, Strategy => "F4"); -- BUG: just wrong
@@ -565,10 +564,30 @@ TEST /// -- GB's of modules
   m2 = genericMatrix(R2, a, 2, 3)
   elapsedTime gbC = groebnerBasis(m2, Strategy => "MGB"); -- BUG: just wrong
 
-
   assert(leadTerm matrix{{a},{a}} == matrix{{0},{a}})
 
   -- note: msolveGB only works for ideals, doesn't take a matrix or Module, in any case.
+///
+
+TEST /// -- another module GB test
+    R = ZZ/101[a..d]
+    M = R^{0,-1,-2,-3}
+    setRandomSeed 42
+    mat = random(M,R^{-1,-2,-3,-4})
+    gbA = gens gb mat;
+    setRandomSeed 42
+    mat = random(M,R^{-1,-2,-3,-4})
+    gbB = gens gb(mat, Algorithm => LinearAlgebra);
+    assert(gbA == gbB)
+///
+
+TEST /// -- another module GB test
+    R = ZZ/101[a..f, Degrees => {1,2,3,4,5,6}]
+    M = koszul(3,vars R)
+    gbA = gens gb M;
+    M = koszul(3,vars R)
+    gbB = gens gb(M, Algorithm => LinearAlgebra);
+    assert(gbA == gbB)
 ///
 
 -*
@@ -639,7 +658,7 @@ TEST /// -- different monomial orders
   assert(gbA == gbB)
   assert(gbA == gbC)
   LT4 = leadTerm J1
-  assert(LT3 != sub(LT1, R1))
+  assert(LT4 != sub(LT1, R1))
 ///
 
 -*
