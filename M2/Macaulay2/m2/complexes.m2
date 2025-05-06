@@ -7,6 +7,38 @@ needs "modules.m2" -- for Module
 HomologicalAlgebraPackage = "OldChainComplexes"
 
 -----------------------------------------------------------------------------
+-- Local utilities
+-----------------------------------------------------------------------------
+
+-- called from OldChainComplexes
+baseRing' = R -> ultimate(coefficientRing, R) -- Note: different from first R.baseRings
+
+-----------------------------------------------------------------------------
+-- unexported helper functions used in several packages
+-----------------------------------------------------------------------------
+
+resolutionLengthLimit = (R, lengthLimit) -> (
+    if lengthLimit == infinity then (
+	A := baseRing' R;
+	nvars := # generators(R, CoefficientRing => A);
+	nvars + 1 + if A === ZZ then 1 else 0)
+    else lengthLimit )
+
+-- also used by Saturation
+resolutionDegreeLimit = (R, degreeLimit) -> (
+    degreeLimit = if degreeLimit =!= null      then  degreeLimit  else {};
+    degreeLimit = if instance(degreeLimit, ZZ) then {degreeLimit} else degreeLimit;
+    if #degreeLimit == degreeLength R and all(degreeLimit, d -> instance(d, ZZ))
+    or #degreeLimit == 0 then degreeLimit
+    else error "expected DegreeLimit or HardDegreeLimit to be a valid degree, multidegree, or null")
+
+-----------------------------------------------------------------------------
+-- this is here because currently both Complexes and OldChainComplexes use it
+
+Resolution = new Type of MutableHashTable
+Resolution.synonym = "resolution"
+
+-----------------------------------------------------------------------------
 -- Categories for which complexes are currently implemented in Macaulay2
 -----------------------------------------------------------------------------
 -- SheafMap and CoherentSheaf are added later in Varieties
