@@ -396,6 +396,6 @@ Node
       TABLE {
 	  { M2CODE "loadedPackages",                            "-- a list of the currently loaded packages" },
 	  { M2CODE "help \"packages provided with Macaulay2\"", "-- a list of all the available packages" },
-	  { M2CODE "help \"initialization file \"",             "-- show documentation about the file init.m2" }
+	  { M2CODE "help \"initialization file\"",              "-- show documentation about the file init.m2" }
       }
 ///
