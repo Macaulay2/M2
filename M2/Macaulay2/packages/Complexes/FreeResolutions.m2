@@ -540,8 +540,9 @@ addHook((freeResolution, Module), resolutionOverZZ, Strategy => OverZZ)
 addHook((freeResolution, Module), resolutionOverField, Strategy => OverField)
 
 -- TODO: compare this with the OverZZ strategy above
-addHook((freeResolution, Module), Strategy => symbol LLL,
-    (o, M) -> if ring M === ZZ then complex compress LLL presentation M)
+-- c.f. https://github.com/Macaulay2/M2/issues/3785
+-- addHook((freeResolution, Module), Strategy => symbol LLL,
+--     (o, M) -> if ring M === ZZ then complex compress LLL presentation M)
 
 
 cechComplex = method()
