@@ -54,6 +54,7 @@ TEST /// -- tests for cached saturation map M --> Gamma_* sheaf M
   F = sheaf truncate(4,S^1)
   assert(F == OO_X^1)
   G = prune F
+  assert isIsomorphic(F, G)
   h = G.cache.pruningMap
   assert(inverse h * h === id_F)
   --assert(h * inverse h === id_G) -- FIXME
