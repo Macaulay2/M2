@@ -153,7 +153,7 @@ runFile = (inf, inputhash, outf, tmpf, pkg, announcechange, usermode, examplefil
      -- print debugging info
      printerr "running failed";
      printerr("error log:  " | logLocation tmpf);
-     printerr("test input: " | testLocation inf);
+     printerr("input code: " | testLocation inf);
      if debugLevel > 0 then
      stderr << commentize "full command:" << endl << cmd << endl;
      stderr << pad("*** error: M2 " | describeReturnCode r, printWidth - 32) << flush;
