@@ -20,10 +20,10 @@ newPackage(
     PackageExports => {
         "ReesAlgebra", 
         "TangentCone", 
-        "OldPolyhedra",
         "Normaliz",
         "PrimaryDecomposition",
-        "MinimalPrimes"
+        "MinimalPrimes",
+        "OldPolyhedra",
     },
     Certification => {
 	"journal name" => "Journal of Software for Algebra and Geometry",
