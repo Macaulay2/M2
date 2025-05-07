@@ -305,7 +305,7 @@ doc ///
   descendingRuns
   descents
   exceedances
-  extend
+  (extend, Permutation, ZZ)
   fixedPoints
   foataBijection
   inverse
@@ -969,7 +969,6 @@ doc ///
 -- extend(w,n)
 doc ///
   Key
-    extend
     (extend, Permutation, ZZ)
   Headline
     rewrites a permutation as a permutation on more symbols
@@ -1391,7 +1390,7 @@ doc ///
       p = permutation {3,1,2,5,4,6,7}
       trim p
   SeeAlso
-    extend
+    (extend, Permutation, ZZ)
 ///
 
 -- saliances
