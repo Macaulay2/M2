@@ -12,7 +12,7 @@ newPackage(
 	     }, 
     	Headline => "Betti diagram operations useful for investigating the Boij-Soederberg conjectures",
 	Keywords => {"Commutative Algebra"},
-	PackageImports => {"OldChainComplexes"},
+	PackageExports => {"OldChainComplexes"},
     	DebuggingMode => false
     	)
 

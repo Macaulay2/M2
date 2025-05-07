@@ -14,8 +14,8 @@ newPackage("EliminationMatrices",
 	     },
    Headline => "resultants",
    Keywords => {"Commutative Algebra"},
+   PackageImports => { "Elimination" },
    PackageExports => { "Complexes" },
-   PackageImports => { "Elimination", "OldChainComplexes"},
    DebuggingMode => false
    )
 
@@ -1637,7 +1637,7 @@ document {
 	"regularityVar (l,I)"
       	},
     
-    SeeAlso => {coefficientRing, resolution, res}
+    SeeAlso => {coefficientRing, resolution}
      }
 
 ---------------------------------------------------------------
