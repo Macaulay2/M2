@@ -208,6 +208,9 @@ minimization = M -> (
 -- TODO: hookify and split into strategies, then add strategies that:
 -- - check if pruning of the modules is cached already
 -- - check if Hilbert polynomial, regularity, dimension, etc. are known
+-- - check if there are surjections in both directions, a la
+--   isDegreeZeroSurjection in TateOnProducts
+--  or degreeZeroSurjection in EagonResolution
 isIsomorphic = method(
     TypicalValue => Boolean,
     Options => {
@@ -217,7 +220,12 @@ isIsomorphic = method(
 	Tries       => null,  -- number of attempts at generating a random map
     })
 isIsomorphic(Module, Module) := Boolean => o -> (N, M) -> (
-    -- returns a pair (false, null) or (true, f), where f is an isomorphism M --> N.
+    -- returns true iff there is an isomorphism N <- M.
+    -- and unless M === N, the isomorphism is cached under
+    -- Y.cache.cache.Isomorphisms#(N, M, {Strict?, Homogeneous?}),
+    -- where Y is the youngest of M and N based on hash, and the list
+    -- indicates whether the isomorphism was homogeneous or if it
+    -- was strict (not strict if M is isomorphic to a _twist_ of N)
     if M === N or hasIsomorphism(N, M, o) then return true;
     --
     S := ring M;
@@ -297,9 +305,13 @@ Node
     probabilistic test for isomorphism of modules
   Description
     Text
-      Two modules are isomorphic if there is a surjection in each direction.
+      Two modules are isomorphic if there a homomorphism $f:M \to N$ which is both
+      injective and surjective, or equivalently if there is a surjection in each direction.
       These routines produce random combinations of the generators of @TO Hom@
-      and test whether these are surjections.
+      and test for a homomorphism which is both injective and surjective.
+
+      Note that it suffices to check surjectivity after tensoring with the residue field,
+      so in a future version we may instead check for surjections in both directions.
   SeeAlso
     isIsomorphic
     isomorphism
@@ -413,33 +425,41 @@ Node
     Text
       In case both modules are homogeneous the program first uses @TO checkDegrees@
       to see whether an isomorphism is possible. This may be an isomorphism up to shift
-      if Strict => false (the default) or on the nose if Strict => true.
-
-      If this test is passed, the program uses a variant of the Hom command
-      to compute a random map of minimal possible degree from M to N,
+      if @TT "Strict => false"@ (the default) or on the nose if @TT "Strict => true"@.
+    Example
+      S = ZZ/32003[x_0..x_3]
+      m = random(S^3, S^{4:-2});
+      M = coker m;
+      assert isIsomorphic(S^{-3} ** M, M)
+      assert not isIsomorphic(S^{-3} ** M, M, Strict => true)
+    Text
+      If this test is passed, the program uses a variant of the @TO Hom@ command
+      to compute a random map of minimal possible degree from $M$ to $N$,
       and checks whether this is surjective and injective.
       If @TT "Tries => n"@ is provided, this is attempted $n$ times,
       otherwise a heuristic based on the characteristic of the field is used
       to determine the number of attempts to make (1 in characteristic zero,
       ~10 in characteristic 32003, and ~150 in characteristic 2).
-
-      In the inhomogeneous case (or with Homogeneous => false) the random map is
+    Example
+      A = random(target m, target m);
+      B = random(source m, source m);
+      N = coker(A * m * B);
+      isIsomorphic(N, M)
+      isomorphism(N, M)
+    Text
+      The internal routine for generating a random map of minimal possible degree
+      is essentially equivalent to the code below, but caching and various other
+      optimizations make this routine more efficient.
+    Example
+      f = homomorphism random Hom(N, M, DegreeLimit => 0)
+      isIsomorphism f
+    Text
+      If the modules are inhomogeneous and @TT "Homogeneous => false"@ is passed, the random map is
       a random linear combination of the generators of the module of homomorphisms.
 
       If the output is false, then the conclusion of non-isomorphism is only probabilistic.
       If the output is true, then as certificate an isomorphism $M \to N$ is cached
-      in the module and can be retried using the @TO isomorphism@ method.
-    Example
-      S = ZZ/32003[x_0..x_3]
-      m = random(S^3, S^{4:-2});
-      A = random(target m, target m);
-      B = random(source m, source m);
-      N = coker(A*m*B);
-      M = coker m;
-      assert isIsomorphic(S^{-3} ** M, M)
-      assert not isIsomorphic(S^{-3} ** M, M, Strict => true)
-      isIsomorphic(N, M)
-      isomorphism(N, M)
+      in the @TO youngest@ module and can be retried using the @TO isomorphism@ method.
     Text
       The following examples checks two well-known isomorphisms in homological algebra.
     Example
