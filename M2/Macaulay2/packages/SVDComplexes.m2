@@ -22,8 +22,7 @@ newPackage(
             },
         Headline => "SVD (singular value decomposition) of a complex over the reals and related functions",
 	Keywords => {"Homological Algebra", "Commutative Algebra"},
-	PackageImports => {"OldChainComplexes"},
-	PackageExports => {"LLLBases"},
+	PackageExports => { "LLLBases", "OldChainComplexes" },
         DebuggingMode => false
         )
 

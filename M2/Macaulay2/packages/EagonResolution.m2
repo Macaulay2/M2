@@ -10,7 +10,6 @@ newPackage(
                   HomePage => "http://pi.math.cornell.edu/~mike"}},
         Headline => "Compute the Eagon Resolution of the residue field",
 	Keywords => {"Commutative Algebra"},
-        PackageImports => {"OldChainComplexes"},
         PackageExports => {"Complexes"},
         DebuggingMode => false
         )
