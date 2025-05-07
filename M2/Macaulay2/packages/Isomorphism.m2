@@ -145,31 +145,32 @@ defaultNumTries = p -> ceiling(0.1 + 100 / log p)
 -- key to cache known isomorphisms
 protect Isomorphisms
 
--- currently we cache isomorphisms ONLY in the source
+-- we cache isomorphisms in the youngest of the modules
+-- Note: this is similar to where Hom is cached.
 setIsomorphism = (N, M, f, o) -> (
+    Y := youngest(N.cache.cache, M.cache.cache);
+    -- make a "monic" isomorphism
     f = reduceCoefficient f;
     o = { o.Strict or all(degree f, zero),
 	o.Homogeneous or isHomogeneous f };
-    M.cache.Isomorphisms ??= new MutableHashTable;
-    M.cache.Isomorphisms#(N, o) = f;
+    Y.Isomorphisms ??= new MutableHashTable;
+    Y.Isomorphisms#(N, M, o) = f;
     true)
 
--- we check isomorphisms cached in source OR target
+-- we check if a matching isomorphism is cached
 getIsomorphism = (N, M, o) -> (
-    if M.cache.?Isomorphisms then
-    for isom in keys M.cache.Isomorphisms do (
-	(N', o') := isom;
-	if N' === N
+    Y := youngest(N.cache.cache, M.cache.cache);
+    if Y.?Isomorphisms then
+    for isom in keys Y.Isomorphisms do (
+	(B, A, o') := isom;
+	if B === N and A === M
 	and ( not o.Strict      or o.Strict      and o'#0 )
 	and ( not o.Homogeneous or o.Homogeneous and o'#1 )
-	then return M.cache.Isomorphisms#isom);
-    if N.cache.?Isomorphisms then
-    for isom in keys N.cache.Isomorphisms do (
-	(M', o') := isom;
-	if M' === M
+	then return Y.Isomorphisms#isom;
+	if B === M and A === N
 	and ( not o.Strict      or o.Strict      and o'#0 )
 	and ( not o.Homogeneous or o.Homogeneous and o'#1 )
-	then return inverse N.cache.Isomorphisms#isom))
+	then return inverse Y.Isomorphisms#isom))
 
 hasIsomorphism = (N, M, o) -> null =!= getIsomorphism(N, M, o)
 
@@ -680,7 +681,7 @@ TEST ///
   N = R^{{0,1}, {1,1}}
   assert isIsomorphic(N, M, Strict => false, Homogeneous => false)
   f = isomorphism(N, M,     Strict => false, Homogeneous => false)
-  assert same(f, map(N, M, {{0, 1}, {1, 0}}), M.cache.Isomorphisms#(N, {true, true}))
+  assert same(f, map(N, M, {{0, 1}, {1, 0}}), N.cache.cache.Isomorphisms#(N, M, {true, true}))
   assert isWellDefined f
   assert isHomogeneous f
   assert(source f === M)
@@ -691,13 +692,14 @@ TEST ///
   assert isIsomorphic(N, M, Strict => true,  Homogeneous => true)
   f' = isomorphism(M, N,    Strict => false, Homogeneous => false)
   assert same(f', map(M, N, {{0, 1}, {1, 0}}), inverse f)
-  assert(1 == #M.cache.Isomorphisms)
+  assert(1 == #N.cache.cache.Isomorphisms)
+  assert not M.cache.cache.?Isomorphisms
 
-  M = R^{{1,1}, {0,1}}
   N = R^{{0,1}, {1,1}} ** R^{{2,2}}
+  M = R^{{1,1}, {0,1}}
   assert isIsomorphic(N, M, Strict => false, Homogeneous => false)
   f = isomorphism(N, M,     Strict => false, Homogeneous => false)
-  assert same(f, map(N, M, {{0, 1}, {1, 0}}, Degree => {-2,-2}), M.cache.Isomorphisms#(N, {false, true}))
+  assert same(f, map(N, M, {{0, 1}, {1, 0}}, Degree => {-2,-2}), M.cache.cache.Isomorphisms#(N, M, {false, true}))
   assert isWellDefined f
   assert isHomogeneous f
   assert(source f === M)
@@ -706,13 +708,14 @@ TEST ///
   assert isIsomorphic(N, M, Strict => false, Homogeneous => true)
   assert isIsomorphic(N, M, Strict => true,  Homogeneous => false)
   f = isomorphism(N, M,     Strict => true,  Homogeneous => false)
-  assert same(f, map(N, M, {{1, 0}, {0, 1}}), M.cache.Isomorphisms#(N, {true, false}))
+  assert same(f, map(N, M, {{1, 0}, {0, 1}}), M.cache.cache.Isomorphisms#(N, M, {true, false}))
   assert isWellDefined f
   assert not isHomogeneous f
   assert(source f === M)
   assert(target f === N)
   assert not isIsomorphic(N, M, Strict => true, Homogeneous => true)
-  assert(2 == #M.cache.Isomorphisms)
+  assert(2 == #M.cache.cache.Isomorphisms)
+  assert not N.cache.cache.?Isomorphisms
 ///
 
 TEST ///
@@ -723,7 +726,7 @@ TEST ///
   assert isIsomorphic(N, M, Strict => false, Homogeneous => false)
   f = isomorphism(N, M,     Strict => false, Homogeneous => false)
   -- TODO: ideally, if a homogeneous isomorphism _can_ be found, we should find it
-  --assert(f === M.cache.Isomorphisms#(N, {true, true}))
+  --assert(f === N.cache.cache.Isomorphisms#(N, M, {true, true}))
   assert isWellDefined f
   --assert isHomogeneous f
   assert(source f === M)
@@ -734,12 +737,13 @@ TEST ///
   assert isIsomorphic(N, M, Strict => true,  Homogeneous => true)
   f' = isomorphism(M, N,    Strict => false, Homogeneous => false)
   assert(inverse f === f')
-  --assert(1 == #M.cache.Isomorphisms)
+  --assert(1 == #N.cache.cache.Isomorphisms)
+  assert not M.cache.cache.?Isomorphisms
 
   N = N ** R^{{2}}
   assert isIsomorphic(N, M, Strict => false, Homogeneous => false)
   f = isomorphism(N, M,     Strict => false, Homogeneous => false)
-  --assert(f === M.cache.Isomorphisms#(N, {false, true}))
+  --assert(f === N.cache.cache.Isomorphisms#(N, M, {false, true}))
   assert isWellDefined f
   --assert isHomogeneous f
   assert(source f === M)
@@ -748,13 +752,14 @@ TEST ///
   assert isIsomorphic(N, M, Strict => false, Homogeneous => true)
   assert isIsomorphic(N, M, Strict => true,  Homogeneous => false)
   f = isomorphism(N, M,     Strict => true,  Homogeneous => false)
-  assert same(f, M.cache.Isomorphisms#(N, {true, false}))
+  assert same(f, N.cache.cache.Isomorphisms#(N, M, {true, false}))
   assert isWellDefined f
   assert not isHomogeneous f
   assert(source f === M)
   assert(target f === N)
   assert not isIsomorphic(N, M, Strict => true, Homogeneous => true)
-  --assert(2 == #M.cache.Isomorphisms)
+  --assert(2 == #N.cache.cache.Isomorphisms)
+  assert not M.cache.cache.?Isomorphisms
 ///
 
 TEST ///
@@ -765,7 +770,7 @@ TEST ///
   assert isIsomorphic(N, M, Strict => false, Homogeneous => false)
   f = isomorphism(N, M,     Strict => false, Homogeneous => false)
   -- TODO: ideally, if a homogeneous isomorphism _can_ be found, we should find it
-  --assert(f === M.cache.Isomorphisms#(N, {true, true}))
+  --assert(f === N.cache.cache.Isomorphisms#(N, M, {true, true}))
   assert isWellDefined f
   --assert isHomogeneous f
   assert(source f === M)
@@ -776,12 +781,13 @@ TEST ///
   assert isIsomorphic(N, M, Strict => true,  Homogeneous => true)
   f' = isomorphism(M, N,    Strict => false, Homogeneous => false)
   assert(inverse f === f')
-  --assert(1 == #M.cache.Isomorphisms)
+  --assert(1 == #N.cache.cache.Isomorphisms)
+  assert not M.cache.cache.?Isomorphisms
 
   N = N ** R^{{2,2}}
   assert isIsomorphic(N, M, Strict => false, Homogeneous => false)
   f = isomorphism(N, M,     Strict => false, Homogeneous => false)
-  --assert(f === M.cache.Isomorphisms#(N, {false, true}))
+  --assert(f === N.cache.cache.Isomorphisms#(N, M, {false, true}))
   assert isWellDefined f
   --assert isHomogeneous f
   assert(source f === M)
@@ -790,13 +796,14 @@ TEST ///
   assert isIsomorphic(N, M, Strict => false, Homogeneous => true)
   assert isIsomorphic(N, M, Strict => true,  Homogeneous => false)
   f = isomorphism(N, M,     Strict => true,  Homogeneous => false)
-  assert same(f, M.cache.Isomorphisms#(N, {true, false}))
+  assert same(f, N.cache.cache.Isomorphisms#(N, M, {true, false}))
   assert isWellDefined f
   assert not isHomogeneous f
   assert(source f === M)
   assert(target f === N)
   assert not isIsomorphic(N, M, Strict => true, Homogeneous => true)
-  --assert(2 == #M.cache.Isomorphisms)
+  --assert(2 == #N.cache.cache.Isomorphisms)
+  assert not M.cache.cache.?Isomorphisms
 ///
 
 TEST ///
