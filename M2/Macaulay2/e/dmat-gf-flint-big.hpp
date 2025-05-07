@@ -76,6 +76,12 @@ class DMat<M2::ARingGFFlintBig>
     swap(newMatrix);
   }
 
+  // These are labelled 'unsafe', as it s possible the rows
+  // are out of order (which happens in particular if
+  // certain flint functions created this.
+  const ElementType* unsafeArray() const { return mArray->entries; }
+  ElementType*& unsafeArray() { return mArray->entries; }
+  
  public:
   // Access routines so that the flint fq_nmod_mat interface may be used
   const fq_nmod_mat_t& fq_nmod_mat() const { return mArray; }

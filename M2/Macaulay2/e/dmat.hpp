@@ -126,6 +126,13 @@ class DMat
   // Get rid of these too!
   const ElementType* rowMajorArray() const { return mArray; }
   ElementType*& rowMajorArray() { return mArray; }
+
+  // These are labelled 'unsafe', as it s possible the rows
+  // are out of order (which happens in particular if
+  // certain flint functions created this.
+  const ElementType* unsafeArray() const { return mArray; }
+  ElementType*& unsafeArray() { return mArray; }
+  
  private:
   const ACoeffRing* mRing;
   size_t mNumRows;

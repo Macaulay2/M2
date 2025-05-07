@@ -237,10 +237,10 @@ bool SLEvaluatorConcrete<RT>::evaluate(const DMat<RT>& inputs,
 
   if (isCompiled) {
     if(parametersAndInputs==nullptr) {
-      (*compiled_fn)(inputs.array(), outputs.array());
+      (*compiled_fn)(inputs.unsafeArray(), outputs.unsafeArray());
     } else {
-      std::copy(inputs.array(),inputs.array()+nInputs,parametersAndInputs+nParams); 
-      (*compiled_fn)(parametersAndInputs, outputs.array());
+      std::copy(inputs.unsafeArray(),inputs.unsafeArray()+nInputs,parametersAndInputs+nParams); 
+      (*compiled_fn)(parametersAndInputs, outputs.unsafeArray());
     }
     return true;
   } else {                           
