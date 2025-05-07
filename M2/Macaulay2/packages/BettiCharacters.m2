@@ -2401,30 +2401,34 @@ Node
 
 Node
     Key
-    	dual
 	(dual,Character,RingMap)
     	(dual,Character,List)
     Headline
     	dual character
-    Usage
-    	dual(c,conj)
-    	dual(c,perm)
-    Inputs
-    	c:Character
-	    of a finite group action
-    	conj:RingMap
-	    conjugation in coefficient field
-    	perm:List
-	    permutation of conjugacy classes
-    Outputs
-    	:Character
     Description
     	Text
 	    Returns the dual of a character, i.e., the character
 	    of the dual or contragredient representation.
 	    
 	    The first argument is the original character.
-	    
+	    The second argument has two possibilities, listed below.
+	    The page @TO characterTable@ contains some motivation
+	    for using conjugation or permutations of conjugacy
+	    classes when dealing with characters.
+    Synopsis
+      Heading
+        dual character with respect to a conjugation in coefficient field
+      Usage
+    	dual(c,conj)
+      Inputs
+    	c:Character
+	    of a finite group action
+    	conj:RingMap
+	    conjugation in coefficient field
+      Outputs
+    	:Character
+      Description
+        Text
 	    Assuming the polynomial ring over which the character
 	    is defined has a coefficient field @TT "F"@ which is a subfield
 	    of the complex numbers, then the second argument is the
@@ -2446,7 +2450,20 @@ Node
 	    conj = map(F,F,{w^2})
 	    X = character(R,4,hashTable {(1,{2}) => matrix{{1,1,w,w^2}}})
 	    X' = dual(X,conj)
-    	Text
+    Synopsis
+      Heading
+        dual character with respect to a permutation of conjugacy classes
+      Usage
+    	dual(c,perm)
+      Inputs
+    	c:Character
+	    of a finite group action
+    	perm:List
+	    permutation of conjugacy classes
+      Outputs
+    	:Character
+      Description
+        Text
     	    If working over coefficient fields of positive characteristic
 	    or if one wishes to avoid defining conjugation, one may replace
 	    the second argument by a list containing a permutation
@@ -2466,10 +2483,6 @@ Node
     	Example
     	    perm = {1,2,4,3}
 	    dual(X,perm) === X'
-    	Text
-	    The page @TO characterTable@ contains some motivation
-	    for using conjugation or permutations of conjugacy
-	    classes when dealing with characters.
     SeeAlso
     	characterTable
 	    
