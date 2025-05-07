@@ -29,7 +29,8 @@ document {
      ring should be installed with a statement like ", TT "M.ring = R", ".",
      SeeAlso => "GradedModuleMap",
     Subnodes => {
-	TO gradedModule,
+	TO (gradedModule, List),
+	TO (complete, GradedModule),
 	TO (symbol SPACE, GradedModule, Array),
         TO (max, GradedModule),
         TO (min, GradedModule),
@@ -38,6 +39,7 @@ document {
         TO (symbol **, GradedModule, ChainComplex),
         TO (symbol **, GradedModule, Module),
         TO (length, GradedModule),
+	TO (betti, ChainComplex),
         },
      }
 
@@ -124,7 +126,6 @@ document {
 	 -- TO (NewFromMethod, ChainComplex, Resolution),
 	TO dd,
 	TO (status, ChainComplex),
-	TO complete,
         TO (complete, ChainComplex),
         TO (length, ChainComplex),
         TO (symbol ++, ChainComplex, ChainComplex),
@@ -139,9 +140,13 @@ document {
         TO (homology, ChainComplex),
         TO (homology, ZZ, ChainComplex),
         TO (poincare, ChainComplex),
+        TO (poincareN, ChainComplex),
+	TO (regularity, ChainComplex),
         TO (symbol ^, ChainComplex, ZZ),
         TO (symbol _, ChainComplex, ZZ),
         TO ((symbol _, symbol =), ChainComplex, ZZ),
+	TO (symbol ^, ChainComplex, Array),
+	TO (symbol _, ChainComplex, Array),
         },
      }
 
@@ -219,7 +224,12 @@ document {
         TO (transpose, ChainComplexMap),
         TO (symbol ^, ChainComplexMap, ZZ),
         TO (symbol _, ChainComplexMap, ZZ),
+	TO (symbol _, ChainComplexMap, Array),
         TO ((symbol _, symbol =), ChainComplexMap, ZZ),
+	TO (extend,ChainComplex,ChainComplex,Matrix),
+	TO (Hom,Module,ChainComplex),
+	TO (map,ChainComplex,ChainComplex,Function),
+	TO nullhomotopy,
         },
      }
 
