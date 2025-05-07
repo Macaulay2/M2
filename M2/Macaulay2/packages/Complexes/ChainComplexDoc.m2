@@ -948,6 +948,7 @@ doc ///
 
 doc ///
     Key
+        "Options for free resolutions"
         [freeResolution, LengthLimit]
         [freeResolution, DegreeLimit]
         [freeResolution, HardDegreeLimit]

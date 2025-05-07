@@ -9,7 +9,10 @@ document {
      by the user.",
      PARA{},
      "The symbol ", TT "Resolution", " is also used in a ", TO "ChainComplex", " to
-     store the resolution it comes from."
+     store the resolution it comes from.",
+     Subnodes => {
+	 TO resolution,
+         },
      }
 
 document {  -- This node is used as an example in the node: Key

@@ -76,36 +76,51 @@ if isPackageLoaded "Complexes" then
   load "./OldChainComplexes/docs/conversion.m2"
 
 doc ///
-Key
-  OldChainComplexes
-Headline
-  legacy chain complex code and doc
-Description
-  Text
-    This package contains code we are moving from the Core.
-    The first part of the plan is to consolidate all legacy chain complex
-    code and doc in one package.  Later, we will make this not preloaded.
-///
+Node
+  Key
+    OldChainComplexes
+    "chain complexes"
+  Headline
+    legacy implementation of chain complexes
+  Description
+    Text
+      This package contains legacy code that was extracted from the Core in order to preserve the existing
+      functionality of chain complexes, graded modules, and resolutions for backwards compatibility.
 
-///
-Key
-Headline
-Usage
-Inputs
-Outputs
-Consequences
-  Item
-Description
-  Text
-  Example
-  CannedExample
-  Code
-  Pre
-ExampleFiles
-Contributors
-References
-Caveat
-SeeAlso
+      Beginning in the 1.25.11 release, this package will not be preloaded anymore and current routines
+      involving chain complexes and graded modules will be superseded by new functorial homological algebra
+      routines in the @TO "Complexes::Complexes"@ package.
+
+      Users and package developers are encouraged to preview the upcoming changes by adding
+    Pre
+      HomologicalAlgebraPackage = "Complexes"
+    Text
+      to their @TO "initialization file"@ and reporting any bugs via email or
+      @HREF{"https://github.com/Macaulay2/M2/issues/3778", "GitHub"}@.
+      Once the transition is complete, adding
+    Pre
+      HomologicalAlgebraPackage = "OldChainComplexes"
+    Text
+      will provide a workaround for running old scripts or benchmarking
+      against previous algorithms to detect potential regressions.
+
+      For additional common operations and a comprehensive list of all routines provided
+      in this package which return or use chain complexes or maps between chain complexes,
+      see @TO "ChainComplex"@ and @TO "ChainComplexMap"@.
+  SeeAlso
+    "ChainComplexExtras :: ChainComplexExtras"
+    "ChainComplexOperations :: ChainComplexOperations"
+  Subnodes
+    "free resolutions of modules"
+    "extracting information from chain complexes"
+    "making chain complexes by hand"
+    "manipulating chain complexes"
+    "maps between chain complexes"
+    GradedModule
+    GradedModuleMap
+    ChainComplex
+    ChainComplexMap
+    Resolution
 ///
 
 -----------------------------------------------------------------------------
