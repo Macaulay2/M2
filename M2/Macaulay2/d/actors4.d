@@ -1550,9 +1550,12 @@ powermod(e:Expr):Expr := (
      if length(s) == 3 then
      when s.0 is base:ZZcell do
      when s.1 is exp:ZZcell do
-     when s.2 is mod:ZZcell do
-     -- # typical value: powermod, ZZ, ZZ, ZZ, ZZ
-     toExpr(powermod(base.v,exp.v,mod.v))
+     when s.2 is mod:ZZcell do (
+	 -- # typical value: powermod, ZZ, ZZ, ZZ, ZZ
+	 if isNegative(exp.v) && !isInvertible(base.v, mod.v)
+	 then buildErrorPacket(
+	     tostring(base.v) + " is not invertible mod " + tostring(mod.v))
+	 else toExpr(powermod(base.v,exp.v,mod.v)))
      else WrongArgZZ(3)
      else WrongArgZZ(2)
      else WrongArgZZ(1)

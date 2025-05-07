@@ -23,6 +23,12 @@ export (x:ZZ) ^ (n:ZZ) : ZZ := (
      if !isULong(n) then fatal("integer exponent too large");
      x^toULong(n));
 
+export isInvertible(x:ZZ, n:ZZ):bool := (
+    z := newZZmutable();
+    r := Ccode(int, "mpz_invert(", z, ", ", x, ", ", n, ")");
+    clear(z);
+    return r != 0);
+
 export powermod(x:ZZ, y:ZZ, n:ZZ) : ZZ := (
      -- z = x^y mod n
      z := newZZmutable();

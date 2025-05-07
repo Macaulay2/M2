@@ -175,7 +175,7 @@ init(x:ZZmutable) ::= Ccode( ZZmutable, "(mpz_init(",  x, "),",x,")" );
 
 export newZZmutable():ZZmutable := init(GCmalloc(ZZmutable));
 
-clear(x:ZZmutable) ::= Ccode( void, "mpz_clear(",  x, ")" );
+export clear(x:ZZmutable) ::= Ccode( void, "mpz_clear(",  x, ")" );
 
 init(x:QQmutable) ::= Ccode( QQmutable, "(mpq_init(",  x, "),",x,")" );
 
