@@ -121,7 +121,7 @@ findWeightCone Ideal := (I) -> (
 	       b = compress (b % I);
 	       apply(first entries b, g -> first exponents f - first exponents g)
 	       ));
-     M0 = M;
+     M0 := M;
      (C,H) := fourierMotzkin M;
      M = fourierMotzkin(C,H);
      C = -C;
@@ -182,7 +182,7 @@ parameterRing(Ideal,List,Symbol) := (M,L,t) -> (
      indices1 = apply(rsort gens1, (h,i) -> i);
      -- Now make the actual coeff ring:
      R2 := kk[(gens R1)_indices1, (gens R1)_indices2, Degrees => join(D_indices1,D_indices2), MonomialOrder => {Lex => (#indices1), #indices2}, Heft => w];
-     U := R2 (monoid([gens R, Join=>false, Degrees => Dxvars, Heft => w]));
+     U = R2 (monoid([gens R, Join=>false, Degrees => Dxvars, Heft => w]));
      f1 := map(R2,R1);
      f2 := map(U, ring J, vars U | f1.matrix);
      J = f2 J;
@@ -243,11 +243,11 @@ parameterIdeal(Ideal,Ideal) := (M,family) -> (
      -- M is a monomial ideal in a polynomial ring
      -- family is the result of a call to 'parameterFamily'
      R := ring M;
-     time G = forceGB gens family;
-     time syzM = substitute(syz gens M, ring family);
-     time eq = compress((gens family * syzM) % G);
+     time G := forceGB gens family;
+     time syzM := substitute(syz gens M, ring family);
+     time eq := compress((gens family * syzM) % G);
      --time (mons,eqns) := toSequence coefficients(toList(0..(numgens R)-1), eq);
-     time (mons,eqns) = coefficients(eq); -- , Variables=>apply(gens R, x -> substitute(x,ring eq)));
+     time (mons,eqns) := coefficients(eq); -- , Variables=>apply(gens R, x -> substitute(x,ring eq)));
      ideal lift(eqns,coefficientRing ring eqns))
 
 pruneParameterScheme = method()
@@ -310,6 +310,7 @@ preprune = (J,F) -> (
 
 groebnerScheme = method(Options=>{Minimize=>true, Weights=>null})
 groebnerScheme Ideal := opts -> (I) -> (
+     local t;
      L1 := smallerMonomials I;
      F0 := parameterFamily(I,L1,symbol t,Weights=>opts.Weights);
      J0 := parameterIdeal(I,F0);

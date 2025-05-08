@@ -223,7 +223,8 @@ extern "C" {
                                   M2_bool use_max_slanted_degree,
                                   int max_slanted_degree,
                                   int algorithm,
-                                  int strategy /* drg: connected rawResolution */
+                                  int strategy, /* drg: connected rawResolution */
+                                  M2_bool parallelizeByDegree
                                   );
 
   const Matrix /* or null */ *rawResolutionGetMatrix(Computation *G,int level);

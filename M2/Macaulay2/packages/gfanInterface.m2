@@ -10,7 +10,7 @@ newPackage(
 	Authors => {
 		{Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => ""},
 		{Name => "Andrew Hoefel", Email => "andrew.hoefel@gmail.com", HomePage =>"http://www.mast.queensu.ca/~ahhoefel/"},
-	    {Name => "Diane Maclagan (current maintainer)", Email => "D.Maclagan@warwick.ac.uk", HomePage=>"http://homepages.warwick.ac.uk/staff/D.Maclagan/"},
+	    { Name => "Diane Maclagan", Email => "D.Maclagan@warwick.ac.uk", HomePage => "http://homepages.warwick.ac.uk/staff/D.Maclagan/", Maintainer => true },
 	    {Name => "Josephine Yu", Email => "jyu@math.gatech.edu", HomePage => "http://people.math.gatech.edu/~jyu67/"}},
 	Headline => "interface to Anders Jensen's Gfan software",
 	Keywords => {"Interfaces"},
@@ -753,7 +753,7 @@ gfanConvertToNewRing (PolynomialRing) := R1 -> (
   --produced by this method.
   R1Gens := gens R1;
   numDigits := length (toString (#R1Gens));
-  R2 := (coefficientRing R1) (for i in 1..#R1Gens list (
+  R2 := (coefficientRing R1) new Array from (for i in 1..#R1Gens list (
     value ("x" | demark ("",for i from 1 to numDigits-(length toString i) list "0") | toString i)
   ) );
   R2Gens := gens R2;
@@ -4435,6 +4435,15 @@ doc///
 	 Bprime = markedPolynomialList {{x^2, y^3},{x^2 + y^2, y^3 + x*y + y^2}}
 	 assert equalMPL(B,Bprime)
 	 ///
+
+-- TEST gfanConvertToNewRing x NCAlgebra (cf. #3600)
+	TEST ///
+	debug needsPackage "gfanInterface"
+	R = QQ[a];
+	gfanConvertToNewRing(R);
+	needsPackage "NCAlgebra";
+	gfanConvertToNewRing(R)
+	///
 
 	-- TEST gfanBuchberger
 	TEST ///

@@ -132,7 +132,7 @@ multiplierIdeal (Ideal, List) := o -> (a,cs) -> (
 
 
 jumpingCoefficients = method(Options => {Strategy=>ViaElimination, DegreeLimit=>null})
--- jumping numbers and multiplier ideals up to the analytic spead
+-- jumping numbers and multiplier ideals up to the analytic spread
 jumpingCoefficients Ideal := o -> I -> jumpingCoefficients(I,0, analyticSpread I)
 -- jumping numbers and multiplier ideals in the interval (a,b)
 jumpingCoefficients (Ideal, ZZ, ZZ) := o -> (I,a,b) -> jumpingCoefficients(I,promote(a,QQ),promote(b,QQ))

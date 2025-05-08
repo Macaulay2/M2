@@ -10,13 +10,13 @@ newPackage(
 	PackageImports => {"FourTiTwo", "Depth", "Polyhedra"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "Computing quasidegrees of A-graded modules",
 	     "acceptance date" => "26 February 2019",
 	     "published article URI" => "https://msp.org/jsag/2019/9-1/p04.xhtml",
 	     "published article DOI" => "10.2140/jsag.2019.9.29",
 	     "published code URI" => "https://msp.org/jsag/2019/9-1/jsag-v9-n1-x04-Quasidegrees.m2",
-	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Quasidegrees.m2",
+	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Quasidegrees.m2",
 	     "release at publication" => "d76252d2c8d38f0ec55212eb458869503b1f0312",	    -- git commit number in hex
 	     "version at publication" => "1.0",
 	     "volume number" => "9",
@@ -141,7 +141,7 @@ toGradedRing(Matrix,PolynomialRing) := (A,R) -> (
 toricIdeal = method()
 toricIdeal(Matrix,Ring) := (A,R) -> (
     m := product gens R;
-    saturate(toBinomial(transpose(syz(A)),R),m)	
+    saturate(sub(toBinomial(transpose(syz(A)),R),R),m)
     )
 
 
@@ -863,7 +863,7 @@ needsPackage"Dmodules"
 A = matrix{{1,1,1,1},{0,1,5,11}}
 R = toGradedRing(A,QQ[a..d])
 I = toricIdeal(A,R)
-S = quasidegreesLocalCohomology R^1/I
+S = quasidegreesLocalCohomology(R^1/I)
 T = {}; for i to #S-1 do T=T|{(S_i)_0}
 for i to #T-1 do assert(holonomicRank(gkz(A,{0,0}))<holonomicRank(gkz(A,entries(T_i))))
 ///

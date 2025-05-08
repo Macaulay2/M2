@@ -1,5 +1,6 @@
 #include "supervisor.hpp"
 #include "supervisorinterface.h"
+#include <cassert>
 #include <iostream>
 #include <stdlib.h>
 #include <M2/config.h>
@@ -57,7 +58,7 @@ static volatile bool started=false;
 static void* TS_Test2_Func1(void* vtup)
 {
   started=true;
-  while(!AO_load(&THREADLOCAL(interrupts_interruptedFlag,struct atomic_field).field))
+  while(!atomic_load(&THREADLOCAL(interrupts_interruptedFlag,struct atomic_field).field))
     {
      sleep(0);
      }

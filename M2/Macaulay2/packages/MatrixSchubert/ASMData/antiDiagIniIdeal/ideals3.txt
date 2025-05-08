@@ -1,0 +1,7 @@
+ideal 0
+monomialIdeal(z_(1,1))
+monomialIdeal(z_(1,2)*z_(2,1))
+monomialIdeal(z_(1,1),z_(1,2)*z_(2,1))
+monomialIdeal(z_(1,1),z_(1,2))
+monomialIdeal(z_(1,1),z_(2,1))
+monomialIdeal(z_(2,1),z_(1,2),z_(1,1))

@@ -29,7 +29,7 @@ IndexedVariableTable _ Thing := (x,i) -> (
 IndexedVariableTable _ Thing  = (x,i,e) -> (checkValue x; x#i = e)
 IndexedVariableTable.GlobalAssignHook = (X,x) -> (
      globalAssignFunction(X,x);
-     if not x#?symbol$ then x#symbol$ = X;
+     x#symbol$ ??= X;
      )
 IndexedVariableTable.GlobalReleaseHook = (X,x) -> (
      globalReleaseFunction(X,x);

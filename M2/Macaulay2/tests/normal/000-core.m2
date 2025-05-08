@@ -8,39 +8,6 @@
      assert( {{1, 0, 1}, {0, 20, 0}, {1, 0, 1}} === applyTable(result,last@@last) )
      print new MatrixExpression from result
 
-
--- Example 4.1: the bounds can be sharp.
---
-     S = QQ[w,x,y,z];
-     X = Proj S;
-     I = monomialCurveIdeal(S,{1,3,4})
-     N = S^1/I;
-     assert(Ext^1(OO_X,N~(>= 0)) == prune truncate(0,Ext^1(truncate(2,S^1),N)))
-     assert(Ext^1(OO_X,N~(>= 0)) != prune truncate(0,Ext^1(truncate(1,S^1),N)))
-
-
--- Example 4.2: locally free sheaves and global Ext.
---
-     S = ZZ/32003[u,v,w,x,y,z];
-     I = minors(2,genericSymmetricMatrix(S,u,3));
-     X = variety I;
-     R = ring X;
-     Omega = cotangentSheaf X;
-     OmegaDual = dual Omega;
-     assert(Ext^1(OmegaDual, OO_X^1(>= 0)) == Ext^1(OO_X^1, Omega(>= 0)))
-
-
--- Example 4.3: Serre-Grothendieck duality.
---
-     S = QQ[v,w,x,y,z];
-     X = variety ideal(w*x+y*z,w*y+x*z);
-     R = ring X;
-     omega = OO_X^{-1};
-     G = sheaf cokernel genericSymmetricMatrix(R,R_0,2);
-     assert(Ext^2(G,omega) == dual HH^0(G))
-     assert(Ext^1(G,omega) == dual HH^1(G))
-     assert(Ext^0(G,omega) == dual HH^2(G))
-
 --
 fib = memoize( n -> if n <= 1 then 1 else fib(n-1) + fib(n-2) )
 assert ( fib 10 == 89 )
@@ -177,26 +144,6 @@ assert isIsomorphism p^-1
 assert ( p * p^-1 == id_M )
 assert ( p^-1 * p == id_N )
 
---
-S = ZZ/101[a..d]
-I = monomialCurveIdeal(S, {1,3,4})
-R = S/I
-use R
-J = module ideal(a,d)
-K = module ideal(b^2,c^2)
-JK = Hom(J,K)
-f = JK_{0}
-g = homomorphism f
-assert isHomogeneous g
-assert ( source g === J )
-assert ( target g === K )
-f' = homomorphism' g
-assert (f-f' == 0)
-assert (degrees f' === {{{1}}, {{0}}})
-assert (degrees f === {{{1}}, {{1}}})
-assert (degree f == {0})
-assert (degree f' == {1})
-
 
      --
 	  R = ZZ[x]
@@ -276,21 +223,6 @@ time C = resolution M
 assert(regularity C === 2)
 f = symmetricPower(2,vars R)
 assert(f%a + a * (f//a) == f)
-
-
---
-S = ZZ/101[t_1 .. t_9,u_1 .. u_9]
-m = matrix pack (3,toList (t_1 .. t_9))			  -- 3 by 3
-n = matrix pack (3,toList (u_1 .. u_9))			  -- 3 by 3
-j = flatten (m * n - n * m)
-k = flatten (m * n - n * m)
-G = gb j
-jj = generators G
-assert( numgens source jj == 26 )
-T = (degreesRing S)_0
-assert( poincare cokernel j == 1-8*T^2+2*T^3+31*T^4-32*T^5-25*T^6+58*T^7-32*T^8+4*T^9+T^10 )
-v = apply(7, i -> numgens source generators gb(k,DegreeLimit => i) )
-assert (v  === {0, 0, 8, 20, 25, 26, 26} )
 
 
 --
@@ -866,12 +798,6 @@ assert( degree U4 == 0 )
 
 
 --
-R=ZZ/101[x]
-assert(monomialIdeal vars R != 0)
-assert(monomialIdeal map(R^1,R^1,0) == 0)
-
-
---
 R = ZZ/101[a .. d,Degrees=>{1,2,3,5}]
 f = vars R
 C = resolution cokernel f
@@ -1107,7 +1033,7 @@ assert try (clean(0.1,A);false) else true  -- not yet implemented.
 needsPackage "SimplicialComplexes"
 R = QQ[a..d]
 D = simplicialComplex {a*b*c,a*b*d,a*c*d,b*c*d}
-C = chainComplex D
+C = complex D
 assert ( rank HH_2 C == 1 )
 
 
@@ -1237,22 +1163,6 @@ F 3
 
 --
      assert( 3 === position({a,b,c,d,e,f},i->i===d ) )
-
-
-
---
-    R = QQ[x,y,z];
-    I = monomialIdeal(x^2,y^3,x*y^2*z,y*z^4);
-    J = polarize(I);
-    assert(betti res I==betti res J)
-
-
---
-    R = QQ[x,y,z];
-    I = monomialIdeal(x^2*y^2,y^2*z^2,x*y*z^4);
-    J = polarize(I, VariableBaseName => "whyNotAWord");
-    assert(betti res I==betti res J)
-
 
 --
 clearAll

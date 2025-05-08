@@ -284,6 +284,9 @@ inline void DMatLUinPlace<M2::ARingRR>::computeLU()
   int info;
   int min = (rows <= cols) ? rows : cols;
 
+  if (min == 0)
+    return;
+
   // printf("entering DMatLUinPlace::computeLUNaive for RR\n");
 
   int* perm = newarray_atomic(int, min);
@@ -344,6 +347,9 @@ inline void DMatLUinPlace<M2::ARingCC>::computeLU()
   int cols = static_cast<int>(mLU.numColumns());
   int info;
   int min = (rows <= cols) ? rows : cols;
+
+  if (min == 0)
+    return;
 
   // printf("entering DMatLUtemplate::computeLUNaive for RR\n");
 

@@ -1,6 +1,14 @@
 --		Copyright 1994-2006,2010 by Daniel R. Grayson
 
+declarations "
+#ifndef _GNU_SOURCE
+ #define _GNU_SOURCE
+#endif
+#include <stdint.h>
+#define hash_t uint64_t";
+
 export nothing := void();
+export size_t := integerType "size_t";
 export uchar := integerType "unsigned char";
 export short := integerType "short";
 export ushort := integerType "unsigned short";
@@ -17,6 +25,7 @@ export int32_t := integerType "int32_t";
 export uint32_t := integerType "uint32_t";
 export int64_t := integerType "int64_t";
 export uint64_t := integerType "uint64_t";
+export hash_t := integerType "hash_t";
 export float := arithmeticType "float";
 export ! (x:bool) ::= Ccode(bool,"(!(",x,"))");
 export (x:bool) | (y:bool) ::= Ccode(bool,"((",x,")|(",y,"))");
@@ -57,7 +66,9 @@ export (x:uint) <= (y:uint) ::= Ccode(bool,"(",x," <= ",y,")");
 export (x:uint) >  (y:uint) ::= Ccode(bool,"(",x," > " ,y,")");
 export (x:uint) >= (y:uint) ::= Ccode(bool,"(",x," >= ",y,")");
 export (x:char) <  (y:char) ::= Ccode(bool,"(",x," < " ,y,")");
+export (x:char) <  (y:int) ::= Ccode(bool,"(",x," < " ,y,")");
 export (x:char) <= (y:char) ::= Ccode(bool,"(",x," <= ",y,")");
+export (x:int)  <= (y:char) ::= Ccode(bool,"(",x," <= ",y,")");
 export (x:char) >  (y:char) ::= Ccode(bool,"(",x," > " ,y,")");
 export (x:char) >= (y:char) ::= Ccode(bool,"(",x," >= ",y,")");
 export (x:ulong) <  (y:ulong) ::= Ccode(bool,"(",x," < " ,y,")");
@@ -94,6 +105,7 @@ export (x:uint) % (y:int) ::= Ccode(uint,"(",x," % ",y,")");
 export (x:int) % (y:uint) ::= Ccode(uint,"(",x," % ",y,")");
 export (x:uint) % (y:uint) ::= Ccode(uint,"(",x," % ",y,")");
 export (x:ushort) % (y:ushort) ::= Ccode(ushort,"(",x," % ",y,")");
+export (x:char) % (y:int) ::= Ccode(char, "(",x," % ",y,")");
 export (x:double) + (y:double) ::= Ccode(double,"(",x," + ",y,")");
 export (x:double) - (y:double) ::= Ccode(double,"(",x," - ",y,")");
 export (x:double) * (y:double) ::= Ccode(double,"(",x," * ",y,")");
@@ -103,6 +115,7 @@ export (x:float) + (y:float) ::= Ccode(float,"(",x," + ",y,")");
 export (x:float) - (y:float) ::= Ccode(float,"(",x," - ",y,")");
 export (x:float) * (y:float) ::= Ccode(float,"(",x," * ",y,")");
 export (x:float) / (y:float) ::= Ccode(float,"(",x," / ",y,")");
+export (x:char) + (y:char) ::= Ccode(char,"(",x," + ",y,")");
 export (x:char) + (y:int ) ::= Ccode(char,"(",x," + ",y,")");
 export (x:short) + (y:int ) ::= Ccode(short,"(",x," + ",y,")");
 export (x:long) + (y:int ) ::= Ccode(long,"(",x," + ",y,")");
@@ -165,6 +178,19 @@ export (x:double) * (y:long) ::= Ccode(double,"(",x," * ",y,")");
 export (x:int) / (y:double) ::= Ccode(double,"(",x," / ",y,")");
 export (x:ulong) / (y:double) ::= Ccode(double,"(",x," / ",y,")");
 export (x:double) / (y:int) ::= Ccode(double,"(",x," / ",y,")");
+export (x:hash_t) + (y:hash_t) ::= Ccode(hash_t, "(", x, " + ", y, ")");
+export (x:int) + (y:hash_t) ::= Ccode(hash_t, "(", x, " + ", y, ")");
+export (x:hash_t) + (y:int) ::= Ccode(hash_t, "(", x, " + ", y, ")");
+export (x:hash_t) * (y:hash_t) ::= Ccode(hash_t, "(", x, " * ", y, ")");
+export (x:int) * (y:hash_t) ::= Ccode(hash_t, "(", x, " * ", y, ")");
+export (x:hash_t) * (y:int) ::= Ccode(hash_t, "(", x, " * ", y, ")");
+export (x:hash_t) % (y:int) ::= Ccode(hash_t, "(", x, " % ", y, ")");
+export (x:int) & (y:hash_t) ::= Ccode(hash_t, "(", x, " & ", y, ")");
+export (x:hash_t) & (y:int) ::= Ccode(hash_t, "(", x, " & ", y, ")");
+export (x:hash_t) > (y:hash_t) ::= Ccode(bool,"(",x," > " ,y,")");
+export (x:hash_t) < (y:hash_t) ::= Ccode(bool,"(",x," < " ,y,")");
+export (x:hash_t) < (y:int) ::= Ccode(bool,"(",x," < " ,y,")");
+
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d arithmetic.o "

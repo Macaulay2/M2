@@ -4,7 +4,7 @@ newPackage(
     	Version => "3.0", 
     	Date => "29 June 2008, revised by DE June 2016, revised by FG and JWS June 2018",
     	Authors => {
-	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.uiuc.edu/Macaulay2/"},
+	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "https://macaulay2.com/"},
      	     {Name => "Gregory G. Smith", Email => "ggsmith@mast.queensu.ca"},
 	     {Name => "Stein A. Strømme", Email => "stromme@math.uib.no"},
 	     {Name => "David Eisenbud", Email => "de@msri.org"},

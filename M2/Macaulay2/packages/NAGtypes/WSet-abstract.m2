@@ -60,7 +60,7 @@ coordinateProjection(Ambient,Ambient) := (B,A) -> (
     )
 evaluate = method()
 evaluate(RationalMap, AbstractPoint) := (M,P) -> point sub(matrix M, matrix P)
-compose(RationalMap, RationalMap) := (M,N) -> rationalMap sub(matrix M, matrix N)
+compose(RationalMap, RationalMap) := RationalMap => {} >> o -> (M,N) -> rationalMap sub(matrix M, matrix N)
 
 -- SlicingVariety -------------------(hacked to work with AffineSpace)-----------------
 -- "map" is hacked as a (1-column) matrix that defines the slice  

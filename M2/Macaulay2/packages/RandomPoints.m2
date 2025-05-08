@@ -1,13 +1,13 @@
 
 newPackage(
         "RandomPoints",
-    	Version => "1.5.2",
-    	Date => "July 30th, 2021",
+    	Version => "1.5.3",
+    	Date => "May 17th, 2023",
     	Authors => {
-	     {Name => "Sankhaneel Bisui", Email => "sbisu@tulane.edu", HomePage=>"https://sites.google.com/view/sankhaneelbisui/home"},
+	     {Name => "Sankhaneel Bisui", Email => "Sankhaneel.Bisui@umanitoba.ca", HomePage=>"https://sites.google.com/view/sankhaneelbisui/home"},
          {Name => "Zhan Jiang", Email => "zoeng@umich.edu", HomePage => "http://www-personal.umich.edu/~zoeng/"},
-         {Name => "Sarasij Maitra", Email => "sm3vg@virginia.edu", HomePage => "https://sarasij93.github.io/"},         
-	     {Name=> "Thai Nguyen", Email =>"tnguyen11@tulane.edu", HomePage=>"https://sites.google.com/view/thainguyenmath "},
+         {Name => "Sarasij Maitra", Email => "maitra@math.utah.edu", HomePage => "https://sarasij93.github.io/"},         
+	     {Name=> "Thai Nguyen", Email =>"nguyt161@mcmaster.ca", HomePage=>"https://sites.google.com/view/thainguyenmath "},
          {Name=> "Frank-Olaf Schreyer", Email =>"schreyer@math.uni-sb.de", HomePage=>"https://www.math.uni-sb.de/ag/schreyer/index.php/ "},
 	     {Name=>"Karl Schwede", Email=>"schwede@math.utah.edu", HomePage=>"https://www.math.utah.edu/~schwede/" }	     	     
 	     },
@@ -15,7 +15,22 @@ newPackage(
         PackageImports => {"SwitchingFields", "MinimalPrimes", "ConwayPolynomials"}, 
 		DebuggingMode => false, 
 		Reload=>false,
-		AuxiliaryFiles => false -- set to true if package comes with auxiliary files
+		AuxiliaryFiles => false, -- set to true if package comes with auxiliary files
+		Keywords => {"Examples and Random Objects"},
+		Certification => {
+		    "journal name" => "Journal of Software for Algebra and Geometry",
+		    "journal URI" => "https://msp.org/jsag/",
+		    "article title" => "Finding points on varieties with Macaulay2",
+		    "acceptance date" => "2023-05-08",
+		    "published article URI" => "https://msp.org/jsag/2023/13-1/p03.xhtml",
+		    "published article DOI" => "10.2140/jsag.2023.13.33",
+		    "published code URI" => "https://msp.org/jsag/2023/13-1/jsag-v13-n1-x03-RandomPoints.m2",
+		    "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/RandomPoints.m2",
+		    "release at publication" => "ae946e7b4ba5d4d16f3cf8b3ddfef75086ba0559",
+		    "version at publication" => "1.5.3",
+		    "volume number" => "13",
+		    "volume URI" => "https://msp.org/jsag/2023/13-1/"
+		    }
     	)
 
 -- Any symbols or functions that the user is to have access to

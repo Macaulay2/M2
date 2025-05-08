@@ -69,7 +69,7 @@ void testCoerceToLongInteger(const RT& R)
 TEST(RingZZp, create)
 {
   const Z_mod* R = Z_mod::create(101);
-  EXPECT_FALSE(R == 0);
+  EXPECT_FALSE(R == nullptr);
   buffer o;
   o << "Ring being tested: ";
   R->text_out(o);

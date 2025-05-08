@@ -18,8 +18,8 @@
 
 newPackage(
 	"Visualize",
-    	Version => "1.5", 
-    	Date => "May 24, 2019",
+	Version => "1.7",
+	Date => "May 3, 2025",
     	Authors => {       
      	     {Name => "Brett Barwick", Email => "bbarwick@uscupstate.edu", HomePage => "http://faculty.uscupstate.edu/bbarwick/"},	     
 	     {Name => "Thomas Enkosky", Email => "tomenk@bu.edu", HomePage => "http://math.bu.edu/people/tomenk/"},	     
@@ -62,6 +62,16 @@ export {
      "closePort"
 }
 
+---------------
+-- ChangeLog --
+---------------
+
+-*
+
+1.7 (2025-05-03, M2 1.25.05)
+* update for leadTerm changes
+
+*-
 
 ------------------------------------------------------------
 -- Global Variables
@@ -241,7 +251,7 @@ visualize(Ideal) := commonVisOpts|{VisTemplate => basePath |"Visualize/templates
 	
 	-- changed gens to leadTerm so if there's a non monomial ideal
 	-- it will return the initial ideal
-	arrayList = apply( flatten entries leadTerm J, m -> flatten exponents m);	
+	arrayList = apply((leadTerm J)_*, m -> flatten exponents m);
 	arrayList = toArray arrayList;
 	arrayString = toString arrayList;
 	
@@ -264,7 +274,7 @@ visualize(Ideal) := commonVisOpts|{VisTemplate => basePath |"Visualize/templates
 	    
     	arrayList = apply(flatten entries basis(0,infinity, R/J), m -> flatten exponents m );
     	arrayList = toArray arrayList;
-	newArrayList = apply(flatten entries leadTerm J, m -> flatten exponents m );
+	newArrayList = apply((leadTerm J)_*, m -> flatten exponents m );
     	newArrayList = toArray newArrayList;
     	arrayString = toString arrayList;
      	newArrayString = toString newArrayList;
@@ -1042,14 +1052,12 @@ document {
      
      UL {
 	 {HREF("https://github.com/AndreaLombardo/BootSideMenu","BootSideMenu.js")},
-	 {HREF("https://github.com/dataarts/webgl-globe/blob/master/globe-vertex-texture/third-party/Three/Detector.js","Detectors.js")},
 	 {HREF("http://getbootstrap.com/","Bootstrap.js")},
 	 {HREF("https://clipboardjs.com/","clipboard.js")},
 	 {HREF("https://d3js.org/","D3.js")},
 	 {HREF("https://jquery.com/","jQuery")},
 	 {HREF("http://refreshless.com/nouislider/","noUiSlider.js")},
-	 {HREF("https://github.com/mrdoob/three.js/","Three.js")},
-	 {HREF("http://underscorejs.org/","Underscore.js")}
+	 {HREF("https://github.com/mrdoob/three.js/","Three.js")}
 	},
          
      
@@ -1285,7 +1293,7 @@ document {
 	 {BOLD "Highlight Neighbors: ", "Allows you to see the neighbors of a vertex when selected.", BR{}, BR{}}, 
 	 
 	 {BOLD "Reset Nodes: ", "When you move a vertex, it will pin it to the canvas. If you have pinned a node to the canvas, you can 
-	     undo this process by reseting the nodes. Clicking this will reset all nodes.", BR{}, BR{}}, 
+	     undo this process by resetting the nodes. Clicking this will reset all nodes.", BR{}, BR{}}, 
 	     
 	 {BOLD "Turn off force: ", "The force is what creates the charges on the nodes. Turning this off will make the vertices 
 	     not repel each other.", BR{}, BR{}}, 
@@ -1427,7 +1435,7 @@ document {
 	 {BOLD "Highlight Neighbors: ", "Allows you to see the neighbors of a vertex when selected.", BR{}, BR{}}, 
 	 
 	 {BOLD "Reset Nodes: ", "When you move a vertex, it will pin it to the canvas. If you have pinned a node to the canvas, you can 
-	     undo this process by reseting the nodes. Clicking this will reset all nodes.", BR{}, BR{}}, 
+	     undo this process by resetting the nodes. Clicking this will reset all nodes.", BR{}, BR{}}, 
 	     
 	 {BOLD "Turn off force: ", "The force is what creates the charges on the nodes. Turning this off will make the vertices 
 	     not repel each other.", BR{}, BR{}}, 
@@ -1530,7 +1538,7 @@ document {
 	 {BOLD "Fix extremal nodes: ", "Forces extremal nodes to be placed at the top and bottom of the image.", BR{}, BR{}}, 	 
 	 
 	 {BOLD "Reset Nodes: ", "When you move a vertex, it will pin it to the canvas. If you have pinned a node to the canvas, you can 
-	     undo this process by reseting the nodes. Clicking this will reset all nodes.", BR{}, BR{}}, 
+	     undo this process by resetting the nodes. Clicking this will reset all nodes.", BR{}, BR{}}, 
 	     
 	 {BOLD "Turn off force: ", "The force is what creates the charges on the nodes. Turning this off will make the vertices 
 	     not repel each other.", BR{}, BR{}}, 
@@ -1627,7 +1635,7 @@ document {
 	 {BOLD "Highlight faces: ", "Allows you to see the connecting faces when a vertex is selected.", BR{}, BR{}}, 
 	 
 	 {BOLD "Reset Nodes: ", "When you move a vertex, it will pin it to the canvas. If you have pinned a node to the canvas, you can 
-	     undo this process by reseting the nodes. Clicking this will reset all nodes.", BR{}, BR{}}, 
+	     undo this process by resetting the nodes. Clicking this will reset all nodes.", BR{}, BR{}}, 
 	     
 	 {BOLD "Turn off force: ", "The force is what creates the charges on the nodes. Turning this off will make the vertices 
 	     not repel each other.", BR{}, BR{}}, 

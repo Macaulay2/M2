@@ -10,7 +10,7 @@ MinimalPrimes::MinimalPrimes(const MonomialIdeal *const &I)
       mi(I->radical())
 {
   exps = newarray(int *, nvars + 2);
-  for (int i = 0; i <= nvars + 1; i++) exps[i] = 0;
+  for (int i = 0; i <= nvars + 1; i++) exps[i] = nullptr;
 
   primes = new MonomialIdeal(I->get_ring());
   codim_limit = 0;
@@ -19,7 +19,7 @@ MinimalPrimes::MinimalPrimes(const MonomialIdeal *const &I)
 MinimalPrimes::~MinimalPrimes()
 {
   for (int i = 0; i <= nvars + 1; i++)
-    if (exps[i] != 0) freemem(exps[i]);
+    if (exps[i] != nullptr) freemem(exps[i]);
   freemem(exps);
   delete primes;
   delete mi;
@@ -226,7 +226,7 @@ MonomialIdeal *MinimalPrimes::min_primes(int codim_limit0, int minprime_limit0)
   state = do_primes;
   n_minprimes = 0;
 
-  if (exps[0] == 0) exps[0] = newarray_atomic_clear(int, nvars);
+  if (exps[0] == nullptr) exps[0] = newarray_atomic_clear(int, nvars);
 
   while (codim_limit < codim_limit0)
     {
@@ -235,7 +235,7 @@ MonomialIdeal *MinimalPrimes::min_primes(int codim_limit0, int minprime_limit0)
     }
 
   MonomialIdeal *result = primes;
-  primes = 0;
+  primes = nullptr;
   return result;
 }
 
@@ -263,12 +263,12 @@ static int reduce_exp(const int *m, const int *exp)
 void MinimalPrimes::ass_prime_generator(Nmi_node *p, int codim)
 {
   int i = codim + 1;
-  if (exps[i] == 0) exps[i] = newarray_atomic(int, nvars);
+  if (exps[i] == nullptr) exps[i] = newarray_atomic(int, nvars);
   exponents_t exp0 = exps[i];
   for (int j = 0; j < nvars; j++) exp0[j] = exps[codim][j];
   for (;;)
     {
-      if (p == NULL)
+      if (p == nullptr)
         {
           if (state == do_codim)
             {

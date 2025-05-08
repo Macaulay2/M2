@@ -1,7 +1,6 @@
 // Copyright 2005-2021 Michael E. Stillman
 
 #include "f4/f4-m2-interface.hpp"
-#include "f4/gausser.hpp"              // for Gausser
 #include "f4/moninfo.hpp"              // for monomial_word, MonomialInfo
 #include "f4/ntuple-monomial.hpp"      // for ntuple_word
 #include "freemod.hpp"                 // for FreeModule
@@ -107,8 +106,8 @@ vec F4toM2Interface::to_M2_vec(const VectorArithmetic* VA,
   Nterm **last = newarray(Nterm *, F->rank());
   for (int i = 0; i < F->rank(); i++)
     {
-      comps[i] = 0;
-      last[i] = 0;
+      comps[i] = nullptr;
+      last[i] = nullptr;
     }
 
   int *exp = newarray_atomic(int, M->n_vars() + 1);
@@ -125,7 +124,7 @@ vec F4toM2Interface::to_M2_vec(const VectorArithmetic* VA,
       ring_elem a = VA->ringElemFromElementArray(f.coeffs, i);
       Nterm *g = R->make_flat_term(a, m1);
       g->next = nullptr;
-      if (last[comp] == 0)
+      if (last[comp] == nullptr)
         {
           comps[comp] = g;
           last[comp] = g;
@@ -139,12 +138,12 @@ vec F4toM2Interface::to_M2_vec(const VectorArithmetic* VA,
   vec result = nullptr;
   for (int i = 0; i < F->rank(); i++)
     {
-      if (comps[i] != 0)
+      if (comps[i] != nullptr)
         {
           vec v = R->make_vec(i, comps[i]);
           R->add_vec_to(result, v);
-          comps[i] = 0;
-          last[i] = 0;
+          comps[i] = nullptr;
+          last[i] = nullptr;
         }
     }
 

@@ -13,27 +13,25 @@ hasNoQuotients QuotientRing := (R) -> isField R
 hasNoQuotients PolynomialRing := (R) -> hasNoQuotients coefficientRing R
 hasNoQuotients Ring := (R) -> true
 
-getMinorsStrategy := (R, opts) -> (
-     bareiss := 0;  -- WARNING: these must match the engine!!
-     cofactor := 1;
-     dynamic := 2;
-     strat := if opts.?Strategy then opts.Strategy else null;
-     if strat === global Bareiss then bareiss
-     else if strat === global Cofactor then cofactor
-     else if strat === global Dynamic then dynamic
-     else if strat =!= null then (
-	  error "'Strategy' keyword must be 'Cofactor', 'Bareiss' or 'Dynamic";
-	  )
-     else (
+hasFreeSupport = (R, m) -> 0 == # intersect(set \\ index \ support m, set \\ index \ support ideal R)
+
+-- Keep this in sync DET_* strategy codes in Macaulay2/e/det.hpp
+RawMinorsStrategyCodes = new HashTable from {
+    Bareiss  => 0,
+    Cofactor => 1,
+    Dynamic  => 2,
+    }
+
+getMinorsStrategy := (R, m, strat) -> RawMinorsStrategyCodes#strat ?? (
+    if strat === null then RawMinorsStrategyCodes#(
 	  -- Use the Bareiss algorithm unless R is a quotient of
 	  -- a polynomial ring.  Note that if R is non-commutative
 	  -- then either algorithm is incorrect.  What is the correct
 	  -- thing to do in this case?
-          if hasNoQuotients R and precision R === infinity then
-            bareiss
-          else
-     	    cofactor
-     ))
+	if precision R < infinity then Cofactor else
+        if hasNoQuotients R       then Bareiss  else
+	if hasFreeSupport(R, m)   then Bareiss  else Cofactor)
+    else error "'Strategy' keyword must be 'Cofactor', 'Bareiss' or 'Dynamic")
 
 -----------------------------------------------------------------------------
 -- symmetricAlgebra
@@ -45,7 +43,7 @@ rep := (meth, opts, args) -> prepend_opts nonnull apply(args, arg ->
     else arg)
 
 symmetricAlgebra = method( Options => monoidDefaults )
-symmetricAlgebra Module := Ring => opts -> (cacheValue (symmetricAlgebra => opts)) (M -> (
+symmetricAlgebra Module := Ring => opts -> M -> M.cache#(symmetricAlgebra, opts) ??= (
 	k := ring M;
 	N := monoid rep(symmetricAlgebra, opts, [
 		Variables => () -> numgens M,
@@ -54,14 +52,13 @@ symmetricAlgebra Module := Ring => opts -> (cacheValue (symmetricAlgebra => opts
 	S := k N;
 	S  = S / ideal(vars S * promote(presentation M, S));
 	S.Module = M;
-	S))
+    S)
 
-symmetricAlgebra(Ring, Ring, Matrix) := RingMap => o -> (T, S, f) -> (
-    if f.cache#?(key := (symmetricAlgebra, T, S, f)) then f.cache#key else f.cache#key = (
+symmetricAlgebra(Ring, Ring, Matrix) := RingMap => o -> (T, S, f) -> f.cache#(symmetricAlgebra, T, S, f) ??= (
 	p := map(T, S, vars T * promote(cover f, T));
 	if f.cache.?inverse then p.cache.inverse = (
 	    map(S, T, vars S * promote(cover inverse f, S)));
-	p))
+    p)
 symmetricAlgebra                   Matrix  := RingMap => o ->        f  -> symmetricAlgebra(symmetricAlgebra target f, symmetricAlgebra source f, f)
 symmetricAlgebra(Nothing, Nothing, Matrix) := RingMap => o -> (T, S, f) -> symmetricAlgebra(symmetricAlgebra target f, symmetricAlgebra source f, f)
 symmetricAlgebra(Nothing, Ring,    Matrix) := RingMap => o -> (T, S, f) -> symmetricAlgebra(symmetricAlgebra target f, S, f)
@@ -72,8 +69,7 @@ symmetricAlgebra(Ring,    Nothing, Matrix) := RingMap => o -> (T, S, f) -> symme
 -----------------------------------------------------------------------------
 
 symmetricPower = method()
-symmetricPower(ZZ, Module) := Module => (p, M) -> (
-    if M.cache#?(key := (symmetricPower, p)) then M.cache#key else M.cache#key = (
+symmetricPower(ZZ, Module) := Module => (p, M) -> M.cache#(symmetricPower, p) ??= (
 	R := ring M;
 	if p   < 0 then R^0 else
 	if p === 0 then R^1 else
@@ -81,12 +77,11 @@ symmetricPower(ZZ, Module) := Module => (p, M) -> (
 	if isFreeModule M   then new Module from (R, rawSymmetricPower(p, raw M))
 	else coimage basis(p, symmetricAlgebra M,
 	    SourceRing => ring M, Degree => {p, degreeLength R:0})
-    ))
+    )
 symmetricPower(ZZ, Matrix) := Matrix => (i, m) -> map(ring m, rawSymmetricPower(i, raw m))
 
 exteriorPower = method(Options => { Strategy => null })
-exteriorPower(ZZ, Module) := Module => opts -> (p, M) -> (
-    if M.cache#?(exteriorPower, p) then M.cache#(exteriorPower, p) else M.cache#(exteriorPower, p) = (
+exteriorPower(ZZ, Module) := Module => opts -> (p, M) -> M.cache#(exteriorPower, p) ??= (
 	R := ring M;
 	if p   < 0 then R^0 else
 	if p === 0 then R^1 else
@@ -99,7 +94,7 @@ exteriorPower(ZZ, Module) := Module => opts -> (p, M) -> (
 	    h1 := m ** id_Fp1;
 	    h2 := wedgeProduct(1,p-1,F);
 	    cokernel(h2 * h1))
-    ))
+    )
 
 exteriorPower(ZZ, Matrix) := Matrix => opts -> (p, m) -> (
     R := ring m;
@@ -110,7 +105,7 @@ exteriorPower(ZZ, Matrix) := Matrix => opts -> (p, m) -> (
     else map(
 	exteriorPower(p, target m, opts),
 	exteriorPower(p, source m, opts),
-	rawExteriorPower(p, raw m, getMinorsStrategy(R, opts)))
+	rawExteriorPower(p, raw m, getMinorsStrategy(R, m, opts.Strategy)))
     )
 
 wedgeProduct = method()
@@ -141,7 +136,7 @@ minors(ZZ, Matrix) := Ideal => opts -> (j, m) -> (
 	       )
 	  ) then error "expected a list of 2 lists of integers";
      if j <= 0 then ideal 1_(ring m)
-     else ideal map(ring m, rawMinors(j, raw m, getMinorsStrategy(ring m,opts), 
+     else ideal map(ring m, rawMinors(j, raw m, getMinorsStrategy(ring m, m, opts.Strategy),
 	       if opts.Limit === infinity then -1 else opts.Limit,
 	       if f =!= null then f#0, 
 	       if f =!= null then f#1)))

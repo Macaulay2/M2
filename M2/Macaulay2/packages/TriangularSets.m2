@@ -271,13 +271,13 @@ pseudoRemainder(RingElement,TriaSystem) := (f,T) -> (
 )
 RingElement % TriaSystem := (f,T) -> pseudoRemainder(f,T)
 
-resultant(RingElement,TriaSystem) := (f,T) -> (
+resultant(RingElement,TriaSystem) := opts -> (f,T) -> (
     if isConstant f then return f;
     for t in T.gens do(
         if f==0 then return f;
         x := mvar t;
         if mvar f < x then continue;
-        f = resultant(f,t,x);
+        f = resultant(f,t,x,opts);
     );
     return f;
 )
@@ -719,8 +719,7 @@ myHermite = (A,c,negativepivot,badcol) -> (
             assign(i1,A#i2,c#i2,{});
             assign(i2,A2,c2,b2);
         )else(
-            D := gcdCoefficients(x,y);
-            d:=D#0; r:=D#1; s:=D#2;
+            (d,r,s) := gcdCoefficients(x,y);
             (A1,c1,b1):=addRows(i1,r,i2,s,j);
             (A2,c2,b2)=addRows(i1,y//d,i2,-x//d,j);
             assign(i1,A1,c1,b1);

@@ -1,0 +1,35 @@
+-- -*- M2-comint -*- hash: 17527591670198198636
+
+i1 : X = toricProjectiveSpace 4
+
+o1 = X
+
+o1 : NormalToricVariety
+
+i2 : Z1 = toricCycle({{0,1} => 3,{0,2} => 7,{1,2} => 82},X)
+
+o2 = 3*X       + 7*X       + 82*X
+        {0, 1}      {0, 2}       {1, 2}
+
+o2 : ToricCycle on X
+
+i3 : Z2 = toricCycle({{0,1} => 4,{0,2} => 5},X)
+
+o3 = 4*X       + 5*X
+        {0, 1}      {0, 2}
+
+o3 : ToricCycle on X
+
+i4 : support Z1
+
+o4 = {{0, 1}, {0, 2}, {1, 2}}
+
+o4 : List
+
+i5 : support Z2
+
+o5 = {{0, 1}, {0, 2}}
+
+o5 : List
+
+i6 : 

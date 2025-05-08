@@ -249,7 +249,8 @@ doc ///
 doc ///
     Key
     	"evaluating gates"
-     	(value, InputGate, ValueHashTable)    
+	(value, Gate, ValueHashTable)    
+	(value, InputGate, ValueHashTable)    
      	(value, SumGate, ValueHashTable)
         (value, ProductGate, ValueHashTable)
         (value, DivideGate, ValueHashTable)

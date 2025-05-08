@@ -37,6 +37,7 @@ assert Equation(fold(plus, next i, i), 77)
 assert Equation(take(P, 0), {})
 assert Equation(take(P, 5), {2, 3, 5, 7, 11})
 assert Equation(take(P, 20), {2, 3, 5, 7, 11, 13, 17, 19})
+assert Equation(take(P, {2, 5}), {5, 7, 11, 13})
 
 assert Equation(toList iterator {1, 2, 3}, {1, 2, 3})
 assert Equation(toList iterator (1, 2, 3), {1, 2, 3})
@@ -51,3 +52,13 @@ assert Equation(toList(iterator {1, 2, 3} | iterator {4, 5, 6}),
 assert Equation(join({1, 2, 3}, iterator {4, 5, 6}), {1, 2, 3, 4, 5, 6})
 assert Equation(join((1, 2, 3), iterator {4, 5, 6}), (1, 2, 3, 4, 5, 6))
 assert Equation(join([1, 2, 3], iterator {4, 5, 6}), [1, 2, 3, 4, 5, 6])
+
+assert Equation(toList pairs "foo", {(0, "f"), (1, "o"), (2, "o")})
+assert Equation(toList applyPairs("foo", (i, c) -> (c, i + 1)),
+    {("f", 1), ("o", 2), ("o", 3)})
+x = 0
+scanPairs("foo", (i, c) -> x += i + first ascii c)
+assert Equation(x, 0 + 102 + 1 + 111 + 2 + 111)
+assert Equation(selectPairs(1..10, (i, x) -> even x),
+    ((1, 2), (3, 4), (5, 6), (7, 8), (9, 10)))
+assert Equation(selectPairs(2, 1..10, (i, x) -> even x), ((1, 2), (3, 4)))

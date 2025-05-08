@@ -134,10 +134,11 @@ const RingElement *rawRingElementRatConversion(const RingElement *f,
 
 const Matrix *rawMatrixRatConversion(const Matrix *f, mpz_srcptr m, const Ring *RQ)
 {
-  const PolyRing *R = f->get_ring()->cast_to_PolyRing();
+  const Ring *Rf = f->get_ring();
+  const PolyRing *P = Rf->cast_to_PolyRing();
   const PolyRing *PQ = RQ->cast_to_PolyRing();
 
-  if (R == nullptr)
+  if (P == nullptr)
     {
       ERROR("expected polynomial ring over ZZ");
       return nullptr;
@@ -150,7 +151,7 @@ const Matrix *rawMatrixRatConversion(const Matrix *f, mpz_srcptr m, const Ring *
 
   const int *deg;
 
-  deg = f->degree_monoid()->make_one();
+  deg = Rf->degree_monoid()->make_one();
 
   MatrixConstructor mat(FQ, GQ, deg);
   for (int i = 0; i < f->n_cols(); i++)

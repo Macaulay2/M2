@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 259384909
+-- -*- M2-comint -*- hash: 3509501310639924813
 
 i1 : x = (import "math")@@pi
 

@@ -13,7 +13,7 @@ export topLevelTeXmacs():int := (
      	  stdIO.echo = false;
 	  r := getLine(stdIO);
 	  when r is e:errmsg do (
-	       flush(stdIO);
+	       stdIO << flush;
      	       endLine(stdError);
 	       stderr << "can't get line : " << e.message << endl;
 	       exit(1);
@@ -23,7 +23,7 @@ export topLevelTeXmacs():int := (
 	       method := lookup(stringClass,TeXmacsEvaluate);
 	       if method == nullE 
 	       then (
-		    flush(stdIO);
+		    stdIO << flush;
      		    endLine(stdError);
 		    stderr << "no method for TeXmacsEvaluate" << endl;
 		    )

@@ -4,7 +4,7 @@
 doc///
  Key
   switch
-  (switch,ZZ,ZZ,VisibleList)
+  (switch,ZZ,ZZ,BasicList)
  Headline
   copy a list, switching two elements
  Usage
@@ -12,9 +12,9 @@ doc///
  Inputs
   i: ZZ
   j: ZZ
-  L: VisibleList
+  L: BasicList
  Outputs
-  L2:
+  L2: BasicList
    a copy of the list {\tt L}, with the elements in positions {\tt i} and {\tt j} interchanged. 
  Description
   Text

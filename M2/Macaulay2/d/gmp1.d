@@ -23,6 +23,12 @@ export (x:ZZ) ^ (n:ZZ) : ZZ := (
      if !isULong(n) then fatal("integer exponent too large");
      x^toULong(n));
 
+export isInvertible(x:ZZ, n:ZZ):bool := (
+    z := newZZmutable();
+    r := Ccode(int, "mpz_invert(", z, ", ", x, ", ", n, ")");
+    clear(z);
+    return r != 0);
+
 export powermod(x:ZZ, y:ZZ, n:ZZ) : ZZ := (
      -- z = x^y mod n
      z := newZZmutable();
@@ -73,7 +79,7 @@ export format(
      ng := sign(x);
      if isinf(x) then return array(string)(if ng then "-" else "","infinity");
      if isnan(x) then return array(string)(if ng then "-" else "","NotANumber");
-     meaningful := int(floor(precision(x) / log2ten));
+     meaningful := int(floor(precision(x) / log2ten)) + 1;
      if s == 0 || s > meaningful then s = meaningful; -- print at most the "meaningful" digits
      sgn := "";
      if ng then (

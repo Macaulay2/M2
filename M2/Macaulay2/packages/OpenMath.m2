@@ -77,6 +77,9 @@ beginDocumentation()
 document { 
 	Key => OpenMath,
 	Headline => "OpenMath support",
+	"This package provides methods  for representing Macaulay2 objects ",
+	"using the ", HREF("https://openmath.org/", "OpenMath"), " standard ",
+	"and vice versa.",
 	SeeAlso => {(val, XMLnode)}
 	}
 

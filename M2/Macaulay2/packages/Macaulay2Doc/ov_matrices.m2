@@ -6,16 +6,23 @@ document {
      "In Macaulay2, each matrix is defined over a ring, (see ", TO "rings", "). 
      Matrices are perhaps the most common data type in Macaulay2.",
      Subnodes => {
+	 TO Matrix,
+	 TO matrix,
 	  "making matrices", 
 	  TO "inputting a matrix",
    	  TO "projections, inclusions, and permutations",
 	  TO "random and generic matrices",
+	  TO "mutable matrices",
 	  "operations involving matrices",
 	  TO "extracting information about a matrix",
 	  TO "basic arithmetic of matrices",
 	  TO "concatenating matrices",
- 	  -- Mike wanted this: TO "submatrices",
-	  TO "differentiation",
+	  TO "submatrices",
+	  TO "diff and contract",
+	  "matrix decompositions",
+	  TO LUdecomposition,
+	  TO QRDecomposition,
+	  TO SVD,
 	  "determinants and related computations",
 	  TO "rank of a matrix",
 	  TO "determinants and minors",
@@ -36,11 +43,19 @@ document {
      
      SUBSECTION "by its entries",
        "Using the function ", TO "matrix", " is the most basic method 
-       for inputting a matrix.  The entries are typed in by rows.",
+       for inputting a matrix.  The entries are typed in by rows as a doubly
+       nested list of ring elements.",
        EXAMPLE {
 	    "R = ZZ/5[s..z];",
 	    "M = matrix {{ x^2+y, z^3}, {y^3-z,3*z-6*x-5*y}}"
 	    },
+       "One way to construct a doubly nested
+       list of ring elements is with the ", TO "table", " command.",
+       EXAMPLE {
+	   "table(3,3,(i,j) -> R_i^j)",
+	   "p = matrix oo",
+	   "q = matrix table(3,3,(i,j) -> R_j^i)",
+	   },
 
      SUBSECTION "by a function",  
        "The function ", TO map, " can be used to construct 
@@ -120,7 +135,15 @@ document {
        size of the matrix.",
        EXAMPLE { 
 	    "genericSkewMatrix(S,u,3)"
-	    }     
+	    },
+    SeeAlso => {
+	(random, Module, Module),
+        },
+    Subnodes => {
+	TO genericMatrix,
+	TO genericSymmetricMatrix,
+	TO genericSkewMatrix,
+    }
      }
 
 document {
@@ -137,15 +160,46 @@ document {
        TO "target", " command to obtain the target of the 
        linear transformation ", TT "f", ".",
        EXAMPLE {
-	    "target f"
+	    "M = target f"
 	    },     
+      "Free modules are actually graded free modules, with the same sort
+      of grading that the ring comes with.  The degrees of the basis vectors
+      of the target are always zero.",
+      EXAMPLE {
+	  "degree M_0",
+	  "degree M_1",
+	  },
 
      SUBSECTION "source",
        "Likewise, to obtain the source of our linear transformation,
        use the ", TO "source", " command.",
        EXAMPLE {
-	    "source f"
+	    "N = source f"
 	    },
+       "If possible, the degrees of the basis vectors of the source are set so
+       that the map ", TT "f", " turns out to a homogeneous map of degree zero.
+       This opportunism is important because certain algorithms will run faster
+       on homogeneous maps.",
+       EXAMPLE {
+	   "degree N_0",
+	   "degree N_1",
+	   "degree N_2",
+	   "degree N_3",
+	   "isHomogeneous f",
+	   },
+      "A list of the degrees of all the basis vectors can be obtained with
+      ", TO "degrees", ".",
+      EXAMPLE "degrees N",
+      "It may happen that the matrix can not be made homogeneous.  In that
+      case, the degree of a basis vector is currently set to the degree of the
+      largest monomial occurring in the corresponding column of the matrix.  In
+      a future version of the program it might be more sensible to set
+      the degrees of the basis vectors all to zero.",
+      EXAMPLE {
+	  "g = matrix {{x,0,y*z},{y^2,x^2,0}}",
+	  "isHomogeneous g",
+	  "degrees source g",
+	  },
 
      SUBSECTION "number of rows or columns",
        "Use ", TO "numgens", " to obtain the rank of a free module. Combining 
@@ -190,7 +244,10 @@ document {
      }
 
 document {
-     Key => "basic arithmetic of matrices",
+    Key => {
+	"basic arithmetic of matrices",
+	(symbol==, Matrix, Matrix),
+    },
 
      SUBSECTION "+",
        "To add two matrices, use the ", TO "+", " operator.",
@@ -201,6 +258,10 @@ document {
 	    },
        "The matrices in question must have the same number of rows 
        and columns and also must have the same ring.",
+       PARA{},
+       "Scalars are converted to scalar matrices when necessary.",
+       EXAMPLE "matrix {{1, 2}, {3, 4}} + 5",
+       "This is also true for the other arithmetic operations discussed below.",
 
      SUBSECTION "-",
        "To subtract two matrices, use the ", TO "-", " operator.",
@@ -218,6 +279,35 @@ document {
 	    "gg = matrix {{g,h},{i,j},{k,l}}",
 	    "ff * gg"
 	    },
+       "Suppose we multiply a homogeneous polynomial by a homogeneous matrix.
+       The result ought to be homogeneous, but how can we arrange that?  Scalar
+       multiplication should not change the source or target of a map!  Instead,
+       we introduce one final complication: each matrix records a degree of its own,
+       which is normally zero, and is used when deciding whether the matrix is
+       homogeneous.",
+       EXAMPLE {
+	   "R = ZZ/101[x,y,z];",
+	   "degree matrix {{x^10}}",
+	   "f = matrix {{x,0,y*z},{0,y^2,x^2}};",
+	   "degree f",
+	   },
+       "Multiplying a matrix by a homogeneous polynomial adds the degree of
+       the polynomial to the degree of the map.",
+       EXAMPLE {
+	   "h = x^10 * f",
+	   "degree h",
+	   "degrees source h",
+	   "isHomogeneous h",
+	   },
+       "If you don't like this, you have an alternative.  The degree of a tensor
+       product of two matrices is the sum of the degrees, and its source module is
+       the tensor product of the source modules.",
+       EXAMPLE {
+	   "h = x^10 ** f",
+	   "degree h",
+	   "degrees source h",
+	   "isHomogeneous h"
+	   },
 
      SUBSECTION "^",
        "To raise a square matrix to a power, use the ", TO "^", " operator.",
@@ -275,6 +365,7 @@ document {
        ff ** gg : K ** M  ---> L ** N
        ///,
        EXAMPLE {
+	    "R = ZZ/17[a..l];",
 	    "ff = matrix {{a,b,c},{d,e,f}}",
 	    "gg = matrix {{g,h},{i,j},{k,l}}",
 	    "ff ** gg"
@@ -318,23 +409,167 @@ document {
        matrix function that row entry must have 3 entries.",
 
      SUBSECTION "direct sum of matrices as maps between modules", 
-       "++"
-     }
+       "Use ", TO symbol ++, " to find the direct sum of two matrices.",
+       EXAMPLE {
+	   "R = ZZ/101[x,y,z];",
+	   "p = matrix table(3,3,(i,j) -> R_i^j)",
+	   "q = matrix table(3,3,(i,j) -> R_j^i)",
+	   "r=p++q"
+	   },
+       "The components of a direct sum can be recovered later.",
+       EXAMPLE "components r"
+       }
 
--*
--- Mike wanted this: 
 document {
-     Key => "submatrices",
-     }
-*-
+    Key => "submatrices",
+    "Here are the ways to get a submatrix of a matrix.",
+    Subnodes => TO \ {
+	submatrix',
+	submatrixByDegrees,
+	(submatrix, Matrix, VisibleList),
+	(submatrix, Matrix, VisibleList, VisibleList),
+	(symbol _, Matrix, List),
+	(symbol ^, Matrix, List),
+	(symbol _, Matrix, Array),
+	(symbol ^, Matrix, Array)
+	},
+    }
 
 document {
-     Key => "differentiation",
-     SUBSECTION "diff",
-     SUBSECTION "diff'",
-     SUBSECTION "contract",
-     SUBSECTION "contract'",
-     SUBSECTION "jacobian",
+     Key => "diff and contract",
+     "We may use the function ", TO "diff", " to differentiate polynomials:
+     the first argument is the variable to differentiate with respect to,
+     and the second argument is the polynomial to be differentiated.",
+     EXAMPLE {
+	  "R = QQ[a,b,t,x,y,z];",
+	  "f = x^7 * y^11;",
+	  "diff(x,f)",
+	  "diff(y,f)",
+	  },
+     "We indicate higher derivatives by simply multiplying the variables
+     to differentiate by.",
+     EXAMPLE {
+	  "diff(x^2,f)",
+	  "diff(x*y,f)",
+	  "diff(y^2,f)",
+	  },
+     "The first argument can also be a sum, in which case the sum of
+     the answers provided by each of its terms is returned.",
+     EXAMPLE {
+	  "diff(x+y,f)",
+	  "diff(x^2+x*y+y^2,f)",
+	  },
+     "Remark: the operation ", TT "diff", " is useful, but it's not a
+     natural one: it's not invariant under linear coordinate changes;
+     in effect, we've identified the a free module with its dual.",
+     PARA{},
+     "The second argument can be a matrix, in which case each of
+     its entries gets differentiated.",
+     EXAMPLE {
+	  "m = matrix {{x^3, x^4},{x^5,x^6}}",
+	  "diff(x,m)",
+	  "diff(x^2,m)",
+	  },
+     "The first argument can also be a matrix, in which case
+     the matrices obtained from each of its entries, acting upon
+     the second argument, are concatenated.  Thus the shape of
+     the first matrix plays the major role.",
+     EXAMPLE {
+	  "diff(matrix {{x,x^2,x^3,x^4}}, m)",
+	  "diff(matrix {{x,x^2},{x^3,x^4}}, m)",
+	  },
+     PARA{},
+     "Perhaps the most common usage of ", TO "diff", " is when one argument
+     has a single column and the other column has a single row.  For example,
+     the Jacobian matrix can be computed as follows.",
+     EXAMPLE {
+	  "diff(matrix {{x},{y}}, matrix {{x^2, x*y, y^2}})",
+	  },
+     HR{},
+     "We can also compute the Hessian matrix of a quadratic form using ", TO "diff", ",
+     as follows.",
+     EXAMPLE {
+	  "v = matrix {{x,y}}",
+	  "diff(v ** transpose v, 3*x^2 + 5*x*y + 11*y^2)"
+	  },
+     HR{},
+     "As another example, we show how to compute the Wronskian of a
+     polynomial ", TT "f", ".",
+     EXAMPLE {
+	  "f = x^3 + y^3 + z^3 - t*x*y*z",
+	  "v = matrix {{x,y,z}}",
+	  "det diff(transpose v * v, f)",
+	  },
+     HR{},
+     "The function ", TO "contract", " is the same as ", TO "diff", ",
+     except the multiplication by integers that occurs during
+     differentiation is omitted.",
+     EXAMPLE {
+	  "contract(x,m)",
+	  "contract(x^2,m)",
+	  "contract(matrix {{x,x^2,x^3,x^4}}, m)",
+	  "contract(matrix {{x,x^2},{x^3,x^4}}, m)",
+	  },
+     "One use is for picking out coefficients of homogeneous polynomials.",
+     EXAMPLE {
+	  "f",
+	  "v3 = symmetricPower(3,matrix{{x,y,z}})",
+	  "contract(v3, f)",
+	  },
+     HR{},
+     "As an example, the Sylvester resultant between homogeneous polynomials
+     ", TT "f(x,y)", " and ", TT "g(x,y)", " can be found in the following way.",
+     EXAMPLE {
+	  "f = a * x^3 + b * x^2 * y + y^3",
+	  "g = b * x^3 + a * x * y^2 + y^3",
+	  },
+     "Multiply each of these by all quadrics, obtaining a set of elements in
+     degree 5.",
+     EXAMPLE {
+	  "n = matrix {{f,g}} ** symmetricPower(2,matrix {{x,y}})",
+	  },
+     "Now create the matrix of coefficients by using contract against all
+     monomials of degree 5 in ", TT "x", " and ", TT "y", ", and
+     compute its determinant.",
+     EXAMPLE {
+	  "M = contract(transpose symmetricPower(5,matrix {{x,y}}), n)",
+	  "det M",
+          --
+          --                5    2 3    3     2 2       3    4    3     2        2    3
+          --       ideal(- a  - a b  - a b - a b  + 2a*b  - b  + a  - 3a b + 3a*b  - b )
+          --
+	  },
+     HR{},
+     "The function ", TO "diff'", " is the same as ", TO "diff", ",
+     except that the first argument is differentiated by the second;
+     the shape of the first argument still plays the major role.",
+     EXAMPLE {
+	  "diff'(m, matrix {{x,x^2,x^3,x^4}})",
+	  "diff'(m, matrix {{x,x^2},{x^3,x^4}})",
+	  },
+     "The function ", TO "contract'", " is the same as ", TO "contract", ",
+     except that the first argument is contracted by the second;
+     the shape of the first argument still plays the major role.",
+     EXAMPLE {
+	  "contract'(m, matrix {{x,x^2,x^3,x^4}})",
+	  "contract'(m, matrix {{x,x^2},{x^3,x^4}})",
+	  },
+     HR{},
+     "All four of these operators are engineered so that the result is
+     a homogeneous matrix if the arguments are.  The operations ", TO "diff", "
+     and ", TO "contract", " are essentially partially defined division operations,
+     so it should come as no surprise that the source and target of
+     ", TT "diff(m,n)", " are the same as those we would get from
+     the tensor product ", TT "transpose m^-1 ** n", ", if
+     only ", TT "m", " were invertible.",
+     Subnodes => {
+	 TO diff,
+	 TO diff',
+	 TO contract,
+	 TO contract',
+	 TO jacobian,
+	 TO reshape,
+         }
      }
 
 document {
@@ -350,10 +585,30 @@ document {
      "The command ", TO2(determinant, "det"), " can be used to compute the determinant of
      a square matrix.",
      EXAMPLE {
-	  "R = ZZ[a..d];",
-	  "f = matrix{{a,b},{c,d}}",
-	  "det f"
-	  },      
+	  "R = ZZ[a..i];",
+	  "det matrix{{a,b},{c,d}}"
+	  },
+     "Macaulay2 can use three different algorithms to compute determinants:
+     the ", TO "Cofactor", " method, which expands a determinant using the standard cofactor
+     approach, and ", TO "Bareiss", " which uses a fraction-free variant of Gaussian elimination
+     to compute a determinant. The ", TO "Dynamic", " algorithm implements a version of cofactor
+     expansion, with caching of intermediate results. The algorithm to use may be chosen using the optional ",
+     TO "Strategy", " argument:",
+     EXAMPLE {
+	 "m = matrix{{0,a,b},{a+b,a,d},{e,f,g}}",
+	 "det(m, Strategy => Cofactor)",
+	 "minors(2,m, Strategy => Bareiss)",
+	 "exteriorPower(2,m, Strategy => Dynamic)",
+	 },
+     "One warning is in order here: the Bareiss algorithm requires division in the base ring,
+     and so can yield the INCORRECT answer if the base ring contains zero divisors.  However,
+     the Bareiss algorithm is often dramatically faster than the cofactor method, unless the
+     matrix is particularly sparse.  Consequently, the default strategy for rings which are fields or are
+     not quotients of polynomial rings is ", TO "Bareiss", ", while the default for quotients of polynomial
+     rings that are not (declared to be) fields is ", TO "Cofactor", ".",
+     " The ", TO "Dynamic", " algorithm can sometimes also result in significant speedups compared to ", TO "Cofactor",
+     " and ", TO "Bareiss", ", at the cost of a slight memory overhead.",
+     PARA{},
      "The command ", TO "minors", " can be used to construct the ideal 
      generated by the ", TT "n", " by ", TT "n", " minors of a matrix. 
      Recall that the ", TT "n", " by ", TT "n", " minors of a matrix are 
@@ -363,7 +618,25 @@ document {
 	  "R = QQ[x,y,z];",
 	  "f = matrix{{x,y,z},{y,z,x^2}}",
 	  "I = minors(2,f)"
-	  }
+	  },
+     "Sometimes finer control is needed when one is computing the ideal of minors of a larger
+     matrix.  Compute the ideal of some determinants using ", TO "minors", " with optional
+     arguments as in",
+     EXAMPLE {
+	 "R = ZZ[a..i];",
+	 "M = genericMatrix(R,a,3,3);",
+	 "minors(2,M,First => {{0,1},{1,2}}, Limit => 3)"
+	 },
+     "The argument to the optional argument ", TO "First", " is the list of row and column positions
+     to use for the first minor.  Starting at this first minor, we then compute three minors.",
+     Subnodes => {
+	 TO trace,
+	 TO minors,
+	 TO determinant,
+	 TO permanents,
+	 TO pfaffians,
+	 TO fittingIdeal,
+         },
      }
 
 document {
@@ -385,7 +658,19 @@ document {
      TT "2", 
      " minor (the determinant of a ", TT "2", " by ", TT "2", " submatrix) 
      of the matrix ", TT "ff", ".",
-     SeeAlso => "exterior power of a module"
+     PARA{},
+     "The signs are chosen so that this operation commutes with multiplication:",
+     EXAMPLE {
+	 "S = QQ[x_(1,1) .. x_(3,5), y_(1,1) .. y_(5,4)]",
+	 "M = transpose genericMatrix(S,x_(1,1),5,3)",
+	 "N = transpose genericMatrix(S,y_(1,1),4,5)",
+	 "exteriorPower(3,M*N) == exteriorPower(3,M) * exteriorPower(3,N)"
+	 },
+     SeeAlso => "exterior power of a module",
+     Subnodes => {
+	 TO exteriorPower,
+	 TO(exteriorPower, ZZ, Matrix),
+         },
      }
 
 document { -- something should be said about the degrees
@@ -416,14 +701,22 @@ document { -- something should be said about the degrees
 	  "compactMatrixForm = true",
 	  "matrix{{x^2 + 3, x^4 + 1},{x^13 - 5, x^7 - 1}}"
 	  },
+     Subnodes => {
+	 TO "blockMatrixForm",
+	 TO "compactMatrixForm",
+	 TO "printingAccuracy",
+	 TO "printingLeadLimit",
+	 TO "printingPrecision",
+	 TO "printingSeparator",
+	 TO "printingTimeLimit",
+	 TO "printingTrailLimit ",
+},
      }
 
 document {
      Key => "importing and exporting matrices",
-     
-     SUBSECTION "toString",
-
-     SUBSECTION "toExternalString"
+     TO "toString",
+     TO "toExternalString"
      }
 
 -- Local Variables:

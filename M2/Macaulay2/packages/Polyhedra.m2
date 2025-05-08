@@ -3,7 +3,7 @@
 --
 -- PURPOSE: Computations with convex polyhedra 
 -- PROGRAMMER : René Birkner 
--- UPDATE HISTORY : April 2008, December 2008, March 2009, Juli 2009,
+-- UPDATE HISTORY : April 2008, December 2008, March 2009, July 2009,
 --     	    	    September 2009, October 2009, January 2010
 ---------------------------------------------------------------------------
 newPackage("Polyhedra",
@@ -13,16 +13,17 @@ newPackage("Polyhedra",
     AuxiliaryFiles => true,
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
-	 "journal URI" => "http://j-sag.org/",
+	 "journal URI" => "https://msp.org/jsag/",
 	 "article title" => "Polyhedra: a package for computations with convex polyhedral objects",
 	 "acceptance date" => "2009-09-07",
-	 "published article URI" => "http://j-sag.org/Volume1/jsag-3-2009.pdf",
-	 "published code URI" => "http://j-sag.org/Volume1/Polyhedra.m2",
+	 "published article URI" => "https://msp.org/jsag/2009/1-1/p03.xhtml",
+	 "published article DOI" => "10.2140/jsag.2009.1.11",
+	 "published code URI" => "https://msp.org/jsag/2009/1-1/jsag-v1-n1-x03-code.zip",
 	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Polyhedra.m2",
  	 "release at publication" => "c065ec7651789907627333018dc7d675968639e4", -- git commit number in hex
 	 "version at publication" => "1.0.5",
 	 "volume number" => "1",
-	 "volume URI" => "http://j-sag.org/Volume1/"
+	 "volume URI" => "https://msp.org/jsag/2009/1-1/"
 	 },
     Keywords => {"Convex Geometry"},
     Authors => {
@@ -37,8 +38,7 @@ newPackage("Polyhedra",
         Email => "k.l@fu-berlin.de"
      }
      },
-    PackageExports=>{"FourTiTwo"},
-    PackageImports=>{"IntegralClosure", "ReesAlgebra", "LLLBases"}
+    PackageImports=>{"LLLBases"}
     )
 
 ---------------------------------------------------------------------------

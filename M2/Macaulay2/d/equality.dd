@@ -16,8 +16,8 @@ equal(x:HashTable,y:HashTable):Expr := (
      if x == y then return True;
      if x.hash != y.hash then return False;
      if x.Class != y.Class || x.parent != y.parent then return False;
-     if x.hash == 0 && x.Class == cacheTableClass then return True; -- cache tables have hash code 0
-     if x.Mutable || y.Mutable then return False;
+     if x.hash == hash_t(0) && x.Class == cacheTableClass then return True; -- cache tables have hash code 0
+     if x.Mutable || y.Mutable then return False;	-- so we don't need to lockRead() after this
      if x.numEntries != y.numEntries || length(x.table) != length(y.table) then return False;
      foreach a at i in x.table do (
 	  p := a;
@@ -121,11 +121,18 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	       )
 	  -- other cases needed soon
 	  else False)
-     is c:CodeClosure do (
+     is c:PseudocodeClosure do (
 	  when rhs
-	  is d:CodeClosure do (
+	  is d:PseudocodeClosure do (
 	       if c.frame == d.frame
 	       && c.code == d.code
+	       then True else False)
+	  else False
+	  )
+     is c:Pseudocode do (
+	  when rhs
+	  is d:Pseudocode do (
+	       if c.code == d.code
 	       then True else False)
 	  else False
 	  )
@@ -248,6 +255,10 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	 when rhs
 	 is y:pointerCell do if x.v == y.v then True else False
 	 else False
+     is x:atomicIntCell do (
+	 when rhs
+	 is y:atomicIntCell do if x == y then True else False
+	 else False)
      );
 
 -- Local Variables:

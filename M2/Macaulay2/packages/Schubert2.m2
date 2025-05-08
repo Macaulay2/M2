@@ -11,11 +11,11 @@ newPackage(
 	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
 	     {Name => "Charley Crissman", Email => "charleyc@math.berkeley.edu", HomePage => "http://math.berkeley.edu/~charleyc/"}
 	     },
-	HomePage => "http://www.math.uiuc.edu/Macaulay2/",
+	HomePage => "https://macaulay2.com/",
     	Headline => "characteristic classes for varieties without equations",
 	Keywords => {"Intersection Theory"},
         DebuggingMode => false,
-	PackageImports => {"SchurRings","PushForward"}
+	PackageImports => {"SchurRings","PushForward","Varieties"}
     	)
 
 schurVersion = value SchurRings.Options.Version
@@ -23,7 +23,7 @@ schurVersion = value SchurRings.Options.Version
 if  schurVersion < 0.5 then protect EorH
 
 export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety", "schubertCycle'", "schubertCycle", "ReturnType",
-     "AbstractVarietyMap", "adams", "Base", "blowup", "BundleRanks", "Bundles", "VarietyDimension", "Bundle",
+     "AbstractVarietyMap", "adams", "blowup", "BundleRanks", "Bundles", "VarietyDimension", "Bundle",
      "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassVariable", "ctop", "exceptionalDivisor", "FlagBundle",
      "flagBundle", "projectiveBundle'", "projectiveBundle", "abstractProjectiveSpace'", "abstractProjectiveSpace", "integral", "IntersectionRing",
      "intersectionRing", "Rank","PullBack", "ChernClassVariableTable",
@@ -463,7 +463,7 @@ integral intersectionRing point := r -> if liftable(r,ZZ) then lift(r,ZZ) else l
 
 dim AbstractVariety := X -> X.dim
 chern = method(TypicalValue => RingElement)
-chern AbstractSheaf := (cacheValue ChernClass) (F -> expp F.ChernCharacter)
+chern AbstractSheaf := F -> F.cache.ChernClass ??= expp F.ChernCharacter
 chern(ZZ, AbstractSheaf) := (p,F) -> part(p,chern F)
 chern(ZZ, ZZ, AbstractSheaf) := List => (p,q,F) -> toList apply(p..q, i -> chern(i,F))
 
@@ -503,7 +503,7 @@ ChernClassVariable .. ChernClassVariable := (a,b) -> (
 
 installMethod(symbol _, OO, RingElement, AbstractSheaf => (OO,D) -> (
 	  if D != 0 and degree D != {1} then error "expected a cycle class of degree 1 (a divisor class)";
-	  1 - OO_(variety D)(-D)))
+	  1 - OO_(variety ring D)(-D)))
 installMethod(symbol _, OO, AbstractVariety, AbstractSheaf => 
      (OO,X) -> (
 	  A := intersectionRing X;
@@ -554,7 +554,7 @@ AbstractSheaf ^** QQ := AbstractSheaf ^** RingElement := AbstractSheaf => (E,n) 
 rank AbstractSheaf := RingElement => E -> E.cache.rank
 variety AbstractSheaf := AbstractVariety => E -> E.AbstractVariety
 
-tangentBundle FlagBundle := (stashValue TangentBundle) (FV -> tangentBundle FV.Base + tangentBundle FV.StructureMap)
+tangentBundle FlagBundle := FV -> FV.TangentBundle ??= tangentBundle FV.Base + tangentBundle FV.StructureMap
 
 assignable = v -> instance(v,Symbol) or null =!= lookup(symbol <-, class v)
 
@@ -1326,13 +1326,15 @@ inclusion(RingMap) := opts -> (f) -> (
      
      A := source f;
      B := target f;
+     X := if instance(variety B, AbstractVariety) then variety B else null;
+     Y := if instance(variety A, AbstractVariety) then variety A else null;
      try integral 1_A else error "Expected an integral to be defined on A";
      try integral 1_B else error "Expected an integral to be defined on B";
      -- find the base ring
      S := null;
      if opts.Base === null then (
-     	  Abasering := try intersectionRing target (variety A).StructureMap else ring integral 1_A;
-     	  Bbasering := try intersectionRing target (variety B).StructureMap else ring integral 1_B;
+	  Abasering := try intersectionRing target Y.StructureMap else ring integral 1_A;
+	  Bbasering := try intersectionRing target X.StructureMap else ring integral 1_B;
 	  if not (Abasering === Bbasering) then error "Base not provided and cannot be gleaned from integrals";
 	  S = Abasering
 	  ) else (
@@ -1345,8 +1347,8 @@ inclusion(RingMap) := opts -> (f) -> (
      if not (degreeLength B == 1) then error "Multigraded rings are not supported.";	  
      
      -- Calculate dimensions / codimension:
-     dY := try dim variety A else opts.SuperDimension;
-     dX := try dim variety B else opts.SubDimension;
+     dY := try dim Y else opts.SuperDimension;
+     dX := try dim X else opts.SubDimension;
      if dX === null then (
 	  if (dY === null) or (opts.Codimension === null) then error "Not enough data provided to calculate dimensions";
 	  dX = dY - opts.Codimension
@@ -1363,11 +1365,11 @@ inclusion(RingMap) := opts -> (f) -> (
      if (opts.SubDimension =!= null) and (dX != opts.SubDimension) then error "Dimension of subvariety conflicts with computed dimension";
      
      -- Create subvariety, if it does not exist
-     X := try variety B else (
+     if not instance(X, AbstractVariety) then X = (
 	  abstractVariety(dX,B,DefaultIntegral => false)
 	  );
      -- Compute tangent classes
-     tY := try chern tangentBundle variety A else opts.SuperTangent;
+     tY := try chern tangentBundle Y else opts.SuperTangent;
      if tY === null then error "No tangent bundle given for containing variety";
      tYpulledback := abstractSheaf(X, Rank => dY, ChernClass => f(tY));
      tX := try chern tangentBundle X else (
@@ -1398,7 +1400,7 @@ inclusion(RingMap) := opts -> (f) -> (
      ctop := part(r,c);
      EBA := extensionAlgebra(f,ctop, Codimension => r, CoefficientRing => S);     
 
-     Y := abstractVariety(dY,EBA,DefaultIntegral => false);
+     Y = abstractVariety(dY, EBA, DefaultIntegral => false);
      
      -- Construct integral on Y
      integral EBA := e -> (
@@ -1411,7 +1413,7 @@ inclusion(RingMap) := opts -> (f) -> (
      incl := abstractVarietyMap(Y,X, EBA.PullBack, EBA.cache.Bincl);
      
      -- if base ring has a variety, build structure maps
-     try variety S then (
+     if instance(variety S, AbstractVariety) then (
 	  XS := variety S;
      	  pfEBA := method();
      	  pfEBA EBA := e -> (integral e);
@@ -1578,7 +1580,7 @@ AbstractSheaf * AbstractSheaf := AbstractSheaf => (
 	  else abstractSheaf(X, ChernCharacter => part(0,dim X,f*g)))
      ) @@ coerce
 
-Hom(AbstractSheaf, AbstractSheaf) := AbstractSheaf => (F,G) -> dual F ** G
+Hom(AbstractSheaf, AbstractSheaf) := AbstractSheaf => o -> (F,G) -> dual F ** G
 
 det AbstractSheaf := AbstractSheaf => opts -> (F) -> abstractSheaf(variety F, Rank => 1, ChernClass => 1 + part(1,ch F))
 
@@ -1746,7 +1748,7 @@ diagrams(ZZ,ZZ,ZZ) := (k,n,d) -> (--partitions of d of above form
 toSchubertBasis = method()
 toSchubertBasis(RingElement) := c -> (
      --by Charley Crissman
-     try G := variety c else error "expected an element of an intersection ring"; 
+     if not instance(G := variety ring c, AbstractVariety) then error "expected an element of an intersection ring";
      (S,T,U) := schubertRing(G);
      T c
      )
@@ -1767,7 +1769,7 @@ schubertRing(FlagBundle) := G -> (
           (k,q) := toSequence(G.BundleRanks);
           P := diagrams(q,k);
           M := apply(P, i-> schubertCycle(i,G));
-          E := flatten entries basis(R);
+          E := flatten entries basis(R, Variables => 0 .. numgens R - 1);
           local T';
 	  T := transpose matrix apply (M, i -> apply(E, j-> coefficient(j,i))); --matrix converting from schu-basis 
                                                                  --to h-basis

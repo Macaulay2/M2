@@ -1,0 +1,63 @@
+From 2cd3a04050f2fa447d8a9c8265f32f25f4cb6546 Mon Sep 17 00:00:00 2001
+From: Jerry James <loganjerry@gmail.com>
+Date: Mon, 13 Nov 2023 09:36:10 -0700
+Subject: [PATCH] Give cblas_ssyrk a return type
+
+From 97ee718ebc054d3dda020223a7d777786f7ad924 Mon Sep 17 00:00:00 2001
+From: "Benjamin A. Beasley" <code@musicinmybrain.net>
+Date: Tue, 14 Nov 2023 09:04:55 -0500
+Subject: [PATCH] Fix ryk/yrk typo in config-blas.h
+
+From 9994f6aa5fc2e3677b14c3d12671ba46ce5a58b5 Mon Sep 17 00:00:00 2001
+From: Doug Torrance <dtorrance@piedmont.edu>
+Date: Fri, 27 Sep 2024 13:38:29 -0400
+Subject: [PATCH] Add declarations for ssyrk_ and dsyrk_ when cblas is not
+ available
+
+From b559549fb3f4abfa69ca7e5da337544ab02c44a1 Mon Sep 17 00:00:00 2001
+From: Doug Torrance <dtorrance@piedmont.edu>
+Date: Fri, 27 Sep 2024 16:33:16 -0400
+Subject: [PATCH] Add missing "static inline" to cblas_dsyrk wrapper
+
+diff -u b/fflas-ffpack/config-blas.h b/fflas-ffpack/config-blas.h
+--- b/fflas-ffpack/config-blas.h
++++ fflas-ffpack-2.5.0/fflas-ffpack/config-blas.h
+@@ -128,6 +128,8 @@ extern "C" {
+     void strmm_ (const char*, const char*, const char*, const char*, const int*, const int*, const float*, const float*, const int*, float*, const int*);
+     void sgemm_ (const char*, const char*, const int*, const int*, const int*, const float*, const float*, const int*, const float*, const int*, const float*, float*, const int*);
+     void dgemm_ (const char*, const char*, const int*, const int*, const int*, const double*, const double*, const int*, const double*, const int*, const double*, double*, const int*);
++    void ssyrk_ (const char*, const char*, const int*, const int*, const float*, const float*, const int*, const float*, float*, const int*);
++    void dsyrk_ (const char*, const char*, const int*, const int*, const double*, const double*, const int*, const double*, double*, const int*);
+ }
+ 
+ // define C wrappers
+@@ -288,23 +290,23 @@ extern "C" {
+             sgemm_ ( EXT_BLAS_TRANSPOSE(TransA), EXT_BLAS_TRANSPOSE(TransB), &M, &N, &K, &alpha, A, &lda, B, &ldb, &beta, C, &ldc);
+     }
+ 
+-    static inline cblas_ssyrk(const enum CBLAS_ORDER Order, const enum CBLAS_UPLO Uplo,
++    static inline void cblas_ssyrk(const enum CBLAS_ORDER Order, const enum CBLAS_UPLO Uplo,
+                               const enum CBLAS_TRANSPOSE Trans, const int N, const int K,
+                               const float alpha, const float *A, const int lda,
+                               const float beta, float *C, const int ldc){
+        if (Order == CblasRowMajor)
+-           ssryk_ (EXT_BLAS_UPLO_tr(Uplo), EXT_BLAS_TRANSPOSE(Trans), N, K, alpha, A, lda, beta, C, ldc); // @TODO check this
++           ssyrk_ (EXT_BLAS_UPLO_tr(Uplo), EXT_BLAS_TRANSPOSE(Trans), &N, &K, &alpha, A, &lda, &beta, C, &ldc); // @TODO check this
+        else
+-           ssryk_ (EXT_BLAS_UPLO (Uplo), EXT_BLAS_TRANSPOSE(Trans), N, K, alpha, A, lda, beta, C, ldc); 
++           ssyrk_ (EXT_BLAS_UPLO (Uplo), EXT_BLAS_TRANSPOSE(Trans), &N, &K, &alpha, A, &lda, &beta, C, &ldc);
+     }
+-    void cblas_dsyrk(const enum CBLAS_ORDER Order, const enum CBLAS_UPLO Uplo,
++    static inline void cblas_dsyrk(const enum CBLAS_ORDER Order, const enum CBLAS_UPLO Uplo,
+                  const enum CBLAS_TRANSPOSE Trans, const int N, const int K,
+                  const double alpha, const double *A, const int lda,
+                      const double beta, double *C, const int ldc){
+         if (Order == CblasRowMajor)
+-            dsryk_ (EXT_BLAS_UPLO_tr(Uplo), EXT_BLAS_TRANSPOSE(Trans), N, K, alpha, A, lda, beta, C, ldc); // @TODO check this
++            dsyrk_ (EXT_BLAS_UPLO_tr(Uplo), EXT_BLAS_TRANSPOSE(Trans), &N, &K, &alpha, A, &lda, &beta, C, &ldc); // @TODO check this
+         else
+-            dsryk_ (EXT_BLAS_UPLO (Uplo), EXT_BLAS_TRANSPOSE(Trans), N, K, alpha, A, lda, beta, C, ldc); 
++            dsyrk_ (EXT_BLAS_UPLO (Uplo), EXT_BLAS_TRANSPOSE(Trans), &N, &K, &alpha, A, &lda, &beta, C, &ldc);
+     }
+ 
+ }

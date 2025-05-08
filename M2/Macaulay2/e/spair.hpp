@@ -20,23 +20,23 @@ struct gb_elem : public our_new_delete
   int me;
 
   gb_elem()
-      : next(NULL),
-        next_min(NULL),
-        pair_list(NULL),
-        f(NULL),
-        fsyz(NULL),
-        lead_exp(NULL),
+      : next(nullptr),
+        next_min(nullptr),
+        pair_list(nullptr),
+        f(nullptr),
+        fsyz(nullptr),
+        lead_exp(nullptr),
         is_min(0),
         me(0)
   {
   }
   gb_elem(gbvector *f0, gbvector *fsyz0, int is_min0)
-      : next(NULL),
-        next_min(NULL),
-        pair_list(NULL),
+      : next(nullptr),
+        next_min(nullptr),
+        pair_list(nullptr),
         f(f0),
         fsyz(fsyz0),
-        lead_exp(NULL),
+        lead_exp(nullptr),
         is_min(is_min0),
         me(0)
   {

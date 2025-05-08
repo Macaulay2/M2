@@ -9,6 +9,49 @@ BREWPREFIX := `brew --prefix`
 ## cmake build files ##
 #######################
 
+cmake-appleclang:
+	echo "git branch is " $(BRANCH)
+	mkdir -p builds.tmp/cmake-appleclang
+	cd builds.tmp/cmake-appleclang; cmake \
+		-GNinja \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DCMAKE_PREFIX_PATH="`brew --prefix libffi`" \
+		-DBUILD_NATIVE=off \
+		-DCMAKE_INSTALL_PREFIX=`pwd`/installed \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		-DCMAKE_EXPORT_COMPILE_COMMANDS=true \
+		../../../..
+
+cmake-clang:
+	echo "git branch is " $(BRANCH)
+	mkdir -p builds.tmp/cmake-clang
+	cd builds.tmp/cmake-clang; cmake \
+		-GNinja \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DCMAKE_C_COMPILER="`brew --prefix llvm`/bin/clang" \
+		-DCMAKE_CXX_COMPILER="`brew --prefix llvm`/bin/clang++" \
+		-DBUILD_DOCS=on \
+		-DBUILD_NATIVE=off \
+		-DCMAKE_EXPORT_COMPILE_COMMANDS=true \
+		../../../..
+
+cmake-gcc14:
+	mkdir -p builds.tmp/cmake-gcc14
+	cd builds.tmp/cmake-gcc14; cmake \
+		-GNinja \
+	    -DCMAKE_C_COMPILER:FILEPATH=/opt/homebrew/opt/gcc/bin/gcc-14 \
+		-DCMAKE_CXX_COMPILER:FILEPATH=/opt/homebrew/opt/gcc/bin/g++-14 \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+
+## clean up or remove all below here
+## grab debug builds, autotools builds, profile builds (on linux at leasst)
+
+
 cmake-make-appleclang:
 	echo "git branch is " $(BRANCH)
 	mkdir -p builds.tmp/cmake-make-appleclang-$(BRANCH)
@@ -52,7 +95,7 @@ cmake-appleclang:
 	cd builds.tmp/cmake-appleclang; cmake \
 		-GNinja \
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
-		-DCMAKE_PREFIX_PATH="`brew --prefix tbb@2021`;`brew --prefix libffi`;`brew --prefix`" \
+		-DCMAKE_PREFIX_PATH="`brew --prefix libffi`" \
 		-DBUILD_NATIVE=off \
 		-DCMAKE_INSTALL_PREFIX=`pwd`/installed \
 		-DBUILD_TESTING=on \
@@ -142,6 +185,29 @@ ubuntu-cmake-gcc:
 		-DBUILD_TESTING=on \
 		-DBUILD_DOCS=on \
 		../../../..
+
+ubuntu-arm64-cmake-gcc:
+	mkdir -p builds.tmp/ubuntu-arm64-cmake-gcc
+	cd builds.tmp/ubuntu-arm64-cmake-gcc; cmake \
+		-GNinja \
+	    -DCMAKE_C_COMPILER:FILEPATH=gcc \
+		-DCMAKE_CXX_COMPILER:FILEPATH=g++ \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+
+ubuntu-amd64-cmake-gcc:
+	mkdir -p builds.tmp/ubuntu-amd64-cmake-gcc
+	cd builds.tmp/ubuntu-amd64-cmake-gcc; cmake \
+		-GNinja \
+	    -DCMAKE_C_COMPILER:FILEPATH=gcc \
+		-DCMAKE_CXX_COMPILER:FILEPATH=g++ \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+
 
 # running cmake-gcc9 now: 30 May 2020.
 #  build-libraries (with testing off): 22m36s

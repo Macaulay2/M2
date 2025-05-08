@@ -20,8 +20,7 @@ newPackage(
 	},
 	Headline => "binomial ideals of collections of cells",
 	Keywords => {"Combinatorial Commutative Algebra"},
-	DebuggingMode => false,
-	Reload => true
+	DebuggingMode => false
 )
 
 export {

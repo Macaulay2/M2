@@ -97,17 +97,18 @@ class PolyRing : public PolyRingFlat
   virtual int compare_elems(const ring_elem f, const ring_elem g) const;
 
   virtual bool is_homogeneous(const ring_elem f) const;
-  virtual void degree(const ring_elem f, monomial d) const;
   virtual bool multi_degree(const ring_elem f, monomial d) const;
   virtual void degree_weights(const ring_elem f,
-                              M2_arrayint wts,
+                              const std::vector<int> &wts,
                               int &lo,
                               int &hi) const;
   virtual ring_elem homogenize(const ring_elem f,
                                int v,
                                int deg,
-                               M2_arrayint wts) const;
-  virtual ring_elem homogenize(const ring_elem f, int v, M2_arrayint wts) const;
+                               const std::vector<int> &wts) const;
+  virtual ring_elem homogenize(const ring_elem f,
+                               int v,
+                               const std::vector<int> &wts) const;
 
   virtual ring_elem copy(const ring_elem f) const;
   virtual void remove(ring_elem &f) const;
@@ -195,10 +196,10 @@ class PolyRing : public PolyRingFlat
 
   virtual engine_RawArrayPairOrNull list_form(const Ring *coeffR,
                                               const ring_elem f) const;
-  virtual ring_elem *get_parts(const M2_arrayint wts,
+  virtual ring_elem *get_parts(const std::vector<int> &wts,
                                const ring_elem f,
                                long &result_len) const;
-  virtual ring_elem get_part(const M2_arrayint wts,
+  virtual ring_elem get_part(const std::vector<int> &wts,
                              const ring_elem f,
                              bool lobound_given,
                              bool hibound_given,

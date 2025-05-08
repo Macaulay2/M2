@@ -11,24 +11,19 @@ newPackage("ThreadedGB",
 	    Name => "Sara Jamshidi Zelenberg",
 	    Email => "szelenberg@mx.lakeforest.edu",
 	    HomePage => "https://www.sjzelenberg.com/"
-	},
-        {
-      	    Name => "Contributing Author: Tanner Zielinski",
-	    Email => "tzielin1@hawk.iit.edu",
-	    HomePage => "https://www.linkedin.com/in/tannerzielinski/"
 	}
     },
     Keywords => {"Groebner Basis Algorithms"},
     Headline => "Compute a Groebner basis using the classical Buchberger with multiple threads",
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry",
-	 "journal URI" => "http://j-sag.org/",
+	 "journal URI" => "https://msp.org/jsag/",
 	 "article title" => "Threaded Gröbner bases: a Macaulay2 package",
 	 "acceptance date" => "8 October 2021",
 	 "published article URI" => "https://msp.org/jsag/2021/11-1/p12.xhtml",
 	 "published article DOI" => "10.2140/jsag.2021.11.123",
 	 "published code URI" => "https://msp.org/jsag/2021/11-1/jsag-v11-n1-x12-ThreadedGB.m2",
-	 "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/ThreadedGB.m2",
+	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/ThreadedGB.m2",
 	 "release at publication" => "51d352fbdb9f5903c5bedbd5dce0c14d3fc66d2d",	    -- git commit number in hex
 	 "version at publication" => "1.1",
 	 "volume number" => "11",
@@ -54,7 +49,6 @@ manualLCM = (f,g) -> (
 
 export {
     "tgb",
-    "minimize",
     "reduce",
     "Minimal",
     "LineageTable"
@@ -172,7 +166,7 @@ tgb (Ideal) := MutableHashTable => o -> (I) -> (
 -- this method returns a minimal Groebner basis.
 -- Keys of non-minimal elements are retained within the hashtable (H#those=null).
 ---------------------------------------------------------------------------------------------
-minimize = method(TypicalValue => LineageTable)
+--minimize = method(TypicalValue => LineageTable)
 minimize(LineageTable) := LineageTable => (H) -> (
     -- nothing to do if gens gb == {1}:
     if H#?"trivial" then (
@@ -398,6 +392,8 @@ doc ///
       a remainder.
   SeeAlso
     tgb
+  Contributors
+    @HREF{"https://www.linkedin.com/in/tannerzielinski/", "Tanner Zielinski"}@ <@HREF{"mailto:tzielin1\@hawk.iit.edu", "tzielin1\@hawk.iit.edu"}@>
 ///
 doc ///
   Key
@@ -459,11 +455,11 @@ doc ///
       In the example above, the S-polynomial S(f0,f1) didn't reduce to zero, hence the remainder was added to the
       output with key (0,1). The additional two S-polynomials reduced and the process ended.
   SeeAlso
-    minimize
+    (minimize, LineageTable)
     reduce
   Caveat
     Due to threads running in parallel, it can happen that there are redundant elements in the final
-    Gr\"obner basis. However these can be easily removed using @TO minimize@, for example.
+    Gr\"obner basis. However these can be easily removed using @TO (minimize, LineageTable)@, for example.
     
     Also, {\tt  allowableThreads} needs to be set to an integer larger than 1, prior to calling @TO tgb@.
     Otherwise, errors may occur. It may be a good idea to reset allowableThreads to 1 after the threaded computations are done. 
@@ -486,7 +482,6 @@ doc ///
 ///
 doc ///
   Key
-    minimize
     (minimize, LineageTable)
   Headline
     turn a Gr\"obner basis computed using threaded Gr\"obner bases into a minimal one
@@ -677,8 +672,6 @@ installPackage("ThreadedGB", RemakeAllDocumentation=>true, RerunExamples=>true)
 loadPackage("ThreadedGB",Reload=>true)
 viewHelp tgb
 viewHelp "ThreadedGB"
-viewHelp minimize
+viewHelp (minimize, LineageTable)
 installPackage("ThreadedGB")
 check ThreadedGB
-
-

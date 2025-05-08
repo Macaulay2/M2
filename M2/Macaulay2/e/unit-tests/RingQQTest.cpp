@@ -27,10 +27,10 @@ ring_elem getElement<RingQQ>(const RingQQ &R, int index)
 TEST(RingQQ, create)
 {
   const Ring *R = globalQQ;
-  EXPECT_TRUE(R != 0);
+  EXPECT_TRUE(R != nullptr);
 
-  EXPECT_TRUE(dynamic_cast<const Z_mod *>(R) == 0);
-  EXPECT_TRUE(dynamic_cast<const RingQQ *>(R) != 0);
+  EXPECT_TRUE(dynamic_cast<const Z_mod *>(R) == nullptr);
+  EXPECT_TRUE(dynamic_cast<const RingQQ *>(R) != nullptr);
   EXPECT_EQ(R->coefficient_type(), Ring::COEFF_QQ);
   EXPECT_FALSE(R->is_ZZ());
   EXPECT_EQ(ringName(*R), "QQGMP");

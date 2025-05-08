@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -396527238
+-- -*- M2-comint -*- hash: 14215205459930741114
 
 i1 : A = skewPolynomialRing(QQ,(-1)_QQ,{w,x,y,z})
 --Calling Bergman for NCGB calculation.

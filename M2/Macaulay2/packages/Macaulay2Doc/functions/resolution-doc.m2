@@ -3,7 +3,7 @@
 doc ///
    Key
      FastNonminimal
-     [res,FastNonminimal]
+     [resolution, FastNonminimal]
    Headline
      compute a non-minimal graded free resolution
    Usage
@@ -67,8 +67,8 @@ doc ///
       needsPackage "PruneComplex"
       pruneComplex C
     Text
-      If one has a specific Groebner basis on which one wants to base the Schreyer resolution,
-      use Strategy=>5.  This will not check that the input forms a Groebner basis, but
+      If one has a specific Gröbner basis on which one wants to base the Schreyer resolution,
+      use @TT "Strategy => 5"@.  This will not check that the input forms a Gröbner basis, but
       if it does not, then the function will either produce non-sensical answers, or fail.
     Example
       R = ZZ/101[a..c,x_1..x_9, MonomialOrder=>{3,9}]

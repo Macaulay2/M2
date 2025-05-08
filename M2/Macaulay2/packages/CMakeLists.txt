@@ -31,9 +31,8 @@ ENDMACRO ()
 set(PACKAGES "${DISTRIBUTED_PACKAGES}" CACHE INTERNAL "the list of packages to install")
 set(PACKAGES_DEVEL       "EngineTests" CACHE INTERNAL "the list of packages to only check")
 ## Arguments to M2
-set(errorDepth                  "3" CACHE STRING "set the error printing depth")
+set(errorDepth                  "1" CACHE STRING "set the error printing depth")
 set(debugLevel                  "0" CACHE STRING "set the debugging level")
-set(gbTrace                     "0" CACHE STRING "set the Groebner basis trace level")
 ## Options to installPackage
 set(CheckDocumentation       "true" CACHE STRING "check documentation for completeness")
 set(IgnoreExampleErrors     "false" CACHE STRING "ignore errors in example code")
@@ -71,23 +70,8 @@ set(M2_INSTALL_TEMPLATE [[installPackage("@package@",
   DebuggingMode          => true)]])
 set(M2_NEED_TEMPLATE    [[needsPackage("@package@", LoadDocumentation=>true, DebuggingMode=>true)]])
 set(M2_TEST_TEMPLATE    [[debug Core \; argumentMode = @ArgumentMode@ \; check(@_i@, "@package@")]])
-set(M2_INFO_TEMPLATE    [["info-"|"@package@" << @package@#"test number" << close]]) # ignore the color
+set(M2_INFO_TEMPLATE    [["info-"|"@package@" << #@package@#"test inputs" << close]]) # ignore the color
 set(M2_CHECK_TEMPLATE   [[check("@package@", UserMode=>false, Verbose=>$<IF:$<BOOL:${VERBOSE}>,true,false>)]])
-
-# TODO: simplify
-set(M2_DOC_TEMPLATE [[installPackage("@package@",
-  Verbose                => $<IF:$<BOOL:${VERBOSE}>,true,false>,
-  RerunExamples          => ${RerunExamples},
-  CheckDocumentation     => ${CheckDocumentation},
-  IgnoreExampleErrors    => ${IgnoreExampleErrors},
-  RemakeAllDocumentation => ${RemakeAllDocumentation},
-  InstallPrefix          => "${M2_DIST_PREFIX}/",
-  UserMode               => false,
-  SeparateExec           => true,
-  DebuggingMode          => true,
-  MakeHTML               => false,
-  MakeInfo               => false,
-  MakePDF                => true)]])
 
 #################################################################################
 ## Declare all targets: {install,check,all,uninstall}-{packages,PACKAGE}
@@ -117,6 +101,7 @@ foreach(_target IN LISTS _target_prefixes)
   add_custom_target(${_target}-packages DEPENDS ${${_dependencies_list}})
 endforeach()
 
+# Makes the target all (possibly) depend on info-packages and install-packages
 set_target_properties(${_all_target_list} PROPERTIES EXCLUDE_FROM_ALL OFF)
 
 #################################################################################
@@ -160,7 +145,6 @@ foreach(package IN LISTS PACKAGES)
   _M2_STRING_CONFIGURE(M2_CHECK_TEMPLATE   M2_CHECK_STRING)
   _M2_STRING_CONFIGURE(M2_NEED_TEMPLATE    M2_NEED_STRING)
   _M2_STRING_CONFIGURE(M2_INFO_TEMPLATE    M2_INFO_STRING)
-  _M2_STRING_CONFIGURE(M2_DOC_TEMPLATE     M2_DOC_STRING TRUE)
 
   ###############################################################################
   ## Enable USES_TERMINAL only for Macaulay2Doc and EngineTests

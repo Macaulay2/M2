@@ -20,7 +20,9 @@ ResolutionComputation *ResolutionComputation::choose_res(
     M2_bool use_max_slanted_degree,
     int max_slanted_degree,
     int algorithm,
-    int strategy)
+    int strategy,
+    int numThreads,  // only used for algorithms supporting parallelism.  0 means use TBB default.
+    M2_bool parallelizeByDegree) // only used for algorithms supporting parallelism.  0 means use TBB default.
 {
   // The following modification is because some algorithms do not work if
   // max_level is 0.
@@ -133,7 +135,7 @@ ResolutionComputation *ResolutionComputation::choose_res(
             return nullptr;
           }
         if (M2_gbTrace > 0) emit_line("resolution Strategy=>4 (res-f4)");
-        C = createF4Res(m, max_level, strategy);
+        C = createF4Res(m, max_level, strategy, numThreads, parallelizeByDegree);
         if (C == nullptr) return nullptr;
         break;
     }
@@ -241,7 +243,7 @@ MutableMatrix /* or null */ *ResolutionComputation::get_matrix(int level,
 {
   // the default version gives an error that it isn't defined
   ERROR("this function not defined for this resolution type");
-  return 0;
+  return nullptr;
 }
 
 // Local Variables:

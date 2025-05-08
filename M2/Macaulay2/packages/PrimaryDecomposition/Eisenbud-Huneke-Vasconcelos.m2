@@ -294,10 +294,6 @@ regSeqInIdeal (Ideal, ZZ) := Ideal => opts -> (I, n) -> (
 )
 regSeqInIdeal Ideal := Ideal => opts -> I -> regSeqInIdeal(I, dim ring I + 1)
 
-sort (List, Function) := opts -> (L, f) -> (
-    H := hashTable(identity, apply(L, l -> f(l) => l));
-    deepSplice join apply(sort keys H, k -> H#k))
-
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PrimaryDecomposition.installed "
 -- End:

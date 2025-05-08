@@ -12,7 +12,7 @@ monoms = flatten entries monomials F
 toGate = m -> product apply(X,first first listForm m,(x,a)->x^a)
 M = hashTable apply(monoms, m->m=>toGate m) -- monomials
 polys = flatten entries F
-C = apply(#polys,i-> -- parameteric coefficients 
+C = apply(#polys,i-> -- parametric coefficients 
     apply(flatten entries monomials polys#i, m->inputGate (symbol c)_(i,m))
     )
 S = transpose matrix{

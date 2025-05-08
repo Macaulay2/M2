@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -1967880964
+-- -*- M2-comint -*- hash: 18428378250418095356
 
 i1 : B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
 --Calling Bergman for NCGB calculation.

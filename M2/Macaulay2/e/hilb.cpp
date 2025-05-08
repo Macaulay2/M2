@@ -190,7 +190,7 @@ static int popular_var(const MonomialIdeal &I,
   for (k = 0; k < nvars; k++) hits[k] = 0;
   for (k = 0; k < nvars; k++) minnonzero[k] = MAX_EXP;
 
-  non_pure_power = NULL;
+  non_pure_power = nullptr;
 
   for (Bag& a : I)
     {
@@ -325,15 +325,15 @@ void hilb_comp::next_monideal()
 void hilb_comp::reset()
 {
   depth = 0;
-  if (current == NULL)
+  if (current == nullptr)
     {
       current = new hilb_step;
-      current->up = current->down = NULL;
+      current->up = current->down = nullptr;
       current->h0 = R->from_long(0);
       current->h1 = R->from_long(0);
     }
   else
-    while (current->up != NULL) current = current->up;
+    while (current->up != nullptr) current = current->up;
 
   R->remove(current->h0);  // This line should not be needed...
   R->remove(current->h1);
@@ -349,7 +349,7 @@ hilb_comp::hilb_comp(const PolynomialRing *RR, const Matrix *m)
       input_mat(m),
       this_comp(0),
       n_components(m->n_rows()),
-      current(NULL),
+      current(nullptr),
       part_table(S->n_vars(), mi_stash)
 {
   assert(D == R->getMonoid());
@@ -374,10 +374,10 @@ hilb_comp::hilb_comp(const PolynomialRing *RR, const MonomialIdeal *I)
       M(S->getMonoid()),
       D(S->degree_monoid()),
       mi_stash(new stash("hilb mi", sizeof(Nmi_node))),
-      input_mat(0),
+      input_mat(nullptr),
       this_comp(0),
       n_components(1),
-      current(NULL),
+      current(nullptr),
       part_table(S->n_vars(), mi_stash)
 {
   assert(D == R->getMonoid());
@@ -401,7 +401,7 @@ hilb_comp::hilb_comp(const PolynomialRing *RR, const MonomialIdeal *I)
 hilb_comp::~hilb_comp()
 {
   // free 'current' (which is most of the stuff here...)
-  while (current != NULL)
+  while (current != nullptr)
     {
       hilb_step *p = current;
       current = current->down;
@@ -470,7 +470,7 @@ int hilb_comp::step()
       current->h0 = R->from_long(0);
       current->h1 = R->from_long(0);
       current->monids.clear();
-      if (current->up == NULL)
+      if (current->up == nullptr)
         {
           if (input_mat)
             {
@@ -502,11 +502,11 @@ void hilb_comp::recurse(MonomialIdeal *&I, const_varpower pivot_vp)
   depth++;
   if (depth > maxdepth) maxdepth = depth;
   nrecurse++;
-  if (current->down == NULL)
+  if (current->down == nullptr)
     {
       current->down = new hilb_step;  // MES: is this ok?
       current->down->up = current;
-      current->down->down = NULL;
+      current->down->down = nullptr;
     }
   current = current->down;
   current->h0 = R->from_long(0);
@@ -601,7 +601,7 @@ void hilb_comp::do_ideal(MonomialIdeal *I)
 
 int hilb_comp::is_done() const
 {
-  return (current != NULL && current->up == NULL);
+  return (current != nullptr && current->up == nullptr);
 }
 
 RingElement *hilb_comp::value()
@@ -609,7 +609,7 @@ RingElement *hilb_comp::value()
   if (!is_done())
     {
       ERROR("Hilbert function computation not complete");
-      return 0;
+      return nullptr;
     }
   RingElement *result = RingElement::make_raw(R, R->copy(result_poincare));
   return result;
@@ -627,7 +627,7 @@ void hilb_comp::stats() const
 
   hilb_step *p = current;
   int d = depth;
-  while (p != NULL)
+  while (p != nullptr)
     {
       o << "----- depth " << d << " -------------" << newline;
       o << "  " << p->monids.size() << " monomial ideals total" << newline;
@@ -669,10 +669,10 @@ RingElement *hilb_comp::hilbertNumerator(const Matrix *M)
    computing Hilbert series, or the computation was interrupted. */
 {
   const PolynomialRing *P = M->get_ring()->get_degree_ring();
-  if (P == 0) return 0;
+  if (P == nullptr) return nullptr;
   hilb_comp *hf = new hilb_comp(P, M);
   int retval = hf->calc(-1);
-  if (retval != COMP_DONE) return 0;
+  if (retval != COMP_DONE) return nullptr;
   RingElement *result = hf->value();
   delete hf;
   return result;
@@ -680,7 +680,7 @@ RingElement *hilb_comp::hilbertNumerator(const Matrix *M)
 
 RingElement *hilb_comp::hilbertNumerator(const FreeModule *F)
 {
-  const Matrix *Fmatrix = Matrix::make(F, 0, 0);
+  const Matrix *Fmatrix = Matrix::make(F, 0, nullptr);
   RingElement *result = hilbertNumerator(Fmatrix);
   delete Fmatrix;
   return result;
@@ -692,10 +692,10 @@ RingElement /* or null */ *hilb_comp::hilbertNumerator(const MonomialIdeal *I)
    computing Hilbert series, or the computation was interrupted. */
 {
   const PolynomialRing *P = I->get_ring()->get_degree_ring();
-  if (P == 0) return 0;
+  if (P == nullptr) return nullptr;
   hilb_comp *hf = new hilb_comp(P, I);
   int retval = hf->calc(-1);
-  if (retval != COMP_DONE) return 0;
+  if (retval != COMP_DONE) return nullptr;
   RingElement *result = hf->value();
   delete hf;
   return result;

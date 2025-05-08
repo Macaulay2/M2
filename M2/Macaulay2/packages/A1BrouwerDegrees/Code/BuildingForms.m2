@@ -1,169 +1,141 @@
-
 -----------------------
 -- Producing new forms
 -----------------------
 
--- Input: A field kk, and a list of elements a_1, ... , a_n of kk
--- Output: The diagonal form <a_1,...,a_n> 
+-- Input: A field kk of characteristic not 2, and a list of elements a_1,...,a_n of kk
+-- Output: The Grothendieck-Witt class represented by the diagonal form <a_1,...,a_n> 
 
-diagonalForm = method()
-diagonalForm(Ring,RingElement) := GrothendieckWittClass => (kk,a) -> (
-    return gwClass(matrix(kk,{{sub(a,kk)}}))
+makeDiagonalForm = method()
+makeDiagonalForm (Ring, RingElement) := GrothendieckWittClass => (kk, a) -> (
+    makeGWClass matrix(kk, {{sub(a, kk)}})
     )
 
-diagonalForm(Ring,ZZ) := GrothendieckWittClass => (kk,a) -> (
-    return gwClass(matrix(kk,{{sub(a,kk)}}))
+makeDiagonalForm (Ring, ZZ) := GrothendieckWittClass => (kk, a) -> (
+    makeGWClass matrix(kk, {{sub(a, kk)}})
     )
 
-diagonalForm(Ring,QQ) := GrothendieckWittClass => (kk,a) -> (
-    return gwClass(matrix(kk,{{sub(a,kk)}}))
+makeDiagonalForm (Ring, QQ) := GrothendieckWittClass => (kk, a) -> (
+    makeGWClass matrix(kk, {{sub(a, kk)}})
     )
 
-diagonalForm(Ring, Sequence) := GrothendieckWittClass => (kk,L) -> (
+makeDiagonalForm (Ring, Sequence) := GrothendieckWittClass => (kk, L) -> (
     -- Get the length of the input sequence
     n := #L;
     
-    -- Build an n x n identity matrix
+    -- Build an n x n mutable identity matrix
     A := mutableIdentity(kk, n);
     
-    for i from 0 to (n-1) do(
-	A_(i,i) = sub(L_i,kk);
-	);
+    for i from 0 to n - 1 do A_(i,i) = sub(L_i, kk);
     
-    -- A is mutable so we take matrix(A) to plug it into gwClass
-    return gwClass(matrix(A))
+    -- A is mutable so we take matrix A and form a Grothendieck-Witt class
+    makeGWClass matrix A
     )
 
-diagonalForm(InexactFieldFamily,RingElement) := GrothendieckWittClass => (kk,a) -> (
-    return gwClass(matrix(kk,{{sub(a,kk)}}))
+makeDiagonalForm (InexactFieldFamily,RingElement) := GrothendieckWittClass => (kk, a) -> (
+    makeGWClass matrix(kk, {{sub(a, kk)}})
     )
 
-diagonalForm(InexactFieldFamily,ZZ) := GrothendieckWittClass => (kk,a) -> (
-    return gwClass(matrix(kk,{{sub(a,kk)}}))
+makeDiagonalForm (InexactFieldFamily,ZZ) := GrothendieckWittClass => (kk, a) -> (
+    makeGWClass matrix(kk, {{sub(a, kk)}})
     )
 
-diagonalForm(InexactFieldFamily,QQ) := GrothendieckWittClass => (kk,a) -> (
-    return gwClass(matrix(kk,{{sub(a,kk)}}))
+makeDiagonalForm (InexactFieldFamily,QQ) := GrothendieckWittClass => (kk, a) -> (
+    makeGWClass matrix(kk, {{sub(a, kk)}})
     )
 
-diagonalForm(InexactFieldFamily, Sequence) := GrothendieckWittClass => (kk,L) -> (
+makeDiagonalForm (InexactFieldFamily, Sequence) := GrothendieckWittClass => (kk, L) -> (
     -- Get the length of the input sequence
     n := #L;
     
-    -- Build an n x n identity matrix
+    -- Build an n x n mutable identity matrix
     A := mutableIdentity(kk, n);
     
-    for i from 0 to (n - 1) do(
-	A_(i,i) = sub(L_i,kk);
-	);
+    for i from 0 to n - 1 do A_(i,i) = sub(L_i, kk);
     
-    -- A is mutable so we take matrix(A) to plug it into gwClass
-    return gwClass(matrix(A))
+    -- A is mutable so we take matrix A and form a Grothendieck-Witt class
+    makeGWClass matrix A
     )
 
--- Input: A field kk
--- Output: An even number, giving an optional rank n for a totally hyperbolic form
+-- Input: A field kk of characteristic not 2, and an optional even rank n (default is n = 2)
+-- Output: A Grothendieck-Witt class over kk represented by a totally hyperbolic form of rank n
 
-hyperbolicForm = method()
-
-hyperbolicForm(Ring) := GrothendieckWittClass => (kk) -> (
-    return gwClass(matrix(kk,{{1,0},{0,-1}}))
+makeHyperbolicForm = method()
+makeHyperbolicForm Ring := GrothendieckWittClass => kk -> (
+    makeGWClass matrix(kk, {{1,0},{0,-1}})
     )
 
--- Can take an optional input specifying an (even) rank of a totally hyperbolic form. Default is 2
-hyperbolicForm(Ring,ZZ) := GrothendieckWittClass => (kk,n) -> (
-	if odd n then error "inputted rank is odd";
-	H := matrix(kk,{{1,0},{0,-1}});
-    	k := sub(n/2,ZZ);
-    	outputMatrix := diagonalMatrix(kk,{});
-    	for i from 0 to k - 1 do(
-	    outputMatrix = outputMatrix ++ H;
-	    );
-        return gwClass(outputMatrix)
+makeHyperbolicForm (Ring, ZZ) := GrothendieckWittClass => (kk, n) -> (
+    if odd n then error "entered rank is odd";
+    H := matrix(kk, {{1,0},{0,-1}});
+    m := sub(n/2, ZZ);
+    outputMatrix := diagonalMatrix(kk, {});
+    for i from 0 to m - 1 do outputMatrix = outputMatrix ++ H;
+    makeGWClass outputMatrix
     )
 
-hyperbolicForm(InexactFieldFamily) := GrothendieckWittClass => (kk) -> (
-    return gwClass(matrix(kk,{{1,0},{0,-1}}))
+makeHyperbolicForm InexactFieldFamily := GrothendieckWittClass => kk -> (
+    makeGWClass matrix(kk, {{1,0},{0,-1}})
     )
 
--- Can take an optional input specifying an (even) rank of a totally hyperbolic form. Default is 2
-hyperbolicForm(InexactFieldFamily,ZZ) := GrothendieckWittClass => (kk,n) -> (
-	if odd n then error "inputted rank is odd";
-	H := matrix(kk,{{1,0},{0,-1}});
-    	k := sub(n/2,ZZ);
-    	outputMatrix := diagonalMatrix(kk,{});
-    	for i from 0 to k - 1 do(
-	    outputMatrix = outputMatrix ++ H;
-	    );
-        return gwClass(outputMatrix)
+makeHyperbolicForm (InexactFieldFamily, ZZ) := GrothendieckWittClass => (kk, n) -> (
+    if odd n then error "entered rank is odd";
+    H := matrix(kk, {{1,0},{0,-1}});
+    m := sub(n/2, ZZ);
+    outputMatrix := diagonalMatrix(kk, {});
+    for i from 0 to m - 1 do outputMatrix = outputMatrix ++ H;
+    makeGWClass outputMatrix
     )
 
--- Input: A field kk, and a list of elements a_1, ... , a_n of kk
+-- Input: A field kk of characteristic not 2, and a list of elements a_1,...,a_n of kk
 -- Output: The Pfister form <<a_1,...,a_n>>
 
-PfisterForm = method()
-PfisterForm(Ring,RingElement) := GrothendieckWittClass => (kk,a) -> (
-    return diagonalForm(kk,(1,(-1)*a))
-    );
+makePfisterForm = method()
+makePfisterForm (Ring, RingElement) := GrothendieckWittClass => (kk, a) -> (
+    makeDiagonalForm(kk, (1, sub((-1)*a, kk)))
+    )
 
-PfisterForm(Ring,ZZ) := GrothendieckWittClass => (kk,a) -> (
-    return diagonalForm(kk,(1,(-1)*a))
-    );
+makePfisterForm (Ring, ZZ) := GrothendieckWittClass => (kk, a) -> (
+    makeDiagonalForm(kk, (1, sub((-1)*a, kk)))
+    )
 
-PfisterForm(Ring,QQ) := GrothendieckWittClass => (kk,a) -> (
-    return diagonalForm(kk,(1,(-1)*a))
-    );
+makePfisterForm (Ring, QQ) := GrothendieckWittClass => (kk, a) -> (
+    makeDiagonalForm(kk, (1, sub((-1)*a, kk)))
+    )
 
-PfisterForm(Ring,Sequence) := GrothendieckWittClass => (kk,L) -> (
+makePfisterForm (Ring, Sequence) := GrothendieckWittClass => (kk, L) -> (
     -- Get the length of the input sequence
     n := #L;
-    if n == 0 then error "list is empty";
     
-    -- If there is just one entry L_0 return the form <1, -L_0>
-    firstPfisterForm := diagonalForm(kk,(1,(-1)*L_0));
-    if n == 1 then(
-	return firstPfisterForm
+    -- Iteratively multiply <1,-L_0>*<1,-L_1>*...
+    outputForm := makeDiagonalForm(kk, 1);
+    for i from 0 to n - 1 do (
+	ithPfister := makePfisterForm(kk, L_i);
+	outputForm = multiplyGW(outputForm, ithPfister);
 	);
-    
-    -- If n>1 iteratively multiply <1,-L_0>*<1,-L_1>*...
-    outputForm := firstPfisterForm;
-    for i from 1 to (n-1) do (
-	ithPfister := diagonalForm(kk,(1,(-1)*L_i));
-	outputForm = gwMultiply(outputForm,ithPfister);
-	);
-    
-    return outputForm
-   )
+    outputForm
+    )
 
-PfisterForm(InexactFieldFamily,RingElement) := GrothendieckWittClass => (kk,a) -> (
-    return diagonalForm(kk,(1,(-1)*a))
-    );
+makePfisterForm (InexactFieldFamily, RingElement) := GrothendieckWittClass => (kk, a) -> (
+    makeDiagonalForm(kk, (1, sub((-1)*a, kk)))
+    )
 
-PfisterForm(InexactFieldFamily,ZZ) := GrothendieckWittClass => (kk,a) -> (
-    return diagonalForm(kk,(1,(-1)*a))
-    );
+makePfisterForm (InexactFieldFamily,ZZ) := GrothendieckWittClass => (kk, a) -> (
+    makeDiagonalForm(kk,(1, sub((-1)*a, kk)))
+    )
 
-PfisterForm(InexactFieldFamily,QQ) := GrothendieckWittClass => (kk,a) -> (
-    return diagonalForm(kk,(1,(-1)*a))
-    );
+makePfisterForm (InexactFieldFamily,QQ) := GrothendieckWittClass => (kk, a) -> (
+    makeDiagonalForm(kk,(1, sub((-1)*a, kk)))
+    )
 
-PfisterForm(InexactFieldFamily,Sequence) := GrothendieckWittClass => (kk,L) -> (
+makePfisterForm (InexactFieldFamily,Sequence) := GrothendieckWittClass => (kk, L) -> (
     -- Get the length of the input sequence
     n := #L;
-    if n == 0 then error "list is empty";
     
-    -- If there is just one entry L_0 return the form <1, -L_0>
-    firstPfisterForm := diagonalForm(kk,(1,(-1)*L_0));
-    if n == 1 then(
-	return firstPfisterForm
+    -- Iteratively multiply <1,-L_0>*<1,-L_1>*...
+    outputForm := makeDiagonalForm(kk, 1);
+    for i from 0 to n - 1 do (
+	ithPfister := makePfisterForm(kk, L_i);
+	outputForm = multiplyGW(outputForm, ithPfister);
 	);
-    
-    -- If n>1 iteratively multiply <1,-L_0>*<1,-L_1>*...
-    outputForm := firstPfisterForm;
-    for i from 1 to (n-1) do(
-	ithPfister := diagonalForm(kk,(1,(-1)*L_i));
-	outputForm = gwMultiply(outputForm,ithPfister);
-	);
-    
-    return outputForm
-   )
+    outputForm
+    )

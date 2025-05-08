@@ -18,16 +18,16 @@ newPackage( "RationalMaps",
     }, --this file is in the public domain
     Keywords => {"Commutative Algebra"},
     Headline => "rational maps between varieties", 
-    PackageExports => {"FastMinors"},
+    PackageExports => {"FastMinors", "Varieties"},
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry",
-	 "journal URI" => "http://j-sag.org/",
+	 "journal URI" => "https://msp.org/jsag/",
 	 "article title" => "RationalMaps, a package for Macaulay2",
 	 "acceptance date" => "17 July 2022",
 	 "published article URI" => "https://msp.org/jsag/2022/12-1/p03.xhtml",
 	 "published article DOI" => "10.2140/jsag.2022.12.17",
 	 "published code URI" => "https://msp.org/jsag/2022/12-1/jsag-v12-n1-x03-RationalMaps.m2",
-	 "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/RationalMaps.m2",
+	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/RationalMaps.m2",
 	 "release at publication" => "0cee3a5ae1e3fbd3dfa8407a4c8d6ad6a13dffd3",	    -- git commit number in hex
 	 "version at publication" => "1.0",
 	 "volume number" => "12",
@@ -1367,8 +1367,8 @@ document {
     EM  TO "Parametrization",
       ":  While the package ", TO "Parametrization", " focuses mostly on curves, it also includes a function ", TO "Parametrization::invertBirationalMap", "
       that has the same functionality as ", TO "inverseOfMap", ".  On the other hand, these two functions were implemented differently and so sometimes one function can be substantially faster than the other.\n", BR{}, BR{},
-    EM TO "Cremona",
-    ":  The package ", TO "Cremona", " focuses on  fast probabilistic computations in general cases and  deterministic computations for special
+    EM TO "Cremona::Cremona",
+    ":  The package ", TO "Cremona::Cremona", " focuses on  fast probabilistic computations in general cases and  deterministic computations for special
      kinds of maps from projective space.  More precisely, ",BR{},
     UL {
         {TO "Cremona::isBirational", " gives a probabilistic answer to the question of whether a map between varieties is birational.  Furthermore, if the
@@ -1733,7 +1733,7 @@ doc ///
         SimisStrategy
         ReesStrategy
     Caveat
-        Also see the very fast probabilistic birationality checking of the @TO "Cremona"@ package: @TO "Cremona::isBirational"@.
+        Also see the very fast probabilistic birationality checking of the @TO "Cremona::Cremona"@ package: @TO "Cremona::isBirational"@.
 ///
 --***************************************************************
 
@@ -2277,7 +2277,7 @@ doc ///
         SimisStrategy
         ReesStrategy
     Caveat
-        The current implementation of this function works only for irreducible varieties.  Also see the function @TO "Cremona::inverseMap"@ in the package @TO "Cremona"@, which for some maps from projective space is faster.  Additionally, also compare with the function @TO "Parametrization::invertBirationalMap"@ of the package @TO "Parametrization"@.
+        The current implementation of this function works only for irreducible varieties.  Also see the function @TO "Cremona::inverseMap"@ in the package @TO "Cremona::Cremona"@, which for some maps from projective space is faster.  Additionally, also compare with the function @TO "Parametrization::invertBirationalMap"@ of the package @TO "Parametrization"@.
 ///
 --***************************************************************
 
@@ -2334,7 +2334,7 @@ doc ///
              phi=map(S,S,transpose jacobian ideal g);
              sourceInversionFactor(phi, Verbosity=>0)
     Caveat
-        The current implementation of this function works only for irreducible varieties..  Also see the function @TO "Cremona::inverseMap"@ in the package @TO "Cremona"@, which for some maps from projective space is faster.  Additionally, also compare with the function @TO "Parametrization::invertBirationalMap"@ of the package @TO"Parametrization"@.
+        The current implementation of this function works only for irreducible varieties..  Also see the function @TO "Cremona::inverseMap"@ in the package @TO "Cremona::Cremona"@, which for some maps from projective space is faster.  Additionally, also compare with the function @TO "Parametrization::invertBirationalMap"@ of the package @TO"Parametrization"@.
     SeeAlso
         HybridStrategy
         SimisStrategy

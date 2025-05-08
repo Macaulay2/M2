@@ -66,7 +66,7 @@ class DMatLinAlg<M2::ARingQQ>
 
   void matrixPLU(std::vector<size_t>& P, Mat& L, Mat& U)
   {
-    printf("dmat lu qq PLU\n");
+    // printf("dmat lu qq PLU\n");
     FlintQQMat A(mInputMatrix);
     FlintZZMat LU(A.numRows(), A.numColumns());
     fmpz_t den, den2;

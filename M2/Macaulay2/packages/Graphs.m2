@@ -33,8 +33,7 @@ newPackage (
             {Name => "David Cook II", Email => "dcook.math@gmail.com", HomePage => "http://ux1.eiu.edu/~dwcook/"},
             {Name => "Caroline Jansen", Email => "cjansen@alumni.nd.edu"},
             {Name => "Amelia Taylor", Email => "originalbrickhouse@gmail.com"},
-            {Name => "Augustine O'Keefe", Email => "aokeefe@tulane.edu"},
-            {Name => "Contributors of note: Carlos Amendola, Alex Diaz, Luis David Garcia Puente, Roser Homs Pons, Olga Kuznetsova,  Shaowei Lin, Sonja Mapes, Harshit J Motwani, Mike Stillman, Doug Torrance"}
+            {Name => "Augustine O'Keefe", Email => "aokeefe@tulane.edu"}
         },
         Headline => "graphs and directed graphs (digraphs)",
 	Keywords => {"Graph Theory"},
@@ -394,14 +393,14 @@ vertices Digraph := List => D -> D#(symbol vertexSet)
 -------------------------------------------
 
 displayGraph = method()
-displayGraph (String, String, Digraph) := (dotfilename, jpgfilename, G) -> (
+displayGraph (String, String, Digraph) := (dotfilename, pngfilename, G) -> (
      writeDotFile(dotfilename, G);
-     runcmd(graphs'DotBinary  | " -Tjpg " | dotfilename | " -o " | jpgfilename);
-     show URL("file://" | toAbsolutePath jpgfilename);
+     runcmd(graphs'DotBinary  | " -Tpng " | dotfilename | " -o " | pngfilename);
+     show URL("file://" | toAbsolutePath pngfilename);
      )
 displayGraph (String, Digraph) := (dotfilename, G) -> (
-     jpgfilename := temporaryFileName() | ".jpg";
-     displayGraph(dotfilename, jpgfilename, G);
+     pngfilename := temporaryFileName() | ".png";
+     displayGraph(dotfilename, pngfilename, G);
      )
 displayGraph Digraph := G -> (
      dotfilename := temporaryFileName() | ".dot";
@@ -1155,16 +1154,7 @@ spectrum Graph := List => G -> sort toList eigenvalues (adjacencyMatrix G, Hermi
 
 
 
-topologicalSort = method(TypicalValue =>List)
-topologicalSort Digraph := List => D -> topologicalSort(D, "")
-topologicalSort (Digraph, String) := List => (D,s) -> (
-    if instance(D, Graph) or isCyclic D then error "Topological sorting is only defined for acyclic directed graphs.";
-    s = toLower s;
-    processor := if s == "random" then random
-        else if s == "min" then sort
-        else if s == "max" then rsort
-        else if s == "degree" then L -> last \ sort transpose {apply(L, v -> degree(D, v)), L}
-        else identity;
+attemptTopologicalSort = (D,processor) -> (
     S := processor sources D;
     L := {};
     v := null;
@@ -1173,7 +1163,23 @@ topologicalSort (Digraph, String) := List => (D,s) -> (
         L = L|{v};
         S = processor join(drop(S, 1), select(toList children (D, v), c -> isSubset(parents(D, c), L)));
         );
-    L
+    if #L == #(vertexSet D) then L else null
+    )
+
+topologicalSort = method(TypicalValue =>List)
+topologicalSort Digraph := List => D -> topologicalSort(D, "")
+topologicalSort (Digraph, String) := List => (D,s) -> (
+    if instance(D, Digraph) then (
+        s = toLower s;
+        processor := if s == "random" then random
+            else if s == "min" then sort
+            else if s == "max" then rsort
+            else if s == "degree" then L -> last \ sort transpose {apply(L, v -> degree(D, v)), L}
+            else identity;
+        L := attemptTopologicalSort(D, processor);
+        if L =!= null then return L;
+    );
+    error "Topological sorting is only defined for acyclic directed graphs.";
     )
 
 
@@ -1271,14 +1277,7 @@ isConnected Graph := Boolean => G -> numberOfComponents G <= 1
 
 isCyclic = method()
 isCyclic Graph := Boolean => G -> isConnected G and all(vertexSet G, v -> degree(G, v) == 2)
-isCyclic Digraph := Boolean => G -> (
-        D := depthFirstSearch G;
-        any(vertexSet G, u ->
-            any(toList children(G, u), v ->
-                (D#symbol discoveryTime)#v < (D#symbol discoveryTime)#u and (D#symbol finishingTime)#u < (D#symbol finishingTime)#v
-                )
-            )
-        )
+isCyclic Digraph := Boolean => G -> attemptTopologicalSort(G, identity) === null
 
 isEulerian = method()
 isEulerian Graph := Boolean => G -> all(apply(vertexSet G, v -> degree(G,v)), even) and isConnected G
@@ -1751,6 +1750,16 @@ beginDocumentation()
 doc ///
   Key
     Graphs
+  Headline
+    graphs and digraphs
+  Description
+    Text
+      This package defines classes for graphs and digraphs and related methods.
+  Contributors
+    Carlos Amendola, Alex Diaz, Luis David Garcia Puente, Roser Homs Pons,
+    Olga Kuznetsova, Shaowei Lin, Sonja Mapes, Harshit J Motwani, Mike Stillman,
+    and Doug Torrance contributed to this package.
+
 ///
 
 -------------------------------
@@ -2110,13 +2119,13 @@ doc ///
     Headline
         displays a digraph or graph using Graphviz
     Usage
-        displayGraph(dotFileName,jpgFileName,G)
+        displayGraph(dotFileName,pngFileName,G)
         displayGraph(dotFileName,G)
         displayGraph G
     Inputs
         G:Digraph
         dotFileName:String
-        jpgFileName:String
+        pngFileName:String
     Description
         Text
             Displays a digraph or graph using Graphviz
@@ -3012,7 +3021,7 @@ doc ///
         breadthFirstSearch
         (breadthFirstSearch, Digraph, Thing)
     Headline
-        runs a breadth first search on the digraph starting at a specified node and returns a list of the vertices in the order they were discovered
+        runs a breadth first search on the digraph starting at a specified node
     Usage
         bfs = breadthFirstSearch(D,v)
     Inputs
@@ -3395,7 +3404,7 @@ doc ///
         depthFirstSearch
         (depthFirstSearch, Digraph)
     Headline
-        runs a depth first search on the digraph or digraph and returns the discovery time and finishing time for each vertex in the digraph
+        runs a depth first search on the digraph
     Usage
         dfs = depthFirstSearch D
         dfs = depthFirstSearch G
@@ -3651,7 +3660,7 @@ doc ///
         floydWarshall
         (floydWarshall, Digraph)
     Headline
-        runs the Floyd-Warshall algorithm on a digraph to determine the minimum distance from one vertex to another in the digraph
+        runs the Floyd-Warshall algorithm on a digraph to determine the minimum distance from one vertex
     Usage
         F = floydWarshall D
     Inputs
@@ -4044,7 +4053,7 @@ doc ///
         reverseBreadthFirstSearch
         (reverseBreadthFirstSearch, Digraph, Thing)
     Headline
-        runs a reverse breadth first search on the digraph and returns a list of the vertexSet in the order they were discovered
+        runs a reverse breadth first search on the digraph starting at a specified node
     Usage
         bfs = reverseBreadthFirstSearch(D,v)
     Inputs
@@ -5284,7 +5293,7 @@ doc ///
         (topSort, Digraph) 
 	(topSort, Digraph, String)
     Headline
-        outputs a hashtable containing original digraph, new digraph with vertices topologically sorted and a map from vertices of original digraph to new digraph.
+        topologically sort the vertices of a digraph
     Usage
         topSort(D)
 	topSort(D,S)
@@ -5496,6 +5505,17 @@ TEST ///
    assert(topologicalSort D==={2,3,1})
 ///
 
+TEST ///
+-- check cycle detection in digraphs
+assert( isCyclic digraph({{1,2},{2,3},{3,1}}) === true )
+assert( isCyclic digraph({{1,2},{2,3},{3,4},{4,3}}) === true )
+assert( isCyclic digraph({{1,2},{2,3},{3,4},{2,4}}) === false )
+assert( isCyclic digraph({{1,3},{1,4},{2,4},{3,2},{4,3}}) === true )
+assert( isCyclic digraph({{1,3},{1,4},      {3,2},{4,3}}) === false )
+assert( isCyclic digraph({{1,2},{2,3},{3,4}}) === false )
+assert( isCyclic digraph({{1,2},{2,3},{3,4},{4,4}}) === true )
+assert( isCyclic digraph({{1,2},{2,3},{3,4},{5,5}}) === true )
+///
 
 TEST ///
 

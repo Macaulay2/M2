@@ -5,7 +5,7 @@ needs "max.m2"
 needs "methods.m2"
 needs "nets.m2"
 
-Constant = new Type of BasicList
+Constant = new Type of Number
 globalAssignment Constant
 
 precedence = method(Dispatch => Thing)
@@ -476,6 +476,7 @@ expression ZZ := i -> (
      else if i < 0 then new Minus from { -i }
      else hold i
      )
+OneExpression ^ Expression :=
 Holder     ^ OneExpression :=
 Expression ^ OneExpression := (x,y) -> x
 Holder     ^ ZeroExpression :=
@@ -550,7 +551,7 @@ toString'(Function, SparseMonomialVectorExpression) := (fmt,v) -> toString (
 MatrixExpression = new HeaderType of Expression
 MatrixExpression.synonym = "matrix expression"
 matrixOpts1 := new OptionTable from {Blocks=>null,Degrees=>null,MutableMatrix=>false};
-matrixOpts := m -> ( -- helper function
+matrixOpts = m -> ( -- helper function
     (opts,x) := override(matrixOpts1,toSequence m);
     (opts, if #x > 0 and class x#0 =!= List then { x } else toList x) -- because of #1548
     )
@@ -585,45 +586,6 @@ toString'(Function, Table) := (fmt,m) -> concatenate(
      between(", ",apply(toList m,row->("{", between(", ",apply(row,fmt)), "}"))),
      "}" )
 -----------------------------------------------------------------------------
-
--- TODO: move this to latex.m2
-keywordTexMath = new HashTable from { -- both unary and binary keywords
-    symbol |- => "\\vdash ",
-    symbol .. => "\\,{.}{.}\\,",
-    symbol ..< => "\\,{.}{.}{<}\\,",
-    symbol <= => "\\le ",
-    symbol >= => "\\ge ",
-    symbol => => "\\Rightarrow ",
-    symbol ==> => "\\Longrightarrow ",
-    symbol <== => "\\Longleftarrow ",
-    symbol <==> => "\\Longleftrightarrow ",
-    symbol ** => "\\otimes ",
-    symbol ++ => "\\oplus ",
-    symbol != => "\\ne ",
-    symbol -> => "\\rightarrow ",
-    symbol <- => "\\leftarrow ",
-    symbol ===> => "{\\large\\Longrightarrow}",
-    symbol <=== => "{\\large\\Longleftarrow}",
-    symbol << => "\\ll ",
-    symbol >> => "\\gg ",
-    symbol ~ => "\\sim ",
-    symbol ^** => "{}^{\\otimes}", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
-    symbol _ => "\\_",
-    symbol { => "\\{",
-    symbol } => "\\}",
-    symbol \ => "\\backslash ",
-    symbol \\ => "\\backslash\\backslash ",
-    symbol # => "\\#",
-    symbol #? => "\\#?",
-    symbol % => "\\%",
-    symbol & => "\\&",
-    symbol ^ => "\\wedge ",
-    symbol ^^ => "\\wedge\\wedge ",
-    symbol <| => "\\langle ",
-    symbol |> => "\\rangle ",
-    symbol _* => "{}_*", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
-    symbol ^* => "{}^*" -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
-    }
 
 BinaryOperation = new HeaderType of Expression -- {op,left,right}
 BinaryOperation.synonym = "binary operation expression"
@@ -840,7 +802,7 @@ net Sum := v -> (
 		    then bigParenthesize net v#i
 		    else      	   	 net v#i))))
 
-isNumber = method(TypicalValue => Boolean)
+isNumber = method(Dispatch => Thing, TypicalValue => Boolean)
 isNumber Thing := i -> false
 isNumber RR :=
 isNumber QQ := -- QQ never appears in an expression...
@@ -1099,7 +1061,7 @@ texMath Subscript := v -> (
      x := texMath v#0;
      y := if class v#1 === Sequence then demark(",", apply(v#1,texMath)) else texMath v#1; -- no () for sequences
      if precedence v#0 <  p or class v#0 === Subscript then x = "\\left(" | x | "\\right)"; -- precedence or double subscript
-     concatenate(x,"_{",y,"}") -- no braces around x
+     concatenate(x,"_{",y,"}",if class v#0===Symbol and last toString v#0=="'" then "{}") -- no braces around x
      )
 
 -*
@@ -1173,7 +1135,7 @@ texMath MatrixExpression := x -> (
 		 between("&",m#i),
 		 if i<#m-1 then "\\\\", -- sadly, LaTeX *requires* no final \\
 		 newline,
-		 if blk then (j=j+1; if h<#opts.Blocks#0-1 and j == opts.Blocks#0#h then (j=0; h=h+1; "\\hline\n"))
+		 if blk then (j += 1; if h<#opts.Blocks#0-1 and j == opts.Blocks#0#h then (j=0; h=h+1; "\\hline\n"))
 		 )),
 	"\\end{array}\\!",
 	"\\right)"
@@ -1181,7 +1143,8 @@ texMath MatrixExpression := x -> (
 )
 
 texMath VectorExpression := v -> (
-    concatenate(
+    if all(v,i->class i===ZeroExpression) then "0"
+    else concatenate(
 	"\\left(",
 	"\\!\\begin{array}{c}",
 	newline,
@@ -1193,13 +1156,9 @@ texMath VectorExpression := v -> (
 
 -----------------------------------------------------------------------------
 print =  x -> (
-    c := class x;
-    while not c#?{topLevelMode,print} do (
-	if c === Thing then (<< net x << endl; return); -- default
-	c = parent c;
-	);
-    c#{topLevelMode,print} x
-    )
+    f := lookup({topLevelMode, print}, class x);
+    if f === null then << net x << endl -- default
+    else f x;)
 -----------------------------------------------------------------------------
 
 File << Thing := File => (o,x) -> printString(o,net x)
@@ -1268,12 +1227,6 @@ net Option := net @@ expression
 texMath Option := texMath @@ expression
 toString Option := toString @@ expression
 
-SheafExpression = new WrapperType of Expression;
-toString'(Function, SheafExpression) := (fmt,x) -> toString'(fmt,new FunctionApplication from { sheaf, x#0 })
-net SheafExpression := x -> net x#0
-texMath SheafExpression := x -> texMath x#0
-expressionValue SheafExpression := x -> sheaf expressionValue x#0
-
 moduleZERO = new ZeroExpression from { 0, Module }
 
 -- note that one can't have a symbol <---
@@ -1282,12 +1235,12 @@ toString'(Function, MapExpression) := (fmt,x) -> toString'(fmt,new FunctionAppli
 lineOnTop := (s) -> concatenate(width s : "-") || s
 net MapExpression := x-> if #x>2 then horizontalJoin(net x#0, " <--",
 		    lineOnTop net x#2,
-		    "-- ", net x#1) else net x#0 | " <--- " | net x#1
+		    "-- ", net x#1) else net x#0 | " <-- " | net x#1
 texMath MapExpression := x -> texMath x#0 | "\\," | (if #x>2 then "\\xleftarrow{" | texMath x#2 | "}" else "\\longleftarrow ") | "\\," | texMath x#1
 expressionValue MapExpression := x -> map toSequence apply(x,expressionValue)
 
 -- moved from set.m2 because of loadsequence order
-expression Set := x -> Adjacent {set, expression (sortByName keys x)}
+expression Set := x -> Adjacent {set, expression keys x}
 toString Set := toString @@ expression
 net Set := net @@ expression
 texMath Set := texMath @@ expression

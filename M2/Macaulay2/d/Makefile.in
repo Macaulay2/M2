@@ -184,7 +184,7 @@ CFLAGS   += -Wunused-function
 CXXFLAGS += -Wunused-function
 
 CFLAGS   += -Wfatal-errors
-CXXFLAGS += -Wfatal-errors
+CXXFLAGS += -Wfatal-errors -std=gnu++17
 
 version.o : CPPFLAGS += -I@srcdir@/../e/memtailor -I@srcdir@/../e/mathic -I@srcdir@/../e/mathicgb
 version.o : CXXFLAGS += -Wno-unused-local-typedefs

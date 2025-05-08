@@ -1,11 +1,11 @@
 # replace lrslib by the name of the library or package
 # install this file as lrslib/Makefile.in
-# add libraries/lrslib/Makefile to ../config/files
+# add libraries/lrslib/Makefile to ../m4/files
 # run make -C ../..
 # reconfigure in the build directory
 HOMEPAGE = http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html
 # URL = http://cgm.cs.mcgill.ca/~avis/C/lrslib/archive
-URL = http://macaulay2.com/Downloads/OtherSourceCode
+URL = https://macaulay2.com/Downloads/OtherSourceCode
 VERSION = 071a
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 TARFILE = lrslib-$(VERSION).tar.gz

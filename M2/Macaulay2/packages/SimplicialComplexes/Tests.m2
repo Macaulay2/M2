@@ -166,7 +166,7 @@ assert(dim void == -infinity)
 assert(faces(0,void) == {})
 assert(faces(-1,void) == {})
 assert(vertices void == {})
-C = chainComplex void
+C = complex void
 assert(C.dd^2 == 0 )
 assert(HH_0(void) == 0)
 assert(HH_-1(void) == 0)
@@ -179,7 +179,7 @@ assert(faces(0,irrelevant) == {})
 assert(#faces(-1,irrelevant) === 1)
 assert(irrelevant === dual irrelevant)
 assert(fVector irrelevant === {1})
-C = chainComplex irrelevant
+C = complex irrelevant
 assert(C.dd^2 == 0 )
 assert(HH_0(irrelevant) == 0)
 assert(HH_-1(irrelevant) == (coefficientRing R)^1)
@@ -215,7 +215,7 @@ D = simplicialComplex monomialIdeal(a*d, a*e, b*c*d, d*e, c*e, b*e)
 assert not isPure D
 assert ( ideal dual D == monomialIdeal (a*b*c*d, a*b*e, a*c*e, d*e) )
 S = ZZ/32003[u,v,w,x,y];
-C = chainComplex(D, Labels => {u,v,w,x,y})
+C = complex(D, Labels => {u,v,w,x,y})
 assert(C.dd^2 == 0 )
 H = prune HH(C)
 assert(H_0 != 0)
@@ -233,14 +233,14 @@ D = simplicialComplex{a*b*i, a*e*i, i*b*j, j*c*b, j*c*a, j*a*e,
      e*i*f, i*h*f, i*h*j, j*e*d, j*g*d, j*h*g, g*h*f, f*e*d,
      d*f*a, f*b*a, f*g*c, f*b*c, g*c*a, g*d*a}
 assert isPure D
-C = chainComplex D
+C = complex D
 assert( C.dd^2 == 0 )
 H = prune HH(C)
 assert(H_0 == 0)
 assert(rank H_1 == 2)
 assert(rank H_2 == 1)
 D' = dual D
-C' = chainComplex D'
+C' = complex D'
 assert(C'.dd^2 == 0 )
 H' = prune HH(C')
 assert (H'_(7-2) === H_2)
@@ -256,7 +256,7 @@ D = simplicialComplex {a*b*i, a*e*i, b*i*j, b*c*j, a*c*j,
      f*g*h, d*e*f, a*d*f, a*b*f, c*f*g, b*c*f, a*c*g, a*e*g}
 isPure D
 assert(vertices D == toList(a..j))
-C = chainComplex D
+C = complex D
 assert(C.dd^2 == 0)
 H = prune HH(C)
 assert(H_0 == 0)
@@ -280,7 +280,7 @@ D = simplicialComplex abelian 8
 #faces(1,D)
 #faces(2,D)
 #faces(3,D)
-C = chainComplex D
+C = complex D
 assert(C.dd^2 == 0)
 prune HH(C)
 transpose gens ideal D     
@@ -297,7 +297,7 @@ assert(vertices D == toList(b..f))
 assert(facets dual D == facets D)
 S = ZZ/32003[u,v,x,y,z];
 L = {x^2, x*y, x*z, y^2, y*z}
-C = chainComplex(D, Labels => L)
+C = complex(D, Labels => L)
 assert(C.dd^2 == 0)
 l = length C
 assert((for i to l list rank C_i) == for i to l list (fVector D)#i)
@@ -312,7 +312,7 @@ assert all(1..l, i -> H_i == 0)
 TEST ///
 R = ZZ/101[a..e];
 D = simplicialComplex monomialIdeal product gens R
-C = chainComplex D
+C = complex D
 assert(C.dd^2 == 0)
 assert(boundaryMap(5,D) == 0)
 H = prune HH(C)
@@ -328,7 +328,7 @@ D = simplicialComplex {x_0 * x_1 * x_2, x_1 * x_2 * x_3}
 facets D
 dual D
 faces(0,D)
-chainComplex D
+complex D
 dual D
 ///
 
@@ -357,14 +357,14 @@ D = buchbergerSimplicialComplex(L1,R)
 -- peek D.cache.labels
 boundaryMap(0,D,Labels=>L1)
 boundaryMap(1,D,Labels=>L1)
-C = chainComplex(D,Labels=>L1)
+C = complex(D,Labels=>L1)
 assert(C.dd^2 == 0)
 prune(HH C)
 assert all(0..dim D, i -> HH_(i+1)(C) == 0)
 assert(HH_0(C) == S^1/(ideal L1))
 assert isHomogeneous C
 E = lyubeznikSimplicialComplex(L1,R)
-B = chainComplex(E,Labels=>L1)
+B = complex(E,Labels=>L1)
 assert(B.dd^2 == 0)
 assert all(0..dim E, i -> HH_(i+1)(B) == 0)
 assert(HH_0(B) == S^1/(ideal L1))
@@ -436,7 +436,7 @@ S=ZZ/32003[x,y,z]
 L={y*z,x^2*z^2,x^2*y^2}
 R = ZZ/32003[a..c]
 D = buchbergerSimplicialComplex(L,R)
-C = chainComplex(D,Labels=>L)
+C = complex(D,Labels=>L)
 assert(C.dd^2 == 0)
 betti C
 prune(HH C)
@@ -449,7 +449,7 @@ TEST ///
 x = getSymbol "x"
 S = QQ[x_1..x_5];
 Delta = simplicialComplex {x_1*x_2*x_3, x_2*x_4, x_3*x_4, x_5};
-C = chainComplex Delta
+C = complex Delta
 C.dd
 assert(C.dd_0 * C.dd_1 == 0)
 assert(C.dd_1 * C.dd_2 == 0)
@@ -538,11 +538,11 @@ D = simplicialComplex{A_0*A_2*A_3,A_2*A_3*A_4}
 vertices D
 S = QQ[x_0..x_3]
 -- This complex should be a minimal free resolution of ideal {S_0*S_1,S_3,S_1*S_2,S_0*S_2}
-C = chainComplex(D,Labels => {S_0*S_1,S_3,S_1*S_2,S_0*S_2})
+C = complex(D,Labels => {S_0*S_1,S_3,S_1*S_2,S_0*S_2})
 assert((for i to length C list rank C_i) === fVector D)
 assert all(1..length C, i -> ((homology C)_i == 0))
 -- This complex is not a minimal free resolution. It is not even exact.
-C = chainComplex(D,Labels => {S_3,S_0*S_1,S_1*S_2,S_0*S_2})
+C = complex(D,Labels => {S_3,S_0*S_1,S_1*S_2,S_0*S_2})
 assert(not (homology C)_1 == 0)
 ///
 
@@ -568,17 +568,17 @@ assert (ring image g === ring D)
 
 
 ------------------------------------------------------------------------------
--- Testing chainComplex of a simplicial map
+-- Testing complex of a simplicial map
 TEST ///
 R = QQ[a,b,c,d,e,f]
 D = simplicialComplex({a*b*c, b*c*d, d*e*f})
 D' = simplicialComplex({a*b*c, c*d, d*e*f})
 phi = map(D, D', {a,b,c,d,e,f})
 assert isWellDefined phi
-Phi = chainComplex phi
+Phi = complex phi
 assert (Phi * (source Phi).dd == (target Phi).dd * Phi)
-assert ((source Phi) === (chainComplex D'))
-assert ((target Phi) === (chainComplex D))
+assert ((source Phi) === (complex D'))
+assert ((target Phi) === (complex D))
 ///
 
 
@@ -601,7 +601,7 @@ assert((prune homology I)_1 == matrix{{1_(coefficientRing D)}})
 ///
 
 ------------------------------------------------------------------------------
--- Testing more chainComplex maps
+-- Testing more complex maps
 -- These examples come from Munkres' Algebraic Topology
 -- Example 1 of Ch. 1, Sec. 12, page 63-64.
 TEST ///
@@ -616,16 +616,16 @@ Torus = simplicialComplex{
 S = ZZ[y_0..y_5]
 Circle = simplicialComplex(for i to 5 list S_i*S_((i+1)%6))
 f = map(Torus,Circle,matrix{{R_0,R_4,R_3,R_3,R_4,R_6}})
-Cf = chainComplex f
+Cf = complex f
 CCircle = source Cf
 CTorus = target Cf
 assert not isInjective f
 assert all(1, i -> Cf_(i-1)*CCircle.dd_i == CTorus.dd_i*Cf_i )
 g = map(Torus,Circle,matrix{{R_0,R_1,R_2,R_0,R_4,R_3}})
-Cg = chainComplex g
+Cg = complex g
 assert all(1, i -> Cg_(i-1)*CCircle.dd_i == CTorus.dd_i*Cg_i)
 h = map(Torus,Circle,matrix{{R_0,R_7,R_8,R_5,R_5,R_0}})
-Ch = chainComplex h
+Ch = complex h
 assert all(1, i -> Ch_(i-1)*CCircle.dd_i == CTorus.dd_i*Ch_i)
 ///
 

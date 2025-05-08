@@ -1655,7 +1655,8 @@ static node chkdefinition(node e, scope v){
 			EQUAL!=strcmp("signed char",ltype->body.type.Cname) &&
 			EQUAL!=strcmp("unsigned char",ltype->body.type.Cname) &&
 			EQUAL!=strcmp("short",ltype->body.type.Cname) &&
-			EQUAL!=strcmp("unsigned short",ltype->body.type.Cname))
+			EQUAL!=strcmp("unsigned short",ltype->body.type.Cname) &&
+			EQUAL!=strcmp("hash_t",ltype->body.type.Cname))
 		       {
 			 errorpos(lhs, "thread local variable not valid integer type");
 			 return bad__K;

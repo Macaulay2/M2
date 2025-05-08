@@ -229,13 +229,13 @@ class GBRing : public our_new_delete
   // Returns coeff*exp*e_sub_i in F, where exp is an exponent vector.
   // If comp==0, F is never considered (so it can be NULL)
 
-  gbvector *gbvector_zero() const { return 0; }
+  gbvector *gbvector_zero() const { return nullptr; }
   void gbvector_sort(const FreeModule *F,
                      gbvector *&f);  // TO BE USED CAREFULLY: gbvector's should
   // mostly be kept in monomial order.  This is here when the construction
   // doesn't satisfy this property.
 
-  bool gbvector_is_zero(const gbvector *f) const { return f == 0; }
+  bool gbvector_is_zero(const gbvector *f) const { return f == nullptr; }
   bool gbvector_is_equal(const gbvector *f, const gbvector *g) const;
   // f,g can be both be in F, or both in Fsyz
 

@@ -3,17 +3,17 @@ doc ///
       minimalBetti
      (minimalBetti,Ideal)
      (minimalBetti,Module)
-     (minimalBetti,MonomialIdeal)
      [minimalBetti,DegreeLimit]
      [minimalBetti,LengthLimit]
      [minimalBetti,Weights]
+     [minimalBetti,ParallelizeByDegree]
    Headline
      minimal betti numbers of (the minimal free resolution of) a homogeneous ideal or module
    Usage
      B = minimalBetti I
      B = minimalBetti(I, DegreeLimit=>d, LengthLimit=>len, Weights=>h)
    Inputs
-     I:{Ideal,Module,MonomialIdeal}
+     I:{Ideal,Module}
        a homogeneous ideal or module in a singly graded polynomial ring or skew commuting polynomial ring over a finite prime field
      DegreeLimit=>ZZ
        if given, only compute enough to determine the Betti diagram up to and including the row labelled {\tt d}
@@ -21,6 +21,9 @@ doc ///
        if given, only compute enough to determine the Betti diagram up to and including the column labelled {\tt len}
      Weights=>List
        see @TO [betti, Weights]@
+     ParallelizeByDegree => Boolean
+       Use additional parallelism to compute different (homological degree, internal degree) pairs in
+       parallel when possible. To control parallelism, see @TO "parallelism in engine computations"@
    Outputs
      :BettiTally
    Description
@@ -55,7 +58,7 @@ doc ///
       have support for {\tt DegreeLimit} and {\tt LengthLimit}, and probably still computes more
       than is needed (it is still experimental).
    Caveat
-     Released in M2 1.9.1, still experimental.  Only works over finite prime field.
+     Only works over finite prime field.
      If the ideal or module is a non-homogeneous or multi-homogeneous object,
      then this function will result in an error.
    SeeAlso
@@ -64,3 +67,4 @@ doc ///
      resolution
      [resolution, FastNonminimal]
 ///
+

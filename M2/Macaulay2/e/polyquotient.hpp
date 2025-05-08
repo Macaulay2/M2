@@ -220,18 +220,13 @@ class PolyRingQuotient : public PolyRingFlat
     return is_graded() && numerR_->PolyRing::is_homogeneous(f);
   }
 
-  virtual void degree(const ring_elem f, monomial d) const
-  {
-    numerR_->PolyRing::degree(f, d);
-  }
-
   virtual bool multi_degree(const ring_elem f, monomial d) const
   {
     return numerR_->PolyRing::multi_degree(f, d);
   }
 
   virtual void degree_weights(const ring_elem f,
-                              M2_arrayint wts,
+                              const std::vector<int> &wts,
                               int &lo,
                               int &hi) const
   {
@@ -241,14 +236,16 @@ class PolyRingQuotient : public PolyRingFlat
   virtual ring_elem homogenize(const ring_elem f,
                                int v,
                                int deg,
-                               M2_arrayint wts) const
+                               const std::vector<int> &wts) const
   {
     ring_elem result = numerR_->PolyRing::homogenize(f, v, deg, wts);
     normal_form(result);
     return result;
   }
 
-  virtual ring_elem homogenize(const ring_elem f, int v, M2_arrayint wts) const
+  virtual ring_elem homogenize(const ring_elem f,
+                               int v,
+                               const std::vector<int> &wts) const
   {
     ring_elem result = numerR_->PolyRing::homogenize(f, v, wts);
     normal_form(result);
@@ -280,14 +277,14 @@ class PolyRingQuotient : public PolyRingFlat
     return numerR_->PolyRing::list_form(coeffR, f);
   }
 
-  virtual ring_elem *get_parts(const M2_arrayint wts,
+  virtual ring_elem *get_parts(const std::vector<int> &wts,
                                const ring_elem f,
                                long &result_len) const
   {
     return numerR_->PolyRing::get_parts(wts, f, result_len);
   }
 
-  virtual ring_elem get_part(const M2_arrayint wts,
+  virtual ring_elem get_part(const std::vector<int> &wts,
                              const ring_elem f,
                              bool lobound_given,
                              bool hibound_given,

@@ -7,7 +7,6 @@ Node
    (annihilator, Ideal)
    (annihilator, Module)
    (annihilator, RingElement)
-   (annihilator, CoherentSheaf)
    [annihilator, Strategy]
   Headline
     the annihilator ideal
@@ -15,7 +14,7 @@ Node
     ann M
     annihilator M
   Inputs
-    M:{Ideal,Module,RingElement,CoherentSheaf}
+    M:{Ideal,Module,RingElement}
     Strategy=>Symbol
       either @TT "Quotient"@ or @TT "Intersection"@
   Outputs

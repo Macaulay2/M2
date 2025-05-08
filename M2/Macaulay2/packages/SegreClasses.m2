@@ -9,7 +9,7 @@ newPackage( "SegreClasses",
          Email => "Corey.Harris@mis.mpg.de",
          HomePage => "http://coreyharris.name"}
     },
-    Headline => "test containment of varieties and computes algebraic multiplicity of subvarieties and Fulton-MacPherson intersection products, via a very general Segre class computation",
+    Headline => "Segre class computations for containment of varieties and Fulton-MacPherson intersection products",
     Keywords => {"Intersection Theory"},
     DebuggingMode => false
 );
@@ -293,7 +293,7 @@ chowClass Scheme := opts -> X -> (
                     Ls=Ls+sum(wDims_i,j->ideal(random(OneAti(degreeLength R,i),R)));
                 );
             );
-            ZeroDimGB=ideal groebnerBasis(saturate(X)+Ls+LA, Strategy=>"F4");
+            ZeroDimGB=groebnerBasis(saturate(X)+Ls+LA, Strategy=>"F4");
             classI=classI+(numColumns basis(cokernel leadTerm ZeroDimGB))*w;
         );
     );

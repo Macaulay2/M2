@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -1393920928
+-- -*- M2-comint -*- hash: 4423001283312120928
 
 i1 : R = CC[x,t]; -- include the path variable in the ring
 
@@ -18,16 +18,8 @@ o6 : List
 
 i7 : peek S0_0
 
-o7 = Point{ConditionNumber => 1           }
+o7 = Point{cache => CacheTable{...9...}}
            Coordinates => {-1.41421}
-           CycleNumber => 1
-           FunctionResidual => 4.44089e-16
-           LastT => .0015625
-           MaximumPrecision => 52
-           Multiplicity => 1
-           NewtonResidual => 0
-           SolutionNumber => -1
-           SolutionStatus => Regular
 
 i8 : R=CC[x,y,t]; -- include the path variable in the ring
 
@@ -57,9 +49,9 @@ o14 : List
 
 i15 : S0=bertiniTrackHomotopy(t, H, S1, IsProjective=>1) --solutions to H when t=0
 
-o15 = {{-.947782-.710437*ii, .11122-.740833*ii}, {-.847231+1.44261*ii,
+o15 = {{-.482114-.646009*ii, .215048-.462233*ii}, {4.1398-4.7253*ii,
       -----------------------------------------------------------------------
-      .549043+.904502*ii}}
+      -1.389-3.72253*ii}}
 
 o15 : List
 

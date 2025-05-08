@@ -608,7 +608,7 @@ hilbertBasis Cone := opts->C -> (
      if C#?"HilbertBasis" then return (apply(numRows C#"HilbertBasis",i->(transpose C#"HilbertBasis")_{i}));
      if opts#UsePolymake then runPolymake(C,"HilbertBasis")
      else (
-     -- Computing the row echolon form of the matrix M
+     -- Computing the row echelon form of the matrix M
      ref := M -> (
 	  n := numColumns M;
 	  s := numRows M;

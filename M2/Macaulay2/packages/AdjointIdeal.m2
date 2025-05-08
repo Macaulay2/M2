@@ -5,7 +5,7 @@ newPackage(
     	Date => "August 25, 2010",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@mathematik.uni-kl.de", 
-		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}},
+		  HomePage => "https://agag-jboehm.math.rptu.de/~boehm/"}},
     	Headline => "adjoint ideals of plane curves and related computations",
 	Keywords => {"Commutative Algebra"},
     	DebuggingMode => false,
@@ -663,7 +663,7 @@ doc ///
 
      For more theoretical details see 
      J. Boehm: Rational parametrization of rational curves,
-     @HREF"http://www.math.uni-sb.de/ag/schreyer/jb/diplom%20janko%20boehm.pdf"@.
+     @HREF"https://agag-jboehm.math.rptu.de/~boehm/diplom%20janko%20boehm.pdf"@.
 
 
      {\bf Key user functions:}

@@ -2,7 +2,7 @@
 
 -----------------------------------------------------------------------------
 -- paramBpoly attempts to compute the b-polys for a poly with parameters
--- IN>  f: RingElement (an element in a Weyl algebra with a palynomial ring for a coefficientRing)
+-- IN>  f: RingElement (an element in a Weyl algebra with a polynomial ring for a coefficientRing)
 -- IN>  file: File (e.g., stdio)
 -- OUT> list of all possible Bernstein-Sato polynomials (also write the tree of b-polys into file)
 -----------------------------------------------------------------------------

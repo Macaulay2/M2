@@ -173,7 +173,8 @@ resolutionInEngine := (opts, M) -> (
 		    false,			-- useMaxSlantedDegree
 		    0,				-- maxSlantedDegree (is this the same as harddegreelimit?)
 		    floor strategy,		-- algorithm (floor converts the experimental value 4.1 to 4, avoiding error message above)
-		    opts.SortStrategy		-- strategy (is this the same as opts.SortStrategy?)
+		    opts.SortStrategy,		-- strategy (is this the same as opts.SortStrategy?)
+                    opts.ParallelizeByDegree
 		    )};
 	  W#"RawComputation log" = Bag {log};
      	  W.RawComputation = value log;
@@ -231,7 +232,8 @@ resolution = method(
 	-- HardLengthLimit	=> infinity,	-- throw out information in lengths above this one
 	SortStrategy		=> 0,		-- strategy choice for sorting S-pairs
 	Strategy		=> null,	-- algorithm to use, usually 1, but sometimes 2
-	FastNonminimal		=> false
+	FastNonminimal		=> false,
+        ParallelizeByDegree     => false        -- currently: only used by FastNonminimal, gives warning if true and another Strategy selected
 	}
     )
 
@@ -277,6 +279,7 @@ updateComputation(ResolutionComputation, ChainComplex) := ChainComplex => option
 protect ManualResolution -- not to be exported
 storefuns#resolution = (M,C) -> M.cache.ManualResolution = C
 
+resolution Ideal  := ChainComplex => opts -> I -> resolution(comodule I, opts)
 resolution Module := ChainComplex => opts -> M -> (
     R := ring M;
     strategy := opts.Strategy;
@@ -305,10 +308,6 @@ resolution Module := ChainComplex => opts -> M -> (
     if C =!= null then C else if strategy === null
     then error("no applicable strategy for resolving over ", toString R)
     else error("assumptions for resolution strategy ", toString strategy, " are not met"))
-
-resolution Ideal := ChainComplex => opts -> I -> resolution(
-    if I.cache.?quotient then I.cache.quotient
-    else I.cache.quotient = cokernel generators I, opts)
 
 resolution Matrix := ChainComplexMap => opts -> f -> extend(
     resolution(target f, opts), resolution(source f, opts), matrix f)
@@ -356,6 +355,7 @@ resolutionNonminimal = (opts, M) -> (
     --    LengthLimit
     --    Strategy (values allowed: strats)
     strats := {4, 4.1, 5, 5.1};
+    if isMember(opts.Strategy, {4.1, 5.1}) then error "nonminimal resolution strategies 4.1 and 5.1 have been removed in M2 1.23.  Please contact the M2 team with any questions";
     strategy := if isMember(opts.Strategy, strats) then opts.Strategy
     else if opts.FastNonminimal then (
 	if opts.Strategy === null then first strats
@@ -412,7 +412,8 @@ resolutionNonminimal = (opts, M) -> (
                 false,					    -- useMaxSlantedDegree
                 0,					    -- maxSlantedDegree (is this the same as harddegreelimit?)
                 floor strategy,		    -- algorithm (floor converts the experimental value 4.1 to 4, avoiding error message above)
-                opts.SortStrategy			    -- strategy (is this the same as opts.SortStrategy?)
+                opts.SortStrategy,			    -- strategy (is this the same as opts.SortStrategy?)
+                opts.ParallelizeByDegree
                 )};
         W#"RawComputation log" = Bag {log};
         W.RawComputation = value log;

@@ -57,26 +57,26 @@ GBRing::GBRing(const Ring *K0, const Monoid *M0)
       M(M0),
       K(K0),
       _coeffs_ZZ(false),  // set below
-      zzp(0),
+      zzp(nullptr),
       _nvars(M->n_vars()),
       _up_order(false),
       _is_skew(false),
       _skew(),
-      _skew_monoms(0),
+      _skew_monoms(nullptr),
       is_weyl(false),
-      weyl(0),
+      weyl(nullptr),
       is_solvable(false),
-      solvable(0),
+      solvable(nullptr),
       _one(K->from_long(1))
 {
   exp_size = EXPONENT_BYTE_SIZE(_nvars + 2);
   monom_size = MONOMIAL_BYTE_SIZE(M->monomial_size());
 
-  gbvector_size = sizeofgbvector(((gbvector *)0), M->monomial_size());
+  gbvector_size = sizeofgbvector(((gbvector *)nullptr), M->monomial_size());
   mem = new stash("gbvector", gbvector_size);
 
   const Z_mod *Kp = K->cast_to_Z_mod();
-  if (Kp != 0) zzp = Kp->get_CoeffRing();
+  if (Kp != nullptr) zzp = Kp->get_CoeffRing();
 
   if (K == globalQQ) K = globalZZ;
   if (K == globalZZ) _coeffs_ZZ = true;
@@ -106,17 +106,17 @@ gbvector *GBRingPoly::mult_by_term1(const FreeModule *F,
   gbvector *inresult = &head;
   int monlen = M->monomial_size();
 
-  for (const gbvector *s = f; s != NULL; s = s->next)
+  for (const gbvector *s = f; s != nullptr; s = s->next)
     {
       gbvector *t = new_raw_term();
-      t->next = 0;
+      t->next = nullptr;
       t->comp = s->comp + comp;
       t->coeff = K->mult(u, s->coeff);
       exponents::mult(monlen, monom, s->monom, t->monom);
       inresult->next = t;
       inresult = inresult->next;
     }
-  inresult->next = 0;
+  inresult->next = nullptr;
   return head.next;
 }
 
@@ -165,14 +165,14 @@ gbvector *GBRingSkew::mult_by_term1(const FreeModule *F,
 
   M->to_expvector(m, EXP1);
 
-  for (const gbvector *s = f; s != NULL; s = s->next)
+  for (const gbvector *s = f; s != nullptr; s = s->next)
     {
       gbvector_get_lead_exponents(F, s, EXP2);
       int sign = _skew.mult_sign(EXP1, EXP2);
       if (sign == 0) continue;
 
       gbvector *t = new_raw_term();
-      t->next = 0;
+      t->next = nullptr;
       t->comp = s->comp + comp;
       t->coeff = K->mult(c, s->coeff);
       if (sign < 0) K->negate_to(t->coeff);
@@ -181,7 +181,7 @@ gbvector *GBRingSkew::mult_by_term1(const FreeModule *F,
       inresult->next = t;
       inresult = inresult->next;
     }
-  inresult->next = 0;
+  inresult->next = nullptr;
   return head.next;
 }
 
@@ -263,7 +263,7 @@ gbvector *GBRingSolvable::mult_by_term1(const FreeModule *F,
 #ifdef DEVELOPMENT
 #warning "implement GBRingSolvable::mult_by_term"
 #endif
-  return 0;
+  return nullptr;
 }
 
 //////////////////////
@@ -273,7 +273,7 @@ gbvector *GBRingSolvable::mult_by_term1(const FreeModule *F,
 void GBRing::gbvector_remove_term(gbvector *f)
 {
   // It is not clear whether we should try to free elements of K
-  f->next = 0;
+  f->next = nullptr;
   f->coeff = ZERO_RINGELEM;
   mem->delete_elem(f);
   // GC_FREE(reinterpret_cast<char *>(f));
@@ -283,7 +283,7 @@ void GBRing::gbvector_remove(gbvector *f0)
 {
   // It is not clear whether we should try to free elements of K
   gbvector *f = f0;
-  while (f != 0)
+  while (f != nullptr)
     {
       gbvector *g = f;
       f = f->next;
@@ -297,11 +297,11 @@ gbvector *GBRing::gbvector_term(const FreeModule *F, ring_elem coeff, int comp)
   gbvector *v = new_raw_term();
   v->coeff = coeff;
   v->comp = comp;
-  v->next = 0;
+  v->next = nullptr;
   M->one(v->monom);
 
   const SchreyerOrder *S;
-  if (comp > 0 && _schreyer_encoded && (S = F->get_schreyer_order()) != 0)
+  if (comp > 0 && _schreyer_encoded && (S = F->get_schreyer_order()) != nullptr)
     S->schreyer_up(v->monom, comp - 1, v->monom);
 
   return v;
@@ -314,7 +314,7 @@ gbvector *GBRing::gbvector_raw_term(ring_elem coeff, const int *monom, int comp)
   gbvector *v = new_raw_term();
   v->coeff = coeff;
   v->comp = comp;
-  v->next = 0;
+  v->next = nullptr;
   M->copy(monom, v->monom);
 
   return v;
@@ -330,7 +330,7 @@ gbvector *GBRing::gbvector_term(const FreeModule *F,
   gbvector *v = gbvector_raw_term(coeff, monom, comp);
 
   const SchreyerOrder *S;
-  if (comp > 0 && _schreyer_encoded && (S = F->get_schreyer_order()) != 0)
+  if (comp > 0 && _schreyer_encoded && (S = F->get_schreyer_order()) != nullptr)
     S->schreyer_up(v->monom, comp - 1, v->monom);
 
   return v;
@@ -347,11 +347,11 @@ gbvector *GBRing::gbvector_term_exponents(const FreeModule *F,
   gbvector *v = new_raw_term();
   v->coeff = coeff;
   v->comp = comp;
-  v->next = 0;
+  v->next = nullptr;
   M->from_expvector(exp, v->monom);
 
   const SchreyerOrder *S;
-  if (comp > 0 && _schreyer_encoded && (S = F->get_schreyer_order()) != 0)
+  if (comp > 0 && _schreyer_encoded && (S = F->get_schreyer_order()) != nullptr)
     S->schreyer_up(v->monom, comp - 1, v->monom);
 
   return v;
@@ -360,7 +360,7 @@ gbvector *GBRing::gbvector_term_exponents(const FreeModule *F,
 gbvector *GBRing::gbvector_copy_term(const gbvector *t)
 {
   gbvector *v = new_raw_term();
-  v->next = 0;
+  v->next = nullptr;
   v->coeff = t->coeff;
   v->comp = t->comp;
   M->copy(t->monom, v->monom);
@@ -371,12 +371,12 @@ bool GBRing::gbvector_is_equal(const gbvector *a, const gbvector *b) const
 {
   for (;; a = a->next, b = b->next)
     {
-      if (a == NULL)
+      if (a == nullptr)
         {
-          if (b == NULL) return true;
+          if (b == nullptr) return true;
           return false;
         }
-      if (b == NULL) return false;
+      if (b == nullptr) return false;
       if (a->comp != b->comp) return false;
       if (!K->is_equal(a->coeff, b->coeff)) return false;
       if (M->compare(a->monom, b->monom) != 0) return false;
@@ -386,7 +386,7 @@ bool GBRing::gbvector_is_equal(const gbvector *a, const gbvector *b) const
 int GBRing::gbvector_n_terms(const gbvector *v) const
 {
   int result = 0;
-  for (; v != NULL; v = v->next) result++;
+  for (; v != nullptr; v = v->next) result++;
   return result;
 }
 
@@ -442,7 +442,7 @@ gbvector *GBRing::gbvector_lead_term(int nparts,
 #ifdef DEVELOPMENT
 #warning "Schreyer order question"
 #endif
-  if (v == NULL) return NULL;
+  if (v == nullptr) return nullptr;
   if (nparts < 0)
     {
       return gbvector_copy_term(v);
@@ -452,13 +452,13 @@ gbvector *GBRing::gbvector_lead_term(int nparts,
       int nslots = M->n_slots(nparts);
       gbvector head;
       gbvector *result = &head;
-      for (const gbvector *t = v; t != NULL; t = t->next)
+      for (const gbvector *t = v; t != nullptr; t = t->next)
         {
           if (M->compare(nslots, t->monom, v->monom) != 0) break;
           result->next = gbvector_copy_term(t);
           result = result->next;
         }
-      result->next = NULL;
+      result->next = nullptr;
       return head.next;
     }
 }
@@ -490,7 +490,7 @@ gbvector *GBRing::gbvector_parallel_lead_terms(M2_arrayint w,
                                                const gbvector *leadv,
                                                const gbvector *v)
 {
-  if (v == NULL) return NULL;
+  if (v == nullptr) return nullptr;
 
   // loop through every term of v.  Keep those t that satisfy: exp(leadv) -
   // exp(t)
@@ -504,7 +504,7 @@ gbvector *GBRing::gbvector_parallel_lead_terms(M2_arrayint w,
 
   gbvector head;
   gbvector *result = &head;
-  for (const gbvector *t = v; t != NULL; t = t->next)
+  for (const gbvector *t = v; t != nullptr; t = t->next)
     {
       M->to_expvector(t->monom, e);
       if (leadv == t || isparallel(w, lead, e))
@@ -513,7 +513,7 @@ gbvector *GBRing::gbvector_parallel_lead_terms(M2_arrayint w,
           result = result->next;
         }
     }
-  result->next = NULL;
+  result->next = nullptr;
   return head.next;
 }
 
@@ -524,7 +524,7 @@ void GBRing::gbvector_get_lead_monomial(const FreeModule *F,
 // the result will NOT be the total monomial.
 {
   const SchreyerOrder *S;
-  if (_schreyer_encoded && (S = F->get_schreyer_order()) != 0 && f->comp > 0)
+  if (_schreyer_encoded && (S = F->get_schreyer_order()) != nullptr && f->comp > 0)
     S->schreyer_down(f->monom, f->comp - 1, result);
   else
     M->copy(f->monom, result);
@@ -535,7 +535,7 @@ void GBRing::gbvector_get_lead_exponents(const FreeModule *F,
                                          int *result)
 {
   const SchreyerOrder *S;
-  if (_schreyer_encoded && (S = F->get_schreyer_order()) != 0 && f->comp > 0)
+  if (_schreyer_encoded && (S = F->get_schreyer_order()) != nullptr && f->comp > 0)
     {
       monomial MONOM1 = ALLOCATE_MONOMIAL(monom_size);
 
@@ -548,25 +548,25 @@ void GBRing::gbvector_get_lead_exponents(const FreeModule *F,
 
 void GBRing::gbvector_mult_by_coeff_to(gbvector *f, ring_elem u)
 {
-  for (; f != 0; f = f->next) K->mult_to(f->coeff, u);
+  for (; f != nullptr; f = f->next) K->mult_to(f->coeff, u);
 }
 
 void GBRing::gbvector_negate_to(gbvector *f) const
 {
-  for (; f != 0; f = f->next) K->negate_to(f->coeff);
+  for (; f != nullptr; f = f->next) K->negate_to(f->coeff);
 }
 
 gbvector *GBRing::gbvector_mult_by_coeff(const gbvector *v, ring_elem u)
 {
   gbvector head;
   gbvector *result = &head;
-  for (const gbvector *t = v; t != NULL; t = t->next)
+  for (const gbvector *t = v; t != nullptr; t = t->next)
     {
       result->next = gbvector_copy_term(t);
       result = result->next;
       K->mult_to(result->coeff, u);
     }
-  result->next = NULL;
+  result->next = nullptr;
   return head.next;
 }
 
@@ -574,8 +574,8 @@ gbvector *GBRing::gbvector_copy(const gbvector *f)
 {
   gbvector head;
   gbvector *b = &head;
-  for (; f != 0; f = f->next, b = b->next) b->next = gbvector_copy_term(f);
-  b->next = 0;
+  for (; f != nullptr; f = f->next, b = b->next) b->next = gbvector_copy_term(f);
+  b->next = nullptr;
   return head.next;
 }
 
@@ -583,11 +583,11 @@ void GBRing::gbvector_add_to_zzp(const FreeModule *F,
                                  gbvector *&f,
                                  gbvector *&g)
 {
-  if (g == NULL) return;
-  if (f == NULL)
+  if (g == nullptr) return;
+  if (f == nullptr)
     {
       f = g;
-      g = NULL;
+      g = nullptr;
       return;
     }
   gbvector head;
@@ -600,7 +600,7 @@ void GBRing::gbvector_add_to_zzp(const FreeModule *F,
           result->next = g;
           result = result->next;
           g = g->next;
-          if (g == NULL)
+          if (g == nullptr)
             {
               result->next = f;
               f = head.next;
@@ -612,11 +612,11 @@ void GBRing::gbvector_add_to_zzp(const FreeModule *F,
           result->next = f;
           result = result->next;
           f = f->next;
-          if (f == NULL)
+          if (f == nullptr)
             {
               result->next = g;
               f = head.next;
-              g = NULL;
+              g = nullptr;
               return;
             }
         }
@@ -640,17 +640,17 @@ void GBRing::gbvector_add_to_zzp(const FreeModule *F,
               result = result->next;
             }
           gbvector_remove_term(tmg);
-          if (g == NULL)
+          if (g == nullptr)
             {
               result->next = f;
               f = head.next;
               return;
             }
-          if (f == NULL)
+          if (f == nullptr)
             {
               result->next = g;
               f = head.next;
-              g = NULL;
+              g = nullptr;
               return;
             }
         }
@@ -659,11 +659,11 @@ void GBRing::gbvector_add_to_zzp(const FreeModule *F,
 
 void GBRing::gbvector_add_to(const FreeModule *F, gbvector *&f, gbvector *&g)
 {
-  if (g == NULL) return;
-  if (f == NULL)
+  if (g == nullptr) return;
+  if (f == nullptr)
     {
       f = g;
-      g = NULL;
+      g = nullptr;
       return;
     }
   if (zzp)
@@ -679,7 +679,7 @@ void GBRing::gbvector_add_to(const FreeModule *F, gbvector *&f, gbvector *&g)
           result->next = g;
           result = result->next;
           g = g->next;
-          if (g == NULL)
+          if (g == nullptr)
             {
               result->next = f;
               f = head.next;
@@ -690,11 +690,11 @@ void GBRing::gbvector_add_to(const FreeModule *F, gbvector *&f, gbvector *&g)
           result->next = f;
           result = result->next;
           f = f->next;
-          if (f == NULL)
+          if (f == nullptr)
             {
               result->next = g;
               f = head.next;
-              g = NULL;
+              g = nullptr;
               return;
             }
           break;
@@ -722,17 +722,17 @@ void GBRing::gbvector_add_to(const FreeModule *F, gbvector *&f, gbvector *&g)
               result = result->next;
             }
           gbvector_remove_term(tmg);
-          if (g == NULL)
+          if (g == nullptr)
             {
               result->next = f;
               f = head.next;
               return;
             }
-          if (f == NULL)
+          if (f == nullptr)
             {
               result->next = g;
               f = head.next;
-              g = NULL;
+              g = nullptr;
               return;
             }
           break;
@@ -745,17 +745,17 @@ void GBRing::gbvector_sort(const FreeModule *F, gbvector *&f)
   // then add them together.  This allows the same monomial
   // to appear more than once in 'f'.
 
-  if (f == NULL || f->next == NULL) return;
-  gbvector *f1 = NULL;
-  gbvector *f2 = NULL;
-  while (f != NULL)
+  if (f == nullptr || f->next == nullptr) return;
+  gbvector *f1 = nullptr;
+  gbvector *f2 = nullptr;
+  while (f != nullptr)
     {
       gbvector *t = f;
       f = f->next;
       t->next = f1;
       f1 = t;
 
-      if (f == NULL) break;
+      if (f == nullptr) break;
       t = f;
       f = f->next;
       t->next = f2;
@@ -773,7 +773,7 @@ void GBRing::gbvector_text_out(buffer &o,
                                const gbvector *v,
                                int nterms) const
 {
-  if (v == NULL)
+  if (v == nullptr)
     {
       o << "0";
       return;
@@ -784,15 +784,15 @@ void GBRing::gbvector_text_out(buffer &o,
   bool p_parens = false;
   int count = nterms;
   const gbvector *t;
-  for (t = v; t != NULL && count != 0; t = t->next, count--)
+  for (t = v; t != nullptr && count != 0; t = t->next, count--)
     {
-      int isone = (M == NULL || M->is_one(t->monom));
+      int isone = (M == nullptr || M->is_one(t->monom));
       K->elem_text_out(o, t->coeff, p_one, p_plus, p_parens);
       if (!isone) M->elem_text_out(o, t->monom, p_one);
       if (t->comp >= 1) o << "<" << t->comp << ">";
       p_plus = true;
     }
-  if (t != NULL) o << "+...";
+  if (t != nullptr) o << "+...";
 }
 
 void GBRing::divide_exponents(const_exponents exp1,
@@ -835,9 +835,9 @@ gbvector *GBRing::mult_by_term(const FreeModule *F,
 {
   gbvector *result = mult_by_term1(F, f, u, monom, comp);
   const SchreyerOrder *S;
-  if (comp > 0 && _schreyer_encoded && (S = F->get_schreyer_order()) != 0)
+  if (comp > 0 && _schreyer_encoded && (S = F->get_schreyer_order()) != nullptr)
     {
-      for (gbvector *t = result; t != 0; t = t->next)
+      for (gbvector *t = result; t != nullptr; t = t->next)
         S->schreyer_up(t->monom, comp - 1, t->monom);
     }
   return result;
@@ -923,7 +923,7 @@ void GBRing::find_reduction_monomial(
     {
       comp = f->comp;
       const SchreyerOrder *S;
-      if (_schreyer_encoded && (S = F->get_schreyer_order()) != 0)
+      if (_schreyer_encoded && (S = F->get_schreyer_order()) != nullptr)
         S->schreyer_down(monom, comp - 1, monom);
     }
   else
@@ -960,7 +960,7 @@ void GBRing::gbvector_reduce_lead_term(const FreeModule *F,
 
   gbvector *result1 = mult_by_term(F, g, v, MONOM1, comp);
   gbvector_add_to(F, f, result1);
-  if (gsyz != 0)
+  if (gsyz != nullptr)
     {
       gbvector *result_syz1 = mult_by_term(Fsyz, gsyz, v, MONOM1, comp);
       gbvector_add_to(Fsyz, fsyz, result_syz1);
@@ -996,7 +996,7 @@ void GBRing::gbvector_reduce_with_marked_lead_term(const FreeModule *F,
 
   gbvector *result1 = mult_by_term(F, g, v, MONOM1, comp);
   gbvector_add_to(F, f, result1);
-  if (gsyz != 0)
+  if (gsyz != nullptr)
     {
       gbvector *result_syz1 = mult_by_term(Fsyz, gsyz, v, MONOM1, comp);
       gbvector_add_to(Fsyz, fsyz, result_syz1);
@@ -1036,7 +1036,7 @@ bool GBRing::gbvector_reduce_lead_term_ZZ(const FreeModule *F,
 
   gbvector *result1 = mult_by_term(F, g, v, MONOM1, comp);
   gbvector_add_to(F, f, result1);
-  if (gsyz != 0)
+  if (gsyz != nullptr)
     {
       gbvector *result_syz1 = mult_by_term(Fsyz, gsyz, v, MONOM1, comp);
       gbvector_add_to(Fsyz, fsyz, result_syz1);
@@ -1092,8 +1092,8 @@ void GBRing::gbvector_cancel_lead_terms(const FreeModule *F,
   result = mult_by_term(F, f, u, MONOM1, 0);
   gbvector *result1 = mult_by_term(F, g, v, MONOM2, comp);
   gbvector_add_to(F, result, result1);
-  if (fsyz == 0 && gsyz == 0)
-    result_syz = 0;
+  if (fsyz == nullptr && gsyz == nullptr)
+    result_syz = nullptr;
   else
     {
       result_syz = mult_by_term(Fsyz, fsyz, u, MONOM1, 0);
@@ -1121,10 +1121,10 @@ void GBRing::gbvector_replace_2by2_ZZ(const FreeModule *F,
   mpz_init(gd);
   mpz_gcdext(gd, u, v, f->coeff.get_mpz(), g->coeff.get_mpz());
 
-  gbvector *new_g = 0;
-  gbvector *g2 = 0;
-  gbvector *new_gsyz = 0;
-  gbvector *gsyz2 = 0;
+  gbvector *new_g = nullptr;
+  gbvector *g2 = nullptr;
+  gbvector *new_gsyz = nullptr;
+  gbvector *gsyz2 = nullptr;
 
   if (mpz_sgn(v) != 0)
     {
@@ -1203,8 +1203,8 @@ void GBRing::gbvector_combine_lead_terms_ZZ(const FreeModule *F,
   ring_elem v = ring_elem(v1);
   if (globalZZ->is_zero(u) || globalZZ->is_zero(v))
     {
-      result = 0;
-      result_syz = 0;
+      result = nullptr;
+      result_syz = nullptr;
       mpz_clear(u1);
       mpz_clear(v1);
       return;
@@ -1227,8 +1227,8 @@ void GBRing::gbvector_combine_lead_terms_ZZ(const FreeModule *F,
   result = mult_by_term(F, f, u, MONOM1, 0);
   gbvector *result1 = mult_by_term(F, g, v, MONOM2, comp);
   gbvector_add_to(F, result, result1);
-  if (fsyz == 0 && gsyz == 0)
-    result_syz = 0;
+  if (fsyz == nullptr && gsyz == nullptr)
+    result_syz = nullptr;
   else
     {
       result_syz = mult_by_term(Fsyz, fsyz, u, MONOM1, 0);
@@ -1256,7 +1256,7 @@ void GBRing::gbvector_apply(const FreeModule *F,
   // [combines: freemod::apply_quotient_ring_elements,
   // GBZZ_comp::apply_gb_elements]
 
-  for (; gsyz != 0; gsyz = gsyz->next)
+  for (; gsyz != nullptr; gsyz = gsyz->next)
     {
       if (gsyz->comp < 0)
         {
@@ -1283,7 +1283,7 @@ void GBRing::divide_coeff_exact_to_ZZ(gbvector *f, gmp_ZZ u) const
 {
   mpz_t a;
   mpz_init(a);
-  for (; f != 0; f = f->next)
+  for (; f != nullptr; f = f->next)
     {
       mpz_divexact(a, f->coeff.get_mpz(), u);
       f->coeff = globalZZ->RingZZ::from_int(a);
@@ -1295,8 +1295,8 @@ void GBRing::lower_content_ZZ(gbvector *f, mpz_ptr content) const
 // content should be a positive number.  Modify this value
 // so that new value of content = gcd(old-content, content(f)).
 {
-  if (f == 0) return;
-  for (; f != 0; f = f->next)
+  if (f == nullptr) return;
+  for (; f != nullptr; f = f->next)
     {
       mpz_gcd(content, content, f->coeff.get_mpz());
       if (mask_mpz_cmp_si(content, 1) == 0) return;
@@ -1316,13 +1316,13 @@ void GBRing::gbvector_remove_content_ZZ(gbvector *f,
   gbvector *gsyz = fsyz;
   mpz_t content;
   int leadsign;
-  if (g != 0)
+  if (g != nullptr)
     {
       leadsign = mpz_sgn(g->coeff.get_mpz());
       mpz_init_set(content, g->coeff.get_mpz());
       g = g->next;
     }
-  else if (gsyz != 0)
+  else if (gsyz != nullptr)
     {
       leadsign = mpz_sgn(gsyz->coeff.get_mpz());
       mpz_init_set(content, gsyz->coeff.get_mpz());
@@ -1374,9 +1374,9 @@ void GBRing::gbvector_remove_content(gbvector *f,
   // At this point, our coefficient ring is a field (What about
   // finite extensions of ZZ?)
   ring_elem c, cinv;
-  if (f != 0)
+  if (f != nullptr)
     c = f->coeff;
-  else if (fsyz != 0)
+  else if (fsyz != nullptr)
     c = fsyz->coeff;
   else
     return;
@@ -1403,7 +1403,7 @@ const gbvector *GBRing::find_coeff(const FreeModule *F,
 /* If the monomial (g->monom,g->comp) appears exactly in f,
    then return a pointer to that term, if not, return 0. */
 {
-  while (f != 0)
+  while (f != nullptr)
     {
       int cmp = gbvector_compare(F, f, g);
       if (cmp == LT)
@@ -1413,7 +1413,7 @@ const gbvector *GBRing::find_coeff(const FreeModule *F,
       else
         f = f->next;
     }
-  return 0;
+  return nullptr;
 }
 
 void GBRing::gbvector_auto_reduce(const FreeModule *F,
@@ -1428,7 +1428,7 @@ void GBRing::gbvector_auto_reduce(const FreeModule *F,
 // then set f := u*f - v*g, fsyz := u*fsyz - v*gsyz
 {
   const gbvector *t;
-  if ((t = find_coeff(F, f, g)) != 0)
+  if ((t = find_coeff(F, f, g)) != nullptr)
     {
       ring_elem u, v;
       K->syzygy(t->coeff, g->coeff, u, v);
@@ -1469,7 +1469,7 @@ void GBRing::gbvector_auto_reduce_ZZ(const FreeModule *F,
 {
   assert(globalZZ == K);
   const gbvector *t;
-  if ((t = find_coeff(F, f, g)) != 0)
+  if ((t = find_coeff(F, f, g)) != nullptr)
     {
       ring_elem v = globalZZ->quotient(t->coeff, g->coeff);
       if (globalZZ->is_zero(v)) return;
@@ -1504,7 +1504,7 @@ gbvectorHeap::gbvectorHeap(GBRing *GR0, const FreeModule *FF)
 {
   // set K
   int i;
-  for (i = 0; i < GEOHEAP_SIZE; i++) heap[i] = NULL;
+  for (i = 0; i < GEOHEAP_SIZE; i++) heap[i] = nullptr;
 }
 
 gbvectorHeap::~gbvectorHeap()
@@ -1517,7 +1517,7 @@ gbvectorHeap::~gbvectorHeap()
 void gbvectorHeap::mult_by_coeff(ring_elem a)
 {
   for (int i = top_of_heap; i >= 0; i--)
-    if (heap[i] != 0) GR->gbvector_mult_by_coeff_to(heap[i], a);
+    if (heap[i] != nullptr) GR->gbvector_mult_by_coeff_to(heap[i], a);
 }
 
 void gbvectorHeap::add(gbvector *p)
@@ -1528,13 +1528,13 @@ void gbvectorHeap::add(gbvector *p)
   while (len >= heap_size[i]) i++;
   GR->gbvector_add_to(F, heap[i], p);
   len = GR->gbvector_n_terms(heap[i]);
-  p = NULL;
+  p = nullptr;
   while (len >= heap_size[i])
     {
       i++;
       GR->gbvector_add_to(F, heap[i], heap[i - 1]);
       len = GR->gbvector_n_terms(heap[i]);
-      heap[i - 1] = NULL;
+      heap[i - 1] = nullptr;
     }
   if (i > top_of_heap) top_of_heap = i;
 }
@@ -1544,7 +1544,7 @@ const gbvector *gbvectorHeap::get_lead_term()
   int lead_so_far = -1;
   for (int i = 0; i <= top_of_heap; i++)
     {
-      if (heap[i] == NULL) continue;
+      if (heap[i] == nullptr) continue;
       if (lead_so_far < 0)
         {
           lead_so_far = i;
@@ -1561,7 +1561,7 @@ const gbvector *gbvectorHeap::get_lead_term()
       K->add_to(heap[lead_so_far]->coeff, heap[i]->coeff);
       gbvector *tmp = heap[i];
       heap[i] = tmp->next;
-      tmp->next = NULL;
+      tmp->next = nullptr;
       GR->gbvector_remove(tmp);
 
       if (K->is_zero(heap[lead_so_far]->coeff))
@@ -1569,36 +1569,36 @@ const gbvector *gbvectorHeap::get_lead_term()
           // Remove, and start over
           tmp = heap[lead_so_far];
           heap[lead_so_far] = tmp->next;
-          tmp->next = NULL;
+          tmp->next = nullptr;
           GR->gbvector_remove(tmp);
           lead_so_far = -1;
           i = -1;
         }
     }
   mLead = lead_so_far;
-  if (lead_so_far < 0) return NULL;
+  if (lead_so_far < 0) return nullptr;
   gbvector *result = heap[lead_so_far];
   return result;
 }
 gbvector *gbvectorHeap::remove_lead_term()
 {
   if (mLead < 0) get_lead_term();
-  if (mLead < 0) return NULL;
+  if (mLead < 0) return nullptr;
   gbvector *result = heap[mLead];
   heap[mLead] = result->next;
-  result->next = NULL;
+  result->next = nullptr;
   mLead = -1;
   return result;
 }
 
 gbvector *gbvectorHeap::value()
 {
-  gbvector *result = NULL;
+  gbvector *result = nullptr;
   for (int i = 0; i <= top_of_heap; i++)
     {
-      if (heap[i] == NULL) continue;
+      if (heap[i] == nullptr) continue;
       GR->gbvector_add_to(F, result, heap[i]);
-      heap[i] = NULL;
+      heap[i] = nullptr;
     }
   top_of_heap = -1;
   return result;
@@ -1606,10 +1606,10 @@ gbvector *gbvectorHeap::value()
 
 gbvector *gbvectorHeap::current_value() const
 {
-  gbvector *result = NULL;
+  gbvector *result = nullptr;
   for (int i = 0; i <= top_of_heap; i++)
     {
-      if (heap[i] == NULL) continue;
+      if (heap[i] == nullptr) continue;
       gbvector *tmp = GR->gbvector_copy(heap[i]);
       GR->gbvector_add_to(F, result, tmp);
     }
@@ -1621,7 +1621,7 @@ void gbvectorHeap::show() const
 {
   for (int i = 0; i <= top_of_heap; i++)
     {
-      if (heap[i] == NULL) continue;
+      if (heap[i] == nullptr) continue;
       printf("%d ", i);
       dgbvec(GR, heap[i]);
       printf("\n");
@@ -1658,7 +1658,7 @@ void GBRing::reduce_marked_lead_term_heap(
 
   gbvector *result1 = mult_by_term(F, g, v, MONOM1, comp);
   f.add(result1);
-  if (gsyz != 0)
+  if (gsyz != nullptr)
     {
       gbvector *result_syz1 = mult_by_term(Fsyz, gsyz, v, MONOM1, comp);
       fsyz.add(result_syz1);

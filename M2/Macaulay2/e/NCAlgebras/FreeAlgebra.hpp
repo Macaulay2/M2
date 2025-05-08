@@ -9,7 +9,6 @@
 #include "ringelem.hpp"               // for ring_elem
 #include "style.hpp"                  // for GEOHEAP_SIZE
 
-#include <gmp.h>                      // for mpz_srcptr, mpq_srcptr
 #include <iosfwd>                     // for ostream, string
 #include <utility>                    // for pair
 #include <vector>                     // for vector
@@ -108,7 +107,13 @@ public:
                      bool p_parens) const;
 
   bool is_homogeneous(const Poly& f) const;
-  void degree(const Poly& f, monomial d) const;
+  // FIXME: copied from ring.hpp because this doesn't inherit from Ring
+  inline const_monomial degree(const Poly& f) const
+  {
+    auto d = degreeMonoid().make_one();
+    multi_degree(f, d);
+    return d;
+  }
   // returns true if f is homogeneous, and sets already_allocated_degree_vector
   // to be the LCM of the exponent vectors of the degrees of all terms in f.
   bool multi_degree(const Poly& f, monomial already_allocated_degree_vector) const;

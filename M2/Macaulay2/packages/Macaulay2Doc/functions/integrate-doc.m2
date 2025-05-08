@@ -1,13 +1,8 @@
 doc ///
   Key
     integrate
-    (integrate, Function, Constant, Constant)
-    (integrate, Function, Constant, InfiniteNumber)
-    (integrate, Function, Constant, Number)
-    (integrate, Function, InfiniteNumber, Constant)
     (integrate, Function, InfiniteNumber, InfiniteNumber)
     (integrate, Function, InfiniteNumber, Number)
-    (integrate, Function, Number, Constant)
     (integrate, Function, Number, InfiniteNumber)
     (integrate, Function, Number, Number)
   Headline
@@ -16,8 +11,8 @@ doc ///
     integrate(f, a, b)
   Inputs
     f:Function
-    a:{Number, InfiniteNumber, Constant}
-    b:{Number, InfiniteNumber, Constant}
+    a:{Number, InfiniteNumber}
+    b:{Number, InfiniteNumber}
   Outputs
     :RR
   Description

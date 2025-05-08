@@ -14,7 +14,21 @@ document {
 
 document {  -- This node is used as an example in the node: Key
      Key => resolution,
-     Headline => "projective resolution"
+     Headline => "projective resolution",
+     Subnodes => {
+	TO (resolution, Ideal),
+	TO (resolution, Matrix),
+	TO (resolution, Module),
+	TO [resolution, DegreeLimit],
+        TO [resolution, SyzygyLimit],
+        TO [resolution, PairLimit],
+        TO [resolution, StopBeforeComputation],
+        TO [resolution, LengthLimit],
+        TO [resolution, HardDegreeLimit],
+        TO [resolution, Strategy],
+        TO [resolution, SortStrategy],
+	TO [resolution, FastNonminimal]
+        },
      }
 document {
      Key => [resolution,DegreeLimit],
@@ -77,11 +91,6 @@ document {
      }
 
 document {
-     Key => LengthLimit,
-     Headline => "stop when the resolution reaches this length",
-     }
-
-document {
      Key => [resolution,LengthLimit],
      Headline => "stop when the resolution reaches this length",
      TT "LengthLimit", " -- keyword for an optional argument used with
@@ -98,13 +107,6 @@ document {
      PARA{},
      "The resolution returned may actually be one step longer than requested.
      The extra differential is not guaranteed to be minimal."
-     }
-
-document {
-     Key => HardDegreeLimit,
-     Headline => "compute only up to this degree",
-     TT "HardDegreeLimit", " -- keyword for an optional argument that specifies
-     that information above a specified degree is to be discarded."
      }
 
 document {
@@ -136,13 +138,6 @@ document {
 	  },
      "All algorithms use induced monomial orders (Schreyer orders), since
      this makes an enormous improvement to the efficiency of the algorithm."
-     }
-
-document {
-     Key => SortStrategy,
-     Headline => "specify a strategy for sorting S-pairs",
-     TT "SortStrategy", " -- a keyword for an optional argument that
-     specifies the strategy to be used for sorting S-pairs."
      }
 
 document {
@@ -220,7 +215,7 @@ document {   -- This node is used as an example for the documentation node: Key,
 
 document {
      Key => (resolution, Matrix),
-     Headline => "given a module map represented by a matrix, produce a comparison map between resolutions of its source and target",
+     Headline => "compute the comparison map between resolutions of the source and target of a module map represented by a matrix",
      Usage => "resolution f",
      Inputs => { "f" => {"a module homomorphism ", TT "N <--- M"} },
      Outputs => { {"a chain map from a projective resolution of the source of ", TT "f", " to a resolution of the target of ", TT "f" } },
@@ -235,7 +230,7 @@ document {
      }
 
 document { -- This node is used as an example in the documentation nodes: Inputs, Outputs
-     Key => {(resolution, Ideal),(resolution, MonomialIdeal)},
+     Key => (resolution, Ideal),
      Headline => "compute a projective resolution of (the quotient ring corresponding to) an ideal",
      Usage => "resolution I",
      Inputs => {
@@ -268,11 +263,11 @@ document {
      PARA{},
      "Options:",
      UL {
-	  {TO TotalPairs, " -- display the total number of S-pairs, default value ",
+	  {TT "TotalPairs", " -- display the total number of S-pairs, default value ",
 	       toString (options status).TotalPairs },
-	  {TO PairsRemaining, " -- display the number of S-pairs remaining, default value ",
+	  {TT "PairsRemaining", " -- display the number of S-pairs remaining, default value ",
 	       toString (options status).PairsRemaining},
-	  {TO Monomials, " -- display the number of monomials, default value ",
+	  {TT "Monomials", " -- display the number of monomials, default value ",
 	       toString (options status).Monomials}
 	  },
      EXAMPLE lines ///
@@ -280,88 +275,6 @@ document {
 	  D = res coker random(R^2,R^{4:-2})
 	  status(D, TotalPairs => true, PairsRemaining => true, Monomials => true)
      ///
-     }
-
-document {
-     Key => TotalPairs,
-     Headline => "whether to display the total number of S-pairs",
-     TT "TotalPairs", " -- an option for ", TO "status", " which specifies
-     whether to display the total number of S-pairs."
-     }
-
-document {
-     Key => PairsRemaining,
-     Headline => "whether to display the number of S-pairs remaining",
-     TT "PairsRemaining", " -- an option for ", TO "status", " which specifies
-     whether to display number of S-pairs remaining."
-     }
-
-document {
-     Key => Monomials,
-     Headline => "whether to display the number of monomial",
-     TT "Monomials", " -- an option for ", TO "status", " which specifies
-     whether to display the number of monomials."
-     }
-
-document {
-    Key => Precision,
-    Headline => "name of an optional argument.",
-}
-
-document {
-    Key => Unique,
-    Headline => "do not return repeated polynomial roots",
-    "A boolean", TO Boolean, ", to select whether to return repeated roots or not.",
-}
-
-
-document {
-     Key => Variety,
-     Headline => "the class of all algebraic varieties",
-     SeeAlso => "varieties"
-     }
-document { Key => AffineVariety, Headline => "the class of all affine varieties" }
-document { Key => ProjectiveVariety, Headline => "the class of all projective varieties" }
-document {
-     Key => {(Spec, Ring),Spec},
-     Headline => "make an affine variety",
-     Usage => "Spec R",
-     Inputs => {"R"},
-     Outputs => {{ "the affine variety (or scheme) formed from the ring ", TT "R" }},
-     EXAMPLE lines ///
-     R = QQ[x,y];
-     Spec R
-     ///
-     }
-
-document {
-     Key => {(symbol >=, ZZ),(symbol >=,InfiniteNumber)},
-     Usage => "(>= d)",
-     Inputs => { "d" },
-     Outputs => {{"a special object of class ", TT "LowerBound", " used to represent the set of natural numbers at least as large as ", TT "d"}}
-     }
-
-document {
-     Key => {(symbol >, ZZ),(symbol >,InfiniteNumber)},
-     Usage => "(> d)",
-     Inputs => { "d" },
-     Outputs => { { "a special object of class ", TT "LowerBound", " used to represent the set of natural numbers larger than ", TT "d" } }
-     }
-
-document {
-     Key => {(symbol _,OO,Variety), OO},
-     Headline => "the structure sheaf",
-     Usage => "OO_X",
-     Inputs => { "X" => "a variety" },
-     Outputs => { { "the structure sheaf of ", TT "X", "." } },
-     EXAMPLE lines ///
-     R = QQ[x,y,z]/(y^2*z-x*(x-z)*(x-37*z));
-     X = Proj R
-     OO_X
-     HH^1(OO_X)
-     HH^0(OO_X(3))
-     ///,
-     SeeAlso => {CoherentSheaf, cohomology}
      }
 
 document { Key => toRR,
@@ -414,53 +327,6 @@ document {
 	  )
      }
 
-document { Key => InexactNumber,
-     PARA {
-	  "This type of number is intended to serve as a parent class for those types of numbers
-	  that are inexactly represented in the computer."
-	  }
-     }
-
-document {
-     Key => { Constant,
-	  (symbol /,Constant,Constant),
-	  (symbol /,Constant,InexactNumber),
-	  (symbol /,Constant,Number),
-	  (symbol /,InexactNumber,Constant),
-	  (symbol /,Number,Constant),
-	  (symbol ==,Constant,Constant),
-	  (symbol ==,Constant,InexactNumber),
-	  (symbol ==,InexactNumber,Constant),
-	  (symbol ^,Constant,Constant),
-	  (symbol ^,Constant,InexactNumber),
-	  (symbol ^,Constant,Number),
-	  (symbol ^,InexactNumber,Constant),
-	  (symbol ^,Number,Constant),
-	  (symbol +,Constant,RingElement),
-	  (symbol +,RingElement,Constant),
-	  (symbol -,Constant,RingElement),
-	  (symbol -,RingElement,Constant),
-	  (symbol *,Constant,RingElement),
-	  (symbol *,RingElement,Constant),
-	  (symbol /,Constant,RingElement),
-	  (symbol /,Holder,OneExpression),
-	  (symbol /,RingElement,Constant)
-     	  },
-     PARA {
-	  "A constant is a symbolic entity that can be approximated by a real or complex
-	  number to any desired accuracy.  It is converted to a numeric value of the
-	  correct precision, when necessary."
-	  },
-     EXAMPLE lines ///
-     pi
-     +pi
-     numeric_100 pi
-     2. * pi
-     2p100 * pi
-     exp(2*pi*ii/17)
-     ///,
-     SeeAlso => { numeric, "defaultPrecision" }
-     }
 
 document { Key => InexactField,
      Headline => "the class of inexact fields",
@@ -473,7 +339,8 @@ document { Key => InexactField,
      ring oo
      class oo
      parent oo
-     ///
+     ///,
+     Subnodes => { TO RealField, TO ComplexField },
      }
 
 document { Key => InexactFieldFamily,

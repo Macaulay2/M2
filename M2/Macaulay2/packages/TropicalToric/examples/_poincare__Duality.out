@@ -1,0 +1,31 @@
+-- -*- M2-comint -*- hash: 13898403744114474946
+
+i1 : X = toricProjectiveSpace 3;
+
+i2 : k = 2;
+
+i3 : l = toList(#orbits(X,1):3)
+
+o3 = {3, 3, 3, 3, 3, 3}
+
+o3 : List
+
+i4 : poincareDuality(l, X, k)
+
+o4 = {3, 0, 0, 0}
+
+o4 : List
+
+i5 : poincareMatrix(X,2)
+
+o5 = | 1 1 1 1 |
+     | 1 1 1 1 |
+     | 1 1 1 1 |
+     | 1 1 1 1 |
+     | 1 1 1 1 |
+     | 1 1 1 1 |
+
+              6        4
+o5 : Matrix QQ  <--- QQ
+
+i6 : 

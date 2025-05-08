@@ -46,9 +46,11 @@ class MatrixStream
   // Fields required for the general stream interface (see mathicgb::mathicgb.h)
   typedef int Coefficient;
   // typedef long Coefficient;
-  typedef size_t VarIndex;
+  // typedef size_t VarIndex;
+  typedef int VarIndex;
   typedef int Exponent;
-  typedef unsigned int Component;
+  //typedef unsigned int Component;
+  typedef int Component;
 
   Coefficient modulus() const
   {
@@ -56,6 +58,7 @@ class MatrixStream
   }
   VarIndex varCount() const { return mPolyRing->n_vars(); }
   Component comCount() const { return mFreeModule->rank(); }
+  
   void idealBegin(size_t polyCount);
   void appendPolynomialBegin(size_t termCount);
   void appendTermBegin(Component com);

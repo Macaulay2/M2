@@ -11,7 +11,7 @@ document {
 	  }
      }
 document {
-     Key => (jacobian,Matrix),
+     Key => {(jacobian, Matrix), (jacobian, RingElement)},
      Headline => "the matrix of partial derivatives of polynomials in a matrix",
      Usage => "jacobian f",
      Inputs => {"f" => " with one row"},
@@ -39,7 +39,7 @@ document {
 	       }
      }
 document {
-     Key => {(jacobian,Ideal),(jacobian, MonomialIdeal)},
+    Key => (jacobian, Ideal),
      Headline => "the Jacobian matrix of the generators of an ideal",
      Usage => "jacobian I",
      Inputs => {"I" => " in a polynomial ring"},

@@ -7,9 +7,9 @@ needs "polyrings.m2"
 GaloisField = new Type of EngineRing
 GaloisField.synonym = "Galois field"
 
-toExternalString GaloisField := k -> toString describe k
-toString GaloisField := toString @@ expression
-net GaloisField := net @@ expression
+isField GaloisField := F -> true
+isFinitePrimeField GaloisField := F -> F.degree == 1
+
 expression GaloisField := F -> if hasAttribute(F,ReverseDictionary) then expression getAttribute(F,ReverseDictionary) else (expression GF) (expression F.order)
 describe GaloisField := F -> Describe (expression GF) (expression F.order)
 
@@ -225,13 +225,15 @@ GF(Ring) := GaloisField => opts -> (S) -> (
 	  );
      F.use = F -> var <- F_0;
      F.use F;
+     F.cache = new CacheTable;
      F / F := (x,y) -> if y == 0 then error "division by zero" else x // y;
      F % F := (x,y) -> if y == 0 then x else 0_F;
      F)
 
 random GaloisField := opts -> F -> (
-     i := random F.order;
-     if i === 0 then 0_F else F_0^i
+     p := char F;
+     t := F_0;
+     sum(F.degree, i -> random p * t^i)
      )
 
 dim GaloisField := ZZ => R -> 0

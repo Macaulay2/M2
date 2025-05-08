@@ -69,21 +69,14 @@ SchurRing.synonym = "Schur ring"
 ClassFunction = new Type of HashTable
 ClassFunction.synonym = "Class function"
 
-expression SchurRing := S -> new FunctionApplication from { schurRing, (expression last S.baseRings, S.Symbol, S.numgens ) }
+describe SchurRing := S -> Describe (expression schurRing) (expression last S.baseRings, S.Symbol, S.numgens)
+undocumented (describe, SchurRing)
+
+expression SchurRing := S -> (
+    if hasAttribute(S, ReverseDictionary)
+    then toString getAttribute(S, ReverseDictionary)
+    else new FunctionApplication from unhold describe S)
 undocumented (expression, SchurRing)
-
-toExternalString SchurRing := R -> toString expression R
-undocumented (toExternalString, SchurRing),
-
-toString SchurRing := R -> (
-     if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
-     else toString expression R)
-undocumented (toString, SchurRing)
-
-net SchurRing := R -> (
-     if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
-     else net expression R)
-undocumented (net, SchurRing)
 
 rawmonom2partition = (m) -> (
      reverse splice apply(rawSparseListFormMonomial m, (x,e) -> e:x)

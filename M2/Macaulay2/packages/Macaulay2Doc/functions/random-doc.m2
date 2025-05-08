@@ -15,12 +15,13 @@ Node
       This function can be used to get randomized objects of various sorts.
   Subnodes
     (random, ZZ, ZZ)
+    (random, QQ)
     (random, Type)
     (random, List)
     (random, ZZ, Ideal)
     (random, ZZ, Ring)
+    (random, Module)
     (random, Module, Module)
-  SeeAlso
     setRandomSeed
 
 Node
@@ -62,6 +63,29 @@ Node
 
 Node
   Key
+    (random, QQ)
+  Headline
+    get a random rational number
+  Usage
+    random x
+  Inputs
+    x:QQ
+    Height => ZZ
+  Outputs
+    :QQ -- randomly chosen from the interval $[0, x]$
+  Description
+    Text
+      A random number is chosen from the uniform distribution on the interval
+      $[0, x]$ and then rounded (using the @wikipedia "Farey sequence"@) to the
+      nearest rational number with denominator bounded by the @CODE "Height"@
+      option.
+    Example
+      apply(10, i -> random(7_QQ, Height => 5))
+  SeeAlso
+    setRandomSeed
+
+Node
+  Key
     (random, Type)
   Headline
     get a random object of a type
@@ -76,12 +100,15 @@ Node
   Description
     Text
       If the @TT "Height"@ option specifies a number @TT "h"@ and @TT "T"@
-      is @TO "ZZ"@ then the integers returned are in the range @TT "[0, h)"@;
-      for @TO "QQ"@ the numerator and denominator are in the range @TT "[1, h]"@.
+      is @TO "ZZ"@ then the integers returned are in the range @TT "[0, h)"@.
+      If @TT "T"@ is @TO QQ@, then the results are drawn from the uniform
+      distribution on @TT "[0, h]"@ and rounded to the nearest rational number
+      with denominator bounded by @TT "h"@.
     Example
       random RR
       random CC_100
-      tally for i to 100 list random GF 11
+      kk = GF 11
+      tally for i to 100 list random kk
       random GF(2,40)
   SeeAlso
     setRandomSeed
@@ -167,33 +194,72 @@ Node
       random toList (0 .. 12)
   SeeAlso
     setRandomSeed
-///
 
-document {
-     Key => {(random, Module, Module),[random, MaximalRank],[random, Density],[random, UpperTriangular]},
-     Headline => "make a random module map",
-     Usage => "f = random(F,G)",
-     Inputs => {
-	  "F" => {"a free module"},
-	  "G" => {"a free module"},
-	  MaximalRank => {"whether to ensure that the resulting map has maximal rank: designed mostly
-	       for use with matrices of numbers: for polynomial rings, returns inhomogeneous results"},
-	  Density => RR => {"the proportion of entries to set"},
-	  UpperTriangular => Boolean => {"whether to set just entries strictly above the diagonal"}
-	  },
-     Outputs => {"f" => {"a random, graded, degree ", TT "0", " map, from ", TT "G", " to ", TT "F"}},
-     EXAMPLE lines ///
-	  R = ZZ/101[x,y];
-	  random(R^{1,2,3},R^{1,2,3})
-	  random(ZZ^3,ZZ^6,MaximalRank=>true)
-	  random(ZZ^3,ZZ^10,Density=>.3)
-	  random(ZZ^6,ZZ^6,UpperTriangular=>true)
-	  ///,
-     Caveat => {
-	  "Over a polynomial ring, specifying ", TT "MaximalRank=>true", " will yield a non-homogeneous matrix."
-	  },
-     SeeAlso => {"setRandomSeed"}
-     }
+Node
+  Key
+    (random, Module, Module)
+    [random, Density]
+    [random, MaximalRank]
+    [random, UpperTriangular]
+  Headline
+    get a random map of module
+  Usage
+    f = random(F, G)
+  Inputs
+    F:Module
+    G:Module
+    Density=>RR
+      the proportion of entries to set
+    MaximalRank=>Boolean
+      whether to ensure that the resulting map has maximal rank: designed mostly
+      for use with matrices of numbers: for polynomial rings, returns inhomogeneous results
+    UpperTriangular=>Boolean
+      whether to set just entries strictly above the diagonal
+  Outputs
+    f:Matrix
+      a random, graded, degree @TT "0"@ map $f: G \to F$
+  Description
+    Example
+      R = ZZ/101[x,y];
+      random(R^{1,2,3}, R^{1,2,3})
+      random(ZZ^3, ZZ^10, Density => .3)
+      random(ZZ^3, ZZ^6, MaximalRank => true)
+      random(ZZ^6, ZZ^6, UpperTriangular => true)
+  Caveat
+    Over a polynomial ring, specifying @TT "MaximalRank=>true"@ will yield a non-homogeneous matrix.
+  SeeAlso
+    (random, Module)
+    setRandomSeed
+
+Node
+  Key
+    (random, List, Module)
+    (random, ZZ,   Module)
+    (random,       Module)
+  Headline
+    get a random vector in the module
+  Usage
+    v = random(d, M)
+    v = random M
+  Inputs
+    d:{ZZ,List} -- a degree or degree vector, assumed to be zero if omitted
+    M:Module
+  Outputs
+    v:Vector
+  Description
+    Example
+      R = ZZ/7[x,y]
+      E = End R^{-1,1}
+      h = homomorphism random E
+      h = homomorphism random(0, E)
+      h = homomorphism random(1, E)
+      h = homomorphism random(-1, E)
+      h = homomorphism random(-2, E)
+  SeeAlso
+    (Hom, Module, Module)
+    (random, Module, Module)
+    setRandomSeed
+///
 
 document { Key => {(randomMutableMatrix, ZZ, ZZ, RR, ZZ),
 	  [randomMutableMatrix,Dense],

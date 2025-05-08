@@ -24,7 +24,21 @@ newPackage(
         "Normaliz",
         "PrimaryDecomposition",
         "MinimalPrimes"
-    }
+    },
+    Certification => {
+	"journal name" => "Journal of Software for Algebra and Geometry",
+	"journal URI" => "https://msp.org/jsag/",
+	"article title" => "Computing multiplicity sequences",
+	"acceptance date" => "2023-10-31",
+	"published article URI" => "https://msp.org/jsag/2024/14-1/p03.xhtml",
+	"published article DOI" => "10.2140/jsag.2024.14.13",
+	"published code URI" => "https://msp.org/jsag/2024/14-1/jsag-v14-n1-x03-MultiplicitySequence.m2",
+	"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/MultiplicitySequence.m2",
+	"release at publication" => "6a750d5611ff9685a31e1eb4e176bb71b6842a58",
+	"version at publication" => "0.7",
+	"volume number" => "14",
+	"volume URI" => "https://msp.org/jsag/2024/14-1/"
+	}
 )
 
 export {
@@ -359,7 +373,7 @@ doc ///
             this function computes the bi-graded ring Gr_m(Gr_I(R)), presented as a 
             quotient of a bigraded polynomial ring with variables names u and v.
 	    After being computed once, this ring is stored in the cache of I.
-	    This function is based on the method normalCone.
+	    This function is based on the method @TO associatedGradedRing@.
         Example
             R = QQ[x,y]
             I = ideal"x2,xy"
@@ -367,7 +381,7 @@ doc ///
             describe A
             hilbertSeries A
     SeeAlso
-    	normalCone
+	associatedGradedRing
 ///
 
 doc ///

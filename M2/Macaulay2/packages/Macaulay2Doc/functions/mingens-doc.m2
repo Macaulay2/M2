@@ -52,7 +52,8 @@ document {
      a generating set, which is sometimes a larger 
      generating set than is required.  This routine returns a matrix
      whose columns generate the given ideal or module.",
-     SeeAlso => {trim, minimalPresentation}
+     SeeAlso => {trim, prune, minimalPresentation},
+     Subnodes => { TO [mingens, Strategy] },
      }
 
 document {
@@ -63,7 +64,7 @@ document {
      }
 
 document { 
-     Key => {(mingens,Module),(mingens,Ideal)},
+     Key => {(mingens,Module),(mingens,Ideal),(mingens,MonomialIdeal)},
      Usage => "mingens I",
      Inputs => {
 	  "I" => "or an ideal"

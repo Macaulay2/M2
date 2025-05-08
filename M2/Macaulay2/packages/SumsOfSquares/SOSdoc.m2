@@ -69,11 +69,15 @@ document {
     some of the difficulties that arise from using these numerical procedures. ",
     "See ", TO "coefficient field", " for more information.",
 
-    HEADER4 "Literature",
+    References =>
     UL {
     LI {"[BPT12] ", EM "Semidefinite Optimization and Convex Algebraic Geometry", " SIAM Textbook, edited by G. Blekherman, P. Parrilo, and R. Thomas, (2012)."},
     LI {"[P05] ", EM "Exploiting Algebraic Structure in Sum of Squares Programs", " P. Parrilo in ", EM"Positive polynomials in control", " (2005)."},
     LI {"[PP] ", EM "Computing sum of squares decompositions with rational coefficients", " H. Peyrl and P. Parrilo ", " in Theoretical Computer Science 409 (2008) p. 269–281."},
+    },
+
+    Acknowledgement => {
+	"Special thanks: Ilir Dema, Nidhi Kaihnsa, Anton Leykin."
     }
     }
 

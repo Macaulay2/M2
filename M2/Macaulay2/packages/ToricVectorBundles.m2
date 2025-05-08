@@ -3,36 +3,37 @@
 ---------------------------------------------------------------------------
 -- PURPOSE: Computations with vector bundles on toric varieties 
 -- PROGRAMMER : René Birkner 
--- UPDATE HISTORY : November 2008, November 2009, April 2010
+-- UPDATE HISTORY : November 2008, November 2009, April 2010, May 2024, April 2025
 ---------------------------------------------------------------------------
 newPackage("ToricVectorBundles",
     Headline => "vector bundles on toric varieties",
-    Version => "1.1",
-    Date => "August 21, 2014",
+    Version => "1.3",
+    Date => "April 15, 2025",
     Authors => {
-         {Name => "René Birkner",
-	  HomePage => "http://page.mi.fu-berlin.de/rbirkner/indexen.htm",
-	  Email => "rbirkner@math.fu-berlin.de"},
+         {Name => "René Birkner"
+	  },
          {Name => "Nathan Ilten",
-	  HomePage => "http://people.cs.uchicago.edu/~nilten/",
-	  Email => "nilten@cs.uchicago.edu"},
-         {Name => "Lars Petersen",
-	  Email => "petersen@math.fu-berlin.de"}},
+	  HomePage => "https://www.sfu.ca/~nilten/",
+	  Email => "nilten@sfu.ca"},
+         {Name => "Lars Petersen"
+	  }},
     Keywords => {"Toric Geometry"},
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
-	 "journal URI" => "http://j-sag.org/",
+	 "journal URI" => "https://msp.org/jsag/",
 	 "article title" => "Computations with equivariant toric vector bundles",
 	 "acceptance date" => "2010-06-15",
-	 "published article URI" => "http://j-sag.org/Volume2/jsag-3-2010.pdf",
-	 "published code URI" => "http://j-sag.org/Volume2/ToricVectorBundles.m2",
+	 "published article URI" => "https://msp.org/jsag/2010/2-1/p03.xhtml",
+	 "published article DOI" => "10.2140/jsag.2010.2.11",
+	 "published code URI" => "https://msp.org/jsag/2010/2-1/jsag-v2-n1-x03-code.zip",
 	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/ToricVectorBundles.m2",
 	 "release at publication" => "314a1e7a1a5f612124f23e2161c58eabeb491f46",
 	 "version at publication" => "1.0",
 	 "volume number" => "2",
-	 "volume URI" => "http://j-sag.org/Volume2/"
+	 "volume URI" => "https://msp.org/jsag/2010/2-1/"
 	 },
     Configuration => {},
+    PackageImports => {"Varieties"},
     PackageExports => {"Polyhedra"}
     )
 
@@ -91,6 +92,7 @@ export {"ToricVectorBundle",
      "hirzebruchFan",
      "pp1ProductFan", 
      "projectiveSpaceFan",
+     "raySortOfFan",
      "customConeSort"}
 
 
@@ -673,62 +675,48 @@ deltaE = method()
 
 --   INPUT : 'tvb',  a ToricVectorBundle
 --  OUTPUT : a Polyhedron
-deltaE ToricVectorBundle := (cacheValue symbol deltaE)( T -> (
-	  if not isComplete T#"ToricVariety" then error("The toric variety needs to be complete.");
-     	  n := T#"dimension of the variety";
-	  if instance(T,ToricVectorBundleKaneyama) then (
-	       dT := values T#"degreeTable";
-	       dT = matrix {dT};
-	       convexHull dT)
-	  else (
-	       W := findWeights T;
-	       W = apply(W,first);
-	       W = matrix {W};
-	       convexHull W)))
-
---oldDeltaE = method()
---oldDeltaE ToricVectorBundle := (cacheValue symbol oldDeltaE)( tvb -> (
---     	  if not isComplete tvb#"ToricVariety" then error("The toric variety needs to be complete.");
---     	  n := tvb#"dimension of the variety";
---	  if instance(tvb,ToricVectorBundleKaneyama) then (
---	       -- Extracting necessary data
---     	       raylist := rays tvb;
---     	       rl := #raylist;
---     	       k := tvb#"rank of the vector bundle";
---     	       tCT := sort keys tvb#"topConeTable";
---     	       dT := tvb#"degreeTable";
---     	       -- Creating an index table, for each ray the first top cone containing it
---     	       raytCTindex := hashTable apply(#raylist, r -> r => position(tCT, C -> contains(C,raylist#r)));
---     	       raylist = transpose matrix {raylist};
---     	       -- Get the subsets of 'n' elements in 'rl'
---     	       sset := subsets(rl,n);
---     	       jList := {{}};
---     	       -- Get all different combinations of choices of variety dimension many degree vectors
---     	       for i from 0 to n-1 do jList = flatten apply(jList, l -> apply(k, j -> l|{j}));
---     	       M := map(QQ^1,QQ^n,0);
---     	       v := map(QQ^1,QQ^1,0);
---     	       -- For every 'n' in 'l' subset and any combination in jList get the intersection of the dual cones
---     	       -- of the corresponding rays. If this is a non-empty compact polytope then add the vertices to the
---     	       -- list L
---     	       L := unique flatten apply(sset, s -> (
---	       	    	 unique for j in jList list (
---		    	      N := matrix apply(n, i -> {raylist^{s#i},raylist^{s#i} * ((dT#(tCT#(raytCTindex#(s#i))))_{j#i})});
---		    	      w := N_{n};
---		    	      N = submatrix'(N,{n});
---		    	      P := intersection(M,v,N,w);
---		    	      if isCompact P and (not isEmpty P) then vertices P else continue)));
---     	       -- Make a matrix of all the vertices in L
---     	       M = matrix {L};
---     	       convexHull M)
---	  else (
---	       -- Extracting necessary data
---	       rayTable := tvb#"rayTable";
---	       l := #rayTable;
---	       fMT := hashTable apply(pairs tvb#"filtrationMatricesTable", (i,j) -> (j = flatten entries j; i => matrix{{-(min j),max j}}));
---	  		      sset1 := select(subsets(rays tvb,n), s -> rank matrix {s} == n);
---	  		      convexHull matrix {apply(sset1, s -> (
---			 		     M := transpose matrix {apply(s, r -> (-r | r) || (fMT#r))};
---			 		     vertices intersection(M_{0..n-1},M_{n})))})))
+deltaE ToricVectorBundle := (cacheValue symbol deltaE)( tvb -> (
+     	  if not isComplete tvb#"ToricVariety" then error("The toric variety needs to be complete.");
+     	  n := tvb#"dimension of the variety";
+          if instance(tvb,ToricVectorBundleKaneyama) then (
+	  -- Extracting necessary data
+          raylist := rays tvb;
+          rl := #raylist;
+          k := tvb#"rank of the vector bundle";
+          tCT := keys tvb#"topConeTable";
+          dT := tvb#"degreeTable";
+          -- Creating an index table, for each ray the first top cone containing it
+          raytCTindex := hashTable apply(#raylist, r -> r => position(tCT, C -> contains(posHull C_0,raylist#r)));
+          raylist = transpose matrix {raylist};
+          -- Get the subsets of 'n' elements in 'rl'
+          sset := subsets(rl,n);
+          jList := {{}};
+          -- Get all different combinations of choices of variety dimension many degree vectors
+          for i from 0 to n-1 do jList = flatten apply(jList, l -> apply(k, j -> l|{j}));
+          M := map(QQ^1,QQ^n,0);
+          v := map(QQ^1,QQ^1,0);
+          -- For every 'n' in 'l' subset and any combination in jList get the intersection of the dual cones
+          -- of the corresponding rays. If this is a non-empty compact polytope then add the vertices to the
+          -- list L
+     	       L := unique flatten apply(sset, s -> (
+	       	    	 unique for j in jList list (
+		    	      N := matrix apply(n, i -> {raylist^{s#i},raylist^{s#i} * ((dT#(tCT#(raytCTindex#(s#i))))_{j#i})});
+		    	      w := N_{n};
+		    	      N = submatrix'(N,{n});
+		    	      P := polyhedronFromHData(M,v,N,w);
+		    	      if isCompact P and (not isEmpty P) then vertices P else continue)));
+     	       -- Make a matrix of all the vertices in L
+     	       M = matrix {L};
+     	       convexHull M)
+	else (
+          -- Extracting necessary data
+          rayTable := tvb#"rayTable";
+          l := #rayTable;
+          fMT := hashTable apply(pairs tvb#"filtrationMatricesTable", (i,j) -> (j = flatten entries j; i => matrix{{-(min j),max j}}));
+		      sset1 := select(subsets(rays tvb,n), s -> rank matrix {s} == n);
+  		      convexHull matrix {apply(sset1, s -> (
+		 		     M := transpose matrix {apply(s, r -> (-r | r) || (fMT#r))};
+		 		     vertices polyhedronFromHData(M_{0..n-1},M_{n})))})))
 
 
 --   INPUT : '(tvb1,tvb2)',  two ToricVectorBundle over the same Fan
@@ -829,8 +817,14 @@ dual ToricVectorBundle := {} >> opts -> tvb -> (
      else (
 	  -- Inverting the filtration. If the filtration has d steps then the new n-th boundary is -(d-n+1th boundary)-1 and the n-th step is the 
      	  -- d-n+2 th step
-     	  fT := hashTable apply(pairs tvb#"filtrationTable", (r,e) -> r => (k:=sort keys e;e = apply(#k-1, i -> (k#i,e#(k#(i+1))))|{(last k,{})}; hashTable apply(e, entry -> -(entry#0)-1 => entry#1)));
-     	  fMT := hashTable apply(pairs fT, q -> q#0 => (q1new:= hashTable flatten apply(pairs q#1, p -> apply(p#1, i -> i => p#0)); matrix {apply(#q1new, j -> q1new#j)}));
+	  fT := hashTable apply(pairs tvb#"filtrationTable", (r,e) -> r => (
+		  newkeys := reverse drop(sort keys e, 1);
+		  newvalues := {{}} | apply(newkeys, k -> e#k);
+		  newkeys = {-first newkeys - 1} | -newkeys;
+		  hashTable apply(#newkeys, i -> newkeys#i => newvalues#i)
+		  )
+	      );
+	  fMT := hashTable apply(pairs fT, q -> q#0 => (q1new:= hashTable flatten apply(pairs q#1, p -> apply(p#1, i -> i => p#0)); matrix {apply(#q1new, j -> q1new#j)}));
      	  -- The orthogonal complement is given by the transpose of the inverse matrix
      	  bT := hashTable apply(pairs tvb#"baseTable", p -> p#0 => transpose inverse p#1);
      	  T := new ToricVectorBundleKlyachko from {
@@ -1245,7 +1239,7 @@ rank ToricVectorBundle := T -> T#"rank of the vector bundle"
 -- PURPOSE : Giving the rays of the underlying Fan of a toric vector bundle
 --   INPUT : 'tvb',  a TorcVectorBundle
 --  OUTPUT : 'L',  a List containing the rays of the Fan underlying the bundle
-rays ToricVectorBundle := tvb -> raySortOfFan tvb#"ToricVariety"
+rays ToricVectorBundle := {} >> o -> tvb -> raySortOfFan tvb#"ToricVariety"
 
 
 -- PURPOSE : Computing the 'l'-th symmetric power of a Toric Vector Bundle
@@ -2398,7 +2392,7 @@ document {
 	  "b" => Boolean => {"whether ", TT "E", " and ", TT "F", " are isomorphic"}
 	  },     
      
-     PARA{}, TT "E"," and ",TT "F"," must be vector bundles over the same fan. Two equivariant vector 
+     PARA{}, TT "E"," and ",TT "F"," must be vector bundles over the same fan and the filtrations must be defined over the same ring. Two equivariant vector 
      bundles in Klyachko's description are isomorphic if there exists a simultaneous isomorphism for 
      the filtered vector spaces of all rays. The method then returns whether the bundles are 
      isomorphic.",     
@@ -2412,8 +2406,9 @@ document {
      
      PARA{}, "To obtain the isomorphism, if two bundles are isomorphic use ",TO isomorphism,".",
      
-     SeeAlso => {isomorphism,base,filtration,details}
+     SeeAlso => {isomorphism,base,filtration,details},
      
+     Caveat => {"If ",TT "E"," and ",TT "F"," are defined over different rings (e.g. ",TT "QQ"," and ",TT "ZZ",") then ",TT "areIsomorphic(E,F)"," will return ",TT "false",". Likewise, if the bundles are only defined over ",TT "ZZ",", the function will check for an isomorphism of the filtrations over ",TT "ZZ","."}
      }
 
 document {
@@ -2472,6 +2467,7 @@ document {
 	  " cartierIndex(L,F)"
 	  },
      
+     Caveat=> {"The ordering of the list ",TT "L"," must correspond to the ordering of the rays of the fan output by ",TO raySortOfFan,"."},
      SeeAlso => {weilToCartier}
      
      }
@@ -2734,7 +2730,7 @@ document {
      complete then an error is returned.",
      
      EXAMPLE {
-	  " E = toricVectorBundle(2,pp1ProductFan 2, \"Type\" => \"Kaneyama\")",
+	  " E = toricVectorBundle(2,pp1ProductFan 2)",
 	  " P = deltaE E",
 	  " vertices P",
 	  " E1 = tangentBundle projectiveSpaceFan 2",
@@ -2886,7 +2882,9 @@ document {
      PARA{}, "Note that the data given in the description of ",TT "E"," defines an equivariant vector bundle 
      on the toric variety exactly if there exists a set of weight vectors for each maximal cone that admits a 
      decomposition. The function ",TO isVectorBundle," uses this.",
-     
+    
+     Caveat => {TT "existsDecomposition"," is known to produce incorrect output."},
+ 
      SeeAlso => {findWeights,isVectorBundle,(maxCones,ToricVectorBundle)}
      
      }
@@ -3219,6 +3217,7 @@ document {
 	  " isVectorBundle E"
 	  },
      
+     Caveat => {TT "isVectorBundle"," is known to produce incorrect output for Klyachko bundles. The user is recommended to instead use ",TT "isLocallyFree"," from the package ",TT "PositivityToricBundles","."},
      SeeAlso => {findWeights,
 	  existsDecomposition,
 	  addBase,
@@ -3421,7 +3420,8 @@ document {
 	  " details E1"
 	  },
      
-     SeeAlso => {base,filtration,details,isGeneral}
+     SeeAlso => {base,filtration,details,isGeneral},
+     Caveat =>{"In general, ",TT "randomDeformation"," will only produce a reflexive sheaf, not a locally free one. However, for smooth toric surfaces, equivariant reflexive sheaves are automatically locally free."}
      }
 
 document {
@@ -3472,6 +3472,29 @@ document {
 	  charts}
      
      }
+
+
+document {
+     Key => {raySortOfFan},
+     Headline => "The sorted rays of the fan",
+     Usage => " L = raySortOfFan F",
+     Inputs => {
+	  "F" => Fan
+	  },
+     Outputs => {
+	  "L" => List
+	  },
+     
+     PARA{}, "Returns the rays of the fan as a list. Each ray is 
+     given as a one column matrix. This list is sorted in the same order as is used with all routines involving Klyachko-style vector bundles.",
+     
+     EXAMPLE {
+	  " F = projectiveSpaceFan 2",
+	  " raySortOfFan F"
+	  }
+     }
+
+
 
 document {
      Key => {regCheck, (regCheck,ToricVectorBundleKaneyama)},
@@ -3842,7 +3865,8 @@ document {
 	  " E1 = twist(E,L)",
 	  " details E1"
 	  },
-     
+    
+     Caveat=> {"The ordering of the list ",TT "L"," must correspond to the ordering of the rays of the fan output by ",TO raySortOfFan,"."},
      SeeAlso => {weilToCartier,cartierIndex,details}
      
      }
@@ -3881,6 +3905,7 @@ document {
 	  " details E"
 	  },
      
+     Caveat=> {"The ordering of the list ",TT "L"," must correspond to the ordering of the rays of the fan output by ",TO raySortOfFan,"."},
      SeeAlso => {cartierIndex}
      
      }
@@ -4029,9 +4054,9 @@ TEST ///
 T = toricVectorBundle(3,projectiveSpaceFan 2,"Type" => "Kaneyama")
 assert(deltaE T == convexHull matrix{{0},{0}})
 T = tangentBundle(projectiveSpaceFan 2,"Type" => "Kaneyama")
-assert(deltaE T == convexHull matrix {{-1,1,0,1,0,-1},{0,0,-1,-1,1,1}})
+assert(deltaE T == convexHull matrix {{-1,2,-1},{-1,-1,2}})
 T = cotangentBundle(pp1ProductFan 3,"Type" => "Kaneyama")
-assert(deltaE T == convexHull matrix {{-1,1,0,0,0,0},{0,0,-1,1,0,0},{0,0,0,0,-1,1}})
+assert(deltaE T == convexHull matrix {{-1,1,-1,1,-1,1,-1,1},{-1,-1,1,1,-1,-1,1,1},{-1,-1,-1,-1,1,1,1,1}})
 ///
 
 -- Test 10
@@ -4040,9 +4065,9 @@ TEST ///
 T = toricVectorBundle(3,projectiveSpaceFan 2)
 assert(deltaE T == convexHull matrix{{0},{0}})
 T = tangentBundle projectiveSpaceFan 2
-assert(deltaE T == convexHull matrix {{-1, 1, 0, 1, 0, -1}, {0, 0, -1, -1, 1, 1}})
+assert(deltaE T == convexHull matrix {{-1,2,-1},{-1,-1,2}})
 T = cotangentBundle pp1ProductFan 3
-assert(deltaE T == convexHull matrix {{-1,1,0,0,0,0},{0,0,-1,1,0,0},{0,0,0,0,-1,1}})
+assert(deltaE T == convexHull matrix {{-1,1,-1,1,-1,1,-1,1},{-1,-1,1,1,-1,-1,1,1},{-1,-1,-1,-1,1,1,1,1}})
 ///
 
 -- Test 11
@@ -4173,7 +4198,7 @@ assert(T#"dimension of the variety" == 3)
 T1 = tangentBundle projectiveSpaceFan 3
 T = dual(T1 ++ T)
 assert(T#"ring" === QQ)
-assert(T#"filtrationMatricesTable" === hashTable {matrix{{-1},{-1},{-1}} => matrix{{1,0,0,-1}},matrix{{0},{0},{1}} => matrix{{1,0,0,-1}},matrix{{0},{1},{0}} => matrix{{1,0,0,-1}}, matrix{{1},{0},{0}} => matrix{{1,0,0,-1}}})
+assert(T#"filtrationMatricesTable" === hashTable {matrix{{-1},{-1},{-1}} => matrix{{1,0,0,-1}},matrix{{0},{0},{1}} => matrix{{1,0,0,-4}},matrix{{0},{1},{0}} => matrix{{1,0,0,-3}}, matrix{{1},{0},{0}} => matrix{{1,0,0,-2}}})
 assert(T#"baseTable" === hashTable {matrix{{-1},{-1},{-1}} => matrix{{-1_QQ,-1,-1,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}},matrix{{0},{0},{1}} => matrix{{0_QQ,1,0,0},{0,0,1,0},{1,0,0,0},{0,0,0,1}},matrix{{0},{1},{0}} => matrix{{0_QQ,1,0,0},{1,0,0,0},{0,0,1,0},{0,0,0,1}}, matrix{{1},{0},{0}} => matrix{{1_QQ,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}}})
 assert(rank T == 4)
 assert(T#"dimension of the variety" == 3)

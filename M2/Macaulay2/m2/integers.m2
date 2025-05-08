@@ -13,7 +13,6 @@ conjugate Number := identity
 toExternalString Number := simpleToString
 floor Number := x -> floor0(x)
 floor Constant := floor0 @@ numeric
-ceiling Constant :=
 ceiling Number := x -> - floor(-x)
 
 -----------------------------------------------------------------------------
@@ -52,16 +51,25 @@ gcd(QQ,ZZ) := QQ => (y,x) -> gcd(x * denominator y, numerator y) / denominator y
 gcd(QQ,QQ) := QQ => (x,y) -> (
      d := denominator x * (denominator y // gcd(denominator x, denominator y));
      gcd(numerator (x * d), numerator (y * d)) / d)
+gcd ZZ := gcd QQ := identity
 
 abs = method()
 abs ZZ := abs RR := abs RRi := abs CC := abs QQ := abs0
 abs Constant := abs @@ numeric
 
 lcm = method(Binary => true)
-lcm(ZZ,ZZ) := (f,g) -> abs f * (abs g // gcd(f,g))
-lcm(ZZ,QQ) := (f,g) -> abs f * (abs g / gcd(f,g))
-lcm(QQ,ZZ) := (f,g) -> abs f * (abs g / gcd(f,g))
-lcm(QQ,QQ) := (f,g) -> abs f * (abs g / gcd(f,g))
+installMethod(lcm, () -> 1)
+lcm(ZZ,ZZ) := (f,g) -> (
+    d := gcd(f, g);
+    if d == 0 then 0
+    else abs f * (abs g // d))
+lcm(ZZ,QQ) :=
+lcm(QQ,ZZ) :=
+lcm(QQ,QQ) := (f,g) -> (
+    d := gcd(f, g);
+    if d == 0 then 0_QQ
+    else abs f * (abs g / d))
+lcm ZZ := lcm QQ := identity
 
 odd  = x -> 1 === x%2
 even = x -> 0 === x%2
@@ -84,6 +92,11 @@ ZZ & ZZ := ZZ => lookup(symbol &, ZZ, ZZ)
 ZZ ^^ ZZ := bitxorfun
 Boolean xor Boolean := (x, y) -> x and not y or not x and y
 
+Function and Function := (f, g) -> s -> f s and g s
+Function or  Function := (f, g) -> s -> f s or  g s
+Function xor Function := (f, g) -> s -> f s xor g s
+not Function := f -> s -> not f s
+
 ZZ~ := bitnotfun
 
 changeBase = method()
@@ -91,6 +104,24 @@ changeBase(ZZ,     ZZ)     := String =>
 changeBase(String, ZZ)     := ZZ     => changeBase0
 changeBase(String, ZZ, ZZ) := String => (s, oldbase, newbase) -> (
     changeBase(changeBase(s, oldbase), newbase))
+
+-----------------------------------------------------------------------------
+-- AtomicInt
+-----------------------------------------------------------------------------
+
+AtomicInt.synonym = "atomic integer"
+
+scan({symbol +=, symbol -=, symbol &=, symbol |=, symbol ^^=},
+    op -> typicalValues#(op, AtomicInt) = ZZ)
+
+store = method()
+store(AtomicInt, ZZ) := atomicStore
+
+exchange = method()
+exchange(AtomicInt, ZZ) := atomicExchange
+
+compareExchange = method()
+compareExchange(AtomicInt, ZZ, ZZ) := atomicCompareExchange
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -268,19 +268,18 @@ class PolynomialRing : public Ring
   virtual M2_arrayint support(const ring_elem a) const = 0;
 
   virtual bool is_homogeneous(const ring_elem f) const = 0;
-  virtual void degree(const ring_elem f, monomial d) const = 0;
   virtual bool multi_degree(const ring_elem f, monomial d) const = 0;
   virtual void degree_weights(const ring_elem f,
-                              M2_arrayint wts,
+                              const std::vector<int> &wts,
                               int &lo,
                               int &hi) const = 0;
   virtual ring_elem homogenize(const ring_elem f,
                                int v,
                                int deg,
-                               M2_arrayint wts) const = 0;
+                               const std::vector<int> &wts) const = 0;
   virtual ring_elem homogenize(const ring_elem f,
                                int v,
-                               M2_arrayint wts) const = 0;
+                               const std::vector<int> &wts) const = 0;
 
   virtual ring_elem mult_by_term(const ring_elem f,
                                  const ring_elem c,
@@ -291,10 +290,10 @@ class PolynomialRing : public Ring
 
   virtual engine_RawArrayPairOrNull list_form(const Ring *coeffR,
                                               const ring_elem f) const = 0;
-  virtual ring_elem *get_parts(const M2_arrayint wts,
+  virtual ring_elem *get_parts(const std::vector<int> &wts,
                                const ring_elem f,
                                long &result_len) const = 0;
-  virtual ring_elem get_part(const M2_arrayint wts,
+  virtual ring_elem get_part(const std::vector<int> &wts,
                              const ring_elem f,
                              bool lobound_given,
                              bool hibound_given,

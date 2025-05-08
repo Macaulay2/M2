@@ -666,8 +666,8 @@ doc ///
         Text
 	    We will comput the mixed volume to find the number of solution counts.
         Example
-            mixedVolume = computeMixedVolume specializeSystem(p0,polys)
-            monodromySolve(polys,p0,{x0},SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialE, TargetSolutionCount=>mixedVolume)
+            mixedVol = computeMixedVolume specializeSystem(p0,polys)
+            monodromySolve(polys,p0,{x0},SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialE, TargetSolutionCount=>mixedVol)
     SeeAlso
         "selectBestEdgeAndDirection"
         "potentialLowerBound"

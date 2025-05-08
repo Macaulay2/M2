@@ -20,11 +20,11 @@ class Matrix;
 HilbertController::HilbertController(const FreeModule *F0,
                                      const RingElement *hf)
     : F(F0),
-      leadterms(0),  // set later
+      leadterms(nullptr),  // set later
       hilb_new_elems(true),
       hilb_n_in_degree(0),  // will be really set later
       hf_orig(hf),
-      hf_diff(0)  // will be set later
+      hf_diff(nullptr)  // will be set later
 {
   // TODO: check and write
   R = F->get_ring()->cast_to_PolynomialRing();
@@ -35,9 +35,9 @@ HilbertController::~HilbertController()
 {
   // TODO: check and write
   delete leadterms;
-  F = 0;
-  hf_orig = 0;
-  hf_diff = 0;
+  F = nullptr;
+  hf_orig = nullptr;
+  hf_diff = nullptr;
 }
 
 bool HilbertController::setDegree(int this_degree)
@@ -73,7 +73,7 @@ bool HilbertController::recomputeHilbertFunction()
       // Recompute h, hf_diff
       Matrix *M = make_lead_term_matrix();
       RingElement *h = hilb_comp::hilbertNumerator(M);
-      if (h == 0) return false;  // computation was interrupted
+      if (h == nullptr) return false;  // computation was interrupted
       hf_diff = (*h) - (*hf_orig);
       hilb_new_elems = false;
     }

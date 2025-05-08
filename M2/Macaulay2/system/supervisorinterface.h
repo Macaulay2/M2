@@ -31,7 +31,7 @@ extern "C" {
   struct ThreadTask;
   extern void setInterpThread();
   extern int tryGlobalInterrupt(), tryGlobalAlarm(), tryGlobalTrace();
-  extern void* waitOnTask(struct ThreadTask* task);
+  extern void* waitOnTask(struct ThreadTask* task);	// wait until done or canceled
   extern void addCancelTask(struct ThreadTask* task, struct ThreadTask* cancel);
   extern void pushTask(struct ThreadTask* task);
   extern void addStartTask(struct ThreadTask* task, struct ThreadTask* start);
@@ -44,6 +44,10 @@ extern "C" {
      Returns 1 if the task has been started, 0 otherwise
   **/
   extern int taskStarted(struct ThreadTask* task);
+  /**
+     Returns 1 if the task is ready to run, 0 otherwise
+  **/
+  extern int taskReady(struct ThreadTask* task);
   /**
      Returns the taskResult if finished, NULL otherwise
   **/
@@ -71,6 +75,7 @@ extern "C" {
   void createThreadGCMemory();
   extern void delThread(pthread_t thread);
   extern void initializeThreadSupervisor();
+  extern char isThreadSupervisorInitialized(void);
   /**
      Set the maximum number of allowable threads
   **/

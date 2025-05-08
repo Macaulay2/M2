@@ -783,7 +783,7 @@ doc ///
      In particular, there are constructions for random points in $M_g$ for $g=11,12,13$.
 
      For a algorithms and theoretical background see
-     @ HREF("http://www.math.uiuc.edu/Macaulay2/Book/", "Needles in a Haystack") @
+     @ HREF("https://macaulay2.com/Book/", "Needles in a Haystack") @
 
   ///
 

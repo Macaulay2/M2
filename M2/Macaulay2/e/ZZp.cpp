@@ -64,7 +64,7 @@ bool Z_mod::initialize_Z_mod(int p)
 Z_mod *Z_mod::create(int p)
 {
   Z_mod *result = new Z_mod;
-  if (!result->initialize_Z_mod(p)) return 0;
+  if (!result->initialize_Z_mod(p)) return nullptr;
 
   return result;
 }

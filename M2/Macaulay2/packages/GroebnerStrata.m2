@@ -5,10 +5,11 @@ newPackage(
     	Date => "11 Nov 2021",
     	Authors => {
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"},
-	     {Name => "    Kristine Jones", Email => "kejones84@gmail.com"}},
-    	Headline => "a Macaulay2 package for computing Groebner loci in Hilbert schemes",
+	     {Name => "Kristine Jones", Email => "kejones84@gmail.com"}},
+	Headline => "computing Groebner loci in Hilbert schemes",
         PackageImports => {"Elimination"},
-    	DebuggingMode => false
+    	DebuggingMode => false,
+	Keywords => {"Commutative Algebra"}
     	)
 
 export { 
@@ -641,6 +642,7 @@ doc ///
       L = smallerMonomials M;
       mat = findWeightConstraints(M,L)
       needsPackage "Polyhedra"
+      needsPackage "FourTiTwo"
       dualCone posHull (-mat)
       rays oo
       posHull mat -- seems wrong?

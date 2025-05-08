@@ -32,8 +32,8 @@ o8 = | 0 1 0 |
      | 0 0 1 |
      | 0 0 0 |
 
-             3       3
-o8 : Matrix S  <--- S
+             3      3
+o8 : Matrix S  <-- S
 
 i9 : G = genericMatrix(S, y_0, 3, 3)
 
@@ -41,8 +41,8 @@ o9 = | y_0 y_3 y_6 |
      | y_1 y_4 y_7 |
      | y_2 y_5 y_8 |
 
-             3       3
-o9 : Matrix S  <--- S
+             3      3
+o9 : Matrix S  <-- S
 
 i10 : classicalAdjoint = (G) -> (
            n := degree target G;
@@ -53,15 +53,15 @@ i10 : classicalAdjoint = (G) -> (
 
 i11 : num = G * N3 * classicalAdjoint(G);
 
-              3       3
-o11 : Matrix S  <--- S
+              3      3
+o11 : Matrix S  <-- S
 
 i12 : D = det(G);
 
 i13 : M = genericMatrix(S, a, 3, 3);
 
-              3       3
-o13 : Matrix S  <--- S
+              3      3
+o13 : Matrix S  <-- S
 
 i14 : elimIdeal = minors(1, (D*id_(S^3))*M - num) + ideal(1-D*t);
 
@@ -96,8 +96,8 @@ o21 = {1} | 3x2a+2xyb+y2d+2xzc+yze+z2f |
       {1} | x2b+2xyd+3y2g+xze+2yzh+z2i |
       {1} | x2c+xye+y2h+2xzf+2yzi+3z2j |
 
-              3       1
-o21 : Matrix S  <--- S
+              3      1
+o21 : Matrix S  <-- S
 
 i22 : singularities = ideal(partials) + ideal(F);
 
@@ -119,8 +119,8 @@ o25 = {1} | 3a 2b d  2c e  f  |
       {1} | b  2d 3g e  2h i  |
       {1} | c  e  h  2f 2i 3j |
 
-              3       6
-o25 : Matrix S  <--- S
+              3      6
+o25 : Matrix S  <-- S
 
 i26 : hess = det submatrix(jacobian ideal partials, {0..2}, {0..2});
 
@@ -131,8 +131,8 @@ o27 = {1} | -24c2d+24bce-18ae2-24b2f+72adf               4be2-16bdf-48c2g+144afg
       {1} | 2be2-8bdf-24c2g+72afg+16bch-24aeh-8b2i+24adi 4de2-16d2f-48ceg+48bfg+32cdh-48ah2-16bdi+144agi         -18e2g+24deh-24bh2-24d2i+72bgi                2e3-8def-24cfg-8ceh+24bfh+24cdi-8bei-24ahi-24bdj+216agj -48efg+4e2h+32dfh-16ch2+48cgi-16bhi-48d2j+144bgj        -24f2g+2e2i+16dfi-8chi-8bi2-24dej+72cgj+24bhj |
       {1} | 2ce2-8cdf-8c2h+24afh+16bci-24aei-24b2j+72adj 2e3-8def-24cfg-8ceh+24bfh+24cdi-8bei-24ahi-24bdj+216agj -24efg+2e2h+16dfh-8ch2+24cgi-8bhi-24d2j+72bgj 4e2f-16df2-16cfh+32bfi-48ai2+48cdj-48bej+144ahj         -48f2g+4e2i+32dfi-16chi-16bi2-48dej+144cgj+48bhj        -24f2h+24efi-24ci2-18e2j+72chj                |
 
-              3       6
-o27 : Matrix S  <--- S
+              3      6
+o27 : Matrix S  <-- S
 
 i28 : detDiscr = ideal det (A || B, Strategy=>Cofactor);
 
@@ -346,7 +346,7 @@ i76 : phi = map(PP4, S, matrix{{0_PP4, 0_PP4, 0_PP4}} | vars PP4)
 
 o76 = map (PP4, S, {0, 0, 0, a, b, c, d, e})
 
-o76 : RingMap PP4 <--- S
+o76 : RingMap PP4 <-- S
 
 i77 : surfaceA = phi ideal selectInSubring(1, gens gb I)
 
@@ -368,7 +368,7 @@ i80 : PP2xPP1 = QQ[x, y, z, u, v];
 
 i81 : embed = map(PP2xPP1, R, 0 | vars PP2xPP1);
 
-o81 : RingMap PP2xPP1 <--- R
+o81 : RingMap PP2xPP1 <-- R
 
 i82 : blowUp = PP2xPP1 / embed(blowUpIdeal);
 
@@ -376,7 +376,7 @@ i83 : PP5 = QQ[A .. F];
 
 i84 : segre = map(blowUp, PP5, matrix{{x*u,y*u,z*u,x*v,y*v,z*v}});
 
-o84 : RingMap blowUp <--- PP5
+o84 : RingMap blowUp <-- PP5
 
 i85 : ker segre
 
@@ -389,7 +389,7 @@ i86 : projection = map(PP4, PP5, matrix{{a, c, d, c, b, e}})
 
 o86 = map (PP4, PP5, {a, c, d, c, b, e})
 
-o86 : RingMap PP4 <--- PP5
+o86 : RingMap PP4 <-- PP5
 
 i87 : surfaceB = trim projection ker segre
 
@@ -407,7 +407,7 @@ o88 : Ideal of PP4
 
 i89 : sigma = map( PP4, PP4, matrix{{d, e, a, c, b}});
 
-o89 : RingMap PP4 <--- PP4
+o89 : RingMap PP4 <-- PP4
 
 i90 : surfaceC = sigma determinantal
 
@@ -437,7 +437,7 @@ i96 : R = QQ[t, u, v, A .. H];
 i97 : phi = map(R, PP3, matrix{{t}} | 
               u*matrix{{A, B, C, D}} + v*matrix{{E, F, G, H}});
 
-o97 : RingMap R <--- PP3
+o97 : RingMap R <-- PP3
 
 i98 : imageFamily = phi Q;
 
@@ -447,15 +447,15 @@ i99 : coeffOfFamily = contract(matrix{{u^2,u*v,v^2}}, gens imageFamily)
 
 o99 = | tA2+tB2+tC2+D2 2tAE+2tBF+2tCG+2DH tE2+tF2+tG2+H2 |
 
-              1       3
-o99 : Matrix R  <--- R
+              1      3
+o99 : Matrix R  <-- R
 
 i100 : S = QQ[t, A..H];
 
 i101 : coeffOfFamily = substitute(coeffOfFamily, S);
 
-               1       3
-o101 : Matrix S  <--- S
+               1      3
+o101 : Matrix S  <-- S
 
 i102 : Sbar = S / (ideal coeffOfFamily);
 
@@ -464,8 +464,8 @@ i103 : psi = matrix{{t}} | exteriorPower(2,
 
 o103 = | t -BE+AF -CE+AG -CF+BG -DE+AH -DF+BH -DG+CH |
 
-                  1          7
-o103 : Matrix Sbar  <--- Sbar
+                  1         7
+o103 : Matrix Sbar  <-- Sbar
 
 i104 : PP5 = QQ[t, a..f];
 
@@ -494,8 +494,8 @@ o107 = {-2} | f2       |
        {-2} | ad-cf    |
        {-2} | a2+b2+c2 |
 
-                 11         1
-o107 : Matrix PP5   <--- PP5
+                 11        1
+o107 : Matrix PP5   <-- PP5
 
 i108 : oneFibre = trim substitute(saturate(fanoOfFamily, t), {t => 1})
 

@@ -14,16 +14,17 @@ newPackage(
 	  Date => "July 3, 2009",
 	  Certification => {
 	       "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
-	       "journal URI" => "http://j-sag.org/",
+	       "journal URI" => "https://msp.org/jsag/",
 	       "article title" => "Computing inclusions of Schur modules",
 	       "acceptance date" => "2009-06-27",
-	       "published article URI" => "http://j-sag.org/Volume1/jsag-2-2009.pdf",
-	       "published code URI" => "http://j-sag.org/Volume1/PieriMaps.m2",
+	       "published article URI" => "https://msp.org/jsag/2009/1-1/p02.xhtml",
+	       "published article DOI" => "10.2140/jsag.2009.1.5",
+	       "published code URI" => "https://msp.org/jsag/2009/1-1/jsag-v1-n1-x02-code.zip",
 	       "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/PieriMaps.m2",
 	       "release at publication" => "38e96fec660168d488ad0449f8632e6608cc9ede",
 	       "version at publication" => "1.0",
 	       "volume number" => "1",
-	       "volume URI" => "http://j-sag.org/Volume1/"
+	       "volume URI" => "https://msp.org/jsag/2009/1-1/"
 	       },
 	  Authors => {{
 		    Name => "Steven V Sam",

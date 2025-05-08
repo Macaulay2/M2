@@ -12,6 +12,7 @@
 #include "comp-gb-proxy.hpp"
 #include "text-io.hpp"
 #include "finalize.hpp"
+#include "util.hpp"
 
 GBComputation *createF4GB(const Matrix *m,
                           M2_bool collect_syz,
@@ -20,6 +21,12 @@ GBComputation *createF4GB(const Matrix *m,
                           int strategy,
                           M2_bool use_max_degree,
                           int max_degree);
+
+// Found in "gb-f4/GBF4Interface.hpp"
+GBComputation *createGBF4Interface(const Matrix *m,
+                                  const std::vector<int>& weights,
+                                  int strategy
+                                  );
 
 GBComputation::~GBComputation() {}
 void GBComputation::text_out(buffer &o) const
@@ -40,7 +47,8 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
   const Ring *R1 = m->get_ring();
   const PolynomialRing *R2 = R1->cast_to_PolynomialRing();
 
-  if (R2 == 0)
+  std::vector<int> weights; // used in createParallelF4GB
+  if (R2 == nullptr)
     {
       // Look for the correct computation type here.
       if (R1 == globalZZ)
@@ -55,7 +63,7 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
 #warning "handle non polynomial rings"
 #endif
       ERROR("GB computation for non-polynomial rings not yet re-implemented");
-      return 0;
+      return nullptr;
     }
 
 //  const PolynomialRing *R = R2->get_flattened_ring();
@@ -111,6 +119,12 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
       case 8:
         ERROR("Algorithm => Test has been removed from M2");
         return nullptr;
+      case 9:
+        weights = M2_arrayint_to_stdvector<int>(gb_weights);
+        result = createGBF4Interface(m,
+                            weights,
+                            strategy);
+        break;
       default:
         result = gbA::create(m,
                              collect_syz,
@@ -123,7 +137,7 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
         break;
     }
   intern_GB(result);
-  return result != NULL ? new GBProxy(result) : NULL;
+  return result != nullptr ? new GBProxy(result) : nullptr;
 
 #if 0
 //   if (is_graded)
@@ -191,7 +205,7 @@ Computation /* or null */ *GBComputation::set_hilbert_function(
 // used.
 {
   ERROR("Hilbert function use is not implemented for this GB algorithm");
-  return 0;
+  return nullptr;
 }
 
 const Matrix /* or null */ *GBComputation::get_parallel_lead_terms(
@@ -200,7 +214,7 @@ const Matrix /* or null */ *GBComputation::get_parallel_lead_terms(
   ERROR(
       "Cannot compute parallel lead terms for this kind of Groebner "
       "computation");
-  return 0;
+  return nullptr;
 }
 
 // Local Variables:

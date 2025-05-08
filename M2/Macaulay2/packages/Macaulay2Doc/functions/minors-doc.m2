@@ -37,5 +37,6 @@ document {
      minors(0,M)
      minors(-1,M)
      ///,
-     SeeAlso => {"exteriorPower", "det"}
+     SeeAlso => {"exteriorPower", "det"},
+     Subnodes => { TO [minors, Strategy] },
      }

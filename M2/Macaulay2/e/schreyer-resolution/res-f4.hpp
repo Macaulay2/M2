@@ -3,6 +3,7 @@
 #ifndef _res_f4_hpp_
 #define _res_f4_hpp_
 
+#include "VectorArithmetic.hpp"
 #include "f4/monhashtable.hpp"
 #include "schreyer-resolution/res-memblock.hpp"
 #include "schreyer-resolution/res-poly-ring.hpp"
@@ -33,7 +34,7 @@ class F4Res
   // NOTE: it is not needed to have done: construct(lev-1,degree)
   void construct(int lev, int degree);
 
-  const ResGausser& resGausser() const { return mRing.resGausser(); }
+  const VectorArithmetic& vectorArithmetic() const { return mRing.vectorArithmetic(); }
   const ResMonoid& monoid() const { return mRing.monoid(); }
   const ResPolyRing& ring() const { return mRing; }
  private:
@@ -43,7 +44,7 @@ class F4Res
         mLeadTerm;  // monomial (level lev-1) giving rise to this row
     // The following two should have the same length.
     std::vector<ComponentIndex> mComponents;  // indices into mColumns
-    CoefficientVector mCoeffs;
+    ElementArray mCoeffs;
     Row() : mLeadTerm(nullptr) {}
   };
 
@@ -63,6 +64,10 @@ class F4Res
   void reorderColumns();
   void makeMatrix();
   void gaussReduce();
+  void gaussReduceRow(int index,
+                       ElementArray &dense,
+                       bool onlyConstantMaps,
+                       const std::vector<bool>& track);
 
   void debugOutputReducers();
   void debugOutputColumns();
@@ -100,7 +105,7 @@ class F4Res
   std::vector<long> mSPairComponents;  // index into mFrame.level(mThisLevel)
   std::vector<res_packed_monomial>
       mColumns;  // all the monomials at level lev-2 we need to consider
-  //  MemoryBlock<res_monomial_word> mMonomSpace;  // for monomials stored in this
+  //  ResMemoryBlock<res_monomial_word> mMonomSpace;  // for monomials stored in this
                                                // (lev,degree) in mColumns and
                                                // the lead terms in Row.
   MonomialMemorySpace mMonomSpace2;

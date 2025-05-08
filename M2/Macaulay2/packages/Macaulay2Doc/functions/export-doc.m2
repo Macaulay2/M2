@@ -74,6 +74,8 @@ Node
      exportFrom
     (exportFrom, Package, List)
     (exportFrom, String,  List)
+    (exportFrom, Package, String)
+    (exportFrom, String,  String)
   Headline
     export symbols from a package's private dictionary
   Usage
@@ -81,7 +83,7 @@ Node
   Inputs
     pkg:{Package,String}
       the package containing the symbols
-    :List
+    :{String, List}
       of strings, corresponding to the symbols to export
   Consequences
     Item
@@ -102,6 +104,8 @@ Node
      importFrom
     (importFrom, Package, List)
     (importFrom, String,  List)
+    (importFrom, Package, String)
+    (importFrom, String,  String)
   Headline
     import symbols to the current private dictionary
   Usage
@@ -109,7 +113,7 @@ Node
   Inputs
     pkg:{Package,String}
       the package containing the private symbols
-    :List
+    :{String, List}
       of strings, corresponding to the private @TO2 {Symbol, "symbols"}@ to export from the package
   Outputs
     :List

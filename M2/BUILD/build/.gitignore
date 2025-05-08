@@ -1,4 +1,4 @@
-GNUmakefile
+Makefile
 Macaulay2
 check-configure
 config.args

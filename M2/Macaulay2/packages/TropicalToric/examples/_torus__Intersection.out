@@ -1,0 +1,51 @@
+-- -*- M2-comint -*- hash: 1827265772020591012
+
+i1 : X = NormalToricVarieties$cartesianProduct apply((1,1), i-> toricProjectiveSpace i);
+
+i2 : S = ring X;
+
+i3 : f = 2 * S_1 + 3 * S_3 + S_0;
+
+i4 : torusIntersection(X,f)
+
+o4 = 2y  + 3y  + 1
+       1     2
+
+o4 : QQ[y ..y ]
+         1   2
+
+i5 : torusIntersection(X,ideal(f))
+
+o5 = ideal(2y  + 3y  + 1)
+             1     2
+
+o5 : Ideal of QQ[y ..y ]
+                  1   2
+
+i6 : X = toricProjectiveSpace 3;
+
+i7 : S = ring X;
+
+i8 : f = S_0*S_1*S_2+S_0*S_1*S_3+S_0*S_2*S_3+S_1*S_2*S_3;
+
+i9 : torusIntersection(X,f)
+
+o9 = y y y  + y y  + y y  + y y
+      1 2 3    1 2    1 3    2 3
+
+o9 : QQ[y ..y ]
+         1   3
+
+i10 : I = ideal((S_1+S_2)*S_0, (S_1+S_2)*(S_0+S_1));
+
+o10 : Ideal of S
+
+i11 : torusIntersection(X,I)
+
+o11 = ideal(y  + y )
+             1    2
+
+o11 : Ideal of QQ[y ..y ]
+                   1   3
+
+i12 : 

@@ -180,7 +180,7 @@ grMatchingField(ZZ, ZZ, List) := (Lk , Ln, L) -> (
 	}
     )
 
--- Constructor for parital Flag Matching Fields
+-- Constructor for partial Flag Matching Fields
 flMatchingField = method(
     TypicalValue => FlMatchingField
     )
@@ -978,7 +978,7 @@ matchingFieldFromPermutationNoScaling(ZZ, ZZ, List) := opts -> (Lk, Ln, S) -> (
 -- 7) if not then d = d+1 and go back to step 2
 -- 8) reduce the matching field ideal gens modulo the full GB and check if the result is zero
 --
--- In the homgeneous case, it suffices to compute a GB up to degree limit d (step 1)
+-- In the homogeneous case, it suffices to compute a GB up to degree limit d (step 1)
 -- so we can forgo the while loop
 
 isToricDegeneration = method ()
@@ -1905,7 +1905,7 @@ doc ///
 	  Given a matching field $\Lambda$ for the Grassmannian Gr$(k,n)$, the matching field 
 	  polytope $P(\Lambda)$ is simply the convex hull of the exponent
 	  vectors of the image of Pluecker variables under the monomial map of 
-	  $\Lambda$. The polytope natrually lives in the space
+	  $\Lambda$. The polytope naturally lives in the space
 	  $\RR^{k \times n}$.
 	Example
 	  L2 = diagonalMatchingField(2, 4)

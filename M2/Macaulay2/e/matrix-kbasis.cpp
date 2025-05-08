@@ -106,7 +106,7 @@ class KBasis
   ~KBasis() {}
   void compute();
 
-  Matrix *value() { return (kb_error ? 0 : mat.to_matrix()); }
+  Matrix *value() { return (kb_error ? nullptr : mat.to_matrix()); }
 
  public:
   static Matrix *k_basis(const Matrix *bottom,
@@ -139,7 +139,7 @@ KBasis::KBasis(const Matrix *bottom,
   M = P->getMonoid();
   D = P->get_degree_ring()->getMonoid();
 
-  if (lo_degree == 0 && hi_degree == 0) { computation_type = KB_FULL; }
+  if (lo_degree == nullptr && hi_degree == nullptr) { computation_type = KB_FULL; }
   else if (mHeftVector.size() == 1) { computation_type = KB_SINGLE; }
   else { computation_type = KB_MULTI; }
 
@@ -165,10 +165,10 @@ KBasis::KBasis(const Matrix *bottom,
   kb_exp = newarray_atomic_clear(int, P->n_vars());
   kb_exp_weight = 0;
 
-  if (lo_degree != NULL)
+  if (lo_degree != nullptr)
     kb_target_lo_weight =
         exponents::weight(mHeftVector.size(), lo_degree, mHeftVector);
-  if (hi_degree != NULL)
+  if (hi_degree != nullptr)
     kb_target_hi_weight =
         exponents::weight(mHeftVector.size(), hi_degree, mHeftVector);
 
@@ -184,12 +184,12 @@ KBasis::KBasis(const Matrix *bottom,
   mat = MatrixConstructor(bottom->rows(), 0);
   kb_exp_multidegree = D->make_one();
 
-  if (mHeftVector.size() > 1 && lo_degree != NULL)
+  if (mHeftVector.size() > 1 && lo_degree != nullptr)
     {
       kb_target_multidegree = D->make_one();
       exponents::copy(mHeftVector.size(), lo_degree, kb_target_multidegree);
     }
-  else { kb_target_multidegree = 0; }
+  else { kb_target_multidegree = nullptr; }
 }
 
 void KBasis::insert()
@@ -396,7 +396,7 @@ void KBasis::compute()
       // coeffs
 
       if (kb_monideal->is_one()) continue;
-      if (hi_degree == NULL)
+      if (hi_degree == nullptr)
         {
           // check here that kb_monideal is 0-dimensional
           // (at least for the variables being used):
@@ -475,28 +475,28 @@ Matrix /* or null */ *KBasis::k_basis(const Matrix *bottom,
   //
   // Do some checks first, return 0 if not good.
   const PolynomialRing *P = bottom->get_ring()->cast_to_PolynomialRing();
-  if (P == 0) return Matrix::identity(bottom->rows());
+  if (P == nullptr) return Matrix::identity(bottom->rows());
 
   const PolynomialRing *D = P->get_degree_ring();
-  const int *lo = lo_degree->len > 0 ? lo_degree->array : 0;
-  const int *hi = hi_degree->len > 0 ? hi_degree->array : 0;
+  const int *lo = lo_degree->len > 0 ? lo_degree->array : nullptr;
+  const int *hi = hi_degree->len > 0 ? hi_degree->array : nullptr;
 
   if (heftvec.size() > D->n_vars())
     {
       ERROR("expected heft vector of length <= %d", D->n_vars());
-      return 0;
+      return nullptr;
     }
 
   if (lo && heftvec.size() != lo_degree->len)
     {
       ERROR("expected degrees of length %d", heftvec.size());
-      return 0;
+      return nullptr;
     }
 
   if (hi && heftvec.size() != hi_degree->len)
     {
       ERROR("expected degrees of length %d", heftvec.size());
-      return 0;
+      return nullptr;
     }
 
   // If heftvec.size() is > 1, and both lo and hi are non-null,
@@ -506,7 +506,7 @@ Matrix /* or null */ *KBasis::k_basis(const Matrix *bottom,
       if (lo_degree->array[i] != hi_degree->array[i])
         {
           ERROR("expected degree bounds to be equal");
-          return 0;
+          return nullptr;
         }
 
   KBasis KB(bottom, lo, hi, heftvec, varlist, do_truncation, limit);
@@ -520,15 +520,15 @@ Matrix /* or null */ *KBasis::k_basis(const Matrix *bottom,
           ERROR(
               "basis: computation requires a heft form non-negative on the "
               "degrees of the variables");
-          return 0;
+          return nullptr;
         }
   // This next line will happen if both lo,hi degrees are given, and they are
   // different.  This can only be the singly generated case, and in that case
   // the degrees are in the wrong order, so return with 0 basis.
-  if (lo != NULL && hi != NULL && lo[0] > hi[0]) return KB.value();
+  if (lo != nullptr && hi != nullptr && lo[0] > hi[0]) return KB.value();
 
   KB.compute();
-  if (system_interrupted()) return 0;
+  if (system_interrupted()) return nullptr;
   return KB.value();
 }
 

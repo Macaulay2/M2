@@ -9,6 +9,7 @@
 #include <string>
 #include <sstream>
 
+#include "M2mem.h"  // for getmemvectortype, getmematomicvectortype
 #include "error.h"
 #include "monordering.hpp" // TODO: where can this go? it only defines one class
 
@@ -20,14 +21,14 @@ static struct mon_part_rec_ *mo_make(enum MonomialOrdering_type type,
   result = getmemstructtype(mon_part);
   result->type = type;
   result->nvars = nvars;
-  if (wts != 0)
+  if (wts != nullptr)
     {
       int i;
       result->wts = getmematomicvectortype(int, nvars);
       for (i = 0; i < nvars; i++) result->wts[i] = wts[i];
     }
   else
-    result->wts = 0;
+    result->wts = nullptr;
   return result;
 }
 
@@ -38,7 +39,7 @@ static MonomialOrdering *make_mon_order(int n)
   z->len = n;
   z->_hash = next_hash++;
   int i;
-  for (i = 0; i < n; i++) z->array[i] = NULL;
+  for (i = 0; i < n; i++) z->array[i] = nullptr;
   return z;
 }
 
@@ -53,7 +54,7 @@ static MonomialOrdering *M2_mo_offset(const MonomialOrdering *mo, int offset)
         result->array[i] = mo_make(p->type, p->nvars, p->wts);
       else
         {
-          mon_part q = mo_make(MO_WEIGHTS, offset + p->nvars, NULL);
+          mon_part q = mo_make(MO_WEIGHTS, offset + p->nvars, nullptr);
           q->wts = getmemvectortype(int, q->nvars);
           for (j = 0; j < offset; j++) q->wts[j] = 0;
           for (; j < q->nvars; j++) q->wts[j] = p->wts[j - offset];
@@ -232,7 +233,7 @@ MonomialOrdering *MonomialOrderings::join(
           else
             {
               /* Shift the weights over by nvars_so_far */
-              mon_part q = mo_make(MO_WEIGHTS, nvars_so_far + p->nvars, NULL);
+              mon_part q = mo_make(MO_WEIGHTS, nvars_so_far + p->nvars, nullptr);
               q->wts = getmemvectortype(int, q->nvars);
               for (j = 0; j < nvars_so_far; j++) q->wts[j] = 0;
               for (; j < q->nvars; j++) q->wts[j] = p->wts[j - nvars_so_far];
@@ -358,7 +359,7 @@ std::string MonomialOrderings::toString(const MonomialOrdering *mo)
             o << "UNKNOWN";
             break;
         }
-      if (p->wts != NULL) { ::toString(o, p->nvars, p->wts); }
+      if (p->wts != nullptr) { ::toString(o, p->nvars, p->wts); }
       else if (p_ones)
         {
           ::ones(o, p->nvars);
@@ -439,7 +440,7 @@ M2_arrayint moGetWeightValues(const MonomialOrdering *mo)
 {
   int nvars = rawNumberOfVariables(mo);
   // grab the first weight vector
-  if (mo->len == 0) return 0;
+  if (mo->len == 0) return nullptr;
   if (mo->array[0]->type == MO_WEIGHTS)
     {
       int i;
@@ -449,7 +450,7 @@ M2_arrayint moGetWeightValues(const MonomialOrdering *mo)
       for (; i < nvars; i++) result->array[i] = 0;
       return result;
     }
-  return 0;
+  return nullptr;
 }
 
 int rawNumberOfInvertibleVariables(const MonomialOrdering *mo)
@@ -542,7 +543,7 @@ MonomialOrdering *rawLexMonomialOrdering(int nvars, int packing)
   else
     typ = MO_LEX;
 
-  p = mo_make(typ, nvars, NULL);
+  p = mo_make(typ, nvars, nullptr);
   result = make_mon_order(1);
   result->array[0] = p;
   return result;
@@ -561,7 +562,7 @@ MonomialOrdering /* or null */ *rawGRevLexMonomialOrdering(M2_arrayint degs,
     if (degs->array[i] <= 0)
       {
         ERROR("grevlex: expected all degrees to be positive");
-        return NULL;
+        return nullptr;
       }
     else if (degs->array[i] > 1)
       all_one = 0;
@@ -574,7 +575,7 @@ MonomialOrdering /* or null */ *rawGRevLexMonomialOrdering(M2_arrayint degs,
         typ = MO_GREVLEX4;
       else
         typ = MO_GREVLEX;
-      wts = 0;
+      wts = nullptr;
     }
   else
     {
@@ -595,7 +596,7 @@ MonomialOrdering /* or null */ *rawGRevLexMonomialOrdering(M2_arrayint degs,
 
 MonomialOrdering *rawRevLexMonomialOrdering(int nvars)
 {
-  mon_part p = mo_make(MO_REVLEX, nvars, NULL);
+  mon_part p = mo_make(MO_REVLEX, nvars, nullptr);
   MonomialOrdering *result = make_mon_order(1);
   result->array[0] = p;
   return result;
@@ -610,21 +611,21 @@ MonomialOrdering *rawWeightsMonomialOrdering(M2_arrayint wts)
 }
 MonomialOrdering *rawGroupLexMonomialOrdering(int nvars)
 {
-  mon_part p = mo_make(MO_LAURENT, nvars, 0);
+  mon_part p = mo_make(MO_LAURENT, nvars, nullptr);
   MonomialOrdering *result = make_mon_order(1);
   result->array[0] = p;
   return result;
 }
 MonomialOrdering *rawGroupRevLexMonomialOrdering(int nvars)
 {
-  mon_part p = mo_make(MO_LAURENT_REVLEX, nvars, 0);
+  mon_part p = mo_make(MO_LAURENT_REVLEX, nvars, nullptr);
   MonomialOrdering *result = make_mon_order(1);
   result->array[0] = p;
   return result;
 }
 MonomialOrdering *rawNClexMonomialOrdering(int nvars)
 {
-  mon_part p = mo_make(MO_NC_LEX, nvars, 0);
+  mon_part p = mo_make(MO_NC_LEX, nvars, nullptr);
   MonomialOrdering *result = make_mon_order(1);
   result->array[0] = p;
   return result;
@@ -632,7 +633,7 @@ MonomialOrdering *rawNClexMonomialOrdering(int nvars)
 MonomialOrdering *rawPositionMonomialOrdering(M2_bool up_or_down)
 {
   mon_part p =
-      mo_make((up_or_down ? MO_POSITION_UP : MO_POSITION_DOWN), 0, NULL);
+      mo_make((up_or_down ? MO_POSITION_UP : MO_POSITION_DOWN), 0, nullptr);
   MonomialOrdering *result = make_mon_order(1);
   result->array[0] = p;
   return result;
@@ -671,7 +672,7 @@ MonomialOrdering *rawJoinMonomialOrdering(engine_RawMonomialOrderingArray M)
           else
             {
               /* Shift the weights over by nvars_so_far */
-              mon_part q = mo_make(MO_WEIGHTS, nvars_so_far + p->nvars, NULL);
+              mon_part q = mo_make(MO_WEIGHTS, nvars_so_far + p->nvars, nullptr);
               q->wts = getmemvectortype(int, q->nvars);
               for (j = 0; j < nvars_so_far; j++) q->wts[j] = 0;
               for (; j < q->nvars; j++) q->wts[j] = p->wts[j - nvars_so_far];
@@ -815,11 +816,192 @@ M2_string IM2_MonomialOrdering_to_string(const MonomialOrdering *mo)
             break;
         }
       result = M2_join(result, M2_tostring(s));
-      if (p->wts != NULL)
+      if (p->wts != nullptr)
         result = M2_join(result, intarray_to_string(p->nvars, p->wts));
       else if (p_ones)
         result = M2_join(result, ones_to_string(p->nvars));
     }
   result = M2_join(result, M2_tostring("\n    }"));
+  return result;
+}
+
+// Many monomial ordering routines are in monordering.c
+// Here are some that use c++ features, so cannot be there.
+// @todo Make monordering.{h,c} into a c++ class.
+
+static void write_row(std::vector<int> &grading,
+                      int nvars,
+                      int which,
+                      int value)
+{
+  for (int i = 0; i < nvars; i++)
+    if (i == which)
+      grading.push_back(value);
+    else
+      grading.push_back(0);
+}
+static void write_weights(std::vector<int> &grading,
+                          int nvars,
+                          int firstvar,
+                          int *wts,
+                          int nwts)
+// place nvars ints into grading:  0 ... 0 wts[0] wts[1] ... wts[nwts-1] 0 ....
+// 0
+// where wts[0] is in the 'firstvar' location.  If wts is NULL, treat it as the
+// vector with nwts '1's.
+{
+  for (int i = 0; i < firstvar; i++) grading.push_back(0);
+  if (wts == nullptr)
+    for (int i = 0; i < nwts; i++) grading.push_back(1);
+  else
+    for (int i = 0; i < nwts; i++) grading.push_back(wts[i]);
+  for (int i = firstvar + nwts; i < nvars; i++) grading.push_back(0);
+}
+
+bool monomialOrderingToMatrix(
+    const struct MonomialOrdering &mo,
+    std::vector<int> &mat,
+    bool &base_is_revlex,
+    int &component_direction,      // -1 is Down, +1 is Up, 0 is not present
+    int &component_is_before_row)  // -1 means at the end, 0 means before the
+                                   // order, and r means considered before row
+                                   // 'r' of the matrix.
+{
+  // a false return value means an error has occurred.
+  int nvars = rawNumberOfVariables(&mo);
+  base_is_revlex = true;
+  enum LastBlock { LEX, REVLEX, WEIGHTS, NONE };
+  LastBlock last = NONE;
+  int nwts = 0;  // local var used in MO_WEIGHTS section
+  int nrows = 0;
+  int firstvar = 0;
+  component_direction = 0;
+  component_is_before_row =
+      -2;                   // what should the default value be?  Probably: -1.
+  size_t last_element = 0;  // The vector 'mat' will be resized back to this
+                            // value if the last part of the order is lex or
+                            // revlex.
+  for (int i = 0; i < mo.len; i++)
+    {
+      mon_part p = mo.array[i];
+      switch (p->type)
+        {
+          case MO_LEX:
+          case MO_LEX2:
+          case MO_LEX4:
+            // printf("lex %d\n", p->nvars);
+            last_element = mat.size();
+            for (int j = 0; j < p->nvars; j++)
+              {
+                write_row(mat, nvars, firstvar + j, 1);
+              }
+            last = LEX;
+            firstvar += p->nvars;
+            nrows += p->nvars;
+            break;
+          case MO_GREVLEX:
+          case MO_GREVLEX2:
+          case MO_GREVLEX4:
+            // printf("grevlex %d %ld\n", p->nvars, p->wts);
+            write_weights(mat, nvars, firstvar, p->wts, p->nvars);
+            last_element = mat.size();
+            for (int j = p->nvars - 1; j >= 1; --j)
+              {
+                write_row(mat, nvars, firstvar + j, -1);
+              }
+            last = REVLEX;
+            firstvar += p->nvars;
+            nrows += p->nvars;
+            break;
+          case MO_GREVLEX_WTS:
+          case MO_GREVLEX2_WTS:
+          case MO_GREVLEX4_WTS:
+            // printf("grevlex_wts %d %ld\n", p->nvars, p->wts);
+            write_weights(mat, nvars, firstvar, p->wts, p->nvars);
+            last_element = mat.size();
+            for (int j = p->nvars - 1; j >= 1; --j)
+              {
+                write_row(mat, nvars, firstvar + j, -1);
+              }
+            last = REVLEX;
+            firstvar += p->nvars;
+            nrows += p->nvars;
+            break;
+          case MO_REVLEX:
+            // printf("revlex %d\n", p->nvars);
+            last_element = mat.size();
+            for (int j = p->nvars - 1; j >= 0; --j)
+              {
+                write_row(mat, nvars, firstvar + j, -1);
+              }
+            last = REVLEX;
+            firstvar += p->nvars;
+            nrows += p->nvars;
+            break;
+          case MO_WEIGHTS:
+            // printf("matsize= %d weights %d p->wts=%lu\n", mat.size(),
+            // p->nvars, p->wts);
+            nwts = (p->nvars > nvars ? nvars : p->nvars);
+            write_weights(mat, nvars, 0, p->wts, nwts);
+            nrows++;
+            last_element = mat.size();
+            last = WEIGHTS;
+            break;
+          case MO_LAURENT:
+          case MO_LAURENT_REVLEX:
+          case MO_NC_LEX:
+            return false;
+            break;
+          case MO_POSITION_UP:
+            component_direction = 1;
+            component_is_before_row = nrows;
+            break;
+          case MO_POSITION_DOWN:
+            component_direction = -1;
+            component_is_before_row = nrows;
+            break;
+          default:
+            // DO nothing
+            break;
+        }
+    }
+  if (last == LEX)
+    {
+      // last block was lex, so use lex tie-breaker
+      mat.resize(last_element);
+      if (nrows == component_is_before_row) component_is_before_row = -1;
+      base_is_revlex = false;
+    }
+  else if (last == REVLEX)
+    {
+      // last block was revlex, so use revlex tie-breaker
+      if (nrows == component_is_before_row) component_is_before_row = -1;
+      mat.resize(last_element);
+    }
+  else
+    {
+      // last block is a weight vector, so use revlex as the tie-breaker.
+      // nothing to change here.
+    }
+  return true;
+}
+
+M2_arrayint rawMonomialOrderingToMatrix(const struct MonomialOrdering *mo)
+{
+  bool base;
+  std::vector<int> mat;
+  M2_arrayint result = nullptr;
+  int component_is_before_row = 0;
+  int component_direction = 0;
+  if (monomialOrderingToMatrix(
+          *mo, mat, base, component_direction, component_is_before_row))
+    {
+      int top = static_cast<int>(mat.size());
+      result = M2_makearrayint(top + 3);
+      for (int i = 0; i < top; i++) result->array[i] = mat[i];
+      result->array[top] = (base ? 1 : 0);
+      result->array[top + 1] = component_direction;
+      result->array[top + 2] = component_is_before_row;
+    }
   return result;
 }

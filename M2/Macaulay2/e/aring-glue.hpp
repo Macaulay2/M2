@@ -73,9 +73,9 @@ class ConcreteRing : public Ring
   // These are declared below for Galois fields, and the definitions appear
   // where?
 
-  const RingElement *getMinimalPolynomial() const { return 0; }
-  const RingElement *getGenerator() const { return 0; }
-  const RingElement *getRepresentation(const ring_elem &a) const { return 0; }
+  const RingElement *getMinimalPolynomial() const { return nullptr; }
+  const RingElement *getGenerator() const { return nullptr; }
+  const RingElement *getRepresentation(const ring_elem &a) const { return nullptr; }
   virtual long discreteLog(const ring_elem &a) const
   {
     throw exc::engine_error("cannot compute discrete logarithm in this ring");

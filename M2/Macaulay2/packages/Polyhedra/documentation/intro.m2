@@ -16,8 +16,9 @@ document {
 	PARA{}, TT "Polyhedra", " uses the ",
    UL {
       { TO "FourierMotzkin", " package by ", HREF("http://www.mast.queensu.ca/~ggsmith", "Gregory G. Smith")},
-      { TO "FourTiTwo", " package by ", HREF("http://pi.math.cornell.edu/~mike/", "Michael Stillman"),", ", HREF("http://people.math.gatech.edu/~jyu67/", "Josephine Yu"), ", and ",
+      { TO "FourTiTwo::FourTiTwo", " package by ", HREF("http://pi.math.cornell.edu/~mike/", "Michael Stillman"),", ", HREF("http://people.math.gatech.edu/~jyu67/", "Josephine Yu"), ", and ",
       HREF("http://math.iit.edu/~spetrov1/", "Sonja Petrovic")},
+      { TO "Normaliz::Normaliz", " package by Gesa Kaempf and Christof Soeger" },
       { TO "Topcom", " package by ",  HREF("http://pi.math.cornell.edu/~mike/", "Michael Stillman"), "."}
    },
 	

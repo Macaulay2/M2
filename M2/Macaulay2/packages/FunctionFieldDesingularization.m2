@@ -2,7 +2,8 @@ newPackage("FunctionFieldDesingularization",
      Version => "1.0", 
      Date => "September 13, 2021",
      Authors => {{Name => "Douglas A. Leonard", Email => "leonada@auburn.edu"}},
-     Headline => "desingularization of function fields"
+     Headline => "desingularization of function fields",
+     Keywords => {"Commutative Algebra"}
      )
 
 export {"negLexMatrix", "arcs"}

@@ -50,7 +50,7 @@ relink:
 foo : ; : @libdir@ $(BUILTLIBPATH)
 
 check: $(EXEFILE)
-	LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" $< --check 1 -q --stop -E "exit 0"
+	LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" $< --check 1 -q
 
 ifeq (@OS@,Darwin)
 # We specify the search path for finding shareable libraries, in case there are any,
@@ -130,7 +130,7 @@ $(EXEFILE): $(M2_OBJECTS) $(M2_LIBDEPS) | @pre_bindir@
 	@ $(WHY)
 	@ echo "compiling timestamp.cpp"
 	$(COMPILE.cc) @srcdir@/timestamp.cpp -o timestamp.o
-	time @CXX@ $(M2_LDFLAGS) timestamp.o $(M2_OBJECTS) $(M2_LIBRARIES) -o "$@".tmp
+	@CXX@ $(M2_LDFLAGS) timestamp.o $(M2_OBJECTS) $(M2_LIBRARIES) -o "$@".tmp
 ifneq ("$(EXECSTACK)","no")
 	@ if [ -x /usr/bin/execstack ] ;\
 	  then if (set -x ; execstack -q "$@".tmp; execstack -c "$@".tmp ) ; \

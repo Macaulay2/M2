@@ -210,7 +210,7 @@ Types:
 
 	Pointer "bar"			a new pointer type, declared as "bar" in the C or C++ code produced
 	atomicPointer "bar"		a new atomic pointer type, declared as "bar" in the C or C++ code produced
-	malloc(T)			returns a pointer of type T pointing to new memory on the heap
+	GCmalloc(T)			returns a pointer of type T pointing to new memory on the heap
 					the number of bytes allocated is sizeof(*((T)0))
 					if T is a pointer type, the memory is cleared by GC_MALLOC
 					if T is an atomic pointer type, the memory is not cleared by GC_MALLOC_ATOMIC
@@ -266,7 +266,7 @@ Expressions:
 	if a then b
 	until a do b
 	while a do b			evaluates b as long as a is true
-	while a list b			produces a list of the values of b, as long as a is true
+	while a list b			produces a list of the values of b, as long as a is true (not implemented!?)
 	foreach a in b do c		
 	foreach a at i in b do c
 	foreach a at i in b by s do c
@@ -289,7 +289,7 @@ Expressions:
 
 	export a := b				export a variable or function (by declaring it in *.sig)
 	import a				import a variable (used mainly in *.sig files)
-	thread a := b				declare a thread local variable
+	threadLocal a := b			declare a thread local variable
 
 	f(x,y)					function application
 	when e 					examine e
@@ -330,7 +330,7 @@ Useful functions
 	+	-	*	/	%
 	^^					exclusive or
 	^					power (for doubles)
-	::					nothing
+	::					nothing (not implemented!?)
 
 Operators
 

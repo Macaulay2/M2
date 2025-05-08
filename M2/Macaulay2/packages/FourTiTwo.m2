@@ -28,6 +28,7 @@ newPackage(
 	Configuration => { "path" => "",
 	     "keep files" => true
 	      },
+	PackageExports => {"Polyhedra"}, -- for hilbertBasis
     	DebuggingMode => false
     	)
 
@@ -39,9 +40,9 @@ export {
      "toricGroebner",
      "toricCircuits",
      "toricGraver",
-     "hilbertBasis",
+     "toricGraverDegrees",
+     -- "hilbertBasis", -- defined in Polyhedra
      "InputType",
-     "toricGraverDegrees"
      }
 
 -- for backward compatibility
@@ -49,6 +50,7 @@ if not programPaths#?"4ti2" and FourTiTwo#Options#Configuration#"path" != ""
     then programPaths#"4ti2" = FourTiTwo#Options#Configuration#"path"
 
 fourTiTwo = null
+debugLimit = 5
 
 run4ti2 = (exe, args) -> (
     if fourTiTwo === null then
@@ -107,25 +109,26 @@ toBinomial(Matrix,Ring) := (M,S) -> (
      ideal apply(entries M, toBinom)
      )
 
-toricMarkov = method(Options=> {InputType => null})
+toricMarkov = method(Options=> {InputType => null, Precision => 64})
 toricMarkov Matrix := Matrix => o -> (A) -> (
      filename := getFilename();
-     if debugLevel >= 1 then << "using temporary file name " << filename << endl;
+     if debugLevel >= debugLimit then << "using temporary file name " << filename << endl;
      if o.InputType === "lattice" then
      	  F := openOut(filename|".lat")
      else 
        	  F = openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     run4ti2("markov", rootPath | filename);
+     run4ti2("markov",
+	 "-p " | toString o.Precision | " " | rootPath | filename);
      getMatrix(filename|".mar")
      )
 toricMarkov(Matrix,Ring) := o -> (A,S) -> toBinomial(toricMarkov(A,o), S)
 
-toricGroebner = method(Options=>{Weights=>null})
+toricGroebner = method(Options=>{Weights=>null, Precision => 64})
 toricGroebner Matrix := o -> (A) -> (
      filename := getFilename();
-     if debugLevel >= 1 then << "using temporary file name " << filename << endl;
+     if debugLevel >= debugLimit then << "using temporary file name " << filename << endl;
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
@@ -133,55 +136,60 @@ toricGroebner Matrix := o -> (A) -> (
 	  cost := concatenate apply(o.Weights, x -> (x|" "));
 	  (filename|".cost") << "1 " << #o.Weights << endl << cost << endl  << close;
 	  );
-     run4ti2("groebner", rootPath | filename);
+     run4ti2("groebner",
+	 "-p " | toString o.Precision | " " | rootPath | filename);
      getMatrix(filename|".gro")
      )
 toricGroebner(Matrix,Ring) := o -> (A,S) -> toBinomial(toricGroebner(A,o), S)
 
-toricCircuits = method()
-toricCircuits Matrix := Matrix => (A ->(
+toricCircuits = method(Options => {Precision => 64})
+toricCircuits Matrix := Matrix => (o -> A ->(
      filename := getFilename();
-     if debugLevel >= 1 then << "using temporary file name " << filename << endl;
+     if debugLevel >= debugLimit then << "using temporary file name " << filename << endl;
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     run4ti2("circuits", rootPath | filename);
+     run4ti2("circuits",
+	 "-p " | toString o.Precision | " " | rootPath | filename);
      getMatrix(filename|".cir")
      ))
 
-toricGraver = method()
-toricGraver Matrix := Matrix => (A ->(
+toricGraver = method(Options => {Precision => 32})
+toricGraver Matrix := Matrix => (o -> A ->(
      filename := getFilename();
-     if debugLevel >= 1 then << "using temporary file name " << filename << endl;
+     if debugLevel >= debugLimit then << "using temporary file name " << filename << endl;
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     run4ti2("graver -q ", rootPath | filename);
+     run4ti2("graver",
+	 "-q -p " | toString o.Precision | " " | rootPath | filename);
      getMatrix(filename|".gra")
      ))
-toricGraver (Matrix,Ring) := Ideal => ((A,S)->toBinomial(toricGraver(A),S))
+toricGraver (Matrix,Ring) := Ideal => (o -> (A,S)->toBinomial(toricGraver(A),S))
 
-hilbertBasis = method(Options=> {InputType => null})
-hilbertBasis Matrix := Matrix => o -> (A ->(
+-- hilbertBasis is defined in Polyhedra
+hilbertBasis Matrix := Matrix => { InputType => null, Precision => 32 } >> o -> A -> (
      filename := getFilename();
-     if debugLevel >= 1 then << "using temporary file name " << filename << endl;
+     if debugLevel >= debugLimit then << "using temporary file name " << filename << endl;
      if o.InputType === "lattice" then
      	  F := openOut(filename|".lat")
      else 
        	  F = openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     run4ti2("hilbert", rootPath | filename);
+     run4ti2("hilbert",
+	 "-p " | toString o.Precision | " " | rootPath | filename);
      getMatrix(filename|".hil")
-     ))
+     )
 
-rays Matrix := Matrix => (A ->(
+rays Matrix := Matrix => { Precision => 64 } >> o -> (A ->(
      filename := getFilename();
-     if debugLevel >= 1 then << "using temporary file name " << filename << endl;
+     if debugLevel >= debugLimit then << "using temporary file name " << filename << endl;
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     run4ti2("rays", rootPath | filename);
+     run4ti2("rays",
+	 "-p " | toString o.Precision | " " | rootPath | filename);
      getMatrix(filename|".ray")
      ))
 
@@ -190,14 +198,15 @@ rays Matrix := Matrix => (A ->(
 -- the way 4ti2 does this is you tell it the whatever.mar or whatever.cir file and it writes the degrees
 -- to the screen.
 -- On the other hand, it doesn't matter because you can ask M2 for those degrees directly! 
-toricGraverDegrees = method()
-toricGraverDegrees Matrix := Matrix => (A ->(
+toricGraverDegrees = method(Options => {Precision => 32})
+toricGraverDegrees Matrix := Matrix => (o -> A ->(
      filename := getFilename();
-     if debugLevel >= 1 then << "using temporary file name " << filename << endl;
+     if debugLevel >= debugLimit then << "using temporary file name " << filename << endl;
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     run4ti2("graver", rootPath | filename);
+     run4ti2("graver",
+	 "-p " | toString o.Precision | " " | rootPath | filename);
      ret := run4ti2("output", "--degrees " | rootPath | filename|".gra");
      print ret#"output"
      ))
@@ -337,6 +346,7 @@ doc ///
           (toricGroebner, Matrix)
      	  (toricGroebner, Matrix, Ring)
      	  [toricGroebner, Weights]
+	  [toricGroebner, Precision]
      Headline
      	  calculates a Groebner basis of the toric ideal I_A, given A; invokes "groebner" from 4ti2
      Usage
@@ -346,6 +356,9 @@ doc ///
 	       whose columns parametrize the toric variety. The toric ideal $I_A$ is the kernel of the map defined by {\tt A}.
      	  R:Ring
 	       ring with as least as many generators as the columns of {\tt A}
+	  Precision => {ZZ, String}
+	       32, 64, or "arbitrary", the precision of the integers used during
+	       the computation
      Outputs
      	  B:Matrix 
 	       whose rows give binomials that form a Groebner basis of the toric ideal of {\tt A}
@@ -377,6 +390,7 @@ doc ///
           (toricMarkov, Matrix)
 	  (toricMarkov, Matrix, Ring)
 	  [toricMarkov, InputType]
+	  [toricMarkov, Precision]
      Headline
      	  calculates a generating set of the toric ideal I_A, given A; invokes "markov" from 4ti2
      Usage
@@ -390,9 +404,12 @@ doc ///
 	       which is the string "lattice" if rows of {\tt A} specify a lattice basis
 	  R:Ring
 	       polynomial ring in which the toric ideal $I_A$ should live
+	  Precision => {ZZ, String}
+	       32, 64, or "arbitrary", the precision of the integers used during
+	       the computation
      Outputs
      	  B:Matrix 
-	       whose rows form a Markov Basis of the lattice $\{z {\rm integral} : A z = 0\}$
+	       whose rows form a Markov Basis of the lattice $\{z : z \text{ is integral and } A z = 0\}$
 	       or the lattice spanned by the rows of {\tt A} if the option {\tt InputType => "lattice"} is used
      Description
      	  Text
@@ -430,6 +447,7 @@ doc ///
      	  toricGraver
           (toricGraver, Matrix)
      	  (toricGraver, Matrix, Ring)
+	  [toricGraver, Precision]
      Headline
      	  calculates the Graver basis of the toric ideal; invokes "graver" from 4ti2
      Usage
@@ -439,6 +457,9 @@ doc ///
 	       whose columns parametrize the toric variety. The toric ideal $I_A$ is the kernel of the map defined by {\tt A}
 	  R:Ring
 	       polynomial ring in which the toric ideal $I_A$ should live
+	  Precision => {ZZ, String}
+	       32, 64, or "gmp", the precision of the integers used during the
+	       computation
      Outputs
      	  B:Matrix 
 	       whose rows give binomials that form the Graver basis of the toric ideal of {\tt A}, or
@@ -464,6 +485,7 @@ doc ///
      Key
      	  toricGraverDegrees
           (toricGraverDegrees, Matrix)
+	  [toricGraverDegrees, Precision]
      Headline
      	  displays the degrees of all Graver basis elements for the toric ideal I_A
      Usage
@@ -471,6 +493,9 @@ doc ///
      Inputs
       	  A:Matrix    
 	       whose columns parametrize the toric variety. The toric ideal $I_A$ is the kernel of the map defined by {\tt A}
+	  Precision => {ZZ, String}
+	       32, 64, or "gmp", the precision of the integers used during the
+	       computation
      Description
      	  Text
 	       Equivalent to "output --degrees foo.gra" in 4ti2.
@@ -499,9 +524,9 @@ doc ///
 
 doc ///
      Key
-     	  hilbertBasis
           (hilbertBasis, Matrix)
-	  [hilbertBasis, InputType]
+	 [(hilbertBasis, Matrix), InputType]
+	 [(hilbertBasis, Matrix), Precision]
      Headline
      	  calculates the Hilbert basis of the cone; invokes "hilbert" from 4ti2
      Usage
@@ -509,10 +534,15 @@ doc ///
      Inputs
       	  A:Matrix    
 	       defining the cone $\{z : Az = 0, z \ge 0 \}$
+	  InputType => String
+	       use the string "lattice" if rows of {\tt A} specify a lattice basis
+	  Precision => {ZZ, String}
+	       32, 64, or "gmp", the precision of the integers used during the
+	       computation
      Outputs
      	  B:Matrix 
 	       whose rows form the Hilbert basis of the cone $\{z : Az = 0, z \ge 0 \}$
-	       or the cone $\{z A : z {\rm {} is an integral vector and } z A \ge 0 \}$ if {\tt InputType => "lattice"} is used
+	       or the cone $\{z A : z \text{ is an integral vector and } z A \ge 0 \}$ if {\tt InputType => "lattice"} is used
      Description
 	  Example
 	       A = matrix "1,1,1,1; 1,2,3,4"
@@ -532,6 +562,9 @@ doc ///
      Inputs
       	  A:Matrix   
 	       defining the cone $\{z : Az = 0, z \ge 0 \}$
+	  Precision => {ZZ, String}
+	       32, 64, or "arbitrary", the precision of the integers used during
+	       the computation
      Outputs
      	  B:Matrix 
 	       whose rows are the extreme rays of the cone $\{z : Az = 0, z \ge 0 \}$
@@ -548,6 +581,7 @@ doc ///
      Key
      	  toricCircuits
           (toricCircuits, Matrix)
+	  [toricCircuits, Precision]
      Headline
      	  calculates the circuits of the toric ideal; invokes "circuits" from 4ti2
      Usage
@@ -555,6 +589,9 @@ doc ///
      Inputs
       	  A:Matrix    
                whose columns parametrize the toric variety. The toric ideal $I_A$ is the kernel of the map defined by {\tt A} 
+	  Precision => {ZZ, String}
+	       32, 64, or "arbitrary", the precision of the integers used during
+	       the computation
      Outputs
      	  B:Matrix 
 	       whose rows form the circuits of A

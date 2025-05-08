@@ -1,7 +1,7 @@
 -- numbers
 assert Equation(toJSON 1, "1")
 assert Equation(toJSON 3.14159, "3.14159")
-assert Equation(toJSON pi, "3.14159265358979")
+assert Equation(toJSON pi, "3.141592653589793")
 assert Equation(toJSON(1/2), ".5")
 
 -- strings
@@ -59,3 +59,19 @@ assert Equation(toJSON(hashTable{"a" => 1, "b" => 2, "c" => 3}, Sort => true,
 	ValueSeparator => " , "), "{\"a\": 1 , \"b\": 2 , \"c\": 3}")
 assert Equation(toJSON(hashTable{"a" => 1, "b" => 2, "c" => 3}, Sort => true,
 	NameSeparator => " : "), "{\"a\" : 1, \"b\" : 2, \"c\" : 3}")
+
+-- Dispatch => Thing
+assert Equation(toJSON(1, 2), "[1, 2]")
+
+-- converting other types to strings
+assert Equation(toJSON foo, "\"foo\"")
+assert Equation(toJSON ZZ, "\"ZZ\"")
+assert Equation(toJSON Core, "\"Core\"")
+
+-- hypertext
+assert Equation(toJSON HREF("foo.html", "foo"),
+    ///"<a href=\"foo.html\">foo</a>"///)
+
+-- control characters
+x = ascii(0..31) | "\\\""
+assert Equation(fromJSON toJSON x, x)

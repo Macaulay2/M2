@@ -33,7 +33,7 @@ class MatrixConstructor
   MatrixConstructor(const FreeModule *target, int ncols);
   MatrixConstructor(const FreeModule *target,
                     const FreeModule *source,
-                    const_monomial deg = 0);
+                    const_monomial deg = nullptr);
 
   // The copy constructor just does the default thing: copy over all items.
 

@@ -1,6 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
 needs "methods.m2"
+needs "expressions.m2" -- for Constant
 
 -----------------------------------------------------------------------------
 -- Ring
@@ -78,30 +79,35 @@ isHomogeneous Ring := R -> (
      degreeLength R == 0 
      )
 
+-- printing
+-- technically this should not be allowed, since rings are mutable
+-- and therefore "R === value toExternalString R" will always be false,
+-- however, this is good enough to serialize a ring for another session.
+toExternalString Ring := toString @@ describe
+-- the rest of the printing methods will inherit from methods on Type
+
 -----------------------------------------------------------------------------
 -- promote, lift, liftable, and isConstant
 -----------------------------------------------------------------------------
 
+-- TODO rename isLiftable; currently impossible due to conflict with Varieties::isLiftable
 -- some remnants from lift and promote, version 2
 liftable = method(TypicalValue => Boolean, Dispatch => {Thing, Type, Type})
 liftable(Number,      Number)      :=
 liftable(Number,      RingElement) :=
-liftable(Constant,    Number)      :=
-liftable(Constant,    RingElement) :=
 liftable(RingElement, Number)      :=
-liftable(RingElement, RingElement) := (f, R) -> null =!= lift(f, R, Verify => false)
+liftable(RingElement, RingElement) := (f, R) -> lookup(lift,class f,R) =!= null and null =!= lift(f, R, Verify => false)
 
 isConstant = method(TypicalValue => Boolean)
 isConstant RingElement := r -> liftable(r, coefficientRing ring r)
 
 lift = method(Dispatch => {Thing, Type, Type}, Options => {Verify => true})
-Number   ^ Ring :=
-Constant ^ Ring := lift
+Number ^ Ring := lift
 
 promote = method(Dispatch => {Thing, Type, Type})
-Number   _ Ring :=
-Constant _ Ring := promote
+Number _ Ring := promote
 
+isPromotable = (R,S) -> lookup(promote,R,S) =!= null
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

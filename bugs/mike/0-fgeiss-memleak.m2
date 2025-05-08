@@ -1297,7 +1297,7 @@ while((r=testRandomModule6())==(0,0)) do();
 
 while((r=testH3())==(0,0)) do();
 
--- this one leaks alot:
+-- this one leaks a lot:
 h3 = makeh3();
 while((r=testH3b())==(0,0)) do();
 

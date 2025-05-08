@@ -375,8 +375,7 @@ document {
 
 document {
      Key => {(paramBpoly, RingElement, File), paramBpoly},
-     Headline => "compute the list of all possible Bernstein-Sato polynomials 
-     for a polynomial with parametric coefficients",
+     Headline => "compute the list of all possible Bernstein-Sato polynomials for a parametric polynomial",
      Usage => "paramBpoly(f,file)", 	  
      Inputs => {
      	  "f" => RingElement => {
@@ -387,7 +386,8 @@ document {
      Outputs => {
 	  List => {"all possible Bernstein-Sato polynomials"}
 	  },
-     "Along with the finite list of B.-S. polynomials this function creates latex code 
+     "This function computes the finite list of all possible Bernstein-Sato polynomials
+     for a polynomial with parametric coefficients and creates latex code
      describing strata in the parameter space 
      corresponding to the B.-S. polynomials --- each stratum is a constructible set. ",     
      "This is an implementation of the algorithmic approach in ", 

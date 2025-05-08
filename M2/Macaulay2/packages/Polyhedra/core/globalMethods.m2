@@ -21,7 +21,7 @@ isFullDimensional PolyhedralObject := X -> ambDim X == dim X
 -- PURPOSE : Giving the rays
 --   INPUT : 'PO'  a PolyhedralObject
 --  OUTPUT : a Matrix, containing the rays of PO as column vectors
-rays PolyhedralObject := PO -> getProperty(PO, rays)
+rays PolyhedralObject := {} >> o -> PO -> getProperty(PO, rays)
 
 linealitySpace = method(TypicalValue => Matrix)
 linealitySpace PolyhedralObject := PO -> getProperty(PO, computedLinealityBasis)
@@ -66,8 +66,7 @@ fVector PolyhedralObject := PO -> getProperty(PO, computedFVector)
 -------------------------------------------------------------------------------
 -- For fan and cone
 isPointed = method(TypicalValue => Boolean)
--- PURPOSE : Checks if the input is smooth
-isSmooth = method(TypicalValue => Boolean)
+-- isSmooth = method(TypicalValue => Boolean)
 
 
 

@@ -36,7 +36,7 @@ jobs:
 
     steps:
       - name: Checkout the project repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Run testbot on project branch
         run: |

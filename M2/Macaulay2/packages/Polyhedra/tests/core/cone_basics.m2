@@ -121,3 +121,9 @@ TEST ///
 P = convexHull transpose matrix {{0,0},{2,0},{2,3},{-1,4}}
 assert(isSimplicial P)
 ///
+
+--Test for interiorVector for cone without rays
+TEST ///
+C = coneFromVData(map(ZZ^(4),ZZ^1,0), matrix{{1},{1},{1},{1}})
+assert(interiorVector C==matrix{{0},{0},{0},{0}})
+///

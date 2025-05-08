@@ -11,11 +11,10 @@ newPackage(
             Email => "mike@math.cornell.edu", 
             HomePage => "http://www.math.cornell.edu/~mike"
             }},
-    Headline => "development package for beta testing new version of chain complexes",
+    Headline => "beta testing new version of chain complexes",
     Keywords => {"Homological Algebra"},
-    PackageExports => {}, -- {"Truncations"},
-    AuxiliaryFiles => true,
-    DebuggingMode => true
+    PackageExports => { "Truncations" },
+    AuxiliaryFiles => true
     )
 
 export {
@@ -32,7 +31,9 @@ export {
     "connectingMap",
     "connectingExtMap",
     "connectingTorMap",
+    "constantStrand",
     "cylinder",
+    "epicResolutionMap",
     "freeResolution",
     "homotopyMap",
     "horseshoeResolution",
@@ -46,10 +47,14 @@ export {
     "isNullHomotopyOf",
     "isShortExactSequence",
     "liftMapAlongQuasiIsomorphism",
+--    "minimalBetti",
     "minimizingMap",
     "nullHomotopy",
+    --"nullhomotopy" => "nullHomotopy",
     "naiveTruncation",
     "randomComplexMap",
+--    "res" => "resolution",
+--    "resolution",
     "resolutionMap",
     "tensorCommutativity",
     "torSymmetry",
@@ -59,11 +64,15 @@ export {
     "yonedaMap'",
     "yonedaProduct",
     -- Option names
+    "FreeToExact", -- used in nullHomotopy
+    "OverField",
+    "OverZZ",
+    "Homogenization",
+    "Nonminimal",
     "Concentration",
     "Cycle",
     "Boundary",
     "InternalDegree",
-    "Base",
     "UseTarget"
     }
 
@@ -103,40 +112,14 @@ homTensorAdjoint(Module, Module, Module) := (L, M, N) -> (
     -- phi -> (ell |-> (m |-> phi(ell ** m)))
     )
 
--- This belongs in M2 Core!!!
--- make this into a git issue.
-single = v -> (
-     if not same v 
-     then error "incompatible objects in direct sum";
-     v#0)
-directSum Sequence := args -> (
-    if #args === 0 then error "expected more than 0 arguments";
-    y := youngest args;
-    key := (directSum, args);
-    if y =!= null and y.cache#?key then y.cache#key else (
-        type := single apply(args, class);
-        meth := lookup(symbol directSum, type);
-        if meth === null then error "no method for direct sum";
-        S := meth args;
-        if y =!= null then y.cache#key = S;
-        S))
-
-Hom(Module, Module) := Module => (M,N) -> (
-    Y := youngest(M.cache.cache,N.cache.cache);
-    if Y#?(Hom,M,N) then return Y#(Hom,M,N);
-    H := trim kernel (transpose presentation M ** N);
-    H.cache.homomorphism = (f) -> map(N,M,adjoint'(f,M,N), Degree => first degrees source f + degree f);
-    Y#(Hom,M,N) = H; -- a hack: we really want to type "Hom(M,N) = ..."
-    H.cache.formation = FunctionApplication { Hom, (M,N) };
-    H)
-
 --------------------------------------------------------------------
 -- package code ----------------------------------------------------
 --------------------------------------------------------------------
-load "Complexes/ChainComplex.m2"
-load "Complexes/FreeResolutions.m2"
-load "Complexes/ChainComplexMap.m2"
-load "Complexes/Tor.m2"
+load "./Complexes/ChainComplex.m2"
+load "./Complexes/FreeResolutions.m2"
+load "./Complexes/ChainComplexMap.m2"
+load "./Complexes/Tor.m2"
+load "./Complexes/Ext.m2"
 
 --------------------------------------------------------------------
 -- interface code to legacy types ----------------------------------
@@ -150,7 +133,7 @@ chainComplex Complex := ChainComplex => (cacheValue symbol ChainComplex) (C -> (
     D
     ))
 
-complex ChainComplex := Complex => opts -> (cacheValue symbol Complex)(D -> (
+complex ChainComplex := Complex => {} >> opts -> (cacheValue symbol Complex)(D -> (
     (lo,hi) := (min D, max D);
     while lo < hi and (D_lo).numgens == 0 do lo = lo+1;
     while lo < hi and (D_hi).numgens == 0 do hi = hi-1;
@@ -171,7 +154,7 @@ chainComplex ComplexMap := ChainComplexMap => f -> (
     g
     )
 
-complex ChainComplexMap := ComplexMap => opts -> g -> (
+complex ChainComplexMap := ComplexMap => {} >> opts -> g -> (
     map(complex target g, complex source g, i -> g_i, Degree => degree g)
     )
 --------------------------------------------------------------------
@@ -189,8 +172,8 @@ undocumented{
     component
     }
 
-load "Complexes/ChainComplexDoc.m2"
-load "Complexes/ChainComplexMapDoc.m2"
+load "./Complexes/ChainComplexDoc.m2"
+load "./Complexes/ChainComplexMapDoc.m2"
 
 --------------------------------------------------------------------
 -- documentation for legacy type conversion ------------------------
@@ -390,8 +373,8 @@ doc ///
 --------------------------------------------------------------------
 -- package tests ---------------------------------------------------
 --------------------------------------------------------------------
-load "Complexes/ChainComplexTests.m2"
-load "Complexes/FreeResolutionTests.m2"
+load "./Complexes/ChainComplexTests.m2"
+load "./Complexes/FreeResolutionTests.m2"
 
 end------------------------------------------------------------
 
@@ -420,6 +403,9 @@ doc ///
 
 
 S = ZZ/101[a..d]
-K = res coker vars S
+K = freeResolution coker vars S
 L = K ** K
+-- would be nice if these were fast(er):
 elapsedTime L**L;
+elapsedTime (oo ** K)
+elapsedTime (K ** ooo)

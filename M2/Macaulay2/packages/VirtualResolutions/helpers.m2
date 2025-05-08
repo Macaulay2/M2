@@ -1,7 +1,7 @@
 plotRegion = method()
 plotRegion(Function, List, List) := (func, low, high) -> printerr netList(Boxes => false,
-    table(min(high - low) + 1, max(high - low) + 1,
-	(i, j) -> if func(j + first low, first high - i) then "." else "x"))
+    table(last(high - low) + 1, first(high - low) + 1,
+	(i, j) -> if func(j + first low, last high - i) then "." else "x"))
 plotRegion(List, List, List) := (L, low, high) -> plotRegion(
     (i, j) -> any(L, ell -> i >= ell_0 and j >= ell_1), low, high)
 
@@ -42,7 +42,7 @@ normalToricVarietyWithTateData = X -> (
 -- input: multigraded polynomial ring with Tate Data
 -- output: NormalToricVariety, with the given ring cached in it
 normalToricVarietyFromTateData = S -> (
-    if S.?variety and S.?variety.?ring and S.?variety.cache.ring.?TateData then return S.variety;
+    if S.?variety and S.variety.cache.?ring and S.variety.cache.ring.?TateData then return S.variety;
     if not S.?TateData then error "expected a ring with TateData";
     X := cartesianProduct apply(toSequence dimVector S, n -> toricProjectiveSpace(n, CoefficientRing => coefficientRing S));
     X.cache.ring = S; S.variety = X)

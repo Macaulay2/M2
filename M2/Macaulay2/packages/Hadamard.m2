@@ -9,7 +9,7 @@ newPackage(
 	    HomePage => "http://calvino.polito.it/~imanbj"
 	    }
 	}, -- TODO
-    Headline => "A package for the Hadamard products of projective subvarieties",
+    Headline => "Hadamard products of projective subvarieties",
     AuxiliaryFiles => false,
     DebuggingMode => false,
     Reload => false,
@@ -165,6 +165,10 @@ doc ///
        Hadamard
      Headline
        a package to study Hadamard products of varieties.
+     Description
+       Text
+	 This package provides a class for representing points in projective
+	 space and methods for computing Hadamard products of varieties.
 ///
 
 doc ///

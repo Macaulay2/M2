@@ -78,11 +78,11 @@ class RingElement : public EngineObject
   ////////////////////////////////////
 
   bool is_homogeneous() const;
-  RingElement *homogenize(int v, M2_arrayint wts) const;
-  RingElement *homogenize(int v, int deg, M2_arrayint wts) const;
-  void degree_weights(M2_arrayint wts, int &lo, int &hi) const;
-  M2_arrayint multi_degree() const;
-  //  intarray  degree() const;
+  RingElement *homogenize(int v, const std::vector<int> &wts) const;
+  RingElement *homogenize(int v, int deg, const std::vector<int> &wts) const;
+  void degree_weights(const std::vector<int> &wts, int &lo, int &hi) const;
+  const_monomial degree() const { return R->degree(val); }
+  bool multi_degree(monomial d) const { return R->multi_degree(val, d); }
 
   // See engine.h for the definition of 'content' here
   const RingElement /* or null */ *content() const;

@@ -6,7 +6,7 @@
 -----------------------------
 needs "raw-util.m2"
 mo = rawMonomialOrdering { GRevLex => {1,2,3,4} }
-M = rawMonoid(mo, (a,b,c,d)/toString, degring 2, (0,1, 0,1, 1,0, 1,0),{1,1})
+M = rawMonoid(mo, degring 2, ("a","b","c","d"), (0,1, 0,1, 1,0, 1,0),{1,1})
 R = rawPolynomialRing(rawZZ(), M)
 a = rawRingVar(R,0)
 c = rawRingVar(R,2)

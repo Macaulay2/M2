@@ -7,6 +7,7 @@
                        HomePage => "http://www.msri.org/~de"}},
              Headline => "decompose a Sheaf on P1",
 	     Keywords => {"Commutative Algebra"},
+	     PackageImports => {"Varieties"},
              DebuggingMode => false
              )
      export {

@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 536938271
+-- -*- M2-comint -*- hash: 1331976800031
 
 i1 : R = CC[x,y,z];
 

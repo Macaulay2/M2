@@ -40,7 +40,7 @@ struct MarkedGB_sorter
 MarkedGB::MarkedGB(const PolynomialRing *originalR0,
                    const FreeModule *F0,
                    const FreeModule *Fsyz0)
-    : ReducedGB(originalR0->get_gb_ring(), originalR0, F0, Fsyz0), T(0)
+    : ReducedGB(originalR0->get_gb_ring(), originalR0, F0, Fsyz0), T(nullptr)
 {
   T = MonomialTable::make(R->n_vars());
 }
@@ -69,8 +69,8 @@ void MarkedGB::add_marked_elems(const VECTOR(gbvector *) & leadterms0,
       h.f = R->gbvector_copy(f);
       h.fsyz = R->gbvector_copy(polys0[i].fsyz);
 
-      gbvector *iinf = 0;
-      for (gbvector *t = h.f; t != 0; t = t->next)
+      gbvector *iinf = nullptr;
+      for (gbvector *t = h.f; t != nullptr; t = t->next)
         if (inf->comp == t->comp && EQ == M->compare(inf->monom, t->monom))
           {
             iinf = t;
@@ -120,7 +120,7 @@ void MarkedGB::marked_remainder(POLY &f,
 {
   gbvector head;
   gbvector *frem = &head;
-  frem->next = 0;
+  frem->next = nullptr;
   POLY h = f;
   exponents_t EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
 
@@ -150,7 +150,7 @@ void MarkedGB::marked_remainder(POLY &f,
       frem->next = h.f;
       frem = frem->next;
       h.f = h.f->next;
-      frem->next = 0;
+      frem->next = nullptr;
     }
 
   h.f = head.next;
@@ -162,16 +162,16 @@ void MarkedGB::marked_remainder(POLY &f,
 
 void MarkedGB::remainder(POLY &f, bool use_denom, ring_elem &denom)
 {
-  marked_remainder(f, use_denom, denom, NULL);
+  marked_remainder(f, use_denom, denom, nullptr);
 }
 
 void MarkedGB::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
 {
   //  return geo_remainder(f,use_denom,denom);
-  gbvector *zero = 0;
+  gbvector *zero = nullptr;
   gbvector head;
   gbvector *frem = &head;
-  frem->next = 0;
+  frem->next = nullptr;
   gbvector *h = f;
   exponents_t EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
 
@@ -185,7 +185,7 @@ void MarkedGB::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
           frem->next = h;
           frem = frem->next;
           h = h->next;
-          frem->next = 0;
+          frem->next = nullptr;
         }
       else
         {
@@ -211,7 +211,7 @@ void MarkedGB::geo_remainder(gbvector *&f, bool use_denom, ring_elem &denom)
 {
   gbvector head;
   gbvector *frem = &head;
-  frem->next = 0;
+  frem->next = nullptr;
 
   gbvectorHeap fb(R, F);
   gbvectorHeap zero(R, Fsyz);
@@ -219,7 +219,7 @@ void MarkedGB::geo_remainder(gbvector *&f, bool use_denom, ring_elem &denom)
 
   const gbvector *lead;
   exponents_t EXP = ALLOCATE_EXPONENTS(R->exponent_byte_size());
-  while ((lead = fb.get_lead_term()) != NULL)
+  while ((lead = fb.get_lead_term()) != nullptr)
     {
       R->gbvector_get_lead_exponents(F, lead, EXP);
       int x = lead->comp;
@@ -228,13 +228,13 @@ void MarkedGB::geo_remainder(gbvector *&f, bool use_denom, ring_elem &denom)
         {
           frem->next = fb.remove_lead_term();
           frem = frem->next;
-          frem->next = 0;
+          frem->next = nullptr;
         }
       else
         {
           POLY g = polys[w];
           R->reduce_marked_lead_term_heap(
-              F, Fsyz, lead, EXP, head.next, fb, zero, leadterms[w], g.f, 0);
+              F, Fsyz, lead, EXP, head.next, fb, zero, leadterms[w], g.f, nullptr);
         }
     }
   f = head.next;
@@ -246,7 +246,7 @@ const Matrix /* or null */ *MarkedGB::get_initial(int nparts)
   if (nparts > 0)
     {
       ERROR("Cannot determine given initial monomials");
-      return 0;
+      return nullptr;
     }
   MatrixConstructor mat(F, 0);
   for (int i = 0; i < polys.size(); i++)

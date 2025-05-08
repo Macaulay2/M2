@@ -1799,7 +1799,6 @@ doc ///
 doc ///
     Key 
         (isProjective, NormalToricVariety)
-        isProjective	
     Headline 
         whether a toric variety is projective
     Usage 

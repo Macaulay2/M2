@@ -122,8 +122,8 @@ testTransverse = F -> (
           char F << " in " << j << " iteration(s)" << endl;
       );
 testTransverse(ZZ/2);
-(random 10;for i to 7 do random 2;testTransverse(GF 4);)
-testTransverse(ZZ/7);
+(random 10;for i to 8 do random 2; testTransverse(GF 4);)
+(for i to 2 do random 2; testTransverse(ZZ/7);)
 randomSymmetricMatrix = (R, n) -> (
     entries := new MutableHashTable;
     scan(0..n-1, i -> scan(i..n-1, j -> 

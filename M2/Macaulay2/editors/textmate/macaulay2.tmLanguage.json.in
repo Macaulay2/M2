@@ -1,0 +1,106 @@
+{
+  "name": "Macaulay2",
+  "scopeName": "source.macaulay2",
+  "fileTypes": [
+    "m2"
+  ],
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#support"
+    }
+  ],
+  "repository": {
+    "storage": {
+      "patterns": [
+        {
+          "name": "meta.function.macaulay2",
+          "match": "(\\)"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.other.macaulay2",
+          "match": "(x?)\\b(@M2KEYWORDS@)\\b"
+        },
+        {
+          "name": "keyword.operator.functionArrow.macaulay2",
+          "match": "->"
+        },
+        {
+          "name": "keyword.operator.optionArrow.macaulay2",
+          "match": "=>"
+        },
+        {
+          "name": "keyword.operator.arithmetic.macaulay2",
+          "match": "%|\\*|/|//|-|\\+|\\\\"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.macaulay2",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.macaulay2",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.tripleslash.macaulay2",
+          "begin": "///",
+          "end": "///"
+        }
+      ]
+    },
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-dash.macaulay2",
+          "begin": "--",
+          "end": "$"
+        },
+        {
+          "name": "comment.block.macaulay2",
+          "begin": "-\\*",
+          "end": "\\*-"
+        },
+        {
+          "name": "comment.block.macaulay2.deprecated",
+          "begin": "{\\*",
+          "end": "\\*}"
+        }
+      ]
+    },
+    "support": {
+      "patterns": [
+        {
+          "name": "entity.name.type.macaulay2",
+          "match": "(x?)\\b(@M2DATATYPES@)\\b"
+        },
+        {
+          "name": "support.function.macaulay2",
+          "match": "(x?)\\b(@M2FUNCTIONS@)\\b"
+        },
+        {
+          "name": "constant.language.macaulay2",
+          "match": "(x?)\\b(@M2CONSTANTS@)\\b"
+        }
+      ]
+    }
+  }
+}

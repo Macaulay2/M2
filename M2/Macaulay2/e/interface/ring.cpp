@@ -67,7 +67,7 @@ const Ring /* or null */ *IM2_Ring_ZZp(int p)
   if (p <= 1 || p >= 32750)
     {
       ERROR("ZZP: expected a prime number p in range 2 <= p <= 32749");
-      return 0;
+      return nullptr;
     }
   return Z_mod::create(p);
 }
@@ -84,7 +84,7 @@ const Ring /* or null */ *rawGaloisField(const RingElement *f)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -120,7 +120,7 @@ const Ring /* or null */ *IM2_Ring_polyring(const Ring *K, const Monoid *M)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -139,7 +139,7 @@ const Ring * /* or null */ rawDividedPowerRing(const Ring *K, const Monoid *M)
   }
 #endif
   ERROR("not yet implemented");
-  return 0;
+  return nullptr;
 }
 
 const Ring /* or null */ *IM2_Ring_skew_polyring(const Ring *R,
@@ -148,10 +148,10 @@ const Ring /* or null */ *IM2_Ring_skew_polyring(const Ring *R,
   try
     {
       const PolynomialRing *P = R->cast_to_PolynomialRing();
-      if (P == 0)
+      if (P == nullptr)
         {
           ERROR("expected a polynomial ring");
-          return 0;
+          return nullptr;
         }
       SkewPolynomialRing *result = SkewPolynomialRing::create(
           P->getCoefficients(), P->getMonoid(), skewvars);
@@ -160,7 +160,7 @@ const Ring /* or null */ *IM2_Ring_skew_polyring(const Ring *R,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -172,10 +172,10 @@ const Ring /* or null */ *IM2_Ring_weyl_algebra(const Ring *R,
   try
     {
       const PolynomialRing *P = R->cast_to_PolynomialRing();
-      if (P == 0)
+      if (P == nullptr)
         {
           ERROR("expected a polynomial ring");
-          return 0;
+          return nullptr;
         }
       WeylAlgebra *result = WeylAlgebra::create(P->getCoefficients(),
                                                 P->getMonoid(),
@@ -187,7 +187,7 @@ const Ring /* or null */ *IM2_Ring_weyl_algebra(const Ring *R,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -197,10 +197,10 @@ const Ring /* or null */ *IM2_Ring_solvable_algebra(const Ring *R,
   try
     {
       const PolynomialRing *P = R->cast_to_PolynomialRing();
-      if (P == 0)
+      if (P == nullptr)
         {
           ERROR("expected a polynomial ring");
-          return 0;
+          return nullptr;
         }
       SolvableAlgebra *result = SolvableAlgebra::create(P, Q);
       intern_polyring(result);
@@ -208,7 +208,7 @@ const Ring /* or null */ *IM2_Ring_solvable_algebra(const Ring *R,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -242,7 +242,7 @@ const Ring* /* or null */ rawRingM2FreeAlgebra(const Ring* coefficientRing,
   }
   catch (exc::engine_error& e) {
     ERROR(e.what());
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -295,7 +295,7 @@ const Ring* /* or null */ rawRingM2FreeAlgebraQuotient(const Matrix* GB, int max
   }
   catch (exc::engine_error& e) {
     ERROR(e.what());
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -305,46 +305,46 @@ const Ring /* or null */ *IM2_Ring_frac(const Ring *R)
     {
       if (R == globalZZ) return globalQQ;
       const PolyRingFlat *P = R->cast_to_PolyRingFlat();
-      if (P == 0)
+      if (P == nullptr)
         {
           ERROR("expected polynomial ring");
-          return 0;
+          return nullptr;
         }
       if (P->getMonoid()->numNonTermOrderVariables() > 0)
         {
           ERROR(
               "cannot currently make fraction field over a polynomial ring "
               "with a non-global monomial order");
-          return 0;
+          return nullptr;
         }
       if (P->getMonoid()->numInvertibleVariables() > 0)
         {
           ERROR(
               "cannot currently make fraction field over a polynomial ring "
               "with Laurent variables, i.e. Inverses=>true set");
-          return 0;
+          return nullptr;
         }
       if (R->get_precision() > 0)
         {
           ERROR("cannot make fraction field over approximate field base");
-          return 0;
+          return nullptr;
         }
-      if (P->getCoefficients()->cast_to_FractionField() != 0)
+      if (P->getCoefficients()->cast_to_FractionField() != nullptr)
         {
           ERROR(
               "fraction fields over other fraction fields not yet implemented");
-          return 0;
+          return nullptr;
         }
-      if (P->getCoefficients()->cast_to_LocalRing() != 0)
+      if (P->getCoefficients()->cast_to_LocalRing() != nullptr)
         {
           ERROR("fraction fields over other local rings not yet implemented");
-          return 0;
+          return nullptr;
         }
       return FractionField::create(P);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -373,7 +373,7 @@ const Ring /* or null */ *IM2_Ring_localization(const Ring *R, Computation *C)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -388,7 +388,7 @@ const Ring /* or null */ *IM2_Ring_quotient(const Ring *R, const Matrix *I)
       if (I->n_rows() != 1)
         {
           ERROR("expected a one row matrix of quotient elements");
-          return 0;
+          return nullptr;
         }
       const PolynomialRing *P = R->cast_to_PolynomialRing();
       if (P != nullptr)
@@ -408,7 +408,7 @@ const Ring /* or null */ *IM2_Ring_quotient(const Ring *R, const Matrix *I)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -422,15 +422,15 @@ const Ring /* or null */ *IM2_Ring_quotient1(const Ring *R, const Ring *B)
     {
       const PolynomialRing *R1 = R->cast_to_PolynomialRing();
       const PolynomialRing *B1 = B->cast_to_PolynomialRing();
-      if (R1 == 0 || B1 == 0)
+      if (R1 == nullptr || B1 == nullptr)
         {
           ERROR("expected a polynomial ring");
-          return 0;
+          return nullptr;
         }
       if (R1->n_quotients() > 0)
         {
           ERROR("encountered quotient polynomial ring");
-          return 0;
+          return nullptr;
         }
       PolynomialRing *result = PolyRingQuotient::create_quotient(R1, B1);
       intern_polyring(result);
@@ -438,7 +438,7 @@ const Ring /* or null */ *IM2_Ring_quotient1(const Ring *R, const Ring *B)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -447,10 +447,10 @@ const Ring /* or null */ *IM2_Ring_schur(const Ring *R)
   try
     {
       const PolynomialRing *P = R->cast_to_PolynomialRing();
-      if (P == 0)
+      if (P == nullptr)
         {
           ERROR("Schur ring construction: expected a polynomial ring");
-          return 0;
+          return nullptr;
         }
       SchurRing *result = SchurRing::create(P);
       intern_polyring(result);
@@ -458,7 +458,7 @@ const Ring /* or null */ *IM2_Ring_schur(const Ring *R)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -471,7 +471,7 @@ const Ring *rawSchurRing1(const Ring *A)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -484,7 +484,7 @@ const Ring *rawSchurRing2(const Ring *A, int n)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -497,7 +497,7 @@ const Ring *rawSchurSnRing(const Ring *A, int n)
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
+      return nullptr;
   }
 }
 
@@ -512,16 +512,16 @@ const Ring /* or null */ *rawTowerRing2(const Ring *R1,
   try
     {
       const Tower *R = R1->cast_to_Tower();
-      if (R == 0)
+      if (R == nullptr)
         {
           ERROR("expected a tower coefficient ring");
-          return 0;
+          return nullptr;
         }
       return Tower::create(R, new_names);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return 0;
+      return nullptr;
   }
 }
 
@@ -531,10 +531,10 @@ const Ring /* or null */ *rawTowerRing3(const Ring *R1,
   try
     {
       const Tower *R = R1->cast_to_Tower();
-      if (R == 0)
+      if (R == nullptr)
         {
           ERROR("expected a tower coefficient ring");
-          return 0;
+          return nullptr;
         }
       VECTOR(ring_elem) extensions;
       for (int i = 0; i < eqns->len; i++)
@@ -543,7 +543,7 @@ const Ring /* or null */ *rawTowerRing3(const Ring *R1,
           if (f->get_ring() != R1)
             {
               ERROR("extension element has incorrect base ring");
-              return 0;
+              return nullptr;
             }
           extensions.push_back(f->get_value());
         }
@@ -551,7 +551,7 @@ const Ring /* or null */ *rawTowerRing3(const Ring *R1,
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return 0;
+      return nullptr;
   }
 }
 
@@ -587,10 +587,10 @@ const Ring /* or null */ *rawAmbientRing(const Ring *R)
    engine. */
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0)
+  if (P == nullptr)
     {
       ERROR("expected polynomial ring");
-      return 0;
+      return nullptr;
     }
   return P->getAmbientRing();
 }
@@ -601,10 +601,10 @@ const Ring /* or null */ *rawDenominatorRing(const Ring *R)
    is returned. This routine is provided only for debugging the engine. */
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0)
+  if (P == nullptr)
     {
       ERROR("expected polynomial ring");
-      return 0;
+      return nullptr;
     }
   return P->getDenominatorRing();
 }

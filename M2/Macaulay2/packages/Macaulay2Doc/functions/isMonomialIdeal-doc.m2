@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => {isMonomialIdeal, (isMonomialIdeal,Ideal), (isMonomialIdeal,Thing), (isMonomialIdeal,MonomialIdeal)},
+     Key => {isMonomialIdeal, (isMonomialIdeal,Ideal), (isMonomialIdeal,Thing), (isMonomialIdeal, Module), (isMonomialIdeal,MonomialIdeal)},
      Headline => "whether something is a monomial ideal",
      Usage => "isMonomialIdeal I",
      Inputs => {

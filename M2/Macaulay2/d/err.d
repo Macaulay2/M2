@@ -4,7 +4,7 @@ use stdio;
 warnings := 0;
 export warning(msg:string):void := (
      warnings = warnings + 1;
-     flush(stdIO);
+     stdIO << flush;
      endLine(stdError);
      stderr << argv.0 << ": warning: " << msg << newline;
      if warnings > 1000 then (
@@ -15,7 +15,7 @@ export warning(msg:string):void := (
 errors := 0;
 export error(msg:string):void := (
      errors = errors + 1;
-     flush(stdIO);
+     stdIO << flush;
      endLine(stdError);
      stderr << argv.0 << ": error: " << msg << newline;
      if errors > 100 then (
@@ -24,17 +24,17 @@ export error(msg:string):void := (
 	  );
      );
 export fatal(msg:string):exits := (
-     flush(stdIO);
+     stdIO << flush;
      endLine(stdError);
      stderr << argv.0 << ": fatal: " << msg << endl;
      exit(1));
 export abort(msg:string):exits := (
-     flush(stdIO);
+     stdIO << flush;
      endLine(stdError);
      stderr << argv.0 << ": fatal: " << msg << endl;
      abort());
 export syserr(msg:string):exits := (
-     flush(stdIO);
+     stdIO << flush;
      endLine(stdError);
      stderr << argv.0 << ": system error: " << msg;
      s := syserrmsg();

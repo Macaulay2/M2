@@ -145,12 +145,6 @@ struct JumpCell
 void *sbrk();		/* not really ansi standard, sigh */
 #endif
 
-#ifdef MP
-#define link _link
-#include <MP.h>
-#undef link
-#endif
-
 #define STDIN 0
 #define STDOUT 1
 #define STDERR 2

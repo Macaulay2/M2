@@ -66,7 +66,7 @@ pretty3 = (l,i,m,m',r,s) -> (
 	  x = append( drop(x,-1), last x | r);
 	  x = prepend(l | first x, apply(drop(x,1), t -> l'|t));
 	  n := max(width\x);
-	  if w+n <= printWidth then ( w = w + n; rowstart = false; j = j + 1; x)
+	  if w+n <= printWidth then ( w = w + n; rowstart = false; j += 1; x)
 	  else ( if rowstart then error "pretty: internal error"; w = 0; break));
      splice toSequence while true list (
 	  if j == #s' then break;

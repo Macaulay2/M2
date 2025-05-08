@@ -17,6 +17,9 @@ auto OverlapTable::insert(int deg, bool isGenerator, Overlap o) -> void
   std::deque<Overlap> emptyDeque;
   auto ret = mOverlapMap.insert(std::make_pair(std::make_pair(deg,isGenerator),
                                                emptyDeque));
+  // ret is a std::pair<iterator,bool>
+  // ret.first is the iterator into mOverlapMap, which itself is a pair <key,value>
+  // the keys are std::pair<deg,bool> value is deque.  So we push_back o on the deque.
   (ret.first)->second.push_back(o);
 }
   

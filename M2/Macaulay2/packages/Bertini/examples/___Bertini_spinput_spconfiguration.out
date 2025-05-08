@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 1659948913
+-- -*- M2-comint -*- hash: 5125700499117494129
 
 i1 : CC[x,y]; F = {x^2-1,y^2-1};
 
@@ -18,7 +18,7 @@ i5 : G = {x^2+y^2-1};
 
 i6 : bertiniPosDimSolve(G,opts)
 
-o6 = a numerical variety with components in
+o6 = a "numerical variety" with components in
      dim 1:  (dim=1,deg=2)
 
 o6 : NumericalVariety

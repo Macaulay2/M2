@@ -15,6 +15,7 @@ Dmodules
 WeylAlgebras
 HolonomicSystems
 BernsteinSato
+ConnectionMatrices
 Depth
 Elimination
 GenericInitialIdeal
@@ -33,6 +34,7 @@ SimplicialComplexes
 LLLBases
 TangentCone
 ChainComplexExtras
+Varieties
 Schubert2
 PushForward
 LocalRings
@@ -165,7 +167,6 @@ Topcom
 Triangulations
 ReflexivePolytopesDB
 AbstractToricVarieties
-Licenses
 TestIdeals
 FrobeniusThresholds
 Seminormalization
@@ -210,6 +211,7 @@ DecomposableSparseSystems
 MixedMultiplicity
 PencilsOfQuadrics
 ThreadedGB
+AdjunctionForSurfaces
 VectorGraphics
 GKMVarieties
 MonomialIntegerPrograms
@@ -259,4 +261,25 @@ CellularResolutions
 SagbiGbDetection
 A1BrouwerDegrees
 QuadraticIdealExamplesByRoos
+TerraciniLoci
+MatrixSchubert
+RInterface
+OIGroebnerBases
+PlaneCurveLinearSeries
+Valuations
+SchurVeronese
+VNumber
+TropicalToric
+MultigradedBGG
+AbstractSimplicialComplexes
+MultigradedImplicitization
+Msolve
+Permutations
+SCMAlgebras
+NumericalSemigroups
+IncidenceCorrespondenceCohomology
+ToricHigherDirectImages
+Brackets
+IntegerProgramming
+GameTheory
 AllMarkovBases

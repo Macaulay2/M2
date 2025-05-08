@@ -69,7 +69,7 @@ void freememlen(void *s, size_t old) {
 #ifdef MEMDEBUG
      M2_debug_free(s);
 #else     
-     GC_FREE(s);
+     /* GC_FREE(s); */
 #endif
 }
 
@@ -80,7 +80,7 @@ void freemem(void *s) {
 #ifdef MEMDEBUG
      M2_debug_free(s);
 #else     
-     GC_FREE(s);
+     /* GC_FREE(s); */
 #endif
 }
 
@@ -192,7 +192,7 @@ char *getmoremem_atomic (char *s, size_t old, size_t new) {
      size_t min = old<new ? old : new;
      if (p == NULL) outofmem2(new);
      memcpy(p, s, min);
-     GC_FREE(s);
+     /* GC_FREE(s); */
 #    ifndef NDEBUG
      {
        int excess = new - min;

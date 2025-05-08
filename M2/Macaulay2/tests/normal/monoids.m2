@@ -26,11 +26,21 @@ monoid[vars(0..3), VariableBaseName => "e", SkewCommutative => vars(0..3)]
 ---
 
 --- checking element access in towers
--* currently not working reliably
-R = ((frac(QQ[x,y]))[t,u])/(t^2-x,u^2-y)
-assert(sum({"x", "y", "t", "u"}, s -> s_R) === t + u + x + y)
+A0 = QQ[x,y]
+A1 = frac A0
+A2 = A1[t,u]
+A3 = A2/(t^2-x,u^2-y)
+assert instance(x+y, A1)
+assert instance(x+t, A3)
+assert all({x, "x", y, "y"}, s -> instance(value baseName s_A0, A1))
+assert all({x, "x", y, "y"}, s -> instance(value baseName s_A1, A1))
+assert all({x, "x", y, "y"}, s -> instance(value baseName s_A2, A1))
+assert all({x, "x", y, "y"}, s -> instance(value baseName s_A3, A1))
+assert all({t, "t", u, "u"}, s -> instance(value baseName s_A2, A3))
+assert all({t, "t", u, "u"}, s -> instance(value baseName s_A3, A3))
 
 -- promote
+-* currently not working reliably
 F = frac(QQ[x,y])
 S = F[t,u]
 R = S/(t-x)
@@ -119,6 +129,14 @@ use S
 R = S/(x-y)
 monoid R
 
+-- used to be in debugme.m2
+A = ZZ[a]
+B = A/a^6
+C = B[b]
+assert(B === ring a)
+assert(C === ring b)
+assert(C === ring(a*b))
+
 --- test Cox rings with torsion degree group
 needsPackage "NormalToricVarieties"
 B = {{2, -1}, {-1, 2}, {-1,-1}}
@@ -134,6 +152,10 @@ L = monomials(D = 3*X_0)
 assert(set first entries basis(degree D, S) === set L)
 -- FIXME should be homogeneous
 isHomogeneous sum({1,1,1,1}, L, times)
+
+-- test truncate
+needsPackage "Truncations"
+assert(set(truncate({0,3}, S))_* === set(monomials(X_0+2*X_1) | monomials(2*X_0+X_1) | monomials(3*X_0)))
 
 --- test passing a map of ZZ-modules for Degrees
 M = monoid[a,b,c, Degrees => A]
@@ -230,6 +252,7 @@ assert(gens(B = A ** A) == {x_0,y_0,x_1,y_1}) -- TODO: eliminate the warning
 assert(gens(C = B ** B) == {x_(0,0),y_(0,0),x_(0,1),y_(0,1),x_(1,0),y_(1,0),x_(1,1),y_(1,1)})
 assert(toString gens(A ** B) == "{x, y, x_0, y_0, x_1, y_1}") -- TODO: not yet working without toString
 assert(toString gens(monoid[x,y,x,z]) == "{x_0, y, x_1, z}") -- TODO: not yet working without toString
+assert(toString gens(monoid[x,x,x]) == "{x_0, x_1, x_2}") -- issue #3261
 
 -- test ^** and runLengthEncode
 -- TODO: what should happen for odd powers?

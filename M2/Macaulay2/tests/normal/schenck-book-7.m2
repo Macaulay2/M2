@@ -10,13 +10,13 @@ assert( (M = fromWDivToCl H2) === map((ZZ)^2,(ZZ)^4,{{1, -2, 1, 0}, {0, 1, 0, 1}
 assert( (W=matrix{{3,0,0,-5}}) === map((ZZ)^1,(ZZ)^4,{{3, 0, 0, -5}}) );
 assert( (DinClass = M*transpose W) === map((ZZ)^2,(ZZ)^1,{{3}, {-5}}) );
 C = ring H2     -- added
-assert( (L = sheaf(H2, (ring H2)^{{3,-5}})) === new CoherentSheaf from {symbol variety => H2, symbol module => (C)^{{3,-5}}} );
+assert( (L = sheaf(H2, (ring H2)^{{3,-5}})) === new CoherentSheaf from {symbol variety => H2, symbol module => (C)^{{3,-5}}, symbol cache => new CacheTable} );
 assert( (apply(3, i->rank HH^i(H2,L))) === {0,2,6} );
 chi'=(X,F)->(sum((dim X)+1,i->((-1)^i)*(rank HH^i(X,F))))
 assert( (chi'(H2, L)) === 4 );
 needsPackage "BoijSoederberg"
 needsPackage "BGG"
-assert( (OM = cotangentSheaf H2) === new CoherentSheaf from {symbol variety => H2, symbol module => cokernel map((C)^{{-2,0},{1,-2},{1,-2}},(C)^{{0,-2}},{{2*x_1*x_3}, {x_0}, {-x_2}})} );
+assert( (OM = cotangentSheaf H2) === new CoherentSheaf from {symbol variety => H2, symbol module => cokernel map((C)^{{-2,0},{1,-2},{1,-2}},(C)^{{0,-2}},{{2*x_1*x_3}, {x_0}, {-x_2}}), symbol cache => new CacheTable} );
 cohomologyTable(ZZ,CoherentSheaf,List,List):=(k,F,lo,hi)->(
     degRange := toList(lo#0..hi#0);
     new CohomologyTally from select(flatten apply(degRange,

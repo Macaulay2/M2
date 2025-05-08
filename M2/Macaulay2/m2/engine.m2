@@ -317,7 +317,7 @@ RawFreeModule ** RawFreeModule := rawTensor
 
 -- matrices
 
-setAttribute(ReverseDictionary,RawMatrix,symbol RawMatrix)
+setAttribute(RawMatrix,ReverseDictionary,symbol RawMatrix)
 RawMatrix.synonym = "raw matrix"
 
 setAttribute(RawMutableMatrix,ReverseDictionary,symbol RawMutableMatrix)

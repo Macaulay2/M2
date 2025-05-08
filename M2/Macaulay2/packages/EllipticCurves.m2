@@ -7,6 +7,7 @@ newPackage(
 		  Email => "oneto@math.su.se"},
 	    {Name => "Stefano Marseglia", 
 		  Email => "stefanom@math.su.se"}},
+	PackageImports => {"Varieties"},
 	Keywords => {"Algebraic Number Theory"},
     	Headline => "group law on elliptic curves (and counting points with brute force methods)"
     	)
@@ -506,6 +507,8 @@ beginDocumentation()
 document {
      Key => EllipticCurves,
      Headline => "elliptic curves and a brute-force method for point counting",
+     "This package defines classes for elliptic curves, points on elliptic ",
+     "curves, and related methods."
      }
 
 document {

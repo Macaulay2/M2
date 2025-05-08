@@ -1,7 +1,7 @@
 #include "matrix-stream.hpp"
 
 MatrixStream::MatrixStream(const FreeModule* F)
-    : mFreeModule(F), mMatrixConstructor(F, 0), mValue(0), mCurrentComponent(0)
+    : mFreeModule(F), mMatrixConstructor(F, 0), mValue(nullptr), mCurrentComponent(0)
 {
   mPolyRing = F->get_ring()->cast_to_PolyRing();
   assert(mPolyRing != 0);
@@ -44,8 +44,8 @@ void MatrixStream::appendTermDone(Coefficient coefficient)
   Nterm* t = ring().new_term();
   ring().getMonoid()->from_expvector(mCurrentExponents, t->monom);
   t->coeff = ring().getCoefficients()->from_long(coefficient);
-  t->next = 0;
-  if (mLastTerms[mCurrentComponent] == 0)
+  t->next = nullptr;
+  if (mLastTerms[mCurrentComponent] == nullptr)
     {
       mCurrentColumn[mCurrentComponent] = t;
       mLastTerms[mCurrentComponent] = t;
@@ -67,8 +67,8 @@ void MatrixStream::appendPolynomialDone()
   mMatrixConstructor.append(v);
   for (int i = 0; i < mFreeModule->rank(); i++)
     {
-      mCurrentColumn[i] = 0;
-      mLastTerms[i] = 0;
+      mCurrentColumn[i] = nullptr;
+      mLastTerms[i] = nullptr;
     }
 }
 void MatrixStream::idealDone()

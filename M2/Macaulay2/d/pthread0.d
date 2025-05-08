@@ -39,6 +39,19 @@ export init(x:SpinLock) ::= Ccode(void, "initializeSpinLock(&(",lvalue(x),"))");
 export lock(x:SpinLock) ::= Ccode(void, "acquireSpinLock(&(",lvalue(x),"))");
 export unlock(x:SpinLock) ::= Ccode(void, "releaseSpinLock(&(",lvalue(x),"))");
 
+export ThreadRWLockPtr := atomicPointer "pthread_rwlock_t *";
+threadRWLockFinalizer(p:ThreadRWLockPtr,cd:null):void :=
+    Ccode(void, "if (pthread_rwlock_destroy(",p,")) abort()");
+export newThreadRWLock():ThreadRWLockPtr := (
+    p := GCmalloc(ThreadRWLockPtr);
+    Ccode(void, "if (pthread_rwlock_init(",p,",NULL)) abort()");
+    Ccode(void, "GC_REGISTER_FINALIZER(",p,",(GC_finalization_proc)",threadRWLockFinalizer,
+	",NULL,NULL,NULL)");
+    p);
+export lockRead(p:ThreadRWLockPtr) ::= Ccode(void, "if (pthread_rwlock_rdlock(",p,")) abort()");
+export lockWrite(p:ThreadRWLockPtr) ::= Ccode(void, "if (pthread_rwlock_wrlock(",p,")) abort()");
+export unlock(p:ThreadRWLockPtr) ::= Ccode(void, "if (pthread_rwlock_unlock(",p,")) abort()");
+
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d pthread0.o "
 -- End:

@@ -1012,7 +1012,7 @@ doc ///
    S=importPoints(l,n)
  Inputs
    l: String
-     A string giving the  locaton of a Bertini solution file.
+     A string giving the location of a Bertini solution file.
    n: ZZ
      Number of coordinates for each solution.
  Outputs
