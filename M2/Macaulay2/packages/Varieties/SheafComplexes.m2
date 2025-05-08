@@ -19,8 +19,6 @@ clearHom = (M, N) -> (
     H := youngest(M.cache.cache, N.cache.cache);
     apply(keys H, k -> remove(H, k)))
 
-freeResolution' = X -> freeResolution(X, LengthLimit => 3)
-
 -----------------------------------------------------------------------------
 -- Basic constructors for complexes of sheaves
 -----------------------------------------------------------------------------
@@ -30,7 +28,6 @@ importFrom_Complexes { "isMorphism", "isAbelianCategory" }
 isMorphism SheafMap := isAbelianCategory CoherentSheaf := x -> true
 
 complex CoherentSheaf := Complex => lookup(complex, Module)
-
 
 -----------------------------------------------------------------------------
 -- Basic operations between sheaves, complexes, etc.
@@ -88,13 +85,6 @@ module ComplexMap := ComplexMap => phi -> phi.cache.module ??= (
     sphi := map(truncate(maxTruncDeg,module T), truncate(maxTruncDeg,module S), applyValues(phi.map, i -> truncate(maxTruncDeg, matrix i)));
     sphi.cache.sheaf = phi;
     sphi)
-
--- TODO: move to Complexes
-freeResolution Complex := Complex => opts -> C -> resolution(C, opts)
-
-sheafRes = method(Options => options freeResolution)
-sheafRes Complex       :=
-sheafRes CoherentSheaf := Complex => opts -> F -> sheaf freeResolution'(module F, opts)
 
 Complex(ZZ) := Complex(Sequence) := Complex => (C, a) -> complex applyValues(C.dd.map, f -> f(a))
 
