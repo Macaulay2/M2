@@ -143,9 +143,13 @@ exit = Command exitMethod
 -----------------------------------------------------------------------------
 
 setRandomSeed = method(Dispatch => Thing)
-setRandomSeed ZZ := seed -> randomSeed = seed		    -- magic assignment, calls rawSetRandomSeed internally
+setRandomSeed ZZ := seed -> (
+    printerr("setting random seed to ", toString seed);
+    randomSeed = seed) -- magic assignment, calls rawSetRandomSeed internally
 setRandomSeed String := seed -> setRandomSeed fold((i,j) -> 101*i + j, 0, ascii seed)
-setRandomSeed Sequence := seed -> if seed === () then rawRandomInitialize() else setRandomSeed hash seed
+setRandomSeed Sequence := seed -> if seed === () then (
+    printerr("initializing random seed");
+    rawRandomInitialize()) else setRandomSeed hash seed
 
 -----------------------------------------------------------------------------
 -- Layouts
