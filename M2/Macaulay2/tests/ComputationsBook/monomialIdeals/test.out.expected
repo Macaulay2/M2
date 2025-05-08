@@ -1,5 +1,6 @@
 
 i1 : setRandomSeed();
+ -- initializing random seed
 
 i2 : S = QQ[a, b, c, d];
 
