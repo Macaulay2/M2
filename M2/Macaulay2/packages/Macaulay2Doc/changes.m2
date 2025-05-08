@@ -94,6 +94,14 @@ document {
 	    UL {
 		LI { "The package ", TO "OldChainComplexes::OldChainComplexes", " has been added to preserve the existing
 		    functionality of chain complexes, graded modules, and resolutions for backwards compatibility." },
+		LI { TO "AllMarkovBases::AllMarkovBases", ", a package by Alexander Milner and Oliver Clarke for computing all minimal Markov bases of a configuration matrix, has been added." },
+		LI { TO "Brackets::Brackets", ", a package by Dalton Bidleman, Tim Duff, Jack Kendrick, and Michael Zeng for brackets, Grassmann-Cayley algebras, and projective geometry, has been added." },
+		LI { TO "ConnectionMatrices::ConnectionMatrices", ", a package by Paul Goerlach, Joris Koefler, Mahrud Sayrafi, Anna-Laura Sattelberger, Hendrik Schroeder, Nicolas Weiss, and Francesca Zaffalon for connection matrices and integrable systems from D-ideals, has been added." },
+		LI { TO "GameTheory::GameTheory", ", a package by Erin Connelly, Vincenzo Galgano, Zhuang He, Lars Kastner, Giacomo Maletto, Elke Neuhaus, Irem Portakal, Hannah Tillmann-Morris, and Chenyang Zhao for computing equilibria in game theory, has been added." },
+		LI { TO "IncidenceCorrespondenceCohomology::IncidenceCorrespondenceCohomology", ", a package by Annet Kyomuhangi, Emanuela Marangone, Claudiu Raicu, and Ethan Reed for cohomology on the incidence correspondence, bundles of principal parts, and Lefschetz properties, has been added." },
+		LI { TO "IntegerProgramming::IntegerProgramming", ", a package by Mike Cummings for solving integer programs with Gröbner bases, has been added." },
+		LI { TO "Oscillators::Oscillators", ", a package by John Cobb, Hal Schenck, and Michael E. Stillman for analyzing graph oscillators, has been added." },
+		LI { TO "ToricHigherDirectImages::ToricHigherDirectImages", ", a package by Sasha Zotine for computations involving pushforwards and higher direct images of toric maps, has been added." },
 		}
 	    },
 	LI { "functionality changed in a way that could break code:",
