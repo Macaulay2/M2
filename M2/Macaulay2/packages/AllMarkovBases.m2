@@ -2,8 +2,7 @@ newPackage(
     "AllMarkovBases",
     Version => "1.0",
     Date => "May 08, 2025",
-    Headline => "package for computing all minimal Markov bases
-    of a configuration matrix",
+    Headline => "computing all minimal Markov bases of a configuration matrix",
     Authors => {
         {Name => "Alexander Milner",
             Email => "A.J.C.Milner@sms.ed.ac.uk",
