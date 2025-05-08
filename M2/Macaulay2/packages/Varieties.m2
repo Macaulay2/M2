@@ -277,7 +277,11 @@ sheaf Variety        := SheafOfRings =>  X     -> sheaf(X, ring X)
 sheaf(Variety, Ring) := SheafOfRings => (X, R) -> (
     if ring X =!= R then error "sheaf: expected ring of the variety";
     -- TODO: simplify when https://github.com/Macaulay2/M2/issues/3351 is fixed
-    X.sheaf = X.sheaf ?? new SheafOfRings from { symbol variety => X, symbol ring => R } )
+    X.sheaf = X.sheaf ?? new SheafOfRings from { symbol variety => X, symbol ring => R };
+    -- this is here to get RingElement * Complex to work, but there may be a better way
+    -- e.g. should we define Section as the parent of SheafOfRings?
+    promote(Thing, X.sheaf) := Thing => (x, O) -> promote(x, ring variety O);
+    X.sheaf)
 
 -- TODO: should the module of a sheaf be fixed, or should it be allowed to change?
 -- TODO: https://github.com/Macaulay2/M2/issues/1358
