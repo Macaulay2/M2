@@ -79,9 +79,6 @@ module ComplexMap := ComplexMap => phi -> phi.cache.module ??= (
     sphi.cache.sheaf = phi;
     sphi)
 
--- TODO: move to Complexes
-freeResolution Complex := Complex => opts -> C -> resolution(C, opts)
-
 sheafRes = method(Options => options freeResolution)
 sheafRes Complex       :=
 sheafRes CoherentSheaf := Complex => opts -> F -> sheaf freeResolution'(module F, opts)
