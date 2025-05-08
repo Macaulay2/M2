@@ -672,14 +672,7 @@ void F4GB::gauss_reduce(bool diagonalize)
                          threadLocalDense_t::reference my_dense = threadLocalDense.local();
                          for (auto i = r.begin(); i != r.end(); ++i)
                          {
-                            // these lines are commented out to avoid the hilbert hint for now...
-                            //if ((not hilbert) or (n_newpivots > 0))
-                            //{
                                bool newNonzeroReduction = gauss_reduce_row(spair_rows[i], my_dense);
-                               if (not newNonzeroReduction) ++n_zero_reductions;
-                            //   if (hilbert && newNonzeroReduction)
-                            //     --n_newpivots;
-                            //}
                          }
                        });
   });

@@ -440,18 +440,18 @@ TEST /// -- Algorithm => LinearAlgebra, over non-prime finite field.
 TEST /// -- hilbert driven gb computation, for default, Algorithn => LinearAlgebra
   setRandomSeed 42
   kk = ZZ/101
-  R1 = kk[a..g, MonomialSize=>8];
+  R1 = kk[a..g, MonomialSize => 8];
   K1 = ideal (a^4, b^4, c^4, d^4)
   hfJ = poincare K1
   J1 = ideal random(R1^1, R1^{-4, -4, -4, -4});
   elapsedTime gbA = flatten entries gens gb(ideal J1_*, Hilbert => hfJ);
   elapsedTime gbB = flatten entries gens gb(ideal J1_*,
                                           Algorithm => LinearAlgebra,
-					  Hilbert => hfJ); -- CRASH
+					  Hilbert => hfJ);
   elapsedTime gbB2 = flatten entries gens gb(ideal J1_*,
                                           Algorithm => LinearAlgebra);
   elapsedTime gbC = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
-  --assert(gbA == gbB)
+  assert(gbA == gbB)
   assert(gbA == gbB2)
   assert(gbA == gbC)
 

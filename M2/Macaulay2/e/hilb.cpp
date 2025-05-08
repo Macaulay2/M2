@@ -720,6 +720,9 @@ int hilb_comp::coeff_of(const RingElement *h, int deg)
           fprintf(
               stderr,
               "internal error: incorrect Hilbert function given, aborting\n");
+          fprintf(
+              stderr,
+              "exp[0]: %d   deg: %d\n", exp[0], deg);    
           abort();
         }
       else if (exp[0] == deg)
