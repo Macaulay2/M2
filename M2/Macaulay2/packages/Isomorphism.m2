@@ -217,6 +217,7 @@ isIsomorphic = method(
 	Homogeneous => true,  -- if false, allow an inhomogeneous isomorphism
 	Strict      => false, -- forces strict equality of degrees
 	Verbose     => false,
+	Strategy    => null,
 	Tries       => null,  -- number of attempts at generating a random map
     })
 isIsomorphic(Module, Module) := Boolean => o -> (N, M) -> (
@@ -403,6 +404,7 @@ Node
    (isIsomorphic, Matrix, Matrix)
    [isIsomorphic, Verbose]
    [isIsomorphic, Homogeneous]
+   [isIsomorphic, Strategy]
    [isIsomorphic, Strict]
    [isIsomorphic, Tries]
   Headline
@@ -417,6 +419,7 @@ Node
     n:Matrix -- presentation of N
     Homogeneous => Boolean
     Verbose     => Boolean
+    Strategy    => Thing
     Strict      => Boolean
     Tries       => ZZ  -- the number of attempts at generating random map
   Outputs
