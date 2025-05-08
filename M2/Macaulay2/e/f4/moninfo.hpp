@@ -195,7 +195,7 @@ class MonomialInfo : public our_new_delete
     // this is to connect with older 'int *' monomials.
     ncalls_to_expvector++;
     result_comp = static_cast<int>(m[1]);
-    m += 2;
+    m += firstvar;
     for (int i = 0; i < nvars; i++) *result++ = static_cast<int>(*m++);
     return true;
   }

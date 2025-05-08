@@ -79,8 +79,6 @@ F4Computation::F4Computation(const VectorArithmetic* VA,
       moduleHeftDegrees.push_back(mFreeModule->primary_degree(j));
       
     }
-  std::cout << "Module Heft Degrees: " << moduleHeftDegrees << std::endl;
-  
   mMonoid = new MonomialInfo(mOriginalRing->n_vars(),
                              mOriginalRing->getMonoid()->getMonomialOrdering(),
                              heftDegrees,
@@ -107,6 +105,7 @@ F4Computation::~F4Computation() = default;
  *************************/
 
 void F4Computation::start_computation() { mF4GB->start_computation(stop_); }
+
 Computation /* or null */ *F4Computation::set_hilbert_function(
     const RingElement *hf)
 {
