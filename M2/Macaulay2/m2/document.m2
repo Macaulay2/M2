@@ -493,6 +493,9 @@ processSignature := (tag, fn) -> (type0, item) -> (
 	    else if  isInputText y then    text = y --   description, e.g {"hypertext sequence"}
 	    else error("encountered unrecognizable synopsis item ", toString y, " in documentation for ", format tag))
 	) item;
+    -- if no type information is provided,
+    -- get type from the method sequence
+    if type === null then type = type0;
     if debugLevel > 1 then printerr("parsed synopsis item:\t", toExternalString (optsymb, inpname, type, text));
 
     result := if optsymb === null then {
