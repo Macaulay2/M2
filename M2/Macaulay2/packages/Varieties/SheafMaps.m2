@@ -200,6 +200,8 @@ isIsomorphic(CoherentSheaf, CoherentSheaf) := Boolean => o -> (F, G) -> F === G 
 	r := 1 + max(regularity F.module, regularity G.module);
 	truncate(r, F.module, MinimalGenerators => false),
 	truncate(r, G.module, MinimalGenerators => false));
+    -- FIXME: this is incomplete, because we need to store pruning maps or embedding maps
+    -- in order to compose/precompose with the cached isomorphism on the modules.
     if isIsomorphic(M, N, o, Strict => true, Homogeneous => true)
     then (( G.cache.Isomorphisms ??= new MutableHashTable )#F = (M, N); true)
     else false)
@@ -207,9 +209,13 @@ isIsomorphic(CoherentSheaf, CoherentSheaf) := Boolean => o -> (F, G) -> F === G 
 isomorphism(CoherentSheaf, CoherentSheaf) := SheafMap => o -> (F, G) -> (
     if F === G then id_F else if isIsomorphic(F, G, o,
 	Strict => true, Homogeneous => true)
-    -- TODO: should the source and target be set to F and G?
-    then isomorphism splice(G.cache.Isomorphisms#F,
-	Strict => true, Homogeneous => true)
+    -- FIXME: this is probably not correct yet, because we may
+    -- need to compose/precompose with the pruning maps of F and G.
+    then --map(F, G,
+	--inverse (prune F).cache.pruningMap *
+	sheaf isomorphism splice(G.cache.Isomorphisms#F,
+	    Strict => true, Homogeneous => true)
+	--* (prune G).cache.pruningMap)
     else error "sheaves are not isomorphic")
 
 isIsomorphic(SheafMap, SheafMap) := Boolean => o -> (psi, phi) -> isIsomorphic(coker phi, coker psi, o)
