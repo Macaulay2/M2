@@ -219,6 +219,8 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
     fn := pkg#"pkgname" | ".m2";
     -- authors
     au := pkg.Options.Authors;
+    -- citation
+    ci := citePackage pkg;
     -- exported symbols
     -- TODO: this misses exported symbols from Macaulay2Doc; is this intentional?
     e := toSequence pkg#"exported symbols";
@@ -268,6 +270,12 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 	    SUBSECTION "Version",
 	    PARA { "This documentation describes version ", BOLD pkg.Options.Version, " of ",
 		if pkg#"pkgname" === "Macaulay2Doc" then "Macaulay2" else pkg#"pkgname", "." }},
+	if instance(ci, DIV) then ci else DIV {
+	    SUBSECTION "Citation",
+	    PARA "If you have used this package in your research, please cite it as follows:",
+	    TABLE {"class" => "examples",
+		TR TD PRE prepend("class" => "language-bib", CODE ci)}
+	    },
 	if pkg#"pkgname" =!= "Macaulay2Doc" and #e + #m > 0 then DIV {
 	    SUBSECTION "Exports",
 	    DIV { "class" => "exports",
@@ -463,7 +471,7 @@ getBody := (key, tag, rawdoc) -> (
 	data := getData(key, tag, rawdoc);
 	HEADER1 toList data.Headline,
 	apply(("Synopsis", Description, SourceCode, Acknowledgement, Contributors,
-		References, Citation, Caveat, SeeAlso, Subnodes, "WaysToUse"),
+		References, Caveat, SeeAlso, Subnodes, "WaysToUse"),
 	    section -> if data#?section then data#section)
         )
     )
@@ -582,6 +590,15 @@ briefDocumentation = key -> (
 ? Symbol   :=
 ? Thing    := -- TODO: does this interfere with anything?
 ? Type     := briefDocumentation
+
+-----------------------------------------------------------------------------
+-- extract the citation guide from the documentation or package info
+-----------------------------------------------------------------------------
+-- this is used by cite from PackageCitations
+citePackage = pkg -> (
+    tag := makeDocumentTag pkg;
+    rawdoc := fetchAnyRawDocumentation tag;
+    getOption(rawdoc, Citation) ?? (symbolFrom("PackageCitations", "iCite")) pkg)
 
 -----------------------------------------------------------------------------
 -- get a list of commands whose name matches the regex
