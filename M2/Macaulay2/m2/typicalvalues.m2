@@ -31,17 +31,7 @@ fileMode(ZZ,File) := fileMode
 fileMode(ZZ,String) := fileMode
 get File := get String := String => get
 getc File := String => getc
-isInputFile(File) := Boolean => isInputFile
-isListener(File) := Boolean => isListener
-isOpen(Database) := Boolean => isOpen
-isOpen(File) := Boolean => isOpen
-isOutputFile(File) := Boolean => isOutputFile
 linkFile(String,String) := Nothing => linkFile
-openIn String := File => openIn
-openInOut String := openInOut File := File => openInOut
-openListener String := File => openListener
-openOut String := File => openOut
-openOutAppend String := File => openOutAppend
 kill File := Nothing => kill
 kill ZZ := Nothing => kill
 read File := String => read
@@ -78,7 +68,9 @@ chk := (type,key) -> if type#?key then (
      << "   " << code type#key << endl;
      error("method already installed: ",toString type," # ",toString key))
 
-
+typval2f -*(Function,Type)*- := (f,Z) -> (
+     chk(nullaryMethods, 1:f);
+     installMethod(f, Z => dummy))
 typval3f-*(Function,Type,Type)*- := (f,X,Z) -> (
      msg := toString f | "(" | toString X | ") => " | toString Z;
      chk(X, f);
@@ -135,7 +127,10 @@ redefs := hashTable apply({acos, agm, asin, atan, atan2, Beta, cos, cosh, cot, c
 variants := new MutableHashTable;
 
 typval = x -> (
-     if #x == 3 then (
+     if #x == 2 then (
+	  if instance(x#0, Function) then typval2f x
+	  else error "typval: expected a function")
+     else if #x == 3 then (
 	  if instance(x#0,Function) then typval3f x
 	  else if instance(x#0,Keyword) then typval3k x
 	  else error "typval: expected keyword or function"
@@ -146,7 +141,7 @@ typval = x -> (
 	  else error "typval: expected keyword or function"
 	  )
      else if #x == 5 then typval5f x
-     else error "typval: expected 3, 4, or 5 arguments";
+     else error "typval: expected 2, 3, 4, or 5 arguments";
      if redefs#?(x#0) then (
 	 f' := x#0;
 	 f := redefs#f';
