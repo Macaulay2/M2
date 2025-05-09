@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------
 -- PURPOSE : QuillenSuslin package for Macaulay2 provides the ability to 
--- compute a free basis for a projective moadule over a polynomial ring 
+-- compute a free basis for a projective module over a polynomial ring 
 -- with coefficients in Q, Z or Z/p for a prime integer p. 
 --
 -- Copyright (C) 2013 Brett Barwick and Branden Stone
