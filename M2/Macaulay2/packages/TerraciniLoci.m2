@@ -127,6 +127,17 @@ doc ///
 
       This package exports one method, @TO terraciniLocus@, for computing the
       ideals of these varieties.
+  Citation
+    @article{Galuppi_2025,
+      title={Geometry of First Nonempty Terracini Loci},
+      ISSN={1793-6683},
+      url={http://dx.doi.org/10.1142/S0219199725500531},
+      DOI={10.1142/s0219199725500531},
+      journal={Communications in Contemporary Mathematics},
+      publisher={World Scientific Pub Co Pte Ltd},
+      author={Galuppi, Francesco and Santarsiero, Pierpaola and Torrance, Douglas A. and Turatti, Ettore Teixeira},
+      year={2025},
+      month=apr }
 ///
 
 doc ///
