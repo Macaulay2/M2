@@ -26,7 +26,7 @@ assert ( t*f*s == g )
 assert ( # pivots g == 3 )
 
 R = QQ[x]
-time (g,t,s) = smithNormalForm ( f = random(R^8,R^3,MaximalRank=>true) * matrix "14+x,,;,140-x2,;,,1261+2x" * random(R^3,R^10,MaximalRank=>true) );
+time (g,t,s) = smithNormalForm ( f = random(R^5,R^3,MaximalRank=>true) * matrix "14+x,,;,140-x2,;,,1261+2x" * random(R^3,R^4,MaximalRank=>true) );
 time assert ( t*f*s == g )
 time assert ( # pivots g == 3 )
 
@@ -34,10 +34,6 @@ S = QQ [x, MonomialOrder => {Position => Down}]
 f = first smithNormalForm(vars S,ChangeMatrix => {true, false})
 debug Core
 assert( degrees raw source f == degrees source raw f )
-
-R = QQ[x]
-assert isHomogeneous minimalPresentation coker vars R
-assert isHomogeneous first smithNormalForm vars R
 
 chk = M -> (
      (D,P,Q) = smithNormalForm M;

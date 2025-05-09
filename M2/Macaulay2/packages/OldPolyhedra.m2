@@ -8909,15 +8909,8 @@ assert isNormal Q
 -- Test 63
 -- Checking sublatticeBasis and toSublattice
 TEST ///
-
--- new answer:
-assert((sublatticeBasis matrix{{2,4,2,4},{1,2,2,3}}) === matrix({{2, 4}, {2, 3}}) );
--- assert(sublatticeBasis matrix{{2,4,2,4},{1,2,2,3}} == matrix {{2,2},{1,2}})
-
--- new answer:
-assert( (sublatticeBasis convexHull matrix {{1,2,2},{0,-1,2}}) === map(ZZ^2,ZZ^2,{{0, 1}, {-1, 2}}) );
--- assert(sublatticeBasis convexHull matrix {{1,2,2},{0,-1,2}} == matrix {{-1,1},{1,0}})
-
+assert(abs det solve(sublatticeBasis matrix{{2,4,2,4},{1,2,2,3}},matrix({{2, 4}, {2, 3}})) == 1);
+assert(abs det solve(sublatticeBasis convexHull matrix {{1,2,2},{0,-1,2}}, matrix {{-1,1},{1,0}}) == 1)
 assert(toSublattice convexHull matrix {{2,0},{0,3}} == convexHull matrix {{0,1}})
 ///
 
