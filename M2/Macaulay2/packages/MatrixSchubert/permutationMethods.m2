@@ -173,6 +173,7 @@ getOneReducedWord List := List => (w) -> (
 ------------------------------------
 toOneLineNotation = method()
 toOneLineNotation (List, ZZ) := List => (perm, maxIdx) -> (
+    if maxIdx == 1 then return {1};
     switch(perm_0-1, perm_1-1, toList(1..maxIdx))
 )
 toOneLineNotation (Matrix) := List => (P) -> (
@@ -317,7 +318,7 @@ longestIncrSeq (ZZ,ZZ,List) := List => memoize ((preVal,prevSZ,w) -> (
 	else currSZ = longestIncrSeq(currVal, prevSZ+1, w_{i+1..#w-1});
 	longestSZ = max(longestSZ, currSZ);
     );
-    return longestSZ;
+    longestSZ
 ))
 
 ------------------------------------------
@@ -327,11 +328,11 @@ longestIncrSeq (ZZ,ZZ,List) := List => memoize ((preVal,prevSZ,w) -> (
 rajcode = method()
 rajcode List := ZZ => (w) -> (
     if not (isPerm w) then error ("Expecting a permutation.");
-    rajCodeVec := {};
+    rajCodeVec := new MutableList;
     for k from 0 to #w-1 do (
-    	rajCodeVec = append(rajCodeVec, (#w-k) - longestIncrSeq(w_k, 1, w_{k+1..#w-1}));
+	rajCodeVec#(#rajCodeVec) = (#w-k) - longestIncrSeq(w_k, 1, w_{k+1..#w-1});
     );
-    return rajCodeVec;
+    toList rajCodeVec
 )
 
 ------------------------------------------
