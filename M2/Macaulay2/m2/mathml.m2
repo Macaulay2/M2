@@ -150,6 +150,7 @@ mathML Power := v -> (
 mathML ZZ := i -> concatenate("<mn>",toString i, "</mn>")
 mathML RR := i -> concatenate("<mn>",toString i, "</mn>")
 mathML QQ := i -> concatenate( "<mfrac>",mathML numerator i, mathML denominator i, "</mfrac>" )
+mathML RowExpression := x -> mrow concatenate apply(x, mathML)
 mathML Expression := x -> error("mathML conversion for expression class ", toString class x, " not implemented yet")
 
 mathML LITERAL := x -> concatenate x

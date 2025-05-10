@@ -242,6 +242,7 @@ net ComplexMap := Net => f -> (
      )
 
 texMath ComplexMap := String => f -> texMath expression f
+mathML ComplexMap := String => f -> mathML expression f
 
 ComplexMap _ ZZ := Matrix => (f,i) -> (
     if f.map#?i then f.map#i else map((target f)_(i + degree f), (source f)_i, 0))
