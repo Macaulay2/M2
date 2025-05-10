@@ -14,8 +14,7 @@ rpmlint:;   docker run $(VOLUME) -it --entrypoint "" $(TAG) bash -c "rpmlint M2/
 ## autotools build
 ## TODO: generalize this to other distros, move to toplevel Makefile
 
-CONFIG_OPT = --with-system-gc --with-system-memtailor --with-system-mathic \
-	--with-system-mathicgb --enable-download --enable-rpm --prefix=/usr
+CONFIG_OPT = --with-system-libs --enable-download --enable-rpm --prefix=/usr
 
 define M2_BUILD_SCRIPT_autotools
 set -xe

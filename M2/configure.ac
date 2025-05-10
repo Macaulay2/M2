@@ -712,13 +712,18 @@ else if test $SHARED = no -a $TRY_STATIC = yes
      fi
 fi
 
+AC_ARG_WITH([system-libs],
+    [AS_HELP_STRING([--with-system-libs],
+        [use system gc, memtailor, mathic, and mathicgb instead of building them])],,
+    [with_system_libs=no])
+
 ## we build gc by default so we can configure it for large memory spaces
 ## see issue #2445
 AC_ARG_WITH([system-gc],
     [AS_HELP_STRING([--with-system-gc],
         [use system gc instead of building it])],
     [],
-    [with_system_gc=no])
+    [with_system_gc=$with_system_libs])
 
 AS_IF([test "x$with_system_gc" = xyes],
     [AC_MSG_CHECKING(whether package bdw-gc is provided)
@@ -1311,7 +1316,7 @@ AS_IF([test $BUILD_tbb = yes],
 AC_ARG_WITH([system-memtailor],
     [AS_HELP_STRING([--with-system-memtailor],
 	[use system memtailor instead of building git submodule])],,
-    [with_system_memtailor=no])
+    [with_system_memtailor=$with_system_libs])
 if test $with_system_memtailor = no
 then
     BUILD_memtailor=yes
@@ -1327,7 +1332,7 @@ fi
 AC_ARG_WITH([system-mathic],
     [AS_HELP_STRING([--with-system-mathic],
 	[use system mathic instead of building git submodule])],,
-    [with_system_mathic=no])
+    [with_system_mathic=$with_system_libs])
 if test $with_system_mathic = no
 then
     BUILD_mathic=yes
@@ -1343,7 +1348,7 @@ fi
 AC_ARG_WITH([system-mathicgb],
     [AS_HELP_STRING([--with-system-mathicgb],
 	[use system mathicgb instead of building git submodule])],,
-    [with_system_mathicgb=no])
+    [with_system_mathicgb=$with_system_libs])
 if test $with_system_mathicgb = no
 then
     BUILD_mathicgb=yes
