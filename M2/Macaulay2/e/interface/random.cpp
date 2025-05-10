@@ -161,12 +161,24 @@ void rawSetRandomQQ(mpq_ptr result, gmp_ZZ height)
 /* returns random a/b, where 1 <= b <= height, 1 <= a <= height */
 /* if height is the null pointer, use the default height */
 {
+  mpz_t d;
+
+  mpz_init(d);
   if (height == nullptr) height = maxHeight;
-  mpz_urandomm(mpq_numref(result), state, height);
-  mpz_urandomm(mpq_denref(result), state, height);
-  mpz_add_ui(mpq_numref(result), mpq_numref(result), 1);
-  mpz_add_ui(mpq_denref(result), mpq_denref(result), 1);
-  mpq_canonicalize(result);
+  if (mpz_cmp_si(height, 0) <= 0)
+    throw exc::engine_error("expected a positive height");
+
+  while (true) {
+    mpz_urandomm(mpq_numref(result), state, height);
+    mpz_urandomm(mpq_denref(result), state, height);
+    mpz_add_ui(mpq_numref(result), mpq_numref(result), 1);
+    mpz_add_ui(mpq_denref(result), mpq_denref(result), 1);
+    mpz_gcd(d, mpq_numref(result), mpq_denref(result));
+    if (mpz_cmp_ui(d, 1) == 0)
+      break;
+  }
+
+  mpz_clear(d);
 }
 
 gmp_QQ rawRandomQQ(gmp_ZZ height)
