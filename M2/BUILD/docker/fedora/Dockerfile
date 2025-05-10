@@ -20,12 +20,12 @@ RUN microdnf install -y openblas-devel libxml2-devel readline-devel gdbm-devel \
 RUN microdnf install -y eigen3-devel glpk-devel gmp-devel mpfr-devel ntl-devel \
     libnauty-devel libnormaliz-devel libfrobby-devel gc-devel mpfi-devel       \
     factory-devel mpsolve-devel fflas-ffpack-devel memtailor-devel             \
-    mathic-devel mathicgb-devel
+    mathic-devel mathicgb-devel gtest-devel
 
 # Programs we can build
 # TODO: Polymake requires firefox???
 RUN microdnf install -y cddlib-devel 4ti2 gfan normaliz csdp-tools nauty \
-    lrslib-utils cohomCalg msolve
+    lrslib-utils cohomCalg msolve TOPCOM
 
 # Optional packages
 RUN microdnf install -y plocate bash-completion R
