@@ -485,6 +485,14 @@ texMath Complex := String => C -> (
         )
     )
 
+importFrom(Core, {"leftarrow", "mtable"})
+mathML Complex := C -> (
+    if C == 0 then mathML "0"
+    else (
+	(lo, hi) := concentration C;
+	mtable transpose between({leftarrow, "", ""},
+	    toList apply(lo..hi, i -> {mathML short C_i, "", mathML i}))))
+
 gradedModule Complex := Complex => C -> (
     (lo,hi) := concentration C;
     complex(for i from lo to hi list C_i, Base=>lo)
