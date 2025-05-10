@@ -68,10 +68,9 @@ Node
     To run a function in another thread use @ TO schedule @, as in the
     following example.
   Example
-       R = ZZ/101[x,y,z];
-       I = (ideal vars R)^2
-       dogb = I -> () -> res quotient module I
-       f = dogb I
+       R = QQ[x,y,z];
+       I = ideal(x^2 + 2*y^2 - y - 2*z, x^2 - 8*y^2 + 10*z - 1, x^2 - 7*y*z)
+       f = () -> gens gb I
        t = schedule f
   Text
     Note that @ TO schedule @ returns a task, not the result of the computation,
@@ -86,7 +85,7 @@ Node
     To wait for the result and then retrieve it, use @ TO taskResult @.
   Example
        taskResult t
-       assert instance(oo,ChainComplex)
+       assert instance(oo, Matrix)
   Text
     It is possible to make a task without starting it running, using @ TO createTask @.
   Example
