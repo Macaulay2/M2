@@ -2,8 +2,6 @@
 #include <M2/gc-include.h>
 #include <engine.h>
 
-unsigned long gmp_defaultPrecision = 53;
-
 int main(int argc, char **argv)
 {
   IM2_initialize();

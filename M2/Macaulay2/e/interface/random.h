@@ -35,12 +35,12 @@ gmp_QQ rawFareyApproximation(gmp_RR x, gmp_ZZ height);
 /* returns the nearest rational to x w/ denominator <= height */
 
 gmp_QQ rawRandomQQ(gmp_ZZ height);
-/* returns a  sample from the uniform distribution on [0, height], */
-/* rounded to the nearest rational number with denominator bounded by height */
+/* returns random a/b, where 1 <= b <= height, 1 <= a <= height */
+/* if height is the null pointer, use the default height */
 
 void rawSetRandomQQ(mpq_ptr result, gmp_ZZ height);
-/* sets result = a sample from the uniform distribution on [0, height], */
-/* rounded to the nearest rational number with denominator bounded by height */
+/* sets result = random a/b, where 1 <= b <= height, 1 <= a <= height */
+/* if height is the null pointer, use the default height */
 
 gmp_RR rawRandomRRUniform(unsigned long prec);
 /* returns a uniformly distributed random real with the given precision, in
