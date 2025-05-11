@@ -539,6 +539,26 @@ doc ///
       ord p
 ///
 
+-- randomPermutation
+doc ///
+  Key
+    randomPermutation
+    (randomPermutation, ZZ)
+  Headline
+    generates a random permutation
+  Usage
+    randomPermutation n
+  Inputs
+    n:ZZ
+  Outputs
+    :Permutation
+  Description
+    Text
+      Generates a random permutation on $1..n$.
+    Example
+      randomPermutation 5
+///
+
 -- records
 doc ///
   Key

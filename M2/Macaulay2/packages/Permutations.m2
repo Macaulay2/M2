@@ -30,6 +30,7 @@ export {
     "isVexillary",
     "isCartwrightSturmfels",
     "isCDG",
+    "isSeparable",
     "foataBijection",
     "ord",
     "sign",
@@ -38,6 +39,7 @@ export {
     "isDerangement",
     "fixedPoints",
     "inversions",
+    "randomPermutation",
     -- symbols
     "Weak"
 }

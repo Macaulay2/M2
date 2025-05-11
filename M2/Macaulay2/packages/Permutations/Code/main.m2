@@ -229,3 +229,10 @@ inversions Permutation := List => w -> (
 
 
 length Permutation := ZZ => w -> (#(inversions w))
+
+
+------------------------------------
+-- Random permutations
+------------------------------------
+randomPermutation = method()
+randomPermutation ZZ := Permutation => (n) -> (permutation random toList(1..n))
