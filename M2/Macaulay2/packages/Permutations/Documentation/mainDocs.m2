@@ -616,7 +616,7 @@ doc ///
       original permutation.
     Example
       word = words#0
-      product apply(word, i -> switch(i-1, i, word))
+      product apply(word, i -> switch(i-1, i, toList(1..#p)))
   SeeAlso
     length
 ///
