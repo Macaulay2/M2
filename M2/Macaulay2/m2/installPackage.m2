@@ -884,7 +884,7 @@ removeFiles = p -> scan(reverse findFiles p, fn -> if fileExists fn or readlink 
 uninstallPackage = method(Options => { InstallPrefix => applicationDirectory() | "local/" })
 uninstallPackage Package := opts -> pkg -> uninstallPackage(toString pkg, opts)
 uninstallPackage String  := opts -> pkg -> (
-    checkPackageName pkg;
+    checkPackageName(pkg, false);
     installPrefix := minimizeFilename opts.InstallPrefix;
     apply(findFiles apply({1, 2},
 	    i -> apply(flatten {
