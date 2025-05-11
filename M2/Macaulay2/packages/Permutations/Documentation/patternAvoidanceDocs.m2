@@ -20,6 +20,8 @@ doc ///
     Example
       p = permutation {3,1,2,5,4}
       avoidsPattern(p, {2,1,4,3})
+  Acknowledgement
+    This method was ported over from the @TO "MatrixSchubert"@ package.
   SeeAlso
     avoidsPatterns
     isCartwrightSturmfels
@@ -47,6 +49,8 @@ doc ///
     Example
       p = permutation {3,1,2,5,4}
       avoidsPatterns(p, {{2,1,4,3}, {1,4,3,2}})
+  Acknowledgement
+    This method was ported over from the @TO "MatrixSchubert"@ package.
   SeeAlso
     avoidsPattern
     isCartwrightSturmfels
@@ -55,7 +59,6 @@ doc ///
 ///
 
 -- isCartwrightSturmfels
--- TODO: add list of patterns to description
 doc ///
   Key
     isCartwrightSturmfels
@@ -70,10 +73,14 @@ doc ///
     :Boolean
   Description
     Text
-      A permutation $p$ is {\em Cartwright-Sturmfels} if it avoids.
+      A permutation $p$ is {\em Cartwright-Sturmfels} if it avoids all of the 
+      following patterns:
+      $12543$, $13254$, $13524$, $13542$, $21543$, $125364$, $125634$, $215364$, $215634$, $315264$, $315624$, and $315642$.
     Example
       p = permutation {3,1,2,5,4}
       isCartwrightSturmfels p
+  Acknowledgement
+    This method was ported over from the @TO "MatrixSchubert"@ package.
   SeeAlso
     avoidsPattern
     avoidsPatterns
@@ -82,8 +89,6 @@ doc ///
 ///
 
 -- isCDG
--- TODO: add CDG spelled out to headline and description
--- TODO add list of patterns to description
 doc ///
   Key
     isCDG
@@ -98,10 +103,14 @@ doc ///
     :Boolean
   Description
     Text
-      A permutation $p$ is {\em CDG} if it avoids.
+      A permutation $p$ is {\em Conca-De Negri-Gorla} ({\em CDG}) if it avoids 
+      all of the following patterns:
+      $13254$, $21543$, $214635$, $215364$, $215634$, $241635$, $315264$, and $4261735$.
     Example
       p = permutation {3,1,2,5,4}
       isCDG p
+  Acknowledgement
+    This method was ported over from the @TO "MatrixSchubert"@ package.
   SeeAlso
     avoidsPattern
     avoidsPatterns
@@ -129,6 +138,8 @@ doc ///
     Example
       p = permutation {3,1,2,5,4}
       isVexillary p
+  Acknowledgement
+    This method was ported over from the @TO "MatrixSchubert"@ package.
   SeeAlso
     avoidsPattern
     avoidsPatterns

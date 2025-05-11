@@ -3,6 +3,7 @@
 doc ///
   Key
     Permutation
+    permutation
     (permutation, VisibleList)
   Headline
     the Permutation type
