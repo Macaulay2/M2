@@ -23,12 +23,12 @@ document { Key => eulers,       methodstr }
 document { Key => genera,       methodstr }
 document { Key => genus,        methodstr }
 document { Key => isSmooth,     methodstr, SeeAlso => {
-	"Divisor::isSmooth(Ideal)", "LatticePolytopes::isSmooth(Polyhedron)",
+	"WeilDivisors::isSmooth(Ideal)", "LatticePolytopes::isSmooth(Polyhedron)",
 	"Varieties::isSmooth(Variety)", "SpaceCurves::isSmooth(Curve)",
 	"Polyhedra::isSmooth(Cone)", "NormalToricVarieties::isSmooth(NormalToricVariety)",
 	"SpecialFanoFourfolds::isSmooth(EmbeddedProjectiveVariety)" } }
 document { Key => isVeryAmple,  methodstr, SeeAlso => {
-	"Divisor::isVeryAmple(WeilDivisor)", "Polyhedra::isVeryAmple(Polyhedron)",
+	"WeilDivisors::isVeryAmple(WeilDivisor)", "Polyhedra::isVeryAmple(Polyhedron)",
 	"PositivityToricBundles::isVeryAmple(ToricVectorBundleKlyachko)",
 	"NormalToricVarieties::isVeryAmple(ToricDivisor)" } }
 document { Key => isNormal,     methodstr, SeeAlso => {

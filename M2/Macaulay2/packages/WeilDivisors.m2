@@ -1,6 +1,6 @@
 --this file is in the public domain
 
-newPackage( "Divisor",
+newPackage( "WeilDivisors",
      Version => "0.3", 
      Date => "May 30th, 2018",
      Authors => {
@@ -19,6 +19,7 @@ newPackage( "Divisor",
 	  "published code URI" => "https://msp.org/jsag/2018/8-1/jsag-v8-n1-x09-Divisor.m2",
 	  "release at publication" => "0e40b423ff375d6eb0a98d6fbbe7be8b2db95a98",	    -- git commit number in hex
 	  "version at publication" => "0.3",
+	  "legacy name" => "Divisor", -- renamed due to GitHub issue #3543
 	  "volume number" => "8",
 	  "volume URI" => "https://msp.org/jsag/2018/8-1/"
 	  }
@@ -1936,9 +1937,9 @@ reflexivePower(ZZ, Ideal) := Ideal => o -> (n1, I1) -> (
 beginDocumentation();
 
 document {
-    Key => Divisor,
+    Key => WeilDivisors,
     Headline => "divisors",
-    EM "Divisor", " is a package for working with (Q/R)-Weil divisors on ", EM "normal", " affine and projective varieties (equivalently, on commutative, normal and graded rings).", 
+    EM "WeilDivisors", " is a package for working with ($\\QQ$/$\\RR$)-Weil divisors on ", EM "normal", " affine and projective varieties (equivalently, on commutative, normal and graded rings).",
     BR{},BR{},
     "This package introduces a type ", TO "WeilDivisor", " which lets the user work with Weil divisors similar to the way one might in algebraic geometry.  We highlight a few important functions below.",
     BR{},BR{},
