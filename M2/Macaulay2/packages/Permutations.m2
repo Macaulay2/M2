@@ -40,6 +40,7 @@ export {
     "fixedPoints",
     "inversions",
     "randomPermutation",
+    "reducedWords",
     -- symbols
     "Weak"
 }

@@ -154,3 +154,30 @@ TEST ///
     assert(length extendedIdentity == 0)
 ///
 
+TEST ///
+    -- reducedWords
+    p = permutation {4,3,2,1}
+    actualReducedWords = {{1,2,1,3,2,1},
+                          {1,2,3,1,2,1},
+                          {1,2,3,2,1,2},
+                          {1,3,2,1,3,2},
+                          {1,3,2,3,1,2},
+                          {2,1,2,3,2,1},
+                          {2,1,3,2,1,3},
+                          {2,1,3,2,3,1},
+                          {2,3,1,2,1,3},
+                          {2,3,1,2,3,1},
+                          {2,3,2,1,2,3},
+                          {3,1,2,1,3,2},
+                          {3,1,2,3,1,2},
+                          {3,2,1,2,3,2},
+                          {3,2,1,3,2,3},
+                          {3,2,3,1,2,3}}
+    computedWords = reducedWords p
+    -- Should be the same reduced words.
+    assert((matrix actualReducedWords) === (matrix computedWords))
+    -- All reduced words should be the length of the permutation (by definition).
+    assert(all(computedWords, word -> #word == length p))
+    -- All reduced words should multiply out to the permutation.
+    assert(all(computedWords, word -> product apply(word, i -> permutation switch(i-1, i, toList(1..#p))) == p))
+///

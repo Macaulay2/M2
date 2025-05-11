@@ -587,6 +587,40 @@ doc ///
     saliances
 ///
 
+-- reducedWords
+doc ///
+  Key
+    reducedWords
+    (reducedWords, Permutation)
+  Headline
+    computes the reduced words of a permutation
+  Usage
+    reducedWords w
+  Inputs
+    w:Permutation
+  Outputs
+    :List
+  Description
+    Text
+      A permutation $p$ can be expressed as a product of transpositions.
+      A {\em reduced word} is a minimal-length expression of a permutation as a
+      product of transpositions. The {\tt reducedWords} method computes all of 
+      the reduced words of a permutation. A word is represented by a list of 
+      integers, where $i$ denotes the transposition $(i,i+1)$.
+    Example
+      p = permutation {4,3,2,1}
+      words = reducedWords p
+    Text
+      Using @TO switch@, we can create the transposition $(i,i+1)$ (be careful
+      with indexing!). We can check that a reduced word multiplies out to the 
+      original permutation.
+    Example
+      word = words#0
+      product apply(word, i -> switch(i-1, i, word))
+  SeeAlso
+    length
+///
+
 -- saliances
 doc ///
   Key

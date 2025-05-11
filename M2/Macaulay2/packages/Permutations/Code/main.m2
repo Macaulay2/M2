@@ -236,3 +236,23 @@ length Permutation := ZZ => w -> (#(inversions w))
 ------------------------------------
 randomPermutation = method()
 randomPermutation ZZ := Permutation => (n) -> (permutation random toList(1..n))
+
+
+------------------------------------
+-- Words
+------------------------------------
+reducedWords = method()
+reducedWords Permutation := List => w -> (
+    -- This is an adaptation of the MAPLE procedure found on page 7
+    -- "The Saga of Reduced Factorizations of Elements of the Symmetric Group" [Garsia, 2001]
+    -- https://mathweb.ucsd.edu/~garsia/somepapers/saga.pdf
+    predecessors := apply(descents w, i -> (i, w * (permutation switch(i-1, i, toList(1..#w)))));
+
+    -- base case
+    if predecessors === {} then return {{}};
+    -- recursive case
+    flatten for idxPermPair in predecessors list (
+        (idx, tau) := idxPermPair;
+        (reducedWords tau) / (word -> prepend(idx, word))
+    )
+)
