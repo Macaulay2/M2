@@ -389,10 +389,9 @@ document {
      Key => {ExteriorIdeals},
      Headline => "a package for working with ideals over exterior algebra",
      TT "ExteriorIdeals is a package for creating and manipulating ideals over exterior algebra",
-     PARA {"Other acknowledgements:"},      
-     "The method ", TT "isLexIdeal", " was taken from Chris Francisco's package: LexIdeals, which is available at ",
-      HREF{"http://www2.macaulay2.com/Macaulay2/doc/Macaulay2-1.10/share/doc/Macaulay2/LexIdeals/html/","LexIdeals"}
-      
+     Acknowledgement => PARA {
+	 "The method ", TO "isLexIdeal", " was taken from ", TO "LexIdeals::isLexIdeal",
+	 " in Chris Francisco's package ", TO "LexIdeals::LexIdeals", "." },
      }
 
 document {
@@ -468,16 +467,15 @@ document {
      Inputs => {"I" => {"a monomial ideal of an exterior algebra"}
       },
      Outputs => {Boolean => {"true whether ideal ", TT "I", " is lex"}},
-      PARA {"Other acknowledgements:"},      
-     "This method was taken from Chris Francisco's package: LexIdeals, which is available at ",
-      HREF{"http://www2.macaulay2.com/Macaulay2/doc/Macaulay2-1.10/share/doc/Macaulay2/LexIdeals/html/","LexIdeals"},
-      
      PARA {"Examples:"},
      EXAMPLE lines ///
            E=QQ[e_1..e_4,SkewCommutative=>true]
            isLexIdeal ideal {e_1*e_2,e_2*e_3}
            isLexIdeal ideal {e_1*e_2,e_1*e_3,e_1*e_4,e_2*e_3}
      ///,
+     Acknowledgement => PARA {
+	 "This method was taken from ", TO "LexIdeals::isLexIdeal",
+	 " in Chris Francisco's package ", TO "LexIdeals::LexIdeals", "." },
      SeeAlso =>{lexIdeal},
      }
 
