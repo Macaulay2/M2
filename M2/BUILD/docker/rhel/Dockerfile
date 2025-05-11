@@ -22,4 +22,11 @@ RUN dnf -y install autoconf automake bison boost-devel bzip2 cmake     \
     python3-devel R readline-devel rpm-build tbb-devel which xz-devel  \
     zlib-devel
 
+# Add non-root user for building and running Macaulay2
+RUN useradd -G wheel -g root -u 1000 -m macaulay && echo "macaulay ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+USER 1000:0
+
+ENV PATH /home/macaulay/M2/M2/BUILD/build-docker:${PATH}
+
 WORKDIR /home/macaulay
+ENTRYPOINT M2
