@@ -26,6 +26,7 @@ doc ///
     avoidsPatterns
     isCartwrightSturmfels
     isCDG
+    isSeparable
     isVexillary
 ///
 
@@ -55,6 +56,7 @@ doc ///
     avoidsPattern
     isCartwrightSturmfels
     isCDG
+    isSeparable
     isVexillary
 ///
 
@@ -85,6 +87,7 @@ doc ///
     avoidsPattern
     avoidsPatterns
     isCDG
+    isSeparable
     isVexillary
 ///
 
@@ -115,9 +118,36 @@ doc ///
     avoidsPattern
     avoidsPatterns
     isCartwrightSturmfels
+    isSeparable
     isVexillary
 ///
 
+-- isSeparable
+doc ///
+  Key
+    isSeparable
+    (isSeparable, Permutation)
+  Headline
+    whether a permutation is separable.
+  Usage
+    isSeparable w
+  Inputs
+    w:Permutation
+  Outputs
+    :Boolean
+  Description
+    Text
+      A permutation $p$ is {\em separable} if it avoids $2413$ and $3142$.
+    Example
+      p = permutation {1,4,3,2,5,9,7,8,6}
+      isSeparable p
+  SeeAlso
+    avoidsPattern
+    avoidsPatterns
+    isCartwrightSturmfels
+    isCDG
+    isVexillary
+///
 
 -- isVexillary
 doc ///
@@ -145,4 +175,5 @@ doc ///
     avoidsPatterns
     isCartwrightSturmfels
     isCDG
+    isSeparable
 ///

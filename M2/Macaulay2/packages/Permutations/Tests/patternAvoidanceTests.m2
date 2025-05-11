@@ -43,3 +43,20 @@ TEST ///
     assert(not isVexillary(permutation {7,2,5,8,1,3,6,4}))
     assert(isVexillary(permutation {1,6,9,2,4,7,3,5,8}))
 ///
+
+TEST ///
+    --------------------
+    -- isSeparable
+    --------------------
+    -- Example appears in "Distributions of statistics on separable permutations" (Chen-Kitaev-Zhang, 2024)
+    p = permutation {1,4,3,2,5,9,7,8,6}
+    assert(isSeparable p)
+    assert(isSeparable reverse p)
+    assert(isSeparable inverse p)
+
+    -- Example appears in "Distributions of statistics on separable permutations" (Chen-Kitaev-Zhang, 2024)
+    p = permutation {5,8,7,6,9,4,2,3,1}
+    assert(isSeparable p)
+    assert(isSeparable reverse p)
+    assert(isSeparable inverse p)
+///

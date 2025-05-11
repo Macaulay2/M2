@@ -57,3 +57,8 @@ isCDG Permutation := w -> (
                  {4,2,6,1,7,3,5}};
     avoidsPatterns(w, patterns)
 )
+
+isSeparable = method(TypicalValue => Boolean)
+isSeparable Permutation := w -> (
+    avoidsPatterns(w, {{2,4,1,3}, {3,1,4,2}})
+)
