@@ -24,7 +24,6 @@ doc ///
     avoidsPatterns
     isCartwrightSturmfels
     isCDG
-    isSeparable
     isVexillary
 ///
 
@@ -52,7 +51,6 @@ doc ///
     avoidsPattern
     isCartwrightSturmfels
     isCDG
-    isSeparable
     isVexillary
 ///
 
@@ -80,7 +78,6 @@ doc ///
     avoidsPattern
     avoidsPatterns
     isCDG
-    isSeparable
     isVexillary
 ///
 
@@ -109,9 +106,9 @@ doc ///
     avoidsPattern
     avoidsPatterns
     isCartwrightSturmfels
-    isSeparable
     isVexillary
 ///
+
 
 -- isVexillary
 doc ///
@@ -137,5 +134,4 @@ doc ///
     avoidsPatterns
     isCartwrightSturmfels
     isCDG
-    isSeparable
 ///

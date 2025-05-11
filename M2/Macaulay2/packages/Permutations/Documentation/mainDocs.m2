@@ -262,16 +262,16 @@ doc ///
   Outputs
     e:Sequence
   Description
-  Text
-    For ease, we can also extend two permutations so that they are regarded as 
-    permutations on the same number of symbols. More precisely, if we have 
-    permutations $p=(p_1, \dots, p_n)$ and $q=(q_1, \dots, q_m)$, then 
-    {\tt extend(p,q)} will return both $p$ and $q$ as permutations on
-    $\text{max}(m,n)$ symbols.
-  Example
-    p = permutation {3,1,2,5,4}
-    q = permutation {2,3,1,4,5,7,6}
-    extend(p,q)
+    Text
+      For ease, we can also extend two permutations so that they are regarded as 
+      permutations on the same number of symbols. More precisely, if we have 
+      permutations $p=(p_1, \dots, p_n)$ and $q=(q_1, \dots, q_m)$, then 
+      {\tt extend(p,q)} will return both $p$ and $q$ as permutations on
+      $\text{max}(m,n)$ symbols.
+    Example
+      p = permutation {3,1,2,5,4}
+      q = permutation {2,3,1,4,5,7,6}
+      extend(p,q)
   SeeAlso
     (extend, Permutation, ZZ)
     trim
