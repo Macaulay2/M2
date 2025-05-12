@@ -264,15 +264,6 @@ testNewSimplex(List, List) := (P, D) ->(
 
 intersectLists = (D',D) -> D - set(D-set D')
 
-randomSubset = (n,m) -> (
-    L := new MutableList from toList (0..m-1);
-    for i from m to n-1 do (
-	j := random(i+1);
-    	if j < m then L#j = i;
-	);
-    sort toList L
-    )
-
 randomAddition = method()
 randomAddition(ZZ,ZZ,List) := (n,m,P) ->(
     if #P == 0 then return {randomSubset(n,m+1)};

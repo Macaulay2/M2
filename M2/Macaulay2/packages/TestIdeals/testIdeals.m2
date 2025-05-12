@@ -66,15 +66,6 @@ testElement Ring := o -> R1 ->
     testEle % I1
 )
 
-randomSubset = method()
-
-randomSubset ( ZZ, ZZ ) := ( m, n ) ->
-(
-    L := toList( 0..m-1 );
-    scan( m-n, i -> L = delete( L#(random(0,m-1-i)), L ) );
-    L
-)
-
 --****************************
 --****************************
 --**New test ideal functions**
