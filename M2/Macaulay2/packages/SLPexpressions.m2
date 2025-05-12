@@ -903,12 +903,12 @@ expression DetGate := g -> (expression det) eGM g.Inputs
 printLargeGate = g -> VerticalList { class g, "depth"=>depth g, "#gates"=> countGates g }
 net Gate := g -> (
     n := net expression g;
-    if depth g > 5 and width n <= printWidth and height n <= printWidth then n
+    if depth g < 6 and width n <= printWidth and height n <= printWidth then n
     else net printLargeGate g
     )
 html Gate := g -> (
     e := expression g;
-    html if depth g > 5 and width net e <= printWidth then e else printLargeGate g
+    html if depth g < 6 and width net e <= printWidth then e else printLargeGate g
     )
 
 beginDocumentation()
