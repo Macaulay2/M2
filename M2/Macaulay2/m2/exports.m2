@@ -1045,6 +1045,7 @@ export {
 	"random",
 	"randomKRationalPoint",
 	"randomMutableMatrix",
+	"randomSubset",
 	"rank",
 	"rays",
 	"read",
