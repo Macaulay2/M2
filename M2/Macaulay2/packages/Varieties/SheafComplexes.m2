@@ -31,6 +31,7 @@ isMorphism SheafMap := isAbelianCategory CoherentSheaf := x -> true
 
 complex CoherentSheaf := Complex => lookup(complex, Module)
 
+
 -----------------------------------------------------------------------------
 -- Basic operations between sheaves, complexes, etc.
 -----------------------------------------------------------------------------

@@ -11,8 +11,8 @@
 ---------------------------------------------------------------------------
 newPackage(
     "Varieties",
-    Date     => "28 Feb 2025",
-    Version  => "0.3",
+    Date     => "March 14 2025",
+    Version  => "0.4",
     Keywords => { "Algebraic Geometry", "Homological Algebra" },
     Headline => "routines for working with affine and projective varieties and coherent sheaves on them",
     Authors  => {
@@ -36,10 +36,10 @@ newPackage(
 	    HomePage => "https://johndcobb.github.io"}
 	},
     PackageExports => {
-	HomologicalAlgebraPackage,
 	"Saturation",
 	"Truncations",
 	"Isomorphism",
+	HomologicalAlgebraPackage
 	},
     AuxiliaryFiles => true
     )
@@ -798,7 +798,8 @@ euler ProjectiveVariety := X -> (
 -----------------------------------------------------------------------------
 
 load "./Varieties/SheafMaps.m2"
---load "./Varieties/SheafComplexes.m2"
+if HomologicalAlgebraPackage === "Complexes" then
+load "./Varieties/SheafComplexes.m2"
 
 -----------------------------------------------------------------------------
 -- Tests
@@ -808,7 +809,8 @@ load "./Varieties/tests-varieties.m2"
 load "./Varieties/tests-sheaves.m2"
 load "./Varieties/tests-functors.m2"
 load "./Varieties/tests-maps.m2"
---load "./Varieties/tests-complexes.m2"
+if HomologicalAlgebraPackage === "Complexes" then
+load "./Varieties/tests-complexes.m2"
 
 -----------------------------------------------------------------------------
 -- Documentation
@@ -860,7 +862,8 @@ Node
 load "./Varieties/doc-varieties.m2"
 load "./Varieties/doc-sheaves.m2"
 load "./Varieties/doc-maps.m2"
---load "./Varieties/doc-complexes.m2"
+if HomologicalAlgebraPackage === "Complexes" then
+load "./Varieties/doc-complexes.m2"
 load "./Varieties/doc-functors.m2"
 load "./Varieties/euler-doc.m2"
 load "./Varieties/genus-doc.m2"
