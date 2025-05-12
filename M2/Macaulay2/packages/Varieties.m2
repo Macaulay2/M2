@@ -525,7 +525,8 @@ degreeList := M -> (
 
 -- quotienting by local H_m^0(M) to "saturate" M
 -- TODO: use irrelevant ideal here
-killH0 := -*(cacheValue symbol TorsionFree)*- (M -> if (H0 := saturate(0*M)) == 0 then M else M / H0)
+killLocalH0 := -*(cacheValue symbol TorsionFree)*- (
+    M -> if (H0 := saturate(0*M)) == 0 then M else M / H0)
 
 -- TODO: add tests:
 -- - global sections of sheafHom are Hom
@@ -544,7 +545,7 @@ twistedGlobalSectionsModule = (F, bound) -> (
     if degreeLength A =!= 1 then error "expected degree length 1";
     -- quotient by HH^0_m(M) to kill the torsion
     -- TODO: pass the appropriate irrelevant ideal
-    N := killH0 M;
+    N := killLocalH0 M;
     -- pushforward to the projective space
     N' := flattenModule N;
     S := ring N';
@@ -553,12 +554,16 @@ twistedGlobalSectionsModule = (F, bound) -> (
     w := S^{-n-1}; -- canonical sheaf on P^n
     -- Note: bound=infinity signals that HH^1_m(M) = 0, ie. M is saturated
     -- in other words, don't search for global sections not already in M
-    -- TODO: what would pdim N' < n, hence E1 = 0, imply?
+    -- TODO: what would pdim N' < n, hence En = 0, imply?
+    -- pdim N' < n means N' has depth >= 1 already
     p := if bound === infinity or pdim N' < n then 0 else (
-        E1 := Ext^n(N', w); -- the top Ext
-        if dim E1 <= 0 -- 0-module or 0-dim module (i.e. finite length)
-        then 1 + max degreeList E1 - min degreeList E1
-        else 1 - first min degrees E1 - bound);
+	-- En is the dual of the HH^1_m(N'), so its degrees
+	-- tell us how far to look for the extension
+	-- 0 -> N' -> Gamma_*(N'^~) -> HH^1_m(N') -> 0
+        En := Ext^n(N', w); -- the top Ext
+        if dim En <= 0 -- 0-module or 0-dim module (i.e. finite length)
+        then 1 + max degreeList En - min degreeList En
+        else 1 - first min degrees En - bound);
     -- this can only happen if bound=-infinity, e.g. from calling H^0(F(*)) = H^0(F(>=(-infinity))
     if p === infinity then error "the global sections module is not finitely generated";
     -- caching these to be used later in prune SheafMap
@@ -641,6 +646,7 @@ minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opt
     F -> F.cache#(symbol minimalPresentation => opts) ??= tryHooks(
 	(minimalPresentation, CoherentSheaf), (opts, F), (opts, F) -> (
 	    -- this is the default algorithm
+	    -- it uses twistedGlobalSectionsModule
 	    G := sheaf(F.variety, HH^0 F(>=0));
 	    G.cache.pruningMap = sheaf(F.variety, F.cache.SaturationMap);
 	    G)))
