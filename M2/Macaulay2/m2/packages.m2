@@ -196,6 +196,8 @@ loadPackage String  := opts -> pkgname -> (
 
 needsPackage = method(TypicalValue => Package, Options => options loadPackage)
 needsPackage String  := opts -> pkgname -> (
+    -- package name must be alphanumeric
+    pkgname = checkPackageName(pkgname, true);
     if PackageDictionary#?pkgname
     and instance(pkg := value PackageDictionary#pkgname, Package)
     and (opts.FileName === null or
