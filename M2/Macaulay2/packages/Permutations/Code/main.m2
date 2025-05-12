@@ -256,3 +256,60 @@ reducedWords Permutation := List => w -> (
         (reducedWords tau) / (word -> prepend(idx, word))
     )
 )
+
+
+------------------------------------
+-- Bruhat orders
+------------------------------------
+leftWeakBruhatOrder = method()
+leftWeakBruhatOrder (Permutation, Permutation) := Boolean => (w, v) -> (
+    -- Proposition 3.1.2 (ii) of "Combinatorics of Coxeter Groups" [Bjorner-Brenti, 2005]
+    length w + length(w * (inverse v)) == length v
+)
+
+
+rightWeakBruhatOrder = method()
+rightWeakBruhatOrder (Permutation, Permutation) := Boolean => (w, v) -> (
+    -- Proposition 3.1.2 (ii) of "Combinatorics of Coxeter Groups" [Bjorner-Brenti, 2005]
+    length w + length((inverse w) * v) == length v
+)
+
+
+weakBruhatOrder = method(Options => {Side => "right"})
+weakBruhatOrder (Permutation, Permutation) := Boolean => opts -> (w, v) -> (
+    orders := hashTable {"left" => leftWeakBruhatOrder,
+                         "right" => rightWeakBruhatOrder};
+    if not orders#?(opts.Side) then error("Invalid Bruhat order side: " | opts.Side)
+    else orders#(opts.Side)(w, v)
+)
+
+
+strongBruhatOrder = method()
+strongBruhatOrder (Permutation, Permutation) := Boolean => (w, v) -> (
+    -- METHOD 1
+    -- w <= v if and only if every principal submatrix in w has at least as 
+    -- many 1's as the corresponding principal submatrix in v.
+    -- (See Theorem 2.1.5 of "Combinatorics of Coxeter Groups" [Bjorner-Brenti, 2005]) 
+
+    -- METHOD 2 (Tableau criterion)
+    -- w <= v if and only if the cumulative sorted tableau of w is component-wise
+    -- less than or equal to the cumulative sorted tableau of v.
+    -- (See Theorem 2.6.3 of "Combinatorics of Coxeter Groups" [Bjorner-Brenti, 2005])
+
+    -- NOTE: Method 2 turns out to be much faster than Method 1.
+    -- NOTE: Remarkably, computing descent sets does not seem to provide any speedup on average
+    --       (see https://github.com/seangrate/M2/issues/22#issuecomment-2868631145).
+    (w, v) = extend(w, v);
+    n := #w;
+    for k in 0 ..< n do (
+        if any(sort w_{0..k}, sort v_{0..k}, (i,j) -> i > j) then return false;
+    );
+    true
+)
+
+
+symmetricGroupPoset = method()
+symmetricGroupPoset (ZZ, Function) := Poset => (n, comparisonFunction) -> (
+    Sn := apply(permutations n, p -> permutation to1Index p);
+    poset(Sn, comparisonFunction)
+)

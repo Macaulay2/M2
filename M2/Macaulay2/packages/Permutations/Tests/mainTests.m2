@@ -181,3 +181,67 @@ TEST ///
     -- All reduced words should multiply out to the permutation.
     assert(all(computedWords, word -> product apply(word, i -> permutation switch(i-1, i, toList(1..#p))) == p))
 ///
+
+TEST ///
+    -- strong Bruhat order
+    assert(strongBruhatOrder(permutation {3,5,1,2,4}, permutation {4,5,1,2,3}) == true)
+
+    -- For the example below, the two permutations are not comparable in the strong Bruhat order.
+    p = permutation {6,9,4,2,8,7,5,3,1}
+    q = permutation {3,6,8,4,7,5,9,1,2}
+    assert(not strongBruhatOrder(p, q))
+    assert(not strongBruhatOrder(q, p))
+
+    -- All strong Bruhat relations in S_3
+    p1 = permutation {1,2,3}
+    p2 = permutation {1,3,2}
+    p3 = permutation {2,1,3}
+    p4 = permutation {2,3,1}
+    p5 = permutation {3,1,2}
+    p6 = permutation {3,2,1}
+    assert(strongBruhatOrder(p1, p2) and (not strongBruhatOrder(p2, p1)))
+    assert(strongBruhatOrder(p1, p3) and (not strongBruhatOrder(p3, p1)))
+    assert(strongBruhatOrder(p1, p4) and (not strongBruhatOrder(p4, p1)))
+    assert(strongBruhatOrder(p1, p5) and (not strongBruhatOrder(p5, p1)))
+    assert(strongBruhatOrder(p1, p6) and (not strongBruhatOrder(p6, p1)))
+    assert((not strongBruhatOrder(p2, p3)) and (not strongBruhatOrder(p3, p2)))
+    assert(strongBruhatOrder(p2, p4) and (not strongBruhatOrder(p4, p2)))
+    assert(strongBruhatOrder(p2, p5) and (not strongBruhatOrder(p5, p2)))
+    assert(strongBruhatOrder(p2, p6) and (not strongBruhatOrder(p6, p2)))
+    assert(strongBruhatOrder(p3, p4) and (not strongBruhatOrder(p4, p3)))
+    assert(strongBruhatOrder(p3, p5) and (not strongBruhatOrder(p5, p3)))
+    assert(strongBruhatOrder(p3, p6) and (not strongBruhatOrder(p6, p3)))
+    assert((not strongBruhatOrder(p4, p5)) and (not strongBruhatOrder(p5, p4)))
+    assert(strongBruhatOrder(p4, p6) and (not strongBruhatOrder(p6, p4)))
+    assert(strongBruhatOrder(p5, p6) and (not strongBruhatOrder(p6, p5)))
+
+
+///
+
+TEST ///
+    -- weak Bruhat order
+
+    -- All (right) weak Bruhat relations in S_3
+    p1 = permutation {1,2,3}
+    p2 = permutation {1,3,2}
+    p3 = permutation {2,1,3}
+    p4 = permutation {2,3,1}
+    p5 = permutation {3,1,2}
+    p6 = permutation {3,2,1}
+    assert(weakBruhatOrder(p1, p2) and (not weakBruhatOrder(p2, p1)))
+    assert(weakBruhatOrder(p1, p2) and (not weakBruhatOrder(p2, p1)))
+    assert(weakBruhatOrder(p1, p3) and (not weakBruhatOrder(p3, p1)))
+    assert(weakBruhatOrder(p1, p4) and (not weakBruhatOrder(p4, p1)))
+    assert(weakBruhatOrder(p1, p5) and (not weakBruhatOrder(p5, p1)))
+    assert(weakBruhatOrder(p1, p6) and (not weakBruhatOrder(p6, p1)))
+    assert((not weakBruhatOrder(p2, p3)) and (not weakBruhatOrder(p3, p2)))
+    assert((not weakBruhatOrder(p2, p4)) and (not weakBruhatOrder(p4, p2)))
+    assert(weakBruhatOrder(p2, p5) and (not weakBruhatOrder(p5, p2)))
+    assert(weakBruhatOrder(p2, p6) and (not weakBruhatOrder(p6, p2)))
+    assert(weakBruhatOrder(p3, p4) and (not weakBruhatOrder(p4, p3)))
+    assert((not weakBruhatOrder(p3, p5)) and (not weakBruhatOrder(p5, p3)))
+    assert(weakBruhatOrder(p3, p6) and (not weakBruhatOrder(p6, p3)))
+    assert((not weakBruhatOrder(p4, p5)) and (not weakBruhatOrder(p5, p4)))
+    assert(weakBruhatOrder(p4, p6) and (not weakBruhatOrder(p6, p4)))
+    assert(weakBruhatOrder(p5, p6) and (not weakBruhatOrder(p6, p5)))
+///

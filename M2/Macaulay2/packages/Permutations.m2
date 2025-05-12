@@ -9,7 +9,8 @@ newPackage(
          Email => "sean.grate@auburn.edu", 
          HomePage => "https://seangrate.com/"}
     },
-    Headline => "functions for working with permutations")
+    Headline => "functions for working with permutations",
+    PackageExports => {"Posets"})
 
 export {
     -- types
@@ -41,8 +42,12 @@ export {
     "inversions",
     "randomPermutation",
     "reducedWords",
+    "weakBruhatOrder",
+    "strongBruhatOrder",
+    "symmetricGroupPoset",
     -- symbols
-    "Weak"
+    "Weak",
+    "Side"
 }
 
 

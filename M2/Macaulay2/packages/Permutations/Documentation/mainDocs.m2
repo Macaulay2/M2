@@ -677,6 +677,73 @@ doc ///
     isOdd
 ///
 
+-- strongBruhatOrder
+doc ///
+  Key
+    strongBruhatOrder
+    (strongBruhatOrder, Permutation, Permutation)
+  Headline
+    compares two permutations in the (strong) Bruhat order
+  Usage
+    strongBruhatOrder(w,v)
+  Inputs
+    w:Permutation
+    v:Permutation
+  Outputs
+    :Boolean
+  Description
+    Text
+      The {\em (strong) Bruhat order} is a partial order on the symmetric group
+      $\mathfrak{S}_n$. This method compares two permutation with this order.
+    Example
+      p = permutation {3,5,1,2,4}
+      q = permutation {4,5,1,2,3}
+      strongBruhatOrder(p, q)
+  SeeAlso
+    weakBruhatOrder
+    symmetricGroupPoset
+///
+
+-- symmetricGroupPoset
+doc ///
+  Key
+    symmetricGroupPoset
+    (symmetricGroupPoset, ZZ, Function)
+  Headline
+    constructs the poset of the symmetric group under a partial order
+  Usage
+    symmetricGroupPoset(n,f)
+  Inputs
+    w:Permutation
+    f:Function
+  Outputs
+    :Boolean
+  Description
+    Text
+      Using the @TO "Posets"@ package, we can construct the poset on the
+      symmetric group $\mathfrak{S}_n$ under a partial order. See
+      [BB05] for more details on Bruhat order.
+    Example
+      symmetricGroupPoset(4, strongBruhatOrder)
+    Text
+      With a little bit of finagling, we can also construct the poset using 
+      the non-default {\em left} weak Bruhat order.
+    Example
+      partialOrder = (w,v) -> weakBruhatOrder(w,v, Side=>"left")
+      symmetricGroupPoset(4, partialOrder)
+  References
+    @UL{
+      {
+        "[BB05] A. Björner and F. Brenti, ",
+        HREF("https://link.springer.com/book/10.1007/3-540-27596-7", EM "Combinatorics of Coxeter groups"), 
+        ", Graduate Texts in Mathematics, 231, Springer, New York, 2005"
+      }
+    }@
+  SeeAlso
+    weakBruhatOrder
+    strongBruhatOrder
+///
+
 -- trim
 doc ///
   Key
@@ -701,4 +768,59 @@ doc ///
       trim p
   SeeAlso
     extend
+///
+
+-- weakBruhatOrder
+doc ///
+  Key
+    weakBruhatOrder
+    (weakBruhatOrder, Permutation, Permutation)
+    [weakBruhatOrder, Side]
+    Side
+  Headline
+    compares two permutations in the weak Bruhat order
+  Usage
+    weakBruhatOrder(w,v)
+  Inputs
+    w:Permutation
+    v:Permutation
+    Side:String
+      an optional argument to specify the side of the Bruhat order
+  Outputs
+    :Boolean
+  Description
+    Text
+      The (right) weak Bruhat order is a partial order on the symmetric group 
+      $\mathfrak{S}_n$. For two permutations $p$ and $q$, $w \leq_R v$ if and 
+      only if $\ell(w) + \ell(v^{-1} w) = \ell(v)$, where $\ell$ denotes the
+      @TO (length, Permutation)@ of a permutation and $\leq_R$ is the right 
+      weak Bruhat order. See [BB05] for more details on Bruhat 
+      order.
+    Example
+      p = permutation {1,3,2}
+      q = permutation {2,1,3}
+      r = permutation {3,1,2}
+      weakBruhatOrder(p, r)
+      weakBruhatOrder(q, r)
+    Text
+      By default, {\tt weakBruhatOrder} computes the {\em right}
+      weak Bruhat order, but the optional argument {tt Side} can be used to 
+      compute, for example, the {\em left} weak Bruhat order.
+      The current options for {\tt Side} are {\tt "left"} and {\tt "right"}.
+    Example
+      p = permutation {1,3,2}
+      r = permutation {3,1,2}
+      weakBruhatOrder(inverse p, inverse r, Side=>"left")
+  References
+    @UL{
+      {
+        "[BB05] A. Björner and F. Brenti, ",
+        HREF("https://link.springer.com/book/10.1007/3-540-27596-7", EM "Combinatorics of Coxeter groups"), 
+        ", Graduate Texts in Mathematics, 231, Springer, New York, 2005"
+      }
+    }@
+  SeeAlso
+    (length, Permutation)
+    strongBruhatOrder
+    symmetricGroupPoset
 ///
