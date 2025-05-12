@@ -159,32 +159,9 @@ abstractSimplicialComplex(ZZ,ZZ) := AbstractSimplicialComplex => (n,r) -> (
 ----------------------------------------
 
 -- What follows are simple minded (yet still seemingly practical)
--- methods for producing random subsets and random simplicial complexes.
+-- methods for producing random simplicial complexes.
 -- In either case they are fairly efficient.
 -- In either case, what follows suffices for our purposes at present.
-
--- Make a random subset of {1,...,n}.
-
-randomSubset = method()
-
--- Make a random size random subset of [n] = {1,...,n}.
-
-randomSubset(ZZ) := List =>  (n) -> (
-     k := random(0,n); 
-     sort unique (for i from 1 to k list (random(1,n))))
-
--- Make a random size r subset.
-
-randomSubset(ZZ,ZZ) := List =>  (n,r) -> (
-     sort unique (for i from 1 to r list (random(1,n))))
-
- -- Make a random subset of a given set.
-
-randomSubset(List) := List =>  (L) -> (
-     n := #L;
-     k := random(0,n);
-     mySubset := subsets(L,k);
-     mySubset_(random(binomial(n,k))))
 
 --  A variant of the above method would yield a random k element subset of a given set.
 
@@ -194,14 +171,16 @@ randomAbstractSimplicialComplex = method()
 
 randomAbstractSimplicialComplex(ZZ) := AbstractSimplicialComplex => (n) -> (
      listLength := 1 + random(2^n);
-     randomFaces := unique(for i from 1 to listLength list randomSubset(n));
+     x := toList(1..n);
+     randomFaces := unique(for i from 1 to listLength list randomSubset x);
      abstractSimplicialComplex randomFaces)
 
 --  Make a random simplicial complex on [n] with r-skeleton.
 
 randomAbstractSimplicialComplex(ZZ,ZZ) := AbstractSimplicialComplex => (n,r) -> (
      listLength := 1 + random(binomial(n,r));
-     randomFaces := unique(for i from 1 to listLength list randomSubset(n,r));
+     x := toList(1..n);
+     randomFaces := unique(for i from 1 to listLength list randomSubset(x,r));
      abstractSimplicialComplex randomFaces)
 
 --  Make the random complex Y_d(n,m) which has vertex set
