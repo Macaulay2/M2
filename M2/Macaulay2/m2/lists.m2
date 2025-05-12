@@ -237,6 +237,34 @@ random List := opts -> s -> (
 	  t := s#i ; s#i = s#j ; s#j = t;
 	  );
      new List from s)
+
+randomSubset = method()
+-- Knuth Algorithm S, Art of Computer Programming, Section 3.4.2
+randomSubset(ZZ, ZZ) := (N, n) -> (
+    if n < 0 or n > N then error("expected an integer between 0 and ", N);
+    t := 0;
+    apply(n, m -> (
+	    while (N - t) * rawRandomRRUniform defaultPrecision >= n - m
+	    do t += 1;
+	    first (t, t += 1))))
+-- when size not given, use binomial distribution first to determine size
+randomSubset ZZ := N -> (
+    if N < 0 then error "expected a nonnegative integer"
+    else if N < 30 then (
+	-- for small N, sum up N Bernoulli variates
+	n := 0;
+	scan(N, i -> n += random 2))
+    else (
+	-- for large N, use normal approximation
+	n = round(n/2 + sqrt(n/4)*rawRandomRRNormal defaultPrecision);
+	-- in the vanishingly unlikely case we end up outside [0, N]:
+	n = min(N, max(0, n)));
+    randomSubset(N, n))
+randomSubset(VisibleList, ZZ) := (x, n) -> x_(randomSubset(#x, n))
+randomSubset VisibleList := x -> x_(randomSubset(#x))
+randomSubset(Set, ZZ) := (x, n) -> set randomSubset(toList x, n)
+randomSubset Set := x -> set randomSubset toList x
+
 -----------------------------------------------------------------------------
 -- sublists
 -----------------------------------------------------------------------------

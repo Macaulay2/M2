@@ -23,6 +23,7 @@ Node
     (random, Module)
     (random, Module, Module)
     setRandomSeed
+    randomSubset
 
 Node
   Key
