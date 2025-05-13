@@ -126,16 +126,16 @@ isWellDefined SheafMap := f -> (
 source  SheafMap := CoherentSheaf => f -> f.source
 target  SheafMap := CoherentSheaf => f -> f.target
 variety SheafMap := Variety       => f -> f.variety
-ring    SheafMap := SheafOfRings  => f -> sheaf f.variety
+ring    SheafMap := SheafOfRings  => f -> f.variety.sheaf
 matrix  SheafMap := Matrix   => o -> f -> f.map
 -- TODO: does this make sense, or should all sheaf maps be degree zero?
 degree  SheafMap := ZZ            => f -> degree f.map
 -- TODO: add a method that returns f.degree
 
-image    SheafMap := CoherentSheaf =>         f -> sheaf(f.variety, image    matrix f)
-kernel   SheafMap := CoherentSheaf => opts -> f -> sheaf(f.variety, kernel   matrix f)
-coimage  SheafMap := CoherentSheaf =>         f -> sheaf(f.variety, coimage  matrix f)
-cokernel SheafMap := CoherentSheaf =>         f -> sheaf(f.variety, cokernel matrix f)
+kernel   SheafMap := CoherentSheaf => o -> f -> sheaf(f.variety,   kernel(f.map, o))
+cokernel SheafMap := CoherentSheaf =>      f -> sheaf(f.variety, cokernel f.map)
+coimage  SheafMap := CoherentSheaf =>      f -> sheaf(f.variety,  coimage f.map)
+image    SheafMap := CoherentSheaf =>      f -> sheaf(f.variety,    image f.map)
 
 -- TODO: are there any tricks for checking injectivity/surjectivity?
 -- e.g. check surjectivity of the module map after tensoring with k?
