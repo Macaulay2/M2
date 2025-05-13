@@ -20,8 +20,8 @@ newPackage("OldPolyhedra",
 	 "published article URI" => "https://msp.org/jsag/2009/1-1/p03.xhtml",
 	 "published article DOI" => "10.2140/jsag.2009.1.11",
 	 "published code URI" => "https://msp.org/jsag/2009/1-1/jsag-v1-n1-x03-code.zip",
-	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Polyhedra.m2",
 	 "release at publication" => "c065ec7651789907627333018dc7d675968639e4", -- git commit number in hex
+	 "legacy name" => "Polyhedra",
 	 "version at publication" => "1.0.5",
 	 "volume number" => "1",
 	 "volume URI" => "https://msp.org/jsag/2009/1-1/"
@@ -3439,7 +3439,7 @@ statePolytope Ideal := I -> (
 	  -- map 'I' into 'S' and compute Groebner basis and leadterm
 	  I1 := f I;
 	  g := gb I1;
-	  lt := leadTerm I1;
+	  lt := generators leadTerm I1;
 	  gbRemove I1;
 	  (g,lt));
      makePositive := (w,posv) -> (
@@ -3455,7 +3455,7 @@ statePolytope Ideal := I -> (
      if not noError then error("The ideal must be homogeneous w.r.t. some strictly positive grading");
      -- Compute a first Groebner basis to start with
      g := gb I;
-     lt := leadTerm I;
+     lt := generators leadTerm I;
      -- Compute the Groebner cone
      C := gCone(g,lt);
      gbRemove I;
@@ -8909,15 +8909,8 @@ assert isNormal Q
 -- Test 63
 -- Checking sublatticeBasis and toSublattice
 TEST ///
-
--- new answer:
-assert((sublatticeBasis matrix{{2,4,2,4},{1,2,2,3}}) === matrix({{2, 4}, {2, 3}}) );
--- assert(sublatticeBasis matrix{{2,4,2,4},{1,2,2,3}} == matrix {{2,2},{1,2}})
-
--- new answer:
-assert( (sublatticeBasis convexHull matrix {{1,2,2},{0,-1,2}}) === map(ZZ^2,ZZ^2,{{0, 1}, {-1, 2}}) );
--- assert(sublatticeBasis convexHull matrix {{1,2,2},{0,-1,2}} == matrix {{-1,1},{1,0}})
-
+assert(abs det solve(sublatticeBasis matrix{{2,4,2,4},{1,2,2,3}},matrix({{2, 4}, {2, 3}})) == 1);
+assert(abs det solve(sublatticeBasis convexHull matrix {{1,2,2},{0,-1,2}}, matrix {{-1,1},{1,0}}) == 1)
 assert(toSublattice convexHull matrix {{2,0},{0,3}} == convexHull matrix {{0,1}})
 ///
 

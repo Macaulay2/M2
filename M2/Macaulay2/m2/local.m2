@@ -1,6 +1,6 @@
 --		Copyright 1993-1998 by Daniel R. Grayson, Michael E. Stillman
 
-needs "ext.m2"
+needs "complexes.m2" -- for Ext
 
 -- local cohomology
 

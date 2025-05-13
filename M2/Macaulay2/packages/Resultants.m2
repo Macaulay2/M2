@@ -23,7 +23,6 @@ newPackage(
 	     "published article URI" => "https://msp.org/jsag/2018/8-1/p03.xhtml",
 	     "published article DOI" => "10.2140/jsag.2018.8.21",
 	     "published code URI" => "https://msp.org/jsag/2018/8-1/jsag-v8-n1-x03-Resultants.m2",
-	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Resultants.m2",
 	     "release at publication" => "61c93a6aaf9d6bf0dd11440339145703ce3d824b",	    -- git commit number in hex
 	     "version at publication" => "1.2.1",
 	     "volume number" => "8",
@@ -384,14 +383,14 @@ detectGrassmannian (QuotientRing) := (G) -> (
 
 duality = method(TypicalValue => RingMap); -- p. 94 [Gelfand, Kapranov, Zelevinsky - Discriminants, resultants, and multidimensional determinants, 1994]
 
-sign = (permutation) -> sub(product(subsets(0..#permutation-1,2),I->(permutation_(I_1)-permutation_(I_0))/(I_1-I_0)),ZZ); -- thanks to Nivaldo Medeiros 
+sgn = (permutation) -> sub(product(subsets(0..#permutation-1,2),I->(permutation_(I_1)-permutation_(I_0))/(I_1-I_0)),ZZ); -- thanks to Nivaldo Medeiros 
 tosequence = (L) -> if #L != 1 then toSequence L else L_0;
 
 duality(PolynomialRing) := (R) -> (  -- returns the map R:=G(k,P^n) ---> G(n-k-1,P^n*)
    (k,n,KK,p) := detectGrassmannian R; 
    G := ambient Grass(k,n,KK,Variable=>p);
    G' := ambient Grass(n-k-1,n,KK,Variable=>p);  
-   L := for U in subsets(set(0..n),n-k) list sign( (sort toList(set(0..n)-U)) | sort toList U)  *  (p_(tosequence sort toList(set(0..n)-U)))_G;
+   L := for U in subsets(set(0..n),n-k) list sgn( (sort toList(set(0..n)-U)) | sort toList U)  *  (p_(tosequence sort toList(set(0..n)-U)))_G;
    return(map(R,G,vars R) * map(G,G',L));
 );
 

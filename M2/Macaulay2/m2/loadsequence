@@ -68,11 +68,7 @@ genmat.m2
 multilin.m2
 pushforward.m2
 Hom.m2
-ext.m2
-tor.m2
-gradedmodules.m2
-chaincomplexes.m2
-res.m2
+complexes.m2
 betti.m2
 monideal.m2
 intersect.m2
@@ -99,11 +95,9 @@ latex.m2
 book.m2
 
 webapp.m2
-jupyter.m2
 texmacs.m2
 pretty.m2
 programs.m2
 obsolete.m2
 typicalvalues.m2
-exports.m2
 last.m2

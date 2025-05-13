@@ -9,13 +9,17 @@ newPackage(
 	{ Name => "Harrison Tsai" }
 	},
     Keywords => {"D-modules"},
-    PackageExports => { "WeylAlgebras", "HolonomicSystems" },
     PackageImports => {
 	"PrimaryDecomposition",
 	"ReesAlgebra",
 	"Elimination",
 	"FourTiTwo"
 	},
+    PackageExports => {
+	"WeylAlgebras",
+	"HolonomicSystems",
+	"OldChainComplexes",
+    },
     AuxiliaryFiles => true,
     DebuggingMode => false
     )

@@ -81,6 +81,7 @@ export relativizeFilename(filename:string):string := (
      r := getcwd();
      if length(r) == 0 then filename else relativizeFilename(r,filename));
 export minimizeFilename(filename:string):string := (
+     filename = expandFileName(filename);
      a := relativizeFilename(filename);
      b := absoluteFilename(filename);
      c := if length(a) <= length(b) then a else b;
@@ -127,7 +128,7 @@ cleanscreen():void := (
     if stdIO.outfd == stdError.outfd && !atEndOfLine(stdIO) || test(interruptedFlag)
     then stdIO << newline << flush;);
 
-printMessage(position:Position,message:string):void := (
+export printMessage(position:Position,message:string):void := (
      if !SuppressErrors then (
      	  cleanscreen();
 	  stdError << position;
@@ -179,6 +180,8 @@ export peek(o:PosFile, offset:int):int := (
 	  );
      c);
 export peek(o:PosFile):int := peek(o,0);
+-- concatenate the next two bytes into a single int
+export peek2(o:PosFile):int := (peek(o) << 8) | peek(o, 1);
 export isatty(o:PosFile):bool := o.file.inisatty;
 export close(o:PosFile):int := (
      when close(o.file) is errmsg do ERROR else 0

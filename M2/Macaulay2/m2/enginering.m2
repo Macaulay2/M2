@@ -470,7 +470,9 @@ someTerms(RingElement,ZZ,ZZ) := RingElement => (f,i,n) -> new ring f from rawGet
 baseName RingElement := x -> (
      R := class x;
      i := rawIndexIfVariable raw x;
-     if i === null then error "expected a generator";
+     if i === null then (
+	 try return baseName lift(x, baseRing R)
+	 else error "expected a generator");
      S := R;
      while i >= length generators S do (
 	  i = i - length generators S;

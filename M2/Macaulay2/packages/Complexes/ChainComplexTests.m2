@@ -913,7 +913,7 @@ TEST ///
   assert(coker f == 0)
   assert(kernel HH f == 0)
   assert(cokernel HH f == 0)
-  assert(resolution C == source f)
+  assert(freeResolution C == source f)
 ///
 
 TEST ///
@@ -1097,9 +1097,9 @@ TEST ///
   assert(coker f == 0)
   assert(kernel HH f == 0)
   assert(cokernel HH f == 0)
-  assert(resolution C == source f)
+  assert(freeResolution C == source f)
   assert(isFree source f)
-  D = resolution C
+  D = freeResolution C
   prune HH C
 
   MD = minimize D;
@@ -1115,7 +1115,7 @@ TEST ///
 
   I = ideal"b2-ac,c2-bd,bcd-ad2"
   C = Hom(freeResolution I, R^1/I)
-  elapsedTime D = resolution C;
+  elapsedTime D = freeResolution C;
   
   C1 = complex for i from -2 to 0 list dd^D_i
   isWellDefined C1
@@ -2009,10 +2009,12 @@ TEST ///
   restart
   needsPackage "Complexes"
 *-
-
   S = ZZ/101[a..d, Degrees=>{2:{1,0},2:{0,1}}]
   B = ideal(a,b) * ideal(c,d)
-  Ext^1(B, S)
+  E = Ext^1(B, S)
+  C = yonedaExtension map(E, , matrix random cover E)
+  assert(C_0 == module B)
+  assert(C_2 == module S)
   F = random({1,2}, S)
   f = map(S^1, S^{-degree F}, {{F}})
   assert isHomogeneous f
@@ -2204,7 +2206,7 @@ needsPackage "Complexes"
 *-
   R = QQ[x];
   X = complex(R^1) ++ complex(R^1)[-2]
-  resolution X
+  freeResolution X
 ///
 
 TEST ///
@@ -2214,8 +2216,8 @@ needsPackage "Complexes"
 *-
   R = QQ[x];
   X = complex({map(R^1,R^2,matrix{{1_R,1_R}})})
-  resolution X
-  resolution(minimize X)
+  freeResolution X
+  freeResolution(minimize X)
 ///
 
 TEST ///
@@ -2363,4 +2365,21 @@ TEST ///
   LES = longExactSequence(g', f')
   assert all(3, i -> dd^LES'_(-3*(i+1)) == delta_(-i-2)) -- note that contravariance shifts the indexing...
   assert(HH LES == 0)
+///
+
+TEST ///
+  k = ZZ/101
+  R = k[a..e]
+  I = inverseSystem random(4, R);
+  C = freeResolution(I, Strategy => Nonminimal)
+  C5 = constantStrand(C, 5)
+  assert isWellDefined C5
+  assert(ring C5 === k)
+  C7 = constantStrand(C, {7})
+  assert isWellDefined C7
+  assert(ring C7 === k)
+  C12 = constantStrand(C, 12)
+  assert isWellDefined C12
+  C9 = constantStrand(C, 9)
+  assert isWellDefined C9
 ///

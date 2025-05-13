@@ -40,7 +40,6 @@ newPackage(
 	     "published article URI" => "https://msp.org/jsag/2018/8-1/p05.xhtml",
 	     "published article DOI" => "10.2140/jsag.2018.8.49",
 	     "published code URI" => "https://msp.org/jsag/2018/8-1/jsag-v8-n1-x05-ReesAlgebra.m2",
-	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/ReesAlgebra.m2",
 	     "release at publication" => "0ccfca1d3d08d13ed0da78435b2106209fcee1b1",	    -- git commit number in hex
 	     "version at publication" => "2.2",
 	     "volume number" => "8",
@@ -73,7 +72,6 @@ export{
   "symmetricKernel", 
   "versalEmbedding",
   "whichGm",
-  "Tries",
   "jacobianDual",
   "symmetricAlgebraIdeal",
   "expectedReesIdeal",
@@ -872,7 +870,6 @@ doc ///
 doc ///
   Key
     [minimalReduction, Tries]
-    Tries
   Headline
     Set the number of random tries to compute a minimal reduction
   Usage
@@ -1648,7 +1645,7 @@ doc ///
       routine checks rigorously that the output ideal is a reduction, and tries
       probabilistically again if it is not. If it cannot find a minimal reduction after
       a certain number of tries, it returns an error. The number of tries defaults
-      to 20, but can be set with the optional argument @TO Tries@.
+      to 20, but can be set with the optional argument @TO [minimalReduction, Tries]@.
 
       To say that $I$ is integrally dependent on $J$ means that
       $JI^k = I^{k+1}$ for some non-negative integer $k$.  The smallest $k$ with this

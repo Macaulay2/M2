@@ -39,7 +39,6 @@ newPackage(
 	"published article URI" => "https://msp.org/jsag/2024/14-1/p11.xhtml",
 	"published article DOI" => "10.2140/jsag.2024.14.97",
 	"published code URI" => "https://msp.org/jsag/2024/14-1/jsag-v14-n1-x11-SAGBIBases.zip",
-	"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/SubalgebraBases.m2",
 	"release at publication" => "97d711d9b7232b6fcf64c0395bd9cb07b8b968c0",
 	"version at publication" => "1.3",
 	"volume number" => "14",

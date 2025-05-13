@@ -7,7 +7,7 @@
 
 ASMFullList = method()
 ASMFullList ZZ := List => (n) -> (
-    if (n < 1 or n > 7) then error("There is no available list for this n.");
+    if (n < 1 or n > 7) then error("expected an integer between 1 and 7");
     filename := concatenate(
 	MatrixSchubert#"source directory",
 	"MatrixSchubert/ASMData/full/", toString n, ".txt");
@@ -22,7 +22,7 @@ ASMFullList ZZ := List => (n) -> (
 ------------------------------
 ASMRandomList = method()
 ASMRandomList (ZZ,ZZ) := List => (n,m) -> (
-    if (n < 1 or n > 7) then error("There is no available list for this n.");
+    if (n < 1 or n > 7) then error("expected an integer between 1 and 7");
     fullList := ASMFullList(n);
     randNums := for i to m-1 list random (#fullList-1);
     listOfMatrices := apply(randNums, i -> fullList#i);
@@ -35,7 +35,7 @@ ASMRandomList (ZZ,ZZ) := List => (n,m) -> (
 ------------------------------
 cohenMacaulayASMsList = method()
 cohenMacaulayASMsList ZZ := List => (n) -> (
-    if (n < 1 or n > 6) then error("There is no available list for this n.");
+    if (n < 1 or n > 6) then error("expected an integer between 1 and 6");
     filename := concatenate(
 	MatrixSchubert#"source directory",
 	"MatrixSchubert/ASMData/CM/good", toString n, ".txt");
@@ -49,7 +49,7 @@ cohenMacaulayASMsList ZZ := List => (n) -> (
 ------------------------------
 nonCohenMacaulayASMsList = method()
 nonCohenMacaulayASMsList ZZ := List => (n) -> (
-    if (n < 1 or n > 6) then error("There is no available list for this n.");
+    if (n < 1 or n > 6) then error("expected an integery between 1 and 6");
     if (n <= 3) then return {};
     filename := concatenate(
 	MatrixSchubert#"source directory",
@@ -65,7 +65,7 @@ nonCohenMacaulayASMsList ZZ := List => (n) -> (
 ------------------------------
 initialIdealsList = method()
 initialIdealsList ZZ := List => (n) -> (
-    if (n < 3 or n > 6) then error("There is no available list for this n.");
+    if (n < 3 or n > 6) then error("expected an integer between 3 and 6");
     filename := concatenate(
 	MatrixSchubert#"source directory",
 	"MatrixSchubert/ASMData/antiDiagIniIdeal/ideals", toString n, ".txt");

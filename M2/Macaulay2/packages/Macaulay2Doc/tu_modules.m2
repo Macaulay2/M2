@@ -70,7 +70,7 @@ C = res I
 C.dd
 -- The (graded) betti numbers
 betti C
--- Use {\tt help (betti,GradedModule)} for a detailed description
+-- Use {\tt help betti} for a detailed description
 -- of what this display means.  Basically, it says that I has three
 -- generators of degree 2, one syzygy of degree 3, 2 syzygies of degree 4, and
 -- one second syzygy of degree 5.

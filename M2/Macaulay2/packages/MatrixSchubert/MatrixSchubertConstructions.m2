@@ -91,7 +91,7 @@ isPartialASM Matrix := Boolean => (A) -> (
         colPartialSum := accumulate(plus, {0}|(flatten entries(A_{i})));
         if (not(isSubset(sort unique colPartialSum, {0,1}))) then return false;
     );
-    return true
+    true
 )
 
 -------------------------------------
@@ -348,7 +348,7 @@ schubertDeterminantalIdeal Matrix := o -> A -> (
     );
     I = ideal (unique flatten toList fultonGens);
     I.cache.ASM = A;
-    return I;
+    I
 )
 schubertDeterminantalIdeal List := o -> w -> (
     if not(isPerm w) then error("The input must be a partial alternating sign matrix or a permutation.");    
@@ -544,13 +544,12 @@ entrywiseMaxRankTable List := Matrix => L -> (
 monomialRank = method()
 monomialRank (RingElement, ZZ) := ZZ => (mon, maxIdx) -> (
     monIdx := indexOfVariable mon;
-    return (monIdx_0 + 1)*maxIdx - monIdx_1
+    (monIdx_0 + 1)*maxIdx - monIdx_1
 )
 
 -------------------------------------------
 --INPUT: an ASM ideal
 --OUTPUT: the primary decomposition of the ASM ideal
---TODO: docs and tests
 -------------------------------------------
 
 schubertDecompose = method()
@@ -564,22 +563,26 @@ schubertDecompose Ideal := List => I -> (
 	M := I.cache.ASM;
         entrySum := sum flatten entries M;
 	maxIdx = 2*(numcols M) - entrySum;
+	permMaxIdx := numcols M;
 	);
     if not(I.cache.?ASM) then (
 	maxIdx = max((ring I)_* / indexOfVariable  / toList / sum);
+	permMaxIdx = last indexOfVariable last ((ring I)_*);
 	);
     primeDecomp := decompose ideal leadTerm I;
     -- varWeights := (monoid ring I).Options.MonomialOrder#1#1;
-    cycleDecomp := {};
+    cycleDecomp := new MutableList;
     for primeComp in primeDecomp do {
         mons := sort(primeComp_*, mon -> monomialRank(mon, maxIdx));
         perms := apply(mons / indexOfVariable, perm -> toAntiDiagTrans(perm, maxIdx));
         fullPerm := fold(composePerms, perms);
-        trimmedPermIdx := select(#fullPerm, i -> fullPerm_{i..#fullPerm-1} != toList(i+1..#fullPerm));        
-        trimmedPerm := fullPerm_trimmedPermIdx;
-        cycleDecomp = append(cycleDecomp, trimmedPerm);
+	if sort take(fullPerm,permMaxIdx) == toList(1..permMaxIdx) then trimmedPerm := take(fullPerm,permMaxIdx) else (
+	    trimmedPermIdx := select(#fullPerm, i -> fullPerm_{i..#fullPerm-1} != toList(i+1..#fullPerm)); --THIS IS WRONG
+	    trimmedPerm = fullPerm_trimmedPermIdx;
+	    );
+	cycleDecomp#(#cycleDecomp) = trimmedPerm;
     };
-    unique cycleDecomp
+    unique toList cycleDecomp
 )
 
 schubertDecompose Matrix := List => A -> (
@@ -668,7 +671,7 @@ isASM Matrix := Boolean => (M) -> (
     for i from 0 to n-1 do (
 	if ((sum entries(M_{i}) != {1}) or (sum entries((transpose M)_{i}) != {1})) then return false;
     );
-    return true
+    true
 )
 
 -------------------------------------------
@@ -683,7 +686,7 @@ isASMUnion List := Boolean => (L) -> (
     rkTable := entrywiseMaxRankTable (L / permToMatrix);
     if not isMinRankTable rkTable then return false; -- might be redundant, is the entrywise max rank table of a list of *permutations* always a min rank table?
     A := rankTableToASM rkTable;
-    set L === set permSetOfASM A
+    isSubset(set permSetOfASM A, set L)
 )
 
 -------------------------------------------

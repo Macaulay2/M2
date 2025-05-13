@@ -36,7 +36,8 @@ newPackage(
         },
     Headline => "operations over a local ring R_p",
     Keywords => {"Commutative Algebra"},
-    PackageExports => {"PruneComplex", "Saturation"},
+    PackageImports => {"OldChainComplexes"},
+    PackageExports => {"PruneComplex", "Saturation", "Complexes"},
     AuxiliaryFiles => true
     )
 
@@ -323,11 +324,11 @@ hilbertSamuelFunction (Ideal, Module, ZZ, ZZ) := List => (q, M, n0, n1) -> (
 --===================================== addHooks Section =====================================--
 
 -- res, resolution
-addHook((resolution, Module), Strategy => Local, (opts, M) -> (
+addHook((freeResolution, Module), Strategy => Local, (opts, M) -> (
         RP := ring M;
         if instance(RP, LocalRing) then (
             M' := liftUp M;
-            C := resolution(M', opts);
+            C := freeResolution(M', opts);
             CP := C ** RP;
             CP = if isHomogeneous M'
               then pruneComplex(CP, UnitTest => isScalar, PruningMap => false)

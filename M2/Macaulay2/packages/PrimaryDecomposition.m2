@@ -24,7 +24,7 @@ newPackage(
 	{Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud"}},
     Keywords => {"Commutative Algebra"},
     PackageExports => { "Saturation", "MinimalPrimes" },
-    PackageImports => { "Elimination" },
+    PackageImports => { HomologicalAlgebraPackage, "Elimination" },
     AuxiliaryFiles => true,
     DebuggingMode => false
     )
@@ -261,9 +261,7 @@ ass0 = I -> (
     J := dual I;
     M := first entries generators J;
     H := new MutableHashTable;
-    scan(M, m -> (
-	    s := rawIndices raw m;
-	    if not H#?s then H#s = true));
+    scan(M, m -> H#(rawIndices raw m) ??= true);
     inds := sort apply(keys H, ind -> (#ind, ind));
     apply(inds, s -> s#1))
 

@@ -24,7 +24,49 @@ smithNormalForm = method(
      	  KeepZeroes => true
 	  }
      )
-smithNormalForm Matrix := o -> (f) -> (
+smithNormalForm Matrix := o -> A -> (
+    (D',P,Q) := preSmithNormalForm(A,o);
+    D := mutableMatrix D';
+    -- get into a diagonal matrix
+    n := min(numRows D, numColumns D);
+    start'i := 0;
+    done := false;
+    P' := mutableMatrix map((ring D')^(numRows D'));
+    Q' := mutableMatrix map((ring D')^(numColumns D'));
+    while not done do (
+	pos'i := position(start'i..(n-2),j->D_(j+1,j+1)!=0 and D_(j+1,j+1) % D_(j,j) != 0);	
+	if pos'i === null then (
+	    if start'i > 0 then start'i = 0 else done = true
+	    ) else (
+	    i := pos'i + start'i;
+	    start'i = i + 1;
+	    a := D_(i,i);
+	    b := D_(i+1,i+1);
+	    (g,e,f) := gcdCoefficients(a,b);
+	    D_(i,i) = g;
+	    D_(i+1,i+1) = lcm(a,b);
+	    rowAdd(P',i+1,e,i);
+	    rowAdd(P',i,1-a//g,i+1);
+	    rowAdd(P',i+1,-1,i);
+	    rowAdd(Q',i,f,i+1);
+	    rowAdd(Q',i+1,(a//g-1)*b//g,i);
+    )
+	);-- end while 
+    P'' := matrix P';
+    Q'' := matrix Q';
+    if P =!= null then P = P'' * P;
+    if Q =!= null then Q = Q * transpose Q'';
+    unsequence nonnull (P'' * D' * transpose Q'', P, Q)
+)
+
+preSmithNormalForm = method(
+     Options => {
+	  ChangeMatrix => {true, true},		    -- target, source
+     	  KeepZeroes => true
+	  }
+     )
+preSmithNormalForm Matrix := o -> (f) -> (
+     pruneSyz := m -> generators gb(syz m, Syzygies=>false, ChangeMatrix=>false);
      if not isFreeModule source f or not isFreeModule target f then error "expected map between free modules";
      (tchg,schg,keepz) := (o.ChangeMatrix#0, o.ChangeMatrix#1,o.KeepZeroes);
      (tmat,smat) := (null,null);	-- null represents the identity, lazily
@@ -53,7 +95,7 @@ smithNormalForm Matrix := o -> (f) -> (
 	  if op then (
 	       if tchg then (
 	       	    chg := getChangeMatrix G;
-	       	    zer := syz G;
+	       	    zer := pruneSyz G;
 		    if keepz then (
 			 if tmat === null
 			 then (tmat,tzer) = (chg,zer)
@@ -65,7 +107,7 @@ smithNormalForm Matrix := o -> (f) -> (
 	  else (
 	       if schg then (
 	       	    chg = getChangeMatrix G;
-	       	    zer = syz G;
+	       	    zer = pruneSyz G;
 		    if keepz then (
 			 if smat === null
 			 then (smat, szer) = (chg, zer)
@@ -77,7 +119,7 @@ smithNormalForm Matrix := o -> (f) -> (
 	  g = transpose h;
 	  op = not op;
 	  count = count + 1;
-	  );
+	  ); -- end while
      if op then g = transpose g;
      if tchg then (
 	  if tmat === null
@@ -99,11 +141,19 @@ smithNormalForm Matrix := o -> (f) -> (
 	       else schange = smat));
      g = lift(g,R);
      -- D == P f Q ;
-     D := map(R^(numgens target g),,g);			    -- this makes D homogeneous, if possible
-     P := if tchg then map(target D,target f,lift(tchange,R));
-     Q := if schg then map(source f, source D,lift(schange,R));
-     unsequence nonnull ( D, P, Q ))
+     D := if not keepz then map(R^(numgens target g),,g) else (
+	 m := numgens target f;
+	 n := numgens source f;
+	 m' := numgens target g;
+	 n' := numgens source g;
+	 (map(R^m',R^n',g) | map(R^m',R^(n-n'),0)) || map(R^(m-m'),R^n,0) 
+	 );			    -- this makes D homogeneous, if possible
+     P := if tchg then map(target D, target f, lift(tchange,R));
+     Q := if schg then map(source f, source D, lift(schange,R));
+     ( D, P, Q )
+     )
 
+ 
 complementOkay = method()     -- modeled after isAffineRing, but allows ZZ, too
 complementOkay Ring := R -> isField R or R === ZZ
 complementOkay PolynomialRing := R -> (
@@ -142,8 +192,8 @@ complement Matrix := Matrix => (f) -> (
 -- the method is declared in gb.m2
 -- TODO: the strategies should be separated
 mingens Ideal  := Matrix => opts -> I -> mingens(module I, opts)
-mingens Module := Matrix => opts -> M -> if isFreeModule M then generators M else cacheHooks(
-    symbol mingens, M, (mingens, Module), (opts, M), (opts, M) -> (
+mingens Module := Matrix => opts -> M -> M.cache.mingens ??= if isFreeModule M then generators M else tryHooks(
+    (mingens, Module), (opts, M), (opts, M) -> (
 	if opts.Strategy === null then opts = opts ++ { Strategy => Complement };
  	  mingb := m -> gb (m, StopWithMinimalGenerators=>true, Syzygies=>false, ChangeMatrix=>false);
 	  zr := f -> if f === null or f == 0 then null else f;
@@ -172,8 +222,8 @@ trim QuotientRing := Ring => o -> R -> quotient trim(ideal presentation R, o)
 
 -- TODO: the strategies should be separated
 trim Ideal  := Ideal  => opts -> I -> ideal trim(module I, opts)
-trim Module := Module => opts -> M -> if isFreeModule M then M else cacheHooks(
-    (symbol trim, opts), M, (trim, Module), (opts, M), (opts, M) -> (
+trim Module := Module => opts -> M -> M.cache#(symbol trim => opts) ??= if isFreeModule M then M else tryHooks(
+    (trim, Module), (opts, M), (opts, M) -> (
 	if opts.Strategy === null then opts = opts ++ { Strategy => Complement };
 	  -- we preserve the ambient free module of which M is subquotient and try to minimize the generators and relations
 	  --   without computing an entire gb
@@ -296,6 +346,7 @@ modulo(Matrix,Matrix)  := Matrix => options -> (m,n) -> (
      then map(L,source f,f)			    -- it can happen that L has a Schreier order, and we want to preserve that exactly
      else f)
 
+-- TODO: make this work between non-free modules
 quotientRemainder'(Matrix, Matrix) := Matrix => (f, g) -> (
     L := source f;
     M := target f;
@@ -325,32 +376,43 @@ quotientRemainder(Matrix,Matrix) := Matrix => (f,g) -> (
 	  map(M, L, rem)
      ))
 
-leftQuotientWarn = true
+--------------------------------------------------------------------------------
+-- factoring of a matrix through another
 
-Matrix // Matrix := Matrix => (f,g) -> quotient(f,g)
-Matrix \\ Matrix := (g,f) -> (if leftQuotientWarn then (leftQuotientWarn = false; printerr "Warning: 'm \\\\ n' is deprecated; use 'n // m' instead."); f // g)
-quotient'(Matrix,Matrix) := Matrix => (f,g) -> (
-     if not isFreeModule source f or not isFreeModule target f
-     or not isFreeModule source g or not isFreeModule target g then error "expected maps between free modules";
-     dual quotient(dual f, dual g))
-quotient(Matrix,Matrix) := Matrix => opts -> (f,g) -> (
-     if target f != target g then error "quotient: expected maps with the same target";
-     c := runHooks((quotient, Matrix, Matrix), (opts, f, g));
-     if c =!= null then c else error "quotient: no method implemented for this type of input")
+-- Note: when f and g are endomorphisms, the sources and targets all agree,
+-- so we need both functions quotient and quotient' to distinguish them.
 
-addHook((quotient, Matrix, Matrix), Strategy => Default, (opts, f, g) -> (
+-- factor matrices with same targets
+Matrix // Matrix := Matrix => (f, g) -> quotient(f, g)
+Number // Matrix := RingElement // Matrix := Matrix => (r, g) -> map(source g, target g, map(target g, cover target g, r) // g)
+Matrix // Number := Matrix // RingElement := Matrix => (f, r) -> map(target f, source f, f // map(target f, cover target f, r))
+
+-- factor matrices with same sources
+Matrix \\ Matrix := Matrix => (g, f) -> quotient'(f, g)
+-- commented because they don't seem very meaningful
+--Matrix \\ Number := Matrix \\ RingElement := Matrix => (g, r) -> map(source g, target g, g \\ map(cover source g, source g, r))
+--Number \\ Matrix := RingElement \\ Matrix := Matrix => (r, f) -> map(target g, source g, map(cover source g, source g, r) \\ f)
+
+quotient(Matrix, Matrix) := Matrix => opts -> (f, g) -> (
+    -- given f: A-->C and g: B-->C, then find (f//g): A-->B such that g o (f//g) + r = f
+    if target f != target g then error "quotient: expected maps with the same target";
+    c := runHooks((quotient, Matrix, Matrix), (opts, f, g), Strategy => opts.Strategy);
+    if c =!= null then c else error "quotient: no method implemented for this type of input")
+
+addHook((quotient, Matrix, Matrix), Strategy => Default,
+    -- Note: this strategy only works if the remainder is zero, i.e.:
+    -- homomorphism' f % image Hom(source f, g) == 0
+    (opts, f, g) -> (
+	opts = new OptionTable from {
+	    DegreeLimit       => opts.DegreeLimit,
+	    MinimalGenerators => opts.MinimalGenerators };
+	map(source g, source f, homomorphism(homomorphism'(f, opts) // Hom(source f, g, opts)))))
+
+-- FIXME: this is still causing unreasonable slow downs, e.g. for (large m) // (scalar)
+addHook((quotient, Matrix, Matrix), Strategy => "Reflexive", (opts, f, g) -> if f == 0 or isFreeModule source f then (
      L := source f;	     -- result may not be well-defined if L is not free
      M := target f;
      N := source g;
-     if instance(ring M, InexactField)
-       and numRows g === numColumns g
-       and isFreeModule source g and isFreeModule source f
-       then return solve(g,f);	   	     	       	    
-     local retVal;
-     if isQuotientOf(ZZ,ring target f)
-       and isFreeModule source g and isFreeModule source f
-       then retVal = solve(g,f);
-     if retVal =!= null then return retVal;
      if M.?generators then (
 	  M = cokernel presentation M;	    -- this doesn't change the cover
 	  );
@@ -368,16 +430,39 @@ addHook((quotient, Matrix, Matrix), Strategy => Default, (opts, f, g) -> (
 	  Degree => degree f' - degree g'  -- set the degree in the engine instead
 	  )))
 
-Number // Matrix :=
-RingElement // Matrix := (r,f) -> (r * id_(target f)) // f
-Matrix \\ Number :=
-Matrix \\ RingElement := (f,r) -> r // f
+addHook((quotient, Matrix, Matrix), Strategy => InexactField, (opts, f, g) ->
+    if instance(ring target f, InexactField)
+    -- TODO: c.f. https://github.com/Macaulay2/M2/issues/3252
+    and numRows g === numColumns g
+    and isFreeModule source g
+    and isFreeModule source f
+    then solve(g, f))
 
-Matrix // Number :=
-Matrix // RingElement := (f,r) -> f // (r * id_(target f))
-Number \\ Matrix :=
-RingElement \\ Matrix      := (r,f) -> f // r
+addHook((quotient, Matrix, Matrix), Strategy => ZZ, (opts, f, g) ->
+    if isQuotientOf(ZZ, ring target f)
+    and isFreeModule source g
+    and isFreeModule source f
+    then solve(g, f))
 
+quotient'(Matrix, Matrix) := Matrix => opts -> (f, g) -> (
+    -- given f: A-->C and g: A-->B, then finds (g\\f): B-->C such that (g\\f) o g + r = f
+    if source f != source g then error "quotient': expected maps with the same source";
+    c := runHooks((quotient', Matrix, Matrix), (opts, f, g), Strategy => opts.Strategy);
+    if c =!= null then c else error "quotient': no method implemented for this type of input")
+
+addHook((quotient', Matrix, Matrix), Strategy => Default,
+    -- Note: this strategy only works if the remainder is zero, i.e.:
+    -- homomorphism' f % image Hom(g, target f) == 0
+    (opts, f, g) -> (
+	opts = new OptionTable from {
+	    DegreeLimit       => opts.DegreeLimit,
+	    MinimalGenerators => opts.MinimalGenerators };
+	map(target f, target g, homomorphism(homomorphism'(f, opts) // Hom(g, target f, opts)))))
+
+addHook((quotient', Matrix, Matrix), Strategy => "Reflexive",
+    (opts, f, g) -> if all({source f, target f, source g, target g}, isFreeModule) then dual quotient(dual f, dual g, opts))
+
+--------------------
 
 remainder'(Matrix,Matrix) := Matrix => (f,g) -> (
      if not isFreeModule source f or not isFreeModule source g

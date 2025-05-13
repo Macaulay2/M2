@@ -41,9 +41,8 @@ Node
       There are two basic types of documentation:
 
       @OL {
-          {"Documenting a function or a method, as in ", TO (resolution, Module), "."},
-          {"documenting an overview or functions with methods, as in ", TO "chain complexes",
-              " or ", TO resolution, " respectively."}}@
+          {"Documenting a function or a method, as in ", TO (ideal, List), "."},
+          {"documenting an overview or functions with methods, as in ", TO "ideals", " or ", TO ideal, " respectively."}}@
 
       The headings @TO Usage@, @TO BaseFunction@, @TO Inputs@, @TO Outputs@, and @TO Consequences@,
       are useful only for documentation of the first type, as well as in a call to @TO SYNOPSIS@.
@@ -136,27 +135,27 @@ Node
       The document key is the name of the node, specifically the one that allows users to find the
       documentation for the desired command. Some node names, rather than being strings, are sequences
       of Macaulay2 objects that refer to specific method functions. If one is documenting a function of
-      Macaulay2, the key will just be the function's name, as in the documentation for @TO resolution@.
+      Macaulay2, the key will just be the function's name, as in the documentation for @TO "OldChainComplexes :: resolution"@.
     Code
       EXAMPLE { PRE ////Key => {resolution}//// }
 
     Text
       However, if one is documenting a method for a function, then the key will have
-      a different form, as in the documentation for @TO (resolution, Module)@.
+      a different form, as in the documentation for @TO "OldChainComplexes :: resolution(Module)"@.
     Code
       EXAMPLE { PRE ////Key => {(resolution, Module)}//// }
 
     Text
       If one is documenting an optional argument to a function, then the key
-      has a different form still, as in @TO [resolution, SyzygyLimit]@.
+      has a different form still, as in @TO "OldChainComplexes :: resolution(...,SyzygyLimit=>...)"@.
     Code
       EXAMPLE { PRE ////Key => {[resolution, SyzygyLimit]}//// }
 
     Text
       Finally, if one is documenting an overview of a group of functions or a package,
-      as in @TO "chain complexes"@ then one would set up a document key of the form:
+      as in @TO "ideals"@ then one would set up a document key of the form:
     Code
-      EXAMPLE { PRE ////Key => {"chain complexes"}//// }
+      EXAMPLE { PRE ////Key => {"ideals"}//// }
   Caveat
     No two documentation nodes may have the same key or even a key that is a synonym for a key which is already used.
     However, sometimes there is a need for several documentation nodes to have the same key. This happens when a
@@ -217,7 +216,7 @@ Node
     Code
       EXAMPLE { PRE ////Usage => "matrix v"//// }
     Text
-      Here is the code for the @TT "Usage"@ entry of the method @TO (resolution, Module)@:
+      Here is the code for the @TT "Usage"@ entry of the method @TO "OldChainComplexes :: resolution(Module)"@:
     Code
       EXAMPLE { PRE ////Usage => "resolution M\nres M"//// }
     Text
@@ -248,7 +247,7 @@ Node
           TT "symbolname => class => hypertext",
           }@
 
-      As an example, here is the @TT "Inputs"@ entry of the method @TO (resolution, Ideal)@:
+      As an example, here is the @TT "Inputs"@ entry of the method @TO "OldChainComplexes :: resolution(Ideal)"@:
     Code
       EXAMPLE { PRE ////Inputs => { "I" => { "an ideal in a ring ", TT "R", ", say" } }//// }
     Text
@@ -278,12 +277,13 @@ Node
           TT "symbolname => class => hypertext (or null)",
           }@
 
-      As an example, here is the @TT "Outputs"@ entry of the method @TO ( resolution,Ideal)@:
+      As an example, here is the @TT "Outputs"@ entry of the method @TO "OldChainComplexes :: resolution(Ideal)"@:
     Code
       EXAMPLE { PRE ////Outputs => { {"a resolution of ", TT "R/I", " by projective ", TT "R", "-modules" } }//// }
     Text
       Note that the hypertext list needs to be bounded by @TT "{"@ and @TT "}"@ as there is only one output for
-      @TO (resolution, Ideal)@. Without the braces, multiple outputs are defined. Note also that the @TO Type@ of
+      @TO "OldChainComplexes :: resolution(Ideal)"@.
+      Without the braces, multiple outputs are defined. Note also that the @TO Type@ of
       the output is automatically added in this case.
 
       Here is an example of the @TT "Outputs"@ entry of the function @TO sin@:
@@ -435,7 +435,7 @@ Node
       This option inserts the source code of the listed functions into a documentation page.
 
       As an example, here is the code for the @TT "SourceCode"@ part
-      of the documentation node for @TO (variety, SheafOfRings)@.
+      of the documentation node for @TO "Varieties::variety(SheafOfRings)"@.
     Code
       EXAMPLE { PRE ////SourceCode => {(variety, SheafOfRings)}//// }
   SeeAlso
@@ -662,3 +662,43 @@ Node
       f BasicList := x -> 3
       undocumented { f, (f,List) }
 ///
+
+document {
+    Key => tutorial,
+    Headline => "convert documentation from tutorial format",
+    Usage => "tutorial x",
+    Inputs => { "x" => String => "documentation in tutorial format" },
+    Outputs => {{ "documentation in hypertext format" }},
+    PARA { "Some of the Macaulay2 documentation is written in this format." },
+    EXAMPLE {
+	"///-- We can compute $(x+y)^3$ as follows.
+	R = QQ[x,y]
+	(x+y)^3
+	///",
+	"tutorial oo",
+	"peek oo"
+    }}
+
+document {
+    Key => {
+	ofClass,
+       (ofClass, Type),
+       (ofClass, ImmutableType),
+       (ofClass, List)
+    },
+    Headline => "English phrases for types",
+    Usage => "ofClass T",
+    Inputs => { "T" => Nothing => {ofClass{Type,ImmutableType,List}, " of types"} },
+    Outputs => { Sequence => { "an English phrase in hypertext, using a synonym for each type, ",
+	    "together with appropriate indefinite articles, and, if a list is presented, the word ",
+	    EM "or", " as a conjunction at the end" }},
+    PARA { "When viewed in html, words in the phrase hot link(s) to the documentation node(s) for the class(es)." },
+    EXAMPLE lines ///
+          ofClass class 3
+	  peek oo
+	  ofClass Ring
+	  needsPackage "Text"
+	  SPAN ofClass {HashTable, ProjectiveVariety}
+	  document { Key => foo, "We may need ", ofClass ZZ, " and ", ofClass HashTable, "." }
+	  help foo
+     ///}

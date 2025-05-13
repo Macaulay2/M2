@@ -99,13 +99,9 @@ map(Complex, Complex, ZZ) := ComplexMap => opts -> (D, C, j) -> (
         result.cache.isCommutative = true;
         return result
         );
-    if j === 1 then (
-        if C == D and (opts.Degree === null or opts.Degree === 0) then
-            return id_C;
-        error "expected source and target to be the same";
-        );
-    error "expected integer to be zero or one";
-    )
+    if C == D and (opts.Degree === null or opts.Degree === 0) then
+        return j * id_C;
+    error "expected 0 or source and target to be the same")
 
 map(Complex, Complex, ComplexMap) := ComplexMap => opts -> (tar, src, f) -> (
     deg := if opts.Degree === null then degree f else opts.Degree;
@@ -691,6 +687,46 @@ randomComplexMap(Complex, Complex) := ComplexMap => o -> (D,C) -> (
         );
     homomorphism(deg, g, E)
     )
+
+--------------------------------------------------------------------
+-- Yoneda extensions -----------------------------------------------
+--------------------------------------------------------------------
+
+-- duplicated from OldChainComplexes/Ext.m2
+-- TODO: documentation is still in Macaulay2Doc
+Ext(ZZ, Matrix, Module) := Matrix => opts -> (i,f,N) -> (
+     R := ring f;
+     if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
+     if R =!= ring N then error "expected modules over the same ring";
+     prune' := if opts.MinimalGenerators then prune else identity;
+     if i < 0 then map(R^0, R^0, {})
+     else if i === 0 then Hom(f, N, opts)
+     else prune'(
+	  g := freeResolution(f,LengthLimit=>i+1);
+	  Es := Ext^i(source f, N, opts);
+	  Et := Ext^i(target f, N, opts);
+	  psi := if Es.cache.?pruningMap then Es.cache.pruningMap else id_Es;
+	  phi := if Et.cache.?pruningMap then Et.cache.pruningMap else id_Et;
+	  psi^-1 * inducedMap(target psi, target phi, Hom(g_i, N, opts)) * phi))
+
+-- TODO: is this correct?
+-- c.f. https://github.com/Macaulay2/M2/issues/246
+-- duplicated from OldChainComplexes/Ext.m2
+-- TODO: documentation is still in Macaulay2Doc
+Ext(ZZ, Module, Matrix) := Matrix => opts -> (i,N,f) -> (
+     R := ring f;
+     if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
+     if R =!= ring N then error "expected modules over the same ring";
+     prune' := if opts.MinimalGenerators then prune else identity;
+     if i < 0 then map(R^0, R^0, {})
+     else if i === 0 then Hom(N, f, opts)
+     else prune'(
+	  C := freeResolution(N,LengthLimit=>i+1);
+	  Es := Ext^i(N, source f, opts);
+	  Et := Ext^i(N, target f, opts);
+	  psi := if Es.cache.?pruningMap then Es.cache.pruningMap else id_Es;
+	  phi := if Et.cache.?pruningMap then Et.cache.pruningMap else id_Et;
+	  phi^-1 * inducedMap(target phi, target psi, Hom(C_i, f, opts)) * psi))
 
 --------------------------------------------------------------------
 -- tensor products -------------------------------------------------
@@ -1373,8 +1409,7 @@ horseshoeResolution(Matrix, Matrix) := Sequence => opts -> (g,f) -> (
     horseshoeResolution(complex{g,f}, opts)
     )  
 
-connectingExtMap = method(Options => {Concentration => null,
-        LengthLimit => infinity})
+connectingExtMap = method(Options => {LengthLimit => infinity, Concentration => null})
 connectingExtMap(Module, Matrix, Matrix) := ComplexMap => opts -> (M, g, f) -> (
     F := freeResolution(M, LengthLimit => opts.LengthLimit);
     connectingMap(Hom(F, g), Hom(F, f), Concentration => opts.Concentration)
@@ -1384,4 +1419,28 @@ connectingExtMap(Matrix, Matrix, Module) := ComplexMap => opts -> (g, f, N) -> (
     G := freeResolution(N, LengthLimit => opts.LengthLimit);
     -- TODO: the indexing on opts.Concentration needs to be negated
     connectingMap(Hom(f', G), Hom(g', G), Concentration => opts.Concentration)
+    )
+
+constantStrand = method()
+constantStrand(Complex, ZZ) :=
+constantStrand(Complex, List) := (C, deg) -> (
+    kk := coefficientRing ring C;
+    (loC, hiC) := concentration C;
+    modules := new MutableHashTable;
+    maps := hashTable for i from loC + 1 to hiC list (
+        m := lift(submatrixByDegrees(C.dd_i, deg, deg), kk);
+        if numrows m != 0 then modules#i = target m;
+        if numcols m != 0 then modules#i = source m;
+        if m != 0 then i => m else continue
+        );
+    if #keys maps === 0 then (
+      if #keys modules === 0 then
+          complex kk^0
+      else directSum for i from loC to hiC list (
+          if modules#?i then
+              complex(modules#i, Base => i)
+          else continue
+          )
+      )
+    else complex maps
     )

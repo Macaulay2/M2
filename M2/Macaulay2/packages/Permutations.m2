@@ -34,7 +34,6 @@ export {
     "isSeparable",
     "foataBijection",
     "ord",
-    "sign",
     "isEven",
     "isOdd",
     "isDerangement",

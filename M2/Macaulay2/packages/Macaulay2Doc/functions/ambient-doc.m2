@@ -55,7 +55,7 @@ document {
      SeeAlso => {}
      }
 document { 
-     Key => {(ambient, Module), (ambient, GradedModule)},
+     Key => (ambient, Module),
      Headline => "ambient free module",
      Usage => "ambient M",
      Inputs => {

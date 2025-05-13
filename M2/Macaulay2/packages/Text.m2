@@ -496,7 +496,7 @@ document {
      Key => (html, TEX),
      Headline => "conversion of $\\TeX$ to html",
      Usage => "html t",
-     Inputs => { "t" },
+     Inputs => { "t" => TEX },
      Outputs => { {"a string containing the result of converting ", TT "t", " to html"} },
      PARA {
 	 TEX "This method produces an HTML string, mainly converting several simple text formatting environments,
@@ -504,10 +504,9 @@ document {
 	 HREF{"https://katex.org/","$\\KaTeX$"}, ", a JavaScript math typesetting library for browsers. See the list of ",
 	 HREF{"https://katex.org/docs/supported.html","supported functions and symbols"}, " for more information, or ",
 	 HREF{"https://en.wikibooks.org/wiki/LaTeX/Mathematics","this page"}, " for an introduction to math mode in $\\LaTeX$." },
-     PARA {
-	 TEX "Equations in ", TT "$..$", " or ", TT "\\(...\\)", " appear in inline mode, such as $x^2-1$,
-	 while those in ", TT "$$..$$", " or ", TT "\\[...\\]", " appear in display mode:",
-	 TEX {"$$", texMath genericMatrix(QQ[x,y,z,w],2,2), ".$$"} },
+     "Equations in ", KBD "$..$", " or ", KBD "\\(...\\)", " appear in inline mode, such as $x^2-1$,
+     while those in ", KBD "$$..$$", " or ", KBD "\\[...\\]", " appear in display mode:",
+     "$$", texMath genericMatrix(QQ[x,y,z,w],2,2), ".$$",
      PARA {
 	 "In addition, ", TT "{\\bf ...}", ", ", TT "{\\em ...}", ", ", TT "{\\it ...}", ", ", TT "{\\tt ...}",
 	 ", and ", TT "\\url{...}", " are converted to ", TO Hypertext, " objects:" },

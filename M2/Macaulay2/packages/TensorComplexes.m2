@@ -52,6 +52,7 @@ newPackage(
       Email => "dumitru.stamate@fmi.unibuc.ro"}},
   Headline => "multilinear algebra with labeled bases",
   Keywords => {"Commutative Algebra"},
+  PackageExports => {"OldChainComplexes"},
   DebuggingMode => false
   )
 

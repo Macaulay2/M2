@@ -755,9 +755,6 @@ gcdLLL List := options -> (s) -> (
      then bgcdLLL(s,options.Threshold)
      else agcdLLL(s,options.Threshold))
 
-addHook((resolution, Module), Strategy => symbol LLL,
-    (o,M) -> if ring M === ZZ then chainComplex compress LLL presentation M)
-
 addHook((minimalPresentation, Module), Strategy => symbol LLL,
     (o, M) -> (
 	  return null;					    -- this routine isn't correct yet -- it only partially minimizes; we could use this for trim and improve it for this
@@ -946,9 +943,9 @@ document {
      },
      SUBSECTION "Orthogonalization Strategy",
      UL {
-  	  {"default -- Classical Gramm-Schmidt Orthogonalization, ",
+  	  {"default -- Classical Gram-Schmidt Orthogonalization, ",
      "This choice uses classical methods for computing
-     the Gramm-Schmidt othogonalization.
+     the Gram-Schmidt orthogonalization.
      It is fast but prone to stability problems.
      This strategy was first proposed by Schnorr and Euchner in the paper
      mentioned above.

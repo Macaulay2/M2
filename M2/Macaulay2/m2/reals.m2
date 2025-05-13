@@ -241,23 +241,28 @@ conjugate Constant := conjugate @@ numeric
 
 isConstant Number := i -> true
 
-round RR := round CC := round0
-round Constant := round0 @@ numeric
+round Number := round0 @@ numeric
 round(ZZ,RR) := (n,x) -> (
      prec := precision x;
      p := (toRR(prec,10))^n;
      toRR(prec,round(x*p)/p))
+round(ZZ, CC) := (n, x) -> toCC(round(n, realPart x), round(n, imaginaryPart x))
+round(ZZ, RRi) := (n, x) -> toRRi(round(n, left x), round(n, right x))
+round(ZZ, Number) := (n, x) -> round(n, numeric x)
 
 truncate Number := {} >> o -> x -> (
     if x >= 0 then floor x
     else if x < 0 then ceiling x
     else 0) -- e.g., RRi's containing 0 as interior pt
 
-random RR := RR => opts -> x -> x * rawRandomRR precision x
+random RR := RR => opts -> x -> x * rawRandomRRUniform precision x
 random(RR,RR) := opts -> (x,y) -> x + random(y-x)
-RR'.random = opts -> R -> rawRandomRR R.precision
+RR'.random = opts -> R -> rawRandomRRUniform R.precision
 CC'.random = opts -> C -> rawRandomCC C.precision
 random RingFamily := opts -> R -> random(default R,opts)
+
+random QQ := QQ => opts -> x -> rawFareyApproximation(
+    random numeric x, opts.Height)
 
 -- algebraic operations and functions
 
@@ -345,6 +350,7 @@ RingElement == Constant :=
 InexactNumber == Constant := (x,c) -> x == numeric(precision x,c)
 Constant ? Constant := (c,d) -> numeric c ? numeric d
 InexactNumber ? Constant := (x,c) -> x ? numeric(precision x,c)
+Constant ? InexactNumber := (c,x) -> numeric(precision x,c) ? x
 
 Constant _ Ring := (c,R) -> (
      prec := precision R;

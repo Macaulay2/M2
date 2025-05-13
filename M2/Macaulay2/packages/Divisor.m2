@@ -17,7 +17,6 @@ newPackage( "Divisor",
 	  "published article URI" => "https://msp.org/jsag/2018/8-1/p09.xhtml",
 	  "published article DOI" => "10.2140/jsag.2018.8.87",
 	  "published code URI" => "https://msp.org/jsag/2018/8-1/jsag-v8-n1-x09-Divisor.m2",
-	  "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Divisor.m2",
 	  "release at publication" => "0e40b423ff375d6eb0a98d6fbbe7be8b2db95a98",	    -- git commit number in hex
 	  "version at publication" => "0.3",
 	  "volume number" => "8",
@@ -979,9 +978,8 @@ bezoutNumbers := (l1) -> (
 	if (mySize == 1) then ({1}) else (
 		l2 := take(l1, 2);
 		l3 := take(l1, -(mySize - 2));
-		temp := gcdCoefficients toSequence l2;
-		tempCoeff := take(temp, -2);
-		tempGCD := temp#0;
+		(tempGCD, r, s) := gcdCoefficients toSequence l2;
+		tempCoeff := {r, s};
 		recursiveList := bezoutNumbers(prepend(tempGCD, l3));
 		recursiveList2 := take(recursiveList, -(mySize-2));
 		newCoeff := recursiveList#0;

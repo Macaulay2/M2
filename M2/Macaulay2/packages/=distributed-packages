@@ -15,6 +15,7 @@ Dmodules
 WeylAlgebras
 HolonomicSystems
 BernsteinSato
+ConnectionMatrices
 Depth
 Elimination
 GenericInitialIdeal
@@ -166,7 +167,6 @@ Topcom
 Triangulations
 ReflexivePolytopesDB
 AbstractToricVarieties
-Licenses
 TestIdeals
 FrobeniusThresholds
 Seminormalization
@@ -176,6 +176,7 @@ Chordal
 Tropical
 SymbolicPowers
 Complexes
+OldChainComplexes
 GroebnerWalk
 RandomMonomialIdeals
 Matroids
@@ -277,3 +278,10 @@ Msolve
 Permutations
 SCMAlgebras
 NumericalSemigroups
+Oscillators
+IncidenceCorrespondenceCohomology
+ToricHigherDirectImages
+Brackets
+IntegerProgramming
+GameTheory
+AllMarkovBases

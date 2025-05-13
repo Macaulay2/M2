@@ -282,6 +282,11 @@ countGates GateMatrix := M -> (
     scan(flatten entries M, g->findTally(g,t));
     new HashTable from t
     ) 
+countGates Gate := g -> (
+    t := new MutableHashTable from {cache=>new CacheTable};
+    findTally(g,t);
+    new HashTable from t
+    ) 
 
 findTally = method()
 findTally (InputGate,MutableHashTable) := (g,t) -> if t.cache#?g then t.cache#g = t.cache#g+1 else (
@@ -883,6 +888,28 @@ GY = value(diff(Y,G),h)
 FY = value(diff(Y,F),h)
 assert ( value(compress diff(Y,G/F), h) == (GY*value(F,h) - value(G,h)*FY)/(value(F,h))^2 )
 ///
+
+
+------------------------
+-- expression, net, html
+expression InputGate := g -> expression g.Name
+expression SumGate := g -> Parenthesize sum(g.Inputs,expression)
+expression ProductGate := g -> Parenthesize product(g.Inputs,expression)
+expression DivideGate := g -> expression g.Inputs#0 / expression g.Inputs#1
+html GateMatrix := html @@ expression
+eGM:=
+expression GateMatrix := g -> new MatrixExpression from applyTable(g,expression)
+expression DetGate := g -> (expression det) eGM g.Inputs
+printLargeGate = g -> VerticalList { class g, "depth"=>depth g, "#gates"=> countGates g }
+net Gate := g -> (
+    n := net expression g;
+    if depth g < 6 and width n <= printWidth and height n <= printWidth then n
+    else net printLargeGate g
+    )
+html Gate := g -> (
+    e := expression g;
+    html if depth g < 6 and width net e <= printWidth then e else printLargeGate g
+    )
 
 beginDocumentation()
 -* run

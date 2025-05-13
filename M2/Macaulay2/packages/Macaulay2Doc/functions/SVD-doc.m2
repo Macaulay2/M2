@@ -47,12 +47,13 @@ document {
      (S', U', V') = SVD(M, DivideConquer => true)
      norm \ ({S', U', V'}-{S, U, V})
      ///,
-     "The SVD routine calls on the SVD algorithms in the lapack and eigen libraries.",
-     SeeAlso => {eigenvalues, eigenvectors, norm, clean, "printingAccuracy", "printingPrecision" }
+     "The SVD routine calls on the SVD algorithms in the LAPACK and eigen libraries.",
+     SeeAlso => {eigenvalues, eigenvectors, norm, clean, "printingAccuracy", "printingPrecision" },
+     Subnodes => { TO [SVD, DivideConquer] },
      }
 document { 
      Key => [SVD, DivideConquer],
-     Headline => "Use the lapack divide and conquer SVD algorithm",
+     Headline => "whether to use the LAPACK divide and conquer SVD algorithm",
      Usage => "SVD(M, DivideConquer=>true)",
      "For large matrices, this algorithm is often much faster.",
      EXAMPLE {

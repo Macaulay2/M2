@@ -3,10 +3,15 @@
 --- author(s): 
 --- notes: 
 
-document { 
-     Key => kernel,
-     Headline => "kernel of a ringmap, matrix, or chain complex",
-     }
+doc ///
+Node
+  Key
+    kernel
+  Headline
+    kernel of a map
+  SeeAlso
+    source
+///
 
 document { 
      Key => (kernel,RingMap),
@@ -31,31 +36,8 @@ document {
      used to speed up the computations.",
      Caveat => {"It should be possible to interrupt the computation and restart it, but this has
 	  not yet been implemented."},
-     SeeAlso => {"substitution and maps between rings", "elimination of variables", monomialCurveIdeal}
-     }
-document { 
-     Key => {(kernel,ChainComplexMap),
-	  (kernel, GradedModuleMap)},
-     Headline => "kernel of a chain complex map",
-     Usage => "kernel f",
-     Inputs => {
-	  "f" => {"a map of chain complexes ", TT "C --> D"}
-	  },
-     Outputs => {
-	  ChainComplex => {"the kernel of f"}
-	  },
-     "If f is ", ofClass GradedModuleMap, ", then the result will be ", ofClass GradedModule, ".",
-     PARA{},
-     EXAMPLE lines ///
-     	  R = QQ[a..d]
-	  I = ideal(a^3,b^3,c^3)
-	  C = res coker gens I
-	  D = res coker gens (I + ideal(a*b*c))
-	  F = extend(D,C,map(D_0,C_0,1))
-	  ///,
-     SeeAlso => {syz, 
-	  -- Mike wanted this: "kernel, cokernel and image of a map of modules",
-	  genericSkewMatrix}
+     SeeAlso => {"substitution and maps between rings", "elimination of variables", monomialCurveIdeal},
+     Subnodes => { TO [kernel, SubringLimit] },
      }
 
 document { 
@@ -82,3 +64,11 @@ document {
 	  -- Mike wanted this: "kernel, cokernel and image of a map of modules",
 	  genericSkewMatrix}
      }
+
+document {
+    Key => [kernel, SubringLimit],
+    Headline => "stop after finding enough elements of a subring",
+    TT "SubringLimit => n", " -- an option for ", TO "kernel", " which
+    causes the computation of the kernel of a ring map to stop after ", TT "n", "
+    elements have been discovered."
+}

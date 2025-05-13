@@ -63,8 +63,9 @@ doc ///
      then this function will result in an error.
    SeeAlso
      betti
-     [betti, Minimize]
-     resolution
-     [resolution, FastNonminimal]
+     "OldChainComplexes :: betti(...,Minimize=>...)"
+     "OldChainComplexes :: resolution"
+     "OldChainComplexes :: resolution(...,FastNonminimal=>...)"
+     "Complexes :: Nonminimal"
 ///
 

@@ -10,6 +10,7 @@ newPackage(
 		     HomePage => "http://www.math.uni-sb.de/ag-schreyer/index.php/people/researchers/74-michael-hahn"}},
 	 Headline=> "the relative canonical resolution for g-nodal canonical curves with a fixed g^1_k",
 	 Keywords => {"Commutative Algebra"},
+         PackageExports => {"OldChainComplexes"},
 	 Certification => {
 	        "journal name" => "The Journal of Software for Algebra and Geometry",
 		"journal URI" => "https://msp.org/jsag/",
@@ -18,7 +19,6 @@ newPackage(
 		"published article URI" => "https://msp.org/jsag/2021/11-1/p03.xhtml",
          	"published article DOI" => "10.2140/jsag.2021.11.15",
 		"published code URI" => "https://msp.org/jsag/2021/11-1/jsag-v11-n1-x03-RelativeCanonicalResolution.m2",
-     	        "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/RelativeCanonicalResolution.m2",
 		"release at publication" => "2f0290ad1bf65508e8f3cf63579447ef3153486f",	    -- git commit number in hex
 		"version at publication" => "1.0",
 		"volume number" => "11",

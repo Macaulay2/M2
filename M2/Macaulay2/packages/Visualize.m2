@@ -18,8 +18,8 @@
 
 newPackage(
 	"Visualize",
-	Version => "1.6",
-	Date => "October 28, 2024",
+	Version => "1.7",
+	Date => "May 3, 2025",
     	Authors => {       
      	     {Name => "Brett Barwick", Email => "bbarwick@uscupstate.edu", HomePage => "http://faculty.uscupstate.edu/bbarwick/"},	     
 	     {Name => "Thomas Enkosky", Email => "tomenk@bu.edu", HomePage => "http://math.bu.edu/people/tomenk/"},	     
@@ -62,6 +62,16 @@ export {
      "closePort"
 }
 
+---------------
+-- ChangeLog --
+---------------
+
+-*
+
+1.7 (2025-05-03, M2 1.25.05)
+* update for leadTerm changes
+
+*-
 
 ------------------------------------------------------------
 -- Global Variables
@@ -241,7 +251,7 @@ visualize(Ideal) := commonVisOpts|{VisTemplate => basePath |"Visualize/templates
 	
 	-- changed gens to leadTerm so if there's a non monomial ideal
 	-- it will return the initial ideal
-	arrayList = apply( flatten entries leadTerm J, m -> flatten exponents m);	
+	arrayList = apply((leadTerm J)_*, m -> flatten exponents m);
 	arrayList = toArray arrayList;
 	arrayString = toString arrayList;
 	
@@ -264,7 +274,7 @@ visualize(Ideal) := commonVisOpts|{VisTemplate => basePath |"Visualize/templates
 	    
     	arrayList = apply(flatten entries basis(0,infinity, R/J), m -> flatten exponents m );
     	arrayList = toArray arrayList;
-	newArrayList = apply(flatten entries leadTerm J, m -> flatten exponents m );
+	newArrayList = apply((leadTerm J)_*, m -> flatten exponents m );
     	newArrayList = toArray newArrayList;
     	arrayString = toString arrayList;
      	newArrayString = toString newArrayList;

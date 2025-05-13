@@ -20,6 +20,7 @@ newPackage(
 	       HomePage=>"http://www.msri.org/~de"}},
      Headline => "make a 3-generator ideal with an \"any\" resolution",
      Keywords => {"Commutative Algebra"},
+     PackageImports => {"OldChainComplexes"},
      DebuggingMode => false
      )
 

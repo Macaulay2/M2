@@ -10,7 +10,7 @@ Description: a software system for algebraic geometry research
  provides algorithms for computing homological invariants of rings and
  modules.
  .
- Home page: http://www.math.uiuc.edu/Macaulay2/.
+ Home page: https://macaulay2.com/.
  .
  This package contains the architecture independent portion of Macaulay2, and is
  normally installed automatically when one of the architecture dependent 

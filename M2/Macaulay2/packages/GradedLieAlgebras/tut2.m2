@@ -82,7 +82,7 @@ doc ///
 			defines the signs of all the generators to be 1.  
 			The signs affect the axioms of a Lie superalgebra, 
 			see @TO LieAlgebra@. 
-			Use @TO sign@ to 
+			Use @TO (sign, LieElement)@ to 
 			compute the sign of an arbitrary homogeneous Lie expression.
 		
 			  

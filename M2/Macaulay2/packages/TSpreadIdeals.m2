@@ -7,6 +7,7 @@ Authors => {{Name => "Luca Amata", Email => "lamata@unime.it", HomePage => "http
            },
 Headline => "t-spread ideals of a polynomial ring",
 Keywords => {"Commutative Algebra"},
+PackageImports => {"OldChainComplexes"},
 DebuggingMode => false
 )
 
@@ -652,7 +653,7 @@ else error "expected a graded ideal";
 -- returns the initial ideal of an ideal
 ----------------------------------------------------------------------------------------------
 initialIdeal = method(TypicalValue=>Ideal)
-initialIdeal Ideal := I -> ideal rsort leadTerm I
+initialIdeal Ideal := I -> ideal rsort leadTerm gb I
 
 -------------------------------------------------------------------------------------------
 -- returns the minimal Betti numbers of the quotient S/I

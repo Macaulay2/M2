@@ -11,7 +11,6 @@ newPackage(
 	"published article URI" => "https://msp.org/jsag/2010/2-1/p01.xhtml",
 	"published article DOI" => "10.2140/jsag.2010.2.1",
 	"published code URI" => "https://msp.org/jsag/2010/2-1/jsag-v2-n1-x01-code.zip",
-	"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/HodgeIntegrals.m2",
 	"release at publication" => "5169e42924f6675b7eec36596b3eeafd8b718141",
 	"version at publication" => "1.2.1",
 	"volume number" => "2",

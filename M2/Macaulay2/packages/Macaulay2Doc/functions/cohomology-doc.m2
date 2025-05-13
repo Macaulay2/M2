@@ -3,23 +3,12 @@
 --- notes: 
 
 undocumented {(cohomology,ZZ,Sequence)}
--*
--- this is the old version
-document {
-     Key => {cohomology,[cohomology,Degree]},
-     Headline => "general cohomology functor",
-     TT "cohomology", " -- a method name available for computing expressions
-     of the forms ", TT "HH^i(X)", " and ", TT "HH^i(M,N)", ".",
-     PARA{},
-     "If it is intended that ", TT "i", " be of class ", TO "ZZ", ", ", TT "M", " be of
-     class ", TT "A", ", and ", TT "N", " be of 
-     class ", TT "B", ", then the method can be installed with ",
-     PRE "     cohomology(ZZ, A, B) := opts -> (i,M,N) -> ...",
-     SeeAlso => {"homology", "HH", "ScriptedFunctor"}
-     }
-*-
+
 document { 
-     Key => cohomology,
+    Key => {
+	 cohomology,
+	[cohomology, Degree],
+    },
      Headline => "general cohomology functor",
       TT "cohomology", " -- a method name available for computing expressions
      of the forms ", TT "HH^i(X)", " and ", TT "HH^i(M,N)", ".",
@@ -28,22 +17,12 @@ document {
      class ", TT "A", ", and ", TT "N", " be of
      class ", TT "B", ", then the method can be installed with ",
      PRE "     cohomology(ZZ, A, B) := opts -> (i,M,N) -> ...",
-     SeeAlso => {"homology", "HH", "ScriptedFunctor"}
+     SeeAlso => {"homology", "HH", "ScriptedFunctor"},
+     Subnodes => {
+	 TO (cohomology, ZZ, Module),
+         },
      }
 
-document { 
-     Key => (cohomology,ZZ,ChainComplexMap),
-     Headline => "cohomology of a chain complex map",
-     Usage => "HH^i f",
-     Inputs => {"i","f"
-	  },
-     Outputs => {Matrix=>{"the ", TT "i", 
-	       "-th cohomology map induced by the chain complex map ", TT "f"}
-	  },
-     "The command provides the map on the ", TT "i", "-th cohomology module
-     induced by a map ", TT "f", " of chain complexes.",
-     SeeAlso => {"cohomology", "HH", "ChainComplex"}
-     }
 document { 
      Key => (cohomology,ZZ,Module),
      Headline => "local cohomology of a module",
@@ -78,35 +57,8 @@ document {
 	  },
      Caveat => {"There is no check made if the given module 
 	  is graded over the base polynomial ring"},
-     SeeAlso => {"Dmodules::Dmodules",(cohomology,ZZ,SumOfTwists),(cohomology,ZZ,CoherentSheaf)}
+     SeeAlso => {"Dmodules::Dmodules",
+	 "Varieties::HH^ZZ SumOfTwists",
+	 "Varieties::HH^ZZ CoherentSheaf"}
      }
 
-document { 
-     Key => (cohomology,ZZ,ChainComplex),
-     Headline => "cohomology of a chain complex",
-     Usage => "HH^i C",
-     Inputs => {"i"=> ZZ, "C" => ChainComplex
-	  	  },
-     Outputs => {Module => {"HH^i C", " -- homology at the i-th spot of the chain complex ", TT "C", "."}
-	  },
-     "By definition, this is the same as computing HH_(-i) C.",
-     PARA{},
-     EXAMPLE {
-           "R = ZZ/101[x,y]",
-           "C = chainComplex(matrix{{x,y}},matrix{{x*y},{-x^2}})",
-           "M = HH^1 C",
-           "prune M"
-            },
-     PARA{},
-     "Here is another example computing simplicial cohomology
-     (for a hollow tetrahedron):",
-     EXAMPLE {
-	  "needsPackage \"SimplicialComplexes\"",
-	  "R = QQ[a..d]",
-          "D = simplicialComplex {a*b*c,a*b*d,a*c*d,b*c*d}",
-          "C = complex D",  
-          "HH_2 C",
-	  "prune oo"
-	  },
-     SeeAlso => {"GradedModule", "HH"}
-     }

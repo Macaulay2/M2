@@ -99,12 +99,23 @@ setupfun("setGroupID",setpgidfun);
 absfun(e:Expr):Expr := (
      when e
      is i:ZZcell do toExpr(abs(i.v))
-     is x:RRcell do toExpr(if sign(x.v) then -x.v else x.v)
+     is x:RRcell do toExpr(if signbit(x.v) then -x.v else x.v)
      is x:RRicell do toExpr(abs(x.v))
      is x:CCcell do toExpr(abs(x.v))
      is r:QQcell do toExpr(abs(r.v))
      else WrongArg("a number, real or complex"));
 setupfun("abs0",absfun);
+
+sign(e:Expr):Expr := (
+    when e
+    is x:ZZcell do toExpr(sign(x.v))
+    is x:QQcell do toExpr(sign(x.v))
+    is x:RRcell do toExpr(sign(x.v))
+    is x:CCcell do (
+	if isZero(x.v) then toExpr(toCC(0, 0, precision(x.v)))
+	else toExpr(x.v / abs(x.v)))
+    else WrongArg("a number, real or complex"));
+setupfun("sign0", sign);
 
 select(a:Sequence,f:Expr):Expr := (
      b := new array(bool) len length(a) do provide false;
@@ -200,6 +211,8 @@ select(e:Expr):Expr := (
      else WrongNumArgs(2,5));
 setupfun("select", select).Protected = false; -- will be overloaded in m2/lists.m2 and m2/regex.m2
 
+-- # typical value: selectPairs, HashTable, Function, HashTable
+-- # typical value: selectPairs, ZZ, HashTable, Function, HashTable
 selectPairs(nval:int, obj:HashTable, f:Expr):Expr := (
     u := newHashTable(obj.Class,obj.parent);
     u.beingInitialized = true;
@@ -228,18 +241,18 @@ selectPairs(nval:int, obj:HashTable, f:Expr):Expr := (
 		    "expected predicate to yield true or false"));
 	    p = p.next));
     Expr(sethash(u,obj.Mutable)));
+-- TODO: support iterators
 selectPairs(e:Expr):Expr := (
     when e
     is a:Sequence do (
-	-- # typical value: selectPairs, HashTable, Function, HashTable
 	if length(a) == 2 then (
 	    when a.0
 	    is obj:HashTable do (
 		if obj.Mutable
-		then WrongArg(1, "an immutable hash table")
+		then WrongArgImmutableHashTable(1)
 		else selectPairs(obj.numEntries, obj, a.1))
-	    else WrongArgHashTable(1))
-	-- # typical value: selectPairs, ZZ, HashTable, Function, HashTable
+	    -- # typical value: selectPairs, BasicList, Function, List
+	    else select(pairs(a.0), a.1))
 	else if length(a) == 3 then (
 	    when a.0
 	    is n:ZZcell do (
@@ -248,9 +261,10 @@ selectPairs(e:Expr):Expr := (
 		    when a.1 is obj:HashTable
 		    do (
 			if obj.Mutable
-			then WrongArg(2, "an immutable hash table")
+			then WrongArgImmutableHashTable(2)
 			else selectPairs(toInt(n), obj, a.2))
-		    else WrongArgHashTable(2)))
+		    -- # typical value: selectPairs, ZZ, BasicList, Function, List
+		    else select(a.0, pairs(a.1), a.2, nullE, nullE)))
 	    else WrongArgZZ(1))
 	else WrongNumArgs(2, 3))
     else WrongNumArgs(2, 3));
@@ -298,7 +312,7 @@ any(f:Expr,e:Expr):Expr := (
      is b:List do Expr(any(f,b.v))
      is i:ZZcell do if isInt(i) then Expr(any(f,toInt(i))) else WrongArgSmallInteger(1)
      is c:HashTable do
-     if c.Mutable then WrongArg(1,"an immutable hash table") else
+     if c.Mutable then WrongArgImmutableHashTable(1) else
      Expr(any(f,c))
      else WrongArg("a list or a hash table"));
 any(f:Expr,a:Sequence,b:Sequence):Expr := (
@@ -1081,6 +1095,8 @@ setupfun("connectionCount", connectionCount);
 format(e:Expr):Expr := (
      when e
      is s:stringCell do toExpr("\"" + present(s.v) + "\"")
+     is ZZcell do e
+     is QQcell do e
      is RRcell do format(Expr(Sequence(e)))
      is RRicell do format(Expr(Sequence(e)))
      is CCcell do format(Expr(Sequence(e)))
@@ -1102,6 +1118,8 @@ format(e:Expr):Expr := (
 	  is Nothing do nothing else return WrongArgZZ(4);
 	  if n > 5 then when args.4 is p:stringCell do sep = p.v else return WrongArgString(5);
 	  when args.(n-1)
+	  is x:ZZcell do toExpr(concatenate(format(s,ac,l,t,sep,toRR(x.v,defaultPrecision))))
+	  is x:QQcell do toExpr(concatenate(format(s,ac,l,t,sep,toRR(x.v,defaultPrecision))))
 	  is x:RRcell do toExpr(concatenate(format(s,ac,l,t,sep,x.v)))
 	  is z:CCcell do toExpr(format(s,ac,l,t,sep,false,false,z.v))
 	  else WrongArgRR(n)
@@ -1543,9 +1561,12 @@ powermod(e:Expr):Expr := (
      if length(s) == 3 then
      when s.0 is base:ZZcell do
      when s.1 is exp:ZZcell do
-     when s.2 is mod:ZZcell do
-     -- # typical value: powermod, ZZ, ZZ, ZZ, ZZ
-     toExpr(powermod(base.v,exp.v,mod.v))
+     when s.2 is mod:ZZcell do (
+	 -- # typical value: powermod, ZZ, ZZ, ZZ, ZZ
+	 if isNegative(exp.v) && !isInvertible(base.v, mod.v)
+	 then buildErrorPacket(
+	     tostring(base.v) + " is not invertible mod " + tostring(mod.v))
+	 else toExpr(powermod(base.v,exp.v,mod.v)))
      else WrongArgZZ(3)
      else WrongArgZZ(2)
      else WrongArgZZ(1)

@@ -91,7 +91,7 @@ checkShadow := () -> (
 
 isOptionList := opts -> instance(opts, List) and all(opts, opt -> instance(opt, Option) and #opt == 2)
 
-isPackageLoaded := pkgname -> PackageDictionary#?pkgname and instance(value PackageDictionary#pkgname, Package)
+isPackageLoaded = pkgname -> PackageDictionary#?pkgname and instance(value PackageDictionary#pkgname, Package)
 
 -- TODO: make this local
 checkPackageName = title -> (
@@ -114,7 +114,7 @@ net      Package :=
 toString Package := pkg -> if pkg#?"pkgname" then pkg#"pkgname" else "-*package*-"
 texMath  Package := pkg -> texMath toString pkg
 options  Package := pkg -> pkg.Options
-methods  Package := memoize(pkg -> select(methods(), m -> package m === pkg))
+methods  Package := pkg -> select(methods(), m -> package' m === pkg)
 hypertext Package := SAMPc "constant"
 
 -- TODO: should this go elsewhere?
@@ -191,7 +191,10 @@ needsPackage String  := opts -> pkgname -> (
     and (opts.FileName === null or
 	realpath opts.FileName == realpath pkg#"source file")
     and pkg.PackageIsLoaded
-    then use value PackageDictionary#pkgname
+    then (
+	if any(packageFiles pkg, file -> fileTime file > filesLoaded#file)
+	then loadPackage(pkgname, opts ++ {Reload => true})
+	else use pkg)
     else loadPackage(pkgname, opts))
 
 -- used as the default loadOptions in newPackage
@@ -243,6 +246,7 @@ newPackage String := opts -> pkgname -> (
     -- TODO: add a general type checking mechanism
     scan({Certification, Configuration}, name -> if opts#name =!= null and not isOptionList opts#name then
 	error("newPackage: expected ", toString name, " option to be a list of options"));
+    opts = first override(opts, ( Authors => nonnull opts.Authors ));
     if opts.Authors =!= null and any(opts.Authors, author -> not isOptionList author)
     then error("newPackage: expected Authors option to be a list of zero or more lists of options");
     if opts.Authors =!= null and any(opts.Authors, author -> (
@@ -444,38 +448,6 @@ exportFrom(Package, List) := (P, x) -> export \\ toString \ importFrom(P, x)
 exportFrom(String,  String) :=
 exportFrom(Package, String) := (P, x) -> exportFrom(P, {x})
 
----------------------------------------------------------------------
--- Here is where Core officially becomes a package
--- TODO: is this line necessary? when does it ever run?
-addStartFunction( () -> if prefixDirectory =!= null then Core#"package prefix" = prefixDirectory )
-newPackage("Core",
-     Authors => {
-	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"},
-	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
-	  },
-     DebuggingMode => debuggingMode,
-     Reload => true,
-     HomePage => "http://www.math.uiuc.edu/Macaulay2/",
-     Version => version#"VERSION",
-     Headline => "A computer algebra system designed to support algebraic geometry")
-Core#"preloaded packages" = {
-    "Elimination",
-    "LLLBases",
-    "IntegralClosure",
-    "PrimaryDecomposition",
-    "MinimalPrimes",
-    "Saturation",
-    "Classic",
-    "TangentCone",
-    "ReesAlgebra",
-    "ConwayPolynomials",
-    "InverseSystems",
-    "SimpleDoc",
-    "OnlineLookup",
-    "Isomorphism",
-    "Varieties",
-    "PackageCitations"}
-
 protect PackageIsLoaded
 
 endPackage = method()
@@ -557,6 +529,9 @@ package Dictionary := d -> (
     scan(unique prepend_currentPackage implicitlyLoadedPackages(),
 	pkg -> if pkg.Dictionary === d or pkg#"private dictionary" === d then break pkg))
 
+-- speeds up documentation generation by orders of magnitude
+package' = memoize package
+
 -- TODO: should this reset the values of exported mutable symbols?
 use Package := pkg -> (
     scan(nonnull pkg.Options.PackageExports, needsPackage);
@@ -566,10 +541,26 @@ use Package := pkg -> (
     if pkg.?use then pkg.use pkg else pkg)
 
 debug ZZ      := i   -> debugWarningHashcode = i
-debug Package := pkg -> (
-    dict := pkg#"private dictionary";
+debug String  := file -> debug fileDictionaries#(relativizeFilename file)
+debug Package := pkg  -> debug pkg#"private dictionary"
+-- TODO: debug(Function) for accessing the local dictionary of a function closure
+debug LocalDictionary  := dict -> (
+    -- FIXME: this works, but the original location of the symbols is lost
+    apply(pairs dict, (str, symb) -> globalAssign(getSymbol str, value symb));
+    checkShadow())
+debug GlobalDictionary := dict -> (
     if not isMember(dict, dictionaryPath) then dictionaryPath = prepend(dict, dictionaryPath);
     checkShadow())
+
+packageFiles = pkg -> (
+    pkgaux := (
+	if not pkg#?"auxiliary files" then {}
+	else select(values loadedFiles, match_(pkg#"auxiliary files")));
+    prepend(realpath pkg#"source file", pkgaux))
+
+locate Package := pkg -> NumberedVerticalList (
+    -- TODO: somehow keep track of the number of lines of each file
+    apply(packageFiles pkg, file -> new FilePosition from (file, 0, 0)))
 
 -----------------------------------------------------------------------------
 -- evaluateWithPackage

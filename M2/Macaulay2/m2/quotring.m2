@@ -15,7 +15,8 @@ isQuotientRing = method(TypicalValue => Boolean)
 isQuotientRing Ring := R -> false
 isQuotientRing QuotientRing := R -> true
 
-isFinitePrimeField = F -> isQuotientRing F and ambient F === ZZ and F.?char
+isFinitePrimeField = method(TypicalValue => Boolean)
+isFinitePrimeField Ring := F -> isQuotientRing F and ambient F === ZZ and F.?char
 
 isQuotientOf = method(TypicalValue => Boolean)
 isQuotientOf(Ring,Ring) := (R,S) -> false
@@ -37,7 +38,6 @@ degreesMonoid QuotientRing := (cacheValue degreesMonoid) (S -> degreesMonoid amb
 degreeLength QuotientRing := S -> degreeLength ambient S
 degreeGroup  QuotientRing := S -> degreeGroup  ambient S
 
-vars QuotientRing := (cacheValue vars) (S -> map(S^1,, table (1, numgens S, (i,j) -> S_j)))
 degrees QuotientRing := R -> degrees ambient R
 
 precision QuotientRing := precision @@ ambient
@@ -232,8 +232,7 @@ Ring / List := Ring / Sequence := QuotientRing => (R,f) -> R / promote(ideal f, 
 -----------------------------------------------------------------------------
 
 presentation PolynomialRing := Matrix => R -> map(R^1, R^0, 0)
-presentation QuotientRing   := Matrix => R -> (
-     if R.?presentation then R.presentation else R.presentation = (
+presentation QuotientRing   := Matrix => R -> R.presentation ??= (
 	  S := ambient R;
 	  f := generators ideal R;
 	  while class S === QuotientRing do (		    -- untested code
@@ -241,8 +240,7 @@ presentation QuotientRing   := Matrix => R -> (
 	       S = ambient S;
 	       );
 	  f
-	  )
-     )
+    )
 
 presentation(QuotientRing,   QuotientRing)   :=
 presentation(QuotientRing,   PolynomialRing) :=

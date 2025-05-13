@@ -1,22 +1,11 @@
-# https://www.singular.uni-kl.de/
-# svn co svn+ssh://monty.mathematik.uni-kl.de/usr/local/Singular/svn/trunk
-# svn co http://www.singular.uni-kl.de/svn/trunk
-# old URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory
-# URL = ftp://jim.mathematik.uni-kl.de/pub/Math/Factory
-# https://github.com/Singular/Sources
-# https://service.mathematik.uni-kl.de/ftp/pub/Math/Factory/factory-4.2.0.tar.gz
-# ftp://jim.mathemathematik.uni-kl.de/pub/Math/Singular
-# https://www.singular.uni-kl.de
-# https://www.singular.uni-kl.de/ftp/pub/Math/Singular/SOURCES/4-3-0/singular-4.3.0.tar.gz
+# The Singular developers no longer publish a factory tarball on their
+# website, so we generate our own.  To do so, run:
+# make -C libraries/factory dist
+# This will generate a tarball in BUILD/tarfiles
+# Upload this to https://macaulay2.com/Downloads/OtherSourceCode/
 
-# We seem to be the only users of the factory library, which is part of
-# Singular.  Its source code accompanies binary installations of Singular,
-# under Arch Linux, for example.  To get a more recent tar file for factory,
-# I ask Hans Schoenemann <hannes@mathematik.uni-kl.de> to make one and post
-# it at one of the ftp sites above.  Version 4.1.3 is available.
-
-URL = https://www.singular.uni-kl.de/ftp/pub/Math/Factory
-VERSION = 4.4.0
+URL = https://macaulay2.com/Downloads/OtherSourceCode
+VERSION = 4.4.1
 #PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -vif
 
@@ -48,6 +37,7 @@ CONFIGOPTIONS += --disable-omalloc --enable-streamio
 CONFIGOPTIONS += --includedir='$(LIBRARIESDIR)/include/'
 CONFIGOPTIONS += --disable-shared
 CONFIGOPTIONS += --without-Singular
+CONFIGOPTIONS += --datadir=@pre_packagesdir@/Core # for gftables
 
 ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-assertions 
@@ -99,6 +89,17 @@ uninstall clean ::
 	then cd $(LIBRARIESDIR) && rm -rf \
 		include/factory.h include/factoryconf.h include/cf_gmp.h include/templates/ftmpl_* include/factory ; \
 	fi
+
+dist:
+	rm -rf Singular
+	@GIT@ clone https://github.com/Singular/Singular --single-branch \
+		-b Release-$(subst .,-,$(VERSION)) --depth=1
+# Remove if https://github.com/Singular/Singular/pull/1265 merged
+	sed -i 's/make dist/.\/configure \&\& make dist/' \
+		Singular/factory/make_factory_dist
+	cd Singular/factory && sh make_factory_dist
+	cp Singular/factory/factory-$(VERSION).tar.gz $(TARFILE_DIR)
+	rm -rf Singular
 
 #post-install: $(LIBRARIESDIR)/lib/libcfmem-newdelete-removed
 #$(LIBRARIESDIR)/lib/libcfmem-newdelete-removed : $(LIBRARIESDIR)/lib/libcfmem.a

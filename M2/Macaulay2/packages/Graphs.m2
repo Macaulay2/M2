@@ -393,14 +393,14 @@ vertices Digraph := List => D -> D#(symbol vertexSet)
 -------------------------------------------
 
 displayGraph = method()
-displayGraph (String, String, Digraph) := (dotfilename, jpgfilename, G) -> (
+displayGraph (String, String, Digraph) := (dotfilename, pngfilename, G) -> (
      writeDotFile(dotfilename, G);
-     runcmd(graphs'DotBinary  | " -Tjpg " | dotfilename | " -o " | jpgfilename);
-     show URL("file://" | toAbsolutePath jpgfilename);
+     runcmd(graphs'DotBinary  | " -Tpng " | dotfilename | " -o " | pngfilename);
+     show URL("file://" | toAbsolutePath pngfilename);
      )
 displayGraph (String, Digraph) := (dotfilename, G) -> (
-     jpgfilename := temporaryFileName() | ".jpg";
-     displayGraph(dotfilename, jpgfilename, G);
+     pngfilename := temporaryFileName() | ".png";
+     displayGraph(dotfilename, pngfilename, G);
      )
 displayGraph Digraph := G -> (
      dotfilename := temporaryFileName() | ".dot";
@@ -1154,16 +1154,7 @@ spectrum Graph := List => G -> sort toList eigenvalues (adjacencyMatrix G, Hermi
 
 
 
-topologicalSort = method(TypicalValue =>List)
-topologicalSort Digraph := List => D -> topologicalSort(D, "")
-topologicalSort (Digraph, String) := List => (D,s) -> (
-    if instance(D, Graph) or isCyclic D then error "Topological sorting is only defined for acyclic directed graphs.";
-    s = toLower s;
-    processor := if s == "random" then random
-        else if s == "min" then sort
-        else if s == "max" then rsort
-        else if s == "degree" then L -> last \ sort transpose {apply(L, v -> degree(D, v)), L}
-        else identity;
+attemptTopologicalSort = (D,processor) -> (
     S := processor sources D;
     L := {};
     v := null;
@@ -1172,7 +1163,23 @@ topologicalSort (Digraph, String) := List => (D,s) -> (
         L = L|{v};
         S = processor join(drop(S, 1), select(toList children (D, v), c -> isSubset(parents(D, c), L)));
         );
-    L
+    if #L == #(vertexSet D) then L else null
+    )
+
+topologicalSort = method(TypicalValue =>List)
+topologicalSort Digraph := List => D -> topologicalSort(D, "")
+topologicalSort (Digraph, String) := List => (D,s) -> (
+    if instance(D, Digraph) then (
+        s = toLower s;
+        processor := if s == "random" then random
+            else if s == "min" then sort
+            else if s == "max" then rsort
+            else if s == "degree" then L -> last \ sort transpose {apply(L, v -> degree(D, v)), L}
+            else identity;
+        L := attemptTopologicalSort(D, processor);
+        if L =!= null then return L;
+    );
+    error "Topological sorting is only defined for acyclic directed graphs.";
     )
 
 
@@ -1270,14 +1277,7 @@ isConnected Graph := Boolean => G -> numberOfComponents G <= 1
 
 isCyclic = method()
 isCyclic Graph := Boolean => G -> isConnected G and all(vertexSet G, v -> degree(G, v) == 2)
-isCyclic Digraph := Boolean => G -> (
-        D := depthFirstSearch G;
-        any(vertexSet G, u ->
-            any(toList children(G, u), v ->
-                (D#symbol discoveryTime)#v < (D#symbol discoveryTime)#u and (D#symbol finishingTime)#u < (D#symbol finishingTime)#v
-                )
-            )
-        )
+isCyclic Digraph := Boolean => G -> attemptTopologicalSort(G, identity) === null
 
 isEulerian = method()
 isEulerian Graph := Boolean => G -> all(apply(vertexSet G, v -> degree(G,v)), even) and isConnected G
@@ -1367,7 +1367,6 @@ cartesianProduct(Graph, Graph) := Graph => (G, H) -> (
     graph(V, E, EntryMode => "edges")
     )
 
--- the 'directProduct' method is defined in 'Polyhedra'
 directProduct(Graph,Graph) := Graph => (G, H) -> (
     V := toList(set vertexSet G ** set vertexSet H);
     E := flatten for u in V list for v in V list
@@ -2119,13 +2118,13 @@ doc ///
     Headline
         displays a digraph or graph using Graphviz
     Usage
-        displayGraph(dotFileName,jpgFileName,G)
+        displayGraph(dotFileName,pngFileName,G)
         displayGraph(dotFileName,G)
         displayGraph G
     Inputs
         G:Digraph
         dotFileName:String
-        jpgFileName:String
+        pngFileName:String
     Description
         Text
             Displays a digraph or graph using Graphviz
@@ -5505,6 +5504,17 @@ TEST ///
    assert(topologicalSort D==={2,3,1})
 ///
 
+TEST ///
+-- check cycle detection in digraphs
+assert( isCyclic digraph({{1,2},{2,3},{3,1}}) === true )
+assert( isCyclic digraph({{1,2},{2,3},{3,4},{4,3}}) === true )
+assert( isCyclic digraph({{1,2},{2,3},{3,4},{2,4}}) === false )
+assert( isCyclic digraph({{1,3},{1,4},{2,4},{3,2},{4,3}}) === true )
+assert( isCyclic digraph({{1,3},{1,4},      {3,2},{4,3}}) === false )
+assert( isCyclic digraph({{1,2},{2,3},{3,4}}) === false )
+assert( isCyclic digraph({{1,2},{2,3},{3,4},{4,4}}) === true )
+assert( isCyclic digraph({{1,2},{2,3},{3,4},{5,5}}) === true )
+///
 
 TEST ///
 

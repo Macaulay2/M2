@@ -21,8 +21,8 @@ newPackage(
 	{ Name => "Yeongrak Kim",     	 Email => "kim@math.uni-sb.de",      HomePage => "http://sites.google.com/view/yeongrak/"}
 	},
     Keywords => {"Commutative Algebra"},
-    PackageImports => {"Truncations", "SVDComplexes", "Complexes"},
-    PackageExports => {"SVDComplexes"},
+    PackageImports => { "Truncations" },
+    PackageExports => { "Isomorphism", "SVDComplexes", "OldChainComplexes" },
     DebuggingMode => false
     )
 
@@ -72,7 +72,7 @@ export {
     "directImageComplex",
     "actionOnDirectImage",
     --the following could all be part of ChainComplexExtras
-    "isIsomorphic",
+    "isIsomorphicStrict",
 --    "prependZeroMap",
 --    "appendZeroMap",
 --    "removeZeroTrailingTerms",
@@ -735,8 +735,8 @@ source TA == TM
 target TA == TN
 isChainComplexMap TA
 
-isIsomorphic (truncate(regularity M, HH^0 (beilinson TM)), truncate(regularity M, M))
-isIsomorphic (truncate(regularity N, HH^0 (beilinson TN)), truncate(regularity N, N))
+isIsomorphicStrict (truncate(regularity M, HH^0 (beilinson TM)), truncate(regularity M, M))
+isIsomorphicStrict (truncate(regularity N, HH^0 (beilinson TN)), truncate(regularity N, N))
 
 ------------------------------
 restart
@@ -761,8 +761,8 @@ source TA == TM
 target TA == TN
 isChainComplexMap TA
 
-isIsomorphic (truncate(regM, HH^0 (beilinson TM)), truncate(regM, M))
-isIsomorphic (truncate(regN, HH^0 (beilinson TN)), truncate(regN, N))    
+isIsomorphicStrict (truncate(regM, HH^0 (beilinson TM)), truncate(regM, M))
+isIsomorphicStrict (truncate(regN, HH^0 (beilinson TN)), truncate(regN, N))    
 ------------------------
 ///
 
@@ -856,7 +856,7 @@ viewHelp TateOnProducts
 
 lastQuadrantComplex=method()
 lastQuadrantComplex(ChainComplex,List) := (C,c) -> (
-    -- c index of the lower corner of the complentary first quadrant
+    -- c index of the lower corner of the complementary first quadrant
     lastQuadrantComplex1(C,c-toList(#c:1)))
 
 
@@ -1219,7 +1219,7 @@ minimize ChainComplex := o -> E ->(
     )
 *-
 --isExact=method()
-isExact(ChainComplex):=(C) -> (
+isExact(ChainComplex) := {} >> o -> (C) -> (
    if (all((min C,max C), i -> (prune HH_i(C) == 0))) then true else false
 )
 
@@ -2386,24 +2386,29 @@ ring (sour^[j])
 isDegreeZeroSurjection := method()
 isDegreeZeroSurjection(Module,Module) := (A,B)->(
     --tests a random degree 0 map to see whether its a surjection
-    H := Hom(A,B);
-    B0 := basis(0,H); -- this seems to be total degree 0 in case of degreeLength>1
+    z := degree 0_A;
+    H := Hom(A, B, DegreeLimit => z);
+    B0 := basis(z, H);
     f := homomorphism(B0*random(source B0, (ring B0)^1));
     coker f == 0)
 
-isIsomorphic = method()
-isIsomorphic(Module,Module) := (A,B) -> (
-    --tests random degree 0 maps A->B, B->A and returns true
-    --if both are surjective.
-    if not(isHomogeneous A and isHomogeneous B) then 
-	  error"not implemented for inhomogeneous modules";
-    Ap := prune A;
-    Bp := prune B;
-    dA := set flatten degrees source gens Ap;
-    dB := set flatten degrees source gens Bp;
-    if dA =!= dB then false else    
-    isDegreeZeroSurjection(Ap,Bp) and isDegreeZeroSurjection(Bp,Ap)
-    )
+isIsomorphicStrict = method()
+isIsomorphicStrict(Module, Module) := (A,B) -> (
+    isIsomorphic(A, B, Strict => true, Homogeneous => true))
+-- This is now replaced and improved in Isomorphism package
+-- isIsomorphic = method()
+-- isIsomorphic(Module,Module) := o -> (A,B) -> (
+--     --tests random degree 0 maps A->B, B->A and returns true
+--     --if both are surjective.
+--     if not(isHomogeneous A and isHomogeneous B) then 
+-- 	  error"not implemented for inhomogeneous modules";
+--     Ap := prune A;
+--     Bp := prune B;
+--     dA := set flatten degrees source gens Ap;
+--     dB := set flatten degrees source gens Bp;
+--     if dA =!= dB then false else    
+--     isDegreeZeroSurjection(Ap,Bp) and isDegreeZeroSurjection(Bp,Ap)
+--     )
 
 
 
@@ -2830,7 +2835,7 @@ I=ker pphi
 isAction(I, apply(dim S, i->prune HH^1 ARphiN#1#i))
 
 R1=prune HH^1 source ARphiN#1#0
-isIsomorphic(truncate(2,R1),truncate(2,dual dual R1))
+isIsomorphicStrict(truncate(2,R1),truncate(2,dual dual R1))
 dual dual R1
 ----------------------
 s=3,d=1
@@ -2853,7 +2858,7 @@ keys ARphiN
 isAction(I, apply(dim S, i->prune HH^0 ARphiN#0#i))
 
 R0= prune HH^0 source ARphiN#0#0
-isIsomorphic(truncate(2,R0),truncate(2,dual dual R0))
+isIsomorphicStrict(truncate(2,R0),truncate(2,dual dual R0))
 dual dual R0
 ///
 
@@ -3470,7 +3475,7 @@ primaryDecomposition ann R1piL
 R0=prune HH^0 source AA#0#0
 degree R0, rank R0, ann R0
 dual dual R0
-isIsomorphic(truncate(3, R0), truncate(3,dual dual R0))
+isIsomorphicStrict(truncate(3, R0), truncate(3,dual dual R0))
 -- R0 is isomorphic to O+O(-1)+O(-2)+O(-3), which is the pushforward of O_C.
 
 R1=prune HH^1 source AA#1#0
@@ -3578,7 +3583,7 @@ composedFunctions = () -> (
       B=beilinson T
       M'=prune HH^0 B
       prune HH^1 B
-      isIsomorphic(M,M')
+      isIsomorphicStrict(M,M')
      --Text
      -- We study the corner complex of T at c={0,0} . 
      --Example
@@ -3597,7 +3602,7 @@ composedFunctions = () -> (
       apply(coLP,h->dim h)
       M1=HH^0 LP
       betti M1,betti M
-      isIsomorphic(M,M1)
+      isIsomorphicStrict(M,M1)
      --Text
      -- It works also for different syzygy modules in the corner complex.
      -- It works for all P=ker C.dd_k in the range where C.dd_k is computed 
@@ -3611,7 +3616,7 @@ composedFunctions = () -> (
       apply(coLP,h->dim h)
       M1=HH^(-k) LP
       betti M1, betti M
-      isIsomorphic(M,M1)
+      isIsomorphicStrict(M,M1)
      --Text
      -- Note that we have to take HH^{(-k)} == HH_k because of the homological position in which
      -- P sits.
@@ -3624,7 +3629,7 @@ composedFunctions = () -> (
       apply(coLP,h->dim h)
       M1=HH^(-k) LP
       betti M1,betti M
-      isIsomorphic(M,M1)
+      isIsomorphicStrict(M,M1)
      --Text
      -- Next we check the functor bgg on S-modules.
      --Example
@@ -3658,7 +3663,7 @@ composedFunctions = () -> (
      --Example
       Mc=prune truncate(c,M)**S^{c}
       betti (Mc'=HH^0 LP), betti Mc
-      isIsomorphic(Mc',Mc)
+      isIsomorphicStrict(Mc',Mc)
      --Example
       c={3,1}
       cohomologyMatrix(T1,low,2*high)
@@ -3673,7 +3678,7 @@ composedFunctions = () -> (
      
       Mc=prune truncate(c,M)**S^{c}
       betti (Mc'=HH^0 LP), betti Mc
-      isIsomorphic(Mc',Mc)
+      isIsomorphicStrict(Mc',Mc)
      --Text
      -- Now we test tateExtension.
      --Example
@@ -3697,7 +3702,7 @@ composedFunctions = () -> (
       M1=HH^0 B1
       dim M1
       betti M1, betti M
-      isIsomorphic(M1,M**S^{-d})
+      isIsomorphicStrict(M1,M**S^{-d})
      --Text
      -- Another shift:
      --Example 
@@ -3710,7 +3715,7 @@ composedFunctions = () -> (
       M2=HH^0 B2
       dim M2
       betti M2, betti M, betti truncate(-d,M)
-      isIsomorphic(M2,truncate(-d,M)**S^{-d}")
+      isIsomorphicStrict(M2,truncate(-d,M)**S^{-d}")
 
 
 
@@ -3761,7 +3766,7 @@ betti M1,betti M
 -- some how wrong twist
 M1'=M1**S^{{-2,-2}}
 betti M1',betti M
-isIsomorphic(M,M1')
+isIsomorphicStrict(M,M1')
 
 
 P=ker C.dd_2; betti P
@@ -3774,7 +3779,7 @@ M1=last coLP
 betti M1,betti M
 M1'=M1**S^{{-2,-2}}
 betti M1',betti M
-isIsomorphic(M,M1')
+isIsomorphicStrict(M,M1')
 -- we conclude: It works for various P=kerC.dd_p
 
 
@@ -3785,7 +3790,7 @@ cohomologyMatrix(RM,low,high)
 P=ker RM.dd_(-2)
 betti RM
 RM.dd_(-2)==0 -- Frank: I do not understand why the first differential is zero
-isIsomorphic(image(RM.dd_(-3)),image(T1.dd_(-3)))
+isIsomorphicStrict(image(RM.dd_(-3)),image(T1.dd_(-3)))
 
 
 --Testing Reciprocity
@@ -3799,7 +3804,7 @@ coLP=apply(toList(min LP1..max LP),i->prune HH^(-i) LP)
 apply(coLP,h->dim h)
 Mc=prune truncate(c,M)
 betti (Mc'=(first coLP)**S^{-{2,2}}), betti Mc
-isIsomorphic(Mc',Mc)
+isIsomorphicStrict(Mc',Mc)
 
 --Testing Reciprocity
 c={3,1}
@@ -3813,7 +3818,7 @@ apply(coLP,h->dim h)
 Mc=prune truncate(c,M)
 -- Frank: I do not understand why {-2,-2} is the right correction for the twist.
 betti (Mc'=(first coLP)**S^{-{2,2}}), betti Mc
-isIsomorphic(Mc',Mc)
+isIsomorphicStrict(Mc',Mc)
 
 --Testing Reciprocity
 c={3,2}
@@ -3827,7 +3832,7 @@ apply(coLP,h->dim h)
 Mc=prune truncate(c,M)
 -- Frank: I do not understand why {-2,-2} is the right correction for the twist.
 betti (Mc'=(first coLP)**S^{-{2,2}}), betti Mc
-isIsomorphic(Mc',Mc)
+isIsomorphicStrict(Mc',Mc)
 
 
 
@@ -3889,12 +3894,12 @@ document {
    }
 doc ///
    Key
-    isIsomorphic
-    (isIsomorphic,Module,Module)
+    isIsomorphicStrict
+    (isIsomorphicStrict,Module,Module)
    Headline
     probabilistic test for homogeneous isomorphism
    Usage
-    v = isIsomorphic(A,B)
+    v = isIsomorphicStrict(A,B)
    Inputs
     A:Module
     B:Module
@@ -3902,6 +3907,10 @@ doc ///
     v:Boolean
    Description
     Text
+     This is the same as @TO isIsomorphic@ but with additional
+     options @TT "Strict => true"@ and @TT "Homogeneous => true"@
+     added by default.
+
      First checks that the generator degrees are the same. Then
      computes a random degree 0 map A --> B and B --> A, 
      and returns true iff both are surjections.
@@ -3909,7 +3918,7 @@ doc ///
      S = ZZ/11[a,b]
      M = coker random(S^{-2,0,1,2}, S^{3:-3})
      N = coker (random(cover M, cover M)*presentation M)
-     tally apply(100, j->isIsomorphic(M,N))
+     tally apply(100, j->isIsomorphicStrict(M,N))
    Caveat
     If the function returns true then the modules ARE isomorphic. But if it returns false
     they may be isomorphic anyway.
@@ -3957,7 +3966,7 @@ doc ///
       B=beilinson T
       M'=prune HH^0 B
       prune HH^1 B
-      isIsomorphic(M,M')
+      isIsomorphicStrict(M,M')
      Text
       We study the corner complex of T at c=\{0,0\} . 
      Example
@@ -3976,7 +3985,7 @@ doc ///
       apply(coLP,h->dim h)
       M1=HH^0 LP
       betti M1,betti M
-      isIsomorphic(M,M1)
+      isIsomorphicStrict(M,M1)
      Text
       It works also for different syzygy modules in the corner complex.
       It works for all P=ker C.dd_k in the range where C.dd_k is computed 
@@ -3990,7 +3999,7 @@ doc ///
       apply(coLP,h->dim h)
       M1=HH^(-k) LP
       betti M1, betti M
-      isIsomorphic(M,M1)
+      isIsomorphicStrict(M,M1)
      Text
       Note that we have to take HH^{(-k)} == HH_k because of the homological position in which
       P sits.
@@ -4003,7 +4012,7 @@ doc ///
       apply(coLP,h->dim h)
       M1=HH^(-k) LP
       betti M1,betti M
-      isIsomorphic(M,M1)
+      isIsomorphicStrict(M,M1)
      Text
       Next we check the functor bgg on S-modules.
      Example
@@ -4037,7 +4046,7 @@ doc ///
      Example
       Mc=prune truncate(c,M)**S^{c}
       betti (Mc'=HH^0 LP), betti Mc
-      isIsomorphic(Mc',Mc)
+      isIsomorphicStrict(Mc',Mc)
      Example
       c={3,1}
       cohomologyMatrix(T1,low,2*high)
@@ -4052,7 +4061,7 @@ doc ///
      
       Mc=prune truncate(c,M)**S^{c}
       betti (Mc'=HH^0 LP), betti Mc
-      isIsomorphic(Mc',Mc)
+      isIsomorphicStrict(Mc',Mc)
      Text
       Now we test tateExtension.
      Example
@@ -4076,7 +4085,7 @@ doc ///
       M1=HH^0 B1
       dim M1
       betti M1, betti M
-      isIsomorphic(M1,M**S^{-d})
+      isIsomorphicStrict(M1,M**S^{-d})
      Text
       Another shift:
      Example 
@@ -4089,7 +4098,7 @@ doc ///
       M2=HH^0 B2
       dim M2
       betti M2, betti M, betti truncate(-d,M)
-      isIsomorphic(M2,truncate(-d,M)**S^{-d})
+      isIsomorphicStrict(M2,truncate(-d,M)**S^{-d})
    SeeAlso
     bgg
     upperCorner
@@ -4097,7 +4106,7 @@ doc ///
     cohomologyMatrix
     beilinson
     tateExtension
-    isIsomorphic
+    isIsomorphicStrict
 ///
 
 
@@ -6043,7 +6052,7 @@ doc ///
 	        
       M0=source (prunedActionList(0))_0
       (rank M0, degree M0, betti res M0)
-      isIsomorphic(truncate(regularity M0, M0), truncate(regularity M0, dual dual M0))
+      isIsomorphicStrict(truncate(regularity M0, M0), truncate(regularity M0, dual dual M0))
       dual dual M0
 
       M1=source (prunedActionList(1))_0
@@ -6056,7 +6065,7 @@ doc ///
  Caveat
      Note that the resulting complex is a chain complex instead of a cochain complex,
      so that for example HH^i RpiM = HH_{-i} RpiM. Also note that this requires a pseudo-inverse computation
-     of a split exact sequence, which might fail over finite fields (see SVDComplexes.m2 and its documentations).
+     of a split exact sequence, which might fail over finite fields (see @TO "SVDComplexes :: SVDComplexes"@).
  SeeAlso
       directImageComplex
 ///
@@ -6393,8 +6402,8 @@ M = S^{{1,0},{0,1}}
 M' = S^{{0,1},{1,0}}
 A = S^{{1,-1}}
 B = S^1
-assert(isIsomorphic(M,M') ===true)
-assert(isIsomorphic(A,B) ===false)
+assert(isIsomorphicStrict(M,M') ===true)
+assert(isIsomorphicStrict(A,B) ===false)
 ///
 
 TEST ///
@@ -6443,11 +6452,11 @@ BW = beilinsonWindow C
 betti BW
 B = beilinson C
 M' = HH_0 B
-assert isIsomorphic(M',M)
+assert isIsomorphicStrict(M',M)
 --note: isomorphic, not equal!
 BW' = beilinsonWindow tateResolution(M',-high,high)
 assert( all(2, i->BW_i == BW'_i))
-assert(isIsomorphic(coker BW.dd_1, coker BW'.dd_1))
+assert(isIsomorphicStrict(coker BW.dd_1, coker BW'.dd_1))
 ///
 
 TEST ///
@@ -6457,7 +6466,7 @@ high = {3,3}
 C = tateResolution(M,-high,high);
 B = beilinson C
 M' = HH_0 B
-assert isIsomorphic(M',M)
+assert isIsomorphicStrict(M',M)
 --note: isomorphic, not equal!
 ///
 
@@ -6788,7 +6797,7 @@ assert(C'== C)
   F3a = prune truncate(tdeg,F3);
   F2a = prune truncate(tdeg,F2);
 assert(numgens F3a == numgens F2a)
---  isIsomorphic(F3a, F2a) -- this is too slow!
+--  isIsomorphicStrict(F3a, F2a) -- this is too slow!
 
 
   -- Now shift another time
@@ -7177,8 +7186,8 @@ BC = beilinson C
 betti BC
 tallyDegrees BC
 M' = HH_0 BC
-isIsomorphic(truncate({3,1},M), truncate({3,1},M'))
-isIsomorphic(truncate({2,0},M), truncate({2,0},M'))
+isIsomorphicStrict(truncate({3,1},M), truncate({3,1},M'))
+isIsomorphicStrict(truncate({2,0},M), truncate({2,0},M'))
 cohomologyMatrix(M,low,high)
 cohomologyMatrix(RM,low,high)
 
@@ -7196,8 +7205,8 @@ BT = beilinson T
 betti BT
 tallyDegrees BT
 M' = HH_0 BT
-isIsomorphic(truncate({3,0},M), truncate({3,0},M'))
-isIsomorphic(truncate({2,1},M), truncate({2,1},M'))
+isIsomorphicStrict(truncate({3,0},M), truncate({3,0},M'))
+isIsomorphicStrict(truncate({2,1},M), truncate({2,1},M'))
 
 C = cornerComplex(T,{0,0})
 cohomologyMatrix(C,low,high)
@@ -7210,7 +7219,7 @@ apply(betti C.dd_0)
 (values HH)
 (apply(8, i->ann HH_(-i)(bgg image C.dd_0)))/codim
 M' = HH_(-4)(bgg image C.dd_0);
-isIsomorphic(truncate({2,2},M), truncate({2,2},M'))
+isIsomorphicStrict(truncate({2,2},M), truncate({2,2},M'))
 cohomologyMatrix (M', low, high)
 cohomologyMatrix (M, low, high)
 
