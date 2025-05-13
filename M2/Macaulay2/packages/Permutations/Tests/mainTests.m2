@@ -189,7 +189,7 @@ TEST ///
     -- All reduced words should be the length of the permutation (by definition).
     assert(all(computedWords, word -> #word == length p))
     -- All reduced words should multiply out to the permutation.
-    assert(all(computedWords, word -> product reverse apply(word, i -> transposition i) == p))
+    assert(all(computedWords, word -> product reverse apply(word, transposition) == p))
 
     -- Specific example
     p = permutation {3,1,2,5,4}
@@ -201,7 +201,7 @@ TEST ///
     -- All reduced words should be the length of the permutation (by definition).
     assert(all(computedWords, word -> #word == length p))
     -- All reduced words should multiply out to the permutation.
-    assert(all(computedWords, word -> product reverse apply(word, i -> transposition i) == p))
+    assert(all(computedWords, word -> product reverse apply(word, transposition) == p))
 ///
 
 TEST ///
@@ -266,4 +266,27 @@ TEST ///
     assert((not weakBruhatOrder(p4, p5)) and (not weakBruhatOrder(p5, p4)))
     assert(weakBruhatOrder(p4, p6) and (not weakBruhatOrder(p6, p4)))
     assert(weakBruhatOrder(p5, p6) and (not weakBruhatOrder(p6, p5)))
+///
+
+TEST ///
+    -- symmetric group poset with Bruhat orders
+    n = 4
+    P = symmetricGroupPoset(n, weakBruhatOrder)
+
+    -- Some facts about the rank generating function of the poset.
+    polyCoeffs = apply(flatten entries (coefficients rankGeneratingFunction P)#1, k -> sub(k, ZZ))
+    d = binomial(n,2) + 1
+    assert(#polyCoeffs == d)
+    -- FACT: The rank generating function should be symmetric.
+    assert(all(apply(#polyCoeffs // 2, i -> polyCoeffs_i == polyCoeffs_(d-i-1))))
+    -- FACT: The rank generating function should be unimodal.
+    -- Strategy: Calculate consecutive, pairwise differences and see if sign 
+    --           changed in difference (increasing to decreasing or vice versa).
+    --           Sign can only change at most one time.
+    firstDiffs = delete(0, apply(drop(polyCoeffs,-1), drop(polyCoeffs,1), difference))
+    signFlips = apply(drop(firstDiffs,-1), drop(firstDiffs,1), (i, j) -> if i*j < 0 then 1 else 0)
+    assert(sum signFlips <= 1)
+
+    -- The poset is Sperner.
+    assert(isSperner P)
 ///
