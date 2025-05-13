@@ -257,7 +257,7 @@ fiberGraph = method(
         }
     );
 fiberGraph Matrix := opts -> A -> (
-    if not A.cache#?"MarkovBasis" then elapsedTime setupFibers A;
+    if not A.cache#?"MarkovBasis" then setupFibers A;
     if opts.ReturnConnectedComponents then(
         if not A.cache#"componentsComputed" then (
             for val in rsort keys A.cache#"fiberStarters" do computeFiberInternal(A,val,ReturnConnectedComponents=>true,FiberAlgorithm=>opts.FiberAlgorithm);
