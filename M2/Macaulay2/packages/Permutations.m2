@@ -2,7 +2,7 @@ newPackage(
     "Permutations",
     AuxiliaryFiles => true,
     Version => "1.1", 
-    Date => "May 11, 2025",
+    Date => "May 13, 2025",
     Keywords => {"Combinatorics"},
     Authors => {
         {Name => "Sean Grate", 
