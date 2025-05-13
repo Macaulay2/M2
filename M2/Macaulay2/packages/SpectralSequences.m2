@@ -158,7 +158,7 @@ FilteredComplex _ ZZ := Complex => (K,p) -> (
 FilteredComplex ^ InfiniteNumber :=
 FilteredComplex ^ ZZ := Complex => (K,p) -> K_(-p)
 
-chainComplex FilteredComplex := ChainComplex => K -> K_infinity
+chainComplex FilteredComplex := Complex => K -> K_infinity
 
 -- Returns the inclusion map from the pth subcomplex to the top
 inducedMap (FilteredComplex, ZZ) := ComplexMap => opts -> (K,p) -> (
@@ -883,7 +883,7 @@ pruningMaps(SpectralSequencePage) := (E) -> ( if E.Prune == false then error "pa
 -- auxiliary spectral sequence stuff.  
 
 filteredComplex SpectralSequence := FilteredComplex => opts -> E -> E.filteredComplex
-chainComplex SpectralSequence := ChainComplex => E -> chainComplex filteredComplex E
+chainComplex SpectralSequence := Complex => E -> chainComplex filteredComplex E
 -- given a morphism f: A --> B
 -- compute the connecting map
 -- HH_{n+1}( coker f) --> HH_n (im f)
@@ -2482,7 +2482,7 @@ doc ///
 	  Inputs
 	       L:List       	  
 		    	 or 
-	       L:ChainComplex 
+	       L:Complex 
 	       	    	 or
      	       L:SpectralSequence			 
 	       ReducedHomology => Boolean	       	  	    
@@ -2850,7 +2850,7 @@ doc ///
      Inputs
      	  K:FilteredComplex
      Outputs
-     	  C:ChainComplex
+     	  C:Complex
      Description
      	  Text 
 	       Returns the ambient chain complex of the filtered complex.
@@ -3012,7 +3012,7 @@ doc ///
      Inputs
      	  E:SpectralSequence
      Outputs
-     	  K:ChainComplex
+     	  K:Complex
      Description
      	  Text 
 	       Returns the underlying chain complex of a spectral sequence.
@@ -3755,7 +3755,7 @@ doc ///
      Inputs 
 	  E: SpectralSequence
      Outputs
-          C: ChainComplex
+          C: Complex
      Description
      	  Text
 	       Suppose that $E$ is a spectral sequence with the properties that:
