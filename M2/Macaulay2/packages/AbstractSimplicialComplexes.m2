@@ -588,7 +588,6 @@ doc ///
 	"randomSubSimplicialComplex"
         "random"
 	"RandomIdeals"
-	"setRandomSeed"	     
 ///
 
 
@@ -701,7 +700,6 @@ doc ///
         randomSubSimplicialComplex(K)
     Inputs
         K : AbstractSimplicialComplex
---	Seed => Boolean
     Outputs
         : AbstractSimplicialComplex
     Description
@@ -991,15 +989,6 @@ doc ///
 	      	describe	      
 ///
 
-doc ///
-         Key
-           "Seed"
-         Headline
-	      name for an optional argument
-	 SeeAlso
-	      "randomAbstractSimplicialComplex"
-	      "randomSubSimplicialComplex"
-///	      
 
 
 -* Test section *-
