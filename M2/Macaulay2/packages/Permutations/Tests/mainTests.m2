@@ -185,11 +185,23 @@ TEST ///
                           {3,2,3,1,2,3}}
     computedWords = reducedWords p
     -- Should be the same reduced words.
-    assert((matrix actualReducedWords) === (matrix computedWords))
+    assert((set actualReducedWords) === (set computedWords))
     -- All reduced words should be the length of the permutation (by definition).
     assert(all(computedWords, word -> #word == length p))
     -- All reduced words should multiply out to the permutation.
-    assert(all(computedWords, word -> product apply(word, i -> transposition i) == p))
+    assert(all(computedWords, word -> product reverse apply(word, i -> transposition i) == p))
+
+    -- Specific example
+    p = permutation {3,1,2,5,4}
+    actualReducedWords = {{1,2,4},
+                          {1,4,2},
+                          {4,1,2}}
+    computedWords = reducedWords p
+    assert((set actualReducedWords) === (set computedWords))
+    -- All reduced words should be the length of the permutation (by definition).
+    assert(all(computedWords, word -> #word == length p))
+    -- All reduced words should multiply out to the permutation.
+    assert(all(computedWords, word -> product reverse apply(word, i -> transposition i) == p))
 ///
 
 TEST ///

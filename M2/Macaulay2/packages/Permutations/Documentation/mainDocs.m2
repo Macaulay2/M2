@@ -612,9 +612,11 @@ doc ///
       words = reducedWords p
     Text
       We can check that a reduced word multiplies out to the original permutation.
+      Note that we need to multiply from right to left, so we must reverse the 
+      list.
     Example
       word = words#0
-      product apply(word, i -> transposition i)
+      product reverse apply(word, i -> transposition i)
   SeeAlso
     length
     transposition
@@ -767,7 +769,6 @@ doc ///
     Example
       transposition(3,5)
 ///
-
 
 -- trim
 doc ///
