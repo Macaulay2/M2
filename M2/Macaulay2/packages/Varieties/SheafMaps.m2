@@ -128,10 +128,10 @@ matrix  SheafMap := Matrix   => o -> f -> f.map
 degree  SheafMap := ZZ            => f -> degree f.map
 -- TODO: add a method that returns f.degree
 
-image    SheafMap := CoherentSheaf =>         f -> sheaf(f.variety, image    matrix f)
-kernel   SheafMap := CoherentSheaf => opts -> f -> sheaf(f.variety, kernel   matrix f)
-coimage  SheafMap := CoherentSheaf =>         f -> sheaf(f.variety, coimage  matrix f)
-cokernel SheafMap := CoherentSheaf =>         f -> sheaf(f.variety, cokernel matrix f)
+kernel   SheafMap := CoherentSheaf => o -> f -> sheaf(f.variety,   kernel(f.map, o))
+cokernel SheafMap := CoherentSheaf =>      f -> sheaf(f.variety, cokernel f.map)
+coimage  SheafMap := CoherentSheaf =>      f -> sheaf(f.variety,  coimage f.map)
+image    SheafMap := CoherentSheaf =>      f -> sheaf(f.variety,    image f.map)
 
 -- TODO: are there any tricks for checking injectivity/surjectivity?
 -- e.g. check surjectivity of the module map after tensoring with k?
