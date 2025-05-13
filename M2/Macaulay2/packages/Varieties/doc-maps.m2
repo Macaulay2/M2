@@ -1,5 +1,4 @@
 undocumented {
-    sheafMap, -- deprecated
     -- TODO: document some of these
     (symbol SPACE, SheafMap, ZZ),
     (symbol +,   SheafMap, SheafMap),
