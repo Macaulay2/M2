@@ -2,7 +2,7 @@ newPackage(
     "AllMarkovBases",
     Version => "1.0",
     Date => "May 08, 2025",
-    Headline => "computing all minimal Markov bases of a configuration matrix",
+    Headline => "package for computing all minimal Markov bases of a configuration matrix",
     Authors => {
         {Name => "Alexander Milner",
             Email => "A.J.C.Milner@sms.ed.ac.uk",
@@ -11,7 +11,6 @@ newPackage(
             Email => "oliver.clarke@durham.ac.uk",
             HomePage => "https://www.oliverclarkemath.com/"}
         },
-		Keywords => {"Algebraic Statistics"},
     AuxiliaryFiles => false,
     DebuggingMode => false,
     PackageExports => {"FourTiTwo","Graphs","Normaliz"}
@@ -70,8 +69,8 @@ computeFiberInternal = method(
     );
 computeFiberInternal (Matrix,List) := opts -> (A, val) -> (
     if not (A.cache#"fibers")#?val or (opts.ReturnConnectedComponents and (A.cache#"fiberStarters")#?val and not (A.cache#"fiberComponents")#?val) then(
-        if opts.FiberAlgorithm == "lattice" then computeFiberInternalLattice(A,val,ReturnConnectedComponents=>opts.ReturnConnectedComponents)
-        else if opts.FiberAlgorithm == "fast" then computeFiberInternalFast(A,val)
+	if opts.FiberAlgorithm == "fast" then computeFiberInternalFast(A,val)
+        else if opts.FiberAlgorithm == "lattice" then computeFiberInternalLattice(A,val,ReturnConnectedComponents=>opts.ReturnConnectedComponents)
         else if opts.FiberAlgorithm == "decompose" or opts.FiberAlgorithm == "markov" then computeFiberInternalDecompose(A,val,ReturnConnectedComponents=>opts.ReturnConnectedComponents,FiberAlgorithm=>opts.FiberAlgorithm)
         else error("unknown input for FiberAlgorithm option");
         );
@@ -89,7 +88,11 @@ computeFiberInternalFast (Matrix,List) := (A,val) -> (
             );
         u
         );
-    validMoves := for move in entries A.cache#"MarkovBasis" list if ((A.cache#"fiberValues")#move << val) and ((A.cache#"fiberValues")#move != val) then move else continue;
+    validMoves := if A.cache#"NN" then(
+	for move in entries A.cache#"MarkovBasis" list if ((A.cache#"fiberValues")#move << val) and ((A.cache#"fiberValues")#move != val) then move else continue
+	)else(
+	for move in entries A.cache#"MarkovBasis" list if  (A.cache#"fiberValues")#move != val then move else continue
+	);
     validMoves = new MutableHashTable from ((v -> {v,true}) \ validMoves);
     out := for i from 0 to #buildFiber - 1 list(
         cc := set {buildFiber#i};
@@ -121,10 +124,11 @@ computeFiberInternalLattice = method(
         }
     );
 computeFiberInternalLattice (Matrix,List) := opts -> (A,val) -> (
-    M := transpose matrix for basisElement in entries A.cache#"MarkovBasis" list if (A.cache#"fiberValues")#basisElement<<val then basisElement else continue;
+    M := transpose A.cache#"MarkovBasis";
     if (numColumns M)==0 then M = transpose matrix{toList((numColumns A):0)};
-    latticeOut := if (A.cache#"fiberStarters")#?val then set latticePointsFromMoves(M,transpose matrix{first toList (A.cache#"fiberStarters")#val})
-    else(
+    latticeOut := if (A.cache#"fiberStarters")#?val then (
+	set latticePointsFromMoves(M,transpose matrix{first toList (A.cache#"fiberStarters")#val})
+    )else(
         u:={};
         for row in entries toricMarkov ((matrix vector val) | A) do(
             r := drop(row,1);
@@ -161,19 +165,30 @@ computeCCs List := L -> (
 computeFiberInternalDecompose = method(
     Options => {
         ReturnConnectedComponents => false,
-        FiberAlgorithm => "decompose"
+        FiberAlgorithm => "fast"
         }
     );
 computeFiberInternalDecompose (Matrix,List) := opts -> (A,val) -> (
-    if opts.FiberAlgorithm == "decompose" then(
-        A.cache#"Ring" = ZZ(monoid[Variables => numRows A + numColumns A,MonomialOrder=>Eliminate numRows A]);
-        A.cache#"RingGenerators" = gens A.cache#"Ring";
-        A.cache#"toricIdeal"=toricGroebner(id_(ZZ^(numRows A)) | A, A.cache#"Ring");
+    if opts.FiberAlgorithm == "decompose" and not A.cache#?"Ring" then(
+	if A.cache#"NN" then(
+	    A.cache#"Ring" = ZZ(monoid[Variables => numRows A + numColumns A,MonomialOrder=>Eliminate numRows A]);
+	    A.cache#"RingGenerators" = gens A.cache#"Ring";
+	    A.cache#"toricIdeal"=toricGroebner(id_(ZZ^(numRows A)) | A, A.cache#"Ring");
+	    )else(
+	    A.cache#"Ring" = ZZ(monoid[Variables => 2*numRows A + numColumns A,MonomialOrder=>Eliminate (2*numRows A)]);
+	    A.cache#"RingGenerators" = gens A.cache#"Ring";
+	    A.cache#"toricIdeal"=toricGroebner(id_(ZZ^(numRows A)) | -id_(ZZ^(numRows A)) | A, A.cache#"Ring");
+	    );
         );
     if (A.cache#"fiberStarters")#?val and opts.ReturnConnectedComponents then (
         out := for z in pairs A.cache#"fiberValues" list(
-            if z#1==val or not (z#1 << val) then continue;
-            resid := val-z#1;
+	    if z#1 == val then continue;
+	    resid := val-z#1;
+	    if A.cache#"NN" then(
+	        if not (z#1 << val) then continue;
+		)else(
+	        if any(A.cache#"supportingHyperplanes",z->(matrix{z}*(vector resid))_0<0) then continue;
+		);
             if not (A.cache#"fibers")#?resid then fibRecursion(A,resid,FiberAlgorithm=>opts.FiberAlgorithm);
             if #((A.cache#"fibers")#resid)==0 then continue;
             fibAdd((A.cache#"posNeg")#(z#0),(A.cache#"fibers")#resid)
@@ -186,6 +201,7 @@ computeFiberInternalDecompose (Matrix,List) := opts -> (A,val) -> (
         )else fibRecursion(A,val,FiberAlgorithm=>opts.FiberAlgorithm);
     );
 
+
 -- recursive method using decompose algorithm (unexported)
 fibRecursion = method(
     Options => {
@@ -195,9 +211,13 @@ fibRecursion = method(
     );
 fibRecursion (Matrix,List) := opts -> (A, val) -> (
     out := union for z in pairs A.cache#"fiberValues" list(
-        if not (z#1 << val) then continue;
-        if z#1==val and (A.cache#"fiberStarters")#?val then continue (A.cache#"posNeg")#(z#0);
-        resid := val-z#1;
+	if z#1==val and (A.cache#"fiberStarters")#?val then continue (A.cache#"posNeg")#(z#0);
+	resid := val-z#1;
+	if A.cache#"NN" then(
+	    if not (z#1 << val) then continue;
+	    )else(
+	    if any(A.cache#"supportingHyperplanes",z->(matrix{z}*(vector resid))_0<0) then continue;
+	    );
         if not (A.cache#"fibers")#?resid then fibRecursion(A,resid,FiberAlgorithm=>opts.FiberAlgorithm);
         if #((A.cache#"fibers")#resid) == 0 then continue;
         fibAdd((A.cache#"posNeg")#(z#0),(A.cache#"fibers")#resid)
@@ -209,8 +229,13 @@ fibRecursion (Matrix,List) := opts -> (A, val) -> (
                 if row#0 == 1 and all(r,z->z<=0) then (out = set{-r}; break;);
                 );
             )else (
-            e:=first exponents (product(for i from 0 to #val-1 list ((A.cache#"RingGenerators")#i)^(val#i)) % A.cache#"toricIdeal");
-            if take(e,numRows A) == toList((numRows A):0) then out = set{take(e,-numColumns A)};
+	    if A.cache#"NN" then(
+		e1:=first exponents (product(for i from 0 to #val-1 list ((A.cache#"RingGenerators")#i)^(val#i)) % A.cache#"toricIdeal");
+		if take(e1,numRows A) == toList((numRows A):0) then out = set{take(e1,-numColumns A)};
+		)else(
+		e2:=first exponents (product(for i from 0 to #val-1 list if val#i>0 then ((A.cache#"RingGenerators")#i)^(val#i) else ((A.cache#"RingGenerators")#(i+numRows A))^(-val#i)) % A.cache#"toricIdeal");
+		if take(e2,2*numRows A) == toList((2*numRows A):0) then out = set{take(e2,-numColumns A)};
+		);
             );
         );
     (A.cache#"fibers")#val = out;
@@ -232,7 +257,7 @@ fiberGraph = method(
         }
     );
 fiberGraph Matrix := opts -> A -> (
-    if not A.cache#?"MarkovBasis" then setupFibers A;
+    if not A.cache#?"MarkovBasis" then elapsedTime setupFibers A;
     if opts.ReturnConnectedComponents then(
         if not A.cache#"componentsComputed" then (
             for val in rsort keys A.cache#"fiberStarters" do computeFiberInternal(A,val,ReturnConnectedComponents=>true,FiberAlgorithm=>opts.FiberAlgorithm);
@@ -273,6 +298,12 @@ setupFibers Matrix := A -> (
     A.cache#"fiberComponents" = new MutableHashTable;
     A.cache#"componentsComputed" = false;
     A.cache#"fiberGraphs" = new MutableHashTable;
+    A.cache#"NN"= all(for row in entries A list all(for el in row list el>=0,z->z),z->z);
+    N:=normaliz(A,"normalization",allComputations=>true);
+    S:=entries N#"sup";
+    G:=entries N#"gen";
+    tem := transpose matrix for row in entries A list S#(position(G,z->z==row));
+    A.cache#"supportingHyperplanes" = for el in entries tem list if el == toList(#S:0) then continue else el;
     );
 
 
@@ -1400,3 +1431,72 @@ installPackage "AllMarkovBases"
 check AllMarkovBases
 
 viewHelp AllMarkovBases
+
+
+
+
+
+-- computeFiberInternalDecompose = method(
+--     Options => {
+--         ReturnConnectedComponents => false,
+--         FiberAlgorithm => "fast"
+--         }
+--     );
+-- computeFiberInternalDecompose (Matrix,List) := opts -> (A,val) -> (
+--     if opts.FiberAlgorithm == "decompose" and not A.cache#?"Ring" then(
+--         A.cache#"Ring" = ZZ(monoid[Variables => 2*numRows A + numColumns A,MonomialOrder=>Eliminate (2*numRows A)]);
+--         A.cache#"RingGenerators" = gens A.cache#"Ring";
+--         A.cache#"toricIdeal"=toricGroebner(id_(ZZ^(numRows A)) | -id_(ZZ^(numRows A)) | A, A.cache#"Ring");
+--         );
+--     if (A.cache#"fiberStarters")#?val and opts.ReturnConnectedComponents then (
+--         out := for z in pairs A.cache#"fiberValues" list(
+-- 	    print z#1;
+--             if z#1==val or not (z#1 << val) then continue;
+--             resid := val-z#1;
+--             if not (A.cache#"fibers")#?resid then fibRecursion(A,resid,FiberAlgorithm=>opts.FiberAlgorithm);
+--             if #((A.cache#"fibers")#resid)==0 then continue;
+--             fibAdd((A.cache#"posNeg")#(z#0),(A.cache#"fibers")#resid)
+--             );
+--         G := new HashTable from for i from 0 to #out-1 list (out#i,for j from i+1 to #out-1 list if not  #intersect(out#i,out#j)==0 then out#j else continue);
+--         out = apply(connectedComponents graph(out,pairs G),z->toList union z);
+--         out = out | apply(toList ((A.cache#"fiberStarters")#val - (flatten out)),v->{v});
+--         (A.cache#"fiberComponents")#val = out;
+--         (A.cache#"fibers")#val = flatten out;
+--         )else fibRecursion(A,val,FiberAlgorithm=>opts.FiberAlgorithm);
+--     );
+
+-- -- recursive method using decompose algorithm (unexported)
+-- fibRecursion = method(
+--     Options => {
+--         FiberAlgorithm => "decompose"
+--         }
+
+--     );
+-- fibRecursion (Matrix,List) := opts -> (A, val) -> (
+--     print val;
+--     out := union for z in pairs A.cache#"fiberValues" list(
+--         if not (z#1 << val) then continue;
+--         if z#1==val and (A.cache#"fiberStarters")#?val then continue (A.cache#"posNeg")#(z#0);
+--         resid := val-z#1;
+--         if not (A.cache#"fibers")#?resid then fibRecursion(A,resid,FiberAlgorithm=>opts.FiberAlgorithm);
+--         if #((A.cache#"fibers")#resid) == 0 then continue;
+--         fibAdd((A.cache#"posNeg")#(z#0),(A.cache#"fibers")#resid)
+--         );
+--     if #out==0 then(
+--         if opts.FiberAlgorithm == "markov" then (
+--             for row in entries toricMarkov ((matrix vector val) | A) do(
+--                 r := drop(row,1);
+--                 if row#0 == 1 and all(r,z->z<=0) then (out = set{-r}; break;);
+--                 );
+--             )else (
+--             e:=first exponents (product(for i from 0 to #val-1 list if val#i>0 then ((A.cache#"RingGenerators")#i)^(val#i) else ((A.cache#"RingGenerators")#(i+numRows A))^(-val#i)) % A.cache#"toricIdeal");
+--             if take(e,2*numRows A) == toList((2*numRows A):0) then out = set{take(e,-numColumns A)};
+--             );
+--         );
+--     (A.cache#"fibers")#val = out;
+--     );
+
+-- fibAdd = method();
+-- fibAdd (Set,Set) := (L1,L2) -> (
+--     set flatten for l1 in keys L1 list for l2 in keys L2 list l1+l2
+--     );
