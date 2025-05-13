@@ -695,11 +695,19 @@ doc ///
   Description
     Text
       The {\em (strong) Bruhat order} is a partial order on the symmetric group
-      $\mathfrak{S}_n$. This method compares two permutation with this order.
+      $\mathfrak{S}_n$. See [BB05] for more details on the strong Bruhat order.
     Example
       p = permutation {3,5,1,2,4}
       q = permutation {4,5,1,2,3}
       strongBruhatOrder(p, q)
+  References
+    @UL{
+      {
+        "[BB05] Anders Björner and Francesco Brenti, ",
+        HREF("https://link.springer.com/book/10.1007/3-540-27596-7", EM "Combinatorics of Coxeter groups"), 
+        ", Graduate Texts in Mathematics, 231, Springer, New York, 2005"
+      }
+    }@
   SeeAlso
     weakBruhatOrder
     symmetricGroupPoset
@@ -732,14 +740,6 @@ doc ///
     Example
       partialOrder = (w,v) -> weakBruhatOrder(w,v, Side=>"left")
       symmetricGroupPoset(4, partialOrder)
-  References
-    @UL{
-      {
-        "[BB05] A. Björner and F. Brenti, ",
-        HREF("https://link.springer.com/book/10.1007/3-540-27596-7", EM "Combinatorics of Coxeter groups"), 
-        ", Graduate Texts in Mathematics, 231, Springer, New York, 2005"
-      }
-    }@
   SeeAlso
     weakBruhatOrder
     strongBruhatOrder
@@ -820,8 +820,7 @@ doc ///
       $\mathfrak{S}_n$. For two permutations $p$ and $q$, $w \leq_R v$ if and 
       only if $\ell(w) + \ell(v^{-1} w) = \ell(v)$, where $\ell$ denotes the
       @TO (length, Permutation)@ of a permutation and $\leq_R$ is the right 
-      weak Bruhat order. See [BB05] for more details on Bruhat 
-      order.
+      weak Bruhat order. See [BB05] for more details on the weak Bruhat order.
     Example
       p = permutation {1,3,2}
       q = permutation {2,1,3}
@@ -840,7 +839,7 @@ doc ///
   References
     @UL{
       {
-        "[BB05] A. Björner and F. Brenti, ",
+        "[BB05] Anders Björner and Francesco Brenti, ",
         HREF("https://link.springer.com/book/10.1007/3-540-27596-7", EM "Combinatorics of Coxeter groups"), 
         ", Graduate Texts in Mathematics, 231, Springer, New York, 2005"
       }
