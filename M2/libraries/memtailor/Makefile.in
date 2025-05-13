@@ -1,7 +1,7 @@
 SUBMODULE = true
 HOMEPAGE = https://github.com/broune/memtailor
 VPATH = @srcdir@
-VERSION = 20210630-51b88ac2f9
+VERSION = 20250513-07c84a6852
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -i
 CONFIGOPTIONS = --disable-shared

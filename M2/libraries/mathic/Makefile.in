@@ -1,7 +1,7 @@
 HOMEPAGE = https://github.com/broune/mathic
 SUBMODULE = true
 VPATH = @srcdir@
-VERSION = 20230812-865f9dcf7a
+VERSION = 20250513-7abf77e4ce
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -i
 CONFIGOPTIONS = --disable-shared
