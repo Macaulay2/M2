@@ -158,7 +158,7 @@ FilteredComplex _ ZZ := Complex => (K,p) -> (
 FilteredComplex ^ InfiniteNumber :=
 FilteredComplex ^ ZZ := Complex => (K,p) -> K_(-p)
 
-chainComplex FilteredComplex := Complex => K -> K_infinity
+--chainComplex FilteredComplex := Complex => K -> K_infinity
 
 -- Returns the inclusion map from the pth subcomplex to the top
 inducedMap (FilteredComplex, ZZ) := ComplexMap => opts -> (K,p) -> (
@@ -673,7 +673,7 @@ edgeComplex(SpectralSequence) := (E) -> (
     M := select(spots E^2 .dd, i -> E^2_i != 0);
     l := min apply(M, i -> i#0);
     m := min apply(M, i -> i#1);
-    C := chainComplex E; -- we still haven't overloaded complex; but this still returns a complex 
+    C := (E.filteredComplex)_(infinity); -- we still haven't overloaded complex; but this still returns a complex 
     if M != {} then (
     complex {inducedMap(E^2_{l + 1, m}, HH_(l + m + 1) C, id_(C_(l + m + 1))),
     inducedMap(HH_(l + m + 1) C, E^2_{l,m + 1}, id_(C_(l + m + 1))), 
@@ -883,7 +883,12 @@ pruningMaps(SpectralSequencePage) := (E) -> ( if E.Prune == false then error "pa
 -- auxiliary spectral sequence stuff.  
 
 filteredComplex SpectralSequence := FilteredComplex => opts -> E -> E.filteredComplex
-chainComplex SpectralSequence := Complex => E -> chainComplex filteredComplex E
+
+-- this seems to cause a conflict with Complexes so is omitted for now --
+-- the same information can be accessed by (E.filteredComplex)_(infinity)
+
+--chainComplex SpectralSequence := Complex => E -> chainComplex filteredComplex E
+
 -- given a morphism f: A --> B
 -- compute the connecting map
 -- HH_{n+1}( coker f) --> HH_n (im f)
@@ -2839,32 +2844,33 @@ doc ///
 ///
 
 --- This is still using chainComplex - do we want this?
-doc ///
-     Key
-  	  (chainComplex, FilteredComplex)
-     Headline
-     	  the ambient chain complex of a filtered complex
-     Usage
-     	  C = chainComplex K
-     Inputs
-     	  K:FilteredComplex
-     Outputs
-     	  C:Complex
-     Description
-     	  Text 
-	       Returns the ambient chain complex of the filtered complex.
-	  Example
-	      A = QQ[x,y];
-	      C = koszulComplex vars A
-	      K = filteredComplex C;
-	      chainComplex K
-	      K_infinity     
-    SeeAlso
-    	(symbol _, FilteredComplex, ZZ)
-	(symbol _, FilteredComplex, InfiniteNumber)
-	(symbol ^, FilteredComplex, ZZ)
-	(symbol ^, FilteredComplex, InfiniteNumber)	       	       	       	       
-///
+--- Let's remove it for now (as it seems to be causing a conflict with complexes
+--doc ///
+--     Key
+--  	  (chainComplex, FilteredComplex)
+--     Headline
+--     	  the ambient chain complex of a filtered complex
+--     Usage
+--     	  C = chainComplex K
+--     Inputs
+--     	  K:FilteredComplex
+--     Outputs
+--     	  C:Complex
+--     Description
+--     	  Text 
+--	       Returns the ambient chain complex of the filtered complex.
+--	  Example
+--	      A = QQ[x,y];
+--	      C = koszulComplex vars A
+--	      K = filteredComplex C;
+--	      chainComplex K
+--	      K_infinity     
+--    SeeAlso
+--    	(symbol _, FilteredComplex, ZZ)
+--	(symbol _, FilteredComplex, InfiniteNumber)
+--	(symbol ^, FilteredComplex, ZZ)
+--	(symbol ^, FilteredComplex, InfiniteNumber)	       	       	       	       
+--///
 
 
 doc ///
@@ -3000,28 +3006,30 @@ doc ///
      	 "Filtrations and tensor product complexes"	       
 ///
     
---- also this still uses chainComplex
-doc ///
-     Key
-     	   (chainComplex, SpectralSequence)
-     Headline
-     	  the underlying chain complex of a Spectral Sequence
-     Usage
-     	  K = chainComplex E
-     Inputs
-     	  E:SpectralSequence
-     Outputs
-     	  K:Complex
-     Description
-     	  Text 
-	       Returns the underlying chain complex of a spectral sequence.
-	  Example
-	      A = QQ[x,y];
-	      C = koszulComplex vars A
-	      K = filteredComplex C;
-	      E = spectralSequence K
-	      chainComplex E
-///
+--- also this still uses chainComplex and causes a conflict it seems with Complexes
+--- so we can remove it for now since we can simply use (E.filteredComplex)_(infinity)
+--- to access the same information
+--doc ///
+--     Key
+--     	   (chainComplex, SpectralSequence)
+--     Headline
+--     	  the underlying chain complex of a Spectral Sequence
+--     Usage
+--     	  K = chainComplex E
+--     Inputs
+--     	  E:SpectralSequence
+--     Outputs
+--     	  K:Complex
+--     Description
+--     	  Text 
+--	       Returns the underlying chain complex of a spectral sequence.
+--	  Example
+--	      A = QQ[x,y];
+--	      C = koszulComplex vars A
+--	      K = filteredComplex C;
+--	      E = spectralSequence K
+--	      chainComplex E
+--///
 
 doc ///
      Key
@@ -4230,4 +4238,3 @@ installPackage("SpectralSequences", RemakeAllDocumentation => true)
 check "SpectralSequences";
 viewHelp SpectralSequences
 ------------------------------------------
-
