@@ -71,6 +71,16 @@ TEST ///
 ///
 
 TEST ///
+    -- transpositions
+    assert(transposition(1) == permutation {2,1})
+    assert(transposition(5) == permutation {1,2,3,4,6,5})
+
+    assert(transposition(1,2) == transposition(1))
+    assert(transposition(5,6) == transposition(5))
+    assert(transposition(3,5) == permutation {1,2,5,4,3})
+///
+
+TEST ///
     -----------------------
     -- identity permutation
     -----------------------
@@ -179,7 +189,7 @@ TEST ///
     -- All reduced words should be the length of the permutation (by definition).
     assert(all(computedWords, word -> #word == length p))
     -- All reduced words should multiply out to the permutation.
-    assert(all(computedWords, word -> product apply(word, i -> permutation switch(i-1, i, toList(1..#p))) == p))
+    assert(all(computedWords, word -> product apply(word, i -> transposition i) == p))
 ///
 
 TEST ///

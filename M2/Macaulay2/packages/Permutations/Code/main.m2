@@ -52,12 +52,17 @@ extend (Permutation, Permutation) := Sequence => o -> (w,v) -> (
 
 
 ------------------------------------
--- Matrix representation of a permutation
+-- Some permutation constructors
 ------------------------------------
 -- some people prefer the transpose of this
 matrix Permutation := Matrix => o -> w -> (
     id_(ZZ^(#w))_(to0Index toList w)
 )
+
+
+transposition = method()
+transposition ZZ := Permutation => (i) -> (permutation switch(i-1, i, toList(1..i+1)))
+transposition (ZZ, ZZ) := Permutation => (i, j) -> (permutation switch(i-1, j-1, toList(1..(max(i,j)))))
 
 
 ------------------------------------

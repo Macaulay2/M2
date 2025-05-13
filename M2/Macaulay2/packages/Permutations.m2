@@ -45,6 +45,7 @@ export {
     "weakBruhatOrder",
     "strongBruhatOrder",
     "symmetricGroupPoset",
+    "transposition",
     -- symbols
     "Weak",
     "Side"

@@ -611,14 +611,13 @@ doc ///
       p = permutation {4,3,2,1}
       words = reducedWords p
     Text
-      Using @TO switch@, we can create the transposition $(i,i+1)$ (be careful
-      with indexing!). We can check that a reduced word multiplies out to the 
-      original permutation.
+      We can check that a reduced word multiplies out to the original permutation.
     Example
       word = words#0
-      product apply(word, i -> switch(i-1, i, toList(1..#p)))
+      product apply(word, i -> transposition i)
   SeeAlso
     length
+    transposition
 ///
 
 -- saliances
@@ -743,6 +742,32 @@ doc ///
     weakBruhatOrder
     strongBruhatOrder
 ///
+
+doc ///
+  Key
+    transposition
+    (transposition, ZZ)
+    (transposition, ZZ, ZZ)
+  Headline
+    constructs a transposition
+  Usage
+    transposition i
+  Inputs
+    i:ZZ
+    j:ZZ
+  Outputs
+    :Permutation
+  Description
+    Text
+      This method constructs the transposition $(i,i+1)$.
+    Example
+      transposition 3
+    Text
+      When two arguments are passed, this constructs the transposition $(i,j)$.
+    Example
+      transposition(3,5)
+///
+
 
 -- trim
 doc ///
