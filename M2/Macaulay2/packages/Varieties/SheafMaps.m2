@@ -137,7 +137,11 @@ kernel   SheafMap := CoherentSheaf => opts -> f -> sheaf(f.variety, kernel   mat
 coimage  SheafMap := CoherentSheaf =>         f -> sheaf(f.variety, coimage  matrix f)
 cokernel SheafMap := CoherentSheaf =>         f -> sheaf(f.variety, cokernel matrix f)
 
-isSurjective SheafMap := Boolean => f -> coker f == 0
+-- TODO: are there any tricks for checking injectivity/surjectivity?
+-- e.g. check surjectivity of the module map after tensoring with k?
+isInjective   SheafMap := Boolean => f ->   kernel f == 0
+isSurjective  SheafMap := Boolean => f -> cokernel f == 0
+isIsomorphism SheafMap := Boolean => f -> isInjective f and isSurjective f
 
 -- TODO: is sheaf sufficient here, or should we specify source/target/degree?
 cover   SheafMap := SheafMap => f -> sheaf(f.variety, cover   matrix f)
@@ -159,8 +163,6 @@ SheafMap == SheafMap := Boolean => (psi, phi) -> psi === phi or (
 
 SheafMap == ZZ := Boolean => (f, n) -> ( if n === 0 then image f == n else matrix(prune f) == n)
 ZZ == SheafMap := Boolean => (n, f) -> f == n
-
-isIsomorphism SheafMap := Boolean => f -> ker f == 0 and coker f == 0
 
 -- TODO: isomorphisms of modules are cached under Y.cache.cache.Isomorphisms,
 -- where Y is the youngest of the modules, but currently isomorphisms of sheaves
