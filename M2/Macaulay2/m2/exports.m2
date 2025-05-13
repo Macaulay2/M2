@@ -1200,6 +1200,7 @@ export {
 	"texMath",
 	"then",
 	"threadLocal",
+	"threadLock",
 	"throw",
 	"time",
 	"times",

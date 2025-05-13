@@ -3,6 +3,7 @@ use evaluate;
 use expr;
 
 header "#include \"../system/supervisorinterface.h\"";
+header "#include <errno.h>"; -- for EBUSY
 
 
 taskCreatePush(f:function(TaskCellBody):null,tb:TaskCellBody) ::=  Ccode(taskPointer,
@@ -230,6 +231,20 @@ export getIOThreadMode(e:Expr):Expr := (
     is f:file do toExpr(getFileThreadMode(f))
     else WrongArg("a file or ()"));
 setupfun("getIOThreadMode", getIOThreadMode);
+
+-- TODO: what if we cancel a task before it unlocks the mutex?
+mutex := newMutex;
+threadLock(c:Code):Expr := (
+    r := 0;
+    while (r = trylock(mutex); r == Ccode(int, "EBUSY")) do (
+	f := eval(dummyCode); -- handle interrupts
+	when f is Error do return f else nothing);
+    if r == 0 then (
+	e := eval(c);
+	unlock(mutex);
+	e)
+    else buildErrorPacketErrno("threadLock", r));
+setupop(threadLockS, threadLock);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d pthread.o "

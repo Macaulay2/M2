@@ -85,6 +85,13 @@ assert Equation(getIOThreadMode f, 2)
 
 removeFile fn
 
+-- threadLock
+-- mutable lists are *not* thread safe
+-- if they ever become thread safe, then change this test
+x = new MutableList
+taskResult \ apply(1000, i -> schedule(() -> threadLock x##x = null));
+assert Equation(#x, 1000)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test threads.out"
 -- End:
