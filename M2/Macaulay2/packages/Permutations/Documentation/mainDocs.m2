@@ -415,7 +415,7 @@ doc ///
       isEven p
   SeeAlso
     isOdd
-    sign
+    (sign, Permutation)
 ///
 
 -- isOdd
@@ -441,7 +441,7 @@ doc ///
       isOdd p
   SeeAlso
     isEven
-    sign
+    (sign, Permutation)
 ///
 
 -- isWellDefined
@@ -650,10 +650,9 @@ doc ///
     records
 ///
 
--- sign
+-- (sign, Permutation)
 doc ///
   Key
-    sign
     (sign, Permutation)
   Headline
     computes the sign of a permutation
