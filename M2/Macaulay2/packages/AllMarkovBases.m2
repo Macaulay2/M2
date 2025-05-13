@@ -11,6 +11,7 @@ newPackage(
             Email => "oliver.clarke@durham.ac.uk",
             HomePage => "https://www.oliverclarkemath.com/"}
         },
+    Keywords => {"Algebraic Statistics"},
     AuxiliaryFiles => false,
     DebuggingMode => false,
     PackageExports => {"FourTiTwo","Graphs","Normaliz"}
