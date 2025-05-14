@@ -58,7 +58,7 @@ Node
       S = QQ[x,y]
       M = coker matrix{{x,y},{x,x}}
       L = summands M
-      assert first isIsomorphic(M, directSum L)
+      assert isIsomorphic(M, directSum L)
   SeeAlso
     findIdempotents
 ///

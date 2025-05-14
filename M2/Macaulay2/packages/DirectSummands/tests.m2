@@ -139,7 +139,7 @@ TEST ///
   elapsedTime L = summands M
   assert(8 == #L)
   assert all(L, isHomogeneous)
-  assert first isIsomorphic(M, directSum L)
+  assert isIsomorphic(M, directSum L)
   assert all(8, i -> same { M, target M_[i], source M^[i] }
       and same { L#i, target M^[i], source M_[i] })
   --elapsedTime profile summands M;
@@ -188,7 +188,7 @@ TEST /// -- testing inhomogeneous examples
   assert(3 == #summands M)
   assert(3 == #summandsFromIdempotents M)
   assert(3 == #summandsFromProjectors M)
-  assert isIsomorphic'(directSum summands M, M, Tries => 10)
+  assert isIsomorphic(directSum summands M, M, Tries => 10)
   --
   -- TODO: this is locally zero, but can we diagonalize it?
   M = coker matrix matrix"1,y,z;y,1,x;z,x,1"
@@ -203,7 +203,7 @@ TEST /// -- testing inhomogeneous examples
   M = coker matrix matrix"x,y,z;y,z,x;z,x,y"
   assert(2 == #summands M)
   assert(2 == #summandsFromProjectors M)
-  assert first isIsomorphic(directSum summands M, M)
+  assert isIsomorphic(directSum summands M, M)
   -- TODO: this is locally zero, but can we diagonalize it?
   M = coker matrix matrix"1,y,z;y,1,x;z,x,1"
   assert(summands M == {M})

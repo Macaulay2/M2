@@ -251,7 +251,7 @@ summandsFromIdempotents(Module, List)   := opts -> (M, ends) -> (
     projs = append(projs, inducedMap(image comp, M, comp));
     -- assert(0 == intersect apply(ends, ker));
     -- assert(0 == intersect apply(injs, image));
-    -- assert first isIsomorphic(M, directSum apply(projs, target));
+    -- assert isIsomorphic(M, directSum apply(projs, target));
     -- this is the splitting (surjection, inclusion) of M to a module
     -- whose degree zero endomorphisms have already been computed.
     (pr0, inc0) := opts#"Splitting" ?? (id_M, id_M);

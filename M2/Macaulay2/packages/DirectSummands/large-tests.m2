@@ -26,7 +26,7 @@ TEST ///
   debugLevel = 1
   elapsedTime L5 = summands M; -- takes ~30min on Fields' server
   assert(#L5 == 75); -- could be wrong
-  assert first isIsomorphic(M, directSum L5)
+  assert isIsomorphic(M, directSum L5)
 ///
 
 ///
