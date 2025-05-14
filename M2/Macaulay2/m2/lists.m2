@@ -247,19 +247,10 @@ randomSubset(ZZ, ZZ) := (N, n) -> (
 	    while (N - t) * rawRandomRRUniform defaultPrecision >= n - m
 	    do t += 1;
 	    first (t, t += 1))))
--- when size not given, use binomial distribution first to determine size
 randomSubset ZZ := N -> (
-    if N < 0 then error "expected a nonnegative integer"
-    else if N < 30 then (
-	-- for small N, sum up N Bernoulli variates
-	n := 0;
-	scan(N, i -> n += random 2))
-    else (
-	-- for large N, use normal approximation
-	n = round(n/2 + sqrt(n/4)*rawRandomRRNormal defaultPrecision);
-	-- in the vanishingly unlikely case we end up outside [0, N]:
-	n = min(N, max(0, n)));
-    randomSubset(N, n))
+    if N < 0 then error "expected a nonnegative integer";
+    r := random 2^N;
+    for i to N - 1 list if r & 2^i != 0 then i else continue)
 randomSubset(VisibleList, ZZ) := (x, n) -> x_(randomSubset(#x, n))
 randomSubset VisibleList := x -> x_(randomSubset(#x))
 randomSubset(Set, ZZ) := (x, n) -> set randomSubset(toList x, n)
