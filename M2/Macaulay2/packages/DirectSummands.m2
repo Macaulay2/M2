@@ -47,9 +47,6 @@ export {
     "generalEndomorphism",
     "isomorphismTally",
     "tallySummands",
-    "isomorphism",
-    -- symbols
-    "Tries",
     -- frobenius methods
     "frobeniusMap",
     "frobeniusRing",
@@ -59,6 +56,7 @@ export {
     "potentialExtension",
     "extendGroundField" => "changeBaseField",
     "changeBaseField"
+    -- symbols
     }
 
 importFrom_Core {
@@ -221,43 +219,6 @@ checkRecursionDepth = () -> if recursionDepth() > recursionLimit - 20 then print
 
 module Module := identity
 
--- give an isomorphism between two free modules with same degrees
--- FIXME: because of https://github.com/Macaulay2/M2/issues/3719,
--- this might not give the most "natural" isomorphism
-isisofree = o -> (M, N0) -> (
-    (d1, d2) := (degrees M, degrees N0);
-    if #d1 =!= #d2 then return (false, null);
-    if o.Strict then N := N0 else d2 = degrees(
-	N = N0 ** (ring N0)^{min d2 - min d1});
-    if sort d1 != sort d2 then return (false, null);
-    p1 := first \ (sortBy last) toList pairs d1;
-    p2 := first \ (sortBy last) toList pairs d2;
-    (true, map(M, N0, id_N^p2 // id_M^p1)))
-
-isiso = lookup(isIsomorphic, Module, Module)
-isIsomorphic(Module, Module) := Sequence => o -> (M, N) -> (
-    if isFreeModule M and isFreeModule N
-    then (isisofree o)(M, N)
-    else (isiso o)(M, N))
-
-protect Isomorphisms
-isIsomorphic' = method(Options => options isIsomorphic ++ { Tries => null })
-isIsomorphic'(Module, Module) := opts -> (M, N) -> (
-    M.cache.Isomorphisms ??= new MutableHashTable;
-    if M.cache.Isomorphisms#?N then return true;
-    tries := opts.Tries ?? defaultNumTries char ring M;
-    opts' := selectKeys(opts, k -> (options isIsomorphic)#?k);
-    -- TODO: parallelize
-    for c to tries - 1 do (
-	(bool, isom) := isIsomorphic(M, N, opts');
-	if bool then ( M.cache.Isomorphisms#N = isom; return true ));
-    false)
-
-isomorphism = method(Options => options isIsomorphic ++ { Tries => null })
-isomorphism(Module, Module) := Matrix => o -> (M, N) -> (
-    if not isIsomorphic'(M, N, o) then error "modules not isomorphic";
-    M.cache.Isomorphisms#N)
-
 -- TODO: speed this up
 -- TODO: implement isIsomorphic for sheaves
 -- TODO: add strict option
@@ -266,7 +227,7 @@ tallySummands = L -> tally (
     L  = new MutableList from module \ L;
     b := new MutableList from #L : true;
     for i to #L-2 do if b#i then for j from i+1 to #L-1 do if b#j then (
-	if isIsomorphic'(L#i, L#j, opts)
+	if isIsomorphic(L#i, L#j, opts)
 	then ( b#j = false; L#j = L#i ));
     new List from L)
 
@@ -281,7 +242,7 @@ isomorphismTally List := L -> (
 	i := j + 1;
 	c := 1;
 	while i < #L do (
-	    if isIsomorphic'(L#j, L#i, opts)
+	    if isIsomorphic(L#j, L#i, opts)
 	    then (
 		L = drop(L, {i, i});
 		c = c + 1)
