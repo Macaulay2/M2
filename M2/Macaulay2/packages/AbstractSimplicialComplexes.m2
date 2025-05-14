@@ -653,13 +653,15 @@ doc ///
 	     L = randomAbstractSimplicialComplex(6,3)
 	  Text
 	     Create the random complex $Y_d(n,m)$ which has vertex set
-             $[n]$ and complete $(d − 1)$-skeleton, and has exactly m d-dimensional faces,
+             $[n]$ and complete $(d − 1)$-skeleton, and has exactly $m$ $d$-dimensional faces,
              chosen at random from all $\binom{\binom{n}{d+1}{m}$ possibilities.
 	     Such random simplicial complexes appear in lots of different
 	     contexts including in the article
 	     @HREF("https://www.tandfonline.com/doi/abs/10.1080/10586458.2018.1473821",
 		       "Cohen-Lenstra heuristics for torsion in homology of random complexes")@
 	     by  M. Kahle, F. H. Lutz, A. Newman, and K. Parsons [Exp. Math. vol. 29, no. 3 (2020)].
+	     The output of the method may produce, in some cases, complexes which have fewer than
+	     $m$ faces of dimension $d$.  Further, not all $d-1$ skeletons will be complete.
 	  Example
 	     N = randomAbstractSimplicialComplex(6,3,2)
     SeeAlso
