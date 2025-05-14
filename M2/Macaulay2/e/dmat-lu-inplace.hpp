@@ -88,7 +88,7 @@ template <>
 inline void DMatLUinPlace<M2::ARingGFFlintBig>::computeLU()
 {
   if (mIsDone) return;
-  //  std::cout << "computing LU decomposition GFFlintBig" << std::endl;
+  //std::cout << "computing LU decomposition GFFlintBig" << std::endl;
   
   mp_limb_signed_t* perm = newarray_atomic(mp_limb_signed_t, mLU.numRows());
   fq_nmod_mat_lu(perm, mLU.fq_nmod_mat(), false, ring().flintContext());
@@ -108,7 +108,7 @@ template <>
 inline void DMatLUinPlace<M2::ARingGFFlint>::computeLU()
 {
   if (mIsDone) return;
-  // std::cout << "computing LU decomposition GFFlint" << std::endl;
+  //  std::cout << "computing LU decomposition GFFlint" << std::endl;
   mp_limb_signed_t* perm = newarray_atomic(mp_limb_signed_t, mLU.numRows());
   fq_zech_mat_lu(perm, mLU.fq_zech_mat(), false, ring().flintContext());
   // Now we set mPerm:
@@ -196,7 +196,7 @@ void DMatLUinPlace<RingType>::computeLU()
 {
   if (mIsDone) return;
 
-  // std::cout << "computing LU decomposition generic version" << std::endl;
+  //  std::cout << "computing LU decomposition generic version" << std::endl;
   typename RingType::Element tmp(mLU.ring());
 
   size_t col = 0;  // current column we are working on
@@ -280,7 +280,7 @@ void DMatLUinPlace<RingType>::computeLU()
   mIsDone = true;
 }
 
-
+#if 0
 template <>
 inline void DMatLUinPlace<M2::ARingRR>::computeLU()
 {
@@ -294,8 +294,6 @@ inline void DMatLUinPlace<M2::ARingRR>::computeLU()
 
   if (min == 0)
     return;
-
-  // printf("entering DMatLUinPlace::computeLUNaive for RR\n");
 
   int* perm = new int[min];
   std::vector<double> copyA = make_lapack_array(mLU);
@@ -330,7 +328,9 @@ inline void DMatLUinPlace<M2::ARingRR>::computeLU()
 
   delete [] perm;
 }
+#endif
 
+#if 0
 template <>
 inline void DMatLUinPlace<M2::ARingCC>::computeLU()
 {
@@ -377,6 +377,7 @@ inline void DMatLUinPlace<M2::ARingCC>::computeLU()
 
   delete[] perm;
 }
+#endif
 
 template <class RingType>
 void LUUtil<RingType>::setUpperLower(const Mat& LU, Mat& lower, Mat& upper)
