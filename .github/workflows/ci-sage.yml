@@ -87,7 +87,7 @@ jobs:
   linux:
     uses: passagemath/passagemath/.github/workflows/docker.yml@main
     with:
-      extra_sage_packages: gdbm git libxml2
+      extra_sage_packages: gdbm git libxml2 gfortran cmake python3 openblas zlib readline sqlite libpng bzip2 liblzma libffi openssl
       targets: SAGE_CHECK=no SAGE_CHECK_PACKAGES="macaulay2" macaulay2
       # Standard setting: Test the current HEAD of passagemath:
       sage_repo: passagemath/passagemath
@@ -101,7 +101,7 @@ jobs:
   macos:
     uses: passagemath/passagemath/.github/workflows/macos.yml@main
     with:
-      extra_sage_packages: gdbm git libxml2
+      extra_sage_packages: gdbm git libxml2 gfortran cmake python3 openblas zlib readline sqlite libpng bzip2 liblzma libffi openssl
       targets: SAGE_CHECK=no SAGE_CHECK_PACKAGES="macaulay2" macaulay2
       # Standard setting: Test the current HEAD of passagemath:
       sage_repo: passagemath/passagemath
