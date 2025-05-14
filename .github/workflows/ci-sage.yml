@@ -1,5 +1,15 @@
 name: Run Sage CI
-
+##
+## This GitHub Actions workflow uses the portability testing framework
+## of passagemath (https://github.com/passagemath).
+##
+##  - Documentation: https://doc.sagemath.org/html/en/developer/portability_testing.html
+##
+##  - Deployment of ci-sage.yml in upstream projects is tracked at
+##    https://github.com/passagemath/passagemath/issues/704
+##
+##  - Contact: @passagemath/ci team on GitHub
+##
 ## This GitHub Actions workflow provides:
 ##
 ##  - portability testing, by building and testing this project on many platforms
@@ -15,10 +25,6 @@ name: Run Sage CI
 ## After all jobs have finished (or are canceled) and a short delay,
 ## tar files of all logs are made available as "build artifacts".
 ##
-## This GitHub Actions workflow uses the portability testing framework
-## of SageMath (https://www.sagemath.org/).  For more information, see
-## https://doc.sagemath.org/html/en/developer/portability_testing.html
-
 ## The workflow consists of two jobs:
 ##
 ##  - First, it builds a source distribution of the project
