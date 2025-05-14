@@ -18,7 +18,8 @@ name: Run Sage CI
 ##  - continuous integration, by building and testing other software
 ##    that depends on this project.
 ##
-## It runs on every pull request and push of a tag to the GitHub repository.
+## It runs on every push of a tag to the GitHub repository
+## and can also be invoked manually ("workflow_dispatch").
 ##
 ## The testing can be monitored in the "Actions" tab of the GitHub repository.
 ##
@@ -40,14 +41,8 @@ name: Run Sage CI
 ## Many copies of the second step are run in parallel for each of the tested
 ## systems/configurations.
 
-#on: [push, pull_request]
-
 on:
-  pull_request:
-    types: [opened, synchronize]
   push:
-    branches:
-      - master
     tags:
       - '*'
   workflow_dispatch:
