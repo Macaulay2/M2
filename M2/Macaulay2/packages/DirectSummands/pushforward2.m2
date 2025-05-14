@@ -7,8 +7,11 @@ decomposePushforwardPresentation(List, Matrix) := (d, f) -> (
     if #d == 1 then decomposePushforwardPresentation(d#0, f)
     else error "not implemented for multigraded maps")
 decomposePushforwardPresentation(ZZ, Matrix) := (d, f) -> (
+    if d <= 0 then error "expected positive degree";
+    if d == 1 then return {f};
     tardegrees := degrees target f;
     srcdegrees := degrees source f;
+    -- TODO: hypercube(n, 0, 0) gives an error, but it should return the origin
     cube := flatten \ entries \ latticePoints hypercube(degreeLength ring f, 0, d - 1);
     tarclasses := apply(cube, i -> positions(tardegrees, deg -> deg % d == i));
     srcclasses := apply(cube, i -> positions(srcdegrees, deg -> deg % d == i));
@@ -20,7 +23,7 @@ decomposePushforwardPresentation(ZZ, Matrix) := (d, f) -> (
 pushForward' = (f, M, opts) -> (
     if not isHomogeneous f
     or not isHomogeneous M
-    then return null;
+    then error "expected homogeneous inputs";
     M = cokernel presentation M;
     M1 := M / ideal f.matrix;
     M2 := subquotient(matrix basis M1, relations M);
