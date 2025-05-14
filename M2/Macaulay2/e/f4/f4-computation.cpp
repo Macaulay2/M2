@@ -32,9 +32,24 @@ GBComputation *createF4GB(const Matrix *m,
                           int numThreads)
 {
   const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
+  if (R == nullptr)
+    {
+      ERROR("internal error: expected a polynomial ring for `Algorithm => LinearAlgebra` groebner basis");
+      return nullptr;
+    }
   const Ring *K = R->getCoefficients();
 
   // TODO: code here used to detect whether R, K is a valid ring here
+  if (not R->is_commutative_ring())
+    {
+      ERROR("expected commutative polynomial ring for `Algorithm => LinearAlgebra` groebner basis");
+      return nullptr;
+    }
+  if (R->is_quotient_ring())
+    {
+      ERROR("can't use quotient polynomial rings with `Algorithm => LinearAlgebra` groebner basis");
+      return nullptr;
+    }
   if (not m->is_homogeneous())
     {
       ERROR("expected homogeneous input for `Algorithm => LinearAlgebra` groebner basis");
@@ -84,6 +99,16 @@ F4Computation::F4Computation(const VectorArithmetic* VA,
                              heftDegrees,
                              moduleHeftDegrees);
 
+  if (m->n_rows() >= 2)
+    {
+      if (mMonoid->componentLocation() != -1 or
+          mMonoid->positionUp() != 1)
+        {
+          delete mMonoid;
+          throw exc::engine_error("must use Position=>Up at end of monomial order for Algorithm=>LinearAlgebra groebner basis");
+        }
+    }
+  
   mF4GB = new F4GB(mVectorArithmetic,
                    mMonoid,
                    m->rows(),

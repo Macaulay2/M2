@@ -99,6 +99,9 @@ class MonomialInfo : public our_new_delete
   int monomial_size(const_packed_monomial m) const { return nslots; }
   void show() const;
 
+  int componentLocation() const { return mComponentLoc; }
+  int positionUp() { return mPositionUp; }
+  
   long hash_value(const_packed_monomial m) const { return *m; }
   // This hash value is an ADDITIVE hash (trick due to A. Steel)
 
