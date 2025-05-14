@@ -353,7 +353,7 @@ TEST /// -- Algorithm => LinearAlgebra, over finite field.
   kk = ZZ/101;
   R1 = kk[a..f];
   J1 = ideal(a*b*c-d*e*f, a^2*c-b^2*e, b*e^4 - d*f^4 + e^5)
-  elapsedTime gbC = flatten entries gens (G = gb(ideal J1_*, Algorithm => LinearAlgebra)); -- crash
+  elapsedTime gbC = flatten entries gens (G = gb(ideal J1_*, Algorithm => LinearAlgebra));
   elapsedTime gbB = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
   assert(gbC == gbB)
 
@@ -377,7 +377,7 @@ TEST /// -- Algorithm => LinearAlgebra, over finite field.
   setRandomSeed 42
   J1 = ideal random(R1^1, R1^{-2, -2, -2, -3});
   elapsedTime gbA = flatten entries gens gb(ideal J1_*);
-  elapsedTime gbC = flatten entries gens (G = gb(ideal J1_*, Algorithm => LinearAlgebra)); -- crash
+  elapsedTime gbC = flatten entries gens (G = gb(ideal J1_*, Algorithm => LinearAlgebra));
   elapsedTime gbB = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
   assert(gbA == gbB)
   assert(gbA == gbC)
@@ -438,7 +438,7 @@ TEST /// -- Algorithm => LinearAlgebra, over non-prime finite field.
 -*
   restart
 *-
-TEST /// -- hilbert driven gb computation, for default, Algorithn => LinearAlgebra
+TEST /// -- hilbert driven gb computation, for default, Algorithm => LinearAlgebra
   setRandomSeed 42
   kk = ZZ/101
   R1 = kk[a..g, MonomialSize => 8];
@@ -448,7 +448,7 @@ TEST /// -- hilbert driven gb computation, for default, Algorithn => LinearAlgeb
   elapsedTime gbA = flatten entries gens gb(ideal J1_*, Hilbert => hfJ);
   elapsedTime gbB = flatten entries gens gb(ideal J1_*,
                                           Algorithm => LinearAlgebra,
-					  Hilbert => hfJ);
+                                          Hilbert => hfJ);
   elapsedTime gbB2 = flatten entries gens gb(ideal J1_*,
                                           Algorithm => LinearAlgebra);
   elapsedTime gbC = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
@@ -461,6 +461,28 @@ TEST /// -- hilbert driven gb computation, for default, Algorithn => LinearAlgeb
   assert(gbA == gbD)
 ///
 
+
+-*
+  restart
+*-
+TEST /// -- hilbert driven gb computation, quasi-degrees
+  setRandomSeed 42
+  kk = ZZ/101
+  R1 = kk[a..g, Degrees => {1,2,3,3,4,4,5}];
+  K1 = ideal (a^8, b^4, e^2, f^2)
+  hfJ = poincare K1
+  J1 = ideal random(R1^1, R1^{-8, -8, -8, -8});
+  --elapsedTime gbA = flatten entries gens gb(ideal J1_*, Hilbert => hfJ);
+  elapsedTime gbB = flatten entries gens gb(ideal J1_*,
+                                          Algorithm => LinearAlgebra,
+                                          Hilbert => hfJ);
+  elapsedTime gbB2 = flatten entries gens gb(ideal J1_*,
+                                          Algorithm => LinearAlgebra);
+  elapsedTime gbC = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
+  assert(gbB == gbB2)
+  assert(gbB == gbC)
+///
+
 -*
   restart
 *-
@@ -470,14 +492,9 @@ TEST /// -- GB over quotient rings
   R1 = kk[a,b,c,d,e,f]/ideal(a^2 - b*c)
   J1 = ideal random(R1^1, R1^{-2,-2,-3,-3});
   elapsedTime gbA = flatten entries gens gb(ideal J1_*);
-  elapsedTime gbB = flatten entries gens gb(ideal J1_*,
-      Algorithm => LinearAlgebra); -- BUG: INCORRECT
+  assert try(gb(ideal J1_*, Algorithm => LinearAlgebra);false) else true
   elapsedTime gbC = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4"); 
-  assert(gbA == gbB) -- fails
   assert(gbA == gbC) -- because it falls back to working version
-  #gbA
-  #gbB
-  #gbC
 
   needsPackage "Msolve"
   assert try(msolveGB(ideal J1_*, Threads => 8); false) else true -- correctly gives error
@@ -493,27 +510,9 @@ TEST /// -- exterior algebra
   setRandomSeed 42
   J1 = ideal random(R1^1, R1^{-2,-2,-2,-2});
   elapsedTime gbA = flatten entries gens gb(J1);
-  elapsedTime gbB = flatten entries gens gb(ideal J1_*, Algorithm => LinearAlgebra); -- BUG!!
+  assert try(gb(ideal J1_*, Algorithm => LinearAlgebra); false) else true;
   elapsedTime gbC = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
-  --assert(gbA == gbB)
-  --assert(gbA == gbC)
-  --assert(gbA == gbD)
-
-  needsPackage "Msolve" -- BUG!!
-  assert try(msolveGB(ideal J1_*, Threads => 8); false) else true -- shoulg give error!
-  gbD = flatten entries msolveGB(ideal J1_*, Threads => 8);-- is this correct?! NO!!  What is going on? I think it is substituting back into R1, getting mostly zeros...
-  #gbA
-  #gbD
-
-  R2 = kk[a,b,c,d,e,f]
-  J2 = sub(J1, R2)
-  gbA2 = flatten entries gens gb(ideal J2_*);
-  gbB2 = flatten entries gens gb(ideal J2_*, Algorithm => LinearAlgebra);
-  gbD2 = flatten entries msolveGB(ideal J2_*);
-  assert(gbA2 == sort gbB2)
-  assert(gbA2 == gbD2)
-
-  ideal for f in gbD2 list sub(f, R1)
+  assert(gbA == gbC)
 ///
 
 -*
@@ -524,16 +523,13 @@ TEST /// -- nonstandard grading
   R1 = kk[a..f, MonomialOrder => {GRevLex => {1,1,1,1,1,1}}, Degrees => {1,2,3,4,4,4}];
   setRandomSeed 42
 
-  dotprod = (c,d) -> sum( min(#c, #d), i -> c#i * d#i )
-  apply(degrees R1, d -> dotprod(d, heft R1))
-  
   J1 = ideal random(R1^1, R1^{-5, -5, -5, -5});
   assert isHomogeneous J1
   elapsedTime gbA = flatten entries gens gb(J1);
   elapsedTime gbB = flatten entries gens gb(ideal J1_*, Algorithm => LinearAlgebra);
   elapsedTime gbC = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
   needsPackage "Msolve"
-  elapsedTime gbD = flatten entries msolveGB(ideal J1_*, Verbosity => 2, Threads => 8);
+  elapsedTime gbD = flatten entries msolveGB(ideal J1_*, Threads => 8);
   assert(gbA == gbB)
   assert(gbA == gbC)
   assert(gbA == gbD)
@@ -582,6 +578,19 @@ TEST /// -- another module GB test
 ///
 
 TEST /// -- another module GB test
+    R = ZZ/101[a..d, MonomialOrder => {Position => Up, GRevLex => 2, GRevLex => 2 }]
+    M = R^2
+    setRandomSeed 42
+    mat = matrix{{a,b},{a,c}}
+    gbA = gens gb mat;
+    -- to clear cache for mat
+    mat = matrix{{a,b},{a,c}}
+    assert try (gb(mat, Algorithm => LinearAlgebra); false) else true
+
+    gens gb(ideal(a,b), Algorithm => LinearAlgebra)
+///
+
+TEST /// -- another module GB test
     R = ZZ/101[a..f, Degrees => {1,2,3,4,5,6}]
     M = koszul(3,vars R)
     gbA = gens gb M;
@@ -593,16 +602,15 @@ TEST /// -- another module GB test
 -*
   restart
 *-
-TEST /// -- inhomgeneity. Algorithm => LinearAlgebra, over finite field.
+TEST /// -- inhomgeneity. Algorithm => LinearAlgebra, over finite field. Need to implement still
   kk = ZZ/101;
   R1 = kk[a..g, MonomialSize=>8];
   setRandomSeed 42
   J1 = ideal (random(2, R1) + random(3, R1), random(2, R1) - 1)
   elapsedTime gbA = flatten entries gens gb(ideal J1_*);
-  elapsedTime gbC = flatten entries gens (G = gb(ideal J1_*, Algorithm => LinearAlgebra)); -- gives error, as it should
+  elapsedTime assert try(gb(ideal J1_*, Algorithm => LinearAlgebra); false) else true;
   elapsedTime gbB = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
   assert(gbA == gbB)
-  --assert(gbA == gbC)
 
   -- TODO: is it ok to check Msolve while we do this?
   needsPackage "Msolve"
@@ -665,6 +673,13 @@ TEST /// -- different monomial orders
   restart
 *-
 TEST /// -- Weyl algebras
+  R = QQ[x,dx, WeylAlgebra => {x=>dx}]
+  I = ideal(x^3, x*dx)
+  assert try (gb(I, Algorithm => LinearAlgebra); false) else true
+
+  R = ZZ/32003[x,dx,h, WeylAlgebra => {x=>dx,h}]
+  I = ideal(x^3, x*dx)
+  assert try (gb(I, Algorithm => LinearAlgebra); false) else true -- this should error
 ///
 
 
@@ -672,15 +687,28 @@ TEST /// -- Weyl algebras
   restart
 *-
 TEST /// -- multigradings
-///
-
--*
-  restart
-*-
-TEST /// -- restarting GB's after stopping for some reason
+  I = Grassmannian(2, 5, CoefficientRing => ZZ/32003)
+  R = ring I
+  es = entries id_(ZZ^6)
+  degs = apply(subsets(0..5, 3), x -> sum apply(x, i -> es_i))
+  S = newRing(R, Degrees => degs)
+  J1 = sub(I, S)
+  isHomogeneous J1
+  elapsedTime gbA = flatten entries gens gb(ideal J1_*);
+  elapsedTime gbC = flatten entries gens gb(ideal J1_*, Algorithm => LinearAlgebra);
+  elapsedTime gbB = flatten entries groebnerBasis(ideal J1_*, Strategy => "F4");
+  assert(gbA == gbB)
+  assert(gbA == gbC)
 ///
 
 -- todo:
--- 1. leadTerm
--- 2. sort the GB
--- 3. consider other monomial orders
+--  error for quotient rings (for LinearAlgebra)
+--  error for exterior algebra
+--  error for Weyl algebra
+--  error if module order is wrong (only if we are in a non-ideal situation).
+-- check
+--  Hilbert hint with quasi-gradings OK
+--  multi-gradings: OK
+--  check Weyl algebra (homogenized Weyl algebra): Need to error 
+
+
