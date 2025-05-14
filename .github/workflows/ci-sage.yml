@@ -53,7 +53,7 @@ concurrency:
 
 env:
   # Ubuntu packages to install so that the project's "make dist" can succeed
-  DIST_PREREQ: autoconf automake libtool
+  DIST_PREREQ: git
   # Name of this project in the Sage distribution
   SPKG:        macaulay2
   REMOVE_PATCHES:   "*"
@@ -72,26 +72,10 @@ jobs:
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install $DIST_PREREQ
 
-      # From test_build.yml
-
-      - name: Install requirements for Linux
-        if: runner.os == 'Linux'
-        run: |
-          sudo add-apt-repository -y -n ppa:macaulay2/macaulay2
-          sudo apt-get update
-          sudo apt-get install -y -q --no-install-recommends clang-16 gfortran libtool-bin ninja-build yasm ccache
-          sudo apt-get install -y -q --no-install-recommends liblzma-dev libboost-stacktrace-dev \
-                  libncurses-dev libncurses5-dev libreadline-dev libeigen3-dev libopenblas-dev libxml2-dev \
-                  libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libmpfi-dev libntl-dev gfan \
-                  libgivaro-dev libboost-regex-dev fflas-ffpack libflint-dev libmps-dev libfrobby-dev \
-                  libsingular-dev singular-data libcdd-dev cohomcalg topcom 4ti2 libnormaliz-dev normaliz coinor-csdp \
-                  libnauty-dev nauty lrslib polymake pipx phcpack w3c-markup-validator libtbb-dev qepcad libomp-16-dev msolve
-
-
       - name: Run make dist, prepare upstream artifact
         run: |
-          (cd build/pkgs/${{ env.SPKG }}/src && cd M2 && ./autogen.sh && ./configure && make dist) \
-          && mkdir -p upstream && cp build/pkgs/${{ env.SPKG }}/src/M2/*.tar.gz upstream/${{ env.SPKG }}-git.tar.gz \
+          (cd build/pkgs/${{ env.SPKG }}/src && git archive --format=tar.gz --prefix=${{ env.SPKG }}-git/ HEAD > ${{ env.SPKG }}-git.tar.gz) \
+          && mkdir -p upstream && cp build/pkgs/${{ env.SPKG }}/src/*.tar.gz upstream/${{ env.SPKG }}-git.tar.gz \
           && echo "sage-package create ${{ env.SPKG }} --version git --tarball ${{ env.SPKG }}-git.tar.gz --type=optional" > upstream/update-pkgs.sh \
           && if [ -n "${{ env.REMOVE_PATCHES }}" ]; then echo "(cd ../build/pkgs/${{ env.SPKG }}/patches && rm -f ${{ env.REMOVE_PATCHES }}; :)" >> upstream/update-pkgs.sh; fi \
           && ls -l upstream/
