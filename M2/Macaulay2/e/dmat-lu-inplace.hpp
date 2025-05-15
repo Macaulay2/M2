@@ -280,7 +280,6 @@ void DMatLUinPlace<RingType>::computeLU()
   mIsDone = true;
 }
 
-#if 0
 template <>
 inline void DMatLUinPlace<M2::ARingRR>::computeLU()
 {
@@ -328,9 +327,7 @@ inline void DMatLUinPlace<M2::ARingRR>::computeLU()
 
   delete [] perm;
 }
-#endif
 
-#if 0
 template <>
 inline void DMatLUinPlace<M2::ARingCC>::computeLU()
 {
@@ -377,7 +374,6 @@ inline void DMatLUinPlace<M2::ARingCC>::computeLU()
 
   delete[] perm;
 }
-#endif
 
 template <class RingType>
 void LUUtil<RingType>::setUpperLower(const Mat& LU, Mat& lower, Mat& upper)
