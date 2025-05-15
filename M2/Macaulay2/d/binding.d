@@ -137,7 +137,7 @@ export makeProtectedSymbolClosure(w:Word):SymbolClosure := (
      when globalFrame.values.(entry.frameindex)
      is s:SymbolClosure do s
      else SymbolClosure(globalFrame,entry));
-makeKeyword(w:Word):SymbolClosure := (
+export makeKeyword(w:Word):SymbolClosure := (
      -- keywords differ from symbols in that their initial value is null
      entry := makeEntry(w,dummyPosition,globalDictionary);
      entry.Protected = true;
@@ -190,9 +190,9 @@ special(s:string,f:function(Token,TokenFile,int,bool):ParseTree,lprec:int,rprec:
 -- created below are all in the global dictionary.
 
 -- new operators must be:
---   set up as an "actor" with "setup()"
+--   set up as an "actor" with "setup()" if they have nonstandard syntax
+--   (without "setup()", M2 will just lookup a method)
 --   added to the export list in ../m2/exports.m2
---   added to the table binaryOperatorFunctions in ../m2/expressions.m2
 --   added to the list of operators in the documentation node "operators" in ../packages/Macaulay2Doc/ov_language.m2
 --   documented with a suitable headline, such as:
 --     	    "a unary operator"
@@ -286,11 +286,7 @@ bumpPrecedence();
      export PlusS := makeKeyword(unarybinaryleft("+"));	    -- also binary
      export PlusPlusS := makeKeyword(binaryleft("++"));
 bumpPrecedence();
-     export InterpunctS := makeKeyword(binaryleft("·"));
-bumpPrecedence();
      export StarStarS := makeKeyword(binaryleft("**"));
-     export BoxTimesS := makeKeyword(binaryleft("⊠"));
-     export ShuffleProductS := makeKeyword(binaryleft("⧢"));
 bumpPrecedence();
      precBracket := prec;
      export leftbracket := parens("[","]",precBracket, precRightParen, precRightParen);
@@ -516,10 +512,7 @@ export opsWithBinaryMethod := array(SymbolClosure)(
      PowerGreaterEqualS,   UnderscoreGreaterEqualS,
      PowerLessS,           UnderscoreLessS,
      PowerLessEqualS,      UnderscoreLessEqualS,
-     PowerStarStarS,
-     InterpunctS,
-     BoxTimesS,
-     ShuffleProductS
+     PowerStarStarS
      );
 export opsWithUnaryMethod := array(SymbolClosure)(
      StarS, MinusS, PlusS, LessLessS, QuestionQuestionS,
@@ -644,18 +637,6 @@ bindParenParmList(e:ParseTree,dictionary:Dictionary,desc:functionDescription):vo
 	  )
      is p:EmptyParentheses do nothing
      else makeErrorTree(e,"expected parenthesized argument list or symbol"));
-opHasBinaryMethod(o:Symbol):bool := (
-     foreach s in opsWithBinaryMethod do if s.symbol == o then return true;
-     return false;
-     );
-opHasUnaryMethod(o:Symbol):bool := (
-     foreach s in opsWithUnaryMethod do if s.symbol == o then return true;
-     return false;
-     );
-opHasPostfixMethod(o:Symbol):bool := (
-     foreach s in opsWithPostfixMethod do if s.symbol == o then return true;
-     return false;
-     );
 bindTokenLocally(t:Token,dictionary:Dictionary):void := (
      lookupCountIncrement = 0;
      r := lookup(t.word,dictionary);
@@ -716,54 +697,26 @@ bindassignment(assn:Binary,dictionary:Dictionary,colon:bool):void := (
 	  bindop(unary.Operator,dictionary);
 	  bind(unary.rhs,dictionary);
 	  bind(body,dictionary);
-	  if colon
-	  then (
-	       if ! opHasUnaryMethod(unary.Operator.entry)
-	       then makeErrorTree(assn.Operator, "can't assign a method for this unary operator");
-	       )
-	  else (
-	       if ! opHasUnaryMethod(unary.Operator.entry)
-	       then makeErrorTree(assn.Operator, "can't assign a value for this unary operator")
-	       )
 	  )
      is unary:Postfix do (
 	  bind(unary.lhs,dictionary);
 	  bindop(unary.Operator,dictionary);
 	  bind(body,dictionary);
-	  if colon
-	  then (
-	       if ! opHasPostfixMethod(unary.Operator.entry)
-	       then makeErrorTree(assn.Operator, "can't assign a method for this postfix operator");
-	       )
-	  else (
-	       if ! opHasPostfixMethod(unary.Operator.entry)
-	       then makeErrorTree(assn.Operator, "can't assign a value for this postfix operator")
-	       )
 	  )
      is binary:Binary do (
 	  bind(binary.lhs,dictionary);
 	  bindop(binary.Operator,dictionary);
-	  bind(binary.rhs, if binary.Operator.word == DotS.symbol.word then globalDictionary else dictionary );
+	  bind(binary.rhs, if binary.Operator.word == DotS.symbol.word then globalDictionary else dictionary);
 	  bind(body,dictionary);
-	  if colon then (
-	       if ! opHasBinaryMethod(binary.Operator.entry)
-	       then makeErrorTree( assn.Operator, "can't assign a method for this binary operator");
-	       )
-	  else (
-	       if !(binary.Operator.word == DotS.symbol.word
-		    || 
-		    binary.Operator.word == SharpS.symbol.word
-		    ||
-		    opHasBinaryMethod(binary.Operator.entry))
-	       then makeErrorTree( assn.Operator, "can't assign a value for this binary operator");
-	       if binary.Operator.word == DotS.symbol.word then (
-		    when binary.rhs is t:Token do (
-			 if t.word.typecode != TCid
-			 then makeErrorTree(assn.Operator, "expected a symbol to right of '.'");
-			 )
-		    else makeErrorTree(assn.Operator, "expected a symbol to right of '.'");
-		    );
-	       )
+	  if colon && (binary.Operator.word == DotS.symbol.word
+                   ||
+                   binary.Operator.word == SharpS.symbol.word
+		   ) then makeErrorTree( assn.Operator, "can't assign a method for this binary operator");
+	  if binary.Operator.word == DotS.symbol.word then (
+              when binary.rhs is t:Token do return
+	      else nothing;
+              makeErrorTree(assn.Operator, "expected a symbol to right of '.'");
+	      );
 	  )
      is n:New do (
 	  if colon then (

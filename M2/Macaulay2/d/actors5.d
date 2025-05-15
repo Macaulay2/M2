@@ -1,6 +1,7 @@
 --		Copyright 1995,2010 by Daniel R. Grayson
 use actors;
 use actors2;
+use binding;
 
 header "#include <interface/random.h>";
 
@@ -13,26 +14,47 @@ getParsing(e:Expr):Expr := (
      else nullE);
 setupfun("getParsing",getParsing);
 
-LongDoubleRightArrowFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongDoubleRightArrowS);
-setup(LongDoubleRightArrowS,LongDoubleRightArrowFun);
-
-LongLongDoubleRightArrowFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongLongDoubleRightArrowS);
-setup(LongLongDoubleRightArrowS,LongLongDoubleRightArrowFun);
-
-LongDoubleLeftArrowFun1(rhs:Code):Expr := unarymethod(rhs,LongDoubleLeftArrowS);
-LongDoubleLeftArrowFun2(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongDoubleLeftArrowS);
-setup(LongDoubleLeftArrowS,LongDoubleLeftArrowFun1,LongDoubleLeftArrowFun2);
-
-LongLongDoubleLeftArrowFun1(rhs:Code):Expr := unarymethod(rhs,LongLongDoubleLeftArrowS);
-LongLongDoubleLeftArrowFun2(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongLongDoubleLeftArrowS);
-setup(LongLongDoubleLeftArrowS,LongLongDoubleLeftArrowFun1,LongLongDoubleLeftArrowFun2);
-
-LongBiDoubleArrowFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongBiDoubleArrowS);
-setup(LongBiDoubleArrowS,LongBiDoubleArrowFun);
-
-binaryDeductionFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,DeductionS);
-unaryDeductionFun(rhs:Code):Expr := unarymethod(rhs,DeductionS);
-setup(DeductionS,unaryDeductionFun,binaryDeductionFun);
+export makeKeywordFun(e:Expr):Expr := (
+    when e
+    is seq:Sequence do
+    if length(seq) != 4
+	  then WrongNumArgs(4)
+	  else (
+     	when seq.0
+     	is s:stringCell do
+	when seq.1
+	is p:ZZcell do
+	when seq.2
+        is b1:Boolean do
+	when seq.3
+	is b2:Boolean do (
+	   if !isvalidkeyword(s.v) then buildErrorPacket("invalid keyword") else (
+	   u:=errorunary;
+	   t:=errorbinary;
+	   prec:=toInt(p);
+	   uprec:=nopr;
+	   bprec:=nopr;
+	   if b1.v || b2.v then (
+	   if b1.v then (t=binaryop; bprec=prec);
+	   if b2.v then (u=unaryop; uprec=prec);
+	   ) else t=postfixop;
+	   w:=makeUniqueWord(s.v, parseinfo(prec,bprec,uprec,parsefuns(u,t)));
+	   when globalLookup(w) is x:Symbol do (
+	   	stderr << "warning: keyword already in use" << endl;
+		globalFrame.values.(x.frameindex)
+		)
+	   else (
+	   install(s.v,w);
+	   Expr(makeKeyword(w)))
+	))
+	else WrongArg(4,"a boolean")
+	else WrongArg(3,"a boolean")
+	else WrongArg(2,"an integer")
+	else WrongArg(1,"a string")
+     )
+     else WrongNumArgs(4)
+    );
+setupfun("makeKeyword",makeKeywordFun);
 
 -- doublePointerfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,DoubleArrowS);
 optionFun(lhs:Code,rhs:Code):Expr := (
@@ -137,108 +159,6 @@ integermod(e:Expr):Expr := (
      else WrongNumArgs(2));
 installMethod(PercentS,ZZClass,ZZClass,integermod);
 
-modC(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PercentS);
-setup(PercentS,modC);
-
-AtAtfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,AtAtS);
-setup(AtAtS,AtAtfun);
-
-StarStarfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,StarStarS);
-setup(StarStarS,StarStarfun);
-
-doubleplusfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PlusPlusS);
-setup(PlusPlusS,doubleplusfun);
-
-lesslessfun2(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LessLessS);
-lesslessfun1(rhs:Code):Expr := unarymethod(rhs,LessLessS);
-setup(LessLessS,lesslessfun1,lesslessfun2);
-
-greatergreaterfun2(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,GreaterGreaterS);
-setup(GreaterGreaterS,greatergreaterfun2);
-
-barfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,BarS);
-setup(BarS,barfun);
-
-BarUnderscorefun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,BarUnderscoreS);
-setup(BarUnderscoreS,BarUnderscorefun);
-
-UnderscoreGreaterfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreGreaterS);
-setup(UnderscoreGreaterS,UnderscoreGreaterfun);
-
-UnderscoreGreaterEqualfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreGreaterEqualS);
-setup(UnderscoreGreaterEqualS,UnderscoreGreaterEqualfun);
-
-UnderscoreLessfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreLessS);
-setup(UnderscoreLessS,UnderscoreLessfun);
-
-UnderscoreLessEqualfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreLessEqualS);
-setup(UnderscoreLessEqualS,UnderscoreLessEqualfun);
-
-PowerGreaterfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PowerGreaterS);
-setup(PowerGreaterS,PowerGreaterfun);
-
-PowerGreaterEqualfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PowerGreaterEqualS);
-setup(PowerGreaterEqualS,PowerGreaterEqualfun);
-
-PowerLessfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PowerLessS);
-setup(PowerLessS,PowerLessfun);
-
-PowerLessEqualfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PowerLessEqualS);
-setup(PowerLessEqualS,PowerLessEqualfun);
-
-PowerStarStarfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PowerStarStarS);
-setup(PowerStarStarS,PowerStarStarfun);
-
-colonfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,ColonS);
-setup(ColonS,colonfun);
-
-ampersandfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,AmpersandS);
-setup(AmpersandS,ampersandfun);
-
-hathatfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,HatHatS);
-setup(HatHatS,hathatfun);
-
-interpunctfun(lhs:Code, rhs:Code):Expr := binarymethod(lhs, rhs, InterpunctS);
-setup(InterpunctS, interpunctfun);
-
-boxtimesfun(lhs:Code, rhs:Code):Expr := binarymethod(lhs, rhs, BoxTimesS);
-setup(BoxTimesS, boxtimesfun);
-
-shuffleproductfun(lhs:Code, rhs:Code):Expr := binarymethod(lhs, rhs, ShuffleProductS);
-setup(ShuffleProductS, shuffleproductfun);
-
-Tildefun(rhs:Code):Expr := unarymethod(rhs,TildeS);
-setuppostfix(TildeS,Tildefun);
-
-PowerTildefun(rhs:Code):Expr := unarymethod(rhs,PowerTildeS);
-setuppostfix(PowerTildeS,PowerTildefun);
-
-UnderscoreTildefun(rhs:Code):Expr := unarymethod(rhs,UnderscoreTildeS);
-setuppostfix(UnderscoreTildeS,UnderscoreTildefun);
-
-ParenStarParenfun(rhs:Code):Expr := unarymethod(rhs,ParenStarParenS);
-setuppostfix(ParenStarParenS,ParenStarParenfun);
-
-UnderscoreStarfun(rhs:Code):Expr := unarymethod(rhs,UnderscoreStarS);
-setuppostfix(UnderscoreStarS,UnderscoreStarfun);
-
-PowerStarfun(rhs:Code):Expr := unarymethod(rhs,PowerStarS);
-setuppostfix(PowerStarS,PowerStarfun);
-
---PowerSharpfun(rhs:Code):Expr := unarymethod(rhs,PowerSharpS);
---setuppostfix(PowerSharpS,PowerSharpfun);
-
---UnderscoreSharpfun(rhs:Code):Expr := unarymethod(rhs,UnderscoreSharpS);
---setuppostfix(UnderscoreSharpS,UnderscoreSharpfun);
-
-Exclamationfun(rhs:Code):Expr := unarymethod(rhs,ExclamationS);
-setuppostfix(ExclamationS,Exclamationfun);
-
-PowerExclamationfun(rhs:Code):Expr := unarymethod(rhs,PowerExclamationS);
-setuppostfix(PowerExclamationS,PowerExclamationfun);
-
-UnderscoreExclamationfun(rhs:Code):Expr := unarymethod(rhs,UnderscoreExclamationS);
-setuppostfix(UnderscoreExclamationS,UnderscoreExclamationfun);
 
 factorial(x:Expr):Expr := (
      when x
@@ -255,9 +175,6 @@ setupfun("factorial",factorial);
 installMethod(ExclamationS,RRClass,factorial);
 installMethod(ExclamationS,ZZClass,factorial);
 installMethod(ExclamationS,QQClass,factorial);
-
-underscorefun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,UnderscoreS);
-setup(UnderscoreS,underscorefun);
 
 dotfun(lhs:Code,rhs:Code):Expr := (
      left := eval(lhs);
@@ -280,11 +197,6 @@ dotQfun(lhs:Code,rhs:Code):Expr := (
      else False);
 setup(DotQuestionS,dotQfun);
 
-atfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,AtS);
-setup(AtS,atfun);
-
-leftDividefun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LeftDivideS);
-setup(LeftDivideS,leftDividefun);
 
 header "
 #ifdef HAVE_SYS_IOCTL_H
@@ -1599,8 +1511,10 @@ createSymbol(w:Word, d:Dictionary, s:string):Expr := (
 
 getglobalsym(d:Dictionary,s:string):Expr := (
      w := makeUniqueWord(s,parseWORD);
-     when lookup(w,d.symboltable) is x:Symbol do Expr(SymbolClosure(globalFrame,x))
-     is null do createSymbol(w, d, s));
+     when lookup(w,d.symboltable)
+     is x:Symbol do Expr(SymbolClosure(globalFrame,x))
+     is null do if w.parse != parseWORD then buildErrorPacket("symbol "+s+" is a keyword") else createSymbol(w, d, s)
+     );
 
 getglobalsym(s:string):Expr := (
      w := makeUniqueWord(s,parseWORD);
@@ -2095,7 +2009,12 @@ functionBody(e:Expr):Expr := (
      );
 setupfun("functionBody",functionBody);
 
-symbolBody(e:Expr):Expr := when e is s:SymbolClosure do Expr(SymbolBody(s.symbol)) else WrongArg("a symbol");
+symbolBody(e:Expr):Expr := (
+     when e
+     is s:SymbolClosure do Expr(SymbolBody(s.symbol))
+     is s:SpecialExpr do symbolBody(s.e)
+     else WrongArg("a symbol")
+     );
 setupfun("symbolBody",symbolBody);
 
 dumpNodes(e:Expr):Expr := (dumpNodes(); nullE);
