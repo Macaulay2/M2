@@ -37,7 +37,7 @@ export {"AbstractSimplicialComplex", "abstractSimplicialComplex",
     "ambientAbstractSimplicialComplexSize",
     "ambientAbstractSimplicialComplex", "abstractSimplicialComplexFacets",
     "randomAbstractSimplicialComplex", "randomSubSimplicialComplex",
-    "inducedSimplicialChainComplexMap","inducedReducedSimplicialChainComplexMap", 
+    "inducedSimplicialChainComplexMap","inducedReducedSimplicialChainComplexMap", "Seed"
     }
 
 -* Code section *-
@@ -167,9 +167,9 @@ abstractSimplicialComplex(ZZ,ZZ) := AbstractSimplicialComplex => (n,r) -> (
 
 --  Make a "random" simplicial complex on {1,...,n}.
 
-randomAbstractSimplicialComplex = method()
+randomAbstractSimplicialComplex = method(Options => {Seed => true})
 
-randomAbstractSimplicialComplex(ZZ) := AbstractSimplicialComplex => (n) -> (
+randomAbstractSimplicialComplex(ZZ) := AbstractSimplicialComplex =>  o -> (n) -> (
      listLength := 1 + random(2^n);
      x := toList(1..n);
      randomFaces := unique(for i from 1 to listLength list randomSubset x);
@@ -177,7 +177,7 @@ randomAbstractSimplicialComplex(ZZ) := AbstractSimplicialComplex => (n) -> (
 
 --  Make a random simplicial complex on [n] with r-skeleton.
 
-randomAbstractSimplicialComplex(ZZ,ZZ) := AbstractSimplicialComplex => (n,r) -> (
+randomAbstractSimplicialComplex(ZZ,ZZ) := AbstractSimplicialComplex =>  o -> (n,r) -> (
      listLength := 1 + random(binomial(n,r));
      x := toList(1..n);
      randomFaces := unique(for i from 1 to listLength list randomSubset(x,r));
@@ -190,12 +190,17 @@ randomAbstractSimplicialComplex(ZZ,ZZ) := AbstractSimplicialComplex => (n,r) -> 
 --  Cohen-Lenstra heuristics for torsion in homology of random complexes
 --  (Kahle, M. and Lutz, F. H. and Newman, A. and Parsons, K.).
 
-randomAbstractSimplicialComplex(ZZ,ZZ,ZZ) := AbstractSimplicialComplex => (n,m,d) -> (
+randomAbstractSimplicialComplex(ZZ,ZZ,ZZ) := AbstractSimplicialComplex =>  o -> (n,m,d) -> (
      L := for i from 1 to n list i;
      dDimlSubsets := subsets(L,d+1);
-     rdmFaces := for i from 1 to m list (dDimlSubsets#(random(binomial(n,d+1))));
-     append(append(rdmFaces,{L}),subsets(L,d));
-     abstractSimplicialComplex(rdmFaces))
+     rdmFaces := unique(for i from 1 to m list (dDimlSubsets#(random(binomial(n,d+1)))));
+     if o.Seed == true then abstractSimplicialComplex(rdmFaces|subsets(L,d))
+     else(
+     if #rdmFaces == m then ( 
+     abstractSimplicialComplex(rdmFaces|subsets(L,d)))
+    else(randomAbstractSimplicialComplex(n,m,d,Seed=>false))
+    )
+)
  
 -- Make a random simplicial subcomplex.
 
@@ -551,7 +556,7 @@ doc ///
 	     prune HH simplicialChainComplex L
 	  Text
 	     Create the random simplicial complex $Y_d(n,m)$ which has vertex set
-             $[n]$ and complete $(d − 1)$-skeleton, and has exactly m dimension d faces,
+             $[n]$ and complete $(d − 1)$-skeleton, and has m dimension d faces,
              chosen at random from all $\binom{\binom{n}{d+1}}{m}$ possibilities.
 	  Example
 	     M = randomAbstractSimplicialComplex(6,3,2)
@@ -638,6 +643,7 @@ doc ///
 	r : ZZ
 	m : ZZ
 	d : ZZ
+        Seed => Boolean
     Outputs
         : AbstractSimplicialComplex
     Description
@@ -660,10 +666,12 @@ doc ///
 	     @HREF("https://www.tandfonline.com/doi/abs/10.1080/10586458.2018.1473821",
 		       "Cohen-Lenstra heuristics for torsion in homology of random complexes")@
 	     by  M. Kahle, F. H. Lutz, A. Newman, and K. Parsons [Exp. Math. vol. 29, no. 3 (2020)].
-	     The output of the method may produce, in some cases, complexes which have fewer than
-	     $m$ faces of dimension $d$.  Further, not all $d-1$ skeletons will be complete.
+	     When the option Seed is set to false, the output of the method will produce complexes which have exactly 
+	     $m$ faces of dimension $d$.
 	  Example
 	     N = randomAbstractSimplicialComplex(6,3,2)
+	     tally apply(1000, i ->  #(randomAbstractSimplicialComplex(5,3,2))_2)
+	     tally apply(1000, i -> #(randomAbstractSimplicialComplex(5,3,2,Seed=>false))_2)
     SeeAlso
         "randomSubSimplicialComplex"
         "random"
@@ -968,6 +976,22 @@ doc ///
 	       	   see describe
     	  SeeAlso
 	      	describe	      
+///
+doc ///
+         Key
+           "Seed"
+         Headline
+	      name for an optional argument
+	 SeeAlso
+	      "randomAbstractSimplicialComplex"
+	      "randomSubSimplicialComplex"
+///	      
+
+doc ///
+          Key
+           [randomAbstractSimplicialComplex,Seed]
+	 SeeAlso
+	      "randomAbstractSimplicialComplex"
 ///
 
 
