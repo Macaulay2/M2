@@ -23,7 +23,7 @@ newPackage(
         "Normaliz",
         "PrimaryDecomposition",
         "MinimalPrimes",
-        "OldPolyhedra",
+        "Polyhedra",
     },
     Certification => {
 	"journal name" => "Journal of Software for Algebra and Geometry",
@@ -208,7 +208,7 @@ monReduction Ideal := MonomialIdeal => I -> (
 --- from a matrix M extract the rows where all the entries are not zero
 isBddFacet := (n, M) -> (
     s := rank source M; --- # of columns
-    mutableM := mutableIdentity (ZZ,s); --- row as a vector
+    mutableM := mutableIdentity (ring M,s); --- row as a vector
     for i from 0 to (s - 1) do (mutableM_(i,i) = M_(n,i));
     det mutableM != 0 --- No if 0, Yes otherwise
 )
@@ -240,7 +240,7 @@ monAnalyticSpread Ideal := ZZ => I -> (
     Mm := M_0;
     Mv := M_1;
     r := rank target Mm;  --- # of rows
-    1 + max apply(r, p -> dim convexHull vertices intersection (Mm, Mv, Mm^{p}, Mv^{p}))
+    1 + max apply(r, p -> dim convexHull vertices polyhedronFromHData (Mm, Mv, Mm^{p}, Mv^{p}))
     -- monAS := 0;
     -- for p from 0 to r-1 do (
         -- face := intersection (Mm, Mv, Mm^{p}, Mv^{p});
@@ -263,7 +263,7 @@ monjMult Ideal := ZZ => I -> (
     monj := 0;
     for p from 0 to r-1 do (
     if isBddFacet(p, Mm) then (
-        face := intersection (Mm, Mv, Mm^{p}, Mv^{p});
+        face := polyhedronFromHData (Mm, Mv, Mm^{p}, Mv^{p});
         monj = monj + (d!)*(volume convexHull pyrF(vertices face));
         );
     );
