@@ -8,7 +8,7 @@ protect KnownDomain;
 protect IsGraded;
 protect ModuleStrategy;
 
---the following code is take from Divisor.m2
+--the following code is take from WeilDivisors.m2
 
 reflexify = method( Options => { Strategy => NoStrategy, KnownDomain => true, ReturnMap => false } )
 
