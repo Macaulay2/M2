@@ -1,2 +1,0 @@
-deprecate "export" applied to symbols by making it not work at all.
-The error message should explain that strings can be used instead.

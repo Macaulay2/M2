@@ -1,1 +1,0 @@
-investigate using fpLLL by Damien Stehle.  Sage uses it because it's fast.  It uses mpfr.

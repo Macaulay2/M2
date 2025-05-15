@@ -1,5 +1,0 @@
-silly error message:
-
-
-i12 : intersect {}
-stdio:12:1:(3):[0]: error: expected at least one argument

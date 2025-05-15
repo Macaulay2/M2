@@ -1,3 +1,0 @@
-It is no longer necessary, under ubuntu, for our postinstall script to run
-install-info.  We should learn how to use dpkg-trigger, either at build time or at install
-time, to determine whether to run it.

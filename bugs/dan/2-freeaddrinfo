@@ -1,1 +1,0 @@
-scclib.c uses getaddrinfo but not freeaddrinfo
