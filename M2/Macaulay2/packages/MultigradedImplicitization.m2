@@ -16,7 +16,6 @@ newPackage(
   Headline => "solving implicitization problems using multigradings",
   Keywords => {"Algebraic Statistics", "Commutative Algebra"},
   PackageImports => {"gfanInterface"},
-  DebuggingMode => true
 )
 
 --------------------
