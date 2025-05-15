@@ -1365,6 +1365,7 @@ doc ///
     		TO (isComplete, NormalToricVariety),
     		TO (isProjective, NormalToricVariety),
     		TO (isFano, NormalToricVariety),
+		TO (isQQFano, NormalToricVariety),
     		TO (fan, NormalToricVariety)
 	    }@
     SeeAlso
@@ -1764,7 +1765,7 @@ doc ///
 	    PP1 = toricProjectiveSpace 1;
             assert (isComplete PP1 and isProjective PP1 and isSmooth PP1)
 	    FF7 = hirzebruchSurface 7;
-            assert (isComplete FF7 and isProjective FF7 and isSmooth FF7 and not isFano FF7)	    
+	    assert (isComplete FF7 and isProjective FF7 and isSmooth FF7 and not isFano FF7 and isQQFano FF7)
 	    X = smoothFanoToricVariety (4,120);
             assert (isComplete X and isProjective X and isSmooth X and isFano X)	    	    
 	    P12234 = weightedProjectiveSpace {1,2,2,3,4};

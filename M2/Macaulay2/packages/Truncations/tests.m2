@@ -387,6 +387,58 @@ TEST /// -- test of subtruncate
   assert(truncate(1, 2, id_M) == map(truncate(1, M), truncate(2, M), {{y, 0, 0}, {0, y, x}}))
 ///
 
+TEST /// -- test of truncationPolyhedron with torsion in class group
+  debug needsPackage "Truncations"
+  needsPackage "NormalToricVarieties"
+  needsPackage "Polyhedra"
+  B = matrix {{2, -1}, {-1, 2}, {-1,-1}}
+  Y = normalToricVariety(entries B,
+      {{0, 1}, {1, 2}, {2, 0}})
+  S = ring Y
+  D = 3 * Y_0
+  deg = degree D
+
+  -- TODO: is this correct?
+  -- I = truncate(deg, S)
+  -- assert(I == ideal {x_2^3, x_0*x_1*x_2, x_1^3, x_0^3})
+  -- assert(degrees I == {{0, 3}, {0, 3}, {0, 3}, {0, 3}})
+
+  assert same { set monomials D,
+      set first entries basis(deg, module S, Strategy => Torsion),
+      --set first entries basis(deg, module S, Strategy => Toric),
+      set first entries basis(deg, module S) }
+
+  -- TODO
+  --X = normalToricVariety (id_(ZZ^3) | -id_(ZZ^3));
+  --Y = makeSimplicial X;
+  --Bl1 = toricBlowup({0}, X);
+  --Y = toricBlowup({7}, Bl1);
+///
+
+TEST ///
+  needsPackage "NormalToricVarieties"
+  needsPackage "Complexes"
+  N = ZZ^3
+  D = toricDivisor convexHull matrix {0_N, N_0, N_1, N_0 + N_1 + 2*N_2}
+  X = variety D
+  X.cache.nefCone = coneFromVData map(coker matrix {{2, 0}, {0, 2}, {0, 0}}, , transpose{{0,0,1}})
+  S = ring X
+
+  -- TODO: are these correct?
+  -- C = complex gens truncate(degree D, S)
+  -- part(degree(2*D), C) -- TODO: add an assertion
+  -- assert(part(degree(2*D), HH_0 C) == 0)
+  -- assert(part(degree(2*D), HH_1 C) == QQ^5)
+  -- assert(part(degree(2*D), HH C) == complex map(QQ^0, QQ^5, 0))
+  -- assert(part(degree(2*D), HH C) == prune HH part(degree(2*D), C))
+
+  M = coker basis({0,0,2}, S)
+  assert(basis({0,0,1}, M) == x_3)
+  assert(basis({0,0,2}, M) == 0)
+  assert(basis({0,0,3}, M) == x_0*x_1*x_2)
+  assert(basis({0,0,4}, M) == x_0*x_1*x_2*x_3)
+///
+
 end--
 
 restart

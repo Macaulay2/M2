@@ -144,3 +144,14 @@ K = image map(source b, , gens ker b)
 -- assert isSubset(ker b, source b)
 assert isSubset(K, source b)
 assert(ker f == K)
+
+-- testing basis in presence of torsion in the degree group
+needsPackage "Complexes"
+B = map(ZZ^1/ideal 2 ++ ZZ^1/ideal 2 ++ ZZ^1, ,
+    matrix transpose {{1,1,1}, {0,1,1}, {1,0,1}, {0,0,1}})
+S = QQ[x_0..x_3, Degrees => B]
+m = basis({0,0,2}, S)
+C = complex m
+assert(4 == numcols m)
+assert(0 == part({0,0,2}, HH C))
+assert(0 == HH part({0,0,2}, C))
