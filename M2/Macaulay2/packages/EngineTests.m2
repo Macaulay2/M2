@@ -248,6 +248,7 @@ load "EngineTests/LinearAlgebra.Test.Driver.m2"
 load "EngineTests/MutableMatrix.Test.Driver.m2"
 load "EngineTests/Ring.Test.Driver.m2"
 load "EngineTests/GB.Test.Mathic.m2"
+load "EngineTests/GB.Test.LinearAlgebra.m2"
 
 load "EngineTests/Res.f4.m2"
 --check  EngineTests
