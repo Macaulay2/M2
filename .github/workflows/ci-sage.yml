@@ -109,26 +109,3 @@ jobs:
       sage_ref: main
       upstream_artifact: upstream
     needs: [dist]
-
-  passagemath-macaulay2:
-    uses: passagemath/passagemath/.github/workflows/docker.yml@main
-    with:
-      targets: SAGE_CHECK=no SAGE_CHECK_PACKAGES="sagemath_macaulay2" sagemath_macaulay2
-      # Standard setting: Test the current HEAD of passagemath:
-      sage_repo: passagemath/passagemath
-      sage_ref: main
-      upstream_artifact: upstream
-      # Build incrementally from published Docker image
-      incremental: true
-      free_disk_space: true
-      from_docker_repository: ghcr.io/passagemath/passagemath/
-      from_docker_target: "with-targets"
-      from_docker_tag: "dev"
-      docker_targets: "with-targets"
-      tox_system_factors: >-
-        ["ubuntu-jammy"]
-      tox_packages_factors: >-
-        ["standard"]
-      # avoid clash with linux job for the same platform
-      logs_artifact: false
-    needs: [dist]
