@@ -271,7 +271,8 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 	DIV {
 	    SUBSECTION "Version",
 	    PARA { "This documentation describes version ", BOLD pkg.Options.Version, " of ",
-		if pkg#"pkgname" === "Macaulay2Doc" then "Macaulay2" else pkg#"pkgname", "." }},
+		if pkg#"pkgname" === "Macaulay2Doc" then "Macaulay2" else pkg#"pkgname",
+		if pkg.Options.Date =!= null then { ", released ", BOLD pkg.Options.Date }, "." }},
 	if #au > 0 then
 	if instance(ci, DIV) then ci else DIV {
 	    SUBSECTION "Citation",
