@@ -13,7 +13,7 @@ from pygments.token import Comment, Keyword, Name, String, Text
 
 __all__ = ['Macaulay2Lexer']
 
-@M2BANNER@
+# @M2BANNER@
 
 M2KEYWORDS = (
     @M2KEYWORDS@
