@@ -1525,7 +1525,7 @@ toCC(e:Expr):Expr := (
 		    -- # typical value: toCC, ZZ, RR, QQ, CC
 		    -- # typical value: toCC, ZZ, RR, RR, CC
 		    if !isULong(prec.v) then WrongArgSmallUInteger(1)
-		    else toExpr(CC(
+		    else toExpr(toCC(
 			      when s.1
 			      is x:QQcell do toRR(x.v,toULong(prec.v))
 			      is x:ZZcell do toRR(x.v,toULong(prec.v))
