@@ -8,7 +8,7 @@ newPackage("MultigradedBGG",
 	{Name => "Tara Gomes",	    	     Email => "gomes072@umn.edu",      HomePage => "https://cse.umn.edu/math/tara-gomes" },
 	{Name => "Prashanth Sridhar",	     Email => "pzs0094@auburn.edu",    HomePage => "https://sites.google.com/view/prashanthsridhar/home"},
 	{Name => "Eduardo Torres Davila",    Email => "torre680@umn.edu",      HomePage => "https://etdavila10.github.io/" },
-	{Name => "Sasha	Zotine",    	     Email => "zotinea@mcmaster.ca",   HomePage => "https://sites.google.com/view/szotine/home" }
+	{Name => "Sasha Zotine",    	     Email => "zotinea@mcmaster.ca",   HomePage => "https://sites.google.com/view/szotine/home" }
     },
     PackageExports => {"NormalToricVarieties", "Complexes"},
     Keywords => {"Commutative Algebra"}
