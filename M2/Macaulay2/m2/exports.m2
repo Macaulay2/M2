@@ -1283,6 +1283,7 @@ export {
 	"member" => "isMember",
         "minPres" => "minimalPresentation",
         "mutable" => "isMutable",
+	"NotANumber" => "indeterminate",
         "numcols" => "numColumns",
         "numrows" => "numRows",
         "sub" => "substitute",
