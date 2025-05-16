@@ -1187,36 +1187,113 @@ globalAssignment(frameindex:int,t:Symbol,newvalue:Expr):Expr := ( -- frameID = 0
      vals.frameindex = newvalue;
      newvalue);
 
-assignment(nestingDepth:int,frameindex:int,t:Symbol,newvalue:Expr):Expr := (
-     if nestingDepth == -1
-     then globalAssignment(frameindex,t,newvalue)
-     else localAssignment(nestingDepth,frameindex,newvalue));
-
 globalAssignmentFun(x:globalAssignmentCode):Expr := (
      t := x.lhs;
      newvalue := eval(x.rhs);
      when newvalue is Error do return newvalue else nothing;
      globalAssignment(t.frameindex,t,newvalue));
 
+ParallelAssignmentError(n:int):Expr := buildErrorPacket(
+    "parallel assignment expected a sequence of length " + tostring(n));
+ParallelAssignmentErrorAt(n:int):Expr := buildErrorPacket(
+    "parallel assignment failure at argument " + tostring(n));
 parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
-     syms := x.lhs;
-     nestingDepth := x.nestingDepth;
-     frameindex := x.frameindex;
-     nlhs := length(frameindex);
-     foreach sym in syms do if sym.Protected then return buildErrorPacket("assignment to protected variable '" + sym.word.name + "'");
-     value := eval(x.rhs);
-     when value 
-     is Error do return value 
-     is values:Sequence do 
-     if nlhs == length(values) then (
-	  for i from 0 to nlhs-1 do (
-	       r := assignment(nestingDepth.i,frameindex.i,syms.i,values.i);
-	       when r is Error do return r else nothing;
-	       );
-	  value
-	  )
-     else buildErrorPacket("parallel assignment: expected a sequence of " + tostring(nlhs) + " values")
-     else buildErrorPacket("parallel assignment: expected a sequence of " + tostring(nlhs) + " values"));
+    nlhs := length(x.lhs);
+    value := eval(x.rhs);
+    when value is Error do return value else nothing;
+    -- (x) = y should behave just like x = y
+    if nlhs == 1 then (
+	when value is a:Sequence do (
+	    -- unless y is a sequence of length 1, then it behaves like x = y#0
+	    if length(a) == 1 then nothing
+	    else return ParallelAssignmentError(1))
+	is a:List do (
+	    if length(a.v) == 1 then nothing
+	    else return ParallelAssignmentError(1))
+	else value = seq(value));
+    klass := sequenceClass;
+    when value is a:List do (
+	value = Expr(a.v);
+	klass = a.Class)
+    else nothing;
+    when value
+    is values:Sequence do (
+	if nlhs == length(values) then (
+	    pos := codePosition(x.rhs);
+	    e := nullE;
+	    result := new Sequence len nlhs at i do provide (
+		when e is Error do nullE
+		else (
+		    c := Code(evaluatedCode(values.i, pos));
+		    r := when x.lhs.i
+		    is y:globalMemoryReferenceCode do (
+			globalAssignment(y.var.frameindex, y.var, values.i))
+		    is y:localMemoryReferenceCode do (
+			localAssignment(y.nestingDepth, y.frameindex, values.i))
+		    is y:threadMemoryReferenceCode do (
+			globalAssignment(y.var.frameindex, y.var, values.i))
+		    is y:binaryCode do (
+			codeseq := CodeSequence(
+			    convertGlobalOperator(y.oper), y.lhs, y.rhs, c);
+			if x.colon then InstallMethodFun(codeseq)
+			else (
+			    if y.oper == DotS.symbol || y.oper == SharpS.symbol
+			    then AssignElemFun(y.lhs, y.rhs, c)
+			    else InstallValueFun(codeseq)))
+		    is y:adjacentCode do (
+			codeseq := CodeSequence(
+			    convertGlobalOperator(AdjacentS.symbol),
+			    y.lhs, y.rhs, c);
+			if x.colon then InstallMethodFun(codeseq)
+			else InstallValueFun(codeseq))
+		    is y:unaryCode do (
+			oper := convertGlobalOperator(y.oper);
+			if x.colon then UnaryInstallMethodFun(oper, y.rhs, c)
+			else UnaryInstallValueFun(oper, y.rhs, c))
+		    is y:sequenceCode do (
+			parallelAssignmentFun(parallelAssignmentCode(x.colon,
+				y.x, c, y.position)))
+		    is y:listCode do (
+			parallelAssignmentFun(parallelAssignmentCode(x.colon,
+				y.y, c, y.position)))
+		    is y:arrayCode do (
+			parallelAssignmentFun(parallelAssignmentCode(x.colon,
+				y.z, c, y.position)))
+		    is y:angleBarListCode do (
+			parallelAssignmentFun(parallelAssignmentCode(x.colon,
+				y.t, c, y.position)))
+		    is y:newCode do (
+			if x.colon
+			then AssignNewFun(y.newClause, c)
+			else ParallelAssignmentErrorAt(i + 1))
+		    is y:newOfCode do (
+			if x.colon
+			then AssignNewOfFun(y.newClause, y.ofClause, c)
+			else ParallelAssignmentErrorAt(i + 1))
+		    is y:newFromCode do (
+			if x.colon
+			then AssignNewFromFun(y.newClause, y.fromClause, c)
+			else ParallelAssignmentErrorAt(i + 1))
+		    is y:newOfFromCode do (
+			if x.colon
+			then AssignNewOfFromFun(CodeSequence(
+				y.newClause, y.ofClause, y.fromClause, c))
+			else ParallelAssignmentErrorAt(i + 1))
+		    is nullCode do nullE
+		    else ParallelAssignmentErrorAt(i + 1);
+		    when r
+		    is Error do (
+			e = r;
+			nullE)
+		    else r));
+	    when e
+	    is Error do e
+	    else if nlhs == 1 then result.0
+	    else (
+		if klass == sequenceClass then Expr(result)
+		else list(klass, result)))
+	else ParallelAssignmentError(nlhs))
+    else ParallelAssignmentError(nlhs));
 
 -- helper function used when evaluating tryCode and by null coalescion
 -- tryEvalSuccess is true unless an (non-interrupting) error occurred
@@ -1262,10 +1339,49 @@ nullCoalescion(lhs:Code,rhs:Code):Expr := (
     else e);
 setup(QuestionQuestionS, nullify, nullCoalescion);
 
+-- TODO: is there a better way to declare this?
+augmentedAssignmentFun(c:augmentedAssignmentCode):Expr;
+header "static parse_Expr augmentedAssignmentFun(parse_augmentedAssignmentCode c);";
+augmentedParallelAssignmentFun(oper:Symbol, lhs:CodeSequence, rhs:Code):Expr:= (
+    n := length(lhs);
+    rexpr := eval(rhs);
+    when rexpr
+    is Error do return rexpr else nothing;
+    if n == 1 then rexpr = seq(rexpr);
+    when rexpr
+    is rvals:Sequence do (
+	if length(rvals) == n then (
+	    pos := codePosition(rhs);
+	    e := nullE;
+	    result := new Sequence len n at i do provide (
+		when e is Error do nullE
+		else (
+		    r := augmentedAssignmentFun(augmentedAssignmentCode(oper,
+			    lhs.i, Code(evaluatedCode(rvals.i, pos)), pos));
+		    when r is Error do (
+			e = r;
+			nullE)
+		    else r));
+	    when e
+	    is Error do e
+	    else if n == 1 then result.0 else Expr(result)))
+    else ParallelAssignmentError(n));
+
 augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
     when lookup(x.oper.word, augmentedAssignmentOperatorTable)
     is null do buildErrorPacket("unknown augmented assignment operator")
     is s:Symbol do (
+	-- parallel assignment?
+	when x.lhs
+	is y:sequenceCode do (
+	    return augmentedParallelAssignmentFun(x.oper, y.x, x.rhs))
+	is y:listCode do (
+	    return augmentedParallelAssignmentFun(x.oper, y.y, x.rhs))
+	is y:arrayCode do (
+	    return augmentedParallelAssignmentFun(x.oper, y.z, x.rhs))
+	is y:angleBarListCode do (
+	    return augmentedParallelAssignmentFun(x.oper, y.t, x.rhs))
+	else nothing;
 	-- evaluate the left-hand side first
 	lexpr := nullE;
 	if s.word.name === "??" -- x ??= y is treated like x ?? (x = y)
@@ -1288,33 +1404,35 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 		else return r)
 	    else return r);
 	-- if not, use default behavior
-	left := evaluatedCode(lexpr, codePosition(x.lhs));
+	c := (
+	    if s.word.name === "??" then x.rhs
+	    else Code(binaryCode(s,
+		    Code(evaluatedCode(lexpr, codePosition(x.lhs))),
+		    x.rhs, x.position)));
 	when x.lhs
 	is y:globalMemoryReferenceCode do (
-	    r := s.binary(Code(left), x.rhs);
-	    when r is e:Error do r
-	    else globalAssignment(y.frameindex, x.info, r))
+	    r := eval(c);
+	    when r is Error do r
+	    else globalAssignment(y.var.frameindex, y.var, r))
 	is y:localMemoryReferenceCode do (
-	    r := s.binary(Code(left), x.rhs);
-	    when r is e:Error do r
+	    r := eval(c);
+	    when r is Error do r
 	    else localAssignment(y.nestingDepth, y.frameindex, r))
 	is y:threadMemoryReferenceCode do (
-	    r := s.binary(Code(left), x.rhs);
-	    when r is e:Error do r
-	    else globalAssignment(y.frameindex, x.info, r))
+	    r := eval(c);
+	    when r is Error do r
+	    else globalAssignment(y.var.frameindex, y.var, r))
 	is y:binaryCode do (
-	    r := Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
-	    if y.f == DotS.symbol.binary || y.f == SharpS.symbol.binary
-	    then AssignElemFun(y.lhs, y.rhs, r)
+	    if y.oper == DotS.symbol || y.oper == SharpS.symbol
+	    then AssignElemFun(y.lhs, y.rhs, c)
 	    else InstallValueFun(CodeSequence(
-		    convertGlobalOperator(x.info), y.lhs, y.rhs, r)))
+		    convertGlobalOperator(y.oper), y.lhs, y.rhs, c)))
 	is y:adjacentCode do (
-	    r := Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
 	    InstallValueFun(CodeSequence(
-		    convertGlobalOperator(AdjacentS.symbol), y.lhs, y.rhs, r)))
+		    convertGlobalOperator(AdjacentS.symbol), y.lhs, y.rhs, c)))
 	is y:unaryCode do (
-	    r := Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
-	    UnaryInstallValueFun(convertGlobalOperator(x.info), y.rhs, r))
+	    UnaryInstallValueFun(convertGlobalOperator(y.oper), y.rhs, c))
+	is nullCode do nullE -- for use w/ parallel assignment
 	else buildErrorPacket(
 	    "augmented assignment not implemented for this code")));
 
@@ -1423,8 +1541,8 @@ export evalraw(c:Code):Expr := (
 		    buildErrorPacket("unknown exception")
 		    ))
 	  else when c
-	  is u:unaryCode do u.f(u.rhs)
-	  is b:binaryCode do b.f(b.lhs,b.rhs)
+	  is u:unaryCode do u.oper.unary(u.rhs)
+	  is b:binaryCode do b.oper.binary(b.lhs,b.rhs)
 	  is b:adjacentCode do (
 	       left := eval(b.lhs);
 	       when left
@@ -1462,9 +1580,9 @@ export evalraw(c:Code):Expr := (
 		    );
 	       if r.frameindex>=length(f.values) then buildErrorPacket("frame error")
 	       else return f.values.(r.frameindex))
-	  is r:globalMemoryReferenceCode do return globalFrame.values.(r.frameindex)
+	  is r:globalMemoryReferenceCode do return globalFrame.values.(r.var.frameindex)
 	  is r:threadMemoryReferenceCode do return (
-	       i := r.frameindex;
+	       i := r.var.frameindex;
 	       v := threadFrame.values;
 	       if i < length(v) then v.i else nullE)
 	  is x:localAssignmentCode do (

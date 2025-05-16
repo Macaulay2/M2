@@ -19,6 +19,8 @@ document {
      Key => symbol >>,
      Headline => "a binary operator, used for bit shifting or attaching optional inputs to functions",
      SeeAlso => { (symbol >>, OptionTable, Function) },
+     Caveat => {"Due to its low precedence, parentheses must be used on the left hand side when installing methods for this operator, e.g., ",
+	 CODE "(X >> Y) := f", "."},
      Subnodes => { TO "right shift" }
      }
 

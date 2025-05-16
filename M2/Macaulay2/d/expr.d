@@ -208,9 +208,6 @@ export newParseinfo():parseinfo := parseinfo(nopr,nopr,nopr,parsefuns(dummyunary
 export dummyUnaryFun(c:Code):Expr := (
      anywhereError("dummy unary function called");
      nullE);
-export dummyPostfixFun(c:Code):Expr := (
-     anywhereError("dummy postfix function called");
-     nullE);
 export dummyBinaryFun(c:Code,d:Code):Expr := (
      anywhereError("dummy binary function called");
      nullE);
@@ -226,7 +223,7 @@ export emptySequenceE := Expr(emptySequence);
 
 export dummySymbol := Symbol(
      Word("-*dummy symbol*-",TCnone,hash_t(0),newParseinfo()),dummySymbolHash,dummyPosition,
-     dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
+     dummyUnaryFun,dummyBinaryFun,
      Macaulay2Dictionary.frameID,dummySymbolFrameIndex,1,
      false,						    -- not protected, so we can use it in parallelAssignmentFun
      false,

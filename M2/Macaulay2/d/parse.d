@@ -74,7 +74,6 @@ export Symbol := {		    -- symbol table entry for a symbol
      hash:hash_t,		    --   based on the hash code of word, unchanging
      position:Position,	    	    --   the position where the definition was made
      unary:unop,
-     postfix:unop,
      binary:binop,
      frameID:int,		    -- seqno of frame for dictionary containing it
 				    -- 0 for the globalFrame
@@ -176,11 +175,11 @@ export localMemoryReferenceCode := {+
      position:Position
      };
 export globalMemoryReferenceCode := {+
-     frameindex:int,
+     var:Symbol,
      position:Position
      };
 export threadMemoryReferenceCode := {+
-     frameindex:int,
+     var:Symbol,
      position:Position,
      x:void						    -- just to distinguish it
      };
@@ -201,9 +200,8 @@ export catchCode := {+ code:Code, position:Position };
 
 export SymbolSequence := array(Symbol);
 export parallelAssignmentCode := {+
-     nestingDepth:array(int), -- spots corresponding to global and thread variables are filled with -1
-     frameindex:array(int),
-     lhs:SymbolSequence, -- spots corresponding to local variables are filled with dummySymbol
+     colon:bool, -- := or =
+     lhs:CodeSequence,
      rhs:Code,
      position:Position};
 
@@ -211,7 +209,6 @@ export augmentedAssignmentCode := {+
     oper:Symbol,
     lhs:Code,
     rhs:Code,
-    info:Symbol, -- variable name or operator
     position:Position};
 
 -- code that's already been evaluated; needed for augmented assignment
@@ -221,8 +218,8 @@ export nullCode := {+};
 export realCode := {+x:RR,position:Position};
 export integerCode := {+x:ZZ,position:Position};
 export stringCode := {+x:string,position:Position};
-export unaryCode := {+f:unop,rhs:Code,position:Position};
-export binaryCode := {+f:binop,lhs:Code,rhs:Code,position:Position};
+export unaryCode := {+oper:Symbol,rhs:Code,position:Position};
+export binaryCode := {+oper:Symbol,lhs:Code,rhs:Code,position:Position};
 export adjacentCode := {+lhs:Code,rhs:Code,position:Position};
 export whileDoCode := {+predicate:Code,doClause:Code,position:Position};
 export whileListCode := {+predicate:Code,listClause:Code,position:Position};
