@@ -220,6 +220,7 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
     -- authors
     au := pkg.Options.Authors;
     -- citation
+    if #au > 0 then
     ci := citePackage pkg;
     -- exported symbols
     -- TODO: this misses exported symbols from Macaulay2Doc; is this intentional?
@@ -271,6 +272,7 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 	    SUBSECTION "Version",
 	    PARA { "This documentation describes version ", BOLD pkg.Options.Version, " of ",
 		if pkg#"pkgname" === "Macaulay2Doc" then "Macaulay2" else pkg#"pkgname", "." }},
+	if #au > 0 then
 	if instance(ci, DIV) then ci else DIV {
 	    SUBSECTION "Citation",
 	    PARA "If you have used this package in your research, please cite it as follows:",
