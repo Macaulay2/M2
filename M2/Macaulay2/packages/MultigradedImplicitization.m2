@@ -112,10 +112,12 @@ R = QQ[x_1..x_(numcols A)];
 S = QQ[t_1..t_(numrows A)];
 F = map(S, R, apply(numcols(A), i -> S_(flatten entries A_i)));
 dom = newRing(R, Degrees => A);
-B = basis(2, source F) | basis(3, source F);
+use R;
+B = basis(1, source F) | basis(2, source F) | basis(3, source F);
 lats = unique apply(flatten entries B, i -> degree(sub(i, dom)));
-basisHash = hashTable apply(lats, deg -> {deg, basis(deg, dom)});
-assert(trimBasisInDegree({2,1,0,1,1},  dom, {x_2*x_4-x_1*x_5, x_3*x_4-x_1*x_6, x_3*x_5-x_2*x_6}, basisHash) == matrix {{x_2*x_3*x_4}});
+basisHash = hashTable apply(lats, deg -> {deg, sub(basis(deg, dom), R)});
+G = {x_2*x_4-x_1*x_5, x_3*x_4-x_1*x_6, x_3*x_5-x_2*x_6}
+assert(trimBasisInDegree({2,1,0,1,1},  dom, G, basisHash) == matrix {{x_2*x_3*x_4}});
 ///
 
 
@@ -480,12 +482,13 @@ Description
   Example
     A = matrix {{1,1,1,0,0,0,0,0,0}, {0,0,0,1,1,1,0,0,0}, {0,0,0,0,0,0,1,1,1}, {1,0,0,1,0,0,1,0,0}, {0,1,0,0,1,0,0,1,0}};
     R = QQ[x_1..x_(numcols A)];
+    dom = newRing(R, Degrees => A);
+    use R;
     S = QQ[t_1..t_(numrows A)];
     F = map(S, R, apply(numcols(A), i -> S_(flatten entries A_i)));
-    dom = newRing(R, Degrees => A);
-    B = basis(2, source F) | basis(3, source F);
+    B = basis(1, source F) | basis(2, source F) | basis(3, source F);
     lats = unique apply(flatten entries B, i -> degree(sub(i, dom)));
-    basisHash = hashTable apply(lats, deg -> {deg, basis(deg, dom)});
+    basisHash = hashTable apply(lats, deg -> {deg, sub(basis(deg, dom), R)});
     trimBasisInDegree({2,1,0,1,1},  dom, {x_2*x_4-x_1*x_5, x_3*x_4-x_1*x_6, x_3*x_5-x_2*x_6}, basisHash)
   Text
     Observe that after trimming we get a smaller monomial basis for this homogeneous component. The full monomial basis is
