@@ -78,7 +78,7 @@ export format(
      ) : array(string) := (	   -- return: ("-","132.456") or ("","123.456")
      ng := signbit(x);
      if isinf(x) then return array(string)(if ng then "-" else "","infinity");
-     if isnan(x) then return array(string)(if ng then "-" else "","NotANumber");
+     if isnan(x) then return array(string)("NotANumber");
      meaningful := int(floor(precision(x) / log2ten)) + 1;
      if s == 0 || s > meaningful then s = meaningful; -- print at most the "meaningful" digits
      sgn := "";
@@ -175,11 +175,13 @@ export tostringRRi(x:RRi):string := concatenate(
        	));  
 tostringRRipointer = tostringRRi;  
 
+numericstr(prec:ulong, str:string, ng:bool):string := (
+    "numeric(" + tostring(prec) + ", " + if ng then "-" else "" + str + ")");
 
 export toExternalString(x:RR):string := (
      ng := signbit(x);
-     if isinf(x) then return if ng then "-infinity" else "infinity";
-     if isnan(x) then return if ng then "-NotANumber" else "NotANumber";
+     if isinf(x) then return numericstr(precision(x), "infinity", ng);
+     if isnan(x) then return numericstr(precision(x), "NotANumber", false);
      if ng then x = -x;
      ex := long(0);
      s := getstr(ex, base, 0, x);

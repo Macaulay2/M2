@@ -68,6 +68,14 @@ assert ch( +ii*.73249827349273948274398273498273p100e0)
 assert ch( +ii*.92837938475938759387539847539847p100e0)
 assert ch( -ii*.73249827349273948274398273498273p100e0)
 assert ch( -ii*.92837938475938759387539847539847p100e0)
+assert ch numeric infinity
+assert ch numeric(100, infinity)
+
+chnan = x -> (
+    y := value toExternalString x;
+    precision y === precision x and not isANumber y)
+assert chnan numeric NotANumber
+assert chnan numeric(100, NotANumber)
 
 assert( 1. === 1. )
 assert( 1. =!= .1 )
