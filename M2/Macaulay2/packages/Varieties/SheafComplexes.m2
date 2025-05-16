@@ -21,6 +21,7 @@ isMorphism SheafMap := isAbelianCategory CoherentSheaf := x -> true
 
 complex CoherentSheaf := Complex => lookup(complex, Module)
 
+
 -----------------------------------------------------------------------------
 -- Basic operations between sheaves, complexes, etc.
 -----------------------------------------------------------------------------
@@ -77,9 +78,6 @@ module ComplexMap := ComplexMap => phi -> phi.cache.module ??= (
     sphi := map(truncate(maxTruncDeg,module T), truncate(maxTruncDeg,module S), applyValues(phi.map, i -> truncate(maxTruncDeg, matrix i)));
     sphi.cache.sheaf = phi;
     sphi)
-
--- TODO: move to Complexes
-freeResolution Complex := Complex => opts -> C -> resolution(C, opts)
 
 sheafRes = method(Options => options freeResolution)
 sheafRes Complex       :=

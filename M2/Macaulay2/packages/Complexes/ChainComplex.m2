@@ -1341,3 +1341,7 @@ koszulComplex List := Complex => {Concentration => null} >> opts -> L -> (
     if #L === 0 then error "expected a non-empty list";
     koszulComplex(matrix{L}, opts)
     )
+
+koszul Matrix := Complex => f -> koszulComplex f
+
+-- TODO: eagonNorthcott

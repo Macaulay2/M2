@@ -22,7 +22,8 @@ TEST /// -- twisted cubic curve
   G = OO_X(-2);
   -- note G is OO_(P^1)(-6)
   assert(prune F === G);
-  maxRegs = max(regularity F.module, regularity G.module) + 1 -- 3
+  debug Varieties
+  maxRegs = max(regularity' F.module, regularity' G.module) + 1 -- 3
   M = truncate(maxRegs, F.module, MinimalGenerators => false)
   N = truncate(maxRegs, G.module, MinimalGenerators => false)
   assert(prune sheaf M === prune F)

@@ -179,7 +179,7 @@ commonEngineRingInitializations = (F) -> (
 	       if i == n-1 then (
 		    promoter := promoters#n;
 		    lifter := lifters#n;
-	       	    promote(Aclass,F) := (
+		    promote(A,F) := (
 			 if ancestor(Number, A) 
 		    	 then (n,R) -> new R from rawFromNumber(raw R,n)
 	       	    	 else basicPromote);
@@ -200,7 +200,7 @@ commonEngineRingInitializations = (F) -> (
 		    liftDegreesChain    := reverse take(lifters, {i+1,n});
 		    promoteRingsAndDegreesChain := apply(promoteChain, promoteDegreesChain, identity);
 		    liftRingsAndDegreesChain    := apply(liftChain   , liftDegreesChain   , identity);
-	       	    promote(Aclass,F) := (
+		    promote(A,F) := (
 			 if ancestor(Number, A)
 		    	 then (n,R) -> new R from rawFromNumber(raw R,n)
 	       	    	 else (a,F) -> multiplePromote(a, promoteChain));

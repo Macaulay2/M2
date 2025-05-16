@@ -1,5 +1,4 @@
 undocumented {
-    sheafMap, -- deprecated
     -- TODO: document some of these
     (symbol SPACE, SheafMap, ZZ),
     (symbol +,   SheafMap, SheafMap),
@@ -95,12 +94,12 @@ Node
 Node
   Key
     cotangentSurjection
---   (cotangentSurjection, ProjectiveVariety)
+   (cotangentSurjection, ProjectiveVariety)
 
 Node
   Key
     embeddedToAbstract
---   (embeddedToAbstract, ProjectiveVariety)
+   (embeddedToAbstract, ProjectiveVariety)
 
 -----------------------------------------------------------------------------
 -- Basic methods for sheaves

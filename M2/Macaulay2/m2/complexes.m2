@@ -4,7 +4,7 @@ needs "matrix1.m2" -- for Ideal
 needs "modules.m2" -- for Module
 
 -- whether to use Complexes or OldChainComplexes
-HomologicalAlgebraPackage = "OldChainComplexes"
+HomologicalAlgebraPackage = "Complexes"
 
 -----------------------------------------------------------------------------
 -- Local utilities
