@@ -86,7 +86,7 @@ jobs:
     uses: passagemath/passagemath/.github/workflows/docker.yml@main
     with:
       # singular is not suitable, omit
-      extra_sage_packages: gdbm git libxml2 gfortran cmake python3 openblas zlib readline sqlite libpng bzip2 liblzma libffi openssl 4ti2 fflas_ffpack boost_cropped cddlib givaro glpk gmp mpc mpfi mpfr ncurses ntl readline lrslib normaliz topcom gfan frobby nauty libnauty flint onetbb googletest mpsolve msolve eigen gc ninja_build curl gsl libatomic_ops
+      extra_sage_packages: gdbm git libxml2 gfortran cmake python3 openblas zlib readline sqlite libpng bzip2 liblzma libffi openssl 4ti2 fflas_ffpack boost_cropped cddlib givaro glpk gmp mpc mpfi mpfr ncurses ntl readline lrslib normaliz topcom gfan frobby nauty libnauty flint onetbb googletest mpsolve msolve eigen gc ninja_build curl gsl libatomic_ops tox
       targets: SAGE_CHECK=no SAGE_CHECK_PACKAGES="sagemath_macaulay2" sagemath_macaulay2
       # Standard setting: Test the current HEAD of passagemath:
       sage_repo: passagemath/passagemath
