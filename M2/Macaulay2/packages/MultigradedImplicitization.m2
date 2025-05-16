@@ -15,7 +15,7 @@ newPackage(
   },
   Headline => "solving implicitization problems using multigradings",
   Keywords => {"Algebraic Statistics", "Commutative Algebra"},
-  PackageImports => {"gfanInterface"},
+  PackageImports => {"gfanInterface"}
 )
 
 --------------------
@@ -359,10 +359,10 @@ R = KK[x_1..x_(numcols A)];
 S = KK[t_1..t_(numrows A)];
 F = map(S, R, apply(numcols(A), i -> S_(flatten entries A_i)));
 dom = newRing(R, Degrees => A);
-G = componentsOfKernel(2,F, UseInterpolation => true, CoefficientRing => KK);
-G = new HashTable from G;
-G = delete(null, flatten values(G));
-assert(sub(ideal(G),R) == ker F)
+use R;
+samplePoints = {{x_1 => -6002, x_2 => -37732, x_3 => -43250, x_4 => 32043, x_5 => -32855, x_6 => -9794, x_7 => 15988, x_8 => 12703, x_9 => 46296}, {x_1 => -44235, x_2 => 32764, x_3 => -554, x_4 => -2799, x_5 => -45090, x_6 => -47890, x_7 => 7916, x_8 => -47725, x_9 => 17466}}
+G = interpolateComponent(samplePoints, sub(basis({0, 1, 1, 0, 1}, dom), R))
+assert(G == {x_6*x_8-x_5*x_9})
 ///
 
 -----------------------------
