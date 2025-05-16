@@ -215,13 +215,13 @@ documentationValue(Nothing, Sequence) := (S, s) -> (
 -- TODO: simplify this process
 -- e.g. Macaulay2Doc :: Macaulay2Doc
 documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then (
+    isM2Doc := pkg#"pkgname" === "Macaulay2Doc";
     -- package filename
     fn := pkg#"pkgname" | ".m2";
     -- authors
     au := pkg.Options.Authors;
     -- citation
-    if #au > 0 then
-    ci := citePackage pkg;
+    ci := if isM2Doc then citePackage "M2" else if #au > 0 then citePackage pkg;
     -- exported symbols
     -- TODO: this misses exported symbols from Macaulay2Doc; is this intentional?
     e := toSequence pkg#"exported symbols";
@@ -271,16 +271,17 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 	DIV {
 	    SUBSECTION "Version",
 	    PARA { "This documentation describes version ", BOLD pkg.Options.Version, " of ",
-		if pkg#"pkgname" === "Macaulay2Doc" then "Macaulay2" else pkg#"pkgname",
+		if isM2Doc then "Macaulay2" else pkg#"pkgname",
 		if pkg.Options.Date =!= null then { ", released ", BOLD pkg.Options.Date }, "." }},
-	if #au > 0 then
+	if isM2Doc or #au > 0 then
 	if instance(ci, DIV) then ci else DIV {
 	    SUBSECTION "Citation",
-	    PARA "If you have used this package in your research, please cite it as follows:",
+	    PARA { "If you have used ", if isM2Doc then "Macaulay2" else "this package",
+		" in your research, please cite it as follows:" },
 	    TABLE {"class" => "examples",
 		TR TD PRE prepend("class" => "language-bib", CODE ci)}
 	    },
-	if pkg#"pkgname" =!= "Macaulay2Doc" and #e + #m > 0 then DIV {
+	if not isM2Doc and #e + #m > 0 then DIV {
 	    SUBSECTION "Exports",
 	    DIV { "class" => "exports",
 		fixup UL {
