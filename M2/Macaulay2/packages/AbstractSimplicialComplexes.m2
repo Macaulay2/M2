@@ -27,7 +27,7 @@ newPackage(
     Authors => {{ Name => "Nathan Grieve", Email => "nathan.m.grieve@gmail.com",
 	    HomePage => "https://sites.google.com/view/nathan-grieve"}},
     AuxiliaryFiles => false,
-    DebuggingMode => true,
+    DebuggingMode => false,
     PackageImports => {"Complexes"},
     Keywords => {"Combinatorial Commutative Algebra"},
     Certification => {
