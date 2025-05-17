@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage(
 	"SRdeformations",
-    	Version => "0.51", 
+    	Version => "0.53",
     	Date => "July 12, 2010",
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@mathematik.uni-kl.de", 
@@ -10,7 +10,7 @@ newPackage(
     	Headline => "deformations of Stanley-Reisner rings and related computations",
 	Keywords => {"Combinatorial Commutative Algebra"},
     	DebuggingMode => false,
-     	PackageImports => { "ConvexInterface", "OldPolyhedra" },
+	PackageImports => { "ConvexInterface" },
         Configuration => {"UseConvex"=>false}
         )
 
@@ -32,20 +32,23 @@ please set up "ConvexInterface" first.
 If you don't have Maple/Convex or haven't set up "ConvexInterface"
 stay with the standard option UseConvex=>false.
 
-Then automatically the package "OldPolyhedra" is used,
+Then automatically the package "Polyhedra" is used,
 but that is several magnitudes slower compared to maple/convex.
 
-"OldPolyhedra" relies on the package "FourierMotzkin".
+"Polyhedra" relies on the package "FourierMotzkin".
 
 These packages are only used for computing convex hulls and lattice points thereof.
 Methods of "SRdeformations" relying on this package are so far:
 
+hull
 convHull
 globalSections
 
 *-
 
-
+importFrom_"Polyhedra" {
+    "facesAsCones", "facesAsPolyhedra", "ambDim", "linSpace", "halfspaces", "hyperplanes",
+    "faces", "vertices", "latticePoints", "coneFromVData", "dualCone", "convexHull" }
 
 -- the commands available to the user
 
@@ -3240,8 +3243,8 @@ degs:=prepend(1,(entries(-A))#0);
 if A==raysPPn(degs) then return(globalSectionsPPn(degs,v));
 le:=linesEquations(A,v);
 be:=boundaryEquations(A);
-C:=posHull(be,le);
-dC:=-(C#"dualgens")#0;
+C:=coneFromVData(be,le);
+dC:=transpose halfspaces C;
 L:=apply(entries transpose dC,j->cutRay vector j);
 Lv:=apply(L,j->sub(j,ZZ)-v);
 preLv:=apply(Lv,j->preImage(A,j));
@@ -3272,8 +3275,8 @@ be:=boundaryEquations(A);
 for j from 0 to #cL-1 do (
   be=be|(-be_{cL#j});
 );
-C:=posHull(be,le);
-dC:=-(C#"dualgens")#0;
+C:=coneFromVData(be,le);
+dC:=transpose halfspaces C;
 L:=apply(entries transpose dC,j->cutRay vector j);
 Lv:=apply(L,j->sub(j,ZZ)-v);
 preLv:=apply(Lv,j->preImage(A,j));
@@ -3376,10 +3379,10 @@ hull(List):=opts->(L)->(
 -- use "Convex" if available
 if ((options SRdeformations).Configuration)#"UseConvex"==true then return(hullConvex(L,opts));
 vA:=joinVectors(L);
-P:=posHull vA;
-d:=P#"dimension of the cone";
-embdim:=P#"ambient dimension";
-if embdim!=d or P#"dimension of lineality space">0 then error("expected cone of full dimension without lineality space");
+P:=coneFromVData vA;
+d:=dim P;
+embdim:=ambDim P;
+if embdim!=d or rank linSpace P > 0 then error("expected cone of full dimension without lineality space");
 A:=sub(transpose rays(P),ZZ);
 Adual:=-sub(transpose rays dualCone P,ZZ);
 n:=rank target A;
@@ -3402,7 +3405,7 @@ dCl:=newEmptyComplex(Rdual);
 --L1:={{},{face({},Cl,-1,0)}};
 L1:={{face({},Cl,-1,0)}};
 for j from 1 to d-1 do (
- fc:=faces(d-j,P);
+ fc:=facesAsCones(d-j,P);
  fc=apply(fc,j->sub(transpose rays j,ZZ));
  fc=apply(toList(0..(#fc-1)),jj->face(matrixToVarlist(fc#jj,R),Cl,j-1,jj));
  L1=append(L1,fc);
@@ -3471,9 +3474,9 @@ convHull(List):=opts->(L)->(
 if ((options SRdeformations).Configuration)#"UseConvex"==true then return(convHullConvex(L,opts));
 vA:=joinVectors(L);
 P:=convexHull vA;
-d:=P#"dimension of polyhedron";
-embdim:=P#"ambient dimension";
-if embdim!=d or P#"dimension of lineality space">0 then error("expected polytope of full dimension without lineality space");
+d:=dim P;
+embdim:=ambDim P;
+if embdim!=d or rank linSpace P > 0 then error("expected polytope of full dimension without lineality space");
 -- put QQ-ZZ test here !!!!!!!!!!!!
 A:=sub(transpose vertices(P),ZZ);
 n:=rank target A;
@@ -3491,8 +3494,8 @@ Cl:=newEmptyComplex(R);
 L1:={{face({},Cl,-1,0)}};
 AdualL:={};
 for j from 0 to d-1 do (
- fc:=faces(d-j,P);
- if j==d-1 then AdualL=apply(fc,j1->-1/((j1#"hyperplanes"#1)_(0,0))*(entries(j1#"hyperplanes"#0))#0);
+ fc:=facesAsPolyhedra(d-j,P);
+ if j==d-1 then AdualL=apply(fc,j1->-1/((last hyperplanes j1)_(0,0))*(entries(first hyperplanes j1))#0);
  fc=apply(fc,j->sub(transpose vertices j,ZZ));
  fc=apply(toList(0..(#fc-1)),jj->face(matrixToVarlist(fc#jj,R),Cl,j,jj));
  L1=append(L1,fc);
@@ -3866,7 +3869,12 @@ doc ///
 
       {\bf What' new:}
 
-        {\it Jul 13, 2010 (Version 0.52)}
+        {\it May 13, 2025 (Version 0.53)}
+
+           Minor changes to make the package compatible with @TO "Polyhedra::Polyhedra"@ (1.10).
+
+
+	{\it Jul 13, 2010 (Version 0.52)}
         
            Some changes to ensure compatibility with the current version of OldPolyhedra (1.1), in particular
            the method isSimplicial has been renamed to @TO isSimp@, as OldPolyhedra is now using the name
@@ -3951,13 +3959,13 @@ doc ///
 
       There are two choices of M2 packages to be called for computations with polyhedra:
 
-      @TO OldPolyhedra@:
+      @TO "Polyhedra::Polyhedra"@:
 
       Works without additional configuration, but is not very fast.
 
-      It uses the M2 package {\it FourierMotzkin}.
+      It uses the M2 package @TO "FourierMotzkin::FourierMotzkin"@.
 
-      To use {\it OldPolyhedra} do
+      To use {\it Polyhedra} do
 
       @TO loadPackage@("SRdeformations",Configuration=>\{"UseConvex"=>false\})
 
@@ -3965,11 +3973,11 @@ doc ///
 
       @TO loadPackage@("SRdeformations")
 
-      {\it ConvexInterface}:
+      @TO "ConvexInterface::ConvexInterface"@:
 
       This package has to be installed first, see its documentation for this.
 
-      It calls the Maple package Convex and is faster than OldPolyhedra, hence the preferable choice.
+      It calls the Maple package Convex and is faster than Polyhedra, hence the preferable choice.
       If you want to do non-trivial examples you have to go for it.
 
       To use it type
@@ -6210,7 +6218,7 @@ doc ///
   SeeAlso
      Complex
   Caveat
-     This uses the package OldPolyhedra.m2 to compute the facets. Too slow compared to Maple/convex.
+     This uses the package {\it Polyhedra} to compute the facets. Too slow compared to Maple/convex.
 
      If the package {\it ConvexInterface} is loaded, then this command calls Maple/Convex.
      See the corresponding option explained at @TO SRdeformations@.
@@ -6393,9 +6401,7 @@ doc ///
      globalSections(A,b)
      globalSections(A,b,{1})
   Caveat
-    This uses the package OldPolyhedra.m2 (if ConvexInterface.m2 is not present) to compute the lattice points of a convex hull.
-    constructHilbertBasis of the package OldPolyhedra.m2 used by latticePoints overwrites global variable C.
-    Fixed this in my local version.
+    This uses the package {\it Polyhedra} (if ConvexInterface.m2 is not present) to compute the lattice points of a convex hull.
      
 ///
 
@@ -7677,7 +7683,7 @@ doc ///
     and non-Pfaffians) examples this may lead to an incorrect result. Use with care.
     This will be fixed at some point.
 
-    If using @TO OldPolyhedra@ to compute convex hulls and its faces instead of 
+    If using @TO "Polyhedra::Polyhedra"@ to compute convex hulls and its faces instead of 
     {\it ConvexInterface} you are limited to rather simple examples.
 ///
 
@@ -7718,7 +7724,7 @@ doc ///
     and non-Pfaffians) examples this may lead to an incorrect result. Use with care.
     This will be fixed at some point.
 
-    If using @TO OldPolyhedra@ to compute convex hulls and its faces instead of 
+    If using @TO "Polyhedra::Polyhedra"@ to compute convex hulls and its faces instead of 
     {\it ConvexInterface} you are limited to rather simple examples.
 ///
 
@@ -7883,7 +7889,7 @@ doc ///
      The cone is represented as a complex on its rays, hence if @TO (dim,Face)@ is applied to a @TO Face@ it
      will return the dimension of the corresponding cone minus one.
       
-     This uses the package OldPolyhedra.m2 to compute the facets. Too slow compared to Maple/convex.
+     This uses the package {\it Polyhedra} to compute the facets. Too slow compared to Maple/convex.
 
      If the package {\it ConvexInterface} is loaded, then this command calls Maple/Convex.
      See the corresponding option explained at @TO SRdeformations@.
