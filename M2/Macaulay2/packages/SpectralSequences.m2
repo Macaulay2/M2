@@ -1152,7 +1152,7 @@ doc ///
 	 Example     
 	      B = QQ[a..d]
 	      J = ideal vars B
-	      C = complex complete res monomialCurveIdeal(B,{1,3,4})
+	      C = freeResolution monomialCurveIdeal(B,{1,3,4})
 	      K = filteredComplex(J,C,4)
 	 Text
 	      Here are some higher pages of the associated spectral sequence:
@@ -1245,8 +1245,8 @@ doc ///
 	     
 	 Example
 	     A = QQ[x,y,z,w];
-	     B = complex res monomialCurveIdeal(A, {1,2,3});
-	     C = complex res monomialCurveIdeal(A, {1,3,4});
+	     B = freeResolution monomialCurveIdeal(A, {1,2,3});
+	     C = freeResolution monomialCurveIdeal(A, {1,3,4});
 	     F' = Hom(filteredComplex B, C)
 	     F'' = Hom(B,filteredComplex C)
 	 Text
@@ -1297,8 +1297,8 @@ doc ///
 	    --$ B\otimes(filteredComplex C)$.
     	  Example
 	      A = QQ[x,y,z,w];
-	      B = complex res monomialCurveIdeal(A,{1,2,3});
-	      C = complex res monomialCurveIdeal(A,{1,3,4});
+	      B = freeResolution monomialCurveIdeal(A,{1,2,3});
+	      C = freeResolution monomialCurveIdeal(A,{1,3,4});
 	      F' = (filteredComplex B) ** C
 	      F'' = B ** (filteredComplex C)  
 	 Text
@@ -1445,8 +1445,8 @@ doc ///
 	       R = S/I;
 	       kR = coker vars R;
 	       kS = coker vars S;
-	       CS = complex res kS;
-	       CR = complex res(kR,LengthLimit=>6);
+	       CS = freeResolution kS;
+	       CR = freeResolution(kR,LengthLimit=>6);
 	       CS' = CS**R;
 	       E = prune spectralSequence (CS' ** filteredComplex CR);
     	  Text
@@ -1506,7 +1506,7 @@ doc ///
 		B = B_*/(x -> x^2)//ideal;
 		-- need to take a large enough power. 
 		-- it turns out that 2 is large enough for this example 
-		G = complex complete res image gens B;
+		G = freeResolution image gens B;
 		F = koszulComplex gens I;
 		K = Hom(G, filteredComplex(F));
 		E = prune spectralSequence K;
@@ -1578,14 +1578,14 @@ doc ///
 		 R = ZZ/101[a_0..b_1, Degrees=>{2:{1,0},2:{0,1}}]; -- PP^1 x PP^1
 		 B = intersect(ideal(a_0,a_1),ideal(b_0,b_1)) ; -- irrelevant ideal
 		 B = B_*/(x -> x^5)//ideal ; -- Sufficentily high Frobenius power 
-		 G = complex res image gens B ;
+		 G = freeResolution image gens B ;
 	  Text
 	       We next make the ideal, denoted by $I$ below, of a general divisor of type $(3,3)$ 
 	       on $\mathbb{P}^1 \times \mathbb{P}^1$.  Also the chain complex
 	       $F$ below is a resolution of this ideal.
 	  Example
 	  	 I = ideal random(R^1, R^{{-3,-3}}) ; -- ideal of C
-		 F = complex res comodule I 
+		 F = freeResolution comodule I 
     	  Text
 	       To use hypercohomology to compute the cohomology groups of the 
 	       line bundle $\mathcal{O}_C(1,0)$ on $C$ we twist the
@@ -1741,8 +1741,8 @@ doc ///
 	       To compute $Tor^A_i(M,N)$ we resolve the modules, tensor appropriately, 
 	       and then take homology. 
      	  Example	       	       	       
-	       K = complex res M
-	       J = complex res N
+	       K = freeResolution M
+	       J = freeResolution N
      	  Text
 	       The spectral sequence that computes $Tor^A_i(M,N)$ by tensoring
 	       $K$ with $N$ and taking homology is given by
@@ -2340,7 +2340,7 @@ doc ///
 	 Example     
 	      B = QQ[a..d];
 	      J = ideal vars B;
-	      C = complex complete res monomialCurveIdeal(B,{1,3,4});
+	      C = freeResolution monomialCurveIdeal(B,{1,3,4});
 	      K = filteredComplex(J,C,4);
 	 Text
 	      The infinity page of the resulting spectral sequence is computed below.
@@ -2430,7 +2430,7 @@ doc ///
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complex complete res monomialCurveIdeal(B,{1,3,4});
+	       C = freeResolution monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	  Text
 	       We compute an example of a pruning map below.
@@ -2583,7 +2583,7 @@ doc ///
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complex complete res monomialCurveIdeal(B,{1,3,4});
+	       C = freeResolution monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	       E = spectralSequence K
 	  Text
@@ -4019,9 +4019,9 @@ doc ///
 	       f = map(S,R,{s^2,s*t,t^2});
 	       N = coker vars S;
 	       M = coker vars R --;
-	       F := complex complete res N;
+	       F := freeResolution N;
 	       pushFwdF := pushFwd(f,F);
-	       G := complex complete res M;
+	       G := freeResolution M;
 	       E := spectralSequence(filteredComplex(G) ** pushFwdF);
 	       EE := spectralSequence(G ** (filteredComplex pushFwdF));
      	       e = prune E;
@@ -4212,8 +4212,8 @@ I = ideal(x^2,x*y,y^2);
 R = S/I;
 kR = coker vars R;
 kS = coker vars S;
-CS = complex res kS;
-CR = complex res(kR,LengthLimit=>6);
+CS = freeResolution kS;
+CR = freeResolution(kR,LengthLimit=>6);
 CS' = CS**R;
 E = prune spectralSequence (CS' ** filteredComplex CR);
 assert(all(keys support E^0, j -> isIsomorphism homologyIsomorphism(E,j#0,j#1,0)))
