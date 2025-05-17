@@ -24,10 +24,6 @@ generateGrammar("vim/m2.vim.dict", x -> demark(" ", x)) -- TODO: is this necessa
 generateGrammar("pygments/macaulay2.py",
     x -> demark("," | newline | "    ", format \ x))
 
--- highlight.js: Write macaulay2.js
-generateGrammar("highlightjs/macaulay2.js",
-    x -> demark("," | newline | "	", format \ x))
-
 generateGrammar("textmate/macaulay2.tmLanguage.json", x -> demark("|", x))
 
 -- Macaulay2Web: Write M2-symbols.ts
