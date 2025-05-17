@@ -17,7 +17,7 @@
 ---------------------------------------------------------------------------------
 -- The code that follows is mostly formatted to max line length of 80 and in some
 -- special cases (like method definition) to max line length of 110.
--- The code that follows is designed to run on Macaulay2, version 1.24.11.
+-- The code that follows is designed to run on Macaulay2, version 1.25.02.
 
 newPackage(
     "AbstractSimplicialComplexes",
@@ -27,9 +27,22 @@ newPackage(
     Authors => {{ Name => "Nathan Grieve", Email => "nathan.m.grieve@gmail.com",
 	    HomePage => "https://sites.google.com/view/nathan-grieve"}},
     AuxiliaryFiles => false,
-    DebuggingMode => false,
+    DebuggingMode => true,
     PackageImports => {"Complexes"},
-    Keywords => {"Combinatorial Commutative Algebra"}
+    Keywords => {"Combinatorial Commutative Algebra"},
+    Certification => {
+	"journal name" => "Journal of Software for Algebra and Geometry",
+	"journal URI" => "https://msp.org/jsag/",
+	"article title" => "Abstract simplicial complexes in Macaulay2",
+	"acceptance date" => "2025-04-14",
+	"published article URI" => "https://msp.org/jsag/2025/15-1/p03.xhtml",
+	"published article DOI" => "10.2140/jsag.2025.15.29",
+	"published code URI" => "https://msp.org/jsag/2025/15-1/jsag-v15-n1-x03-AbstractSimplicialComplexes.m2",
+	"release at publication" => "5b79022404cef1d070584115c819d4436be7bcee",
+	"version at publication" => "1.0",
+	"volume number" => "15",
+	"volume URI" => "https://msp.org/jsag/2025/15-1/"
+	}
     )
 
 export {"AbstractSimplicialComplex", "abstractSimplicialComplex",
@@ -37,7 +50,7 @@ export {"AbstractSimplicialComplex", "abstractSimplicialComplex",
     "ambientAbstractSimplicialComplexSize",
     "ambientAbstractSimplicialComplex", "abstractSimplicialComplexFacets",
     "randomAbstractSimplicialComplex", "randomSubSimplicialComplex",
-    "inducedSimplicialChainComplexMap","inducedReducedSimplicialChainComplexMap", "Seed"
+    "inducedSimplicialChainComplexMap","inducedReducedSimplicialChainComplexMap", 
     }
 
 -* Code section *-
@@ -159,17 +172,15 @@ abstractSimplicialComplex(ZZ,ZZ) := AbstractSimplicialComplex => (n,r) -> (
 ----------------------------------------
 
 -- What follows are simple minded (yet still seemingly practical)
--- methods for producing random simplicial complexes.
+-- methods for producing random subsets and random simplicial complexes.
 -- In either case they are fairly efficient.
 -- In either case, what follows suffices for our purposes at present.
 
---  A variant of the above method would yield a random k element subset of a given set.
-
 --  Make a "random" simplicial complex on {1,...,n}.
 
-randomAbstractSimplicialComplex = method(Options => {Seed => true})
+randomAbstractSimplicialComplex = method(Options => {Verify => false})
 
-randomAbstractSimplicialComplex(ZZ) := AbstractSimplicialComplex =>  o -> (n) -> (
+randomAbstractSimplicialComplex(ZZ) := AbstractSimplicialComplex => o -> (n) -> (
      listLength := 1 + random(2^n);
      x := toList(1..n);
      randomFaces := unique(for i from 1 to listLength list randomSubset x);
@@ -177,30 +188,29 @@ randomAbstractSimplicialComplex(ZZ) := AbstractSimplicialComplex =>  o -> (n) ->
 
 --  Make a random simplicial complex on [n] with r-skeleton.
 
-randomAbstractSimplicialComplex(ZZ,ZZ) := AbstractSimplicialComplex =>  o -> (n,r) -> (
+randomAbstractSimplicialComplex(ZZ,ZZ) := AbstractSimplicialComplex => o -> (n,r) -> (
      listLength := 1 + random(binomial(n,r));
      x := toList(1..n);
      randomFaces := unique(for i from 1 to listLength list randomSubset(x,r));
      abstractSimplicialComplex randomFaces)
 
 --  Make the random complex Y_d(n,m) which has vertex set
---  [n] and complete (d − 1)-skeleton, and has m d-dimensional faces,
+--  [n] and complete (d − 1)-skeleton, and has exactly m d-dimensional faces,
 --  chosen at random from all binomial(binomial(n,d+1),m) possibilities.
 --  Such random complexes appear in lots of different contexts including in the article
 --  Cohen-Lenstra heuristics for torsion in homology of random complexes
 --  (Kahle, M. and Lutz, F. H. and Newman, A. and Parsons, K.).
 
-randomAbstractSimplicialComplex(ZZ,ZZ,ZZ) := AbstractSimplicialComplex =>  o -> (n,m,d) -> (
-     L := for i from 1 to n list i;
-     dDimlSubsets := subsets(L,d+1);
-     rdmFaces := unique(for i from 1 to m list (dDimlSubsets#(random(binomial(n,d+1)))));
-     if o.Seed == true then abstractSimplicialComplex(rdmFaces|subsets(L,d))
+randomAbstractSimplicialComplex(ZZ,ZZ,ZZ) := AbstractSimplicialComplex => o -> (n,m,d) -> (
+     x := toList(1..n);
+     rdmFaces := unique(for i from 1 to m list randomSubset(x, d+1)); 
+     if o.Verify == false then abstractSimplicialComplex(rdmFaces|subsets(x,d))
      else(
      if #rdmFaces == m then ( 
-     abstractSimplicialComplex(rdmFaces|subsets(L,d)))
-    else(randomAbstractSimplicialComplex(n,m,d,Seed=>false))
+     abstractSimplicialComplex(rdmFaces|subsets(x,d)))
+    else(randomAbstractSimplicialComplex(n,m,d,Verify=>true))
     )
-)
+     )
  
 -- Make a random simplicial subcomplex.
 
@@ -561,6 +571,7 @@ doc ///
 	  Example
 	     M = randomAbstractSimplicialComplex(6,3,2)
 	     prune HH simplicialChainComplex M
+	     N = randomAbstractSimplicialComplex(6,3,2,Verify => true)
           Text
 	     Creates a random subsimplicial complex of a given simplicial complex.
           Example
@@ -643,7 +654,7 @@ doc ///
 	r : ZZ
 	m : ZZ
 	d : ZZ
-        Seed => Boolean
+	Verify => Boolean
     Outputs
         : AbstractSimplicialComplex
     Description
@@ -659,19 +670,20 @@ doc ///
 	     L = randomAbstractSimplicialComplex(6,3)
 	  Text
 	     Create the random complex $Y_d(n,m)$ which has vertex set
-             $[n]$ and $(d − 1)$-skeleton, and has $m$ $d$-dimensional faces,
+             $[n]$ and complete $(d − 1)$-skeleton, and has exactly m d-dimensional faces,
              chosen at random from all $\binom{\binom{n}{d+1}{m}$ possibilities.
 	     Such random simplicial complexes appear in lots of different
 	     contexts including in the article
 	     @HREF("https://www.tandfonline.com/doi/abs/10.1080/10586458.2018.1473821",
 		       "Cohen-Lenstra heuristics for torsion in homology of random complexes")@
 	     by  M. Kahle, F. H. Lutz, A. Newman, and K. Parsons [Exp. Math. vol. 29, no. 3 (2020)].
-	     When the option Seed is set to false, the output of the method will produce complexes which have exactly 
+	     When the option Verify is set to true, the output of the method will produce  complexes which have exactly 
 	     $m$ faces of dimension $d$.
 	  Example
 	     N = randomAbstractSimplicialComplex(6,3,2)
 	     tally apply(1000, i ->  #(randomAbstractSimplicialComplex(5,3,2))_2)
-	     tally apply(1000, i -> #(randomAbstractSimplicialComplex(5,3,2,Seed=>false))_2)
+	     tally apply(1000, i -> #(randomAbstractSimplicialComplex(5,3,2,Verify=>true))_2)
+
     SeeAlso
         "randomSubSimplicialComplex"
         "random"
@@ -977,22 +989,6 @@ doc ///
     	  SeeAlso
 	      	describe	      
 ///
-doc ///
-         Key
-           "Seed"
-         Headline
-	      name for an optional argument
-	 SeeAlso
-	      "randomAbstractSimplicialComplex"
-	      "randomSubSimplicialComplex"
-///	      
-
-doc ///
-          Key
-           [randomAbstractSimplicialComplex,Seed]
-	 SeeAlso
-	      "randomAbstractSimplicialComplex"
-///
 
 
 
@@ -1110,6 +1106,3 @@ restart
 uninstallPackage "AbstractSimplicialComplexes"
 installPackage("AbstractSimplicialComplexes", RemakeAllDocumentation => true)
 check "AbstractSimplicialComplexes"
-
-
-
