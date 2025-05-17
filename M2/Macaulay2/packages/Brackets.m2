@@ -5,7 +5,7 @@ newPackage(
           Headline => "Brackets, Grassmann-Cayley Algebra, and Projective Geometry",
           Authors => {
 	      { Name => "Dalton Bidleman", Email => "deb0036@auburn.edu", HomePage => ""},
-	      { Name => "Tim Duff", Email => "tduff@missouri.edu", HomePage => "https://timduff35.github.io/timduff35/"},
+	      { Name => "Timothy Duff", Email => "tduff@missouri.edu", HomePage => "https://timduff35.github.io/timduff35/"},
 	      { Name => "Jack Kendrick", Email => "jackgk@uw.edu", HomePage => ""},
 	      { Name => "Michael Zeng", Email => "zengrf@uw.edu", HomePage => ""}		      
 	      },

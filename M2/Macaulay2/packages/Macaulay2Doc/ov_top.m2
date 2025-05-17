@@ -94,7 +94,7 @@ Node
       -- but have been credited in various documentation files.
       - Sorin Popescu
       - Manoj Kummini
-      - L. Gold
+      - Leah Gold
       - Amelia Taylor
       - Giulio Caviglia
       - Gregory G. Smith

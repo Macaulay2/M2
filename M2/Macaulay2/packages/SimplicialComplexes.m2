@@ -25,8 +25,9 @@ newPackage(
 	 HomePage => "http://www.mast.queensu.ca/~ggsmith"},
         {Name => "Ben Hersey", 
 	 Email => "b.hersey@queensu.ca"},
-        {Name => "Alexandre Zotine", 
-	 Email => "18az45@queensu.ca"}
+        {Name     => "Sasha Zotine",
+	 Email    => "zotinea@mcmaster.ca",
+	 HomePage => "https://sites.google.com/view/szotine/home" }
      },
     Headline => "exploring abstract simplicial complexes within commutative algebra",
     Keywords => {"Combinatorial Commutative Algebra"},
