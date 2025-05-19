@@ -147,8 +147,8 @@ else()
   set(EIGEN_BUILD_TYPE Release)
 endif()
 ExternalProject_Add(build-eigen
-  URL               https://gitlab.com/libeigen/eigen/-/archive/3.3.9/eigen-3.3.9.tar.bz2
-  URL_HASH          SHA256=0fa5cafe78f66d2b501b43016858070d52ba47bd9b1016b0165a7b8e04675677
+  URL               https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.bz2
+  URL_HASH          SHA256=b4c198460eba6f28d34894e3a5710998818515104d6e74e5cc331ce31e46e626
   PREFIX            libraries/eigen
   BINARY_DIR        libraries/eigen/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
