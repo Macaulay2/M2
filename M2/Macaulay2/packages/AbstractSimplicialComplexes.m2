@@ -670,7 +670,7 @@ doc ///
 	     L = randomAbstractSimplicialComplex(6,3)
 	  Text
 	     Create the random complex $Y_d(n,m)$ which has vertex set
-             $[n]$ and complete $(d − 1)$-skeleton, and has exactly $m$ $d$-dimensional faces,
+             $[n]$ and complete $(d − 1)$-skeleton, and has $m$ $d$-dimensional faces,
              chosen at random from all $\binom{\binom{n}{d+1}}{m}$ possibilities.
 	     Such random simplicial complexes appear in lots of different
 	     contexts including in the article
