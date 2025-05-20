@@ -2,7 +2,6 @@ export {
     -- Types
     "SheafMap",
     -- Methods
-    "sheafMap",
 --  "isLiftable",
     "yonedaSheafExtension",
 --  "yonedaSheafExtension'",
@@ -38,10 +37,6 @@ regularity' = M -> regularity flattenModule M
 
 SheafMap = new Type of HashTable
 SheafMap.synonym = "morphism of sheaves"
-
--- Temporarily moved here
-importFrom_Core { "isMorphism", "isAbelianCategory" }
-isMorphism SheafMap := isAbelianCategory CoherentSheaf := x -> true
 
 -- TODO: if over affine variety, dehomogenize the maps
 map(CoherentSheaf, CoherentSheaf, Matrix) := SheafMap => opts -> (G, F, phi) -> (
@@ -89,10 +84,6 @@ sheaf(Variety, Matrix)     := SheafMap => (X, phi)    -> map(sheaf_X target phi,
 sheaf(Variety, Matrix, ZZ) := SheafMap => (X, phi, d) -> map(sheaf_X target phi, sheaf_X source phi,
     truncate(d, phi, MinimalGenerators => false), d)
 
--- TODO: remove by M2 1.25
-sheafMapWarn = true
-sheafMap = x -> (if sheafMapWarn then (sheafMapWarn = false; printerr "Note: sheafMap is deprecated; use sheaf instead."); sheaf x)
-
 random(CoherentSheaf, CoherentSheaf) := SheafMap => o -> (F, G) -> map(F, G, random(F.module, G.module, o))
 
 isWellDefined SheafMap := f -> (
@@ -135,18 +126,22 @@ isWellDefined SheafMap := f -> (
 source  SheafMap := CoherentSheaf => f -> f.source
 target  SheafMap := CoherentSheaf => f -> f.target
 variety SheafMap := Variety       => f -> f.variety
-ring    SheafMap := SheafOfRings  => f -> sheaf f.variety
+ring    SheafMap := SheafOfRings  => f -> f.variety.sheaf
 matrix  SheafMap := Matrix   => o -> f -> f.map
 -- TODO: does this make sense, or should all sheaf maps be degree zero?
 degree  SheafMap := ZZ            => f -> degree f.map
 -- TODO: add a method that returns f.degree
 
-image    SheafMap := CoherentSheaf =>         f -> sheaf(f.variety, image    matrix f)
-kernel   SheafMap := CoherentSheaf => opts -> f -> sheaf(f.variety, kernel   matrix f)
-coimage  SheafMap := CoherentSheaf =>         f -> sheaf(f.variety, coimage  matrix f)
-cokernel SheafMap := CoherentSheaf =>         f -> sheaf(f.variety, cokernel matrix f)
+kernel   SheafMap := CoherentSheaf => o -> f -> sheaf(f.variety,   kernel(f.map, o))
+cokernel SheafMap := CoherentSheaf =>      f -> sheaf(f.variety, cokernel f.map)
+coimage  SheafMap := CoherentSheaf =>      f -> sheaf(f.variety,  coimage f.map)
+image    SheafMap := CoherentSheaf =>      f -> sheaf(f.variety,    image f.map)
 
-isSurjective SheafMap := Boolean => f -> coker f == 0
+-- TODO: are there any tricks for checking injectivity/surjectivity?
+-- e.g. check surjectivity of the module map after tensoring with k?
+isInjective   SheafMap := Boolean => f ->   kernel f == 0
+isSurjective  SheafMap := Boolean => f -> cokernel f == 0
+isIsomorphism SheafMap := Boolean => f -> isInjective f and isSurjective f
 
 -- TODO: is sheaf sufficient here, or should we specify source/target/degree?
 cover   SheafMap := SheafMap => f -> sheaf(f.variety, cover   matrix f)
@@ -169,8 +164,6 @@ SheafMap == SheafMap := Boolean => (psi, phi) -> psi === phi or (
 SheafMap == ZZ := Boolean => (f, n) -> ( if n === 0 then image f == n else matrix(prune f) == n)
 ZZ == SheafMap := Boolean => (n, f) -> f == n
 
-isIsomorphism SheafMap := Boolean => f -> ker f == 0 and coker f == 0
-
 -- TODO: isomorphisms of modules are cached under Y.cache.cache.Isomorphisms,
 -- where Y is the youngest of the modules, but currently isomorphisms of sheaves
 -- is simply cached under the source. We should fix this.
@@ -184,6 +177,8 @@ isIsomorphic(CoherentSheaf, CoherentSheaf) := Boolean => o -> (F, G) -> (
     if isIsomorphic(M, N, o, Strict => true, Homogeneous => true)
     then (( G.cache.Isomorphisms ??= new MutableHashTable )#F = (M, N); true)
     else false)
+
+-- TODO: check if F and G are vector bundles first, and if so compare their double duals
 
 -- TODO: perhaps better would be to construct random
 -- maps F --> G and check their kernel and cokernel.
@@ -263,7 +258,7 @@ quotient'(SheafMap, SheafMap) := SheafMap => opts -> (f, g) -> (
     map(target f, target g, quotient'(autotruncate(f, g), opts)))
 
 -- base change
--- FIXME: this is a kludge; should we define Section as the parent of SheafOfRings?
+-- also see promote(Thing, OO_X) defined by sheaf(Variety, Ring)
 promote(SheafMap, Nothing)     := SheafMap => (f, O) -> if O === ring f         then f else error "base change of maps of sheaves is not yet implemented"
 promote(SheafMap, RingElement) := SheafMap => (f, R) -> if R === ring variety f then f else error "base change of maps of sheaves is not yet implemented"
 
@@ -314,7 +309,7 @@ lift'(SheafMap,ZZ) := SheafMap => (shphi,e) -> (
     phi := matrix shphi;
     M := module source shphi;
     eta := inducedMap(truncate(e, M, MinimalGenerators => false), source phi);
-    sheaf(lift'(phi, eta), e))
+    sheaf(variety shphi, lift'(phi, eta), e))
 
 --lifts a sheaf map shphi represented by a module map
 --phi : M(\geq d) --> N to a map M(\geq e) --> N that represents
@@ -548,7 +543,6 @@ Ext(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f) -> (
 	M = truncate(r, M));
     part(0, Ext^m(M, matrix f, opts)))
 
--*
 -- internal method for modules only
 -- TODO: move this to Complexes?
 ExtLES = method(Options => {LengthLimit => null})
@@ -560,7 +554,6 @@ ExtLES(Matrix, Matrix, Module) := ComplexMap => opts -> (g, f, N) -> (
     G := freeResolution(N, opts);
     -- TODO: the indexing on opts.Concentration needs to be negated
     longExactSequence(Hom(f', G), Hom(g', G)))
-*-
 
 --TODO: RHom(ZZ, SheafComplex, SheafComplex)
 --TODO: TorLongExactSequence
@@ -568,7 +561,6 @@ ExtLES(Matrix, Matrix, Module) := ComplexMap => opts -> (g, f, N) -> (
 -- Given f: G -> H, leading to SES 0 -> ker f -> G -> im f -> 0 and F a sheaf,
 -- this method returns the long exact sequence in cohomology;
 -- the concentration argument will give Ext^(lo) -> ... -> Ext^(hi)
--*
 ExtLongExactSequence = method(Options => {Concentration => null})
 ExtLongExactSequence(CoherentSheaf, SheafMap)           := Matrix => opts -> (F, f) ->
     ExtLongExactSequence(F, inducedMap(image f, source f, f), inducedMap(source f, ker f), opts)
@@ -626,13 +618,11 @@ connectingExtMap(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f0) ->
     h := ExtLongExactSequence(F, f, g,
 	Concentration => (m, m + 1));
     h.dd_(-3*m))
-*-
 
 -----------------------------------------------------------------------------
 -- Yoneda Ext
 -----------------------------------------------------------------------------
 
--*
 yonedaSheafExtension = method()
 yonedaSheafExtension Matrix := Complex => f -> (
     E := target f; -- Ext^d(F,G)
@@ -645,7 +635,6 @@ yonedaSheafExtension Matrix := Complex => f -> (
     f' := basis(0, E') * f;
     C := yonedaExtension f';
     complex apply(d + 1, i -> sheaf_X C.dd_(i+1)))
-*-
 
 --yonedaSheafExtension' = method(Options => options Ext.argument)
 --yonedaSheafExtension' Complex := Matrix => opts -> C -> ()
@@ -750,8 +739,6 @@ CoherentSheaf ^ Array := SheafMap => (F, v) -> (
 -----------------------------------------------------------------------------
 -- Common maps and complexes of sheaves
 -----------------------------------------------------------------------------
-
-end--
 
 -- TODO: Beilinson resolution of the diagonal for PP^n
 

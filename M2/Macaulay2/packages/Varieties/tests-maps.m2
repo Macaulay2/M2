@@ -347,6 +347,21 @@ TEST ///
   elapsedTime assert isIsomorphic(OO_X^1, prune F)
 ///
 
+TEST ///
+  -- tests for isomorphism
+  R = QQ[x,y,z]
+  X = Proj R
+  F = sheaf(R^1/(x,y))
+  F1 = sheaf HH^0(F(>=-1))
+  F2 = sheaf HH^0(F(>=-10))
+  assert isIsomorphic(F1,F2)
+  g = isomorphism(F1,F2)
+  assert isWellDefined g
+  assert isIsomorphism g
+  -- FIXME
+  --assert(source g === F2)
+  --assert(target g === F1)
+///
 
 TEST ///
   -- tests for consistent truncations
@@ -389,7 +404,7 @@ TEST ///
   assert(g === sheaf inducedMap(module source f, module ker f))
 ///
 
-///
+TEST ///
   -- tests for connectingExtMap
   K = ZZ/11
   S = K[x,y,z,t]
@@ -422,7 +437,7 @@ TEST ///
   assert(g * h === f)
 ///
 
-///
+TEST ///
   -- tests for cotangentSurjection
   S = QQ[x,y,z,w]
   P = Proj S
@@ -443,7 +458,7 @@ TEST ///
 ///
 
 
-///
+TEST ///
   -- tests for embeddedToAbstract
   S = (ZZ/17)[x,y,z]
   I = ideal(x^5+y^5+z^5)
