@@ -871,6 +871,7 @@ ExternalProject_Add(build-lrslib
   SOURCE_DIR        libraries/lrslib/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
+  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/lrslib/patch-073
   CONFIGURE_COMMAND true
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} lrs # all-shared
                       INCLUDEDIR=${GMP_INCLUDE_DIRS}
