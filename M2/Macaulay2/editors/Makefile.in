@@ -35,8 +35,7 @@ prism/%: @srcdir@/prism/% prism
 	cp $< $@
 
 clean:
-	rm -rf @pre_emacsdir@/* atom emacs prism pygments vim \
-		Macaulay2Web textmate
+	rm -rf @pre_emacsdir@/* atom emacs prism pygments vim Macaulay2Web
 
 else
 clean:
