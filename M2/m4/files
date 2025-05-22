@@ -107,4 +107,3 @@ Macaulay2/tests/gigantic/Makefile
 Macaulay2/tests/goals/Makefile
 Macaulay2/tests/quarantine/Makefile
 Macaulay2/tests/rationality/Makefile
-Macaulay2/util/Makefile
