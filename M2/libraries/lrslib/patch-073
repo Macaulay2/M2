@@ -1,0 +1,45 @@
+Description: Fix incompatible pointer type errors in GCC 15
+Origin: https://src.fedoraproject.org/rpms/lrslib/blob/rawhide/f/lrslib-fixes.patch
+
+--- a/lrslib.c
++++ lrslib-073/lrslib.c
+@@ -84,10 +84,10 @@ char *lrs_basename(char *path);
+ /* signals handling            */
+ /*******************************/
+ #ifndef SIGNALS
+-static void checkpoint ();
+-static void die_gracefully ();
++static void checkpoint (int signum);
++static void die_gracefully (int signum);
+ static void setup_signals (void);
+-static void timecheck ();
++static void timecheck (int signum);
+ #endif
+ 
+ /*******************************/
+@@ -6368,7 +6368,7 @@ setup_signals ()
+ }
+ 
+ static void
+-timecheck ()
++timecheck (int signum)
+ {
+   lrs_dump_state ();
+   errcheck ("signal", signal (SIGALRM, timecheck));
+@@ -6376,14 +6376,14 @@ timecheck ()
+ }
+ 
+ static void
+-checkpoint ()
++checkpoint (int signum)
+ {
+   lrs_dump_state ();
+   errcheck ("signal", signal (SIGUSR1, checkpoint));
+ }
+ 
+ static void
+-die_gracefully ()
++die_gracefully (int signum)
+ {
+   lrs_dump_state ();
+ 
