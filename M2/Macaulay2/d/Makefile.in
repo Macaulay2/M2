@@ -86,11 +86,14 @@ clean::; rm -f distributed-packages.h
 # these files depend on WITH_MYSQL, which is in config.h:
 actors4.o actors2.o : ../../include/M2/config.h
 
+# https://stackoverflow.com/a/786530
+reverse = $(if $(1),$(call reverse,$(wordlist 2,$(words $(1)),$(1)))) $(firstword $(1))
+
 ifeq "$(DEPENDS)" "yes"
 # We include all the files twice, once in reverse order.  Example: "include a b c d d c b a"
 # The reason for this is that some versions of gnu make build the needed files in reverse order, and some build in forward order.
 # (Compare version 4.3 to version 4.4)
-include $(patsubst %.d, %.dep, $(patsubst %.dd, %.dep, $(M2_DFILES) $(shell ../util/echoout -r $(M2_DFILES))))
+include $(patsubst %.d, %.dep, $(patsubst %.dd, %.dep, $(M2_DFILES) $(call reverse, $(M2_DFILES))))
 endif
 
 .SUFFIXES: .d .sig .dep .res .test .m2
