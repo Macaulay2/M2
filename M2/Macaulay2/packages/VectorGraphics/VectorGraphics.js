@@ -412,7 +412,7 @@ function gfxReorder(el) {
 
 function gNode(nd,vec) {
     if (nd instanceof HTMLCollection) { // we're in trouble -- id used multiple times
-	i=0;
+	var i=0;
 	while (i<nd.length && !currentEl.contains(nd[i])) i++;
 	if (i<nd.length) nd=nd[i]; else return; // shouldn't happen
     }
