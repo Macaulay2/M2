@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
   pull_request:
     branches:
-      - master
+      - stable
       - development
   schedule:
     - cron: '0 6 * * SUN' # runs tests on the main branch every Sunday at 06:00 UTC

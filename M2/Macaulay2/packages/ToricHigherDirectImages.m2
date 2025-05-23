@@ -21,7 +21,8 @@ newPackage(
     Date => "2025 April",
     Authors => {
 	{Name     => "Sasha Zotine", 
-	 Email    => "sashahbc@gmail.com"}
+	 Email    => "zotinea@mcmaster.ca",
+	 HomePage => "https://sites.google.com/view/szotine/home" }
 	},
     Headline => "computations involving pushforwards and higher direct images of toric maps",
     Keywords => {"Toric Geometry"},

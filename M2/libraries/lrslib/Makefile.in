@@ -6,7 +6,7 @@
 HOMEPAGE = http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html
 URL = https://cgm.cs.mcgill.ca/~avis/C/lrslib/archive
 VERSION = 073
-# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 TARFILE = lrslib-$(VERSION).tar.gz
 #PROGRAMS = lrs redund lra1 redund1 nash setupnash setupnash2 fourier buffer 2nash
 PROGRAMS = lrs #redund lrs1 redund1 setnash setnash2 2nash
