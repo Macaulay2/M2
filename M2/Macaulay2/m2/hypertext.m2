@@ -46,10 +46,15 @@ new URL from String := (URL, str) -> { str }
 isAbsoluteURL = url -> match( "^(#|mailto:|[a-z]+://)", url )
 
 -- TODO: phase this one out eventually
+fileExists' = pth -> (
+    if match("#",pth) then pth = substring(0,lastMatch#0#0,pth);
+    fileExists pth
+)
+
 toURL = method()
 toURL String := pth -> (
      urlEncode if isAbsolutePath pth then concatenate(rootURI,
-	  if fileExists pth then realpath pth
+	  if fileExists' pth then realpath pth
 	  else (
 	       stderr << "-- *** warning: file needed for URL not found: " << pth << endl;
 	       pth))
@@ -75,6 +80,12 @@ toURL(String, String) := (prefix,tail) -> (		    -- this is the good one
 	  stderr << "--                      result        = " << r << endl;
 	  );
      urlEncode r)
+
+toURL FilePosition := p -> concatenate(
+	p#0,
+	"#L",toString p#1,":C",toString p#2,
+	if #p>=5 then ("-L",toString p#3,":C",toString p#4)
+	)
 
 -----------------------------------------------------------------------------
 -- MarkUpType type declarations
@@ -369,9 +380,6 @@ addAttribute(INPUT, buttonAttr | {"accept","alt","checked",
 	"height", "list", "max", "maxlength", "min", "minlength", "multiple",
 	"pattern", "placeholder", "readonly", "required", "size", "src", "step", "width" })
 
-M2CODE = method()
-M2CODE Thing := x -> prepend("class" => "language-macaulay2", CODE x)
-
 -- Written by P. Zinn-Justin
 style = method(Options => true)
 style Hypertext := true >> o -> x -> (
@@ -381,6 +389,22 @@ style Hypertext := true >> o -> x -> (
     ops = applyPairs(ops,(k,v)->if k==="style" then (k,concatenate(v, if v=!=null and #v>0 and last v =!= ";" then ";",str)) else if v=!=null then (k,v));
     new class x from (toList sequence arg | apply(pairs ops,a->new Option from a))
     )
+
+htmlClass = method()
+htmlClass Hypertext := x -> (
+    (ops,arg) := override(options class x,toSequence x);
+    if ops#"class" =!= null then separate(" ",ops#"class") else {}
+    )
+htmlClass(Hypertext,List) := (x,c) -> (
+    c = unique(htmlClass x | c);
+    i := position(toList x, y -> class y === Option and y#0 === "class");
+    if i=!=null then x = drop(x,{i,i});
+    append(x,"class"=>demark_" " c)
+    )
+htmlClass(Hypertext,String) := (x,s) -> htmlClass(x,{s})
+
+M2CODE = method()
+M2CODE Thing := x -> htmlClass(CODE x, "language-macaulay2")
 
 hypertext = method(Dispatch => Thing, TypicalValue => Hypertext)
 hypertext Hypertext := identity
@@ -409,7 +433,6 @@ hypertext Manipulator :=
 hypertext Nothing :=
 hypertext Boolean := SAMPc "constant"
 hypertext Type :=
-hypertext FilePosition :=
 hypertext Dictionary := SAMPc "class-name"
 hypertext String := SAMPc "string"
 hypertext Net := n -> PRE {
@@ -417,6 +440,9 @@ hypertext Net := n -> PRE {
     "class"=>"token net",
     if #n>0 and depth n!=0 then "style" => "vertical-align:"|toString(-100*depth n)|"%"
     }
+hypertext FilePosition := p -> SAMP HREF {
+    toURL p,
+    toString p};
 hypertext VerticalList         := x -> if #x==0 then SPAN{"{}"} else UL append(apply(x, y -> new LI from hold y),"style"=>"display:inline-table")
 hypertext NumberedVerticalList := x -> if #x==0 then SPAN{"{}"} else OL append(apply(x, y -> new LI from hold y),"style"=>"display:inline-table")
 hypertext RawObject := hypertext @@ net

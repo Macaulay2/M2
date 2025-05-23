@@ -240,8 +240,8 @@ toString FilePosition :=
 net FilePosition := p -> concatenate(
     if match(" ", p#0) then format p#0 else p#0,
     ":",toString p#1,":",toString p#2,
-    if #p>3 then ("-",toString p#3,":",toString p#4),
---    if #p>5 then (" (",toString p#5,":",toString p#6,")")
+    if #p==4 then (":(",toString p#3,")")
+    else if #p>=5 then ("-",toString p#3,":",toString p#4)
     )
 currentPosition = () -> new FilePosition from { currentFileName, currentRowNumber(), currentColumnNumber() }
 
