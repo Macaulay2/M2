@@ -61,9 +61,23 @@ printFunc := Thing#{WebApp,print} = x -> (
 
 on := () -> concatenate(webAppPromptTag,interpreterDepth:"o", toString lineNumber,webAppEndTag)
 
+timelimit := (t,f) -> (alarm t; r := f(); alarm 0; r)
+
 Thing#{WebApp,Print} = x -> (
     << endl << on() | " = ";
-    printFunc x;
+    fun := () -> ( printFunc x; );
+    try timelimit(printingTimeLimit, fun) else (
+	alarm 0; -- in case it's another error that triggered try
+	global debugError <- fun;
+	stderr << "--error or time limit reached in conversion of output to html: type " | webAppHtmlTag | "<code data-m2code>debugError()</code>" | webAppEndTag |" to run it again; will try conversion to net" << endl;
+	try timelimit(printingTimeLimit, () -> (
+--		<< flush << net x << flush << endl; -- not quite right
+		printFunc net x;
+		)) else (
+	    alarm 0;
+	    error "time limit/error reached in conversion of output to net";
+	    )
+	);
     )
 
 InexactNumber#{WebApp,Print} = x ->  withFullPrecision ( () -> Thing#{WebApp,Print} x )
