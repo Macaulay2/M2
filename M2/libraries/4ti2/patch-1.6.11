@@ -1,0 +1,13 @@
+Description: Drop autoconf version down to 2.69 for older systems
+
+--- a/configure.ac
++++ 4ti2-1.6.11/configure.ac
+@@ -1,7 +1,7 @@
+ #                                               -*- Autoconf -*-
+ # Process this file with autoconf to produce a configure script.
+ 
+-AC_PREREQ([2.71])
++AC_PREREQ([2.69])
+ AC_INIT([4ti2],[1.6.11])
+ AC_CONFIG_MACRO_DIR([m4])
+ AM_INIT_AUTOMAKE([foreign std-options])

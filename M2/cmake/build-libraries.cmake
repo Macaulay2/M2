@@ -773,8 +773,9 @@ ExternalProject_Add(build-4ti2
   SOURCE_DIR        libraries/4ti2/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-  PATCH_COMMAND     mkdir swig # needed because the tar doesn't have a swig directory but 4ti2's Makefile.am seems to need it
-  CONFIGURE_COMMAND autoreconf -vif
+  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/4ti2/patch-1.6.11
+  # tar doesn't have a swig directory but 4ti2's Makefile.am seems to need it
+  CONFIGURE_COMMAND mkdir -p swig && autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --with-glpk=${GLPK_ROOT}

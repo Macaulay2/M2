@@ -2,7 +2,7 @@
 VERSION = 1.6.11
 TARDIR = 4ti2-$(VERSION)
 
-# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = mkdir -p swig && autoreconf -vif
 
 VERSION_ = $(shell echo $(VERSION) | sed 's/\./_/g')
