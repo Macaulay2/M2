@@ -212,7 +212,7 @@ document {
 	LI { "functionality changed in a way that could break code:",
 	    UL {
 		LI { "The package ", TT "Divisor", " has been renamed as ", TO "WeilDivisors :: WeilDivisors", "." },
-		LI { "The method ", TO "Isomorphism :: isIsomorphism", " now only returns true or false. ",
+		LI { "The method ", TO "Isomorphism :: isIsomorphic", " now only returns true or false. ",
 		    "To retrieved the computed isomorphism, use the method ", TO "Isomorphism :: isomorphism", "." },
 		LI { "The method ", TO (symbol\\, Matrix, Matrix), " is now a shortcut for ", TO (quotient', Matrix, Matrix), ". ",
 		    "The previous functionality is still available via ", TO (symbol//, Matrix, Matrix), ", which is a shortcut for ",
