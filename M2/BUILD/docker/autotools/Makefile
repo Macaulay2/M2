@@ -9,7 +9,7 @@ mkdir -p M2/$(BUILD_DIR)
 cd M2/$(BUILD_DIR)
 $(M2_HOME)/M2/M2/autogen.sh
 $(M2_HOME)/M2/M2/configure $(CONFIG_OPT)
-make
+make $(MAKE_OPT)
 endef
 export M2_BUILD_SCRIPT_autotools
 
