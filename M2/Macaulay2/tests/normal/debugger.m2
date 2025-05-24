@@ -43,7 +43,8 @@ assert( (disassemble'((a,b,c) -> a*b*c)) === "(2-OP * (2-OP * (local-fetch 0 0) 
 assert( (disassemble'((a,b,c) -> (a*b)*c)) === "(2-OP * (2-OP * (local-fetch 0 0) (local-fetch 1 0)) (local-fetch 2 0))" );
 assert( (disassemble'((a,b,c) -> a*(b*c))) === "(2-OP * (local-fetch 0 0) (2-OP * (local-fetch 1 0) (local-fetch 2 0)))" );
 needsPackage "FirstPackage"
-assert( (toString last code locate symbol firstFunction) === "PRE{CODE{class => language-macaulay2, firstFunction = method(TypicalValue => String)}}" );
+assert( (toString last code locate symbol firstFunction) === "PRE{CODE{firstFunction = method(TypicalValue => String), class => language-macaulay2}}" );
+
 end--
 -*
 -- to update this file simply run these lines:
