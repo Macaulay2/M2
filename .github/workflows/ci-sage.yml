@@ -47,6 +47,10 @@ on:
       - '*'
   workflow_dispatch:
     # Allow to run manually
+    inputs:
+      macaulay2_targets:
+        description: 'Targets to build before M2-core, e.g., build-normaliz'
+        required: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -89,7 +93,7 @@ jobs:
     uses: passagemath/passagemath/.github/workflows/docker.yml@main
     with:
       extra_sage_packages: gdbm git libxml2 gfortran cmake python3 openblas zlib readline sqlite libpng bzip2 liblzma libffi openssl
-      targets: SAGE_CHECK=no SAGE_CHECK_PACKAGES="macaulay2" macaulay2
+      targets: SAGE_CHECK=no SAGE_CHECK_PACKAGES="macaulay2" SAGE_MACAULAY2_TARGETS="${{ github.event.inputs.macaulay2_targets }}" macaulay2
       # Standard setting: Test the current HEAD of passagemath:
       sage_repo: passagemath/passagemath
       sage_ref: main
@@ -103,7 +107,7 @@ jobs:
     uses: passagemath/passagemath/.github/workflows/macos.yml@main
     with:
       extra_sage_packages: gdbm git libxml2 gfortran cmake python3 openblas zlib readline sqlite libpng bzip2 liblzma libffi openssl
-      targets: SAGE_CHECK=no SAGE_CHECK_PACKAGES="macaulay2" macaulay2
+      targets: SAGE_CHECK=no SAGE_CHECK_PACKAGES="macaulay2" SAGE_MACAULAY2_TARGETS="${{ github.event.inputs.macaulay2_targets }}" macaulay2
       # Standard setting: Test the current HEAD of passagemath:
       sage_repo: passagemath/passagemath
       sage_ref: main
