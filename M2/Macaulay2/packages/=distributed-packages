@@ -231,6 +231,7 @@ SpecialFanoFourfolds
 RationalPoints2
 SuperLinearAlgebra
 SubalgebraBases
+Subrings
 AInfinity
 LinearTruncations
 ThinSincereQuivers
@@ -280,4 +281,3 @@ SCMAlgebras
 NumericalSemigroups
 IncidenceCorrespondenceCohomology
 ToricHigherDirectImages
-Subring

@@ -1,6 +1,6 @@
 -- -*- coding: utf-8 -*-
 newPackage(
-    "Subring",
+    "Subrings",
     Version => "1.0",
     Date => "June 6, 2023",
     Authors => {
