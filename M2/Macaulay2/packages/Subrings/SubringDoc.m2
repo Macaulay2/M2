@@ -28,7 +28,7 @@ doc ///
      It also allows one to check if two subrings are secretly the same.
   Caveat
      There are other subring flavor things out there.
-     For example, the SubalgebraBases package contains a subring. -- How do I reference other packages?
+     For example, the @TO "SubalgebraBases::SubalgebraBases"@ package contains a subring.
      That subring will eventually be deprecated in favor of this one.
   Subnodes
     Subring
