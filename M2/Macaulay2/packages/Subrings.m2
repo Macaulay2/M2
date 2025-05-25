@@ -146,8 +146,8 @@ Subring == Subring := (S1, S2) -> (
 -----------------------------------------
 beginDocumentation()
 
-load "./Subring/SubringDoc.m2"
-load "./Subring/SubringTests.m2"
+load "./Subrings/SubringDoc.m2"
+load "./Subrings/SubringTests.m2"
 
 end--
 
