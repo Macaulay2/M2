@@ -68,6 +68,34 @@ assert ch( +ii*.73249827349273948274398273498273p100e0)
 assert ch( +ii*.92837938475938759387539847539847p100e0)
 assert ch( -ii*.73249827349273948274398273498273p100e0)
 assert ch( -ii*.92837938475938759387539847539847p100e0)
+assert ch numeric infinity
+assert ch numeric(100, infinity)
+assert ch toCC numeric infinity
+assert ch toCC numeric(100, infinity)
+
+CCinf = toCC numeric infinity
+assert(CCinf === -CCinf)
+scan({5, 5/1, 5.0}, x -> (
+	y := toCC(53, x, numeric infinity);
+	assert ch y;
+	assert(y === CCinf);
+	y = toCC(53, numeric infinity);
+	assert ch y;
+	assert(y === CCinf)))
+
+chnan = x -> (
+    y := value toExternalString x;
+    precision y === precision x and not isANumber y)
+assert chnan numeric NotANumber
+assert chnan numeric(100, NotANumber)
+
+nan = numeric NotANumber
+CCnan = toCC nan
+chCCnan = chnan @@ realPart and chnan @@ imaginaryPart
+assert chCCnan CCnan
+scan({5, 5/1, 5.0}, x -> (
+	assert chCCnan toCC(53, x, nan);
+	assert chCCnan toCC(53, nan, x)))
 
 assert( 1. === 1. )
 assert( 1. =!= .1 )
