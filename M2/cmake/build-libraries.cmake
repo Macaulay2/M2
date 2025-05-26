@@ -767,15 +767,13 @@ set(4ti2_PROGRAMS
   qsolve rays walk zbasis zsolve hilbert graver ppi genmodel gensymm output)
 list(TRANSFORM 4ti2_PROGRAMS PREPEND ${M2_HOST_PREFIX}/bin/ OUTPUT_VARIABLE 4ti2_PROGRAMS)
 ExternalProject_Add(build-4ti2
-  URL               https://github.com/4ti2/4ti2/releases/download/Release_1_6_11/4ti2-1.6.11.tar.gz
-  URL_HASH          SHA256=cdb7dbb2c2b3797dc8291bed32512767557c553114b7bf496a8f39daafa23a27
+  URL               https://github.com/4ti2/4ti2/releases/download/Release_1_6_12/4ti2-1.6.12.tar.gz
+  URL_HASH          SHA256=5c72266610a18f39c6dfda62fb3af40482d083739f87e5240ae4f9a5b9d402dd
   PREFIX            libraries/4ti2
   SOURCE_DIR        libraries/4ti2/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/4ti2/patch-1.6.11
-  # tar doesn't have a swig directory but 4ti2's Makefile.am seems to need it
-  CONFIGURE_COMMAND mkdir -p swig && autoreconf -vif
+  CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --with-glpk=${GLPK_ROOT}
@@ -792,7 +790,7 @@ ExternalProject_Add(build-4ti2
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
   INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} -C src install-strip
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/4ti2
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different README ${M2_INSTALL_LICENSESDIR}/4ti2
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different README.md ${M2_INSTALL_LICENSESDIR}/4ti2
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${4ti2_PROGRAMS} ${M2_INSTALL_PROGRAMSDIR}/
           COMMAND   ${CMAKE_COMMAND} -E remove -f ${4ti2_PROGRAMS}
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
