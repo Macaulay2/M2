@@ -57,43 +57,6 @@ makeCodeSequence(e:ParseTree,separator:Word):CodeSequence := (
      v := new CodeSequence len CodeSequenceLength(e,separator) do provide dummyCode;
      fillCodeSequence(e,v,length(v),separator);
      v);
-SymbolSequenceLength(e:ParseTree):int := (
-     i := 0;
-     while true do (
-     	  when e
-	  is p:Parentheses do e = p.contents
-     	  is b:Binary do (
-	       i = i+1;
-	       e = b.lhs;
-	       )
-	  else (					    -- should be the first token
-	       i = i+1;
-	       return i;
-	       )
-	  )
-     );
-makeSymbolSequence(e:ParseTree):SymbolSequence := (	    -- but replace local symbols by dummySymbol
-     m := SymbolSequenceLength(e);
-     v := new SymbolSequence len m do provide dummySymbol;
-     while true do (
-     	  when e
-	  is p:Parentheses do e = p.contents
-     	  is b:Binary do (
-	       when b.rhs is t:Token do (
-		    m = m-1;
-		    v.m = t.entry;
-		    )
-	       else nothing;				    -- shouldn't happen
-	       e = b.lhs;
-	       )
-	  is t:Token do (
-	       m = m-1;
-	       v.m = t.entry;
-	       break;
-	       )
-	  else break;					    -- shouldn't happen
-	  );
-     v);
 
 nestingDepth(frameID:int,d:Dictionary):int := (
      if frameID == 0 then return -1;
@@ -123,8 +86,8 @@ convertTokenReference(token:Token):Code := (
     else (
 	if var.frameID == 0 then
 	if var.thread
-	then Code(threadMemoryReferenceCode(var.frameindex, pos))
-	else Code(globalMemoryReferenceCode(var.frameindex, pos))
+	then Code(threadMemoryReferenceCode(var, pos))
+	else Code(globalMemoryReferenceCode(var, pos))
 	else Code(localMemoryReferenceCode(nestingDepth(var.frameID, token.dictionary), var.frameindex, pos)))
     );
 
@@ -138,15 +101,11 @@ convertTokenAssignment(token:Token, rhs:ParseTree):Code := (
 	    nestingDepth(sym.frameID, token.dictionary), sym.frameindex, val, pos))
     );
 
-convertParallelAssignment(par:Parentheses,rhs:ParseTree,d:Dictionary):Code := (
-    syms := makeSymbolSequence(ParseTree(par)); -- silly -- rethink
+convertParallelAssignment(colon:bool, par:Parentheses, rhs:ParseTree):Code := (
+    lhs := makeCodeSequence(par.contents, CommaW);
     vals := convert(rhs);
     pos := combinePositionR(par.left.position, treePosition(rhs));
-    n := length(syms);
-    nd := new array(int) len n do foreach x in syms do provide nestingDepth(x.frameID, d); -- rethink dictionary
-    fr := new array(int) len n do foreach x in syms do provide x.frameindex;
-    foreach x in syms do if x.frameID != 0 then x = dummySymbol;
-    Code(parallelAssignmentCode(nd, fr, syms, vals, pos))
+    Code(parallelAssignmentCode(colon, lhs, vals, pos))
     );
 
 export convertGlobalOperator(oper:Token):Code := Code(globalSymbolClosureCode(oper.entry, oper.position));
@@ -189,7 +148,7 @@ export convert0(e:ParseTree):Code := (
 		rhs := convertGlobalOperator(token);
 		-- TODO: is this check necessary?
 		if token.word.typecode == TCid
-		then Code(binaryCode(b.Operator.entry.binary, convert(b.lhs), rhs, pos))
+		then Code(binaryCode(b.Operator.entry, convert(b.lhs), rhs, pos))
 		else dummyCode -- should not occur
 		)
 	    else dummyCode -- should not occur
@@ -207,7 +166,12 @@ export convert0(e:ParseTree):Code := (
 	    -- e.g. x = ...
 	    is t:Token       do convertTokenAssignment(t, b.rhs)
 	    -- e.g. (x,y,z) = (...)
-	    is p:Parentheses do convertParallelAssignment(p, b.rhs, b.Operator.dictionary)
+	    is p:Parentheses do convertParallelAssignment(false, p, b.rhs)
+	    is p:EmptyParentheses do Code(parallelAssignmentCode(
+		    false,
+		    CodeSequence(),
+		    convert(b.rhs),
+		    combinePositionR(p.left.position, treePosition(b.rhs))))
 	    -- Note: usable, but not used anywhere yet
 	    is u:Unary   do convertUnaryInstallCode(UnaryInstallValueFun,
 		convertGlobalOperator(u.Operator), convert(u.rhs), convert(b.rhs), pos)
@@ -243,7 +207,12 @@ export convert0(e:ParseTree):Code := (
 	    -- e.g. x := ...
 	    is t:Token       do convertTokenAssignment(t, b.rhs)
 	    -- e.g. (x,y,z) := (...)
-	    is p:Parentheses do convertParallelAssignment(p, b.rhs, b.Operator.dictionary)
+	    is p:Parentheses do convertParallelAssignment(true, p, b.rhs)
+	    is p:EmptyParentheses do Code(parallelAssignmentCode(
+		    true,
+		    CodeSequence(),
+		    convert(b.rhs),
+		    combinePositionR(p.left.position, treePosition(b.rhs))))
 	    -- e.g. - Matrix := ...
 	    -- TODO: can #T be implemented here?
 	    is u:Unary   do convertUnaryInstallCode(UnaryInstallMethodFun,
@@ -261,7 +230,7 @@ export convert0(e:ParseTree):Code := (
 		if n.newParent      == dummyTree then
 		if n.newInitializer == dummyTree
 		-- e.g. new ChainComplex := ChainComplex => T -> ...
-		then Code(binaryCode(AssignNewFun,
+		then Code(binaryCode(NewS.symbol,
 			convert(n.newClass),
 			convert(b.rhs), pos))
 		-- e.g. new Set from List := Set => ...
@@ -288,25 +257,25 @@ export convert0(e:ParseTree):Code := (
 	  then (
 	      when b.lhs
 	      is a:Adjacent do Code(augmentedAssignmentCode(
-		      b.Operator.entry, convert(b.lhs), convert(b.rhs), AdjacentS.symbol, pos))
+		      b.Operator.entry, convert(b.lhs), convert(b.rhs), pos))
 	      is o:Unary do Code(augmentedAssignmentCode(
-		      b.Operator.entry, convert(b.lhs), convert(b.rhs), o.Operator.entry, pos))
+		      b.Operator.entry, convert(b.lhs), convert(b.rhs), pos))
 	      is o:Postfix do Code(augmentedAssignmentCode(
-		      b.Operator.entry, convert(b.lhs), convert(b.rhs), o.Operator.entry, pos))
+		      b.Operator.entry, convert(b.lhs), convert(b.rhs), pos))
 	      is o:Binary do Code(augmentedAssignmentCode(
-		      b.Operator.entry, convert(b.lhs), convert(b.rhs), o.Operator.entry, pos))
+		      b.Operator.entry, convert(b.lhs), convert(b.rhs), pos))
 	      is t:Token do Code(augmentedAssignmentCode(
-		      b.Operator.entry, convert(b.lhs), convert(b.rhs), t.entry, pos))
+		      b.Operator.entry, convert(b.lhs), convert(b.rhs), pos))
 	      else Code(augmentedAssignmentCode(
-		      b.Operator.entry, convert(b.lhs), convert(b.rhs), dummySymbol, pos))
+		      b.Operator.entry, convert(b.lhs), convert(b.rhs), pos))
 		      )
-	  else Code(binaryCode(b.Operator.entry.binary, convert(b.lhs), convert(b.rhs), pos))
+	  else Code(binaryCode(b.Operator.entry, convert(b.lhs), convert(b.rhs), pos))
 	  )
     is u:Unary do (
 	if u.Operator.word == CommaW     then Code(sequenceCode(makeCodeSequence(e, CommaW),     pos)) else
 	if u.Operator.word == SemicolonW then Code(semiCode(    makeCodeSequence(e, SemicolonW), pos))
-	else Code(unaryCode(u.Operator.entry.unary, convert(u.rhs), pos)))
-    is u:Postfix do Code(unaryCode(u.Operator.entry.postfix, convert(u.lhs), pos))
+	else Code(unaryCode(u.Operator.entry, convert(u.rhs), pos)))
+    is u:Postfix do Code(unaryCode(u.Operator.entry, convert(u.lhs), pos))
     is q:Quote do (
 	  token := q.rhs;
 	  sym := token.entry;

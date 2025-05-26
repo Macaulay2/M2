@@ -129,18 +129,6 @@ export unopNameList := unopNameListCell(dummyUnop,dummySymbol,self);
 export binopNameList := binopNameListCell(dummyBinop,dummySymbol,self);
 export ternopNameList := ternopNameListCell(dummyTernop,dummySymbol,self);
 export multopNameList := multopNameListCell(dummyMultop,dummySymbol,self);
-export getUnopName(f:unop):Symbol := (
-     p := unopNameList;
-     while true do (
-	  if p == p.next || p.f == f then return p.name;
-	  p = p.next;
-	  ));
-export getBinopName(f:binop):Symbol := (
-     p := binopNameList;
-     while true do (
-	  if p == p.next || p.f == f then return p.name;
-	  p = p.next;
-	  ));
 export getTernopName(f:ternop):Symbol := (
      p := ternopNameList;
      while true do (

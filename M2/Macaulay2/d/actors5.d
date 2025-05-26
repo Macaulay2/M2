@@ -208,37 +208,37 @@ shuffleproductfun(lhs:Code, rhs:Code):Expr := binarymethod(lhs, rhs, ShuffleProd
 setup(ShuffleProductS, shuffleproductfun);
 
 Tildefun(rhs:Code):Expr := unarymethod(rhs,TildeS);
-setuppostfix(TildeS,Tildefun);
+setupop(TildeS,Tildefun);
 
 PowerTildefun(rhs:Code):Expr := unarymethod(rhs,PowerTildeS);
-setuppostfix(PowerTildeS,PowerTildefun);
+setupop(PowerTildeS,PowerTildefun);
 
 UnderscoreTildefun(rhs:Code):Expr := unarymethod(rhs,UnderscoreTildeS);
-setuppostfix(UnderscoreTildeS,UnderscoreTildefun);
+setupop(UnderscoreTildeS,UnderscoreTildefun);
 
 ParenStarParenfun(rhs:Code):Expr := unarymethod(rhs,ParenStarParenS);
-setuppostfix(ParenStarParenS,ParenStarParenfun);
+setupop(ParenStarParenS,ParenStarParenfun);
 
 UnderscoreStarfun(rhs:Code):Expr := unarymethod(rhs,UnderscoreStarS);
-setuppostfix(UnderscoreStarS,UnderscoreStarfun);
+setupop(UnderscoreStarS,UnderscoreStarfun);
 
 PowerStarfun(rhs:Code):Expr := unarymethod(rhs,PowerStarS);
-setuppostfix(PowerStarS,PowerStarfun);
+setupop(PowerStarS,PowerStarfun);
 
 --PowerSharpfun(rhs:Code):Expr := unarymethod(rhs,PowerSharpS);
---setuppostfix(PowerSharpS,PowerSharpfun);
+--setupop(PowerSharpS,PowerSharpfun);
 
 --UnderscoreSharpfun(rhs:Code):Expr := unarymethod(rhs,UnderscoreSharpS);
---setuppostfix(UnderscoreSharpS,UnderscoreSharpfun);
+--setupop(UnderscoreSharpS,UnderscoreSharpfun);
 
 Exclamationfun(rhs:Code):Expr := unarymethod(rhs,ExclamationS);
-setuppostfix(ExclamationS,Exclamationfun);
+setupop(ExclamationS,Exclamationfun);
 
 PowerExclamationfun(rhs:Code):Expr := unarymethod(rhs,PowerExclamationS);
-setuppostfix(PowerExclamationS,PowerExclamationfun);
+setupop(PowerExclamationS,PowerExclamationfun);
 
 UnderscoreExclamationfun(rhs:Code):Expr := unarymethod(rhs,UnderscoreExclamationS);
-setuppostfix(UnderscoreExclamationS,UnderscoreExclamationfun);
+setupop(UnderscoreExclamationS,UnderscoreExclamationfun);
 
 factorial(x:Expr):Expr := (
      when x
