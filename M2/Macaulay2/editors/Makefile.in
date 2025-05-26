@@ -35,13 +35,12 @@ prism/%: @srcdir@/prism/% prism
 	cp $< $@
 
 clean:
-	rm -rf @pre_emacsdir@/* atom emacs prism pygments vim Macaulay2Web
+	rm -rf @pre_emacsdir@/* emacs prism pygments vim Macaulay2Web
 
 else
 clean:
 	rm -rf @pre_emacsdir@/* $(addprefix emacs/, $(MADEFILES)) \
-		atom/macaulay2.cson pygments/macaulay2.py         \
-		$(PRISM_MADEFILES)
+		pygments/macaulay2.py $(PRISM_MADEFILES)
 endif
 
 %/node_modules: %/package.json
