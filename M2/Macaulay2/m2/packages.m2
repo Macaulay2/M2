@@ -168,6 +168,8 @@ loadPackage String  := opts -> pkgname -> (
     if opts.Reload === true then (
 	dismiss pkgname;
 	if isPackageLoaded pkgname then (
+	    printerr("warning: reloading ", pkgname,
+		"; recreate instances of types from this package");
 	    closePackage value PackageDictionary#pkgname;
 	    -- clear out the value of the symbol
 	    PackageDictionary#pkgname <- PackageDictionary#pkgname));
