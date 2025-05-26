@@ -877,13 +877,13 @@ doc ///
     Example
       G1 = graph ({}, Singletons => {1,2,3});
       G2 = graph ({{1,2}}, Singletons => {3});
-      I1 = spohnCI(PR,X,G1)
-      I2 = spohnCI(PR,X,G2)
+      I1 = spohnCI(PR,X,G1);
+      I2 = spohnCI(PR,X,G2);
       -- One can also add the linear constraint coming from the probabilities.
       -- For generic games, the ideal J1 models totally mixed Nash equilibria.
       J = probabilitySumIdeal(PR)
-      J1 = I1 + J
-      J2 = I1 + J
+      J1 = I1 + J;
+      J2 = I1 + J;
   References
     This package is based on the following papers:
          
@@ -900,11 +900,11 @@ doc ///
         Journal of Algebra, Volume 666, 2025.
 	
   Acknowledgement
-    We thank Ben Hollering<@HREF"https://sites.google.com/view/benhollering"@> and Mahrud Sayrafi<@HREF"https://www-users.cse.umn.edu/~mahrud/"@> for their support
-    during the Macaulay2 in the Sciences Workshop<@HREF"https://www.mis.mpg.de/de/events/series/macaulay2-in-the-sciences"@> where the development of this package began.
+    We thank @HREF("https://sites.google.com/view/benhollering","Ben Hollering")@ and @HREF("https://www-users.cse.umn.edu/~mahrud/","Mahrud Sayrafi")@ for their support
+    during the @HREF("https://www.mis.mpg.de/de/events/series/macaulay2-in-the-sciences","Macaulay2 in the Sciences Workshop")@ where the development of this package began.
   Contributors
     The following people have generously contributed their time and effort to this project:  
-    Luca Sodomaco<@HREF"https://sites.google.com/view/luca-sodomaco/home"@>.
+    Luca Sodomaco @HREF("https://sites.google.com/view/luca-sodomaco/home","Luca Sodomaco")@.
   Caveat
     GameTheory uses Polyhedra.m2 for the methods of correlated equilibria and GraphicalModels.m2 for the methods of conditional independence equilibria.
     Throughout the package, we followed Macaulay2's convention of zero-based indexing. This can be seen e.g., in the methods of @TO nashEquilibriumRing@
@@ -968,7 +968,7 @@ doc ///
   Description
 
     Text
-      The type `Tensor` is a mutable hash table with additional metadata to represent multi-dimensional arrays.
+      The type Tensor is a mutable hash table with additional metadata to represent multi-dimensional arrays.
       Each tensor has an associated format (list of dimensions), a coefficient ring, and a set of index keys.
 
     Example
@@ -1129,7 +1129,7 @@ doc ///
       A list of entries of the tensor along the specified dimension.
   Description
     Text
-      This method varies the index at the position given by the length of `Lstart`, iterating from 0 to $d_i - 1$, where $d_i$ is the corresponding index of the format.
+      This method varies the index at the position given by the length of Lstart, iterating from 0 to $d_i - 1$, where $d_i$ is the corresponding index of the format.
 
       The slice is formed by fixing all other indices and varying only the one at the slicing position.
 
@@ -1434,12 +1434,12 @@ doc ///
     For an $n$-player game where the $i$-th player has $d_i$ pure strategies, the maximum number of isolated totally mixed Nash equilibria is given
     by the degree $c(\mathbf{d})$ of the top Chern class of the following vector bundle:
 
-    \[ E \coloneqq \bigoplus_{i=0}^{n-1} \ko_{\mathbb{P}^{\mathbf{d}}}({\mathbf{1}}_i)^{\oplus(d_i-1)},\]
+    \[E := \bigoplus_{i=0}^{n-1} \mathcal{O}_{\mathbb{P}^{\mathbf{d}}}(\mathbf{1}_i)^{\oplus (d_i - 1)},\]
 
     where $\mathbb{P}^{\mathbf{d}}=\prod_{i=0}^{n-1}\mathbb{P}^{d_i-1}$ and $\mathbf{1}_i=(1,\ldots,1,0,1,\ldots,1)$, where the entry $0$ is in the $i$-th component.
     In particular, this function computes the integer $c(\mathbf{d})$ as the coefficient of the monomial
     $\prod_{i=0}^{n-1} h_i^{d_i-1}$ in $\prod_{i=0}^{n-1} \hat{h}_i^{d_i-1}$ with $\hat{h}_i\coloneqq \sum_{j\neq i}h_j$,
-    where $h_i$ denotes the pullback of the hyperplane class on the $i$-th factor $\mathbb{P}^{d_i-1}$ of $\PP^\bd$ via the projection map.
+    where $h_i$ denotes the pullback of the hyperplane class on the $i$-th factor $\mathbb{P}^{d_i-1}$ of $\mathbb{P}^{\mathbf{d}}$ via the projection map.
 
    Example
     d = {2,2,2};
@@ -1685,7 +1685,7 @@ doc ///
       Di = {2,2,3};
       PR = probabilityRing(Di);
       X = randomGame(Di);
-      I = spohnIdeal(PR,X)
+      I = spohnIdeal(PR,X);
   SeeAlso
     probabilityRing
     randomGame
@@ -1895,8 +1895,8 @@ doc ///
 
     A single conditional independence statement is a list consisting of three disjoint
     lists of indices for random variables, e.g. $\{ \{1,2\},\{4\}, \{3\} \}$
-    which represents the conditional independence statement ``$(X_1, X_2)$
-    is conditionally independent of $X_4$ given $X_3$''.
+    which represents the conditional independence statement "$(X_1, X_2)$
+    is conditionally independent of $X_4$ given $X_3$".
     Given an undirected graph $G$, the conditional independence statements are produced via
     the globalMarkov function from the GraphicalModels package. A global Markov statement
     for $G$ is a list $\{A, B, C\}$ of three disjoint lists of vertices of $G$, where the
@@ -1908,7 +1908,7 @@ doc ///
     maps it to an ideal of PR via the mapToProbabilityRing function.
 
    Example
-      FF = ZZ/32003
+      FF = ZZ/32003;
       d = {2,3,2};
       PR = probabilityRing (d, CoefficientRing => FF);
       G = graph ({}, Singletons => {1,2,3});
@@ -1990,8 +1990,8 @@ doc ///
       an undirected graph.
       A single conditional independence statement is a list consisting of three disjoint
       lists of indices for random variables, e.g. $\{ \{1,2\},\{4\}, \{3\} \}$
-      which represents the conditional independence statement ``$(X_1, X_2)$
-      is conditionally independent of $X_4$ given $X_3$''. In the context of game theory, the variable
+      which represents the conditional independence statement "$(X_1, X_2)$
+      is conditionally independent of $X_4$ given $X_3$". In the context of game theory, the variable
       $X_i$ represents the strategy of player $i$.
 
       Given an undirected graph $G$, the conditional independence statements are produced via
@@ -1999,15 +1999,15 @@ doc ///
       for $G$ is a list $\{A, B, C\}$ of three disjoint lists of vertices of $G$, where the
       subset $C$ separates the subset $A$ from the subset $B$ in the graph $G$.
     Example
-     FF = ZZ/32003
+     FF = ZZ/32003;
      d = {2,2,2};
      X = randomGame(d, CoefficientRing => FF);
      PR = probabilityRing(d, CoefficientRing => FF);
      V = spohnIdeal(PR, X);
      G1 = graph ({}, Singletons => {1,2,3});
      G2 = graph ({{1,2}}, Singletons => {3});
-     I1 = intersectWithCImodel(V, G1)
-     I2 = intersectWithCImodel(V, G2)
+     I1 = intersectWithCImodel(V, G1);
+     I2 = intersectWithCImodel(V, G2);
 
     Text
       Here is an example where the vertices of the graph need to be relabeled.
@@ -2020,8 +2020,8 @@ doc ///
      V = spohnIdeal(PR, X);
      G1 = graph {{John,Matthew},{Matthew,Sarah}};
      G2 = graph {{a,b},{b,c},{c,a}};
-     I1 = intersectWithCImodel(V, G1, {John,Matthew,Sarah})
-     I2 = intersectWithCImodel(V, G2, {a,b,c}) 
+     I1 = intersectWithCImodel(V, G1, {John,Matthew,Sarah});
+     I2 = intersectWithCImodel(V, G2, {a,b,c});
       
     Text
       Here is an example where the conditional independence relations are given with a List.
@@ -2034,8 +2034,8 @@ doc ///
       V = spohnIdeal(PR, X);
       G = graph ({{1,2}},Singletons => {3});
       L = {{{1,2},{3},{}}};
-      I1 = intersectWithCImodel(V, G)
-      I2 = intersectWithCImodel(V, L)
+      I1 = intersectWithCImodel(V, G);
+      I2 = intersectWithCImodel(V, L);
       I1 == I2
 
     Text
@@ -2103,48 +2103,48 @@ doc ///
       an undirected graph.
       A single conditional independence statement is a list consisting of three disjoint
       lists of indices for players, e.g. $\{ \{1,2\},\{4\}, \{3\} \}$
-      which represents the conditional independence statement ``The strategies of Players 1 and 2
-      are conditionally independent of Player 4's strategy given Player 3's strategy''.
+      which represents the conditional independence statement "The strategies of Players 1 and 2
+      are conditionally independent of Player 4's strategy given Player 3's strategy".
 
       Given an undirected graph $G$, the conditional independence statements are produced via
       the globalMarkov function from the GraphicalModels package. A global Markov statement
       for $G$ is a list $\{A, B, C\}$ of three disjoint lists of vertices of $G$, where the
       subset $C$ separates the subset $A$ from the subset $B$ in the graph $G$.
     Example
-      FF = ZZ/32003
+      FF = ZZ/32003;
       d = {2,2,2};
       X = randomGame(d, CoefficientRing => FF);
       PR = probabilityRing(d, CoefficientRing => FF);
       G1 = graph ({}, Singletons => {1,2,3});
       G2 = graph ({{1,2}}, Singletons => {3});
-      I1 = spohnCI(PR,X,G1)
-      I2 = spohnCI(PR,X,G2)
+      I1 = spohnCI(PR,X,G1);
+      I2 = spohnCI(PR,X,G2);
       
     Text
       Here is an example where the vertices of the graph need to be relabeled.
       
     Example  
-      FF = ZZ/32003
+      FF = ZZ/32003;
       d = {2,3,2};
       X = randomGame(d, CoefficientRing => FF);
       PR = probabilityRing(d, CoefficientRing => FF);
       G1 = graph {{John,Matthew},{Matthew,Sarah}};
       G2 = graph {{a,b},{b,c},{c,a}};
-      I1 = spohnCI(PR,X,G1, {John,Matthew,Sarah})
-      I2 = spohnCI(PR,X,G2, {a,b,c}) 
+      I1 = spohnCI(PR,X,G1, {John,Matthew,Sarah});
+      I2 = spohnCI(PR,X,G2, {a,b,c});
       
     Text
       Here is an example where the conditional independence relations are given with a List.
 
     Example
-      FF = ZZ/32003
+      FF = ZZ/32003;
       d = {2,2,2};
       X = randomGame(d, CoefficientRing => FF);
       PR = probabilityRing(d, CoefficientRing => FF);
       G = graph ({{1,2}},Singletons => {3});
       L = {{{1,2},{3},{}}};
-      I1 = spohnCI(PR,X,G)
-      I2 = spohnCI(PR,X,L)
+      I1 = spohnCI(PR,X,G);
+      I2 = spohnCI(PR,X,L);
       I1 == I2
 
     Text
