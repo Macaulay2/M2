@@ -30,7 +30,7 @@ export {
   "interpolateComponent",
   "componentsOfKernel",
   -- Options
-  "Grading", "PreviousGens", "ReturnTargetGrading", "UseMatroid", "UseInterpolation", "Verbose"
+  "Grading", "PreviousGens", "ReturnTargetGrading", "UseMatroid", "UseInterpolation",
 }
 
 
@@ -785,7 +785,6 @@ Description
 
 doc ///
 Key
-  Verbose
   [componentsOfKernel, Verbose]
 Headline
   display detailed output during computation
