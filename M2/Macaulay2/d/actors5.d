@@ -1333,6 +1333,7 @@ setupfun("readlink",readlinkfun);
 
 realpathfun(e:Expr):Expr := (
      when e is f:stringCell do (
+	  if f.v === "stdio" || f.v === "currentString" then return e;
      	  when realpath(expandFileName(f.v))
      	  is null do buildErrorPacket(syscallErrorMessage("realpath"))
      	  is p:string do toExpr(p)
