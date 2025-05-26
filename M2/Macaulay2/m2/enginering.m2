@@ -358,7 +358,11 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 	  if denominator f != 1 
 	  then error "expected a generator"
 	  else baseName numerator f);
-     expression F := (f) -> expression numerator f / expression denominator f;
+     expression F := (f) -> (
+	 e:=expression numerator f;
+	 e':=expression denominator f;
+	 if class e === Minus then Minus{e#0/e'} else e/e'
+	 );
      numerator F := (f) -> new R from rawNumerator raw f;
      denominator F := (f) -> new R from rawDenominator raw f;
      fraction(F,F) := F / F := (x,y) -> if y != 0 then x//y else error "division by 0";
