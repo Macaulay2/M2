@@ -553,10 +553,15 @@ debug GlobalDictionary := dict -> (
     checkShadow())
 
 packageFiles = pkg -> (
-    pkgaux := (
+    srcfile := realpath pkg#"source file";
+    if (
+	srcfile == "stdio"         or
+	srcfile == "currentString" or
+	match("/startup\\.m2(?:\\.in)?$", srcfile))
+    then {}
+    else prepend(srcfile,
 	if not pkg#?"auxiliary files" then {}
-	else select(values loadedFiles, match_(pkg#"auxiliary files")));
-    prepend(realpath pkg#"source file", pkgaux))
+	else select(values loadedFiles, match_(pkg#"auxiliary files"))))
 
 locate Package := pkg -> NumberedVerticalList (
     -- TODO: somehow keep track of the number of lines of each file
