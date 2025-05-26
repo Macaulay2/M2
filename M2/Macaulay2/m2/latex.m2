@@ -196,10 +196,16 @@ texMath BasicList    := L -> concatenate(texMath class L, texMathVisibleList("\\
 texMathMutable :=
 texMath MutableList  := L -> concatenate(texMath class L, "\\left\\{", if #L > 0 then "\\ldots "|#L|"\\ldots" else "\\,", "\\right\\}")
 
-texMath HashTable := H -> if H.?texMath then H.texMath else (
-    if hasAttribute(H, ReverseDictionary) then texMath toString getAttribute(H, ReverseDictionary)
-    else if isMutable H then texMathMutable H
-    else texMath class H | texMath apply(sortByName pairs H, (k, v) -> k => v))
+texMath HashTable := H -> (
+    if isMutable H then texMathMutable H
+    else texMath class H | texMath apply(sortByName pairs H, (k, v) -> k => v)
+    )
+
+texMath Ring := R -> (
+    if R.?texMath then R.texMath
+    else if hasAttribute(R, ReverseDictionary) then texMath toString getAttribute(R, ReverseDictionary)
+    else (lookup(texMath,HashTable)) R -- should never happen
+    )
 
 texMath Function := f -> texMath toString f
 
