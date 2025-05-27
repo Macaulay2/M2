@@ -900,11 +900,11 @@ doc ///
         Journal of Algebra, Volume 666, 2025.
 	
   Acknowledgement
-    We thank @HREF("https://sites.google.com/view/benhollering","Ben Hollering")@ and @HREF("https://www-users.cse.umn.edu/~mahrud/","Mahrud Sayrafi")@ for their support
+    We thank @HREF("https://sites.google.com/view/benhollering","Ben Hollering")@ and @HREF("https://sites.google.com/view/mahrud","Mahrud Sayrafi")@ for their support
     during the @HREF("https://www.mis.mpg.de/de/events/series/macaulay2-in-the-sciences","Macaulay2 in the Sciences Workshop")@ where the development of this package began.
   Contributors
     The following people have generously contributed their time and effort to this project:  
-    Luca Sodomaco @HREF("https://sites.google.com/view/luca-sodomaco/home","Luca Sodomaco")@.
+    @HREF("https://sites.google.com/view/luca-sodomaco/home","Luca Sodomaco")@.
   Caveat
     GameTheory uses Polyhedra.m2 for the methods of correlated equilibria and GraphicalModels.m2 for the methods of conditional independence equilibria.
     Throughout the package, we followed Macaulay2's convention of zero-based indexing. This can be seen e.g., in the methods of @TO nashEquilibriumRing@
