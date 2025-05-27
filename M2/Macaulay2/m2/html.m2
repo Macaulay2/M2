@@ -158,7 +158,7 @@ html COMMENT := x -> if match("--", concatenate x) then
 html HREF := x -> (
      r := concatenate apply(splice if #x > 1 then drop(x, 1) else x, html1);
      r = if match("^ +$", r) then #r : "&nbsp;&nbsp;" else r;
-     concatenate("<a href=\"", htmlLiteral toURL first x, "\">", r, "</a>")
+     concatenate("<a href=\"", toURL first x, "\">", r, "</a>")
      )
 
 html MENU := x -> html redoMENU x
@@ -212,7 +212,7 @@ percentEncoding =  new MutableHashTable from toList apply(
     -- unreserved characters from RFC 3986
     -- ALPHA / DIGIT / "-" / "." / "_" / "~"
     -- we also add "/" and ":" since they're standard URL characters
-    -- also "#" for named anchors
+    -- also "#" for named anchors -- should we also add "?" and "="? what if a filename contains these?
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890-._~/:#",
     c -> (c, c))
     -- everything else will be percent encoded and added to the hash table
