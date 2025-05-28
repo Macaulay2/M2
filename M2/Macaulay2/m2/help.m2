@@ -279,7 +279,10 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 	    PARA { "If you have used ", if isM2Doc then "Macaulay2" else "this package",
 		" in your research, please cite it as follows:" },
 	    TABLE {"class" => "examples",
-		TR TD PRE prepend("class" => "language-bib", CODE ci)}
+		TR TD PRE prepend("class" => "language-bib", CODE ci)},
+	    -- TODO: ideally this should be in Macaulay2Doc/ov_top.m2
+	    if isM2Doc then PARA { "Moreover, you can use the ", TO "PackageCitations::cite", " function
+		to learn how to cite any particular Macaulay2 packages which contributed to your research." }
 	    },
 	if not isM2Doc and #e + #m > 0 then DIV {
 	    SUBSECTION "Exports",
