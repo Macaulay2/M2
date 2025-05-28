@@ -113,8 +113,10 @@ randomMR := opts -> (F,G) -> (
      map(F,G,new Matrix from f))
 
 random(Module, Module) := Matrix => opts -> (F,G) -> (
-    if not isFreeModule F or not isFreeModule G
-    then return homomorphism random(Hom(F, G, DegreeLimit => 0), opts);
+    if not isFreeModule G
+    then return homomorphism random(Hom(G, F, DegreeLimit => 0), opts);
+    if not isFreeModule F
+    then return map(F, G, random(cover F, G, opts));
      R := ring F;
      if R =!= ring G then error "modules over different rings";
      if opts.MaximalRank then return (randomMR opts)(F,G);

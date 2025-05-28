@@ -186,11 +186,11 @@ iCite Package := P -> (
     -- bibtex howpublished content
     bibPackageSource :=
         if isInternalPackage and isInternalSource
-            then "\\url{https://github.com/Macaulay2/M2/tree/master/M2/Macaulay2/packages}"
+            then "\\url{https://github.com/Macaulay2/M2/tree/stable/M2/Macaulay2/packages}"
         else if isInternalPackage and not isInternalSource
             then if P#Options#HomePage =!= null
                 then concatenate("\"", toString (P#Options#HomePage), "\"")
-            else "\\url{https://github.com/Macaulay2/M2/tree/master/M2/Macaulay2/packages}"
+            else "\\url{https://github.com/Macaulay2/M2/tree/stable/M2/Macaulay2/packages}"
         else if P#Options#HomePage === null
             then (print concatenate ("Warning: The \"", T, "\" package provides insufficient citation data: howpublished."))
         else concatenate("\\url{" ,toString (P#Options#HomePage), "}");

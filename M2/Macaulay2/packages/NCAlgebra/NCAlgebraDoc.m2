@@ -39,7 +39,7 @@ doc ///
       
       Detailed instructions for installing Bergman, as well as the NCAlgebra system, can be
       found in the file installNCAlgebra.txt file contained in the NCAlgebra package directory.
-      It may also be found at @HREF"https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/NCAlgebra/installNCAlgebra.txt"@.
+      It may also be found at @HREF"https://github.com/Macaulay2/M2/blob/stable/M2/Macaulay2/packages/NCAlgebra/installNCAlgebra.txt"@.
 	 
   Subnodes
     "Basic operations on noncommutative algebras"
@@ -4116,7 +4116,7 @@ doc ///
       Text
          Detailed instructions for installing Bergman, as well as the NCAlgebra system, can be
 	 found in the file installNCAlgebra.txt file contained in the NCAlgebra package directory.
-	 It may also be found at @HREF"https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/NCAlgebra/installNCAlgebra.txt"@.
+	 It may also be found at @HREF"https://github.com/Macaulay2/M2/blob/stable/M2/Macaulay2/packages/NCAlgebra/installNCAlgebra.txt"@.
    SeeAlso
       "Using the Bergman interface"
 ///
