@@ -26,7 +26,6 @@
 #include <algorithm>                   // for stable_sort
 #include <vector>                      // for swap, vector
 #include <atomic>                      // for atomic ints in gauss_reduce
-#include <strstream>
 #include <iostream>
 
 class RingElement;
