@@ -103,7 +103,7 @@ file-prereqs: .prepared always
 	do if [ -f $$i ] ; then ( set -x ; ldd $$i ) ; fi ;		\
 	done								\
 	    | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//'	\
-	    | egrep -v '^$(BUILTLIBPATH)'					\
+	    | grep -Ev '^$(BUILTLIBPATH)'					\
 	    | sort | uniq						\
 	    > $@ || true
 	for i in @FILE_PREREQS@ ; do echo $$i ; done >>$@
@@ -115,7 +115,7 @@ packages-used: file-prereqs
 	cat file-prereqs											\
 	| while read x ;											\
 	do rpm --query -f "$$x" | sed 's/\([^.]*\)-\(.*\)\(-.*$$\)/\1 \2/' ;					\
-	done | fgrep -v 'is not owned by any package' | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
+	done | grep -Fv 'is not owned by any package' | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
 
 ifneq (@RPMLINT@,)
 check:; @RPMLINT@ -i ../../$(PKG_COM_RPM) ../../$(PKG_RPM)
