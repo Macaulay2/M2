@@ -10,9 +10,6 @@ needsPackage "Style"
 -- Emacs: Write M2-symbols.el
 generateGrammar("emacs/M2-symbols.el", x -> demark(" ", format \ x))
 
--- Atom & Linguist: Write macaulay2.cson
-generateGrammar("atom/macaulay2.cson", x -> demark("|", x))
-
 -- Prism: Write macaulay2.js
 generateGrammar("prism/macaulay2.js", x -> demark("|", x))
 
@@ -23,12 +20,6 @@ generateGrammar("vim/m2.vim.dict", x -> demark(" ", x)) -- TODO: is this necessa
 -- Pygments: Write macaulay2.py
 generateGrammar("pygments/macaulay2.py",
     x -> demark("," | newline | "    ", format \ x))
-
--- highlight.js: Write macaulay2.js
-generateGrammar("highlightjs/macaulay2.js",
-    x -> demark("," | newline | "	", format \ x))
-
-generateGrammar("textmate/macaulay2.tmLanguage.json", x -> demark("|", x))
 
 -- Macaulay2Web: Write M2-symbols.ts
 generateGrammar("Macaulay2Web/M2-symbols.ts", x -> demark(",", format \ x))
