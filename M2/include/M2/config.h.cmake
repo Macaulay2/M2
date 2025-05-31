@@ -47,18 +47,6 @@
 /* libffi version */
 #define FFI_VERSION "${FFI_VERSION}"
 
-// TODO: only used in Macaulay2/d/scclib.c. Still needed?
-/* whether getaddrinfo can handle numeric service (port) numbers */
-#cmakedefine GETADDRINFO_WORKS 1
-
-// TODO: only used in Macaulay2/d/scclib.c. Still needed?
-/* Define to 1 if you have the `accept' function. */
-#cmakedefine HAVE_ACCEPT 1
-
-// TODO: only used in Macaulay2/d/interrupts.d. Still needed?
-/* Defined if you have the `alarm' function. */
-#cmakedefine HAVE_ALARM 1
-
 // TODO: used a few places, what is it for?
 /* Define to 1 if you have `alloca', as a function or macro. */
 #cmakedefine HAVE_ALLOCA 1
@@ -74,20 +62,12 @@
 /* Define to 1 if you have the <assert.h> header file. */
 #cmakedefine HAVE_ASSERT_H 1
 
-// TODO: only used in Macaulay2/d/M2lib.c. Still needed?
-/* Defined if you have the `clock_gettime' function. */
-#cmakedefine HAVE_CLOCK_GETTIME 1
-
 /* Defined if you have the <dlfcn.h> header file. */
 #cmakedefine HAVE_DLFCN_H 1
 
 // TODO: remove?
 /* Define to 1 if you have the <elf.h> header file. */
 #cmakedefine HAVE_ELF_H 1
-
-// TODO: remove?
-/* Define to 1 if you have the `error' function. */
-#cmakedefine HAVE_ERROR 1
 
 /* Define to 1 if you have the <execinfo.h> header file. */
 #cmakedefine HAVE_EXECINFO_H 1
@@ -105,9 +85,6 @@
 /* whether we are linking with the fplll library */
 #cmakedefine HAVE_FPLLL 1
 
-/* Define to 1 if you have the `getaddrinfo' function. */
-#cmakedefine HAVE_GETADDRINFO 1
-
 /* Define to 1 if you have the `getpgrp' function. */
 #cmakedefine HAVE_GETPGRP 1
 
@@ -122,9 +99,6 @@
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #cmakedefine HAVE_INTTYPES_H 1
-
-/* Define to 1 if you have the `ioctl' function. */
-#cmakedefine HAVE_IOCTL 1
 
 // TODO: used in Macaulay2/d/types.h. Still needed?
 /* Define to 1 if you have the <io.h> header file. */
@@ -143,9 +117,6 @@
 /* Define to 1 if you have the <linux/personality.h> header file. */
 #cmakedefine HAVE_LINUX_PERSONALITY_H 1
 
-/* Define to 1 if you have the `longjmp' function. */
-#cmakedefine HAVE_LONGJMP 1
-
 /* Define to 1 if you have the `lstat' function. */
 #cmakedefine HAVE_LSTAT 1
 
@@ -158,17 +129,11 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #cmakedefine HAVE_MEMORY_H 1
 
-/* Define to 1 if you have the `mkdir' function. */
-#cmakedefine HAVE_MKDIR 1
-
 /* Define to 1 if you have the <netdb.h> header file. */
 #cmakedefine HAVE_NETDB_H 1
 
 /* Define to 1 if you have the <netinet/in.h> header file. */
 #cmakedefine HAVE_NETINET_IN_H 1
-
-/* Define to 1 if you have the `personality' function. */
-#cmakedefine HAVE_PERSONALITY 1
 
 /* Define to 1 if you have the `pipe' function. */
 #cmakedefine HAVE_PIPE 1
@@ -191,14 +156,8 @@
 /* Define to 1 if you have the `sigaction' function. */
 #cmakedefine HAVE_SIGACTION 1
 
-/* Define to 1 if you have the `siglongjmp' function. */
-#cmakedefine HAVE_SIGLONGJMP 1
-
 /* Define to 1 if you have the `sigprocmask' function. */
 #cmakedefine HAVE_SIGPROCMASK 1
-
-/* Define to 1 if you have the `socket' function. */
-#cmakedefine HAVE_SOCKET 1
 
 /* Define to 1 if you have the <stddef.h> header file. */
 #cmakedefine HAVE_STDDEF_H 1
@@ -217,9 +176,6 @@
 
 /* Define to 1 if you have the `symlink' function. */
 #cmakedefine HAVE_SYMLINK 1
-
-/* Define to 1 if you have the `sync' function. */
-#cmakedefine HAVE_SYNC 1
 
 /* Define to 1 if you have the <syscall.h> header file. */
 #cmakedefine HAVE_SYSCALL_H 1
@@ -259,12 +215,6 @@
 
 /* Defined if you have the <regex.h> header file. */
 #cmakedefine HAVE_REGEX_H 1
-
-/* Define to 1 if you have the `wait4' function. */
-#cmakedefine HAVE_WAIT4 1
-
-/* Define to 1 if you have the `waitpid' function. */
-#cmakedefine HAVE_WAITPID 1
 
 /* issue (flavor) of operating system, if any */
 #define ISSUE "${ISSUE}"

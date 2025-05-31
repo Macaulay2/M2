@@ -196,6 +196,7 @@ rmfile(o:file):void := (
 	       )));
 addfile(stdIO);
 addfile(stdError);
+
 opensocket(filename:string,input:bool,output:bool,listener:bool):(file or errmsg) := (
      if readonlyfiles then return (file or errmsg)(errmsg("--read-only-files: opening a socket not permitted"));
      host0 := substr(filename,1);
@@ -209,7 +210,9 @@ opensocket(filename:string,input:bool,output:bool,listener:bool):(file or errmsg
      sd := NOFD;
      if length(host0) == 0 || listener then (
 	  so = openlistener(host0,serv);
-     	  if so == ERROR then return (file or errmsg)(errmsg("can't open listener : "+syserrmsg()));
+	  if so < 0
+	  then return (file or errmsg)(
+	      errmsg("can't open listener: " + netstrerror(so)));
 	  if input || output then (
 	       sd = acceptBlocking(so);
      	       if sd == ERROR then (
@@ -220,8 +223,9 @@ opensocket(filename:string,input:bool,output:bool,listener:bool):(file or errmsg
 	  )
      else (
 	  sd = opensocket(host0,serv);
-     	  if sd == ERROR then return (file or errmsg)(errmsg("can't open socket : "+syserrmsg()));
-	  );
+	  if sd < 0
+	  then return (file or errmsg)(
+	      errmsg("can't open socket: " + netstrerror(sd))));
      (file or errmsg)(addfile(newFile(filename, 0,
 	  false, "",
 	  listener, so, NOFD, if listener then 0 else 1,
@@ -348,15 +352,22 @@ export openOut(filename:string):(file or errmsg) := (
 		    true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false,dummyNetList,0,-1,false,0)))));
 export openOutAppend(filename:string):(file or errmsg) := (
      if readonlyfiles then return (file or errmsg)(errmsg("--read-only-files: opening an output file not permitted"));
-     filename = expandFileName(filename);
-     fd := openoutappend(filename);
-     if fd == ERROR
-     then (file or errmsg)(errmsg(syscallErrorMessage("opening output (append) file \""+filename+"\"")))
-     else (file or errmsg)(addfile(newFile(filename, 0, 
-	       false, "",
-	       false, NOFD,NOFD,0,
-	       false, NOFD, false,           "",          0, 0, false,false,noprompt,noprompt,false,true,false,0,
-	       true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false,dummyNetList,0,-1,false,0))));
+     if filename === "-"
+     then (file or errmsg)(stdIO)
+     else if length(filename) > 0 && filename . 0 == '$'
+     then opensocket(filename,false,true,false)
+     else if length(filename) > 0 && filename . 0 == '!'
+     then openpipe(filename,false,true)
+     else (
+	 filename = expandFileName(filename);
+	 fd := openoutappend(filename);
+	 if fd == ERROR
+	 then (file or errmsg)(errmsg(syscallErrorMessage("opening output (append) file \""+filename+"\"")))
+	 else (file or errmsg)(addfile(newFile(filename, 0, 
+		     false, "",
+		     false, NOFD,NOFD,0,
+		     false, NOFD, false,           "",          0, 0, false,false,noprompt,noprompt,false,true,false,0,
+		     true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false,dummyNetList,0,-1,false,0)))));
 export openInOut(filename:string):(file or errmsg) := (
      if readonlyfiles then return (file or errmsg)(errmsg("--read-only-files: opening an output file not permitted"));
      if filename === "-"
