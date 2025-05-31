@@ -9,7 +9,7 @@ export EOF ::= -2;					    -- end of file
 export DEPRECATED := -3;				    -- deprecated syntax
 export STDIN ::= 0;
 export STDOUT ::= 1;
-export STDERR ::= 2;
+export STDERR:int:=2; -- will be modified in webapp mode
 
 export iseof      (c:int ):bool := c == EOF;
 export iserror    (c:int ):bool := c == ERROR;
