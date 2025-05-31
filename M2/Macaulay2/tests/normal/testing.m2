@@ -21,6 +21,9 @@ expectedCode = DIV{
 assert BinaryOperation(symbol ===, code pkgtest, expectedCode)
 assert BinaryOperation(symbol ===, code 0, expectedCode)
 
+TEST "assert Equation(1 + 1, 2)"
+check User
+
 assert( (for i from 1 to 2 list { for j from 1 to 2 do { if j == 2 then break 444; } }) === {{444}, {444}} ) -- see issue #2522
 
 

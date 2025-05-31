@@ -168,6 +168,8 @@ loadPackage String  := opts -> pkgname -> (
     if opts.Reload === true then (
 	dismiss pkgname;
 	if isPackageLoaded pkgname then (
+	    printerr("warning: reloading ", pkgname,
+		"; recreate instances of types from this package");
 	    closePackage value PackageDictionary#pkgname;
 	    -- clear out the value of the symbol
 	    PackageDictionary#pkgname <- PackageDictionary#pkgname));
@@ -553,10 +555,15 @@ debug GlobalDictionary := dict -> (
     checkShadow())
 
 packageFiles = pkg -> (
-    pkgaux := (
+    srcfile := realpath pkg#"source file";
+    if (
+	srcfile == "stdio"         or
+	srcfile == "currentString" or
+	match("/startup\\.m2(?:\\.in)?$", srcfile))
+    then {}
+    else prepend(srcfile,
 	if not pkg#?"auxiliary files" then {}
-	else select(values loadedFiles, match_(pkg#"auxiliary files")));
-    prepend(realpath pkg#"source file", pkgaux))
+	else select(values loadedFiles, match_(pkg#"auxiliary files"))))
 
 locate Package := pkg -> NumberedVerticalList (
     -- TODO: somehow keep track of the number of lines of each file

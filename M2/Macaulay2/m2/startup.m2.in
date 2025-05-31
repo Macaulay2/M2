@@ -154,7 +154,12 @@ if firstTime then (
      concatPath = (dir, name) -> if isAbsolutePath name then name else concatenate(
 	 dir, if not match("/$", dir) then "/", name);
 
-     toAbsolutePath = pth -> if pth =!= "stdio" and not isAbsolutePath pth then "/" | relativizeFilename("/", pth) else pth;
+     toAbsolutePath = pth -> (
+	 if (
+	     pth =!= "stdio"         and
+	     pth =!= "currentString" and
+	     not isAbsolutePath pth)
+	 then "/" | relativizeFilename("/", pth) else pth);
 
      use = x -> x;				  -- temporary, until methods.m2
 
