@@ -394,11 +394,11 @@ document {
      "Bidirectional communication with a program is also possible.  We use
      ", TO "openInOut", " to create a file that serves as a bidirectional
      connection to a program.  That file is called an input output file.  In
-     this example we open a connection to the unix utility ", TT "egrep", "
+     this example we open a connection to the unix utility ", TT "grep", "
      and use it to locate the symbol names in Macaulay2 that begin with
      ", TT "in", ".",
      EXAMPLE {
-	  ///f = openInOut "!egrep '^in'"///,
+	  ///f = openInOut "!grep -E '^in'"///,
 	  ///scan(keys Core.Dictionary, key -> f << key << endl)///,
 	  ///f << closeOut///,
 	  ///get f///
@@ -406,7 +406,7 @@ document {
      "With this form of bidirectional communication there is always a danger
      of blocking, because the buffers associated with the communication
      channels (pipes) typically hold only 4096 bytes.  In this example we
-     succeeded because the entire output from ", TT "egrep", " was smaller
+     succeeded because the entire output from ", TT "grep", " was smaller
      than 4096 bytes.  In general, one should be careful to arrange things
      so that the two programs take turns using the communication channel, so
      that when one is writing data, the other is reading it.",
