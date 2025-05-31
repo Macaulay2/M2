@@ -980,7 +980,7 @@ tex svgElement Polygon := x -> concatenate(
     )
 tex svgDefs := x -> "" -- not implemented
 
-tex GraphicsObject := texMath GraphicsObject := g -> tex SVG g;
+tex GraphicsObject := texMath GraphicsObject := g -> if topLevelMode === WebApp then webAppLiteralTag|webAppHtmlTag|html g|webAppEndTag|webAppLiteralTag else tex SVG g;
 
 -- now transformations
 -- following 2 functions can be used to produce matrices to be fed to either
