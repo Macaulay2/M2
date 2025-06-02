@@ -11,6 +11,7 @@ newPackage(
         {Name => "Christopher O'Neill", Email => "cdoneill@sdsu.edu"}},
     Headline => "a package for subrings",
     Keywords => {"Commutative Algebra"},
+    AuxiliaryFiles => true,
     )
 
 
