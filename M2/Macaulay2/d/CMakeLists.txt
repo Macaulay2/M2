@@ -36,7 +36,6 @@ set(DLIST
   strings.d
   varstrin.d
   strings1.d
-  errio.d
   vararray.d
   ctype.d
   nets.d
@@ -49,6 +48,7 @@ set(DLIST
   engine.dd
   xml.d		# removed unless WITH_XML
   stdio0.d
+  errio.d
   parse.d
   expr.d
   stdio.d
