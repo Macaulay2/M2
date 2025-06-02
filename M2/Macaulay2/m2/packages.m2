@@ -556,11 +556,7 @@ debug GlobalDictionary := dict -> (
 
 packageFiles = pkg -> (
     srcfile := realpath pkg#"source file";
-    if (
-	srcfile == "stdio"         or
-	srcfile == "currentString" or
-	match("/startup\\.m2(?:\\.in)?$", srcfile))
-    then {}
+    if not fileExists srcfile then {}
     else prepend(srcfile,
 	if not pkg#?"auxiliary files" then {}
 	else select(values loadedFiles, match_(pkg#"auxiliary files"))))
