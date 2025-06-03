@@ -37,6 +37,7 @@ addStartFunction(
 		   DebuggingMode  => true);
 	       User.PackageIsLoaded = true;
 	       User#"source directory" = "";
+	       User#"source file" = "stdio";
 	       path = prepend("./",path); -- now we search also the user's current directory, since our files have already been loaded
 	       path = unique apply( path, minimizeFilename);	    -- beautify
 	       allowLocalCreation User#"private dictionary";
