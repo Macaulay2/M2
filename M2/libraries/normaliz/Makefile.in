@@ -1,6 +1,6 @@
 HOMEPAGE = https://www.normaliz.uni-osnabrueck.de/
 # get releases from https://github.com/Normaliz/Normaliz/releases
-VERSION = 3.10.4
+VERSION = 3.10.5
 #PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 URL = https://github.com/Normaliz/Normaliz/releases/download/v$(VERSION)
