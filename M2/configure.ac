@@ -1226,8 +1226,11 @@ AC_ARG_WITH(unbuilt-programs,
 	esac
      done])
 
-AC_SUBST(DOWNLOAD,no)
-AC_ARG_ENABLE(download, AS_HELP_STRING(--enable-download,enable automatic downloading of needed third-party libraries), DOWNLOAD=$enableval)
+AC_SUBST([DOWNLOAD], [yes])
+AC_ARG_ENABLE([download],
+    [AS_HELP_STRING([--disable-download],
+        [disable automatic downloading of needed third-party libraries])],
+    [DOWNLOAD=$enableval])
 AC_CHECK_PROGS(WGET,wget,false)
 AC_CHECK_PROGS(CURL,curl,false)
 if test $DOWNLOAD = yes
