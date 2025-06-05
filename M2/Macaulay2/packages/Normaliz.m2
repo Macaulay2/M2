@@ -284,11 +284,13 @@ getNumInvs = () -> (
     if debugLevel > 0 then << "--reading " << nmzFile << ".inv" << endl;
     s := lines get(nmzFile | ".inv");
 
-    for i from 0 to #s - 1 do (  -- for each line in the file
+    hashTable for i from 0 to #s - 1 list (  -- for each line in the file
 	key = "";
 	if match("^integer", s#i) then (
 	    local j;
 	    (key, j) = getKeyword(s#i, 8);
+	    -- "multiplicity" was renamed to "multiplicity num" in 3.10.5
+	    if key == "multiplicity num" then key = "multiplicity";
 	    inv = value(getNumber substring(j + 3, s#i))#0;
 	    )
 	else(
@@ -299,6 +301,8 @@ getNumInvs = () -> (
 		if match("^vector", s#i) then (
 		    (len, str) := getNumber substring(7, s#i);
 		    (key, j) = getKeyword(str, 1);
+		    -- new keys added in 3.10.5
+		    if match("^hilbert series cyclo", key) then continue;
 		    inv = {};
 		    --   en:="";
 		    --str=substring(j+10+#len,s#i);
@@ -308,8 +312,7 @@ getNumInvs = () -> (
 		    );
 		);
 	    );
-	numInvs = append(numInvs,{key,inv}));
-    hashTable numInvs)
+	{key, inv}))
 
 ----------------------------------------------------------------------
 -- running normaliz (with options)
