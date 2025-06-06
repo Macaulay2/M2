@@ -15,6 +15,14 @@ loadedPackages = {}
 rawKey   = "raw documentation"
 rawKeyDB = "raw documentation database"
 
+-- warnings or errors to issue for deprecated packages
+-- TODO: also add package deprecation warnings for OldPolyhedra, etc?
+deprecatedPackageWarnings = new HashTable from {
+    -- two warnings added before v1.25.05
+    "Divisor"      => () -> ( printerr "warning: the 'Divisor' package has been renamed as 'WeilDivisors'."; "WeilDivisors" ),
+    "CodepthThree" => () -> ( printerr "warning: the 'CodepthThree' package has been renamed as 'TorAlgebra'."; "TorAlgebra" ),
+}
+
 -----------------------------------------------------------------------------
 -- Local variables
 -----------------------------------------------------------------------------
@@ -93,9 +101,11 @@ isOptionList := opts -> instance(opts, List) and all(opts, opt -> instance(opt, 
 
 isPackageLoaded = pkgname -> PackageDictionary#?pkgname and instance(value PackageDictionary#pkgname, Package)
 
--- TODO: make this local
-checkPackageName = title -> (
-    if not match("^[[:alnum:]]+$", title) then error("package title not alphanumeric: ", format title))
+checkPackageName = (title, checkdeprecated) -> (
+    if not match("^[[:alnum:]]+$", title)
+    then error("package title not alphanumeric: ", format title);
+    if checkdeprecated and deprecatedPackageWarnings#?title
+    then (deprecatedPackageWarnings#title)() else title)
 
 closePackage = pkg -> if pkg#?rawKeyDB then (db -> if isOpen db then close db) pkg#rawKeyDB
 
@@ -163,7 +173,7 @@ loadPackage Package := opts -> pkg     -> loadPackage(toString pkg, opts ++ { Re
 loadPackage String  := opts -> pkgname -> (
     if not isOptionList opts.Configuration then error("expected Configuration option to be a list of options");
     -- package name must be alphanumeric
-    checkPackageName pkgname;
+    pkgname = checkPackageName(pkgname, true);
     -- dismiss the loaded package before reloading
     if opts.Reload === true then (
 	dismiss pkgname;
@@ -188,6 +198,8 @@ loadPackage String  := opts -> pkgname -> (
 
 needsPackage = method(TypicalValue => Package, Options => options loadPackage)
 needsPackage String  := opts -> pkgname -> (
+    -- package name must be alphanumeric
+    pkgname = checkPackageName(pkgname, true);
     if PackageDictionary#?pkgname
     and instance(pkg := value PackageDictionary#pkgname, Package)
     and (opts.FileName === null or
@@ -233,7 +245,7 @@ newPackage = method(
 newPackage Sequence := opts -> x -> newPackage splice(nonnull x, opts) -- to allow null entries
 newPackage String := opts -> pkgname -> (
     -- package name must be alphanumeric
-    checkPackageName pkgname;
+    checkPackageName(pkgname, false);
     -- required package values
     scan({
 	    (Authors,        List),
