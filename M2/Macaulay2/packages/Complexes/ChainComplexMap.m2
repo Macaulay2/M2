@@ -110,7 +110,7 @@ map(Complex, Complex, ComplexMap) := ComplexMap => opts -> (tar, src, f) -> (
     )
 
 ComplexMap | ComplexMap := ComplexMap => (f,g) -> (
-    if target f =!= target g then error "expected targets to be the same";
+    if not isIdentical(target f, target g) then error "expected targets to be the same";
     deg := degree f;
     if deg =!= degree g then error "expected maps with the same degree";
     result := map(target f, source f ++ source g, {{f,g}}, Degree=>deg);
@@ -121,7 +121,7 @@ ComplexMap | ComplexMap := ComplexMap => (f,g) -> (
     )
 
 ComplexMap || ComplexMap := ComplexMap => (f,g) -> (
-    if source f =!= source g then error "expected sources to be the same";
+    if not isIdentical(source f, source g) then error "expected sources to be the same";
     deg := degree f;
     if deg =!= degree g then error "expected maps with the same degree";
     result := map(target f ++ target g, source f, {{f},{g}}, Degree=>deg);
@@ -277,8 +277,14 @@ ComplexMap ^ ZZ := ComplexMap => (f,n) -> (
       )
   )
 
-ComplexMap == ComplexMap := (f,g) -> (
-    if f === g then return true;    
+-- this method is not exported, and is only
+-- used internally instead of === and =!=
+isIdentical(ComplexMap, ComplexMap) := (f, g) -> f === g or (
+    f.degree === g.degree and f.map === g.map
+    and isIdentical(f.source, g.source)
+    and isIdentical(f.target, g.target))
+
+ComplexMap == ComplexMap := (f,g) -> isIdentical(f, g) or (
     if source f != source g or target f != target g 
       then return false;
     (lo1,hi1) := (source f).concentration;
@@ -524,7 +530,8 @@ truncate(ZZ,   ComplexMap) :=
 truncate(List, ComplexMap) := ComplexMap => truncateMatrixOpts >> opts -> (degs, f) -> (
     d := degree f;
     C := truncate(degs, source f, opts);
-    D := if source f === target f then C else truncate(degs, target f, opts);
+    D := if isIdentical(source f, target f) then C
+    else truncate(degs, target f, opts);
     map(D, C, i -> inducedTruncationMap(D_(i+d), C_i, f_i), Degree => d))
 
 --------------------------------------------------------------------
@@ -538,7 +545,8 @@ basis(ZZ,   ComplexMap) :=
 basis(List, ComplexMap) := ComplexMap => opts -> (deg, f) -> (
     d := degree f;
     C := basis(deg, source f, opts);
-    D := if source f === target f then C else basis(deg, target f, opts);
+    D := if isIdentical(source f, target f) then C
+    else basis(deg, target f, opts);
     map(D, C, i -> inducedBasisMap(D_(i+d), C_i, f_i), Degree => d))
 
 --------------------------------------------------------------------
@@ -1276,7 +1284,8 @@ liftMapAlongQuasiIsomorphism(ComplexMap, ComplexMap) := (alpha,beta) -> (
     P := source alpha;
     N := target alpha;
     M := source beta;
-    if N =!= target beta then error "expected targets of two maps to be the same complex";
+    if not isIdentical(N, target beta)
+    then error "expected targets of two maps to be the same complex";
     (loP, hiP) := concentration P;
     Cbeta := cone beta;
     gamma := new MutableHashTable;
