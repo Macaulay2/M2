@@ -55,11 +55,11 @@ if firstTime then (
      srcdirs = {};
 
      markLoaded = (filepath, filetime, notify) -> (
-	 filepath = realpath toAbsolutePath filepath;
 	 filesLoaded#filepath = filetime;
 	 loadedFiles##loadedFiles = filepath;
 	 if notify then printerr("loaded ", filepath));
      tryLoad = (filename, filepath, loadfun, notify) -> if fileExists filepath then (
+	 filepath = realpath toAbsolutePath filepath;
 	 filetime := fileTime filepath;
 	 if notify then printerr("loading ", filename);
 	 ret := loadfun filepath;
