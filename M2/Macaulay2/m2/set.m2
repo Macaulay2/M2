@@ -15,7 +15,7 @@ tally String      :=
 tally VisibleList := Tally => tally
 
 elements = method()
-elements Tally := x -> splice apply(pairs x, (k,v) -> v:k)
+elements Tally := toList Tally := x -> splice apply(pairs x, (k,v) -> v:k)
 
 toString VirtualTally := x -> concatenate( "new ", toString class x, " from {", demark(", ", sort apply(pairs x, (v,i) -> (toString v, " => ", toString i))), "}" )
 
@@ -83,9 +83,8 @@ product VirtualTally := (w) -> product(pairs w, (k,v) -> k^v)
 Set.synonym = "set"
 
 -- constructors, both compiled functions defined in d/sets.dd
-set VisibleList := Set => set
-new Set from List := Set => (X,x) -> set x
-set Set := identity
+set HashTable := set VisibleList := Set => set
+new Set from List := new Set from HashTable := Set => (X,x) -> set x
 
 -- set operations
 elements Set := List => keys
