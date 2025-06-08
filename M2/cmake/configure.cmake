@@ -283,7 +283,6 @@ include(CheckIncludeFiles)
 # TODO: are all still relevant?
 # HAVE_SCSCP is used in version.dd: https://www.openmath.org/standard/scscp/
 check_include_files("stdlib.h;stdarg.h;string.h;float.h" STDC_HEADERS)
-check_include_files(arpa/inet.h	HAVE_ARPA_INET_H)
 check_include_files(assert.h	HAVE_ASSERT_H)
 check_include_files(dlfcn.h	HAVE_DLFCN_H)
 check_include_files(execinfo.h	HAVE_EXECINFO_H)
@@ -315,52 +314,28 @@ check_include_files(unistd.h	HAVE_UNISTD_H)
 # TODO: clear out d/types.h
 
 include(CheckFunctionExists)
-# TODO: can't getaddrinfo
 check_function_exists(herror	HAVE_HERROR)
-check_function_exists(error	HAVE_ERROR)
-check_function_exists(clock_gettime	HAVE_CLOCK_GETTIME)
-check_function_exists(getaddrinfo	HAVE_GETADDRINFO)
 check_function_exists(hstrerror	HAVE_HSTRERROR)
-check_function_exists(sync	HAVE_SYNC)
 check_function_exists(getpgrp	HAVE_GETPGRP)
 check_function_exists(setpgid	HAVE_SETPGID)
 check_function_exists(fchmod	HAVE_FCHMOD)
 check_function_exists(pipe	HAVE_PIPE)
-check_function_exists(waitpid	HAVE_WAITPID)
 check_function_exists(setrlimit	HAVE_SETRLIMIT)
 check_function_exists(alarm	HAVE_ALARM)
 check_function_exists(fork	HAVE_FORK)
 check_function_exists(sigprocmask	HAVE_SIGPROCMASK)
 check_function_exists(kill	HAVE_KILL)
 check_function_exists(sigaction	HAVE_SIGACTION)
-check_function_exists(wait4	HAVE_WAIT4)
 check_function_exists(readlink	HAVE_READLINK)
 check_function_exists(lstat	HAVE_LSTAT)
 check_function_exists(realpath	HAVE_REALPATH)
-check_function_exists(mkdir	HAVE_MKDIR)
 check_function_exists(link	HAVE_LINK)
 check_function_exists(symlink	HAVE_SYMLINK)
-check_function_exists(socket	HAVE_SOCKET)
-check_function_exists(accept	HAVE_ACCEPT)
 check_function_exists(fcntl	HAVE_FCNTL)
-check_function_exists(personality	HAVE_PERSONALITY)
-check_function_exists(ioctl	HAVE_IOCTL)
 
 include(CheckSymbolExists)
 include(CheckCSourceCompiles)
 include(CheckCXXSourceCompiles)
-
-# TODO: is this necessary?
-# whether getaddrinfo can handle numeric service (port) numbers
-check_c_source_compiles([[
-  #include <sys/types.h>
-  #ifdef HAVE_SYS_SOCKET_H
-   #include <sys/socket.h>
-  #endif
-  #ifdef HAVE_NETDB_H
-   #include <netdb.h>
-  #endif
-  int main(){struct addrinfo *addr;return 0 != getaddrinfo("1.2.3.4", "80", 0, &addr) ? 99 : 0;}]] GETADDRINFO_WORKS)
 
 ###############################################################################
 

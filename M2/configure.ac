@@ -352,7 +352,7 @@ AC_SUBST(SIZEOF_INT_P,$ac_cv_sizeof_int_p)
 AC_CHECK_SIZEOF([long])
 AC_SUBST(SIZEOF_LONG,$ac_cv_sizeof_long)
 
-AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h time.h sys/wait.h sys/resource.h io.h linux/personality.h stddef.h elf.h execinfo.h syscall.h math.h pthread.h assert.h alloca.h malloc.h dlfcn.h)
+AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h sys/time.h time.h sys/wait.h sys/resource.h io.h linux/personality.h stddef.h elf.h execinfo.h syscall.h math.h pthread.h assert.h alloca.h malloc.h dlfcn.h)
 AC_CHECK_HEADERS(winsock2.h) dnl used with ws2_32.dll under mingw64
 dnl winsock2.h should be included before including windows.h
 dnl  pthread.h includes windows.h
@@ -369,9 +369,9 @@ AC_SEARCH_LIBS(hstrerror,resolv)
 AC_SEARCH_LIBS(dlopen,dl)
 AC_SEARCH_LIBS(gethostbyname,nsl)
 
-AC_CHECK_FUNCS([herror error clock_gettime getaddrinfo hstrerror sync getpgrp setpgid fchmod pipe waitpid setrlimit alarm fork sigprocmask kill longjmp siglongjmp sigaction wait4 readlink lstat realpath mkdir link symlink socket accept fcntl personality ioctl])
-
-AC_SUBST(HAVE_PERSONALITY,$ac_cv_func_personality)
+AC_CHECK_FUNCS([herror hstrerror getprgp setpgid fchmod pipe setrlimit
+		fork sigprocmask kill sigaction readlink lstat realpath link
+		symlink fcntl])
 
 if test $host_os = mingw32
 then CPPFLAGS="$CPPFLAGS -D_POSIX" # arrange for SIGPIPE to get defined
@@ -1673,28 +1673,6 @@ if nm --help 2>&1 | grep demangle >/dev/null
    then NM_DEMANGLES=yes; AC_MSG_RESULT(yes)
    else NM_DEMANGLES=no ; AC_MSG_RESULT(no)
 fi
-
-AC_LANG(C)
-AC_MSG_CHECKING([whether getaddrinfo can handle numeric service (port) numbers])
-AC_RUN_IFELSE([AC_LANG_SOURCE([
-    #include <sys/types.h>
-    #ifdef HAVE_SYS_SOCKET_H
-     #include <sys/socket.h>
-    #endif
-    #ifdef HAVE_WINSOCK2_H
-     #include <winsock2.h>
-    #endif
-    #ifdef HAVE_NETDB_H
-     #include <netdb.h>
-    #endif
-    int main(void) {
-       struct addrinfo *addr; 
-       return 0 != getaddrinfo("1.2.3.4", "80", 0, &addr) ? 99 : 0 ;
-       }
-    ])],
-    [AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,1,[whether getaddrinfo can handle numeric service (port) numbers])] [AC_MSG_RESULT(yes)],
-    [if test $? = 99 ; then AC_MSG_RESULT(no) ; else AC_MSG_ERROR([test file failed to compile]) ; fi],
-    [AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,1,[whether getaddrinfo can handle numeric service (port) numbers])] [AC_MSG_RESULT([probably (cross-compiling, not tested)])])
 
 AC_SUBST(BUILDLIST)
 for i in $LIBLIST $PROGLIST

@@ -219,19 +219,25 @@ int system_strnumcmp(M2_string s,M2_string t) {
 }
 
 int fix_status(int status) {
-     /* We can't handle status codes bigger than 127 if the shell intervenes. */
-     return
-       status == ERROR ? ERROR :
-       WIFSIGNALED(status) ?					  /* whether the process died due to a signal */
-       WTERMSIG(status) + (WCOREDUMP(status) ? 128 : 0) :	  /* signal number n, plus 128 if core was dumped */
-       WIFEXITED(status) ?					  /* whether the process exited */
-       (
-	    ((WEXITSTATUS(status) & 0x80) != 0) ?                 /* whether /bin/sh indicates a signal in a command */
-	    (WEXITSTATUS(status) & 0x7f) :			  /* the signal number */
-	    (WEXITSTATUS(status) << 8)				  /* status code times 256 */
-	    ) :
-       -2;						  	  /* still running (or stopped) */
-     }
+  /* We can't handle status codes bigger than 127 if the shell intervenes. */
+  if (status == ERROR)
+    return ERROR;
+  else if (WIFSIGNALED(status)) {                              /* whether the process died due to a signal */
+#ifdef WCOREDUMP
+    return WTERMSIG(status) + (WCOREDUMP(status) ? 128 : 0);   /* signal number n, plus 128 if core was dumped */
+#else
+    return WTERMSIG(status);
+#endif
+  }
+  else if (WIFEXITED(status)) {                                /* whether the process exited */
+    if ((WEXITSTATUS(status) & 0x80) != 0)                     /* whether /bin/sh indicates a signal in a command */
+      return WEXITSTATUS(status) & 0x7f;                       /* the signal number */
+    else
+      return WEXITSTATUS(status) << 8;                         /* status code times 256 */
+  }
+  else
+    return -2;                                                 /* still running (or stopped) */
+}
 
 M2_arrayint system_waitNoHang(M2_arrayint pids)
 {
@@ -240,13 +246,17 @@ M2_arrayint system_waitNoHang(M2_arrayint pids)
      M2_arrayint z = (M2_arrayint)getmem_atomic(sizeofarray(z,n));
      z->len = n;
      for (int i=0; i<n; i++) {
-	  #ifdef HAVE_WAITPID
-	      int status = 0, ret = waitpid(pid[i],&status,WNOHANG);
-	      z->array[i] =
-		ret == ERROR ? -1 : fix_status(status);
-	  #else
-	      z->array[i] = -1;                                            /* not implemented */
-	  #endif
+       int status, ret;
+
+       status = 0;
+       ret = waitpid(pid[i], &status, WNOHANG);
+
+       if (ret == 0) /* still running */
+	 z->array[i] = -2;
+       else if (ret == ERROR)
+	 z->array[i] = ERROR;
+       else
+	 z->array[i] = fix_status(status);
      }
      return z;
 }
@@ -612,17 +622,6 @@ M2_string system_readfile(int fd) {
      return s;
 }
 
-static const char *hostname_error_message;
-
-#if defined(HAVE_GETADDRINFO) && GETADDRINFO_WORKS
-static int set_addrinfo(struct addrinfo **addr, struct addrinfo *hints, char *hostname, char *service) {
-     int ret;
-     ret = getaddrinfo(hostname, service, hints /* thanks to Dan Roozemond for pointing out this was NULL before, causing problems */, addr);
-     hostname_error_message = ret != 0 ? gai_strerror(ret) : NULL;
-     return ret;
-}
-#endif
-
 #ifndef HAVE_HSTRERROR
 const char *hstrerror(int herrno) {
      switch(herrno) {
@@ -636,81 +635,17 @@ const char *hstrerror(int herrno) {
 }
 #endif
 
-#if !(defined(HAVE_GETADDRINFO) && GETADDRINFO_WORKS)
-int host_address(name)
-char *name;
-{
-#ifdef HAVE_SOCKET
-     if ('0' <= name[0] && name[0] <= '9') {
-     	  int s;
-	  s = inet_addr(name);	/* this function is obsolete, replaced by inet_aton(); we use it only if getaddrinfo is not available */
-	  if (s == ERROR) {
-	       hostname_error_message = "IP address translation failed";
-	       return ERROR;
-	  }
-	  return s;
-	  }
-     else {
-	  struct hostent *t;
-	  /* FIXME
-	  if (SETJMP(interrupt_jump)) {
-	       interrupt_jump_set = FALSE;
-	       return ERROR;
-	  }
-	  else interrupt_jump_set = TRUE; */
-	  t = gethostbyname(name); /* this function is obsolete because it doesn't handle IPv6; we use it only if getaddrinfo is not available */
-	  // interrupt_jump_set = FALSE;
-	  if (t == NULL) {
-	       hostname_error_message = hstrerror(h_errno);
-	       return ERROR;
-	  }
-	  else {
-	       return *(int *)t->h_addr;
-	  }
-     }
-#else
-     return ERROR;
-#endif
-     }
-
-int serv_address(name)
-char *name;
-{
-#ifdef HAVE_SOCKET
-     if ('0' <= name[0] && name[0] <= '9') {
-	  return htons(atoi(name));
-	  }
-     else {
-	  struct servent *t = getservbyname(name,"tcp");
-	  if (t == NULL) {
-	    errno = ENXIO;
-	    return ERROR;
-	  }
-	  else {
-	    return t->s_port;
-	  }
-     }
-#else
-     return ERROR;
-#endif
-     }
-#endif
-
 int system_acceptBlocking(int so) {
-#ifdef HAVE_ACCEPT
   struct sockaddr_in addr;
   socklen_t addrlen = sizeof addr;
 #ifdef HAVE_FCNTL
   fcntl(so,F_SETFL,0);
 #endif
   return accept(so,(struct sockaddr*)&addr,&addrlen);
-#else
-  return ERROR;
-#endif
 }
 
 int system_acceptNonblocking(int so) {
-#if defined(HAVE_SOCKET) && defined(HAVE_FCNTL)
+#if defined(HAVE_FCNTL)
   struct sockaddr_in addr;
   socklen_t addrlen = sizeof addr;
   int sd;
@@ -722,38 +657,67 @@ int system_acceptNonblocking(int so) {
 #endif
 }
 
+/* openlistener and opensocket might encounter errors in getaddrinfo, which
+   doesn't use errno, or in various other functions that do.
+   To keep these straight, we return the following:
+
+   * ERROR (#defined as -1 in types.h) when errno is set so we know when
+     to call strerror(errno)
+
+   * r + ERROR when getaddrinfo raises an error (r = getaddrinfo ret value)
+     so we can recover r before calling gai_strerror by subtracting ERROR
+
+   The following function determines the error message:
+*/
+
+M2_string system_netstrerror(int errcode) {
+  if (errcode == ERROR || errcode - ERROR == EAI_SYSTEM)
+    return M2_tostring(strerror(errno));
+  else
+    return M2_tostring(gai_strerror(errcode - ERROR));
+}
+
 #define INCOMING_QUEUE_LEN 10
 
 int openlistener(char *interface0, char *service) {
-#ifdef HAVE_SOCKET
-#if defined(HAVE_GETADDRINFO) && GETADDRINFO_WORKS
-  struct addrinfo *addr = NULL;
-  static struct addrinfo hints;	/* static so all parts get initialized to zero */
-  int so;
-  hints.ai_family = PF_UNSPEC;
+  struct addrinfo *addr, *p, hints;
+  int so, r;
+
+  addr = NULL;
+  p = NULL;
+  memset(&hints, 0, sizeof(hints));
+
+  hints.ai_family = AF_UNSPEC;
+  hints.ai_socktype = SOCK_STREAM;
   hints.ai_flags = AI_PASSIVE;
-  if (0 != set_addrinfo(&addr,&hints,interface0,service)) return ERROR;
-  so = socket(addr->ai_family,SOCK_STREAM,0);
-  if (ERROR == so) { freeaddrinfo(addr); return ERROR; }
-  if (ERROR == bind(so,addr->ai_addr,addr->ai_addrlen) || ERROR == listen(so, INCOMING_QUEUE_LEN)) { freeaddrinfo(addr); close(so); return ERROR; }
-  freeaddrinfo(addr); 
+  r = getaddrinfo(interface0, service, &hints, &addr);
+  if (r != 0)
+    return r + ERROR; /* see note above system_netstrerror */
+
+  for (p = addr; p != NULL; p = p->ai_next) {
+    so = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+    if (so == ERROR)
+      continue;
+
+    if (bind(so, p->ai_addr, p->ai_addrlen) == ERROR) {
+      close(so);
+      continue;
+    }
+
+    break;
+  }
+
+  freeaddrinfo(addr);
+
+  if (p == NULL)
+    return ERROR;
+
+  if (listen(so, INCOMING_QUEUE_LEN) == ERROR) {
+    close(so);
+    return ERROR;
+  }
+
   return so;
-#else
-  int sa = serv_address(service);
-  int so = socket(AF_INET,SOCK_STREAM,0);
-  struct sockaddr_in addr;
-  addr.sin_family = PF_INET;
-  addr.sin_port = sa;
-  addr.sin_addr.s_addr = INADDR_ANY;
-  if (ERROR == so ||
-      ERROR == sa ||
-      ERROR == bind(so,(struct sockaddr*)&addr,sizeof addr) ||
-      ERROR == listen(so, INCOMING_QUEUE_LEN)) { close(so); return ERROR; }
-  return so;
-#endif
-#else
-  return ERROR;
-#endif
 }
 
 int opensocket(char *host, char *service) {
@@ -763,42 +727,40 @@ int opensocket(char *host, char *service) {
     return ERROR;
   } else { interrupt_jump_set = TRUE; }
   */
-#ifdef HAVE_SOCKET
-#if defined(HAVE_GETADDRINFO) && GETADDRINFO_WORKS
-  struct addrinfo *addr;
-  int so;
-  if (0 != set_addrinfo(&addr,NULL,host,service)) return ERROR;
-  so = socket(addr->ai_family,SOCK_STREAM,0);
-  if (ERROR == so) { freeaddrinfo(addr); return ERROR; }
-  if (ERROR == connect(so,addr->ai_addr,addr->ai_addrlen)) { freeaddrinfo(addr); close(so); return ERROR; }
+  struct addrinfo *addr, *p, hints;
+  int so, r;
+
+  addr = NULL;
+  p = NULL;
+  memset(&hints, 0, sizeof(hints));
+
+  hints.ai_family = AF_UNSPEC;
+  hints.ai_socktype = SOCK_STREAM;
+  r = getaddrinfo(host, service, &hints, &addr);
+  if (r != 0)
+    return r + ERROR;  /* see note above system_netstrerror */
+
+  for (p = addr; p != NULL; p = p->ai_next) {
+    so = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+    if (so == ERROR)
+      continue;
+
+    if (connect(so, p->ai_addr, p->ai_addrlen) == ERROR) {
+      close(so);
+      continue;
+    }
+
+    break;
+  }
+
+
   // interrupt_jump_set = FALSE;
   freeaddrinfo(addr);
+
+  if (p == NULL)
+    return ERROR;
+
   return so;
-#else
-  int sd = socket(AF_INET,SOCK_STREAM,0);
-  struct sockaddr_in addr;
-  int sa = serv_address(service);
-  if (sa == ERROR) {
-       /* strange but true, some systems don't list the common services:
-		u24% uname -a
-		SunOS u24.math.uiuc.edu 5.8 Generic_117350-34 sun4u sparc
-		u24% grep http /etc/services
-		u24% 
-       */
-       if (0 == strcmp(service,"http")) sa = 80;
-       else if (0 == strcmp(service,"https")) sa = 443;
-  }
-  addr.sin_family = PF_INET;
-  addr.sin_port = sa;
-  addr.sin_addr.s_addr = host_address(host);
-  if (ERROR == addr.sin_addr.s_addr ||
-      ERROR == sa ||
-      ERROR == connect(sd,(struct sockaddr *)&addr,sizeof(addr))) { close(sd); return ERROR; }
-  return sd;
-#endif
-#else
-  return ERROR;
-#endif
 }
 
 int system_opensocket(M2_string host,M2_string serv) {
@@ -828,11 +790,6 @@ int system_errno(void) {
 }
 
 char const *system_strerror(void) {
-     if (hostname_error_message) {
-	  char const *msg = hostname_error_message;
-	  hostname_error_message = NULL;
-	  return msg;
-     }
      if (errno > 0) {
 	  char const *msg = strerror(errno);
 	  errno = 0;

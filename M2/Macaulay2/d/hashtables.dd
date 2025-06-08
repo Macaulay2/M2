@@ -416,7 +416,7 @@ installIt(numtypes:int,assgnmt:bool,h:HashTable,key:Expr,value:Expr):Expr := (
      else buildErrorPacket(messx));
 -----------------------------------------------------------------------------
 -- nullary methods
-export NullaryMethods := newHashTableWithHash(mutableHashTableClass,nothingClass);
+export NullaryMethods := newHashTableWithHash(typeClass,nothingClass);
 setupconst("nullaryMethods",Expr(NullaryMethods));
 export lookup(e:Expr):Expr := (
      r := lookup1(NullaryMethods,Expr(Sequence(e)));
