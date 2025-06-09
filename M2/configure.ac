@@ -117,6 +117,7 @@ then if test -f /usr/bin/sw_vers
      # translate to something standard (for us), and verify :
      case $ISSUE_FLAVOR in
          "Mac OS X") ISSUE_FLAVOR=MacOS ;;
+         "macOS") ISSUE_FLAVOR=MacOS ;;
 	 "debian"|"Debian"*) ISSUE_FLAVOR=Debian ;;
          "ubuntu"|"Ubuntu") ISSUE_FLAVOR=Ubuntu ;;
 	 "FedoraCore"*) ISSUE_FLAVOR=FedoraCore ;;
