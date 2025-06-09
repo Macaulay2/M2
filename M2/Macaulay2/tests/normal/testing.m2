@@ -1,8 +1,9 @@
-testpkg = minimizeFilename(temporaryFileName() | ".m2")
+testpkg = temporaryFileName() | ".m2"
 testpkg << ///newPackage("TestPackage")
 beginDocumentation()
 TEST "assert Equation(1 + 1, 2)"
 /// << close
+testpkg = minimizeFilename realpath testpkg
 loadPackage("TestPackage", FileName => testpkg)
 check "TestPackage"
 pkgtest = tests(0, "TestPackage")
