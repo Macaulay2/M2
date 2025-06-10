@@ -2,8 +2,8 @@
 
 newPackage(
         "GeometricDecomposability",
-        Version => "1.4.2",
-        Date => "May 2, 2025",
+        Version => "1.4.3",
+        Date => "June 10, 2025",
         Headline => "checking whether ideals are geometrically vertex decomposable",
         Authors => {
                 {
@@ -36,6 +36,8 @@ newPackage(
 
 export {
         -- methods
+        "deletion",
+        "oneStepGVDNyI",
         "findLexCompatiblyGVDOrders",
         "findOneStepGVD",
         "getGVDIdeal",
@@ -45,9 +47,9 @@ export {
         "isLexCompatiblyGVD",
         "isUnmixed",
         "isWeaklyGVD",
-        "oneStepGVD",
+        "link",
         "oneStepGVDCyI",
-        "oneStepGVDNyI",
+        "oneStepGVD",
 
         -- options
         "CheckCM",
@@ -68,6 +70,22 @@ export {
 --
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+
+deletion = method(
+        Options => {
+                CheckUnmixed => true, 
+                UniversalGB => false
+        }
+)
+
+deletion(Ideal, RingElement) := Sequence => opts -> (I, y) -> (
+        oneStepGVDNyI(I, y, 
+                CheckUnmixed => opts.CheckUnmixed,
+                UniversalGB => opts.UniversalGB
+                )
+)
 
 --------------------------------------------------------------------------------
 
@@ -483,6 +501,23 @@ isWeaklyGVD(Ideal) := Boolean => opts -> I -> (
 
 --------------------------------------------------------------------------------
 
+link = method(
+        Options => {
+                CheckUnmixed => true, 
+                UniversalGB => false
+        }
+)
+
+link(Ideal, RingElement) := Sequence => opts -> (I, y) -> (
+        oneStepGVDCyI(I, y, 
+                CheckUnmixed => opts.CheckUnmixed,
+                UniversalGB => opts.UniversalGB
+                )
+)
+
+
+--------------------------------------------------------------------------------
+
 oneStepGVD = method( 
         Options => {
                 CheckDegenerate => false, 
@@ -870,23 +905,25 @@ doc///
                         matroidal ideals. Arch. Math. 114 (2020), no. 3 299–-304.
 
                 Subnodes
-                        CheckCM
-                        CheckDegenerate
-                        CheckUnmixed
+                        deletion
+                        oneStepGVDNyI
                         findLexCompatiblyGVDOrders
                         findOneStepGVD
                         getGVDIdeal
                         initialYForms
                         isGeneratedByIndeterminates
                         isGVD
-                        IsIdealHomogeneous
-                        IsIdealUnmixed
                         isLexCompatiblyGVD
                         isUnmixed
                         isWeaklyGVD
-                        oneStepGVD
+                        link
                         oneStepGVDCyI
-                        oneStepGVDNyI
+                        oneStepGVD
+                        CheckCM
+                        CheckDegenerate
+                        CheckUnmixed
+                        IsIdealHomogeneous
+                        IsIdealUnmixed
                         OnlyDegenerate
                         OnlyNondegenerate
                         SquarefreeOnly
@@ -898,6 +935,34 @@ doc///
 -- Documentation for functions
 --******************************************************************************
 
+doc///
+        Node
+                Key
+                        deletion
+                        (deletion, Ideal, RingElement)
+                Headline
+                        computes the ideal $N_{y,I}$
+                Usage 
+                        deletion(I, y)
+                Inputs
+                        I:Ideal
+                        y:RingElement
+                                an indeterminate in the ring
+                Outputs
+                        :Ideal
+                Description
+                        Text
+                                This is an alias for @TO oneStepGVDNyI@.
+                SeeAlso
+                        CheckUnmixed
+                        getGVDIdeal
+                        link
+                        oneStepGVD
+                        oneStepGVDCyI
+                        oneStepGVDNyI
+                        UniversalGB
+
+///
 
 doc///
         Node
@@ -1420,6 +1485,35 @@ doc///
 
 
 doc///
+        Node
+                Key
+                        link
+                        (link, Ideal, RingElement)
+                Headline
+                        computes the ideal $C_{y,I}$
+                Usage
+                        link(I, y)
+                Inputs
+                        I:Ideal
+                        y:RingElement
+                                an indeterminate in the ring
+                Outputs
+                        :Ideal
+                Description
+                        Text
+                                This is an alias for @TO oneStepGVDCyI@.
+                SeeAlso
+                        CheckUnmixed
+                        deletion
+                        getGVDIdeal
+                        oneStepGVD
+                        oneStepGVDNyI
+                        UniversalGB
+
+///
+
+
+doc///
        Node
                 Key
                         oneStepGVD
@@ -1535,7 +1629,7 @@ doc///
                         oneStepGVDCyI
                         (oneStepGVDCyI, Ideal, RingElement)
                 Headline
-                        computes the ideal $C_{y,I}$ for a given ideal and indeterminate
+                        computes the ideal $C_{y,I}$
                 Usage
                         oneStepGVDCyI(I, y)
                 Inputs
@@ -1584,8 +1678,10 @@ doc///
 		        [KR] Patricia Klein and Jenna Rajchgot. Geometric vertex decomposition and
                         liaison. Forum Math. Sigma, 9 (2021) Paper No. e70, 23pp.
                 SeeAlso
+                        deletion
                         CheckUnmixed
                         getGVDIdeal
+                        link
                         oneStepGVD
                         oneStepGVDNyI
                         UniversalGB
@@ -1598,7 +1694,7 @@ doc///
                         oneStepGVDNyI
                         (oneStepGVDNyI, Ideal, RingElement)
                 Headline
-                        computes the ideal $N_{y,I}$ for a given ideal and indeterminate
+                        computes the ideal $N_{y,I}$
                 Usage
                         oneStepGVDNyI(I, y)
                 Inputs
@@ -1648,8 +1744,10 @@ doc///
                         liaison. Forum Math. Sigma, 9 (2021) Paper No. e70, 23pp.
 
 		SeeAlso
+                        deletion
                         CheckUnmixed
                         getGVDIdeal
+                        link
                         oneStepGVDCyI
                         oneStepGVD
                         UniversalGB
@@ -1753,12 +1851,14 @@ doc///
         Node
                 Key
                         CheckUnmixed
+                        [deletion, CheckUnmixed]
                         [findLexCompatiblyGVDOrders, CheckUnmixed]
                         [findOneStepGVD, CheckUnmixed]
                         [getGVDIdeal, CheckUnmixed]
                         [isGVD, CheckUnmixed]
                         [isLexCompatiblyGVD, CheckUnmixed]
                         [isWeaklyGVD, CheckUnmixed]
+                        [link, CheckUnmixed]
                         [oneStepGVD, CheckUnmixed]
                         [oneStepGVDCyI, CheckUnmixed]
                         [oneStepGVDNyI, CheckUnmixed]
@@ -1799,6 +1899,7 @@ doc///
                         matroidal ideals. Arch. Math. 114 (2020), no. 3 299–-304.
 
                 SeeAlso
+                        deletion
                         findLexCompatiblyGVDOrders
                         findOneStepGVD
                         getGVDIdeal
@@ -1807,6 +1908,7 @@ doc///
                         isLexCompatiblyGVD
                         isUnmixed
                         isWeaklyGVD
+                        link
                         oneStepGVD
                         oneStepGVDCyI
                         oneStepGVDNyI
@@ -1951,15 +2053,17 @@ doc///
         Node
                 Key
                         UniversalGB
+                        [deletion, UniversalGB]
                         [findOneStepGVD, UniversalGB]
                         [getGVDIdeal, UniversalGB]
+                        [initialYForms, UniversalGB]
                         [isGVD, UniversalGB]
                         [isLexCompatiblyGVD, UniversalGB]
                         [isWeaklyGVD, UniversalGB]
+                        [link, UniversalGB]
                         [oneStepGVD, UniversalGB]
                         [oneStepGVDCyI, UniversalGB]
                         [oneStepGVDNyI, UniversalGB]
-                        [initialYForms, UniversalGB]
                 Headline
                         whether the generators for an ideal form a universal Gröbner basis
                 Description
@@ -1989,15 +2093,17 @@ doc///
                         $C_{y, I}$ and $N_{y, I}$, it may take longer to verify the intersection condition.
 
                 SeeAlso
-                        oneStepGVDCyI
+                        deletion
                         findOneStepGVD
                         getGVDIdeal
                         initialYForms
                         isGVD
                         isLexCompatiblyGVD
                         isWeaklyGVD
-                        oneStepGVDNyI
+                        link
                         oneStepGVD
+                        oneStepGVDCyI
+                        oneStepGVDNyI
 ///
 
 
@@ -2276,3 +2382,8 @@ assert( sub(oneStepGVDNyI(I, y), R) == ideal(x^2*w*r+w*r*s^2+z^2*w*r+w^2*r^2) )
 
 
 end--
+
+uninstallPackage "GeometricDecomposability"
+restart 
+installPackage "GeometricDecomposability"
+check GeometricDecomposability
