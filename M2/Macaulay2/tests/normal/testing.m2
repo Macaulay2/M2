@@ -17,8 +17,8 @@ beginDocumentation()
 expectedCode = DIV{
     new FilePosition from (testpkg, 3, 5, 3, 32, 3, 5),
     ": --source code:",
-    PRE{CODE{"class" => "language-macaulay2",
-	    "TEST \"assert Equation(1 + 1, 2)\""}}}
+    PRE{CODE{"TEST \"assert Equation(1 + 1, 2)\"",
+	    "class" => "language-macaulay2"}}}
 assert BinaryOperation(symbol ===, code pkgtest, expectedCode)
 assert BinaryOperation(symbol ===, code 0, expectedCode)
 

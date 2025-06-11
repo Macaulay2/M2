@@ -407,14 +407,9 @@ expression RR := x -> (
 expression CC := z -> (
      x := realPart z;
      y := imaginaryPart z;
-     if y == 0 then expression x
-     else if x == 0 
-     then if y == 1 then hold ii
-     else if y == -1 then - hold ii
-     else y * hold ii
-     else if y == -1 then x - hold ii
-     else if y == 1 then x + hold ii
-     else x + y * hold ii)
+     if x == 0 then x=0;
+     if y == 0 or abs y < abs x * 2^(-precision z) then y=0;
+     x + y * hold ii)
 net InexactField := R -> net expression R
 net CC := z -> simpleToString z
 toExternalString RR := toExternalString0
@@ -423,12 +418,22 @@ texMath CC := x -> texMath expression x
 texMath RR := x -> (
     if not isANumber x then texMath toString x else
     if    isInfinite x then texMath(if x > 0 then infinity else -infinity)
-    else "{" | format(
-	printingPrecision,
-	printingAccuracy,
-	printingLeadLimit,
-	printingTrailLimit,
-	"}\\cdot 10^{", x ) | "}")
+    else (
+	s := simpleToString x;
+	r := regex("(-?\\d*)(?:\\.(\\d*)|)(?:"|regexQuote printingSeparator|"(-?\\d+)|)",s);
+	if r === null then return s; -- shouldn't happen
+	ss := substring(r#1,s);
+	if ss=="1" and r#2#1==0 and r#3#1>0 then "10^{"|substring(r#3,s)|"}"
+	else if ss=="-1" and r#2#1==0 and r#3#1>0 then "-10^{"|substring(r#3,s)|"}"
+	else concatenate (
+	    "{",
+	    (lookup(texMath,ZZ)) ss,
+	    if r#2#1>0 then "."|substring(r#2,s),
+	    "}",
+	    if r#3#1>0 then "\\cdot 10^{"|substring(r#3,s)|"}"
+	    )
+	)
+    )
 texMath RRi := x -> concatenate("\\big[",texMath left x,",",texMath right x,"\\big]",if isEmpty x then "\\text{ (an empty interval)}")
 withFullPrecision = f -> (
      prec := printingPrecision;

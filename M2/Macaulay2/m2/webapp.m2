@@ -6,23 +6,22 @@ needs "monideal.m2"
 
 -- topLevelMode=WebApp definitions
 -- tags are required to help the browser app distinguish html from text
-webAppTags := apply((17,18,19,20,28,29,30,14,21,(17,36),(36,18)),ascii);
+webAppTags = apply((17,18,19,20,28,29,30,14,21),ascii);
     (	webAppHtmlTag,        -- indicates what follows is HTML ~ <span class='M2Html'>
 	webAppEndTag,         -- closing tag ~ </span>
 	webAppCellTag,        -- start of cell (bundled input + output) ~ <p>
 	webAppCellEndTag,     -- closing tag for cell ~ </p>
 	webAppInputTag,       -- it's text but it's input ~ <span class='M2Input'>
 	webAppInputContdTag,  -- text, continuation of input
-	webAppUrlTag,         -- used internally to follow URLs
+	webAppLiteralTag,     -- used internally to keep track of encoding
 	webAppPromptTag,      -- input/output prompt
-	webAppPositionTag,    -- code position (row:col)
-	webAppTexTag,         -- effectively deprecated, ~ <span class='M2Html'> $
-	webAppTexEndTag       -- effectively deprecated, ~ $ </span>
+	webAppPositionTag     -- code position (row:col)
 	)=webAppTags;
 
-webAppTagsRegex := concatenate("[",drop(webAppTags,-2),"]")
+webAppTagsRegex := concatenate("[",webAppTags,"]")
 
 -- output routines for WebApp mode
+
 recordPosition = () -> if currentFileName == "stdio" then ( -- for now only stdio recorded
     webAppPositionTag,
 --    toString currentFileName,
@@ -62,9 +61,23 @@ printFunc := Thing#{WebApp,print} = x -> (
 
 on := () -> concatenate(webAppPromptTag,interpreterDepth:"o", toString lineNumber,webAppEndTag)
 
+timelimit := (t,f) -> (alarm t; r := f(); alarm 0; r)
+
 Thing#{WebApp,Print} = x -> (
     << endl << on() | " = ";
-    printFunc x;
+    fun := () -> ( printFunc x; );
+    try timelimit(printingTimeLimit, fun) else (
+	alarm 0; -- in case it's another error that triggered try
+	global debugError <- fun;
+	stderr << "--error or time limit reached in conversion of output to html: type " | webAppHtmlTag | "<code data-m2code>debugError()</code>" | webAppEndTag |" to run it again; will try conversion to net" << endl;
+	try timelimit(printingTimeLimit, () -> (
+--		<< flush << net x << flush << endl; -- not quite right
+		printFunc net x;
+		)) else (
+	    alarm 0;
+	    error "time limit/error reached in conversion of output to net";
+	    )
+	);
     )
 
 InexactNumber#{WebApp,Print} = x ->  withFullPrecision ( () -> Thing#{WebApp,Print} x )
@@ -92,17 +105,19 @@ Thing#{WebApp,AfterNoPrint} = x -> (
 
 removeWebAppTags = s -> if s === null then null else replace(webAppTagsRegex,"😀",s);
 if topLevelMode === WebApp then (
-    extractStr := x -> concatenate apply(x,y -> if instance(y,Hypertext) then extractStr y else if instance(y,String) then y);
-    -- the help hack: if started in WebApp mode, help is compiled in it as well
-    processExamplesLoop ExampleItem := (x->new LITERAL from extractStr x) @@ (lookup(processExamplesLoop,ExampleItem));
-    -- the help hack 2 (incidentally, this regex is safer than in standard mode)
-    M2outputRE      = "(?="|webAppCellTag|")";
     -- the show/edit hack
-    show URL := url -> (<< webAppUrlTag | url#0 | webAppEndTag;);
-    editURL := f -> "#editor:"|toString f;
-    editMethod String :=
-    editMethod FilePosition := f -> show editURL f;
-    hypertext FilePosition := f -> SAMP HREF {editURL f,toString f};
+    show URL := url -> ANCHOR { "href" => htmlLiteral url#0, "Opening "|url#0, "class" => "auto" };
+    editMethod String := f -> show URL("#editor:"|f);
+    editMethod FilePosition := editMethod @@ toURL; -- shouldn't that always be the case?
     -- redefine htmlLiteral to exclude codes
-    htmlLiteral = removeWebAppTags @@ htmlLiteral;
+    htmlLiteral0 := htmlLiteral;
+    html1 String := htmlLiteral = s -> if s === null then s else (
+	s=separate(webAppLiteralTag,s);
+	concatenate apply(#s, i -> if even i then removeWebAppTags htmlLiteral0 s#i else s#i)
+	);
+    -- the texMath hack
+    scan(methods hypertext, (f,T) -> (
+	    texMath T := x -> webAppLiteralTag|webAppHtmlTag|html x|webAppEndTag|webAppLiteralTag;
+	    )
+	)
     )
