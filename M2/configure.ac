@@ -957,6 +957,7 @@ then BUILTLIBS="-lflint $BUILTLIBS -lm"
                   BUILD_gmp=yes
                   LIBS_GMP="-lgmpxx -lgmp"
                   BUILTLIBS="$LIBS_GMP $BUILTLIBS"])])
+     BUILD_factory=yes
 fi
 
 dnl debian: 4ti2-
