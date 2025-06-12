@@ -6,7 +6,7 @@
 
 URL = https://macaulay2.com/Downloads/OtherSourceCode
 VERSION = 4.4.1
-#PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -vif
 
 BUILDTARGET = all ftmpl_inst.o
