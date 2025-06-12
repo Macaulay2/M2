@@ -957,6 +957,9 @@ then BUILTLIBS="-lflint $BUILTLIBS -lm"
                   BUILD_gmp=yes
                   LIBS_GMP="-lgmpxx -lgmp"
                   BUILTLIBS="$LIBS_GMP $BUILTLIBS"])])
+     AS_IF([test "x$BUILD_factory" = "xno"],
+         [AC_MSG_NOTICE([we will build factory since we are building flint])
+          BUILD_factory=yes])
 fi
 
 dnl debian: 4ti2-
