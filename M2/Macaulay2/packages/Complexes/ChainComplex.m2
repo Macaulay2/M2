@@ -280,8 +280,12 @@ length Complex := (C) -> (
     hi-lo
     )
 
-Complex == Complex := (C,D) -> (
-    if C === D then return true;
+-- this method is not exported, and is only used internally instead of === and =!=,
+-- since Complex is a MutableHashTable and are never identical unless literally the same.
+isIdentical = method()
+isIdentical(Complex, Complex) := (C, D) -> C === D or C.module === D.module and C.dd.map === D.dd.map
+
+Complex == Complex := (C,D) -> isIdentical(C, D) or (
     (loC,hiC) := C.concentration;
     (loD,hiD) := D.concentration;
     if ring C =!= ring D then return false;
