@@ -2,7 +2,7 @@ SUBMODULE = true
 # LIBNAME = flint2
 HOMEPAGE = http://flintlib.org
 # git://github.com/wbhart/flint2.git
-VERSION = 3.2.1
+VERSION = 3.3.0
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PARALLEL = yes
 
