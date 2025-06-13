@@ -26,7 +26,7 @@ isNZD(RingElement, Module) := (X,M) ->(ker (X*id_M) == 0)
 doubleDualMap = method()
 doubleDualMap Module := M ->(
     --returns the map from M to its double dual. Code is
-    --adapted from the package "Divisor",
+    --adapted from the package "WeilDivisors",
     --where it is called reflexifyModuleWithMap
     S := ring M;
     h := coverMap M;
@@ -325,7 +325,7 @@ installPackage ("CompleteIntersectionResolutions")
 loadPackage ("CompleteIntersectionResolutions", Reload=>true)
 viewHelp CompleteIntersectionResolutions
 
-installPackage "Divisor"
+installPackage "WeilDivisors"
 viewHelp reflexify
 --
 S = ZZ/101[a,b]

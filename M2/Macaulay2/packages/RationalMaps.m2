@@ -2618,7 +2618,7 @@ TEST /// --test #28
 ///
 
 TEST /// --test #29, map from genus 3 curve to projective space
-    needsPackage "Divisor";
+    needsPackage "WeilDivisors";
     C = ZZ/103[x,y,z]/(x^4+x^2*y*z+y^4+z^3*x);
     Q = ideal(y,x+z); --a point on our curve
     f2 = mapToProjectiveSpace(7*divisor(Q)); --a divisor of degree 7 (this is degree 7, so should induce an embedding)
