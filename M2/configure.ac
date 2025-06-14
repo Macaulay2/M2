@@ -1550,7 +1550,7 @@ AC_ARG_VAR([GFTABLESDIR],
     [path to gftables directory if factory is already installed])
 if test $BUILD_factory = yes
 then
-    GFTABLESDIR="${datadir}/Macaulay2/Core/factory/"
+    GFTABLESDIR="${libdir}/factory/"
 else
     if test x$GFTABLESDIR = x
     then
@@ -2030,7 +2030,7 @@ exec_prefix=$save_exec_prefix
 if test $BUILD_factory = no
 then PRE_GFTABLESDIR="$GFTABLESDIR"
 else
-PRE_GFTABLESDIR="$pre_datadir/Macaulay2/Core/factory/"
+PRE_GFTABLESDIR="$pre_libdir/factory/"
 fi
 AC_SUBST(PRE_GFTABLESDIR)
 
