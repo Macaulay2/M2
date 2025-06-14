@@ -131,7 +131,7 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release -DBUILD_NATIVE=OFF \
             -DCMAKE_PREFIX_PATH="`brew --prefix`;`brew --prefix libffi`" \
             -DCMAKE_INSTALL_PREFIX=/usr \
-            --debug-trycompile
+            --debug-trycompile -DBUILD_LIBRARIES=flint
 
       - name: Build libraries using Ninja
         if: matrix.build-system == 'cmake'
@@ -164,7 +164,8 @@ jobs:
             -L`brew --prefix readline`/lib"
           export F77=gfortran-14
           export FC=gfortran-14
-          ../../configure --with-system-gc --with-fplll
+          ../../configure --with-system-gc --with-fplll \
+            --enable-build-libraries=flint
 
       - name: Build Macaulay2 using Make
         if: matrix.build-system == 'autotools'

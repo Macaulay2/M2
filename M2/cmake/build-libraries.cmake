@@ -344,6 +344,7 @@ ExternalProject_Add(build-flint
   PREFIX            libraries/flint
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/flint
   BUILD_IN_SOURCE   ON
+  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/flint/patch-3.3.0
   CONFIGURE_COMMAND ./bootstrap.sh &&
                     ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                     ${shared_setting}
@@ -383,7 +384,7 @@ ExternalProject_Add(build-factory
   SOURCE_DIR        libraries/factory/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-#  PATCH_COMMAND     patch --batch < ${CMAKE_SOURCE_DIR}/libraries/factory/patch-4.4.0
+  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/factory/patch-4.4.1
   CONFIGURE_COMMAND autoreconf -vif &&
                     ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
