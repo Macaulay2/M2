@@ -344,7 +344,6 @@ ExternalProject_Add(build-flint
   PREFIX            libraries/flint
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/flint
   BUILD_IN_SOURCE   ON
-  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/flint/patch-3.3.0
   CONFIGURE_COMMAND ./bootstrap.sh &&
                     ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                     ${shared_setting}
