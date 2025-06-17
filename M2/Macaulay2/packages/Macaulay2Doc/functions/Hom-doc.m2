@@ -32,7 +32,7 @@ Node
     Strategy => Thing
   Outputs
     :Module
-      isomorphic to $\mathrm{Hom}_R(M,N), where $M$ and $N$ are both $R$-modules
+      isomorphic to $\mathrm{Hom}_R(M,N)$, where $M$ and $N$ are both $R$-modules
   Description
     Text
       If $M$ or $N$ is an ideal or ring, it is regarded as a module in the evident way.
