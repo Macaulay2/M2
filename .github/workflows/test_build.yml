@@ -64,6 +64,7 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew config
+          brew update
           brew tap macaulay2/tap
           brew install --overwrite python
           brew install automake boost tbb ccache ctags texinfo llvm make ninja yasm libffi msolve googletest fplll
