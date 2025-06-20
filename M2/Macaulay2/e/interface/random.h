@@ -25,6 +25,9 @@ unsigned long rawRandomULong(unsigned long max);
 int32_t rawRandomInt(int32_t max);
 /* generate a random number in the range 0..max-1 */
 
+void rawSetRandomInteger(mpz_ptr result, gmp_ZZ maxN);
+/* if height is the null pointer, use the default height */
+
 gmp_ZZ rawRandomInteger(gmp_ZZ maxN);
 /* if height is the null pointer, use the default height */
 
