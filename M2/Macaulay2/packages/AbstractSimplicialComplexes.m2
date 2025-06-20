@@ -17,7 +17,7 @@
 ---------------------------------------------------------------------------------
 -- The code that follows is mostly formatted to max line length of 80 and in some
 -- special cases (like method definition) to max line length of 110.
--- The code that follows is designed to run on Macaulay2, version 1.25.02.
+-- The code that follows is designed to run on Macaulay2, version 1.25.05.
 
 newPackage(
     "AbstractSimplicialComplexes",
@@ -170,11 +170,6 @@ abstractSimplicialComplex(ZZ,ZZ) := AbstractSimplicialComplex => (n,r) -> (
 ----------------------------------------
 -- Making random simplicial complexes --
 ----------------------------------------
-
--- What follows are simple minded (yet still seemingly practical)
--- methods for producing random subsets and random simplicial complexes.
--- In either case they are fairly efficient.
--- In either case, what follows suffices for our purposes at present.
 
 --  Make a "random" simplicial complex on {1,...,n}.
 
@@ -677,8 +672,8 @@ doc ///
 	     @HREF("https://www.tandfonline.com/doi/abs/10.1080/10586458.2018.1473821",
 		       "Cohen-Lenstra heuristics for torsion in homology of random complexes")@
 	     by  M. Kahle, F. H. Lutz, A. Newman, and K. Parsons [Exp. Math. vol. 29, no. 3 (2020)].
-	     When the option Verify is set to true, the output of the method will produce  complexes which have exactly 
-	     $m$ faces of dimension $d$.
+             By default, there is a chance that the putoput may have fewer than m faces. To avoid this, set
+             the Verify option to true.
 	  Example
 	     N = randomAbstractSimplicialComplex(6,3,2)
 	     tally apply(1000, i ->  #(randomAbstractSimplicialComplex(5,3,2))_2)
