@@ -672,7 +672,7 @@ doc ///
 	     @HREF("https://www.tandfonline.com/doi/abs/10.1080/10586458.2018.1473821",
 		       "Cohen-Lenstra heuristics for torsion in homology of random complexes")@
 	     by  M. Kahle, F. H. Lutz, A. Newman, and K. Parsons [Exp. Math. vol. 29, no. 3 (2020)].
-             By default, there is a chance that the putoput may have fewer than m faces. To avoid this, set
+             By default, there is a chance that the output may have fewer than $m$ faces. To avoid this, set
              the Verify option to true.
 	  Example
 	     N = randomAbstractSimplicialComplex(6,3,2)
