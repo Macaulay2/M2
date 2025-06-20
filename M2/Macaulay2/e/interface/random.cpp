@@ -56,14 +56,11 @@ int32_t rawRandomInt(int32_t max)
 void rawSetRandomInteger(mpz_ptr result, gmp_ZZ maxN)
 /* if height is the null pointer, use the default height */
 {
-  if (maxN == nullptr)
-    mpz_urandomm(result, state, maxHeight);
-  else if (1 != mpz_sgn(maxN))
-    {
-      mpz_set_si(result, 0);
-    }
-  else
-    mpz_urandomm(result, state, maxN);
+  if (maxN == nullptr) maxN = maxHeight;
+  if (mpz_cmp_si(maxN, 0) <= 0)
+    throw exc::engine_error("expected a positive height");
+
+  mpz_urandomm(result, state, maxN);
 }
 
 gmp_ZZ rawRandomInteger(gmp_ZZ maxN)
@@ -72,7 +69,12 @@ gmp_ZZ rawRandomInteger(gmp_ZZ maxN)
   mpz_ptr result = getmemstructtype(mpz_ptr);
   mpz_init(result);
 
-  rawSetRandomInteger(result, maxN);
+  try {
+    rawSetRandomInteger(result, maxN);
+  } catch (const exc::engine_error& e) {
+    ERROR(e.what());
+    return nullptr;
+  }
 
   mpz_reallocate_limbs(result);
   return result;

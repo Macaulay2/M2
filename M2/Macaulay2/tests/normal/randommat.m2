@@ -34,3 +34,6 @@ assert isSurjective random(R^3,R^6,MaximalRank=>true)
 assert(random(ZZ^2, ZZ^2, MaximalRank => true) - id_(ZZ^2) != 0)
 assert(random(QQ^2, QQ^2, MaximalRank => true) - id_(QQ^2) != 0)
 assert(random(R^2,  R^2,  MaximalRank => true) - id_(R^2)  != 0)
+
+-- used to crash M2 (#2089)
+assert try random(ZZ^2, ZZ^2, Height => 0) then false else true
