@@ -1656,7 +1656,7 @@ Node
 	(polarSequence, Ideal, Ideal)
 	(polarSequence, Ideal, Ideal,List)
     Headline
-    	Computes the list of multiplcities of a subvareity in the polar varities of another vareity. 
+    	Computes the list of multiplcities of a subvareity in the polar varieties of another vareity. 
     Usage
     	polarSequence(I)
     Inputs

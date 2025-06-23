@@ -88,9 +88,9 @@ EulerAffine (Ideal) := idea -> (
     n:=numgens S;
     z:=getSymbol "zzz";
     S=kk[z_0..z_n];
-    schem:=(map(S,ring idea,{z_1..z_n})) idea;
-    r:=numgens schem;
-    gschem:=(entries gens schem)_0;
+    schem11:=(map(S,ring idea,{z_1..z_n})) idea;
+    r:=numgens schem11;
+    gschem:=(entries gens schem11)_0;
     sset:=new MutableList from {0..r};
     psum:=new MutableList from {0..r};
     for s from 1 to r do(
