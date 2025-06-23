@@ -123,7 +123,7 @@ whitneyStratifyPol (Ideal):=opts->(I)->(
             Ti:=n-codim(th);
 	    (V#Ti)#(#(V#Ti))=th;
 	    );
-	--now find singularities and Whitney points of current dim peices 
+	--now find singularities and Whitney points of current dim pieces 
 	for Ia in V#(dimI-a) do(
 	    PolsIa={};
 	    pols2={};
@@ -654,7 +654,7 @@ minCoarsenWS(MutableHashTable):=opts->(Vin)->(
 		    Y=Ylist_(first contX);
 		    if isHom then(
 			if multCatchErr(sub(X,R2),sub(Y,R2))>1 then(
-			    if opts.Print==true then<<"X is singular in higher peice "<<endl;
+			    if opts.Print==true then<<"X is singular in higher piece "<<endl;
 			    curL#(#curL)=X;
 			    Xadded=true;
 			    );
@@ -685,7 +685,7 @@ minCoarsenWS(MutableHashTable):=opts->(Vin)->(
 				polMultHash#(kV_i,m,kV_(Yj-l),b)=polarSequence(sub(X,R2),sub(Z,R2),polHash#(kV_(Yj-l),b),Print=>opts.Print);
 				) else (if opts.Print==true then print "using cached polar seq";);
 			    polXZ=polMultHash#(kV_i,m,kV_(Yj-l),b);
-			    if opts.Print==true then<<"startin pol sequence: Y, Z= "<<Y<<", "<<Z<<endl;
+			    if opts.Print==true then<<"starting pol sequence: Y, Z= "<<Y<<", "<<Z<<endl;
 			    if not polMultHash#?(kV_(Yj),first contX,kV_(Yj-l),b) then(
 				if opts.Print==true then print "pol seq not cached";
 				polMultHash#(kV_(Yj),first contX,kV_(Yj-l),b)=polarSequence(sub(Y,R2),sub(Z,R2),polHash#(kV_(Yj-l),b), Print=>opts.Print);
@@ -899,7 +899,7 @@ whitneyStratify (Ideal,ZZ,ZZ):=opts->(I,level,Icodim)->(
             Ti:=n-codim(th);
 	    (V#Ti)#(#(V#Ti))=th;
 	    );
-	--now find singularities and Whitney points of current dim peices 
+	--now find singularities and Whitney points of current dim pieces 
 	for Ia in V#(dimI-a) do(
 	    dimIa:=dimI-a;
 	    J=ideal mingens(Ia+minors(codim Ia,jacobian Ia));
@@ -1455,7 +1455,7 @@ Node
 	    WS=new MutableHashTable from for k in keys WS1 list k=>toList((set(WS1)#k)*(set(WS2)#k))
 	    peek WS
 	Text 
-	    There are also several different options to preform the underlying polar variety calculations. The default algorithm uses the M2 saturate command to compute the polar variteies, this option is Algorithm=>. The other options are: Algorithm=>"msolve" and  Algorithm=>"M2F4". The Algorithm=>"msolve" only works in versions 1.25.06 and above of Macaulay2. The  Algorithm=>"M2F4" is mostly beneficial when working over a finite field. Note that over a finite field we can still sometimes obtain useful information about the stratification, but the coefficients appearing in the resulting polynomials may (or likely will) be incorrect. 
+	    There are also several different options to perform the underlying polar variety calculations. The default algorithm uses the M2 saturate command to compute the polar variteies, this option is Algorithm=>. The other options are: Algorithm=>"msolve" and  Algorithm=>"M2F4". The Algorithm=>"msolve" only works in versions 1.25.06 and above of Macaulay2. The  Algorithm=>"M2F4" is mostly beneficial when working over a finite field. Note that over a finite field we can still sometimes obtain useful information about the stratification, but the coefficients appearing in the resulting polynomials may (or likely will) be incorrect. 
 	Example 
 	    WS3=whitneyStratifyPol(I,Algorithm=>"msolve")
 	    peek WS3
@@ -1649,7 +1649,7 @@ Node
 	    I=ideal(y^2*z-x^2)
 	    polarVars I
 	Text 
-	    There are also several different options to preform the polar variety calculations. The default algorithm uses the M2 saturate command to compute the polar varieties, this option is Algorithm=>. The other options are: Algorithm=>"msolve" and  Algorithm=>"M2F4". The Algorithm=>"msolve" only works in versions 1.25.06 and above of Macaulay2. The  Algorithm=>"M2F4" is mostly beneficial when working over a finite field. Note that over a finite field we can still sometimes obtain useful information, but the coefficients appearing in the resulting polynomials may (or likely will) be incorrect. 
+	    There are also several different options to perform the polar variety calculations. The default algorithm uses the M2 saturate command to compute the polar varieties, this option is Algorithm=>. The other options are: Algorithm=>"msolve" and  Algorithm=>"M2F4". The Algorithm=>"msolve" only works in versions 1.25.06 and above of Macaulay2. The  Algorithm=>"M2F4" is mostly beneficial when working over a finite field. Note that over a finite field we can still sometimes obtain useful information, but the coefficients appearing in the resulting polynomials may (or likely will) be incorrect. 
 Node 
     Key
     	polarSequence
@@ -1738,7 +1738,7 @@ Node
 	    is the value of $Eu_Y$ at any point in $Z=V(x,y)-V(x,y,z)=\{(x,y,z)|x=y=0, \; z\neq 0\} $. And the final entry of the column is the value of $Eu_Y$ at the point $(0,0,0)$.
 
 	Text 
-	    There are also several different options to preform the underlying polar variety calculations. The default algorithm uses the M2 saturate command to compute the polar varieties, this option is Algorithm=>. The other options are: Algorithm=>"msolve" and  Algorithm=>"M2F4". The Algorithm=>"msolve" only works in versions 1.25.06 and above of Macaulay2. The  Algorithm=>"M2F4" is mostly beneficial when working over a finite field. Note that over a finite field we can still sometimes obtain useful information about the stratification, but the coefficients appearing in the resulting polynomials may (or likely will) be incorrect. 	    
+	    There are also several different options to perform the underlying polar variety calculations. The default algorithm uses the M2 saturate command to compute the polar varieties, this option is Algorithm=>. The other options are: Algorithm=>"msolve" and  Algorithm=>"M2F4". The Algorithm=>"msolve" only works in versions 1.25.06 and above of Macaulay2. The  Algorithm=>"M2F4" is mostly beneficial when working over a finite field. Note that over a finite field we can still sometimes obtain useful information about the stratification, but the coefficients appearing in the resulting polynomials may (or likely will) be incorrect. 	    
 
 Node 
     Key
@@ -1787,7 +1787,7 @@ Node
 	    dStrats=for s in CCmultiplcityList list first last s
 	    EulerCharComplexLink=for i from 0 to #CCmultiplcityList-1 list (1-(-1)^(d-dStrats_i)*m_i)
 	Text 
-	    There are also several different options to preform the underlying polar variety calculations. The default algorithm uses the M2 saturate command to compute the polar varieties, this option is Algorithm=>. The other options are: Algorithm=>"msolve" and  Algorithm=>"M2F4". The Algorithm=>"msolve" only works in versions 1.25.06 and above of Macaulay2. The  Algorithm=>"M2F4" is mostly beneficial when working over a finite field. Note that over a finite field we can still sometimes obtain useful information about the stratification, but the coefficients appearing in the resulting polynomials may (or likely will) be incorrect. 	    	    
+	    There are also several different options to perform the underlying polar variety calculations. The default algorithm uses the M2 saturate command to compute the polar varieties, this option is Algorithm=>. The other options are: Algorithm=>"msolve" and  Algorithm=>"M2F4". The Algorithm=>"msolve" only works in versions 1.25.06 and above of Macaulay2. The  Algorithm=>"M2F4" is mostly beneficial when working over a finite field. Note that over a finite field we can still sometimes obtain useful information about the stratification, but the coefficients appearing in the resulting polynomials may (or likely will) be incorrect. 	    	    
 ///	      
 TEST ///
 -*  
