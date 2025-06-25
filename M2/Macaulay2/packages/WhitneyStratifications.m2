@@ -7,9 +7,9 @@ newPackage(
 		  HomePage => "http://martin-helmer.com/"}},
     	Headline => "Compute Whitney Stratifications",
     	DebuggingMode => false,
-	--PackageImports=>{"Elimination","PrimaryDecomposition","Saturation","SegreClasses"}
-	PackageImports=>{"Elimination","PrimaryDecomposition","Saturation","SegreClasses", "Msolve"}
-    	);
+	PackageImports=>{"Elimination","PrimaryDecomposition","Saturation","SegreClasses", "Msolve"},
+	Keywords => {"Algebraic Geometry"}
+	);
 export{
     "conormal",
     "conormalRing",
@@ -22,13 +22,13 @@ export{
     "coordProj",
     "StratsToFind",
     "AssocPrimes",
-    "fiberContAssocPrimes",
     "polarSequence",
     "minCoarsenWS",
     "whitneyStratifyPol",
     "mapStratifyPol",
     "multCC"
     }
+
 
 --multCatchErr=method(TypicalValue=>List,Options=>{Print=>false});
 multCatchErr=(X,Y)->(
@@ -49,19 +49,19 @@ eulerObsMatrix(MutableHashTable):=opts->V->(
     Eu:=mutableMatrix(QQ,m,m);
     for b from 1 to m  do(
 	Zb:=sub(last strata_(m-b),R2);
-	if opts.Print==true then <<"big= "<<last strata_(m-b)<<endl;
+	if opts.Print then <<"big= "<<last strata_(m-b)<<endl;
 	db:=first strata_(m-b);
 	polsZb:=polarVars(Zb,Print=>opts.Print, Algorithm=>opts.Algorithm);
 	Eu_(m-b,m-b)=1;--(-1)^db;
 	for a from 0 to m-b-1 do(
-	    if opts.Print==true then <<"little= "<<last strata_a<<endl;
+	    if opts.Print then <<"little= "<<last strata_a<<endl;
 	    psaZ:=polarSequence(sub(last strata_a,R2),Zb,polsZb,Print=>opts.Print, Algorithm=>opts.Algorithm);
 	    da:=first strata_a;
-	    if opts.Print==true then <<"Current Polar Sequence= "<<psaZ<<endl;
+	    if opts.Print then <<"Current Polar Sequence= "<<psaZ<<endl;
 	    --Eu_(a,m-b)=(-1)^(db)*sum(0..#psaZ-1,k->(-1)^(#psaZ-1-k)*psaZ_k);
 	    Eu_(a,m-b)=sum(0..#psaZ-1,k->(-1)^(#psaZ-1-k)*psaZ_k);
 	    );
-	if opts.Print==true then <<"Current Eu= "<<matrix Eu<<endl;
+	if opts.Print then <<"Current Eu= "<<matrix Eu<<endl;
 	);
     --polsZ:=polarVars(sub(Z,R2));
     use R;
@@ -76,12 +76,12 @@ multCC(MutableHashTable):=opts->V->(
     for i from 0 to #strata-1 do(
 	if (dimV-first(strata_i))%2==1 then columnMult(A,i,-1);
 	);
-    if opts.Print==true then <<"Eu scaled= "<<matrix(A)<<endl;
-    if opts.Print==true then <<"Eu scaled= "<<toString matrix(A)<<endl;
-    if opts.Print==true then <<"Eu scaled= "<<tex matrix(A)<<endl;
+    if opts.Print then <<"Eu scaled= "<<matrix(A)<<endl;
+    if opts.Print then <<"Eu scaled= "<<toString matrix(A)<<endl;
+    if opts.Print then <<"Eu scaled= "<<tex matrix(A)<<endl;
     b:=transpose matrix {for i from 1 to #strata list 1};
     sol:=flatten entries (solve(matrix(A),b));
-    if opts.Print==true then <<"CC mults= "<<sol<<endl;
+    if opts.Print then <<"CC mults= "<<sol<<endl;
     strataCCmult:=for i from 0 to #strata-1 list {sol_i,strata_i};
     return {matrix A, strataCCmult};
     );
@@ -103,7 +103,7 @@ whitneyStratifyPol (Ideal):=opts->(I)->(
     pols2:={};
     tempJ:=0;
     if dimI<2 then(
-	if opts.Print==true then <<"decompose sing(I)"<<endl;
+	if opts.Print then <<"decompose sing(I)"<<endl;
 	tempJ=decompose(J);
 	for K in tempJ do(
 	    for i from 0 to dimI-1 do(
@@ -128,25 +128,20 @@ whitneyStratifyPol (Ideal):=opts->(I)->(
 	    PolsIa={};
 	    pols2={};
 	    dimIa:=dimI-a;
-	    if opts.Print==true then<<"sing minors below dim "<<dimI-a<<endl;
-	    --<<"sing minors below dim "<<dimI-a<<endl;
+	    if opts.Print then<<"sing minors below dim "<<dimI-a<<endl;
 	    J=radical ideal mingens(Ia+minors(codim Ia,jacobian Ia));
 	    mu:=n-codim(J);
 	    ell:=0;
-	    --<<"dim sing= "<<mu<<endl;
-	    --if mu==0 then(
 	    for K in decompose(J) do(
 		ell=n-codim(K);
 		(V#ell)#(#(V#ell))=K;
 		);
 	--	);
 	    if mu>0 then(
-		if opts.Print==true then<<"find pols "<<dimI-a<<endl;
-		--<<"find pols "<<dimI-a<<endl;
+		if opts.Print then<<"find pols "<<dimI-a<<endl;
 		PolsIa=polarVars(Ia,Print=>opts.Print, Algorithm=>opts.Algorithm);
-		--print "done pols";
 		);
-	    if opts.Print==true then<<"decompose pols+ sing"<<endl;
+	    if opts.Print then<<"decompose pols+ sing"<<endl;
 		pols2=flatten for p in PolsIa list decompose(J+p);
 	    --add all singularities of Ia
 	    for K in pols2 do(
@@ -168,26 +163,26 @@ mapStratifyPol (List,Ideal,Ideal):=opts->(F,X,Y)->(
     R:=ring X;
     S:=ring Y;
     kk:=coefficientRing R;
-    if opts.Print==true then <<"R= "<<R<<"S= "<<S<<endl;
+    if opts.Print then <<"R= "<<R<<"S= "<<S<<endl;
     conRingX:=conormalRing(X);
     conRingY:=conormalRing(Y);
-    if opts.Print==true then<<"conRingX= "<<gens(conRingX)<<endl;
+    if opts.Print then<<"conRingX= "<<gens(conRingX)<<endl;
     n:=numgens(R);
     m:=numgens(S);
-    if opts.Print==true then<<"isProper= "<<opts.isProper<<endl;
+    if opts.Print then<<"isProper= "<<opts.isProper<<endl;
     V:=new MutableHashTable;
     VcheckedBeforeInd:=new MutableHashTable;
     W:=new MutableHashTable;
     WcheckedBeforeInd:=new MutableHashTable;
     fIsCoordProjection:=false; 
-    if opts.Print==true then<<"F= "<<F<<", gens S= "<<gens S<<endl;
+    if opts.Print then<<"F= "<<F<<", gens S= "<<gens S<<endl;
     graphR:=0;
     elimIm:=0;
     elimInv:=0;
     Gam:=0;
     y:=0;
     if all(F, i->any(gens R,j->i===j)) then(
-	if opts.Print==true then <<"the map is a coordinate projection"<<endl;
+	if opts.Print then <<"the map is a coordinate projection"<<endl;
 	fIsCoordProjection=true;
 	graphR=R;
 	elimIm=toList(set(gens(R))-set(F));
@@ -204,27 +199,23 @@ mapStratifyPol (List,Ideal,Ideal):=opts->(F,X,Y)->(
     	y=(gens graphR)_{numgens(R)..numgens(graphR)-1};
     	Gam=ideal for i from 0 to numgens(S)-1 list y_i-sub(F_i,graphR);
 	);
-    if opts.Print==true then <<"graph R= "<<gens(graphR)<<endl;
-    if opts.Print==true then <<"elimIm= "<<elimIm<<endl;
-    if opts.Print==true then <<"elimInv= "<<elimInv<<endl;
+    if opts.Print then <<"graph R= "<<gens(graphR)<<endl;
+    if opts.Print then <<"elimIm= "<<elimIm<<endl;
+    if opts.Print then <<"elimInv= "<<elimInv<<endl;
     dimX:=n-codim(X);
     tempSubsetsV:=0;
     tempSubsetsW:=0; 
     dimY:=m-codim(Y);
-    --
-    --print "starting Jel";
     fX:=ideal mingens(sub(eliminate(elimIm,Gam+sub(X,graphR)),S)+Y);
-    --fX:=Y;
     dimfX:=m-codim(fX);
     for i from 0 to dimX-1 do V#i=new MutableList;
     for i from 0 to dimfX-1 do W#i=new MutableList;
     
     for i from 0 to dimX do VcheckedBeforeInd#i=0;
     for i from 0 to dimfX do WcheckedBeforeInd#i=0;
-    if opts.Print==true then print "decompose X";
+    if opts.Print then print "decompose X";
     V#dimX=decompose X;  
-    --V#dimX={X};
-    if opts.Print==true then print "decompose Y";
+    if opts.Print then print "decompose Y";
     W#(dimY)=decompose Y;
     if fX!=Y then(
 	Y=fX;
@@ -232,13 +223,13 @@ mapStratifyPol (List,Ideal,Ideal):=opts->(F,X,Y)->(
 	W#(dimY)=decompose Y;
 	);
     if opts.isProper==false then(
-	if opts.Print==true then<<"Computing Jolenck flag"<<endl;
+	if opts.Print then<<"Computing Jolenck flag"<<endl;
 	JelY:=new MutableList from {};
 	JelX:=new MutableList from {};
 	JelY#0=Y;
 	JelX#0=X;
 	for i from 0 to dimY-1 do(
-	    if opts.Print==true then<<"Jel#"<<i<<" ="<<JelY#i<<endl;
+	    if opts.Print then<<"Jel#"<<i<<" ="<<JelY#i<<endl;
 	    JelY#(i+1)=nonProperSet(F,JelX#i,Y);
 	    JelX#(i+1)=ideal mingens(sub(eliminate(elimInv,Gam+sub(JelY#(i+1),graphR)),R)+X);
 	    );
@@ -255,14 +246,11 @@ mapStratifyPol (List,Ideal,Ideal):=opts->(F,X,Y)->(
 		);
 	    );
 	);
-    if opts.Print==true then print "past Jel check/computation";	
-    if opts.Print==true then print "V";
-    if opts.Print==true then for ke in keys V do print toList(V#ke);
-    if opts.Print==true then print "W";
-    if opts.Print==true then for ke in keys W do print toList(W#ke);
-    --level:=max(dimX,dimY);
-    --levelX:=dimX;
-    --lelvelY:=dimY;
+    if opts.Print then print "past Jel check/computation";	
+    if opts.Print then print "V";
+    if opts.Print then for ke in keys V do print toList(V#ke);
+    if opts.Print then print "W";
+    if opts.Print then for ke in keys W do print toList(W#ke);
     aX:=0;
     aY:=0;
     JY:=0;dimYa:=0;muY:=0;ellY:=0;dimKinv:=0;Kdim:=0;Kinv:=0;ell:=0;Ti:=0;intse:=0;CYa:=0;CpullYa:=0;PolsYa:=0;
@@ -273,34 +261,31 @@ mapStratifyPol (List,Ideal,Ideal):=opts->(F,X,Y)->(
     tXind:=0;
     YaNew:=0;YaOld:=0;
     XaNew:=0;XaOld:=0;
-    --<<"dim X= "<<dimX<<", dim Y= "<<dimY<<endl;
     while (aX<dimX) or (aY<dimY) do(
-	--<<"aX= "<<aX<<", aY="<<aY<<endl;
-    --for a from 0 to level-1 do(
-	if opts.Print==true then <<"{aY, aX}= "<<{aY,aX}<<endl;
+	if opts.Print then <<"{aY, aX}= "<<{aY,aX}<<endl;
 	-- Y at codim>a 
 	if (dimY-aY)>0 then(
-	    if opts.Print==true then print "In Y";
+	    if opts.Print then print "In Y";
 	    	--add subset intersections of Y at level aY
 		tYind=WcheckedBeforeInd#(dimY-aY);
 		YaNew=(toList(W#(dimY-aY)))_(toList(tYind..(#(W#(dimY-aY))-1)));
 		YaOld=(toList(W#(dimY-aY)))_(toList(0..tYind-1));
 		tempSubsetsW=join(flatten for a1 in YaOld list(for b1 in YaNew list {a1,b1}),subsets(YaNew,2));
 		--TODO need to add intersections of the form 1 from before tYind and 1 from after tYind
-		if opts.Print==true then<<"starting subset sing at "<<dimY-aY<<", num subsets W= "<<#tempSubsetsW<<endl;
+		if opts.Print then<<"starting subset sing at "<<dimY-aY<<", num subsets W= "<<#tempSubsetsW<<endl;
 		intse=unique flatten for s in tempSubsetsW list decompose ideal  mingens(sum(s));
 		for th in intse do(
 		    Ti=m-codim(th);
-		    if opts.Print==true then <<"Y Whit= "<<th<<endl;
+		    if opts.Print then <<"Y Whit= "<<th<<endl;
 		    if (any(toList(W#Ti),jj->th==jj)==false) then (
 			(W#Ti)#(#(W#Ti))=th;
-			if opts.Print==true then<<"added to Y strat= "<<th<<endl;
+			if opts.Print then<<"added to Y strat= "<<th<<endl;
 			);
 		    --Pullback to X, add to X strat, V
 		    Kinv=ideal mingens(sub(eliminate(elimInv,Gam+sub(th,graphR)),R)+X);
 		    for comp in decompose Kinv do(
 			dimKinv=n-codim(comp);
-			if opts.Print==true then <<"Y Whit in X= "<<comp<<endl;
+			if opts.Print then <<"Y Whit in X= "<<comp<<endl;
 			if (any(toList(V#dimKinv),jj->comp==jj)==false) then(
 			    (V#dimKinv)#(#(V#dimKinv))=comp;
 			    					--have unprocessed components above current dim, go back up
@@ -308,8 +293,6 @@ mapStratifyPol (List,Ideal,Ideal):=opts->(F,X,Y)->(
 			    );
 			);
 		    );
-		--<<"for j2...."<<endl;
-	    --for Ya in W#(dimY-a) do(
 	    for j2 from WcheckedBeforeInd#(dimY-aY) to #(W#(dimY-aY))-1 do(
 		Ya=(W#(dimY-aY))#j2;
 		WcheckedBeforeInd#(dimY-aY)=WcheckedBeforeInd#(dimY-aY)+1;
@@ -322,7 +305,6 @@ mapStratifyPol (List,Ideal,Ideal):=opts->(F,X,Y)->(
 		   --<<"adding dim 0 sings"<<endl;
 		    for K in decompose(JY) do(
 		    --Add to Y strat, W
-		    --<<"at K= "<<K<<endl;
 		    KDim=m-codim(K);
 		    if (any(toList(W#KDim),jj->(K)==jj)==false) then (W#KDim)#(#(W#KDim))=ideal mingens(K);
 		    --Pullback to X, add to X strat, V
@@ -338,32 +320,10 @@ mapStratifyPol (List,Ideal,Ideal):=opts->(F,X,Y)->(
 		    );
 		);	
 		if muY>0 and (opts.StratsToFind!="singularOnly") then (
-		    --if opts.Print==true then 
-		    --<<"doing Y whit check"<<endl;
-		    --CYa=conormal(ideal mingens Ya,conRingY);
+
 		    PolsYa=polarVars(ideal mingens Ya, Print=>opts.Print, Algorithm=>opts.Algorithm);
 		    WhitYa=flatten for p in PolsYa list decompose(JY+p);
-		    --CpullYa=0;
-		    --for j from 0 to muY do(
-		    --	ell=muY-j;
-		    ---	for Z in W#ell do(
-			 -*   CpullYa=ideal mingens (CYa+sub(Z,conRingY));
-			    if opts.AssocPrimes==false then(
-				--print "start eq decomp Y";
-				WhitYa=decompose fiberContAssocPrimes(Z, CYa);
-				)
-			    else(
-				if (opts.StratsToFind=="all") then(
-				    if opts.Print==true then <<"doing Y assoc. primes with "<<CpullYa<<endl;
-				    WhitYa=for q in associatedPrimes CpullYa list sub(eliminate((gens conRingY)_{(numgens(S))..numgens(conRingY)-1},q),S);
-				    )
-			    	else(
-			            if opts.Print==true then <<"doing Y min. primes with "<<CpullYa<<endl;
-				    WhitYa=for q in decompose CpullYa list sub(eliminate((gens conRingY)_{(numgens(S))..numgens(conRingY)-1},q),S);
-				    );
-			    	);
-			    *-
-			    if opts.Print==true then <<"done assoc primes "<<endl;
+			    if opts.Print then <<"done assoc primes "<<endl;
 			    for K in WhitYa do(
 				--Add to Y strat, W
 			    	KDim=m-codim(K);
@@ -382,8 +342,6 @@ mapStratifyPol (List,Ideal,Ideal):=opts->(F,X,Y)->(
 					);	   
 				    );
 			    	);
-		--	    );-- pairs for Z in W#ell
-		    --	);--pairs: for j from 0 to muY
 		    );
 	    	);
 	    --now go down a level in Y, if there are levels left
@@ -393,127 +351,91 @@ mapStratifyPol (List,Ideal,Ideal):=opts->(F,X,Y)->(
 	--X at codim> a
 	--TODO, change X block to look like Y block above with new index check etc. 
 	if (dimX-aX)>0 then(
-	    if opts.Print==true then print "In X";
+	    if opts.Print then print "In X";
 	    	--subset intersections at level aX of X
 		tXind=VcheckedBeforeInd#(dimX-aX);
 		XaNew=(toList(V#(dimX-aX)))_(toList(tXind..(#(V#(dimX-aX))-1)));
 		XaOld=(toList(V#(dimX-aX)))_(toList(0..tXind-1));
 		tempSubsetsV=join(flatten for a1 in XaOld list(for b1 in XaNew list {a1,b1}),subsets(XaNew,2));
 	    	--Add subset intersections of Xa, push forward
-		--tempSubsetsV=subsets(toList(V#(dimX-a)),2);
-		if opts.Print==true then<<"starting subset sing at "<<dimX-aX<<", num subsets V= "<<#tempSubsetsV<<endl;
+		if opts.Print then<<"starting subset sing at "<<dimX-aX<<", num subsets V= "<<#tempSubsetsV<<endl;
 		    intse=unique flatten for s in tempSubsetsV list decompose ideal  mingens(sum(s));
 		    for th in intse do(
 		    	Ti=n-codim(th);
-		    	if opts.Print==true then<<"X whit subsets= "<<th<<endl;
+		    	if opts.Print then<<"X whit subsets= "<<th<<endl;
 		    	if (any(toList(V#Ti),jj->th==jj)==false) then (V#Ti)#(#(V#Ti))=th;
 		    	--Pushforward to Y, add to Y strat, W
 		    	Kinv=ideal mingens(sub(eliminate(elimIm,Gam+sub(th,graphR)),S)+Y);
 		    	for comp in decompose Kinv do(
 			    dimKinv=m-codim(comp);
-			    if opts.Print==true then<<"X whit in Y "<<comp<<endl;
+			    if opts.Print then<<"X whit in Y "<<comp<<endl;
 			    if (any(toList(W#dimKinv),jj->comp==jj)==false) then (
 				(W#dimKinv)#(#(W#dimKinv))=comp;
 				--have unprocessed components above current dim, go back up
 				if dimKinv>(dimY-aY) then aY=dimY-dimKinv;
-				if opts.Print==true then<<"Added to Y Sing = "<<comp<<endl;
-				if opts.Print==true then<<"Dim th= "<<dim(th)<<", From X part= "<<th<<endl;
-				if opts.Print==true then<<", intse="<<intse<<endl;
+				if opts.Print then<<"Added to Y Sing = "<<comp<<endl;
+				if opts.Print then<<"Dim th= "<<dim(th)<<", From X part= "<<th<<endl;
+				if opts.Print then<<", intse="<<intse<<endl;
 				);
 			    );
 		    	);
 	    for j2 from VcheckedBeforeInd#(dimX-aX) to #(V#(dimX-aX))-1 do(
 		Xa=(V#(dimX-aX))#j2;
 		VcheckedBeforeInd#(dimX-aX)=VcheckedBeforeInd#(dimX-aX)+1;
-	    	--dima=dimY-aY;	    
-	    --for Xa in V#(dimX-a) do(
-		if opts.Print==true then<<"Xa= "<<Xa<<endl;
+		if opts.Print then<<"Xa= "<<Xa<<endl;
 	    	dimXa:=dimX-aX;
 	    	JX=radical ideal mingens(Xa+minors(codim Xa,jacobian Xa));
-		if opts.Print==true then<<"JX= "<<JX<<endl;
+		if opts.Print then<<"JX= "<<JX<<endl;
 	    	muX=n-codim(JX);
 	    	ellX=0;
 	    	WhitXa=0;
 		if muX==0 then (
-		    --<<"doing X dim 0 sings"<<endl;
-		    --if (any(toList(V#0),jj->JX==jj)==false) then (V#0)#(#(V#0))=JX;
 		    for K in decompose(JX) do(
 			Ti=n-codim(K);
-			if opts.Print==true then<<"X Whit= "<<K<<endl;
+			if opts.Print then<<"X Whit= "<<K<<endl;
 			if (any(toList(V#Ti),jj->K==jj)==false) then (V#Ti)#(#(V#Ti))=ideal mingens(K);
 			);
 		    );
 		AX=jacobian(Xa+ideal(F));
-		if opts.Print==true then<<"AX= "<<AX<<endl;
+		if opts.Print then<<"AX= "<<AX<<endl;
 		--todo, use the tighter bound here
 		rXa=min(numrows(AX), numcols(AX));
 		for i from 0 to rXa do(
 		    IiXf=ideal mingens(Xa+minors(rXa-i,AX));
-		    if opts.Print==true then<<"IiXf= "<<IiXf<<endl;
+		    if opts.Print then<<"IiXf= "<<IiXf<<endl;
 		    if IiXf==ideal(1_R) then break;
 		    --<<" In TB starting decompose of IiXf"<<endl;
 		    for K in decompose(IiXf) do(
 			--add to X strat, V
 			Ti=n-codim(K);
-			if opts.Print==true then<<"X Tb 1= "<<K<<endl;
-			if opts.Print==true then<<"V#"<<Ti<<" ="<<toList(V#Ti)<<", ring= "<<(for v in toList(V#Ti) list gens(ring(v)))<<endl;
+			if opts.Print then<<"X Tb 1= "<<K<<endl;
+			if opts.Print then<<"V#"<<Ti<<" ="<<toList(V#Ti)<<", ring= "<<(for v in toList(V#Ti) list gens(ring(v)))<<endl;
 			if (any(toList(V#Ti),jj->K==jj)==false) then (
 			    (V#Ti)#(#(V#Ti))=K;
-			    if opts.Print==true then<<"Added to X TB = "<<K<<endl;
+			    if opts.Print then<<"Added to X TB = "<<K<<endl;
 			    );
 			--add image to Y strat, W
 			Kpf=ideal mingens(sub(eliminate(elimIm,Gam+sub(K,graphR)),S)+Y);
 			--<<"TB X decomposing in Y"<<endl;
 		       	for comp in decompose Kpf do(
 		            dimKinv:=m-codim(comp);
-			    if opts.Print==true then<<"Y TB= "<<comp<<endl;
+			    if opts.Print then<<"Y TB= "<<comp<<endl;
 			    if (any(toList(W#dimKinv),jj->comp==jj)==false) then(
 				(W#dimKinv)#(#(W#dimKinv))=comp;
 				--Unprocessed components detected above, go back up
 				if dimKinv>(dimY-aY) then aY=dimY-dimKinv;
-				if opts.Print==true then<<"Added to Y TB = "<<comp<<endl;
+				if opts.Print then<<"Added to Y TB = "<<comp<<endl;
 				);
 			    );
 			--<<"done inner decompose"<<endl;
 		    	);
 		    );
 		--<<"done TB"<<", muX="<<muX<<endl;
-		if opts.Print==true then<<"done TB"<<", muX="<<muX<<endl;
+		if opts.Print then<<"done TB"<<", muX="<<muX<<endl;
 		if muX>0 and (opts.StratsToFind!="singularOnly") then (
-		    --if opts.Print==true then<<"doing X conormal with "<<Xa<<endl;
-		  -- <<"doing X Whit checks "<<endl;
-		    --CXa=conormal(ideal mingens Xa,conRingX);
 		    PolsXa=polarVars(ideal mingens Xa,Print=>opts.Print, Algorithm=>opts.Algorithm);
 		    --<<"done polar vars, start decompose"<<endl;
 		    WhitXa=flatten for p in PolsXa list decompose(JX+p);
-		    --<<"done decompose"<<endl;
-		    --Cpull=0;
-		    --<<"Xa= "<<Xa<<endl;
-		   -- for j from 0 to muX do(
-		    --	ell=muX-j;
-		    --	for Z in V#ell do(
-		    
-		    -*
-	     	    	    if opts.AssocPrimes==false then(
-				--print "start eq decomp X";
-				WhitXa=decompose fiberContAssocPrimes(Z, CXa);
-				)
-			    else(
-				Cpull=ideal mingens (CXa+sub(Z,conRingX));
-			    	if (opts.StratsToFind=="all") then(
-				    if opts.Print==true then<<"doing X assoc. primes with "<<Cpull<<endl;
-				    --<<"doing X assoc. primes with "<<Cpull<<endl;
-				    WhitXa=for q in associatedPrimes(Cpull) list sub(eliminate((gens conRingX)_{(numgens(R))..numgens(conRingX)-1},q),R);
-				    --for q in WhitXa do <<"X whit= "<<q<<endl;
-				    )
-			    	else(
-				    if opts.Print==true then<<"doing X min. primes with "<<Cpull<<endl;
-				    pList:= decompose Cpull; 
-				    WhitXa= for q in pList list sub(eliminate((gens conRingX)_{(numgens(R))..numgens(conRingX)-1},q),R);
-				    );
-			    	);
-			    if opts.Print==true then<<"done associated/min primes X"<<endl;
-			    *-
 			    for K in WhitXa do(
 			    	--only add elements that are new
 			    	Ti=n-codim(K);
@@ -521,12 +443,12 @@ mapStratifyPol (List,Ideal,Ideal):=opts->(F,X,Y)->(
 				if (any(toList(V#Ti),jj->K==jj)==false) then(
 				    (V#Ti)#(#(V#Ti))=ideal mingens(K);
 				   -- <<"added Whit Strata X"<<endl;
-			    	    if opts.Print==true then<<"X whit= "<<K<<endl;
+			    	    if opts.Print then<<"X whit= "<<K<<endl;
 				    --<<"X whit= "<<K<<endl;
 		       	    	    Kpf=ideal mingens(sub(eliminate(elimIm,Gam+sub(K,graphR)),S)+Y);
 		       	    	    for comp in decompose Kpf do(
 		       	    	    	dimKinv=m-codim(comp);
-				    	if opts.Print==true then<<"X whit in Y "<<comp<<endl;
+				    	if opts.Print then<<"X whit in Y "<<comp<<endl;
 	       		 	    	if (any(toList(W#dimKinv),jj->comp==jj)==false) then(
 					    (W#dimKinv)#(#(W#dimKinv))=comp;
 					    if dimKinv>(dimY-aY) then aY=dimY-dimKinv;
@@ -534,14 +456,12 @@ mapStratifyPol (List,Ideal,Ideal):=opts->(F,X,Y)->(
      				    	);
 			    	    );
 			    	);
-			   -- <<"done whit processing"<<endl;
-			  --  );--pairs: for Z in V#ell
-		    	--);-- pairs: for j from 0 to muX
+
 		    );
 		);
 	    aX=aX+1;
-		    if opts.Print==true then<<"|W|= "<<toString(sum for k in keys W list #(W)#k)<<endl;
-		    if opts.Print==true then<<"|V|= "<<toString(sum for k in keys V list #(V)#k)<<endl;
+		    if opts.Print then<<"|W|= "<<toString(sum for k in keys W list #(W)#k)<<endl;
+		    if opts.Print then<<"|V|= "<<toString(sum for k in keys V list #(V)#k)<<endl;
 	    	);
     	);
     for a in keys(V) do V#a=unique toList(V#a); 
@@ -552,7 +472,6 @@ mapStratifyPol (List,Ideal,Ideal):=opts->(F,X,Y)->(
 
 polarSequence=method(TypicalValue=>ZZ,Options=>{Print=>false, Algorithm=>"saturate"});
 polarSequence(Ideal,Ideal):=opts->(X,Z)->(
-     --<<"alg polarSeq= "<< opts.Algorithm<<endl;
     R:=ring X;
     kk:=ZZ/32749;
     R2:=kk[gens R];
@@ -560,11 +479,9 @@ polarSequence(Ideal,Ideal):=opts->(X,Z)->(
     return polarSequence(sub(X,R2),sub(Z,R2),polsZ,Print=>opts.Print, Algorithm=>opts.Algorithm); 
     );
 polarSequence(Ideal,Ideal,List):=opts->(X,Z,polsZ)->(
-    --<<"alg polarSeq= "<< opts.Algorithm<<endl;
     R:=ring X;
     kk:=coefficientRing(R);
     R1:=kk[gens R];
-    --isHom:=(isHomogeneous(X) and isHomogeneous(Z));
     isHom:=false;
     LX:=0;
     temp:=0;
@@ -584,15 +501,14 @@ polarSequence(Ideal,Ideal,List):=opts->(X,Z,polsZ)->(
 	    polSeq#ind=0;
 	    )
 	else(
-	    --if opts.Print==true then
-	    if opts.Print==true then <<"mult calc started, coeff ring="<<coefficientRing(R1)<<endl;
-	    --time polSeq#ind=multiplicity(temp,homogenize(sub(p,R1),x0));
+	    --if opts.Print then
+	    if opts.Print then <<"mult calc started, coeff ring="<<coefficientRing(R1)<<endl;
 	    polSeq#ind=multCatchErr(temp,homogenize(sub(p,R1),x0));
 	    );
 	ind=ind+1;
 	);
-    if opts.Print==true then print "done pol seq";
-    if opts.Print==true then <<"pol seq= "<<toList(polSeq)<<endl;
+    if opts.Print then print "done pol seq";
+    if opts.Print then <<"pol seq= "<<toList(polSeq)<<endl;
     use R;
     return toList polSeq;
     );
@@ -622,26 +538,26 @@ minCoarsenWS(MutableHashTable):=opts->(Vin)->(
     polXZ:={};
     polYZ:={};
     Xadded:=false;
-    if opts.Print==true then<<"kV= "<<kV<<endl;
+    if opts.Print then<<"kV= "<<kV<<endl;
     if (not isHom) then R1=kk[getSymbol "wthhhh",gens R];
     x0:=first gens R1;
     R3:=ZZ/65521[gens R1];
     curL:={};
     for i from 1 to #kV-1 do(
-	if opts.Print==true then<<"i= "<<i<<endl;
+	if opts.Print then<<"i= "<<i<<endl;
 	if PassedSing then(
 	    curL:=new MutableList from {};
 	    for m from 0 to #V#(kV_i)-1 do(
 		X=(V#(kV_i))_m;
-		if opts.Print==true then<<"checking X= "<<X<<endl;
+		if opts.Print then<<"checking X= "<<X<<endl;
 		Xadded=false;
 		for j from 1 to i-1 do(
-		    if opts.Print==true then<<"i= "<<i<<", j= "<<j<<endl;
+		    if opts.Print then<<"i= "<<i<<", j= "<<j<<endl;
 		    if V#(kV_(i-j))!={} then(
 			Ylist=V#(kV_(i-j));
 			Yj=i-j;
 			contX=positions(Ylist, K->isSubset(K,X));
-			if opts.Print==true then<<"cont X= "<<contX<<endl;
+			if opts.Print then<<"cont X= "<<contX<<endl;
 			break;
 			);
 		    );
@@ -654,7 +570,7 @@ minCoarsenWS(MutableHashTable):=opts->(Vin)->(
 		    Y=Ylist_(first contX);
 		    if isHom then(
 			if multCatchErr(sub(X,R2),sub(Y,R2))>1 then(
-			    if opts.Print==true then<<"X is singular in higher piece "<<endl;
+			    if opts.Print then<<"X is singular in higher piece "<<endl;
 			    curL#(#curL)=X;
 			    Xadded=true;
 			    );
@@ -666,37 +582,37 @@ minCoarsenWS(MutableHashTable):=opts->(Vin)->(
 			    );
 			);
 		    );
-		if opts.Print==true then<<"starting polar test, i= "<<i<<", Yj= "<<Yj<<endl;
+		if opts.Print then<<"starting polar test, i= "<<i<<", Yj= "<<Yj<<endl;
 		if (not Xadded) and (not (#contX==0)) then(
 		    for l from 1 to Yj do(
 			Zlist=V#(kV_(Yj-l));
 			contY=positions(Zlist, K->isSubset(K,X));
-		        if opts.Print==true then<<"l= "<<l<<", Zlist= "<< Zlist_contY<<endl;
+		        if opts.Print then<<"l= "<<l<<", Zlist= "<< Zlist_contY<<endl;
 			for b from 0 to #contY-1 do(
 			    Z=Zlist_b;
 			    if not polHash#?(kV_(Yj-l),b) then(
-				if opts.Print==true then<<"finding polar for Z= "<<Z<<endl;
+				if opts.Print then<<"finding polar for Z= "<<Z<<endl;
 				polHash#(kV_(Yj-l),b)=polarVars(sub(Z,R2),Print=>opts.Print, Algorithm=>opts.Algorithm);
-				) else (if opts.Print==true then print "using cached polar var";);
+				) else (if opts.Print then print "using cached polar var";);
 			    --
-			    if opts.Print==true then<<"starting pol sequence: X, Z= "<<X<<", "<<Z<<endl;
+			    if opts.Print then<<"starting pol sequence: X, Z= "<<X<<", "<<Z<<endl;
 			    if not polMultHash#?(kV_i,m,kV_(Yj-l),b) then(
-				if opts.Print==true then print "pol seq not cached";
+				if opts.Print then print "pol seq not cached";
 				polMultHash#(kV_i,m,kV_(Yj-l),b)=polarSequence(sub(X,R2),sub(Z,R2),polHash#(kV_(Yj-l),b),Print=>opts.Print);
-				) else (if opts.Print==true then print "using cached polar seq";);
+				) else (if opts.Print then print "using cached polar seq";);
 			    polXZ=polMultHash#(kV_i,m,kV_(Yj-l),b);
-			    if opts.Print==true then<<"starting pol sequence: Y, Z= "<<Y<<", "<<Z<<endl;
+			    if opts.Print then<<"starting pol sequence: Y, Z= "<<Y<<", "<<Z<<endl;
 			    if not polMultHash#?(kV_(Yj),first contX,kV_(Yj-l),b) then(
-				if opts.Print==true then print "pol seq not cached";
+				if opts.Print then print "pol seq not cached";
 				polMultHash#(kV_(Yj),first contX,kV_(Yj-l),b)=polarSequence(sub(Y,R2),sub(Z,R2),polHash#(kV_(Yj-l),b), Print=>opts.Print);
-				)else (if opts.Print==true then print "using cached polar seq";);
+				)else (if opts.Print then print "using cached polar seq";);
 			    polYZ=polMultHash#(kV_(Yj),first contX,kV_(Yj-l),b);
-			    if opts.Print==true then<<"Y= "<<Y<<endl;
-			    if opts.Print==true then<<"Z= "<<Z<<endl;
-			    if opts.Print==true then<<"polXZ= "<<polXZ<<", polYZ= "<<polYZ<<endl;
-			    if opts.Print==true then<<"Y= "<<Y<<endl;
-			    if opts.Print==true then<<"Z= "<<Z<<endl;
-			    if opts.Print==true then<<"polXZ= "<<polXZ<<", polYZ= "<<polYZ<<endl;
+			    if opts.Print then<<"Y= "<<Y<<endl;
+			    if opts.Print then<<"Z= "<<Z<<endl;
+			    if opts.Print then<<"polXZ= "<<polXZ<<", polYZ= "<<polYZ<<endl;
+			    if opts.Print then<<"Y= "<<Y<<endl;
+			    if opts.Print then<<"Z= "<<Z<<endl;
+			    if opts.Print then<<"polXZ= "<<polXZ<<", polYZ= "<<polYZ<<endl;
 			    if polXZ!=polYZ then(
 				curL#(#curL)=X;
 				Xadded=true;
@@ -704,13 +620,13 @@ minCoarsenWS(MutableHashTable):=opts->(Vin)->(
 			    );
 			);
 		    );
-		if opts.Print==true then print "done pol test";
+		if opts.Print then print "done pol test";
 		--if (not Xadded) then V#(kV_i)=delete(X,V#(kV_i));
 		);
 	    W#(kV_i)=toList curL;
-	    if opts.Print==true then print "cur L added";
+	    if opts.Print then print "cur L added";
 	    );
-	if opts.Print==true then<<"PassedSing= "<<PassedSing<<endl;
+	if opts.Print then<<"PassedSing= "<<PassedSing<<endl;
 	if not PassedSing then (
 	    W#(kV_i)=V#(kV_i);
 	    if (V#(kV_i)!={}) then PassedSing = true;
@@ -759,15 +675,9 @@ saturateHelper = (S,K,J)-> (
     return sub(ideal (selectInSubring(1,groebnerBasis(K2, Strategy=>"F4"))),ring J);
     );
 
---polarVars=method(TypicalValue=>Ideal,Options=>{Algorithm=>"msolve"});
 polarVars=method(TypicalValue=>Ideal,Options=>{Print=>false,Algorithm=>"saturate"});
 polarVars(Ideal):=opt->(I)->(
     R:=ring I;
-    --<<"alg polarVars= "<< opt.Algorithm<<endl;
-     --if opt.Algorithm=="msolve" then(
-	 --<<"using msolve"<<endl;
-	 --<<"using M2 F4/MGB"<<endl;
---	 );
      kk:=coefficientRing R;
      t3t:=symbol t3t;
      S:=kk[t3t, gens R, MonomialOrder => Eliminate 1];
@@ -778,17 +688,14 @@ polarVars(Ideal):=opt->(I)->(
      K:=0;
      K3:=0;
      for l from 1 to n+1+(1-codim(I)) do(
-	 --<<"polare var index = "<<l<<endl;
 	 M=(jacobian I)|(transpose matrix for j from 1 to l list (for i from 1 to numgens R list ((-1)^(random(ZZ))*random(1,9155))));
-	 --<<"minors time "<<endl;
 	 K=I+minors(codim(I)+l,M);
-	 --<<"saturate time"<<endl;
 	 if opt.Algorithm=="M2F4" then(
-	     if opt.Print==true then<<"M2 F4"<<endl;
+	     if opt.Print then<<"M2 F4"<<endl;
 	     K3=saturateHelper(S,K,J);
 	     )
 	 else if(opt.Algorithm=="msolve") then(
-	     if opt.Print==true then<<"msolve"<<endl;
+	     if opt.Print then<<"msolve"<<endl;
 	     JsatPoly:=sum(flatten entries gens J, f->(-1)^(random(ZZ))*random(1,2000)*f);
 	     K2:=sub(K,S)+ideal(1-S_0*sub(JsatPoly,S));
 	     if char(kk)==0 then(
@@ -801,7 +708,7 @@ polarVars(Ideal):=opt->(I)->(
 
 	     )
 	 else(
-	     if opt.Print==true then<<"doing saturate"<<endl;
+	     if opt.Print then<<"doing saturate"<<endl;
 	     K3=saturate(K,J);
 	     );
 	 pol#(#pol)=K3;
@@ -830,7 +737,6 @@ conormalRing(Ideal,List,List):=(I,Alist,alpha)->(
     indset:=for vert in alpha list position(Alist,i->i==vert);
     v:=symbol v;
     S:=kk[gens(R),for i in indset list v_i,Degrees=>degs];
-    --print S;
     return S;
 
     );
@@ -869,14 +775,12 @@ whitneyStratify (Ideal,ZZ,ZZ):=opts->(I,level,Icodim)->(
     S:=conormalRing(I);
     if opts.Projective then n=n-1;
     V:=new MutableHashTable;
-    --print "test";
     dimI:=n-codim(I);
     for i from 0 to dimI-1 do V#i=new MutableList;
     V#dimI=decompose I;
     Wdim:=0;
     W:={};
     Kdim:=0;
-    --<<"level= "<<level<<", n= "<<n<<", dimI="<<dimI<<endl;
     if level==0 then return V;
     J:=ideal mingens(I+minors(codim I,jacobian I));
     if dimI<2 then(
@@ -959,26 +863,26 @@ mapStratify (List,Ideal,Ideal):=opts->(F,X,Y)->(
     R:=ring X;
     S:=ring Y;
     kk:=coefficientRing R;
-    if opts.Print==true then <<"R= "<<R<<"S= "<<S<<endl;
+    if opts.Print then <<"R= "<<R<<"S= "<<S<<endl;
     conRingX:=conormalRing(X);
     conRingY:=conormalRing(Y);
-    if opts.Print==true then<<"conRingX= "<<gens(conRingX)<<endl;
+    if opts.Print then<<"conRingX= "<<gens(conRingX)<<endl;
     n:=numgens(R);
     m:=numgens(S);
-    if opts.Print==true then<<"isProper= "<<opts.isProper<<endl;
+    if opts.Print then<<"isProper= "<<opts.isProper<<endl;
     V:=new MutableHashTable;
     VcheckedBeforeInd:=new MutableHashTable;
     W:=new MutableHashTable;
     WcheckedBeforeInd:=new MutableHashTable;
     fIsCoordProjection:=false; 
-    if opts.Print==true then<<"F= "<<F<<", gens S= "<<gens S<<endl;
+    if opts.Print then<<"F= "<<F<<", gens S= "<<gens S<<endl;
     graphR:=0;
     elimIm:=0;
     elimInv:=0;
     Gam:=0;
     y:=0;
     if all(F, i->any(gens R,j->i===j)) then(
-	if opts.Print==true then <<"the map is a coordinate projection"<<endl;
+	if opts.Print then <<"the map is a coordinate projection"<<endl;
 	fIsCoordProjection=true;
 	graphR=R;
 	elimIm=toList(set(gens(R))-set(F));
@@ -995,27 +899,23 @@ mapStratify (List,Ideal,Ideal):=opts->(F,X,Y)->(
     	y=(gens graphR)_{numgens(R)..numgens(graphR)-1};
     	Gam=ideal for i from 0 to numgens(S)-1 list y_i-sub(F_i,graphR);
 	);
-    if opts.Print==true then <<"graph R= "<<gens(graphR)<<endl;
-    if opts.Print==true then <<"elimIm= "<<elimIm<<endl;
-    if opts.Print==true then <<"elimInv= "<<elimInv<<endl;
+    if opts.Print then <<"graph R= "<<gens(graphR)<<endl;
+    if opts.Print then <<"elimIm= "<<elimIm<<endl;
+    if opts.Print then <<"elimInv= "<<elimInv<<endl;
     dimX:=n-codim(X);
     tempSubsetsV:=0;
     tempSubsetsW:=0; 
     dimY:=m-codim(Y);
-    --
-    --print "starting Jel";
     fX:=ideal mingens(sub(eliminate(elimIm,Gam+sub(X,graphR)),S)+Y);
-    --fX:=Y;
     dimfX:=m-codim(fX);
     for i from 0 to dimX-1 do V#i=new MutableList;
     for i from 0 to dimfX-1 do W#i=new MutableList;
     
     for i from 0 to dimX do VcheckedBeforeInd#i=0;
     for i from 0 to dimfX do WcheckedBeforeInd#i=0;
-    if opts.Print==true then print "decompose X";
+    if opts.Print then print "decompose X";
     V#dimX=decompose X;  
-    --V#dimX={X};
-    if opts.Print==true then print "decompose Y";
+    if opts.Print then print "decompose Y";
     W#(dimY)=decompose Y;
     if fX!=Y then(
 	Y=fX;
@@ -1023,13 +923,13 @@ mapStratify (List,Ideal,Ideal):=opts->(F,X,Y)->(
 	W#(dimY)=decompose Y;
 	);
     if opts.isProper==false then(
-	if opts.Print==true then<<"Computing Jolenck flag"<<endl;
+	if opts.Print then<<"Computing Jolenck flag"<<endl;
 	JelY:=new MutableList from {};
 	JelX:=new MutableList from {};
 	JelY#0=Y;
 	JelX#0=X;
 	for i from 0 to dimY-1 do(
-	    if opts.Print==true then<<"Jel#"<<i<<" ="<<JelY#i<<endl;
+	    if opts.Print then<<"Jel#"<<i<<" ="<<JelY#i<<endl;
 	    JelY#(i+1)=nonProperSet(F,JelX#i,Y);
 	    JelX#(i+1)=ideal mingens(sub(eliminate(elimInv,Gam+sub(JelY#(i+1),graphR)),R)+X);
 	    );
@@ -1046,14 +946,11 @@ mapStratify (List,Ideal,Ideal):=opts->(F,X,Y)->(
 		);
 	    );
 	);
-    if opts.Print==true then print "past Jel check/computation";	
-    if opts.Print==true then print "V";
-    if opts.Print==true then for ke in keys V do print toList(V#ke);
-    if opts.Print==true then print "W";
-    if opts.Print==true then for ke in keys W do print toList(W#ke);
-    --level:=max(dimX,dimY);
-    --levelX:=dimX;
-    --lelvelY:=dimY;
+    if opts.Print then print "past Jel check/computation";	
+    if opts.Print then print "V";
+    if opts.Print then for ke in keys V do print toList(V#ke);
+    if opts.Print then print "W";
+    if opts.Print then for ke in keys W do print toList(W#ke);
     aX:=0;
     aY:=0;
     JY:=0;dimYa:=0;muY:=0;ellY:=0;dimKinv:=0;Kdim:=0;Kinv:=0;ell:=0;Ti:=0;intse:=0;CYa:=0;CpullYa:=0;
@@ -1064,34 +961,31 @@ mapStratify (List,Ideal,Ideal):=opts->(F,X,Y)->(
     tXind:=0;
     YaNew:=0;YaOld:=0;
     XaNew:=0;XaOld:=0;
-    --<<"dim X= "<<dimX<<", dim Y= "<<dimY<<endl;
     while (aX<dimX) or (aY<dimY) do(
-	--<<"aX= "<<aX<<", aY="<<aY<<endl;
-    --for a from 0 to level-1 do(
-	if opts.Print==true then <<"{aY, aX}= "<<{aY,aX}<<endl;
+	if opts.Print then <<"{aY, aX}= "<<{aY,aX}<<endl;
 	-- Y at codim>a 
 	if (dimY-aY)>0 then(
-	    if opts.Print==true then print "In Y";
+	    if opts.Print then print "In Y";
 	    	--add subset intersections of Y at level aY
 		tYind=WcheckedBeforeInd#(dimY-aY);
 		YaNew=(toList(W#(dimY-aY)))_(toList(tYind..(#(W#(dimY-aY))-1)));
 		YaOld=(toList(W#(dimY-aY)))_(toList(0..tYind-1));
 		tempSubsetsW=join(flatten for a1 in YaOld list(for b1 in YaNew list {a1,b1}),subsets(YaNew,2));
 		--TODO need to add intersections of the form 1 from before tYind and 1 from after tYind
-		if opts.Print==true then<<"starting subset sing at "<<dimY-aY<<", num subsets W= "<<#tempSubsetsW<<endl;
+		if opts.Print then<<"starting subset sing at "<<dimY-aY<<", num subsets W= "<<#tempSubsetsW<<endl;
 		intse=unique flatten for s in tempSubsetsW list decompose ideal  mingens(sum(s));
 		for th in intse do(
 		    Ti=m-codim(th);
-		    if opts.Print==true then <<"Y Whit= "<<th<<endl;
+		    if opts.Print then <<"Y Whit= "<<th<<endl;
 		    if (any(toList(W#Ti),jj->th==jj)==false) then (
 			(W#Ti)#(#(W#Ti))=th;
-			if opts.Print==true then<<"added to Y strat= "<<th<<endl;
+			if opts.Print then<<"added to Y strat= "<<th<<endl;
 			);
 		    --Pullback to X, add to X strat, V
 		    Kinv=ideal mingens(sub(eliminate(elimInv,Gam+sub(th,graphR)),R)+X);
 		    for comp in decompose Kinv do(
 			dimKinv=n-codim(comp);
-			if opts.Print==true then <<"Y Whit in X= "<<comp<<endl;
+			if opts.Print then <<"Y Whit in X= "<<comp<<endl;
 			if (any(toList(V#dimKinv),jj->comp==jj)==false) then(
 			    (V#dimKinv)#(#(V#dimKinv))=comp;
 			    					--have unprocessed components above current dim, go back up
@@ -1100,7 +994,6 @@ mapStratify (List,Ideal,Ideal):=opts->(F,X,Y)->(
 			);
 		    );
 		<<"for j2...."<<endl;
-	    --for Ya in W#(dimY-a) do(
 	    for j2 from WcheckedBeforeInd#(dimY-aY) to #(W#(dimY-aY))-1 do(
 		Ya=(W#(dimY-aY))#j2;
 		WcheckedBeforeInd#(dimY-aY)=WcheckedBeforeInd#(dimY-aY)+1;
@@ -1127,8 +1020,6 @@ mapStratify (List,Ideal,Ideal):=opts->(F,X,Y)->(
 			);
 		    );
 		if muY>0 and (opts.StratsToFind!="singularOnly") then (
-		    --if opts.Print==true then 
-		    --<<"doing Y conormal with "<<Ya<<endl;
 		    CYa=conormal(ideal mingens Ya,conRingY);
 		    CpullYa=0;
 		    for j from 0 to muY do(
@@ -1136,23 +1027,20 @@ mapStratify (List,Ideal,Ideal):=opts->(F,X,Y)->(
 		    	for Z in W#ell do(
 			    CpullYa=ideal mingens (CYa+sub(Z,conRingY));
 			    if opts.AssocPrimes==false then(
-				--print "start eq decomp Y";
 				WhitYa=decompose fiberContAssocPrimes(Z, CYa);
 				)
 			    else(
 				if (opts.StratsToFind=="all") then(
-				    if opts.Print==true then <<"doing Y assoc. primes with "<<CpullYa<<endl;
+				    if opts.Print then <<"doing Y assoc. primes with "<<CpullYa<<endl;
 				    WhitYa=for q in associatedPrimes CpullYa list sub(eliminate((gens conRingY)_{(numgens(S))..numgens(conRingY)-1},q),S);
 				    )
 			    	else(
-			            if opts.Print==true then <<"doing Y min. primes with "<<CpullYa<<endl;
+			            if opts.Print then <<"doing Y min. primes with "<<CpullYa<<endl;
 				    WhitYa=for q in decompose CpullYa list sub(eliminate((gens conRingY)_{(numgens(S))..numgens(conRingY)-1},q),S);
 				    );
 			    	);
-			    if opts.Print==true then <<"done assoc primes "<<endl;
+			    if opts.Print then <<"done assoc primes "<<endl;
 			    for K in WhitYa do(
-				--check if K was actually needed
-				--Add to Y strat, W
 			    	KDim=m-codim(K);
 				if (any(toList(W#KDim),jj->(K+Z)==jj)==false) then (W#KDim)#(#(W#KDim))=ideal mingens(K+Z);
 				--Pullback to X, add to X strat, V
@@ -1179,7 +1067,7 @@ mapStratify (List,Ideal,Ideal):=opts->(F,X,Y)->(
 	--X at codim> a
 	--TODO, change X block to look like Y block above with new index check etc. 
 	if (dimX-aX)>0 then(
-	    if opts.Print==true then print "In X";
+	    if opts.Print then print "In X";
 	    	--subset intersections at level aX of X
 		tXind=VcheckedBeforeInd#(dimX-aX);
 		XaNew=(toList(V#(dimX-aX)))_(toList(tXind..(#(V#(dimX-aX))-1)));
@@ -1187,24 +1075,24 @@ mapStratify (List,Ideal,Ideal):=opts->(F,X,Y)->(
 		tempSubsetsV=join(flatten for a1 in XaOld list(for b1 in XaNew list {a1,b1}),subsets(XaNew,2));
 	    	--Add subset intersections of Xa, push forward
 		--tempSubsetsV=subsets(toList(V#(dimX-a)),2);
-		if opts.Print==true then<<"starting subset sing at "<<dimX-aX<<", num subsets V= "<<#tempSubsetsV<<endl;
+		if opts.Print then<<"starting subset sing at "<<dimX-aX<<", num subsets V= "<<#tempSubsetsV<<endl;
 		    intse=unique flatten for s in tempSubsetsV list decompose ideal  mingens(sum(s));
 		    for th in intse do(
 		    	Ti=n-codim(th);
-		    	if opts.Print==true then<<"X whit subsets= "<<th<<endl;
+		    	if opts.Print then<<"X whit subsets= "<<th<<endl;
 		    	if (any(toList(V#Ti),jj->th==jj)==false) then (V#Ti)#(#(V#Ti))=th;
 		    	--Pushforward to Y, add to Y strat, W
 		    	Kinv=ideal mingens(sub(eliminate(elimIm,Gam+sub(th,graphR)),S)+Y);
 		    	for comp in decompose Kinv do(
 			    dimKinv=m-codim(comp);
-			    if opts.Print==true then<<"X whit in Y "<<comp<<endl;
+			    if opts.Print then<<"X whit in Y "<<comp<<endl;
 			    if (any(toList(W#dimKinv),jj->comp==jj)==false) then (
 				(W#dimKinv)#(#(W#dimKinv))=comp;
 				--have unprocessed components above current dim, go back up
 				if dimKinv>(dimY-aY) then aY=dimY-dimKinv;
-				if opts.Print==true then<<"Added to Y Sing = "<<comp<<endl;
-				if opts.Print==true then<<"Dim th= "<<dim(th)<<", From X part= "<<th<<endl;
-				if opts.Print==true then<<", intse="<<intse<<endl;
+				if opts.Print then<<"Added to Y Sing = "<<comp<<endl;
+				if opts.Print then<<"Dim th= "<<dim(th)<<", From X part= "<<th<<endl;
+				if opts.Print then<<", intse="<<intse<<endl;
 				);
 			    );
 		    	);
@@ -1213,90 +1101,82 @@ mapStratify (List,Ideal,Ideal):=opts->(F,X,Y)->(
 		VcheckedBeforeInd#(dimX-aX)=VcheckedBeforeInd#(dimX-aX)+1;
 	    	--dima=dimY-aY;	    
 	    --for Xa in V#(dimX-a) do(
-		if opts.Print==true then<<"Xa= "<<Xa<<endl;
+		if opts.Print then<<"Xa= "<<Xa<<endl;
 	    	dimXa:=dimX-aX;
 	    	JX=ideal mingens(Xa+minors(codim Xa,jacobian Xa));
-		if opts.Print==true then<<"JX= "<<JX<<endl;
+		if opts.Print then<<"JX= "<<JX<<endl;
 	    	muX=n-codim(JX);
 	    	ellX=0;
 	    	WhitXa=0;
 	    	for K in decompose(JX) do(
 		     Ti=n-codim(K);
-		     if opts.Print==true then<<"X Whit= "<<K<<endl;
+		     if opts.Print then<<"X Whit= "<<K<<endl;
 		     if (any(toList(V#Ti),jj->K==jj)==false) then (V#Ti)#(#(V#Ti))=ideal mingens(K);
 		    );
 		AX=jacobian(Xa+ideal(F));
-		if opts.Print==true then<<"AX= "<<AX<<endl;
+		if opts.Print then<<"AX= "<<AX<<endl;
 		--todo, use the tighter bound here
 		rXa=min(numrows(AX), numcols(AX));
 		for i from 0 to rXa do(
 		    IiXf=ideal mingens(Xa+minors(rXa-i,AX));
-		    if opts.Print==true then<<"IiXf= "<<IiXf<<endl;
+		    if opts.Print then<<"IiXf= "<<IiXf<<endl;
 		    if IiXf==ideal(1_R) then break; 
 		    for K in decompose(IiXf) do(
 			--add to X strat, V
 			Ti=n-codim(K);
-			if opts.Print==true then<<"X Tb 1= "<<K<<endl;
-			if opts.Print==true then<<"V#"<<Ti<<" ="<<toList(V#Ti)<<", ring= "<<(for v in toList(V#Ti) list gens(ring(v)))<<endl;
+			if opts.Print then<<"X Tb 1= "<<K<<endl;
+			if opts.Print then<<"V#"<<Ti<<" ="<<toList(V#Ti)<<", ring= "<<(for v in toList(V#Ti) list gens(ring(v)))<<endl;
 			if (any(toList(V#Ti),jj->K==jj)==false) then (
 			    (V#Ti)#(#(V#Ti))=K;
-			    if opts.Print==true then<<"Added to X TB = "<<K<<endl;
+			    if opts.Print then<<"Added to X TB = "<<K<<endl;
 			    );
 			--add image to Y strat, W
 			Kpf=ideal mingens(sub(eliminate(elimIm,Gam+sub(K,graphR)),S)+Y);
 		       	for comp in decompose Kpf do(
 		            dimKinv:=m-codim(comp);
-			    if opts.Print==true then<<"Y TB= "<<comp<<endl;
+			    if opts.Print then<<"Y TB= "<<comp<<endl;
 			    if (any(toList(W#dimKinv),jj->comp==jj)==false) then(
 				(W#dimKinv)#(#(W#dimKinv))=comp;
 				--Unprocessed components detected above, go back up
 				if dimKinv>(dimY-aY) then aY=dimY-dimKinv;
-				if opts.Print==true then<<"Added to Y TB = "<<comp<<endl;
+				if opts.Print then<<"Added to Y TB = "<<comp<<endl;
 				);
 			    );
 		    	);
 		    );
-		if opts.Print==true then<<"done TB"<<", muX="<<muX<<endl;
+		if opts.Print then<<"done TB"<<", muX="<<muX<<endl;
 		if muX>0 and (opts.StratsToFind!="singularOnly") then (
-		    --if opts.Print==true then<<"doing X conormal with "<<Xa<<endl;
-		    --<<"doing X conormal with "<<Xa<<endl;
 		    CXa=conormal(ideal mingens Xa,conRingX);
 		    Cpull=0;
-		    --<<"Xa= "<<Xa<<endl;
 		    for j from 0 to muX do(
 		    	ell=muX-j;
 		    	for Z in V#ell do(
 	     	    	    if opts.AssocPrimes==false then(
-				--print "start eq decomp X";
 				WhitXa=decompose fiberContAssocPrimes(Z, CXa);
 				)
 			    else(
 				Cpull=ideal mingens (CXa+sub(Z,conRingX));
 			    	if (opts.StratsToFind=="all") then(
-				    if opts.Print==true then<<"doing X assoc. primes with "<<Cpull<<endl;
-				    --<<"doing X assoc. primes with "<<Cpull<<endl;
+				    if opts.Print then<<"doing X assoc. primes with "<<Cpull<<endl;
 				    WhitXa=for q in associatedPrimes(Cpull) list sub(eliminate((gens conRingX)_{(numgens(R))..numgens(conRingX)-1},q),R);
-				    --for q in WhitXa do <<"X whit= "<<q<<endl;
 				    )
 			    	else(
-				    if opts.Print==true then<<"doing X min. primes with "<<Cpull<<endl;
+				    if opts.Print then<<"doing X min. primes with "<<Cpull<<endl;
 				    pList:= decompose Cpull; 
 				    WhitXa= for q in pList list sub(eliminate((gens conRingX)_{(numgens(R))..numgens(conRingX)-1},q),R);
 				    );
 			    	);
-			    if opts.Print==true then<<"done associated/min primes X"<<endl;
+			    if opts.Print then<<"done associated/min primes X"<<endl;
 			    for K in WhitXa do(
 			    	--only add elements that are new
 			    	Ti=n-codim(K+Z);
-				--<<"X whit= "<<K<<endl;
 				if (any(toList(V#Ti),jj->K==jj)==false) then(
 				    (V#Ti)#(#(V#Ti))=ideal mingens(K+Z);
-			    	    if opts.Print==true then<<"X whit= "<<K<<endl;
-				    --<<"X whit= "<<K<<endl;
+			    	    if opts.Print then<<"X whit= "<<K<<endl;
 		       	    	    Kpf=ideal mingens(sub(eliminate(elimIm,Gam+sub(K+Z,graphR)),S)+Y);
 		       	    	    for comp in decompose Kpf do(
 		       	    	    	dimKinv=m-codim(comp);
-				    	if opts.Print==true then<<"X whit in Y "<<comp<<endl;
+				    	if opts.Print then<<"X whit in Y "<<comp<<endl;
 	       		 	    	if (any(toList(W#dimKinv),jj->comp==jj)==false) then(
 					    (W#dimKinv)#(#(W#dimKinv))=comp;
 					    if dimKinv>(dimY-aY) then aY=dimY-dimKinv;
@@ -1309,8 +1189,8 @@ mapStratify (List,Ideal,Ideal):=opts->(F,X,Y)->(
 		    );
 		);
 	    aX=aX+1;
-		    if opts.Print==true then<<"|W|= "<<toString(sum for k in keys W list #(W)#k)<<endl;
-		    if opts.Print==true then<<"|V|= "<<toString(sum for k in keys V list #(V)#k)<<endl;
+		    if opts.Print then<<"|W|= "<<toString(sum for k in keys W list #(W)#k)<<endl;
+		    if opts.Print then<<"|V|= "<<toString(sum for k in keys V list #(V)#k)<<endl;
 	    	);
     	);
     for a in keys(V) do V#a=unique toList(V#a); 
@@ -1318,9 +1198,7 @@ mapStratify (List,Ideal,Ideal):=opts->(F,X,Y)->(
     use R;  
     return {V,W};
     );
---fiberContAssocPrimes=method(TypicalValue=>Ideal,Options=>{Projective=>false});
 fiberContAssocPrimes=(IY,ConX)->(
-    --<<"In equidim decomp"<<endl;
     R:=ring IY;
     S:=ring ConX;
     kk:=coefficientRing R;
