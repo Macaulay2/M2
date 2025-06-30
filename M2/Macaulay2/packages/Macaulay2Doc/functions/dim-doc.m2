@@ -47,7 +47,7 @@ document {
 	  },
      Outputs => {ZZ
 	  },
-     "Computes the Krull dimension of the module ", TT "M",
+     "Computes the Krull dimension of the module ", TT "M", ". Recall that the Krull dimension of a module is by definition the ", TO2((dim,Ring), "dimension of the base ring"), " minus the ", TO2((codim,Module), "codimension"), " of the module.",
      EXAMPLE {
 	  "R = ZZ/31991[a,b,c,d]",
 	  "I = monomialCurveIdeal(R,{1,2,3})",
