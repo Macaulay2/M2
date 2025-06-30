@@ -38,6 +38,9 @@
 /* whether we have the flint header file arb.h */
 #cmakedefine HAVE_FLINT_ARB_H 1
 
+/* whether we have the function flint_rand_init */
+#cmakedefine HAVE_FLINT_RAND_INIT 1
+
 /* whether frobby has frobby_version >=0.9.4 or constants::version <0.9.4 */
 #cmakedefine HAVE_FROBBY_VERSION 1
 
