@@ -7,7 +7,7 @@ namespace M2 {
 
 ARingZZ::ARingZZ()
 {
-  flint_randinit(mRandomState);
+  FLINT_RAND_INIT(mRandomState);
   fmpz_init(mMaxHeight);
   fmpz_set_ui(mMaxHeight, 100);
 }
@@ -15,7 +15,7 @@ ARingZZ::ARingZZ()
 // This function will likely not ever get called.
 ARingZZ::~ARingZZ()
 {
-  flint_randclear(mRandomState);
+  FLINT_RAND_CLEAR(mRandomState);
   fmpz_clear(mMaxHeight);
 }
 

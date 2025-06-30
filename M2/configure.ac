@@ -925,6 +925,7 @@ then AC_LANG(C)
 	       AC_CHECK_HEADERS([arb.h],,
 		   [AC_CHECK_HEADERS([flint/arb.h],,
 		       [AC_MSG_ERROR([Arb headers not found])])])
+	       AC_CHECK_FUNCS([flint_rand_init])
 	  fi,
 	  AC_MSG_RESULT([no])
 	  BUILD_flint=yes)
@@ -934,6 +935,7 @@ if test $BUILD_flint = yes
 then BUILTLIBS="-lflint $BUILTLIBS -lm"
      AC_DEFINE([HAVE_FLINT_NMOD_H])
      AC_DEFINE([HAVE_FLINT_ARB_H])
+     AC_DEFINE([HAVE_FLINT_RAND_INIT])
      AS_IF([test $BUILD_gmp = no],
          [AC_LANG([C])
           AC_MSG_CHECKING([if gmp >= 6.2.1 (needed to build flint)])

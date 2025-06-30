@@ -8,6 +8,14 @@
 #include "ringelem.hpp"
 #include "buffer.hpp"
 
+#ifdef HAVE_FLINT_RAND_INIT
+#define FLINT_RAND_INIT(x) flint_rand_init(x)
+#define FLINT_RAND_CLEAR(x) flint_rand_clear(x)
+#else
+#define FLINT_RAND_INIT(x) flint_randinit(x)
+#define FLINT_RAND_CLEAR(x) flint_randclear(x)
+#endif
+
 class PolynomialRing;
 class RingMap;
 
