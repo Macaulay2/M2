@@ -19,8 +19,8 @@ newPackage(
     "ToricHigherDirectImages",
     Version => "1.1", 
     Date => "2025 June",
-    Authors => {    
-	{Name     => "Sasha Zotine",	
+    Authors => {
+	{Name     => "Sasha Zotine",
 	 Email    => "zotinea@mcmaster.ca",
 	 HomePage => "https://sites.google.com/view/szotine/home" }
 	},
@@ -219,8 +219,8 @@ affineSemigroupGenerators (NormalToricVariety, List) := Matrix => (X, w) -> (
     )
 
 -- Internal method. computes the "generating lattice points" in a polyhedron via Hilbert bases.
-idealFromPolyhedron = method();
-idealFromPolyhedron Polyhedron := List => P -> (
+generatingLatticePoints = method();
+generatingLatticePoints Polyhedron := List => P -> (
     H := entries map(ZZ, rawHilbertBasis raw transpose rays cone P);
     for h in H list if h#0 === 1 then drop(h,1) else continue
     )
@@ -351,7 +351,7 @@ computeEigencharacters (ToricMap, ZZ, List) := (phi, i, D) -> (
         if Ps == {} then {} else (
 	    -- take the bounded part of the polyhedron, then compute
 	    -- the lattice points of this. this gives Gamma_sigma.
-	    pts := (flatten (Ps/idealFromPolyhedron))/vector/matrix;
+	    pts := (flatten (Ps/generatingLatticePoints))/vector/matrix;
 	    -- here is the set of eigencharacters C(L,i).
     	    CLi := unique for p in pts list MK * (transpose MK) * p;
 	    -- for each character, compute this minimizing divisor D_sigma.
@@ -450,7 +450,7 @@ HDIComplex (ToricMap, ZZ, List) := (phi, i, D) -> (
 			-- record that the w term is non-zero
 			nonzerow#j = append(nonzerow#j, w);
 			-- compute the vertices and output the ideal.
-			idealgens := idealFromPolyhedron P;
+			idealgens := generatingLatticePoints P;
 			module ideal for gen in idealgens list S_gen
 			)
 		    )
