@@ -503,6 +503,7 @@ case $COMPRESS in
     *) AC_MSG_ERROR(unrecognized option for enable-compress) ;;
 esac
 
+$GIT fetch --tags https://github.com/Macaulay2/M2 2> /dev/null || true
 AC_SUBST([GIT_DESCRIPTION],
          [`$GIT describe --tags --dirty || echo release-$PACKAGE_VERSION`])
 AC_SUBST([GIT_BRANCH],

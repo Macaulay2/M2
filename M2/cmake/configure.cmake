@@ -55,6 +55,9 @@ set(PACKAGE_VERSION ${Macaulay2_VERSION})
 find_package(Git QUIET)
 if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
   execute_process(
+    COMMAND ${GIT_EXECUTABLE} fetch --tags https://github.com/Macaulay2/M2
+    ERROR_QUIET)
+  execute_process(
     COMMAND ${GIT_EXECUTABLE} describe --tags --dirty
     ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
