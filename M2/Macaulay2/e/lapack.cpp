@@ -2166,13 +2166,17 @@ bool Lapack::eigenvectors(const DMatRR *A,
     }
   else
     {
-
-      ///// YYY REVIEW THIS...!
       // Make the complex arrays of eigvals and eigvecs
       eigvals->resize(size, 1);
       eigvecs->resize(size, size);
       //      DMatCC::ElementType *elems = eigvals->rowMajorArray();
       double* eigenLoc = eigen;
+      for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            std::cout << eigen[i + j * size] << " ";
+        }
+        std::cout << std::endl;
+      }
       for (int j = 0; j < size; j++, eigenLoc += size)
         {
           eigvals->ring().set_from_doubles(eigvals->entry(j,0), real[j], imag[j]);
@@ -2191,9 +2195,9 @@ bool Lapack::eigenvectors(const DMatRR *A,
               for (int i = 0; i < size; ++i)
                 {
                   eigvecs->ring().set_from_doubles(eigvecs->entry(i,j),
-                                                   eigen[i], eigen[size + i]);
+                                                   eigenLoc[i], eigenLoc[size + i]);
                   eigvecs->ring().set_from_doubles(eigvecs->entry(i,j+1),
-                                                   eigen[i], - eigen[size + i]);
+                                                   eigenLoc[i], - eigenLoc[size + i]);
                 }
             }
         }
