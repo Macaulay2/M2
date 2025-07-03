@@ -1397,11 +1397,10 @@ eigenvectors M
 M0 = matrix{{1_RR,-1},{1,1}};
 M = M0++M0;
 (D, P) = eigenvectors M
-
+assert( 1e-10 > norm(M*P - P * diagonalMatrix(D)))
 
 M = matrix{{1.0, 2.0}, {2.0, 1.0}}
 eigenvectors(M, Hermitian=>true)
-assert( 1e-10 > norm(M*P - P * diagonalMatrix(D)))
 
 M = matrix{{1.0, 2.0}, {5.0, 7.0}}
 (eigvals, eigvecs) = eigenvectors M
