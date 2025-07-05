@@ -14,7 +14,7 @@ newPackage(
   PackageExports => {
     "NormalToricVarieties",
     "Tropical",
-    "Package$gfanInterface"
+    "gfanInterface"
   },
   PackageImports => {
     "FourierMotzkin"
