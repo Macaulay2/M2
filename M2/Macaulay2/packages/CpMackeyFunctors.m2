@@ -164,7 +164,6 @@ load "./CpMackeyFunctors/Documentation/ResolutionsDoc.m2"
 ----------------------------
 
 load "./CpMackeyFunctors/Tests/AbelianCategoryTest.m2"
-
 load "./CpMackeyFunctors/Tests/BoxProductTests.m2"
 load "./CpMackeyFunctors/Tests/CohomologicalTest.m2"
 load "./CpMackeyFunctors/Tests/ConstructorsTest.m2"
