@@ -25,19 +25,19 @@ doc ///
 
             Another example from algebra are the @TO2(makeRealRepresentationMackeyFunctor,"real")@ and @TO2(makeComplexRepresentationMackeyFunctor,"complex representation")@ Mackey functors. Similarly to the Burnside Mackey functor, their underlying module is $\ZZ$, however their fixed module is the representation ring of $C_p$. Any finite $C_p$-set has an associated permutation representation, which induces what are called the @TO2(realLinearizationMap,"real")@ and @TO2(complexLinearizationMap,"complex linearization maps")@ from the Burnside Mackey functor to the representation Mackey functor. 
 
-            {\bf Fixed point and orbit Mackey functors:} If $M$ is a $\ZZ[C_p]$-module, the @TO2(,"fixed point Mackey functor")@ of $M$ has $M$ as its underlying module and the fixed points $M^{C_p}$ as its fixed module. The conjugation action on $M$ is the $C_p$-action, and the transfer sums along the orbits of an element.
+            {\bf Fixed point and orbit Mackey functors:} If $M$ is a $\ZZ[C_p]$-module, the @TO2(makeFixedPointMackeyFunctor,"fixed point Mackey functor")@ of $M$ has $M$ as its underlying module and the fixed points $M^{C_p}$ as its fixed module. The conjugation action on $M$ is the $C_p$-action, and the transfer sums along the orbits of an element.
 
         Example
             makeFixedPointMackeyFunctor(2,matrix{{0,1,0},{1,0,0},{0,0,1}})
 
         Text
-            Similarly, given a $\ZZ[C_p]$-module $M$, we can form the @TO2(,"orbit Mackey functor")@, whose underlying module is again $M$ with $C_p$-action yielding conjugation. The fixed point module is now the {\em quotient module} $M/C_p$, transfer is the quotient map, and now {\em restriction} is defined by summing along the orbits.
+            Similarly, given a $\ZZ[C_p]$-module $M$, we can form the @TO2(makeOrbitMackeyFunctor,"orbit Mackey functor")@, whose underlying module is again $M$ with $C_p$-action yielding conjugation. The fixed point module is now the {\em quotient module} $M/C_p$, transfer is the quotient map, and now {\em restriction} is defined by summing along the orbits.
 
         Example
             makeOrbitMackeyFunctor(2,matrix{{0,1,0},{1,0,0},{0,0,1}})
 
         Text
-            {\bf Free constructors:} Analogous to how a free module can be constructed on a generator or set of generators, we can construct free Mackey functors. For $C_p$-Mackey functors, there are two modules, which lead to two different ideas of a "free" Mackey functor, namely a free $C_p$-Mackey functor on a generator in the {\em underlying} module, and a free $C_p$-Mackey functor on a generator in the {\em fixed} module. The @TO2(,"free Mackey functor on a single underlying generator")@ can be accessed as follows:
+            {\bf Free constructors:} Analogous to how a free module can be constructed on a generator or set of generators, we can construct free Mackey functors. For $C_p$-Mackey functors, there are two modules, which lead to two different ideas of a "free" Mackey functor, namely a free $C_p$-Mackey functor on a generator in the {\em underlying} module, and a free $C_p$-Mackey functor on a generator in the {\em fixed} module. The @TO2(makeUnderlyingFreeMackeyFunctor,"free Mackey functor on a single underlying generator")@ can be accessed as follows:
         
         Example
             makeUnderlyingFreeMackeyFunctor(3)
