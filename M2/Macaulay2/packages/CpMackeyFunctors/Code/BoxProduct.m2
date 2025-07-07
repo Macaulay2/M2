@@ -98,7 +98,7 @@ boxProductConjugation (CpMackeyFunctor,CpMackeyFunctor) := Matrix => (M,N) ->(
 -- Define the box product!
 boxProduct = method()
 boxProduct (CpMackeyFunctor,CpMackeyFunctor) := CpMackeyFunctor => (M,N) ->(
-    if M.PrimeOrder != N.PrimeOrder then error("-- Primes not the same (incompatable)");
+    if M.PrimeOrder != N.PrimeOrder then error("-- Primes not the same (incompatible)");
     result := makeCpMackeyFunctor(M.PrimeOrder,boxProductRestriction(M,N), boxProductTransfer(M,N),boxProductConjugation(M,N));
     result.cache.formation = FunctionApplication{boxProduct, (M, N)};
     result
