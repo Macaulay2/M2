@@ -38,7 +38,6 @@ newPackage(
     -- One day: export Complexes and use that framework for computing derived functors
     PackageExports=>{},
     AuxiliaryFiles => true,
-    DebuggingMode=>true
 )
 
 importFrom_Core {
