@@ -127,19 +127,19 @@ support FilteredComplex := List => (
 
 
 FilteredComplex _ InfiniteNumber :=
-FilteredComplex _ ZZ := ChainComplex => (K,p) -> (
+FilteredComplex _ ZZ := Complex => (K,p) -> (
   if K#?p then K#p 
   else if p < min K then K#(min K) 
   else if p > max K then K#(max K)
   )
 
 FilteredComplex ^ InfiniteNumber :=
-FilteredComplex ^ ZZ := ChainComplex => (K,p) -> K_(-p)
+FilteredComplex ^ ZZ := Complex => (K,p) -> K_(-p)
 
-chainComplex FilteredComplex := ChainComplex => K -> K_infinity
+complex FilteredComplex := Complex => {} >> o -> K -> K_infinity
 
 -- Returns the inclusion map from the pth subcomplex to the top
-inducedMap (FilteredComplex, ZZ) := ChainComplexMap => opts -> (K,p) -> (
+inducedMap (FilteredComplex, ZZ) := ComplexMap => opts -> (K,p) -> (
   if not K.cache#?inducedMaps then K.cache.inducedMaps = new MutableHashTable;
   if not K.cache.inducedMaps#?p then K.cache.inducedMaps#p = inducedMap(K_infinity, K_p);
   K.cache.inducedMaps#p)
@@ -172,21 +172,21 @@ filteredComplex(List) := FilteredComplex => opts -> L -> (
   if all(#L, p -> class L#p === SimplicialComplex) then (
     kk := coefficientRing L#0;
     if opts.ReducedHomology == true then (
-    C = chainComplex complex L#0; -- By default the ambient simplicial complex is the first element of the list
-    maps = apply(#L-1, p -> map(C, chainComplex complex L#(p+1), 
+    C = complex L#0; -- By default the ambient simplicial complex is the first element of the list
+    maps = apply(#L-1, p -> map(C, complex L#(p+1), 
         i -> sub(contract(transpose matrix{faces(i,L#0)}, matrix{faces(i,L#(p+1))}), kk))))
-    else (C = truncate(chainComplex complex L#0,1); -- By default the ambient simplicial complex is the first element of the list
-    maps = apply(#L-1, p -> map(C, truncate(chainComplex complex L#(p+1),1), 
+    else (C = naiveTruncation(complex L#0,1); -- By default the ambient simplicial complex is the first element of the list
+    maps = apply(#L-1, p -> map(C, naiveTruncation(complex L#(p+1),1), 
         i -> sub(contract(transpose matrix{faces(i,L#0)}, matrix{faces(i,L#(p+1))}), kk))))   
  )
   else (
     maps = L;
-    if any(#maps, p -> class maps#p =!= ChainComplexMap) then (
+    if any(#maps, p -> class maps#p =!= ComplexMap) then (
       error "expected sequence of chain complexes");
     C = target maps#0;-- By default the ambient chain complex is target of first map.
     if any(#maps, p -> target maps#p != C) then (
       error "expected all map to have the same target"));     
-  Z := image map(C, C, i -> 0*id_(C#i)); -- make zero subcomplex as a subcomplex of ambient complex 
+  Z := image map(C, C, i -> 0*id_(C_i)); -- make zero subcomplex as a subcomplex of ambient complex
    P := {};
  myList := {};
  for p from 0 to #maps - 1 do (
@@ -205,33 +205,30 @@ filteredComplex(List) := FilteredComplex => opts -> L -> (
 
 
 -- make the filtered complex associated to the "naive truncation of a chain complex"
-filteredComplex ChainComplex := FilteredComplex => opts-> C->( complete C; 
-    n := max support C;
-    m := min support C;
+filteredComplex Complex := FilteredComplex => opts-> C->(
+    (n, m) := concentration C;
     p := length C;
     if p > 0  then (
-    H := for i from 1 to p list inducedMap(C,truncate(C,-i));
+    H := for i from 1 to p list inducedMap(C, naiveTruncation(C, -i));
     filteredComplex( H, Shift => - m) )
     else filteredComplex {map(C, image(0 * id_C), id_C)}--{map(C, id_C} -- now the constructor supports the zero chain complex
 	      )
 
-
 --produce the "x-filtration" of the tensor product complex.
-FilteredComplex ** ChainComplex := FilteredComplex => (K,C) -> ( 
-     xTensormodules := (p,q,T)->(apply( (T#q).cache.indices,
-     i-> if (i#0) <=p then  
-     image (id_(((T#q).cache.components)#(((T#q).cache.indexComponents)#i)))
-     else image(0* id_(((T#q).cache.components)#(((T#q).cache.indexComponents)#i)))) );
-     xTensorComplex := (T,p) ->(K := new ChainComplex;
-		    K.ring = T.ring;
-		    for i from min T to max T do (
-		    if T#?(i-1) then
-		    K.dd_i = inducedMap(
-			 directSum(xTensormodules(p,i-1,T)
-			      ),
-			 directSum(xTensormodules(p,i,T)),T.dd_i));
-       	       K
-		    );
+xTensormodules := (p,q,T) -> (
+    apply(indices T_q, components T_q,
+	(ind, M) -> if ind#0 <= p
+	then image id_M
+	else image(0 * id_M)))
+
+xTensorComplex := (T,p) ->(
+    (lo, hi) := concentration T;
+    if lo == hi
+    then complex(directSum xTensormodules(p, lo, T), Base => lo)
+    else complex applyPairs(T.dd.map,
+	(i,f) -> i => inducedMap(directSum(xTensormodules(p, i-1, T)), directSum(xTensormodules(p, i, T)), f)))
+
+FilteredComplex ** Complex := FilteredComplex => (K,C) -> (
 		     supp := support K_infinity;
      -- try to handle the boundary cases --
      if supp != {} and #supp > 1 then (		
@@ -254,18 +251,20 @@ filteredComplex(reverse for i from P to (N-1) list
      )
 
 --produce the "y-filtration" of the tensor product complex.
-ChainComplex ** FilteredComplex := FilteredComplex => (C,K) -> ( 
-     yTensorModules := (p,q,T)->(apply( (T#q).cache.indices,
-     i-> if (i#1) <=p then  image (id_(((T#q).cache.components)#(((T#q).cache.indexComponents)#i)))
-     else image(0* id_(((T#q).cache.components)#(((T#q).cache.indexComponents)#i)))) );
-    yTensorComplex := (T,p) -> (K := new ChainComplex;
-		    K.ring = T.ring;
-		    for i from min T to max T do (
-		    if T#?(i-1) then
-	     	    K.dd_i = inducedMap(directSum(yTensorModules(p,i-1,T)),
-			 directSum(yTensorModules(p,i,T)),T.dd_i));
-	       K
-	       );
+yTensorModules := (p,q,T)->(
+    apply(indices T_q, components T_q,
+	(ind, M) -> if ind#1 <= p
+	then image id_M
+	else image(0 * id_M)))
+
+yTensorComplex := (T,p) -> (
+    (lo, hi) := concentration T;
+    if lo == hi
+    then complex(directSum(yTensorModules(p, lo, T), Base => lo))
+    else complex applyPairs(T.dd.map,
+	(i,f) -> i => inducedMap(directSum(yTensorModules(p, i-1, T)), directSum(yTensorModules(p, i, T)), f)))
+
+Complex ** FilteredComplex := FilteredComplex => (C,K) -> (
 	   supp := support K_infinity;
 	        -- try to handle the boundary cases --
      if supp != {} and #supp > 1 then (		
@@ -288,40 +287,36 @@ filteredComplex(reverse for i from P to (N-1) list
      )	   
 
 -- produce the "x-filtration" of the Hom complex.
-xmodules := (n, d, H)->(
+xHomModules := (n, d, H)->(
     -- want components {p,q} = Hom(-p, q) with p + q = d and p <= n
-     apply( (H#d).cache.indices,
-     i -> if  - (i#0) <= n then  
-     image (id_(((H#d).cache.components)#(((H#d).cache.indexComponents)#i)))
-     else image(0* id_(((H#d).cache.components)#(((H#d).cache.indexComponents)#i)))) );
+    apply(indices H_d, components H_d,
+	(ind, M) -> if -ind#0 <= n
+	then image id_M
+	else image(0 * id_M)))
 
-
-xComplex := (T,n) -> 
-     	       (K := new ChainComplex;
-		    K.ring = T.ring;
-		    for i from min T to max T do (
-		    if T#?(i-1) then
-		    K.dd_i = inducedMap(directSum(xmodules(n,i-1,T)),directSum(xmodules(n,i,T)),T.dd_i));
-	       K
-	       )
+xHomComplex := (T,n) -> (
+    (lo, hi) := concentration T;
+    if lo == hi
+    then complex(directSum(xHomModules(n, lo, T), Base => lo))
+    else complex applyPairs(T.dd.map,
+	(i,f) -> i => inducedMap(directSum(xHomModules(n, i-1, T)), directSum(xHomModules(n, i, T)), f)))
 
 -- produce the "x-filtration" of the Hom complex.
-Hom (FilteredComplex, ChainComplex):= FilteredComplex => opts -> (K, D) -> (
-    	C := complete D;
+Hom (FilteredComplex, Complex):= FilteredComplex => opts -> (K, C) -> (
     	   supp := support K_infinity;
 	        -- try to handle the boundary cases --
      if supp != {} and #supp > 1 then (		
      N := - max support K_infinity;
      P := - min support K_infinity;
      H := Hom(K_infinity, C, opts);
-     filteredComplex(reverse for i from N to P - 1 list inducedMap(H, xComplex(H,i)), 
+     filteredComplex(reverse for i from N to P - 1 list inducedMap(H, xHomComplex(H,i)),
 	 Shift => - N)
      )
  else ( if #supp == 1 then
 	(
 	p := min supp;
 	h := Hom(K_infinity, C, opts);
-	filteredComplex( {inducedMap(h, xComplex(h, p))}, Shift =>  p + 1 )
+	filteredComplex( {inducedMap(h, xHomComplex(h, p))}, Shift =>  p + 1 )
 	)
 	else(
 	    hhh := Hom(K_infinity, C, opts);
@@ -332,40 +327,35 @@ Hom (FilteredComplex, ChainComplex):= FilteredComplex => opts -> (K, D) -> (
 
 -- next are some functions used in the "y-filtration" of the Hom complex.
 
-ymodules := (n, d, H) -> (
+yHomModules := (n, d, H) -> (
     -- want components {p,q} = Hom(-p, q) with p + q = d and q <= n
-     apply( (H#d).cache.indices,
-     i -> if   (i#1) <= n then  
-     image (id_(((H#d).cache.components)#(((H#d).cache.indexComponents)#i)))
-     else image(0* id_(((H#d).cache.components)#(((H#d).cache.indexComponents)#i)))) 
- )
+    apply(indices H_d, components H_d,
+	(ind, M) -> if ind#1 <= n
+	then image id_M
+	else image(0 * id_M)))
 
+yHomComplex := (T,n) -> (
+    (lo, hi) := concentration T;
+    if lo == hi
+    then complex(directSum(yHomModules(n, lo, T), Base => lo))
+    else complex applyPairs(T.dd.map,
+	(i,f) -> i => inducedMap(directSum(yHomModules(n, i-1, T)), directSum(yHomModules(n, i, T)), f)))
 
-yComplex := (T,n) -> 
-     	       (K := new ChainComplex;
-		    K.ring = T.ring;
-		    for i from min T to max T do (
-		    if T#?(i-1) then
-		    K.dd_i = inducedMap(directSum(ymodules(n,i-1,T)),directSum(ymodules(n,i,T)),T.dd_i));
-	       K
-	       )
-
-Hom (ChainComplex, FilteredComplex) := FilteredComplex => opts -> (D, K) -> (
-      C := complete D; 
+Hom (Complex, FilteredComplex) := FilteredComplex => opts -> (C, K) -> (
      supp := support K_infinity;
 	        -- try to handle the boundary cases --
      if supp != {} and #supp > 1 then (		
      N :=  max support K_infinity;
      P :=  min support K_infinity;
      H := Hom(C, K_infinity, opts);
-     filteredComplex(reverse for i from P to N - 1 list inducedMap(H, yComplex(H,i)), 
+     filteredComplex(reverse for i from P to N - 1 list inducedMap(H, yHomComplex(H,i)),
 	 Shift => - P)
      )
   else ( if #supp == 1 then
 	(
 	p := min supp;
 	h := Hom(C, K_infinity, opts);
-	filteredComplex( {inducedMap(h, yComplex(h, p))}, Shift =>  - p  + 1 )
+	filteredComplex( {inducedMap(h, yHomComplex(h, p))}, Shift =>  - p  + 1 )
 	)
 	else(
 	    hhh := Hom(C, K_infinity, opts);
@@ -377,14 +367,14 @@ Hom (ChainComplex, FilteredComplex) := FilteredComplex => opts -> (D, K) -> (
 
 -- I-adic filtration code --
 -- the following script allows us to multiply a chain complex by an ideal
-Ideal * ChainComplex := ChainComplex => (I,C) -> (
-    D := new ChainComplex;
-    D.ring = C.ring;
-    apply(drop(spots C, 1), i -> D.dd_i = inducedMap(I * C_(i-1), I * C_i, C.dd_i));
-    D
-    )
+Ideal * Complex := Complex => (I,C) -> (
+    (lo, hi) := concentration C;
+    if lo == hi
+    then complex(I * C_lo, Base => lo)
+    else complex applyValues(C.dd.map,
+	f -> inducedMap(I * target f, I * source f, f)))
 
-filteredComplex(Ideal,ChainComplex,ZZ) := FilteredComplex => opts -> (I,C,n) ->(
+filteredComplex(Ideal,Complex,ZZ) := FilteredComplex => opts -> (I,C,n) ->(
     if n < 0 then error "expected a non-negative integer"
     else
     filteredComplex(apply(n, i -> inducedMap(C, I^(i+1) * C)), Shift => n)   
@@ -791,18 +781,20 @@ SpectralSequencePageMap ^ List := Matrix => (d,i)-> (d_(-i))
 -- auxiliary spectral sequence stuff.  
 
 filteredComplex SpectralSequence := FilteredComplex => opts -> E -> E.filteredComplex
-chainComplex SpectralSequence := ChainComplex => E -> chainComplex filteredComplex E
+complex SpectralSequence := Complex => {} >> opts -> E -> complex E.filteredComplex
+
 -- given a morphism f: A --> B
 -- compute the connecting map
 -- HH_{n+1}( coker f) --> HH_n (im f)
 
 connectingMorphism = method()
 
-connectingMorphism(ChainComplexMap,ZZ) := (a,n) -> (
+connectingMorphism(ComplexMap,ZZ) := (a,n) -> (
     K := filteredComplex ({a}) ;
     e := spectralSequence K ;
     e^1 .dd_{1, n}
     )
+
 -- here are some needed functions related to Hilbert polynomials --
 hilbertPolynomial ZZ := ProjectiveHilbertPolynomial => o -> (M) -> ( if M == 0
     then new ProjectiveHilbertPolynomial from {} else
@@ -846,24 +838,19 @@ basis (List,SpectralSequencePage) := opts -> (deg,E) -> (
 --
 
 edgeComplex = method()
-
 edgeComplex(SpectralSequence) := (E) -> (
     if E.Prune == true then error "not currently implemented for pruned spectral sequences";
-   if E.Prune == true then error "not currently implemented for pruned spectral sequences";
     M := select(spots E^2 .dd, i -> E^2_i != 0);
     l := min apply(M, i -> i#0);
     m := min apply(M, i -> i#1);
-    C := chainComplex E;
+    C := complex E;
     if M != {} then (
-    chainComplex {inducedMap(E^2_{l + 1, m}, HH_(l + m + 1) C, id_(C_(l + m + 1))),
+    complex {inducedMap(E^2_{l + 1, m}, HH_(l + m + 1) C, id_(C_(l + m + 1))),
     inducedMap(HH_(l + m + 1) C, E^2_{l,m + 1}, id_(C_(l + m + 1))), 
     E^2 .dd_{l + 2,m}, inducedMap(E^2_{l + 2, m}, HH_(l + m + 2) C, id_(C_(l + m + 2)))})
-    else
-    (c := new ChainComplex; c.ring = E.filteredComplex _infinity .ring;
-    c)
-    )
+    else complex C.ring)
 
- 
+
 filteredHomologyObject = method()
 
 filteredHomologyObject(ZZ, ZZ,FilteredComplex) := (p,n,K) -> (
