@@ -751,18 +751,6 @@ connectingMorphism(ComplexMap,ZZ) := (a,n) -> (
     e^1 .dd_{1, n}
     )
 
--- here are some needed functions related to Hilbert polynomials --
-hilbertPolynomial ZZ := ProjectiveHilbertPolynomial => o -> (M) -> ( if M == 0
-    then new ProjectiveHilbertPolynomial from {} else
-    new ProjectiveHilbertPolynomial from {0 => M}
-    )
-ProjectiveHilbertPolynomial == ZZ := (M,N) -> (M == hilbertPolynomial N)
-ProjectiveHilbertPolynomial + ZZ := (P, N) -> P + hilbertPolynomial N
-ZZ + ProjectiveHilbertPolynomial := (P,N) -> hilbertPolynomial P + N
-ProjectiveHilbertPolynomial - ZZ := (P, N) -> P - hilbertPolynomial N
-ZZ - ProjectiveHilbertPolynomial := (P,N) -> hilbertPolynomial P - N
----
-
 hilbertPolynomial SpectralSequencePage := Page => o -> E -> (
     P := new Page;
     apply(spots E .dd, i -> P#i = hilbertPolynomial(E_i));
