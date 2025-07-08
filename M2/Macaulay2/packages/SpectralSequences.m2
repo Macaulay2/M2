@@ -1078,7 +1078,7 @@ doc ///
 	 Example     
 	      B = QQ[a..d]
 	      J = ideal vars B
-	      C = complete res monomialCurveIdeal(B,{1,3,4})
+	      C = res monomialCurveIdeal(B,{1,3,4})
 	      K = filteredComplex(J,C,4)
 	 Text
 	      Here are some higher pages of the associated spectral sequence:
@@ -1272,25 +1272,25 @@ doc ///
 	       R = QQ[x,y,z,w] ;
 	       c2 = matrix(R,{{1},{0}}) ;
 	       c1 = matrix(R,{{0,1}}) ;
-	       C = chainComplex({c1,c2})        
+	       C = complex({c1,c2})
 	       D_2 = image matrix(R,{{1}});
 	       D_1 = image matrix(R,{{1,0},{0,0}});
 	       D_0 = image matrix(R,{{1}});
-	       D = chainComplex({inducedMap(D_0,D_1,C.dd_1),inducedMap(D_1,D_2,C.dd_2)})     
+	       D = complex({inducedMap(D_0,D_1,C.dd_1),inducedMap(D_1,D_2,C.dd_2)})
                E_2 = image matrix(R,{{0}});
 	       E_1 = image matrix(R,{{1,0},{0,0}});
 	       E_0 = image matrix(R,{{1}});
-	       E = chainComplex({inducedMap(E_0,E_1,C.dd_1),inducedMap(E_1,E_2,C.dd_2)})
+	       E = complex({inducedMap(E_0,E_1,C.dd_1),inducedMap(E_1,E_2,C.dd_2)})
      	  Text
 	       We now make our chain complex maps.
      	  Example	       	     
-	       d = chainComplexMap(C,D,apply(spots C, i-> inducedMap(C_i,D_i,id_C _i)))
-	       e = chainComplexMap(C,E,apply(spots C, i->inducedMap(C_i,E_i, id_C _i)))
+	       d = map(C,D,apply(spots C, i-> inducedMap(C_i,D_i,id_C _i)))
+	       e = map(C,E,apply(spots C, i->inducedMap(C_i,E_i, id_C _i)))
 	  Text
 	       We can check that these are indeed chain complex maps:
 	  Example   
-	       isChainComplexMap d
-	       isChainComplexMap e
+	       isWellDefined d
+	       isWellDefined e
      	  Text 
 	       Now, given the list of chain complex maps $\{d, e\}$, we obtain
 	       a filtration of $C$ by:
@@ -1429,7 +1429,7 @@ doc ///
 	  Text
 	     We can check that the homology of the simplicial complex twoSphere agrees with that of $\mathbb{S}^2$.
 	  Example
-	      C = truncate(chainComplex complex twoSphere,1)	
+	      C = naiveTruncation(complex twoSphere, 1)
 	      prune HH C
 	  Text
 	      We now write down our simplicial complex whose topological realization 
@@ -1441,7 +1441,7 @@ doc ///
 	      Again we can check that we've entered a simplicial complex
        	      whose homology agrees with that of the real projective plane.
 	  Example
-	      B = truncate(chainComplex complex realProjectivePlane,1)	 
+	      B = naiveTruncation(complex realProjectivePlane, 1)
 	      prune HH B
     	  Text
 	      We now compute the fibers of the anti-podal quotient map
@@ -1496,7 +1496,7 @@ doc///
 	      We can check that the homology of this simplicial complex agrees with that
 	      of the Klein Bottle:
 	 Example     
-	      C = truncate(chainComplex complex Delta,1)
+	      C = naiveTruncation(complex Delta, 1)
 	      prune HH C
     	 Text
 	      Let $S$ be the simplicial complex with facets $\{A_0 A_1, A_0 A_2, A_1 A_2\}$.  Then $S$ is a triangulation of $S^1$.  The simplicial map
@@ -1547,7 +1547,7 @@ doc ///
 	      $\Delta$ agrees with that of the torus
 	      $\mathbb{S}^1 \times \mathbb{S}^1 $
 	 Example          
-	      C = truncate(chainComplex complex Delta,1)
+	      C = naiveTruncation(complex Delta, 1)
 	      prune HH C
 	 Text
 	      Let $S$ be the simplicial complex with facets $\{A_0 A_1, A_0 A_2, A_1 A_2\}$.  Then $S$ is a triangulation of $S^1$.  The simplicial map
@@ -1597,8 +1597,8 @@ doc ///
 		B = B_*/(x -> x^2)//ideal;
 		-- need to take a large enough power. 
 		-- it turns out that 2 is large enough for this example 
-		G = complete res image gens B;
-		F = koszul gens I;
+		G = res image gens B;
+		F = koszulComplex gens I;
 		K = Hom(G, filteredComplex(F));
 		E = prune spectralSequence K;
 		E^1
@@ -1654,11 +1654,10 @@ doc ///
 		M = intersect(ideal(a_0,a_1),ideal(b_0,b_1)) ; -- irrelevant ideal
 		M = M_*/(x -> x^5)//ideal ; -- Suitably high Frobenius power of M
 		G = res image gens M ;
-		I = ideal random(R^1, R^{{-3,-3}}) -- ideal of C
-	        b = chainComplex gradedModule R^{{1,0}} -- make line bundle a chain complex
-		a = chainComplex gradedModule R^{{-2,-3}}
+	        b = complex R^{{1,0}} -- make line bundle a chain complex
+		a = complex R^{{-2,-3}}
 		-- make the map OO(-2, -3) --> OO(1,0)     
-		f = chainComplexMap(b, a,{random(R^1, R^{{-3,-3}})}) ; 
+		f = randomComplexMap(b, a, Degree => 0)
 		K = filteredComplex ({Hom(G,f)}) ; -- the two step filtered complex we want
 		E = prune spectralSequence K ;
     	  Text
@@ -1944,9 +1943,9 @@ doc ///
 	       f = map(S,R,{s^2,s*t,t^2});
 	       N = coker vars S;
 	       M = coker vars R --;
-	       F := complete res N;
+	       F := res N;
 	       pushFwdF := pushFwd(f,F);
-	       G := complete res M;
+	       G := res M;
 	       E := spectralSequence(filteredComplex(G) ** pushFwdF);
 	       EE := spectralSequence(G ** (filteredComplex pushFwdF));
      	       e = prune E;
@@ -2315,7 +2314,7 @@ doc ///
 	 Example     
 	      B = QQ[a..d];
 	      J = ideal vars B;
-	      C = complete res monomialCurveIdeal(B,{1,3,4});
+	      C = res monomialCurveIdeal(B,{1,3,4});
 	      K = filteredComplex(J,C,4);
 	 Text
 	      The infinity page of the resulting spectral sequence is computed below.
@@ -2405,7 +2404,7 @@ doc ///
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complete res monomialCurveIdeal(B,{1,3,4});
+	       C = res monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	  Text
 	       We compute an example of a pruning map below.
@@ -2435,13 +2434,13 @@ doc ///
 
 doc ///
           Key
-       	   (spots, ChainComplex)
+	    (spots, Complex)
           Headline
 	       which spots does the given chain complex has a module.
      	  Usage
 	       s = spots L
 	  Inputs
-	       L:ChainComplex   	  
+	       L:Complex
 	  Outputs
 	       s:List 
 	  Description
@@ -2462,7 +2461,7 @@ doc ///
 	  Inputs
 	       L:List       	  
 		    	 or 
-	       L:ChainComplex 
+	       L:Complex
 	       	    	 or
      	       L:SpectralSequence			 
 	       ReducedHomology => Boolean	       	  	    
@@ -2558,7 +2557,7 @@ doc ///
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complete res monomialCurveIdeal(B,{1,3,4});
+	       C = res monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	       E = spectralSequence K
 	  Text
@@ -2594,7 +2593,7 @@ doc ///
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complete res monomialCurveIdeal(B,{1,3,4});
+	       C = res monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	       E = spectralSequence K
 	  Text
@@ -2609,24 +2608,36 @@ doc ///
 	 "Examples of filtered complexes and spectral sequences"   
 ///
 
-
-
 doc ///
-    	  Key
-	    (truncate, ChainComplex, ZZ)
-	  Headline 
-	    compute the hard truncation of a chain complex   
-     Description
-     	  Text
-	       Computes the hard truncation of a chain complex as a specified homological degree.
-	  Example
-	       B = QQ[a..d];
-	       C = koszul vars B
-	       truncate(C,1)
-	       truncate(C,-1)
-	       truncate(C,-10)
-	       truncate(C,10)     	    
-///	       
+  Key
+    (naiveTruncation, Complex, ZZ)
+  Headline
+    compute the hard truncation of a chain complex
+  Usage
+    naiveTruncation(C, n)
+  Inputs
+    C:Complex
+    n:ZZ
+  Outputs
+    :Complex
+  Description
+    Text
+      This method returns the naive truncation of $C$ by truncating
+      the low homological degrees if $n$ is positive (i.e. from left)
+      and high homological degrees if $n$ is negative (i.e. from right).
+    Example
+      B = QQ[a..d];
+      C = (koszulComplex vars B)[2]
+      naiveTruncation(C, 10)
+      naiveTruncation(C, 2)
+      naiveTruncation(C, 1)
+      naiveTruncation(C, 0)
+      naiveTruncation(C,-1)
+      naiveTruncation(C,-2)
+      naiveTruncation(C,-10)
+  SeeAlso
+    (naiveTruncation, Complex, ZZ, ZZ)
+///
 
 doc ///
      Key
@@ -2648,7 +2659,7 @@ doc ///
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complete res monomialCurveIdeal(B,{1,3,4});
+	       C = res monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	  Text
 	       We compute an example of a pruning map below.
@@ -2664,7 +2675,7 @@ doc ///
 
 doc ///
     	  Key
-	    (support,ChainComplex)
+	    (support,Complex)
 	  Headline 
 	    nonzero parts of a chain complex
 	  Description
@@ -2673,13 +2684,13 @@ doc ///
 		    
 	      Example
 	      	    A = QQ[x,y];
-		    C = koszul vars A
+		    C = koszulComplex vars A
 		    support C
-		    D = truncate(C,1)
+		    D = naiveTruncation(C, 1)
 		    spots D
 		    support D
     	  SeeAlso
-	       (spots, ChainComplex)	     	    
+	       (spots, Complex)
 ///	       
 
 
@@ -2697,7 +2708,7 @@ doc ///
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complete res monomialCurveIdeal(B,{1,3,4});
+	       C = res monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	  Text
 	       We compute an example of a pruning map below.
@@ -2736,38 +2747,38 @@ doc ///
 	       R = QQ[x,y,z,w]
 	       d2 = matrix(R,{{1},{0}})
 	       d1 = matrix(R,{{0,1}})
-	       C = chainComplex({d1,d2}) 
+	       C = complex({d1,d2})
 	  Text
 	      We now make the modules of the another chain complex which we will label D.
 	  Example      
 	       D_2 = image matrix(R,{{1}})
 	       D_1 = image matrix(R,{{1,0},{0,0}})
 	       D_0 = image matrix(R,{{1}})
-	       D = chainComplex({inducedMap(D_0,D_1,C.dd_1),inducedMap(D_1,D_2,C.dd_2)})
+	       D = complex({inducedMap(D_0,D_1,C.dd_1),inducedMap(D_1,D_2,C.dd_2)})
      	  Text
 	       Now make a chain complex map.
      	  Example	       	     
-	       d = chainComplexMap(C,D,apply(spots C, i-> inducedMap(C_i,D_i,id_C _i)))
-	       isChainComplexMap d
-	       d == chainComplexMap(C,D,{inducedMap(C_0,D_0,id_(C_0)),inducedMap(C_1,D_1,id_(C_1)),inducedMap(C_2,D_2,id_(C_2))})
+	       d = map(C,D,{inducedMap(C_0,D_0,id_(C_0)),inducedMap(C_1,D_1,id_(C_1)),inducedMap(C_2,D_2,id_(C_2))})
+	       isWellDefined d
      	  Text
 	       We now make the modules of another chain complex which we will label E.	     
      	  Example	      
                E_2 = image matrix(R,{{0}})
 	       E_1 = image matrix(R,{{1,0},{0,0}})
 	       E_0 = image matrix(R,{{1}})
-	       E = chainComplex({inducedMap(E_0,E_1,C.dd_1),inducedMap(E_1,E_2,C.dd_2)})
+	       E = complex({inducedMap(E_0,E_1,C.dd_1),inducedMap(E_1,E_2,C.dd_2)})
      	  Text
 	       Now make a chain complex map.
      	  Example	      	       
-	       e = chainComplexMap(C,E,apply(spots C, i->inducedMap(C_i,D_i, id_C _i)))
+	       e = map(C,E,{inducedMap(C_0,E_0,id_(C_0)),inducedMap(C_1,E_1,id_(C_1)),inducedMap(C_2,E_2,id_(C_2))})
+               isWellDefined e
      	  Text 
 	       Now make a filtered complex from a list of chain complex maps.
      	  Example	       	       
 	       K = filteredComplex({d,e})
 	  Text
 	     We can make a filtered complex, with a specified minimum filtration degree
-             from a list of ChainComplexMaps by using the Shift option.
+             from a list of ComplexMaps by using the Shift option.
       	  Example	       	     
 	       L = filteredComplex({d,e},Shift => 1)
 	       M = filteredComplex({d,e},Shift => -1)	      	    
@@ -2790,13 +2801,13 @@ doc ///
 
 doc ///
      Key 
-          (filteredComplex, ChainComplex)
+          (filteredComplex, Complex)
      Headline 
          obtain a filtered complex from a chain complex
      Usage 
          K = filteredComplex C 
      Inputs 
-	  C: ChainComplex
+	  C: Complex
 -- these options don't do anything for this constructor.
 	  ReducedHomology => Boolean	       	  	    
 	  Shift => ZZ
@@ -2806,12 +2817,11 @@ doc ///
      	  Text
 	     Produces the filtered complex obtained by successively truncating the complex.
 	  Example 
-	    needsPackage "SpectralSequences"
 	    A = QQ[x,y]
-	    C = koszul vars A
+	    C = koszulComplex vars A
 	    K = filteredComplex C
      SeeAlso 
-	  (truncate, ChainComplex,ZZ)
+	(naiveTruncation, Complex, ZZ, ZZ)
 /// 
 
 doc ///
@@ -2848,10 +2858,9 @@ doc ///
 	  Example     
     	    C = filteredComplex E 
      SeeAlso
-          --(_, FilteredComplex,InfiniteNumber)
-          --(^,FilteredComplex,InfiniteNumber)
-/// 
-
+        (symbol _, FilteredComplex, InfiniteNumber)
+	(symbol ^, FilteredComplex, InfiniteNumber)
+///
 
 doc ///
      Key
@@ -2876,7 +2885,7 @@ doc ///
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complete res monomialCurveIdeal(B,{1,3,4});
+	       C = res monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	  Text
 	       We compute the degree $0$ piece of the $E^3$ page below.
@@ -2908,7 +2917,7 @@ doc ///
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complete res monomialCurveIdeal(B,{1,3,4});
+	       C = res monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	  Text
 	       We compute the degree $0$ piece of the $E^3$ page below.
@@ -2919,23 +2928,23 @@ doc ///
 
 doc ///
      Key
-  	  (chainComplex, FilteredComplex)
+	  (complex, FilteredComplex)
      Headline
      	  the ambient chain complex of a filtered complex
      Usage
-     	  C = chainComplex K
+	  C = complex K
      Inputs
      	  K:FilteredComplex
      Outputs
-     	  C:ChainComplex
+	  C:Complex
      Description
      	  Text 
 	       Returns the ambient chain complex of the filtered complex.
 	  Example
 	      A = QQ[x,y];
-	      C = koszul vars A
+	      C = koszulComplex vars A
 	      K = filteredComplex C;
-	      chainComplex K
+	      complex K
 	      K_infinity     
     SeeAlso
     	(symbol _, FilteredComplex, ZZ)
@@ -2968,7 +2977,7 @@ doc ///
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complete res monomialCurveIdeal(B,{1,3,4});
+	       C = res monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	  Text
 	       Compare some pages of the non-pruned version of the spectral sequence
@@ -3010,7 +3019,7 @@ doc ///
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complete res monomialCurveIdeal(B,{1,3,4});
+	       C = res monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	  Text
 	       Compare some pruned and non-prunded pages the spectral sequence $E$ below.
@@ -3045,22 +3054,22 @@ doc ///
 	       Returns the spectral sequence associated to the filtered complex.
 	  Example
 	      A = QQ[x,y];
-	      C = koszul vars A
+	      C = koszulComplex vars A
 	      K = filteredComplex C;
 	      E = spectralSequence K
 ///
     
 doc ///
      Key
-     	   (Hom, FilteredComplex, ChainComplex)
-	   (Hom, ChainComplex, FilteredComplex)
+	   (Hom, FilteredComplex, Complex)
+	   (Hom, Complex, FilteredComplex)
      Headline
      	  the filtered Hom complex
      Usage
      	  f = Hom(K,C)
      Inputs
      	  K:FilteredComplex
-	  C:ChainComplex
+	  C:Complex
      Outputs
      	  f:FilteredComplex
      Description
@@ -3079,24 +3088,24 @@ doc ///
     
 doc ///
      Key
-     	   (chainComplex, SpectralSequence)
+	   (complex, SpectralSequence)
      Headline
      	  the underlying chain complex of a Spectral Sequence
      Usage
-     	  K = chainComplex E
+	  K = complex E
      Inputs
      	  E:SpectralSequence
      Outputs
-     	  K:ChainComplex
+	  K:Complex
      Description
      	  Text 
 	       Returns the underlying chain complex of a spectral sequence.
 	  Example
 	      A = QQ[x,y];
-	      C = koszul vars A
+	      C = koszulComplex vars A
 	      K = filteredComplex C;
 	      E = spectralSequence K
-	      chainComplex E
+	      complex E
 ///
 
 doc ///
@@ -3122,7 +3131,7 @@ doc ///
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complete res monomialCurveIdeal(B,{1,3,4});
+	       C = res monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	       
 	  Text
@@ -3214,7 +3223,7 @@ doc ///
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complete res monomialCurveIdeal(B,{1,3,4});
+	       C = res monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	       
 	  Text
@@ -3255,7 +3264,7 @@ doc ///
 	  Example 
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complete res monomialCurveIdeal(B,{1,3,4});
+	       C = res monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	  Text
 	       We compute a map on the third page of the spectral sequence associated to $K$.
@@ -3289,7 +3298,7 @@ doc ///
 	  Example 
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complete res monomialCurveIdeal(B,{1,3,4});
+	       C = res monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	  Text
 	       We compute a map on the third page of the spectral sequence associated to $K$.
@@ -3323,7 +3332,7 @@ doc ///
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complete res monomialCurveIdeal(B,{1,3,4});
+	       C = res monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	       
 	  Text
@@ -3378,7 +3387,7 @@ doc ///
 	       (Using cohomological or upper indexing conventions.)  The relationship $E^{-i,-j} = E_{i,j}$ holds.
 	  Example
 	      A = QQ[x,y]
-	      C = koszul vars A;
+	      C = koszulComplex vars A;
 	      K = filteredComplex C;
 	      E = spectralSequence K
 	      E_0
@@ -3408,7 +3417,7 @@ doc ///
 	       (Using homological or lower indexing conventions.)  The relationship $E_{i,j} = E^{-i,-j}$ holds.
 	  Example
 	      A = QQ[x,y]
-	      C = koszul vars A;
+	      C = koszulComplex vars A;
 	      K = filteredComplex C;
 	      E = spectralSequence K
 	      E^0
@@ -3421,15 +3430,15 @@ doc ///
 
 doc ///
      Key
-     	   (symbol **, ChainComplex, FilteredComplex)
-	   (symbol **, FilteredComplex, ChainComplex)
+	   (symbol **, Complex, FilteredComplex)
+	   (symbol **, FilteredComplex, Complex)
      Headline
      	  filtered tensor product of complexes
      Usage
      	  KK = C ** K
 	  KK = K ** C
      Inputs
-     	  C:ChainComplex
+	  C:Complex
 	  K:FilteredComplex
      Outputs
      	  KK:FilteredComplex
@@ -3440,26 +3449,26 @@ doc ///
 	       The following example illustrates the syntax.
 	  Example
 	      A = QQ[x,y];
-	      B = koszul vars A;
-	      C = koszul vars A;
+	      B = koszulComplex vars A;
+	      C = koszulComplex vars A;
 	      F' = (filteredComplex B) ** C
 	      F'' = B ** (filteredComplex C)             
      SeeAlso
           "Filtrations and tensor product complexes"	       
 ///
-    
+
 doc ///
      Key
-     	  (tensor, RingMap, ChainComplex)
+	  (tensor, RingMap, Complex)
      Headline
      	  tensor product of a chain complex by a ring map
      Usage
      	  D = tensor(f,C)
      Inputs
 	  f:RingMap
-	  C:ChainComplex
+	  C:Complex
      Outputs
-     	  D:ChainComplex
+	  D:Complex
      Description
      	  Text 
 	       Given a ring map R -> S and a chain complex over R, 
@@ -3488,7 +3497,7 @@ doc ///
      	  K:FilteredComplex
 	  i:ZZ
      Outputs
-     	  f:ChainComplexMap
+	  f:ComplexMap
      Description
      	  Text 
 	       Returns the chain complex map specifying the inclusion of the i piece 
@@ -3496,7 +3505,7 @@ doc ///
 	       complex to the ambient chain complex.
 	  Example
 	      A = QQ[x,y];
-	      C = koszul vars A;
+	      C = koszulComplex vars A;
 	      K = filteredComplex C
 	      inducedMap(K,1)     
 ///
@@ -3514,14 +3523,14 @@ doc ///
 	  j:ZZ 
 	       an integer, infinity, or -infinity
      Outputs
-     	  C:ChainComplex
+	  C:Complex
      Description
      	  Text 
 	       Returns the chain complex in (homological) filtration degree j.  
 	       The relationship	$K _ j = K ^{(-j)}$ holds.     
     	   Example
 	       A = QQ[x,y];
-	       C = koszul vars A;
+	       C = koszulComplex vars A;
 	       K = filteredComplex C
 	       K_0
 	       K_1
@@ -3550,14 +3559,14 @@ doc ///
 	  j:ZZ 
 	       an integer, infinity, or -infinity
      Outputs
-     	  C:ChainComplex
+	  C:Complex
      Description
      	  Text 
 	       Returns the chain complex in (cohomological) filtration degree j.
 	       The relationship $K ^ j = K _{(-j)}$ holds.
 	  Example
 	       A = QQ[x,y];
-	       C = koszul vars A;
+	       C = koszulComplex vars A;
 	       K = filteredComplex C
 	       K_0
 	       K_1
@@ -3582,7 +3591,7 @@ doc ///
      Usage 
          g = connectingMorphism(f, n)
      Inputs
-         f:ChainComplexMap
+         f:ComplexMap
 	 n:ZZ	 
      Outputs
          g:Matrix 
@@ -3594,13 +3603,13 @@ doc ///
 
 doc ///
      Key
-     	  (connectingMorphism, ChainComplexMap,ZZ)
+       (connectingMorphism, ComplexMap,ZZ)
      Headline
           use spectral sequences to compute connecting morphisms
      Usage 
          g = connectingMorphism(f, n)
      Inputs
-         f:ChainComplexMap
+         f:ComplexMap
 	 n:ZZ	 
      Outputs
          g:Matrix 
@@ -3743,10 +3752,6 @@ doc ///
 	       
 ///
    
---doc ///
---     Key
---          associatedGradedHomologyObject     	  
---///   
    	       
 doc ///
      Key  
@@ -3834,7 +3839,7 @@ doc ///
      Inputs 
 	  E: SpectralSequence
      Outputs
-          C: ChainComplex
+          C: Complex
      Description
      	  Text
 	       Suppose that $E$ is a spectral sequence with the properties that:
@@ -3886,14 +3891,14 @@ doc ///
 
 doc ///
      Key
-     	  (filteredComplex, Ideal, ChainComplex, ZZ)
+       (filteredComplex, Ideal, Complex, ZZ)
      Headline
      	  I-adic filtrations of chain complexes
      Usage 
          K = filteredComplex(I,C,n)  
      Inputs 
 	  I: Ideal
-	  C: ChainComplex
+	  C: Complex
 	  n: ZZ
      Outputs
           K: FilteredComplex
@@ -3903,7 +3908,7 @@ doc ///
 	 Example     
 	      B = QQ[a..d]
 	      J = ideal vars B
-	      C = complete res monomialCurveIdeal(B,{1,3,4})
+	      C = res monomialCurveIdeal(B,{1,3,4})
 	      K = filteredComplex(J,C,4)
 	 Text
 	      Here are higher some pages of the associated spectral sequence:
