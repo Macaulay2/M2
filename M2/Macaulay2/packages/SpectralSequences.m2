@@ -568,6 +568,9 @@ SpectralSequence _ ZZ := SpectralSequencePage => (E,r) -> ( E^r )
 minimalPresentation SpectralSequence := prune SpectralSequence := SpectralSequence => opts -> E -> (
     spectralSequence(E.filteredComplex, Prune => true))
 
+filteredComplex SpectralSequence := FilteredComplex => opts -> E -> E.filteredComplex
+complex SpectralSequence := Complex => {} >> opts -> E -> complex E.filteredComplex
+
 --------------------------------------------------------------------------------
 -- spectral sequence pages
 --------------------------------------------------------------------------------
@@ -736,20 +739,15 @@ SpectralSequencePageMap ^ List := Matrix => (d,i)-> (d_(-i))
 
 -- auxiliary spectral sequence stuff.
 
-filteredComplex SpectralSequence := FilteredComplex => opts -> E -> E.filteredComplex
-complex SpectralSequence := Complex => {} >> opts -> E -> complex E.filteredComplex
-
 -- given a morphism f: A --> B
 -- compute the connecting map
 -- HH_{n+1}( coker f) --> HH_n (im f)
 
 connectingMorphism = method()
-
-connectingMorphism(ComplexMap,ZZ) := (a,n) -> (
-    K := filteredComplex ({a}) ;
-    e := spectralSequence K ;
-    e^1 .dd_{1, n}
-    )
+connectingMorphism(ComplexMap, ZZ) := (a, n) -> (
+    K := filteredComplex ({a});
+    e := spectralSequence K;
+    e^1 .dd_{1, n})
 
 hilbertPolynomial SpectralSequencePage := Page => o -> E -> (
     P := new Page;
@@ -769,36 +767,27 @@ basis(List, SpectralSequencePage) := opts -> (deg, E) -> (
     P := new Page;
     apply(spots E.dd, i -> P#i = basis(deg,E_i));
     P)
---
---
---
 
 edgeComplex = method()
-edgeComplex(SpectralSequence) := (E) -> (
+edgeComplex SpectralSequence := E -> (
     if E.Prune then error "not currently implemented for pruned spectral sequences";
     M := select(spots E^2 .dd, i -> E^2_i != 0);
     l := min apply(M, i -> i#0);
     m := min apply(M, i -> i#1);
     C := complex E;
     if M != {} then (
-    complex {inducedMap(E^2_{l + 1, m}, HH_(l + m + 1) C, id_(C_(l + m + 1))),
-    inducedMap(HH_(l + m + 1) C, E^2_{l,m + 1}, id_(C_(l + m + 1))),
-    E^2 .dd_{l + 2,m}, inducedMap(E^2_{l + 2, m}, HH_(l + m + 2) C, id_(C_(l + m + 2)))})
+	complex {inducedMap(E^2_{l + 1, m}, HH_(l + m + 1) C, id_(C_(l + m + 1))),
+	    inducedMap(HH_(l + m + 1) C, E^2_{l,m + 1}, id_(C_(l + m + 1))),
+	    E^2 .dd_{l + 2,m}, inducedMap(E^2_{l + 2, m}, HH_(l + m + 2) C, id_(C_(l + m + 2)))})
     else complex C.ring)
 
-
 filteredHomologyObject = method()
-
-filteredHomologyObject(ZZ, ZZ,FilteredComplex) := (p,n,K) -> (
-    image(inducedMap(HH_n K_infinity, HH_n K_p, id_(K_infinity _n)))
-    )
-
+filteredHomologyObject(ZZ, ZZ, FilteredComplex) := (p,n,K) -> (
+    image inducedMap(HH_n K_infinity, HH_n K_p, id_(K_infinity _n)))
 
 associatedGradedHomologyObject = method()
-
-associatedGradedHomologyObject(ZZ,ZZ,FilteredComplex) := (p,n,K) -> (
-    filteredHomologyObject(p,n,K) / filteredHomologyObject(p-1,n,K)
-    )
+associatedGradedHomologyObject(ZZ, ZZ, FilteredComplex) := (p,n,K) -> (
+    filteredHomologyObject(p,n,K) / filteredHomologyObject(p-1,n,K))
 
 ---
 -- Documentation and tests
