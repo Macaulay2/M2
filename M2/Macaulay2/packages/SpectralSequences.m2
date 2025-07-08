@@ -182,38 +182,41 @@ filteredComplex = method(Options => {
     ReducedHomology => true})
 
 filteredComplex(List) := FilteredComplex => opts -> L -> (
-  local maps;
-  local C;
-  if #L === 0 
-  then error "expected at least one chain complex map or simplicial complex";
-  if all(#L, p -> class L#p === SimplicialComplex) then (
-  kk := coefficientRing L#0;
-    if opts.ReducedHomology == true then (
-    C = complex  L#0; -- By default the ambient simplicial complex is the first element of the list
-    maps = apply(#L-1, p -> map(C, complex L#(p+1), 
-        i -> sub(contract(transpose matrix{faces(i,L#0)}, matrix{faces(i,L#(p+1))}), kk))))
-    else (C = naiveTruncation(complex L#0,1); -- By default the ambient simplicial complex is the first element of the list
-    maps = apply(#L-1, p -> map(C, naiveTruncation(complex L#(p+1),1),
-        i -> sub(contract(transpose matrix{faces(i,L#0)}, matrix{faces(i,L#(p+1))}), kk))))
- )
-  else (
-    maps = L;
-    if any(#maps, p -> class maps#p =!= ComplexMap) then (
-      error "expected sequence of chain complexes");
-    C = target maps#0;-- By default the ambient chain complex is target of first map.
-    if any(#maps, p -> target maps#p != C) then (
-      error "expected all map to have the same target"));
-  Z := image map(C, C, i -> 0*id_(C_i)); -- make zero subcomplex as a subcomplex of ambient complex
-   P := {};
- myList := {};
- for p from 0 to #maps - 1 do (
-	 myList = myList |
-	  {#maps - (p+1) -opts.Shift => image maps#p};
-	  );
-  if myList != {} then (P = {(#maps-opts.Shift) => C} | myList)
-  else P = { - opts.Shift => C} ;
-  if (last P)#1 != Z then (P = P | {(-1-opts.Shift) => Z});
-  return new FilteredComplex from P | {symbol zero => (ring C)^0, symbol cache =>  new CacheTable})
+    if #L == 0 then error "expected at least one complex map or simplicial complex";
+    if not uniform L then error "expected a list of complex maps or simplicial complexes";
+    --
+    maps := if instance(L#0, SimplicialComplex) then (
+	kk := coefficientRing L#0;
+	if opts.ReducedHomology == true then (
+	    -- By default the ambient simplicial complex is the first element of the list
+	    C := complex L#0;
+	    apply(#L-1, p -> map(C, complex L#(p+1),
+		    i -> sub(contract(transpose matrix{faces(i,L#0)}, matrix{faces(i,L#(p+1))}), kk))))
+	else (
+	    -- By default the ambient simplicial complex is the first element of the list
+	    C = complex L#0;
+	    C = naiveTruncation(C, 1);
+	    apply(#L-1, p -> map(C, naiveTruncation(complex L#(p+1), 1),
+		    i -> sub(contract(transpose matrix{faces(i,L#0)}, matrix{faces(i,L#(p+1))}), kk))))
+	)
+    else if instance(L#0, ComplexMap) then (
+	-- By default the ambient chain complex is target of first map.
+	C = target L#0;
+	if same apply(L, target) then L
+	else error "expected all maps to have the same target")
+    else error "expected a list of complex maps or simplicial complexes";
+    --
+    Z := image map(C, C, i -> 0*id_(C_i)); -- make zero subcomplex as a subcomplex of ambient complex
+    P := {};
+    myList := {};
+    for p from 0 to #maps - 1 do (
+	myList = myList |
+	{#maps - (p+1) -opts.Shift => image maps#p};
+	);
+    if myList != {} then (P = {(#maps-opts.Shift) => C} | myList)
+    else P = { - opts.Shift => C} ;
+    if (last P)#1 != Z then (P = P | {(-1-opts.Shift) => Z});
+    return new FilteredComplex from P | {symbol zero => (ring C)^0, symbol cache =>  new CacheTable})
 
 
 --------------------------------------------------------------------------------
