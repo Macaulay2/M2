@@ -4028,19 +4028,14 @@ doc ///
 
 
 TEST ///
-restart;
-needsPackage "SpectralSequences";
 A = QQ[a,b,c];
-C = new ChainComplex;
-C.ring = A;
+C = complex A^0
 K = filteredComplex C;
 assert(K_0 == C);
 assert(K_1 == C);
 ///    
 
 TEST ///
-restart;
-needsPackage "SpectralSequences";
 A = QQ[a,b,c];
 D = simplicialComplex {a*b*c};
 F2D = D;
@@ -4064,8 +4059,6 @@ assert(all(keys support e^5, j -> isIsomorphism homologyIsomorphism(e,j#0,j#1,5)
 ///
 
 TEST ///
-restart
-needsPackage "SpectralSequences";
 -- The following example is taken from p. 127, Fig 7.2 of 
 -- Zomorodian's "Topology for computing"
 A = ZZ [s,t,u,v,w] ;
@@ -4120,8 +4113,6 @@ assert(all(keys support e^12, j -> isIsomorphism homologyIsomorphism(e,j#0,j#1,1
 ///
 
 TEST ///
-restart
-needsPackage "SpectralSequences";
 A = QQ[a,b,c,d];
 D = simplicialComplex {a*d*c, a*b, a*c, b*c};
 F2D = D;
@@ -4159,11 +4150,9 @@ assert(all(keys support e^12, j -> isIsomorphism homologyIsomorphism(e,j#0,j#1,1
 ///
 
 TEST ///
-restart
-needsPackage "SpectralSequences";
 B = QQ[a..d];
 J = ideal vars B;
-C = complete res monomialCurveIdeal(B,{1,3,4});
+C = res monomialCurveIdeal(B,{1,3,4});
 K = filteredComplex(J,C,4);
 e = prune spectralSequence K;
 assert(all(keys support e^0, j -> isIsomorphism homologyIsomorphism(e,j#0,j#1,0)))
@@ -4175,8 +4164,6 @@ assert(all(keys support e^4, j -> isIsomorphism homologyIsomorphism(e,j#0,j#1,4)
 
 
 TEST ///
-restart
-needsPackage "SpectralSequences";
 S = ZZ/101[x,y];
 I = ideal(x^2,x*y,y^2);
 R = S/I;
@@ -4206,7 +4193,3 @@ installPackage("SpectralSequences", RemakeAllDocumentation => true)
 check "SpectralSequences";
 viewHelp SpectralSequences
 ------------------------------------------
-
-Status API Training Shop Blog About
-© 2016 GitHub, Inc. Terms Privacy Security Contact Help
-
