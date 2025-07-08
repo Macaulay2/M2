@@ -109,29 +109,27 @@ ReverseDictionary = value Core#"private dictionary"#"ReverseDictionary"
 -------------------------------------------------------------------------------------------------
 --  The writing of some methods are much improved --
 
-
-
 -- since things are mutable we don't want to cache spots
 spots = method()
+spots Complex := List => C -> sort keys C.module
 
-spots Complex := List => (
-  C -> (c := concentration C; toList(c_0 .. c_1)))
-
-support Complex := List => (
-     C -> sort select (spots C, i -> C_i != 0))
-
+support Complex := List => C -> select(spots C, i -> C_i != 0)
 
 -- the following relies on the pushFwd method from the package "PushForward.m2"
 -- perhaps this should be added to the Complexes package --
 
-pushFwd(RingMap, Complex) := o -> (f,C) ->
-(   -- pushFwdC := complex chainComplex(source f);
-     complex hashTable(for i from min C to max C list (i => pushFwd(f,C.dd_i)))
-    )
+pushFwd(RingMap, Complex) := o -> (f, C) -> (
+    (lo, hi) := concentration C;
+    if dd^C == 0
+    then complex(for i from lo to hi list pushFwd(f, C_i, o), Base => lo)
+    else complex applyValues(C.dd.map, m -> pushFwd(f, m, o)))
 
-
- 
-----------------------------------------------------------------------------------
+-- e.g. n = 2 means cut 2 from the beginning
+-- and n = -2 means cut 2 from the tail; n = 0 does nothing
+naiveTruncation(Complex, ZZ) := Complex => (C, n) -> (
+    (lo, hi) := concentration C;
+    if n > 0 then naiveTruncation(C, (lo + n,  infinity)) else
+    if n < 0 then naiveTruncation(C, (-infinity, hi + n)) else C)
 
 -------------------------------------------------------------------------------------
 -- filtered complexes
