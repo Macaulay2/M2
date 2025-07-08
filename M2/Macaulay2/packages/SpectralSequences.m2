@@ -603,7 +603,7 @@ SpectralSequence ^ InfiniteNumber:=
 	-- again trying to handle the case of the zero complex --
     if min K_(infinity) < infinity and max K_infinity > - infinity then (
 	    for p from min K to max K do (
-	  	for q from - p + min K_(infinity) to max K_(infinity) do (
+		for q from -p + min K_(infinity) to max K_(infinity) + 1 do (
 	       	    if E.Prune == false then H#{p,q} = epq(K,p,q,s)
 	       	    else H#{p,q} = prune epq(K,p,q,s)
 	       );
@@ -690,7 +690,7 @@ page SpectralSequencePage := Page => opts -> E -> (
     -- again trying to handle the case of the zero complex --
     if min K_(infinity) < infinity and max K_infinity > - infinity then (
 	    for p from min K to max K do (
-	  	for q from -p + min K_(infinity) to max K_(infinity) do (
+		for q from -p + min K_(infinity) to max K_(infinity) + 1 do (
 --		    H#{p,q} = E^s_{p,q}
 	       	    if E.Prune == false then H#{p,q} = epq(K,p,q,s)
 	       	    else H#{p,q} = prune epq(K,p,q,s)
