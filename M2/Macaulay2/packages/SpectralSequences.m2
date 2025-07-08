@@ -47,8 +47,7 @@ newPackage(
       HomePage => "http://math.berkeley.edu/~thanh"}},
   Headline => "spectral sequences",
   Keywords => {"Homological Algebra"},
-  PackageImports => {"Truncations"},
-  PackageExports => {"SimplicialComplexes", "ChainComplexExtras", "PushForward"}
+  PackageExports => {"SimplicialComplexes", "Complexes", "PushForward"}
   )
 
 export {
@@ -91,148 +90,25 @@ ReverseDictionary = value Core#"private dictionary"#"ReverseDictionary"
 --------------------------------------------------------------------------------
 -- CODE
 --------------------------------------------------------------------------------
-------------------------------------------------------------------------------------
--- ChainComplexExtraExtras -- Several people have worked on this portion of the code
---------------------------------------------------------------------------------------
+-- TODO: move these to Complexes
 
--- since things are mutable we don't want to cache spots
 spots = method()
+spots Complex := List => C -> sort keys C.module
 
-spots ChainComplex := List => (
-  C -> sort select(keys complete C,i -> class i === ZZ))
-
-max ChainComplex := K -> max spots K
-min ChainComplex := K -> min spots K
-
-support ChainComplex := List => (
-     C -> sort select (spots C, i -> C_i != 0))
-
-
--- Computes the graded pieces of the total complex of a Hom double complex 
--- (just as a graded module, so no maps!)
-Hom (GradedModule, GradedModule) := GradedModule => opts -> (C, D) -> (
-  R := C.ring;  if R =!= D.ring then error "expected graded modules over the same ring";
-  (c,d) := (spots C, spots D);
-  pairs := new MutableHashTable;
-  scan(c, i -> scan(d, j -> (
-        k := j-i;
-	p := if not pairs#?k then pairs#k = new MutableHashTable else pairs#k;
-	p#(i,j) = 1;)));
-  scan(keys pairs, k -> pairs#k = sort keys pairs#k);
-  E := new GradedModule;
-  E.ring = R;
-  scan(keys pairs, k-> (
-      p := pairs#k;
-      E#k = directSum(apply(p, v -> v => Hom(C_(v#0), D_(v#1), opts)));));
-  E)
-
-
-
-isWellDefined ChainComplexMap := Boolean => f -> (
-     (F,G):= (source f, target f);
-     all(drop(spots F,1), i -> G.dd_i * f#i == f#(i-1) * F.dd_i))
-
--- Computes the total complex of the Hom double complex of two chain complexes
--- This code is different from that in ChainComplexExtras.  We need this version
--- so that the indices are cached.
-Hom (ChainComplex, ChainComplex) := ChainComplex => opts -> (C, D) -> (
-  if C.ring =!= D.ring then error "expected chain complexes over the same ring";
-  hom := lookup(Hom, GradedModule, GradedModule);
-  E := chainComplex (hom opts)(C, D);
-  scan(spots E, i -> if E#?i and E#?(i-1) then E.dd#i = 
-    map(E#(i-1), E#i, 
-      matrix table(
-        E#(i-1).cache.indices, E#i.cache.indices, 
-	(j,k) -> map(E#(i-1).cache.components#(E#(i-1).cache.indexComponents#j), 
-	  (E#i).cache.components#((E#i).cache.indexComponents#k),
-	  if j#0 === k#0 and j#1 === k#1-1 then (-1)^(k#0)*Hom(C_(k#0), D.dd_(k#1), opts)
-	  else if j#0 === k#0 + 1 and j#1 === k#1 then Hom(C.dd_(j#0), D_(k#1), opts)
-	  else 0))));
-  E    	    		    
-)
-
-Hom (ChainComplex, ChainComplexMap) := ChainComplexMap => opts -> (C, f) -> (
-  (F, G) := (Hom(C, source f, opts), Hom(C, target f, opts));
-  map(G,F, i -> map(G_i,F_i, matrix table( G_i.cache.indices,F_i.cache.indices, 
-      (j,k) -> map(G#i.cache.components#(G#i.cache.indexComponents#j), 
-        F#i.cache.components#(F#i.cache.indexComponents#k),
-	if j === k then Hom(C_(j#0), f_(j#1), opts)
-	else 0)))))
-
-Hom (ChainComplexMap, ChainComplex) := ChainComplexMap => opts -> (f, C) -> (
-  (F, G) := (Hom(target f, C, opts), Hom(source f, C, opts));
-  map(G,F, i -> map (G_i,F_i, matrix table(G_i.cache.indices,F_i.cache.indices,
-        (j,k) -> map(G#i.cache.components#(G#i.cache.indexComponents#j), 
-	  F#i.cache.components#(F#i.cache.indexComponents#k),
-	  if j === k then Hom(f_(j#0), C_(j#1), opts)
-	  else 0)))))
-  
-ChainComplexMap ** ChainComplex := ChainComplexMap => (f,C) -> (
-  (F,G) := ((source f) ** C, (target f) ** C); 
-  map(G,F, i -> map (G_i,F_i, matrix table(G_i.cache.indices,F_i.cache.indices,
-        (j,k) -> map(G#i.cache.components#(G#i.cache.indexComponents#j), 
-	  F#i.cache.components#(F#i.cache.indexComponents#k),
-	  if j === k then f_(j#0) ** C_(j#1) 
-	  else 0)))))
-
-ChainComplex ** ChainComplexMap := ChainComplexMap => (C,f) -> (
-  (F,G) := (C ** source f, C ** target f); 
-  map(G,F, i -> map (G_i,F_i, matrix table(G_i.cache.indices,F_i.cache.indices,
-        (j,k) -> map(G#i.cache.components#(G#i.cache.indexComponents#j), 
-	  F#i.cache.components#(F#i.cache.indexComponents#k),
-	  if j === k then C_(j#0) ** f_(j#1) 
-	  else 0)))))
-
--- truncate a chain complex at a given homological degree 
-truncate(ChainComplex,ZZ):= {} >> o -> (C,q) ->(
-     if q == 0 then return C 
-     else (
-	  m := min support C;
-	  n := max support C;
-	  l := length C;
-	  if q < -l or q > l then return image(0*id_C)
-	  else  K:=new ChainComplex;
-	        K.ring=C.ring;
-	  	if q < 0 then for i from min C + 1 to max C do (
-	             if i <= n + q then K.dd_i = C.dd_i 
-	       	     else if i-1 > n + q then K.dd_i = inducedMap(0*C_(i-1),0*C_i,C.dd_i)
-	       	     else K.dd_i = inducedMap(C_(i-1), 0*C_i, C.dd_i) ) 
-	  	else for i from min C+1  to max C do (
-	       	     if i-1 >= q + m then K.dd_i = C.dd_i 
-	       	     else if i < q + m then K.dd_i = inducedMap(0*C_(i-1),0*C_i,C.dd_i)
-	       	     else K.dd_i = map(0*C_(i-1), C_i, 0*C.dd_i) )); 		
-     K)
-
+support Complex := List => C -> select(spots C, i -> C_i != 0)
 
 -- the following relies on the pushFwd method from the package "PushForward.m2"
+pushFwd(RingMap, Complex) := o -> (f, C) -> (
+    (lo, hi) := concentration C;
+    if lo == hi
+    then complex(pushFwd(f, C_lo, o), Base => lo)
+    else complex applyValues(C.dd.map,
+	m -> pushFwd(f, m, o)))
 
-pushFwd(RingMap,ChainComplex):=o->(f,C) ->
-(    pushFwdC := chainComplex(source f);
-     maps := apply(spots C, i-> (i,pushFwd(f,C.dd_i)));
-     for i from min C to max C do (
-	 pushFwdC.dd_(maps#i_0) = maps#i_1 
-	 );
-    pushFwdC
-    )
-
-
--- New method for tensor that returns the tensor product of a complex via a ring map
-tensor(RingMap, ChainComplex) := ChainComplex => {} >> opts -> (f,C) -> (
-         k := min C; 
-    D := chainComplex(
-	if even(k) then apply(
-	    drop(select(keys complete C, 
-	    	i -> instance(i,ZZ)),1), 
-	    j -> f ** C.dd_j)
-	else apply(
-	    drop(select(keys complete C, 
-	    	i -> instance(i,ZZ)),1), 
-	    j -> (-1) * (f ** C.dd_j)));
-    D[-k]
-    )
-
-
-----------------------------------------------------------------------------------
+naiveTruncation(Complex, ZZ) := Complex => (C, n) -> (
+    (lo, hi) := concentration C;
+    if n > 0 then naiveTruncation(C, (lo + n,  infinity)) else
+    if n < 0 then naiveTruncation(C, (-infinity, hi + n)) else C)
 
 -------------------------------------------------------------------------------------
 -- filtered complexes
