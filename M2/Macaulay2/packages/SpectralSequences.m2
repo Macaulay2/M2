@@ -31,8 +31,8 @@
 newPackage(
   "SpectralSequences",
 --  AuxiliaryFiles => true,
-  Version => "2.01",
-  Date => "25 February 2026",
+  Version => "2.02",
+  Date => "9 March 2026",
   Authors => {
        {
       Name => "David Berlekamp", 
