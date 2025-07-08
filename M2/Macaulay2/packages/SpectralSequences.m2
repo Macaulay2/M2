@@ -17,7 +17,7 @@
 --------------------------------------------------------------------------------
 newPackage(
     "SpectralSequences",
-    Headline => "spectral sequences",
+    Headline => "spectral sequences and filtered complexes",
     Keywords => { "Homological Algebra" },
     Version  => "1.1",
     Date     => "8 July 2025",
@@ -77,11 +77,9 @@ export {
     "netPage",
     }
 
---------------------------------------------------------------------------------
-
-hasAttribute = value Core#"private dictionary"#"hasAttribute"
-getAttribute = value Core#"private dictionary"#"getAttribute"
-ReverseDictionary = value Core#"private dictionary"#"ReverseDictionary"
+importFrom_Core {
+    "getAttribute", "hasAttribute", "ReverseDictionary",
+    }
 
 --------------------------------------------------------------------------------
 -- CODE
@@ -109,25 +107,25 @@ naiveTruncation(Complex, ZZ) := Complex => (C, n) -> (
 -------------------------------------------------------------------------------------
 -- filtered complexes
 -------------------------------------------------------------------------------------
+
 FilteredComplex = new Type of HashTable
 FilteredComplex.synonym = "filtered chain complex"
 
 spots FilteredComplex := List => (
-  K -> sort select(keys K, i -> class i === ZZ))
+    K -> sort select(keys K, i -> class i === ZZ))
 
 max FilteredComplex := K -> max spots K
 min FilteredComplex := K -> min spots K
 
 support FilteredComplex := List => (
-     K -> sort select (spots K, i -> K#i != 0))
-
+    K -> sort select (spots K, i -> K#i != 0))
 
 FilteredComplex _ InfiniteNumber :=
 FilteredComplex _ ZZ := Complex => (K,p) -> (
-  if K#?p then K#p
-  else if p < min K then K#(min K)
-  else if p > max K then K#(max K)
-  )
+    if K#?p then K#p
+    else if p < min K then K#(min K)
+    else if p > max K then K#(max K)
+    )
 
 FilteredComplex ^ InfiniteNumber :=
 FilteredComplex ^ ZZ := Complex => (K,p) -> K_(-p)
@@ -137,15 +135,13 @@ complex FilteredComplex := Complex => {} >> o -> K -> K_infinity
 -- Returns the inclusion map from the pth subcomplex to the top
 protect inducedMaps
 inducedMap (FilteredComplex, ZZ) := ComplexMap => opts -> (K,p) -> (
-  if not K.cache#?inducedMaps then K.cache.inducedMaps = new MutableHashTable;
-  if not K.cache.inducedMaps#?p then K.cache.inducedMaps#p = inducedMap(K_infinity, K_p);
-  K.cache.inducedMaps#p)
-
+    if not K.cache#?inducedMaps then K.cache.inducedMaps = new MutableHashTable;
+    if not K.cache.inducedMaps#?p then K.cache.inducedMaps#p = inducedMap(K_infinity, K_p);
+    K.cache.inducedMaps#p)
 
 net FilteredComplex := K -> (
-  v := between("", apply(spots K, p -> p | " : " | net K_p));
-  if #v === 0 then "0" else stack v)
-
+    v := between("", apply(spots K, p -> p | " : " | net K_p));
+    if #v === 0 then "0" else stack v)
 
 -- Primitive constructor, takes a list eg {m_n,m_(n-1), ...,m_0}
 -- defining inclusion maps C=F_(n+1)C > F_(n)C > ... > F_0 C
@@ -158,8 +154,8 @@ net FilteredComplex := K -> (
 -- WE WANT THE ZERO COMPLEX TO HAVE "FILTRATION DEGREE -1".
 
 filteredComplex = method(Options => {
-    Shift => 0,
-    ReducedHomology => true})
+	Shift => 0,
+	ReducedHomology => true})
 
 filteredComplex(List) := FilteredComplex => opts -> L -> (
     if #L == 0 then error "expected at least one complex map or simplicial complex";
@@ -167,7 +163,7 @@ filteredComplex(List) := FilteredComplex => opts -> L -> (
     --
     maps := if instance(L#0, SimplicialComplex) then (
 	kk := coefficientRing L#0;
-	if opts.ReducedHomology == true then (
+	if opts.ReducedHomology then (
 	    -- By default the ambient simplicial complex is the first element of the list
 	    C := complex L#0;
 	    apply(#L-1, p -> map(C, complex L#(p+1),
@@ -198,11 +194,9 @@ filteredComplex(List) := FilteredComplex => opts -> L -> (
     if (last P)#1 != Z then (P = P | {(-1-opts.Shift) => Z});
     return new FilteredComplex from P | {symbol zero => (ring C)^0, symbol cache =>  new CacheTable})
 
-
 --------------------------------------------------------------------------------
 -- constructing filtered complexes ---------------------------------------------
 --------------------------------------------------------------------------------
-
 
 -- make the filtered complex associated to the "naive truncation of a chain complex"
 filteredComplex Complex := FilteredComplex => opts -> C -> (
@@ -227,26 +221,26 @@ xTensorComplex := (T,p) ->(
 	(i,f) -> i => inducedMap(directSum(xTensormodules(p, i-1, T)), directSum(xTensormodules(p, i, T)), f)))
 
 FilteredComplex ** Complex := FilteredComplex => (K,C) -> (
-		     supp := support K_infinity;
-     -- try to handle the boundary cases --
-     if supp != {} and #supp > 1 then (
-	  N := max support K_infinity;
-	  P := min support K_infinity;
-	  T := K_infinity ** C;
-filteredComplex(reverse for i from P to (N-1) list
-     inducedMap(T, xTensorComplex(T,i)), Shift => -P)
- )
+    supp := support K_infinity;
+    -- try to handle the boundary cases --
+    if supp != {} and #supp > 1 then (
+	N := max support K_infinity;
+	P := min support K_infinity;
+	T := K_infinity ** C;
+	filteredComplex(reverse for i from P to (N-1) list
+	    inducedMap(T, xTensorComplex(T,i)), Shift => -P)
+	)
     else ( if #supp == 1 then
 	(
-	p := min supp;
-	t := K_infinity ** C;
-	filteredComplex( {inducedMap(t, xTensorComplex(t, p))}, Shift => - p + 1)
-	)
+	    p := min supp;
+	    t := K_infinity ** C;
+	    filteredComplex( {inducedMap(t, xTensorComplex(t, p))}, Shift => - p + 1)
+	    )
 	else( tt:= K_infinity ** C;
 	    filteredComplex({id_tt})
 	    )
 	)
-     )
+    )
 
 --produce the "y-filtration" of the tensor product complex.
 yTensorModules := (p,q,T)->(
@@ -263,26 +257,26 @@ yTensorComplex := (T,p) -> (
 	(i,f) -> i => inducedMap(directSum(yTensorModules(p, i-1, T)), directSum(yTensorModules(p, i, T)), f)))
 
 Complex ** FilteredComplex := FilteredComplex => (C,K) -> (
-	   supp := support K_infinity;
-	        -- try to handle the boundary cases --
-     if supp != {} and #supp > 1 then (
-	  N := max support K_infinity;
-	  P := min support K_infinity;
-	  T := C ** K_infinity;
-filteredComplex(reverse for i from P to (N-1) list
-     inducedMap(T, yTensorComplex(T,i)), Shift => -P)
- )
+    supp := support K_infinity;
+    -- try to handle the boundary cases --
+    if supp != {} and #supp > 1 then (
+	N := max support K_infinity;
+	P := min support K_infinity;
+	T := C ** K_infinity;
+	filteredComplex(reverse for i from P to (N-1) list
+	    inducedMap(T, yTensorComplex(T,i)), Shift => -P)
+	)
     else ( if #supp == 1 then
 	(
-	p := min supp;
-	t := C ** K_infinity;
-	filteredComplex( {inducedMap(t, yTensorComplex(t, p))}, Shift => - p + 1)
-	)
+	    p := min supp;
+	    t := C ** K_infinity;
+	    filteredComplex( {inducedMap(t, yTensorComplex(t, p))}, Shift => - p + 1)
+	    )
 	else( tt:= C ** K_infinity ;
 	    filteredComplex({id_tt})
 	    )
 	)
-     )
+    )
 
 -- produce the "x-filtration" of the Hom complex.
 xHomModules := (n, d, H)->(
@@ -301,21 +295,21 @@ xHomComplex := (T,n) -> (
 
 -- produce the "x-filtration" of the Hom complex.
 Hom (FilteredComplex, Complex):= FilteredComplex => opts -> (K, C) -> (
-	   supp := support K_infinity;
-	        -- try to handle the boundary cases --
-     if supp != {} and #supp > 1 then (
-     N := - max support K_infinity;
-     P := - min support K_infinity;
-     H := Hom(K_infinity, C, opts);
-     filteredComplex(reverse for i from N to P - 1 list inducedMap(H, xHomComplex(H,i)),
-	 Shift => - N)
-     )
- else ( if #supp == 1 then
-	(
-	p := min supp;
-	h := Hom(K_infinity, C, opts);
-	filteredComplex( {inducedMap(h, xHomComplex(h, p))}, Shift =>  p + 1 )
+    supp := support K_infinity;
+    -- try to handle the boundary cases --
+    if supp != {} and #supp > 1 then (
+	N := - max support K_infinity;
+	P := - min support K_infinity;
+	H := Hom(K_infinity, C, opts);
+	filteredComplex(reverse for i from N to P - 1 list inducedMap(H, xHomComplex(H,i)),
+	    Shift => - N)
 	)
+    else ( if #supp == 1 then
+	(
+	    p := min supp;
+	    h := Hom(K_infinity, C, opts);
+	    filteredComplex( {inducedMap(h, xHomComplex(h, p))}, Shift =>  p + 1 )
+	    )
 	else(
 	    hhh := Hom(K_infinity, C, opts);
 	    filteredComplex({id_hhh})
@@ -340,21 +334,21 @@ yHomComplex := (T,n) -> (
 	(i,f) -> i => inducedMap(directSum(yHomModules(n, i-1, T)), directSum(yHomModules(n, i, T)), f)))
 
 Hom (Complex, FilteredComplex) := FilteredComplex => opts -> (C, K) -> (
-     supp := support K_infinity;
-	        -- try to handle the boundary cases --
-     if supp != {} and #supp > 1 then (
-     N :=  max support K_infinity;
-     P :=  min support K_infinity;
-     H := Hom(C, K_infinity, opts);
-     filteredComplex(reverse for i from P to N - 1 list inducedMap(H, yHomComplex(H,i)),
-	 Shift => - P)
-     )
-  else ( if #supp == 1 then
-	(
-	p := min supp;
-	h := Hom(C, K_infinity, opts);
-	filteredComplex( {inducedMap(h, yHomComplex(h, p))}, Shift =>  - p  + 1 )
+    supp := support K_infinity;
+    -- try to handle the boundary cases --
+    if supp != {} and #supp > 1 then (
+	N :=  max support K_infinity;
+	P :=  min support K_infinity;
+	H := Hom(C, K_infinity, opts);
+	filteredComplex(reverse for i from P to N - 1 list inducedMap(H, yHomComplex(H,i)),
+	    Shift => - P)
 	)
+    else ( if #supp == 1 then
+	(
+	    p := min supp;
+	    h := Hom(C, K_infinity, opts);
+	    filteredComplex( {inducedMap(h, yHomComplex(h, p))}, Shift =>  - p  + 1 )
+	    )
 	else(
 	    hhh := Hom(C, K_infinity, opts);
 	    filteredComplex({id_hhh})
@@ -378,30 +372,26 @@ filteredComplex(Ideal,Complex,ZZ) := FilteredComplex => opts -> (I,C,n) ->(
     filteredComplex(apply(n, i -> inducedMap(C, I^(i+1) * C)), Shift => n)
     )
 
-------------------------------------
--- Pages and Sequences --
-------------------------------------
-
-
 --------------------------------------------------------------------------------
--- Pages
+-- Pages and Sequences
 --------------------------------------------------------------------------------
+
 Page = new Type of MutableHashTable
-Page.synonym = "Page"
+Page.synonym = "page"
+
 Page.GlobalAssignHook = globalAssignFunction
 Page.GlobalReleaseHook = globalReleaseFunction
-describe Page := E -> net expression E
 
 new Page := Page => (cl) -> (
-     C := newClass(Page,new MutableHashTable); -- sigh
-     C.cache = new CacheTable;
-     b := C.dd = new PageMap;
-     b.degree = {};
-     b.source = b.target = C;
-     C)
-ring Page := C -> C.ring
-degree Page := C -> C.dd.degree
+    C := newClass(Page, new MutableHashTable); -- sigh
+    C.cache = new CacheTable;
+    b := C.dd = new PageMap;
+    b.degree = {};
+    b.source = b.target = C;
+    C)
 
+ring   Page := C -> C.ring
+degree Page := C -> C.dd.degree
 
 netPage = method()
 netPage(Page,List,List) := (E,mins,maxs) -> (
@@ -420,10 +410,12 @@ netPage(Page,List,List) := (E,mins,maxs) -> (
     finalmaxP := min {newmaxP,maxP};
     finalminP := max {newminP,minP};
     K := while finalmaxQ >= finalminQ list makeRow(finalmaxP, finalminP, finalmaxQ, P) do (finalmaxQ = finalmaxQ - 1);
-   -- netList(K, Boxes => false)
-   netList K
+    -- netList(K, Boxes => false)
+    netList K
     )
 
+-- printing
+describe Page := E -> net expression E
 net Page := E -> (
     L := select(keys E, i -> class i === List and E#i !=0);
     maxQ := max(apply(L, i -> i#1));
@@ -431,16 +423,16 @@ net Page := E -> (
     maxP := max(apply(L, i -> i#0));
     minP := min(apply(L,i -> i#0));
     K := while maxQ >= minQ list makeRow(maxP, minP, maxQ, E) do maxQ = maxQ - 1;
-   -- netList(K, Boxes => false)
-   netList K
+    -- netList(K, Boxes => false)
+    netList K
     )
 
 makeRow = method()
 makeRow(ZZ,ZZ,ZZ,Page) := (maxP,minP,q,E)->(L := {};
-      apply(minP .. maxP, i->
-	   if E#?{i,q} then L = append(L, stack(net E#{i,q}, "  ", net {i,q}))
-	   else L = append(L, stack(net 0, " ", net {i,q})));
-       L)
+    apply(minP .. maxP, i->
+	if E#?{i,q} then L = append(L, stack(net E#{i,q}, "  ", net {i,q}))
+	else L = append(L, stack(net 0, " ", net {i,q})));
+    L)
 
 Page _ List := (E,L) -> ( if E#?L then E#L else (ring E)^0 )
 
@@ -453,7 +445,7 @@ spots Page := List => (
 page = method (Options => {Prune => false})
 
 support Page := List => (
-     P -> sort select (spots P, i -> P#i != 0))
+    P -> sort select (spots P, i -> P#i != 0))
 
 -- at present there are no advanced constructors for page.
 
@@ -462,21 +454,16 @@ support Page := List => (
 
 -- this present method is mainly for testing code.  It might have other uses later. --
 page(List,List,Page) := Page => opts -> (L,M,E) -> (
-    if E.?ring then (
+    R := if E.?ring then E.ring else error "page does not have a ring";
     minP := L#0;
     maxP := L#1;
     minQ := M#0;
     maxQ := M#1;
-  --  E := new Page;
-  --  E.ring = A;
-    for i from minP to maxP do (
-	for j from minQ to maxQ do (
-	    E#{i,j} = (E.ring)^0;
-    )
-);
-E) else error "page does not have a ring"
-)
-
+    --  E := new Page;
+    --  E.ring = A;
+    for i from minP to maxP do
+    for j from minQ to maxQ do E#{i,j} = R^0;
+    E)
 
 --------------------------------------------------------------------------------
 -- PageMap
@@ -484,41 +471,37 @@ E) else error "page does not have a ring"
 
 PageMap = new Type of MutableHashTable
 PageMap.synonym = "page map"
+
 PageMap.GlobalAssignHook = globalAssignFunction
 PageMap.GlobalReleaseHook = globalReleaseFunction
-describe PageMap := d -> net expression d
 
+spots PageMap := List => d -> select(keys d,
+    i -> class i === List and all(i, j -> class j === ZZ))
 
-spots PageMap := List => (
-    d -> select(keys d, i -> class i === List and all(i, j -> class j === ZZ))
-    )
-
-support PageMap := List => (
-     d -> sort select (spots d, i -> d#i != 0))
-
+support PageMap := List => d -> sort select(spots d, i -> d#i != 0)
 
 PageMap _ List := Matrix => (f,i) ->  if f#?i then f#i else (
-      de := f.degree;
-      so := (f.source)_i;
-      ta := (f.target)_(i + de);
-      map(ta,so,0))
+    de := f.degree;
+    so := (f.source)_i;
+    ta := (f.target)_(i + de);
+    map(ta,so,0))
 
-
-
+-- printing
 lineOnTop := (s) -> concatenate(width s : "-") || s
 
+describe PageMap := d -> net expression d
 net PageMap := f -> (
-     v := between("",
-	  apply(spots f,
-	       i -> horizontalJoin(
-		         net (i + f.degree), " : " , net (target f#i), " <--",
-		         lineOnTop net f#i,
-		         "-- ", net source f#i, " : ", net i
-		    )
-	       )
-	       );
-	  stack v
-)
+    v := between("",
+	apply(spots f,
+	    i -> horizontalJoin(
+		net (i + f.degree), " : " , net (target f#i), " <--",
+		lineOnTop net f#i,
+		"-- ", net source f#i, " : ", net i
+		)
+	    )
+	);
+    stack v
+    )
 
 -- at present there are no constructors for pageMap
 
@@ -532,122 +515,100 @@ SpectralSequence.synonym = "spectral sequence"
 SpectralSequence.GlobalAssignHook = globalAssignFunction
 SpectralSequence.GlobalReleaseHook = globalReleaseFunction
 
+-- printing
 describe SpectralSequence := E -> net expression E
 net SpectralSequence := E -> (
     if hasAttribute(E, ReverseDictionary)
     then toString getAttribute(E, ReverseDictionary)
     else net expression E)
 expression SpectralSequence := E -> stack(
-  "  .-.  ",
-  " (o o) ",
-  " | O \\   Unnamed spectral sequence! ..ooOOOooooOO",
-  "  \\   \\  ",
-  "   `~~~` ")
+    "  .-.  ",
+    " (o o) ",
+    " | O \\   Unnamed spectral sequence! ..ooOOOooooOO",
+    "  \\   \\  ",
+    "   `~~~` ")
 
-
-spectralSequence = method (Options =>{Prune => false})
-
+spectralSequence = method (Options => { Prune => false })
 spectralSequence FilteredComplex := SpectralSequence => opts -> K -> (
-     new SpectralSequence from {
-	  symbol filteredComplex => K,
-	  symbol cache => CacheTable,
-	  symbol Prune => opts.Prune}
-     )
+    new SpectralSequence from {
+	symbol filteredComplex => K,
+	symbol cache => CacheTable,
+	symbol Prune => opts.Prune}
+    )
 
-SpectralSequence ^ InfiniteNumber:=
-  SpectralSequence ^ ZZ := SpectralSequencePage => (E,r) -> (
-      -- the case that r is an infinite number has been rewritten
-      -- and also returns a page --- with no maps!
-      -- this fixes an earlier bug.
-      if class r === InfiniteNumber then (
-    if r < 0 then error "expected an infinite number bigger than zero"
-    else (
-	myList := {};
-	K := E.filteredComplex;
-	s := max K - min K + 1;
-	H := new Page;
-	-- again trying to handle the case of the zero complex --
-    if min K_(infinity) < infinity and max K_infinity > - infinity then (
-	    for p from min K to max K do (
-		for q from -p + min K_(infinity) to max K_(infinity) + 1 do (
-		    if E.Prune == false then H#{p,q} = epq(K,p,q,s)
-		    else H#{p,q} = prune epq(K,p,q,s)
-	       );
-	   );
-       );
-   ) ;
-
-H
-)
-      else (
-       if E#?r then E#r else (
-       E#r = spectralSequencePage(E.filteredComplex,r, Prune => E.Prune););
-       E#r
-       )
-       )
+-- TODO: also cache E^infinity
+SpectralSequence ^ InfiniteNumber :=
+SpectralSequence ^ ZZ := SpectralSequencePage => (E,r) -> (
+    -- the case that r is an infinite number has been rewritten
+    -- and also returns a page --- with no maps!
+    -- this fixes an earlier bug.
+    if class r === InfiniteNumber then (
+	if r < 0 then error "expected an infinite number bigger than zero"
+	else (
+	    myList := {};
+	    K := E.filteredComplex;
+	    s := max K - min K + 1;
+	    H := new Page;
+	    -- again trying to handle the case of the zero complex --
+	    if min K_(infinity) < infinity and max K_infinity > - infinity then (
+		for p from min K to max K do (
+		    for q from -p + min K_(infinity) to max K_(infinity) + 1 do (
+			H#{p,q} = if E.Prune then prune epq(K,p,q,s) else epq(K,p,q,s)
+			);
+		    );
+		);
+	    );
+	H)
+    else E#r ??= spectralSequencePage(E.filteredComplex,r, Prune => E.Prune)
+    )
 
 SpectralSequence _ InfiniteNumber :=
 SpectralSequence _ ZZ := SpectralSequencePage => (E,r) -> ( E^r )
 
-minimalPresentation SpectralSequence := prune SpectralSequence := SpectralSequence  => opts -> (E) -> (
-	  spectralSequence(E.filteredComplex, Prune => true)
-	  )
-
-----------------------------------------------------------------------------
+minimalPresentation SpectralSequence := prune SpectralSequence := SpectralSequence => opts -> E -> (
+    spectralSequence(E.filteredComplex, Prune => true))
 
 --------------------------------------------------------------------------------
 -- spectral sequence pages
 --------------------------------------------------------------------------------
+
 SpectralSequencePage = new Type of Page
 SpectralSequencePage.synonym = "spectral sequence page"
 SpectralSequencePage.GlobalAssignHook = globalAssignFunction
 SpectralSequencePage.GlobalReleaseHook = globalReleaseFunction
-describe SpectralSequencePage := E -> net expression E
 
-spectralSequencePage = method (Options =>{Prune => false})
-
+spectralSequencePage = method(Options => { Prune => false })
 spectralSequencePage(FilteredComplex, ZZ) := SpectralSequencePage => opts ->  (K,r) -> (
-new SpectralSequencePage from
- {symbol filteredComplex=> K,
-       symbol Prune => opts.Prune,
-       symbol number => r,
-       symbol dd => spectralSequencePageMap(K,r, Prune => opts.Prune),
-       symbol cache => CacheTable}
-  )
+    new SpectralSequencePage from {
+	symbol filteredComplex => K,
+	symbol number          => r,
+	symbol dd              => spectralSequencePageMap(K, r, opts),
+	symbol Prune           => opts.Prune,
+	symbol cache           => CacheTable}
+    )
 
-minimalPresentation SpectralSequencePage := prune SpectralSequencePage := SpectralSequencePage  => opts -> (E) -> (
-     spectralSequencePage(E.filteredComplex, E.number, Prune => true)
-     )
+minimalPresentation SpectralSequencePage := prune SpectralSequencePage := SpectralSequencePage  => opts -> E -> (
+    spectralSequencePage(E.filteredComplex, E.number, Prune => true))
 
-SpectralSequencePage _ List := Module => (E,i)-> ( source(E.dd _i) )
-
-
-SpectralSequencePage ^ List := Module => (E,i)-> (E_(-i))
+SpectralSequencePage _ List := Module => (E, i) -> source(E.dd_i)
+SpectralSequencePage ^ List := Module => (E, i) -> E_(-i)
 
 -- view the modules on a Spectral Sequence Page.  We are referring to these
 -- as the support of the page.
 
-
-
-
-
-
 page SpectralSequencePage := Page => opts -> E -> (
-	K := E.filteredComplex;
-	s := E.number;
+    K := E.filteredComplex;
+    s := E.number;
     H := new Page;
     -- again trying to handle the case of the zero complex --
     if min K_(infinity) < infinity and max K_infinity > - infinity then (
-	    for p from min K to max K do (
-		for q from -p + min K_(infinity) to max K_(infinity) + 1 do (
---		    H#{p,q} = E^s_{p,q}
-		    if E.Prune == false then H#{p,q} = epq(K,p,q,s)
-		    else H#{p,q} = prune epq(K,p,q,s)
-	       )
-	   );
-       );
-    H
-    )
+	for p from min K to max K do (
+	    for q from -p + min K_(infinity) to max K_(infinity) + 1 do (
+		-- H#{p,q} = E^s_{p,q}
+		H#{p,q} = if E.Prune then prune epq(K,p,q,s) else epq(K,p,q,s))
+	    );
+	);
+    H)
 
 -- the following two methods are used to view the modules
 -- on the r th page in grid form.
@@ -656,9 +617,7 @@ page SpectralSequencePage := Page => opts -> E -> (
 
 net SpectralSequencePage := E -> (page E)
 
-support SpectralSequencePage := E -> (
-     new Page from apply(spots E.dd, i-> i=> source E.dd #i) )
-
+support SpectralSequencePage := E -> new Page from apply(spots E.dd, i-> i=> source E.dd #i)
 
 ------------------------------------------------------------------------
 -- below are the methods which compute the
@@ -675,22 +634,21 @@ support SpectralSequencePage := E -> (
 -- for a spectral sequence.
 
 cycles := (K,p,q,r) -> (
-ker inducedMap((K_infinity)_(p+q-1) / K_(p-r) _ (p+q-1),
-     K_p _ (p+q), K_(infinity).dd_(p+q), Verify => false))
+    ker inducedMap((K_infinity)_(p+q-1) / K_(p-r) _ (p+q-1),
+	K_p _ (p+q), K_(infinity).dd_(p+q), Verify => false))
 
 boundaries := (K,p,q,r) -> (
-    ( image (K_(p+r-1).dd_(p+q+1))) + (K_(p-1) _ (p+q)))
+    image K_(p+r-1).dd_(p+q+1) + K_(p-1) _ (p+q))
 
 -- compute the pq modules on the rth page
 epq = method()
-epq(FilteredComplex,ZZ,ZZ,ZZ) := (K,p,q,r) -> (
-    ((cycles(K,p,q,r) + boundaries(K,p,q,r)) / boundaries(K,p,q,r)))
+epq(FilteredComplex, ZZ, ZZ, ZZ) := (K,p,q,r) -> (
+    (cycles(K,p,q,r) + boundaries(K,p,q,r)) / boundaries(K,p,q,r))
 
 -- the pq maps on the rth page.
 epqrMaps = method()
-epqrMaps(FilteredComplex,ZZ,ZZ,ZZ) := (K,p,q,r) -> (
-     inducedMap(epq(K,p-r,q+r-1,r), epq(K,p,q,r),(K_infinity).dd_(p+q), Verify => false))
-
+epqrMaps(FilteredComplex, ZZ, ZZ, ZZ) := (K,p,q,r) -> (
+    inducedMap(epq(K, p-r, q+r-1, r), epq(K,p,q,r), (K_infinity).dd_(p+q), Verify => false))
 
 -- prune the pq maps on the rth page. --
 --  "sourcePruningMap",
@@ -700,43 +658,41 @@ epqrMaps(FilteredComplex,ZZ,ZZ,ZZ) := (K,p,q,r) -> (
 
 pruneEpqrMaps = method()
 pruneEpqrMaps(FilteredComplex,ZZ,ZZ,ZZ) := (K,p,q,r) -> (
-     d := epqrMaps(K,p,q,r);
-     N := minimalPresentation(source d);
-     M := minimalPresentation(target d);
-     f := inverse(M.cache.pruningMap)* d * (N.cache.pruningMap);
-     f.cache #(symbol sourcePruningMap) = N.cache.pruningMap;
-     f.cache #(symbol targetPruningMap) = M.cache.pruningMap;
-     f
-     )
+    d := epqrMaps(K,p,q,r);
+    N := minimalPresentation(source d);
+    M := minimalPresentation(target d);
+    f := inverse(M.cache.pruningMap)* d * (N.cache.pruningMap);
+    f.cache #(symbol sourcePruningMap) = N.cache.pruningMap;
+    f.cache #(symbol targetPruningMap) = M.cache.pruningMap;
+    f)
 
 ErMaps = method(Options => {Prune => false})
-ErMaps(FilteredComplex,ZZ,ZZ,ZZ) := Matrix => opts -> (K,p,q,r) -> (if opts.Prune == false then
-     epqrMaps(K,p,q,r)
-     else   pruneEpqrMaps(K,p,q,r))
+ErMaps(FilteredComplex,ZZ,ZZ,ZZ) := Matrix => opts -> (K,p,q,r) -> (
+    if opts.Prune then pruneEpqrMaps(K,p,q,r) else epqrMaps(K,p,q,r))
 
 -- the homology at the pq spot on the rth page.
 rpqHomology = method()
 rpqHomology(SpectralSequence,ZZ,ZZ,ZZ) := (E,p,q,r) -> (
-      (ker(E^r .dd_{p,q})) / (image(E^r .dd_{p+r,q-r+1}) )
-      )
+    ker E^r.dd_{p,q} / image E^r.dd_{p+r,q-r+1})
 
 -- the isomorphism of the homology at the pq spot
 -- on the r-th page and the module on at the pq spot on the r+1-th page.
 homologyIsomorphism = method()
 homologyIsomorphism(SpectralSequence,ZZ,ZZ,ZZ) := (E,p,q,r) -> (
-    if E.Prune == false then
-inducedMap(source (E^(r+1) .dd_{p,q}),rpqHomology(E,p,q,r), id_(E^(r+1) .filteredComplex _infinity _(p+q)), Verify=>false) -- if Verify not set to false can get error when running on M2 1.9
-    else
-    rpqPruneIsomorphism(E,p,q,r)
-  )
+    if E.Prune then rpqPruneIsomorphism(E,p,q,r)
+    else inducedMap(
+	source (E^(r+1) .dd_{p,q}), rpqHomology(E,p,q,r),
+	-- FIXME: if Verify not set to false can get error when running on M2 1.9
+	id_(E^(r+1) .filteredComplex _infinity _(p+q)), Verify => false))
 
 rpqPruneIsomorphism = method()
 rpqPruneIsomorphism(SpectralSequence,ZZ,ZZ,ZZ) := (E,p,q,r) -> (
     M := rpqHomology(E,p,q,r);
-    f := inducedMap(target (E^(r + 1) .dd_{p,q}) .cache.sourcePruningMap,
-	    M, (E^r .dd_{p,q}).cache.sourcePruningMap, Verify=>false); -- if Verify not set to false can get error when running on M2 1.9
-	inverse((E^(r + 1) .dd_{p,q}) .cache.sourcePruningMap) * f
-  )
+    f := inducedMap(
+	target (E^(r + 1) .dd_{p,q}) .cache.sourcePruningMap, M,
+	-- FIXME: if Verify not set to false can get error when running on M2 1.9
+	(E^r .dd_{p,q}).cache.sourcePruningMap, Verify => false);
+    inverse((E^(r + 1) .dd_{p,q}) .cache.sourcePruningMap) * f)
 
 ---
 -- Spectral Sequence Page Maps
@@ -744,39 +700,36 @@ rpqPruneIsomorphism(SpectralSequence,ZZ,ZZ,ZZ) := (E,p,q,r) -> (
 
 SpectralSequencePageMap = new Type of PageMap
 SpectralSequencePageMap.synonym = "spectral sequence page map"
-SpectralSequencePageMap.synonym = "spectral sequence page map"
 SpectralSequencePageMap.GlobalAssignHook = globalAssignFunction
 SpectralSequencePageMap.GlobalReleaseHook = globalReleaseFunction
-describe SpectralSequencePageMap := d -> net expression d
-
-
 
 spectralSequencePageMap = method(Options =>{Prune => false})
 
-spectralSequencePageMap(FilteredComplex,ZZ) := SpectralSequencePageMap => opts ->
- (K,r) -> (myList:={};
-     -- try to handle case coming from the zero complex --
-     Kmin := min K_infinity; Kmax := max K_(infinity);
-     if class Kmin < infinity  and Kmax > - infinity then (
-           for p from min K to max K do (
-		for q from -p + min K_(infinity) to max K_(infinity) -p do (
-		     myList =
-		     append(myList, {p,q} => ErMaps(K,p,q,r, Prune => opts.Prune)) )); );
-	       new SpectralSequencePageMap from
-	       join (myList, {symbol cache =>  new CacheTable,
-		    symbol degree => {-r,r-1},
-		    symbol filteredComplex => K,
-		    symbol Prune => opts.Prune})
-      )
+-- FIXME
+spectralSequencePageMap(FilteredComplex,ZZ) := SpectralSequencePageMap => opts -> (K,r) -> (
+    myList := {};
+    -- try to handle case coming from the zero complex --
+    Kmin := min K_infinity; Kmax := max K_(infinity);
+    if class Kmin < infinity  and Kmax > - infinity then (
+	for p from min K to max K do (
+	    for q from -p + min K_(infinity) to max K_(infinity) -p do (
+		myList =
+		append(myList, {p,q} => ErMaps(K,p,q,r, Prune => opts.Prune)) )); );
+    new SpectralSequencePageMap from join(myList, {
+	symbol degree          => {-r, r-1},
+	symbol filteredComplex => K,
+	symbol Prune           => opts.Prune,
+	symbol cache           => new CacheTable,
+	}
+    )
+)
 
-
-SpectralSequencePageMap _ List := Matrix => (d,i)-> (if (d)#?i then d#i
-	  else
-	       if d.Prune == false then
-	            epqrMaps(d.filteredComplex,i#0,i#1,- d.degree #0)
-	       else
-		    pruneEpqrMaps(d.filteredComplex,i#0,i#1,- d.degree #0)
-		    )
+SpectralSequencePageMap _ List := Matrix => (d,i)-> (
+    if d#?i then d#i else
+    if d.Prune
+    then pruneEpqrMaps(d.filteredComplex,i#0,i#1,- d.degree #0)
+    else epqrMaps(d.filteredComplex,i#0,i#1,- d.degree #0)
+    )
 
 SpectralSequencePageMap ^ List := Matrix => (d,i)-> (d_(-i))
 
@@ -810,39 +763,31 @@ ProjectiveHilbertPolynomial - ZZ := (P, N) -> P - hilbertPolynomial N
 ZZ - ProjectiveHilbertPolynomial := (P,N) -> hilbertPolynomial P - N
 ---
 
-hilbertPolynomial (SpectralSequencePage) := Page => o -> (E) -> (
+hilbertPolynomial SpectralSequencePage := Page => o -> E -> (
     P := new Page;
     apply(spots E .dd, i -> P#i = hilbertPolynomial(E_i));
-    P
-    )
+    P)
 
 pruningMaps = method()
-pruningMaps(SpectralSequencePage) := (E) -> ( if E.Prune == false then error "page is not pruned"
-    else
+pruningMaps SpectralSequencePage := E -> (
+    if not E.Prune then error "page is not pruned";
     P := new PageMap;
     P.degree = E.dd.degree;
     apply(spots E.dd, i -> P#i = E.dd_i .cache.sourcePruningMap);
-    P
-    )
+    P)
 
-basis (ZZ,SpectralSequencePage) := opts -> (deg,E) -> (
+basis(ZZ,   SpectralSequencePage) :=
+basis(List, SpectralSequencePage) := opts -> (deg, E) -> (
     P := new Page;
     apply(spots E.dd, i -> P#i = basis(deg,E_i));
-    P
-    )
-
-basis (List,SpectralSequencePage) := opts -> (deg,E) -> (
-    P := new Page;
-    apply(spots E.dd, i -> P#i = basis(deg,E_i));
-    P
-    )
+    P)
 --
 --
 --
 
 edgeComplex = method()
 edgeComplex(SpectralSequence) := (E) -> (
-    if E.Prune == true then error "not currently implemented for pruned spectral sequences";
+    if E.Prune then error "not currently implemented for pruned spectral sequences";
     M := select(spots E^2 .dd, i -> E^2_i != 0);
     l := min apply(M, i -> i#0);
     m := min apply(M, i -> i#1);
