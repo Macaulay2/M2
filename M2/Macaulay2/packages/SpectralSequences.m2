@@ -225,14 +225,12 @@ filteredComplex(List) := FilteredComplex => opts -> L -> (
 
 
 -- make the filtered complex associated to the "naive truncation of a chain complex"
-filteredComplex(Complex) := FilteredComplex => opts-> C->(
-    (n, m) := concentration C;
-    p := length C;
-    if p > 0  then (
-    H := for i from 1 to p list inducedMap(C, naiveTruncation(C, -i));
-    filteredComplex( H, Shift => - m) )
-    else filteredComplex {map(C, image(0 * id_C), id_C)}--{map(C, id_C} -- now the constructor supports the zero chain complex
-	      )
+filteredComplex Complex := FilteredComplex => opts -> C -> (
+    (lo, hi) := concentration C;
+    if C^dd == 0
+    then filteredComplex{ map(C, image(0 * id_C), id_C) }
+    else filteredComplex(Shift => -lo,
+	apply(hi-lo, i -> inducedMap(C, naiveTruncation(C, lo, hi-i-1)))))
 
 --produce the "x-filtration" of the tensor product complex.
 xTensormodules := (p,q,T) -> (
