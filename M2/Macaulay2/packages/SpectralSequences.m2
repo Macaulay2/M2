@@ -68,7 +68,6 @@ export {
     "targetPruningMap",
     "Page",
     "PageMap",
-    "pageMap",
     "page" ,
     "pruningMaps",
     "edgeComplex",
@@ -503,9 +502,6 @@ net PageMap := f -> (
     stack v
     )
 
--- at present there are no constructors for pageMap
-
-
 --------------------------------------------------------------------------------
 -- spectral sequences
 --------------------------------------------------------------------------------
@@ -796,7 +792,7 @@ associatedGradedHomologyObject(ZZ, ZZ, FilteredComplex) := (p,n,K) -> (
 beginDocumentation()
 
 load "./SpectralSequences/docs.m2"
-
+load "./SpectralSequences/examples.m2"
 load "./SpectralSequences/tests.m2"
 
 ---
