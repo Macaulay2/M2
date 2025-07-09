@@ -19,8 +19,8 @@ newPackage(
     "SpectralSequences",
     Headline => "spectral sequences and filtered complexes",
     Keywords => { "Homological Algebra" },
-    Version  => "1.1",
-    Date     => "8 July 2025",
+    Version  => "1.2",
+    Date     => "9 July 2025",
     Authors  => {
 	{
 	    Name => "David Berlekamp",
