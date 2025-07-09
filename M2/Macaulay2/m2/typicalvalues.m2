@@ -125,8 +125,12 @@ generateTypicalValues = (srcdir) -> (
     outfile << "-- DONE: generated based on " | version#"git description" << endl << close)
 
 -- if missing or not successfully generated, tvalues.m2 is regenerated directly
-if not fileExists typicalValuesSource or not match("-- DONE", get typicalValuesSource)
-then generateTypicalValues(currentFileDirectory | "../d/")
+ddir := currentFileDirectory | "../d/"
+if (
+    not fileExists typicalValuesSource or
+    not match("-- DONE", get typicalValuesSource) or
+    isDirectory ddir and fileTime typicalValuesSource < fileTime ddir)
+then generateTypicalValues ddir
 
 -----------------------------------------------------------------------------
 -- numerical functions that will be wrapped
