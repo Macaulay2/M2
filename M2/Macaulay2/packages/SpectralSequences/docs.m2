@@ -308,24 +308,21 @@ Node
     Text
       By multiplying a chain complex by successive powers of an ideal we obtain a filtered complex.
     Example
-      B = QQ[a..d]
-      J = ideal vars B
-      C = res monomialCurveIdeal(B,{1,3,4})
-      K = filteredComplex(J,C,4)
+      S = QQ[a..d]
+      J = ideal vars S
+      C = res monomialCurveIdeal(S,{1,3,4})
+      K = filteredComplex(J,C,2)
     Text
       Here are higher some pages of the associated spectral sequence:
     Example
-      e = prune spectralSequence K
-      e^2
-      -- e^3
-      -- e^3 .dd
-      -- e^4
-      -- e^4 .dd
-      assert(all(keys support e^0, j -> isIsomorphism homologyIsomorphism(e,j#0,j#1,0)))
-      assert(all(keys support e^1, j -> isIsomorphism homologyIsomorphism(e,j#0,j#1,1)))
-      assert(all(keys support e^2, j -> isIsomorphism homologyIsomorphism(e,j#0,j#1,2)))
-      assert(all(keys support e^3, j -> isIsomorphism homologyIsomorphism(e,j#0,j#1,3)))
-      assert(all(keys support e^4, j -> isIsomorphism homologyIsomorphism(e,j#0,j#1,4)))
+      E = prune spectralSequence K
+      E^2
+      E^3
+      assert all(keys support E^0, j -> isIsomorphism homologyIsomorphism(E, j#0, j#1, 0))
+      assert all(keys support E^1, j -> isIsomorphism homologyIsomorphism(E, j#0, j#1, 1))
+      assert all(keys support E^2, j -> isIsomorphism homologyIsomorphism(E, j#0, j#1, 2))
+      assert all(keys support E^3, j -> isIsomorphism homologyIsomorphism(E, j#0, j#1, 3))
+      assert all(keys support E^4, j -> isIsomorphism homologyIsomorphism(E, j#0, j#1, 4))
 
 Node
   Key
@@ -627,13 +624,14 @@ doc ///
       B = QQ[a..d];
       J = ideal vars B;
       C = res monomialCurveIdeal(B,{1,3,4});
-      K = filteredComplex(J,C,4);
+      K = filteredComplex(J,C,2);
       E = spectralSequence K
     Text
-      To view pages or maps we proceed as follows (note we suppress the output of the E^0.dd command to prevent excessive output).
+      To view pages or maps we proceed as follows.
     Example
-      E^0
-      E^0 .dd;
+      E^2
+      support E^2 .dd
+      E^2 .dd _{0,1}
       E^infinity
   SeeAlso
     SpectralSequence
@@ -661,14 +659,10 @@ doc ///
   Description
     Text
       Returns the k-th page of the spectral sequence.
-
-      Consider the filtered complex $K$ below, obtained by multiplying the minimal free resolution of
-      the rational quartic space curve by successive powers of the irrelevant ideal.
     Example
-      B = QQ[a..d];
-      J = ideal vars B;
-      C = res monomialCurveIdeal(B,{1,3,4});
-      K = filteredComplex(J,C,4);
+      S = QQ[a..d];
+      C = koszulComplex vars S
+      K = filteredComplex C
     Text
       Let $E$ be the spectral sequence determined by $K$.
     Example
@@ -767,10 +761,10 @@ doc ///
       obtained by multiplying the minimal free resolution of the rational
       quartic space curve by successive powers of the irrelevant ideal.
     Example
-      B = QQ[a..d];
-      J = ideal vars B;
-      C = res monomialCurveIdeal(B,{1,3,4});
-      K = filteredComplex(J,C,4);
+      S = QQ[a..d];
+      J = ideal vars S;
+      C = res monomialCurveIdeal(S, {1,3,4});
+      K = filteredComplex(J,C,2);
     Text
       Compare some pages of the non-pruned version of the spectral sequence with that of the pruned version.
     Example
@@ -832,10 +826,10 @@ doc ///
       As a specific example consider the filtered complex $K$ below, obtained by multiplying the minimal free resolution of
       the rational quartic space curve by successive powers of the irrelevant ideal.
     Example
-      B = QQ[a..d];
-      J = ideal vars B;
-      C = res monomialCurveIdeal(B,{1,3,4});
-      K = filteredComplex(J,C,4);
+      S = QQ[a..d];
+      J = ideal vars S;
+      C = res monomialCurveIdeal(S,{1,3,4});
+      K = filteredComplex(J,C,2);
     Text
       The infinity page of the resulting spectral sequence is computed below.
     Example
@@ -929,8 +923,8 @@ doc ///
 	> "hilbertPolynomial(Page)"
 	> "SpectralSequencePage ^ List"
   Caveat
-      The isomorphisms $4$ and $4$' are not explicitly
-      part of the data type, although they can be obtained by using the command @TO"homologyIsomorphism"@.
+      The isomorphisms above are not explicitly part of the data type,
+      but they can be obtained by using the command @TO"homologyIsomorphism"@.
   SeeAlso
     SpectralSequence
     SpectralSequencePageMap
@@ -955,10 +949,10 @@ doc ///
       Consider the filtered complex $K$ below, obtained by multiplying the minimal free resolution of
       the rational quartic space curve by successive powers of the irrelevant ideal.
     Example
-      B = QQ[a..d];
-      J = ideal vars B;
-      C = res monomialCurveIdeal(B,{1,3,4});
-      K = filteredComplex(J,C,4);
+      S = QQ[a..d];
+      J = ideal vars S;
+      C = res monomialCurveIdeal(S, {1,3,4});
+      K = filteredComplex(J,C,2);
     Text
       Let $E$ be the spectral sequence determined by $K$.
     Example
@@ -967,7 +961,7 @@ doc ///
       We now compute some pages.
     Example
       E^0
-      E^1
+      E^2
       E^infinity
 ///
 
@@ -988,15 +982,18 @@ doc ///
     Text
       This is the primitive spectral sequence page constructor.
     Example
-      B = QQ[a..d];
-      J = ideal vars B;
-      C = res monomialCurveIdeal(B,{1,3,4});
-      K = filteredComplex(J,C,4);
+      S = QQ[a..d];
+      J = ideal vars S;
+      C = res monomialCurveIdeal(S,{1,3,4});
+      K = filteredComplex(J,C,2);
       E = spectralSequence K
     Text
-      To view pages and or maps we proceed, for example, as follows
+      To view pages or maps we proceed as follows.
     Example
-      E^0
+      E^2
+      support E^2 .dd
+      E^2 .dd _{0,1}
+      E^infinity
   SeeAlso
     spectralSequence
     (spectralSequence, FilteredComplex)
@@ -1053,18 +1050,11 @@ doc ///
   Description
     Text
       Returns the pruning maps which are cached in the process of pruning the spectral sequence page.
-
-      As a specific example consider the filtered complex $K$ below, obtained by multiplying the minimal free resolution of
-      the rational quartic space curve by successive powers of the irrelevant ideal.
     Example
-      B = QQ[a..d];
-      J = ideal vars B;
-      C = res monomialCurveIdeal(B,{1,3,4});
-      K = filteredComplex(J,C,4);
-    Text
-      We compute an example of a pruning map below.
-    Example
-      E = prune spectralSequence K;
+      S = QQ[a..d];
+      C = koszulComplex vars S
+      K = filteredComplex C
+      E = prune spectralSequence K
       pruningMaps E^2
   SeeAlso
     (prune, SpectralSequence)
@@ -1084,25 +1074,25 @@ doc ///
     L:List
     E:SpectralSequencePage
   Outputs
-      B:Matrix --Note!!  The output should actually be a page!!
+    B:Page
   Description
     Text
-      Returns generators for the requested (multi)degree of the spectral sequence page.  It is designed to extend
-      the function @TO"basis"@ which can be applied to modules, for instance.
+      Returns generators for the requested (multi)degree of the spectral sequence page.
+      It is designed to extend the function @TO"basis"@ which can be applied to modules, for instance.
 
       As a specific example consider the filtered complex $K$ below, obtained by multiplying the minimal free resolution of
       the rational quartic space curve by successive powers of the irrelevant ideal.
     Example
-      B = QQ[a..d];
-      J = ideal vars B;
-      C = res monomialCurveIdeal(B,{1,3,4});
-      K = filteredComplex(J,C,4);
+      S = QQ[a..d];
+      J = ideal vars S;
+      C = res monomialCurveIdeal(S, {1,3,4});
+      K = filteredComplex(J,C,2);
     Text
       We compute the degree $0$ piece of the $E^3$ page below.
     Example
       E = prune spectralSequence K;
       E^3
-      basis(0,E^3)
+      basis(0, E^3)
   SeeAlso
       basis
 ///
@@ -1125,15 +1115,17 @@ doc ///
       As a specific example consider the filtered complex $K$ below, obtained by multiplying the minimal free resolution of
       the rational quartic space curve by successive powers of the irrelevant ideal.
     Example
-      B = QQ[a..d];
-      J = ideal vars B;
-      C = res monomialCurveIdeal(B,{1,3,4});
-      K = filteredComplex(J,C,4);
+      S = QQ[a..d];
+      J = ideal vars S;
+      C = res monomialCurveIdeal(S, {1,3,4});
+      K = filteredComplex(J,C,2);
     Text
       We compute the degree $0$ piece of the $E^3$ page below.
     Example
       E = prune spectralSequence K;
-      hilbertPolynomial(E^3)
+      hilbertPolynomial(E^0)
+      hilbertPolynomial(E^1)
+      hilbertPolynomial(E^infinity)
 ///
 
 doc ///
@@ -1158,10 +1150,10 @@ doc ///
       As a specific example consider the filtered complex $K$ below, obtained by multiplying the minimal free resolution of
       the rational quartic space curve by successive powers of the irrelevant ideal.
     Example
-      B = QQ[a..d];
-      J = ideal vars B;
-      C = res monomialCurveIdeal(B,{1,3,4});
-      K = filteredComplex(J,C,4);
+      S = QQ[a..d];
+      J = ideal vars S;
+      C = res monomialCurveIdeal(S, {1,3,4});
+      K = filteredComplex(J,C,2);
     Text
       Compare some pruned and non-prunded pages the spectral sequence $E$ below.
     Example
@@ -1243,15 +1235,17 @@ doc ///
       As a specific example consider the filtered complex $K$ below, obtained by multiplying the minimal free resolution of
       the rational quartic space curve by successive powers of the irrelevant ideal.
     Example
-      B = QQ[a..d];
-      J = ideal vars B;
-      C = res monomialCurveIdeal(B,{1,3,4});
-      K = filteredComplex(J,C,4);
+      S = QQ[a..d];
+      J = ideal vars S;
+      C = res monomialCurveIdeal(S, {1,3,4});
+      K = filteredComplex(J,C,2);
     Text
       We compute an example of a pruning map below.
     Example
       E = prune spectralSequence K;
-      pruningMaps E^2
+      D = E^2 .dd
+      support D
+      D_{0,1}
   SeeAlso
     Page
     SpectralSequencePageMap
@@ -1326,10 +1320,10 @@ doc ///
     Text
       The notation @TT "P.dd_{p,q}"@ returns the map with source the homological {p,q} term on a spectral sequence page.
     Example
-      B = QQ[a..d];
-      J = ideal vars B;
-      C = res monomialCurveIdeal(B,{1,2,3});
-      K = filteredComplex(J,C,4);
+      S = QQ[a..d];
+      J = ideal vars S;
+      C = res monomialCurveIdeal(S, {1,2,3});
+      K = filteredComplex(J,C,2);
     Text
       We compute a map on the third page of the spectral sequence associated to $K$.
     Example
