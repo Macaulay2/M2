@@ -10,6 +10,7 @@ undocumented {
     (net, PageMap),
     (net, SpectralSequence),
     (net, SpectralSequencePage),
+    (page, Page),
     (page, SpectralSequencePage),
     (ring, Page),
     (spots, PageMap),
@@ -925,7 +926,7 @@ doc ///
 	> "minimalPresentation(SpectralSequencePage)"
 	> "pruningMaps(SpectralSequencePage)"
 	> "basis(List,SpectralSequencePage)"
-	> "hilbertPolynomial(SpectralSequencePage)"
+	> "hilbertPolynomial(Page)"
 	> "SpectralSequencePage ^ List"
   Caveat
       The isomorphisms $4$ and $4$' are not explicitly
@@ -1108,18 +1109,18 @@ doc ///
 
 doc ///
   Key
-    (hilbertPolynomial, SpectralSequencePage)
+    (hilbertPolynomial, Page)
   Headline
-    the Hilbert polynomial of a spectral sequence page
+    the Hilbert polynomial of a page
   Usage
     H = hilbertPolynomial(E)
   Inputs
-    E:SpectralSequencePage
+    E:Page
   Outputs
       H:Page
   Description
     Text
-      Returns the Hilbert polynomials of all modules of the spectral sequence page
+      Returns the Hilbert polynomials of all modules in a page.
 
       As a specific example consider the filtered complex $K$ below, obtained by multiplying the minimal free resolution of
       the rational quartic space curve by successive powers of the irrelevant ideal.

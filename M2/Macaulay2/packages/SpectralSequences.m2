@@ -68,7 +68,7 @@ export {
     "targetPruningMap",
     "Page",
     "PageMap",
-    "page" ,
+    "page",
     "pruningMaps",
     "edgeComplex",
     "filteredHomologyObject",
@@ -608,6 +608,7 @@ page SpectralSequencePage := Page => opts -> E -> (
 	    );
 	);
     H)
+page Page := Page => opts -> identity
 
 -- the following two methods are used to view the modules
 -- on the r th page in grid form.
@@ -745,9 +746,9 @@ connectingMorphism(ComplexMap, ZZ) := (a, n) -> (
     e := spectralSequence K;
     e^1 .dd_{1, n})
 
-hilbertPolynomial SpectralSequencePage := Page => o -> E -> (
+hilbertPolynomial Page := Page => o -> E -> (
     P := new Page;
-    apply(spots E .dd, i -> P#i = hilbertPolynomial(E_i));
+    apply(spots page E, i -> P#i = hilbertPolynomial(E_i));
     P)
 
 pruningMaps = method()
@@ -759,7 +760,7 @@ pruningMaps SpectralSequencePage := E -> (
     P)
 
 basis(ZZ,   SpectralSequencePage) :=
-basis(List, SpectralSequencePage) := opts -> (deg, E) -> (
+basis(List, SpectralSequencePage) := Page => opts -> (deg, E) -> (
     P := new Page;
     apply(spots E.dd, i -> P#i = basis(deg,E_i));
     P)
