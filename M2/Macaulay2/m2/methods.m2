@@ -301,6 +301,7 @@ default = method()
 --     m ())
 
 random = method(Options => {
+	CoefficientRing => null,
 	  MaximalRank => false,
 	  Density => 1.,
 	  UpperTriangular => false,
