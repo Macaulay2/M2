@@ -440,7 +440,7 @@ if(BUILD_TESTING)
 
   # TODO: overflow tests
   # TODO: break up into multiple branches
-  add_executable(M2-unit-tests
+  add_executable(M2-unit-tests EXCLUDE_FROM_ALL
     unit-tests/M2-cpp-replacement.cpp
 
     unit-tests/util-polyring-creation.hpp
