@@ -144,7 +144,7 @@ homTensorAdjoint(Module, Module, Module) := (L, M, N) -> (
 -- package code ----------------------------------------------------
 --------------------------------------------------------------------
 load "./Complexes/ChainComplex.m2"
-load "./Complexes/FreeResolutions.m2"
+load "./Complexes/FreeResolution.m2"
 load "./Complexes/ChainComplexMap.m2"
 load "./Complexes/Tor.m2"
 load "./Complexes/Ext.m2"
