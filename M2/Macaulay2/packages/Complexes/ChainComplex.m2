@@ -1229,6 +1229,7 @@ Ext(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
     )
 
 yonedaExtension = method()
+yonedaExtension Vector := Complex => f -> yonedaExtension matrix f
 yonedaExtension Matrix := Complex => f -> (
     -- f: R^1 --> Ext^d(M,N) = E
     -- construct the chain complex:
