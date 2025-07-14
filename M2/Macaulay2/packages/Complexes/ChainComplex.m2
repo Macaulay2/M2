@@ -683,10 +683,8 @@ poincareN Complex := C -> (
     f
     )
 
-rank Complex := ZZ => C -> (
-    (lo, hi) := concentration C;
-    sum for i from lo to hi list (-1)^i * rank C_i
-    )
+rank Complex := C ->
+    sum(pairs C.module, (i, M) -> (-1)^i * rank M)
 
 hilbertPolynomial Complex := o -> C ->
     sum(pairs C.module, (i, M) -> (-1)^i * hilbertPolynomial(M, o))
