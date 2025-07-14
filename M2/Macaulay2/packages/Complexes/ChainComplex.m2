@@ -692,7 +692,7 @@ hilbertPolynomial Complex := o -> C ->
 euler Complex := C -> euler hilbertPolynomial C
 
 minimalPresentation Complex := 
-prune Complex := Complex => opts -> (cacheValue symbol minimalPresentation)(C -> (
+prune Complex := Complex => opts -> C -> C.cache.minimalPresentation ??= (
     -- opts is ignored here
     -- to be cached: in the input C: cache the result D
     --               in the result: cache pruningMap: D --> C
@@ -718,7 +718,7 @@ prune Complex := Complex => opts -> (cacheValue symbol minimalPresentation)(C ->
     D.cache.pruningMap = map(C,D,pruning);
     D.cache.pruningMap.cache.isCommutative = true;
     D
-    ))
+    )
 
 --------------------------------------------------------------------
 -- truncations -----------------------------------------------------
@@ -1146,13 +1146,9 @@ epicResolutionMap Complex := ComplexMap => opts -> C -> resolutionMapPrivate(C, 
 freeResolution Complex := opts -> C -> source resolutionMap(C, opts)
 
 augmentationMap = method()
-augmentationMap Complex := ComplexMap => 
-    (cacheValue symbol augmentationMap)(C -> (
-            if not C.cache.?Module then error "expected a free resolution";
-            M := C.cache.Module;
-            map(complex M, C, i -> if i === 0 then map(M, C_0, 1))
-            )
-        )
+augmentationMap Complex := ComplexMap => C -> C.cache.augmentationMap ??= (
+    M := try C.cache.Module else error "expected a free resolution";
+    map(complex M, C, i -> if i === 0 then map(M, C_0, 1)))
 
 -- TODO: get this to work over fields, poly rings, quotients, and also the local case.
 --       improve the performance of this function
