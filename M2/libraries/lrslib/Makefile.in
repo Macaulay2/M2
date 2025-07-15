@@ -4,7 +4,7 @@
 # run make -C ../..
 # reconfigure in the build directory
 HOMEPAGE = http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html
-URL = https://cgm.cs.mcgill.ca/~avis/C/lrslib/archive
+URL = https://macaulay2.com/Downloads/OtherSourceCode/
 VERSION = 073
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 TARFILE = lrslib-$(VERSION).tar.gz

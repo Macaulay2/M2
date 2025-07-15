@@ -864,7 +864,7 @@ _ADD_COMPONENT_DEPENDENCY(programs gfan "gmp;cddlib" GFAN)
 # http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html
 # TODO: the shared library target doesn't work on Apple
 ExternalProject_Add(build-lrslib
-  URL               https://cgm.cs.mcgill.ca/~avis/C/lrslib/archive/lrslib-073.tar.gz
+  URL               https://macaulay2.com/Downloads/OtherSourceCode/lrslib-073.tar.gz
   URL_HASH          SHA256=c49a4ebd856183473d1d5a62785fcdfe1057d5d671d4b96f3a1250eb1afe4e83
   PREFIX            libraries/lrslib
   SOURCE_DIR        libraries/lrslib/build
