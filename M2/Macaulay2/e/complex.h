@@ -10,7 +10,8 @@
 */
 
 #if !defined(SAFEC_EXPORTS)
-#include <engine-exports.h>
+//#include <engine-exports.h>
+#include "interface/m2-types.h"
 #endif
 
 #if defined(__cplusplus)

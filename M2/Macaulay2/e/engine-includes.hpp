@@ -10,7 +10,8 @@
 #include <M2/config.h>
 
 #if !defined(SAFEC_EXPORTS)
-#include <engine-exports.h>
+//#include <engine-exports.h>
+#include "interface/m2-types.h"
 #endif
 
 #if HAVE_STDINT_H

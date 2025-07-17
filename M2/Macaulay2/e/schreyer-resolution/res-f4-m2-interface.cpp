@@ -12,7 +12,7 @@
 #include "comp.hpp"                                       // for Computation
 #include "mat-linalg.hpp"                                 // for DMatLinAlg
 #include "dmat.hpp"                                       // for DMat
-#include "engine-exports.h"                               // for M2_arrayint
+#include "interface/m2-types.h"                           // for M2_arrayint
 #include "error.h"                                        // for ERROR
 #include "exceptions.hpp"                                 // for engine_error
 #include "freemod.hpp"                                    // for FreeModule

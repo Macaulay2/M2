@@ -6,7 +6,7 @@
 #include "VectorArithmetic.hpp"             // for VectorArithmetic
 #include "NCAlgebras/WordTable.hpp"         // for Overlap, WordTable
 #include "buffer.hpp"                       // for buffer
-#include "engine-exports.h"                 // for M2_gbTrace
+#include "interface/m2-types.h"                 // for M2_gbTrace
 #include "ring.hpp"                         // for Ring
 #include "ringelem.hpp"                     // for ring_elem
 #include "../system/supervisorinterface.h"  // for getAllowableThreads
