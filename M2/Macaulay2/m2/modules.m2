@@ -104,6 +104,7 @@ degree Vector := v -> (
      f := ambient v#0;
      first degrees source map(target f,,f))
 matrix Vector := opts -> v -> v#0
+vector Vector := identity
 new Matrix from Vector := (Matrix,v) -> v#0
 new Vector from Matrix := (M,f) -> (
      if not isFreeModule source f or numgens source f =!= 1 then error "expected source to be free with rank 1";
