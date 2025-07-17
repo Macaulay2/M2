@@ -9,3 +9,6 @@ assert(v·w == 11)
 assert try getSymbol "⟎⟎" then false else true
 
 assert((a⇒b) === (a => b))
+
+-- used to raise recursion error (M2/bugs/dan/1-recursion-in-printing)
+assert(vector vector {1} == vector(ZZ, 1))

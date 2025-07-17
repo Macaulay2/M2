@@ -22,3 +22,8 @@ gcd(p,q)
 assert( gcd(p,q) == d )
 -- test deferred, trying to get it to work
 -- factor p						    -- not implemented yet
+
+-- used to crash (M2/bugs/dan/1-factory-bug)
+R = ZZ/2[x,y,z,u,v]
+I = ideal(z^2 + x*y*z + x^2*y + x*y^2, u^2 + x*u + x, v^2 + y*v + y)
+assert(I == radical I)

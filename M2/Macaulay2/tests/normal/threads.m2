@@ -17,6 +17,8 @@ assert( 4 === taskResult t )
 t = schedule ( x -> x+2, 2 )
 assert( 4 === taskResult t )
 
+assert(hash schedule(() -> null) != hash schedule(() -> null))
+
 -- check whether thread local variables have separate values in separate threads
 threadVariable aaa
 assert( aaa === null )
