@@ -626,9 +626,7 @@ checkForWarnings := pkg -> (
 
 checkForErrors := pkg -> (
     if 0 < numDocumentationErrors then error("installPackage: ", toString numDocumentationErrors,
-	" error(s) occurred in processing documentation for package ", toString pkg);
-    if 0 < numExampleErrors then error("installPackage: ", toString numExampleErrors,
-	" error(s) occurred in running examples for package ", toString pkg))
+	" error(s) occurred in processing documentation for package ", toString pkg))
 
 -----------------------------------------------------------------------------
 -- installPackage
@@ -783,8 +781,9 @@ installPackage Package := opts -> pkg -> (
 	if 0 < numExampleErrors then verboseLog stack apply(readDirectory exampleOutputDir,
 	    file -> if match("\\.errors$", file) then stack {
 		file, concatenate(width file : "="), getErrors(exampleOutputDir | file)});
-
-	if not opts.IgnoreExampleErrors then checkForErrors pkg;
+	if not opts.IgnoreExampleErrors and  0 < numExampleErrors
+	then error("installPackage: ", numExampleErrors,
+	    " error(s) occurred in running examples for package ", pkg);
 
 	-- if no examples were generated, then remove the directory
 	if length readDirectory exampleOutputDir == 2 then removeDirectory exampleOutputDir;
