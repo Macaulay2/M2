@@ -29,10 +29,10 @@ clean::; rm -f version.m2
 STOP = --stop
 ARGS = -q --silent $(STOP) -e errorDepth=0
 TVFILES := $(wildcard @srcdir@/../d/*.d)
-all: tvalues.m2
-tvalues.m2: $(TVFILES) @pre_packagesdir@/Core
-	rm -f tvalues.m2 && @pre_exec_prefix@/bin/M2 $(ARGS) --no-preload -e 'exit 0'
-clean::;rm -f tvalues.m2
+all: @pre_packagesdir@/Core/tvalues.m2
+@pre_packagesdir@/Core/tvalues.m2: $(TVFILES) @pre_packagesdir@/Core
+	rm -f $@ && @pre_exec_prefix@/bin/M2 $(ARGS) --no-preload -e 'exit 0'
+clean::;rm -f @pre_packagesdir@/Core/tvalues.m2
 #################################
 all: tags
 tags: Makefile @srcdir@/TAGS @srcdir@/TAGS.doc
