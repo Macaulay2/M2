@@ -1,4 +1,4 @@
-#include "engine-exports.h"
+#include "../interface/m2-types.h"
 #include "M2mem-replacement.h"
 #include <memory.h>
 #include <M2/gc-include.h>
@@ -30,7 +30,7 @@ M2_string M2_join(M2_string x, M2_string y)
   //GC_CHECK_CLOBBER(p);
   return p;
 }
-M2_string M2_tostring(M2_constcharstarOrNull s)
+M2_string M2_tostring(const char* s)
 {
   int n = s ? strlen(s) : 0;
   M2_string p = getmematomicarraytype(M2_string,n);

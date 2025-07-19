@@ -3,7 +3,6 @@
 #ifndef _buffer_hpp_
 #define _buffer_hpp_
 
-#include "../d/M2mem.h"
 #include "newdelete.hpp"
 #include "engine-includes.hpp"
 #include <string>

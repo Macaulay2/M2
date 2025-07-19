@@ -221,7 +221,7 @@ NAMES_H = \
 	f4/varpower-monomial \
 	res-a0-pair
 
-C_FILES = error table exptable complex
+C_FILES = error table exptable complex # interface/m2-types interface/m2-mem
 
 D_FILES = 
 DD_FILES = #test
