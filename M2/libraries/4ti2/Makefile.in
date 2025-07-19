@@ -1,5 +1,5 @@
 # temporary beta testing version
-VERSION = 1.6.12
+VERSION = 1.6.13
 TARDIR = 4ti2-$(VERSION)
 
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
