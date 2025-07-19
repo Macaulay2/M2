@@ -38,8 +38,6 @@ set +x && cd "$1" && echo make: Entering directory \'`pwd`\' && set -x
 endef
 
 # terminology:
-#   subdirectories of the source tree
-#     usr-build  -- install tools needed for rebuilding the configure script here, if needed
 #   subdirectories of the build tree
 #     usr-host   -- install the results of compilation of libraries and programs here, for the target machine
 #     usr-dist   -- place copies of everything needed in the final Macaulay2 distribution here, for the target machine

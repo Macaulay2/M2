@@ -506,8 +506,6 @@ reproduciblePaths = outstr -> (
 	     outstr = replace(prefixdir | Layout#2#key,
 		 finalPrefix | Layout#1#key, outstr));
 	 outstr = replace(prefixdir, finalPrefix, outstr);
-	 -- usr-build/bin is in PATH during build
-	 outstr = replace(builddir | "usr-build/", finalPrefix, outstr);
 	 -- home directory
 	 outstr = replace(homedir, "/home/m2user", outstr);
 	 );
