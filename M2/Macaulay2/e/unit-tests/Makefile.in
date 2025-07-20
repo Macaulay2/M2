@@ -10,7 +10,6 @@ export LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 
 CPPFLAGS := -I. -I@srcdir@  -I@srcdir@/..  $(CPPFLAGS) \
      -isystem $(GTEST_DIR) -isystem $(GTEST_DIR)/include \
-	 -I@srcdir@/../../d -I../../d \
 	 -I@srcdir@/../../c #-Wno-unused-local-typedefs # ffpack has some of these.
 CXXFLAGS += -std=gnu++17 -Wno-sign-conversion #-Wno-unused-local-typedefs -coverage
 
@@ -31,7 +30,7 @@ check: runtests
 fullCheck: $(UNITTEST_TARGET)
 	valgrind --track-origins=yes ./$(UNITTEST_TARGET)
 
-$(UNITTEST_TARGET) : $(UNITTEST_OBJECT_FILES) $(E_OBJECT_FILES) ../../system/supervisor.o
+$(UNITTEST_TARGET) : $(UNITTEST_OBJECT_FILES) $(E_OBJECT_FILES) # ../../system/supervisor.o
 	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
 
 runtests: $(UNITTEST_TARGET)
@@ -43,10 +42,10 @@ ARingRRRTest :  ARingRRRTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES)
 ARingRRiTest :  ARingRRiTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES)
 	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
 
-ARingGFTest :  ARingGFTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES) ../../system/supervisor.o
+ARingGFTest :  ARingGFTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES) # ../../system/supervisor.o
 	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
 
-NCGroebnerTest :  NCGroebnerTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES) ../../system/supervisor.o
+NCGroebnerTest :  NCGroebnerTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES) # ../../system/supervisor.o
 	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
 
 runNCGroebnerTest : NCGroebnerTest

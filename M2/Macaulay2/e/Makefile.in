@@ -8,7 +8,11 @@ PRE.cc   = $(COMPILE.cc) -E
 
 include @srcdir@/Makefile.files
 include Makefile.common
-CPPFLAGS := -I@srcdir@ $(CPPFLAGS) -I../d -I@srcdir@/../c -I@srcdir@/../d -Wno-fatal-errors -Wno-unused-variable
+CPPFLAGS := -I@srcdir@ $(CPPFLAGS) \
+  -Wno-fatal-errors -Wno-unused-variable
+
+#  -I../d -I@srcdir@/../c -I@srcdir@/../d \
+
 CXXFLAGS += -Wno-unknown-pragmas -std=gnu++17 -Wno-macro-redefined
 
 DOXYGEN_CONF_DIR :=$(SRCDIR)/doxygen-settings
@@ -107,7 +111,7 @@ dups-okay: dups-tmp
 doxygen : ; cd @srcdir@ && doxygen
 distclean: clean; rm -f Makefile @srcdir@/TAGS
 
-SCCFLAGS += -I../d
+#SCCFLAGS += -I../d
 
 # we like using "struct" and "class" interchangeably
 CXXFLAGS += -Wno-mismatched-tags

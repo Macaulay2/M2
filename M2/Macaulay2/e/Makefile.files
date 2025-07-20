@@ -178,6 +178,8 @@ INTERFACE = \
 	weylalg
 
 COMMANDS = \
+	interface/m2-types \
+	interface/m2-mem \
 	ntl-internal \
 	ntl-debugio \
 	matrix-kbasis \

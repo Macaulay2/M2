@@ -27,8 +27,8 @@
 
 #ifndef __cplusplus /* These are coming from newdelete.hpp, in C++ */
 #include <M2/gc-include.h>
-#include "../d/M2mem.h"
-#include "../d/debug.h"
+//#include "../d/M2mem.h"
+//#include "../d/debug.h"
 #endif
 
 // IWYU pragma: end_exports

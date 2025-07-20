@@ -12,7 +12,7 @@
 
 #include "ExponentList.hpp"    // for index_varpower, varpower, const_v...
 #include "ExponentVector.hpp"  // for exponents
-#include "M2mem.h"             // for freemem
+#include "interface/m2-mem.h"             // for freemem
 #include "buffer.hpp"          // for buffer
 #include "error.h"             // for ERROR
 #include "freemod.hpp"         // for FreeModule
