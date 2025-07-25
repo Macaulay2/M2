@@ -1,4 +1,4 @@
-VERSION = 1.7.0
+VERSION = 1.7.1
 # URL = http://www.linalg.org
 URL = https://github.com/linbox-team/linbox/archive/refs/tags
 TARFILE = v$(VERSION).tar.gz
