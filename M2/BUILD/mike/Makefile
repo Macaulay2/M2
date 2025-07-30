@@ -37,7 +37,6 @@ cmake-debug-appleclang:
 arm64-appleclang : always
 	mkdir -p builds.tmp/arm64-appleclang
 	cd builds.tmp/arm64-appleclang; ../../../../configure \
-	--enable-dmg \
 	--enable-download --with-system-gc \
 	--with-system-memtailor --with-system-mathic \
 	--with-system-mathicgb \

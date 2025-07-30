@@ -111,6 +111,7 @@ document {
 	 TO gbRemove,
 	 TO "gbTrace",
 	 TO LongPolynomial,
+         TO canUseHilbertHint
          }
      }
 

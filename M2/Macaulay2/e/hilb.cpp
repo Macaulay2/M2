@@ -709,33 +709,26 @@ int hilb_comp::coeff_of(const RingElement *h, int deg)
   // exp[0]=deg.
   const PolynomialRing *P = h->get_ring()->cast_to_PolynomialRing();
 
-  exponents_t exp = newarray_atomic(int, P->n_vars());
+  exponents_t exp = new int[P->n_vars()];
   int result = 0;
   for (Nterm& f : h->get_value())
     {
       P->getMonoid()->to_expvector(f.monom, exp);
       if (exp[0] < deg)
         {
-          ERROR("incorrect Hilbert function given");
-          fprintf(
-              stderr,
-              "internal error: incorrect Hilbert function given, aborting\n");
-          fprintf(
-              stderr,
-              "exp[0]: %d   deg: %d\n", exp[0], deg);    
-          abort();
+          throw exc::engine_error("incorrect Hilbert function given");
         }
       else if (exp[0] == deg)
         {
           std::pair<bool, long> res =
               P->getCoefficientRing()->coerceToLongInteger(f.coeff);
-          assert(res.first &&
-                 std::abs(res.second) < std::numeric_limits<int>::max());
+          if (not res.first or std::abs(res.second) > std::numeric_limits<int>::max())
+            throw exc::engine_error("Hilbert function value too large to use with Groebner basis computation");
           int n = static_cast<int>(res.second);
           result += n;
         }
     }
-  freemem(exp);
+  delete [] exp;
   return result;
 }
 
