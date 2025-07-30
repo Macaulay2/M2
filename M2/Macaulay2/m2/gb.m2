@@ -282,7 +282,7 @@ canUseHilbertHint Matrix := Boolean => m -> canUseHilbertHint ring m and isHomog
 gbGetHilbertHint := (m, opts) -> (
     if opts.Hilbert =!= null then (
         if not canUseHilbertHint m then (
-            << "warning: Hilbert hint given, but is being ignored" << endl;
+            --<< "warning: Hilbert hint given, but is being ignored" << endl;
             return null;
             );
 	if ring opts.Hilbert === degreesRing ring m then opts.Hilbert
