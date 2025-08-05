@@ -847,7 +847,7 @@ As of version 4.0, the package also computes nested versal deformations for pair
      
     PARA{}, "A basic description of the package's approach to deformation problems can
     be found at the documentation node for ",TO versalDeformation,". A discussion
-    about nested deformations can be found at the documenation node for ",TO NestedDeformation,". 
+    about nested deformations can be found at the documentation node for ",TO NestedDeformation,". 
     For mathematical details and background see ",
      
      UL {
