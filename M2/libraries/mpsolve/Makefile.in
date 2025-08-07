@@ -1,14 +1,11 @@
 VPATH = @srcdir@
 HOMEPAGE = https://numpi.dm.unipi.it/software/mpsolve 
-VERSION = 3.2.1
-URL = https://macaulay2.com/Downloads/OtherSourceCode
+VERSION = 3.2.3
+TARFILE = $(LIBNAME)-$(VERSION).tar.bz2
+TAROPTIONS = --bzip2
+URL = https://numpi.dm.unipi.it/wp-content/uploads/2025/08
 
-# obtained from https://numpi.dm.unipi.it/_media/software/mpsolve
-#               https://numpi.dm.unipi.it/_media/software/mpsolve/mpsolve-3.2.1.tar.gz
-
-# the patch disables the python tests, which don't know that the name of the
-# sharable library in Mac OS is libmps.3.dylib instead of libmps.so.3
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 LICENSEFILES = README
 
