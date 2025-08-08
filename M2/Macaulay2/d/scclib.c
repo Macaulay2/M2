@@ -854,7 +854,7 @@ int system_run(M2_string command){
      return r;
      }
 
-struct FUNCTION_CELL *pre_final_list, *final_list, *thread_prepare_list;
+struct FUNCTION_CELL *pre_final_list, *final_list;
 
 void system_atend(void (*func)()){
      struct FUNCTION_CELL *this_final = (struct FUNCTION_CELL *)getmem(sizeof(struct FUNCTION_CELL));
