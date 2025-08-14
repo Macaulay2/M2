@@ -31,7 +31,6 @@
 #if !defined(SAFEC_EXPORTS)
 typedef char M2_bool;
 
-#ifndef D_GENERATED_H
 typedef struct M2_string_struct * M2_string;
 struct M2_string_struct {int len;signed char array[];};
 
@@ -42,7 +41,6 @@ struct M2_arrayint_struct {int len;int array[];};
 typedef struct M2_ArrayString_struct * M2_ArrayString;
 typedef M2_ArrayString M2_ArrayStringOrNull;
 struct M2_ArrayString_struct {int len;M2_string array[];};
-#endif
 
 struct MonomialOrdering;
 struct Ring;

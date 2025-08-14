@@ -333,8 +333,6 @@ int main(int argc, char **argv){
 		    if (NULL == freopen(n,"w", stdout)) {
 			 fatal("can't open file %s",n);
 			 }
-		    put("#ifndef D_GENERATED_H\n");
-		    put("#define D_GENERATED_H\n");
 		    printf("#ifndef %s_included\n",targetname);
 		    printf("#define %s_included\n",targetname);
 		    declarationsstrings = reverse(declarationsstrings);
@@ -349,7 +347,6 @@ int main(int argc, char **argv){
 		    /* printtypecodes(); */
 		    cprinttypes();
 		    put(declarations_trailer);
-		    put("#endif\n");
 		    put("#endif\n");
 		    }
 	       if (TRUE) {
