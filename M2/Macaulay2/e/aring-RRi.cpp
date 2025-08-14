@@ -12,8 +12,8 @@ void ARingRRi::elem_text_out(buffer &o,
   (void) p_one;
   (void) p_parens;
   mpfi_ptr a = &const_cast<ElementType &>(ap);
-  M2_string s1 = (*gmp_tostringRRpointer)(&(a->left));
-  M2_string s2 = (*gmp_tostringRRpointer)(&(a->right));
+  M2_string s1 = (*tostringRRpointer)(&(a->left));
+  M2_string s2 = (*tostringRRpointer)(&(a->right));
 
   if(p_plus) o << "+";
   o << "[";

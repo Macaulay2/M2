@@ -11,7 +11,7 @@ void ARingCC::elem_text_out(buffer &o,
 {
   gmp_CC g = toBigComplex(ap);
   M2_string s =
-    p_parens ? (*gmp_tonetCCparenpointer)(g) : (*gmp_tonetCCpointer)(g);
+    p_parens ? (*tonetCCparenpointer)(g) : (*tonetCCpointer)(g);
   
   bool prepend_plus = p_plus && (s->array[0] != '-');
   bool strip_last =

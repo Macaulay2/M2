@@ -152,20 +152,16 @@ typedef const struct Matrix * engine_RawMatrixOrNull;
 extern "C" {
 #endif
 
-  extern M2_string (*gmp_tonetCCparenpointer)(gmp_CC);
-  extern M2_string (*gmp_tonetCCpointer)(gmp_CC);
-  extern M2_string (*gmp_tostringRRipointer)(mpfi_srcptr);
-  extern M2_string (*gmp_tostringRRpointer)(mpfr_srcptr);
+  extern M2_string (*tonetCCparenpointer)(gmp_CC);
+  extern M2_string (*tonetCCpointer)(gmp_CC);
+  extern M2_string (*tostringRRipointer)(mpfi_srcptr);
+  extern M2_string (*tostringRRpointer)(mpfr_srcptr);
   
   M2_arrayint M2_makearrayint(int n);
   char * M2_tocharstar(M2_string s);
   M2_string M2_join(M2_string x, M2_string y);
   M2_string M2_tostring(const char* s);
   M2_string M2_tostringn(char *s, int n);
-
-  //  M2_string (*gmp_tonetCCparenpointer)(gmp_CC);
-  //  M2_string (*gmp_tonetCCpointer)(gmp_CC);
-  //  M2_string (*gmp_tostringRRpointer)(mpfr_srcptr);
 
 #if defined(__cplusplus)
 }

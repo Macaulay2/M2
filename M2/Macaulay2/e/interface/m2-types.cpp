@@ -46,9 +46,9 @@ M2_string M2_tostringn(char *s, int n)
     return p;
 }
 
-M2_string (*gmp_tonetCCparenpointer)(gmp_CC);
-M2_string (*gmp_tonetCCpointer)(gmp_CC);
-M2_string (*gmp_tostringRRpointer)(mpfr_srcptr);
+M2_string (*tonetCCparenpointer)(gmp_CC);
+M2_string (*tonetCCpointer)(gmp_CC);
+M2_string (*tostringRRpointer)(mpfr_srcptr);
 
 
 char newline[] = "\n";

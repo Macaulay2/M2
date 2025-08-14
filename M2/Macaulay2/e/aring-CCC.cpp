@@ -14,7 +14,7 @@ void ARingCCC::elem_text_out(buffer &o,
   g.re = &const_cast<ElementType &>(f).re;
   g.im = &const_cast<ElementType &>(f).im;
   M2_string s =
-      p_parens ? (*gmp_tonetCCparenpointer)(&g) : (*gmp_tonetCCpointer)(&g);
+      p_parens ? (*tonetCCparenpointer)(&g) : (*tonetCCpointer)(&g);
 
   // if: first char is a "-", and p_plus, o << "+"
   // if: an internal "+" or "-", then put parens around it.
