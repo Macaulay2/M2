@@ -152,11 +152,6 @@ typedef const struct Matrix * engine_RawMatrixOrNull;
 extern "C" {
 #endif
 
-  extern M2_string (*tonetCCparenpointer)(gmp_CC);
-  extern M2_string (*tonetCCpointer)(gmp_CC);
-  extern M2_string (*tostringRRipointer)(mpfi_srcptr);
-  extern M2_string (*tostringRRpointer)(mpfr_srcptr);
-  
   M2_arrayint M2_makearrayint(int n);
   char * M2_tocharstar(M2_string s);
   M2_string M2_join(M2_string x, M2_string y);
@@ -172,4 +167,8 @@ extern int M2_numTBBThreads;
 extern int M2_gbTrace;
 extern int M2_numericalAlgebraicGeometryTrace;
 
-#endif
+#endif // !defined(SAFEC_EXPORTS)
+
+extern M2_string (*tonetCCparenpointer)(gmp_CC);
+extern M2_string (*tonetCCpointer)(gmp_CC);
+extern M2_string (*tostringRRpointer)(mpfr_srcptr);

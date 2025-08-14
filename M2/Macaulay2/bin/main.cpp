@@ -4,6 +4,7 @@
 #include <M2/gc-include.h>
 
 #include "interp-exports.h"
+#include <interface/m2-types.h>
 
 #include "M2mem.h"
 #include "types.h"
@@ -93,6 +94,10 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
   signal(SIGPIPE,SIG_IGN); /* ignore the broken pipe signal */
 
   flint_set_abort(M2_flint_abort);
+
+  tonetCCparenpointer = gmp_tonetCCparenpointer;
+  tonetCCpointer = gmp_tonetCCpointer;
+  tostringRRpointer = gmp_tostringRRpointer;
 
   static struct ArgCell* M2_vargs;
   M2_vargs = (ArgCell*) GC_MALLOC_UNCOLLECTABLE(sizeof(struct ArgCell));
