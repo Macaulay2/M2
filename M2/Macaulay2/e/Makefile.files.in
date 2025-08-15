@@ -243,8 +243,10 @@ ENGINE_OFILES := $(addsuffix .o,$(C_FILES) $(CC_FILES) $(D_FILES) $(DD_FILES))
 
 ifeq "$(SHARED)" "yes"
 ENGINE_OBJFILES := $(LOFILES)
+LIBENGINE = @pre_librariesdir@/libengine.so
 else
 ENGINE_OBJFILES := $(ENGINE_OFILES)
+LIBENGINE = @pre_librariesdir@/libengine.a
 endif
 
 HHFILES := $(addsuffix .hpp, $(NAMES_H) $(NAMES) $(INTERFACE) $(INTERFACE2)) $(E_H)

@@ -22,7 +22,7 @@ endif
 NORULES = yes
 include ../../include/config.Makefile
 include ../d/Makefile.files
-include @srcdir@/../e/Makefile.files
+include ../e/Makefile.files
 include @srcdir@/../system/Makefile.files
 
 %.o : %.c
@@ -33,7 +33,7 @@ include @srcdir@/../system/Makefile.files
 %.o : %.s
 
 # warning: static initializers are run in left-to-right order, and some of them depend on others of them
-M2_OBJECTS := $(SYSTEM_OFILES:%=../system/%) $(ENGINE_OFILES:%=../e/%) $(M2_OBJECTS:%=../d/%) $(patsubst %, ../d/%.o, $(M2_DNAMES))
+M2_OBJECTS := $(SYSTEM_OFILES:%=../system/%) $(M2_OBJECTS:%=../d/%) $(patsubst %, ../d/%.o, $(M2_DNAMES)) $(LIBENGINE)
 
 EXEFILE = @pre_bindir@/M2@EXE@
 M2SCRIPT = @pre_bindir@/M2
