@@ -53,7 +53,7 @@ captureTestResult := (desc, teststring, pkg, usermode) -> (
     -- TODO: remove this when capture uses ArgQ
     if usermode === not noinitfile then
     -- try capturing in the same process
-    if isCapturable(teststring, pkg, true) then (
+    if isCapturable(teststring, pkg) then (
 	checkmsg("capturing", desc);
 	-- TODO: adjust and pass argumentMode, instead. This can be done earlier, too.
 	-- Note: UserMode option of capture is not related to UserMode option of check

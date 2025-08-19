@@ -124,8 +124,8 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
 protect symbol capture
 
 -- returns false if the inputs or the package are not known to behave well with capture
--- this is also used in testing.m2, where isTest is set to true.
-isCapturable = (inputs, pkg, isTest) -> (
+-- this is also used in testing.m2
+isCapturable = (inputs, pkg) -> (
     -- argumentMode is mainly used by ctest to select M2 subprocess arguments,
     -- or whether capture should be avoided; see packages/CMakeLists.txt
     -- alternatively, no-capture-flag can be used with an example or test
@@ -133,9 +133,7 @@ isCapturable = (inputs, pkg, isTest) -> (
     -- strip commented segments first
     inputs = replace("--.*$", "",            inputs);
     inputs = replace("-\\*(.|\n)*?\\*-", "", inputs);
-    -- TODO: remove this when the effects of capture on other packages is reviewed
-    (isTest or match({"FirstPackage", "Macaulay2Doc"},            pkg#"pkgname"))
-    and not match({
+    not match({
 	    "FastMinors", "TerraciniLoci",
 	    "MultiprojectiveVarieties", "SpecialFanoFourfolds",
 	    "EngineTests", "ThreadedGB", "RunExternalM2"}, pkg#"pkgname")
@@ -242,7 +240,7 @@ storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
 captureExampleOutput = (desc, inputs, pkg, inf, outf, errf, data, inputhash, changeFunc, usermode) -> (
     stdio << flush; -- just in case previous timing information hasn't been flushed yet
     -- try capturing in the same process
-    if isCapturable(inputs, pkg, false) then (
+    if isCapturable(inputs, pkg) then (
 	desc = concatenate(desc, 62 - #desc);
 	stderr << commentize pad("capturing " | desc, 72) << flush; -- the timing info will appear at the end
 	(err, output) := capture(inputs, UserMode => false);
