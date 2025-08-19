@@ -558,7 +558,7 @@ Node
  Description
   Example
    xmlNewRoot "foo"
-   xmlDocDump oo
+   xmlDocDump oo -* no-capture-flag *-
  SeeAlso
   xmlDocDump
 Node
@@ -613,7 +613,7 @@ Node
    xmlAddElement(n,"key")
    xmlAddText(oo,"frobble 你好")
    n
-   xmlDocDump n   
+   xmlDocDump n -* no-capture-flag *-
  SeeAlso
   xmlNewRoot
 Node
