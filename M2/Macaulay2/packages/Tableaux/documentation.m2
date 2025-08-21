@@ -112,7 +112,7 @@ Description
     The inner shape may be drawn by calling drawInnerShape.
   Example
     T'' = skewTableau(new Partition from {5,4,-1}, new Partition from {2,4,-3})
-    drawInnerShape true
+    drawInnerShape true -* no-capture-flag *-
     T''
     drawInnerShape false
     T''
@@ -420,7 +420,7 @@ Description
   Text
     The number of rows is the same as largest part in its shape, minus the smallest part in the shape.
   Example
-    drawInnerShape true
+    drawInnerShape true -* no-capture-flag *-
     T = skewTableau(new Partition from {4,3,1}, new Partition from {1,1,1})
     numColumns T
   Text
