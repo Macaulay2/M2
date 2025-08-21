@@ -134,7 +134,7 @@ isCapturable = (inputs, pkg) -> (
     inputs = replace("--.*$", "",            inputs);
     inputs = replace("-\\*(.|\n)*?\\*-", "", inputs);
     not match({
-	    "FastMinors", "TerraciniLoci",
+	    "FastMinors", "TerraciniLoci", "OldPolyhedra",
 	    "MultiprojectiveVarieties", "SpecialFanoFourfolds",
 	    "EngineTests", "ThreadedGB", "RunExternalM2"}, pkg#"pkgname")
     and not (match({"Cremona"}, pkg#"pkgname") and version#"pointer size" == 4)
