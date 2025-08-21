@@ -87,7 +87,7 @@ Node
 
       For example, to run the tests for the @TO "FirstPackage::FirstPackage"@ package, use:
     Example
-      needsPackage "FirstPackage" -* no-capture-flag *-
+      needsPackage "FirstPackage"
       check_1 FirstPackage
       check FirstPackage
     Text

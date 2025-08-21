@@ -142,7 +142,7 @@ isCapturable = (inputs, pkg) -> (
     and not match("(gbTrace|NAGtrace)",                       inputs) -- cerr/cout directly from engine isn't captured
     and not match("(notify|stopIfError|debuggingMode)",       inputs) -- stopIfError and debuggingMode may be fixable
     and not match("(alarm|exec|exit|quit|restart|run)\\b",    inputs) -- these commands interrupt the interpreter
-    and not match("(capture|read|input|load|needs)\\b",       inputs) -- these commands hide undesirable functions
+    and not match("(capture|read|input|load|needs|check)\\b", inputs) -- these commands hide undesirable functions
     and not match("([Cc]ommand|fork|schedule|thread|Task)",   inputs) -- remove when threads work more predictably
     and not match("(temporaryFileName)",                      inputs) -- this is sometimes bug prone
     and not match("(addHook|export|newPackage)",              inputs) -- these commands have permanent effects
