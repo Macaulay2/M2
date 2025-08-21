@@ -1704,7 +1704,7 @@ doc ///
       using the function writeSample. 
       This shows how to retrieve that stored sample and have it loaded as an object of type Sample: 
     Example 
-      writeSample(sample(ER(2,3,0.1),5), "testDirectory")
+      writeSample(sample(ER(2,3,0.1),5), "testDirectory") -* no-capture-flag *-
       mySample = sample("testDirectory")
       peek mySample 
   SeeAlso
@@ -1846,7 +1846,7 @@ doc ///
       about the model used to generate the sample, and another text file contains the 
       information about the sample itself. 
     Example
-      writeSample(sample(ER(2,3,0.1),5), "testDirectory")
+      writeSample(sample(ER(2,3,0.1),5), "testDirectory") -* no-capture-flag *-
       mySample = sample("testDirectory")
       peek mySample 
   SeeAlso
