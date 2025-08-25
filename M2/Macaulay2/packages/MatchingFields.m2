@@ -1044,9 +1044,9 @@ NOBody = method()
 -- So, the lead terms can be simply scaled and the NO body is the convex hull of exponent vectors
 NOBody(GrMatchingField) := MF -> (
     if not MF.cache.?mfNOBody then ( 
-    	-- compute the initial algbera of the Pluecker algebra wrt the weight term order
-    	initialAlgberaGens := first entries leadTerm subalgebraBasis(plueckerAlgebra MF, AutoSubduce => false); 
-    	generatorExponents := apply(initialAlgberaGens, f -> (exponents(f))_0);
+    	-- compute the initial algebra of the Pluecker algebra wrt the weight term order
+    	initialAlgebraGens := first entries leadTerm subalgebraBasis(plueckerAlgebra MF, AutoSubduce => false); 
+    	generatorExponents := apply(initialAlgebraGens, f -> (exponents(f))_0);
     	NOBodyVertices := apply(generatorExponents, v -> ((MF.k) / sum(v))*v); -- normalize the vertices
     	MF.cache.mfNOBody = convexHull transpose matrix NOBodyVertices;
 	);

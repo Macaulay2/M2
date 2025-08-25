@@ -356,7 +356,7 @@ polyoToric(List, List) := (Q,H) -> (
     Vert=toList (Vert);
     Vert=sort(Vert);                			--Vert is the sorted list the second coordinates of every cell
     VerInt:={};
-    for i from min(Oriz) to max(Oriz) do(               --bulding the vertical maxiamal intervals
+    for i from min(Oriz) to max(Oriz) do(               --building the vertical maximal intervals
         j:=min(Vert);
         while j<max(Vert) do(
             L1:={};
@@ -372,7 +372,7 @@ polyoToric(List, List) := (Q,H) -> (
     );
     VerInt=delete({},VerInt);                   	 --VerInt contains the vertical maximals intervals
     OrInt:={};
-    for j from min(Vert) to max(Vert) do(       	 --bulding the orizontal maxiamal intervals
+    for j from min(Vert) to max(Vert) do(       	 --building the orizontal maximal intervals
         i:=min(Oriz);
         while i<max(Oriz) do(
             L1:={};
@@ -435,7 +435,7 @@ document {
         Headline => "a package to work with binomial ideals associated with collections of cells",
         EM "PolyominoIdeals", " is a package for making several computations with the inner 2-minor ideals attached to collections of  cells.\n ",
         BR{},BR{},
-        "In [AAQ2012] Ayesha Asloob Qureshi establishes a connection between Combinatorial Commutiative Algebra and collection of cells, assigning to every collection of cells the binomial ideal of its inner $2$-minors.\n",
+        "In [AAQ2012] Ayesha Asloob Qureshi establishes a connection between Combinatorial Commutative Algebra and collection of cells, assigning to every collection of cells the binomial ideal of its inner $2$-minors.\n",
         BR{},BR{},
         " Consider the natural partial order on $\\NN^2$ and let $a,b \\in \\N^2$ with $a\\leq b$. The set $[a, b] = \\{c \\in \\NN^2 : a \\leq c \\leq b\\}$ is called an interval of $\\NN^2$; moreover, if $b=a+(1,1)$, then $[a,b]$ is called a cell of $\\NN^2$. An interval $C=[a, b]$, where $a = (i, j)$ and $b = (k, l)$, is said to be a proper interval if $i < k$ and $j < l$. The elements $a, b$ are said the diagonal corners of $C$ and  $c = (k, j)$ and $d = (i, l)$ the anti-diagonal ones. If $C$ is a cell, then $V(C)=\\{a,a+(1,1),a+(0,1),a+(1,0)\\}$ is the set of the corners of $C$.\n",
        BR{},
