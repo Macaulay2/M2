@@ -604,6 +604,21 @@ done
 AC_SUBST(OPENMP_CXXFLAGS,"$OPENMP_CXXFLAGS")
 AC_SUBST(OPENMP_LIBS,"$OPENMP_LIBS")
 
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81358
+AC_MSG_CHECKING([whether we need to link with -latomic])
+AC_LANG([C++])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([
+	#include <atomic>
+	], [std::atomic<int64_t> x; x++])],
+	[AC_MSG_RESULT([no])],
+	[LIBS="$LIBS -latomic"
+	 AC_LINK_IFELSE([AC_LANG_PROGRAM([
+		#include <atomic>
+		], [std::atomic<int64_t> x; x++])],
+		[AC_MSG_RESULT([yes])],
+		[AC_MSG_RESULT([error])
+		 AC_MSG_ERROR([unable to handle 64-bit atomics])])])
+
 #############################################################################
 AC_SUBST(BUILTLIBS)
 # The list BUILTLIBS is the list of link options for the libraries we have decided to build,
@@ -1849,21 +1864,6 @@ AC_LINK_IFELSE([AC_LANG_SOURCE([int main() {}])],
     HAVE_WL_MAP=no ;  AC_MSG_RESULT(no))
 rm -f conftest.mapfile
 LDFLAGS=$SAVE
-
-# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81358
-AC_MSG_CHECKING([whether we need to link with -latomic])
-AC_LANG([C++])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([
-	#include <atomic>
-	], [std::atomic<int64_t> x; x++])],
-	[AC_MSG_RESULT([no])],
-	[LIBS="$LIBS -latomic"
-	 AC_LINK_IFELSE([AC_LANG_PROGRAM([
-		#include <atomic>
-		], [std::atomic<int64_t> x; x++])],
-		[AC_MSG_RESULT([yes])],
-		[AC_MSG_RESULT([error])
-		 AC_MSG_ERROR([unable to handle 64-bit atomics])])])
 
 AC_SUBST(DUMPDATAFILE,Macaulay2-$ARCH-data)
 
