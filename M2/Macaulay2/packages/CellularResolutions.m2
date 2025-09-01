@@ -5,8 +5,8 @@ newPackage(
     Version => "1.0",
     Date => "May 17, 2023",
     Authors => {
-        {Name => "Jay Yang", Email => "jayy@wustl.edu"},
-        {Name => "Aleksandra Sobieska", Email => "asobieska@math.wisc.edu"}
+        {Name => "Jay Yang", Email => "jay.k.yang@vanderbilt.edu"},
+        {Name => "Aleksandra Sobieska", Email => "sobieskasnyd@marshall.edu"}
         },
     Headline => "cellular resolutions of monomial ideals",
     AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
