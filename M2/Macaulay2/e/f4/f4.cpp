@@ -631,17 +631,17 @@ void F4GB::gauss_reduce(bool diagonalize)
         }
     }
 
-#if defined(WITH_TBB)
-//#if 0
-
   for (int i = 0; i < nrows; ++i)
     {
       if (not is_pivot_row(i))
         spair_rows.push_back(i);
     }
-  
-  std::mutex cout_guard;
+
   t0 = mtbb::tick_count::now();
+
+#if defined(WITH_TBB)
+
+  std::mutex cout_guard;
   using threadLocalDense_t = mtbb::enumerable_thread_specific<ElementArray>;
   // create a dense array for each thread
   threadLocalDense_t threadLocalDense([&]() { 
@@ -677,9 +677,20 @@ void F4GB::gauss_reduce(bool diagonalize)
   });
   for (auto tlDense : threadLocalDense)
     mVectorArithmetic->deallocateElementArray(tlDense);
+
+#else
+
+  ElementArray my_dense { mVectorArithmetic->allocateElementArray(ncols) };
+
+  for (int i = 0; i < INTSIZE(spair_rows); ++i)
+    gauss_reduce_row(spair_rows[i], my_dense);
+
+  mVectorArithmetic->deallocateElementArray(my_dense);
+
+#endif
+
   t1 = mtbb::tick_count::now();
   mParallelGaussTime += (t1-t0).seconds();
-#endif 
 
   if (M2_gbTrace >= 2)
     std::cout << "About to do serial loop, n_newpivots = " << n_newpivots << std::endl;
