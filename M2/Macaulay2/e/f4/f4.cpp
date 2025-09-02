@@ -69,8 +69,8 @@ F4GB::F4GB(const VectorArithmetic* VA,
       mNewSPairTime(0),
       mInsertGBTime(0),
       clock_make_matrix(0),
-      mNumThreads(mtbb::numThreads(numThreads)),
 #if defined(WITH_TBB)
+      mNumThreads(mtbb::numThreads(numThreads)),
       mScheduler(mNumThreads),
       mSPairSet(mMonomialInfo, mGroebnerBasis, mScheduler)
 #else
@@ -619,6 +619,7 @@ void F4GB::gauss_reduce(bool diagonalize)
 
   mtbb::tick_count t0;
   mtbb::tick_count t1;
+  std::vector<int> spair_rows;
 
   if (hilbert)
     {
@@ -633,7 +634,6 @@ void F4GB::gauss_reduce(bool diagonalize)
 #if defined(WITH_TBB)
 //#if 0
 
-  std::vector<int> spair_rows;
   for (int i = 0; i < nrows; ++i)
     {
       if (not is_pivot_row(i))
