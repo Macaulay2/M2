@@ -22,10 +22,11 @@ export {
     -- see ConnectionMatrices/reduce.m2
     "normalForm",
     "baseFractionField",
-    -- see ConnectionMatrices/connectionMatrices.m2
+    -- see ConnectionMatrices.m2
     "standardMonomials",
-    "connectionMatrices",
+    "connectionMatrices" => "pfaffianSystem",
     "connectionMatrix",
+    "pfaffianSystem",
     -- see ConnectionMatrices/integrabilityCheck.m2
     "isIntegrable",
     -- see ConnectionMatrices/gaugeMatrix.m2
@@ -51,7 +52,7 @@ load "./ConnectionMatrices/holonomic.m2"
 load "./ConnectionMatrices/normalForm.m2"
 
 -------------------------------------------------------------
--- connectionMatrices: computes system of connection matrices
+-- pfaffianSystem: computes system of connection matrices
 -------------------------------------------------------------
 
 -- borrowed from Varieties: twists don't make sense on connection matrices, so we remove them
@@ -60,11 +61,11 @@ dehomogenizeMatrix = f -> (R := ring f; map(R^(numRows f), R^(numColumns f), f))
 -- to access private methods from Core
 importFrom_Core { "concatCols" }
 
-connectionMatrices = method()
+pfaffianSystem = method()
 
 -- gives connection matrices for a D-ideal
 -- c.f. [Theorem 1.4.22, SST]
-connectionMatrices Ideal := List => I -> I.cache.connectionMatrices ??= (
+pfaffianSystem Ideal := List => I -> I.cache.pfaffianSystem ??= (
     D := ring I;
     if not isWeylAlgebra D then error "expected left ideal in a Weyl algebra";
     -- TODO: Change holonomic Rank, so it only takes ideal and infers the order from it.
@@ -88,9 +89,9 @@ connectionMatrices Ideal := List => I -> I.cache.connectionMatrices ??= (
 )
 
 -- gives the system of connection matrices with respect to a new basis B
-connectionMatrices(Ideal, List) := (I, B)->(
+pfaffianSystem(Ideal, List) := (I, B)->(
     g := gaugeMatrix(I,B);
-    A := connectionMatrices I;
+    A := pfaffianSystem I;
     gaugeTransform(g, A)
 )
 
@@ -102,7 +103,7 @@ connectionMatrix = method()
 
 -- D-ideal as an input
 connectionMatrix Ideal := Net => I -> (
-    P := connectionMatrices I;
+    P := pfaffianSystem I;
     R := rationalWeylAlgebra ring I;
     net sum(P, gens R, (Px, dx) -> Px * dx)
 )

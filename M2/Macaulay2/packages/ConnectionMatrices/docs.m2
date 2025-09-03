@@ -22,7 +22,7 @@ Node
 	standardMonomials
 	baseFractionField
       :Computing and displaying $D$-ideals in connection form
-        connectionMatrices
+        pfaffianSystem
         connectionMatrix
       :Changing basis of a system of connection matrices
         gaugeMatrix
@@ -47,7 +47,7 @@ Node
     normalForm
     standardMonomials
     baseFractionField
-    connectionMatrices
+    pfaffianSystem
     connectionMatrix
     gaugeMatrix
     gaugeTransform
@@ -159,14 +159,14 @@ SeeAlso
 
 doc ///
 Key
-    connectionMatrices
-    (connectionMatrices, Ideal)
-    (connectionMatrices, Ideal, List)
+     pfaffianSystem
+    (pfaffianSystem, Ideal)
+    (pfaffianSystem, Ideal, List)
 Headline
     computes the connection matrices of a $D_n$-ideal $I$ for a chosen basis
 Usage
-    connectionMatrices I
-    connectionMatrices(I, B)
+    pfaffianSystem I
+    pfaffianSystem(I, B)
 Inputs
     I:Ideal
       $D_n$-ideal
@@ -185,7 +185,7 @@ Description
   Example
     D = makeWeylAlgebra(QQ[x,y], {2, 1})
     I = ideal (x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1)
-    A = connectionMatrices I
+    A = pfaffianSystem I
 References
   For more details, see [@HREF("https://link.springer.com/book/10.1007/978-3-662-04112-3","SST")@, pp. 37-40].
 ///
@@ -216,7 +216,7 @@ Description
   Example
     D = makeWeylAlgebra(QQ[x,y]);
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
-    A = connectionMatrices I;
+    A = pfaffianSystem I;
     M = matrix {{x,0}, {0,y}};
     gaugeTransform(M, A, D)
   Text
@@ -255,7 +255,7 @@ Description
 Caveat
   The output is purely for visualizing purposes.
 SeeAlso
-  connectionMatrices
+  pfaffianSystem
 ///
 
 doc ///
@@ -318,7 +318,7 @@ Description
   Example
     D = makeWeylAlgebra(frac(QQ[ϵ])[x]);
     I = ideal(x*(1-x)*dx^2 - ϵ*(1-x)*dx);
-    A = connectionMatrices(I, {1_D, 1/ϵ*dx})
+    A = pfaffianSystem(I, {1_D, 1/ϵ*dx})
     isEpsilonFactorized(A, ϵ)
 SeeAlso
   isIntegrable
@@ -351,12 +351,12 @@ Description
   Example
     D = makeWeylAlgebra(QQ[x,y], {1, 2});
     I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
-    A = connectionMatrices I;
+    A = pfaffianSystem I;
     assert isIntegrable(D, A)
     assert isIntegrable A
 Caveat
   The matrices need to be defined over the @TO2{baseFractionField, "base fraction field"}@ of $D_n$.
 SeeAlso
-  connectionMatrices
+  pfaffianSystem
   isEpsilonFactorized
 ///

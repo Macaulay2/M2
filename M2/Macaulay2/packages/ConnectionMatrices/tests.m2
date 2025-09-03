@@ -26,7 +26,7 @@ TEST /// -- course notes, Example 7.16 (1)
   assert(G == {y*dy+x*dx+1, x^2*dx^2-x*y*dx^2+3*x*dx-y*dx+1, x*dx*dy+x*dx^2+dy+dx });
 
   R = baseFractionField D
-  A = connectionMatrices I;
+  A = pfaffianSystem I;
   assert(A_0 == map(R^2, R^2, {{0, 1}, {(-1)/(x^2-x*y), (-3*x+y)/(x^2-x*y)}}))
   assert(A_1 == map(R^2, R^2, {{(-1)/y, (-x)/y}, {1/(x*y-y^2), (x+y)/(x*y-y^2)}}))
 
@@ -46,7 +46,7 @@ TEST /// -- course notes, Example 7.16 (2)
   assert(holonomicRank(w, comodule I) == 2);
 
   R = baseFractionField D;
-  A = connectionMatrices I;
+  A = pfaffianSystem I;
   G = flatten entries gens gb I;
 
   SM = standardMonomials I;
@@ -70,7 +70,7 @@ TEST /// -- course notes, Example 7.16 (3)
   assert(holonomicRank(w, comodule I) == 2);
 
   R = baseFractionField D;
-  A = connectionMatrices I;
+  A = pfaffianSystem I;
   G = flatten entries gens gb I;
 
   SM = standardMonomials I;
@@ -102,11 +102,11 @@ TEST /// -- Example from Overleaf
   assert(holonomicRank I == 2)
 
   -- Computing the system of connection matrices w.r.t. weight vector w1
-  C1 = connectionMatrices I;
+  C1 = pfaffianSystem I;
   SM1 = standardMonomials I;
 
   -- Computing the system of connection matrices w.r.t. weight vector w2
-  C2 = connectionMatrices sub(I, D2);
+  C2 = pfaffianSystem sub(I, D2);
   SM2 = standardMonomials sub(I, D2);
 
   R = baseFractionField D2
@@ -163,7 +163,7 @@ TEST /// -- isIntegrable
   -- A connection coming from a D-ideal is integrable:
   D = makeWeylAlgebra(QQ[x,y], w = {1,2});
   I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1);
-  A = connectionMatrices I;
+  A = pfaffianSystem I;
   assert(isIntegrable(D,A));
 
   -- Constant coefficient matrices that don't commute can't come from an integrable system.
