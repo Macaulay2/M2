@@ -524,6 +524,11 @@ ExternalProject_Add(build-mpsolve
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND autoreconf -vif
+            # yacc-generated files shipped in 3.2.3 tarball result in
+            # errors when using newer compilers, so we remove them so
+            # bison can regenerate them
+            COMMAND rm src/libmps/monomial/yacc-parser.c
+            COMMAND rm src/libmps/monomial/yacc-parser.h
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       ${shared_setting}
