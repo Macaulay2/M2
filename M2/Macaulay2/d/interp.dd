@@ -258,7 +258,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 					else buildErrorPacket("error occurred in parsing")))))))));
 
 interpreterDepthS := setupvar("interpreterDepth",zeroE);
-setInterpreterDepth(n:int):void := (
+export setInterpreterDepth(n:int):void := (
      interpreterDepth = n;
      setGlobalVariable(interpreterDepthS, toExpr(interpreterDepth)));
 incrementInterpreterDepth():void := setInterpreterDepth(interpreterDepth + 1);

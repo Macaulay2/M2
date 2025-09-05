@@ -4,6 +4,24 @@
 -- this file gets incorporated into the executable file bin/M2 as the string 'startupString'
 -- we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 
+--------------------------------------------------------------------------------
+
+interpreter := () -> (
+    loadDepth = errorDepth = 3;
+    n := commandInterpreter();
+    if class n === ZZ and 0 <= n and n < 128 then exit n;
+    if n === null then exit 0;
+    debuggingMode = false;
+    stopIfError = true;
+    stderr << "error: can't interpret return value as an exit code" << endl;
+    exit 1)
+
+-- false if we return after an abort
+firstTime := class path === Symbol
+if not firstTime then interpreter()
+
+--------------------------------------------------------------------------------
+
 interpreterDepth = loadDepth = errorDepth = 0
 debuggingMode = true
 stopIfError = false
@@ -15,8 +33,6 @@ if gotarg "--no-randomize" then 0 else (currentTime() << 16) + processID()
 if gotarg "--notify" then notify = true
 if gotarg "--stop" then stopIfError = true
 if gotarg "--int"  then handleInterrupts = false
-
-firstTime := class PackageDictionary === Symbol
 
 if firstTime then (
     -- we do this bit *before* "debug Core", so that Core (the symbol, not the package),
@@ -35,7 +51,6 @@ if firstTime then (
     )
 -- we can't make this an else-clause, because then "Core" will be in the wrong dictionary
 disassemble ( () -> debug Core )
-if not firstTime then debug Core -- we need access to the private symbols (we remove the Core private dictionary later.)
 
 toString := value' getGlobalSymbol if firstTime then "simpleToString" else "toString"
 
@@ -345,7 +360,6 @@ matchpart := (pat,i,s) -> substring_((regex(pat, s))#i) s
 notdir := s -> matchpart("[^/]*$",0,s)
 nocore = false
 noinitfile = false
-interpreter := commandInterpreter
 
 M2version := () -> (
     initcurrentlayout();
@@ -618,19 +632,8 @@ loadCore = path -> (
 
 (core "runStartFunctions")()
 
-loadDepth = 0;
-( loadDepth = 3;
-     processCommandLineOptions 4;
-     n := 0;
-     errorDepth = loadDepth = 3;
-     n = interpreter();
-     if class n === ZZ and 0 <= n and n < 128 then exit n;
-     if n === null then exit 0;
-     debuggingMode = false;
-     stopIfError = true;
-     stderr << "error: can't interpret return value as an exit code" << endl;
-     exit 1;
-     )
+(loadDepth = 3; processCommandLineOptions 4; interpreter())
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d startup.m2 all && make -C $M2BUILDDIR/Macaulay2/bin all "
 -- End:

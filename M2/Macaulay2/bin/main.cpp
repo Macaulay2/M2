@@ -272,6 +272,7 @@ void interrupt_handler(int sig) {
 	      fprintf(stderr,"returning to top level\n");
 	      fflush(stderr);
 
+	      interp_setInterpreterDepth(0);
 	      interrupts_clearAlarmedFlag();
 	      interrupts_clearInterruptFlag();
 
