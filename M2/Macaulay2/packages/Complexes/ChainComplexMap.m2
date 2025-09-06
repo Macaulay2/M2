@@ -178,6 +178,13 @@ isWellDefined ComplexMap := f -> (
         );
     for i from lo to hi do (
         g := f_i;
+        if not isWellDefined g then (
+            if debugLevel > 0 then (
+                << "-- expected all differentials to be well-defined morphisms" << endl;
+                << "--   differential at index " << i << " fails this condition" << endl;
+                );
+            return false;
+            );
         if source g =!= f.source_i or target g =!= f.target_(i+f.degree)
         then (
             if debugLevel > 0 then (
