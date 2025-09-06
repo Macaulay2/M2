@@ -212,7 +212,7 @@ makeDocumentTag String      := opts -> key -> (
 fixup DocumentTag := DocumentTag => tag -> (
     tag' := if (rawdoc := fetchAnyRawDocumentation tag) =!= null then rawdoc.DocumentTag else tag;
     if package tag =!= package tag' then printerr("warning: ambiguous reference ",
-	format toString tag, " and ", format toString tag', " when processsing ",
+	format toString tag, " and ", format toString tag', " when processing ",
 	toString locate currentDocumentTag);
     tag')
 

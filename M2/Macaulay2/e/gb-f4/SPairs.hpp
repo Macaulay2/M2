@@ -17,7 +17,7 @@
 //   insert each spair directly.
 //   
 // Grabbing a set of spairs to do (but if interrupted, don't lose the pairs!)
-//   sort them? at leat by degree...
+//   sort them? at least by degree...
 //   how to remove a pair that isn't required? (the more complicated spair approach).
 
 // Maybe what I should do before meeting Frank:

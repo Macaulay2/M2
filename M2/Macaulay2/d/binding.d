@@ -538,7 +538,7 @@ export fixedPostfixOperators := array(SymbolClosure)(SemicolonS,commaS);
 -- augmented assignment operators --
 ------------------------------------
 
--- same precendence as =
+-- same precedence as =
 saveprec := prec;
 prec = EqualW.parse.precedence;
 
