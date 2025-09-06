@@ -784,7 +784,7 @@ canonicalTruncation(Complex,Nothing,ZZ) := Complex => (C,lo,hi) -> canonicalTrun
 importFrom_Truncations { "inducedTruncationMap" }
 
 truncateModuleOpts := options(truncate, List, Module)
-truncate(ZZ,   Complex) :=
+truncate(ZZ,   Complex) := truncate(InfiniteNumber, Complex) :=
 truncate(List, Complex) := Complex => truncateModuleOpts >> opts -> (degs, C) -> (
     (lo, hi) := C.concentration;
     if lo == hi

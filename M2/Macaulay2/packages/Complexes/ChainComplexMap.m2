@@ -520,7 +520,7 @@ canonicalTruncation(ComplexMap,ZZ,Nothing) :=
 canonicalTruncation(ComplexMap,Nothing,ZZ) := ComplexMap => (f,lo,hi) -> canonicalTruncation(f, (lo,hi))
 
 truncateMatrixOpts := options(truncate, List, Matrix)
-truncate(ZZ,   ComplexMap) :=
+truncate(ZZ,   ComplexMap) := truncate(InfiniteNumber, ComplexMap) :=
 truncate(List, ComplexMap) := ComplexMap => truncateMatrixOpts >> opts -> (degs, f) -> (
     d := degree f;
     C := truncate(degs, source f, opts);
