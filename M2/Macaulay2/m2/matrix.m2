@@ -460,17 +460,17 @@ submatrix  = method(TypicalValue => Matrix)
 submatrix' = method(TypicalValue => Matrix)
 
 submatrix(Matrix, VisibleList, VisibleList) := (m, rows, cols) -> map(sliceModule(target m, rows), sliceModule(source m, cols), raw submatrixFree(m, rows, cols))
-submatrix(Matrix, VisibleList, Nothing)     := (m, rows, null) -> map(sliceModule(target m, rows), source m,                    raw submatrixFree(m, rows, null))
+submatrix(Matrix, VisibleList, Nothing)     := (m, rows, cols) -> map(sliceModule(target m, rows), source m,                    raw submatrixFree(m, rows, null))
 submatrix(Matrix, VisibleList)              := (m,       cols) -> map(target m,                    sliceModule(source m, cols), raw submatrixFree(m, null, cols))
-submatrix(Matrix, Nothing,     VisibleList) := (m, null, cols) -> submatrix(m, cols)
-submatrix(Matrix, Nothing,     Nothing)     := (m, null, null) -> m
+submatrix(Matrix, Nothing,     VisibleList) := (m, rows, cols) -> submatrix(m, cols)
+submatrix(Matrix, Nothing,     Nothing)     := (m, rows, cols) -> m
 
 compl := (M, rows) -> if #(rows = listZZ rows) > 0 then toList(0 .. numgens M - 1) - set rows
 submatrix'(Matrix, VisibleList, VisibleList) := (m, rows, cols) -> submatrix(m, compl(target m, rows), compl(source m, cols))
-submatrix'(Matrix, VisibleList, Nothing)     := (m, rows, null) -> submatrix(m, compl(target m, rows), null)
+submatrix'(Matrix, VisibleList, Nothing)     := (m, rows, cols) -> submatrix(m, compl(target m, rows), null)
 submatrix'(Matrix, VisibleList)              := (m,       cols) -> submatrix(m, null, compl(source m, cols))
-submatrix'(Matrix, Nothing,     VisibleList) := (m, null, cols) -> submatrix'(m, cols)
-submatrix'(Matrix, Nothing,     Nothing)     := (m, null, null) -> m
+submatrix'(Matrix, Nothing,     VisibleList) := (m, rows, cols) -> submatrix'(m, cols)
+submatrix'(Matrix, Nothing,     Nothing)     := (m, rows, cols) -> m
 
 submatrixByDegrees = method()
 submatrixByDegrees(Matrix, Sequence, Sequence) := (m, tarBox, srcBox) -> (

@@ -101,11 +101,11 @@ promote(MutableMatrix,Number) := Matrix => (f,S) -> (
 --------------------------------
 MutableMatrix _ List := Matrix => (f,v) -> submatrix(f,listZ splice v)	-- get some columns
 MutableMatrix ^ List := Matrix => (f,v) -> submatrix(f,listZ splice v,) -- get some rows
-submatrix(MutableMatrix,VisibleList,VisibleList) := (m,rows,cols) -> map(ring m,rawSubmatrix(raw m, listZ toList splice rows, listZ toList splice cols))
-submatrix(MutableMatrix,VisibleList            ) := (m,cols     ) -> map(ring m,rawSubmatrix(raw m, listZ toList splice cols))
-submatrix(MutableMatrix,Nothing    ,VisibleList) := (m,null,cols) -> submatrix(m,cols)
-submatrix(MutableMatrix, VisibleList, Nothing)     := (m, rows, null) -> map(ring m, rawSubmatrix(raw m, listZZ rows, 0 .. numColumns m - 1))
-submatrix(MutableMatrix, Nothing,     Nothing)     := (m, null, null) -> m
+submatrix(MutableMatrix, VisibleList, VisibleList) := (m, rows, cols) -> map(ring m,rawSubmatrix(raw m, listZ toList splice rows, listZ toList splice cols))
+submatrix(MutableMatrix, VisibleList             ) := (m,       cols) -> map(ring m,rawSubmatrix(raw m, listZ toList splice cols))
+submatrix(MutableMatrix, Nothing,     VisibleList) := (m, rows, cols) -> submatrix(m,cols)
+submatrix(MutableMatrix, VisibleList, Nothing)     := (m, rows, cols) -> map(ring m, rawSubmatrix(raw m, listZZ rows, 0 .. numColumns m - 1))
+submatrix(MutableMatrix, Nothing,     Nothing)     := (m, rows, cols) -> m
 
 --------------------------------
 numRows(RawMutableMatrix) := (m) -> rawNumberOfRows m

@@ -615,6 +615,13 @@ bindFormalParmList(e:ParseTree,dictionary:Dictionary,desc:functionDescription):v
 	  then (
 	       bindFormalParmList(binary.lhs,dictionary,desc);
 	       bindop(binary.Operator,dictionary);
+	       when binary.rhs
+	       is t:Token do (
+		   when lookup(t.word, dictionary.symboltable)
+		   is Symbol do makeErrorTree(t,
+		       "duplicate symbol in parameter list: " + t.word.name)
+		   else nothing)
+	       else nothing;
 	       bindFormalParm(binary.rhs,dictionary,desc);)
 	  else makeErrorTree(e,"syntax error: expected function parameter list"))
      else bindFormalParm(e,dictionary,desc));
