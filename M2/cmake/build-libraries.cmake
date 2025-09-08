@@ -931,13 +931,13 @@ set(nauty_BINARIES
   genspecialg gentourng gentreeg hamheuristic labelg linegraphg listg multig newedgeg pickg
   planarg ranlabg shortg showg subdivideg twohamg vcolg watercluster2)
 ExternalProject_Add(build-nauty
-  URL               https://pallini.di.uniroma1.it/nauty2_9_0.tar.gz
-  URL_HASH          SHA256=7b38834c7cefe17d25e05eef1ef3882fa9cd1933f582b9eb9de7477411956053
+  URL               https://pallini.di.uniroma1.it/nauty2_9_1.tar.gz
+  URL_HASH          SHA256=488fa906d10a372c72d2364c5dee48e0f7307004fbe52c2bce50c52de8cd873e
   PREFIX            libraries/nauty
   SOURCE_DIR        libraries/nauty/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-  CONFIGURE_COMMAND rm -f aclocal.m4 && autoreconf -vif
+  CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       CPPFLAGS=${CPPFLAGS}

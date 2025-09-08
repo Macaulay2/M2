@@ -1,7 +1,7 @@
 URL = https://pallini.di.uniroma1.it
-VERSION = 2_9_0
+VERSION = 2_9_1
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-PRECONFIGURE = rm -f aclocal.m4 && autoreconf -vif
+PRECONFIGURE = autoreconf -vif
 TARFILE = nauty$(VERSION).tar.gz
 TARDIR = nauty$(VERSION)
 
