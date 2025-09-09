@@ -122,7 +122,15 @@ PACKAGE-DISTCLEAN-TARGET := distclean
 package-distclean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) $(NOTPARALLEL) -C $(BUILDDIR) $(PACKAGE-DISTCLEAN-TARGET) ; fi
 fetch: download-enabled
 ifeq ($(SUBMODULE),true)
-fetch: update-submodule
+fetch: .submodule-updated
+.submodule-updated:
+	$(MAKE) update-submodule
+	touch $@
+update-submodule:
+	@GIT@ submodule update --init @abs_top_srcdir@/submodules/$(LIBNAME)
+clean::
+	rm -f .submodule-updated
+	@GIT@ submodule deinit @abs_top_srcdir@/submodules/$(LIBNAME)
 else
 fetch: $(TARFILE_DIR)/$(TARFILE)
 endif
@@ -132,8 +140,6 @@ $(LICENSE_DIR):; $(MKDIR_P) $(LICENSE_DIR)
 compile: config-chk .compiled-$(VERSION) 
 configure: .configured-$(VERSION) config-chk 
 config-chk:
-update-submodule:
-	git submodule update --init @abs_top_srcdir@/submodules/$(LIBNAME)
 
 PROGRAMS ?=
 LICENSEFILES ?=
