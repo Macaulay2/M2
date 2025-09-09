@@ -3,7 +3,7 @@
 include include/config.Makefile
 VPATH = @srcdir@
 .PRECIOUS:@srcdir@/configure config.status
-.PHONY:unconfigure-libs reconfigure configure-help report-M2-location help scripts
+.PHONY:unconfigure-libs reconfigure configure-help report-M2-location help scripts dist
 all install:										\
 	check-make config.status configured check-for-undefined-configure-variables	\
 	srcdir protect-configs configured-files check-machine				\
@@ -62,6 +62,7 @@ clean:
 	rm -f M2 srcdir .link-test srcdir confdefs.h configure.lineno conftest.* include/config.h
 	rm -rf usr-dist conf_* usr-host
 	rm -f pre-install.sh post-install.sh normal-install.sh
+	rm -f $(DIST_NAME).tar.gz
 
 install: configured; $(MAKE) -C distributions $@
 @srcdir@/configure : @srcdir@/configure.ac @srcdir@/m4/files; @srcdir@/autogen.sh
@@ -130,6 +131,32 @@ report-M2-location:
 validate-html:
 	$(MAKE) -C Macaulay2/packages $@
 
+DIST_NAME = @PACKAGE_TARNAME@-@PACKAGE_VERSION@
+
+dist: $(DIST_NAME).tar.gz
+
+$(DIST_NAME)/M2:
+	mkdir -p $@/include/M2
+	cp @top_srcdir@/configure $@
+	cp @top_srcdir@/install-sh $@
+	cp @top_srcdir@/config.guess $@
+	cp @top_srcdir@/config.sub $@
+	cp @top_srcdir@/include/M2/config.h.in $@/include/M2
+
+$(DIST_NAME).tar.gz: $(DIST_NAME)/M2
+	git submodule update --init @top_srcdir@/Macaulay2/editors/emacs
+	cd @top_srcdir@/.. && @GIT@ archive \
+		--prefix=$(DIST_NAME)/ \
+		-o @abs_builddir@/M2.tar HEAD
+	cd @top_srcdir@/Macaulay2/editors/emacs && @GIT@ archive \
+		--prefix=$(DIST_NAME)/M2/Macaulay2/editors/emacs/ \
+		-o @abs_builddir@/M2-emacs.tar HEAD
+	@TAR@ -Af M2.tar M2-emacs.tar
+	@TAR@ -rf M2.tar $(DIST_NAME)
+	gzip M2.tar
+	mv M2.tar.gz $@
+	rm -rf M2-emacs.tar $(DIST_NAME)
+
 announce:
 	@ echo "================================================================="
 	@ echo "    Macaulay2 version @PACKAGE_VERSION@"
@@ -158,6 +185,7 @@ help:
 	@ echo "  check             run the tests"
 	@ echo "  clean             remove all generated files except configured files"
 	@ echo "  distclean         remove all generated files"
+	@ echo "  dist              generate a source tarball for distribution"
 	@ echo "  help              show this help"
 	@ echo ""
 	@ echo "targets for all libraries:"
