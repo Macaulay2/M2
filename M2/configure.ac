@@ -508,17 +508,6 @@ AC_SUBST([GIT_DESCRIPTION],
 AC_SUBST([GIT_BRANCH],
          [`$GIT branch --show-current`])
 
-AC_SUBST(DEB,no)
-AC_ARG_ENABLE(deb,  AS_HELP_STRING(--enable-deb,prepare a *.deb package (for debian, ubuntu, ...)), DEB=$enableval)
-if test "$DEB" = yes 
-then if test "$OPTIMIZE" = no
-     then AC_MSG_ERROR([--disable-optimize and --enable-deb both specified])
-     fi
-     if test "$DEBUG" = yes
-     then AC_MSG_ERROR([--enable-debug and --enable-deb both specified])
-     fi
-fi
-
 AC_SUBST(FREEBSD,no)
 AC_ARG_ENABLE(freebsd,  AS_HELP_STRING(--enable-freebsd,prepare a package file for freebsd), FREEBSD=$enableval)
 if test "$FREEBSD" = yes 
@@ -1957,10 +1946,6 @@ fi
 
 # Here we insert autoconf's default values so we can compute the relative locations in the directory tree
 test "$prefix" || prefix=/usr/local
-
-# for some distributions, we know what the prefix should be:
-test "$DEB"     = yes && test "$prefix" != /usr && 
-     AC_MSG_ERROR(--enable-deb specified and --prefix not set to /usr)
 
 if test "$prefix" != /usr/local
 then test "$FREEBSD" = yes && AC_MSG_ERROR(--enable-freebsd specified and --prefix not set to /usr/local)
