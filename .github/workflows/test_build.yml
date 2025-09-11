@@ -102,6 +102,10 @@ jobs:
               echo "CC=clang"    >> $GITHUB_ENV
               echo "CXX=clang++" >> $GITHUB_ENV
               echo "$(brew --prefix llvm)/bin" >> $GITHUB_PATH
+              # https://github.com/Macaulay2/M2/issues/3967
+              # maybe remove after some future llvm release?
+              SDKROOT=$(xcrun --show-sdk-path)
+              echo "CXXFLAGS=-nostdinc++ -isystem $SDKROOT/usr/include/c++/v1 -isystem $SDKROOT/usr/include" >> $GITHUB_ENV
               ;;
           esac
 
