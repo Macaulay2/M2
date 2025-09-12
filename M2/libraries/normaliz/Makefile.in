@@ -13,29 +13,6 @@ CONFIGOPTIONS += --disable-shared \
 	--without-nauty           \
 	--without-e-antic
 
-# Mac OS X gcc has -fopenmp, but gives an internal compiler error if we try it:
-# I have filed a bug report, Bug ID# 8338749:
-OPENMP = no
-
-#### from their Makefile:
-ifeq ($(OPENMP),no)
- CXXFLAGS0 = -Wno-unknown-pragmas -DNO_OPENMP
-else
- CXXFLAGS0 = -fopenmp
-endif
-# -static doesn't work in Mac OS X, so override variables from normaliz's Makefile.configuration:
-# former value:
-# NORMFLAGS = -static
-# new value:
-NORMFLAGS = 
-####
-
-CXXFLAGS1 = $(CPPFLAGS) -Wall -O3 -Wno-unknown-pragmas -I .. -I . $(CXXFLAGS0)
-BUILDOPTIONS =  CXX="$(CXX)" \
-		NORMFLAGS="$(NORMFLAGS)" \
-		CXXFLAGS="$(CXXFLAGS1) -std=c++14" \
-		RANLIB="@RANLIB@" \
-		GMPFLAGS="$(LDFLAGS) -lgmpxx -lgmp"
 PROGRAMS = source/normaliz
 STRIPFILES = source/normaliz
 LICENSEFILES = COPYING
