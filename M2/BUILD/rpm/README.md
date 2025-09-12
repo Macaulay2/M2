@@ -20,3 +20,24 @@ make rpm DISTRIBUTION=fedora RELEASE=42
 The build artifacts are deposited in the `rpmbuild-$(DISTRIBUTION)-$(RELEASE)`
 directory, and in particular, the rpm package file may be found in the `RPMS`
 subdirectory of that directory.
+
+This can also be automated on GitHub using the "Build RPM packages" workflow.
+
+# Publishing Macaulay2 rpm packages
+
+*(For M2 core developers with login access to aeschylus.)*
+
+After building the rpm packages, upload each of them to the appropriate
+directory:
+
+* Fedora: `/var/www/www2.macaulay2.com/Repositories/Fedora/${RELEASE}`
+* RHEL: `/var/www/www2.macaulay2.com/Repositories/Scientific/${RELEASE}`
+
+Then in that directory, run:
+
+```
+createrepo .
+```
+
+After doing this for each package, run `make` in `/var/www/www2.macaulay2.com/`
+to regenerate all the html pages.

@@ -1,0 +1,41 @@
+name: Build RPM packages
+on: workflow_dispatch
+
+jobs:
+  build-rpm:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - distribution: fedora
+            release: 40
+          - distribution: fedora
+            release: 41
+          - distribution: fedora
+            release: 42
+          - distribution: fedora
+            release: 43
+          - distribution: almalinux
+            release: 8
+          - distribution: almalinux
+            release: 9
+          - distribution: almalinux
+            release: 10
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build RPM
+        run: |
+          cd M2/BUILD/rpm
+          make rpm DISTRIBUTION=${{ matrix.distribution }} \
+          RELEASE=${{ matrix.release }}
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.distribution }}-${{ matrix.release }}
+          path: |
+            M2/BUILD/rpm/rpmbuild-*/BUILD/Macaulay2-*/M2/config.log
+            M2/BUILD/rpm/rpmbuild-*/BUILD/Macaulay2-*/M2/libraries/*/build/*/config.log
+            M2/BUILD/rpm/rpmbuild-*/BUILD/Macaulay2-*/M2/usr-dist/common/share/doc/Macaulay2/*/example-output/*.errors
+            M2/BUILD/rpm/rpmbuild-*/RPMS/*/*.rpm
