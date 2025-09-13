@@ -10,9 +10,6 @@ distributions/top/preremove
 distributions/top/postinstall
 distributions/tar/Makefile
 distributions/dmg/Makefile
-distributions/rpm/Makefile
-distributions/rpm/Macaulay2-body.spec
-distributions/rpm/Macaulay2-common-body.spec
 distributions/freebsd/Makefile
 distributions/freebsd/post-install
 distributions/freebsd/post-deinstall
