@@ -11,6 +11,15 @@ install::
 	$(MKDIR_P) $(DESTDIR)@prefix@
 	$(T) -C @pre_prefix@      . | @TAR@ xfp - -C $(DESTDIR)@prefix@
 	$(T) -C @pre_exec_prefix@ . | @TAR@ xfp - -C $(DESTDIR)@exec_prefix@
+# fix rpath's
+ifeq (@CHRPATH@,chrpath)
+	for file in $(DESTDIR)@librariesdir@/* $(DESTDIR)@programsdir@/*; \
+	do                                                                \
+		if @CHRPATH@ $$file > /dev/null 2>&1;                     \
+		then @CHRPATH@ $$file -r @librariesdir@;                  \
+		fi;                                                       \
+	done
+endif
 
 install::$(DESTDIR)@infodir@/dir
 $(DESTDIR)@infodir@/dir :; @INSTALL_DATA@ @abs_top_srcdir@/files/info-dir-template $@
