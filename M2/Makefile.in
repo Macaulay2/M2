@@ -134,7 +134,7 @@ announce:
 	@ echo "================================================================="
 	@ echo "    Macaulay2 version @PACKAGE_VERSION@"
 	@ echo "    OS=@OS@ ISSUE=@ISSUE@ ARCH=@ARCH@"
-	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@"
+	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@"
 	@ echo "================================================================="
 
 help:
@@ -142,7 +142,7 @@ help:
 	@ echo ""
 	@ echo "make files configured with:"
 	@ echo "    OS=@OS@ ISSUE=@ISSUE@ ARCH=@ARCH@"
-	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@"
+	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@"
 	@ echo ""
 	@ echo "Macaulay2 executable location:"
 	@ echo "   @pre_bindir@/M2@EXE@"
@@ -192,7 +192,6 @@ help:
 	@ echo "                      (currently ${prefix})"
 	@ echo "  exec_prefix=...     installation prefix for architecture dependent files"
 	@ echo "                      (currently ${exec_prefix})"
-	@ echo "  ENCAP=yes           install in ${prefix}/@package@ instead"
 	@ echo "  MAPFILE=yes         create a mapfile when linking M2"
 	@ echo "  DESTDIR=/Foo/Bar    install in /Foo/Bar${prefix} instead"
 # Local Variables:

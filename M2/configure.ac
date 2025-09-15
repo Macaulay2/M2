@@ -392,7 +392,6 @@ test "$DEBUG" = "yes" && ENABLE_STRIP=no
 # note: we build many programs for inclusion in the distribution -- stripping them saves 9MB of 70
 
 AC_SUBST(MEMDEBUG,no)  AC_ARG_ENABLE(memdebug, AS_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG=$enableval)
-AC_SUBST(ENCAP,no)     AC_ARG_ENABLE(encap, AS_HELP_STRING(--enable-encap,encapsulate all files in a subdirectory at installation time), ENCAP=$enableval)
 AC_SUBST(XCODE,no)     AC_ARG_ENABLE(xcode, AS_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE=$enableval)
 
 AC_SUBST(CC_THREAD_SUPPORT)
