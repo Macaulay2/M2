@@ -4,6 +4,7 @@ import '@fortawesome/fontawesome-free/css/fontawesome.css';
 import '@fortawesome/fontawesome-free/css/solid.css';
 import './fa-glyphicons-trick.css';
 import ClipboardJS from 'clipboard';
+import 'jquery';
 
 // trick Bootstrap 5 into supporting Bootstrap 3 attributes so we can
 // keep using BootSideMenu
