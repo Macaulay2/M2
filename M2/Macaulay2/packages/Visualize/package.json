@@ -1,18 +1,13 @@
 {
   "scripts": {
-    "postinstall": "copy-files-from-to"
+    "build": "webpack"
   },
   "dependencies": {
-    "clipboard": "^2.0.11",
-    "copy-files-from-to": "^3.11.0"
+    "clipboard": "^2.0.11"
   },
-  "copyFiles": [
-    {
-      "from": "node_modules/clipboard/dist/clipboard.min.js",
-      "to": "js/"
-    }
-  ],
-  "copyFilesSettings": {
-    "whenFileExists": "overwrite"
+  "devDependencies": {
+    "expose-loader": "^5.0.1",
+    "webpack": "^5.101.3",
+    "webpack-cli": "^6.0.1"
   }
 }

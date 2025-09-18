@@ -1,0 +1,1 @@
+import ClipboardJS from 'clipboard';
