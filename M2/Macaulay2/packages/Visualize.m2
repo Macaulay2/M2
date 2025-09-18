@@ -539,7 +539,7 @@ copyJS(String) := opts -> dst -> (
     if not match("/$", dst) then dst = dst | "/";
     if not fileExists dst then makeDirectory dst;
 
-    dirs := {"js", "css", "fonts", "images"};
+    dirs := {"js", "css", "fonts"};
     existingDirs := select(dirs, dir -> fileExists concatenate(dst, dir));
 
     if #existingDirs > 0 and opts.Warning == true then (

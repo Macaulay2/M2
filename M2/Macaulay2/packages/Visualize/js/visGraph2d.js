@@ -952,10 +952,8 @@ function exportTikz (event){
     tikzButton.id = "copyButton";
     tikzButton.style = "vertical-align:middle;";
     tikzButton.type = "button";
-    var clipboardImg = document.createElement("img");
-    clipboardImg.src = scriptSource+"images/32px-Octicons-clippy.png";
-    clipboardImg.alt = "Copy to clipboard";
-    clipboardImg.style = "width:19px;height:19px;";
+    var clipboardImg = document.createElement("i");
+    clipboardImg.classList.add("fa-solid", "fa-clipboard");
     tikzButton.appendChild(clipboardImg);
     tikzDiv.appendChild(tikzInput);
     tikzDiv.appendChild(tikzButton);

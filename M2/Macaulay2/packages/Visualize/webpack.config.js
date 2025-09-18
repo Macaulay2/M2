@@ -15,6 +15,17 @@ module.exports = {
           exposes: 'ClipboardJS',
         },
       },
-   ],
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
+      },
+      {
+        test: /\.(woff2?|eot|ttf|otf)$/,
+        type: 'asset/resource',
+        generator: {
+          filename: '../fonts/[name].[contenthash][ext]',
+        },
+      },
+    ],
   },
 };
