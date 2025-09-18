@@ -21,6 +21,13 @@ module.exports = {
         options: { exposes: ['$', 'jQuery'] },
       },
       {
+        test: require.resolve('nouislider'),
+        loader: 'expose-loader',
+        options: {
+          exposes: 'noUiSlider',
+        },
+      },
+      {
         test: /\.css$/i,
         use: ['style-loader', 'css-loader'],
       },

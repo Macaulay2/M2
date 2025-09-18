@@ -94,43 +94,6 @@ text.id {
     width: 120px;
 }
 
-.noUi-horizontal .noUi-handle {
-    width: 24px;
-    height: 18px;
-    left: -17px;
-    top: -6px;
-}
-    
-.noUi-horizontal {
-    height: 14px;
-}
-
-/* Vertical lines on the handles */
-.noUi-handle:before,
-.noUi-handle:after {
-    content: "";
-    display: block;
-    position: absolute;
-    height: 10px;
-    width: 1px;
-    background: #E8E7E6;
-    left: 10px;
-    top: 3px;
-}
-.noUi-handle:after {
-    left: 12px;
-}
-        
-.noUi-horizontal.noUi-extended {
-    padding-right: 20px;
-}
-.noUi-horizontal.noUi-extended .noUi-handle {
-    left: -2px;
-}
-.noUi-horizontal.noUi-extended .noUi-origin  {
-    right: -32px;
-}
-
 .list-group-item.active > textarea {
     color: #333;
 }
