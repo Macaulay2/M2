@@ -1,0 +1,21 @@
+/* trick BootSideMenu into thinking we have glyphicon fonts */
+.glyphicon {
+    font-family: "Font Awesome 7 Free", "Font Awesome 6 Free", "Font Awesome 5 Free";
+    font-weight: 900;
+    font-style: normal;
+    display: inline-block;
+    line-height: 1;
+    speak: none;
+}
+
+.glyphicon-chevron-left::before {
+    content: "\f053";
+}
+
+.glyphicon-chevron-right::before {
+    content: "\f054";
+}
+
+.glyphicon-chevron-down::before {
+    content: "\f078";
+}
