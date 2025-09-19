@@ -2,9 +2,13 @@ const path = require('path');
 
 module.exports = {
   mode: 'production',
+  entry: {
+    visCommon: './src/visCommon.js',
+    visGraph2d: './src/visGraph2d.js'
+  },
   output: {
     path: path.resolve(__dirname, 'js'),
-    filename: 'visCommon.js',
+    filename: '[name].js',
   },
   module: {
     rules: [
