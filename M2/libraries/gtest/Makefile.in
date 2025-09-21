@@ -1,5 +1,6 @@
 SUBMODULE = true
 LIBNAME = googletest
+URL = https://github.com/google/googletest
 VERSION = 1.16.0
 CONFIGURECMD = cmake . -DCMAKE_INSTALL_PREFIX=$(PREFIX) -DBUILD_GMOCK=OFF \
 	-DCMAKE_INSTALL_LIBDIR=lib

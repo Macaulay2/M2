@@ -13,6 +13,7 @@ ifneq ($(PARALLEL),yes)
 NOTPARALLEL = -j1
 endif
 LIBNAME ?= $(shell basename `pwd`)
+GIT_REF ?= v$(VERSION)
 UNTARDIR = build
 OLDUNTARDIR = build-old
 TARDIR ?= $(LIBNAME)-$(VERSION)
@@ -127,10 +128,27 @@ fetch: .submodule-updated
 	$(MAKE) update-submodule
 	touch $@
 update-submodule:
-	@GIT@ submodule update --init @abs_top_srcdir@/submodules/$(LIBNAME)
+	if git rev-parse 2> /dev/null;                          \
+	then                                                    \
+		@GIT@ submodule update --init                   \
+			@abs_top_srcdir@/submodules/$(LIBNAME); \
+	else                                                    \
+		cd @abs_top_srcdir@/submodules;                 \
+		rm -rf $(LIBNAME);                              \
+		@GIT@ clone $(URL) $(LIBNAME);                  \
+		cd $(LIBNAME);                                  \
+		@GIT@ checkout $(GIT_REF);                      \
+	fi
+
 clean::
 	rm -f .submodule-updated
-	@GIT@ submodule deinit @abs_top_srcdir@/submodules/$(LIBNAME)
+	if git rev-parse 2> /dev/null;                                         \
+	then                                                                   \
+		@GIT@ submodule deinit @abs_top_srcdir@/submodules/$(LIBNAME); \
+	else                                                                   \
+		rm -rf @abs_top_srcdir@/submodules/$(LIBNAME);                 \
+		mkdir @abs_top_srcdir@/submodules/$(LIBNAME);                  \
+	fi
 else
 fetch: $(TARFILE_DIR)/$(TARFILE)
 endif

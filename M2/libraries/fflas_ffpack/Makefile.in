@@ -4,6 +4,7 @@
 # This link is broken: http://linalg.org/projects/fflas-ffpack
 # http://linalg.org/
 SUBMODULE = true
+URL = https://github.com/linbox-team/fflas-ffpack
 VERSION = 2.5.0
 PRECONFIGURE = autoreconf -vif
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)

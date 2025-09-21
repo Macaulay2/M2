@@ -7,7 +7,8 @@ SUBMODULE = true
 VLIMIT = 900000
 MLIMIT = 900000
 
-VERSION = 4.2.0
+URL = https://github.com/linbox-team/givaro
+VERSION = 4.2.1
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 # the patch modifies test/Makefile.am, so we must remake test/Makefile.in
 PRECONFIGURE = autoreconf -vif

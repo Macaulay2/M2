@@ -1,7 +1,7 @@
 HOMEPAGE = http://www.hboehm.info/gc/
 SUBMODULE = true
 LIBNAME = bdwgc
-URL = http://www.hboehm.info/gc/gc_source/
+URL = https://github.com/ivmai/bdwgc.git
 GITURL = https://github.com/ivmai/bdwgc/
 VERSION = 8.2.8
 LICENSEFILES = README.QUICK

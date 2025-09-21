@@ -1,7 +1,9 @@
 SUBMODULE = true
 HOMEPAGE = https://github.com/broune/memtailor
+URL = https://github.com/Macaulay2/memtailor
 VPATH = @srcdir@
-VERSION = 20250513-07c84a6852
+VERSION = 1.0~git20250513
+GIT_REF = 07c84a6852
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -i
 CONFIGOPTIONS = --disable-shared

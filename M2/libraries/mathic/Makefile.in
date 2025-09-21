@@ -1,7 +1,9 @@
 HOMEPAGE = https://github.com/broune/mathic
+URL = https://github.com/Macaulay2/mathic
 SUBMODULE = true
 VPATH = @srcdir@
-VERSION = 20250513-7abf77e4ce
+VERSION = 1.0~git20250513
+GIT_REF = 7abf77e4ce
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -i
 CONFIGOPTIONS = --disable-shared
