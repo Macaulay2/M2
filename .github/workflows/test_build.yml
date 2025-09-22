@@ -39,17 +39,17 @@ jobs:
           - cmake
         os:
           - ubuntu-24.04
-          - macos-13
+          - macos-14
         compiler:
           - default
         include:
           # This build tests Clang rather than AppleClang (keep)
           - build-system: cmake
-            os: macos-13 # TODO: switch to macos-14 for arm64 testing
+            os: macos-14
             compiler: brew-clang
         exclude:
           - build-system: cmake
-            os: macos-13
+            os: macos-14
             compiler: default
     steps:
       - uses: actions/checkout@v5
