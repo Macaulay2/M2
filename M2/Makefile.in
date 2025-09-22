@@ -3,7 +3,8 @@
 include include/config.Makefile
 VPATH = @srcdir@
 .PRECIOUS:@srcdir@/configure config.status
-.PHONY:unconfigure-libs reconfigure configure-help report-M2-location help scripts dist
+.PHONY: unconfigure-libs reconfigure configure-help report-M2-location help \
+	scripts dist doc-dist
 all install:										\
 	check-make config.status configured check-for-undefined-configure-variables	\
 	srcdir protect-configs configured-files check-machine				\
@@ -62,7 +63,7 @@ clean:
 	rm -f M2 srcdir .link-test srcdir confdefs.h configure.lineno conftest.* include/config.h
 	rm -rf usr-dist conf_* usr-host
 	rm -f pre-install.sh post-install.sh normal-install.sh
-	rm -f $(DIST_NAME).tar.gz
+	rm -f $(DIST_NAME).tar.gz $(DOC_DIST_NAME).tar.gz
 
 install: configured; $(MAKE) -C distributions $@
 @srcdir@/configure : @srcdir@/configure.ac @srcdir@/m4/files; @srcdir@/autogen.sh
@@ -157,6 +158,30 @@ $(DIST_NAME).tar.gz: $(DIST_NAME)/M2
 	mv M2.tar.gz $@
 	rm -rf M2-emacs.tar $(DIST_NAME)
 
+DOC_DIST_NAME = @PACKAGE_TARNAME@-docs-@PACKAGE_VERSION@
+
+doc-dist: $(DOC_DIST_NAME).tar.gz
+
+$(DOC_DIST_NAME).tar.gz:
+	$(MAKE) -C Macaulay2/packages
+	mkdir -p $(DOC_DIST_NAME)/share/doc
+	cp -r @pre_docdir@ $(DOC_DIST_NAME)/share/doc
+	cp -r @pre_infodir@ $(DOC_DIST_NAME)/share
+	mkdir -p $(DOC_DIST_NAME)/dump
+	for PACKAGE_DIR in @pre_libm2dir@/*;                                 \
+	do                                                                   \
+		PACKAGE=$$(basename $$PACKAGE_DIR);                          \
+		if test -d @pre_libm2dir@/$$PACKAGE/cache;                   \
+		then cd @pre_libm2dir@/$$PACKAGE/cache;                      \
+		gdbm_dump rawdocumentation-*.db                              \
+			@abs_builddir@/$(DOC_DIST_NAME)/dump/$$PACKAGE.dump; \
+		fi;                                                          \
+	done
+	cp @srcdir@/Makefile.doc-dist $(DOC_DIST_NAME)/Makefile
+	@TAR@ -czf $@ $(DOC_DIST_NAME)
+	rm -rf $(DOC_DIST_NAME)
+
+
 announce:
 	@ echo "================================================================="
 	@ echo "    Macaulay2 version @PACKAGE_VERSION@"
@@ -186,6 +211,7 @@ help:
 	@ echo "  clean             remove all generated files except configured files"
 	@ echo "  distclean         remove all generated files"
 	@ echo "  dist              generate a source tarball for distribution"
+	@ echo "  doc-dist          generate a tarball containing the M2 docs"
 	@ echo "  help              show this help"
 	@ echo ""
 	@ echo "targets for all libraries:"

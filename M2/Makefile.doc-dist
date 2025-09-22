@@ -1,0 +1,30 @@
+prefix ?= /usr/local
+exec_prefix ?= $(prefix)
+datadir ?= $(prefix)/share
+libdir ?= $(exec_prefix)/lib
+
+PACKAGES := $(patsubst dump/%.dump, %, $(wildcard dump/*.dump))
+ENDIAN := $(shell printf '\x61\x62\x63\x64' | od -An -tx4 -N4 | tr -d ' \n' | \
+	awk '{if($$0=="61626364") print "abcd"; else print "dcba"}')
+POINTER_SIZE := $(shell expr $(shell getconf LONG_BIT) / 8)
+DB_FILENAME = rawdocumentation-$(ENDIAN)-$(POINTER_SIZE).db
+DB_FILES := $(patsubst %, lib/Macaulay2/%/cache/$(DB_FILENAME), $(PACKAGES))
+
+all: $(DB_FILES)
+
+lib/Macaulay2/%/cache/$(DB_FILENAME): dump/%.dump
+	mkdir -p $(@D)
+	gdbm_load $< $@
+
+install:
+	mkdir -p $(DESTDIR)$(datadir)
+	cp -r share/* $(DESTDIR)$(datadir)
+	mkdir -p $(DESTDIR)$(libdir)
+	cp -r lib/* $(DESTDIR)$(libdir)
+
+clean:
+	rm -rf lib
+
+# Local Variables:
+# mode: makefile
+# End:
