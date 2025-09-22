@@ -4,7 +4,8 @@ module.exports = {
   mode: 'production',
   entry: {
     visCommon: './src/visCommon.js',
-    visGraph2d: './src/visGraph2d.js'
+    visGraph2d: './src/visGraph2d.js',
+    visDigraph2d: './src/visDigraph2d.js',
   },
   output: {
     path: path.resolve(__dirname, 'js'),
