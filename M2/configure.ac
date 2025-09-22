@@ -219,7 +219,8 @@ fi
 AC_ARG_ENABLE([documentation],
     [AS_HELP_STRING([--enable-documentation=...],
         [space-delimited list of types of documentation to build; available
-         options are "html", "info", and "pdf"; default value is "html info"])],
+         options are "html", "info", and "pdf"; default value is "html info".
+         "download" will download pre-generated documentation])],
     [DOCUMENTATION=$enableval],
     [DOCUMENTATION="html info"])
 
@@ -227,6 +228,9 @@ if test "$DOCUMENTATION" = no
 then DOCUMENTATION=""
 elif test "$DOCUMENTATION" = yes
 then DOCUMENTATION="html info"
+elif test "$DOCUMENTATION" = download
+then DOCUMENTATION=""
+     BUILDLIST="$BUILDLIST Macaulay2-docs"
 else for DOCTYPE in $DOCUMENTATION
     do case $DOCTYPE in
             html|pdf)

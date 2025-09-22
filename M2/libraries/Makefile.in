@@ -4,7 +4,7 @@ BUILT_TARGETS = patch fetch all check unconfigure reinstall
 ALL_TARGETS = $(BUILT_TARGETS) clean distclean
 all:fetch
 $(ALL_TARGETS): Makefile.library
-$(foreach d,@LIBLIST@ @PROGLIST@ libtool M2,		\
+$(foreach d,@LIBLIST@ @PROGLIST@ M2 Macaulay2-docs,	\
 	$(foreach t, $(ALL_TARGETS),			\
 		$(eval $t-in-$d:; + $$(MAKE) -C $d $t)	\
 		$(eval .PHONY: $t $t-in-$d)))

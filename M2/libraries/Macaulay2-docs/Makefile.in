@@ -1,0 +1,8 @@
+VERSION = @PACKAGE_VERSION@
+
+CONFIGURECMD = :
+
+INSTALLTARGET = install prefix=@pre_prefix@ exec_prefix=@pre_exec_prefix@
+
+include ../Makefile.library
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/Macaulay2-docs/Makefile

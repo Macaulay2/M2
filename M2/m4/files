@@ -25,6 +25,7 @@ distributions/deb/macaulay2/preinst
 libraries/Makefile
 libraries/4ti2/Makefile
 libraries/M2/Makefile
+libraries/Macaulay2-docs/Makefile
 libraries/Makefile.library
 libraries/cddlib/Makefile
 libraries/cddplus/Makefile
