@@ -7,6 +7,7 @@ module.exports = {
     visGraph2d: './src/visGraph2d.js',
     visDigraph2d: './src/visDigraph2d.js',
     visPoset: './src/visPoset.js',
+    visSimplicialComplex2d: './src/visSimplicialComplex2d.js',
   },
   output: {
     path: path.resolve(__dirname, 'js'),
