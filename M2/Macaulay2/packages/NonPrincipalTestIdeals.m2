@@ -9,7 +9,7 @@ newPackage(
     Headline => "",
     Headline => "singularities of pairs with non-principal ideals",
     Keywords => {"Test ideal", "Extended Rees algebra", "F-pure threshold", "canonical module", "F-jumping number"},
-    DebuggingMode => true,
+    DebuggingMode => false,
     Reload=>true,     
     PackageExports => {"Divisor", "TestIdeals", "FrobeniusThresholds", "ReesAlgebra", "Complexes"}
     )
