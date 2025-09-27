@@ -8,7 +8,7 @@ newPackage(
         {Name => "Hunter Simper", Email => "hunter.simper@utah.edu", HomePage => "https://www.huntersimper.com/"}},    
     Headline => "",
     Headline => "singularities of pairs with non-principal ideals",
-    Keywords => {},
+    Keywords => {"Test ideal", "Extended Rees algebra", "F-pure threshold", "canonical module", "F-jumping number"},
     DebuggingMode => true,
     Reload=>true,     
     PackageExports => {"Divisor", "TestIdeals", "FrobeniusThresholds", "ReesAlgebra", "Complexes"}
