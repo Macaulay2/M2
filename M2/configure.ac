@@ -880,6 +880,9 @@ fi
 if test -d /usr/include/cdd 
 then CPPFLAGS="$CPPFLAGS -I/usr/include/cdd"
 fi
+if test -d /opt/homebrew/include/cddlib
+then CPPFLAGS="$CPPFLAGS -I/opt/homebrew/include/cddlib"
+fi
 AC_LANG(C)
 AC_CHECK_HEADER(cdd.h,,[ AC_MSG_RESULT([[cddlib not found, will build]])
 			     BUILD_cddlib=yes],

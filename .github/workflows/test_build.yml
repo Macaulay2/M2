@@ -39,19 +39,19 @@ jobs:
           - cmake
         os:
           - ubuntu-24.04
-          - macos-13
+          - macos-14
         compiler:
           - default
         include:
           # This build tests Clang rather than AppleClang (keep)
           - build-system: cmake
-            os: macos-13 # TODO: switch to macos-14 for arm64 testing
+            os: macos-14
             compiler: clang-15
             cxx: clang++
             cc: clang
         exclude:
           - build-system: cmake
-            os: macos-13
+            os: macos-14
             compiler: default
     steps:
       - uses: actions/checkout@v5
@@ -66,7 +66,7 @@ jobs:
           brew config
           brew tap macaulay2/tap
           brew install --overwrite python
-          brew install automake boost tbb ccache ctags texinfo llvm make ninja yasm libffi msolve googletest fplll
+          brew install automake boost libtool tbb ccache ctags texinfo llvm make ninja yasm libffi msolve googletest fplll
           brew install --only-dependencies macaulay2/tap/M2
           brew link factory --force
 
