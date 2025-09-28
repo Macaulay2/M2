@@ -1,16 +1,15 @@
 newPackage(
     "NonPrincipalTestIdeals",
     Version => "1.0",
-    Date => "September 27th, 2025",
+    Date => "September 28th, 2025",
     Authors => {
         {Name => "Trung Chau", Email => "chauchitrung1996@gmail.com", HomePage => "https://trungchaumath.github.io/"}, 
         {Name => "Karl Schwede", Email => "schwede@math.utah.edu", HomePage => "https://www.math.utah.edu/~schwede/"},
         {Name => "Hunter Simper", Email => "hunter.simper@utah.edu", HomePage => "https://www.huntersimper.com/"}},    
-    Headline => "",
     Headline => "singularities of pairs with non-principal ideals",
-    Keywords => {"Test ideal", "Extended Rees algebra", "F-pure threshold", "canonical module", "F-jumping number"},
+    Keywords => {"Commutative algebra", "Singularities"},
     DebuggingMode => false,
-    Reload=>true,     
+    Reload=>false,     
     PackageExports => {"Divisor", "TestIdeals", "FrobeniusThresholds", "ReesAlgebra", "Complexes"}
     )
 export{
@@ -55,7 +54,7 @@ torsionOrder(ZZ, Ideal) := (ZZ, Ideal) => opts -> (n1, I1) -> (
         if isInvertibleIdeal(curIdeal) then return (i, curIdeal);        
         i = i+1;
     );
-    return (0, ideal(sub(0, ring I1)));
+    (0, ideal(sub(0, ring I1)))
 );
 
 
@@ -1575,7 +1574,6 @@ assert (not isFPT(1+5/6, J));
 ///
 
 TEST ///--#17, checking a non-polynomial FPT
-loadPackage "NonPrincipalTestIdeals"
 R = ZZ/3[x,y,z]/ideal(x*y-z^2); --threshold should be 1
 J = ideal(x,y,z);
 assert(isFPT(1/1,J))
