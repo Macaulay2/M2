@@ -448,6 +448,7 @@ Ring _ ZZ := RingElement => (R,i) -> (generators R)#i
 protect numallvars
 
 EngineRing _ ZZ := (R,i) -> (
+     if R.?numallvars and i < 0 then i += R.numallvars;
      if i < 0 or R.?numallvars and i >= R.numallvars then error("index ", toString i, " out of bounds 0 .. ", toString (R.numallvars-1));
      new R from R.RawRing_i
      )

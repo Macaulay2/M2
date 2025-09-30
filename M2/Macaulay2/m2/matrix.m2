@@ -442,10 +442,14 @@ Matrix _ ZZ := Vector => (m,i) -> (
      new target h from {h})
 
 -- given a map of free modules, find a submatrix of it
-submatrixFree = (m, rows, cols) -> map(ring m, if rows === null
-    then rawSubmatrix(raw cover m, listZZ cols)
-    else rawSubmatrix(raw cover m, listZZ rows,
-	if cols =!= null then listZZ cols else 0 .. numgens source m - 1))
+adjustindex := (I, n) -> apply(I, i -> if i < 0 then n + i else i)
+submatrixFree = (m, rows, cols) -> (
+    if rows =!= null then rows = adjustindex(listZZ rows, numRows m);
+    if cols =!= null then cols = adjustindex(listZZ cols, numColumns m);
+    map(ring m, if rows === null
+    then rawSubmatrix(raw cover m, cols)
+    else rawSubmatrix(raw cover m, rows,
+	if cols =!= null then cols else 0 .. numgens source m - 1)))
 -- given a module, find a part of the ambient module
 -- along with corresponding generators and relations
 sliceModule = (M, rows) -> (

@@ -19,8 +19,10 @@ N = coker matrix{{x}}
 m = map(N++R^1, N++R^1, sub(M, R))
 assert(m^{0} == map(N, N++R^1, {{a, b}}))
 assert(m^{1} == map(R^1, N++R^1, {{c, d}}))
+assert(m^{-1} == map(R^1, N++R^1, {{c, d}}))
 assert(m_{0} == map(N++R^1, N, {{a}, {c}}))
 assert(m_{1} == map(N++R^1, R^1, {{b}, {d}}))
+assert(m_{-1} == map(N++R^1, R^1, {{b}, {d}}))
 
 R = QQ[a..d];
 M = image vars R ++ coker vars R
