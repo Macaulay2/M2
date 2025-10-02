@@ -323,13 +323,23 @@ RawMatrix.synonym = "raw matrix"
 setAttribute(RawMutableMatrix,ReverseDictionary,symbol RawMutableMatrix)
 RawMutableMatrix.synonym = "raw mutable matrix"
 
+-- helper functions for negative indices
+adjustIndex = (i, n) -> if i < 0 then n + i else i
+adjustIndices = (I, n) -> apply(I, i -> adjustIndex(i, n))
+
 rawExtract = method()
 
 rawExtract(RawMatrix,ZZ,ZZ) := 
-rawExtract(RawMutableMatrix,ZZ,ZZ) := (m,r,c) -> rawMatrixEntry(m,r,c)
+rawExtract(RawMutableMatrix,ZZ,ZZ) := (m,r,c) -> (
+    r = adjustIndex(r, rawNumberOfRows m);
+    c = adjustIndex(c, rawNumberOfColumns m);
+    rawMatrixEntry(m, r, c))
 
 rawExtract(RawMatrix,Sequence,Sequence) := 
-rawExtract(RawMutableMatrix,Sequence,Sequence) := (m,r,c) -> rawSubmatrix(m,spliceInside r,spliceInside c)
+rawExtract(RawMutableMatrix,Sequence,Sequence) := (m,r,c) -> (
+    r = adjustIndices(spliceInside r, rawNumberOfRows m);
+    c = adjustIndices(spliceInside c, rawNumberOfColumns m);
+    rawSubmatrix(m,spliceInside r,spliceInside c))
 
 RawMatrix _ Sequence := 
 RawMutableMatrix _ Sequence := (m,rc) -> ((r,c) -> rawExtract(m,r,c)) rc
@@ -364,7 +374,13 @@ new RawMatrix from RawRingElement := (RawMatrix,f) -> rawMatrix1(rawFreeModule(r
 new RawMatrix from RawMutableMatrix := rawMatrix
 new RawMutableMatrix from RawMatrix := rawMutableMatrix
 
-RawMutableMatrix _ Sequence = (M,ij,val) -> ((i,j) -> (rawSetMatrixEntry(M,i,j,val); val)) ij
+RawMutableMatrix _ Sequence = (M,ij,val) -> ((i,j) -> (
+	rawSetMatrixEntry(
+	    M,
+	    adjustIndex(i, rawNumberOfRows M),
+	    adjustIndex(j, rawNumberOfColumns M),
+	    val);
+	val)) ij
 
 degree RawMatrix := rawMultiDegree
 degrees RawMatrix :=f -> {rawMultiDegree rawTarget f,rawMultiDegree rawSource f}

@@ -97,10 +97,10 @@ toSameRing = (m,n) -> (
      else (m,n))
 
 Matrix _ Sequence := RingElement => (m,ind) -> (
-     if # ind === 2
-     then promote(rawMatrixEntry(m.RawMatrix, ind#0, ind#1), ring m)
-     else error "expected a sequence of length two"
-     )
+    n := (raw m)_ind;
+    if instance(n, RawRingElement) then promote(n, ring m)
+    else if instance(n, RawMatrix) then map(ring m, n)
+    else error "internal error")
 
 Number      == Matrix :=
 RingElement == Matrix :=
@@ -442,10 +442,9 @@ Matrix _ ZZ := Vector => (m,i) -> (
      new target h from {h})
 
 -- given a map of free modules, find a submatrix of it
-adjustindex := (I, n) -> apply(I, i -> if i < 0 then n + i else i)
 submatrixFree = (m, rows, cols) -> (
-    if rows =!= null then rows = adjustindex(listZZ rows, numRows m);
-    if cols =!= null then cols = adjustindex(listZZ cols, numColumns m);
+    if rows =!= null then rows = adjustIndices(listZZ rows, numRows m);
+    if cols =!= null then cols = adjustIndices(listZZ cols, numColumns m);
     map(ring m, if rows === null
     then rawSubmatrix(raw cover m, cols)
     else rawSubmatrix(raw cover m, rows,

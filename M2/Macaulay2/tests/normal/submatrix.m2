@@ -23,6 +23,7 @@ assert(m^{-1} == map(R^1, N++R^1, {{c, d}}))
 assert(m_{0} == map(N++R^1, N, {{a}, {c}}))
 assert(m_{1} == map(N++R^1, R^1, {{b}, {d}}))
 assert(m_{-1} == map(N++R^1, R^1, {{b}, {d}}))
+assert(m_(-1,-2) == c)
 
 R = QQ[a..d];
 M = image vars R ++ coker vars R

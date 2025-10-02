@@ -2,7 +2,8 @@ R = QQ
 M = mutableMatrix(QQ,3,5)
 M_(0,0) = 1_QQ
 M_(2,4) = 3/4
-M
+M_(-1,-2) = 7
+assert(M == mutableMatrix {{1,0,0,0,0}, {0,0,0,0,0}, {0,0,0,7,3/4}})
 debug Core
 rawSubmatrix(raw M,(0,1),(0,1))
 
@@ -18,6 +19,7 @@ m
 assert(m_(0,2) == z)
 m_(1,2) = x+y
 assert(m_(1,2) == x+y)
+assert(m_(-1,-1) == z)
 assert(not (m == mutableMatrix f))
 m
 rowSwap(m,0,1)
