@@ -525,13 +525,9 @@ support Ideal       := I -> support generators I
 --------------------
 homogenize = method()
 
-listZ := v -> (
-     if not all(v,i -> class i === ZZ) then error "expected list of integers";
-     )
-
 homogCheck := (R, f, v, wts) -> (
      if R =!= ring v then error "homogenization requires variable in the same ring";
-     listZ wts;
+     wts = listZZ wts;
      if degreeLength R =!= 1 then error "homogenization requires degrees of length 1";
      -- if # wts != numgens ring f then error "homogenization weight vector has incorrect length";
      i := index v;

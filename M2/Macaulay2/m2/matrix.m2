@@ -431,8 +431,8 @@ Matrix || Number := (f,g) -> concatRows(f,g*id_(source f))
 -----------------------------------------------------------------------------
 -- submatrix, submatrixByDegrees
 -----------------------------------------------------------------------------
-Matrix _ List := Matrix => (f,v) -> submatrix(f,listZ splice v)	-- get some columns
-Matrix ^ List := Matrix => (f,v) -> submatrix(f,listZ splice v,) -- get some rows
+Matrix _ List := Matrix => (f,v) -> submatrix(f, v)  -- get some columns
+Matrix ^ List := Matrix => (f,v) -> submatrix(f, v,) -- get some rows
 
 Matrix _ ZZ := Vector => (m,i) -> (
      R := ring m;
