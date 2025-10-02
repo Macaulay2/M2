@@ -107,6 +107,46 @@ RRi => { "an interval containing the square roots of the points of ", TT "I" }
      ///
      }
 
+doc ///
+  Key
+    (sqrt, ZZ, ZZ)
+  Headline
+    modular square root
+  Usage
+    sqrt(n, p)
+  Inputs
+    n:ZZ
+    p:ZZ -- a prime number
+  Outputs
+    :ZZ -- the square root of @VAR "n"@ modulo @VAR "p"@
+  Description
+    Text
+      This returns a solution of the equation $x^2\equiv n\pmod p$, provided
+      that @VAR "n"@ is a quadratic residue modulo @VAR "p"@.  If it is not,
+      then an error is raised.
+    Example
+      powermod(5, (41 - 1) // 2, 41) -- Euler's criterion
+      sqrt(5, 41)
+      powermod(13, 2, 41)
+    Text
+      Every quadratic residue modulo an odd prime has two square roots.  The
+      second square root may be obtained by subtracting the first from
+      @VAR "p"@.
+    Example
+      powermod(28, 2, 41)
+    Text
+      This method may also be used for finding square roots in finite prime
+      fields.
+    Example
+      sqrt(5_(ZZ/41))
+      sqrt(5_(GF 41))
+  References
+    Shanks, Daniel. "Five number-theoretic algorithms." @EM "Proceedings of
+    the Second Manitoba Conference on Numerical Mathematics (Winnipeg)"@, 1973.
+  SeeAlso
+    powermod
+///
+
 document {
      Key => {gcd,
 	 1:gcd,

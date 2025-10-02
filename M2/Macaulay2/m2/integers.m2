@@ -109,6 +109,36 @@ changeBase(String, ZZ)     := ZZ     => changeBase0
 changeBase(String, ZZ, ZZ) := String => (s, oldbase, newbase) -> (
     changeBase(changeBase(s, oldbase), newbase))
 
+-- Tonelli-Shanks algorithm (used by various sqrt methods)
+legendreSymbol = (n, p) -> powermod(n, (p - 1)//2, p)
+tonelliShanks = (n, p) -> (
+    if n % p == 0 then return 0;
+    if n % p == 1 then return 1;
+    if not isPrime p then error "expected a prime";
+    if legendreSymbol(n, p) != 1 then error "not a quadratic residue";
+    (q, s) := (p - 1, 0);
+    while even q do (
+	q //= 2;
+	s += 1);
+    z := 2;
+    while legendreSymbol(z, p) != p - 1 do z += 1;
+    m := s;
+    c := powermod(z, q, p);
+    t := powermod(n, q, p);
+    r := powermod(n, (q + 1)//2, p);
+    while true do (
+	if t == 0 then return 0;
+	if t == 1 then return (
+	    if 2*r > p then p - r
+	    else r);
+	i := 0;
+	while powermod(t, 2^i, p) != 1 do i += 1;
+	b := powermod(c, 2^(m - i - 1), p);
+	m = i;
+	c = powermod(b, 2, p);
+	t = (t * c) % p;
+	r = (r * b) % p))
+
 -----------------------------------------------------------------------------
 -- AtomicInt
 -----------------------------------------------------------------------------

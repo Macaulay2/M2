@@ -228,6 +228,7 @@ GF(Ring) := GaloisField => opts -> (S) -> (
      F.cache = new CacheTable;
      F / F := (x,y) -> if y == 0 then error "division by zero" else x // y;
      F % F := (x,y) -> if y == 0 then x else 0_F;
+     sqrt F := x -> promote(tonelliShanks(lift(x, ZZ), F.order), F);
      F)
 
 random GaloisField := opts -> F -> (

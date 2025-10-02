@@ -319,6 +319,8 @@ taylor (log1p, (x,n) -> (
     s
     ))
 
+-- now that sqrt is a method function, we can finally install this
+sqrt(ZZ, ZZ) := tonelliShanks
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

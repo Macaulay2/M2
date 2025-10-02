@@ -79,6 +79,8 @@ assert try powermod(2, -1, 4) else true -- used to crash M2
 for b from 2 to 62 do assert(changeBase("10101", b, b) == "10101")
 assert(changeBase("0xdeadbeef", 0) == 0xdeadbeef)
 
+assert(powermod(sqrt(5, 41), 2, 41) == 5)
+
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test integer.out"

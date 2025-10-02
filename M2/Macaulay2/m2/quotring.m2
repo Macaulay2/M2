@@ -103,6 +103,7 @@ ZZp Ideal := opts -> (I) -> (
 	  expression S := x -> expression rawToInteger raw x;
 	  fraction(S,S) := S / S := (x,y) -> if y === 0_S then error "division by zero" else x//y;
 	  S.frac = S;		  -- ZZ/n with n PRIME!
+	  sqrt S := x -> promote(tonelliShanks(lift(x, ZZ), n), S);
       savedQuotients#(typ, n) = S;
       lift(S,QQ) := opts -> liftZZmodQQ;
 	  S))

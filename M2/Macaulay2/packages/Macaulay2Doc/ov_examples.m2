@@ -10,6 +10,7 @@ Node
     times
     power
     powermod
+    (sqrt, ZZ, ZZ)
     lcm
     gcd
     gcdCoefficients
