@@ -9,7 +9,7 @@ newPackage("Text",
 
 exportFrom_Core {
      "ANCHOR", "BLOCKQUOTE", "BODY", "BOLD", "BR", "CDATA", "CODE", "COMMENT", "DD", "DIV", "DL", "DT", "EM", "ExampleItem", "HEAD", "HEADER1",
-     "HEADER2", "HEADER3", "HEADER4", "HEADER5", "HEADER6", "HR", "HREF", "HTML", "Hypertext", "HypertextContainer", "HypertextParagraph", "HypertextVoid", "IMG", "INDENT", "ITALIC", "KBD",
+     "HEADER2", "HEADER3", "HEADER4", "HEADER5", "HEADER6", "HR", "HREF", "HTML", "Hypertext", "HypertextContainer", "HypertextParagraph", "HypertextVoid", "IFRAME", "IMG", "INDENT", "ITALIC", "KBD",
      "LABEL", "LATER", "LI", "LINK", "LITERAL", "M2CODE", "MENU", "META", "PARA", "PRE", "SAMP", "SCRIPT", "SMALL", "SPAN", "STRONG", "STYLE", "SUB", "SUBSECTION", "SUP", "TABLE", "TD", "TH",
      "TEX", "TITLE", "TO", "TO2", "TOH", "TR", "TT", "UL", "VAR", "OL", "INPUT", "BUTTON", "validate",
      "MarkUpType", "IntermediateMarkUpType",
@@ -854,6 +854,19 @@ document {
      },
      "For an example, see ", TO "Macaulay2Doc::hypertext list format", "."
      }
+
+document {
+    Key => {IFRAME},
+    Headline => "HTML inline frame (iframe) element",
+    Usage => "IFRAME x",
+    Inputs => {"x" => List => "specifying the iframe attributes"},
+    PARA {
+	"An ", M2CODE "IFRAME", " object represents an inline frame in HTML, ",
+	"which allows embedding an independent browsing context (another HTML ",
+	"document) within the current one."},
+    EXAMPLE "html IFRAME {\"src\" => \"https://example.com\"}",
+    PARA {"This is rendered in the browser as:"},
+    IFRAME {"src" => "https://example.com"}}
 
 document { Key => (options, MarkUpType),
      "Optional arguments of mark up types allow attributes to be added to html elements.",

@@ -133,6 +133,7 @@ DIV        = new MarkUpType of HypertextContainer
 BR         = new MarkUpType of HypertextVoid
 HR         = new MarkUpType of HypertextVoid
 SCRIPT     = new MarkUpType of HypertextParagraph
+IFRAME     = new MarkUpType of HypertextContainer
 
 -- Headers
 HEADER1    = new MarkUpType of HypertextParagraph
@@ -372,6 +373,9 @@ addAttribute(TH,     htmlAttr | {"colspan", "headers", "rowspan"})
 addAttribute(IMG,    htmlAttr | {"alt", "src", "srcset", "width", "height",
 	"sizes", "crossorigin", "longdesc", "referrerpolicy", "ismap", "usemap"})
 addAttribute(OL, htmlAttr | {"start"=>"0", "reversed", "type"})
+addAttribute(IFRAME, htmlAttr | {"allow", "allowfullscreen",
+	"allowpaymentrequest", "height", "loading", "name", "referrerpolicy",
+	"sandbox", "src", "srcdoc", "width"})
 buttonAttr = htmlAttr | {"autofocus","disabled",
     "form","formaction","formenctype","formmethod","formnovalidate","formtarget",
     "name", "type", "value"}
