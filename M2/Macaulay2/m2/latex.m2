@@ -197,16 +197,14 @@ texMathMutable :=
 texMath MutableList  := L -> concatenate(texMath class L, "\\left\\{", if #L > 0 then "\\ldots "|#L|"\\ldots" else "\\,", "\\right\\}")
 
 texMath HashTable := H -> (
-    if isMutable H then texMathMutable H
-    else texMath class H | texMath apply(sortByName pairs H, (k, v) -> k => v)
+    texMath class H | texMath apply(sortByName pairs H, (k, v) -> k => v)
     )
 
-texMath RingFamily :=
-texMath Ring := R -> (
-    if R.?texMath then R.texMath
-    else if hasAttribute(R, ReverseDictionary) then texMath toString getAttribute(R, ReverseDictionary)
-    else (lookup(texMath,HashTable)) R -- should never happen
-    )
+texMath MutableHashTable := H -> (
+    if H.?texMath then H.texMath -- used by some rings, e.g., ZZ, QQ, RR
+    else if hasAttribute(H, ReverseDictionary)
+    then texMath toString getAttribute(H, ReverseDictionary)
+    else texMathMutable H)
 
 texMath Function := f -> texMath toString f
 
