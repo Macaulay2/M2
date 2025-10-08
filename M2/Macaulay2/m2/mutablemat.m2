@@ -99,12 +99,12 @@ promote(MutableMatrix,Number) := Matrix => (f,S) -> (
 --------------------------------
 -- submatrices -----------------
 --------------------------------
-MutableMatrix _ List := Matrix => (f,v) -> submatrix(f,listZ splice v)	-- get some columns
-MutableMatrix ^ List := Matrix => (f,v) -> submatrix(f,listZ splice v,) -- get some rows
-submatrix(MutableMatrix, VisibleList, VisibleList) := (m, rows, cols) -> map(ring m,rawSubmatrix(raw m, listZ toList splice rows, listZ toList splice cols))
-submatrix(MutableMatrix, VisibleList             ) := (m,       cols) -> map(ring m,rawSubmatrix(raw m, listZ toList splice cols))
-submatrix(MutableMatrix, Nothing,     VisibleList) := (m, rows, cols) -> submatrix(m,cols)
-submatrix(MutableMatrix, VisibleList, Nothing)     := (m, rows, cols) -> map(ring m, rawSubmatrix(raw m, listZZ rows, 0 .. numColumns m - 1))
+MutableMatrix _ List := Matrix => (f,v) -> submatrix(f, v)  -- get some columns
+MutableMatrix ^ List := Matrix => (f,v) -> submatrix(f, v,) -- get some rows
+submatrix(MutableMatrix, VisibleList, VisibleList) := (m, rows, cols) -> submatrixFree(m, rows, cols)
+submatrix(MutableMatrix, VisibleList)              := (m,       cols) -> submatrixFree(m, null, cols)
+submatrix(MutableMatrix, Nothing,     VisibleList) := (m, rows, cols) -> submatrix(m, cols)
+submatrix(MutableMatrix, VisibleList, Nothing)     := (m, rows, cols) -> submatrixFree(m, rows, null)
 submatrix(MutableMatrix, Nothing,     Nothing)     := (m, rows, cols) -> m
 
 --------------------------------
@@ -305,6 +305,8 @@ QRDecomposition Matrix := A -> (
      A = mutableMatrix(A,Dense=>true);
      (Q,R) := QRDecomposition A;
      (matrix Q,matrix R))
+
+cover MutableMatrix := MutableMatrix => identity
 
 rank MutableMatrix := (M) -> (
     if isField ring M then

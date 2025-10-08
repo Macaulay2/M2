@@ -8,7 +8,7 @@ document {
      SeeAlso => {"ambient", "super"}}
 
 document {
-     Key => {(cover,Matrix)},
+     Key => {(cover,Matrix), (cover,MutableMatrix)},
      Headline => "get the map between the covering free modules",
      Usage => "cover f",
      Inputs => {"f"},

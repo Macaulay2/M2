@@ -72,3 +72,7 @@ assert(ring mutableMatrix(ZZ/101, {{1,2,3}}) === ZZ/101)
 M = mutableMatrix {{1, 2, 3}, {4, 5, 6}}
 assert Equation(target M, ZZ^2)
 assert Equation(source M, ZZ^3)
+
+-- submatrices
+assert Equation(M_{0, -1}, mutableMatrix {{1, 3}, {4, 6}})
+assert Equation(M^{-1}, mutableMatrix {{4, 5, 6}})
