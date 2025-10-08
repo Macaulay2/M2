@@ -142,8 +142,13 @@ jobs:
       - name: Build Macaulay2 using Ninja
         if: matrix.build-system == 'cmake'
         run: |
-          cmake --build . --target M2-core M2-emacs install-packages
-          if [[ "${{ runner.os }}" == "Linux" ]] && [[ "${{ matrix.build-system }}" == "cmake" ]]; then
+          cmake --build . --target M2-core M2-emacs
+
+      - name: Install packages using Ninja
+        if: matrix.build-system == 'cmake'
+        run: |
+          cmake --build . --target install-packages
+          if [[ "${{ runner.os }}" == "Linux" ]]; then
               sudo apt-get install -y -q --no-install-recommends dpkg-dev
               echo "GIT_COMMIT=`git describe --dirty --always --match HEAD`" >> $GITHUB_ENV
               cpack -G DEB
@@ -168,6 +173,11 @@ jobs:
           ../../configure --with-system-gc --with-fplll
 
       - name: Build Macaulay2 using Make
+        if: matrix.build-system == 'autotools'
+        run: |
+          make -j$(nproc 2>/dev/null || sysctl -n hw.logicalcpu) PACKAGES=
+
+      - name: Install packages using Make
         if: matrix.build-system == 'autotools'
         run: |
           make -j$(nproc 2>/dev/null || sysctl -n hw.logicalcpu)
