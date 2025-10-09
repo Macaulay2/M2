@@ -34,6 +34,7 @@ newPackage(
 export {
     -- types
     -- methods
+    "frobeniusPushforward",
     "frobeniusDirectImage",
     "nefContraction",
     "nefRayContractions",
@@ -55,11 +56,12 @@ importFrom(Core, {"sortBy", "raw", "rawHilbertBasis"})
 --        M - a module over a multigraded polynomial ring.
 -- OUTPUT:  the module (F_p)_* M, i.e. the pushforward of M under the p-th toric
 --          Frobenius map.
-frobeniusDirectImage = method();
-frobeniusDirectImage (ZZ, Module) := Module => (p, M) -> (
+frobeniusPushforward = method();
+frobeniusDirectImage = frobeniusPushforward;
+frobeniusPushforward (ZZ, Module) := Module => (p, M) -> (
     if M == 0 then return M;
     -- If it isn't free
-    if not isFreeModule M then coker frobeniusDirectImage_p presentation M else ( 
+    if not isFreeModule M then coker frobeniusPushforward_p presentation M else ( 
     	S := ring M;
     	X := variety S;
     	A := matrix rays X;
@@ -76,7 +78,7 @@ frobeniusDirectImage (ZZ, Module) := Module => (p, M) -> (
 	    );
     	dSum := directSum apply(B, b -> S^b);
 	-- We should remember our choice of Cartier divisors.
-    	dSum.cache.frobeniusDirectImage = D;
+    	dSum.cache.frobeniusPushforward = D;
     	dSum
 	)
     )
@@ -86,7 +88,7 @@ frobeniusDirectImage (ZZ, Module) := Module => (p, M) -> (
 -- INPUT: p - an integer
 --        f - a map between multigraded modules f : M -> N.
 -- OUTPUT:  the map between modules (F_p)_* f : (F_p)_* M -> (F_p)_* N.
-frobeniusDirectImage (ZZ, Matrix) := (p, f) -> (
+frobeniusPushforward (ZZ, Matrix) := (p, f) -> (
     S := ring f;
     -- easy way to access the variety which these modules are over.
     X := variety S;
@@ -94,14 +96,14 @@ frobeniusDirectImage (ZZ, Matrix) := (p, f) -> (
     pts := toList (toList (dim X:{0})..toList (dim X:{p-1}));
     -- our map will be a block matrix
     blocksize := #pts;
-    src := frobeniusDirectImage_p source f;
-    tgt := frobeniusDirectImage_p target f;
+    src := frobeniusPushforward_p source f;
+    tgt := frobeniusPushforward_p target f;
     A := matrix rays X;
     -- this is the main reason to keep track of the divisors.
     -- we need them to make sure that the map is sending terms to the correct place.
     -- e.g. the trivial summand should map to the trivial summand.
-    Dsrc := src.cache.frobeniusDirectImage;
-    Dtgt := tgt.cache.frobeniusDirectImage;
+    Dsrc := src.cache.frobeniusPushforward;
+    Dtgt := tgt.cache.frobeniusPushforward;
     -- to make the direct image of the map
     matrix table(numrows f, numcols f, (r,c) -> (
 	    -- we want to convert the entries of the input map
@@ -141,10 +143,10 @@ frobeniusDirectImage (ZZ, Matrix) := (p, f) -> (
 -- OUTPUT:  the pushforward of the complex C, by applying the functor to each differential.
 -- NOTE: since the Frobenius is a finite map, the pushforward is an exact functor, i.e.
 --       there are no higher direct images.
-frobeniusDirectImage (ZZ, Complex) := Complex => (p, K) -> (
+frobeniusPushforward (ZZ, Complex) := Complex => (p, K) -> (
     complex (
-    	if length K == 0 then map(frobeniusDirectImage_p K_0, 0, 0)
-    	else apply(length K, i -> frobeniusDirectImage(p, K.dd_(i+1)))
+    	if length K == 0 then map(frobeniusPushforward_p K_0, 0, 0)
+    	else apply(length K, i -> frobeniusPushforward(p, K.dd_(i+1)))
 	)
     )
 
@@ -559,13 +561,13 @@ doc ///
 	Text
 	    2) When $\varphi \colon Y \rightarrow Y$ is a toric Frobenius map, i.e.
 	    induced from the natural morphism on the dense torus given by raising all
-	    of the coordinates to the same power, then the method \texttt{frobeniusDirectImage}
+	    of the coordinates to the same power, then the method \texttt{frobeniusPushforward}
 	    allows one to compute pushforwards of any coherent sheaf. For instance,
 	    the pushforward of the trivial bundle on $\mathbb{P}^2$ by the second Frobenius map
 	    splits into 4 line bundles.
 	Example
 	    S = ring Y;
-	    frobeniusDirectImage(2,S^1)
+	    frobeniusPushforward(2,S^1)
 	Text
 	    @SUBSECTION "References"@
 	Text
@@ -585,13 +587,17 @@ doc ///
 
 doc ///
     Key
+	frobeniusPushforward
 	frobeniusDirectImage
+	(frobeniusPushforward, ZZ, Module)
 	(frobeniusDirectImage, ZZ, Module)
     Headline
         compute the pushforward of a module under the $p$th toric Frobenius map
     Usage
-        frobeniusDirectImage(p, M)
-        frobeniusDirectImage_p M
+        frobeniusPushforward(p, M)
+        frobeniusPushforward_p M
+	frobeniusDirectImage(p,M)
+	frobeniusDirectImage_p M
     Inputs
 	p : ZZ
 	M : Module
@@ -611,22 +617,22 @@ doc ///
 	Example
 	    X = hirzebruchSurface 1;
 	    R = ring X;
-	    frobeniusDirectImage(4, R^1)
+	    frobeniusPushforward(4, R^1)
 	Text
 	    We can pushforward many kinds of modules. Here is the pushforward of an ideal.
 	Example
 	    I = module ideal {R_0, R_2};
-	    prune frobeniusDirectImage(2, I)
+	    prune frobeniusPushforward(2, I)
 	Text
 	    Here is the pushforward of a free module.
 	Example
 	    F = R^{{1,0},{0,1}};
-	    frobeniusDirectImage(2, F)
+	    frobeniusPushforward(2, F)
 	Text
 	    Here is the pushforward of a torsion module.
 	Example
 	    M = R^1/(module I)
-	    prune frobeniusDirectImage(2, M)
+	    prune frobeniusPushforward(2, M)
 	Text
 	    As mentioned, $p$ is not related to the characteristic of the field, and the
 	    outputs will be the same modules over a different coefficient ring.
@@ -634,20 +640,23 @@ doc ///
 	    Y = hirzebruchSurface(1, CoefficientRing => ZZ/2);
 	    S = ring Y;
 	    I' = module ideal {S_0, S_2};
-	    prune frobeniusDirectImage(2, I')
+	    prune frobeniusPushforward(2, I')
     SeeAlso
-	(frobeniusDirectImage, ZZ, Matrix)
-	(frobeniusDirectImage, ZZ, Complex)
+	(frobeniusPushforward, ZZ, Matrix)
+	(frobeniusPushforward, ZZ, Complex)
 ///
 
 doc ///
     Key
+	(frobeniusPushforward, ZZ, Matrix)
 	(frobeniusDirectImage, ZZ, Matrix)
     Headline
         compute the pushforward of map of modules under the $p$th toric Frobenius map
     Usage
-        frobeniusDirectImage(p, M)
-        frobeniusDirectImage_p M
+        frobeniusPushforward(p, M)
+        frobeniusPushforward_p M
+	frobeniusDirectImage(p, M)
+	frobeniusDirectImage_p M
     Inputs
 	p : ZZ
 	f : Matrix
@@ -670,20 +679,23 @@ doc ///
 	    X = hirzebruchSurface 1;
 	    R = ring X;
 	    M = koszul_1 vars R
-	    frobeniusDirectImage_2 M
+	    frobeniusPushforward_2 M
     SeeAlso
-	(frobeniusDirectImage, ZZ, Module)
-	(frobeniusDirectImage, ZZ, Complex)
+	(frobeniusPushforward, ZZ, Module)
+	(frobeniusPushforward, ZZ, Complex)
 ///
 
 doc ///
     Key
+	(frobeniusPushforward, ZZ, Complex)
 	(frobeniusDirectImage, ZZ, Complex)
     Headline
         compute the pushforward of a complex of modules under the $p$th toric Frobenius map
     Usage
-        frobeniusDirectImage(p, C)
-        frobeniusDirectImage_p C
+        frobeniusPushforward(p, C)
+        frobeniusPushforward_p C
+	frobeniusDirectImage(p, C)
+	frobeniusDirectImage_p C
     Inputs
 	p : ZZ
 	C : Complex
@@ -706,10 +718,10 @@ doc ///
 	    X = hirzebruchSurface 1;
 	    R = ring X;
 	    C = complex koszul vars R
-	    frobeniusDirectImage_2 C
+	    frobeniusPushforward_2 C
     SeeAlso
-	(frobeniusDirectImage, ZZ, Module)
-	(frobeniusDirectImage, ZZ, Matrix)
+	(frobeniusPushforward, ZZ, Module)
+	(frobeniusPushforward, ZZ, Matrix)
 ///
 
 doc ///
@@ -931,9 +943,9 @@ doc ///
 	    RL = prune phi_*^1 L
 	    annihilator RL
     SeeAlso
-	(frobeniusDirectImage, ZZ, Module)
-	(frobeniusDirectImage, ZZ, Matrix)
-	(frobeniusDirectImage, ZZ, Complex)
+	(frobeniusPushforward, ZZ, Module)
+	(frobeniusPushforward, ZZ, Matrix)
+	(frobeniusPushforward, ZZ, Complex)
 ///
 
 ------------------------------------------------------------------------------
@@ -943,7 +955,7 @@ doc ///
 TEST ///
 X = toricProjectiveSpace 2;
 S = ring X;
-FS = frobeniusDirectImage_2 S^1;
+FS = frobeniusPushforward_2 S^1;
 assert(degrees FS == {{0}, {1}, {1}, {1}})
 ///
 
@@ -952,14 +964,14 @@ X = smoothFanoToricVariety(3,7);
 d = dim X;
 p = 4;
 S = ring X;
-FS = frobeniusDirectImage_p S^1
+FS = frobeniusPushforward_p S^1
 assert(rank FS == p^d)
 ///
 
 TEST ///
 X = hirzebruchSurface 3;
 S = ring X;
-M = frobeniusDirectImage_2 koszul_1 vars S;
+M = frobeniusPushforward_2 koszul_1 vars S;
 M' = map(S^{{0, 0}, {1, -1}, {-1, 0}, {1, -1}},
          S^{{-1, 0}, {0, -1}, {-1, 0}, {1, -1}, {1, -1}, {2, -1}, {1, -1},  {3, -1},
 	    {-1, 0}, {0, -1}, {-1, 0}, {1, -1}, {0, -1}, {1, -1}, {-1, -1}, {1, -1}},
@@ -976,7 +988,7 @@ d = dim X;
 p = 2;
 S = ring X;
 C = complex koszul vars S;
-FC = frobeniusDirectImage_p C;
+FC = frobeniusPushforward_p C;
 assert(isWellDefined FC)
 assert(length FC == length C)
 assert(all(length C, i -> rank FC_i == (rank C_i) * p^d))
