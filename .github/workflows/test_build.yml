@@ -177,6 +177,11 @@ jobs:
           export FC=gfortran-14
           ../../configure --with-system-gc --with-fplll
 
+      - name: Build libraries using Make
+        if: matrix.build-system == 'autotools'
+        run: |
+          make -j$(nproc 2>/dev/null || sysctl -n hw.logicalcpu) -C libraries
+
       - name: Build Macaulay2 using Make
         if: matrix.build-system == 'autotools'
         run: |
