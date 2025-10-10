@@ -26,7 +26,6 @@ document {
 	  "determinants and related computations",
 	  TO "rank of a matrix",
 	  TO "determinants and minors",
-	  TO "Pfaffians",
 	  TO "exterior power of a matrix",
 	  "display of matrices and saving matrices to a file",
 	  TO "format and display of matrices in Macaulay2",
@@ -638,12 +637,6 @@ document {
 	 TO pfaffian,
 	 TO fittingIdeal,
          },
-     }
-
-document {
-     Key => "Pfaffians",
-     
-     SUBSECTION "pfaffians"
      }
 
 document {
