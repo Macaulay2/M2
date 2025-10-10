@@ -2262,6 +2262,13 @@ export rawPfaffians(e:Expr):Expr := (
      );
 setupfun("rawPfaffians",rawPfaffians);
 
+export rawPfaffian(e:Expr):Expr := (
+    when e
+    is M:RawMatrixCell do toExpr(Ccode(RawRingElementOrNull,
+	    "IM2_Matrix_pfaffian(", M.p, ")"))
+    else WrongArgMatrix());
+setupfun("rawPfaffian", rawPfaffian);
+
 export rawTensor(e:Expr):Expr := (
      when e is s:Sequence do
      when s.0

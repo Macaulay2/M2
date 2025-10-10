@@ -157,6 +157,16 @@ pfaffians = method(TypicalValue => Ideal)
 pfaffians(ZZ, Matrix) := (j, m) -> (
      ideal(map(ring m, rawPfaffians(j,raw m))))
 
+pfaffian = method()
+pfaffian Matrix := M -> (
+    if (
+	numRows M != numColumns M or
+	not zero(M + transpose M))
+    then error "expected a skew symmetric matrix";
+    if odd numRows M then 0_(ring M)
+    else if numRows M == 0 then 1_(ring M)
+    else promote(rawPfaffian raw M, ring M))
+
 -----------------------------------------------------------------------------
 -- trace and determinant
 -----------------------------------------------------------------------------

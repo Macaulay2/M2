@@ -635,6 +635,7 @@ document {
 	 TO determinant,
 	 TO permanents,
 	 TO pfaffians,
+	 TO pfaffian,
 	 TO fittingIdeal,
          },
      }

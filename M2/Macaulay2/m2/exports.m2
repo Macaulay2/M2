@@ -1000,6 +1000,7 @@ export {
 	"peek'",
 	"permanents",
 	"permutations",
+	"pfaffian",
 	"pfaffians",
 	"pi",
 	"pivots",

@@ -165,7 +165,10 @@ class Matrix : public EngineObject
                                M2_arrayintOrNull first_col   // possibly NULL
                                ) const;
 
-  Matrix *pfaffians(int p) const;  // in pfaff.cpp
+  // in pfaff.cpp
+  Matrix *pfaffians(int p) const;
+  ring_elem pfaffian() const;
+
   static Matrix *wedge_product(int p, int q, const FreeModule *F);
   //  static Matrix wedge_dual(int p, const FreeModule *F);
 

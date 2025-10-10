@@ -241,6 +241,9 @@ const Matrix /* or null */ *IM2_Matrix_pfaffians(
     int p,
     const Matrix *M); /* drg: connected rawPfaffians*/
 
+const RingElement /* or null */ *IM2_Matrix_pfaffian(
+    const Matrix *M);
+
 const Matrix *rawMatrixCompress(
     const Matrix *M); /* connected rawMatrixCompress */
 

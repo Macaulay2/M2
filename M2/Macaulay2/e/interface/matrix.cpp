@@ -556,6 +556,11 @@ const Matrix /* or null */ *IM2_Matrix_pfaffians(int p, const Matrix *M)
   return M->pfaffians(p);
 }
 
+const RingElement /* or null */ *IM2_Matrix_pfaffian(const Matrix *M)
+{
+  return RingElement::make_raw(M->get_ring(), M->pfaffian());
+}
+
 const Matrix /* or null */ *IM2_Matrix_diff(const Matrix *M, const Matrix *N)
 {
   return M->diff(N, 1);

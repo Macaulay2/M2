@@ -45,5 +45,5 @@ document {
           "The skew symmetry of ", TT "M", " is not checked, but the algorithm 
 	  proceeds as if it were, with somewhat unpredictable results!"
 	  },
-     SeeAlso => {det, "matrices"}
+     SeeAlso => {pfaffian, det, "matrices"}
      }
