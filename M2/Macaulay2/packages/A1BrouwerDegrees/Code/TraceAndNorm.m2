@@ -36,7 +36,7 @@ getMultiplicationMatrix(Ring,Ideal,Thing):= (S,I,b) -> (
 	    (M=M|(toVector (q*B_(0,i))) ; i=i+1); M);
 	lift(Matrep b, coefficientRing S))
 
---We use the implemented matrix representation to calclate the algebraic trace
+--We use the implemented matrix representation to calculate the algebraic trace
     
 getTrace=method()
 
@@ -48,7 +48,7 @@ getTrace(Ring,Ideal,Thing) := (S,I,b) -> (
 	M:=getMultiplicationMatrix(S,I,b);
 	trace M)
 
---We use the implemented matrix representation to calclate the algebraic norm 
+--We use the implemented matrix representation to calculate the algebraic norm 
     
 getNorm=method()
 
