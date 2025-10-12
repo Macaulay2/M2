@@ -2,6 +2,10 @@
 -- A1-Brouwer degree methods
 ----------------------------
 
+---------
+-- Global 
+---------
+
 -- Input: A list f = {f_1, f_2, ..., f_n} of polynomials giving a map kk^n -> kk^n
 -- Output: The Grothendieck-Witt class deg^(A^1)(f)
 
@@ -14,7 +18,10 @@ getGlobalA1Degree List := GrothendieckWittClass => Endo -> (
     -- Get the underlying ring, and ensure it is a field
     kk := coefficientRing ring(Endo#0); 
     if not isField kk then kk = toField kk;
-    
+
+    if not (instance(kk, ComplexField) or instance(kk, RealField) or kk === QQ or (instance(kk, GaloisField) and kk.char != 2)) then
+    error "Base field not supported; only implemented over QQ, RR, CC, and finite fields of characteristic not 2";
+
     -- Let S = kk[x_1..x_n] be the ambient polynomial ring
     S := ring(Endo#0);
     
@@ -140,6 +147,9 @@ getLocalA1Degree (List, Ideal) := GrothendieckWittClass => (Endo,p) -> (
     -- Get the underlying ring, and ensure it is a field
     kk := coefficientRing ring(Endo#0); 
     if not isField kk then kk = toField kk;
+
+    if not (instance(kk, ComplexField) or instance(kk, RealField) or kk === QQ or (instance(kk, GaloisField) and kk.char != 2)) then
+    error "Base field not supported; only implemented over QQ, RR, CC, and finite fields of characteristic not 2";
 
     -- Let S = kk[x_1..x_n] be the ambient polynomial ring
     S := ring(Endo#0);

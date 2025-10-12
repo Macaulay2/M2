@@ -1,15 +1,19 @@
 --A1BrouwerDegrees.m2
 newPackage (
     "A1BrouwerDegrees",
-    Version => "1.1",
-    Date => "July 23, 2024",
+    Version => "2.0",
+    Date => "October 13, 2025",
     Authors => {
+        {Name=> "Stephanie Atherton",
+    Email => "satherton@student.otis.edu"},
         {Name => "Nikita Borisov",
 	 Email => "nborisov@sas.upenn.edu",
 	 HomePage => "https://www.math.upenn.edu/people/nikita-borisov"},
         {Name => "Thomas Brazelton",
 	 Email => "brazelton@math.harvard.edu",
 	 HomePage => "https://tbrazel.github.io/"},
+	 {Name => "Somak Dutta",
+	 Email => "somakdutta@tamu.edu"},
         {Name => "Frenly Espino",
 	 Email => "frenly@sas.upenn.edu",
 	 HomePage => "https://www.math.upenn.edu/people/frenly-espino"},
@@ -25,73 +29,73 @@ newPackage (
         {Name => "Joel Louwsma",
 	 Email => "jlouwsma@niagara.edu",
 	 HomePage => "https://www.joellouwsma.com/"},
+        {Name => "Yuyuan Luo",
+	 Email => "luo.yuyuan@princeton.edu",
+	 HomePage => "https://web.math.princeton.edu/~yl4428/"},
         {Name => "Wern Juin Gabriel Ong",
-	 Email => "gong@bowdoin.edu",
+	 Email => "wgabrielong@uni-bonn.de",
 	 HomePage => "https://wgabrielong.github.io/"},
+        {Name => "Ruzho Sagayaraj",
+	 Email => "ruzhomath@tamu.edu",
+	 HomePage => "https://github.com/Ruzho-S"},
         {Name => "Andrew Tawfeek",
 	 Email => "atawfeek@uw.edu",
 	 HomePage => "https://www.atawfeek.com/"}
 	},
-    Headline => "A1-Brouwer degree computations",
-    PackageImports => {},
-    PackageExports => {},
-    AuxiliaryFiles => true,
-    Keywords => {"Homotopy Theory","Commutative Algebra"},
-    Certification => {
-	"journal name" => "Journal of Software for Algebra and Geometry",
-	"journal URI" => "https://msp.org/jsag/",
-	"article title" => "$\\mathbb{A}^1$-Brouwer degrees in Macaulay2",
-	"acceptance date" => "2024-08-07",
-	"published article URI" => "https://msp.org/jsag/2024/14-1/p15.xhtml",
-	"published article DOI" => "10.2140/jsag.2024.14.175",
-	"published code URI" => "https://msp.org/jsag/2024/14-1/jsag-v14-n1-x15-A1BrouwerDegrees.zip",
-	"release at publication" => "98f142fe23304b808c1e931b723b3addff77a643",
-	"version at publication" => "1.1",
-	"volume number" => "14",
-	"volume URI" => "https://msp.org/jsag/2024/14-1/"
-	}
+    Headline => "for working with A1-Brouwer degree computations and quadratic forms"
     )
 
+    PackageImports=>{
+	"MinimalPrimes"
+	},
+
 export{
+    
+    --AnisotropicDimension.m2
+    "getAnisotropicDimensionQQp",
+    "getAnisotropicDimension",
+    "getWittIndex",
     
     -- ArithmeticMethods.m2
     "getPadicValuation",
     "getLocalAlgebraBasis",
-    
-    --MatrixMethods.m2
-    "diagonalizeViaCongruence",
-    
-    --GrothendieckWittClasses.m2    
-    "makeGWClass",
-    "GrothendieckWittClass",
-    "getBaseField",
-    "getMatrix",
-    "addGW",
-    "multiplyGW",
+    "getSylvesterMatrix",
+    "getResultant",
     
     --BuildingForms.m2
     "makeDiagonalForm",
     "makeHyperbolicForm",
     "makePfisterForm",
+    "makeDiagonalUnstableForm",
+    "makeHyperbolicUnstableForm",   
     
-    --SimplifiedRepresentatives.m2
-    "getDiagonalClass",
-    "getDiagonalEntries",
+    --Decomposition.m2
+    "getAnisotropicPart",
+    "getSumDecomposition",
+    "getSumDecompositionString",
     
-    --getHilbertSymbols.m2
-    "getHilbertSymbolReal",
-    "getHilbertSymbol",
-    
+    --GrothendieckWittClasses.m2    
+    "makeGWClass",
+    "GrothendieckWittClass",
+    "getAlgebra",
+    "getBaseField",
+    "getMatrix",
+    "addGW",
+    "multiplyGW",
+
     --GWInvariants.m2
     "getRank",
     "getSignature",
     "getIntegralDiscriminant",
     "getRelevantPrimes",
     "getHasseWittInvariant",
-
-    --LocalGlobalDegrees.m2
-    "getGlobalA1Degree",
-    "getLocalA1Degree",
+    
+    --GWTransfer.m2
+    "transferGW",
+    
+    --HilbertSymbols.m2
+    "getHilbertSymbolReal",
+    "getHilbertSymbol",
     
     --IsomorphismOfForms.m2
     "isIsomorphicForm",
@@ -99,17 +103,37 @@ export{
     --Isotropy.m2
     "isAnisotropic",
     "isIsotropic",
+    
+    --LocalGlobalDegrees.m2
+    "getGlobalA1Degree",
+    "getLocalA1Degree",
+    
+    --MatrixMethods.m2
+    "diagonalizeViaCongruence",
+    
+    --SimplifiedRepresentatives.m2
+    "getDiagonalClass",
+    "getDiagonalEntries",
 
-    --AnisotropicDimension.m2
-    "getAnisotropicDimensionQQp",
-    "getAnisotropicDimension",
-    "getWittIndex",
-    
-    --Decomposition.m2
-    "getAnisotropicPart",
-    "getSumDecomposition",
-    "getSumDecompositionString"
-    
+    --TraceAndNorm.m2
+    "getTrace",
+    "getNorm",
+    "getMultiplicationMatrix",
+
+    --UnstableGrothendieckWittClasses.m2
+    "makeGWuClass",
+    "getScalar",
+    "addGWu",
+    "addGWuDivisorial",
+    "getGWClass",
+    "UnstableGrothendieckWittClass",
+
+    --UnstableLocalGlobalDegrees.m2
+    "getGlobalUnstableA1Degree",
+    "getLocalUnstableA1Degree",
+
+    --Options
+    "linearTolerance",
     }
 
 -- Basic arithmetic, p-adic, and commutative algebra operations we will use
@@ -145,8 +169,21 @@ load "./A1BrouwerDegrees/Code/Isotropy.m2"
 -- Computing anisotropic dimension
 load "./A1BrouwerDegrees/Code/AnisotropicDimension.m2"
 
+-- Unstable Grothendieck-Witt classes 
+load "./A1BrouwerDegrees/Code/UnstableGrothendieckWittClasses.m2"
+
 -- Decomposing Grothendieck-Witt classes and symmetric bilinear forms
 load "./A1BrouwerDegrees/Code/Decomposition.m2"
+
+-- Unstable local and global A1-Brouwer degrees 
+load "./A1BrouwerDegrees/Code/UnstableLocalGlobalDegrees.m2"
+
+-- Compute traces and norms
+load "./A1BrouwerDegrees/Code/TraceAndNorm.m2"
+
+-- Compute transfer
+load "./A1BrouwerDegrees/Code/GWTransfer.m2"
+
 
 ----------------------------
 ----------------------------
@@ -156,49 +193,57 @@ load "./A1BrouwerDegrees/Code/Decomposition.m2"
 
 beginDocumentation()
 
-document{
-    Key => A1BrouwerDegrees,
-    Headline => "package for working with A1-Brouwer degree computations",
-    PARA{"This package is intended to allow the computation and manipulation of ", TO2(getLocalA1Degree,"local"), 
-	" and ", TO2(getGlobalA1Degree,"global"), " ", TEX///$\mathbb{A}^1$///, EM "-Brouwer degrees.",
-	" Global Brouwer degrees are non-degenerate symmetric bilinear forms valued in the Grothendieck-Witt ring of a field ", TEX///$\text{GW}(k)$///, "."},
-    PARA{"In order to simplify the forms produced, this package produces invariants of symmetric bilinear forms, including their ", 
-	TO2(getWittIndex,"Witt indices"), ", their ", 
-	TO2(getIntegralDiscriminant,"discriminants"), ", and their ", 
-	TO2(getHasseWittInvariant, "Hasse-Witt invariants"), ". Quadratic forms can be ", 
-	TO2(getSumDecomposition,"decomposed"), " into their isotropic and ", TO2(getAnisotropicPart,"anisotropic parts"), 
-	". Finally, and perhaps most crucially, we can certify whether two symmetric bilinear forms are ", TO2(isIsomorphicForm,"isomorphic") , " in the Grothendieck-Witt ring."},
-PARA{"Below is an example using the methods provided by this package to compute the ", TO2(getLocalA1Degree,"local"),
-        " and ", TO2(getGlobalA1Degree,"global"), " ", TEX///$\mathbb{A}^1$///,  "-Brouwer degrees for an endomorphism ",
-	TEX///$\mathbb{A}_{\mathbb{Q}}^1\rightarrow \mathbb{A}_{\mathbb{Q}}^1.$///, " defined by ",TEX///$$ f(x)=(x^2+x+1)(x-3)(x+2).$$///,
-	" We first compute the global degree."},
-    EXAMPLE {
-    "R = QQ[x]",
-    "f = {x^4 - 6*x^2 - 7*x - 6}",
-    "alpha = getGlobalA1Degree f",
-    "beta = getSumDecomposition alpha",
-    },
-    PARA{"We can also compute the local degrees at the respective ideals."},   
-    EXAMPLE {
-    "I1 = ideal(x^2 + x + 1);",
-    "alpha1 = getLocalA1Degree(f, I1)",
-    "I2 = ideal(x - 3)",
-    "alpha2 = getLocalA1Degree(f, I2)",
-    "I3 = ideal(x + 2);",
-    "alpha3 = getLocalA1Degree(f, I3)", 
-    },
+doc ///
+Node
+    Key
+        A1BrouwerDegrees
+    Headline
+        a package for working with A1-Brouwer degree computations and quadratic forms
+    Description
+        Text
+            This package is intended to allow the computation of local and global A1-Brouer degrees in both the stable and unstable settings, and for manipulations of unstable Grothendieck-Witt classes and symmetric bilinear forms including their invariants and decompositions. 
 
-    PARA{"We can then use the ", TO isIsomorphicForm, "  method to verify that the ", 
-    TO2(getLocalA1Degree, "local"), " degrees sum to the ", TO2(getGlobalA1Degree, "global"), 
-    " degree."},
-    EXAMPLE{
-	"alpha' = addGW(alpha1, addGW(alpha2, alpha3))",
-	"isIsomorphicForm(alpha,alpha')",
-	"beta' = getSumDecomposition alpha'",
-	},
-    },
-undocumented{
-    }
+            Version history: 
+            @UL{
+				(BOLD("V 1.1: "), "this version was developed by N. Borisov, T. Brazelton, F. Espino, T. Hagedorn, Z. Han, J. Lopez Garcia, J. Louwsma, G. Ong, and A. Tawfeek. This version implements computations of local and global A1-Brouwer degrees, as well as Grothendieck-Witt classes and their invariants. "),
+				(BOLD("V 2.0: "), "this version was developed by S. Atherton, S. Dutta, J. Lopez Garcia, J. Louwsma, Y. Luo, G. Ong, and R. Sagayaraj. This version implements the computation of unstable local and global A1-Brouwer degrees, manipulations of the unstable Grothendieck-Witt group, and generalizes several methods in V 1.1 for Grothendieck-Witt class manipulations over fields to the setting of finite étale algebras over fields.")
+			}@
+
+            The $\mathbb{A}^{1}$-Brouwer degree and its unstable counterpart are valued in the Grothendieck-Witt ring and unstable Grothendieck-Group of a field $\text{GW}(k)$ and $\text{GW}^{u}(k)$, respectively. These can be computed as follows: 
+
+        Example
+            R = QQ[x];
+            f = {x^4 - 6*x^2 - 7*x - 6};
+            alpha = getGlobalA1Degree f
+        
+        Text
+
+
+        Example
+            K = frac R;
+            q = (x^2 + x - 2)/(3*x + 5);
+            beta = getGlobalUnstableA1Degree(q)
+
+        Text
+            Furthermore, we can compute a number of invariants associated to symmetric bilinear forms such as their @TO2(getWittIndex, "Witt indices")@, @TO2(getIntegralDiscriminant, "integral discriminants")@, and @TO2(getHasseWittInvariant, "Hasse-Witt invariants")@ at a fixed prime:
+        
+        Example
+            getWittIndex alpha
+            getIntegralDiscriminant alpha
+            getHasseWittInvariant(alpha, 3)
+
+        Text
+            Finally, we provide methods for verifying if two symmetric bilinear forms or unstable Grothendieck-Witt classes are @TO2(isIsomorphicForm,"isomorphic")@, and for computing @TO2(getSumDecomposition,"simplified representatives")@ of these objects. 
+
+        Example
+            getSumDecompositionString alpha
+            twoH = makeDiagonalForm(QQ, (1,-1,1,-1))
+            isIsomorphicForm(alpha, twoH)
+        Example
+            getSumDecomposition beta
+            gamma = makeGWuClass(matrix(QQ, {{11, 0},{0,22}}), 8)
+            isIsomorphicForm(beta, gamma)
+///
 
 load "./A1BrouwerDegrees/Documentation/ArithmeticMethodsDoc.m2"
 
@@ -224,6 +269,13 @@ load "./A1BrouwerDegrees/Documentation/AnisotropicDimensionDoc.m2"
 
 load "./A1BrouwerDegrees/Documentation/DecompositionDoc.m2"
 
+load "./A1BrouwerDegrees/Documentation/UnstableGrothendieckWittClassesDoc.m2"
+
+load "./A1BrouwerDegrees/Documentation/TraceAndNormDoc.m2"
+
+load "./A1BrouwerDegrees/Documentation/GWTransferDoc.m2"
+
+load "./A1BrouwerDegrees/Documentation/UnstableLocalGlobalDegreesDoc.m2"
 
 ----------------------------
 ----------------------------
@@ -415,9 +467,9 @@ TEST ///
 M1 = matrix(QQ, {{1/1,0,0},{0,1,0},{0,0,1}});
 M2 = matrix(QQ, {{1/1,24/10,0},{24/10,-5,0},{0,0,69}});
 M3 = matrix(GF(7), {{1,0,0},{0,2,0},{0,0,-3}});
-assert(class(makeGWClass M1) === GrothendieckWittClass);
-assert(class(makeGWClass M2) === GrothendieckWittClass);
-assert(class(makeGWClass M3) === GrothendieckWittClass);
+assert(instance(makeGWClass M1, GrothendieckWittClass));
+assert(instance(makeGWClass M2, GrothendieckWittClass));
+assert(instance(makeGWClass M3, GrothendieckWittClass));
 ///
 
 -- Test for getBaseField
@@ -429,8 +481,8 @@ M3 = makeGWClass matrix(CC, {{1*ii,24/10,-2.41},{24/10,-5,0},{-2.41,0,69+ii}});
 M4 = makeGWClass matrix(GF(7), {{1,0,0},{0,2,0},{0,0,-3}});
 
 assert(getBaseField(M1) === QQ);
-assert(getBaseField(M2) === RR_53);
-assert(getBaseField(M3) === CC_53);
+assert(instance(getBaseField(M2),RealField));
+assert(instance(getBaseField(M3),ComplexField));
 assert((getBaseField M4).order == 7);
 ///
 
@@ -542,4 +594,260 @@ assert(getHilbertSymbolReal(-3/1, 5) == 1);
 assert(getHilbertSymbolReal(-3, -5/1) == -1);
 assert(getHilbertSymbolReal(-3/1, -5) == -1);
 assert(getHilbertSymbolReal(3, 5) == 1);
+///
+
+-- New tests for v2.0 of package
+-- Test 26
+TEST ///
+M1 = matrix(RR, {{0,1},{1,0}});
+G1 = makeGWuClass M1;
+G2 = getDiagonalClass G1;
+assert(getMatrix(G2) === matrix(RR, {{1,0},{0,-1}}));
+assert(getScalar(G2) === det M1);
+assert(getGWClass(G1) === makeGWClass(M1));
+///
+
+-- Test 27
+TEST ///
+M3 = matrix(CC, {{1,2,3},{2,4,5},{3,5,7}});
+G3 = makeGWuClass M3;
+G4 = getDiagonalClass G3;
+assert(getMatrix(G4) === matrix(CC, {{1,0,0},{0,1,0},{0,0,1}}));
+assert(getScalar(G4) === det M3);
+assert(getGWClass(G3) === makeGWClass(M3));
+///
+
+--Test 28
+TEST ///
+M5 = matrix(QQ, {{1,2,3},{2,4,5},{3,5,7}});
+G5 = makeGWuClass M5;
+G6 = getDiagonalClass G5;
+assert(getMatrix(G6) === matrix(QQ, {{1,0,0},{0,-2,0},{0,0,2}}));
+assert(getScalar(G6) === det M5);
+assert(getGWClass(G5) === makeGWClass(M5));
+///
+
+-- Test 29
+TEST ///
+-- Tests for UnstableGrothendieckWittClass type
+M1 = matrix(QQ, {{1,0},{0,1}});
+M2 = matrix(QQ, {{1,2},{2,5}});
+G1 = makeGWuClass M1;
+G2 = makeGWuClass M2;
+assert(getBaseField(G1) === QQ);
+assert(getMatrix(G1) === M1);
+-- Test for addGWu
+G3 = addGWu(G1, G2);
+assert(getMatrix(G3) === matrix(QQ, {{1,0,0,0},{0,1,0,0},{0,0,1,2},{0,0,2,5}}));
+assert(getScalar(G3) === (det M1) * (det M2));
+///
+
+-- Tests for UnstableGrothendieckWittClass constructors
+-- Test 30
+TEST ///
+M1 = matrix(QQ, {{1/1,0,0},{0,1,0},{0,0,1}});
+M2 = matrix(QQ, {{1/1,24/10,0},{24/10,-5,0},{0,0,69}});
+M3 = matrix(GF(7), {{1,0,0},{0,2,0},{0,0,-3}});
+assert(instance(makeGWuClass M1, UnstableGrothendieckWittClass));
+assert(instance(makeGWuClass M2, UnstableGrothendieckWittClass));
+assert(instance(makeGWuClass M3, UnstableGrothendieckWittClass));
+assert(try(makeGWuClass(M1,-1)) then false else true);
+assert(try(makeGWuClass(M2,sub(3,GF 17))) then false else true);
+assert(try(makeGWuClass(M3,sub(-6,GF 5))) then false else true);
+///
+
+
+-- Test for getBaseField and getAlgebra
+-- Test 31
+TEST ///
+M1 = makeGWuClass matrix(QQ, {{1/1,0,0},{0,2,3},{0,3,1}});
+M2 = makeGWuClass matrix(RR, {{1.0,24/10,-2.41},{24/10,-5,0},{-2.41,0,69}})
+M3 = makeGWuClass matrix(CC, {{1*ii,24/10,-2.41},{24/10,-5,0},{-2.41,0,69+ii}})
+M4 = makeGWuClass matrix(GF(7), {{1,0,0},{0,2,0},{0,0,-3}});
+
+assert(getBaseField(M1) === QQ);
+assert(getBaseField(M2) === RR_53);
+assert(getBaseField(M3) === CC_53);
+assert((getBaseField M4).order == 7);
+assert(getAlgebra(M1) === QQ);
+assert(getAlgebra(M2) === RR_53);
+assert(getAlgebra(M3) === CC_53);
+assert((getAlgebra M4).order == 7);
+///
+
+-- Test for addGWu
+-- Test 32
+TEST ///
+A1 = makeGWuClass matrix(QQ, {{1/1,0,-3},{0,23,0},{-3,0,-2/5}});
+A2 = makeGWuClass matrix(QQ, {{0,1/2,0},{1/2,5/9,0},{0,0,1}});
+A3 = makeGWuClass matrix(QQ, {{1/1,0,-3,0,0,0},{0,23,0,0,0,0},{-3,0,-2/5,0,0,0},{0,0,0,0,1/2,0},{0,0,0,1/2,5/9,0},{0,0,0,0,0,1}})
+
+B1 = makeGWuClass matrix(RR, {{sqrt(2),0,-3},{0,sqrt(5),0},{-3,0,-1/5}});
+B2 = makeGWuClass matrix(RR, {{1/3}});
+B3 = makeGWuClass matrix(RR, {{sqrt(2),0,-3,0},{0,sqrt(5),0,0},{-3,0,-1/5,0},{0,0,0,1/3}});
+
+C1 = makeGWuClass matrix(CC, {{2*ii,0,0},{0,-2,0},{0,0,-3}});
+C2 = makeGWuClass matrix(CC, {{1,0,-3+ii,0},{0,-2,0,0},{-3+ii,0,-3,0},{0,0,0,5}});
+C3 = makeGWuClass matrix(CC, {{2*ii,0,0,0,0,0,0},{0,-2,0,0,0,0,0},{0,0,-3,0,0,0,0},{0,0,0,1,0,-3+ii,0},{0,0,0,0,-2,0,0},{0,0,0,-3+ii,0,-3,0},{0,0,0,0,0,0,5}});
+
+assert(addGWu(A1, A2) === A3);
+assert(addGWu(B1, B2) === B3);
+assert(addGWu(C1, C2) === C3);
+///
+
+-- Test for constructors over etale algebras
+-- Test 33
+TEST ///
+R = QQ[x]/(x^2 + 1);
+S = QQ[y]/(y^2 - 1);
+M1 = matrix(R, {{1,2},{2,x}});
+M2 = matrix(S, {{1,2},{2,y}});
+assert(try(makeGWuClass(M1)) then true else false);
+assert(try(makeGWClass(M1)) then true else false);
+assert(try(makeGWuClass(M2)) then true else false);
+assert(try(makeGWClass(M2)) then true else false);
+assert(getAlgebra(makeGWuClass(M1)) === R);
+assert(getAlgebra(makeGWClass(M2)) === S);
+///
+
+-- Test for diagonalization over etale algebras
+-- Test 34
+TEST ///
+R = QQ[x]/(x^2 + 1);
+S = QQ[y]/(y^2 - 1);
+G1 = makeGWClass matrix(R, {{1,2},{2,x}});
+G2 = makeGWClass matrix(S, {{1,2},{2,y}});
+G3 = makeGWuClass matrix(R, {{1,2},{2,x}});
+G4 = makeGWuClass matrix(S, {{1,2},{2,y}});
+assert(getDiagonalClass(G1) === makeGWClass matrix(R, {{1,0},{0,x-4}}));
+assert(getDiagonalClass(G2) === makeGWClass matrix(S, {{1,0},{0,y-4}}));
+assert(getDiagonalClass(G3) === makeGWuClass(matrix(R, {{1,0},{0,x-4}}), getScalar G3));
+assert(getDiagonalClass(G4) === makeGWuClass(matrix(S, {{1,0},{0,y-4}}), getScalar G4));
+assert(getGWClass(G3) === G1);
+assert(getGWClass(G4) === G2);
+///
+
+-- Tests for isIsomorphicForm for unstable classes
+-- Test 35
+TEST ///
+B1 = matrix(QQ, {{1/1,-2/1,4/1},{-2/1,2/1,0},{4/1,0,-7/1}});
+B2 = matrix(QQ, {{-17198/4225,-166126/975,-71771/1560},{-166126/975,-27758641/4050,-251077/135},{-71771/1560,-251077/135,-290407/576}});
+assert(isIsomorphicForm(makeGWuClass B1, makeGWuClass(B2,-18)));
+B3 = matrix(QQ, {{-38/1,-50/1,23/1},{-50/1,-62/1,41/1},{23/1,41/1,29/1}});
+assert(isIsomorphicForm(makeGWuClass B1, makeGWuClass(B3, -18)));
+///
+
+-- Test for local degree and global degree functions and that the local-global principle is satisfied
+-- Test 36
+TEST ///
+frac QQ[x];
+q = (x^5 - 6*x^4 + 11*x^3 - 2*x^2 - 12*x + 8)/(x^4 - 5*x^2 + 7*x + 1);
+Gdeg = getGlobalUnstableA1Degree q;
+M = matrix(QQ, {{-68, 38, 11, -14, 1}, {38, -63, 63, -29, 7}, {11, 63, -84, 39, -5}, {-14, -29, 39, -16, 0}, {1, 7, -5, 0, 1}});
+assert(isIsomorphicForm(Gdeg,makeGWuClass(M, -53240)))
+deg1 = getLocalUnstableA1Degree(q, -1)
+deg2 = getLocalUnstableA1Degree(q, 1)
+deg3 = getLocalUnstableA1Degree(q, 2)
+assert(isIsomorphicForm(deg1, makeGWuClass(matrix(QQ, {{-5/27}}))));
+assert(isIsomorphicForm(deg2, makeGWuClass(matrix(QQ, {{-2}}))));
+assert(isIsomorphicForm(deg3, makeGWuClass(matrix(QQ, {{0, 0, 11/3}, {0, 11/3, 0}, {11/3, 0, 0}}))));
+degSum = addGWuDivisorial({deg1, deg2, deg3}, {-1, 1, 2});
+assert(isIsomorphicForm(degSum, Gdeg));
+///
+
+-- Test for general local and global degree functions
+-- Test 37
+TEST ///
+F = GF(32003)
+R = frac F[x];
+q = (x^2 + x - 2)/(3*x + 5);
+Gdeg = getGlobalUnstableA1Degree(q);
+deg1 = getLocalUnstableA1Degree(q, -2);
+deg2 = getLocalUnstableA1Degree(q, 1);
+assert(isIsomorphicForm(Gdeg, makeGWuClass(matrix(F, {{11, 5}, {5, 3}}))));
+assert(isIsomorphicForm(deg1, makeGWuClass(matrix(F, {{1/3}}))));
+assert(isIsomorphicForm(deg2, makeGWuClass(matrix(F, {{8/3}}))));
+degSum = addGWuDivisorial({deg1, deg2}, {-2, 1});
+assert(isIsomorphicForm(degSum, Gdeg));
+///
+
+-- Tests for Sylvester matrix and resultant
+-- Test 38
+TEST ///
+R = QQ[x];
+f = x^2 + x - 2;
+g = 3*x + 5;
+Sylv = getSylvesterMatrix(f, g);
+M = matrix(QQ, {{-2, 5, 0}, {1, 3, 5}, {1, 0, 3}});
+assert(Sylv == M);
+assert(getResultant(f, g) == det M);
+///
+
+-- Test 39
+TEST ///
+R = ZZ[x];
+f = x^2 + x - 2;
+g = 3*x + 5;
+Sylv = getSylvesterMatrix(f, g);
+M = matrix(ZZ, {{-2, 5, 0}, {1, 3, 5}, {1, 0, 3}});
+assert(Sylv == M);
+assert(getResultant(f, g) == det M);
+///
+
+-- Test for trace and norm
+-- Test 40
+TEST ///
+R=GF(2)[x]/(x^2+x+1)
+F=frac R
+K=F[y]/(y^2+x*y+1)
+N=getMultiplicationMatrix(K,1+x*y)
+assert(N-matrix{{1, x},{x, 1+x^2}}==map(F^2,F^2,0))
+///
+
+-- Test 41
+TEST ///
+F = QQ[x]/(x^5+2*x+3) 
+F=frac F
+N=getMultiplicationMatrix(F[y]/(y^3+3*y+2),1+x*y)
+assert(N-matrix{{1_F, 0_F, -2*x },{x, 1, -3*x},{0, x, 1 }}==map(F^3,F^3,0))
+assert(getTrace(F[y]/(y^3+3*y+2),1+x*y)==3_F)
+assert(getNorm(F[y]/(y^3+3*y+2),1+x*y)==det N)
+///
+
+-- Test for transferGW
+-- Test 42
+TEST ///
+R = QQ[x]/(x^5 - x - 1)
+M = matrix(R, {{1, 3*x^2 + 4*x^4, 8*x^3 + 4}, {3*x^2 + 4*x^4, 5, 1}, {8*x^3 + 4, 1, 7*x^2 + 3*x}});
+G = makeGWClass M;
+GQ = transferGW G;
+assert(GQ === makeDiagonalForm(QQ, (5, -75, 17059280/279299)));
+///
+
+-- Test 43
+TEST ///
+R = GF(7)[x]/(x^3 + 6*x^2 + 4);
+M = matrix(R, {{1, 2, x}, {2, x^2 + 5, 3*x + 2}, {x, 3*x + 2, 5}});
+G = makeGWClass M;
+G7 = transferGW G;
+assert(isIsomorphicForm(G7, makeDiagonalForm(GF(7), (3, 4, 4))));
+///
+
+-- Test for diagonal and hyperbolic unstable constructors
+-- Test 44
+TEST ///
+alpha = makeDiagonalUnstableForm(RR, (1,-1));
+beta = makeGWuClass matrix(RR, {{0,1},{1,0}});
+H = makeHyperbolicUnstableForm RR;
+assert(isIsomorphicForm(alpha, H));
+assert(isIsomorphicForm(beta, H));
+///
+
+-- Test 45
+TEST ///
+alpha = makeDiagonalUnstableForm(GF(27), (1,-1));
+beta = makeGWuClass matrix(GF(27), {{0,1},{1,0}});
+H = makeHyperbolicUnstableForm GF(27);
+assert(isIsomorphicForm(alpha, H));
+assert(isIsomorphicForm(beta, H));
 ///

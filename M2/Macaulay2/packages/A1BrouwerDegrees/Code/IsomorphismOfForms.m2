@@ -37,14 +37,14 @@ isIsomorphicFormQQ (Matrix,Matrix) := Boolean => (M,N) -> (
 -- Input: Two matrices representing symmetric bilinear forms over CC, RR, QQ, or a finite field of characteristic not 2
 -- Output: Boolean that gives whether the bilinear forms are isomorphic
 
-isIsomorphicForm = method()
-isIsomorphicForm (Matrix,Matrix) := Boolean => (A,B) -> (
+isIsomorphicForm = method(Options => {linearTolerance => 1e-6})
+isIsomorphicForm (Matrix,Matrix) := Boolean => opts -> (A,B) -> (
     k1 := ring A;
     k2 := ring B;
     -- Ensure both base fields are supported
     if not (instance(k1, ComplexField) or instance(k1, RealField) or k1 === QQ or (instance(k1, GaloisField) and k1.char != 2)) then
         error "Base field not supported; only implemented over QQ, RR, CC, and finite fields of characteristic not 2";
-    if not (instance(k2, ComplexField) or instance(k2, RealField) or k2 === QQ or (instance(k1, GaloisField) and k1.char != 2)) then
+    if not (instance(k2, ComplexField) or instance(k2, RealField) or k2 === QQ or (instance(k2, GaloisField) and k2.char != 2)) then
         error "Base field not supported; only implemented over QQ, RR, CC, and finite fields of characteristic not 2";
     
     -- Ensure both matrices are symmetric
@@ -98,6 +98,6 @@ isIsomorphicForm (Matrix,Matrix) := Boolean => (A,B) -> (
 -- Input: Two Grothendieck-Witt classes alpha and beta, defined over CC, RR, QQ, or a finite field of characteristic not 2
 -- Output: Boolean that gives whether alpha and beta are the same Grothendieck-Witt class
 
-isIsomorphicForm (GrothendieckWittClass,GrothendieckWittClass) := Boolean => (alpha,beta) -> (
+isIsomorphicForm (GrothendieckWittClass,GrothendieckWittClass) := Boolean => opts -> (alpha,beta) -> (
     isIsomorphicForm(getMatrix alpha, getMatrix beta)
     )

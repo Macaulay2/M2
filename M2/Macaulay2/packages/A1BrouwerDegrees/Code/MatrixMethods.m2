@@ -15,7 +15,7 @@ isSquare Matrix := Boolean => M -> (
 
 isSquareAndSymmetric = method()
 isSquareAndSymmetric Matrix := Boolean => M -> (
-    transpose(M) == M
+    entries transpose M == entries M
     )
 
 -- Input: A symmetric matrix
@@ -24,11 +24,7 @@ isSquareAndSymmetric Matrix := Boolean => M -> (
 isDegenerate = method()
 isDegenerate Matrix := Boolean => M -> (
     if not isSquareAndSymmetric M then error "matrix is not symmetric";
-    if numRows(M) == 0 then (
-	return false;
-	)
-    else
-	return det(M) == 0;
+    det(M) == 0
     )
 
 -- Input: A symmetric matrix
@@ -58,22 +54,78 @@ isDiagonal Matrix := Boolean => M -> (
     true
     )
 
+diagonalizeViaCongruence = method()
+diagonalizeViaCongruence Matrix := Matrix => A -> (
+
+    -- Return an error if the matrix is not square and symmetric.
+    if not isSquareAndSymmetric A then
+	error "matrix is not symmetric";
+
+    k := ring A;
+
+    -- If the matrix is defined over a field, run the diagonalizeViaCongruenceField
+    if (isField k or instance(k, ComplexField) or instance(k, RR) or (instance(k, QuotientRing) and isField coefficientRing k and dim k == 0 and isPrime ideal(0_(k)))) then 
+    return diagonalizeViaCongruenceField(A);
+
+    -- If the matrix is defined only over a ring, run diagonalizeViaCongruenceRing
+    diagonalizeViaCongruenceRing A
+)
 -- Input: A symmetric matrix over a field
 -- Output: A diagonal matrix congruent to the original matrix
+diagonalizeViaCongruenceRing = method()
+diagonalizeViaCongruenceRing (Matrix) := (Matrix) => (AnonMut) -> (
+    A := mutableMatrix AnonMut;
+    n:=numRows(A);
+    for col from 0 to (n-1) do (
+        if A_(col,col) == 0 then (
+            for row from col+1 to n-1 do ( 
+		--Scan for nonzero entries below the diagonal entry
+                if A_(row,col) != 0 then (
+                    if A_(row,row) == 0 then (
+		        --Row reduction to make A_(col,col) nonzero
+                        rowAdd(A,col,1,row);
+		        --Column reduction to keep reduced matrix congruent to original matrix
+                        columnAdd(A,col,1,row);
+                        )
+                    else (
+		        --Row and column swaps to make A_(col,col) nonzero
+                        rowSwap(A,col,row);
+                        columnSwap(A,col,row);
+                        );
+                    );
+                    break;
+                );
+            );
+        --Now A_(col,col) != 0 unless there was a zero row/column and we use it to clear the column below
+        if A_(col,col) != 0 then (
+            for row from (col+1) to (n-1) do (
+                temp:=A_(row,col);
+                rowMult(A,row,A_(col,col)); --multiply row row by A_(col,col)
+                columnMult(A,row,A_(col,col)); --column multiplication to keep reduced matrix congruent
+                rowAdd(A,row,-temp,col); --more row reduction make every entry below A_(col,col) is zero
+                columnAdd(A,row,-temp,col); --column reduction to keep reduced matrix congruent
+                );
+            );
+        );
+    return matrix A 
+    )
 
-diagonalizeViaCongruence = method()
-diagonalizeViaCongruence Matrix := Matrix => AnonMut -> (
+-- Input: A symmetric matrix over a field
+-- Output: A diagonal matrix congruent to the original matrix
+diagonalizeViaCongruenceField = method()
+diagonalizeViaCongruenceField (Matrix) := Matrix => (AnonMut) -> (
     k := ring AnonMut;
-    if not isField k then error "expected matrix over a field";
-    if not isSquareAndSymmetric AnonMut then
-	error "matrix is not symmetric";
-    
+    kk := k;
+    if not isField k then kk = toField k;
+
     -- If the matrix is already diagonal, then return it
     if isDiagonal AnonMut then return AnonMut;
     
     -- Otherwise, we iterate through positions below the diagonal, performing row operations followed by the corresponding
     -- column operations in order to obtain a diagonal matrix congruent to the original
-    A := mutableMatrix AnonMut;
+    B := sub(AnonMut, kk);
+    A := mutableMatrix B;
+
     n := numRows A;
     for col from 0 to n - 1 do (
 	-- If diagonal entry in column "col" is zero
@@ -107,8 +159,8 @@ diagonalizeViaCongruence Matrix := Matrix => AnonMut -> (
                 );
             );
         );
-    if instance(k, InexactField) then A = clean(1e-12, A);
-    matrix A 
+    if instance(k, InexactField) then A = diagonalMatrix apply(n, i -> A_(i,i));
+    sub(matrix A,k) 
     )
 
 -- Input: A symmetric matrix over QQ, RR, CC, and finite fields of characteristic not 2
@@ -117,9 +169,9 @@ diagonalizeViaCongruence Matrix := Matrix => AnonMut -> (
 diagonalizeAndSimplifyViaCongruence = method()
 diagonalizeAndSimplifyViaCongruence Matrix := Matrix => AnonMut -> (
     k := ring AnonMut;
-    if not (instance(k, ComplexField) or instance(k, RealField) or k === QQ or (instance(k, GaloisField) and k.char != 2)) then (
-        error "Base field not supported; only implemented over QQ, RR, CC, and finite fields of characteristic not 2";
-        );
+   -- if not (instance(k, ComplexField) or instance(k, RealField) or k === QQ or (instance(k, GaloisField) and k.char != 2)) then (
+     --   error "Base field not supported; only implemented over QQ, RR, CC, and finite fields of characteristic not 2";
+       -- );
     if not isSquareAndSymmetric AnonMut then error "matrix is not symmetric";
 
     A := mutableMatrix diagonalizeViaCongruence AnonMut;

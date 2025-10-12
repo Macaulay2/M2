@@ -1,5 +1,34 @@
+-- Input: A ring
+-- Output: Boolean that gives whether the ring is a finite etale algebra over a field (and in particular if it is a field or a field extension)
+isFiniteEtaleAlgebra = method()
+isFiniteEtaleAlgebra QuotientRing := Boolean => (Alg) -> (
+    -- Verifies that the input is a finitely generated algebra over a field of dimension 0
+    if not (isField Alg or (instance(Alg, QuotientRing) and isField coefficientRing Alg and dim Alg == 0)) then return false;
+
+    -- Being a finite etale algebra over a field can be checked by verifying that the trace defines a nondegenerate symmetric bilinear form from Alg x Alg to the base field
+    baseField := coefficientRing Alg;
+    B := flatten entries basis Alg; 
+    n := #B;
+    
+    -- Define the matrix of the trace form
+    M := mutableMatrix id_(baseField^n);
+    
+    for i from 0 to n-1 do (
+        for j from 0 to n-1 do (
+            M_(i,j) = getTrace(Alg, B_i * B_j);
+        );
+    );
+
+    discAlg := determinant matrix M;
+
+    if (discAlg == 0_baseField) then return false;
+
+    true
+)
+
+
 -- Input: A matrix
--- Output: Boolean that gives whether the matrix defines a nondegenerate symmetric bilinear form over a field of characteristic not 2
+-- Output: Boolean that gives whether the matrix defines a nondegenerate symmetric bilinear form over an algebra of characteristic not 2
 
 isWellDefinedGW = method()
 isWellDefinedGW Matrix := Boolean => M -> (
@@ -11,9 +40,9 @@ isWellDefinedGW Matrix := Boolean => M -> (
     if isDegenerate M then return false;
 
     -- Return false if the matrix isn't defined over a field
-    if not isField ring M then return false;
+    if not (isField ring M or isFiniteEtaleAlgebra ring M) then return false;
     
-    -- Returns false if the matrix is defined over a field of characteristic 2
+    -- Returns false if the matrix is defined over a ring of characteristic 2
     if char(ring M) == 2 then return false;
 
     -- Otherwise, return true
@@ -34,7 +63,7 @@ makeGWClass Matrix := GrothendieckWittClass => M -> (
    if isWellDefinedGW M then (
         new GrothendieckWittClass from {
             symbol matrix => M,
-            symbol cache => new CacheTable
+            symbol cache => new CacheTable,
             }
         )
     else (
@@ -56,11 +85,22 @@ texMath GrothendieckWittClass := String => alpha -> (
     texMath getMatrix alpha
     )
 
+getAlgebra = method()
+getAlgebra GrothendieckWittClass := Ring => beta -> (
+    ring getMatrix beta
+    )
+
 -- Input: A Grothendieck-Witt class beta, the isomorphism class of a symmetric bilinear form
 -- Output: The base field of beta
 
 getBaseField = method()
 getBaseField GrothendieckWittClass := Ring => beta -> (
+    if (instance(getAlgebra beta, ComplexField)) or (instance(getAlgebra beta, RealField)) or (getAlgebra beta === QQ) or (instance(getAlgebra beta, GaloisField)) then return getAlgebra beta;
+
+    if not isPrime ideal(0_(getAlgebra beta)) then error "the Grothendieck-Witt class is not defined over a field";
+
+    if (not isField getAlgebra beta) then return toField getAlgebra beta;
+
     ring getMatrix beta
     )
 
@@ -77,8 +117,8 @@ getMatrix GrothendieckWittClass := Matrix => alpha -> (
 
 addGW = method()
 addGW (GrothendieckWittClass,GrothendieckWittClass) := GrothendieckWittClass => (beta,gamma) -> (
-    Kb := getBaseField beta;
-    Kg := getBaseField gamma;
+    Kb := getAlgebra beta;
+    Kg := getAlgebra gamma;
     
     -- Galois field case
     if instance(Kb, GaloisField) and instance(Kg, GaloisField) then (
@@ -99,8 +139,8 @@ addGW (GrothendieckWittClass,GrothendieckWittClass) := GrothendieckWittClass => 
 
 multiplyGW = method()
 multiplyGW (GrothendieckWittClass,GrothendieckWittClass) := GrothendieckWittClass => (beta,gamma) -> (
-    Kb := getBaseField beta;
-    Kg := getBaseField gamma;
+    Kb := getAlgebra beta;
+    Kg := getAlgebra gamma;
     
     -- Galois field case
     if instance(Kb, GaloisField) and instance(Kg, GaloisField) then (
