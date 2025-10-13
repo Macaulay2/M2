@@ -1,7 +1,7 @@
 newPackage("PathSignatures",
          Version => "1.0",
          Authors => {{Name => "Felix Lotter", HomePage => "https://felixlotter.gitlab.io"}, {Name => "Oriol Reig"}, {Name => "Angelo El Saliby"}, {Name => "Carlos Amendola"}},
-         Headline => "A package for working with signatures of algebraic paths",
+         Headline => "working with algebraic path signatures",
          AuxiliaryFiles => true,
          Keywords => {"Applied Algebraic Geometry"},
          PackageExports => {"NCAlgebra", "Permutations"}
