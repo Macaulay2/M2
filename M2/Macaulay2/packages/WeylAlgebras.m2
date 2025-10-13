@@ -16,6 +16,9 @@ newPackage("WeylAlgebras",
 	 "ReesAlgebra",
 	 "Elimination",
 	 "FourTiTwo"
+         },
+     PackageExports => {
+	 "OldChainComplexes",
 	 }
      )
 
@@ -86,6 +89,16 @@ export {
     "AnnG", -- TODO: move to BernsteinSato?
     "Generator",
     "makeCyclic",
+    }
+
+-- PZJ's factor
+load "./WeylAlgebras/factorWA.m2"
+export {
+    "factorWeylAlgebra",
+    "factorWA" => "factorWeylAlgebra",
+    "StopAfter",
+    "factorWeylAlgebra1",
+    "factorWA1" => "factorWeylAlgebra1",
     }
 
 --------------------------------------------------------------------------------

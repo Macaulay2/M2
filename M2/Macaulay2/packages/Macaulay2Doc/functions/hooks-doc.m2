@@ -31,7 +31,8 @@ Node
       of a hook will be passed on to it. Otherwise it will be ignored.
     Example
       foo ZZ := true >> opts -> args -> runHooks((foo, ZZ), args, opts);
-      debugLevel = 1
+      importFrom_Core "debugHooksLevel"
+      debugHooksLevel = 1
       assert( foo 1 == 15 )
       assert( foo(2, b => 9) == 10 )
       assert( foo 3 == 24 )
@@ -51,6 +52,16 @@ Node
     Example
       hooks(quotient, Ideal, Ideal)
       code 1
+    Text
+      Internally, the information about hooks are stored either in types or under @TT "GlobalHookStore"@.
+    Example
+      importFrom_Core { "getHookStore", "Hooks", "HookPriority", "HookAlgorithms" }
+      Ideal.Hooks === getHookStore((quotient, Ideal, Ideal), false)
+      peek Ideal.Hooks
+      peek Ideal.Hooks#(quotient, Ideal, Ideal)
+      peek Ideal.Hooks#(quotient, Ideal, Ideal).HookPriority
+      peek Ideal.Hooks#(quotient, Ideal, Ideal).HookAlgorithms
+      peek GlobalHookStore
   Subnodes
     hooks
     addHook

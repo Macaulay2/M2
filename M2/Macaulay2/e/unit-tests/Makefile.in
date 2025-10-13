@@ -15,11 +15,7 @@ CPPFLAGS := -I. -I@srcdir@  -I@srcdir@/..  $(CPPFLAGS) \
 CXXFLAGS += -std=gnu++17 -Wno-sign-conversion #-Wno-unused-local-typedefs -coverage
 
 # note: on some machines, gcc can't find -lstdc++
-LOADLIBES += @BUILTLIBS@ @LINALGLIBS@ @LIBS@ @FCLIBS@ -pthread
-
-# do not link with gtest -- it's supposed to get compiled in via #include:
-# LDFLAGS += -L$(GTEST_DIR)/lib/.libs
-# LOADLIBES += -lgtest
+LOADLIBES += @BUILTLIBS@ @LINALGLIBS@ @LIBS@ @FCLIBS@ -lgtest -pthread
 
 .PHONY: place_into_lib runtests
 
@@ -35,28 +31,28 @@ check: runtests
 fullCheck: $(UNITTEST_TARGET)
 	valgrind --track-origins=yes ./$(UNITTEST_TARGET)
 
-$(UNITTEST_TARGET) : gtest-include.o $(UNITTEST_OBJECT_FILES) $(E_OBJECT_FILES) ../../system/supervisor.o
+$(UNITTEST_TARGET) : $(UNITTEST_OBJECT_FILES) $(E_OBJECT_FILES) ../../system/supervisor.o
 	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
 
 runtests: $(UNITTEST_TARGET)
 	time ./$(UNITTEST_TARGET)
 
-ARingRRRTest :  gtest-include.o ARingRRRTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES)
+ARingRRRTest :  ARingRRRTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES)
 	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
 
-ARingRRiTest :  gtest-include.o ARingRRiTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES)
+ARingRRiTest :  ARingRRiTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES)
 	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
 
-ARingGFTest :  gtest-include.o ARingGFTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES) ../../system/supervisor.o
+ARingGFTest :  ARingGFTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES) ../../system/supervisor.o
 	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
 
-NCGroebnerTest :  gtest-include.o NCGroebnerTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES) ../../system/supervisor.o
+NCGroebnerTest :  NCGroebnerTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES) ../../system/supervisor.o
 	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
 
 runNCGroebnerTest : NCGroebnerTest
 	time ./NCGroebnerTest
 
-ARingRRRZZpTest :  gtest-include.o  \
+ARingRRRZZpTest : \
     ARingZZpTest.o  \
     ARingRRRTest.o \
     ARingZZpTest.o \

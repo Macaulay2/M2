@@ -19,7 +19,7 @@ print this brief help message and exit
 print no backtrace after error
 .TP
 \fB\-\-copyright\fR
-display full copyright messasge
+display full copyright message
 .TP
 \fB\-\-no\-debug\fR
 do not enter debugger upon error

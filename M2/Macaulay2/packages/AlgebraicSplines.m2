@@ -23,7 +23,7 @@ newPackage(
 	Keywords => {"Applied Algebraic Geometry"},
         Configuration => {},
         DebuggingMode => false,
-	PackageImports => { "Elimination" },
+	PackageImports => { "OldChainComplexes", "Elimination" },
         PackageExports => {
 	    "FourierMotzkin"
 	    }

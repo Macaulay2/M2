@@ -50,7 +50,7 @@ ryser Matrix := (M) -> (
       for i from 1 to n-1 do(del = append(del,0););--delta is of length n
       
       --take the initial product corresponding to delta all +1's
-      sign:=1;
+      sgn:=1;
       prod:=1;
       for i from 0 to n-1 do(
 	  prod=prod*s#i;
@@ -60,7 +60,7 @@ ryser Matrix := (M) -> (
       curIndex:=0;--which position in the gray code changed
       curVal:=0;--what is the new value in the changed position of the gray code
       for count from 2 to 2^n do(--start at 2 because we already took the initial product corresponding to delta consisting of all 1's
-	  sign=(-1)*sign;
+	  sgn=(-1)*sgn;
 	  --increment delta
 	  flag:=1;
 	  for k from 0 to n-1 when flag==1 do(
@@ -79,7 +79,7 @@ ryser Matrix := (M) -> (
 	  	  prod=prod*s#i;
 	      );
 	      
-	  permanent = permanent+sign*prod;
+	  permanent = permanent+sgn*prod;
 	  );
       
       permanent
@@ -117,7 +117,7 @@ glynn Matrix := (M) -> (
       for i from 1 to n-2 do(del = append(del,0););--delta is of length n-1 because first position is always positive, so we don't consider it in the gray code
       
       --take the initial product corresponding to delta all +1's
-      sign:=1;
+      sgn:=1;
       prod:=1;
       for i from 0 to n-1 do(
 	  prod=prod*s#i;
@@ -127,7 +127,7 @@ glynn Matrix := (M) -> (
       curIndex:=0;--which position in the gray code changed
       curVal:=0;--what is the new value in the changed position of the gray code
       for count from 2 to 2^(n-1) do(--start at 2 because we already took the initial product corresponding to delta consisting of all 1's
-	  sign=(-1)*sign;
+	  sgn=(-1)*sgn;
 	  --increment delta
 	  flag:=1;
 	  for k from 0 to n-2 when flag==1 do(
@@ -146,7 +146,7 @@ glynn Matrix := (M) -> (
 	  	  prod=prod*s#i;
 	      );
 	      
-	  perm = perm+sign*prod;
+	  perm = perm+sgn*prod;
 	  );
 
       --need to divide in Glynn's formula

@@ -16,7 +16,6 @@ newPackage(
          "published article URI" => "https://msp.org/jsag/2018/8-1/p07.xhtml",
          "published article DOI" => "10.2140/jsag.2018.8.71",
          "published code URI" => "https://msp.org/jsag/2018/8-1/jsag-v8-n1-x07-ExteriorIdeals.m2",
-         "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/ExteriorIdeals.m2",
          "release at publication" => "1073789664ba1f00096121613a8b6d932a0e5c4e",        -- git commit number in hex
          "version at publication" => "1.0",
          "volume number" => "8",
@@ -390,10 +389,9 @@ document {
      Key => {ExteriorIdeals},
      Headline => "a package for working with ideals over exterior algebra",
      TT "ExteriorIdeals is a package for creating and manipulating ideals over exterior algebra",
-     PARA {"Other acknowledgements:"},      
-     "The method ", TT "isLexIdeal", " was taken from Chris Francisco's package: LexIdeals, which is available at ",
-      HREF{"http://www2.macaulay2.com/Macaulay2/doc/Macaulay2-1.10/share/doc/Macaulay2/LexIdeals/html/","LexIdeals"}
-      
+     Acknowledgement => PARA {
+	 "The method ", TO "isLexIdeal", " was taken from ", TO "LexIdeals::isLexIdeal",
+	 " in Chris Francisco's package ", TO "LexIdeals::LexIdeals", "." },
      }
 
 document {
@@ -469,16 +467,15 @@ document {
      Inputs => {"I" => {"a monomial ideal of an exterior algebra"}
       },
      Outputs => {Boolean => {"true whether ideal ", TT "I", " is lex"}},
-      PARA {"Other acknowledgements:"},      
-     "This method was taken from Chris Francisco's package: LexIdeals, which is available at ",
-      HREF{"http://www2.macaulay2.com/Macaulay2/doc/Macaulay2-1.10/share/doc/Macaulay2/LexIdeals/html/","LexIdeals"},
-      
      PARA {"Examples:"},
      EXAMPLE lines ///
            E=QQ[e_1..e_4,SkewCommutative=>true]
            isLexIdeal ideal {e_1*e_2,e_2*e_3}
            isLexIdeal ideal {e_1*e_2,e_1*e_3,e_1*e_4,e_2*e_3}
      ///,
+     Acknowledgement => PARA {
+	 "This method was taken from ", TO "LexIdeals::isLexIdeal",
+	 " in Chris Francisco's package ", TO "LexIdeals::LexIdeals", "." },
      SeeAlso =>{lexIdeal},
      }
 

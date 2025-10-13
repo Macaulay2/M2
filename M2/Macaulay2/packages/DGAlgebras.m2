@@ -10,7 +10,7 @@ newPackage("DGAlgebras",
        },
      Keywords => {"Commutative Algebra"},
      DebuggingMode => false,
-     PackageExports => {"IntegralClosure", "Complexes"}
+     PackageExports => {"IntegralClosure", "OldChainComplexes", "Complexes"}
      )
 export {"DGAlgebra", 
         "DGAlgebraMap", 

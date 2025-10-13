@@ -45,7 +45,6 @@ newPackage (
 	"published article URI" => "https://msp.org/jsag/2024/14-1/p15.xhtml",
 	"published article DOI" => "10.2140/jsag.2024.14.175",
 	"published code URI" => "https://msp.org/jsag/2024/14-1/jsag-v14-n1-x15-A1BrouwerDegrees.zip",
-	"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/A1BrouwerDegrees.m2",
 	"release at publication" => "98f142fe23304b808c1e931b723b3addff77a643",
 	"version at publication" => "1.1",
 	"volume number" => "14",

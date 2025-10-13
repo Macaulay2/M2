@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage(
         "VectorGraphics",
-        Version => "1.1",
+        Version => "1.1.1",
         Date => "July 4, 2024", -- "May 18, 2018",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
@@ -49,6 +49,10 @@ svgAttr= htmlAttr | htmlData | { "transform", "filter" } -- what else ?
 gParse := method()
 -- gParse Sequence := x -> gParse vector toList x -- retired due to https://github.com/Macaulay2/M2/issues/1548
 gParse Array := x -> gParse vector toList x -- replaced with this
+gParse AngleBarList := x -> (
+    r := if #x>1 then x#1 else 1;
+    gParse vector { r * cos x#0, r * sin x#0 }
+    )
 gParse Matrix := x -> (
     if rank source x =!= rank target x or rank source x < 2 or rank source x > 4 then error "wrong matrix";
     if rank source x == 2 then x++1.++1. else if rank source x == 3 then x++1. else sub(x,RR)
@@ -249,7 +253,7 @@ GraphicsObject ++ List := (opts1, opts2) -> (
     if #sty>0 then opts2 = append(opts2,symbol style => merge(opts1.style,sty,last));
     x := new class opts1 from select(opts2,o -> class o#0 =!= String);
     x=merge(opts1,x,
-	(m,m') -> if instance(m,Matrix) and instance(m',Matrix) then m*m' else m' -- for TransformMatrix and AnimMatrix
+	(m,m') -> if instance(m,Matrix) and instance(m',Matrix) then m'*m else m' -- for TransformMatrix and AnimMatrix
 	);
     -- almost like cloneall
     crdlist=new MutableList; grlist=new MutableHashTable;
@@ -833,7 +837,8 @@ tikzconv1 := x -> y -> (
 	) else if substring(y,0,3)=="rgb" then ( -- TODO cmy as well
 	c = value substring(y,3);
 	y = "{rgb,255:red,"|jsString min(c#0,255)|";green,"|jsString min(c#1,255)|";blue,"|jsString min(c#2,255)|"}";
-	);
+	)
+    else if y == "transparent" then y="none";
     x|"="|y
     )
 tikzconv := hashTable {
@@ -975,7 +980,7 @@ tex svgElement Polygon := x -> concatenate(
     )
 tex svgDefs := x -> "" -- not implemented
 
-tex GraphicsObject := texMath GraphicsObject := g -> tex SVG g;
+tex GraphicsObject := texMath GraphicsObject := g -> if topLevelMode === WebApp then webAppLiteralTag|webAppHtmlTag|html g|webAppEndTag|webAppLiteralTag else tex SVG g;
 
 -- now transformations
 -- following 2 functions can be used to produce matrices to be fed to either
@@ -1351,7 +1356,7 @@ multidoc ///
    Example
     Circle{Center=>vector {10,10},Radius=>1,"fill"=>"green","stroke"=>"none"}
     Circle{[10,10],1} -- equivalent syntax for coordinates
-    gList(oo,Circle{[0,0],[10,10]})
+    gList apply(10,i->Circle{<|2*pi*i/10,(1+sqrt 5)/2|>,1}) -- another syntax: polar coordinates
  Node
   Key
    Line

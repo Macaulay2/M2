@@ -39,7 +39,7 @@ RESULTS := $(notdir $(patsubst %.m2, %.out, $(TESTFILES))) \
 	   $(notdir $(patsubst %.m2-input, %.out, $(wildcard $(SRCDIR)/*.m2-input)))
 
 PAT := 'internal error|:[0-9][0-9]*:[0-9][0-9]*:\([0-9][0-9]*\):|^GC|^0x|^out of mem|non-zero status|^Command terminated|user.*system.*elapsed|^[0-9]+\.[0-9]+user'
-FILTER := $(if $(VERBOSE),tail,egrep -a $(PAT))
+FILTER := $(if $(VERBOSE),tail,grep -Ea $(PAT))
 
 ifeq ($(DEFERRED),no)
 check: $(RESULTS)
@@ -60,7 +60,7 @@ ARGS += --no-randomize
 
 status: status-files
 status-files: $(TESTFILES)
-	@ egrep -n '^--status:' $(TESTFILES) /dev/null || true
+	@ grep -En '^--status:' $(TESTFILES) /dev/null || true
 
 %.out : %.m2
 	@ echo testing: $<
@@ -72,12 +72,12 @@ status-files: $(TESTFILES)
 		else a=$$?; \
 		     <$*.errors $(FILTER) ; \
 		     echo "$*.errors:0: error output left here for the errors above:" >&2 ; \
-		     egrep -n '^--status:' $< /dev/null || true ; \
+		     grep -En '^--status:' $< /dev/null || true ; \
 		     exit $$a ; \
 		fi
 %.out : %.m2-input
 	@ echo testing: $<
-	@ egrep -n '^--status:' $< /dev/null || true
+	@ grep -En '^--status:' $< /dev/null || true
 	@ $(LIMIT) \
 		echo "--*- compilation -*-" >$*.errors; \
 		if GC_MAXIMUM_HEAP_SIZE=400M time @pre_exec_prefix@/bin/M2 $(ARGS) <$< >>$*.errors 2>&1 ; \

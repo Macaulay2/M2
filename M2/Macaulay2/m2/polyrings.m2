@@ -178,6 +178,7 @@ Ring Monoid := PolynomialRing => (R, M) -> (
     RM.FlatMonoid = F;
     RM.numallvars = numallvars;
     RM.baseRings  = append(R.baseRings, R);
+    RM.cache      = new CacheTable;
     RM.promoteDegree = (
 	if F.Options.DegreeMap === null
 	then makepromoter degreeLength RM -- means the degree map is zero

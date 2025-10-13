@@ -4,18 +4,15 @@
 
 document { 
      Key => {coimage,
-	  (coimage, ChainComplexMap),
 	  (coimage, Matrix),
-	  (coimage, GradedModuleMap),
 	  (coimage, RingMap)},
      Headline => "coimage of a map",
      Usage => "coimage f",
      Inputs => {
 	  "f" => {
 	       "a ", TO2(RingMap,"ring map"), 
-	       ", a ", TO2(Matrix, "matrix"),
-	       ", a ", TO2(ChainComplexMap, "chain complex map"),
-	       ", or a ", TO2(GradedModuleMap, "graded module map, from ", TT "A", " to ", TT "B")
+	       " or a ", TO2(Matrix, "matrix"),
+           " from ", TT "A", " to ", TT "B"
 	       }
 	  },
      Outputs => {

@@ -7,6 +7,8 @@ doc ///
     replace
   Headline
     replacement in strings and lists
+  Subnodes
+    (replace, ZZ, Thing, BasicList)
 ///
 
 doc ///

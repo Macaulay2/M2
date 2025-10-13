@@ -32,7 +32,6 @@ newPackage(
 	 "published article URI" => "https://msp.org/jsag/2021/11-1/p06.xhtml",
 	 "published article DOI" => "10.2140/jsag.2021.11.53",
 	 "published code URI" => "https://msp.org/jsag/2021/11-1/jsag-v11-n1-x06-DecomposableSparseSystems.zip",
-	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/DecomposableSparseSystems.m2",
 	 "release at publication" => "c07e21e64bfa7f37ce7969b2a1bad99666d0fb17",	    -- git commit number in hex
 	 "version at publication" => "1.0.1",
 	 "volume number" => "11",

@@ -12,8 +12,13 @@ document {
      polynomials of projective spaces because it is a good form for
      extracting geometric information from the polynomial. The Hilbert
      polynomial of ", TT "P^i", " is ",  TT "z |--> binomial(z + i, i).",
-     SeeAlso => {"degreesRing", "reduceHilbert", "poincare", "poincareN", 
-	  "hilbertSeries", "hilbertFunction"}
+     SeeAlso => {"degreesRing", "reduceHilbert", "poincare", "Complexes :: poincareN",
+	  "hilbertSeries", "hilbertFunction"},
+    Subnodes => {
+	TO [hilbertPolynomial, Projective],
+	TO ProjectiveHilbertPolynomial,
+	TO projectiveHilbertPolynomial,
+        },
      } 
 
 document {

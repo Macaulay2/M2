@@ -241,23 +241,28 @@ conjugate Constant := conjugate @@ numeric
 
 isConstant Number := i -> true
 
-round RR := round CC := round0
-round Constant := round0 @@ numeric
+round Number := round0 @@ numeric
 round(ZZ,RR) := (n,x) -> (
      prec := precision x;
      p := (toRR(prec,10))^n;
      toRR(prec,round(x*p)/p))
+round(ZZ, CC) := (n, x) -> toCC(round(n, realPart x), round(n, imaginaryPart x))
+round(ZZ, RRi) := (n, x) -> toRRi(round(n, left x), round(n, right x))
+round(ZZ, Number) := (n, x) -> round(n, numeric x)
 
 truncate Number := {} >> o -> x -> (
     if x >= 0 then floor x
     else if x < 0 then ceiling x
     else 0) -- e.g., RRi's containing 0 as interior pt
 
-random RR := RR => opts -> x -> x * rawRandomRR precision x
+random RR := RR => opts -> x -> x * rawRandomRRUniform precision x
 random(RR,RR) := opts -> (x,y) -> x + random(y-x)
-RR'.random = opts -> R -> rawRandomRR R.precision
+RR'.random = opts -> R -> rawRandomRRUniform R.precision
 CC'.random = opts -> C -> rawRandomCC C.precision
 random RingFamily := opts -> R -> random(default R,opts)
+
+random QQ := QQ => opts -> x -> rawFareyApproximation(
+    random numeric x, opts.Height)
 
 -- algebraic operations and functions
 
@@ -345,6 +350,7 @@ RingElement == Constant :=
 InexactNumber == Constant := (x,c) -> x == numeric(precision x,c)
 Constant ? Constant := (c,d) -> numeric c ? numeric d
 InexactNumber ? Constant := (x,c) -> x ? numeric(precision x,c)
+Constant ? InexactNumber := (c,x) -> numeric(precision x,c) ? x
 
 Constant _ Ring := (c,R) -> (
      prec := precision R;
@@ -401,14 +407,9 @@ expression RR := x -> (
 expression CC := z -> (
      x := realPart z;
      y := imaginaryPart z;
-     if y == 0 then expression x
-     else if x == 0 
-     then if y == 1 then hold ii
-     else if y == -1 then - hold ii
-     else y * hold ii
-     else if y == -1 then x - hold ii
-     else if y == 1 then x + hold ii
-     else x + y * hold ii)
+     if x == 0 then x=0;
+     if y == 0 or abs y < abs x * 2^(-precision z) then y=0;
+     x + y * hold ii)
 net InexactField := R -> net expression R
 net CC := z -> simpleToString z
 toExternalString RR := toExternalString0
@@ -417,12 +418,22 @@ texMath CC := x -> texMath expression x
 texMath RR := x -> (
     if not isANumber x then texMath toString x else
     if    isInfinite x then texMath(if x > 0 then infinity else -infinity)
-    else "{" | format(
-	printingPrecision,
-	printingAccuracy,
-	printingLeadLimit,
-	printingTrailLimit,
-	"}\\cdot 10^{", x ) | "}")
+    else (
+	s := simpleToString x;
+	r := regex("(-?\\d*)(?:\\.(\\d*)|)(?:"|regexQuote printingSeparator|"(-?\\d+)|)",s);
+	if r === null then return s; -- shouldn't happen
+	ss := substring(r#1,s);
+	if ss=="1" and r#2#1==0 and r#3#1>0 then "10^{"|substring(r#3,s)|"}"
+	else if ss=="-1" and r#2#1==0 and r#3#1>0 then "-10^{"|substring(r#3,s)|"}"
+	else concatenate (
+	    "{",
+	    (lookup(texMath,ZZ)) ss,
+	    if r#2#1>0 then "."|substring(r#2,s),
+	    "}",
+	    if r#3#1>0 then "\\cdot 10^{"|substring(r#3,s)|"}"
+	    )
+	)
+    )
 texMath RRi := x -> concatenate("\\big[",texMath left x,",",texMath right x,"\\big]",if isEmpty x then "\\text{ (an empty interval)}")
 withFullPrecision = f -> (
      prec := printingPrecision;

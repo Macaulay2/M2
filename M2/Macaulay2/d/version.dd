@@ -65,6 +65,10 @@ header "
    #include <Eigen/Core>
 
    #include <libnormaliz/version.h>
+
+   #ifdef HAVE_FPLLL
+   #include <fplll.h>
+   #endif
    ";
 
 header "
@@ -162,6 +166,13 @@ setupconst("version", Expr(toHashTable(Sequence(
 	  #endif
 	  "),
    "fflas_ffpack version" => ffpackVersion(),
+   "fplll version" => Ccode(constcharstar, "
+       #ifdef HAVE_FPLLL
+	   stringize(FPLLL_VERSION)
+       #else
+	   \"not present\"
+       #endif
+       "),
    "mpsolve version" => Ccode(constcharstar, "stringize(MPS_MAJOR_VERSION) \".\" stringize(MPS_MINOR_VERSION) \".\" stringize(MPS_PATCH_VERSION)" ),
    "python version" => Ccode(constcharstar,"
 	#ifdef WITH_PYTHON

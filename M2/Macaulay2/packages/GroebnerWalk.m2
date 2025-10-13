@@ -552,7 +552,7 @@ Description
   Text
     while running at Level 2 gives some conversion information.
   Example
-    setWalkTrace 2;
+    setWalkTrace 2; -* no-capture-flag *-
     groebnerWalk(gb I1, R2)
 SeeAlso
   groebnerWalk
@@ -596,7 +596,7 @@ Description
     down the computation, and is not recommended except for testing.
   Example
     getWalkTrace()
-    setWalkTrace 2;
+    setWalkTrace 2; -* no-capture-flag *-
     getWalkTrace()
 SeeAlso
   groebnerWalk

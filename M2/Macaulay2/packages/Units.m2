@@ -56,7 +56,7 @@ Measurement ^ ZZ := (m,i) -> if i === 0 then 1 else new Measurement from {m#0^i,
 Measurement + Measurement := (m,n) -> ( if m#1 =!= n#1 then error "sum: incompatible measurements"; new Measurement from { m#0 + n#0 , m#1 } )
 Measurement - Measurement := (m,n) -> m + -n
 
-Constant Number := Number Constant := Number Number := times
+Constant Number := Number Constant := Number Number := ZZ ZZ := times
 
 exa = 10^18
 peta = 10^15

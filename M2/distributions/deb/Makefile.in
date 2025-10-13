@@ -51,11 +51,11 @@ check-strip-enabled:; [ @ENABLE_STRIP@ = yes ]
 macaulay2/control.prelim : @srcdir@/macaulay2/control.prelim.in Makefile
 	rm -f $@
 	<$< >$@ sed -e 's/[@]DEBARCH[@]/$(DEBARCH)/g' -e 's/[@]PACKAGE_VERSION[@]/$(DIST_VERSION)/g'
-	! egrep -nH '@[A-Za-z_]+@' <$@
+	! grep -EnH '@[A-Za-z_]+@' <$@
 macaulay2-common/control.prelim : @srcdir@/macaulay2-common/control.prelim.in Makefile
 	rm -f $@
 	<$< >$@ sed -e 's/[@]DEBARCH[@]/$(DEBARCH)/g' -e 's/[@]PACKAGE_VERSION[@]/$(DIST_VERSION)/g'
-	! egrep -nH '@[A-Za-z_]+@' <$@
+	! grep -EnH '@[A-Za-z_]+@' <$@
 announce:
 	@ echo "============================================================================="
 	@ echo "package files prepared:"
@@ -96,7 +96,7 @@ T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --f
 prepare: .prepared
 tmp@bindir@/M2@EXE@ .prepared: 
 	: ensure change log is up to date...
-	fgrep 'macaulay2 (@PACKAGE_VERSION@) ' <@srcdir@/changelog
+	grep -F 'macaulay2 (@PACKAGE_VERSION@) ' <@srcdir@/changelog
 	rm -rf tmp@prefix@ tmp-common@prefix@
 	$(MKDIR_P) tmp@prefix@
 	$(MKDIR_P) tmp-common@prefix@
@@ -124,7 +124,7 @@ macaulay2-common/data.tar.gz : prepare;	(cd tmp-common && @TAR@ cfz - $(TAROPTIO
 macaulay2/md5sums            : prepare; (cd tmp        && @FIND@ * -type f | xargs md5sum) >$@
 macaulay2-common/md5sums     : prepare;	(cd tmp-common && @FIND@ * -type f | xargs md5sum) >$@
 ifneq (@LINTIAN@,)
-SUP = fgrep -v 
+SUP = grep -Fv
 check: check1 check2
 check1:; - @LINTIAN@ -I ../../$(PKG_DEB)
 check2:; - @LINTIAN@ -I ../../$(PKG_COM_DEB)
@@ -150,19 +150,19 @@ libraries-used: .prepared tmp@bindir@/M2@EXE@
 	do if [ -f $$i ] ; then ( set -x ; ldd $$i ) ; fi ; \
 	done \
 	| sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' \
-	| egrep '^/' \
+	| grep -E '^/' \
 	| sort | uniq \
 	> $@ || true
 clean::; rm -f libraries-used
 libraries-really-used: libraries-used libraries-used-directly
-	egrep `echo \`cat libraries-used-directly\` | sed -e 's=^=.*/=' -e 's= =|.*/=g'` <$< >$@
+	grep -E `echo \`cat libraries-used-directly\` | sed -e 's=^=.*/=' -e 's= =|.*/=g'` <$< >$@
 files-used: Makefile
 	for i in @FILE_PREREQS@ ; do echo $$i ; done >$@
 packages-used: libraries-really-used files-used
 	cat $^ |								\
 	while read x ;								\
 	x=`readlink -f "$$x"` ;							\
-	do @FIND@ /var/lib/dpkg/info -name \*.list | xargs egrep -l "^$$x";	\
+	do @FIND@ /var/lib/dpkg/info -name \*.list | xargs grep -El "^$$x";	\
 	done | sort | uniq | sed -r -e 's=.*/==' -e 's=(:.*)?\.list$$==' >$@
 clean::; rm -f packages-used
 macaulay2/control : macaulay2/control.prelim macaulay2/data.tar.gz packages-used

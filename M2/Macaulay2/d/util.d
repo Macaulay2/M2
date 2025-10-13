@@ -187,6 +187,14 @@ export getSequenceOfMutableMatrices(e:Expr) : RawMutableMatrixArray := (
      is a:RawMutableMatrixCell do RawMutableMatrixArray(a.p)
      else RawMutableMatrixArray());
 
+export isFunction(e:Expr):bool := (
+     when e
+     is CompiledFunction do true
+     is CompiledFunctionClosure do true
+     is FunctionClosure do true
+     is s:SpecialExpr do isFunction(s.e)
+     else false);
+
 -----------------------------------------------------------------------------
 -- helper routines for checking and converting return values
 

@@ -131,7 +131,7 @@ processAlgorithm := (alg, m) -> (
     -- else if alg === Faugere       then error "the Faugere algorithm option has been replaced by LinearAlgebra"
     else if alg === Sugarless     then 4
     else if alg === Homogeneous2  then 5
-    else if alg === LinearAlgebra then (warnexp(); 6)
+    else if alg === LinearAlgebra then 6
     else if alg === Toric         then (warnexp(); 7)
     else if alg === Test          then 8
     else if alg === ParallelF4    then 9 -- also experimental
@@ -147,19 +147,12 @@ GroebnerBasis.synonym = "Gröbner basis"
 GroebnerBasisOptions = new Type of OptionTable
 GroebnerBasisOptions.synonym = "Gröbner basis options"
 
--- m:    a Matrix
--- type: an GroebnerBasisOptions
--- opts: an OptionTable
 -- TODO: document this
-new GroebnerBasis from Sequence := (GB, S) -> (
-    (m, type, opts) := if #S === 3 then S else error "GroebnerBasis: expected three initial values";
-    -- TODO: implement recursive type checking
-    if not instance(m, Matrix) or not instance(type, GroebnerBasisOptions) or not instance(opts, OptionTable)
-    then error "GroebnerBasis: expected a sequence of type (Matrix, GroebnerBasisOptions, OptionTable)";
+new GroebnerBasis from (Matrix, GroebnerBasisOptions, OptionTable) := (GB, m, type, opts) -> (
     if flagInhomogeneity and not isHomogeneous m then error "internal error: gb: inhomogeneous matrix flagged";
     -- initialize the toplevel container
     G := new GroebnerBasis;
-    if debugLevel > 5 then registerFinalizer(G, "gb (new GroebnerBasis from Sequence)");
+    if debugLevel > 5 then registerFinalizer(G, "gb (new GroebnerBasis from (Matrix, GroebnerBasisOptions, OptionTable))");
     G.ring = ring m;
     G.matrix = Bag {m};
     G.target = target m;
@@ -312,7 +305,7 @@ gb = method(TypicalValue => GroebnerBasis, Options => gbDefaults)
 gb Ideal  := GroebnerBasis => opts -> I -> gb (module I, opts)
 gb Module := GroebnerBasis => opts -> M -> (
     if M.?relations then (
-	if not M.cache#?"full gens" then M.cache#"full gens" = generators M | relations M;
+	M.cache#"full gens" ??= generators M | relations M;
 	gb(M.cache#"full gens", opts, SyzygyRows => numgens source generators M))
     else gb(generators M, opts))
 gb Matrix := GroebnerBasis => opts -> m -> (
@@ -425,7 +418,13 @@ groebnerBasis Matrix := opts -> x -> (
 	if gbTrace > 0 then << "-- computing mgb " << opts.Strategy << " " << mgbopts << endl;
 	-- use engineMGB
 	generators forceGB engineMGB(x, mgbopts))
-    else generators gb x)
+    else (
+        -- if opts.Strategy === "F4" or opts.Strategy === "MGB" then (
+        --     << "warning: cannot use MGB or F4 option with this ring, falling back to default" << endl;
+        --     );
+        generators gb x
+        )
+    )
 
 -----------------------------------------------------------------------------
 -- forceGB

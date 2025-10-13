@@ -912,8 +912,8 @@ garnirElement(YoungTableau,ZZ,ZZ,ZZ):= (tableau,coef,a,b)-> (
 	    for j from a+1 to conju#b do (  
 	    	newTableau_(j-1,b) = AB#(comb#j);
 		);
-	    sign:=sortColumnsTableau(newTableau);
-	    spechtModuleElement (newTableau, (coef) *sign*permutationSign(conjugacyClass(comb)))
+	    sgn:=sortColumnsTableau(newTableau);
+	    spechtModuleElement (newTableau, (coef) *sgn*permutationSign(conjugacyClass(comb)))
       	    ));
     	
 	);
@@ -941,9 +941,9 @@ sortColumnsTableau SpechtModuleElement := element ->
 	    y := youngTableau(element#partition,t);
 	    coef := element#values#t;
 	    remove(element#values,t);
-	    sign:= sortColumnsTableau(y);
-	    if(element#values#?(entries y)) then element#values#(entries y) = element#values#(entries y)+sign*coef
-	    else element#values#(entries y) = coef*sign;
+	    sgn:= sortColumnsTableau(y);
+	    if(element#values#?(entries y)) then element#values#(entries y) = element#values#(entries y)+sgn*coef
+	    else element#values#(entries y) = coef*sgn;
 	     )   
 	);
     )
@@ -1193,14 +1193,14 @@ higherSpechtPolynomial(YoungTableau, YoungTableau, PolynomialRing) := o-> (S,T,R
 	rowPermutations := rowPermutationTableaux indexTableau S;
 	ans = spechtPolynomial(T,R,AsExpression =>o.AsExpression)*sum(rowPermutations, tab -> product apply (numcols S, i->
 		(
-		    (sortedList,sign) := sortList(tab_i);
+		    (sortedList,sgn) := sortList(tab_i);
 		    sortedList = sortedList  -  toList (0..(#(tab_i)-1));
 		    sortedList = reverse sortedList;
 		    firstZero := position(sortedList,i->i==0);
 		    lastNonZero:= 0;
 	 	    if (firstZero === null) then lastNonZero = #sortedList-1 else lastNonZero = firstZero -1;
 		    partition:= new Partition from sortedList_{0..lastNonZero};
-		    sign*schurPolynomial(T_i,partition,R,AsExpression => o.AsExpression)
+		    sgn*schurPolynomial(T_i,partition,R,AsExpression => o.AsExpression)
 		    )))
 	);
     ans

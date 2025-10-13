@@ -612,7 +612,7 @@ doc ///
       @TO "toPython"@.
     Example
       math = import "math"
-      setattr(math, "pi", 22/7)
+      setattr(math, "pi", 22/7) -* no-capture-flag *-
       math@@pi
     Text
       As with @TO "getattr"@, when using the shortcut @TT "\@\@"@, @TT "y"@

@@ -14,8 +14,8 @@ newPackage("EliminationMatrices",
 	     },
    Headline => "resultants",
    Keywords => {"Commutative Algebra"},
-   PackageExports => { "Complexes" },
    PackageImports => { "Elimination" },
+   PackageExports => { "Complexes" },
    DebuggingMode => false
    )
 
@@ -802,7 +802,7 @@ document {
 	
 	TT "EliminationMatrices", " is a package for elimination theory, emphasizing universal formulas, in particular, resultant computations.",
 	
-	PARA {}, "The package contains an implementation for computing determinant of free graded complexes, called ", TO2((detComplex), "detComplex"), ", with several derived methods:  ", TO2((listDetComplex), "listDetComplex"),", ", TO2((mapsComplex), "mapsComplex"),", and  ", TO2((minorsComplex), "minorsComplex"), ". This provides a method for producing universal formulas for any family of schemes, just by combining the ", TO2 {(resolution,Ideal),"resolution(Ideal)"}, " method with  ", TO2((detComplex), "detComplex"), ". In Section 2 determinants of free resolutions are treated, as well as a few examples. We recommend to see [Dem84, Jou95, GKZ94, Bus06] for more details on determinants of complexes in elimination theory.",
+	PARA {}, "The package contains an implementation for computing determinant of free graded complexes, called ", TO2((detComplex), "detComplex"), ", with several derived methods:  ", TO2((listDetComplex), "listDetComplex"),", ", TO2((mapsComplex), "mapsComplex"),", and  ", TO2((minorsComplex), "minorsComplex"), ". This provides a method for producing universal formulas for any family of schemes, just by combining the ", TO2 {"OldChainComplexes :: resolution(Ideal)" ,"resolution(Ideal)"}, " method with  ", TO2((detComplex), "detComplex"), ". In Section 2 determinants of free resolutions are treated, as well as a few examples. We recommend to see [Dem84, Jou95, GKZ94, Bus06] for more details on determinants of complexes in elimination theory.",
 
 	PARA {}, "The package also provides a method ", TO2((eliminationMatrix), "eliminationMatrix")," for computing matrices and formulas for different resultants applicable on different families of polynomials, such as the Macaulay resultant (Macaulay) for generic homogeneous polynomials; the residual resultant ('ciResidual' and 'CM2Residual') for generic polynomials having a non empty base locus scheme; the determinantal resultant ('determinantal') for generic polynomial matrices of a given generic rank. For the theory behind those resultants, the reader can refer to [Mac02, Jou91, Cha93, GKZ94, Jou97, CLO98, BEM00, BEM01, Bus01b, Bus06, Bus04].",
 
@@ -1637,7 +1637,7 @@ document {
 	"regularityVar (l,I)"
       	},
     
-    SeeAlso => {coefficientRing, resolution, res}
+    SeeAlso => {coefficientRing, resolution}
      }
 
 ---------------------------------------------------------------

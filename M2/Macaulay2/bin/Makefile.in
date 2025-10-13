@@ -174,8 +174,8 @@ endif
 ifeq (@OS@ @SHARED@,Linux yes)
 ifneq (@BUILDLIST@,)
 ifneq (@OBJDUMP@,false)
-	@OBJDUMP@ -x "$@".tmp | egrep RPATH || [ $$? -lt 2 ]
-	@OBJDUMP@ -x "$@".tmp | egrep "RPATH +@librariesdir@$$" || [ $$? -lt 2 ]
+	@OBJDUMP@ -x "$@".tmp | grep -E RPATH || [ $$? -lt 2 ]
+	@OBJDUMP@ -x "$@".tmp | grep -E "RPATH +@librariesdir@$$" || [ $$? -lt 2 ]
 else
 	echo "--warning: 'objdump' not installed, can't check rpath in M2 binary"
 endif

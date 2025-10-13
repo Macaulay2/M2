@@ -18,7 +18,7 @@ newPackage(
 		   HomePage => "http://www.math.cornell.edu/~mike"} 
 		},
 	Keywords => {"Homological Algebra", "Commutative Algebra"},
-     	PackageImports => { "SVDComplexes" },
+     	PackageExports => { "SVDComplexes", "OldChainComplexes" },
         Headline => "non-minimal strands of a non-minimal resolution of a homogeneous module"
         )
 
@@ -428,7 +428,8 @@ TEST ///
 -*  
   restart
 *-  
-  debug Core -- for the key resolutionNonminimal
+  debug OldChainComplexes -- for the key resolutionNonminimal
+
   kk = ZZ/32003
   R = kk[a..d]
 

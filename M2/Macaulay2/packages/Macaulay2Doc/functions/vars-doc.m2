@@ -7,8 +7,6 @@ document {
      Headline => "variables",
      }
 
-undocumented {(vars,QuotientRing)}
-
 document { 
      Key => {(vars,Ring)},
      Headline => "row matrix of the variables",     

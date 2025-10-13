@@ -27,6 +27,7 @@ newPackage(
 	    },
     	Headline => "Schur functors of complexes",
 	Keywords => {"Representation Theory", "Homological Algebra"},
+    PackageExports => {"Complexes"},
 	Certification => {
 	     "journal name" => "Journal of Software for Algebra and Geometry",
 	     "journal URI" => "https://msp.org/jsag/",
@@ -35,7 +36,6 @@ newPackage(
 	     "published article URI" => "https://msp.org/jsag/2019/9-2/p02.xhtml",
 	     "published article DOI" => "10.2140/jsag.2019.9.111",
 	     "published code URI" => "https://msp.org/jsag/2019/9-2/jsag-v9-n2-x02-SchurComplexes.m2",
-	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/SchurComplexes.m2",
 	     "release at publication" => "61384b8d76f8bfef42010911dae401d24bcc6ebe",	    -- git commit number in hex
 	     "version at publication" => "1.1",
 	     "volume number" => "9",
@@ -173,13 +173,13 @@ schurComplex= (Lambda,F) ->
     R := ring(F);
     l := max(F);
     evengen := flatten for i from 0 to l//2 list (
-    d := numgens F_(2*i);
-    for j from 1 to d list (2*i,j)
+        d := numgens F_(2*i);
+        for j from 1 to d list (2*i,j)
         );
-        n := #evengen; --number of even variables
+    n := #evengen; --number of even variables
     oddgen := flatten for i from 0 to (l-1)//2 list (
-    d := numgens F_(2*i+1);
-    for j from 1 to d list(2*i+1,j)
+        d := numgens F_(2*i+1);
+        for j from 1 to d list(2*i+1,j)
         );
     m := #oddgen;  --number of odd variables
     inversehash := new HashTable from --computes the map that associates a label to a generator of F
@@ -220,11 +220,12 @@ schurComplex= (Lambda,F) ->
 	    );
 	--The i-th entry of matrixList is the matrix giving the map between the (i+1)-st and i-th components 
 	--of the Schur complex. 
-	    C:= chainComplex for i from 0 to (#matrixList - 1) list map(componentList_i, componentList_(i + 1), matrixList_i);
-	    C.ring = R;
+	    C:= complex for i from 0 to (#matrixList - 1) list map(componentList_i, componentList_(i + 1), matrixList_i);
+	    --removed: C.ring = R;
 	    C[-shift-2*Min*Size]---moves the Schur complex based on the shift of F at the beginning
 	) 
-    else new ChainComplex    
+    else complex R^0
+    --changed: else new ChainComplex    
 )
 
 
@@ -251,7 +252,7 @@ homologicalDegree(HashTable,List,List) := (T,evengen,oddgen) -> sum for b in key
 ------Straightening algorithm
 
 --Inputs: U= List, V= permutation represented as a list. Outputs: sign of the induced permutation on the unmarked elements of U.
-sign = (U,V)-> (
+sgn = (U,V)-> (
     n:=#U;
     answer:=1;
     for i from 0 to n-2 do (
@@ -288,7 +289,7 @@ shuffle = (T, vio, downCol2, lambdaprime) -> (
     indicesofL:=toList (0..(#L-1));
     subsetsofLofsizetruncatedcol1:=subsets(indicesofL,#truncatedcol1);
     pairs1:=apply(subsetsofLofsizetruncatedcol1, x-> (x, indicesofL-(set x)));
-    signs:=apply(pairs1, x-> sign(L,join(x)));
+    signs:=apply(pairs1, x-> sgn(L,join(x)));
     outputlist:={}; 
     dividedContributions := for i from 0 to (#pairs1-1) list (
 	dividedContribution := 1; --contribution from divided power multiplication
@@ -502,9 +503,9 @@ doc ///
    G=schurComplex(lambda,F)
   Inputs
    lambda: List
-   F: ChainComplex
+   F: Complex
   Outputs
-   G: ChainComplex
+   G: Complex
   Description
    Text
      This function computes the Schur complex associated to a partition $\lambda$ and a bounded complex $F_{\bullet}$ of finitely-generated free modules over a commutative ring.
@@ -516,7 +517,7 @@ doc ///
    Example
     R=ZZ[x,y,z];
     I=ideal(x,y,z);
-    F=res I;
+    F=freeResolution I;
     lambda={1,1};
     G=schurComplex(lambda,F)
     G.dd
@@ -527,11 +528,12 @@ doc ///
    Example
     R=QQ[x11,x21,x12,x22,x13,x23,x14,x24];
     M=genericMatrix(R,x11,2,4);
-    F = new ChainComplex; F.ring = R; F#0=target M; F#1=source M; F.dd#1=M;
+    F = complex {M};
+      -- F = new ChainComplex; F.ring = R; F#0=target M; F#1=source M; F.dd#1=M;
     lambda={3};
     G=schurComplex(lambda,F)
     G.dd
-    apply((length G)+1,i->reduceHilbert hilbertSeries HH_(i)(G))
+    apply(1+length G,i->reduceHilbert hilbertSeries HH_i(G))
     
    Text
      We compute a third example.
@@ -539,7 +541,7 @@ doc ///
    Example
     R=ZZ/7[x,y,z,w];
     I=ideal(x*z-y^2,x*w-y*z, y*w-z^2);
-    F=res I;
+    F=freeResolution I;
     lambda={2,1};
     G=schurComplex(lambda,F)
     G.dd
@@ -553,10 +555,11 @@ doc ///
 TEST ///
     R=QQ[x11,x21,x12,x22,x13,x23,x14,x24]
     M=genericMatrix(R,x11,2,4)
-    F = new ChainComplex; F.ring = R; F#0=target M; F#1=source M; F.dd#1=M;
+    F = complex {M};
+    --F = new ChainComplex; F.ring = R; F#0=target M; F#1=source M; F.dd#1=M;
     lambda={3}
     G=schurComplex(lambda,F)
-    H=reduceHilbert hilbertSeries HH_(1)(G)
+    H=reduceHilbert hilbertSeries HH_1(G)
     H1=lift(numerator(H),ZZ)
     assert (H1 === 0)
 ///
@@ -565,7 +568,8 @@ TEST ///
 TEST ///-------this Schur complex is exact by Proposition 2.4.7(a) Weyman "Cohomology of Vector Bundles and Syzygies"
     R=ZZ[x,y,z]
     M=id_(R^3)
-    F= new ChainComplex; F.ring = R; F#-7=target M; F#-6=source M; F.dd#-6=M;
+    F = complex({M}, Base => -7);
+    --F= new ChainComplex; F.ring = R; F#-7=target M; F#-6=source M; F.dd#-6=M;
     lambda={3,1}
     G=schurComplex(lambda,F)
     H={}
@@ -579,7 +583,7 @@ TEST ///-------this Schur complex is exact by Proposition 2.4.7(a) Weyman "Cohom
 
 TEST ///
     R=ZZ[x,y]
-    F=res ideal (x,y)
+    F=freeResolution ideal (x,y)
     lambda={1,1} 
     S=schurComplex(lambda,F)
     N2=S.dd_2
@@ -611,5 +615,5 @@ TEST ///
 
 
 
-end
+end--
 

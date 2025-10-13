@@ -122,15 +122,10 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
 
 /* ######################################################################### */
 
-std::ofstream prof_log;
-thread_local std::vector<char*> M2_stack;
-
-void stack_trace(std::ostream &stream, bool M2) {
-  if(M2) {
-    stream << "M2";
-    for (char* M2_frame : M2_stack)
-      stream << ";" << M2_frame;
-    stream << std::endl;
+void profiler_stacktrace(std::ostream &stream, int traceDepth) {
+  if(0 < traceDepth) {
+    // TODO: pipe output to the stream
+    profiler_stacktrace(traceDepth);
   } else {
     stream << "-* stack trace, pid: " << (long) getpid() << std::endl;
     stream << boost::stacktrace::stacktrace();
@@ -139,29 +134,19 @@ void stack_trace(std::ostream &stream, bool M2) {
 }
 
 void M2_flint_abort(void) {
-  stack_trace(std::cerr, false);
+  profiler_stacktrace(std::cerr, 0);
   abort();
-}
-
-extern "C" {
-  void M2_stack_trace() { stack_trace(std::cout, false); }
-#if PROFILING
-  void M2_stack_push(char* M2_frame) { M2_stack.emplace_back(M2_frame); }
-  void M2_stack_pop() { M2_stack.pop_back(); }
-#else
-  void M2_stack_push(char* M2_frame) {}
-  void M2_stack_pop() {}
-#endif
 }
 
 void* profFunc(ArgCell* p)
 {
   using namespace std::chrono_literals;
   std::string filename("profile-" + std::to_string(getpid())+ ".raw");
-  // std::cerr << "Saving profile data in " << filename << std::endl;
-  prof_log.open(filename, std::ios::out | std::ios::trunc );
+  std::cerr << "-- Storing profiling data in " << filename << std::endl;
+  std::ofstream prof_log(filename, std::ios::out | std::ios::trunc );
   while(true) {
-    std::this_thread::sleep_for(1000ms);
+    // use prime number to avoid oversampling scheduled tasks
+    std::this_thread::sleep_for(997ms);
     tryGlobalTrace();
   }
   return NULL;
@@ -235,7 +220,7 @@ extern "C" void oursignal(int sig, void (*handler)(int)) {
 
 void trace_handler(int sig) {
   if (tryGlobalTrace() == 0)
-    stack_trace(prof_log, true);
+    profiler_stacktrace(std::cerr, 1);
   oursignal(SIGUSR1,trace_handler);
 }
 
@@ -253,7 +238,7 @@ void segv_handler(int sig) {
     fprintf(stderr,"-- SIGSEGV handler called a second time, aborting\n");
     _exit(2);
   }
-  stack_trace(std::cerr, false);
+  profiler_stacktrace(std::cerr, 0);
   level --;
   _exit(1);
 }
@@ -292,7 +277,7 @@ void interrupt_handler(int sig) {
 	    }
 	  }
 	  if (buf[0]=='b' || buf[0]=='B') {
-	    stack_trace(std::cout, false);
+	    profiler_stacktrace(std::cout, 0);
 	    fprintf(stderr,"exiting\n");
 	    exit(12);
 	  }

@@ -1,3 +1,23 @@
+undocumented {
+     (truncate, InfiniteNumber, Thing),
+    [(truncate, InfiniteNumber, Thing), MinimalGenerators],
+     (truncate, InfiniteNumber, InfiniteNumber, Matrix),
+    [(truncate, InfiniteNumber, InfiniteNumber, Matrix), MinimalGenerators],
+     (truncate, Nothing, InfiniteNumber, Matrix),
+    [(truncate, Nothing, InfiniteNumber, Matrix), MinimalGenerators],
+    -- TODO:
+     (truncate, Nothing, List, Matrix),
+    [(truncate, Nothing, List, Matrix), MinimalGenerators],
+     (truncate, Nothing, ZZ, Matrix),
+    [(truncate, Nothing, ZZ, Matrix), MinimalGenerators],
+     (truncate, List, List, Matrix),
+    [(truncate, List, List, Matrix), MinimalGenerators],
+     (truncate, ZZ, ZZ, Matrix),
+    [(truncate, ZZ, ZZ, Matrix), MinimalGenerators],
+    effCone, effGenerators, (effCone, Ring), (effGenerators, Ring),
+    nefCone, nefGenerators, (nefCone, Ring), (nefGenerators, Ring),
+}
+
 doc ///
 Node
   Key
@@ -73,6 +93,11 @@ Node
     (truncate, ZZ,   Ideal)
     (truncate, ZZ,   Ring)
    [(truncate, List, Module), MinimalGenerators]
+   [(truncate, List, Ideal),  MinimalGenerators]
+   [(truncate, List, Ring),   MinimalGenerators]
+   [(truncate, ZZ,   Module), MinimalGenerators]
+   [(truncate, ZZ,   Ideal),  MinimalGenerators]
+   [(truncate, ZZ,   Ring),   MinimalGenerators]
   Headline
     truncation of the graded ring, ideal or module at a specified degree or set of degrees
   Usage
@@ -162,6 +187,7 @@ Node
     (truncate, List, Matrix)
     (truncate, ZZ,   Matrix)
    [(truncate, List, Matrix), MinimalGenerators]
+   [(truncate, ZZ,   Matrix), MinimalGenerators]
   Headline
     truncation of a map of free modules
   Usage
@@ -188,7 +214,10 @@ Node
       g2 = truncate({1,1}, C.dd_2)
       g3 = truncate({1,1}, C.dd_3)
       g4 = truncate({1,1}, C.dd_4)
-      D = chainComplex {g1, g2, g3, g4}
+      needsPackage "Complexes"
+      D = complex {g1, g2, g3, g4}
+      D' = truncate({1,1}, freeResolution I)
+      assert(D == D')
     Text
       This functor is exact.
     Example

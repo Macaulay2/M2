@@ -15,6 +15,7 @@ Dmodules
 WeylAlgebras
 HolonomicSystems
 BernsteinSato
+ConnectionMatrices
 Depth
 Elimination
 GenericInitialIdeal
@@ -110,7 +111,7 @@ InvariantRing
 QuillenSuslin
 EnumerationCurves
 Book3264Examples
-Divisor
+WeilDivisors
 EllipticCurves
 HighestWeights
 MinimalPrimes
@@ -166,9 +167,9 @@ Topcom
 Triangulations
 ReflexivePolytopesDB
 AbstractToricVarieties
-Licenses
 TestIdeals
 FrobeniusThresholds
+NonPrincipalTestIdeals
 Seminormalization
 AlgebraicSplines
 TriangularSets
@@ -176,6 +177,7 @@ Chordal
 Tropical
 SymbolicPowers
 Complexes
+OldChainComplexes
 GroebnerWalk
 RandomMonomialIdeals
 Matroids
@@ -277,3 +279,15 @@ Msolve
 Permutations
 SCMAlgebras
 NumericalSemigroups
+ExteriorExtensions
+Oscillators
+IncidenceCorrespondenceCohomology
+ToricHigherDirectImages
+Brackets
+IntegerProgramming
+GameTheory
+AllMarkovBases
+Tableaux
+CpMackeyFunctors
+JSONRPC
+MatrixFactorizations

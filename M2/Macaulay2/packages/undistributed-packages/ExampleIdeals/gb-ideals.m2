@@ -40,7 +40,8 @@ J1=ideal"dgjm-chjm-dfkm+bhkm+cflm-bglm-dgin+chin+dekn-ahkn-celn+agln+dfio-bhio-d
   JMPS-INPS-JLQS+HNQS+ILRS-HMRS-JMOT+INOT+JKQT-GNQT-IKRT+GMRT+JLOU-HNOU-JKPU+GNPU+HKRU-GLRU-ILOV+HMOV+IKPV-GMPV-HKQV+GLQV";
 J1
 -*
-  time gb(ideal J1_*, Algorithm=>LinearAlgebra); -- 69.9 sec
+  gbTrace = 2
+  elapsedTime gb(ideal J1_*, Algorithm=>LinearAlgebra); -- 69.9 sec
     -- Mike M1 max,  std::variant VectorArithmetic: 18.0 sec, 18.46 sec
     -- Mike M1 max,  virtual VectorArithmetic: 17.88 sec, 19.06 sec
 
@@ -65,7 +66,7 @@ R1 = kk[a..g, MonomialSize=>8];
 J1 = ideal random(R1^1, R1^{-5,-5,-5,-6});
 J1
 -*     
-  gbTrace=1
+  gbTrace=2
   time gb(ideal J1_*, Algorithm=>LinearAlgebra); -- 54.1 sec (53.25 sec, 58.7 sec, MBP 7/17/09)
     -- Mike M1 max,  std::variant VectorArithmetic: 14.29 sec, 14.3  sec
     -- Mike M1 max,  virtual VectorArithmetic: 14.43 sec, 14.28  sec
@@ -639,3 +640,14 @@ I = sub(ideal last coefficients F, R)
 gbTrace=3
 time gens gb(I, DegreeLimit=>m*n);
 ----------------------------------------------
+
+--random5566
+restart
+kk = ZZ/101;
+R1 = kk[a..g, MonomialSize=>8];
+J1 = ideal random(R1^1, R1^{-5,-5,-6,-6});
+-*     
+  gbTrace=2
+  elapsedTime gens gb(ideal J1_*, Algorithm=>LinearAlgebra);   -- 26.3  M1 Mac Mini + Zoom; 16s gauss
+  elapsedTime groebnerBasis(ideal J1_*, Strategy=>"F4");  -- 6.5s  M1 Mac Mini + Zoom
+*-

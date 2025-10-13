@@ -22,7 +22,6 @@ libraries linked with M2:
 code by other authors compiled as part of M2:
 
 Macaulay2/kernel/bibasis		Mikhail V. Zinin, GPL 2 or later
-Macaulay2/kernel/mixed-cells		Anders Jensen and Anton Leykin, under development, not linked yet with M2
 Macaulay2/e code by Franziska Hinkelmann 		public domain
 Macaulay2/e code by Anton Leykin			public domain
 Macaulay2/system code et al., by Bill Furnish		public domain

@@ -21,7 +21,7 @@ newPackage(
                     },
         Headline => "random complexes over fields or the integers",
 	Keywords => {"Examples and Random Objects"},
-        PackageExports => {"SimplicialComplexes"},
+        PackageExports => {"OldChainComplexes", "SimplicialComplexes"},
 	PackageImports => {"LLLBases"}
         )
 

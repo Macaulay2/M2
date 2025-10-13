@@ -124,7 +124,7 @@ distclean:clean
 # python3 -m pip install html5validator
 validate-html:
 	@ INVALID_PACKAGES="";                                       \
-	for PACKAGE in $(PACKAGES);                                  \
+	for PACKAGE in $(filter $(ALL_PACKAGES), $(PACKAGES));       \
 	do echo "validating $$PACKAGE documentation ...";            \
 	   html5validator --show-warnings                            \
 		--root @pre_prefix@/@tail_htmldir@/$$PACKAGE/html || \

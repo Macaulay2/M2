@@ -55,6 +55,10 @@ TEST ///
     assert ( firstFunction 2 == "D'oh!" )
 ///
 
+TEST ///
+    assert ( firstFunction 1 == "Hello World!" )
+///
+
 end--
 
 You can write anything you want down here.  I like to keep examples

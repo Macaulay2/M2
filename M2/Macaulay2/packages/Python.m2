@@ -800,7 +800,7 @@ pythonHelp
 quit
 
 runSimpleString "x=2"
-runSimpleString "print x"
+runSimpleString "print(x)"
 rs "dir()"
 rs "dict"
 rs "__builtins__.keys()"
@@ -874,7 +874,7 @@ sage "preparse"
 sage "preparse('x=1')"
 sage "x=2^100"
 sage "x"
-sage "R.<x,y,z> = QQ[];;"
+sage "R.<x,y,z> = QQ[];"
 sage "R"
 sage "x = var('x');"
 sage "plot(sin(x))"

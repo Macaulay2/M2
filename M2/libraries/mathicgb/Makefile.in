@@ -1,10 +1,10 @@
 HOMEPAGE = https://github.com/broune/mathicgb
 SUBMODULE = true
 VPATH = @srcdir@
-VERSION = 20240205-4cd2bd1357
+VERSION = 20250513-de13956492
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -i
-CONFIGOPTIONS = --disable-shared PKG_CONFIG_PATH=$(LIBRARIESDIR)/lib/pkgconfig GTEST_PATH=@GTEST_PATH@ --with-gtest=yes
+CONFIGOPTIONS = --disable-shared PKG_CONFIG_PATH=$(LIBRARIESDIR)/lib/pkgconfig
 ifeq (@ENABLE_TBB@, no)
 CONFIGOPTIONS += --without-tbb
 endif

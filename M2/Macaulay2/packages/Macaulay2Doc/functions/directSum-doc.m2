@@ -9,10 +9,13 @@ undocumented {
      }
 
 document {
-     Key => {isDirectSum,(isDirectSum, ChainComplex),(isDirectSum, GradedModule),(isDirectSum, Module)},
+    Key => {
+	isDirectSum,
+       (isDirectSum, Module),
+    },
      Headline => "whether something is a direct sum",
-     "Works for modules, graded modules, etc.  The components of the sum
-     can be recovered with ", TO "components", ".",
+     "Works for modules, chain complexes, etc.
+     The components of the sum can be recovered with ", TO "components", ".",
      EXAMPLE lines ///
      	  isDirectSum ZZ^6
 	  F = ZZ^2 ++ ZZ^3
@@ -24,8 +27,6 @@ document {
 document {
      Key => {
 	  (symbol ++,Module,Module),
-	  (symbol ++,Module,GradedModule),
-	  (symbol ++,GradedModule,Module)
 	  },
      Headline => "direct sum of modules",
      TT "M++N", " -- computes the direct sum of two modules (or coherent sheaves).",
@@ -48,7 +49,6 @@ document {
 document {
      Key => {
 	  (symbol ++,Matrix,Matrix),
-	  (symbol ++,GradedModuleMap,GradedModuleMap),
 	  (symbol ++,RingElement,Matrix),
 	  (symbol ++,Matrix,RingElement),
 	  (symbol ++,RingElement,RingElement)
@@ -72,10 +72,15 @@ document {
      SeeAlso => {directSum, (symbol |, Matrix, Matrix), (symbol ||, Matrix, Matrix)}}
 
 document {
-     Key => {directSum,
-	  (directSum, Module),(directSum, ChainComplex),(directSum, GradedModule),
-	  (directSum, List),(directSum, Matrix),(directSum, Option),(directSum, Sequence),
-	  (symbol++, Option, Option)},
+    Key => {
+	directSum,
+       (directSum, Module),
+       (directSum, Matrix),
+       (directSum, List),
+       (directSum, Option),
+       (directSum, Sequence),
+       (symbol++, Option, Option)
+    },
      Headline => "direct sum of modules or maps",
      TT "directSum(M,N,...)", " -- forms the direct sum of matrices or modules.",
      PARA{
@@ -104,18 +109,28 @@ document {
 	  ///F = (a => ZZ^1) ++ (b => ZZ^2)///,
 	  ///F_[b]///,
 	  },
-     SeeAlso => {"++", "components", "indexComponents", "indices", formation}}
+     SeeAlso => {"++", "indices", formation},
+     Subnodes => {
+	 TO isDirectSum,
+	 TO components,
+     }}
 
 document {
-     Key => {components,(components, GradedModuleMap),(components, Module),(components, Matrix),(components, GradedModule),(components, ChainComplexMap)},
+    Key => {
+	components,
+       (components, Module),
+       (components, Matrix),
+    },
      Headline => "list the components of a direct sum",
      TT "components x", " -- produces a list of the components of an element of a 
      free module.",
      BR{},
      TT "components M", " -- the list of components for a module ", TT "M", " which was
-     formed as a direct sum, or ", TT "{M}", " if ", TT "M", " was not formed as a 
-     direct sum.  Works also for homomorphism, chain complexes, and graded modules.",
-     SeeAlso => {"vector", "directSum", "++"}}
+     formed as a direct sum, or ", TT "{M}", " if ", TT "M", " was not formed as a direct sum.
+     Works also for matrices, chain complexes, etc.",
+     SeeAlso => {"vector", "directSum", "++"},
+     Subnodes => { TO indexComponents },
+     }
 
 -- TODO:
 -- document { 

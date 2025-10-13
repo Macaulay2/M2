@@ -1,5 +1,6 @@
 
 i1 : setRandomSeed 1;
+ -- setting random seed to 1
 
 i2 : randomPlanePoints = (delta,R) -> (
           k:=ceiling((-3+sqrt(9.0+8*delta))/2);

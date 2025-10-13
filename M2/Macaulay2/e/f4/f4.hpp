@@ -71,15 +71,15 @@
 #include "engine-exports.h"         // for M2_arrayint, M2_bool
 #include "f4-types.hpp"             // for gb_array, MonomialLookupTable
 #include "f4/moninfo.hpp"           // for packed_monomial, MonomialInfo
+#include "f4/f4-spairs.hpp"         // For F4SPairSet
 #include "interface/computation.h"  // for ComputationStatusCode, StopCondit...
+#include "m2tbb.hpp"                // for TBB
 #include "memblock.hpp"             // for F4MemoryBlock
 #include "monhashtable.hpp"         // for MonomialHashTable
 #include "newdelete.hpp"            // for our_new_delete
 #include "MemoryBlock.hpp"          // for MemoryBlock<T>
 #include <ctime>                    // for clock, CLOCKS_PER_SEC, clock_t
 
-class F4Mem;
-class F4SPairSet;
 class FreeModule;
 class HilbertController;
 class RingElement;
@@ -91,9 +91,9 @@ class F4GB : public our_new_delete
 {
   // Basic required information
   const VectorArithmetic* mVectorArithmetic;
-  const MonomialInfo *M;
-  const FreeModule *F;
-  M2_arrayint weights;  // The length of this is the number of variables, each
+  const MonomialInfo *mMonomialInfo;
+  const FreeModule *mFreeModule;
+  M2_arrayint mWeights;  // The length of this is the number of variables, each
                         // entry is positive.
   M2_arrayint component_degrees;  // Degree of each free module element.
   // Also need Schreyer order info sometimes
@@ -114,27 +114,65 @@ class F4GB : public our_new_delete
   // Monomial order information.  Should this be in M?
 
   // The main players in the computation
-  gb_array gens;
-  gb_array gb;
-  MonomialLookupTable *lookup;  // (monom,comp) --> index into gb
-  F4SPairSet *S;
+  gb_array mGenerators;
+  gb_array mGroebnerBasis;
+  MonomialLookupTable mLookupTable;  // (monom,comp) --> index into mGroebnerBasis
 
   // The matrix and its construction
   int next_col_to_process;
   coefficient_matrix *mat;
-  MonomialHashTable<MonomialInfo> H;
-  F4MemoryBlock<monomial_word> B;
+  MonomialHashTable<MonomialInfo> mMonomialHashTable;
+  F4MemoryBlock<monomial_word> mMonomialMemoryBlock;
   monomial_word *next_monom;  // valid while creating the matrix
   
-  F4Mem *Mem;  // Used to allocate and deallocate arrays used in the matrix
-  MemoryBlock mComponentSpace; // stop-gap for use with VectorArithmetic and Mem.
+  MemoryBlock mComponentSpace; // stop-gap for use with VectorArithmetic and Mem. (TODO: what does this comment mean?)
 
   // cumulative timing info
   double clock_sort_columns;
   clock_t clock_gauss;
+  double mGaussTime;
+  double mParallelGaussTime;
+  double mSerialGaussTime;
+  double mTailReduceTime;
+  double mNewSPairTime;
+  double mInsertGBTime;
   clock_t clock_make_matrix;
 
- private:
+  struct MacaulayMatrixStats
+  {
+  public:
+    // #rows/cols
+    long mTopAndLeft = 0;
+    long mBottom = 0;
+    long mRight = 0;
+    
+    // #entries
+    long mAEntries = 0; // but not the diagonals?
+    long mBEntries = 0;
+    long mCEntries = 0;
+    long mDEntries = 0;
+    
+    // memory usage: column info, row info, all the entries, hash table?
+    long mColumnInfo = 0;
+    long mRowInfo = 0;
+    long mEntries = 0;
+ 
+    void display(buffer& o);
+    void display();
+  };
+
+  MacaulayMatrixStats macaulayMatrixStats() const;  // For debugging info
+  
+#if defined (WITH_TBB)
+  int mNumThreads;
+  mtbb::task_arena mScheduler;
+
+  mtbb::task_arena& getScheduler() { return mScheduler; }
+#endif
+
+  F4SPairSet mSPairSet;
+
+private:
   ////////////////////////////////////////////////////////////////////
   void delete_gb_array(gb_array &g);
 
@@ -154,7 +192,11 @@ class F4GB : public our_new_delete
   void load_gen(int which);
   void load_row(packed_monomial monom, int which);
   void process_column(int c);
+
+  void loadSPairRow(spair *p);
+  void loadReducerRow(spair *p);
   void process_s_pair(spair *p);
+
   void reorder_columns();
   void reorder_rows();
 
@@ -168,7 +210,10 @@ class F4GB : public our_new_delete
   // place
   // and also to determine if an element (row) needs to be tail reduced
 
+  bool is_pivot_row(int index) const;
+  
   void gauss_reduce(bool diagonalize);
+  bool gauss_reduce_row(int index, ElementArray& gauss_row);
   void tail_reduce();
 
   void row_to_dense_row(int r, int &first, int &last);
@@ -180,9 +225,12 @@ class F4GB : public our_new_delete
 
   void insert_gb_element(row_elem &r);
 
+  void poly_set_degrees(const GBF4Polynomial &f,
+                        int &deg_result,
+                        int &alpha) const; // private: used in new_generators
+  
  public:
   F4GB(const VectorArithmetic* VA,
-       F4Mem *Mem0,
        const MonomialInfo *MI,
        const FreeModule *F,  // used for debugging only...
        M2_bool collect_syz,
@@ -190,7 +238,8 @@ class F4GB : public our_new_delete
        M2_arrayint gb_weights,
        int strategy,
        M2_bool use_max_degree,
-       int max_degree);
+       int max_degree,
+       int numThreads);
 
   ~F4GB();
 
@@ -199,10 +248,10 @@ class F4GB : public our_new_delete
 
   void new_generators(int lo, int hi);
 
-  const gb_array &get_generators() const { return gens; }
-  gb_array &get_generators() { return gens; }
-  const gb_array &get_gb() const { return gb; }
-  gb_array &get_gb() { return gb; }
+  const gb_array &get_generators() const { return mGenerators; }
+  gb_array &get_generators() { return mGenerators; }
+  const gb_array &get_gb() const { return mGroebnerBasis; }
+  gb_array &get_gb() { return mGroebnerBasis; }
   void set_hilbert_function(const RingElement *hf);
 
   enum ComputationStatusCode start_computation(StopConditions &stop_);

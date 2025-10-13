@@ -1,0 +1,26 @@
+From 37b65cbd2ccd13b713cfbaa9a95a6d1eda5f09d1 Mon Sep 17 00:00:00 2001
+From: Doug Torrance <dtorrance@piedmont.edu>
+Date: Wed, 11 Jun 2025 23:18:05 -0400
+Subject: [PATCH] Use fq_nmod_mat_entry instead of row pointer (removed in
+ flint 3.3.0)
+
+---
+ factory/FLINTconvert.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/factory/FLINTconvert.cc b/factory/FLINTconvert.cc
+index c36f6022d..a4d86fd17 100644
+--- a/FLINTconvert.cc
++++ factory-4.4.1/FLINTconvert.cc
+@@ -652,7 +652,7 @@ convertFacCFMatrix2Fq_nmod_mat_t (fq_nmod_mat_t M,
+   {
+     for(j=m.columns();j>0;j--)
+     {
+-      convertFacCF2nmod_poly_t (M->rows[i-1]+j-1, m (i,j));
++      convertFacCF2nmod_poly_t (fq_nmod_mat_entry(M, i-1, j-1), m (i,j));
+     }
+   }
+ }
+-- 
+2.43.0
+

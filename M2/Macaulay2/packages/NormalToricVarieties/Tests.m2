@@ -162,6 +162,8 @@ assert (makeSimplicial X === X)
 assert (makeSmooth X === X)
 M = saturate(image map(S^1/x_0, S^0, 0), ideal X)
 assert(0 == cohomology(0, X, sheaf_X M))
+-- test prune for line bundles
+assert(OO_X^1 === prune sheaf(X, truncate({1,1}, S^1)))
 ///
 
 -- test 4

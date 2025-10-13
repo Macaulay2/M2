@@ -80,3 +80,7 @@ assert BinaryOperation(symbol ===, tally "Hello, world!", new Tally from {
 assert Equation(ascii "\"\\\a\b\e\E\f\n\r\t\v",
     {0x22, 0x5c, 0x07, 0x08, 0x1b, 0x1b, 0x0c, 0x0a, 0x0d, 0x09, 0x0b})
 assert Equation("\172\x7a\x7A\u007a\u007A", "zzzzz")
+assert Equation(format(ascii(0..31) | "\"\\"),
+    ///"\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000b\f\r/// |
+    ///\u000e\u000f\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017/// |
+    ///\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001f\"\\"///)

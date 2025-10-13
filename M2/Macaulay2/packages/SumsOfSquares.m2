@@ -29,7 +29,6 @@ newPackage(
         "published article URI" => "https://msp.org/jsag/2020/10-1/p03.xhtml",
         "published article DOI" => "10.2140/jsag.2020.10.17",
         "published code URI" => "https://msp.org/jsag/2020/10-1/jsag-v10-n1-x03-SumsOfSquares.zip",
-        "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/SumsOfSquares.m2",
         "release at publication" => "7623915208e2f52445cd73c9acd680027bba1d9c",     -- git commit number in hex
         "version at publication" => "2.1",
         "volume number" => "10",

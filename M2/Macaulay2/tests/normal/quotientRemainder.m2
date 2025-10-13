@@ -7,6 +7,14 @@ NA=gens intersect(image(N),image(A));
 (mat1,mat2) = quotientRemainder(NA,N)
 assert(mat2 == 0)
 assert(N * mat1 == NA)
+
+-- test for left and right quotients
+M = coker(5 * id_(ZZ^2));
+f = map(M, M, {{1,2},{3,4}});
+g = map(M, M, {{2,3},{4,0}});
+assert same {g, quotient(f * g, f),  (f * g) // f}
+assert same {f, quotient'(f * g, g), g \\ (f * g)}
+
 end
 
 -- the following was used to debug this, as the error was in rawGBMatrixLift         

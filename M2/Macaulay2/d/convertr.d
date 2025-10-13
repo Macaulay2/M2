@@ -298,7 +298,7 @@ export convert0(e:ParseTree):Code := (
 	      is t:Token do Code(augmentedAssignmentCode(
 		      b.Operator.entry, convert(b.lhs), convert(b.rhs), t.entry, pos))
 	      else Code(augmentedAssignmentCode(
-		      b.Operator.entry, dummyCode, dummyCode, dummySymbol, dummyPosition)) -- CHECK
+		      b.Operator.entry, convert(b.lhs), convert(b.rhs), dummySymbol, pos))
 		      )
 	  else Code(binaryCode(b.Operator.entry.binary, convert(b.lhs), convert(b.rhs), pos))
 	  )

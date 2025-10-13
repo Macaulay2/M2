@@ -160,7 +160,7 @@ help:
 	@ echo ""
 	@ echo "Current configuration:"
 	@ echo "    OS=@OS@ REL=@REL@ ISSUE=@ISSUE@ ARCH=@ARCH@"
-	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@"
+	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@"
 	@ echo ""
 	@ echo "targets:"
 	@ echo "  all               build/compile all files in Macaulay2/e [the default target]"

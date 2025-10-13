@@ -16,8 +16,7 @@
 --  General Public License for more details.
 --
 --  You should have received a copy of the GNU General Public License along
---  with this program; if not, write to the Free Software Foundation, Inc.,
---  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+--  with this program; if not, see <https://www.gnu.org/licenses/>.
 --
 -- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -40,7 +39,6 @@ newPackage(
 	     "published article URI" => "https://msp.org/jsag/2012/4-1/p01.xhtml",
 	     "published article DOI" => "10.2140/jsag.2012.4.1",
 	     "published code URI" => "https://msp.org/jsag/2012/4-1/jsag-v4-n1-x01-code.zip",
-	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Binomials.m2",
 	     "release at publication" => "6c927c4f11724e29840c889e5ac7a426b17685ab",
 	     "version at publication" => "1.0",
 	     "volume number" => "4",

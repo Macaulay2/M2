@@ -138,11 +138,11 @@ find_package(MPSolve	3.2.0)
 find_package(Nauty	2.7.0)
 find_package(Normaliz	3.8.0)
 # TODO: add minimum version checks
-find_package(EAntic	2.0.0)
+find_package(EAntic	2.0.0 QUIET) # only needed when libnormaliz.so needs it
 find_package(MSolve	0.7.0)
 find_package(Frobby	0.9.0)
 find_package(CDDLIB)  # 0.94m?
-find_package(GTest	1.10)
+find_package(GTest	1.16)
 #find_package(Memtailor 1.0.0)
 #find_package(Mathic    1.0.0)
 #find_package(Mathicgb  1.0.0)
@@ -188,6 +188,7 @@ endif()
 ## Programs we can download and build:
 #   4ti2	combinatorial problems on linear spaces		(needs gmp, glpk)
 #   cohomCalg	sheaf cohomology for line bundles on toric varieties
+#   msolve	solving multivariate polynomial systems		(needs gmp, mpfr, flint)
 #   Gfan	Grobner fans and tropical varieties		(needs gmp, cddlib, factory)
 #   lrslib	vertex enumeration/convex hull problems		(needs gmp)
 #   CSDP	semidefinite programming problems		(needs LAPACK, OpenMP)
@@ -197,6 +198,7 @@ endif()
 
 find_program(4TI2	NAMES	circuits 4ti2-circuits 4ti2_circuits)
 find_program(COHOMCALG	NAMES	cohomcalg)
+find_program(MSOLVE	NAMES	msolve)
 find_program(GFAN	NAMES	gfan)
 # TODO: library or program?
 find_program(LRSLIB	NAMES	lrs)
@@ -211,7 +213,7 @@ find_program(PHCPACK	NAMES	phc)
 find_program(HOM4PS2	NAMES	hom4ps2) # TODO: http://www.math.nsysu.edu.tw/~leetsung/works/HOM4PS_soft.htm
 # TODO: Maple and package convex
 
-set(PROGRAM_OPTIONS 4ti2 cohomCalg Gfan lrslib CSDP NAUTY_EXECUTABLE NORMALIZ_EXECUTABLE TOPCOM)
+set(PROGRAM_OPTIONS 4ti2 cohomCalg msolve Gfan lrslib CSDP NAUTY_EXECUTABLE NORMALIZ_EXECUTABLE TOPCOM)
 
 ###############################################################################
 ## List installed components and unset those that we wish to build ourselves
@@ -334,9 +336,12 @@ if(FLINT_FOUND)
   set(CMAKE_REQUIRED_INCLUDES "${FLINT_INCLUDE_DIR};${GMP_INCLUDE_DIRS}")
   check_include_files(flint/nmod.h HAVE_FLINT_NMOD_H)
   check_include_files(flint/arb.h  HAVE_FLINT_ARB_H)
+  set(CMAKE_REQUIRED_LIBRARIES ${FLINT_LIBRARIES})
+  check_function_exists(flint_rand_init HAVE_FLINT_RAND_INIT)
 else()
   unset(HAVE_FLINT_NMOD_H CACHE)
   unset(HAVE_FLINT_ARB_H  CACHE)
+  unset(HAVE_FLINT_RAND_INIT CACHE)
 endif()
 
 if(FROBBY_FOUND)

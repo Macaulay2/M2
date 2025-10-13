@@ -436,7 +436,6 @@ Node
     [installPackage, MakeHTML]
     [installPackage, MakeInfo]
     [installPackage, MakePDF]
-    [installPackage, MakeLinks]
     [installPackage, RemakeAllDocumentation]
     [installPackage, RerunExamples]
     [installPackage, RunExamples]
@@ -483,8 +482,6 @@ Node
       the installation prefix for installation of the files of the package, in case encapsulation is not enabled,
       or for installation of the links to the files, in case encapsulation is enabled. The default value is the
       subdirectory named @TT "local"@ of the user's @TO "application directory"@.
-    MakeLinks=>Boolean
-      whether to make links to the files after installing them, in case encapsulation is enabled
     RemakeAllDocumentation=>Boolean
       whether to regenerate all of the help pages for this package. The default action is to rebuild only the html
       pages of the documentation entries that have been changed since the last time the package was installed.

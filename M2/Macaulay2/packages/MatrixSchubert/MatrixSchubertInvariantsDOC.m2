@@ -5,7 +5,7 @@ doc ///
         (schubertRegularity, List)
 	(schubertRegularity, Matrix)
     Headline
-        compute the Castelnuovo-Mumford regularity of the quotient by a Schubert determinantal ideal or ASM ideal
+        compute the Castelnuovo-Mumford regularity of the quotient by an ASM ideal
     Usage
         schubertRegularity w
         schubertRegularity A
@@ -17,7 +17,7 @@ doc ///
             Given a partial alternating sign matrix or a permutation in 1-line notation, computes the Castelnuovo-Mumford regularity of the quotient by the corresponding alternating sign matrix ideal or Schubert determinantal ideal.  In the case of a permutation in 1-line notation, computes the Castelnuovo-Mumford regularity of the corresponding Schubert determinantal ideal by implementing Theorem 1.1 of 
 
             @UL {
-                {"Oliver Pechenik, David Speyer, and Anna Weigandt, ", EM "Castelnuovo-Mumford regularity of matrix Schubert varieties, ", arXiv  "2111.10681"}
+                {"Oliver Pechenik, David Speyer, and Anna Weigandt, ", EM "Castelnuovo-Mumford regularity of matrix Schubert varieties, ", arXiv  "2111.10681", ", ", "Selecta Mathematica New Series 30, 66 (2024)."}
             }@
 	
 	    In the case of a partial permutation, computes the regularity using the antidiagonal initial ideal, a valid strategy in light of 

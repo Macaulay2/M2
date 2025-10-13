@@ -1,5 +1,5 @@
 HOMEPAGE = https://eigen.tuxfamily.org/
-VERSION = 3.4.0
+VERSION = 5.0.0
 URL = https://gitlab.com/libeigen/eigen/-/archive/$(VERSION)
 TARFILE = eigen-$(VERSION).tar.gz
 LICENSEFILES = COPYING.* README.md

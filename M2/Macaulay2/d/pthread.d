@@ -42,14 +42,6 @@ startup(tb:TaskCellBody):null := (
      compilerBarrier();
      null());
 
-isFunction(e:Expr):bool := (
-     when e
-     is CompiledFunction do true
-     is CompiledFunctionClosure do true
-     is FunctionClosure do true
-     is s:SpecialExpr do isFunction(s.e)
-     else false);
-
 taskDone(tb:TaskCellBody):bool := tb.resultRetrieved || taskDone(tb.task);
 
 cancelTask(tb:TaskCellBody):Expr := (

@@ -167,7 +167,7 @@ doc ///
     	   gens S
     	   degrees S
     	   assert (try (normalToricVariety S; false) else true)
-    	   assert (try (variety S; false) else true)
+	   assert instance(variety S, ProjectiveVariety)
     Caveat
     	This methods does {\em not} determine if a ring could be realized as
 	the total coordinate ring of a normal toric variety.

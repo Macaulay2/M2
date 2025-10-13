@@ -570,6 +570,7 @@ TEST ///
 TEST ///
   setRandomSeed "10"
   needsPackage "BGG"
+  needsPackage "OldChainComplexes"
   S = ZZ/101[x_0..x_5] -- P^5
   E = ZZ/101[e_0..e_5, SkewCommutative => true]
   F = random(S^2, S^{-3,-3})

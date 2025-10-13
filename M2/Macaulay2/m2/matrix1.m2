@@ -4,9 +4,8 @@ needs "matrix.m2"
 needs "modules.m2"
 needs "quotient.m2"
 
-plurals := hashTable { "matrix" => "matrices" }
-pluralize := s -> if plurals#?s then plurals#s else s|"s"
-pluralsynonym := T -> try pluralize T.synonym else "objects of class "|toString T;
+-----------------------------------------------------------------------------
+
 notsamering := (X,Y) -> (
      if X === Y then error("expected ",pluralsynonym X, " for the same ring")
      else error("expected ",X.synonym," and ",Y.synonym," for the same ring"))
@@ -178,25 +177,22 @@ concatBlocks = mats -> (
 Matrix.matrix = options -> (f) -> concatBlocks f
 
 commonRing = method()
-trythese := rings -> ring try sum apply(rings, R -> 0_R) else error "common ring not found"
-commonRing List := f -> (
-     f = flatten f;
-     if #f == 0 then return ZZ;
-     types := unique apply(f, class);
-     if # types === 1 and instance(types#0,Ring) then return types#0;
-     rings := if all(types, T -> instance(T,Ring)) then types else unique apply(f,ring);
-     ring try sum apply(rings, R -> 0_R) else error "common ring not found")
+commonRing List := L -> (
+    rings := unique apply(flatten L, ring);
+    if #rings === 0 then ZZ      else
+    if #rings === 1 then rings#0 else
+    ring try sum apply(rings, R -> 0_R) else error "common ring not found")
 
-matrixTable := opts -> (f) -> (
+matrixTable = opts -> (f) -> (
      R := commonRing f;
      havemat := false;
-     f = applyTable(f, x -> (
-	       if instance(x,Matrix) then havemat = true
-	       else if not ( instance(x,RingElement) or instance(x,Number) )
-	       then error "expected numbers, ring elements, and matrices";
-	       promote(x,R)));
-     if not havemat then return map(R^#f,, f, opts);
+     f = applyTable(f,
+	 x -> if isMorphism x then (havemat = true; promote(x, R))
+	 else if instance(x, RingElement) or instance(x, Number) then promote(x, R)
+	 else error "expected numbers, ring elements, and matrices");
+     if not havemat then return map(R^#f, , f, opts);
      types := unique apply(flatten f, class);
+     -- Note: we use Matrix.matrix here, which is different from Matrix#matrix
      if # types === 1 and types#0 .?matrix then return ( types#0 .matrix opts)(f);
      f = apply(f, row -> new MutableList from row);
      m := #f;
@@ -274,20 +270,16 @@ matrix(Matrix) := Matrix => opts -> (m) -> (
 
 matrix RingElement := matrix Number := opts -> r -> matrix({{r}}, opts)
 
-matrix(List) := Matrix => opts -> (m) -> (
-     if #m === 0 then return matrix(ZZ, {});
-     mm := apply(splice m,splice);
-     if #mm === 0 then error "expected nonempty list";
-     types := unique apply(mm,class);
-     if #types === 1 then (
-	  type := types#0;
-	  if instance(type,Module) then matrix { apply(mm, v -> new Matrix from v) }
-	  else if ancestor(List, type) then (
-	       if isTable mm then (matrixTable opts)(mm)
-	       else error "expected rows all to be the same length"
-	       )
-	  else error "expected a table of ring elements or matrices, or a list of elements of the same module")
-     else error "expected a table of ring elements or matrices, or a list of elements of the same module")
+matrix List := Matrix => opts -> L -> (
+    if #L === 0 then return matrix(ZZ, {});
+    L = apply(splice L, splice); -- TODO: is this deepSplice?
+    if not uniform L and not isTable L
+    then error "expected a list of vectors or a table of entries or maps";
+    -- construct a matrix by concatenating column vectors
+    if instance(L#0, Vector) then matrix { apply(L, matrix) } else
+    -- construct a matrix from a table of entries or maps
+    if isTable L then (matrixTable opts)(L)
+    else error "expected a rows all to be the same length")
 
 align := g -> (
      -- generator and relation maps can just as well have a nonzero degree
@@ -319,14 +311,15 @@ subquotient(Nothing,Matrix) := (null,relns) -> (
 	  Mparts = append(Mparts, symbol relations => relns);
 	  );
      new Module of Vector from hashTable Mparts)
-subquotient(Matrix,Nothing) := (subgens,null) -> (
-     R := ring subgens;
-     E := target subgens;
-     rE := E.RawFreeModule;
-     subgens = align matrix subgens;
+subquotient(Matrix, Nothing) := (subgens0, null) -> (
+    R := ring subgens0;
+    E := target subgens0;
+    rE := E.RawFreeModule;
+    subgens := align matrix subgens0;
      if E.?generators then subgens = E.generators * subgens;
      Mparts := {
 	  symbol cache => new CacheTable from { 
+	    symbol Monomials => subgens0,
 	       cache => new MutableHashTable	    -- this hash table is mutable, hence has a hash number that can serve as its age
 	       },
 	  symbol RawFreeModule => rE,
@@ -338,16 +331,16 @@ subquotient(Matrix,Nothing) := (subgens,null) -> (
 	  Mparts = append(Mparts, symbol relations => E.relations);
 	  );
      new Module of Vector from hashTable Mparts)
-subquotient(Matrix,Matrix) := (subgens,relns) -> (
-     R := ring relns;
-     E := target subgens;
+subquotient(Matrix, Matrix) := (subgens0, relns) -> (
+    R := ring relns;
+    E := target subgens0;
      if E =!= target relns then error "expected maps with the same target";
      rE := E.RawFreeModule;
      n := rawRank rE;
      if n == 0 then new Module from (R,rE)
      else (
 	  relns = align matrix relns;
-	  subgens = align matrix subgens;
+	subgens := align matrix subgens0;
 	  if E.?generators then (
 	       relns = E.generators * relns;
 	       subgens = E.generators * subgens;
@@ -355,6 +348,7 @@ subquotient(Matrix,Matrix) := (subgens,relns) -> (
 	  if E.?relations then relns = relns | E.relations;
 	  Mparts := {
 	       symbol cache => new CacheTable from { 
+		symbol Monomials => subgens0,
 		    cache => new MutableHashTable	    -- this hash table is mutable, hence has a hash number that can serve as its age
 		    },
 	       symbol RawFreeModule => rE,
@@ -404,25 +398,23 @@ Number ** RingElement :=
 RingElement ** Number := 
 RingElement ** RingElement := (r,s) -> matrix {{r}} ** matrix {{s}}
 
-Matrix#AfterPrint = Matrix#AfterNoPrint = f -> (
+Matrix.AfterPrint = Matrix.AfterNoPrint = f -> (
     class f,
     (
-	(tar, src) := apply((target f, source f), M -> moduleAbbrv(M, null));
+	(tar, src) := apply((target f, source f), moduleAbbrv);
 	if tar =!= null and src =!= null
-	then (" ", new MapExpression from expression \ {tar, src}))
-    )
+	then (" ", MapExpression(tar, src))
+    ))
 
 -- precedence Matrix := x -> precedence symbol x
 
-image Matrix := Module => f -> (
-     if f.cache.?image then f.cache.image else f.cache.image = subquotient(f,)
-     )
-coimage Matrix := Module => f -> (
-     if f.cache.?coimage then f.cache.coimage else f.cache.coimage = cokernel inducedMap(source f, kernel f)
-     )
-cokernel Matrix := Module => m -> (
-     if m.cache.?cokernel then m.cache.cokernel else m.cache.cokernel = subquotient(,m)
-     )
+-- source and target are defined in modules.m2
+-- image caches f in M.cache.Monomials
+image    Matrix := Module => f -> f.cache.image    ??= subquotient(f, null)
+cokernel Matrix := Module => f -> f.cache.cokernel ??= subquotient(null, f)
+-- kernel is defined in pushforward.m2
+coimage  Matrix := Module => f -> f.cache.coimage  ??= cokernel inducedMap(source f, kernel f)
+-- homology is defined further down
 
 cokernel RingElement := Module => f -> cokernel matrix {{f}}
 image RingElement := Module => f -> image matrix {{f}}
@@ -587,6 +579,28 @@ Ideal ^ Array := (I, e) -> (
    -- apply the ring homomorphism and create the new ideal
    ideal phi generators I
 )
+
+-----------------------------------------------------------------------------
+-- kernel and homology
+-----------------------------------------------------------------------------
+
+kernel = method(Options => {
+	DegreeLimit  => {},
+	Strategy     => {},
+	SubringLimit => infinity, -- stop after finding enough elements of a subring
+    })
+kernel Matrix := Module => opts -> g -> g.cache.kernel ??= if g == 0 then source g else tryHooks(
+    (kernel, Matrix), (opts, g), (opts, g) -> (
+	-- this is the default algorithm
+	-- compare with homology below
+	N := source g;
+	P := target g;
+	g = matrix g;
+	if P.?generators then g = P.generators * g;
+	h := modulo(g, if P.?relations then P.relations);
+	if N.?generators then h = N.generators * h;
+	subquotient(h, if N.?relations then N.relations)))
+kernel RingElement := Module => opts -> f -> kernel(matrix {{f}}, opts)
 
 homology(Matrix,Matrix) := Module => opts -> (g,f) -> (
      if g == 0 then cokernel f

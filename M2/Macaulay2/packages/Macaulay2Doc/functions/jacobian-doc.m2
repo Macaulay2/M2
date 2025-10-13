@@ -11,7 +11,7 @@ document {
 	  }
      }
 document {
-     Key => (jacobian,Matrix),
+     Key => {(jacobian, Matrix), (jacobian, RingElement)},
      Headline => "the matrix of partial derivatives of polynomials in a matrix",
      Usage => "jacobian f",
      Inputs => {"f" => " with one row"},

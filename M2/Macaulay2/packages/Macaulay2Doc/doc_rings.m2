@@ -4,7 +4,16 @@ document {
      "A monoid is a set with a multiplicative operation on
      it and an identity element.  A typical monoid is the set
      of monomials in a polynomial ring, which we consider to be
-     created before the polynomial ring is created."
+     created before the polynomial ring is created.",
+     Subnodes => {
+	 TO OrderedMonoid,
+	 TO GeneralOrderedMonoid,
+	 TO MonoidElement,
+        TO (generators, Monoid),
+        TO (numgens, Monoid),
+        TO (tensor, Monoid, Monoid),
+        TO (vars, Monoid),
+         },
      }
 document {
     Key => OrderedMonoid,
@@ -26,11 +35,28 @@ document {
     Key => GeneralOrderedMonoid,
     Headline => "the class of all ordered free commutative monoids",
     "This is the class of free monoids that can be handled by
-    the ", TO "engine", ".  Elements of such monoids are implemented
+    the ", TO "the engine of Macaulay2", ".  Elements of such monoids are implemented
     as instances of ", TO "MonoidElement", ".",
     PARA{},
     SeeAlso => { "monoid" }
     }
+document {
+    Key => FlatMonoid,
+    Usage => "R.FlatMonoid",
+    Inputs => {
+	"R" => PolynomialRing
+    },
+    Outputs => {
+	GeneralOrderedMonoid => { "the flattened monoid in terms of which the polynomials 
+	    are expressed when the coefficient ring of R is itself a polynomial ring"
+	}
+    },
+    EXAMPLE lines ///
+    R = QQ[a,b][x]
+    R.FlatMonoid
+    ///,
+    SeeAlso => { flattenRing }
+}
 document {
     Key => MonoidElement,
     Headline => "the class of all monoid elements",
@@ -65,14 +91,50 @@ document {
 	  TO (symbol ^, Ring, List),
 	  TO (vars, Ring),
 	  },
+    -- TODO: merge these with the above
+     Subnodes => {
+	 TO EngineRing,
+	 TO ring,
+	 TO isRing,
+        TO (ambient, Ring),
+	TO (baseRing, Ring),
+        TO (degree, Ring),
+	TO (degreeLength, Ring),
+	TO (degreeGroup, Ring),
+	TO degrees,
+        TO (degrees, Ring),
+	TO (degreesRing, Ring),
+        TO (numgens, Ring),
+        TO (dim, Ring),
+        TO (vars, Ring),
+        TO (generators, Ring),
+        TO (hilbertPolynomial, Ring),
+        TO (jacobian, Ring),
+        TO (minimalPresentation, Ring),
+	TO selectVariables,
+	TO flattenRing,
+	TO generators,
+        },
      }
+document {
+    Key => RingFamily,
+    "This family is used to contain classes that correspond to a family of similar rings with a default member.",
+    Subnodes => {
+	TO InexactFieldFamily,
+	TO default,
+        },
+    }
+document {
+    Key => Engine,
+    Headline => "specify whether a ring is handled by the engine",
+    TT "Engine", " -- a key for rings that yields the value ", TT "true", " if this
+    ring is supported by the ", TO "the engine of Macaulay2", "."}
 document {
     Key => EngineRing,
     Headline => "the class of rings handled by the engine",
-    "The ", TO "engine", " handles most of the types of rings in the
-    system.",
+    "Typically, ", TO "the engine of Macaulay2", " handles the rings in the system.",
     PARA{},
-    "The command ", TT "new Engine from x", " is not meant for general
+    "The command ", TT "new EngineRing from x", " is not meant for general
     users, and provides the developers with a way to create top-level
     rings corresponding to rings implemented in the engine.  Here ", TT "x", "
     may be:",
@@ -83,19 +145,51 @@ document {
 	"a ring, in which case another top-level ring is formed as
 	an interface to the same underlying engine ring.",
 	"the handle of on engine ring"
-	}}
+	},
+    Subnodes => {
+	TO Engine,
+        TO InexactField,
+	TO GaloisField,
+	TO FractionField,
+	TO PolynomialRing,
+	TO QuotientRing,
+        },
+    }
 document {
     Key => RingElement,
     Headline => "the class of all ring elements handled by the engine",
-    SeeAlso => "engine"}
+    SeeAlso => EngineRing,
+    Subnodes => {
+	TO isUnit,
+	TO (leadTerm, RingElement),
+        TO (leadTerm, ZZ, RingElement),
+        TO (quotientRemainder, RingElement, RingElement),
+        TO (degree, RingElement),
+        TO (degree, RingElement, RingElement),
+        TO (factor, RingElement),
+        TO (indices, RingElement),
+        TO (symbol ^, RingElement, ZZ),
+        TO (symbol /, RingElement, RingElement),
+        TO (symbol .., RingElement, RingElement),
+        TO (symbol ..<, RingElement, RingElement),
+        },
+    }
 document {
     Key => PolynomialRing,
     Headline => "the class of all ordered monoid rings",
     "Every element of a polynomial ring is also a ", TO "RingElement", ".",
-    SeeAlso => "polynomial rings"}
+    SeeAlso => "polynomial rings",
+    Subnodes => {
+	TO (hilbertSeries, PolynomialRing),
+        },
+    }
 document {
     Key => QuotientRing,
-    Headline => "the class of all quotient rings"
+    Headline => "the class of all quotient rings",
+    Subnodes => {
+        TO (codim, QuotientRing),
+        TO (presentation, PolynomialRing, QuotientRing),
+        },
     }
 document {
     Key => FractionField,
@@ -123,6 +217,15 @@ document {
 	TO lift
 	}
     }
+document {
+     Key => GaloisField,
+     Headline => "the class of all Galois fields",
+     Subnodes => {
+	 TO GF,
+	 TO order,
+         TO (ambient, GaloisField),
+         },
+     }
 
 document {
      Key => {(symbol SPACE, Ring, Array), (symbol SPACE,InexactFieldFamily, Array)},
@@ -168,7 +271,13 @@ document {
 	"(t_0 -  2*t_1)^3",
 	},
     "Warning: the values of the indexed variables ", TT "t_i", " are stored in a global location,
-    behind the scenes, so may not get garbage collected, even if ", TT "t", " is a local variable."
+    behind the scenes, so may not get garbage collected, even if ", TT "t", " is a local variable.",
+    Subnodes => {
+	TO (value, IndexedVariable),
+        TO (symbol .., IndexedVariable, IndexedVariable),
+        TO (symbol ..<, IndexedVariable, IndexedVariable),
+	TO baseName,
+        },
     }
 
 undocumented {(NewFromMethod,IndexedVariableTable,Symbol)}
@@ -202,6 +311,7 @@ document {
 	(baseName, Thing),
 	(baseName, IndexedVariable),
 	(baseName, IndexedVariableTable),
+	(baseName, MonoidElement),
 	(baseName, RingElement),
 	(baseName, Subscript),
 	(baseName, Symbol)},
@@ -298,4 +408,54 @@ document {
      quotientRemainder(x^100 - y^61, x^5 - 1)
      ///,
      SeeAlso => {"heft vectors", "polynomial rings", degreesRing}
+     }
+
+document { Key => InexactField,
+     Headline => "the class of inexact fields",
+     PARA {
+	  "An inexact field is one whose elements are real or complex numbers,
+	  represented floating point approximations of varying accuracy or precision."
+	  },
+     EXAMPLE lines ///
+     numeric_100 pi
+     ring oo
+     class oo
+     parent oo
+     ///,
+     Subnodes => { TO RealField, TO ComplexField },
+     }
+
+document { Key => InexactFieldFamily,
+     Headline => "the class of all families of inexact fields",
+     PARA {
+	  "All real numbers have the same class, ", TO "RR", ", but the rings they
+	  belong to depends on the number of binary digits of precision used
+	  to represent them.  Similarly for complex numbers, which all belong
+	  to the class ", TO "CC", ".  Thus ", TO "RR", " and ", TO "CC", " are regarded not as inexact
+	  fields, but as families of inexact fields."
+	  },
+     EXAMPLE lines ///
+     x = 1/3.
+     class x
+     ring x
+     x = 1/3.p200
+     class x
+     ring x
+     ///,
+     SeeAlso => { InexactField }
+     }
+
+document { Key => RealField,
+     Headline => "the class of all real fields",
+     PARA { "A real number ring is a ring whose elements are real numbers of variable precision." }
+     }
+
+undocumented {
+     (NewOfFromMethod,ComplexField,Nothing,ZZ),
+     (NewOfFromMethod,RealField,Nothing,ZZ)
+     }
+
+document { Key => ComplexField,
+     Headline => "the class of all complex fields",
+     PARA { "A complex number ring is a ring whose elements are complex numbers of variable precision." }
      }

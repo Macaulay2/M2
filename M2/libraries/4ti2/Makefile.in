@@ -1,9 +1,9 @@
 # temporary beta testing version
-VERSION = 1.6.10
+VERSION = 1.6.13
 TARDIR = 4ti2-$(VERSION)
 
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-PRECONFIGURE = mkdir -p swig && autoreconf -vif
+PRECONFIGURE = autoreconf -vif
 
 VERSION_ = $(shell echo $(VERSION) | sed 's/\./_/g')
 URL = https://github.com/4ti2/4ti2/releases/download/Release_$(VERSION_)
@@ -31,7 +31,7 @@ endif
   #                         argument is no, do not use the GMP library; some
   #                         functionality will not be available then.
 
-LICENSEFILES = README
+LICENSEFILES = README.md
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/4ti2/Makefile
 # Local Variables:

@@ -92,11 +92,10 @@ export min(x:ulong,y:ulong):ulong := if x<y then x else y;
 
 export max(x:ulong,y:ulong):ulong := if x<y then y else x;
 
-
-
-isPositive0(x:ZZ) ::=  1 == Ccode(int, "mpz_sgn(", x, ")");
-isZero0    (x:ZZ) ::=  0 == Ccode(int, "mpz_sgn(", x, ")");
-isNegative0(x:ZZ) ::= -1 == Ccode(int, "mpz_sgn(", x, ")");
+export sign(x:ZZ):int := Ccode(int, "mpz_sgn(", x, ")");
+isPositive0(x:ZZ) ::=  1 == sign(x);
+isZero0    (x:ZZ) ::=  0 == sign(x);
+isNegative0(x:ZZ) ::= -1 == sign(x);
 
 export isPositive(x:ZZ):bool := isPositive0(x);
 
@@ -175,7 +174,7 @@ init(x:ZZmutable) ::= Ccode( ZZmutable, "(mpz_init(",  x, "),",x,")" );
 
 export newZZmutable():ZZmutable := init(GCmalloc(ZZmutable));
 
-clear(x:ZZmutable) ::= Ccode( void, "mpz_clear(",  x, ")" );
+export clear(x:ZZmutable) ::= Ccode( void, "mpz_clear(",  x, ")" );
 
 init(x:QQmutable) ::= Ccode( QQmutable, "(mpq_init(",  x, "),",x,")" );
 
@@ -645,8 +644,9 @@ export denominatorRef(x:QQmutable) ::= Ccode( ZZmutable, "mpq_denref(",  x, ")")
 
 export hash(x:QQ):hash_t := hash(numeratorRef(x))+1299841*hash(denominatorRef(x));
 
-isZero0    (x:QQ):bool :=  0 == Ccode(int, "mpq_sgn(",x,")");
-isNegative0(x:QQ):bool := -1 == Ccode(int, "mpq_sgn(",x,")");
+export sign(x:QQ):int := Ccode(int, "mpq_sgn(",x,")");
+isZero0    (x:QQ):bool :=  0 == sign(x);
+isNegative0(x:QQ):bool := -1 == sign(x);
 
 export isZero    (x:QQ):bool := isZero0(x);
 export isNegative(x:QQ):bool := isNegative0(x);
@@ -856,10 +856,11 @@ export realPart(z:CC):RR := z.re;
 export imaginaryPart(z:CC):RR := z.im;
 
 -- warning: these routines just check the sign bit, and don't verify finiteness!
-isPositive0(x:RR) ::=  1 == Ccode(int, "mpfr_sgn(", x, ")");
-isNegative0(x:RR) ::= -1 == Ccode(int, "mpfr_sgn(", x, ")");
-isZero0    (x:RR) ::=  0 == Ccode(int, "mpfr_sgn(", x, ")");
-                                    
+export sign(x:RR):int := Ccode(int, "mpfr_sgn(", x, ")");
+isPositive0(x:RR) ::=  1 == sign(x);
+isNegative0(x:RR) ::= -1 == sign(x);
+isZero0    (x:RR) ::=  0 == sign(x);
+
 isPositive0(x:RRi) ::=  0 < Ccode(int, "mpfi_is_strictly_pos(", x, ")");
 isNegative0(x:RRi) ::=  0 < Ccode(int, "mpfi_is_strictly_neg(", x, ")");
 isZero0    (x:RRi) ::=  0 < Ccode(int, "mpfi_is_zero(", x, ")");
@@ -1127,29 +1128,29 @@ export nanRR(prec:ulong):RR := (
                                     
 export nanRRi(prec:ulong):RRi := toRRi(nanRR(prec));
 
+export infinityCC(prec:ulong):CC := (x := infinityRR(prec,1); CC(x,x));
+
+export nanCC(prec:ulong):CC := (x := nanRR(prec); CC(x,x));
+
 export toCC(x:RR,y:RR):CC := (
-     if ( isnan0(x) || isnan0(y) ) then (prec := precision0(x); z := nanRR(prec); CC(z,z))
-     else if ( isinf0(x) || isinf0(y) ) then (prec := precision0(x); z := infinityRR(prec,1); CC(z,z))
+     if ( isnan0(x) || isnan0(y) ) then nanCC(min(precision0(x), precision0(y)))
+     else if ( isinf0(x) || isinf0(y) ) then infinityCC(min(precision0(x), precision0(y)))
      else if precision0(x) == precision0(y) then CC(x,y)
      else if precision0(x) < precision0(y) then CC(x,toRR(y,precision0(x)))
      else CC(toRR(x,precision0(y)),y)
     );
 
-export infinityCC(prec:ulong):CC := (x := infinityRR(prec,1); toCC(x,x));
+export toCC(x:RR):CC := toCC(x,toRR(0,precision0(x)));
 
-export nanCC(prec:ulong):CC := (x := nanRR(prec); toCC(x,x));
+export toCC(x:int,y:RR):CC := toCC(toRR(x,precision0(y)),y);
 
-export toCC(x:RR):CC := CC(x,toRR(0,precision0(x)));
-
-export toCC(x:int,y:RR):CC := CC(toRR(x,precision0(y)),y);
-
-export toCC(x:RR,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
+export toCC(x:RR,prec:ulong):CC := toCC(toRR(x,prec),toRR(0,prec));
 
 export toCC(x:CC,prec:ulong):CC := (
      if precision0(x.re) == prec then x
      else CC(toRR(x.re,prec),toRR(x.im,prec)));
 
-export toCC(x:RR,y:RR,prec:ulong):CC := CC(toRR(x,prec),toRR(y,prec));
+export toCC(x:RR,y:RR,prec:ulong):CC := toCC(toRR(x,prec),toRR(y,prec));
 
 export toCC(x:QQ,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
 
@@ -2576,9 +2577,7 @@ export yn(n:long,x:RR):RR := (
      Ccode( void, "mpfr_yn(", z, ",",n,",", x, ", MPFR_RNDN)" );
      moveToRRandclear(z));
 
-export sign(x:RR):bool := 0 != Ccode(int,"mpfr_signbit(",x,")");
-
-export sign(x:RRi):bool := 0 != Ccode(int,"mpfi_is_neg(",x,")");
+export signbit(x:RR):bool := 0 != Ccode(int,"mpfr_signbit(",x,")");
 
 -- complex transcendental functions
 

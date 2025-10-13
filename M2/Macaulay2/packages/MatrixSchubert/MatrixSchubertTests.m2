@@ -168,9 +168,11 @@ TEST ///
 -- isASMUnion
 assert isASMUnion {{1}}
 assert isASMUnion {{4,3,2,1}}
-assert not isASMUnion {{2,1,3,4},{4,2,3,1}}
+assert not isASMUnion {{2,1,3},{1,3,2}}
 assert isASMUnion {{3,1,2},{2,3,1}}
 assert isASMUnion {{4,1,3,2},{3,4,1,2},{2,4,3,1}}
+assert isASMUnion {{2,1,3}} --catches old bug from using cycle Decompositions
+assert isASMUnion {{2,1,3},{3,1,2}} --catches old bug that misses containment
 ///
 
 TEST ///
@@ -1027,4 +1029,10 @@ M = matrix{{0,3,4},{1,1,1}}
 A = matrix{{0,1,1},{1,1,1}}
 assert(rankTableFromMatrix M == A)
 assert(rankTableFromMatrix A == A)
+///
+
+TEST ///
+--toOneLineNotation edge case
+assert(toOneLineNotation({1},1) == {1})
+
 ///

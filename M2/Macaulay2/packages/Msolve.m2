@@ -1,9 +1,9 @@
 newPackage(
 	"Msolve",
-	Version => "1.24.05", 
-    	Date => "July 2024",
+	Version => "1.24.06", 
+    	Date => "September 2025",
     	Authors => {{Name => "Martin Helmer", 
-		  Email => "mhelmer@ncsu.edu", 
+		  Email => "martin.helmer@swansea.ac.uk", 
 		  HomePage => "http://martin-helmer.com/"}, {Name => "Mike Stillman", 
 		  Email => "mike@math.cornell.edu", 
 		  HomePage => "https://math.cornell.edu/michael-e-stillman"},{Name => "Anton Leykin", 
@@ -252,11 +252,19 @@ msolveRUR Ideal := opt -> I0 ->(
     RUR#"var"=T;
     RUR#"degree"=(solsp_1)_2;
     para:= ((solsp_1)_5)_1;
+    sVarsMsolve:=(solsp_1)_3;
     W:=sum((para_0)_0+1,i->(T)^i*(((para_0)_1)_i));
     RUR#"findRootsUniPoly"=W;
     RUR#"denominator"=diff(T,W);
     vs:=last para;
-    RUR#"numerator"=append(for f in vs list sum((f_0)_0+1,i->T^i*((f_0)_1)_i),-T*diff(T,W));
+    msolveVarOrder:=for sg in gens(S) list position(sVarsMsolve,i->i==toString(sg));
+    tempNumerator:=(append(for f in vs list sum((f_0)_0+1,i->T^i*((f_0)_1)_i),-T*diff(T,W)));
+    if (numgens(S)==#(tempNumerator)) then(
+	RUR#"numerator"=tempNumerator_msolveVarOrder;
+	)
+    else(
+	RUR#"numerator"=tempNumerator_(append(msolveVarOrder, numgens(S)));
+	);
     return new HashTable from RUR;
     );
 
@@ -305,7 +313,7 @@ Node
 	  Example
 	      R = QQ[x,y,z]
 	      I = ideal(x, y, z)
-	      msolveGB(I, Verbosity => 2, Threads => 6)
+	      msolveGB(I, Verbosity => 2, Threads => 6) -* no-capture-flag *-
     References
       [1] The msolve library: @HREF {"https://msolve.lip6.fr"}@;
 

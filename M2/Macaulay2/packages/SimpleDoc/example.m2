@@ -83,6 +83,8 @@ docExample = "doc ///
     Acknowledge contributors who are not listed as authors here.
   References
     Provide references for further reading.
+  Citation
+    Here is how to cite this package.
   Caveat
     This is not a particularly useful function.
   SeeAlso

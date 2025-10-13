@@ -66,74 +66,95 @@ class DMatLinAlg<M2::ARingQQ>
 
   void matrixPLU(std::vector<size_t>& P, Mat& L, Mat& U)
   {
-    // printf("dmat lu qq PLU\n");
+    //    std::cout << "calling matrixPLU FlintQQ\n";
+
+    // I had wanted to use fmpz_mat_fflu, but it doesn't return a LU decomposition
+    // only something similar, which doesn't actually give a factorization of A.
+    // Instead, we use the generic code for LU (in dmat-lu.hpp)
     FlintQQMat A(mInputMatrix);
-    FlintZZMat LU(A.numRows(), A.numColumns());
-    fmpz_t den, den2;
-    fmpz_init(den);
-    fmpz_init(den2);
-    mp_limb_signed_t* perm = newarray_atomic(mp_limb_signed_t, LU.numRows());
-    for (long i = 0; i < LU.numRows(); i++) perm[i] = i;
-    fmpq_mat_get_fmpz_mat_matwise(LU.value(), den, A.value());
-    fmpz_mat_fflu(LU.value(),
-                  den2,
-                  perm,
-                  LU.value(),
-                  0);  // the 0 means do not abort if rank is not maximal
-    P.resize(0);
-    for (long i = 0; i < LU.numRows(); i++) P.push_back(perm[i]);
-    freemem(perm);
 
-    fmpz_mul(den, den, den2);  // total denominator
-    // Now we need to set L and U.
-    // Sigh, this code is taken and hacked from LUUtil<RingType>::setUpperLower.
-    size_t min = std::min(LU.numRows(), LU.numColumns());
-    L.resize(LU.numRows(), min);
-    U.resize(min, LU.numColumns());
+  //  std::cout << "calling matrixPLU generic\n";  
+    DMatLUinPlace<RingType> luObject(mInputMatrix);
+    const Mat& LU = luObject.LUinPlace();
 
-    // At this point, lower and upper should be zero matrices.
-    assert(MatrixOps::isZero(L));
-    assert(MatrixOps::isZero(U));
-
-    fmpq_t b;
-    fmpq_init(b);
-    for (size_t c = 0; c < LU.numColumns(); c++)
-      {
-        if (c < min) L.ring().set_from_long(L.entry(c, c), 1);
-        for (size_t r = 0; r < LU.numRows(); r++)
-          {
-            if (r <= c)
-              {
-                mpq_t a;
-                // Set the value in U by dividing the fmpz by the denom
-                // Note: the elements in LU have type fmpz_t
-                // the elements in L or U: have type mpq_t
-
-                fmpq_set_fmpz_frac(b, fmpz_mat_entry(LU.value(), r, c), den);
-                flint_mpq_init_set_readonly(a, b);
-                assert(U.ring().set_from_mpq(U.entry(r, c), a));
-                U.ring().set_from_mpq(U.entry(r, c), a);  // ignore the result
-                                                          // boolean: this
-                                                          // operation should
-                                                          // not fail
-                flint_mpq_clear_readonly(a);
-              }
-            else if (c < L.numRows())
-              {
-                mpz_t a;
-                flint_mpz_init_set_readonly(a,
-                                            fmpz_mat_entry(LU.value(), r, c));
-                L.ring().set_from_mpz(L.entry(r, c), a);
-                flint_mpz_clear_readonly(a);
-              }
-          }
-      }
-
-    fmpq_clear(b);
-    fmpz_clear(den);
-    fmpz_clear(den2);
+    LUUtil<M2::ARingQQ>::setUpperLower(LU, L, U);
+    P = luObject.permutation();
+    //return luObject.signOfPermutation();
   }
 
+//   #if 0
+//   // The following code calls the fraction free LU decomp code in flint.
+//   // But this is *not* what we want, I think.
+//     FlintZZMat LU(A.numRows(), A.numColumns());
+//     fmpz_t den, den2;
+//     fmpz_init(den);
+//     fmpz_init(den2);
+//     mp_limb_signed_t* perm = newarray_atomic(mp_limb_signed_t, LU.numRows());
+//     for (long i = 0; i < LU.numRows(); i++) perm[i] = i;
+//     fmpq_mat_get_fmpz_mat_matwise(LU.value(), den, A.value());
+//     int rk = fmpz_mat_fflu(LU.value(),
+//                   den2,
+//                   perm,
+//                   LU.value(),
+//                   0);  // the 0 means do not abort if rank is not maximal
+//     fmpz_mat_print_pretty(LU.value());
+//     fmpz_print(den2);
+//     //    std::cout << "rank = " << rk << std::endl;
+//     P.resize(0);
+//     for (long i = 0; i < LU.numRows(); i++) P.push_back(perm[i]);
+//     freemem(perm);
+
+//     fmpz_mul(den, den, den2);  // total denominator
+//     // Now we need to set L and U.
+//     // Sigh, this code is taken and hacked from LUUtil<RingType>::setUpperLower.
+//     size_t min = std::min(LU.numRows(), LU.numColumns());
+//     L.resize(LU.numRows(), min);
+//     U.resize(min, LU.numColumns());
+
+//     // At this point, lower and upper should be zero matrices.
+//     assert(MatrixOps::isZero(L));
+//     assert(MatrixOps::isZero(U));
+
+//     fmpq_t b;
+//     fmpq_init(b);
+//     for (size_t c = 0; c < LU.numColumns(); c++)
+//       {
+//         if (c < min) L.ring().set_from_long(L.entry(c, c), 1);
+//         for (size_t r = 0; r < LU.numRows(); r++)
+//           {
+//             if (r <= c)
+//               {
+//                 mpq_t a;
+//                 // Set the value in U by dividing the fmpz by the denom
+//                 // Note: the elements in LU have type fmpz_t
+//                 // the elements in L or U: have type mpq_t
+
+//                 fmpq_set_fmpz_frac(b, fmpz_mat_entry(LU.value(), r, c), den);
+//                 flint_mpq_init_set_readonly(a, b);
+//                 assert(U.ring().set_from_mpq(U.entry(r, c), a));
+//                 U.ring().set_from_mpq(U.entry(r, c), a);  // ignore the result
+//                                                           // boolean: this
+//                                                           // operation should
+//                                                           // not fail
+//                 flint_mpq_clear_readonly(a);
+//               }
+//             else if (c < L.numRows())
+//               {
+//                 mpz_t a;
+//                 flint_mpz_init_set_readonly(a,
+//                                             fmpz_mat_entry(LU.value(), r, c));
+//                 L.ring().set_from_mpz(L.entry(r, c), a);
+//                 flint_mpz_clear_readonly(a);
+//               }
+//           }
+//       }
+
+//     fmpq_clear(b);
+//     fmpz_clear(den);
+//     fmpz_clear(den2);
+//   }
+// #endif
+  
   bool solve(const Mat& B1, Mat& X1)
   {
     // This is the version where A = this isn't nec square or full rank...

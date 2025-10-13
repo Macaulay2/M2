@@ -1333,6 +1333,7 @@ setupfun("readlink",readlinkfun);
 
 realpathfun(e:Expr):Expr := (
      when e is f:stringCell do (
+	  if f.v === "stdio" || f.v === "currentString" then return e;
      	  when realpath(expandFileName(f.v))
      	  is null do buildErrorPacket(syscallErrorMessage("realpath"))
      	  is p:string do toExpr(p)
@@ -1408,6 +1409,8 @@ isDirectory(e:Expr):Expr := (
 	  filename := filename0.v;
 	  filename = expandFileName(filename);
 	  if !fileExists(filename) then return False;
+	  if filename.(length(filename) - 1) != '/'
+	  then filename = filename + "/";
 	  r := isDirectory(filename);
 	  if r == -1 then buildErrorPacket("can't see file '" + filename + "' : " + syserrmsg())
 	  else if r == 1 then True else False)
@@ -1751,8 +1754,10 @@ storeInHashTable(
      Expr(newCompiledFunction(storeGlobalDictionaries)));
 
 getcwdfun(e:Expr):Expr := (				    -- this has to be a function, because getcwd may fail
-     when e is s:Sequence do
-     if length(s) == 0 then cwd() else WrongNumArgs(0)
+    when e is s:Sequence do if length(s) != 0 then WrongNumArgs(0) else (
+	dir := getcwd();
+	if dir != "" then Expr(stringCell(dir))
+	else buildErrorPacket("can't get current working directory: " + syserrmsg()))
      else WrongNumArgs(0));
 setupfun("currentDirectory",getcwdfun);
 
@@ -1994,7 +1999,7 @@ setupconst("fileDictionaries",Expr(fileDictionaries));
 
 export newStaticLocalDictionaryClosure(filename:string):DictionaryClosure := (
      d := newStaticLocalDictionaryClosure();
-     storeInHashTable(fileDictionaries,toExpr(filename),Expr(d));
+     storeInHashTable(fileDictionaries,toExpr(relativizeFilename(filename)),Expr(d));
      d);
 
 fileMode(e:Expr):Expr := (
@@ -2107,7 +2112,8 @@ toExternalString(e:Expr):Expr := (
 setupfun("toExternalString0",toExternalString);
 
 header "
-#ifndef GC_get_full_gc_total_time /* added in bdwgc 8 */
+/* added in bdwgc 8 */
+#if GC_VERSION_MAJOR < 8
 unsigned long GC_get_full_gc_total_time(void) {return 0;}
 #endif
 #define DEF_GC_FN0(s)	static void * s##_0(void *client_data) { (void) client_data; return (void *) (long) s(); }

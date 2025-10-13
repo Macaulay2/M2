@@ -1,5 +1,6 @@
 
 i1 : setRandomSeed();
+ -- initializing random seed
 
 i2 : R = ZZ/101[y11, y12, y21, y22];
 

@@ -2,6 +2,12 @@
 --- author(s):
 --- notes:
 
+document {
+    Key => {symbol =>,(symbol =>, Thing, Thing)},
+    Headline => "construct an option",
+    TT "x => y", " a binary operator that produces a type of list called an ", TO "Option", "."
+}
+
 doc ///
 Node
   Key
@@ -9,7 +15,11 @@ Node
   Headline
     get options
   SeeAlso
-    Option
+    (options, Monoid)
+    (options, Package)
+    (options, Function)
+    OptionTable
+    Options
 
 Node
   Key
@@ -38,16 +48,18 @@ Node
   SeeAlso
     (NewFromMethod, HashTable, List)
     (symbol=>, Thing, Thing)
+  Subnodes
     options
 
 Node
   Key
-    (options, Command)
     (options, Function)
+    (options, Command)
     (options, Sequence)
+    (options, List)
     (options, ZZ)
   Headline
-    get optional arguments and default values of functions and methods
+    get the optional arguments and default values of a function or method
   Usage
     options f
   Inputs
@@ -63,8 +75,13 @@ Node
       options res
       options codim
       options(codim, Ideal)
+      methods codim
+      options oo
       methods intersect
       options 0
   SeeAlso
+    method
     methods
+    methodOptions
+    MethodFunctionWithOptions
 ///

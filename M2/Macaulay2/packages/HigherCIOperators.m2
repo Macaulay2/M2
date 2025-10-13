@@ -9,7 +9,7 @@ newPackage(
 	Keywords => {"Commutative Algebra"},
         DebuggingMode => false,
      	PackageImports => { "CompleteIntersectionResolutions" },
-	PackageExports =>{"MCMApproximations"}
+	PackageExports =>{"MCMApproximations", "OldChainComplexes"}
         )
 
 export {"exteriorMultiplication",

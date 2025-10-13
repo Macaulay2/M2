@@ -36,7 +36,6 @@ newPackage(
 	 "published article URI" => "https://msp.org/jsag/2023/13-1/p04.xhtml",
 	 "published article DOI" => "10.2140/jsag.2023.13.45",
 	 "published code URI" => "https://msp.org/jsag/2023/13-1/jsag-v13-n1-x04-BettiCharacters.m2",
-	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/BettiCharacters.m2",
 	 "release at publication" => "a446af4424af33c06ab97694761a4d5bbc4d535f",
 	 "version at publication" => "2.1",
 	 "volume number" => "13",
@@ -560,13 +559,11 @@ actors(ActionOnComplex,ZZ) := List => (A,i) -> (
     	((cacheValue (symbol actors,i)) f) A
     	) else (
     	-- function for actors of A in hom degree i
-    	f = A -> apply(inverseRingActors A,actors(A,i+1), (gInv,g0) ->
+	f = A -> apply(inverseRingActors A,actors(A,i+1),
 	    -- given a map of free modules C.dd_i : F <-- F',
 	    -- the inverse group action on the ring (as substitution)
 	    -- and the group action on F', computes the group action on F
-	    -- it is necessary to transpose because we need a left factorization
-	    -- but M2's command // always produces a right factorization
-	    transpose(transpose(sub(C.dd_(i+1),gInv)*g0)//transpose(C.dd_(i+1)))
+	    (gInv,g0) -> C.dd_(i+1) \\ (sub(C.dd_(i+1), gInv) * g0)
 	    );
     	-- make cache function from f and run it on A
     	((cacheValue (symbol actors,i)) f) A
@@ -1122,9 +1119,9 @@ Node
 	the sign character just constructed: the result is the
 	same as the character of the resolution.
     Example
-    	sign = character(R,15,hashTable {(0,{7}) =>
+    	sgn = character(R,15,hashTable {(0,{7}) =>
 		matrix{{1,-1,-1,1,-1,1,-1,1,1,-1,1,-1,1,-1,1}}})
-	dual(c,id_QQ)[-5] ** sign === c
+	dual(c,id_QQ)[-5] ** sgn === c
     Text
     	The second argument in the @TT "dual"@ command is the
 	restriction of complex conjugation to the field of
@@ -2404,30 +2401,34 @@ Node
 
 Node
     Key
-    	dual
 	(dual,Character,RingMap)
     	(dual,Character,List)
     Headline
     	dual character
-    Usage
-    	dual(c,conj)
-    	dual(c,perm)
-    Inputs
-    	c:Character
-	    of a finite group action
-    	conj:RingMap
-	    conjugation in coefficient field
-    	perm:List
-	    permutation of conjugacy classes
-    Outputs
-    	:Character
     Description
     	Text
 	    Returns the dual of a character, i.e., the character
 	    of the dual or contragredient representation.
 	    
 	    The first argument is the original character.
-	    
+	    The second argument has two possibilities, listed below.
+	    The page @TO characterTable@ contains some motivation
+	    for using conjugation or permutations of conjugacy
+	    classes when dealing with characters.
+    Synopsis
+      Heading
+        dual character with respect to a conjugation in coefficient field
+      Usage
+    	dual(c,conj)
+      Inputs
+    	c:Character
+	    of a finite group action
+    	conj:RingMap
+	    conjugation in coefficient field
+      Outputs
+    	:Character
+      Description
+        Text
 	    Assuming the polynomial ring over which the character
 	    is defined has a coefficient field @TT "F"@ which is a subfield
 	    of the complex numbers, then the second argument is the
@@ -2449,7 +2450,20 @@ Node
 	    conj = map(F,F,{w^2})
 	    X = character(R,4,hashTable {(1,{2}) => matrix{{1,1,w,w^2}}})
 	    X' = dual(X,conj)
-    	Text
+    Synopsis
+      Heading
+        dual character with respect to a permutation of conjugacy classes
+      Usage
+    	dual(c,perm)
+      Inputs
+    	c:Character
+	    of a finite group action
+    	perm:List
+	    permutation of conjugacy classes
+      Outputs
+    	:Character
+      Description
+        Text
     	    If working over coefficient fields of positive characteristic
 	    or if one wishes to avoid defining conjugation, one may replace
 	    the second argument by a list containing a permutation
@@ -2469,10 +2483,6 @@ Node
     	Example
     	    perm = {1,2,4,3}
 	    dual(X,perm) === X'
-    	Text
-	    The page @TO characterTable@ contains some motivation
-	    for using conjugation or permutations of conjugacy
-	    classes when dealing with characters.
     SeeAlso
     	characterTable
 	    
@@ -2842,8 +2852,8 @@ Node
 	    observed by tensoring with the character of the
 	    sign representation concentrated in degree 3.
     	Example
-	    sign = character(R,3, hashTable { (0,{3}) => matrix{{1,-1,1}} })
-	    dual(a,{1,2,3}) ** sign === a
+	    sgn = character(R,3, hashTable { (0,{3}) => matrix{{1,-1,1}} })
+	    dual(a,{1,2,3}) ** sgn === a
 
 ///
 	    
@@ -3064,10 +3074,10 @@ K = freeResolution ideal vars R
 S4 = symmetricGroupActors(R)
 A = action(K,S4)
 c = character A
-sign = character(R,5, hashTable { (-4,{-4}) => matrix{{-1,1,1,-1,1}} })
+sgn = character(R,5, hashTable { (-4,{-4}) => matrix{{-1,1,1,-1,1}} })
 -- check duality of representations in Koszul complex
 -- which is true up to a twist by a sign representation
-assert(dual(c,id_QQ) == c ** sign)
+assert(dual(c,id_QQ) == c ** sgn)
 ///
 
 end

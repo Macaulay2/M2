@@ -10,9 +10,6 @@ distributions/top/preremove
 distributions/top/postinstall
 distributions/tar/Makefile
 distributions/dmg/Makefile
-distributions/rpm/Makefile
-distributions/rpm/Macaulay2-body.spec
-distributions/rpm/Macaulay2-common-body.spec
 distributions/freebsd/Makefile
 distributions/freebsd/post-install
 distributions/freebsd/post-deinstall
@@ -42,13 +39,11 @@ libraries/frobby/Makefile
 libraries/gc/Makefile
 libraries/gdbm/Makefile
 libraries/gfan/Makefile
-libraries/gftables/Makefile
 libraries/givaro/Makefile
 libraries/glpk/Makefile
 libraries/gmp/Makefile
 libraries/gtest/Makefile
 libraries/lapack/Makefile
-libraries/libtool/Makefile
 libraries/linbox/Makefile
 libraries/lrslib/Makefile
 libraries/mathic/Makefile
@@ -61,13 +56,11 @@ libraries/msolve/Makefile
 libraries/nauty/Makefile
 libraries/normaliz/Makefile
 libraries/ntl/Makefile
-libraries/pari/Makefile
 libraries/polymake/Makefile
 libraries/readline/Makefile
 libraries/tbb/Makefile
 libraries/topcom/Makefile
 Macaulay2/Makefile
-Macaulay2/README
 Macaulay2/packages/SCSCP/docinput/Makefile
 Macaulay2/c/Makefile
 Macaulay2/d/Makefile
@@ -111,4 +104,3 @@ Macaulay2/tests/gigantic/Makefile
 Macaulay2/tests/goals/Makefile
 Macaulay2/tests/quarantine/Makefile
 Macaulay2/tests/rationality/Makefile
-Macaulay2/util/Makefile

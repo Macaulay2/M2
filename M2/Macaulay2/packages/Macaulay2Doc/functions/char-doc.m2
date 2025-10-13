@@ -10,7 +10,7 @@ undocumented {
 
 document { 
      Key => {char, (char,Ring)},
-     Headline => "computes the characteristic of the ring or field",
+     Headline => "get the characteristic of the ring or field",
      Usage => "char F",
      Inputs => {"F" => Ring},
      Outputs => {{"the characteristic of the ring."}},

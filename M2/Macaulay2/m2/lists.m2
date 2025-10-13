@@ -237,6 +237,25 @@ random List := opts -> s -> (
 	  t := s#i ; s#i = s#j ; s#j = t;
 	  );
      new List from s)
+
+randomSubset = method()
+-- Knuth Algorithm S, Art of Computer Programming, Section 3.4.2
+randomSubset(ZZ, ZZ) := (N, n) -> (
+    if n < 0 or n > N then error("expected an integer between 0 and ", N);
+    t := 0;
+    apply(n, m -> (
+	    while (N - t) * rawRandomRRUniform defaultPrecision >= n - m
+	    do t += 1;
+	    first (t, t += 1))))
+randomSubset ZZ := N -> (
+    if N < 0 then error "expected a nonnegative integer";
+    r := random 2^N;
+    for i to N - 1 list if r & 2^i != 0 then i else continue)
+randomSubset(VisibleList, ZZ) := (x, n) -> x_(randomSubset(#x, n))
+randomSubset VisibleList := x -> x_(randomSubset(#x))
+randomSubset(Set, ZZ) := (x, n) -> set randomSubset(toList x, n)
+randomSubset Set := x -> set randomSubset toList x
+
 -----------------------------------------------------------------------------
 -- sublists
 -----------------------------------------------------------------------------
@@ -292,6 +311,11 @@ isSorted VisibleList := s -> all(#s-1, i -> s#i <= s#(i+1))
 deepApply' = (L, f, g) -> flatten if g L then toList apply(L, e -> deepApply'(e, f, g)) else toList{f L}
 deepApply  = (L, f) ->  deepApply'(L, f, e -> instance(e, BasicList))
 deepScan   = (L, f) -> (deepApply'(L, f, e -> instance(e, BasicList));) -- not memory efficient
+
+deepSelect = method()
+deepSelect(BasicList, Type)     := (L, T) -> deepSelect(L, e -> instance(e, T))
+deepSelect(BasicList, Function) := (L, f) -> nonnull deepApply'(L,
+    e -> if f e then e, e -> instance(e, BasicList) and not f e)
 
 -----------------------------------------------------------------------------
 -- Tables (nested lists)

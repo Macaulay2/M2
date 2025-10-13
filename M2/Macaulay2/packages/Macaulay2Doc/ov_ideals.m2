@@ -1,5 +1,4 @@
 -- -*- coding: utf-8 -*-
--- -*- coding: utf-8 -*-
 document {
      Key => "ideals",
      HEADER2 "An overview",     
@@ -7,6 +6,9 @@ document {
      ") is defined, ideals are constructed in the usual way
      by giving a set of generators.",
      Subnodes => {
+	 TO Ideal,
+	 TO ideal,
+	 TO isIdeal,
 	  TO "creating an ideal",
 	  "conversions",
 	  TO "ideals to and from matrices",
@@ -149,7 +151,7 @@ document {
 
      SUBSECTION "modules versus ideals for computations",
        "Some functions in Macaulay2 try to make an informed decision 
-       about ideal and modules.  For example, if ", TO "resolution", " is
+       about ideal and modules.  For example, if ", TO "OldChainComplexes :: resolution", " is
        given an ideal ", TT "I", ", it will compute a resolution of
        the module ", TT "R^1/I", ", as in the following example.",
        EXAMPLE {
@@ -163,7 +165,10 @@ document {
        polynomial of the module ", TT "I", " if the input 
        is ", TT "hilbertPolynomial I", ".",     
        PARA{}, "For basic information about working with 
-       modules see ", TO "modules", "."
+       modules see ", TO "modules", ".",
+    Subnodes => {
+	TO comodule,
+        },
      }
 
 document {
@@ -186,10 +191,15 @@ document {
      }
 
 document {
-     Key => "equality and containment",
+    Key => {
+	"equality and containment",
+	(symbol ==, Ideal, Ideal),
+	(symbol ==, Ideal, ZZ),
+	(symbol ==, ZZ, Ideal),
+    },
      "Equality and containment between two ideals in a polynomial ring 
      (or quotient of a polynomial ring) is checked by comparing their 
-     respective Groebner bases.",     
+     respective Gröbner bases.",
      SUBSECTION "equal and not equal",
        "Use ", TO (symbol==,Ideal,Ideal), " to test if two ideals in 
        the same ring 
@@ -202,10 +212,10 @@ document {
 	    "I != J",
 	    },
 
-     SUBSECTION "normal form with respect to a Groebner basis and membership",
+     SUBSECTION "normal form with respect to a Gröbner basis and membership",
        "The function ", TO (symbol%,RingElement,Ideal), 
        " reduces an element with 
-       respect to a Groebner basis of the ideal.", 
+       respect to a Gröbner basis of the ideal.",
        EXAMPLE {
 	    "(1+a+a^3+a^4) % J"
 	    },
@@ -284,7 +294,7 @@ document {
 	    "mingens I",
 	    "trim I"
 	    },
- "The function ", TT "mingens", " is only well-defined for a 
+       "The function ", TT "mingens", " is only well-defined for a 
        homogeneous ideal or in a local ring.  However, one can still try to 
        get as small a generating set as possible and when it is implemented
        this function will be done by ", TT "trim", ".",
@@ -300,7 +310,10 @@ document {
 	    "R = QQ[a..d];",
 	    "I = monomialCurveIdeal(R,{1,2,3});",
 	    "toString I"
-	    }
+	    },
+     Subnodes => {
+         TO "generators of rings, ideals, and modules",
+         },
      }
 
 document {
@@ -385,7 +398,7 @@ document {
      "To recover the generators of an ideal as a matrix, use ", TO "generators", ".",
      EXAMPLE "generators J",
      "Use the operator ", TT "%", " to reduce a ring element with respect to a
-     Groebner basis of the ideal.",
+     Gröbner basis of the ideal.",
      EXAMPLE "(1+a+a^3+a^4) % J",
      "Membership in the ideal may be tested by comparing the answer to 0 with ", TT "==", ".",
      EXAMPLE {
@@ -426,7 +439,7 @@ document {
      the underlying module is used.  Here are some examples where the quotient 
      module is used.",
      PARA{},
-     "A free resolution of ", TT "R^1/I", " can be obtained with ", TO "resolution", ".",
+     "A free resolution of ", TT "R^1/I", " can be obtained with ", TO "OldChainComplexes :: resolution", ".",
      EXAMPLE "resolution I",
      "The Krull dimension or codimension of the support of the quotient module can
      be obtained.",

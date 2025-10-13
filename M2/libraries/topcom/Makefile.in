@@ -1,9 +1,8 @@
-# http://www.rambau.wm.uni-bayreuth.de/Software/
-HOMEPAGE = http://www.rambau.wm.uni-bayreuth.de/TOPCOM/
-URL = https://macaulay2.com/Downloads/OtherSourceCode
-VERSION = 0.17.8
+HOMEPAGE = https://www.wm.uni-bayreuth.de/de/team/rambau_joerg/TOPCOM/
+URL = https://www.wm.uni-bayreuth.de/de/team/rambau_joerg/TOPCOM-Downloads
+VERSION = 1.1.2
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-TARFILE = TOPCOM-$(VERSION).tar.gz
+TARFILE = TOPCOM-$(subst .,_,$(VERSION)).tgz
 CPPFLAGS += -I$(BUILTLIBPATH)/include/cddlib
 PRECONFIGURE = autoreconf -vif
 LICENSEFILES = COPYING README
@@ -19,6 +18,7 @@ PROGRAMS = src-reg/checkregularity src/points2finetriang src/points2chiro src/ch
 STRIPFILES = $(PROGRAMS)
 INSTALLCMD = :
 include ../Makefile.library
+CXXFLAGS += -std=c++17
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/topcom/Makefile
 # Local Variables:
 # mode: makefile-gmake

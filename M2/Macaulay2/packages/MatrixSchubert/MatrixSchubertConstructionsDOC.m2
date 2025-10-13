@@ -28,9 +28,9 @@ doc ///
 	    {"[KW21] Patricia Klein and Anna Weigandt, ",
 	    HREF("https://arxiv.org/abs/2108.08370", EM "Bumpless pipe dreams encode Gröbner geometry of Schubert polynomials"),
 	    ", arxiv preprint 2108.08370."},
-            {"[PSW21] Oliver Pechenik, David Speyer, and Anna Weigandt, ",
+            {"[PSW24] Oliver Pechenik, David Speyer, and Anna Weigandt, ",
             HREF("https://arxiv.org/abs/2111.10681", EM "Castelnuovo-Mumford regularity of matrix Schubert varieties"),
-            ", arxiv preprint 2111.10681."},
+            ", Selecta Mathematica New Series 30, 66 (2024)."},
             {"[Wei17] Anna Weigandt, ",
             HREF("https://arxiv.org/abs/1708.07236", EM "Prism tableaux for alternating sign matrix varieties"),
             ", arXiv preprint 1708.07236."}
@@ -43,8 +43,14 @@ doc ///
             @HREF("https://www.math.tamu.edu/directory/graduate.html", "Pooja Joshi")@,
 	    @HREF("https://www-users.cse.umn.edu/~mahrud/", "Mahrud Sayrafi")@, and
             @HREF("https://www.clemson.edu/science/academics/departments/mathstat/about/profiles/arakoto", "Antsa Tantely Fandresena Rakotondrafara")@.
+	    We also thank the anonymous referees for their helpful suggestions.
     SeeAlso 
         "Investigating matrix Schubert varieties"
+        "Investigating ASM varieties"
+        "Initial ideals of ASM ideals"
+        "Functions for investigating permutations"
+    Subnodes
+	"Investigating matrix Schubert varieties"
         "Investigating ASM varieties"
         "Initial ideals of ASM ideals"
         "Functions for investigating permutations"
@@ -77,16 +83,16 @@ doc ///
             {"[KM05] Allen Knutson and Ezra Miller, ",
             HREF("https://arxiv.org/abs/math/0110058", EM "Gröbner geometry of Schubert polynomials"),
             ", Annals of Mathematics (2005): 1245-1318."},
-            {"[PSW21] Oliver Pechenik, David Speyer, and Anna Weigandt, ",
+            {"[PSW24] Oliver Pechenik, David Speyer, and Anna Weigandt, ",
             HREF("https://arxiv.org/abs/2111.10681", EM "Castelnuovo-Mumford regularity of matrix Schubert varieties"),
-            ", arxiv preprint 2111.10681."}
+            ", Selecta Mathematica New Series 30, 66 (2024)."}
             }@
 	Text
 	    The general method for creating a
 	    Schubert determinantal Ideal is @TO schubertDeterminantalIdeal@.
 	    The input is a permutation in the form of a list.
-	    This package contains functions for investigating the rank matrix,
-	    the Rothe diagram, and the essential cells of the Rothe diagram
+	    This package contains functions for investigating the rank matrix (@TO rankTable@),
+	    the Rothe diagram (@TO rotheDiagram@), and the essential cells (@TO essentialSet@) of the Rothe diagram
 	    as defined by Fulton in [Ful92].
 	Example
 	    p = {2,1,6,3,5,4};
@@ -99,23 +105,25 @@ doc ///
 	    In order to access a minimal generating set, use @TO trim@.
 	Example
 	    I = schubertDeterminantalIdeal p;
-	    # (I_*)
-	    # ((trim I)_*)
+	    numgens I
+	    numgens (trim I)
 	Text
-	    After creating a Schubert determinantal ideal, the permutation associated to it is stored in its cache table.
+	    After creating a Schubert determinantal ideal, the permutation associated to it is stored in its cache table under the key ASM.
+	    One can also access the permutation matrix directly using @TO getASM@.
 	Example
 	    peek I.cache
+	    getASM I
 	Text
-	    This package also contains methods for investigating antidiagonal initial ideals
+	    This package also contains methods for investigating antidiagonal initial ideals (@TO antiDiagInit@)
 	    of Schubert determinantal ideals and their associated Stanley-Reisner complexes,
-	    which are a kind of subword complex. Subword complexes were introduced in [KM05] 
+	    which are a kind of subword complex (@TO subwordComplex@). Subword complexes were introduced in [KM05]
 	    in the study of antidiagonal initial ideal of Schubert determinantal ideals
 	    and their relation to Schubert polynomials.
 	Example
 	    antiDiagInit p
 	    subwordComplex p
 	Text
-	    Given a list of permutations, this package also contains functions for intersecting and adding
+	    Given a list of permutations, this package also contains functions for intersecting (@TO schubertIntersect@) and adding (@TO schubertAdd@)
 	    the Schubert determinantal ideals associated to the list of permutations.
 	Example
 	    L = {{3,1,5,4,2},{2,5,3,4,1}} -- a list of 2 permutations
@@ -123,7 +131,7 @@ doc ///
 	    schubertIntersect L
 	Text
 	    Finally, this package contains functions for investigating homological invariants of matrix Schubert
-	    varieties efficiently through combinatorial algorithms produced in [PSW21].
+	    varieties efficiently through combinatorial algorithms produced in [PSW24] via @TO schubertRegularity, TO schubertCodim@.
 	Example
 	    time schubertRegularity p
 	    time regularity comodule I 
@@ -176,8 +184,8 @@ doc ///
 	    isPartialASM A
 	    A' = partialASMToASM A
 	Text
-	    This package contains functions for investigating the rank matrix,
-	    the Rothe diagram, and the essential cells of the Rothe diagram
+	    This package contains functions for investigating the rank matrix (@TO rankTable@),
+	    the Rothe diagram (@TO rotheDiagram@), and the essential cells (@TO essentialSet@) of the Rothe diagram
 	    of a partial ASM as defined by Fulton in [Ful92] and Weigandt in [Wei17].
 	Example
 	    rotheDiagram A
@@ -189,14 +197,14 @@ doc ///
 	    In order to access a minimal generating set, use @TO trim@.
 	Example
 	    I = schubertDeterminantalIdeal A;
-	    # (I_*)
-	    # ((trim I)_*)
+	    numgens I
+	    numgens (trim I)
 	Text
 	    After creating an ASM ideal, the corresponding ASM is stored in the cache table.
 	Example
 	    peek I.cache
 	Text
-	    This package also contains methods for investigating or using initial ideals of ASM ideals.
+	    This package also contains methods for investigating or using initial ideals of ASM ideals, for instance via @TO antiDiagInit@.
 	Example
 	    antiDiagInit A
 	Text
@@ -206,7 +214,7 @@ doc ///
 	Example
 	    schubertDecompose I
 	Text
-	    Given a list of partial ASMs, this package also contains functions for intersecting and adding
+	    Given a list of partial ASMs, this package also contains functions for intersecting (@TO schubertIntersect@) and adding (@TO schubertAdd@)
 	    the ASM ideals associated to the list of ASMs or partial ASMs. Every sum of ASM ideals (equivalently, 
 	    of ideals defined by partial ASMs) is again an ASM ideal.  The function @TO schubertAdd@ 
 	    automatically stores the ASM associated to this new ideal in its cache table.
@@ -227,7 +235,8 @@ doc ///
 	    isASMIdeal K'
 	    getASM K'
 	Text
-	    Additionally, this package facilitates the investigating homological invariants of ASM ideals
+	    Additionally, this package facilitates investigating homological invariants of ASM ideals
+	    such as regularity (@TO schubertRegularity@) and codimension (@TO schubertCodim@).
 	    efficiently by computing the associated invariants for their antidiagonal initial ideals,
 	    which are known to be squarefree by [Wei17]. Therefore the extremal Betti numbers
 	    (which encode regularity, depth, and projective dimension) of ASM ideals coincide 
@@ -260,6 +269,41 @@ doc ///
 		TO (permSetOfASM, Matrix),
 		TO (toOneLineNotation, Matrix)
 		}@
+    Subnodes
+	padASM
+	isPartialASM
+	partialASMToASM
+	rankTable
+	rotheDiagram
+	augmentedRotheDiagram
+	essentialSet
+	augmentedEssentialSet
+	schubertDeterminantalIdeal
+	fultonGens
+	entrywiseMinRankTable
+	entrywiseMaxRankTable
+	schubertDecompose
+	permSetOfASM
+	isASMIdeal
+	isASM
+	isASMUnion
+	getASM
+	isMinRankTable
+	rankTableToASM
+	rankTableFromMatrix
+	schubertIntersect
+	schubertAdd
+	ASMToMonotoneTriangle
+	monotoneTriangleToASM
+	ASMFullList
+	ASMRandomList
+	cohenMacaulayASMsList
+	nonCohenMacaulayASMsList
+	isIntersectionOfSchubertDeterminantalIdeals
+	isSchubertCM
+	KPolynomialASM
+	schubertCodim
+	schubertRegularity
 ///
 doc ///
     Key 
@@ -303,7 +347,7 @@ doc ///
             ", arXiv preprint 1708.07236."}
             }@
 	Text
-	    Given a permutation or a partial ASM, one may compute its antidiagonal initial ideal.
+	    Given a permutation or a partial ASM, one may compute its antidiagonal initial ideal via @TO antiDiagInit@.
 	    By [KM05] and [Wei17] or [Knu09], the Fulton generators form a Gröbner basis for any ASM ideal with respect to
 	    any antidiagonal term order.
         Example
@@ -319,7 +363,7 @@ doc ///
 	    (betti res I, betti res inI)
 	Text
 	    By work of Knutson and Miller [KM05], building off of work of Bergeron and Billey [BB93], the prime components of the antidiagonal initial ideal
-	    of a Schubert determinantal ideal for a permutation w are in bijection with the pipe dreams associated
+	    of a Schubert determinantal ideal for a permutation w are in bijection with the pipe dreams (see @TO PipeDream@) associated
 	    to w.  See [BB93] for a detailed description of pipe dreams, there called RC-graphs.
 	Example
 	    # pipeDreams w == # (decompose inI)
@@ -361,7 +405,13 @@ doc ///
 		TO (diagRevLexInit, Matrix),
 		TO (pipeDreams, List)
 		}@
-	
+    Subnodes
+	antiDiagInit
+	diagLexInitSE
+	diagLexInitNW
+	diagRevLexInit
+	subwordComplex
+	initialIdealsList
 ///
 
 doc ///
@@ -460,6 +510,28 @@ doc ///
 		TO (pipeDreams, List),
 		TO (pipeDreamsNonReduced, List),
 		}@
+    Subnodes
+	isPerm
+	permToMatrix
+	lastDescent
+	firstDescent
+	descentSet
+	permLength
+	inverseOf
+	longestPerm
+	toOneLineNotation
+	composePerms
+	isPatternAvoiding
+	isVexillary
+	avoidsAllPatterns
+	isCartwrightSturmfels
+	isCDG
+	rajcode
+	rajIndex
+	grothendieckPolynomial
+	schubertPolynomial
+	doubleSchubertPolynomial
+	PipeDream
 ///
 
 doc ///
@@ -561,7 +633,7 @@ doc ///
             
             tells us that the Fulton generators of each Schubert determinantal ideal form a Gröbner basis.  For an extension to ASM ideals, see  
 	    
-	    @UL {{"[KW]: Klein and Weigant, Bumpless pipe dreams encode Gröbner geometry of Schubert polynomials (see ", arXiv "2108.08370", ")."},}@
+	    @UL {{"[KW]: Klein and Weigandt, Bumpless pipe dreams encode Gröbner geometry of Schubert polynomials (see ", arXiv "2108.08370", ")."},}@
             
             @UL {{"[Wei]: Weigandt, Prism tableaux for alternating sign matrix varieties (see ", arXiv "1708.07236", ")."},}@
             
@@ -580,7 +652,7 @@ doc ///
         (rankTable, List)
         (rankTable, Matrix)
     Headline
-        compute a table of rank conditions that determines a Schubert determinantal ideal or, more generally, an alternating sign matrix ideal.
+        compute a table of rank conditions that determines the corresponding ASM or matrix Schubert variety
     Usage
         rankTable w
         rankTable A
@@ -630,7 +702,7 @@ doc ///
         (augmentedRotheDiagram, List)
         (augmentedRotheDiagram, Matrix)
     Headline
-        find the Rothe diagram of a partial alternating sign matrix together with the rank table determining the alternating sign matrix variety
+        find the Rothe diagram and rank table for a partial ASM or permutation
     Usage
         augmentedRotheDiagram w
         augmentedRotheDiagram A
@@ -656,7 +728,7 @@ doc ///
         (essentialSet, List)
         (essentialSet, Matrix)
     Headline
-        compute the essential set in the Rothe Diagram for a partial alternating sign matrix or a permutation.
+        compute the essential set in the Rothe Diagram for a partial ASM or a permutation.
     Usage
         essentialSet w
         essentialSet A
@@ -679,7 +751,7 @@ doc ///
         (augmentedEssentialSet, List)
         (augmentedEssentialSet, Matrix)
     Headline
-        find the essential set of a partial alternating sign matrix or a permutation together with the rank conditions determining the alternating sign matrix variety
+        find the essential set and rank conditions for a partial ASM or a permutation
     Usage
         augmentedEssentialSet w
         augmentedEssentialSet A
@@ -1055,7 +1127,7 @@ doc ///
         
 	    If the union of the matrix Schubert varieties of the input list of permutations is an ASM variety, it must be the ASM variety considered by this algorithm.
 	Example 
-            isASMUnion {{2,1,3,4},{4,2,3,1}} -- false 
+            isASMUnion {{2,1,3},{1,3,2}} -- false
             isASMUnion {{4,1,3,2},{3,4,1,2},{2,4,3,1}} -- true
 ///
 
@@ -1199,7 +1271,7 @@ doc ///
 	    
 	     @UL {{"[Wei, Section 3.5]: Weigandt, Prism tableaux for alternating sign matrix varieties (see ", arXiv "1708.07236", ")."},}@
 	    
-	     @UL {{"[KW, Lemma 2.6]: Klein and Weigant, Bumpless pipe dreams encode Gröbner geometry of Schubert polynomials (see ", arXiv "2108.08370", ")."},}@
+	     @UL {{"[KW, Lemma 2.6]: Klein and Weigandt, Bumpless pipe dreams encode Gröbner geometry of Schubert polynomials (see ", arXiv "2108.08370", ")."},}@
 	    
 	    The canonical rank table of the sum will be entrywise minimum of the rank tables of the summands.  This function computes the sum of ASM ideals by computing the individual rank tables, using entrywiseMinRankTable to find the entrywise minimum, and then constructing the partial ASM from that rank table.
 	    

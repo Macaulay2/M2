@@ -29,6 +29,7 @@ importFrom_Core {
     "raw",
     "degreeToHeft", 
     "rawBetti", 
+    "rawMinimalBetti",
     "rawStartComputation", 
     "rawGBSetStop", 
     "rawStatus1", 
@@ -36,9 +37,13 @@ importFrom_Core {
     "rawResolution",
     "rawResolutionGetFree", 
     "rawResolutionGetMatrix",
+    "unpackEngineBetti",
+    "generatorSymbols",
     "hasNoQuotients",
     "Computation"
     }
+
+importFrom_Core "Resolution"
 
 ResolutionObject = new Type of MutableHashTable
 ResolutionObject.synonym = "resolution object"
@@ -534,8 +539,12 @@ addHook((freeResolution, Module), resolutionInEngine, Strategy => Engine)
 addHook((freeResolution, Module), resolutionOverZZ, Strategy => OverZZ)
 addHook((freeResolution, Module), resolutionOverField, Strategy => OverField)
 
+-- TODO: compare this with the OverZZ strategy above
+-- c.f. https://github.com/Macaulay2/M2/issues/3785
+-- addHook((freeResolution, Module), Strategy => symbol LLL,
+--     (o, M) -> if ring M === ZZ then complex compress LLL presentation M)
 
-debug Core
+
 cechComplex = method()
 cechComplex MonomialIdeal := Complex => B -> (
     if not isSquareFree B then error "expected squarefree monomial ideal";

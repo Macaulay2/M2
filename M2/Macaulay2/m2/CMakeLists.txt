@@ -2,7 +2,7 @@
 ## This directory contains the rules for building M2-core
 
 set(CORE_DIR ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core)
-set(CORE_TESTS ${M2_DIST_PREFIX}/${M2_INSTALL_DOCDIR}/Core/tests)
+set(CORE_TESTS ${CORE_DIR}/tests)
 set(M2_ARGS -q --silent --stop -e errorDepth=0 --no-preload)
 
 # List of Core sources
@@ -42,7 +42,7 @@ add_custom_command(OUTPUT ${CORE_DIR}/tvalues.m2
 configure_file(version.m2.in ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/version.m2 @ONLY)
 
 foreach(filename IN LISTS M2LIST ITEMS
-    ${CMAKE_CURRENT_BINARY_DIR}/startup.m2 Core.m2 loadsequence)
+    ${CMAKE_CURRENT_BINARY_DIR}/startup.m2 Core.m2 exports.m2 loadsequence)
   file(COPY ${filename} DESTINATION ${CORE_DIR})
 endforeach()
 

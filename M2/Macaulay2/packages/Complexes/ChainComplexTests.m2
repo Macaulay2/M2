@@ -913,7 +913,7 @@ TEST ///
   assert(coker f == 0)
   assert(kernel HH f == 0)
   assert(cokernel HH f == 0)
-  assert(resolution C == source f)
+  assert(freeResolution C == source f)
 ///
 
 TEST ///
@@ -1097,9 +1097,9 @@ TEST ///
   assert(coker f == 0)
   assert(kernel HH f == 0)
   assert(cokernel HH f == 0)
-  assert(resolution C == source f)
+  assert(freeResolution C == source f)
   assert(isFree source f)
-  D = resolution C
+  D = freeResolution C
   prune HH C
 
   MD = minimize D;
@@ -1115,7 +1115,7 @@ TEST ///
 
   I = ideal"b2-ac,c2-bd,bcd-ad2"
   C = Hom(freeResolution I, R^1/I)
-  elapsedTime D = resolution C;
+  elapsedTime D = freeResolution C;
   
   C1 = complex for i from -2 to 0 list dd^D_i
   isWellDefined C1
@@ -2073,7 +2073,7 @@ needsPackage "Complexes"
 ///
 
 TEST ///
-  -- example of computing part.
+  -- example of computing basis and part.
 -*
   restart
   needsPackage "Complexes" 
@@ -2094,16 +2094,19 @@ TEST ///
   assert isWellDefined part(2, F)
   assert(ring part(2, F) === kk)
 
-  assert (C = part(6, F); 
-      (for i from 0 to length C list rank C_i) == {84, 125, 54, 1})
-  assert isWellDefined part(6, F)
+  C = part(6, F)
+  D = basis(6, F)
+  assert isWellDefined C
+  assert isWellDefined D
+  assert({84, 125, 54, 1} == apply(length C + 1, i -> rank C_i))
+  assert({84, 125, 54, 1} == apply(length D + 1, i -> rank cover D_i))
 
   kk = ZZ/32003[s,t]
   S = kk[a..d]
   psi = map(kk, S)
   I = ideal"sab, tad, (s-t)bc, tc3"
 
-  isHomogeneous I
+  assert isHomogeneous I
   F = freeResolution comodule I
 
   assert(part(-10, F) == 0)
@@ -2126,8 +2129,19 @@ TEST ///
   assert(ring part(6, F) === kk)
 
   C = part(2, F)
-  dd^C
-  isHomogeneous dd^C_1 -- want this to be true.
+  D = basis(2, F)
+  assert isHomogeneous C
+  assert isHomogeneous D
+  assert isHomogeneous dd^C
+  assert isHomogeneous dd^D
+
+  f = id_F;
+  g = part(2, f)
+  h = basis(2, f)
+  assert isHomogeneous g
+  assert isHomogeneous h
+  assert isCommutative g
+  assert isCommutative h
 ///
 
 TEST ///  
@@ -2206,7 +2220,7 @@ needsPackage "Complexes"
 *-
   R = QQ[x];
   X = complex(R^1) ++ complex(R^1)[-2]
-  resolution X
+  freeResolution X
 ///
 
 TEST ///
@@ -2216,8 +2230,8 @@ needsPackage "Complexes"
 *-
   R = QQ[x];
   X = complex({map(R^1,R^2,matrix{{1_R,1_R}})})
-  resolution X
-  resolution(minimize X)
+  freeResolution X
+  freeResolution(minimize X)
 ///
 
 TEST ///

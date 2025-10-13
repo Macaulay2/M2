@@ -8,14 +8,14 @@ namespace M2 {
 
 ARingQQFlint::ARingQQFlint()
 {
-  flint_randinit(mRandomState);
+  FLINT_RAND_INIT(mRandomState);
   mMaxHeight = 50;
 }
 
 // This function will likely not ever get called.
 ARingQQFlint::~ARingQQFlint()
 {
-  flint_randclear(mRandomState);
+  FLINT_RAND_CLEAR(mRandomState);
 }
 
 void ARingQQFlint::eval(const RingMap* map,

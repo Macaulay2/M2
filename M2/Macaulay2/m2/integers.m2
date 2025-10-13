@@ -51,10 +51,15 @@ gcd(QQ,ZZ) := QQ => (y,x) -> gcd(x * denominator y, numerator y) / denominator y
 gcd(QQ,QQ) := QQ => (x,y) -> (
      d := denominator x * (denominator y // gcd(denominator x, denominator y));
      gcd(numerator (x * d), numerator (y * d)) / d)
+gcd ZZ := gcd QQ := identity
 
 abs = method()
 abs ZZ := abs RR := abs RRi := abs CC := abs QQ := abs0
 abs Constant := abs @@ numeric
+
+sign = method()
+sign Number := sign0
+sign Constant := sign @@ numeric
 
 lcm = method(Binary => true)
 installMethod(lcm, () -> 1)
@@ -68,6 +73,7 @@ lcm(QQ,QQ) := (f,g) -> (
     d := gcd(f, g);
     if d == 0 then 0_QQ
     else abs f * (abs g / d))
+lcm ZZ := lcm QQ := identity
 
 odd  = x -> 1 === x%2
 even = x -> 0 === x%2
@@ -89,6 +95,11 @@ ZZ & ZZ := ZZ => lookup(symbol &, ZZ, ZZ)
 
 ZZ ^^ ZZ := bitxorfun
 Boolean xor Boolean := (x, y) -> x and not y or not x and y
+
+Function and Function := (f, g) -> s -> f s and g s
+Function or  Function := (f, g) -> s -> f s or  g s
+Function xor Function := (f, g) -> s -> f s xor g s
+not Function := f -> s -> not f s
 
 ZZ~ := bitnotfun
 

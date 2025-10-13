@@ -1,21 +1,18 @@
 // Copyright 2004-2021 Michael E. Stillman
 
-#ifndef __f4spairs_h_
-#define __f4spairs_h_
+#pragma once
 
+#include <queue>                     // for std::priority_queue
+#include "MemoryBlock.hpp"           // for MemoryBlock
 #include "f4/f4-types.hpp"           // for spair (ptr only), gb_array, pre_...
 #include "f4/memblock.hpp"           // for F4MemoryBlock
 #include "f4/moninfo.hpp"            // for MonomialInfo (ptr only), packed_...
 #include "f4/varpower-monomial.hpp"  // for varpower_word
-#include "newdelete.hpp"             // for our_new_delete
-class stash;
 
-class F4SPairSet : public our_new_delete
+class F4SPairSet
 {
  private:
-  int determine_next_degree(int &result_number);
-
-  spair *make_spair(spair_type type,
+  spair *make_spair(SPairType type,
                     int deg,
                     int i,
                     int j);  // CAUTION: lcm is allocated correctly, but is
@@ -31,8 +28,12 @@ class F4SPairSet : public our_new_delete
   int construct_pairs(bool remove_disjoints);
 
  public:
-  F4SPairSet(const MonomialInfo *MI0, const gb_array &gb0);
-
+#if defined(WITH_TBB)
+  F4SPairSet(const MonomialInfo *MI0, const gb_array &gb0,mtbb::task_arena& scheduler);
+#else
+  F4SPairSet(const MonomialInfo *MI0, const gb_array &gb0);  
+#endif
+  
   ~F4SPairSet();
 
   void insert_generator(int deg, packed_monomial lcm, int column);
@@ -45,16 +46,20 @@ class F4SPairSet : public our_new_delete
   int find_new_pairs(bool remove_disjoints);
   // returns the number of new pairs found, using the last element on this list
 
-  int prepare_next_degree(int max, int &result_number);
+  std::pair<bool,int> setThisDegree();
+  
+  // int prepare_next_degree(int max, int &result_number);
   // Returns the (sugar) degree being done next, and collects all (or at
   // most 'max', if max>0) spairs in this lowest degree.
   // Returns the degree, sets result_number.
   // These spairs are not sorted in any way.  Should they be?
 
-  spair *get_next_pair();
+  std::pair<bool,spair> get_next_pair();
   // get the next pair in this degree (the one 'prepare_next_degree' set up')
-  // returns 0 if at the end
 
+  // discard all of the spairs in the current set degree
+  void discardSPairsInCurrentDegree();
+  
   void display_spair(spair *p);
   // A debugging routine which displays an spair
 
@@ -65,22 +70,37 @@ class F4SPairSet : public our_new_delete
   // Returns how many pairs were created, then later removed due to
   // spair criteria.
 
+  size_t numberOfSPairs() const { return mSPairs.size(); }
+
+  double secondsToMinimizePairs() const { return mMinimizePairsSeconds; }
+  double secondsToCreatePrePairs() const { return mPrePairsSeconds; }
  private:
   F4MemoryBlock<pre_spair> PS;      // passed to constructor routine
   F4MemoryBlock<varpower_word> VP;  // used for constructing new pairs
+  MemoryBlock mSPairLCMs;  // used for spair lcms  
+  
   int max_varpower_size;
 
   const MonomialInfo *M;
   const gb_array &gb;
-  spair *heap;  // list of pairs
-  spair *this_set;
-  stash *spair_stash;
+
+  std::vector<spair> mSPairs;
+  SPairCompare mSPairCompare;
+  std::priority_queue<size_t,std::vector<size_t>,SPairCompare> mSPairQueue;
+
+  long mThisDegree;
 
   // stats
   long nsaved_unneeded;
+  double mMinimizePairsSeconds;
+  double mPrePairsSeconds;
+
+#if defined (WITH_TBB)
+  mtbb::task_arena& mScheduler;
+#endif
+  
 };
 
-#endif
 
 // Local Variables:
 //  compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

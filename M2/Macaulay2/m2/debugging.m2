@@ -42,7 +42,7 @@ on = { CallLimit => 100000, Name => null, GenerateAssertions => false } >> opts 
      fb := functionBody f;
      calldepth := 0;
      totaltime := 0.;
-     if not callCount#?fb then callCount#fb = 0;
+     callCount#fb ??= 0;
      limit := opts.CallLimit;
      if not instance(f, Function) then error("expected a function");
      fn := if opts.Name =!= null then opts.Name else try toString f else "-*function*-";
@@ -135,7 +135,7 @@ show1(Sequence,Function) := show1(List,Function) := (types,pfun) -> (
 --	  if hasAttribute(v,PrintNet) then v = getAttribute(v,PrintNet) else
 --	  if hasAttribute(v,PrintNames) then v = getAttribute(v,PrintNames) else
 --	  if hasAttribute(v,ReverseDictionary) then v = getAttribute(v,ReverseDictionary);
-	  if w#?v then w#v else w#v = new Descent
+	  w#v ??= new Descent
 	  );
      scan(types, install);
      world)
@@ -233,17 +233,31 @@ generateAssertions List := y -> (
 	       else lin
 	       )))^-1
 
+-----------------------------------------------------------------------------
+-- FilePosition and currentPosition
+-----------------------------------------------------------------------------
+
 -- FilePosition = new Type of BasicList -- defined in d
 FilePosition.synonym = "file position"
+
+-- TODO: add FilePosition(String, ZZ, ZZ) and FilePosition(String)
 toExternalString FilePosition :=
 toString FilePosition :=
 net FilePosition := p -> concatenate(
     if match(" ", p#0) then format p#0 else p#0,
     ":",toString p#1,":",toString p#2,
-    if #p>3 then ("-",toString p#3,":",toString p#4),
---    if #p>5 then (" (",toString p#5,":",toString p#6,")")
+    if #p==4 then (":(",toString p#3,")")
+    else if #p>=5 then ("-",toString p#3,":",toString p#4)
     )
+
+String | FilePosition := (s, p) -> s | toString p
+FilePosition | String := (p, s) -> toString p | s
+
 currentPosition = () -> new FilePosition from { currentFileName, currentRowNumber(), currentColumnNumber() }
+
+-----------------------------------------------------------------------------
+-- locate
+-----------------------------------------------------------------------------
 
 locate' = locate -- defined in d/actors4.d
 locate = method(Dispatch => Thing, TypicalValue => FilePosition)

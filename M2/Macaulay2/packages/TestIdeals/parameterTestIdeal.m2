@@ -8,7 +8,7 @@
 --This function computes the parameter test module of a ring, it returns it as a submodule of a canonical ideal.
 --this is a slightly modified function originally written by Moty Katzman for "Parameter test ideals of Cohen Macaulay rings"
 --it returns the lift of the canonical module to the ambient ring
---needsPackage "Divisor";
+--needsPackage "WeilDivisors";
 
 canonicalIdeal = method( Options => { Attempts => 10 } )
 

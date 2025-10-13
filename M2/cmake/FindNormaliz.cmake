@@ -71,6 +71,17 @@ if(NOT NORMALIZ_FOUND)
   # find the Normaliz executable
   find_program(NORMALIZ_EXECUTABLE NAMES normaliz)
 
+  # ensure that it runs
+  if(NORMALIZ_EXECUTABLE)
+    execute_process(
+      COMMAND ${NORMALIZ_EXECUTABLE} --version
+      RESULT_VARIABLE NORMALIZ_RESULT
+      OUTPUT_QUIET ERROR_QUIET)
+    if(NOT NORMALIZ_RESULT EQUAL "0")
+      unset(NORMALIZ_EXECUTABLE CACHE)
+    endif()
+  endif()
+
   if(NOT NORMALIZ_INCLUDE_DIR)
     find_path(NORMALIZ_INCLUDE_DIR NAMES libnormaliz/version.h
       HINTS ENV NORMALIZDIR

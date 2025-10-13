@@ -1018,7 +1018,7 @@ peek M.cache#(ResolutionContext{}).Result.Resolution.RawComputation
 -- Some benchmark examples for testing parallelism of Schreyer res code.
 
   -- I = Grassmannian(2, 5, CoefficientRing => ZZ/101)
-  -- I = Grassmannian(1, 6, CoefficientRing => ZZ/101)
+  I = Grassmannian(1, 6, CoefficientRing => ZZ/101)
 
   I = Grassmannian(1, 7, CoefficientRing => ZZ/101)
   debug Core
@@ -1048,3 +1048,15 @@ peek M.cache#(ResolutionContext{}).Result.Resolution.RawComputation
   elapsedTime freeResolution(ideal I_*, Strategy => Nonminimal)
   elapsedTime C = freeResolution(ideal I_*, Strategy => Nonminimal, ParallelizeByDegree => true)
 
+  restart
+  I = Grassmannian(2, 6, CoefficientRing => ZZ/101)
+  poincI = poincare ideal I_*
+  R = ring I
+  elapsedTime gens gb(ideal I_*, Algorithm => LinearAlgebra, Hilbert => poincI);
+  
+  restart
+  R = ZZ/101[a..g]
+  I = ideal random(R^1,R^{4:-4});
+  poincI = poincare ideal (a^4, b^4, c^4, d^4);
+  elapsedTime Igb = gens gb(ideal I_*, Algorithm => LinearAlgebra);
+  elapsedTime gens gb(ideal I_*, Algorithm => LinearAlgebra, Hilbert => poincI);  

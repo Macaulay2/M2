@@ -103,6 +103,7 @@ Computation /* or null */ *IM2_GB_make(
     {
       test_over_RR_or_CC(m->get_ring());
       clear_emit_size();
+      int numThreads = M2_numTBBThreads; // settable from front end.
       return GBComputation::choose_gb(m,
                                       collect_syz,
                                       n_rows_to_keep,
@@ -111,6 +112,7 @@ Computation /* or null */ *IM2_GB_make(
                                       max_degree,
                                       algorithm,
                                       strategy,
+                                      numThreads,
                                       max_reduction_count);
   } catch (const exc::engine_error& e)
     {
@@ -789,6 +791,7 @@ const Matrix *rawMGB(
       if (not P->getCoefficientRing()->isFinitePrimeField())
         {
           ERROR("coefficients for mathic gb computation must be a prime field");
+          return nullptr;
         }
       int charac = static_cast<int>(P->characteristic());
       int nvars = P->n_vars();
@@ -837,7 +840,7 @@ const Matrix *rawMGB(
 
       if (component_is_before_row >= 0)
         configuration.setComponentBefore(component_is_before_row);
-      configuration.setComponentsAscending(component_direction == 1);
+      configuration.setComponentsAscending(component_direction == 1); // BUG: what if descending??
 
 #if 0
     // Debug information
@@ -845,6 +848,8 @@ const Matrix *rawMGB(
     for (size_t i=0; i<mat.size(); i++) printf("%d ", mat[i]);
     printf("\n");
     printf("  Base=%d\n", base_is_revlex);
+    printf("  ComponentBefore=%d\n", component_is_before_row);
+    std::cout << "componentBefore: " << configuration.componentBefore() << std::endl;
 #endif
 
       mgb::GroebnerInputIdealStream input(configuration);

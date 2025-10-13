@@ -41,12 +41,12 @@ void addMultipleTo(DMatZZpFFPACK& C,
                n,
                k,
                a,
-               A.array(),
+               A.rowMajorArray(),
                A.numColumns(),
-               B.array(),
+               B.rowMajorArray(),
                B.numColumns(),
                b,
-               C.array(),
+               C.rowMajorArray(),
                C.numColumns());
 }
 
@@ -84,7 +84,7 @@ size_t rank(const DMatZZpFFPACK& mat)
   size_t result = FFPACK::Rank(mat.ring().field(),
                                mat.numRows(),
                                mat.numColumns(),
-                               N.array(),
+                               N.rowMajorArray(),
                                mat.numColumns());
   return result;
 }
@@ -105,7 +105,7 @@ void determinant(const DMatZZpFFPACK& mat, ZZpFFPACK::ElementType& result_det)
       result_det = FFPACK::Det(mat.ring().field(),
                                det,
                                mat.numRows(),
-                               N.array(),
+                               N.rowMajorArray(),
                                mat.numColumns());
     }
 }
@@ -129,7 +129,7 @@ bool inverse(const DMatZZpFFPACK& mat, DMatZZpFFPACK& result_inv)
   size_t n = mat.numRows();
   int nullspacedim;
   FFPACK::Invert2(
-      mat.ring().field(), n, N.array(), n, result_inv.array(), n, nullspacedim);
+      mat.ring().field(), n, N.rowMajorArray(), n, result_inv.rowMajorArray(), n, nullspacedim);
   return (nullspacedim == 0);
 }
 
@@ -152,7 +152,7 @@ size_t nullSpace(const DMatZZpFFPACK& mat, DMatZZpFFPACK& nullspace)
                          (right_side ? FFLAS::FflasRight : FFLAS::FflasLeft),
                          nr,
                          nc,
-                         N.array(),
+                         N.rowMajorArray(),
                          nc,
                          nullspaceFFPACK,
                          nullspace_leading_dim,
@@ -174,7 +174,7 @@ size_t nullSpace(const DMatZZpFFPACK& mat, DMatZZpFFPACK& nullspace)
   else
     nullspace.resize(nullspace_dim, nr);
 
-  std::swap(nullspace.array(), nullspaceFFPACK);
+  std::swap(nullspace.rowMajorArray(), nullspaceFFPACK);
 
   delete[] nullspaceFFPACK;
   return nullspace_dim;
@@ -210,11 +210,11 @@ bool solveLinear(const DMatZZpFFPACK& A,
                 a_rows,
                 a_cols,
                 (right_side ? b_cols : b_rows),
-                copyA.array(),
+                copyA.rowMajorArray(),
                 a_cols,  // leading dim of A
-                X.array(),
+                X.rowMajorArray(),
                 x_cols,
-                copyB.array(),
+                copyB.rowMajorArray(),
                 b_cols,
                 &info);
 
@@ -245,14 +245,14 @@ M2_arrayintOrNull rankProfile(const DMatZZpFFPACK& mat, bool row_profile)
     rk = FFPACK::RowRankProfile(mat.ring().field(),
                                 mat.numRows(),
                                 mat.numColumns(),
-                                N.array(),
+                                N.rowMajorArray(),
                                 mat.numColumns(),
                                 prof);
   else
     rk = FFPACK::ColumnRankProfile(mat.ring().field(),
                                    mat.numRows(),
                                    mat.numColumns(),
-                                   N.array(),
+                                   N.rowMajorArray(),
                                    mat.numColumns(),
                                    prof);
 
@@ -276,14 +276,14 @@ void rankProfile(const DMatZZpFFPACK& mat,
     rk = FFPACK::RowRankProfile(mat.ring().field(),
                                 mat.numRows(),
                                 mat.numColumns(),
-                                N.array(),
+                                N.rowMajorArray(),
                                 mat.numColumns(),
                                 prof);
   else
     rk = FFPACK::ColumnRankProfile(mat.ring().field(),
                                    mat.numRows(),
                                    mat.numColumns(),
-                                   N.array(),
+                                   N.rowMajorArray(),
                                    mat.numColumns(),
                                    prof);
 

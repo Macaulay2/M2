@@ -1,19 +1,8 @@
 document {
-    Key => submatrix,
-    Subnodes => TO \ {
-	submatrix',
-	submatrixByDegrees,
-	(submatrix, Matrix, VisibleList),
-	(submatrix, Matrix, VisibleList, VisibleList),
+    Key => {
 	(symbol _, Matrix, List),
-	(symbol ^, Matrix, List),
-	(symbol _, Matrix, Array),
-	(symbol ^, Matrix, Array)
-	},
-     }
-
-document {
-     Key => (symbol _, Matrix, List),
+	(symbol _, MutableMatrix, List),
+    },
      Headline => "select columns",
      Usage => "f_cols",
      Inputs => {
@@ -34,7 +23,11 @@ document {
      SeeAlso => {submatrix, (symbol ^, Matrix, List)}
      }
 document {
-     Key => (symbol ^, Matrix, List),
+    Key => {
+	(symbol ^, Matrix, List),
+	(symbol ^, MutableMatrix, List),
+	(symbol ^, Vector, List),
+    },
      Headline => "select rows",
      Usage => "f_rows",
      Inputs => {
@@ -67,6 +60,7 @@ undocumented {
 -- FIXME: these cannot be documented because of a bug in document.m2
 document {
      Key => {
+	  submatrix,
 --	 (submatrix, Matrix, Nothing, VisibleList),
 --	 (submatrix, Matrix, VisibleList, Nothing),
 	 (submatrix, Matrix, VisibleList, VisibleList),

@@ -12,7 +12,7 @@ class MatrixConstructor;
 class PolynomialRing;
 class RingElement;
 
-class HilbertController
+class HilbertController : public our_new_delete
 {
  public:
   HilbertController(const FreeModule *F0, const RingElement *hf);

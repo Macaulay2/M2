@@ -10,11 +10,11 @@ newPackage(
 	  {Name => "Lily Silverstein", Email => "lsilverstein@cpp.edu", HomePage => "https://www.cpp.edu/faculty/lsilverstein/"}
 	  },
      Headline => "some additional ChainComplex Functions",
+     PackageExports => {"OldChainComplexes"},
      Keywords => {"Homological Algebra"},
      DebuggingMode =>false
      )
 
-export "isExact"
 export "isChainComplex"
 export "isChainComplexMap"
 export "isQuasiIsomorphism"
@@ -24,7 +24,7 @@ export "taylor"
 export "taylorResolution"
 export "chainComplexMap"
 export "InitialDegree"
-export "minimize"
+--export "minimize"
 export "isMinimalChainComplex"
 export "extendFromMiddle"
 export "resolutionOfChainComplex"
@@ -287,8 +287,8 @@ chainComplexMap(ChainComplex,ChainComplex,List):= o -> (D,C,maps) -> (
    F
 )
 
-isExact=method(Options => {LengthLimit => infinity})
-isExact(ChainComplex):= o -> (C) -> (
+--isExact=method(Options => {LengthLimit => infinity})
+isExact(ChainComplex):= { LengthLimit => infinity } >> o -> (C) -> (
    if all((min C,min(max C,o.LengthLimit)), i -> (prune HH_i(C) == 0)) then true else false
 )
 
@@ -484,7 +484,6 @@ nonzeroMax ChainComplex := (cacheValue symbol nonzeroMax)(C -> (
    complete C;
    max for i from min C to max C list if C_i == 0 then continue else i))
 
-minimize = method ()
 minimize ChainComplex := E ->(
     --To simplify the notation consider the complex C = E[min E] that
     --is shifted so that the first nonzero module is C_0.
@@ -806,7 +805,7 @@ document {
      }
 
 document {
-     Key => {isExact, (isExact,ChainComplex)},
+     Key => {(isExact,ChainComplex)},
      Headline => "Test to see if the ChainComplex is exact.",
      Usage => "isExact(F)",
      Inputs => {
@@ -996,11 +995,11 @@ doc ///
      isQuasiIsomorphism(m, LengthLimit=> 10)
      isQuasiIsomorphism(m, LengthLimit => 12)
    SeeAlso
-    isExact
+    (isExact, ChainComplex)
 ///
 doc ///
    Key
-    [isExact,LengthLimit]
+    [(isExact, ChainComplex),LengthLimit]
    Headline
     Option to check exactness only up to a particular homological degree
    Usage
@@ -1137,12 +1136,11 @@ document {
 	  betti source resolutionOfChainComplex C
 	  betti source cartanEilenbergResolution C
         SeeAlso
-	 minimize
+	 (minimize, ChainComplex)
      ///
 
 doc ///
    Key
-    minimize
     (minimize, ChainComplex)
    Headline
     minimal quotient complex of a free ChainComplex 

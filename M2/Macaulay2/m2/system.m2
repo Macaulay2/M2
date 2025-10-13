@@ -77,6 +77,7 @@ sampleInitFile := ///-- This is a sample init.m2 file provided with Macaulay2.
 
 readmeFile := ///Welcome to Macaulay2!
 
+-- TODO: move this to a node titled "application directory"
 This directory is used to contain data and code specific to Macaulay2.  For
 example, your initialization file, init.m2, is in this directory, and is
 automatically loaded upon startup of Macaulay2, unless you use the "-q" option.
@@ -142,9 +143,13 @@ exit = Command exitMethod
 -----------------------------------------------------------------------------
 
 setRandomSeed = method(Dispatch => Thing)
-setRandomSeed ZZ := seed -> randomSeed = seed		    -- magic assignment, calls rawSetRandomSeed internally
+setRandomSeed ZZ := seed -> (
+    printerr("setting random seed to ", toString seed);
+    randomSeed = seed) -- magic assignment, calls rawSetRandomSeed internally
 setRandomSeed String := seed -> setRandomSeed fold((i,j) -> 101*i + j, 0, ascii seed)
-setRandomSeed Sequence := seed -> if seed === () then rawRandomInitialize() else setRandomSeed hash seed
+setRandomSeed Sequence := seed -> if seed === () then (
+    printerr("initializing random seed");
+    rawRandomInitialize()) else setRandomSeed hash seed
 
 -----------------------------------------------------------------------------
 -- Layouts

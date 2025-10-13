@@ -38,8 +38,6 @@ set +x && cd "$1" && echo make: Entering directory \'`pwd`\' && set -x
 endef
 
 # terminology:
-#   subdirectories of the source tree
-#     usr-build  -- install tools needed for rebuilding the configure script here, if needed
 #   subdirectories of the build tree
 #     usr-host   -- install the results of compilation of libraries and programs here, for the target machine
 #     usr-dist   -- place copies of everything needed in the final Macaulay2 distribution here, for the target machine
@@ -64,7 +62,6 @@ clean:
 	rm -f M2 srcdir .link-test srcdir confdefs.h configure.lineno conftest.* include/config.h
 	rm -rf usr-dist conf_* usr-host
 	rm -f pre-install.sh post-install.sh normal-install.sh
-	if [ -f Makefile ] ; then $(MAKE) -f Makefile clean-tools ; fi
 
 install: configured; $(MAKE) -C distributions $@
 @srcdir@/configure : @srcdir@/configure.ac @srcdir@/m4/files; @srcdir@/autogen.sh
@@ -104,14 +101,14 @@ srcdir:
 	echo "@srcdir@/" >$@
 subst: config.status ; ./config.status
 show: config.status
-	<$< sed -e 's/\\\n//' |egrep '^[SD]\["' | sed -e 's/^S."\(.*\)"\]="\(.*\)"$$/\1=\2/' -e 's/^D."\(.*\)"\]="\(.*\)"$$/#define \1 \2/' -e 's/\\"/"/g'
+	<$< sed -e 's/\\\n//' |grep -E '^[SD]\["' | sed -e 's/^S."\(.*\)"\]="\(.*\)"$$/\1=\2/' -e 's/^D."\(.*\)"\]="\(.*\)"$$/#define \1 \2/' -e 's/\\"/"/g'
 CONFIG_FILES = @srcdir@/configure @srcdir@/install-sh @srcdir@/config.sub @srcdir@/config.guess @srcdir@/m4/files
 reconfigure-top-only: recheck check-for-undefined-configure-variables protect-configs
 protect-configs:
 	 @ chmod a-w $(shell cat @srcdir@/m4/files)
 check-for-undefined-configure-variables:
 	: "checking for strings that look like undefined configure variables in all *.in files..."
-	@ if egrep -nH '@[A-Za-z_]+@' $(shell cat @srcdir@/m4/files) | sed -e 's=^\([^:]*\):=@srcdir@/\1.in:=' | egrep . ;	\
+	@ if grep -EnH '@[A-Za-z_]+@' $(shell cat @srcdir@/m4/files) | sed -e 's=^\([^:]*\):=@srcdir@/\1.in:=' | grep -E . ;	\
 	  then exit 1;														\
 	  fi
 configure-help: $(CONFIG_FILES) ; @ @srcdir@/configure --help
@@ -137,7 +134,7 @@ announce:
 	@ echo "================================================================="
 	@ echo "    Macaulay2 version @PACKAGE_VERSION@"
 	@ echo "    OS=@OS@ ISSUE=@ISSUE@ ARCH=@ARCH@"
-	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@"
+	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@"
 	@ echo "================================================================="
 
 help:
@@ -145,7 +142,7 @@ help:
 	@ echo ""
 	@ echo "make files configured with:"
 	@ echo "    OS=@OS@ ISSUE=@ISSUE@ ARCH=@ARCH@"
-	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@"
+	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@"
 	@ echo ""
 	@ echo "Macaulay2 executable location:"
 	@ echo "   @pre_bindir@/M2@EXE@"
@@ -195,7 +192,6 @@ help:
 	@ echo "                      (currently ${prefix})"
 	@ echo "  exec_prefix=...     installation prefix for architecture dependent files"
 	@ echo "                      (currently ${exec_prefix})"
-	@ echo "  ENCAP=yes           install in ${prefix}/@package@ instead"
 	@ echo "  MAPFILE=yes         create a mapfile when linking M2"
 	@ echo "  DESTDIR=/Foo/Bar    install in /Foo/Bar${prefix} instead"
 # Local Variables:

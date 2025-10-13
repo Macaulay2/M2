@@ -1,5 +1,7 @@
 document { 
-     Key => {installAssignmentMethod,
+    Key => {
+	"installing assignment methods",
+	 installAssignmentMethod,
 	  (installAssignmentMethod,Symbol,HashTable,Option),
 	  (installAssignmentMethod,Symbol,HashTable,HashTable,Option),
 	  (installAssignmentMethod,Symbol,HashTable,Function),

@@ -54,10 +54,6 @@ isMember(A,RRi) := (N,M) -> subsetRRi(N,M);
 
 isSubset(RRi,RRi) := (N,M) -> subsetRRi(N,M);
 
--- TODO: now that intersect is a binary method with arbitrary options, we can remove this
-intersection(RRi,RRi) := {Precision => -1} >> opts -> (N,M) -> (
-    intersect(N, M, opts))
-
 -- intersect is an associative binary method, so it works on arbitrary lists and sequences
 intersect RRi       := RRi => { Precision => -1 } >> opts -> identity
 intersect(RRi, RRi) := RRi => { Precision => -1 } >> opts -> (N, M) -> (

@@ -2,12 +2,15 @@
 --- author(s): 
 --- notes: 
 
--- TODO: (sort,List,Function)
-
 document { 
      Key => sort,
      Headline => "sort a list or columns of a matrix",
-     SeeAlso => {rsort, sortColumns, symbol<=, symbol?}
+     SeeAlso => {rsort, sortColumns, symbol<=, symbol?},
+     Subnodes => {
+	 TO (sort, List),
+	 TO (sort, Matrix),
+	 TO sortColumns,
+         },
      }
 document { 
      Key => (sort,Matrix),
@@ -42,10 +45,16 @@ document {
 	  "options sort",
 	  "sort(m, DegreeOrder=>null, MonomialOrder=>Descending)"
 	  },
-     SeeAlso => {sortColumns}
+     SeeAlso => {sortColumns},
+     Subnodes => {
+	 TO [sort, MonomialOrder],
+	 TO [sort, DegreeOrder],
+	 TO Ascending,
+	 TO Descending
+         },
      }
 document { 
-     Key => {(sort,List)},
+     Key => {(sort,List), (sort, List, Function)},
      Headline => "sort a list",
      Usage => "sort v",
      Inputs => { "v" },
@@ -120,3 +129,17 @@ document {
 	  the elements of a list"},
      SeeAlso => {}
      }
+
+document {
+    Key => Ascending,
+    Headline => "specify ascending order",
+    TT "Ascending", " -- a symbol used as a value for optional
+    arguments ", TO "DegreeOrder", " and ", TO "MonomialOrder", "."
+}
+
+document {
+    Key => Descending,
+    Headline => "specify descending order",
+    TT "Descending", " -- a symbol used as a value for optional
+    arguments ", TO "DegreeOrder", " and ", TO "MonomialOrder", "."
+}

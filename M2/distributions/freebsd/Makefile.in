@@ -55,7 +55,7 @@ T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --f
 	touch $@
 
 libraries-used : files/bin/M2@EXE@
-	ldd files/bin/M2@EXE@ | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
+	ldd files/bin/M2@EXE@ | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | grep -E '^/' >$@ || true
 files-used: Makefile
 	for i in @FILE_PREREQS@ ; do echo $i ; done >$@
 packages-used : libraries-used files-used

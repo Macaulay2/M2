@@ -8,6 +8,7 @@ newPackage(
 	     {Name => "Kristine Jones", Email => "kejones84@gmail.com"}},
 	Headline => "computing Groebner loci in Hilbert schemes",
         PackageImports => {"Elimination"},
+        PackageExports => {"OldChainComplexes"},
     	DebuggingMode => false,
 	Keywords => {"Commutative Algebra"}
     	)

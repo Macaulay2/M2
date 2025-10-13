@@ -266,3 +266,16 @@ diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-llvm-eigen/lib
    next=list;
    list=this;
    */
+# Avoid "Assertion '__n < this->size()' failed" in gfanMixedVolume example
+# when gfan is compiled with -D_GLIBCXX_ASSERTIONS (e.g., in RHEL 10 rpm)
+--- a/src/gfanlib_mixedvolume.cpp
++++ gfan0.6.2/src/gfanlib_mixedvolume.cpp
+@@ -5,6 +5,8 @@
+  *      Author: anders
+  */
+ 
++#undef _GLIBCXX_ASSERTIONS
++
+ #include "gfanlib_mixedvolume.h"
+ 
+ #include "gfanlib_circuittableint.h"

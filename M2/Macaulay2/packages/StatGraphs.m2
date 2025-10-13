@@ -1514,7 +1514,8 @@ TEST ///
 -- Tests for isCyclic(Mixed Graph) 
 --------------------------------------------
 
-TEST /// 
+TEST ///
+-- no-check-flag (see discussion at https://github.com/Macaulay2/M2/pull/3628)
 	   U = graph{{1,2},{2,3},{3,4},{1,4},{1,5}}
 	   D = digraph{{2,1},{3,1},{7,8}}
 	   B = bigraph{{1,5}}

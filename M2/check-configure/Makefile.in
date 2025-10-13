@@ -18,8 +18,8 @@ check-config:
 	    @abs_top_srcdir@/configure						\
 	    PKG_CONFIG_PATH=$(BUILTLIBPATH)/lib/pkgconfig:$(PKG_CONFIG_PATH)	\
 	    GFTABLESDIR=@PRE_GFTABLESDIR@					\
-	    LDFLAGS="@BUILTLIBS@ $(LDFLAGS)"					\
-	    --with-gtest-source-path="@GTEST_PATH@"				\
+	    LDFLAGS="$(LDFLAGS)"						\
+	    LIBS="@BUILTLIBS@"							\
 	    CPPFLAGS="$(CPPFLAGS)"						\
 	    CC="$(CC)"								\
 	    CXX="$(CXX)"							\

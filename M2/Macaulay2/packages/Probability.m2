@@ -12,9 +12,7 @@
 -- GNU General Public License for more details.
 
 -- You should have received a copy of the GNU General Public License
--- along with this program; if not, write to the Free Software
--- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
--- 02110-1301, USA.
+-- along with this program; if not, see <https://www.gnu.org/licenses/>.
 
 newPackage("Probability",
     Headline => "basic probability functions",
@@ -33,7 +31,6 @@ newPackage("Probability",
 	"published article URI" => "https://msp.org/jsag/2024/14-1/p07.xhtml",
 	"published article DOI" => "10.2140/jsag.2024.14.51",
 	"published code URI" => "https://msp.org/jsag/2024/14-1/jsag-v14-n1-x07-Probability.m2",
-	"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Probability.m2",
 	"release at publication" => "fe3f536ed3c90d114452e31a24fc3a935a3b9ca3",
 	"version at publication" => "0.3",
 	"volume number" => "14",

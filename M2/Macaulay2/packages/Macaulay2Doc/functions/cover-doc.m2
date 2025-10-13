@@ -17,7 +17,8 @@ document {
      }
 
 document {
-     Key => {(cover, Module), (cover, GradedModule)},
+     Key => (cover, Module),
+     Headline => "get the covering free module",
      Usage => "F = cover M",
      Inputs => {"M"},
      Outputs => {"F" => {"the free module whose basis elements correspond to the generators of ", TT "M", "."}},

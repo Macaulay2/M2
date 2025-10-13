@@ -27,20 +27,10 @@ doc ///
 	     "of the program to ", TT "stderr", "."}}@
   SeeAlso
     runProgram
-///
-
-doc ///
-  Key
-    KeepFiles
-  Headline
-    whether to keep temporary files
-///
-
-doc ///
-  Key
-    RunDirectory
-  Headline
-    the directory from which to run a program
+    (symbol <<, Program, Thing)
+    Program
+  Subnodes
+    (status, ProgramRun)
 ///
 
 doc ///
@@ -106,11 +96,13 @@ doc ///
       Another way to interact with programs is to pass a string beginning
       with "!" to @TO get@, @TO openIn@, @TO openOut@, or @TO openInOut@.
   SeeAlso
-    ProgramRun
+    Program
     findProgram
     (status, ProgramRun)
     run
     get
+  Subnodes
+    ProgramRun
 ///
 
 doc ///
@@ -160,4 +152,5 @@ doc ///
   SeeAlso
     findProgram
     runProgram
+    get
 ///

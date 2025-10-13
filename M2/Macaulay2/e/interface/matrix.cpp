@@ -991,12 +991,15 @@ PointArray::RealVector getRealVector(const MutableMatrix *M, int col)
   PointArray::RealVector result;
   auto MC = dynamic_cast<const MutableMat<DMat<M2::ARingCC> > *>(M);
   // if (MC == nullptr)
-  auto i = MC->getMat().columnBegin(col);
-  auto iEnd = MC->getMat().columnEnd(col);
-  for (; i != iEnd; ++i)
+  if (MC == nullptr)
     {
-      result.push_back((*i).re);
-      result.push_back((*i).im);
+      throw exc::engine_error("expected mutable matrix over CC");
+    }
+
+  for (size_t r = 0; r < MC->getMat().numRows(); ++r)
+    {
+      result.push_back(MC->getMat().entry(r, col).re);
+      result.push_back(MC->getMat().entry(r, col).im);
     }
   return result;
 }

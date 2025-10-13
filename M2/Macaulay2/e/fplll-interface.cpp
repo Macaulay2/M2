@@ -15,15 +15,15 @@ bool fp_LLL(MutableMatrix *M, MutableMatrix *U, int strategy)
   assert(U == NULL);
   double delta = 0.99;
   double eta = 0.51;
-  LLLMethod method = LM_WRAPPER;
-  FloatType floatType = FT_DEFAULT;
+  fplll::LLLMethod method = fplll::LM_WRAPPER;
+  fplll::FloatType floatType = fplll::FT_DEFAULT;
   int precision = 0;
-  int flags = LLL_DEFAULT;
+  int flags = fplll::LLL_DEFAULT;
 
   int ncols = static_cast<int>(M->n_rows());
   int nrows = static_cast<int>(M->n_cols());
 
-  ZZ_mat<mpz_t> mat(nrows, ncols);
+  fplll::ZZ_mat<mpz_t> mat(nrows, ncols);
 
   for (int i = 0; i < nrows; i++)
     for (int j = 0; j < ncols; j++)
@@ -31,21 +31,21 @@ bool fp_LLL(MutableMatrix *M, MutableMatrix *U, int strategy)
         ring_elem a;
         if (M->get_entry(j, i, a))
           {
-            mpz_set(mat[i][j].getData(), a.get_mpz());
+            mpz_set(mat[i][j].get_data(), a.get_mpz());
           }
       }
 
   int result =
-      lllReduction(mat, delta, eta, method, floatType, precision, flags);
+      lll_reduction(mat, delta, eta, method, floatType, precision, flags);
 
   switch (result)
     {
-      case RED_SUCCESS:
+      case fplll::RED_SUCCESS:
         break;
-      case RED_BABAI_FAILURE:
+      case fplll::RED_BABAI_FAILURE:
         ERROR("Error in fpLLL");
         return 0;
-      case RED_LLL_FAILURE:
+      case fplll::RED_LLL_FAILURE:
         ERROR("infinite loop in LLL");
         return 0;
       default:
@@ -60,7 +60,7 @@ bool fp_LLL(MutableMatrix *M, MutableMatrix *U, int strategy)
   for (int j = 0; j < ncols; j++)
     for (int i = 0; i < nrows; i++)
       {
-        mpz_set(a, mat[i][j].getData());
+        mpz_set(a, mat[i][j].get_data());
         ring_elem b = globalZZ->from_int(a);
         M->set_entry(j, i, b);
       }

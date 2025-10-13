@@ -1,4 +1,3 @@
--- -*- coding: utf-8 -*-
 -- In this tutorial we introduce a number of basic operations 
 -- using Gröbner bases, and at the same time become familiar
 -- with a range of useful Macaulay2 constructs.

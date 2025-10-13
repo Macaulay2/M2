@@ -24,7 +24,6 @@ newPackage (
 	"published article URI" => "https://msp.org/jsag/2010/2-1/p05.xhtml",
 	"published article DOI" => "10.2140/jsag.2010.2.20",
 	"published code URI" => "https://msp.org/jsag/2010/2-1/jsag-v2-n1-x05-code.zip",
-	"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/SimplicialDecomposability.m2",
 	"release at publication" => "d230ee4205bab933be32f3de7ae0ae0f52115c84",
 	"version at publication" => "1.0.5",
 	"volume number" => "2",

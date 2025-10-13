@@ -68,6 +68,34 @@ assert ch( +ii*.73249827349273948274398273498273p100e0)
 assert ch( +ii*.92837938475938759387539847539847p100e0)
 assert ch( -ii*.73249827349273948274398273498273p100e0)
 assert ch( -ii*.92837938475938759387539847539847p100e0)
+assert ch numeric infinity
+assert ch numeric(100, infinity)
+assert ch toCC numeric infinity
+assert ch toCC numeric(100, infinity)
+
+CCinf = toCC numeric infinity
+assert(CCinf === -CCinf)
+scan({5, 5/1, 5.0}, x -> (
+	y := toCC(53, x, numeric infinity);
+	assert ch y;
+	assert(y === CCinf);
+	y = toCC(53, numeric infinity);
+	assert ch y;
+	assert(y === CCinf)))
+
+chnan = x -> (
+    y := value toExternalString x;
+    precision y === precision x and not isANumber y)
+assert chnan numeric NotANumber
+assert chnan numeric(100, NotANumber)
+
+nan = numeric NotANumber
+CCnan = toCC nan
+chCCnan = chnan @@ realPart and chnan @@ imaginaryPart
+assert chCCnan CCnan
+scan({5, 5/1, 5.0}, x -> (
+	assert chCCnan toCC(53, x, nan);
+	assert chCCnan toCC(53, nan, x)))
 
 assert( 1. === 1. )
 assert( 1. =!= .1 )
@@ -177,9 +205,16 @@ assert( ring(1p44+ii) === CC_44 )
 assert( round 3.4 === 3 )
 assert( round 3.5 === 4 )
 assert( round 4.5 === 4 )
+assert( round toRRi(exp 1, numeric pi) === 3 )
+assert( round pi === 3 )
 assert( round_1 .34 === .3 )
 assert( round_1 .35 === .4 )
 assert( round_1 .45 === .4 )
+assert( round_2 (1/3) == 0.33 )
+assert( round_2 pi === 3.14 )
+assert( round_2 toRRi(exp 1, numeric pi) === toRRi(2.72, 3.14) )
+assert( round_2 toCC(exp 1, numeric pi) === toCC(2.72, 3.14) )
+
 setRandomSeed 4
 assert( apply(20,i -> random 100) === {47, 38, 51, 74, 28, 50, 44, 25, 72, 16, 41, 61, 76, 89, 28, 27, 77, 34, 26, 57} ) -- version 1.1
 
@@ -1081,6 +1116,16 @@ assert( not isANumber ((1/0.-1/0.) + 1*ii) )
 assert( not isANumber (1 + (ii/0.-ii/0.) ) )
 assert( not isANumber ((1 + ii/0.) - ii/0. ) )
 
+importFrom(Core, "rawFareyApproximation")
+assert( rawFareyApproximation(numeric pi, 10) == 22/7 )
+assert( rawFareyApproximation(numeric pi, 200) == 355/113 )
+assert( rawFareyApproximation(-pi, 10) == -22/7 )
+
+assert( sign 5 == 1 )
+assert( sign pi == 1 )
+assert( sign 0/1 == 0 )
+assert( sign(-3) == -1 )
+assert( sign(-5 * ii) == -ii )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test numbers.out"

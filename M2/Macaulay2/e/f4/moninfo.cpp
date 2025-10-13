@@ -1,16 +1,22 @@
 // Copyright 2005-2021  Michael E. Stillman
 
 #include "f4/moninfo.hpp"
-#include "interface/monomial-ordering.h"  // for moGetWeightValues, moIsGRevLex
+#include "monordering.hpp"                // for monomialOrderingToMatrix
 #include "newdelete.hpp"                  // for freemem, newarray_atomic
 
 #include <cstdio>                         // for fprintf, stderr, stdout
 #include <cstdlib>                        // for rand
+#include <iostream>
 
-MonomialInfo::MonomialInfo(int nvars0, const MonomialOrdering *mo)
+MonomialInfo::MonomialInfo(int nvars0,
+                           const MonomialOrdering *mo,
+                           const std::vector<int>& heftDegrees,
+                           const std::vector<int>& moduleHeftDegrees)
+  : mHeftDegrees(heftDegrees),
+    mModuleHeftDegrees(moduleHeftDegrees)
 {
   nvars = nvars0;
-  hashfcn = newarray_atomic(monomial_word, nvars);
+  hashfcn = new monomial_word[nvars];
   for (int i = 0; i < nvars; i++) hashfcn[i] = rand();
   mask = 0x10000000;
 
@@ -28,43 +34,53 @@ MonomialInfo::MonomialInfo(int nvars0, const MonomialOrdering *mo)
   ncalls_unneccesary = 0;
   ncalls_quotient_as_vp = 0;
 
-  nweights = 0;
-  weight_vectors = nullptr;
-  if (moIsLex(mo))
-    {
-      compare = &MonomialInfo::compare_lex;
+  monomialOrderingToMatrix(*mo,
+                           mWeightVectors, // flattened
+                           mTieBreakerIsRevLex, // true means RevLex, false means Lex
+                           mPositionUp, // +1 means Up, -1 means Down
+                           mComponentLoc); // 0 means check first comp, -1 means check at end, otherwise check before this location
 
-      if (M2_gbTrace >= 1) fprintf(stderr, "lex order\n");
-    }
-  else if (moIsGRevLex(mo))
-    {
-      compare = &MonomialInfo::compare_grevlex;
+  mNumWeights = (nvars == 0 ? 0 : mWeightVectors.size() / nvars);
 
-      if (M2_gbTrace >= 1) fprintf(stderr, "grevlex order\n");
-    }
-  else
-    {
-      weight_vectors = moGetWeightValues(mo);
-      nweights = weight_vectors->len / nvars;
-      compare = &MonomialInfo::compare_weightvector;
+  // if (moIsLex(mo))
+  //   {
+  //     compare = &MonomialInfo::compare_lex;
 
-      if (M2_gbTrace >= 1) fprintf(stderr, "weight order\n");
-    }
+  //     if (M2_gbTrace >= 1) fprintf(stderr, "lex order\n");
+  //   }
+  // else if (moIsGRevLex(mo))
+  //   {
+  //     compare = &MonomialInfo::compare_grevlex;
 
-  nslots = 2 + nvars + nweights;
-  firstvar = 2 + nweights;
+  //     if (M2_gbTrace >= 1) fprintf(stderr, "grevlex order\n");
+  //   }
+  // else
+  //   {
+  //     weight_vectors = moGetWeightValues(mo);
+  //     nweights = weight_vectors->len / nvars;
+  //     compare = &MonomialInfo::compare_weightvector;
+
+  //     if (M2_gbTrace >= 1) fprintf(stderr, "weight order\n");
+  //   }
+
+  nslots = 2 + nvars + mNumWeights;
+  firstvar = 2 + mNumWeights;
 }
 
-MonomialInfo::~MonomialInfo() { freemem(hashfcn); }
-monomial_word MonomialInfo::monomial_weight(const_packed_monomial m,
-                                            const M2_arrayint wts) const
+MonomialInfo::~MonomialInfo()
+{ 
+  delete [] hashfcn; 
+}
+
+monomial_word MonomialInfo::monomial_heft(const_packed_monomial m) const
 {
   ncalls_weight++;
-  const_packed_monomial m1 = m + 2;
-  int top = wts->len;
-  int *n = wts->array;
-  monomial_word sum = 0;
-  for (int j = top; j > 0; --j) sum += *m1++ * *n++;
+  const_packed_monomial m1 = m + firstvar;
+  monomial_word sum = mModuleHeftDegrees[get_component(m)];
+  for (int j = 0; j < mHeftDegrees.size(); ++j)
+    {
+      sum += mHeftDegrees[j] * m1[j];
+    }
   return sum;
 }
 
@@ -73,6 +89,9 @@ void MonomialInfo::show() const
   fprintf(stderr, "monomial info\n");
   fprintf(stderr, "  nvars  = %d", nvars);
   fprintf(stderr, "  nslots = %d", nslots);
+  fprintf(stderr, "  firstvar = %d", firstvar);
+  fprintf(stderr, "  nweights = %d", mNumWeights);
+  fprintf(stderr, "  tiebreaker = %d", mTieBreakerIsRevLex);
   fprintf(stderr, "  mask   = %ld", mask);
   fprintf(stderr, "  hash values for each variable\n");
   for (int i = 0; i < nvars; i++) fprintf(stderr, "    %ld\n", hashfcn[i]);
@@ -106,7 +125,7 @@ void MonomialInfo::showAlpha(const_packed_monomial m) const
 {
   long comp = get_component(m);
 
-  m += 2 + nweights;  // get by: hashcode, component, weightvals
+  m += 2 + mNumWeights;  // get by: hashcode, component, weightvals
   for (int i = 0; i < nvars; i++)
     {
       long e = *m++;

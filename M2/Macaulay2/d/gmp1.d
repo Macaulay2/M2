@@ -23,6 +23,12 @@ export (x:ZZ) ^ (n:ZZ) : ZZ := (
      if !isULong(n) then fatal("integer exponent too large");
      x^toULong(n));
 
+export isInvertible(x:ZZ, n:ZZ):bool := (
+    z := newZZmutable();
+    r := Ccode(int, "mpz_invert(", z, ", ", x, ", ", n, ")");
+    clear(z);
+    return r != 0);
+
 export powermod(x:ZZ, y:ZZ, n:ZZ) : ZZ := (
      -- z = x^y mod n
      z := newZZmutable();
@@ -70,9 +76,9 @@ export format(
      sep:string,		     -- separator between mantissa and exponent
      x:RR						-- the number to format
      ) : array(string) := (	   -- return: ("-","132.456") or ("","123.456")
-     ng := sign(x);
+     ng := signbit(x);
      if isinf(x) then return array(string)(if ng then "-" else "","infinity");
-     if isnan(x) then return array(string)(if ng then "-" else "","NotANumber");
+     if isnan(x) then return array(string)("NotANumber");
      meaningful := int(floor(precision(x) / log2ten)) + 1;
      if s == 0 || s > meaningful then s = meaningful; -- print at most the "meaningful" digits
      sgn := "";
@@ -169,11 +175,13 @@ export tostringRRi(x:RRi):string := concatenate(
        	));  
 tostringRRipointer = tostringRRi;  
 
+numericstr(prec:ulong, str:string, ng:bool):string := (
+    "numeric(" + tostring(prec) + ", " + if ng then "-" else "" + str + ")");
 
 export toExternalString(x:RR):string := (
-     if isinf(x) then return if x < 0 then "-infinity" else "infinity";
-     if isnan(x) then return if sign(x) then "-NotANumber" else "NotANumber";
-     ng := sign(x);
+     ng := signbit(x);
+     if isinf(x) then return numericstr(precision(x), "infinity", ng);
+     if isnan(x) then return numericstr(precision(x), "NotANumber", false);
      if ng then x = -x;
      ex := long(0);
      s := getstr(ex, base, 0, x);

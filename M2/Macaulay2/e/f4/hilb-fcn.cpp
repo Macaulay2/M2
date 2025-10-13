@@ -28,7 +28,6 @@ HilbertController::HilbertController(const FreeModule *F0,
 {
   // TODO: check and write
   R = F->get_ring()->cast_to_PolynomialRing();
-  fprintf(stderr, "initializing hilbert controller\n");
 }
 
 HilbertController::~HilbertController()

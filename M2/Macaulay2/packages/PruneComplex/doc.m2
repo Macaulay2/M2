@@ -17,13 +17,13 @@ Description
   Text
     Here we produce an intentionally nonminimal resolution:
   Example
-    C = res(I, FastNonminimal=>true)
+    C = freeResolution(I, Strategy => Nonminimal)
   Text
     Now we prune the resolution above to get a minimal resolution:
   Example
     D = pruneComplex(C, UnitTest => isScalar)
     isCommutative D.cache.pruningMap
-    betti D == betti res I
+    betti D == betti freeResolution I
 Caveat
   Only supports localization at prime ideals.
 SeeAlso
@@ -35,20 +35,20 @@ Key
    pruneComplex
   (pruneComplex, List)
   (pruneComplex, List, ZZ)
-  (pruneComplex, ChainComplex)
-  (pruneComplex, ChainComplex, ZZ)
+  (pruneComplex, Complex)
+  (pruneComplex, Complex, ZZ)
 Headline
   Prunes a chain complex or list of mutable matrices
 Usage
   D = pruneComplex C
   D = pruneComplex(C, nsteps)
 Inputs
-  C: ChainComplex
+  C: Complex
     or a list of mutable matrices defining the differentials of a complex
   nsteps: ZZ
     the number of maps in the complex that will be pruned
 Outputs
-  D: ChainComplex
+  D: Complex
     or the list of modified mutable matrices
 Description
   Text
@@ -65,7 +65,7 @@ Description
   Example
     S = (coefficientRing R)(monoid [gens R, local h]);
     Ihom = ideal homogenize(sub(gens gb I, S), S_(numgens R));
-    Chom = (res(Ihom, FastNonminimal=>true))[-10];
+    Chom = (freeResolution(Ihom, Strategy => Nonminimal))[-10];
     C = (map(R, S, gens R | {1})) Chom
   Text
     Now we use pruneComplex to prune the resolution above:
@@ -96,7 +96,7 @@ Description
     R = ZZ/32003[vars(0..8)]
     M = genericMatrix(R,3,3)
     I = minors(2, M)
-    C = res(I, FastNonminimal=>true)
+    C = freeResolution(I, Strategy => Nonminimal)
     pruneComplex(C, UnitTest => isScalar)
 Consequences
   Item
@@ -117,22 +117,22 @@ Key
    pruneDiff
   (pruneDiff, List, ZZ)
   (pruneDiff, List, ZZ, List)
-  (pruneDiff, ChainComplex, ZZ)
-  (pruneDiff, ChainComplex, ZZ, List)
+  (pruneDiff, Complex, ZZ)
+  (pruneDiff, Complex, ZZ, List)
 Headline
   Prunes a single differential in a chain complex or list of mutable matrices
 Usage
   D = pruneDiff(C, n)
   D = pruneDiff(C, n, M)
 Inputs
-  C: ChainComplex
+  C: Complex
     or a list of mutable matrices defining the differentials of a complex
   n: ZZ
     the index of the differential in C
   M: List
     if provided, will initialize the map back to the original complex
 Outputs
-  D: ChainComplex
+  D: Complex
     or the list of modified mutable matrices
   M: List
     unless PruningMap is false, will contain the map back to the original complex
@@ -145,7 +145,7 @@ Description
     needsPackage "LocalRings";
     R = ZZ/32003[vars(0..5)];
     I = ideal"abc-def,ab2-cd2-c,-b3+acd";
-    C = res I;
+    C = freeResolution I;
     M = ideal gens R;
     RM = localRing(R, M);
     F = C.dd_2;
@@ -227,14 +227,14 @@ Inputs
   F: Module
     the initial free module in the resolution. This is used to calculate the degrees in the maps.
 Outputs
-  C: ChainComplex
+  C: Complex
 Description
   Example
     R = ZZ/32003[vars(0..17)];
     m1 = genericMatrix(R,a,3,3)
     m2 = genericMatrix(R,j,3,3)
     I = ideal(m1*m2-m2*m1)
-    C = res I;
+    C = freeResolution I;
     D = C[-10]
     MC = toMutableComplex D;
     MC = first pruneComplex MC;
@@ -250,13 +250,13 @@ SeeAlso
 doc ///
 Key
    toMutableComplex
-  (toMutableComplex, ChainComplex)
+  (toMutableComplex, Complex)
 Headline
   Converts a chain complex into a list of mutable matrices.
 Usage
   M = toMutableComplex C
 Inputs
-  C: ChainComplex
+  C: Complex
 Outputs
   M: List
     a list of MutableMatrix type
@@ -265,7 +265,7 @@ Description
     needsPackage "LocalRings"
     R = ZZ/32003[vars(0..3)]
     I = monomialCurveIdeal(R, {1, 3, 4})
-    C = res I
+    C = freeResolution I
     RP = localRing(R, ideal"a,b,c");
     D = (C ++ C[-5]) ** RP
     MD = toMutableComplex D

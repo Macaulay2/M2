@@ -227,22 +227,13 @@ scan({Default, Quotient}, strategy ->
 -- kernel
 -----------------------------------------------------------------------------
 
-kernel Matrix := Module => opts -> (cacheValue symbol kernel) ((m) -> (
-	  N := source m;
-	  if m == 0 then return N;
-	  P := target m;
-	  if m.?RingMap then (
-	       f := m.RingMap;
-	       n := map(target m,f source m,raw m);
-	       p := pushNonLinear(options pushForward, f, coimage n);
-	       image p)
-	  else (
-	       m = matrix m;
-	       if P.?generators then m = P.generators * m;
-	       h := modulo(m, if P.?relations then P.relations);
-	       if N.?generators then h = N.generators * h;
-	       subquotient( h, if N.?relations then N.relations))))
-kernel RingElement := Module => options -> (m) -> kernel (matrix {{m}},options)
+addHook((kernel, Matrix), Strategy => "PushForward",
+    (opts, m) -> if m.?RingMap then (
+	N := source m;
+	P := target m;
+	f := m.RingMap;
+	M := coimage map(target m, f ** source m, raw m);
+	image pushNonLinear(options pushForward, f, M)))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

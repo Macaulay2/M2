@@ -310,24 +310,25 @@ bumpPrecedence();
      export leftparen   := parens("(",")",precSpace, precRightParen, precRightParen);
      export leftbrace   := parens("{","}",precSpace, precRightParen, precRightParen);
      parseWORD.precedence = prec; parseWORD.binaryStrength = nopr; parseWORD.unaryStrength = nopr;
-     export timeS := special("time",unaryop,precSpace,wide);
-     export timingS := special("timing",unaryop,precSpace,wide);
-     export elapsedTimeS := special("elapsedTime",unaryop,precSpace,wide);
-     export elapsedTimingS := special("elapsedTiming",unaryop,precSpace,wide);
-     export shieldS := special("shield",unaryop,precSpace,wide);
-     export TestS := special("TEST",unaryop,precSpace,wide);
-     export throwS := special("throw",nunaryop,precSpace,wide);
-     export returnS := special("return",nunaryop,precSpace,wide);
-     export breakS := special("break",nunaryop,precSpace,wide);
-     export continueS := special("continue",nunaryop,precSpace,wide);
-     export stepS := special("step",nunaryop,precSpace,wide);
-     -- export codePositionS := special("codePosition",unaryop,precSpace,narrow);
-     special("new",unarynew,precSpace,narrow);
-     special("for",unaryfor,precSpace,narrow);
-     special("while",unarywhile,precSpace,wide);
-     special("if",unaryif,precSpace,wide);
-     special("try",unarytry,precSpace,wide);
-     special("catch",unarycatch,precSpace,wide);
+     export TestS          := special("TEST",          unaryop, precSpace, wide);
+     export timeS          := special("time",          unaryop, precSpace, wide);
+     export timingS        := special("timing",        unaryop, precSpace, wide);
+     export elapsedTimeS   := special("elapsedTime",   unaryop, precSpace, wide);
+     export elapsedTimingS := special("elapsedTiming", unaryop, precSpace, wide);
+     export breakpointS    := special("breakpoint",    unaryop, precSpace, wide);
+     export profileS       := special("profile",       unaryop, precSpace, wide);
+     export shieldS        := special("shield",        unaryop, precSpace, wide);
+     export throwS         := special("throw",        nunaryop, precSpace, wide);
+     export returnS        := special("return",       nunaryop, precSpace, wide);
+     export breakS         := special("break",        nunaryop, precSpace, wide);
+     export continueS      := special("continue",     nunaryop, precSpace, wide);
+     export stepS          := special("step",         nunaryop, precSpace, wide);
+     special("new",   unarynew,   precSpace, narrow);
+     special("for",   unaryfor,   precSpace, narrow);
+     special("while", unarywhile, precSpace, wide);
+     special("if",    unaryif,    precSpace, wide);
+     special("try",   unarytry,   precSpace, wide);
+     special("catch", unarycatch, precSpace, wide);
 bumpPrecedence();
      export ParenStarParenS := makeKeyword(postfix("(*)"));
 bumpPrecedence();
@@ -364,10 +365,10 @@ bumpPrecedence();
      --export UnderscoreSharpS := makeKeyword(postfix("_#"));
 bumpPrecedence();
      --why are these using precSpace and not prec?
-     special("symbol",unarysymbol,precSpace,prec);
-     special("global",unaryglobal,precSpace,prec);
-     special("threadLocal",unarythread,precSpace,prec);
-     special("local",unarylocal,precSpace,prec);
+     special("symbol",      unarysymbol, precSpace, prec);
+     special("global",      unaryglobal, precSpace, prec);
+     special("threadLocal", unarythread, precSpace, prec);
+     special("local",       unarylocal,  precSpace, prec);
 -----------------------------------------------------------------------------
 export GlobalAssignS := makeProtectedSymbolClosure("GlobalAssignHook");
 export GlobalAssignE := Expr(GlobalAssignS);
@@ -471,14 +472,8 @@ lookup(t:Token,forcedef:bool,thread:bool):void := (
      	  is entry:Symbol do (
 	       t.entry = entry;
 	       if entry.position == tempPosition then entry.position = t.position;
-	       if entry.flagLookup then (
-		    printErrorMessage(t,"flagged symbol encountered");
-		    HadError=true;
-		    );
-	       if thread && !entry.thread then (
-		    printErrorMessage(t,"symbol already present, but not thread local");
-		    HadError=true;
-		    );
+	       if entry.flagLookup then makeErrorTree(t,"flagged symbol encountered");
+	       if thread && !entry.thread then makeErrorTree(t,"symbol already present, but not thread local");
 	       )
      	  else (
 	       if forcedef
@@ -494,9 +489,7 @@ lookup(t:Token,forcedef:bool,thread:bool):void := (
 		    t.dictionary = globalDictionary; -- undefined variables are defined as global
 		    t.entry = makeSymbol(t.word,t.position,globalDictionary,thread,locallyCreated);
 		    )
-	       else (
-	       	    printErrorMessage(t,"undefined symbol " + t.word.name);
-	       	    HadError=true;))));
+	       else makeErrorTree(t,"undefined symbol " + t.word.name))));
 lookup(t:Token):void := lookup(t,true,false);
 lookuponly(t:Token):void := lookup(t,false,false);
 -----------------------------------------------------------------------------
@@ -545,7 +538,7 @@ export fixedPostfixOperators := array(SymbolClosure)(SemicolonS,commaS);
 -- augmented assignment operators --
 ------------------------------------
 
--- same precendence as =
+-- same precedence as =
 saveprec := prec;
 prec = EqualW.parse.precedence;
 
@@ -622,6 +615,13 @@ bindFormalParmList(e:ParseTree,dictionary:Dictionary,desc:functionDescription):v
 	  then (
 	       bindFormalParmList(binary.lhs,dictionary,desc);
 	       bindop(binary.Operator,dictionary);
+	       when binary.rhs
+	       is t:Token do (
+		   when lookup(t.word, dictionary.symboltable)
+		   is Symbol do makeErrorTree(t,
+		       "duplicate symbol in parameter list: " + t.word.name)
+		   else nothing)
+	       else nothing;
 	       bindFormalParm(binary.rhs,dictionary,desc);)
 	  else makeErrorTree(e,"syntax error: expected function parameter list"))
      else bindFormalParm(e,dictionary,desc));

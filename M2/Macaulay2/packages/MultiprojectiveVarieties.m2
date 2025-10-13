@@ -28,7 +28,6 @@ newPackage(
 	 "published article URI" => "https://msp.org/jsag/2021/11-1/p14.xhtml",
 	 "published article DOI" => "10.2140/jsag.2021.11.143",
 	 "published code URI" => "https://msp.org/jsag/2021/11-1/jsag-v11-n1-x14-MultiprojectiveVarieties.m2",
-	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/MultiprojectiveVarieties.m2",
 	 "release at publication" => "5831dc6b020fae7365f257256b92539d5d496954",	    -- git commit number in hex
 	 "version at publication" => "2.3",
 	 "volume number" => "11",
@@ -40,10 +39,10 @@ requiredCremonaVersion := "5.2.1";
 if Cremona.Options.Version < requiredCremonaVersion then (
     <<endl<<"Your version of the Cremona package is outdated (required version "<<requiredCremonaVersion<<" or newer);"<<endl;
     <<"you can manually download the latest version from"<<endl;
-    <<"https://github.com/Macaulay2/M2/tree/master/M2/Macaulay2/packages."<<endl;
+    <<"https://github.com/Macaulay2/M2/tree/stable/M2/Macaulay2/packages."<<endl;
     <<"To automatically download the latest version of Cremona in your current directory,"<<endl;
     <<"you may run the following Macaulay2 code:"<<endl<<"***"<<endl<<endl;
-    <<///(makeDirectory("Cremona"), for f in {"Cremona.m2","Cremona/documentation.m2","Cremona/examples.m2","Cremona/tests.m2"} do run("curl -s -o "|f|" https://raw.githubusercontent.com/Macaulay2/M2/master/M2/Macaulay2/packages/"|f));///<<endl<<endl<<"***"<<endl;
+    <<///(makeDirectory("Cremona"), for f in {"Cremona.m2","Cremona/documentation.m2","Cremona/examples.m2","Cremona/tests.m2"} do run("curl -s -o "|f|" https://raw.githubusercontent.com/Macaulay2/M2/stable/M2/Macaulay2/packages/"|f));///<<endl<<endl<<"***"<<endl;
     error("required Cremona package version "|requiredCremonaVersion|" or newer");
 );
 
