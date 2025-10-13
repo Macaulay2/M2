@@ -46,6 +46,7 @@ newPackage (
 	PackageImports => {"MinimalPrimes"},
     PackageExports => {},
     AuxiliaryFiles => true,
+	DebuggingMode => true,
 	Keywords => {"Homotopy Theory","Commutative Algebra"},
     Certification => {
 	"journal name" => "Journal of Software for Algebra and Geometry",
