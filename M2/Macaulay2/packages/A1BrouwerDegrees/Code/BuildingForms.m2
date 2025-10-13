@@ -91,8 +91,8 @@ makeDiagonalForm (Ring, Sequence) := GrothendieckWittClass => (kk, L) -> (
     n := #L;
     
     -- Iteratively add <L_0> + <L_1> + ...
-    outputForm := makeDiagonalForm(kk, L_0);
-    for i from 1 to n - 1 do (
+    outputForm := makeGWClass matrix(kk,{});
+    for i from 0 to n - 1 do (
 	    ithDiagonal := makeDiagonalForm(kk, L_i);
 	    outputForm = addGW(outputForm, ithDiagonal);
 	);
@@ -115,8 +115,8 @@ makeDiagonalForm (InexactFieldFamily, Sequence) := GrothendieckWittClass => (kk,
     n := #L;
     
     -- Iteratively add <L_0> + <L_1> + ...
-    outputForm := makeDiagonalForm(kk, L_0);
-    for i from 1 to n - 1 do (
+    outputForm := makeGWClass matrix(kk,{});
+    for i from 0 to n - 1 do (
 	    ithDiagonal := makeDiagonalForm(kk, L_i);
 	    outputForm = addGW(outputForm, ithDiagonal);
 	);
