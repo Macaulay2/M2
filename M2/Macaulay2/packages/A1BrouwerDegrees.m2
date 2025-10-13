@@ -42,11 +42,11 @@ newPackage (
 	 Email => "atawfeek@uw.edu",
 	 HomePage => "https://www.atawfeek.com/"}
 	},
-    Headline => "for working with A1-Brouwer degree computations and quadratic forms"
+    Headline => "for working with A1-Brouwer degree computations and quadratic forms",
 	PackageImports => {"MinimalPrimes"},
     PackageExports => {},
     AuxiliaryFiles => true,
-	DebuggingMode => true,
+	DebuggingMode => false,
 	Keywords => {"Homotopy Theory","Commutative Algebra"},
     Certification => {
 	"journal name" => "Journal of Software for Algebra and Geometry",
