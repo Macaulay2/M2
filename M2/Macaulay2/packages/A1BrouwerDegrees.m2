@@ -43,7 +43,7 @@ newPackage (
 	 HomePage => "https://www.atawfeek.com/"}
 	},
     Headline => "for working with A1-Brouwer degree computations and quadratic forms"
-	PackageImports => {"MinimalPrimes},
+	PackageImports => {"MinimalPrimes"},
     PackageExports => {},
     AuxiliaryFiles => true,
 	Keywords => {"Homotopy Theory","Commutative Algebra"},
