@@ -454,6 +454,7 @@ Node
     Key
         shuffle
         (symbol **, NCRingElement, NCRingElement)
+        (symbol ⧢, NCRingElement, NCRingElement)
         (shuffle, NCRingElement, NCRingElement)
     Headline
         shuffle product of two words

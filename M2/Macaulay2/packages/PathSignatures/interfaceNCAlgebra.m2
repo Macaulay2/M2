@@ -105,11 +105,11 @@ tensorArray(NCRingElement,ZZ) := (f,h) -> (
     applyDeep(product(h,k->genv),w->(if(H#?w) then H#w else 0))
 )
 
-NCRingElement @ ZZ := (f,h) -> tensorArray(f,h);
+NCRingElement @ ZZ := tensorArray
 
 -- installs operator to work with words [i1,...,ik]_R in an NC ring R
 Array _ NCPolynomialRing := (a, R) -> (
-    if(max(toList a)>length(gens R)) then (error(toString(net "Not enough letters in ring " | net R | ".")));
+    if(max(toList a)>length(gens R)) then (error(toString(net "not enough letters in ring " | net R | ".")));
     
     product(a,i->R_(i-1))
 )

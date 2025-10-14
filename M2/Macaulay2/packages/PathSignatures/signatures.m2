@@ -17,7 +17,7 @@ sig (Path, List) := (X,w) -> (
 )
 
 sig(Path,NCRingElement) := (X,f) -> (
-    return(linExt(w->sig(X,w),f));
+    linExt(w->sig(X,w),f)
 )
 
 --Compute the signature in level h of a path X, 
@@ -101,7 +101,7 @@ polyIntegral (RingElement, RingElement) := RingElement => (f, xn) ->(
     R := ring f;
     indexn := index xn;
     termsf := terms f;
-    return sum(termsf, i->(1_R/(((((exponents(i))#0)#(indexn)+1))) * i * xn))
+    sum(termsf, i->(1_R/(((((exponents(i))#0)#(indexn)+1))) * i * xn))
 );
 
 
@@ -136,7 +136,8 @@ polySigGen (List, List, Ring) := RingElement => (l,w, baseR) ->(
     resd = sub(polyIntegral(resd, R_(k-1)),R);
     --use(baseR);
     resd = substitute(resd, {R_(k-1) => 1_baseR}) - substitute(resd, {R_(k-1) =>0_baseR});
-    return (if class resd === baseR then resd else leadCoefficient resd)
+    
+    if class resd === baseR then resd else leadCoefficient resd
 );
 
 

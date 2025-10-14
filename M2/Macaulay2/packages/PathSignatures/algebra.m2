@@ -9,12 +9,12 @@ matrixAction = method();
 matrixAction (Matrix,  NCRing, NCRing) := NCRingElement => (M, A, B) -> (
     N :=transpose entries M;
     f := ncMap(B, A, apply(N, j->sum(length(j), i->j#i*(gens B)#i)));
-    return(f);
+    f
 )
 
 matrixAction (Matrix,  NCRingElement, NCRing) := NCRingElement => (M, p, B) -> (
     f := matrixAction(M,ring p, B);
-    return(f(p));
+    f(p)
 )
 
 -- Matrix * Tensor also computes the diagonal matrix action on a tensor, but creates the output nc ring automatically
@@ -22,10 +22,10 @@ Matrix * NCRingElement := (M, f) -> (
     n := length entries M;
     m := length entries transpose M;
     tf := length gens ring f;
-    if(m != tf) then (error("A " | toString(n) | "x" | toString(m) | " matrix can not act on a tensor over " | toString(tf) | "-dimensional space.");)
+    if(m != tf) then (error("a " | toString(n) | "x" | toString(m) | " matrix can not act on a tensor over " | toString(tf) | "-dimensional space.");)
     else (
     B := wordAlgebra(n, CoefficientRing => (coefficientRing ring f));
-    return(matrixAction(M, f, B));)
+    matrixAction(M, f, B))
 )
 
 -- tensorParametrization takes a tensor T, constructs a ring R with one variable for each word appearing in T 
@@ -37,7 +37,7 @@ tensorParametrization(NCRingElement) := opts -> (f) -> (
     lm := t / leadMonomial;
     bR := coefficientRing (class f);
     bF := baseRing bR;
-    if (not opts.CoefficientRing === null ) then bF = opts.CoefficientRing;
+    if (opts.CoefficientRing =!= null ) then bF = opts.CoefficientRing;
     if(opts.VarWordTable === null) then (
         b := getSymbol("b");
         varis := apply(lm, i -> b_(wordString i));
@@ -46,16 +46,16 @@ tensorParametrization(NCRingElement) := opts -> (f) -> (
         vwtable := opts.VarWordTable;
         words := apply(lm, i-> value(wordString i));
         R = ring (product (keys vwtable));
-        if(instance(R,QuotientRing)) then error("Expected free polynomial ring.");
+        if(instance(R,QuotientRing)) then error("expected free polynomial ring.");
         scan(words, i-> (
                 if (not isMember(i,values vwtable)) then (
-                    print("Warning: No variable associated to word " | toString(i));
+                    printerr("warning: no variable associated to word " | toString(i));
                 );
             ) 
         );
         lc = apply(gens R, i-> inner(f, (vwtable#i)_(ring f)));
     );
-    return(map(bR,R,lc));
+    map(bR,R,lc)
 )
 
 -- create the non commutative algebra over alphabet given by a list.
@@ -63,12 +63,12 @@ wordAlgebra = method(Options=>{CoefficientRing => QQ});
 wordAlgebra (List) := opts -> (l) -> (
     Lt := getSymbol("Lt");
     myvars := apply(l,i-> (Lt_i));
-    return(opts.CoefficientRing myvars);
+    opts.CoefficientRing myvars
 )
 
 -- create the non commutative algebra over alphabet 1..z
 wordAlgebra (ZZ) := opts -> (z) -> (
-    return(wordAlgebra(toList(1..z), CoefficientRing => opts.CoefficientRing));
+    wordAlgebra(toList(1..z), CoefficientRing => opts.CoefficientRing)
 )
 
 -- define shuffle products on words, use linExt to extend to NCRingElements. Define operator ** as shuffle product in NCAlgebra
@@ -87,7 +87,7 @@ shuffleHelper(List,List,NCRing) := (w1,w2,R) -> (
     i := w1#-1;
     j := w2#-1;
 
-    return(shuffleHelper(w1,w2l,R)*[j]_R + shuffleHelper(w1l,w2,R)*[i]_R);
+    shuffleHelper(w1,w2l,R)*[j]_R + shuffleHelper(w1l,w2,R)*[i]_R
 );
 
 shuffleHelper(NCRingElement, List) := (f,w2) -> linExt(i->shuffleHelper(i,w2,ring f),f);
@@ -96,7 +96,7 @@ shuffleHelper(NCRingElement, NCRingElement) := (f,g) -> (
     if(ring f === ring g) then (
         return(linExt(i->shuffleHelper(f,i),g));)
     else (
-        error "Can not apply shuffle to polynomials from different rings";
+        error "can not apply shuffle to polynomials from different rings";
     )
 )
 
@@ -105,9 +105,9 @@ shuffleHelper(NCRingElement, NCRingElement) := (f,g) -> (
 shuffle = method();
 shuffle (NCRingElement, NCRingElement) := (a, b) -> shuffleHelper(a,b); 
 
-NCRingElement ** NCRingElement := (f,g) -> (
-    shuffle(f,g)
-)
+NCRingElement ** NCRingElement := shuffle
+
+NCRingElement ⧢ NCRingElement := shuffle
 
 -- the antipode of the nc polynomial ring as a Hopf algebra
 antipode NCRingElement := (f) -> (
@@ -122,16 +122,16 @@ halfshuffleHelper = method();
 halfshuffleHelper(NCRingElement, List) := (f,w) -> (
     wl := w_(toList(0..length(w)-2));
     wr := w_(-1);
-    return( shuffleHelper(f,wl) * (ring f)_(wr-1) );
+    shuffleHelper(f,wl) * (ring f)_(wr-1)
 )
 
 halfshuffle = method();
 halfshuffle (NCRingElement, NCRingElement) := (f,g) -> (
     if(ring f === ring g) then (
-        if(degree f == 0 or degree g == 0) then error("Can not apply halfshuffle to polynomials of degree zero.");
+        if(degree f == 0 or degree g == 0) then error("can not apply halfshuffle to polynomials of degree zero.");
         return(linExt(i->halfshuffleHelper(f,i),g));)
     else (
-        error "Can not apply halfshuffle to polynomials from different rings";
+        error "can not apply halfshuffle to polynomials from different rings";
     )
 )
 
@@ -142,16 +142,16 @@ innerHelper = method();
 innerHelper(List, NCRingElement) := (l,f) -> (
     H := coefficientHTable f;
     mon := (new Array from l)_(ring f);
-    return(if(H#?mon) then H#mon else 0);
+    if(H#?mon) then H#mon else 0
 )
 
 inner = method();
 -- the first argument is to be viewed as an element of the dual space
 inner(NCRingElement, NCRingElement) := (fv,f) -> (
-    return(linExt(w->innerHelper(w,f),fv));
+    linExt(w->innerHelper(w,f),fv)
 )
 
-NCRingElement @ NCRingElement := (f,m) -> inner(f,m);
+NCRingElement @ NCRingElement := inner
 
 
 
@@ -199,15 +199,16 @@ adjointWord (NCRingElement, NCPolynomialRing, List) := (f, A, P) -> (
 
     --Check that number of letters in the given NCRing is enough to compute the image of the word  
     if d>length(gens A) then (
-        error("Number of generators of the NCRing lower than dimension of the polynomial ring")
+        error("number of generators of the NCRing lower than dimension of the polynomial ring")
     );
-    if not (length(P) == length(gens ring f)) then error("The polynomial transformation does not map to the space underlying the input word.");
+    if not (length(P) == length(gens ring f)) then error("the polynomial transformation does not map to the space underlying the input word.");
 
     if not all(apply(P, p->part(0,p)), q->q==0) then (
-        error("The image of 0 under the polynomial map is not 0");
+        error("the image of 0 under the polynomial map is not 0");
     );
     if(f == 0_(ring f)) then return 0_A;
-    return(linExt(w->adjointWordHelper(w,A,P), f));
+
+    linExt(w->adjointWordHelper(w,A,P), f)
 )
 
 
@@ -223,7 +224,8 @@ nextLyndonWord(Array,ZZ,ZZ) := Array => (ar,d,k) -> (
         nl = nl_{0..length(nl)-2};
     );
     if(nl != {d}) then nl = nl + toList(((length(nl)-1):0) | (1:1));
-    return(new Array from nl)
+
+    new Array from nl
 );
 
 -- lyndonWords(d,k) returns a list of all Lyndon words of length at most k in d letters
@@ -236,7 +238,8 @@ lyndonWords (ZZ,ZZ) := (d,k) -> (
     while(l_(-1) != [d]) do (
         l = l | {nextLyndonWord(l_(-1),d,k)};
     );
-    return(l);
+
+    l
 )
 
 -- lie(a,b) returns the lie bracket of a and b
@@ -250,7 +253,8 @@ isLyndon Array := (w) -> (
     l := toList w;
     out := true;
     scan(1..length(l)-1, i->( if(out==true) then out = (l < l_{i..(length(l)-1)}) ) );
-    return(out);
+
+    out
 );
 
 -- lyndonFact(l) computes the standard decomposition of l
@@ -262,7 +266,8 @@ lyndonDecomposition Array := (w) -> (
     cand := select(ls,i-> isLyndon(i_1));
     cand = cand_0;
     if(isLyndon(cand#0)) then return cand;
-    return(lyndonDecomposition(cand#0) | {cand#1})
+
+    lyndonDecomposition(cand#0) | {cand#1}
 )
 
 
@@ -273,7 +278,7 @@ lieBasis(Array, NCPolynomialRing) := (w,R) -> (
     if(length(w) == 0) then error("lieBasis expected a non-empty list as input.");
     if(length(w) == 1) then return R_(w_(-1) - 1);
     fact := apply(lyndonDecomposition(w),i-> lieBasis(i,R));
-    return(lie(fact_0,fact_1))
+    lie(fact_0,fact_1)
 )
 
 lieBasis(List, NCPolynomialRing) := (l, R) -> lieBasis (new Array from l, R);
@@ -281,7 +286,7 @@ lieBasis(List, NCPolynomialRing) := (l, R) -> lieBasis (new Array from l, R);
 
 
 expTerm = (tl,l) -> (
-    return(1/(length(l))!)*product(l,i->(tl_i))
+    1/(length(l))!)*product(l,i->(tl_i)
 )
 
 -- Given a tensor p with constant term 0, tensorExp(p,k) returns the k-th level component of exp(p)
@@ -292,11 +297,12 @@ tensorExp (NCRingElement, ZZ) := (p,k) -> (
     s := {1} | toList apply(1..k, i-> sum(select(terms p, j->((degree j) == i))));
     comp := unique apply(compositions k, i->delete(0,i));
     t := sum(apply(comp, i-> expTerm(s,i)));
-    return(t);
+
+    t
 )
 
 logTerm = (tl,l) -> (
-    return(1/(length(l)))*product(l,i->(tl_i))
+    1/(length(l)))*product(l,i->(tl_i)
 )
 
 -- Given a tensor p with constant term 1, tensorLog(p,k) returns the k-th level component of log(p)
@@ -307,7 +313,8 @@ tensorLog (NCRingElement, ZZ) := (p,k) -> (
     s := {1} | toList apply(1..k, i-> sum(select(terms lp, j->((degree j) == i))));
     comp := unique apply(compositions k, i->delete(0,i));
     t := - sum(apply(comp, i-> logTerm(s,i)));
-    return(t);
+
+    t
 )
 
 lyndonShuffleHelper = method();
@@ -330,7 +337,7 @@ lyndonShuffleHelper(List,Ring,NCRing) := (l,R,A) -> ( -- R must be a suitable ri
 )
 
 lyndonShuffleHelper(NCRingElement,Ring) := (f,R) -> (
-    return(linExt(i->lyndonShuffleHelper(i, R, ring f),f,CoefficientRing => R))
+    linExt(i->lyndonShuffleHelper(i, R, ring f),f,CoefficientRing => R)
 )
 
 lyndonShuffle = method();
@@ -344,7 +351,7 @@ lyndonShuffle(NCRingElement) := (f) -> ( -- rewrites a tensor as a shuffle polyn
     pol := lyndonShuffleHelper(f,R);
     polh := standardForm pol;
     polh = applyKeys(polh, i-> applyKeys(i,j-> last baseName R_j));
-    return(polh);
+    polh
 )
 
 

@@ -29,7 +29,7 @@ polyPath List := Path => (polyPathList) -> (
     if(polyPathList === {}) then return new Path from {pieces => {}, dimension => -1, numberOfPieces => 0};
 
     if isListForm (polyPathList#0) then (
-        apply(polyPathList, i-> if not(isListForm(i)) then error("The input was neither a list of polynomials nor a list of polynomials in listForm"));
+        apply(polyPathList, i-> if not(isListForm(i)) then error("the input was neither a list of polynomials nor a list of polynomials in listForm"));
         return new Path from{
             pieces => {polyPathList},
             dimension => length polyPathList,
@@ -40,7 +40,7 @@ polyPath List := Path => (polyPathList) -> (
 
     if (instance(product(polyPathList), RingElement)) then (
         tR := class product(polyPathList);
-        if(#gens(tR) != 1) then error("Expected a vector of polynomials in one variable.");
+        if(#gens(tR) != 1) then error("expected a vector of polynomials in one variable.");
         baseR := coefficientRing (tR);
         P := new Path from{
             bR => baseR,
@@ -62,7 +62,8 @@ Path _ List := Path => (X, l) -> (
         dimension => X.dimension,
         numberOfPieces => length(l)
     };
-    return P;
+
+    P
 )
 
 Path _ Sequence := Path => (X,l) -> (
@@ -70,7 +71,7 @@ Path _ Sequence := Path => (X,l) -> (
 )
 
 Path _ ZZ := Path => (X, z) -> (
-    return X_{z};
+    X_{z}
 )
 
 getDimension = method();
@@ -98,12 +99,13 @@ sub(Path,Ring) := Path => (X,R) -> (
         dimension => X.dimension,
         numberOfPieces => X.numberOfPieces
     };
-    return(P);
+
+    P
 );
 
 concatPath = method();
 concatPath(Path,Path) := Path => (X,Y) -> (
-    if(X.dimension != Y.dimension) then error("Cannot concatenate paths of different ambient dimension.");
+    if(X.dimension != Y.dimension) then error("cannot concatenate paths of different ambient dimension.");
     R := if((X.bR === Y.bR)) then X.bR else (
         if (isMember(Y.bR, (X.bR).baseRings)) then (
             Y = sub(Y,X.bR); return(X ** Y);
@@ -113,7 +115,7 @@ concatPath(Path,Path) := Path => (X,Y) -> (
             nR := X.bR ** Y.bR;
             return(sub(X,nR)**sub(Y,nR));
          )
-        else error("The base rings 'bR' of the two paths were different, namely they were X.bR = ", toString X.bR, " and Y.bR = ", toString Y.bR, ". Moreover no trivial relation between them was found.");
+        else error("the base rings 'bR' of the two paths were different, namely they were X.bR = ", toString X.bR, " and Y.bR = ", toString Y.bR, ". Moreover no trivial relation between them was found.");
     );
     
     P := new Path from{
@@ -122,7 +124,8 @@ concatPath(Path,Path) := Path => (X,Y) -> (
         dimension => X.dimension,
         numberOfPieces => X.numberOfPieces + Y.numberOfPieces
     };
-    return P;
+
+    P
 )
 
 Path ** Path := Path => (X,Y) -> concatPath(X,Y);
@@ -146,7 +149,8 @@ Path ^ ZZ := Path => (X,n) -> (
     );
     t:= getSymbol("t");
     auxR := X.bR [t];
-    return(polyPath(toList(X.dimension:(0_(auxR)))))
+
+    polyPath(toList(X.dimension:(0_(auxR))))
 )
 
 
@@ -168,7 +172,8 @@ net Path := (X) ->
             )
         );
     myNet = myNet || "" || (net pieces);
-    return(myNet)
+
+    myNet
 )
 
 --Constructs the linear polynomial path t*v for a vector v
@@ -190,7 +195,8 @@ linPath List := Path => (v) ->(
 pwLinPath = method();
 pwLinPath Matrix := Path => (pwlMatrix) -> (
     pathList := apply(transpose entries pwlMatrix, i-> linPath(i));
-    return(fold(pathList,(i,j)->i**j));
+
+    fold(pathList,(i,j)->i**j)
 )
 
 
@@ -203,5 +209,5 @@ isListForm Thing := (L) ->(
     if not(instance(c, Number)) and not(instance(c, RingElement)) then return false;
     apply(L, i-> 
         if length(i#0)!=l or (not(instance(i#(-1), Number)) and not(instance(#i(-1), RingElement))) then return false);
-    return true
+    true
 );
