@@ -29,6 +29,7 @@ doc ///
 			beta.cache.getDiagonalClass
 		Text
 			We additionally have the following methods which can be applied to Grothendieck-Witt classes:
+
 			@UL(
 			(TO2(getRank,"getRank"),": returns the rank of a form,"),
 			(TO2(getSignature,"getSignature"),": returns the signature of a form over the real numbers or rational numbers,"),
@@ -40,6 +41,7 @@ doc ///
 			(TO2(getSumDecompositionString,"getSumDecompositionString"),": returns a string to quickly read a form,"),
 			)@
 			and Boolean methods for Grothendieck-Witt classes:
+
 			@UL(
 			(TO2(isIsotropic,"isIsotropic"),": returns whether the form is isotropic,"),
 			(TO2(isAnisotropic,"isAnisotropic"),": returns whether the form is anisotropic."),

@@ -218,6 +218,7 @@ Node
             This package is intended to allow the computation of local and global A1-Brouer degrees in both the stable and unstable settings, and for manipulations of unstable Grothendieck-Witt classes and symmetric bilinear forms including their invariants and decompositions. 
 
             Version history: 
+            
             @UL{
 				(BOLD("V 1.1: "), "this version was developed by N. Borisov, T. Brazelton, F. Espino, T. Hagedorn, Z. Han, J. Lopez Garcia, J. Louwsma, G. Ong, and A. Tawfeek. This version implements computations of local and global A1-Brouwer degrees, as well as Grothendieck-Witt classes and their invariants. "),
 				(BOLD("V 2.0: "), "this version was developed by S. Atherton, S. Dutta, J. Lopez Garcia, J. Louwsma, Y. Luo, G. Ong, and R. Sagayaraj. This version implements the computation of unstable local and global A1-Brouwer degrees, manipulations of the unstable Grothendieck-Witt group, and generalizes several methods in V 1.1 for Grothendieck-Witt class manipulations over fields to the setting of finite étale algebras over fields.")
