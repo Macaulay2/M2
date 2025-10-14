@@ -40,6 +40,7 @@ doc ///
 			(TO2(getSumDecomposition,"getSumDecomposition"),": returns a simplified diagonal representative of a form,"),
 			(TO2(getSumDecompositionString,"getSumDecompositionString"),": returns a string to quickly read a form,"),
 			)@
+
 			and Boolean methods for Grothendieck-Witt classes:
 
 			@UL(
