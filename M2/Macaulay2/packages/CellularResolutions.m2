@@ -104,7 +104,7 @@ mkCellComplex = (labelRingVal, cellsVal, maxCellsVal) -> (
     )
 
 cellComplex = method(Options=>true, TypicalValue=>CellComplex)
-cellComplex(Ring,List) := {} >> o -> (R,maxCells) -> (
+cellComplex(Ring,List) := CellComplex => {} >> o -> (R,maxCells) -> (
     (realMaxCells,allCells) := maxAndAllCells maxCells;
     mkCellComplex(R, allCells, realMaxCells)
     )
@@ -136,7 +136,7 @@ cellComplex(Ring,SimplicialComplex) := {Labels=>null} >> o -> (S,C) -> (
     )
 
 maxCells = method(TypicalValue=>HashTable)
-maxCells(CellComplex) := (cacheValue (symbol maxCells)) (cellComplex ->
+maxCells(CellComplex) := HashTable => (cacheValue (symbol maxCells)) (cellComplex ->
     (
         lst := flatten values cells cellComplex;
         if #lst == 0 then return new HashTable;
@@ -189,7 +189,7 @@ chainToVirtualTally = (lst) -> (
 boundary = method()
 boundary Cell := List => cell -> cell.boundary
 boundaryCells = method(TypicalValue=>List)
-boundaryCells Cell := cell -> apply(boundary(cell), c -> first c)
+boundaryCells Cell := List => cell -> apply(boundary(cell), c -> first c)
 --Boundary function, returns the boundary as a VirtualTally
 boundaryTally = cell -> chainToVirtualTally cell.boundary
 
@@ -203,7 +203,7 @@ internalCycleCheck = lst -> ((sum(lst,l -> (
 
 --Check if a chain, represented by a list is a boundary
 isCycle = method(TypicalValue=>Boolean)
-isCycle List := {Reduced=>true} >> o -> (lst) ->
+isCycle List := Boolean => {Reduced=>true} >> o -> (lst) ->
     (if o.Reduced
     then (
         p := partition(x -> dim (x#0) == 0, lst);
@@ -280,7 +280,7 @@ newCell = method(Options => {CellDimension=>null}, TypicalValue=>Cell)
 newCell(List,Number) :=
 newCell(List,RingElement) :=
 newCell(List,Module) :=
-newCell(List,Ideal) := opt -> (boundary,label) -> (
+newCell(List,Ideal) := Cell => opt -> (boundary,label) -> (
     if #boundary!=0 and instance(boundary#0,Cell)
     then return newCell(inferOrientation boundary,label,CellDimension=>opt.CellDimension);
     if not isCycle boundary then error "Expected the boundary to be a cycle";
@@ -304,11 +304,11 @@ isSimplexBoundary = (lst) -> (
     )
 
 isSimplex = method(TypicalValue=>Boolean);
-isSimplex Cell := cell ->
+isSimplex Cell := Boolean => cell ->
      isSimplexBoundary boundary cell
 
 newSimplexCell = method(TypicalValue=>Cell);
-newSimplexCell List := boundary -> (
+newSimplexCell List := Cell => boundary -> (
     if #boundary!=0 and instance(boundary#0,Cell)
     then return newSimplexCell inferOrientation boundary;
     if not isSimplexBoundary boundary then error "The given boundary is not a valid boundary for a simplex";
@@ -317,7 +317,7 @@ newSimplexCell List := boundary -> (
 newSimplexCell(List,Number) :=
 newSimplexCell(List,RingElement) :=
 newSimplexCell(List,Module) :=
-newSimplexCell(List,Ideal) := (boundary,label) -> (
+newSimplexCell(List,Ideal) := Cell => (boundary,label) -> (
     if #boundary!=0 and instance(boundary#0,Cell)
     then return newSimplexCell(inferOrientation boundary,label);
     if not isSimplexBoundary boundary then error "The given boundary is not a valid boundary for a simplex";
@@ -326,7 +326,7 @@ newSimplexCell(List,Ideal) := (boundary,label) -> (
 
 --Relabel function
 relabelCellComplex = method(Options=>{InferLabels=>true},TypicalValue=>CellComplex);
-relabelCellComplex(CellComplex,HashTable) := o -> (C,T) -> (
+relabelCellComplex(CellComplex,HashTable) := CellComplex => o -> (C,T) -> (
     dimC := dim C;
     R := ring C;
     tablecellsbydim := for i to dimC list select(keys T, c -> dim c == i);
@@ -386,7 +386,7 @@ sparseBlockMap = (codomain,domain,ht) -> (
     map(codomain,domain,matrix apply(#components codomain,i -> apply(#components domain, j -> maybeHt(i,j)))))
 
 --Create one boundary map in the chain complex
-boundaryMap(ZZ,CellComplex) := opts -> (r,cellComplex) -> (
+boundaryMap(ZZ,CellComplex) := Matrix => opts -> (r,cellComplex) -> (
     R := cellComplex.labelRing;
     t := r-1;
     rCells := cells(r,cellComplex);
@@ -416,7 +416,7 @@ boundaryMap(ZZ,CellComplex) := opts -> (r,cellComplex) -> (
     sparseBlockMap(codomain,domain,new HashTable from L)
     );
 
-complex CellComplex := {Reduced=>true, Prune=>true} >> o -> cellComplex -> (
+complex CellComplex := Complex => {Reduced=>true, Prune=>true} >> o -> cellComplex -> (
     if not cellComplex.cache.?complex then (
         cellComplex.cache.complex =
             (complex apply(max((dim cellComplex) + 1,1), r -> boundaryMap(r,cellComplex)))[1]
@@ -434,23 +434,23 @@ complex CellComplex := {Reduced=>true, Prune=>true} >> o -> cellComplex -> (
     );
 
 --Get homology directly from cell complex
-homology(ZZ,CellComplex) := opts -> (i,cellComplex) -> (
+homology(ZZ,CellComplex) := Module => opts -> (i,cellComplex) -> (
     homology_i complex(cellComplex)
     );
 
-homology CellComplex := opts -> cellComplex -> (
+homology CellComplex := Complex => opts -> cellComplex -> (
     homology complex(cellComplex)
     );
 
 --Get cohomology directly from cell complex
-cohomology(ZZ,CellComplex) := opts -> (i,cellComplex) -> (
+cohomology(ZZ,CellComplex) := Module => opts -> (i,cellComplex) -> (
     cohomology_i Hom(complex(cellComplex),cellComplex.labelRing^1)
     );
 
 ----------
 ---Here there be polyhedra
 ----------
-cellComplex(Ring,Polyhedron) := {Labels => null} >> o -> (R,P) -> (
+cellComplex(Ring,Polyhedron) := CellComplex => {Labels => null} >> o -> (R,P) -> (
     if not isCompact P then error "The given polyhedron is not compact.";
     Pdim := dim P;
     Pfaces := applyPairs(faces P, (i,lst) -> (Pdim-i,apply(lst,first)));
@@ -474,7 +474,7 @@ cellComplex(Ring,Polyhedron) := {Labels => null} >> o -> (R,P) -> (
     cellComplex(R,flatten values cells)
     );
 
-cellComplex(Ring,PolyhedralComplex) := {Labels => null} >> o -> (R,P) -> (
+cellComplex(Ring,PolyhedralComplex) := CellComplex => {Labels => null} >> o -> (R,P) -> (
     Pdim := dim P;
     Pfaces := applyPairs(faces P, (i,lst) -> (Pdim-i-1,apply(lst,first)));
     verts := vertices P;
@@ -501,7 +501,7 @@ cellComplex(Ring,PolyhedralComplex) := {Labels => null} >> o -> (R,P) -> (
 -- Posets
 -------------
 
-facePoset CellComplex := cellComplex -> (
+facePoset CellComplex := Poset => cellComplex -> (
     G := flatten values cells cellComplex;
     contain := (a,b) -> member(a,boundaryCells b) or a === b;-- a contained or equal b
     P := poset(G,contain);
@@ -516,25 +516,25 @@ facePoset CellComplex := cellComplex -> (
 
 --isFree = method(TypicalValue => Boolean);
 --check if all the labels are free modules
-isFree CellComplex := cellComplex -> (
+isFree CellComplex := Boolean => cellComplex -> (
     R := cellComplex.labelRing;
     all(flatten values cells cellComplex,c -> isFreeModule prune toModule(R,cellLabel c))
     )
 
-isCellMinimal := (R,cell) -> (
+isCellMinimal := Boolean => (R,cell) -> (
     label := toModule(R,cellLabel cell);
     all(boundary cell, c -> toModule(R,cellLabel first c) != label)
     )
 
 isMinimal = method(TypicalValue => Boolean)
 --Check if a labeled cell complex is minimal, Note: we assume the cell complex is free (see isFree)
-isMinimal CellComplex := cellComplex -> (
+isMinimal CellComplex := Boolean => cellComplex -> (
     R := cellComplex.labelRing;
     all(flatten values cells cellComplex,c -> isCellMinimal(R,c))
     )
 
 subcomplex = method(TypicalValue => CellComplex, Options=>{LabelRing=>null})
-subcomplex(CellComplex,RingElement) := o -> (C,m) -> (
+subcomplex(CellComplex,RingElement) := CellComplex => o -> (C,m) -> (
     allCells := flatten values cells C;
     R := ring C;
     S := if o.LabelRing =!= null then o.LabelRing else coefficientRing R;
@@ -551,7 +551,7 @@ subcomplex(CellComplex,RingElement) := o -> (C,m) -> (
     cellComplex(S,values finalCells)
     )
 
-subcomplex(CellComplex,List) := o -> (C,d) -> (
+subcomplex(CellComplex,List) := CellComplex => o -> (C,d) -> (
     allCells := flatten values cells C;
     R := ring C;
     S := if o.LabelRing =!= null then o.LabelRing else coefficientRing R;
@@ -568,11 +568,11 @@ subcomplex(CellComplex,List) := o -> (C,d) -> (
     cellComplex(R,values finalCells)
     )
 
-subcomplex(CellComplex,ZZ) := o -> (C,d) -> subcomplex(C,{d},LabelRing=>o.LabelRing);
+subcomplex(CellComplex,ZZ) := CellComplex => o -> (C,d) -> subcomplex(C,{d},LabelRing=>o.LabelRing);
 
-CellComplex _ RingElement := (C,m) -> (subcomplex(C,m))
-CellComplex _ List := (C,d) -> (subcomplex(C,d))
-CellComplex _ ZZ := (C,d) -> (subcomplex(C,{d}))
+CellComplex _ RingElement := CellComplex => (C,m) -> (subcomplex(C,m))
+CellComplex _ List := CellComplex => (C,d) -> (subcomplex(C,d))
+CellComplex _ ZZ := CellComplex => (C,d) -> (subcomplex(C,{d}))
 
 ---------
 -- Output
@@ -599,7 +599,7 @@ net CellComplex := cellComplex -> (
 ------------------------
 
 cellComplexSphere = method(TypicalValue=>CellComplex);
-cellComplexSphere(Ring,ZZ) := (R,n) -> (
+cellComplexSphere(Ring,ZZ) := CellComplex => (R,n) -> (
     if n<0 then error "cellComplexSphere expects a non-negative integer";
     v := newSimplexCell {};
     if n==0 then (
@@ -613,7 +613,7 @@ cellComplexSphere(Ring,ZZ) := (R,n) -> (
     )
 
 cellComplexRPn = method(TypicalValue=>CellComplex);
-cellComplexRPn(Ring,ZZ) := (R,n) -> (
+cellComplexRPn(Ring,ZZ) := CellComplex => (R,n) -> (
     if n<0 then error "cellComplexRPn expects a non-negative integer";
     t := newSimplexCell {};
     if n==0 then return cellComplex(R,{t});
@@ -625,7 +625,7 @@ cellComplexRPn(Ring,ZZ) := (R,n) -> (
     )
 
 cellComplexTorus = method(TypicalValue=>CellComplex);
-cellComplexTorus(Ring,ZZ) := (R,n) -> (
+cellComplexTorus(Ring,ZZ) := CellComplex => (R,n) -> (
     if n<0 then error "cellComplexTorus expects a non-negative integer";
     v := newSimplexCell {};
     if n==0 then return cellComplex(R,{v});
@@ -643,7 +643,7 @@ cellComplexTorus(Ring,ZZ) := (R,n) -> (
 ----------------------------
 
 taylorComplex = method(TypicalValue=>CellComplex);
-taylorComplex MonomialIdeal := I -> (
+taylorComplex MonomialIdeal := CellComplex => I -> (
     gensI := I_*;
     r := #gensI;
     if r == 0 then error "taylorComplex expects a non-zero monomialIdeal";
@@ -659,7 +659,7 @@ taylorComplex MonomialIdeal := I -> (
     )
 
 scarfComplex = method(TypicalValue=>CellComplex)
-scarfComplex MonomialIdeal := I -> (
+scarfComplex MonomialIdeal := CellComplex => I -> (
     gensI := I_*;
     r := #gensI;
     if r == 0 then error "scarfComplex expects a non-zero monomialIdeal";
@@ -699,7 +699,7 @@ scarfComplex MonomialIdeal := I -> (
     )
 
 hullComplex = method(TypicalValue=>CellComplex);
-hullComplex MonomialIdeal := I -> (
+hullComplex MonomialIdeal := CellComplex => I -> (
     n := numgens ring I;
     hullComplex((n+1)!+1,I)
     )
@@ -727,7 +727,7 @@ hullComplex(QQ,MonomialIdeal) := (t,I) -> (
     cellComplex(R,flatten values cells)
     )
 
-isWellDefined Cell := C -> (
+isWellDefined Cell := Boolean => C -> (
     R := ring C.label;
     M := toModule(R,C.label);
     if not isSubmodule M then return false;
@@ -738,7 +738,7 @@ isWellDefined Cell := C -> (
     isCycle(C.boundary)
     )
 
-isWellDefined CellComplex := C -> (
+isWellDefined CellComplex := Boolean => C -> (
     allCells := flatten values C.cells;
     containingModule := null;
     for cell in allCells do (
