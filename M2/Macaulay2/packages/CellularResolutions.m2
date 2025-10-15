@@ -28,7 +28,6 @@ export {--types
         "cellLabel",
         "hullComplex",
         "isCycle",
---        "isFree",
         "isMinimal",
         "isSimplex",
         "newCell",
@@ -43,7 +42,6 @@ export {--types
         "InferLabels",
         "LabelRing",
         "Reduced"
-        --"Prune"
         }
 protect labelRing
 protect label
@@ -66,7 +64,7 @@ CellComplex.GlobalReleaseHook = globalReleaseFunction
 Cell = new Type of MutableHashTable
 Cell.synonym = "cell"
 
-maxAndAllCells := (lst) -> (
+maxAndAllCells = lst -> (
     if #lst == 0 then return (new HashTable,new HashTable);
     bdfn := c -> set boundaryCells c;
     maxcells := set lst;
@@ -82,7 +80,7 @@ maxAndAllCells := (lst) -> (
     )
 
 --returns a hashtable of lists of cells indexed by dimension
-cellsFromMaxCells := lst -> (
+cellsFromMaxCells = lst -> (
     pendingCells := set lst;
     finishedCells := {};
     while #pendingCells !=0 do (
@@ -94,7 +92,7 @@ cellsFromMaxCells := lst -> (
     )
 
 --Private constructor, creates the cache
-mkCellComplex := (labelRingVal, cellsVal, maxCellsVal) -> (
+mkCellComplex = (labelRingVal, cellsVal, maxCellsVal) -> (
     new CellComplex from {
         symbol labelRing => labelRingVal,
         symbol cells => cellsVal,
@@ -154,20 +152,20 @@ maxCells(CellComplex) := (cacheValue (symbol maxCells)) (cellComplex ->
         ))
 
 --Define dimension for cell
-dim(Cell) := (cell) -> cell.cellDimension
+dim Cell := cell -> cell.cellDimension
 
 --Define dimension for cell complex
-dim(CellComplex) := (cellComplex) -> max keys cellComplex.cells
+dim CellComplex := cellComplex -> max keys cellComplex.cells
 
 --Define ring for cell complex
-ring(CellComplex) := (cellComplex) -> cellComplex.labelRing
+ring CellComplex := cellComplex -> cellComplex.labelRing
 
 
 cellLabel = method()
-cellLabel(Cell) := (cell) -> cell.label
+cellLabel Cell := cell -> cell.label
 
 --Make a cell, internal function
-makeCell := (lst, l, d) -> (
+makeCell = (lst, l, d) -> (
     bdim := -1;
     for cell in lst do (
         if bdim < 0
@@ -182,21 +180,21 @@ makeCell := (lst, l, d) -> (
         }
     );
 
-chainToVirtualTally := (lst) -> (
+chainToVirtualTally = (lst) -> (
     if lst == {}
     then new VirtualTally from {}
     else sum(lst, (cell,deg) -> new VirtualTally from {cell => deg})
     )
 
 boundary = method()
-boundary(Cell) := List => (cell) -> cell.boundary
+boundary Cell := List => cell -> cell.boundary
 boundaryCells = method(TypicalValue=>List)
-boundaryCells(Cell) := (cell) -> apply(boundary(cell), c -> first c)
+boundaryCells Cell := cell -> apply(boundary(cell), c -> first c)
 --Boundary function, returns the boundary as a VirtualTally
-boundaryTally := (cell) -> chainToVirtualTally cell.boundary
+boundaryTally = cell -> chainToVirtualTally cell.boundary
 
 
-internalCycleCheck := (lst) -> ((sum(lst,l -> (
+internalCycleCheck = lst -> ((sum(lst,l -> (
                 c := l#0;
                 deg := l#1;
                 if deg>0
@@ -205,7 +203,7 @@ internalCycleCheck := (lst) -> ((sum(lst,l -> (
 
 --Check if a chain, represented by a list is a boundary
 isCycle = method(TypicalValue=>Boolean)
-isCycle(List) := {Reduced=>true} >> o -> (lst) ->
+isCycle List := {Reduced=>true} >> o -> (lst) ->
     (if o.Reduced
     then (
         p := partition(x -> dim (x#0) == 0, lst);
@@ -217,7 +215,7 @@ isCycle(List) := {Reduced=>true} >> o -> (lst) ->
 
 
 --Figure out an orientation automatically
-inferOrientation := (lst) -> (
+inferOrientation = lst -> (
     if #lst == 2 and (dim first lst) == 0 then (
         ret := {(lst#0,1),(lst#1,-1)};
         if not isCycle ret then error "The given list of cells do not form a cycle";
@@ -256,7 +254,7 @@ inferOrientation := (lst) -> (
     )
 
 --Convert it to a submodule of R^1 if possible
-toModule := (R,x) -> (
+toModule = (R,x) -> (
     if instance(x,Module) then return x;
     if instance(x,Ideal) then return module x;
     if instance(x,RingElement) then return image matrix {{x}};
@@ -264,7 +262,7 @@ toModule := (R,x) -> (
     error "Expected a Module, Ideal, RingElement, or Number"
     )
 
-inferLabel := boundary -> (
+inferLabel = boundary -> (
     if boundary == {} then return 1;
     if instance(boundary#0,Sequence) then return boundary/first//inferLabel;
     if all(boundary/cellLabel,b -> instance(b,RingElement) or instance(b,Number))
@@ -291,11 +289,11 @@ newCell(List,Ideal) := opt -> (boundary,label) -> (
     if opt.CellDimension=!=null and dim c > cd then error "Incorrect CellDimension optional parameter";
     c
     )
-newCell(List) := opt -> cells -> newCell(cells,inferLabel cells,CellDimension=>opt.CellDimension);
+newCell List := opt -> cells -> newCell(cells,inferLabel cells,CellDimension=>opt.CellDimension);
 
 
 
-isSimplexBoundary := (lst) -> (
+isSimplexBoundary = (lst) -> (
     if #lst==0 then return true;
     bdim := dim first lst#0;
     all(lst,isSimplex @@ first) and
@@ -306,11 +304,11 @@ isSimplexBoundary := (lst) -> (
     )
 
 isSimplex = method(TypicalValue=>Boolean);
-isSimplex(Cell) := cell ->
+isSimplex Cell := cell ->
      isSimplexBoundary boundary cell
 
 newSimplexCell = method(TypicalValue=>Cell);
-newSimplexCell(List) := (boundary) -> (
+newSimplexCell List := boundary -> (
     if #boundary!=0 and instance(boundary#0,Cell)
     then return newSimplexCell inferOrientation boundary;
     if not isSimplexBoundary boundary then error "The given boundary is not a valid boundary for a simplex";
@@ -362,7 +360,7 @@ RingMap ** CellComplex := (f,c) -> (
 
 --Get list of cells
 cells = method();
-cells(CellComplex) := HashTable => (cellComplex) -> cellComplex.cells
+cells CellComplex := HashTable => cellComplex -> cellComplex.cells
 cells(ZZ,CellComplex) := List => (r,cellComplex) -> (
     if cellComplex.cells#?r
     then cellComplex.cells#r
@@ -375,7 +373,7 @@ skeleton(ZZ,CellComplex) := CellComplex => (n,cellComplex) -> (
     )
 
 --take a hash table of RingElements/Matrices, and make a matrix, or 0
-sparseBlockMap := (codomain,domain,ht) -> (
+sparseBlockMap = (codomain,domain,ht) -> (
     ks := keys ht;
     if ks == {} then return map(codomain,domain,0);
     rows := max (ks/first) + 1;
@@ -418,7 +416,7 @@ boundaryMap(ZZ,CellComplex) := opts -> (r,cellComplex) -> (
     sparseBlockMap(codomain,domain,new HashTable from L)
     );
 
-complex(CellComplex) := {Reduced=>true, Prune=>true} >> o -> (cellComplex) -> (
+complex CellComplex := {Reduced=>true, Prune=>true} >> o -> cellComplex -> (
     if not cellComplex.cache.?complex then (
         cellComplex.cache.complex =
             (complex apply(max((dim cellComplex) + 1,1), r -> boundaryMap(r,cellComplex)))[1]
@@ -440,7 +438,7 @@ homology(ZZ,CellComplex) := opts -> (i,cellComplex) -> (
     homology_i complex(cellComplex)
     );
 
-homology(CellComplex) := opts -> (cellComplex) -> (
+homology CellComplex := opts -> cellComplex -> (
     homology complex(cellComplex)
     );
 
@@ -503,7 +501,7 @@ cellComplex(Ring,PolyhedralComplex) := {Labels => null} >> o -> (R,P) -> (
 -- Posets
 -------------
 
-facePoset(CellComplex) := (cellComplex) -> (
+facePoset CellComplex := cellComplex -> (
     G := flatten values cells cellComplex;
     contain := (a,b) -> member(a,boundaryCells b) or a === b;-- a contained or equal b
     P := poset(G,contain);
@@ -518,7 +516,7 @@ facePoset(CellComplex) := (cellComplex) -> (
 
 --isFree = method(TypicalValue => Boolean);
 --check if all the labels are free modules
-isFree(CellComplex) := (cellComplex) -> (
+isFree CellComplex := cellComplex -> (
     R := cellComplex.labelRing;
     all(flatten values cells cellComplex,c -> isFreeModule prune toModule(R,cellLabel c))
     )
@@ -530,7 +528,7 @@ isCellMinimal := (R,cell) -> (
 
 isMinimal = method(TypicalValue => Boolean)
 --Check if a labeled cell complex is minimal, Note: we assume the cell complex is free (see isFree)
-isMinimal(CellComplex) := (cellComplex) -> (
+isMinimal CellComplex := cellComplex -> (
     R := cellComplex.labelRing;
     all(flatten values cells cellComplex,c -> isCellMinimal(R,c))
     )
@@ -580,11 +578,11 @@ CellComplex _ ZZ := (C,d) -> (subcomplex(C,{d}))
 -- Output
 ---------
 
-net(Cell) := (cell) -> (
+net Cell := cell -> (
     "Cell of dimension " | (dim cell) | " with label " | (net cellLabel cell)
     )
 
-net(CellComplex) := (cellComplex) -> (
+net CellComplex := cellComplex -> (
     if hasAttribute (cellComplex, ReverseDictionary) then return getAttribute (cellComplex, ReverseDictionary);
     d := dim cellComplex;
     nTotalCells := #(flatten values cells cellComplex);
@@ -645,7 +643,7 @@ cellComplexTorus(Ring,ZZ) := (R,n) -> (
 ----------------------------
 
 taylorComplex = method(TypicalValue=>CellComplex);
-taylorComplex(MonomialIdeal) := (I) -> (
+taylorComplex MonomialIdeal := I -> (
     gensI := I_*;
     r := #gensI;
     if r == 0 then error "taylorComplex expects a non-zero monomialIdeal";
@@ -661,7 +659,7 @@ taylorComplex(MonomialIdeal) := (I) -> (
     )
 
 scarfComplex = method(TypicalValue=>CellComplex)
-scarfComplex(MonomialIdeal) := (I) -> (
+scarfComplex MonomialIdeal := I -> (
     gensI := I_*;
     r := #gensI;
     if r == 0 then error "scarfComplex expects a non-zero monomialIdeal";
@@ -701,7 +699,7 @@ scarfComplex(MonomialIdeal) := (I) -> (
     )
 
 hullComplex = method(TypicalValue=>CellComplex);
-hullComplex(MonomialIdeal) := (I) -> (
+hullComplex MonomialIdeal := I -> (
     n := numgens ring I;
     hullComplex((n+1)!+1,I)
     )
@@ -729,7 +727,7 @@ hullComplex(QQ,MonomialIdeal) := (t,I) -> (
     cellComplex(R,flatten values cells)
     )
 
-isWellDefined(Cell) := (C) -> (
+isWellDefined Cell := C -> (
     R := ring C.label;
     M := toModule(R,C.label);
     if not isSubmodule M then return false;
@@ -740,7 +738,7 @@ isWellDefined(Cell) := (C) -> (
     isCycle(C.boundary)
     )
 
-isWellDefined(CellComplex) := (C) -> (
+isWellDefined CellComplex := C -> (
     allCells := flatten values C.cells;
     containingModule := null;
     for cell in allCells do (
