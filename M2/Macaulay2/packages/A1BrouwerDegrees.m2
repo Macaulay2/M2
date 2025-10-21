@@ -43,7 +43,7 @@ newPackage (
 	 HomePage => "https://www.atawfeek.com/"}
 	},
     Headline => "for working with A1-Brouwer degree computations and quadratic forms",
-	PackageImports => {"MinimalPrimes"},
+	PackageImports => {"MinimalPrimes", "Elimination"},
     PackageExports => {},
     AuxiliaryFiles => true,
 	DebuggingMode => false,
@@ -73,8 +73,6 @@ export{
     -- ArithmeticMethods.m2
     "getPadicValuation",
     "getLocalAlgebraBasis",
-    "getSylvesterMatrix",
-    "getResultant",
     
     --BuildingForms.m2
     "makeDiagonalForm",
@@ -786,31 +784,9 @@ degSum = addGWuDivisorial({deg1, deg2}, {-2, 1});
 assert(isIsomorphicForm(degSum, Gdeg));
 ///
 
--- Tests for Sylvester matrix and resultant
--- Test 38
-TEST ///
-R = QQ[x];
-f = x^2 + x - 2;
-g = 3*x + 5;
-Sylv = getSylvesterMatrix(f, g);
-M = matrix(QQ, {{-2, 5, 0}, {1, 3, 5}, {1, 0, 3}});
-assert(Sylv == M);
-assert(getResultant(f, g) == det M);
-///
-
--- Test 39
-TEST ///
-R = ZZ[x];
-f = x^2 + x - 2;
-g = 3*x + 5;
-Sylv = getSylvesterMatrix(f, g);
-M = matrix(ZZ, {{-2, 5, 0}, {1, 3, 5}, {1, 0, 3}});
-assert(Sylv == M);
-assert(getResultant(f, g) == det M);
-///
 
 -- Test for trace and norm
--- Test 40
+-- Test 38
 TEST ///
 R=GF(2)[x]/(x^2+x+1)
 F=frac R
@@ -819,7 +795,7 @@ N=getMultiplicationMatrix(K,1+x*y)
 assert(N-matrix{{1, x},{x, 1+x^2}}==map(F^2,F^2,0))
 ///
 
--- Test 41
+-- Test 39
 TEST ///
 F = QQ[x]/(x^5+2*x+3) 
 F=frac F
@@ -830,7 +806,7 @@ assert(getNorm(F[y]/(y^3+3*y+2),1+x*y)==det N)
 ///
 
 -- Test for transferGW
--- Test 42
+-- Test 40
 TEST ///
 R = QQ[x]/(x^5 - x - 1)
 M = matrix(R, {{1, 3*x^2 + 4*x^4, 8*x^3 + 4}, {3*x^2 + 4*x^4, 5, 1}, {8*x^3 + 4, 1, 7*x^2 + 3*x}});
@@ -839,7 +815,7 @@ GQ = transferGW G;
 assert(GQ === makeDiagonalForm(QQ, (5, -75, 17059280/279299)));
 ///
 
--- Test 43
+-- Test 41
 TEST ///
 R = GF(7)[x]/(x^3 + 6*x^2 + 4);
 M = matrix(R, {{1, 2, x}, {2, x^2 + 5, 3*x + 2}, {x, 3*x + 2, 5}});
@@ -849,7 +825,7 @@ assert(isIsomorphicForm(G7, makeDiagonalForm(GF(7), (3, 4, 4))));
 ///
 
 -- Test for diagonal and hyperbolic unstable constructors
--- Test 44
+-- Test 42
 TEST ///
 alpha = makeDiagonalUnstableForm(RR, (1,-1));
 beta = makeGWuClass matrix(RR, {{0,1},{1,0}});
@@ -858,7 +834,7 @@ assert(isIsomorphicForm(alpha, H));
 assert(isIsomorphicForm(beta, H));
 ///
 
--- Test 45
+-- Test 43
 TEST ///
 alpha = makeDiagonalUnstableForm(GF(27), (1,-1));
 beta = makeGWuClass matrix(GF(27), {{0,1},{1,0}});

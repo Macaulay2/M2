@@ -136,7 +136,7 @@ getGlobalUnstableA1Degree (RingElement, RingElement) := UnstableGrothendieckWitt
    	
 	 makeGWuClass(
             id_(CC^((degree fr)#0)),
-            promote((-1)^(((degree fr)#0^2 - (degree fr)#0)/2), kk) * getResultant(fr, gr)
+            promote((-1)^(((degree fr)#0^2 - (degree fr)#0)/2), kk) * resultant(fr, gr, x)
 	    )
     ) else if instance(kk, RealField) then (
         error "getGlobalUnstableA1Degree method does not work over the reals."

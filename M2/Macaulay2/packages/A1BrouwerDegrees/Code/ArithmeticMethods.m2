@@ -142,7 +142,7 @@ getLocalAlgebraBasis (List, Ideal) := List => (L, p) -> (
     if not (isSubset(ideal(L),p)) then error "the polynomials of the list do not vanish at the prescribed ideal";
 
     -- Verify that the ideal p is prime
-    try isPrime p else print "Warning: Unable to verify whether the prime ideal is an isolated zero of the list of polynomials";
+    try isPrime p else print "warning: Unable to verify whether the prime ideal is an isolated zero of the list of polynomials";
     
     -- Check whether the ideal I is zero-dimensional
     if dim I > 0 then error "morphism does not have isolated zeros";
@@ -216,44 +216,3 @@ solveCongruenceList(List,List) := (L1,L2) -> (
         );
     a
     )
-
--- Input: two polynomials in one variable
--- Output: the Sylvester matrix of the two polynomials
-getSylvesterMatrix = method()
-getSylvesterMatrix(RingElement, RingElement) := RingElement => (f, g) -> (
-    if not ((ring f === ring g) and length gens ring f == 1) then
-        error  "the polynomials must be defined over the same univariate polynomial ring";
-
-    kk := coefficientRing ring f;
-
-    u := (gens ring f)#0;
-
-    n := degree(u, f);
-    m := degree(u, g);
-
-    S := mutableMatrix(kk, m+n, m+n);
-    
-    -- populate the first m columns with the coefficients of f
-    for i from 0 to n do (
-        for j from 0 to m-1 do (
-            S_(i + j, j) = coefficient(u^i, f);
-        );
-    );
-
-    -- promote the next n columns with the coefficients of g
-    for i from 0 to m do (
-        for j from 0 to n-1 do (
-            S_(i + j, m + j) = coefficient(u^i, g);
-        );
-    );
-
-    -- return the matrix S
-    matrix S
-)
-
--- Input: two polynomials in one variable
--- Output: the resultant of the two polynomials
-getResultant = method()
-getResultant(RingElement, RingElement) := RingElement => (f, g) -> (
-    determinant getSylvesterMatrix(f, g)
-)

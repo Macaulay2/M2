@@ -6,7 +6,7 @@ isRingElement=method()
 
 isRingElement(Ring,Thing):=(R,a) -> (
     try promote(a,R) else (
-	error "The given element is not a member of the input ring"
+	error "the given element is not a member of the input ring"
     )
 )
 
