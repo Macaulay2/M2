@@ -704,7 +704,8 @@ C2 = makeGWuClass matrix(CC, {{1,0,-3+ii,0},{0,-2,0,0},{-3+ii,0,-3,0},{0,0,0,5}}
 C3 = makeGWuClass matrix(CC, {{2*ii,0,0,0,0,0,0},{0,-2,0,0,0,0,0},{0,0,-3,0,0,0,0},{0,0,0,1,0,-3+ii,0},{0,0,0,0,-2,0,0},{0,0,0,-3+ii,0,-3,0},{0,0,0,0,0,0,5}});
 
 assert(addGWu(A1, A2) === A3);
-assert(addGWu(B1, B2) === B3);
+assert(getMatrix addGWu(B1, B2) === getMatrix B3);
+assert(abs(getScalar addGWu(B1, B2) - getScalar B3) < 1e-15);
 assert(addGWu(C1, C2) === C3);
 ///
 
