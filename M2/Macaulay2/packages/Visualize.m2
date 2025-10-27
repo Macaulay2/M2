@@ -18,8 +18,8 @@
 
 newPackage(
 	"Visualize",
-	Version => "1.7",
-	Date => "May 3, 2025",
+	Version => "1.8",
+	Date => "October 27, 2025",
     	Authors => {       
      	     {Name => "Brett Barwick", Email => "bbarwick@uscupstate.edu", HomePage => "http://faculty.uscupstate.edu/bbarwick/"},	     
 	     {Name => "Thomas Enkosky", Email => "tomenk@bu.edu", HomePage => "http://math.bu.edu/people/tomenk/"},	     
@@ -67,6 +67,10 @@ export {
 ---------------
 
 -*
+
+1.8 (2025-10-27, M2 1.25.11)
+* use webpack to bundle most of the javascript libraries
+* bootstrap 3 -> bootstrap 5
 
 1.7 (2025-05-03, M2 1.25.05)
 * update for leadTerm changes
