@@ -9,6 +9,7 @@ module.exports = {
     visPoset: './src/visPoset.js',
     visSimplicialComplex2d: './src/visSimplicialComplex2d.js',
     visIdeal2d: './src/visIdeal2d.js',
+    visIdeal3d: './src/visIdeal3d.js',
   },
   output: {
     path: path.resolve(__dirname, 'js'),
