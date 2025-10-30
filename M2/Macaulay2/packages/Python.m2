@@ -719,29 +719,30 @@ TEST ///
 -----------------------
 -- string operations --
 -----------------------
-foo = pythonValue "'foo'"
-bar = pythonValue "'bar'"
+foo = toPython "foo"
+bar = toPython "bar"
 
 -- concatenation
-assert Equation(foo + bar, pythonValue "'foobar'")
+assert Equation(foo + bar, "foobar")
 assert Equation(foo + "bar", "foobar")
 assert Equation("foo" + bar, "foobar")
 
 -- repetition
-assert Equation(foo * pythonValue "2", pythonValue "'foofoo'")
+assert Equation(foo * toPython 2, "foofoo")
 assert Equation(foo * 2, "foofoo")
-assert Equation("foo" * pythonValue "2", "foofoo")
-assert Equation(pythonValue "2" * foo, pythonValue "'foofoo'")
+assert Equation("foo" * toPython 2, "foofoo")
+assert Equation(toPython 2 * foo, "foofoo")
 assert Equation(2 * foo, "foofoo")
-assert Equation(pythonValue "2" * "foo", "foofoo")
+assert Equation(toPython 2 * "foo", "foofoo")
 
 -- check a few methods
-assert Equation(foo@@capitalize(), pythonValue "'Foo'")
-assert Equation(foo@@center(5, "x"), pythonValue "'xfoox'")
-assert Equation((pythonValue "'{0}, {1}!'")@@format("Hello", "world"),
-    pythonValue "'Hello, world!'")
-assert Equation(foo@@replace("f", "F"), pythonValue "'Foo'")
-assert Equation(foo@@upper(), pythonValue "'FOO'")
+assert Equation(foo@@capitalize(), "Foo")
+assert Equation(foo@@center(5, "x"), "xfoox")
+assert Equation(
+    (toPython "{0}, {1}!")@@format("Hello", "world"),
+    "Hello, world!")
+assert Equation(foo@@replace("f", "F"), "Foo")
+assert Equation(foo@@upper(), "FOO")
 ///
 
 TEST ///
