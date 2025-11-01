@@ -730,10 +730,16 @@ hullComplex(QQ,MonomialIdeal) := (t,I) -> (
 isWellDefined Cell := Boolean => C -> (
     R := ring C.label;
     M := toModule(R,C.label);
-    if not isSubmodule M then return false;
+    if not isSubmodule M then (
+        if debugLevel > 0 then stderr << "isWellDefined: Expeccted a label describing a submodule" << endl;
+        return false;
+        );
     --check that the boundary labels are compatible
     --boundary is a list of pairs where the first element is the cell
-    if not all(C.boundary, x ->  isSubset(M,toModule(R,(x#0).label))) then return false;
+    if not all(C.boundary, x ->  isSubset(M,toModule(R,(x#0).label))) then (
+        if debugLevel > 0 then stderr << "isWellDefined: Boundary cell has incompatible label" << endl;
+        return false;
+        );
     --check that the boundary is a cycle in homology
     isCycle(C.boundary)
     )
@@ -742,11 +748,18 @@ isWellDefined CellComplex := Boolean => C -> (
     allCells := flatten values C.cells;
     containingModule := null;
     for cell in allCells do (
-        if ring cell.label =!= C.labelRing then return false;
+        if ring cell.label =!= C.labelRing then (
+            if debugLevel > 0 then stderr << "isWellDefined: Cell labels should be over the label ring" << endl;
+            return false;
+            );
+        --Don't print a further debug here, reply on the output of isWellDefined cell
         if not isWellDefined cell then return false;
         M := toModule(C.labelRing,cell.label);
         if containingModule === null then containingModule = ambient M;
-        if containingModule != ambient M then return false;
+        if containingModule != ambient M then(
+            if debugLevel > 0 then stderr << "isWellDefined: Cells have labels from different ambient modules" << endl;
+            return false;
+            );
         );
     true
     )
