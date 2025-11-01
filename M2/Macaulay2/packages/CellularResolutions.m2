@@ -521,7 +521,7 @@ isFree CellComplex := Boolean => cellComplex -> (
     all(flatten values cells cellComplex,c -> isFreeModule prune toModule(R,cellLabel c))
     )
 
-isCellMinimal := Boolean => (R,cell) -> (
+isCellMinimal = (R,cell) -> (
     label := toModule(R,cellLabel cell);
     all(boundary cell, c -> toModule(R,cellLabel first c) != label)
     )
