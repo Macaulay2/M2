@@ -7,6 +7,18 @@ newPackage(
 	{Name => "Luke Oeding", Email => "oeding@auburn.edu", HomePage => "http://webhome.auburn.edu/~lao0004/"}}, 
     Headline => "Builds an algebra extending an exterior algebra", 
     Keywords => {"Lie Groups and Lie Algebras"},
+    Certification => {
+	"journal name" => "Journal of Software for Algebra and Geometry",
+	"journal URI" => "https://msp.org/jsag/",
+	"article title" => "ExteriorExtensions: a package for Macaulay2",
+	"acceptance date" => "2025-07-16",
+	"published article URI" => "https://msp.org/jsag/2025/15-1/p06.xhtml",
+	"published article DOI" => "10.2140/jsag.2025.15.69",
+	"published code URI" => "https://msp.org/jsag/2025/15-1/jsag-v15-n1-x06-ExteriorExtensions.m2",
+	"version at publication" => "1.0",
+	"volume number" => "15",
+	"volume URI" => "https://msp.org/jsag/2025/15-1/"
+	}
     )
 export {
 "ExteriorExtension", 
