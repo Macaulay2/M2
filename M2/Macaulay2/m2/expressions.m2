@@ -1275,7 +1275,6 @@ ldots=new Dots from symbol ldots
 texMath Dots := x -> "\\" | simpleToString x -- note that \vdots has bad spacing in ordinary LaTeX
 toString Dots := x -> "..."
 net Dots := x -> if x === vdots then "."||"."||"." else if x === ddots then ".  "||" . "||"  ." else "..."
-
 -- used e.g. in chaincomplexes.m2
 shortLength = 8
 shortStringLength := 3*shortLength

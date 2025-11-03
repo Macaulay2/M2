@@ -1102,6 +1102,7 @@ export unarymethod(rhs:Code,methodkey:SymbolClosure):Expr := (
 	  method := lookup(Class(right),Expr(methodkey),methodkey.symbol.hash);
 	  if method == nullE then MissingMethod(methodkey)
 	  else applyEE(method,right)));
+
 export binarymethod(lhs:Code,rhs:Code,methodkey:SymbolClosure):Expr := (
      left := eval(lhs);
      when left is Error do left
@@ -1126,6 +1127,17 @@ export binarymethod(left:Expr,rhs:Code,methodkey:SymbolClosure):Expr := (
 	       else MissingMethodPair(methodkey,left,right)
 	       )
 	  else applyEEE(method,left,right)));
+export binarymethodCode(lhs:Code,rhs:Code,methodkey:Code):Expr := (
+    when methodkey is
+        s:globalSymbolClosureCode do binarymethod(lhs,rhs,SymbolClosure(globalFrame,s.symbol))
+    else nullE
+);
+export unarymethodCode(rhs:Code,methodkey:Code):Expr := (
+    when methodkey is
+        s:globalSymbolClosureCode do unarymethod(rhs,SymbolClosure(globalFrame,s.symbol))
+    else nullE
+);
+
 
 -----------------------------------------------------------------------------
 
@@ -1272,7 +1284,7 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	then (
 	    e := nullify(x.lhs);
 	    when e
-	    is Nothing do nothing
+	    is Nothing do nothing -- TODO: treat here separately by calling ordinary =
 	    else return e)
 	else lexpr = eval(x.lhs);
 	when lexpr is e:Error do return lexpr else nothing;
@@ -1289,32 +1301,52 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	    else return r);
 	-- if not, use default behavior
 	left := evaluatedCode(lexpr, codePosition(x.lhs));
+        r := nullE; c := Code(nullCode());
 	when x.lhs
 	is y:globalMemoryReferenceCode do (
-	    r := s.binary(Code(left), x.rhs);
+	    if s.word.name === "??" then r=eval(x.rhs) -- should ?? be treated separately earlier?
+	    else if s.binary==dummyBinaryFun then r=binarymethod(Code(left),x.rhs,SymbolClosure(globalFrame,s))
+	    else r=s.binary(Code(left),x.rhs);
 	    when r is e:Error do r
 	    else globalAssignment(y.frameindex, x.info, r))
 	is y:localMemoryReferenceCode do (
-	    r := s.binary(Code(left), x.rhs);
+	    if s.word.name === "??" then r=eval(x.rhs) -- should ?? be treated separately earlier?
+	    else if s.binary==dummyBinaryFun then r=binarymethod(Code(left),x.rhs,SymbolClosure(globalFrame,s))
+	    else r=s.binary(Code(left),x.rhs);
 	    when r is e:Error do r
 	    else localAssignment(y.nestingDepth, y.frameindex, r))
 	is y:threadMemoryReferenceCode do (
-	    r := s.binary(Code(left), x.rhs);
+	    if s.word.name === "??" then r=eval(x.rhs) -- should ?? be treated separately earlier?
+	    else if s.binary==dummyBinaryFun then r=binarymethod(Code(left),x.rhs,SymbolClosure(globalFrame,s))
+	    else r=s.binary(Code(left),x.rhs);
 	    when r is e:Error do r
 	    else globalAssignment(y.frameindex, x.info, r))
 	is y:binaryCode do (
-	    r := Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
+	    if s.word.name === "??" then c=x.rhs -- should ?? be treated separately earlier?
+	    else if s.binary==dummyBinaryFun then c=Code(ternaryCode(binarymethodCode, Code(left), x.rhs, globalSymbolClosureCode(s, dummyPosition), x.position))
+	    else c=Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
 	    if y.f == DotS.symbol.binary || y.f == SharpS.symbol.binary
-	    then AssignElemFun(y.lhs, y.rhs, r)
+	    then AssignElemFun(y.lhs, y.rhs, c)
+	    else if y.f == unarymethodCode then UnaryInstallValueFun(convertGlobalOperator(x.info), y.lhs, c)
 	    else InstallValueFun(CodeSequence(
-		    convertGlobalOperator(x.info), y.lhs, y.rhs, r)))
-	is y:adjacentCode do (
-	    r := Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
+		    convertGlobalOperator(x.info), y.lhs, y.rhs, c)))
+	is y:ternaryCode do (
+	    if s.word.name === "??" then c=x.rhs -- should ?? be treated separately earlier?
+	    else if s.binary==dummyBinaryFun then c=Code(ternaryCode(binarymethodCode, Code(left), x.rhs, globalSymbolClosureCode(s, dummyPosition), x.position))
+	    else c=Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
 	    InstallValueFun(CodeSequence(
-		    convertGlobalOperator(AdjacentS.symbol), y.lhs, y.rhs, r)))
+		    convertGlobalOperator(x.info), y.arg1, y.arg2, c)))
+	is y:adjacentCode do (
+	    if s.word.name === "??" then c=x.rhs -- should ?? be treated separately earlier?
+	    else if s.binary==dummyBinaryFun then c=Code(ternaryCode(binarymethodCode, Code(left), x.rhs, globalSymbolClosureCode(s, dummyPosition), x.position))
+	    else c=Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
+	    InstallValueFun(CodeSequence(
+		    convertGlobalOperator(AdjacentS.symbol), y.lhs, y.rhs, c)))
 	is y:unaryCode do (
-	    r := Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
-	    UnaryInstallValueFun(convertGlobalOperator(x.info), y.rhs, r))
+	    if s.word.name === "??" then c=x.rhs -- should ?? be treated separately earlier?
+	    else if s.binary==dummyBinaryFun then c=Code(ternaryCode(binarymethodCode, Code(left), x.rhs, globalSymbolClosureCode(s, dummyPosition), x.position))
+	    else c=Code(binaryCode(s.binary, Code(left), x.rhs, x.position));
+	    UnaryInstallValueFun(convertGlobalOperator(x.info), y.rhs, c))
 	else buildErrorPacket(
 	    "augmented assignment not implemented for this code")));
 
@@ -2073,6 +2105,9 @@ export notFun(a:Expr):Expr := if a == True then False else if a == False then Tr
 -- evaluate.d depends on hashtables.dd, so we use a pointer
 -- to evaluate methods in hashtables.dd before it is defined.
 applyEEEpointer = applyEEE;
+
+binarymethod1=binarymethodCode;
+unarymethod1=unarymethodCode;
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d evaluate.o "

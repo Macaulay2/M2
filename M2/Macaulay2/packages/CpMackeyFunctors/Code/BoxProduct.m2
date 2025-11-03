@@ -106,6 +106,7 @@ boxProduct (MackeyFunctorHomomorphism, CpMackeyFunctor) := MackeyFunctorHomomorp
 CpMackeyFunctor ** CpMackeyFunctor := boxProduct
 CpMackeyFunctor ** MackeyFunctorHomomorphism := boxProduct
 MackeyFunctorHomomorphism ** CpMackeyFunctor := boxProduct
+new Keyword from "⊠"
 CpMackeyFunctor ⊠ CpMackeyFunctor := boxProduct
 CpMackeyFunctor ⊠ MackeyFunctorHomomorphism := boxProduct
 MackeyFunctorHomomorphism ⊠ CpMackeyFunctor := boxProduct

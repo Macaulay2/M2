@@ -346,6 +346,7 @@ newfromfun(newClassCode:Code,newInitCode:Code):Expr := (
 	       if method != nullE
 	       then newClass(applyEEE(method,Expr(classs),newInitExpr),classs,true)
 	       else (
+	       	    if classs == keywordClass then return buildErrorPacket("invalid new Keyword");
 		    when newInitExpr
 		    is s:Sequence do (
 			if length(s) == 2
