@@ -518,8 +518,7 @@ class MutableMat : public MutableMatrix
                 n_cols() - 1);
           return 0;
         }
-    MutableMat* result =
-        new MutableMat(*this);  // zero matrix, over the same ring
+    MutableMat* result = makeZeroMatrix(rows->len, cols->len);
     MatOps::setFromSubmatrix(getMat(), rows, cols, result->getMat());
     return result;
   }
@@ -534,8 +533,7 @@ class MutableMat : public MutableMatrix
                 n_cols() - 1);
           return 0;
         }
-    MutableMat* result =
-        new MutableMat(*this);  // zero matrix, over the same ring
+    MutableMat* result = makeZeroMatrix(n_rows(), cols->len);
     MatOps::setFromSubmatrix(getMat(), cols, result->getMat());
     return result;
   }

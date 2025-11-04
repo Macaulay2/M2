@@ -78,3 +78,8 @@ assert Equation(source M, ZZ^3)
 -- submatrices
 assert Equation(M_{0, -1}, mutableMatrix {{1, 3}, {4, 6}})
 assert Equation(M^{-1}, mutableMatrix {{4, 5, 6}})
+
+-- issue #997
+A = mutableMatrix {{10}}
+B = submatrix(A, {0}, {0})
+assert(hash A != hash B)
