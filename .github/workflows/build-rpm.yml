@@ -9,8 +9,6 @@ jobs:
       matrix:
         include:
           - distribution: fedora
-            release: 40
-          - distribution: fedora
             release: 41
           - distribution: fedora
             release: 42
