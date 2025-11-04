@@ -582,17 +582,32 @@ net Cell := cell -> (
     "Cell of dimension " | (dim cell) | " with label " | (net cellLabel cell)
     )
 
+texMath Cell := cell -> (
+    "\text{Cell of dimension }" | (texMath dim cell) | "\text{ with label }" | (texMath cellLabel cell)
+    )
+
 net CellComplex := cellComplex -> (
-    if hasAttribute (cellComplex, ReverseDictionary) then return getAttribute (cellComplex, ReverseDictionary);
+    if hasAttribute (cellComplex, ReverseDictionary) then return net getAttribute (cellComplex, ReverseDictionary);
     d := dim cellComplex;
     nTotalCells := #(flatten values cells cellComplex);
     if nTotalCells == 0
-    then "empty CellComplex"
+    then "empty cell complex"
     else (
-        ("CellComplex over " | (net cellComplex.labelRing) | " of dimension " | d | " with " | nTotalCells | " total cells") ||
+        ("Cell complex over " | (net cellComplex.labelRing) | " of dimension " | d | " with " | nTotalCells | " total cells") ||
         stack(apply(d+1,i -> net cells_i cellComplex)))
     );
 
+
+texMath CellComplex := cellComplex -> (
+    if hasAttribute (cellComplex, ReverseDictionary) then return texMath getAttribute (cellComplex, ReverseDictionary);
+    d := dim cellComplex;
+    nTotalCells := #(flatten values cells cellComplex);
+    if nTotalCells == 0
+    then "\text{empty cell complex}"
+    else (
+        ("\text{Cell complex over }" | (texMath cellComplex.labelRing) | "\text{ of dimension }" | d | "\text{ with }" | nTotalCells | "\text{ total cells}") ||
+        stack(apply(d+1,i -> texMath cells_i cellComplex)))
+    );
 
 ------------------------
 -- Common cell complexes
