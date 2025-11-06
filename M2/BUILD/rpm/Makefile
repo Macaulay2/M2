@@ -8,11 +8,8 @@ TARNAME = Macaulay2-$(VERSION)
 
 ifeq ($(DISTRIBUTION), fedora)
 	DOCKERDIR = fedora
-	SUBMODULES =
 else
 	DOCKERDIR = rhel
-	SUBMODULES = bdwgc fflas_ffpack flint frobby givaro googletest \
-		mathic mathicgb memtailor
 endif
 
 HOST_RPMBUILD = rpmbuild-$(DISTRIBUTION)-$(RELEASE)
@@ -32,7 +29,7 @@ $(HOST_RPMBUILD): Macaulay2.spec
 	mkdir -p $@/SPECS
 	cp Macaulay2.spec $@/SPECS
 	mkdir -p $@/SOURCES
-# build "fat" tarball w/ all necessary submodules
+# build tarball (essentially the same as "make dist")
 	cd ../../.. && git archive --prefix=$(TARNAME)/ \
 		-o $(CURDIR)/M2.tar HEAD
 	git submodule update --init ../../Macaulay2/editors/emacs
@@ -41,15 +38,6 @@ $(HOST_RPMBUILD): Macaulay2.spec
 			--prefix=$(TARNAME)/M2/Macaulay2/editors/emacs/ \
 			-o $(CURDIR)/M2-emacs.tar HEAD
 	tar --concatenate --file=M2.tar M2-emacs.tar
-	for SUBMODULE in $(SUBMODULES); do \
-		git submodule update --init ../../submodules/$$SUBMODULE; \
-		cd ../../submodules/$$SUBMODULE; \
-		git archive \
-			--prefix=$(TARNAME)/M2/submodules/$$SUBMODULE/ \
-			-o $(CURDIR)/$$SUBMODULE.tar HEAD; \
-		cd $(CURDIR); \
-		tar --concatenate --file=M2.tar $$SUBMODULE.tar; \
-	done
 	gzip M2.tar
 	mv M2.tar.gz $@/SOURCES/$(TARNAME).tar.gz
 	rm *.tar
