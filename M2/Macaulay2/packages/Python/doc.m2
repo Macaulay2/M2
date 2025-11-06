@@ -406,9 +406,11 @@ doc ///
     (toPython, Number)
     (toPython, PythonObject)
     (toPython, RR)
+    (toPython, RRi)
     (toPython, Sequence)
     (toPython, Set)
     (toPython, String)
+    (toPython, Symbol)
     (toPython, VisibleList)
     (toPython, ZZ)
   Headline
