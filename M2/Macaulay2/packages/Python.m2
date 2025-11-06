@@ -122,9 +122,6 @@ export {
     "toFunction",
     "toPython",
 
-    -- symbols
-    "KeepBuiltins",
-
     -- objects
     -- TODO: anything else that would be good to export?
     "builtins",
@@ -168,11 +165,11 @@ pythonValue Sequence := o -> s -> pythonValue(concatenate \\ toString \ s, o)
 
 pythonRunScript = method(
     Dispatch => Thing,
-    Options => {Global => null, KeepBuiltins => false})
+    Options => {Global => null})
 pythonRunScript String := o -> s -> (
     if debugLevel > 0 then printerr("python command: ", s);
     r := pythonRunStringFile(s, toPython(o.Global ?? pythonDictNew()));
-    if not o.KeepBuiltins then delete("__builtins__", r);
+    delete("__builtins__", r);
     r)
 pythonRunScript Sequence := o -> s -> pythonRunScript(
     concatenate \\ toString \ s, o)
