@@ -172,7 +172,7 @@ pythonRunScript = method(
 pythonRunScript String := o -> s -> (
     if debugLevel > 0 then printerr("python command: ", s);
     r := pythonRunStringFile(s, toPython(o.Global ?? pythonDictNew()));
-    if not o.KeepBuiltins then delete(r, "__builtins__");
+    if not o.KeepBuiltins then delete("__builtins__", r);
     r)
 pythonRunScript Sequence := o -> s -> pythonRunScript(
     concatenate \\ toString \ s, o)
@@ -307,7 +307,6 @@ scan({
 		else if pythonObjectIsTrue operator@@"eq"(x, y) then symbol ==
 		else incomparable)),
 	(isMember,  pythonObjectIsTrue @@ (toFunction operator@@"contains") @@ swap),
-	(delete,    (x, y) -> (operator@@"delitem"(x, y);)),
 	(quotientRemainder, (x, y) -> (
 		qr := builtins@@"divmod"(x, y);
 		(qr_0, qr_1))),
@@ -323,6 +322,9 @@ scan({
 	installMethod(op, PythonObject, PythonObject, f);
 	installMethod(op, PythonObject, Thing,        f);
 	installMethod(op, Thing,        PythonObject, f)))
+
+delete(Thing, PythonObject) := (i, x) -> (
+    (operator@@"delitem")(x, i);)
 
 -- augmented assignment
 scan({
@@ -813,7 +815,7 @@ assert Equation(ceiling(-e), -2)
 
 -- del
 x = toPython hashTable {"foo" => "bar"}
-delete(x, "foo")
+delete("foo", x)
 assert Equation(x, hashTable {})
 
 -- help
