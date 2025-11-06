@@ -455,9 +455,6 @@ stmtexpr = (s, dict) -> (
     else (eval(compile(s, "<string>", "exec"), dict);)) -- statement
 
 new PythonContext := T -> T {symbol Dictionary => pythonDictNew()}
-new PythonContext from Sequence := (T, s) -> (
-    if #s == 0 then new T
-    else error "expected 0 or 1 arguments")
 new PythonContext from String := (T, s) -> (
     dict := pythonDictNew();
     stmtexpr(s, dict);

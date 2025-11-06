@@ -32,9 +32,11 @@ doc ///
     "Python tutorial: matplotlib"
     :classes
     PythonObject
+    PythonContext
 ///
 
 load "./doc/tutorials.m2"
+load "./doc/context.m2"
 
 ------------------
 -- PythonObject --
