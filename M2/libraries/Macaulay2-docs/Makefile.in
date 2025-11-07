@@ -1,3 +1,4 @@
+URL = https://macaulay2.com/Downloads/OtherSourceCode
 VERSION = @PACKAGE_VERSION@
 
 CONFIGURECMD = :
