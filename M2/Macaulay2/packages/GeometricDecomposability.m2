@@ -36,8 +36,8 @@ newPackage(
 
 export {
         -- methods
-        "deletion",
         "oneStepGVDNyI",
+        "deletion" => "oneStepGVDNyI",
         "findLexCompatiblyGVDOrders",
         "findOneStepGVD",
         "getGVDIdeal",
@@ -47,8 +47,8 @@ export {
         "isLexCompatiblyGVD",
         "isUnmixed",
         "isWeaklyGVD",
-        "link",
         "oneStepGVDCyI",
+        "link" => "oneStepGVDCyI",
         "oneStepGVD",
 
         -- options
@@ -70,22 +70,6 @@ export {
 --
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-
---------------------------------------------------------------------------------
-
-deletion = method(
-        Options => {
-                CheckUnmixed => true, 
-                UniversalGB => false
-        }
-)
-
-deletion(Ideal, RingElement) := Sequence => opts -> (I, y) -> (
-        oneStepGVDNyI(I, y, 
-                CheckUnmixed => opts.CheckUnmixed,
-                UniversalGB => opts.UniversalGB
-                )
-)
 
 --------------------------------------------------------------------------------
 
@@ -501,23 +485,6 @@ isWeaklyGVD(Ideal) := Boolean => opts -> I -> (
 
 --------------------------------------------------------------------------------
 
-link = method(
-        Options => {
-                CheckUnmixed => true, 
-                UniversalGB => false
-        }
-)
-
-link(Ideal, RingElement) := Sequence => opts -> (I, y) -> (
-        oneStepGVDCyI(I, y, 
-                CheckUnmixed => opts.CheckUnmixed,
-                UniversalGB => opts.UniversalGB
-                )
-)
-
-
---------------------------------------------------------------------------------
-
 oneStepGVD = method( 
         Options => {
                 CheckDegenerate => false, 
@@ -905,7 +872,6 @@ doc///
                         matroidal ideals. Arch. Math. 114 (2020), no. 3 299–-304.
 
                 Subnodes
-                        deletion
                         oneStepGVDNyI
                         findLexCompatiblyGVDOrders
                         findOneStepGVD
@@ -916,7 +882,6 @@ doc///
                         isLexCompatiblyGVD
                         isUnmixed
                         isWeaklyGVD
-                        link
                         oneStepGVDCyI
                         oneStepGVD
                         CheckCM
@@ -935,34 +900,6 @@ doc///
 -- Documentation for functions
 --******************************************************************************
 
-doc///
-        Node
-                Key
-                        deletion
-                        (deletion, Ideal, RingElement)
-                Headline
-                        computes the ideal $N_{y,I}$
-                Usage 
-                        deletion(I, y)
-                Inputs
-                        I:Ideal
-                        y:RingElement
-                                an indeterminate in the ring
-                Outputs
-                        :Ideal
-                Description
-                        Text
-                                This is an alias for @TO oneStepGVDNyI@.
-                SeeAlso
-                        CheckUnmixed
-                        getGVDIdeal
-                        link
-                        oneStepGVD
-                        oneStepGVDCyI
-                        oneStepGVDNyI
-                        UniversalGB
-
-///
 
 doc///
         Node
@@ -1485,35 +1422,6 @@ doc///
 
 
 doc///
-        Node
-                Key
-                        link
-                        (link, Ideal, RingElement)
-                Headline
-                        computes the ideal $C_{y,I}$
-                Usage
-                        link(I, y)
-                Inputs
-                        I:Ideal
-                        y:RingElement
-                                an indeterminate in the ring
-                Outputs
-                        :Ideal
-                Description
-                        Text
-                                This is an alias for @TO oneStepGVDCyI@.
-                SeeAlso
-                        CheckUnmixed
-                        deletion
-                        getGVDIdeal
-                        oneStepGVD
-                        oneStepGVDNyI
-                        UniversalGB
-
-///
-
-
-doc///
        Node
                 Key
                         oneStepGVD
@@ -1628,10 +1536,12 @@ doc///
                 Key
                         oneStepGVDCyI
                         (oneStepGVDCyI, Ideal, RingElement)
+                        (link, Ideal, RingElement)
                 Headline
                         computes the ideal $C_{y,I}$
                 Usage
                         oneStepGVDCyI(I, y)
+                        link(I, y)
                 Inputs
                         I:Ideal
                         y:RingElement
@@ -1693,10 +1603,12 @@ doc///
                 Key
                         oneStepGVDNyI
                         (oneStepGVDNyI, Ideal, RingElement)
+                        (deletion, Ideal, RingElement)
                 Headline
                         computes the ideal $N_{y,I}$
                 Usage
                         oneStepGVDNyI(I, y)
+                        deletion(I, y)
                 Inputs
                         I:Ideal
                         y:RingElement
