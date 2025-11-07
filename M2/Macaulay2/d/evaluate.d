@@ -1401,6 +1401,29 @@ augmentedParallelAssignmentFun(oper:Symbol, lhs:CodeSequence, rhs:Code):Expr:= (
 	    else if n == 1 then result.0 else Expr(result)))
     else ParallelAssignmentError(n));
 
+HashTableOrNull := HashTable or null;
+
+-- check if code is x#k or x.k (where x is a hash table)
+-- if so, lock it and return (so we can unlock it later)
+maybeLock(c:Code):HashTableOrNull := (
+    when c
+    is x:binaryCode do (
+	if x.f == DotS.symbol.binary || x.f == SharpS.symbol.binary
+	then (
+	    y := eval(x.lhs);
+	    when y is z:HashTable do (
+		if !z.beingInitialized then lockWrite(z.mutex);
+		HashTableOrNull(z))
+	    else HashTableOrNull(null()))
+	else HashTableOrNull(null()))
+    else HashTableOrNull(null()));
+
+maybeUnlock(x:HashTableOrNull):void := (
+    when x
+    is y:HashTable do (
+	if !y.beingInitialized then unlock(y.mutex))
+    else nothing);
+
 augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
     when lookup(x.oper.word, augmentedAssignmentOperatorTable)
     is null do buildErrorPacket("unknown augmented assignment operator")
@@ -1416,6 +1439,8 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	is y:angleBarListCode do (
 	    return augmentedParallelAssignmentFun(x.oper, y.t, x.rhs))
 	else nothing;
+	-- check if we're modifying a hash table and lock if so
+	table := maybeLock(x.lhs);
 	-- evaluate the left-hand side first
 	lexpr := nullE;
 	if s.word.name === "??" -- x ??= y is treated like x ?? (x = y)
@@ -1423,20 +1448,32 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	    e := nullify(x.lhs);
 	    when e
 	    is Nothing do nothing
-	    else return e)
+	    else (
+		maybeUnlock(table);
+		return e))
 	else lexpr = eval(x.lhs);
-	when lexpr is e:Error do return lexpr else nothing;
+	when lexpr is e:Error do (
+	    maybeUnlock(table);
+	    return lexpr)
+	else nothing;
 	-- check if user-defined method exists
 	meth := lookup(Class(lexpr), Expr(SymbolClosure(globalFrame, x.oper)));
 	if meth != nullE then (
 	    rexpr := eval(x.rhs);
-	    when rexpr is e:Error do return rexpr else nothing;
+	    when rexpr is e:Error do (
+		maybeUnlock(table);
+		return rexpr)
+	    else nothing;
 	    r := applyEEE(meth, lexpr, rexpr);
 	    when r
 	    is s:SymbolClosure do (
 		if s.symbol.word.name === "Default" then nothing
-		else return r)
-	    else return r);
+		else (
+		    maybeUnlock(table);
+		    return r))
+	    else (
+		maybeUnlock(table);
+		return r));
 	-- if not, use default behavior
 	c := (
 	    if s.word.name === "??" then x.rhs
@@ -1458,7 +1495,10 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	    else globalAssignment(y.var.frameindex, y.var, r))
 	is y:binaryCode do (
 	    if y.oper == DotS.symbol || y.oper == SharpS.symbol
-	    then AssignElemFun(y.lhs, y.rhs, c)
+	    then (
+		z := AssignElemFun(y.lhs, y.rhs, r);
+		maybeUnlock(table);
+		z)
 	    else InstallValueFun(CodeSequence(
 		    convertGlobalOperator(y.oper), y.lhs, y.rhs, c)))
 	is y:adjacentCode do (
