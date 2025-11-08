@@ -67,7 +67,8 @@ jobs:
           brew install --overwrite python
           brew install automake bison boost libtool tbb ccache ctags texinfo llvm make ninja yasm libffi msolve googletest fplll eigen
           brew install --only-dependencies macaulay2/tap/M2
-          brew link factory --force
+# TODO: restore this once factory package works again
+#          brew link factory --force
 
 # ----------------------
 #   Install missing tools and libraries for Linux
