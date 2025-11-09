@@ -130,100 +130,159 @@ doc ///
     installNumPyMethods
 ///
 
+-* code for canned example
+
+pycode = get(Python#"auxiliary files" | "doc/matplotlib-example.py")
+pythonRunScript pycode
+
+matplotlib = PythonContext "import matplotlib.pyplot as plt"
+matplotlib "import numpy as np"
+matplotlib "fig = plt.figure()"
+matplotlib "ax = fig.add_subplot(projection='3d')"
+matplotlib "t = np.linspace(-10, 10, 100)"
+matplotlib "ax.plot(t, t**2, t**3)"
+matplotlib "plt.show()"
+
+plt = import "matplotlib.pyplot"
+np = import "numpy"
+fig = plt@@figure()
+ax = fig@@"add_subplot"(projection => "3d")
+t = np@@linspace(-10, 10, 100);
+ax@@plot(t, t^2, t^3)
+plt@@show()
+
+*-
+
 doc ///
   Key
-    "Python tutorial: matplotlib"
+    "Python tutorial: plotting the twisted cubic with Matplotlib"
   Description
     Text
-      In this tutorial, we use @HREF{"https://matplotlib.org/", "matplotlib"}@
-      to plot the twisted cubic.
+      In this tutorial, we use @HREF{"https://matplotlib.org/", "Matplotlib"}@
+      to plot the twisted cubic in three different ways.  We are assuming
+      that Matplotlib is already installed.  See @TO pipInstall@ to learn
+      how to install Python modules.
+
+      This example is heavily inspired by the
+      @HREF{"https://matplotlib.org/stable/gallery/mplot3d/lines3d.html",
+	  "Parametric curve"}@ example in the matplotlib documentation.
+
+      @HEADER2 "Running Python code directly"@
+
+      If we just want to run some Python code directly, then the simplest
+      way is with the @TO pythonRunScript@ method.
+
+      For this example, we have our code saved as a .py file.
+    CannedExample
+      i1 : pycode = get(Python#"auxiliary files" | "doc/matplotlib-example.py")
+
+      o1 = import matplotlib.pyplot as plt
+           import numpy as np
+
+           fig = plt.figure()
+           ax = fig.add_subplot(projection='3d')
+           t = np.linspace(-10, 10, 100)
+           ax.plot(t, t**2, t**3)
+           plt.show()
+
+
+      i2 : pythonRunScript pycode
+    Text
+      @HEADER2 "Using a PythonContext"@
+
+      @TO PythonContext@ objects allow us to run Python code one line at a
+      time, just like working in the Python REPL.
+    CannedExample
+      i3 : matplotlib = PythonContext "import matplotlib.pyplot as plt"
+
+      o3 = matplotlib
+
+      o3 : PythonContext
+
+      i4 : matplotlib "import numpy as np"
+
+      i5 : matplotlib "fig = plt.figure()"
+
+      i6 : matplotlib "ax = fig.add_subplot(projection='3d')"
+
+      i7 : matplotlib "t = np.linspace(-10, 10, 100)"
+
+      i8 : matplotlib "ax.plot(t, t**2, t**3)"
+
+      o8 = [<mpl_toolkits.mplot3d.art3d.Line3D object at 0x7b8243b7e5f0>]
+
+      o8 : PythonObject of class list
+
+      i9 : matplotlib "plt.show()"
+
+      o9 = None
+
+      o9 : PythonObject of class NoneType
+    Text
+      @HEADER2 "Using PythonObjects directly"@
+
+      Finally, we can write our code in the Macaulay2 language, but making
+      calls to Python as needed.
 
       First, we import the necessary modules using @TO import@.  Note that
       we can essentially replace the Python @CODE "import foo as bar"@ with
       @CODE "bar = import \"foo\""@.
     CannedExample
-      i2 : plt = import "matplotlib.pyplot"
+      i10 : plt = import "matplotlib.pyplot"
 
-      o2 = <module 'matplotlib.pyplot' from
-           '/usr/lib/python3/dist-packages/matplotlib/pyplot.py'>
+      o10 = <module 'matplotlib.pyplot' from
+            '/usr/lib/python3/dist-packages/matplotlib/pyplot.py'>
 
-      o2 : PythonObject of class module
+      o10 : PythonObject of class module
 
-      i3 : np = import "numpy"
+      i11 : np = import "numpy"
 
-      o3 = <module 'numpy' from '/usr/lib/python3/dist-packages/numpy/__init__.py'>
+      o11 = <module 'numpy' from '/usr/lib/python3/dist-packages/numpy/__init__.py'>
 
-      o3 : PythonObject of class module
+      o11 : PythonObject of class module
     Text
       Next, we begin to create the various Python objects needed for our
-      plot.  This example is heavily inspired by the
-      @HREF{"https://matplotlib.org/stable/gallery/mplot3d/lines3d.html",
-	  "Parametric curve"}@ example in the matplotlib documentation.
+      plot.
 
-      Note that we basically replace the Python @CODE "foo.bar"@ with
+      Note that we replace the Python @CODE "foo.bar"@ with
       @CODE "foo\x40\x40bar"@
       (see @TO (symbol \@\@, PythonObject, Thing)@).
-      -- TODO: rework this -- we don't need so many quotes
       We need to be careful for attributes that include underscores.
-      They must given as strings, i.e., delimited using quotes.  This
-      is also the case for keyword arguments.
+      They must given as strings, i.e., delimited using quotes.
     CannedExample
-      i4 : fig = plt@@figure()
+      i12 : fig = plt@@figure()
 
-      o4 = Figure(640x480)
+      o12 = Figure(640x480)
 
-      o4 : PythonObject of class matplotlib.figure.Figure
+      o12 : PythonObject of class matplotlib.figure.Figure
 
-      i5 : ax = fig@@"add_subplot"("projection" => "3d")
+      i13 : ax = fig@@"add_subplot"(projection => "3d")
 
-      o5 = Axes3DSubplot(0.125,0.11;0.775x0.77)
+      o13 = Axes3DSubplot(0.125,0.11;0.775x0.77)
 
-      o5 : PythonObject of class matplotlib.axes._subplots.Axes3DSubplot
+      o13 : PythonObject of class matplotlib.axes._subplots.Axes3DSubplot
 
-      i6 : t = np@@linspace(-10, 10, 100)
-
-      o6 = [-10.          -9.7979798   -9.5959596   -9.39393939  -9.19191919
-             -8.98989899  -8.78787879  -8.58585859  -8.38383838  -8.18181818
-             -7.97979798  -7.77777778  -7.57575758  -7.37373737  -7.17171717
-             -6.96969697  -6.76767677  -6.56565657  -6.36363636  -6.16161616
-             -5.95959596  -5.75757576  -5.55555556  -5.35353535  -5.15151515
-             -4.94949495  -4.74747475  -4.54545455  -4.34343434  -4.14141414
-             -3.93939394  -3.73737374  -3.53535354  -3.33333333  -3.13131313
-             -2.92929293  -2.72727273  -2.52525253  -2.32323232  -2.12121212
-             -1.91919192  -1.71717172  -1.51515152  -1.31313131  -1.11111111
-             -0.90909091  -0.70707071  -0.50505051  -0.3030303   -0.1010101
-              0.1010101    0.3030303    0.50505051   0.70707071   0.90909091
-              1.11111111   1.31313131   1.51515152   1.71717172   1.91919192
-              2.12121212   2.32323232   2.52525253   2.72727273   2.92929293
-              3.13131313   3.33333333   3.53535354   3.73737374   3.93939394
-              4.14141414   4.34343434   4.54545455   4.74747475   4.94949495
-              5.15151515   5.35353535   5.55555556   5.75757576   5.95959596
-              6.16161616   6.36363636   6.56565657   6.76767677   6.96969697
-              7.17171717   7.37373737   7.57575758   7.77777778   7.97979798
-              8.18181818   8.38383838   8.58585859   8.78787879   8.98989899
-              9.19191919   9.39393939   9.5959596    9.7979798   10.        ]
-
-      o6 : PythonObject of class numpy.ndarray
+      i14 : t = np@@linspace(-10, 10, 100);
     Text
       Now we construct the twisted cubic.  Note that even though Python itself
-      uses @CODE "**"@ for exponentiation, we use @TO symbol ^@ for consistency
-      with the rest of Macaulay2.
+      uses @CODE "**"@ for exponentiation, we may use @TO symbol ^@ for
+      consistency with the rest of Macaulay2.
     CannedExample
-      i7 : ax@@plot(t, t^2, t^3)
+      i15 : ax@@plot(t, t^2, t^3)
 
-      o7 = [<mpl_toolkits.mplot3d.art3d.Line3D object at 0x78bdf578a000>]
+      o15 = [<mpl_toolkits.mplot3d.art3d.Line3D object at 0x73a51970eb00>]
 
-      o7 : PythonObject of class list
+      o15 : PythonObject of class list
     Text
-      Finally, we show our plot.  It will appear in a separate window.
+      Finally, we show our plot.
     CannedExample
-      i8 : plt@@show()
-
-      o8 = None
-
-      o8 : PythonObject of class NoneType
+      i16 : plt@@show()
     Text
-      @IMG("src" => Python#"auxiliary files" | "twisted-cubic.png",
+      All three of the above methods should have resulted in a window
+      appearing containing the following image.
+
+      @IMG("src" => replace("PKG", "Python",
+	      currentLayout#"package" | "doc/twisted-cubic.png"),
 	  "alt" => "parametric plot of the twisted cubic")@
 ///
 

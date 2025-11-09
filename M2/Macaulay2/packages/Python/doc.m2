@@ -22,7 +22,7 @@ doc ///
   Subnodes
     :tutorials
     "Python tutorial: creating a virtual environment and installing NumPy"
-    "Python tutorial: matplotlib"
+    "Python tutorial: plotting the twisted cubic with Matplotlib"
     :evaluating code
     pythonValue
     pythonRunScript
