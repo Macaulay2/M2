@@ -15,7 +15,7 @@ typicalValues#(symbol threadLocal) = Symbol
 typicalValues#(symbol local) = Symbol
 typicalValues#(symbol global) = Symbol
 typicalValues#(symbol symbol) = Symbol
-typicalValues#(symbol ?) = Symbol
+typicalValues#(symbol ?) = Boolean
 
 dummy := x -> error("dummy method function called")
 

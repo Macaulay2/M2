@@ -1065,6 +1065,7 @@ document {
           TO symbol .? ,
           TO symbol # ,
           TO symbol #? ,
+	  TO symbol @@? ,
      "arithmetic operators",
           TO symbol ! ,
 	  TO symbol + ,

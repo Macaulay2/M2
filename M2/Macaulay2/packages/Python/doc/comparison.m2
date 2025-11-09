@@ -14,8 +14,6 @@ doc ///
   Inputs
     x:PythonObject
     y:PythonObject
-  Outputs
-    :Symbol -- <, >, ==, or @TO incomparable@
   Description
     Text
       Compare two Python objects.  The result is one of the following symbols:

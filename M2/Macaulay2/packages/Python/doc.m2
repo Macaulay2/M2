@@ -31,10 +31,11 @@ doc ///
     pythonValue
     pythonRunScript
     runSimpleString
-    :installing modules
+    :working with modules
     setupVirtualEnvironment
     pipInstall
     installNumPyMethods
+    import
     :classes
     PythonObject
     PythonContext
@@ -65,13 +66,28 @@ doc ///
       toPython 3
       toPython "foo"
   Subnodes
+    :converting to Python objects
+    toPython
+    :converting from Python objects
+    (value, PythonObject)
+    toFunction
+    addPyToM2Function
     :string functions
     (toString, PythonObject)
     (toExternalString, PythonObject)
     :list functions
     (symbol _, PythonObject, Thing)
     ((symbol _, symbol =), PythonObject, Thing)
+    (length, PythonObject)
+    (isMember, PythonObject, PythonObject)
     (delete, Thing, PythonObject)
+    (iterator, PythonObject)
+    (next, PythonObject)
+    :attributes
+    objectType
+    (symbol @@, PythonObject, Thing)
+    (symbol @@?, PythonObject, Thing)
+    ((symbol @@, symbol =), PythonObject, Thing)
     :arithmetic operators
     (symbol +,  PythonObject, PythonObject)
     (symbol -,  PythonObject, PythonObject)
@@ -82,6 +98,7 @@ doc ///
     (symbol %,  PythonObject, PythonObject)
     (quotientRemainder, PythonObject, PythonObject)
     (symbol ^,  PythonObject, PythonObject)
+    (abs, PythonObject)
     :bitwise operators
     (symbol <<, PythonObject, PythonObject)
     (symbol >>, PythonObject, PythonObject)
@@ -157,12 +174,14 @@ doc ///
     pythonValue
     (pythonValue, String)
     (pythonValue, Sequence)
+    [pythonValue, Global]
   Headline
     execute Python source code from a string
   Usage
     pythonValue s
   Inputs
     s:{String, Sequence} -- containing Python source code
+    Global => PythonObject -- globals dictionary
   Outputs
     :PythonObject -- the return value of the given code
   Description
@@ -396,8 +415,8 @@ doc ///
       class \ oo
     Text
       Since the type of @TT "x"@ is not initially known, a sequence of
-      @TO2 {"using hooks", "hooks"}@ are used to determine its type
-      and then convert it.
+      @TO2 {"Macaulay2Doc::using hooks", "hooks"}@ are used to determine its
+      type and then convert it.
     Example
       hooks value
     Text
@@ -594,9 +613,6 @@ doc ///
       "https://docs.python.org/3/library/functions.html#setattr", "setattr"}@
       function.  Note that @TT "e"@ is converted to a Python object using
       @TO "toPython"@.
-
-      As with @TO "getattr"@, when using the shortcut @TT "\@\@"@, @TT "y"@
-      need not be a string.
     Example
       math = import "math"
       math@@pi = 22/7 -* no-capture-flag *-
