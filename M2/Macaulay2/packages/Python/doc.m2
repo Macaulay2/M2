@@ -19,6 +19,10 @@ doc ///
       value pythonValue "[1, 2/3, 'foo', (1, 2, 3), {'foo' : 'bar'}]"
       math = import "math"
       math@@sqrt 2
+    Text
+      The @TO [loadPackage, Configuration]@ option accepts an
+      "executable" option to specify the path to the Python executable, e.g.,
+      for working with virtual environments.
   Subnodes
     :tutorials
     "Python tutorial: creating a virtual environment and installing NumPy"
