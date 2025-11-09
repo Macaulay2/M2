@@ -3,8 +3,8 @@ this does not work unless M2 is compiled --with-python
 *-
 
 newPackage("Python",
-    Version => "0.6",
-    Date => "January 28, 2024",
+    Version => "1.0",
+    Date => "November 8, 2025",
     Headline => "interface to Python",
     Authors => {
 	{Name => "Daniel R. Grayson",
@@ -25,6 +25,17 @@ newPackage("Python",
 ---------------
 
 -*
+
+1.0 (2025-11-08, M2 1.25.11)
+* New PythonContext class replacing undocumented Context class
+* getattr, hasattr, and settattr removed (use @@ and @@? now)
+* getitem and setitem removed (use _ now)
+* NumPy support added
+* New "pythonRunScript" for running multiline Python code
+* Add support for working with virtual environments and installing modules
+  using pip.
+* Significant documentation improvements, including two tutorials
+* Stop shipping cached examples since Python is supported by default now.
 
 0.6 (2024-01-28, M2 1.23)
 * add expression, net, texMath, describe, and toExternalString methods
