@@ -121,10 +121,6 @@ export {
     "setupVirtualEnvironment",
     "toFunction",
     "toPython",
-
-    -- objects
-    -- TODO: anything else that would be good to export?
-    "builtins",
 }
 
 executable = ((options currentPackage).Configuration#"executable" ??
@@ -581,6 +577,8 @@ checkInM2 {1, 3, 5, 7, 9}
 checkInM2 set {1, 3, 5, 7, 9}
 checkInM2 hashTable {"a" => 1, "b" => 2, "c" => 3}
 checkInM2 null
+
+builtins = import "builtins"
 assert BinaryOperation(symbol ===,
     value builtins@@frozenset {1, 3, 5, 7, 9}, set {1, 3, 5, 7, 9})
 
