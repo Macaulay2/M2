@@ -4,7 +4,7 @@ beginDocumentation()
 -*
 needsPackage "Python"
 importFrom(Core, "isMissingDoc")
-select(methods PythonObject, x -> isMissingDoc makeDocumentTag x)
+select(methods Python, x -> isMissingDoc makeDocumentTag x)
 *-
 
 --------------------
@@ -33,10 +33,13 @@ doc ///
     :classes
     PythonObject
     PythonContext
+    :functions
+    installNumPyMethods
 ///
 
 load "./doc/tutorials.m2"
 load "./doc/context.m2"
+load "./doc/numpy.m2"
 
 ------------------
 -- PythonObject --
