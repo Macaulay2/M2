@@ -1,12 +1,5 @@
 beginDocumentation()
 
--- TODO: document these:
--*
-needsPackage "Python"
-importFrom(Core, "isMissingDoc")
-select(methods Python, x -> isMissingDoc makeDocumentTag x)
-*-
-
 --------------------
 -- top-level-node --
 --------------------
@@ -30,16 +23,19 @@ doc ///
     :tutorials
     "Python tutorial: creating a virtual environment and installing NumPy"
     "Python tutorial: matplotlib"
+    :installing modules
+    setupVirtualEnvironment
+    pipInstall
+    installNumPyMethods
     :classes
     PythonObject
     PythonContext
-    :functions
-    installNumPyMethods
 ///
 
 load "./doc/tutorials.m2"
 load "./doc/context.m2"
 load "./doc/numpy.m2"
+load "./doc/venv.m2"
 
 ------------------
 -- PythonObject --

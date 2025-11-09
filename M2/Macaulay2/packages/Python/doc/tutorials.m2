@@ -2,6 +2,26 @@
 -- tutorials --
 ---------------
 
+-* code for canned example
+
+needsPackage "Python"
+dir = applicationDirectory() | "venv"
+setupVirtualEnvironment dir
+
+restart
+
+loadPackage("Python", Configuration => {
+    "executable" => applicationDirectory() | "venv/bin/python3"})
+
+pipInstall "numpy"
+
+installNumPyMethods()
+A = toPython matrix {{1, 2}, {3, 4}}
+B = toPython matrix {{5, 6}, {7, 8}}
+A @ B
+
+*-
+
 doc ///
   Key
     "Python tutorial: creating a virtual environment and installing NumPy"
@@ -23,9 +43,9 @@ doc ///
     CannedExample
       i1 : needsPackage "Python";
 
-      i2 : dir = temporaryFileName()
+      i2 : dir = applicationDirectory() | "venv"
 
-      o2 = /tmp/M2-2158442-1/0
+      o2 = /home/m2user/.Macaulay2/venv
 
       i3 : setupVirtualEnvironment dir
     Text
@@ -33,7 +53,7 @@ doc ///
 
       Next we restart Macaulay2 so we can initialize the Python binary in
       the new virtual environment.
-    Example
+    CannedExample
       i4 : restart
     Text
       To ensure that the Python interface uses the newly created
@@ -43,7 +63,7 @@ doc ///
       to the @CODE "python3"@ binary inside our virtual environment.
     CannedExample
       i1 : loadPackage("Python", Configuration => {
-               "executable" => "/tmp/M2-2158442-1/0/bin/python3"})
+               "executable" => applicationDirectory() | "venv/bin/python3"})
 
       o1 = Python
 
@@ -73,24 +93,41 @@ doc ///
 
       @HEADER2 "Step 4: Import and Use NumPy"@
 
-      Now that NumPy is installed, we can import it and perform
-      numerical computations.
+      Now that NumPy is installed, we can call @TO installNumPyMethods@
+      and begin using it.  Let's verify that it works by multiplying two
+      matrices.
     CannedExample
-      i3 : np = import "numpy"
+      i3 : installNumPyMethods()
 
-      o3 = <module 'numpy' from '/tmp/M2-2158442-1/0/lib/python3.12/site-packages/
-           numpy/__init__.py'>
+      o3 = <module 'numpy' from '/home/profzoom/.Macaulay2/venv/lib/python3.10/site-
+           packages/numpy/__init__.py'>
 
       o3 : PythonObject of class module
-    Text
-      To verify that NumPy is working correctly, we perform matrix multiplication using NumPy arrays:
-    CannedExample
-      i4 : np@@array {{1, 2}, {3, 4}} @ np@@array {{5, 6}, {7, 8}}
 
-      o4 = [[19 22]
-            [43 50]]
+      i4 : A = toPython matrix {{1, 2}, {3, 4}}
+
+      o4 = [[1 2]
+            [3 4]]
 
       o4 : PythonObject of class numpy.ndarray
+
+      i5 : B = toPython matrix {{5, 6}, {7, 8}}
+
+      o5 = [[5 6]
+            [7 8]]
+
+      o5 : PythonObject of class numpy.ndarray
+
+      i6 : A @ B
+
+      o6 = [[19 22]
+            [43 50]]
+
+      o6 : PythonObject of class numpy.ndarray
+  SeeAlso
+    setupVirtualEnvironment
+    pipInstall
+    installNumPyMethods
 ///
 
 doc ///
