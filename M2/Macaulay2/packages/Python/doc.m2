@@ -23,6 +23,10 @@ doc ///
     :tutorials
     "Python tutorial: creating a virtual environment and installing NumPy"
     "Python tutorial: matplotlib"
+    :evaluating code
+    pythonValue
+    pythonRunScript
+    runSimpleString
     :installing modules
     setupVirtualEnvironment
     pipInstall
@@ -175,6 +179,7 @@ doc ///
       pythonValue("3 + ", x)
   SeeAlso
     runSimpleString
+    pythonRunScript
 ///
 
 doc ///
@@ -196,6 +201,47 @@ doc ///
       runSimpleString "print('Hello, world!')" -* no-capture-flag *-
   SeeAlso
     pythonValue
+    pythonRunScript
+///
+
+doc ///
+  Key
+     pythonRunScript
+    (pythonRunScript, String)
+    (pythonRunScript, Sequence)
+    [pythonRunScript, Global]
+  Headline
+    execute a sequence of Python statements
+  Usage
+    pythonRunScript s
+  Inputs
+    s:{String, Sequence} -- containing Python code
+    Global => PythonObject -- globals dictionary
+  Outputs
+    :PythonObject -- the globals dictionary
+  Description
+    Text
+      Execute a sequence of statements as if they were read from a Python file.
+      This is for multi-line code that might contain definitions, control
+      structures, imports, etc.  It is great for running Python code from
+      a file.
+
+      The return value is a Python dictionary containing all the variables
+      defined in the global scope.
+    Example
+      pyfile = temporaryFileName() | ".py"
+      pyfile << "import math" << endl
+      pyfile << "x = math.sin(3.4)" << endl << close
+      get pyfile
+      pythonRunScript oo
+    Text
+      The @M2CODE "Global"@ option may be used to pass a globals dictionary
+      so that variables may be shared between scripts.
+    Example
+      pythonRunScript("y = math.cos(x)", Global => oo)
+  SeeAlso
+    pythonValue
+    runSimpleString
 ///
 
 doc ///
