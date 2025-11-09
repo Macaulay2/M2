@@ -30,6 +30,9 @@ doc ///
     :classes
     PythonObject
     PythonContext
+    :getting help
+    (help#0, PythonObject)
+    pythonHelp
 ///
 
 load "./doc/tutorials.m2"
@@ -608,8 +611,6 @@ doc ///
 ///
 
 
-
-
 doc ///
   Key
     (help#0, PythonObject)
@@ -629,4 +630,67 @@ doc ///
       math = import "math"
       help math
       help math@@sin
+  SeeAlso
+    pythonHelp
+///
+
+doc ///
+  Key
+    pythonHelp
+  Headline
+    run Python's interactive help utility
+  Usage
+    pythonHelp
+  Description
+    Text
+      This run's Python's interactive help utility.  Type "quit" when done.
+    CannedExample
+      i1 : pythonHelp
+
+      Welcome to Python 3.10's help utility!
+
+      If this is your first time using Python, you should definitely check out
+      the tutorial on the internet at https://docs.python.org/3.10/tutorial/.
+
+      Enter the name of any module, keyword, or topic to get help on writing
+      Python programs and using Python modules.  To quit this help utility and
+      return to the interpreter, just type "quit".
+
+      To get a list of available modules, keywords, symbols, or topics, type
+      "modules", "keywords", "symbols", or "topics".  Each module also comes
+      with a one-line summary of what it does; to list the modules whose name
+      or summary contain a given string such as "spam", type "modules spam".
+
+      help> lambda
+      Lambdas
+      *******
+
+         lambda_expr ::= "lambda" [parameter_list] ":" expression
+
+      Lambda expressions (sometimes called lambda forms) are used to create
+      anonymous functions. The expression "lambda parameters: expression"
+      yields a function object.  The unnamed object behaves like a function
+      object defined with:
+
+         def <lambda>(parameters):
+             return expression
+
+      See section Function definitions for the syntax of parameter lists.
+      Note that functions created with lambda expressions cannot contain
+      statements or annotations.
+
+      Related help topics: FUNCTIONS
+
+      help> quit
+
+      You are now leaving help and returning to the Python interpreter.
+      If you want to ask for help on a particular object directly from the
+      interpreter, you can type "help(object)".  Executing "help('string')"
+      has the same effect as typing a particular string at the help> prompt.
+
+      o1 = None
+
+      o1 : PythonObject of class NoneType
+  SeeAlso
+    (help#0, PythonObject)
 ///
