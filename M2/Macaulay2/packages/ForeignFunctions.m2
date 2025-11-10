@@ -1,5 +1,5 @@
 -- ForeignFunctions package for Macaulay2
--- Copyright (C) 2022-2024 Doug Torrance
+-- Copyright (C) 2022-2025 Doug Torrance
 
 -- This program is free software; you can redistribute it and/or
 -- modify it under the terms of the GNU General Public License
@@ -16,8 +16,8 @@
 
 newPackage("ForeignFunctions",
     Headline => "foreign function interface",
-    Version => "0.5",
-    Date => "March 8, 2025",
+    Version => "0.6",
+    Date => "November 10, 2025",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -43,6 +43,9 @@ newPackage("ForeignFunctions",
 ---------------
 
 -*
+
+0.6 (2025-11-10, M2 1.25.11)
+* update GPL 2 text (FSF no longer has a physical address)
 
 0.5 (2025-03-08, M2 1.25.05)
 * make LAPACK example canned since it may be a static library

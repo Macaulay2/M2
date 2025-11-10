@@ -1,8 +1,24 @@
+-- JSON package for Macaulay2
+-- Copyright (C) 2022-2025 Doug Torrance
+
+-- This program is free software; you can redistribute it and/or
+-- modify it under the terms of the GNU General Public License
+-- as published by the Free Software Foundation; either version 2
+-- of the License, or (at your option) any later version.
+
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+
+-- You should have received a copy of the GNU General Public License
+-- along with this program; if not, see <https://www.gnu.org/licenses/>.
+
 newPackage(
     "JSON",
     Headline => "JSON encoding and decoding",
-    Version => "0.4",
-    Date => "February 24, 2025",
+    Version => "0.5",
+    Date => "November 10, 2025",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -17,13 +33,17 @@ newPackage(
 ---------------
 
 -*
+
+0.5 (2025-11-10, M2 1.25.11)
+* add GPL copyright header
+* move tests to "tests" subdirectory
+
 0.4 (2025-02-24, M2 1.25.05)
 * add "json" synonym for "toJSON"
 * remove JSONEncoder class
 * add several new toJSON methods (Thing, MutableHashTable, Hypertext)
 * set toJSON to Dispatch => Thing so it will work for short sequences
 * properly deal w/ escaped characters in fromJSON
-* move tests to "tests" subdirectory
 
 0.3 (2024-09-14, M2 1.24.11)
 * remove redundant Constant methods now that we can use inheritance

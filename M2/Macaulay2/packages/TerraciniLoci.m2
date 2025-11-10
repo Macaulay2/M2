@@ -29,8 +29,8 @@
 
 newPackage("TerraciniLoci",
     Headline => "Terracini loci of projective varieties",
-    Version => "0.3",
-    Date => "May 10, 2025",
+    Version => "0.4",
+    Date => "November 10, 2025",
     Authors => {
 	{
 	    Name => "Francesco Galuppi",
@@ -57,6 +57,9 @@ newPackage("TerraciniLoci",
 ---------------
 
 -*
+
+0.4 (2025-11-10, M2 1.25.11)
+* update GPL 2 text (FSF no longer has a physical address)
 
 0.3 (2025-05-10, M2 1.25.05)
 * add citation information
