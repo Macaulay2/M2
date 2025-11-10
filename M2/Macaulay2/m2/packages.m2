@@ -18,9 +18,9 @@ rawKeyDB = "raw documentation database"
 -- warnings or errors to issue for deprecated packages
 -- TODO: also add package deprecation warnings for OldPolyhedra, etc?
 deprecatedPackageWarnings = new HashTable from {
-    -- two warnings added before v1.25.05
     "Divisor"      => () -> ( printerr "warning: the 'Divisor' package has been renamed as 'WeilDivisors'."; "WeilDivisors" ),
     "CodepthThree" => () -> ( printerr "warning: the 'CodepthThree' package has been renamed as 'TorAlgebra'."; "TorAlgebra" ),
+    "LieTypes"     => () -> ( printerr "warning: the 'LieTypes' package has been renamed as 'LieAlgebraRepresentations'."; "LieAlgebraRepresentations" ),
 }
 
 -----------------------------------------------------------------------------

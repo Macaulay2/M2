@@ -123,6 +123,7 @@ TateOnProducts
 LatticePolytopes
 FiniteFittingIdeals
 HigherCIOperators
+LieAlgebraRepresentations
 ConformalBlocks
 M0nbar
 AnalyzeSheafOnP1
@@ -291,4 +292,3 @@ CpMackeyFunctors
 JSONRPC
 MatrixFactorizations
 PathSignatures
-LieAlgebraRepresentations
