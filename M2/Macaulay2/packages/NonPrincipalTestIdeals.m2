@@ -10,7 +10,7 @@ newPackage(
     Keywords => {"Commutative algebra", "Singularities"},
     DebuggingMode => false,
     Reload=>false,     
-    PackageExports => {"Divisor", "TestIdeals", "FrobeniusThresholds", "ReesAlgebra", "Complexes"}
+    PackageExports => {"WeilDivisors", "TestIdeals", "FrobeniusThresholds", "ReesAlgebra", "Complexes"}
     )
 export{
     "extendedReesAlgebra",
