@@ -1177,6 +1177,9 @@ function makeCorsRequest(method,url,browserData) {
 // End Server Stuff
 // -----------------------------------------
 
+    // Initialize clipboard.js.
+    var clipboard = null;
+
 //    $('#side').BootSideMenu({side:"right"});
     $('#side').BootSideMenu({side:"right", closeOnClick: false, width: "230px"});
     // When the side menu bar is opened or closed (i.e, when the "toggler" div is clicked), resize the svg appropriately so that nodes do not go behind the side menu.
