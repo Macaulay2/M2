@@ -392,8 +392,6 @@ scan({
 	exp,
 	expm1,
 	floor,
-	gcd,
-	lcm,
 	log,
 	log1p,
 	sin,
@@ -420,7 +418,6 @@ truncate   PythonObject := {} >> o -> toFunction math@@"trunc"
 scan({
 	atan2,
 	gcd,
-	lcm,
 	remainder
 	},
     f -> (
@@ -440,6 +437,22 @@ scan({
 log(PythonObject, PythonObject) :=
 log(PythonObject, Thing)        :=
 log(Thing,        PythonObject) := (toFunction math@@log) @@ swap
+
+-- lcm & 1-arg gcd not added until Python 3.9
+if math@@?lcm then (
+    gcd PythonObject := toFunction math@@gcd;
+    lcm PythonObject :=
+    lcm(PythonObject, PythonObject) :=
+    lcm(PythonObject, Thing)        :=
+    lcm(Thing,        PythonObject) := toFunction math@@lcm
+) else (
+    gcd PythonObject :=
+    lcm PythonObject := x -> (
+	if isinstance(x, numbers@@"Integral") then x
+	else error "expected an integer");
+    lcm(PythonObject, PythonObject) :=
+    lcm(PythonObject, Thing)        :=
+    lcm(Thing,        PythonObject) := (x, y) -> abs(x * y // gcd(x, y)))
 
 help#0 PythonObject := x -> toString x@@"__doc__"
 
@@ -958,6 +971,12 @@ checkNumPyComplexDtype "complex_"
 checkNumPyComplexDtype "csingle"
 checkNumPyComplexDtype "cdouble"
 checkNumPyComplexDtype "clongdouble"
+///
+
+TEST ///
+-- Python < 3.9 compatibility
+assert Equation(gcd toPython 200, 200)
+assert Equation(lcm(toPython 200, toPython 300), 600)
 ///
 
 end --------------------------------------------------------
