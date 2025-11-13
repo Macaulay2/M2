@@ -3,8 +3,9 @@
 
 #include <gmp.h>
 
-PyStatus python_Initialize(char *executable)
+const char * python_Initialize(char *executable)
 {
+#if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 8
   PyConfig config;
   PyStatus status;
 
@@ -17,7 +18,17 @@ PyStatus python_Initialize(char *executable)
 
 exception:
   PyConfig_Clear(&config);
-  return status;
+
+  if (PyStatus_Exception(status) != 0)
+    return status.err_msg;
+  else
+    return NULL;
+#else
+  (void)executable;
+
+  Py_Initialize();
+  return NULL;
+#endif
 }
 
 /**************

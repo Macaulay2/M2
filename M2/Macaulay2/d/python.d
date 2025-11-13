@@ -5,8 +5,6 @@ use evaluate;
 
 declarations "#include <Python.h>";
 
-PyStatus := arithmeticType "PyStatus";
-
 WrongArgPythonObject():Expr := WrongArg("a python object");
 WrongArgPythonObject(n:int):Expr := WrongArg(n,"a python object");
 
@@ -35,15 +33,15 @@ toExpr(r:pythonObjectOrNull):Expr := (
 	x.hash = h;
 	Expr(x)));
 
-import Initialize(exec:charstar):PyStatus;
+import Initialize(exec:charstar):constcharstarOrNull;
 PyInitialize(e:Expr):Expr := (
     when e
     is s:stringCell do (
 	if Ccode(int, "Py_IsInitialized()") != 0 then return nullE;
-	status := Initialize(tocharstar(expandFileName(s.v)));
-	if Ccode(int, "PyStatus_Exception(", status, ")") != 0
-	then buildErrorPacket(tostring(Ccode(constcharstar, status,".err_msg")))
-	else nullE)
+	r := Initialize(tocharstar(expandFileName(s.v)));
+	when r
+	is msg:constcharstar do buildErrorPacket(tostring(msg))
+	is null do nullE)
     else WrongArgString());
 setupfun("pythonInitialize", PyInitialize);
 
@@ -54,6 +52,15 @@ PyRunSimpleString(e:Expr):Expr := (
 	 else buildPythonErrorPacket())
      else WrongArgString());
 setupfun("runSimpleString",PyRunSimpleString);
+
+PyEvalGetBuiltins(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 0 then toExpr(Ccode(pythonObjectOrNull,
+		"PyEval_GetBuiltins()"))
+	else WrongNumArgs(0))
+    else WrongNumArgs(0));
+setupfun("pythonEvalGetBuiltins", PyEvalGetBuiltins);
 
 PyRunStringEval(e:Expr):Expr := (
     when e

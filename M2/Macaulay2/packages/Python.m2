@@ -90,6 +90,7 @@ importFrom_Core {
     "pythonComplexFromDoubles",
     "pythonDictNew",
     "pythonDictSetItem",
+    "pythonEvalGetBuiltins",
     "pythonFalse",
     "pythonFloatAsDouble",
     "pythonFloatFromDouble",
@@ -175,8 +176,10 @@ pythonRunScript = method(
     Options => {Global => null})
 pythonRunScript String := o -> s -> (
     if debugLevel > 0 then printerr("python command: ", s);
-    r := pythonRunStringFile(s, toPython(o.Global ?? pythonDictNew()));
-    delete("__builtins__", r);
+    globals := toPython o.Global ?? pythonDictNew();
+    globals_"__builtins__" ??= pythonEvalGetBuiltins();
+    r := pythonRunStringFile(s, globals);
+    if isMember("__builtins__", r) then delete("__builtins__", r);
     r)
 pythonRunScript Sequence := o -> s -> pythonRunScript(
     concatenate \\ toString \ s, o)
@@ -417,22 +420,13 @@ truncate   PythonObject := {} >> o -> toFunction math@@"trunc"
 -- binary methods
 scan({
 	atan2,
-	gcd,
-	remainder
+	gcd
 	},
     f -> (
 	g := toFunction math@@f;
 	installMethod(f, PythonObject, PythonObject, g);
 	installMethod(f, PythonObject, Thing,        g);
 	installMethod(f, Thing,        PythonObject, g)))
-scan({
-	(binomial, "comb")
-	},
-    (m2f, pyf) -> (
-	g := toFunction math@@pyf;
-	installMethod(m2f, PythonObject, PythonObject, g);
-	installMethod(m2f, PythonObject, Thing,        g);
-	installMethod(m2f, Thing,        PythonObject, g)))
 
 log(PythonObject, PythonObject) :=
 log(PythonObject, Thing)        :=
@@ -453,6 +447,35 @@ if math@@?lcm then (
     lcm(PythonObject, PythonObject) :=
     lcm(PythonObject, Thing)        :=
     lcm(Thing,        PythonObject) := (x, y) -> abs(x * y // gcd(x, y)))
+
+-- comb not added until Python 3.8
+if math@@?"comb" then (
+    binomial(PythonObject, PythonObject) :=
+    binomial(PythonObject, Thing)        :=
+    binomial(Thing,        PythonObject) := toFunction math@@"comb"
+) else (
+    binomial(PythonObject, PythonObject) :=
+    binomial(PythonObject, Thing)        :=
+    binomial(Thing,        PythonObject) := (x,y) -> (
+	if x < y then pythonLongFromLong 0
+	else (
+	    r := d := pythonLongFromLong 1;
+	    while d <= y do (
+		r *= x;
+		r //= d;
+		x -= 1;
+		d += 1);
+	    r)))
+
+-- remainder not added until Python 3.7
+if math@@?remainder then (
+    remainder(PythonObject, PythonObject) :=
+    remainder(PythonObject, Thing)        :=
+    remainder(Thing,        PythonObject) := toFunction math@@remainder
+) else (
+    remainder(PythonObject, PythonObject) :=
+    remainder(PythonObject, Thing)        :=
+    remainder(Thing,        PythonObject) := (x, y) -> x - y * round(x/y))
 
 help#0 PythonObject := x -> toString x@@"__doc__"
 

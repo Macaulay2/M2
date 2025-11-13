@@ -22,7 +22,8 @@ doc ///
     Text
       The @TO [loadPackage, Configuration]@ option accepts an
       "executable" option to specify the path to the Python executable, e.g.,
-      for working with virtual environments.
+      for working with virtual environments.  At least Python version 3.8 is
+      required for this feature to work.
   Subnodes
     :tutorials
     "Python tutorial: creating a virtual environment and installing NumPy"
