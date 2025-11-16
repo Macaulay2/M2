@@ -310,6 +310,10 @@ doc ///
             user is urged to check for correct spelling and grammar.
       Example
           cite "Bruns"
+      Text
+          To override the automatically generated citation, package authors
+          may provide a @TO "Macaulay2Doc::Citation"@ entry in the main
+          documentation node for a package.
     SeeAlso
         PackageCitations
 ///
