@@ -173,9 +173,10 @@ extern int M2_gbTrace;
 extern int M2_numericalAlgebraicGeometryTrace;
 
 #else
-  extern M2_string (*tonetCCparenpointer)(gmp_CC);
-  extern M2_string (*tonetCCpointer)(gmp_CC);
-  extern M2_string (*tostringRRpointer)(mpfr_srcptr);
+typedef struct gmp_CC_struct * gmp_CC;
+extern M2_string (*tonetCCparenpointer)(gmp_CC);
+extern M2_string (*tonetCCpointer)(gmp_CC);
+extern M2_string (*tostringRRpointer)(mpfr_srcptr);
 
 #endif // !defined(SAFEC_EXPORTS)
 

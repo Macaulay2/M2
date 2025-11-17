@@ -6,7 +6,6 @@ DEPENDS = yes
 
 PRE.cc   = $(COMPILE.cc) -E 
 
-#include @srcdir@/Makefile.files
 include Makefile.files
 include Makefile.common
 CPPFLAGS := -I@srcdir@ $(CPPFLAGS) \
