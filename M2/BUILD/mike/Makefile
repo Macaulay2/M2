@@ -51,6 +51,14 @@ arm64-appleclang : always
 		-I`brew --prefix factory`/include   \
 		-I`brew --prefix libomp`/include    \
 		-I`brew --prefix readline`/include" \
-	F77="gfortran-14" \
+	F77="gfortran-15" \
 	PKG_CONFIG_PATH="`brew --prefix factory`/lib/pkgconfig"
+
+# arm64-appleclang : always
+# 	mkdir -p builds.tmp/arm64-appleclang
+# 	cd builds.tmp/arm64-appleclang; ../../../../configure \
+# 	--with-system-libs \
+# 	F77="gfortran-14" \
+# 	PKG_CONFIG_PATH="`brew --prefix factory`/lib/pkgconfig"
+
 
