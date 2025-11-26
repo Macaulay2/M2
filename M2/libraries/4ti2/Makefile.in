@@ -1,11 +1,10 @@
-# temporary beta testing version
-VERSION = 1.6.13
+VERSION = 1.6.14
 TARDIR = 4ti2-$(VERSION)
 
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -vif
 
-VERSION_ = $(shell echo $(VERSION) | sed 's/\./_/g')
+VERSION_ = $(subst .,_,$(VERSION))
 URL = https://github.com/4ti2/4ti2/releases/download/Release_$(VERSION_)
 
 ifeq (@ENABLE_STRIP@,yes)
