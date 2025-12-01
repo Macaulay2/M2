@@ -1145,6 +1145,34 @@ regularizedBeta(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("regularizedBeta",regularizedBeta).Protected=false;
 
+polylog(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 2 then (
+	    when a.0
+	    is x:RRcell do (
+		when a.1
+		is y:RRcell do (                                                 -- # typical value: polylog, RR, RR, RR
+		    if y.v < 1 then toExpr(polylog(x.v, y.v))
+		    else toExpr(polylog(toCC(x.v), toCC(y.v))))
+		is y:RRicell do toExpr(polylog(toRRi(x.v), y.v))                 -- # typical value: polylog, RR, RRi, RRi
+		is y:CCcell do toExpr(polylog(toCC(x.v), y.v))                   -- # typical value: polylog, RR, CC, CC
+		else WrongArgRRorCC(2))
+	    is x:RRicell do (
+		when a.1
+		is y:RRcell do toExpr(polylog(x.v, toRRi(y.v)))                  -- # typical value: polylog, RRi, RR, RRi
+		is y:RRicell do toExpr(polylog(x.v, y.v))                        -- # typical value: polylog, RRi, RRi, RRi
+		else WrongArgRRorCC(2))
+	    is x:CCcell do (
+		when a.1
+		is y:RRcell do toExpr(polylog(x.v, toCC(y.v)))                   -- # typical value: polylog, CC, RR, CC
+		is y:CCcell do toExpr(polylog(x.v, y.v))                         -- # typical value: polylog, CC, CC, CC
+		else WrongArgRRorCC(2))
+	    else WrongArgRRorCC(1))
+	else WrongNumArgs(2))
+    else WrongNumArgs(2));
+setupfun("polylog", polylog).Protected=false;
+
 cosh(e:Expr):Expr := (
      when e
      is x:CCcell do toExpr(cosh(x.v))				    -- # typical value: cosh, CC, CC

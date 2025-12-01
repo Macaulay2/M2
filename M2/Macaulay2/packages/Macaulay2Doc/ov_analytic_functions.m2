@@ -50,6 +50,7 @@ Node
       BesselJ
       BesselY
       agm
+      polylog
     :Trigonometric functions
       sin
       asin

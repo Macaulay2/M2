@@ -243,6 +243,26 @@ export regularizedBeta(u:RRi,v:RRi,w:RRi):RRi := (
     clear(z);
     moveToRRiandclear(r, prec));
 
+export polylog(z:RR, w:RR):RR := (
+    prec := min(precision(z), precision(w));
+    x := toRRball(z);
+    y := toRRball(w);
+    r := newRRball();
+    Ccode(void, "arb_polylog(", r, ", ", x, ", ", y, ", ", prec, ")");
+    clear(x);
+    clear(y);
+    moveToRRandclear(r, prec));
+
+export polylog(z:RRi, w:RRi):RRi := (
+    prec := min(precision(z), precision(w));
+    x := toRRball(z);
+    y := toRRball(w);
+    r := newRRball();
+    Ccode(void, "arb_polylog(", r, ", ", x, ", ", y, ", ", prec, ")");
+    clear(x);
+    clear(y);
+    moveToRRiandclear(r, prec));
+
 ------------
 -- CCBall --
 ------------
@@ -388,4 +408,14 @@ export regularizedBeta(u:CC,v:CC,w:CC):CC := (
     clear(x);
     clear(y);
     clear(z);
+    moveToCCandclear(r, prec));
+
+export polylog(z:CC, w:CC):CC := (
+    prec := min(precision(z), precision(w));
+    x := toCCball(z);
+    y := toCCball(w);
+    r := newCCball();
+    Ccode(void, "acb_polylog(", r, ", ", x, ", ", y, ", ", prec, ")");
+    clear(x);
+    clear(y);
     moveToCCandclear(r, prec));
