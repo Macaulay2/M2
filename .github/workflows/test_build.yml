@@ -52,7 +52,7 @@ jobs:
             os: macos-14
             compiler: default
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
 # ----------------------
 #   Install missing tools and libraries for macOS

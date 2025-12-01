@@ -34,7 +34,7 @@ jobs:
           - distribution: fedora
             release: 10
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Build RPM
         run: |
           cd M2/BUILD/rpm
