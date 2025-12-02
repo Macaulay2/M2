@@ -16,14 +16,28 @@
 
 newPackage("JSONRPC",
     Headline => "JSON-RPC server",
-    Version => "0.1",
-    Date => "May 19, 2025",
+    Version => "0.2",
+    Date => "December 17, 2025",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
     Keywords => {"System"},
     PackageImports => {"JSON"})
+
+---------------
+-- ChangeLog --
+---------------
+
+-*
+
+0.2 (2025-12-17, M2 1.26.05)
+* Use trap for error messages
+
+0.1 (2025-05-19, M2 1.25.11)
+* Initial release
+
+*-
 
 export {
     -- classes
@@ -139,17 +153,15 @@ callMethod(JSONRPCMethod, List, Thing) := (m, params, ID) -> (
 	    i -> if i >= #params then null else params#i)
 	else params);
     if #inp == 1 then inp = inp#0;
-    r := (try m#"function" inp
-	-- TODO: use lastError here once it's available
-	-- afterwards, validate params and only throw this
-	-- error when they're bad
-	-- also update JSONRPCError doc node
-	else JSONRPCError(-32602, "Invalid params"));
-    if instance(r, JSONRPCError)
-    then m#"server"#"logger" concatenate(
-	"method \"", m#"name", "\" failed with error: ", toJSON r)
+    -- TODO: validate params and throw the following if they're bad:
+    -- JSONRPCError(-32602, "Invalid params")
+    (r, err) := trap m#"function" inp;
+    if err =!= null then (
+	r = JSONRPCError(-32603, "Internal error: " | toString err);
+	m#"server"#"logger" concatenate(
+	    "method \"", m#"name", "\" failed with error: ", toJSON r))
     else m#"server"#"logger" concatenate(
-	"method \"", m#"name", "\" returned: ", toJSON r);
+	    "method \"", m#"name", "\" returned: ", toJSON r);
     makeResponse(m#"server", r, ID))
 
 callMethod(JSONRPCMethod, HashTable, Thing) := (m, params, ID) -> (
@@ -383,21 +395,13 @@ doc ///
       data. This class ensures that errors are properly formatted according to
       the JSON-RPC 2.0 specification and can be easily included in responses to
       clients.
-
-      Consider the following example.  The default response doesn't include a
-      very useful error message.
     Example
       server = new JSONRPCServer
-      registerMethod(server, "divide", (x, y) -> x/y)
-      handleRequest(server, makeRequest("divide", {1, 0}, 1))
-    Text
-      Let's replace it with a more useful one.
-    Example
       registerMethod(server, "divide", (x, y) -> (
 	      if zero y then JSONRPCError(-32001, "division by zero")
 	      else x/y))
       handleRequest(server, makeRequest("divide", {1, 0}, 1))
-      handleRequest(server, makeRequest("divide", {22, 7}, 1))
+      handleRequest(server, makeRequest("divide", {22, 7}, 2))
     Text
       Note that the error codes -32000 to -32099 are reserved for use by
       JSON-RPC servers, so @CODE "errCode"@ should lie in this interval
@@ -650,6 +654,9 @@ assertJSONRPC = (request, expected) -> assert BinaryOperation(symbol ===,
 registerMethod(server, "foo", () -> JSONRPCError(1234, "bar"))
 assertJSONRPC("{\"jsonrpc\": \"2.0\", \"method\": \"foo\", \"id\": 1}",
     "{\"error\": {\"code\": 1234, \"message\": \"bar\"}, \"jsonrpc\": \"2.0\", \"id\": 1}")
+registerMethod(server, "divide", (x,y) -> x/y)
+assertJSONRPC("{\"jsonrpc\": \"2.0\", \"method\": \"divide\", \"params\": [1, 0], \"id\": 2}",
+    "{\"error\": {\"code\": -32603, \"message\": \"Internal error: division by zero\"}, \"jsonrpc\": \"2.0\", \"id\": 2}")
 ///
 
 TEST ///
