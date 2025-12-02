@@ -1,3 +1,5 @@
+assert try error "foo" else caughtError#1 == "foo"
+
 stderr << "--testing the error messages must be done manually" << endl
 end
 

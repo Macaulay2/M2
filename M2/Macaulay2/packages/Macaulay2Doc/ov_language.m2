@@ -704,6 +704,7 @@ document {
 	  TO "error",
 	  TO "try",
 	  TO "throw",
+	  TO "caughtError",
 	  }
      }
 
@@ -732,8 +733,10 @@ document {
      PARA{},
      "The behavior of interrupts (other than alarms) is unaffected.",
      EXAMPLE "apply(-3..3,i->try 1/i else infinity)",
-     Caveat => "We will change the behavior of this function soon so that it will be possible to catch errors of a particular type.  Meanwhile, users are
-     recommended to use this function sparingly, if at all."
+     "Information about a caught error may be obtained in the ", M2CODE "else",
+     " clause using the variable ", TO "caughtError", ".",
+     EXAMPLE "try 1/0 else caughtError",
+     SeeAlso => {"caughtError"}
      }
 
 document {

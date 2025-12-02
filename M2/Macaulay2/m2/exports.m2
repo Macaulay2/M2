@@ -532,6 +532,7 @@ export {
 	"cancelTask",
 	"capture",
 	"catch",
+	"caughtError",
 	"ceiling",
 	"centerString",
 	"changeBase",

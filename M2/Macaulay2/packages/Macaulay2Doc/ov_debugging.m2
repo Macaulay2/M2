@@ -327,6 +327,23 @@ document {
 	  }
      }
 
+doc ///
+  Key
+    "caughtError"
+  Headline
+    the error caught by try
+  Description
+    Text
+      In order to reach the @M2CODE "else"@ clause of a @TO symbol try@
+      statement, an error must have occurred.  Information about this error is
+      stored in the @M2CODE "caughtError"@ variable as a sequence with
+      two elements, the position of the code where the error occurred
+      (as a @TO FilePosition@ object) and the error message.
+    Example
+      try 1/0 else caughtError
+  SeeAlso
+    symbol try
+///
 
 document {
      Key => "recursionLimit",

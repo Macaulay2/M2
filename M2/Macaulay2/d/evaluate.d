@@ -36,6 +36,8 @@ export applyIteratorS := setupvar("applyIterator", nullE);
 export joinIteratorsS := setupvar("joinIterators", nullE);
 export pairsIteratorS := setupvar("pairsIterator", nullE);
 
+caughtErrorS := setupvarThread("caughtError", nullE);
+
 eval(c:Code):Expr;
 applyEE(f:Expr,e:Expr):Expr;
 export evalAllButTail(c:Code):Code := while true do c = (
@@ -1481,7 +1483,14 @@ export evalraw(c:Code):Expr := (
 	      if tryEvalSuccess then
 	      when ret is Error do ret
 	      else if c.thenClause == NullCode then ret   else eval(c.thenClause)
-	      else if c.elseClause == NullCode then nullE else eval(c.elseClause))
+	      else if c.elseClause == NullCode then nullE else (
+		  when ret
+		  is err:Error do setGlobalVariable(caughtErrorS,
+		      seq(locate(err.position), toExpr(err.message)))
+		  else nothing; -- shouldn't happen
+		  p := eval(c.elseClause);
+		  setGlobalVariable(caughtErrorS, nullE);
+		  p))
 	  is c:catchCode do (
 	       p := eval(c.code);
 	       when p is err:Error do if err.message == throwMessage then err.value else p
