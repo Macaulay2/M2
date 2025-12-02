@@ -16,14 +16,28 @@
 
 newPackage("JSONRPC",
     Headline => "JSON-RPC server",
-    Version => "0.1",
-    Date => "May 19, 2025",
+    Version => "0.2",
+    Date => "December 1, 2025",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
     Keywords => {"System"},
     PackageImports => {"JSON"})
+
+---------------
+-- ChangeLog --
+---------------
+
+-*
+
+0.2 (2025-12-01, M2 1.26.05)
+* Use caughtError for error messages
+
+0.1 (2025-05-19, M2 1.25.11)
+* Initial release
+
+*-
 
 export {
     -- classes
@@ -139,12 +153,10 @@ callMethod(JSONRPCMethod, List, Thing) := (m, params, ID) -> (
 	    i -> if i >= #params then null else params#i)
 	else params);
     if #inp == 1 then inp = inp#0;
+    -- TODO: validate params and throw the following if they're bad:
+    -- JSONRPCError(-32602, "Invalid params")
     r := (try m#"function" inp
-	-- TODO: use lastError here once it's available
-	-- afterwards, validate params and only throw this
-	-- error when they're bad
-	-- also update JSONRPCError doc node
-	else JSONRPCError(-32602, "Invalid params"));
+	else JSONRPCError(-32603, "Internal error: " | caughtError#1));
     if instance(r, JSONRPCError)
     then m#"server"#"logger" concatenate(
 	"method \"", m#"name", "\" failed with error: ", toJSON r)
@@ -383,21 +395,13 @@ doc ///
       data. This class ensures that errors are properly formatted according to
       the JSON-RPC 2.0 specification and can be easily included in responses to
       clients.
-
-      Consider the following example.  The default response doesn't include a
-      very useful error message.
     Example
       server = new JSONRPCServer
-      registerMethod(server, "divide", (x, y) -> x/y)
-      handleRequest(server, makeRequest("divide", {1, 0}, 1))
-    Text
-      Let's replace it with a more useful one.
-    Example
       registerMethod(server, "divide", (x, y) -> (
 	      if zero y then JSONRPCError(-32001, "division by zero")
 	      else x/y))
       handleRequest(server, makeRequest("divide", {1, 0}, 1))
-      handleRequest(server, makeRequest("divide", {22, 7}, 1))
+      handleRequest(server, makeRequest("divide", {22, 7}, 2))
     Text
       Note that the error codes -32000 to -32099 are reserved for use by
       JSON-RPC servers, so @CODE "errCode"@ should lie in this interval
