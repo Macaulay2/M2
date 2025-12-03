@@ -17,7 +17,8 @@ newPackage("Python",
     Keywords => {"Interfaces"},
     PackageImports => {"Text"},
     AuxiliaryFiles => true,
-    OptionalComponentsPresent => Core#"private dictionary"#?"pythonTrue"
+    OptionalComponentsPresent => Core#"private dictionary"#?"pythonTrue",
+    UseCachedExampleOutput => true,
     )
 
 ---------------
