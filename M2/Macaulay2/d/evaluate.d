@@ -1670,6 +1670,8 @@ testfun(c:Code):Expr := (
     when r is Error do r else nullE);
 setupop(TestS, testfun);
 
+export toExpr(err:Error):Expr := Expr(SpecialExpr(Class(err), Expr(err)));
+
 assigntofun(lhs:Code,rhs:Code):Expr := (
     left := eval(lhs);
     when left is Error do return left else (

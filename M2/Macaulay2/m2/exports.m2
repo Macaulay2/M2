@@ -156,6 +156,7 @@ export {
 	"End",
 	"Engine",
 	"EngineRing",
+	"Error",
 	"Equation",
 	"EulerConstant",
 	"ExampleFiles",
