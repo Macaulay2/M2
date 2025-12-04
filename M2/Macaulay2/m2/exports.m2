@@ -1223,6 +1223,7 @@ export {
 	"topCoefficients",
 	"trace",
 	"transpose",
+	"trap",
 	"trim",
 	"true",
 	"truncate",

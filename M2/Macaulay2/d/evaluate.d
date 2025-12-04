@@ -1672,6 +1672,16 @@ setupop(TestS, testfun);
 
 export toExpr(err:Error):Expr := Expr(SpecialExpr(Class(err), Expr(err)));
 
+trapfun(c:Code):Expr := (
+    r := tryEval(c);
+    if tryEvalSuccess then seq(r, nullE)
+    else (
+	when r
+	is err:Error do seq(nullE, toExpr(err))
+	-- shouldn't happen since tryEvalSuccess only false when r is an Error
+	else buildErrorPacket("unable to trap error")));
+setupop(trapS, trapfun);
+
 assigntofun(lhs:Code,rhs:Code):Expr := (
     left := eval(lhs);
     when left is Error do return left else (
