@@ -704,6 +704,8 @@ document {
 	  TO "error",
 	  TO "try",
 	  TO "throw",
+	  TO "trap",
+	  TO "Error",
 	  }
      }
 
@@ -733,7 +735,8 @@ document {
      "The behavior of interrupts (other than alarms) is unaffected.",
      EXAMPLE "apply(-3..3,i->try 1/i else infinity)",
      Caveat => "We will change the behavior of this function soon so that it will be possible to catch errors of a particular type.  Meanwhile, users are
-     recommended to use this function sparingly, if at all."
+     recommended to use this function sparingly, if at all.",
+     SeeAlso => {"attempt"},
      }
 
 document {

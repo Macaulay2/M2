@@ -1,3 +1,10 @@
+(val, err) = trap error "foo"
+assert Equation(toString err, "foo")
+
+MyError = new SelfInitializingType of Error
+(val, err) = trap error MyError "foo"
+assert instance(err, MyError)
+
 stderr << "--testing the error messages must be done manually" << endl
 end
 
