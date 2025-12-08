@@ -16,10 +16,67 @@ doc ///
             functions to work with cell complexes. For
             some direct ways to construct common cellular resolutions for
             monomial ideals, see @TO taylorComplex@ and @TO hullComplex@.
+	    Introductions to cellular resolutions can be found in:
+	Text
+	    @UL {
+		{
+		HREF("https://services.math.duke.edu/~ezra/", "Ezra Miller"),
+		" and ",
+		HREF("https://math.berkeley.edu/~bernd/", "Bernd Sturmfels"),
+		", ", 
+		HREF("https://www.springer.com/gp/book/9780387223568",
+		    "Combinatorial commutative algebra"),
+		", Graduate Texts in Mathematics 227, ",
+		"Springer-Verlag, New York, 2005. ",
+		"ISBN: 0-387-22356-8" },
+		{
+		HREF("https://en.wikipedia.org/wiki/Dave_Bayer", "Dave Bayer"),
+		HREF("https://pi.math.cornell.edu/~irena/", "Ireena Peeva"),
+		" and ",
+		HREF("https://math.berkeley.edu/~bernd/", "Bernd Sturmfels"),
+		", ",
+		HREF("https://dx.doi.org/10.4310/MRL.1998.v5.n1.a3",
+		    "Monomial Resolutions"),
+		", Mathematical Research Letters 5, pp. 31-46 (1998)" },
+		{
+		HREF("https://en.wikipedia.org/wiki/Dave_Bayer", "Dave Bayer"),
+		" and ",
+		HREF("https://math.berkeley.edu/~bernd/", "Bernd Sturmfels"),
+		", ",
+		HREF("https://doi.org/10.1515/crll.1998.083",
+		    "Cellular resolutions of monomial modules"),
+		", Journal für die reine und angewandte Mathematik, vol. 1998, no. 502, 1998, pp. 123-140."}
+	    }@	    
         Text
             More generally, cell complexes can be constructed by creating cells
             using @TO newCell@ or @TO newSimplexCell@, and then the maximal
-            cells can be provided to @TO cellComplex@ to construct a cell complex
+            cells can be provided to @TO cellComplex@ to construct a cell complex.
+        Text
+	    The example below follows Example 1.6 in @HREF("https://doi.org/10.1515/crll.1998.083",
+		    "Cellular resolutions of monomial modules")@,
+	    where two simplicial complexes X and Y are constructed
+		on the same monomial ideal. However, only X supports a resolution.
+	Example
+	    S = QQ[a,b,c, Degrees=>{{1,0,0},{0,1,0},{0,0,1}}];
+	    v101 = newCell({},a*c)
+	    v012 = newCell({},b*c^2); v020 = newCell({},b^2); v210 = newCell({},a^2*b);
+
+	    e112 = newCell({v101,v012})
+	    e022 = newCell({v012,v020}); e220 = newCell({v020,v210}); e211 = newCell({v210,v101});
+
+	    e121 = newCell({v101,v020});
+	    f122 = newCell({e112,e022,e121})
+	    f221 = newCell({e220,e211,e121});
+	    X = cellComplex(S,{f122,f221})
+
+	    e212 = newCell({v210,v012}); f212 = newCell({e112,e211,e212}); f222 = newCell({e022,e220,e212});
+	    Y = cellComplex(S,{f212,f222})
+
+	    prune HH X
+	    prune HH Y
+
+	    Y121 = subcomplex(Y,a*b^2*c)
+	    prune HH Y121
 ///
 
 doc ///
