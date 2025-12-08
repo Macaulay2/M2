@@ -127,7 +127,13 @@ find_package(GMP	6.0.0 REQUIRED)
 #   givaro	prime field and algebraic computations	(needs gmp)
 #  fflas_ffpack	Finite Field Linear Algebra Routines	(needs gmp, givaro + LAPACK)
 
-find_package(Eigen3	3.3.0 PATHS ${M2_HOST_PREFIX})
+find_package(Eigen3	3.4...5.0 PATHS ${M2_HOST_PREFIX})
+# FindEigen3 doesn't set EIGEN3_FOUND, and instead we should check
+# if the target Eigen3::Eigen is defined, so we set EIGEN3_FOUND
+# for compatibility with the rest of the build code
+if(TARGET Eigen3::Eigen)
+  set(EIGEN3_FOUND TRUE)
+endif (TARGET Eigen3::Eigen)
 find_package(BDWGC	7.6.4)
 find_package(MPFR	4.0.1)
 find_package(MPFI	1.5.1)
