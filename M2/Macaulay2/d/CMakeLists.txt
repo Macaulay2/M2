@@ -151,11 +151,6 @@ target_link_libraries(M2-interpreter PRIVATE M2-supervisor
   $<$<BOOL:${WITH_TBB}>:TBB::tbb>
   $<$<BOOL:${WITH_FFI}>:FFI::ffi>)
 
-if(EIGEN3_FOUND)
-  #version.d is using an Eigen header it can't find without this line
-  target_link_libraries(M2-interpreter PRIVATE Eigen3::Eigen)
-endif()
-
 # TODO: c.f. https://github.com/Macaulay2/M2/issues/2682
 if(NOT APPLE)
   target_link_libraries(M2-interpreter PRIVATE quadmath)
@@ -171,10 +166,10 @@ target_include_directories(M2-interpreter
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/e/mathic>
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/e/memtailor>
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/e/mathicgb>
+    $<BUILD_INTERFACE:$<TARGET_PROPERTY:Eigen3::Eigen,INTERFACE_INCLUDE_DIRECTORIES>>
     # for libraries that the interpreter needs
     $<BUILD_INTERFACE:${READLINE_INCLUDE_DIR}>
     $<BUILD_INTERFACE:${LIBXML2_INCLUDE_DIR}>
-    $<BUILD_INTERFACE:${EIGEN3_INCLUDE_DIR}>
     $<INSTALL_INTERFACE:include/Macaulay2>
     $<$<BOOL:${WITH_PYTHON}>:$<BUILD_INTERFACE:${Python3_INCLUDE_DIRS}>>
   PRIVATE
