@@ -127,6 +127,10 @@ find_package(GMP	6.0.0 REQUIRED)
 #   givaro	prime field and algebraic computations	(needs gmp)
 #  fflas_ffpack	Finite Field Linear Algebra Routines	(needs gmp, givaro + LAPACK)
 
+# Prior to 3.4.1, find_package for Eigen3 doesn't support version ranges
+# but Ubuntu only has 3.4.0 right now, so we should support it
+# For Eigen 5.0 and later, the way the version checking is setup, specifying
+# a version of 3.4.0 or similar won't find version 5.0
 find_package(Eigen3	3.4.0 PATHS ${M2_HOST_PREFIX})
 if(NOT EIGEN3_FOUND)
   find_package(Eigen3	3.4.1...5.0 PATHS ${M2_HOST_PREFIX})
