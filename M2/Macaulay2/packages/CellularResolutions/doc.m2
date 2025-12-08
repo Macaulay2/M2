@@ -1558,3 +1558,71 @@ doc ///
             D = taylorComplex monomialIdeal {a,b,c}
             subcomplex(D,{1,1,0})
 ///
+
+doc ///
+    Key
+        (net,CellComplex)
+        (net,Cell)
+    Headline
+        Describes a cell complex or cell
+    Usage
+        net C
+    Inputs
+        C : {CellComplex, Cell}
+    Outputs
+        : Net
+    Description
+        Text
+            For cell complexes, this method uses @TO GlobalAssignHook@ to use the name of the cell complex
+            if the cell complex is assigned to a global variable.
+            Otherwise the method returns a description of the cell complex and all the cells it contains.
+        Text
+            For individual cells, the description contains only the dimension and the label,
+            the data of the boundary of the cell is not given in the description.
+        Example
+            R = QQ[x,y];
+            v1 = newSimplexCell({},x);
+            v2 = newSimplexCell({},y);
+            e1 = newSimplexCell({v1,v2},x);
+            e2 = newSimplexCell({v1,v2},y);
+            f = newCell({(e1,1),(e2,-1)},x*y);
+            net cellComplex(R,{f})
+            net f
+            X = cellComplex(R,{f});
+            net X
+    SeeAlso
+        (texMath, CellComplex)
+        (texMath, Cell)
+///
+
+doc ///
+    Key
+        (texMath,CellComplex)
+        (texMath,Cell)
+    Headline
+        Describes a cell complex or cell using TeX
+    Usage
+        texMath C
+    Inputs
+        C : {CellComplex, Cell}
+    Outputs
+        : String
+    Description
+        Text
+            This method functions mostly as @TO (net, CellComplex)@ and @TO (net, Cell)@ does.
+            The primary difference in the output is that the output is formatted for TeX.
+        Example
+            R = QQ[x,y];
+            v1 = newSimplexCell({},x);
+            v2 = newSimplexCell({},y);
+            e1 = newSimplexCell({v1,v2},x);
+            e2 = newSimplexCell({v1,v2},y);
+            f = newCell({(e1,1),(e2,-1)},x*y);
+            texMath cellComplex(R,{f})
+            texMath f
+            X = cellComplex(R,{f});
+            texMath X
+    SeeAlso
+        (net, CellComplex)
+        (net, Cell)
+///

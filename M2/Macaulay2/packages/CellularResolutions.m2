@@ -2,7 +2,7 @@
 -- This file is in the public domain
 newPackage(
     "CellularResolutions",
-    Version => "1.0",
+    Version => "1.1",
     Date => "May 17, 2023",
     Authors => {
         {Name => "Jay Yang", Email => "jay.k.yang@vanderbilt.edu"},
@@ -583,7 +583,7 @@ net Cell := cell -> (
     )
 
 texMath Cell := cell -> (
-    "\text{Cell of dimension }" | (texMath dim cell) | "\text{ with label }" | (texMath cellLabel cell)
+    "\\text{Cell of dimension }" | (texMath dim cell) | "\\text{ with label }" | (texMath cellLabel cell)
     )
 
 net CellComplex := cellComplex -> (
