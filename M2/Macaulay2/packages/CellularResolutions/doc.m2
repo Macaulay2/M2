@@ -575,6 +575,8 @@ doc ///
             the source cell-dimension
         C : CellComplex
             the CellComplex
+        Labels => List
+            this option is ignored by this function
     Outputs
         : Matrix
             the boundary map from r-faces to (r-1)-faces of C
@@ -782,6 +784,8 @@ doc ///
         r : ZZ
             a non-negative integer
         C : CellComplex
+        Degree => ZZ
+            this option is ignored by this function
     Outputs
         : Module
             the r-th cohomology module of C
