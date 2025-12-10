@@ -18,6 +18,8 @@ error = args -> (
      olderror processArgs args)
 protect symbol error
 
+new Error from Thing := (T, x) -> new T from processArgs x
+
 warningMessage0 = (args,deb) -> (
      args = processArgs args;
      h := hash args % 10000;

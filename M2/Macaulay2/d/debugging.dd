@@ -224,3 +224,22 @@ locate(e:Expr):Expr := (
     is s:SpecialExpr do locate(s.e)
     else WrongArg("a function, symbol, sequence, or null"));
 setupfun("locate", locate).Protected = false; -- will be overloaded in m2/methods.m2
+
+errorFromString(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 2 then (
+	    when a.0
+	    is T:HashTable do (
+		if ancestor(T, errorClass) then (
+		    when a.1
+		    is msg:stringCell do Expr(SpecialExpr(
+			    T,
+			    Error(dummyPosition, msg.v, T, false,
+				dummyFrame)))
+		    else WrongArgString(2))
+		else WrongArg(1, "a type of error"))
+	    else WrongArgHashTable(1))
+	else WrongNumArgs(2))
+    else WrongNumArgs(2));
+installMethod(NewFromS, errorClass, stringClass, errorFromString);
