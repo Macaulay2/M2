@@ -261,13 +261,14 @@ currentPosition = () -> new FilePosition from { currentFileName, currentRowNumbe
 -- locate
 -----------------------------------------------------------------------------
 
-locate' = locate -- defined in d/actors4.d
+locate' = locate -- defined in d/debugging.dd
 locate = method(Dispatch => Thing, TypicalValue => FilePosition)
 locate Nothing     :=
 locate FunctionBody:=
 locate Function    :=
 locate Pseudocode  :=
 locate Sequence    :=
+locate Error       :=
 locate Symbol      := FilePosition => locate'
 locate Command     := FilePosition => C -> locate'(C#0)
 locate List        := List     => x -> apply(x, locate)
