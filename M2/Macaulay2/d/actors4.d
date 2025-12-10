@@ -663,10 +663,11 @@ stringcatfun(e:Expr):Expr := (
 setupfun("concatenate",stringcatfun);
 
 errorfun(e:Expr):Expr := (
-     e = stringcatfun(e);
      when e
      is s:stringCell do buildErrorPacket(s.v)
-     else buildErrorPacket("expects a string or sequence of strings as its argument"));
+     is err:Error do (err.printed = false; e)
+     is x:SpecialExpr do errorfun(x.e)
+     else WrongArg("a string or error"));
 setupfun("error",errorfun).Protected = false;		    -- this will be replaced by a toplevel function that calls this one
 
 mingleseq(a:Sequence):Expr := (

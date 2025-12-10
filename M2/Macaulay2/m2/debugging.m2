@@ -13,9 +13,10 @@ processArgs := args -> concatenate (
      apply(args, x -> if class x === Symbol then ("\n", toString locate x, ": here is the first use of '",toString x, "'") else "")
      )
 olderror := error
-error = args -> (
-     -- this is the body of the "error" function, which prints out error messages
-     olderror processArgs args)
+error = method(Dispatch => Thing)
+error String :=
+error Error  := olderror
+error Thing  := x -> olderror processArgs x
 protect symbol error
 
 new Error from Thing := (T, x) -> new T from processArgs x
