@@ -176,7 +176,7 @@ getMons(PolynomialRing, Ideal) := options -> (R, I) -> (
                 for k from 0 to (#G - 1) do ( -- Multiply each element in degreeiEls by each generator.
                     subject := degreeiEls#j;
                     newMon := subject * G_k;
-                    if ( (any(M, a -> a == newMon ) == false ) and ( theDegree (newMon) >= 0 ) ) then ( -- If the new element is not in M and isn't the idenitity do:
+                    if ( (any(M, a -> a == newMon ) == false ) and ( theDegree (newMon) >= 0 ) ) then ( -- If the new element is not in M and isn't the identity do:
                         M#(#M) = newMon;
                         );
                     );
@@ -800,7 +800,7 @@ macaulayOrders (QuotientRing) := options -> (S) -> (
     
     if not isPolynomialRing R then return "The ambient ring must be a polynomial ring.";
     if not isField baseRing R then return "The base ring of the polynomial ring must be a field.";
-    if not isHomogeneousWrtVars I then return "The ring must be homogenous.";
+    if not isHomogeneousWrtVars I then return "The ring must be homogeneous.";
     -- The ideal also should be level linearly independent
     
     macaulayOrders(getPoset(R,I), MaxTime => options.MaxTime, TikZ => options.TikZ, Visual => options.Visual, AllOrders => options.AllOrders)
@@ -1339,7 +1339,7 @@ Node
             unused
     Outputs
         :PosetMap
-            the poset map from @TT "P"@ to @TT "Q"@ specificed by @TT "L"@.
+            the poset map from @TT "P"@ to @TT "Q"@ specified by @TT "L"@.
     Description
         Text
             A poset map is a monotone function $f: P\rightarrow Q$ from a poset $P$ to a poset $Q$, so $f(p)\leq f(q)$ whenever $p\leq q$.
@@ -1456,7 +1456,7 @@ Node
             whose elements are lists representing orders with respect to which the poset is Macaulay, or a @TO "String"@ if time runs out or the input doesn't satisfy the conditions
     Description
         Text
-            Given a poset with rank functon $r$, this method returns all Macaulay orders $<$ on the poset such that $r(p)<r(q)$ implies $p<q$.
+            Given a poset with rank function $r$, this method returns all Macaulay orders $<$ on the poset such that $r(p)<r(q)$ implies $p<q$.
             
             Given a quotient $S$ of a polynomial ring, this method returns Macaulay orders on the monomial poset of $S$.
             
@@ -1497,7 +1497,7 @@ Node
             or a @TO "String"@ if time runs out or the input doesn't satisfy the conditions
     Description
         Text
-            Suppose $P$ is a ranked poset and $<$ is a total order on the ground set of $P$. Let $\operatorname{Seg}_d n$ denote the largest $n$ elements of rank $d$ with respect to $<$. Suppose that for every integer $d$ between $0$ and the rank of $P$, and for every subset $A$ of the $d$th level of $P$, we have $\lvert\nabla_P\operatorname{Seg}_d\lvert A\rvert\rvert \leq \lvert\nabla_P(A)\rvert$ and $\nabla_P\operatorname{Seg}_d\lvert A\rvert = \operatorname{Seg}_{d+1}\lvert\nabla_P(A)\rvert$. Then, we say $P$ is Macaulay with respect to $<$. A Macaulay poset is a poset for which there exists an order with repsect to which it is Macaulay.
+            Suppose $P$ is a ranked poset and $<$ is a total order on the ground set of $P$. Let $\operatorname{Seg}_d n$ denote the largest $n$ elements of rank $d$ with respect to $<$. Suppose that for every integer $d$ between $0$ and the rank of $P$, and for every subset $A$ of the $d$th level of $P$, we have $\lvert\nabla_P\operatorname{Seg}_d\lvert A\rvert\rvert \leq \lvert\nabla_P(A)\rvert$ and $\nabla_P\operatorname{Seg}_d\lvert A\rvert = \operatorname{Seg}_{d+1}\lvert\nabla_P(A)\rvert$. Then, we say $P$ is Macaulay with respect to $<$. A Macaulay poset is a poset for which there exists an order with respect to which it is Macaulay.
             
             There is an analogous property for rings, not to be confused with the Cohen-Macaulay property.
             
