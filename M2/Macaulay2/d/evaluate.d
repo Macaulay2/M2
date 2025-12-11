@@ -36,6 +36,8 @@ export applyIteratorS := setupvar("applyIterator", nullE);
 export joinIteratorsS := setupvar("joinIterators", nullE);
 export pairsIteratorS := setupvar("pairsIterator", nullE);
 
+export toExpr(err:Error):Expr := Expr(SpecialExpr(Class(err), Expr(err)));
+
 eval(c:Code):Expr;
 applyEE(f:Expr,e:Expr):Expr;
 export evalAllButTail(c:Code):Code := while true do c = (
@@ -1478,10 +1480,26 @@ export evalraw(c:Code):Expr := (
 	  is c:threadSymbolClosureCode do return Expr(SymbolClosure(threadFrame,c.symbol))
 	  is c:tryCode do (
 	      ret := tryEval(c.code);
-	      if tryEvalSuccess then
-	      when ret is Error do ret
-	      else if c.thenClause == NullCode then ret   else eval(c.thenClause)
-	      else if c.elseClause == NullCode then nullE else eval(c.elseClause))
+	      if tryEvalSuccess then (
+		  when ret is Error do ret
+		  else if c.thenClause == NullCode then ret
+		  else eval(c.thenClause))
+	      else (
+		  if c.elseClause != NullCode then eval(c.elseClause)
+		  else if c.doClause == NullCode then nullE
+		  else ( -- try .. except .. do
+		      when ret is err:Error do (
+			  localFrame = Frame(
+			      localFrame, c.frameID, c.framesize, false,
+			      new Sequence len c.framesize do provide nullE);
+			  -- variable specified by "except"
+			  localFrame.values.0 = toExpr(err);
+			  p := eval(c.doClause);
+			  localFrame = localFrame.outerFrame;
+			  p)
+		      -- shouldn't happen since tryEvalSuccess is only
+		      -- false when ret is an Error
+		      else buildErrorPacket("unable to catch error"))))
 	  is c:catchCode do (
 	       p := eval(c.code);
 	       when p is err:Error do if err.message == throwMessage then err.value else p
@@ -1669,8 +1687,6 @@ testfun(c:Code):Expr := (
 	seq(eval(c), locate(codePosition(c))));
     when r is Error do r else nullE);
 setupop(TestS, testfun);
-
-export toExpr(err:Error):Expr := Expr(SpecialExpr(Class(err), Expr(err)));
 
 trapfun(c:Code):Expr := (
     r := tryEval(c);

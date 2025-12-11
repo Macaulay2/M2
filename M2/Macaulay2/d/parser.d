@@ -126,6 +126,7 @@ export elseW := Word("-*dummy word: else*-",TCnone,hash_t(0),newParseinfo());		 
 export ofW := Word("-*dummy word: of*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
 export doW := Word("-*dummy word: do*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
 export listW := Word("-*dummy word: list*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export exceptW := Word("-*dummy word: except*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
 export fromW := Word("-*dummy word: from*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
 export inW := Word("-*dummy word: in*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
 export toW := Word("-*dummy word: to*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
@@ -457,6 +458,18 @@ export unarytry(tryToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
 	       if elseClause == errorTree then return errorTree;
 	       accumulate(ParseTree(TryThenElse(tryToken,primary,thenToken,thenClause,elseToken,elseClause)),file,prec,obeylines))
 	  else accumulate(ParseTree(TryThen(tryToken,primary,thenToken,thenClause)),file,prec,obeylines))
+     else if peektoken(file,obeylines).word == exceptW then (
+	  exceptToken := gettoken(file,false);
+	  if exceptToken == errorToken then return errorTree;
+	  variable := parse(file,exceptW.parse.unaryStrength,obeylines);
+	  if variable == errorTree then return errorTree;
+	  if peektoken(file,obeylines).word == doW then (
+	      doToken := gettoken(file,false);
+	      if doToken == errorToken then return errorTree;
+	      doClause := parse(file,doW.parse.unaryStrength,obeylines);
+	      if doClause == errorTree then return errorTree;
+	      accumulate(ParseTree(TryExceptDo(tryToken,primary,exceptToken,variable,doToken,doClause,dummyDictionary)),file,prec,obeylines))
+	  else return makeParseError(exceptToken,"syntax error: expected 'do'"))
      else accumulate(ParseTree(Try(tryToken,primary)),file,prec,obeylines));
 export unarycatch(catchToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      primary := parse(file,catchToken.word.parse.unaryStrength,obeylines);
@@ -501,6 +514,7 @@ export treePosition(e:ParseTree):Position := (
     is t:TryThen          do combinePositionL(t.tryToken.position,   treePosition(t.sequel))
     is t:TryThenElse      do combinePositionL(t.tryToken.position,   treePosition(t.alternate))
     is t:TryElse          do combinePositionL(t.tryToken.position,   treePosition(t.alternate))
+    is t:TryExceptDo      do combinePositionL(t.tryToken.position,   treePosition(t.doClause))
     is t:Catch            do combinePositionL(t.catchToken.position, treePosition(t.primary))
     is t:WhileDo          do combinePositionL(t.whileToken.position, treePosition(t.doClause))
     is t:WhileListDo      do combinePositionL(t.whileToken.position, treePosition(t.doClause))
@@ -542,6 +556,7 @@ export size(e:ParseTree):int := (
     is x:TryThen     do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary) + size(x.thenToken) + size(x.sequel)
     is x:TryElse     do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary)                                      + size(x.elseToken) + size(x.alternate)
     is x:Try         do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary)
+    is x:TryExceptDo do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary) + size(x.exceptToken) +size(x.variable) + size(x.doToken) + size(x.doClause)
      is x:Catch do Ccode(int,"sizeof(*",x,")") + size(x.catchToken) + size(x.primary)
      is x:For do Ccode(int,"sizeof(*",x,")")+ size(x.forToken) + size(x.variable) + size(x.inClause) + size(x.fromClause) + size(x.toClause) + size(x.whenClause) + size(x.listClause) + size(x.doClause)
      is x:WhileDo do Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.dotoken) + size(x.doClause)

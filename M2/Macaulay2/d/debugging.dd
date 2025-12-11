@@ -51,7 +51,14 @@ export tostring(c:Code):string := (
     is x:evaluatedCode do concatenate(array(string)("(expr ", tostring(hash(x.expr)), ")"))
     --
     is x:ifCode    do concatenate(array(string)("(if ",    tostring(x.predicate), " then: ", tostring(x.thenClause), " else: ", tostring(x.elseClause), ")"))
-    is x:tryCode   do concatenate(array(string)("(try ",   tostring(x.code), " ",            tostring(x.thenClause), " ",       tostring(x.elseClause), ")"))
+    is x:tryCode   do concatenate(array(string)(
+	    "(try ",
+	    " framesize: ", tostring(x.framesize),
+	    " frameID: ",   tostring(x.frameID),
+	    " code: ",      tostring(x.code),
+	    " then: ",      tostring(x.thenClause),
+	    " else: ",      tostring(x.elseClause),
+	    " do: ",        tostring(x.doClause), ")"))
     is x:catchCode do concatenate(array(string)("(catch ", tostring(x.code), ")"))
     --
     is x:unaryCode    do concatenate(array(string)("(1-OP ", getUnopName(x.f).word.name,   " ", tostring(x.rhs), ")"))
@@ -126,7 +133,14 @@ export toList(c:Code):Expr := (
     is x:evaluatedCode do toExpr(tostring(c))
     --
     is x:ifCode    do list(toExpr("if"),    seq(toExpr(x.predicate), list(toExpr("then"), toExpr(x.thenClause)), list(toExpr("else"), toExpr(x.elseClause))))
-    is x:tryCode   do list(toExpr("try"),   seq(toExpr(x.code),      list(toExpr("then"), toExpr(x.thenClause)), list(toExpr("else"), toExpr(x.elseClause))))
+    is x:tryCode   do list(toExpr("try"),
+	Expr(Sequence(
+	    list(toExpr("framesize"), toExpr(x.framesize)),
+	    list(toExpr("frameID"),   toExpr(x.frameID)),
+	    list(toExpr("code"),      toExpr(x.code)),
+	    list(toExpr("then"),      toExpr(x.thenClause)),
+	    list(toExpr("else"),      toExpr(x.elseClause)),
+	    list(toExpr("do"),        toExpr(x.doClause)))))
     is x:catchCode do list(toExpr("catch"), seq(toExpr(x.code)))
     --
     is x:unaryCode   do list(toExpr("1-OP"), Expr(SymbolBody(getUnopName(x.f))),   seq(toExpr(x.rhs)))

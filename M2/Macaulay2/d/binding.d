@@ -220,6 +220,7 @@ bumpPrecedence();
      thenW = token("then"); makeKeyword(thenW);
      doW = token("do"); makeKeyword(doW);
      listW = token("list"); makeKeyword(listW);
+     exceptW = token("except"); makeKeyword(exceptW);
 bumpPrecedence();
      export ColonEqualW := binaryright(":="); export ColonEqualS := makeKeyword(ColonEqualW);
      export EqualW := binaryright("="); export EqualS := makeKeyword(EqualW);
@@ -915,6 +916,13 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	  )
      is i:Try do (
 	  bind(i.primary,dictionary);
+	  )
+     is i:TryExceptDo do (
+	  bind(i.primary,dictionary);
+	  newdict := newLocalDictionary(dictionary);
+	  bindSingleParm(i.variable,newdict);
+	  bind(i.doClause,newdict);
+	  i.dictionary = newdict;
 	  )
      is i:Catch do (
 	  bind(i.primary,dictionary);

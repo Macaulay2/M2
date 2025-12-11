@@ -664,6 +664,7 @@ export {
 	"eulers",
 	"even",
 	"examples",
+	"except",
 	"exchange",
 	"exec",
 	"exit",
