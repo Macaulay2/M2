@@ -39,7 +39,7 @@ M2_string M2_tostring(M2_constcharstarOrNull s)
   //GC_CHECK_CLOBBER(p);
   return p;
 }
-M2_string M2_tostringn(char *s, int n)
+M2_string M2_tostringn(const char *s, int n)
 {
     M2_string p = (M2_string)getmem_atomic(sizeofarray(p,n));
     p->len = n;

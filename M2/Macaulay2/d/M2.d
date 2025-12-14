@@ -54,7 +54,7 @@ export tocharstar(s:string):charstar := tocharstarn(s, length(s));
 export tocharstarOrNull(s:string):charstarOrNull := (
     if length(s) == 0 then charstarOrNull(null())
     else charstarOrNull(tocharstar(s)));
-export tostringn(s:charstar,n:int):string := Ccode(returns, "
+export tostringn(s:constcharstar,n:int):string := Ccode(returns, "
   M2_string p = (M2_string)getmem_atomic(sizeofarray(p,n));
   p->len = n;
   memcpy(p->array,s,n);
