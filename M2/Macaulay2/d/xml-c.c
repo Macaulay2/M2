@@ -18,7 +18,10 @@ static char *copystring(const char *s) {
 
 static void initxml() __attribute__ ((constructor));
 static void initxml() {
-  xmlGcMemSetup(freemem,(void *(*)(size_t))getmem,(void *(*)(size_t))getmem_atomic,(void *(*)(void *,size_t))getmoremem1,copystring);
+  xmlMemSetup((xmlFreeFunc) freemem,
+	      (xmlMallocFunc) getmem,
+	      (xmlReallocFunc) getmoremem1,
+	      (xmlStrdupFunc) copystring);
 }
 
 
