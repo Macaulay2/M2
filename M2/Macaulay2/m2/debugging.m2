@@ -3,26 +3,8 @@
 needs "nets.m2"
 needs "methods.m2"
 
-processArgs := args -> concatenate (
-     args = sequence args;
-     apply(args, x -> 
-	  if class x === String then x
-	  else if class x === Symbol then ("'", toString x, "'")
-	  else silentRobustString(40,3,x)
-	  ),
-     apply(args, x -> if class x === Symbol then ("\n", toString locate x, ": here is the first use of '",toString x, "'") else "")
-     )
-olderror := error
-error = method(Dispatch => Thing)
-error String :=
-error Error  := olderror
-error Thing  := x -> olderror processArgs x
-protect symbol error
-
-new Error from Thing := (T, x) -> new T from processArgs x
-
 warningMessage0 = (args,deb) -> (
-     args = processArgs args;
+     args = processErrorArgs args;
      h := hash args % 10000;
      if debugWarningHashcode === h
      then error args

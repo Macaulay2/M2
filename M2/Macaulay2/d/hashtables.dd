@@ -325,6 +325,12 @@ export robustPrintNet(e:Expr):Net := (
     when applyEEpointer(see, e)
     is n:Net do n else dummyNet);
 
+export robustPrintString(e:Expr):string := (
+    see := lookup(Class(e), RobustPrintStringE);
+    if see != notfoundE then
+    when applyEEpointer(see, e)
+    is s:stringCell do s.v else "");
+
 KeyNotFound(object:string, key:Expr):Expr := (
     -- TODO: implement a similar trick to call synonym(object)
     msg := "key not found in " + object;

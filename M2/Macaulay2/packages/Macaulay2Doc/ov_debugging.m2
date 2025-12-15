@@ -293,7 +293,7 @@ document {
      }
 
 document {
-     Key => {error, (error, Thing), (error, Error), (error, String)},
+     Key => error,
      Headline => "deliver error message",
 	Usage => "error s",
 	Inputs => {
@@ -330,7 +330,6 @@ document {
 doc ///
   Key
     Error
-    (NewFromMethod, Error, String)
     (NewFromMethod, Error, Thing)
   Headline
     error information

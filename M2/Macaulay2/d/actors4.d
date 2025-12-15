@@ -662,14 +662,6 @@ stringcatfun(e:Expr):Expr := (
      else WrongArg("a sequence or list of strings, integers, or symbols"));
 setupfun("concatenate",stringcatfun);
 
-errorfun(e:Expr):Expr := (
-     when e
-     is s:stringCell do buildErrorPacket(s.v)
-     is err:Error do (err.printed = false; e)
-     is x:SpecialExpr do errorfun(x.e)
-     else WrongArg("a string or error"));
-setupfun("error",errorfun).Protected = false;		    -- this will be replaced by a toplevel function that calls this one
-
 mingleseq(a:Sequence):Expr := (
      n := length(a);
      b := new array(Sequence) len n do provide emptySequence;

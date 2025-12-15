@@ -275,21 +275,49 @@ export tostringFilePosition(e:Expr):string := (
 	else invalidFilePosition)
     else invalidFilePosition);
 
-errorFromString(e:Expr):Expr := (
+processErrorArgs0(a:Sequence):string := (
+    r := concatenate(new array(string) len length(a) at i do (
+	    when a.i
+	    is s:stringCell do provide s.v
+	    is s:SymbolClosure do provide "'" + s.symbol.word.name + "'"
+	    else provide robustPrintString(a.i)));
+    foreach x in a do (
+	when x
+	is s:SymbolClosure do r = concatenate(array(string)(
+		r, "\n",
+		tostringFilePosition(locate(s.symbol.position)),
+		": here is the first use of '",
+		s.symbol.word.name, "'"))
+	else nothing);
+    r);
+
+processErrorArgs0(e:Expr):string := (
+    when e
+    is a:Sequence do processErrorArgs0(a)
+    else processErrorArgs0(seq(e)));
+
+processErrorArgs(e:Expr):Expr := toExpr(processErrorArgs0(e));
+setupfun("processErrorArgs", processErrorArgs);
+
+errorfun(e:Expr):Expr := (
+     when e
+     is s:stringCell do buildErrorPacket(s.v)
+     is err:Error do (err.printed = false; e)
+     is x:SpecialExpr do errorfun(x.e)
+     else buildErrorPacket(processErrorArgs0(e)));
+setupfun("error",errorfun);
+
+newError(e:Expr):Expr := (
     when e
     is a:Sequence do (
 	if length(a) == 2 then (
 	    when a.0
 	    is T:HashTable do (
-		if ancestor(T, errorClass) then (
-		    when a.1
-		    is msg:stringCell do Expr(SpecialExpr(
-			    T,
-			    Error(dummyPosition, msg.v, T, false,
-				dummyFrame)))
-		    else WrongArgString(2))
+		if ancestor(T, errorClass) then Expr(SpecialExpr(T,
+			Error(dummyPosition, processErrorArgs0(a.1), T, false,
+			    dummyFrame)))
 		else WrongArg(1, "a type of error"))
 	    else WrongArgHashTable(1))
 	else WrongNumArgs(2))
     else WrongNumArgs(2));
-installMethod(NewFromS, errorClass, stringClass, errorFromString);
+installMethod(NewFromS, errorClass, thingClass, newError);
