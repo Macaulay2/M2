@@ -80,6 +80,59 @@ const RingElement /* or null */ *IM2_Matrix_get_entry(const Matrix *M,
   }
 }
 
+/* Returns the entries of the matrix in a flat array in row major order
+ */
+engine_RawRingElementArrayOrNull IM2_Matrix_get_entries(const Matrix *M)
+{
+  try
+    {
+      int ncols = M->n_cols();
+      int nrows = M->n_rows();
+      if(nrows < 0 || ncols < 0)
+        {
+          ERROR("internal error: matrix has a negative size %d by %d",
+                nrows,
+                ncols);
+        }
+      //TODO overflow detection/handling.
+      //This also runs into the problem that the arrays from "d"
+      //only use an int for their length field.
+      int nentries = nrows * ncols;
+      engine_RawRingElementArray entries =
+          getmemarraytype(engine_RawRingElementArray, nentries);
+      entries->len = nentries;
+      RingElement *zero =
+          RingElement::make_raw(M->get_ring(), M->get_ring()->zero());
+      //populate the matrix with zeros
+      std::fill_n(entries->array, nentries, zero);
+      //walk through the columns
+      for(int c = 0; c < ncols; c++)
+        {
+          const vec &column = M->elem(c);
+          for(const vecterm &term : column)
+            {
+              if(term.comp < 0 || term.comp >= nrows)
+                {
+                  ERROR("internal error: matrix contains invalid entries:"
+                        "row index %d out of range 0 .. %d",
+                        term.comp,
+                        nrows - 1);
+                  //Ignoring the entry and continuing
+                  continue;
+                }
+              entries->array[term.comp * ncols + c] =
+                  RingElement::make_raw(M->get_ring(), term.coeff);
+            }
+        }
+      return entries;
+    } catch (const exc::engine_error &e)
+    {
+      ERROR(e.what());
+      return nullptr;
+    }
+  return nullptr;
+}
+
 const Matrix *IM2_Matrix_identity(const FreeModule *F, int preference)
 {
 #ifdef DEVELOPMENT

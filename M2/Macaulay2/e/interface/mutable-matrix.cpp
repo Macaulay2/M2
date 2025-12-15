@@ -196,6 +196,46 @@ IM2_MutableMatrix_get_entry(const MutableMatrix *M, int r, int c)
   return RingElement::make_raw(M->get_ring(), result);
 }
 
+engine_RawRingElementArrayOrNull
+IM2_MutableMatrix_get_entries(const MutableMatrix *M)
+{
+  try
+    {
+      int ncols = M->n_cols();
+      int nrows = M->n_rows();
+      if(nrows < 0 || ncols < 0)
+        {
+          ERROR("internal error: matrix has a negative size %d by %d",
+                nrows,
+                ncols);
+        }
+      //TODO overflow detection/handling.
+      //This also runs into the problem that the arrays from "d"
+      //only use an int for their length field.
+      int nentries = nrows * ncols;
+      engine_RawRingElementArray entries =
+          getmemarraytype(engine_RawRingElementArray, nentries);
+      entries->len = nentries;
+      for(int r = 0; r < nrows; r++)
+        {
+          for(int c = 0; c < ncols; c++)
+            {
+              ring_elem result;
+              M->get_entry(r, c, result);
+              entries->array[r * ncols + c] =
+                  RingElement::make_raw(M->get_ring(), result);
+            }
+        }
+      return entries;
+    } catch (const exc::engine_error& e)
+    {
+      ERROR(e.what());
+      return nullptr;
+    }
+  return nullptr;
+}
+
+
 M2_bool IM2_MutableMatrix_set_entry(MutableMatrix *M,
                                     int r,
                                     int c,

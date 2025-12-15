@@ -2127,6 +2127,16 @@ export rawMatrixEntry(e:Expr):Expr := (
      );
 setupfun("rawMatrixEntry",rawMatrixEntry);
 
+export rawMatrixEntries(e:Expr):Expr := (
+    when e is M:RawMutableMatrixCell do
+        toExpr(Ccode(RawRingElementArrayOrNull, "IM2_MutableMatrix_get_entries(", M.p, ")"))
+    else
+    when e is M:RawMatrixCell do
+         toExpr(Ccode(RawRingElementArrayOrNull, "IM2_Matrix_get_entries(", M.p, ")"))
+    else WrongArg("a raw matrix or mutable matrix")
+    );
+setupfun("rawMatrixEntries",rawMatrixEntries);
+
 export rawSortColumns(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else

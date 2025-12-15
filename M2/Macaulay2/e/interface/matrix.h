@@ -60,6 +60,8 @@ const RingElement /* or null */ *IM2_Matrix_get_entry(
     int r,
     int c); /* drg: connected rawMatrixEntry, OK*/
 
+engine_RawRingElementArrayOrNull IM2_Matrix_get_entries(const Matrix *M);
+
 /*******************************************************************************/
 const Matrix *IM2_Matrix_identity(
     const FreeModule *F,
