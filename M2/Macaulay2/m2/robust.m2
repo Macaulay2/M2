@@ -59,8 +59,7 @@ silentRobustStringWithClass = (wid,sec,y) -> (
      concatenate(part1, part2));
 
 -- mainly called by KeyNotFound in hashtables.dd to print missing key errors
-Thing.RobustPrintMethod = (msg, obj) -> try toString stack { msg | ":",
-    horizontalJoin("\t", silentRobustNetWithClass(60, 5, 3, obj)) } else msg
+Thing.RobustPrintNetMethod = obj -> try silentRobustNetWithClass(60, 5, 3, obj)
 
 hush := false
 scan(flexibleBinaryOperators, op -> (

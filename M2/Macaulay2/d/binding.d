@@ -404,8 +404,8 @@ export NewOfFromE := Expr(NewOfFromS);
 export InverseS := makeProtectedSymbolClosure("InverseMethod");
 export InverseE := Expr(InverseS);
 
-export RobustPrintS := makeProtectedSymbolClosure("RobustPrintMethod");
-export RobustPrintE := Expr(RobustPrintS);
+export RobustPrintNetS := makeProtectedSymbolClosure("RobustPrintNetMethod");
+export RobustPrintNetE := Expr(RobustPrintNetS);
 
 export StopIterationS := makeProtectedSymbolClosure("StopIteration");
 export StopIterationE := Expr(StopIterationS);

@@ -5,9 +5,11 @@ use classes;
 
 header "#include <cassert>";
 
--- applyEEE is not defined until evaluate.d,
--- so we use a pointer and populate it later.
+-- applyEE and applyEEE are not defined until evaluate.d,
+-- so we use pointers and populate them later.
+dummyapplyEE(g:Expr,e:Expr):Expr := g;
 dummyapplyEEE(g:Expr,e0:Expr,e1:Expr):Expr := g;
+export applyEEpointer := dummyapplyEE;
 export applyEEEpointer := dummyapplyEEE;
 
 export hash(x:HashTable):hash_t := (
@@ -317,14 +319,20 @@ export copy(o:HashTable,newClass:HashTable,newMutable:bool):HashTable := copy(o,
 
 lookup(object:HashTable, key:Expr):Expr; -- forward declaration
 
+export robustPrintNet(e:Expr):Net := (
+    see := lookup(Class(e), RobustPrintNetE);
+    if see != notfoundE then
+    when applyEEpointer(see, e)
+    is n:Net do n else dummyNet);
+
 KeyNotFound(object:string, key:Expr):Expr := (
     -- TODO: implement a similar trick to call synonym(object)
     msg := "key not found in " + object;
     if !SuppressErrors then (
-	see := lookup(Class(key), RobustPrintE);
-	if see != notfoundE then
-	when applyEEEpointer(see, toExpr(msg), key)
-	is str:stringCell do msg = str.v else nothing);
+	n := robustPrintNet(key);
+	if n != dummyNet then (
+	    info := toString(HorizontalJoin(array(Net)(toNet("\t"), n)));
+	    msg = msg + ":\n" + info));
     buildErrorPacket(msg));
 
 export lookup1(object:HashTable,key:Expr,keyhash:hash_t):Expr := (

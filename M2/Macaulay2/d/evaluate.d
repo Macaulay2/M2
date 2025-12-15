@@ -2100,6 +2100,7 @@ export notFun(a:Expr):Expr := if a == True then False else if a == False then Tr
 
 -- evaluate.d depends on hashtables.dd, so we use a pointer
 -- to evaluate methods in hashtables.dd before it is defined.
+applyEEpointer = applyEE;
 applyEEEpointer = applyEEE;
 
 -- Local Variables:
