@@ -246,12 +246,8 @@ FilePosition.synonym = "file position"
 -- TODO: add FilePosition(String, ZZ, ZZ) and FilePosition(String)
 toExternalString FilePosition :=
 toString FilePosition :=
-net FilePosition := p -> concatenate(
-    if match(" ", p#0) then format p#0 else p#0,
-    ":",toString p#1,":",toString p#2,
-    if #p==4 then (":(",toString p#3,")")
-    else if #p>=5 then ("-",toString p#3,":",toString p#4)
-    )
+net FilePosition := simpleToString -- tostringFilePosition in debugging.dd
+
 
 String | FilePosition := (s, p) -> s | toString p
 FilePosition | String := (p, s) -> toString p | s

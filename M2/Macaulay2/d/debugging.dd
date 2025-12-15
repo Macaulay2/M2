@@ -240,6 +240,41 @@ locate(e:Expr):Expr := (
     else WrongArg("a function, symbol, sequence, or null"));
 setupfun("locate", locate).Protected = false; -- will be overloaded in m2/methods.m2
 
+invalidFilePosition := "-* invalid file position *-";
+
+export tostringFilePosition(e:Expr):string := (
+    when e
+    is p:List do (
+	if length(p.v) < 3 then return invalidFilePosition;
+	when p.v.0
+	is s:stringCell do (
+	    r := s.v;
+	    for i from 0 to length(r) - 1 do (
+		if r.i == ' '
+		then (
+		    r = format(r);
+		    break));
+	    when p.v.1
+	    is n:ZZcell do r = r + ":" + tostring(n.v)
+	    else return invalidFilePosition;
+	    when p.v.2
+	    is n:ZZcell do r = r + ":" + tostring(n.v)
+	    else return invalidFilePosition;
+	    if length(p.v) == 4 then (
+		when p.v.3
+		is n:ZZcell do r = r + "(" + tostring(n.v) + ")"
+		else return invalidFilePosition)
+	    else if length(p.v) > 4 then (
+		when p.v.3
+		is n:ZZcell do r = r + "-" + tostring(n.v)
+		else return invalidFilePosition;
+		when p.v.4
+		is n:ZZcell do r = r + ":" + tostring(n.v)
+		else return invalidFilePosition);
+	    r)
+	else invalidFilePosition)
+    else invalidFilePosition);
+
 errorFromString(e:Expr):Expr := (
     when e
     is a:Sequence do (

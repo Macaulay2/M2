@@ -996,7 +996,10 @@ tostringfun(e:Expr):Expr := (
      is err:Error do toExpr(err.message)
      is Sequence do toExpr("<<a sequence>>")
      is HashTable do toExpr("<<a hash table>>")
-     is List do toExpr("<<a list>>")
+     is x:List do (
+	 if ancestor(x.Class, filePositionClass)
+	 then toExpr(tostringFilePosition(e))
+	 else toExpr("<<a list>>"))
      is s:SpecialExpr do tostringfun(s.e)
      is x:RawMonomialCell do toExpr(tostring(x.p))
      is x:RawFreeModuleCell do toExpr(Ccode(string, "IM2_FreeModule_to_string(",x.p,")" ))
@@ -1095,7 +1098,7 @@ setupfun("connectionCount", connectionCount);
 
 format(e:Expr):Expr := (
      when e
-     is s:stringCell do toExpr("\"" + present(s.v) + "\"")
+     is s:stringCell do toExpr(format(s.v))
      is s:SpecialExpr do format(s.e)
      is ZZcell do e
      is QQcell do e
