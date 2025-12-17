@@ -1690,7 +1690,9 @@ setupop(TestS, testfun);
 
 trapfun(c:Code):Expr := (
     r := tryEval(c);
-    if !tryCaughtError then seq(r, nullE)
+    if !tryCaughtError then (
+	when r is Error do r
+	else seq(r, nullE))
     else (
 	when r
 	is err:Error do seq(nullE, toExpr(err))
