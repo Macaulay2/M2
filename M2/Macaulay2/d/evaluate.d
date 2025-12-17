@@ -1221,14 +1221,14 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
      else buildErrorPacket("parallel assignment: expected a sequence of " + tostring(nlhs) + " values"));
 
 -- helper function used when evaluating tryCode and by null coalescion
--- tryEvalSuccess is true unless an (non-interrupting) error occurred
-threadLocal tryEvalSuccess := true;
+-- tryCaughtError is false unless an (non-interrupting) error occurred
+threadLocal tryCaughtError := false;
 tryEval(c:Code):Expr := (
     oldSuppressErrors := SuppressErrors;
     SuppressErrors = true;
     p := eval(c);
     if !SuppressErrors then ( -- eval could have turned it off
-	tryEvalSuccess = true)
+	tryCaughtError = false)
     else (
 	SuppressErrors = oldSuppressErrors;
 	when p
@@ -1240,14 +1240,14 @@ tryEval(c:Code):Expr := (
 		err.message == continueMessageWithArg ||
 		err.message == unwindMessage          ||
 		err.message == throwMessage)
-	    then tryEvalSuccess = true
-	    else tryEvalSuccess = false)
-	else tryEvalSuccess = true);
+	    then tryCaughtError = false
+	    else tryCaughtError = true)
+	else tryCaughtError = false);
     p);
 
 nullify(c:Code):Expr := (
     e := tryEval(c);
-    if tryEvalSuccess
+    if !tryCaughtError
     then (
 	when e
 	is Nothing do e
@@ -1480,7 +1480,7 @@ export evalraw(c:Code):Expr := (
 	  is c:threadSymbolClosureCode do return Expr(SymbolClosure(threadFrame,c.symbol))
 	  is c:tryCode do (
 	      ret := tryEval(c.code);
-	      if tryEvalSuccess then (
+	      if !tryCaughtError then (
 		  when ret is Error do ret
 		  else if c.thenClause == NullCode then ret
 		  else eval(c.thenClause))
@@ -1497,8 +1497,8 @@ export evalraw(c:Code):Expr := (
 			  p := eval(c.doClause);
 			  localFrame = localFrame.outerFrame;
 			  p)
-		      -- shouldn't happen since tryEvalSuccess is only
-		      -- false when ret is an Error
+		      -- shouldn't happen since tryCaughtError is only
+		      -- true when ret is an Error
 		      else buildErrorPacket("unable to catch error"))))
 	  is c:catchCode do (
 	       p := eval(c.code);
@@ -1690,11 +1690,11 @@ setupop(TestS, testfun);
 
 trapfun(c:Code):Expr := (
     r := tryEval(c);
-    if tryEvalSuccess then seq(r, nullE)
+    if !tryCaughtError then seq(r, nullE)
     else (
 	when r
 	is err:Error do seq(nullE, toExpr(err))
-	-- shouldn't happen since tryEvalSuccess only false when r is an Error
+	-- shouldn't happen since tryCaughtError only true when r is an Error
 	else buildErrorPacket("unable to trap error")));
 setupop(trapS, trapfun);
 
