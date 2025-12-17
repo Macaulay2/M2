@@ -1,5 +1,6 @@
 (val, err) = trap error "foo"
 assert Equation(toString err, "foo")
+assert Equation(toString try error "bar" except err do err, "bar")
 
 MyError = new SelfInitializingType of Error
 (val, err) = trap error MyError "foo"

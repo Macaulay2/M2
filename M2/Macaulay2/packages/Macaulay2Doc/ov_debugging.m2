@@ -335,9 +335,9 @@ doc ///
     error information
   Description
     Text
-      An instance of this class is returned as the second element when
-      @TO symbol trap@ catches an error.  The error message may be recovered
-      using @TO toString@ and the location using @TO locate@.
+      An instance of this class may be caught when an error occurs inside a
+      @TO symbol trap@ or @TO symbol try@ statement.  The error message may be
+      recovered using @TO toString@ and the location using @TO locate@.
     Example
       (val, err) = trap 1/0
       toString err
@@ -356,9 +356,9 @@ doc ///
       handling.
     Example
       MyError = new SelfInitializingType of Error
-      (val, err)  = trap error MyError "bar"
-      err
+      try error MyError "bar" except err do err
   SeeAlso
+    symbol try
     symbol trap
     error
 ///
