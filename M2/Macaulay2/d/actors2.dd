@@ -66,6 +66,7 @@ toList(e:Expr):Expr := (
      is s:stringCell do list(strtoseq(s))
      is c:PseudocodeClosure do toList(c.code)
      is c:Pseudocode do toList(c.code)
+     is pos:positionCell do list(positionToSequence(pos.v))
      is s:SpecialExpr do toList(s.e)
      else WrongArg("list, sequence, set, or string"));
 setupfun("toList1",toList);

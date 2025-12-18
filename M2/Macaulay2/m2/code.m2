@@ -52,7 +52,8 @@ dedupMethods = L -> (
 
 code = method(Dispatch => Thing)
 code Nothing    := identity
-code FilePosition := x -> (
+code FilePosition := pos -> (
+    x := toSequence pos;
     filename := x#0; start := x#1; stop := x#3 ?? x#1;
      (
 	  wp := set characters " \t\r);";
@@ -74,7 +75,7 @@ code FilePosition := x -> (
 	       );
 	  file = lines file;
 	  if #file < stop then error("line number ",toString stop, " not found in file ", filename);
-	  DIV splice { codeAddress(x), codeContent(start, stop, file) }
+	  DIV splice { codeAddress(pos), codeContent(start, stop, file) }
 	  ))
 code Symbol     :=
 code Pseudocode := s -> code locate s

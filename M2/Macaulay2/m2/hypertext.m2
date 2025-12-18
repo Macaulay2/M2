@@ -81,11 +81,13 @@ toURL(String, String) := (prefix,tail) -> (		    -- this is the good one
 	  );
      urlEncode r)
 
-toURL FilePosition := p -> concatenate(
+toURL FilePosition := pos -> (
+    p := toSequence pos;
+    concatenate(
 	p#0,
 	"#L",toString p#1,":C",toString p#2,
 	if #p>=5 then ("-L",toString p#3,":C",toString p#4)
-	)
+	))
 
 -----------------------------------------------------------------------------
 -- MarkUpType type declarations

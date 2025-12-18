@@ -267,3 +267,9 @@ newFilePosition(e:Expr):Expr := (
 	else WrongNumArgs(2))
     else WrongNumArgs(2));
 installMethod(NewFromS, filePositionClass, basicListClass, newFilePosition);
+
+export positionToSequence(pos:Position):Sequence := Sequence(
+    toExpr(pos.filename),
+    toExpr(pos.lineL), toExpr(pos.columnL),
+    toExpr(pos.lineR), toExpr(pos.columnR),
+    toExpr(pos.lineF), toExpr(pos.columnF));

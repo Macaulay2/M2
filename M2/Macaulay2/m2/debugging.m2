@@ -240,6 +240,8 @@ generateAssertions List := y -> (
 -- FilePosition = new Type of BasicList -- defined in d
 FilePosition.synonym = "file position"
 
+toList FilePosition := toList1
+
 -- TODO: add FilePosition(String, ZZ, ZZ) and FilePosition(String)
 
 String | FilePosition := (s, p) -> s | toString p

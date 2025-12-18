@@ -1317,6 +1317,7 @@ export toSequence(e:Expr):Expr := (
 	  else Expr(b.v)
 	  )
      is s:stringCell do Expr(strtoseq(s))
+     is pos:positionCell do Expr(positionToSequence(pos.v))
      else (
 	 iter := getIterator(e);
 	 if iter != nullE

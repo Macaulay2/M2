@@ -362,7 +362,7 @@ getTechnical := (S, s) -> DIV nonnull ( "class" => "waystouse",
 
 getLocation := tag -> if tag =!= null then (
     pkg := package tag;
-    docpos := locate tag;
+    docpos := toSequence locate tag;
     linepos := ":" | docpos#1 | ":" | docpos#2;
     docfile := toAbsolutePath docpos#0;
     filename := replace(pkg#"source directory", "", docfile);
