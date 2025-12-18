@@ -403,6 +403,14 @@ currentColumnNumber(e:Expr):Expr := (
      else WrongNumArgs(0));
 setupfun("currentColumnNumber",currentColumnNumber);
 
+currentPosition(e:Expr):Expr := (
+    when e
+    is s:Sequence do (
+	if length(s) == 0 then toExpr(position(currentPosFile))
+	else WrongNumArgs(0))
+    else WrongNumArgs(0));
+setupfun("currentPosition", currentPosition);
+
 input(e:Expr):Expr := (
      when e
      is f:stringCell do (

@@ -253,8 +253,6 @@ net FilePosition := p -> concatenate(
 String | FilePosition := (s, p) -> s | toString p
 FilePosition | String := (p, s) -> toString p | s
 
-currentPosition = () -> new FilePosition from { currentFileName, currentRowNumber(), currentColumnNumber() }
-
 -----------------------------------------------------------------------------
 -- locate
 -----------------------------------------------------------------------------
