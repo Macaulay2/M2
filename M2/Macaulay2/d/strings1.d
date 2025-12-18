@@ -20,6 +20,15 @@ export tostring(i:ulong):string := (
 	  );
      toreversestring(s));
 
+export tostring(i:ushort):string := (
+     if i == ushort(0) then return "0";
+     s := newvarstring(5); -- largest ushort is 65536
+     while i>0 do (
+	  s << "0123456789".(i%ushort(10));
+	  i = i/10;
+	  );
+     toreversestring(s));
+
 export tostring(i:int):string := (
      if i==0 then return "0";
      s := newvarstring(25);

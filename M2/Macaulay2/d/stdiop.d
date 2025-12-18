@@ -110,18 +110,30 @@ export verifyMinimizeFilename(filename:string):string := (
 	  is k:string do (
      	       if k === h then f else h
 	       )));
-export tostring(w:Position) : string := (
-     if w == dummyPosition 
+
+formatPositionFilename(filename:string):string := (
+    filename = verifyMinimizeFilename(filename);
+    foreach c in filename do (
+	if c == ' ' then (
+	    filename = "\"" + filename + "\"";
+	    break));
+    filename);
+
+export tostring(w:Position):string := (
+    r := formatPositionFilename(w.filename) + ":";
+    r = r + tostring(w.lineL) + ":" + tostring(w.columnL);
+    if w.lineL != w.lineR || w.columnL != w.columnR
+    then r = r + "-" + tostring(w.lineR) + ":" + tostring(w.columnR);
+    r);
+
+export tostringForError(w:Position) : string := (
+     if w == dummyPosition
      then "-*dummy position*-"
      else (
-	 filename := verifyMinimizeFilename(w.filename);
-	 foreach c in filename do (
-	     if c == ' ' then (
-		 filename = "\"" + filename + "\"";
-		 break));
+	 filename := formatPositionFilename(w.filename);
 	 errfmt(filename, int(w.lineF), int(w.columnF), int(w.loadDepth))));
-export (o:file) << (w:Position) : file := o << tostring(w);
-export (o:BasicFile) << (w:Position) : BasicFile := o << tostring(w);
+export (o:file) << (w:Position) : file := o << tostringForError(w);
+export (o:BasicFile) << (w:Position) : BasicFile := o << tostringForError(w);
 threadLocal export SuppressErrors := false;
 cleanscreen():void := (
     stdIO << flush;
