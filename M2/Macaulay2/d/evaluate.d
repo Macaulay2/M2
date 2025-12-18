@@ -1666,7 +1666,7 @@ addTestS := setupvar("addTest", nullE); -- will be overwritten in testing.m2
 testfun(c:Code):Expr := (
     r := applyEE(
 	getGlobalVariable(addTestS),
-	seq(eval(c), locate(codePosition(c))));
+	seq(eval(c), toExpr(codePosition(c))));
     when r is Error do r else nullE);
 setupop(TestS, testfun);
 

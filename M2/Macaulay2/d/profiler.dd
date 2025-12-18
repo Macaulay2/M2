@@ -18,7 +18,7 @@ thread_local std::vector<stdiop0_Position> M2_stack;";
 
 -- TODO: implement better std::vector utilities
 -- push and pop the given positions in the top-level call stack log
-stackpush(p:Position):Expr := ( Ccode(void, "M2_stack.emplace_back(", p, ")"); locate(p) );
+stackpush(p:Position):Expr := ( Ccode(void, "M2_stack.emplace_back(", p, ")"); toExpr(p) );
 stackpop(e:Expr):Expr      := ( Ccode(void, "M2_stack.pop_back()"); e );
 
 -- if traceDepth = 0, _prints_ the engine stacktrace using Boost::stacktrace
@@ -28,7 +28,7 @@ export stacktrace(traceDepth:int):Expr := (
     if traceDepth == 0
     then ( Ccode(void, "profiler_stacktrace(std::cout, 0)"); nullE )
     else Expr(new Sequence len Ccode(int, "M2_stack.size()") at i do
-	provide locate(Ccode(Position, "M2_stack[", i, "]"))));
+	provide toExpr(Ccode(Position, "M2_stack[", i, "]"))));
 stacktrace(e:Expr):Expr := (
     when e is n:ZZcell do if !isInt(n) then WrongArgSmallInteger(1)
     else stacktrace(toInt(n))
