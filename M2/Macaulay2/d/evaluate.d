@@ -1245,6 +1245,29 @@ tryEval(c:Code):Expr := (
 	else tryCaughtError = false);
     p);
 
+evalTryCode(c:tryCode):Expr := (
+    ret := tryEval(c.code);
+    -- certain errors should not be caught, see above
+    if !tryCaughtError then when ret is Error do ret
+    -- then ...
+    else if c.thenClause != NullCode then eval(c.thenClause) else ret
+    -- else ...
+    else if c.elseClause != NullCode then eval(c.elseClause)
+    -- except .. do ...
+    else if c.doClause   != NullCode then (
+	when ret is err:Error do (
+	    localFrame = Frame(
+		localFrame, c.frameID, c.framesize, false,
+		new Sequence len c.framesize do provide nullE);
+	    -- variable specified by "except"
+	    localFrame.values.0 = toExpr(err);
+	    p := eval(c.doClause);
+	    localFrame = localFrame.outerFrame;
+	    p)
+	-- shouldn't happen since tryCaughtError is only true when ret is an Error
+	else buildErrorPacket("internal error: unable to catch error"))
+    else nullE);
+
 trapfun(c:Code):Expr := (
     ret := tryEval(c);
     if !tryCaughtError
@@ -1487,28 +1510,7 @@ export evalraw(c:Code):Expr := (
 	  is c:augmentedAssignmentCode do augmentedAssignmentFun(c)
 	  is c:globalSymbolClosureCode do return Expr(SymbolClosure(globalFrame,c.symbol))
 	  is c:threadSymbolClosureCode do return Expr(SymbolClosure(threadFrame,c.symbol))
-	  is c:tryCode do (
-	      ret := tryEval(c.code);
-	      if !tryCaughtError then (
-		  when ret is Error do ret
-		  else if c.thenClause == NullCode then ret
-		  else eval(c.thenClause))
-	      else (
-		  if c.elseClause != NullCode then eval(c.elseClause)
-		  else if c.doClause == NullCode then nullE
-		  else ( -- try .. except .. do
-		      when ret is err:Error do (
-			  localFrame = Frame(
-			      localFrame, c.frameID, c.framesize, false,
-			      new Sequence len c.framesize do provide nullE);
-			  -- variable specified by "except"
-			  localFrame.values.0 = toExpr(err);
-			  p := eval(c.doClause);
-			  localFrame = localFrame.outerFrame;
-			  p)
-		      -- shouldn't happen since tryCaughtError is only
-		      -- true when ret is an Error
-		      else buildErrorPacket("unable to catch error"))))
+	  is c:tryCode do evalTryCode(c)
 	  is c:catchCode do (
 	       p := eval(c.code);
 	       when p is err:Error do if err.message == throwMessage then err.value else p
