@@ -1245,6 +1245,15 @@ tryEval(c:Code):Expr := (
 	else tryCaughtError = false);
     p);
 
+trapfun(c:Code):Expr := (
+    ret := tryEval(c);
+    if !tryCaughtError
+    then when ret is     Error do ret else seq(ret,   nullE)
+    else when ret is err:Error do          seq(nullE, toExpr(err))
+    -- shouldn't happen since tryCaughtError is only true when ret is an Error
+    else buildErrorPacket("internal error: unable to trap error"));
+setupop(trapS, trapfun);
+
 nullify(c:Code):Expr := (
     e := tryEval(c);
     if !tryCaughtError
@@ -1687,18 +1696,6 @@ testfun(c:Code):Expr := (
 	seq(eval(c), locate(codePosition(c))));
     when r is Error do r else nullE);
 setupop(TestS, testfun);
-
-trapfun(c:Code):Expr := (
-    r := tryEval(c);
-    if !tryCaughtError then (
-	when r is Error do r
-	else seq(r, nullE))
-    else (
-	when r
-	is err:Error do seq(nullE, toExpr(err))
-	-- shouldn't happen since tryCaughtError only true when r is an Error
-	else buildErrorPacket("unable to trap error")));
-setupop(trapS, trapfun);
 
 assigntofun(lhs:Code,rhs:Code):Expr := (
     left := eval(lhs);
