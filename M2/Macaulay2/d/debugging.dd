@@ -194,9 +194,6 @@ pseudocode(e:Expr):Expr := (
     else WrongArg("a function derived from Macaulay2 code"));
 setupfun("pseudocode", pseudocode);
 
-export filePositionClass := newHashTableWithHash(typeClass, basicListClass);
-setupconst("FilePosition", Expr(filePositionClass));
-
 export locate(p:Position):Expr := (
     if p == dummyPosition || p == tempPosition
     then nullE

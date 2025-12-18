@@ -72,6 +72,7 @@ export hash(e:Expr):hash_t := (
      -- cast to long first to avoid "different size" compiler warning
      is x:pointerCell do Ccode(hash_t, "(long)", x.v)
      is x:atomicIntCell do x.hash
+     is x:positionCell do hash(x.v)
      );
 
 export hash(x:List):hash_t := (

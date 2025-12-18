@@ -263,6 +263,10 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	 when rhs
 	 is y:atomicIntCell do if x == y then True else False
 	 else False)
+     is x:positionCell do (
+	 when rhs
+	 is y:positionCell do toExpr(x.v === y.v)
+	 else False)
      );
 
 -- Local Variables:

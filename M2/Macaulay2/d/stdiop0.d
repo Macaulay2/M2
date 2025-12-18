@@ -40,3 +40,7 @@ export combinePositionC(L:Position, R:Position, C:Position):Position := Position
 -- combine two positions belonging to adjacent tokens (focus is on endpoint of the first one)
 export combinePositionM(L:Position, R:Position):Position := Position(
     L.filename, L.lineL, L.columnL, R.lineR, R.columnR, L.lineR, L.columnR, L.loadDepth);
+
+export hash(p:Position):hash_t := (
+    hash(p.filename) + 7669*p.lineL + 8263*p.columnL + 8287*p.lineR +
+    1069*p.columnR + 3847*p.lineF + 6659*p.columnF + 4049*p.loadDepth);

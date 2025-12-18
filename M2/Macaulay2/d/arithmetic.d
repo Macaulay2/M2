@@ -161,6 +161,7 @@ export (x:ushort) + (y:int) ::= Ccode(ushort,"(unsigned short)(",x," + ",y,")");
 export (x:int) + (y:ushort) ::= Ccode(ushort,"(unsigned short)(",x," + ",y,")");
 export (x:ushort) - (y:int) ::= Ccode(ushort,"(unsigned short)(",x," - ",y,")");
 export (x:int) - (y:ushort) ::= Ccode(ushort,"(unsigned short)(",x," - ",y,")");
+export (x:int) * (y:ushort) ::= Ccode(int, "(", x, " * ", y, ")");
 export - (x:int) ::= Ccode(int,"(- ",x,")");
 export - (x:double) ::= Ccode(double,"(- ",x,")");
 export - (x:float) ::= Ccode(float,"(- ",x,")");

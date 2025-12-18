@@ -358,6 +358,8 @@ export pointerCell := {+ v:voidPointer };
 
 export atomicIntCell := {+ v:atomicField, hash:hash_t };
 
+export positionCell := {+ v:Position };
+
 export Expr := (
      CCcell or
      RRcell or
@@ -414,7 +416,8 @@ export Expr := (
      TaskCell or 
      fileOutputSyncState or
      pointerCell or
-     atomicIntCell
+     atomicIntCell or
+     positionCell
      );
 
 --Unique True expression
