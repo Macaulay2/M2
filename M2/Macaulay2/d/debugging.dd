@@ -210,3 +210,60 @@ locate(e:Expr):Expr := (
     is s:SpecialExpr do locate(s.e)
     else WrongArg("a function, symbol, sequence, or null"));
 setupfun("locate", locate).Protected = false; -- will be overloaded in m2/methods.m2
+
+newFilePosition(a:Sequence):Expr := (
+    if !(length(a) == 3 || length(a) == 5)
+    then return buildErrorPacket("expected 3 or 5 arguments");
+    pos:= Position("",
+	ushort(0), ushort(0),
+	ushort(0), ushort(0),
+	ushort(0), ushort(0),
+	loadDepth);
+    when a.0
+    is s:stringCell do pos.filename = s.v
+    else return WrongArgString(1);
+    when a.1
+    is i:ZZcell do (
+	if isUShort(i.v) then pos.lineL = toUShort(i.v)
+	else return WrongArgSmallUInteger(2))
+    else return WrongArgSmallUInteger(2);
+    when a.2
+    is i:ZZcell do (
+	if isUShort(i.v) then pos.columnL = toUShort(i.v)
+	else return WrongArgSmallUInteger(3))
+    else return WrongArgSmallUInteger(3);
+    if length(a) == 5 then (
+	when a.3
+	is i:ZZcell do (
+	    if isUShort(i.v) then pos.lineR = toUShort(i.v)
+	    else return WrongArgSmallUInteger(4))
+	else return WrongArgSmallUInteger(4);
+	when a.4
+	is i:ZZcell do (
+	    if isUShort(i.v) then pos.columnR = toUShort(i.v)
+	    else return WrongArgSmallUInteger(5))
+	else return WrongArgSmallUInteger(5))
+    else (
+	pos.lineR = pos.lineL;
+	pos.columnR = pos.columnL);
+    pos.lineF = pos.lineL;
+    pos.columnF = pos.columnL;
+    toExpr(pos));
+
+newFilePosition(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 2 then (
+	    when a.0
+	    is T:HashTable do (
+		if ancestor(T, filePositionClass)
+		then (
+		    when a.1
+		    is b:Sequence do newFilePosition(b)
+		    is b:List do newFilePosition(b.v)
+		    else WrongArg(2, "a basic list"))
+		else WrongArg(1, "a type of file position"))
+	    else WrongArgHashTable(1))
+	else WrongNumArgs(2))
+    else WrongNumArgs(2));
+installMethod(NewFromS, filePositionClass, basicListClass, newFilePosition);
