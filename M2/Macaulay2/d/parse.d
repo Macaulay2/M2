@@ -125,11 +125,12 @@ export For := {+ forToken:Token, variable:ParseTree, inClause:ParseTree, fromCla
 export WhileDo := {+ whileToken:Token, predicate:ParseTree, dotoken:Token, doClause:ParseTree};
 export WhileList := {+ whileToken:Token, predicate:ParseTree, listtoken:Token, listClause:ParseTree};
 export WhileListDo := {+ whileToken:Token, predicate:ParseTree, listtoken:Token, listClause:ParseTree, dotoken:Token, doClause:ParseTree };
+export TryDo       := {+ tryToken:Token, primary:ParseTree,                                    exceptToken:Token, variable:ParseTree, doToken:Token, doClause:ParseTree, dictionary:Dictionary};
+export TryThenDo   := {+ tryToken:Token, primary:ParseTree, thenToken:Token, sequel:ParseTree, exceptToken:Token, variable:ParseTree, doToken:Token, doClause:ParseTree, dictionary:Dictionary};
 export TryThenElse := {+ tryToken:Token, primary:ParseTree, thenToken:Token, sequel:ParseTree, elseToken:Token, alternate:ParseTree};
 export TryThen     := {+ tryToken:Token, primary:ParseTree, thenToken:Token, sequel:ParseTree};
 export TryElse     := {+ tryToken:Token, primary:ParseTree,                                    elseToken:Token, alternate:ParseTree};
 export Try         := {+ tryToken:Token, primary:ParseTree};
-export TryExceptDo := {+ tryToken:Token, primary:ParseTree, exceptToken:Token, variable:ParseTree, doToken:Token, doClause:ParseTree, dictionary:Dictionary};
 export Catch := {+ catchToken:Token, primary:ParseTree};
 export IfThen := {+ ifToken:Token, predicate:ParseTree, thenClause:ParseTree };
 export IfThenElse := {+ ifToken:Token, predicate:ParseTree, thenClause:ParseTree, elseClause:ParseTree};
@@ -150,7 +151,7 @@ export ParseTree := (
     Token or Parentheses or EmptyParentheses or Adjacent or Arrow
     or Quote or GlobalQuote or ThreadQuote or LocalQuote
     or Unary or Binary or Postfix or IfThen or IfThenElse
-    or Try or TryThen or TryThenElse or TryElse or TryExceptDo or Catch
+    or Try or TryThen or TryThenElse or TryElse or TryThenDo or TryDo or Catch
     or WhileDo or WhileListDo or WhileList or For
     or New
     or dummy );

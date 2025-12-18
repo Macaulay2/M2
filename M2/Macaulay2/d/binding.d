@@ -920,8 +920,16 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
      is i:Try do (
 	  bind(i.primary,dictionary);
 	  )
-     is i:TryExceptDo do (
+     is i:TryDo do (
 	  bind(i.primary,dictionary);
+	  newdict := newLocalDictionary(dictionary);
+	  bindSingleParm(i.variable,newdict);
+	  bind(i.doClause,newdict);
+	  i.dictionary = newdict;
+	  )
+     is i:TryThenDo do (
+	  bind(i.primary,dictionary);
+	  bind(i.sequel,dictionary);
 	  newdict := newLocalDictionary(dictionary);
 	  bindSingleParm(i.variable,newdict);
 	  bind(i.doClause,newdict);

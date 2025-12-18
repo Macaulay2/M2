@@ -451,7 +451,19 @@ export unarytry(tryToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
 	  if thenToken == errorToken then return errorTree;
 	  thenClause := parse(file,thenW.parse.unaryStrength,obeylines);
 	  if thenClause == errorTree then return errorTree;
-	  if peektoken(file,obeylines).word == elseW then (
+	  if peektoken(file,obeylines).word == exceptW then (
+	      exceptToken := gettoken(file,false);
+	      if exceptToken == errorToken then return errorTree;
+	      variable := parse(file,exceptW.parse.unaryStrength,obeylines);
+	      if variable == errorTree then return errorTree;
+	      if peektoken(file,obeylines).word == doW then (
+		  doToken := gettoken(file,false);
+		  if doToken == errorToken then return errorTree;
+		  doClause := parse(file,doW.parse.unaryStrength,obeylines);
+		  if doClause == errorTree then return errorTree;
+		  accumulate(ParseTree(TryThenDo(tryToken,primary,thenToken,thenClause,exceptToken,variable,doToken,doClause,dummyDictionary)),file,prec,obeylines))
+	      else return makeParseError(exceptToken,"syntax error: expected 'do'"))
+	  else if peektoken(file,obeylines).word == elseW then (
 	       elseToken := gettoken(file,false);
 	       if elseToken == errorToken then return errorTree;
 	       elseClause := parse(file,elseW.parse.unaryStrength,obeylines);
@@ -468,7 +480,7 @@ export unarytry(tryToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
 	      if doToken == errorToken then return errorTree;
 	      doClause := parse(file,doW.parse.unaryStrength,obeylines);
 	      if doClause == errorTree then return errorTree;
-	      accumulate(ParseTree(TryExceptDo(tryToken,primary,exceptToken,variable,doToken,doClause,dummyDictionary)),file,prec,obeylines))
+	      accumulate(ParseTree(TryDo(tryToken,primary,exceptToken,variable,doToken,doClause,dummyDictionary)),file,prec,obeylines))
 	  else return makeParseError(exceptToken,"syntax error: expected 'do'"))
      else accumulate(ParseTree(Try(tryToken,primary)),file,prec,obeylines));
 export unarycatch(catchToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
@@ -514,7 +526,8 @@ export treePosition(e:ParseTree):Position := (
     is t:TryThen          do combinePositionL(t.tryToken.position,   treePosition(t.sequel))
     is t:TryThenElse      do combinePositionL(t.tryToken.position,   treePosition(t.alternate))
     is t:TryElse          do combinePositionL(t.tryToken.position,   treePosition(t.alternate))
-    is t:TryExceptDo      do combinePositionL(t.tryToken.position,   treePosition(t.doClause))
+    is t:TryDo            do combinePositionL(t.tryToken.position,   treePosition(t.doClause))
+    is t:TryThenDo        do combinePositionL(t.tryToken.position,   treePosition(t.doClause))
     is t:Catch            do combinePositionL(t.catchToken.position, treePosition(t.primary))
     is t:WhileDo          do combinePositionL(t.whileToken.position, treePosition(t.doClause))
     is t:WhileListDo      do combinePositionL(t.whileToken.position, treePosition(t.doClause))
@@ -556,7 +569,8 @@ export size(e:ParseTree):int := (
     is x:TryThen     do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary) + size(x.thenToken) + size(x.sequel)
     is x:TryElse     do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary)                                      + size(x.elseToken) + size(x.alternate)
     is x:Try         do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary)
-    is x:TryExceptDo do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary) + size(x.exceptToken) +size(x.variable) + size(x.doToken) + size(x.doClause)
+    is x:TryDo       do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary)                                      + size(x.exceptToken) +size(x.variable) + size(x.doToken) + size(x.doClause)
+    is x:TryThenDo   do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary) + size(x.thenToken) + size(x.sequel) + size(x.exceptToken) +size(x.variable) + size(x.doToken) + size(x.doClause)
      is x:Catch do Ccode(int,"sizeof(*",x,")") + size(x.catchToken) + size(x.primary)
      is x:For do Ccode(int,"sizeof(*",x,")")+ size(x.forToken) + size(x.variable) + size(x.inClause) + size(x.fromClause) + size(x.toClause) + size(x.whenClause) + size(x.listClause) + size(x.doClause)
      is x:WhileDo do Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.dotoken) + size(x.doClause)
