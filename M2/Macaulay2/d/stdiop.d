@@ -91,7 +91,7 @@ export minimizeFilename(filename:string):string := (
 export verifyMinimizeFilename(filename:string):string := (
      filename = expandFileName(filename);
      p := when realpath(filename) is null do return filename is s:string do s;
-     f := minimizeFilename(filename);
+     f := minimizeFilename(p);
      if isAbsolutePath(f) then return f;
      if !(length(f) >= 3 && f.0 == '.' && f.1 == '.' && f.2 == '/') then (
 	  -- we assume realpath(getenv("PWD")) and getcwd() would be the same, so the only problem for
