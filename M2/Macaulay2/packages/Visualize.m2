@@ -18,8 +18,8 @@
 
 newPackage(
 	"Visualize",
-	Version => "1.8",
-	Date => "October 27, 2025",
+	Version => "1.9",
+	Date => "December 19, 2025",
     	Authors => {       
      	     {Name => "Brett Barwick", Email => "bbarwick@uscupstate.edu", HomePage => "http://faculty.uscupstate.edu/bbarwick/"},	     
 	     {Name => "Thomas Enkosky", Email => "tomenk@bu.edu", HomePage => "http://math.bu.edu/people/tomenk/"},	     
@@ -67,6 +67,9 @@ export {
 ---------------
 
 -*
+
+1.9 (2025-12-19, M2 1.26.05)
+* bump three.js to 0.182.0 and update 3d ideal code
 
 1.8 (2025-10-27, M2 1.25.11)
 * use webpack to bundle most of the javascript libraries

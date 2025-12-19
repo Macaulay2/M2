@@ -9,7 +9,7 @@
     "d3": "^3.5.17",
     "jquery": "^3.7.1",
     "nouislider": "^15.8.1",
-    "three": "^0.111.0"
+    "three": "^0.182.0"
   },
   "devDependencies": {
     "css-loader": "^7.1.2",
