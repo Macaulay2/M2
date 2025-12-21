@@ -1095,6 +1095,7 @@ setupfun("connectionCount", connectionCount);
 format(e:Expr):Expr := (
      when e
      is s:stringCell do toExpr("\"" + present(s.v) + "\"")
+     is s:SpecialExpr do format(s.e)
      is ZZcell do e
      is QQcell do e
      is RRcell do format(Expr(Sequence(e)))
