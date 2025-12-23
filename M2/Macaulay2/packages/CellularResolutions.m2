@@ -3,7 +3,7 @@
 newPackage(
     "CellularResolutions",
     Version => "1.1",
-    Date => "May 17, 2023",
+    Date => "December 23, 2025",
     Authors => {
         {Name => "Jay Yang", Email => "jay.k.yang@vanderbilt.edu"},
         {Name => "Aleksandra Sobieska", Email => "sobieskasnyd@marshall.edu"}
@@ -109,7 +109,7 @@ cellComplex(Ring,List) := CellComplex => {} >> o -> (R,maxCells) -> (
     mkCellComplex(R, allCells, realMaxCells)
     )
 
-cellComplex(Ring,SimplicialComplex) := {Labels=>null} >> o -> (S,C) -> (
+cellComplex(Ring,SimplicialComplex) := CellComplex => {Labels=>null} >> o -> (S,C) -> (
     R := ring C;
     Cfaces := new HashTable from faces C;
     --cells indexes Cells by monomials corresponding to faces of the simplicial complex
@@ -118,10 +118,8 @@ cellComplex(Ring,SimplicialComplex) := {Labels=>null} >> o -> (S,C) -> (
         for simplex in Cfaces#i do (
             label :=
                (if class(o.Labels) === HashTable
-               then (if o.Labels#?simplex
-                     then o.Labels#simplex
-                     else null
-                   )
+               then
+                   o.Labels#simplex ?? null
                else null);
             bd := if i==0
                   then {}
@@ -152,17 +150,17 @@ maxCells(CellComplex) := HashTable => (cacheValue (symbol maxCells)) (cellComple
         ))
 
 --Define dimension for cell
-dim Cell := cell -> cell.cellDimension
+dim Cell := ZZ => cell -> cell.cellDimension
 
 --Define dimension for cell complex
-dim CellComplex := cellComplex -> max keys cellComplex.cells
+dim CellComplex := ZZ => cellComplex -> max keys cellComplex.cells
 
 --Define ring for cell complex
-ring CellComplex := cellComplex -> cellComplex.labelRing
+ring CellComplex := Ring => cellComplex -> cellComplex.labelRing
 
 
 cellLabel = method()
-cellLabel Cell := cell -> cell.label
+cellLabel Cell := Thing => cell -> cell.label
 
 --Make a cell, internal function
 makeCell = (lst, l, d) -> (
@@ -207,8 +205,8 @@ isCycle List := Boolean => {Reduced=>true} >> o -> (lst) ->
     (if o.Reduced
     then (
         p := partition(x -> dim (x#0) == 0, lst);
-        zeroDimCells := if p#?true then p#true else {};
-        otherCells := if p#?false then p#false else {};
+        zeroDimCells := p#true ?? {};
+        otherCells := p#false ?? {};
         internalCycleCheck otherCells and sum(zeroDimCells,last) == 0
         )
     else internalCycleCheck lst)
@@ -289,7 +287,7 @@ newCell(List,Ideal) := Cell => opt -> (boundary,label) -> (
     if opt.CellDimension=!=null and dim c > cd then error "Incorrect CellDimension optional parameter";
     c
     )
-newCell List := opt -> cells -> newCell(cells,inferLabel cells,CellDimension=>opt.CellDimension);
+newCell List := Cell => opt -> cells -> newCell(cells,inferLabel cells,CellDimension=>opt.CellDimension);
 
 
 
@@ -347,7 +345,7 @@ relabelCellComplex(CellComplex,HashTable) := CellComplex => o -> (C,T) -> (
     cellComplex(R, flatten values relabeledcells)
     )
 
-RingMap ** CellComplex := (f,c) -> (
+RingMap ** CellComplex := CellComplex => (f,c) -> (
     if source f =!= ring c then error "source ring should match label ring";
     R := source f;
     S := target f;
@@ -361,11 +359,7 @@ RingMap ** CellComplex := (f,c) -> (
 --Get list of cells
 cells = method();
 cells CellComplex := HashTable => cellComplex -> cellComplex.cells
-cells(ZZ,CellComplex) := List => (r,cellComplex) -> (
-    if cellComplex.cells#?r
-    then cellComplex.cells#r
-    else {}
-    )
+cells(ZZ,CellComplex) := List => (r,cellComplex) -> cellComplex.cells#r ?? {}
 
 skeleton(ZZ,CellComplex) := CellComplex => (n,cellComplex) -> (
     c := new HashTable from select(pairs cellComplex.cells, (k,v) -> k<=n);
@@ -378,9 +372,7 @@ sparseBlockMap = (codomain,domain,ht) -> (
     if ks == {} then return map(codomain,domain,0);
     rows := max (ks/first) + 1;
     columns := max (ks/(p->p#1)) + 1;
-    maybeHt := p -> (
-        if ht#?p then ht#p else 0
-        );
+    maybeHt := p -> ht#p ?? 0;
     assert(rows <= #components codomain);
     assert(columns <= #components domain);
     map(codomain,domain,matrix apply(#components codomain,i -> apply(#components domain, j -> maybeHt(i,j)))))
@@ -578,15 +570,15 @@ CellComplex _ ZZ := CellComplex => (C,d) -> (subcomplex(C,{d}))
 -- Output
 ---------
 
-net Cell := cell -> (
+net Cell := Net => cell -> (
     "Cell of dimension " | (dim cell) | " with label " | (net cellLabel cell)
     )
 
-texMath Cell := cell -> (
+texMath Cell := String => cell -> (
     "\\text{Cell of dimension }" | (texMath dim cell) | "\\text{ with label }" | (texMath cellLabel cell)
     )
 
-net CellComplex := cellComplex -> (
+net CellComplex := Net => cellComplex -> (
     if hasAttribute (cellComplex, ReverseDictionary) then return net getAttribute (cellComplex, ReverseDictionary);
     d := dim cellComplex;
     nTotalCells := #(flatten values cells cellComplex);
@@ -598,15 +590,16 @@ net CellComplex := cellComplex -> (
     );
 
 
-texMath CellComplex := cellComplex -> (
+texMath CellComplex := String => cellComplex -> (
     if hasAttribute (cellComplex, ReverseDictionary) then return texMath getAttribute (cellComplex, ReverseDictionary);
     d := dim cellComplex;
     nTotalCells := #(flatten values cells cellComplex);
     if nTotalCells == 0
-    then "\text{empty cell complex}"
+    then "\\text{empty cell complex}"
     else (
-        ("\text{Cell complex over }" | (texMath cellComplex.labelRing) | "\text{ of dimension }" | d | "\text{ with }" | nTotalCells | "\text{ total cells}") ||
-        stack(apply(d+1,i -> texMath cells_i cellComplex)))
+        ("\\text{Cell complex over }" | (texMath cellComplex.labelRing) | "\\text{ of dimension }" | d | "\\text{ with }" | nTotalCells | "\\text{ total cells}\n") |
+        "\\left\\{" | concatenate(apply(d+1,i -> (texMath cells_i cellComplex) | "\n")) | "\\right\\}"
+        )
     );
 
 ------------------------
@@ -718,8 +711,8 @@ hullComplex MonomialIdeal := CellComplex => I -> (
     n := numgens ring I;
     hullComplex((n+1)!+1,I)
     )
-hullComplex(ZZ,MonomialIdeal) := (t,I) -> hullComplex(t/1,I)
-hullComplex(QQ,MonomialIdeal) := (t,I) -> (
+hullComplex(ZZ,MonomialIdeal) := CellComplex => (t,I) -> hullComplex(t/1,I)
+hullComplex(QQ,MonomialIdeal) := CellComplex => (t,I) -> (
     gensI := I_*;
     R := ring I;
     n := numgens R;
@@ -771,7 +764,7 @@ isWellDefined CellComplex := Boolean => C -> (
         if not isWellDefined cell then return false;
         M := toModule(C.labelRing,cell.label);
         if containingModule === null then containingModule = ambient M;
-        if containingModule != ambient M then(
+        if containingModule != ambient M then (
             if debugLevel > 0 then stderr << "isWellDefined: Cells have labels from different ambient modules" << endl;
             return false;
             );
@@ -788,3 +781,11 @@ load "./CellularResolutions/doc.m2"
 load "./CellularResolutions/tests.m2"
 
 end
+
+restart
+installPackage "CellularResolutions"
+loadPackage "CellularResolutions"
+R = QQ[x]
+texMath newCell({},x^2)
+peek CellularResolutions
+check CellularResolutions

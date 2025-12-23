@@ -566,6 +566,7 @@ doc ///
 doc ///
     Key
         (boundaryMap,ZZ,CellComplex)
+        [(boundaryMap,ZZ,CellComplex), Labels]
     Headline
         compute the boundary map of a cell complex from r-faces to (r-1)-faces
     Usage
@@ -576,7 +577,7 @@ doc ///
         C : CellComplex
             the CellComplex
         Labels => List
-            this option is ignored by this function
+            which is ignored by this particular function
     Outputs
         : Matrix
             the boundary map from r-faces to (r-1)-faces of C
@@ -776,6 +777,7 @@ doc ///
 doc ///
     Key
         (cohomology,ZZ,CellComplex)
+        [(cohomology,ZZ,CellComplex),Degree]
     Headline
         cohomology of a cell complex
     Usage
@@ -785,7 +787,7 @@ doc ///
             a non-negative integer
         C : CellComplex
         Degree => ZZ
-            this option is ignored by this function
+            which is ignored by this particular function
     Outputs
         : Module
             the r-th cohomology module of C
