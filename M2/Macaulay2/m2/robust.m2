@@ -35,8 +35,6 @@ String.Format = format
 silentRobustNet = (wid,ht,sec,y) -> (
      truncNet(wid,ht,
 	  try timelimit (sec, () -> checkNet if lookup(symbol Format,class y) =!= null then (lookup(symbol Format,class y)) y else net y)
-	  else 
-	  try timelimit (sec, () -> checkString toExternalString y)
 	  else (
 	       alarm 0;
 	       simpleToString y)
