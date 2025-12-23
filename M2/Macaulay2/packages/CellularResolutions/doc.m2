@@ -31,6 +31,7 @@ doc ///
 		"ISBN: 0-387-22356-8" },
 		{
 		HREF("https://en.wikipedia.org/wiki/Dave_Bayer", "Dave Bayer"),
+		", ",
 		HREF("https://pi.math.cornell.edu/~irena/", "Ireena Peeva"),
 		" and ",
 		HREF("https://math.berkeley.edu/~bernd/", "Bernd Sturmfels"),
