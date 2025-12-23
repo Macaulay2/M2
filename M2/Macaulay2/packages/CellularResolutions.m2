@@ -575,7 +575,7 @@ net Cell := Net => cell -> (
     )
 
 texMath Cell := String => cell -> (
-    "\\text{Cell of dimension }" | (texMath dim cell) | "\\text{ with label }" | (texMath cellLabel cell)
+    "\\textrm{Cell of dimension }" | (texMath dim cell) | "\\textrm{ with label }" | (texMath cellLabel cell)
     )
 
 net CellComplex := Net => cellComplex -> (
@@ -595,10 +595,14 @@ texMath CellComplex := String => cellComplex -> (
     d := dim cellComplex;
     nTotalCells := #(flatten values cells cellComplex);
     if nTotalCells == 0
-    then "\\text{empty cell complex}"
+    then "\\textrm{empty cell complex}"
     else (
-        ("\\text{Cell complex over }" | (texMath cellComplex.labelRing) | "\\text{ of dimension }" | d | "\\text{ with }" | nTotalCells | "\\text{ total cells}\n") |
-        "\\left\\{" | concatenate(apply(d+1,i -> (texMath cells_i cellComplex) | "\n")) | "\\right\\}"
+        ("\\textrm{Cell complex over }" | (texMath cellComplex.labelRing) | "\\textrm{ of dimension }" | d | "\\textrm{ with }" | nTotalCells | "\\textrm{ total cells }\n") |
+        "\\left\\{" |
+        "\\begin{array}{l}" |
+        concatenate(apply(d+1,i -> (texMath cells_i cellComplex) | "\\\\")) |
+        "\\end{array}" |
+        "\\right\\}"
         )
     );
 
