@@ -39,10 +39,10 @@ endforeach()
 string(REPLACE ";" " " COMPILEFLAGS "${COMPILE_OPTIONS}")
 
 # C compiler flags
-set(CFLAGS   "${COMPILEFLAGS} -w -Wimplicit -Werror")
+set(CFLAGS   "${CMAKE_C_FLAGS}")
 
 # C++ compiler flags
-set(CXXFLAGS "${COMPILEFLAGS} -std=gnu++11 -w -Wno-mismatched-tags -Wno-deprecated-register")
+set(CXXFLAGS "${CMAKE_CXX_FLAGS}")
 
 # Linker flags
 string(REPLACE ";" " " LDFLAGS "${LINK_OPTIONS}")
