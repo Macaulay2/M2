@@ -82,7 +82,7 @@ const RingElement /* or null */ *IM2_Matrix_get_entry(const Matrix *M,
 
 /* Returns the entries of the matrix in a flat array in row major order
  */
-engine_RawRingElementArrayOrNull IM2_Matrix_get_entries(const Matrix *M)
+engine_RawRingElementArrayArrayOrNull IM2_Matrix_get_entries(const Matrix *M)
 {
   try
     {
@@ -93,18 +93,19 @@ engine_RawRingElementArrayOrNull IM2_Matrix_get_entries(const Matrix *M)
           ERROR("internal error: matrix has a negative size %d by %d",
                 nrows,
                 ncols);
+          return nullptr;
         }
-      //TODO overflow detection/handling.
-      //This also runs into the problem that the arrays from "d"
-      //only use an int for their length field.
-      int nentries = nrows * ncols;
-      engine_RawRingElementArray entries =
-          getmemarraytype(engine_RawRingElementArray, nentries);
-      entries->len = nentries;
+      engine_RawRingElementArrayArray entries = getmemarraytype(engine_RawRingElementArrayArray,nrows);
+      entries->len = nrows;
       RingElement *zero =
           RingElement::make_raw(M->get_ring(), M->get_ring()->zero());
-      //populate the matrix with zeros
-      std::fill_n(entries->array, nentries, zero);
+      for(int r = 0; r < nrows; r++)
+        {
+          engine_RawRingElementArray currRow = getmemarraytype(engine_RawRingElementArray, ncols);
+          currRow->len = ncols;
+          std::fill_n(currRow->array, ncols, zero);
+          entries->array[r] = currRow;
+        }
       //walk through the columns
       for(int c = 0; c < ncols; c++)
         {
@@ -120,7 +121,7 @@ engine_RawRingElementArrayOrNull IM2_Matrix_get_entries(const Matrix *M)
                   //Ignoring the entry and continuing
                   continue;
                 }
-              entries->array[term.comp * ncols + c] =
+              entries->array[term.comp]->array[c] =
                   RingElement::make_raw(M->get_ring(), term.coeff);
             }
         }

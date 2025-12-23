@@ -355,9 +355,7 @@ transposeSequence := t -> pack(#t, mingle t)
 isHomogeneous RawMatrix := rawIsHomogeneous
 entries RawMutableMatrix :=
 entries RawMatrix := m -> (
-    allEntries := rawMatrixEntries m;
-    ncols := rawNumberOfColumns m;
-    table(rawNumberOfRows m, ncols, (i,j) -> allEntries#(i*ncols+j))
+    toList(apply(rawMatrixEntries m, row -> toList row))
     )
 
 ZZ * RawMatrix := (n,f) -> (
