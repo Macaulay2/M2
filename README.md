@@ -35,7 +35,7 @@ determined by `check`, in the latest version of Macaulay2.
 
 ### Copyright
 
-Copyright (C) 1993-2025 [The Macaulay2 Authors](
+Copyright (C) 1993-2026 [The Macaulay2 Authors](
 https://github.com/Macaulay2/M2/wiki/The-Macaulay2-Authors)
 
 This program is free software; you can redistribute it and/or modify
