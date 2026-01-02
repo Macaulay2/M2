@@ -698,15 +698,17 @@ document {
      errors.  Your error message will appear on the screen and execution
      will be stopped.",
      PARA{},
-     "The function ", TO "try", " can be used to catch an error before
-     execution is stopped and to continue or to try something else.",
+     "The keywords ", TO "try", " and ", TO "trap", " can be used to catch an
+     error before execution is stopped and to continue or to try something
+     else.",
      Subnodes => {
 	  TO "error",
 	  TO "try",
 	  TO "throw",
 	  TO "trap",
 	  TO "Error",
-	  }
+	  },
+     SeeAlso => {"stopIfError"}
      }
 
 doc ///
