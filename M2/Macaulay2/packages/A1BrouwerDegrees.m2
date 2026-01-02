@@ -256,6 +256,21 @@ Node
             getSumDecomposition beta
             gamma = makeGWuClass(matrix(QQ, {{11, 0},{0,22}}), 8)
             isIsomorphicForm(beta, gamma)
+		Citation
+	    @article{zbMATH08005952,
+		 author = {Borisov, Nikita and Brazelton, Thomas and Espino, Frenly and Hagedorn, Thomas and Han, Zhaobo and Lopez Garcia, Jordy and Louwsma, Joel and Ong, Wern Juin Gabriel and Tawfeek, Andrew R.},
+		 title = {{{\(\mathbb{A}^1\)}}-Brouwer degrees in {Macaulay2}},
+		 fjournal = {The Journal of Software for Algebra and Geometry},
+		 journal = {J. Softw. Algebra Geom.},
+		 issn = {1948-7916},
+		 volume = {14},
+		 pages = {175--187},
+		 year = {2024},
+		 language = {English},
+		 doi = {10.2140/jsag.2024.14.175},
+		 keywords = {14F42,55M25,68W30,11E04,14N10},
+		 zbMATH = {8005952}
+		}
 ///
 
 load "./A1BrouwerDegrees/Documentation/ArithmeticMethodsDoc.m2"
