@@ -256,7 +256,7 @@ Node
             getSumDecomposition beta
             gamma = makeGWuClass(matrix(QQ, {{11, 0},{0,22}}), 8)
             isIsomorphicForm(beta, gamma)
-	Citation
+    Citation
 	@article{zbMATH08005952,
 	 author = {Borisov, Nikita and Brazelton, Thomas and Espino, Frenly and Hagedorn, Thomas and Han, Zhaobo and Lopez Garcia, Jordy and Louwsma, Joel and Ong, Wern Juin Gabriel and Tawfeek, Andrew R.},
 	 title = {{{\(\mathbb{A}^1\)}}-Brouwer degrees in {Macaulay2}},
