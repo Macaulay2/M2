@@ -95,13 +95,15 @@ engine_RawRingElementArrayArrayOrNull IM2_Matrix_get_entries(const Matrix *M)
                 ncols);
           return nullptr;
         }
-      engine_RawRingElementArrayArray entries = getmemarraytype(engine_RawRingElementArrayArray,nrows);
+      engine_RawRingElementArrayArray entries =
+          getmemarraytype(engine_RawRingElementArrayArray, nrows);
       entries->len = nrows;
       RingElement *zero =
           RingElement::make_raw(M->get_ring(), M->get_ring()->zero());
       for(int r = 0; r < nrows; r++)
         {
-          engine_RawRingElementArray currRow = getmemarraytype(engine_RawRingElementArray, ncols);
+          engine_RawRingElementArray currRow =
+              getmemarraytype(engine_RawRingElementArray, ncols);
           currRow->len = ncols;
           std::fill_n(currRow->array, ncols, zero);
           entries->array[r] = currRow;

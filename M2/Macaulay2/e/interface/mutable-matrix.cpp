@@ -210,11 +210,13 @@ IM2_MutableMatrix_get_entries(const MutableMatrix *M)
                 ncols);
           return nullptr;
         }
-      engine_RawRingElementArrayArray entries = getmemarraytype(engine_RawRingElementArrayArray,nrows);
+      engine_RawRingElementArrayArray entries =
+          getmemarraytype(engine_RawRingElementArrayArray, nrows);
       entries->len = nrows;
       for(int r = 0; r < nrows; r++)
         {
-          engine_RawRingElementArray currRow = getmemarraytype(engine_RawRingElementArray, ncols);
+          engine_RawRingElementArray currRow =
+              getmemarraytype(engine_RawRingElementArray, ncols);
           currRow->len = ncols;
           entries->array[r] = currRow;
         }
