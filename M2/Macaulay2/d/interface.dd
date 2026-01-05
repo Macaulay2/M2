@@ -2129,9 +2129,9 @@ setupfun("rawMatrixEntry",rawMatrixEntry);
 
 entriesArrayToExpr(entriesOrNull:RawRingElementArrayArrayOrNull):Expr := (
     when entriesOrNull is entries:RawRingElementArrayArray do (
-        Expr(new Sequence len length(entries) do (
+        list(new Sequence len length(entries) do (
             foreach row in entries do (
-                provide toExpr(row)))))
+                provide list(listClass, toExpr(row))))))
     else (
         nullE
     ));

@@ -354,9 +354,7 @@ source RawMatrix := o -> rawSource o
 transposeSequence := t -> pack(#t, mingle t)
 isHomogeneous RawMatrix := rawIsHomogeneous
 entries RawMutableMatrix :=
-entries RawMatrix := m -> (
-    toList(apply(rawMatrixEntries m, row -> toList row))
-    )
+entries RawMatrix := rawMatrixEntries
 
 ZZ * RawMatrix := (n,f) -> (
      R := rawRing rawTarget f;
