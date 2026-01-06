@@ -2632,3 +2632,10 @@ mpfi = openSharedLibrary "mpfi"
 assert instance(value describe mpfi, SharedLibrary)
 assert instance(value toExternalString mpfi, SharedLibrary)
 ///
+
+TEST ///
+-- finalizing gmp and mpfr objects
+scan(1000, i -> mpzT 2^100)
+scan(1000, i -> mpfrT numeric(100, pi))
+collectGarbage()
+///
