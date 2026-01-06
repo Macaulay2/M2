@@ -463,6 +463,8 @@ public:
 
   long to_modp_long(const ElementArray& coeffs, size_t loc) const
   {
+    (void) coeffs;
+    (void) loc;
     return 0; // DANGER WILL ROBINSON!
   }
   
@@ -518,6 +520,7 @@ public:
   void from_ring_elem(ElementArray& coeffs, ring_elem numer, ring_elem denom) const
   // Appends numer/denom to coeffs array
   {
+    (void) denom;
     auto& svec = * elementArray(coeffs);
     FieldElement inumer;
     mRing->init(inumer);
@@ -554,6 +557,7 @@ inline void ConcreteVectorArithmetic<M2::ARingQQGMP>::from_ring_elem(ElementArra
 {
   // TODO: this function ignores denom, this is non-intuitive and bug-prone.
     // TODO: this will fail: input is alas ZZ integers... not QQ elements...
+    (void) denom;
     auto& svec = * elementArray(coeffs);
     //ring_elem val = numer;
     FieldElement inumer;

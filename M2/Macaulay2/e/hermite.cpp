@@ -345,6 +345,7 @@ const Matrix /* or null */ *HermiteComputation::get_syzygies()
 
 const Matrix /* or null */ *HermiteComputation::get_initial(int nparts)
 {
+  (void) nparts;
   MatrixConstructor mat(gens->rows(), 0);
   for (hm_elem *p = GB_list; p != nullptr; p = p->next)
     {

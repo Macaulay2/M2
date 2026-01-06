@@ -9,6 +9,8 @@ void ARingRRi::elem_text_out(buffer &o,
                              bool p_plus,
                              bool p_parens) const
 {
+  (void) p_one;
+  (void) p_parens;
   mpfi_ptr a = &const_cast<ElementType &>(ap);
   M2_string s1 = (*gmp_tostringRRpointer)(&(a->left));
   M2_string s2 = (*gmp_tostringRRpointer)(&(a->right));

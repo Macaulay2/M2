@@ -96,7 +96,12 @@ class MonomialInfo : public our_new_delete
 
   int n_vars() const { return nvars; }
   int max_monomial_size() const { return nslots; }
-  int monomial_size(const_packed_monomial m) const { return nslots; }
+  int monomial_size(const_packed_monomial m) const
+  {
+    (void) m;
+    return nslots;
+  }
+
   void show() const;
 
   int componentLocation() const { return mComponentLoc; }

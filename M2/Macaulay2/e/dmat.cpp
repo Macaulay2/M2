@@ -187,7 +187,7 @@ bool solveLinear(const DMatZZpFFPACK& A,
                  bool declare_A_is_invertible)  // this parameter is unused
 {
   //    std::cerr << "inside FFpackSolveLinear" << std::endl;
-
+  (void) declare_A_is_invertible;
   size_t a_rows = A.numRows();
   size_t a_cols = A.numColumns();
 

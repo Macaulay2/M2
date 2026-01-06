@@ -173,7 +173,10 @@ class SchurRing2 : public Ring
 
   virtual int compare_elems(const ring_elem f, const ring_elem g) const;
   virtual ring_elem copy(const ring_elem f) const;
-  virtual void remove(ring_elem &f) const {}  // let the GC do it!
+  virtual void remove(ring_elem &f) const
+  {
+    (void) f;
+  }  // let the GC do it!
   virtual ring_elem negate(const ring_elem f) const;
   virtual ring_elem add(const ring_elem f, const ring_elem g) const;
   virtual ring_elem subtract(const ring_elem f, const ring_elem g) const;

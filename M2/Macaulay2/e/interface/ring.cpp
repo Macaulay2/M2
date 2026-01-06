@@ -126,6 +126,8 @@ const Ring /* or null */ *IM2_Ring_polyring(const Ring *K, const Monoid *M)
 
 const Ring * /* or null */ rawDividedPowerRing(const Ring *K, const Monoid *M)
 {
+  (void) K;
+  (void) M;
 #if 0
   //TODO: MES, this function has not yet been implemented, or even placed in ring.h
   try {

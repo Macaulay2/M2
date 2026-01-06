@@ -36,6 +36,8 @@ NCF4::NCF4(const FreeAlgebra& A,
       mScheduler(mNumThreads)
 {
   //  std::cout << "number of processors being used: " << mNumThreads << std::endl;
+  (void) hardDegreeLimit;
+  (void) strategy;
   if (M2_gbTrace >= 1)
     {
       buffer o;

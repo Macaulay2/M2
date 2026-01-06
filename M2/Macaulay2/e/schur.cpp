@@ -95,12 +95,15 @@ SchurRing *SchurRing::create(const PolynomialRing *R)
 
 SchurRing *SchurRing::create(const Ring *A, int n)
 {
+  (void) A;
+  (void) n;
   ERROR("not implemented yet");
   return nullptr;
 }
 
 SchurRing *SchurRing::createInfinite(const Ring *A)
 {
+  (void) A;
   ERROR("not implemented yet");
   return nullptr;
 }

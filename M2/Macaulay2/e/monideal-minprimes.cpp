@@ -98,6 +98,7 @@ static int alg1_reduce_exp(const int *m, const int *exp)
 void MinimalPrimes::alg1_grab_prime(int depth)
 {
   Bag *b = new Bag(0);
+  (void) depth;
   for (int i = 0; i < nvars; i++)
     if (exp[i + 1] > 0)
       exp2[i] = 1;
@@ -166,6 +167,7 @@ MonomialIdeal *MinimalPrimes::alg1_min_primes(int maxcodim, int count)
   // We need to know how large to make it.  So, we first add up all of the
   // degrees of the gens
 
+  (void) count;
   depth_limit = -maxcodim - 1;
 
   long len = 1;

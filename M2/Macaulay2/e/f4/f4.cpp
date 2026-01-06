@@ -77,6 +77,12 @@ F4GB::F4GB(const VectorArithmetic* VA,
       mSPairSet(mMonomialInfo, mGroebnerBasis)
 #endif
 {
+  (void) collect_syz;
+  (void) n_rows_to_keep;
+  (void) weights0;
+  (void) strategy;
+  (void) use_max_degree;
+  (void) max_degree;
   //  mLookupTable = new MonomialLookupTable(mMonomialInfo->n_vars());
   //  mSPairSet = new F4SPairSet(mMonomialInfo, mGroebnerBasis);
   mat = new coefficient_matrix;

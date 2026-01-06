@@ -77,6 +77,7 @@ void ARingZZp::elem_text_out(buffer &o,
                              bool p_plus,
                              bool p_parens) const
 {
+  (void) p_parens;
   long n = coerceToLongInteger(a);
   if (n < 0)
     {
@@ -93,6 +94,7 @@ void ARingZZp::eval(const RingMap *map,
                     int first_var,
                     ring_elem &result) const
 {
+  (void) first_var;
   long a = coerceToLongInteger(f);
   result = map->get_ring()->from_long(a);
 }

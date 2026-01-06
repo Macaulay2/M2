@@ -99,19 +99,23 @@ struct our_new_delete
 
   static inline void *operator new(size_t size, void *existing_memory)
   {
+    (void) size;
     return existing_memory;
   }
   static inline void *operator new[](size_t size, void *existing_memory)
   {
+    (void) size;
     return existing_memory;
   }
 
   static inline void operator delete(void *obj, void *existing_memory)
   {
+    (void) existing_memory;
     TRAPCHK(obj);
   }
   static inline void operator delete[](void *obj, void *existing_memory)
   {
+    (void) existing_memory;
     TRAPCHK(obj);
   }
 
@@ -149,6 +153,7 @@ public:
 
 static inline void cleanup(void* obj, void* displ)
 {
+  (void) displ;
 #ifdef MEMDEBUG
   obj = M2_debug_to_inner(obj);
 #endif

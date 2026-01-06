@@ -9,6 +9,7 @@ void ARingRR::elem_text_out(buffer &o,
                             bool p_plus,
                             bool p_parens) const
 {
+  (void) p_parens;
   ElementType &ap1 = const_cast<ElementType &>(ap);
   mpfr_t a;
   mpfr_init(a);

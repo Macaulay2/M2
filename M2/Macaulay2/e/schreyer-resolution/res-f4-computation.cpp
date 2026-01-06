@@ -35,6 +35,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   // We assume also that the matrix is homogeneous.
   // If any of these are incorrect, an error message is provided, and
   // null is returned.
+  (void) strategy;
   const PolynomialRing* origR =
       groebnerBasisMatrix->get_ring()->cast_to_PolynomialRing();
   if (origR == nullptr)

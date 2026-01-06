@@ -6,6 +6,7 @@ namespace newf4 {
 
 void PolynomialListStreamCollector::idealBegin(size_t polyCount)
 {
+  (void) polyCount;
   mCurrentPoly = -1;
 }
 

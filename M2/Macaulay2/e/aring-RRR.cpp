@@ -9,6 +9,7 @@ void ARingRRR::elem_text_out(buffer &o,
                              bool p_plus,
                              bool p_parens) const
 {
+  (void) p_parens;
   mpfr_ptr a = &const_cast<ElementType &>(ap);
   M2_string s = (*gmp_tostringRRpointer)(a);
   bool prepend_plus = p_plus && (s->array[0] != '-');

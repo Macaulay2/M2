@@ -140,6 +140,7 @@ void M2_flint_abort(void) {
 
 void* profFunc(ArgCell* p)
 {
+  (void) p;
   using namespace std::chrono_literals;
   std::string filename("profile-" + std::to_string(getpid())+ ".raw");
   std::cerr << "-- Storing profiling data in " << filename << std::endl;
@@ -219,12 +220,14 @@ extern "C" void oursignal(int sig, void (*handler)(int)) {
 }
 
 void trace_handler(int sig) {
+  (void) sig;
   if (tryGlobalTrace() == 0)
     profiler_stacktrace(std::cerr, 1);
   oursignal(SIGUSR1,trace_handler);
 }
 
 void alarm_handler(int sig) {
+  (void) sig;
   if (tryGlobalAlarm() == 0)
     interrupts_setAlarmedFlag();
   oursignal(SIGALRM,alarm_handler);
@@ -232,6 +235,7 @@ void alarm_handler(int sig) {
 
 void segv_handler(int sig) {
   static int level;
+  (void) sig;
   fprintf(stderr, "-- SIGSEGV\n");
   level ++;
   if (level > 1) {
@@ -244,6 +248,7 @@ void segv_handler(int sig) {
 }
 
 void interrupt_handler(int sig) {
+  (void) sig;
   if (tryGlobalInterrupt() == 0) {
     if (test_Field(THREADLOCAL(interrupts_interruptedFlag, struct atomic_field)) ||
                    THREADLOCAL(interrupts_interruptPending, bool)) {

@@ -7,8 +7,15 @@ header "#include <cassert>";
 
 -- applyEE and applyEEE are not defined until evaluate.d,
 -- so we use pointers and populate them later.
-dummyapplyEE(g:Expr,e:Expr):Expr := g;
-dummyapplyEEE(g:Expr,e0:Expr,e1:Expr):Expr := g;
+dummyapplyEE(g:Expr,e:Expr):Expr := (
+    Ccode(void, "(void)", g);
+    Ccode(void, "(void)", e);
+    nullE);
+dummyapplyEEE(g:Expr,e0:Expr,e1:Expr):Expr := (
+    Ccode(void, "(void)", g);
+    Ccode(void, "(void)", e0);
+    Ccode(void, "(void)", e1);
+    nullE);
 export applyEEpointer := dummyapplyEE;
 export applyEEEpointer := dummyapplyEEE;
 

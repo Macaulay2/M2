@@ -116,8 +116,19 @@ class ARingQQFlint : public SimpleARing<ARingQQFlint>
     return true;
   }
 
-  bool set_from_BigReal(ElementType& result, gmp_RR a) const { return false; }
-  void set_var(ElementType& result, int v) const { fmpq_set_si(&result, 1, 1); }
+  bool set_from_BigReal(ElementType& result, gmp_RR a) const
+  {
+    (void) result;
+    (void) a;
+    return false;
+  }
+
+  void set_var(ElementType& result, int v) const
+  {
+    (void) v;
+    fmpq_set_si(&result, 1, 1);
+  }
+
   /** @} */
 
   /** @name arithmetic
@@ -264,6 +275,9 @@ class ARingQQFlint : public SimpleARing<ARingQQFlint>
 
   bool lift(const Ring* Rg, const ElementType& f, ring_elem& result) const
   {
+    (void) Rg;
+    (void) f;
+    (void) result;
     return false;
   }
 

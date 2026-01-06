@@ -13,6 +13,7 @@ auto createGBF4Interface(const Matrix *inputMatrix,
                          int numThreads
                          ) -> GBComputation*
 {
+  (void) strategy;
   return newf4::createGBF4Interface(inputMatrix, variableWeights, newf4::Strategy::Normal, numThreads);  
 }
 
@@ -51,6 +52,7 @@ GBF4Interface::GBF4Interface(const PolynomialRing* originalRing,
                                                      variableWeights,
                                                      strategy))
 {
+    (void) numThreads;
     mComputation->initializeWithMatrix(inputMatrix);
     mComputation->dumpBasisMonomials();
     mComputation->showInput();
@@ -71,6 +73,7 @@ GBF4Interface::GBF4Interface(const PolynomialRing* originalRing,
                                                      variableWeights,
                                                      strategy))
 {
+    (void) numThreads;
     mComputation->initializeWithBasicPolyList(basicPolyList);
 }
 
