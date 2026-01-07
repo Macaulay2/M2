@@ -60,6 +60,27 @@ concentration ComplexMap := Sequence => f -> (
 max Complex := ZZ => C -> max concentration C
 min Complex := ZZ => C -> min concentration C
 
+shiftDegrees = method()
+shiftDegrees List := L -> (
+    if not all(L, x -> instance(x, Matrix)) or not all(L, isHomogeneous) then L
+    else (
+        prevSource := null;
+        for i from 0 to #L-1 list (
+            if i == 0 then (
+                prevSource = source L#0;
+                L#0)
+            else (
+                deg := degrees prevSource - degrees target L#i;
+                if not same deg then error "complex: expected composable differential maps";
+                f := L#i;
+                if #deg > 0 and  not all(deg#0, a -> a === 0) then
+                    f = map(prevSource,,f);
+                prevSource = source f;
+                f)
+            )
+        )
+    )
+    
 complexOptions = {Base => 0}
 complex = method(Options => true)
 complex HashTable := Complex => complexOptions >> opts -> maps -> (
@@ -94,6 +115,7 @@ complex List := Complex => complexOptions >> opts -> L -> (
     if not instance(opts.Base, ZZ) then
       error "expected Base to be an integer";
     if uniform L and isMorphism L#0 then (
+        L = shiftDegrees L; -- doesn't change L unless all are matrices, with unequal source/target pairs, yet after a shift they are equal.
         mapHash := hashTable for i from 0 to #L-1 list opts.Base+i+1 => L#i;
         return complex(mapHash, opts)
         );
