@@ -163,8 +163,6 @@ rightbrace := mo "}"
 
 mathML MapExpression := x -> mrow {mathML x#0, leftarrow, mathML x#1}
 mathML Option := s -> concatenate("<mrow>",mathML s#0, doublerightarrow, mathML s#1, "</mrow>")
-mathML Type :=
-mathML ImmutableType := R -> if R.?mathML then R.mathML else mathML expression R
 mathML VirtualTally :=
 mathML HashTable := s -> if s.?mathML then s.mathML else concatenate( "<mrow>",mathML class s,leftbrace, mtable sort apply(pairs s, (k,v) -> {mathML k, doublerightarrow, mathML v}), rightbrace,"</mrow>", newline )
 mathML MutableHashTable := x -> if x.?mathML then x.mathML else (
