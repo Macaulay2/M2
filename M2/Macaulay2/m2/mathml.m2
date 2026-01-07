@@ -86,6 +86,12 @@ mathML Minus := v -> concatenate( "<mrow><mo>-</mo>", mathML v#0, "</mrow>")
 mathML Divide := x -> concatenate("<mfrac>", mathML x#0, mathML x#1, "</mfrac>")
 mathML OneExpression := x -> "<mn>1</mn>"
 mathML ZeroExpression := x -> "<mn>0</mn>"
+mathML BinaryOperation := m -> (
+    x := mathML m#1;
+    y := mathML m#2;
+    if rightPrecedence m#1 < lprec m#0 then x = mathMLparen x;
+    if precedence m#2 <= rprec m#0 then y = mathMLparen y;
+    mrow(x | mo m#0 | y))
 mathML Sum := v -> (
      n := # v;
      if n === 0 then "<mn>0</mn>"
