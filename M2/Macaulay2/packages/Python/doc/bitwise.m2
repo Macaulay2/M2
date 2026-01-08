@@ -503,7 +503,7 @@ doc ///
   Headline
     bitwise negation of a python object
   Usage
-    x~
+    ~x
   Inputs
     x:PythonObject
   Outputs
@@ -511,10 +511,9 @@ doc ///
   Description
     Text
       This operation negates each bit.  For integers, this is equivalent to
-      CODE "-x - 1".  Unlike Python, @CODE "~"@ is a postfix unary operator
-      in Macaulay2.
+      CODE "-x - 1".
     Example
-      (toPython 5)~
+      ~toPython 5
   SeeAlso
     (symbol &, PythonObject, PythonObject)
     (symbol |, PythonObject, PythonObject)

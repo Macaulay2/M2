@@ -101,7 +101,7 @@ Function or  Function := (f, g) -> s -> f s or  g s
 Function xor Function := (f, g) -> s -> f s xor g s
 not Function := f -> s -> not f s
 
-ZZ~ := bitnotfun
+~ ZZ := bitnotfun
 
 changeBase = method()
 changeBase(ZZ,     ZZ)     := String =>

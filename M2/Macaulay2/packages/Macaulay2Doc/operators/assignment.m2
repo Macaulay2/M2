@@ -359,8 +359,8 @@ document {
 		    }},
 	  "The first line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
-	       String ~ = peek;
-	       "foo" ~ = "value"
+	       String ^~ = peek;
+	       "foo" ^~ = "value"
 	  ///,
 	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay2."
 	  },
@@ -381,8 +381,8 @@ document {
 	  References to currently installed assignment methods are given below.",
 	  "The second line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
-	       String ~ = peek;
-	       "foo" ~ = "value"
+	       String ^~ = peek;
+	       "foo" ^~ = "value"
 	  ///
 	  },
      SeeAlso => {":=", "<-", "globalAssignmentHooks" }
@@ -610,8 +610,8 @@ document {
 		    }},
 	  "The first line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
-	       String ~ := peek;
-	       "foo" ~
+	       String ^~ := peek;
+	       "foo" ^~
 	  ///,
 	  PARA "Warning: the installation of new methods may supplant old ones, changing the behavior of Macaulay2."
 	  },
@@ -630,8 +630,8 @@ document {
 	       },
 	  "The second line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
-	       String ~ := peek;
-	       "foo" ~
+	       String ^~ := peek;
+	       "foo" ^~
 	  ///
 	  },
      SYNOPSIS {

@@ -267,6 +267,7 @@ bumpPrecedence();
      export QuestionS := makeKeyword(unarybinaryright("?"));
      export NotEqualEqualEqualS := makeKeyword(binaryright("=!="));
      export NotEqualS := makeKeyword(binaryright("!="));
+     export TildeS := makeKeyword(unarybinaryright("~"));
 -- operations on terms that yield terms:
 bumpPrecedence();
      export BarBarS := makeKeyword(binaryleft("||"));
@@ -335,7 +336,6 @@ bumpPrecedence();
      export AtAtS := makeKeyword(binaryleft("@@"));
      export AtAtQuestionS := makeKeyword(binaryleft("@@?"));
 bumpPrecedence();
-     export TildeS := makeKeyword(postfix("~"));
      export PowerTildeS := makeKeyword(postfix("^~"));
      export UnderscoreTildeS := makeKeyword(postfix("_~"));
      export UnderscoreStarS := makeKeyword(postfix("_*"));
@@ -500,7 +500,7 @@ export opsWithBinaryMethod := array(SymbolClosure)(
      LongDoubleRightArrowS, LongLongDoubleRightArrowS,
      LongDoubleLeftArrowS, LongLongDoubleLeftArrowS,
      ColonS, BarS, HatHatS, AmpersandS, DotDotS, DotDotLessS, MinusS, PlusS, PlusPlusS, StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
-     AdjacentS, AtAtS, AtAtQuestionS, orS, andS, xorS,
+     AdjacentS, AtAtS, AtAtQuestionS, orS, andS, xorS, TildeS,
      -- TODO: why are these four not listed here?
      -- GreaterS, GreaterEqualS, LessS, LessEqualS,
      BarUnderscoreS,
@@ -516,13 +516,13 @@ export opsWithBinaryMethod := array(SymbolClosure)(
      );
 export opsWithUnaryMethod := array(SymbolClosure)(
      StarS, MinusS, PlusS, LessLessS, QuestionQuestionS,
-     LongDoubleLeftArrowS, LongLongDoubleLeftArrowS, 
+     LongDoubleLeftArrowS, LongLongDoubleLeftArrowS, TildeS,
      notS, DeductionS, QuestionS,LessS,GreaterS,LessEqualS,GreaterEqualS);
 export opsWithPostfixMethod := array(SymbolClosure)(
     ExclamationS,    PowerExclamationS, UnderscoreExclamationS,
     -- FIXME:        PowerSharpS,       UnderscoreSharpS,
     ParenStarParenS, PowerStarS,        UnderscoreStarS,
-    TildeS,          PowerTildeS,       UnderscoreTildeS
+    PowerTildeS,     UnderscoreTildeS
     );
 
 -- ":=" "=" "<-" "->"  "=>" "===" "=!=" "!=" "#" "#?" "." ".?" ";" "," "<" ">" "<=" ">="
