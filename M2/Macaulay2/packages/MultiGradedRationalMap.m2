@@ -9,7 +9,7 @@ newPackage(
     Date => "2018",
     DebuggingMode => false,
     Configuration => {},
-    PackageImports => {"OldChainComplexes", "ReesAlgebra"}
+    PackageImports => {"Complexes", "ReesAlgebra"}
 )
 
 export { 

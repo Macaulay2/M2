@@ -17,7 +17,7 @@ newPackage(
                    },
     	Headline => "random smooth space curves",
 	Keywords => {"Examples and Random Objects"},
-        PackageImports => {"OldChainComplexes", "Complexes"},
+        PackageImports => {"Complexes"},
      	PackageExports => {"RandomObjects"},
     	DebuggingMode => false
         )

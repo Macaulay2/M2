@@ -11,7 +11,7 @@ newPackage(
 	          Email => "hovinen@math.uni-hannover.de"}},
      Headline => "versal deformations of maximal Cohen-Macaulay modules",
      Keywords => {"Deformation Theory"},
-     PackageImports => { "OldChainComplexes", "Truncations" },
+     PackageImports => { "Complexes", "Truncations" },
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	  "journal URI" => "https://msp.org/jsag/",
@@ -257,7 +257,7 @@ deformMCMModule(Module,RingMap) := o -> (M0,phi) -> (
 
      -- Extract the other matrix of the matrix factorization
      Ml := coker substitute (presentation M0, prune ring M0);
-     C := chainComplex lift (presentation Ml, ambient ring Ml);
+     C := complex lift (presentation Ml, ambient ring Ml);
      f := (mingens ideal ring Ml)_0_0;
      B0 := substitute ((nullhomotopy (f * id_C))_0, ring M0);
      

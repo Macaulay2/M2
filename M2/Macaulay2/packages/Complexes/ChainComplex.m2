@@ -73,8 +73,9 @@ shiftDegrees List := L -> (
                 deg := degrees prevSource - degrees target L#i;
                 if not same deg then error "complex: expected composable differential maps";
                 f := L#i;
-                if #deg > 0 and  not all(deg#0, a -> a === 0) then
-                    f = map(prevSource,,f);
+                if #deg > 0 and  not all(deg#0, a -> a === 0) then (
+                    f = map(prevSource, (source f) ** (ring f)^(-deg#0),f);
+                    );
                 prevSource = source f;
                 f)
             )

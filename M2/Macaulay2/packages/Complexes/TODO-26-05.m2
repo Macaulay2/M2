@@ -1,5 +1,10 @@
 What do we need to do?  Using Claude to help figure out this.
 
+Things we can do to match old behavior:
+    1. change koszul to be koszulComplex
+    2. use the shiftDegree function, added in commit d8629f8ed4b04
+    3. allow res(Fastnonminimal => true)
+    
 First: I removed: TateOnProducts, VirtualResolutions, LinearTruncations from the =distributed-packages file (temporarily).
 
 The true leaf packages (importing OldChainComplexes but with no dependents) would be the remaining 21:
@@ -8,22 +13,22 @@ x  2. AlgebraicSplines
 x  3. BeginningMacaulay2
 x  4. Benchmark
 x  5. Bruns
-  6. ChainComplexOperations
-  7. HigherCIOperators
-  8. HighestWeights
-  9. Kronecker
-  10. ModuleDeformations
-  11. MonomialIntegerPrograms
-  12. MultiGradedRationalMap
+  6. ChainComplexOperations -- reverseComplex is causing a problem.
+y 7. HigherCIOperators -- uses chainComplex, koszul, ChainComplex
+y 8. HighestWeights -- seems ok now.
+  9. Kronecker -- implements things for GradedModuleMap, uses chainComplex.
+y 10. ModuleDeformations (y: not yet checked in)
+y 11. MonomialIntegerPrograms -- probably ok. But hard to tell until we fix code.
+y 12. MultiGradedRationalMap
   13. NonminimalComplexes
-  14. Parametrization
+y 14. Parametrization -- but doesn't really work without Maple...  So can't tell if it is functional.
   15. RandomComplexes
-  16. RandomCurvesOverVerySmallFiniteFields
-  17. RandomMonomialIdeals
-  18. ResolutionsOfStanleyReisnerRings
-  19. TorAlgebra
-  20. ToricTopology
-  21. TSpreadIdeals
+y 16. RandomCurvesOverVerySmallFiniteFields -- BUT: no tests!
+y 17. RandomMonomialIdeals (but: imports Depth too, which could be setting package back to OldChainComplexes...)
+y 18. ResolutionsOfStanleyReisnerRings
+  19. TorAlgebra -- doesn't work yet, need to get LocalRings switched over.
+y 20. ToricTopology
+y 21. TSpreadIdeals
 
 These should be easy to change, I hope.
 
@@ -101,4 +106,41 @@ Packages that import Depth via PackageImports or PackageExports:
         Quasidegrees, QuadraticIdealExamplesByRoos,
         ResidualIntersections, SCMAlgebras) don't appear to use
         OldChainComplexes directly
-  
+
+At this point, the following still import or export OldChainComplexes      
+
+ | Package                 | Import Type    |
+  |-------------------------|----------------|
+  | BernsteinSato           | PackageExports |
+e | BoijSoederberg          | PackageExports | error: isPure is being used...
+  | ChainComplexExtras      | PackageExports |
+y | CorrespondenceScrolls   | PackageImports |
+  | Depth                   | PackageImports |
+  | DGAlgebras              | PackageExports |
+  | GroebnerStrata          | PackageExports |
+y | HigherCIOperators       | PackageExports |
+y | HyperplaneArrangements  | PackageImports |
+  | Kronecker               | PackageExports |
+y | LexIdeals               | PackageImports |
+  | LinearTruncations       | PackageExports |
+  | LocalRings              | PackageImports |
+y | Matroids                | PackageImports |
+  | MonomialIntegerPrograms | PackageImports |
+e | NCAlgebra               | PackageExports | has error, since I don't have bergman...
+  | NonminimalComplexes     | PackageExports |
+y | Points                  | PackageImports |
+  | PruneComplex            | PackageExports |
+  | RandomComplexes         | PackageExports |
+y | RandomGenus14Curves     | PackageImports |
+y | RandomSpaceCurves       | PackageImports |
+y | SpaceCurves             | PackageImports | (NO tests)
+  | SVDComplexes            | PackageExports |
+  | TateOnProducts          | PackageExports |
+  | TensorComplexes         | PackageExports |
+y | TestIdeals              | PackageImports |
+  | WeylAlgebras            | PackageExports |    
+
+w = working on it.
+y = package installs and checks
+x = checked in
+e = has error in installing or checking.    

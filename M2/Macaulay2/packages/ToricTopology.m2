@@ -29,7 +29,7 @@ newPackage(
 		{Name => "Kumar Sannidhya Shukla", Email => "kshukla5@uwo.ca"}
 	},
 	Keywords => {"Toric Geometry"},
-	PackageImports => { "OldChainComplexes", "SimplicialComplexes" },
+	PackageImports => { "Complexes", "SimplicialComplexes" },
 	Headline => "toric topology"
 )
 

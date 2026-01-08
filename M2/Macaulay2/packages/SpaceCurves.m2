@@ -14,7 +14,7 @@ newPackage(
 	      },
         Headline => "space curves",
 	Keywords => {"Examples and Random Objects"},
-        PackageImports => {"OldChainComplexes"},
+        PackageImports => {"Complexes"},
         DebuggingMode => false,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
@@ -379,7 +379,7 @@ minimalCurveBetti Module := M -> (
 	    continue    
 	)    		
     );
-    betti chainComplex {random(R^1,(target (Q.dd_3)^cols)**R^{-h}),(Q.dd_3)^cols**R^{-h},
+    betti complex {random(R^1,(target (Q.dd_3)^cols)**R^{-h}),(Q.dd_3)^cols**R^{-h},
 	 Q.dd_4**R^{-h}, Q.dd_5**R^{-h}}
 )
 minimalCurveBetti Ideal := I -> minimalCurveBetti raoModule I
