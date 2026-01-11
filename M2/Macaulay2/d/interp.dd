@@ -16,10 +16,10 @@ export setupargv():void := (
      setupconst("environment",toExpr(envp));
      );
 
-fileExitHooks := setupvar("fileExitHooks", Expr(emptyList));
-currentFileName := setupvar("currentFileName", nullE);
-currentPosFile  := dummyPosFile;
-currentFileDirectory := setupvar("currentFileDirectory", toExpr("./"));
+fileExitHooks := setupvarThread("fileExitHooks", Expr(emptyList));
+currentFileName := setupvarThread("currentFileName", nullE);
+threadLocal currentPosFile  := dummyPosFile;
+currentFileDirectory := setupvarThread("currentFileDirectory", toExpr("./"));
 update(err:Error,prefix:string,f:Code):Error := (
      if !err.printed
      then printErrorMessage0(f,prefix + ": " + err.message)
@@ -514,7 +514,7 @@ debugger(f:Frame,c:Code):Expr := (
      ret);
 debuggerpointer = debugger;
 
-currentString := setupvar("currentString", nullE);
+currentString := setupvarThread("currentString", nullE);
 value(e:Expr):Expr := (
      when e
      is q:SymbolClosure do (
