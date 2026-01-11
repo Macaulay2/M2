@@ -224,6 +224,68 @@ void WeylAlgebra::initialize1()
     }
 }
 
+
+
+ring_elem WeylAlgebra::binomial(int top, int bottom) const
+{
+  // Assumption: 0 <= bottom <= top.
+  if (bottom == 0) return K_->from_long(1);
+  if (bottom == 1) return K_->from_long(top);
+
+  const int p = K_->characteristic();  // (or however the coeff ring exposes it)
+
+  // In char p, avoid division by 0 when bottom >= p
+  if (p > 0 && bottom >= p)
+    {
+      ring_elem result = K_->from_long(1);
+
+      int n = top;
+      int k = bottom;
+
+      while (k > 0)
+        {
+          int ni = n % p;
+          int ki = k % p;
+
+          if (ki > ni)
+            {
+              K_->remove(result);
+              return K_->from_long(0);
+            }
+
+          // Safe: 0 <= ki <= ni < p, so denominators 1..(p-1) never hit 0
+          ring_elem term = binomial(ni, ki); // this call will *not* re-enter Lucas
+          ring_elem tmp  = K_->mult(result, term);
+
+          K_->remove(result);
+          K_->remove(term);
+          result = tmp;
+
+          n /= p;
+          k /= p;
+        }
+      return result;
+    }
+
+  // existing code path (works in char 0, and in char p when bottom < p)
+  if (top <= binomtop) return K_->from_long(binomtable[top][bottom]);
+  ring_elem result = K_->from_long(1);
+  for (int a = 0; a < bottom; a++)
+    {
+      ring_elem b = K_->from_long(top - a);
+      ring_elem result1 = K_->mult(result, b);
+      K_->remove(result);
+      K_->remove(b);
+      ring_elem c = K_->from_long(a + 1);
+      result = K_->divide(result1, c);  // exact in char 0; safe in char p if bottom < p
+      K_->remove(c);
+    }
+  return result;
+}
+
+
+
+/*
 ring_elem WeylAlgebra::binomial(int top, int bottom) const
 {
   // This should be located elsewhere
@@ -244,6 +306,7 @@ ring_elem WeylAlgebra::binomial(int top, int bottom) const
     }
   return result;
 }
+*/
 
 ring_elem WeylAlgebra::multinomial(ring_elem c,
                                    const int *top,
