@@ -89,6 +89,10 @@ typedef struct engine_RawRingElementArray_struct * engine_RawRingElementArray;
 typedef engine_RawRingElementArray engine_RawRingElementArrayOrNull;
 struct engine_RawRingElementArray_struct {int len;const struct RingElement * array[];};
 
+typedef struct engine_RawRingElementArrayArray_struct * engine_RawRingElementArrayArray;
+typedef engine_RawRingElementArrayArray engine_RawRingElementArrayArrayOrNull;
+struct engine_RawRingElementArrayArray_struct {int len;engine_RawRingElementArray array[];};
+
 typedef struct engine_RawArrayPair_struct * engine_RawArrayPair;
 typedef engine_RawArrayPair engine_RawArrayPairOrNull;
 struct engine_RawArrayPair_struct BASECLASS {engine_RawMonomialArray monoms;engine_RawRingElementArray coeffs;};
