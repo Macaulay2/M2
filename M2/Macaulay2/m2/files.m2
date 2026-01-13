@@ -447,8 +447,8 @@ runAndEcho = s -> (
     printerr("running: ", cmd);
     run cmd)
 
-makeEmacsPackage = () -> (
-    if run "command -v emacs > /dev/null" != 0 then (
+makeEmacsPackage = emacs -> (
+    if run("command -v " | emacs | " > /dev/null") != 0 then (
 	printerr "warning: emacs not found; cannot install package";
 	return);
     rootdir := temporaryFileName() | "/";
@@ -470,7 +470,7 @@ makeEmacsPackage = () -> (
     pkgfile << "(define-package \"M2\" \"" << version#"VERSION";
     pkgfile << "\" \"Macaulay2 major modes\")" << endl << close;
     runAndEcho("cd", rootdir, "&&", "tar", "-cf", tarfile, pkgname);
-    runAndEcho("emacs", "--batch",
+    runAndEcho(emacs, "--batch",
 	"--eval", "'(package-install-file \"" | rootdir | tarfile | "\")'");)
 
 stripdir := dir -> if dir === "/" then dir else replace("/$","",dir)
@@ -508,7 +508,13 @@ prelim := () -> (
      promptUser = true;
      if prefixDirectory === null then error "can't determine Macaulay 2 prefix (prefixDirectory not set)";
      )
-setupEmacs() := () -> ( prelim(); mungeEmacs(); makeEmacsPackage() )
+
+setupEmacs String := emacs -> (
+    prelim();
+    mungeEmacs();
+    makeEmacsPackage emacs)
+setupEmacs() := () -> setupEmacs "emacs"
+
 setup() := () -> (
      prelim();
      dotprofileFix = concatenate(shHeader, apply(shellfixes, (var,dir,rest) -> fix(var,dir,rest,bashtempl)));
