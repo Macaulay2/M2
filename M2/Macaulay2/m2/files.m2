@@ -301,13 +301,13 @@ supplantFileFile = (tmp,filename,backupq) -> (
      else "file created for initialization text";
      linkFile(tmp,filename);
      removeFile tmp;
-     stderr << "--" << msg << ": " << filename << endl;
+     printerr(msg, ": ", filename);
      )
 
 supplantStringFile = (text,filename,backupq) -> (
      text = replace("/PREFIX/",prefixDirectory,text);
      if fileExists filename and text === get filename then (
-	  stderr << "--initialization text already in file: " << filename << endl;
+	  printerr("initialization text already in file: ", filename);
 	  return;
 	  );
      tmp := filename | ".Macaulay2.tmp";
@@ -336,7 +336,7 @@ mungeFile = (filename, headerline, trailerline, text) -> (
 		    );
 	       newcontents := replace(regexp, insert, oldcontents);
 	       if oldcontents == newcontents then (
-		    stderr << "--initialization text already in file, no changes needed: " << filename << endl;
+		    printerr("initialization text already in file, no changes needed: ", filename);
 		    return false;
 		    );
 	       )
@@ -389,12 +389,6 @@ emacsenvtempl := ///
 ///
 
 dotemacsFix0 = ///
-;; this version will give an error if M2-init.el is not found:
-(load "M2-init")
-
-;; this version will not give an error if M2-init.el is not found:
-;; (load "M2-init" t)
-
 ;; You may comment out the following line with an initial semicolon if you 
 ;; want to use your f12 key for something else.  However, this action
 ;; will be undone the next time you run setup() or setupEmacs().
@@ -443,11 +437,41 @@ shellfixes := {
      ("INFOPATH", currentLayout#"info",":"),
      ("LD_LIBRARY_PATH", currentLayout#"lib","")}
 emacsfixes := {
-     ("load-path", currentLayout#"emacs", emacstempl),
      -- the exec-path fix is not needed, because we exec the shell and ask it to find M2
      -- ("exec-path", currentLayout#"bin", emacstempl),
      ("Info-default-directory-list", currentLayout#"info", emacstempl),
      ("PATH", currentLayout#"bin", emacsenvtempl)}
+
+runAndEcho = s -> (
+    cmd := demark(" ", s);
+    printerr("running: ", cmd);
+    run cmd)
+
+makeEmacsPackage = () -> (
+    if run "command -v emacs > /dev/null" != 0 then (
+	printerr "warning: emacs not found; cannot install package";
+	return);
+    rootdir := temporaryFileName() | "/";
+    pkgname := "M2-" | version#"VERSION";
+    pkgdir := rootdir | pkgname | "/";
+    tarfile := pkgname | ".tar.gz";
+    makeDirectory pkgdir;
+    symbolsfile := first select({
+	    "M2-symbols.el",   -- autotools
+	    "M2-symbols.el.gz" -- cmake
+	    },
+	file -> fileExists(prefixDirectory | currentLayout#"emacs" | file));
+    scan({"M2.el", "M2-mode.el", symbolsfile},
+	file -> copyFile(
+	    prefixDirectory | currentLayout#"emacs" | file,
+	    pkgdir | file, Verbose => true));
+    pkgfile := openOut(pkgdir | "M2-pkg.el");
+    pkgfile << ";; -*- no-byte-compile: t; lexical-binding: nil -*-" << endl;
+    pkgfile << "(define-package \"M2\" \"" << version#"VERSION";
+    pkgfile << "\" \"Macaulay2 major modes\")" << endl << close;
+    runAndEcho("cd", rootdir, "&&", "tar", "-cf", tarfile, pkgname);
+    runAndEcho("emacs", "--batch",
+	"--eval", "'(package-install-file \"" | rootdir | tarfile | "\")'");)
 
 stripdir := dir -> if dir === "/" then dir else replace("/$","",dir)
 fix := (var,dir,rest,templ) -> replace_(":REST",rest) replace_("VAR",var) replace_("DIR",stripdir dir) templ
@@ -484,7 +508,7 @@ prelim := () -> (
      promptUser = true;
      if prefixDirectory === null then error "can't determine Macaulay 2 prefix (prefixDirectory not set)";
      )
-setupEmacs() := () -> ( prelim(); mungeEmacs(); )
+setupEmacs() := () -> ( prelim(); mungeEmacs(); makeEmacsPackage() )
 setup() := () -> (
      prelim();
      dotprofileFix = concatenate(shHeader, apply(shellfixes, (var,dir,rest) -> fix(var,dir,rest,bashtempl)));
