@@ -992,7 +992,8 @@ installFun2(a:Expr,args:CodeSequence):Expr := (
 	       when b
 	       is Error do b
 	       is bcd:Sequence do (
-		    if length(bcd) == 2 then (
+		    if length(bcd) == 0 then installMethod(a, eval(args.3))
+		    else if length(bcd) == 2 then (
 			 when bcd.0
 			 is bb:HashTable do
 			 when bcd.1
@@ -1018,7 +1019,7 @@ installFun2(a:Expr,args:CodeSequence):Expr := (
 			 else buildErrorPacket("expected second parameter to be a hash table")
 			 else buildErrorPacket("expected first parameter to be a hash table")
 			 )
-		    else buildErrorPacket("expected 1, 2, 3, or 4 parameter types"))
+		    else buildErrorPacket("expected between 0 and 4 parameter types"))
 	       is bb:HashTable do installMethod(a,bb,eval(args.3))
 	       else buildErrorPacket("expected right hand parameter to be a hash table or sequence"))
 	  else buildErrorPacket("expected adjacency operator ' ' on left"))

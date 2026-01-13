@@ -94,7 +94,7 @@ new Set from VisibleList := Set => (Set, X) -> set' X
 
 -- set operations
 elements Set := List => keys
-installMethod(union, () -> set {})
+union()         := () -> set {}
 union(Set, Set) := Set + Set := Set => (x,y) -> merge(x,y,(i,j)->i)
 
 -- Set ++ Set := Set => (x,y) -> applyKeys(x,i->(0,i)) + applyKeys(y,j->(1,j))

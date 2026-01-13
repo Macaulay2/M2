@@ -484,8 +484,8 @@ prelim := () -> (
      promptUser = true;
      if prefixDirectory === null then error "can't determine Macaulay 2 prefix (prefixDirectory not set)";
      )
-installMethod(setupEmacs, () -> ( prelim(); mungeEmacs(); ))
-installMethod(setup, () -> (
+setupEmacs() := () -> ( prelim(); mungeEmacs(); )
+setup() := () -> (
      prelim();
      dotprofileFix = concatenate(shHeader, apply(shellfixes, (var,dir,rest) -> fix(var,dir,rest,bashtempl)));
      dotloginFix = concatenate(shHeader,apply(shellfixes, (var,dir,rest) -> fix(var,dir,rest,cshtempl)));
@@ -505,7 +505,7 @@ installMethod(setup, () -> (
      -- csh and tcsh:
      mungeFile("~/.login",startToken,endToken,M2loginRead) or
      -- emacs:
-     mungeEmacs(); ))
+     mungeEmacs(); )
 
 scanLines = method()
 ifbrk := x -> if x =!= null then break x

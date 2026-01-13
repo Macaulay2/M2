@@ -44,7 +44,7 @@ ZZ.random = opts -> ZZ -> rawRandomZZ opts.Height
 texMath ZZ := toString
 
 gcd = method(Binary => true)
-installMethod(gcd, () -> 0)
+gcd()      := () -> 0
 gcd(ZZ,ZZ) := ZZ => gcd0
 gcd(ZZ,QQ) := QQ => (x,y) -> gcd(x * denominator y, numerator y) / denominator y
 gcd(QQ,ZZ) := QQ => (y,x) -> gcd(x * denominator y, numerator y) / denominator y
@@ -62,7 +62,7 @@ sign Number := sign0
 sign Constant := sign @@ numeric
 
 lcm = method(Binary => true)
-installMethod(lcm, () -> 1)
+lcm()      := () -> 1
 lcm(ZZ,ZZ) := (f,g) -> (
     d := gcd(f, g);
     if d == 0 then 0

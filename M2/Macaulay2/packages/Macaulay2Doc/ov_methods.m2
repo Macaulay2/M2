@@ -350,8 +350,8 @@ document {
      PARA{"Most users will use a different way of installing methods."},
      PARA{
 	  TT "installMethod(M,f)", "     -- installs a function ", TT "f", " as a nullary method
-	  under the name ", TT "M", ".  This is a replacement for the syntax ", "M () := f", ",
-	  which hasn't yet been made to work.  As currently implemented, this is also the same
+	  under the name ", TT "M", ".  This is the same as ", "M() := f", "
+	  if ", TT "M", " is a function.  As currently implemented, this is also the same
 	  as ", TT "nullaryMethods#(1:M) = f", "."
 	  },
      PARA{

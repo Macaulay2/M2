@@ -166,14 +166,7 @@ localSymbols Pseudocode :=
 localSymbols Symbol :=
 localSymbols Dictionary :=
 localSymbols Function := ls
-
--- make this work eventually:
--- localSymbols() := () -> if current === null then ls() else ls current
--- meanwhile: (see also method123())
--- nullaryMethods # (1 : localSymbols) = () -> if current =!= null then ls current else error "not in debugger (i.e., current not set)"
--- also meanwhile:
-installMethod(localSymbols, () -> if current =!= null then ls current else error "not in debugger (i.e., current not set)")
-
+localSymbols() := () -> if current =!= null then ls current else error "not in debugger (i.e., current not set)"
 localSymbols(Type,Symbol) :=
 localSymbols(Type,Dictionary) :=
 localSymbols(Type,Function) :=
