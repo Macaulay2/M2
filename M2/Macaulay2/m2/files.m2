@@ -388,6 +388,17 @@ emacsenvtempl := ///
      (setenv "VAR" "/PREFIX/DIR:$VAR" t))
 ///
 
+emacsfallbacktempl := ///
+;; Check if setupEmacs() successfully installed the M2 emacs package.  If not,
+;; then load it manually.
+(unless (fboundp 'M2)
+  (add-to-list 'load-path "/PREFIX/DIR")
+  ;; this version will give an error if M2-init.el is not found:
+  (load "M2-init"))
+  ;; this version will not give an error if M2-init.el is not found:
+  ;; (load "M2-init" t))
+///
+
 dotemacsFix0 = ///
 ;; You may comment out the following line with an initial semicolon if you 
 ;; want to use your f12 key for something else.  However, this action
@@ -440,7 +451,8 @@ emacsfixes := {
      -- the exec-path fix is not needed, because we exec the shell and ask it to find M2
      -- ("exec-path", currentLayout#"bin", emacstempl),
      ("Info-default-directory-list", currentLayout#"info", emacstempl),
-     ("PATH", currentLayout#"bin", emacsenvtempl)}
+     ("PATH", currentLayout#"bin", emacsenvtempl),
+     ("", currentLayout#"emacs", emacsfallbacktempl)}
 
 runAndEcho = s -> (
     cmd := demark(" ", s);
