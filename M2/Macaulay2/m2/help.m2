@@ -635,6 +635,7 @@ about Type     :=
 about Symbol   :=
 about ScriptedFunctor :=
 about Function := o -> f -> about("\\b" | toString f | "\\b", o)
+about Keyword := o -> f -> about("(?:^| )" | regexQuote toString f | "(?:$| )")
 about String   := o -> re -> lastabout = (
     packagesSeen := new MutableHashTable;
     NumberedVerticalList sort join(
