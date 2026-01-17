@@ -2377,6 +2377,28 @@ scanPairs(e:Expr):Expr := (
     else WrongNumArgs(2));
 setupfun("scanPairs", scanPairs);
 
+newMutableListFromZZ(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 2 then (
+	    when a.0
+	    is T:HashTable do (
+		if ancestor(T, mutableListClass) then (
+		    when a.1
+		    is n:ZZcell do (
+			if isInt(n) then (
+			    k := toInt(n);
+			    if k >= 0 then list(T,
+				new Sequence len k do provide nullE, true)
+			    else WrongArg(2, "a nonnegative integer"))
+			else WrongArgSmallInteger(2))
+		    else WrongArgZZ(2))
+		else WrongArg(1, "a type of mutable list"))
+	    else WrongArgHashTable(1))
+	else WrongNumArgs(2))
+    else WrongNumArgs(2));
+installMethod(NewFromS, mutableListClass, ZZClass, newMutableListFromZZ);
+
 nextPrime(e:Expr):Expr := (
      when e
      is x:ZZcell do toExpr(nextPrime(x.v - oneZZ))
