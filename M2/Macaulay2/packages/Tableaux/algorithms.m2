@@ -226,8 +226,7 @@ randomStandardTableau Partition := lam -> (
     T := youngTableau lam;
 
     mu := lam;
-    indexList := {};
-    for i from 1 to n do (
+    indexList := for i from 1 to n list (
         cornerList := positionList(youngTableau mu,isCorner);
         randomIndex := random(#cornerList);
         thePosition := cornerList#randomIndex;
@@ -237,7 +236,7 @@ randomStandardTableau Partition := lam -> (
             if i == rowIndex then mu#i-1 else mu#i
             );
         
-        indexList = indexList | {toIndex(thePosition,T)};
+        toIndex(thePosition,T)
         );
 
     entryList := for i from 0 to #indexList - 1 list (n - position(indexList, theIndex -> theIndex == i));
@@ -292,16 +291,15 @@ allSubPartitions (Partition,Partition) := (lam,mu) -> (
 
     if hasNegativeRow T then return Bag {};
 
-    ans := {toList mu};
-
+    ans := new MutableList from {toList mu};
     for rowIndex in rowRange T do (
-        tempList := flatten for thePartition in ans list (
-             for j from 1 to lam#rowIndex-mu#rowIndex list (
-                if rowIndex >= 1 and thePartition#rowIndex + j > thePartition#(rowIndex-1) then continue;
-                ((toList(rowIndex:0))|{j}|(toList((#lam-rowIndex-1):0))) + thePartition
+        for thePartition in ans do (
+            for j from 1 to lam#rowIndex-mu#rowIndex do (
+                if rowIndex > 0 and thePartition#rowIndex + j > thePartition#(rowIndex-1) then continue;
+                ans#(#ans) = (((toList(rowIndex:0))|{j}|(toList((#lam-rowIndex-1):0))) + thePartition);
                 )
             );
-        ans = ans | tempList;
+        
         );
     
     
@@ -316,18 +314,16 @@ toPartitionChain YoungTableau := T -> (
     minEntry := min entries T;
     maxEntry := max entries T;
 
-    ans := {mu};
-    
-    for i from minEntry to maxEntry do (
-        lamPrev := ans#-1;
-        
+    lamPrev := mu;
+    ans := for i from minEntry to maxEntry list (
         lamNew := new Partition from for rowIndex in rowRange T list (
             lamPrev#rowIndex + number(rowEntries(T,rowIndex), theBox -> theBox == i)
             );
-
-        ans = append(ans, lamNew);
+        
+        lamPrev = lamNew;
+        lamNew
         );
 
-    --apply(ans, trim)
-    toSequence ans
+    --toSequence apply({mu}|ans, trim)
+    toSequence({mu}|ans)
     )
