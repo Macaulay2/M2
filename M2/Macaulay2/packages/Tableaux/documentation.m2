@@ -535,7 +535,7 @@ Outputs
       a net of objects in L, stacked horizontally and justified at the top.
 Description
   Text
-    If L is a list of objects $A_1,A_2,\ldots,A_n$, then this concatentates their nets horizontally.
+    If L is a list of objects $A_1,A_2,\ldots,A_n$, then this concatenates their nets horizontally.
   Example
     T1 = youngTableau(new Partition from {6,6,5,3,1}, new Partition from {2,1,1})
     T2 = youngTableau(new Partition from {3,1}, new Partition from {1}, {"a","b","c"})
@@ -1485,7 +1485,7 @@ Outputs
       a net of objects in L, stacked vertically and justified on the left.
 Description
   Text
-    If L is a list of objects $A_1,A_2,\ldots,A_n$, then this concatentates their nets vertically. Note that
+    If L is a list of objects $A_1,A_2,\ldots,A_n$, then this concatenates their nets vertically. Note that
     this concatenates their nets into a single net, whereas @TO verticalConcatenate@ concatenates the
     tableaux themselves into a single tableau.
   Example
@@ -1798,7 +1798,7 @@ Inputs
       a tabloid.
 Outputs
     l:Bag
-      a bagged list of all Young tableaux in the equivelence class T.
+      a bagged list of all Young tableaux in the equivalence class T.
 Description
   Example
     T = tabloid(new Partition from {3,1}, {1,2,3,4})
