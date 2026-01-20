@@ -84,8 +84,11 @@ poincare Module := M -> (
     if (P := computation M) =!= null then return P;
     error("no applicable strategy for computing poincare over ", toString ring M))
 
-addHook((poincare, Module), Strategy => Default, M -> (
-	new degreesRing ring M from rawHilbert raw leadTerm gb presentation M))
+-- Use that the Poincare polynomial of a subquotient module is the difference of the Poincare polynomials of two quotients.
+addHook((poincare, Module), Strategy => Default, M -> (new degreesRing ring M from
+        if M.cache.?minimalPresentation then rawHilbert raw leadTerm gb M.cache.minimalPresentation
+	else if M.cache.?presentation then rawHilbert raw leadTerm gb M.cache.presentation
+	else (rawHilbert raw leadTerm gb relM) - (rawHilbert raw leadTerm gb M)))
 
 -- manually installs the numerator of the reduced Hilbert series for the module
 storefuns#poincare = method()
