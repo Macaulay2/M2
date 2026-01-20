@@ -88,7 +88,7 @@ poincare Module := M -> (
 addHook((poincare, Module), Strategy => Default, M -> (new degreesRing ring M from
         if M.cache.?minimalPresentation then rawHilbert raw leadTerm gb M.cache.minimalPresentation
 	else if M.cache.?presentation then rawHilbert raw leadTerm gb M.cache.presentation
-	else (rawHilbert raw leadTerm gb relM) - (rawHilbert raw leadTerm gb M)))
+	else (rawHilbert raw leadTerm gb relations M) - (rawHilbert raw leadTerm gb M)))
 
 -- manually installs the numerator of the reduced Hilbert series for the module
 storefuns#poincare = method()
