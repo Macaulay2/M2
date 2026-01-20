@@ -129,7 +129,7 @@ normalForm(RingElement, RingElement) := (f, g) -> (
     R := rationalWeylAlgebra(D);
     if R =!= ring f then f = sub(f, R);
     f0 := leadTerm(f);
-    g0 := leadTerm(g);
+    g0 := leadTerm(sub(g,R));
     --fexp := unique exponents f0;
     --gexp := unique apply(exponents g0, e -> last pack_n e);
     fexp := (exponents f0)#0;

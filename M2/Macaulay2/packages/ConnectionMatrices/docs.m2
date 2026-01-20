@@ -222,6 +222,7 @@ Description
     gaugeTransform(M, A, D)
   Text
     It is also possible to compute the gauge transform of a system of connection matrices containing parameters.
+    See line i15 of @TO2{"Cosmological correlator for the 2-site chain", "Cosmological correlator for the 2-site chain"}@ for an example.
 SeeAlso
   gaugeMatrix
   "Cosmological correlator for the 2-site chain"
