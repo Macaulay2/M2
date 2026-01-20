@@ -320,6 +320,11 @@ Description
   Example
     D = makeWeylAlgebra(frac(QQ[ϵ])[x]);
     I = ideal(x*(1-x)*dx^2 - ϵ*(1-x)*dx);
+    A = pfaffianSystem(I)
+    isEpsilonFactorized(A, ϵ)
+  Text
+    The property of being epsilon factorizable depends on a choice of basis.
+  Example
     A = pfaffianSystem(I, {1_D, 1/ϵ*dx})
     isEpsilonFactorized(A, ϵ)
 SeeAlso
@@ -356,6 +361,12 @@ Description
     A = pfaffianSystem I;
     assert isIntegrable(D, A)
     assert isIntegrable A
+  Text
+    A trivial example of a non integrable system comes from non-commuting constant matrices.
+  Example
+    R = baseFractionField(D);
+    A = {sub(matrix{{1,1},{1,1}},R),sub(matrix{{1,0},{0,-1}},R)};
+    isIntegrable(D,A)
 Caveat
   The matrices need to be defined over the @TO2{baseFractionField, "base fraction field"}@ of $D_n$.
 SeeAlso
