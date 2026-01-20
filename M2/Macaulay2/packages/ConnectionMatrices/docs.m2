@@ -15,7 +15,8 @@ Node
       The systematic computation of connection matrices requires Gröbner basis computations in the rational Weyl algebra
       $$ R_n=\CC(x_1,\ldots,x_n)\langle \partial_1,\ldots,\partial_n \rangle. $$
 
-      The theoretical foundations of our algorithms is described the companion paper to this package, available at @arXiv "2504.01362"@.
+      The theoretical foundations of our algorithms are described in the companion paper to this package, available at @arXiv "2504.01362"@.
+      The package is available with Macaulay2, version 1.25.05 and newer.
     Tree
       :Working with the rational Weyl algebra
         normalForm
