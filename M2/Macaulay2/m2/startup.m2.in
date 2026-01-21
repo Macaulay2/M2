@@ -562,9 +562,9 @@ if firstTime then processCommandLineOptions 1
 srcversion = M2version()
 
 if firstTime and not nobanner then (
-     if topLevelMode === TeXmacs then stderr << TeXmacsBegin << "verbatim:";
-     stderr << "Macaulay2, version " << srcversion << newline << flush;
-     if topLevelMode === TeXmacs then stderr << TeXmacsEnd << flush)
+     if topLevelMode === TeXmacs then << TeXmacsBegin << "verbatim:";
+     << "Macaulay2, version " << srcversion << newline << flush;
+     if topLevelMode === TeXmacs then << TeXmacsEnd << flush)
 
 scan(commandLine, arg -> if arg === "-q" then noinitfile = true)
 homeDirectory = getenv "HOME" | "/"
