@@ -96,6 +96,7 @@ export sethash(x:List):List := (
      x);
 export copy(v:Sequence):Sequence := (
      new Sequence len length(v) do foreach i in v do provide i);
+export elements(x:List):Sequence := if x.Mutable then copy(x.v) else x.v;
 export reverse(a:Sequence):Sequence := (
      n := length(a);
      new Sequence len n do (n = n-1; provide a.n));

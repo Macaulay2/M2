@@ -177,7 +177,7 @@ newClassParent(e:Expr,classs:HashTable,parent:HashTable,returned:bool):Expr := (
 	       if parent != nothingClass
 	       then buildErrorPacket("expected Nothing as parent for list")
 	       else if o.Class == classs then e
-	       else if classs == sequenceClass then Expr(o.v)
+	       else if classs == sequenceClass then Expr(elements(o))
 	       else (
 	       	    is_mutable := ancestor(classs,mutableListClass);
 		    list(classs,
@@ -221,7 +221,7 @@ newClass(e:Expr,classs:HashTable,returned:bool):Expr := (
 	  basicType := basictype(classs);
 	  if basicType == basicListClass || basicType == numberClass then (
 	       if o.Class == classs then e
-	       else if classs == sequenceClass then Expr(o.v)
+	       else if classs == sequenceClass then Expr(elements(o))
 	       else (
 		    is_mutable := ancestor(classs,mutableListClass);
 		    list(classs,
