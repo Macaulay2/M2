@@ -517,7 +517,8 @@ examine(e:Expr):Expr := (
 	  << "basic list:" << endl
 	  << " length: " << length(s.v) << endl
 	  << " hash: " << s.hash << endl
-	  << " mutable: " << s.Mutable << endl;
+	  << " mutable: " << s.Mutable << endl
+	  << " capacity: " << s.capacity << endl;
 	  nullE)
      is s:SpecialExpr do (
 	  stdIO
