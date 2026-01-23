@@ -99,7 +99,7 @@ export seq(e:Expr):Expr := Expr(Sequence(e));
 export seq(e:Expr,f:Expr):Expr := Expr(Sequence(e,f));
 export seq(e:Expr,f:Expr,g:Expr):Expr := Expr(Sequence(e,f,g));
 export list(classs:HashTable,a:Sequence,is_mutable:bool):Expr := (
-     r := List(classs,a,hash_t(0),is_mutable);
+     r := List(classs,a,hash_t(0),is_mutable, length(a));
      Expr(sethash(r)));
 export list(classs:HashTable,a:Sequence):Expr := list(classs, a, false);
 export list(a:Sequence):Expr := list(listClass, a);
