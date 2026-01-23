@@ -617,7 +617,7 @@ remove(x:List,i:int):Expr:= (
 	  if i < 0 then i = n + i;
 	  ret := x.v.i;
 	  for j from i to n - 2 do x.v.j = x.v.(j + 1);
-	  Ccode(void, x.v, "->len = ", n - 1);
+	  changeLength(x, n - 1);
 	  ret));
 
 removefun(e:Expr):Expr := (

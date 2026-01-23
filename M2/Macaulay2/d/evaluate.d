@@ -107,6 +107,17 @@ export storeInDictionary(dc:DictionaryClosure,i:Code,rhs:Code):Expr := (
      is Error do ival
      else printErrorMessageE(i,"expected a string"));
 
+export changeLength(x:List, newlen:int):void := (
+    newcapacity := max(4, x.capacity);
+    while newcapacity < newlen do newcapacity = 2 * newcapacity;
+    while newcapacity > max(4, 4 * newlen) do newcapacity = newcapacity / 2;
+    if newcapacity != x.capacity then (
+	x.v = new Sequence len newcapacity do (
+	    foreach y in x.v do provide y;
+	    while true do provide nullE);
+	x.capacity = newcapacity);
+    Ccode(void, x.v, "->len = ", newlen));
+
 assignvector(m:List,i:Code,rhs:Code):Expr := (
      x := m.v;
      ival := eval(i);
@@ -119,13 +130,8 @@ assignvector(m:List,i:Code,rhs:Code):Expr := (
 	       if k < 0 then return printErrorMessageE(i,"negative subscript out of bounds 0 .. "+tostring(length(x)-1));
 	       val := eval(rhs);
 	       when val is Error do return val else (
-		    if k >= length(x) then (
-			 x = new Sequence len k+1 do (
-			      foreach t in x do provide t;
-			      while true do provide nullE;
-			      );
-			 m.v = x; );
-	       	    x.k = val;
+		    if k >= length(x) then changeLength(m, k + 1);
+	       	    m.v.k = val;
 	       	    val))
 	  else printErrorMessageE(i,"expected small integer"))
      is Error do ival
