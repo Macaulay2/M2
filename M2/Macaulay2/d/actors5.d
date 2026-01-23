@@ -60,15 +60,13 @@ prependfun(e:Expr):Expr := (
 			 foreach t in y do provide t;
 			 )		    
 		    )
-	       is y:List do (
-		    r := List(
+	       is y:List do list(
 			 y.Class,
 			 new Sequence len length(y.v) + 1 do (
 			      provide elem;
 			      foreach t in y.v do provide t;
 			      ),
-			 hash_t(0),y.Mutable);
-		    Expr(sethash(r,y.Mutable)))
+			 y.Mutable)
 	       else WrongArg(1+1,"a list or sequence")
 	       )
 	  )
@@ -90,15 +88,13 @@ appendfun(e:Expr):Expr := (
 			 provide elem;
 			 )		    
 		    )
-	       is y:List do (
-		    r := List(
+	       is y:List do list(
 			 y.Class,
 			 new Sequence len length(y.v) + 1 do (
 			      foreach t in y.v do provide t;
 			      provide elem;
 			      ),
-			 hash_t(0),y.Mutable);
-		    Expr(sethash(r,y.Mutable)))
+			 y.Mutable)
 	       else WrongArg(0+1,"a list or sequence")
 	       )
 	  )
@@ -1644,7 +1640,7 @@ setupfun("isGlobalSymbol",isGlobalSymbol);
 --      else WrongNumArgs(0));
 -- setupfun("history",history);
 
-listFrame(s:Sequence):Expr := Expr(List(mutableListClass, s, nextHash(), true));	  
+listFrame(s:Sequence):Expr := list(mutableListClass, s, true);
 listFrame(f:Frame):Expr := if f.frameID == 0 then listFrame(emptySequence) else listFrame(f.values); -- refuse to defeat the protection of global variables
 frame(e:Expr):Expr := (
      when e
