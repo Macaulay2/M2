@@ -972,7 +972,7 @@ export (x:string) => (y:constcharstar) ::= x => tostring(y);
 
 export copy(e:Expr):Expr := (
      when e
-     is a:List do if a.Mutable then Expr(copy(a)) else e
+     is a:List do if a.Mutable then list(a.Class, copy(a.v), a.Mutable) else e
      is o:HashTable do if o.Mutable then Expr(copy(o)) else e
      else e);
 setupfun("copy",copy);
