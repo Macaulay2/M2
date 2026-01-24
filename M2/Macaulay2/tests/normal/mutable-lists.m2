@@ -11,6 +11,14 @@ for i to 2 do assert Equation(M''#i, 2*(i + 1))
 M''#0 = 5
 assert Equation(M''#0, 5)
 
+-- ensure that we clean up when removing elements
+x = new MutableList from {1, 2, 3, 4}
+assert Equation(remove(x, 0), 1)
+assert Equation(toList x, {2, 3, 4})
+assert Equation(remove(x, 2), 4)
+x#3 = 5
+assert Equation(toList x, {2, 3, null, 5}) -- 4 should be gone
+
 -- growing a list must not affect sequences made from it, even when
 -- there is spare capacity to grow in place
 grow = () -> (y := new MutableList; for i to 4 do y##y = i; y)
