@@ -115,7 +115,8 @@ export changeLength(x:List, newlen:int):void := (
 	x.v = new Sequence len newcapacity do (
 	    foreach y in x.v do provide y;
 	    while true do provide nullE);
-	x.capacity = newcapacity);
+	x.capacity = newcapacity)
+    else for i from newlen to length(x.v) - 1 do x.v.i = nullE;
     Ccode(void, x.v, "->len = ", newlen));
 
 assignvector(m:List,i:Code,rhs:Code):Expr := (
