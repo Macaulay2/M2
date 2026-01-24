@@ -294,16 +294,36 @@ document {
     SeeAlso => {IndexedVariable}
     }
 
-document {
-     Key => {size, (size, RingElement)},
-     Headline => "the size of an object",
-     TT "size x", " -- returns the size of ", TT "x", " which usually gives
-     a rough indication of memory space required to store the object ", TT "x", ".",
-     PARA{},
-     "For a polynomial, the size is the number of terms.",
-     PARA{},
-     "This function should be replaced by something more generally useful."
-     }
+doc ///
+  Key
+     size
+    (size, RingElement)
+    (size, BasicList)
+  Usage
+    size x
+  Headline
+    the size of an object
+  Description
+    Text
+      @M2CODE "size x"@ returns the size of @VAR "x"@, which usually gives
+      a rough indication of memory space required to store it.
+
+      For a polynomial, the size is the number of terms.
+    Example
+      R = QQ[x,y,z,w]
+      f = z^2 - y*w
+      size f
+    Text
+      For lists, @M2CODE "size"@ reports the capacity of the underlying
+      sequence, which may exceed the number of elements when the list is
+      mutable.  This reflects the amount of memory currently allocated to allow
+      efficient growth without reallocating on every insertion.
+    Example
+      x = new MutableList
+      x#5 = 2;
+      #x
+      size x
+///
 
 document {
     Key => {
