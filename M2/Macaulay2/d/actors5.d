@@ -528,6 +528,13 @@ examine(e:Expr):Expr := (
      else WrongArg("(), a function, a symbol, or a basic list"));
 setupfun("examine",examine);
 
+size(e:Expr):Expr := (
+    when e
+    is x:Sequence do toExpr(length(x))
+    is x:List do toExpr(x.capacity)
+    else WrongArg("a list or sequence"));
+setupfun("size0", size);
+
 numparms(e:Expr):Expr := (
      when e
      is fc:FunctionClosure do toExpr(if fc.model.desc.restargs then -1 else fc.model.desc.numparms)
