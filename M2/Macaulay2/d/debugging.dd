@@ -321,3 +321,121 @@ newError(e:Expr):Expr := (
 	else WrongNumArgs(2))
     else WrongNumArgs(2));
 installMethod(NewFromS, errorClass, thingClass, newError);
+
+------------
+-- parse --
+-----------
+
+toExpr(t:Token):Expr := list(toExpr("Token"), toExpr(t.word.name));
+export toExpr(e:ParseTree):Expr := (
+    when e
+    is t:Token do toExpr(t)
+    is p:Parentheses do list(
+	toExpr("Parentheses"),
+	toExpr(p.left),
+	toExpr(p.contents),
+	toExpr(p.right))
+    is p:EmptyParentheses do list(
+	toExpr("EmptyParentheses"),
+	toExpr(p.left),
+	toExpr(p.right))
+    is a:Adjacent do list(
+	toExpr("Adjacent"),
+	toExpr(a.lhs),
+	toExpr(a.rhs))
+    is a:Arrow do list(
+	toExpr("Arrow"),
+	toExpr(a.lhs),
+	toExpr(a.rhs))
+    is q:Quote do list(
+	toExpr("Quote"),
+	toExpr(q.rhs))
+    is q:GlobalQuote do list(
+	toExpr("GlobalQuote"),
+	toExpr(q.rhs))
+    is q:ThreadQuote do list(
+	toExpr("ThreadQuote"),
+	toExpr(q.rhs))
+    is q:LocalQuote do list(
+	toExpr("LocalQuote"),
+	toExpr(q.rhs))
+    is u:Unary do list(
+	toExpr("Unary"),
+	toExpr(u.Operator),
+	toExpr(u.rhs))
+    is b:Binary do list(
+	toExpr("Binary"),
+	toExpr(b.lhs),
+	toExpr(b.Operator),
+	toExpr(b.rhs))
+    is p:Postfix do list(
+	toExpr("Postfix"),
+	toExpr(p.lhs),
+	toExpr(p.Operator))
+    is i:IfThen do list(
+	toExpr("IfThen"),
+	toExpr(i.predicate),
+	toExpr(i.thenClause))
+    is i:IfThenElse do list(
+	toExpr("IfThenElse"),
+	toExpr(i.predicate),
+	toExpr(i.thenClause),
+	toExpr(i.elseClause))
+    is t:Try do list(
+	toExpr("Try"),
+	toExpr(t.primary))
+    is t:TryThen do list(
+	toExpr("TryThen"),
+	toExpr(t.primary),
+	toExpr(t.sequel))
+    is t:TryThenElse do list(
+	toExpr("TryThenElse"),
+	toExpr(t.primary),
+	toExpr(t.sequel),
+	toExpr(t.alternate))
+    is t:TryElse do list(
+	toExpr("TryElse"),
+	toExpr(t.primary),
+	toExpr(t.alternate))
+    is t:TryThenDo do list(Sequence(
+	    toExpr("TryThenDo"),
+	    toExpr(t.primary),
+	    toExpr(t.sequel),
+	    toExpr(t.variable),
+	    toExpr(t.doClause)))
+    is t:TryDo do list(
+	toExpr("TryDo"),
+	toExpr(t.primary),
+	toExpr(t.variable),
+	toExpr(t.doClause))
+    is c:Catch do list(
+	toExpr("Catch"),
+	toExpr(c.primary))
+    is w:WhileDo do list(
+	toExpr("WhileDo"),
+	toExpr(w.predicate),
+	toExpr(w.doClause))
+    is w:WhileListDo do list(
+	toExpr("WhileListDo"),
+	toExpr(w.predicate),
+	toExpr(w.listClause),
+	toExpr(w.doClause))
+    is w:WhileList do list(
+	toExpr("WhileList"),
+	toExpr(w.predicate),
+	toExpr(w.listClause))
+    is f:For do list(Sequence(
+	    toExpr("For"),
+	    toExpr(f.variable),
+	    toExpr(f.inClause),
+	    toExpr(f.fromClause),
+	    toExpr(f.toClause),
+	    toExpr(f.whenClause),
+	    toExpr(f.listClause),
+	    toExpr(f.doClause)))
+    is n:New do list(
+	toExpr("New"),
+	toExpr(n.newClass),
+	toExpr(n.newParent),
+	toExpr(n.newInitializer))
+    is dummy do list(toExpr("dummy")));

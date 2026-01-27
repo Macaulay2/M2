@@ -994,6 +994,7 @@ export {
 	"pairs",
 	"parallelApply",
 	"parent",
+	"parse",
 	"part",
 	"partition",
 	"partitions",

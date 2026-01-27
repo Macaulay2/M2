@@ -25,6 +25,7 @@ document {
 	-- TO "currentDirectory",
 	TO "pseudocode",
 	TO "disassemble",
+	TO "parse",
 	TO "frames",
 	TO functionBody,
 	TO dictionary,
