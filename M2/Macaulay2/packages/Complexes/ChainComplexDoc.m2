@@ -72,6 +72,7 @@ doc ///
                 TO (symbol SPACE, RingMap, Complex),
                 TO (symbol **, RingMap, Complex),
                 TO (koszulComplex, Matrix),
+                TO (eagonNorthcottComplex, Matrix),
                 TO (naiveTruncation, Complex, ZZ, ZZ),
                 TO (canonicalTruncation, Complex, ZZ, ZZ),
                 TO (minimalPresentation, Complex),

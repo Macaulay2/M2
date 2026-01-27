@@ -115,9 +115,9 @@ doc ///
      (Fourier,RingElement)
      (Fourier,Ideal)
      (Fourier,Module)
-     (Fourier,ChainComplex)
+     (Fourier,Complex)
       FourierInverse
-     (FourierInverse, ChainComplex)
+     (FourierInverse, Complex)
      (FourierInverse, Ideal)
      (FourierInverse, Matrix)
      (FourierInverse, Module)
@@ -128,10 +128,10 @@ doc ///
     Fourier A
     FourierInverse A
    Inputs
-     A:{Matrix, RingElement, Ideal, ChainComplex}
+     A:{Matrix, RingElement, Ideal, Complex}
        over the Weyl algebra
    Outputs
-     :{Matrix, RingElement, Ideal, ChainComplex}
+     :{Matrix, RingElement, Ideal, Complex}
        the Fourier transform of @TT "A"@ as a matrix, function, ideal, or chain complex over the Weyl algebra
    Description
     Text
@@ -147,9 +147,9 @@ doc ///
       Fourier L
       I = ideal(8*x*y*dy^3+y^5, dx^7+5)
       Fourier I
-      C = chainComplex{matrix{{x*dx, y^2+dx}},matrix{{dx*dy},{y^2*dy^3}}}
-      FC = Fourier C
-      FC.dd
+      --C = chainComplex{matrix{{x*dx, y^2+dx}},matrix{{dx*dy},{y^2*dy^3}}}
+      --FC = Fourier C
+      --FC.dd
    SeeAlso
      WeylAlgebra
 ///
@@ -185,7 +185,7 @@ doc ///
      Dtransposition
      (Dtransposition,Matrix)
      (Dtransposition,Ideal)
-     (Dtransposition,ChainComplex)
+     (Dtransposition,Complex)
      (Dtransposition,RingElement)
    Headline
      standard transposition for Weyl algebra

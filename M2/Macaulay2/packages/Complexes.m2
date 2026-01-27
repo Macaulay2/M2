@@ -36,6 +36,7 @@ export {
     "connectingTorMap",
     "constantStrand",
     "cylinder",
+    "eagonNorthcottComplex",
     "epicResolutionMap",
     "freeResolution",
     "homotopyMap",
