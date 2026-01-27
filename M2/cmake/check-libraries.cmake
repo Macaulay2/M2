@@ -141,7 +141,7 @@ find_package(GMP	6.0.0 REQUIRED)
 # but Ubuntu only has 3.4.0 right now, so we should support it
 # For Eigen 5.0 and later, the way the version checking is setup, specifying
 # a version of 3.4.0 or similar won't find version 5.0
-find_package(Eigen3	3.4.0 PATHS ${M2_HOST_PREFIX})
+find_package(Eigen3	3.4.0 PATHS ${M2_HOST_PREFIX} QUIET)
 if(NOT EIGEN3_FOUND)
   find_package(Eigen3	3.4.1...5.0 PATHS ${M2_HOST_PREFIX})
   # FindEigen3 doesn't set EIGEN3_FOUND, and instead we should check
