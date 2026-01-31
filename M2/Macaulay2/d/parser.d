@@ -404,13 +404,13 @@ export unaryglobal(quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):Pars
 export unarythread(quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      arg := gettoken(file,false);
      if arg == errorToken then return errorTree;
-     if arg.word.typecode != TCid then makeParseError(arg, "syntax error: " + arg.word.name);
+     if arg.word.typecode != TCid then return makeParseError(arg, "syntax error: " + arg.word.name);
      r := ParseTree(ThreadQuote(quotetoken,arg));
      accumulate(r,file,prec,obeylines));
 export unarylocal(quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      arg := gettoken(file,false);
      if arg == errorToken then return errorTree;
-     if arg.word.typecode != TCid then makeParseError(arg, "syntax error: " + arg.word.name);
+     if arg.word.typecode != TCid then return makeParseError(arg, "syntax error: " + arg.word.name);
      r := ParseTree(LocalQuote(quotetoken,arg));
      accumulate(r,file,prec,obeylines));
 export unaryif(ifToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
