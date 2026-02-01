@@ -281,7 +281,7 @@ Ring ^ ZZ   := Module => (R, n) -> (
 Ring ^ List := Module => (R, degs) -> (
     if not R.?RawRing then error "non-engine free modules with degrees not implemented yet";
     -- check the args
-    degs = - splice degs;
+    degs = - splice\splice degs;
     degrk := degreeLength R;
     if #degs === 0 then ()
     else if isListOfIntegers degs        then ( if degrk != 1
