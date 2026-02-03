@@ -1506,7 +1506,7 @@ frankNetwork := (P) -> (
     t := (4, 0);
 
     fromSourceEdges := for vertex in P_* list {s, (2, vertex)};
-    comparisonEdges = apply(allRelations P, edge -> {(2, first edge), 
+    comparisonEdges := apply(allRelations P, edge -> {(2, first edge), 
                                                      (3, last edge)});
     toSinkEdges := for vertex in P_* list {(3, vertex), t};
     G := digraph(fromSourceEdges | comparisonEdges | toSinkEdges);
