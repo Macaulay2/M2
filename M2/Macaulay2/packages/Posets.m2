@@ -1481,19 +1481,132 @@ fPolynomial Poset := RingElement => opts -> P -> (
     sum(-1..dim oP, i -> fV#(i+1) * R_0^(i + 1))
     )
 
-greeneKleitmanPartition = method(Options => {symbol Strategy => "antichains"})
+-- This is not exported; it is a helper function for `greeneKleitmanPartition`.
+frankNetwork := (P) -> (
+    -- (Following the notation of Section 8 of [Britz-Fomin, 1999].)
+    -- Essentially, make two copies of V(P), adjoin a source s to one copy and
+    -- a sink t to the other copy. Then form edges (s,x_p) and (x_p,t), as well
+    -- as edges (x_p,y_p') if p >= p' in P.
+    --
+    -- Since we can't compare Symbol == IndexedVariable (e.g., s == x_1), we
+    -- regard this network as a multipartite graph with four parts:
+    --
+    --    Level | Part
+    --    ------------
+    --      1   | source = s
+    --      2   | x_1 .. x_p
+    --      3   | y_1 .. y_p
+    --      4   | sink = t
+    --
+    -- So, we identify each vertex with the label (level, index). For instance, 
+    -- the vertex x_5 corresponds to the vertex (2, 5).
+
+    -- Make the underlying (di)graph of the network.
+    s := (1, 0);
+    t := (4, 0);
+
+    fromSourceEdges := for vertex in P_* list {s, (2, vertex)};
+    comparisonEdges = apply(allRelations P, edge -> {(2, first edge), 
+                                                     (3, last edge)});
+    toSinkEdges := for vertex in P_* list {(3, vertex), t};
+    G := digraph(fromSourceEdges | comparisonEdges | toSinkEdges);
+
+    -- Now, make all edge capacities c(e) equal to 1, with a cost function a(e)
+    -- defined by a(e) = 1 if e = (x_p,y_p); otherwise, a(e) = 0.
+    costFunction := new MutableHashTable from for edge in edges G list edge =>0;
+    for vertex in P_* do costFunction#({(2, vertex), (3, vertex)}) = 1;
+
+    (G, costFunction)
+)
+
+greeneKleitmanPartition = method(Options => {symbol Strategy => "auto"})
 greeneKleitmanPartition Poset := Partition => opts -> P -> (
     if P.cache.?greeneKleitmanPartition then return P.cache.greeneKleitmanPartition;
-    (C, f) := if opts.Strategy === "chains" then (chains P, identity)
-        else if opts.Strategy === "antichains" then (antichains P, conjugate)
-        else error "The option Strategy must either be 'chains' or 'antichains'.";
+    
+    strategy := if opts.Strategy === "auto" then (
+        -- For small posets, chains or antichains is usually quicker.
+        -- Otherwise, Britz-Fomin drastically outperforms.
+        if #P.GroundSet <= 7 then "chains" else "Britz-Fomin"
+    )
+    else if isMember(opts.Strategy, set {"chains", "antichains", "Britz-Fomin"}) then (
+        opts.Strategy
+    )
+    else (
+        error "The option Strategy must be 'auto', 'chains', 'antichains, or 'Britz-Fomin'"
+    );
+
     lambda := {};
-    k := 0;
-    while sum lambda < #P.GroundSet do (
-        lk := max apply(subsets(C, k = k + 1), c -> #unique flatten c);
-        lambda = append(lambda, lk - sum lambda);
+    if isMember(strategy, set {"chains", "antichains"}) then (
+        (C, f) := if opts.Strategy === "chains" then (chains P, identity)
+            else if opts.Strategy === "antichains" then (antichains P, conjugate);
+        k := 0;
+        while sum lambda < #P.GroundSet do (
+            lk := max apply(subsets(C, k = k + 1), c -> #unique flatten c);
+            lambda = append(lambda, lk - sum lambda);
+            );
+        lambda = f new Partition from lambda;
+    )
+    else (
+        -- (Following the notation of Section 7 of [Britz-Fomin, 1999].)
+        -- Initialize for the Ford-Fulkerson algorithm.
+        (G, cost) := frankNetwork P;
+        s := (1, 0);
+        t := (4, 0);
+        capacity := new MutableHashTable from for edge in edges G list edge => 1;
+        flow := new MutableHashTable from for edge in edges G list edge => 0;
+        potential := new MutableHashTable from for vertex in vertices G list vertex => 0;
+
+        -- We need to build the partition step-by-step.
+        lambdaPart := 0;
+        while sum lambda != #P.GroundSet do (
+            -- Ford-Fulkerson algorithm
+            -- Step MC1
+            G' := digraph(vertices G, {});
+            for edge in edges G do (
+                if potential#(last edge) - potential#(first edge) == cost#edge then (
+                    if flow#edge < capacity#edge then (
+                        G' = addEdges'(G', {edge});
+                    ) 
+                    else if flow#edge > 0 then (
+                        G' = addEdges'(G', {reverse edge});
+                    );
+                );
+            );
+            X := set flatten breadthFirstSearch(G', s);
+            if isMember(t, X) then (
+                -- Step MC2a
+                -- Increase the flow along an s-t path in G' by 1.
+                -- NOTE: The choice of path here *should not* matter, but might as 
+                --       well do it by a shortest path, since `findPaths` requires 
+                --       a distance argument.
+                pathsFromStart := findPaths(G', s, distance(G', s, t));
+                shortestPath := first select(pathsFromStart, somePath -> (first somePath == s) and (last somePath == t));
+                shortestPathAsEdges := apply(drop(shortestPath, -1), drop(shortestPath, 1), (u, v) -> {u, v});
+                for edge in shortestPathAsEdges do (
+                    if flow#?edge then (
+                        flow#edge += 1;
+                    )
+                    else (
+                        flow#(reverse edge) -= 1;
+                    );
+                );
+                -- We increased the value of the flow
+                if lambdaPart > 0 then ( lambda = append(lambda, lambdaPart); );
+            ) 
+            else (
+                -- Step MC2b
+                for vertex in vertices G do (
+                    if not isMember(vertex, X) then (
+                        potential#vertex += 1;
+                    );
+                );
+                -- We increased the value of the potential
+                lambdaPart += 1;
+            );
         );
-    P.cache.greeneKleitmanPartition = f new Partition from lambda
+        lambda = new Partition from reverse lambda;
+    );
+    P.cache.greeneKleitmanPartition = lambda
     )
 
 hPolynomial = method(Options => {symbol VariableName => getSymbol "q"})
@@ -5082,12 +5195,14 @@ doc ///
         computes the Greene-Kleitman partition of a poset
     Usage
         l = greeneKleitmanPartition P
+        l = greeneKleitmanPartition(P, Strategy => "auto")
         l = greeneKleitmanPartition(P, Strategy => "chains")
         l = greeneKleitmanPartition(P, Strategy => "antichains")
+        l = greeneKleitmanPartition(P, Strategy => "Britz-Fomin")
     Inputs
         P:Poset
         Strategy=>String
-            either "chains" or "antichains"
+            one of "auto", "chains", "antichains", or "Britz-Fomin"
     Outputs
         l:Partition
             the Greene-Kleitman partition of $P$
@@ -5113,6 +5228,17 @@ doc ///
             partition of $n$ with $1$ part.
         Example
             greeneKleitmanPartition chain 10
+        Text
+            When the Strategy is "auto", for small posets, the strategies 
+            "chains" and "antichains" are used as a brute force search is 
+            performed. For larger posets, a max-flow computation is performed 
+            according to [BF99].
+    References
+        @UL {
+	        {"[BF01] Thomas Britz and Sergey Fomin, ",
+    	    HREF("https://doi.org/10.1006/aima.2000.1966", EM "Finite Posets and Ferrer Shapes"),
+	        ", Adv. Math., 158.1 (2001), pp. 86-127."}
+        }@
     SeeAlso
         chains
         antichains
@@ -6649,8 +6775,7 @@ assert(toString flagfPolynomial B === "6*q_0*q_1*q_2*q_3*q_4*q_5*q_6+6*q_0*q_1*q
 --assert(toString flaghPolynomial B === "q_1+q_2+q_3+q_4+q_5+1")
 assert(toString fPolynomial B === "6*q^7+37*q^6+96*q^5+135*q^4+110*q^3+51*q^2+12*q+1")
 assert(toString hPolynomial B === "5*q+1")
---Removed for time purposes (slow!)
---assert(greeneKleitmanPartition B === new Partition from {7,5})
+assert(greeneKleitmanPartition B === new Partition from {7,5})
 assert(moebiusFunction B === new HashTable from {(1,6) => 1, (24,48) => -1, (48,24) => 0, (1,8) => 0, (1,12) => 0, (32,48) => 0, (48,32) => 0, (1,16) => 0, (1,24) => 0, (48,48) => 1, (1,32) => 0, (96,1) => 0, (96,2) => 0, (96,3) => 0, (4,96) => 0, (96,4) => 0, (96,6) => 0, (8,96) => 0, (96,8) => 0, (12,96) => 0, (96,12) => 0, (16,96) => 1, (96,16) => 0, (1,48) => 0, (24,96) => 0, (96,24) => 0, (96,32) => 0, (32,96) => -1, (2,1) => 0, (2,2) => 1, (2,3) => 0, (2,4) => -1, (6,1) => 0, (2,6) => -1, (6,2) => 0, (6,3) => 0, (2,8) => 0, (6,4) => 0, (6,6) => 1, (6,8) => 0, (2,12) => 1, (96,48) => 0, (48,96) => -1, (6,12) => -1, (2,16) => 0, (6,16) => 0, (2,24) => 0, (6,24) => 0, (1,96) => 0, (2,32) => 0, (6,32) => 0, (2,48) => 0, (6,48) => 0, (96,96) => 1, (3,1) => 0, (3,2) => 0, (3,3) => 1, (3,4) => 0, (3,6) => -1, (3,8) => 0, (3,12) => 0, (3,16) => 0, (3,24) => 0, (2,96) => 0, (3,32) => 0, (6,96) => 0, (3,48) => 0, (4,1) => 0, (4,2) => 0, (4,3) => 0, (4,4) => 1, (8,1) => 0, (8,2) => 0, (4,6) => 0, (8,3) => 0, (8,4) => 0, (4,8) => -1, (12,1) => 0, (12,2) => 0, (8,6) => 0, (12,3) => 0, (12,4) => 0, (8,8) => 1, (4,12) => -1, (16,1) => 0, (12,6) => 0, (16,2) => 0, (16,3) => 0, (12,8) => 0, (8,12) => 0, (16,4) => 0, (4,16) => 0, (16,6) => 0, (8,16) => -1, (12,12) => 1, (16,8) => 0, (24,1) => 0, (24,2) => 0, (24,3) => 0, (24,4) => 0, (12,16) => 0, (4,24) => 1, (16,12) => 0, (24,6) => 0, (24,8) => 0, (8,24) => -1, (16,16) => 1, (32,1) => 0, (32,2) => 0, (32,3) => 0, (3,96) => 0, (24,12) => 0, (32,4) => 0, (12,24) => -1, (4,32) => 0, (32,6) => 0, (24,16) => 0, (8,32) => 0, (32,8) => 0, (16,24) => 0, (32,12) => 0, (12,32) => 0, (24,24) => 1, (32,16) => 0, (16,32) => -1, (48,1) => 0, (48,2) => 0, (48,3) => 0, (48,4) => 0, (4,48) => 0, (48,6) => 0, (24,32) => 0, (32,24) => 0, (8,48) => 1, (48,8) => 0, (12,48) => 0, (48,12) => 0, (32,32) => 1, (48,16) => 0, (16,48) => -1, (1,1) => 1, (1,2) => -1, (1,3) => -1, (1,4) => 0})
 assert(toString rankGeneratingFunction B === "q^6+2*q^5+2*q^4+2*q^3+2*q^2+2*q+1")
 assert(toString zetaPolynomial B == "(1/120)*q^6+(1/12)*q^5+(7/24)*q^4+(5/12)*q^3+(1/5)*q^2")
