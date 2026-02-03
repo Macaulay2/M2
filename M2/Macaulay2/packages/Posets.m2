@@ -1537,8 +1537,8 @@ greeneKleitmanPartition Poset := Partition => opts -> P -> (
 
     lambda := {};
     if isMember(strategy, set {"chains", "antichains"}) then (
-        (C, f) := if opts.Strategy === "chains" then (chains P, identity)
-            else if opts.Strategy === "antichains" then (antichains P, conjugate);
+        (C, f) := if strategy === "chains" then (chains P, identity)
+            else if strategy === "antichains" then (antichains P, conjugate);
         k := 0;
         while sum lambda < #P.GroundSet do (
             lk := max apply(subsets(C, k = k + 1), c -> #unique flatten c);
