@@ -1,4 +1,5 @@
 VERSION = 1.6.14
+SHA256SUM = 1bc340173f93ca4abd30ea962118bd5057fdedf7e79c71d2a0c4cc9569f8b0b1
 TARDIR = 4ti2-$(VERSION)
 
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)

@@ -1,4 +1,5 @@
 VERSION = 0.94m
+SHA256SUM = 70dffdb3369b8704dc75428a1b3c42ab9047b81ce039f12f427e2eb2b1b0dee2
 
 ## I encountered a problem with certificate checking and got around it this way:
 # FETCHER = wget

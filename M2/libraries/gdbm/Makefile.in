@@ -2,6 +2,7 @@ LICENSEFILES = COPYING
 
 URL = https://ftp.gnu.org/gnu/gdbm
 VERSION = 1.24
+SHA256SUM = 695e9827fdf763513f133910bc7e6cfdb9187943a4fec943e57449723d2b8dbf
 
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared --enable-static

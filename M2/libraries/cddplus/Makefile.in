@@ -3,6 +3,7 @@ HOMEPAGE = http://www.ifor.math.ethz.ch/~fukuda/cdd_home/
 # URL = ftp://ftp.ifor.math.ethz.ch/pub/fukuda/cdd/
 URL = https://macaulay2.com/Downloads/OtherSourceCode
 VERSION = 077a
+SHA256SUM = bace5c6c62fc48938b04a7b80fc55935e1bfe56cfb0b80f803842173a40ad616
 TARFILE = cdd+-$(VERSION).tar.gz
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PROGRAMS = cddr+ cddf+
