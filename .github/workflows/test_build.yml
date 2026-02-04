@@ -175,7 +175,8 @@ jobs:
           ../../autogen.sh
           export F77=gfortran-14
           export FC=gfortran-14
-          ../../configure --with-system-gc --with-fplll
+          ../../configure --with-system-gc --with-fplll \
+            --enable-build-libraries=gdbm
 
       - name: Build libraries using Make
         if: matrix.build-system == 'autotools'
