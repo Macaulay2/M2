@@ -2,6 +2,10 @@ VERSION = 5.5.0
 SHA256SUM = f0af6bdd0ebd5871e87ff3ef7737cb5360b1e38181a4e5a8c1236f3476fec3b2
 URL = https://github.com/fplll/fplll/releases/download/$(VERSION)
 
+ifeq (@SHARED@,no)
+CONFIGOPTIONS += --disable-shared
+endif
+
 LICENSEFILES = COPYING
 
 include ../Makefile.library
