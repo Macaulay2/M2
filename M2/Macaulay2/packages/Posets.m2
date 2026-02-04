@@ -5232,7 +5232,7 @@ doc ///
             When the Strategy is "auto", for small posets, the strategies 
             "chains" and "antichains" are used as a brute force search is 
             performed. For larger posets, a max-flow computation is performed 
-            according to [BF99].
+            according to [BF01].
     References
         @UL {
 	        {"[BF01] Thomas Britz and Sergey Fomin, ",
