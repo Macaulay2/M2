@@ -7,6 +7,8 @@ ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared --enable-static
 endif
 
+CONFIGOPTIONS += --without-readline
+
 ifeq ($(VERSION) @host@,1.9.1 x86_64-w64-mingw32)
 PATCHFILE += @abs_srcdir@/patch-1.9.1-mingw64
 endif
