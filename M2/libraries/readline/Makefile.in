@@ -1,14 +1,9 @@
 LICENSEFILES = COPYING
 
-VERSION = 8.2
-SHA256SUM = 3feb7171f16a84ee82ca18a36d7b9be109a52c04f492a053331d7d1095007c35
-PATCHES = 001
+VERSION = 8.3
+SHA256SUM = fe5383204467828cd495ee8d1d3c037a7eba1389c22bc6a041f627976f9061cc
 
-RELAX = yes
-# URL = ftp://ftp.gnu.org/gnu/readline
-# PATCHURL = $(URL)/readline-$(VERSION)-patches
-URL = https://macaulay2.com/Downloads/OtherSourceCode
-PATCHURL = $(URL)
+URL = ftp://ftp.gnu.org/gnu/readline
 
 BUILDTARGET = all -o install-examples
 INSTALLTARGET = install -o install-examples
