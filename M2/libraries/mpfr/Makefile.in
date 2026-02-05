@@ -23,7 +23,6 @@ CONFIGOPTIONS += --disable-thread-safe
 # from a file such as http://www.mpfr.org/mpfr-3.1.2/allpatches and applying them.
 #############################################################################
 
-RELAX = yes
 URL = https://www.mpfr.org/mpfr-$(VERSION)
 
 ifeq (@DEBUG@,yes)
