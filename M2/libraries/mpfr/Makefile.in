@@ -1,7 +1,7 @@
 #############################################################################
 
-VERSION = 4.2.1
-SHA256SUM = 116715552bd966c85b417c424db1bbdf639f53836eb361549d1f8d6ded5cb4c6
+VERSION = 4.2.2
+SHA256SUM = 826cbb24610bd193f36fde172233fb8c009f3f5c2ad99f644d0dea2e16a20e42
 LICENSEFILES = README COPYING.LESSER
 TARFILE = $(LIBNAME)-$(VERSION).tar.gz
 
