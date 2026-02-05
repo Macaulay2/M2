@@ -222,7 +222,6 @@ ExternalProject_Add(build-mpfr
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --with-gmp=${GMP_ROOT}
-                      --disable-thread-safe
                       ${shared_setting}
                       ${assert_setting}
                       CPPFLAGS=${CPPFLAGS}
