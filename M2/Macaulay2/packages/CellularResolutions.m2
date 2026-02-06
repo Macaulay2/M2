@@ -578,6 +578,15 @@ texMath Cell := String => cell -> (
     "\\textrm{Cell of dimension }" | (texMath dim cell) | "\\textrm{ with label }" | (texMath cellLabel cell)
     )
 
+describe CellComplex := Expression => cellComplex -> (
+    d := dim cellComplex;
+    nTotalCells := #(flatten values cells cellComplex);
+    if nTotalCells == 0
+    then Describe "empty cell complex"
+    else (
+        Describe (("Cell complex over ") (describe cellComplex.labelRing)) ("of dimension " | d | " with " | nTotalCells | " total cells")
+    ))
+
 net CellComplex := Net => cellComplex -> (
     if hasAttribute (cellComplex, ReverseDictionary) then return net getAttribute (cellComplex, ReverseDictionary);
     d := dim cellComplex;
@@ -585,10 +594,8 @@ net CellComplex := Net => cellComplex -> (
     if nTotalCells == 0
     then "empty cell complex"
     else (
-        ("Cell complex over " | (net cellComplex.labelRing) | " of dimension " | d | " with " | nTotalCells | " total cells") ||
-        stack(apply(d+1,i -> net cells_i cellComplex)))
-    );
-
+        "Cell complex over " | net cellComplex.labelRing |" of dimension " | d | " with " | nTotalCells | " total cells"
+    ))
 
 texMath CellComplex := String => cellComplex -> (
     if hasAttribute (cellComplex, ReverseDictionary) then return texMath getAttribute (cellComplex, ReverseDictionary);
@@ -597,14 +604,8 @@ texMath CellComplex := String => cellComplex -> (
     if nTotalCells == 0
     then "\\textrm{empty cell complex}"
     else (
-        ("\\textrm{Cell complex over }" | (texMath cellComplex.labelRing) | "\\textrm{ of dimension }" | d | "\\textrm{ with }" | nTotalCells | "\\textrm{ total cells }\n") |
-        "\\left\\{" |
-        "\\begin{array}{l}" |
-        concatenate(apply(d+1,i -> (texMath cells_i cellComplex) | "\\\\")) |
-        "\\end{array}" |
-        "\\right\\}"
-        )
-    );
+        ("\\textrm{Cell complex over }" | (texMath cellComplex.labelRing) | "\\textrm{ of dimension }" | d | "\\textrm{ with }" | nTotalCells | "\\textrm{ total cells }\n")
+    ))
 
 ------------------------
 -- Common cell complexes
@@ -743,7 +744,7 @@ isWellDefined Cell := Boolean => C -> (
     R := ring C.label;
     M := toModule(R,C.label);
     if not isSubmodule M then (
-        if debugLevel > 0 then stderr << "isWellDefined: Expeccted a label describing a submodule" << endl;
+        if debugLevel > 0 then stderr << "isWellDefined: Expected a label describing a submodule" << endl;
         return false;
         );
     --check that the boundary labels are compatible
@@ -787,9 +788,11 @@ load "./CellularResolutions/tests.m2"
 end
 
 restart
-installPackage "CellularResolutions"
+installPackage("CellularResolutions", RerunExamples => true)
 loadPackage "CellularResolutions"
 R = QQ[x]
 texMath newCell({},x^2)
 peek CellularResolutions
 check CellularResolutions
+
+viewHelp "CellularResolutions"

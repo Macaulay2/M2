@@ -1568,6 +1568,37 @@ doc ///
 
 doc ///
     Key
+        (describe,CellComplex)
+    Headline
+        Describes a cell complex or cell
+    Usage
+        describe C
+    Inputs
+        C : {CellComplex, Cell}
+    Outputs
+        : Expression
+    Description
+        Text
+            Unlike @TO (net,CellComplex)@ this version ignores the name from @TO GlobalAssignHook@.
+            Consequently, this method returns a short description of the cell complex regardless of
+            if it has been assigned to a global variable.
+        Example
+            R = QQ[x,y];
+            v1 = newSimplexCell({},x);
+            v2 = newSimplexCell({},y);
+            e1 = newSimplexCell({v1,v2},x);
+            e2 = newSimplexCell({v1,v2},y);
+            f = newCell({(e1,1),(e2,-1)},x*y);
+            describe cellComplex(R,{f})
+            X = cellComplex(R,{f});
+            describe X
+    SeeAlso
+        describe
+        (net, CellComplex)
+///
+
+doc ///
+    Key
         (net,CellComplex)
         (net,Cell)
     Headline
@@ -1582,7 +1613,7 @@ doc ///
         Text
             For cell complexes, this method uses @TO GlobalAssignHook@ to use the name of the cell complex
             if the cell complex is assigned to a global variable.
-            Otherwise the method returns a description of the cell complex and all the cells it contains.
+            Otherwise the method returns a short description of the cell complex.
         Text
             For individual cells, the description contains only the dimension and the label,
             the data of the boundary of the cell is not given in the description.
