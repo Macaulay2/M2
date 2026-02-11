@@ -84,11 +84,15 @@ poincare Module := M -> (
     if (P := computation M) =!= null then return P;
     error("no applicable strategy for computing poincare over ", toString ring M))
 
--- Use that the Poincare polynomial of a subquotient module is the difference of the Poincare polynomials of two quotients.
+-- Use that the Poincare polynomial of a subquotient module M is the difference of the Poincare polynomials of two quotients.
+-- This avoids having to find a presentation of M (unless that has already been done).
 addHook((poincare, Module), Strategy => Default, M -> (
-        if any(select(keys M.cache, Option), o -> o#0 === symbol minimalPresentation)
-        then return poincare minimalPresentation M;
-        hf := if not M.?generators then
+        hf := if any(select(keys M.cache, Option), o -> o#0 === symbol minimalPresentation) then
+                  rawHilbert raw leadTerm gb relations minimalPresentation M
+              -- We cannot just call "poincare minimalPresentation M", because there are cases (such as M free)
+              -- where both M and minimalPresentation M are cached as having a minimal presentation;
+              -- so that would lead to an infinite loop. 
+              else if not M.?generators then
                   rawHilbert raw leadTerm gb relations M
               else if M.cache.?presentation then
                   rawHilbert raw leadTerm gb M.cache.presentation
