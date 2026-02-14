@@ -373,31 +373,48 @@ hilbertSeries ProjectiveHilbertPolynomial := opts -> P -> (
 -- hilbertFunction
 -----------------------------------------------------------------------------
 
-hilbertFunction = method()
+export{
+    -- Symbol
+    "UseHilbertSeries"
+    }
+
+hilbertFunction=method(Options => new OptionTable from {
+	Strategy => Default})
 hilbertFunction(ZZ, Ring)   :=
 hilbertFunction(ZZ, Ideal)  :=
-hilbertFunction(ZZ, Module) := (d, M) -> hilbertFunction({d}, M)
+hilbertFunction(ZZ, Module) := opts -> (d, M) -> hilbertFunction({d}, M, opts)
 
-hilbertFunction(List, Ring)   := (L, R) -> hilbertFunction(L, module R)
-hilbertFunction(List, Ideal)  :=
-hilbertFunction(List, Module) := (L, M) -> (
-    -- computes the Hilbert series to a sufficiently high order and
-    -- returns the desired coefficient, thus it is cached by hilbertSeries
+hilbertFunction(List, Ring)   := opts -> (L, R) -> hilbertFunction(L, module R, opts)
+hilbertFunction(List, Ideal)  := opts -> (L, I) -> hilbertFunction(L, cokernel generators I, opts)
+hilbertFunction(List, Module) := opts -> (L, M) -> (
     R := ring M;
     if not all(L, i -> instance(i, ZZ)) then error "hilbertFunction: expected degree to be an integer or list of integers";
     if #L =!= degreeLength R            then error "hilbertFunction: degree length mismatch";
     if heft R === null                  then error "hilbertFunction: ring has no heft vector";
     --
-    HF := runHooks((hilbertFunction, List, Module), (L, M));
+    HF := runHooks((hilbertFunction, List, Module), (opts, L, M), Strategy => opts.Strategy);
     if HF =!= null then return HF;
     error("no applicable strategy for computing Hilbert function over ", toString R))
 
-addHook((hilbertFunction, List, Module), Strategy => Default, (L, M) -> (
+-- computes the Hilbert series to a sufficiently high order and
+-- returns the desired coefficient, thus it is cached by hilbertSeries
+addHook((hilbertFunction, List, Module), Strategy => UseHilbertSeries, (opts, L, M) -> (
     h := heft ring M;
     f := hilbertSeries(M, Order => 1 + sum(h, L, times));
     U := monoid ring f;
     coefficient(U_L, f)))
 
+-- When a module is given as a subquotient, M = N1/N2 with N2 < N1 < free module F,
+-- we use that hilbertFunction(d, M) = hilbertFunction(d, F/N2) - hilbertFunction(d, F/N1).
+-- Also, we do this by finding a basis for F/N2 and F/N1 in degree d, rather than computing the whole Hilbert series.
+addHook((hilbertFunction, List, Module), Strategy => Default, (opts, L, M) -> (
+	if any(select(keys M.cache, Option), o -> o#0 === symbol minimalPresentation) then
+	rank source basis(L, minimalPresentation M)
+	else if not M.?generators then rank source basis(L, M)
+	else if M.cache.?presentation then rank source basis(L, cokernel presentation M)
+	else (rank source basis(L, cokernel relations M)) - (rank source basis(L, cokernel (generators M|relations M)))))
+
 hilbertFunction Ring   :=
 hilbertFunction Ideal  :=
-hilbertFunction Module := M -> d -> hilbertFunction(d, M)
+hilbertFunction Module := opts -> M -> d -> hilbertFunction(d, M, opts)
+
