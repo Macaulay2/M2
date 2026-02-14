@@ -350,7 +350,7 @@ hilb_comp::hilb_comp(const PolynomialRing *RR, const Matrix *m)
       this_comp(0),
       n_components(m->n_rows()),
       current(nullptr),
-      part_table(S->n_vars(), mi_stash)
+      part_table(std::max(1, S->n_vars()), mi_stash)
 {
   assert(D == R->getMonoid());
   one = R->getCoefficientRing()->from_long(1);
