@@ -373,7 +373,7 @@ hilbertSeries ProjectiveHilbertPolynomial := opts -> P -> (
 -- hilbertFunction
 -----------------------------------------------------------------------------
 
-protect symbol UseHilbertSeries
+protect symbol Basis
 
 hilbertFunction=method(Options => new OptionTable from {
 	Strategy => Default})
@@ -393,23 +393,26 @@ hilbertFunction(List, Module) := opts -> (L, M) -> (
     if HF =!= null then return HF;
     error("no applicable strategy for computing Hilbert function over ", toString R))
 
--- computes the Hilbert series to a sufficiently high order and
--- returns the desired coefficient, thus it is cached by hilbertSeries
-addHook((hilbertFunction, List, Module), Strategy => UseHilbertSeries, (opts, L, M) -> (
-    h := heft ring M;
-    f := hilbertSeries(M, Order => 1 + sum(h, L, times));
-    U := monoid ring f;
-    coefficient(U_L, f)))
-
 -- When a module is given as a subquotient, M = N1/N2 with N2 < N1 < free module F,
--- we use that hilbertFunction(d, M) = hilbertFunction(d, F/N2) - hilbertFunction(d, F/N1).
+-- Strategy => Base uses that hilbertFunction(d, M) = hilbertFunction(d, F/N2) - hilbertFunction(d, F/N1).
 -- Also, we do this by finding a basis for F/N2 and F/N1 in degree d, rather than computing the whole Hilbert series.
-addHook((hilbertFunction, List, Module), Strategy => Default, (opts, L, M) -> (
+-- This may or may not be faster than the default strategy, but it should be at least as fast as "rank source basis(d, M)"
+-- in essentially all cases, and faster than that when M was defined as a subquotient module.
+-- If a presentation or minimal presentation for M has already been computed, we use that.
+addHook((hilbertFunction, List, Module), Strategy => Base, (opts, L, M) -> (
 	if any(select(keys M.cache, Option), o -> o#0 === symbol minimalPresentation) then
 	rank source basis(L, minimalPresentation M)
 	else if not M.?generators then rank source basis(L, M)
 	else if M.cache.?presentation then rank source basis(L, cokernel presentation M)
 	else (rank source basis(L, cokernel relations M)) - (rank source basis(L, cokernel (generators M|relations M)))))
+
+-- computes the Hilbert series to a sufficiently high order and
+-- returns the desired coefficient, thus it is cached by hilbertSeries
+addHook((hilbertFunction, List, Module), Strategy => Default, (opts, L, M) -> (
+    h := heft ring M;
+    f := hilbertSeries(M, Order => 1 + sum(h, L, times));
+    U := monoid ring f;
+    coefficient(U_L, f)))
 
 hilbertFunction Ring   :=
 hilbertFunction Ideal  :=
