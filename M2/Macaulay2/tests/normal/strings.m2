@@ -89,3 +89,4 @@ assert Equation(format(ascii(0..31) | "\"\\"),
 T = new SelfInitializingType of String
 assert Equation(net T "foo", "foo")
 assert Equation(format T "foo", "\"foo\"")
+assert Equation(value T "5", 5)
