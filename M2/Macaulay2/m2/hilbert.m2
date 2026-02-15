@@ -373,6 +373,8 @@ hilbertSeries ProjectiveHilbertPolynomial := opts -> P -> (
 -- hilbertFunction
 -----------------------------------------------------------------------------
 
+protect symbol UseHilbertSeries
+
 hilbertFunction=method(Options => new OptionTable from {
 	Strategy => Default})
 hilbertFunction(ZZ, Ring)   :=
