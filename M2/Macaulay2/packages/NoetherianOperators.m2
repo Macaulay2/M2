@@ -313,15 +313,15 @@ socles MonomialIdeal := I -> mingens((I : ideal gens ring I)/I)
 socles Matrix := M -> socles monomialIdeal M
 sCorners = socles
 
-hilbertFunction DualSpace := L -> (
+hilbertFunction DualSpace := opts -> L -> (
     if not L.Space.Reduced then L = reduceSpace L;
     tally(flatten entries gens L / first @@ degree)
     )
-hilbertFunction(List,DualSpace) := (LL,L) -> (
+hilbertFunction(List,DualSpace) := opts -> (LL,L) -> (
     h := hilbertFunction L;
     apply(LL, d->(if h#?d then h#d else 0))
     )
-hilbertFunction(ZZ,DualSpace) := (d,L) -> first hilbertFunction({d},L)
+hilbertFunction(ZZ,DualSpace) := opts -> (d,L) -> first hilbertFunction({d},L)
 
 localHilbertRegularity = method(TypicalValue => ZZ, Options=>{Tolerance => null})
 localHilbertRegularity(AbstractPoint, Ideal) := o -> (p,I) -> localHilbertRegularity(p,gens I,o)
