@@ -1,7 +1,7 @@
 newPackage(
     "MacaulayPosets",
     Version => "1.0",
-    Date => "July 1, 2025",
+    Date => "February 15, 2026",
     Headline => "Macaulay posets",
         Authors => { {Name => "Penelope Beall", Email => "pbeall@ucdavis.edu", HomePage=>"https://pbeall.github.io"}, {Name => "Yu Olivier Li", Email => "yol1@st-andrews.ac.uk"}  },
     PackageExports => {
@@ -31,7 +31,6 @@ export {
     "Visual",
     "AllOrders"
 }
-needsPackage "Posets";
 needsPackage "Visualize";
 
 --Some methods use the following variable to avoid taking too long. They first set timeout to several seconds after currentTime(). When currentTime() reaches timeout, macaulayHelper (used by macaulayOrders and isMacaulay) and isAdditive return a String. For isAdditive, time will first be spent in macaulayOrders, and then more time may be spent in the body of isAdditive after macaulayOrders is used.
@@ -52,10 +51,10 @@ target(PosetMap) := Poset => f -> f.target;
 
 map(Poset, Poset, HashTable) := PosetMap => opts -> (Q,P,f) -> (
     -- check that the domain of f is P
-    if not set keys f == set vertices P then error "The keys must be vertices of the source Poset.";
+    if not set keys f == set vertices P then error "the keys must be vertices of the source Poset.";
     
     -- check that the codomain of f is contained in Q
-    if not isSubset(values f, vertices Q) then error "The image must be contained in the codomain.";
+    if not isSubset(values f, vertices Q) then error "the image must be contained in the codomain.";
     
     g := new PosetMap from join({
         symbol source => P,
@@ -64,30 +63,30 @@ map(Poset, Poset, HashTable) := PosetMap => opts -> (Q,P,f) -> (
     );
     
     -- check monotonicity
-    scan(coveringRelations P, c -> if not compare(Q, g(c#0), g(c#1)) then error "The resulting PosetMap would not be monotone.");
+    scan(coveringRelations P, c -> if not compare(Q, g(c#0), g(c#1)) then error "the resulting PosetMap would not be monotone.");
     
     g
 );
 map(Poset, Poset, List) := PosetMap => opts -> (Q,P,L) -> (
     -- Either everything in L a vertex of Q,
-    if instance(scan(L, i -> if not isMember(i, vertices Q) then break false), Nothing) then (
+    if isSubset(L, vertices Q) then (
         return( map(Q, P, new HashTable from apply(#P_*, i->P_*#i=>L#i)) );
     );
     -- or everything in L is an Option and not everything in L is a vertex of Q
-    if instance(scan(L, i -> if not instance(i, Option) then break false), Nothing) then (
+    if all(L, i -> instance(i, Option)) then (
         return map(Q, P, new HashTable from L );
     );
-    error("List elements must all be vertices of the target or all be Options.")
+    error("list elements must all be vertices of the target or all be Options.")
 );
 PosetMap Thing := Thing => (f,p) -> (
-    if not f#?p then error "The element is not in the source of the map.";
+    if not f#?p then error "the element is not in the source of the map.";
     
     f#p
 );
 PosetMap==PosetMap := Boolean => (f,g) -> (
     if not ((source f)==(source g) and (target f)==(target g)) then return false;
     
-    instance(scan((vertices source f), i->if not (f(i)==g(i)) then break false), Nothing)
+	all(vertices source f, i -> f(i)==g(i))
 );
 PosetMap*PosetMap := PosetMap => (f,g) -> (
     map(target f, source g, apply(vertices source g, p -> f(g(p))))
@@ -115,9 +114,7 @@ isRankPreserving(PosetMap) := Boolean => (f) -> (
     sourceRankFunction := rankFunction source f;
     sourceRank := new HashTable from apply(#(vertices source f), i -> (vertices source f)#i => sourceRankFunction#i);
     
-    instance(scan(vertices source f, p -> (
-        if not (sourceRank#p == targetRank#(f(p))) then break false;
-    )), Nothing)
+	all(vertices source f, i -> sourceRank#i == targetRank#(f(i)))
 );
 
 --------------------------------------------------
@@ -131,7 +128,7 @@ theDegree = (s) -> (
     if s == 0_S then return -infinity;
     
     sum := 0;
-    for g in (gens S) do (
+    for g in (unique gens S) do (
         if not (g == 0_S) then (
             sum = sum + degree(g,s);
         );
@@ -150,16 +147,14 @@ getMons = method(TypicalValue => List, Options => { MaxDegree => 10 } );
 
 getMons(PolynomialRing, Ideal) := options -> (R, I) -> (
     M := {};
-    if not isField baseRing R then return "The base ring of the polynomial ring must be a field.";
-    if not isHomogeneousWrtVars I then return "The given ring must be homogeneous.";
-    try R/I then S := R/I else return "The first input needs to be a polynomial ring R, second input needs to be an ideal of R";
+    if not isField baseRing R then error "the base ring of the polynomial ring must be a field.";
+    if not isHomogeneousWrtVars I then error "the given ring must be homogeneous.";
+    try R/I then S := R/I else error "the first input needs to be a polynomial ring R, second input needs to be an ideal of R";
     
     try super basis(S) then ( -- If the quotient ring has a finite number of elements (ie. the super basis returns a finite number of monomials): 
         M = super basis(S);
         M = flatten entries M;
     ) else ( -- If the quotient ring doesn't have a finite number of elements:
-        M = new MutableList;
-        
         print( "Ideal is not finite over the base (Quotient ring has infinitely many monomials)" );
         print( concatenate("Monomials up to degree ", toString(options.MaxDegree), " given.")  );
         G := gens S; -- Get the generators of the quotient ring.
@@ -167,37 +162,34 @@ getMons(PolynomialRing, Ideal) := options -> (R, I) -> (
 		
         for i from 0 to (#G - 1) do (
             minEl = minEl * G_i^0;
-            ); -- Get the minimal element of the ring. 
-        M#(#M) = minEl;
+            ); -- Get the minimal element of the ring.
 		
-        for i from 0 to (options.MaxDegree - 1) do (
-            degreeiEls := select( M, a -> theDegree( a ) == i ); -- Choose the elements in M that have degree i.
-            for j from 0 to (#degreeiEls - 1) do (
-                for k from 0 to (#G - 1) do ( -- Multiply each element in degreeiEls by each generator.
-                    subject := degreeiEls#j;
-                    newMon := subject * G_k;
-                    if ( (any(M, a -> a == newMon ) == false ) and ( theDegree (newMon) >= 0 ) ) then ( -- If the new element is not in M and isn't the identity do:
-                        M#(#M) = newMon;
-                        );
-                    );
-                );
+		-- N#i will be the list of degree i monomials
+        N := for i from -1 to (options.MaxDegree - 1) list (
+			if i==-1 then
+				M={minEl} -- the list of degree 0 monomials
+			else (
+				-- Currently, M is the list of degree i monomials.
+				-- We now replace M with the list of degree i+1 monomials.
+				M = unique flatten apply(M, m -> select( apply(G, g->m*g), a->a!=0_S ) )
+				)
             );
-        M = new List from M;
+	M = flatten N;
         );
     M
     );
 
 getMons( Ideal  ) := options -> (I) -> ( -- If the input is an ideal.
     R := ring I;
-    if not isPolynomialRing R then return "The given ideal must be an ideal of a polynomial ring.";
-    if not isField baseRing R then return "The base ring of the polynomial ring must be a field.";
+    if not isPolynomialRing R then error "the given ideal must be an ideal of a polynomial ring.";
+    if not isField baseRing R then error "the base ring of the polynomial ring must be a field.";
     getMons(R, I, MaxDegree => options.MaxDegree)
     );
 
 getMons( QuotientRing ) := options -> (S) -> ( -- If the input is a quotient ring.
     R := ambient(S);
-    if not isPolynomialRing R then return "The given quotient ring must be the quotient of a polynomial ring R and an ideal of R.";
-    if not isField baseRing R then return "The base ring of the polynomial ring must be a field.";
+    if not isPolynomialRing R then error "the given quotient ring must be the quotient of a polynomial ring R and an ideal of R.";
+    if not isField baseRing R then error "the base ring of the polynomial ring must be a field.";
     I := ideal(S);
     getMons(R, I, MaxDegree => options.MaxDegree)
     );
@@ -237,15 +229,15 @@ getPoset(PolynomialRing, Ideal) := options -> (R, I) -> (
 
 getPoset(Ideal) := options -> (I) -> ( -- Given an ideal as an input.
     R := ring I;
-        if not isPolynomialRing R then return "The given ideal must be an ideal of a polynomial ring.";
-        if not isField baseRing R then return "The base ring of the polynomial ring must be a field.";
+        if not isPolynomialRing R then error "the given ideal must be an ideal of a polynomial ring.";
+        if not isField baseRing R then error "the base ring of the polynomial ring must be a field.";
     getPoset(R, I, MaxDegree => options.MaxDegree)
     );
 
 getPoset(QuotientRing) := options -> (S) -> ( -- Given a quotient ring as an input.
     R := ambient(S);
-    if not isPolynomialRing R then return "The given quotient ring must be the quotient of a polynomial ring R and an ideal of R.";
-    if not isField baseRing R then return "The base ring of the polynomial ring must be a field.";
+    if not isPolynomialRing R then error "the given quotient ring must be the quotient of a polynomial ring R and an ideal of R.";
+    if not isField baseRing R then error "the base ring of the polynomial ring must be a field.";
     I := ideal(S);
     getPoset(R, I, MaxDegree => options.MaxDegree)
     );
@@ -256,41 +248,15 @@ getPoset(PolynomialRing) := options -> (R) -> (
     );
 
 --------------------------------------------------
---- Finding unique extremal elements of posets
+--- unique extremal elements of posets
 --------------------------------------------------
 
 checkUniqueMin = (poset) -> (
-    flag := true;
-    if ( #(minimalElements poset) == 1 ) then (
-        flag = true; 
-        ) else (
-        flag = false;
-        );
-    flag
-    );
-
-getUniqueMin = (poset) -> (
-    if (  checkUniqueMin(poset) == true ) then (
-        el := minimalElements poset
-        );
-    el
-    );
+    #(minimalElements poset) == 1
+	);
 
 checkUniqueMax = (poset) -> (
-    flag := true;
-    if ( #(maximalElements poset) == 1 ) then (
-        flag = true; 
-        ) else (
-        flag = false;
-        );
-    flag
-    );
-
-getUniqueMax = (poset) -> (
-    if (  checkUniqueMax(poset) == true ) then (
-        el := maximalElements poset
-        );
-    el
+    #(maximalElements poset) == 1
     );
 
 --------------------------------------------------
@@ -301,14 +267,14 @@ posetWedgeProduct = Posets -> (
     posets := splice {Posets};
     for i from 0 to (#posets - 1) do (
         if not ( instance(posets_i, Poset)  ) then (
-            return concatenate("All elements in the list must be posets, element number ", toString(i+1), " is not a Poset.");
+            error concatenate("all elements in the list must be posets, element number ", toString(i+1), " is not a Poset.");
             );
         );
     checkPoset := null;
     for i from 0 to (#posets - 1) do ( -- Checks whether all of the posets have a unique element or not.
         checkPoset = posets_i;
         if checkUniqueMin(checkPoset) == false then (
-            return "All posets must have a unique minimal element.";
+            error "all posets must have a unique minimal element.";
             );
         );
     
@@ -358,21 +324,21 @@ posetWedgeProduct = Posets -> (
 posetFiberProduct = PosetMaps -> (
     posetMaps := splice {PosetMaps};
     
-    if 0 == #posetMaps then return "Number of PosetMaps must be larger than 0";
+    if 0 == #posetMaps then error "number of PosetMaps must be larger than 0";
     
     scan(posetMaps, f-> (
         if not ( instance(f, PosetMap) ) then (
-            return "All arguments must be PosetMaps.";
+            error "all arguments must be PosetMaps.";
             );
         if not isRankPreserving f then (
-            return "All PosetMaps must be rank-preserving.";
+            error "all PosetMaps must be rank-preserving.";
             );
         if not isInjective f then (
-            return "All PosetMaps must be injective.";
+            error "all PosetMaps must be injective.";
             );
         ));
     fiberSource := source posetMaps#0;
-    scan(posetMaps, f-> if not source f == fiberSource then return "All PosetMaps must have the same source");
+    scan(posetMaps, f-> if not source f == fiberSource then error "all PosetMaps must have the same source");
     
     allPosetEls := apply(vertices fiberSource, b->(#posetMaps, b));
     allPosetCovers := {};
@@ -402,15 +368,15 @@ posetConnectedSum = PosetMaps -> (
     
     for i from 0 to (#posetMaps - 1) do (
         if not ( instance(posetMaps_i, PosetMap)  ) then (
-            return concatenate("All elements in the list must be poset maps, element number ", toString(i+1), " is not a PosetMap.");
+            error concatenate("all elements in the list must be poset maps, element number ", toString(i+1), " is not a PosetMap.");
             );
         );
     scan(posetMaps, f-> ( -- Checks whether all of the poset maps are rank-preserving and injective
         if not isRankPreserving f then (
-            return "All PosetMaps must be rank-preserving and injective.";
+            error "all PosetMaps must be rank-preserving and injective.";
             );
         if not isInjective f then (
-            return "All PosetMaps must be injective.";
+            error "all PosetMaps must be injective.";
             );
         ));
     
@@ -439,7 +405,7 @@ posetClosedProduct = Posets -> (
     posets := splice {Posets};
         for i from 0 to (#posets - 1) do (
             if not (instance(posets_i, Poset)) then (
-                return concatenate("All elements in the list must be posets, element number ", toString(i+1), " is not a Poset.");
+                error concatenate("all elements in the list must be posets, element number ", toString(i+1), " is not a Poset.");
                 );
             );
         
@@ -450,7 +416,7 @@ posetClosedProduct = Posets -> (
     for i from 0 to (#posets - 1) do (
         checkPoset = posets_i;
         if (checkUniqueMin(checkPoset) == false or checkUniqueMax(checkPoset) == false ) then (
-            return "All posets must have a unique minimal element and a unique maximal element.";
+            error "all posets must have a unique minimal element and a unique maximal element.";
             );
         posetRanks = append(posetRanks, #( rankPoset checkPoset  ) - 1 ); -- Gets the maximum rank of all the given lists.
         );
@@ -527,13 +493,13 @@ ringConnectedSum = method(Binary=>true);
 ringProductHelper = (I1, I2, connected) -> (
     R1 := ring I1;
     R2 := ring I2;
-    if not ( isPolynomialRing R1 and isPolynomialRing R2 ) then return "Both quotient rings must be the quotient of a polynomial ring R and an ideal of R.";
-    if not (  isField (coefficientRing R1) and isField (coefficientRing R2) ) then return "Both quotient rings must be quotients of a polynomial ring with base ring of a field.";
-    if not (coefficientRing R1 === coefficientRing R2) then return "The coefficient field of both ambient rings of both quotient rings must be the same.";
-    if not ( isHomogeneousWrtVars(I1) and isHomogeneousWrtVars(I2) ) then return "Both ideals of each quotient ring must be homogeneous.";
+    if not ( isPolynomialRing R1 and isPolynomialRing R2 ) then error "both quotient rings must be the quotient of a polynomial ring R and an ideal of R.";
+    if not (  isField (coefficientRing R1) and isField (coefficientRing R2) ) then error "both quotient rings must be quotients of a polynomial ring with base ring of a field.";
+    if not (coefficientRing R1 === coefficientRing R2) then error "the coefficient field of both ambient rings of both quotient rings must be the same.";
+    if not ( isHomogeneousWrtVars(I1) and isHomogeneousWrtVars(I2) ) then error "both ideals of each quotient ring must be homogeneous.";
     
-    try R1/I1 then S := R1/I1 else return "Second input must be an ideal of the first polynomial ring.";
-    try R2/I2 then T := R2/I2 else return "Fourth input must be an ideal of the second polynomial ring.";
+    try R1/I1 then S := R1/I1 else error "second input must be an ideal of the first polynomial ring.";
+    try R2/I2 then T := R2/I2 else error "fourth input must be an ideal of the second polynomial ring.";
     
     ringTensorProduct := tensor(S, T);
     
@@ -563,7 +529,7 @@ ringProductHelper = (I1, I2, connected) -> (
             
             maxP := maximalElements P;
             
-            if not (1 == #maxP) then return "The monomial posets of the rings must have unique maximal elements.";
+            if not (1 == #maxP) then error "the monomial posets of the rings must have unique maximal elements.";
             
             maxs = append(maxs, maxP#0);
         ));
@@ -596,20 +562,14 @@ ringConnectedSum(QuotientRing, QuotientRing) := (S, T) -> (
 -- If P is a Poset and S is a subset of its ground set P_*, then let upperShadow(P,S) be the upper shadow of S in P, and similarly for lowerShadow.
 shadowHelper = (P,S,p) -> (
     if not isSubset(S,P_*) then (
-        return "The given set is not a subset of the given poset";
+        error "the given set is not a subset of the given poset";
     );
 
     shadow := {};
 
     -- For each covering relation k={k#0,k#1} with k#0 in S, the element k#1 is supposed to be in the upper shadow of S.
     -- For each covering relation k={k#0,k#1} with k#1 in S, the element k#0 is supposed to be in the lower shadow of S.
-    for k in coveringRelations(P) do (
-        if any(S, s->s===k#p) then (
-            shadow = append(shadow, k#(p-1));
-        );
-    );
-
-    unique shadow
+	unique for k in coveringRelations P list if any(S, s -> s === k#p) then k#(p - 1) else continue
 );
 upperShadow = method();
 lowerShadow = method();
@@ -621,16 +581,16 @@ lowerShadow (Poset, List) := List => (P,S) -> shadowHelper(P,S,1);
 initialSegment = method();
 initialSegment (Poset, List, ZZ, ZZ) := List => (P,O,d,s) -> (
     if not O == unique O then (
-        return "The given order must not have duplicate entries.";
+        error "the given order must not have duplicate entries.";
     );
     if (s>0 and #O==0) then (
-        return "The order must contain the desired segment.";
+        error "the order must contain the desired segment.";
     );
     
     dLvl := (rankPoset P)#d;
     
     if (0 > s or s > #dLvl) then (
-        return "The size of the segment must be inclusively between 0 and the size of the dth level.";
+        error "the size of the segment must be inclusively between 0 and the size of the dth level.";
     );
 
     segment := {};
@@ -639,7 +599,7 @@ initialSegment (Poset, List, ZZ, ZZ) := List => (P,O,d,s) -> (
         while not member(O#j, dLvl) do (
             j = j-1;
             if j < 0 then (
-                return "The order must contain the desired segment.";
+                error "the order must contain the desired segment.";
             );
         );
         segment = append(segment, O#j);
@@ -727,10 +687,10 @@ macaulayOrders (Poset) := options -> (P) -> (
     for timeType in {ZZ,QQ,RR,InfiniteNumber} do (
         timeAllowed = timeAllowed or instance(options.MaxTime, timeType);
     );
-    if not timeAllowed then return "The option MaxTime must be an integer, a rational, a real, or an infinite number.";
-    if not instance(options.TikZ, Boolean) then return "The option TikZ must be a Boolean.";
-    if not instance(options.AllOrders, Boolean) then return "The option AllOrders must be a Boolean.";
-    if not isRanked(P) then return "The poset must be ranked.";
+    if not timeAllowed then error "the option MaxTime must be an integer, a rational, a real, or an infinite number.";
+    if not instance(options.TikZ, Boolean) then error "the option TikZ must be a Boolean.";
+    if not instance(options.AllOrders, Boolean) then error "the option AllOrders must be a Boolean.";
+    if not isRanked(P) then error "the poset must be ranked.";
     
     timeout = currentTime() + options.MaxTime;
     macaulayDegree = 0;
@@ -798,9 +758,9 @@ macaulayOrders (QuotientRing) := options -> (S) -> (
     R := ambient S;
     I := ideal S;
     
-    if not isPolynomialRing R then return "The ambient ring must be a polynomial ring.";
-    if not isField baseRing R then return "The base ring of the polynomial ring must be a field.";
-    if not isHomogeneousWrtVars I then return "The ring must be homogeneous.";
+    if not isPolynomialRing R then error "the ambient ring must be a polynomial ring.";
+    if not isField baseRing R then error "the base ring of the polynomial ring must be a field.";
+    if not isHomogeneousWrtVars I then error "the ring must be homogeneous.";
     -- The ideal also should be level linearly independent
     
     macaulayOrders(getPoset(R,I), MaxTime => options.MaxTime, TikZ => options.TikZ, Visual => options.Visual, AllOrders => options.AllOrders)
@@ -836,7 +796,6 @@ isAdditive = method(TypicalValue => Boolean, Options => {MaxTime => 600});
 isAdditive (Poset) := options -> (P) -> (
     orders := macaulayOrders(P, MaxTime=>options.MaxTime);
     if instance(orders, String) then return orders;
-    if 0 == #orders then return "The poset must be Macaulay.";
     
     levels := rankPoset P;
     
@@ -1453,7 +1412,7 @@ Node
         AllOrders=>Boolean
     Outputs
         :List
-            whose elements are lists representing orders with respect to which the poset is Macaulay, or a @TO "String"@ if time runs out or the input doesn't satisfy the conditions
+            whose elements are lists representing orders with respect to which the poset is Macaulay, or a @TO "String"@ if time runs out
     Description
         Text
             Given a poset with rank function $r$, this method returns all Macaulay orders $<$ on the poset such that $r(p)<r(q)$ implies $p<q$.
@@ -1494,7 +1453,7 @@ Node
         Visual=>Boolean
     Outputs
         :Boolean
-            or a @TO "String"@ if time runs out or the input doesn't satisfy the conditions
+            or a @TO "String"@ if time runs out
     Description
         Text
             Suppose $P$ is a ranked poset and $<$ is a total order on the ground set of $P$. Let $\operatorname{Seg}_d n$ denote the largest $n$ elements of rank $d$ with respect to $<$. Suppose that for every integer $d$ between $0$ and the rank of $P$, and for every subset $A$ of the $d$th level of $P$, we have $\lvert\nabla_P\operatorname{Seg}_d\lvert A\rvert\rvert \leq \lvert\nabla_P(A)\rvert$ and $\nabla_P\operatorname{Seg}_d\lvert A\rvert = \operatorname{Seg}_{d+1}\lvert\nabla_P(A)\rvert$. Then, we say $P$ is Macaulay with respect to $<$. A Macaulay poset is a poset for which there exists an order with respect to which it is Macaulay.
@@ -1514,10 +1473,8 @@ Node
         Example
             isMacaulay(ZZ/2[x,y]/monomialIdeal(x^2, y^3), TikZ=>true)
         Text
-            If the input doesn't satisfy the conditions, or time runs out, then a @TO "String"@ will be returned.
+            If time runs out, then a @TO "String"@ will be returned.
         Example
-            print isMacaulay(ZZ/2);
-            print isMacaulay(ZZ/2[x,y]/ideal(x^3,x^2-y));
             print isMacaulay(chain 1, MaxTime=>0);
     Caveat
         Given a @TO "QuotientRing"@ or an @TO "Ideal"@, this method will not verify level linear independence.
@@ -1794,7 +1751,7 @@ assert(  isMacaulay( posetClosedProduct( P3, P3, P3 )  )  )
 
 TEST ///
 -- A test to check the code. 
-assert(  getPoset(QQ[x, y]/ideal(x^3 - y^2)) == "The given ring must be homogeneous." )
+assert(  null == try getPoset(QQ[x, y]/ideal(x^3 - y^2)) )
 
 -- Example 2.3
 assert( isMacaulay( posetWedgeProduct(  chain(5), chain(4), chain(10) ) )   )
