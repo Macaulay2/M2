@@ -1,11 +1,14 @@
 newPackage(
     "MacaulayPosets",
     Version => "1.0",
-    Date => "February 15, 2026",
+    Date => "February 16, 2026",
     Headline => "Macaulay posets",
         Authors => { {Name => "Penelope Beall", Email => "pbeall@ucdavis.edu", HomePage=>"https://pbeall.github.io"}, {Name => "Yu Olivier Li", Email => "yol1@st-andrews.ac.uk"}  },
     PackageExports => {
         "Posets"
+    },
+    PackageImports => {
+        "Visualize"
     },
     Keywords => {"Combinatorial Commutative Algebra"}
 )
@@ -31,7 +34,6 @@ export {
     "Visual",
     "AllOrders"
 }
-needsPackage "Visualize";
 
 --Some methods use the following variable to avoid taking too long. They first set timeout to several seconds after currentTime(). When currentTime() reaches timeout, macaulayHelper (used by macaulayOrders and isMacaulay) and isAdditive return a String. For isAdditive, time will first be spent in macaulayOrders, and then more time may be spent in the body of isAdditive after macaulayOrders is used.
 timeout=0;
@@ -86,7 +88,7 @@ PosetMap Thing := Thing => (f,p) -> (
 PosetMap==PosetMap := Boolean => (f,g) -> (
     if not ((source f)==(source g) and (target f)==(target g)) then return false;
     
-	all(vertices source f, i -> f(i)==g(i))
+    all(vertices source f, i -> f(i)==g(i))
 );
 PosetMap*PosetMap := PosetMap => (f,g) -> (
     map(target f, source g, apply(vertices source g, p -> f(g(p))))
@@ -114,7 +116,7 @@ isRankPreserving(PosetMap) := Boolean => (f) -> (
     sourceRankFunction := rankFunction source f;
     sourceRank := new HashTable from apply(#(vertices source f), i -> (vertices source f)#i => sourceRankFunction#i);
     
-	all(vertices source f, i -> sourceRank#i == targetRank#(f(i)))
+    all(vertices source f, i -> sourceRank#i == targetRank#(f(i)))
 );
 
 --------------------------------------------------
@@ -159,22 +161,22 @@ getMons(PolynomialRing, Ideal) := options -> (R, I) -> (
         print( concatenate("Monomials up to degree ", toString(options.MaxDegree), " given.")  );
         G := gens S; -- Get the generators of the quotient ring.
         minEl := 1;
-		
+        
         for i from 0 to (#G - 1) do (
             minEl = minEl * G_i^0;
             ); -- Get the minimal element of the ring.
-		
-		-- N#i will be the list of degree i monomials
+        
+        -- N#i will be the list of degree i monomials
         N := for i from -1 to (options.MaxDegree - 1) list (
-			if i==-1 then
-				M={minEl} -- the list of degree 0 monomials
-			else (
-				-- Currently, M is the list of degree i monomials.
-				-- We now replace M with the list of degree i+1 monomials.
-				M = unique flatten apply(M, m -> select( apply(G, g->m*g), a->a!=0_S ) )
-				)
+            if i==-1 then
+                M={minEl} -- the list of degree 0 monomials
+            else (
+                -- Currently, M is the list of degree i monomials.
+                -- We now replace M with the list of degree i+1 monomials.
+                M = unique flatten apply(M, m -> select( apply(G, g->m*g), a->a!=0_S ) )
+                )
             );
-	M = flatten N;
+    M = flatten N;
         );
     M
     );
@@ -253,7 +255,7 @@ getPoset(PolynomialRing) := options -> (R) -> (
 
 checkUniqueMin = (poset) -> (
     #(minimalElements poset) == 1
-	);
+    );
 
 checkUniqueMax = (poset) -> (
     #(maximalElements poset) == 1
@@ -270,10 +272,9 @@ posetWedgeProduct = Posets -> (
             error concatenate("all elements in the list must be posets, element number ", toString(i+1), " is not a Poset.");
             );
         );
-    checkPoset := null;
     for i from 0 to (#posets - 1) do ( -- Checks whether all of the posets have a unique element or not.
-        checkPoset = posets_i;
-        if checkUniqueMin(checkPoset) == false then (
+        checkPoset := posets_i;
+        if not checkUniqueMin(checkPoset) then (
             error "all posets must have a unique minimal element.";
             );
         );
@@ -281,38 +282,32 @@ posetWedgeProduct = Posets -> (
     uniqueMinimalElements := flatten for P in posets list minimalElements(P); -- The minimal element for each poset. 
     noElsList := for P in posets list #(vertices P); -- Number of elements for each poset.
     
-    allPosetEls := new MutableList;
     minElIndex := 0;
     
-    for i from 0 to (#posets - 1) do (
+    allPosetEls := for i from 0 to (#posets - 1) list (
         -- For the ith poset, we are creating a set with the same number of elements as the number of elements in the ground set.
         
         posetiGroundSet := splice {(i, 1) .. (i, noElsList_i) };
         -- We find the the position of the minimal element in the ith poset ground set.
-        minElIndex = position( (posets_i)_*, b -> toString(b) == toString(uniqueMinimalElements_i) );
+        minElIndex = position( (posets_i)_*, b -> b === uniqueMinimalElements_i );
         -- Then replace the element of the same position in the new set.
         posetiGroundSet = insert(minElIndex, "min", posetiGroundSet  );
         posetiGroundSet = drop(posetiGroundSet, {minElIndex + 1, minElIndex + 1}  );
-        allPosetEls#(#allPosetEls) = posetiGroundSet;
+        posetiGroundSet
         );
     
-    wedgeGroundSet := unique flatten new List from allPosetEls;
-    subjectCoverRels := null;
-    subjectGroundSet := null;
-    subjectRelation := null;
-    firstPostion := null;
-    secondPostion := null;
+    wedgeGroundSet := unique flatten allPosetEls;
     
     wedgeCoverRelations := flatten for i from 0 to (#posets - 1) list (
-        subjectGroundSet = (posets_i)_*;
-        subjectCoverRels = coveringRelations posets_i;
-                
+        subjectGroundSet := (posets_i)_*;
+        subjectCoverRels := coveringRelations posets_i;
+        
         for j from 0 to (#subjectCoverRels - 1) list (
-            subjectRelation = subjectCoverRels_j;
+            subjectRelation := subjectCoverRels_j;
             -- We find the positions of the elements in their respective poset ground set.
-                        firstPosition := position( subjectGroundSet, x -> toString(x) == toString(subjectRelation_0)  );
-            secondPosition := position( subjectGroundSet, x -> toString(x) == toString(subjectRelation_1)  );
-                        -- We append the cover relation with the new ground set.
+            firstPosition := position( subjectGroundSet, x -> x === subjectRelation_0  );
+            secondPosition := position( subjectGroundSet, x -> x === subjectRelation_1  );
+            -- We append the cover relation with the new ground set.
             flatten { (allPosetEls#i)_{firstPosition}, (allPosetEls#i)_{secondPosition}   }
             )
         );
@@ -341,9 +336,8 @@ posetFiberProduct = PosetMaps -> (
     scan(posetMaps, f-> if not source f == fiberSource then error "all PosetMaps must have the same source");
     
     allPosetEls := apply(vertices fiberSource, b->(#posetMaps, b));
-    allPosetCovers := {};
     
-    scan(#posetMaps, i->(
+    posetElsAndCovers := apply(#posetMaps, i->(
         -- For the ith map, take its elements not in the image of the map and disjointify them from the other images
         posetiGroundSet := apply(select((target(posetMaps_i))_*, b -> not member(b, image posetMaps_i)), b -> (i, b));
         
@@ -352,9 +346,11 @@ posetFiberProduct = PosetMaps -> (
         
         posetiCoverRels := apply(coveringRelations(target(posetMaps_i)), c->apply((0,1), j->if preimagei#?(c#j) then (#posetMaps, preimagei#(c#j)) else (i, c#j)));
         
-        allPosetEls = append(allPosetEls, posetiGroundSet);
-        allPosetCovers = append(allPosetCovers, posetiCoverRels);
+        {posetiGroundSet, posetiCoverRels}
         ));
+    
+    allPosetEls = flatten append(allPosetEls, for i in posetElsAndCovers list i#0);
+    allPosetCovers := for i in posetElsAndCovers list i#1;
     
     fiberGroundSet := flatten allPosetEls;
     fiberCoverRelations := unique flatten allPosetCovers;
@@ -403,83 +399,66 @@ posetConnectedSum = PosetMaps -> (
 
 posetClosedProduct = Posets -> (
     posets := splice {Posets};
-        for i from 0 to (#posets - 1) do (
-            if not (instance(posets_i, Poset)) then (
-                error concatenate("all elements in the list must be posets, element number ", toString(i+1), " is not a Poset.");
-                );
-            );
-        
-        
-        posetRanks := {};
-    checkPoset := null;
-    
     for i from 0 to (#posets - 1) do (
-        checkPoset = posets_i;
-        if (checkUniqueMin(checkPoset) == false or checkUniqueMax(checkPoset) == false ) then (
+        if not (instance(posets_i, Poset)) then (
+            error concatenate("all elements in the list must be posets, element number ", toString(i+1), " is not a Poset.");
+            );
+        );
+    
+    posetRanks := for i from 0 to (#posets - 1) list (
+        checkPoset := posets_i;
+        if not (checkUniqueMin(checkPoset) and checkUniqueMax(checkPoset) ) then (
             error "all posets must have a unique minimal element and a unique maximal element.";
             );
-        posetRanks = append(posetRanks, #( rankPoset checkPoset  ) - 1 ); -- Gets the maximum rank of all the given lists.
+            #( rankPoset checkPoset ) - 1 -- Gets the maximum rank of all the given lists.
         );
     posetRanks = unique posetRanks;
     if (#posetRanks > 1) then (
         print ("The given posets do not have the same rank, therefore the resulting poset will not be ranked.");
+        );    
+    
+    uniqueMinimalElements := flatten for i from 0 to (#posets - 1) list (
+        minimalElements(posets_i)
         );
+    uniqueMaximalElements := flatten for i from 0 to (#posets - 1) list (
+        maximalElements(posets_i)
+    );
+    noElsList := for i from 0 to (#posets - 1) list ( -- Number of elements for each poset.
+        # (posets_i)_*
+    );
     
-    uniqueMinimalElements := {};
-    uniqueMaximalElements := {};
-    noElsList := {}; -- Number of elements for each poset.
-    for i from 0 to (#posets - 1) do (
-        uniqueMinimalElements = append( uniqueMinimalElements, minimalElements(posets_i)  );
-        uniqueMaximalElements = append( uniqueMaximalElements, maximalElements(posets_i)  );
-        noElsList = append(noElsList, # (posets_i)_* );
-        );
-    uniqueMinimalElements = flatten uniqueMinimalElements;
-    uniqueMaximalElements = flatten uniqueMaximalElements;
-    
-    
-    allPosetEls := {};
-    posetiGroundSet := null;
-    minElIndex := null;
-    maxElIndex := null;
-    
-    for i from 0 to (#posets - 1) do (        
-        posetiGroundSet = splice {(i, 1) .. (i, noElsList_i) };
+    allPosetEls := for i from 0 to (#posets - 1) list (        
+        posetiGroundSet := splice {(i, 1) .. (i, noElsList_i) };
         -- Replace the element in the minimum element index with a common minimal element m_l.
-        minElIndex = position( (posets_i)_*, b -> toString(b) == toString(uniqueMinimalElements_i) );
+        minElIndex := position( (posets_i)_*, b -> b === uniqueMinimalElements_i );
         posetiGroundSet = insert(minElIndex, "min", posetiGroundSet  );
         posetiGroundSet = drop(posetiGroundSet, {minElIndex + 1, minElIndex + 1}  );
         
         -- Do the same as above but replace the eelmeent in the maximum element index with a common maximal element "max".
-        maxElIndex = position( (posets_i)_*, b -> toString(b) == toString(uniqueMaximalElements_i) );
+        maxElIndex := position( (posets_i)_*, b -> b === uniqueMaximalElements_i );
         posetiGroundSet = insert(maxElIndex, "max", posetiGroundSet  );
         posetiGroundSet = drop(posetiGroundSet, {maxElIndex + 1, maxElIndex + 1}  );
         
-        allPosetEls = append(allPosetEls, posetiGroundSet);
+        posetiGroundSet
         );
-    
     
     closedGroundSet := unique flatten allPosetEls;
-    closedCoverRelations := {};
-    subjectGroundSet := null;
-    subjectCoverRels := null;
-    subjectRelation := null;
-    firstPosition := null;
-    secondPosition := null;
     
-    for i from 0 to (#posets - 1) do (
-        subjectGroundSet = (posets_i)_*;
-        subjectCoverRels = coveringRelations posets_i;
+    closedCoverRelations := flatten for i from 0 to (#posets - 1) list (
+        subjectGroundSet := vertices posets_i;
+        subjectCoverRels := coveringRelations posets_i;
         
-        for j from 0 to (#subjectCoverRels - 1) do (
-            subjectRelation = subjectCoverRels_j;
+        for j from 0 to (#subjectCoverRels - 1) list (
+            subjectRelation := subjectCoverRels_j;
             -- We find the positions of the elmeents in their respective poset ground set.
-            firstPosition = position( subjectGroundSet, x -> toString(x) == toString(subjectRelation_0)  );
-            secondPosition = position( subjectGroundSet, x -> toString(x) == toString(subjectRelation_1)  );
+            firstPosition := position( subjectGroundSet, x -> x === subjectRelation_0  );
+            secondPosition := position( subjectGroundSet, x -> x === subjectRelation_1  );
             -- We append the cover relation with the new ground set.
-            closedCoverRelations = append(closedCoverRelations, flatten { (allPosetEls_i)_{firstPosition}, (allPosetEls_i)_{secondPosition}   }   );
-            );
+            flatten { (allPosetEls_i)_{firstPosition}, (allPosetEls_i)_{secondPosition} }
+            )
         );
-    closedPoset := poset( closedGroundSet, closedCoverRelations  );
+    
+    closedPoset := poset( closedGroundSet, closedCoverRelations );
     closedPoset
     );
 
@@ -507,34 +486,31 @@ ringProductHelper = (I1, I2, connected) -> (
     fiberRing := ambient ringTensorProduct; 
     fiberIdeal := ideal ringTensorProduct;
     extraIdeal := 0_fiberRing;
-    extraIdealList := {};
     
     -- Get the two maps into the tensor product.
     -- We assume that the fiberRing gained from the tensor product will be in the correct form with the variables of the 1st ring at the start, and the variables of the 2nd ring at the end.
     R1toTensor := map(fiberRing, R1, take(gens fiberRing, #(gens R1)));
     R2toTensor := map(fiberRing, R2, take(gens fiberRing, -#(gens R2)));
     
-    scan(gens R1, g->scan(gens R2, h->(
-        extraIdealList = append(extraIdealList, R1toTensor(g) * R2toTensor(h));
+    extraIdealList := flatten apply(gens R1, g->apply(gens R2, h->(
+        R1toTensor(g) * R2toTensor(h)
     )));
     
     extraIdeal = ideal( extraIdealList );
     fiberIdeal = fiberIdeal + extraIdeal;
     
     if connected then (
-        maxs := {0};
-        
-        scan({I1, I2}, I -> (
+        maxs := apply({I1, I2}, I -> (
             P := getPoset I;
             
             maxP := maximalElements P;
             
             if not (1 == #maxP) then error "the monomial posets of the rings must have unique maximal elements.";
             
-            maxs = append(maxs, maxP#0);
+            maxP#0
         ));
         
-        fiberIdeal = fiberIdeal + ideal(R1toTensor(lift(maxs#1,R1)) - R2toTensor(lift(maxs#2,R2)));
+        fiberIdeal = fiberIdeal + ideal(R1toTensor(lift(maxs#0,R1)) - R2toTensor(lift(maxs#1,R2)));
     );
     
     fiberRing/fiberIdeal
@@ -569,7 +545,7 @@ shadowHelper = (P,S,p) -> (
 
     -- For each covering relation k={k#0,k#1} with k#0 in S, the element k#1 is supposed to be in the upper shadow of S.
     -- For each covering relation k={k#0,k#1} with k#1 in S, the element k#0 is supposed to be in the lower shadow of S.
-	unique for k in coveringRelations P list if any(S, s -> s === k#p) then k#(p - 1) else continue
+    unique for k in coveringRelations P list if any(S, s -> s === k#p) then k#(p - 1) else continue
 );
 upperShadow = method();
 lowerShadow = method();
@@ -592,18 +568,18 @@ initialSegment (Poset, List, ZZ, ZZ) := List => (P,O,d,s) -> (
     if (0 > s or s > #dLvl) then (
         error "the size of the segment must be inclusively between 0 and the size of the dth level.";
     );
-
-    segment := {};
+    
     j := #O-1;
-    for i from 0 to s-1 do (
+    segment := for i from 0 to s-1 list (
         while not member(O#j, dLvl) do (
             j = j-1;
             if j < 0 then (
                 error "the order must contain the desired segment.";
             );
         );
-        segment = append(segment, O#j);
         j = j-1;
+        O#(j+1)
+        
     );
     segment
 );
@@ -632,19 +608,18 @@ macaulayHelper = (P,O,d,returnAllOrders) -> (
         -- For level 0, there is no lower layer putting constraints on d1orders.
         d1orders = permutations(levels#(d+1));
     ) else (
-        shadows := {{}};
-        for s from 1 to #(levels#d) do (
+        shadows := flatten append({{{}}}, for s from 1 to #(levels#d) list (
             -- Let shadows#s be the upper shadow of the initial segment of size s in level d.
-            shadows = append(shadows, upperShadow(P,initialSegment(P,O,d,s)));
-        );
+            upperShadow(P,initialSegment(P,O,d,s))
+        ));
         -- There might also be elements of levels#(d+1) which are not in the upper shadow of levels#d
         shadows = append(shadows, levels#(d+1));
         
         for s from 1 to 1+#(levels#d) do (
             -- Suppose d1orders is the list of possible orderings of shadows#(s-1). Then, replace each ordering with its possible extensions to an ordering of shadows#s.
-            extendedOrders := {};
-            for o in d1orders do (
-                for p in permutations(shadows#s - set shadows#(s-1)) do (
+            if true then (
+            extendedOrders := flatten for o in d1orders list (
+                for p in permutations(shadows#s - set shadows#(s-1)) list (
                     if timeout <= currentTime() then return "timeout";
                     
                     oPossible := true;
@@ -657,10 +632,14 @@ macaulayHelper = (P,O,d,returnAllOrders) -> (
                         );
                     );
                     
-                    if oPossible then extendedOrders = append(extendedOrders, join(p, o));
-                );
+                    if not oPossible then continue;
+                    
+                    join(p, o)
+                )
             );
             d1orders = extendedOrders;
+            );
+            
         );
     );
     
@@ -1677,8 +1656,8 @@ TEST ///
     y = S_1
     
     assert(set getMons(R, I) === set {1_S, x, y, x*y})
-	
-	assert( 31 == #getMons( QQ[x, y], ideal(x^2 - y^2), MaxDegree => 15 ) )
+    
+    assert( 31 == #getMons( QQ[x, y], ideal(x^2 - y^2), MaxDegree => 15 ) )
     
     x = R_0
     y = R_1
