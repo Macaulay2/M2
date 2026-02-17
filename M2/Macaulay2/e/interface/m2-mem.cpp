@@ -11,16 +11,16 @@
 
 #ifndef NDEBUG
 #define __thread
-static __thread bool in_getmem = FALSE;
+static __thread bool in_getmem = false;
 static inline void enter_getmem() {
   #if 0
     /* this is not always an error, because we may call GC_malloc from a finalizer */
     if (in_getmem) fatal("internal error: getmem called while getmem active");
   #endif
-  in_getmem = TRUE;
+  in_getmem = true;
 }
 static inline void exit_getmem() {
-  in_getmem = FALSE;
+  in_getmem = false;
 }
 #else
 static inline void enter_getmem() {}
