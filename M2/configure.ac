@@ -1669,6 +1669,10 @@ AS_IF([test x$with_libffi != xno ],
 AC_SUBST([LIBFFI], [$with_libffi])
 AC_DEFINE_UNQUOTED([FFI_VERSION], ["$FFI_VERSION"], [libffi version])
 
+AC_CHECK_HEADERS([jansson.h],, [AC_MSG_ERROR([jansson.h not found])])
+AC_SEARCH_LIBS([json_loadb], [jansson], [],
+    [AC_MSG_ERROR([libjansson not found])])
+
 # after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()
 SAVELIBS=$LIBS
 

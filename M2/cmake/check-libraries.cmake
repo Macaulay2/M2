@@ -11,7 +11,7 @@
 # TODO: turn all these libraries into imported libraries and find incompatibilities another way.
 set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
 set(LIBRARIES_LIST MPSOLVE FROBBY NORMALIZ FACTORY FLINT NTL MPFI MPFR GMP BDWGC LAPACK)
-set(LIBRARY_LIST   READLINE HISTORY GDBM)
+set(LIBRARY_LIST   READLINE HISTORY GDBM JANSSON)
 
 message(CHECK_START " Checking for existing libraries and programs")
 
@@ -35,6 +35,7 @@ endif()
 #   TBB 	libtbb-dev	tbb-devel	tbb (Optional)
 #   OpenMP	libomp-dev	libomp-devel	libomp (Optional)
 #   GDBM	libgdbm-dev	gdbm-devel	gdbm
+#   jansson	libjansson-dev	jansson-devel	jansson
 
 # Set this variable to specify the linear algebra library.
 # See `cmake --help-module FindLAPACK` for the list of options
@@ -57,6 +58,8 @@ check_include_files(boost/math/tools/atomic.hpp
 
 # TODO: replace gdbm, see https://github.com/Macaulay2/M2/issues/594
 find_package(GDBM	REQUIRED QUIET) # See FindGDBM.cmake
+
+find_package(Jansson REQUIRED)
 
 if(WITH_OMP)
   find_package(OpenMP REQUIRED)
