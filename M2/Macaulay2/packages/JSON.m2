@@ -24,7 +24,6 @@ newPackage(
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
     Keywords => {"System"},
-    PackageImports => {"Parsing"},
     PackageExports => {"Text"},
     AuxiliaryFiles => true)
 
@@ -72,90 +71,11 @@ export {
     "ValueSeparator",
     }
 
-exportFrom_Parsing "nil"
-
-----------------------------------------------------------------
--- parser based on https://datatracker.ietf.org/doc/html/rfc8259
-----------------------------------------------------------------
-
--- whitespace
-wsP   = *orP(" ", "\t", "\n", "\r")
-strip = p -> first % (p @ wsP)
-
--- structural characters
-beginArrayP     = strip "["
-beginObjectP    = strip "{"
-endArrayP       = strip "]"
-endObjectP      = strip "}"
-nameSeparatorP  = strip ":"
-valueSeparatorP = strip ","
-
--- literals
-falseP = (x -> false) % constParser "false"
-nullP  = (x -> nil)   % constParser "null" -- using null would break parsing
-trueP  = (x -> true)  % constParser "true"
-
--- numbers
-digit19P = orP("1", "2", "3", "4", "5", "6", "7", "8", "9")
-digitP   = "0" | digit19P
-expP     = andP(orP("e", "E"), optP(orP("-", "+")), +digitP)
-fracP    = andP(".", +digitP)
-intP     = orP("0", digit19P @ *digitP)
-numberP  = (x -> value concatenate delete(nil, deepSplice x)
-    ) % andP(optP("-"), intP, optP(fracP), optP(expP))
-
--- strings
-hexDigitP = digitP | orP("a", "b", "c", "d", "e", "f",
-    "A", "B", "C", "D", "E", "F");
-unescapedP = Parser(c -> if c === null then null else (
-	x := first utf8 c;
-	if x < 0x20 or x == 0x22 or x == 0x5c or x > 0x10ffff
-	then null
-	else terminalParser c))
-deformat = x -> (
-    if last x === "/" then "/"
-    else value concatenate("\"", x, "\""))
-escapedP = deformat % ("\\" @
-    orP("\"", "\\", "/", "b", "f", "n", "r", "t",
-	andP("u", hexDigitP, hexDigitP, hexDigitP, hexDigitP)))
-charP = unescapedP | escapedP
-stringP = ((l, x, r) -> concatenate x) % andP("\"", *charP, "\"")
-
--- objects
-memberP = ((k, gets, v) -> k => v) % andP(
-    stringP, nameSeparatorP, futureParser valueP)
-objectP = ((l, x, r) ->  hashTable (
-	if x === nil then {}
-	else toList deepSplice x)) % andP(
-    beginObjectP,
-    optP(memberP @ * (last % valueSeparatorP @ memberP)),
-    endObjectP)
-
--- arrays
-arrayP = ((l, x, r) -> (
-	if x === nil then {}
-	else toList deepSplice x)) % andP(
-    beginArrayP,
-    optP(futureParser valueP @
-	*(last % valueSeparatorP @ futureParser valueP)),
-    endArrayP)
-
--- values
-valueP = strip orP(falseP, nullP, trueP, objectP, arrayP, numberP, stringP)
-jsonTextP = (last @@ last) % (*wsP @ valueP)
-
-utf8Analyzer = Analyzer(s -> (
-	if not instance(s, String) then error "analyzer expected a string";
-	chars := characters s;
-	i := 0;
-	() -> if chars#?i then (
-	    r := (i, chars#i);
-	    i = i + 1;
-	    r)))
+importFrom(Core, "fromJSON0")
 
 fromJSON = method()
-fromJSON String := jsonTextP : utf8Analyzer
-fromJSON File   := fromJSON @@ get
+fromJSON String :=
+fromJSON File   := fromJSON0
 
 --------------
 -- encoding --
@@ -170,15 +90,15 @@ toJSON = method(
 	ValueSeparator => null,
 	Sort           => false})
 
-toJSON Thing   := toJSON MutableHashTable := o -> format @@ toString
+toJSON Thing   :=
+toJSON Symbol  :=
+toJSON MutableHashTable := o -> format @@ toString
 toJSON String  := o -> format
 toJSON RR      := o -> format_0
 toJSON Number  := o -> format_0 @@ numeric
 toJSON ZZ      :=
 toJSON Boolean :=
 toJSON Nothing := o -> toString
-toJSON Symbol  := o -> x -> (
-    if x === nil then "null" else format toString x)
 toJSON Hypertext := o -> format @@ html
 
 maybeNewline = o -> if o.Indent === null then "" else newline
@@ -231,7 +151,7 @@ doc ///
       @TO toJSON@ and @TO fromJSON@, for converting Macaulay2 things to
       valid JSON data and vice versa.
     Example
-      toJSON {hashTable{"foo" => "bar"}, 1, 3.14159, true, false, nil}
+      toJSON {hashTable{"foo" => "bar"}, 1, 3.14159, true, false, null}
       fromJSON oo
 ///
 
@@ -278,7 +198,7 @@ doc ///
       given Macaulay2 thing.  If the @TT "Indent"@ option is @TT "null"@
       (the default), then there are no newlines or indentation.
     Example
-      x = hashTable {"foo" => {1, 2, {pi, true, false, nil}}}
+      x = hashTable {"foo" => {1, 2, {pi, true, false, null}}}
       toJSON x
     Text
       If the @TT "Indent"@ option is an integer, then newlines are added between
@@ -328,8 +248,7 @@ doc ///
   Description
     Text
       The JSON data provided in the given string or file is parsed using the
-      @TO "Parsing"@ package with the context-free grammar specified by
-      @HREF{"https://datatracker.ietf.org/doc/html/rfc8259", "RFC 8259"}@.
+      @HREF("https://github.com/akheron/jansson", "Jansson")@ library.
       The type of the return value will vary depending on the data.
 
       Numbers will result in @TT "ZZ"@ or @TT "RR"@ objects, as appropriate.
@@ -347,11 +266,9 @@ doc ///
       fromJSON "true"
       fromJSON "false"
     Text
-      Due to the implementation of the @TT "Parsing"@ package, @TO "null"@
-      cannot be a return value, and so the symbol @TO "nil"@ is returned
-      when JSON's @TT "null"@ is given.
+      JSON's @TT "null"@ will result in Macaulay2's @TO null@.
     Example
-      fromJSON "null"
+      fromJSON "null" === null
     Text
       Objects will result in hash tables.
     Example
@@ -377,7 +294,6 @@ testdir = tmpdir | "/JSONTestSuite/test_parsing"
 tsts = select(readDirectory(testdir), f ->
     match("\\.json$", f))
 
-needsPackage "Parsing" -- for nil
 debug Core -- for commentize
 
 outdir = (needsPackage "JSON")#"source directory" | "JSON"
