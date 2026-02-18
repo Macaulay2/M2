@@ -162,10 +162,6 @@ extern "C" {
   M2_string M2_tostring(const char* s);
   M2_string M2_tostringn(char *s, int n);
 
-  extern M2_string (*tonetCCparenpointer)(gmp_CC);
-  extern M2_string (*tonetCCpointer)(gmp_CC);
-  extern M2_string (*tostringRRpointer)(mpfr_srcptr);
-  
 #if defined(__cplusplus)
 }
 #endif
@@ -178,9 +174,6 @@ extern int M2_numericalAlgebraicGeometryTrace;
 
 #else
 typedef struct gmp_CC_struct * gmp_CC;
-extern M2_string (*tonetCCparenpointer)(gmp_CC);
-extern M2_string (*tonetCCpointer)(gmp_CC);
-extern M2_string (*tostringRRpointer)(mpfr_srcptr);
 
 #endif // !defined(SAFEC_EXPORTS)
 

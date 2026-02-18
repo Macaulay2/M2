@@ -48,11 +48,6 @@ M2_string M2_tostringn(const char *s, int n)
     return p;
 }
 
-M2_string (*tonetCCparenpointer)(gmp_CC);
-M2_string (*tonetCCpointer)(gmp_CC);
-M2_string (*tostringRRpointer)(mpfr_srcptr);
-
-
 char newline[] = "\n";
 
 int M2_numTBBThreads = 0;

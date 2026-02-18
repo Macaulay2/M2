@@ -95,10 +95,6 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
 
   flint_set_abort(M2_flint_abort);
 
-  tonetCCparenpointer = gmp_tonetCCparenpointer;
-  tonetCCpointer = gmp_tonetCCpointer;
-  tostringRRpointer = gmp_tostringRRpointer;
-
   static struct ArgCell* M2_vargs;
   M2_vargs = (ArgCell*) GC_MALLOC_UNCOLLECTABLE(sizeof(struct ArgCell));
   M2_vargs->argv = argv; /* argument vector */

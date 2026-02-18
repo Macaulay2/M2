@@ -162,7 +162,6 @@ export printingSeparator := "e";			    -- was "*10^"
 -- this can be used by the engine for printing matrices to a uniform precision
 
 export tostringRR(x:RR):string := concatenate(format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,x));
-tostringRRpointer = tostringRR;
 
 export tostringRRi(x:RRi):string := concatenate( 
     array(string)(
@@ -173,7 +172,6 @@ export tostringRRi(x:RRi):string := concatenate(
        	"]",
         if isEmpty(x) then " (an empty interval)" else ""
        	));  
-tostringRRipointer = tostringRRi;  
 
 numericstr(prec:ulong, str:string, ng:bool):string := (
     "numeric(" + tostring(prec) + ", " + if ng then "-" else "" + str + ")");
@@ -244,11 +242,9 @@ export tostringCC(z:CC):string := (
 export tonetCC(z:CC):string := (
      format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,true,false,z)
      );
-tonetCCpointer = tonetCC;
 export tonetCCparen(z:CC):string := (
      format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,true,true,z)
      );
-tonetCCparenpointer = tonetCCparen;
 
 export toExternalString(z:CC):string := concatenate(array(string)(
      	  "toCC(",
