@@ -10,18 +10,14 @@ void ARingRRR::elem_text_out(buffer &o,
                              bool p_parens) const
 {
   (void) p_parens;
-  mpfr_ptr a = &const_cast<ElementType &>(ap);
-  M2_string s = (*tostringRRpointer)(a);
-  bool prepend_plus = p_plus && (s->array[0] != '-');
-  bool strip_last =
-      !p_one && ((s->len == 1 && s->array[0] == '1') ||
-                 (s->len == 2 && s->array[1] == '1' && s->array[0] == '-'));
 
-  if (prepend_plus) o << "+";
-  if (strip_last)
-    o.put((char *)s->array, s->len - 1);
-  else
-    o.put((char *)s->array, s->len);
+  if (p_plus && mpfr_cmp_si(&ap, 0) > 0)
+    o << "+";
+
+  if (!p_one && mpfr_cmp_si(&ap, -1) == 0)
+    o << "-";
+  else if (p_one || mpfr_cmp_si(&ap, 1) != 0)
+    o << &ap;
 }
 
 };  // end namespace M2

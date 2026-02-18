@@ -18,19 +18,19 @@ using RRimutable = mpfi_ptr;
 
 // The following is the data type used for complex numbers in aring-CCC
 // Perhaps we should have it be 
-typedef struct 
+struct cc_struct
 {
   __mpfr_struct re;
   __mpfr_struct im;
-} cc_struct;
+};
 using cc_ptr = cc_struct *;
 using cc_srcptr = cc_struct const *;
 
-typedef struct
+struct cc_doubles_struct
 {
   double re;
   double im;
-} cc_doubles_struct;
+};
 using cc_doubles_srcptr = cc_doubles_struct const *;
 using cc_doubles_ptr = cc_doubles_struct *;
 

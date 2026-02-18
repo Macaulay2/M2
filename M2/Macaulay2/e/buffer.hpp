@@ -9,6 +9,10 @@
 
 const int BUFFER_INITIAL_CAPACITY = 100;
 
+// forward declarations (from ringelem.hpp)
+struct cc_struct;
+struct cc_doubles_struct;
+
 struct indent
 {
   int n;
@@ -63,6 +67,9 @@ class buffer : public our_new_delete
   void put(unsigned long long n);  // Format the integer, place into buffer
   void put(unsigned long n,
            int width);  // Format the integer, with given width field.
+  void put(mpfr_srcptr x);
+  void put(cc_struct const *x);
+  void put(cc_doubles_struct const *x);
   void put(std::string s) { put(s.data(), s.size()); }
   // To put an endline in:
   // o.put(newline);
@@ -132,6 +139,21 @@ class buffer : public our_new_delete
   buffer &operator<<(unsigned char c)
   {
     put(static_cast<char>(c));
+    return *this;
+  }
+  buffer &operator<<(mpfr_srcptr x)
+  {
+    put(x);
+    return *this;
+  }
+  buffer &operator<<(cc_struct const *x)
+  {
+    put(x);
+    return *this;
+  }
+  buffer &operator<<(cc_doubles_struct const *x)
+  {
+    put(x);
     return *this;
   }
   buffer &operator<<(indent s)
