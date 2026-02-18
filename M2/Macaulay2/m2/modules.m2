@@ -356,7 +356,7 @@ isSubset(Module, Module) := (M, N) -> (
     ambient M === ambient N and
     if  not M.?relations and not N.?relations then issub(generators M, generators N)
     else if M.?relations and     N.?relations then (
-	isequal(M.relations, N.relations) and issub(generators M, generators N | N.relations))
+	isequal(M.relations, N.relations) and issub(generators M, fullgens N))
     -- see the code for subquotient: if present, M.relations is nonzero; same for N
     -- so one of the modules has nonzero relations and the other doesn't
     else false)

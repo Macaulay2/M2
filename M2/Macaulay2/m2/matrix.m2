@@ -656,7 +656,7 @@ isSubquotient(Module,Module) := (M,N) -> (
      and
      ambient M === ambient N
      and
-     (generators M | relations M) % (generators N | relations N) == 0
+     fullgens M % fullgens N == 0
      and
      relations N % relations M == 0
      )
