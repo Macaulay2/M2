@@ -307,6 +307,8 @@ https://github.com/nst/JSONTestSuite"
 outfile = openOut(outdir | "/tests/parse.m2")
 outfile << commentize  copyrightBanner << endl
 for tst in sort select(tsts, f -> match("^y_", f)) do (
+    -- TODO: allow \0 in keys (need jansson 2.14)
+    if tst == "y_object_escaped_null_in_key.json" then continue;
     outfile << endl << commentize tst << endl;
     testjson = get(testdir | "/" | tst);
     outfile << "assert BinaryOperation(symbol ===, fromJSON " <<
