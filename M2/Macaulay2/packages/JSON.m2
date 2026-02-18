@@ -1,5 +1,5 @@
 -- JSON package for Macaulay2
--- Copyright (C) 2022-2025 Doug Torrance
+-- Copyright (C) 2022-2026 Doug Torrance
 
 -- This program is free software; you can redistribute it and/or
 -- modify it under the terms of the GNU General Public License
@@ -17,8 +17,8 @@
 newPackage(
     "JSON",
     Headline => "JSON encoding and decoding",
-    Version => "0.5",
-    Date => "November 10, 2025",
+    Version => "0.6",
+    Date => "February 18, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -32,6 +32,13 @@ newPackage(
 ---------------
 
 -*
+
+0.6 (2026-02-18, M2 1.26.05)
+* parsing is now handled by jansson in the interpreter, which speeds things up
+  considerably
+* breaking changes:
+  - "null" now returns as null, not nil
+  - \0 is no longer allowed in object keys
 
 0.5 (2025-11-10, M2 1.25.11)
 * add GPL copyright header
