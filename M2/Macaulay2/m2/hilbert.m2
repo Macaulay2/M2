@@ -87,7 +87,7 @@ poincare Module := M -> (
 -- Use that the Poincare polynomial of a subquotient module M is the difference of the Poincare polynomials of two quotients.
 -- This avoids having to find a presentation of M (unless that has already been done).
 addHook((poincare, Module), Strategy => Default, M -> (
-        hf := if any(select(keys M.cache, Option), o -> o#0 === symbol minimalPresentation) then
+        hf := if hasMinPres M then
                   rawHilbert raw leadTerm gb relations minimalPresentation M
               -- We cannot just call "poincare minimalPresentation M", because there are cases (such as M free)
               -- where both M and minimalPresentation M are cached as having a minimal presentation;
