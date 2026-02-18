@@ -1,5 +1,5 @@
 -- JSONRPC package for Macaulay2
--- Copyright (C) 2025 Doug Torrance <dtorrance@piedmont.edu>
+-- Copyright (C) 2025-2026 Doug Torrance <dtorrance@piedmont.edu>
 
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 newPackage("JSONRPC",
     Headline => "JSON-RPC server",
     Version => "0.2",
-    Date => "December 17, 2025",
+    Date => "February 18, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -31,8 +31,9 @@ newPackage("JSONRPC",
 
 -*
 
-0.2 (2025-12-17, M2 1.26.05)
+0.2 (2026-02-18, M2 1.26.05)
 * Use trap for error messages
+* Update for JSON v0.6 (nil -> null)
 
 0.1 (2025-05-19, M2 1.25.11)
 * Initial release
@@ -116,7 +117,7 @@ handleRequestHelper(JSONRPCServer, HashTable) := (server, request) -> (
 	request#?"id" and not (
 	    instance(request#"id", String) or
 	    instance(request#"id", ZZ) or
-	    request#"id" === nil))
+	    request#"id" === null))
     then handleRequestHelper(server, null) -- invalid request
     else if not server#?(request#"method")
     then (
