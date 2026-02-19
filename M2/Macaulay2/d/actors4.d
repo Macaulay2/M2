@@ -1115,7 +1115,7 @@ format(e:Expr):Expr := (
 	  is x:ZZcell do toExpr(concatenate(format(s,ac,l,t,sep,toRR(x.v,defaultPrecision))))
 	  is x:QQcell do toExpr(concatenate(format(s,ac,l,t,sep,toRR(x.v,defaultPrecision))))
 	  is x:RRcell do toExpr(concatenate(format(s,ac,l,t,sep,x.v)))
-	  is z:CCcell do toExpr(format(s,ac,l,t,sep,false,false,z.v))
+	  is z:CCcell do toExpr(format(s,ac,l,t,sep,z.v))
 	  else WrongArgRR(n)
 	  )
      else WrongArg("string, or real number, integer, integer, integer, string"));

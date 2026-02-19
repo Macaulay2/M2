@@ -208,44 +208,24 @@ export format(
      l:int,					   -- max number leading zeroes
      t:int,				    -- max number extra trailing digits
      sep:string,		     -- separator between mantissa and exponent
-     abb:bool,				  -- whether to abbreviate "*ii" to "i"
-     paren:bool,    -- whether to parenthesize a sum and prepend a possible '-'
      z:CC						-- the number to format
      ) : string := (
      if isnan(z.re) || isnan(z.im) then return "NotANumber";
      if isinf(z.re) || isinf(z.im) then return "infinity";
      if s != 0 && ac == -1 && !isZero(z.re) && !isZero(z.im) then ac = s - int(floor(double(exponent(z))/log2ten));
-     star := if abb then ""  else "*" ;
-     i  := if abb then "i" else "ii";
+     star := "*";
+     i  := "ii";
      x := format(s,ac,l,t,sep,z.re);
      y := format(s,ac,l,t,sep,z.im);
      if y.1 === "0" then return if x.1 === "0" then "0" else concatenate(x);
      if y.1 === "1" then (y.1 = ""; star = "");
      if x.1 === "0" then return concatenate(array(string)(y.0,y.1,star,i));
      if y.0 === "" then y.0 = "+";
-     lp := "";
-     rp := "";
-     if paren then (
-	  if x.0 === "-" 
-	  then (
-	       x.0 = "";
-	       lp = "-("; 
-	       if y.0 .0 == '-' then y.0 = "+" else y.0 = "-")
-	  else lp = "(";
-	  rp = ")"; 
-	  );
-     concatenate(array(string)(lp,x.0,x.1,y.0,y.1,star,i,rp)));
+     concatenate(array(string)(x.0,x.1,y.0,y.1,star,i)));
 
 export tostringCC(z:CC):string := (
-     format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,false,false,z)
+     format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,z)
      );
-export tonetCC(z:CC):string := (
-     format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,true,false,z)
-     );
-export tonetCCparen(z:CC):string := (
-     format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,true,true,z)
-     );
-
 export toExternalString(z:CC):string := concatenate(array(string)(
      	  "toCC(",
 	  toExternalString(realPart(z)),
