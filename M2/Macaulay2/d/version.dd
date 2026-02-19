@@ -69,6 +69,8 @@ header "
    #ifdef HAVE_FPLLL
    #include <fplll.h>
    #endif
+
+   #include <libxml/xmlversion.h>
    ";
 
 header "
@@ -173,6 +175,7 @@ setupconst("version", Expr(toHashTable(Sequence(
 	   \"not present\"
        #endif
        "),
+   "libxml2 version" => Ccode(constcharstar, "LIBXML_DOTTED_VERSION"),
    "mpsolve version" => Ccode(constcharstar, "stringize(MPS_MAJOR_VERSION) \".\" stringize(MPS_MINOR_VERSION) \".\" stringize(MPS_PATCH_VERSION)" ),
    "python version" => Ccode(constcharstar,"
 	#ifdef WITH_PYTHON
