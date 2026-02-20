@@ -1,4 +1,0 @@
-we need, perhaps, a master index to the documentation of all the installed
-packages to be generated on the user's computer, so the user can find things
-such as associatedPrimes, which is in a subsidiary package, but not listed in
-the index of Macaulay2

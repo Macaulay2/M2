@@ -1,9 +1,0 @@
-
-i14 : sqrt ii
-stdio:14:1:(3): error: expected a real number			<=== incorrect error message
-
-i15 : sqrt (+ii)
-
-o15 = .707106781186548+.707106781186547*ii
-
-o15 : CC (of precision 53)

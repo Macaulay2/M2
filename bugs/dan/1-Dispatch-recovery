@@ -1,4 +1,0 @@
-How can the user determine the Dispatch method from the function?  E.g., recover
-{Thing,Type,Type} from promote?
-
-promote = method(Dispatch=>{Thing,Type,Type})

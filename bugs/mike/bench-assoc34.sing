@@ -1,6 +1,0 @@
-LIB "primdec.lib";
-ring r = 32003, (a,b,c,d,e,f,g,h,i,j,k,l), dp;
-timer=1;
-ideal J = acf2-b2eg, bdg2-c2fh, acj2-b2ik, bdk2-c2jl, egj2-f2ik, fhk2-g2jl, af2i-be2j, ag2i-ce2k, bg2j-cf2k, ah2i-de2l, bh2j-df2l, ch2k-dg2l, bgi-cej, -agj+bek, chj-dfk, -bhk+cfl;
-primdecGTZ(J);
-primdecSY(J);

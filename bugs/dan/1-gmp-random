@@ -1,2 +1,0 @@
-put a test into configure.ac for whether the random number generator in gmp
-that we use has changed its output
