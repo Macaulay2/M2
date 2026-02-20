@@ -54,11 +54,27 @@ arm64-appleclang : always
 	F77="gfortran-15" \
 	PKG_CONFIG_PATH="`brew --prefix factory`/lib/pkgconfig"
 
-# arm64-appleclang : always
-# 	mkdir -p builds.tmp/arm64-appleclang
-# 	cd builds.tmp/arm64-appleclang; ../../../../configure \
-# 	--with-system-libs \
-# 	F77="gfortran-14" \
-# 	PKG_CONFIG_PATH="`brew --prefix factory`/lib/pkgconfig"
+arm64-debug-appleclang : always
+	mkdir -p builds.tmp/arm64-debug-appleclang
+	cd builds.tmp/arm64-debug-appleclang; ../../../../configure \
+		--disable-strip \
+		--enable-debug \
+		--enable-memdebug \
+		--disable-optimize \
+		--enable-download --with-system-gc \
+		--with-system-memtailor --with-system-mathic \
+		--with-system-mathicgb \
+		LDFLAGS="-L`brew --prefix`/lib  \
+			-L`brew --prefix factory`/lib \
+			-L`brew --prefix libomp`/lib  \
+			-L`brew --prefix readline`/lib \
+			-L`brew --prefix python`/Frameworks/Python.framework/Versions/3.13/lib" \
+		CPPFLAGS="-I`brew --prefix`/include   \
+		    -I`brew --prefix`/include/cddlib    \
+			-I`brew --prefix factory`/include   \
+			-I`brew --prefix libomp`/include    \
+			-I`brew --prefix readline`/include" \
+		F77="gfortran-15" \
+		PKG_CONFIG_PATH="`brew --prefix factory`/lib/pkgconfig"
 
-
+# todo: add profiling builds

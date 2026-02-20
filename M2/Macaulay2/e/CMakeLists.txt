@@ -450,9 +450,6 @@ if(BUILD_TESTING)
   # TODO: break up into multiple branches
   add_executable(M2-unit-tests
     unit-tests/M2-cpp-replacement.cpp
-#    unit-tests/M2-replacement.c
-#    unit-tests/M2mem-replacement.c
-#    unit-tests/M2mem-replacement.h
 
     unit-tests/util-polyring-creation.hpp
     unit-tests/util-polyring-creation.cpp
