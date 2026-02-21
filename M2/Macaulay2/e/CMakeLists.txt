@@ -392,14 +392,6 @@ foreach(LIB IN LISTS LIBRARIES_LIST)
   endif()
 endforeach()
 
-foreach(LIB IN LISTS LIBRARY_LIST)
-  if(${LIB}_FOUND)
-    target_link_libraries(M2-engine PUBLIC ${${LIB}_LIBRARY})
-    target_include_directories(M2-engine PUBLIC
-        "$<BUILD_INTERFACE:${${LIB}_INCLUDE_DIR}>")
-  endif()
-endforeach()
-    
 # Compiler warning flags
 target_compile_options(M2-engine PRIVATE
   -Wno-cast-qual # FIXME
@@ -460,14 +452,16 @@ if(BUILD_TESTING)
     unit-tests/ARingTest.hpp
     unit-tests/ARingZZTest.cpp
     unit-tests/ARingZZpTest.cpp
-#    unit-tests/ARingGFTest.cpp # FIXME: see aring-gf-givaro.cpp:199
+#    unit-tests/ARingGFTest.cpp # TODO: needs rework - ARingGFFlint API has changed
     unit-tests/ARingQQFlintTest.cpp
     unit-tests/ARingQQGmpTest.cpp
     unit-tests/ARingRRTest.cpp
     unit-tests/ARingCCTest.cpp
     unit-tests/ARingRRRTest.cpp
+    unit-tests/ARingRRiTest.cpp
     unit-tests/ARingCCCTest.cpp
     unit-tests/NCGroebnerTest.cpp
+#    unit-tests/WeylAlgebraTest.cpp # TODO: add this file
 
     unit-tests/RingTest.hpp
     unit-tests/RingZZTest.cpp

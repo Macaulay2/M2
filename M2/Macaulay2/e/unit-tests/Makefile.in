@@ -9,96 +9,37 @@ include @srcdir@/Makefile.files
 export LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 
 CPPFLAGS := -I. -I@srcdir@  -I@srcdir@/..  $(CPPFLAGS) \
-     -isystem $(GTEST_DIR) -isystem $(GTEST_DIR)/include \
-	 -I@srcdir@/../../c #-Wno-unused-local-typedefs # ffpack has some of these.
-CXXFLAGS += -std=gnu++17 -Wno-sign-conversion #-Wno-unused-local-typedefs -coverage
+     -isystem $(GTEST_DIR) -isystem $(GTEST_DIR)/include
+CXXFLAGS += -std=gnu++17 -Wno-sign-conversion
 
-# note: on some machines, gcc can't find -lstdc++
 LOADLIBES += @BUILTLIBS@ @LINALGLIBS@ @LIBS@ @FCLIBS@ -lgtest -pthread
 
-.PHONY: place_into_lib runtests
+.PHONY: runtests
 
 all: $(UNITTEST_OBJECT_FILES) $(LIBENGINE)
-	echo @BUILTLIBS@
-	echo @LIBS@
 
-# disabling a test temporarily, because it doesn't compile
-#check:
-#	@ echo "makefile: Warning : skipping temporarily disabled test in e/unit-test"
 check: runtests
 
 fullCheck: $(UNITTEST_TARGET)
 	valgrind --track-origins=yes ./$(UNITTEST_TARGET)
 
-$(UNITTEST_TARGET) : $(UNITTEST_OBJECT_FILES) $(LIBENGINE) # ../../system/supervisor.o
+$(UNITTEST_TARGET) : $(UNITTEST_OBJECT_FILES) $(LIBENGINE)
 	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
 
 runtests: $(UNITTEST_TARGET)
 	time ./$(UNITTEST_TARGET)
 
-ARingRRRTest :  ARingRRRTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(LIBENGINE)
-	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
-
-ARingRRiTest :  ARingRRiTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(LIBENGINE)
-	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
-
-ARingGFTest :  ARingGFTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(LIBENGINE) # ../../system/supervisor.o
-	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
-
-NCGroebnerTest :  NCGroebnerTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(LIBENGINE) # ../../system/supervisor.o
-	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
-
-runNCGroebnerTest : NCGroebnerTest
-	time ./NCGroebnerTest
-
-ARingRRRZZpTest : \
-    ARingZZpTest.o  \
-    ARingRRRTest.o \
-    ARingZZpTest.o \
-    RingZZTest.o \
-    RingZZpTest.o \
-    RingQQTest.o \
-    RingRRRTest.o \
-    RingCCCTest.o \
-    $(UNITTEST_SHARED_OBJECT_FILES) $(LIBENGINE)
-	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
-
-checkGivaro: GivaroTest
-
-GivaroTest: GivaroTest.o
-	@CXX@ $(LDFLAGS) $^ -lgivaro -lgmp -lgmpxx -o $@
-
-checkRingRRR: ARingRRRTest
-	time ./ARingRRRTest
-
-checkRingRRi: ARingRRiTest
-	time ./ARingRRiTest
-
-#fails for whatever reasons
-checkRingRRRZZp: ARingRRRZZpTest
-	time ./ARingRRRZZpTest
-
-
-# fails on my 32-bit fedora 14 , gcc is 4.5.1. 
-failing: checkRingRRRZZp
-
-
-%.s : %.c; $(COMPILE.cc) -S $< $(OUTPUT_OPTION)
-
 MORE_OPTIONS = -Wno-cast-qual
-COMPILE.c += $(MORE_OPTIONS)
 COMPILE.cc += $(MORE_OPTIONS)
-
 
 Makefile: Makefile.in; cd ../../..; ./config.status Macaulay2/e/unit-tests/Makefile
 clean::; rm -f *.o *.rpo *.dep dep-*.tmp LOGFILE testMain
 distclean: clean; rm -f Makefile
 
 ifeq "$(DEPENDS)" "yes"
-include $(UNITTEST_CFILES:=.dep) $(UNITTEST_CCFILES:=.dep)
+include $(UNITTEST_CCFILES:=.dep)
 endif
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check"
 # End:
-.NOTPARALLEL:
