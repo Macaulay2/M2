@@ -205,13 +205,14 @@ Dtransposition Matrix := m -> (
      error "expected an element of a Weyl algebra";
      createDpairs W;
      
-     if not isFreeModule source m or not isFreeModule target m then (
-	 error "expected a matrix between free modules";);
-     
-     if numgens source m == 0 or numgens target m == 0 then mtrans := m
-     else mtrans = matrix apply( entries m, i -> 
-	  (apply (i, j -> Dtransposition j)) );
-     mtrans
+     if not isFreeModule source m or not isFreeModule target m then
+	 error "expected a matrix between free modules";
+
+     -- MES GGS Bug????  Degrees are off here.  Is this correct?
+     if numgens source m == 0 or numgens target m == 0 then m
+       else map(target m,
+               source m,
+               matrix apply(entries m, i -> apply(i, j -> Dtransposition j)))
      )
 
 Dtransposition Ideal := I -> (
@@ -230,7 +231,7 @@ Dtransposition Complex := C -> (
      
      (loC, hiC) := concentration C;
      if loC == hiC then return C;
-     transC := for i from loC to hiC-1 list Dtransposition C.dd_i;
+     transC := for i from loC+1 to hiC list Dtransposition C.dd_i;
      -- apply( keys C.dd, i -> if (class C.dd#i === Matrix) then
 	 --       	    C.dd#i = Dtransposition C.dd#i);
      complex(transC, Base => loC)
