@@ -152,6 +152,9 @@ Description
     D2 = makeWeylAlgebra(QQ[x, y], w2 = {1, 2});
     SM2 = standardMonomials sub(I, D2)
     gaugeMatrix(I, SM2)
+  Text
+    It is also possible to compute the gauge matrix of a system of connection matrices containing parameters.
+    See line i14 of @TO2{"Cosmological correlator for the 2-site chain", "Cosmological correlator for the 2-site chain"}@ for an example.
 SeeAlso
   standardMonomials
   gaugeTransform
