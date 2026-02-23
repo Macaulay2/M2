@@ -87,6 +87,14 @@ Description
     D = makeWeylAlgebra(QQ[x,y], {1,1});
     P = dx^2 ; Q = x*dx+1;
     normalForm(P, Q)
+  Text
+    We can compute the normal form with respect to the Gröbner basis of a $D$-ideal.
+  Example
+    D = makeWeylAlgebra(QQ[x, y]);
+    I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
+    G = first entries mingens gb I;
+    P = dx;
+    normalForm(P,G)
 References
   See [@HREF("https://link.springer.com/book/10.1007/978-3-662-04112-3","SST")@, Theorem 1.1.7].
 Caveat

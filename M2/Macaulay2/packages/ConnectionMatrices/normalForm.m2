@@ -120,44 +120,46 @@ reduceOneStep(RingElement, RingElement) := (f, g) -> (
 -- Normal form with respect to single element g.
 normalForm = method()
 -- f in D, g in D, SST page 7
-normalForm(RingElement, RingElement) := (f, g) -> (
-    if f == 0 then return f;
-    D := ring g;
-    w := (((options(D)).MonomialOrder)#1)#1;
-    n := numgens D // 2;
-    F := baseFractionField D;
-    R := rationalWeylAlgebra(D);
-    if R =!= ring f then f = sub(f, R);
-    f0 := leadTerm(f);
-    g0 := leadTerm(sub(g,R));
-    --fexp := unique exponents f0;
-    --gexp := unique apply(exponents g0, e -> last pack_n e);
-    fexp := (exponents f0)#0;
-    gexp := (last pack_n (exponents g0)#0);
-    -- as long as we refine with elimination lexicographic order, we don't need generic weights
-    -- if #fexp > 1 or #gexp > 1 then error "expected generic weight order";
-    -- RECURSION: if g0 does not divide f0, no reduction is necessary
-    if not (gexp << fexp) then (return f0 + normalForm(f-f0, g));
-    -- compare weights of leading monomials
-    -- scalar product of exponent vector with the weight of the d's
-    fwt := sum(fexp, last pack_n w, times);
-    gwt := sum(gexp, last pack_n w, times);
-    if fwt < gwt then return f;
-    -- find the coefficient to divide by
-    fcoef := lift(f0 // R_(fexp), F);
-    gcoef := lift(sub(g0, R) // R_(gexp), F);
-    -- this must be in D to perform the derivative
-    ddexp := fexp - gexp;
-    ddmon := D_(toList(n:0) | ddexp);
-    -- exponents on the x's are zeroes and exponents of the d's are ddexp
-    -- recurse to normalize the lower order terms
---     -- FIXME: this should work, but doesn't:
---     -- f - fcoef / gcoef * sub(ddmon * g, R)
---     --    print netList {f, g, sub(ddmon * g, R), f % sub(ddmon * g, R)};
---     --    error 0;
-    normalForm(f % sub(ddmon * g, R), g)
-    -- eliminates leading term of f and restarts with the remainder
-    )
+normalForm(RingElement, RingElement) := (f, g) -> normalForm(f,{g})
+
+-- normalForm(RingElement, RingElement) := (f, g) -> (
+--     if f == 0 then return f;
+--     D := ring g;
+--     w := (((options(D)).MonomialOrder)#1)#1;
+--     n := numgens D // 2;
+--     F := baseFractionField D;
+--     R := rationalWeylAlgebra(D);
+--     if R =!= ring f then f = sub(f, R);
+--     f0 := leadTerm(f);
+--     g0 := leadTerm(sub(g,R));
+--     --fexp := unique exponents f0;
+--     --gexp := unique apply(exponents g0, e -> last pack_n e);
+--     fexp := (exponents f0)#0;
+--     gexp := (last pack_n (exponents g0)#0);
+--     -- as long as we refine with elimination lexicographic order, we don't need generic weights
+--     -- if #fexp > 1 or #gexp > 1 then error "expected generic weight order";
+--     -- RECURSION: if g0 does not divide f0, no reduction is necessary
+--     if not (gexp << fexp) then (return f0 + normalForm(f-f0, g));
+--     -- compare weights of leading monomials
+--     -- scalar product of exponent vector with the weight of the d's
+--     fwt := sum(fexp, last pack_n w, times);
+--     gwt := sum(gexp, last pack_n w, times);
+--     if fwt < gwt then return f;
+--     -- find the coefficient to divide by
+--     fcoef := lift(f0 // R_(fexp), F);
+--     gcoef := lift(sub(g0, R) // R_(gexp), F);
+--     -- this must be in D to perform the derivative
+--     ddexp := fexp - gexp;
+--     ddmon := D_(toList(n:0) | ddexp);
+--     -- exponents on the x's are zeroes and exponents of the d's are ddexp
+--     -- recurse to normalize the lower order terms
+-- --     -- FIXME: this should work, but doesn't:
+-- --     -- f - fcoef / gcoef * sub(ddmon * g, R)
+-- --     --    print netList {f, g, sub(ddmon * g, R), f % sub(ddmon * g, R)};
+-- --     --    error 0;
+--     normalForm(f % sub(ddmon * g, R), g)
+--     -- eliminates leading term of f and restarts with the remainder
+--     )
 
 -- use this for lifting from R to D
 -- c.f. https://github.com/Macaulay2/M2/issues/3613
@@ -188,7 +190,7 @@ restart
 needs "reduce.m2"
 -- Examples for testing with connection matrices
 -- Example 1.3: w = (0,0,2,1)
-D = makeWeylAlgebra(QQ[x,y], w = {0,0,2,1});
+D = makeWeylAlgebra(QQ[x,y], w = {2,1});
 I = ideal(x*dx^2-y*dy^2+dx-dy,x*dx+y*dy+1)
 leadTerm(I)
 R = rationalWeylAlgebra D
@@ -208,7 +210,7 @@ normalForm(dy_R^2,flatten entries gens G)
 
 
 -- Example 1.3: w = (0,0,1,2)
-D = makeWeylAlgebra(QQ[x,y], w = {0,0,1,2});
+D = makeWeylAlgebra(QQ[x,y], w = {1,2});
 I = ideal(x*dx^2-y*dy^2+dx-dy,x*dx+y*dy+1)
 leadTerm(I)
 R = rationalWeylAlgebra D
@@ -227,7 +229,7 @@ normalForm(dy_R,flatten entries gens G)
 normalForm(dx_R*dy_R,flatten entries gens G)
 
 -- Example 1.4: w = (0,0,2,1)
-D = makeWeylAlgebra(QQ[x,y], w = {0,0,2,1});
+D = makeWeylAlgebra(QQ[x,y], w = {2,1});
 I = ideal(x*dx^2-y*dy^2+2*dx-2*dy,x*dx+y*dy+1)
 leadTerm(I)
 R = rationalWeylAlgebra D
@@ -245,7 +247,7 @@ normalForm(dy_R,flatten entries gens G)
 normalForm(dy_R^2,flatten entries gens G)
 
 -- w=(0,0,1,2)
-D = makeWeylAlgebra(QQ[x,y], w = {0,0,1,2});
+D = makeWeylAlgebra(QQ[x,y], w = {1,2});
 I = ideal(x*dx^2-y*dy^2+2*dx-2*dy,x*dx+y*dy+1)
 leadTerm(I)
 R = rationalWeylAlgebra D
