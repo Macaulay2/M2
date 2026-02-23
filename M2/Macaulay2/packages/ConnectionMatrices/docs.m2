@@ -84,7 +84,7 @@ Description
     This method computes the normal form of an element $P$ in the Weyl algebra $D_n$ with respect to another element in the Weyl algebra, or a whole list of such elements.
     The reduction step is carried out over the rational Weyl algebra $R_n$.
   Example
-    D = makeWA(QQ[x,y], {1,1});
+    D = makeWeylAlgebra(QQ[x,y], {1,1});
     P = dx^2 ; Q = x*dx+1;
     normalForm(P, Q)
 References
@@ -114,7 +114,7 @@ Description
     Several functions in this package return an object over the fraction field of the base
     polynomial ring of a Weyl algebra. This function extracts that ring.
   Example
-    D = makeWA(frac(QQ[e])[a,b,c, DegreeRank => 0][x,y]);
+    D = makeWeylAlgebra(frac(QQ[e])[a,b,c, DegreeRank => 0][x,y]);
     baseFractionField D
     gens oo
 ///
@@ -154,7 +154,13 @@ Description
     gaugeMatrix(I, SM2)
   Text
     It is also possible to compute the gauge matrix of a system of connection matrices containing parameters.
-    See line i14 of @TO2{"Cosmological correlator for the 2-site chain", "Cosmological correlator for the 2-site chain"}@ for an example.
+  Example
+    D = makeWeylAlgebra(frac(QQ[a])[x]);
+    I = ideal(x^2*dx^2 + x*dx + (x^2-a^2))
+    standardMonomials I
+    gaugeMatrix(I,{dx,x^2*dx^2+x*dx+x^2})
+  Text
+    See also line i14 of @TO2{"Cosmological correlator for the 2-site chain", "Cosmological correlator for the 2-site chain"}@ for an example.
 SeeAlso
   standardMonomials
   gaugeTransform
@@ -241,7 +247,14 @@ Description
     gaugeTransform(M, A, D)
   Text
     It is also possible to compute the gauge transform of a system of connection matrices containing parameters.
-    See line i15 of @TO2{"Cosmological correlator for the 2-site chain", "Cosmological correlator for the 2-site chain"}@ for an example.
+  Example
+    D = makeWeylAlgebra(frac(QQ[a])[x]);
+    I = ideal(x^2*dx^2 + x*dx + (x^2-a^2))
+    A = pfaffianSystem I
+    M = gaugeMatrix(I,{dx,x^2*dx^2+x*dx+x^2});
+    gaugeTransform(M,A)
+  Text
+    See also line i15 of @TO2{"Cosmological correlator for the 2-site chain", "Cosmological correlator for the 2-site chain"}@ for an example.
 SeeAlso
   gaugeMatrix
   "Cosmological correlator for the 2-site chain"
