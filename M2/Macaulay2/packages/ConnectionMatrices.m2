@@ -25,7 +25,8 @@ export {
     -- see ConnectionMatrices.m2
     "standardMonomials",
     "connectionMatrices" => "pfaffianSystem",
-    "connectionMatrix",
+    "connectionForm",
+    "connectionMatrix" => "connectionForm",
     "pfaffianSystem",
     -- see ConnectionMatrices/integrabilityCheck.m2
     "isIntegrable",
@@ -96,20 +97,20 @@ pfaffianSystem(Ideal, List) := (I, B)->(
 )
 
 ----------------------------------------------------
--- connectionMatrix: computes connection matrix of I
+-- connectionForm: computes connection matrix of I
 ----------------------------------------------------
 
-connectionMatrix = method()
+connectionForm = method()
 
 -- D-ideal as an input
-connectionMatrix Ideal := Net => I -> (
+connectionForm Ideal := Net => I -> (
     P := pfaffianSystem I;
     R := rationalWeylAlgebra ring I;
     net sum(P, gens R, (Px, dx) -> Px * dx)
 )
 
 -- a system of connection matrices as input
-connectionMatrix List := Net => P -> (
+connectionForm List := Net => P -> (
     F := ring P#0;
     D := inferWeylAlgebra F;
     R := rationalWeylAlgebra D;

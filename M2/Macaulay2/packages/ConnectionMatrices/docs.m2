@@ -24,7 +24,7 @@ Node
 	baseFractionField
       :Computing and displaying $D$-ideals in connection form
         pfaffianSystem
-        connectionMatrix
+        connectionForm
       :Changing basis of a system of connection matrices
         gaugeMatrix
         gaugeTransform
@@ -49,7 +49,7 @@ Node
     standardMonomials
     baseFractionField
     pfaffianSystem
-    connectionMatrix
+    connectionForm
     gaugeMatrix
     gaugeTransform
     isEpsilonFactorized
@@ -164,7 +164,7 @@ Key
     (pfaffianSystem, Ideal)
     (pfaffianSystem, Ideal, List)
 Headline
-    computes the connection matrices of a $D_n$-ideal $I$ for a chosen basis
+    computes the Pfaffian system of a $D_n$-ideal $I$ for a chosen basis
 Usage
     pfaffianSystem I
     pfaffianSystem(I, B)
@@ -175,18 +175,34 @@ Inputs
       a basis of $R_n/R_nI$
 Outputs
     A:List
-      the system of connection matrices of $I$ over the @TO2{baseFractionField, "base fraction field"}@ of $D_n$
+      Pfaffian system of $I$ over the @TO2{baseFractionField, "base fraction field"}@ of $D_n$
 Description
   Text
     Let $I$ be an ideal in the Weyl algebra $D_n$ and $B$ a basis for $R_n/R_nI$ over the
     @TO2{baseFractionField, "base fraction field"}@ of $D_n$. If no basis is provided by the user,
     the basis is chosen to be the set of standard monomials of a Gröbner basis on $R_nI$ with
     regards to the weighted Lex order $(\partial_1 > \cdots > \partial_n > x_1 > \cdots > x_n)$
-    on the Weyl algebra.
+    on the Weyl algebra. The following example computes the Pfaffian system for the $D$-ideal
+    annihilating $1/x$ and $1/y$.
   Example
     D = makeWeylAlgebra(QQ[x,y], {2, 1})
     I = ideal (x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1)
     A = pfaffianSystem I
+  Text
+    The following example computes the Pfaffian system for the $D$-ideal annihilating $sin(xy)$
+    and $cos(xy)$, with respect to the basis $\{1,dx\}$.
+  Example
+    D = makeWeylAlgebra(QQ[x,y]);
+    I = ideal (dx^2-y^2, dy^2-x^2);
+    A = pfaffianSystem(I,{1_D,dx})
+  Text
+    The command @TT "pfaffianSystem(I,B)"@ computes the Pfaffian system of $I$ with
+    respect to the basis of standard monomials of $I$ and then performs a
+    @TO2{"gaugeTransform", "gauge transformation"}@ to the provided basis $B$.
+  Example
+    B = pfaffianSystem(I)
+    M = gaugeMatrix(I,{1_D,dx})
+    A2 = gaugeTransform(M,B)
 References
   For more details, see [@HREF("https://link.springer.com/book/10.1007/978-3-662-04112-3","SST")@, pp. 37-40].
 ///
@@ -230,14 +246,14 @@ SeeAlso
 
 doc ///
 Key
-    connectionMatrix
-    (connectionMatrix, Ideal)
-    (connectionMatrix, List)
+    connectionForm
+    (connectionForm, Ideal)
+    (connectionForm, List)
 Headline
     computes the connection matrix
 Usage
-    connectionMatrix I
-    connectionMatrix A
+    connectionForm I
+    connectionForm A
 Inputs
     I:Ideal
       of the Weyl algebra
@@ -253,7 +269,15 @@ Description
   Example
     D = makeWeylAlgebra(QQ[x,y]);
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
-    connectionMatrix I
+    connectionForm I
+  Text
+    The following example computes the connection matrix of the $D$-ideal annihilating $sin(xy)$
+    and $cos(xy)$
+  Example
+    D = makeWeylAlgebra(QQ[x,y]);
+    I = ideal (dx^2-y^2, dy^2-x^2);
+    A = pfaffianSystem(I,{1_D,dx});
+    connectionForm A
 Caveat
   The output is purely for visualizing purposes.
 SeeAlso
