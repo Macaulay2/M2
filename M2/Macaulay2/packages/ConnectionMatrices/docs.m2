@@ -311,6 +311,12 @@ Description
     I = ideal(x*dx^2-y*dy^2+2*dx-2*dy, x*dx+y*dy+1);
     standardMonomials I
     holonomicRank I
+  Text
+    Changing the order on the Weyl algebra might change the
+    standard monomials of $I$.
+  Example
+    D2 = makeWeylAlgebra(QQ[x,y],{1,10});
+    standardMonomials(sub(I,D2))
 SeeAlso
   "Dmodules::holonomicRank"
   gaugeMatrix
