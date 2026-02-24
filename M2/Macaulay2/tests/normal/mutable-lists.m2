@@ -13,6 +13,7 @@ assert Equation(M''#0, 5)
 
 -- ensure that we clean up when removing elements
 x = new MutableList from {1, 2, 3, 4}
+assert Equation(length x, 4)
 assert Equation(remove(x, 0), 1)
 assert Equation(toList x, {2, 3, 4})
 assert Equation(remove(x, 2), 4)

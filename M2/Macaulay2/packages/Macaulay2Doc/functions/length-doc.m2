@@ -7,7 +7,7 @@ document {
     }
 
 document {
-    Key => (length, VisibleList),
+    Key => {(length, VisibleList), (length, MutableList)},
     Headline => "length of a visible list",
     Usage => "n = length x",
     Inputs => { "x" },
