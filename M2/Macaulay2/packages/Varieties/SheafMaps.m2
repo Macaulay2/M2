@@ -753,6 +753,9 @@ CoherentSheaf ^ Array := SheafMap => (F, v) -> (
     G := directSum apply(toList v, j -> F.cache.components#j);
     map(G, F, (cover module F)^v))
 
+SheafMap _ Array := SheafMap => (f,v) -> f * (source f)_v
+SheafMap ^ Array := SheafMap => (f,v) -> (target f)^v * f
+
 -----------------------------------------------------------------------------
 -- Common maps and complexes of sheaves
 -----------------------------------------------------------------------------
