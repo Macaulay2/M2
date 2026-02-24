@@ -35,7 +35,6 @@ export {
         "drawParliament2Dtikz",
         "wellformedBundleFiltrations",
 -- Options
-        "Verbosity",
         "DrawCohomology",
         "DrawChernCharacter"
         }
@@ -48,9 +47,6 @@ protect restrictionsToInvCurves
 protect isLW
 protect isLF
 -- Options
-protect DrawCohomology
-protect DrawChernCharacter
-protect Verbosity
 protect preferredGenerators
 
 ---------------------------------------------------------------------------
