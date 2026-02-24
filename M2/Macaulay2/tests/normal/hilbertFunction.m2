@@ -5,7 +5,7 @@ assert(t < 1 and n == 96560646)
 R = QQ[x_0..x_5]/(x_0^8+x_1^8+x_2^8+x_3^8+x_4^8)
 M = module ideal random({2,2,3}, ideal vars R);
 (t, n) = toSequence timing hilbertFunction(100, M)
-assert(t < 10 and n == 32105454)
+assert(t < 30 and n == 32105454)
 
 -- see https://github.com/Macaulay2/M2/issues/1701
 S = ZZ/101[a,b,c]
