@@ -61,7 +61,7 @@ newPackage(
   Headline => "spectral sequences",
   Keywords => {"Homological Algebra"},
   PackageImports => {"Complexes","PushForward"},
-  PackageExports => {"SimplicialComplexes", "PushForward", "Complexes"}
+  PackageExports => {"SimplicialComplexes", "Complexes"}
   )
 
 export {
@@ -668,8 +668,7 @@ minimalPresentation SpectralSequence := prune SpectralSequence := SpectralSequen
 edgeComplex = method()
 
 edgeComplex(SpectralSequence) := (E) -> (
-       if E.Prune == true then error "not currently implemented for pruned spectral sequences";
-   if E.Prune == true then error "not currently implemented for pruned spectral sequences";
+    if E.Prune then error "not currently implemented for pruned spectral sequences";
     M := select(spots E^2 .dd, i -> E^2_i != 0);
     l := min apply(M, i -> i#0);
     m := min apply(M, i -> i#1);
@@ -872,11 +871,11 @@ SpectralSequencePageMap _ List := Matrix => (d,i)-> (if (d)#?i then d#i
 SpectralSequencePageMap ^ List := Matrix => (d,i) -> (d_(-i))    
 
 pruningMaps = method()
-pruningMaps(SpectralSequencePage) := (E) -> ( if E.Prune == false then error "page is not pruned"
+pruningMaps(SpectralSequencePage) := (E) -> ( if not E.Prune then error "page is not pruned"
     else
     P := new PageMap;
     P.degree = E.dd.degree;
-    apply(spots E.dd, i -> P#i = E.dd_i .cache.sourcePruningMap);
+    scan(spots E.dd, i -> P#i = E.dd_i .cache.sourcePruningMap);
     P    
     )
 
