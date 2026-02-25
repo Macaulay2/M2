@@ -228,6 +228,7 @@ SheafMap * SheafMap := SheafMap => (f, g) -> (
     (m, n) := (matrix f, matrix g);
     if d < e then
     m = truncate(d, m, MinimalGenerators => false);
+    if d < infinity then
     n = truncate(d, n, MinimalGenerators => false);
     if d >= e
     then map(target f, source g, m * inducedMap(source m, target n) * n)

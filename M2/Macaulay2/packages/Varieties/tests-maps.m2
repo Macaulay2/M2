@@ -29,6 +29,9 @@ TEST ///
   assert((dual shphi4).degree === 0)
   --
   isWellDefined map(OO_X^1, OO_X^0, 0)
+
+  (f, g) = (map(S^0, S^0, 0), map(S^0, S^1, 0))
+  assert(f * g === matrix(sheaf f * sheaf g))
 ///
 
 TEST ///
