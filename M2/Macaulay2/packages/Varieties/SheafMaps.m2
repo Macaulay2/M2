@@ -746,12 +746,14 @@ trans := (C,v) -> (
 CoherentSheaf _ Array := SheafMap => (F, v) -> (
     v = trans(F,v);
     G := directSum apply(toList v, j -> F.cache.components#j);
-    map(F, G, (cover module F)_v))
+    -- TODO: is cover required here? if so, set the source
+    -- and target modules, otherwise the map is not well-defined
+    map(F, G, (module F)_v))
 
 CoherentSheaf ^ Array := SheafMap => (F, v) -> (
     v = trans(F,v);
     G := directSum apply(toList v, j -> F.cache.components#j);
-    map(G, F, (cover module F)^v))
+    map(G, F, (module F)^v))
 
 SheafMap _ Array := SheafMap => (f,v) -> f * (source f)_v
 SheafMap ^ Array := SheafMap => (f,v) -> (target f)^v * f
