@@ -1,6 +1,6 @@
 -- -*- coding: utf-8 -*-
 --------------------------------------------------------------------------------
--- Copyright 2024  the joint authors
+-- Copyright 2026  the joint authors
 --
 -- This program is free software: you can redistribute it and/or modify it under
 -- the terms of the GNU General Public License as published by the Free Software
@@ -31,8 +31,8 @@
 newPackage(
   "SpectralSequences",
 --  AuxiliaryFiles => true,
-  Version => "2.0",
-  Date => "27 October 2024",
+  Version => "2.01",
+  Date => "25 February 2026",
   Authors => {
        {
       Name => "David Berlekamp", 
@@ -60,7 +60,7 @@ newPackage(
       HomePage => "http://math.berkeley.edu/~thanh"}},
   Headline => "spectral sequences",
   Keywords => {"Homological Algebra"},
-  PackageImports => {"Complexes","PushForward", "SimplicialComplexes", "AbstractSimplicialComplexes"},
+  PackageImports => {"Complexes","PushForward", "SimplicialComplexes"},
   PackageExports => {}
   )
 
