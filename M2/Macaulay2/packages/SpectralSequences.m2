@@ -60,8 +60,8 @@ newPackage(
       HomePage => "http://math.berkeley.edu/~thanh"}},
   Headline => "spectral sequences",
   Keywords => {"Homological Algebra"},
-  PackageImports => {"Complexes","PushForward", "SimplicialComplexes"},
-  PackageExports => {}
+  PackageImports => {},
+  PackageExports => {"Complexes","PushForward", "SimplicialComplexes"}
   )
 
 export {
