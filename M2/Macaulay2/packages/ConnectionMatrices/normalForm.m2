@@ -10,6 +10,13 @@ WeightThenEliminationOrder = w -> join( { Weights => w },
 --D = QQ[x,y,dx,dy, WeylAlgebra => {x=>dx, y=>dy}, MonomialOrder => WeightThenLexicographicOrder {0,0,1,1}]
 --1 + dx + dy + dx^2 + dx*dy + dy^2 + x*(1 + dx + dy + dx^2 + dx*dy + dy^2)
 
+-- retrieve the weight vectors of a WeylAlgebra (or any polynomial ring)
+weights = D -> (
+    mo := D.monoid.Options.MonomialOrder;
+    last \ select(mo, opt ->
+	instance(opt, Option)
+	and opt#0 === Weights))
+
 -- Weyl Algebra with monomial order given by the weighted lexicographic elimination order
 makeWeylAlgebra(PolynomialRing, List) := opts -> (R, v) -> (
     n := numgens R;
@@ -25,7 +32,6 @@ makeWeylAlgebra(PolynomialRing, List) := opts -> (R, v) -> (
     if opts.SetVariables then use W;
     W)
 
--- This causes a crash
 -- Weyl Algebra with non-weighted lexicographic elimination order
 makeWeylAlgebra(PolynomialRing) := opts -> R -> (
     n := length(gens R);
@@ -75,7 +81,7 @@ inferWeylAlgebra = F -> (
 -- Used for bookkeeping elements in R
 rationalWeylAlgebra = memoize((D) -> (
     createDpairs D;
-    w := (((options(D)).MonomialOrder)#1)#1;
+    w := first weights D;
     R := baseFractionField(D);
     (R)(monoid[D.dpairVars#1,
 	    MonomialOrder => WeightThenLexicographicOrder last pack_(#w//2) w ]))
@@ -86,7 +92,7 @@ reduceOneStep = method()
 reduceOneStep(RingElement, RingElement) := (f, g) -> (
     if f == 0 then return f;
     D := ring g;
-    w := (((options(D)).MonomialOrder)#1)#1;
+    w := first weights D;
     n := numgens D // 2;
     F := baseFractionField D;
     R := rationalWeylAlgebra(D);
