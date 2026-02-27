@@ -168,7 +168,7 @@ Description
     standardMonomials I
     gaugeMatrix(I,{dx,x^2*dx^2+x*dx+x^2})
   Text
-    See also line i14 of @TO2{"Cosmological correlator for the 2-site chain", "Cosmological correlator for the 2-site chain"}@ for an example.
+    See @TO2{"Cosmological correlator for the 2-site chain", "Cosmological correlator for the 2-site chain"}@ for an example.
 SeeAlso
   standardMonomials
   gaugeTransform
@@ -262,7 +262,7 @@ Description
     M = gaugeMatrix(I,{dx,x^2*dx^2+x*dx+x^2});
     gaugeTransform(M,A)
   Text
-    See also line i15 of @TO2{"Cosmological correlator for the 2-site chain", "Cosmological correlator for the 2-site chain"}@ for an example.
+    See @TO2{"Cosmological correlator for the 2-site chain", "Cosmological correlator for the 2-site chain"}@ for an example.
 SeeAlso
   gaugeMatrix
   "Cosmological correlator for the 2-site chain"
