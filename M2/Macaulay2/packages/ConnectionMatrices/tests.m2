@@ -37,6 +37,27 @@ TEST /// -- course notes, Example 7.16 (1)
   -- Grobner basis:
   -- | ydy+xdx+1 xdxdy+xdx^2+dy+dx x2dx^2-xydx^2+3xdx-ydx+1 |
 
+  -- Note: this example also shows that reducing with respect to each
+  -- element of G only once in order doesn't suffice, because after
+  -- reducing by an element, the result may become further reducible
+  -- by an earlier element in the list.
+  debug needsPackage "ConnectionMatrices"
+  D = makeWeylAlgebra(QQ[x,y], w = {2,1});
+  I = ideal(x*dx^2 - y*dy^2 + dx-dy, x*dx+y*dy+1)
+  R = rationalWeylAlgebra D
+  G = flatten entries gens gb I
+  f0 = dx_R*dy_R
+  -- first pass
+  f1 = normalForm(f0, G#0) -- does not reduce wrt G#0
+  f2 = normalForm(f1, G#1) -- reduces
+  f3 = normalForm(f2, G#2)
+  assert same {f0, f1, dx_R*dy_R}
+  assert same {f2, f3, -(y_R*x_R^-1)*dy_R^2 - (2*x_R^-1)*dy_R}
+  -- second pass
+  f4 = normalForm(f3, G#0) -- now it reduces wrt G#0!
+  f5 = normalForm(f4, G#1)
+  f6 = normalForm(f5, G#2)
+  assert same {f4, f5, f6, (-x_R-y_R)*(x_R^2-x_R*y_R)^-1*dy_R - (x_R^2-x_R*y_R)^-1}
 ///
 
 TEST /// -- course notes, Example 7.16 (2)

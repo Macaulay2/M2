@@ -87,9 +87,17 @@ rationalWeylAlgebra = memoize((D) -> (
 	    MonomialOrder => WeightThenLexicographicOrder last pack_(#w//2) w ]))
 )
 
--- reduce the lead term in rational Weyl algebra R
-reduceOneStep = method()
-reduceOneStep(RingElement, RingElement) := (f, g) -> (
+-- use this for lifting from R to D
+-- c.f. https://github.com/Macaulay2/M2/issues/3613
+sub' = (g, D) -> if instance(g, D) then g else sum(listForm g,
+    (e, c) -> sub(c, D) * sub((ring g)_e, D))
+
+clearDenominators = (G, D) -> apply(G, g -> if instance(g, D) then g
+    else sub'(g * lcm(denominator \ last \ listForm g), D))
+
+normalForm = method()
+-- Normal form of f with respect to a single element g.
+normalForm(RingElement, RingElement) := (f, g) -> (
     if f == 0 then return f;
     D := ring g;
     w := first weights D;
@@ -105,7 +113,8 @@ reduceOneStep(RingElement, RingElement) := (f, g) -> (
     gexp := (last pack_n (exponents g0)#0);
     -- as long as we refine with elimination lexicographic order, we don't need generic weights
     -- if #fexp > 1 or #gexp > 1 then error "expected generic weight order";
-    if not (gexp << fexp) then return f;
+    -- RECURSION: if g0 does not divide f0, no reduction is necessary
+    if not (gexp << fexp) then return f0 + normalForm(f-f0, g);
     -- compare weights of leading monomials
     -- scalar product of exponent vector with the weight of the d's
     fwt := sum(fexp, last pack_n w, times);
@@ -118,25 +127,20 @@ reduceOneStep(RingElement, RingElement) := (f, g) -> (
     ddexp := fexp - gexp;
     ddmon := D_(toList(n:0) | ddexp);
     -- exponents on the x's are zeroes and exponents of the d's are ddexp
-    -- recurse to normalize the lower order terms
-    -- Computing S-pair
-    f - fcoef / gcoef * sub(ddmon * g, R)
-    )
+    -- the remainder is f % sub(ddmon * g, R), but we can get it directly as
+    r := f - fcoef / gcoef * sub(ddmon * g, R);
+    -- now we recurse to normalize the lower order terms
+    normalForm(r, g))
 
--- use this for lifting from R to D
--- c.f. https://github.com/Macaulay2/M2/issues/3613
-sub' = (g, D) -> if instance(g, D) then g else sum(listForm g,
-    (e, c) -> sub(c, D) * sub((ring g)_e, D))
+-- Reduces only the lead term of f w.r.t g in the rational Weyl algebra R
+reduceLeadTerm = method()
+reduceLeadTerm(RingElement, RingElement) := (f, g) -> (
+    normalForm(f0 := leadTerm f, g) + (f - f0))
 
-clearDenominators = (G, D) -> apply(G, g -> if instance(g, D) then g
-    else sub'(g * lcm(denominator \ last \ listForm g), D))
-
-normalForm = method()
--- Normal form with respect to single element g.
-normalForm(RingElement, RingElement) := (f, g) -> normalForm(f,{g})
--- Normal form with respect to a Groebner basis G.
-normalForm(RingElement, List) := (f, G) -> (
-    -- f in D, G in D, SST page 7
+-- Normal form of f with respect to a Groebner basis G.
+normalForm(RingElement, GroebnerBasis) := (f, G) -> normalForm(f, flatten entries gens G)
+normalForm(RingElement, List)          := (f, G) -> (
+    -- f and G are in Weyl algebra D, see SST page 7.
     if f == 0 then return f;
     D := ring(G#0);
     w := first weights D;
@@ -144,67 +148,18 @@ normalForm(RingElement, List) := (f, G) -> (
     G = clearDenominators(G, D);
     f = sub(f, R);
     f0 := 0_R;
-    -- iterate as long as going through G does not give any change
-    while f0 != f do (
-	f0 = f; scan(G, g -> f = reduceOneStep(f, g)));
-    -- recurse to normalize the lower order terms
+    -- iteratively reduce the lead term w.r.t G until it does not change
+    while f0 != f do ( f0 = f; scan(G, g -> f = reduceLeadTerm(f, g)) );
+    -- now recurse to normalize the lower order terms
     f = leadTerm f + normalForm(f - leadTerm f, G);
+    -- Alternatively, we can reduce all of f repeatedly, but this may be slower.
+    -- while f0 != f do ( f0 = f; scan(G, g -> f = normalForm(f, g)) );
     f)
-
--- Suppose G = {g1, g2}, then this version works with the assumption
--- that reducing once against g1 and once against g2 is enough,
--- but we think it might be possible that after reducing against g2,
--- the element f can be again reduced with respect to g1.
--- TODO: find an explicit example where this occurs.
--- normalForm(RingElement, List) := (f, G) -> (
---     if f == 0 then return f;
---     D := ring(G#0);
---     G = clearDenominators(G, D);
---     scan(G, g -> f = normalForm(f, g));
---     f)
--- normalForm(RingElement, RingElement) := (f, g) -> (
---     if f == 0 then return f;
---     D := ring g;
---     w := first weights D;
---     n := numgens D // 2;
---     F := baseFractionField D;
---     R := rationalWeylAlgebra(D);
---     if R =!= ring f then f = sub(f, R);
---     f0 := leadTerm(f);
---     g0 := leadTerm(sub(g,R));
---     --fexp := unique exponents f0;
---     --gexp := unique apply(exponents g0, e -> last pack_n e);
---     fexp := (exponents f0)#0;
---     gexp := (last pack_n (exponents g0)#0);
---     -- as long as we refine with elimination lexicographic order, we don't need generic weights
---     -- if #fexp > 1 or #gexp > 1 then error "expected generic weight order";
---     -- RECURSION: if g0 does not divide f0, no reduction is necessary
---     if not (gexp << fexp) then (return f0 + normalForm(f-f0, g));
---     -- compare weights of leading monomials
---     -- scalar product of exponent vector with the weight of the d's
---     fwt := sum(fexp, last pack_n w, times);
---     gwt := sum(gexp, last pack_n w, times);
---     if fwt < gwt then return f;
---     -- find the coefficient to divide by
---     fcoef := lift(f0 // R_(fexp), F);
---     gcoef := lift(sub(g0, R) // R_(gexp), F);
---     -- this must be in D to perform the derivative
---     ddexp := fexp - gexp;
---     ddmon := D_(toList(n:0) | ddexp);
---     -- exponents on the x's are zeroes and exponents of the d's are ddexp
---     -- recurse to normalize the lower order terms
--- --     -- FIXME: this should work, but doesn't:
--- --     -- f - fcoef / gcoef * sub(ddmon * g, R)
--- --     --    print netList {f, g, sub(ddmon * g, R), f % sub(ddmon * g, R)};
--- --     --    error 0;
---     normalForm(f % sub(ddmon * g, R), g)
---     -- eliminates leading term of f and restarts with the remainder
---     )
 
 end--
 restart
 
-needs "reduce.m2"
+debug needsPackage "ConnectionMatrices"
 -- Examples for testing with connection matrices
 -- Example 1.3: w = (0,0,2,1)
 D = makeWeylAlgebra(QQ[x,y], w = {2,1});
