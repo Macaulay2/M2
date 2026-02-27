@@ -123,15 +123,49 @@ reduceOneStep(RingElement, RingElement) := (f, g) -> (
     f - fcoef / gcoef * sub(ddmon * g, R)
     )
 
--- Normal form with respect to single element g.
-normalForm = method()
--- f in D, g in D, SST page 7
-normalForm(RingElement, RingElement) := (f, g) -> normalForm(f,{g})
+-- use this for lifting from R to D
+-- c.f. https://github.com/Macaulay2/M2/issues/3613
+sub' = (g, D) -> if instance(g, D) then g else sum(listForm g,
+    (e, c) -> sub(c, D) * sub((ring g)_e, D))
 
+clearDenominators = (G, D) -> apply(G, g -> if instance(g, D) then g
+    else sub'(g * lcm(denominator \ last \ listForm g), D))
+
+normalForm = method()
+-- Normal form with respect to single element g.
+normalForm(RingElement, RingElement) := (f, g) -> normalForm(f,{g})
+-- Normal form with respect to a Groebner basis G.
+normalForm(RingElement, List) := (f, G) -> (
+    -- f in D, G in D, SST page 7
+    if f == 0 then return f;
+    D := ring(G#0);
+    w := first weights D;
+    R := rationalWeylAlgebra D;
+    G = clearDenominators(G, D);
+    f = sub(f, R);
+    f0 := 0_R;
+    -- iterate as long as going through G does not give any change
+    while f0 != f do (
+	f0 = f; scan(G, g -> f = reduceOneStep(f, g)));
+    -- recurse to normalize the lower order terms
+    f = leadTerm f + normalForm(f - leadTerm f, G);
+    f)
+
+-- Suppose G = {g1, g2}, then this version works with the assumption
+-- that reducing once against g1 and once against g2 is enough,
+-- but we think it might be possible that after reducing against g2,
+-- the element f can be again reduced with respect to g1.
+-- TODO: find an explicit example where this occurs.
+-- normalForm(RingElement, List) := (f, G) -> (
+--     if f == 0 then return f;
+--     D := ring(G#0);
+--     G = clearDenominators(G, D);
+--     scan(G, g -> f = normalForm(f, g));
+--     f)
 -- normalForm(RingElement, RingElement) := (f, g) -> (
 --     if f == 0 then return f;
 --     D := ring g;
---     w := (((options(D)).MonomialOrder)#1)#1;
+--     w := first weights D;
 --     n := numgens D // 2;
 --     F := baseFractionField D;
 --     R := rationalWeylAlgebra(D);
@@ -166,29 +200,6 @@ normalForm(RingElement, RingElement) := (f, g) -> normalForm(f,{g})
 --     normalForm(f % sub(ddmon * g, R), g)
 --     -- eliminates leading term of f and restarts with the remainder
 --     )
-
--- use this for lifting from R to D
--- c.f. https://github.com/Macaulay2/M2/issues/3613
-sub' = (g, D) -> if instance(g, D) then g else sum(listForm g,
-    (e, c) -> sub(c, D) * sub((ring g)_e, D))
-
-clearDenominators = (G, D) -> apply(G, g -> if instance(g, D) then g else sub'(g * lcm(denominator \ last \ listForm g), D))
-
--- Normal Form w.r.t. a Groebner Basis
-normalForm(RingElement, List) := (f, G) -> (
-    if f == 0 then return f;
-    D := ring(G#0);
-    w := (((options(D)).MonomialOrder)#1)#1;
-    G = clearDenominators(G, D);
-    haschanged := true;
-    -- iterate as long as going through G does not give any change
-    while haschanged do(
-        fstart := sub(f, rationalWeylAlgebra(D));
-        scan(G, g -> f = reduceOneStep(f, g));
-        haschanged = not(fstart == f);
-        );
-    f = leadTerm(f) + normalForm(f-leadTerm(f), G);
-    f)
 
 end--
 restart
