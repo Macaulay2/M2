@@ -8,7 +8,6 @@ export LD_LIBRARY_PATH:=$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 # prefix that was used at compile time, i.e., the only change allowed to the prefix
 # between compile time and install time is to prepend a string
 PREFIX = $(BUILTLIBPATH)
-.NOTPARALLEL:
 ifneq ($(PARALLEL),yes)
 NOTPARALLEL = -j1
 endif

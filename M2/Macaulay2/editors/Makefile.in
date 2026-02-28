@@ -1,7 +1,6 @@
 # @configure_input@
 include ../../include/config.Makefile
 ARGS = --script
-.NOTPARALLEL:
 
 MADEFILES = M2-symbols.el M2-emacs-help.txt M2-emacs.m2
 SRCFILES = M2-init.el M2-mode.el M2.el README.md

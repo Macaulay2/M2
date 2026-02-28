@@ -40,7 +40,7 @@ M2SCRIPT = @pre_bindir@/M2
 
 all: $(EXEFILE) $(M2SCRIPT) 
 
-$(M2SCRIPT): M2
+$(M2SCRIPT): M2 @pre_bindir@
 	@INSTALL_SCRIPT@ M2 $(M2SCRIPT)
 
 relink:
@@ -199,4 +199,3 @@ M2: M2.in; cd ../..; ./config.status Macaulay2/bin/M2
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/bin relink "
 # End:
-.NOTPARALLEL:

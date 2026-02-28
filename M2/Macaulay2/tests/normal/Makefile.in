@@ -21,4 +21,3 @@ all: $(patsubst $(SRCDIR)/%.m2, @pre_packagesdir@/Core/tests/%.m2, $(wildcard $(
 # Local Variables:
 # compile-command: "make -k -C $M2BUILDDIR/Macaulay2/tests/normal check "
 # End:
-.NOTPARALLEL:
