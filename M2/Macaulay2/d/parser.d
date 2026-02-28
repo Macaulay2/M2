@@ -51,6 +51,9 @@ export hexvalue   (c:char ):int  := (
      );
 export hexvalue   (c:int ):int  := hexvalue(char(c));
 
+hexvalue(a:char, b:char, c:char, d:char):int := (
+    hexvalue(d) + 16*(hexvalue(c) + 16*(hexvalue(b) + 16*hexvalue(a))));
+
 export parseInt(s:string):ZZ := (
      i := zeroZZ;
      n := length(s);
@@ -90,7 +93,18 @@ export parseString(s:string):string := (
 	       else if c == '\\' then v << '\\'
 	       else if c == 'u' then (
 		    i = i+4;
-		    utf8(v, ((hexvalue(s.(i-3)) * 16 + hexvalue(s.(i-2))) * 16 + hexvalue(s.(i-1))) * 16 + hexvalue(s.i)))
+		    val := hexvalue(s.(i-3), s.(i-2), s.(i-1), s.i);
+		    -- high surrogate (0xd800 - 0xdbff)
+		    if 55296 <= val && val <= 56319 then (
+			if i + 6 < length(s) && s.(i+1) == '\\' && s.(i+2) == 'u'
+			then (
+			    val2 := hexvalue(s.(i+3), s.(i+4), s.(i+5), s.(i+6));
+			    -- low surrogate (0xdc00 - 0xdfff)
+			    if 56320 <= val2 && val2 <= 57343 then (
+				i = i + 6;
+				-- 0x10000 + 0x400*(high-0xd800) + low-0xdc00
+				val = 65536 + 1024*(val-55296) + val2-56320)));
+		    utf8(v, val))
 	       else if c == 'x' then (
 		    i = i + 2;
 		    v << char(hexvalue(s.(i - 1)) * 16 + hexvalue(s.i)))
