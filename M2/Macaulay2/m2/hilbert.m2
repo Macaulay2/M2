@@ -400,11 +400,12 @@ hilbertFunction(List, Module) := opts -> (L, M) -> (
 -- in essentially all cases, and faster than that when M was defined as a subquotient module.
 -- If a presentation or minimal presentation for M has already been computed, we use that.
 addHook((hilbertFunction, List, Module), Strategy => Base, (opts, L, M) -> (
-	if any(select(keys M.cache, Option), o -> o#0 === symbol minimalPresentation) then
-	rank source basis(L, minimalPresentation M)
-	else if not M.?generators then rank source basis(L, M)
-	else if M.cache.?presentation then rank source basis(L, cokernel presentation M)
-	else (rank source basis(L, cokernel relations M)) - (rank source basis(L, cokernel (generators M|relations M)))))
+	if hasMinPres M then numColumns basis(L, minimalPresentation M)
+	else if not M.?generators then numColumns basis(L, M)
+	else if M.cache.?presentation then numColumns basis(L, cokernel presentation M)
+	else (
+	    numColumns basis(L, super M) -
+	    numColumns basis(L, cokernel fullgens M))))
 
 -- computes the Hilbert series to a sufficiently high order and
 -- returns the desired coefficient, thus it is cached by hilbertSeries
