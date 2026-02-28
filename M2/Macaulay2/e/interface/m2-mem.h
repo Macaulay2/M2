@@ -29,7 +29,7 @@ extern "C" {
 
 #else
 
-#define TRAPCHK(p)
+#define TRAPCHK(p) (void)p
 #define TRAPCHK_SIZE(n)
 
 #endif

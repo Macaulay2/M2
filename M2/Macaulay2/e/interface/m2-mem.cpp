@@ -91,9 +91,8 @@ char *getmem(size_t n)
 }
 
 void freememlen(void *s, size_t old) {
-#    ifndef NDEBUG
-     trapchk(s);
-#    endif
+     (void)old;
+     TRAPCHK(s);
 #ifdef MEMDEBUG
      M2_debug_free(s);
 #else     
@@ -102,9 +101,7 @@ void freememlen(void *s, size_t old) {
 }
 
 void freemem(void *s) {
-#    ifndef NDEBUG
-     trapchk(s);
-#    endif
+     TRAPCHK(s);
 #ifdef MEMDEBUG
      M2_debug_free(s);
 #else     
