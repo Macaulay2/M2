@@ -72,7 +72,9 @@ header "
 
    #include <libxml/xmlversion.h>
 
+   #ifdef WITH_JANSSON
    #include <jansson.h>
+   #endif
    ";
 
 header "
@@ -192,7 +194,13 @@ setupconst("version", Expr(toHashTable(Sequence(
    "ntl version" => Ccode(constcharstar,"NTL_VERSION"),
    "frobby version" => Ccode(constcharstar,"frobby_version"),
    "flint version" => Ccode(constcharstar,"FLINT_VERSION"),
-   "jansson version" => Ccode(constcharstar, "JANSSON_VERSION"),
+   "jansson version" => Ccode(constcharstar, "
+       #ifdef WITH_JANSSON
+           JANSSON_VERSION
+       #else
+           \"not present\"
+       #endif
+       "),
    "scscp version" => Ccode(constcharstar,"
 	 #ifdef HAVE_SCSCP
 	   stringize(SCSCP_VERSION_MAJOR) \".\" stringize(SCSCP_VERSION_MINOR) \".\" stringize(SCSCP_VERSION_PATCH)

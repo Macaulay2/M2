@@ -1252,7 +1252,7 @@ message("\n## Library information
      GMP Arithmetic    = ${GMP_LIBRARIES}")
 
 execute_process(COMMAND ${CMAKE_COMMAND} -E echo_append "     Optional libs     =")
-foreach(_opt IN ITEMS OMP TBB FFI MPI XML PYTHON MYSQL)
+foreach(_opt IN ITEMS OMP TBB FFI MPI XML PYTHON MYSQL JANSSON)
   if(WITH_${_opt})
     execute_process(COMMAND ${CMAKE_COMMAND} -E echo_append " ${_opt}")
   endif()

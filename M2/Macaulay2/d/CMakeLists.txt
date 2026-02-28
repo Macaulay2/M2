@@ -114,6 +114,9 @@ endif()
 if(NOT WITH_FFI)
   list(REMOVE_ITEM DLIST ffi.d)
 endif()
+if(NOT WITH_JANSSON)
+  list(REMOVE_ITEM DLIST json.d)
+endif()
 
 ###############################################################################
 ## Generate TAGS file
