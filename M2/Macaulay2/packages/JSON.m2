@@ -18,13 +18,14 @@ newPackage(
     "JSON",
     Headline => "JSON encoding and decoding",
     Version => "0.6",
-    Date => "February 18, 2026",
+    Date => "February 28, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
     Keywords => {"System"},
     PackageExports => {"Text"},
+    PackageImports => {"Parsing"},
     AuxiliaryFiles => true)
 
 ---------------
@@ -33,9 +34,10 @@ newPackage(
 
 -*
 
-0.6 (2026-02-18, M2 1.26.05)
+0.6 (2026-02-28, M2 1.26.05)
 * parsing is now handled by jansson in the interpreter, which speeds things up
-  considerably
+  considerably (if M2 is built w/o jansson support, then we fall back on the
+  old behavior)
 * breaking changes:
   - "null" now returns as null, not nil
   - \0 is no longer allowed in object keys
@@ -78,11 +80,100 @@ export {
     "ValueSeparator",
     }
 
-importFrom(Core, "fromJSON0")
+---------------------------------------------------------------
+-- parser based on https://datatracker.ietf.org/doc/html/rfc8259
+----------------------------------------------------------------
+-- only used if we build M2 w/o jansson support
+
+-- whitespace
+wsP   = *orP(" ", "\t", "\n", "\r")
+strip = p -> first % (p @ wsP)
+
+-- structural characters
+beginArrayP     = strip "["
+beginObjectP    = strip "{"
+endArrayP       = strip "]"
+endObjectP      = strip "}"
+nameSeparatorP  = strip ":"
+valueSeparatorP = strip ","
+
+-- literals
+falseP = (x -> false) % constParser "false"
+nullP  = (x -> nil)   % constParser "null" -- using null would break parsing
+trueP  = (x -> true)  % constParser "true"
+
+-- numbers
+digit19P = orP("1", "2", "3", "4", "5", "6", "7", "8", "9")
+digitP   = "0" | digit19P
+expP     = andP(orP("e", "E"), optP(orP("-", "+")), +digitP)
+fracP    = andP(".", +digitP)
+intP     = orP("0", digit19P @ *digitP)
+numberP  = (x -> value concatenate delete(nil, deepSplice x)
+    ) % andP(optP("-"), intP, optP(fracP), optP(expP))
+
+-- strings
+hexDigitP = digitP | orP("a", "b", "c", "d", "e", "f",
+    "A", "B", "C", "D", "E", "F");
+unescapedP = Parser(c -> if c === null then null else (
+	x := first utf8 c;
+	if x < 0x20 or x == 0x22 or x == 0x5c or x > 0x10ffff
+	then null
+	else terminalParser c))
+escapedP = ((l, r) -> if r === "/" then r else concatenate(l, r))  % ("\\" @
+    orP("\"", "\\", "/", "b", "f", "n", "r", "t",
+	andP("u", hexDigitP, hexDigitP, hexDigitP, hexDigitP)))
+charP = unescapedP | escapedP
+stringP = ((l, x, r) -> value concatenate(l, x, r)) % andP("\"", *charP, "\"")
+
+-- objects
+memberP = ((k, gets, v) -> k => v) % andP(
+    stringP, nameSeparatorP, futureParser valueP)
+objectP = ((l, x, r) ->  hashTable (
+	if x === nil then {}
+	else toList deepSplice x)) % andP(
+    beginObjectP,
+    optP(memberP @ * (last % valueSeparatorP @ memberP)),
+    endObjectP)
+
+-- arrays
+arrayP = ((l, x, r) -> (
+	if x === nil then {}
+	else toList deepSplice x)) % andP(
+    beginArrayP,
+    optP(futureParser valueP @
+	*(last % valueSeparatorP @ futureParser valueP)),
+    endArrayP)
+
+-- values
+valueP = strip orP(falseP, nullP, trueP, objectP, arrayP, numberP, stringP)
+jsonTextP = (last @@ last) % (*wsP @ valueP)
+
+utf8Analyzer = Analyzer(s -> (
+	if not instance(s, String) then error "analyzer expected a string";
+	chars := characters s;
+	i := 0;
+	() -> if chars#?i then (
+	    r := (i, chars#i);
+	    i = i + 1;
+	    r)))
+
+-- hack so we can transform nil -> null
+processJSON = method()
+processJSON Thing := identity
+processJSON Symbol := x -> null -- should only ever be nil
+processJSON List := x -> apply(x, processJSON)
+processJSON HashTable := x -> applyValues(x, processJSON)
 
 fromJSON = method()
-fromJSON String :=
-fromJSON File   := fromJSON0
+
+-- did we build w/ jansson support?
+fromJSON0 = value(?? Core#"private dictionary"#"fromJSON0")
+if fromJSON0 === null then (
+    fromJSON String := processJSON @@ (jsonTextP : utf8Analyzer);
+    fromJSON File   := fromJSON @@ get
+    ) else (
+    fromJSON String :=
+    fromJSON File   := fromJSON0)
 
 --------------
 -- encoding --
