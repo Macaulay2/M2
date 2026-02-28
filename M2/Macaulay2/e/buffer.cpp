@@ -125,7 +125,7 @@ void buffer::put(mpfr_srcptr x)
 
 void buffer::put(cc_doubles_srcptr x)
 {
-  if (x->re !=0 || x->re == 0 && x->im == 0) {
+  if (x->re !=0 || (x->re == 0 && x->im == 0)) {
     put(x->re);
     if (x->im > 0)
       put('+');
@@ -144,7 +144,7 @@ void buffer::put(cc_doubles_srcptr x)
 void buffer::put(cc_srcptr x)
 {
   if (mpfr_cmp_si(&x->re, 0) !=0 ||
-      mpfr_cmp_si(&x->re, 0) == 0 && mpfr_cmp_si(&x->im, 0) == 0) {
+      (mpfr_cmp_si(&x->re, 0) == 0 && mpfr_cmp_si(&x->im, 0) == 0)) {
     put(&x->re);
     if (mpfr_cmp_si(&x->im, 0) > 0)
       put('+');

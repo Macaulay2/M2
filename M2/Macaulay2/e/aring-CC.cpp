@@ -9,7 +9,7 @@ void ARingCC::elem_text_out(buffer &o,
                             bool p_plus,
                             bool p_parens) const
 {
-  if (p_plus && (ap.re > 0 || ap.re == 0 && ap.im > 0))
+  if (p_plus && (ap.re > 0 || (ap.re == 0 && ap.im > 0)))
     o << "+";
 
   if (p_parens && ap.re != 0 && ap.im != 0) {

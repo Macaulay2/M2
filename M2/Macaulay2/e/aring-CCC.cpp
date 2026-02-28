@@ -11,7 +11,7 @@ void ARingCCC::elem_text_out(buffer &o,
                              bool p_parens) const
 {
   if (p_plus && (mpfr_cmp_si(&f.re, 0) > 0 ||
-                 mpfr_cmp_si(&f.re, 0) == 0 && mpfr_cmp_si(&f.im, 0) > 0))
+                 (mpfr_cmp_si(&f.re, 0) == 0 && mpfr_cmp_si(&f.im, 0) > 0)))
     o << "+";
 
   if (p_parens && mpfr_cmp_si(&f.re, 0) != 0 && mpfr_cmp_si(&f.im, 0) != 0) {
