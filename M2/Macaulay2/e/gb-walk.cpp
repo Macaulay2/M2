@@ -169,6 +169,7 @@ void GBWalker::start_computation()
             }
           next_to_reduce = 0;
           state = STATE_reduce;
+          [[fallthrough]];
         case STATE_reduce:
           while (next_to_reduce < 0)  // TODO: consider the top of the loop
             {
@@ -177,6 +178,7 @@ void GBWalker::start_computation()
               next_to_reduce++;
             }
           state = STATE_autoreduce;
+          break;
         case STATE_autoreduce:
           G->remove_gb();
           delete G;

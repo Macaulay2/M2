@@ -2437,6 +2437,7 @@ void gbA::do_computation()
                 np_i++;
               }
             state = STATE_HILB;
+            [[fallthrough]];
 
           case STATE_HILB:
             // If we are using hilbert function tracking:
@@ -2456,6 +2457,7 @@ void gbA::do_computation()
                 hilb_new_elems = false;
               }
             state = STATE_NEWDEGREE;
+            [[fallthrough]];
 
           case STATE_NEWDEGREE:
             // Get the spairs and generators for the next degree
@@ -2540,6 +2542,7 @@ void gbA::do_computation()
                   }
               }
             state = STATE_AUTOREDUCE;
+            [[fallthrough]];
           // or state = STATE_NEWPAIRS
 
           case STATE_AUTOREDUCE:

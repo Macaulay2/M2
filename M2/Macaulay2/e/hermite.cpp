@@ -168,6 +168,7 @@ hm_elem *HermiteComputation::merge(hm_elem *f, hm_elem *g)
               return head.next;
             }
         // Now fall through to merge f into the result:
+          [[fallthrough]];
         case -1:
           result->next = f;
           result = result->next;
