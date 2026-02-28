@@ -21,14 +21,6 @@ extern "C" {
 }
 #endif
 
-#define TRAPCHK(p) trapchk(p)
-#define TRAPCHK_SIZE(n) trapchk_size(n)
-
-#else
-
-#define TRAPCHK(p) (void) p
-#define TRAPCHK_SIZE(n)
-
 #endif
 #endif
 
