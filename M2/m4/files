@@ -19,7 +19,6 @@ libraries/M2/Makefile
 libraries/Macaulay2-docs/Makefile
 libraries/Makefile.library
 libraries/cddlib/Makefile
-libraries/cddplus/Makefile
 libraries/cohomcalg/Makefile
 libraries/csdp/Makefile
 libraries/eigen/Makefile
@@ -62,6 +61,7 @@ Macaulay2/bin/Makefile
 Macaulay2/bin/M2
 Macaulay2/e/Makefile
 Macaulay2/e/Makefile.common
+Macaulay2/e/Makefile.files
 Macaulay2/e/unit-tests/Makefile
 Macaulay2/editors/Makefile
 Macaulay2/html-check-links/Makefile

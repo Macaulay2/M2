@@ -210,8 +210,9 @@ setup(BoxTimesS, boxtimesfun);
 shuffleproductfun(lhs:Code, rhs:Code):Expr := binarymethod(lhs, rhs, ShuffleProductS);
 setup(ShuffleProductS, shuffleproductfun);
 
-Tildefun(rhs:Code):Expr := unarymethod(rhs,TildeS);
-setuppostfix(TildeS,Tildefun);
+Tildefun2(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,TildeS);
+Tildefun1(rhs:Code):Expr := unarymethod(rhs,TildeS);
+setup(TildeS,Tildefun1,Tildefun2);
 
 PowerTildefun(rhs:Code):Expr := unarymethod(rhs,PowerTildeS);
 setuppostfix(PowerTildeS,PowerTildefun);

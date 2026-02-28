@@ -1,13 +1,9 @@
 LICENSEFILES = COPYING
 
-VERSION = 8.2
-PATCHES = 001
+VERSION = 8.3
+SHA256SUM = fe5383204467828cd495ee8d1d3c037a7eba1389c22bc6a041f627976f9061cc
 
-RELAX = yes
-# URL = ftp://ftp.gnu.org/gnu/readline
-# PATCHURL = $(URL)/readline-$(VERSION)-patches
-URL = https://macaulay2.com/Downloads/OtherSourceCode
-PATCHURL = $(URL)
+URL = ftp://ftp.gnu.org/gnu/readline
 
 BUILDTARGET = all -o install-examples
 INSTALLTARGET = install -o install-examples
@@ -18,6 +14,10 @@ else
 BUILDTARGET += shared
 INSTALLTARGET += install-shared
 endif
+
+# some apps (e.g., awk) may break if we don't add this
+CONFIGOPTIONS += --with-curses
+BUILDOPTIONS = SHLIB_LIBS=-lcurses
 
 # warning: we have to set PATCHFILE first, so the dependencies work out, but $(TARFILE_DIR) isn't defined yet, so we use its value here:
 PATCHFILE = $(addprefix @abs_top_srcdir@/BUILD/tarfiles/readline$(shell echo $(VERSION) | sed 's/\.//g')-,$(PATCHES))

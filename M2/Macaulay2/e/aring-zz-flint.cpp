@@ -25,6 +25,8 @@ void ARingZZ::eval(const RingMap* map,
                    ring_elem& result) const
 {
   mpz_t temp;
+
+  (void) first_var;
   flint_mpz_init_set_readonly(temp, &f);
   result = map->get_ring()->from_int(temp);
   flint_mpz_clear_readonly(temp);
@@ -38,6 +40,7 @@ void ARingZZ::elem_text_out(buffer& o,
 {
   char* str;
 
+  (void) p_parens;
   bool is_neg = (fmpz_cmp_si(&a, 0) == -1);
   bool is_one = (fmpz_cmp_si(&a, 1) == 0 || fmpz_cmp_si(&a, -1) == 0);
 

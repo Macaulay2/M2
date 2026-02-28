@@ -220,6 +220,7 @@ bumpPrecedence();
      thenW = token("then"); makeKeyword(thenW);
      doW = token("do"); makeKeyword(doW);
      listW = token("list"); makeKeyword(listW);
+     exceptW = token("except"); makeKeyword(exceptW);
 bumpPrecedence();
      export ColonEqualW := binaryright(":="); export ColonEqualS := makeKeyword(ColonEqualW);
      export EqualW := binaryright("="); export EqualS := makeKeyword(EqualW);
@@ -267,6 +268,7 @@ bumpPrecedence();
      export QuestionS := makeKeyword(unarybinaryright("?"));
      export NotEqualEqualEqualS := makeKeyword(binaryright("=!="));
      export NotEqualS := makeKeyword(binaryright("!="));
+     export TildeS := makeKeyword(unarybinaryright("~"));
 -- operations on terms that yield terms:
 bumpPrecedence();
      export BarBarS := makeKeyword(binaryleft("||"));
@@ -318,6 +320,7 @@ bumpPrecedence();
      export breakpointS    := special("breakpoint",    unaryop, precSpace, wide);
      export profileS       := special("profile",       unaryop, precSpace, wide);
      export shieldS        := special("shield",        unaryop, precSpace, wide);
+     export trapS          := special("trap",          unaryop, precSpace, wide);
      export throwS         := special("throw",        nunaryop, precSpace, wide);
      export returnS        := special("return",       nunaryop, precSpace, wide);
      export breakS         := special("break",        nunaryop, precSpace, wide);
@@ -335,7 +338,6 @@ bumpPrecedence();
      export AtAtS := makeKeyword(binaryleft("@@"));
      export AtAtQuestionS := makeKeyword(binaryleft("@@?"));
 bumpPrecedence();
-     export TildeS := makeKeyword(postfix("~"));
      export PowerTildeS := makeKeyword(postfix("^~"));
      export UnderscoreTildeS := makeKeyword(postfix("_~"));
      export UnderscoreStarS := makeKeyword(postfix("_*"));
@@ -402,8 +404,11 @@ export NewOfFromE := Expr(NewOfFromS);
 export InverseS := makeProtectedSymbolClosure("InverseMethod");
 export InverseE := Expr(InverseS);
 
-export RobustPrintS := makeProtectedSymbolClosure("RobustPrintMethod");
-export RobustPrintE := Expr(RobustPrintS);
+export RobustPrintNetS := makeProtectedSymbolClosure("RobustPrintNetMethod");
+export RobustPrintNetE := Expr(RobustPrintNetS);
+
+export RobustPrintStringS := makeProtectedSymbolClosure("RobustPrintStringMethod");
+export RobustPrintStringE := Expr(RobustPrintStringS);
 
 export StopIterationS := makeProtectedSymbolClosure("StopIteration");
 export StopIterationE := Expr(StopIterationS);
@@ -500,7 +505,7 @@ export opsWithBinaryMethod := array(SymbolClosure)(
      LongDoubleRightArrowS, LongLongDoubleRightArrowS,
      LongDoubleLeftArrowS, LongLongDoubleLeftArrowS,
      ColonS, BarS, HatHatS, AmpersandS, DotDotS, DotDotLessS, MinusS, PlusS, PlusPlusS, StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
-     AdjacentS, AtAtS, AtAtQuestionS, orS, andS, xorS,
+     AdjacentS, AtAtS, AtAtQuestionS, orS, andS, xorS, TildeS,
      -- TODO: why are these four not listed here?
      -- GreaterS, GreaterEqualS, LessS, LessEqualS,
      BarUnderscoreS,
@@ -516,13 +521,13 @@ export opsWithBinaryMethod := array(SymbolClosure)(
      );
 export opsWithUnaryMethod := array(SymbolClosure)(
      StarS, MinusS, PlusS, LessLessS, QuestionQuestionS,
-     LongDoubleLeftArrowS, LongLongDoubleLeftArrowS, 
+     LongDoubleLeftArrowS, LongLongDoubleLeftArrowS, TildeS,
      notS, DeductionS, QuestionS,LessS,GreaterS,LessEqualS,GreaterEqualS);
 export opsWithPostfixMethod := array(SymbolClosure)(
     ExclamationS,    PowerExclamationS, UnderscoreExclamationS,
     -- FIXME:        PowerSharpS,       UnderscoreSharpS,
     ParenStarParenS, PowerStarS,        UnderscoreStarS,
-    TildeS,          PowerTildeS,       UnderscoreTildeS
+    PowerTildeS,     UnderscoreTildeS
     );
 
 -- ":=" "=" "<-" "->"  "=>" "===" "=!=" "!=" "#" "#?" "." ".?" ";" "," "<" ">" "<=" ">="
@@ -914,6 +919,21 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	  )
      is i:Try do (
 	  bind(i.primary,dictionary);
+	  )
+     is i:TryDo do (
+	  bind(i.primary,dictionary);
+	  newdict := newLocalDictionary(dictionary);
+	  bindSingleParm(i.variable,newdict);
+	  bind(i.doClause,newdict);
+	  i.dictionary = newdict;
+	  )
+     is i:TryThenDo do (
+	  bind(i.primary,dictionary);
+	  bind(i.sequel,dictionary);
+	  newdict := newLocalDictionary(dictionary);
+	  bindSingleParm(i.variable,newdict);
+	  bind(i.doClause,newdict);
+	  i.dictionary = newdict;
 	  )
      is i:Catch do (
 	  bind(i.primary,dictionary);

@@ -11,7 +11,7 @@ ReducedGB_Field::~ReducedGB_Field()
   Rideal = nullptr;
 }
 
-void ReducedGB_Field::set_gb(VECTOR(POLY) & polys0) {}
+void ReducedGB_Field::set_gb(VECTOR(POLY) & polys0) { (void) polys0; }
 struct ReducedGB_Field_sorter
 {
   GBRing *R;

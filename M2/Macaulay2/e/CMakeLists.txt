@@ -131,6 +131,10 @@ set(CPPONLYFILES
   interface/gmp-util.h # only has inline definitions
   interface/groebner.cpp
   interface/groebner.h
+  interface/m2-mem.cpp
+  interface/m2-mem.h
+  interface/m2-types.cpp
+  interface/m2-types.h
   interface/matrix.cpp
   interface/matrix.h
   interface/monoid.cpp
@@ -364,7 +368,7 @@ target_include_directories(M2-engine PUBLIC
   $<INSTALL_INTERFACE:include/Macaulay2>)
 
 # TODO: make engine independent of interpreter headers
-target_link_libraries(M2-engine PUBLIC M2-interpreter memtailor mathic mathicgb)
+target_link_libraries(M2-engine PUBLIC memtailor mathic mathicgb)
 
 if(EIGEN3_FOUND)
   target_link_libraries(M2-engine PUBLIC Eigen3::Eigen)
@@ -373,6 +377,20 @@ endif()
 if(OpenMP_FOUND)
   target_link_libraries(M2-engine PUBLIC OpenMP::OpenMP_CXX)
 endif()
+
+foreach(LIB IN LISTS PKGLIB_LIST)
+  if(${LIB}_FOUND)
+    target_link_libraries(M2-engine PUBLIC PkgConfig::${LIB})
+  endif()
+endforeach()
+
+foreach(LIB IN LISTS LIBRARIES_LIST)
+  if(${LIB}_FOUND)
+    target_link_libraries(M2-engine PUBLIC ${${LIB}_LIBRARIES})
+    target_include_directories(M2-engine PUBLIC
+        "$<BUILD_INTERFACE:${${LIB}_INCLUDE_DIR}>")
+  endif()
+endforeach()
 
 # Compiler warning flags
 target_compile_options(M2-engine PRIVATE
@@ -422,11 +440,8 @@ if(BUILD_TESTING)
 
   # TODO: overflow tests
   # TODO: break up into multiple branches
-  add_executable(M2-unit-tests
+  add_executable(M2-unit-tests EXCLUDE_FROM_ALL
     unit-tests/M2-cpp-replacement.cpp
-    unit-tests/M2-replacement.c
-    unit-tests/M2mem-replacement.c
-    unit-tests/M2mem-replacement.h
 
     unit-tests/util-polyring-creation.hpp
     unit-tests/util-polyring-creation.cpp
@@ -437,14 +452,16 @@ if(BUILD_TESTING)
     unit-tests/ARingTest.hpp
     unit-tests/ARingZZTest.cpp
     unit-tests/ARingZZpTest.cpp
-#    unit-tests/ARingGFTest.cpp # FIXME: see aring-gf-givaro.cpp:199
+#    unit-tests/ARingGFTest.cpp # TODO: needs rework - ARingGFFlint API has changed
     unit-tests/ARingQQFlintTest.cpp
     unit-tests/ARingQQGmpTest.cpp
     unit-tests/ARingRRTest.cpp
     unit-tests/ARingCCTest.cpp
     unit-tests/ARingRRRTest.cpp
+    unit-tests/ARingRRiTest.cpp
     unit-tests/ARingCCCTest.cpp
     unit-tests/NCGroebnerTest.cpp
+#    unit-tests/WeylAlgebraTest.cpp # TODO: add this file
 
     unit-tests/RingTest.hpp
     unit-tests/RingZZTest.cpp

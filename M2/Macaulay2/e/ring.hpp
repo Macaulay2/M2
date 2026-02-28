@@ -276,6 +276,7 @@ class Ring : public MutableEngineObject
   // If a is zero, then r is set to -1.
   virtual long discreteLog(const ring_elem &a) const
   {
+    (void) a;
     throw exc::engine_error("cannot compute discrete logarithm in this ring");
   }
 
@@ -287,6 +288,7 @@ class Ring : public MutableEngineObject
   // for that call.
   virtual const RingElement *getRepresentation(const ring_elem &a) const
   {
+    (void) a;
     return nullptr;
   }
 
@@ -294,6 +296,9 @@ class Ring : public MutableEngineObject
                                            size_t ncols,
                                            bool dense) const
   {
+    (void) nrows;
+    (void) ncols;
+    (void) dense;
     return nullptr;
   }
 

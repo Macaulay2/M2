@@ -61,6 +61,8 @@ gbA *gbA::create(const Matrix *m,
                  int max_degree_limit,
                  int max_reduction_count)
 {
+  (void) use_max_degree_limit;
+  (void) max_degree_limit;
   const PolynomialRing *origR = m->get_ring()->cast_to_PolynomialRing();
   if (origR == nullptr)
     {
@@ -1598,6 +1600,7 @@ int gbA::find_good_monomial_divisor_ZZ(mpz_srcptr c,
   int i, gap, newgap, egap;
   int n = 0;
 
+  (void) c;
   VECTOR(MonomialTableZZ::mon_term *) divisors;
   egap = degf - weightInfo_->exponents_weight(e, x);
 
@@ -1836,6 +1839,8 @@ void gbA::remainder_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
 
   exponents_t EXP = ALLOCATE_EXPONENTS(exp_size);
 
+  (void) use_denom;
+  (void) denom;
   frem->next = nullptr;
   int count = 0;
   POLY h = f;

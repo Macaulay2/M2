@@ -1,8 +1,0 @@
-This should not slow down by a factor of 100!
-
-
-i39 : time (x=new MutableList ; for i to 1000 do x#i = i ;  )
-     -- used 0.002677 seconds
-
-i40 : time (x=new MutableList ; for i to 10000 do x#i = i ;  )
-     -- used 2.56211 seconds

@@ -17,7 +17,8 @@ newPackage("Python",
     Keywords => {"Interfaces"},
     PackageImports => {"Text"},
     AuxiliaryFiles => true,
-    OptionalComponentsPresent => Core#"private dictionary"#?"pythonTrue"
+    OptionalComponentsPresent => Core#"private dictionary"#?"pythonTrue",
+    UseCachedExampleOutput => true,
     )
 
 ---------------
@@ -146,13 +147,14 @@ pythonInitialize(ZZ#"Python executable" = executable)
 
 pythonHelp = Command (() -> builtins@@help())
 
-expression PythonObject := expression @@ pythonUnicodeAsUTF8 @@ pythonObjectStr
-toString PythonObject := toString @@ expression
-net PythonObject := net @@ expression
-texMath PythonObject := texMath @@ expression
+toString PythonObject := pythonUnicodeAsUTF8 @@ pythonObjectStr
+net PythonObject := net @@ toString
+texMath PythonObject := texMath @@ toString
+hypertext PythonObject := x -> SAMP { toString x, "class" => "language-python" }
+html PythonObject := html @@ hypertext
 
 describe PythonObject := x -> Describe FunctionApplication(pythonValue,
-    expression x@@"__repr__"())
+    toString x@@"__repr__"())
 toExternalString PythonObject := toExternalFormat @@ describe
 
 typename = x -> (
@@ -609,6 +611,14 @@ installNumPyMethods = () -> (
 
 load "Python/doc.m2"
 
+-- if in WebAppp mode, let's also import matplotlib and change the backend
+if topLevelMode === WebApp then try (
+    sys@@"path"@@append Python#"auxiliary files";
+    mpl := pythonImportImportModule "matplotlib";
+    mpl@@use "module://m2web_backend";
+)
+
+
 TEST ///
 -----------
 -- value --
@@ -756,7 +766,7 @@ assert Equation(0 xor y, 2)
 ----------------------
 assert Equation(-x, -5)
 assert Equation(+x, 5)
-assert Equation(x~, -6)
+assert Equation(~x, -6)
 assert Equation(not x, false)
 ///
 

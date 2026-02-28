@@ -41,7 +41,7 @@ public:
 
   void normalizeInPlace(Poly& f) const;
   
-  void init(Poly& f) const {}
+  void init(Poly& f) const { (void) f; }
   void clear(Poly& f) const;
   void setZero(Poly& f) const;
 

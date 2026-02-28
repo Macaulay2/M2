@@ -7,6 +7,9 @@ VPATH = @srcdir@
 SRCDIR = @srcdir@
 include ../Makefile.test
 
+# often takes longer than 90s in GitHub builds
+release-checklist.out: TLIMIT = 180
+
 Makefile: Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/tests/normal/Makefile
 
 @pre_packagesdir@/Core/tests: @pre_packagesdir@/Core; $(MKDIR_P) $@

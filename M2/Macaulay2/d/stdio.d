@@ -694,6 +694,8 @@ export present(x:string):string := (
 		    provide c)))
      else x);
 
+export format(s:string):string := "\"" + present(s) + "\"";
+
 export filbuf(o:file):int := (
 --      if o.fulllines then (
 -- 	  stdIO << flush;

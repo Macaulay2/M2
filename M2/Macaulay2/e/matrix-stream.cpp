@@ -19,13 +19,11 @@ MatrixStream::~MatrixStream()
 
 void MatrixStream::idealBegin(size_t polyCount)
 {
-  // We ignore polyCount
-  // Nothing to do
+  (void) polyCount;
 }
 void MatrixStream::appendPolynomialBegin(size_t termCount)
 {
-  // we ignore termCount
-  // Nothing to do
+  (void) termCount;
 }
 void MatrixStream::appendTermBegin(Component com)
 {

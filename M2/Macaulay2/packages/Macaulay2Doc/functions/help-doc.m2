@@ -226,6 +226,7 @@ Node
     (about, String)
     (about, Symbol)
     (about, Type)
+    (about, Keyword)
   Headline
     search the documentation
   Usage

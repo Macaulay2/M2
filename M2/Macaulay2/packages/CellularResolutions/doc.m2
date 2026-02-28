@@ -16,10 +16,68 @@ doc ///
             functions to work with cell complexes. For
             some direct ways to construct common cellular resolutions for
             monomial ideals, see @TO taylorComplex@ and @TO hullComplex@.
+	    Introductions to cellular resolutions can be found in:
+	Text
+	    @UL {
+		{
+		HREF("https://services.math.duke.edu/~ezra/", "Ezra Miller"),
+		" and ",
+		HREF("https://math.berkeley.edu/~bernd/", "Bernd Sturmfels"),
+		", ", 
+		HREF("https://www.springer.com/gp/book/9780387223568",
+		    "Combinatorial commutative algebra"),
+		", Graduate Texts in Mathematics 227, ",
+		"Springer-Verlag, New York, 2005. ",
+		"ISBN: 0-387-22356-8" },
+		{
+		HREF("https://en.wikipedia.org/wiki/Dave_Bayer", "Dave Bayer"),
+		", ",
+		HREF("https://pi.math.cornell.edu/~irena/", "Ireena Peeva"),
+		" and ",
+		HREF("https://math.berkeley.edu/~bernd/", "Bernd Sturmfels"),
+		", ",
+		HREF("https://dx.doi.org/10.4310/MRL.1998.v5.n1.a3",
+		    "Monomial Resolutions"),
+		", Mathematical Research Letters 5, pp. 31-46 (1998)" },
+		{
+		HREF("https://en.wikipedia.org/wiki/Dave_Bayer", "Dave Bayer"),
+		" and ",
+		HREF("https://math.berkeley.edu/~bernd/", "Bernd Sturmfels"),
+		", ",
+		HREF("https://doi.org/10.1515/crll.1998.083",
+		    "Cellular resolutions of monomial modules"),
+		", Journal für die reine und angewandte Mathematik, vol. 1998, no. 502, 1998, pp. 123-140."}
+	    }@	    
         Text
             More generally, cell complexes can be constructed by creating cells
             using @TO newCell@ or @TO newSimplexCell@, and then the maximal
-            cells can be provided to @TO cellComplex@ to construct a cell complex
+            cells can be provided to @TO cellComplex@ to construct a cell complex.
+        Text
+	    The example below follows Example 1.6 in @HREF("https://doi.org/10.1515/crll.1998.083",
+		    "Cellular resolutions of monomial modules")@,
+	    where two simplicial complexes X and Y are constructed
+		on the same monomial ideal. However, only X supports a resolution.
+	Example
+	    S = QQ[a,b,c, Degrees=>{{1,0,0},{0,1,0},{0,0,1}}];
+	    v101 = newCell({},a*c)
+	    v012 = newCell({},b*c^2); v020 = newCell({},b^2); v210 = newCell({},a^2*b);
+
+	    e112 = newCell({v101,v012})
+	    e022 = newCell({v012,v020}); e220 = newCell({v020,v210}); e211 = newCell({v210,v101});
+
+	    e121 = newCell({v101,v020});
+	    f122 = newCell({e112,e022,e121})
+	    f221 = newCell({e220,e211,e121});
+	    X = cellComplex(S,{f122,f221})
+
+	    e212 = newCell({v210,v012}); f212 = newCell({e112,e211,e212}); f222 = newCell({e022,e220,e212});
+	    Y = cellComplex(S,{f212,f222})
+
+	    prune HH X
+	    prune HH Y
+
+	    Y121 = subcomplex(Y,a*b^2*c)
+	    prune HH Y121
 ///
 
 doc ///
@@ -509,6 +567,7 @@ doc ///
 doc ///
     Key
         (boundaryMap,ZZ,CellComplex)
+        [(boundaryMap,ZZ,CellComplex), Labels]
     Headline
         compute the boundary map of a cell complex from r-faces to (r-1)-faces
     Usage
@@ -518,6 +577,8 @@ doc ///
             the source cell-dimension
         C : CellComplex
             the CellComplex
+        Labels => List
+            which is ignored by this particular function
     Outputs
         : Matrix
             the boundary map from r-faces to (r-1)-faces of C
@@ -717,6 +778,7 @@ doc ///
 doc ///
     Key
         (cohomology,ZZ,CellComplex)
+        [(cohomology,ZZ,CellComplex),Degree]
     Headline
         cohomology of a cell complex
     Usage
@@ -725,6 +787,8 @@ doc ///
         r : ZZ
             a non-negative integer
         C : CellComplex
+        Degree => ZZ
+            which is ignored by this particular function
     Outputs
         : Module
             the r-th cohomology module of C
@@ -1500,4 +1564,103 @@ doc ///
             S = QQ[a,b,c,DegreeRank=>3];
             D = taylorComplex monomialIdeal {a,b,c}
             subcomplex(D,{1,1,0})
+///
+
+doc ///
+    Key
+        (describe,CellComplex)
+    Headline
+        Describes a cell complex or cell
+    Usage
+        describe C
+    Inputs
+        C : {CellComplex, Cell}
+    Outputs
+        : Expression
+    Description
+        Text
+            Unlike @TO (net,CellComplex)@ this version ignores the name from @TO GlobalAssignHook@.
+            Consequently, this method returns a short description of the cell complex regardless of
+            if it has been assigned to a global variable.
+        Example
+            R = QQ[x,y];
+            v1 = newSimplexCell({},x);
+            v2 = newSimplexCell({},y);
+            e1 = newSimplexCell({v1,v2},x);
+            e2 = newSimplexCell({v1,v2},y);
+            f = newCell({(e1,1),(e2,-1)},x*y);
+            describe cellComplex(R,{f})
+            X = cellComplex(R,{f});
+            describe X
+    SeeAlso
+        describe
+        (net, CellComplex)
+///
+
+doc ///
+    Key
+        (net,CellComplex)
+        (net,Cell)
+    Headline
+        Describes a cell complex or cell
+    Usage
+        net C
+    Inputs
+        C : {CellComplex, Cell}
+    Outputs
+        : Net
+    Description
+        Text
+            For cell complexes, this method uses @TO GlobalAssignHook@ to use the name of the cell complex
+            if the cell complex is assigned to a global variable.
+            Otherwise the method returns a short description of the cell complex.
+        Text
+            For individual cells, the description contains only the dimension and the label,
+            the data of the boundary of the cell is not given in the description.
+        Example
+            R = QQ[x,y];
+            v1 = newSimplexCell({},x);
+            v2 = newSimplexCell({},y);
+            e1 = newSimplexCell({v1,v2},x);
+            e2 = newSimplexCell({v1,v2},y);
+            f = newCell({(e1,1),(e2,-1)},x*y);
+            net cellComplex(R,{f})
+            net f
+            X = cellComplex(R,{f});
+            net X
+    SeeAlso
+        (texMath, CellComplex)
+        (texMath, Cell)
+///
+
+doc ///
+    Key
+        (texMath,CellComplex)
+        (texMath,Cell)
+    Headline
+        Describes a cell complex or cell using TeX
+    Usage
+        texMath C
+    Inputs
+        C : {CellComplex, Cell}
+    Outputs
+        : String
+    Description
+        Text
+            This method functions mostly as @TO (net, CellComplex)@ and @TO (net, Cell)@ does.
+            The primary difference in the output is that the output is formatted for TeX.
+        Example
+            R = QQ[x,y];
+            v1 = newSimplexCell({},x);
+            v2 = newSimplexCell({},y);
+            e1 = newSimplexCell({v1,v2},x);
+            e2 = newSimplexCell({v1,v2},y);
+            f = newCell({(e1,1),(e2,-1)},x*y);
+            texMath cellComplex(R,{f})
+            texMath f
+            X = cellComplex(R,{f});
+            texMath X
+    SeeAlso
+        (net, CellComplex)
+        (net, Cell)
 ///

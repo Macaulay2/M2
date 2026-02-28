@@ -1,5 +1,6 @@
 GFAN_VERSION = 0.6.2
 VERSION = $(GFAN_VERSION)
+SHA256SUM = a674d5e5dc43634397de0d55dd5da3c32bd358d05f72b73a50e62c1a1686f10a
 PATCHFILE = @abs_srcdir@/patch-$(GFAN_VERSION)
 # URL = http://home.imf.au.dk/jensen/software/gfan/gfan.html
 URL = https://macaulay2.com/Downloads/OtherSourceCode

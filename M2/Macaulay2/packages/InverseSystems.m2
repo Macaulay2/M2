@@ -379,7 +379,7 @@ Description
   Method: To represent finitely generated S-submodule of $D'$ 
   as an S-module we use the map of modules
   S/(x_1^d,\dots, x_n^d) -> D' sending $x^a$ to 
-  contract(x^a, product(n, j-> x_i^{d-1})), and its inverse,
+  contract(x^a, product(1 .. n, i -> x_i^(d-1))), and its inverse,
   which is of course defined only on divided monomials of 
   small degree.  
 Caveat
@@ -470,14 +470,14 @@ Usage
  M1 = inverseSystem I
 Inputs
  M:Matrix
-  if r rows, then represents a submodule of D'^r
+  if $r$ rows, then represents a submodule of $D'^r$
  M:RingElement
  I:Ideal
 Outputs
  I1:Ideal
-  if r=1
+  if $r=1$
  I1:Module
-  submodule of S^r
+  submodule of $S^r$
  M1:Matrix
 Description
  Text
@@ -485,27 +485,27 @@ Description
   ideals and modules. For that application
   see @TO Gorenstein@.
  
-  Let S = k[x_1..x_n] be a standard graded polynomial ring,
-  and let D be its dual, the divided power algebra,
-  regarded as an S-module.  Let M be an rxm matrix of polynomials,
-  and let I be an ideal of S. 
+  Let $S = k[x_1,\ldots,x_n]$ be a standard graded polynomial ring,
+  and let $D$ be its dual, the divided power algebra,
+  regarded as an $S$-module.  Let $M$ be an $r \times m$ matrix of polynomials,
+  and let $I$ be an ideal of $S$. 
   
-  From a submodule of D^r to a submodule of S^r (or to an ideal, if r=1):
+  From a submodule of $D^r$ to a submodule of $S^r$ (or to an ideal, if $r=1$):
   
-  We think of the columns of M as generators of an  S-submodule MM of D^r,
+  We think of the columns of M as generators of an  $S$-submodule MM of $D^r$,
   and 
-  inverseSystem M returns the annihilator of MM in S^r = Hom_{graded}(D^r,k).
+  inverseSystem M returns the annihilator of MM in $S^r = \mathrm{Hom}_{\text{graded}}(D^r,k)$.
   In the default behavior
   a monomial $x^a$ in an entry of the matrix M is taken to represent
-  $a!x^(a) \in D'$, where,
-  $a = (a_1,\dots,a_n)$ then $a! = a_1!*\dots*a_n!$. Use
+  $a!x^{(a)} \in D'$, where,
+  $a = (a_1,\dots,a_n)$ then $a! = a_1!\times\dots\times a_n!$. Use
   
   inverseSystem(M, DividedPowers => false)
   
-  to make the monomials of entries of M represent the dual basis of the monomial basis of S,
-  that is, the divided powers of the generators of D as an algebra.
+  to make the monomials of entries of M represent the dual basis of the monomial basis of $S$,
+  that is, the divided powers of the generators of $D$ as an algebra.
   
-  From an ideal of S to a submodule of D:
+  From an ideal of $S$ to a submodule of $D$:
   
   If $I$ is an ideal of $S$, homogeneous or not,
   we regard $I$ as an ideal of the localization $S'$ of $S$ at $(x_1,\dots,x_n)$. If $S'/I$ is of
@@ -517,22 +517,22 @@ Description
   
   M1 = inverseSystem(I, DividedPowers => false)
   
-  each return a 1 x m matrix whose entries are
+  each return a $1 \times m$ matrix whose entries are
   the minimal generators of
   the annihilator of $I$ in $D$. In the matrix $M$
   a term $x^a$
   is to be interpreted as 
-  $a! x^(a)$, while in the matrix $M'$ it is interpreted
-  as $x^(a)$. Of course the first computation is only
+  $a! x^{(a)}$, while in the matrix $M'$ it is interpreted
+  as $x^{(a)}$. Of course the first computation is only
   valid if all the powers of variables appearing in the generators
   of $I$ are < char k.
   
   To make these computations it is necessary to represent some sufficiently
-  large finitely generated S-submodule of $D$ (this will automatically be
+  large finitely generated $S$-submodule of $D$ (this will automatically be
   an $S'$-submodule. To do this we use the map of modules
-  D-> S/(x_1^d,\dots, x_n^d) sending $x^{(a)}$ to 
-  contract(x^a, product(n, j-> x_i^{d-1})), defined only when the variables
-  in $x^{(a)}$ appear only with powers < d.
+  $D\to S/(x_1^d,\dots, x_n^d)$ sending $x^{(a)}$ to 
+  contract(x^a, product(1 .. n, i -> x_i^(d-1))), defined only when the variables
+  in $x^{(a)}$ appear only with powers < $d$.
   
  Example
   setRandomSeed 0
@@ -565,10 +565,10 @@ Caveat
  it should not be used in the default mode
  unless the characteristic is greater than the highest
  degree to which a variable appears. 
- To make $x^a$ represent $x^(a)$,
+ To make $x^a$ represent $x^{(a)}$,
  for example in small characteristics use
   
- inverseSystem(Matrix, DividedPowers=>false)
+ inverseSystem(Matrix, DividedPowers=>true)
   
  (which was the default behavior of the old script
  "fromDual"). 

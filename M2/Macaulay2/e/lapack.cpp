@@ -82,6 +82,7 @@ void fill_from_lapack_upper(const std::vector<double>& lapack_numbers,  // colum
 // lapack_numbers is in column major form
 // upper is in row major form
 {
+  (void) numcols;
   // At this point, upper should be a zero matrix of size (min(numrows, numcols) x numcols)
   assert(upper.numRows() == std::min(numrows, numcols));
   assert(upper.numColumns() == numcols);
@@ -107,6 +108,7 @@ void fill_from_lapack_upper(const std::vector<double>& lapack_numbers,  // colum
 // lapack_numbers is in column major form
 // upper is in row major form
 {
+  (void) numcols;
   // At this point, upper should be a zero matrix of size (min(numrows, numcols) x numcols)
   assert(upper.numRows() == std::min(numrows, numcols));
   assert(upper.numColumns() == numcols);

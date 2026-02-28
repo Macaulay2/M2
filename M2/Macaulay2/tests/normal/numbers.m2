@@ -1013,6 +1013,10 @@ assert small abs(BesselY(1, ii) + 0.565159103992484 - 0.383186043874565*ii)
 assert (abs(BesselY(ii, 1) + 0.476556612479964 + 1.50506915911039*ii) < 1e-14)
 assert small abs(BesselY(ii, ii) + 0.665181892391867 - 0.395137431337008*ii)
 
+assert small(polylog(1, 1/2) - log 2)
+assert small(polylog(2, 1/2) - 1/12*pi^2 + 1/2*(log 2)^2)
+assert(polylog(3, 1) == zeta 3)
+
 assert Equation(truncate 1, 1)
 assert Equation(truncate 1.9, 1)
 assert Equation(truncate(-1.9), -1)

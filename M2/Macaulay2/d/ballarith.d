@@ -52,6 +52,11 @@ toRR(x:RRball, prec:ulong):RR := (
     Ccode(int, "arf_get_mpfr(", y, ", arb_midref(", x, "), MPFR_RNDN)");
     moveToRRandclear(y));
 
+moveToRRandclear(x:RRball, prec:ulong):RR := (
+    r := toRR(x, prec);
+    clear(x);
+    r);
+
 toRRi(x:RRball, prec:ulong):RRi := (
     y := newRRimutable(prec);
     Ccode(void, "arb_get_interval_mpfr((mpfr_ptr)&", y,
@@ -88,6 +93,17 @@ export Gamma(z:RRi,w:RRi):RRi := (
     clear(x);
     clear(y);
     moveToRRiandclear(r, prec));
+
+export regularizedGamma(z:RR,w:RR):RR := (
+    prec := min(precision(z), precision(w));
+    x := toRRball(z);
+    y := toRRball(w);
+    r := newRRball();
+    Ccode(void, "arb_hypgeom_gamma_upper(", r, ", ", x, ", ", y, ", 1, ",
+	prec, ")");
+    clear(x);
+    clear(y);
+    moveToRRandclear(r, prec));
 
 export regularizedGamma(z:RRi,w:RRi):RRi := (
     prec := min(precision(z), precision(w));
@@ -135,12 +151,29 @@ export erfc(x:RRi):RRi := (
     clear(y);
     moveToRRiandclear(r, precision(x)));
 
+export inverseErf(x:RR):RR := (
+    y := toRRball(x);
+    r := newRRball();
+    Ccode(void, "arb_hypgeom_erfinv(", r, ", ", y, ", ", precision(x), ")");
+    clear(y);
+    moveToRRandclear(r, precision(x)));
+
 export inverseErf(x:RRi):RRi := (
     y := toRRball(x);
     r := newRRball();
     Ccode(void, "arb_hypgeom_erfinv(", r, ", ", y, ", ", precision(x), ")");
     clear(y);
     moveToRRiandclear(r, precision(x)));
+
+export BesselJ(z:RR,w:RR):RR := (
+    prec := min(precision(z), precision(w));
+    x := toRRball(z);
+    y := toRRball(w);
+    r := newRRball();
+    Ccode(void, "arb_hypgeom_bessel_j(", r, ", ", x, ", ", y, ", ", prec, ")");
+    clear(x);
+    clear(y);
+    moveToRRandclear(r, prec));
 
 export BesselJ(z:RRi,w:RRi):RRi := (
     prec := min(precision(z), precision(w));
@@ -151,6 +184,16 @@ export BesselJ(z:RRi,w:RRi):RRi := (
     clear(x);
     clear(y);
     moveToRRiandclear(r, prec));
+
+export BesselY(z:RR,w:RR):RR := (
+    prec := min(precision(z), precision(w));
+    x := toRRball(z);
+    y := toRRball(w);
+    r := newRRball();
+    Ccode(void, "arb_hypgeom_bessel_y(", r, ", ", x, ", ", y, ", ", prec, ")");
+    clear(x);
+    clear(y);
+    moveToRRandclear(r, prec));
 
 export BesselY(z:RRi,w:RRi):RRi := (
     prec := min(precision(z), precision(w));
@@ -174,6 +217,19 @@ export Beta(z:RRi,w:RRi):RRi := (
     clear(y);
     moveToRRiandclear(r, prec));
 
+export regularizedBeta(u:RR,v:RR,w:RR):RR := (
+    prec := min(min(precision(u), precision(v)), precision(w));
+    x := toRRball(u);
+    y := toRRball(v);
+    z := toRRball(w);
+    r := newRRball();
+    Ccode(void, "arb_hypgeom_beta_lower(", r, ", ", y, ", ", z, ", ", x,
+	 ", 1, ", prec, ")");
+    clear(x);
+    clear(y);
+    clear(z);
+    moveToRRandclear(r, prec));
+
 export regularizedBeta(u:RRi,v:RRi,w:RRi):RRi := (
     prec := min(min(precision(u), precision(v)), precision(w));
     x := toRRball(u);
@@ -185,6 +241,26 @@ export regularizedBeta(u:RRi,v:RRi,w:RRi):RRi := (
     clear(x);
     clear(y);
     clear(z);
+    moveToRRiandclear(r, prec));
+
+export polylog(z:RR, w:RR):RR := (
+    prec := min(precision(z), precision(w));
+    x := toRRball(z);
+    y := toRRball(w);
+    r := newRRball();
+    Ccode(void, "arb_polylog(", r, ", ", x, ", ", y, ", ", prec, ")");
+    clear(x);
+    clear(y);
+    moveToRRandclear(r, prec));
+
+export polylog(z:RRi, w:RRi):RRi := (
+    prec := min(precision(z), precision(w));
+    x := toRRball(z);
+    y := toRRball(w);
+    r := newRRball();
+    Ccode(void, "arb_polylog(", r, ", ", x, ", ", y, ", ", prec, ")");
+    clear(x);
+    clear(y);
     moveToRRiandclear(r, prec));
 
 ------------
@@ -332,4 +408,14 @@ export regularizedBeta(u:CC,v:CC,w:CC):CC := (
     clear(x);
     clear(y);
     clear(z);
+    moveToCCandclear(r, prec));
+
+export polylog(z:CC, w:CC):CC := (
+    prec := min(precision(z), precision(w));
+    x := toCCball(z);
+    y := toCCball(w);
+    r := newCCball();
+    Ccode(void, "acb_polylog(", r, ", ", x, ", ", y, ", ", prec, ")");
+    clear(x);
+    clear(y);
     moveToCCandclear(r, prec));

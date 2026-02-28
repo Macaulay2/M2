@@ -12,7 +12,6 @@ assert Equation(toJSON "¡pʃɹoʍ 'oʃʃǝH", "\"¡pʃɹoʍ 'oʃʃǝH\"")
 assert Equation(toJSON true, "true")
 assert Equation(toJSON false, "false")
 assert Equation(toJSON null, "null")
-assert Equation(toJSON nil, "null")
 
 -- arrays
 assert Equation(toJSON {1, 2, 3}, "[1, 2, 3]")

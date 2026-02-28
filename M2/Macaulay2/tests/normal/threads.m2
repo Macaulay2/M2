@@ -87,6 +87,10 @@ assert Equation(getIOThreadMode f, 2)
 
 removeFile fn
 
+-- issue #3358
+Foo = taskResult schedule(() -> new Type of HashTable)
+assert BinaryOperation(symbol ===, youngest(Foo, Matrix), Foo)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test threads.out"
 -- End:

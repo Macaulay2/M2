@@ -39,10 +39,10 @@ endforeach()
 string(REPLACE ";" " " COMPILEFLAGS "${COMPILE_OPTIONS}")
 
 # C compiler flags
-set(CFLAGS   "${COMPILEFLAGS} -w -Wimplicit -Werror")
+set(CFLAGS   "${CMAKE_C_FLAGS}")
 
 # C++ compiler flags
-set(CXXFLAGS "${COMPILEFLAGS} -std=gnu++11 -w -Wno-mismatched-tags -Wno-deprecated-register")
+set(CXXFLAGS "${CMAKE_CXX_FLAGS}")
 
 # Linker flags
 string(REPLACE ";" " " LDFLAGS "${LINK_OPTIONS}")
@@ -212,16 +212,16 @@ _ADD_COMPONENT_DEPENDENCY(libraries bdwgc "" BDWGC_FOUND)
 # NOTE: mpfr puts pointers to gmp numbers in thread local variables, unless
 # specially configured, so we shouldn't tell gmp to use libgc (we used to do that)
 ExternalProject_Add(build-mpfr
-  URL               https://www.mpfr.org/mpfr-current/mpfr-4.2.1.tar.xz
-  URL_HASH          SHA256=277807353a6726978996945af13e52829e3abd7a9a5b7fb2793894e18f1fcbb2
+  URL               https://www.mpfr.org/mpfr-4.2.2/mpfr-4.2.2.tar.gz
+  URL_HASH          SHA256=826cbb24610bd193f36fde172233fb8c009f3f5c2ad99f644d0dea2e16a20e42
   PREFIX            libraries/mpfr
   SOURCE_DIR        libraries/mpfr/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-  CONFIGURE_COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
+  CONFIGURE_COMMAND autoreconf -vif
+            COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --with-gmp=${GMP_ROOT}
-                      --disable-thread-safe
                       ${shared_setting}
                       ${assert_setting}
                       CPPFLAGS=${CPPFLAGS}
@@ -282,13 +282,12 @@ _ADD_COMPONENT_DEPENDENCY(libraries mpfi "gmp;mpfr" MPFI_FOUND)
 
 # http://shoup.net/ntl
 ExternalProject_Add(build-ntl
-  URL               https://github.com/libntl/ntl/archive/refs/tags/v11.5.1.tar.gz
-  URL_HASH          SHA256=ef578fa8b6c0c64edd1183c4c303b534468b58dd3eb8df8c9a5633f984888de5
+  URL               https://libntl.org/ntl-11.6.0.tar.gz
+  URL_HASH          SHA256=bc0ef9aceb075a6a0673ac8d8f47d5f8458c72fe806e4468fbd5d3daff056182
   PREFIX            libraries/ntl
   SOURCE_DIR        libraries/ntl/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/ntl/patch-11.5.1
   CONFIGURE_COMMAND cd src && ${CONFIGURE} PREFIX=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       TUNE=generic
@@ -447,8 +446,8 @@ _ADD_COMPONENT_DEPENDENCY(libraries frobby gmp FROBBY_FOUND)
 # https://github.com/cddlib/cddlib
 # https://www.inf.ethz.ch/personal/fukudak/cdd_home/
 ExternalProject_Add(build-cddlib
-  URL               https://github.com/cddlib/cddlib/releases/download/0.94m/cddlib-0.94m.tar.gz
-  URL_HASH          SHA256=70dffdb3369b8704dc75428a1b3c42ab9047b81ce039f12f427e2eb2b1b0dee2
+  URL               https://github.com/cddlib/cddlib/releases/download/0.94n/cddlib-0.94n.tar.gz
+  URL_HASH          SHA256=b87ee07ba2c1d0ab92a3e4eccacdf568f981a095a392e3b9efd7e7e4a9e125b1
   PREFIX            libraries/cddlib
   SOURCE_DIR        libraries/cddlib/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -486,8 +485,8 @@ endif()
 
 # https://github.com/algebraic-solving/msolve
 ExternalProject_Add(build-msolve
-  URL               https://github.com/algebraic-solving/msolve/archive/refs/tags/v0.9.2.tar.gz
-  URL_HASH          SHA256=9ba8b290fee048e49615015c43a7a1f2c05ac7e7fb277a964105d51c082f7d9f
+  URL               https://github.com/algebraic-solving/msolve/archive/refs/tags/v0.9.4.tar.gz
+  URL_HASH          SHA256=02572df81596ff1d06b5d841e3fa7652f7d7976ef021c80728bcf0b08824e30c
   PREFIX            libraries/msolve
   SOURCE_DIR        libraries/msolve/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -772,8 +771,8 @@ set(4ti2_PROGRAMS
   qsolve rays walk zbasis zsolve hilbert graver ppi genmodel gensymm output)
 list(TRANSFORM 4ti2_PROGRAMS PREPEND ${M2_HOST_PREFIX}/bin/ OUTPUT_VARIABLE 4ti2_PROGRAMS)
 ExternalProject_Add(build-4ti2
-  URL               https://github.com/4ti2/4ti2/releases/download/Release_1_6_13/4ti2-1.6.13.tar.gz
-  URL_HASH          SHA256=f59e1ea5563d2188b0e8ff61a8584845a899e3e54a570305f6f99b26c9b1e6b5
+  URL               https://github.com/4ti2/4ti2/releases/download/Release_1_6_14/4ti2-1.6.14.tar.gz
+  URL_HASH          SHA256=1bc340173f93ca4abd30ea962118bd5057fdedf7e79c71d2a0c4cc9569f8b0b1
   PREFIX            libraries/4ti2
   SOURCE_DIR        libraries/4ti2/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -973,8 +972,8 @@ _ADD_COMPONENT_DEPENDENCY(libraries nauty "" NAUTY_FOUND)
 # https://www.normaliz.uni-osnabrueck.de/
 # normaliz needs libgmp, libgmpxx, boost, and openmp, and is used by the package Normaliz
 ExternalProject_Add(build-normaliz
-  URL               https://github.com/Normaliz/Normaliz/releases/download/v3.11.0/normaliz-3.11.0.tar.gz
-  URL_HASH          SHA256=14441981afce3546c1c0f12b490714da3564af7a60d12ac0a494f9d2382d1a01
+  URL               https://github.com/Normaliz/Normaliz/releases/download/v3.11.1/normaliz-3.11.1.tar.gz
+  URL_HASH          SHA256=9a00d590f0fdcad847e2189696d2842d97ed896ed36c22421874a364047f76e8
   PREFIX            libraries/normaliz
   SOURCE_DIR        libraries/normaliz/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles

@@ -274,6 +274,7 @@ expression EngineRing := R -> if hasAttribute(R,ReverseDictionary) then expressi
 toString EngineRing := toString @@ expression
 net      EngineRing :=      net @@ expression
 texMath  EngineRing :=  texMath @@ expression
+mathML   EngineRing :=   mathML @@ expression
 
 ZZ _ EngineRing := 
 RR _ EngineRing :=

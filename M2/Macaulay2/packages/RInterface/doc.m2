@@ -491,7 +491,7 @@ doc ///
     Example
       x = RObject 12
       y = RObject 10
-      x~
+      ~x
     Text
       @TO symbol &@ is bitwise @EM "and"@, calling R's @SAMP "bitwAnd"@.
     Example

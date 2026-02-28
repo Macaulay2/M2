@@ -137,7 +137,12 @@ class ARingCCC : public SimpleARing<ARingCCC>
     mpfr_set_si(&result.im, 0, MPFR_RNDN);
   }
 
-  void set_var(ElementType& result, int v) const { set_from_long(result, 1); }
+  void set_var(ElementType& result, int v) const
+  {
+    (void) v;
+    set_from_long(result, 1);
+  }
+
   void set_from_mpz(ElementType& result, mpz_srcptr a) const
   {
     mpfr_set_z(&result.re, a, MPFR_RNDN);
@@ -483,6 +488,7 @@ class ARingCCC : public SimpleARing<ARingCCC>
             ring_elem& result) const
   {
     gmp_CC_struct g;
+    (void) first_var;
     g.re = &f.re;
     g.im = &f.im;
     if (!map->get_ring()->from_BigComplex(&g, result))

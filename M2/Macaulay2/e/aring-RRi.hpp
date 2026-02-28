@@ -342,7 +342,8 @@ class ARingRRi : public SimpleARing<ARingRRi>
             int first_var,
             ring_elem &result) const
   {
-      if (!map->get_ring()->from_Interval(&f, result))
+    (void) first_var;
+    if (!map->get_ring()->from_Interval(&f, result))
       {
            result = map->get_ring()->from_long(0);
            ERROR("cannot coerce RRi value to ring type");
@@ -352,13 +353,17 @@ class ARingRRi : public SimpleARing<ARingRRi>
 /* Not ready */
   void zeroize_tiny(gmp_RR epsilon, ElementType &a) const
   {
-      throw 20;
+    (void) epsilon;
+    (void) a;
+    throw 20;
     //if (mpfr_cmpabs(&a, epsilon) < 0) set_zero(a);
   }
     /* Not ready */
   void increase_norm(gmp_RRmutable norm, const ElementType &a) const
   {
-      throw 20;
+    (void) norm;
+    (void) a;
+    throw 20;
    /* if (mpfr_cmpabs(&a, norm) > 0)
       {
         set(*norm, a);

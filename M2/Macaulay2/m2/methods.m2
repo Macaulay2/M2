@@ -226,7 +226,7 @@ method = methodDefaults >> opts -> args -> (
 -- get the options used when a method was declared
 -- TODO: doesn't work for MethodFunctionSingle, MethodFunctionBinary
 methodOptions = method(TypicalValue => OptionTable)
-methodOptions Function := methodOptions Symbol := f -> null
+methodOptions Function := methodOptions Symbol := methodOptions List := f -> null
 methodOptions MethodFunctionWithOptions := MultipleArgsWithOptionsGetMethodOptions
 methodOptions MethodFunction := MultipleArgsNoOptionsGetMethodOptions
 methodOptions Command := f -> methodOptions f#0
@@ -301,6 +301,7 @@ default = method()
 --     m ())
 
 random = method(Options => {
+	CoefficientRing => null,
 	  MaximalRank => false,
 	  Density => 1.,
 	  UpperTriangular => false,

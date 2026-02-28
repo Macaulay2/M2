@@ -23,11 +23,13 @@ bool isDense(const MT& mat);
 template <typename RT>
 bool isDense(const DMat<RT>& mat)
 {
+  (void) mat;
   return true;
 }
 template <typename RT>
 bool isDense(const SMat<RT>& mat)
 {
+  (void) mat;
   return false;
 }
 
@@ -235,6 +237,7 @@ class MutableMat : public MutableMatrix
     result->mat.grab(m);
     return result;
 #endif
+    (void) prefer_dense;
     return clone();
   }
 
@@ -542,9 +545,24 @@ class MutableMat : public MutableMatrix
   // promote, lift, eval ////////
   ///////////////////////////////
 
-  virtual MutableMatrix* promote(const Ring* S) const { return 0; }
-  virtual MutableMatrix* lift(const Ring* R) const { return 0; }
-  virtual MutableMatrix* eval(const RingMap* F) const { return 0; }
+  virtual MutableMatrix* promote(const Ring* S) const
+  {
+    (void) S;
+    return 0;
+  }
+
+  virtual MutableMatrix* lift(const Ring* R) const
+  {
+    (void) R;
+    return 0;
+  }
+
+  virtual MutableMatrix* eval(const RingMap* F) const
+  {
+    (void) F;
+    return 0;
+  }
+
   ///////////////////////////////
   // Matrix operations //////////
   ///////////////////////////////

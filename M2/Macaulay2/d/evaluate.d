@@ -36,6 +36,8 @@ export applyIteratorS := setupvar("applyIterator", nullE);
 export joinIteratorsS := setupvar("joinIterators", nullE);
 export pairsIteratorS := setupvar("pairsIterator", nullE);
 
+export toExpr(err:Error):Expr := Expr(SpecialExpr(Class(err), Expr(err)));
+
 eval(c:Code):Expr;
 applyEE(f:Expr,e:Expr):Expr;
 export evalAllButTail(c:Code):Code := while true do c = (
@@ -1219,14 +1221,14 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
      else buildErrorPacket("parallel assignment: expected a sequence of " + tostring(nlhs) + " values"));
 
 -- helper function used when evaluating tryCode and by null coalescion
--- tryEvalSuccess is true unless an (non-interrupting) error occurred
-threadLocal tryEvalSuccess := true;
+-- tryCaughtError is false unless an (non-interrupting) error occurred
+threadLocal tryCaughtError := false;
 tryEval(c:Code):Expr := (
     oldSuppressErrors := SuppressErrors;
     SuppressErrors = true;
     p := eval(c);
     if !SuppressErrors then ( -- eval could have turned it off
-	tryEvalSuccess = true)
+	tryCaughtError = false)
     else (
 	SuppressErrors = oldSuppressErrors;
 	when p
@@ -1238,14 +1240,46 @@ tryEval(c:Code):Expr := (
 		err.message == continueMessageWithArg ||
 		err.message == unwindMessage          ||
 		err.message == throwMessage)
-	    then tryEvalSuccess = true
-	    else tryEvalSuccess = false)
-	else tryEvalSuccess = true);
+	    then tryCaughtError = false
+	    else tryCaughtError = true)
+	else tryCaughtError = false);
     p);
+
+evalTryCode(c:tryCode):Expr := (
+    ret := tryEval(c.code);
+    -- certain errors should not be caught, see above
+    if !tryCaughtError then when ret is Error do ret
+    -- then ...
+    else if c.thenClause != NullCode then eval(c.thenClause) else ret
+    -- else ...
+    else if c.elseClause != NullCode then eval(c.elseClause)
+    -- except .. do ...
+    else if c.doClause   != NullCode then (
+	when ret is err:Error do (
+	    localFrame = Frame(
+		localFrame, c.frameID, c.framesize, false,
+		new Sequence len c.framesize do provide nullE);
+	    -- variable specified by "except"
+	    localFrame.values.0 = toExpr(err);
+	    p := eval(c.doClause);
+	    localFrame = localFrame.outerFrame;
+	    p)
+	-- shouldn't happen since tryCaughtError is only true when ret is an Error
+	else buildErrorPacket("internal error: unable to catch error"))
+    else nullE);
+
+trapfun(c:Code):Expr := (
+    ret := tryEval(c);
+    if !tryCaughtError
+    then when ret is     Error do ret else seq(ret,   nullE)
+    else when ret is err:Error do          seq(nullE, toExpr(err))
+    -- shouldn't happen since tryCaughtError is only true when ret is an Error
+    else buildErrorPacket("internal error: unable to trap error"));
+setupop(trapS, trapfun);
 
 nullify(c:Code):Expr := (
     e := tryEval(c);
-    if tryEvalSuccess
+    if !tryCaughtError
     then (
 	when e
 	is Nothing do e
@@ -1476,12 +1510,7 @@ export evalraw(c:Code):Expr := (
 	  is c:augmentedAssignmentCode do augmentedAssignmentFun(c)
 	  is c:globalSymbolClosureCode do return Expr(SymbolClosure(globalFrame,c.symbol))
 	  is c:threadSymbolClosureCode do return Expr(SymbolClosure(threadFrame,c.symbol))
-	  is c:tryCode do (
-	      ret := tryEval(c.code);
-	      if tryEvalSuccess then
-	      when ret is Error do ret
-	      else if c.thenClause == NullCode then ret   else eval(c.thenClause)
-	      else if c.elseClause == NullCode then nullE else eval(c.elseClause))
+	  is c:tryCode do evalTryCode(c)
 	  is c:catchCode do (
 	       p := eval(c.code);
 	       when p is err:Error do if err.message == throwMessage then err.value else p
@@ -2072,6 +2101,7 @@ export notFun(a:Expr):Expr := if a == True then False else if a == False then Tr
 
 -- evaluate.d depends on hashtables.dd, so we use a pointer
 -- to evaluate methods in hashtables.dd before it is defined.
+applyEEpointer = applyEE;
 applyEEEpointer = applyEEE;
 
 -- Local Variables:

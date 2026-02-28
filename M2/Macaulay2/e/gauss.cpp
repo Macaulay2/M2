@@ -277,6 +277,7 @@ void GaussElimComputation::start_computation()
 const Matrix *GaussElimComputation::get_mingens() { return get_gb(); }
 const Matrix *GaussElimComputation::get_initial(int nparts)
 {
+  (void) nparts;
   MatrixConstructor mat(gens->rows(), 0);
   for (int i = 0; i < gens->n_rows(); i++)
     if (gb_list[i] != nullptr)

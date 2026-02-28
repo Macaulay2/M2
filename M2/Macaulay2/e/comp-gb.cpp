@@ -210,6 +210,7 @@ Computation /* or null */ *GBComputation::set_hilbert_function(
 // The default version returns an error saying that Hilbert functions cannot be
 // used.
 {
+  (void) h;
   ERROR("Hilbert function use is not implemented for this GB algorithm");
   return nullptr;
 }
@@ -217,6 +218,7 @@ Computation /* or null */ *GBComputation::set_hilbert_function(
 const Matrix /* or null */ *GBComputation::get_parallel_lead_terms(
     M2_arrayint w)
 {
+  (void) w;
   ERROR(
       "Cannot compute parallel lead terms for this kind of Groebner "
       "computation");

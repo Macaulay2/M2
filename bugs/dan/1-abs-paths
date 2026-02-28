@@ -1,3 +1,0 @@
-error messages in output files should not use relative paths
-there should be a way to turn that on
-runFile in html.m2 should use it
