@@ -373,16 +373,13 @@ hilbertSeries ProjectiveHilbertPolynomial := opts -> P -> (
 -- hilbertFunction
 -----------------------------------------------------------------------------
 
-protect symbol Basis
-
-hilbertFunction=method(Options => new OptionTable from {
-	Strategy => Default})
+hilbertFunction = method(Options => { Strategy => Default })
 hilbertFunction(ZZ, Ring)   :=
 hilbertFunction(ZZ, Ideal)  :=
 hilbertFunction(ZZ, Module) := opts -> (d, M) -> hilbertFunction({d}, M, opts)
 
 hilbertFunction(List, Ring)   := opts -> (L, R) -> hilbertFunction(L, module R, opts)
-hilbertFunction(List, Ideal)  := opts -> (L, I) -> hilbertFunction(L, cokernel generators I, opts)
+hilbertFunction(List, Ideal)  := opts -> (L, I) -> hilbertFunction(L, comodule I, opts)
 hilbertFunction(List, Module) := opts -> (L, M) -> (
     R := ring M;
     if not all(L, i -> instance(i, ZZ)) then error "hilbertFunction: expected degree to be an integer or list of integers";
@@ -418,4 +415,3 @@ addHook((hilbertFunction, List, Module), Strategy => Default, (opts, L, M) -> (
 hilbertFunction Ring   :=
 hilbertFunction Ideal  :=
 hilbertFunction Module := opts -> M -> d -> hilbertFunction(d, M, opts)
-
