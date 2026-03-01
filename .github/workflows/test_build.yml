@@ -213,7 +213,7 @@ jobs:
       - name: Run Tests using Autotools
         if: matrix.build-system == 'autotools' && runner.os == 'Linux' && matrix.compiler == 'default'
         run: |
-          make check -o check-in-libraries
+          make -j$(nproc 2>/dev/null || sysctl -n hw.logicalcpu) check -o check-in-libraries
           make -C Macaulay2/html-check-links check
 
       - name: Validate HTML documentation
