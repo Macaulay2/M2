@@ -126,7 +126,7 @@ generateTypicalValues = (srcdir) -> (
 
 -- if missing or not successfully generated, tvalues.m2 is regenerated directly
 if not fileExists typicalValuesSource or not match("-- DONE", get typicalValuesSource)
-then generateTypicalValues(currentFileDirectory | "../d/")
+then generateTypicalValues(topSrcdir | "Macaulay2/d/")
 
 -----------------------------------------------------------------------------
 -- numerical functions that will be wrapped
