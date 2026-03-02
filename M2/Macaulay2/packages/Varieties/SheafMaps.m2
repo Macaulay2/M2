@@ -140,6 +140,8 @@ image    SheafMap := CoherentSheaf =>      f -> sheaf(f.variety,    image f.map)
 isInjective   SheafMap := Boolean => f ->   kernel f == 0
 isSurjective  SheafMap := Boolean => f -> cokernel f == 0
 isIsomorphism SheafMap := Boolean => f -> isInjective f and isSurjective f
+-- TODO: should this also check that the degree is set correctly?
+isHomogeneous SheafMap := Boolean => f -> isHomogeneous matrix f
 
 -- TODO: is sheaf sufficient here, or should we specify source/target/degree?
 cover   SheafMap := SheafMap => f -> sheaf(f.variety, cover   matrix f)
