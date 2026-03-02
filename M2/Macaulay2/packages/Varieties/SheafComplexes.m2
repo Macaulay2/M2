@@ -138,6 +138,12 @@ sheafHom(SheafOfRings, Complex) := Complex => opts -> (R,C) -> sheafHom(complex 
 sheafDual = method()
 sheafDual Complex := Complex => C -> sheafHom(C, ring C)
 
+-- see Complexes/ChainComplexMap.m2
+extend(Complex, Complex, SheafMap) := ComplexMap =>
+    lookup(extend, Complex, Complex, Matrix)
+extend(Complex, Complex, SheafMap, Sequence) := ComplexMap =>
+    lookup(extend, Complex, Complex, Matrix, Sequence)
+
 -----------------------------------------------------------------------------
 -- RHom and Ext
 -----------------------------------------------------------------------------
