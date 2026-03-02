@@ -857,7 +857,7 @@ extend(Complex,Complex,Matrix) := ComplexMap => opts -> (D, C, f) -> extend(D, C
 -- sign convention: Using Conrad (Grothendieck Duality) sign choice for cone, pg 8 of intro. 
 -- NOTE: one could extend this to complex maps which commute, but have nonzero degree,
 --  IF this would be useful at all.
-cone ComplexMap := Complex => f -> (
+cone ComplexMap := Complex => f -> f.cache.cone ??= (
     if not isComplexMorphism f then 
         error "expected a complex morphism";
     B := source f;
