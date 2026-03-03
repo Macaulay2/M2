@@ -36,7 +36,6 @@ newPackage(
         },
     Headline => "operations over a local ring R_p",
     Keywords => {"Commutative Algebra"},
-    PackageImports => {"OldChainComplexes"},
     PackageExports => {"PruneComplex", "Saturation", "Complexes"},
     AuxiliaryFiles => true
     )

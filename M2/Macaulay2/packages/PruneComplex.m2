@@ -20,8 +20,7 @@ newPackage(
         },
     Headline => "pruning chain complexes over polynomial and local rings",
     Keywords => {"Commutative Algebra", "Homological Algebra"},
-    -- the latter is needed to get the documentation of FastNonminimal to work
-    PackageExports => {"Complexes", "OldChainComplexes"},
+    PackageExports => {"Complexes"},
     AuxiliaryFiles => true
     )
 
@@ -363,8 +362,8 @@ pruneComplex(List, ZZ) := opts -> (mComplex, nsteps) -> (
     (mComplex, pruningMorph)
     )
 -- for backwards compatibility; to be removed
-pruneComplex ChainComplex      := opts ->  C          -> pruneComplex(C, -1, opts)
-pruneComplex(ChainComplex, ZZ) := opts -> (C, nsteps) -> pruneComplex(complex C, -1, opts)
+--pruneComplex ChainComplex      := opts ->  C          -> pruneComplex(C, -1, opts)
+--pruneComplex(ChainComplex, ZZ) := opts -> (C, nsteps) -> pruneComplex(complex C, -1, opts)
 
 enginePruneComplex = method(Options => options pruneComplex) -- ++ {...}
 enginePruneComplex List      := opts ->  C          -> enginePruneComplex(C, -1, opts)

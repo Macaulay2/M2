@@ -190,7 +190,7 @@ TEST /// -- chain homotopy over local rings
 	      x*y^2+5019*x*y+3216*y^2-13233*z^2+3723*x,
 	      13424*x^2*y+936*x*y^2+10667*y*z^2+14913*x^2-8521*x*y-15541*y^2-12289*x}})
 
-  F = chainComplex { gens J, syz gens J, syz syz gens J }
+  F = complex { gens J, syz gens J, syz syz gens J }
   f0 = J_0
   s0 = map(R^1, 0, 0)
   L = for i to 3 list (
