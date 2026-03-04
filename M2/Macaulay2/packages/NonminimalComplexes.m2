@@ -18,13 +18,13 @@ newPackage(
 		   HomePage => "http://www.math.cornell.edu/~mike"} 
 		},
 	Keywords => {"Homological Algebra", "Commutative Algebra"},
-     	PackageExports => { "SVDComplexes", "OldChainComplexes" },
+     	PackageExports => { "SVDComplexes", "Complexes" },
         Headline => "non-minimal strands of a non-minimal resolution of a homogeneous module"
         )
 
 export {
     -- These functions should be moved.  Where to?
-    "constantStrand", -- documented, tests
+    "oldConstantStrand", -- documented, tests
     -- "constantStrands", -- documented, tests
     -- "getNonminimalRes",  -- internal function here...
     -- "degreeZeroMatrix", -- internal function?
@@ -136,9 +136,9 @@ removeZeroOneRows SparseMatrix := (S) -> (
 isMadeFromFastNonminimal = (C) -> C.?Resolution and C.Resolution.?RawComputation
 fastNonminimalComputation = (C) -> if C.?Resolution and C.Resolution.?RawComputation then C.Resolution.RawComputation else null
 
-constantStrand = method()
+oldConstantStrand = method()
 -- The following was removed in M2 version 1.23.  Its use is based on undocumented and now removed features from M2.
--- constantStrand(ChainComplex, Ring, ZZ) := (C, kk, deg) -> (
+-- oldConstantStrand(ChainComplex, Ring, ZZ) := (C, kk, deg) -> (
 --     -- assumption: we are resolving an ideal, or at least all gens occur in degree >= 0.
 --     comp := fastNonminimalComputation C;
 --     if comp === null then error "currently expect chain complex to have been constructed with res(...,FastNonminimal=>true)";
@@ -149,7 +149,7 @@ constantStrand = method()
 --         )
 --     )    
 
-constantStrand(ChainComplex, ZZ) := (C, deg) -> (
+oldConstantStrand(Complex, ZZ) := (C, deg) -> (
     kk := coefficientRing ring C;
     if kk === QQ then error "the base field must be a finite prime field currently";
     comp := fastNonminimalComputation C;
@@ -157,7 +157,7 @@ constantStrand(ChainComplex, ZZ) := (C, deg) -> (
     -- assumption: we are resolving an ideal, or at least all gens occur in degree >= 0.
     len := length C;
     reg := regularity C;
-    chainComplex for lev from 1 to len list (
+    complex for lev from 1 to len list (
         matrix map(kk, rawResolutionGetMutableMatrix2B(comp, raw kk, deg,lev))
         )
     )
@@ -171,14 +171,14 @@ constantStrand(ChainComplex, ZZ) := (C, deg) -> (
 --     len := length C;
 --     reg := regularity C;
 --     hashTable for deg from 0 to len+reg list (
---         D := constantStrand(C,deg);
+--         D := oldConstantStrand(C,deg);
 --         if D == 0 then continue else deg => D
 --         )
 --     )
 -- constantStrands ChainComplex := (C) -> constantStrands(C, coefficientRing ring C)
 
 getNonminimalRes = method()
-getNonminimalRes(ChainComplex, Ring) := (C, R) -> (
+getNonminimalRes(Complex, Ring) := (C, R) -> (
     -- if C was created using FastNonminimal=>true, then returns the nonminimal complex.
     -- if ring C is not QQ, this should be exactly C (with C.dd set).
     -- if ring C is QQ, then R must be either RR_53 (monoid ring C), or (ZZ/p)(monoid ring C), where p is the prime used to
@@ -190,15 +190,15 @@ getNonminimalRes(ChainComplex, Ring) := (C, R) -> (
       result#i = matrix map(R, rawResolutionGetMutableMatrixB(rawC, raw R, i+1));
       if i > 0 then result#i = map(source result#(i-1),,result#i);
       );
-    chainComplex toList result
+    complex toList result
     )
 
 "TEST"
 ///
--- TODO for constantStrand, constantStrands:
+-- TODO for oldConstantStrand, constantStrands:
 --  a. make it work for complexes constructed in different manners, not just for FastNonminimal
 --  b. allow a single multi-degree
-  -- constantStrand, constantStrands
+  -- oldConstantStrand, constantStrands
   -- these are from nonminimal free resolutions over QQ
 -*  
   restart
@@ -210,9 +210,9 @@ getNonminimalRes(ChainComplex, Ring) := (C, R) -> (
   C = res(ideal gens gb I, Strategy=>4.1)
   C = res(ideal gens gb I, Strategy=>5.1)
   betti C
-  constantStrand(C, RR_53, 4)
-  constantStrand(C, RR_53, 5)
-  constantStrand(C, RR_53, 10)
+  oldConstantStrand(C, RR_53, 4)
+  oldConstantStrand(C, RR_53, 5)
+  oldConstantStrand(C, RR_53, 10)
 
   constantStrands(C, RR_53)  
   constantStrands(C, RR_1000)  
@@ -258,14 +258,14 @@ getNonminimalRes(ChainComplex, Ring) := (C, R) -> (
 ///
 
 degreeZeroMatrix = method()
-degreeZeroMatrix(ChainComplex, ZZ, ZZ) := (C, slanteddeg, level) -> (
+degreeZeroMatrix(Complex, ZZ, ZZ) := (C, slanteddeg, level) -> (
     if ring C === QQ then error "need to provide a target coefficient ring, QQ is not allowed";
     kk := coefficientRing ring C;
     rawC := C.Resolution.RawComputation;
     matrix map(coefficientRing ring C, rawResolutionGetMatrix2(rawC, level, slanteddeg+level))
     )
 
-degreeZeroMatrix(ChainComplex, Ring, ZZ, ZZ) := (C, kk, slanteddeg, level) -> (
+degreeZeroMatrix(Complex, Ring, ZZ, ZZ) := (C, kk, slanteddeg, level) -> (
     if kk =!= QQ then degreeZeroMatrix(C,slanteddeg, level)
     else (
         rawC := C.Resolution.RawComputation;
@@ -281,7 +281,7 @@ degzero = (B) -> (
     )  
 
 minimizeBetti = method()
-minimizeBetti(ChainComplex, Ring) := (C, kk) -> (
+minimizeBetti(Complex, Ring) := (C, kk) -> (
     B := betti C;
     mB := new MutableHashTable from B;
     rk := if kk =!= RR_53 then rank else numericRank;
@@ -304,7 +304,7 @@ toBetti(ZZ, HashTable) := (deg, H) -> (
 
 -- How to handle this here??
 -- SVDBetti = method()
--- SVDBetti ChainComplex := (C) -> (
+-- SVDBetti Complex := (C) -> (
 --     if coefficientRing ring C =!= QQ then error "expected FastNonminimal resolution over QQ"; 
 --     Ls := constantStrands(C,RR_53);
 --     H := hashTable for i in keys Ls list i => SVDHomology Ls#i;
@@ -324,7 +324,7 @@ doc ///
     Text
        Some functionality here should be moved elsewhere.
    Caveat
-       This package will be removed soon, with {\tt constantStrand}
+       This package will be removed soon, with {\tt oldConstantStrand}
        functionality moved elsewhere.  The undocumented features the
        rest of the package relied on have been removed in M2 version
        1.23.
@@ -332,19 +332,19 @@ doc ///
 
 doc ///
    Key
-     constantStrand
-     (constantStrand, ChainComplex, ZZ)
+     oldConstantStrand
+     (oldConstantStrand, Complex, ZZ)
    Headline
      a constant strand of a chain complex
    Usage
-     Cd = constantStrand(C, deg)
+     Cd = oldConstantStrand(C, deg)
    Inputs
-     C:ChainComplex
+     C:Complex
        a chain complex created using (the unsupported) {\tt res(I, Strategy=>4.1)}
      deg:ZZ
        the degree of the strand of the complex
    Outputs
-     Cd:ChainComplex
+     Cd:Complex
        a chain complex over {\tt kk}, consisting of the submatrices of {\tt C} of degree {\tt deg}
    Description
     Text
@@ -357,7 +357,7 @@ doc ///
       I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
       C = res(I, Strategy=>4)
       betti C
-      CR = constantStrand(C, 5)
+      CR = oldConstantStrand(C, 5)
       CR.dd_2
    Caveat
      This function should be defined for any graded chain complex, not just ones created
@@ -878,7 +878,7 @@ restart
   Ip = ideal sub(gens I, Rp);
   elapsedTime minimalBetti Ip
   
-  D = constantStrand(C, RR_53, 7)
+  D = oldConstantStrand(C, RR_53, 7)
   SVDComplex D;
   E = target first oo
   for i from 2 to 5 list sort flatten entries compress flatten E.dd_i
@@ -1050,13 +1050,13 @@ TEST ///
 ///
    Key
      constantStrands
-     (constantStrands, ChainComplex, Ring)
+     (constantStrands, Complex, Ring)
    Headline
      all constant strands of a chain complex
    Usage
      Cs = constantStrands(C, kk)
    Inputs
-     C:ChainComplex
+     C:Complex
        A chain complex created using {\tt res(I, Strategy=>4.1)}
      kk:Ring
        if the coefficient ring of the ring of C is QQ, then this should be either:
@@ -1084,19 +1084,19 @@ TEST ///
      approximations (as doubles, and as 1000 bit floating numbers), together with its remainders under a couple of primes,
      together with information about how many multiplications were performed to obtain this number.
    SeeAlso
-     constantStrand
+     oldConstantStrand
 ///
 
 ///
    Key
      SVDBetti
-     (SVDBetti, ChainComplex)
+     (SVDBetti, Complex)
    Headline
      the Betti table computed with SVD methods
    Usage
      SVDBetti C
    Inputs
-     C:ChainComplex
+     C:Complex
        A chain complex created using {\tt res(I, Strategy=>4.1)}   
        if the coefficient ring of the ring of C is QQ, then this should be either:
        RR_{53}, RR_{1000}, ZZ/1073741891, or ZZ/1073741909.  
@@ -1133,13 +1133,13 @@ TEST ///
   C = res(ideal gens gb I,Strategy=>4.1)
   betti C
   betti'deg8 = new BettiTally from {(3,{},0) => 13, (4,{},0) => 4}
-  CR = constantStrand(C, RR_53, 8)
-  CR2 = constantStrand(C, RR_1000, 8) -- crash
+  CR = oldConstantStrand(C, RR_53, 8)
+  CR2 = oldConstantStrand(C, RR_1000, 8) -- crash
 
   kk1 = ZZ/32003
   kk2 = ZZ/1073741909
-  Cp1 = constantStrand(C, kk1, 8)
-  Cp2 = constantStrand(C, kk2, 8)
+  Cp1 = oldConstantStrand(C, kk1, 8)
+  Cp2 = oldConstantStrand(C, kk2, 8)
 
   assert(betti'deg8 == betti CR)
   assert(betti'deg8 == betti CR2)  
@@ -1162,7 +1162,7 @@ TEST ///
   I = ideal(a^3, b^3, c^3, d^3, (a+3*b+7*c-4*d)^3)
   C = res(ideal gens gb I, Strategy=>4.1)
   betti C
-  constantStrand(C, RR_53, 8)
+  oldConstantStrand(C, RR_53, 8)
 ///
 
 "TEST"
@@ -1183,7 +1183,7 @@ TEST ///
   --C = res(I1, Strategy=>5) -- refuses to try it
   C = res(ideal gens gb I, Strategy=>5.1)
   betti C
-  constantStrand(C, RR_53, 8)
+  oldConstantStrand(C, RR_53, 8)
 ///
 
 ///
