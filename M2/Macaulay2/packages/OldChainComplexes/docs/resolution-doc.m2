@@ -59,13 +59,13 @@ doc ///
       @TO "minimalBetti"@ does not work in these cases.  In the inhomogeneous case, the 
       returned free resolution is often highly non minimal. Of course, there is no notion of minimal
       resolution in this case, but one can use @TO "PruneComplex::pruneComplex"@ to clean up the
-      returned complex.
+      returned complex, however one must now use the Complexes package for that.
     Example
       R = ZZ/101[a..f]
       I = ideal"a3-ab-c2,abc-d2-1, b3-b2-b"
       C = res(I, FastNonminimal => true)
-      needsPackage "PruneComplex"
-      pruneComplex C
+      -- needsPackage "PruneComplex"
+      -- pruneComplex complex C
     Text
       If one has a specific Gröbner basis on which one wants to base the Schreyer resolution,
       use @TT "Strategy => 5"@.  This will not check that the input forms a Gröbner basis, but
