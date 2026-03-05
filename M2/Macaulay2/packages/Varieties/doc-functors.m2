@@ -1,17 +1,86 @@
 -- TODO: cohomology(...,Degree=>...)
 
+
+doc ///
+Node
+  Key
+    directImage
+  Headline
+    direct image of a coherent sheaf by a closed immersion
+  Usage
+    directImage(F, Y)
+  Inputs
+    F:{CoherentSheaf,SheafOfRings}
+    Y:Variety
+    Prune => Boolean
+      whether to @TO prune@ the output
+  Outputs
+    :CoherentSheaf
+  Description
+    Text
+      For $F$ a coherent sheaf on a scheme $X$, with $X$ a closed subscheme of $Y$
+      (writing $i\colon X \to Y$ for the inclusion),
+      return the direct image sheaf $i_*(F)$ on $Y$. This function assumes (and partly checks)
+      that $X$ and $Y$ are given as $\mathrm{Proj}(S/I)$ and $\mathrm{Proj}(S/J)$,
+      with the same polynomial ring $S$ in both cases, with the ideal $J$ contained in $I$; or likewise in the affine case.
+      This function also works for subspaces of a weighted projective space.
+    Text
+      For example, if $X$ is a closed subscheme of a projective space $Y$, the cohomology of a coherent sheaf $F$ on $X$
+      is isomorphic to the cohomology of the direct image $G = i_*(F)$ on $Y$. Nonetheless, one might sometimes
+      decide to apply a Macaulay2 command such as @TO2{(cohomology,ZZ,SumOfTwists),"HH^m(Y,G(>=0))"}@ rather than
+      @TT "HH^m(X,F(>=0))"@, because that gives
+      the cohomology as a module over a polynomial ring rather than over a quotient of a polynomial ring.
+    Example
+      S = ZZ/31991[x,y,z]; Y = Proj S;
+      R = S/(x^3+y^3+z^3); X = Proj R;
+      directImage(OO_X(1),Y)
+  SeeAlso
+    pullback
+
+Node
+  Key
+    (pullback, CoherentSheaf, Variety)
+    (pullback, SheafOfRings, Variety)
+    [(pullback, CoherentSheaf, Variety), Prune]
+    [(pullback, SheafOfRings, Variety), Prune]
+  Headline
+    pullback of a coherent sheaf by a closed immersion
+  Usage
+    pullback(F, X)
+  Inputs
+    F:{CoherentSheaf,SheafOfRings}
+    X:Variety
+    Prune => Boolean
+      whether to @TO prune@ the output
+  Outputs
+    :CoherentSheaf
+  Description
+    Text
+      For $F$ a coherent sheaf on a scheme $Y$, with $X$ a closed subscheme of $Y$
+      (writing $i\colon X \to Y$ for the inclusion),
+      return the pullback sheaf $i^*(F)$ on $X$. This function assumes (and partly checks)
+      that $X$ and $Y$ are given as $\mathrm{Proj}(S/I)$ and $\mathrm{Proj}(S/J)$,
+      with the same polynomial ring $S$ in both cases, with the ideal $J$ contained in $I$; or likewise in the affine case.
+      This function also works for subspaces of a weighted projective space.
+    Example
+      S = ZZ/31991[x,y,z];
+      R = S/(x^3+y^3+z^3);
+      X = Proj R; Y = Proj S;
+      pullback(OO_Y(1),X)
+  SeeAlso
+    directImage
+
 -----------------------------------------------------------------------------
 -- sheaf cohomology
 -----------------------------------------------------------------------------
 
-doc ///
 Node
   Key
     (cohomology, ZZ, SheafOfRings)
   Headline
     cohomology of a sheaf of rings on a projective variety
   Usage
-    HH^d(OX)
+    HH^i(OX)
   Inputs
     i:ZZ
     OX:SheafOfRings
@@ -21,9 +90,11 @@ Node
       representing a vector space over the coefficient field of $X$
   Description
     Text
-      The command computes the $i$-th cohomology group of $OX$ as a vector space over the coefficient field of $X$.
+      The command computes the $i$th cohomology group of $OX$ as a vector space over the coefficient field of $X$.
+      Here $X$ may be a projective scheme over a field, or more generally a closed subspace
+      of a weighted projective space, viewed as a stack.
     Example
-      Cubic = Proj QQ[x_0..x_2]/ideal(x_0^3+x_1^3+x_2^3)
+      Cubic = Proj ZZ/31991[x_0..x_2]/(x_0^3+x_1^3+x_2^3);
       HH^1(OO_Cubic)
   SeeAlso
     SheafOfRings
@@ -37,6 +108,7 @@ Node
   Key
     (cohomology, ZZ,                    SumOfTwists)
     (cohomology, ZZ, ProjectiveVariety, SumOfTwists)
+    [cohomology, Degree]
     TorsionFree
     GlobalSectionLimit
     SaturationMap
@@ -48,40 +120,52 @@ Node
   Inputs
     i:ZZ
     F(>=d):SumOfTwists -- see @TO2 {(symbol SPACE, CoherentSheaf, LowerBound), TT "F(>=d)"}@
+    Degree => Thing
+       for an algorithm based on local duality. Alternatively,
+       Degree => Direct uses a more direct (but often slower) algorithm. When @TT "HH^i(F(>=d))"@ is called by another function,
+       use Degree => NonPrint or Degree => DirectNonPrint to avoid printing information to the screen;
+       instead, a sequence $(b0, b1, M)$ is returned, meaning that $M$ is a graded module that maps to $H^i(X, F(*))$,
+       the map is an isomorphism in degrees at least $b0$, and it is surjective in degrees at least $b1$.
+       (These bounds need not be optimal.)
   Outputs
     :Module
       over the homogeneous coordinate ring of the variety $X$
   Description
     Text
-      Given a @syn CoherentSheaf@ @TT "F"@ on a @syn ProjectiveVariety@ $X$,
-      the notation @TT "F(>=d)"@ creates an object representing
-      the @syn SumOfTwists@ $\bigoplus_{a=d}^\infty\mathcal F(a)$.
-    Text
       This command computes a graded module $M$ over the homogeneous coordinate ring of
       the variety $X$ such that the graded component $M_a$ for $a\geq d$
-      is isomorphic to the cohomology group @TT "HH^i(F(a))"@.
+      is isomorphic to the cohomology group @TT "HH^i(F(a))"@. In all degrees,
+      there is a map $M\to H^i(X,F(*))$ of graded modules. The output includes some information about this map;
+      for example, it may report that the map is an isomorphism in all degrees.
     Text
-      To discard the part of the module $M$ of degree less than $d$,
-      truncate the module with @TO2 {"Truncations::truncate(ZZ,Module)", TT "truncate(d, M)"}@.
+      To discard the part of the output of degree less than $d$,
+      truncate it with @TO2 {"Truncations::truncate(ZZ,Module)", TT "truncate(d, M)"}@.
+      (Note that this may yield a more complicated module, for example with more generators.)
     Text
-      Use @TT "HH^i(F(>d))"@ to compute the cohomology of the twists strictly greater than $d$
-      and @TT "HH^i(F(*))"@ to try to compute the whole graded module.
-      When $i=0$, this is known as the module of twisted global sections
-      $$ \Gamma_*(\mathcal F) = \bigoplus_{a\in\mathbf Z}(X, \mathcal F(a)).$$
-      Note that this computation will fail if the module is not finitely generated.
+      If you only want the dimensions of the cohomology groups, the commands @TT "hh^i(F(*))"@
+      or @TT "hh^i(F,d,e)"@ or @TT "hh^i(F)"@ are usually faster.
     Text
-      As a first example we look at the cohomology of line bundles on the projective plane.
+      The base space of @TT "F"@ may be a closed subspace $X$ of a weighted projective space. The distinction between
+      $X$ as a stack and its associated coarse moduli space, $e\colon X \to V$, does not matter
+      for computing cohomology: we have $H^i(X,F)\cong H^i(V,e_*F)$ for every $i$. Twists
+      are interpreted by tensoring with the line bundles $O(c)$ on the stack.
+    Text
+      The base ring should be a field. Note that it is usually faster
+      to work over $\mathbb{Z}/p$ for a prime number $p \leq 32767$, say @TT "ZZ/31991"@, rather than over @TT "QQ"@.
+    Text
+      As a first example, we look at the cohomology of line bundles on the projective plane.
     Example
-      X = Proj QQ[x_0..x_2]
-      HH^0(OO_X^1(>=0))
-      HH^1(OO_X^1(>=0))
-      HH^2(OO_X^1(>=-3)) -- this should change to * once implemented
-      TruncDual = HH^2(OO_X^1(>=-4))
+      R1 = QQ[x_0..x_2];
+      X1 = Proj R1;
+      HH^0(OO_X1(>=0))
+      HH^1(OO_X1(>=0))
+      HH^2(OO_X1(>=-3)) -- this should change to * once implemented
+      TruncDual = HH^2(OO_X1(>=-4))
       hilbertFunction(-4, TruncDual)
       hilbertFunction(-3, TruncDual)
     Text
-      As a second example we compute the $H^1$ cohomology module $T$ of
-      the Horrocks-Mumford bundle on the projective fourspace, which is
+      As a second example, we compute the $H^1$ cohomology module $T$ of
+      the Horrocks-Mumford bundle on projective 4-space, which is
       an artinian module with Hilbert function (5,10,10,2):
     Example
       R = QQ[x_0..x_4];
@@ -95,15 +179,16 @@ Node
       betti (C=res coker M)
       N = transpose submatrix(C.dd_3,{10..28},{2..36});
       betti (D=res coker N)
-      Pfour = Proj(R)
+      Pfour = Proj(R);
       HorrocksMumford = sheaf(coker D.dd_3);
       T = HH^1(HorrocksMumford(>=-1))
       apply(-1..2, i-> hilbertFunction(i,T))
   Caveat
     The computation of @TT "HH^0(F(*))"@ will fail if the module is not finitely generated.
-    Also the version @TT "HH^i(F(*))"@ for $i>0$ is not yet implemented.
+    Also, the version @TT "HH^i(F(*))"@ for $i>0$ is not yet implemented.
   SeeAlso
     HH
+    (hh, ZZ, SumOfTwists)
     (cohomology, ZZ, CoherentSheaf)
     (cohomology, ZZ, Module)
     (prune, CoherentSheaf)
@@ -137,16 +222,23 @@ Node
     Text
       The command computes the $i$-th cohomology group of @TT "F"@
       as a vector space over the coefficient field of @TT "X"@.
-      For $i>0$ this is currently done via local duality. More precisely, the code takes advantage of
+      This is done via local duality. More precisely, the code takes advantage of
       the isomorphism
-      $$H^i (X, \mathcal{F}) = ( H_{\mathfrak{m}}^i ( M) )_0,$$
-      where the notation $(-)_0$ denotes the degree $0$ part of a module, and $M$ is any module representing $\mathcal F$.
-      Combining this with the local duality isomorphism for the graded polynomial ring $S$ yields
+      $$H^i (X, \mathcal{F}) \cong ( H_{\mathfrak{m}}^i ( M) )_0$$
+      for $i>0$,
+      where the notation $(-)_0$ denotes the degree $0$ part of a module, and $M$ is any graded module representing $\mathcal F$.
+      Combining this with the local duality isomorphism for the graded polynomial ring $S$ yields that
       $$H_{\mathfrak{m}}^i (M) \cong \operatorname{Ext}^{d-i}_S (M, S(-n-1)),$$
       where we are viewing $X$ as being embedded into $\mathbb{P}^n$ via some affine morphism.
-      For $i=0$, things are not as simple since there is not a direct isomorphism between the global
-      sections of a sheaf and the degree 0 part of the $0$th local cohomology. Thus it is instead computed
-      as a limit of @TO2 {(Hom, Module, Module), "Hom"}@s.
+      For $i=0$, the relation of sheaf cohomology to local cohomology is similar but a bit more complicated.
+    Text
+      The base space of @TT "F"@ may be a closed subspace $X$ of a weighted projective space. The distinction between
+      $X$ as a stack and its associated coarse moduli space, $e\colon X \to W$, does not matter
+      for computing cohomology: we have $H^i(X,F)\cong H^i(W,e_*F)$ for every $i$. Twists such as @TT "F(c)"@
+      are interpreted by tensoring with the line bundles $O(c)$ on the stack.
+    Text
+      The base ring should be a field. Note that it is usually faster
+      to work over $\mathbb{Z}/p$ for a prime number $p \leq 32767$, say @TT "ZZ/31991"@, rather than over @TT "QQ"@.
     Text
       See @TO "BGG::cohomologyTable"@ and @TO "TateOnProducts::cohomologyHashTable"@ for
       alternative sheaf cohomology algorithms via the Bernstein-Gelfand-Gelfand correspondence.
@@ -167,13 +259,14 @@ Node
       so the Picard group of @TT "V"@ has rank 1 (generated by the hyperplane section)
       and the moduli space of @TT "V"@ (which is unobstructed) has dimension 101:
     Example
-      Quintic = Proj QQ[x_0..x_4]/ideal(x_0^5+x_1^5+x_2^5+x_3^5+x_4^5-101*x_0*x_1*x_2*x_3*x_4)
+      R1 = QQ[x_0..x_4];
+      Quintic = Proj R1/(x_0^5+x_1^5+x_2^5+x_3^5+x_4^5-101*x_0*x_1*x_2*x_3*x_4);
       singularLocus Quintic
       omegaQuintic = cotangentSheaf Quintic;
       h11 = rank HH^1(omegaQuintic)
       h12 = rank HH^2(omegaQuintic)
     Text
-      By Hodge duality this is $h^{2,1}$.  Directly $h^{2,1}$ could be computed as:
+      By Hodge duality this is $h^{2,1}$.  Directly, $h^{2,1}$ could be computed as:
     Example
       h21 = rank HH^1(cotangentSheaf(2, Quintic))
     Text
@@ -183,23 +276,23 @@ Node
       hh^(2,1)(Quintic)
       hh^(1,1)(Quintic)
     Text
-      Using the Hodge number we compute the topological Euler characteristic of @TT "V"@:
+      Using the Hodge numbers, or directly, we compute the topological Euler characteristic of @TT "V"@:
     Example
       euler Quintic
     Text
       When $\lambda$ is a 5th root of unity the quintic @TT "V"@ is singular.
       It has 125 ordinary double points (nodes), namely the orbit of the point
-      $(1:\lambda:\lambda:\lambda:\lambda)$ under a natural action of $\ZZ/5^3$.
+      $(1:\lambda:\lambda:\lambda:\lambda)$ under a natural action of $(\ZZ/5)^3$.
       Then @TT "V"@ has a projective small resolution $W$ which is a Calabi-Yau threefold
-      (since the action of $\ZZ/5^3$ is transitive on the sets of nodes of @TT "V"@,
+      (since the action of $(\ZZ/5)^3$ is transitive on the set of nodes of @TT "V"@,
       or for instance, just by blowing up one of the $(1,5)$ polarized abelian surfaces
       @TT "V"@ contains). Perhaps the most interesting such 3-fold is the one
       for the value $\lambda=1$, which is defined over $\QQ$ and is modular
       (see Schoen's work). To compute the Hodge numbers of the small resolution
-      $W$ of @TT "V"@ we proceed as follows:
+      $W$ of @TT "V"@, we proceed as follows:
     Example
-      SchoensQuintic = Proj QQ[x_0..x_4]/ideal(x_0^5+x_1^5+x_2^5+x_3^5+x_4^5-5*x_0*x_1*x_2*x_3*x_4)
-      Z = singularLocus SchoensQuintic
+      SchoensQuintic = Proj QQ[x_0..x_4]/(x_0^5+x_1^5+x_2^5+x_3^5+x_4^5-5*x_0*x_1*x_2*x_3*x_4);
+      Z = singularLocus SchoensQuintic;
       degree Z
       II'Z = sheaf module ideal Z
     Text
@@ -212,17 +305,19 @@ Node
       The number $h^{2,1}(W)$ (the dimension of the moduli space of $W$) can be computed (Clemens-Griffiths, Werner)
       as $\dim H^0({\mathbf I}_Z(5))/\mathrm{JacobianIdeal}(V)_5$.
     Example
-      quinticsJac = numgens source basis(5, ideal Z)
+      quinticsJac = hilbertFunction(5, module ideal Z)
       h21 = rank HH^0(II'Z(5)) - quinticsJac
     Text
-      In other words W is rigid. It has the following topological Euler characteristic.
+      In other words, W is rigid. It has the following topological Euler characteristic.
     Example
       chiW = euler Quintic + 2 * degree Z
   SeeAlso
     "coherent sheaves"
     (cohomology, ZZ, SumOfTwists)
     (cohomology, ZZ, Module)
-    hh
+    (hh, ZZ, CoherentSheaf)
+    (hh, ZZ, CoherentSheaf, ZZ, ZZ)
+    (hh, ZZ, SumOfTwists)
     CoherentSheaf
 
 Node
@@ -233,6 +328,152 @@ Node
 -----------------------------------------------------------------------------
 -- hh
 -----------------------------------------------------------------------------
+
+Node
+  Key
+   (hh, ZZ, CoherentSheaf)
+  Headline
+    dimension of the cohomology of a coherent sheaf on a projective variety
+  Usage
+    hh^i(F)
+  Inputs
+    i:ZZ
+    F:CoherentSheaf
+      on a ProjectiveVariety @TT "X"@
+  Outputs
+    :ZZ
+      dimension of the $i$-th cohomology group of @TT "F"@ as a vector space
+      over the coefficient field of @TT "X"@
+  Description
+    Text
+      The command computes the dimension of the $i$-th cohomology group of @TT "F"@
+      as a vector space over the coefficient field of @TT "X"@.
+      If you want to compute cohomology with many twists, the functions @TO2{(hh,ZZ,CoherentSheaf,ZZ,ZZ),"hh^i(F,b1,b2)"}@
+      or @TO2{(hh,ZZ,SumOfTwists),"hh^i(F(*))"}@ should be more convenient than running this program repeatedly.
+    Text
+      The base space of @TT "F"@ may be a closed subspace $X$ of a weighted projective space. The distinction between
+      $X$ as a stack and its associated coarse moduli space, $e\colon X \to W$, does not matter
+      for computing cohomology: we have $H^i(X,F)\cong H^i(W,e_*F)$ for every $i$. Twists such as @TT "F(c)"@
+      are interpreted by tensoring with the line bundles $O(c)$ on the stack.
+    Text
+      The base ring should be a field. Note that it is usually faster
+      to work over $\mathbb{Z}/p$ for a prime number $p \leq 32767$, say @TT "ZZ/31991"@, rather than over @TT "QQ"@.
+    Text
+      See @TO "BGG::cohomologyTable"@ and @TO "TateOnProducts::cohomologyHashTable"@ for
+      alternative sheaf cohomology algorithms via the Bernstein-Gelfand-Gelfand correspondence.
+    Text
+      The function also gives a correct answer for a coherent sheaf F on an @TO "AffineVariety"@. Note that
+      hh^0(F) is often infinity in that case, although not always.
+    Text
+      For example, we compute the Hodge number $h^{1,1}$ of the Fermat K3 surface:
+    Example
+      X = Proj ZZ/31991[x_0..x_3]/(x_0^4+x_1^4+x_2^4+x_3^4);
+      assert isSmooth X
+      hh^1(cotangentSheaf X)
+  SeeAlso
+    (hh, ZZ, CoherentSheaf, ZZ, ZZ)
+    (hh, ZZ, SumOfTwists)
+    (cotangentSheaf, ProjectiveVariety)
+    (cohomology, ZZ, SumOfTwists)
+    (euler, CoherentSheaf)
+
+Node
+  Key
+   (hh, ZZ, CoherentSheaf, ZZ, ZZ)
+  Headline
+    dimension of the cohomology of a coherent sheaf on a projective variety with a range of twists
+  Usage
+    hh^i(F,b,c)
+  Inputs
+    i:ZZ
+    F:CoherentSheaf
+      on a ProjectiveVariety $X$
+    b:ZZ
+    c:ZZ
+  Outputs
+    :RingElement
+      the Laurent polynomial $\sum_{j=b}^c h^i(X,F(j))T^j$, giving the dimensions of the $i$-th cohomology groups
+      of @TT "F(j)"@ for $j$ from $b$ to $c$, as vector spaces
+      over the coefficient field of $X$
+  Description
+    Text
+      The command computes the dimension of the $i$-th cohomology group of the twist $F(j)=F\otimes O_X(j)$
+      for each $j$ from $b$ to $c$,
+      as a vector space over the coefficient field of $X$.
+      In some cases, you may prefer the function @TO2{(hh,ZZ,SumOfTwists),"hh^i(F(*))"}@,
+      which computes the cohomology with all twists at once.
+    Text
+      The base space of @TT "F"@ may be a closed subspace $X$ of a weighted projective space. The distinction between
+      $X$ as a stack and its associated coarse moduli space, $e\colon X \to W$, does not matter
+      for computing cohomology: we have $H^i(X,F)\cong H^i(W,e_*F)$ for every $i$. Twists such as @TT "F(c)"@
+      are interpreted by tensoring with the line bundles $O(c)$ on the stack.
+    Text
+      The base ring should be a field. Note that it is usually faster
+      to work over $\mathbb{Z}/p$ for a prime number $p \leq 32767$, say @TT "ZZ/31991"@, rather than over @TT "QQ"@.
+    Text
+      See @TO "BGG::cohomologyTable"@ and @TO "TateOnProducts::cohomologyHashTable"@ for
+      alternative sheaf cohomology algorithms via the Bernstein-Gelfand-Gelfand correspondence.
+    Text
+      For example, we compute $H^0$ of some line bundles on projective 3-space:
+    Example
+      X = Proj ZZ/2[x_0..x_3]
+      hh^0(OO_X^1,-5,5)
+  SeeAlso
+    (hh, ZZ, SumOfTwists)
+    (cohomology, ZZ, SumOfTwists)
+    (euler, CoherentSheaf)
+
+Node
+  Key
+   (hh, ZZ, SumOfTwists)
+  Headline
+    dimension of the cohomology of a coherent sheaf on a projective variety with all twists
+  Usage
+    hh^i(F(*))
+  Inputs
+    i:ZZ
+    F(*):SumOfTwists
+  Outputs
+    :Sequence
+      The output describes the formal series $\sum_{j\in\mathbb{Z}} h^i(X,F(j))T^j$ by a sequence consisting of
+      some text explanation, and also:
+      the infimum of the weights j such that $H^i(X,F(j))$ is not zero (possibly $-\infty$ or,
+      if the cohomology is zero in all weights, $\infty$) as entry 1, the supremum of such weights (entry 3)
+      a rational function in $T$ (entry 5), and a rational function in $U = T^{-1}$ (entry 7),
+      such that the sum of the latter two functions
+      as Laurent series is $\sum_{j\in\mathbb{Z}} h^i(X, F(j)) T^j$. (The two functions do not overlap,
+      as formal series in T.)
+  Description
+    Text
+      The command computes the dimension of the $i$th cohomology group of the twist $F(j)=F\otimes O_X(j)$
+      for every integer $j$,
+      as a vector space over the coefficient field of @TT "X"@. The algorithm is based on local duality.
+      In some cases, you may prefer the function @TO2{(hh,ZZ,CoherentSheaf,ZZ,ZZ),"hh^i(F,b,c)"}@,
+      which computes the cohomology with all twists from $b$ to $c$.
+    Text
+      The base space of @TT "F"@ may be a closed subspace $X$ of a weighted projective space. The distinction between
+      $X$ as a stack and its associated coarse moduli space, $e\colon X \to W$, does not matter
+      for computing cohomology: we have $H^i(X,F)\cong H^i(W,e_*F)$ for every $i$. Twists such as @TT "F(c)"@
+      are interpreted by tensoring with the line bundles $O(c)$ on the stack.
+    Text
+      The base ring should be a field. Note that it is usually faster
+      to work over $\mathbb{Z}/p$ for a prime number $p \leq 32767$, say @TT "ZZ/31991"@, rather than over @TT "QQ"@.
+    Text
+      See @TO "BGG::cohomologyTable"@ and @TO "TateOnProducts::cohomologyHashTable"@ for
+      alternative sheaf cohomology algorithms via the Bernstein-Gelfand-Gelfand correspondence.
+      Also, Euler characteristics are faster to compute, for example by the function
+      @TO2{(euler,CoherentSheaf,ZZ,ZZ),"euler(F,b,c)"}@.
+    Text
+      For example, we compute $h^0$ of all line bundles on the projective plane:
+    Example
+      X = Proj ZZ/2[x_0..x_2];
+      S = OO_X^1
+      hh^0(S(*))
+  SeeAlso
+    (hh, ZZ, CoherentSheaf)
+    (hh, ZZ, CoherentSheaf, ZZ, ZZ)
+    (cohomology, ZZ, SumOfTwists)
+    (euler, CoherentSheaf)
 
 Node
   Key
@@ -248,16 +489,19 @@ Node
     X:ProjectiveVariety
   Outputs
     :ZZ
-      the $(p,q)$-Hodge numbers of $X$
+      the $(p,q)$-Hodge number of $X$
   Description
     Text
-      The command computes the Hodge numbers
+      This function computes the Hodge number
       $$ h^{p,q}(X) = \dim H^q(\Omega_X^p) $$
-      of the smooth projective variety $X$, calculated as @TT "HH^q(cotangentSheaf(p, X))"@.
+      of a smooth projective variety $X$. For $X$ singular, the function gives
+      @TO2{(hh,ZZ,CoherentSheaf),"hh^q(reflexiveDifferentials(p, X))"}@.
     Text
-      As an example we compute the Hodge diamond of a smooth K3 surface (Fermat quartic in projective threespace):
+      This function also works for $X$ a closed substack of a weighted projective space.
+    Text
+      As an example, we compute the Hodge diamond of a smooth K3 surface (the Fermat quartic):
     Example
-      X = Proj QQ[x_0..x_3]/ideal(x_0^4+x_1^4+x_2^4+x_3^4)
+      X = Proj QQ[x_0..x_3]/(x_0^4+x_1^4+x_2^4+x_3^4);
       assert isSmooth X
       matrix table(toList(0..2), toList(0..2), (p,q) -> hh^(p,q)(X))
       euler X
@@ -269,7 +513,6 @@ Node
 -----------------------------------------------------------------------------
 -- Hom
 -----------------------------------------------------------------------------
-
 
 --TODO: add the fact that we can access the actual morphism of sheaves corresponding
 --to a global section?
@@ -291,10 +534,8 @@ Node
       representing a vector space over the coefficient field of $X$
   Description
     Text
-      If @TT "F"@ or @TT "G"@ is a @syn SheafOfRings@, it is regarded as a sheaf of modules in the evident way.
-    Text
       Both @TT "F"@ and @TT "G"@ must be coherent sheaves on the same projective variety or scheme $X$.
-    Text
+      If @TT "F"@ or @TT "G"@ is a @syn SheafOfRings@, it is regarded simply as a coherent sheaf.
       The result is the sheaf associated to the graded module @TT "Hom(module F, module G)"@.
     Example
       R = QQ[a..d];
@@ -331,17 +572,17 @@ Node
     G:{CoherentSheaf,SheafOfRings}
   Outputs
     :CoherentSheaf
-      corresponding to homomorphisms from $M \to N$, where $F = \tilde M$ and $G = \tilde N$
   Description
     Text
-      If @TT "F"@ or @TT "G"@ is a @syn SheafOfRings@, it is regarded as a sheaf of modules in the evident way.
+      Here @TT "F"@ and @TT "G"@ must be coherent sheaves on the same projective variety or scheme $X$.
+      (To arrange this, the command @TO "directImage"@ may be useful.)
+      If @TT "F"@ or @TT "G"@ is a @syn SheafOfRings@, it is regarded simply as a coherent sheaf.
     Text
-      Both @TT "F"@ and @TT "G"@ must be coherent sheaves on the same projective variety or scheme $X$.
-    Text
-      The result is the sheaf associated to the graded module @TT "Hom(module F, module G)"@.
+      The result is the sheaf of $O_X$-linear maps from @TT "F"@ to @TT "G"@.
+      Equivalently, this is the sheaf associated to the graded module @TT "Hom(module F, module G)"@.
     Example
-      S = QQ[x,y]
-      X = Proj S
+      S = QQ[x,y];
+      X = Proj S;
       sheafHom(OO_X^1(2), OO_X^1(11))
       Hom(S^{2}, S^{11})
   SourceCode
@@ -381,26 +622,41 @@ Node
     i:ZZ
     F:{CoherentSheaf,SheafOfRings}
     G(>=d):SumOfTwists -- see @TO2 {(symbol SPACE, CoherentSheaf, LowerBound), TT "G(>=d)"}@
+    -- MinimalGenerators => Thing -- THIS SHOULD be included, logically.
+      When @TT "Ext^i(F, G(>=d))"@ is called by another function,
+      use MinimalGenerators => NonPrint, to avoid printing information to the screen;
+      instead, a sequence $(b, c, M)$ will be returned, meaning that $M$ is a graded module that maps to $\mathrm{Ext}^i(X, F(*))$,
+      the map is an isomorphism in degrees at least $b$, and it is surjective in degrees at least $c$.
+      (These bounds need not be optimal.)
   Outputs
     :Module
-      $\bigoplus_{j \geq d} \mathrm{Ext}_X^i(F, G(j))$
   Description
     Text
       If @TT "F"@ or @TT "G"@ is a @syn SheafOfRings@, it is regarded as a sheaf of modules in the evident way.
     Text
-      Both @TT "F"@ and @TT "G"@ must be coherent sheaves on the same projective variety or scheme $X$.
+      Here @TT "F"@ and @TT "G"@ must be coherent sheaves on the same projective variety or scheme $X$.
+      $X$ may also be a closed subspace of a weighted projective space, viewed as a stack. When $X=\mathrm{Proj}(R)$,
+      the output is a graded $R$-module $M$ with a map $M\to\mathrm{Ext}_X^i(F,G(*))$ that is an isomorphism
+      in degrees at least $d$. The output may also give stronger information about this map.
     Text
-      As an example, we consider the rational quartic curve in $\mathbf P^3$.
+      To discard the part of the module $M$ of degree less than $d$,
+      truncate the module with @TO2 {"Truncations::truncate(ZZ,Module)", TT "truncate(d, M)"}@.
+      (Note that this may yield a more complicated module, for example with more generators.)
+    Text
+      The base ring should be a field. It is usually faster
+      to work over $\mathbb{Z}/p$ for a prime number $p \leq 32767$, say @TT "ZZ/31991"@, rather than over @TT "QQ"@.
+    Text
+      As an example, we consider the smooth rational quartic curve in $\mathbf P^3$.
     Example
-      S = QQ[a..d]
+      S = ZZ/31991[a..d];
       I = monomialCurveIdeal(S, {1,3,4})
-      R = S/I
-      X = Proj R
+      R = S/I;
+      X = Proj R;
       IX = sheaf (module I ** R)
-      Ext^1(IX, OO_X(>=-3))
-      Ext^0(IX, OO_X(>=-10))
+      hilbertSeries(Ext^1(IX, OO_X(>=-3)),Order=>10)
+      hilbertSeries(Ext^0(IX, OO_X(>=-10)),Order=>10)
     Text
-      The algorithm used may be found in:
+      The algorithm builds on that of:
     Code
       UL { LI { "Smith, G., ", EM "Computing global extension modules", ", J. Symbolic Comp (2000) 29, 729-746." } }
     Text
@@ -411,7 +667,7 @@ Node
     Hom
     HH
     sheafExt
---    yonedaSheafExtension
+    yonedaSheafExtension
 
 Node
   Key
@@ -432,47 +688,49 @@ Node
       the global Ext module $\mathrm{Ext}^i_X(\mathcal F, \mathcal G)$
   Description
     Text
-      The global Ext module $\operatorname{Ext}^i_X (\mathcal F, \mathcal G)$ is a vector space, defined
-      as the $i$th right derived functor of the global Hom functor $\operatorname{Hom}_X (\mathcal{F}, -)$. The
+      The global Ext module $\mathrm{Ext}^i_X (\mathcal F, \mathcal G)$ is a vector space, defined
+      as the $i$th right derived functor of the global Hom functor $\mathrm{Hom}_X (\mathcal{F}, -)$. The
       elements of the $i$th global Ext functor represent extensions of the sheaf $\mathcal{F}$ by $\mathcal{G}$; that
       is, exact sequences of sheaves of the form
       $$0 \to \mathcal{G} \to \mathcal{C}_i \to \mathcal{C}_{i-1} \to \cdots \to \mathcal{C}_1 \to \mathcal{F} \to 0.$$
       These representatives can be accessed using the --put in yonedaSheafExt command
+      Finally, another description is in terms of the derived category of $O_X$-modules:
+      $$\mathrm{Ext}^i_X(\mathcal F,\mathcal G)\cong\mathrm{Hom}_{D(X)}(\mathcal F,\mathcal G[i]).$$
     Text
-      Of course, in Macaulay2 these vector spaces are not computed using injective resolutions of sheaves.
-      Instead, a result of Greg Smith is used that shows that if $\mathca{F}$ and $\mathcal{G}$ are sheaves
-      represented by modules $M$ and $N$, respectively, then there exists an integer $d$ (depending on $M$, $N$, and $i$)
-      such that
-      $$\operatorname{Ext}^i_X (\mathcal F, \mathcal G) = \operatorname{Ext}^i_S (M_{\geq d} , N)_0,$$
-      where in the above $S$ is some polynomial ring over a field, $M_{\geq d}$ denotes truncation,
-      and $(-)_0$ denotes the degree $0$ part of a graded module. Moreover, the modules $M$ and $N$ are being
-      viewed as modules over the polynomial ring $S$ via restriction of scalars along the canonical
-      surjection $S \to R$, where $X = \operatorname{Proj} (R)$. 
-    Text
-      If @TT "F"@ or @TT "G"@ is a @syn SheafOfRings@, it is regarded as a sheaf of modules in the evident way.
+      The algorithm in Macaulay2 views $\mathrm{Ext}^i_X(\mathcal F,\mathcal G)$ as cohomology,
+      $H^i(X,\mathrm{RHom}(\mathcal F,\mathcal G))$. For $X$ a closed subspace of a projective space
+      (or weighted projective stack) $P=\mathrm{Proj }S$,
+      computing cohomology can be done on $P$. Finally, we use that
+      for a bounded complex $D$ of coherent sheaves on $P$, $H^i(P,D)$ is isomorphic to the degree-zero
+      part of the graded module $\mathrm{Ext}^i_S(I,D)$,
+      for a suitable truncation $I\subset S$ of the polynomial ring $S$.
     Text
       Both @TT "F"@ and @TT "S"@ must be coherent sheaves on the same projective variety or scheme $X$.
+      If @TT "F"@ or @TT "G"@ is a @syn SheafOfRings@, it is regarded as a sheaf of modules in the evident way.
+    Text
+      The base ring should be a field. Note that it is usually faster
+      to work over $\mathbb{Z}/p$ for a prime number $p \leq 32767$, say @TT "ZZ/31991"@, rather than over @TT "QQ"@.
     Text
       As an example, we compute $\mathrm{Hom}_X(\mathcal I_X,\mathcalO_X)$ and $\mathrm{Ext}^1_X(\mathcal I_X,\mathcal O_X)$,
-      for the rational quartic curve in $\PP^3$.
+      for the smooth rational quartic curve in $\PP^3$.
     Example
-      S = QQ[a..d];
+      S = ZZ/101[a..d];
       I = monomialCurveIdeal(S,{1,3,4})
-      R = S/I
-      X = Proj R
+      R = S/I;
+      X = Proj R;
       IX = sheaf (module I ** R)
       Hom(IX, OO_X)
       Ext^1(IX, OO_X)
     Text
-      The $\mathrm{Ext}^1$ being zero says that the point corresponding to $I$
-      on the Hilbert scheme is smooth (unobstructed), and vector space dimension
+      The vanishing of $\mathrm{Ext}^1$ says that the point corresponding to $I$
+      on the Hilbert scheme is smooth (unobstructed), and the vector space dimension
       of $\mathrm{Hom}$ tells us that the dimension of the component at the point $I$ is 16.
     Text
-      The algorithm used may be found in:
+      The algorithm builds on that of:
     Code
       UL { LI { "Smith, G., ", EM "Computing global extension modules", ", J. Symbolic Comp (2000) 29, 729-746." } }
     Text
-      If the module $\bigoplus_{a\geq 0} \mathrm{Ext}^i(M, N(a))$ is desired, see @TO (Ext,ZZ,CoherentSheaf,SumOfTwists)@.
+      To compute the module $\bigoplus_{a\geq 0} \mathrm{Ext}^i(M, N(a))$, see @TO (Ext,ZZ,CoherentSheaf,SumOfTwists)@.
   SeeAlso
     resolution
     Tor
@@ -496,39 +754,39 @@ Node
       the induced map on global Ext $\mathrm{Ext}^i_X(\mathcal{F} , g)$, where $g$ is some morphism of sheaves
   Description
     Text
-      As explained in @TO (Ext, ZZ, CoherentSheaf, CoherentSheaf)@, the global Ext module $\operatorname{Ext}^i_X (\mathcal F, \mathcal G)$ is a
-      vector space, defined as the $i$th right derived functor of the global Hom functor $\operatorname{Hom}_X (\mathcal{F}, -)$.
+      As explained in @TO (Ext, ZZ, CoherentSheaf, CoherentSheaf)@, the global Ext module $\mathrm{Ext}^i_X (\mathcal F, \mathcal G)$ is a
+      vector space, defined as the $i$th right derived functor of the global Hom functor $\mathrm{Hom}_X (\mathcal{F}, -)$.
       In particular, this implies that for any morphism of sheaves $g : \mathcal{G} \to \mathcal{G}'$ there is an induced map
-      $$\operatorname{Ext}^i_X (\mathcal F , g) : \operatorname{Ext}^i_X (\mathcal F , \mathcal G) \to \operatorname{Ext}^i_X (\mathcal F , \mathcal{G}').$$
+      $$\mathrm{Ext}^i_X (\mathcal F , g) : \mathrm{Ext}^i_X (\mathcal F , \mathcal G) \to \mathrm{Ext}^i_X (\mathcal F , \mathcal{G}').$$
     Text
       In Macaulay2, these vector spaces are not computed using injective resolutions of sheaves.
-      Instead, a result of Greg Smith is used that shows that if $\mathca{F}$ and $\mathcal{G}$ are sheaves
+      Instead, a result of Greg Smith is used that shows that if $\mathcal{F}$ and $\mathcal{G}$ are sheaves
       represented by modules $M$ and $N$, respectively, then there exists an integer $d$ (depending on $M$, $N$, and $i$)
       such that
-      $$\operatorname{Ext}^i_X (\mathcal F, \mathcal G) = \operatorname{Ext}^i_S (M_{\geq d} , N)_0,$$
+      $$\mathrm{Ext}^i_X (\mathcal F, \mathcal G) = \mathrm{Ext}^i_S (M_{\geq d} , N)_0,$$
       where in the above $S$ is some polynomial ring over a field, $M_{\geq d}$ denotes truncation,
       and $(-)_0$ denotes the degree $0$ part of a graded module. Moreover, the modules $M$ and $N$ are being
       viewed as modules over the polynomial ring $S$ via restriction of scalars along the canonical
-      surjection $S \to R$, where $X = \operatorname{Proj} (R)$. In particular, if $\mathcal{G}'$ is represented by some module $N'$,
+      surjection $S \to R$, where $X = \mathrm{Proj} (R)$. In particular, if $\mathcal{G}'$ is represented by some module $N'$,
       then after taking $d$ to be the maximum of the integers required to satisfy the assumptions of G. Smith's
       result, the induced map on global Ext may be computed as
-      $$\operatorname{Ext}^i_X (\mathcal F , g) = \operatorname{Ext}_S^i (M_{\geq d} , \widehat{g} )_0,$$
-      where $\widetilde{g}$ is some map of modules whose associated sheaf is equal to $g$. 
+      $$\mathrm{Ext}^i_X (\mathcal F , g) = \mathrm{Ext}_S^i (M_{\geq d} , \widehat{g} )_0,$$
+      where $\widetilde{g}$ is some map of modules whose associated sheaf is equal to $g$.
     Text
-      If @TT "F"@ or @TT "G"@ is a @syn SheafOfRings@, it is regarded as a free $\mathcal{O}_X$-module of rank $1$.
-      In particular, if $\mathcal{F} = \mathcal{O}_X$ then the map being computed is just the induced map
+      If @TT "F"@ or @TT "G"@ is a @syn SheafOfRings@, it is viewed simply as a coherent sheaf.
+      In particular, if $\mathcal{F} = \mathcal{O}_X$, then the map being computed is just the induced map
       on cohomology
       $$H^i (g) : H^i (\mathcal{G}) \to H^i (\mathcal{G}').$$
     Text
       Both @TT "F"@ and @TT "G"@ must be coherent sheaves on the same projective variety or scheme $X$.
     Text
       As an example, we compute $\mathrm{Hom}_X(\mathcal I_X,\mathcal O_X)$ and $\mathrm{Ext}^1_X(\mathcal I_X,\mathcal O_X)$,
-      for the rational quartic curve in $\PP^3$.
+      for the smooth rational quartic curve in $\PP^3$.
     Example
       S = QQ[a..d]; --KELLER: need to add examples here
       I = monomialCurveIdeal(S,{1,3,4})
-      R = S/I
-      X = Proj R
+      R = S/I;
+      X = Proj R;
       IX = sheaf (module I ** R)
       Hom(IX, OO_X)
       Ext^1(IX, OO_X)
@@ -582,13 +840,13 @@ Node
       the n-th sheaf extension of @TT "F"@ and @TT "G"@
   Description
     Text
-      If @TT "F"@ or @TT "G"@ is a @syn SheafOfRings@, it is regarded as a sheaf of modules in the evident way.
-    Text
-      Both @TT "F"@ and @TT "S"@ must be coherent sheaves on the same projective variety or scheme $X$.
+      Here @TT "F"@ and @TT "G"@ must be coherent sheaves on the same projective variety or scheme $X$.
+      (To arrange this, the command @TO "directImage"@ may be useful.)
+      If @TT "F"@ or @TT "G"@ is a @syn SheafOfRings@, it is regarded simply as a coherent sheaf.
     Text
       The result is the sheaf associated to the graded module @TT "Ext^n(module F, module G)"@.
     Example
-      X = Proj QQ[x,y]
+      X = Proj QQ[x,y];
       sheafExt^1(OO_X^1(2), OO_X^1(-11))
   SeeAlso
     sheafHom
@@ -617,7 +875,7 @@ Node
     Text
       The determinant of a vector bundle is defined to be the top exterior power of that bundle. More precisely,
       if $\mathcal E$ has rank $n$, then
-      $$\operatorname{det} (\mathcal E) := \bigwedge^n \mathcal{E}.$$
+      $$\mathrm{det} (\mathcal E) := \bigwedge^n \mathcal{E}.$$
     Text
       Both @TT "F"@ and @TT "G"@ must be coherent sheaves on the same projective variety or scheme $X$.
     Text

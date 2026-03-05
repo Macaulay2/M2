@@ -172,10 +172,10 @@ Node
       a non-negative integer
   Outputs
     :SheafMap
-      the sheaf map f raised to the power n
+      the sheaf map @TT "f"@ raised to the power @TT "n"@
   Description
     Text
-      This will create a sheaf map g which is the square of f.
+      This function returns a sheaf map which is the $n$-th power of @TT "f"@.
     Example
       R = QQ[x,y,z]
       X = variety R
