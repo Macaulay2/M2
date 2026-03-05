@@ -11,25 +11,25 @@
 ---------------------------------------------------------------------------
 newPackage(
     "Varieties",
-    Date     => "March 14 2025",
-    Version  => "0.4",
+    Date     => "04 March 2025",
+    Version  => "0.5",
     Keywords => { "Algebraic Geometry", "Homological Algebra" },
     Headline => "routines for working with affine and projective varieties and coherent sheaves on them",
     Authors  => {
 	{   Name => "Devlin Mallory",
 	    Email => "malloryd@math.utah.edu",
-	    HomePage => "https://www.math.utah.edu/~malloryd/" },
+	    HomePage => "https://devlin-mallory.github.io/" },
 	{   Name => "Ritvik Ramkumar",
-	    Email => "ritvikr@cornell.edu",
+	    Email => "rramkuma@nd.edu",
 	    HomePage => "https://sites.google.com/view/ritvikramkumar/" },
 	{   Name => "Mahrud Sayrafi",
-	    Email => "mahrud@umn.edu",
-	    HomePage => "https://math.umn.edu/~mahrud/" },
+	    Email => "mahrud@mcmaster.edu",
+	    HomePage => "https://mahrud.github.io/" },
 	{   Name => "Gregory G. Smith",
 	    Email => "ggsmith@mast.queensu.ca",
 	    HomePage => "https://www.mast.queensu.ca/~ggsmith"},
 	{   Name => "Keller VandeBogert",
-	    Email => "kvandebo@nd.edu",
+	    Email => "keller.v@uky.edu",
 	    HomePage => "https://sites.google.com/view/kellervandebogert/home"},
 	{   Name => "John Cobb",
 	    Email => "jdcobb3@gmail.com",
@@ -863,7 +863,7 @@ Node
     @HREF{"https://aimath.org/pastworkshops/macaulay2efie.html", "workshop"}@ at the
     @HREF{"https://aimath.org", "American Institute of Mathematics"}@ in September 2023.
   Contributors
-    @HREF("https://www3.nd.edu/~craicu/", "Claudiu Raicu")@ contributed to the development of this package.
+    @HREF("https://academicweb.nd.edu/~craicu/", "Claudiu Raicu")@ contributed to the development of this package.
   SeeAlso
     "Schubert2::Schubert2"
     "GKMVarieties::GKMVarieties"
