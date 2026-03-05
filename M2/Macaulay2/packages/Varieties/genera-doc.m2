@@ -7,89 +7,119 @@ document {
      Headline => "list of the successive linear sectional arithmetic genera",
      SeeAlso => {genus,hilbertPolynomial,euler}
      }
-document { 
-     Key => (genera,Ring),
-     Usage => "genera R",
-     Inputs => {"R"
-	  },
-     Outputs => {List =>{"of the successive linear sectional
-     arithmetic genera of projective scheme ", TT "V"," with homogeneous coordinate
-     ring ", TT "R"}
-	  },
-     "Computes the list of successive linear sectional arithmetic genera, 
-     where the i-th entry in the list is the arithmetic genus of the i-th
-     successive generic hyperplane section of ", TT "V", " ", 
-     "(= (-1)^dim-lin-section * (chi(OO_lin-section) - 1)).",
-     EXAMPLE {
-	  "R = ZZ/101[x_0..x_4];",
-	  "I = ideal random(R^1, R^{-2,-3});",
-	  "genera(R/I)"  
-	  },
-     SeeAlso => {genus, euler}
-     }
-document { 
-     Key => {(genera,CoherentSheaf), (genera,Module)},
-     Usage => "genera M",
-     Inputs => {"M"
-	  },
-     Outputs => {List =>{"of the successive linear sectional
-     arithmetic genera of the successive generic hyperplane restrictions 
-     of ", TT "M"}
-	  },
-     "Computes the list of successive generic linear sectional arithmetic genera, 
-     where the i-th entry in the list is 
-     (-1)^dim-support -i  * (chi(M ** OO_lin-section) - 1)).",
-     EXAMPLE {
-	  "V = Proj(ZZ/101[x_0..x_2]);",
-	  "M = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})",     
-	  "genera M"
-	  },
-     SeeAlso => {euler}
-     }
-document { 
-     Key => (genera,Ideal),
-     Usage => "genera I",
-     Inputs => {"I"
-	  },
-     Outputs => {List =>{"of the successive linear sectional
-     arithmetic genera of ", TT "I"}
-          }, 
-     "Computes the list of successive linear sectional arithmetic genera, 
-     where the i-th entry in the list is the arithmetic genus of the i-th
-     successive generic hyperplane section of the zero-locus of ", TT "I", " ",  
-     "(= (-1)^dim-lin-section * (chi(OO_lin-section) - 1)).",
-     PARA{},
-     "A complete intersection of type (2,3) in projective fourspace;
-     its hyperplane section is a canonical curve of genus 4:",
-     EXAMPLE {
-	  "R = ZZ/101[x_0..x_4];",
-	  "I = ideal random(R^1, R^{-2,-3});",
-	  "genera I"  
-	  },
-     SeeAlso => {euler, genus}
-     }
 
-document { 
-     Key => {(genera,ProjectiveVariety)},
-     Usage => "genera V",
-     Inputs => {"V"
-	  },
-     Outputs => {List => {"of the successive linear sectional
-     arithmetic genera of ", TT "V"}
-	  },
-     "Computes the list of successive linear sectional arithmetic genera, 
-     where the i-th entry in the list is the arithmetic genus of the i-th
-     successive generic hyperplane section of ", TT "V", " ", 
-     "(= (-1)^dim-lin-section * (chi(OO_lin-section) - 1)).",
-     PARA{},
-     "A complete intersection of type (2,3) in projective fourspace;
-     its hyperplane section is a canonical curve of genus 4:",
-     EXAMPLE {
-	  "R = ZZ/101[x_0..x_4];",
-	  "V = Proj(R/(ideal random(R^1, R^{-2,-3})));",
-	  "genera V"  
-	  },
-     SeeAlso => {euler,genus}
-     }
+doc ///
+Node
+  Key
+    (genera, CoherentSheaf)
+    (genera, Module)
+  Headline
+    the linear sectional arithmetic genera of a coherent sheaf
+  Usage
+    genera F
+  Inputs
+    F:CoherentSheaf
+  Outputs
+    :List
+  Description
+    Text
+      This function computes the list of successive generic linear sectional arithmetic genera
+      of a coherent sheaf @TT "M"@ on a closed subscheme $X$ of projective space.
+      Writing $m$ for the dimension of the support $X$ of @TT "M"@
+      and $X_i$ for a general codimension-$i$ linear section of $X$,
+      the $i$th entry in the list is $(-1)^{m-i}(\chi(X_i, M|_{X_i}) - 1)$.
+    Example
+      V = Proj(ZZ/101[x_0..x_2]);
+      M = sheaf(image matrix {{x_0^3+x_1^3+x_2^3}})
+      genera M
+  SeeAlso
+    (euler,CoherentSheaf)
+    genus
 
- 
+Node
+  Key
+    (genera, Ideal)
+  Headline
+    the linear sectional arithmetic genera of the zero locus of an ideal
+  Usage
+    genera I
+  Inputs
+    I:Ideal
+  Outputs
+    :List
+  Description
+    Text
+      This function computes the list of successive generic linear sectional arithmetic genera
+      of the zero locus of an ideal @TT "I"@ in a graded ring $R$ (generated in degree 1).
+      Writing $m$ for the dimension of the zero locus $X$ of @TT "I"@ in $\mathrm{Proj}(R)$
+      and $X_i$ for a general codimension-$i$ linear section of $X$,
+      the $i$th entry in the list is $(-1)^{m-i}(\chi(X_i, O) - 1)$.
+    Text
+      For example, we take a complete intersection surface of type $(2,3)$ in projective 4-space.
+      Its hyperplane section is a canonical curve of genus 4:
+    Example
+      R = ZZ/101[x_0..x_4];
+      I = ideal random(R^1, R^{-2,-3});
+      genera I
+  SeeAlso
+    (euler,CoherentSheaf)
+    genus
+
+Node
+  Key
+    (genera, ProjectiveVariety)
+  Headline
+    the linear sectional arithmetic genera of a projective variety
+  Usage
+    genera X
+  Inputs
+    X:ProjectiveVariety
+  Outputs
+    :List
+  Description
+    Text
+      This function computes the list of successive generic linear sectional arithmetic genera
+      of a closed subscheme @TT "X"@ of projective space.
+      Writing $m$ for the dimension of @TT "X"@
+      and $X_i$ for a general codimension-$i$ linear section of @TT "X"@,
+      the $i$th entry in the list is $(-1)^{m-i}(\chi(X_i, O) - 1)$.
+    Text
+      For example, we take a complete intersection surface of type $(2,3)$ in projective 4-space.
+      Its hyperplane section is a canonical curve of genus 4:
+    Example
+      R = ZZ/101[x_0..x_4];
+      X = Proj(R/(ideal random(R^1, R^{-2,-3})));
+      genera X
+  SeeAlso
+    (euler,CoherentSheaf)
+    genus
+
+Node
+  Key
+    (genera, Ring)
+  Headline
+    the linear sectional arithmetic genera of Proj of a graded ring
+  Usage
+    genera R
+  Inputs
+    R:Ring
+  Outputs
+    :List
+  Description
+    Text
+      This function computes the list of successive generic linear sectional arithmetic genera
+      of the projective scheme $X=\mathrm{Proj}(R)$, for $R$ an algebra generated in degree 1.
+      Writing $m$ for the dimension of @TT "X"@
+      and $X_i$ for a general codimension-$i$ linear section of $X$,
+      the $i$th entry in the list is $(-1)^{m-i}(\chi(X_i, O) - 1)$.
+    Text
+      For example, we take a complete intersection surface of type $(2,3)$ in projective 4-space.
+      Its hyperplane section is a canonical curve of genus 4:
+    Example
+      R = ZZ/101[x_0..x_4];
+      I = ideal random(R^1, R^{-2,-3});
+      genera (R/I)
+  SeeAlso
+    (euler,CoherentSheaf)
+    genus
+    ///
