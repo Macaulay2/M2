@@ -243,6 +243,7 @@ addHook((kernel, Matrix), Strategy => "PushForward",
 -- cf. https://github.com/Macaulay2/M2/issues/3321
 -- and https://github.com/Macaulay2/M2/issues/3656
 -- TODO: can we lift generators and relations and avoid presentation?
+-- TODO: make this work for ring towers
 liftModule   = M -> (
     if instance(ring M, PolynomialRing) then M
     else cokernel liftMorphism presentation M)

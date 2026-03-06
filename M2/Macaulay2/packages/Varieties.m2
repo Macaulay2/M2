@@ -199,6 +199,9 @@ hilbertPolynomial ProjectiveVariety := opts -> X -> hilbertPolynomial(ring X, op
 
 ambient     AffineVariety :=     AffineVariety => X -> Spec ambient ring X
 ambient ProjectiveVariety := ProjectiveVariety => X -> Proj ambient ring X
+-- Note that if ring X was defined as a quotient of another quotient ring Q,
+-- then "ambient ring X" gives Q, not a polynomial ring as one might want.
+-- The polynomial ring can be obtained by: S = ring presentation ring X
 
 -- arithmetic ops
 AffineVariety     **     AffineVariety :=     AffineVariety => (X, Y) -> Spec(ring X ** ring Y)
