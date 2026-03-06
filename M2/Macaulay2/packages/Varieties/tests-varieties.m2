@@ -36,8 +36,21 @@ TEST ///
 ///
 
 TEST ///
-X = Proj(ZZ[x]/(2*x))
-assert(char X == 2)
+  X = Proj(ZZ[x]/(2*x))
+  assert(char X == 2)
+///
+
+TEST /// -- degree of a projective variety
+  S1 = ZZ/3[x,y,z,w];
+  I1 = ideal(x^5-y*z^3*w+w^5-x*z^4);
+  R1 = S1/I1;
+  X1 = Proj R1
+  assert(degree X1 == 5)
+  S2 = QQ[u,v,w,Degrees=>{1,2,3}];
+  I2 = ideal(u^7+v^2*w);
+  R2 = S2/I2;
+  X2 = Proj R2
+  assert(degree X2 == 7/6)
 ///
 
 end
