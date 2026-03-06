@@ -237,9 +237,12 @@ dim ProjectiveVariety := X -> (
 char     AffineVariety := X -> char ring X
 char ProjectiveVariety := X -> char quotient saturate ideal X -- TODO: saturate with respect to B?
 
--- TODO: should these be defined, but return 0 for an AffineVariety?
-degree ProjectiveVariety := X -> degree ring X
-genus  ProjectiveVariety := X -> genus  ring X
+-- The degree of a closed subspace of a weighted projective space.
+-- (This is compatible with the function hilbertPolynomial X.)
+-- This function returns an integer if all weights are equal to 1, but otherwise a rational number.
+-- For example, the degree of the weighted projective space P^n(a_0,...,a_n) is 1/(a_0...a_n).
+degree ProjectiveVariety := X -> degree OO_X^1
+genus  ProjectiveVariety := X -> genus  OO_X^1
 genera ProjectiveVariety := X -> genera ring X
 -- euler ProjectiveVariety is defined further down
 -- TODO: define degrees, eulers
