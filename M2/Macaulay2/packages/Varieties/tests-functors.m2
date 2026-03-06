@@ -92,3 +92,19 @@ TEST ///
   assert(hh^0 S2 == infinity)
   assert(hh^1 S2 == 0)
 ///
+
+TEST /// -- The (topological) Euler characteristic of projective varieties,
+  -- Euler characteristic of coherent sheaves, and hh^i(F,a,b).
+  R0 = QQ[x,y,z,w];
+  I1 = ideal(x^3*y+y^3*z+z^3*w+w^3*x);
+  R1 = R0/I1;
+  X1 = Proj R1; -- a K3 surface
+  assert(euler X1 == 24)
+  R2 = degreesRing R0; -- The ring ZZ[T].
+  T = R2_0;
+  S3 = cotangentSheaf X1;
+  assert(euler(S3,-3,3) == 16*T^(-3)-4*T^(-2)-16*T^(-1)-20*T^0-16*T^1-4*T^2+16*T^3)
+  assert(hh^0(S3,-3,3) == 6*T^2+20*T^3);
+  assert(hh^1(S3,-3,3) == 4*T^(-3)+10*T^(-2)+16*T^(-1)+20*T^0+16*T^1+10*T^2+4*T^3)
+  assert(hh^2(S3,-3,3) == 20*T^(-3)+6*T^(-2));
+///
