@@ -100,13 +100,13 @@ flags (ToricVectorBundleKlyachko) := (cacheValue symbol filtrationFlags) ( tvb -
    rayFlag := for i in unique filtSteps list (
     ((base tvb)#rho)_(positions(filtSteps, j->j<=i))
    );
-   rayFlag = sort(rayFlag, mat -> numgens source mat);
+   rayFlag = sort(rayFlag, mat -> numColumns mat);
    rho => rayFlag
  )
 ))
 
 getColumns = method( TypicalValue => List )
-getColumns Matrix := mat -> toList apply( 0..<numgens source mat, i->mat_i )
+getColumns Matrix := mat -> toList apply( 0..<numColumns mat, i->mat_i )
 getColumns Module := M -> apply( getColumns gens M, c -> image matrix c)
 
 primitive = method( TypicalValue =>  Matrix )
@@ -285,7 +285,7 @@ isLocallyWeil = method( Options => true, TypicalValue => Boolean )
 isLocallyWeil ToricVectorBundleKlyachko := {Verbosity => 0} >> opts -> (cacheValue isLW) (tvb -> (
  if opts#Verbosity>0 then << "METHOD: isLocallyWeil" << endl;
  cbs := compatibleBases (tvb, Verbosity=>opts#Verbosity );
- isVB := applyValues(cbs, b -> numgens source b == rank tvb);
+ isVB := applyValues(cbs, b -> numColumns b == rank tvb);
  if opts#Verbosity>0 then (
    << "cones where sheaf is not locally Weil:" << endl;
    for cb in pairs cbs do if not cb#1 then << cb#0 << endl;
@@ -311,9 +311,9 @@ toricChernCharacter ToricVectorBundleKlyachko := {Verbosity => 0} >> opts -> (ca
  );
  cI := 1; -- cartierIndex
  result := hashTable for cb in pairs compBases list (
-  maxcone := apply( 0..<numgens source cb_0, i->matrix (cb_0)_i );
+  maxcone := apply( 0..<numColumns cb_0, i->matrix (cb_0)_i );
   if opts#Verbosity>0 then << "For maximal cone sigma: " << endl << maxcone << endl;
-  base := apply( 0..<numgens source cb_1, i->matrix (cb_1)_i );
+  base := apply( 0..<numColumns cb_1, i->matrix (cb_1)_i );
   if opts#Verbosity>0 then << "the compatible basis is: " << endl << base << endl;
   cb_0 => for b in base list (
    RHS := for rho in maxcone list (
@@ -434,7 +434,7 @@ separatesJetsLocally (ToricVectorBundleKlyachko,Cone) := {Verbosity => 0} >> opt
  edges = applyValues(edges, edgeSet -> apply(edgeSet, polSet -> apply(polSet, pol -> matrix vertices pol )));
  if opts#Verbosity>0 then << "the intersections of u+sigmaDual with P(e) have vertices " << edges << endl;
  -- calculate the lattice length and take for each P(e) the minimal one
- edgeLengths := applyValues(edges, edgeSet -> apply(edgeSet, matSet -> min apply(matSet, mat -> gcd flatten entries (mat_0 - mat_(numgens source mat-1)))));
+ edgeLengths := applyValues(edges, edgeSet -> apply(edgeSet, matSet -> min apply(matSet, mat -> gcd flatten entries (mat_0 - mat_(numColumns mat-1)))));
  -- [RJS, Thm 6.2, condition (iv)]
  -- check which combinations of P(e)s give a basis
  checkBaseOfMatroid := apply(cartesianProduct values uSigmaPE, es -> rank fold(es, (i,j)->i|j) == rank tvb);
@@ -1469,7 +1469,7 @@ areEqualListsModPerm = (L1,L2) -> (
   return areEqualListsModPerm(drop(L1,{0,0}),drop(L2,{pos#0,pos#0}))
 )
 
-getColumns := mat -> toList apply( 0..<numgens source mat, i->mat_i )
+getColumns := mat -> toList apply( 0..<numColumns mat, i->mat_i )
 
 foundList = for i in 0 ..< #cList list (
  found := -1;
@@ -1519,7 +1519,7 @@ wList = findWeights E
 
 assert(#cList == #wList)
 
-getColumns := mat -> toList apply( 0..<numgens source mat, i->mat_i )
+getColumns := mat -> toList apply( 0..<numColumns mat, i->mat_i )
 
 -- assumes that both lists have equal length
 areEqualListsModPerm = (L1,L2) -> (
@@ -1577,7 +1577,7 @@ wList = findWeights E
 
 assert(#cList == #wList)
 
-getColumns := mat -> toList apply( 0..<numgens source mat, i->mat_i )
+getColumns := mat -> toList apply( 0..<numColumns mat, i->mat_i )
 
 -- assumes that both lists have equal length
 areEqualListsModPerm = (L1,L2) -> (
@@ -1617,7 +1617,7 @@ TEST ///
 
 E = dual tangentBundle projectiveSpaceFan 2
 
-getCols = mat -> toList apply( 0..<numgens source mat, i->mat_i )
+getCols = mat -> toList apply( 0..<numColumns mat, i->mat_i )
 
 filtE = applyValues(filtration E, filt -> flatten entries filt);
 raysE = keys filtE;
