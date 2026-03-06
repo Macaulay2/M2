@@ -815,6 +815,47 @@ Node
 
 Node
   Key
+   (cotangentSheaf, AffineVariety)
+  Headline
+    cotangent sheaf of an affine variety
+  Usage
+    cotangentSheaf X
+  Inputs
+    X:AffineVariety
+    MinimalGenerators => Boolean
+      whether to @TO prune@ the result before returning it
+  Outputs
+    :CoherentSheaf
+  Description
+    Text
+      This function computes the cotangent sheaf $\Omega^1_X$ of an affine scheme $X$
+      over a base ring $k$. This is a vector bundle if $X$ is smooth over $k$.
+    Text
+      If $X$ is singular, the sheaf of @TO reflexiveDifferentials@ may be more useful.
+    Text
+      We compute the cotangent sheaf of some affine surfaces.
+    Example
+      R0 = QQ[x,y,z];
+      R1 = R0/(x^2+y^2+z^2-1);
+      X1 = Spec R1;
+      S1 = cotangentSheaf X1
+      rank S1
+      isLocallyFree S1
+      use R0;
+      R2 = R0/(x^2+y^2+z^2);
+      X2 = Spec R2;
+      S2 = cotangentSheaf X2
+      rank S2
+      isLocallyFree S2
+  SeeAlso
+    idealSheaf
+    (tangentSheaf, AffineVariety)
+    (reflexiveDifferentials, AffineVariety)
+    (cotangentSheaf, ZZ, ProjectiveVariety)
+    AffineVariety
+
+Node
+  Key
     idealSheaf
    (idealSheaf, ProjectiveVariety)
    (idealSheaf, AffineVariety)
