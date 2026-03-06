@@ -23,3 +23,19 @@ TEST /// -- Hilbert polynomials, for projective and weighted projective varietie
   i = (class hilb2)_0; -- This may not be the "same" ring QQ[i] as before.
   assert(hilb2 == (1/12)*i^2+(1/2)*i+(47/72))
 ///
+
+TEST /// -- degreeOnCurve, the degree of a vector bundle on a curve,
+  -- in projective space or weighted projective space.
+  R1 = ZZ/2[x,y,z];
+  X1 = Proj R1;
+  R2 = R1/(x^6*y+y^6*z+z^6*x);
+  X2 = Proj R2;
+  S2 = canonicalBundle X2;
+  assert(degreeOnCurve S2 == 28) -- The curve X2 has genus g = 15, so deg(K_(X2)) = 2g-2 = 28.
+  S3 = pullback(tangentSheaf X1, X2);
+  assert(degreeOnCurve S3 == 21) -- Here det(T_(X1)) = O(3), which has degree (3)(7) = 21 on the curve X2.
+  R4 = ZZ/31991[x0,x1,x2,Degrees=>{2,5,7}]/(x0^6-3*x1*x2);
+  X4 = Proj R4;
+  S4 = OO_X4(-3);
+  assert(degreeOnCurve S4 == -18/35) -- Since the line bundle O(1) has degree 12/((2)(5)(7)) = 6/35 on the curve X4.
+///
