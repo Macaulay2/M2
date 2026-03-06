@@ -58,3 +58,34 @@ TEST /// -- The degree of a coherent sheaf on a closed subspace of projective sp
   S4 = OO_X4^1;
   assert(degree S4 == 1/840)
 ///
+
+TEST /// -- Check isLocallyFree, for modules or coherent sheaves. A locally free sheaf need not have constant rank.
+  R1 = QQ[x,y];
+  R2 = R1/(x*(x-1), x*y);
+  X2 = Spec R2; -- The disjoint union of an affine line and a point.
+  M1 = R2^1/(x); S1 = sheaf M1;
+  M2 = R2^1/(x-1,y); S2 = sheaf M2;
+  M3 = R2^1/(x,y); S3=sheaf M3;
+  assert(isLocallyFree M1)
+  assert(isLocallyFree M2)
+  assert(not isLocallyFree M3);
+  assert(isLocallyFree(M1++M2++M2))
+  assert(isLocallyFree S1)
+  assert(isLocallyFree S2)
+  assert(not isLocallyFree S3)
+  assert(isLocallyFree(S1++S2++S2))
+///
+
+TEST ///
+  R4 = QQ[u,v,w];
+  R5 = R4/(u*v, u*w);
+  X5 = Proj R5; -- The disjoint union of a projective line and a point.
+  M6 = R5^1/(u); S6 = sheaf M6;
+  M7 = R5^1/(v,w); S7 = sheaf M7;
+  M8 = R5^1/(u,v); S8 = sheaf M8;
+  assert(isLocallyFree S6)
+  assert(isLocallyFree S7)
+  assert(not isLocallyFree S8)
+  assert(isLocallyFree(S6++S7++S7))
+  assert(not isLocallyFree(M6++M7++M7))
+///
