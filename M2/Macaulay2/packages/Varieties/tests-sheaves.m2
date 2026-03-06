@@ -39,3 +39,22 @@ TEST /// -- degreeOnCurve, the degree of a vector bundle on a curve,
   S4 = OO_X4(-3);
   assert(degreeOnCurve S4 == -18/35) -- Since the line bundle O(1) has degree 12/((2)(5)(7)) = 6/35 on the curve X4.
 ///
+
+TEST /// -- The degree of a coherent sheaf on a closed subspace of projective space, or of weighted projective space.
+-- Not to be confused with the degree of a line bundle on a curve.
+  R = ZZ/101[x_0..x_2];
+  V = Proj R;
+  S1 = OO_V(-5);
+  assert(degree S1 == 1)
+  M2 = R^1/(x_0^7-5*x_1^7+7*x_2^7);
+  S2 = sheaf M2;
+  assert(degree S2 == 7)
+  R3 = R/(x_0^3+x_1^3+x_2^3);
+  X3 = Proj R3;
+  S3 = directImage(cotangentSheaf X3,V);
+  assert(degree S3 == 3)
+  R4 = ZZ/2[x,y,z,w,Degrees=>{4,5,6,7}];
+  X4 = Proj R4;
+  S4 = OO_X4^1;
+  assert(degree S4 == 1/840)
+///
