@@ -636,6 +636,45 @@ Node
     reflexiveDifferentials
     (cotangentSheaf, ZZ, ProjectiveVariety)
     AffineVariety
+
+Node
+  Key
+    degreeOnCurve
+  Headline
+    the degree of a vector bundle (for example, a line bundle) on a projective curve
+  Usage
+    degreeOnCurve F
+  Inputs
+    F:CoherentSheaf
+  Outputs
+    :RingElement
+      The output is an integer for a vector bundle on a curve $X$ in projective space,
+      and a rational number when $X$ is in a more general weighted projective space.
+  Description
+    Text
+      This function computes the degree of a vector bundle @TT "F"@
+      (for example, a line bundle) on a projective curve $X$.
+      Be careful not to write @TO{"degree"," F"}@, which would mean the degree of @TT "F"@ as a coherent sheaf
+      on projective space; that is just the rank of @TT "F"@ times the degree of $X$.
+    Text
+      This function does not check that @TT "F"@ is a vector bundle; if not, the answer may be meaningless.
+      It does check that $X$ has dimension 1.
+      The function works correctly for a vector bundle on a curve $X$
+      in a weighted projective space, in which case the degree of @TT "F"@
+      is given as a rational number rather than an integer. (It is the intersection number $\int_X c_1(F)$.)
+    Example
+      R = ZZ/101[x,y,z]/(x^5+y^5+z^5);
+      X = Proj R;
+      KX = canonicalBundle X
+      degreeOnCurve KX
+    Example
+      R2 = QQ[x0,x1,Degrees=>{2,3}];
+      X2 = Proj R2;
+      degreeOnCurve OO_X2(13)
+  SeeAlso
+    (degree,CoherentSheaf)
+    (pullback,CoherentSheaf,Variety)
+
 Node
   Key
     tangentSheaf
