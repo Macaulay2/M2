@@ -120,7 +120,7 @@ primitive Matrix := mat -> (
 )
 
 -- is there a better way?
-cartesianProduct2 = (L1,L2) -> flatten apply(L1, l1 -> apply(L2, l2 -> {l1,l2}))
+cartesianProduct2 = (L1,L2) -> flatten table(L1,L2, (l1,l2) -> {l1,l2})
 cartesianProductNested = L -> fold(L, cartesianProduct2)
 inductiveFlatten = (L,i) -> if i<=0 then L else ( {L#0} | inductiveFlatten (L#1,i-1))
 cartesianProduct = L -> (
