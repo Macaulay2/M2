@@ -727,6 +727,46 @@ Node
 
 Node
   Key
+   (tangentSheaf, AffineVariety)
+  Headline
+    tangent sheaf of an affine variety
+  Usage
+    tangentSheaf X
+  Inputs
+    X:AffineVariety
+    MinimalGenerators => Boolean
+      whether to @TO prune@ the result before returning it
+  Outputs
+    :CoherentSheaf
+  Description
+    Text
+      This function computes the tangent sheaf $TX$ of an affine scheme $X$
+      over a base ring $k$. It is defined as the dual of the @TO cotangentSheaf@.
+      It is a vector bundle if $X$ is smooth over $k$.
+    Text
+      We compute the tangent sheaf of some affine surfaces.
+    Example
+      R0 = QQ[x,y,z];
+      R1 = R0/(x^2+y^2+z^2-1);
+      X1 = Spec R1;
+      S1 = tangentSheaf X1
+      rank S1
+      isLocallyFree S1
+      use R0;
+      R2 = R0/(x^2+y^2+z^2);
+      X2 = Spec R2;
+      S2 = tangentSheaf X2
+      rank S2
+      isLocallyFree S2
+  SeeAlso
+    idealSheaf
+    (cotangentSheaf, AffineVariety)
+    (reflexiveDifferentials, AffineVariety)
+    (cotangentSheaf, ZZ, ProjectiveVariety)
+    AffineVariety
+
+Node
+  Key
     cotangentSheaf
    (cotangentSheaf, ProjectiveVariety)
    [cotangentSheaf, MinimalGenerators]
