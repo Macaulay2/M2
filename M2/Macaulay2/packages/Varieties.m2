@@ -224,7 +224,15 @@ ideal Variety := X -> ideal ring X -- TODO: should this give the irrelevant idea
 codim Variety := options(codim, QuotientRing) >> o -> X -> codim(ring X, o)
 
 dim     AffineVariety := X -> dim ring X
-dim ProjectiveVariety := X -> dim ring X - 1 -- TODO: - Picard rank instead?
+dim ProjectiveVariety := X -> (
+    -- For a singly graded algebra R, the dimension of Proj(R) is dim(R) - 1, except that
+    -- it is always at least -1. For an ZZ^r-graded ring R, this definition views Proj(R)
+    -- as the quotient of an (unspecified) open subset of Spec(R) by a generically stable action
+    -- of a torus of dimension r. That is not the standard definition of Proj; but it may
+    -- be useful if developed further. For now, many commands for projective varieties
+    -- are restricted to the singly graded case.
+    -- TODO: is this always correct for a Mori dream space?
+    max(-1, dim ring X - rank degreeGroup ring X))
 
 char     AffineVariety := X -> char ring X
 char ProjectiveVariety := X -> char quotient saturate ideal X -- TODO: saturate with respect to B?
