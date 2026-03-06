@@ -112,7 +112,7 @@ getColumns Module := M -> apply( getColumns gens M, c -> image matrix c)
 primitive = method( TypicalValue =>  Matrix )
 primitive Matrix := mat -> (
  m := 1;
- if instance(mat_(0,0),QQ) then
+ if ring mat === QQ then
   m = lcm apply(flatten entries mat, denominator);
  matmod := m*mat;
  m = gcd flatten entries matmod;
