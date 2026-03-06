@@ -78,3 +78,17 @@ TEST ///
   M3trunc = truncate(-4,M3);
   assert(hilbertSeries(M3trunc, Order => 10) == T^0)
 ///
+
+TEST ///
+  -- hh^i of a sheaf on an AffineVariety.
+  R0 = ZZ/31991[x,y];
+  X0 = Spec R0;
+  I1 = ideal(x^2-y^2-x-1, (x+y)*(x-2*y)-3);
+  M1 = R0^1/I1;
+  S1 = sheaf M1;
+  assert(hh^0 S1 == 3)
+  M2 = ideal(x^3+y^4-1);
+  S2 = sheaf M2;
+  assert(hh^0 S2 == infinity)
+  assert(hh^1 S2 == 0)
+///
