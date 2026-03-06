@@ -93,7 +93,7 @@ protect preferredGenerators
 -- flags, getColumns, primitive, 
 ------------------------------------------------------------------------------
 
-flags = method()
+flags = method( TypicalValue => HashTable )
 flags (ToricVectorBundleKlyachko) := (cacheValue symbol filtrationFlags) ( tvb -> (
   hashTable for rho in rays tvb list (
    filtSteps := flatten entries (filtration tvb)#rho;
@@ -105,12 +105,12 @@ flags (ToricVectorBundleKlyachko) := (cacheValue symbol filtrationFlags) ( tvb -
  )
 ))
 
-getColumns = method ()
-getColumns (Matrix) := mat -> toList apply( 0..<numgens source mat, i->mat_i )
-getColumns (Module) := M -> apply( getColumns gens M, c -> image matrix c)
+getColumns = method( TypicalValue => List )
+getColumns Matrix := mat -> toList apply( 0..<numgens source mat, i->mat_i )
+getColumns Module := M -> apply( getColumns gens M, c -> image matrix c)
 
-primitive = method ()
-primitive (Matrix) := mat -> (
+primitive = method( TypicalValue =>  Matrix )
+primitive Matrix := mat -> (
  m := 1;
  if instance(mat_(0,0),QQ) then
   m = lcm apply(flatten entries mat, denominator);
@@ -129,7 +129,7 @@ cartesianProduct = L -> (
  apply( cartesianProductNested L, l -> inductiveFlatten(l,n))
 )
 
-poset = method()
+poset = method( TypicalValue => List )
 poset (ToricVectorBundleKlyachko) := (cacheValue symbol posetTvb)  (tvb -> (
  -- do all possible intersections (over QQ)
  intersections := apply( cartesianProduct values flags tvb, L -> intersect( apply(L, l -> image promote(l,QQ) ) ) );
@@ -145,8 +145,8 @@ poset (ToricVectorBundleKlyachko) := (cacheValue symbol posetTvb)  (tvb -> (
 --           IMPORTANT: Due to the implementation, elements might appear several times
 --   INPUT : 'tvb', a ToricVectorBundleKlyachko
 --  OUTPUT : ground set (list of nx1-matrices)
-groundSet = method( Options => true )
-groundSet (ToricVectorBundleKlyachko) :=  {Verbosity => 0, preferredGenerators => {}} >> opts -> (cacheValue groundSet)  (tvb -> (
+groundSet = method( Options => true, TypicalValue => List )
+groundSet ToricVectorBundleKlyachko :=  {Verbosity => 0, preferredGenerators => {}} >> opts -> (cacheValue groundSet)  (tvb -> (
  if opts#Verbosity>0 then << "METHOD: groundSet" << endl;
  intersections := poset tvb;
  if opts#Verbosity>0 then << "Poset of proper linear subspaces of E: " << endl << apply(intersections,gens) << endl;
@@ -198,7 +198,7 @@ groundSet (ToricVectorBundleKlyachko) :=  {Verbosity => 0, preferredGenerators =
 ------------------------------------------------------------------------------
 
 
-polytopeTVB = method( Options => true )
+polytopeTVB = method( Options => true, TypicalValue => Polyhedron )
 polytopeTVB (ToricVectorBundleKlyachko, Matrix) := {Verbosity => 0} >> opts -> ( (tvb,e) -> (
  if opts#Verbosity>0 then << "Calculate polytope for e = " << e << endl;
  filtSteps := hashTable for rho in rays tvb list (
@@ -221,8 +221,8 @@ polytopeTVB (ToricVectorBundleKlyachko, Matrix) := {Verbosity => 0} >> opts -> (
 --           compute the parliament of polytopes [RJS]
 --   INPUT : 'tvb', a ToricVectorBundleKlyachko
 --  OUTPUT : parliament of polytopes, hash table (ground set => parliament)
-parliament = method( Options => true )
-parliament(ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> (cacheValue parliament)( tvb -> (
+parliament = method( Options => true, TypicalValue => HashTable )
+parliament ToricVectorBundleKlyachko := {Verbosity => 0} >> opts -> (cacheValue parliament)( tvb -> (
  if opts#Verbosity>0 then << "METHOD: parliament" << endl;
  gs := groundSet(tvb, Verbosity=>(opts#Verbosity-1));
  hashTable for e in gs list ( e => polytopeTVB(tvb,e, Verbosity=>opts#Verbosity) )
@@ -236,7 +236,7 @@ parliament(ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> (cacheValue
 ------------------------------------------------------------------------------
 
 
-restrictToAffine = method( Options => true )
+restrictToAffine = method( Options => true, TypicalValue => ToricVectorBundleKlyachko )
 restrictToAffine (ToricVectorBundleKlyachko, Matrix) := {Verbosity => 0} >> opts -> ( (tvb,cone) ->
 (
  if opts#Verbosity>0 then << "METHOD: restrictToAffine" << endl;
@@ -251,7 +251,7 @@ restrictToAffine (ToricVectorBundleKlyachko, Matrix) := {Verbosity => 0} >> opts
 --   INPUT: 'tvb', toric vector bundle
 --          'sigma', maximal cone
 --  OUTPUT: compatible base (matrix of vectors)
-compatibleBasis = method( Options => true )
+compatibleBasis = method( Options => true, TypicalValue => Matrix )
 compatibleBasis (ToricVectorBundleKlyachko, Matrix) := {Verbosity => 0} >> opts -> ( (tvb, sigma) -> (
  if opts#Verbosity>0 then << "METHOD: compatibleBasis" << endl;
  E := restrictToAffine(tvb,sigma, Verbosity=>opts#Verbosity);
@@ -266,8 +266,8 @@ compatibleBasis (ToricVectorBundleKlyachko, Matrix) := {Verbosity => 0} >> opts 
 --          compute list of compatible bases as in [RJS, Section 3]
 --   INPUT: 'tvb', toric vector bundle
 --  OUTPUT: hash table: max cone => compatible basis
-compatibleBases = method( Options => true )
-compatibleBases (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> (cacheValue symbol compatibleBases) (tvb -> (
+compatibleBases = method( Options => true, TypicalValue => HashTable )
+compatibleBases ToricVectorBundleKlyachko := {Verbosity => 0} >> opts -> (cacheValue symbol compatibleBases) (tvb -> (
  if opts#Verbosity>0 then << "METHOD: compatibleBases" << endl;
  maxcones := apply(maxCones tvb, rays);
  hashTable for sigma in maxcones list (sigma => compatibleBasis (tvb , sigma, Verbosity=>opts#Verbosity ))
@@ -281,8 +281,8 @@ compatibleBases (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> (cach
 --          check whether it is locally Weil, that is, locally a direct sum of reflexive sheaves of rank 1
 --   INPUT: 'tvb', toric vector bundle
 --  OUTPUT: true or false
-isLocallyWeil = method( Options => true )
-isLocallyWeil (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> (cacheValue isLW) (tvb -> (
+isLocallyWeil = method( Options => true, TypicalValue => Boolean )
+isLocallyWeil ToricVectorBundleKlyachko := {Verbosity => 0} >> opts -> (cacheValue isLW) (tvb -> (
  if opts#Verbosity>0 then << "METHOD: isLocallyWeil" << endl;
  cbs := compatibleBases (tvb, Verbosity=>opts#Verbosity );
  isVB := applyValues(cbs, b -> numgens source b == rank tvb);
@@ -302,8 +302,8 @@ isLocallyWeil (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> (cacheV
 --           compute the toric Chern character as introduced in [Payne] 
 --   INPUT : 'tvb', toric vector bundle
 --  OUTPUT : hash table: max cone => points of toric Chern character.
-toricChernCharacter = method( Options => true )
-toricChernCharacter (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> (cacheValue toricChernCharacter) ( tvb -> (
+toricChernCharacter = method( Options => true, TypicalValue => HashTable )
+toricChernCharacter ToricVectorBundleKlyachko := {Verbosity => 0} >> opts -> (cacheValue toricChernCharacter) ( tvb -> (
  compBases := compatibleBases(tvb); 
  if opts#Verbosity>0 then << "METHOD: toricChernCharacter" << endl;
  filtSteps := hashTable for rho in rays tvb list (
@@ -340,16 +340,16 @@ toricChernCharacter (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> (
  result
 ))
 
-isLocallyFree = method()
-isLocallyFree (ToricVectorBundleKlyachko) :=  tvb -> (
+isLocallyFree = method( TypicalValue => Boolean )
+isLocallyFree ToricVectorBundleKlyachko :=  tvb -> (
  if not isLocallyWeil tvb then return false;
  if not tvb.cache.?isLF then   
   toricChernCharacter tvb;
  tvb.cache.isLF
 )
 
-cartierInd = method()
-cartierInd (ToricVectorBundleKlyachko) := tvb -> (
+cartierInd = method( TypicalValue => ZZ )
+cartierInd ToricVectorBundleKlyachko := tvb -> (
  if not tvb.cache.?cartierInd then
   toricChernCharacter tvb;
  tvb.cache.cartierInd
@@ -360,8 +360,8 @@ cartierInd (ToricVectorBundleKlyachko) := tvb -> (
 --           connect components in adjacent maximal cones by lines
 --   INPUT : 'tvb', toric vector bundle
 --  OUTPUT : hash table: cone of codim 1 (curve) => list of pairs
-graphToricChernCharacter = method( Options => true )
-graphToricChernCharacter (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> (cacheValue graphToricChernCharacter) ( tvb -> (
+graphToricChernCharacter = method( Options => true, TypicalValue => HashTable )
+graphToricChernCharacter ToricVectorBundleKlyachko := {Verbosity => 0} >> opts -> (cacheValue graphToricChernCharacter) ( tvb -> (
  torChern := toricChernCharacter(tvb, Verbosity=>opts#Verbosity);
  if opts#Verbosity>0 then  << "METHOD: graphToricChernCharacter" << endl;
  F := fan tvb;
@@ -393,7 +393,7 @@ graphToricChernCharacter (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts
 -- METHOD: separateJets
 ------------------------------------------------------------------------------
 
-separatesJetsLocally = method( Options => true )
+separatesJetsLocally = method( Options => true, TypicalValue => ZZ )
 separatesJetsLocally (ToricVectorBundleKlyachko,Cone) := {Verbosity => 0} >> opts -> (tvb,sigma) -> (
  if opts#Verbosity>0 then << "METHOD: separatesJetsLocally" << endl;
  sigmaMat := rays sigma;
@@ -452,8 +452,8 @@ separatesJetsLocally (ToricVectorBundleKlyachko,Cone) := {Verbosity => 0} >> opt
 --           compute the maximal l such that the bundle separates l-jets
 --   INPUT : 'tvb', toric vector bundle
 --  OUTPUT :  Integer, -infinity if not separates any l-jets, otherwise l
-separatesJets = method( Options => true )
-separatesJets (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> (cacheValue separatesJets) ( tvb -> (
+separatesJets = method( Options => true, TypicalValue => ZZ )
+separatesJets ToricVectorBundleKlyachko := {Verbosity => 0} >> opts -> (cacheValue separatesJets) ( tvb -> (
  if opts#Verbosity>0 then << "METHOD: separatesJets" << endl;
  min( apply( maxCones tvb, sigma -> separatesJetsLocally(tvb,sigma, Verbosity=>opts#Verbosity) ) )
 ))
@@ -469,17 +469,17 @@ separatesJets (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> (cacheV
 --           check if the vector bundle is globally generated, using [RJS, Thm. 1.2]
 --   INPUT : 'tvb', toric vector bundle
 --  OUTPUT :  'true' if globally generated, otherwise 'false'
-isGloballyGenerated = method( Options => true )
-isGloballyGenerated (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> (tvb) -> 
+isGloballyGenerated = method( Options => true, TypicalValue => Boolean )
+isGloballyGenerated ToricVectorBundleKlyachko := {Verbosity => 0} >> opts -> tvb -> 
 if separatesJets(tvb, Verbosity=>opts#Verbosity) >= 0 then true else false;
 
 -- PURPOSE : Given a toric vector bundle in Klyachko's description,
 --           its parliament, compatible bases and toric Chern character
 --           check if the vector bundle is very ample, using [RJS, Cor. 6.7]
 --   INPUT : 'tvb', toric vector bundle
---  OUTPUT :  'true' if very ample, otherwise 'false'
---isVeryAmple = method( Options => true ) -- already defined in Polyhedra
-isVeryAmple (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> tvb -> separatesJets(tvb, opts) >= 1
+--  OUTPUT : 'true' if very ample, otherwise 'false'
+--isVeryAmple = method( Options => true, TypicalValue => Boolean ) -- already defined in Polyhedra
+isVeryAmple ToricVectorBundleKlyachko := {Verbosity => 0} >> opts -> tvb -> separatesJets(tvb, opts) >= 1
   
 ------------------------------------------------------------------------------
 -- METHOD: restrictToInvCurves, isNef, isAmple
@@ -496,7 +496,7 @@ isVeryAmple (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> tvb -> se
 --           'tau', (n-1)-dim cone given as matrix of rays
 --           'torChern', toric Chern character
 --  OUTPUT : list of integers (a_i) such that E|_C = \sum O_C(a_i)
-restrictToCurve = method( Options => true)
+restrictToCurve = method( Options => true, TypicalValue => List )
 restrictToCurve (Matrix,HashTable) := {Verbosity => 0} >> opts -> (tau,torChern) -> (
  normal := generators kernel transpose tau;
  if opts#Verbosity>0 then << "a vector normal to tau:" << endl << normal << endl;
@@ -530,8 +530,8 @@ restrictToCurve (Matrix,HashTable) := {Verbosity => 0} >> opts -> (tau,torChern)
 
 -- MAIN METHODS: restrictToInvCurves, isNef, isAmple -----------------------------
 
-restrictToInvCurves = method ( Options => true)
-restrictToInvCurves (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> (cacheValue symbol restrictionsToInvCurves) ( tvb -> (
+restrictToInvCurves = method ( Options => true, TypicalValue => HashTable )
+restrictToInvCurves ToricVectorBundleKlyachko := {Verbosity => 0} >> opts -> (cacheValue symbol restrictionsToInvCurves) ( tvb -> (
  torChern := toricChernCharacter( tvb, Verbosity=>(opts#Verbosity-1));
  if opts#Verbosity>0 then << "METHOD: restrictToInvCurves" << endl;
  F := fan tvb;
@@ -548,16 +548,21 @@ restrictToInvCurves (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> (
 --           its toric Chern character,
 --           compute whether the bundle is nef or ample, using [HMP, Thm. 2.1]
 --   INPUT : 'tvb', toric vector bundle
---  OUTPUT : hash table
-isNef = method( Options => true)
-isNef (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> tvb -> (
+--  OUTPUT : 'true' if nef, otherwise 'false'
+isNef = method( Options => true, TypicalValue => Boolean )
+isNef ToricVectorBundleKlyachko := {Verbosity => 0} >> opts -> tvb -> (
  if opts#Verbosity>0 then << "METHOD: isNef" << endl;
  restrictions := restrictToInvCurves(tvb, Verbosity => opts#Verbosity);
  all(values restrictions, r -> all(r, x -> x >=0))
 )
 
-isAmple = method( Options => true)
-isAmple (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> tvb -> (
+-- PURPOSE : Given a toric vector bundle in Klyachko's description and
+--           its toric Chern character,
+--           compute whether the bundle is ample, using [HMP, Thm. 2.1]
+--   INPUT : 'tvb', toric vector bundle
+--  OUTPUT : 'true' if ample, otherwise 'false'
+isAmple = method( Options => true, TypicalValue => Boolean )
+isAmple ToricVectorBundleKlyachko := {Verbosity => 0} >> opts -> tvb -> (
  if opts#Verbosity>0 then << "METHOD: isAmple" << endl;
  restrictions := restrictToInvCurves(tvb, Verbosity => opts#Verbosity);
  all(values restrictions, r -> all(r, x -> x >0))
@@ -573,7 +578,7 @@ isAmple (ToricVectorBundleKlyachko) := {Verbosity => 0} >> opts -> tvb -> (
 -- PURPOSE : Given a list of points in the plane, 
 --           and a list of the angles (interpret points as complex numbers),
 --           sort the points by angle
-sortByAngle = method()
+sortByAngle = method( TypicalValue => List )
 sortByAngle (List,List) := (p, angles) -> (
  if #p == 1 then return p;
  for i from 0 to #p-2 do 
@@ -584,8 +589,8 @@ sortByAngle (List,List) := (p, angles) -> (
 
 -- PURPOSE : Given a list of points in the plane,
 --           sort them in circular way around center of gravity
-circularOrder = method()
-circularOrder (List) := p -> (
+circularOrder = method( TypicalValue => List )
+circularOrder List := p -> (
  mid := sum p/#p;
  pmoved := apply(p, pt->pt-mid);
  angles := apply(pmoved, pt -> atan2(pt_1,pt_0));
@@ -598,7 +603,7 @@ circularOrder (List) := p -> (
 --   INPUT: 'tvb', toric vector bundle,
 --          'file', string with file name
 --  OUTPUT: nothing to M2, output goes to file
-drawParliament2Dtikz = method( Options => true)
+drawParliament2Dtikz = method( Options => true )
 drawParliament2Dtikz (ToricVectorBundleKlyachko,String) := {DrawCohomology => true, DrawChernCharacter => true } >> opts -> (tvb,file) -> (
 -- check for dimension 2
 if dim fan tvb != 2 then (
@@ -694,8 +699,8 @@ f << close;
 --   INPUT: 'tvb', toric vector bundle
 --  OUTPUT: a toric vector bundle, whose filtration matrices have ascending entries
 
-wellformedBundleFiltrations = method ()
-wellformedBundleFiltrations (ToricVectorBundleKlyachko) := tvb -> (
+wellformedBundleFiltrations = method ( TypicalValue => ToricVectorBundleKlyachko )
+wellformedBundleFiltrations ToricVectorBundleKlyachko := tvb -> (
  fMTlist := applyValues(filtration tvb, f -> sort flatten entries f );
  fMT := applyValues(fMTlist, f -> matrix {f});
  fMTunique := applyValues(fMTlist, unique);
