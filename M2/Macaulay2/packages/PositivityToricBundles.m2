@@ -114,9 +114,9 @@ primitive Matrix := mat -> (
  m := 1;
  if ring mat === QQ then
   m = lcm apply(flatten entries mat, denominator);
- matmod := m*mat;
+ matmod := lift(m*mat,ZZ);
  m = gcd flatten entries matmod;
- lift(1/m*promote(matmod,QQ),ZZ)
+ matmod//m
 )
 
 -- is there a better way?
