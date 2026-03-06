@@ -810,6 +810,7 @@ Node
     idealSheaf
     tangentSheaf
     cotangentSurjection
+    reflexiveDifferentials
     (cotangentSheaf, ZZ, ProjectiveVariety)
     ProjectiveVariety
 
@@ -941,6 +942,175 @@ Node
     ProjectiveVariety
     (hh, Sequence, ProjectiveVariety)
 
+Node
+  Key
+    reflexiveDifferentials
+   (reflexiveDifferentials, ProjectiveVariety)
+   [reflexiveDifferentials, MinimalGenerators]
+   [reflexiveDifferentials, Strategy]
+  Headline
+    sheaf of reflexive differentials on a projective variety
+  Usage
+    reflexiveDifferentials X
+  Inputs
+    X:ProjectiveVariety
+    MinimalGenerators => Boolean
+      whether to @TO prune@ the result before returning it
+  Outputs
+    :CoherentSheaf
+  Description
+    Text
+      This function computes the sheaf of reflexive differentials of a closed subscheme $X$ of a projective space
+      over a ring $k$, written as $\Omega^{[1]}_X$. It is defined as the double dual of the cotangent sheaf of $X$.
+      If $X$ is smooth over $k$, this is the same as the cotangent sheaf.
+    Text
+      More generally, @TT "reflexiveDifferentials X"@ works for $X$ a closed subspace of a weighted projective space,
+      viewed as a stack. If $X$ is smooth as a stack (for example if the coarse moduli space of $X$
+      is quasi-smooth and well-formed), then this is the same as @TO{"cotangentSheaf"," X"}@.
+    Text
+      As an example, we verify that one of the two del Pezzo surfaces $X$ with a du Val singularity of type $E_8$
+      satisfies Bott vanishing (that $H^1(X, \Omega^{[1]}(a))=0$ for all $a>0$), while the other one does not.
+      We can view both surfaces as hypersurfaces in a certain weighted projective space. In this description, they
+      are not smooth stacks, and so the sheaf of reflexive differentials is not the same as the cotangent sheaf.
+    Example
+      R1 = QQ[x,y,z,w, Degrees=>{1,1,2,3}];
+      R2 = R1/(w^2+z^3+x^5*y+x^4*z);
+      X2 = Proj R2;
+      S2 = reflexiveDifferentials X2;
+      hh^1(S2(*))
+      use R1;
+      R3 = R1/(w^2+z^3+x^5*y);
+      X3 = Proj R3;
+      S3 = reflexiveDifferentials X3;
+      hh^1(S3(*))
+  SeeAlso
+    idealSheaf
+    tangentSheaf
+    cotangentSheaf
+    cotangentSurjection
+    ProjectiveVariety
+
+Node
+  Key
+   (reflexiveDifferentials, AffineVariety)
+  Headline
+    sheaf of reflexive differentials on an affine variety
+  Usage
+    reflexiveDifferentials X
+  Inputs
+    X:AffineVariety
+    MinimalGenerators => Boolean
+      whether to @TO prune@ the result before returning it
+  Outputs
+    :CoherentSheaf
+  Description
+    Text
+      This function computes the sheaf of reflexive differentials of an affine scheme $X$
+      over a ring $k$, written as $\Omega^{[1]}_X$. In other words, this is the double dual of the cotangent sheaf of $X$.
+      If $X$ is smooth over $k$, this is the same as the cotangent sheaf.
+    Text
+      We compute the sheaf of reflexive differentials on some affine surfaces.
+    Example
+      R0 = QQ[x,y,z];
+      R1 = R0/(x^2+y^2+z^2-1);
+      X1 = Spec R1;
+      S1 = reflexiveDifferentials X1
+      rank S1
+      isLocallyFree S1
+      use R0;
+      R2 = R0/(x^2+y^2+z^2);
+      X2 = Spec R2;
+      S2 = reflexiveDifferentials X2
+      rank S2
+      isLocallyFree S2
+  SeeAlso
+    idealSheaf
+    (tangentSheaf, AffineVariety)
+    (cotangentSheaf, AffineVariety)
+    (cotangentSheaf, ZZ, ProjectiveVariety)
+    AffineVariety
+
+Node
+  Key
+    (reflexiveDifferentials, ZZ, ProjectiveVariety)
+  Headline
+    the sheaf of reflexive m-forms on a projective variety, for a number m
+  Usage
+    cotangentSheaf(m, X)
+  Inputs
+    m:ZZ
+    X:ProjectiveVariety
+    MinimalGenerators => Boolean
+      whether to @TO prune@ the result before returning it
+  Outputs
+    :CoherentSheaf
+  Description
+    Text
+      This function computes the sheaf $\Omega^{[m]}_X$ of reflexive $m$-forms
+      on a closed subscheme $X$ of projective space over a field $k$. This is defined as the double dual
+      of the sheaf $\Omega^m_X$ of $m$-forms.
+    Text
+      More generally, reflexiveDifferentials(m, X) works for $X$ a closed subspace of a weighted projective space,
+      viewed as a stack.
+      For example, if the stack $X$ is smooth over $k$, then this is the same as @TO{"cotangentSheaf","(m, X)"}@.
+    Text
+      As an example, we compute $H^0(X,\Omega^{[2]}_X) = H^0(X,K_X)$ on a K3 surface with one node
+      (a quartic in projective 3-space). In this case, $\Omega^{[2]}_X$ is a trivial line bundle,
+      whereas $\Omega^2_X$ is not a line bundle at the singular point.
+    Example
+      K3 = Proj ZZ/31991[x_0..x_3]/(x_0^4+x_1^4+x_2^4+x_0^2*x_3^2+x_1*x_2*x_3^2);
+      isLocallyFree cotangentSheaf(2, K3)
+      omega2 = reflexiveDifferentials(2, K3);
+      isLocallyFree omega2
+      hh^0 omega2
+  SeeAlso
+    cotangentSheaf
+    ProjectiveVariety
+    (hh, Sequence, ProjectiveVariety)
+
+Node
+  Key
+    (reflexiveDifferentials, ZZ, AffineVariety)
+  Headline
+    the sheaf of reflexive m-forms on an affine variety, for a number m
+  Usage
+    cotangentSheaf(m, X)
+  Inputs
+    m:ZZ
+    X:AffineVariety
+    MinimalGenerators => Boolean
+      whether to @TO prune@ the result before returning it
+  Outputs
+    :CoherentSheaf
+  Description
+    Text
+      This function computes the sheaf $\Omega^{[m]}_X$ of reflexive $m$-forms
+      on an affine scheme $X$ over a base ring $k$. This is defined as the double dual
+      of the sheaf $\Omega^m_X$ of $m$-forms. If $X$ is smooth over $k$,
+      this is the same as $\Omega^m_X$.
+    Text
+      We compute the sheaf of reflexive 2-forms on some affine surfaces. Equivalently, this is
+      the @TO2{(canonicalBundle,AffineVariety),"canonical bundle"}@ of these surfaces.
+    Example
+      R0 = QQ[x,y,z];
+      R1 = R0/(x^2+y^2+z^2-1);
+      X1 = Spec R1;
+      S1 = reflexiveDifferentials(2,X1)
+      rank S1
+      isLocallyFree S1
+      use R0;
+      R2 = R0/(x^2+y^2+z^2);
+      X2 = Spec R2;
+      S2 = reflexiveDifferentials(2,X2)
+      rank S2
+      isLocallyFree S2
+  SeeAlso
+    idealSheaf
+    (tangentSheaf, AffineVariety)
+    (cotangentSheaf, AffineVariety)
+    (reflexiveDifferentials, AffineVariety)
+    (cotangentSheaf, ZZ, ProjectiveVariety)
+    AffineVariety
 -----------------------------------------------------------------------------
 -- Basic methods for sheaves
 -----------------------------------------------------------------------------
