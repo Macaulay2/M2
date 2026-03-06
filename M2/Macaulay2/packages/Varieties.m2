@@ -8,11 +8,12 @@
 --  - 2023: SheafMap is implemented at AIM.
 --  - 2024: Varieties is added as a package (see 0f1c1485)
 --          Complexes of sheaves are implemented at workshop in Utah
+--  - 2026: Most commands work for subvarieties of weighted projective stacks.
 ---------------------------------------------------------------------------
 newPackage(
     "Varieties",
-    Date     => "04 March 2025",
-    Version  => "0.5",
+    Date     => "05 March 2026",
+    Version  => "0.6",
     Keywords => { "Algebraic Geometry", "Homological Algebra" },
     Headline => "routines for working with affine and projective varieties and coherent sheaves on them",
     Authors  => {
@@ -102,9 +103,7 @@ importFrom_Core {
 
 checkRing = A -> (
     -- TODO: make this unnecessary
-    if not degreeLength A === 1 then error "expected degreeLength of ring to be 1";
-    if not same degrees A then error "expected variables all of the same degree";
-    )
+    if not degreeLength A === 1 then error "expected degreeLength of ring to be 1")
 
 -- prints the message only if bool is false and debugLevel > 0
 -- TODO: eventually turn into a method and move to Core
@@ -196,8 +195,10 @@ ProjectiveVariety/Thing := ProjectiveVariety => (X, I) -> Proj((ring X)/I) -- TO
     AffineVariety Array :=     AffineVariety => (X, M) -> Spec((ring X) M)
 ProjectiveVariety Array := ProjectiveVariety => (X, M) -> Proj((ring X) M)
 
--- true for standard graded polynomial rings
+-- true for standard graded rings
 isStandardGraded = R -> unique degrees R === {{1}}
+-- true for a singly graded rings with positive grading
+isWeightedZZGraded = R -> degreeLength R === 1 and min flatten degrees R > 0
 
 -- Note: this can be specialized for other types of varieties.
 isWellDefined Variety := X -> (
@@ -212,8 +213,9 @@ isWellDefined Variety := X -> (
 	"the hash table does not have the expected values")
     -- mathematical checks
     -- TODO: support non-graded rings (e.g. ZZ, QQ, etc.) and nonstandard gradings
-    and assert'(not isProjective X or isStandardGraded R,
-	"coordinate ring of a projective variety should be homogeneous and generated in degree 1")
+    and assert'(not isProjective X or isWeightedZZGraded R,
+	-- TODO: should we also check that every subset of n-1 degrees are coprime?
+	"the coordinate ring of a projective variety should be positively graded")
     )
 
 -- basic methods
@@ -355,6 +357,7 @@ Node
     Work on the type @TO SheafMap@ and related algorithms began at a Macaulay2
     @HREF{"https://aimath.org/pastworkshops/macaulay2efie.html", "workshop"}@ at the
     @HREF{"https://aimath.org", "American Institute of Mathematics"}@ in September 2023.
+    In 2026, most functions were revised to work for subvarieties of weighted projective stacks.
   Contributors
     @HREF("https://academicweb.nd.edu/~craicu/", "Claudiu Raicu")@ contributed to the development of this package.
   SeeAlso
