@@ -352,6 +352,71 @@ document {
 doc ///
 Node
   Key
+    currentModuleMap
+  Headline
+    map to a simplified module representing a coherent sheaf
+  Usage
+    currentModuleMap F
+  Inputs
+    F:CoherentSheaf
+  Outputs
+    :Matrix
+  Description
+    Text
+      A coherent sheaf $F$ on a projective scheme Proj $R$ is viewed in Macaulay2
+      as the sheaf associated to a graded $R$-module $M$. However, any other graded $R$-module that agrees with $M$
+      in sufficiently high degrees also represents the same sheaf $F$.
+      The function @TT "currentModuleMap F"@ returns a map
+      $M\to N$ of graded modules such that $N$ also represents $F$, but $N$ should be "simpler" than $M$
+      (or at least as simple). The choice of $N$ may be improved as other functions are applied to $F$.
+      This is mainly intended for internal Macaulay2 use.
+    Text
+      The function also works for a coherent sheaf on a closed subspace of a weighted projective space.
+    Example
+      R = QQ[x,y];
+      X = Proj R;
+      S1 = R^1/(x^2,x*y,y^2)
+      currentModuleMap S1
+  SeeAlso
+    currentModuleBaseRing
+
+Node
+  Key
+    currentModuleBaseRing
+  Headline
+    a simplified module representing a coherent sheaf
+  Usage
+    currentModuleBaseRing F
+  Inputs
+    F:CoherentSheaf
+  Outputs
+    :Module
+  Description
+    Text
+      A coherent sheaf $F$ on a projective scheme Proj $R$ is viewed in Macaulay2
+      as the sheaf associated to a graded $R$-module $M$. However, any other graded $R$-module that agrees with $M$
+      in sufficiently high degrees also represents the same sheaf $F$.
+      The function @TO2{currentModuleMap,"currentModuleMap F"}@ returns a map
+      $M\to N$ of graded $R$-modules such that $N$ also represents $F$, but $N$ should be "simpler" than $M$
+      (or at least as simple). The choice of $N$ may be improved as other functions are applied to $F$.
+    Text
+      The ring $R$ will be a quotient of a polynomial ring $S$,
+      and @TT "currentModuleBaseRing F"@ returns $N$ as an $S$-module.
+      This is mainly intended for internal Macaulay2 use.
+    Text
+      The function also works for a coherent sheaf on a closed subspace of a weighted projective space.
+    Example
+      R1 = QQ[x,y,z];
+      R2 = R1/(x^2-y*z);
+      X2 = Proj R2;
+      S2 = OO_X2^1
+      module S2
+      currentModuleBaseRing S2
+  SeeAlso
+    currentModuleMap
+
+Node
+  Key
     (degree, CoherentSheaf)
   Headline
     the degree of a coherent sheaf on a closed subscheme of projective space
