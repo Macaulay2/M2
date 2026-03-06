@@ -32,3 +32,49 @@ TEST ///
   assert(Ext^1(G,omega) == dual HH^1(G))
   assert(Ext^0(G,omega) == dual HH^2(G))
 ///
+
+TEST ///
+  -- The sheaf cohomology command hh^1(S(*)) on two weighted projective surfaces.
+  -- This also tests reflexiveDifferentials X for these surfaces, which are not smooth even as stacks.
+  R0 = QQ;
+  R1 = R0[x,y,z,w,Degrees=>{1,1,2,3}];
+  R2 = R1/(w^2+z^3+x^5*y);
+  X2 = Proj R2;
+  S2 = reflexiveDifferentials X2;
+  S2series = (hh^1(S2(*)))_5;
+  -- That should be a Divide representing sum_a h^1(S2(a)) T^a.
+  S2poly = numerator S2series;
+  -- That should be a Laurent polynomial in ZZ[T].
+  T = (degreesRing R2)_0;
+  assert(S2poly == T^(-1)+T^0+T^1)
+  use R1;
+  R3 = R1/(w^2+z^3+x^5*y+x^4*z);
+  X3 = Proj R3;
+  S3 = reflexiveDifferentials X3;
+  S3series = (hh^1(S3(*)))_5;
+  -- That should be a Divide representing sum_a h^1(S3(a)) T^a.
+  S3poly = numerator S3series;
+  assert(S3poly == T^0)
+///
+
+TEST ///
+  -- The sheaf cohomology command HH^1(S(>=b)) on the same two weighted projective surfaces.
+  R0 = QQ;
+  R1 = R0[x,y,z,w,Degrees=>{1,1,2,3}];
+  R2 = R1/(w^2+z^3+x^5*y);
+  X2 = Proj R2;
+  S2 = reflexiveDifferentials X2;
+  T = (degreesRing R2)_0;
+  M2 = HH^1(S2(>=-4));
+  -- That graded R2-module is only guaranteed to be correct in degrees at least -4.
+  M2trunc = truncate(-4,M2);
+  assert(hilbertSeries(M2trunc, Order => 10) == T^(-1)+T^0+T^1)
+  use R1;
+  R3 = R1/(w^2+z^3+x^5*y+x^4*z);
+  X3 = Proj R3;
+  S3 = reflexiveDifferentials X3;
+  M3 = HH^1(S3(>=-4));
+  -- That graded R2-module is only guaranteed to be correct in degrees at least -4.
+  M3trunc = truncate(-4,M3);
+  assert(hilbertSeries(M3trunc, Order => 10) == T^0)
+///
