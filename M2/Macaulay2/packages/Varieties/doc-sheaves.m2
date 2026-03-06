@@ -597,6 +597,47 @@ Node
 
 Node
   Key
+   (canonicalBundle, AffineVariety)
+  Headline
+    canonical bundle of an affine variety
+  Usage
+    canonicalBundle X
+  Inputs
+    X:AffineVariety
+    MinimalGenerators => Boolean
+      whether to @TO prune@ the result before returning it
+  Outputs
+    :CoherentSheaf
+  Description
+    Text
+      This method computes the canonical bundle $K_X$ of an affine scheme $X$ over a base ring $k$. This is the line bundle
+      $\Omega^n_X$ of $n$-forms if $X$ is smooth of dimension $n$ over $k$. In general, it is a coherent sheaf, defined as the
+      reflexive hull (that is, the double dual) of the sheaf $\Omega^n_X$, where where $n$ is the rank of $\Omega^1_X$.
+    Text
+      We compute the canonical bundle of some affine surfaces.
+    Example
+      R0 = QQ[x,y,z];
+      R1 = R0/(x^2+y^2+z^2-1);
+      X1 = Spec R1;
+      S1 = canonicalBundle X1
+      isLocallyFree S1
+      use R0;
+      R2 = R0/(x^2+y^2+z^2);
+      X2 = Spec R2;
+      S2 = canonicalBundle X2
+      isLocallyFree S2
+  Caveat
+      The function does not check that the input variety $X$ is normal,
+      but rather always returns the reflexive hull of the top exterior power of the cotangent sheaf.
+      Also, the function only gives reasonable output for $X$ equidimensional.
+  SeeAlso
+    idealSheaf
+    cotangentSheaf
+    reflexiveDifferentials
+    (cotangentSheaf, ZZ, ProjectiveVariety)
+    AffineVariety
+Node
+  Key
     tangentSheaf
    (tangentSheaf, ProjectiveVariety)
    [tangentSheaf, MinimalGenerators]
