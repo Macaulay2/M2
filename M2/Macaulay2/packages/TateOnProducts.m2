@@ -2811,30 +2811,52 @@ inverseQIsoFromTate(Complex) :=  (W)->(
     R := ring B';
     kk := coefficientRing R;
     B'' := beilinson (W**E^{1}, BundleType=>DummyQuotientBundle) ** R^{1};
---    assert(B'' == coker phi);
+    assert(B'' == coker phi);
     psi := map(B'', B, id_B);
     
     -- computing pseudoinverse
-    --mapsB := for i from (min B)+1 to max B list sub(B.dd_i,kk); -- reduction to the vector space maps
-    --tempB := chainComplexFromData{min B, max B, mapsB};
-    tempB := complex hashTable for i from min B + 1 to max B list i => sub(B.dd_i, kk);    
+    tempB := complex hashTable for i from min B + 1 to max B list i => sub(B.dd_i, kk);
+    pinvtempB := pseudoInverse tempB;
+    assert(arePseudoInverses(tempB, pinvtempB));
     Binv:= (pseudoInverse tempB)**R; -- takes too much time in several cases
---    assert(arePseudoInverses(tempB, Binv));
 
---    splittingMapsFromB:= for i from min B to max B list psi_(i+1)*Binv.dd_(-i);
---    mapFromB:=map(B''[1],B,i->splittingMapsFromB_(i-min B));
-    
-    splittingMapsFromB':= for i from min B to max B list psi_(i+1)*Binv.dd_(-i)*phi_i;
---    qIs:= map(B''[1],B',i->map(B''_(i-1), B'_i, splittingMapsFromB'_(i-min B)));
-    
-    (minB', maxB') := concentration B';
-    qIs:= map(B''[1],B',i->(
-            if i === minB' then map(B''_(i+1), B'_i, 0)
-            else map(B''_(i+1), B'_i, splittingMapsFromB'_(i-minB'-1))
-            ));
---    (B',B,B'',mapFromB,qIs)
+    qIs := map(B''[1], B', i -> psi_(i+1)*Binv.dd_(-i)*map(target phi_i, B'_i, phi_i));
+    assert(isQuism qIs);
     qIs
 )
+
+///
+-- to be removed: testing maps in above qIs
+i = 0
+B'_0
+source(psi_(i+1)*Binv.dd_(-i)*phi_i)
+target psi_1
+source psi_1
+target Binv.dd_(0)
+source Binv.dd_(0)
+target phi_0
+source phi_0
+(B''[1])_0
+target(psi_(i+1)*Binv.dd_(-i)*phi_i)
+
+i = -1
+assert(target(psi_(i+1)) === (B''[1])_i)
+assert(target(Binv.dd_(-i)) === source psi_(i+1))
+assert(source(Binv.dd_(-i)) === target phi_i)
+assert(source phi_i === B'_i) -- FAILS
+
+i = 0
+assert(target(psi_(i+1)) === (B''[1])_i)
+assert(target(Binv.dd_(-i)) === source psi_(i+1))
+assert(source(Binv.dd_(-i)) === target phi_i)
+assert(source phi_i === B'_i) -- fails
+
+i = 1
+assert(target(psi_(i+1)) === (B''[1])_i)
+assert(target(Binv.dd_(-i)) === source psi_(i+1))
+assert(source(Binv.dd_(-i)) === target phi_i)
+assert(source phi_i === B'_i)
+///
 
 
 --
@@ -6184,13 +6206,13 @@ doc ///
       on the direct image under \pi, in other words, provide {O_C}-module structures. As results,
       these actions make (the sheafification of) M0 and M1 into {O_C}-modules which are identical to 
       R^0f_{*}L and R^1f_{*}L. 
-  Pre
+  Example
       J=ideal (S'_0^4+S'_1^4+S'_2^4);
       retTable=actionOnDirectImage(J,W);
       keys retTable
   Text
       We see that 0, 1 appear as keys, in other words, both R^0f_{*}L and R^1f_{*}L survives.
-  Pre
+  Example
       prunedActionList = i->apply(dim S',j->prune HH^i retTable#i#j);
       apply(keys retTable, i->isAction(J,prunedActionList(i)))
 	        
