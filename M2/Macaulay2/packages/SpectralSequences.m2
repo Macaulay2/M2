@@ -2591,6 +2591,37 @@ doc ///
 ///
 
 doc ///
+  Key
+    (naiveTruncation, Complex, ZZ)
+  Headline
+    compute the hard truncation of a chain complex
+  Usage
+    naiveTruncation(C, n)
+  Inputs
+    C:Complex
+    n:ZZ
+  Outputs
+    :Complex
+  Description
+    Text
+      This method returns the naive truncation of $C$ by truncating
+      the low homological degrees if $n$ is positive (i.e. from left)
+      and high homological degrees if $n$ is negative (i.e. from right).
+    Example
+      B = QQ[a..d];
+      C = (koszulComplex vars B)[2]
+      naiveTruncation(C, 10)
+      naiveTruncation(C, 2)
+      naiveTruncation(C, 1)
+      naiveTruncation(C, 0)
+      naiveTruncation(C,-1)
+      naiveTruncation(C,-2)
+      naiveTruncation(C,-10)
+  SeeAlso
+    (naiveTruncation, Complex, ZZ, ZZ)
+///
+
+doc ///
      Key
 	  pruningMaps
      Headline 
@@ -2694,8 +2725,8 @@ doc ///
 	    A = QQ[x,y]
 	    C = koszulComplex vars A
 	    K = filteredComplex C
---     SeeAlso 
---	  (truncate, Complex,ZZ)
+     SeeAlso
+	  (naiveTruncation, Complex,ZZ)
 /// 
 
 doc ///
