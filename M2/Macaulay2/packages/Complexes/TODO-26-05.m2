@@ -111,16 +111,16 @@ At this point, the following still import or export OldChainComplexes
 
  | Package                 | Import Type    |
   |-------------------------|----------------|
-  | BernsteinSato           | PackageExports |
+y | BernsteinSato           | PackageExports |
 e | BoijSoederberg          | PackageExports | error: isPure is being used...
   | ChainComplexExtras      | PackageExports |
 y | CorrespondenceScrolls   | PackageImports |
   | Depth                   | PackageImports |
-  | DGAlgebras              | PackageExports |
+y | DGAlgebras              | PackageExports | needs koszulComplex alot, but then works.
   | GroebnerStrata          | PackageExports |
 y | HigherCIOperators       | PackageExports |
 y | HyperplaneArrangements  | PackageImports |
-  | Kronecker               | PackageExports |
+y | Kronecker               | PackageExports |
 y | LexIdeals               | PackageImports |
   | LinearTruncations       | PackageExports |
   | LocalRings              | PackageImports |
@@ -136,11 +136,89 @@ y | RandomSpaceCurves       | PackageImports |
 y | SpaceCurves             | PackageImports | (NO tests)
   | SVDComplexes            | PackageExports |
   | TateOnProducts          | PackageExports |
-  | TensorComplexes         | PackageExports |
+y | TensorComplexes         | PackageExports | need eagonNorthcott!
 y | TestIdeals              | PackageImports |
-  | WeylAlgebras            | PackageExports |    
+y | WeylAlgebras            | PackageExports |    
 
 w = working on it.
 y = package installs and checks
 x = checked in
 e = has error in installing or checking.    
+
+Packages still importing OldChainComplexes directly.
+ | Package                 | Import Type    |
+  |-------------------------|----------------|
+y | BernsteinSato           | PackageExports |
+  | ChainComplexExtras      | PackageExports |
+y | Depth                   | PackageImports |
+  | GroebnerStrata          | PackageExports |
+y | Kronecker               | PackageExports | implements alot of GradedModule, GradedModuleMap functions BUT only for M2 ver <= 1.1 !!
+  | LinearTruncations       | PackageExports |
+  | LocalRings              | PackageImports |
+  | MonomialIntegerPrograms | PackageImports | probably ok, but can't test MonomialIntegerPrograms
+  | NonminimalComplexes     | PackageExports |
+  | PruneComplex            | PackageExports |
+  | RandomComplexes         | PackageExports |
+  | SVDComplexes            | PackageExports |
+  | TateOnProducts          | PackageExports |
+y | TensorComplexes         | PackageExports | needs eagonNorthcott
+y | WeylAlgebras            | PackageExports | done
+
+ChainComplexExtras:
+export "isMinimalChainComplex"
+
+-- Want this functionality?
+isMinimalChainComplex = C -> (
+    S := ring C;
+    red := map(S,S,toList(numgens S:0_S));
+    T :=true;
+    scan(toList(1+min C..max C),
+	i-> if 0 != red(C.dd_i) then T = false);
+    T
+    )
+
+-- try out betti(C, Minimize=>true)
+R = ZZ/101[a..d]
+I = inverseSystem random(5, R)
+M = comodule I
+C = freeResolution(M, Strategy => Nonminimal)
+betti(C, Minimize => true)
+debug Complexes
+peek C.cache
+C.cache.Module.cache.ResolutionObject.RawComputation
+peek oo
+
+
+betti ChainComplex := opts -> C -> (
+    R := ring C;
+    if C.?Resolution and degreeLength R === 1 and heft R === {1} then return betti(C.Resolution, opts);
+    if opts.Minimize then error "Minimize=>true is currently only supported for res(...,FastNonminimal=>true)";
+    complete C;
+    heftfn := heftfun heftvec(opts.Weights, heft R);
+    new BettiTally from flatten apply(
+	select(pairs C, (i,F) -> class i === ZZ),
+	(i,F) -> (
+	    if not isFreeModule F then error("betti: expected module at spot ", toString i, " in chain complex to be free");
+	    apply(pairs tally degrees F, (d,n) -> (i,d,heftfn d) => n))))
+
+minimalBettiOfResolution = method(Options => options betti)
+minimalBettiOfResolution Complex := BettiTally => C -> (
+    -- this version works only for rings of degree length 1
+    -- currently if opts.Minimize is true, then an error is given
+    -- unless Strategy => Nonminimal option was given for the free resolution.
+    rawcomp := try (if C.cache.Nonminimal then C.cache.Module.cache.ResolutionObject.RawComputation) else null;
+    if rawcomp === null then error "expected non-minimal resolution computation";
+    B := rawBetti(rawcomp.RawComputation, if opts.Minimize then 4 else 0); -- the raw version takes no weight option
+    betti(B, Weights => heftvec(opts.Weights, heft ring X))
+    )
+
+-- Strategy => 4.  Also want strategy 5...!
+-- Using QQ.  
+R = QQ[a..d]
+I = ideal(1/2*a,3*b,5*c,7*d)
+I = ideal(a,b,c,d)
+M = comodule I
+gbTrace=3
+C = freeResolution(M, Strategy => Nonminimal)
+-- all the non lead terms are of the form 1/0...
+C.dd

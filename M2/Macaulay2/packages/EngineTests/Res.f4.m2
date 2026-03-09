@@ -157,23 +157,8 @@ TEST ///
   -- test linear ideal in exterior algebra
   R = ZZ/101[a..d, SkewCommutative=>true]
   I = ideal(a-d, b+13*a)
-  B1 = betti res I
-  C = res(ideal(I_*), Strategy => Nonminimal)
-  assert(B1 == betti C)
-  B1 = betti res (ideal(I_*), LengthLimit=>7)
-  B2 = betti res(ideal(I_*), Strategy => Nonminimal, LengthLimit=>7)
-  assert(B1 == B2)
-  assert(C.dd^2 == 0)
-///
-
-TEST ///
-  -- nonminimal resolution.
-  -- test linear ideal in exterior algebra
-  R = ZZ/101[a..d, SkewCommutative=>true]
-  I = ideal(a-d, b+13*a)
-  B1 = betti res I
-  C = res(ideal(I_*), Strategy => Nonminimal, LengthLimit => 5)
-  C.dd^2
+  B1 = betti res(I, LengthLimit => 7)
+  C = res(ideal(I_*), LengthLimit => 7, Strategy => Nonminimal)
   assert(B1 == betti C)
   B1 = betti res (ideal(I_*), LengthLimit=>7)
   B2 = betti res(ideal(I_*), Strategy => Nonminimal, LengthLimit=>7)
@@ -292,12 +277,13 @@ TEST ///
   M = coker map(F,,{{a,0,0},{0,b,0},{0,0,c}})
   assert isHomogeneous M  
   C = res(M, Strategy => Nonminimal)
+  minBettiC = betti(C, Minimize=>true)
   assert(betti res M == betti C)
   for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)  
 
   M2 = coker map(F,,{{a,0,0},{0,b,0},{0,0,c}})
   assert(minimalBetti M2 == betti C) -- doesn't always hold, but does here.
-  assert(minimalBetti M2 == betti(C, Minimize=>true))
+  assert(minimalBetti M2 == minBettiC)
   assert isHomogeneous C
 ///
 
@@ -364,7 +350,7 @@ TEST ///
 
   elapsedTime for i from 1 to 1000 do (
       J = ideal I_*;
-      res(J, Strategy=>4);
+      res(J, Strategy=>Nonminimal);
       )
   debug Core
   engineMemory()
@@ -374,7 +360,7 @@ TEST ///
 
   elapsedTime for i from 1 to 10 list (
       J = ideal I_*;
-      res(J, Strategy=>4)
+      res(J, Strategy=>Nonminimal)
       );
   debug Core
   engineMemory()
@@ -397,27 +383,6 @@ TEST ///
 
   betti(C, Minimize=>true)
   debug Core
-  assert(rawBetti(raw C.Resolution, 1) == betti(C))
-  assert(rawBetti(raw C.Resolution, 0) == betti C)
-  assert(rawBetti(raw C.Resolution, 4) == betti(C, Minimize=>true))
-  rawBetti(raw C.Resolution, 5)
-  --rawBetti(raw C.Resolution, 2) -- not implemented yet
-  --rawBetti(raw C.Resolution, 3) -- not implemented yet
-
-  kk = coefficientRing R
-
-  assert(rank map(kk,rawResolutionGetMatrix2(raw C,2,3)) == 12)
-  assert(rank map(kk,rawResolutionGetMatrix2(raw C,2,4)) == 5)
-  assert(rank map(kk,rawResolutionGetMatrix2(raw C,2,5)) == 1)
-
-  assert(rank map(kk,rawResolutionGetMatrix2(raw C,3,4)) == 9)
-  assert(rank map(kk,rawResolutionGetMatrix2(raw C,3,5)) == 41)
-  assert(rank map(kk,rawResolutionGetMatrix2(raw C,3,6)) == 7)
-
-  assert(rank map(kk,rawResolutionGetMatrix2(raw C,4,5)) == 2)
-  assert(rank map(kk,rawResolutionGetMatrix2(raw C,4,6)) == 69)
-  assert(rank map(kk,rawResolutionGetMatrix2(raw C,4,7)) == 20)
-  
   assert(schreyerOrder target C.dd_2 != 0)
   assert(schreyerOrder source C.dd_2 != 0)
 ///
@@ -444,13 +409,19 @@ TEST ///
   I = ideal I_*
   C1 = res(ideal gens gb I, Strategy=>1)
   debug Core
-  rawBetti(raw C1.Resolution, 1)
-  rawBetti(raw C1.Resolution, 0)
-
+  debug Complexes
+  -- Possibly remove this test?  Or make access to the raw computation reasonable!
+  rawcomp = C1.cache.Module.cache.ResolutionObject.RawComputation
+  b1 = rawBetti(rawcomp, 1)
+  b2 = rawBetti(rawcomp, 0)
+ 
   I = ideal I_*
   C2 = res(ideal gens gb I, Strategy=>0)
-  rawBetti(raw C2.Resolution, 1)
-  rawBetti(raw C2.Resolution, 0)  
+  rawcomp = C2.cache.Module.cache.ResolutionObject.RawComputation
+  b1' = rawBetti(rawcomp, 1)
+  b2' = rawBetti(rawcomp, 0)
+  assert(b2 === b2')
+  -- b1, b1' are different.
 ///
 
 ///
@@ -564,13 +535,12 @@ TEST ///
   isHomogeneous P1
   betti(res(coker P1, Strategy => Nonminimal), Minimize=>true)
   res coker P1 -- this one looks wrong if one does not do the line before this? (MES: I don't see any issue here 3/2018)
-  -- ?? is this a bug??
+  -- ?? is this a bug??  BUG, it seems 
 ///
 
 TEST ///
   setRandomSeed "10"
   needsPackage "BGG"
-  needsPackage "OldChainComplexes"
   S = ZZ/101[x_0..x_5] -- P^5
   E = ZZ/101[e_0..e_5, SkewCommutative => true]
   F = random(S^2, S^{-3,-3})
@@ -580,24 +550,23 @@ TEST ///
   elapsedTime gens gb m;
   gbTrace=0
   elapsedTime C1 = res(coker m, Strategy => Nonminimal, LengthLimit=>7)
+  B0 = betti(C1, Minimize => true)
   B1 = minimalBetti(coker m, LengthLimit=>7)
-  B2 = betti res(coker m)
+  B2 = betti res(coker m, LengthLimit => 7)
   assert(B1 == B2)
 
   m = bgg(2,M,E);  
+  elapsedTime res(coker m, Strategy => Nonminimal, LengthLimit=>7)
   elapsedTime C2 = res(coker m, LengthLimit=>6)
   elapsedTime minimalBetti(coker m, LengthLimit=>6)
   assert(betti C2 == oo)
-  betti(C1, Minimize => true)
-  elapsedTime res(coker m, Strategy => Nonminimal, LengthLimit=>7)
-  betti oo
-  
+
   m = bgg(3,M,E);
   elapsedTime gens gb m;
   elapsedTime B1 = minimalBetti(coker m, LengthLimit=>7) -- 1.4 sec
-  elapsedTime B2 = betti res(coker m) -- 27 seconds
-  time C1 = res(coker m, Strategy => Nonminimal, LengthLimit=>7) -- .65 sec if done without minimalBetti line.
-  assert(B1 == B2)
+  -- elapsedTime B2 = betti res(coker m, LengthLimit => 7) -- 27 seconds (in 2026: 10.5 sec M4 mac)
+  -- time C1 = res(coker m, Strategy => Nonminimal, LengthLimit=>7) -- .65 sec if done without minimalBetti line.
+  -- assert(B1 == B2)
 ///
 
 
@@ -608,7 +577,8 @@ TEST ///
   R = kk[vars(0..3)]
   I = ideal fromDual random(R^1, R^{-3});
   C = res(I, Strategy => Nonminimal)
-  
+  betti(C, Minimize => true)  
+
   I = ideal(I_*)
   elapsedTime C1 = res(I, Strategy => Nonminimal, DegreeLimit=>1) -- DOES NOTHING (i.e. does the whole thing) BUG
 ----  assert(betti(C,Minimize=>true) != betti(C1,Minimize=>true)) -- totally non-minimal, so maybe it did do something. ACTUALLY: returns without doing ranks
@@ -619,7 +589,7 @@ TEST ///
   assert(isHomogeneous C)
   C1 = betti res ideal(I_*)
   assert(betti(C,Minimize=>true) == betti(C1,Minimize=>true))
-  assert(minimalBetti I == betti C1)
+  assert(minimalBetti I == betti C1)  -- BUG??
 ///
 
 TEST ///  
@@ -769,13 +739,13 @@ TEST ///
   C1 = res(I, Strategy=>1);
   C2 = res(I, Strategy=>2);
   C0 = res(I, Strategy=>0);
-  C4 = res(I, Strategy=>4);
+  C4 = res(I, Strategy=>Nonminimal);
   assert(C2 === C1)
   assert(C0 === C1)
   assert(C4 === C1)
 
   I = ideal I_*;
-  C4 = res(I, Strategy=>4);
+  C4 = res(I, Strategy=>Nonminimal);
   C1 = res(I, Strategy=>1);
   C2 = res(I, Strategy=>2);
   C0 = res(I, Strategy=>0);

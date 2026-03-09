@@ -617,8 +617,15 @@ heftfun = (wt1,wt2) -> (
      else d -> 0
      )
 
+importFrom_Core { "rawBetti", "RawComputation" };
 betti Matrix  := opts -> f -> betti(complex f, opts)
 betti Complex := opts -> C -> (
+    if opts.Minimize then (
+        rawcomp := try (if C.cache.Nonminimal then C.cache.Module.cache.ResolutionObject.RawComputation) else null;
+        if rawcomp === null then error "Minimize option expected non-minimal resolution computation";
+        B := rawBetti(rawcomp, if opts.Minimize then 4 else 0); -- the raw version takes no weight option
+        return betti(B, Weights => (opts.Weights ?? heft ring C))
+        );
     heftfn := heftfun(opts.Weights, heft ring C);
     (lo,hi) := C.concentration;
     new BettiTally from flatten for i from lo to hi list (
