@@ -170,7 +170,7 @@ partialRegularities Module := M ->
     partialRegularities res prune M
 partialRegularities Complex := F-> (
     t := degreeLength ring F;
-    range := toList(min F..max F-1);
+    range := toList(min F..max F);
     apply(t, i -> max flatten apply(range, j -> (
 		apply(degrees(F_j), ell -> ell_i - j)
 		)))
@@ -192,9 +192,10 @@ isLinearComplex Complex := F -> (
 isLinearComplex = method()
 --requires generators in single degree
 isLinearComplex Complex := F -> (
+    F = prune F; -- removes trailing zero modules.
     if F == 0 then return true;
     t := degreeLength ring F;
-    range := toList(min F..max F-1);
+    range := toList(min F..max F);
     if #(unique degrees F_(min F)) != 1 then return false;
     dF := apply(range, i -> (degrees(F_i))/sum);
     mindF := dF_(min F)_0;
