@@ -227,7 +227,7 @@ filteredComplex(List) := FilteredComplex => opts -> L -> (
 -- make the filtered complex associated to the "naive truncation of a chain complex"
 filteredComplex Complex := FilteredComplex => opts -> C -> (
     (lo, hi) := concentration C;
-    if C^dd == 0
+    if dd^C == 0
     then filteredComplex{ map(C, image(0 * id_C), id_C) }
     else filteredComplex(Shift => -lo,
 	apply(hi-lo, i -> inducedMap(C, naiveTruncation(C, lo, hi-i-1)))))
