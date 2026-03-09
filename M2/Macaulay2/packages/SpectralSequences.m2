@@ -1686,7 +1686,7 @@ doc ///
                 R = ZZ/101[a_0..b_1, Degrees=>{2:{1,0},2:{0,1}}] -- PP^1 x PP^1
 		M = intersect(ideal(a_0,a_1),ideal(b_0,b_1))  -- irrelevant ideal
 		M = M_*/(x -> x^5)//ideal  -- Suitably high Frobenius power of M
-		G = complex res image gens M 
+		G = freeResolution image gens M
 		I = ideal random(R^1, R^{{-3,-3}}) -- ideal of C -- but we don't use this in what follows
 	        B = complex R^{{1,0}} -- make line bundle a chain complex
 		A = complex R^{{-2,-3}}
@@ -2629,7 +2629,7 @@ doc ///
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complex complete res monomialCurveIdeal(B,{1,3,4});
+	       C = freeResolution monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	       E = spectralSequence K
 	  Text
@@ -2695,7 +2695,7 @@ doc ///
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complex complete res monomialCurveIdeal(B,{1,3,4});
+	       C = freeResolution monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	  Text
 	       We compute an example of a pruning map below.
@@ -2744,7 +2744,7 @@ doc ///
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complex complete res monomialCurveIdeal(B,{1,3,4});
+	       C = freeResolution monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	  Text
 	       We compute an example of a pruning map below.
@@ -2815,7 +2815,7 @@ doc ///
 	       K = filteredComplex({d,e})
 	  Text
 	     We can make a filtered complex, with a specified minimum filtration degree
-             from a list of ChainComplexMaps by using the Shift option.
+             from a list of ComplexMaps by using the Shift option.
       	  Example	       	     
 	       L = filteredComplex({d,e},Shift => 1)
 	       M = filteredComplex({d,e},Shift => -1)	      	    
@@ -2925,7 +2925,7 @@ doc ///
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complex complete res monomialCurveIdeal(B,{1,3,4});
+	       C = freeResolution monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	  Text
 	       We compute the degree $0$ piece of the $E^3$ page below.
@@ -2957,7 +2957,7 @@ doc ///
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complex complete res monomialCurveIdeal(B,{1,3,4});
+	       C = freeResolution monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	  Text
 	       We compute the degree $0$ piece of the $E^3$ page below.
@@ -3018,7 +3018,7 @@ doc ///
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complex complete res monomialCurveIdeal(B,{1,3,4});
+	       C = freeResolution monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	  Text
 	       Compare some pages of the non-pruned version of the spectral sequence
@@ -3060,7 +3060,7 @@ doc ///
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complex complete res monomialCurveIdeal(B,{1,3,4});
+	       C = freeResolution monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	  Text
 	       Compare some pruned and non-prunded pages the spectral sequence $E$ below.
@@ -3119,8 +3119,8 @@ doc ///
 	      an example which illustrates the syntax. 
 	  Example
 	     A = QQ[x,y,z,w];
-	     B = complex res monomialCurveIdeal(A, {1,2,3});
-	     C = complex res monomialCurveIdeal(A, {1,3,4});
+	     B = freeResolution monomialCurveIdeal(A, {1,2,3});
+	     C = freeResolution monomialCurveIdeal(A, {1,3,4});
 	     F' = Hom(filteredComplex B, C)
 	     F'' = Hom(B,filteredComplex C)   
      SeeAlso
@@ -3172,7 +3172,7 @@ doc ///
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complex complete res monomialCurveIdeal(B,{1,3,4});
+	       C = freeResolution monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	       
 	  Text
@@ -3217,9 +3217,9 @@ doc ///
 	    S = R/ideal"x2";
 	    N = S^1/ideal"x";
 	    M = R^1/R_0;
-	    C = complex res M;
+	    C = freeResolution M;
 	    C' = C ** S;
-	    D = complex res(N,LengthLimit => 10);
+	    D = freeResolution(N,LengthLimit => 10);
 	    E0 = C' ** (filteredComplex D);
 	    E = prune spectralSequence E0;
  	  Text
@@ -3234,9 +3234,9 @@ doc ///
 	    S = R/ideal"x2";
 	    N = S^1/ideal"x";
 	    M = R^1/R_0;
-	    C = complex res M;
+	    C = freeResolution M;
 	    C' = C ** S;
-	    D = complex res(N,LengthLimit => 10);
+	    D = freeResolution(N,LengthLimit => 10);
 	    E0 = C' ** (filteredComplex D);
 	    E = prune spectralSequence E0;
 	    netPage(E_2,{-5,0},{7,1})
@@ -3264,7 +3264,7 @@ doc ///
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complex complete res monomialCurveIdeal(B,{1,3,4});
+	       C = freeResolution monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	       
 	  Text
@@ -3305,7 +3305,7 @@ doc ///
 	  Example 
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complex complete res monomialCurveIdeal(B,{1,3,4});
+	       C = freeResolution monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	  Text
 	       We compute a map on the third page of the spectral sequence associated to $K$.
@@ -3339,7 +3339,7 @@ doc ///
 	  Example 
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complex complete res monomialCurveIdeal(B,{1,3,4});
+	       C = freeResolution monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	  Text
 	       We compute a map on the third page of the spectral sequence associated to $K$.
@@ -3373,7 +3373,7 @@ doc ///
 	  Example     
 	       B = QQ[a..d];
 	       J = ideal vars B;
-	       C = complex complete res monomialCurveIdeal(B,{1,3,4});
+	       C = freeResolution monomialCurveIdeal(B,{1,3,4});
 	       K = filteredComplex(J,C,4);
 	       
 	  Text
@@ -3518,7 +3518,7 @@ doc ///
 	      R = QQ[x];
 	      M = R^1/(x^2);
 	      S = R/(x^4);
-     	      C = complex res M
+	      C = freeResolution M
 	      f = map(S,R,{1});
 	      tensor(f,C)            
      SeeAlso
@@ -3933,7 +3933,7 @@ doc ///
 
 doc ///
      Key
-     	  (filteredComplex, Ideal, Complex, ZZ)
+       (filteredComplex, Ideal, Complex, ZZ)
      Headline
      	  I-adic filtrations of chain complexes
      Usage 
@@ -3950,7 +3950,7 @@ doc ///
 	 Example     
 	      B = QQ[a..d]
 	      J = ideal vars B
-	      C = complex complete res monomialCurveIdeal(B,{1,3,4})
+	      C = freeResolution monomialCurveIdeal(B,{1,3,4})
 	      K = filteredComplex(J,C,4)
 	 Text
 	      Here are higher some pages of the associated spectral sequence:
@@ -4193,7 +4193,7 @@ assert(all(keys support e^12, j -> isIsomorphism homologyIsomorphism(e,j#0,j#1,1
 TEST ///
 B = QQ[a..d];
 J = ideal vars B;
-C = complex res monomialCurveIdeal(B,{1,3,4});
+C = freeResolution monomialCurveIdeal(B,{1,3,4});
 K = filteredComplex(J,C,4);
 e = prune spectralSequence K;
 assert(all(keys support e^0, j -> isIsomorphism homologyIsomorphism(e,j#0,j#1,0)))
