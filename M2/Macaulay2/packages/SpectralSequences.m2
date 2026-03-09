@@ -2830,34 +2830,32 @@ doc ///
 	       hilbertPolynomial(E^3)
 ///
 
---- This is still using chainComplex - do we want this?
---- Let's remove it for now (as it seems to be causing a conflict with complexes
---doc ///
---     Key
---  	  (chainComplex, FilteredComplex)
---     Headline
---     	  the ambient chain complex of a filtered complex
---     Usage
---     	  C = chainComplex K
---     Inputs
---     	  K:FilteredComplex
---     Outputs
---     	  C:Complex
---     Description
---     	  Text 
---	       Returns the ambient chain complex of the filtered complex.
---	  Example
---	      A = QQ[x,y];
---	      C = koszulComplex vars A
---	      K = filteredComplex C;
---	      chainComplex K
---	      K_infinity     
---    SeeAlso
---    	(symbol _, FilteredComplex, ZZ)
---	(symbol _, FilteredComplex, InfiniteNumber)
---	(symbol ^, FilteredComplex, ZZ)
---	(symbol ^, FilteredComplex, InfiniteNumber)	       	       	       	       
---///
+doc ///
+    Key
+ 	  (complex, FilteredComplex)
+    Headline
+    	  the ambient chain complex of a filtered complex
+    Usage
+    	  C = complex K
+    Inputs
+    	  K:FilteredComplex
+    Outputs
+    	  C:Complex
+    Description
+    	  Text
+	       Returns the ambient chain complex of the filtered complex.
+	  Example
+	      A = QQ[x,y];
+	      C = koszulComplex vars A
+	      K = filteredComplex C;
+	      complex K
+	      K_infinity
+   SeeAlso
+   	(symbol _, FilteredComplex, ZZ)
+	(symbol _, FilteredComplex, InfiniteNumber)
+	(symbol ^, FilteredComplex, ZZ)
+	(symbol ^, FilteredComplex, InfiniteNumber)
+///
 
 
 doc ///
@@ -2993,30 +2991,27 @@ doc ///
      	 "Filtrations and tensor product complexes"	       
 ///
     
---- also this still uses chainComplex and causes a conflict it seems with Complexes
---- so we can remove it for now since we can simply use (E.filteredComplex)_(infinity)
---- to access the same information
---doc ///
---     Key
---     	   (chainComplex, SpectralSequence)
---     Headline
---     	  the underlying chain complex of a Spectral Sequence
---     Usage
---     	  K = chainComplex E
---     Inputs
---     	  E:SpectralSequence
---     Outputs
---     	  K:Complex
---     Description
---     	  Text 
---	       Returns the underlying chain complex of a spectral sequence.
---	  Example
---	      A = QQ[x,y];
---	      C = koszulComplex vars A
---	      K = filteredComplex C;
---	      E = spectralSequence K
---	      chainComplex E
---///
+doc ///
+    Key
+    	   (complex, SpectralSequence)
+    Headline
+    	  the underlying chain complex of a Spectral Sequence
+    Usage
+    	  K = complex E
+    Inputs
+    	  E:SpectralSequence
+    Outputs
+    	  K:Complex
+    Description
+    	  Text
+	       Returns the underlying chain complex of a spectral sequence.
+	  Example
+	      A = QQ[x,y];
+	      C = koszulComplex vars A
+	      K = filteredComplex C;
+	      E = spectralSequence K
+	      complex E
+///
 
 doc ///
      Key
@@ -4055,6 +4050,9 @@ doc ///
 	    spectral sequence by:
 	  Example     
     	    C = filteredComplex E 	    
+    SeeAlso
+        (symbol _, FilteredComplex, InfiniteNumber)
+	(symbol ^, FilteredComplex, InfiniteNumber)
 ///
 
 TEST ///
