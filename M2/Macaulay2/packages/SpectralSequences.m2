@@ -194,10 +194,10 @@ filteredComplex(List) := FilteredComplex => opts -> L -> (
     C = complex  L#0; -- By default the ambient simplicial complex is the first element of the list
     maps = apply(#L-1, p -> map(C, complex L#(p+1), 
 	    i -> sub(contract(transpose matrix{faces(i,L#0)}, matrix{faces(i,L#(p+1))}), kk))))
-    else (C = naiveTruncation(complex  L#0,1,infinity); -- By default the ambient simplicial complex is the first element of the list
+    else (C = naiveTruncation(complex  L#0,0,infinity); -- By default the ambient simplicial complex is the first element of the list
 --- the ``patch method" -- truncate a chain complex at a given homological degree 
 ---- truncate(ChainComplex,ZZ) is now replaced by naiveTruncation(Complex,ZZ,ZZ)
-   maps = apply(#L-1, p -> map(C, naiveTruncation(complex  L#(p+1),1,infinity), 
+   maps = apply(#L-1, p -> map(C, naiveTruncation(complex  L#(p+1),0,infinity), 
         i -> sub(contract(transpose matrix{faces(i,L#0)}, matrix{faces(i,L#(p+1))}), kk))));   
  )
   else (
@@ -1843,7 +1843,7 @@ doc ///
 	  Text
 	     We can check that the homology of the simplicial complex twoSphere agrees with that of $\mathbb{S}^2$.
 	  Example
-	      C = naiveTruncation(complex twoSphere,1,infinity)	
+	      C = naiveTruncation(complex twoSphere,0,infinity)	
 	      prune HH C
 	  Text
 	      We now write down our simplicial complex whose topological realization 
@@ -1855,7 +1855,7 @@ doc ///
 	      Again we can check that we've entered a simplicial complex
        	      whose homology agrees with that of the real projective plane.
 	  Example
-	      B = naiveTruncation(complex realProjectivePlane, 1,infinity)	 
+	      B = naiveTruncation(complex realProjectivePlane, 0,infinity)	 
 	      prune HH B
     	  Text
 	      We now compute the fibers of the anti-podal quotient map
@@ -1910,7 +1910,7 @@ doc///
 	      We can check that the homology of this simplicial complex agrees with that
 	      of the Klein Bottle:
 	 Example     
-	      C = naiveTruncation(complex Delta,1, infinity)
+	      C = naiveTruncation(complex Delta,0, infinity)
 	      prune HH C
     	 Text
 	      Let $S$ be the simplicial complex with facets $\{A_0 A_1, A_0 A_2, A_1 A_2\}$.  Then $S$ is a triangulation of $S^1$.  The simplicial map
@@ -1961,7 +1961,7 @@ doc ///
 	      $\Delta$ agrees with that of the torus
 	      $\mathbb{S}^1 \times \mathbb{S}^1 $
 	 Example          
-	      C = naiveTruncation(complex Delta,1, infinity)
+	      C = naiveTruncation(complex Delta,0, infinity)
 	      prune HH C
 	 Text
 	      Let $S$ be the simplicial complex with facets $\{A_0 A_1, A_0 A_2, A_1 A_2\}$.  Then $S$ is a triangulation of $S^1$.  The simplicial map
@@ -2049,7 +2049,7 @@ doc ///
        	       2'. A collection of homomorphisms $\{d_r^{p,q}: E_r^{p,q} \rightarrow E_{r}^{p+r,q-r+1}\}$ for $p,q \in \mathbb{Z}, r \geq 0$ such that
 	       $d_r^{p,q} d_r^{p-r,q+r-1} = 0$ ; 	       
 	       
-	       3'. A collection of isomorphisms $E_{r+1}^{p,q}  $\rightarrow$ ker d_r^{p,q} / image d_r^{p-r,q+r-1}$.	       
+	       3'. A collection of isomorphisms $E_{r+1}^{p,q}  \rightarrow ker d_r^{p,q} / image d_r^{p-r,q+r-1}$.	       
 	       
 	       The type {\tt SpectralSequence} is a data type for working with spectral sequences. 
 	       In this package, a spectral sequence is represented by a sequence of spectral sequence pages.
@@ -2680,7 +2680,7 @@ doc ///
 	      	    A = QQ[x,y];
 		    C = koszulComplex vars A
 		    support C
-		    D = naiveTruncation(C,1, infinity)
+		    D = naiveTruncation(C,0, infinity)
 		    spots D
 		    support D
     	  SeeAlso
