@@ -129,7 +129,7 @@ virtualOfPair(Module, List) := Complex => opts -> (M, alphas) -> (
     complex L)
 virtualOfPair(Complex, List) := Complex => opts -> (F, alphas) -> (
     if any(alphas, alpha -> #alpha =!= degreeLength ring F) then error "degree has wrong length";
-    L := complex toList apply(min F .. max F - 1, i -> submatrixWinnow(F.dd_(i+1), alphas));
+    L := complex toList apply(min F .. max F, i -> submatrixWinnow(F.dd_(i+1), alphas));
     -- winnowingMap is the map M --> HH_0 F
     M := HH_0 F;
     N := HH_0 L;
