@@ -433,13 +433,14 @@ Node
 doc ///
 Node
   Key
-   (isSmooth, Variety)
+   (isSmooth, AffineVariety)
+   (isSmooth, ProjectiveVariety)
   Headline
     whether a variety is smooth
   Usage
     isSmooth X
   Inputs
-    X:Variety
+    X:{AffineVariety,ProjectiveVariety}
   Outputs
     :Boolean
   Description

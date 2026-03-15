@@ -506,7 +506,7 @@ Node
       matrix table(toList(0..2), toList(0..2), (p,q) -> hh^(p,q)(X))
       euler X
   SeeAlso
-    (cotangentSheaf, ZZ, ProjectiveVariety)
+    (cotangentSheaf, ZZ, Variety)
     (cohomology, ZZ, CoherentSheaf)
     (euler, ProjectiveVariety)
 
