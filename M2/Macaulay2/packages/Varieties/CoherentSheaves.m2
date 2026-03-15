@@ -628,7 +628,7 @@ cotangentSheaf AffineVariety := opts -> (cacheValue (symbol cotangentSheaf => op
 	M0 := R^n;
 	e := jacobian F ** R; -- Thus e: R^r -> R^n sends the jth basis element (corresponding to the jth relation
 	-- of f_1,...,f_r) to df_j = sum_{i=1}^n df_j/dx_i dx_i.
-	om := sheaf cokernel e;
+	om := sheaf(X, cokernel e);
 	-- The module om represents the cotangent sheaf of X. By default, we simplify its description, as follows,
 	-- although there is not a precise notion of minimal presentations in this ungraded situation.
 	if opts.MinimalGenerators then minimalPresentation om else om))
@@ -641,30 +641,32 @@ cotangentSheaf(ZZ, Variety) := opts -> (i, X) -> (
     prune' exteriorPower(i, cotangentSheaf(X, opts), Strategy => opts.Strategy))
 
 tangentSheaf = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
-tangentSheaf Variety := opts -> X -> dual cotangentSheaf(X, opts)
+tangentSheaf Variety := opts -> X -> (
+    prune' := if opts.MinimalGenerators then minimalPresentation else identity;
+    sheaf_X prune' module dual cotangentSheaf(X, opts))
 
 idealSheaf = method(TypicalValue => CoherentSheaf)
 idealSheaf Variety := X -> sheaf ideal (ring X).relations
 
 -- TODO: should this be canonicalSheaf?
--- TODO: should module be pruned or sheaf?
 canonicalBundle = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
 canonicalBundle Variety := opts -> X -> (
-    sheaf prune module dual dual determinant(cotangentSheaf(X, opts), Strategy => opts.Strategy))
+    prune' := if opts.MinimalGenerators then minimalPresentation else identity;
+    sheaf_X prune' module dual dual determinant(cotangentSheaf(X, opts), Strategy => opts.Strategy))
 
 -- This function computes the sheaf of reflexive differentials of a given closed substack X of a weighted projective space.
 -- At least when X is normal and well-formed (not necessarily quasi-smooth), its direct image sheaf
 -- on the coarse moduli space Y of X is the sheaf of reflexive differentials on Y.
 reflexiveDifferentials = method(TypicalValue => CoherentSheaf,
     Options => options exteriorPower ++ { MinimalGenerators => true })
-reflexiveDifferentials Variety := opts -> (cacheValue (symbol reflexiveDifferentials => opts)) (X -> (
-	sheaf prune module dual dual cotangentSheaf(X, opts)))
+reflexiveDifferentials Variety := opts -> X -> reflexiveDifferentials(1, X, opts)
 
 -- This function computes the sheaf of reflexive i-forms (for i>=0) on a given closed substack X of a weighted projective space.
 -- At least when X is normal and well-formed (not necessarily quasi-smooth), its direct image sheaf
 -- on the coarse moduli space Y of X is the sheaf of reflexive i-forms on Y.
 reflexiveDifferentials(ZZ, Variety) := opts -> (i, X) -> (
-    sheaf prune module dual dual exteriorPower(i, cotangentSheaf(X, opts), Strategy => opts.Strategy))
+    prune' := if opts.MinimalGenerators then minimalPresentation else identity;
+    sheaf_X prune' module dual dual exteriorPower(i, cotangentSheaf(X, opts), Strategy => opts.Strategy))
 
 -----------------------------------------------------------------------------
 -- isLocallyFree
