@@ -154,6 +154,19 @@ minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opt
 	    G)))
 
 -----------------------------------------------------------------------------
+-- Projective bundles
+-----------------------------------------------------------------------------
+-- TODO: add isVectorSpace, then given a vector space V with basis elements
+-- V_1 .. V_n support defining PP(V) = Proj Sym V = Proj kk[V_1..V_n].
+
+-- TODO: is this correct?
+symmetricAlgebra CoherentSheaf := Ring => opts -> F -> symmetricAlgebra(HH^0 F(>=0), opts)
+-- TODO: is the dual right?
+-- TODO: add isLocallyFree and make sure F is locally free first?
+ProjectiveSpace(CoherentSheaf) := ProjectiveVariety => F -> tryHooks((ProjectiveSpace, CoherentSheaf), F,
+    F -> Proj flattenRing(symmetricAlgebra dual F, Result => Thing))
+
+-----------------------------------------------------------------------------
 -- Sheaf Hom and Ext
 -----------------------------------------------------------------------------
 
