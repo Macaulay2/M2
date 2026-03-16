@@ -52,9 +52,9 @@ reverseFactors(Complex, Complex) := (F,G) ->(
     Ln := symbol Ln;
     phi := for n from min sour to max sour list (
 	Ln = for i from max(min G,n-max F) to min(max G,n-min F) list (
-    	(tar_n)_[(i,n-i)]*reverseFactors(F_(n-i),G_i,n-i,i)*(sour_n)^[(n-i,i)]); 
+    	(tar_n)_[{i,n-i}]*reverseFactors(F_(n-i),G_i,n-i,i)*(sour_n)^[{n-i,i}]); 
     	sum Ln);
-map(tar,sour,n->phi_(n-min sour))
+    map(tar,sour,n->phi_(n-min sour))
     )
 
 sym2 = method()
