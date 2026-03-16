@@ -96,6 +96,7 @@ prune dual canonicalBundle X === OO_X(3)
 -- vector bundle on a curve, e.g. to create Hirzebruch surfaces
 restart
 debug Core
+PP = ProjectiveSpace
 kk = QQ
 C = PP_kk^1 -- a curve
 S = ring C
@@ -109,6 +110,11 @@ PP_QQ^2
 PP_QQ^{1,2}
 PP_QQ(1,2,3)
 PP sheaf_C S^{0,-3}
+
+-- TODO: should these error?
+PP 4
+PP{1,2,3}
+PP^(1,2,3)
 
 -- TODO: speed this up
 -- https://groups.google.com/g/macaulay2/c/q64H_WLg5Uc/m/D_IRGdL2xCQJ

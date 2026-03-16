@@ -102,6 +102,37 @@ document {
     ///
     }
 
+doc ///
+Node
+  Key
+    ProjectiveSpace
+    ProjectiveStack
+  Headline
+    construct a projective space or weighted projective stack
+  Usage
+    ProjectiveSpace^n
+    ProjectiveStack(a,b,c)
+    ProjectiveSpace_kk^n
+    ProjectiveStack_kk(a,b,c)
+  Inputs
+    n:ZZ
+    "(a,b,c)":Sequence
+    kk:Ring
+  Outputs
+    :ProjectiveVariety
+      projective space or weighted projective stack over the ring @TT "kk"@
+  Description
+    Example
+      PP = ProjectiveSpace
+      PP^2
+      PP_(ZZ/101)^1
+      PP(1,1,2)
+      PP_(ZZ/101)(1,1,2)
+  SeeAlso
+    "NormalToricVarieties :: toricProjectiveSpace"
+    "NormalToricVarieties :: weightedProjectiveSpace"
+///
+
 -- document { Key => variety, Headline => "get the variety" }
 -- for (variety, CoherentSheaf), etc. see doc-sheaves.m2
 document {

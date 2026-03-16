@@ -55,10 +55,13 @@ export {
     "SheafOfRings",
     "SumOfTwists",
     "LowerBound",
-    -- Methods
-    "variety",
+    -- Constructors
     "Proj",
     "Spec",
+    "ProjectiveSpace",
+    "ProjectiveStack",
+    -- Methods
+    "variety",
     "sheaf",
     "sheafExt",
     "sheafHom",
@@ -79,6 +82,7 @@ export {
     }
 
 importFrom_Core {
+    "nonnull", "listZZ",
     "getAttribute", "hasAttribute", "ReverseDictionary",
     "applyMethod", "applyMethod''", "functorArgs",
     "toString'", "expressionValue", "unhold", -- TODO: prune these
@@ -135,15 +139,51 @@ Proj Ring := (stashValue symbol Proj) (R ->
 	}
     )
 
--- TODO: PP(1,2,3) for weighted Proj and PP(V) for vector space V and PP(E) for bundle E?
---PP = new ScriptedFunctor from {
---     superscript => (
---	  i -> R -> (
---	       x := symbol x;
---	       Proj (R[ x_0 .. x_i ])
---	       )
---	  )
---     }
+-- Note: users may define synonym PP
+ProjectiveSpace = new ScriptedFunctor from {
+    subscript => K -> new ScriptedFunctor from {
+	-- PP_kk^2
+	superscript => X -> applyMethod''(ProjectiveSpace, functorArgs(K, 1:X)),
+	-- PP_kk(1,2,3)
+	argument    => X -> applyMethod''(ProjectiveSpace, functorArgs(K, 1:X)),
+	},
+    -- PP^2     --> Proj QQ[a,b]
+    -- PP^{1,2} --> PP^1 ** PP^1
+    superscript => X -> applyMethod''(ProjectiveSpace, 1:X),
+    -- PP(1,2,3) --> weighted projective stack shortcut
+    -- PP E      --> projective bundle Proj E
+    argument    => X -> applyMethod''(ProjectiveSpace, 1:X)
+    }
+typicalValues#ProjectiveSpace = ProjectiveVariety
+
+-- ProjectiveSpace_kk(n) defines projective space PP^n over a given base ring k (typically a field).
+-- TODO: add options for variable names, other monoid options?
+-- TODO: see base change issue https://github.com/Macaulay2/M2/issues/2351
+ProjectiveSpace ZZ        := ProjectiveVariety =>      n  -> Proj(QQ[vars(0..n#0)])
+ProjectiveSpace(Ring, ZZ) := ProjectiveVariety => (kk, n) -> Proj(kk[vars(0..n)])
+-- TODO:
+--ProjectiveSpace List        := ProjectiveVariety =>      nn  -> cartesianProduct apply(nn, n -> ProjectiveSpace^n)
+--ProjectiveSpace(Ring, List) := ProjectiveVariety => (kk, nn) -> cartesianProduct apply(nn, n -> ProjectiveSpace_kk^n)
+-- these two are defined only for convenience of allowing a PP synonym
+ProjectiveSpace       Sequence  :=
+ProjectiveSpace(Ring, Sequence) := ProjectiveVariety => args -> ProjectiveStack(args)
+-- Finally, ProjectiveSpace(CoherentSheaf) is defined in Functors.m2
+
+ProjectiveStack = new ScriptedFunctor from {
+    subscript => K -> new ScriptedFunctor from {
+	-- PP_kk(1,2,3)
+	argument => X -> applyMethod''(ProjectiveStack, functorArgs(K, 1:X)),
+	},
+    -- PP(1,2,3) --> weighted projective stack shortcut
+    argument => X -> applyMethod''(ProjectiveStack, X)
+    }
+typicalValues#ProjectiveStack = ProjectiveVariety
+
+-- ProjectiveStack_kk(a,b,c) defines the weighted projective space PP(a,b,c) over a given base ring kk (typically a field).
+-- TODO: add options for variable names, other monoid options?
+ProjectiveStack       Sequence  := ProjectiveVariety =>      w  -> Proj(QQ[vars(0..#w#0-1), Degrees => listZZ w#0])
+-- TODO: see base change issue https://github.com/Macaulay2/M2/issues/2351
+ProjectiveStack(Ring, Sequence) := ProjectiveVariety => (kk, w) -> Proj(kk[vars(0..#w-1), Degrees => listZZ w])
 
 -- this is a kludge to make Spec ZZ/101[x,y]/(y^2-x^3) and Proj ZZ/101[x,y]/(x^2-y^2) work as expected
 -- TODO: also make Spec kk{x,y} or Spec kk<|x,y|> work when they are supported
@@ -231,6 +271,7 @@ toExternalString Variety := toString @@ describe
 -- used to be in m2/mathml.m2
 mathML Variety := lookup(mathML, Thing)
 
+-- TODO: if the ring is not standard graded, it should be displayed (e.g. show the degrees)
 describe     AffineVariety := X -> Describe (expression Spec) (expression X.ring)
 describe ProjectiveVariety := X -> Describe (expression Proj) (expression X.ring)
 
