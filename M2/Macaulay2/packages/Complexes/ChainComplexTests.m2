@@ -1158,7 +1158,6 @@ TEST ///
   C = freeResolution(I, Strategy => Nonminimal)
   ---- elapsedTime minimize C  -- very slow, TODO: fix this
 -*
-  needsPackage "PruneComplex"  
   needsPackage "ChainComplexExtras"
   C' = chainComplex freeResolution(I, Strategy => Nonminimal)
   elapsedTime pruneComplex(C', UnitTest=>isScalar) -- 17.7 sec on my MBP

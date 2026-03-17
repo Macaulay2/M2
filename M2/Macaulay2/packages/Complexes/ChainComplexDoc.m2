@@ -3480,7 +3480,6 @@ doc ///
 
 /// -- comment about minimize and pruneComplex:
   -- this code can be run for the example ini (minimize,Complex).
-  needsPackage "PruneComplex"
   C' = chainComplex C
   D' = pruneComplex(C', UnitTest => isScalar)
   g' = D'.cache.pruningMap

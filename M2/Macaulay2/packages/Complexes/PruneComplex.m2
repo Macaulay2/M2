@@ -10,61 +10,10 @@
 --        pruneComplex may not treat degrees of free modules correctly when working
 --        on a free chain complex rather than a free resolution.
 ---------------------------------------------------------------------------
-newPackage(
-    "PruneComplex",
-    Version => "1.0",
-    Date => "January 14th, 2017",
-    Authors => {
-        {Name => "Mahrud Sayrafi", Email => "mahrud@berkeley.edu",   HomePage => "http://ocf.berkeley.edu/~mahrud/"},
-        {Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"}
-        },
-    Headline => "pruning chain complexes over polynomial and local rings",
-    Keywords => {"Commutative Algebra", "Homological Algebra"},
-    PackageExports => {"Complexes"},
-    AuxiliaryFiles => true
-    )
-
-importFrom_Core {
-    "LocalRing",
-    "raw",
-    "rawDeleteColumns",
-    "rawDeleteRows",
-    "rawMutableComplex",
-    "rawPruneBetti",
-    "rawPruneComplex",
-    "rawPruningMorphism",
-    }
-
-export {
-    "toMutableComplex",
-    "toChainComplex",
-    "pruneComplex",
-    "pruneUnit",
-    "pruneDiff",
-    "isScalar",
---    "findUnit",
---    "findAllUnits",
---    "findSparseUnit",
---    "isQuasiIsomorphism", -- see ChainComplexExtras.m2
---    "isCommutative",
---    "isAcyclic",
---    "isMinimal",
---    "freeRes",
---    "testM2",
---    "testEngine",
---  Options:
-    "Direction", "PruningMap", "UnitTest"
-    }
-
--- << "--------------------------------------------------------------------------------------" << endl;
--- << "-- The PruneComplex package is experimental.                                        --" << endl;
--- << "-- See the documentation and comments in the package to learn more.                 --" << endl;
--- << "--------------------------------------------------------------------------------------" << endl;
 
 --=================================== Chain Complex Operations ===================================--
--- TODO see if the new Chain Complexes package can be incorporated
 
--- converts a ChainComplex into a list of mutable matrices
+-- converts a Complex into a list of mutable matrices
 -- TODO: take an option to make sparse mutable matrices here
 toMutableComplex = method()
 toMutableComplex Complex := C -> for i from min C to max C list mutableMatrix C.dd_(i+1)
@@ -409,17 +358,22 @@ enginePruneComplex(List, ZZ) := opts -> (C, nsteps) -> (
 --     if all((min C,min(max C, opts.LengthLimit)), i -> (prune HH_i(C) == 0)) then true else false
 --     )
 -- Checks that C is a resolution of N
-isQuasiIsomorphism(Complex, Ideal)  := Boolean => opts -> (C, I) -> isQuasiIsomorphism(C, coker gens I)
-isQuasiIsomorphism(Complex, Module) := Boolean => opts -> (C, N) -> (
+
+isQuasiIsomorphismOf = method(Options => options isQuasiIsomorphism)
+isQuasiIsomorphismOf(Complex, Ideal)  := Boolean => opts -> (C, I) -> isQuasiIsomorphismOf(C, coker gens I)
+isQuasiIsomorphismOf(Complex, Module) := Boolean => opts -> (C, N) -> (
     R := ring N;
     D := complex N;
     if C == 0 then return D == 0;
     M := {map(D_0, C_0, 1)} | for i from 1 to max(length C, length D) list map(D_i, C_i, 0);
-    isQuasiIsomorphism(map(D, C, i -> M#i), opts)
+    isQuasiIsomorphismOf(map(D, C, i -> M#i), opts)
     )
 
+-*
 -- Checks that C is an acyclic chain complex
 isAcyclic = C -> isQuasiIsomorphism(C, 0)
+*-
+
 
 -- Checks whether there are any more units are left in the complex
 -- Note: this only implies that the resolution is minimal in the local and graded case
@@ -430,6 +384,7 @@ isMinimal Complex  := Boolean => opts -> C -> (
     if any(length C + 1, i -> not isMinimal(matrix (C.dd_i), opts)) then false else true
     )
 
+-*
 -- Checks commutativity of chain complexes C and D with chain complex map M
 isCommutative ComplexMap := Boolean => f -> (
     D := source f;
@@ -439,9 +394,47 @@ isCommutative ComplexMap := Boolean => f -> (
         return false;
     true
     )
+*-
 
-load ("./PruneComplex/tests.m2")
-beginDocumentation()
-load ("./PruneComplex/doc.m2")
+--============================ Tests Code ===================================--
+-- These two rutines are not exported.  So tests must `debug needsPackage "Complexes"`.
+
+-- Returns a non-minimal free resolution, for testing purposes.
+-- Homogenizes the ideal w.r.t. a new variable, calculates a free resolution
+-- using res with option Strategy => Nonminimal, then dehomogenizes
+-- Warning: only works for finite fields
+freeRes = I -> (
+    -- Warning: only works for finite fields
+    R := ring I;
+    homogvar := local homogvar;
+    S := (coefficientRing R)(monoid [gens R, homogvar]);
+    Ih := ideal homogenize(sub(gens gb I, S), S_(numgens R));
+    C1 := freeResolution(Ih, Strategy => Nonminimal);
+    phi := map(R,S,gens R | {1});
+    phi C1
+    )
+
+-- Runs various sanity checks
+testSuit = (I, P, strategy) -> (
+    R := ring I;
+    if not instance(R, LocalRing) then (
+        C := freeRes I;
+        assert(C.dd^2 == 0);
+        time D := pruneComplex(C, Strategy => strategy, Direction => "left", PruningMap => true);
+        assert(D.dd^2 == 0);
+        if isHomogeneous I then assert(betti D == betti freeResolution I);
+        assert(isCommutative D.cache.pruningMap);
+        assert(isQuasiIsomorphismOf(D, I));
+        E := D ** R_P;
+        ) else E = freeResolution I;
+    RP := ring E;
+    assert(E.dd^2 == 0);
+    time F := pruneComplex(E, Strategy => strategy, Direction => "left", PruningMap => true);
+    return (
+        F.dd^2 == 0 and isMinimal F and
+        isCommutative F.cache.pruningMap and
+        isQuasiIsomorphismOf(F, ideal(gens I ** RP)))
+    )
+
 
 end--

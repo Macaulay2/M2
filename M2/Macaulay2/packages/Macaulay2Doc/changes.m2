@@ -1346,7 +1346,7 @@ document {
 	       	    LI { TO "Matroids::Matroids", ", a package by Justin Chen for computations with matroids, has been added." },
 		    LI { TO "NonminimalComplexes::NonminimalComplexes", ", a package by Frank Schreyer and Mike Stillman for obtaining the non-minimal strands of a non-minimal resolution of a homogeneous module, has been added." },
 	       	    LI { TO "NumericalImplicitization::NumericalImplicitization", ", a package by Justin Chen and Joe Kileel for computing invariants of images of polynomial maps, has been added." },
-	       	    LI { TO "PruneComplex::PruneComplex", ", a package by Mahrud Sayrafi and Mike Stillman for pruning chain complexes over polynomial and local rings, has been added." },
+	       	    LI { "PruneComplex::PruneComplex", ", a package by Mahrud Sayrafi and Mike Stillman for pruning chain complexes over polynomial and local rings, has been added." },
 	       	    LI { TO "RandomMonomialIdeals::RandomMonomialIdeals", ", a package by Despina Stasi, Dane Wilburne, Tanner Zielinski, Daniel Kosmas, Parker Joncus, Richard Osborn, Monica Yun, and Genevieve Hummel for generating Erdos-Renyi-type random monomial ideals, has been added." },
 	       	    LI { TO "ReflexivePolytopesDB::ReflexivePolytopesDB", ", a package by Mike Stillman for simple access to Kreuzer-Skarke database of reflexive polytopes of dimensions 3 and 4, has been added." },
 	       	    LI { TO "SymbolicPowers::SymbolicPowers", ", a package by Eloisa Grifo for calculations involving symbolic powers, has been added." },

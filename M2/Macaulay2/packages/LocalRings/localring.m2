@@ -17,7 +17,7 @@
 --
 -- NOTE : Elementary operations in a local ring are defined in e/localring.hpp and handled here.
 --        Most operations (syz, res, mingens, etc.) are in packages/LocalRings.m2 and rely heavily
---        on liftUp in packages/LocalRings.m2 and on pruneComplex from packages/PruneComplex.m2
+--        on liftUp in packages/LocalRings.m2 and on pruneComplex from packages/Complexes.
 --        Legacy code from 2008 is stored in packages/LocalRings/legacy.m2 and is still loaded.
 ---------------------------------------------------------------------------
 

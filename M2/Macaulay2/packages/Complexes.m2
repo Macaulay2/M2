@@ -72,16 +72,37 @@ export {
     "OverZZ",
     "Homogenization",
     "Nonminimal",
+    "NonminimalWithGB",
     "Concentration",
     "Cycle",
     "Boundary",
     "InternalDegree",
-    "UseTarget"
+    "UseTarget",
+
+    -- From pruneComplex code
+    "toMutableComplex",
+    "toChainComplex",
+    "pruneComplex",
+    "pruneUnit",
+    "pruneDiff",
+    "isScalar",
+    "Direction", "PruningMap", "UnitTest"
     }
 
 importFrom_Core {
     "isPackageLoaded",
-}
+
+    -- Used in pruneComplex code
+    "LocalRing",
+    "raw",
+    "rawDeleteColumns",
+    "rawDeleteRows",
+    "rawMutableComplex",
+    "rawPruneBetti",
+    "rawPruneComplex",
+    "rawPruningMorphism",
+    }
+
 
 -- keys into the type `Complex`
 protect modules
@@ -127,6 +148,7 @@ load "./Complexes/FreeResolutions.m2"
 load "./Complexes/ChainComplexMap.m2"
 load "./Complexes/Tor.m2"
 load "./Complexes/Ext.m2"
+load "./Complexes/PruneComplex.m2"
 
 --------------------------------------------------------------------
 -- interface code to legacy types ----------------------------------
@@ -151,6 +173,7 @@ undocumented{
 
 load "./Complexes/ChainComplexDoc.m2"
 load "./Complexes/ChainComplexMapDoc.m2"
+load "./Complexes/PruneComplexDoc.m2"
 
 --------------------------------------------------------------------
 -- documentation for legacy type conversion ------------------------
@@ -163,7 +186,7 @@ if isPackageLoaded "OldChainComplexes" then
 --------------------------------------------------------------------
 load "./Complexes/ChainComplexTests.m2"
 load "./Complexes/FreeResolutionTests.m2"
-
+load "./Complexes/PruneComplexTests.m2"
 end------------------------------------------------------------
 
 restart

@@ -1,7 +1,7 @@
 --============================ Tests Sections ===================================--
 
 TEST /// -- test for localRing, res, **, ==
-  debug needsPackage "PruneComplex"
+  debug needsPackage "Complexes"
   R = ZZ/32003[vars(0..3)]
   I = monomialCurveIdeal(R, {1, 3, 4})
   CI = freeResolution I
