@@ -56,7 +56,7 @@ freeResolution Module := Complex => opts -> M -> (
     -- This handles caching, hooks for different methods of computing 
     -- resolutions or over different rings which require different algorithms.
     --
-    -- Nonminimal: true if the computation is constructed using the Nonminimal strategy.
+    -- Nonminimal: true if the computation is constructed using the Nonminimal or NonminimalWithGB strategies
     -- LengthLimit prescribes the length of the computed complex.
     -- DegreeLimit is a lower limit on what will be computed degree-wise, but more might be computed.
     R := ring M;
@@ -72,7 +72,7 @@ freeResolution Module := Complex => opts -> M -> (
         C = M.cache.Resolution;
         if not C.cache.?LengthLimit or not C.cache.?DegreeLimit then
             error "internal error: Resolution should have both a LengthLimit and DegreeLimit";
-        if C.cache.Nonminimal === (opts.Strategy === Nonminimal) and
+        if C.cache.Nonminimal === (opts.Strategy === Nonminimal or opts.Strategy === NonminimalWithGB) and
            C.cache.LengthLimit >= opts.LengthLimit and 
            C.cache.DegreeLimit >= opts.DegreeLimit then (
                C' := naiveTruncation(C, -infinity, opts.LengthLimit);
@@ -85,14 +85,14 @@ freeResolution Module := Complex => opts -> M -> (
         );
     if M.cache.?ResolutionObject then (
         RO := M.cache.ResolutionObject;
-        if (opts.Strategy === null and RO.Strategy =!= 4) or --4 is the magic number for Nonminimal.  In this case, we need to recompute the resolution.
+        if (opts.Strategy === null and (RO.Strategy =!= 4 and RO.Strategy =!= 5)) or --4 is the magic number for Nonminimal.  5 for NonminimalGB. In these cases, we need to recompute the resolution.
             opts.Strategy === RO.Strategy
         then (
             if RO.isComputable(opts.LengthLimit, opts.DegreeLimit) -- this is informational: does not change RO.
             then (
                 RO.compute(opts.LengthLimit, opts.DegreeLimit); -- it is possible to interrupt this and then the following lines do not happen.
                 C = RO.complex(opts.LengthLimit);
-                C.cache.Nonminimal = (RO.Strategy === 4); -- magic number: this means Nonminimal to the engine...
+                C.cache.Nonminimal = (RO.Strategy === 4 or  RO.Strategy === 5); -- magic number: this means Nonminimal, or NonminimalWithGB to the engine...
                 C.cache.LengthLimit = if max C < opts.LengthLimit then infinity else opts.LengthLimit;
                 C.cache.DegreeLimit = opts.DegreeLimit;
                 C.cache.Module = M;
@@ -117,7 +117,7 @@ freeResolution Module := Complex => opts -> M -> (
     
     if C =!= null then (
         assert(instance(C, Complex));
-        C.cache.Nonminimal = (RO.Strategy === 4); -- magic number: this means Nonminimal to the engine...
+        C.cache.Nonminimal = (RO.Strategy === 4 or RO.Strategy === 5); -- magic number: this means Nonminimal, NonminimalWithGB to the engine...
         C.cache.LengthLimit = if max C < opts.LengthLimit then infinity else opts.LengthLimit;
         C.cache.DegreeLimit = opts.DegreeLimit;
         C.cache.Module = M;
@@ -350,6 +350,35 @@ resolutionInEngine4 = (opts, M) -> (
     resolutionObjectInEngine(opts, M, gbM)
     )
 
+resolutionInEngine5 = (opts, M) -> (
+    -- opts are the options from resolution.  Includes Strategy, LengthLimit, DegreeLimit.
+    -- M is a Module.
+    
+    -- first determine if this method applies.  
+    -- Return null if not, as quickly as possible
+    R := ring M;
+    if not (
+        R.?Engine and
+        heft R =!= null and
+        (isSkewCommutative R or isCommutative R) and (
+            A := ultimate(coefficientRing, R);
+            A =!= R and isField A
+        ))
+    then return null;
+
+    if gbTrace > 0 then
+      << "[Doing freeResolution Strategy => NonminimalGB]" << endl;
+    RO := M.cache.ResolutionObject;  -- this exists already
+    if RO.Strategy === null then RO.Strategy = 5
+    else if RO.Strategy === NonminimalWithGB then RO.Strategy = 5
+    else error "our internal logic is flawed";
+
+    gbM := presentation M;
+    -- TODO: check that gbM is monic and otherwise give an error
+    resolutionObjectInEngine(opts, M, gbM)
+    )
+
+
 resolutionInEngine = (opts, M) -> (
     R := ring M;
     if isQuotientRing R or isSkewCommutative R 
@@ -476,6 +505,7 @@ protect HomogenizedModule
 protect DehomogenizationMap
 protect HomogenizedModuleResolution
 protect Nonminimal
+protect NonminimalWithGB
 
 resolutionByHomogenization = (opts, M) -> (
     R := ring M;
@@ -528,6 +558,7 @@ resolutionByHomogenization = (opts, M) -> (
     RO.complex(opts.LengthLimit)
     )
 
+addHook((freeResolution, Module), resolutionInEngine5, Strategy => NonminimalWithGB)
 addHook((freeResolution, Module), resolutionInEngine4, Strategy => Nonminimal)
 addHook((freeResolution, Module), resolutionBySyzygies, Strategy => Syzygies)
 addHook((freeResolution, Module), resolutionByHomogenization, Strategy => Homogenization)

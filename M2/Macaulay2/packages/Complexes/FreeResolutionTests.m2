@@ -58,6 +58,14 @@ TEST ///
   assert isWellDefined Fn
   assert(prune HH Fn == complex M) -- only guaranteed to be isomorphic?
   assert(B1 =!= betti Fn) -- Fn is non minimal in this example
+
+  -- this is meant to be the GB of the above I.
+  I = ideal matrix {{a*b-c*d, b*c*d-c*d^2, a^3-c^3, a*c*d^2-c^2*d^2, b*c^3-a^2*c*d}}
+  Fn = freeResolution(I, Strategy => NonminimalWithGB)
+  assert isWellDefined Fn
+  assert(prune HH Fn == complex M) -- only guaranteed to be isomorphic?
+  assert(B1 =!= betti Fn) -- Fn is non minimal in this example
+  
 ///
 
 TEST ///
@@ -142,6 +150,13 @@ TEST ///
   C = freeResolution(I, LengthLimit => 3, Strategy => Nonminimal)
   assert isWellDefined C  
   assert(length C == 3)
+
+  I = ideal gens gb ideal I_*
+  C = freeResolution(I, LengthLimit => 4, Strategy => NonminimalWithGB)
+  assert isWellDefined C
+  assert(length C == 4)
+
+  C = freeResolution(I, LengthLimit => 4, Strategy => Nonminimal)
 ///
 
 TEST ///
