@@ -76,15 +76,6 @@ Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/factory/M
 #      #include <wchar.h>
 #    }
 
-.installed-$(VERSION) : $(LIBRARIESDIR)/include/factory/cf_assert.h \
-			$(LIBRARIESDIR)/include/factory/templates/ftmpl_list.cc
-$(LIBRARIESDIR)/include/factory/cf_assert.h : $(BUILDDIR)/cf_assert.h .compiled-$(VERSION) 
-	$(MKDIR_P) $(LIBRARIESDIR)/include/factory
-	@INSTALL_DATA@ $< $@
-$(LIBRARIESDIR)/include/factory/templates/ftmpl_list.cc : $(BUILDDIR)/templates/ftmpl_list.cc .compiled-$(VERSION) 
-	$(MKDIR_P) $(LIBRARIESDIR)/include/factory/templates
-	@INSTALL_DATA@ $< $@
-
 uninstall clean ::
 	if [ -d $(LIBRARIESDIR) ] ;\
 	then cd $(LIBRARIESDIR) && rm -rf \
