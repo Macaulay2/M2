@@ -323,7 +323,8 @@ topcomNumFlips(Matrix, List) := ZZ => opts -> (A, tri) -> (
     inputs := if topcomVersion >= "1.2.0"
         then {topcomPoints(A, Homogenize=>opts.Homogenize), [], [], tri}
         else {topcomPoints(A, Homogenize=>opts.Homogenize), [], tri};
-    (outfile, errfile) := callTopcom(executable | args, inputs);
+    triangseed := if topcomVersion >= "1.2.0" then " --triangseed" else "";
+    (outfile, errfile) := callTopcom(executable | args | triangseed, inputs);
     value get outfile
     )
 
@@ -337,7 +338,8 @@ topcomFlips(Matrix, List) := List => opts -> (A, tri) -> (
     inputs := if topcomVersion >= "1.2.0"
         then {topcomPoints(A, Homogenize=>opts.Homogenize), [], [], tri}
         else {topcomPoints(A, Homogenize=>opts.Homogenize), [], tri};
-    (outfile, errfile) := callTopcom(executable | args, inputs);
+    triangseed := if topcomVersion >= "1.2.0" then " --triangseed" else "";
+    (outfile, errfile) := callTopcom(executable | args | triangseed, inputs);
     s := get outfile;
     s = replace("->0","",s); -- I don't understand why this is in their notation...
     s = replace("[0-9,]*:", "", s);
@@ -380,7 +382,8 @@ topcomIsTriangulation(Matrix, List) := Boolean => opts -> (Vin, T) -> (
    inputs := if topcomVersion >= "1.2.0"
        then {topcomPoints(V, Homogenize=>false), [], [], T}
        else {topcomPoints(V, Homogenize=>false), [], T};
-   (outfile, errfile) := callTopcom("points2nflips --checktriang -v", inputs);
+   triangseed := if topcomVersion >= "1.2.0" then " --triangseed" else "";
+   (outfile, errfile) := callTopcom("points2nflips --checktriang -v" | triangseed, inputs);
    not match("not valid", get errfile)
 )
 
