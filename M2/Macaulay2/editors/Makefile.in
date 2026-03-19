@@ -5,12 +5,13 @@ ARGS = --script
 MADEFILES = M2-symbols.el M2-emacs-help.txt M2-emacs.m2
 SRCFILES = M2-init.el M2-mode.el M2.el README.md
 
-all: @pre_emacsdir@ $(addprefix @pre_emacsdir@/, $(SRCFILES) $(MADEFILES))
+all: $(addprefix @pre_emacsdir@/, $(SRCFILES) $(MADEFILES))
 verify: $(addprefix @pre_emacsdir@/, $(SRCFILES) $(MADEFILES)) $(addprefix emacs/, $(SRCFILES) $(MADEFILES)); ls -lrt $^
 Makefile: @srcdir@/Makefile.in; cd ../..; ./config.status Macaulay2/editors/Makefile
 
 @pre_emacsdir@ :; @INSTALL@ -d "$@"
-@pre_emacsdir@/% : $(addprefix emacs/, %) ; @INSTALL_DATA@ $^ @pre_emacsdir@
+@pre_emacsdir@/% : emacs/% | @pre_emacsdir@
+	@INSTALL_DATA@ $< $(@D)
 
 emacs/M2-symbols.el prism/macaulay2.js :                         \
 	@srcdir@/make-M2-symbols.m2 @srcdir@/../m2/exports.m2    \
