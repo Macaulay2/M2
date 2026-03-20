@@ -97,9 +97,10 @@ leadTerm (ZZ, Vector) := (n,v) -> new class v from leadTerm(n,v#0)
 degree Vector := v -> (
      f := ambient v#0;
      first degrees source map(target f,,f))
+ 
 matrix Vector := opts -> v -> map(class v,,v#0)
 vector Vector := identity
-new Matrix from Vector := (Matrix,v) -> map(class v,,v#0)
+new Matrix from Vector := (Matrix,v) -> v#0
 new Vector from Matrix := (M,f) -> (
      if not isFreeModule source f or numgens source f =!= 1 then error "expected source to be free with rank 1";
      if M =!= target f then error "module must be target of matrix";
@@ -356,7 +357,7 @@ isSubset(Module, Module) := (M, N) -> (
     ambient M === ambient N and
     if  not M.?relations and not N.?relations then issub(generators M, generators N)
     else if M.?relations and     N.?relations then (
-	isequal(M.relations, N.relations) and issub(generators M, fullgens N))
+	isequal(M.relations, N.relations) and issub(generators M, generators N | N.relations))
     -- see the code for subquotient: if present, M.relations is nonzero; same for N
     -- so one of the modules has nonzero relations and the other doesn't
     else false)
