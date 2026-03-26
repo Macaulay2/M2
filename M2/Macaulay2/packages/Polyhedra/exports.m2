@@ -113,6 +113,7 @@ export {
    "barycentricTriangulation",
    "regularSubdivision",
    "minimalNonFaces",
-   "stanleyReisnerRing"
+   "stanleyReisnerRing",
+   "centroid"
 }
 

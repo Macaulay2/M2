@@ -28,7 +28,7 @@ assert(linealitySpace Q == promote(transpose matrix {{0,1}}, QQ))
 
 TEST ///
 -- A tetrahedron
-assert(centroid simplex 3 == transpose matrix {{1/4, 1/4, 1/4}})
+assert(centroid stdSimplex 3 == transpose matrix {{1/4, 1/4, 1/4, 1/4}})
 
 -- An associahedron
 P = convexHull transpose matrix {{-1,1}, {1,1}, {1,-1}, {0,-1}, {-1,0}}
