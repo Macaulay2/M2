@@ -303,6 +303,20 @@ interiorPoint Polyhedron := P -> (
      Vm * ones)
 
 
+-- PURPOSE : Computing the barycenter/centroid a Polyhedron 
+--   INPUT : 'P',  a Polyhedron
+--  OUTPUT : 'p',  a point given as a matrix
+centroid = method(TypicalValue => Matrix)
+centroid Polyhedron := Matrix => P -> (
+    if not isCompact then error "the polyhedron must be compact";
+    totalVolume := volume P;
+    sum for delta in barycentricTriangulation P list (
+        barycenter := (sum delta) / #delta;
+        (volume convexHull delta / totalVolume) * barycenter
+    )
+)
+
+
 -- PURPOSE : Computing the face of a Polyhedron where a given weight attains its minimum
 --   INPUT : '(v,P)',  a weight vector 'v' given by a one column matrix over ZZ or QQ and a 
 --     	     	       Polyhedron 'P'

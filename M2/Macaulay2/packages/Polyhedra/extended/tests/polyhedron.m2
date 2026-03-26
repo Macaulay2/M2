@@ -25,3 +25,12 @@ A = matrix{{1,0,0},{0,1,0}}
 Q = affineImage(A,P)
 assert(linealitySpace Q == promote(transpose matrix {{0,1}}, QQ))
 ///
+
+TEST ///
+-- A tetrahedron
+centroid simplex 3 == transpose matrix {{1/4, 1/4, 1/4}}
+
+-- An associahedron
+P = convexHull transpose matrix {{-1,1}, {1,1}, {1,-1}, {0,-1}, {-1,0}}
+centroid P == transpose matrix {{2/21, 2/21}}
+///
