@@ -308,7 +308,7 @@ interiorPoint Polyhedron := P -> (
 --  OUTPUT : 'p',  a point given as a matrix
 centroid = method(TypicalValue => Matrix)
 centroid Polyhedron := Matrix => P -> (
-    if not isCompact then error "the polyhedron must be compact";
+    if not isCompact P then error "the polyhedron must be compact";
     totalVolume := volume P;
     sum for delta in barycentricTriangulation P list (
         barycenter := (sum delta) / #delta;
