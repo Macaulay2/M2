@@ -526,14 +526,15 @@ Node
 
 Node
   Key
-    canonicalBundle
-   (canonicalBundle, Variety)
-   [canonicalBundle, MinimalGenerators]
-   [canonicalBundle, Strategy]
+    canonicalSheaf
+   (canonicalSheaf, Variety)
+   [canonicalSheaf, MinimalGenerators]
+   [canonicalSheaf, Strategy]
+    canonicalBundle -- TODO: deprecate
   Headline
-    the canonical bundle of a variety
+    the canonical sheaf of a variety
   Usage
-    canonicalBundle X
+    canonicalSheaf X
   Inputs
     X:Variety
     MinimalGenerators => Boolean
@@ -542,22 +543,22 @@ Node
     :CoherentSheaf
   Description
     Text
-      This function computes the canonical bundle $K_X$ of a variety $X$ over a base ring $k$.
-      This is the line bundle $\Omega^n_X$ of $n$-forms if $X$ is smooth of dimension $n$ over $k$.
+      This function computes the canonical sheaf $K_X$ of a variety $X$ over a base ring $k$.
+      This is the line bundle $\Omega^n_X$ of $n$-forms (called the canonical bundle) if $X$ is smooth of dimension $n$ over $k$.
       In general, it is a coherent sheaf, defined as the reflexive hull (that is, the double dual)
       of the sheaf $\Omega^n_X$, where $n$ is the rank of $\Omega^1_X$.
     Text
-      We compute the canonical bundle of some affine surfaces.
+      We compute the canonical sheaf of some affine surfaces.
     Example
       R0 = QQ[x,y,z];
       R1 = R0/(x^2+y^2+z^2-1);
       X1 = Spec R1;
-      S1 = canonicalBundle X1
+      S1 = canonicalSheaf X1
       isLocallyFree S1
       use R0;
       R2 = R0/(x^2+y^2+z^2);
       X2 = Spec R2;
-      S2 = canonicalBundle X2
+      S2 = canonicalSheaf X2
       isLocallyFree S2
     Text
       The function also works for closed subspaces of a weighted projective space.
@@ -566,23 +567,23 @@ Node
     Example
       R1 = QQ[x_0..x_3];
       X = Proj R1 -- That is, P^3.
-      omega = canonicalBundle X
+      omega = canonicalSheaf X
       for i to 3 list hh^i (tangentSheaf X)(-1)
       for i to 3 list hh^i (dual( (tangentSheaf X)(-1)) ** omega)
       --I = ideal(x_1*x_2-x_0*x_3,x_2^3-x_1*x_3^2,x_0*x_2^2-x_1^2*x_3,x_1^3-x_0^2*x_2
       --ideal(x_2^2-x_1*x_3,x_1*x_2-x_0*x_3,x_1^2-x_0*x_2)
       Y = Proj(R1/(x_0^5+x_1^5+x_2^5+x_3^5))
       isSmooth Y
-      omega' = canonicalBundle Y
+      omega' = canonicalSheaf Y
       C = cotangentSheaf(2,Y);
       for i to 2 list hh^i (C)
       for i to 2 list hh^i ((dual C) ** omega') --dual
     Text
-      We can use this to see the difference between the top exterior power of the cotangent bundle of Z and its reflexive hull.
+      We can use this to see the difference between the top exterior power of the cotangent sheaf of Z and its reflexive hull.
     Example
       Z = Proj(R1/(x_0^2*x_1 - x_2^2*x_3))
       isSmooth Z
-      for i to 2 list hh^i canonicalBundle Z
+      for i to 2 list hh^i canonicalSheaf Z
       for i to 2 list hh^i det cotangentSheaf Z
     Text
       The geometric genus of a smooth projective variety is defined as the dimension of the vector space
@@ -592,15 +593,15 @@ Node
     Example
       R2 = QQ[x..z]/(y^3 - y*z^2 - x^3)
       E = Proj R2
-      for i to 1 list hh^i canonicalBundle E
+      for i to 1 list hh^i canonicalSheaf E
     Text
       For a hypersurface $X$ defined by an equation of degree $d$ in a weighted projective space
-      $\mathbf{P}^n(a_0,\ldots,a_n)$, the canonical bundle is $K_X=O(d-a_0-\cdots-a_n)$.
+      $\mathbf{P}^n(a_0,\ldots,a_n)$, the canonical sheaf is $K_X=O(d-a_0-\cdots-a_n)$.
     Example
       R3 = ZZ/31991[x,y,z,w,Degrees=>{1,1,2,3}];
       R4 = R3/(x^6+y^6+z^3+w^2);
       X4 = Proj R4;
-      canonicalBundle X4
+      canonicalSheaf X4
   Caveat
       The function does not check that the input variety $X$ is normal,
       but rather always returns the reflexive hull of the top exterior power of the cotangent sheaf.
@@ -636,7 +637,7 @@ Node
     Example
       R = ZZ/101[x,y,z]/(x^5+y^5+z^5);
       X = Proj R;
-      KX = canonicalBundle X
+      KX = canonicalSheaf X
       degreeOnCurve KX
     Example
       R2 = QQ[x0,x1,Degrees=>{2,3}];
@@ -942,7 +943,7 @@ Node
       of the sheaf $\Omega^m_X$ of $m$-forms.
     Text
       We compute the sheaf of reflexive 2-forms on some affine surfaces. Equivalently, this is
-      the @TO2{(canonicalBundle, Variety), "canonical bundle"}@ of these surfaces.
+      the @TO2{(canonicalSheaf, Variety), "canonical sheaf"}@ of these surfaces.
     Example
       R0 = QQ[x,y,z];
       R1 = R0/(x^2+y^2+z^2-1);

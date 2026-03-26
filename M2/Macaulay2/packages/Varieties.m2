@@ -71,6 +71,7 @@ export {
     "sheafHom",
     "tangentSheaf",
     "cotangentSheaf",
+    "canonicalSheaf",
     "canonicalBundle",
     "idealSheaf",
     "isProjective",

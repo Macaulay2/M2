@@ -570,12 +570,17 @@ texMath    SumOfTwists :=  texMath @@ expression
 toString   SumOfTwists := toString @@ expression
 
 -----------------------------------------------------------------------------
--- cotangentSheaf, tangentSheaf, and canonicalBundle
+-- cotangentSheaf, tangentSheaf, and canonicalSheaf
 -----------------------------------------------------------------------------
 -- TODO: this might be relevant for weighted projective spaces, see c564ec04
 -- weightedVars = S -> (
 --      map(S^1, S^-(degrees S), {apply(generators S, flatten degrees S, times)})
 --      )
+
+--- TODO: remove by M2 1.27
+canonicalBundleWarn = true
+canonicalBundle = x -> (if canonicalBundleWarn then (canonicalBundleWarn = false;
+	printerr "Note: canonicalBundle is deprecated; use canonicalSheaf instead."); canonicalSheaf x)
 
 -- TODO: remove MinimalGenerators option and let user call prune?
 cotangentSheaf = method(TypicalValue => CoherentSheaf,
@@ -648,9 +653,8 @@ tangentSheaf Variety := opts -> X -> (
 idealSheaf = method(TypicalValue => CoherentSheaf)
 idealSheaf Variety := X -> sheaf ideal (ring X).relations
 
--- TODO: should this be canonicalSheaf?
-canonicalBundle = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
-canonicalBundle Variety := opts -> X -> (
+canonicalSheaf = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
+canonicalSheaf Variety := opts -> X -> (
     prune' := if opts.MinimalGenerators then minimalPresentation else identity;
     sheaf_X prune' module dual dual determinant(cotangentSheaf(X, opts), Strategy => opts.Strategy))
 

@@ -30,7 +30,7 @@ TEST /// -- degreeOnCurve, the degree of a vector bundle on a curve,
   X1 = Proj R1;
   R2 = R1/(x^6*y+y^6*z+z^6*x);
   X2 = Proj R2;
-  S2 = canonicalBundle X2;
+  S2 = canonicalSheaf X2;
   assert(degreeOnCurve S2 == 28) -- The curve X2 has genus g = 15, so deg(K_(X2)) = 2g-2 = 28.
   S3 = pullback(tangentSheaf X1, X2);
   assert(degreeOnCurve S3 == 21) -- Here det(T_(X1)) = O(3), which has degree (3)(7) = 21 on the curve X2.
