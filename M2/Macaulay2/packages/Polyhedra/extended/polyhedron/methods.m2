@@ -310,9 +310,10 @@ centroid = method(TypicalValue => Matrix)
 centroid Polyhedron := Matrix => P -> (
     if not isCompact P then error "the polyhedron must be compact";
     totalVolume := volume P;
-    sum for delta in barycentricTriangulation P list (
-        barycenter := (sum delta) / #delta;
-        (volume convexHull delta / totalVolume) * barycenter
+    sum(barycentricTriangulation P, delta -> (
+            barycenter := (sum delta) / #delta;
+            (volume convexHull delta / totalVolume) * barycenter
+        )
     )
 )
 

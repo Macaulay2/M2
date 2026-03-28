@@ -114,6 +114,6 @@ export {
    "regularSubdivision",
    "minimalNonFaces",
    "stanleyReisnerRing",
-   "centroid"
+   "centroid",
 }
 
