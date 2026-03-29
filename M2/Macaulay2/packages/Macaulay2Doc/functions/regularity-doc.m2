@@ -62,7 +62,6 @@ Node
       betti(C, Weights => {2})
       regularity(C, Weights => {2})
   SeeAlso
-    (weightedRegularity, Module)
     "OldChainComplexes :: resolution"
     betti
     comodule
