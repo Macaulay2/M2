@@ -36,7 +36,7 @@ Node
       regularity I
       regularity module I
     Text
-      A closely related notion is the @TO2 {(weightedRegularity,Module),"weightedRegularity"} of a module.
+      A closely related notion is the @TO2 {(weightedRegularity,Module),"weightedRegularity"}@ of a module.
       Let @TT "R"@ be a graded polynomial algebra over a field, with generators $x_0,\ldots,x_{n-1}$
       in positive integer weights $a_0,...,a_{n-1}$,
       and let $\mathfrak{m}$ be the maximal ideal $(x_0,\ldots,x_{n-1})$.
