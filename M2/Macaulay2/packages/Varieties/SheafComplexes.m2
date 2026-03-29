@@ -238,7 +238,8 @@ euler Complex := C -> sum(pairs C.module, (i, M) -> (-1)^i * euler M)
 -- naiveCotangentComplex
 -----------------------------------------------------------------------------
 
-naiveCotangentComplex = method(TypicalValue => Complex, Options => options exteriorPower)
+naiveCotangentComplex = method(TypicalValue => Complex,
+    Options => options exteriorPower ++ { MinimalGenerators => true })
 
 -- The cotangent complex of a closed substack X of a weighted projective space P over a field k
 -- lives in cohomological degrees <= 1. This function computes its truncation to degrees >= 0,
@@ -248,11 +249,10 @@ naiveCotangentComplex = method(TypicalValue => Complex, Options => options exter
 -- If Y denotes the affine cone over X in A^{n+1}, X is the quotient stack by the multiplicative group G_m,
 -- [(Y-0)/G_m].
 --
--- The output is a complex of graded modules in cohomological degrees 0 and 1. (Eventually,
--- this should become a complex of sheaves.) It can be viewed as
--- the complex of G_m-equivariant sheaves 0 -> Omega^1_Y -> g^* tensor O_Y -> 0, where g is the Lie algebra of G_m.
+-- The output is a complex of sheaves on X in cohomological degrees 0 and 1. It can be viewed as the complex
+-- of G_m-equivariant sheaves 0 -> Omega^1_Y -> g^* tensor O_Y -> 0, where g is the Lie algebra of G_m.
 -- (The boundary map is given by plugging in the vector field associated to the G_m-action on Y.)
--- The cohomology sheaf of this complex in degree 0 is computed by cotangentSheaf(R).
+-- The cohomology sheaf of this complex in degree 0 is computed by cotangentSheaf(X).
 -- If X is a smooth substack of P (that is, if X is "quasi-smooth"
 -- in the coarse moduli space), then naiveCotangentComplex(X) is equivalent (in the derived category of X)
 -- to the whole cotangent complex of X.
@@ -287,7 +287,7 @@ naiveCotangentComplex ProjectiveVariety := opts -> X -> X.cache.naiveCotangentCo
     assert(d * e == 0); -- Delete these assertions when this program has been checked.
     M0 := cokernel e; -- This graded module represents Omega^1_Y, where Y is the affine cone over X, with its G_m-action.
     map0 := map(M1, M0, d1, Degree => 0);
-    complex({map0}, Base => -1) -- The complex is in homological degrees 0 and -1, that is, cohomological degrees 0 and 1.
+    sheaf complex({map0}, Base => -1) -- The complex is in homological degrees 0 and -1, that is, cohomological degrees 0 and 1.
     )
 
 -- The cotangent complex of a closed substack X of a weighted projective space P over a field k
@@ -298,9 +298,8 @@ naiveCotangentComplex ProjectiveVariety := opts -> X -> X.cache.naiveCotangentCo
 -- If Y denotes the affine cone over X in A^{n+1}, X is the quotient stack by the multiplicative group G_m,
 -- [(Y-0)/G_m].
 --
--- The output is a complex of graded modules in cohomological degrees from 0 to i. (Eventually,
--- this should become a complex of sheaves.) It can be viewed as
--- the complex of G_m-equivariant sheaves
+-- The output is a complex of sheaves on X in cohomological degrees from 0 to i. It can be viewed
+-- as the complex of G_m-equivariant sheaves
 --      0 -> Omega^i_Y -> Omega^{i-1}_Y tensor g^* -> ... -> O_Y tensor S^i(g^*) -> 0,
 -- where g is the Lie algebra of G_m.
 -- The cohomology sheaf of this complex in degree 0 is computed by cotangentSheaf(i,R).
@@ -312,8 +311,7 @@ naiveCotangentComplex ProjectiveVariety := opts -> X -> X.cache.naiveCotangentCo
 -- then X is a Deligne-Mumford stack, and so HH^i of this complex is zero except when i=0.
 -- In that case, naiveCotangentComplex(i,X) is equivalent (in the derived category of X)
 -- to cotangentSheaf(i,X). But in general, naiveCotangentComplex(i,X) should be considered as more natural
--- than its cohomology sheaf in degree 0. Eventually, one might want to consider exterior powers
--- of the full cotangent complex of X, or at least its truncation to degrees >= -1 rather than >= 0.
+-- than its cohomology sheaf in degree 0.
 --
 naiveCotangentComplex(ZZ, ProjectiveVariety) := opts -> (i, X) -> (
     R := ring X;
@@ -346,7 +344,7 @@ naiveCotangentComplex(ZZ, ProjectiveVariety) := opts -> (i, X) -> (
     -- truncated to: 0 -> R^(n choose i) -> ... -> R^(n choose 0) -> 0, viewed as in homological degrees i,...,0.
     maplist := apply(i, j -> map(modulelist#j, modulelist#(j+1), dd^koszultrunc_(j+1), Degree => 0));
     -- That lists the maps in the complex we want.
-    complex(maplist, Base => -i)) -- The complex is in homological degrees 0,-1,...,-i,
+    sheaf complex(maplist, Base => -i)) -- The complex is in homological degrees 0,-1,...,-i,
 -- that is, cohomological degrees 0,1,...,i.
 
 -----------------------------------------------------------------------------

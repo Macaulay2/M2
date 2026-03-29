@@ -136,6 +136,7 @@ doc ///
                 TO (min, Complex),
                 TO (length, Complex),
                 TO (regularity, Complex),
+                TO (weightedRegularity, Complex),		
                 TO (betti, Complex),
                 TO (poincare, Complex),
                 TO (poincareN, Complex),
@@ -4329,7 +4330,7 @@ doc ///
         :ZZ
     Description
         Text
-            Given a free complex $C$ over a standard graded polynomial ring,
+            Given a free complex $C$ over a singly graded polynomial ring,
             the regularity $r$ of $C$ is the smallest integer such that
             each basis element of $C_i$ has degree at most $i + r$.
         Example
@@ -4356,13 +4357,107 @@ doc ///
             regularity FJ
         Text
             Although Castelnuovo-Mumford regularity is defined
-            in more general settings (e.g. toric varieties with multi-degrees)
+            in more general settings (e.g., toric varieties with multi-degrees),
+            this method does not currently handle these 
+            extensions.  Similarly, Castelnuovo-Mumford
+            regularity can be defined for non-free complexes,
+            but this method doesn't handle that case either.
+    SeeAlso
+        (weightedRegularity, Complex)
+        "Basic invariants and properties"
+        regularity
+        betti
+        freeResolution
+///
+
+doc ///
+Node
+  Key
+     weightedRegularity
+    (weightedRegularity, Ideal)
+    (weightedRegularity, Module)
+  Headline
+    compute the weighted Castelnuovo-Mumford regularity
+  Usage
+    r = weightedRegularity C
+  Inputs
+    C: -- an Ideal, a Module, or a ChainComplex
+  Outputs
+    r:ZZ
+  Description
+    Text
+      Let @TT "R"@ be a graded polynomial algebra over a field, with generators $x_0,\ldots,x_{n-1}$
+      in positive integer weights $a_0,...,a_{n-1}$,
+      and let $\mathfrak{m}$ be the maximal ideal $(x_0,\ldots,x_{n-1})$.
+      For a graded module @TT "R"@-module @TT "M"@, the weighted regularity of @TT "M"@ is defined
+      in terms of local cohomology, as
+      $$\sup_{i\geq 0} (i + \text{maximum degree of }H^i_{\mathfrak{m}}(R, M)).$$
+      For example, if @TT "M"@ is bounded above, then the weighted regularity of @TT "M"@
+      is the maximum degree of @TT "M"@, and this should be a fast way to compute the maximum degree.
+    Text
+      If the weights are equal to 1, this is the same as @TO2{(regularity,Module),"regularity(M)"}@.
+      In general, the weighted regularity is equal to the regularity minus $\sum_i (a_i-1)$.
+      What we call weighted regularity was proposed by Peter Symonds as the definition of regularity.
+    Text
+      In the following example, the module @TT "M"@ is bounded above, with top-degree element $xy$ in degree 12.
+    Example
+      R = QQ[x,y,Degrees=>{5,7}];
+      M = R^1/(x^2,y^2);
+      regularity M
+      weightedRegularity M
+  SeeAlso
+    (regularity, Module)
+    "OldChainComplexes :: resolution"
+    betti
+    comodule
+    "VirtualResolutions :: multigradedRegularity"
+///
+
+doc ///
+    Key
+        (weightedRegularity, Complex)
+    Headline
+        compute the weighted Castelnuovo-Mumford regularity
+    Usage
+        weightedRegularity C
+    Inputs
+        C:Complex
+    Outputs
+        :ZZ
+    Description
+        Text
+            Given a complex @TT "C"@ of free modules over a singly graded polynomial ring $R$,
+            the @TO2 {(regularity,Complex),"regularity"}@ of $C$ is the smallest integer $r$ such that
+            each basis element of $C_i$ has degree at most $i + r$. Let the generators of $R$
+	    have weights $a_0,\ldots,a_{n-1}$. Then @TT "weightedRegularity C"@ is defined
+	    as the regularity of @TT "C"@ minus $\sum_i (a_i-1)$. (Thus the two notions
+	    are the same when the weights are equal to 1.)
+	Text
+	    This is motivated by the case where @TT "C"@ is the minimal free resolution of a graded $R$-module @TT "M"@.
+	    In that case, @TT "weightedRegularity C"@ is equal to the weighted regularity of @TT "M"@, defined
+	    in terms of local cohomology as
+	    $$\sup_{i\geq 0} (i+\text{maximum degree of }H^i_{\m}(R, M)).$$
+	    For example, if @TT "M"@ is bounded above, then this is the maximum degree of @TT "M"@.
+	Text
+	    In the following example, the module @TT "M"@ is bounded above, with top-degree element $xy$ in degree 7.
+        Example
+            R = ZZ/101[x,y,Degrees=>{2,5}];
+	    M = R^1/(x^2,y^2);
+            C = freeResolution M
+            betti C
+            regularity C
+            weightedRegularity C
+            weightedRegularity M
+        Text
+            Although Castelnuovo-Mumford regularity is defined
+            in more general settings (e.g., toric varieties with multi-degrees),
             this method does not currently handle these 
             extensions.  Similarly, Castelnuovo-Mumford
             regularity can be defined for non-free complexes,
             but this method doesn't handle that case either.
     SeeAlso
         "Basic invariants and properties"
+	(regularity, Complex)
         regularity
         betti
         freeResolution

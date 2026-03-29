@@ -60,6 +60,7 @@ export {
     "resolutionMap",
     "tensorCommutativity",
     "torSymmetry",
+    "weightedRegularity",
     "yonedaExtension",
     "yonedaExtension'",
     "yonedaMap",

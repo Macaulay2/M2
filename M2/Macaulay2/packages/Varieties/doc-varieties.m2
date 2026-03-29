@@ -23,14 +23,15 @@ document { Key => "varieties",
     a specified coordinate ring and ", TO "ring", " to recover the ring.",
     EXAMPLE {
 	"R = ZZ/2[x0,x1,x2];",
-	"X = Spec R",
+	"X = Spec R;",
 	"ring X",
 	"dim X",
 	},
     "The variety ", TT "X", " is a 3-dimensional affine space A^3 over the field of order 2.",
     PARA{},
     "We may use ", TO "Proj", " to create a projective scheme (or algebraic variety)
-    with a specified homogeneous coordinate ring. An example is the projective plane P^2:",
+    with a specified homogeneous coordinate ring. An example is the projective plane P^2,
+    in this case over the field Z/2:",
     EXAMPLE {
 	"Y = Proj R",
 	"ring Y",
@@ -38,8 +39,10 @@ document { Key => "varieties",
 	},
     PARA{},
     "The ring R may have generators in different degrees,
-    in which case ", TT "Proj R", " is a closed subspace of a weighted projective space. (When the distinction matters,
-    a weighted projective space and its subspaces are viewed as algebraic stacks.)",
+    in which case ", TT "Proj R", " is a closed subspace of a weighted projective space. When the distinction matters,
+    a weighted projective space and its subspaces are viewed as algebraic stacks.
+    For example, the weighted projective plane X1 = P^2(1,2,3) is the quotient stack of A^3 - 0 by the multiplicative group
+    G_m, acting by t(w, x, y) = (tw, t^2 x, t^3 y).",
     PARA{},
     "The coarse moduli space of a weighted projective space is a projective variety; so it could be embedded
     in a higher-dimensional projective space. But it is more efficient that Macaulay2 can compute directly
@@ -55,12 +58,14 @@ document { Key => "varieties",
     PARA{},
     "Macaulay2 views the weighted projective plane X1 as an algebraic stack; as such, it is smooth over Q,
     although its coarse moduli space has two singular points (the points [0,1,0] and [0,0,1] with nontrivial
-    stabilizer groups, of order 2 or 3). Concretely, X1 is the quotient of A^3 - 0 by the multiplicative group
-    G_m, acting by t(w,x,y) = (tw, t^2 x, t^3 y).",
+    stabilizer groups, of order 2 or 3).",
     PARA{},
     "Next, X2 is an elliptic curve; in fact,
     the Weierstrass equation of an elliptic curve is naturally viewed as embedding the curve into
-    the weighted projective plane X1 = P^2(1,2,3), as shown here.",
+    the weighted projective plane X1 = P^2(1,2,3), as shown here. More generally, weighted projective spaces
+    come up whenever you encounter a graded ring not generated in degree 1. For example,
+    if p denotes the origin of an elliptic curve X2, the section ring R(X2, O(p)) = sum_{m>=0} H^0(X2, O(mp))
+    has generators in degrees 1, 2, and 3. That explains the embedding of X2 into the weighted projective plane X1.",
     PARA{},
     "The key reason for introducing the notion of algebraic variety into a computer
     algebra system is to support the notion of coherent sheaves and their cohomology.  See ", TO "coherent sheaves", ".",
@@ -76,7 +81,7 @@ document {
     Outputs => {{ "the affine variety (or scheme) formed from the ring ", TT "R" }},
     EXAMPLE lines ///
     R = QQ[x,y];
-    Spec R
+    Spec R;
     ///
     }
 

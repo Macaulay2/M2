@@ -103,7 +103,7 @@ twistedGlobalSectionsModule = (F, bound) -> (
     N' := currentModuleBaseRing F; -- This is N as an R1-module.
     S := ring N'; -- This is a graded polynomial ring.
     degs := flatten degrees S; -- This is a list of the form {1,9,15,22}, say.
-    n := #degs; -- So P = Proj R1 has dimension n-1.
+    n := #degs; -- So P = Proj S has dimension n-1.
     sumOfWeights := fold(plus, degs); -- This is sum_i |x_i|, where S = k[x_0,...,x_(n-1)].
     S.cache ??= new MutableHashTable;
     w := S.cache.Dualizing ??= S^{-sumOfWeights};
@@ -779,8 +779,8 @@ hh = new ScriptedFunctor from {
 -- TODO: is minimum necessarily the most efficient?
 min'pq := d -> (p,q) -> min{(p,q), (q,p), (d-p,d-q), (d-q,d-p)}
 
--- The Hodge numbers of a projective variety.
--- hh^(p,q) X = dim HH^p(X, Omega^q)
+-- The Hodge numbers of a projective variety over a field.
+-- By definition, hh^(p,q)(X) = dim HH^q(X, Omega^p).
 hh(Sequence, ProjectiveVariety) := ZZ => (pq, X) -> (
     -- p and q are swapped here, because cotangentSheaf seems to be the
     -- slowest part of this algorithm, so we minimize the exterior powers

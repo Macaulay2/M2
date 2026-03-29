@@ -186,7 +186,7 @@ genus   CoherentSheaf := F -> (
     then genus module F
     else (-1)^(dim F) * (euler F - 1))
 genera  CoherentSheaf := F -> genera  module F
--- TODO: this is incorrect in higher picard rank
+-- TODO: this is incorrect in higher Picard rank
 pdim    CoherentSheaf := F -> tryHooks((pdim,  CoherentSheaf), F, pdim  @@ module)
 
 -- hilbertPolynomial CoherentSheaf is defined below, for subspaces of weighted projective spaces.
@@ -200,9 +200,13 @@ SheafOfRings(ZZ)   := SheafOfRings  Sequence := CoherentSheaf => (O, a) -> O^1(a
 -- Namely, G.cache.Twist is the sequence ({a}, F) (or the analogous thing if F was itself defined as a twist). Any later calculations made
 -- about G will be cached as information about F.
 CoherentSheaf(ZZ)  := CoherentSheaf Sequence := CoherentSheaf => (F, a) -> (
-    G := F ** (ring F)^{splice{a}};
-    if F.cache.?Twist then G.cache.Twist = (splice{a} + F.cache.Twist#0, F.cache.Twist#1)
-    else G.cache.Twist = (splice{a}, F);
+    R := ring F; aDegree := splice{a}; -- Thus aDegree is the given degree as a list, of the form {2} or {2,3}.
+    if aDegree === degree 1_R then return F; -- That is, F(0) is the same as F.
+    G := F ** (ring F)^{aDegree};
+    if F.cache.?Twist then (
+	if -aDegree === F.cache.Twist#0 then return F.cache.Twist#1 -- That is, E(-a)(a) is the same as E. 
+	else G.cache.Twist = (aDegree + F.cache.Twist#0, F.cache.Twist#1))
+    else G.cache.Twist = (aDegree, F);
     G)
 Module(ZZ) := Module Sequence := Module => (M, a) -> M ** (ring M)^{splice{a}}
 Matrix(ZZ) := Matrix Sequence := Matrix => (f, a) -> f ** (ring f)^{splice{a}}
@@ -641,7 +645,7 @@ cotangentSheaf AffineVariety := opts -> (cacheValue (symbol cotangentSheaf => op
 cotangentSheaf(ZZ, Variety) := opts -> (i, X) -> (
     -- Computes the sheaf of i-forms on a variety over a base ring.
     -- Another possible definition would be: HH^0 naiveCotangentComplex(i, X, opts))
-    -- These are the same if p does not divide any of the weights, hence in particular if all the weights are 1.
+    -- These are the same if p does not divide any of the weights, in particular if all the weights are 1.
     prune' := if opts.MinimalGenerators then minimalPresentation else identity;
     prune' exteriorPower(i, cotangentSheaf(X, opts), Strategy => opts.Strategy))
 
@@ -656,7 +660,11 @@ idealSheaf Variety := X -> sheaf ideal (ring X).relations
 canonicalSheaf = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
 canonicalSheaf Variety := opts -> X -> (
     prune' := if opts.MinimalGenerators then minimalPresentation else identity;
-    sheaf_X prune' module dual dual determinant(cotangentSheaf(X, opts), Strategy => opts.Strategy))
+    if isProjective X and not isStandardGraded ring X then omega1 := (naiveCotangentComplex(X, opts))_0
+    else omega1 = cotangentSheaf(X, opts);
+    sheaf_X prune' module dual dual determinant(omega1, Strategy => opts.Strategy))
+-- In the weighted case, the determinant of the naive cotangent complex C_0 -> C_(-1)
+-- is the determinant of C_0 (as computed here), since C_(-1) = O_X.
 
 -- This function computes the sheaf of reflexive differentials of a given closed substack X of a weighted projective space.
 -- At least when X is normal and well-formed (not necessarily quasi-smooth), its direct image sheaf
@@ -671,6 +679,33 @@ reflexiveDifferentials Variety := opts -> X -> reflexiveDifferentials(1, X, opts
 reflexiveDifferentials(ZZ, Variety) := opts -> (i, X) -> (
     prune' := if opts.MinimalGenerators then minimalPresentation else identity;
     sheaf_X prune' module dual dual exteriorPower(i, cotangentSheaf(X, opts), Strategy => opts.Strategy))
+
+dualizingSheaf = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
+
+-- For a scheme X of finite type over a field k, the dualizing complex omega_X^{\bullet} = f^!(O_(Spec k))
+-- is concentrated in cohomological degrees at least -n, where n = dim X. We compute here H^(-n)(omega_X^{\bullet}),
+-- known as the dualizing sheaf of X. Its support is the union of the n-dimensional irreducible components
+-- of X. The output is also reasonable for X a closed subspace of a weighted projective space,
+-- viewed as a stack.
+dualizingSheaf ProjectiveVariety := opts -> X -> (
+    prune' := if opts.MinimalGenerators then minimalPresentation else identity;
+    A := ring X;
+    if degreeLength A =!= 1 then error "expected degree length 1";
+    S := ring presentation A; -- This is a graded polynomial ring.
+    degs := flatten degrees S; -- This is a list of the form {1,9,15,22}, say.
+    N := -1 + #degs; -- So P = Proj S has dimension N.
+    sumOfWeights := fold(plus, degs); -- This is sum_i |x_i|, where S = k[x_0,...,x_(n-1)].
+    S.cache ??= new MutableHashTable;
+    w := S.cache.Dualizing ??= S^{-sumOfWeights};
+    -- We fix the dualizing module w, as a graded S-module.
+    sheaf_X prune'(Ext^(N-dim X)(cokernel presentation A,w) ** A))
+
+dualizingSheaf AffineVariety := opts -> X -> (
+    prune' := if opts.MinimalGenerators then minimalPresentation else identity;
+    A := ring X;
+    S := ring presentation A; -- This is a polynomial ring.
+    N := numgens S; -- So Spec S is affine N-space.
+    sheaf_X prune'(Ext^(N-dim X)(cokernel presentation A,S) ** A))
 
 -----------------------------------------------------------------------------
 -- isLocallyFree

@@ -73,6 +73,7 @@ export {
     "cotangentSheaf",
     "canonicalSheaf",
     "canonicalBundle",
+    "dualizingSheaf",
     "idealSheaf",
     "isProjective",
     "isLocallyFree",

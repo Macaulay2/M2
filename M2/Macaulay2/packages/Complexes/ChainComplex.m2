@@ -648,11 +648,31 @@ regularity Module := opts -> M -> (
 
 regularity Complex := opts -> C -> (
     if numgens degreesRing ring C =!= 1 then 
-        error "expected the underlying ring to be standard graded";
+        error "expected the underlying ring to be singly graded";
     if not isFree C then 
         error "expected a complex whose terms are all free";
     regularity betti(C,opts)
     )
+
+symondsShift = R -> (
+    -- For a graded polynomial ring R with positive integer weights a_0,...,a_(n-1),
+    -- symondsShift(R) means sum_i (a_i-1).
+    if degreeLength R =!= 1 then error "expected degree length 1";
+    degs := flatten degrees R; -- This is a list of the form {a_0,...,a_(n-1)}.
+    -#degs + fold(plus, degs))
+
+weightedRegularity = method(TypicalValue => ZZ, Options => {})
+
+-- For a graded polynomial ring R with positive integer weights a_0,...,a_(n-1) and a graded R-module M,
+-- weightedRegularity(M) means regularity(M) - sum_i (a_i-1), as suggested by Peter Symonds.
+-- (Thus it agrees with the usual regularity when the weights are 1.) The point is
+-- that the weighted regularity has a simple relation to local cohomology at the irrelevant ideal m:
+-- it is equal to
+--            sup_{i>=0} (maximum degree of H^i_m(R, M) + i).
+-- For example, if the module M is bounded above, then the weighted regularity of M is equal
+-- to the maximum degree of M, and it should be a fast way to compute that.
+weightedRegularity Module := weightedRegularity Ideal := weightedRegularity Complex := opts -> M -> (
+    -symondsShift ring M + regularity M)
 
 poincare Complex := C -> (
     S := degreesRing ring C;

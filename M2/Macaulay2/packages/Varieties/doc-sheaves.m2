@@ -42,8 +42,8 @@ document {
     with an R-linear map to HH^i(F(*)) that is an isomorphism in degrees at least b. (You may wish
     to apply ", TO2{truncate,"truncate(b,M)"}, " or ", TO2{prune,"prune truncate(b,M)"},
     " to the output; but that will often yield a more complicated module,
-    for example with more generators.) When possible, as in the following example,
-    Macaulay2 will compute the module in all degrees, even if you only asked for it in degrees at least some number.",
+    for example with more generators.) When the cohomology module is bounded below, as in the following example,
+    Macaulay2 will compute it in all degrees, even if you only asked for it in degrees at least some number.",
     EXAMPLE {
 	"M2=HH^1(Omega(>=0))",
 	"hilbertSeries(M2,Order=>10)",
@@ -122,7 +122,7 @@ document {
     EXAMPLE lines ///
 	  R = QQ[x,y,z];
 	  X = Proj R;
-	  HH^0(OO_X)
+	  hh^0(OO_X(1))
 	  hh^0(OO_X(*))
     ///
     }
@@ -153,9 +153,9 @@ document {
      Outputs => {{ "the sheaf of regular functions on the variety ", TT "X" }},
      EXAMPLE lines ///
        R = QQ[x,y,z];
-       X = Proj R
-       Y = Spec R
+       X = Proj R;
        sheaf X
+       Y = Spec R;
        sheaf Y
      ///
      }
@@ -165,10 +165,10 @@ document {
      TT "sheaf(X,R)", " -- produce the coherent sheaf on the variety ", TT "X", " corresponding
      to the ring ", TT "R", ".  The variety ", TT "X", " must be ", TT "Spec R", " or ", TT "Proj R", ".",
      EXAMPLE lines ///
-       R = QQ[x,y,z]
-       X = Proj R
-       Y = Spec R
+       R = QQ[x,y,z];
+       X = Proj R;
        sheaf(X,R)
+       Y = Spec R;
        sheaf(Y,R)
      ///}
 
@@ -206,7 +206,7 @@ document {
     Outputs => {{ "the coherent sheaf on the variety ", TT "X", " corresponding to the module ", TT "M" }},
     PARA{
 	"If ", TT "X", " is the affine variety ", TT "Spec R", ", then ", TT "M", " should be an ", TT "R", "-module.  If ", TT "X", " is
-	the projective variety ", TT "Proj R", ", then ", TT "M", " should be a homogeneous ", TT "R", "-module."
+	the projective variety ", TT "Proj R", ", then ", TT "M", " should be a graded ", TT "R", "-module."
 	}
     }
 
@@ -367,7 +367,7 @@ Node
       as the sheaf associated to a graded $R$-module $M$. However, any other graded $R$-module that agrees with $M$
       in sufficiently high degrees also represents the same sheaf $F$.
       The function @TT "currentModuleMap F"@ returns a map
-      $M\to N$ of graded modules such that $N$ also represents $F$, but $N$ should be "simpler" than $M$
+      $M\to N$ of graded $R$-modules such that $N$ also represents $F$, but $N$ should be "simpler" than $M$
       (or at least as simple). The choice of $N$ may be improved as other functions are applied to $F$.
       This is mainly intended for internal Macaulay2 use.
     Text
@@ -397,7 +397,7 @@ Node
       as the sheaf associated to a graded $R$-module $M$. However, any other graded $R$-module that agrees with $M$
       in sufficiently high degrees also represents the same sheaf $F$.
       The function @TO2{currentModuleMap,"currentModuleMap F"}@ returns a map
-      $M\to N$ of graded $R$-modules such that $N$ also represents $F$, but $N$ should be "simpler" than $M$
+      $M\to N$ of graded $R$-modules such that $N$ also represents $F$, with $N$ "simpler" than $M$
       (or at least as simple). The choice of $N$ may be improved as other functions are applied to $F$.
     Text
       The ring $R$ will be a quotient of a polynomial ring $S$,
@@ -441,7 +441,7 @@ Node
       with each $c_j(s)$ a periodic function of $s$, of period dividing the least common multiple
       of the weights. (Equivalently, $h^0(X, F(s))$ has this description for $s$ sufficiently large.)
       Here $m$ is the dimension of the support of @TT "F"@. By definition,
-      the {it average }of the leading coefficient $c_m(s)$ (with respect to $s$) is $\mathrm{degree}(F)/m!$.
+      the {\it average }of the leading coefficient $c_m(s)$ (with respect to $s$) is $\mathrm{degree}(F)/m!$.
       Note that the degree of a coherent sheaf in this generality is only a rational number.
       For example, for $X=\mathbf{P}^n(a_0,\ldots,a_n)$,
       the sheaf $O_X$ has degree $1/(a_0\cdots a_n)$.
@@ -449,10 +449,7 @@ Node
       Beware that the degree of a coherent sheaf on a closed subspace of projective space
       is not directly related to the degree
       of a line bundle on a curve, @TO degreeOnCurve@. Indeed, every line bundle $L$ on a curve $X$ in $\mathbf{P}^n$ has degree
-      {\it as a coherent sheaf }equal to the degree of $X$ in $\mathbf{P}^n$. The degree of $L$
-      as a line bundle on $X$ can be computed as $\chi(X,L)-\chi(X,O_X)$. For a curve $X$
-      in weighted projective space (viewed as a stack), the degree of $L$ on $X$ is the rational number
-      @TT "lift(hilbertPolynomial L - hilbertPolynomial O_X, QQ)"@.
+      {\it as a coherent sheaf }equal to the degree of $X$ in $\mathbf{P}^n$.
     Example
       R = ZZ/101[x_0..x_2];
       V = Proj R;
@@ -546,22 +543,30 @@ Node
       This function computes the canonical sheaf $K_X$ of a variety $X$ over a base ring $k$.
       This is the line bundle $\Omega^n_X$ of $n$-forms (called the canonical bundle) if $X$ is smooth of dimension $n$ over $k$.
       In general, it is a coherent sheaf, defined as the reflexive hull (that is, the double dual)
-      of the sheaf $\Omega^n_X$, where $n$ is the rank of $\Omega^1_X$.
+      of the sheaf $\Omega^n_X$, where $n$ is the @TO (rank, CoherentSheaf)@ of $\Omega^1_X$. (If $X$ is not equidimensional,
+      the function may give an error.) This is a standard definition of the canonical sheaf
+      at least if $X$ is a normal variety over a perfect field.
+    Text
+      The function also gives a reasonable answer when $X$ is a normal closed subspace of a weighted projective space,
+      as the determinant of @TO{"naiveCotangentComplex","(X)"}@.
+      Here $X$ is viewed as an algebraic stack when that makes a difference. For example, for all fields $k$
+      and positive integers $a_0,\ldots,a_n$, the weighted projective space
+      $X = \mathbf{P}^n_k(a_0,\ldots,a_n)$ has canonical bundle $O_X(-a_0-\cdots-a_n)$.
+      In this example, the coarse moduli space $Y$ of $X$
+      has canonical sheaf $O_Y(-a_0-\cdots-a_n)$ (which is a reflexive sheaf of rank 1 on $Y$)
+      only under the extra assumption that $X$ is {\it well-formed},
+      meaning that $\text{gcd}(a_0,\ldots,\widehat{a_i},\ldots,a_n)=1$ for each $i$.
     Text
       We compute the canonical sheaf of some affine surfaces.
     Example
-      R0 = QQ[x,y,z];
-      R1 = R0/(x^2+y^2+z^2-1);
+      R0 = QQ[t,u,v];
+      R1 = R0/(t^2+u^2+v^2-1);
       X1 = Spec R1;
       S1 = canonicalSheaf X1
-      isLocallyFree S1
       use R0;
-      R2 = R0/(x^2+y^2+z^2);
+      R2 = R0/(t^2+u^2+v^2);
       X2 = Spec R2;
       S2 = canonicalSheaf X2
-      isLocallyFree S2
-    Text
-      The function also works for closed subspaces of a weighted projective space.
     Text
       The following example shows some cases of Serre duality and some computations of the geometric genus.
     Example
@@ -595,7 +600,7 @@ Node
       E = Proj R2
       for i to 1 list hh^i canonicalSheaf E
     Text
-      For a hypersurface $X$ defined by an equation of degree $d$ in a weighted projective space
+      For a normal hypersurface $X$ defined by an equation of degree $d$ in a weighted projective space
       $\mathbf{P}^n(a_0,\ldots,a_n)$, the canonical sheaf is $K_X=O(d-a_0-\cdots-a_n)$.
     Example
       R3 = ZZ/31991[x,y,z,w,Degrees=>{1,1,2,3}];
@@ -605,9 +610,73 @@ Node
   Caveat
       The function does not check that the input variety $X$ is normal,
       but rather always returns the reflexive hull of the top exterior power of the cotangent sheaf.
-      Also, the function only gives reasonable output for $X$ equidimensional.
+      Also, the function may give an error if $X$ is not equidimensional.
   SeeAlso
     cotangentSheaf
+    dualizingSheaf
+
+Node
+  Key
+    dualizingSheaf
+   (dualizingSheaf, ProjectiveVariety)
+   (dualizingSheaf, AffineVariety)
+   [dualizingSheaf, MinimalGenerators]
+   [dualizingSheaf, Strategy]
+  Headline
+    the dualizing sheaf of a variety
+  Usage
+    dualizingSheaf X
+  Inputs
+    X:Variety
+    MinimalGenerators => Boolean
+      whether to @TO prune@ the result before returning it
+  Outputs
+    :CoherentSheaf
+  Description
+    Text
+      This function computes the dualizing sheaf $\omega_X$ of a scheme $X$ over a base ring $k$.
+      This is the line bundle $\Omega^n_X$ of $n$-forms (called the canonical bundle) if $X$ is smooth of dimension $n$ over $k$.
+      In general, it is a coherent sheaf, defined as the cohomology sheaf in degree $-n$ of the dualizing complex
+      $f^!(k)$, which lives in cohomological degree at least $-n$; here $n$ is the dimension of $X$
+      (for $k$ a field) and $f\colon X \to \Spec(k)$ is the given morphism. The support of $\omega_X$
+      is the union of the $n$-dimensional irreducible components of $X$. The dualizing sheaf agrees with
+      the @TO canonicalSheaf@ when $X$ is a normal variety over a perfect field. In that situation, if one function is slow,
+      you could try the other one.
+    Text
+      The function also gives a reasonable answer when $X$ is a closed subspace of a weighted projective space.
+      Here $X$ is viewed as an algebraic stack when that makes a difference. For example, for all fields $k$
+      and positive integers $a_0,\ldots,a_n$, the weighted projective space
+      $X = \mathbf{P}^n_k(a_0,\ldots,a_n)$ has dualizing sheaf $O_X(-a_0-\cdots-a_n)$.
+      In this example, the coarse moduli space $Y$ of $X$
+      has dualizing sheaf $O_Y(-a_0-\cdots-a_n)$ (which is a reflexive sheaf of rank 1 on $Y$)
+      only under the extra assumption that $X$ is {\it well-formed},
+      meaning that $\text{gcd}(a_0,\ldots,\widehat{a_i},\ldots,a_n)=1$ for each $i$.
+    Text
+      We compute the dualizing sheaf for some plane curves, showing that the dualizing sheaf
+      can differ from @TO canonicalSheaf@ for a singular curve.
+    Example
+      R0 = QQ[x,y,z];
+      R1 = R0/(x*y+z^2);
+      X1 = Proj R1;
+      dualizingSheaf X1
+      canonicalSheaf X1
+      use R0;
+      R2 = R0/(x*y);
+      X2 = Proj R2;
+      S2 = dualizingSheaf X2
+      S3 = canonicalSheaf X2
+      isLocallyFree S3
+    Text
+      For every hypersurface $X$ defined by an equation of degree $d$ in a weighted projective space
+      $\mathbf{P}^n(a_0,\ldots,a_n)$, the dualizing sheaf is $O(d-a_0-\cdots-a_n)$.
+    Example
+      R3 = ZZ/31991[x,y,z,w,Degrees=>{1,1,2,3}];
+      R4 = R3/(x^6+y^6+z^3+w^2);
+      X4 = Proj R4;
+      dualizingSheaf X4
+  SeeAlso
+    cotangentSheaf
+    canonicalSheaf
 
 Node
   Key
@@ -629,7 +698,8 @@ Node
       Be careful not to write @TO{"degree"," F"}@, which would mean the degree of @TT "F"@ as a coherent sheaf
       on projective space; that is just the rank of @TT "F"@ times the degree of $X$.
     Text
-      This function does not check that @TT "F"@ is a vector bundle; if not, the answer may be meaningless.
+      This function does not check that @TT "F"@ is a vector bundle of constant rank;
+      if not, the output may be meaningless.
       It does check that $X$ has dimension 1.
       The function works correctly for a vector bundle on a curve $X$
       in a weighted projective space, in which case the degree of @TT "F"@
@@ -666,9 +736,9 @@ Node
     Text
       This method computes the tangent sheaf $TX$ of a variety $X$ over a base ring $k$.
       It is defined as the dual of the @TO cotangentSheaf@.
-      If $X$ is smooth, then $TX$ is a vector bundle.
+      If $X$ is smooth over $k$, then $TX$ is a vector bundle.
     Text
-      We compute the tangent sheaf of some affine surfaces.
+      We compute the tangent sheaf for some affine surfaces.
     Example
       R0 = QQ[x,y,z];
       R1 = R0/(x^2+y^2+z^2-1);
@@ -686,14 +756,14 @@ Node
       The function also works for a closed subspace $X$ of a weighted projective space. Here $X$ is viewed
       as a stack. If $X$ is smooth as a stack, then $TX$ is a vector bundle on $X$.
     Text
-      Tangent bundle of the projective plane:
+      For example, we consider the tangent bundle of the projective plane:
     Example
       P2 = Proj QQ[a,b,c];
       TP = tangentSheaf P2
       hh^0(TP(-1))
       hh^1(TP(-3))
     Text
-      The tangent sheaf of the nodal cubic curve and the cuspidal cubic curve:
+      We compute the tangent sheaf for the nodal cubic curve and the cuspidal cubic curve:
     Example
       N = Proj QQ[a,b,c]/(b^2*c-a^2*(a+c));
       TN = tangentSheaf N
@@ -731,7 +801,7 @@ Node
   Description
     Text
       This function computes the cotangent sheaf $\Omega^1_X$ of a variety $X$ over a base ring $k$.
-      This is a vector bundle if $X$ is smooth over $k$, otherwise the sheaf of @TO reflexiveDifferentials@
+      This is a vector bundle if $X$ is smooth over $k$. For $X$ singular, the sheaf of @TO reflexiveDifferentials@
       may be more useful.
     Text
       We compute the cotangent sheaf of some affine surfaces.
@@ -757,7 +827,7 @@ Node
     Text
       If the characteristic $p$ is positive and $p$ divides some of the weights, the weighted projective space
       (and its substacks)
-      need not be Deligne-Mumford stacks. In that situation, this function returns the cohomology sheaf
+      need not be Deligne-Mumford stacks. In that situation, @TT "cotangentSheaf X"@ returns the cohomology sheaf
       in degree 0 of the cotangent complex of $X$.
       In that situation, it may be more natural to consider the truncation of the cotangent complex
       to cohomological degrees $\geq 0$ (which lives in degrees 0 and 1), given by @TO{"naiveCotangentComplex"," X"}@.
@@ -825,11 +895,11 @@ Node
       of a closed subscheme $X$ of projective space over a field, usually denoted $\Omega_X^m$
       or the sheaf of $m$-forms.
     Text
-      More generally, cotangentSheaf(m, X) works for $X$ a closed subspace of a weighted projective space,
+      More generally, @TT "cotangentSheaf(m, X)"@ works for $X$ a closed subspace of a weighted projective space,
       viewed as a stack.
       For example, if the coarse moduli space of $X$ is quasi-smooth and well-formed,
       then the pushforward of this sheaf to the coarse moduli space is the sheaf of reflexive $m$-forms.
-      If $X$ is normal but not quasi-smooth, use the command @TO reflexiveDifferentials@ instead,
+      If $X$ is normal but not quasi-smooth, use the command @TO {reflexiveDifferentials,"(m,X)"}@ instead,
       if you want the sheaf of reflexive $m$-forms.
     Text
       If the characteristic $p$ is positive and $p$ divides some of the weights, the weighted projective space
@@ -974,123 +1044,6 @@ Node
     cotangentSheaf
     ProjectiveVariety
     (hh, Sequence, ProjectiveVariety)
-
-Node
-  Key
-    naiveCotangentComplex
-   (naiveCotangentComplex, ProjectiveVariety)
-   [naiveCotangentComplex, Strategy]
-  Headline
-    the naive cotangent complex of a subspace of weighted projective space
-  Usage
-    naiveCotangentComplex X
-  Inputs
-    X:ProjectiveVariety
-  Outputs
-    :Complex
-  Description
-    Text
-      This is only relevant for $X$ a closed subspace of a weighted projective space,
-      rather than the usual projective space.
-    Text
-      Let $X$ be a closed subspace of a weighted projective space over a ring $k$, with $X$
-      viewed as a stack. (Namely, if $Y$ denotes the affine cone over $X$ in affine space $A^{n+1}$,
-      $X$ is the quotient stack $[(Y-0)/G_m]$, for the action of the multiplicative group $G_m$
-      on $A^{n+1}$ with given weights.)
-      The cotangent complex of $X$ lives in cohomological degrees $\leq 1$.
-      This function computes its truncation to degrees $\geq 0$, which lives in degrees 0 and 1.
-    Text
-      The output is a complex of graded modules in cohomological degrees 0 and 1. (Eventually,
-      this should become a complex of sheaves.) It can be viewed as
-      the complex of $G_m$-equivariant sheaves
-      $$0 \to \Omega^1_Y \to \mathfrak{g}^*\otimes O_Y \to 0,$$
-      where $\mathfrak{g}$ is the Lie algebra of $G_m$. (The boundary map is given
-      by plugging in the vector field associated to the G_m-action on Y.)
-    Text
-      The cohomology sheaf of this complex in degree 0 is @TO{"cotangentSheaf"," X"}@. If $X$ is smooth as a stack
-      (that is, if $X$ is "quasi-smooth" in the coarse moduli space),
-      then @TT "naiveCotangentComplex X"@ is equivalent (in the derived category of $X$)
-      to the whole cotangent complex of X.
-    Text
-      If the characteristic is 0 or the characteristic $p > 0$ does not divide any of the weights,
-      then $X$ is a Deligne-Mumford stack, and so the degree-1 cohomology sheaf
-      of the cotangent complex of $X$ is zero.
-      In that case, @TT "naiveCotangentComplex X"@ is equivalent (in the derived category of $X$)
-      to cotangentSheaf(X). But without those assumptions,
-      @TT "naiveCotangentComplex X"@ should be considered as more natural
-      than its cohomology sheaf in degree 0. Eventually,
-      one might want to consider the full cotangent complex of $X$,
-      or at least its truncation to degrees $\geq -1$ rather than $\geq 0$.
-    Example
-      X1 = ProjectiveStack_(ZZ/5)(1,3,5);
-      C1 = naiveCotangentComplex X1;
-      S0 = sheaf HH^0 C1; -- Note that C1 is a complex of modules, whereas the associated complex of sheaves is really what we want.
-      S1 = sheaf HH^1 C1;
-      dim S0
-      dim S1 -- The sheaf S1 is supported at the point [0,0,1], because the characteristic 5 divides the last weight.
-  SeeAlso
-    cotangentSheaf
-    cotangentSurjection
-    (cotangentSheaf, ZZ, Variety)
-    ProjectiveVariety
-
-Node
-  Key
-   (naiveCotangentComplex, ZZ, ProjectiveVariety)
-  Headline
-    exterior powers of the naive cotangent complex of a subspace of weighted projective space
-  Usage
-    naiveCotangentComplex(m,X)
-  Inputs
-    m:ZZ
-    X:ProjectiveVariety
-  Outputs
-    :Complex
-  Description
-    Text
-      This is only relevant for $X$ a closed subspace of a weighted projective space,
-      rather than the usual projective space.
-    Text
-      Let $X$ be a closed subspace of a weighted projective space over a ring $k$, with $X$
-      viewed as a stack. (Namely, if $Y$ denotes the affine cone over $X$ in affine space $A^{n+1}$,
-      $X$ is the quotient stack $[(Y-0)/G_m]$, for the action of the multiplicative group $G_m$
-      on $A^{n+1}$ with given weights.)
-      The cotangent complex of $X$ lives in cohomological degrees $\leq 1$.
-      Here naiveCotangentComplex(m, X) computes its $m$th exterior power truncated to degrees $\geq 0$,
-      which lives in degrees from 0 to $m$.
-    Text
-      The output is a complex of graded modules in cohomological degrees from 0 to $m$. (Eventually,
-      this should become a complex of sheaves.) It can be viewed as
-      the complex of $G_m$-equivariant sheaves
-      $$0 \to \Omega^m_Y \to \Omega^{m-1}_Y \otimes\mathfrak{g}^* \to \cdots
-      \to O_Y\otimes S^m(\mathfrak{g}^*)\to 0,$$
-      where $\mathfrak{g}$ is the Lie algebra of $G_m$. (The boundary maps are given
-      by plugging in the vector field associated to the $G_m$-action on $Y$.)
-    Text
-      The cohomology sheaf of this complex in degree 0 is @{"cotangentSheaf","(m, X)"}@. If $X$ is smooth as a stack
-      (that is, if $X$ is "quasi-smooth" in the coarse moduli space),
-      then @TT "naiveCotangentComplex(m, X)"@ is equivalent (in the derived category of $X$)
-      to the $m$th exterior power of the whole cotangent complex of $X$.
-    Text
-      If the characteristic is 0 or the characteristic $p > 0$ does not divide any of the weights,
-      then $X$ is a Deligne-Mumford stack, and so the degree-1 cohomology sheaf
-      of the cotangent complex of $X$ is zero.
-      In that case, @TT "naiveCotangentComplex(m, X)"@ is equivalent (in the derived category of $X$)
-      to @TT "cotangentSheaf(m, X)"@. But without those assumptions,
-      @TT "naiveCotangentComplex (m, X)"@ should be considered as more natural
-      than its cohomology sheaf in degree 0.
-    Example
-      X1 = ProjectiveStack_(ZZ/5)(1,3,5);
-      C1 = naiveCotangentComplex(1, X1);
-      S0 = sheaf HH^0 C1; -- Note that C1 is a complex of modules, whereas the associated complex of sheaves is really what we want.
-      S1 = sheaf HH^1 C1;
-      dim S0
-      dim S1 -- The sheaf S1 is supported at the point [0,0,1], because the characteristic 5 divides the last weight.
-  SeeAlso
-    cotangentSheaf
-    cotangentSurjection
-    (cotangentSheaf, ZZ, Variety)
-    ProjectiveVariety
 
 -----------------------------------------------------------------------------
 -- Basic methods for sheaves
@@ -1270,7 +1223,7 @@ document {
     Outputs => {ZZ
 	},
     "Computes the dimension of the support of a coherent sheaf ", TT "F", ". The answer given
-    is definitely valid if ", TT "F", " is defined on an affine variety or on Proj(R) for a singly graded ring R.",
+    is valid at least if ", TT "F", " is defined on an affine variety or on Proj(R) for a singly graded ring R.",
     PARA{},
     "For a ring R graded by an abelian group of rank m, this definition views Proj(R)
     as the quotient of an (unspecified) open subset of Spec(R) by a generically stable action
@@ -1303,12 +1256,16 @@ document {
     TT "Generic => true", " allows the computation of the codimension to proceed without an error message,
     even if the ring is defined over the integers. In effect, the computation proceeds
     by tensoring first with the rational numbers.",
+    PARA{},
+    "For example, consider the projective closure of the curve {(t,t^3,t^5)} in affine 3-space.
+    We compute its ", TO "dualizingSheaf", " by hand, as a sheaf on P^3. This sheaf has codimension 2
+    in P^3.",
     EXAMPLE {
 	  "R = ZZ/31991[a,b,c,d];",
           "I = monomialCurveIdeal(R,{1,3,5})",
-          "projplane = Proj(R)",
+          "projspace = Proj(R)",
           "II = sheaf module I",
-          "can = sheafExt^1(II,OO_projplane^1(-4))",
+          "can = sheafExt^1(II,OO_projspace^1(-4))",
           "codim can"
 	  },
     Caveat => {"The returned value is the usual codimension if ", TT "R",
@@ -1335,8 +1292,9 @@ Node
       of $X$. (Note that a coherent sheaf @TT "F"@ in Macaulay2 is defined on a specific space $X$.
       If @TT "F"@ is supported on a lower-dimensional subset of $X$, its rank is 0.)
     Text
-      For $X$ not integral, the output of this function may not be reasonable.
-      At least it gives the expected value for arbitrary $X$ if @TT "F"@ is a vector bundle
+      For $X$ not integral, the output of this function may not be reasonable;
+      it may return a rational number rather than an integer.
+      At least @TT "rank(F)"@ it gives the expected answer for arbitrary $X$ if @TT "F"@ is a vector bundle
       of constant rank on $X$.
     Example
       R1 = ZZ/31991[x,y,z];
@@ -1685,14 +1643,14 @@ document {
     Usage => "determinant F",
     Inputs => {"F"},
     Outputs => {{ "the determinant of ", TT "F"}},
-    "That is, if ", TT "F", " has ", TO2 {(rank,CoherentSheaf),"rank"}, " r over a space X, the function returns the r-th exterior power
-    of ", TT "F", " over X, which will have rank 1. If ", TT "F", " is not a vector bundle, you might prefer to take
+    "If ", TT "F", " has ", TO2 {(rank,CoherentSheaf),"rank"}, " r over a space X, the function returns the r-th exterior power
+    of ", TT "F", ", which will have rank 1. If ", TT "F", " is not a vector bundle, you might prefer to take
     the reflexive hull (double ", TO "dual", ") of this sheaf. In another direction,
     you may wish to ", TO2 {(minimalPresentation,CoherentSheaf),"prune"}, " this sheaf, to simplify later calculations.",
     PARA{},
     "Note that the rank of ", TT "F", " (and hence this function)
-    is only guaranteed to behave well for X integral. Macaulay2 does give
-    the expected answer for the rank on arbitrary X if ", TT "F", " is a vector bundle of constant rank."
+    is only guaranteed to behave well for X integral. At least ", TT "determinant F", " gives
+    the expected answer on arbitrary X if ", TT "F", " is a vector bundle of constant rank."
     }
 
 
@@ -1717,7 +1675,7 @@ Node
     Text
       @stacksProject("0H2G", "The annihilator of a coherent sheaf")@ $\mathcal F$
       is the ideal corresponding to the kernel of the map of sheaves
-      $$ \mathcal O_X \to \mathcal Hom_{\mathcal O_X}(\mathcal F, \mathcal F). $$
+      $$\mathcal O_X \to \mathcal Hom_{\mathcal O_X}(\mathcal F, \mathcal F). $$
 
       You may use @TT "ann"@ as a synonym for @TT "annihilator"@.
   SeeAlso

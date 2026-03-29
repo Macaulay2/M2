@@ -22,7 +22,8 @@ Node
     r:ZZ
   Description
     Text
-      For a free chain complex @TT "C"@, the regularity @TT "r"@ is the smallest number so that each
+      For a free chain complex @TT "C"@ over a graded polynomial ring,
+      the regularity is the smallest number @TT "r"@ such that each
       basis element of @TT "C_i"@ has degree at most @TT "i+r"@. For an ideal @TT "I"@, regularity is
       one plus the regularity of the minimal free resolution of the quotient of the ambient ring by @TT "I"@.
       For a module @TT "M"@, regularity is the regularity of a minimal free resolution of @TT "M"@.
@@ -34,6 +35,19 @@ Node
       regularity comodule I
       regularity I
       regularity module I
+    Text
+      A closely related notion is the @TT "weightedRegularity"@ of a module.
+      Let @TT "R"@ be a graded polynomial algebra over a field, with generators $x_0,\ldots,x_{n-1}$
+      in positive integer weights $a_0,...,a_{n-1}$,
+      and let $\mathfrak{m}$ be the maximal ideal $(x_0,\ldots,x_{n-1})$.
+      For a graded @TT "R"@-module @TT "M"@, @TT "weightedRegularity(M)"@ is defined
+      using local cohomology as
+      $$\sup_{i\geq 0} (i + \text{maximum degree of }H^i_{\mathfrak{m}}(R, M)).$$
+      For example, if $M$ is bounded above, then the weighted regularity of @TT "M"@ is the maximum degree of $M$.
+    Text
+      If the weights are equal to 1, then weighted regularity is the same as regularity. In general, the weighted
+      regularity is equal to the regularity minus $\sum_i (a_i-1)$.
+      What we call weighted regularity was proposed by Peter Symonds as the definition of regularity.
     Text
       The regularity is the label of the last row in the @TO2 {betti, "Betti diagram"}@ of a chain complex.
       However, this depends on the total degree weights in the Betti tally, which are computed based on the

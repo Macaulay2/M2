@@ -108,10 +108,10 @@ document {
      Outputs => {List =>"the successive sectional Euler characteristics of a coherent sheaf (or of a module)"
 	  },
      "Computes a list of the successive sectional Euler characteristics of a coherent sheaf,
-     the i-th entry on the list being the Euler characteristic of the i-th
-     generic hyperplane restriction of ", TT "E",
+     the i-th entry on the list being the Euler characteristic with coefficients in the i-th
+     generic hyperplane restriction of ", TT "E",".",
      PARA{},
-     "The Horrocks-Mumford bundle on the projective fourspace:",
+     "The Horrocks-Mumford bundle on projective 4-space:",
      EXAMPLE {
 	  "R = QQ[x_0..x_4];",
 	  "a = {1,0,0,0,0}",
@@ -142,8 +142,8 @@ document {
           },
      "Computes a list of the successive sectional Euler 
      characteristics of an ideal (sheaf), the i-th entry 
-     in the list being the Euler characteristic of the i-th
-     generic hyperplane restriction of ", TT "I",     
+     in the list being the Euler characteristic with coefficients in the i-th
+     generic hyperplane restriction of ", TT "I",".",
      EXAMPLE {
 	  "R = ZZ/101[a,b,c];",
 	  "I =ideal(a^3+b^3+c^3)", 
@@ -160,9 +160,9 @@ document {
 	       characteristics of a (sheaf of) ring(s)"
 	  },
      "Computes a list of the successive sectional Euler 
-     characteristics of a ring (sheaf of), the i-th entry 
+     characteristics of a ring, the i-th entry 
      in the list being the Euler characteristic of the i-th
-     generic hyperplane restriction of ", TT "R",     
+     generic hyperplane restriction of ", TT "Proj(R)",".",
      EXAMPLE {
 	  "S = ZZ/101[a,b,c];",
 	  "I = ideal(a^3+b^3+c^3)", 
@@ -191,7 +191,7 @@ Node
       This function returns $\chi(X, F)$, the Euler characteristic of the sheaf @TT "F"@
       on a projective variety $X$,
       that is, the alternating sum of the dimensions of its cohomology groups.
-      This is usually much faster than computing the individual cohomology groups.
+      This is usually faster than computing the individual cohomology groups.
       It works for a coherent sheaf on a projective scheme over a field,
       or more generally on a closed subspace of a weighted projective space.
     Text
@@ -247,10 +247,10 @@ Node
       for this purpose. Indeed, for a coherent sheaf @TT "F"@ on $X$,
       we have $H^i(X, F) \cong H^i(W, s_*(F))$ for every $i$.
       The twists $F(c)$ are understood
-      to take place on $X$, where $O_X(1)$ is a line bundle.
+      to take place on the stack $X$, where $O_X(1)$ is a line bundle.
     Example
       Cubic = Proj(ZZ/101[x_0..x_2]/ideal(x_0^3+x_1^3+x_2^3));
-      euler(OO_Cubic^1,-5,5)
+      euler(OO_Cubic,-5,5)
   SeeAlso
     (euler,CoherentSheaf)
     (hh,ZZ,CoherentSheaf,ZZ,ZZ)

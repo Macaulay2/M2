@@ -33,8 +33,8 @@ Node
     (cohomology, ZZ, CoherentSheaf)
 
 -- Note: TorsionFree and GlobalSectionLimit are set by twistedGlobalSectionsModule,
--- which is called by HH^0(SumOfTwists) and HH^0(CoherentSheaf) are used by prune(SheafMap)
--- Similarly, SaturationMap is set here
+-- which is called by HH^0(SumOfTwists) and HH^0(CoherentSheaf) and hence by prune(SheafMap).
+-- Similarly, SaturationMap is set here.
 Node
   Key
     (cohomology, ZZ,                    SumOfTwists)
@@ -509,7 +509,8 @@ Node
       If @TT "F"@ or @TT "G"@ is a @syn SheafOfRings@, it is regarded simply as a coherent sheaf.
     Text
       The result is the sheaf of $O_X$-linear maps from @TT "F"@ to @TT "G"@.
-      Equivalently, this is the sheaf associated to the graded module @TT "Hom(module F, module G)"@.
+      Equivalently, this is the sheaf associated to the graded module @TT "Hom_R(module F, module G)"@,
+      where X = Proj(R). The function also works on an affine variety X.
     Example
       S = QQ[x,y];
       X = Proj S;
@@ -555,7 +556,8 @@ Node
     -- MinimalGenerators => Thing -- THIS SHOULD be included, logically.
       When @TT "Ext^i(F, G(>=d))"@ is called by another function,
       use MinimalGenerators => NonPrint, to avoid printing information to the screen;
-      instead, a sequence $(b, c, M)$ will be returned, meaning that $M$ is a graded module that maps to $\mathrm{Ext}^i(X, F(*))$,
+      instead, a sequence $(b, c, M)$ will be returned,
+      meaning that $M$ is a graded module that maps to $\mathrm{Ext}^i_X(F, G(*))$,
       the map is an isomorphism in degrees at least $b$, and it is surjective in degrees at least $c$.
       (These bounds need not be optimal.)
   Outputs
@@ -623,17 +625,9 @@ Node
       elements of the $i$th global Ext functor represent extensions of the sheaf $\mathcal{F}$ by $\mathcal{G}$; that
       is, exact sequences of sheaves of the form
       $$0 \to \mathcal{G} \to \mathcal{C}_i \to \mathcal{C}_{i-1} \to \cdots \to \mathcal{C}_1 \to \mathcal{F} \to 0.$$
-      These representatives can be accessed using the --put in yonedaSheafExt command
+      These representatives can be accessed using @TO "yonedaSheafExtension"@.
       Finally, another description is in terms of the derived category of $O_X$-modules:
       $$\mathrm{Ext}^i_X(\mathcal F,\mathcal G)\cong\mathrm{Hom}_{D(X)}(\mathcal F,\mathcal G[i]).$$
-    Text
-      The algorithm in Macaulay2 views $\mathrm{Ext}^i_X(\mathcal F,\mathcal G)$ as cohomology,
-      $H^i(X,\mathrm{RHom}(\mathcal F,\mathcal G))$. For $X$ a closed subspace of a projective space
-      (or weighted projective stack) $P=\mathrm{Proj }S$,
-      computing cohomology can be done on $P$. Finally, we use that
-      for a bounded complex $D$ of coherent sheaves on $P$, $H^i(P,D)$ is isomorphic to the degree-zero
-      part of the graded module $\mathrm{Ext}^i_S(I,D)$,
-      for a suitable truncation $I\subset S$ of the polynomial ring $S$.
     Text
       Both @TT "F"@ and @TT "S"@ must be coherent sheaves on the same projective variety or scheme $X$.
       If @TT "F"@ or @TT "G"@ is a @syn SheafOfRings@, it is regarded as a sheaf of modules in the evident way.
@@ -773,7 +767,8 @@ Node
       Here @TT "F"@ and @TT "G"@ must be coherent sheaves on the same space $X$.
       If @TT "F"@ or @TT "G"@ is a @syn SheafOfRings@, it is regarded simply as a coherent sheaf.
     Text
-      The result is the sheaf associated to the graded module @TT "Ext^n(module F, module G)"@.
+      The result is the sheaf associated to the graded module @TT "Ext^n_R(module F, module G)"@,
+      where X = Proj(R). The function also works for affine varieties, with X = Spec(R).
     Example
       X = Proj QQ[x,y];
       sheafExt^1(OO_X^1(2), OO_X^1(-11))
