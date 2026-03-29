@@ -60,6 +60,7 @@ export {
     "resolutionMap",
     "tensorCommutativity",
     "torSymmetry",
+    "weightedRegularity",
     "yonedaExtension",
     "yonedaExtension'",
     "yonedaMap",
@@ -80,6 +81,7 @@ export {
 
 importFrom_Core {
     "isPackageLoaded",
+    "flattenModule", "flattenMorphism",
 }
 
 -- keys into the type `Complex`
