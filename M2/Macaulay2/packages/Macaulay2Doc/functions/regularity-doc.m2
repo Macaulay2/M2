@@ -36,11 +36,11 @@ Node
       regularity I
       regularity module I
     Text
-      A closely related notion is the @TO2 {(weightedRegularity,Module),"weightedRegularity"}@ of a module.
+      A closely related notion is the @TT "weightedRegularity"@ of a module.
       Let @TT "R"@ be a graded polynomial algebra over a field, with generators $x_0,\ldots,x_{n-1}$
       in positive integer weights $a_0,...,a_{n-1}$,
       and let $\mathfrak{m}$ be the maximal ideal $(x_0,\ldots,x_{n-1})$.
-      Then the weighted regularity of a graded @TT "R"@-module @TT "M"@ is defined
+      For a graded @TT "R"@-module @TT "M"@, @TT "weightedRegularity(M)"@ is defined
       using local cohomology as
       $$\sup_{i\geq 0} (i + \text{maximum degree of }H^i_{\mathfrak{m}}(R, M)).$$
       For example, if $M$ is bounded above, then the weighted regularity of @TT "M"@ is the maximum degree of $M$.
