@@ -53,6 +53,21 @@ TEST /// -- degree of a projective variety
   assert(degree X2 == 7/6)
 ///
 
+TEST ///
+  T = ZZ/5[x0,x1];
+  S = ZZ/5[a,b,c,d];
+  g = map(T, S, {x0^3, x0^2*x1, x0*x1^2, x1^3});
+  X1 = Proj(S/(ker g))
+  assert(isCohenMacaulay X1)
+  R2 = QQ[x,y,u,v]/(x*u, x*v, y*u, y*v);
+  X2 = Proj R2
+  assert(not isCohenMacaulay R2)
+  assert(isCohenMacaulay X2)
+  R3 = QQ[r,s,t]/(r*s,r*t);
+  X3 = Proj R3;
+  assert(not isCohenMacaulay X3) -- The function checks whether X is Cohen-Macaulay AND equidimensional.
+///
+
 end
 
 -- multigraded Proj

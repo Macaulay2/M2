@@ -70,3 +70,19 @@ TEST ///
   assert(isLocallyFree(S6++S7++S7))
   assert(not isLocallyFree(M6++M7++M7))
 ///
+
+TEST ///
+  R0 = QQ[x,y,z];
+  R1 = R0/(x*y+z^2);
+  X1 = Proj R1;
+  assert(dualizingSheaf X1 == OO_X1(-1))
+  use R0;
+  R2 = R0/(x*y);
+  X2 = Proj R2;
+  assert(dualizingSheaf X2 == OO_X2(-1))
+  R3 = ZZ/31991[x,y,z,w,Degrees=>{1,1,2,3}];
+  R4 = R3/(x^6+y^6+z^3+w^2);
+  X4 = Proj R4;
+  assert(dualizingSheaf X4 == OO_X4(-1))
+///
+

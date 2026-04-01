@@ -43,6 +43,7 @@ newPackage(
 	"Saturation",
 	"Truncations",
 	"Isomorphism",
+	"TestIdeals",
 	HomologicalAlgebraPackage
 	},
     AuxiliaryFiles => true
@@ -365,6 +366,31 @@ isSmooth ProjectiveVariety := {} >> o -> X -> (
      -- locus in the affine cone has dimension at most 0.
      -- We don't need to saturate the corresponding ideal, for this purpose.
      dim jacobianIdeal R <= 0)
+
+-- The following functions check whether a variety over a field is Cohen-Macaulay and equidimensional.
+-- (For X connected, this is equivalent to just being Cohen-Macaulay.)
+isCohenMacaulay AffineVariety := opts -> X -> isCohenMacaulay(ring X, opts)
+isCohenMacaulay ProjectiveVariety := opts -> X -> (
+    M := currentModuleBaseRing OO_X^1;
+    S := ring M; -- Thus S is a graded polynomial ring, and M is R = S/I as an S-module,
+    -- for a graded ring R with X = Proj(R).
+    if degreeLength S =!= 1 then error "expected degree length 1";
+    degs := flatten degrees S; -- This is a list of the form {1,9,15,22}, say.
+    dimS := #degs; -- So the ring S has dimension dimS.
+    dimR := dim M;
+    sumOfWeights := fold(plus, degs); -- This is sum_i |x_i|, where S = k[x_0,...,x_(n-1)].
+    S.cache ??= new MutableHashTable;
+    w := S.cache.Dualizing ??= S^{-sumOfWeights};
+    -- We fix the dualizing module w, as a graded S-module (even though the grading is irrelevant
+    -- for this function). As a result, Macaulay2 automatically remembers Ext^i(M, w)
+    -- (for a number i), in case another function has computed that module earlier.
+    flag := true;
+    i := dimS - dimR + 1;
+    while flag and (i < dimS) do ( -- Since R is graded, it suffices to check that the S-module Ext^i(M,w)
+	-- is supported at the origin for dim(S)-dim(R) < i < dim(S).
+	if dim Ext^i(M, w) > 0 then flag = false;
+	i = i + 1);
+    flag)
 
 -----------------------------------------------------------------------------
 -- Subpackages

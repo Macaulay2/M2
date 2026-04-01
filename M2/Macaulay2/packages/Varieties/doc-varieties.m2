@@ -430,14 +430,11 @@ Node
 ///
 
 
---Comment about this code: isn't it sufficient to just check that the quotient by the
---jacobian + the original ideal has finite length? Using the singularLocus command to do this
---adds an additional saturation computation that seems unnecessary
 doc ///
 Node
   Key
-   (isSmooth, AffineVariety)
    (isSmooth, ProjectiveVariety)
+   (isSmooth, AffineVariety)
   Headline
     whether a variety is smooth
   Usage
@@ -450,13 +447,63 @@ Node
     Text
       An variety $X$ is smooth if its @TO2 (singularLocus, "singular locus")@ is empty.
       When $X$ is a closed subspace of a weighted projective space, this function checks
-      whether $X$ is smooth as a stack over the base ring.
+      whether $X$ is smooth as a stack over the base field.
     Example
       R = quotient minors_2 genericMatrix(QQ[x,y,z,w], 2, 2)
       isSmooth Proj R
       isSmooth Spec R
   SeeAlso
     "NormalToricVarieties::isSmooth(NormalToricVariety)"
+
+Node
+  Key
+    (isCohenMacaulay, ProjectiveVariety)
+    (isCohenMacaulay, AffineVariety)
+    --[isCohenMacaulay, AtOrigin]
+  Headline
+    whether a variety is Cohen-Macaulay and equidimensional
+  Usage
+    isCohenMacaulay X
+  Inputs
+    X:{AffineVariety,ProjectiveVariety}
+    AtOrigin => Boolean
+      this option is ignored.
+  Outputs
+    :Boolean
+  Description
+    Text
+      The function {\tt isCohenMacaulay} checks whether a scheme $X$ over a field is Cohen-Macaulay and equidimensional.
+      For $X$ connected, it is equivalent to say simply that $X$ is Cohen-Macaulay.
+      --If the option {\tt AtOrigin} (default value {\tt false}) is set to {\tt true},
+      --{\tt isCohenMacaulay} will simply call the @TO isCM@ function in the {\tt Depth} package,
+      --which checks whether the ring is Cohen-Macaulay at the origin;
+      --otherwise, {\tt isCohenMacaulay} checks the Cohen-Macaulay property globally,
+      --which sometimes is much faster than the local computation.
+    Text
+      The function also works for a subspace of a weighted projective space, viewed as a stack.
+    Example
+      T = ZZ/5[x,y];
+      S = ZZ/5[a,b,c,d];
+      g = map(T, S, {x^3, x^2*y, x*y^2, y^3});
+      X = Proj(S/(ker g));
+      isCohenMacaulay X
+    Example
+      R = QQ[x,y,u,v]/(x*u, x*v, y*u, y*v);
+      X = Proj R;
+      isCohenMacaulay R
+      isCohenMacaulay X
+    Text
+      In the following example, the projective scheme $Y$ (the disjoint union of a point and a line)
+      is Cohen-Macaulay but not equidimensional, and so the function returns {\tt false}.
+    Example
+      A = QQ[r,s,t]/(r*s,r*t);
+      Y = Proj A;
+      isCohenMacaulay Y
+  Caveat
+    This function checks whether $X$ is Cohen-Macaulay {\it and }equidimensional. Also, if you want to know whether
+    a projective variety is projectively Cohen-Macaulay (a stronger property), you can use: {\tt isCohenMacaulay ring X}
+  SeeAlso
+    (isCohenMacaulay,Ring)
 
 Node
   Key

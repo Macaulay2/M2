@@ -98,9 +98,9 @@ twistedGlobalSectionsModule = (F, bound) -> (
     -- However, we need to keep the information
     -- cached in M, for instance if M is a Hom module.
     M := module F;
-    quot := currentModuleMap F; -- The map from M to a simplified R2-module N (at least simplified to M/M_tors).
+    quot := currentModuleMap F; -- The map from M to a simplified A-module N (at least simplified to M/M_tors).
     N := target quot;
-    N' := currentModuleBaseRing F; -- This is N as an R1-module.
+    N' := currentModuleBaseRing F; -- This is N as an S-module.
     S := ring N'; -- This is a graded polynomial ring.
     degs := flatten degrees S; -- This is a list of the form {1,9,15,22}, say.
     n := #degs; -- So P = Proj S has dimension n-1.
