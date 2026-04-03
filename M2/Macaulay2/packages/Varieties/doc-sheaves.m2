@@ -652,6 +652,10 @@ Node
       only under the extra assumption that $X$ is {\it well-formed},
       meaning that $\text{gcd}(a_0,\ldots,\widehat{a_i},\ldots,a_n)=1$ for each $i$.
     Text
+      If $X$ is @TO2{(isCohenMacaulay,ProjectiveVariety),"Cohen-Macaulay"}@ of pure dimension $n$,
+      then the dualizing complex $f^!(k)$ is concentrated in one degree. Namely, it is isomorphic
+      in the derived category of $X$ to $\omega_X[n]$.
+    Text
       We compute the dualizing sheaf for some plane curves, showing that the dualizing sheaf
       can differ from @TO canonicalSheaf@ for a singular curve.
     Example
@@ -1413,17 +1417,19 @@ Node
       For a coherent sheaf on an affine scheme, this function yields an isomorphic sheaf, with an attempt
       to simplify the presentation of the corresponding module.
     Text
-      For a coherent sheaf on a projective scheme over a base ring, this function yields an isomorphic sheaf,
-      but here the underlying module may have changed.
-      Given a sheaf $\mathcal F$ represented by some module $M$, there are always isomorphisms
-      $$H^i(X, \mathcal{F}) = H^i_{\mathfrak{m}}(M)_0 \quad \text{for} \ i > 0,$$
-      where $\mathfrak{m}$ denotes the irrelevant ideal. When $i = 0$ the best one can say in general
-      is that there is an exact sequence
-      $$0 \to H^0_{\mathfrak{m}}(M) \to \bigoplus_{d \geq 0} H^0(X, \mathfrak{F}(d)) \to M \to H^1_{\mathfrak{m}}(M) \to 0.$$
-      Thus, the prune command for a coherent sheaf computes a graded module $M'$ representing the same
-      sheaf $\mathcal{F}$, but such that there is an honest isomorphism
-      $$M' \cong \bigoplus_{d \geq 0} H^0(X, \mathcal{F} (d)).$$
-      In other words, the prune command computes a module with depth at least 2 that represents the same sheaf $\mathcal{F}$.
+      For a coherent sheaf on a projective scheme Proj $R$ over a base ring $k$, this function yields an isomorphic sheaf,
+      perhaps with a different underlying module.
+      Given a sheaf $\mathcal F$ represented by some graded $R$-module $M$, there are always isomorphisms
+      $\bigoplus_{d \in \mathbb{Z}} $H^i(X, \mathcal{F}(d)) = H^{i+1}_{\mathfrak{m}}(M) \quad \text{for} \ i > 0,$$
+      where $\mathfrak{m}$ denotes the ideal of elements of positive degree.
+      When $i = 0$, instead, there is an exact sequence
+      $$0 \to H^0_{\mathfrak{m}}(M) \to M \to \bigoplus_{d \in \mathbb{Z}} H^0(X, \mathfrak{F}(d)) \to H^1_{\mathfrak{m}}(M) \to 0.$$
+    Text
+      The prune command for a coherent sheaf computes a graded $R$-module $M'$ representing the same
+      sheaf $\mathcal{F}$, such that there are maps
+      $$M\ to M' \to \bigoplus_{d \in \mathbb{Z}} H^0(X, \mathcal{F} (d))$$
+      of graded $R$-modules. If the last module is bounded below, then $M'$ will in fact be equal to that module.
+      In that case, $M'$ is a module of depth at least 2 that represents the same sheaf $\mathcal{F}$.
     Example
       R = QQ[x,y];
       M1 = module ideal(x^2,x*y,y^2)
@@ -1440,7 +1446,8 @@ Node
       The method for computing the pruned representative proceeds with a few steps: first, the representative module
       $M$ is replaced by $M / H^0_{\mathfrak{m}} (M)$, which kills any torsion. Next, since $M$ is now torsion-free, we have
       an equality $\operatorname{Hom}_S (N , M) = 0$ for any module $N$ with finite length. Thus, we can choose
-      a large formal Frobenius power $\mathfrak{m}^{[m]} = (x_1^m , \dots , x_n^m)$ of the maximal ideal so that $\operatorname{Hom}_S (\mathfrak{m}^{[m]} , M)$
+      a large formal Frobenius power $\mathfrak{m}^{[m]} = (x_1^m , x_2^m, \ldots , x_n^m)$ of the maximal ideal
+      so that $\operatorname{Hom}_S (\mathfrak{m}^{[m]} , M)$
       has depth at least $2$. Applying the functor $\operatorname{Hom}_S ( - , M)$ to the short exact sequence
       $$0 \to \mathfrak{m}^{[m]} \to S \to S / \mathfrak{m}^{[m]} \to 0$$
       yields a short exact sequence

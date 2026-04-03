@@ -83,13 +83,16 @@ Node
       than its cohomology sheaf in degree 0. Eventually,
       one might want to consider the full cotangent complex of $X$,
       or at least its truncation to degrees $\geq -1$ rather than $\geq 0$.
+    Text
+      In the following example, the cohomology sheaf of the naive cotangent complex in degree 1
+      is nonzero at the point $[0,0,1]$ (and only there), because the characteristic 5 divides the last weight.
     Example
       X1 = ProjectiveStack_(ZZ/5)(1,3,5);
       C1 = naiveCotangentComplex X1;
       S0 = HH^0 C1;
       S1 = HH^1 C1;
       dim S0
-      dim S1 -- The sheaf S1 is supported at the point [0,0,1], because the characteristic 5 divides the last weight.
+      dim S1
   SeeAlso
     cotangentSheaf
     cotangentSurjection
@@ -140,13 +143,16 @@ Node
       to @TT "cotangentSheaf(m, X)"@. But without those assumptions,
       @TT "naiveCotangentComplex (m, X)"@ should be considered as more natural
       than its cohomology sheaf in degree 0.
+    Text
+      In the following example, the cohomology sheaf of the naive cotangent complex in degree 1
+      is nonzero at the point $[0,0,1]$ (and only there), because the characteristic 5 divides the last weight.
     Example
       X1 = ProjectiveStack_(ZZ/5)(1,3,5);
       C1 = naiveCotangentComplex(1, X1);
       S0 = HH^0 C1;
       S1 = HH^1 C1;
       dim S0
-      dim S1 -- The sheaf S1 is supported at the point [0,0,1], because the characteristic 5 divides the last weight.
+      dim S1
   SeeAlso
     cotangentSheaf
     cotangentSurjection

@@ -125,17 +125,30 @@ Node
     kk:Ring
   Outputs
     :ProjectiveVariety
-      projective space or weighted projective stack over the ring @TT "kk"@
+      projective space or weighted projective space over the ring @TT "kk"@
   Description
+    Text
+      This function defines projective space or a weighted projective space over a base ring @TT "kk"@,
+      as shown in the examples below. If the base ring is not specified, it is taken to be @TT "QQ"@.
+    Text
+      Weighted projective space is viewed as an algebraic stack, when that makes a difference.
+      For example, $P(1,3,5)$ is the quotient stack of $A^3-0$ by the multiplicative group $G_m$,
+      acting by $t(x, y, z)=(tx, t^3 y, t^5 z)$. The functions @TT "ProjectiveSpace(1,3,5)"@
+      and @TT "ProjectiveStack(1,3,5)"@ are equivalent. As indicated below, you may wish
+      to define a shorter name @TT "PP"@, replacing the function with the same name
+      in the package @TT "MultiprojectiveVarieties"@.
+    Text
+      Note that it is often more pleasant to choose variable names yourself,
+      by commands like @TT "R = QQ[x,y,z,Degrees=>{1,3,5}]"@ and @TT "X = Proj R"@.      
     Example
       PP = ProjectiveSpace
       PP^2
       PP_(ZZ/101)^1
-      PP(1,1,2)
-      PP_(ZZ/101)(1,1,2)
+      PP(1,3,5)
+      PP_(ZZ/101)(1,3,5)
   SeeAlso
-    "NormalToricVarieties :: toricProjectiveSpace"
-    "NormalToricVarieties :: weightedProjectiveSpace"
+    "NormalToricVarieties::toricProjectiveSpace(ZZ)" -- "make projective space as a toric variety"
+    "NormalToricVarieties::weightedProjectiveSpace(List)" -- "make weighted projective space as a toric variety"
 ///
 
 -- document { Key => variety, Headline => "get the variety" }
@@ -452,6 +465,8 @@ Node
       R = quotient minors_2 genericMatrix(QQ[x,y,z,w], 2, 2)
       isSmooth Proj R
       isSmooth Spec R
+  Caveat
+    It is assumed that $X$ is equidimensional. Otherwise, the answer given is not meaningful.
   SeeAlso
     "NormalToricVarieties::isSmooth(NormalToricVariety)"
 
@@ -470,20 +485,26 @@ Node
   Description
     Text
       The function {\tt isCohenMacaulay} checks whether a scheme $X$ over a field is Cohen-Macaulay and equidimensional.
-      For $X$ connected, it is equivalent to say simply that $X$ is Cohen-Macaulay.
-      --If the option {\tt AtOrigin} (default value {\tt false}) is set to {\tt true},
-      --{\tt isCohenMacaulay} will simply call the @TO isCM@ function in the {\tt Depth} package,
-      --which checks whether the ring is Cohen-Macaulay at the origin;
-      --otherwise, {\tt isCohenMacaulay} checks the Cohen-Macaulay property globally,
-      --which sometimes is much faster than the local computation.
+      For $X$ connected, it is equivalent to say simply that $X$ is Cohen-Macaulay. For example, every smooth variety
+      is Cohen-Macaulay.
     Text
       The function also works for a subspace of a weighted projective space, viewed as a stack.
+    Text
+      If $X$ is a projective Cohen-Macaulay variety of pure dimension $n$ over a field, then $X$ satisfies
+      Serre duality in terms of the @TO2{(dualizingSheaf,ProjectiveVariety),"dualizingSheaf"}@, meaning that
+      $$Ext^i_X(E,\omega_X)\cong H^{n-i}(X,E)^*$$
+      for every coherent sheaf $E$ on $X$ and every integer $i$. If $E$ is a vector bundle, this can be rewritten as:
+      $$H^i(X,E^*\otimes\omega_X)\cong H^{n-i}(X,E)^*.$$
+    Text
+      For example, let us check that the nodal cubic curve in $\mathbf{P}^2$ is Cohen-Macaulay. (More generally,
+      every hypersurface in a smooth variety is Cohen-Macaulay.)
     Example
-      T = ZZ/5[x,y];
-      S = ZZ/5[a,b,c,d];
-      g = map(T, S, {x^3, x^2*y, x*y^2, y^3});
-      X = Proj(S/(ker g));
+      T = ZZ/5[a,b,c];
+      X = Proj(T/(b^2*c - a^2*(a+c)));
+      isSmooth X
       isCohenMacaulay X
+    Text
+      The disjoint union of two lines in $\mathbf{P}^3$ is Cohen-Macaulay, although its coordinate ring is not.
     Example
       needsPackage "Depth"
       R = QQ[x,y,u,v]/(x*u, x*v, y*u, y*v);
@@ -491,7 +512,7 @@ Node
       isCohenMacaulay R
       isCohenMacaulay X
     Text
-      In the following example, the projective scheme $Y$ (the disjoint union of a point and a line)
+      The following scheme $Y$ (the disjoint union of a point and a line)
       is Cohen-Macaulay but not equidimensional, and so the function returns {\tt false}.
     Example
       A = QQ[r,s,t]/(r*s,r*t);
