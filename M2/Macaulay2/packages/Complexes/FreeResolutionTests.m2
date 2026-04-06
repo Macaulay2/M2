@@ -806,6 +806,7 @@ TEST ///
 
 TEST ///
   -- of length limits and free resolutions
+  debug needsPackage "Complexes"
   R = ZZ/32003[a..d]/(a^2-b*c)
   M = coker vars R;
   C1 = freeResolution(M, LengthLimit => 4);
@@ -847,6 +848,7 @@ TEST ///
 ///
 
 TEST ///
+  debug needsPackage "Complexes"
   R = ZZ/101[a..d]
   M = R^0
   C = freeResolution M
@@ -864,13 +866,11 @@ TEST ///
   assert(C2 == 0)
 ///
 
-
-TEST ///
--- XXX
 -*
 restart
 needsPackage "Complexes"
 *-
+TEST ///
   needsPackage "InverseSystems"
   R = ZZ/101[a..e]
   F = a^4 + b^4 + c^4 +d^4 + e^4 + (a+b+c+d+e)^4
@@ -880,14 +880,15 @@ needsPackage "Complexes"
   assert(bt1 == bt2)
 ///
 
+-*  
+  restart
+  needsPackage("Complexes")
+*-
 ///
   -- code to test control-c during a computation.
   -- We don't know how to make this into a proper test.
   -- TODO (possibly): allow snapshot of a partially computed resolution.
--*  
-  restart
   debug needsPackage("Complexes")
-*-
   gbTrace=1
   S = ZZ/101[vars(0..20)]
   I = ideal for i from 1 to numgens S list S_(i-1)^i

@@ -947,12 +947,13 @@ TEST ///
   assert(g == 0)
 ///
 
-TEST ///
-  -- canonical truncation
+
 -*  
   restart
   needsPackage "Complexes"
 *-  
+TEST ///
+  -- canonical truncation
   R = ZZ/101[a,b,c,d,e]
   I = intersect(ideal(a,b),ideal(c,d,e))
   C = freeResolution I
@@ -986,13 +987,12 @@ TEST ///
 
 ///
 
-
-TEST ///
-  -- canonical truncation, more interesting example(s)
 -*  
   restart
   needsPackage "Complexes"
 *-  
+TEST ///
+  -- canonical truncation, more interesting example(s)
   R = ZZ/101[a,b,c,d,e]
   I = intersect(ideal(a,b),ideal(c,d,e))
   J = ideal(a^2, b^2, a*d, b*c^2)
@@ -1015,43 +1015,58 @@ TEST ///
   ZHCE0 = ker dd^HCE_0;
   f0 = map(ZHCD0, R^1,  random(R^(numgens ZHCD0), R^1))
   f = homomorphism(0, f0, HCD)
-  isWellDefined f
-  isNullHomotopic f
+  assert isWellDefined f
+  assert not isNullHomotopic f
   g0 = map(ZHDE0, R^1,  random(R^(numgens ZHDE0), R^1))
   g = homomorphism(0, g0, HDE)
-  isWellDefined g
-  isNullHomotopic g
+  assert isWellDefined g
+  assert not isNullHomotopic g
   h = g * f
-  isWellDefined h
-  isNullHomotopic h
+  assert isWellDefined h
+  assert isNullHomotopic h
   f' = canonicalTruncation(f, (-3,-1));
   g' = canonicalTruncation(g, (-3,-1));
   h' = canonicalTruncation(h, (-3,-1));
+  assert isWellDefined f'
+  assert isWellDefined g'
+  assert isWellDefined h'
   assert(g' * f' == h')
 
   f' = prune canonicalTruncation(f, (-3,-3));
   g' = prune canonicalTruncation(g, (-3,-3));
   h' = prune canonicalTruncation(h, (-3,-3));
+  assert isWellDefined f'
+  assert isWellDefined g'
+  assert isWellDefined h'
   assert(g' * f' == h')
+
   f' = canonicalTruncation(f, (-3,-3));
   g' = canonicalTruncation(g, (-3,-3));
   h' = canonicalTruncation(h, (-3,-3));
+  assert isWellDefined f'
+  assert isWellDefined g'
+  assert isWellDefined h'
   assert(g' * f' == h')
 
   f' = canonicalTruncation(f, (-4,-4));
   g' = canonicalTruncation(g, (-4,-4));
   h' = canonicalTruncation(h, (-4,-4));
+  assert isWellDefined f'
+  assert isWellDefined g'
+  assert isWellDefined h'
   assert(g' * f' == h')
 
   f' = canonicalTruncation(f, (-4,-2));
   g' = canonicalTruncation(g, (-4,-2));
   h' = canonicalTruncation(h, (-4,-2));
+  assert isWellDefined f'
+  assert isWellDefined g'
+  assert isWellDefined h'
   assert(g' * f' == h')
 
   g = canonicalTruncation(f, (-3,-2))
-  isWellDefined g
-  isComplexMorphism g
-  
+  assert isWellDefined g
+  assert isComplexMorphism g
 ///
 
 TEST ///

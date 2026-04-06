@@ -366,7 +366,7 @@ isQuasiIsomorphismOf(Complex, Module) := Boolean => opts -> (C, N) -> (
     D := complex N;
     if C == 0 then return D == 0;
     M := {map(D_0, C_0, 1)} | for i from 1 to max(length C, length D) list map(D_i, C_i, 0);
-    isQuasiIsomorphismOf(map(D, C, i -> M#i), opts)
+    isQuasiIsomorphism(map(D, C, i -> M#i), opts)
     )
 
 -*
@@ -397,7 +397,7 @@ isCommutative ComplexMap := Boolean => f -> (
 *-
 
 --============================ Tests Code ===================================--
--- These two rutines are not exported.  So tests must `debug needsPackage "Complexes"`.
+-- These two routines are not exported.  So tests must `debug needsPackage "Complexes"`.
 
 -- Returns a non-minimal free resolution, for testing purposes.
 -- Homogenizes the ideal w.r.t. a new variable, calculates a free resolution
