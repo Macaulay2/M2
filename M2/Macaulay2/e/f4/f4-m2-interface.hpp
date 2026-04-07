@@ -1,7 +1,7 @@
 #ifndef __F4toM2interface_h_
 #define __F4toM2interface_h_
 
-#include "engine-exports.h"  // for M2_arrayint
+#include "interface/m2-types.h"  // for M2_arrayint
 #include "f4/f4-types.hpp"   // for gb_array, GBF4Polynomial (ptr only), coefficient_m...
 #include "ringelem.hpp"      // for vec
 

@@ -1,9 +1,0 @@
-commenting these out was a bad idea.  Perhaps we can fix typecodes to types don't need to have names:
-
-int gettypecode(node t) {
-     assert(istype(t));
-     t = typeforward(t);
-     if (t == null_T) return 0;
-     /* assert(t->body.type.name != NULL); */
-     /* assert(t->body.type.name->body.symbol.name != NULL); */
-     assert(tostring(t) != NULL);

@@ -25,6 +25,7 @@ document {
 	-- TO "currentDirectory",
 	TO "pseudocode",
 	TO "disassemble",
+	TO "parse",
 	TO "frames",
 	TO functionBody,
 	TO dictionary,
@@ -327,6 +328,72 @@ document {
 	  }
      }
 
+doc ///
+  Key
+    Error
+    (NewFromMethod, Error, Thing)
+  Headline
+    error information
+  Description
+    Text
+      An instance of this class may be caught when an error occurs inside a
+      @TO symbol trap@ or @TO symbol try@ statement.  The error message may be
+      recovered using @TO toString@ and the location using @TO locate@.
+    Example
+      (val, err) = trap 1/0
+      toString err
+      locate err
+    Text
+      An @CODE "Error"@ object may be constructed from an error message.
+    Example
+      err = new Error from "foo"
+    Text
+      An error may be raised from an @CODE "Error"@ object using @TO error@.
+    Example
+      stopIfError = false
+      error err
+    Text
+      It is possible to create subclasses of @CODE "Error"@ for finer error
+      handling.
+    Example
+      MyError = new SelfInitializingType of Error
+      try error MyError "bar" except err do err
+  SeeAlso
+    symbol try
+    symbol trap
+    error
+///
+
+doc ///
+  Key
+    symbol trap
+  Headline
+    trap an error
+  Usage
+    trap c
+  Description
+    Text
+      The code @VAR "c"@ is evaluated and a sequence containing two elements
+      is returned.  If the evaluation completes successfully, then the first
+      element is the value and the second element is null.
+    Example
+      trap 5
+    Text
+      If an error occurs, then the first element is null and the second element
+      is an @TO Error@ object containing information about the error is
+      returned.
+    Example
+      trap 1/0
+    Text
+      Note that this is a @TO Keyword@, not a method, and so it is not
+      necessary to enclose @VAR "c"@ in parentheses.
+    Example
+      trap 5 == "foo"
+      {trap error "bar", 1/2}
+      trap 1/0; 1/2
+  SeeAlso
+    symbol try
+///
 
 document {
      Key => "recursionLimit",

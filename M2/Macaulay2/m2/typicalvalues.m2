@@ -126,11 +126,11 @@ generateTypicalValues = (srcdir) -> (
 
 -- if missing or not successfully generated, tvalues.m2 is regenerated directly
 if not fileExists typicalValuesSource or not match("-- DONE", get typicalValuesSource)
-then generateTypicalValues(currentFileDirectory | "../d/")
+then generateTypicalValues(topSrcdir | "Macaulay2/d/")
 
 -----------------------------------------------------------------------------
 -- numerical functions that will be wrapped
-redefs := hashTable apply({acos, agm, asin, atan, atan2, Beta, cos, cosh, cot, coth, csc, csch, Digamma, eint, erf, erfc, exp, expm1, Gamma, inverseErf, inverseRegularizedBeta, inverseRegularizedGamma, log, log1p, regularizedBeta, regularizedGamma, sec, sech, sin, sinh, sqrt, tan, tanh, zeta},
+redefs := hashTable apply({acos, agm, asin, atan, atan2, Beta, cos, cosh, cot, coth, csc, csch, Digamma, eint, erf, erfc, exp, expm1, Gamma, inverseErf, inverseRegularizedBeta, inverseRegularizedGamma, log, log1p, polylog, regularizedBeta, regularizedGamma, sec, sech, sin, sinh, sqrt, tan, tanh, zeta},
     f -> f => method());
 variants := new MutableHashTable;
 

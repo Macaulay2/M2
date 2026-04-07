@@ -766,7 +766,7 @@ assert Equation(0 xor y, 2)
 ----------------------
 assert Equation(-x, -5)
 assert Equation(+x, 5)
-assert Equation(x~, -6)
+assert Equation(~x, -6)
 assert Equation(not x, false)
 ///
 

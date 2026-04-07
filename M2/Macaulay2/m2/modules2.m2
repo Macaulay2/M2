@@ -124,6 +124,10 @@ presentation Module := Matrix => M -> M.cache.presentation ??= (
 
 -----------------------------------------------------------------------------  
 
+-- whether a minimalPresentation is already cached
+-- TODO: simplify this caching system
+hasMinPres = M -> any(select(keys M.cache, Option), o -> o#0 === symbol minimalPresentation)
+
 minimalPresentation(Module) := prune(Module) := Module => opts -> (cacheValue (symbol minimalPresentation => opts)) (M -> (
 	  if isFreeModule M then (
 	       M.cache.pruningMap = id_M;

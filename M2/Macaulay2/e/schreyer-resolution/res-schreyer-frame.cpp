@@ -618,6 +618,7 @@ void SchreyerFrame::insertLevelZero(res_packed_monomial monom,
                                     int degree,
                                     int maxdeglevel0)
 {
+  (void) maxdeglevel0;
   auto& myframe = level(0);
   long idx = myframe.size();
   myframe.emplace_back(FrameElement(monom, degree));

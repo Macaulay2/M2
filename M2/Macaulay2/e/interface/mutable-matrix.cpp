@@ -72,6 +72,8 @@ unsigned int rawMutableMatrixHash(const MutableMatrix *M) { return M->hash(); }
 MutableMatrix /* or null */ *rawMutableMatrixPromote(const Ring *S,
                                                      const MutableMatrix *f)
 {
+  (void) S;
+  (void) f;
   // Given a natural map i : R --> S
   // f is a matrix over R.
   // returns a matrix over S.
@@ -92,6 +94,8 @@ MutableMatrix /* or null */ *rawMutableMatrixLift(int *success_return,
   // returns a matrix over R.
 
   // ERROR("MutableMatrix lift not implemented yet");
+  (void) R;
+  (void) f;
   *success_return = 0;
   return nullptr;
 #if 0
@@ -196,6 +200,50 @@ IM2_MutableMatrix_get_entry(const MutableMatrix *M, int r, int c)
   return RingElement::make_raw(M->get_ring(), result);
 }
 
+engine_RawRingElementArrayArrayOrNull
+IM2_MutableMatrix_get_entries(const MutableMatrix *M)
+{
+  try
+    {
+      int ncols = M->n_cols();
+      int nrows = M->n_rows();
+      if(nrows < 0 || ncols < 0)
+        {
+          ERROR("internal error: matrix has a negative size %d by %d",
+                nrows,
+                ncols);
+          return nullptr;
+        }
+      engine_RawRingElementArrayArray entries =
+          getmemarraytype(engine_RawRingElementArrayArray, nrows);
+      entries->len = nrows;
+      for(int r = 0; r < nrows; r++)
+        {
+          engine_RawRingElementArray currRow =
+              getmemarraytype(engine_RawRingElementArray, ncols);
+          currRow->len = ncols;
+          entries->array[r] = currRow;
+        }
+      for(int r = 0; r < nrows; r++)
+        {
+          for(int c = 0; c < ncols; c++)
+            {
+              ring_elem result;
+              M->get_entry(r, c, result);
+              entries->array[r]->array[c] =
+                  RingElement::make_raw(M->get_ring(), result);
+            }
+        }
+      return entries;
+    } catch (const exc::engine_error& e)
+    {
+      ERROR(e.what());
+      return nullptr;
+    }
+  return nullptr;
+}
+
+
 M2_bool IM2_MutableMatrix_set_entry(MutableMatrix *M,
                                     int r,
                                     int c,
@@ -255,6 +303,7 @@ M2_bool IM2_MutableMatrix_row_operation(MutableMatrix *M,
                                         M2_bool opposite_mult)
 /* row(i) <- row(i) + r * row(j) */
 {
+  (void) opposite_mult;
   const Ring *R = M->get_ring();
   if (R != r->get_ring())
     {
@@ -278,6 +327,7 @@ M2_bool IM2_MutableMatrix_column_operation(MutableMatrix *M,
                                            M2_bool opposite_mult)
 /* column(i) <- column(i) + r * column(j) */
 {
+  (void) opposite_mult;
   const Ring *R = M->get_ring();
   if (R != r->get_ring())
     {
@@ -300,6 +350,7 @@ M2_bool IM2_MutableMatrix_row_scale(MutableMatrix *M,
                                     M2_bool opposite_mult)
 /* row(i) <- r * row(i) */
 {
+  (void) opposite_mult;
   const Ring *R = M->get_ring();
   if (R != r->get_ring())
     {
@@ -321,6 +372,7 @@ M2_bool IM2_MutableMatrix_column_scale(MutableMatrix *M,
                                        M2_bool opposite_mult)
 /* column(i) <- r * column(i) */
 {
+  (void) opposite_mult;
   const Ring *R = M->get_ring();
   if (R != r->get_ring())
     {
@@ -364,6 +416,7 @@ M2_bool IM2_MutableMatrix_column_2by2(MutableMatrix *M,
    column(c2) <- b1 * column(c1) + b2 * column(c2)
 */
 {
+  (void) opposite_mult;
   const Ring *R = M->get_ring();
   if (a1->get_ring() != R || a2->get_ring() != R || b1->get_ring() != R ||
       b2->get_ring() != R)
@@ -391,6 +444,7 @@ M2_bool IM2_MutableMatrix_row_2by2(MutableMatrix *M,
    row(r2) <- b1 * row(r1) + b2 * row(r2)
 */
 {
+  (void) opposite_mult;
   const Ring *R = M->get_ring();
   if (a1->get_ring() != R || a2->get_ring() != R || b1->get_ring() != R ||
       b2->get_ring() != R)
@@ -409,6 +463,9 @@ M2_bool IM2_MutableMatrix_row_2by2(MutableMatrix *M,
 M2_bool IM2_MutableMatrix_sort_columns(MutableMatrix *M, int lo, int hi)
 /* Returns false if M is not mutable, or lo, or hi are out of range */
 {
+  (void) M;
+  (void) lo;
+  (void) hi;
   ERROR("not re-implemented yet");
   return false;
 }
@@ -567,6 +624,7 @@ M2_bool rawLLL(MutableMatrix *M,
 
 M2_bool IM2_SmithNormalForm(MutableMatrix *M)
 {
+  (void) M;
 #ifdef DEVELOPMENT
 #warning "implement smith"
 #endif
@@ -576,6 +634,7 @@ M2_bool IM2_SmithNormalForm(MutableMatrix *M)
 
 M2_bool IM2_HermiteNormalForm(MutableMatrix *M)
 {
+  (void) M;
 #ifdef DEVELOPMENT
 #warning "implement hermite"
 #endif
@@ -948,6 +1007,7 @@ engine_RawRingElementArrayOrNull rawLinAlgCharPoly(MutableMatrix *A)
 // returns an array whose coefficients give the characteristic polynomial of the
 // square matrix A
 {
+  (void) A;
 #if 1
 #if 0
   const Ring *R = A->get_ring();
@@ -981,6 +1041,7 @@ engine_RawRingElementArrayOrNull rawLinAlgMinPoly(MutableMatrix *A)
 // returns an array whose coefficients give the minimal polynomial of the square
 // matrix A
 {
+  (void) A;
 #if 1
 #if 0
   const Ring *R = A->get_ring();
@@ -1103,6 +1164,7 @@ gmp_RRorNull rawRingElementNorm(gmp_RR p, const RingElement *f)
 
 gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 {
+  (void) p;
   return M->norm();
 }
 

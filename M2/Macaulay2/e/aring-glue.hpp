@@ -75,9 +75,15 @@ class ConcreteRing : public Ring
 
   const RingElement *getMinimalPolynomial() const { return nullptr; }
   const RingElement *getGenerator() const { return nullptr; }
-  const RingElement *getRepresentation(const ring_elem &a) const { return nullptr; }
+  const RingElement *getRepresentation(const ring_elem &a) const
+  {
+    (void) a;
+    return nullptr;
+  }
+
   virtual long discreteLog(const ring_elem &a) const
   {
+    (void) a;
     throw exc::engine_error("cannot compute discrete logarithm in this ring");
   }
 
@@ -92,6 +98,7 @@ class ConcreteRing : public Ring
 
   virtual std::pair<bool, long> coerceToLongInteger(ring_elem a) const
   {
+    (void) a;
     return std::pair<bool, long>(false, 0);
   }
 
@@ -255,6 +262,7 @@ class ConcreteRing : public Ring
 
   virtual void remove(ring_elem &f) const
   {
+    (void) f;
     if (displayArithmeticCalls) fprintf(stderr, "calling remove\n");
     /* currently, do nothing... */
   }
@@ -967,6 +975,7 @@ template <typename RingType>
 ring_elem ConcreteRing<RingType>::zeroize_tiny(gmp_RR epsilon,
                                                const ring_elem f) const
 {
+  (void) epsilon;
   return f;
 }
 
@@ -974,7 +983,8 @@ template <typename RingType>
 void ConcreteRing<RingType>::increase_maxnorm(gmp_RRmutable norm,
                                               const ring_elem f) const
 {
-  // do nothing by default
+  (void) norm;
+  (void) f;
 }
 
 template <>

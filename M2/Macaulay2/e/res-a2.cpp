@@ -73,7 +73,7 @@ void gb_emitter::flush()
 
 bool gb_emitter::is_done() { return (n_left == 0); }
 void gb_emitter::stats() const {}
-void gb_emitter::text_out(buffer &o) const {}
+void gb_emitter::text_out(buffer &o) const { (void) o; }
 typedef gb_node *gb_node_ptr;
 
 void gbres_comp::setup(const Matrix *m, int length, int origsyz, int strategy)

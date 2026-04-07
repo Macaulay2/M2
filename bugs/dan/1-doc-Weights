@@ -1,5 +1,0 @@
-Document that Weights can take a list of lists of integers.
-
-i1 : QQ[x,y,Weights=>{{1,2},{2,1}}]
-
-o1 = QQ[x, y]

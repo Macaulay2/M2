@@ -54,6 +54,8 @@ Tower *Tower::create(int charac, M2_ArrayString names)
 Tower *Tower::create(const Tower *R, M2_ArrayString new_names)
 {
   // TODO: write
+  (void) R;
+  (void) new_names;
   return nullptr;
 }
 
@@ -67,6 +69,7 @@ Tower *Tower::create(const Tower *R, VECTOR(ring_elem) & extensions)
 unsigned int Tower::computeHashValue(const ring_elem a) const
 {
   // TODO HASH
+  (void) a;
   return 3212415;
 }
 
@@ -132,6 +135,7 @@ ring_elem Tower::var(int v) const
 bool Tower::is_unit(const ring_elem f) const
 {
   // Write this.  Git issue #611.
+  (void) f;
   return false;
 }
 
@@ -317,13 +321,19 @@ ring_elem Tower::eval(const RingMap *map,
 
 bool Tower::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 {
-  // Write this.  Git issue #611.
+  // Write this.  Git issue #611
+  (void) Rf;
+  (void) f;
+  (void) result;
   return false;
 }
 
 bool Tower::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
 {
   // Write this.  Git issue #611.
+  (void) Rg;
+  (void) f;
+  (void) result;
   return false;
 }
 
@@ -333,6 +343,10 @@ void Tower::syzygy(const ring_elem a,
                    ring_elem &y) const
 {
   // Write this.  Git issue #611.
+  (void) a;
+  (void) b;
+  (void) x;
+  (void) y;
 }
 
 ring_elem Tower::gcd(const ring_elem f, const ring_elem g) const

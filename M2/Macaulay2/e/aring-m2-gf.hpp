@@ -121,6 +121,7 @@ class ARingGFM2 : public SimpleARing<ARingGFM2>
   void getGenerator(elem &result_gen) const { result_gen = 1; }
   int get_repr(elem f) const
   { /*TODO: WRITE WRITE ;*/
+    (void) f;
     throw exc::internal_error("get_repr not written");
   }
 
@@ -154,7 +155,7 @@ class ARingGFM2 : public SimpleARing<ARingGFM2>
   void init_set(elem &result, elem a) const { result = a; }
   void set(elem &result, elem a) const { result = a; }
   void set_zero(elem &result) const { result = 0; }
-  static void clear(elem &result) { /* nothing */}
+  static void clear(elem &result) { (void) result; }
 
   void set_from_long(elem &result, long a) const
   {
@@ -163,7 +164,12 @@ class ARingGFM2 : public SimpleARing<ARingGFM2>
     result = mGF.fromZZTable(a1);
   }
 
-  void set_var(elem &result, int v) const { result = 1; }
+  void set_var(elem &result, int v) const
+  {
+    (void) v;
+    result = 1;
+  }
+
   void set_from_mpz(elem &result, mpz_srcptr a) const
   {
     int b = static_cast<int>(mpz_fdiv_ui(a, characteristic()));
@@ -180,7 +186,13 @@ class ARingGFM2 : public SimpleARing<ARingGFM2>
     return true;
   }
 
-  bool set_from_BigReal(elem &result, gmp_RR a) const { return false; }
+  bool set_from_BigReal(elem &result, gmp_RR a) const
+  {
+    (void) result;
+    (void) a;
+    return false;
+  }
+
   void negate(elem &result, elem a) const
   {
     if (a != 0)

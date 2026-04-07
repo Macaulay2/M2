@@ -2540,9 +2540,10 @@ gfanFunctions = hashTable {
 	gfanTropicalWeilDivisor => "gfan _tropicalweildivisor" -- v0.4
 }
 
+wrap' = (n, str) -> stack apply(lines str, wrap_n)
 gfanHelp = functionStr -> PRE TT(
     if gfanProgram === null then gfanProgram = findProgram("gfan", "gfan --help", RaiseError => false);
-    if gfanProgram =!= null then runGfanCommandCaptureError(functionStr, hashTable {"help" => true}, "") else {})
+    if gfanProgram =!= null then wrap'_100 runGfanCommandCaptureError(functionStr, hashTable {"help" => true}, "") else {})
 
 doc ///
 	Key

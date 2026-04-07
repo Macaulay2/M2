@@ -264,7 +264,7 @@ class Matrix : public EngineObject
     const vecterm * v;
   public:
     column_iterator(const Matrix *M, int c) : v(M->elem(c)) {}
-    column_iterator(const Matrix *M) : v(nullptr) {}
+    column_iterator(const Matrix *M) : v(nullptr) { (void) M; }
 
     column_iterator& operator++() { v = v->next; return *this; }
     const vecterm* operator *() { return v; }

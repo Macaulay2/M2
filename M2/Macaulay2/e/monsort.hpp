@@ -8,7 +8,7 @@
 #include "newdelete.hpp"
 
 #if !defined(SAFEC_EXPORTS)
-#include <engine-exports.h>
+#include "interface/m2-types.h"
 #endif
 
 template <typename Sorter>

@@ -67,6 +67,7 @@ public:
   // TODO: do something good here.
   std::size_t operator()(const int* m) const
   {
+    (void) m;
     return 0;
   }
 
@@ -91,6 +92,7 @@ public:
   // TODO: do something good here.
   std::size_t operator()(const int* m) const
   {
+    (void) m;
     return 0;
   }
 

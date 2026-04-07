@@ -412,6 +412,8 @@ template <typename RT>
 void transpose(const SMat<RT>& A, SMat<RT>& result)
 {
   // result should be the 0 matrix of the correct size.
+  (void) A;
+  (void) result;
   assert(&A != &result);  // these cannot be aliased!
   assert(result.numRows() == A.numColumns());
   assert(result.numColumns() == A.numRows());

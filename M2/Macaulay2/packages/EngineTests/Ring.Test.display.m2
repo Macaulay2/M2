@@ -18,3 +18,36 @@ TEST ///
   testit(GF(2,4,Strategy=>"FlintBig"))
 ///
 
+TEST ///
+  -- test that p_one does the right thing
+  debug Core
+
+  testit = (R) -> (
+      S := R[x];
+      f := x^2 - x + 1;
+      assert Equation(toString raw f, "x2-x+1"))
+
+  testit ZZ
+  testit(ZZ/101)
+  testit GF(3,4)
+  testit QQ
+  testit RR
+  testit CC
+  testit CC_100
+  testit(ZZ[y])
+///
+
+TEST ///
+  -- test that p_parens does the right thing
+  debug Core
+
+  testit = (R) -> (
+      S := R[x];
+      f := x^3 + (1 + ii)*x^2 + (ii - 1)*x + ii;
+      assert Equation(toString raw f, "x3+(1+i)x2-(1-i)x+i"))
+
+  testit CC
+  testit CC_100
+  testit(CC[y])
+  testit(CC_100[y])
+///

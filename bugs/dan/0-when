@@ -1,4 +1,0 @@
-A := {+ x:int };
-B := {+ y:int };
-C := A or B;
-f(x:C):int := when x is A do 1 is B do 2 else 3;	    -- oops!  This needs to be fixed.

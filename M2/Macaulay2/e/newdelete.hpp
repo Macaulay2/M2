@@ -1,8 +1,8 @@
 #ifndef NEWDELETE_H
 #define NEWDELETE_H 1
 
-#include "M2mem.h"  // for freemem, getmem, outofmem2
-#include "debug.h"  // for TRAPCHK, TRAPCHK_SIZE
+#include "interface/m2-mem.h"  // for freemem, getmem, outofmem2
+//#include "debug.h"  // for TRAPCHK, TRAPCHK_SIZE
 
 #include "M2/gc-include.h"  // for GC_base, NULL, size_t, GC_REGISTER_FINALI...
 // IWYU pragma: begin_exports
@@ -10,9 +10,9 @@
 // IWYU pragma: end_exports
 #include <vector>
 
-#ifdef MEMDEBUG
-#include <memdebug.h>
-#endif
+// #ifdef MEMDEBUG
+// #include <memdebug.h>
+// #endif
 
 /**
   @brief a version of the STL vector, which allocates its backing memory with gc.
@@ -99,19 +99,23 @@ struct our_new_delete
 
   static inline void *operator new(size_t size, void *existing_memory)
   {
+    (void) size;
     return existing_memory;
   }
   static inline void *operator new[](size_t size, void *existing_memory)
   {
+    (void) size;
     return existing_memory;
   }
 
   static inline void operator delete(void *obj, void *existing_memory)
   {
+    (void) existing_memory;
     TRAPCHK(obj);
   }
   static inline void operator delete[](void *obj, void *existing_memory)
   {
+    (void) existing_memory;
     TRAPCHK(obj);
   }
 
@@ -149,6 +153,7 @@ public:
 
 static inline void cleanup(void* obj, void* displ)
 {
+  (void) displ;
 #ifdef MEMDEBUG
   obj = M2_debug_to_inner(obj);
 #endif

@@ -316,6 +316,15 @@ getSource(Symbol, Package) := (S, pkg) -> (
     )
 
 -- Handling operators
+
+-- for each unicode operator, we give a pair:
+-- * unicode name
+-- * TeX name (for emacs TeX input mode -- null if not available)
+unicodeOperators := hashTable {
+    symbol · => ("middle dot", "\\cdot"),
+    symbol ⊠ => ("squared times", "\\boxtimes"),
+    symbol ⧢ => ("shuffle product",)}
+
 -- e.g. symbol +
 getOperator := key -> if operator#?key then (
     op := toString key;
@@ -326,6 +335,8 @@ getOperator := key -> if operator#?key then (
 		"The user may install ", TO "Macaulay2Doc :: binary methods", " for handling such expressions with code such as"},
 	    PRE if key === symbol SPACE
 	    then "         X Y := (x,y) -> ..."
+	    else if (getParsing key)#0 <= (getParsing symbol :=)#0
+	    then "        (X "|op|" Y) := (x,y) -> ..."
 	    else "         X "|op|" Y := (x,y) -> ...",
 	    PARA {"where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the class of ", TT "y", "."}},
 	if key === symbol ?? then { -- can't install binary methods
@@ -344,7 +355,15 @@ getOperator := key -> if operator#?key then (
 	    PARA {"This operator may be used as a binary operator in an expression like ", TT ("x" | op | "y"), ". ",
 		"The user may ", TO2{ "Macaulay2Doc :: :=", "install a method" }, " for handling such expressions with code such as"},
 	    PRE ("         X "|op|" (x,y) -> ..."),
-	    PARA {"where ", TT "X", " is the class of ", TT "x", "."}}
+	    PARA {"where ", TT "X", " is the class of ", TT "x", "."}},
+	if unicodeOperators#?key then {
+	    PARA {"To insert this character in Emacs, you may press ", KBD "C-x 8 RET", " or ", KBD "M-x insert-char",
+		" and then enter ", format unicodeOperators#key#0, " in the minibuffer."},
+	    if (texcmd := unicodeOperators#key#1) =!= null
+	    then PARA {"Alternatively, you may press ", KBD "C-x RET C-\\", "  or ", KBD "M-x set-input-method",
+		" and then enter \"TeX\" in the minibuffer.  Afterwards, typing \"", texcmd,
+		"\" will input the character.  You may then toggle the input method using ", KBD "C-\\", " or ",
+		KBD "M-x toggle-input-method"}},
 	))
 
 -- TODO: expand this
@@ -635,6 +654,7 @@ about Type     :=
 about Symbol   :=
 about ScriptedFunctor :=
 about Function := o -> f -> about("\\b" | toString f | "\\b", o)
+about Keyword := o -> f -> about("(?:^| )" | regexQuote toString f | "(?:$| )")
 about String   := o -> re -> lastabout = (
     packagesSeen := new MutableHashTable;
     NumberedVerticalList sort join(

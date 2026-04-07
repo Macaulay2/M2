@@ -3,7 +3,7 @@
 #include "res-moninfo-sparse.hpp"
 #include <cstdio>                                      // for fprintf, stderr
 #include <cstdlib>                                     // for rand
-#include "engine-exports.h"                            // for M2_gbTrace
+#include "interface/m2-types.h"                            // for M2_gbTrace
 #include "schreyer-resolution/res-monomial-types.hpp"  // for res_monomial_word
 
 ResMonoidSparse::ResMonoidSparse(int nvars,

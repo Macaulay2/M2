@@ -281,7 +281,7 @@ Ring ^ ZZ   := Module => (R, n) -> (
 Ring ^ List := Module => (R, degs) -> (
     if not R.?RawRing then error "non-engine free modules with degrees not implemented yet";
     -- check the args
-    degs = - splice degs;
+    degs = - splice\splice degs;
     degrk := degreeLength R;
     if #degs === 0 then ()
     else if isListOfIntegers degs        then ( if degrk != 1
@@ -356,7 +356,7 @@ isSubset(Module, Module) := (M, N) -> (
     ambient M === ambient N and
     if  not M.?relations and not N.?relations then issub(generators M, generators N)
     else if M.?relations and     N.?relations then (
-	isequal(M.relations, N.relations) and issub(generators M, generators N | N.relations))
+	isequal(M.relations, N.relations) and issub(generators M, fullgens N))
     -- see the code for subquotient: if present, M.relations is nonzero; same for N
     -- so one of the modules has nonzero relations and the other doesn't
     else false)

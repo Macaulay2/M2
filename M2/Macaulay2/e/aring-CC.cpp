@@ -9,20 +9,26 @@ void ARingCC::elem_text_out(buffer &o,
                             bool p_plus,
                             bool p_parens) const
 {
-  gmp_CC g = toBigComplex(ap);
-  M2_string s =
-    p_parens ? (*gmp_tonetCCparenpointer)(g) : (*gmp_tonetCCpointer)(g);
-  
-  bool prepend_plus = p_plus && (s->array[0] != '-');
-  bool strip_last =
-      !p_one && ((s->len == 1 && s->array[0] == '1') ||
-                 (s->len == 2 && s->array[1] == '1' && s->array[0] == '-'));
+  if (p_plus && (ap.re > 0 || (ap.re == 0 && ap.im > 0)))
+    o << "+";
 
-  if (prepend_plus) o << "+";
-  if (strip_last)
-    o.put((char *)s->array, s->len - 1);
-  else
-    o.put((char *)s->array, s->len);
+  if (p_parens && ap.re != 0 && ap.im != 0) {
+    if (ap.re < 0) {
+      ElementType neg;
+
+      init(neg);
+      negate(neg, ap);
+      o << "-(" << &neg << ")";
+      clear(neg);
+    } else {
+      o << "(" << &ap << ")";
+    }
+  } else {
+    if (!p_one && ap.re == -1 && ap.im == 0)
+      o << "-";
+    else if (p_one || ap.re != 1 || ap.im != 0)
+      o << &ap;
+  }
 }
 
 };  // end namespace M2

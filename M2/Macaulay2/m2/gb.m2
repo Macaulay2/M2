@@ -301,12 +301,15 @@ degreeToHeft = (R, d) -> (
 -- gb
 -----------------------------------------------------------------------------
 
+-- TODO: find better name and export this
+fullgens = M -> M.cache#"full gens" ??= (
+    if M.?relations then generators M | M.relations else generators M)
+
 gb = method(TypicalValue => GroebnerBasis, Options => gbDefaults)
 gb Ideal  := GroebnerBasis => opts -> I -> gb (module I, opts)
 gb Module := GroebnerBasis => opts -> M -> (
-    if M.?relations then (
-	M.cache#"full gens" ??= generators M | relations M;
-	gb(M.cache#"full gens", opts, SyzygyRows => numgens source generators M))
+    if M.?relations
+    then gb(fullgens M, opts, SyzygyRows => numgens source generators M)
     else gb(generators M, opts))
 gb Matrix := GroebnerBasis => opts -> m -> (
     checkArgGB m;

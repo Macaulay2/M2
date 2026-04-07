@@ -958,7 +958,7 @@ JoinOfCoincidentRootLoci * JoinOfCoincidentRootLoci := (X,Y) -> joinOfHooks (toS
 --=== Binary forms and utilities =================================
 --================================================================
 
-RingElement ~ := (F) -> RingElement := (G) -> (
+RingElement ~ RingElement := (F, G) -> (
   if not (isPolynomialRing ring F and isPolynomialRing ring G and numgens ring F == 2 and numgens ring G == 2) then error "expected two binary forms";
   K := coefficientRing ring F;
   if K =!= coefficientRing ring G then error "got different coefficient rings";

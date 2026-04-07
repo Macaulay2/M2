@@ -8,6 +8,9 @@
 
 bool fp_LLL(MutableMatrix *M, MutableMatrix *U, int strategy)
 {
+  (void) M;
+  (void) U;
+  (void) strategy;
 #ifndef HAVE_FPLLL
   ERROR("fplll is not available (configure M2 with fplll!)");
   return 0;

@@ -1,6 +1,0 @@
-Figure out how to make rpm repositories using createrepo:
-
-http://createrepo.baseurl.org/
-(seemingly not at http://linux.duke.edu/projects/metadata/ )
-
-createrepo --quiet --update --checkts --database --cachedir path-to-cache-dir path-to-repo-dir

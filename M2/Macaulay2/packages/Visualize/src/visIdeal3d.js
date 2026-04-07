@@ -120,10 +120,10 @@ function init() {
   const line_material = new THREE.LineBasicMaterial({ linewidth: 3 });
   material = new THREE.MeshBasicMaterial({ color: 0x333333 });
   group = new THREE.Object3D();
-  geometry = new THREE.Geometry();
-  geometry.vertices.push(new THREE.Vector3(0, 0, 0));
+  geometry = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(0, 0, 0)]);
   const s = 1;
-  const cube = new THREE.CubeGeometry(s, s, s);
+  const cube = new THREE.BoxGeometry(s, s, s);
   const edges = new THREE.EdgesGeometry(cube);
 
   // wireframe using gl.TRIANGLES (interpreted as quads)
@@ -133,7 +133,6 @@ function init() {
   };
   const valuesQuads = attributesQuads.center.value;
 
-  setupAttributes(cube, valuesQuads);
   const cubes_data = processCubes(data);
 
   cubes_data.forEach(function (cube_data) {
@@ -159,9 +158,9 @@ function init() {
     linewidth: lwidth,
   });
 
-  let lineGeometry = new THREE.Geometry();
-  lineGeometry.vertices.push(new THREE.Vector3(-1, -1, -1));
-  lineGeometry.vertices.push(new THREE.Vector3(-1, -1, maxX + 3));
+  let lineGeometry = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(-1, -1, -1),
+    new THREE.Vector3(-1, -1, maxX + 3)]);
   let line = new THREE.Line(lineGeometry, lineMaterial);
   group.add(line);
   lineMaterial = new THREE.LineBasicMaterial({
@@ -169,9 +168,9 @@ function init() {
     opacity: 0.8,
     linewidth: lwidth,
   });
-  lineGeometry = new THREE.Geometry();
-  lineGeometry.vertices.push(new THREE.Vector3(-1, -1, -1));
-  lineGeometry.vertices.push(new THREE.Vector3(maxY + 3, -1, -1));
+  lineGeometry = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(-1, -1, -1),
+    new THREE.Vector3(maxY + 3, -1, -1)]);
   line = new THREE.Line(lineGeometry, lineMaterial);
   group.add(line);
   lineMaterial = new THREE.LineBasicMaterial({
@@ -179,9 +178,9 @@ function init() {
     opacity: 0.8,
     linewidth: lwidth,
   });
-  lineGeometry = new THREE.Geometry();
-  lineGeometry.vertices.push(new THREE.Vector3(-1, -1, -1));
-  lineGeometry.vertices.push(new THREE.Vector3(-1, maxZ + 3, -1));
+  lineGeometry = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(-1, -1, -1),
+    new THREE.Vector3(-1, maxZ + 3, -1)]);
   line = new THREE.Line(lineGeometry, lineMaterial);
   group.add(line);
 
@@ -195,27 +194,6 @@ function init() {
   document.addEventListener("mousewheel", onMouseWheel, false);
 
   window.addEventListener("resize", onWindowResize, false);
-}
-
-function setupAttributes(geometry, values) {
-  for (let f = 0; f < geometry.faces.length; f++) {
-    const face = geometry.faces[f];
-
-    if (face instanceof THREE.Face3) {
-      values[f] = [
-        new THREE.Vector4(1, 0, 0, 0),
-        new THREE.Vector4(0, 1, 0, 0),
-        new THREE.Vector4(0, 0, 1, 0),
-      ];
-    } else {
-      values[f] = [
-        new THREE.Vector4(1, 0, 0, 1),
-        new THREE.Vector4(1, 1, 0, 1),
-        new THREE.Vector4(0, 1, 0, 1),
-        new THREE.Vector4(0, 0, 0, 1),
-      ];
-    }
-  }
 }
 
 function animate() {

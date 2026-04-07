@@ -5,8 +5,8 @@
 #include <vector>   // for vector
 #include <iostream> // for ostream
 
-#include "M2mem.h"              // for getmemarraytype
-#include "engine-includes.hpp"  // for M2_* types
+#include "interface/m2-mem.h"              // for getmemarraytype
+#include "interface/m2-types.h"  // for M2_* types
 
 /**
  * Utilities for converting between M2 types and standard C++ types

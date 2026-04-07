@@ -13,6 +13,7 @@ doc ///
     between $-2^{31}$ and $2^{31} - 1$.
   SeeAlso
     "parallel programming with threads and tasks"
+    Mutex
   Subnodes
     (NewFromMethod, AtomicInt, ZZ)
     (NewFromMethod, ZZ, AtomicInt)

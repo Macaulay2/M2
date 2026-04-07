@@ -74,7 +74,7 @@ Node
     Headline
         computes Ext of two cohomological Cp-Mackey fuctors
     Usage
-        Ext(i,M,N)
+        ExtCoh(i,M,N)
     Inputs
         i : ZZ
         M : CpMackeyFunctor

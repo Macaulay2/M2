@@ -1,7 +1,8 @@
 // Copyright 2007  Michael E. Stillman
 
 #include "complex.h"
-#include "engine-includes.hpp"
+#include "interface/m2-types.h"
+#include "interface/m2-mem.h"
 #include <stdio.h>
 
 void mpfc_init_set(gmp_CCmutable result, gmp_CCmutable a)

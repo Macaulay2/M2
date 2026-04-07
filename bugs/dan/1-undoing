@@ -1,1 +1,0 @@
-     path = prepend(tmp,path);				    -- how to undo this if the next line has an error?

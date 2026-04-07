@@ -1,5 +1,5 @@
 -- Probability package for Macaulay2
--- Copyright (C) 2022-2025 Doug Torrance
+-- Copyright (C) 2022-2026 Doug Torrance
 
 -- This program is free software; you can redistribute it and/or
 -- modify it under the terms of the GNU General Public License
@@ -16,8 +16,8 @@
 
 newPackage("Probability",
     Headline => "basic probability functions",
-    Version => "0.6",
-    Date => "November 10, 2025",
+    Version => "0.7",
+    Date => "January 13, 2026",
     Authors => {{
 	    Name     => "Doug Torrance",
 	    Email    => "dtorrance@piedmont.edu",
@@ -43,6 +43,9 @@ newPackage("Probability",
 ---------------
 
 -*
+
+0.7 (2026-01-13, M2 1.26.05)
+* use new syntactic sugar for installing nullary methods
 
 0.6 (2025-11-10, M2 1.25.11)
 * update GPL 2 text (FSF no longer has a physical address)
@@ -328,7 +331,7 @@ uniformDistribution(Number, Number) := (a, b) -> (
 	QuantileFunction => p -> a + p * (b - a),
 	Support => (a, b),
 	Description => "U" | toString (a, b)))
-installMethod(uniformDistribution, () -> uniformDistribution(0, 1))
+uniformDistribution() := () -> uniformDistribution(0, 1)
 
 exponentialDistribution = method()
 exponentialDistribution Number := lambda -> (
@@ -357,7 +360,7 @@ normalDistribution(Number, Number) := (mu, sigma) -> (
 	Description => "N" | toString (mu, sigma)))
 
 -- standard normal distribution
-installMethod(normalDistribution, () -> normalDistribution(0, 1))
+normalDistribution() := () -> normalDistribution(0, 1)
 
 gammaDistribution = method()
 gammaDistribution(Number, Number) := (alpha, lambda) -> (

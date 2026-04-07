@@ -60,6 +60,7 @@ class MonomialLookupTable
       //TODO: to be added: mTable(table),
           mIter(iter)
     {
+      (void) table;
     }
 
    public:

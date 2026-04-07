@@ -1,5 +1,5 @@
 -- JSON package for Macaulay2
--- Copyright (C) 2022-2025 Doug Torrance
+-- Copyright (C) 2022-2026 Doug Torrance
 
 -- This program is free software; you can redistribute it and/or
 -- modify it under the terms of the GNU General Public License
@@ -17,15 +17,15 @@
 newPackage(
     "JSON",
     Headline => "JSON encoding and decoding",
-    Version => "0.5",
-    Date => "November 10, 2025",
+    Version => "0.6",
+    Date => "February 28, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
     Keywords => {"System"},
-    PackageImports => {"Parsing"},
     PackageExports => {"Text"},
+    PackageImports => {"Parsing"},
     AuxiliaryFiles => true)
 
 ---------------
@@ -33,6 +33,14 @@ newPackage(
 ---------------
 
 -*
+
+0.6 (2026-02-28, M2 1.26.05)
+* parsing is now handled by jansson in the interpreter, which speeds things up
+  considerably (if M2 is built w/o jansson support, then we fall back on the
+  old behavior)
+* breaking changes:
+  - "null" now returns as null, not nil
+  - \0 is no longer allowed in object keys
 
 0.5 (2025-11-10, M2 1.25.11)
 * add GPL copyright header
@@ -72,11 +80,10 @@ export {
     "ValueSeparator",
     }
 
-exportFrom_Parsing "nil"
-
-----------------------------------------------------------------
+---------------------------------------------------------------
 -- parser based on https://datatracker.ietf.org/doc/html/rfc8259
 ----------------------------------------------------------------
+-- only used if we build M2 w/o jansson support
 
 -- whitespace
 wsP   = *orP(" ", "\t", "\n", "\r")
@@ -112,14 +119,11 @@ unescapedP = Parser(c -> if c === null then null else (
 	if x < 0x20 or x == 0x22 or x == 0x5c or x > 0x10ffff
 	then null
 	else terminalParser c))
-deformat = x -> (
-    if last x === "/" then "/"
-    else value concatenate("\"", x, "\""))
-escapedP = deformat % ("\\" @
+escapedP = ((l, r) -> if r === "/" then r else concatenate(l, r))  % ("\\" @
     orP("\"", "\\", "/", "b", "f", "n", "r", "t",
 	andP("u", hexDigitP, hexDigitP, hexDigitP, hexDigitP)))
 charP = unescapedP | escapedP
-stringP = ((l, x, r) -> concatenate x) % andP("\"", *charP, "\"")
+stringP = ((l, x, r) -> value concatenate(l, x, r)) % andP("\"", *charP, "\"")
 
 -- objects
 memberP = ((k, gets, v) -> k => v) % andP(
@@ -153,9 +157,23 @@ utf8Analyzer = Analyzer(s -> (
 	    i = i + 1;
 	    r)))
 
+-- hack so we can transform nil -> null
+processJSON = method()
+processJSON Thing := identity
+processJSON Symbol := x -> null -- should only ever be nil
+processJSON List := x -> apply(x, processJSON)
+processJSON HashTable := x -> applyValues(x, processJSON)
+
 fromJSON = method()
-fromJSON String := jsonTextP : utf8Analyzer
-fromJSON File   := fromJSON @@ get
+
+-- did we build w/ jansson support?
+fromJSON0 = value(?? Core#"private dictionary"#"fromJSON0")
+if fromJSON0 === null then (
+    fromJSON String := processJSON @@ (jsonTextP : utf8Analyzer);
+    fromJSON File   := fromJSON @@ get
+    ) else (
+    fromJSON String :=
+    fromJSON File   := fromJSON0)
 
 --------------
 -- encoding --
@@ -170,15 +188,15 @@ toJSON = method(
 	ValueSeparator => null,
 	Sort           => false})
 
-toJSON Thing   := toJSON MutableHashTable := o -> format @@ toString
+toJSON Thing   :=
+toJSON Symbol  :=
+toJSON MutableHashTable := o -> format @@ toString
 toJSON String  := o -> format
 toJSON RR      := o -> format_0
 toJSON Number  := o -> format_0 @@ numeric
 toJSON ZZ      :=
 toJSON Boolean :=
 toJSON Nothing := o -> toString
-toJSON Symbol  := o -> x -> (
-    if x === nil then "null" else format toString x)
 toJSON Hypertext := o -> format @@ html
 
 maybeNewline = o -> if o.Indent === null then "" else newline
@@ -231,7 +249,7 @@ doc ///
       @TO toJSON@ and @TO fromJSON@, for converting Macaulay2 things to
       valid JSON data and vice versa.
     Example
-      toJSON {hashTable{"foo" => "bar"}, 1, 3.14159, true, false, nil}
+      toJSON {hashTable{"foo" => "bar"}, 1, 3.14159, true, false, null}
       fromJSON oo
 ///
 
@@ -278,7 +296,7 @@ doc ///
       given Macaulay2 thing.  If the @TT "Indent"@ option is @TT "null"@
       (the default), then there are no newlines or indentation.
     Example
-      x = hashTable {"foo" => {1, 2, {pi, true, false, nil}}}
+      x = hashTable {"foo" => {1, 2, {pi, true, false, null}}}
       toJSON x
     Text
       If the @TT "Indent"@ option is an integer, then newlines are added between
@@ -328,8 +346,7 @@ doc ///
   Description
     Text
       The JSON data provided in the given string or file is parsed using the
-      @TO "Parsing"@ package with the context-free grammar specified by
-      @HREF{"https://datatracker.ietf.org/doc/html/rfc8259", "RFC 8259"}@.
+      @HREF("https://github.com/akheron/jansson", "Jansson")@ library.
       The type of the return value will vary depending on the data.
 
       Numbers will result in @TT "ZZ"@ or @TT "RR"@ objects, as appropriate.
@@ -347,11 +364,9 @@ doc ///
       fromJSON "true"
       fromJSON "false"
     Text
-      Due to the implementation of the @TT "Parsing"@ package, @TO "null"@
-      cannot be a return value, and so the symbol @TO "nil"@ is returned
-      when JSON's @TT "null"@ is given.
+      JSON's @TT "null"@ will result in Macaulay2's @TO null@.
     Example
-      fromJSON "null"
+      fromJSON "null" === null
     Text
       Objects will result in hash tables.
     Example
@@ -377,7 +392,6 @@ testdir = tmpdir | "/JSONTestSuite/test_parsing"
 tsts = select(readDirectory(testdir), f ->
     match("\\.json$", f))
 
-needsPackage "Parsing" -- for nil
 debug Core -- for commentize
 
 outdir = (needsPackage "JSON")#"source directory" | "JSON"
@@ -391,6 +405,8 @@ https://github.com/nst/JSONTestSuite"
 outfile = openOut(outdir | "/tests/parse.m2")
 outfile << commentize  copyrightBanner << endl
 for tst in sort select(tsts, f -> match("^y_", f)) do (
+    -- TODO: allow \0 in keys (need jansson 2.14)
+    if tst == "y_object_escaped_null_in_key.json" then continue;
     outfile << endl << commentize tst << endl;
     testjson = get(testdir | "/" | tst);
     outfile << "assert BinaryOperation(symbol ===, fromJSON " <<

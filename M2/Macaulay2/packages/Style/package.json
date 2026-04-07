@@ -3,7 +3,7 @@
     "postinstall": "rm -rf katex && copy-files-from-to"
   },
   "dependencies": {
-    "copy-files-from-to": "^3.9.1",
+    "copy-files-from-to": "^4.0.0",
     "katex": "^0.16.10"
   },
   "copyFiles": [

@@ -456,20 +456,14 @@ doc ///
   Headline
     logical not
   Usage
-    n~
+    ~n
   Inputs
     n:ZZ
   Outputs
     :ZZ -- the bitwise complement of @TT "n"@
   Description
     Example
-      7~
-    Text
-      Note that @TT "~"@ has @TO2 {"precedence of operators",
-      "higher precedence"}@ than @TT "-"@, so enclose negative integers in
-      parentheses.
-    Example
-      (-12)~
+      ~7
   SeeAlso
     (symbol &, ZZ, ZZ)
     (symbol |, ZZ, ZZ)
@@ -488,8 +482,9 @@ document {
 
 document {
      Key => symbol ~,
-     Headline => "a unary postfix operator",
+     Headline => "a unary or binary operator, often used for bitwise negation",
     Subnodes => { TO (symbol ~, ZZ) },
+    SeeAlso => { "Python::~ PythonObject", "RInterface::~ RObject"}
      }
 
 document {

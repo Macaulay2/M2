@@ -154,13 +154,13 @@ iCite Package := P -> (
     certificationInfo := if P#Options#Certification =!= null then hashTable P#Options#Certification else null;
     -- bibtex author content
     if not P#Options#?Authors
-        then  print concatenate ("Warning: The \"", T, "\" package provides insufficient citation data: author.")
+        then printerr("Warning: The ", format T, " package provides insufficient citation data: author.")
     else
     packageAuthorsWithContributors := apply(P#Options#Authors, a -> a#0#1);
     packageAuthors := select (packageAuthorsWithContributors, a -> not member (":", characters a));
     bibPackageAuthors := wrapTexStrings (demark (" and ", packageAuthors));
     if packageAuthors === {}
-        then  print concatenate ("Warning: The \"", T, "\" package provides insufficient citation data: author.")
+        then  printerr("Warning: The ", format T, " package provides insufficient citation data: author.")
     else null;
     -- set up bibtex string for certified packages
     bibtexCert := if certificationInfo === null then null else
@@ -191,7 +191,7 @@ iCite Package := P -> (
                 then concatenate("\"", toString (P#Options#HomePage), "\"")
             else "\\url{https://github.com/Macaulay2/M2/tree/stable/M2/Macaulay2/packages}"
         else if P#Options#HomePage === null
-            then (print concatenate ("Warning: The \"", T, "\" package provides insufficient citation data: howpublished."))
+            then printerr("Warning: the ", format T, " package provides insufficient citation data: howpublished.")
         else concatenate("\\url{" ,toString (P#Options#HomePage), "}");
     bibtexString :=
         concatenate (

@@ -68,7 +68,7 @@
 //      Hilbert function use
 //
 
-#include "engine-exports.h"         // for M2_arrayint, M2_bool
+#include "interface/m2-types.h"     // for M2_arrayint, M2_bool
 #include "f4-types.hpp"             // for gb_array, MonomialLookupTable
 #include "f4/moninfo.hpp"           // for packed_monomial, MonomialInfo
 #include "f4/f4-spairs.hpp"         // For F4SPairSet

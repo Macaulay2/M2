@@ -14,7 +14,7 @@ RUN microdnf install -y autoconf bison ccache chrpath cmake curl diffutils \
 
 # Libraries we require
 RUN microdnf install -y openblas-devel libxml2-devel readline-devel gdbm-devel \
-    boost-devel libomp-devel tbb-devel python3-devel libffi-devel
+    boost-devel libomp-devel tbb-devel python3-devel libffi-devel jansson-devel
 
 # Libraries we can build (factory not available on ubuntu)
 RUN microdnf install -y eigen3-devel glpk-devel gmp-devel mpfr-devel ntl-devel \
