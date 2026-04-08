@@ -1323,10 +1323,34 @@ tryEval(c:Code):Expr := (
 	else tryCaughtError = false);
     p);
 
+-- env.0 = function
+-- env.1 = try code
+tryFunction(x:Expr, env:Sequence):Expr := (
+    if length(env) == 2 then (
+        when env.1
+        is c:Pseudocode do (
+            when c.code
+            is t:tryCode do (
+                pos := codePosition(t.code);
+                eval(Code(tryCode(
+                            Code(adjacentCode(
+                                    evaluatedCode(env.0, pos),
+                                    evaluatedCode(x, pos),
+                                    pos)),
+                            t.thenClause, t.elseClause, t.doClause,
+                            t.frameID, t.framesize, t.position))))
+            -- none of the following should happen
+            else WrongArg("environment to contain a try code"))
+        else WrongArg("environment to contain a pseudcode"))
+    else WrongArg("environment to have length 2"));
+
 evalTryCode(c:tryCode):Expr := (
     ret := tryEval(c.code);
     -- certain errors should not be caught, see above
     if !tryCaughtError then when ret is Error do ret
+    -- if ret is a function, then return a function that calls try
+    else if isFunction(ret) then Expr(CompiledFunctionClosure(
+            tryFunction, nextHash(), Sequence(ret, Pseudocode(Code(c)))))
     -- then ...
     else if c.thenClause != NullCode then eval(c.thenClause) else ret
     -- else ...
