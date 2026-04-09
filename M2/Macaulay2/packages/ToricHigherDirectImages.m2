@@ -34,11 +34,13 @@ newPackage(
 export {
     -- types
     -- methods
-    "frobeniusDirectImage" => "frobeniusPushforward",
+    "frobeniusPushforward",
+    "frobeniusDirectImages" => "frobeniusPushforward",
     "nefContraction",
     "nefRayContractions",
     "allNefContractions",
     "computeEigencharacters",
+    "HDI",
     "higherDirectImages" => "HDI"
     }
 
