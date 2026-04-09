@@ -340,7 +340,7 @@ isCohenMacaulay Ring := o -> R1 ->
         dimS := dim S1;
         dimR := dim R1;
         flag := true;
-        P1 := res M1;
+        P1 := freeResolution M1;
 
         if (length P1 == dimS - dimR) then (
             true

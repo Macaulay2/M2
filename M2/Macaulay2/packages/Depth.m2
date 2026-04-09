@@ -25,7 +25,7 @@ newPackage(
 	  }
 	  },
      Headline => "aids in computations related to depth",
-     PackageImports => {"OldChainComplexes"},
+     PackageImports => {"Complexes"},
      Keywords => {"Commutative Algebra"},
      DebuggingMode => false
      )
@@ -87,7 +87,7 @@ depth(Ideal,Module) := ZZ => (J,M) -> (
      AJ := S0^1/JJ;
      d := dim MM;
 
-     complete resolution(AJ,LengthLimit=>d);
+     freeResolution(AJ,LengthLimit=>d);
 
      s := scan(0..(d-1), i -> ( 
 --	    print i;
@@ -183,7 +183,7 @@ depth(Module) := ZZ => M -> (
     m := sub(presentation M, S0);
     COK := prune coker(sub(m,S0) | (presentation S ** target m));
     
-    numgens S0 - length res COK    
+    numgens S0 - length freeResolution COK    
 --    depth(ideal gens ring M,M) -- old method
      )
 
