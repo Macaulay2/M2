@@ -1,6 +1,6 @@
 URL = https://pallini.di.uniroma1.it
-VERSION = 2_9_1
-SHA256SUM = 488fa906d10a372c72d2364c5dee48e0f7307004fbe52c2bce50c52de8cd873e
+VERSION = 2_9_3
+SHA256SUM = 9fc4edae04f88a0f5883985be3b39cf7f898fd6cc96e96b9ee25452743cc1b5b
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -vif
 TARFILE = nauty$(VERSION).tar.gz
