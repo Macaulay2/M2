@@ -668,6 +668,7 @@ export process():void := (
      setMaxAllowableThreads();
      -- setLoadDepth(loadDepth);				    -- loaddata() in M2lib.c increments it, so we have to reflect that at top level
      everytimeRun();
+     setStdError(stdError);
      -- we don't know the right directory; calls commandInterpreter and eventually returns:
      ret := readeval(stringTokenFile(startupFile.filename,startupFile.contents),false,false);
      when ret is err:Error do (
