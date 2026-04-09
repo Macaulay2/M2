@@ -11,7 +11,6 @@ downloading binary releases.
 The structure of this directory is as follows:
 
 * `M2`: contains everything needed by a user to build Macaulay2.
-* `bugs`: contains older bug reports.
 
 See `CITATION.cff` for information about citing Macaulay2.
 
