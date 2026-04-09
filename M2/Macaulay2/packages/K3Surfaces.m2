@@ -75,7 +75,7 @@ map (LatticePolarizedK3surface,ZZ,ZZ) := o -> (S,a,b) -> (
     if d == 0 and n == -2 then if b != 0 then error "the K3 surface is nodal";
     H := hyperplane S;
     C := S#"curve";
-    phi := mapDefinedByDivisor(Var S,{(H,a),(C,b)});
+    phi := if a > 0 and b < 0 then rationalMap((-b)*(C % (Var S)), a) else mapDefinedByDivisor(Var S,{(H,a),(C,b)});
     if dim target phi =!= genus(S,a,b) then error("expected map to PP^"|(toString genus(S,a,b))|", but got map to PP^"|toString(dim target phi));
     S.cache#("map",a,b) = phi
 );
@@ -183,7 +183,7 @@ K3 ZZ := o -> g -> (
     if g == 11 then (
         if o.Verbose then <<"-- constructing general K3 surface of genus "<<g<<" and degree "<<2*g-2<<" in PP^"<<g<<endl;
         if o.Verbose then <<"-- (taking a random GM fourfold X of discriminant 20, hence containing a surface S of degree 9 and genus 2)"<<endl;
-        X = specialGushelMukaiFourfold("general GM 4-fold of discriminant 20",K);
+        X = gushelMukaiFourfold("general GM 4-fold of discriminant 20",K);
         if o.Verbose then <<"-- (running procedure 'associatedK3surface' for the GM fourfold X of discriminant 20)"<<endl<<"-- *** --"<<endl;
         Ass = building associatedK3surface(X,Verbose=>o.Verbose,Singular=>o.Singular);
         if o.Verbose then <<"-- *** --"<<endl;
@@ -192,7 +192,7 @@ K3 ZZ := o -> g -> (
     if g == 14 then (
         if o.Verbose then <<"-- constructing general K3 surface of genus "<<g<<" and degree "<<2*g-2<<" in PP^"<<g<<endl;
         if o.Verbose then <<"-- (taking a random cubic fourfold X of discriminant 26, hence containing a surface S of degree 7 and genus 1)"<<endl;
-        X = specialCubicFourfold("one-nodal septic del Pezzo surface",K);
+        X = cubicFourfold("one-nodal septic del Pezzo surface",K);
         if o.Verbose then <<"-- (running procedure 'associatedK3surface' for the cubic fourfold X of discriminant 26)"<<endl<<"-- *** --"<<endl;
         Ass = building associatedK3surface(X,Verbose=>o.Verbose,Singular=>o.Singular);
         if o.Verbose then <<"-- *** --"<<endl;
@@ -201,7 +201,7 @@ K3 ZZ := o -> g -> (
     if g == 20 then (
         if o.Verbose then <<"-- constructing general K3 surface of genus "<<g<<" and degree "<<2*g-2<<" in PP^"<<g<<endl;
         if o.Verbose then <<"-- (taking a random cubic fourfold X of discriminant 38, hence containing a surface S of degree 10 and genus 6)"<<endl;
-        X = specialCubicFourfold("C38",K);
+        X = cubicFourfold("C38",K);
         if o.Verbose then <<"-- (running procedure 'associatedK3surface' for the cubic fourfold X of discriminant 38)"<<endl<<"-- *** --"<<endl;
         Ass = building associatedK3surface(X,Verbose=>o.Verbose,Singular=>o.Singular);
         if o.Verbose then <<"-- *** --"<<endl;
@@ -210,7 +210,7 @@ K3 ZZ := o -> g -> (
     if g == 22 then (
         if o.Verbose then <<"-- constructing general K3 surface of genus "<<g<<" and degree "<<2*g-2<<" in PP^"<<g<<endl;
         if o.Verbose then <<"-- (taking a random cubic fourfold X of discriminant 42, hence containing a surface S of degree 9 and genus 2)"<<endl;
-        X = specialCubicFourfold("C42",K);
+        X = cubicFourfold("C42",K);
         if o.Verbose then <<"-- (running procedure 'associatedK3surface' for the cubic fourfold X of discriminant 42)"<<endl<<"-- *** --"<<endl;
         Ass = building associatedK3surface(X,Verbose=>o.Verbose,Singular=>o.Singular);
         if o.Verbose then <<"-- *** --"<<endl;
@@ -219,7 +219,7 @@ K3 ZZ := o -> g -> (
     error ("no procedure found to construct random K3 surface of genus "|(toString g));
 );
 
-K3 SpecialGushelMukaiFourfold := K3 SpecialCubicFourfold := o -> X -> (
+K3 GushelMukaiFourfold := K3 CubicFourfold := o -> X -> (
     d := discriminant X;
     if (not isAdmissible d) and (not isAdmissibleGM d) then <<"--warning: expected an admissible integer for the discriminant"<<endl;
     g := lift((d+2)/2,ZZ);
@@ -916,10 +916,10 @@ Outputs => {EmbeddedK3surface => {"a general K3 surface defined over ",TEX///$K$
 EXAMPLE {"K3 9"},
 SeeAlso => {(K3,ZZ,ZZ,ZZ)}}
 
-document {Key => {(K3,SpecialCubicFourfold),(K3,SpecialGushelMukaiFourfold)}, 
+document {Key => {(K3,CubicFourfold),(K3,GushelMukaiFourfold)}, 
 Headline => "K3 surface associated to a cubic or GM fourfold",
 Usage => "K3 X",
-Inputs => {"X" => SpecialCubicFourfold => {"or ",ofClass SpecialGushelMukaiFourfold}}, 
+Inputs => {"X" => CubicFourfold => {"or ",ofClass GushelMukaiFourfold}}, 
 Outputs => {EmbeddedK3surface => {"a K3 surface associated to ",TEX///$X$///}}, 
 PARA {"This function calls the function ",TO associatedK3surface,"."},
 EXAMPLE {"X = specialFourfold \"tau-quadric\";", "K3 X", "associatedK3surface X"},
