@@ -21,8 +21,8 @@ newPackage(
     Date => "2026 April",
     Authors => {
 	{Name     => "Sasha Zotine",
-	    Email    => "zotinea@mcmaster.ca",
-	    HomePage => "https://sites.google.com/view/szotine/home" }
+	 Email    => "zotinea@mcmaster.ca",
+	 HomePage => "https://sites.google.com/view/szotine/home" }
 	},
     Headline => "computations involving pushforwards and higher direct images of toric maps",
     Keywords => {"Toric Geometry"},
@@ -34,14 +34,12 @@ newPackage(
 export {
     -- types
     -- methods
-    "frobeniusPushforward",
-    "frobeniusDirectImage",
+    "frobeniusDirectImage" => "frobeniusPushforward",
     "nefContraction",
     "nefRayContractions",
     "allNefContractions",
     "computeEigencharacters",
-    "HDI",
-    "higherDirectImages"
+    "higherDirectImages" => "HDI"
     }
 
 importFrom(NormalToricVarieties, {"outerNormals", "rawHHOO"})
@@ -58,7 +56,6 @@ importFrom(Core, {"sortBy", "raw", "rawHilbertBasis"})
 -- OUTPUT:  the module (F_p)_* M, i.e. the pushforward of M under the p-th toric
 --          Frobenius map.
 frobeniusPushforward = method()
-frobeniusDirectImage = frobeniusPushforward
 frobeniusPushforward (ZZ, Module) := Module => (p, M) -> (
     if M == 0 then return M;
     -- If it isn't free
@@ -490,7 +487,6 @@ HDIComplex (ToricMap, ZZ, List) := (phi, i, D) -> (
 --      D   - a list indexing a toric divisor on source phi
 -- OUTPUT:  the i-th cohomology of HDIComplex(phi,i,D).
 HDI = method()
-higherDirectImages = HDI
 HDI (ToricMap, ZZ, List) := Module => (phi, i, D) -> (
     -- check if we've computed this for i and D already.
     phi.cache.HDI ??= new MutableHashTable;
@@ -582,7 +578,6 @@ doc ///
 doc ///
     Key
         frobeniusPushforward
-        frobeniusDirectImage
         (frobeniusPushforward, ZZ, Module)
         (frobeniusPushforward, ZZ, Matrix)
         (frobeniusPushforward, ZZ, Complex)
@@ -819,7 +814,6 @@ doc ///
 
 doc ///
     Key
-	higherDirectImages
         HDI
         (HDI, ToricMap, ZZ, List)
         (HDI, ToricMap, ZZ, ToricDivisor)
