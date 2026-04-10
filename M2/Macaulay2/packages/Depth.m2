@@ -112,6 +112,16 @@ I = ideal vars T;
 assert( depth(I,T) === 0 )
 assert( depth(I,T^1) === 0 )
 assert( depth T === 0 )
+///
+
+TEST///
+S = ZZ/101[x_1..x_(9)];
+J = ideal(x_1,x_2,x_3,x_4,x_5,x_6,x_7,x_8);
+T = S/J^3; -- The ring T has dimension 1, not 0 as in the previous test.
+I = ideal vars T;
+assert( depth(I,T) === 1 )
+assert( depth(I,T^1) === 1 )
+assert( depth T === 1 )
 ///     
 
 TEST///
@@ -171,6 +181,7 @@ time depth(ideal vars S, S^1)
 depth(Module) := ZZ => M -> (
     --depth of a module with respect to the max ideal, via finite proj dim
     --gives error if the ultimate coefficient ring of R = ring M is not a field.
+    if dim M === 0 then return 0;
     R := ring M;
     if isHomogeneous M === false then print "-- Warning: This module is not homogeneous, computation may be incorrect.";
     if not isCommutative R then error"depth undefined for noncommutative rings";
