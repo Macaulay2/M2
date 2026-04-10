@@ -65,11 +65,11 @@ doc ///
         p : ZZ
             a prime number
         R : Matrix
-            a restriction homomorphim
+            a restriction homomorphism
         T : Matrix
-            a transfer homomorphim
+            a transfer homomorphism
         C : Matrix
-            a conjugation homomorphim
+            a conjugation homomorphism
     Outputs
         : CpMackeyFunctor
     Description

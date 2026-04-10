@@ -3167,7 +3167,7 @@ Description
 
    The function coneEquations(m, "Inhomogeneous" => true) returns the same matrix
    as in the homogeneous case, with one more row, where the last row represents the
-   constant terms of this inquality:
+   constant terms of this inequality:
   Example
    eq=coneEquations(3, "Inhomogeneous" => true)
    coneEquations({3,4,5}, "Inhomogeneous" => true)

@@ -848,7 +848,7 @@ base10p = (p, num) ->(
 --Input: q = p^e a power of an integer prime or q = 0, positive integer d,
 --and R=n or R = ZZ[x_1..x_n] either a positive integer or a polynomial ring
 --Output: If R is a polynomial ring, then the function outputs the q-truncated symmetric polynomial
---where the q=0 is intrepreted to be not truncated
+--where the q=0 is interpreted to be not truncated
 --If R=n an integer then, the output is the number of monomials in this polynomial
 --(i.e. the sum of the coefficients of the monomial terms in this polynomial)
 hqd = (q, d, R) ->(
@@ -884,7 +884,7 @@ hqd = (q, d, R) ->(
 --Input: q=p^e a power of a prime integer p or q = 0, positive integers a,b,
 --and R=n or R = ZZ[x_1..x_n] either a positive integer or a polynomial ring
 --Output: If R is a polynomial ring, then the function outputs the q-truncated Schur polynomial for (a,b)
---where the q=0 is intrepreted to be not truncated
+--where the q=0 is interpreted to be not truncated
 --If R=n an integer then, the output is the sum of the coefficients of the monomial terms in this polynomial
 
 sqab = (q,a, b, R) ->(hqd(q, a, R)*hqd(q, b, R)-hqd(q, a+1, R)*hqd(q, b-1, R))

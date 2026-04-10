@@ -855,7 +855,7 @@ doc ///
 		hessenbergVariety
 		(hessenbergVariety,ZZ)
 	Headline
-		Hessenberg variety asscoiated to the n-permutahedron
+		Hessenberg variety associated to the n-permutahedron
 	Usage
 		hessenbergVariety(n)
 	Inputs
@@ -864,7 +864,7 @@ doc ///
 		:SmallCover
 	Description
 		Text
-			Hessenberg variety asscoiated to the n-permutahedron, as small
+			Hessenberg variety associated to the n-permutahedron, as small
 			cover.
 	SeeAlso
 ///

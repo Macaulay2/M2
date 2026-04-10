@@ -443,7 +443,7 @@ doc ///
         Text
             {\bf Remark.}
             Maximization and minimization (integer) linear programs are equivalent by multiplying objective functions by $-1$.
-            This package treats every problem as a minimization problem and leaves the multiplication for maximiation problems to the user.
+            This package treats every problem as a minimization problem and leaves the multiplication for maximization problems to the user.
 
     References
         [CLO] David A. Cox, John Little, and Donal O'Shea. Using Algebraic Geometry. Second edition. Graduate Texts in Mathematics, 185. Springer, New York, 2005.
