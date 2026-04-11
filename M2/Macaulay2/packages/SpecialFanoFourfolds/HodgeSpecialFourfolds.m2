@@ -149,7 +149,6 @@ expression HodgeSpecialFourfold := X -> (
 );
 
 describe HodgeSpecialFourfold := X -> (
-    if instance(X,IntersectionOfThreeQuadricsInP7) then recognize X;
     descr := if dim ambient X == 4
              then "Four-dimensional projective space"
              else if degrees X == {({2},3)}
@@ -166,10 +165,6 @@ describe HodgeSpecialFourfold := X -> (
         descr = descr|newline|toString("of discriminant "|(toString disc)|" = det"|(net A));
     );
     descr = descr|newline|"containing a "|surfaceDescription(0,surface X);
-    if instance(X,IntersectionOfThreeQuadricsInP7) then (
-        if member(recognize X,{"surf-5-7-0-1","surf-5-10-1","internal-projection-K3-genus-8","surf-4-3-1-external","surf-5-6-2-nodal","surf-7-1-9"}) then descr = descr|newline|"(This is a rational fourfold discovered in August 2022)";
-        if recognize X === "planeInPP7" then descr = descr|newline|"(This is a classical example of rational fourfold)";
-    );
     net expression descr
 );
 

@@ -325,7 +325,6 @@ fanoMapDSCFtoP2xP2 DoublySpecialCubicFourfold := o -> X -> (
     if o.Verbose then << "-- constructing the map PP^5 --> PP^2 x PP^2 via abstract join" << endl << flush;
     (f,g) := abstractJoinOfRationalSurfaces(S,T,Verbose=>o.Verbose);
     if o.Verbose then << "-- computing the inverse of the second projection..." << endl;
-    -- BUG: inverse(g,Verify=>true) in MultiprojectiveVarieties; at line "if image Phi != target Phi then (Phi#"isDominant" = false; Phi#"isBirational" = false; error "the multi-rational map is not dominant");" ambient spaces seem different. Not reproducible by converting g to string.
     g' := inverse(g, Verify=>false);
     if o.Verify and g' * g != 1 then error "inverse verification failed";
     if o.Verbose then << "-- inverse of second projection computed" << endl;
@@ -386,7 +385,7 @@ abstractJoinOfRationalSurfaces (EmbeddedProjectiveVariety,EmbeddedProjectiveVari
     if o.Verbose then << "  -- abstract join computation almost complete" << endl;
     JJ := projectiveVariety J';
     if o.Verbose then << "  -- constructing the two projections: p1:..-->PP^2xPP^2 and p2:..-->PP^" << n << endl;
-    -- psi := rationalMap(last projectionMaps JJ,target f); -- this causes the bug below
+    -- psi := rationalMap(last projectionMaps JJ,target f); -- might cause bugs, forgot details
     psi := rationalMap(last projectionMaps JJ); psi = psi * rationalMap(target psi,target f);
     eta := rationalMap((projectionMaps JJ)_0 | (projectionMaps JJ)_1, PP_K^{2,2});
     S.cache#("abstract join of rational surfaces",P) = (eta,psi)

@@ -11,6 +11,18 @@ IntersectionOfThreeQuadricsInP7.synonym = "complete intersection of three quadri
 
 expression IntersectionOfThreeQuadricsInP7 := X -> expression("complete intersection of three quadrics in PP^7 containing a surface of degree "|toString(degree surface X)|" and sectional genus "|toString(sectionalGenus surface X));
 
+describe IntersectionOfThreeQuadricsInP7 := X -> (
+    descr := "Complete intersection of 3 quadrics in PP^7";
+    disc := discriminant X;
+    A := X.cache#(surface X,"LatticeIntersectionMatrix");
+    descr = descr|newline|toString("of discriminant "|(toString disc)|" = det"|(net A));
+    descr = descr|newline|"containing a "|surfaceDescription(0,surface X);
+    if member(recognize X,{"surf-5-7-0-1","surf-5-10-1","internal-projection-K3-genus-8","surf-4-3-1-external","surf-5-6-2-nodal","surf-7-1-9"}) then descr = descr|newline|"(This is a rational fourfold discovered in August 2022)";
+    if recognize X === "planeInPP7" then descr = descr|newline|"(This is a classical example of rational fourfold)";
+    if computationStatus X >= 0 then descr = descr|newline|(computationStatusLog X)|newline|toString(describeMirrorFourfoldAndK3 X);
+    net expression descr
+);
+
 shortDescriptionFourfold (IntersectionOfThreeQuadricsInP7,Boolean) := (X,UseAttribute) -> (
     if UseAttribute and hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
     "complete intersection of three quadrics in PP^7"

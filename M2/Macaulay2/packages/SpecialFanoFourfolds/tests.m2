@@ -235,12 +235,26 @@ assert(#L == 1 and discriminant X == 18 and last cycleClass X == (5,3))
 -- assert(#L == 1 and discriminant X == 20 and last cycleClass X == (4,3))
 ///
 
-TEST /// -- Test 16
-debug SpecialFanoFourfolds;
-S = surface({3,1},NumNodes=>2);
-assert(dim S == 2 and degree S == 8 and dim ambient S == 6 and degrees S == {({2},5),({3},4)});
-T = image experimentalNormalizationInv S;
-assert(dim T == 2 and degree T == 8 and dim ambient T == 8 and degrees T == {({2},20)})
+TEST /// -- Test 16 -- new description for fourfolds in v.2.8
+X = cubicFourfold "quartic scroll";
+mirrorFourfold X;
+s1 = "Special cubic fourfold of discriminant 14
+containing a rational surface of degree 4 and sectional genus 0
+cut out by 6 hypersurfaces of degree 2
+K3 status: [▓▓▓░░ / ▓▓▓▓▓]
+Mirror fourfold: hypersurface in PP^5 of degree 2
+Surface U of degree 10, sectional genus 7, χ(O_U) = 2, cut out by 7 hypersurfaces of degrees 2^1 3^6 ";
+assert(toString describe X === s1)
+associatedK3surface X
+s2 = "Special cubic fourfold of discriminant 14
+containing a rational surface of degree 4 and sectional genus 0
+cut out by 6 hypersurfaces of degree 2
+K3 status: [▓▓▓▓▓ / ▓▓▓▓▓]
+Mirror fourfold: hypersurface in PP^5 of degree 2
+Surface U of degree 10, sectional genus 7, χ(O_U) = 2, cut out by 7 hypersurfaces of degrees 2^1 3^6 
+Exceptional curves: an irreducible conic curve
+Minimal K3 surface Ũ: degree 14 and sectional genus 8 in PP^8 cut out by 15 hypersurfaces of degree 2";
+assert(toString describe X === s2)
 ///
 
 TEST /// -- Test 17
@@ -304,7 +318,7 @@ TEST /// -- test 23 DSCF -- switch between Fano map types
 debug SpecialFanoFourfolds;
 X = specialFourfold("DSCF-"|(toString 6))
 E = polarizedK3surface(X,Verbose=>true,Strategy=>("Approximate","MapFromU-Virtual"),FanoMapType=>"P2xP2")
-assert(statusK3 X == 2);
+assert(computationStatus X == 2);
 (mu,U,LC,f) = building E;
 assert(U === surface mirrorFourfold X);
 assert(mirrorFourfold mirrorFourfold X === X);
@@ -316,7 +330,7 @@ assert(isFanoMapToP2xP2 X and fanoMapDSCF X === mu);
 assert(E#"LatticePolarization" === null);
 polarizedK3surface(X,Verbose=>true);
 assert(E#"LatticePolarization" =!= null);
-assert(statusK3 X == 2);
+assert(computationStatus X == 2);
 assert(isVirtualLatticeK3 E);
 assert instance(latticePolarization E, LatticePolarizationOnK3Surface);
 assert(latticeMatrix latticePolarization E == matrix {{3, 7}, {7, 2}});
@@ -331,7 +345,7 @@ assert(isFanoMapStandard X and fanoMapDSCF X === first building E');
 assert(E'#"LatticePolarization" === null);
 polarizedK3surface(X,Verbose=>true);
 assert(E'#"LatticePolarization" =!= null);
-assert(statusK3 X == 3);
+assert(computationStatus X == 3);
 assert(isVirtualLatticeK3 E');
 assert instance(latticePolarization E', LatticePolarizationOnK3Surface);
 assert(latticeMatrix latticePolarization E' ==  matrix {{6, 12}, {12, 2}});
@@ -374,4 +388,21 @@ TEST /// -- test 27 DSCF
 -- generateInputsForRunExampleTest 21
 debug SpecialFanoFourfolds;
 runExampleTest(21,38113,7,1,38,16,10,2,8,8,3,2,0,10,matrix {{18, 9}, {9, 2}})
+///
+
+TEST /// -- test 28 DSCF
+debug SpecialFanoFourfolds;
+X = specialFourfold surface((2,0,0),(1,0,0),ZZ/61001);
+assert(char coefficientRing X === 61001);
+T = polarizedK3surface polarizedK3surface X;
+assert(computationStatus T == 4)
+f = map(T,1,1);
+assert(source f === projectiveVariety T and dim ambient source f == 4 and dim ambient target f == 8)
+E = T(1,1);
+assert(E === image f and degree E == 14 and sectionalGenus E == 8)
+assert((latticePolarization T)(1,1) === E)
+T' = polarizedK3surface(T,Strategy=>"MapFromU-Virtual")
+assert(computationStatus T == 3)
+assert instance(T'(1,1),LatticePolarizationOnK3Surface)
+assert((polarizedK3surface(T,Strategy=>"SpecialCurve"))(1,1) === E)
 ///

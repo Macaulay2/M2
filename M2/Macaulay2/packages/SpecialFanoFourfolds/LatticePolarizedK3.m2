@@ -196,7 +196,7 @@ net K3SurfaceFromDoublySpecialCubicFourfold := describe K3SurfaceFromDoublySpeci
     out := describe underlyingK3 S;
     if S#"LatticePolarization" === null then return (out|| "Lattice polarization: not yet computed; use 'polarize' or 'polarizedK3surface'");
     M := latticeMatrix S;
-    if isVirtualLatticeK3 S and statusK3 S <= 3 then out = out||("Lattice intersection matrix (virtual, computed from U): "|(net M));
+    if isVirtualLatticeK3 S and computationStatus S <= 3 then out = out||("Lattice intersection matrix (virtual, computed from U): "|(net M));
     out
 );
 texMath K3SurfaceFromDoublySpecialCubicFourfold := texMath @@ net;
@@ -205,7 +205,7 @@ K3SurfaceFromDoublySpecialCubicFourfold#{WebApp,AfterPrint} =
 K3SurfaceFromDoublySpecialCubicFourfold#{WebApp,AfterNoPrint} =
 K3SurfaceFromDoublySpecialCubicFourfold#{Standard,AfterPrint} =
 K3SurfaceFromDoublySpecialCubicFourfold#{Standard,AfterNoPrint} = S -> (
-    << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "Lattice-polarized K3 surface associated to " << (shortDescriptionFourfold recoverFourfold S) << " — " << K3statusLog(S) << endl;
+    << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "Lattice-polarized K3 surface associated to " << (shortDescriptionFourfold recoverFourfold S) << " — " << computationStatusLog(S) << endl;
 );
 
 underlyingK3 = method();
@@ -216,17 +216,19 @@ projectiveVariety K3SurfaceFromDoublySpecialCubicFourfold := o -> S -> (
     underlyingK3 S
 );
 
+building K3SurfaceFromDoublySpecialCubicFourfold := S -> building underlyingK3 S;
+recoverFourfold K3SurfaceFromDoublySpecialCubicFourfold := S -> recoverFourfold underlyingK3 S;
+getInverseFanoMap K3SurfaceFromDoublySpecialCubicFourfold := Utilde -> getInverseFanoMap underlyingK3 Utilde;
+
 latticePolarization = method();
 latticePolarization K3SurfaceFromDoublySpecialCubicFourfold := S -> (
     if S#"LatticePolarization" === null then error "lattice polarization not yet computed; use 'polarize' or 'polarizedK3surface'";
     S#"LatticePolarization"
 );
 
-building K3SurfaceFromDoublySpecialCubicFourfold := S -> building underlyingK3 S;
 latticeMatrix K3SurfaceFromDoublySpecialCubicFourfold := S -> latticeMatrix latticePolarization S;
-recoverFourfold K3SurfaceFromDoublySpecialCubicFourfold := S -> recoverFourfold underlyingK3 S;
-
-getInverseFanoMap K3SurfaceFromDoublySpecialCubicFourfold := Utilde -> getInverseFanoMap underlyingK3 Utilde;
+K3SurfaceFromDoublySpecialCubicFourfold Sequence := (S,ab) -> (latticePolarization S) ab;
+map(K3SurfaceFromDoublySpecialCubicFourfold,ZZ,ZZ) := o -> (S,a,b) -> map(latticePolarization S,a,b);
 
 isVirtualLatticeK3 = method();
 isVirtualLatticeK3 K3SurfaceFromDoublySpecialCubicFourfold := S -> S#"LatticePolarization" =!= null and (S#"LatticePolarization")#"isVirtual";

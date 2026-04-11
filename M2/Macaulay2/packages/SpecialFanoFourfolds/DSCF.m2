@@ -153,8 +153,8 @@ describe DoublySpecialCubicFourfold := X -> (
         h := quadricFibration X;
         symb := if X.cache#"quadricFibrationCubicFourfoldInC8"_1 then "★ " else "☆ ";
         descr = descr||(symb|X.cache#"quadricFibrationCubicFourfoldInC8"_2);
-        if X.cache#"quadricFibrationCubicFourfoldInC8"_1 then descr = descr||((K3statusLog X)|idX);
-        if statusK3 X >= 1 then descr = descr || (describeMirrorFourfoldAndK3 X);
+        if X.cache#"quadricFibrationCubicFourfoldInC8"_1 then descr = descr||((computationStatusLog X)|idX);
+        if computationStatus X >= 1 then descr = descr || (describeMirrorFourfoldAndK3 X);
     );
     net expression descr
 );
@@ -631,10 +631,10 @@ runExampleTest = (i,charK,degS,gS,dX,degU,gU,chiOU,ambW,degW,gW,degL,degC,gK3,M)
     assert(X.cache#(S,P,"labelDSCF") === "DSCF-V1-"|toString(i));
     assert(degree P == 1 and degree S == degS and sectionalGenus S == gS);
     assert(discriminant X == dX and discriminant X.cache#"parentCubicFourfold" == 8);
-    assert(statusK3 X == -1);
+    assert(computationStatus X == -1);
     E := polarizedK3surface(X,Verbose=>true);
     assert instance(E, K3SurfaceFromDoublySpecialCubicFourfold);
-    assert(statusK3 X == 3);
+    assert(computationStatus X == 3);
     (mu,U,LC,f) := building E; (L,C) := toSequence LC;
     assert(U === surface mirrorFourfold X);
     assert(degree U == degU and sectionalGenus U == gU and euler hilbertPolynomial U == chiOU);
@@ -649,7 +649,7 @@ runExampleTest = (i,charK,degS,gS,dX,degU,gU,chiOU,ambW,degW,gW,degL,degC,gK3,M)
     assert(E#"LatticePolarization" === null);
     polarizedK3surface(X,Verbose=>true);
     assert(E#"LatticePolarization" =!= null);
-    assert(statusK3 X == 4);
+    assert(computationStatus X == 4);
     assert instance(latticePolarization E, LatticePolarizationOnK3Surface);
     assert(latticeMatrix latticePolarization E == M);
     assert(recoverFourfold E === X and recoverFourfold projectiveVariety E === X);

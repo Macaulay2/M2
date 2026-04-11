@@ -111,6 +111,7 @@ normalization EmbeddedProjectiveVariety := o -> X -> (
     X.cache#"Normalization" = f
 );
 
+-*
 experimentalNormalizationInv = method(Options => {Verbose => true});
 experimentalNormalizationInv EmbeddedProjectiveVariety := o -> X -> (
     if X.cache#?"ExperimentalNormalizationInv" then return X.cache#"ExperimentalNormalizationInv";
@@ -130,6 +131,7 @@ experimentalNormalizationInv EmbeddedProjectiveVariety := o -> X -> (
     N := pr * n' * h;
     X.cache#"ExperimentalNormalizationInv" = N
 );
+*-
 
 MinimumCodimensionForExperimentalNormalization = 7; -- 5;
 inverseNormalizationMapRaw = (Y,strY,expEulOut,verb) -> (
@@ -169,7 +171,6 @@ inverseNormalizationMapRaw = (Y,strY,expEulOut,verb) -> (
 
 inverseNormalizationMapExperimentalRaw = (Y,strY,expEulOut,verb) -> (
     -- A variant and improvement of experimentalNormalizationInv.
-    -- Currently under development and testing.
     if not (dim Y == 2 and dim linearSpan Y > 5) then error "experimental normalization requires a surface with linear span dimension > 5";
     if verb then << "-- computing experimental normalization of " << strY << "..." << endl;
     pts := apply(dim ambient Y - 5, i -> point Y);
@@ -273,8 +274,8 @@ interpolateTop (ZZ,EmbeddedProjectiveVariety) := o -> (i,X) -> (
 );
 interpolateTop EmbeddedProjectiveVariety := o -> X -> interpolateTop(0,X,Verbose=>o.Verbose,cache=>o.cache,"Deep"=>o#"Deep");
 
-DefaultVerbosityDSCFtoInterpolateTop = false;
-verbosityInterpolateTop = v -> v and DefaultVerbosityDSCFtoInterpolateTop;
+DefaultVerbosityInterpolateTop = false;
+verbosityInterpolateTop = v -> v and DefaultVerbosityInterpolateTop;
 
 mapDefinedByDivisor = method();
 mapDefinedByDivisor (QuotientRing,VisibleList) := (R,D) -> rationalMap(R,new Tally from apply(select(D,l -> last l > 0),d -> first d => last d));
@@ -447,14 +448,14 @@ humanReadableSeconds = t -> (
     )
 );
 
-statusK3 = method();  -- computation status (generic name, for internal use only)
+computationStatus = method();
 -- -1: Fano map not found
 --  0: surface U missing from cache: no computation performed
 --  1: Fano map and U computed; exceptional curves missing
---  2: exceptional curves computed; associated K3 surface missing
---  3: K3 surface Utilde computed; lattice polarization missing
+--  2: exceptional curves computed; associated K3/Castelnuovo surface missing
+--  3: surface Utilde computed; lattice polarization missing
 --  4: computation complete
-statusK3 DoublySpecialCubicFourfold := X -> (
+computationStatus DoublySpecialCubicFourfold := X -> (
     (S,P) := surfaces X;
     if not S.cache#?("FanoMapDSCF",P) then return -1;
     mu := S.cache#("FanoMapDSCF",P);
@@ -466,7 +467,7 @@ statusK3 DoublySpecialCubicFourfold := X -> (
     if E#"LatticePolarization" === null or isVirtualLatticeK3 E then return 3;
     return 4;
 );
-statusK3 HodgeSpecialFourfold := X -> (
+computationStatus HodgeSpecialFourfold := X -> (
     S := surface X;
     if not S.cache#?("fanoMap",ambientFivefold X) then return -1;
     if not S.cache#?("surfaceDeterminingInverseOfFanoMap",ideal X) then return 0;
@@ -475,11 +476,11 @@ statusK3 HodgeSpecialFourfold := X -> (
     if not X.cache#?"AssociatedSurfaceCompleteData" then return 2;
     return 3;
 );
-statusK3 K3SurfaceFromDoublySpecialCubicFourfold := S -> statusK3 recoverFourfold S;
+computationStatus K3SurfaceFromDoublySpecialCubicFourfold := S -> computationStatus recoverFourfold S;
 
-K3statusLog = method();
-K3statusLog HodgeSpecialFourfold := X -> (
-    s := statusK3 X;
+computationStatusLog = method();
+computationStatusLog HodgeSpecialFourfold := X -> (
+    s := computationStatus X;
     if s >= 0 and (not instance(X,DoublySpecialCubicFourfold)) then s = s + 1;
     st := if      s == -1 then "░░░░░"
           else if s == 0  then "▓░░░░"
@@ -487,14 +488,14 @@ K3statusLog HodgeSpecialFourfold := X -> (
           else if s == 2  then "▓▓▓░░"
           else if s == 3  then "▓▓▓▓░"
           else if s == 4  then "▓▓▓▓▓"
-          else error "internal error: statusK3 returned an invalid value";
-    "K3 status: " | "["|st|" / ▓▓▓▓▓]"
+          else error "internal error: computationStatus returned an invalid value";
+    (if instance(X,IntersectionOfThreeQuadricsInP7) then "Castelnuovo" else "K3") | " status: " | "["|st|" / ▓▓▓▓▓]"
 );
-K3statusLog K3SurfaceFromDoublySpecialCubicFourfold := S -> K3statusLog recoverFourfold S;
+computationStatusLog K3SurfaceFromDoublySpecialCubicFourfold := S -> computationStatusLog recoverFourfold S;
 
 describeMirrorFourfoldAndK3 = method();
 describeMirrorFourfoldAndK3 HodgeSpecialFourfold := X -> (
-    s := statusK3 X;
+    s := computationStatus X;
     if s <= 0 then return "";
     mu := if instance(X,DoublySpecialCubicFourfold) then fanoMapDSCF(X,Verbose=>true) else multirationalMap fanoMap(X,Verbose=>true);  -- already in cache
     W := target mu;

@@ -149,6 +149,7 @@ expression CubicFourfold := X -> expression("cubic fourfold containing a surface
 describe CubicFourfold := X -> (
     descr:="Special cubic fourfold of discriminant "|(toString discriminant X)|newline|"containing a "|surfaceDescription(0,surface X,true);
     if recognize X === "LaiFarkasVerraC42" then descr = descr|newline|"(the surface is the 8-nodal nonic scroll studied by K.-W. Lai, G. Farkas and A. Verra,"|newline|"this implementation is due to M. Hoff)";
+    if computationStatus X >= 0 then descr = descr|newline|(computationStatusLog X)|newline|toString(describeMirrorFourfoldAndK3 X);
     net expression descr
 );
 

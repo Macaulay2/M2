@@ -216,6 +216,7 @@ describe GushelMukaiFourfold := X -> (
     if recognize X === "october2021-26''" or recognize X === "october2021-28" or recognize X === "october2021-28-2" or recognize X === "october2021-34'" then descr = descr|newline|"(case discovered in October 2021)";
     if recognize X === "october2021-20" then descr = descr|newline|"(case discovered in October 2021; see also Table 1 of arXiv:2003.07809)";
     if recognize X === "april2022-GM42''" then descr = descr|newline|"(strange example discovered in October 2021)";
+    if computationStatus X >= 0 then descr = descr|newline|(computationStatusLog X)|newline|toString(describeMirrorFourfoldAndK3 X);
     net expression descr
 );
 
