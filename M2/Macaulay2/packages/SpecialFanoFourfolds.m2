@@ -80,7 +80,8 @@ export{
     "fromOrdinaryToGushel",
     "beauvilleMap",
     "polarizedK3surface",
-    "latticePolarization"
+    "latticePolarization",
+    "swap"
 }
 
 needsPackage "IntegralClosure"; -- for method: normalization
