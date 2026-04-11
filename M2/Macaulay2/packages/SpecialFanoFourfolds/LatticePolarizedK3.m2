@@ -241,8 +241,10 @@ polarizedK3surface DoublySpecialCubicFourfold := o -> X -> (
     StrPolSet := {null, "SpecialCurve", "MapFromW", "MapFromU", "MapFromW-Virtual", "MapFromU-Virtual"};
     if member(o.Strategy,StrPolSet)
     then (StrK3,StrPol) = (null,o.Strategy)
-    else if member(o.Strategy,StrK3Set) then (StrK3,StrPol) = (o.Strategy,null)
-    else if instance(o.Strategy,VisibleList) and # o.Strategy == 2 and member(first o.Strategy, StrK3Set) and member(last o.Strategy, StrPolSet) then (StrK3,StrPol) = toSequence o.Strategy
+    else if member(o.Strategy,StrK3Set)
+    then (StrK3,StrPol) = (o.Strategy,null)
+    else if instance(o.Strategy,VisibleList) and # o.Strategy == 2 and member(first o.Strategy, StrK3Set) and member(last o.Strategy, StrPolSet)
+    then (StrK3,StrPol) = toSequence o.Strategy
     else error("polarizedK3surface: invalid Strategy; expected one of {\"SpecialCurve\", \"MapFromW\", \"MapFromU\", \"MapFromW-Virtual\", \"MapFromU-Virtual\"}, or {\"Inverse\", \"Approximate\"}, or a pair of these");
     if not member(o.FanoMapType,{null,"Standard","P2xP2"}) then error("polarizedK3surface: invalid FanoMapType '" | toString(o.FanoMapType) | "'; expected one of {\"Standard\", \"P2xP2\"}");
     mu := getCachedFanoMapIfCompatible(X,o.FanoMapType);

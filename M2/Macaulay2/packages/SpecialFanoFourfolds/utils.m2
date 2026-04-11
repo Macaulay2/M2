@@ -214,13 +214,13 @@ interpolateImage (MultirationalMap,List,ZZ) := o -> (Phi,D,j) -> (
     cont := 0;
     W := Phi point source Phi;
     while select(flatten degrees ideal W,d -> d <= j) =!= D do (
-        if o.Verbose then <<"image "<<cont<<", ";
+        if o.Verbose then <<"  -- image "<<cont<<", ";
         W = W + Phi point source Phi;
         if o.Verbose then (<<"degrees: "; <<toStringDegreesVar W<<endl);
         cont = cont + 1;
     );
     for i to 3 do (
-        if o.Verbose then <<"(verifying) image "<<cont<<", ";
+        if o.Verbose then <<"  -- (verifying) image "<<cont<<", ";
         W = W + Phi point source Phi;
         if o.Verbose then (<<"degrees: "; <<toStringDegreesVar W<<endl);
         cont = cont + 1;
@@ -251,7 +251,7 @@ interpolateTop (EmbeddedProjectiveVariety,List) := o -> (X,j) -> (
     D := toList(1..m);
     while # unique take(D,-m) != 1 do (
         cont = cont + 1;
-        if o.Verbose then <<"top "<<cont<<", ";
+        if o.Verbose then <<"  -- top "<<cont<<", ";
         f = parametrize random({(dim X):{1}},0_X);
         W = W + f f^* X;
         if o.Verbose then (<<"degrees: "; <<toStringDegreesVar W<<endl);
