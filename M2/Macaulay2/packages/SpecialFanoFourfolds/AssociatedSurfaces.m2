@@ -78,27 +78,30 @@ printFinalLogSurface = strSurf -> (
 
 associatedK3surface = method(Options => {Verbose => false, Strategy => null, Singular => null});
 associatedCastelnuovoSurface = method(Options => {Verbose => false, Strategy => null, Singular => null});
-associatedCastelnuovoSurface IntersectionOfThreeQuadricsInP7 := associatedK3surface GushelMukaiFourfold := associatedK3surface CubicFourfold := o -> X -> (
+
+associatedK3surface CubicFourfold := associatedK3surface GushelMukaiFourfold := associatedCastelnuovoSurface IntersectionOfThreeQuadricsInP7 := o -> X -> (
     if X.cache#?"AssociatedSurfaceCompleteData" then return X.cache#"AssociatedSurfaceCompleteData";
     if X.cache#?"AssociatedSurfacePartialData" then (
         UtildeP := X.cache#"AssociatedSurfacePartialData";
-        return buildMinimalK3ViaNormalization(UtildeP,Verbose=>o.Verbose);
+        return buildAssociatedSurfaceFromPartialData(UtildeP,Verbose=>o.Verbose);
     );
     strSurf := if instance(X,IntersectionOfThreeQuadricsInP7) then "Castelnuovo " else "K3 ";
     if o.Verbose then (
         printFinalLog := printFinalLogSurface("associated "|strSurf);
-        << "-- starting associated "<< strSurf << "computation" << endl;
+        << "-- starting associated " << strSurf << "computation" << endl;
         << "-- input: fourfold containing a " << surfaceDescription surface X << endl;
         printInfoOnPlannedSteps X;
     );
-    if (not X.cache#?(surface X,"label")) and o.Verbose then <<"-- recognizing the fourfold"<<endl;
+    if (not X.cache#?(surface X,"label")) and o.Verbose then << "-- recognizing the fourfold" << endl;
     recognize X;
-    if o.Verbose then (if X.cache#(surface X,"label") === "NotRecognized" then <<"-- fourfold not recognized"<<endl else <<"-- the fourfold has been successfully recognized"<<endl);
+    if o.Verbose then (
+        if X.cache#(surface X,"label") === "NotRecognized" then << "-- fourfold not recognized" << endl else << "-- the fourfold has been successfully recognized" << endl;
+    );
     fanoMap(X,Singular=>o.Singular,Verbose=>o.Verbose);
     (L,C) := exceptionalCurves(X,Verbose=>o.Verbose,Strategy=>o.Strategy);
     U := ambientVariety L;
     mu := multirationalMap fanoMap X;
-    f := if instance(X,IntersectionOfThreeQuadricsInP7) then buildContractionMapCastelnuovo(U,X,o.Verbose) else buildContractionMapK3(U,X,o.Strategy,o.Verbose);
+    f := contractionMap(U,X,Verbose=>o.Verbose,Strategy=>o.Strategy,"ForceNormalization"=>false);
     Utilde := makeSurfaceAssociated(X,mu,U,{L,C},f);
     if o.Verbose then printFinalLog Utilde;
     Utilde
@@ -138,9 +141,10 @@ associatedUnderlyingK3Raw DoublySpecialCubicFourfold := o -> X -> (
             return UtildeFuse;
         );
     );
-    (L,C) := exceptionalCurves(X,Verbose=>o.Verbose,Strategy=>setStrategyDSCFtoK3(X,o.Strategy));
+    Str := setStrategyDSCFtoK3(X,o.Strategy);
+    (L,C) := exceptionalCurves(X,Verbose=>o.Verbose,Strategy=>Str);
     U := ambientVariety L;
-    f := buildContractionMapK3DSCF(U,X,isNormalizationKnownToTerminateQuickly(X),setStrategyDSCFtoK3(X,o.Strategy),o.Verbose);
+    f := contractionMap(U,X,Verbose=>o.Verbose,Strategy=>Str,"ForceNormalization"=>isNormalizationKnownToTerminateQuickly(X));
     Utilde := makeSurfaceAssociated(X,mu,U,{L,C},f);
     if o.Verbose then printFinalLog Utilde;
     Utilde
@@ -163,21 +167,22 @@ printInfoOnPlannedSteps = X -> (
     << endl;
 );
 
-buildMinimalK3ViaNormalization = method(Options => {Verbose => true});
-buildMinimalK3ViaNormalization SurfaceAssociatedToRationalFourfold := o -> Utilde -> (
+buildAssociatedSurfaceFromPartialData = method(Options => {Verbose => true});
+buildAssociatedSurfaceFromPartialData SurfaceAssociatedToRationalFourfold := o -> Utilde -> (
     (mu,U,exC,f) := building Utilde;
-    if f =!= null or Utilde.cache#?"attemptedMinimalK3ViaNormalization" or euler hilbertPolynomial U == 2 then return Utilde;
-    (L,C) := toSequence exC;
+    if f =!= null or Utilde.cache#?"attemptedBuildAssociatedSurfaceFromPartialData" then return Utilde;
     X := recoverFourfold Utilde;
-    if instance(X,DoublySpecialCubicFourfold) then (
-        Str := U.cache#"strategy for surface U";
-        f = buildContractionMapK3DSCF(U,X,true,Str,o.Verbose);
-    ) else if instance(X,CubicFourfold) or instance(X,GushelMukaiFourfold) then (
-        if o.Verbose then << "-- surface normalization required: not yet automated" << endl;
-    ) else if instance(X,IntersectionOfThreeQuadricsInP7) then (
-        if o.Verbose then << "-- surface normalization required: not yet automated" << endl;
-    ) else error "fourfold type not supported";
-    Utilde.cache#"attemptedMinimalK3ViaNormalization" = true;
+    EulerExpVal := if instance(X,IntersectionOfThreeQuadricsInP7) then 4 else 2;
+    if euler hilbertPolynomial U == EulerExpVal then return Utilde;
+    Str := null;
+    if U.cache#?"strategy for surface U" then (
+        Str = U.cache#"strategy for surface U";
+    ) else (
+        << "-- debug: missing 'strategy for surface U' in cache" << endl;
+    );
+    f = contractionMap(U,X,Verbose=>o.Verbose,Strategy=>Str,"ForceNormalization"=>true);
+    Utilde.cache#"attemptedBuildAssociatedSurfaceFromPartialData" = true;
     if f === null then return Utilde;
+    (L,C) := toSequence exC;
     return makeSurfaceAssociated(X,mu,U,{L,C},f);
 );

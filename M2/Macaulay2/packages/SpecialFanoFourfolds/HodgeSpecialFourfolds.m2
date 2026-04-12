@@ -227,6 +227,7 @@ degreeHypersurface HodgeSpecialFourfold := X -> (
 recognize = method();
 
 recognize HodgeSpecialFourfold := X -> (
+    if instance(X,DoublySpecialCubicFourfold) then return recognizeDSCF X;
     if X.cache#?(surface X,"label") then return X.cache#(surface X,"label");
     if instance(X,CubicFourfold) then return X.cache#(surface X,"label") = recognizeCubicFourfold X;
     if instance(X,GushelMukaiFourfold) then return X.cache#(surface X,"label") = recognizeGMFourfold X;
@@ -479,13 +480,9 @@ HodgeSpecialFourfold ** Ring := (X,K) -> (
 );
 
 random HodgeSpecialFourfold := o -> X -> (
-    if instance(X,GushelMukaiFourfold) then (
-        X' := gushelMukaiFourfold(surface X,random(2,surface X) * ambientFivefold X,InputCheck=>-1);
-        X'.cache#"AmbientFivefold" = ambientFivefold X;
-        return X';
-    );
-    if instance(X,CubicFourfold) then return cubicFourfold(surface X,InputCheck=>-1);
-    specialFourfold(surface X,random(degreeHypersurface X,surface X) * ambientFivefold X,ambientFivefold X,InputCheck=>-1)
+    X' := specialFourfold(surface X,random(degreeHypersurface X,surface X) * ambientFivefold X,ambientFivefold X,InputCheck=>-1);
+    if X.cache#?(surface X,"label") and (not X'.cache#?(surface X',"label")) then X'.cache#(surface X',"label") = X.cache#(surface X,"label");
+    X'
 );
 
 toExternalString HodgeSpecialFourfold := X -> (

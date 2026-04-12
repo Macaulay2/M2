@@ -257,6 +257,7 @@ surfaceIntersectionNumber DoublySpecialCubicFourfold := o -> X -> (
 random DoublySpecialCubicFourfold := o -> X -> (
     (S,T) := surfaces X;
     Y := cubicFourfold(S & T,InputCheck=>-1);
+    if X.cache#?(S,T,"labelDSCF") and (not Y.cache#?(S,T,"labelDSCF")) then Y.cache#(S,T,"labelDSCF") = X.cache#(S,T,"labelDSCF");
     if isFanoMapStandard X then setFanoMapToBeStandard Y;
     if isFanoMapToP2xP2 X then setFanoMapToBeMapFromP5toP2xP2 Y;
     Y
@@ -417,6 +418,8 @@ isSurfaceUknownToBeAlreadyEquidimensional = (X,mu) -> (
 isNormalizationKnownToTerminateQuickly = X -> isFanoMapStandard(X) and member(recognizeDSCF X,{"DSCF-V1-17", "DSCF-V1-27", "DSCF-V1-30"});
 
 isHigherDegreeCurveInExceptionalSetKnownToBeSpecial = X -> isFanoMapStandard(X) and member(recognizeDSCF X,{"DSCF-V1-34","DSCF-V1-40"});
+
+isSelfIntersectionVerificationKnownToBeSuperfluous = X -> isFanoMapStandard(X) and member(recognizeDSCF X,{"DSCF-V1-40"});
 
 someExceptionalCurvesKnownToAppearWithMultiplicity = X -> isFanoMapStandard(X) and member(recognizeDSCF X,{"DSCF-V1-5", "DSCF-V1-14"});
 

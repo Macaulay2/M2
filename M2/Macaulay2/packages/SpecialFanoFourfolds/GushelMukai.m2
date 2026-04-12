@@ -292,6 +292,13 @@ recognizeGMFourfold = X -> (
     "NotRecognized"
 );
 
+random GushelMukaiFourfold := o -> X -> (
+    X' := gushelMukaiFourfold(surface X,random(2,surface X) * ambientFivefold X,InputCheck=>-1);
+    X'.cache#"AmbientFivefold" = ambientFivefold X;
+    if X.cache#?(surface X,"label") and (not X'.cache#?(surface X',"label")) then X'.cache#(surface X',"label") = X.cache#(surface X,"label");
+    X'
+);
+
 toGrass = method(TypicalValue => MultirationalMap)
 
 toGrass EmbeddedProjectiveVariety := (cacheValue "toGrass") (X -> (

@@ -12,8 +12,8 @@ PARA {"This package contains several tools related to the rationality problem fo
 SUBSECTION "Version History", UL {
 {"v. 1.0 (Oct 2019) - Initial version."},
 {"v. 2.7.1 (May 2023) - Consolidated stable version."},
-{"v. 2.8 (Apr 2026) - Major refactoring and new features."}},
-PARA {"The following are some papers that have benefited from this package."},
+{"v. 2.8 (Apr 2026) - Updates and new features."}},
+PARA {"The following papers have made use of this package."},
 References => UL{
 {"F. Russo and G. Staglianò, ",EM"On complete intersections of three quadrics in P^7",", available at ",HREF{"https://arxiv.org/abs/2312.01773","arXiv:2312.01773"}," (2023)."},
 {"M. Hoff and G. Staglianò, ",EM"Explicit constructions of K3 surfaces and unirational Noether-Lefschetz divisors",", available at ",HREF{"https://arxiv.org/abs/2110.15819","arXiv:2110.15819"}," (2021)."},

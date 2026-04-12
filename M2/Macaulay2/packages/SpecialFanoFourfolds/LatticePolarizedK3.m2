@@ -311,7 +311,7 @@ associatedLatticePolarizationRaw SurfaceAssociatedToRationalFourfold := o -> Uti
         << "-- available strategies: \"SpecialCurve\", \"MapFromW\", \"MapFromU\", \"MapFromW-Virtual\", \"MapFromU-Virtual\"" << endl;
     );
     if member(o.Strategy,{"MapFromW-Virtual","MapFromU-Virtual"}) then return virtualAssociatedLatticePolarizationRaw(Utilde,Verbose=>o.Verbose,Strategy=>o.Strategy);
-    Utilde = buildMinimalK3ViaNormalization(Utilde,Verbose=>o.Verbose);
+    Utilde = buildAssociatedSurfaceFromPartialData(Utilde,Verbose=>o.Verbose);
     (mu,U,exC,f) := building Utilde;
     X := recoverFourfold Utilde;
     if f === null then error "incomplete K3 data (failed to obtain contraction map)";
@@ -335,7 +335,7 @@ associatedLatticePolarizationRaw SurfaceAssociatedToRationalFourfold := o -> Uti
         );
     );
     if o.Verbose then << "-- constructing lattice polarization..." << endl;
-    T := latticePolarizationOnK3Surface(Utilde,specialCurveK3,Verbose=>o.Verbose,Verify=>true);
+    T := latticePolarizationOnK3Surface(Utilde,specialCurveK3,Verbose=>o.Verbose,Verify=>not(isSelfIntersectionVerificationKnownToBeSuperfluous X));
     if o.Verbose then printFinalLog();
     T
 );

@@ -212,6 +212,12 @@ recognizeCubicFourfold = X -> (
     "NotRecognized"
 );
 
+random CubicFourfold := o -> X -> (
+    X' := cubicFourfold(surface X,InputCheck=>-1);
+    if X.cache#?(surface X,"label") and (not X'.cache#?(surface X',"label")) then X'.cache#(surface X',"label") = X.cache#(surface X,"label");
+    X'
+);
+
 parameterCount CubicFourfold := o -> X -> parameterCount(surface X,X,Verbose=>o.Verbose);
 
 isAdmissible = method();
