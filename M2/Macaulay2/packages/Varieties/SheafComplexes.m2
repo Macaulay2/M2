@@ -145,6 +145,342 @@ extend(Complex, Complex, SheafMap, Sequence) := ComplexMap =>
     lookup(extend, Complex, Complex, Matrix, Sequence)
 
 -----------------------------------------------------------------------------
+-- hh: Cohomology with coefficients in a complex of coherent sheaves
+-----------------------------------------------------------------------------
+
+SumOfTwistsComplex = new Type of BasicList
+SumOfTwistsComplex.synonym = "sum of twists of a complex of sheaves"
+
+-- constructors
+Complex(*) := SumOfTwistsComplex => C -> C(>=-infinity)
+Complex LowerBound := SumOfTwistsComplex => (C, b) -> (new SumOfTwistsComplex from {C, b})
+
+-- basic methods
+ring    SumOfTwistsComplex := C ->    ring C#0
+variety SumOfTwistsComplex := C -> variety C#0
+
+-- printing
+expression SumOfTwistsComplex := C -> (expression C#0) (if C#1#0 === -infinity then expression symbol(*)
+    else (expression symbol>=) (expression C#1#0))
+net        SumOfTwistsComplex :=      net @@ expression
+texMath    SumOfTwistsComplex :=  texMath @@ expression
+toString   SumOfTwistsComplex := toString @@ expression
+
+
+-- This function hh^i(C) computes coherent sheaf cohomology with coefficients in a complex of sheaves
+-- (sometimes called "hypercohomology") on a closed subspace of a projective space,
+-- or more generally in a weighted projective space.
+-- If you want to compute cohomology with many twists, the functions hh^i(C,b1,b2) or hh^i(C(*))
+-- should be faster than running this program repeatedly.
+-- The base ring should be a field. Note that it is usually faster
+-- to work over Z/p for a prime number p <= 32767, say ZZ/31991, rather than over Q.
+--
+-- This function computes only the dimension of the cohomology, not the cohomology as a vector space.
+-- The algorithm uses local duality. The input complex can also be a complex of graded R-modules,
+-- in which case it is interpreted as the associated complex of coherent sheaves.
+--
+-- The distinction between a WPS as a stack X and its associated coarse moduli space, f: X -> V, does not matter
+-- for computing cohomology. Twists are interpreted by tensoring with the line bundles O(a) on the stack.
+--
+hh(ZZ, Complex) := ZZ => opts -> (cohodeg, C) -> (
+    R2 := ring module C;
+    M := flattenComplex module C;
+    R1 := ring M; -- R1 is a graded polynomial ring, and M is a complex of graded R1-modules that represents the complex C of sheaves.
+    if degreeLength R1 =!= 1 then error "expected degree length 1";
+    degs := flatten degrees R1; -- This is a list of the form {1,9,15,22}.
+    n := #degs; -- So P = Proj R1 has dimension n-1.
+    sumOfWeights := fold(plus, degs); -- This is the sum of the weights, that is, n+sigma in Symonds's notation,
+    -- for P = P^{n-1}(a_0,...,a_(n-1)).
+    R1.cache ??= new MutableHashTable;
+    w := R1.cache.Dualizing ??= R1^{-sumOfWeights};
+    -- We fix the dualizing module w, as a graded R1-module.
+    -- Our formula for the Hilbert series of H^i(P, M~(*)) (where i = cohodeg) is:
+    --   hilb(H^i(M)) - phi(hilb(im(Ext^(n-i)(tau^{>=i}M, w) -> Ext^(n-i)(M, w))))
+    --   + phi(hilb(Ext^(n-i-1)(M, w))) - phi(hilb(im(Ext^(n-1-i)(tau^{>=i+1}M, w) -> Ext^(n-i-1)(M, w)))).
+    -- Here phi: Z[T,T^(-1)] -> Z[T,T^(-1)] is the ring homomorphism with phi(T) = T^(-1),
+    -- and M -> tau^(>=j)M is the canonical truncation.
+    mapi := inducedMap(canonicalTruncation(M, -infinity, -cohodeg), M);
+    mapiplus1 := inducedMap(canonicalTruncation(M, -infinity, -cohodeg-1), M);
+    Cresmap := resolutionMap M;
+    tauiCresmap := resolutionMap target mapi;
+    tauiplus1Cresmap := resolutionMap target mapiplus1;
+    mapofresi := liftMapAlongQuasiIsomorphism(mapi*Cresmap, tauiCresmap);
+    mapofresiplus1 := liftMapAlongQuasiIsomorphism(mapiplus1*Cresmap, tauiplus1Cresmap);
+    rightpart := hilbertFunction(0, HH^cohodeg(M));
+    poincimageextmapi := hilbertFunction(0, image HH^(n-cohodeg)(Hom(mapofresi, w)));
+    poincimageextmapiplus1 := hilbertFunction(0, image HH^(n-1-cohodeg)(Hom(mapofresiplus1, w)));
+    poincextiplus1 := hilbertFunction(0, HH^(n-cohodeg-1)(Hom(source Cresmap, w)));
+    rightpart-poincimageextmapi+poincextiplus1-poincimageextmapiplus1)
+
+
+-- This function hh^i(C,b1,b2) computes the cohomology of a closed subspace of a weighted projective space
+-- with coefficients in a complex of sheaves (sometimes called "hypercohomology"),
+-- with all twists in an interval [b1,b2]. The base ring should be a field.
+--
+-- The input complex can also be a complex of graded R-modules,
+-- in which case it is interpreted as the associated complex of coherent sheaves.
+--
+-- This function computes only the Hilbert series of the cohomology, not the cohomology as a module.
+-- The algorithm, using local duality, is the same as that used for hh^i(C) and hh^i(C(*)).
+-- Note that it is usually faster to work over Z/p for a prime number p <= 32767, say ZZ/31991, rather than over Q.
+--
+-- The distinction between a WPS as a stack X and its associated coarse moduli space, f: X -> V, does not matter
+-- for computing cohomology. Twists are interpreted by tensoring with the line bundles O(a) on the stack.
+--
+hh(ZZ, Complex, ZZ, ZZ) := RingElement => opts -> (cohodeg, C, b1, b2) -> (
+    if not instance(b1, ZZ) or not instance(b2, ZZ) or b1>b2 then (
+	error "the input should be in the form hh^i(C,b1,b2), with C a complex of sheaves and b1 <= b2 integers");
+    R2 := ring module C;
+    M := flattenComplex module C;
+    R1 := ring M; -- R1 is a graded polynomial ring, and M is a complex of graded R1-modules that represents the complex C of sheaves.
+    if degreeLength R1 =!= 1 then error "expected degree length 1";
+    A := degreesRing R1; -- This is a ring of the form "ZZ[T]" (meaning Z[T,T^(-1)]).
+    T := A_0; -- This is the variable in the ring A.
+    degs := flatten degrees R1; -- This is a list of the form {1,9,15,22}.
+    n := #degs; -- So P = Proj R1 has dimension n-1.
+    sumOfWeights := fold(plus, degs); -- This is the sum of the weights, that is, n+sigma in Symonds's notation,
+    -- for P = P^{n-1}(a_0,...,a_(n-1)).
+    R1.cache ??= new MutableHashTable;
+    ww := R1.cache.Dualizing ??= R1^{-sumOfWeights};
+    -- We fix the dualizing module ww, as a graded R1-module.
+    -- Our formula for the Hilbert series of H^i(P, M~(*)) (where i = cohodeg) is:
+    --   hilb(H^i(M)) - phi(hilb(im(Ext^(n-i)(tau^{>=i}M, ww) -> Ext^(n-i)(M, ww))))
+    --   + phi(hilb(Ext^(n-i-1)(M, ww))) - phi(hilb(im(Ext^(n-1-i)(tau^{>=i+1}M, ww) -> Ext^(n-i-1)(M, ww)))).
+    -- Here phi: Z[T,T^(-1)] -> Z[T,T^(-1)] is the ring homomorphism with phi(T) = T^(-1),
+    -- and M -> tau^(>=j)M is the canonical truncation.
+    output := 0;
+    mapi := inducedMap(canonicalTruncation(M, -infinity, -cohodeg), M);
+    mapiplus1 := inducedMap(canonicalTruncation(M, -infinity, -cohodeg-1), M);
+    Cresmap := resolutionMap M;
+    tauiCresmap := resolutionMap target mapi;
+    tauiplus1Cresmap := resolutionMap target mapiplus1;
+    mapofresi := liftMapAlongQuasiIsomorphism(mapi*Cresmap, tauiCresmap);
+    mapofresiplus1 := liftMapAlongQuasiIsomorphism(mapiplus1*Cresmap, tauiplus1Cresmap);
+    rightpart := hilbertSeries(HH^cohodeg(M), Order => b2+1); -- The Hilbert series in degrees <= b2.
+    poincimageextmapi := hilbertSeries(image HH^(n-cohodeg)(Hom(mapofresi, ww)), Order => -b1+1);
+    poincimageextmapiplus1 := hilbertSeries(image HH^(n-1-cohodeg)(Hom(mapofresiplus1, ww)), Order => -b1+1);
+    poincextiplus1 := hilbertSeries(HH^(n-cohodeg-1)(Hom(source Cresmap, ww)), Order => -b1+1);
+    leftpart := invertvar(-poincimageextmapi+poincextiplus1-poincimageextmapiplus1);
+    -- The output is the sum of the Laurent polynomials rightpart and leftpart in T, restricted to exponents in [b1, b2].
+    part(b1, b2, rightpart + leftpart))
+
+
+-- This function (usually called as hh^i(C(*)))
+-- computes the cohomology of a closed subspace of a weighted projective space with coefficients
+-- in a complex of sheaves (sometimes called "hypercohomology"), with all twists. For the input hh^i(C(>=b)),
+-- the number b is ignored, as the output explains. The base ring should be a field.
+-- The output is a sequence listing the infimum of weights a such that H^i(X,C(a)) is not zero (possibly -infinity or,
+-- if the cohomology is zero in all weights, infinity), the supremum of such weights,
+-- a rational function in T, and a rational function in U = T^{-1}, such that the sum of these two functions
+-- as Laurent series is sum_a h^i(X, C(a)) T^a (the sum over all integers a). (The two functions do not overlap,
+-- as formal series in T.)
+--
+-- The input complex can also be a complex of graded R-modules,
+-- in which case it is interpreted as the associated complex of coherent sheaves.
+--
+-- This program computes only the Hilbert series of the cohomology, not the cohomology as a module.
+-- The algorithm, using local duality, is the same as that used for hh^i(C) and hh^i(C,b1,b2),
+-- and slightly different from that used for the module HH^i(C(>=b)). It should be faster, in most cases.
+-- Note that it is usually faster to work over Z/p for a prime number p <= 32767, say ZZ/31991, rather than over Q.
+--
+-- The distinction between a WPS as a stack X and its associated coarse moduli space, f: X -> V, does not matter
+-- for computing cohomology. Twists are interpreted by tensoring with the line bundles O(a) on the stack.
+--
+hh(ZZ, SumOfTwistsComplex) := Sequence => opts -> (cohodeg, sumoftwists) -> (
+    -- Compute H^cohodeg(X,C(a)) for all integers a, as a sum of two Laurent series,
+    -- where C is a complex of sheaves on a closed subspace of a weighted projective space.
+    C := sumoftwists#0; -- For an input of the form hh^i(C(>=b)), the number b is ignored.
+    -- Let's not cache whether C was defined as a twist.
+    R2 := ring module C;
+    M := flattenComplex module C;
+    R1 := ring M; -- R1 is a graded polynomial ring, and M is a complex of graded R1-modules that represents the complex C of sheaves.
+    if degreeLength R1 =!= 1 then error "expected degree length 1";
+    hft := heft R1;
+    A := degreesRing R1; -- This is a ring of the form "ZZ[T]" (meaning Z[T,T^(-1)]).
+    T := A_0; -- This is the variable in the ring A.
+    U := getSymbol "U";
+    B := newRing(A,Variables=>{U},MonomialOrder=>{MonomialSize=>32,Weights=>{-1},GroupLex=>1,Position=>Up},Inverses=>true);
+    U = B_0;
+    -- Thus B is a ring of the form "ZZ[U]" (meaning Z[U,U^(-1)]). We think of U as meaning T^(-1).
+    degs := flatten degrees R1; -- This is a list of the form {1,9,15,22}.
+    n := #degs; -- So P = Proj R1 has dimension n-1.
+    sumOfWeights := fold(plus, degs); -- This is the sum of the weights, that is, n+sigma in Symonds's notation,
+    -- for P = P^{n-1}(a_0,...,a_(n-1)).
+    R1.cache ??= new MutableHashTable;
+    ww := R1.cache.Dualizing ??= R1^{-sumOfWeights};
+    -- We fix the dualizing module ww, as a graded R1-module.
+    -- Our formula for the Hilbert series of H^i(P, M~(*)) (where i = cohodeg) is:
+    --   hilb(H^i(M)) - phi(hilb(im(Ext^(n-i)(tau^{>=i}M, ww) -> Ext^(n-i)(M, ww))))
+    --   + phi(hilb(Ext^(n-i-1)(M, ww))) - phi(hilb(im(Ext^(n-1-i)(tau^{>=i+1}M, ww) -> Ext^(n-i-1)(M, ww)))).
+    -- Here phi: Z[T,T^(-1)] -> Z[T,T^(-1)] is the ring homomorphism with phi(T) = T^(-1),
+    -- and M -> tau^(>=j)M is the canonical truncation.
+    mapi := inducedMap(canonicalTruncation(M, -infinity, -cohodeg), M);
+    mapiplus1 := inducedMap(canonicalTruncation(M, -infinity, -cohodeg-1), M);
+    Cresmap := resolutionMap M;
+    tauiCresmap := resolutionMap target mapi;
+    tauiplus1Cresmap := resolutionMap target mapiplus1;
+    mapofresi := liftMapAlongQuasiIsomorphism(mapi*Cresmap, tauiCresmap);
+    mapofresiplus1 := liftMapAlongQuasiIsomorphism(mapiplus1*Cresmap, tauiplus1Cresmap);
+    rightpart := hilbertSeries(HH^cohodeg(M), Reduce => true);
+    denom := denominator hilbertSeries R1;
+    poincimageextmapi := poincare image HH^(n-cohodeg)(Hom(mapofresi, ww));
+    poincimageextmapiplus1 := poincare image HH^(n-1-cohodeg)(Hom(mapofresiplus1, ww));
+    poincextiplus1 := poincare HH^(n-cohodeg-1)(Hom(source Cresmap, ww));
+    leftpart := substitute(reduceHilbert Divide{-poincimageextmapi+poincextiplus1-poincimageextmapiplus1, denom}, T => U);
+    -- The output is the sum of rightpart as a Laurent series in T and leftpart as a Laurent series in U, meaning T^(-1).
+    -- We look for a neat way to describe this output, since it is a series in T that may be infinite to the left and the right.
+    bottomdeg := 0;
+    topdeg := 0;
+    positiveseries := 0;
+    negativeseries := 0;
+    hilb1 := 0; hilb0 := 0;
+    if value denominator leftpart == 1 then ( -- Here Ext^cohodeg(X,C(*)) is bounded below.
+	-- In this case, we will return the output as a rational function in T.
+	hilb10 := substitute(value numerator leftpart, U => T^(-1));
+	-- This is a Laurent polynomial in ZZ[T] = Z[T, T^(-1)].
+	positiveseries = add(rightpart, hilb10);
+	negativeseries = 0;
+	if value numerator positiveseries == 0 then (  -- In this case, Ext^cohodeg(X,C(*)) = 0.
+	    topdeg = -infinity;
+	    bottomdeg = infinity;
+	    positiveseries = 0)
+	else ( -- Here Ext^(cohodeg)(X,C(*)) is bounded below and not zero.
+	    bottomdeg = first min exponents value numerator positiveseries; -- This gives the bottom degree of the output.
+	    if value denominator positiveseries == 1 then topdeg = first max exponents value numerator positiveseries
+	    else topdeg = infinity))
+    else ( -- Here Ext^(cohodeg)(X,C(*)) is not bounded below.
+	bottomdeg = -infinity;
+	if value denominator rightpart == 1 then ( -- Here Ext^(cohodeg) is bounded above but not below.
+	    -- In this case, we will return the output as a rational function in U, meaning T^(-1).
+	    hilb10 = substitute(value numerator rightpart, T => U^(-1));
+	    -- This is a Laurent polynomial in ZZ[U] = Z[U, U^(-1)].
+	    negativeseries = add(leftpart, hilb10);
+	    positiveseries = 0;
+	    topdeg = - first min exponents value numerator negativeseries)
+	else ( -- Here Ext^(cohodeg) is unbounded in both directions.
+	    topdeg = infinity;
+	    negpart := truncateSeries(0, hft, rightpart);
+	    -- The part of "rightpart" of degree < 0 in T, a Laurent polynomial.
+	    pospart := truncateSeries(1, hft, leftpart);
+	    -- The part of "leftpart" of degree <= 0 in U, a Laurent polynomial.
+	    positiveseries = add(rightpart, -negpart + substitute(pospart, U => T^(-1))); -- A Divide of degree >=0 in T.
+	    negativeseries = add(leftpart, -pospart + substitute(negpart, T => U^(-1))))); -- A Divide of degree >0 in U (meaning T^(-1)).
+        ("The following is correct in all degrees. Bottom degree:", bottomdeg, "top degree:", topdeg, "cohomology as a series in T:",
+	positiveseries, "plus cohomology as a series in U = T^(-1):", negativeseries))
+
+
+extOptions = new OptionTable from {
+    Degree => 0
+    }
+
+-- Modeled on hh, defined as a ScriptedFunctor in Functors.m2.
+ext = new ScriptedFunctor from {
+    superscript => i -> new ScriptedFunctor from {
+	-- ext^i(C, D), ext^i(C, D, a, b), and so on
+	argument => extOptions >> opts -> X -> applyMethodWithOpts''(ext, functorArgs(i, X), opts)
+	},
+    argument => extOptions >> opts -> X -> applyMethodWithOpts''(ext, X, opts)
+    }
+
+-- This function ext^i(C,D) computes the dimension of Ext^i_X(C,D).
+-- Here X is a closed subspace of a projective space, or more generally of a weighted projective space.
+-- Also, C and D are complexes of sheaves on X. The base ring should be a field.
+-- If X is a subspace of a weighted projective space, it is viewed as an algebraic stack when that makes a difference.
+-- The algorithm uses local duality. 
+--
+-- If you want to compute Ext with many twists, the functions ext^i(C,D,b1,b2) or ext^i(C,D(*))
+-- may be convenient. Note that it is usually faster
+-- to work over Z/p for a prime number p <= 32767, say ZZ/31991, rather than over Q.
+--
+-- The input complexes can also be complexes of graded R-modules,
+-- in which case they are interpreted as the associated complexes of coherent sheaves.
+--
+ext(ZZ, Complex, Complex) := Sequence => opts -> (cohodeg, C, D) -> (
+    M := module C;
+    N := module D;
+    R2 := ring M;
+    if ring N =!= R2 then error "for Ext, the two complexes should be defined on the same space";
+    lengthlimit := cohodeg+1+(max N)-(min M);
+    -- We need a free resolution of the complex M over R2 out to this length.
+    if lengthlimit <= 0 then 0 -- In this case, inspecting the proof shows that the output is zero.
+    else (
+	Mres := freeResolution(M, LengthLimit => lengthlimit);
+	hh^cohodeg(Hom(Mres,N))))
+
+-*
+-- This function (usually called as ext^i(C,D,b1,b2)) computes the dimension of Ext^i_X(C,D(a)) for all integers a
+-- in an interval [b1,b2]. Here X is a closed subspace of a projective space,
+-- or more generally of a weighted projective space.
+-- Also, C and D are complexes of sheaves on X. In some cases, you might prefer ext^i(C,D(*)),
+-- which computes Ext with all twists. The base ring should be a field.
+-- If X is a subspace of a weighted projective space, it is viewed as an algebraic stack when that makes a difference.
+-- In particular, twists are interpreted by tensoring with the line bundles O(a) on the stack.
+-- The algorithm uses local duality.
+--
+-- The input complexes can also be complexes of graded R-modules,
+-- in which case they are interpreted as the associated complexes of coherent sheaves.
+--
+-- Note that it is usually faster to work over Z/p for a prime number p <= 32767, say ZZ/31991, rather than over Q.
+--
+ext(ZZ, Complex, Complex, ZZ, ZZ) := Sequence => opts -> (cohodeg, C, D, b1, b2) -> (
+    M := module C;
+    N := module D;
+    R2 := ring M;
+    if ring N =!= R2 then error "for Ext, the two complexes should be defined on the same space";
+    lengthlimit := cohodeg+1+(max N)-(min M);
+    -- We need a free resolution of the complex M over R2 out to this length.
+    if lengthlimit <= 0 then 0 -- In this case, inspecting the proof shows that the output is zero.
+    else (
+	Mres := freeResolution(M, LengthLimit => lengthlimit);
+	hh^cohodeg(Hom(Mres,N),b1,b2)))
+*-
+
+-- This function (usually called as ext^i(C,D(*))) computes the dimension of Ext^i_X(C,D(a)) for all integers a.
+-- Here X is a closed subspace of a projective space, or more generally of a weighted projective space.
+-- Also, C and D are complexes of sheaves on X. For the input ext^i(C,D(>=b)),
+-- the number b is ignored, as the output explains. The base ring should be a field.
+-- If X is a subspace of a weighted projective space, it is viewed as an algebraic stack when that makes a difference.
+-- In particular, twists are interpreted by tensoring with the line bundles O(a) on the stack.
+-- The algorithm uses local duality.
+--
+-- The output is a sequence listing the infimum of weights a such that Ext^i_X(C,D(a)) is not zero
+-- (possibly -infinity or, if Ext^i is zero in all weights, infinity), the supremum of such weights,
+-- a rational function in T, and a rational function in U = T^{-1}, such that the sum of these two functions
+-- as Laurent series is sum_a ext^i_X(C, D(a)) T^a (the sum over all integers a).
+-- (The two functions do not overlap, as formal series in T.)
+--
+-- The input complexes can also be complexes of graded R-modules,
+-- in which case they are interpreted as the associated complexes of coherent sheaves.
+--
+-- This function should be faster than computing the module Ext^i_X(C,D(>=b)), in most cases.
+-- Note that it is usually faster to work over Z/p for a prime number p <= 32767, say ZZ/31991, rather than over Q.
+--
+ext(ZZ, Complex, SumOfTwistsComplex) := Sequence => opts -> (cohodeg, C, sumoftwists) -> (
+    -- Compute Ext^cohodeg_X(C,D(a)) for all integers a, as a sum of two Laurent series,
+    -- where C and D are complexes of sheaves on a closed subspace X of a weighted projective space.
+    D := sumoftwists#0; -- For an input of the form ext^i(C,D(>=b)), the number b is ignored.
+    M := module C;
+    N := module D;
+    R2 := ring M;
+    if ring N =!= R2 then error "for Ext, the two complexes should be defined on the same space";
+    lengthlimit := cohodeg+1+(max N)-(min M);
+    -- We need a free resolution of the complex M over R2 out to this length.
+    if lengthlimit <= 0 then ( -- In this case, inspecting the proof shows that the output is zero.
+	bottomdeg := infinity;
+	topdeg := -infinity;
+	positiveseries := 0;
+	negativeseries := 0)
+    else (
+	Mres := freeResolution(M, LengthLimit => lengthlimit);
+	output := hh^cohodeg(Hom(Mres,N)(*));
+	bottomdeg = output_1;
+	topdeg = output_3;
+	positiveseries = output_5;
+	negativeseries = output_7);
+    ("The following is correct in all degrees. Bottom degree:", bottomdeg, "top degree:", topdeg, "Ext as a series in T:",
+	positiveseries, "plus Ext as a series in U = T^(-1):", negativeseries))
+
+-----------------------------------------------------------------------------
 -- RHom and Ext
 -----------------------------------------------------------------------------
 
@@ -225,6 +561,15 @@ Ext(ZZ, CoherentSheaf, Complex) := Complex => opts -> (m, C, D) -> (
 	r := a - l + 1;
 	M = truncate(r, M));
     complex applyValues(D.dd.map, f -> part(0, Ext^m(M, matrix f, opts))))
+
+-- The following would be faster than the current function. It is omitted for now, because
+-- it is not obviously functorial. But it could be combined with functorial constructions,
+-- by choosing a basis for HH^p(X, C) in a fixed way when needed.
+--cohomology(ZZ, ProjectiveVariety, Complex) := Complex => opts -> (p, X, C) -> (
+--    checkVariety(X, C);    
+--    C.cache.cohomology   ??= new MutableHashTable;
+--    k := coefficientRing ring variety C;
+--    C.cache.cohomology#p ??= k^(hh^p(C))) -- Ext^p(sheaf X, C, opts)
 
 cohomology(ZZ, ProjectiveVariety, Complex) := Complex => opts -> (p, X, C) -> (
     C.cache.cohomology   ??= new MutableHashTable;

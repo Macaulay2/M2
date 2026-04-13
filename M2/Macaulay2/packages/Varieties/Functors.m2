@@ -777,14 +777,16 @@ hh = new ScriptedFunctor from {
 
 -- using Hodge symmetry and Serre duality to ease the computation
 -- TODO: is minimum necessarily the most efficient?
-min'pq := d -> (p,q) -> min{(p,q), (q,p), (d-p,d-q), (d-q,d-p)}
+min'pq = d -> (p,q) -> min{(p,q), (q,p), (d-p,d-q), (d-q,d-p)}
 
 -- The Hodge numbers of a projective variety over a field.
--- By definition, hh^(p,q)(X) = dim HH^q(X, Omega^p).
-hh(Sequence, ProjectiveVariety) := ZZ => (pq, X) -> (
-    -- p and q are swapped here, because cotangentSheaf seems to be the
-    -- slowest part of this algorithm, so we minimize the exterior powers
-    (q,p) := (min'pq dim X) pq;
+-- By definition, hh^(p,q)(X) = dim HH^q(X, Omega^[p]), in terms of reflexive differentials.
+-- If X is smooth, this is the bundle Omega^p of p-forms.
+hh(Sequence, ProjectiveVariety) := ZZ => opts -> (pq, X) -> (
+    -- cotangentSheaf seems to be the slowest part of this algorithm, so we minimize the exterior powers
+    -- (note the definition of hh^(p,q)(X), above).
+    (p,q) := if char X == 0 then (min'pq dim X) pq else pq;
+    -- Hodge symmetry holds in characteristic 0, but not always in positive characteristic.
     if not X.cache.?hh   then X.cache.hh = new MutableHashTable;
     if X.cache.hh#?(p,q) then X.cache.hh#(p,q) else X.cache.hh#(p,q) = (
 	hh^q reflexiveDifferentials(p, X)))
@@ -958,6 +960,7 @@ topDegree = (positiveseries, negativeseries) -> (
 	)
     )
 
+
 -- This function (usually called as hh^i(F(*)))
 -- computes coherent sheaf cohomology on a closed subspace of a weighted projective space with all twists.
 -- For the input hh^i(F(>=b)), the number b is ignored, as the output explains. The base ring should be a field.
@@ -983,7 +986,7 @@ topDegree = (positiveseries, negativeseries) -> (
 -- about one sheaf, not its twists.)
 --
 hh(ZZ, SumOfTwists) := Sequence => opts -> (cohodeg, sumoftwists) -> (
-    -- Compute H^{cohodeg}(X,F(a)) for all integers a, as a sum of two Laurent polynomials,
+    -- Compute H^{cohodeg}(X,F(a)) for all integers a, as a sum of two Laurent series,
     -- where F is a CoherentSheaf (or a SheafOfRings) on a closed subspace of a weighted projective space.
     F := sumoftwists#0; -- For an input of the form hh^i(F(>=b)), the number b is ignored. Note that,
     -- if F is input as a SheafOfRings, SumOfTwists automatically turns it into a CoherentSheaf; so that's what this function receives.
@@ -1076,5 +1079,5 @@ hh(ZZ, SumOfTwists) := Sequence => opts -> (cohodeg, sumoftwists) -> (
 		)
 	    )
 	);
-    ("The following is correct in all degrees. Bottom degree:", bottomdeg, "top degree:", topdeg, "cohomology as a series in T:", positiveseries,
-	"plus cohomology as a series in U = T^(-1):", negativeseries))
+    ("The following is correct in all degrees. Bottom degree:", bottomdeg, "top degree:", topdeg, "cohomology as a series in T:",
+	positiveseries, "plus cohomology as a series in U = T^(-1):", negativeseries))

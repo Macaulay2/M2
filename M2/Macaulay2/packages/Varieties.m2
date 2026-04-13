@@ -85,6 +85,7 @@ export {
     "currentModuleBaseRing",
     -- Functors
     "hh", -- TODO: should this be defined in Core?
+    "ext",
     "OO",
     -- Symbols
     "GlobalSectionLimit",
@@ -113,7 +114,7 @@ importFrom_Core {
     "addHook", "tryHooks", "cacheHooks",
     "liftModule", "liftMorphism",
     "isMorphism", "isAbelianCategory",
-    "BinaryPowerMethod",
+    "BinaryPowerMethod", "truncateSeries",
     }
 
 -----------------------------------------------------------------------------
