@@ -80,7 +80,11 @@ latticePolarizationOnK3Surface (SurfaceAssociatedToRationalFourfold,ZZ,ZZ,ZZ) :=
 LatticePolarizationOnK3Surface Sequence := (S,ab) -> (
     if not(#ab == 2 and instance(first ab,ZZ) and instance(last ab,ZZ)) then error "expected a sequence of two integers";
     (a,b) := ab;
-    if not S#"isVirtual" then return image map(S,a,b);
+    if not S#"isVirtual" then (
+        f := map(S,a,b);
+        if char coefficientRing f <= 65521 then return image(f,"F4");
+        return image f;
+    );
     if gcd(a,b) != 1 then error "expected a and b to be coprime for a primitive polarization";
     M := latticeMatrix S;
     g := lift((M_(0,0) + 2)/2, ZZ);
@@ -102,8 +106,9 @@ map (LatticePolarizationOnK3Surface,ZZ,ZZ) := o -> (S,a,b) -> (
     d := M_(0,1);
     n := M_(1,1);
     g := lift((M_(0,0) + 2)/2, ZZ);
-    phi := if a > 0 and b < 0 then rationalMap((-b)*(C % T), a) else mapDefinedByDivisor(T,{(H,a),(C,b)});
     g' := lift((a^2*(2*g-2) + 2*a*b*d + b^2*n + 2)/2,ZZ);
+    if g' <= 0 then error "invalid pair of integers: target of map would be empty or a point";
+    phi := if a > 0 and b < 0 then rationalMap((-b)*(C % T), a) else mapDefinedByDivisor(T,{(H,a),(C,b)});
     if dim target phi =!= g' then error("expected map to PP^"|(toString g')|", but got map to PP^"|toString(dim target phi));
     S.cache#("map",a,b) = phi
 );

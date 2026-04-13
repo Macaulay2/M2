@@ -211,12 +211,20 @@ interpolateImage (MultirationalMap,List,ZZ) := o -> (Phi,D,j) -> (
     if Phi#"image" =!= null then return Phi#"image";
     if Phi#"isDominant" === true then return target Phi;
     if not all(D,d -> instance(d,ZZ)) then error "expected a list of integers";
+    doPrint := (v,c) -> (
+        if not v then return false;
+        if c <= 5 then return true;
+        if c <= 15 then return c % 3 == 0;
+        if c <= 50 then return c % 10 == 0;
+        if c <= 150 then return c % 30 == 0;
+        c % 100 == 0
+    );
     cont := 0;
     W := Phi point source Phi;
     while select(flatten degrees ideal W,d -> d <= j) =!= D do (
-        if o.Verbose then <<"  -- image "<<cont<<", ";
+        if doPrint(o.Verbose,cont) then <<"  -- image "<<cont<<", ";
         W = W + Phi point source Phi;
-        if o.Verbose then (<<"degrees: "; <<toStringDegreesVar W<<endl);
+        if doPrint(o.Verbose,cont) then (<<"degrees: "; <<toStringDegreesVar W<<endl);
         cont = cont + 1;
     );
     for i to 3 do (
