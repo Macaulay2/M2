@@ -725,12 +725,12 @@ minimalBetti Module := BettiTally => opts -> M -> (
         (isSkewCommutative R or isCommutative R) and (
             A =!= R and isField A
         ))
-    then betti freeResolution(M, DegreeLimit => degreelimit, LengthLimit => lengthlimit);
+    then return betti freeResolution(M, DegreeLimit => degreelimit, LengthLimit => lengthlimit);
 
     if lengthlimit === infinity then (
         -- reset lengthlimit
 	nvars := # generators(R, CoefficientRing => A);
-	lengthlimit = nvars + if A === ZZ then 1 else 0;
+	lengthlimit = nvars + (if A === ZZ then 1 else 0);
         );
     C = freeResolution(M, DegreeLimit => degreelimit, LengthLimit => lengthlimit + 1,
         Strategy => Nonminimal, StopBeforeComputation => true);
@@ -739,7 +739,8 @@ minimalBetti Module := BettiTally => opts -> M -> (
         if opts.DegreeLimit === infinity then {} else
 	if opts.DegreeLimit =!= null     then {opts.DegreeLimit} else {},
 	if opts.LengthLimit =!= infinity then {opts.LengthLimit} else {});
-    betti(B, Weights => heftvec(opts.Weights, heft R))
+    ans := betti(B, Weights => heftvec(opts.Weights, heft R));
+    ans
     )
 
 minimalBetti Ideal := BettiTally => opts -> I -> minimalBetti(comodule I, opts)

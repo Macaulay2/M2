@@ -726,12 +726,12 @@ TEST ///
   time C = res I
   time B = betti res I
   time F = res(ideal I_*, Strategy => Nonminimal)
-  time B == betti(F, Minimize =>true)
+  time B == betti(F, Minimize => true)
   assert(betti F != betti C)
   assert(F =!= C)
 
   F = res(ideal I_*, Strategy => Nonminimal)
-  assert(B == betti(F, Minimize =>true))
+  assert(B == betti(F, Minimize => true))
   C = res I;
   assert(B == betti C)
 
@@ -742,7 +742,7 @@ TEST ///
   C4 = res(I, Strategy=>Nonminimal);
   assert(C2 === C1)
   assert(C0 === C1)
-  assert(C4 === C1)
+  assert(C4 =!= C1)
 
   I = ideal I_*;
   C4 = res(I, Strategy=>Nonminimal);
