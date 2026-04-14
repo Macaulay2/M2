@@ -258,13 +258,13 @@ quotient'(SheafMap, SheafMap) := SheafMap => opts -> (f, g) -> (
 
 -- base change
 -- FIXME: this is a kludge; should we define Section as the parent of SheafOfRings?
-promote(Thing,    Nothing)     := Thing    => (x, O) -> promote(x, ring variety O)
-promote(SheafMap, Nothing)     := SheafMap => (f, O) -> if O === ring f         then f else error "base change of maps of sheaves is not yet implemented"
-promote(SheafMap, RingElement) := SheafMap => (f, R) -> if R === ring variety f then f else error "base change of maps of sheaves is not yet implemented"
+-- promote(Thing,    Nothing)     := Thing    => (x, O) -> promote(x, ring variety O)
+-- promote(SheafMap, Nothing)     := SheafMap => (f, O) -> if O === ring f         then f else error "base change of maps of sheaves is not yet implemented"
+-- promote(SheafMap, RingElement) := SheafMap => (f, R) -> if R === ring variety f then f else error "base change of maps of sheaves is not yet implemented"
 
 -- FIXME: another kludge to get RingElement * Complex to work
-promote(Number,      Nothing) :=
-promote(RingElement, Nothing) := RingElement => (r, O) -> try promote(r, O.ring) else r
+-- promote(Number,      Nothing) :=
+-- promote(RingElement, Nothing) := RingElement => (r, O) -> try promote(r, O.ring) else r
 
 -- printing
 -- TODO: use abbreviations for source and target
@@ -378,10 +378,14 @@ tensor(SheafMap, SheafMap) := SheafMap => (phi, psi) -> sheaf(matrix phi ** matr
 
 SheafMap ** SheafMap      := SheafMap => (phi, psi) -> tensor(phi, psi)
 SheafMap ** CoherentSheaf := SheafMap => (phi,   F) -> tensor(phi, id_F)
-CoherentSheaf ** SheafMap := SheafMap => (F,   phi) -> tensor(id_F, phi)
--- TODO: what do these do?!
-SheafMap ** SheafOfRings  := SheafMap => (phi, O) -> phi ** (O^1)
-SheafOfRings ** SheafMap  := SheafMap => (O, phi) -> (O^1) ** phi
+CoherentSheaf ** SheafMap := SheafMap => (F,   phi) -> tensor(id_F, phi) 
+
+-- base change, extension of scalars, etc.
+-- TODO: confirm that changing rings behaves mathematically sound
+SheafMap ** Ring         := baseChange(SheafMap, Ring)         := SheafMap => (f, R) -> baseChange(f, sheaf R)
+SheafMap ** SheafOfRings := baseChange(SheafMap, SheafOfRings) := SheafMap => (f, O) -> if O === ring f then f else tensor(f, id_(O^1))
+SheafOfRings ** SheafMap := Ring ** SheafMap := SheafMap => (O, f) -> baseChange(f, O)
+-- TODO: add ** RingMap
 
 SheafMap^** ZZ := SheafMap => (f, n) -> BinaryPowerMethod(f, n, tensor,
     f -> id_((sheaf variety f)^1),

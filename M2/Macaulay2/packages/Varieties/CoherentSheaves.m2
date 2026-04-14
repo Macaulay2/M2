@@ -38,11 +38,13 @@ sheaf(Variety, Ring) := SheafOfRings => (X, R) -> (
 	O := new SheafOfRings from { symbol variety => X, symbol ring => R };
 	O.cache = new MutableHashTable;
 	O.cache.sheaf = sheaf(O.variety, (ring variety O)^1); -- That is, O.cache.sheaf is the CoherentSheaf O^1.
+	-- TODO: need to either automate this, or add it in NormalToricVarieties, etc.
+	promote(Number,   O) := promote(RingElement, O) := RingElement => (x, O) -> promote(x, ring variety O);
+	promote(SheafMap, O) := promote(SheafMap,    R) := SheafMap    => baseChange;
 	-- We cache this so that constructing O^1 at different times will yield the _same_ CoherentSheaf,
 	-- which itself may have cached information over time.
 	O)
     )
-
 
 -- TODO: should the module of a sheaf be fixed, or should it be allowed to change?
 -- TODO: https://github.com/Macaulay2/M2/issues/1358
@@ -208,7 +210,8 @@ Matrix(ZZ) := Matrix Sequence := Matrix => (f, a) -> f ** (ring f)^{splice{a}}
 Ring(ZZ)   := Ring   Sequence := Module => (R, a) -> (R^1) ** R^{splice{a}}
 
 SheafOfRings  ^ ZZ := SheafOfRings  ^ List   := CoherentSheaf => (O, n) -> (
-    if instance(n, ZZ) and n == 1 then O.cache.sheaf -- Thus, O^1 always yields the _same_ coherent sheaf, which may contain cached information.
+    if instance(n, ZZ) and n == 1 and O.?cache and O.cache.?sheaf then O.cache.sheaf
+    -- Thus, O^1 always yields the _same_ coherent sheaf, which may contain cached information.
     -- We could consider transferring that information to direct sums, but at the moment that is not done.
     else sheaf(O.variety, (ring variety O)^n))
 
@@ -240,9 +243,6 @@ CoherentSheaf.directSum = args -> (
     F.cache.components = toList args;
     F)
 CoherentSheaf ++ CoherentSheaf := CoherentSheaf => (F, G) -> CoherentSheaf.directSum(F, G)
-CoherentSheaf ** CoherentSheaf := CoherentSheaf => (F, G) -> sheaf(F.variety, F.module ** G.module)
-CoherentSheaf^** ZZ            := CoherentSheaf => (F, n) -> sheaf(F.variety, F.module ^** n)
-tensor(CoherentSheaf, CoherentSheaf) := CoherentSheaf => {} >> opts -> (F, G) -> sheaf(F.variety, tensor(F.module, G.module, opts))
 CoherentSheaf  / CoherentSheaf := CoherentSheaf => (F, G) -> sheaf(F.variety, F.module  / G.module)
 CoherentSheaf  / Ideal         := CoherentSheaf => (F, I) -> sheaf(F.variety, F.module  / I)
 Ideal * CoherentSheaf          := CoherentSheaf => (I, F) -> sheaf(F.variety, I * F.module)
@@ -253,6 +253,19 @@ component(CoherentSheaf, Thing) := (F, k) -> (
     if not F.cache.?indexComponents then error "expected Sheaf to be a direct sum with indexed components";
     if not F.cache.indexComponents#?k then error("expected "|toString k|" to be the index of a component");
     (components F)#(F.cache.indexComponents#k))
+
+-- tensor
+tensor(CoherentSheaf, CoherentSheaf) := CoherentSheaf => {} >> opts -> (F, G) -> (
+    sheaf(F.variety, tensor(F.module, G.module, opts)))
+CoherentSheaf ** CoherentSheaf := CoherentSheaf => (F, G) -> sheaf(F.variety, F.module ** G.module)
+CoherentSheaf^** ZZ            := CoherentSheaf => (F, n) -> sheaf(F.variety, F.module ^** n)
+
+-- base change, extension of scalars, etc.
+baseChange = method()
+CoherentSheaf ** Ring         := baseChange(CoherentSheaf, Ring)         := CoherentSheaf => (F, R) -> baseChange(F, sheaf R)
+CoherentSheaf ** SheafOfRings := baseChange(CoherentSheaf, SheafOfRings) := CoherentSheaf => (F, O) -> if O === ring F then F else tensor(F, O^1)
+SheafOfRings ** CoherentSheaf := Ring ** CoherentSheaf := CoherentSheaf => (R, F) -> baseChange(F, R)
+-- TODO: add ** RingMap
 
 -- multilinear ops
 -- TODO: document
