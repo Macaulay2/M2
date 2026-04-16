@@ -377,12 +377,12 @@ doc ///
       The characteristic ideal of @EM "M"@ is the annihilator of
       @EM "gr(M)"@ under a good filtration with respect to the order
       filtration.
-      If $D$ is the Weyl algebra over &#x2102;
+      If $D$ is the Weyl algebra over $\QQ$
       with generators $x_1,\dots,x_n$ and $\partial_1,\dots,\partial_n$,
       then the order filtration corresponds to the weight vector $(0,...,0,1,...,1)$.
       The characteristic ideal lives in the associated graded ring of $D$ with respect to
       the order filtration, and this is a commutative polynomial ring
-      &#x2102;$[x_1,\dots,x_n,\xi_1,\dots,\xi_n]$.
+      $\QQ[x_1,\dots,x_n,\xi_1,\dots,\xi_n]$.
       Here the $\xi_i$ is the principal symbol of $\partial_i$, that is, the image of $\partial_i$
       in the associated graded ring.
       The zero locus of the characteristic ideal is equal to the {\em characteristic variety}
@@ -432,14 +432,14 @@ doc ///
     Text
       The holonomic rank of a D-module is defined algebraically as follows.
       Let $D$ be the Weyl algebra
-      with generators $x_1,\dots,x_n$ and $\partial_1,\dots,\partial_n$ over &#x2102;.
+      with generators $x_1,\dots,x_n$ and $\partial_1,\dots,\partial_n$ over $\QQ$.
       and let $R$ denote the ring of differential operators
-      &#x2102;$(x_1,\dots,x_n)<\partial_1,\dots,\partial_n>$
+      $\QQ(x_1,\dots,x_n)\langle\partial_1,\dots,\partial_n\rangle$
 --      @BOLD "C"@ @TT "("@ @EM "x_1,...,x_n"@ @TT ")"@ @TT "<"@ @EM "d_1,...,d_n"@ @TT ">"@
       with rational function coefficients.
       Then the holonomic rank of $M = D^r/N$ is equal to the dimension of
       $R^r/RN$ as a vector space over
-      &#x2102;$[x_1,\dots,x_n]$.
+      $\QQ(x_1,\dots,x_n)$.
       More details can be found in
       [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Section 1.4].
 --
@@ -481,7 +481,7 @@ doc ///
       The dimension of $M$ is equal to the dimension of
       the associated graded module with respect to the Bernstein
       filtration.
-      If $D$ is the Weyl algebra over &#x2102;
+      If $D$ is the Weyl algebra over $\QQ$
       with generators $x_1,\dots,x_n$ and $\partial_1,\dots,\partial_n$,
       then the Bernstein filtration corresponds to the weight vector $(1,...,1,1,...,1)$.
     Example
