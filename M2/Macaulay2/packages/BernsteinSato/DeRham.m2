@@ -167,7 +167,7 @@ deRhamAll RingElement := options -> f -> (
 	            	 );
 	       	    );
 	       pInfo(2, "\t\t\t time = " | tInfo | " seconds" );
-	       transfers = append(transfers, i => pull);
+	       transfers = append(transfers, i => matrix entries pull);
 	       i = i+1;
 	       );
      	  outputList = outputList | {TransferCycles => 

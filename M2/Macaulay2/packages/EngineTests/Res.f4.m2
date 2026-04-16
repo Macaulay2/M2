@@ -3,7 +3,6 @@
 -- Notes:
 --  Tests are here
 --  Unit tests for f4 free resolution code are in e/unit-tests/ResTest.cpp
---  packages/NonminimalComplexes: has further routines, doc, and maybe some tests.
 
 -- March 2018 todo list:
 -- 1. Allow multi-gradings
@@ -649,8 +648,8 @@ TEST ///
   elapsedTime C = res(I, Strategy => Nonminimal)
   gbTrace=2
   elapsedTime minimalBetti I
-
 ///
+
 -* TEST *- ///
   -- takes too much memory
   -- might take too long ...
@@ -664,8 +663,8 @@ TEST ///
   elapsedTime C = res(I, Strategy => Nonminimal) -- 49.39 seconds on MBP, 11.3 seconds in 2018
   elapsedTime minimalBetti I  -- 75 sec in 2018, 8.3 sec (after nonmin res is made) in 2026.
 
-  debug needsPackage "NonminimalComplexes"  
-  elapsedTime Cd = constantStrand(C, kk, 8) -- 1.7 sec
+  debug needsPackage "Complexes"  
+  elapsedTime Cd = constantStrand(C, 8) -- 1.7 sec
   Mk = Cd.dd_7;
   M = Mk ** R;
   elapsedTime M' = transpose M;
@@ -676,20 +675,6 @@ TEST ///
   -- over kk:
   elapsedTime gens gb Mk; -- >= 104  sec
   elapsedTime gens gb Mk'; --.01  sec
-
-  debug Core
-  kkp = ZZp(101, Strategy=>"Ffpack") -- use this ring for M1
-  debug Core
-  comp = fastNonminimalComputation C
-  elapsedTime M1 = rawResolutionGetMutableMatrix2B(comp, raw kk, 8, 7);
-  M1 = map(kk,M1);
-  elapsedTime M2 = sub(M1,kkp); -- uugh, very slow. crashed because of memory usage.
-  
-  elapsedTime rank M1
-  (numRows M1, numColumns M1)
-  class M1
-  ring M1
-  
 ///
 
 -* TEST *- ///  
@@ -757,7 +742,7 @@ TEST ///
 
 ///
   restart
-  debug needsPackage "NonminimalComplexes"
+  debug needsPackage "Complexes"
   kk = ZZ/101
   R = kk[vars(0..14)]
   M = genericMatrix(R,a,3,5)
@@ -772,7 +757,7 @@ TEST ///
   gbTrace=0
   elapsedTime M = submatrixByDegrees(C.dd_3, {6}, {6});
   elapsedTime Mk = sub(M,kk);
-  elapsedTime C6 = constantStrand(C, kk, 6)
+  elapsedTime C6 = constantStrand(C, 6)
   assert(Mk == C6.dd_3)
   -- over R:
   elapsedTime gens gb M;
@@ -787,7 +772,7 @@ TEST ///
   elapsedTime gens gb Mk';
 
   elapsedTime M = submatrixByDegrees(C.dd_4, {7}, {7});
-  elapsedTime C7 = constantStrand(C, kk, 7)
+  elapsedTime C7 = constantStrand(C, 7)
   Mk = C7.dd_4;
   M = Mk ** R;
   elapsedTime M' = transpose M;
@@ -803,7 +788,7 @@ TEST ///
   time rank Mk -- very slow... 
   time rank Mk'
 
-  elapsedTime C7 = constantStrand(C, kk, 8) -- 4.02 sec IMPROVED THIS!
+  elapsedTime C7 = constantStrand(C, 8) -- 4.02 sec IMPROVED THIS!
   Mk = C7.dd_5;
   M = Mk ** R;
   elapsedTime M' = transpose M;
@@ -819,7 +804,7 @@ TEST ///
   time rank Mk -- very slow... 41 sec
   time rank Mk' -- also slow, since it is being done by dense methods: 53 sec
 
-  elapsedTime C9 = constantStrand(C, kk, 9) -- 4.86 sec
+  elapsedTime C9 = constantStrand(C, 9) -- 4.86 sec
   Mk = C9.dd_6;
   M = Mk ** R;
   elapsedTime M' = transpose M;
@@ -833,8 +818,7 @@ TEST ///
   elapsedTime gens gb Mk; -- .01 sec
   elapsedTime gens gb Mk'; -- .01 sec
 
-
-  elapsedTime C10 = constantStrand(C, kk, 10) -- 7.8 sec
+  elapsedTime C10 = constantStrand(C, 10) -- 7.8 sec
   Mk = C10.dd_7;
   M = Mk ** R;
   elapsedTime M' = transpose M;
