@@ -435,16 +435,13 @@ doc ///
       with generators $x_1,\dots,x_n$ and $\partial_1,\dots,\partial_n$ over $\QQ$.
       and let $R$ denote the ring of differential operators
       $\QQ(x_1,\dots,x_n)\langle\partial_1,\dots,\partial_n\rangle$
---      @BOLD "C"@ @TT "("@ @EM "x_1,...,x_n"@ @TT ")"@ @TT "<"@ @EM "d_1,...,d_n"@ @TT ">"@
       with rational function coefficients.
       Then the holonomic rank of $M = D^r/N$ is equal to the dimension of
       $R^r/RN$ as a vector space over
       $\QQ(x_1,\dots,x_n)$.
       More details can be found in
       [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Section 1.4].
---
---       @BOLD "C"@ ( @EM "x_1,...,x_n"@ ).
---      @BR{}@
+
 --      See the book 'Groebner deformations of hypergeometric differential equations' by
 --      Saito-Sturmfels-Takayama (1999) for more details of the algorithm.
 
