@@ -1,3 +1,5 @@
+
+
 document {
      Key => bFunction,
      Headline => "b-function",
@@ -7,12 +9,13 @@ document {
 	  }
      }
 
+
 document {
      Key => {
+	 IntRing,
 	 [bFunction,Strategy],
 	 NonGeneric,
-     	 TryGeneric,
-     	 IntRing
+     	 TryGeneric
 	 },
      Headline => "specify strategy for computing b-function",
      UL { 
