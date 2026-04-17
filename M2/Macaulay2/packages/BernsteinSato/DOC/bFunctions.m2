@@ -18,6 +18,7 @@ doc ///
   Description
     Text
       See Section 4 of [OT01].
+    Text
       @UL {
 	  {TO (bFunction, Ideal,List), " -- for an ideal"},
 	  {TO (bFunction, Module,List,List), " -- for a module"}
