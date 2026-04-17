@@ -200,13 +200,15 @@ SheafOfRings(ZZ)   := SheafOfRings  Sequence := CoherentSheaf => (O, a) -> O^1(a
 -- Namely, G.cache.Twist is the sequence ({a}, F) (or the analogous thing if F was itself defined as a twist). Any later calculations made
 -- about G will be cached as information about F.
 CoherentSheaf(ZZ)  := CoherentSheaf Sequence := CoherentSheaf => (F, a) -> (
-    R := ring F; aDegree := splice{a}; -- Thus aDegree is the given degree as a list, of the form {2} or {2,3}.
-    if aDegree === degree 1_R then return F; -- That is, F(0) is the same as F.
-    G := F ** (ring F)^{aDegree};
-    if F.cache.?Twist then (
-	if -aDegree === F.cache.Twist#0 then return F.cache.Twist#1 -- That is, E(-a)(a) is the same as E. 
-	else G.cache.Twist = (aDegree + F.cache.Twist#0, F.cache.Twist#1))
-    else G.cache.Twist = (aDegree, F);
+    X := variety F;
+    R := ring X;
+    deg := splice{a};
+    if deg === degree 1_R then return F; -- That is, F(0) is the same as F.
+    G := F ** OO_X^{deg};
+    G.cache.Twist = if not F.cache.?Twist then (deg, F) else (
+	(deg0, F0) := F.cache.Twist;
+	if -deg === deg0 then return F0; -- That is, E(-a)(a) is the same as E.
+	(deg + deg0, F0));
     G)
 Module(ZZ) := Module Sequence := Module => (M, a) -> M ** (ring M)^{splice{a}}
 Matrix(ZZ) := Matrix Sequence := Matrix => (f, a) -> f ** (ring f)^{splice{a}}
