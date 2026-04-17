@@ -61,7 +61,7 @@ document {
 	"R3=ZZ/31991[x,y,z,w,Degrees=>{21,14,6,1}];",
 	"R4=R3/(x^2+y^3+z^7+w^42);",
 	"X4=Proj R4;",
-	"hh^(1,1)(X4)",
+--	"hh^(1,1)(X4)",
 	},
     PARA{},
     "Use the function ", TO "sheaf", " to convert a graded module to
@@ -113,7 +113,8 @@ document {
 document {
     Key => {
 	(symbol (*), CoherentSheaf),
-	(symbol (*), SheafOfRings)
+	(symbol (*), SheafOfRings),
+	(symbol (*), Complex),
 	},
     Headline => "sum of twists",
     Usage => "F(*)",
@@ -1058,6 +1059,7 @@ Node
     (variety, CoherentSheaf)
     (variety, SheafOfRings)
     (variety, SumOfTwists)
+    (variety, SumOfTwistsComplex)    
     (variety, SheafMap)
     variety
   Headline
@@ -1065,7 +1067,7 @@ Node
   Usage
     variety F
   Inputs
-    F:{CoherentSheaf,SheafOfRings,SumOfTwists,SheafMap}
+    F:{CoherentSheaf,SheafOfRings,SumOfTwists,SumOfTwistsComplex,SheafMap}
   Outputs
     :Variety
   Description
@@ -1086,6 +1088,7 @@ Node
     (ring, CoherentSheaf)
     (ring, SheafOfRings)
     (ring, SumOfTwists)
+    (ring, SumOfTwistsComplex)
     (ring, SheafMap)
   Headline
     the coordinate ring of the underlying variety

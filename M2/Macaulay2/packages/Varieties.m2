@@ -58,6 +58,7 @@ export {
     "SheafExpression",
     "SheafOfRings",
     "SumOfTwists",
+    "SumOfTwistsComplex",
     "LowerBound",
     -- Constructors
     "Proj",

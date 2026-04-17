@@ -175,6 +175,9 @@ toString   SumOfTwistsComplex := toString @@ expression
 -- The base ring should be a field. Note that it is usually faster
 -- to work over Z/p for a prime number p <= 32767, say ZZ/31991, rather than over Q.
 --
+-- The input complex can also be a complex of graded R-modules,
+-- in which case it is interpreted as the associated complex of coherent sheaves.
+--
 -- This function computes only the dimension of the cohomology, not the cohomology as a vector space.
 -- The algorithm uses local duality. The input complex can also be a complex of graded R-modules,
 -- in which case it is interpreted as the associated complex of coherent sheaves.
@@ -376,7 +379,7 @@ extOptions = new OptionTable from {
 -- Modeled on hh, defined as a ScriptedFunctor in Functors.m2.
 ext = new ScriptedFunctor from {
     superscript => i -> new ScriptedFunctor from {
-	-- ext^i(C, D), ext^i(C, D, a, b), and so on
+	-- ext^i(C, D), ext^i(C, D(*)), and so on
 	argument => extOptions >> opts -> X -> applyMethodWithOpts''(ext, functorArgs(i, X), opts)
 	},
     argument => extOptions >> opts -> X -> applyMethodWithOpts''(ext, X, opts)
@@ -472,7 +475,7 @@ ext(ZZ, Complex, SumOfTwistsComplex) := Sequence => opts -> (cohodeg, C, sumoftw
 	negativeseries := 0)
     else (
 	Mres := freeResolution(M, LengthLimit => lengthlimit);
-	output := hh^cohodeg(Hom(Mres,N)(*));
+	output := hh^cohodeg((Hom(Mres,N))(*), opts);
 	bottomdeg = output_1;
 	topdeg = output_3;
 	positiveseries = output_5;
