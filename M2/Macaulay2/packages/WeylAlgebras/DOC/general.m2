@@ -62,31 +62,66 @@ doc ///
 ///
 *-
 
-document {
-     Key => {createDpairs, (createDpairs, PolynomialRing), dpairInds, dpairVars},
-     Headline => "pairs coordinate and derivation variables in a Weyl algebra",
-     Usage => "createDpairs A",
-     Inputs => {
-	  "A" => "the Weyl algebra"
-	  },
-     Consequences => {
-	  {"attaches to ", TT "A", " a pair of keys to help distinguish the
-	  coordinate variables from the derivation variables."}
-	  },
-     "Since the Weyl algebra has commutation rules, this routine
-     attaches to the Weyl algebra two keys to organize the
-     variables.  The first key 'dpairVars' contains 3 lists: a list of the coordinate
-     variables, a list of the derivative variables, and a list
-     of the central variables.  The second key 'dpairInds' also contains 3 lists
-     of the corresponding indices to 'dpairVars'.",
-     EXAMPLE lines ///
-	     W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]
-	     createDpairs W
-	     W.dpairVars
-	     W.dpairInds
-	     ///,
-     SeeAlso => {[monoid, WeylAlgebra]}
-     }
+--- old format (commented out) ---
+-- document {
+--      Key => {createDpairs, (createDpairs, PolynomialRing), dpairInds, dpairVars},
+--      Headline => "pairs coordinate and derivation variables in a Weyl algebra",
+--      Usage => "createDpairs A",
+--      Inputs => {
+-- 	  "A" => "the Weyl algebra"
+-- 	  },
+--      Consequences => {
+-- 	  {"attaches to ", TT "A", " a pair of keys to help distinguish the
+-- 	  coordinate variables from the derivation variables."}
+-- 	  },
+--      "Since the Weyl algebra has commutation rules, this routine
+--      attaches to the Weyl algebra two keys to organize the
+--      variables.  The first key 'dpairVars' contains 3 lists: a list of the coordinate
+--      variables, a list of the derivative variables, and a list
+--      of the central variables.  The second key 'dpairInds' also contains 3 lists
+--      of the corresponding indices to 'dpairVars'.",
+--      EXAMPLE lines ///
+-- 	     W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]
+-- 	     createDpairs W
+-- 	     W.dpairVars
+-- 	     W.dpairInds
+-- 	     ///,
+--      SeeAlso => {[monoid, WeylAlgebra]}
+--      }
+
+doc ///
+  Key
+    createDpairs
+    (createDpairs, PolynomialRing)
+    dpairInds
+    dpairVars
+  Headline
+    pairs coordinate and derivation variables in a Weyl algebra
+  Usage
+    createDpairs A
+  Inputs
+    A:PolynomialRing
+      the Weyl algebra
+  Consequences
+    Item
+      attaches to @TT "A"@ a pair of keys to help distinguish the
+      coordinate variables from the derivation variables
+  Description
+    Text
+      Since the Weyl algebra has commutation rules, this routine
+      attaches to the Weyl algebra two keys to organize the
+      variables.  The first key @TT "dpairVars"@ contains 3 lists: a list of the coordinate
+      variables, a list of the derivative variables, and a list
+      of the central variables.  The second key @TT "dpairInds"@ also contains 3 lists
+      of the corresponding indices to @TT "dpairVars"@.
+    Example
+      W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]
+      createDpairs W
+      W.dpairVars
+      W.dpairInds
+  SeeAlso
+    [monoid, WeylAlgebra]
+///
 
 doc ///
   Key

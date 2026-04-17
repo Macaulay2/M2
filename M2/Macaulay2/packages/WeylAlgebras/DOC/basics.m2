@@ -100,13 +100,32 @@ doc ///
     setHomSwitch
 ///
 
-document {
-    Key => {setHomSwitch, (setHomSwitch, Boolean), getHomSwitch},
-    Headline => "toggle the use of homogeneous Weyl algebra",
-    Usage => "setHomSwitch n\ngetHomSwitch()",
-    Inputs => { "n" => Boolean => { "new value" } },
-    Outputs => { Boolean => "old value" }
-    }
+--- old format (commented out) ---
+-- document {
+--     Key => {setHomSwitch, (setHomSwitch, Boolean), getHomSwitch},
+--     Headline => "toggle the use of homogeneous Weyl algebra",
+--     Usage => "setHomSwitch n\ngetHomSwitch()",
+--     Inputs => { "n" => Boolean => { "new value" } },
+--     Outputs => { Boolean => "old value" }
+--     }
+
+doc ///
+  Key
+    setHomSwitch
+    (setHomSwitch, Boolean)
+    getHomSwitch
+  Headline
+    toggle the use of homogeneous Weyl algebra
+  Usage
+    setHomSwitch n
+    getHomSwitch()
+  Inputs
+    n:Boolean
+      new value
+  Outputs
+    :Boolean
+      old value
+///
 
 doc ///
    Key
@@ -154,31 +173,62 @@ doc ///
      WeylAlgebra
 ///
 
--- TODO: better doc needed
-document {
-     Key => {Dprune, (Dprune, Matrix), (Dprune, Module), [Dprune, MinimalGenerators]},
-     Headline => "prunes a D-module",
-     Usage => "Dprune M",
-     Inputs => {
-	  "M" => {ofClass Matrix, " or ", ofClass Module},
-	  MinimalGenerators => Boolean => {"indicates whether a Gröbner basis should be computed"}
-	  },
-     Outputs => {
-	  {ofClass Matrix, " or ", ofClass Module, " of the same type as ", TT "M"}
-	  },
-     "Finds another (possibly smaller) representation of a D-module.
-     If given a matrix, prunes its cokernel; the result is a matrix whose cokernel is isomorphic.",
-     EXAMPLE lines ///
-	 W = makeWA(QQ[x,y])
-	 M = matrix{{x,dx},{1,1}}
-	 Dprune M
-	 Dprune coker M
-	 M = matrix{{x,dx},{x,y}}
-	 Dprune M
-	 ///,
-     -- Caveat => {},
---     SeeAlso => {"BerinsteinSato::pruneCechComplexCC"} -- FIXME
-     }
+--- old format (commented out) ---
+-- -- TODO: better doc needed
+-- document {
+--      Key => {Dprune, (Dprune, Matrix), (Dprune, Module), [Dprune, MinimalGenerators]},
+--      Headline => "prunes a D-module",
+--      Usage => "Dprune M",
+--      Inputs => {
+-- 	  "M" => {ofClass Matrix, " or ", ofClass Module},
+-- 	  MinimalGenerators => Boolean => {"indicates whether a Gröbner basis should be computed"}
+-- 	  },
+--      Outputs => {
+-- 	  {ofClass Matrix, " or ", ofClass Module, " of the same type as ", TT "M"}
+-- 	  },
+--      "Finds another (possibly smaller) representation of a D-module.
+--      If given a matrix, prunes its cokernel; the result is a matrix whose cokernel is isomorphic.",
+--      EXAMPLE lines ///
+-- 	 W = makeWA(QQ[x,y])
+-- 	 M = matrix{{x,dx},{1,1}}
+-- 	 Dprune M
+-- 	 Dprune coker M
+-- 	 M = matrix{{x,dx},{x,y}}
+-- 	 Dprune M
+-- 	 ///,
+--      -- Caveat => {},
+-- --     SeeAlso => {"BerinsteinSato::pruneCechComplexCC"} -- FIXME
+--      }
+
+doc ///
+  Key
+    Dprune
+    (Dprune, Matrix)
+    (Dprune, Module)
+    [Dprune, MinimalGenerators]
+  Headline
+    prunes a D-module
+  Usage
+    Dprune M
+  Inputs
+    M:{Matrix, Module}
+    MinimalGenerators=>Boolean
+      indicates whether a Gröbner basis should be computed
+  Outputs
+    :{Matrix, Module}
+      of the same type as @TT "M"@
+  Description
+    Text
+      Finds another (possibly smaller) representation of a D-module.
+      If given a matrix, prunes its cokernel; the result is a matrix whose cokernel is isomorphic.
+    Example
+      W = makeWA(QQ[x,y])
+      M = matrix{{x,dx},{1,1}}
+      Dprune M
+      Dprune coker M
+      M = matrix{{x,dx},{x,y}}
+      Dprune M
+///
 
 doc ///
    Key

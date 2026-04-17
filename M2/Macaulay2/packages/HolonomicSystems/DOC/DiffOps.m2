@@ -1,26 +1,56 @@
-document {
-     Key => {putWeylAlgebra, (putWeylAlgebra, HashTable)},
-     Headline => "transforms output of diffOps into elements of Weyl algebra",
-     Usage => "putWeylAlgebra m",
-     Inputs => {
-     	  "the output of diffOps"
-	  },
-     Outputs => {
-	  "the differential operators as elements of the Weyl algebra"
-	  },
-     "If I is an ideal of the polynomial ring R and m is the output of ", 
-     TT "diffOps(I, k)", " then this routine returns elements of the Weyl
-     algebra ", TT "W", " corresponding to ", TT "R", " whose images in ", TT "W/IW", 
-     " are an ", TT "R/I", "-generating set for the differential operators of order at most ", 
-     TT "k", ".",
-     EXAMPLE lines ///
-	R = QQ[x,y,z]
-     	I = ideal(x^2-y*z) 
-     	m = diffOps(I, 3)
-     	putWeylAlgebra m
-	///,
-     SeeAlso => {"diffOps"}
-     }
+--- old format (commented out) ---
+-- document {
+--      Key => {putWeylAlgebra, (putWeylAlgebra, HashTable)},
+--      Headline => "transforms output of diffOps into elements of Weyl algebra",
+--      Usage => "putWeylAlgebra m",
+--      Inputs => {
+--      	  "the output of diffOps"
+-- 	  },
+--      Outputs => {
+-- 	  "the differential operators as elements of the Weyl algebra"
+-- 	  },
+--      "If I is an ideal of the polynomial ring R and m is the output of ",
+--      TT "diffOps(I, k)", " then this routine returns elements of the Weyl
+--      algebra ", TT "W", " corresponding to ", TT "R", " whose images in ", TT "W/IW",
+--      " are an ", TT "R/I", "-generating set for the differential operators of order at most ",
+--      TT "k", ".",
+--      EXAMPLE lines ///
+-- 	R = QQ[x,y,z]
+--      	I = ideal(x^2-y*z)
+--      	m = diffOps(I, 3)
+--      	putWeylAlgebra m
+-- 	///,
+--      SeeAlso => {"diffOps"}
+--      }
+
+doc ///
+  Key
+    putWeylAlgebra
+    (putWeylAlgebra, HashTable)
+  Headline
+    transforms output of diffOps into elements of Weyl algebra
+  Usage
+    putWeylAlgebra m
+  Inputs
+    m:HashTable
+      the output of @TO "diffOps"@
+  Outputs
+    :List
+      the differential operators as elements of the Weyl algebra
+  Description
+    Text
+      If $I$ is an ideal of the polynomial ring $R$ and $m$ is the output of
+      @TT "diffOps(I, k)"@ then this routine returns elements of the Weyl
+      algebra $W$ corresponding to $R$ whose images in $W/IW$
+      are an $R/I$-generating set for the differential operators of order at most $k$.
+    Example
+      R = QQ[x,y,z]
+      I = ideal(x^2-y*z)
+      m = diffOps(I, 3)
+      putWeylAlgebra m
+  SeeAlso
+    diffOps
+///
 
 doc ///
   Key

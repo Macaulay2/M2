@@ -84,13 +84,32 @@ document {
 
 -----------------------------------------------
 
-document {
-    Key => {Dtrace, (Dtrace, ZZ), (Dtrace, Sequence)},
-    Headline => "set or get the depth of comments made by D-module routines",
-    Usage => "Dtrace n\nDtrace()",
-    Inputs => { "n" => ZZ => { "new level" } },
-    Outputs => { ZZ => { "old level" } }
-    }
+--- old format (commented out) ---
+-- document {
+--     Key => {Dtrace, (Dtrace, ZZ), (Dtrace, Sequence)},
+--     Headline => "set or get the depth of comments made by D-module routines",
+--     Usage => "Dtrace n\nDtrace()",
+--     Inputs => { "n" => ZZ => { "new level" } },
+--     Outputs => { ZZ => { "old level" } }
+--     }
+
+doc ///
+  Key
+    Dtrace
+    (Dtrace, ZZ)
+    (Dtrace, Sequence)
+  Headline
+    set or get the depth of comments made by D-module routines
+  Usage
+    Dtrace n
+    Dtrace()
+  Inputs
+    n:ZZ
+      new level
+  Outputs
+    :ZZ
+      old level
+///
 
 end--
 ------------------------------------------------------------------------------------------------------------
