@@ -39,8 +39,8 @@ makeQQ := f -> (
      );
 
 -- trivial intersection strategy (internal)
-bfIntRing := method()
-bfIntRing(Ideal, List) :=  (I, w) -> (
+bfIntRing = method()
+bfIntRing(Ideal, List) := RingElement => (I, w) -> (
      local tInfo;
      -- prep work
      if not (ring I).?IntRing then
