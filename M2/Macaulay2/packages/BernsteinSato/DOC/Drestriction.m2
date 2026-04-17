@@ -27,7 +27,10 @@ document {
      Key => {Dresolution, (Dresolution,Module), (Dresolution,Ideal,List), 
 	  (Dresolution,Module,List), (Dresolution,Ideal)},
      Headline => "resolution of a D-module",
-     Usage => "Dresolution M, Dresolution I, Dresolution(M,w), Dresolution(I,w)",
+     Usage => "Dresolution M,
+               Dresolution I,
+	       Dresolution(M,w),
+	       Dresolution(I,w)",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
 	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
@@ -84,13 +87,15 @@ document {
      Key => {Drestriction, (Drestriction,ZZ,Module,List), (Drestriction,Ideal,List), 
 	  (Drestriction,Module,List), (Drestriction,ZZ,Ideal,List)},
      Headline => "restriction modules of a D-module",
-     Usage => "N = Drestriction(M,w), NI = Drestriction(I,w), Ni = Drestriction(i,M,w),
-     NIi = Drestriction(i,I,w)",
+     Usage => "N = Drestriction(M,w),
+               NI = Drestriction(I,w),
+	       Ni = Drestriction(i,M,w),
+               NIi = Drestriction(i,I,w)",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
 	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
-	  "w" => List => "a weight vector",
-	  "i" => ZZ => "nonnegative"  
+	  "w" => List => "a weight vector determining restriction coordinates",
+	  "i" => ZZ => "nonnegative cohomological degree"  
 	  },
      Outputs => {
 	  "Ni" => Module => {"the i-th derived integration module of ", EM "M"," with respect
@@ -101,12 +106,11 @@ document {
      	  "NI" => HashTable => {"contains entries of the form ", TT "i=>NIi"}
 	  },
      "The derived restriction modules of a D-module M are
-     the derived inverse images in the sense of algebraic
-     geometry but in the category of D-modules. 
+     the derived inverse images in the category of D-modules. 
      This routine computes restrictions to coordinate subspaces,
      where the subspace is determined
-     by the strictly positive entries of the weight vector", EM "w", ",
-     e.g., ", EM "{x_i = 0 : w_i > 0}", " if ", 
+     by the strictly positive entries of the weight vector",  EM "w", ",
+     e.g., ", EM "{x_j = 0 : w_j > 0}", " if ", 
      EM "D = ", BOLD "C", EM "<x_1,...,x_n,d_1,...,d_n>", ".
      The input weight vector should be a list of ", EM "n", " numbers
      to induce the weight ", EM "(-w,w)", " on ", EM "D", ".",
@@ -158,7 +162,8 @@ document {
 document {
      Key => {DrestrictionAll, (DrestrictionAll, Module, List), (DrestrictionAll, Ideal, List)},
      Headline => "restriction modules of a D-module (extended version)",
-     Usage => "N = DrestrictionAll(M,w), NI = DrestrictionAll(I,w)",
+     Usage => "N = DrestrictionAll(M,w),
+               NI = DrestrictionAll(I,w)",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
 	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
@@ -215,7 +220,9 @@ document {
      Key => {DrestrictionClasses, (DrestrictionClasses,ZZ,Module,List), (DrestrictionClasses,Ideal,List), (DrestrictionClasses,Module,List),
       (DrestrictionClasses,ZZ,Ideal,List)},
      Headline => "restriction classes of a D-module",
-     Usage => "N = DrestrictionClasses(M,w), NI = DrestrictionClasses(I,w), Ni = DrestrictionClasses(i,M,w),
+     Usage => "N = DrestrictionClasses(M,w),
+               NI = DrestrictionClasses(I,w),
+	       Ni = DrestrictionClasses(i,M,w),
      NIi = DrestrictionClasses(i,I,w), ",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
@@ -300,13 +307,15 @@ document {
      Key => { Dintegration, (Dintegration,ZZ,Module,List), (Dintegration,Ideal,List), 
 	  (Dintegration,Module,List), (Dintegration,ZZ,Ideal,List) },
      Headline => "integration modules of a D-module",
-     Usage => "N = Dintegration(M,w), NI = Dintegration(I,w), Ni = Dintegration(i,M,w),
-     NIi = Dintegration(i,I,w), ",
+     Usage => "N = Dintegration(M,w),
+               NI = Dintegration(I,w),
+	       Ni = Dintegration(i,M,w),
+               NIi = Dintegration(i,I,w), ",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
 	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
-	  "w" => List => "a weight vector",
-	  "i" => ZZ => "nonnegative"  
+	  "w" => List => "a weight vector determining the projection coordinates",
+	  "i" => ZZ => "nonnegative cohomological degree"  
 	  },
      Outputs => {
 	  "Ni" => Module => {"the i-th derived integration module of ", EM "M"," with respect
@@ -321,7 +330,7 @@ document {
      This routine computes integration for projection to 
      coordinate subspaces, where the subspace is determined
      by the strictly positive entries of the weight vector ", EM "w", ",
-     e.g., ", EM "{x_i = 0 : w_i > 0}", " if ", 
+     e.g., ", EM "{x_j = 0 : w_j > 0}", " if ", 
      EM "D = ", BOLD "C", EM "<x_1,...,x_n,d_1,...,d_n>", ".
      The input weight vector should be a list of ", EM "n", " numbers	    
      to induce the weight ", EM "(-w,w)", " on ", EM "D", ".",
@@ -371,7 +380,8 @@ document {
 document {
      Key => {DintegrationAll, (DintegrationAll, Module, List), (DintegrationAll, Ideal, List)},
      Headline => "integration modules of a D-module (extended version)",
-     Usage => "N = DintegrationAll(M,w), NI = DintegrationAll(I,w)",
+     Usage => "N = DintegrationAll(M,w),
+               NI = DintegrationAll(I,w)",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
 	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
@@ -399,7 +409,8 @@ document {
 document {
      Key => {DintegrationComplex, (DintegrationComplex, Module, List), (DintegrationComplex, Ideal, List)},
      Headline => "derived integration complex of a D-module",
-     Usage => "N = DintegrationComplex(M,w), NI = DintegrationComplex(I,w)",
+     Usage => "N = DintegrationComplex(M,w),
+               NI = DintegrationComplex(I,w)",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
 	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
@@ -428,8 +439,10 @@ document {
      Key => {DintegrationClasses, (DintegrationClasses,ZZ,Module,List), (DintegrationClasses,Ideal,List), (DintegrationClasses,Module,List),
       (DintegrationClasses,ZZ,Ideal,List)},
      Headline => "integration classes of a D-module",
-     Usage => "N = DintegrationClasses(M,w), NI = DintegrationClasses(I,w), Ni = DintegrationClasses(i,M,w),
-     NIi = DintegrationClasses(i,I,w), ",
+     Usage => "N = DintegrationClasses(M,w),
+               NI = DintegrationClasses(I,w),
+	       Ni = DintegrationClasses(i,M,w),
+               NIi = DintegrationClasses(i,I,w), ",
      Inputs => {
 	  "M" => Module => {"over the Weyl algebra ", EM "D"},
 	  "I" => Ideal => {"which represents the module ", EM "M = D/I"},
