@@ -189,6 +189,17 @@ projectiveHilbertPolynomial(ZZ, ZZ) := memoize(
 	then apply(min(-d+1, n+1), j -> n-j => (-1)^j * binomial(-d, j))
 	else apply(n+1, j -> n-j => binomial(d-1+j, j))))
 
+-- Translate an integer-valued polynomial in Q[i] to a ProjectiveHilbertPolynomial.
+projectiveHilbertPolynomial RingElement := ProjectiveHilbertPolynomial => p -> (
+    if p == 0 then return new ProjectiveHilbertPolynomial from {};
+    -- TODO: change to allow multigraded hilbert polynomials
+    n := first degree p; -- Here "degree p" would be of the form {n}.
+    i := (ring p)_0;
+    c := coefficient(i^n, p);
+    lift(c * n!, ZZ) * projectiveHilbertPolynomial(n, 0) + if n == 0 then 0 else (
+	-- if n > 0 recurse to p - c * (i+1)(i+2)...(i+n) in QQ[i]
+	projectiveHilbertPolynomial(p - c * product(n, k -> i + k + 1))))
+
 -- arithmetic ops
 -- TODO: how can we abstract away this section?
 P0 := projectiveHilbertPolynomial 0

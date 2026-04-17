@@ -265,6 +265,7 @@ degree ProjectiveVariety := X -> degree OO_X^1
 genus  ProjectiveVariety := X -> genus  OO_X^1
 genera ProjectiveVariety := X -> genera ring X
 
+-- TODO: should this be for any Variety (e.g. including toric varieties)
 hilbertPolynomial ProjectiveVariety := opts -> X -> hilbertPolynomial(OO_X^1, opts)
 
 -- The topological Euler characteristic, if the given variety X is smooth. Otherwise, this is harder to interpret.

@@ -322,7 +322,7 @@ texMath SheafExpression := x -> texMath x#0
 expressionValue SheafExpression := x -> sheaf expressionValue x#0
 
 -----------------------------------------------------------------------------
--- Hilbert polynomial, Euler characteristic, etc
+-- Euler Characteristic
 -----------------------------------------------------------------------------
 
 -- Compute the Euler characteristic of O(c) on a weighted projective space P, for an integer c.
@@ -439,10 +439,11 @@ euler(CoherentSheaf, ZZ, ZZ) := RingElement => (F, b1, b2) -> (
     output = hilbshort * numerator;
     part(b1,b2,output) * T^(-shift))
 
-hilbertFunctionRing = memoize(() -> QQ(monoid [getSymbol "i"]))
+--------------------------------------------------------------------------------
+-- Hilbert Polynomial
+--------------------------------------------------------------------------------
 
--- modified from hilbert.m2 and betti.m2
-hilbertFunctionQ = method()
+importFrom_Core "hilbertFunctionRing"
 
 -- The Hilbert polynomial of a weighted projective space (not the Hilbert function, despite the name).
 -- Namely, for P = Proj R1 such that R1 is a polynomial ring with generators in degrees a_0,...,a_(n-1),
@@ -451,7 +452,8 @@ hilbertFunctionQ = method()
 -- with each c_j(i) a periodic function of i, of period dividing lcm(a_0,...,a_(n-1)).
 -- (Equivalently, h^0(X, O(i)) has this description for i sufficiently large.)
 -- We define the Hilbert polynomial f(i) as the polynomial in QQ[i] obtained by _averaging_ each of these coefficients.
---
+
+hilbertFunctionQ = method()
 hilbertFunctionQ Ring := RingElement => R -> (
     R.cache ??= new MutableHashTable;
     if R.cache.?hilbertPolynomial then return R.cache.hilbertPolynomial;
@@ -488,6 +490,22 @@ hilbertFunctionQ(Ring, ZZ) := memoize(
 	    i := (hilbertFunctionRing())_0;
 	    substitute(hilbertFunctionQ(R), {i => i+d}))))
 
+-- c.f. the toric version in NormalToricVariety/Chow.m2
+-- and the original definition and hook in m2/hilbert.m2
+addHook((hilbertPolynomial, Module), Strategy => Varieties, (opts, M) ->
+    if M.ring.?variety then return try hilbertPolynomial(M.ring.variety, M, opts))
+hilbertPolynomial(Variety, Module)        := o -> (X, M) -> hilbertPolynomial(X, sheaf(X, M), o)
+
+-- these are defined for any Variety, including NormalToricVariety, etc.
+hilbertPolynomial(Variety, Ring)          := o -> (X, S) -> hilbertPolynomial(X, module S, o)
+hilbertPolynomial(Variety, Ideal)         := o -> (X, I) -> hilbertPolynomial(X, comodule I, o)
+hilbertPolynomial(Variety, CoherentSheaf) := o -> (X, F) -> (
+    error "variety does not have a method for computing Hilbert polynomial")
+hilbertPolynomial          CoherentSheaf  := o ->     F  -> hilbertPolynomial(F.variety, module F, o)
+-- FIXME: what definition are these based on?
+hilbertPolynomial(Variety, SheafOfRings)  := o -> (X, O) -> degree O^1
+hilbertPolynomial          SheafOfRings   := o ->     O  -> degree O^1
+
 -- The Hilbert polynomial of a closed subspace X of a weighted projective space, or of a coherent sheaf F on X. Namely,
 -- for X = Proj R2 such that R2 has generators in degrees a_0,...,a_(n-1), chi(X, F(i)) is a quasipolynomial in i:
 --   chi(X, F(i)) = c_m(i) i^m + ... + c_0(i)
@@ -502,49 +520,29 @@ hilbertFunctionQ(Ring, ZZ) := memoize(
 -- For X of dimension m, the Hilbert polynomial in Q[i] has degree m, and its leading coefficient
 -- is degree(X)/m!; this agrees with the function "degree X". Note that the degree of a closed subspace
 -- in a weighted projective space is only a rational number. For example, P^n(a_0,...,a_n) has degree 1/(a_0...a_n).
---
-hilbertPolynomial CoherentSheaf := opts -> F -> (
-    shift := 0;
-    if F.cache.?Twist then
-    (shift = first F.cache.Twist#0;
-	F = F.cache.Twist#1);
-    -- That is, if F was defined as a twist of another sheaf, we have now changed F to that original sheaf,
-    -- and we want to compute the Hilbert polynomial of F(shift).
-    -- We first compute the Hilbert polynomial of F in Q[i] (if that has not already been done), to cache it.
-    F.cache.hilbertPolynomial ??= (
+
+hilbertPolynomial(ProjectiveVariety, CoherentSheaf) := opts -> (X, F0) -> (
+    -- If F0 was defined as a twist of another sheaf, F is now that original sheaf,
+    -- and we want to compute the Hilbert polynomial of F0 = F(twist).
+    (twist, F) := if F0.cache.?Twist then F0.cache.Twist else (degree 1_(ring X), F0);
+    -- compute the Hilbert polynomial of F in Q[i] and cache it
+    hp := F.cache.hilbertPolynomial ??= (
 	M := currentModuleBaseRing F;
-	R1 := ring M; -- R1 is a graded polynomial ring, and M is a simplified R1-module that represents the sheaf F.
-	-- In particular, we have arranged that M has no m-torsion (where m is the maximal ideal R1_(>0)).
-	if isStandardGraded R1 then hilbertPolynomial(M, Projective => false)
+	R := ring M; -- R is a graded polynomial ring, and M is a simplified R-module that represents the sheaf F.
+	-- In particular, we have arranged that M has no m-torsion (where m is the maximal ideal R_(>0)).
+	if isStandardGraded R then hilbertPolynomial(M, Projective => false)
 	-- We always cache the version of the Hilbert polynomial in the ring Q[i].
 	else (
 	    p := pairs standardForm poincare M;
 	    if #p === 0 then 0_(hilbertFunctionRing())
 	    else sum(p, (d, c) -> (
 		    if #d === 0 then d = 0 else d = d#0;
-		    c * hilbertFunctionQ(R1, -d)))));
-    output := (if shift === 0 then F.cache.hilbertPolynomial
-	else (
-	    i := (hilbertFunctionRing())_0;
-	    substitute(F.cache.hilbertPolynomial, {i => i+shift}))); -- This is the Hilbert polynomial of F(shift), in Q[i].
+		    c * hilbertFunctionQ(R, -d)))));
+    output := if twist === degree 1_(ring X) then hp
+    else substitute(hp, matrix { gens ring hp + twist }); -- This is the Hilbert polynomial of F(twist)
+    -- TODO: update projectiveHilbertPolynomial to handle non-standard gradings
+    -- currently euler(Module) fails because of this line
     if isStandardGraded ring module F and opts.Projective then projectiveHilbertPolynomial(output) else output)
-
-hilbertPolynomial SheafOfRings := opts -> O -> degree O^1
-
--- Translate an integer-valued polynomial in Q[i] to a ProjectiveHilbertPolynomial.
-projectiveHilbertPolynomial RingElement := ProjectiveHilbertPolynomial => poly -> (
-    if poly == 0 then new ProjectiveHilbertPolynomial from {}
-    else (
-	n := first degree poly; -- Here "degree poly" would be of the form {n}.
-	i := (ring poly)_0;
-	c := coefficient(i^n, poly);
-	if n === 0 then lift(c, ZZ) * projectiveHilbertPolynomial(0, 0)
-	else
-	lift(c * n!, ZZ) * projectiveHilbertPolynomial(n, 0) + projectiveHilbertPolynomial(poly-c*fold(times, apply(n, k -> i + k + 1)))))
--- That "fold" gives the polynomial (i+1)(i+2)...(i+n) in QQ[i], assuming that n > 0.
-
-hilbertPolynomial(ProjectiveVariety, CoherentSheaf) := RingElement => opts -> (X,F) -> hilbertPolynomial(F, opts)
-hilbertPolynomial(ProjectiveVariety, SheafOfRings) := RingElement => opts -> (X,O) -> hilbertPolynomial(O^1, opts)
 
 -----------------------------------------------------------------------------
 -- SumOfTwists type declarations and basic constructors
