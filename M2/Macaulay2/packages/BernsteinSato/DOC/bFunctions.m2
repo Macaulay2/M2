@@ -14,9 +14,10 @@ doc ///
   Key
     bFunction
   Headline
-    b-function
+    Bernstein-Sato polynomial of a D-module with respect to a weight
   Description
     Text
+      See Section 4 of [OT01].
       @UL {
 	  {TO (bFunction, Ideal,List), " -- for an ideal"},
 	  {TO (bFunction, Module,List,List), " -- for a module"}
