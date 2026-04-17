@@ -26,33 +26,35 @@ doc ///
      Must be over a ring of characteristic $0$.
 ///
 
-document {
-     Key => {(AnnIFs, Ideal,RingElement), AnnIFs}, 
-     Headline => "the annihilating ideal of f^s for an arbitrary D-module", 
-     Usage => "AnnIFs(I,f)",
-     Inputs => {
-	  "I" => {
-	       "that represents a holonomic D-module ", 
-	       EM {"A", SUB "n", "/I"}, 
-	       " (the ideal is expected to be f-saturated; one may use ", TO WeylClosure," if it is not) "
-	       },
-	  "f" => {"a polynomial in a Weyl algebra ", EM {"A", SUB "n"},  
-	       " (should contain no differential variables)"}
-	  },      
-     Outputs => {
-	  Ideal => {"the annihilating ideal of ", TEX "A_n[f^{-1},s] f^s", " tensored with ",
-	       TEX "A_n/I", " over the ring of polynomials" }
-	  },
-     EXAMPLE lines ///
-	  W = QQ[x,dx, WeylAlgebra=>{x=>dx}]
-	  AnnIFs (ideal dx, x^2)
-	  ///, 
-     Caveat => {"Caveats and known problems: The ring of f should not have any 
-	  parameters: it should be a pure Weyl algebra. Similarly, 
-	  this ring should not be a homogeneous Weyl algebra."
-     	  },
-     SeeAlso => {"AnnFs", "WeylAlgebra", "WeylClosure"}
-     }  
+doc ///
+  Key
+    (AnnIFs, Ideal, RingElement)
+    AnnIFs
+  Headline
+    the annihilating ideal of f^s for an arbitrary D-module
+  Usage
+    AnnIFs(I, f)
+  Inputs
+    I:Ideal
+      that represents a holonomic D-module $A_n/I$
+      (the ideal is expected to be $f$-saturated; one may use @TO WeylClosure@ if it is not)
+    f:RingElement
+      a polynomial in a Weyl algebra $A_n$ (should contain no differential variables)
+  Outputs
+    :Ideal
+      the annihilating ideal of $A_n[f^{-1},s] f^s$ tensored with $A_n/I$ over the ring of polynomials
+  Description
+    Example
+      W = QQ[x,dx, WeylAlgebra=>{x=>dx}]
+      AnnIFs (ideal dx, x^2)
+  Caveat
+    The ring of $f$ should not have any parameters: it should be a pure Weyl algebra.
+    Similarly, this ring should not be a homogeneous Weyl algebra.
+  SeeAlso
+    AnnFs
+    WeylAlgebra
+    WeylClosure
+///  
 
 doc ///
   Key
