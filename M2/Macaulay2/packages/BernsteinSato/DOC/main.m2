@@ -20,6 +20,7 @@ Node
 	@TOH "paramBpoly"@
 	@TOH "AnnFs"@
 	@TOH "AnnIFs"@
+	@TOH "rationalFunctionAnnihilator"@
 
       :Resolutions and Functors
 	@TOH "Dresolution"@
