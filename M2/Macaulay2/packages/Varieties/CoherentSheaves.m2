@@ -37,7 +37,6 @@ sheaf(Variety, Ring) := SheafOfRings => (X, R) -> (
     X.sheaf ??= (
 	O := new SheafOfRings from { symbol variety => X, symbol ring => R };
 	O.cache = new MutableHashTable;
-	O.cache.sheaf = sheaf(O.variety, (ring variety O)^1); -- That is, O.cache.sheaf is the CoherentSheaf O^1.
 	-- TODO: need to either automate this, or add it in NormalToricVarieties, etc.
 	promote(Number,   O) := promote(RingElement, O) := RingElement => (x, O) -> promote(x, ring variety O);
 	promote(SheafMap, O) := promote(SheafMap,    R) := SheafMap    => baseChange;
@@ -103,7 +102,7 @@ ring SheafOfRings  :=
 ring CoherentSheaf := SheafOfRings => F -> sheaf variety F
 
 -- This is the module associated to the fixed CoherentSheaf, O^1.
-module SheafOfRings  := Module => O -> module O.cache.sheaf
+module SheafOfRings  := Module => O -> module O.ring
 module CoherentSheaf := Module => F -> F.module
 
 codim   CoherentSheaf := options(codim, Module) >> o -> F -> (
@@ -209,13 +208,11 @@ Module(ZZ) := Module Sequence := Module => (M, a) -> M ** (ring M)^{splice{a}}
 Matrix(ZZ) := Matrix Sequence := Matrix => (f, a) -> f ** (ring f)^{splice{a}}
 Ring(ZZ)   := Ring   Sequence := Module => (R, a) -> (R^1) ** R^{splice{a}}
 
-SheafOfRings  ^ ZZ := SheafOfRings  ^ List   := CoherentSheaf => (O, n) -> (
-    if instance(n, ZZ) and n == 1 and O.?cache and O.cache.?sheaf then O.cache.sheaf
-    -- Thus, O^1 always yields the _same_ coherent sheaf, which may contain cached information.
-    -- We could consider transferring that information to direct sums, but at the moment that is not done.
-    else sheaf(O.variety, (ring variety O)^n))
+CoherentSheaf ^ ZZ := CoherentSheaf ^ List := CoherentSheaf => (F, n) -> sheaf(F.variety, F.module^n)
+SheafOfRings  ^ ZZ := SheafOfRings  ^ List := CoherentSheaf => (O, n) -> (
+    -- this distinction is made because module(Ring) is cached, but Ring^ZZ currently is not
+    if n === 1 then sheaf(O.variety, module O.ring) else sheaf(O.variety, O.ring^n))
 
-CoherentSheaf ^ ZZ := CoherentSheaf ^ List   := CoherentSheaf => (F, n) -> sheaf(F.variety, F.module^n)
 dual CoherentSheaf := CoherentSheaf => options(dual, Module) >> o -> F -> sheaf(F.variety, dual(F.module, o))
 
 -- There are several equivalent conditions for equality:
