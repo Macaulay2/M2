@@ -585,7 +585,7 @@ Node
   Description
     Text
       If @TT "X"@ is a closed subscheme $X$ of a projective space over a field,
-      then the Euler characteristics $\chi(X,O(i))$ are a polynomial function
+      then the Euler characteristic $\chi(X,O(i))$ is a polynomial function
       of the integer $i$, known as the Hilbert polynomial of $X$. (Equivalently, this is the unique polynomial in $i$
       with rational coefficients that is equal to $h^0(X,O(i))$ for $i$ sufficiently large.)
       The default is Projective => true, meaning that the output is given as a $\mathbb{Z}$-linear combination
@@ -599,7 +599,7 @@ Node
       of the weights. (Equivalently, $h^0(X, O(i))$ has this description for $i$ sufficiently large.)
       Note that $O(i)$ is a line bundle on the stack $X$, for each integer $i$.
     Text
-      We define the Hilbert polynomial $f(i)$ of $X$ as the polynomial in @TT "QQ[i]"@ obtained by
+      In that situation, we define the Hilbert polynomial $f(i)$ of $X$ as the polynomial in @TT "QQ[i]"@ obtained by
       {\it averaging} each of the coefficients $c_j(i)$. In particular, with this definition,
       the leading coefficient of the Hilbert polynomial is $\mathrm{degree}(X)/m!$.
       Note that the degree of a closed subspace
@@ -615,8 +615,13 @@ Node
       h = hilbertPolynomial V
       hilbertPolynomial(V, Projective=>false)
     Text
-      We compute the Hilbert polynomial for the ideal sheaf of a cubic curve on the projective plane,
-      and for the structure sheaf of a weighted projective plane:
+      For a subspace of the usual projective space, the values of the Hilbert polynomial
+      are eventually the same as the @TO2{hilbertFunction,"Hilbert function"}@.
+    Example
+      apply(5, k-> h(k))
+      apply(5, k-> hilbertFunction(k,ring V))
+    Text
+      We compute the Hilbert polynomial for the ideal sheaf of a cubic curve in the projective plane.
     Example
       R = ZZ/101[x_0..x_2];
       V = Proj R;
@@ -624,11 +629,7 @@ Node
       h = hilbertPolynomial S
       hilbertPolynomial(S, Projective=>false)
     Text
-      For a subspace of the usual projective space, the values of the Hilbert polynomial
-      are eventually the same as the @TO2{hilbertFunction,"Hilbert function"}@.
-    Example
-      apply(5, k-> h(k))
-      apply(5, k-> hilbertFunction(k,ring V))
+      Here is the Hilbert polynomial of a weighted projective plane, as defined above.
     Example
       R2 = ZZ/2[x,y,z,Degrees=>{1,2,3}];
       X2 = Proj R2;

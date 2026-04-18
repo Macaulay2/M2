@@ -161,6 +161,50 @@ Node
 
 Node
   Key
+   (euler, Complex)
+  Headline
+    Euler characteristic of a projective variety with coefficients in a complex of coherent sheaves
+  Usage
+    euler C
+  Inputs
+    C:Complex
+      on a ProjectiveVariety @TT "X"@
+  Outputs
+    :ZZ
+      Euler characteristic of @TT "X"@ with coefficients in @TT "C"@
+  Description
+    Text
+      The command computes the Euler characteristic of @TT "X"@ with coefficients in @TT "C"@,
+      $$\chi(X,C)=\sum_{i\in\mathbb{Z}} (-1)^i h^i(X,C).$$
+      This should be faster than computing the individual cohomology groups.
+    Text
+      The base space @TT "X"@ of @TT "C"@ may be a closed subspace of a projective space,
+      or more generally of a weighted projective space.
+      In the weighted case, the distinction between @TT "X"@ as a stack and its associated coarse moduli space,
+      $e\colon X \to W$, does not matter for computing cohomology.
+    Text
+      The base ring should be a field. Note that it is usually faster
+      to work over $\mathbb{Z}/p$ for a prime number $p \leq 32767$, say @TT "ZZ/31991"@, rather than over @TT "QQ"@.
+    Text
+      For example, the following complex @TT "C1"@ of sheaves on $\mathbb{P}^2$ is isomorphic in the derived category
+      to the direct image of the sheaf of regular functions on $\mathbb{P}^1$; so their twists have the same cohomology,
+      hence the same Euler characteristic.
+    Example
+      R = ZZ/31991[x,y,z];
+      PP2 = Proj R;
+      M1 = R(-1); M0 = R(0);
+      C1 = sheaf complex map(M0, M1, matrix(R, {{x}}))
+      euler(C1(5))
+      PP1 = Proj(R/(x));
+      euler(OO_PP1(5))
+  SeeAlso
+    (hh, ZZ, Complex)
+    (hh, ZZ, SumOfTwistsComplex)
+    (cohomology, ZZ, SumOfTwists)
+    (euler, CoherentSheaf)
+
+Node
+  Key
    (hh, ZZ, Complex)
   Headline
     dimension of the cohomology of a projective variety with coefficients in a complex of coherent sheaves
@@ -181,11 +225,10 @@ Node
       If you want to compute cohomology with many twists, the functions @TO2{(hh,ZZ,Complex,ZZ,ZZ),"hh^i(C,b1,b2)"}@
       or @TO2{(hh,ZZ,SumOfTwistsComplex),"hh^i(C(*))"}@ should be more convenient than running this program repeatedly.
     Text
-      The base space of @TT "C"@ may be a closed subspace @TT "X"@ of a weighted projective space.
-      The distinction between @TT "X"@ as a stack and its associated coarse moduli space,
+      The base space @TT "X"@ of @TT "C"@ may be a closed subspace of a projective space,
+      or more generally of a weighted projective space.
+      In the weighted case, the distinction between @TT "X"@ as a stack and its associated coarse moduli space,
       $e\colon X \to W$, does not matter for computing cohomology.
-      Twists such as @TT "C(a)"@
-      are interpreted by tensoring with the line bundles $O(a)$ on the stack.
     Text
       The base ring should be a field. Note that it is usually faster
       to work over $\mathbb{Z}/p$ for a prime number $p \leq 32767$, say @TT "ZZ/31991"@, rather than over @TT "QQ"@.
@@ -233,11 +276,12 @@ Node
       In some cases, you may prefer the function @TO2{(hh,ZZ,SumOfTwistsComplex),"hh^i(C(*))"}@,
       which computes the cohomology with all twists at once.
     Text
-      The base space of @TT "C"@ may be a closed subspace @TT "X"@ of a weighted projective space.
-      The distinction between @TT "X"@ as a stack and its associated coarse moduli space,
+      The base space @TT "X"@ of @TT "C"@ may be a closed subspace of a projective space,
+      or more generally of a weighted projective space.
+      In the weighted case, the distinction between @TT "X"@ as a stack and its associated coarse moduli space,
       $e\colon X \to W$, does not matter for computing cohomology.
-      Twists such as @TT "C(a)"@
-      are interpreted by tensoring with the line bundles $O(a)$ on the stack.
+      Twists such as @TT "C(j)"@
+      are interpreted by tensoring with the line bundles $O(j)$ on the stack.
     Text
       The base ring should be a field. Note that it is usually faster
       to work over $\mathbb{Z}/p$ for a prime number $p \leq 32767$, say @TT "ZZ/31991"@, rather than over @TT "QQ"@.
@@ -290,11 +334,12 @@ Node
       In some cases, you may prefer the function @TO2{(hh,ZZ,Complex,ZZ,ZZ),"hh^i(C,b,c)"}@,
       which computes the cohomology with all twists from $b$ to $c$.
     Text
-      The base space of @TT "C"@ may be a closed subspace @TT "X"@ of a weighted projective space.
-      The distinction between @TT "X"@ as a stack and its associated coarse moduli space,
+      The base space @TT "X"@ of @TT "C"@ may be a closed subspace of a projective space,
+      or more generally of a weighted projective space.
+      In the weighted case, the distinction between @TT "X"@ as a stack and its associated coarse moduli space,
       $e\colon X \to W$, does not matter for computing cohomology.
-      Twists such as @TT "C(a)"@
-      are interpreted by tensoring with the line bundles $O(a)$ on the stack.
+      Twists such as @TT "C(j)"@
+      are interpreted by tensoring with the line bundles $O(j)$ on the stack.
     Text
       The base ring should be a field. Note that it is usually faster
       to work over $\mathbb{Z}/p$ for a prime number $p \leq 32767$, say @TT "ZZ/31991"@, rather than over @TT "QQ"@.
@@ -343,9 +388,9 @@ Node
       should be more convenient than running this program repeatedly.
     Text
       The complexes @TT "C"@ and @TT "D"@ must be defined over the same space @TT "X"@.
-      Here @TT "X"@ may be a closed subspace of a weighted projective space.
-      It is viewed as an algebraic stack when that makes a difference.
-      In particular, twists are interpreted by tensoring with the line bundles O(a) on the stack.
+      Here @TT "X"@ may be a closed subspace of a projective space, or more generally of a weighted projective space.
+      In the weighted case, @TT "X"@ is viewed as an algebraic stack when that makes a difference.
+      In particular, twists are interpreted by tensoring with the line bundles $O(j)$ on the stack.
     Text
       The base ring should be a field. Note that it is usually faster
       to work over $\mathbb{Z}/p$ for a prime number $p \leq 32767$, say @TT "ZZ/31991"@, rather than over @TT "QQ"@.
@@ -392,15 +437,15 @@ Node
       as formal series in T.)
   Description
     Text
-      The command computes the dimension of the $i$th global Ext group of @TT "X"@ from @TT "C"@
+      The command computes the dimension of the $i$th global Ext group over @TT "X"@ from @TT "C"@
       to the twist $D(j)=D\otimes O_X(j)$ 
       for every integer $j$,
       as a vector space over the coefficient field of @TT "X"@. The algorithm is based on local duality.
     Text
       The complexes @TT "C"@ and @TT "D"@ must be defined over the same space @TT "X"@.
-      Here @TT "X"@ may be a closed subspace of a weighted projective space.
-      It is viewed as an algebraic stack when that makes a difference.
-      In particular, twists are interpreted by tensoring with the line bundles O(a) on the stack.
+      Here @TT "X"@ may be a closed subspace of a projective space, or more generally of a weighted projective space.
+      In the weighted case, @TT "X"@ is viewed as an algebraic stack when that makes a difference.
+      In particular, twists are interpreted by tensoring with the line bundles $O(j)$ on the stack.
     Text
       The base ring should be a field. Note that it is usually faster
       to work over $\mathbb{Z}/p$ for a prime number $p \leq 32767$, say @TT "ZZ/31991"@, rather than over @TT "QQ"@.
