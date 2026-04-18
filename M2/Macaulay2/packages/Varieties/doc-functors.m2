@@ -292,6 +292,7 @@ Node
     Text
       See @TO "BGG::cohomologyTable"@ and @TO "TateOnProducts::cohomologyHashTable"@ for
       alternative sheaf cohomology algorithms via the Bernstein-Gelfand-Gelfand correspondence.
+      Also, the Euler characteristic @TO2{(euler,CoherentSheaf),"euler F"}@ is faster to compute.
     Text
       The function also gives a correct answer for a coherent sheaf F on an @TO "AffineVariety"@. Note that
       hh^0(F) is often infinity in that case, although not always.
@@ -344,6 +345,8 @@ Node
     Text
       See @TO "BGG::cohomologyTable"@ and @TO "TateOnProducts::cohomologyHashTable"@ for
       alternative sheaf cohomology algorithms via the Bernstein-Gelfand-Gelfand correspondence.
+      Also, the Euler characteristics @TO2{(euler,CoherentSheaf,ZZ,ZZ),"euler(F,b,c)"}@
+      are faster to compute.
     Text
       For example, we compute $H^0$ of some line bundles on projective 3-space:
     Example
