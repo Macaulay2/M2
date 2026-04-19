@@ -57,7 +57,7 @@ valuation Function := v -> (
     internalValuation(v, null, null)
 )
 
-ourSources := {Ring,Subring,LocalRing,RingOfInvariants}
+ourSources := {Ring,Subring,LocalRing,RingOfInvariants,RingFamily}
 ourTargets := {Ring,Subring,LocalRing,RingOfInvariants,OrderedQQn}
 
 -- Create different valuation functions for various inputs
