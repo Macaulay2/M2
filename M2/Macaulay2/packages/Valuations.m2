@@ -231,7 +231,7 @@ padicValuation ZZ := p -> (
         if x == 0 then infinity
         else countPrimeFactor(p, numerator x_QQ) - countPrimeFactor(p, denominator x_QQ)
     );
-    valuation(func,QQ,QQ)
+    valuation(func,QQ,ZZ)
 )
 
 -- Leading Term Valuation,
