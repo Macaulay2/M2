@@ -67,6 +67,7 @@ Node
     directProduct
     monomialCurveIdeal
     isBorel
+    isCohenMacaulay
     isCommutative
     isAffineRing
 

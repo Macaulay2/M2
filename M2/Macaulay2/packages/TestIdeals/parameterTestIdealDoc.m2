@@ -213,9 +213,9 @@ doc ///
 
 doc ///
     Key
-        isCohenMacaulay
+       --isCohenMacaulay
         (isCohenMacaulay, Ring)
-        [isCohenMacaulay, AtOrigin]
+       [(isCohenMacaulay, Ring), AtOrigin]
     Headline
         whether a ring is Cohen-Macaulay
     Usage

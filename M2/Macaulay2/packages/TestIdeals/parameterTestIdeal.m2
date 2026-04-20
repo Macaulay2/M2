@@ -327,9 +327,10 @@ parameterTestIdeal(Ring) := o-> (R1) -> (
 
 --warning, this only works if R is equidimensional.  If Spec R has disjoint components of different dimensions
 --then this function will return false, even if R is Cohen-Macaulay.
-isCohenMacaulay = method( Options => { AtOrigin => false } )
+-- Note: is now defined in Depth and overridden here.
+--isCohenMacaulay = method( Options => { AtOrigin => false } )
 
-isCohenMacaulay Ring := o -> R1 ->
+isCohenMacaulay Ring := { AtOrigin => false } >> o -> R1 ->
 (
     if o.AtOrigin then isCM R1
     else

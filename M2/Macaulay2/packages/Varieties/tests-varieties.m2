@@ -54,6 +54,7 @@ TEST /// -- degree of a projective variety
 ///
 
 TEST ///
+  needsPackage "Depth"
   T = ZZ/5[x0,x1];
   S = ZZ/5[a,b,c,d];
   g = map(T, S, {x0^3, x0^2*x1, x0*x1^2, x1^3});

@@ -15,7 +15,7 @@ newPackage(
 	)
 
 export {"macaulayRep", "macaulayBound", "macaulayLowerOperator", "isHF", "hilbertFunct", 
-     "isCM", "lexIdeal", "isLexIdeal", "isPurePower", "LPP", "generateLPPs", "isLPP", "cancelAll", 
+     -*"isCM",*- "lexIdeal", "isLexIdeal", "isPurePower", "LPP", "generateLPPs", "isLPP", "cancelAll",
      "multUpperHF", "multLowerBound", "multUpperBound", "multBounds", "PrintIdeals", "MaxDegree"}
 
 --gives the d-th Macaulay representation of a.
@@ -104,8 +104,7 @@ hilbertFunct(Ideal) := opts -> I -> (
      reverse apply(listForm h, x -> x#1))
 
 --determines whether (ring I/I) is Cohen-Macaulay, where ring I is a polynomial ring
-isCM = method(TypicalValue=>Boolean)
-isCM(Ideal) := (I) -> (
+isCM(Ideal) := {} >> o -> (I) -> (
      R:=ring I;
      if not instance(R,PolynomialRing) then error "expected ideal in a polynomial ring";
      if I == ideal(1_R) then true else
@@ -698,7 +697,6 @@ doc///
 
 doc///
      Key
-     	  isCM
 	  (isCM,Ideal)
      Headline
      	  test whether a polynomial ring modulo a homogeneous ideal is Cohen-Macaulay

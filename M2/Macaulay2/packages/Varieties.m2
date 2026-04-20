@@ -43,7 +43,6 @@ newPackage(
 	"Saturation",
 	"Truncations",
 	"Isomorphism",
-	"TestIdeals",
 	HomologicalAlgebraPackage
 	},
     AuxiliaryFiles => true
@@ -369,8 +368,11 @@ isSmooth ProjectiveVariety := {} >> o -> X -> (
 
 -- The following functions check whether a variety over a field is Cohen-Macaulay and equidimensional.
 -- (For X connected, this is equivalent to just being Cohen-Macaulay.)
-isCohenMacaulay AffineVariety := opts -> X -> isCohenMacaulay(ring X, opts)
-isCohenMacaulay ProjectiveVariety := opts -> X -> (
+-- Depth::isCohenMacaulay checks only at the origin,
+-- but TestIdeals::isCohenMacaulay checks globally.
+-- cf. https://github.com/Macaulay2/M2/issues/4201
+isCohenMacaulay     AffineVariety := true >> o -> X -> ( needsPackage "TestIdeals"; isCohenMacaulay(ring X, o) ) -- FIXME
+isCohenMacaulay ProjectiveVariety := {}   >> o -> X -> (
     M := currentModuleBaseRing OO_X^1;
     S := ring M; -- Thus S is a graded polynomial ring, and M is R = S/I as an S-module,
     -- for a graded ring R with X = Proj(R).

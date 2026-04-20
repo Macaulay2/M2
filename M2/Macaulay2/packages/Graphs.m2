@@ -173,7 +173,7 @@ export {
     "hasEulerianTrail",
     "hasOddHole",
     "isBipartite",
-    "isCM",
+    --"isCM",
     "isChordal",
     "isConnected",
     "isCyclic",
@@ -1259,8 +1259,7 @@ isBipartite = method()
 isBipartite Graph := Boolean => G ->
     try bipartiteColoring G then true else false
 
-isCM = method()
-isCM Graph := Boolean => G -> (
+isCM Graph := Boolean => {} >> o -> G -> (
     I := edgeIdeal G;
     codim I == pdim coker gens I
     )
@@ -4282,7 +4281,6 @@ doc ///
 --isCM
 doc ///
     Key
-        isCM
         (isCM, Graph)
     Headline
         determines if a graph is Cohen-Macaulay

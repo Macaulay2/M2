@@ -130,7 +130,7 @@ export{
     "AssumeDomain", --an option telling functions to assume a ring is a domain.
     "canonicalIdeal", --Karl (still needs more tests / documentation), this is based on Moty's old code.
     "frobeniusTraceOnCanonicalModule", --Karl (this is Moty's find u function, but it returns a list if Macaulay2 doesn't identify 1 element).
-    "isCohenMacaulay", --Karl (added recently, if anyone has ideas to improve this...)
+    -- "isCohenMacaulay", --Karl (added recently, if anyone has ideas to improve this...)
     "isFRational", --Karl (added recently).
     "AtOrigin", --an option for isCohenMacaulay, isFRational, etc.
     "testModule", --Karl (this subsumes a bunch of older functions)

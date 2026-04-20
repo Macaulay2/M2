@@ -47,6 +47,12 @@ document { Key => isNormal,     methodstr, SeeAlso => {
 	"IntegralClosure::isNormal(Ring)",
 	"AssociativeAlgebras::isNormal(RingElement)",
 	} }
+document { Key => isCohenMacaulay, methodstr, SeeAlso => {
+	"Depth::isCohenMacaulay(Ring)", "Depth::isCohenMacaulay(Module)",
+	"EdgeIdeals::isCohenMacaulay(HyperGraph)", "Graphs::isCohenMacaulay(Graph)",
+	"LexIdeals::isCohenMacaulay(Ideal)", "MonomialAlgebras::isCohenMacaulayMA", -- TODO: rename?
+	"Varieties::isCohenMacaulay(ProjectiveVariety)",
+	"TestIdeals::isCohenMacaulay(Ring)" } }
 document { Key => normalCone,   methodstr, SeeAlso => {
 	"Polyhedra::normalCone(Polyhedron,Polyhedron)",
 	"ReesAlgebra::normalCone(Ideal)",

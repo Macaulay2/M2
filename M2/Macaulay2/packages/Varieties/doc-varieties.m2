@@ -459,15 +459,12 @@ Node
   Key
     (isCohenMacaulay, ProjectiveVariety)
     (isCohenMacaulay, AffineVariety)
-    --[isCohenMacaulay, AtOrigin]
   Headline
     whether a variety is Cohen-Macaulay and equidimensional
   Usage
     isCohenMacaulay X
   Inputs
     X:{AffineVariety,ProjectiveVariety}
-    AtOrigin => Boolean
-      this option is ignored.
   Outputs
     :Boolean
   Description
@@ -488,6 +485,7 @@ Node
       X = Proj(S/(ker g));
       isCohenMacaulay X
     Example
+      needsPackage "Depth"
       R = QQ[x,y,u,v]/(x*u, x*v, y*u, y*v);
       X = Proj R;
       isCohenMacaulay R
@@ -503,7 +501,7 @@ Node
     This function checks whether $X$ is Cohen-Macaulay {\it and }equidimensional. Also, if you want to know whether
     a projective variety is projectively Cohen-Macaulay (a stronger property), you can use: {\tt isCohenMacaulay ring X}
   SeeAlso
-    (isCohenMacaulay,Ring)
+    "Depth::isCM(Ring)"
 
 Node
   Key

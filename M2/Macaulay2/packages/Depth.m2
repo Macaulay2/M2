@@ -37,7 +37,7 @@ export{
     "regularSequenceCheck",
     "isRegularSequence",
     "inhomogeneousSystemOfParameters",
-    "isCM",
+    -- "isCM",
     "Sparseness",
     "Bound",
     "Attempts",
@@ -346,14 +346,13 @@ inhomogeneousSystemOfParameters(Ideal) := Matrix => opts -> I -> inhomogeneousSy
 	       
 --=========================================================================--
 
-isCM = method()
-isCM(Ring) := Boolean => (A) -> (
+isCM(Ring) := Boolean => {} >> opts -> (A) -> (
      dim(A) == depth(A) -- note we should *not* switch to modules - see depth(Ideal,QuotientRing)
      )
 
 -----------------------------------------------------------------------------
 
-isCM(Module) := Boolean => (M) -> (
+isCM(Module) := Boolean => {} >> opts -> (M) -> (
      dim(M) == depth(M)
      )
 
@@ -807,7 +806,7 @@ document {
 -----------------------------------------------------------------------------
 
 document {
-     Key => {isCM,
+     Key => {
 	  (isCM,Module),
   	  (isCM,Ring)},
      Headline => "whether a ring or module is Cohen-Macaulay",

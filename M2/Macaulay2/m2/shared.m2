@@ -37,6 +37,7 @@ isExact = method(TypicalValue => Boolean, Options => true)
 
 isSmooth = method(TypicalValue => Boolean, Options => true)
 isVeryAmple = method(TypicalValue => Boolean, Options => true)
+isCohenMacaulay = method(TypicalValue => Boolean, Options => true)
 
 isNormal = method()
 

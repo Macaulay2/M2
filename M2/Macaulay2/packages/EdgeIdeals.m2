@@ -88,7 +88,7 @@ export {
 	"inducedHyperGraph",
 	"isBipartite",
 	"isChordal",
-	"isCM",
+	--"isCM",
 	"isConnected",
 	"isConnectedGraph",
 	"isEdge",
@@ -782,9 +782,7 @@ isChordal Graph := G -> (
 -- checks if a (hyper)graph is Cohen-Macaulay
 ------------------------------------------------------------
 
-isCM = method();
-
-isCM HyperGraph := H -> (
+isCM HyperGraph := {} >> o -> H -> (
      I := edgeIdeal H;
      codim I == pdim coker gens I
      )
@@ -3149,7 +3147,6 @@ doc ///
 
 doc ///
         Key
-	        isCM
 		(isCM, HyperGraph)
 	Headline
 	        determines if a (hyper)graph is Cohen-Macaulay
