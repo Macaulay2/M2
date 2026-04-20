@@ -279,7 +279,7 @@ localRingValuation LocalRing := R -> (
         if x == 0 then infinity
         else getMExponent(m, sub(x, S))
     );
-    valuation(func, R, ZZ)
+    valuation(func, frac R, ZZ)
 )
 
 --------------------------------------------------------------------------------
