@@ -3871,9 +3871,8 @@ SeeAlso
   "IntegralClosure::makeS2"
   "BGG"
   "cohomology"
-  "HH^ZZ SumOfTwists"
+  "Varieties :: HH^ZZ SumOfTwists"
 Caveat
- Text
   S2-ification is related to computing cohomology and to 
   computing integral closure; there are scripts in
   those packages that produce an S2-ification, but one takes

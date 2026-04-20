@@ -232,9 +232,10 @@ Node
     Text
       The base ring should be a field. Note that it is usually faster
       to work over $\mathbb{Z}/p$ for a prime number $p \leq 32767$, say @TT "ZZ/31991"@, rather than over @TT "QQ"@.
+      Also, the Euler characteristic @TO2{(euler,Complex),"euler C"}@ is faster to compute.
     Text
       For example, the following complex @TT "C1"@ of sheaves on $\mathbb{P}^2$ is isomorphic in the derived category
-      to the direct image of the sheaf of regular functions on $\mathbb{P}^1$; so they have the same cohomology.
+      to the direct image of the sheaf of regular functions on $\mathbb{P}^1$; so their twists have the same cohomology.
     Example
       R = ZZ/31991[x,y,z];
       PP2 = Proj R;
@@ -286,8 +287,8 @@ Node
       The base ring should be a field. Note that it is usually faster
       to work over $\mathbb{Z}/p$ for a prime number $p \leq 32767$, say @TT "ZZ/31991"@, rather than over @TT "QQ"@.
     Text
-      The Euler characteristic is faster to compute, for example by the function
-      @TO2{(euler,CoherentSheaf),"euler(F)"}@.
+      The Euler characteristic @TO2{(euler,Complex),"euler C"}@
+      is faster to compute.
     Text
       For example, the following complex @TT "C1"@ of sheaves on $\mathbb{P}^2$ is isomorphic in the derived category
       to the direct image of the sheaf of regular functions on $\mathbb{P}^1$; so they have the same cohomology.
@@ -345,7 +346,7 @@ Node
       to work over $\mathbb{Z}/p$ for a prime number $p \leq 32767$, say @TT "ZZ/31991"@, rather than over @TT "QQ"@.
     Text
       Euler characteristics are faster to compute, for example by the function
-      @TO2{(euler,CoherentSheaf,ZZ,ZZ),"euler(F,b,c)"}@.
+      @TO2{(euler,Complex),"euler C"}@.
     Text
       For example, the following complex @TT "C1"@ of sheaves on $\mathbb{P}^2$ is isomorphic in the derived category
       to the direct image of the sheaf of regular functions on $\mathbb{P}^1$; so they have the same cohomology.
@@ -358,10 +359,10 @@ Node
       PP1 = Proj(R/(x));
       hh^0(OO_PP1(*))
   SeeAlso
-    (hh, ZZ, CoherentSheaf)
-    (hh, ZZ, CoherentSheaf, ZZ, ZZ)
+    (hh, ZZ, Complex)
+    (hh, ZZ, Complex, ZZ, ZZ)
+    (hh, ZZ, SumOfTwists)
     (cohomology, ZZ, SumOfTwists)
-    (euler, CoherentSheaf)
 
 Node
   Key
@@ -409,10 +410,10 @@ Node
       PP1 = Proj(R/(x));
       hh^0(OO_PP1(5))
   SeeAlso
+    (ext, ZZ, Complex, SumOfTwistsComplex)
     (hh, ZZ, Complex)
-    (hh, ZZ, SumOfTwistsComplex)
     (cohomology, ZZ, SumOfTwists)
-    (euler, CoherentSheaf)
+    (euler, Complex)
 
 Node
   Key
@@ -464,10 +465,10 @@ Node
       PP1 = Proj(R/(x));
       hh^0(OO_PP1(*))
   SeeAlso
-    (hh, ZZ, CoherentSheaf)
-    (hh, ZZ, CoherentSheaf, ZZ, ZZ)
+    (ext, ZZ, Complex, Complex)
+    (hh, ZZ, SumOfTwists)
     (cohomology, ZZ, SumOfTwists)
-    (euler, CoherentSheaf)
+    (euler, Complex)
 ///
 
 document {
