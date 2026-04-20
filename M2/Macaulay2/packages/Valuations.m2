@@ -223,14 +223,12 @@ countPrimeFactor (ZZ, ZZ) := (p, x) -> (
 )
 
 -- p-adic Valuation valuation construction
--- Allows for inputs to be rationals and computes difference of the
--- valuations for the numerator and denominator
 padicValuation = method()
 padicValuation ZZ := p -> (
     if not isPrime p then error "expected a prime integer";
     func := x -> (
         if x == 0 then infinity
-        else countPrimeFactor(p, numerator x_QQ) - countPrimeFactor(p, denominator x_QQ)
+        else countPrimeFactor(p, x)
     );
     valuation(func,QQ,ZZ)
 )
