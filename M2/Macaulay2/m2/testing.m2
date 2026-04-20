@@ -58,7 +58,10 @@ captureTestResult := (desc, teststring, pkg, usermode) -> (
 	-- TODO: adjust and pass argumentMode, instead. This can be done earlier, too.
 	-- Note: UserMode option of capture is not related to UserMode option of check
 	(err, output) := capture(teststring, PackageExports => pkg, UserMode => false);
-	if err then printerr "capture failed; retrying ..." else return true);
+	if err then (
+	    printerr "capture failed; retrying ...";
+	    if debugLevel > 2 then printerr output)
+	else return true);
     -- fallback to using an external process
     checkmsg("running", desc);
     runString(teststring, pkg, usermode))
