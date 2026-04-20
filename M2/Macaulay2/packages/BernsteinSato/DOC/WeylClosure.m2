@@ -21,7 +21,7 @@ doc ///
      Let $D$ be the Weyl algebra 
      with generators $x_1,\dots,x_n$ and $\partial_1,\dots,\partial_n$ over a field $K$
      of characteristic zero, and denote
-     $R = K(x_1..x_n)<\partial_1..\partial_n>$, 
+     $R = K(x_1,\ldots ,x_n)\langle\partial_1,\ldots ,\partial_n\rangle$, 
      the ring of differential
      operators with rational function coefficients. The {\em Weyl closure}
      of an ideal $I$ in $D$ is the intersection of the extended ideal
