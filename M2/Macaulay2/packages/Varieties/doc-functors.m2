@@ -1,75 +1,6 @@
 -- TODO: cohomology(...,Degree=>...)
 
-
 doc ///
-Node
-  Key
-    directImage
-  Headline
-    direct image of a coherent sheaf by a closed immersion
-  Usage
-    directImage(F, Y)
-  Inputs
-    F:{CoherentSheaf,SheafOfRings}
-    Y:Variety
-    Prune => Boolean
-      whether to @TO prune@ the output
-  Outputs
-    :CoherentSheaf
-  Description
-    Text
-      For $F$ a coherent sheaf on a scheme $X$, with $X$ a closed subscheme of $Y$
-      (writing $i\colon X \to Y$ for the inclusion),
-      return the direct image sheaf $i_*(F)$ on $Y$. This function assumes (and partly checks)
-      that $X$ and $Y$ are given as $\mathrm{Proj}(S/I)$ and $\mathrm{Proj}(S/J)$,
-      with the same polynomial ring $S$ in both cases, with the ideal $J$ contained in $I$; or likewise in the affine case.
-      This function also works for subspaces of a weighted projective space.
-    Text
-      For example, if $X$ is a closed subscheme of a projective space $Y$, the cohomology of a coherent sheaf $F$ on $X$
-      is isomorphic to the cohomology of the direct image $G = i_*(F)$ on $Y$. Nonetheless, one might sometimes
-      decide to apply a Macaulay2 command such as @TO2{(cohomology,ZZ,SumOfTwists),"HH^m(Y,G(>=0))"}@ rather than
-      @TT "HH^m(X,F(>=0))"@, because that gives
-      the cohomology as a module over a polynomial ring rather than over a quotient of a polynomial ring.
-    Example
-      S = ZZ/31991[x,y,z]; Y = Proj S;
-      R = S/(x^3+y^3+z^3); X = Proj R;
-      directImage(OO_X(1),Y)
-  SeeAlso
-    pullback
-
-Node
-  Key
-    (pullback, CoherentSheaf, Variety)
-    (pullback, SheafOfRings, Variety)
-    [(pullback, CoherentSheaf, Variety), Prune]
-    [(pullback, SheafOfRings, Variety), Prune]
-  Headline
-    pullback of a coherent sheaf by a closed immersion
-  Usage
-    pullback(F, X)
-  Inputs
-    F:{CoherentSheaf,SheafOfRings}
-    X:Variety
-    Prune => Boolean
-      whether to @TO prune@ the output
-  Outputs
-    :CoherentSheaf
-  Description
-    Text
-      For $F$ a coherent sheaf on a scheme $Y$, with $X$ a closed subscheme of $Y$
-      (writing $i\colon X \to Y$ for the inclusion),
-      return the pullback sheaf $i^*(F)$ on $X$. This function assumes (and partly checks)
-      that $X$ and $Y$ are given as $\mathrm{Proj}(S/I)$ and $\mathrm{Proj}(S/J)$,
-      with the same polynomial ring $S$ in both cases, with the ideal $J$ contained in $I$; or likewise in the affine case.
-      This function also works for subspaces of a weighted projective space.
-    Example
-      S = ZZ/31991[x,y,z];
-      R = S/(x^3+y^3+z^3);
-      X = Proj R; Y = Proj S;
-      pullback(OO_Y(1),X)
-  SeeAlso
-    directImage
-
 -----------------------------------------------------------------------------
 -- sheaf cohomology
 -----------------------------------------------------------------------------
@@ -574,8 +505,7 @@ Node
     :CoherentSheaf
   Description
     Text
-      Here @TT "F"@ and @TT "G"@ must be coherent sheaves on the same projective variety or scheme $X$.
-      (To arrange this, the command @TO "directImage"@ may be useful.)
+      Here @TT "F"@ and @TT "G"@ must be coherent sheaves on the same space $X$.
       If @TT "F"@ or @TT "G"@ is a @syn SheafOfRings@, it is regarded simply as a coherent sheaf.
     Text
       The result is the sheaf of $O_X$-linear maps from @TT "F"@ to @TT "G"@.
@@ -840,8 +770,7 @@ Node
       the n-th sheaf extension of @TT "F"@ and @TT "G"@
   Description
     Text
-      Here @TT "F"@ and @TT "G"@ must be coherent sheaves on the same projective variety or scheme $X$.
-      (To arrange this, the command @TO "directImage"@ may be useful.)
+      Here @TT "F"@ and @TT "G"@ must be coherent sheaves on the same space $X$.
       If @TT "F"@ or @TT "G"@ is a @syn SheafOfRings@, it is regarded simply as a coherent sheaf.
     Text
       The result is the sheaf associated to the graded module @TT "Ext^n(module F, module G)"@.

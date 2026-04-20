@@ -347,8 +347,6 @@ Node
       One can obtain the ambient projective space (for example) as: @TT "Proj ring presentation ring X"@.
   SeeAlso
     (ambient, Ring)
-    directImage
-    (pullback, CoherentSheaf, Variety)
 
 Node
   Key

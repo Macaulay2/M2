@@ -645,7 +645,6 @@ Node
       degreeOnCurve OO_X2(13)
   SeeAlso
     (degree,CoherentSheaf)
-    (pullback,CoherentSheaf,Variety)
 
 Node
   Key
@@ -1118,9 +1117,7 @@ Node
       (or subspace of weighted projective space), even if the support of @TT "F"@ is smaller than $X$.
       This matters in some situations; for example, computing global
       @TO2{(Ext,ZZ,CoherentSheaf,CoherentSheaf),"Ext^i(F,G)"}@ between two sheaves
-      requires them to be defined on the same scheme (or stack) $X$. As a result,
-      one may need to move sheaves around by @TO2{directImage,
-      "directImage(F,Y)"}@ or @TO2{(pullback,CoherentSheaf,Variety),"pullback(F,X)"}@.
+      requires them to be defined on the same scheme (or stack) $X$.
     Example
       X = Proj QQ[x,y,z];
       variety OO_X
