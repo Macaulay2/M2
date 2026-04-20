@@ -624,6 +624,15 @@ end--
   gens gb Iloc
 ///
 
+TEST ///
+-- promoting to fraction field
+R = QQ[x]
+p = ideal x
+S = R_p
+F = frac R
+assert(promote(x_S, F) === x_F)
+///
+
 end--
 
 --  Development stuff

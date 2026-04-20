@@ -67,6 +67,9 @@ localRing(EngineRing, Ideal) := (R, P) ->
         RP.localRing    = RP;
         RP.maxIdeal     =  P;
         commonEngineRingInitializations RP;
+	setupPromote(
+	    f -> numerator f / denominator f,
+	    RP, frac R);
 	RP.residueMap   = map(frac(R/P), RP, vars R % P);
          expression RP := r -> expression numerator r / expression denominator r;
            toString RP := r -> toString expression r;
