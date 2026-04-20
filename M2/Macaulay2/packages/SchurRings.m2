@@ -128,6 +128,15 @@ rawmonom2partition = (m) -> (
      reverse splice apply(rawSparseListFormMonomial m, (x,e) -> e:x)
      )
 
+-- Strip trailing zero parts from a (weakly-decreasing) list representing a
+-- partition.  Used to normalize partition keys for memoization and for
+-- returning partitions without padding.
+stripTrailingZeros = lst -> (
+     k := #lst;
+     while k > 0 and lst#(k-1) == 0 do k = k - 1;
+     take(lst, k)
+     )
+
 --various ways of addressing elements of a Schur ring
 -- s_{lambda_1, lambda_2, ...} from an explicit partition list
 SchurRing _ List := (SR, L) -> new SR from rawSchurFromPartition(raw SR, L)
@@ -229,12 +238,7 @@ slCanonicalize = (f, S) -> (
 	  k := lamList#(n-1);
 	  lamNew := (
 	       if k == 0 then toList lam
-	       else (
-		    res := for i from 0 to n-1 list lamList#i - k;
-		    j := #res;
-		    while j > 0 and res#(j-1) == 0 do j = j - 1;
-		    take(res, j)
-		    )
+	       else stripTrailingZeros(for i from 0 to n-1 list lamList#i - k)
 	       );
 	  rawRes = rawRes + raw promote(c, S) * raw (S_lamNew);
 	  );
@@ -280,48 +284,61 @@ dim(Thing,SchurRingElement) := (n,s) -> dimSchur(n, s);
 -- Weyl reflection formula to the composite weight above.
 ---------------------------------------------------------------
 
--- Sam-Snowden-Weyman modification rule for rational GL(n) characters.
+-- Koike-Terada / Sam-Snowden-Weyman modification rule for rational GL(n).
 --
 -- Given a stable bipartition label (alpha, beta), specialize
 --     chi^{stable}_{alpha, beta} |_{GL(n)}
--- to a finite rational GL(n) character.  The rule is simply:
---     = chi^{GL(n)}_{alpha, beta}        if ell(alpha) + ell(beta) <= n
---     = 0                                 otherwise.
--- (See Sam-Snowden-Weyman, "Littlewood complexes and analogues of determinantal
--- varieties", for the modification/drop rule; equivalently, rational Schur
--- functors S_{alpha, beta}(V) vanish precisely when ell(alpha) + ell(beta)
--- exceeds dim V.)
+-- to a finite rational GL(n) character following [SSW] Sec. 5.4 in the
+-- border-strip form.  A pair (alpha, beta) is *admissible* when
+-- ell(alpha) + ell(beta) <= n; for admissible pairs the specialization is
+-- chi^{GL(n)}_{alpha, beta} with sign +1.
 --
--- Returns a list of triples (rho, sigma, coef): either empty (vanishes) or
--- the singleton [(alpha, beta, 1)].
+-- When (alpha, beta) is not admissible, remove a border strip of length
+--     L = ell(alpha) + ell(beta) - n - 1
+-- from BOTH alpha and beta, starting at the first box of the final row
+-- (equivalently the hook at (k,1) with alpha_k + ell(alpha) - k = L and
+-- likewise for beta).  The sign contribution of the step is
+--     (-1)^(c(R_alpha) + c(R_beta) - 1)
+-- where c(R) is the number of columns the strip occupies.  Recurse until
+-- admissible, or return 0 if at some step no valid strip of the required
+-- length exists.  (L = 0 also forces vanishing: the strip must be non-empty.)
+--
+-- Returns a list of triples (alpha', beta', coef): either empty (character
+-- vanishes) or a singleton [(alpha', beta', sign)] with sign in {+1, -1}.
 ratGLModify = (alpha, beta, n) -> (
-     if #alpha + #beta > n then {}
-     else {(alpha, beta, 1)}
+     a := stripTrailingZeros toList alpha;
+     b := stripTrailingZeros toList beta;
+     if #a + #b <= n then return {(a, b, 1)};
+     sign := 1;
+     while #a + #b > n do (
+	  L := #a + #b - n - 1;
+	  if L == 0 then return {};
+	  kA := findBorderStripRow(a, L);
+	  if kA === null then return {};
+	  kB := findBorderStripRow(b, L);
+	  if kB === null then return {};
+	  (newA, cA) := removeBorderStripAtFirstColumn(a, kA);
+	  (newB, cB) := removeBorderStripAtFirstColumn(b, kB);
+	  if odd (cA + cB - 1) then sign = -sign;
+	  a = newA;
+	  b = newB;
+	  );
+     {(a, b, sign)}
      )
 
 -- Enumerate all partitions contained componentwise in the given bound.
 -- Result includes the empty partition and the bound itself; trailing zeros
 -- are stripped.
 allSubpartitionsBoundedBy = (bound) -> (
-     b := toList bound;
-     while #b > 0 and b#(-1) == 0 do b = drop(b, -1);
+     b := stripTrailingZeros toList bound;
      if #b == 0 then return {{}};
      aux := (idx, prevMax) -> (
 	  if idx >= #b then return {{}};
 	  upper := min(b#idx, prevMax);
-	  result := new MutableList;
-	  v := 0;
-	  while v <= upper do (
-	       for t in aux(idx+1, v) do result#(#result) = prepend(v, t);
-	       v = v + 1;
-	       );
-	  toList result
+	  flatten for v from 0 to upper list
+	       for t in aux(idx+1, v) list prepend(v, t)
 	  );
-     apply(aux(0, infinity), mu -> (
-	       j := #mu;
-	       while j > 0 and mu#(j-1) == 0 do j = j - 1;
-	       take(mu, j)
-	       ))
+     apply(aux(0, infinity), stripTrailingZeros)
      )
 
 -- Iterate all (alpha, beta, scalar) triples of a RatGL element.
@@ -391,7 +408,7 @@ buildRatGLRing = (R, p, n, opts) -> (
      --         Koike-Terada (Sam-Snowden-Weyman) modification rule
      --         to specialize back down to rank n.
      ------------------------------------------------------------------
-     isFiniteN := not (n === infinity or (class n === InfiniteNumber) or n < 0);
+     isFiniteN := not (class n === InfiniteNumber or n < 0);
      if isFiniteN then (
 	  S * S := (f1, f2) -> (
 	       H := stableRatGLHelperOf S;
@@ -416,11 +433,11 @@ buildRatGLRing = (R, p, n, opts) -> (
      ------------------------------------------------------------------
      t := value p;
      t#symbol _ = a -> (
-	  isListish := x -> (class x === List or class x === Sequence);
+	  isListish := x -> instance(x, VisibleList);
 	  if isListish a and #a == 2 and isListish (a#0) and isListish (a#1) then (
 	       alpha := toList a#0;
 	       beta := toList a#1;
-	       isFin := not (n === infinity or (class n === InfiniteNumber) or n < 0);
+	       isFin := not (class n === InfiniteNumber or n < 0);
 	       if isFin and (#alpha + #beta) > n then (
 		    return specializeRatGLInto(
 			 new S from ratGLBasisRaw(S, alpha, beta),
@@ -1365,7 +1382,7 @@ toSymm(RingElement) := (ps) ->
 	  -- maximum #alpha determines the minimum symmetric-ring dim.
 	  maxLen := max apply(toList polyTerms, t -> #(t#0));
 	  nT := numgens S;
-	  targetDim := if nT === infinity or class nT === InfiniteNumber
+	  targetDim := if class nT === InfiniteNumber
 	       then max(maxLen, 1) else nT;
 	  Rsym := symmetricRing(coefficientRing (S.ratNegRing), targetDim);
 	  return sum apply(toList polyTerms, (alpha, c) ->
@@ -1423,7 +1440,7 @@ mapSymToP (RingElement) := (f) -> (
 stableRingConversionGuard := (R, opname) -> (
      if class R === SchurRing then (
 	  n := numgens R;
-	  if n === infinity or class n === InfiniteNumber then
+	  if class n === InfiniteNumber then
 	       error(opname | ": cannot convert an element of a stable "
 		    | "(rank-infinite) Schur ring to an e/h/p-basis "
 		    | "symmetric function.  Specialize the element to a "
@@ -1527,11 +1544,6 @@ toH (RingElement) := (f) -> (
 -- the cache.
 
 kostkaMemo := new MutableHashTable
-stripTrailingZeros = lst -> (
-     k := #lst;
-     while k > 0 and lst#(k-1) == 0 do k = k - 1;
-     take(lst, k)
-     )
 
 -- Enumerate sub-partitions nu of lambda obtained by removing a
 -- horizontal strip of size s.  A horizontal strip is a skew shape with
@@ -1556,23 +1568,14 @@ horizontalStripComplements = (lambda, s) -> (
 	  lowerI := if idx + 1 < l then lam#(idx+1) else 0;
 	  -- nu_idx in [lowerI, lamI]; must also not remove more than
 	  -- `remaining` boxes across this and all later rows.
-	  results := new MutableList;
 	  -- amount removed from this row is lamI - nu_idx
 	  -- so nu_idx ranges: max(lowerI, lamI - remaining) ... lamI
 	  lo := max(lowerI, lamI - remaining);
-	  hi := lamI;
-	  v := lo;
-	  while v <= hi do (
-	       removedHere := lamI - v;
-	       for tail in aux(idx+1, remaining - removedHere) do (
-		    results#(#results) = prepend(v, tail);
-		    );
-	       v = v + 1;
-	       );
-	  toList results
+	  flatten for v from lo to lamI list
+	       for tail in aux(idx+1, remaining - (lamI - v)) list prepend(v, tail)
 	  );
      -- Strip trailing zeros from each candidate.
-     apply(aux(0, s), nu -> stripTrailingZeros nu)
+     apply(aux(0, s), stripTrailingZeros)
      )
 
 kostkaNumber = method()
@@ -1589,9 +1592,8 @@ kostkaNumber(BasicList,BasicList) := (lambda,mu) -> (
      mRest   := drop(m, -1);
      -- Sum over all sub-partitions nu of lam obtained by removing a
      -- horizontal strip of size mLast.
-     total := 0;
-     for nu in horizontalStripComplements(lam, mLast) do
-	  total = total + kostkaNumber(nu, mRest);
+     total := sum for nu in horizontalStripComplements(lam, mLast) list
+	  kostkaNumber(nu, mRest);
      kostkaMemo#key = total;
      total
      )
@@ -1800,11 +1802,9 @@ skewMemo := new MutableHashTable;
 
 skewSchurExpansion = method()
 skewSchurExpansion(BasicList, BasicList) := (lambda, mu) -> (
-     lam := toList lambda;
-     m := toList mu;
      -- Strip trailing zeros (normalize so cache keys collide)
-     while #lam > 0 and lam#(-1) == 0 do lam = drop(lam, -1);
-     while #m > 0 and m#(-1) == 0 do m = drop(m, -1);
+     lam := stripTrailingZeros toList lambda;
+     m := stripTrailingZeros toList mu;
      if sum m > sum lam then return {};
      l := #lam;
      if l == 0 then return {({}, 1)};
@@ -1827,34 +1827,24 @@ skewSchurExpansion(BasicList, BasicList) := (lambda, mu) -> (
      dd := det(matrix M, Strategy => Cofactor);
      sExp := toS dd;
      -- listForm of a SchurRingElement is list of (partition, coeff) pairs
-     result := apply(listForm sExp, t -> (t#0, lift(t#1, ZZ)));
-     skewMemo#key = result;
-     result
+     skewMemo#key = apply(listForm sExp, t -> (t#0, lift(t#1, ZZ)))
      )
 
 -- Enumerate partitions mu, contained in lambda componentwise, with all parts even.
 -- Each mu is returned as a list of positive parts (trailing zeros stripped).
 evenRowsSubpartitionsOf = method()
 evenRowsSubpartitionsOf(BasicList) := (lambda) -> (
-     lam := toList lambda;
-     while #lam > 0 and lam#(-1) == 0 do lam = drop(lam, -1);
+     lam := stripTrailingZeros toList lambda;
      aux := (idx, prevMax) -> (
 	  if idx >= #lam then return {{}};
 	  upper := min(lam#idx, prevMax);
-	  result := new MutableList;
-	  v := 0;
-	  while v <= upper do (
-	       for t in aux(idx+1, v) do result#(#result) = prepend(v, t);
-	       v = v + 2;
-	       );
-	  toList result
+	  flatten for v from 0 to upper list (
+	       if odd v then continue;
+	       for t in aux(idx+1, v) list prepend(v, t)
+	       )
 	  );
      -- Strip trailing zeros off each candidate
-     apply(aux(0, infinity), mu -> (
-	       j := #mu;
-	       while j > 0 and mu#(j-1) == 0 do j = j - 1;
-	       take(mu, j)
-	       ))
+     apply(aux(0, infinity), stripTrailingZeros)
      )
 
 -- Enumerate partitions mu, contained in lambda componentwise, with all columns
@@ -1862,8 +1852,7 @@ evenRowsSubpartitionsOf(BasicList) := (lambda) -> (
 -- come in equal pairs).
 evenColsSubpartitionsOf = method()
 evenColsSubpartitionsOf(BasicList) := (lambda) -> (
-     lam := toList lambda;
-     while #lam > 0 and lam#(-1) == 0 do lam = drop(lam, -1);
+     lam := stripTrailingZeros toList lambda;
      if #lam == 0 then return {{}};
      lamC := toList conjugate new Partition from lam;
      evens := evenRowsSubpartitionsOf(lamC);
@@ -1919,11 +1908,10 @@ findBorderStripRow = (lam, L) -> (
 removeBorderStripAtFirstColumn = (lam, k) -> (
      r := #lam;
      cR := lam#(k-1);  -- c(R) = lam_k (# columns occupied by the strip)
-     newLam := join(
+     newLam := stripTrailingZeros join(
 	  take(lam, k-1),
 	  for i from k+1 to r list lam#(i-1) - 1
 	  );
-     while #newLam > 0 and newLam#(-1) == 0 do newLam = drop(newLam, -1);
      (newLam, cR)
      )
 
@@ -1955,8 +1943,7 @@ sigmaInvolution = (lam, m) -> (
 --   SSW modification rule for Sp(2n).
 --   Returns (tau, sign) or null (meaning zero).
 sswTypeC = (lambda, n) -> (
-     lam := toList lambda;
-     while #lam > 0 and lam#(-1) == 0 do lam = drop(lam, -1);
+     lam := stripTrailingZeros toList lambda;
      if #lam <= n then return (lam, 1);
      sign := 1;
      current := lam;
@@ -1982,8 +1969,7 @@ sswTypeC = (lambda, n) -> (
 --     (D2) sign contribution uses c(R) - 1 instead of c(R),
 --     (D3) if an odd total number of strips was removed, apply sigma to tau.
 sswTypeBD = (lambda, m) -> (
-     lam := toList lambda;
-     while #lam > 0 and lam#(-1) == 0 do lam = drop(lam, -1);
+     lam := stripTrailingZeros toList lambda;
      -- Admissibility test: lam^T_1 + lam^T_2 <= m.
      admissible := (p) -> (
 	  if #p == 0 then return true;
@@ -2057,8 +2043,7 @@ stableSpInSchurCache := new MutableHashTable
 -- Return list of (mu, coef) with coef nonzero integer, such that
 --   sp_lambda  ==  sum_mu coef * s_mu.
 stableSpInSchur = (lambda) -> (
-     lam := toList lambda;
-     while #lam > 0 and lam#(-1) == 0 do lam = drop(lam, -1);
+     lam := stripTrailingZeros toList lambda;
      if stableSpInSchurCache#?lam then return stableSpInSchurCache#lam;
      acc := new MutableHashTable;
      acc#lam = 1;
@@ -2088,8 +2073,7 @@ stableSpInSchur = (lambda) -> (
 stableOInSchurCache := new MutableHashTable
 
 stableOInSchur = (lambda) -> (
-     lam := toList lambda;
-     while #lam > 0 and lam#(-1) == 0 do lam = drop(lam, -1);
+     lam := stripTrailingZeros toList lambda;
      if stableOInSchurCache#?lam then return stableOInSchurCache#lam;
      acc := new MutableHashTable;
      acc#lam = 1;
@@ -2888,7 +2872,7 @@ specialize(RingElement, List) := opts -> (f, ranks) -> (
      R := ring f;
      if #ranks == 0 then return f;
      nTop := ranks#0;
-     g := if nTop === infinity or (class nTop === InfiniteNumber) then f
+     g := if class nTop === InfiniteNumber then f
 	  else specialize(f, nTop, opts);
      if #ranks == 1 then return g;
      -- recurse into coefficient ring
@@ -3381,7 +3365,7 @@ toRatGL(RingElement, SchurRing) := (f, T) -> (
 	  -- apply the Koike-Terada modification.
 	  iterateRatGLTerms(f, (alpha, beta, scalar) -> (
 		    nT := numgens T;
-		    if nT === infinity or (class nT === InfiniteNumber) then (
+		    if class nT === InfiniteNumber then (
 			 sc  := raw promote(scalar, T);
 			 rawRes = rawRes + sc * ratGLBasisRaw(T, alpha, beta);
 			 )
@@ -8618,9 +8602,20 @@ Description
   Text
 
     If {\tt f} already lives in a RatGL ring, it is re-embedded into
-    the target {\tt R} (and, if {\tt R} has finite rank, reduced by
-    the Sam--Snowden--Weyman drop rule: $s_{\alpha,\beta}$ vanishes in
-    GL(n) when $\ell(\alpha) + \ell(\beta) > n$).
+    the target {\tt R}.  When {\tt R} has finite rank $n$, a pair
+    $(\alpha,\beta)$ with $\ell(\alpha)+\ell(\beta) \leq n$ is
+    {\it admissible} and $s_{\alpha,\beta}$ is left unchanged;
+    otherwise the Koike--Terada modification rule is applied.  The
+    rule iteratively removes a border strip of length
+    $L = \ell(\alpha)+\ell(\beta)-n-1$ starting at the first box of
+    the last row, from both $\alpha$ and $\beta$, contributing a sign
+    $(-1)^{c(R_\alpha)+c(R_\beta)-1}$ per step (where $c(R)$ counts
+    the columns the strip occupies), until the result is admissible.
+    The character vanishes if at some step $L = 0$ or either
+    partition admits no border strip of the required length.
+
+    The admissible boundary case $\ell(\alpha)+\ell(\beta) = n+1$
+    therefore always vanishes ($L = 0$):
 
   Example
     S = schurRing(QQ, getSymbol "sStab", infinity, GroupActing => "RatGL");
@@ -8628,17 +8623,42 @@ Description
     toRatGL(sStab_{{1,1},{1,1}} + sStab_{{1},{1}}, T)
   Text
 
-    A more striking example of the SSW drop: embedding the stable
-    bipartitions $((2,1),(\,))$, $((1,1,1),(\,))$, and $((1),(1,1))$
-    into a finite-rank $GL(2)$ rational ring keeps the first and
-    kills the last two, because $\ell(\alpha) + \ell(\beta) > 2$ in
-    those cases:
+    Embedding the stable bipartitions $((2,1),(\,))$,
+    $((1,1,1),(\,))$, and $((1),(1,1))$ into a finite-rank $GL(2)$
+    rational ring keeps the first and kills the last two.  The first
+    is admissible; the other two hit the boundary
+    $\ell(\alpha)+\ell(\beta) = n+1 = 3$ so $L = 0$:
 
   Example
     Tfin2 = schurRing(QQ, getSymbol "sFin2", 2, GroupActing => "RatGL");
     toRatGL(sStab_{{2,1},{}}, Tfin2)
     toRatGL(sStab_{{1,1,1},{}}, Tfin2)
     toRatGL(sStab_{{1},{1,1}}, Tfin2)
+  Text
+
+    When $\ell(\alpha)+\ell(\beta) > n+1$ the rule is genuinely
+    non-trivial and can produce a non-zero modified bipartition
+    with a sign.  For instance, at $GL(3)$ with
+    $\alpha = (4,3,2,2)$ and $\beta = (5,2,2,1,1)$ the rule removes
+    a border strip of length $5$ from each partition, leaving
+    $(4,1,1)$ and $(5,1)$; a further pass (now with $L=1$) strips
+    one box from each, giving $(4,1)$ and $(5)$ with an overall
+    sign of $-1$:
+
+  Example
+    Tfin3 = schurRing(QQ, getSymbol "sFin3", 3, GroupActing => "RatGL");
+    toRatGL(sStab_{{4,3,2,2},{5,2,2,1,1}}, Tfin3)
+
+  Text
+
+    Another non-trivial example at $GL(4)$: the columns
+    $(1^3,1^3)$ satisfy $\ell(\alpha)+\ell(\beta) = 6 > n+1 = 5$,
+    so one border strip of length $L = 1$ is removed from each,
+    producing $(1^2,1^2)$ with an overall sign of $-1$:
+
+  Example
+    Tfin4 = schurRing(QQ, getSymbol "sFin4", 4, GroupActing => "RatGL");
+    toRatGL(sStab_{{1,1,1},{1,1,1}}, Tfin4)
 SeeAlso
   schurRing
   specialize
@@ -10263,10 +10283,22 @@ expectedProd = (sRat_{{2},{2}} + sRat_{{2},{1,1}} + sRat_{{1,1},{2}}
      + sRat_{{1,1},{1,1}} + 2*sRat_{{1},{1}} + sRat_{{},{}});
 assert(prod == expectedProd);
 
--- SSW drop rule: ell(alpha) + ell(beta) > n specializes to 0.
+-- Koike-Terada boundary case: when ell(alpha) + ell(beta) = n+1 the
+-- border-strip length L = ell(alpha)+ell(beta)-n-1 is zero, so the
+-- character specializes to 0.
 assert(specialize(sRat_{{1,1},{1,1}}, 3) == 0);
 assert(specialize(sRat_{{2},{1}},     1) == 0);
 assert(specialize(sRat_{{1},{1}},     1) == 0);
+
+-- Non-trivial modification: at GL(3), alpha=(4,3,2,2), beta=(5,2,2,1,1)
+-- has ell+ell=9 > n+1=4, and the Koike-Terada rule reduces it by two
+-- border-strip passes to the admissible pair ((4,1),(5)) with sign -1.
+Tfin3 = schurRing(QQ, getSymbol "tFin3", 3, GroupActing => "RatGL");
+assert(toRatGL(sRat_{{4,3,2,2},{5,2,2,1,1}}, Tfin3) == -tFin3_{{4,1},{5}});
+-- Another non-trivial pass: at GL(4) the column bipartition (1^3,1^3)
+-- drops to (1^2,1^2) with sign -1 (one border-strip step of length 1).
+Tfin4 = schurRing(QQ, getSymbol "tFin4", 4, GroupActing => "RatGL");
+assert(toRatGL(sRat_{{1,1,1},{1,1,1}}, Tfin4) == -tFin4_{{1,1},{1,1}});
 
 -- Ring-homomorphism property of specialize.
 a = sRat_{{2,1},{1}};
@@ -10290,8 +10322,9 @@ assert(dim(uRat_{{1},{1}})  == 8);  -- adjoint (trace-free part of V tensor V*)
 assert(dim(uRat_{{2},{}})   == 6);  -- Sym^2 V
 assert(dim(uRat_{{1,1},{}}) == 3);  -- Alt^2 V
 
--- Adjoint squared at GL(3): dimensions total 64 = 8^2, and chi_{(1,1),(1,1)}
--- must be dropped (SSW: ell sum 4 > 3) -- so it does not appear in the expansion.
+-- Adjoint squared at GL(3): dimensions total 64 = 8^2.  chi_{(1,1),(1,1)}
+-- hits the Koike-Terada boundary (ell sum 4 = n+1 = 4, so L = 0) and
+-- vanishes in the expansion.
 adj = uRat_{{1},{1}};
 adj2 = adj^2;
 assert(dim adj2 == 64);
