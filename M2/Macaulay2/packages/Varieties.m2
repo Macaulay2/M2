@@ -35,9 +35,6 @@ newPackage(
 	{   Name => "Keller VandeBogert",
 	    Email => "keller.v@uky.edu",
 	    HomePage => "https://sites.google.com/view/kellervandebogert/home"},
-	{   Name => "John Cobb",
-	    Email => "jdcobb3@gmail.com",
-	    HomePage => "https://johndcobb.github.io"}
 	},
     PackageExports => {
 	"Saturation",
@@ -449,6 +446,7 @@ Node
     @HREF{"https://aimath.org", "American Institute of Mathematics"}@ in September 2023.
     In 2026, most functions were revised to work for subvarieties of weighted projective stacks.
   Contributors
+    @HREF("https://johndcobb.github.io/", "John Cobb")@ and
     @HREF("https://academicweb.nd.edu/~craicu/", "Claudiu Raicu")@ contributed to the development of this package.
   SeeAlso
     "varieties"
