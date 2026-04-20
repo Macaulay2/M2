@@ -267,7 +267,7 @@ document {
 	  " rays C"
 	  },
      
-     PARA{}, "See also",TO "Working with cones","."
+     PARA{}, "See also ",TO "Working with cones","."
      
      }
 
@@ -1550,8 +1550,8 @@ document {
      
      PARA{}, TT "faces"," computes the faces of codimension ",TT "k"," of the given ",TO Cone," 
      or ",TO Polyhedron,", where ",TT "k"," must be between 0 and the dimension of the second 
-     argument. The faces will be of the same class as the original convex object. If the parameter",
-     TT "k","is omitted,", TT "faces"," will return a ",TT "HashTable"," containing the faces
+     argument. The faces will be of the same class as the original convex object. If the parameter ",
+     TT "k"," is omitted, ", TT "faces"," will return a ",TT "HashTable"," containing the faces
      with the codimensions as keys.",
      
      PARA{}, "For example, we can look at the edges of the cyclicPolytope with 5 vertices in 3 space",
