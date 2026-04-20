@@ -16,8 +16,4 @@ doc ///
     Example
       polylog_2 1
       zeta 2
-    Text
-      The polylogarithm is also available using the synonym @M2CODE "Li"@.
-    Example
-      Li_2 1
 ///
