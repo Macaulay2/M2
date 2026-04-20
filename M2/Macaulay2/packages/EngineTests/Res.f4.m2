@@ -571,11 +571,13 @@ TEST ///
 
 TEST ///
   -- this is a small-ish example used to get the logic of matrix building right
+  needsPackage "Complexes"
   setRandomSeed 0
   kk = ZZ/101
   R = kk[vars(0..3)]
   I = ideal fromDual random(R^1, R^{-3});
-  C = res(I, Strategy => Nonminimal)
+  minimalBetti I
+  C = res(I, Strategy => Nonminimal) -- WRONG!! if minimalBetti is done first...!
   betti(C, Minimize => true)  
 
   I = ideal(I_*)
@@ -583,11 +585,12 @@ TEST ///
 ----  assert(betti(C,Minimize=>true) != betti(C1,Minimize=>true)) -- totally non-minimal, so maybe it did do something. ACTUALLY: returns without doing ranks
   betti C1
   elapsedTime C2 = res(I, Strategy => Nonminimal)
-  betti C2 == betti C
+  assert(betti C2 == betti C)
   assert(C.dd^2 == 0)
   assert(isHomogeneous C)
   C1 = betti res ideal(I_*)
   assert(betti(C,Minimize=>true) == betti(C1,Minimize=>true))
+  minimalBetti I -- wrong!!
   assert(minimalBetti I == betti C1)  -- BUG??
 ///
 

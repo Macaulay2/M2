@@ -156,6 +156,9 @@ load "./Complexes/PruneComplex.m2"
 if isPackageLoaded "OldChainComplexes" then
   load "./OldChainComplexes/conversion.m2"
 
+koszul Matrix := Complex => m -> koszulComplex m
+eagonNorthcott Matrix := Complex => m -> eagonNorthcottComplex m
+
 --------------------------------------------------------------------
 -- package documentation -------------------------------------------
 --------------------------------------------------------------------
