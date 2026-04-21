@@ -372,18 +372,18 @@ hh(ZZ, SumOfTwistsComplex) := Sequence => opts -> (cohodeg, sumoftwists) -> (
 	positiveseries, "plus cohomology as a series in U = T^(-1):", negativeseries))
 
 
-extOptions = new OptionTable from {
-    Degree => 0
-    }
+-- extOptions = new OptionTable from {
+--     Degree => 0
+--     }
 
--- Modeled on hh, defined as a ScriptedFunctor in Functors.m2.
-ext = new ScriptedFunctor from {
-    superscript => i -> new ScriptedFunctor from {
-	-- ext^i(C, D), ext^i(C, D(*)), and so on
-	argument => extOptions >> opts -> X -> applyMethodWithOpts''(ext, functorArgs(i, X), opts)
-	},
-    argument => extOptions >> opts -> X -> applyMethodWithOpts''(ext, X, opts)
-    }
+-- -- Modeled on hh, defined as a ScriptedFunctor in Functors.m2.
+-- ext = new ScriptedFunctor from {
+--     superscript => i -> new ScriptedFunctor from {
+-- 	-- ext^i(C, D), ext^i(C, D(*)), and so on
+-- 	argument => extOptions >> opts -> X -> applyMethodWithOpts''(ext, functorArgs(i, X), opts)
+-- 	},
+--     argument => extOptions >> opts -> X -> applyMethodWithOpts''(ext, X, opts)
+--     }
 
 -- This function ext^i(C,D) computes the dimension of Ext^i_X(C,D).
 -- Here X is a closed subspace of a projective space, or more generally of a weighted projective space.
@@ -398,17 +398,17 @@ ext = new ScriptedFunctor from {
 -- The input complexes can also be complexes of graded R-modules,
 -- in which case they are interpreted as the associated complexes of coherent sheaves.
 --
-ext(ZZ, Complex, Complex) := Sequence => opts -> (cohodeg, C, D) -> (
-    M := module C;
-    N := module D;
-    R2 := ring M;
-    if ring N =!= R2 then error "for Ext, the two complexes should be defined on the same space";
-    lengthlimit := cohodeg+1+(max N)-(min M);
-    -- We need a free resolution of the complex M over R2 out to this length.
-    if lengthlimit <= 0 then 0 -- In this case, inspecting the proof shows that the output is zero.
-    else (
-	Mres := freeResolution(M, LengthLimit => lengthlimit);
-	hh^cohodeg(Hom(Mres,N))))
+-- ext(ZZ, Complex, Complex) := Sequence => opts -> (cohodeg, C, D) -> (
+--     M := module C;
+--     N := module D;
+--     R2 := ring M;
+--     if ring N =!= R2 then error "for Ext, the two complexes should be defined on the same space";
+--     lengthlimit := cohodeg+1+(max N)-(min M);
+--     -- We need a free resolution of the complex M over R2 out to this length.
+--     if lengthlimit <= 0 then 0 -- In this case, inspecting the proof shows that the output is zero.
+--     else (
+-- 	Mres := freeResolution(M, LengthLimit => lengthlimit);
+-- 	hh^cohodeg(Hom(Mres,N))))
 
 -*
 -- This function (usually called as ext^i(C,D,b1,b2)) computes the dimension of Ext^i_X(C,D(a)) for all integers a
@@ -458,30 +458,30 @@ ext(ZZ, Complex, Complex, ZZ, ZZ) := Sequence => opts -> (cohodeg, C, D, b1, b2)
 -- This function should be faster than computing the module Ext^i_X(C,D(>=b)), in most cases.
 -- Note that it is usually faster to work over Z/p for a prime number p <= 32767, say ZZ/31991, rather than over Q.
 --
-ext(ZZ, Complex, SumOfTwistsComplex) := Sequence => opts -> (cohodeg, C, sumoftwists) -> (
-    -- Compute Ext^cohodeg_X(C,D(a)) for all integers a, as a sum of two Laurent series,
-    -- where C and D are complexes of sheaves on a closed subspace X of a weighted projective space.
-    D := sumoftwists#0; -- For an input of the form ext^i(C,D(>=b)), the number b is ignored.
-    M := module C;
-    N := module D;
-    R2 := ring M;
-    if ring N =!= R2 then error "for Ext, the two complexes should be defined on the same space";
-    lengthlimit := cohodeg+1+(max N)-(min M);
-    -- We need a free resolution of the complex M over R2 out to this length.
-    if lengthlimit <= 0 then ( -- In this case, inspecting the proof shows that the output is zero.
-	bottomdeg := infinity;
-	topdeg := -infinity;
-	positiveseries := 0;
-	negativeseries := 0)
-    else (
-	Mres := freeResolution(M, LengthLimit => lengthlimit);
-	output := hh^cohodeg((Hom(Mres,N))(*), opts);
-	bottomdeg = output_1;
-	topdeg = output_3;
-	positiveseries = output_5;
-	negativeseries = output_7);
-    ("The following is correct in all degrees. Bottom degree:", bottomdeg, "top degree:", topdeg, "Ext as a series in T:",
-	positiveseries, "plus Ext as a series in U = T^(-1):", negativeseries))
+-- ext(ZZ, Complex, SumOfTwistsComplex) := Sequence => opts -> (cohodeg, C, sumoftwists) -> (
+--     -- Compute Ext^cohodeg_X(C,D(a)) for all integers a, as a sum of two Laurent series,
+--     -- where C and D are complexes of sheaves on a closed subspace X of a weighted projective space.
+--     D := sumoftwists#0; -- For an input of the form ext^i(C,D(>=b)), the number b is ignored.
+--     M := module C;
+--     N := module D;
+--     R2 := ring M;
+--     if ring N =!= R2 then error "for Ext, the two complexes should be defined on the same space";
+--     lengthlimit := cohodeg+1+(max N)-(min M);
+--     -- We need a free resolution of the complex M over R2 out to this length.
+--     if lengthlimit <= 0 then ( -- In this case, inspecting the proof shows that the output is zero.
+-- 	bottomdeg := infinity;
+-- 	topdeg := -infinity;
+-- 	positiveseries := 0;
+-- 	negativeseries := 0)
+--     else (
+-- 	Mres := freeResolution(M, LengthLimit => lengthlimit);
+-- 	output := hh^cohodeg((Hom(Mres,N))(*), opts);
+-- 	bottomdeg = output_1;
+-- 	topdeg = output_3;
+-- 	positiveseries = output_5;
+-- 	negativeseries = output_7);
+--     ("The following is correct in all degrees. Bottom degree:", bottomdeg, "top degree:", topdeg, "Ext as a series in T:",
+-- 	positiveseries, "plus Ext as a series in U = T^(-1):", negativeseries))
 
 -----------------------------------------------------------------------------
 -- RHom and Ext

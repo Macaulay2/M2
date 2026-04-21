@@ -313,97 +313,97 @@ Node
     (cohomology, ZZ, SumOfTwists)
     (euler, CoherentSheaf)
 
-Node
-  Key
-    ext
-    (ext, ZZ, Complex, Complex)
-    (ext, ZZ, Complex, SumOfTwistsComplex)
-  Headline
-    dimension of an Ext group between complexes of sheaves on a projective variety
-  Description
-    Text
-      The command computes the dimension of the $i$-th global Ext group over @TT "X"@ from @TT "C"@ to @TT "D"@,
-      as a vector space over the coefficient field of @TT "X"@.
-      You can also compute the Ext group with all twists by the function
-      @TT "ext^i(C,D(*))"@, discussed below.
-    Text
-      The complexes @TT "C"@ and @TT "D"@ must be defined over the same space @TT "X"@.
-      Here @TT "X"@ may be a closed subspace of a projective space, or more generally of a weighted projective space.
-      In the weighted case, @TT "X"@ is viewed as an algebraic stack when that makes a difference.
-      In particular, twists are interpreted by tensoring with the line bundles $O(j)$ on the stack.
-    Text
-      The base ring should be a field. Note that it is usually faster
-      to work over $\mathbb{Z}/p$ for a prime number $p \leq 32767$, say @TT "ZZ/31991"@, rather than over @TT "QQ"@.
-  Synopsis
-    Usage
-      ext^i(C,D)
-    Inputs
-      i:ZZ
-      C:Complex
-      D:Complex
-        on a ProjectiveVariety @TT "X"@
-    Outputs
-      :ZZ
-        dimension of the $i$-th Ext group from @TT "C"@ to @TT "D"@ over @TT "X"@
-    Description
-      Text
-        For example, the following complex @TT "D"@ of sheaves on $\mathbb{P}^2$ is isomorphic in the derived category
-        to the direct image of the sheaf of regular functions on $\mathbb{P}^1$; so they have the same cohomology,
-	with all twists. We can also view cohomology as Ext from the sheaf of regular functions.
-      Example
-        R = ZZ/31991[x,y,z];
-        PP2 = Proj R;
-        M1 = R(-1); M0 = R(0);
-        C = sheaf complex M0
-        D = sheaf complex map(M0, M1, matrix(R, {{x}}))
-        ext^0(C,D(5))
-        hh^0(D(5))
-        PP1 = Proj(R/(x));
-        hh^0(OO_PP1(5))
-  Synopsis
-    Usage
-      ext^i(C,D(*))
-        dimension of Ext between complexes of sheaves over a projective variety, with all twists
-    Inputs
-      i:ZZ
-      C:Complex
-      D(*):SumOfTwistsComplex
-    Outputs
-      :Sequence
-    Description
-      Text
-        The command computes the dimension of the $i$th global Ext group over @TT "X"@ from @TT "C"@
-        to the twist $D(j)=D\otimes O_X(j)$ 
-        for every integer $j$,
-        as a vector space over the coefficient field of @TT "X"@. The algorithm is based on local duality.
-      Text
-        The output describes the formal series $\sum_{j\in\mathbb{Z}} \text{dim}_k Ext^i_X(C,D(j))T^j$ by a sequence consisting of
-        some text explanation, and also:
-        the infimum of the weights j such that $Ext^i_X(C,D(j))$ is not zero (possibly $-\infty$ or,
-        if the cohomology is zero in all weights, $\infty$) as entry 1, the supremum of such weights (entry 3),
-        a rational function in $T$ (entry 5), and a rational function in $U = T^{-1}$ (entry 7),
-        such that the sum of the latter two functions
-        as Laurent series is $\sum_{j\in\mathbb{Z}} \text{dim}_k Ext^i_X(C, D(j)) T^j$. (The two functions do not overlap,
-        as formal series in T.)
-      Text
-        For example, the following complex @TT "D"@ of sheaves on $\mathbb{P}^2$ is isomorphic in the derived category
-        to the direct image of the sheaf of regular functions on $\mathbb{P}^1$; so they have the same cohomology.
-        We can also view cohomology as Ext from the sheaf of regular functions.
-      Example
-        R = ZZ/31991[x,y,z];
-        PP2 = Proj R;
-        M1 = R(-1); M0 = R(0);
-        C = sheaf complex M0
-        D = sheaf complex map(M0, M1, matrix(R, {{x}}))
-        ext^0(C,D(*))
-        hh^0(D(*))
-        PP1 = Proj(R/(x));
-        hh^0(OO_PP1(*))
-  SeeAlso
-    (hh, ZZ, Complex)
-    (hh, ZZ, SumOfTwistsComplex)
-    (cohomology, ZZ, SumOfTwists)
-    (euler, Complex)
+-- Node
+--   Key
+--     ext
+--     (ext, ZZ, Complex, Complex)
+--     (ext, ZZ, Complex, SumOfTwistsComplex)
+--   Headline
+--     dimension of an Ext group between complexes of sheaves on a projective variety
+--   Description
+--     Text
+--       The command computes the dimension of the $i$-th global Ext group over @TT "X"@ from @TT "C"@ to @TT "D"@,
+--       as a vector space over the coefficient field of @TT "X"@.
+--       You can also compute the Ext group with all twists by the function
+--       @TT "ext^i(C,D(*))"@, discussed below.
+--     Text
+--       The complexes @TT "C"@ and @TT "D"@ must be defined over the same space @TT "X"@.
+--       Here @TT "X"@ may be a closed subspace of a projective space, or more generally of a weighted projective space.
+--       In the weighted case, @TT "X"@ is viewed as an algebraic stack when that makes a difference.
+--       In particular, twists are interpreted by tensoring with the line bundles $O(j)$ on the stack.
+--     Text
+--       The base ring should be a field. Note that it is usually faster
+--       to work over $\mathbb{Z}/p$ for a prime number $p \leq 32767$, say @TT "ZZ/31991"@, rather than over @TT "QQ"@.
+--   Synopsis
+--     Usage
+--       ext^i(C,D)
+--     Inputs
+--       i:ZZ
+--       C:Complex
+--       D:Complex
+--         on a ProjectiveVariety @TT "X"@
+--     Outputs
+--       :ZZ
+--         dimension of the $i$-th Ext group from @TT "C"@ to @TT "D"@ over @TT "X"@
+--     Description
+--       Text
+--         For example, the following complex @TT "D"@ of sheaves on $\mathbb{P}^2$ is isomorphic in the derived category
+--         to the direct image of the sheaf of regular functions on $\mathbb{P}^1$; so they have the same cohomology,
+-- 	with all twists. We can also view cohomology as Ext from the sheaf of regular functions.
+--       Example
+--         R = ZZ/31991[x,y,z];
+--         PP2 = Proj R;
+--         M1 = R(-1); M0 = R(0);
+--         C = sheaf complex M0
+--         D = sheaf complex map(M0, M1, matrix(R, {{x}}))
+--         ext^0(C,D(5))
+--         hh^0(D(5))
+--         PP1 = Proj(R/(x));
+--         hh^0(OO_PP1(5))
+--   Synopsis
+--     Usage
+--       ext^i(C,D(*))
+--         dimension of Ext between complexes of sheaves over a projective variety, with all twists
+--     Inputs
+--       i:ZZ
+--       C:Complex
+--       D(*):SumOfTwistsComplex
+--     Outputs
+--       :Sequence
+--     Description
+--       Text
+--         The command computes the dimension of the $i$th global Ext group over @TT "X"@ from @TT "C"@
+--         to the twist $D(j)=D\otimes O_X(j)$ 
+--         for every integer $j$,
+--         as a vector space over the coefficient field of @TT "X"@. The algorithm is based on local duality.
+--       Text
+--         The output describes the formal series $\sum_{j\in\mathbb{Z}} \text{dim}_k Ext^i_X(C,D(j))T^j$ by a sequence consisting of
+--         some text explanation, and also:
+--         the infimum of the weights j such that $Ext^i_X(C,D(j))$ is not zero (possibly $-\infty$ or,
+--         if the cohomology is zero in all weights, $\infty$) as entry 1, the supremum of such weights (entry 3),
+--         a rational function in $T$ (entry 5), and a rational function in $U = T^{-1}$ (entry 7),
+--         such that the sum of the latter two functions
+--         as Laurent series is $\sum_{j\in\mathbb{Z}} \text{dim}_k Ext^i_X(C, D(j)) T^j$. (The two functions do not overlap,
+--         as formal series in T.)
+--       Text
+--         For example, the following complex @TT "D"@ of sheaves on $\mathbb{P}^2$ is isomorphic in the derived category
+--         to the direct image of the sheaf of regular functions on $\mathbb{P}^1$; so they have the same cohomology.
+--         We can also view cohomology as Ext from the sheaf of regular functions.
+--       Example
+--         R = ZZ/31991[x,y,z];
+--         PP2 = Proj R;
+--         M1 = R(-1); M0 = R(0);
+--         C = sheaf complex M0
+--         D = sheaf complex map(M0, M1, matrix(R, {{x}}))
+--         ext^0(C,D(*))
+--         hh^0(D(*))
+--         PP1 = Proj(R/(x));
+--         hh^0(OO_PP1(*))
+--   SeeAlso
+--     (hh, ZZ, Complex)
+--     (hh, ZZ, SumOfTwistsComplex)
+--     (cohomology, ZZ, SumOfTwists)
+--     (euler, Complex)
 ///
 
 document {

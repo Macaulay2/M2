@@ -83,7 +83,7 @@ export {
     "currentModuleBaseRing",
     -- Functors
     "hh", -- TODO: should this be defined in Core?
-    "ext",
+    -- "ext", -- temporarily commented
     "OO",
     -- Symbols
     "GlobalSectionLimit",
