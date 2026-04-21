@@ -84,7 +84,7 @@ importFrom_Core {
     "toString'", "expressionValue", "unhold", -- TODO: prune these
     "concatBlocks", "concatCols", "concatRows",
     "addHook", "tryHooks", "cacheHooks",
-    "flattenModule", "flattenMorphism",
+    "liftModule", "liftMorphism",
     "isMorphism", "isAbelianCategory",
     "BinaryPowerMethod",
     }
@@ -492,6 +492,10 @@ checkVariety := (X, F) -> (
     if not X === variety F     then error "expected coherent sheaf over the same variety";
     if not isAffineRing ring X then error "expected a variety defined over a field";
     )
+
+-- these synonyms are added to avoid a merge conflict
+flattenModule   = liftModule
+flattenMorphism = liftMorphism
 
 -- pushforward the complex to PP^n via S/I <-- S
 -- TODO: move to Complexes?

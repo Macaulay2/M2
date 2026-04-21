@@ -241,10 +241,10 @@ addHook((kernel, Matrix), Strategy => "PushForward",
 -- this is used for instance before computing pdim
 -- or regularity of a module over a quotient ring.
 -- cf. https://github.com/Macaulay2/M2/issues/3321
-flattenModule   = M -> cokernel flattenMorphism presentation M
--- TODO: find a name that can't be confused with flatness.
--- Currently this is simply named after flattenRing.
-flattenMorphism = f -> f.cache#"flattenMorphism" ??= (
+-- and https://github.com/Macaulay2/M2/issues/3656
+-- TODO: can we lift generators and relations and avoid presentation?
+liftModule   = M -> cokernel liftMorphism presentation M
+liftMorphism = f -> f.cache#"liftMorphism" ??= (
     g := presentation ring f;
     S := ring g;
     -- TODO: sometimes lifting to ring g is enough, how can we detect this?

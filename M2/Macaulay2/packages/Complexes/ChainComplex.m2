@@ -633,16 +633,18 @@ betti Complex := opts -> C -> (
         )
     )
 
-pdim Module := M -> length freeResolution flattenModule minimalPresentation M
+-- TODO: should this report infinity in some cases?
+-- c.f. https://github.com/Macaulay2/M2/issues/3656
+pdim Module := M -> length freeResolution liftModule minimalPresentation M
 
 regularity Ideal  := opts -> I -> (
     if I == 0 then -infinity else if I == 1 then 0
-    else 1 + regularity betti(freeResolution flattenModule comodule I, opts))
+    else 1 + regularity betti(freeResolution liftModule comodule I, opts))
 
 -- cf. https://github.com/Macaulay2/M2/issues/3321
 regularity Module := opts -> M -> (
     if not isHomogeneous M then error "regularity: expected homogeneous module";
-    regularity betti(freeResolution flattenModule minimalPresentation M, opts))
+    regularity betti(freeResolution liftModule minimalPresentation M, opts))
 
 regularity Complex := opts -> C -> (
     if numgens degreesRing ring C =!= 1 then 
