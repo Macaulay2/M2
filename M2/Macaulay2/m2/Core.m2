@@ -188,7 +188,6 @@ Core#"package prefix" = prefixDirectory
 
 Core#"preloaded packages" = nonnull {
     "Classic",
-    "Complexes",
     "ConwayPolynomials",
     "Elimination",
     "IntegralClosure",
