@@ -54,9 +54,9 @@ document {
     in a weighted projective 3-space. The surface X4 is smooth as a stack, defined by an equation
     of degree 42; so its canonical line bundle is O_(X4)(42-21-14-6-1)=O_(X4). Its coarse moduli space Y has three singular points,
     which are du Val singularities of types A_1, A_2, and A_6.
-    The minimal resolution of Y is a K3 surface, which has Hodge number h^(1,1) = 20, whereas X4
-    has h^(1,1) equal to 20 - 1 - 2 - 6 = 11. This also computes h^(1,1)(Y), if we interpret that as h^1 of the sheaf
-    of reflexive differentials on Y.",
+    The minimal resolution of Y is a K3 surface, which has Hodge number h^(1,1) = 20, whereas the stack X4
+    has h^(1,1) equal to 20 - 1 - 2 - 6 = 11. This also computes h^(1,1) of the coarse moduli space Y,
+    if we interpret that as h^1 of the sheaf of reflexive differentials on Y.",
     EXAMPLE {
 	"R3=ZZ/31991[x,y,z,w,Degrees=>{21,14,6,1}];",
 	"R4=R3/(x^2+y^3+z^7+w^42);",
@@ -1023,7 +1023,7 @@ Node
       one might want to consider the full cotangent complex of $X$,
       or at least its truncation to degrees $\geq -1$ rather than $\geq 0$.
     Example
-      X1 = WP(ZZ/5,1,3,5);
+      X1 = ProjectiveStack_(ZZ/5)(1,3,5);
       C1 = naiveCotangentComplex X1;
       S0 = sheaf HH^0 C1; -- Note that C1 is a complex of modules, whereas the associated complex of sheaves is really what we want.
       S1 = sheaf HH^1 C1;
@@ -1081,7 +1081,7 @@ Node
       @TT "naiveCotangentComplex (m, X)"@ should be considered as more natural
       than its cohomology sheaf in degree 0.
     Example
-      X1 = WP(ZZ/5,1,3,5);
+      X1 = ProjectiveStack_(ZZ/5)(1,3,5);
       C1 = naiveCotangentComplex(1, X1);
       S0 = sheaf HH^0 C1; -- Note that C1 is a complex of modules, whereas the associated complex of sheaves is really what we want.
       S1 = sheaf HH^1 C1;
