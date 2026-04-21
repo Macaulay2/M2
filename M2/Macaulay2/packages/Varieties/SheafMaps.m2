@@ -764,16 +764,8 @@ SheafMap _ Array := SheafMap => (f,v) -> f * (source f)_v
 SheafMap ^ Array := SheafMap => (f,v) -> (target f)^v * f
 
 -----------------------------------------------------------------------------
--- Common maps and complexes of sheaves
+-- Common maps of sheaves
 -----------------------------------------------------------------------------
-
--- TODO: Beilinson resolution of the diagonal for PP^n
-
-eulerSequence = method()
-eulerSequence ProjectiveVariety := Complex => X -> (
-    -- Given a projective variety X \subset PP^n, returns the two maps
-    -- 0 <-- OO_X^1 <-- OO_X^(n+1)(-1) <-- Omega_PP^n|X <-- 0
-    complex { sheaf_X vars(S := ring X), sheaf_X inducedMap(source vars S, ker vars S) })
 
 cotangentSurjection = method()
 cotangentSurjection ProjectiveVariety := SheafMap => X -> X.cache.cotangentSurjection ??= (
@@ -786,28 +778,11 @@ cotangentSurjection ProjectiveVariety := SheafMap => X -> X.cache.cotangentSurje
     p := (sheaf inducedMap(coker relations module OmegaX, ambient module OmegaX)) * inducedMap(ambient OmegaPX, OmegaPX);
     inducedMap(image p, source p))
 
-cotangentSequence = method();
-cotangentSequence ProjectiveVariety := Complex => X -> (
-    p := cotangentSurjection X;
-    i := inducedMap(source p, ker p);
-    complex {p, i}
-    )
-
 embeddedToAbstract = method()
-embeddedToAbstract(ProjectiveVariety) := Matrix => X -> X.cache.embeddedToAbstract ??= (
+embeddedToAbstract ProjectiveVariety := Matrix => X -> X.cache.embeddedToAbstract ??= (
      g := dual cotangentSurjection X;
      h := inducedMap(coker g, target g);
      connectingExtMap(0, OO_X^1, h, LengthLimit => 2))
-
-idealSheafSequence = method()
-idealSheafSequence ProjectiveVariety := Complex => X -> (
-    -- Given a projective variety X \subset PP^n, returns the sequence
-    -- 0 -> I_X -> OO_P -> OO_P/I_X -> 0
-    IX := idealSheaf(X);
-    i := inducedMap(ambient IX, IX);
-    p := inducedMap(coker i, ambient IX);
-    complex {p, i}
-    )
 
 -----------------------------------------------------------------------------
 -- Development

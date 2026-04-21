@@ -583,6 +583,33 @@ cohomology(ZZ, ProjectiveVariety, Complex) := Complex => opts -> (p, X, C) -> (
 euler Complex := C -> sum(pairs C.module, (i, M) -> (-1)^i * euler M)
 
 -----------------------------------------------------------------------------
+-- Common complexes of sheaves
+-----------------------------------------------------------------------------
+
+-- TODO: Beilinson resolution of the diagonal for PP^n
+
+eulerSequence = method()
+eulerSequence ProjectiveVariety := Complex => X -> (
+    -- Given a projective variety X \subset PP^n, returns the two maps
+    -- 0 <-- OO_X^1 <-- OO_X^(n+1)(-1) <-- Omega_PP^n|X <-- 0
+    complex { sheaf_X vars(S := ring X), sheaf_X inducedMap(source vars S, ker vars S) })
+
+cotangentSequence = method();
+cotangentSequence ProjectiveVariety := Complex => X -> (
+    p := cotangentSurjection X;
+    i := inducedMap(source p, ker p);
+    complex {p, i})
+
+idealSheafSequence = method()
+idealSheafSequence ProjectiveVariety := Complex => X -> (
+    -- Given a projective variety X \subset PP^n, returns the sequence
+    -- 0 -> I_X -> OO_P -> OO_P/I_X -> 0
+    IX := idealSheaf(X);
+    i := inducedMap(ambient IX, IX);
+    p := inducedMap(coker i, ambient IX);
+    complex {p, i})
+
+-----------------------------------------------------------------------------
 -- naiveCotangentComplex
 -----------------------------------------------------------------------------
 
