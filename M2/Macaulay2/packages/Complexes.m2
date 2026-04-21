@@ -91,6 +91,7 @@ export {
 
 importFrom_Core {
     "isPackageLoaded",
+    "flattenModule", "flattenMorphism",
 
     -- Used in pruneComplex code
     "LocalRing",

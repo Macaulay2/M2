@@ -235,6 +235,22 @@ addHook((kernel, Matrix), Strategy => "PushForward",
 	M := coimage map(target m, f ** source m, raw m);
 	image pushNonLinear(options pushForward, f, M)))
 
+-----------------------------------------------------------------------------
+
+-- pushforward the module to PP^n via S/I <-- S
+-- this is used for instance before computing pdim
+-- or regularity of a module over a quotient ring.
+-- cf. https://github.com/Macaulay2/M2/issues/3321
+flattenModule   = M -> cokernel flattenMorphism presentation M
+-- TODO: find a name that can't be confused with flatness.
+-- Currently this is simply named after flattenRing.
+flattenMorphism = f -> f.cache#"flattenMorphism" ??= (
+    g := presentation ring f;
+    S := ring g;
+    -- TODO: sometimes lifting to ring g is enough, how can we detect this?
+    -- TODO: why doesn't lift(f, ring g) do this automatically?
+    map(target f ** S, source f ** S, lift(cover f, S)) ** cokernel g)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
