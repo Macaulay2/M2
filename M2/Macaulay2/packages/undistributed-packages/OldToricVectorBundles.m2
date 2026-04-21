@@ -552,13 +552,13 @@ cohomology(ZZ,ToricVectorBundle) := opts -> (i,T)-> (
 -- PURPOSE : Computing the rank of the cohomology group of a given ToricVectorBundle
 --   INPUT : '(i,T,u)',  'i' for the 'i'th cohomology group, 'T' a ToricVectorBundle and 'u' a weight vector
 --  OUTPUT : 'ZZ',	     the rank of the degree 'weight' part of the 'i'th cohomology group of the bundle
-hh(ZZ,ToricVectorBundle,Matrix) := (i,T,u) -> rank cohomology(i,T,u)
+hh(ZZ,ToricVectorBundle,Matrix) := opts -> (i,T,u) -> rank cohomology(i,T,u,opts)
 
 
 -- PURPOSE : Computing the rank of the cohomology group of a given ToricVectorBundle
 --   INPUT : '(i,T)',  'i' for the 'i'th cohomology group, 'T' a ToricVectorBundle
 --  OUTPUT : 'ZZ',  the rank of the 'i'th cohomology group
-hh(ZZ,ToricVectorBundle) := ZZ => (i,T) -> rank cohomology(i,T)
+hh(ZZ,ToricVectorBundle) := ZZ => opts -> (i,T) -> rank cohomology(i,T,opts)
 
 
 -- PURPOSE : Computing the coker bundle of a toric vector bundle
