@@ -563,25 +563,21 @@ leadTerm(Matrix) := Matrix => m -> (
 borel Matrix := Matrix => m -> generators borel monomialIdeal m
 
 clean(RR,Matrix) := (epsilon,M) -> map(target M, source M, clean(epsilon,raw M))
-norm(RR,Matrix) := (p,M) -> new RR from norm(p,raw M)
-norm(InfiniteNumber,Matrix) := (p,M) -> (
-     prec := precision M;
-     if prec === infinity then (
-	  error "expected a matrix over RR or CC";
-	  )
-     else (
-     	  norm(numeric(prec,p), M)
-	  )
-     )
-norm(Matrix) := (M) -> (
-     prec := precision M;
-     if prec === infinity then (
-	  error "expected a matrix over RR or CC";
-	  )
-     else (
-     	  norm(numeric(prec,infinity), M)
-	  )
-     )
+
+norm Matrix := norm_infinity
+norm(Number, Matrix) := (p, M) -> (
+    R := ring M;
+    if p == infinity then (
+	-- l^infty norm for RR and CC is implemented in the engine
+	if instance(R, RealField) or instance(R, ComplexField)
+	then (
+	    if precision p > precision R
+	    then p = numeric(precision R, infinity);
+	    new RR from norm(p, raw M))
+	else max apply(flatten entries M, norm))
+    else if isReal p and p >= 1
+    then (sum(flatten entries M, x -> (norm(p, x))^p))^(1/p)
+    else error "expected p >= 1")
 
 numRows Matrix := M -> numgens cover target M
 numColumns Matrix := M -> numgens cover source M

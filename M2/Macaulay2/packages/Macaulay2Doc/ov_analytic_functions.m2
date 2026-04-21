@@ -512,34 +512,57 @@ document { Key => {isANumber, (isANumber,Number)},
      SeeAlso => {isFinite, isInfinite}
      }
 
-document {
-     Key => {norm,
-	  (norm, InfiniteNumber, Matrix),(norm, Matrix),(norm, RR, Matrix),(norm, InfiniteNumber, RingElement),(norm, MutableMatrix),
-	  (norm, RingElement),(norm, InexactField, MutableMatrix),(norm, RR, MutableMatrix),(norm, RR, RingElement),
-	  (norm,List),(norm,Vector),(norm,Number),(norm,RR,Number),(norm,InfiniteNumber,Number)
-	  },
-     Usage => "norm M\nnorm(p,M)",
-     Inputs => {
-	  "M"=>{ofClass{MutableMatrix,Matrix,RingElement,Number,Vector,List}},
-	  "p"=>{ofClass{RR,InfiniteNumber}, ", specifying which norm to compute.  Currently, only ", TT "p=infinity", " is accepted."}
-	  },
-     Outputs => {TEX{"the $L^p$-norm of ", TT "M", " computed to the minimum of the precisions of ", TT "M", " and of ", TT "p",
-	       "."}},
-     EXAMPLE lines ///
-	  printingPrecision = 2
-	  R = RR_100
-	  M = 10*random(R^3,R^10)
-	  norm M
-	  norm_(numeric_20 infinity) M
-	  norm {3/2,4,-5}
-	  ///,
-     "The norm of a polynomial is the norm of the vector of its coefficients.",
-     EXAMPLE lines ///
-	  RR[x]
-	  (1+x)^5
-	  norm oo
-	  ///
-     }
+doc ///
+  Key
+    norm
+    (norm,List)
+    (norm,Matrix)
+    (norm,MutableMatrix)
+    (norm,Number)
+    (norm,Number,List)
+    (norm,Number,Matrix)
+    (norm,Number,MutableMatrix)
+    (norm,Number,Number)
+    (norm,Number,RingElement)
+    (norm,Number,Vector)
+    (norm,RingElement)
+    (norm,Vector)
+  Headline
+    l^p norm
+  Usage
+    norm M
+    norm(p, M)
+  Inputs
+    p:Number -- specifying which norm to compute
+    M:{List, Matrix, MutableMatrix, Number, RingElement, Vector}
+  Outputs
+    :Number
+      The $\ell^p$-norm of @VAR "M"@, computed to the minimum of the precisions
+      of @VAR "M"@ and @VAR "p"@.
+  Description
+    Text
+      By default, the $\ell^\infty$ norm giving the maximum absolute entry is returned.
+    Example
+      printingPrecision = 2
+      R = RR_100
+      M = 10*random(R^3,R^10)
+      norm M
+      norm_(numeric_20 infinity) M
+      norm {3/2,4,-5}
+    Text
+      For finite $p$, the $\ell^p$ norm
+      $$\|M\|_p = \left(\sum_{i,j} |M_{ij}|^p\right)^{1/p}$$
+      is returned.  For example, when $p = 2$, this is the Frobenius norm.
+    Example
+      M = matrix {{3, 4}, {12, 84}}
+      norm_2 M
+    Text
+      The norm of a polynomial is the norm of the vector of its coefficients.
+    Example
+      RR[x]
+      (1+x)^5
+      norm oo
+///
 
 document { Key => {commonRing, (commonRing,List)},
      Usage => "commonRing v",

@@ -376,13 +376,23 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 clean(RR,Number) := (epsilon,f) -> if abs f < epsilon then f-f else f
 clean(RR,RingElement) := (epsilon,f) -> new ring f from clean(epsilon,raw f)
 
-norm(List) := z -> max(abs\z)
-norm(RR,Number) := (p,z) -> p-p+abs z
-norm(RR,RingElement) := (p,f) -> new RR from norm(p,raw f)
-norm(InfiniteNumber,Number) := 
-norm(InfiniteNumber,RingElement) := (p,f) -> norm(numeric(precision f, p), f)
-norm(RingElement) := (f) -> norm(numeric(precision f,infinity), f)
-norm Number := abs
+norm List        :=
+norm Number      :=
+norm RingElement := norm_infinity
+norm(Number, List) := (p, z) -> norm(p, matrix {z})
+norm(Number, Number) := (p, z) -> abs z
+norm(Number, RingElement) := (p, f) -> (
+    R := ring f;
+    -- l^infinity norm for polynomials over RR or CC in engine
+    if p == infinity and any(R.baseRings,
+	S -> instance(S, RealField) or instance(S, ComplexField))
+    then (
+	if precision p > precision R
+	then p = numeric(precision R, infinity);
+	norm(p, raw f))
+    else (
+	(mons, coeffs) := coefficients f;
+	norm(p, lift(coeffs, coefficientRing R))))
 
 degreeLength Ring := R -> R.degreeLength
 
