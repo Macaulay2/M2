@@ -45,7 +45,7 @@ document {
 
  document {
      Key => (euler,Module),
-     Headline => "Euler characteristic of coherent sheaf",
+     Headline => "Euler characteristic of a coherent sheaf",
      Usage => "euler M",
      Inputs => {"M" => Module},
      Outputs => {ZZ},

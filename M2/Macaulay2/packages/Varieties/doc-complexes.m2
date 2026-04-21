@@ -206,44 +206,107 @@ Node
 Node
   Key
    (hh, ZZ, Complex)
+   (hh, ZZ, Complex, ZZ, ZZ)
+   (hh, ZZ, SumOfTwistsComplex)
   Headline
     dimension of the cohomology of a projective variety with coefficients in a complex of coherent sheaves
-  Usage
-    hh^i(C)
-  Inputs
-    i:ZZ
-    C:Complex
-      on a ProjectiveVariety @TT "X"@
-  Outputs
-    :ZZ
-      dimension of the $i$-th cohomology group of @TT "X"@ with coefficients in @TT "C"@
   Description
     Text
-      The command computes the dimension of the $i$-th cohomology group of @TT "X"@ with coefficients in @TT "C"@
-      (sometimes called "hypercohomology"),
-      as a vector space over the coefficient field of @TT "X"@.
-      If you want to compute cohomology with many twists, the functions @TO2{(hh,ZZ,Complex,ZZ,ZZ),"hh^i(C,b1,b2)"}@
-      or @TO2{(hh,ZZ,SumOfTwistsComplex),"hh^i(C(*))"}@ should be more convenient than running this program repeatedly.
+      The function @TT "hh^i(C)"@ computes the dimension of the $i$-th cohomology group of @TT "X"@
+      with coefficients in @TT "C"@ (sometimes called "hypercohomology"),
+      as a vector space over the coefficient field of @TT "X"@. You can also compute cohomology with twists
+      by the functions @TT "hh^i(C,b1,b2)"@ or @TT "hh^i(C(*))"@, discussed below.
     Text
       The base space @TT "X"@ of @TT "C"@ may be a closed subspace of a projective space,
       or more generally of a weighted projective space.
       In the weighted case, the distinction between @TT "X"@ as a stack and its associated coarse moduli space,
-      $e\colon X \to W$, does not matter for computing cohomology.
+      $e\colon X \to W$, does not matter for computing cohomology. Twists such as $C(j)$ are interpreted
+      by tensoring with the line bundle $O(j)$ on the stack.
     Text
       The base ring should be a field. Note that it is usually faster
       to work over $\mathbb{Z}/p$ for a prime number $p \leq 32767$, say @TT "ZZ/31991"@, rather than over @TT "QQ"@.
       Also, the Euler characteristic @TO2{(euler,Complex),"euler C"}@ is faster to compute.
-    Text
-      For example, the following complex @TT "C1"@ of sheaves on $\mathbb{P}^2$ is isomorphic in the derived category
-      to the direct image of the sheaf of regular functions on $\mathbb{P}^1$; so their twists have the same cohomology.
-    Example
-      R = ZZ/31991[x,y,z];
-      PP2 = Proj R;
-      M1 = R(-1); M0 = R(0);
-      C1 = sheaf complex map(M0, M1, matrix(R, {{x}}))
-      hh^0(C1(5))
-      PP1 = Proj(R/(x));
-      hh^0(OO_PP1(5))
+  Synopsis
+    Usage
+      hh^i(C)
+    Inputs
+      i:ZZ
+      C:Complex
+        on a ProjectiveVariety @TT "X"@
+    Outputs
+      :ZZ
+        dimension of the $i$-th cohomology group of @TT "X"@ with coefficients in @TT "C"@
+    Description
+      Text
+        For example, the following complex @TT "C1"@ of sheaves on $\mathbb{P}^2$ is isomorphic in the derived category
+        to the direct image of the sheaf of regular functions on $\mathbb{P}^1$; so their twists have the same cohomology.
+      Example
+        R = ZZ/31991[x,y,z];
+        PP2 = Proj R;
+        M1 = R(-1); M0 = R(0);
+        C1 = sheaf complex map(M0, M1, matrix(R, {{x}}))
+        hh^0(C1(5))
+        PP1 = Proj(R/(x));
+        hh^0(OO_PP1(5))
+  Synopsis
+    Usage
+      hh^i(C,b,c)
+        dimension of the $i$-th cohomology of @TT "X"@ with coefficients in a complex of sheaves with a range of twists      
+    Inputs
+      i:ZZ
+      C:Complex
+        on a ProjectiveVariety $X$
+      b:ZZ
+      c:ZZ
+    Outputs
+      :RingElement
+        the Laurent polynomial $\sum_{j=b}^c h^i(X,C(j))T^j$, giving the dimensions of the $i$-th cohomology groups
+        of @TT "X"@ with coefficients in @TT "C(j)"@ for $j$ from $b$ to $c$
+    Description
+      Text
+        For example, the following complex @TT "C1"@ of sheaves on $\mathbb{P}^2$ is isomorphic in the derived category
+        to the direct image of the sheaf of regular functions on $\mathbb{P}^1$; so their twists have the same cohomology.
+      Example
+        R = ZZ/31991[x,y,z];
+        PP2 = Proj R;
+        M1 = R(-1); M0 = R(0);
+        C1 = sheaf complex map(M0, M1, matrix(R, {{x}}))
+        hh^0(C1,-5,5)
+        PP1 = Proj(R/(x));
+        hh^0(OO_PP1,-5,5)
+  Synopsis
+    Usage
+      hh^i(C(*))
+        dimension of cohomology of a projective variety with coefficients in a complex of sheaves with all twists    
+    Inputs
+      i:ZZ
+      C(*):SumOfTwistsComplex
+    Outputs
+      :Sequence
+        The output describes the formal series $\sum_{j\in\mathbb{Z}} h^i(X,C(j))T^j$ by a sequence consisting of
+        some text explanation, and also:
+        the infimum of the weights j such that $H^i(X,C(j))$ is not zero (possibly $-\infty$ or,
+        if the cohomology is zero in all weights, $\infty$) as entry 1, the supremum of such weights (entry 3),
+        a rational function in $T$ (entry 5), and a rational function in $U = T^{-1}$ (entry 7),
+        such that the sum of the latter two functions
+        as Laurent series is $\sum_{j\in\mathbb{Z}} h^i(X, C(j)) T^j$. (The two functions do not overlap,
+        as formal series in $T$.)
+    Description
+      Text
+        This command computes the dimension of the $i$th cohomology group of @TT "X"@ (sometimes called "hypercohomology")
+        with coefficients in the twist $C(j)=C\otimes O_X(j)$ 
+        for every integer $j$.
+      Text
+        For example, the following complex @TT "C1"@ of sheaves on $\mathbb{P}^2$ is isomorphic in the derived category
+        to the direct image of the sheaf of regular functions on $\mathbb{P}^1$; so their twists have the same cohomology.
+      Example
+        R = ZZ/31991[x,y,z];
+        PP2 = Proj R;
+        M1 = R(-1); M0 = R(0);
+        C1 = sheaf complex map(M0, M1, matrix(R, {{x}}))
+        hh^0(C1(*))
+        PP1 = Proj(R/(x));
+        hh^0(OO_PP1(*))
   SeeAlso
     (hh, ZZ, CoherentSheaf)
     (hh, ZZ, SumOfTwists)
@@ -252,141 +315,17 @@ Node
 
 Node
   Key
-   (hh, ZZ, Complex, ZZ, ZZ)
-  Headline
-    dimension of a projective variety with coefficients in a complex of sheaves with a range of twists
-  Usage
-    hh^i(C,b,c)
-  Inputs
-    i:ZZ
-    C:Complex
-      on a ProjectiveVariety $X$
-    b:ZZ
-    c:ZZ
-  Outputs
-    :RingElement
-      the Laurent polynomial $\sum_{j=b}^c h^i(X,C(j))T^j$, giving the dimensions of the $i$-th cohomology groups
-      of @TT "X"@ with coefficients in @TT "C(j)"@ for $j$ from $b$ to $c$
-  Description
-    Text
-      This function computes the dimension of the $i$-th cohomology group of @TT "X"@
-      (sometimes called "hypercohomology") with coefficients
-      in the twist $C(j)=C\otimes O_X(j)$
-      for each $j$ from $b$ to $c$,
-      as a vector space over the coefficient field of $X$.
-      In some cases, you may prefer the function @TO2{(hh,ZZ,SumOfTwistsComplex),"hh^i(C(*))"}@,
-      which computes the cohomology with all twists at once.
-    Text
-      The base space @TT "X"@ of @TT "C"@ may be a closed subspace of a projective space,
-      or more generally of a weighted projective space.
-      In the weighted case, the distinction between @TT "X"@ as a stack and its associated coarse moduli space,
-      $e\colon X \to W$, does not matter for computing cohomology.
-      Twists such as @TT "C(j)"@
-      are interpreted by tensoring with the line bundles $O(j)$ on the stack.
-    Text
-      The base ring should be a field. Note that it is usually faster
-      to work over $\mathbb{Z}/p$ for a prime number $p \leq 32767$, say @TT "ZZ/31991"@, rather than over @TT "QQ"@.
-    Text
-      The Euler characteristic @TO2{(euler,Complex),"euler C"}@
-      is faster to compute.
-    Text
-      For example, the following complex @TT "C1"@ of sheaves on $\mathbb{P}^2$ is isomorphic in the derived category
-      to the direct image of the sheaf of regular functions on $\mathbb{P}^1$; so they have the same cohomology.
-    Example
-      R = ZZ/31991[x,y,z];
-      PP2 = Proj R;
-      M1 = R(-1); M0 = R(0);
-      C1 = sheaf complex map(M0, M1, matrix(R, {{x}}))
-      hh^0(C1,-5,5)
-      PP1 = Proj(R/(x));
-      hh^0(OO_PP1,-5,5)
-  SeeAlso
-    (hh, ZZ, Complex)
-    (hh, ZZ, SumOfTwistsComplex)
-    (cohomology, ZZ, SumOfTwists)
-    (euler, CoherentSheaf)
-
-Node
-  Key
-   (hh, ZZ, SumOfTwistsComplex)
-  Headline
-    dimension of cohomology of a projective variety with coefficients in a complex of sheaves with all twists
-  Usage
-    hh^i(C(*))
-  Inputs
-    i:ZZ
-    C(*):SumOfTwistsComplex
-  Outputs
-    :Sequence
-      The output describes the formal series $\sum_{j\in\mathbb{Z}} h^i(X,C(j))T^j$ by a sequence consisting of
-      some text explanation, and also:
-      the infimum of the weights j such that $H^i(X,C(j))$ is not zero (possibly $-\infty$ or,
-      if the cohomology is zero in all weights, $\infty$) as entry 1, the supremum of such weights (entry 3),
-      a rational function in $T$ (entry 5), and a rational function in $U = T^{-1}$ (entry 7),
-      such that the sum of the latter two functions
-      as Laurent series is $\sum_{j\in\mathbb{Z}} h^i(X, C(j)) T^j$. (The two functions do not overlap,
-      as formal series in T.)
-  Description
-    Text
-      The command computes the dimension of the $i$th cohomology group of @TT "X"@ (sometimes called "hypercohomology")
-      with coefficients in the twist $C(j)=C\otimes O_X(j)$ 
-      for every integer $j$,
-      as a vector space over the coefficient field of @TT "X"@. The algorithm is based on local duality.
-      In some cases, you may prefer the function @TO2{(hh,ZZ,Complex,ZZ,ZZ),"hh^i(C,b,c)"}@,
-      which computes the cohomology with all twists from $b$ to $c$.
-    Text
-      The base space @TT "X"@ of @TT "C"@ may be a closed subspace of a projective space,
-      or more generally of a weighted projective space.
-      In the weighted case, the distinction between @TT "X"@ as a stack and its associated coarse moduli space,
-      $e\colon X \to W$, does not matter for computing cohomology.
-      Twists such as @TT "C(j)"@
-      are interpreted by tensoring with the line bundles $O(j)$ on the stack.
-    Text
-      The base ring should be a field. Note that it is usually faster
-      to work over $\mathbb{Z}/p$ for a prime number $p \leq 32767$, say @TT "ZZ/31991"@, rather than over @TT "QQ"@.
-    Text
-      Euler characteristics are faster to compute, for example by the function
-      @TO2{(euler,Complex),"euler C"}@.
-    Text
-      For example, the following complex @TT "C1"@ of sheaves on $\mathbb{P}^2$ is isomorphic in the derived category
-      to the direct image of the sheaf of regular functions on $\mathbb{P}^1$; so they have the same cohomology.
-    Example
-      R = ZZ/31991[x,y,z];
-      PP2 = Proj R;
-      M1 = R(-1); M0 = R(0);
-      C1 = sheaf complex map(M0, M1, matrix(R, {{x}}))
-      hh^0(C1(*))
-      PP1 = Proj(R/(x));
-      hh^0(OO_PP1(*))
-  SeeAlso
-    (hh, ZZ, Complex)
-    (hh, ZZ, Complex, ZZ, ZZ)
-    (hh, ZZ, SumOfTwists)
-    (cohomology, ZZ, SumOfTwists)
-
-Node
-  Key
     ext
     (ext, ZZ, Complex, Complex)
+    (ext, ZZ, Complex, SumOfTwistsComplex)
   Headline
     dimension of an Ext group between complexes of sheaves on a projective variety
-  Usage
-    ext^i(C,D)
-  Inputs
-    i:ZZ
-    C:Complex
-    D:Complex
-      on a ProjectiveVariety @TT "X"@
-  Outputs
-    :ZZ
-      dimension of the $i$-th Ext group from @TT "C"@ to @TT "D"@ over @TT "X"@
   Description
     Text
       The command computes the dimension of the $i$-th global Ext group over @TT "X"@ from @TT "C"@ to @TT "D"@,
       as a vector space over the coefficient field of @TT "X"@.
-      If you want to compute Ext with many twists, the function
-      @TO2{(ext,ZZ,Complex,SumOfTwistsComplex),"ext^i(C,D(*))"}@
-      should be more convenient than running this program repeatedly.
+      You can also compute the Ext group with all twists by the function
+      @TT "ext^i(C,D(*))"@, discussed below.
     Text
       The complexes @TT "C"@ and @TT "D"@ must be defined over the same space @TT "X"@.
       Here @TT "X"@ may be a closed subspace of a projective space, or more generally of a weighted projective space.
@@ -395,78 +334,74 @@ Node
     Text
       The base ring should be a field. Note that it is usually faster
       to work over $\mathbb{Z}/p$ for a prime number $p \leq 32767$, say @TT "ZZ/31991"@, rather than over @TT "QQ"@.
-    Text
-      For example, the following complex @TT "D"@ of sheaves on $\mathbb{P}^2$ is isomorphic in the derived category
-      to the direct image of the sheaf of regular functions on $\mathbb{P}^1$; so they have the same cohomology.
-      We can also view cohomology as Ext from the sheaf of regular functions.
-    Example
-      R = ZZ/31991[x,y,z];
-      PP2 = Proj R;
-      M1 = R(-1); M0 = R(0);
-      C = sheaf complex M0
-      D = sheaf complex map(M0, M1, matrix(R, {{x}}))
-      ext^0(C,D(5))
-      hh^0(D(5))
-      PP1 = Proj(R/(x));
-      hh^0(OO_PP1(5))
+  Synopsis
+    Usage
+      ext^i(C,D)
+    Inputs
+      i:ZZ
+      C:Complex
+      D:Complex
+        on a ProjectiveVariety @TT "X"@
+    Outputs
+      :ZZ
+        dimension of the $i$-th Ext group from @TT "C"@ to @TT "D"@ over @TT "X"@
+    Description
+      Text
+        For example, the following complex @TT "D"@ of sheaves on $\mathbb{P}^2$ is isomorphic in the derived category
+        to the direct image of the sheaf of regular functions on $\mathbb{P}^1$; so they have the same cohomology,
+	with all twists. We can also view cohomology as Ext from the sheaf of regular functions.
+      Example
+        R = ZZ/31991[x,y,z];
+        PP2 = Proj R;
+        M1 = R(-1); M0 = R(0);
+        C = sheaf complex M0
+        D = sheaf complex map(M0, M1, matrix(R, {{x}}))
+        ext^0(C,D(5))
+        hh^0(D(5))
+        PP1 = Proj(R/(x));
+        hh^0(OO_PP1(5))
+  Synopsis
+    Usage
+      ext^i(C,D(*))
+        dimension of Ext between complexes of sheaves over a projective variety, with all twists
+    Inputs
+      i:ZZ
+      C:Complex
+      D(*):SumOfTwistsComplex
+    Outputs
+      :Sequence
+    Description
+      Text
+        The command computes the dimension of the $i$th global Ext group over @TT "X"@ from @TT "C"@
+        to the twist $D(j)=D\otimes O_X(j)$ 
+        for every integer $j$,
+        as a vector space over the coefficient field of @TT "X"@. The algorithm is based on local duality.
+      Text
+        The output describes the formal series $\sum_{j\in\mathbb{Z}} \text{dim}_k Ext^i_X(C,D(j))T^j$ by a sequence consisting of
+        some text explanation, and also:
+        the infimum of the weights j such that $Ext^i_X(C,D(j))$ is not zero (possibly $-\infty$ or,
+        if the cohomology is zero in all weights, $\infty$) as entry 1, the supremum of such weights (entry 3),
+        a rational function in $T$ (entry 5), and a rational function in $U = T^{-1}$ (entry 7),
+        such that the sum of the latter two functions
+        as Laurent series is $\sum_{j\in\mathbb{Z}} \text{dim}_k Ext^i_X(C, D(j)) T^j$. (The two functions do not overlap,
+        as formal series in T.)
+      Text
+        For example, the following complex @TT "D"@ of sheaves on $\mathbb{P}^2$ is isomorphic in the derived category
+        to the direct image of the sheaf of regular functions on $\mathbb{P}^1$; so they have the same cohomology.
+        We can also view cohomology as Ext from the sheaf of regular functions.
+      Example
+        R = ZZ/31991[x,y,z];
+        PP2 = Proj R;
+        M1 = R(-1); M0 = R(0);
+        C = sheaf complex M0
+        D = sheaf complex map(M0, M1, matrix(R, {{x}}))
+        ext^0(C,D(*))
+        hh^0(D(*))
+        PP1 = Proj(R/(x));
+        hh^0(OO_PP1(*))
   SeeAlso
-    (ext, ZZ, Complex, SumOfTwistsComplex)
     (hh, ZZ, Complex)
-    (cohomology, ZZ, SumOfTwists)
-    (euler, Complex)
-
-Node
-  Key
-   (ext, ZZ, Complex, SumOfTwistsComplex)
-  Headline
-    dimension of Ext between complexes of sheaves over a projective variety, with all twists
-  Usage
-    ext^i(C,D(*))
-  Inputs
-    i:ZZ
-    C:Complex
-    D(*):SumOfTwistsComplex
-  Outputs
-    :Sequence
-      The output describes the formal series $\sum_{j\in\mathbb{Z}} \text{dim}_k Ext^i_X(C,D(j))T^j$ by a sequence consisting of
-      some text explanation, and also:
-      the infimum of the weights j such that $Ext^i_X(C,D(j))$ is not zero (possibly $-\infty$ or,
-      if the cohomology is zero in all weights, $\infty$) as entry 1, the supremum of such weights (entry 3),
-      a rational function in $T$ (entry 5), and a rational function in $U = T^{-1}$ (entry 7),
-      such that the sum of the latter two functions
-      as Laurent series is $\sum_{j\in\mathbb{Z}} \text{dim}_k Ext^i_X(C, D(j)) T^j$. (The two functions do not overlap,
-      as formal series in T.)
-  Description
-    Text
-      The command computes the dimension of the $i$th global Ext group over @TT "X"@ from @TT "C"@
-      to the twist $D(j)=D\otimes O_X(j)$ 
-      for every integer $j$,
-      as a vector space over the coefficient field of @TT "X"@. The algorithm is based on local duality.
-    Text
-      The complexes @TT "C"@ and @TT "D"@ must be defined over the same space @TT "X"@.
-      Here @TT "X"@ may be a closed subspace of a projective space, or more generally of a weighted projective space.
-      In the weighted case, @TT "X"@ is viewed as an algebraic stack when that makes a difference.
-      In particular, twists are interpreted by tensoring with the line bundles $O(j)$ on the stack.
-    Text
-      The base ring should be a field. Note that it is usually faster
-      to work over $\mathbb{Z}/p$ for a prime number $p \leq 32767$, say @TT "ZZ/31991"@, rather than over @TT "QQ"@.
-    Text
-      For example, the following complex @TT "D"@ of sheaves on $\mathbb{P}^2$ is isomorphic in the derived category
-      to the direct image of the sheaf of regular functions on $\mathbb{P}^1$; so they have the same cohomology.
-      We can also view cohomology as Ext from the sheaf of regular functions.
-    Example
-      R = ZZ/31991[x,y,z];
-      PP2 = Proj R;
-      M1 = R(-1); M0 = R(0);
-      C = sheaf complex M0
-      D = sheaf complex map(M0, M1, matrix(R, {{x}}))
-      ext^0(C,D(*))
-      hh^0(D(*))
-      PP1 = Proj(R/(x));
-      hh^0(OO_PP1(*))
-  SeeAlso
-    (ext, ZZ, Complex, Complex)
-    (hh, ZZ, SumOfTwists)
+    (hh, ZZ, SumOfTwistsComplex)
     (cohomology, ZZ, SumOfTwists)
     (euler, Complex)
 ///
