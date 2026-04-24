@@ -154,6 +154,7 @@ set(CPPONLYFILES
 # these files all have .hpp and .cpp files
 # MES TODO: put these NCAlgebra files (and friends) into alpha order in list
 set(SRCLIST
+  computeGV
   BasicPoly
   BasicPolyList
   BasicPolyListParser

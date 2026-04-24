@@ -26,6 +26,14 @@ const Matrix /* or null */ *rawFourierMotzkin(const Matrix *C);
 
 const Matrix /* or null */ *rawHilbertBasis(const Matrix *C);
 
+const Matrix /* or null */ *rawGVInvariants(M2_arrayint a,
+                                            M2_arrayint b,
+                                            M2_arrayint c,
+                                            M2_arrayint d,
+                                            M2_arrayint e,
+                                            M2_arrayint f,
+                                            M2_arrayint g);
+  
 #  if defined(__cplusplus)
 }
 #  endif

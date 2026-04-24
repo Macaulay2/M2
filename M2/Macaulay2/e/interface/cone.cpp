@@ -10,10 +10,10 @@
 #include "matrices/matrix-con.hpp"
 #include "matrices/matrix.hpp"
 #include "ring-elements/ring-element.hpp"
+#include "util.hpp"
 
 #include <libnormaliz/cone.h>
 #include <vector>
-
 typedef mpz_class Integer;
 
 /**
@@ -97,3 +97,70 @@ const Matrix /* or null */ *rawHilbertBasis(const Matrix *C)
       return nullptr;
   }
 }
+
+using CurveAndGVCollection =
+    std::vector < std::pair<std::vector<int>, mpz_srcptr> >;
+
+// The following is in the file e/computeGV.{hpp,cpp}
+extern int gvcompute(
+    std::vector<std::vector<int>> input_curves,
+    std::vector<std::vector<int>> lightcone_curves,
+    std::vector<int> grading_vec,
+    std::vector<std::vector<int>> Q,  // GLSM charge matrix
+    std::vector<std::vector<int>> nef_partition,
+    std::vector<std::vector<int>> intnums_list,  // intersection numbers
+                     std::vector<int> input_settings,
+    CurveAndGVCollection& result); // computation settings
+
+auto decodeArrayArrayInt(M2_arrayint a) -> std::vector<std::vector<int>>
+{
+  // throw an error if the 
+  auto nelems = a->array[0];
+  std::vector<std::vector<int>> result;
+  int next = 1;
+  for (int i = 0; i < nelems; ++i)
+    {
+      result.emplace_back();
+      int len = a->array[next];
+      for (int j = 1; j <= len; ++j) result[i].push_back(a->array[next + j]);
+      next += len + 1;
+    }
+  return result;
+}
+
+const Matrix *rawGVInvariants(M2_arrayint a,
+                              M2_arrayint b,
+                              M2_arrayint c,
+                              M2_arrayint d, // missing e as that cannot be used in d-file...
+                              M2_arrayint f,
+                              M2_arrayint g,
+                              M2_arrayint h)
+{
+  std::vector<std::vector<int>> input_curves {decodeArrayArrayInt(a)};
+  std::vector<std::vector<int>> lightcone_curves {decodeArrayArrayInt(b)};
+  std::vector<int> grading_vec { M2_arrayint_to_stdvector<int>(c) }; // c
+  std::vector<std::vector<int>> Q {decodeArrayArrayInt(d)};  // GLSM charge matrix
+  std::vector<std::vector<int>> nef_partition {decodeArrayArrayInt(f)};
+  std::vector<std::vector<int>> intnums_list {decodeArrayArrayInt(g)};  // intersection numbers
+  std::vector<int> input_settings {M2_arrayint_to_stdvector<int>(h)}; // {h};             // computation settings
+
+  int h11 = input_curves[0].size();
+  //  MatrixConstructor resultCurvesAndGVs(globalZZ->make_FreeModule(h11+1));
+
+  CurveAndGVCollection curveandgvcollection;
+  
+  gvcompute(input_curves,
+            lightcone_curves,
+            grading_vec,
+            Q,
+            nef_partition,
+            intnums_list,
+            input_settings,
+            curveandgvcollection);
+  return nullptr;
+//  return resultCurvesAndGVs.to_matrix();
+}
+// todo here:
+// 1. add in translate functions (make the function...)
+// 2. create the top level function, call the d level function.
+// 3. deal with the output from gvcompute.

@@ -4552,6 +4552,33 @@ export rawZZfactor(e:Expr):Expr := (
   );
 setupfun("rawZZfactor",rawZZfactor);
 
+export rawGVInvariants(e:Expr):Expr := (
+  when e is s:Sequence do (
+  if length(s) == 7 then (
+  if isSequenceOfSmallIntegers(s.0) then (a := getSequenceOfSmallIntegers(s.0);
+  if isSequenceOfSmallIntegers(s.1) then (b := getSequenceOfSmallIntegers(s.1);
+  if isSequenceOfSmallIntegers(s.2) then (c := getSequenceOfSmallIntegers(s.2);
+  if isSequenceOfSmallIntegers(s.3) then (d := getSequenceOfSmallIntegers(s.3);
+  if isSequenceOfSmallIntegers(s.4) then (f := getSequenceOfSmallIntegers(s.4);
+  if isSequenceOfSmallIntegers(s.5) then (g := getSequenceOfSmallIntegers(s.5);
+  if isSequenceOfSmallIntegers(s.6) then (h := getSequenceOfSmallIntegers(s.6);
+    toExpr(Ccode(RawMatrixOrNull,
+      "rawGVInvariants(",
+        a, ",", b, ",", c, ",", d, ",", f, ",", g, ",", h, 
+      ")"
+    ))
+  ) else WrongArg(6, "a sequence of small integers")
+  ) else WrongArg(5, "a sequence of small integers")
+  ) else WrongArg(4, "a sequence of small integers")
+  ) else WrongArg(3, "a sequence of small integers")
+  ) else WrongArg(2, "a sequence of small integers")
+  ) else WrongArg(1, "a sequence of small integers")
+  ) else WrongArg(0, "a sequence of small integers")
+  ) else WrongNumArgs(7)
+  ) else WrongNumArgs(7)
+  );
+setupfun("rawGVInvariants",rawGVInvariants);
+
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d interface.o "
 -- End:

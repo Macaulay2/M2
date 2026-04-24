@@ -35,8 +35,18 @@ celltype = new HashTable from {
         Synonym => "a small integer", 
         Suffix => "",
         Array => (
-            "isInt",
-            "toInt",
+            "isSmallInt",
+            "getSmallInt",
+            "a small integer"
+            )
+        },
+    "ints" => hashTable {
+        DType => "ZZCell",
+        Synonym => "a sequence of small integers", 
+        Suffix => "",
+        Array => (
+            "isSequenceOfSmallIntegers",
+            "getSequenceOfSmallIntegers",
             "a small integer"
             )
         },
@@ -220,6 +230,13 @@ genArg(ZZ,String,String) := (argnum, argtype, argname) -> (innards) -> (
             ") else WrongArgZZ("|argnum|")"
             }
         )
+    else if argtype == "ints" then (
+        {
+            "if isSequenceOfSmallIntegers(s."|argnum|") then ("|argname|" := getSequenceOfSmallIntegers(s."|argnum|");",
+            innards,
+            ") else WrongArg("|argnum|", \"a sequence of small integers\")"
+            }
+        )
     else if argtype == "ulong" then (
         {
             "when s."|argnum|" is w"|argname|":ZZcell do (", 
@@ -309,6 +326,17 @@ ans2 = ///export rawMatrixRowSwap(e:Expr):Expr := (
   ) else WrongNumArgs(3)
   );
 setupfun("rawMatrixRowSwap",rawMatrixRowSwap);
+///
+
+TEST ///
+restart
+debug needsPackage "GenerateD"
+-- note: e is not allowed as a variable name, as we use e as the input expression!
+result = str (genFunctionCall(
+        "rawGVInvariants", 
+        "MatrixOrNull", 
+        ("a"=>"ints", "b"=>"ints", "c"=>"ints", "d"=>"ints", "f"=>"ints", "g"=>"ints", "h"=>"ints")
+        ))
 ///
 
 TEST ///
