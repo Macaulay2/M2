@@ -33,7 +33,13 @@ MutableMatrix /* or null */ *rawGVInvariants(M2_arrayint a,
                                             M2_arrayint e,
                                             M2_arrayint f,
                                             M2_arrayint g);
-  
+
+MutableMatrix /* or null */ *rawLatticePoints(const Matrix *H,
+                                              M2_arrayint rhs,
+                                              int B,
+                                              long max_N_out,
+                                              long max_N_nodes);
+
 #  if defined(__cplusplus)
 }
 #  endif

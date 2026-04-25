@@ -4579,6 +4579,32 @@ export rawGVInvariants(e:Expr):Expr := (
   );
 setupfun("rawGVInvariants",rawGVInvariants);
 
+export rawLatticePoints(e:Expr):Expr := (
+  when e is s:Sequence do (
+  if length(s) == 5 then (
+    when s.0 is H:RawMatrixCell do (
+    if isSequenceOfSmallIntegers(s.1) then (rhs := getSequenceOfSmallIntegers(s.1);
+    when s.2 is B:ZZcell do if isInt(B) then (
+    when s.3 is N1:ZZcell do if isLong(N1) then (
+    when s.4 is N2:ZZcell do if isLong(N2) then (
+      toExpr(Ccode(RawMutableMatrixOrNull,
+        "rawLatticePoints(",
+          H.p, ",", rhs, ",", toInt(B), ",", toLong(N1), ",", toLong(N2),
+        ")"
+      ))
+    ) else WrongArgSmallInteger(5)
+    else WrongArgZZ(5)
+    ) else WrongArgSmallInteger(4)
+    else WrongArgZZ(4)
+    ) else WrongArgSmallInteger(3)
+    else WrongArgZZ(3)
+    ) else WrongArg(2,"a sequence of small integers")
+    ) else WrongArg(1,"a raw matrix")
+  ) else WrongNumArgs(5)
+  ) else WrongNumArgs(5)
+  );
+setupfun("rawLatticePoints",rawLatticePoints);
+
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d interface.o "
 -- End:

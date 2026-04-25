@@ -35,6 +35,7 @@ set(CFILES
   error.c
   exptable.c
   table.c
+  cytools/box_enum.c
   )
 # h files
 set(HFILES
@@ -155,6 +156,7 @@ set(CPPONLYFILES
 # MES TODO: put these NCAlgebra files (and friends) into alpha order in list
 set(SRCLIST
   computeGV
+  cytools/lattice_points
   BasicPoly
   BasicPolyList
   BasicPolyListParser

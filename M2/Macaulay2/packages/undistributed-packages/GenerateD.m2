@@ -130,6 +130,12 @@ celltype = new HashTable from {
         Synonym => "a raw mutable matrix", 
         Suffix => ".p"
         },
+    "MutableMatrixOrNull" => hashTable {
+        DType => "RawMutableMatrixOrNull",
+        Synonym => "a raw mutable matrix or null", 
+        Prefix => "&",
+        Suffix => ""
+        },
     "MutableComplex" => hashTable {
         DType => "RawMutableComplexCell",
         Synonym => "a raw mutable complex", 
@@ -336,6 +342,17 @@ result = str (genFunctionCall(
         "rawGVInvariants", 
         "MatrixOrNull", 
         ("a"=>"ints", "b"=>"ints", "c"=>"ints", "d"=>"ints", "f"=>"ints", "g"=>"ints", "h"=>"ints")
+        ))
+///
+
+TEST ///
+restart
+debug needsPackage "GenerateD"
+-- note: e is not allowed as a variable name, as we use e as the input expression!
+result = str (genFunctionCall(
+        "rawLatticePoints", 
+        "MutableMatrixOrNull", 
+        ("a"=>"Matrix", "b"=>"ints", "c"=>"int", "d"=>"long", "f"=>"long")
         ))
 ///
 

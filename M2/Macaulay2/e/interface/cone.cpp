@@ -16,7 +16,10 @@
 #include "mutable-matrices/mutablemat.hpp"
 #include "util.hpp"
 
+#include "cytools/lattice_points.hpp"
+
 #include <libnormaliz/cone.h>
+#include <stdexcept>
 #include <vector>
 typedef mpz_class Integer;
 
@@ -193,3 +196,55 @@ MutableMatrix *rawGVInvariants(M2_arrayint a,
 // 1. add in translate functions (make the function...)
 // 2. create the top level function, call the d level function.
 // 3. deal with the output from gvcompute.
+
+MutableMatrix *rawLatticePoints(const Matrix *H,
+                                M2_arrayint rhs,
+                                int B,
+                                long max_N_out,
+                                long max_N_nodes)
+{
+  try
+    {
+      const size_t n_hyps = H->n_rows();
+      const size_t dim = H->n_cols();
+
+      if (static_cast<size_t>(rhs->len) != n_hyps)
+        {
+          ERROR("rawLatticePoints: length of rhs must equal number of rows of H");
+          return nullptr;
+        }
+
+      // Marshal H entries from ZZ matrix to vector<vector<int>>.
+      std::vector<std::vector<int>> Hvec(n_hyps, std::vector<int>(dim));
+      for (size_t i = 0; i < n_hyps; i++)
+        for (size_t j = 0; j < dim; j++)
+          {
+            mpz_srcptr z = H->elem(i, j).get_mpz();
+            if (mpz_fits_sint_p(z) == 0)
+              {
+                ERROR("rawLatticePoints: H entry does not fit in a C int");
+                return nullptr;
+              }
+            Hvec[i][j] = static_cast<int>(mpz_get_si(z));
+          }
+
+      std::vector<int> rhsvec = M2_arrayint_to_stdvector<int>(rhs);
+
+      auto result = M2::cytools::latticePoints(
+          static_cast<int>(dim), B, Hvec, rhsvec, max_N_out, max_N_nodes);
+
+      const size_t n_points = result.points.size();
+      MutableMatrix *M =
+          MutableMatrix::zero_matrix(globalZZ, n_points, dim, /*dense*/ true);
+      for (size_t i = 0; i < n_points; i++)
+        for (size_t j = 0; j < dim; j++)
+          M->set_entry(i, j, globalZZ->from_long(result.points[i][j]));
+      return M;
+  } catch (const std::runtime_error &e)
+    {
+      // catches both std::runtime_error from latticePoints() and
+      // exc::engine_error (which derives from std::runtime_error)
+      ERROR(e.what());
+      return nullptr;
+  }
+}

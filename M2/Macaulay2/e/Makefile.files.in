@@ -9,6 +9,9 @@ INTERFACE2 = interrupted
 #  NCAlgebras/SuffixTree \
 
 INTERFACE = \
+	myalloc \
+	computeGV \
+	cytools/lattice_points \
 	BasicPoly \
 	BasicPolyList \
 	BasicPolyListParser \
@@ -225,7 +228,7 @@ NAMES_H = \
 	style \
 	util
 
-C_FILES = error table exptable # interface/m2-types interface/m2-mem
+C_FILES = error table exptable complex cytools/box_enum # interface/m2-types interface/m2-mem
 
 D_FILES =
 DD_FILES = #test
