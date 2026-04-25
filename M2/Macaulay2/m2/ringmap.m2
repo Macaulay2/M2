@@ -317,7 +317,7 @@ algorithms#(kernel, RingMap) = new MutableHashTable from {
 	       assert (not chh or G#?"rawGBSetHilbertFunction log"); -- ensure the Hilbert function hint was actually used in gb.m2
 	       ideal mapback selectInSubring(1,generators G)
 	),
-
+    ZZ => (opts, f) -> if source f === ZZ then ideal char target f,
     Default => (opts, f) -> (
 	(F, R) := (target f, source f);
 	       numsame := 0;
@@ -342,7 +342,7 @@ algorithms#(kernel, RingMap) = new MutableHashTable from {
     }
 
 -- Installing hooks for kernel RingMap
-scan({Default, "AffineRing", FractionField}, strategy ->
+scan({Default, ZZ, "AffineRing", FractionField}, strategy ->
     addHook(key := (kernel, RingMap), algorithms#key#strategy, Strategy => strategy))
 
 -----------------------------------------------------------------------------
