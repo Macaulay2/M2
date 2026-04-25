@@ -312,7 +312,7 @@ permutedTableau= (T,X,row1, row2, col1,lengthcol1,L)-> (
 
 -- Inputs: T=Tableau, vio = pair (column, row) where violation occurs, downCol2 is the number of times the entry in the second column repeats. 
 ---Outputs: Linear combination represented as a hashtable with tableau keys.
-shuffle = (T, vio, downCol2, lambdaprime) -> (
+shuffle' = (T, vio, downCol2, lambdaprime) -> (
     lengthcol1 := lambdaprime#(vio_0-1);
     truncatedcol1:=apply(toList (vio_1..lengthcol1),i -> T#(vio_0,i));
     truncatedcol2:=apply(toList(1..vio_1+downCol2), i-> T#(vio_0 + 1,i));
@@ -434,7 +434,7 @@ recursiveStraighten = (H,lambda) -> (
 			if vio === null then hashlist = merge(hashlist,new HashTable from {T => H#T},plus)
 		    	else (
 			    repeat = true;
-		     	    hashlist = merge(hashlist,scalarMultiply(H#T,shuffle(T,vio,downCol2,lambdaprime)),plus);
+		     	    hashlist = merge(hashlist,scalarMultiply(H#T,shuffle'(T,vio,downCol2,lambdaprime)),plus);
 			    );	
 	    		);
 		    );

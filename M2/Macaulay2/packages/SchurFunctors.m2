@@ -156,7 +156,7 @@ schurExchange = (T, col1, col2, s) -> (
 -- Garnir shuffle between columns col1, col2: enumerate all ways to move
 -- nrows entries between the columns.  Returns the list of non-degenerate
 -- (newFilling, sign) outcomes.
-shuffle = (T, nrows, col1, col2) -> (
+shuffle' = (T, nrows, col1, col2) -> (
      I := subsets(0..#(T#col1)-1, nrows);
      select(apply(I, x -> schurExchange(T, col1, col2, toList x)), y -> y =!= null)
      )
@@ -170,7 +170,7 @@ towardStandardRaw = T -> (
      acc := new MutableHashTable;
      if x === null then acc#T = 1
      else (
-	  for p in shuffle(T, x#1+1, x#0, x#0+1) do (
+	  for p in shuffle'(T, x#1+1, x#0, x#0+1) do (
 	       U := new Filling from p#0;
 	       s := p#1;
 	       if acc#?U then (

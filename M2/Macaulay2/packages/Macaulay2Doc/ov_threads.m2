@@ -41,7 +41,7 @@ Node
     including cpu caches; it is like running Macaulay2 on a computer that is running other big
     programs at the same time. We can see this using @ TO "elapsedTime" @.
   Example
-       L = random toList (1..10000);
+       L = shuffle toList (1..10000);
        elapsedTime         apply(1..100, n -> sort L);
        elapsedTime parallelApply(1..100, n -> sort L);
   Text

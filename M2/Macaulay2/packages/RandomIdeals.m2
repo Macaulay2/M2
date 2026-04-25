@@ -73,7 +73,7 @@ randomMonomialIdeal(List, Ring) := Ideal => (L,S)->(
      Ls := apply(Lu, t -> #positions(L, s->(s==t)));
      --handle the initial degree
      M := flatten entries basis(Lu#0, S^1);
-     if Ls#0 < #M then I := ideal((random M)_{0..Ls#0-1})
+     if Ls#0 < #M then I := ideal shuffle(M, Ls#0)
 	  else (
 	       I = ideal(M);
        	       <<"***** there are only " 
@@ -86,7 +86,7 @@ randomMonomialIdeal(List, Ring) := Ideal => (L,S)->(
      --now the rest of the degrees, if any.
      for t from 1 to #Lu-1 do (
 	  M = flatten entries compress (basis(Lu#t,S^1) % I);
-	  if Ls#t < #M then I = I+ideal((random M)_{0..Ls#t-1})
+	  if Ls#t < #M then I = I+ideal shuffle(M, Ls#t-1)
 	  else (
 	       if #M=!=0 then I = I+ideal(M);
 	       print("low degree gens generated everything"); 
@@ -112,7 +112,7 @@ randomSquareFreeMonomialIdeal(List, Ring) := Ideal => (L,S)->(
      Lu := sort unique L;
      Ls := apply(Lu, t -> #positions(L, s->(s==t)));
      M := flatten entries gens squareFree(Lu#0, S);
-     if Ls#0 < #M then I := ideal((random M)_{0..Ls#0-1})
+     if Ls#0 < #M then I := ideal shuffle(M, Ls#0)
 	  else (I = ideal(M);
 	       <<"***** there are only " <<binomial(numgens S,Lu#0)<<
 		    " square-free monomials of degree " << Lu#0 <<endl;
@@ -120,7 +120,7 @@ randomSquareFreeMonomialIdeal(List, Ring) := Ideal => (L,S)->(
 	       );
      for t from 1 to #Lu-1 do (
 	  M=flatten entries compress (gens squareFree(Lu#t,S) % I);
-	  if Ls#t < #M then I = I+ideal((random M)_{0..Ls#t-1})
+	  if Ls#t < #M then I = I+ideal shuffle(M, Ls#t)
 	  else (if #M=!=0 then I = I+ideal(M);
 	       print("low degree gens generated everything");
 	       break
@@ -1460,9 +1460,9 @@ S=ZZ/101[a..e]
 setRandomSeed 123456
 assert (randomMonomial(7,S)==a*b^3*c^3)
 setRandomSeed 123456
-assert(randomMonomialIdeal({3,4,5}, S)==ideal(d*e^2,a*b*d^2,b*c^3*e))
+assert(randomMonomialIdeal({3,4,5}, S)==ideal(b^2*d))
 setRandomSeed 123456
-assert(randomSquareFreeMonomialIdeal({6,4,4},S)==ideal(a*b*c*e,a*c*d*e))
+assert(randomSquareFreeMonomialIdeal({6,4,4},S)==ideal(a*b*d*e,a*c*d*e))
 setRandomSeed 123456
 assert(ideal(8*a^2+5*a*b+4*b^2+35*b*c+3*b*d+36*b*e,29*a^2+22*a*b+32*b^2-44*b*c-6*b*d+40*b*e) == randomIdeal({2,2},matrix{{a^2,b}}))
 setRandomSeed 123456

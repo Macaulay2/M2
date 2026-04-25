@@ -319,7 +319,7 @@ randomMonomialCurve (ZZ,ZZ,Ring) := Ideal => (d,e,F) -> (
     uVars := flatten entries vars U;
     --- Choose random monomial to define map to P2.
     B := drop(drop(flatten entries basis({e,0,0},U),1),-1);
-    f := (random(B))#0;
+    f := random B;
     --- Defines graph of morphisms in P1x(P1xP2)
     M1 := matrix {{(uVars#0)^d,(uVars#1)^d},{uVars#2,uVars#3}};
     M2 := matrix {{(uVars#0)^e,(uVars#1)^e,f},{uVars#4,uVars#5,uVars#6}};

@@ -318,7 +318,7 @@ randomBinomialIdeal = (R,numge,maxdeg, maxwidth, homog) -> (
 	       	    -ra
 		    );
      	       -- filling with zeros
-	       m = random (m |z);
+	       m = shuffle (m |z);
      	       ge = ge | {makeBinomial (R,m,1)};
   	       );  
 	  )
@@ -331,7 +331,7 @@ randomBinomialIdeal = (R,numge,maxdeg, maxwidth, homog) -> (
 	       	    ra
 	       	    );
      	       -- filling with zeros
-	       m = random (m |z);
+	       m = shuffle (m |z);
      	       ge = ge | {makeBinomial (R,m,1)};
   	       );
 	  );

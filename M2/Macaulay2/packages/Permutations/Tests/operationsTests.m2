@@ -217,7 +217,7 @@ TEST ///
     -------
     -- Misc
     -------
-    p = permutation random toList (1..10)
+    p = permutation shuffle toList (1..10)
     assert((inverse p)*p == trimmedIdentity)
     assert(p*(inverse p) == trimmedIdentity)
     assert(ord p == ord inverse p)

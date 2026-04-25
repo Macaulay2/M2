@@ -345,7 +345,7 @@ chooseRandomNonzeroSubmatrix(ZZ, Matrix) := opts -> (n1, M1) -> (
       --curList = flatten entries curM1;
       entryList = entries transpose matrix nonzeroEntries(curM1);
       if #entryList == 0 then return null;
-      curEntry = entryList#(random(#entryList));
+      curEntry = random entryList;
       --print (curList#curMax);
       curRow = curEntry#0;
       curCol = curEntry#1;
@@ -535,7 +535,7 @@ chooseMinorSmallestDegree(ZZ, MutableMatrix) := o -> (n1, M1) -> (
 randomMaxPosition = method(Options=>{});
 randomMaxPosition(List) := o -> (L1) -> (
     newList := apply(#L1, i -> {L1#i, random((#L1)^2), i});
-    newList2 := random(newList);
+    newList2 := shuffle(newList);
     j := maxPosition(newList2);
     return ((newList2#j)#2);
 );
@@ -544,7 +544,7 @@ randomMaxPosition(List) := o -> (L1) -> (
 randomMinPosition = method(Options=>{});
 randomMinPosition(List) := o -> (L1) -> (
     newList := apply(#L1, i -> {L1#i, random((#L1)^2), i});
-    newList2 := random(newList);
+    newList2 := shuffle(newList);
     j := minPosition(newList2);
     return ((newList2#j)#2);
 );
@@ -553,7 +553,7 @@ randomMinPosition(List) := o -> (L1) -> (
 randomMinPositions = method(Options=>{});
 randomMinPositions(ZZ, List) := o -> (n1, L1) -> (
     newList := apply(#L1, i -> {L1#i, random((#L1)^2), i});
-    newList2 := random(newList);
+    newList2 := shuffle(newList);
     newList3 := sort(newList2);
     return apply(take(n1, newList3), z -> z#0);
 );
@@ -622,10 +622,8 @@ chooseRandomSubmatrix = method(Options=>{});
 
 chooseRandomSubmatrix(ZZ, Matrix) := opts -> (n1, M1) ->
 (
-    rowL := random(toList(0..(numRows M1 - 1)));
-    colL := random(toList(0..(numColumns M1 - 1)));
-    rowL = sort take(rowL, n1);
-    colL = take(colL, n1);
+    rowL := randomSubset(numRows M1, n1);
+    colL := shuffle(toList(0..<numColumns M1), n1);
     return {rowL, colL};
     )
 
@@ -648,7 +646,7 @@ reorderPolynomialRing(Symbol, Ring) := opts-> (myOrder, R1) -> (
         if (debugLevel > 0) then print "reorderPolynomialRing: it is a polynomialRing";
         coeff := coefficientRing R1;
         genList := generators R1;
-        newGenList := random(genList);
+        newGenList := shuffle(genList);
         return coeff[newGenList, MonomialOrder => myOrder];)
     else (return R1);
 );

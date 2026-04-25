@@ -1790,7 +1790,7 @@ C := linearCode G;
 for i from 1 to 1 do(
     message := transpose matrix {(for n from 1 to numgens target G list(random(R)))};
     codeword := (transpose G)*message;
-    errors := sum take(random entries basis target codeword, 3);
+    errors := sum randomSubset(entries basis target codeword, 3);
     errors = transpose matrix({errors});
     received := codeword+errors;
     decoded := syndromeDecode(C, received, 8);
@@ -3110,7 +3110,7 @@ doc ///
 			C = hammingCode(2,3);
 			msg = matrix {{1,0,1,0}};
 			v = msg*(C.GeneratorMatrix);
-			err = matrix take(random entries basis source v, 1);
+			err = matrix shuffle(entries basis source v, 1);
 			received = (transpose (v+err));
 			syndromeDecode(C, received, 3);
 		 	C.cache#"syndromeLUT"

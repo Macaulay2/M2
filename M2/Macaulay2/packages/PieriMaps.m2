@@ -90,7 +90,7 @@ isStandard = T -> (
 -- entries (ignoring that some entries might be equal). The output is given in 
 -- the form a hash table where the keys are the resulting tableau and the 
 -- values are -1
-shuffle(List, ZZ, ZZ, ZZ) := (T, col, row1, row2) -> (
+shuffle' = (T, col, row1, row2) -> (
      len1 := #(T#row1);
      len2 := #(T#row2);
      truncatedrow1 := (T#row1)_{0..col-2}; -- grab row1 entries
@@ -118,7 +118,7 @@ shuffle(List, ZZ, ZZ, ZZ) := (T, col, row1, row2) -> (
 towardStandard = T -> (
      x := isStandard T;
      if x === null then return new HashTable from {T=>1};
-     H := new MutableHashTable from shuffle(T, x#1+1, x#0, x#0+1);
+     H := new MutableHashTable from shuffle'(T, x#1+1, x#0, x#0+1);
      if H #? T then (
 	  coeff := -(H#T) + 1;
 	  remove(H,T);

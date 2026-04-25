@@ -181,7 +181,7 @@ balancedPartition (ZZ,ZZ) := (n,m) -> ( -- m items list of length n
       (L,L1) := ({},{});
       PHI := matrix map(S^1,S^1,0_S);
       while (#flatten entries PHI < g) do (
-      pts := random(apply(p,i -> matrix{{i,1}})|{matrix{{1,0}}});
+      pts := shuffle(apply(p,i -> matrix{{i,1}})|{matrix{{1,0}}});
       while (#L < g or #(unique flatten L) < #(flatten L)) do (  
              (L,L1) = ({},{}); 
 	     f := random(S^1, S^{2:-k});
