@@ -252,6 +252,15 @@ genArg(ZZ,String,String) := (argnum, argtype, argname) -> (innards) -> (
             ") else WrongArgZZ("|argnum|")"
             }
         )
+    else if argtype == "long" then (
+        {
+            "when s."|argnum|" is w"|argname|":ZZcell do (", 
+            "if isLong(w"|argname|") then ("|argname|" := toLong(w"|argname|");",
+            innards,
+            ") else WrongArgSmallInteger("|argnum|")",
+            ") else WrongArgZZ("|argnum|")"
+            }
+        )
     else (
         suffix := celltype#argtype#Suffix;
         {

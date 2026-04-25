@@ -4579,31 +4579,49 @@ export rawGVInvariants(e:Expr):Expr := (
   );
 setupfun("rawGVInvariants",rawGVInvariants);
 
+-- Compute lattice points in a polyhedron, up to given bound.
+-- rawLatticePoints(H, rhs, B, N1, N2)
+--  H: RawMatrix
+--  rhs: seqeunce of integers (length: same as #rows of H.
+--    the i-th constraint is (row i in H).(x1...xd) >= rhs_i)
+--  B: bound: only find lattice points whos ecoordinates xi satisfy -B <= xi <= B.
+--  N1: maximum number of points to be found
+--  N2: maximum number of nodes to visit (not sure what this really is).
+-- returns: a MutableMatrix whose rows are the lattice points satisfying the above constraints.
+-- TODO:
+--  - H and result should have the same type (both MutableMatrix)?
+--  - I think the points should be columns, not rows.
+--  - The constraints should perhaps be Ax <= b.  This would require negating A, b before calling
+--    the C code.  Why should they be Ax <= b.  Only because that is the convention in Polyhedra package.
 export rawLatticePoints(e:Expr):Expr := (
   when e is s:Sequence do (
   if length(s) == 5 then (
-    when s.0 is H:RawMatrixCell do (
-    if isSequenceOfSmallIntegers(s.1) then (rhs := getSequenceOfSmallIntegers(s.1);
-    when s.2 is B:ZZcell do if isInt(B) then (
-    when s.3 is N1:ZZcell do if isLong(N1) then (
-    when s.4 is N2:ZZcell do if isLong(N2) then (
-      toExpr(Ccode(RawMutableMatrixOrNull,
-        "rawLatticePoints(",
-          H.p, ",", rhs, ",", toInt(B), ",", toLong(N1), ",", toLong(N2),
-        ")"
-      ))
-    ) else WrongArgSmallInteger(5)
-    else WrongArgZZ(5)
-    ) else WrongArgSmallInteger(4)
-    else WrongArgZZ(4)
-    ) else WrongArgSmallInteger(3)
-    else WrongArgZZ(3)
-    ) else WrongArg(2,"a sequence of small integers")
-    ) else WrongArg(1,"a raw matrix")
+  when s.0 is wa:RawMatrixCell do (a := wa.p;
+  if isSequenceOfSmallIntegers(s.1) then (b := getSequenceOfSmallIntegers(s.1);
+  when s.2 is wc:ZZcell do (
+  if isInt(wc) then (c := toInt(wc);
+  when s.3 is wd:ZZcell do (
+  if isLong(wd) then (d := toLong(wd);
+  when s.4 is wf:ZZcell do (
+  if isLong(wf) then (f := toLong(wf);
+    toExpr(Ccode(RawMutableMatrixOrNull,
+      "rawLatticePoints(",
+        a, ",", b, ",", c, ",", d, ",", f, 
+      ")"
+    ))
+  ) else WrongArgSmallInteger(4)
+  ) else WrongArgZZ(4)
+  ) else WrongArgSmallInteger(3)
+  ) else WrongArgZZ(3)
+  ) else WrongArgSmallInteger(2)
+  ) else WrongArgZZ(2)
+  ) else WrongArg(1, "a sequence of small integers")
+  ) else WrongArg(0,"a raw matrix")
   ) else WrongNumArgs(5)
   ) else WrongNumArgs(5)
   );
 setupfun("rawLatticePoints",rawLatticePoints);
+
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d interface.o "
