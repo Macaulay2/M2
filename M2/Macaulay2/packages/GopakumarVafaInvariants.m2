@@ -140,7 +140,7 @@ Q = encodeArrayArrayInt {{1, 0, 0, 0, 1, 0, 1}, {0, 1, 0, 1, 0, 1, 1}, {0, 0, 1,
 nefpart = encodeArrayArrayInt {}
 intnums = encodeArrayArrayInt {{0, 0, 0, -1}, {0, 1, 1, -2}, {0, 1, 2, 1}, {1, 1, 1, 8}, {1, 1, 2, -4}, {1, 2, 2, 2}, {2, 2, 2, -1}}
 settings = {10, 150, 0, 300000}
-rawGVInvariants(mori, lightcone, gradingvec, Q, nefpart, intnums, settings)
+transpose map(ZZ, rawGVInvariants(mori, lightcone, gradingvec, Q, nefpart, intnums, settings))
 ///
 
 -- The function to write the data needed by the computeGV program

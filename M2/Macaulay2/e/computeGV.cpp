@@ -37,6 +37,17 @@ along with CYTools.  If not, see <https://www.gnu.org/licenses/>.
 // {{0, 0, 0, 1}, {0, 0, 1, -1}, {0, 1, 1, -1}, {1, 1, 1, -2}, {1, 1, 2, 1}, {1, 2, 2, 3}, {2, 2, 2, 3}}
 // {20, 150, 0, 300000}
 
+bool computeGVverboseMode = false;
+
+void addCurveAndGV(CurveAndGVCollection &collection,
+                   const std::vector<int> &curve,
+                   mpfr_srcptr gv)
+{
+  mpz_class val;
+  mpfr_get_z(val.get_mpz_t(), gv, MPFR_RNDN);
+  collection.push_back({curve, std::move(val)});
+}
+
 void readArguments(
     int argc,
     char** argv,
@@ -226,7 +237,7 @@ int gvcompute(
   int curr_task;
 
   // Now we check for nonpositive degrees
-  std::cerr << "Checking consistency of input of curves..." << std::endl;
+  if (computeGVverboseMode) std::cerr << "Checking consistency of input of curves..." << std::endl;
   std::unordered_set<std::vector<int>,VectorHash> curves_set(
                                                       input_curves.begin(),
                                                       input_curves.end());
@@ -305,7 +316,7 @@ int gvcompute(
   // Now we find the Hilbert basis of the Mori cone
   VectorSet hilbert_set;
   if (mode != 2) {
-    std::cerr << "Finding Hilbert basis..." << std::endl;
+    if (computeGVverboseMode) std::cerr << "Finding Hilbert basis..." << std::endl;
     tmp_all_curves = std::vector<std::vector<int> >(curves_set.begin(),
                                                     curves_set.end());
     tmp_n_curves = tmp_all_curves.size();
@@ -362,7 +373,7 @@ int gvcompute(
       max_deg++;
       continue;
     }
-    std::cerr << "Found " << tmp_new_curves.size() << " new vectors" << std::endl;
+    if (computeGVverboseMode) std::cerr << "Found " << tmp_new_curves.size() << " new vectors" << std::endl;
     if (min_points > 0) {
       tmp_check_curves.insert(tmp_check_curves.end(), tmp_new_curves.begin(),
                               tmp_new_curves.end());
@@ -417,12 +428,12 @@ int gvcompute(
       tmp_check_curves.clear();
       break;
     }
-    std::cerr << "Found new vectors" << std::endl;
+    if (computeGVverboseMode) std::cerr << "Found new vectors" << std::endl;
     tmp_check_curves.clear();
     tmp_check_curves = std::move(tmp_new_curves);
     tmp_new_curves.clear();
     tmp_n_curves = tmp_check_curves.size();
-    std::cerr << "Found " << tmp_check_curves.size() << " new vectors" << std::endl;
+    if (computeGVverboseMode) std::cerr << "Found " << tmp_check_curves.size() << " new vectors" << std::endl;
   }
   tmp_check_curves.clear();
   tmp_new_curves.clear();
@@ -449,7 +460,7 @@ int gvcompute(
   }
   curves_set.clear();
   int n_curves = input_curves.size();
-  std::cerr << "Using " << n_curves << " curves." << std::endl;
+  if (computeGVverboseMode) std::cerr << "Using " << n_curves << " curves." << std::endl;
   if (find_max_deg && max_lightcone_deg) {
     max_deg = max_lightcone_deg;
   }
@@ -480,7 +491,7 @@ int gvcompute(
   old_degs.clear();
 
   // Construct a monomial/curve dictionary
-  std::cerr << "Constructing monomial dictionary..." << std::endl;
+  if (computeGVverboseMode) std::cerr << "Constructing monomial dictionary..." << std::endl;
   VecToIntDict curve_dict;
   for (int i = 0; i < n_curves; i++) {
     curve_dict[curves[i]] = i;
@@ -491,7 +502,7 @@ int gvcompute(
   MPFloat pi2d6 = mpfr::const_pi()*mpfr::const_pi()/6;
 
   // Now we compute c and its derivatives
-  std::cerr << "Computing c..." << std::endl;
+  if (computeGVverboseMode) std::cerr << "Computing c..." << std::endl;
   Polynomial c0;
   std::vector<Polynomial> c1(h11);
   VecToPolyDict c2;
@@ -638,7 +649,7 @@ int gvcompute(
   c0inv_thr.join();
   c0 = Polynomial();
 
-  std::cerr << "Computing alpha polynomials..." << std::endl;
+  if (computeGVverboseMode) std::cerr << "Computing alpha polynomials..." << std::endl;
   std::vector<Polynomial> alpha(h11);
   curr_task = 0;
   for (int i = 0; i < n_threads; i++) {
@@ -653,7 +664,7 @@ int gvcompute(
   }
   thread_vec.clear();
   c1.clear();
-  std::cerr << "Computing beta polynomials..." << std::endl;
+  if (computeGVverboseMode) std::cerr << "Computing beta polynomials..." << std::endl;
   VecToPolyDict beta;
   VectorList beta_pairs_vec = VectorList(beta_pairs.begin(),beta_pairs.end());
   curr_task = 0;
@@ -671,7 +682,7 @@ int gvcompute(
   c2.clear();
 
   // Compute F polynomials (F_ab = beta_ab - alpha_a * alpha_b)
-  std::cerr << "Computing F polynomials..." << std::endl;
+  if (computeGVverboseMode) std::cerr << "Computing F polynomials..." << std::endl;
   VecToPolyDict F;
   curr_task = 0;
   for (int i = 0; i < n_threads; i++) {
@@ -691,7 +702,7 @@ int gvcompute(
   }
 
   // Compute instanton corrections
-  std::cerr << "Computing instanton corrections..." << std::endl;
+  if (computeGVverboseMode) std::cerr << "Computing instanton corrections..." << std::endl;
   if (cy_dim == 3) {
     h22 = h11;
   }
@@ -715,7 +726,7 @@ int gvcompute(
   }
 
   // Compute expalpha
-  std::cerr << "Computing exp(alpha)..." << std::endl;
+  if (computeGVverboseMode) std::cerr << "Computing exp(alpha)..." << std::endl;
   std::vector<Polynomial> expalpha_pos(h11), expalpha_neg(h11);
   curr_task = 0;
   for (int i = 0; i < n_threads; i++) {
@@ -732,8 +743,8 @@ int gvcompute(
   alpha.clear();
 
   // Compute GV invariants iteratively
-  std::cerr << "Computing GV..." << std::endl;
-  std::cout.precision(digits);
+  if (computeGVverboseMode) std::cerr << "Computing GV..." << std::endl;
+  if (computeGVverboseMode) std::cout.precision(digits);
   Polynomial tmp_poly;
   std::vector<int> vec_deg;
   MPFloat tmp_GV, tmp_GV_rounded;
@@ -779,11 +790,17 @@ int gvcompute(
           if (mpfr::abs(tmp_GV) < zero_cutoff) {
             continue;
           }
-          std::cout << "(";
-          for (int k = 0; k < h11; k++) {
-            std::cout << curves[j][k] << (k==h11-1 ? "" : ",");
+
+          addCurveAndGV(result, curves[j], tmp_GV.mpfr_srcptr());
+
+          if (computeGVverboseMode) {
+            std::cout << "(";
+            for (int k = 0; k < h11; k++) {
+              std::cout << curves[j][k] << (k==h11-1 ? "" : ",");
+            }
+            std::cout << "), " << tmp_GV << std::endl;
           }
-          std::cout << "), " << tmp_GV << std::endl;
+
           qN_to_compute.push_back(j);
           GV_qN_to_compute.push_back(tmp_GV);
         }
@@ -802,11 +819,16 @@ int gvcompute(
           if (mpfr::abs(tmp_GV_rounded) < 0.5) {
             continue;
           }
-          std::cout << "(";
-          for (int k = 0; k < h11; k++) {
-            std::cout << curves[j][k] << (k==h11-1 ? "" : ",");
+
+          addCurveAndGV(result, curves[j], tmp_GV.mpfr_srcptr());
+
+          if (computeGVverboseMode) {
+            std::cout << "(";
+            for (int k = 0; k < h11; k++) {
+              std::cout << curves[j][k] << (k==h11-1 ? "" : ",");
+            }
+            std::cout << "), " << tmp_GV_rounded << std::endl;
           }
-          std::cout << "), " << tmp_GV_rounded << std::endl;
           qN_to_compute.push_back(j);
           GV_qN_to_compute.push_back(tmp_GV_rounded);
         }
@@ -821,14 +843,17 @@ int gvcompute(
           }
           tmp_GV = search->second;
           if (computeGW) {
-            if (mpfr::abs(tmp_GV) < zero_cutoff) {
-              continue;
+            if (mpfr::abs(tmp_GV) < zero_cutoff) { continue; }
+
+            addCurveAndGV(result, curves[j], tmp_GV.mpfr_srcptr());
+
+            if (computeGVverboseMode) {
+              std::cout << "(";
+              for (int h = 0; h < h11; h++) {
+                std::cout << curves[j][h] << (h==h11-1 ? "" : ",");
+              }
+              std::cout << "), " << k << ", " << tmp_GV << std::endl;
             }
-            std::cout << "(";
-            for (int h = 0; h < h11; h++) {
-              std::cout << curves[j][h] << (h==h11-1 ? "" : ",");
-            }
-            std::cout << "), " << k << ", " << tmp_GV << std::endl;
             auto search_h22 = h22GV_qN_to_compute.find(j);
             if (search_h22 == h22GV_qN_to_compute.end()) {
               qN_to_compute.push_back(j);
@@ -853,11 +878,16 @@ int gvcompute(
             if (mpfr::abs(tmp_GV_rounded) < 0.5) {
               continue;
             }
-            std::cout << "(";
-            for (int h = 0; h < h11; h++) {
-              std::cout << curves[j][h] << (h==h11-1 ? "" : ",");
+
+            addCurveAndGV(result, curves[j], tmp_GV.mpfr_srcptr());
+
+            if (computeGVverboseMode) {
+              std::cout << "(";
+              for (int h = 0; h < h11; h++) {
+                std::cout << curves[j][h] << (h==h11-1 ? "" : ",");
+              }
+              std::cout << "), " << k << ", " << tmp_GV_rounded << std::endl;
             }
-            std::cout << "), " << k << ", " << tmp_GV_rounded << std::endl;
             auto search_h22 = h22GV_qN_to_compute.find(j);
             if (search_h22 == h22GV_qN_to_compute.end()) {
               qN_to_compute.push_back(j);

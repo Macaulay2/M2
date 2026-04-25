@@ -10,6 +10,10 @@
 #include "matrices/matrix-con.hpp"
 #include "matrices/matrix.hpp"
 #include "ring-elements/ring-element.hpp"
+#include "matrices/matrix-con.hpp"
+#include "matrices/matrix.hpp"
+#include "interface/mutable-matrix.h"
+#include "mutable-matrices/mutablemat.hpp"
 #include "util.hpp"
 
 #include <libnormaliz/cone.h>
@@ -98,8 +102,9 @@ const Matrix /* or null */ *rawHilbertBasis(const Matrix *C)
   }
 }
 
+// Keep this in sync with the typedef in Macaulay2/e/computeGV.hpp.
 using CurveAndGVCollection =
-    std::vector < std::pair<std::vector<int>, mpz_srcptr> >;
+    std::vector<std::pair<std::vector<int>, mpz_class>>;
 
 // The following is in the file e/computeGV.{hpp,cpp}
 extern int gvcompute(
@@ -128,7 +133,7 @@ auto decodeArrayArrayInt(M2_arrayint a) -> std::vector<std::vector<int>>
   return result;
 }
 
-const Matrix *rawGVInvariants(M2_arrayint a,
+MutableMatrix *rawGVInvariants(M2_arrayint a,
                               M2_arrayint b,
                               M2_arrayint c,
                               M2_arrayint d, // missing e as that cannot be used in d-file...
@@ -148,6 +153,7 @@ const Matrix *rawGVInvariants(M2_arrayint a,
   //  MatrixConstructor resultCurvesAndGVs(globalZZ->make_FreeModule(h11+1));
 
   CurveAndGVCollection curveandgvcollection;
+
   
   gvcompute(input_curves,
             lightcone_curves,
@@ -157,7 +163,30 @@ const Matrix *rawGVInvariants(M2_arrayint a,
             intnums_list,
             input_settings,
             curveandgvcollection);
-  return nullptr;
+
+  MutableMatrix *M =
+    MutableMatrix::zero_matrix(globalZZ, h11 + 1, curveandgvcollection.size(), true);
+
+  int col = -1;
+  for (auto &k : curveandgvcollection)
+    {
+      col++;
+      for (int r = 0; r < h11; ++r)
+        {
+          M->set_entry(r, col, globalZZ->from_long(k.first[r]));
+        }
+      M->set_entry(h11, col, globalZZ->from_int(k.second.get_mpz_t()));
+    }
+  return M;
+  
+  
+  // std::cout << "# curves: " << curveandgvcollection.size() << std::endl;
+  // for (auto &k : curveandgvcollection)
+  //   {
+  //     for (auto &a : k.first) { std::cout << a << " "; }
+  //     gmp_printf("%Zd\n", &k.second);
+  //   }
+  // return nullptr;
 //  return resultCurvesAndGVs.to_matrix();
 }
 // todo here:

@@ -4562,7 +4562,7 @@ export rawGVInvariants(e:Expr):Expr := (
   if isSequenceOfSmallIntegers(s.4) then (f := getSequenceOfSmallIntegers(s.4);
   if isSequenceOfSmallIntegers(s.5) then (g := getSequenceOfSmallIntegers(s.5);
   if isSequenceOfSmallIntegers(s.6) then (h := getSequenceOfSmallIntegers(s.6);
-    toExpr(Ccode(RawMatrixOrNull,
+    toExpr(Ccode(RawMutableMatrixOrNull,
       "rawGVInvariants(",
         a, ",", b, ",", c, ",", d, ",", f, ",", g, ",", h, 
       ")"

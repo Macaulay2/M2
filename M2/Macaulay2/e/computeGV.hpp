@@ -16,6 +16,7 @@ along with CYTools.  If not, see <https://www.gnu.org/licenses/>.
 ******************************************************************************/
 
 #include "mpreal.h"
+#include <gmpxx.h>
 
 #include <math.h>
 #include <ctype.h>
@@ -33,16 +34,14 @@ along with CYTools.  If not, see <https://www.gnu.org/licenses/>.
 
 //// MES: added this to the file /////////////
 using CurveAndGVCollection =
-    std::vector < std::pair<std::vector<int>, mpz_srcptr> >;
+    std::vector<std::pair<std::vector<int>, mpz_class>>;
 
-// struct curveAndGVCollection
-// {
-//   MatrixConstructor mMatrix;
+void addCurveAndGV(CurveAndGVCollection &collection,
+                   const std::vector<int> &curve,
+                   mpfr_srcptr gv);
 
-//   curveAndGVCollection(int h11) mMatrix(globalZZ->make_FreeModule(h11 + 1));
-  
-//   void add(const std::vector<int>& curve, mpfr_t gv); // throws an error if not allowed.
-// }  
+// Set to true to print progress messages to std::cerr from gvcompute().
+extern bool computeGVverboseMode;
 //// Above this: added to file ///////////////
 
 // This struct is needed to create sets of vectors
@@ -769,7 +768,6 @@ Polynomial PolyLi2(const Polynomial &p, const IntMatrix &curves,
                    const IntVector &degs, const VecToIntDict &curve_dict) {
   if ((p.nonzero.size() > 0 && p.nonzero[0] == 0)
         || p.coeffs.find(0) != p.coeffs.end()) {
-      std::cout << "hi" << std::endl;
       PolyPrint(p);
       throw std::invalid_argument("This type of polynomials are not "
                                   "supported.");

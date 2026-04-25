@@ -2,12 +2,12 @@
 #define M2_INTERFACE_CONE_H_
 
 #  include "engine-includes.hpp"
-
+#include "m2-types.h"
 // TODO: fix this
 #  if defined(__cplusplus)
-class Matrix;
+  class Matrix;
 #  else
-typedef struct Matrix Matrix;
+  typedef struct Matrix Matrix;
 #  endif
 
 /**
@@ -26,7 +26,7 @@ const Matrix /* or null */ *rawFourierMotzkin(const Matrix *C);
 
 const Matrix /* or null */ *rawHilbertBasis(const Matrix *C);
 
-const Matrix /* or null */ *rawGVInvariants(M2_arrayint a,
+MutableMatrix /* or null */ *rawGVInvariants(M2_arrayint a,
                                             M2_arrayint b,
                                             M2_arrayint c,
                                             M2_arrayint d,
