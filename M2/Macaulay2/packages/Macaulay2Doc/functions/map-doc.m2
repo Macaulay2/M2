@@ -7,7 +7,8 @@
 (map,GaloisField,GaloisField)
 *-
 
-undocumented {(map, RingFamily, Thing, Thing),(map, Thing, RingFamily, Thing)}
+undocumented {(map, RingFamily, Thing, Thing),(map, Thing, RingFamily, Thing),
+    (map, RingFamily, Thing), (map, Thing, RingFamily)}
 
 document {
      Key => { map, "morphisms" },

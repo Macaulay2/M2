@@ -1,4 +1,8 @@
 -- test map
+f = map(CC, RR)
+assert (f 2 === toCC 2)
+g = map(RRi, RR)
+assert (g 2 === toRRi 2)
 
 << "-- this doesn't work yet, but perhaps the presence of" << endl
 << "-- the test will spur us to make it work" << endl

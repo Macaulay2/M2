@@ -53,6 +53,8 @@ Ring#id = R -> map(R, R, vars R)
 
 map(RingFamily, Thing, Thing) := RingMap => opts -> (R, S, m) -> map(default R, S, m, opts)
 map(Thing, RingFamily, Thing) := RingMap => opts -> (R, S, m) -> map(R, default S, m, opts)
+map(RingFamily, Thing) := RingMap => opts -> (R, S) -> map(default R, S, opts)
+map(Thing, RingFamily) := RingMap => opts -> (R, S) -> map(R, default S, opts)
 
 map(Ring, Ring)          := RingMap => opts -> (R, S   ) -> map(R, S, matrix(R, {{}}), opts)
 map(Ring, Ring, RingMap) := RingMap => opts -> (R, S, f) -> map(R, S, matrix f,        opts)
