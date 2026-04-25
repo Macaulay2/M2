@@ -37,7 +37,7 @@ importFrom_Elimination { "eliminationRing" }
 ---------------------------------------------------------------------------
 
 msolveMinimumVersion = "0.7.0"
-msolveProgram = findProgram("msolve", "msolve --help",
+msolveProgram = findProgram("msolve", "msolve -h",
     MinimumVersion => (msolveMinimumVersion, "msolve -V"),
     RaiseError => false,
     Verbose => debugLevel > 0)
