@@ -90,7 +90,7 @@ isStandard = T -> (
 -- entries (ignoring that some entries might be equal). The output is given in 
 -- the form a hash table where the keys are the resulting tableau and the 
 -- values are -1
-shuffle = (T, col, row1, row2) -> (
+shuffle(List, ZZ, ZZ, ZZ) := (T, col, row1, row2) -> (
      len1 := #(T#row1);
      len2 := #(T#row2);
      truncatedrow1 := (T#row1)_{0..col-2}; -- grab row1 entries

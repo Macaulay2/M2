@@ -1143,6 +1143,7 @@ export {
 	"showStructure",
 	"showTex",
 	"showUserStructure",
+	"shuffle",
 	"sign",
 	"sin",
 	"singularLocus",

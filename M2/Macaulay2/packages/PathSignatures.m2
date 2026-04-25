@@ -21,7 +21,6 @@ export {
     "tensorParametrization",
     "wordAlgebra",
     "sgnVolTensor",
-    "shuffle",
     "halfshuffle",
     "wordFormat",
     "wordString",

@@ -180,19 +180,19 @@ Node
   Key
     (random, List)
   Headline
-    shuffle a list randomly
+    select a random element of a list
   Usage
     random L
   Inputs
     L:List
   Outputs
-    :List
-      a new list containing the elements of @TT "L"@ in a shuffled random order
+    :Thing -- random element of @VAR "L"@
   Description
     Example
       random toList (0 .. 12)
   SeeAlso
     setRandomSeed
+    shuffle
 
 Node
   Key

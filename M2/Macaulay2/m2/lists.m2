@@ -228,7 +228,10 @@ flexibleOperators = sort flexibleOperators
 fixedOperators = sort fixedOperators
 allOperators = sort allOperators
 
-random List := opts -> s -> (
+random List := opts -> x -> x#(random(#x))
+
+shuffle = method()
+shuffle List := s -> (
      n := #s;
      if n <= 1 then return s;
      s = new MutableList from s;
