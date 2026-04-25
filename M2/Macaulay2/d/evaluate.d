@@ -1408,7 +1408,7 @@ HashTableOrNull := HashTable or null;
 maybeLock(c:Code):HashTableOrNull := (
     when c
     is x:binaryCode do (
-	if x.f == DotS.symbol.binary || x.f == SharpS.symbol.binary
+	if x.oper == DotS.symbol || x.oper == SharpS.symbol
 	then (
 	    y := eval(x.lhs);
 	    when y is z:HashTable do (
@@ -1433,14 +1433,14 @@ hashTableAugmentedAssignmentFun(lhs:binaryCode, oper1: Symbol, oper:Symbol, rexp
     when table
     is Error do return table
     is hashTable:HashTable do (
-        if lhs.f == DotS.symbol.binary then (
+        if lhs.oper == DotS.symbol then (
             --this replicates dotfun from actors5.d but using the non-locking variation of lookup1force
             when lhs.rhs
             is r:globalSymbolClosureCode do (
                 key = Expr(SymbolClosure(globalFrame,r.symbol));
                 lexpr = lookup1forceNoLock(hashTable, key))
             else nothing) --TODO correct error message printErrorMessageE(rhs,"expected a symbol"))
-        else if lhs.f == SharpS.symbol.binary then (
+        else if lhs.oper == SharpS.symbol then (
             --TODO
             key = eval(lhs.rhs);
             lexpr = lookup1forceNoLock(hashTable, key)
@@ -1466,7 +1466,7 @@ hashTableAugmentedAssignmentFun(lhs:binaryCode, oper1: Symbol, oper:Symbol, rexp
         );
         left := evaluatedCode(lexpr, codePosition(Code(lhs)));
         right := evaluatedCode(rexpr, rpos);
-        r := eval(Code(binaryCode(oper.binary, Code(left), right, rpos)));
+        r := eval(Code(binaryCode(oper, Code(left), right, rpos)));
         --r := oper.binary(Code(left),Code(right));
         storeInHashTableNoLock(hashTable,key,hash(key),r);
         r)
@@ -1503,7 +1503,7 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 		is y:globalMemoryReferenceCode do (
 		    r := eval(x.rhs);
 		    when r is e:Error do r
-		    else globalAssignment(y.frameindex, x.info, r))
+		    else globalAssignment(y.var.frameindex, y.var, r))
 		is y:localMemoryReferenceCode do (
 		    r := eval(x.rhs);
 		    when r is e:Error do r
@@ -1511,22 +1511,22 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 		is y:threadMemoryReferenceCode do (
 		    r := eval(x.rhs);
 		    when r is e:Error do r
-		    else globalAssignment(y.frameindex, x.info, r))
+		    else globalAssignment(y.var.frameindex, y.var, r))
 		is y:binaryCode do (
 		    r := x.rhs;
-		    if y.f == DotS.symbol.binary || y.f == SharpS.symbol.binary
+		    if y.oper == DotS.symbol || y.oper == SharpS.symbol
 		    then (
 			z := AssignElemFun(y.lhs, y.rhs, r);
 			z)
 		    else InstallValueFun(CodeSequence(
-			    convertGlobalOperator(x.info), y.lhs, y.rhs, r)))
+			    convertGlobalOperator(y.oper), y.lhs, y.rhs, r)))
 		is y:adjacentCode do (
 		    r := x.rhs;
 		    InstallValueFun(CodeSequence(
 			    convertGlobalOperator(AdjacentS.symbol), y.lhs, y.rhs, r)))
 		is y:unaryCode do (
 		    r := x.rhs;
-		    UnaryInstallValueFun(convertGlobalOperator(x.info), y.rhs, r))
+		    UnaryInstallValueFun(convertGlobalOperator(y.oper), y.rhs, r))
 		else buildErrorPacket(
 		    "augmented assignment not implemented for this code")
 		)
@@ -1584,7 +1584,7 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	is y:binaryCode do (
 	    if y.oper == DotS.symbol || y.oper == SharpS.symbol
 	    then (
-		z := AssignElemFun(y.lhs, y.rhs, r);
+		z := AssignElemFun(y.lhs, y.rhs, c);
 		z)
 	    else InstallValueFun(CodeSequence(
 		    convertGlobalOperator(y.oper), y.lhs, y.rhs, c)))
