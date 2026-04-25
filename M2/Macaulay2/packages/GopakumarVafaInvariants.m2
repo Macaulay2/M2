@@ -1,3 +1,31 @@
+-- TODO:
+--   1. Have rawGVInvariants catch errors (std::invalid_argument in particular)
+--   2. Determine what lightcone is supposed to do
+--   3. Claude said that same curve will appear with multiple values, for higher dim. Is this true?
+--   4. GW code is not functional (these will be rational numbers too).
+--   5. how to use nefpart
+--   6. add tests
+--   7. take the code in ~/utah/CYToolsM2/StringTorics/GVInvariants.m2, and mesh that with this.
+--     Problems: That needs more information from the StringTorics package.
+--     Need to compute a cone that includes the mori cone of X, and really, needs its hilbert basis.
+--
+-- TODO for adding box_enum.h (finding lattice points in a polyhedron).
+--   1. add the code box_enum.h to Macaulay2/e/cytools
+--     - box_enum.h is part of git@github.com:natemacfadden/latticepts.git,
+--     - checked out at /Users/mike/src/git-from-others/natemacfadden/latticepts
+--   2. in e/interface/cone.{hpp,cpp} add a function rawLatticePoints, which calls box_enum.h
+--       (or a new file in cytools, and the function rawLatticePoints calls that).
+--   3. add in the function into interface.dd
+--   4. in this package (or somewhere?) add in latticePoints(A, b) function with optional arguments
+--      to match what the program can do.
+--   5. make sure to catch errors
+--
+-- Files and directories to consider:
+--   - M2 branch computegv at /Users/mike/src/M2-current-branches/M2-computegv/
+--   - StringTorics package at /Users/mike/utah/CYToolsM2/StringTorics
+--   - old computeGV code (run as an external exectuable): /Users/mike/utah/ComputeGV
+--   - code Macaulay2/e/interface/cone*, Macaulay2/e/cytools/
+
 newPackage(
     "GopakumarVafaInvariants",
     Version => "0.1", 

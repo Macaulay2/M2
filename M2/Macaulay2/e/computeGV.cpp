@@ -232,6 +232,8 @@ int gvcompute(
   if (!n_threads) {
     n_threads = 1;
   }
+  std::cerr << "#threads: " << n_threads << std::endl;
+
   std::vector<std::thread> thread_vec;
   std::mutex task_mut, mut0, mut1, mut2;
   int curr_task;
