@@ -31,10 +31,14 @@ doc ///
     Example
       randomSubset(4, 2)
       randomSubset 5
+    Text
+      The order of elements in @VAR "x"@ is preserved.  For an arbitrary
+      order, use @TO (shuffle, List, ZZ)@ instead.
   References
     Knuth, Donald E.
     @EM "The Art of Computer Programming: Seminumerical Algorithms, Volume 2"@.
     Addison-Wesley Professional, 2014. (Algorithm S, Section 3.4.2)
   SeeAlso
     random
+    shuffle
 ///
