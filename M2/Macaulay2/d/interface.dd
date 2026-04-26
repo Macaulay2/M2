@@ -4580,19 +4580,17 @@ export rawGVInvariants(e:Expr):Expr := (
 setupfun("rawGVInvariants",rawGVInvariants);
 
 -- Compute lattice points in a polyhedron, up to given bound.
--- rawLatticePoints(H, rhs, B, N1, N2)
---  H: RawMatrix
---  rhs: seqeunce of integers (length: same as #rows of H.
---    the i-th constraint is (row i in H).(x1...xd) >= rhs_i)
---  B: bound: only find lattice points whos ecoordinates xi satisfy -B <= xi <= B.
+-- rawLatticePoints(A, b, B, N1, N2)
+--  A: RawMatrix
+--  b: sequence of integers (length: same as #rows of A.
+--    the i-th constraint is (row i in A).(x1...xd) <= b_i)
+--  B: bound: only find lattice points whose coordinates xi satisfy -B <= xi <= B.
 --  N1: maximum number of points to be found
---  N2: maximum number of nodes to visit (not sure what this really is).
--- returns: a MutableMatrix whose rows are the lattice points satisfying the above constraints.
+--  N2: maximum number of nodes to visit in the underlying search tree.
+-- returns: a MutableMatrix with d = #cols(A) rows, one column per lattice
+--   point satisfying the constraints above.
 -- TODO:
---  - H and result should have the same type (both MutableMatrix)?
---  - I think the points should be columns, not rows.
---  - The constraints should perhaps be Ax <= b.  This would require negating A, b before calling
---    the C code.  Why should they be Ax <= b.  Only because that is the convention in Polyhedra package.
+--  - A and result should have the same type (both MutableMatrix)?
 export rawLatticePoints(e:Expr):Expr := (
   when e is s:Sequence do (
   if length(s) == 5 then (

@@ -34,8 +34,12 @@ MutableMatrix /* or null */ *rawGVInvariants(M2_arrayint a,
                                             M2_arrayint f,
                                             M2_arrayint g);
 
-MutableMatrix /* or null */ *rawLatticePoints(const Matrix *H,
-                                              M2_arrayint rhs,
+// Enumerate integer vectors x of length d = #cols(A) satisfying
+//   A * x <= b  (componentwise) and  |x_i| <= B  for all i.
+// Returns a MutableMatrix over ZZ with d rows and one column per
+// lattice point.
+MutableMatrix /* or null */ *rawLatticePoints(const Matrix *A,
+                                              M2_arrayint b,
                                               int B,
                                               long max_N_out,
                                               long max_N_nodes);

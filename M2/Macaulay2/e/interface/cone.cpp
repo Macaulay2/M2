@@ -197,48 +197,53 @@ MutableMatrix *rawGVInvariants(M2_arrayint a,
 // 2. create the top level function, call the d level function.
 // 3. deal with the output from gvcompute.
 
-MutableMatrix *rawLatticePoints(const Matrix *H,
-                                M2_arrayint rhs,
+// User-facing convention is A * x <= b. The underlying box_enum function
+// works with H * x >= rhs, so we negate A and b on the way in.
+MutableMatrix *rawLatticePoints(const Matrix *A,
+                                M2_arrayint b,
                                 int B,
                                 long max_N_out,
                                 long max_N_nodes)
 {
   try
     {
-      const size_t n_hyps = H->n_rows();
-      const size_t dim = H->n_cols();
+      const size_t n_hyps = A->n_rows();
+      const size_t dim = A->n_cols();
 
-      if (static_cast<size_t>(rhs->len) != n_hyps)
+      if (static_cast<size_t>(b->len) != n_hyps)
         {
-          ERROR("rawLatticePoints: length of rhs must equal number of rows of H");
+          ERROR("rawLatticePoints: length of b must equal number of rows of A");
           return nullptr;
         }
 
-      // Marshal H entries from ZZ matrix to vector<vector<int>>.
+      // Marshal A entries to vector<vector<int>>, negating to convert
+      // A*x <= b into (-A)*x >= -b for the box_enum convention.
       std::vector<std::vector<int>> Hvec(n_hyps, std::vector<int>(dim));
       for (size_t i = 0; i < n_hyps; i++)
         for (size_t j = 0; j < dim; j++)
           {
-            mpz_srcptr z = H->elem(i, j).get_mpz();
+            mpz_srcptr z = A->elem(i, j).get_mpz();
             if (mpz_fits_sint_p(z) == 0)
               {
-                ERROR("rawLatticePoints: H entry does not fit in a C int");
+                ERROR("rawLatticePoints: entry of A does not fit in a C int");
                 return nullptr;
               }
-            Hvec[i][j] = static_cast<int>(mpz_get_si(z));
+            Hvec[i][j] = -static_cast<int>(mpz_get_si(z));
           }
 
-      std::vector<int> rhsvec = M2_arrayint_to_stdvector<int>(rhs);
+      std::vector<int> rhsvec(n_hyps);
+      for (size_t i = 0; i < n_hyps; i++) rhsvec[i] = -b->array[i];
 
       auto result = M2::cytools::latticePoints(
           static_cast<int>(dim), B, Hvec, rhsvec, max_N_out, max_N_nodes);
 
+      // Output: rows = ambient coords (dim), cols = lattice points.
       const size_t n_points = result.points.size();
       MutableMatrix *M =
-          MutableMatrix::zero_matrix(globalZZ, n_points, dim, /*dense*/ true);
+          MutableMatrix::zero_matrix(globalZZ, dim, n_points, /*dense*/ true);
       for (size_t i = 0; i < n_points; i++)
         for (size_t j = 0; j < dim; j++)
-          M->set_entry(i, j, globalZZ->from_long(result.points[i][j]));
+          M->set_entry(j, i, globalZZ->from_long(result.points[i][j]));
       return M;
   } catch (const std::runtime_error &e)
     {
