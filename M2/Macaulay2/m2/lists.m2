@@ -231,15 +231,12 @@ allOperators = sort allOperators
 random List := opts -> x -> x#(random(#x))
 
 shuffle = method()
-shuffle List := s -> (
-     n := #s;
-     if n <= 1 then return s;
-     s = new MutableList from s;
-     for i from 1 to n-1 do (
-	  j := random (i+1);
-	  t := s#i ; s#i = s#j ; s#j = t;
-	  );
-     new List from s)
+shuffle MutableList := s -> (
+    for i from 1 to #s-1 do (
+	j := random (i+1);
+	(s#i, s#j) = (s#j, s#i));
+    s)
+shuffle List := s -> toList shuffle new MutableList from s
 
 randomSubset = method()
 -- Knuth Algorithm S, Art of Computer Programming, Section 3.4.2

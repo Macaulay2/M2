@@ -2,6 +2,7 @@ doc ///
   Key
     shuffle
     (shuffle, List)
+    (shuffle, MutableList)
   Headline
     shuffle a list randomly
   Usage
@@ -14,6 +15,11 @@ doc ///
   Description
     Example
       shuffle toList (0 .. 12)
+    Text
+      Mutable lists are shuffled in place.
+    Example
+      x = new MutableList from 0..12; peek x
+      shuffle x; peek x
   SeeAlso
     setRandomSeed
     (random, List)
