@@ -6,6 +6,7 @@ newPackage( "BeginningMacaulay2", Version => "1.0", Date => "November 3, 2009",
 	  },
      Headline => "Mathematicians' Introduction to Macaulay2",
      Keywords => {"Documentation"},
+     PackageExports => {"OldChainComplexes"},
      AuxiliaryFiles => true
      )
 beginDocumentation()

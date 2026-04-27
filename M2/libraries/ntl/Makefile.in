@@ -2,12 +2,11 @@
 LICENSEFILES = doc/copying.txt
 # @configure_input@
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-VERSION = 10.5.0
+VERSION = 11.5.1
 TARDIR = ntl-$(VERSION)
 BUILDDIR = $(UNTARDIR)/$(TARDIR)/src
 TARFILE = ntl-$(VERSION).tar.gz
-# URL = http://shoup.net/ntl
-URL = http://macaulay2.com/Downloads/OtherSourceCode
+URL = https://libntl.org
 CONFIGURECMD = ./configure $(CONFIGUREOPTIONS)
 
 ifeq (@DEBUG@,yes)

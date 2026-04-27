@@ -134,8 +134,7 @@ Node
   Caveat
     This function may behave unpredictably in presence of variables of degree zero.
   SeeAlso
-    poincareN
-    (poincare, ChainComplex)
+    "Complexes :: poincareN"
     degreesRing
     hilbertFunction
     hilbertSeries
@@ -143,84 +142,13 @@ Node
     reduceHilbert
     selectInSubring
     "Elimination::Elimination"
-///
 
--- This will be consumed into the Complexes package
-doc ///
 Node
   Key
-    (poincare, ChainComplex)
-  Headline
-    assemble degrees of a chain complex into a polynomial
-  Usage
-    poincare C
-  Inputs
-    C:ChainComplex
-  Outputs
-    :RingElement
-      in the Laurent polynomial ring @TO2 (degreesRing, "degrees ring")@, whose variables correspond to the degrees of the ambient ring
-  Description
-    Text
-      We compute @TO poincare@ for a chain complex.
-    Example
-      R = ZZ/32003[a..h];
-      C = res ideal(a*b, c*d, e*f)
-      poincare C
-    Text
-      Note that since the Hilbert series is additive in exact sequences, for a free resolution this only depends
-      on the Betti numbers of the resolution. For more details, see @TO "Hilbert functions and free resolutions"@.
-    Example
-      b = betti C
-      poincare b
-  SeeAlso
     poincareN
-    degreesRing
-    hilbertFunction
-    hilbertSeries
-    hilbertPolynomial
-    reduceHilbert
-    (poincare, BettiTally)
-
-Node
-  Key
-     poincareN
-    (poincareN, ChainComplex)
   Headline
     assemble degrees into polynomial
-  Usage
-    poincareN C
-  Inputs
-    C:ChainComplex
-  Outputs
-    :RingElement
-      in the Laurent polynomial ring @TO2 (degreesRing, "degrees ring")@, whose variables correspond to the degrees of the ambient ring
-  Description
-    Text
-      This function encodes information about the degrees of basis elements of a free chain complex in a
-      polynomial. The polynomial has terms $S^i T_0^{d_0} \cdots T_{n-1}^{d_{n-1}}$ in it for each basis
-      element of @TT "C_i"@ with multi-degree @TT "{d_0,...,d_(n-1)}"@.
-    Example
-      R = ZZ/101[a,b,c, Degrees=>{1,1,2}];
-      C = res cokernel vars R
-      betti C
-      p = poincareN C
-    Text
-      Setting the @TT "S"@ variable to -1 gives the polynomial calculated by @TO (poincare, ChainComplex)@.
-    Example
-      sub(p, {S => -1})
-      poincare C
-    Text
-      Conversely, setting it to 1 gives the same polynomial for the direct sum of components of the complex.
-    Example
-      sub(p, {S => 1})
-      poincare sum C
   SeeAlso
-    poincare
-    degreesRing
-    hilbertFunction
-    hilbertSeries
-    hilbertPolynomial
-    reduceHilbert
-    (poincare, BettiTally)
-    (sum, ChainComplex)
+    "Complexes :: poincareN(Complex)"
+    "OldChainComplexes :: poincareN(ChainComplex)"
 ///

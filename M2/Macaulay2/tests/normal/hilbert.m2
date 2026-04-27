@@ -76,7 +76,7 @@ scan(3, n -> (
 		    assert( r == s)))))))
 
 --
-importFrom_Core {"truncateSeries"}
+importFrom_Core "truncateSeries"
 R = QQ[x,y, DegreeRank => 2]
 assert(truncateSeries(5, {1,1}, Divide{1_R,Product{Power{1-x,1}}}) == x^4+x^3+x^2+x+1)
 assert(truncateSeries(5, {1,1}, Divide{1_R,Product{Power{1+x,1}}}) == x^4-x^3+x^2-x+1)

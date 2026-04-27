@@ -8,39 +8,6 @@
      assert( {{1, 0, 1}, {0, 20, 0}, {1, 0, 1}} === applyTable(result,last@@last) )
      print new MatrixExpression from result
 
-
--- Example 4.1: the bounds can be sharp.
---
-     S = QQ[w,x,y,z];
-     X = Proj S;
-     I = monomialCurveIdeal(S,{1,3,4})
-     N = S^1/I;
-     assert(Ext^1(OO_X,N~(>= 0)) == prune truncate(0,Ext^1(truncate(2,S^1),N)))
-     assert(Ext^1(OO_X,N~(>= 0)) != prune truncate(0,Ext^1(truncate(1,S^1),N)))
-
-
--- Example 4.2: locally free sheaves and global Ext.
---
-     S = ZZ/32003[u,v,w,x,y,z];
-     I = minors(2,genericSymmetricMatrix(S,u,3));
-     X = variety I;
-     R = ring X;
-     Omega = cotangentSheaf X;
-     OmegaDual = dual Omega;
-     assert(Ext^1(OmegaDual, OO_X^1(>= 0)) == Ext^1(OO_X^1, Omega(>= 0)))
-
-
--- Example 4.3: Serre-Grothendieck duality.
---
-     S = QQ[v,w,x,y,z];
-     X = variety ideal(w*x+y*z,w*y+x*z);
-     R = ring X;
-     omega = OO_X^{-1};
-     G = sheaf cokernel genericSymmetricMatrix(R,R_0,2);
-     assert(Ext^2(G,omega) == dual HH^0(G))
-     assert(Ext^1(G,omega) == dual HH^1(G))
-     assert(Ext^0(G,omega) == dual HH^2(G))
-
 --
 fib = memoize( n -> if n <= 1 then 1 else fib(n-1) + fib(n-2) )
 assert ( fib 10 == 89 )
@@ -177,26 +144,6 @@ assert isIsomorphism p^-1
 assert ( p * p^-1 == id_M )
 assert ( p^-1 * p == id_N )
 
---
-S = ZZ/101[a..d]
-I = monomialCurveIdeal(S, {1,3,4})
-R = S/I
-use R
-J = module ideal(a,d)
-K = module ideal(b^2,c^2)
-JK = Hom(J,K)
-f = JK_{0}
-g = homomorphism f
-assert isHomogeneous g
-assert ( source g === J )
-assert ( target g === K )
-f' = homomorphism' g
-assert (f-f' == 0)
-assert (degrees f' === {{{1}}, {{0}}})
-assert (degrees f === {{{1}}, {{1}}})
-assert (degree f == {0})
-assert (degree f' == {1})
-
 
      --
 	  R = ZZ[x]
@@ -276,21 +223,6 @@ time C = resolution M
 assert(regularity C === 2)
 f = symmetricPower(2,vars R)
 assert(f%a + a * (f//a) == f)
-
-
---
-S = ZZ/101[t_1 .. t_9,u_1 .. u_9]
-m = matrix pack (3,toList (t_1 .. t_9))			  -- 3 by 3
-n = matrix pack (3,toList (u_1 .. u_9))			  -- 3 by 3
-j = flatten (m * n - n * m)
-k = flatten (m * n - n * m)
-G = gb j
-jj = generators G
-assert( numgens source jj == 26 )
-T = (degreesRing S)_0
-assert( poincare cokernel j == 1-8*T^2+2*T^3+31*T^4-32*T^5-25*T^6+58*T^7-32*T^8+4*T^9+T^10 )
-v = apply(7, i -> numgens source generators gb(k,DegreeLimit => i) )
-assert (v  === {0, 0, 8, 20, 25, 26, 26} )
 
 
 --
@@ -778,100 +710,7 @@ eg3 = () -> (
 
 
 --
--- copyright 1995 Michael E. Stillman
--- several tests of tensor products and Tor
--- many of these examples were created by David Eisenbud
 
--- Test 1.  Checking that Tor_i(M,k) and Tor_i(k,M) both give
--- the graded betti numbers of M.
-
-R = ZZ/101[a..d]
-k = cokernel vars R
-M = cokernel matrix {{a*d - b*c, a^2*c - b^3, c^3 - b*d^2, a*c^2 - b^2*d}}
-
-T0 = Tor_0(M,k)
-S0 = Tor_0(k,M)
-T1 = Tor_1(M,k)
-S1 = Tor_1(k,M)
-T2 = Tor_2(M,k)
-S2 = Tor_2(k,M)
-T3 = Tor_3(M,k)
-S3 = Tor_3(k,M)
-T4 = Tor_4(M,k)
-S4 = Tor_4(k,M)
-
-T = (degreesRing R)_0
-
-assert(poincare T0 ==             (1-T)^4)
-assert(poincare T1 == (T^2+3*T^3)*(1-T)^4)
-assert(poincare T2 == 4*T^4*      (1-T)^4)
-assert(poincare T3 ==  T^5 *      (1-T)^4)
-assert(poincare T4 ==  0)
-
-assert(poincare T0 == poincare S0)
-assert(poincare T1 == poincare S1)
-assert(poincare T2 == poincare S2)
-assert(poincare T3 == poincare S3)
-assert(poincare T4 == poincare S4)
-
--- notice that degree Tor_i(M,k) gives the i th betti number of M,
--- as does Tor_i(k,M), and the graded betti numbers can be seen by using
--- 'see target prune Tor_i(k,M)'
--- or by using, for example
-
-hf = poincare T2;
-if hf != 0 then while substitute(hf,{T=>1}) == 0 do hf = hf // (1-T);
-hf
-
--- Test 2.  Intersection multiplicity according to Serre
--- The intersection of two planes in 4-space meeting another such.
--- The multiplicity should be 4.  Serre's technique says that this
--- number should be the alternating sum of the 'degree Tor_i(R/I,R/J)':
-
-R = ZZ/101[a..d]
-I = generators intersect(image matrix {{a,b}}, image matrix {{c,d}});
-J = generators intersect(image matrix {{a-c-b, b-d}}, image matrix {{a-d, b-c}});
-
-U0 = Tor_0(cokernel I, cokernel J);
-U1 = Tor_1(cokernel I, cokernel J);
-U2 = Tor_2(cokernel I, cokernel J);
-U3 = Tor_3(cokernel I, cokernel J);
-U4 = Tor_4(cokernel I, cokernel J)
-
-U0 = prune U0
-assert( numgens target presentation U0 == 1 )
-assert( numgens source presentation U0 == 8 )
-
-U1 = prune U1
-assert( numgens target presentation U1 == 4 )
-assert( numgens source presentation U1 == 16 )
-
-U2 = prune U2
-assert( numgens target presentation U2 == 1 )
-assert( numgens source presentation U2 == 4 )
-
-U3 = prune U3
-assert( numgens target presentation U3 == 0 )
-assert( numgens source presentation U3 == 0 )
-
-U4 = prune U4
-assert( numgens target presentation U4 == 0 )
-assert( numgens source presentation U4 == 0 )
-
-assert( degree U0 == 7 )
-assert( degree U1 == 4 )
-assert( degree U2 == 1 )
-assert( degree U3 == 0 )
-assert( degree U4 == 0 )
-
-
---
-R=ZZ/101[x]
-assert(monomialIdeal vars R != 0)
-assert(monomialIdeal map(R^1,R^1,0) == 0)
-
-
---
 R = ZZ/101[a .. d,Degrees=>{1,2,3,5}]
 f = vars R
 C = resolution cokernel f
@@ -1107,7 +946,7 @@ assert try (clean(0.1,A);false) else true  -- not yet implemented.
 needsPackage "SimplicialComplexes"
 R = QQ[a..d]
 D = simplicialComplex {a*b*c,a*b*d,a*c*d,b*c*d}
-C = chainComplex D
+C = complex D
 assert ( rank HH_2 C == 1 )
 
 
@@ -1237,22 +1076,6 @@ F 3
 
 --
      assert( 3 === position({a,b,c,d,e,f},i->i===d ) )
-
-
-
---
-    R = QQ[x,y,z];
-    I = monomialIdeal(x^2,y^3,x*y^2*z,y*z^4);
-    J = polarize(I);
-    assert(betti res I==betti res J)
-
-
---
-    R = QQ[x,y,z];
-    I = monomialIdeal(x^2*y^2,y^2*z^2,x*y*z^4);
-    J = polarize(I, VariableBaseName => "whyNotAWord");
-    assert(betti res I==betti res J)
-
 
 --
 clearAll
@@ -1564,52 +1387,6 @@ assert ( euler R == -2 )
 R = ZZ/101[a,b,c]/c^3
 assert ( genera R == {1,2} )
 assert ( eulers R == {0,3} )
-
-
---
-M = matrix{{1.0,1.0},{0.0,1.0}}
-eigenvalues M
-eigenvectors M
-
-M = matrix{{1.0, 2.0}, {2.0, 1.0}}
-eigenvectors(M, Hermitian=>true)
-
-M = matrix{{1.0, 2.0}, {5.0, 7.0}}
-(eigvals, eigvecs) = eigenvectors M
--- here we use "norm" on vectors!
-assert( 1e-10 > norm ( M * eigvecs_0 - eigvals_0 * eigvecs_0 ) )
-assert( 1e-10 > norm ( M * eigvecs_1 - eigvals_1 * eigvecs_1 ) )
-
-printingPrecision = 2
-
-m = map(CC^10, CC^10, (i,j) -> i^2 + j^3*ii)
-(eigvals, eigvecs) = eigenvectors m
-max (abs \ eigvals) / min (abs \ eigvals)
-scan(#eigvals, i -> assert( 1e-10 > norm ( m * eigvecs_i - eigvals_i * eigvecs_i )))
-
--- some ill-conditioned matrices
-
-m = map(CC^10, CC^10, (i,j) -> (i+1)^(j+1))
-(eigvals, eigvecs) = eigenvectors m
-max (abs \ eigvals) / min (abs \ eigvals)
-apply(#eigvals, i -> norm ( m * eigvecs_i - eigvals_i * eigvecs_i ))
-scan(#eigvals, i -> assert( 1e-4 > norm ( m * eigvecs_i - eigvals_i * eigvecs_i )))
-
-m = map(RR^10, RR^10, (i,j) -> (i+1)^(j+1))
-(eigvals, eigvecs) = eigenvectors m
-max (abs \ eigvals) / min (abs \ eigvals)
-apply(#eigvals, i -> norm ( m * eigvecs_i - eigvals_i * eigvecs_i ))
-scan(#eigvals, i -> assert( 1e-4 > norm ( m * eigvecs_i - eigvals_i * eigvecs_i )))
-
-
-
---
-m = map(CC^10, CC^10, (i,j) -> i^2 + j^3*ii)
-eigenvalues m
-m = map(CC^10, CC^10, (i,j) -> (i+1)^(j+1))
-eigenvalues m
-m = map(RR^10, RR^10, (i,j) -> (i+1)^(j+1))
-eigenvalues m
 
 
 --

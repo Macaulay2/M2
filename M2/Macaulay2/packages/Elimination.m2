@@ -100,7 +100,7 @@ eliminate(RingElement, Ideal) := (v,I) -> eliminate({v},I)
 -- Sylvester matrix, resultant, discriminant --
 -----------------------------------------------
 
-sylvesterMatrix = method()
+sylvesterMatrix = method(TypicalValue => Matrix)
 sylvesterMatrix(RingElement,RingElement,RingElement) := (f,g,x) -> (
      R := ring f;
      if R =!= ring g then error "expected same ring";
@@ -120,12 +120,12 @@ sylvesterMatrix(RingElement,RingElement,RingElement) := (f,g,x) -> (
        m = transpose m;
        substitute(m, x=>0)))
 
-resultant = method()
-resultant(RingElement, RingElement, RingElement) := (f,g,x) -> 
+resultant = method(TypicalValue => RingElement, Options => { Algorithm => null })
+resultant(RingElement, RingElement, RingElement) := o -> (f,g,x) ->
      det sylvesterMatrix(f,g,x)
 
-discriminant = method()
-discriminant(RingElement, RingElement) := (f,x) -> resultant(f, diff(x,f), x)
+discriminant = method(Options => { Algorithm => null })
+discriminant(RingElement, RingElement) := RingElement => o -> (f,x) -> resultant(f, diff(x,f), x, o)
 
 -----------------------------------------------
 -- documentation and tests

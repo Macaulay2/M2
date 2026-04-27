@@ -64,7 +64,7 @@ placeholderToSchubertBasis(RingElement,FlagBundle) := (c,G) -> (
      (k,q) := toSequence(G.BundleRanks);
      P := diagrams(q,k);
      M := apply(P, i-> placeholderSchubertCycle(i,G));
-     E := flatten entries basis(R);
+     E := flatten entries basis(R, Variables => 0 .. numgens R - 1);
      local T';
      if R.cache.?htoschubert then T' = R.cache.htoschubert else (
 	  T := transpose matrix apply (M, i -> apply(E, j-> coefficient(j,i))); --matrix converting from schu-basis 

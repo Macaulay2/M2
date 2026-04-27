@@ -37,7 +37,7 @@ doc ///
    the end of the string. Requests for out-of-bound character positions
    are silently ignored.
   Example
-   s = "I love computing Groebner bases in Macaulay2.";
+   s = "I love computing Gröbner bases in Macaulay2.";
    substring(0, 5, s)
    substring(s, -10, 5)
    substring(s, 100, 5)

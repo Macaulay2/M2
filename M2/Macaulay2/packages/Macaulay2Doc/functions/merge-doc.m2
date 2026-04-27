@@ -2,8 +2,9 @@
 -- author: Lily Silverstein
 
 doc ///
+Node
  Key
-  merge
+   merge
   (merge, HashTable, HashTable, Function)
  Headline
   merge two hash tables
@@ -75,4 +76,35 @@ doc ///
   scanValues
   values
   "hash tables"
+
+Node
+  Key
+    mergePairs
+   (mergePairs, BasicList, BasicList, Function)
+  Headline
+    merge sorted lists of pairs
+  Usage
+    mergePairs(x,y,f)
+  Inputs
+    x:BasicList
+    y:BasicList
+    f:Function
+  Outputs
+    :BasicList
+  Description
+    Text
+      This function merges sorted lists of pairs.
+
+      It merges @TT "x"@ and @TT "y"@, which should be lists of pairs @TT "(k,v)"@
+      arranged in increasing order according to the key @TT "k"@. The result will
+      be a list of pairs, also arranged in increasing order, each of which is
+      either from @TT "x"@ or from @TT "y"@, or in the case where a key @TT "k"@
+      occurs in both, with say @TT "(k,v)"@ in @TT "x"@ and @TT "(k,w)"@ in @TT "y"@,
+      then the result will contain the pair @TT "(k,f(v,w))"@. Thus the function
+      @TT "f"@ is used for combining the values when the keys collide.
+
+      The class of the result is taken to be the minimal common
+      ancestor of the class of @TT "x"@ and the class of @TT "y"@.
+  SeeAlso
+    merge
 ///

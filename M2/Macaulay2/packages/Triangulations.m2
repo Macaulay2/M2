@@ -1,7 +1,7 @@
 newPackage(
         "Triangulations",
-        Version => "0.1", 
-        Date => "13 Nov 2022",
+        Version => "0.2", 
+        Date => "25 Oct 2024",
         Authors => {{
                 Name => "Mike Stillman", 
                 Email => "mike@math.cornell.edu", 
@@ -352,7 +352,7 @@ link(List, List) := (tau, triangulation) -> (
 
 flips = method(Options => options topcomFlips)
 flips Triangulation := List => opts -> T -> (
-    first topcomFlips(matrix T, max T, Homogenize => false, RegularOnly => opts.RegularOnly) -- TODO: "first" here is a hack, until topcom version is set.
+    topcomFlips(matrix T, max T, Homogenize => false, RegularOnly => opts.RegularOnly)
     )
 
 bistellarFlip = method()
@@ -875,8 +875,9 @@ TEST ///
   T = regularFineTriangulation A
   naiveIsTriangulation T -- TODO: doc this, and allow A to be homogenized? Same with topcomIsTriangulation
   -- XX
-  flips T -- not really functional.  Returns internal stuff.  I don't understand the format...
+  assert(set flips T === set{{{0, 3}, {4}}, {{1, 2}, {4}}})
   orientedCircuits A
+  assert isSubset(flips T, orientedCircuits A)
   orientedCocircuits A
   chirotope A
   assert(naiveChirotopeString A === chirotopeString A)
@@ -1117,7 +1118,6 @@ TEST ///
   needsPackage "Triangulations"  
 *-
   debug needsPackage "Topcom"  
-  topcompath = "/opt/homebrew/bin/"
 
   -- this tests construction of the chirotope.
   A = transpose matrix"0,0;1,1;3,1;5,0;1,5"
@@ -1137,17 +1137,17 @@ TEST ///
   -- assert(tri/sort//sort == ({{0, 1, 2}, {0, 2, 3}, {1, 2, 4}, {0, 1, 4}, {2, 3, 4}})/sort//sort)
 
   -- now find the possible flips.  Can we get topcom to do the flips?
-  flips T -- output needs to change.
+  assert(set flips T === set {{{0, 2, 4}, {1}}, {{1, 3}, {0, 2}}})
+  assert(isSubset((flips T)/sort, (orientedCircuits A)/sort))
   -- I don't see how to get topcom to use these though.
 ///
 
 TEST ///
 -*
-  -- XXX current test being worked on
   restart
   needsPackage "Triangulations"
 *-
-  -- test if bistellar flips code.
+  -- test of bistellar flips code.
   
   -- example 1.
   debug needsPackage "Topcom"

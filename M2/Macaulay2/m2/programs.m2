@@ -89,18 +89,21 @@ findProgram(String, List) := opts -> (name, cmds) -> (
 	instance(opts.MinimumVersion, Sequence) and
 	class \ opts.MinimumVersion === (String, String)) then
 	error "expected MinimumVersion to be a sequence of two strings";
-    pathsToTry := fixPath \ join(
+    pathsToTry := fixPath \ nonnull flatten {
 	-- try user-configured path first
-	if programPaths#?name then {programPaths#name} else {},
+	if programPaths#?name then programPaths#name,
 	-- now try M2-installed path
-	{prefixDirectory | currentLayout#"programs"},
+	prefixDirectory | currentLayout#"programs",
 	-- any additional paths specified by the caller
-	opts.AdditionalPaths,
+	 opts.AdditionalPaths,
 	-- try PATH
-	if getenv "PATH" == "" then {} else apply(separate(":", getenv "PATH"),
+	if getenv "PATH" =!= "" then apply(
+	    separate(":", getenv "PATH"),
 	    dir -> if dir == "" then "." else dir),
 	-- try directory containing M2-binary
-	{bindir});
+	bindir,
+	-- try usr-host/bin
+	if topBuilddir =!= null then topBuilddir | "usr-host/bin"};
     prefixes := {(".*", "")} | opts.Prefix;
     errorCode := didNotFindProgram;
     versionFound := "0.0";
@@ -146,14 +149,16 @@ runProgram(Program, String, String) := opts -> (program, name, args) -> (
 	    makeDirectory opts.RunDirectory;
 	"cd " | opts.RunDirectory | " && " ) else "";
     cmd = cmd | program#"path" | addPrefix(name, program#"prefix") | " " | args;
+    if opts.Verbose then printerr("running: ", cmd);
     if match("\\|", cmd) then cmd = "{ " | cmd | ";}";
-    returnValue := run (cmd | " > " | outFile | " 2> " | errFile);
-    message := "running: " | cmd | "\n";
+    returnValue := (
+	if opts.Verbose
+	then run ("(((((" | cmd | "; echo $? >&4) | tee " | outFile |
+	    ") 3>&1 1>&2 2>&3 | tee " | errFile |
+	    " >&5) 4>&1) | (read r; exit $r)) 5>&1")
+	else run (cmd | " > " | outFile | " 2> " | errFile));
     output := get outFile;
-    if output != "" then message = message | output;
     err := get errFile;
-    if err != "" then message = message | err;
-    if opts.Verbose then print(message);
     result := {
 	"command" => cmd,
 	"output" => output,
@@ -167,8 +172,8 @@ runProgram(Program, String, String) := opts -> (program, name, args) -> (
 	removeFile errFile;
     );
     if opts.RaiseError and returnValue != 0 then error(
-	program#"name" | " returned an error" |
-	if opts.Verbose then "" else "\n" | message);
+	program#"name" | " returned an error (" | toString returnValue |")" |
+	if opts.Verbose then "" else ":\n" | err);
     new ProgramRun from result
 )
 

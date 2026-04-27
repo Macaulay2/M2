@@ -9,7 +9,7 @@ newPackage("Text",
 
 exportFrom_Core {
      "ANCHOR", "BLOCKQUOTE", "BODY", "BOLD", "BR", "CDATA", "CODE", "COMMENT", "DD", "DIV", "DL", "DT", "EM", "ExampleItem", "HEAD", "HEADER1",
-     "HEADER2", "HEADER3", "HEADER4", "HEADER5", "HEADER6", "HR", "HREF", "HTML", "Hypertext", "HypertextContainer", "HypertextParagraph", "HypertextVoid", "IMG", "INDENT", "ITALIC", "KBD",
+     "HEADER2", "HEADER3", "HEADER4", "HEADER5", "HEADER6", "HR", "HREF", "HTML", "Hypertext", "HypertextContainer", "HypertextParagraph", "HypertextVoid", "IFRAME", "IMG", "INDENT", "ITALIC", "KBD",
      "LABEL", "LATER", "LI", "LINK", "LITERAL", "M2CODE", "MENU", "META", "PARA", "PRE", "SAMP", "SCRIPT", "SMALL", "SPAN", "STRONG", "STYLE", "SUB", "SUBSECTION", "SUP", "TABLE", "TD", "TH",
      "TEX", "TITLE", "TO", "TO2", "TOH", "TR", "TT", "UL", "VAR", "OL", "INPUT", "BUTTON", "validate",
      "MarkUpType", "IntermediateMarkUpType",
@@ -496,7 +496,7 @@ document {
      Key => (html, TEX),
      Headline => "conversion of $\\TeX$ to html",
      Usage => "html t",
-     Inputs => { "t" },
+     Inputs => { "t" => TEX },
      Outputs => { {"a string containing the result of converting ", TT "t", " to html"} },
      PARA {
 	 TEX "This method produces an HTML string, mainly converting several simple text formatting environments,
@@ -504,10 +504,9 @@ document {
 	 HREF{"https://katex.org/","$\\KaTeX$"}, ", a JavaScript math typesetting library for browsers. See the list of ",
 	 HREF{"https://katex.org/docs/supported.html","supported functions and symbols"}, " for more information, or ",
 	 HREF{"https://en.wikibooks.org/wiki/LaTeX/Mathematics","this page"}, " for an introduction to math mode in $\\LaTeX$." },
-     PARA {
-	 TEX "Equations in ", TT "$..$", " or ", TT "\\(...\\)", " appear in inline mode, such as $x^2-1$,
-	 while those in ", TT "$$..$$", " or ", TT "\\[...\\]", " appear in display mode:",
-	 TEX {"$$", texMath genericMatrix(QQ[x,y,z,w],2,2), ".$$"} },
+     "Equations in ", KBD "$..$", " or ", KBD "\\(...\\)", " appear in inline mode, such as $x^2-1$,
+     while those in ", KBD "$$..$$", " or ", KBD "\\[...\\]", " appear in display mode:",
+     "$$", texMath genericMatrix(QQ[x,y,z,w],2,2), ".$$",
      PARA {
 	 "In addition, ", TT "{\\bf ...}", ", ", TT "{\\em ...}", ", ", TT "{\\it ...}", ", ", TT "{\\tt ...}",
 	 ", and ", TT "\\url{...}", " are converted to ", TO Hypertext, " objects:" },
@@ -856,6 +855,19 @@ document {
      "For an example, see ", TO "Macaulay2Doc::hypertext list format", "."
      }
 
+document {
+    Key => {IFRAME},
+    Headline => "HTML inline frame (iframe) element",
+    Usage => "IFRAME x",
+    Inputs => {"x" => List => "specifying the iframe attributes"},
+    PARA {
+	"An ", M2CODE "IFRAME", " object represents an inline frame in HTML, ",
+	"which allows embedding an independent browsing context (another HTML ",
+	"document) within the current one."},
+    EXAMPLE "html IFRAME {\"src\" => \"https://example.com\"}",
+    PARA {"This is rendered in the browser as:"},
+    IFRAME {"src" => "https://example.com"}}
+
 document { Key => (options, MarkUpType),
      "Optional arguments of mark up types allow attributes to be added to html elements.",
      EXAMPLE lines ///
@@ -920,7 +932,6 @@ scan({peek', show, validate, html, net, info, tex, texMath, mathML, NewFromMetho
 	    x.Package === "Text" and (isMissingDoc x or isUndocumented x)))
 
 undocumented {
-    (examples, Hypertext),
     (hypertext, Hypertext)
     }
 

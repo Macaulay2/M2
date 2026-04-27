@@ -9,7 +9,7 @@
 ------------------------------------------
 ------------------------------------------
 
-newPackage select((
+newPackage(
     "Posets",
         Version => "1.1.3",
         Date => "May 15, 2021",
@@ -26,25 +26,26 @@ newPackage select((
             },
         DebuggingMode => false,
         PackageExports => {
+	    "Isomorphism",
             "SimplicialComplexes",
             "Graphs",
-            "FourTiTwo"
+            "FourTiTwo",
+            "Complexes"
             },
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "Partially ordered sets in Macaulay2",
 	     "acceptance date" => "5 June 2015",
-	     "published article URI" => "http://msp.org/jsag/2015/7-1/p02.xhtml",
-	     "published article DOI" => "https://dx.doi.org/10.2140/jsag.2015.7.9-15",
-	     "published code URI" => "http://msp.org/jsag/2015/7-1/jsag-v7-n1-x02-Posets.m2",
-	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Posets.m2",
+	     "published article URI" => "https://msp.org/jsag/2015/7-1/p02.xhtml",
+	     "published article DOI" => "10.2140/jsag.2015.7.9-15",
+	     "published code URI" => "https://msp.org/jsag/2015/7-1/jsag-v7-n1-x02-Posets.m2",
 	     "release at publication" => "3a8d880a524f36a9668750375bb6079a7b00ea0f",
 	     "version at publication" => "1.1.2",
 	     "volume number" => "7",
-	     "volume URI" => "http://msp.org/jsag/2015/7-1/"
+	     "volume URI" => "https://msp.org/jsag/2015/7-1/"
 	     },
-        ), x -> x =!= null)
+    )
 
 -- Load configurations
 posets'Precompute = if instance((options Posets).Configuration#"DefaultPrecompute", Boolean) then (options Posets).Configuration#"DefaultPrecompute" else true;
@@ -100,10 +101,10 @@ export {
     "augmentPoset",
     "diamondProduct",
     "dropElements",
-    "isomorphism",
+  --"isomorphism",
   --"product",
     "removeIsomorphicPosets",
-    "union",
+  --"union",
     --
     -- Enumerators
     "booleanLattice",
@@ -570,8 +571,7 @@ dropElements (Poset, Function) := Poset => (P, f) -> dropElements(P, select(P.Gr
 Poset - List := dropElements
 
 -- Inspired by Stembridge's Maple Package
-isomorphism = method()
-isomorphism (Poset, Poset) := HashTable => (P, Q) -> (
+isomorphism (Poset, Poset) := HashTable => o -> (P, Q) -> (
     -- Test for a quick bail-out (also puts the covering relations in the cache).
     if #P_* != #Q_* or #coveringRelations P != #coveringRelations Q then return null;
     -- Partition the vertices based on (#leq, #geq, #covering, #coveredBy).
@@ -626,9 +626,8 @@ removeIsomorphicPosets List := List => L -> (
         )
     )
 
-union = method()
-union (Poset, Poset) := Poset => (P, Q) -> poset(unique join(P.GroundSet, Q.GroundSet), unique join(P.Relations, Q.Relations), AntisymmetryStrategy => "rank")
-Poset + Poset := union
+union(Poset, Poset) :=
+Poset + Poset := Poset => (P, Q) -> poset(unique join(P.GroundSet, Q.GroundSet), unique join(P.Relations, Q.Relations), AntisymmetryStrategy => "rank")
 
 ------------------------------------------
 -- Enumerators
@@ -1008,10 +1007,10 @@ randomPoset (List) := Poset => opts -> (G) -> (
 randomPoset (ZZ) := Poset => opts -> n -> randomPoset(toList(1..n), opts)
 
 resolutionPoset = method()
-resolutionPoset ChainComplex := Poset => C ->
+resolutionPoset Complex := Poset => C ->
     poset flatten flatten apply(sort unique (first \ keys betti C), d -> for r to numrows C.dd_d - 1 list for c to numcols C.dd_d - 1 list if C.dd_d_(r,c) != 0 then {{d-1,r}, {d,c}} else continue)
 resolutionPoset MonomialIdeal := Poset => I -> (
-    P := resolutionPoset res I;
+    P := resolutionPoset freeResolution I;
     cvrs := applyValues(partition(last, coveringRelations P), v -> last \ first \ v);
     lbl := {{{0,0} => {0,0}}, apply(#I_*, i -> {1,i} => I_i)};
     for r in drop(rankPoset P, 2) do lbl = append(lbl, for v in r list v => lcm (last \ (last lbl)_(cvrs#v)));
@@ -2768,7 +2767,7 @@ doc ///
         (symbol _, Poset, ZZ)
         (symbol _, Poset, List)
         indexLabeling
-        isomorphism
+	(isomorphism, Poset, Poset)
         naturalLabeling
 ///
 
@@ -3062,7 +3061,7 @@ doc ///
             B == divisorPoset (2*3*5*7)
             B == divisorPoset (2^2*3*5)
     SeeAlso
-        isomorphism
+        (isomorphism, Poset, Poset)
         removeIsomorphicPosets
 ///
 
@@ -3167,7 +3166,6 @@ doc ///
 -- isomorphism
 doc ///
     Key
-        isomorphism
         (isomorphism,Poset,Poset)
     Headline
         computes an isomorphism between isomorphic posets
@@ -3256,14 +3254,13 @@ doc ///
             removeIsomorphicPosets L
     SeeAlso
         areIsomorphic
-        isomorphism
+        (isomorphism, Poset, Poset)
         Posets
 ///
 
 -- union
 doc ///
     Key
-        union
         (union,Poset,Poset)
         (symbol +,Poset,Poset)
     Headline
@@ -3829,7 +3826,7 @@ doc ///
 doc ///
     Key
         resolutionPoset
-        (resolutionPoset,ChainComplex)
+        (resolutionPoset,Complex)
         (resolutionPoset,Ideal)
         (resolutionPoset,MonomialIdeal)
     Headline
@@ -3838,7 +3835,7 @@ doc ///
         P = resolutionPoset C
         P = resolutionPoset I
     Inputs
-        C:ChainComplex
+        C:Complex
         I:MonomialIdeal
         I:Ideal
     Outputs
@@ -3850,7 +3847,7 @@ doc ///
             component of the resolution.
         Example
             R = QQ[x,y,z];
-            C = res ideal(y*z,x*z,x^2*y)
+            C = freeResolution ideal(y*z,x*z,x^2*y)
             resolutionPoset C
             (resolutionPoset C).GroundSet
         Text

@@ -1,3 +1,0 @@
-
-i10 : findFiles "/"
-stdio:10:1:(1):[0]: error: array index -1 out of bounds 0 .. -1

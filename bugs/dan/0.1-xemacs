@@ -1,3 +1,0 @@
-this is the line needed in M2.el to get xemacs to work:
-
-(if (and (boundp 'xemacsp) xemacsp) (defun replace-regexp-in-string (regexp rep string) (replace-in-string string regexp rep)))

@@ -6,6 +6,7 @@
 #include "poly.hpp"
 #include "matrix.hpp"
 #include "matrix-con.hpp"
+#include <gmpxx.h>
 
 #if 0
 // Example of the calls used to create an ideal (one rowed matrix), over a poly ring
@@ -44,11 +45,13 @@ class MatrixStream
   }  // This will return null before idealDone() is called.
 
   // Fields required for the general stream interface (see mathicgb::mathicgb.h)
-  typedef int Coefficient;
+  using Coefficient = mpz_class;
   // typedef long Coefficient;
-  typedef size_t VarIndex;
+  // typedef size_t VarIndex;
+  typedef int VarIndex;
   typedef int Exponent;
-  typedef unsigned int Component;
+  //typedef unsigned int Component;
+  typedef int Component;
 
   Coefficient modulus() const
   {
@@ -56,6 +59,7 @@ class MatrixStream
   }
   VarIndex varCount() const { return mPolyRing->n_vars(); }
   Component comCount() const { return mFreeModule->rank(); }
+  
   void idealBegin(size_t polyCount);
   void appendPolynomialBegin(size_t termCount);
   void appendTermBegin(Component com);

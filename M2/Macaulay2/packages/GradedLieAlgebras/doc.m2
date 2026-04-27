@@ -53,7 +53,7 @@ doc ///
 			{\mathbb Z}^n\times {\mathbb Z}/2{\mathbb Z}$, 
 			where the first 
 			component is called the @TO degree@, and the last component
-			is called the @TO sign@, which is 0 or 1 and have effect 
+			is called the @TO2{(sign, LieElement), "sign"}@, which is 0 or 1 and have effect 
 			on the axioms, see below. The list of components of the
 			grading except the sign 
 			is called the @TO weight@, and the last component of the 
@@ -72,7 +72,7 @@ doc ///
    			which are specified by @TO [lieAlgebra,Signs]@. 
    			The sign of a homogeneous element can be 
 			obtained by the function 
-   			@TO sign@. In the axioms
+   			@TO (sign, LieElement)@. In the axioms
    			below the sign of an element $a$ is written sign($a$).
 		       
 		       
@@ -249,7 +249,7 @@ doc ///
 	SeeAlso
 		lieDerivation
 		"isWellDefined(ZZ,LieDerivation)"
-		sign		
+		(sign, LieDerivation)
 		"Homomorphisms and derivations"  
 ///
 
@@ -717,7 +717,7 @@ Outputs
   L: LieAlgebra 
 SeeAlso
    lieAlgebra
-   sign
+   (sign, LieElement)
    "Second Lie algebra tutorial"
 Description
   Text
@@ -727,7 +727,7 @@ Description
     then all generators will be odd. The default value is that
     all generators are even. The signs affect the axioms of a Lie 
     superalgebra, see @TO LieAlgebra@. 
-    Use @TO sign@ to 
+    Use @TO (sign, LieElement)@ to 
     compute the sign of an arbitrary homogeneous Lie expression. 
     
   Example
@@ -743,7 +743,7 @@ Headline
   name for an optional argument for lieAlgebra
 SeeAlso
   lieAlgebra
-  sign
+  (sign, LieElement)
   "Second Lie algebra tutorial"
 Description
   Text
@@ -2171,7 +2171,7 @@ Description
       (ext_1+2 ext_0) ext_2 
 SeeAlso
       ExtAlgebra
-      sign
+      (sign, ExtElement)
       weight
       
 ///

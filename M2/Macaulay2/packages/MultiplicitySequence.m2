@@ -20,11 +20,24 @@ newPackage(
     PackageExports => {
         "ReesAlgebra", 
         "TangentCone", 
-        "OldPolyhedra",
         "Normaliz",
         "PrimaryDecomposition",
-        "MinimalPrimes"
-    }
+        "MinimalPrimes",
+        "Polyhedra",
+    },
+    Certification => {
+	"journal name" => "Journal of Software for Algebra and Geometry",
+	"journal URI" => "https://msp.org/jsag/",
+	"article title" => "Computing multiplicity sequences",
+	"acceptance date" => "2023-10-31",
+	"published article URI" => "https://msp.org/jsag/2024/14-1/p03.xhtml",
+	"published article DOI" => "10.2140/jsag.2024.14.13",
+	"published code URI" => "https://msp.org/jsag/2024/14-1/jsag-v14-n1-x03-MultiplicitySequence.m2",
+	"release at publication" => "6a750d5611ff9685a31e1eb4e176bb71b6842a58",
+	"version at publication" => "0.7",
+	"volume number" => "14",
+	"volume URI" => "https://msp.org/jsag/2024/14-1/"
+	}
 )
 
 export {
@@ -44,11 +57,6 @@ export {
  }
 
 -- installMinprimes() -- for MinimalPrimes.m2
-
-randomSubset := (L, k) -> (
-    i := random(#L);
-    if k == 1 then {L#i} else {L#i} | randomSubset(L_(delete(i, toList(0..<#L))), k-1)
-)
 
 getGenElts = method(Options => {symbol minTerms => -1, symbol numCandidates => 3})
 getGenElts (Ideal, ZZ) := List => opts -> (I, n) -> (
@@ -200,7 +208,7 @@ monReduction Ideal := MonomialIdeal => I -> (
 --- from a matrix M extract the rows where all the entries are not zero
 isBddFacet := (n, M) -> (
     s := rank source M; --- # of columns
-    mutableM := mutableIdentity (ZZ,s); --- row as a vector
+    mutableM := mutableIdentity (ring M,s); --- row as a vector
     for i from 0 to (s - 1) do (mutableM_(i,i) = M_(n,i));
     det mutableM != 0 --- No if 0, Yes otherwise
 )
@@ -232,7 +240,7 @@ monAnalyticSpread Ideal := ZZ => I -> (
     Mm := M_0;
     Mv := M_1;
     r := rank target Mm;  --- # of rows
-    1 + max apply(r, p -> dim convexHull vertices intersection (Mm, Mv, Mm^{p}, Mv^{p}))
+    1 + max apply(r, p -> dim convexHull vertices polyhedronFromHData (Mm, Mv, Mm^{p}, Mv^{p}))
     -- monAS := 0;
     -- for p from 0 to r-1 do (
         -- face := intersection (Mm, Mv, Mm^{p}, Mv^{p});
@@ -255,7 +263,7 @@ monjMult Ideal := ZZ => I -> (
     monj := 0;
     for p from 0 to r-1 do (
     if isBddFacet(p, Mm) then (
-        face := intersection (Mm, Mv, Mm^{p}, Mv^{p});
+        face := polyhedronFromHData (Mm, Mv, Mm^{p}, Mv^{p});
         monj = monj + (d!)*(volume convexHull pyrF(vertices face));
         );
     );
@@ -359,7 +367,7 @@ doc ///
             this function computes the bi-graded ring Gr_m(Gr_I(R)), presented as a 
             quotient of a bigraded polynomial ring with variables names u and v.
 	    After being computed once, this ring is stored in the cache of I.
-	    This function is based on the method normalCone.
+	    This function is based on the method @TO associatedGradedRing@.
         Example
             R = QQ[x,y]
             I = ideal"x2,xy"
@@ -367,7 +375,7 @@ doc ///
             describe A
             hilbertSeries A
     SeeAlso
-    	normalCone
+	associatedGradedRing
 ///
 
 doc ///

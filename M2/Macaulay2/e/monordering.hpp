@@ -30,6 +30,16 @@ public:
   static MonomialOrdering* GRevLex(const std::vector<int>& wts, int packing);
 };
 
+// This is currently located in interface/monomial-ordering.cpp
+bool monomialOrderingToMatrix(
+    const struct MonomialOrdering &mo,
+    std::vector<int> &mat,
+    bool &base_is_revlex,
+    int &component_direction,      // -1 is Down, +1 is Up, 0 is not present
+    int &component_is_before_row);  // -1 means at the end, 0 means before the
+                                   // order, and r means considered before row
+                                   // 'r' of the matrix.
+
 #endif
 
 /*

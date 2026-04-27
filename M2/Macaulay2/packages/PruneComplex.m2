@@ -20,6 +20,8 @@ newPackage(
         },
     Headline => "pruning chain complexes over polynomial and local rings",
     Keywords => {"Commutative Algebra", "Homological Algebra"},
+    -- the latter is needed to get the documentation of FastNonminimal to work
+    PackageExports => {"Complexes", "OldChainComplexes"},
     AuxiliaryFiles => true
     )
 
@@ -66,7 +68,7 @@ export {
 -- converts a ChainComplex into a list of mutable matrices
 -- TODO: take an option to make sparse mutable matrices here
 toMutableComplex = method()
-toMutableComplex ChainComplex := C -> for i from min C to max C list mutableMatrix C.dd_(i+1)
+toMutableComplex Complex := C -> for i from min C to max C list mutableMatrix C.dd_(i+1)
 
 -- Converts a list of mutable matrices into a ChainComplex.
 -- TODO: make sure the information about source and target modules for general complexes are kept
@@ -79,7 +81,7 @@ toChainComplex(List, Module) := (mComplex, F) -> (
     if #mComplex == 0 then error "toChainComplex: expected at least one differential map.";
     places := select(0..(length mComplex)-1, i -> mComplex_i != 0);
     len := if #places === 0 then 0 else max places - min places;
-    chainComplex for i from 0 to len list (
+    complex for i from 0 to len list (
         m := map(F, , matrix mComplex_i);
         F = source m; m)
     )
@@ -264,14 +266,14 @@ pruneUnit(List, ZZ, Sequence, List) := opts -> (mComplex, n, unit, pruningMorph)
 -- sparcest row/column. Uses pruneUnit.
 -- TODO: handle the case of twisted complexes and free modules with degrees (both are OK in the engine)
 pruneDiff = method(Options => {PruningMap => true, UnitTest => isUnit})
-pruneDiff(ChainComplex, ZZ) := opts -> (C, n) -> (
+pruneDiff(Complex, ZZ) := opts -> (C, n) -> (
     if opts.PruningMap === true then (
         (D, pruningMorph) := pruneDiff(toMutableComplex C, n, opts);
         return (toChainComplex D, pruningMorph);
         );
     toChainComplex pruneDiff(toMutableComplex C, n, opts)
     )
-pruneDiff(ChainComplex, ZZ, List) := opts -> (C, n, M) -> (
+pruneDiff(Complex, ZZ, List) := opts -> (C, n, M) -> (
     if opts.PruningMap === true then (
         (D, pruningMorph) := pruneDiff(toMutableComplex C, n, M, opts);
         return (toChainComplex D, pruningMorph);
@@ -311,8 +313,8 @@ pruneComplex = method(
         PruningMap => true, -- TODO: grading may be incorrect if this is set to false
         UnitTest => isUnit -- TODO: detect when all units are scalars and choose that
         })
-pruneComplex ChainComplex      := opts ->  C          -> pruneComplex(C, -1, opts)
-pruneComplex(ChainComplex, ZZ) := opts -> (C, nsteps) -> (
+pruneComplex Complex      := opts ->  C          -> pruneComplex(C, -1, opts)
+pruneComplex(Complex, ZZ) := opts -> (C, nsteps) -> (
     m := min C;
     mComplex := toMutableComplex C;
     (D, M) := pruneComplex(mComplex, nsteps, opts);
@@ -322,7 +324,7 @@ pruneComplex(ChainComplex, ZZ) := opts -> (C, nsteps) -> (
     D = (toChainComplex(D, F))[-m];
     R := ring D;
     if opts.PruningMap == true then
-      D.cache.pruningMap = map(C, D, i -> M#(i-m)//matrix);
+      D.cache.pruningMap = map(C, D, i -> map(C_i, D_i, matrix M#(i-m)));
     D
     )
 pruneComplex List      := opts ->  mComplex          -> pruneComplex(mComplex, -1, opts)
@@ -360,6 +362,9 @@ pruneComplex(List, ZZ) := opts -> (mComplex, nsteps) -> (
         ) do pruneUnit(mComplex, n, first unit, pruningMorph, PruningMap => opts.PruningMap, UnitTest => opts.UnitTest);
     (mComplex, pruningMorph)
     )
+-- for backwards compatibility; to be removed
+pruneComplex ChainComplex      := opts ->  C          -> pruneComplex(C, -1, opts)
+pruneComplex(ChainComplex, ZZ) := opts -> (C, nsteps) -> pruneComplex(complex C, -1, opts)
 
 enginePruneComplex = method(Options => options pruneComplex) -- ++ {...}
 enginePruneComplex List      := opts ->  C          -> enginePruneComplex(C, -1, opts)
@@ -399,19 +404,19 @@ enginePruneComplex(List, ZZ) := opts -> (C, nsteps) -> (
 
 -- Checks that source phi is quasi-isomorphic to target phi
 -- Source: ChainComplexExtras.m2
-isQuasiIsomorphism = method(Options => {LengthLimit => infinity})
-isQuasiIsomorphism ChainComplexMap := Boolean => opts -> phi -> (
-    C := cone phi;
-    if all((min C,min(max C, opts.LengthLimit)), i -> (prune HH_i(C) == 0)) then true else false
-    )
+-- isQuasiIsomorphism = method(Options => {LengthLimit => infinity})
+-- isQuasiIsomorphism ChainComplexMap := Boolean => opts -> phi -> (
+--     C := cone phi;
+--     if all((min C,min(max C, opts.LengthLimit)), i -> (prune HH_i(C) == 0)) then true else false
+--     )
 -- Checks that C is a resolution of N
-isQuasiIsomorphism(ChainComplex, Ideal)  := Boolean => opts -> (C, I) -> isQuasiIsomorphism(C, coker gens I)
-isQuasiIsomorphism(ChainComplex, Module) := Boolean => opts -> (C, N) -> (
+isQuasiIsomorphism(Complex, Ideal)  := Boolean => opts -> (C, I) -> isQuasiIsomorphism(C, coker gens I)
+isQuasiIsomorphism(Complex, Module) := Boolean => opts -> (C, N) -> (
     R := ring N;
-    D := chainComplex map(N, R^0, 0);
+    D := complex N;
     if C == 0 then return D == 0;
     M := {map(D_0, C_0, 1)} | for i from 1 to max(length C, length D) list map(D_i, C_i, 0);
-    isQuasiIsomorphism map(D, C, i -> M#i)
+    isQuasiIsomorphism(map(D, C, i -> M#i), opts)
     )
 
 -- Checks that C is an acyclic chain complex
@@ -422,12 +427,12 @@ isAcyclic = C -> isQuasiIsomorphism(C, 0)
 isMinimal = method(Options => options findUnit)
 isMinimal Matrix        :=
 isMinimal MutableMatrix := Boolean => opts -> M -> 0 == #findAllUnits(M, opts)
-isMinimal ChainComplex  := Boolean => opts -> C -> (
+isMinimal Complex  := Boolean => opts -> C -> (
     if any(length C + 1, i -> not isMinimal(matrix (C.dd_i), opts)) then false else true
     )
 
 -- Checks commutativity of chain complexes C and D with chain complex map M
-isCommutative ChainComplexMap := Boolean => f -> (
+isCommutative ComplexMap := Boolean => f -> (
     D := source f;
     C := target f;
     for i from 1 to max(length C, length D) do

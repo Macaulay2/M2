@@ -1,9 +1,9 @@
-VERSION = 1.7.0
+VERSION = 1.7.1
 # URL = http://www.linalg.org
 URL = https://github.com/linbox-team/linbox/archive/refs/tags
 TARFILE = v$(VERSION).tar.gz
 
-#URL = http://macaulay2.com/Downloads/OtherSourceCode
+#URL = https://macaulay2.com/Downloads/OtherSourceCode
 PRECONFIGURE = autoreconf -i
 
 #PATCHFILE = @abs_srcdir@/patch-$(VERSION)

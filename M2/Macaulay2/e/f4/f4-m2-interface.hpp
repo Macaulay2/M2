@@ -35,7 +35,6 @@ class F4toM2Interface
   static void from_M2_matrix(const VectorArithmetic* VA,
                              const MonomialInfo *MI,
                              const Matrix *m,
-                             M2_arrayint wts,
                              gb_array &result_polys);
 
   static Matrix *to_M2_matrix(const VectorArithmetic* VA,

@@ -9,6 +9,7 @@ Node
     (capture, Net)
     (capture, List)
     (capture, String)
+    (capture, TestInput)
     [capture, UserMode]
     [capture, PackageExports]
   Headline
@@ -16,7 +17,7 @@ Node
   Usage
     (err, output) := capture str
   Inputs
-    str:{Net,List,String}
+    str:{Net,List,String,TestInput}
       the Macaulay2 code to be evaluated
     UserMode=>Boolean
       indicates whether currently loaded packages and exported symbols
@@ -55,6 +56,9 @@ Node
   Key
      examples
     (examples, Thing)
+    (examples, ZZ)
+    (examples, List)
+    (examples, DocumentTag)
   Headline
     list the examples in documentation
   Usage
@@ -76,6 +80,17 @@ Node
       Alternatively, one could use @TO "print"@ to display them with no indentation.
     Example
       print ex
+    Text
+      If the input is an integer, then the examples will correspond to the
+      documentation node with that index in the last call to @TO about@.
+    Example
+      about firstFunction
+      examples 0
+    Text
+      If the input is a list, then the examples for all of its elements will be
+      gathered into a single net.
+    Example
+      examples about firstFunction
   SeeAlso
     "reading the documentation"
     capture
@@ -89,7 +104,7 @@ Node
    (EXAMPLE, String)
    (EXAMPLE, VisibleList)
   Headline
-    hypertext EXAMPLE item
+    construct a hypertext item from a Macaulay2 input string
   Usage
     EXAMPLE x
   Inputs

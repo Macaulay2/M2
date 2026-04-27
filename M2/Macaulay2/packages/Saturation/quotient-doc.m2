@@ -16,12 +16,16 @@ Node
     (quotient, MonomialIdeal, RingElement)
     (symbol:, Ideal, Ideal)
     (symbol:, Ideal, RingElement)
+    (symbol:, MonomialIdeal, RingElement)
 -- return a module
     (quotient, Module, Ideal)
     (quotient, Module, RingElement)
     (symbol:, Module, Ideal)
     (symbol:, Module, RingElement)
     [quotient, MinimalGenerators]
+    [quotient, BasisElementLimit]
+    [quotient, DegreeLimit]
+    [quotient, PairLimit]
   Headline
     ideal or submodule quotient
   Usage
@@ -34,6 +38,9 @@ Node
       specifies the algorithm
     MinimalGenerators=>Boolean
       indicates whether the output should be @TO2 {trim, "trimmed"}@
+    BasisElementLimit => ZZ -- passed onto @TO [gb, BasisElementLimit]@
+    DegreeLimit => List     -- passed onto @TO [gb, DegreeLimit]@
+    PairLimit => ZZ         -- passed onto @TO [gb, PairLimit]@
   Outputs
     :{Ideal,Module}
       the quotient $I:J = \{f | f J\subset I\}$

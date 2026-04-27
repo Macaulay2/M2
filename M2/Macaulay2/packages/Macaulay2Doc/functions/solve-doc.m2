@@ -1,5 +1,3 @@
--- TODO: [solve, Invertible]
-
 doc ///
    Key
      solve
@@ -8,6 +6,7 @@ doc ///
      [solve,MaximalRank]
      [solve,ClosestFit]
      [solve,Precision]
+     [solve, Invertible] -- TODO: document this
    Headline
      solve linear equation(s)
    Usage
@@ -50,7 +49,7 @@ doc ///
      Text
 
        Over {\tt RR_{53}} or {\tt CC_{53}}, if the matrix A is non-singular and square, 
-       then highly optimized lapack routines will be called.
+       then highly optimized LAPACK routines will be called.
 
      Example
        printingPrecision = 4;
@@ -78,7 +77,7 @@ doc ///
      Text
 
        Over higher precision RR or CC, these routines will be much slower than
-       the lower precision lapack routines.
+       the lower precision LAPACK routines.
 
      Example
        N = 100
@@ -169,7 +168,7 @@ document {
     norm oo
      ///,
      "For large dense matrices over ", TO "RR", " or ", TO "CC", ", this function calls 
-     the lapack routines.",
+     the LAPACK routines.",
      EXAMPLE lines ///
         n = 10;
     A = random(CC^n,CC^n)

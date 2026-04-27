@@ -502,7 +502,8 @@ makeFiberRings(List,Ring) := (basevars,R) -> (
       allVars := set gens R;
       fiberVars := rsort toList(allVars - set basevars);
       basevars = rsort basevars;
-      S = (coefficientRing R) monoid([fiberVars,basevars,MonomialOrder=>Lex]);
+      degs := join(fiberVars/degree, basevars/degree);
+      S = (coefficientRing R) monoid([fiberVars,basevars,Degrees => degs, MonomialOrder=>Lex]);
           --MonomialOrder=>{#fiberVars,#basevars}]);
       KK := frac((coefficientRing R)(monoid [basevars]));
       SF := KK (monoid[fiberVars, MonomialOrder=>Lex]);

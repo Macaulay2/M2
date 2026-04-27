@@ -19,13 +19,25 @@ N = coker matrix{{x}}
 m = map(N++R^1, N++R^1, sub(M, R))
 assert(m^{0} == map(N, N++R^1, {{a, b}}))
 assert(m^{1} == map(R^1, N++R^1, {{c, d}}))
+assert(m^{-1} == map(R^1, N++R^1, {{c, d}}))
 assert(m_{0} == map(N++R^1, N, {{a}, {c}}))
 assert(m_{1} == map(N++R^1, R^1, {{b}, {d}}))
+assert(m_{-1} == map(N++R^1, R^1, {{b}, {d}}))
+assert(m_(-1,-2) == c)
 
 R = QQ[a..d];
 M = image vars R ++ coker vars R
 assert(M^{2} == map(R^{-1}, M, {{0, 0, 1, 0, 0}}))
 assert(M_{2} == map(M, R^{-1}, {{0}, {0}, {1}, {0}, {0}}))
+
+R = QQ[x,y,z]
+m = map(image map(R^2, , {{x,y,0}, {0,0,z}}), , {{x},{2*y},{3*z}})
+assert(m^{2,0} == map(image map(R^2, , {{0,x},{z,0}}), , {{3*z},{x}}))
+
+M = coker m
+n = id_M
+assert all(numgens M, i -> same { target n_{i}, source n^{i}, M })
+assert all(numgens M, i -> same { target n^{i}, source n_{i}, image M_{i} })
 
 --
 R = ZZ[x_1..x_12,y]

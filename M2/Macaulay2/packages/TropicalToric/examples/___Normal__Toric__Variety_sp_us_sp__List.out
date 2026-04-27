@@ -1,0 +1,42 @@
+-- -*- M2-comint -*- hash: 4157616537371720309
+
+i1 : rayList={{1,0},{0,1},{-1,-1},{0,-1}}
+
+o1 = {{1, 0}, {0, 1}, {-1, -1}, {0, -1}}
+
+o1 : List
+
+i2 : coneList={{0,1},{1,2},{2,3},{3,0}}
+
+o2 = {{0, 1}, {1, 2}, {2, 3}, {3, 0}}
+
+o2 : List
+
+i3 : X = normalToricVariety(rayList,coneList)
+
+o3 = X
+
+o3 : NormalToricVariety
+
+i4 : X_{1}
+
+o4 = X
+      {1}
+
+o4 : ToricCycle on X
+
+i5 : X_{0,2}
+
+o5 = X
+      {0, 2}
+
+o5 : ToricCycle on X
+
+i6 : 2 * X_{2} - X_{3}
+
+o6 = 2*X    - X
+        {2}    {3}
+
+o6 : ToricCycle on X
+
+i7 : 

@@ -5,7 +5,7 @@ assert( (rays C) === map((ZZ)^3,(ZZ)^4,{{1, 0, 1, 0}, {0, 1, 0, 1}, {0, 0, 1, 1}
 assert( (fVector C) === {1,4,4,1} );
 Cv = dualCone C
 assert( (rays Cv) === map((ZZ)^3,(ZZ)^4,{{1, 0, 0, 1}, {0, 1, 0, 1}, {0, 0, 1, -1}}) );
-assert( (hilbertBasis C) === {map((ZZ)^3,(ZZ)^1,{{1}, {0}, {0}}),map((ZZ)^3,(ZZ)^1,{{0}, {1}, {0}}),map((ZZ)^3,(ZZ)^1,{{0}, {1}, {1}}),map((ZZ)^3,(ZZ)^1,{{1}, {0}, {1}})} );
+assert( (set hilbertBasis C) === new Set from {map((ZZ)^3,(ZZ)^1,{{1}, {0}, {0}}),map((ZZ)^3,(ZZ)^1,{{0}, {1}, {0}}),map((ZZ)^3,(ZZ)^1,{{0}, {1}, {1}}),map((ZZ)^3,(ZZ)^1,{{1}, {0}, {1}})} );
 C1 = posHull transpose matrix {{0,-1,0},{0,0,1},{ -1,0,0}};
 assert( (rays C1) === map((ZZ)^3,(ZZ)^3,{{-1, 0, 0}, {0, -1, 0}, {0, 0, 1}}) );
 assert( (linealitySpace C1) === map((ZZ)^3,(ZZ)^0,0) );
@@ -115,7 +115,7 @@ rays C
 fVector C
 Cv = dualCone C
 rays Cv
-hilbertBasis C
+set hilbertBasis C
 C1 = posHull transpose matrix {{0,-1,0},{0,0,1},{ -1,0,0}};
 rays C1
 linealitySpace C1

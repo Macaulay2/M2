@@ -3,7 +3,7 @@ TO DO
     1. GF (big-gf-flint): need to copy object to GC memory when we save it.
     2. PointArray leak.
     3. NAG memory leaks (could wait until after the merge).
-    4. make sure configure scripts can use built in mpir, flint.
+    4. make sure configure scripts can use built in flint.
     5. speed of e.g. gb over QQ or ZZ.
     6. make sure: all tests and example run correctly.  On multiple machines.
     7. gmp.d has warning message: remove those.
@@ -82,7 +82,7 @@ previous notes:
     
     The plan:
 
-  1. Make it so that we can link with gmp/mpir, flint, mpfr, without modification.
+  1. Make it so that we can link with gmp, flint, mpfr, without modification.
     This just means that when we use mpz fcns, etc that we then copy the results into gc memory, OR
       that we will have that space freed by usual new/delete methods in c++.
   2. Possibly allow the engine to be gc free, except for objects going to the front end.

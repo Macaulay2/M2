@@ -16,7 +16,7 @@ nothing := symbol nothing
 newRing = method( Options => applyValues(monoidDefaults, x -> nothing), TypicalValue => Ring )
 newRing PolynomialRing := opts -> (R) -> (
      opts = new MutableHashTable from select(new HashTable from opts, v -> v =!= nothing);
-     nullify := k -> if not opts#?k then opts#k = monoidDefaults#k;
+    nullify := k -> opts#k ??= monoidDefaults#k;
     if opts.?DegreeRank  then nullify \ {Heft, Degrees,    DegreeGroup};
     if opts.?Degrees     then nullify \ {Heft, DegreeRank, DegreeGroup};
     if opts.?DegreeGroup then nullify \ {Heft, DegreeRank};
@@ -43,6 +43,8 @@ newRing QuotientRing := opts -> R -> (
 
 -- made a method and documented elsewhere.
 Ring ** Ring := Ring => (R,S) -> tensor(R,S)
+Ring^** ZZ   := Ring => (R, n) -> BinaryPowerMethod(R, n, tensor, R -> coefficientRing R,
+    R  -> error "Ring ^** ZZ: expected non-negative integer")
 tensor(Ring, Ring) := Ring => monoidTensorDefaults >> opts -> (R, S) -> (
      if R === (try coefficientRing S) then return S;
      if S === (try coefficientRing R) then return R;
@@ -75,7 +77,15 @@ tensor(QuotientRing,   QuotientRing) := monoidTensorDefaults >> optns -> (R, S) 
      fg := substitute(f,(vars AB)_{0 .. m-1}) | substitute(g,(vars AB)_{m .. m+n-1});
      -- forceGB fg;  -- if the monomial order chosen doesn't restrict, then this
                      -- is an error!! MES
-     AB/image fg)
+     RS := AB/image fg;
+     setupPromote map(RS,R,(vars AB)_{0 .. m-1});
+     setupLift map(R,RS,generators A | toList(n:0));
+     if S =!= R then (
+	 setupPromote map(RS,S,(vars AB)_{m .. m+n-1});
+	 setupLift map(S,RS,toList(m:0) | generators B);
+	 );
+     RS
+     )
 
 -------------------------
 -- Graph of a ring map --

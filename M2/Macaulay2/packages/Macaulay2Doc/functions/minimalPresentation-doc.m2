@@ -14,7 +14,10 @@ document {
 document { 
      Key => prune,
      Headline => "prune, e.g., compute a minimal presentation",
-     SeeAlso => {minimalPresentation}
+     SeeAlso => { minimalPresentation },
+     Subnodes => {
+	 TO "pruningMap",
+         },
      }
 
 document { 
@@ -132,13 +135,10 @@ document { Key => pruningMap,
      "This symbol is used as a key for storing results in modules, by ", TO "minimalPresentation", "."
      }
 document { 
-     Key => {(minimalPresentation,Module),
-	  (minimalPresentation, GradedModule),(minimalPresentation, GradedModuleMap),
-	  (minimalPresentation, ChainComplex),(minimalPresentation, ChainComplexMap),
-	  (minimalPresentation, CoherentSheaf),(prune,Module),
-	  (prune, GradedModule),(prune, GradedModuleMap),
-	  (prune, ChainComplex),(prune, ChainComplexMap),
-	  (prune, CoherentSheaf)},
+    Key => {
+	(minimalPresentation,Module),
+	(prune,Module),
+    },
      Headline => "minimal presentation of a module",
      Usage => "N = minimalPresentation M",
      Inputs => {
@@ -165,14 +165,6 @@ document {
  	  peek N.cache
 	  g = N.cache.pruningMap
 	  g^-1
-     ///,
-     "This function also works when ", TT "M", " is ", ofClass{GradedModule,ChainComplex,CoherentSheaf}, ",
-     by acting on the modules and maps within it.",
-     EXAMPLE lines ///
-	  I = ideal(a^2,b^3,c^4,d^7)
-     	  X = Proj R
-	  J = (module I)~
-	  minimalPresentation J
      ///,
      SeeAlso => {(minimalPresentation, Matrix), (trim, Module), (mingens,Module)}
      }

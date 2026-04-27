@@ -1,6 +1,6 @@
 # replace FOO by the name of the library or package
 # install this file as FOO/Makefile.in
-# add libraries/FOO/Makefile to ../config/files
+# add libraries/FOO/Makefile to ../m4/files
 # run make -C ../..
 # reconfigure in the build directory
 HOMEPAGE = 

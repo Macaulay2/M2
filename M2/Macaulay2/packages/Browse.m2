@@ -148,7 +148,9 @@ beginDocumentation()
 
 document {
      Key => Browse,
-     Headline => "a method for browsing and examining Macaulay2 data structures"
+     Headline => "a method for browsing and examining Macaulay2 data structures",
+     "This package provides a method, ", TO browse, ", for browsing and ",
+     "examining Macaulay2 data structures."
      }
 
 document {

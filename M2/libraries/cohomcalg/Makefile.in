@@ -4,7 +4,7 @@ HOMEPAGE = https://github.com/BenjaminJurke/cohomCalg/
 # Note: download https://github.com/BenjaminJurke/cohomCalg/archive/v0.32.tar.gz but rename the file to cohomCalg-0.32.tar.gz
 # Warning: this no longer compiles with gcc version 4.8.5, and it doesn't help with
 #   https://github.com/Macaulay2/M2/issues/977, so we may want to go back to the old version.
-URL = http://macaulay2.com/Downloads/OtherSourceCode
+URL = https://macaulay2.com/Downloads/OtherSourceCode
 VERSION = 0.32
 TARFILE = cohomCalg-$(VERSION).tar.gz
 LICENSEFILES = LICENSE

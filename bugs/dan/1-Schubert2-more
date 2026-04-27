@@ -49,7 +49,7 @@ name each chern class now?  I couldn't easily find it.
 Perhaps we need a way to introduce generators into the intersection  
 ring of X that have higher degree than 0.  That way we could first  
 define X with these values (and perhaps with whatever relations they  
-satisfy), then we could create the two sheaves afterwords?
+satisfy), then we could create the two sheaves afterwards?
 
 Or, once again, maybe we can do this?!
 

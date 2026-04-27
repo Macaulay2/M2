@@ -6,6 +6,7 @@ doc///
   toList
   (toList, BasicList)
   (toList, Set)
+  (toList, Tally)
   (toList, String)
   (toList, Thing)
  Headline
@@ -13,7 +14,7 @@ doc///
  Usage
   toList A
  Inputs
-  A:{Set,String,BasicList,ZZ}
+  A:{Set,String,BasicList,Tally}
    or an instance of a class with the @TO iterator@ method installed
  Outputs
   L:List

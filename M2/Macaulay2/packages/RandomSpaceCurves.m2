@@ -17,6 +17,7 @@ newPackage(
                    },
     	Headline => "random smooth space curves",
 	Keywords => {"Examples and Random Objects"},
+        PackageImports => {"OldChainComplexes", "Complexes"},
      	PackageExports => {"RandomObjects"},
     	DebuggingMode => false
         )
@@ -208,19 +209,15 @@ TEST ///
 -- rational entries produce an error
 -- multigraded R's work only if the betti Tally
 -- contains degrees of the correct degree length
-Ring ^ BettiTally := (R,b) -> (
-     F := new ChainComplex;
-     F.ring = R;
-     --apply(pDim b,i->F_i = null);
-     for k in keys b do (
-	  -- the keys of a betti table have the form
-	  -- (homological degree, multidegree, weight)
+
+Ring ^ BettiTally := Complex => (R,b) -> (
+    -- direct sum of complexes
+    if #keys b === 0 then return complex R^0;
+    directSum for k in keys b list (
 	  (i,d,h) := k;
-	  -- use F_i since it gives 0 if F#0 is not defined
-	  F#i = F_i ++ R^{b#k:-d};
-	  );
-     F
-     )
+      complex(R^{b#k:-d}, Base => i)
+      )
+    )
 
 TEST ///
      R = QQ[x_0..x_3];
@@ -783,7 +780,7 @@ doc ///
      In particular, there are constructions for random points in $M_g$ for $g=11,12,13$.
 
      For a algorithms and theoretical background see
-     @ HREF("http://www.math.uiuc.edu/Macaulay2/Book/", "Needles in a Haystack") @
+     @ HREF("https://macaulay2.com/Book/", "Needles in a Haystack") @
 
   ///
 

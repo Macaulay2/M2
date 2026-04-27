@@ -3,7 +3,7 @@ Macaulay2 on MacOS X
 	    by Daniel R. Grayson <dan@math.uiuc.edu>
 	 and Michael E. Stillman <mike@math.cornell.edu>
 
-	available from http://www.math.uiuc.edu/Macaulay2/
+	available from https://macaulay2.com/
 
 Welcome to Macaulay2!
 
@@ -15,7 +15,7 @@ Step 1.  Download Macaulay2.
 
 In your browser, download the file
 
-  http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.6-x86_64-MacOS-10.8.dmg
+  https://macaulay2.com//Downloads/MacOSX/Macaulay2-1.6-x86_64-MacOS-10.8.dmg
 
 If there is a later version, use that instead. This should work fine under
 MacOSX version 10.7.

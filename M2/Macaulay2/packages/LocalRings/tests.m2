@@ -4,11 +4,11 @@ TEST /// -- test for localRing, res, **, ==
   debug needsPackage "PruneComplex"
   R = ZZ/32003[vars(0..3)]
   I = monomialCurveIdeal(R, {1, 3, 4})
-  CI = res I
+  CI = freeResolution I
   P = ideal"a,b,c";
   RP = localRing(R, P);
   J = ideal(gens I ** RP)
-  CJ = res J
+  CJ = freeResolution J
   CP = CJ++CJ[-10]
   DJ = CI ** RP
   DP = pruneComplex(DJ++DJ[-10], PruningMap=>true)
@@ -40,9 +40,9 @@ TEST /// -- test for syz, liftUp, **, modulo, inducedMap
   P = ideal gens R;
   RP = localRing(R, P);
   I = monomialCurveIdeal(R, {1,3,4})
-  C = res I
+  C = freeResolution I
   IP = monomialCurveIdeal(RP, {1,3,4})
-  CP = res IP
+  CP = freeResolution IP
   -- syz
   f = syz transpose CP.dd_3
   g = transpose CP.dd_2
@@ -108,7 +108,7 @@ TEST ///
   P = ideal gens R;
   RP = localRing(R, P);
   I = monomialCurveIdeal(RP, {1,3,4})
-  C = res I
+  C = freeResolution I
   F = syz transpose C.dd_3
   G = transpose C.dd_2
    -- free module
@@ -147,7 +147,7 @@ TEST ///
   R = ZZ/32003[a..d]
   phi = map(S,R,{s^2*t-t, s*t-s, t^3-s*t^2-s, s^2*t^2})
   I = ker phi
-  C = pruneComplex res I
+  C = pruneComplex freeResolution I
   RP = localRing(R, ideal gens R)
   C' = pruneComplex(C ** RP)
 
@@ -203,7 +203,7 @@ TEST /// -- chain homotopy over local rings
   phi = map(F, F, i -> L#i, Degree => 1)
   -- TODO: run checks on this
 
-  F = res J
+  F = freeResolution J
   f0 = J_0
   s0 = map(R^1, 0, 0)
   L = for i to 3 list (
@@ -218,8 +218,8 @@ TEST ///
   P = ideal"a,b,c,d";
   RP = localRing(R, P);
 
-  C =  res monomialCurveIdeal(R,  {1, 3, 4})
-  CP = res monomialCurveIdeal(RP, {1, 3, 4})
+  C =  freeResolution monomialCurveIdeal(R,  {1, 3, 4})
+  CP = freeResolution monomialCurveIdeal(RP, {1, 3, 4})
   F = ker   transpose C.dd_3;
   G = image transpose C.dd_2;
   H = subquotient(gens F, gens G)
@@ -236,7 +236,7 @@ TEST /// -- test for // -- TODO add more
   P = ideal gens R;
   RP = localRing(R, P);
   I = monomialCurveIdeal(RP, {1,3,4})
-  C = res I
+  C = freeResolution I
   f = syz transpose C.dd_3
   g = transpose C.dd_2
   f' = liftUp f
@@ -269,7 +269,7 @@ TEST ///
   f = matrix for i from 0 to 2 list for j from 0 to 2 list (random(2, R)+random(1,R))
   I = minors(2, f)
   IP = ideal(gens I ** RP);
-  C = pruneComplex res IP
+  C = pruneComplex freeResolution IP
   assert(coker C.dd_1 == RP^1/IP)
   assert(image C.dd_1 == module IP)
   f1 = relations minimalPresentation image transpose C.dd_2
@@ -358,7 +358,7 @@ TEST /// -- test from Mengyuan
   I = ideal "z(yw-z2)-w(xw-yz), xz-y2"
   codim I == codim P
   -- Hence this is finite, thus I is artinian in R_P, i.e. RP/IP is an artinian ring.
-  C = res I
+  C = freeResolution I
   radical I == P
 
   RP = localRing(R, P)
@@ -430,7 +430,7 @@ TEST ///
 TEST /// -- Legacy test
   R = ZZ/32003[a..f]
   I = ideal"abc-def,ab2-cd2,-b3+acd";
-  C = res I
+  C = freeResolution I
   -- legacy
   setMaxIdeal ideal gens R
   E = localResolution coker C.dd_1
@@ -444,7 +444,7 @@ TEST ///
   I = ker phi
   assert not isHomogeneous I
 
-  C = res I
+  C = freeResolution I
   f = syz transpose C.dd_3;
   g = transpose C.dd_2;
   modulo(f,g);
@@ -549,7 +549,7 @@ end--
   f = matrix for i from 0 to 2 list for j from 0 to 2 list (random(2, R)+random(1,R))
   I = minors(2, f)
   IP = ideal(gens I ** RP);
-  C = pruneComplex res IP
+  C = pruneComplex freeResolution IP
 --  IP = liftUp IP -- uncomment this line to compare speed with the nonlocal case
   elapsedTime m1 = mingens image gens IP;
   elapsedTime m2 = presentation minimalPresentation image m1;
@@ -592,7 +592,7 @@ end--
 
   RP = localRing(R, ideal gens R)
 
-  C = res J
+  C = freeResolution J
   C1 = pruneComplex C
   C2 = C1 ** RP
   elapsedTime pruneComplex(C2, UnitTest => isScalar, PruningMap => false) -- very slow
@@ -612,7 +612,7 @@ end--
   R = ZZ/32003[a..d]
   F = (a^3-b*c*d-3*b*c)^3-a^3-b^2-(b+d)^4-c^5
   I = ideal jacobian matrix{{F}}
-  C = res I
+  C = freeResolution I
   RP = localRing(R, ideal gens R)
   elapsedTime C1 = pruneComplex(C, PruningMap => false)
   elapsedTime C2 = pruneComplex(C ** RP, PruningMap => false) -- how long does this even take?

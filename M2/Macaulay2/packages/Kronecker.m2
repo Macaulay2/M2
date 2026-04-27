@@ -5,6 +5,7 @@ newPackage(
      Headline => "Kronecker and rational normal forms",
      Authors => {{Name => "Edward Carter",
                Email => "edward.carter@gmail.com"}},
+     PackageExports =>{"OldChainComplexes"},
      Keywords => {"Commutative Algebra"},
      DebuggingMode => false
      )
@@ -1046,6 +1047,8 @@ beginDocumentation()
 document {
      Key => { Kronecker },
      Headline => "Kronecker and rational normal forms",
+     "This package provides methods for computing the Kronecker and rational ",
+     "normal forms of a matrix."
      }
 
 document {

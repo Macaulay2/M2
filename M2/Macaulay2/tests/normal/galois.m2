@@ -32,6 +32,9 @@ k = GF(2,3,Variable=>a)
 
 assert( length degree id_(k^1) == 0 )
 
+k = GF 41
+assert(sqrt(5_k)^2 == 5_k)
+
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test galois.out"

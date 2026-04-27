@@ -40,7 +40,7 @@ CONFIGOPTIONS += --with-python
 endif
 
 # We may distribute the result, so prevent aggressive optimizations based on the current architecture:
-CONFIGOPTIONS += --build=$(shell ../../config/config.guess)
+CONFIGOPTIONS += --build=$(shell ../../config.guess)
 
 ifeq ($(MACOSX),yes)
 # # if we don't do this, we may get an absolute path in currentLayout:

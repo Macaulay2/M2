@@ -3,7 +3,6 @@
 needs "integers.m2"
 needs "lists.m2"
 needs "matrix1.m2"
-needs "structure.m2" -- for position
 
 -----------------------------------------------------------------------------
 
@@ -38,18 +37,25 @@ gcd(RingElement,RingElement) := RingElement => (r,s) -> (
 	       if s%a != 0 then error "can't find gcd in this ring";
 	       s // a))
      else notImplemented()))
+gcd RingElement := identity
 
+gcdCoefficients(ZZ, RingElement) := (r, s) -> gcdCoefficients(r_(ring s), s)
+gcdCoefficients(RingElement, ZZ) := (r, s) -> gcdCoefficients(r, s_(ring r))
 gcdCoefficients(RingElement,RingElement) := (f,g) -> (	    -- ??
      R := ring f;
      if R =!= ring g then error "expected elements of the same ring";
      if not isPolynomialRing R then error "expected a polynomial ring";
      if not isField coefficientRing R then error "expected a polynomial ring over a field";
      if numgens R > 1 then error "expected a polynomial ring in at most one variable";
-     toList apply(rawExtendedGCD(raw f, raw g), r -> new R from r))
+     apply(rawExtendedGCD(raw f, raw g), r -> new R from r))
 
 lcm(ZZ,RingElement) := (r,s) -> lcm(promote(abs r,ring s),s)
 lcm(RingElement,ZZ) := (r,s) -> lcm(promote(abs s,ring r),r)
-lcm(RingElement,RingElement) := (f,g) -> f * (g // gcd(f,g))
+lcm(RingElement,RingElement) := (f,g) -> (
+    d := gcd(f, g);
+    if d == 0 then d
+    else f * (g // d))
+lcm RingElement := identity
 
 -----------------------------------------------------------------------------
 
@@ -143,8 +149,6 @@ pseudoRemainder(RingElement,RingElement) := RingElement => (f,g) -> (
      new R from rawPseudoRemainder(raw f, raw g));
 
 -----------------------------------------------------------------------------
-
-inversePermutation = v -> ( w := new MutableList from #v:null; scan(#v, i -> w#(v#i)=i); toList w)
 
 -- We mimic the procedure for finding a finite field addition table used in the routine gf_get_table
 -- for building the file name in "gffilename", in the file BUILD_DIR/libraries/factory/build/factory/gfops.cc .

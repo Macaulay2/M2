@@ -16,7 +16,8 @@
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-#include <flint/arith.h>
+#include <flint/flint.h>  // for flint_rand_t, fmpz, fmpz_t
+#include <flint/fmpz.h>   // for fmpz_set_si, fmpz_pow_ui, fmpz_set_mpz
 #pragma GCC diagnostic pop
 
 namespace M2 {

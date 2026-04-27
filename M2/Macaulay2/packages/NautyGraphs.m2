@@ -12,7 +12,7 @@
 -- License as published by the Free Software Foundation, either version 2
 -- of the License, or any later version.
 
-newPackage select((
+newPackage(
     "NautyGraphs",
     Version => "1.4.3.1",
     Date => "01. March 2013",
@@ -24,7 +24,7 @@ newPackage select((
     Configuration => {"path" => ""},
     PackageExports => {"Graphs"},
     DebuggingMode => false,
-), x -> x =!= null)
+    )
 
 -------------------
 -- Configuration

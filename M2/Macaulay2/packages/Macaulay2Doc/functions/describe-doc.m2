@@ -6,18 +6,16 @@ doc ///
 Node
   Key
      describe
-    (describe, AffineVariety)
-    (describe, CoherentSheaf)
     (describe, FractionField)
     (describe, GaloisField)
     (describe, Matrix)
     (describe, Module)
     (describe, Monoid)
     (describe, PolynomialRing)
-    (describe, ProjectiveVariety)
     (describe, QuotientRing)
     (describe, RingMap)
     (describe, Thing)
+    (describe, Vector)
   Headline
     real description
   Usage

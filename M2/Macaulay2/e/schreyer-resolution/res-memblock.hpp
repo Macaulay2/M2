@@ -3,7 +3,7 @@
 #define __res_memblock_hpp_
 
 template <typename T, long int NSLAB = 4092>
-class MemoryBlock
+class ResMemoryBlock
 {
   struct slab
   {
@@ -20,8 +20,8 @@ class MemoryBlock
   slab *new_slab();
 
  public:
-  MemoryBlock();
-  ~MemoryBlock();
+  ResMemoryBlock();
+  ~ResMemoryBlock();
 
   void reset();
 
@@ -35,12 +35,12 @@ class MemoryBlock
       const;  // total number of bytes allocated in slabs (plus size of this)
 };
 
-/////////////////
-// MemoryBlock //
-/////////////////
+////////////////////
+// ResMemoryBlock //
+////////////////////
 
 template <typename T, long int NSLAB>
-MemoryBlock<T, NSLAB>::MemoryBlock()
+ResMemoryBlock<T, NSLAB>::ResMemoryBlock()
     : first_slab(nullptr), current_slab(nullptr), last_slab(nullptr), next_free(nullptr)
 {
   first_slab = new_slab();
@@ -50,7 +50,7 @@ MemoryBlock<T, NSLAB>::MemoryBlock()
 }
 
 template <typename T, long int NSLAB>
-MemoryBlock<T, NSLAB>::~MemoryBlock()
+ResMemoryBlock<T, NSLAB>::~ResMemoryBlock()
 {
   // Destroy the slabs one by one
   while (first_slab != nullptr)
@@ -66,7 +66,7 @@ MemoryBlock<T, NSLAB>::~MemoryBlock()
 }
 
 template <typename T, long int NSLAB>
-typename MemoryBlock<T, NSLAB>::slab *MemoryBlock<T, NSLAB>::new_slab()
+typename ResMemoryBlock<T, NSLAB>::slab *ResMemoryBlock<T, NSLAB>::new_slab()
 {
   slab *result = new slab;
   result->next = nullptr;
@@ -74,14 +74,14 @@ typename MemoryBlock<T, NSLAB>::slab *MemoryBlock<T, NSLAB>::new_slab()
 }
 
 template <typename T, long int NSLAB>
-void MemoryBlock<T, NSLAB>::reset()
+void ResMemoryBlock<T, NSLAB>::reset()
 {
   current_slab = first_slab;
   next_free = current_slab->block;
 }
 
 template <typename T, long int NSLAB>
-T *MemoryBlock<T, NSLAB>::reserve(int len)
+T *ResMemoryBlock<T, NSLAB>::reserve(int len)
 {
   if (next_free + len > current_slab->block + NSLAB)
     {
@@ -101,13 +101,13 @@ T *MemoryBlock<T, NSLAB>::reserve(int len)
 }
 
 template <typename T, long int NSLAB>
-void MemoryBlock<T, NSLAB>::intern(int len)
+void ResMemoryBlock<T, NSLAB>::intern(int len)
 {
   next_free += len;
 }
 
 template <typename T, long int NSLAB>
-T *MemoryBlock<T, NSLAB>::allocate(int len)
+T *ResMemoryBlock<T, NSLAB>::allocate(int len)
 {
   T *result = reserve(len);
   next_free += len;
@@ -115,7 +115,7 @@ T *MemoryBlock<T, NSLAB>::allocate(int len)
 }
 
 template <typename T, long int NSLAB>
-int MemoryBlock<T, NSLAB>::n_slabs() const
+int ResMemoryBlock<T, NSLAB>::n_slabs() const
 {
   int result = 0;
   for (slab *p = first_slab; p != nullptr; p = p->next) result++;
@@ -123,7 +123,7 @@ int MemoryBlock<T, NSLAB>::n_slabs() const
 }
 
 template <typename T, long int NSLAB>
-long MemoryBlock<T, NSLAB>::memoryUsage() const
+long ResMemoryBlock<T, NSLAB>::memoryUsage() const
 {
   long result = sizeof(*this);
   result += n_slabs() * sizeof(slab);

@@ -2,7 +2,7 @@
 -- licensed under GPL v2 or any later version
 
 -- A collection of algorithms that use NumericalAlgebraicGeometry and related packages. 
-newPackage select((
+newPackage(
      "NAGtools",
      Version => "1.9",
      Date => "Apr 2016",
@@ -18,7 +18,7 @@ newPackage select((
      --   but false after it is done
      --DebuggingMode => true
      DebuggingMode => false
-     ), x -> x =!= null)
+    )
 
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists

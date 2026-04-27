@@ -26,7 +26,7 @@ EngineMonomial::EngineMonomial(M2_arrayint m) { varpower::from_arrayint(m, val);
 EngineMonomial *EngineMonomial::make(int v, int e)
 {
   EngineMonomial *result = new EngineMonomial(v, e);
-  if (error()) return 0;
+  if (error()) return nullptr;
   return result;
 }
 
@@ -35,23 +35,23 @@ EngineMonomial *EngineMonomial::make(M2_arrayint m)
   if ((m->len % 2) != 0)
     {
       ERROR("Monomial expected an even number of elements");
-      return 0;
+      return nullptr;
     }
   for (unsigned int i = 2; i < m->len; i += 2)
     if (m->array[i - 2] <= m->array[i])
       {
         ERROR("Monomial expects variables in descending order");
-        return 0;
+        return nullptr;
       }
   EngineMonomial *result = new EngineMonomial(m);
-  if (error()) return 0;
+  if (error()) return nullptr;
   return result;
 }
 
 EngineMonomial *EngineMonomial::make(const int *vp)
 {
   EngineMonomial *result = new EngineMonomial(vp);
-  if (error()) return 0;
+  if (error()) return nullptr;
   return result;
 }
 
@@ -123,7 +123,7 @@ EngineMonomial *EngineMonomial::operator*(const EngineMonomial &b) const
 {
   EngineMonomial *result = new EngineMonomial;
   varpower::mult(ints(), b.ints(), result->val);
-  if (error()) return 0;
+  if (error()) return nullptr;
   return result;
 }
 
@@ -145,7 +145,7 @@ EngineMonomial *EngineMonomial::power(int n) const
 {
   EngineMonomial *result = new EngineMonomial;
   varpower::power(ints(), n, result->val);
-  if (error()) return 0;
+  if (error()) return nullptr;
   return result;
 }
 

@@ -9,7 +9,7 @@ doc ///
         R = reducedRowEchelonForm A
     Inputs
         A:Matrix
-            or @ofClass MutableMatrix@, a matrix over eiither a finite field or the rationals
+            or @ofClass MutableMatrix@, a matrix over either a finite field or the rationals
     Outputs
         R:Matrix
             or @ofClass MutableMatrix@, the same type as {\tt A}, the 

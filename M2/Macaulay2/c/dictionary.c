@@ -220,7 +220,7 @@ static void psymbol(node s){
      if (s->body.symbol.flags & defined_F) put(" initialized");
      if (s->body.symbol.flags & export_F) put(" export");
      if (s->body.symbol.flags & import_F) put(" import");
-     if (s->body.symbol.flags & threadLocal_F) put(" thread");
+     if (s->body.symbol.flags & threadLocal_F) put(" threadLocal");
      if (s->body.symbol.flags & const_F) put(" const");
      if (s->body.symbol.flags & global_F) put(" global");
      if (s->body.symbol.flags & literal_F) put(" literal");

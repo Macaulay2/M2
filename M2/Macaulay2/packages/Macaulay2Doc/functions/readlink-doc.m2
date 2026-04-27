@@ -4,14 +4,16 @@
 
 document { 
      Key => readlink,
-     Headline => "readlink fn",
-     Usage => "read the contents of a symbolic link",
+     Headline => "get the resolved value a symbolic link",
+     Usage => "readlink fn",
      Inputs => { "fn" => String => "a filename or path to a file" },
-     Outputs => { Boolean => { "whether ", TT "fn", " is the path to a symbolic link" }},
+     Outputs => { String => { "the resolved path to a symbolic link,
+	     or null if the file was not a symbolic link." }},
      EXAMPLE lines ///
      	  p = temporaryFileName ()
 	  symlinkFile ("foo", p)
 	  readlink p
 	  removeFile p
-     ///
+     ///,
+     SeeAlso => { realpath },
      }

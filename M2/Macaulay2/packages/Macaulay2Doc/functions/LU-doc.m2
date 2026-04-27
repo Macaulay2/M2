@@ -1,6 +1,6 @@
 document { 
      Key => {LUdecomposition,(LUdecomposition,MutableMatrix),(LUdecomposition,Matrix)},
-     Headline => "LU decomposition",
+     Headline => "compute the LU decomposition of a matrix",
      Usage => "(P,L,U) = LUdecomposition A",
      Inputs => {
 	  "A" => MutableMatrix => {"or ", ofClass Matrix, ",of size ", TT "m", " by ", TT "n", ", over a 
@@ -31,7 +31,7 @@ document {
 	  Q * L * U == matrix A
      ///,
      "For matrices over ", TT "RR", " or ", TT "CC", ", this function calls 
-     the lapack routines, which are restricted to 53 bits of precision.",
+     the LAPACK routines, which are restricted to 53 bits of precision.",
      EXAMPLE lines ///
      	  A = matrix"1,2,3,4,5,6;1,3,6,12,13,16;19,7,11,47,48,21" ** RR
 	  (P,L,U) = LUdecomposition A

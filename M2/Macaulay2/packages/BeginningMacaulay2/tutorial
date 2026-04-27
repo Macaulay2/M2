@@ -12,9 +12,8 @@ Description
 	  on a command line to bring up the program. You should see something like:
      Code
      	  EXAMPLE {
-	  PRE ///Macaulay2, version 1.7
-      with packages: ConwayPolynomials, Elimination, IntegralClosure, LLLBases,
-             PrimaryDecomposition, ReesAlgebra, TangentCone///}
+	      PRE concatenate("Macaulay2, version ", version#"VERSION",
+		  newline, "Type `help` to see useful commands")}
      Text
           We suggest you do that now, so that you can experiment while you read
 	  this tutorial!
@@ -315,13 +314,13 @@ Description
 	  A great deal of subtle information about a module is visible using
 	  free resolutions. For an example, we begin
 	  by turning $R/I$ into a module. Here the code @ TT "R^1" @ produces the free module of
-	  rank 1 over $R$, and @ TO2 {(resolution,Module),"res"} @ computes a free resolution:
+	  rank 1 over $R$, and @ TO2 {"OldChainComplexes :: resolution(Module)", "res"} @ computes a free resolution:
      Example
 	  M=R^1/I
 	  Mres = res M
      Text
 	  To get more precise information about {\tt Mres},
-	  we could compute its Betti table with @ TO2{(betti,GradedModule), "betti"} @:
+	  we could compute its Betti table with @TO betti@:
      Example
 	  betti Mres
      Text
@@ -342,8 +341,8 @@ Description
 	  resolution has degree $3+2=5$.
 
 	  Commonly computed homological invariants
-	  such as @ TO2 { (pdim,Module), "projective dimension" } @ and @ TO2 {(regularity,Module),
-	  "regularity"} @ are (also) available directly:
+	  such as @ TO2 { pdim, "projective dimension" } @
+	  and @ TO2 { regularity, "regularity"} @ are (also) available directly:
      Example
 	  pdim M
 	  regularity M
@@ -452,7 +451,7 @@ Description
      Example
 	  saturate K
      Text
-	  We have just seen the @ TO saturate @ function in its most
+	  We have just seen the @TO "Saturation :: saturate"@ function in its most
 	  common use: to saturate with respect to the maximal ideal.
 	  but we can also find the saturation of any ideal with
 	  respect to another:
@@ -616,7 +615,7 @@ Description
      Example
 	  (ker phi1)/(image phi2)
      Text
-	  We could also use the data type @TO ChainComplex@ 
+	  We could also use the data type @TO "OldChainComplexes :: ChainComplex"@ 
 	  and use a built-in facility to take homology (in our case $H_1$):
      Example
 	  FF = chainComplex(phi1,phi2)

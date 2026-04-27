@@ -28,7 +28,7 @@ Description
     An ideal, module, or chain complex may either be localized using @TO promote@ or using
     the @TO tensor@ product.
   Example
-    C = res I
+    C = freeResolution I
     D = C ** RM;
     E = pruneComplex D
   Text
@@ -119,7 +119,7 @@ Node
       localResolution coker matrix{{x,y*z},{z*w,x}}
       oo.dd
       use R
-      res coker matrix{{x,y*z},{z*w,x}}
+      freeResolution coker matrix{{x,y*z},{z*w,x}}
       oo.dd
   Subnodes
     setMaxIdeal
@@ -268,7 +268,7 @@ Description
   Example
     R = ZZ/32003[vars(0..5)];
     I = ideal"abc-def,ab2-cd2-c,-b3+acd";
-    C = res I;
+    C = freeResolution I;
     M = ideal gens R;
     RM = localRing(R, M);
     F = C.dd_2;
@@ -373,7 +373,7 @@ importFrom_Core { "headline" }
 scan({ baseRing, char, coefficientRing, degreeLength, degrees, dim, frac, generators, isCommutative, numgens },
     m -> document { Key => (m, LocalRing), Headline => headline makeDocumentTag (m, Ring), PARA {"See ", TO (m, Ring)} })
 
-undocumented apply({describe, expression, precision, presentation, toExternalString}, m -> (m, LocalRing))
+undocumented apply({describe, expression, precision, presentation}, m -> (m, LocalRing))
 
 end--
 

@@ -3,17 +3,16 @@
 #ifndef _dmat_gf_flint_big_hpp_
 #define _dmat_gf_flint_big_hpp_
 
+#include <utility>                 // for swap
+#include "aring-gf-flint-big.hpp"  // for ARingGFFlintBig
+
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-#include <flint/arith.h>
-#include <flint/nmod_mat.h>
-#include <flint/fmpq_mat.h>
-#include <flint/fq_nmod_mat.h>
+#include <flint/fq_nmod_mat.h>  // for fq_nmod_mat_t, fq_nmod_mat_entry, ...
 #pragma GCC diagnostic pop
-#include "aring-gf-flint-big.hpp"
 
 template <typename ACoeffRing>
 class DMat;
@@ -28,11 +27,8 @@ class DMat<M2::ARingGFFlintBig>
   typedef M2::ARingGFFlintBig ACoeffRing;
   typedef ACoeffRing CoeffRing;
   typedef ACoeffRing::ElementType ElementType;
-  typedef ElementType elem;
-  typedef ACoeffRing::Element Element;
-
-  typedef DMatIterator<ACoeffRing> Iterator;
-  typedef DMatConstIterator<ACoeffRing> ConstIterator;
+  // typedef ElementType elem;
+  // typedef ACoeffRing::Element Element;
 
   DMat() : mRing(0) {}
   DMat(const ACoeffRing& R, size_t nrows, size_t ncols) : mRing(&R)
@@ -46,34 +42,6 @@ class DMat<M2::ARingGFFlintBig>
   }
 
   ~DMat() { fq_nmod_mat_clear(mArray, ring().flintContext()); }
-  // storage for these rings is row-major, which is reflected in these iterator
-  // functions
-  Iterator rowBegin(size_t row)
-  {
-    return Iterator(array() + row * numColumns(), 1);
-  }
-  ConstIterator rowBegin(size_t row) const
-  {
-    return ConstIterator(array() + row * numColumns(), 1);
-  }
-  ConstIterator rowEnd(size_t row) const
-  {
-    return ConstIterator(array() + (row + 1) * numColumns(), 1);
-  }
-
-  Iterator columnBegin(size_t col)
-  {
-    return Iterator(array() + col, numColumns());
-  }
-  ConstIterator columnBegin(size_t col) const
-  {
-    return ConstIterator(array() + col, numColumns());
-  }
-  ConstIterator columnEnd(size_t col) const
-  {
-    return ConstIterator(array() + col + numRows() * numColumns(),
-                         numColumns());
-  }
 
   // swap the actual matrices of 'this' and 'M'.
   // The rings must be the same.
@@ -93,8 +61,6 @@ class DMat<M2::ARingGFFlintBig>
     return fq_nmod_mat_ncols(mArray, ring().flintContext());
   }
 
-  const ElementType* array() const { return mArray->entries; }
-  ElementType*& array() { return mArray->entries; }
   ElementType& entry(size_t row, size_t column)
   {
     return *fq_nmod_mat_entry(mArray, row, column);
@@ -110,6 +76,12 @@ class DMat<M2::ARingGFFlintBig>
     swap(newMatrix);
   }
 
+  // These are labelled 'unsafe', as it s possible the rows
+  // are out of order (which happens in particular if
+  // certain flint functions created this.
+  const ElementType* unsafeArray() const { return mArray->entries; }
+  ElementType*& unsafeArray() { return mArray->entries; }
+  
  public:
   // Access routines so that the flint fq_nmod_mat interface may be used
   const fq_nmod_mat_t& fq_nmod_mat() const { return mArray; }

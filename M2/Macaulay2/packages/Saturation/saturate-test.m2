@@ -228,3 +228,10 @@ TEST ///
   --
   cacheHit SaturateComputation := lookup(cacheHit, Computation)
 ///
+
+TEST ///
+  -- Testing the ambient module of saturation
+  S = QQ[x,y]
+  M = coker matrix "x2,y2"
+  assert(super M == saturate 0_M and M / saturate 0_M == 0)
+///

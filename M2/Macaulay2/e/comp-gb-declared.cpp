@@ -28,7 +28,7 @@ GBDeclared::GBDeclared(const Matrix *m0,
       POLY g;
       ring_elem denom1, denom2, u, v;
 
-      if (gb->elem(i) == 0)
+      if (gb->elem(i) == nullptr)
         continue;  // Do not even consider including 0 elements.
       g.f = P->translate_gbvector_from_vec(F, gb->elem(i), denom1);
       g.fsyz = P->translate_gbvector_from_vec(Fsyz, change->elem(i), denom2);
@@ -71,7 +71,7 @@ GBDeclared::GBDeclared(const Matrix *leadterms,
       gbvector *lead;
       ring_elem denom1, denom2, denom3, u, v;
 
-      if (gb->elem(i) == 0)
+      if (gb->elem(i) == nullptr)
         continue;  // Do not even consider including 0 elements.
       g.f = P->translate_gbvector_from_vec(F, gb->elem(i), denom1);
       g.fsyz = P->translate_gbvector_from_vec(Fsyz, change->elem(i), denom2);
@@ -101,14 +101,14 @@ GBComputation *GBDeclared::create(const Matrix *m,
   if (R != m->get_ring() || R != change->get_ring() || R != syz->get_ring())
     {
       ERROR("expected the same ring");
-      return 0;
+      return nullptr;
     }
 
   const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0)
+  if (P == nullptr)
     {
       ERROR("declaring a GB requires a polynomial ring");
-      return 0;
+      return nullptr;
     }
   // Then: create and return the object
   return new GBDeclared(m, gb, change, syz);
@@ -130,14 +130,14 @@ GBComputation *GBDeclared::create(const Matrix *leadterms,
       R != change->get_ring() || R != syz->get_ring())
     {
       ERROR("expected the same ring");
-      return 0;
+      return nullptr;
     }
 
   const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0)
+  if (P == nullptr)
     {
       ERROR("declaring a GB requires a polynomial ring");
-      return 0;
+      return nullptr;
     }
   if (leadterms->n_rows() != gb->n_rows() ||
       leadterms->n_cols() != gb->n_cols())
@@ -145,7 +145,7 @@ GBComputation *GBDeclared::create(const Matrix *leadterms,
       ERROR(
           "expected same number of lead terms as marked Groebner basis "
           "elements");
-      return 0;
+      return nullptr;
     }
   // Then: create and return the object
   return new GBDeclared(leadterms, m, gb, change, syz);

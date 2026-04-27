@@ -1,8 +1,15 @@
 normalizPolyhedra = new MutableHashTable
 normalizPolyhedra#Cone = new MutableHashTable
 
+HBFromNormalizCone := RC -> (
+   HB := transpose RC#"gen";
+   apply(numColumns HB, i -> HB_{i})
+   )
+
 normalizPolyhedra#Cone#computedHilbertBasis = method()
 normalizPolyhedra#Cone#computedHilbertBasis Cone := C -> (
+   needsPackage "Normaliz";
+   normaliz := (value getGlobalSymbol "normaliz");
    if debugLevel > 2 then << "Using Normaliz." << endl;
    if not isPointed C then error("Hilbert basis not implemented for non-pointed cones");
    if hasProperty(C, rays) then (
@@ -17,12 +24,5 @@ normalizPolyhedra#Cone#computedHilbertBasis Cone := C -> (
       if debugLevel > 2 then << "Normaliz computing with rays." << endl;
       return HBFromNormalizCone normaliz(transpose rays C, "integral_closure")
    )
-)
-
-HBFromNormalizCone = method()
-HBFromNormalizCone RationalCone := RC -> (
-   HB := RC#"gen";
-   HB = transpose HB;
-   flatten apply(numColumns HB, i -> HB_{i})
 )
 

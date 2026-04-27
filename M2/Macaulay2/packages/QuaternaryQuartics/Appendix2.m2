@@ -19,7 +19,7 @@ doc ///
       We work over a large finite field, one whose characteristic is large enough so that
       the subtleties of Borels over finite characteristic don't appear.  We use such a finite field,
       instead of $\mathbb{Q}$, so that the coefficients in the ideal aren't huge.
-      This doesn't change the answers, but we need to check that afterwords.
+      This doesn't change the answers, but we need to check that afterwards.
     Example
       setRandomSeed 4332367823
       kk = ZZ/101

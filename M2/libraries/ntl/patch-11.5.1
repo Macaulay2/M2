@@ -1,0 +1,12 @@
+diff -ur a/src/mfile b/src/mfile
+--- a/src/mfile
++++ b/src/mfile
+@@ -358,7 +358,7 @@ setup2:
+ 
+ setup3:
+ 	$(LINK) $(GMP_OPT_INCDIR) -o gen_gmp_aux gen_gmp_aux.cpp $(GMP_OPT_LIBDIR) $(GMP_OPT_LIB) $(LDLIBS)
+-	./gen_gmp_aux > ../include/NTL/gmp_aux.h 
++	LD_LIBRARY_PATH=$(GMP_LIBDIR) ./gen_gmp_aux > ../include/NTL/gmp_aux.h 
+ 	$(LINK) $(GF2X_OPT_INCDIR) -o gf2x_version_1_2_or_later_required gf2x_version_1_2_or_later_required.cpp $(GF2X_OPT_LIBDIR) $(GF2X_OPT_LIB) $(LDLIBS) 
+ 
+ # setup4 runs the wizard

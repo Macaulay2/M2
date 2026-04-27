@@ -6,7 +6,7 @@ doc///
   min
   (min, VisibleList)
  Headline
-  yields the minimum element in a list or sequence
+  get the minimum element in a list or sequence
  Usage
   min X
  Inputs

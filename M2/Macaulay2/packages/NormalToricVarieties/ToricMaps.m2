@@ -367,8 +367,7 @@ rayMaxList ToricMap := List => (cacheValue symbol maxRayList) (f -> (
     )
 )		    
 
-pullback = method()
-pullback (ToricMap, ToricDivisor) := ToricDivisor => (f, D) -> (
+pullback (ToricMap, ToricDivisor) := ToricDivisor => {} >> o -> (f, D) -> (
     if not isCartier D then error "-- expected a Cartier divisor";
     cartierData := cartierCoefficients D;
     A := matrix f;
@@ -383,12 +382,12 @@ pullback (ToricMap, ToricDivisor) := ToricDivisor => (f, D) -> (
 	(transpose cartierData_(maxConeIndices_i) * rho)_(0,0) * X_i
 	)
     )
-pullback (ToricMap, Module) := Module => (f, M) -> (
+pullback (ToricMap, Module) := Module => {} >> o -> (f, M) -> (
     if ring target f =!= ring M then 
 	error "-- expected module over the Cox ring of the target";
     (inducedMap f) ** M
     )
-pullback (ToricMap, CoherentSheaf) := CoherentSheaf => (f, F) -> (
+pullback (ToricMap, CoherentSheaf) := CoherentSheaf => {} >> o -> (f, F) -> (
     sheaf (source f, pullback(f, module F))
     )
 

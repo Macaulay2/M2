@@ -67,7 +67,7 @@ class MonomialTable : public our_new_delete
   int find_divisors(int max,
                     exponents_t exp,
                     int comp,
-                    VECTOR(mon_term *) *result = 0);
+                    VECTOR(mon_term *) *result = nullptr);
   /* max: the max number of divisors to find.
      exp: the monomial whose divisors we seek.
      result: an array of mon_term's.

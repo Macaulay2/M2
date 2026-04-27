@@ -1,7 +1,17 @@
-srcversion := "@PACKAGE_VERSION@"
+-- this file is populated by the build system
+
+gitversion = new HashTable from {
+    "git description" => "@GIT_DESCRIPTION@",
+    "git branch"      => "@GIT_BRANCH@",
+    }
+version = merge(version, gitversion, last)
+protect symbol version
+
+srcversion := version#"git description"
 binversion := version#"VERSION"
-if srcversion =!= binversion
-then stderr << "--warning: mismatch: source code version: " << srcversion << " != executable version " << binversion << endl
+
+if not match(binversion, srcversion)
+then printerr("warning: source code version: ", srcversion, " != executable version ", binversion)
 
 -- Local Variables:
 -- compile-command: "cd $M2BUILDDIR && ./config.status Macaulay2/m2/version.m2"

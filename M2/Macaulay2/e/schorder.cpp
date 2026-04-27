@@ -32,7 +32,7 @@ SchreyerOrder *SchreyerOrder::create(const Matrix *m)
   const Ring *R = m->get_ring();
   const SchreyerOrder *S = m->rows()->get_schreyer_order();
   const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0)
+  if (P == nullptr)
     {
       throw exc::engine_error("expected polynomial ring");
     }
@@ -46,7 +46,7 @@ SchreyerOrder *SchreyerOrder::create(const Matrix *m)
   for (i = 0; i < rk; i++)
     {
       vec v = (*m)[i];
-      if (v == NULL || S == NULL)
+      if (v == nullptr || S == nullptr)
         tiebreaks[i] = i;
       else
         tiebreaks[i] = i + rk * S->compare_num(v->comp);
@@ -57,9 +57,9 @@ SchreyerOrder *SchreyerOrder::create(const Matrix *m)
   for (i = 0; i < rk; i++)
     {
       vec v = (*m)[i];
-      if (v == NULL)
+      if (v == nullptr)
         M->one(base);
-      else if (S == NULL)
+      else if (S == nullptr)
         M->copy(P->lead_flat_monomial(v->coeff), base);
       else
         {
@@ -98,7 +98,7 @@ SchreyerOrder *SchreyerOrder::create(const GBMatrix *m)
   for (i = 0; i < rk; i++)
     {
       gbvector *v = m->elems[i];
-      if (v == NULL || S == NULL)
+      if (v == nullptr || S == nullptr)
         tiebreaks[i] = i;
       else
         tiebreaks[i] = i + rk * S->compare_num(v->comp - 1);
@@ -109,7 +109,7 @@ SchreyerOrder *SchreyerOrder::create(const GBMatrix *m)
   for (i = 0; i < rk; i++)
     {
       gbvector *v = m->elems[i];
-      if (v == NULL)
+      if (v == nullptr)
         M->one(base);
       else  // if (S == NULL)
         M->copy(v->monom, base);
@@ -134,7 +134,7 @@ bool SchreyerOrder::is_equal(const SchreyerOrder *G) const
 // A schreyer order is never equal to a non-Schreyer order, even
 // if the monomials are all ones.
 {
-  if (G == NULL) return false;
+  if (G == nullptr) return false;
   for (int i = 0; i < rank(); i++)
     {
       if (compare_num(i) != G->compare_num(i)) return false;
@@ -156,7 +156,7 @@ SchreyerOrder *SchreyerOrder::sub_space(int n) const
   if (n < 0 || n > rank())
     {
       ERROR("sub schreyer order: index out of bounds");
-      return NULL;
+      return nullptr;
     }
   SchreyerOrder *result = new SchreyerOrder(M);
   for (int i = 0; i < n; i++) result->append(compare_num(i), base_monom(i));
@@ -176,7 +176,7 @@ SchreyerOrder *SchreyerOrder::sub_space(M2_arrayint a) const
       {
         ERROR("schreyer order subspace: index out of bounds");
         freemem(result);
-        return NULL;
+        return nullptr;
       }
   return result;
 }
@@ -281,15 +281,15 @@ struct SchreyerOrder_symm
       : S(S0),
         n(n0),
         M(S0->getMonoid()),
-        symm1_result(0),
-        symm1_base(0),
+        symm1_result(nullptr),
+        symm1_base(nullptr),
         symm1_next(0)
   {
   }
 
   SchreyerOrder *value()
   {
-    if (symm1_result == 0)
+    if (symm1_result == nullptr)
       {
         symm1_result = SchreyerOrder::create(M);
         if (n >= 0)

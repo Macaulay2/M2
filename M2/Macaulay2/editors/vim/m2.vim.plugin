@@ -13,12 +13,12 @@ let b:screens ="vim-M2-plugin"
 let b:termgeom="80x25+0-0"
 
 " Add Commands
-command -nargs=0 -complete=shellcmd M2Start :call M2Start()
-command -nargs=0 -complete=shellcmd M2Restart :call M2Restart()
-command -nargs=0 -complete=shellcmd M2Exit :call M2Exit()
+command -nargs=0 M2Start :call M2Start()
+command -nargs=0 M2Restart :call M2Restart()
+command -nargs=0 M2Exit :call M2Exit()
 command -nargs=1 -complete=shellcmd M2SendString :call M2SendString(<args>)
-command -nargs=0 -complete=shellcmd M2SendBuffer :call M2SendBuffer()
-command -nargs=0 -range -complete=shellcmd M2Send :call M2Send(<line1>,<line2>)
+command -nargs=0 M2SendBuffer :call M2SendBuffer()
+command -nargs=0 -range M2Send :call M2Send(<line1>,<line2>)
     
 " Check for all required executables
 if !executable('screen')

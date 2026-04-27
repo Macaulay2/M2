@@ -1,33 +1,34 @@
 ///
 restart
-loadPackage "CompleteIntersectionResolutions"
 loadPackage "PencilsOfQuadrics"
 uninstallPackage("PencilsOfQuadrics")
+restart
 installPackage("PencilsOfQuadrics")
 check "PencilsOfQuadrics"
 viewHelp "PencilsOfQuadrics"
 needsPackage"CompleteIntersectionResolutions"
 loadPackage("PencilsOfQuadrics", Reload=>true)
 peek loadedFiles
-
 ///
+
      newPackage(
              "PencilsOfQuadrics",
-             Version => "0.9", 
-             Date => "June 17, 2020",
+    	     Version => "1.0",
+    	     Date => "October 10, 2024",
              Authors => {{Name => "Frank-Olaf Schreyer", 
                        Email => "schreyer@math.uni-sb.de", 
-                       HomePage => ""},
+                       HomePage => "https://www.math.uni-sb.de/ag/schreyer/index.php/"},
              	         {Name => "David Eisenbud", 
                        Email => "de@msri.org", 
-                       HomePage => "https://www.msri.org/~de"},
+                       HomePage => "https://eisenbud.github.io/"},
 		       {Name => "Yeongrak Kim",
-			   Email => "kim@math.uni-sb.de",
+    	    	    	   Email => "yeongrak.kim@pusan.ac.kr",
 			   HomePage => "https://sites.google.com/view/yeongrak"}
 		   },
-	     PackageExports => {"CompleteIntersectionResolutions"},
+	               PackageExports => {"CompleteIntersectionResolutions"},
              Headline => "Clifford Algebra of a pencil of quadratic forms",
-	     Keywords => {"Commutative Algebra"}
+             DebuggingMode => false,
+	     Keywords => {"Commutative Algebra", "Algebraic Geometry"}
              )
 
      export {
@@ -36,19 +37,16 @@ peek loadedFiles
 	 "RandomNicePencil",
 	 "cliffordOperators",--
 	 "centers",--
-	 --
 	 "tensorProduct",
-	 "randomLineBundle",
---	 "Nontrivial", -- an option which is not used in ver 0.2
+	 "preRandomLineBundle", -- methods updated in ver 1.0
+	 "randomLineBundle", -- methods updated in ver 1.0
 	 "degOnE",
---	 "degreeOnE",
 	 "orderInPic",
 	 "randomExtension",
 	 --
 	 "randNicePencil",
          "qqRing",
          "quadraticForm",
-         "baseRing",
          "isotropicSpace",
          "matFact1",
          "matFact2",
@@ -61,7 +59,6 @@ peek loadedFiles
 	 "oddOperators",
 	 "evenCenter",
 	 "oddCenter",
---	 "symmetricMatrix",--function returning the symmetric matrix
 	 "symMatrix",--same as symmetricMatrix
 	  "symmetricM", -- key for CliffordModule
 	 "hyperellipticBranchEquation", -- key for CliffordModule
@@ -75,9 +72,10 @@ peek loadedFiles
 	 "VectorBundleOnE",
 	 "vectorBundleOnE",
 	 "yAction",
-	 "searchUlrich",
+	 "searchUlrich", -- methods updated in ver 1.0
 	 "translateIsotropicSubspace",
-	 "randomIsotropicSubspace"
+	 "randomIsotropicSubspace",
+	 "LabBookProtocol",
 	 }
      
 needsPackage"CompleteIntersectionResolutions"
@@ -93,6 +91,319 @@ z := local z;
 CliffordModule  = new Type of MutableHashTable
 VectorBundleOnE = new Type of MutableHashTable
 RandomNicePencil = new Type of MutableHashTable
+
+LabBookProtocol=method()
+LabBookProtocol(ZZ) := (g) -> (
+    if g==3 then (
+    print "
+    	    g=3
+	    kk= ZZ/101;
+	    elapsedTime (S,qq,R,u, M1,M2, Mu1, Mu2)=randomNicePencil(kk,g);
+	     -- 0.644455 seconds elapsed
+	    M=cliffordModule(Mu1,Mu2,R)
+	    Mor = vectorBundleOnE M.evenCenter;
+	    Mor1= vectorBundleOnE M.oddCenter;
+	    f = M.hyperellipticBranchEquation;
+	    assert(dim ideal jacobian ideal f ==0);
+	    elapsedTime while (        
+		m1=randomLineBundle(g+(g%2),f);
+		m2=randomLineBundle(g%2,f);
+		m12=randomExtension(m1.yAction,m2.yAction);
+		V = vectorBundleOnE m12;
+		Ul=tensorProduct(Mor,V);
+		Ul1=tensorProduct(Mor1,V);
+		d0=unique degrees target Ul.yAction;
+		d1=unique degrees target Ul1.yAction;
+		#d1 >=3 or #d0 >=3) do ();
+	    -- 0.337555 seconds elapsed
+	    betti Ul.yAction, betti Ul1.yAction
+	    --further commands
+	    elapsedTime Ul = tensorProduct(M,V); -- the heaviest part computing the actions of generators
+	    -- 9.35977 seconds elapsed
+	    M1Ul=sum(#Ul.oddOperators,i->S_i*sub(Ul.oddOperators_i,S));
+	    r=2
+	    Ulrich := M1Ul^{r*2^g..(2*r)*2^g-1};
+	    Ulr=coker map(S^(r*2^g),,Ulrich);
+	    minimalBetti Ulr
+	    -- will give an Ulrich bundle, with betti table 
+	    -- 16 32 16")
+   else 
+    if g==4 then ( print "
+    g=4
+    kk= ZZ/101;
+    elapsedTime (S,qq,R,u, M1,M2, Mu1, Mu2)=randomNicePencil(kk,g);
+    -- 9.29588 seconds elapsed
+    M=cliffordModule(Mu1,Mu2,R)
+    Mor = vectorBundleOnE M.evenCenter;
+    Mor1= vectorBundleOnE M.oddCenter;
+    f = M.hyperellipticBranchEquation;
+    assert(dim ideal jacobian ideal f ==0);
+    elapsedTime while (        
+        m1=randomLineBundle(g+(g%2),f);
+        m2=randomLineBundle(g%2,f);
+        m12=randomExtension(m1.yAction,m2.yAction);
+        V = vectorBundleOnE m12;
+        Ul=tensorProduct(Mor,V);
+        Ul1=tensorProduct(Mor1,V);
+        d0=unique degrees target Ul.yAction;
+        d1=unique degrees target Ul1.yAction;
+        #d1 >=3 or #d0 >=3) do ();
+    -- 2.27561 seconds elapsed
+    betti Ul.yAction, betti Ul1.yAction
+    --further commands
+    elapsedTime Ul = tensorProduct(M,V); -- the heaviest part computing the actions of generators
+     -- 419.895 seconds elapsed
+     M1Ul:=sum(#Ul.oddOperators,i->S_i*sub(Ul.oddOperators_i,S));
+     r=2
+     Ulrich := M1Ul^{r*2^g..(2*r)*2^g-1};
+     Ulr=coker map(S^(r*2^g),,Ulrich);
+     minimalBetti Ulr
+     -- will give an Ulrich bundle, with betti table 
+     -- 32 64 32
+    ") else
+    if g==5 then ( print "
+    g=5
+    kk= ZZ/101;
+    elapsedTime (S,qq,R,u, M1,M2, Mu1, Mu2)=randomNicePencil(kk,g);
+     -- 56.2955 seconds elapsed
+    elapsedTime M=cliffordModule(Mu1,Mu2,R)
+    Mor = vectorBundleOnE M.evenCenter;
+    Mor1= vectorBundleOnE M.oddCenter;
+    f = M.hyperellipticBranchEquation;
+    assert(dim ideal jacobian ideal f ==0);
+    elapsedTime while (        
+    	m1=randomLineBundle(g+(g%2),f);
+	m2=randomLineBundle(g%2,f);
+        m12=randomExtension(m1.yAction,m2.yAction);
+	V = vectorBundleOnE m12;
+	Ul=tensorProduct(Mor,V);
+	Ul1=tensorProduct(Mor1,V);
+	d0=unique degrees target Ul.yAction;
+	d1=unique degrees target Ul1.yAction;
+	#d1 >=3 or #d0 >=3) do ();
+     -- 29.9208 seconds elapsed
+    betti Ul.yAction, betti Ul1.yAction
+    -- -- the further commands
+    -- Ul = tensorProduct(M,V); -- the heaviest part computing the actions of generators
+    -- add timing
+    -- M1Ul:=sum(#Ul.oddOperators,i->S_i*sub(Ul.oddOperators_i,S));
+    -- r=2
+    -- Ulrich := M1Ul^{r*2^g..(2*r)*2^g-1};
+    -- Ulr=coker map(S^(r*2^g),,Ulrich)
+    -- minimalBetti Ulr
+    -- -- will give an Ulrich bundle, with betti table 
+    -- 64 128 64
+    ")
+    else (print "no record")
+    )
+
+LabBookProtocol(ZZ,ZZ) := (g,r) -> (
+    if (g,r)==(2,3) then (
+    print "
+    g=2
+    r=3
+    kk= ZZ/101;
+    elapsedTime (S,qq,R,u, M1,M2, Mu1, Mu2)=randomNicePencil(kk,g);
+    -- 0.1028558  seconds elapsed
+    P=kk[drop(gens S,-2)]
+    gens P
+    M=cliffordModule(Mu1,Mu2,R)
+    Mor = vectorBundleOnE M.evenCenter;
+    Mor1= vectorBundleOnE M.oddCenter;
+    f = M.hyperellipticBranchEquation;
+    assert(dim ideal jacobian ideal f ==0);
+    degSeq={0,1,2}
+    elapsedTime while (
+	-- build a vector bundle V as extensions of line bundles of degrees in degSeq
+	V=randomLineBundle(degSeq#0,f);
+	for i from 1 to r-1 do(
+	    m1=randomLineBundle(degSeq#i,f); 
+	    m12=randomExtension(m1.yAction,V.yAction);
+	    V=vectorBundleOnE m12;
+	    ); 
+	Ul=tensorProduct(Mor,V);
+	Ul1=tensorProduct(Mor1,V);
+	d0=unique degrees target Ul.yAction;
+	d1=unique degrees target Ul1.yAction;
+	#d1 >=3 or #d0 >=3) do ();
+    -- 0.181415 seconds elapsed   
+    betti Ul.yAction,betti Ul1.yAction
+    --further commands
+    elapsedTime Ul = tensorProduct(M,V); -- the heaviest part computing the actions of generators
+    -- 1.15852 seconds elapsed
+    M1Ul=sum(#Ul.oddOperators,i->S_i*sub(Ul.oddOperators_i,S));
+    Ulrich = coker map(P^(r*2^g),,sub(M1Ul^{r*2^g..(2*r)*2^g-1},P));
+    minimalBetti Ulrich
+    -- Is an Ulrich bundle, with betti numbers
+    -- r*2^g,(2*r)*2^g,r*2^g 
+    elapsedTime qs=ann Ulrich
+    ideal sub(diff((vars S)_{2*g+2,2*g+3},qq),P)==qs
+    ") else 
+    if (g,r)==(3,4) then ( print "
+    g=3
+    r=4
+    kk= ZZ/101;
+    elapsedTime (S,qq,R,u, M1,M2, Mu1, Mu2)=randomNicePencil(kk,g);
+    -- 0.623928 seconds elapsed
+     P=kk[drop(gens S,-2)]
+    gens P
+    M=cliffordModule(Mu1,Mu2,R)
+    Mor = vectorBundleOnE M.evenCenter;
+    Mor1= vectorBundleOnE M.oddCenter;
+    f = M.hyperellipticBranchEquation;
+    assert(dim ideal jacobian ideal f ==0);
+    degSeq={1,2,3,4}
+    elapsedTime while (
+	-- build a vector bundle V as extensions of line bundles of degrees in degSeq
+	V=randomLineBundle(degSeq#0,f);
+	for i from 1 to r-1 do(
+	    m1=randomLineBundle(degSeq#i,f); 
+	    m12=randomExtension(m1.yAction,V.yAction);
+	    V=vectorBundleOnE m12;
+	    ); 
+	Ul=tensorProduct(Mor,V);
+	Ul1=tensorProduct(Mor1,V);
+	d0=unique degrees target Ul.yAction;
+	d1=unique degrees target Ul1.yAction;
+	#d1 >=3 or #d0 >=3) do ();
+    -- 1.15312 seconds elapsed  
+    betti Ul.yAction,betti Ul1.yAction
+    --further commands
+    elapsedTime Ul = tensorProduct(M,V); -- the heaviest part computing the actions of generators
+    -- 87.5896 seconds elapsed
+    M1Ul=sum(#Ul.oddOperators,i->S_i*sub(Ul.oddOperators_i,S));
+    Ulrich = coker map(P^(r*2^g),,sub(M1Ul^{r*2^g..(2*r)*2^g-1},P));
+    minimalBetti Ulrich
+    -- Is an Ulrich bundle, with betti numbers
+    -- r*2^g,(2*r)*2^g,r*2^g 
+    elapsedTime qs=ann Ulrich
+     -- 25.3661 seconds elapsed
+    ideal sub(diff((vars S)_{2*g+2,2*g+3},qq),P)==qs   
+    ") else
+    if (g,r)==(4,3) then ( print "
+    g=4;
+    r=3;
+    kk= ZZ/101;
+    elapsedTime (S,qq,R,u, M1,M2, Mu1, Mu2)=randomNicePencil(kk,g);
+    -- 9.41219 seconds elapsed
+    elapsedTime M=cliffordModule(Mu1,Mu2,R)
+    P=kk[drop(gens S,-2)];
+    Mor = vectorBundleOnE M.evenCenter;
+    Mor1= vectorBundleOnE M.oddCenter;
+    f = M.hyperellipticBranchEquation;
+    assert(dim ideal jacobian ideal f ==0);
+    degSeq={0,2,4}
+    elapsedTime while (
+	-- build a vector bundle V as extensions of line bundles of degrees in degSeq
+	V=randomLineBundle(degSeq#0,f);
+	for i from 1 to r-1 do(
+	    m1=randomLineBundle(degSeq#i,f); 
+	    m12=randomExtension(m1.yAction,V.yAction);
+	    V=vectorBundleOnE m12;
+	    ); 
+	Ul=tensorProduct(Mor,V);
+	Ul1=tensorProduct(Mor1,V);
+	d0=unique degrees target Ul.yAction;
+	d1=unique degrees target Ul1.yAction;
+	#d1 >=3 or #d0 >=3) do ();
+    -- 7.34427 seconds elapsed 
+    betti Ul.yAction,betti Ul1.yAction
+    --further commands
+    -- elapsedTime Ul = tensorProduct(M,V); -- the heaviest part computing the actions of generators
+    -- 1814.76 seconds elapsed
+    -- M1Ul=sum(#Ul.oddOperators,i->S_i*sub(Ul.oddOperators_i,S));
+    -- Ulrich = coker map(P^(r*2^g),,sub(M1Ul^{r*2^g..(2*r)*2^g-1},P));
+    -- minimalBetti Ulrich
+    -- Is an Ulrich bundle, with betti numbers
+    -- r*2^g,(2*r)*2^g,r*2^g 
+    -- elapsedTime qs=ann Ulrich
+    -- 522.132 seconds elapsed
+    -- ideal sub(diff((vars S)_{2*g+2,2*g+3},qq),P)==qs   
+    ")
+    else (print "no record")
+    )
+
+///
+LabBookProtocol 3
+LabBookProtocol 4
+LabBookProtocol 5
+    g=5
+    kk= ZZ/101;
+    elapsedTime (S,qq,R,u, M1,M2, Mu1, Mu2)=randomNicePencil(kk,g);
+     -- 56.2955 seconds elapsed
+    elapsedTime M=cliffordModule(Mu1,Mu2,R)
+     -- 12.8458 seconds elapsed
+    Mor = vectorBundleOnE M.evenCenter;
+    Mor1= vectorBundleOnE M.oddCenter;
+    f = M.hyperellipticBranchEquation;
+    assert(dim ideal jacobian ideal f ==0);
+    elapsedTime while (        
+        m1=randomLineBundle(g+(g%2),f);
+        m2=randomLineBundle(g%2,f);
+        m12=randomExtension(m1.yAction,m2.yAction);
+        V = vectorBundleOnE m12;
+        Ul=tensorProduct(Mor,V);
+        Ul1=tensorProduct(Mor1,V);
+        d0=unique degrees target Ul.yAction;
+        d1=unique degrees target Ul1.yAction;
+        #d1 >=3 or #d0 >=3) do ();
+     -- 29.9208 seconds elapsed
+    betti Ul.yAction, betti Ul1.yAction
+    -- -- the further commands
+    -- elapsedTime Ul = tensorProduct(M,V); -- the heaviest part computing the actions of generators
+    -- 
+    -- M1Ul:=sum(#Ul.oddOperators,i->S_i*sub(Ul.oddOperators_i,S));
+    -- r=2
+    -- Ulrich := M1Ul^{r*2^g..(2*r)*2^g-1};
+    -- Ulr=coker map(S^(r*2^g),,Ulrich)
+    -- minimalBetti Ulr
+    -- -- will give an Ulrich bundle, with betti table 
+    -- 64 128 64
+
+LabBookProtocol 6
+LabBookProtocol(2,3)
+LabBookProtocol(3,4)
+        
+LabBookProtocol(4,3)
+    g=4;
+    r=3;
+    kk= ZZ/101;
+    elapsedTime (S,qq,R,u, M1,M2, Mu1, Mu2)=randomNicePencil(kk,g);
+    -- 9.41219 seconds elapsed
+    elapsedTime M=cliffordModule(Mu1,Mu2,R)
+    Mor = vectorBundleOnE M.evenCenter;
+    Mor1= vectorBundleOnE M.oddCenter;
+    f = M.hyperellipticBranchEquation;
+    assert(dim ideal jacobian ideal f ==0);
+    degSeq={0,2,4}
+    elapsedTime while (
+        -- build a vector bundle V as extensions of line bundles of degrees in degSeq
+        V=randomLineBundle(degSeq#0,f);
+        for i from 1 to r-1 do(
+            m1=randomLineBundle(degSeq#i,f); 
+            m12=randomExtension(m1.yAction,V.yAction);
+            V=vectorBundleOnE m12;
+            ); 
+        Ul=tensorProduct(Mor,V);
+        Ul1=tensorProduct(Mor1,V);
+        d0=unique degrees target Ul.yAction;
+        d1=unique degrees target Ul1.yAction;
+        #d1 >=3 or #d0 >=3) do ();
+    -- 7.34427 seconds elapsed 
+    betti Ul.yAction,betti Ul1.yAction
+    --further commands
+    --elapsedTime Ul = tensorProduct(M,V); -- the heaviest part computing the actions of generators
+    -- add timing
+    --M1Ul=sum(#Ul.oddOperators,i->S_i*sub(Ul.oddOperators_i,S));
+    --Ulrich = coker map(P^(r*2^g),,sub(M1Ul^{r*2^g..(2*r)*2^g-1},P));
+    --minimalBetti Ulrich
+    -- Is an Ulrich bundle, with betti numbers
+    -- r*2^g,(2*r)*2^g,r*2^g 
+    --elapsedTime qs=ann Ulrich
+    --
+    --ideal sub(diff((vars S)_{2*g+2,2*g+3},qq),P)==qs   
+    
+///
 
 
 matrixFactorizationK=method()
@@ -112,24 +423,6 @@ matrixFactorizationK(Matrix,Matrix) := (X,Y) -> (
     (M1,M2)
     )
 
-TEST/// 
--- test of matrixFactorizationK
-kk=ZZ/101
-d=2
-n=2*d
-R=kk[a_0..a_(binomial(n+2,2))]
-S=kk[x_0..x_(n-1),a_0..a_(binomial(n+2,2))]
-M=genericSymmetricMatrix(S,a_0,n)
-X=(vars S)_{0..n-1}
-Y=X*M
-(M1,M2)=matrixFactorizationK(X,Y);
-M12=M1*M2;
-assert(M12-M12_(0,0)*id_(target M12)==0)
-assert(isHomogeneous M1)
-assert(isHomogeneous M2)
-assert(source M1==target M2)
-assert( source M2==target M1**S^{-3})
-///
 
 
 matFact = (X,Y) -> (
@@ -164,7 +457,7 @@ randomNicePencil(Ring,ZZ) := (kk,g) -> (
     X -- is the irrelevant ideal of PP^(2g+1)
     Y -- Y is the coefficient vector of qq written as a linear combination of X
     assert(X*transpose Y==qq)
-    u -- are the linear equations defining a maximal isotropic subspace
+    u -- are the linear equations defining a maximal isotropic saubspace
     betti M1, betti M2 -- is the matrix factorization of qq   
     --  corresponding to the resolution of kk
     betti Mu1, betti Mu2  -- is the matrix factorization of qq 
@@ -185,14 +478,14 @@ randomNicePencil(Ring,ZZ) := (kk,g) -> (
     Y := matrix {drop(last entries transpose syz (X|qq),-1)};
     (m1,m2) := matrixFactorizationK(X,Y);
     cub:=sum_n (i-> S_i^3);
-    F := res(coker X**(S/cub));
+    F := freeResolution(coker X**(S/cub), LengthLimit => 2*g+4);
     degsEven := reverse flatten degrees F_(2*g+4);
     degsOdd := flatten degrees F_(2*g+3);
     M2 := map(S^-degsOdd,S^-degsEven,m2)**S^{2*g+2};
     M1 := map(S^-degsEven**S^{3},S^-degsOdd,m1)**S^{2*g+2};
     Yu := matrix {drop(last entries transpose syz (u|qq),-1)};
     (m1u,m2u) := matrixFactorizationK(u,Yu);
-    F = res(coker u**SQ);
+    F = freeResolution(coker u**SQ, LengthLimit => 2*g+4);
     degsEven = reverse flatten degrees F_(2*g+4);
     degsOdd = flatten degrees F_(2*g+3);
     Mu2 := map(S^-degsOdd,S^-degsEven,m2u)**S^{2*g+2};
@@ -209,7 +502,7 @@ randNicePencil(Ring,ZZ) := (kk,g)->(
     new RandomNicePencil from hashTable{
         (qqRing, L_0),
 	(quadraticForm, L_1),
-	(baseRing, L_2),
+	(symbol baseRing, L_2),
 	(isotropicSpace, L_3),
 	(matFact1, L_4),
 	(matFact2, L_5),
@@ -342,7 +635,6 @@ assert(c0^2-(-1)^d*determ*id_(target c0)==0)
 assert(c1^2-(-1)^d*determ*id_(source c1)==0)
 ///
 
-
 factorToList = method()
 factorToList(Product) := pf ->(
     lpf := toList pf;
@@ -354,9 +646,10 @@ factorToList(Product) := pf ->(
     assert (f == product factorToList factor f)
 ///
 --randomLineBundle=method(Options => {Nontrivial =>true})
-randomLineBundle=method()
+
+preRandomLineBundle=method()
   -- the option is not used
-randomLineBundle( RingElement ) := f -> (
+preRandomLineBundle( RingElement ) := f -> (
     --produces a 2x2 matrix factorization of f, hence a line bundle on the hyperelliptic curve.
     --corresponding to y^2-(-1)^g*f.
     --the first matrix has the form
@@ -376,7 +669,90 @@ randomLineBundle( RingElement ) := f -> (
     m:=map(targetm,, matrix{{b,c},{a,-b}});
     assert(isHomogeneous m);
     vectorBundleOnE m
+    
+    -- an output of this method will be mostly unbalanced -- deg(a) and deg(c) may have a big gap.
+    -- in the case, the corresponding line bundle will lie on a (twisted) theta divisor (or a Brill-Noether loci)
+    -- so we need a method to find a "general" one by tensoring a number of degree 0 line bundles
 )
+
+preRandomLineBundle(ZZ,RingElement) :=  (d,f) -> (
+-- f a binary form of degree 2g+2 over a finite field
+-- d an integer
+-- select randomly a line L of degree d on the hyperelliptic curve
+-- defined by y^2-(-1)^g*f
+   while (L:=preRandomLineBundle f; a:=d-degOnE L; a%2 !=0) do ();
+   R:= ring f;
+   Ld := vectorBundleOnE (L.yAction**R^{-a//2});
+   if d == 0 then
+          while (member({0},degrees target Ld.yAction)) do( 
+          Ld = preRandomLineBundle (d,f);
+      );
+   Ld
+) 
+
+randomLineBundle=method()
+randomLineBundle(RingElement) := (f) -> (
+-- Input
+-- f: a binary form of degree 2g+2 over a finite field
+
+-- Output : a (much more balanced) random line bundle of degree d on the corresponding hyperelliptic curve.
+    if ((# gens ring f) != 2 or ((degree f)_0)%2 !=0) then error "f should be a binary form of degree 2g+2";
+    if (char ring f)==0 then error "define f over a finite field";
+    
+    g:=(degree f)_0 // 2 - 1;
+    Ld := preRandomLineBundle(f);
+    
+    for i from 1 to g-1 do(
+	L0 := preRandomLineBundle(0,f);
+	Ld = tensorProduct(Ld,L0);
+	);
+    Ld
+    )
+
+randomLineBundle(ZZ, RingElement) := (d,f) -> (
+-- Input
+-- d: an integer
+-- f: a binary form of degree 2g+2 over a finite field
+
+-- Output : a (much more balanced) random line bundle of degree d on the corresponding hyperelliptic curve.
+    if ((# gens ring f) != 2 or ((degree f)_0)%2 !=0) then error "f should be a binary form of degree 2g+2";
+    if (char ring f)==0 then error "define f over a finite field";
+    
+    g:=(degree f)_0 // 2 - 1;
+    Ld := preRandomLineBundle(d,f);
+    
+    for i from 1 to g-1 do(
+	L0 := preRandomLineBundle(0,f);
+	Ld = tensorProduct(Ld,L0);
+	);
+    Ld
+    )
+
+
+TEST///
+--test of preRandomLineBundle and randomLineBundle
+restart
+load "PencilsOfQuadrics.m2"
+
+kk = ZZ/nextPrime(10^3)
+R = kk[ s,t]
+g = 3
+
+f = random(2*g+2, R)
+assert(dim ideal(jacobian ideal f)== 0)
+ 
+d=random(ZZ)
+
+tally apply(100, i->(
+preLd=preRandomLineBundle(d,f);
+betti preLd.yAction))
+
+tally apply(100, i->(
+Ld=randomLineBundle(d,f);
+betti Ld.yAction))
+///
+
+
 
 --randomMatrixFactorization = method(Options => {Nontrivial =>true})
 randomMatrixFactorization=method()
@@ -407,25 +783,6 @@ restart
 loadPackage("PencilsOfQuadrics", Reload =>true)
 check "PencilsOfQuadrics"
 ///
-TEST///  
-kk=ZZ/101
-g=1
-(S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g) 
-(uOdd,uEv)=cliffordOperators(Mu1,Mu2,R)
-(c0,c1)=centers(uOdd,uEv)
-symMatrix(uOdd,uEv)
-f=det symMatrix(uOdd,uEv)
-assert(c0^2+(-1)^g*f*id_(target c0)==0)
-L=randomLineBundle(0,f)
-m=L.yAction
-assert((m)^2_(0,0)+(-1)^g*f==0)
---b = random(2*g+2, R)
-assert isHomogeneous m
-degOnE L
-orderInPic L
-
---lcm apply(10,c-> (L=randomLineBundle(0,f); orderInPic L))
-///
 
 degOnE = method() 
 degOnE(Matrix) := (L) -> (
@@ -450,20 +807,7 @@ orderInPic(VectorBundleOnE) := L->(
     if numrows M != 2 or degOnE L != 0 then error("expected bundle to have rank 1 and degree 0");
     orderInPic M)
 
-randomLineBundle(ZZ,RingElement) :=  (d,f) -> (
--- f a binary form of degree 2g+2 over a finite field
--- d an integer
--- select randomly a line L of degree d on the hyperelliptic curve
--- defined by y^2-(-1)^g*f
-   while (L:=randomLineBundle f; a:=d-degOnE L; a% 2 !=0) do ();
-   R:= ring f;
-   Ld := vectorBundleOnE (L.yAction**R^{-a//2});
-   if d == 0 then
-          while (member({0},degrees target Ld.yAction)) do( 
-          Ld = randomLineBundle (d,f);
-      );
-   Ld
-   ) 
+
 
 ///
 -- Experiments on the order of Pic^0 of an elliptic curve over a finite field
@@ -571,23 +915,6 @@ f=random(4,R)
 factor f
 ///
 
-TEST///
---test of tensorProduct of randomLineBundle and degreeOnE and orderInPic
-kk = ZZ/101
-R = kk[ s,t]
-g = 1
-
-f = random(2*g+2, R)
-assert(dim ideal(jacobian ideal f)== 0)
-L1=randomLineBundle(1,f)
-assert(degOnE L1 == 1)
-L2=randomLineBundle(2,f)
-assert(degOnE L2 == 2)
-L0 = randomLineBundle(0,f)
-assert(degOnE L0 == 0)
-assert(degOnE tensorProduct(L1,L1) == 2)
-orderInPic randomLineBundle(0,f)
-///
 
 
 
@@ -600,7 +927,7 @@ tensorProduct(Matrix,Matrix) := (phi,psi) -> (
     R := ring phi;
     g := degree ideal ((phi^2)_(0,0))//2 - 1;
     inclusion:=syz(phi**id_(target psi)-(id_(target phi)**psi)); 	
-    F:=chainComplex(inclusion);
+    F:=complex inclusion;
     F1:=F**R^{g+1}; 
     (extend(F1,F,map(F1_0,F_0,(phi**id_(target psi)))))_1
 )
@@ -617,8 +944,8 @@ tensorProduct(CliffordModule, VectorBundleOnE) := (M,L) -> (
     inclusion0 := syz(phi0**id_(target psi)-(id_(target phi0)**psi)); 	
     inclusion1 := syz(R^{1}**(phi1**id_(target psi)+(id_(target phi1)**psi))); 	    
 
-    FEven := chainComplex(inclusion0);
-    FOdd := chainComplex(inclusion1);
+    FEven := complex inclusion0;
+    FOdd := complex inclusion1;
     Odd' := null;
     Even' := null;
     eOdd := apply(M.oddOperators, Odd->(
@@ -627,7 +954,7 @@ tensorProduct(CliffordModule, VectorBundleOnE) := (M,L) -> (
 
     eEv := apply(M.evenOperators, Even->(
 	Even' = map(FOdd_0, R^{-g-1}**FEven_0, R^{-g-1}**Even**id_(target psi));
-	(extend(FOdd,FEven, Even'))_1));
+	(extend(FOdd,R^{-g-1} ** FEven, Even'))_1));
 
     assert(symMatrix(eOdd,eEv) == symMatrix(M.oddOperators, M.evenOperators));
     c0 := tensorProduct(phi0, psi);
@@ -726,24 +1053,6 @@ cliffordModule(Matrix,Matrix,Ring) := (M1,M2,R)->(
 
 
 
-TEST///
-kk=ZZ/101
-g=1
-(S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g) 
-(uOdd,uEv)=cliffordOperators(Mu1,Mu2,R)
-(c0,c1)=centers(uOdd,uEv)
-betti c0
-betti c1
-symMatrix(uOdd,uEv)
-f=det symMatrix(uOdd,uEv)
-cMu = cliffordModule(uOdd, uEv)
-cM = cliffordModule(M1, M2, R)
-cM.oddOperators
-cMu.symmetricM
-class cM
-
-assert ((cMu.evenCenter, cMu.oddCenter)==centers(cMu.oddOperators, cMu.evenOperators))
-///
 
 randomExtension=method()
 randomExtension(Matrix,Matrix) := (m1,m2) -> (
@@ -911,20 +1220,154 @@ searchUlrich(CliffordModule,Ring) :=(M,S) -> (
     coker map(S^(2^(g+1)),,Ulrich)
 )
 
+
+
+searchUlrich(CliffordModule,Ring,ZZ) := (M,S,r) ->(
+    -- Input 
+    -- r: integer at least 2
+    -- M: a Clifford Module associated to a pencil of quadrics in PP^(2g+1)
+    -- S: associated ring of polynomials (2g+2 variables for PP^(2g+1), and two variables s, t for parametrizing the pencil of quadrics)
+    
+    -- Output: an Ulrich module of rank r*2^(g-2)
+    
+    -- By Riemann-Roch, we need a rank r vector bundle E of degree r(g-2)/2, or a twist by a line bundle
+    -- so we are tempting to find a rank r, degree rg/2 vector bundle by extensions of r line bundles.
+    
+    Mor := vectorBundleOnE M.evenCenter;
+    Mor1:= vectorBundleOnE M.oddCenter;
+    f := M.hyperellipticBranchEquation;
+    assert(dim ideal jacobian ideal f ==0);
+   
+    g:=degree ideal f//2-1;
+    if (numgens S != 2*g+4) then error "S should be a polynomial ring in (2g+4) variables";
+    if (rank source M.evenCenter != 2^(g+1)) then error "M should be a Clifford module associated to a maximal isotropic subspace";
+
+    if (r <= 1) then error "r should be at least 2";
+    if ((r*g)%2 != 0) then error "either r or g should be even";
+
+    m1:=null; m2:= null; m12 := null; 
+    Ul:= null; Ul1:= null; V:= null;
+    d1 := null; d0:= null;
+    
+    d:=g%2;
+    
+    -- build up a nondecreasing sequence begin with d, end with d+g, and their sum is an expected degree, and is balanced as possible as it can
+    targetSum := (r*g)//2 + d*r;
+    degSeq := apply(r, i-> d + floor(g*i/(r-1)));
+    delta := targetSum - sum degSeq;
+    mutSeq := new MutableList from degSeq;
+    
+    -- adjust the sequence
+    searchIndex:=1; -- start from the second element
+    while (delta > 0) do (
+	if (searchIndex >= r-1) then searchIndex=1;
+    	if (mutSeq#searchIndex < mutSeq#(searchIndex+1)) then (mutSeq#searchIndex = mutSeq#searchIndex+1; delta=delta-1; searchIndex=1;) else searchIndex=searchIndex+1;
+	);
+    
+    degSeq=toList mutSeq;
+    assert( degSeq#0 == d and degSeq#(r-1) == d+g and (sum degSeq == targetSum));
+     
+    while (
+	-- build a vector bundle V as extensions of line bundles of degrees in degSeq
+	V=randomLineBundle(degSeq#0,f);
+	for i from 1 to r-1 do(
+	    m1=randomLineBundle(degSeq#i,f); 
+	    m12=randomExtension(m1.yAction,V.yAction);
+	    V=vectorBundleOnE m12;
+	    ); 
+	Ul=tensorProduct(Mor,V);
+	Ul1=tensorProduct(Mor1,V);
+	d0=unique degrees target Ul.yAction;
+	d1=unique degrees target Ul1.yAction;
+
+	#d1 >=3 or #d0 >=3) do ();
+
+    Ul = tensorProduct(M,V); -- the heaviest part computing the actions of generators
+    M1Ul:=sum(#Ul.oddOperators,i->S_i*sub(Ul.oddOperators_i,S));
+    Ulrich := M1Ul^{r*2^g..(2*r)*2^g-1};
+    coker map(S^(r*2^g),,Ulrich)
+)
+
 ///
 restart
 load "PencilsOfQuadrics.m2"
-kk=ZZ/101
+kk=ZZ/nextPrime(10^3)
 R=kk[s,t]
+
 g=3
 (S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g);
 M=cliffordModule(Mu1,Mu2,R)
-elapsedTime Ulrich = searchUlrich(M,S);
-betti res Ulrich
-ann Ulrich
+
+r=4
+time rUlrich=searchUlrich(M,S,r);
+minimalBetti rUlrich
+time ann rUlrich == ideal( sub(qq,{S_(2*g+2)=>1,S_(2*g+3)=>0}), sub(qq,{S_(2*g+2)=>0,S_(2*g+3)=>1}))
 
 
-assert(4*2^(g-1)== numrows presentation Ulrich)
+g=6;
+r=3; -- looking for Ulrich of rank r*2^(g-1)
+time (S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g); -- when g>4 it becomes heavy!
+-- used 461.086 seconds
+time M=cliffordModule(Mu1,Mu2,R)
+-- used 101.41 seconds
+
+Mor = vectorBundleOnE M.evenCenter;
+Mor1= vectorBundleOnE M.oddCenter;
+f = M.hyperellipticBranchEquation;
+d=g%2;
+
+    -- build up a nondecreasing sequence begin with d, end with d+g, and their sum is an expected degree, and is balanced as possible as it can
+    targetSum = (r*g)//2 + d*r;
+    degSeq = apply(r, i-> d + floor(g*i/(r-1)));
+    delta = targetSum - sum degSeq;
+    mutSeq = new MutableList from degSeq;
+    
+    -- adjust the sequence
+    searchIndex=1; -- start from the second element
+    while (delta > 0) do (
+	if (searchIndex >= r-1) then searchIndex=1;
+    	if (mutSeq#searchIndex < mutSeq#(searchIndex+1)) then (mutSeq#searchIndex = mutSeq#searchIndex+1; delta=delta-1; searchIndex=1;) else searchIndex=searchIndex+1;
+	);
+
+    degSeq=toList mutSeq
+    
+    time tally apply(1, j->(  -- number of trials=1
+    V=randomLineBundle(degSeq#0,f);
+    for i from 1 to r-1 do(
+	m1=randomLineBundle(degSeq#i,f); 
+	m12=randomExtension(m1.yAction,V.yAction);
+	V=vectorBundleOnE m12;
+	); 
+      
+    Ul=tensorProduct(Mor,V);
+    Ul1=tensorProduct(Mor1,V);
+
+    (betti Ul.yAction, betti Ul1.yAction)
+    ))
+
+-- computing the actions of generators is very heavy, but by this part the computation is promising
+-- for instance, (g,r) = (6,3) takes 
+
+-*
+     -- used 815.548 seconds
+
+                       0   1           0   1
+o915 = Tally{(total: 384 384, total: 384 384) => 1}
+                 -6: 192   .     -4: 384   .
+                 -5: 192   .     -3:   .   .
+                 -4:   .   .     -2:   .   .
+                 -3:   .   .     -1:   .   .
+                 -2:   .   .      0:   .   .
+                 -1:   .   .      1:   .   .
+                  0:   . 192      2:   . 384
+                  1:   . 192
+
+*-
+
+-- which is believed to be inducing an Ulrich bundle of rank r*2^(g-2).
+>>>>>>> origin/development
+
+
 
 -*
 M=cliffordModule(Mu1,Mu2,R)
@@ -948,7 +1391,7 @@ CI = P/ideal qs
 
 ciRes=cliffordModuleToCIResolution(MV,S,CI)
 betti ciRes
-betti res coker lift(ciRes.dd_5,P)
+betti freeResolution coker lift(ciRes.dd_5,P)
 *-
 
 ///
@@ -964,44 +1407,6 @@ cliffordModuleToMatrixFactorization(CliffordModule,Ring) := (M,S) ->(
     N1' := map(target (S^{1}**N1),,N1);
     N2' := map(target (S^{-1}**N2),,N2);
     (N1', N2'))
-TEST///
-kk = ZZ/101;g= 1
-(S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
-M = cliffordModule(Mu1, Mu2, R)
-(Mu1', Mu2') = cliffordModuleToMatrixFactorization (M,S);
-assert(Mu1'-Mu1 == 0 and Mu2'-Mu2 ==0)
-assert(Mu1'==Mu1)
-assert(Mu2'==Mu2)
-betti Mu1', betti Mu1
-betti Mu2', betti Mu2
-M = cliffordModule(M1, M2, R);
-(M1', M2') = cliffordModuleToMatrixFactorization (M,S);
-assert(M1'-M1 == 0 and M2'-M2 ==0)
-betti M1', betti M1
-assert(M1'==M1)
-betti M2', betti M2
-assert(M2'==M2)
---g=2
-
-kk = ZZ/101;g=2
-(S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
-M = cliffordModule(Mu1, Mu2, R)
-(Mu1', Mu2') = cliffordModuleToMatrixFactorization (M,S);
-assert(Mu1'-Mu1 == 0 and Mu2'-Mu2 ==0)
-betti Mu1', betti Mu1
-betti Mu2', betti Mu2
-assert(Mu1'==Mu1)
-assert(Mu2'==Mu2)
-
-
-M = cliffordModule(M1, M2, R);
-(M1', M2') = cliffordModuleToMatrixFactorization (M,S);
-assert(M1'-M1 == 0 and M2'-M2 ==0)
-assert(M1'==M1)
-assert(M2'==M2)
-betti M1', betti M1
-betti M2', betti M2
-///
 
 -- Translating isotropic subspaces by degree 0 line bundles
 translateIsotropicSubspace = method()
@@ -1067,19 +1472,6 @@ randomIsotropicSubspace(CliffordModule, PolynomialRing) := (M,S) -> (
     )
 
 
-TEST///
--- needsPackage "PencilsOfQuadrics"
-kk=ZZ/101;g=2
-(S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
-
-M=cliffordModule (Mu1, Mu2, R);
-f=M.hyperellipticBranchEquation;
-L=randomLineBundle(0,f)
-uL=translateIsotropicSubspace(M,L,S)
-
-rU=randomIsotropicSubspace(M,S)
-assert (betti rU == betti u)
-///
 
 
 ///
@@ -1098,7 +1490,7 @@ cliffordModuleToCIResolution(CliffordModule,Ring, Ring) :=(M,S,CI) ->(
     assert(degrees target ((transpose M1)**S^d1)==degrees target B1);
     dd1 := (((transpose M1)**S^d1)*B2)//B1;
     dd1':= StoCI (dd1);
-    res coker  dd1'
+    freeResolution(coker  dd1', LengthLimit => numgens ring dd1' + 1)
     )
 -*
 cliffordModuleToCIResolution(CliffordModule,Ring, Ring) :=(M,S,CI) ->(
@@ -1111,87 +1503,13 @@ cliffordModuleToCIResolution(CliffordModule,Ring, Ring) :=(M,S,CI) ->(
     --B2 has target even
     StoCI := map(CI, S, gens CI | {0,0});
     d := StoCI ((M1*B1)//B2);
-    res(coker d, LengthLimit => 5)[i]
+    (freeResolution(coker d, LengthLimit => 5))[i]
     )
 *-
 ///
 restart
 loadPackage "PencilsOfQuadrics"
 ///
-TEST///
-kk = ZZ/101;g=1
-(S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
-diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq)
-P = kk[drop(gens S, -2)]
-qs = sub(diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq), P)
-CI = P/ideal qs
-
-F = res( coker (sub(u, CI)), LengthLimit => 3)
-betti (FF = res( coker transpose F.dd_3, LengthLimit => 5))
-M = cliffordModule(Mu1, Mu2, R)
-betti (F1=cliffordModuleToCIResolution(M,S,CI)) 
-betti FF
-betti (FFF = res coker FF.dd_5)
-q1 = diff(S_(2*g+2),qq)
-q2 = diff(S_(2*g+3),qq)
-N = (S^1/(ideal(q1,q2))**coker sub(F.dd_2,S))
-betti res (N, LengthLimit =>10)
-betti F1.dd_(g+3-(g%2))
-assert(ideal F1.dd_(g+3-(g%2))_{0} ==ideal sub(u,CI))
-M = cliffordModule(M1,M2,R)
-betti (F2=cliffordModuleToCIResolution(M,S,CI)) 
-assert(ideal F2.dd_(2*g+3)_{0}^{0..2*g+1} == ideal gens CI)
------ now genus 2
-g=2
-(S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
-diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq)
-P = kk[drop(gens S, -2)]
-qs = sub(diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq), P)
-CI = P/ideal qs
-
-F = res( coker (sub(u, CI)), LengthLimit => 3)
-betti (FF = res( coker transpose F.dd_3, LengthLimit => 5))
-M = cliffordModule(Mu1, Mu2, R)
-betti (F1=cliffordModuleToCIResolution(M,S,CI)) 
-betti FF
-betti F1.dd_(g+3-(g%2))
-assert(ideal F1.dd_(g+3-(g%2))_{0} ==ideal sub(u,CI))
-M = cliffordModule(M1,M2,R)
-betti (F2=cliffordModuleToCIResolution(M,S,CI)) 
-assert(ideal F2.dd_(2*g+3)_{0}^{0..2*g+1} == ideal gens CI)
--*
-g=3
-(S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
-diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq)
-P = kk[drop(gens S, -2)]
-qs = sub(diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq), P)
-CI = P/ideal qs
-
-F = res( coker (sub(u, CI)), LengthLimit => 3)
-betti (FF = res( coker transpose F.dd_3, LengthLimit => 5))
-M = cliffordModule(Mu1, Mu2, R)
-betti (F1=cliffordModuleToCIResolution(M,S,CI)) 
-betti FF
-betti F1.dd_(g+3-(g%2))
-assert(ideal F1.dd_(g+3-(g%2))_{0} ==ideal sub(u,CI))
-M = cliffordModule(M1,M2,R)
-betti (F2=cliffordModuleToCIResolution(M,S,CI)) 
-assert(ideal F2.dd_(2*g+3)_{0}^{0..2*g+1} == ideal gens CI)
-*-
-
-///
-
-TEST///
-restart
-loadPackage "PencilsOfQuadrics"
-debug PencilsOfQuadrics
-kk = ZZ/101
-R = kk[s,t,x,y,z]
-mm = ideal(x,y,z)
-L = ext1Prep(R,mm)
-assert ((L_0)_1 == coker matrix{{x^2,y,z}})
-///    
-    
 
 
 ciModuleToCliffordModule = method()
@@ -1261,14 +1579,14 @@ randomNicePencil(kk,2)
 
 
 isMinimal = method()
-isMinimal(Ideal, ChainComplex) := (mm, F) -> (
-    --tests whether the differential is in mm
+isMinimal(Ideal, Complex) := (mm, F) -> (
+    --test whether the differential is in mm
     n := length F;
     R := ring F;
     k := R^1/mm;
     all(n, i-> F.dd_i**k == 0)
     )
-isMinimal ChainComplex := F -> (
+isMinimal Complex := F -> (
     mm := ideal vars ring F;
     isMinimal(mm,F))
 
@@ -1280,7 +1598,7 @@ check PencilsOfQuadrics
 ///
       makeTlocal = method()
       --local copy of code from "CompleteIntersectionResolutions"
-      makeTlocal(Matrix, ChainComplex,ZZ) := (ff,F,i) ->(
+      makeTlocal(Matrix, Complex,ZZ) := (ff,F,i) ->(
            -*
            If ff is an c x 1 matrix and
            F is a chain complex
@@ -1293,7 +1611,6 @@ check PencilsOfQuadrics
            degsff := flatten((degrees ff)_1);
            R := ring F;
            S := ring ff;
-           complete F;
            minF := min F;
            d0 := sub(F.dd_i, S);
            d1 := sub(F.dd_(i-1), S);
@@ -1362,14 +1679,6 @@ horizontalConcatenate = L ->(
 	  
 
 
-TEST///
-restart
-loadPackage "PencilsOfQuadrics"
-debug PencilsOfQuadrics
-N = ZZ^2
-L = {id_N,id_N}
-horizontalConcatenate L
-///
 
 beginDocumentation()
 
@@ -1415,6 +1724,7 @@ document {
         },
      SUBSECTION "Vector Bundles",
      UL{
+      TO preRandomLineBundle, -- kk has to be finite
       TO randomLineBundle, -- kk has to be finite
       TO vectorBundleOnE,
       TO yAction,
@@ -1434,7 +1744,8 @@ document {
      UL{
        TO translateIsotropicSubspace,
        TO randomIsotropicSubspace, -- kk has to be finite
-       TO searchUlrich -- kk has to be finite
+       TO searchUlrich, -- kk has to be finite
+       TO LabBookProtocol
       }
    }
 
@@ -1506,6 +1817,7 @@ doc ///
      Using the multigrading, a new matrix factorization in the form needed for
      cliffordModule(e1,e0,R), where R=k[s,t].
     Example
+     setRandomSeed 0
      n = 4
      c = 2
      kk = ZZ/101
@@ -1514,8 +1826,8 @@ doc ///
      qq = random(U^1, U^{2:-2})
      Ubar = U/ideal qq
      M = coker vars Ubar
-     betti (fM=res M)
-     betti res coker transpose fM.dd_3 
+     betti (fM=freeResolution(M, LengthLimit => n))
+     betti freeResolution(coker transpose fM.dd_3, LengthLimit => n) 
      (e1,e0) = ciModuleToMatrixFactorization M;
     Text
      Check that it's a matrix factorization:
@@ -1523,7 +1835,6 @@ doc ///
      source e0 == target e1
      0 == e0*e1 - diagonalMatrix(ring e0, apply(numcols e0, i->(e0*e1)_0_0))
      degrees source e1-degrees target e0
-   Caveat
    SeeAlso
     cliffordModule
     cliffordModuleToCIResolution
@@ -1637,6 +1948,7 @@ doc ///
  
       \{(s,t) | s*q1+t*q2 is singular\} \subset PP^1.
     Example
+     setRandomSeed 0
      kk=ZZ/101
      g=1
      (S, qq, R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g); 
@@ -1676,6 +1988,7 @@ doc ///
 	    Generates a random pencil of quadrics in the same way as randomNicePencil(kk,g). 
 	    Returns a hash table of the type RandomNicePencil.
 	Example
+            setRandomSeed 0
 	    kk=ZZ/101;
 	    g=1;
 	    L=randNicePencil(kk,g)
@@ -1726,7 +2039,7 @@ doc ///
      
      We have eOdd_i*eEv_j+eOdd_j*eEv_i = B(e_i,e_j), where
      the e_i form a basis of the space on which qq acts and B is the bilinear form associated to 2qq
-     thus the pairs (eOd_i,eEv_i) form a representation of Cliff(qq). 
+     thus the the pairs (eOd_i,eEv_i) form a representation of Cliff(qq). 
      --If qq is nonsingular over the generic point of R, then C is an Azumaya algebra over R, and this implies that the representation is faithful.
      
      In the following we construct the generic symmetric
@@ -1808,6 +2121,7 @@ doc ///
     Text
      The list of the even operators uEv_i: M_0\to M_1
     Example
+     setRandomSeed 0
      kk = ZZ/101
      g = 1
      (S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g);
@@ -1834,6 +2148,7 @@ doc ///
     Text
      The list of the odd operators uOdd_i: M_1\to M_0
     Example
+     setRandomSeed 0     
      kk = ZZ/101
      g = 1
      (S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g);
@@ -1859,6 +2174,7 @@ doc ///
     Text
      Gives the action of Haag's center element y of the even Clifford algebra on the even part of M
     Example
+     setRandomSeed 0    
      kk = ZZ/101
      g = 1
      (S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g);
@@ -1886,6 +2202,7 @@ doc ///
     Text
      the underlying pencil of quadratic forms
     Example
+     setRandomSeed 0     
      kk = ZZ/101
      g = 1
      (S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g);
@@ -1917,6 +2234,7 @@ doc ///
     Text
      Gives the action of Haag's center element y of the even Clifford algebra on the odd part of M
     Example
+     setRandomSeed 0    
      kk = ZZ/101
      g = 1
      (S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g);
@@ -1951,6 +2269,7 @@ doc ///
 
     Example
      kk = ZZ/101
+     setRandomSeed 0     
      g = 1
      (S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g);
      M = cliffordModule(M1,M2, R)
@@ -1985,6 +2304,7 @@ doc ///
      the pencil of quadratic forms defining the Clifford algebra. The functions
      symmetricMatrix and symMatrix are the same.
     Example
+     setRandomSeed 0    
      kk = ZZ/101
      g = 1
      (S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g);
@@ -2016,6 +2336,7 @@ doc ///
 	    points over which the associated quadratic form is singular. It is same as 
 	    the determinant of the symmetric matrix M.symmetricM. 
 	Example
+            setRandomSeed 0	
 	    kk=ZZ/101;
 	    g=1;
 	    rNP=randNicePencil(kk,g);
@@ -2034,7 +2355,7 @@ doc ///
 
 doc ///
     Key
-    	baseRing
+    	"baseRing of a RandomNicePencil"
     Headline
     	part of a RandomNicePencil
     Usage
@@ -2044,10 +2365,9 @@ doc ///
 	    polynomial ring kk[s,t]
     Description
     	Text
-	     The base ring kk[s,t] which is the coordinate ring of PP^1.  
-	Example
-	    kk=ZZ/101;
+	     The base ring kk[s,t] which is the coordnate ring of PP^1.  
 	    g=1;
+	    kk=ZZ/101;
 	    rNP=randNicePencil(kk,g);
 	    
 	    R=rNP.baseRing
@@ -2075,13 +2395,14 @@ doc ///
     	Text
 	     The ambient polynomial ring where the quadratic form qq = s*q1 + t*q2 lives.
 	Example
+	    setRandomSeed 0
 	    kk=ZZ/101;
 	    g=1;
 	    rNP=randNicePencil(kk,g);
 	    
 	    S=rNP.qqRing
     SeeAlso
-    	baseRing
+    	"baseRing of a RandomNicePencil"
 	quadraticForm
 	matFact1
 	matFact2
@@ -2105,6 +2426,7 @@ doc ///
 	     the polynomial that represents a pencil of quadrics qq=s*q1+t*q2 with a fixed isotropic subspace
 	     and a fixed corank one quadric in normal form q1.
 	Example
+            setRandomSeed 0	
 	    kk=ZZ/101;
 	    g=1;
 	    rNP=randNicePencil(kk,g);
@@ -2116,7 +2438,7 @@ doc ///
 	    qq==S_(2*g+2)*q1+S_(2*g+3)*q2
     SeeAlso
     	qqRing
-	baseRing
+	"baseRing of a RandomNicePencil"
 	matFact1
 	matFact2
 	matFactu1
@@ -2139,13 +2461,14 @@ doc ///
 	     a row matrix whose entries are generators of the ideal of an isotropic subspace for qq.
 	Example
 	    kk=ZZ/101;
+	    setRandomSeed 0
 	    g=1;
 	    rNP=randNicePencil(kk,g);
 	    
 	    u=rNP.isotropicSpace
     SeeAlso
     	qqRing
-	baseRing
+	"baseRing of a RandomNicePencil"
 	quadraticForm
 	matFact1
 	matFact2
@@ -2169,6 +2492,7 @@ doc ///
 	     of the base ring R=S/(ideal matrix x_0..y_{(g-1)},z_1,z_2) as a module over S/(ideal qq). 
 	     These are used to construct the Clifford algebra of qq.
 	Example
+	    setRandomSeed 0
 	    kk=ZZ/101;
 	    g=1;
 	    rNP=randNicePencil(kk,g);
@@ -2181,7 +2505,7 @@ doc ///
 	    M1*M2 - M2*M1
     SeeAlso
     	qqRing
-	baseRing
+        "baseRing of a RandomNicePencil"
 	quadraticForm
 	matFact2
 	matFactu1
@@ -2205,6 +2529,7 @@ doc ///
 	     of the base ring R=S/(ideal matrix x_0..y_{(g-1)},z_1,z_2) as a module over S/(ideal qq). 
 	     These are used to construct the Clifford algebra of qq.
 	Example
+	    setRandomSeed 0
 	    kk=ZZ/101;
 	    g=1;
 	    rNP=randNicePencil(kk,g);
@@ -2217,7 +2542,7 @@ doc ///
 	    M1*M2 - M2*M1
     SeeAlso
     	qqRing
-	baseRing
+	"baseRing of a RandomNicePencil"
 	quadraticForm
 	matFact1
 	matFactu1
@@ -2243,6 +2568,7 @@ doc ///
 	     and the hyperelliptic curve branched over the degeneracy locus of the pencil.
 	Example
 	    kk=ZZ/101;
+	    setRandomSeed 0
 	    g=1;
 	    rNP=randNicePencil(kk,g);
 	    S=rNP.qqRing;
@@ -2254,7 +2580,7 @@ doc ///
 	    Mu1*Mu2 - Mu2*Mu1
     SeeAlso
     	qqRing
-	baseRing
+	"baseRing of a RandomNicePencil"
 	quadraticForm
 	matFact1
 	matFact2
@@ -2280,6 +2606,7 @@ doc ///
 	     and the hyperelliptic curve branched over the degeneracy locus of the pencil.
 	Example
 	    kk=ZZ/101;
+	    setRandomSeed 0
 	    g=1;
 	    rNP=randNicePencil(kk,g);
 	    S=rNP.qqRing;
@@ -2291,7 +2618,7 @@ doc ///
 	    Mu1*Mu2 - Mu2*Mu1
     SeeAlso
     	qqRing
-	baseRing
+	"baseRing of a RandomNicePencil"
 	quadraticForm
 	matFact1
 	matFact2
@@ -2366,6 +2693,7 @@ doc ///
      is singular.
     Example
      kk = ZZ/101
+     setRandomSeed 0
      g = 1
      (S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g);
      M = cliffordModule(M1,M2, R)
@@ -2437,6 +2765,7 @@ doc ///
       where the index I runs over all even length ordered 
       subsets of [2d].
     Example
+     setRandomSeed 0
      kk=ZZ/101; d=1;
      n=2*d
      R=kk[a_0..a_(binomial(n+2,2)-1)]
@@ -2503,6 +2832,7 @@ doc ///
      is found. Note that this works well over a finite field,
      but is unlikely to work over QQ.
     Example
+     setRandomSeed 0
      kk=ZZ/101
      R = kk[s,t]
      f =(s+2*t)*(s+t)*(s-t)*(s-2*t)
@@ -2540,6 +2870,7 @@ doc ///
     	Text
 	    A matrix representing the action of y for the hyperelliptic curve E with equation y^2 - (-1)^g * f.
 	Example
+	    setRandomSeed 0
 	    kk = ZZ/101;
 	    R = kk[s,t];
 	    f = (s+2*t)*(s+t)*(s-t)*(s-2*t);
@@ -2592,6 +2923,7 @@ doc ///
      
     Example
      kk=ZZ/101
+     setRandomSeed 0
      g=1
      (S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g) ;
      (uOdd,uEv)=cliffordOperators(Mu1,Mu2,R);
@@ -2636,6 +2968,7 @@ doc ///
 	    Computes the degree of a vector bundle L on the hyperelliptic curve E.
 	Example
 	    kk=ZZ/101;
+	    setRandomSeed 0
 	    g=1;
 	    
 	    rNP=randNicePencil(kk,g);
@@ -2678,6 +3011,7 @@ doc ///
     	Text
 	    Computes the order of a degree 0 line bundle L on the hyperelliptic curve E by the most naive method.
 	Example
+	    setRandomSeed 0
 	    kk=ZZ/101;
 	    g=1;
 	    rNP=randNicePencil(kk,g);
@@ -2698,14 +3032,14 @@ doc ///
 
 doc ///
     Key 
-    	randomLineBundle
-	(randomLineBundle,RingElement)
-	(randomLineBundle,ZZ,RingElement)
+    	preRandomLineBundle
+	(preRandomLineBundle,RingElement)
+	(preRandomLineBundle,ZZ,RingElement)
     Headline
     	a random line bundle on the hyperelliptic curve
     Usage
-    	L=randomLineBundle(f)
-	Ld=randomLineBundle(d,f)
+    	L=preRandomLineBundle(f)
+	Ld=preRandomLineBundle(d,f)
     Inputs
     	f : RingElement
 	    the hyperelliptic branch equation of a CliffordModule.
@@ -2731,22 +3065,21 @@ doc ///
 	    whose determinant equals to (-1)^{g}*f. We find such a matrix over a finite ground field 
 	    by picking randomly b, a homogeneous form of degree (g+1),
 	    since the binary form b^2 + (-1)^{g}*f frequently factors.
-	    
-	    
-	    
+	        
 	Example
 	    kk=ZZ/101;
+	    setRandomSeed 0
 	    g=1;
 	    rNP=randNicePencil(kk,g);
 	    cM=cliffordModule(rNP.matFact1,rNP.matFact2,rNP.baseRing);
 	    
 	    f=cM.hyperellipticBranchEquation
-	    L=randomLineBundle(f)
+	    L=preRandomLineBundle(f)
 	    degOnE L
 	    m=L.yAction
 	    (m)^2_(0,0)+(-1)^g*f==0
 	    
-	    L0=randomLineBundle(0,f)
+	    L0=preRandomLineBundle(0,f)
 	    degOnE L0
 	    orderInPic L0
 	    
@@ -2754,6 +3087,60 @@ doc ///
     	The ground field kk has to be finite.
     SeeAlso
     	vectorBundleOnE
+	VectorBundleOnE
+	degOnE
+	orderInPic
+	randomLineBundle
+///
+
+doc ///
+    Key 
+    	randomLineBundle
+	(randomLineBundle,RingElement)
+	(randomLineBundle,ZZ,RingElement)
+    Headline
+    	a random balanced line bundle on the hyperelliptic curve
+    Usage
+    	L=randomLineBundle(f)
+	Ld=randomLineBundle(d,f)
+    Inputs
+    	f : RingElement
+	    the hyperelliptic branch equation of a CliffordModule.
+	d : ZZ
+    Outputs
+    	L : VectorBundleOnE
+	    a line bundle on E
+	Ld : VectorBundleOnE
+	    a line bundle on E of degree d.
+    Description
+    	Text
+	    Chooses a random line bundle on the hyperelliptic curve E of genus g 
+	    given by the equation y^2-(-1)^{g}*f, where f is the branch equation of degree 
+	    (2g+2). Input with an integer d gives a random line bundle of degree d on E.
+	    
+	    Note that the method preRandomLineBundle mostly constructs an unbalanced line bundle, that is, 
+	    the degrees of a and c for the determinantal representation of (-1)^{g}*f have a big gap. 
+	    Such a line bundle will be contained in the theta divisor (after a certain twist), so we make it into a balanced line bundle 
+	    by tensoring degree 0 line bundles.
+	    
+  	    
+	Example
+	    kk=ZZ/1009;
+	    g=2;
+	    rNP=randNicePencil(kk,g);
+	    cM=cliffordModule(rNP.matFact1,rNP.matFact2,rNP.baseRing);
+	
+	    f=cM.hyperellipticBranchEquation
+	    
+	    tally apply(30, i->(Lp=preRandomLineBundle(1,f); betti Lp.yAction))
+	    
+	    tally apply(30, i->(L=randomLineBundle(1,f); betti L.yAction))
+	    
+    Caveat
+    	The ground field kk has to be finite.
+    SeeAlso
+    	preRandomLineBundle
+	vectorBundleOnE
 	VectorBundleOnE
 	degOnE
 	orderInPic
@@ -2783,6 +3170,7 @@ doc ///
 	    Chooses a random extension of V2 by V1, where V1, V2 are vector bundles on E 
 	    represented by the type VectorBundleOnE.
 	Example
+	    setRandomSeed 0
 	    kk=ZZ/101;
 	    g=1;
 	    rNP=randNicePencil(kk,g);
@@ -2805,7 +3193,6 @@ doc ///
 	degOnE
 ///
 
---YK
 doc ///
     Key
     	cliffordModuleToMatrixFactorization
@@ -2845,6 +3232,7 @@ doc ///
 	    From this representation we read off a matrix factorization (M1, M2) of qq.
 	Example
 	    kk=ZZ/101;
+	    setRandomSeed 0
 	    g=1;
 	    rNP=randNicePencil(kk,g);
 	    qq=rNP.quadraticForm;
@@ -2886,7 +3274,7 @@ doc ///
 	CI : Ring
 	    a complete intersection S/ideal(q1,q2) where qq=s*q1+t*q2
     Outputs
-    	F : ChainComplex
+    	F : Complex
 	    a resolution which represents a module over CI
     Description
     	Text
@@ -2908,6 +3296,7 @@ doc ///
 	    its minimal free resolution over CI. This function uses cliffordModuleToMatrixFactorization.
 	Example
 	    kk=ZZ/101;
+	    setRandomSeed 0
 	    g=1;
 	    rNP=randNicePencil(kk,g);
 	    qq=rNP.quadraticForm;
@@ -2935,17 +3324,21 @@ doc ///
     Key
     	searchUlrich
 	(searchUlrich, CliffordModule, Ring)
+	(searchUlrich, CliffordModule, Ring, ZZ)
     Headline
-    	searching an Ulrich module of smallest possible rank
+    	searching an Ulrich module of smallest possible rank, or an Ulrich module of given rank.
     Usage
     	Ulr = searchUlrich(M,S)
+	Ulr = searchUlrich(M,S,r)
     Inputs
     	M : CliffordModule
 	S : Ring
-	    a polynomial ring in x_0..y_{(g-1)},z_1,z_2,s,t
+	    a polynomial ring in x_0..y_(g-1),z_1,z_2,s,t
+	r : ZZ
+	    an integer greater than 1, either g or r is even
     Outputs
     	Ulr : Module
-    	    a module on S supported on x_0..y_{(g-1)},z_1,z_2
+    	    a module on S supported on x_0..y_(g-1),z_1,z_2
     Description
     	Text
 	    M is assumed to be a Clifford module with a Morita bundle F_u, i.e., associated to a 
@@ -2962,8 +3355,14 @@ doc ///
 	    
 	    searchUlrich looks for a candidate G of rank 2 on E and returns a module on S 
 	    supported on a CI V(q_1,q_2) \subset PP^{2g+1}.
+	    
+	    When r is indicated, searchUlrich looks for a candidate G of rank r on E and returns a module on S 
+	    supported on a CI V(q_1,q_2) \subset PP^{2g+1}.
+	    
+	    
 	Example
 	    kk=ZZ/101;
+	    setRandomSeed 0
 	    g=2;
 	    rNP=randNicePencil(kk,g);
 	    S=rNP.qqRing;
@@ -2975,13 +3374,88 @@ doc ///
 	    
 	    M=cliffordModule(Mu1,Mu2,R)
 	    elapsedTime Ulr = searchUlrich(M,S);
-	    betti res Ulr
+	    betti freeResolution Ulr
 	    ann Ulr == ideal qs
+	    
+	    elapsedTime Ulr3 = searchUlrich(M,S,3);
+	    betti freeResolution Ulr3
+	    ann Ulr3 == ideal qs
     Caveat
-    	searchUlrich uses the method randomLineBundle, so the ground field kk has to be finite.
+    	searchUlrich uses the method randomLineBundle, so the ground field kk has to be finite. 
     SeeAlso
     	cliffordModule
+	LabBookProtocol
 ///
+
+doc ///
+    Key
+    	LabBookProtocol
+    	(LabBookProtocol,ZZ)
+	(LabBookProtocol,ZZ,ZZ)
+    Headline
+        Print commands that lead to a construction of a Ulrich bundle
+    Usage
+    	S = LabBookProtocol(g)
+	S = LabBookProtocol(g,r)
+    Inputs
+        g:ZZ	
+	   genus of the associated hyperelliptic curve E.
+	r:ZZ
+	   rank of the vextor bundle E
+    Outputs
+    	S:String
+	   of commands which would produce an Ulrich bundle on X
+    Description
+    	Text
+	    Our function searchUlrich produces Ulrich bundles of rank r
+	    in principle. However some of the computation take lot of time.
+	    We break this approach for small (g,r) into parts
+	    and protocol the commande and the timings.	     
+	Example
+	    g=3
+	    LabBookProtocol(g)
+
+	    g=3
+	    kk= ZZ/101;
+	    elapsedTime (S,qq,R,u, M1,M2, Mu1, Mu2)=randomNicePencil(kk,g);
+	     -- 0.644455 seconds elapsed
+	    M=cliffordModule(Mu1,Mu2,R)
+	    Mor = vectorBundleOnE M.evenCenter;
+	    Mor1= vectorBundleOnE M.oddCenter;
+	    f = M.hyperellipticBranchEquation;
+	    assert(dim ideal jacobian ideal f ==0);
+	    elapsedTime while (        
+		m1=randomLineBundle(g+(g%2),f);
+		m2=randomLineBundle(g%2,f);
+		m12=randomExtension(m1.yAction,m2.yAction);
+		V = vectorBundleOnE m12;
+		Ul=tensorProduct(Mor,V);
+		Ul1=tensorProduct(Mor1,V);
+		d0=unique degrees target Ul.yAction;
+		d1=unique degrees target Ul1.yAction;
+		#d1 >=3 or #d0 >=3) do ();
+	    -- 0.337555 seconds elapsed
+	    betti Ul.yAction, betti Ul1.yAction
+	    --further commands
+	    elapsedTime Ul = tensorProduct(M,V); -- the heaviest part computing the actions of generators
+	    -- 9.35977 seconds elapsed
+	    M1Ul=sum(#Ul.oddOperators,i->S_i*sub(Ul.oddOperators_i,S));
+	    r=2
+	    Ulrich := M1Ul^{r*2^g..(2*r)*2^g-1};
+	    Ulr=coker map(S^(r*2^g),,Ulrich);
+	    minimalBetti Ulr
+	    -- will give an Ulrich bundle, with betti table 
+	    -- 16 32 16
+
+	    (g,r)=(3,4)
+	    LabBookProtocol(g,r)
+    SeeAlso
+    	searchUlrich
+	RandomNicePencil
+	tensorProduct
+	randomLineBundle
+///
+
 
 doc ///
     Key
@@ -3010,7 +3484,8 @@ doc ///
 	    computes the maximal isotropic subspace uL corresponding to the
 	    translation of u by L.
 	Example
-	    kk=ZZ/101; 
+	    kk=ZZ/101;
+	    setRandomSeed 0
 	    g=2;
 	    (S,qq,R,u, M1,M2, Mu1,Mu2) = randomNicePencil(kk,g);
 	    
@@ -3052,7 +3527,8 @@ doc ///
 	    computes the maximal isotropic subspace ru corresponding to the
 	    translation of u by L.
 	Example
-	    kk=ZZ/101; 
+	    kk=ZZ/101;
+	    setRandomSeed 0
 	    g=2;
 	    (S,qq,R,u, M1,M2, Mu1,Mu2) = randomNicePencil(kk,g);
 	    
@@ -3067,10 +3543,213 @@ doc ///
 	CliffordModule
 ///
 
-
+--TEST SECTION--
 ---------------
 ---tests-------
 ---------------
+TEST///
+setRandomSeed 0
+kk = ZZ/101;g=1
+(S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
+diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq)
+P = kk[drop(gens S, -2)]
+qs = sub(diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq), P)
+CI = P/ideal qs
+
+F = freeResolution( coker (sub(u, CI)), LengthLimit => 3)
+betti (FF = freeResolution( coker transpose F.dd_3, LengthLimit => 5))
+M = cliffordModule(Mu1, Mu2, R)
+betti (F1=cliffordModuleToCIResolution(M,S,CI)) 
+betti (FFF = freeResolution(coker FF.dd_5, LengthLimit => 5))
+q1 = diff(S_(2*g+2),qq)
+q2 = diff(S_(2*g+3),qq)
+N = (S^1/(ideal(q1,q2))**coker sub(F.dd_2,S))
+assert(ideal F1.dd_(g+3-(g%2))_{0} ==ideal sub(u,CI))
+M = cliffordModule(M1,M2,R)
+betti (F2=cliffordModuleToCIResolution(M,S,CI)) 
+assert(ideal F2.dd_(2*g+3)_{0}^{0..2*g+1} == ideal gens CI)
+----- now genus 2
+g=2
+(S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
+diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq)
+P = kk[drop(gens S, -2)]
+qs = sub(diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq), P)
+CI = P/ideal qs
+
+F = freeResolution( coker (sub(u, CI)), LengthLimit => 3)
+betti (FF = freeResolution( coker transpose F.dd_3, LengthLimit => 5))
+M = cliffordModule(Mu1, Mu2, R)
+betti (F1=cliffordModuleToCIResolution(M,S,CI)) 
+assert(ideal F1.dd_(g+3-(g%2))_{0} ==ideal sub(u,CI))
+M = cliffordModule(M1,M2,R)
+betti (F2=cliffordModuleToCIResolution(M,S,CI)) 
+assert(ideal F2.dd_(2*g+3)_{0}^{0..2*g+1} == ideal gens CI)
+
+--This was omitted from a test because it's slow
+kk = ZZ/101;g=1
+g=3
+(S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
+diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq)
+P = kk[drop(gens S, -2)]
+qs = sub(diff(matrix{{S_(2*g+2), S_(2*g+3)}}, qq), P)
+CI = P/ideal qs
+
+F = freeResolution( coker (sub(u, CI)), LengthLimit => 3)
+betti (FF = freeResolution( coker transpose F.dd_3, LengthLimit => 5))
+M = cliffordModule(Mu1, Mu2, R)
+betti (F1=cliffordModuleToCIResolution(M,S,CI)) 
+assert(ideal F1.dd_(g+3-(g%2))_{0} ==ideal sub(u,CI))
+M = cliffordModule(M1,M2,R)
+betti (F2=cliffordModuleToCIResolution(M,S,CI)) 
+assert(ideal F2.dd_(2*g+3)_{0}^{0..2*g+1} == ideal gens CI)
+///
+
+
+TEST///-* test of randomIsotropicSubspace*-
+-- needsPackage "PencilsOfQuadrics"
+setRandomSeed 0
+kk=ZZ/101;g=2
+(S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
+
+M=cliffordModule (Mu1, Mu2, R);
+f=M.hyperellipticBranchEquation;
+L=randomLineBundle(0,f)
+uL=translateIsotropicSubspace(M,L,S)
+
+rU=randomIsotropicSubspace(M,S)
+assert (betti rU == betti u)
+///
+
+TEST///-*test of cliffordModuleToMatrixFactorization*-
+setRandomSeed 0
+kk = ZZ/101;g= 1
+(S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
+M = cliffordModule(Mu1, Mu2, R)
+(Mu1', Mu2') = cliffordModuleToMatrixFactorization (M,S);
+assert(Mu1'-Mu1 == 0 and Mu2'-Mu2 ==0)
+assert(Mu1'==Mu1)
+assert(Mu2'==Mu2)
+M = cliffordModule(M1, M2, R);
+(M1', M2') = cliffordModuleToMatrixFactorization (M,S);
+assert(M1'-M1 == 0 and M2'-M2 ==0)
+assert(M1'==M1)
+assert(M2'==M2)
+
+--g=2
+kk = ZZ/101;g=2
+(S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
+M = cliffordModule(Mu1, Mu2, R)
+(Mu1', Mu2') = cliffordModuleToMatrixFactorization (M,S);
+assert(Mu1'-Mu1 == 0 and Mu2'-Mu2 ==0)
+assert(Mu1'==Mu1)
+assert(Mu2'==Mu2)
+M = cliffordModule(M1, M2, R);
+(M1', M2') = cliffordModuleToMatrixFactorization (M,S);
+assert(M1'-M1 == 0 and M2'-M2 ==0)
+assert(M1'==M1)
+assert(M2'==M2)
+///
+
+TEST///-*test of centers*-
+setRandomSeed 0
+kk=ZZ/101
+g=1
+(S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g) 
+(uOdd,uEv)=cliffordOperators(Mu1,Mu2,R)
+(c0,c1)=centers(uOdd,uEv)
+betti c0
+betti c1
+symMatrix(uOdd,uEv)
+f=det symMatrix(uOdd,uEv)
+cMu = cliffordModule(uOdd, uEv)
+cM = cliffordModule(M1, M2, R)
+assert ((cMu.evenCenter, cMu.oddCenter)==centers(cMu.oddOperators, cMu.evenOperators))
+///
+
+TEST///-*test of tensorProduct of randomLineBundle and degreeOnE and orderInPic*-
+setRandomSeed 0
+kk = ZZ/101
+R = kk[ s,t]
+g = 1
+f = random(2*g+2, R)
+assert(dim ideal(jacobian ideal f)== 0)
+L1=randomLineBundle(1,f)
+assert(degOnE L1 == 1)
+L2=randomLineBundle(2,f)
+assert(degOnE L2 == 2)
+L0 = randomLineBundle(0,f)
+assert(degOnE L0 == 0)
+assert(degOnE tensorProduct(L1,L1) == 2)
+assert(orderInPic randomLineBundle(0,f) == 2)
+///
+
+
+TEST///-*Test of the pfaffian formula *-
+kk=ZZ/101
+d=1
+n=2*d
+R=kk[a_0..a_(binomial(n+2,2)-1)]
+S=kk[x_0..x_(n-1),a_0..a_(binomial(n+2,2)-1)]
+M=genericSymmetricMatrix(S,a_0,n)
+X=(vars S)_{0..n-1}
+Y=X*M
+(M1,M2)=matrixFactorizationK(X,Y);
+(eOdd,eEv)=cliffordOperators(M1,M2,R);
+symMatrix(eOdd,eEv)
+(c0,c1)=centers(eOdd,eEv);
+assert isHomogeneous c0
+assert isHomogeneous c1
+betti c0, betti c1
+assert(all(n,i->eOdd_i*c1+c0*eOdd_i==0))
+assert(all(n,i->eEv_i*c0+c1*eEv_i==0))
+assert(target eEv_0 == target c1)
+assert(target eOdd_0 == target c0)
+determ=det symMatrix(eOdd,eEv)
+-- Note the factor (-1)^d occurs in the test below
+assert(c0^2-(-1)^d*determ*id_(target c0)==0)
+assert(c1^2-(-1)^d*determ*id_(source c1)==0)
+///
+
+
+TEST///-*test of randomNicePencil*-
+setRandomSeed 0
+kk=ZZ/101
+g=1
+(S, qq,  R,  u, M1, M2, Mu1, Mu2)=randomNicePencil(kk,g) 
+(uOdd,uEv)=cliffordOperators(Mu1,Mu2,R)
+(c0,c1)=centers(uOdd,uEv)
+symMatrix(uOdd,uEv)
+f=det symMatrix(uOdd,uEv)
+assert(c0^2+(-1)^g*f*id_(target c0)==0)
+L=randomLineBundle(0,f)
+m=L.yAction
+assert((m)^2_(0,0)+(-1)^g*f==0)
+--b = random(2*g+2, R)
+assert isHomogeneous m
+degOnE L
+orderInPic L
+///
+
+
+TEST/// 
+-- test of matrixFactorizationK
+kk=ZZ/101
+d=2
+n=2*d
+R=kk[a_0..a_(binomial(n+2,2))]
+S=kk[x_0..x_(n-1),a_0..a_(binomial(n+2,2))]
+M=genericSymmetricMatrix(S,a_0,n)
+X=(vars S)_{0..n-1}
+Y=X*M
+(M1,M2)=matrixFactorizationK(X,Y);
+M12=M1*M2;
+assert(M12-M12_(0,0)*id_(target M12)==0)
+assert(isHomogeneous M1)
+assert(isHomogeneous M2)
+assert(source M1==target M2)
+assert( source M2==target M1**S^{-3})
+///
+
 TEST///
 kk=ZZ/101
 d=2
@@ -3096,6 +3775,7 @@ end--
 --   coker mm is isomorphic to coker transpose nn
 restart
 uninstallPackage "PencilsOfQuadrics"
+restart
 installPackage "PencilsOfQuadrics"
 check "PencilsOfQuadrics"
 kk=ZZ/101
@@ -3105,12 +3785,12 @@ g=2
 M=cliffordModule(Mu1,Mu2,R)
 
 elapsedTime Ulrich = searchUlrich(M,S);
-betti res Ulrich
+betti freeResolution Ulrich
 ann Ulrich
 T=kk[drop(gens S,-2)]-- coordinate ring of PP^(2g+1)
 m1=sub(presentation Ulrich,T)
 Ulrich =coker m1
-fU=res Ulrich
+fU=freeResolution Ulrich
 elapsedTime betti Hom(Ulrich,Ulrich)   -- 10.1731 seconds elapsed
 elapsedTime betti Hom(Ulrich, T^{-2}**coker transpose fU.dd_2)
 -- => Ulrich isomorphic to T^{-2}**coker transpose fU.dd_2 in case g=2, 
@@ -3118,16 +3798,16 @@ elapsedTime betti Hom(Ulrich, T^{-2}**coker transpose fU.dd_2)
 
 qs= apply(2,i->(gens ann Ulrich)*random(T^{2:-2},T^{-2}))
 Mqs= apply(qs, q1->(Tq= T/ideal sub(q1,T);
-     coker lift((res coker sub(u,Tq)).dd_4,T)**T^{3}))
+     coker lift((freeResolution(coker sub(u,Tq), LengthLimit => numgens Tq + 1)).dd_4,T)**T^{3}))
 homs=apply(Mqs,M->Hom(M,Ulrich));
 
 ring homs_0
 apply(homs,h->betti h)
 -- => there are 4 homomorphisms
 homsList=apply(homs,h-> apply(4,i-> matrix homomorphism h_{i}))
-Cs=apply(Mqs, Mq1->chainComplex presentation Mq1)
+Cs=apply(Mqs, Mq1->complex presentation Mq1)
 ring Cs_0
-D=chainComplex presentation Ulrich
+D=complex presentation Ulrich
 ring D
 
 hom1s= apply(2, j->apply(4,i->(
@@ -3163,8 +3843,8 @@ q0=q=qs_0_(0,0)
 q1=qs_1_(0,0)
 m0'=secondMatrix(m0,q0);
 m1'=secondMatrix(m1,q1);
-res coker (transpose m0'| transpose m1')
-mm*(res image mm).dd_1
+freeResolution coker (transpose m0'| transpose m1')
+mm*(freeResolution image mm).dd_1
 betti Hom(T^{-2}**coker transpose fU.dd_2,coker (transpose m0'| transpose m1'))
 
 
@@ -3177,11 +3857,11 @@ m0*n0
 n1'=lift(syz sub(m1,T1),T)
 n1=n1'*inverse ((m1*n1')//(qs_1_(0,0)*id_(target m1)))
 m1*n1
-betti res coker (nn=(transpose n0|transpose n1))
+betti freeResolution coker (nn=(transpose n0|transpose n1))
 betti Hom(coker mm, coker transpose syz nn)
 h=Hom(coker mm, coker transpose syz mm);
 betti (a=homomorphism h_{0})
-G=chainComplex(mm,(syz mm)*matrix a)
+G=complex(mm,(syz mm)*matrix a)
 ann coker G.dd_1_{0..7}
 ann coker (transpose G.dd_2)_{0..7}
 
@@ -3189,7 +3869,7 @@ ann coker (syz mm)^{0..7}==ideal qs_1
 ann coker (syz mm)^{8..15} == ideal qs_0
 m0*m1-m1*m0
 
-mats=apply(2,j->apply(4,i->(transpose (res Ulrich).dd_2) * syz(transpose hom1s_j_i)))
+mats=apply(2,j->apply(4,i->(transpose (freeResolution Ulrich).dd_2) * syz(transpose hom1s_j_i)))
 apply(flatten mats,m-> betti ann coker m)
 ///
 
@@ -3216,7 +3896,7 @@ M2=map(S^(2^(n-1)),,M2)
 ulrich=coker(M1|transpose M2)
 A=M1-transpose M2
 A^2
-betti res ulrich
+betti freeResolution ulrich
 ann ulrich
 g=n-2
 T=kk[z_0..z_(2*g+1)]
@@ -3290,8 +3970,8 @@ numberOfFactors = # factor det C
 -- We run the code until (det C) is a 4th power of the product of two linear forms
 
 ann UlrichWithoutst
-betti res UlrichWithoutst
-betti res rU
+betti freeResolution UlrichWithoutst
+betti freeResolution rU
 ann rU
 
 (factor det C)
@@ -3303,8 +3983,8 @@ factor1^4 * factor2^4 == det C
 rU1 = prune ker (sub(diff(t,factor1),PCodim2)*A - sub(diff(s,factor1),PCodim2)*B);
 rU2 = prune ker (sub(diff(t,factor2),PCodim2)*A - sub(diff(s,factor2),PCodim2)*B);
 
-betti res rU1
-betti res rU2
+betti freeResolution rU1
+betti freeResolution rU2
 
 needsPackage "TateOnProducts"
 elapsedTime tally apply(5, i->isIsomorphic(rU1++rU2,rU)) 
@@ -3356,8 +4036,8 @@ if numberOfFactors==4 and degree (factor detC)#2#0 == {2} then numberOfFactors=0
 
 betti endOfrU
 ann UlrichWithoutst
-betti res UlrichWithoutst
-betti res rU
+betti freeResolution UlrichWithoutst
+betti freeResolution rU
 ann rU
 
 (factor detC)
@@ -3380,15 +4060,15 @@ endList=apply(4, i->homomorphism (endOfrU_{i}));
 solList=apply(4, i->(syz factorMatrix^{i})*random(P3^3,P3^1))
 rUList=apply(4, i->prune ker sum apply(4, j->sub((solList_i)_(j,0), PCodim4) * endList_j))
 
-tally apply(4,i->betti res rUdecompositionList_i)
-tally apply(4,i->betti res rUList_i)
+tally apply(4,i->betti freeResolution rUdecompositionList_i)
+tally apply(4,i->betti freeResolution rUList_i)
 temp=rUList_0++rUList_1++rUList_2++rUList_3
 
 rU1 = prune image (sub(diff(t,factor1),PCodim2)*A - sub(diff(s,factor1),PCodim2)*B);
 rU2 = prune image (sub(diff(t,factor2),PCodim2)*A - sub(diff(s,factor2),PCodim2)*B);
 
-betti res rU1
-betti res rU2
+betti freeResolution rU1
+betti freeResolution rU2
 
 needsPackage "TateOnProducts"
 elapsedTime tally apply(5, i->isIsomorphic(temp,rU)) 

@@ -6,7 +6,7 @@ PATCHES = 001
 RELAX = yes
 # URL = ftp://ftp.gnu.org/gnu/readline
 # PATCHURL = $(URL)/readline-$(VERSION)-patches
-URL = http://macaulay2.com/Downloads/OtherSourceCode
+URL = https://macaulay2.com/Downloads/OtherSourceCode
 PATCHURL = $(URL)
 
 BUILDTARGET = all -o install-examples

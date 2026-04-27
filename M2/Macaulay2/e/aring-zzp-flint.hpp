@@ -16,8 +16,11 @@ class RingMap;
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-#include "flint/arith.h"
-#include "flint/nmod_vec.h"
+#include <flint/flint.h>  // for fmpz_t, nmod_t, flint_rand_t
+#include <flint/fmpz.h>   // for fmpz_clear, fmpz_fdiv_ui, fmpz_init
+#ifdef HAVE_FLINT_NMOD_H
+  #include <flint/nmod.h>   // for nmod_neg, nmod_add, nmod_div, nmod_mul
+#endif
 #pragma GCC diagnostic pop
 
 namespace M2 {

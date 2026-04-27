@@ -23,7 +23,7 @@ namespace BIBasis
         : MemoryPageSize(1048576)
         , TSize(int_divide_ceil(blockSize,sizeof(void*)))
         , PageSize(int_divide_floor(MemoryPageSize,blockSize))
-        , FreeBlock(0) 
+        , FreeBlock(nullptr) 
     {
     }
 

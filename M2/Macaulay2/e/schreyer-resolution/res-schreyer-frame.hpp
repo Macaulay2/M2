@@ -14,28 +14,25 @@
 //   . gb_array: 3 routines commented out, due to using these.
 //   . need a display routine for Polynomial, also one that limits the number of
 //   monomials displayed
-// res-gausser
-//   . don't use gc
-//   . perhaps define CoefficientArray in this class, so it is easily changed
-//   . don't yet use ARing stuff.
 // res-f4-types.hpp
 //   . has lots of junk (most already commented out)
 
 #ifndef _res_schreyer_frame_hpp_
 #define _res_schreyer_frame_hpp_
 
+#include "m2tbb.hpp"                                   // for TBB headers
 #include "betti.hpp"                                   // for BettiDisplay
 #include "engine-exports.h"                            // for M2_arrayint
-#include "schreyer-resolution/res-memblock.hpp"        // for MemoryBlock
+#include "schreyer-resolution/res-memblock.hpp"        // for ResMemoryBlock
 #include "schreyer-resolution/res-moninfo.hpp"         // for ResMonoid
 #include "schreyer-resolution/res-monomial-types.hpp"  // for component_index
 #include "schreyer-resolution/res-poly-ring.hpp"       // for ResPolyRing, ResPolynomial
 #include "schreyer-resolution/res-schreyer-order.hpp"  // for ResSchreyerOrder
+#include "schreyer-resolution/res-dep-graph.hpp"       // for DependencyGraph
 
 #include <utility>                                     // for pair
 #include <vector>                                      // for vector
 
-class ResGausser;
 struct StopConditions;
 class F4Res;
 
@@ -75,21 +72,26 @@ class SchreyerFrame
 {
  public:
   friend class F4Res;
+#if defined(WITH_TBB)
+  friend class DependencyGraph;
+#endif  
+  
   typedef SchreyerFrameTypes::FrameElement FrameElement;
   typedef SchreyerFrameTypes::PreElement PreElement;
 
   // Construct an empty frame
-  SchreyerFrame(const ResPolyRing& R, int max_level);
+  SchreyerFrame(const ResPolyRing& R, int max_level, int numThreads, bool parallelizeByDegree);
 
   // Destruct the frame
   ~SchreyerFrame();
 
   const ResMonoid& monoid() const { return mRing.monoid(); }
   const ResPolyRing& ring() const { return mRing; }
-  const ResGausser& gausser() const { return mRing.resGausser(); }
+  const VectorArithmetic& vectorArithmetic() const { return mRing.vectorArithmetic(); }
+  
   // This is where we place the monomials in the frame
   // This requires some care from people calling this function
-  MemoryBlock<res_monomial_word>& monomialBlock() { return mMonomialSpace; }
+  ResMemoryBlock<res_monomial_word>& monomialBlock() { return mMonomialSpace; }
   // Debugging, Memory info //
   void show(int len) const;  // len is how much of the polynomials to display
                              // (len=-1 means all, len=0 means just the frame)
@@ -131,7 +133,6 @@ class SchreyerFrame
   void setBettiDisplays();
   int rank(int slanted_degree, int lev);  // rank of the degree 'degree' map of
                                           // scalars level 'lev' to 'lev-1'.
-  //  int rankUsingSparseMatrix(int slanted_degree, int lev);
 
   template<typename Gen>
   int rankUsingSparseMatrix(Gen& D);
@@ -208,7 +209,7 @@ class SchreyerFrame
   ///////////////////
   const ResPolyRing& mRing;
   Frame mFrame;
-  MemoryBlock<res_monomial_word>
+  ResMemoryBlock<res_monomial_word>
       mMonomialSpace;  // We keep all of the monomials here, in order
 
   // This class contains, and allows one to uniquify, all degrees appearing
@@ -218,9 +219,35 @@ class SchreyerFrame
   // Betti tables: set after the frame has been constructed.
   BettiDisplay mBettiNonminimal;
   BettiDisplay mBettiMinimal;
-  BettiDisplay mComputationStatus;  // -1: no entries, 0: frame only so far, 1:
-                                    // syzygies computed, 2: rank taken into
-                                    // account.
+
+  // For each (deg, level), where deg is the slanted degree (actual degree - level).
+  // the following Betti display contains the status of the computation of that part.
+  // value = 0.  No syzygies in this (deg, level).  Nothing to see here. Move along.
+  // value = 1.  The frame is nonzero, but the syzygies themselves have not yet been computed.
+  // value = 2.  The syzygies have been constructed.
+  // value = 3.  The rank from (deg,lev) to (deg+1,lev-1) has been computed (this requires the syzygies have been constructed).
+  //             cannot do thiese computations until the syzygies have been constructed.
+  BettiDisplay mComputationStatus;
+
+  // Another way to organize this. Say degrees are bigrees.
+  // (deg1, deg2, lev), where the deg1, deg2 are the actual degrees (not slanted).
+  // have lots of (deg1, deg2, lev) slots (each one is where there are elements in the frame).
+  // nodes: (deg1, deg2, lev, do_syzygies)
+  // nodes: (deg1, deg2, lev, do_rank)
+  // (deg1, deg2, lev, do_syzygies) depends on :
+  //    (deg1-i, deg2-j, lev-1, do_syzygies) for all (i,j) in semigroup of degrees of the variables.
+  // computeSyzygiesInDegree(deg1,deg2,lev).
+  // computeRankInDegree(deg1,deg2,lev).
+  // Want (maybe) a data structure: contains nodes as above, knows the partial order.
+  //   Select the minimal elements and remove them from this list.
+
+  // TODO for Frank and Mike (29 April 2022)
+  // 1. keep the singly graded aspect for now, but create a graph of nodes.
+  // 2. use chapter 3 flow graphs from ProTBB book.
+  // 3. After we get this to work, we will generalize to multi-graded situation (at least for products of PP^n's,
+  //   but hopefully for toric degrees eventually.
+
+  // This is currently unused.  Remove?
   std::vector<std::pair<int, int>> mMinimalizeTODO;  // a list of (slanted deg,
                                                      // level) for which to
                                                      // compute min betti
@@ -238,8 +265,8 @@ class SchreyerFrame
 
   // These are used during frame construction
 
-  MemoryBlock<PreElement> mPreElements;
-  MemoryBlock<res_varpower_word> mVarpowers;
+  ResMemoryBlock<PreElement> mPreElements;
+  ResMemoryBlock<res_varpower_word> mVarpowers;
   int mMaxVPSize;
 
   // These are used during matrix computation
@@ -247,6 +274,16 @@ class SchreyerFrame
   // this is a separate class because there could be several of these, running
   // in parallel.
 
+  int mNumThreads;
+  bool mParallelizeByDegree; // only used in case WITH_TBB is set.
+#if defined(WITH_TBB)  
+  mtbb::task_arena mScheduler;
+  DependencyGraph mDepGraph;
+
+  mtbb::task_arena& getScheduler() { return mScheduler; }
+  int getNumThreads() { return mNumThreads; }
+#endif
+  
  public:
   // To allow res-f4.cpp to add to timings.
   double timeMakeMatrix;

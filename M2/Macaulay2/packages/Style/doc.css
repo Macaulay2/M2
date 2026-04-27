@@ -88,13 +88,21 @@ span.tt {
 }
 
 kbd {
+  display: inline-block;
   font-family: monospace;
-  padding: 3px 5px;
+  padding: 0.25rem;
+  line-height: 0.8em;
   vertical-align: middle;
-  border: solid 1px;
+  background-color: #f6f8fa;
+  border: solid 0px #afb8c133;
+  border-bottom-color: #afb8c133;
   border-radius: 6px;
-  box-shadow: inset 0 -1px 0;
+  box-shadow: inset 0 -1px 0 #afb8c133;
 }
+
+div#buttons {display: flex;}
+div#buttons div {flex-grow: 1; align-self: flex-end;}
+.right {text-align: right;}
 
 /*
 

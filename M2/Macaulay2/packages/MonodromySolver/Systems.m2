@@ -75,22 +75,8 @@ flatten GateSystem := GS -> gateSystem(parameters GS | vars GS, gateMatrix GS)
 flatten PolySystem := PS -> sub(PS, first flattenRing ring PS)
 
 -- syntactic sugar for creating instances of GateSystem
-gateSystem (BasicList, BasicList, GateMatrix) := (P, X, F) -> (
-    GM := if numcols F == 1 then F else transpose F;
-    gateSystem(gateMatrix{toList P}, gateMatrix{toList X}, GM)
-    )
 gateSystem (Thing, Thing, Gate) := (X, P, g) -> gateSystem(X, P, gateMatrix{{g}})
 gateSystem (List, Thing) := (X, F) -> gateSystem({}, X, F)
-
--- syntactic sugar for declareVariable \ {symbols}
-vars IndexedVariable := x -> declareVariable x
-vars Symbol := x -> declareVariable x
-vars InputGate := x -> x
-InputGate .. InputGate := (A, B) -> value \ (A.Name .. B.Name)
-
--- take some functions from the GateMatrix \ GateSystem
-GateMatrix ^ BasicList := (M, inds) -> M^(toList inds)
-GateSystem ^ BasicList := (P, inds) -> gateSystem(parameters P, vars P, (gateMatrix P)^inds)
 
 -- routines for mixed volume computation (via gfan)
 computeMixedVolume = method()
@@ -105,55 +91,6 @@ computeMixedVolume System := sys -> (
 	);	    
     computeMixedVolume specGS
     )
-
-
--- helper functions for square down
--- orthonormal basis for col(L) using SVD
-ONB = L -> (
-    (S,U,Vt) := SVD L;
-    r := # select(S,s->not areEqual(s,0));
-    U_{0..r-1}
-    )
--- orthonormal basis for subspace of col(L) that is perpendicular to col(M)
-perp = (M, L) -> if areEqual(norm L, 0) then M else (
-    Lortho := ONB L;
-    Lperp := M-Lortho*conjugate transpose Lortho * M;
-    ONB Lperp
-    )
-
--- finding a square subsystem of maximal rank
-rowSelector = method(Options=>{"BlockSize"=>1,Verbose=>false})
-rowSelector (AbstractPoint, AbstractPoint, GateSystem) := o -> (y0, c0, GS) -> (
-    (n, m, N) := (numVariables GS, numParameters GS, numFunctions GS);
-    blockSize := o#"BlockSize";
-    numBlocks := ceiling(N/blockSize);
-    numIters := 0;
-    L := matrix{for i from 1 to n list 0_CC}; -- initial "basis" for row space
-    r := 0;
-    goodRows := {};
-    diffIndices := {};
-    while (r < n and numIters < numBlocks) do (
-    	diffIndices = for j from numIters*blockSize to min((numIters+1)*blockSize, N)-1 list j;
-	if o.Verbose then << "processing rows " << first diffIndices << " thru " << last diffIndices << endl;
-    	newRows := evaluateJacobian(GS^diffIndices, y0, c0);
-    	for j from 0 to numrows newRows - 1 do (
-	    tmp := transpose perp(transpose newRows^{j}, transpose L);
-	    if not areEqual(0, norm tmp) then (
-		if o.Verbose then << "added row " << blockSize*numIters+j << endl;
-	    	if areEqual(norm L^{0}, 0) then L = tmp else L = L || tmp;
-	    	goodRows = append(goodRows, blockSize*numIters+j);
-		);
-    	    );
-    	r = numericalRank L;
-    	numIters = numIters+1;
-	);
-    if o.Verbose then << "the rows selected are " << goodRows << endl;
-    goodRows
-    )
-
-squareDown = method(Options=>{"BlockSize"=>1, Verbose=>false})
-squareDown (AbstractPoint, AbstractPoint, GateSystem) := o -> (y0, c0, F) -> F^(rowSelector(y0, c0, F, "BlockSize" => o#"BlockSize", Verbose=>o.Verbose))
-
 
 newtonHomotopy = method(Options=>{Iterations=>10})
 newtonHomotopy GateSystem := o -> G -> (

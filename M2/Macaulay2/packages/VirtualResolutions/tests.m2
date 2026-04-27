@@ -54,6 +54,13 @@ TEST ///
     S = ZZ/32003[x_0,x_1,x_2,x_3,x_4, Degrees=>{2:{1,0},3:{0,1}}];
     irr = intersect(ideal(x_0,x_1),ideal(x_2,x_3,x_4));
     I = ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3));
+    --
+    d1 = matrix{{x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2,
+        x_0*x_1*x_2^3+x_0*x_1*x_2^2*x_3-x_0^2*x_3^2*x_4+x_1^2*x_2*x_4^2+x_1^2*x_3*x_4^2,
+        x_1^2*x_2^3+x_1^2*x_2^2*x_3-x_0*x_1*x_3^2*x_4-x_0^2*x_4^3}};
+    C = chainComplex({d1});
+    elapsedTime assert(isVirtual(irr,C) == false) -- 0.022
+    --
     d1 = matrix{{x_1^3*x_2+x_1^3*x_3+x_0^3*x_4,
             x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2,
             x_0*x_1*x_2^3+x_0*x_1*x_2^2*x_3-x_0^2*x_3^2*x_4+x_1^2*x_2*x_4^2+x_1^2*x_3*x_4^2,
@@ -67,28 +74,6 @@ TEST ///
 ///
 
 TEST ///
-    S = ZZ/32003[x_0,x_1,x_2,x_3,x_4, Degrees=>{2:{1,0},3:{0,1}}];
-    irr = intersect(ideal(x_0,x_1),ideal(x_2,x_3,x_4));
-    I = ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3));
-    d1 = matrix{{x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2,
-        x_0*x_1*x_2^3+x_0*x_1*x_2^2*x_3-x_0^2*x_3^2*x_4+x_1^2*x_2*x_4^2+x_1^2*x_3*x_4^2,
-        x_1^2*x_2^3+x_1^2*x_2^2*x_3-x_0*x_1*x_3^2*x_4-x_0^2*x_4^3}};
-    C = chainComplex({d1});
-    elapsedTime assert(isVirtual(irr,C) == false) -- 0.022
-///
-
-TEST ///
-    S = ZZ/32003[x_0,x_1,x_2,x_3,x_4, Degrees=>{2:{1,0},3:{0,1}}];
-    irr = intersect(ideal(x_0,x_1),ideal(x_2,x_3,x_4));
-    I = ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3));
-    d1 = matrix{{x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2,
-        x_0*x_1*x_2^3+x_0*x_1*x_2^2*x_3-x_0^2*x_3^2*x_4+x_1^2*x_2*x_4^2+x_1^2*x_3*x_4^2,
-        x_1^2*x_2^3+x_1^2*x_2^2*x_3-x_0*x_1*x_3^2*x_4-x_0^2*x_4^3}};
-    C = chainComplex({d1});
-    elapsedTime assert(isVirtual(irr,C) == false) -- 0.027
-///
-
-TEST ///
     S = ZZ/101[x_0,x_1,x_2,x_3,x_4, Degrees=>{2:{1,0},3:{0,1}}];
     irr = intersect(ideal(x_0,x_1),ideal(x_2,x_3,x_4));
     I = ideal(random({1,2},S),random({3,1},S),random({2,2},S));
@@ -97,15 +82,6 @@ TEST ///
 ///
 
 ----- Tests for idealSheafGens
-TEST ///
-    debug needsPackage "VirtualResolutions"
-    S = ZZ/32003[x_0,x_1,x_2,x_3,x_4, Degrees=>{2:{1,0},3:{0,1}}];
-    irr = intersect(ideal(x_0,x_1),ideal(x_2,x_3,x_4));
-    I = ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3));
-    J = ourSaturation(I,irr);
-    elapsedTime assert(idealSheafGens(2,J,irr) == {I}) -- 4.2
-///
-
 TEST ///
     debug needsPackage "VirtualResolutions"
     S = ZZ/32003[x_0,x_1,y_0,y_1, Degrees=>{2:{1,0},2:{0,1}}];
@@ -122,6 +98,7 @@ TEST ///
     irr = intersect(ideal(x_0,x_1),ideal(x_2,x_3,x_4));
     I = ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3));
     J = ourSaturation(I,irr);
+    elapsedTime assert(idealSheafGens(2,J,irr) == {I}) -- 4.2
     elapsedTime output = idealSheafGens(2,J,irr,GeneralElements=>true); -- 6.8
     elapsedTime assert(J == ourSaturation(output_0, irr)) -- 0.06
 ///
@@ -173,6 +150,11 @@ TEST ///
     elapsedTime assert(multigradedRegularity(S, I) == {{2,2},{4,1},{1,5}}) -- woohoo cache hit!!
     -- test for weird ring problems
     assert(ring x_0 === value getSymbol "S")
+    -- test for slow resolutions
+    elapsedTime M = module saturate(I^2, B); -- ~0.3s
+    elapsedTime assert(multigradedRegularity(S, M) == {{6, 4}, {5, 6}, {4, 8}}) -- ~19s
+    -- elapsedTime M = module saturate(I^3, B); -- ~0.8s
+    -- elapsedTime assert(multigradedRegularity(S, M) == {{8, 7}, {9, 6}, {7, 9}, {6, 11}}) -- ~26min
 ///
 
 TEST ///
@@ -316,7 +298,7 @@ TEST ///
   assert(multigradedRegularity(S, comodule I) == {{0,4}})
 ///
 
-TEST /// -- test of returning -infinity for irrelevant ideals
+/// -- test of returning -infinity for irrelevant ideals
   debug needsPackage "VirtualResolutions"
   X = toricProjectiveSpace(1)**toricProjectiveSpace(2);
   --X = normalToricVarietyWithTateData X

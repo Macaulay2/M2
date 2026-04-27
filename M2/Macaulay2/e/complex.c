@@ -282,7 +282,7 @@ void mpfc_sqrt(gmp_CCmutable result, gmp_CC a)
 {
   // The idea is: write a = a1 + i * a2
   // first make it numerically more stable by dividing by the larger
-  //   answer will be multiplied by larger afterwords, if needed
+  //   answer will be multiplied by larger afterwards, if needed
   // To take the square root of 1+di, or -1+di
   //   it is enough to solve (if sqrt is e+fi), e^2+f^2 = sqrt(1+d^2),
   //   and e^2-f^2 = 1 (or -1).

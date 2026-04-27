@@ -18,6 +18,7 @@ newPackage(
 	  },
      Keywords => {"Applied Algebraic Geometry"},
      PackageImports => {
+	 "Isomorphism",	 
 	  "FourTiTwo"
 	  },
      PackageExports => {
@@ -26,13 +27,12 @@ newPackage(
 	  },
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
-	  "journal URI" => "http://j-sag.org/",
+	  "journal URI" => "https://msp.org/jsag/",
 	  "article title" => "Phylogenetic trees",
 	  "acceptance date" => "8 August 2020",
 	  "published article URI" => "https://msp.org/jsag/2021/11-1/p01.xhtml",
           "published article DOI" => "10.2140/jsag.2021.11.1",
 	  "published code URI" => "https://msp.org/jsag/2021/11-1/jsag-v11-n1-x01-PhylogeneticTrees.m2",
-     	  "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/PhylogeneticTrees.m2",
 	  "release at publication" => "abdf0903e7ffc31568c0cc4beb181368d943cb8d",	    -- git commit number in hex
 	  "version at publication" => "2.0",
 	  "volume number" => "11",
@@ -73,7 +73,7 @@ export {
     "rootedTrees",
     "rootedBinaryTrees",
     "unlabeledTrees",
-    "isIsomorphic"
+    --"isIsomorphic"
     }
 protect \ {Group, Automorphisms, AList, Buckets}
 --------------------------------------------------------------------
@@ -550,8 +550,8 @@ isIsomorphicRooted(LeafTree,Set,LeafTree,Set) := (T1,v1,T2,v2) -> (
     AHU(G1,v1) == AHU(G2,v2)
     )
 
-isIsomorphic = method()
-isIsomorphic(LeafTree,LeafTree) := (T1,T2) -> (
+--isIsomorphic = method()
+isIsomorphic(LeafTree,LeafTree) := o -> (T1,T2) -> (
     if #(leaves T1) != #(leaves T2) or #(edges T1) != #(edges T2) then return false;
     C1 := center graph T1;
     C2 := center graph T2;
@@ -1846,7 +1846,6 @@ doc///
 -- isIsomorphic
 doc///
     Key
-        isIsomorphic
 	(isIsomorphic,LeafTree,LeafTree)
     Headline
         check isomorphism of two tree
@@ -2558,7 +2557,7 @@ TEST ///
 -- We test the function toricSecantDim by computing the 
 -- dimension of a second secant of the CFN model
 -- which is known to be non-defective.
--- We also verify that the dimenson of the secant for the
+-- We also verify that the dimension of the secant for the
 -- CFN model for a 4-leaf tree is no larger than the ambient dimension. 
 
 A = phyloToricAMatrix(6, {{0,1},{2,3},{4,5}},CFNmodel);

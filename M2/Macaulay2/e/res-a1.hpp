@@ -35,10 +35,10 @@ class res_degree : public our_new_delete
 
  public:
   res_degree()
-      : first(NULL),
-        next_new_pair(NULL),
-        next_pair(NULL),
-        next_gen(NULL),
+      : first(nullptr),
+        next_new_pair(nullptr),
+        next_pair(nullptr),
+        next_gen(nullptr),
         is_sorted(0),
         npairs(0),
         nleft(0),
@@ -64,7 +64,7 @@ class res_level : public our_new_delete
   int nminimal;
 
  public:
-  res_level() : compare_num_list(NULL), npairs(0), nleft(0), nminimal(0) {}
+  res_level() : compare_num_list(nullptr), npairs(0), nleft(0), nminimal(0) {}
 };
 
 /**

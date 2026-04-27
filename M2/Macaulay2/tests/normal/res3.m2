@@ -64,3 +64,12 @@ assert( rank C_3 == 60 )
 assert( rank C_4 == 61 )
 C = res(M, LengthLimit => 4, DegreeLimit => 4+2, Strategy => alg)
 assert( rank C_5 == 0 )
+
+-- this test is unrelated but uses the same example
+j = flatten (m * n - n * m)
+v = apply(7, i -> numgens source gens gb(j, DegreeLimit => i) )
+assert (v  === {0, 0, 8, 20, 25, 26, 26} )
+G = gens gb j
+assert( numgens source G == 26 )
+T = (degreesRing S)_0
+assert( poincare cokernel j == 1-8*T^2+2*T^3+31*T^4-32*T^5-25*T^6+58*T^7-32*T^8+4*T^9+T^10 )

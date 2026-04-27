@@ -1,0 +1,155 @@
+
+-----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+-- Summary, Version 0.1, August 2012
+-----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+
+We define two types that are used by the ConformalBlocks package:
+LieAlgebra
+LieAlgebraModule
+
+Objects of both types are hash tables.
+
+LieAlgebras have two keys: RootSystemType, LieAlgebraRank
+The functions available for LieAlgebras are:
+simpleLieAlgebra
+dualCoxeterNumber
+highestRoot
+simpleRoots
+positiveCoroots
+positiveRoots
+starInvolution
+killingForm
+weylAlcove
+cartanMatrix
+subLieAlgebra
+directSum
+
+LieAlgebraModules have two keys: LieAlgebra and DecompositionIntoIrreducibles
+The functions available for LieAlgebraModules are:
+dimension
+weights
+casimirScalar
+tensor product decomposition
+fusion coefficient
+branching rules
+trivial module, adjoint module
+
+Most of the lines of code below are to implement 
+* Freudenthal's formula for the multiplicity of a weight w in the irreducible g-module with highest weight v
+* the Racah-Speiser algorithm for computing tensor product decompositions
+* the Kac-Walton algorithm for computing fusion product decompositions 
+Many of these functions are copied over from early versions of Swinarski's ConformalBlocks package.  
+
+-----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+-- Summary, Version 0.5, June 2018
+-----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+
+Fixed a minor bug in multiplicity function (needed to allow for options, since multiplicity is 
+a method with options.)  Changed the LieAlgebra and LieAlgebraModule classes to print out the
+global variable names instead of the hash table contents. 
+
+-----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+-- Summary, Version 0.6, January 2023
+-----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+
+* Improved output methods
+* Introduced shorthand LL for simple (irreducible) modules
+* Fixed and exported LieAlgebraModuleFromWeights
+* Fixed and optimized tensor product of modules
+* Added ^** and ^ for modules
+* Added/exported trivialModule
+* Additional sanity checks
+* Allow inputting weights as vectors
+* isIrreducible is now a method
+* use of VirtualTally rather than HashTable for its methods
+* Added/exported character method
+* character and weightDiagram have 4 strategies, JacobiTrudi, JacobiTrudi', Weyl and Freudenthal
+  (Weyl seems slower for small reps, but significantly faster for large highest weights)
+* adams, symmetricPower, exteriorPower added/exported
+* added PZJ as coauthor
+
+-----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+-- Summary, Version 0.7, January 2023
+-----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+* replaced isIsomorphic with ==, turned isSimple into a method
+* fixed and optimized fusionProduct
+* added PZJ as author due to novel implementation of Kac-Watson
+* Weyl product formula for dim and qdim (principal specialization)
+* added/exported method dynkinDiagram
+* added/exported method adjointModule
+* reintroduced and exported cartanMatrix, cartanMatrixQQ now calls cartanMatrix
+* allow alternate ordering of arguments of weylAlcove, irreducibleModule to fix inconsistency
+
+-----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+-- Summary, Version 0.8, January 2023
+-----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+* fraktur for shorthand of Lie algebras
+* semi-simple Lie algebras are possible, use ++
+* subLieAlgebra, branchingRule, supports general semi-simple Lie algebras
+* define a Lie algebra based on its Cartan matrix
+* M @ M' for tensor product of modules over different Lie algebras
+* improved caching of characters
+* added/exported method zeroModule
+
+
+-----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+-- Summary, Version 0.9, February 2025
+-----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+* reintroduced isIsomorphic
+* improve subLieAlgebra, added principal subalgebra, method "embedding"
+* added cache to LieAlgebra
+* various bug fixes
+
+
+
+-----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+-- Summary, LieAlgebraRepresentations Version 1.0, October 2025
+-----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+* Renamed package LieAlgebraRepresentations to better reflect its
+contents
+* In LieTypes version 0.8, the code was all in one file (LieTypes.m2). Now we
+split it into many files
+* The contents of LieTypes.m2 are found in lieAlgebras.m2 and
+lieAlgebraModules.m2, almost verbatim from version 0.8
+* Major expansion: now we implement explicit representations
+$\mathfrak{g} \rightarrow V$
+* We created a new type LieAlgebraBasis to store an explicit basis of a
+Lie algebra g plus lots of other useful information about the basis
+* A Lie algebra representation is a new type. It records:
+    1. a LieAlgebraBasis of $\mathfrak{g}
+    2. a list of the images rho(B_i) for each B_i in the Lie algebra 
+basis
+    3. the corresponding LieAlgebraModule (for data about the
+    decomposition into irreducibles, equivalently, the character)
+* We use an algorithm due to Geck to define a basis of $\mathfrak{g} for all types A-G
+* We also implement the bases of $\mathfrak{g} described by Fulton and Harris for types
+A,B,C,D,G
+* We use an algorithm of deGraaf to implement matrix generators for
+Vlambda for all types A-G
+* In type A we also implement matrix generators with respect to the Gelfand-Tsetlin basis
+* Given one or two explicit representations, we can compute symmetric powers,
+exterior powers, and tensor products
+* Given an explicit representation, we can compute the 
+highest weight vectors of a specified weight
+* We can find an explicit submodule with a specified highest weight
+vector inside a larger representation (VInSymdW, VInWedgekW,
+UInVtensorW)
+
+* Sample application: we can compute the degree 4 invariants for plane
+  cubics. See the documentation for VInSymdW
+
+

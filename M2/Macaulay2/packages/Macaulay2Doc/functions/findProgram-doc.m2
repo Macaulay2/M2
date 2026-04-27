@@ -23,8 +23,9 @@ doc ///
 	      "of the program.  Only present if ", TO "findProgram",
 	      " was called with the ", TT "MinimumVersion", " option."}}@
   SeeAlso
-    symbol programPaths
     findProgram
+    runProgram
+    symbol programPaths
 ///
 
 doc ///
@@ -52,28 +53,7 @@ doc ///
       your @TO "initialization file"@ defining its path in this way.
   SeeAlso
     Program
-    findProgram
-///
-
-doc ///
-  Key
-    RaiseError
-  Headline
-    whether to raise an error
-///
-
-doc ///
-  Key
-    AdditionalPaths
-  Headline
-    list of non-standard paths to search for a program
-///
-
-doc ///
-    Key
-      MinimumVersion
-    Headline
-      the minimum required version of a program
+    "path"
 ///
 
 doc ///
@@ -157,10 +137,10 @@ doc ///
       file, then @TT "name"@ should coincide with the name of this
       file.
     Example
-      programPaths#"gfan" = "/path/to/gfan/"
+      programPaths#"gfan" = "/path/to/gfan/" -* no-capture-flag *-
       gfan = findProgram("gfan", "gfan _version --help", Verbose => true)
     Text
-      If @TT "cmd"@ is not provided, then @TT "cmd"@ is run with the common
+      If @TT "cmd"@ is not provided, then @TT "name"@ is run with the common
       @TT "--version"@ command line option.
     Example
       findProgram "normaliz"
@@ -185,7 +165,9 @@ doc ///
         MinimumVersion => ("0.5",
        "gfan _version | head -2 | tail -1 | sed 's/gfan//'"))
   SeeAlso
+    runProgram
+    searchPath
+  Subnodes
     Program
     symbol programPaths
-    runProgram
 ///

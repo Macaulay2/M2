@@ -9,11 +9,11 @@ n = 6
 S = gens cyclicRoots(n,CC)
 R = ring S
 polys = flatten entries S
-ind = flatten apply(#polys,i-> -- parameteric coefficients 
+ind = flatten apply(#polys,i-> -- parametric coefficients 
     apply(exponents polys#i, t->(i,t))
     )
 AR = CC[apply(ind,i->A_i)][gens R] 
-polysP = for i to #polys-1 list -- parameteric coefficients 
+polysP = for i to #polys-1 list -- parametric coefficients 
          sum(exponents polys#i, t->A_(i,t)*AR_(t))
 SP = matrix{polysP}
 

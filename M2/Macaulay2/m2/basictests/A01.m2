@@ -55,11 +55,15 @@ assert( not not true )
 assert( not  true === false )
 assert( not  false === true )
 
--- test try
-assert( try error "" else true )
+-- test try .. then .. else clauses
+assert( true === try 1/0 then false else true )
+assert( null === try 1/0 then false )
+assert( true === try 1/0 else true )
+assert( null === try 1/0 )
+assert( try true then true else false )
 assert( try true else false )
+assert( try true then true )
 assert( try true )
-assert( null === try error "" )
 --i = 5
 --try i := 6 else i :=7
 --assert(i === 5)

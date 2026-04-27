@@ -4,7 +4,7 @@
 
 document { 
      Key => {clean, (clean,RR,Matrix), (clean,RR,MutableMatrix),(clean,RR,Number), (clean,RR,RingElement)},
-     Headline => "Set to zero elements that are approximately zero",
+     Headline => "set to zero elements that are approximately zero",
      Usage => "clean(epsilon,M)\nclean_epsilon M",
      Inputs => {
 	  "epsilon" => RR,

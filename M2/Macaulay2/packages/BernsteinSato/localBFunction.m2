@@ -32,7 +32,7 @@ computeJf RingElement := Ideal => f -> (
      K := coefficientRing D;
      	            
      w := toList(n:0) | {1};
-     inIf := inw(AnnFs {f}, -w|w);
+     inIf := inw(MalgrangeIdeal {f}, -w|w);
      
      Dt := ring inIf;
      x := take(gens Dt,{0,n-1});

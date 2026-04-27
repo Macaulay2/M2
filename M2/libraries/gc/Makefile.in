@@ -1,12 +1,12 @@
 HOMEPAGE = http://www.hboehm.info/gc/
-URL = http://www.hboehm.info/gc/gc_source/
+SUBMODULE = true
+LIBNAME = bdwgc
+URL = https://github.com/ivmai/bdwgc.git
 GITURL = https://github.com/ivmai/bdwgc/
-URL = http://macaulay2.com/Downloads/OtherSourceCode
-VERSION = 8.0.4
-#VERSION = 7.6.2
+VERSION = 8.2.8
 LICENSEFILES = README.QUICK
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-SHARED = yes			# the foreign functions package needs this
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+PRECONFIGURE = ./autogen.sh
 
 # We can also get the sources from the home page above or from
 #   https://github.com/ivmai/bdwgc/
@@ -58,7 +58,7 @@ CONFIGOPTIONS += --enable-threads=posix
 ## always build for large memory configurations
 CPPFLAGS += -DMAX_HEAP_SECTS=81920 -DMAXHINCR=4096
 
-ifeq (@SHARED@-SHARED,no-no)
+ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared --enable-static
 endif
 

@@ -18,9 +18,8 @@
 --  for more details.
 --
 --  You should have received a copy of the GNU General
---  Public License along with this program; if not, write
---  to the Free Software Foundation, Inc.,  51 Franklin
---  Street, Fifth Floor, Boston, MA 02110-1301 USA.
+--  Public License along with this program; if not, see
+--  <https://www.gnu.org/licenses/>.
 --
 -- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 --
@@ -48,6 +47,8 @@ export {
     --"wrapTexStrings",  -- internal method
     --"headlineToTex" -- internal method
     }
+
+importFrom_Core { "citePackage" }
 
 -- store for the TeX equivalent of needed diacritics and symbols
 -- add symbols as needed
@@ -184,11 +185,11 @@ iCite Package := P -> (
     -- bibtex howpublished content
     bibPackageSource :=
         if isInternalPackage and isInternalSource
-            then "\\url{https://github.com/Macaulay2/M2/tree/master/M2/Macaulay2/packages}"
+            then "\\url{https://github.com/Macaulay2/M2/tree/stable/M2/Macaulay2/packages}"
         else if isInternalPackage and not isInternalSource
             then if P#Options#HomePage =!= null
                 then concatenate("\"", toString (P#Options#HomePage), "\"")
-            else "\\url{https://github.com/Macaulay2/M2/tree/master/M2/Macaulay2/packages}"
+            else "\\url{https://github.com/Macaulay2/M2/tree/stable/M2/Macaulay2/packages}"
         else if P#Options#HomePage === null
             then (print concatenate ("Warning: The \"", T, "\" package provides insufficient citation data: howpublished."))
         else concatenate("\\url{" ,toString (P#Options#HomePage), "}");
@@ -197,12 +198,11 @@ iCite Package := P -> (
             "@misc{", T, "Source,\n",
                 concatenate ("  title = {", bibPackageTitle, "},\n"),
                 concatenate ("  author = {", bibPackageAuthors, "},\n"),
-                concatenate (///  howpublished = {A \emph{Macaulay2} package available at ///, bibPackageSource, "}\n"),
+                concatenate (///  howpublished = {A \emph{Macaulay2} package available at///, newline, 4, bibPackageSource, "}\n"),
             "}\n",
             bibtexCert);
     bibtexString
     )
-
 
 iCite String := S -> (
     if S === "M2" then return (
@@ -210,16 +210,13 @@ iCite String := S -> (
             "@misc{M2,\n",
             "  author = {Grayson, Daniel R. and Stillman, Michael E.},\n",
             "  title = {Macaulay2, a software system for research in algebraic geometry},\n",
-            "  howpublished = {Available at ", ///\///, "url{http://www.math.uiuc.edu/Macaulay2/}}\n",
+            "  howpublished = {Available at ", ///\///, "url{https://macaulay2.com/}}\n",
             "}\n",
-            ))
-    else
-        L := select (1, loadedPackages, p -> toString p === S);
-        P := if #L === 1 then L#0 else loadPackage S;
-    return iCite P)
+            ));
+    iCite needsPackage S)
 
 -- The cite command
-cite = new Command from (T -> if T === () then iCite "M2" else iCite T)
+cite = new Command from (T -> if T === () or T === "M2" then iCite "M2" else citePackage T)
 
 ------------------------
 -- End of source code --
@@ -240,7 +237,7 @@ doc ///
           is a package for a powerful open-source mathematical software suite
           but it contains only one method and adds exactly zero computational
           ability to the platform. The one method, called @TO cite@, can be
-          called on any @HREF {"http://www.math.uiuc.edu/Macaulay2/",
+          called on any @HREF {"https://macaulay2.com/",
           "Macaulay2"}@ package and will return a bibtex citation for
           inclusion in a @HREF {"https://www.latex-project.org", "LaTeX"}@
           document. For example, a citation for this package can be obtained

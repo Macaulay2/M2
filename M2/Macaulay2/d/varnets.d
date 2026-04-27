@@ -62,15 +62,15 @@ export (v:vaNet) << (x:Net) : vaNet := (
      else v.nets.(v.size) = x;
      v.size = v.size + 1;
      v);
-export hash(v:vaNet):int := (
-     h := 323;
+export hash(v:vaNet):hash_t := (
+     h := hash_t(323);
      for i from 0 to v.size-1 do h = 41 * h + hash(v.nets.i);
      h & 0x7fffffff);
 
 -- netfile
 
 export NetFile := {+ v:vaNet, x:varnet };
-export hash(n:NetFile):int := 0x7fffffff & (hash(n.v) + 43 * hash(n.x));
+export hash(n:NetFile):hash_t := 0x7fffffff & (hash(n.v) + 43 * hash(n.x));
 export newNetFile():NetFile := NetFile(newvaNet(),newvarnet());
 export (n:NetFile) << (i:int) : NetFile := ( n.x << i; n );
 export (n:NetFile) << (s:string) : NetFile := ( n.x << s; n );

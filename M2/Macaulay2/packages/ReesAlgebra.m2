@@ -34,13 +34,12 @@ newPackage(
 	Keywords => {"Commutative Algebra"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
-	     "journal URI" => "http://j-sag.org/",
+	     "journal URI" => "https://msp.org/jsag/",
 	     "article title" => "The ReesAlgebra package in Macaulay2",
 	     "acceptance date" => "21 May 2018",
 	     "published article URI" => "https://msp.org/jsag/2018/8-1/p05.xhtml",
 	     "published article DOI" => "10.2140/jsag.2018.8.49",
 	     "published code URI" => "https://msp.org/jsag/2018/8-1/jsag-v8-n1-x05-ReesAlgebra.m2",
-	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/ReesAlgebra.m2",
 	     "release at publication" => "0ccfca1d3d08d13ed0da78435b2106209fcee1b1",	    -- git commit number in hex
 	     "version at publication" => "2.2",
 	     "volume number" => "8",
@@ -57,14 +56,14 @@ check "ReesAlgebra"
 *-
 
 export{
-  "analyticSpread", 
+  "analyticSpread",
+  "associatedGradedRing",
   "distinguished",
   "intersectInP",
   "isLinearType", 
   "minimalReduction",
   "isReduction",
   "multiplicity",
-  "normalCone", 
   "reductionNumber",
   "reesIdeal",
   "reesAlgebra",
@@ -73,17 +72,14 @@ export{
   "symmetricKernel", 
   "versalEmbedding",
   "whichGm",
-  "Tries",
   "jacobianDual",
   "symmetricAlgebraIdeal",
   "expectedReesIdeal",
   "PlaneCurveSingularities",
   --synonyms
-  "associatedGradedRing" => "normalCone",
   "reesAlgebraIdeal" => "reesIdeal",
   "Trim" -- option in reesIdeal
   }
-
 
 symmetricAlgebraIdeal = method(Options =>
     {             VariableBaseName => "w"
@@ -209,8 +205,7 @@ isLinearType(Module, RingElement):= o-> (N,a)->(
      J := ideal((vars S) * P);
      ((gens I) % J) == 0)
 
-normalCone = method(TypicalValue => Ring, 
-    	    Options => {
+normalConeOptions = {
 	  DegreeLimit => {},
 	  BasisElementLimit => infinity,
 	  PairLimit => infinity,
@@ -218,16 +213,20 @@ normalCone = method(TypicalValue => Ring,
 	  Strategy => null,
 	  Variable => "w"
 	  }
-)
-normalCone(Ideal) := o -> I -> (
+
+normalCone Ideal := Ring => normalConeOptions >> o -> I -> (
      RI := reesAlgebra(I,o);
      RI/promote(I,RI)
      )
 
-normalCone(Ideal, RingElement) := o -> (I,a) -> (
+normalCone(Ideal, RingElement) := Ring => normalConeOptions >> o  -> (I,a) -> (
      RI := reesAlgebra(I,a,o);
      RI/promote(I,RI)     
      )
+
+associatedGradedRing = method(Options => normalConeOptions)
+associatedGradedRing Ideal := Ring => o -> I -> normalCone(I, o)
+associatedGradedRing(Ideal, RingElement) := Ring => o -> (I,a) -> normalCone(I, a, o)
 
 multiplicity = method(
     	    Options => {
@@ -871,7 +870,6 @@ doc ///
 doc ///
   Key
     [minimalReduction, Tries]
-    Tries
   Headline
     Set the number of random tries to compute a minimal reduction
   Usage
@@ -1141,7 +1139,7 @@ doc ///
       
       In the following example, we find the Rees Algebra of a monomial curve
       singularity.  We also demonstrate the use of @TO reesIdeal@, @TO symmetricKernel@,
-      @TO isLinearType@, @TO normalCone@, @TO associatedGradedRing@, @TO specialFiberIdeal@.
+      @TO isLinearType@, @TO (normalCone, Ideal, RingElement)@, @TO associatedGradedRing@, @TO specialFiberIdeal@.
     Example
       S = QQ[x_0..x_3]
       i = monomialCurveIdeal(S,{3,7,8})      
@@ -1256,15 +1254,18 @@ doc ///
 
 doc ///
   Key
-    normalCone
+    associatedGradedRing
+    (associatedGradedRing, Ideal)
+    (associatedGradedRing, Ideal, RingElement)
     (normalCone, Ideal)
     (normalCone, Ideal, RingElement)
-    
   Headline
     The normal cone of a subscheme
   Usage
     normalCone I
     normalCone(I,f)
+    associatedGradedRing I
+    associatedGradedRing(I,f)
   Inputs
     I:Ideal
     f:RingElement
@@ -1280,8 +1281,7 @@ doc ///
       isomorphic to $S/IS$, which is how it is computed here.
   SeeAlso
     reesAlgebra
-    associatedGradedRing
-    normalCone
+    "MultiplicitySequence::grGr"
 ///
 
 
@@ -1645,7 +1645,7 @@ doc ///
       routine checks rigorously that the output ideal is a reduction, and tries
       probabilistically again if it is not. If it cannot find a minimal reduction after
       a certain number of tries, it returns an error. The number of tries defaults
-      to 20, but can be set with the optional argument @TO Tries@.
+      to 20, but can be set with the optional argument @TO [minimalReduction, Tries]@.
 
       To say that $I$ is integrally dependent on $J$ means that
       $JI^k = I^{k+1}$ for some non-negative integer $k$.  The smallest $k$ with this
@@ -1924,6 +1924,8 @@ doc ///
     [reesIdeal, Variable]
     [reesAlgebra, Variable]
     [associatedGradedRing, Variable]
+    [(normalCone, Ideal), Variable]
+    [(normalCone, Ideal, RingElement), Variable]
     [specialFiberIdeal, Variable]
     [specialFiber, Variable]
     [distinguished, Variable]
@@ -1980,8 +1982,10 @@ doc ///
     [reesAlgebra,Strategy]
     [isLinearType,Strategy]
     [isReduction, Strategy]    	  
-    [normalCone, Strategy]    	  
-    [multiplicity, Strategy]    	  
+    [multiplicity, Strategy]
+    [associatedGradedRing, Strategy]
+    [(normalCone, Ideal), Strategy]
+    [(normalCone, Ideal, RingElement), Strategy]
     [specialFiberIdeal, Strategy]    	  
     [specialFiber, Strategy]    	  
     [analyticSpread, Strategy]    	  
@@ -2007,7 +2011,7 @@ doc ///
     reesAlgebra
     isLinearType
     isReduction
-    normalCone
+    associatedGradedRing
     multiplicity
     specialFiberIdeal
     specialFiber
@@ -2025,7 +2029,9 @@ doc ///
     [specialFiber, PairLimit]
     [specialFiberIdeal, PairLimit]
     [multiplicity, PairLimit]
-    [normalCone, PairLimit]
+    [associatedGradedRing, PairLimit]
+    [(normalCone, Ideal), PairLimit]
+    [(normalCone, Ideal, RingElement), PairLimit]
     [isReduction, PairLimit]
     [isLinearType,PairLimit]
     [reesAlgebra,PairLimit]
@@ -2044,7 +2050,7 @@ doc ///
     reesAlgebra
     isLinearType
     isReduction
-    normalCone
+    associatedGradedRing
     multiplicity
     specialFiberIdeal
     specialFiber
@@ -2062,7 +2068,9 @@ doc ///
     [specialFiber, MinimalGenerators]
     [specialFiberIdeal, MinimalGenerators]
     [multiplicity, MinimalGenerators]
-    [normalCone, MinimalGenerators]
+    [associatedGradedRing, MinimalGenerators]
+    [(normalCone, Ideal), MinimalGenerators]
+    [(normalCone, Ideal, RingElement), MinimalGenerators]
     [isReduction, MinimalGenerators]
     [isLinearType,MinimalGenerators]
     [reesAlgebra,MinimalGenerators]
@@ -2082,7 +2090,7 @@ doc ///
     reesAlgebra
     isLinearType
     isReduction
-    normalCone
+    associatedGradedRing
     multiplicity
     specialFiberIdeal
     specialFiber
@@ -2099,7 +2107,9 @@ doc ///
     [analyticSpread, BasisElementLimit]
     [specialFiber, BasisElementLimit]
     [multiplicity, BasisElementLimit]
-    [normalCone, BasisElementLimit]
+    [associatedGradedRing, BasisElementLimit]
+    [(normalCone, Ideal), BasisElementLimit]
+    [(normalCone, Ideal, RingElement), BasisElementLimit]
     [isReduction, BasisElementLimit]
     [isLinearType,BasisElementLimit]
     [reesAlgebra,BasisElementLimit]
@@ -2119,7 +2129,7 @@ doc ///
     reesAlgebra
     isLinearType
     isReduction
-    normalCone
+    associatedGradedRing
     multiplicity
     specialFiberIdeal
     specialFiber
@@ -2135,8 +2145,10 @@ doc ///
     [distinguished,DegreeLimit]
     [analyticSpread, DegreeLimit]
     [specialFiber, DegreeLimit]
-    [normalCone, DegreeLimit]
     [multiplicity, DegreeLimit]
+    [associatedGradedRing, DegreeLimit]
+    [(normalCone, Ideal), DegreeLimit]
+    [(normalCone, Ideal, RingElement), DegreeLimit]
     [isReduction, DegreeLimit]
     [isLinearType,DegreeLimit]
     [reesAlgebra,DegreeLimit]
@@ -2158,7 +2170,7 @@ doc ///
     reesAlgebra
     isLinearType
     isReduction
-    normalCone
+    associatedGradedRing
     multiplicity
     specialFiberIdeal
     specialFiber

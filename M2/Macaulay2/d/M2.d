@@ -43,22 +43,17 @@ export makearrayint(n:int):arrayint := Ccode(returns, "
   GC_CHECK_CLOBBER(z);
   return z; /* Note that getmem_atomic returns zeroed memory */
 ");
-export tocharstar(s:string):charstar := Ccode(returns, "
-  char *p = getmem_atomic(s->len + 1);
-  memcpy(p,s->array,s->len);
-  p[s->len] = 0;
+export tocharstarn(s:string, n:int):charstar := Ccode(returns, "
+  char *p = getmem_atomic(", n + 1, ");
+  memcpy(p,s->array,", n, ");
+  p[", n, "] = 0;
   GC_CHECK_CLOBBER(p);
   return p;
 ");
-export tocharstarOrNull(s:string):charstarOrNull := Ccode(returns, "
-  char *p;
-  if (s->len == 0) return NULL;
-  p = getmem_atomic(s->len + 1);
-  memcpy(p,s->array,s->len);
-  p[s->len] = 0;
-  GC_CHECK_CLOBBER(p);
-  return p;
-");
+export tocharstar(s:string):charstar := tocharstarn(s, length(s));
+export tocharstarOrNull(s:string):charstarOrNull := (
+    if length(s) == 0 then charstarOrNull(null())
+    else charstarOrNull(tocharstar(s)));
 export tostringn(s:charstar,n:int):string := Ccode(returns, "
   M2_string p = (M2_string)getmem_atomic(sizeofarray(p,n));
   p->len = n;

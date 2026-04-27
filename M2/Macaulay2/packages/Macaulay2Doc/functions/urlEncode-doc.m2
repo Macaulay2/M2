@@ -13,7 +13,7 @@ doc ///
     :String
   Description
     Text
-      Encode all of the characters in a URL except for "/", ":", and
+      Encode all of the characters in a URL except for "/", ":", "#", and
       the "unreserved characters" specified by
       @HREF{"https://www.rfc-editor.org/rfc/rfc3986.html", "RFC 3986"}@,
       i.e., the alphanumeric characters, "-", ".", "_", and "~", using

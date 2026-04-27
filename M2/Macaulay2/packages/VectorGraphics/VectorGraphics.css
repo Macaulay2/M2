@@ -12,6 +12,25 @@ svg.M2Svg {
     stroke-width:1%;
 }
 
+/* transferred from interface_common.css */
+svg.M2Svg path { /* because of KaTeX annoying def */
+    stroke: inherit;
+}
+/*
+.katex .M2Html svg text {
+    stroke: none;
+}
+*/
+svg.M2Svg { /* because of KaTeX annoying def */
+    /*
+    display: inherit;
+    position: inherit;
+*/
+    width: inherit;
+    height: inherit;
+}
+
+
 .M2SvgDraggable {
     cursor: grab;
 }

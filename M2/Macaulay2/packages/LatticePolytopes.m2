@@ -211,7 +211,7 @@ toricBlowUp(Polyhedron,Polyhedron,ZZ) := (P,F,k) -> (
             and contains(e,(facesAsPolyhedra((dim F),F))_0)
         ));
     pt := k * matrix{(vertices Edges_i)_0+(vertices Edges_i)_1-2*(vertices F)_0}*(1/(#latticePoints(Edges_i)-1))+matrix((vertices F)_0);
-    return intersection(A||E,b||(E*pt)));
+    polyhedronFromHData(A||E,b||(E*pt)));
 
 
 
@@ -407,8 +407,8 @@ listSmooth3D = () -> for P in Sm16in3D list convexHull P;
 
 -- PURPOSE : Test if a polyhedron is smooth.
 --           Extends isSmooth from package Polyhedra
-isSmooth(Polyhedron) := P -> isSmooth(normalFan(P));
-isSmooth(Matrix) := M -> isSmooth(normalFan(convexHull(M)));
+isSmooth Polyhedron := {} >> o -> P -> isSmooth normalFan P
+isSmooth Matrix     := {} >> o -> M -> isSmooth normalFan convexHull M
 
 
 
@@ -685,9 +685,9 @@ iskCayleykEdges(Polyhedron):=P->(
 	 if length(L)==2 then(
 	     k:=(L_1-L_0)/gcd(flatten entries(A^{i}));
 	     if k==minLen then(
-		 H0:=intersection(A^{i}||-A^{i},matrix{{L_0},{-L_0}});
+		 H0:=polyhedronFromHData(A^{i}||-A^{i},matrix{{L_0},{-L_0}});
 		 P0=intersection(P,H0);
-		 H1:=intersection(A^{i}||-A^{i},matrix{{L_1},{-L_1}});
+		 H1:=polyhedronFromHData(A^{i}||-A^{i},matrix{{L_1},{-L_1}});
 		 P1=intersection(P,H1);
 		 boolean=false;
 	     );
@@ -1389,7 +1389,7 @@ assert(isJetSpanned(latticePoints(convexHull(matrix{{0,2,0},{0,0,2}})),2,matrix{
 ///
 
 TEST ///
-assert(jetMatrix(latticePoints(convexHull(matrix{{0,2,0},{0,0,2}})),2,matrix{{1},{1}})==matrix {{1, 1, 1, 1, 1, 1}, {0, 0, 1, 2, 1, 0}, {0, 0, 0, 2, 0, 0}, {0, 0, 1, 0, 0, 0}, {0, 2, 1, 0, 0, 1}, {0, 2, 0, 0, 0, 0}});
+assert(jetMatrix(latticePoints(convexHull(matrix{{0,2,0},{0,0,2}})),2,matrix{{1},{1}}) == matrix {{1, 1, 1, 1, 1, 1}, {0, 0, 0, 1, 1, 2}, {0, 0, 0, 0, 0, 2}, {0, 0, 0, 0, 1, 0}, {0, 1, 2, 0, 1, 0}, {0, 0, 2, 0, 0, 0}});
 ///
 
 TEST ///

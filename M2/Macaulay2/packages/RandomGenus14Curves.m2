@@ -12,7 +12,7 @@ newPackage(
     	Headline => "random smooth curves of genus 14",
 	Keywords => {"Examples and Random Objects"},
      	PackageExports => {"RandomObjects"},
-	PackageImports => {"Truncations"},
+	PackageImports => {"OldChainComplexes", "Truncations"},
     	DebuggingMode => false
         )
 

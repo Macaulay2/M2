@@ -102,14 +102,14 @@ isNested = (I,d) -> (
 
 satMon = (I,X)-> (
      m := flatten entries mingens I;
-     lamda := apply(entries transpose matrix flatten apply(m,exponents),max);
+     lambda := apply(entries transpose matrix flatten apply(m,exponents),max);
      l := {};
-     for i to #X -1 do l = l|{X_i^(lamda_i+1)};
+     for i to #X -1 do l = l|{X_i^(lambda_i+1)};
      gensIstar := flatten entries mingens (monomialIdeal l:monomialIdeal I);
      gensallvars :={};
      for i to #gensIstar-1 do if support gensIstar_i == X then gensallvars = gensallvars | {gensIstar_i}; --gensallvars contains the minimal gens of I that contain all variables
      if gensallvars == {} then return 0
-     else return sum lamda +1 - (min apply( gensallvars,degree))_0;
+     else return sum lambda +1 - (min apply( gensallvars,degree))_0;
      )
 
 

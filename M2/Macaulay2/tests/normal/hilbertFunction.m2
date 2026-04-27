@@ -7,11 +7,18 @@ assert(hilbertFunction(3, I) == 4)
 peek I.cache
 assert(hilbertFunction(2, I) == 4)
 
+h = hilbertFunction I
+assert(h 2 == 4)
+assert(h 3 == 4)
+
 --
 
 R = ZZ/101[a..d]
 assert( hilbertFunction(3,R) === 20 )
 assert( hilbertFunction(10,R) === 286 )
+h = hilbertFunction R
+assert(h 3 == 20)
+assert(h 10 == 286)
 
 --
 

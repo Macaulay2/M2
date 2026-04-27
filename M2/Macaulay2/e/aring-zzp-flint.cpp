@@ -10,7 +10,7 @@ namespace M2 {
 ARingZZpFlint::ARingZZpFlint(size_t p0) : mCharac(p0)
 {
   nmod_init(&mModulus, p0);
-  flint_randinit(mRandomState);
+  FLINT_RAND_INIT(mRandomState);
   fmpz_init(mFmpzCharac);
   fmpz_set_ui(mFmpzCharac, mCharac);
   mGenerator = n_primitive_root_prime(mCharac);
@@ -18,7 +18,7 @@ ARingZZpFlint::ARingZZpFlint(size_t p0) : mCharac(p0)
 
 ARingZZpFlint::~ARingZZpFlint()
 {
-  flint_randclear(mRandomState);
+  FLINT_RAND_CLEAR(mRandomState);
   fmpz_clear(mFmpzCharac);
 }
 

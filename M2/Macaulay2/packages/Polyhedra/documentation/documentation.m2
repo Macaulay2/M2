@@ -481,7 +481,7 @@ doc ///
    Description
       Text
          Method used by the package
-         @ HREF("https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2-1.12/share/doc/Macaulay2/Tropical/html/", "Tropical.m2") @ to construct a fan from {\tt Gfan} output.
+	 @ TO "Tropical" @ to construct a fan from {\tt Gfan} output.
          Gfan produces more data than just rays and maximal cones and this constructor will save that data to avoid recomputation.
 ///
 

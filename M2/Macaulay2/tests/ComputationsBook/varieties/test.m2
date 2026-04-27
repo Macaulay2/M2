@@ -45,7 +45,7 @@ basis(19,S)
 (x+y+z)^19
 C = res M
 C.dd_1
-set flatten entries gens M - set flatten entries C.dd_1
+flatten entries gens M - set flatten entries C.dd_1
 C.dd_2
 C.dd_3
 A = {{1, 1, 1, 1},

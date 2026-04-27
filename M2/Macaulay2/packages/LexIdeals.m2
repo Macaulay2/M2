@@ -9,6 +9,7 @@ newPackage(
 		     HomePage => "http://www.math.okstate.edu/~chris"}
 	},
 	Headline => "lexicographic-type monomial ideals",
+    PackageImports => {"OldChainComplexes"},
 	Keywords => {"Commutative Algebra"},
 	DebuggingMode => false
 	)

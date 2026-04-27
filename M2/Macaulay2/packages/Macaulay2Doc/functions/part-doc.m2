@@ -2,35 +2,31 @@
 --- author(s): Lily Silverstein
 --- notes: 
 
--*
--- TODO
-part(InfiniteNumber,InfiniteNumber,Number)
-part(InfiniteNumber,ZZ,Number)
-part(ZZ,InfiniteNumber,Number)
-part(ZZ,Number)
-part(ZZ,ZZ,Number)
-*-
-
 doc///
  Key
   part
   (part,List,RingElement)
   (part,ZZ,ZZ,VisibleList,RingElement)
   (part,InfiniteNumber,InfiniteNumber,RingElement)
+  (part, InfiniteNumber, InfiniteNumber, Number)
   (part,InfiniteNumber,InfiniteNumber,VisibleList,RingElement)
   (part,InfiniteNumber,ZZ,RingElement)
+  (part, InfiniteNumber, ZZ, Number)
   (part,InfiniteNumber,ZZ,VisibleList,RingElement)
   (part,Nothing,Nothing,RingElement)
   (part,Nothing,Nothing,VisibleList,RingElement)
   (part,Nothing,ZZ,RingElement)
   (part,Nothing,ZZ,VisibleList,RingElement)
   (part,ZZ,InfiniteNumber,RingElement)
+  (part, ZZ, InfiniteNumber, Number)
   (part,ZZ,InfiniteNumber,VisibleList,RingElement)
   (part,ZZ,Nothing,RingElement)
   (part,ZZ,Nothing,VisibleList,RingElement)
   (part,ZZ,RingElement)
+  (part, ZZ, Number)
   (part,ZZ,VisibleList,RingElement)
   (part,ZZ,ZZ,RingElement)
+  (part, ZZ, ZZ, Number)
  Headline
   select terms of a polynomial by degree(s) or weight(s)
  Usage

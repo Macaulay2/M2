@@ -29,10 +29,10 @@ ring_elem getElement<RingRRR>(const RingRRR &R, int index)
 TEST(RingRRR, create)
 {
   RingRRR *R = RingRRR::create(std::make_unique<M2::ARingRRR>(100));
-  EXPECT_TRUE(R != 0);
+  EXPECT_TRUE(R != nullptr);
 
-  EXPECT_TRUE(dynamic_cast<const Z_mod *>(R) == 0);
-  EXPECT_TRUE(dynamic_cast<const RingRRR *>(R) != 0);
+  EXPECT_TRUE(dynamic_cast<const Z_mod *>(R) == nullptr);
+  EXPECT_TRUE(dynamic_cast<const RingRRR *>(R) != nullptr);
   EXPECT_FALSE(R->is_ZZ());
   // FIXME: not implemented: EXPECT_TRUE(R->is_RRR());
   // FIXME: string vs char*: EXPECT_EQ(ringName(*R), "RRR_100");

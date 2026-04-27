@@ -426,3 +426,13 @@ TEST /// -- test of removeLowestDimension
   assert same(topComponents I, removeLowestDimension I, ideal"a,d4")
   assert(radical I == ideal(a*b, a*c, a*d, b*d, c*d))
 ///
+
+TEST ///
+  -- a bug in M2 <= 1.24.05, git issue #3176
+  -- the nonstandard grading was handled incorrectly.
+  R = QQ[x,y,z, Degrees => {25,72,29}];
+  P = ker map(QQ[t],R,{t^(25),t^(72),t^(29)});
+  compsP3 = primaryDecomposition(P^3)
+  assert(intersect compsP3 == P^3)
+  assert all(compsP3, isPrimary)  
+///

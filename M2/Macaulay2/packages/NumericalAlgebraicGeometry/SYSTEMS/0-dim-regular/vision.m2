@@ -51,7 +51,6 @@ PS.NumberOfVariables = 8 -- hack!!!
 -- squarePS = squareUp PS 
 gPS = gateSystem(PS,drop(gens R1,8));  
 PH = parametricSegmentHomotopy gPS
---makeGateMatrix(PS,Parameters=>drop(gens R1,8));  
 --PH = parametricSegmentHomotopy PS
 printAsSLP(PH.GateHomotopy#"X"|matrix{{PH.GateHomotopy#"T"}},PH.GateHomotopy#"Hx")
 

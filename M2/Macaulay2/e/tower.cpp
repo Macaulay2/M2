@@ -26,7 +26,7 @@ bool Tower::initialize(long charac0,
   // Translate extensions to poly's
   if (extensions.size() == 0)
     {
-      D = DRing::create(charac0, nvars, 0);
+      D = DRing::create(charac0, nvars, nullptr);
     }
   else
     {
@@ -47,20 +47,20 @@ Tower *Tower::create(int charac, M2_ArrayString names)
 {
   Tower *result = new Tower;
   VECTOR(ring_elem) extensions;
-  if (!result->initialize(charac, names, extensions)) return 0;
+  if (!result->initialize(charac, names, extensions)) return nullptr;
   return result;
 }
 
 Tower *Tower::create(const Tower *R, M2_ArrayString new_names)
 {
   // TODO: write
-  return 0;
+  return nullptr;
 }
 
 Tower *Tower::create(const Tower *R, VECTOR(ring_elem) & extensions)
 {
   Tower *result = new Tower;
-  if (!result->initialize(R->characteristic(), R->names, extensions)) return 0;
+  if (!result->initialize(R->characteristic(), R->names, extensions)) return nullptr;
   return result;
 }
 
@@ -296,7 +296,7 @@ class TowerEvaluator : public DPolyTraverser
     target = map->get_ring();
     H = target->make_SumCollector();
     const PolynomialRing *P = target->cast_to_PolynomialRing();
-    K = (P == 0 ? target : P->getCoefficients());
+    K = (P == nullptr ? target : P->getCoefficients());
   }
 
   virtual ~TowerEvaluator() { delete H; }
@@ -367,7 +367,7 @@ int Tower::degreeInVariable(int whichvar, const ring_elem f) const
 ring_elem Tower::differentiate(int whichvar, const ring_elem f) const
 {
   TowerPolynomial f1 = TOWER_POLYNOMIAL_VAL(f);
-  TowerPolynomial h = 0;
+  TowerPolynomial h = nullptr;
   D->diff(whichvar, h, f1);
   return TOWER_RINGELEM(h);
 }
@@ -384,7 +384,7 @@ ring_elem Tower::power_mod(const ring_elem f,
 {
   TowerPolynomial f1 = TOWER_POLYNOMIAL_VAL(f);
   TowerPolynomial g1 = TOWER_POLYNOMIAL_VAL(g);
-  TowerPolynomial h = 0;
+  TowerPolynomial h = nullptr;
   D->power_mod(h, f1, n, g1);
   return TOWER_RINGELEM(h);
 }
@@ -392,7 +392,7 @@ ring_elem Tower::power_mod(const ring_elem f,
 ring_elem Tower::lowerP(const ring_elem f) const
 {
   TowerPolynomial f1 = TOWER_POLYNOMIAL_VAL(f);
-  TowerPolynomial h = 0;
+  TowerPolynomial h = nullptr;
   D->lowerP(h, f1);
   return TOWER_RINGELEM(h);
 }
@@ -407,7 +407,7 @@ const RingElement *towerGCD(const RingElement *F, const RingElement *G)
 {
   const Tower *R = F->get_ring()->cast_to_Tower();
   const Tower *S = G->get_ring()->cast_to_Tower();
-  if (R == 0 || R != S)
+  if (R == nullptr || R != S)
     {
       ERROR("encountered different rings");
     }
@@ -423,7 +423,7 @@ const RingElement *towerExtendedGCD(const RingElement *F,
 {
   const Tower *R = F->get_ring()->cast_to_Tower();
   const Tower *S = G->get_ring()->cast_to_Tower();
-  if (R == 0 || R != S)
+  if (R == nullptr || R != S)
     {
       ERROR("encountered different rings");
     }
@@ -448,7 +448,7 @@ ring_elem Tower::translate(const PolynomialRing *R, ring_elem fR) const
   const Monoid *M = R->getMonoid();
   const Ring *K = R->getCoefficients();
   int nvars = R->n_vars();
-  TowerPolynomial result = 0;
+  TowerPolynomial result = nullptr;
   exponents_t exp = new int[nvars];
   for (Nterm& t : fR)
     {
@@ -512,17 +512,17 @@ const RingElement *rawTowerTranslatePoly(const Ring *newRing,
   // be the same.
   const PolynomialRing *P = F->get_ring()->cast_to_PolynomialRing();
   const Tower *T = newRing->cast_to_Tower();
-  if (P != 0 && T != 0)
+  if (P != nullptr && T != nullptr)
     {
       if (P->n_vars() != T->n_vars())
         {
           ERROR("expected rings with the same number of variables");
-          return 0;
+          return nullptr;
         }
       if (P->characteristic() != T->characteristic())
         {
           ERROR("expected rings with the same characteristic");
-          return 0;
+          return nullptr;
         }
       ring_elem a = T->translate(P, F->get_value());
       return RingElement::make_raw(T, a);
@@ -537,7 +537,7 @@ const RingElement *rawTowerTranslatePoly(const Ring *newRing,
     }
 #endif
   ERROR("expected an element of a TowerRing or a PolynomialRing");
-  return 0;
+  return nullptr;
 }
 
 // Local Variables:

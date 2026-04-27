@@ -60,13 +60,27 @@ assert Equation(apply(("f", "o", "o"), "bar", concatenate), ("fb", "oa", "or"))
 assert Equation(reverse "Hello, world!", "!dlrow ,olleH")
 
 -- pack
-assert Equation(pack("The quick brown fox jumps over the lazy dog", 5),
-    {"The q","uick ","brown"," fox ","jumps"," over"," the ","lazy ","dog"})
-assert Equation(pack(5, "The quick brown fox jumps over the lazy dog"),
-    {"The q","uick ","brown"," fox ","jumps"," over"," the ","lazy ","dog"})
-assert Equation(pack(0, ""), pack("", 0))
+str = "The quick brown fox jumps over the lazy dog"
+cut = {"The q","uick ","brown"," fox ","jumps"," over"," the ","lazy ","dog"}
+assert Equation(pack(5, str), cut)
+assert Equation(pack(str, 5), cut)
+assert Equation(pack(5, ascii str), ascii \ cut)
+assert Equation(pack(ascii str, 5), ascii \ cut)
+assert Equation(pack(5, toSequence ascii str), ascii \ cut)
+assert Equation(pack(toSequence ascii str, 5), ascii \ cut)
+assert Equation(pack(0, ""), {})
+assert Equation(pack("", 0), {})
 
 -- tally
 assert BinaryOperation(symbol ===, tally "Hello, world!", new Tally from {
 	" " => 1, "!" => 1, "r" => 1, "d" => 1, "e" => 1, "w" => 1,
 	"H" => 1, "l" => 3, "," => 1, "o" => 2})
+
+-- escape sequences
+assert Equation(ascii "\"\\\a\b\e\E\f\n\r\t\v",
+    {0x22, 0x5c, 0x07, 0x08, 0x1b, 0x1b, 0x0c, 0x0a, 0x0d, 0x09, 0x0b})
+assert Equation("\172\x7a\x7A\u007a\u007A", "zzzzz")
+assert Equation(format(ascii(0..31) | "\"\\"),
+    ///"\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000b\f\r/// |
+    ///\u000e\u000f\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017/// |
+    ///\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001f\"\\"///)

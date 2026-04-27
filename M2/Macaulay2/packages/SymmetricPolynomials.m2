@@ -2,7 +2,7 @@ newPackage(
      "SymmetricPolynomials",
      Version => "1.0",
      Date => "May 20 2009",
-    Authors => {{Name => "Alexandra Seceleanu", HomePage => "http://www.math.uiuc.edu/~asecele2/"}},
+    Authors => {{Name => "Alexandra Seceleanu", HomePage => "https://aseceleanu.github.io/"}},
      Headline => "symmetric polynomials",
      Keywords => {"Combinatorics", "Representation Theory"},
      DebuggingMode => false
@@ -94,7 +94,7 @@ document {
 	Headline => "expression in terms of elementary symmetric polynomials",
 	Inputs => {"f, a symmetric", TO RingElement},
 	Outputs =>{"the expression of f in terms of the elementary symmetric functions e_i"},
-	Usage => "elementalSymm f",
+	Usage => "elementarySymmetric f",
 	Caveat => {"if the input is not symmetric the function will announce this"},
 EXAMPLE lines ///
 	n=5;
@@ -111,7 +111,7 @@ document {
 	Headline => "expression in terms of elementary symmetric polynomials",
 	Inputs => {"f"=> {"a symmetric", TO RingElement}},
 	Outputs =>{"the expression of f in terms of the elementary symmetric functions e_i"},
-	Usage => "elementalSymm f",
+	Usage => "elementarySymmetric f",
 	Caveat => {"if the input is not symmetric the function will announce this"},
 EXAMPLE lines ///
 	n=5;
@@ -128,7 +128,7 @@ document {
 	Headline => "elementary symmetric polynomials algebra",
 	Inputs => {"R"=>{ "a", TO PolynomialRing}},
 	Outputs =>{"a map from R adjoin the elementary symmetric functions e_i to R"},
-	Usage => "elementalSymm R",
+	Usage => "elementarySymmetric R",
 EXAMPLE lines ///
 	n=5;
 	R=QQ[x_1..x_n];

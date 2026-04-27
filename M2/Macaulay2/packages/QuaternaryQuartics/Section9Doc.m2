@@ -281,8 +281,8 @@ doc ///
       3-fold $X = X_{10} \cup X_{6} \subset \bf{P}^7$, 
       of degree 16, having Betti table of type [430].
        For an artinian reduction $A_F$, the quadratic part of the ideal $F^\perp$ is the ideal
-      of a line and three independant points $p_1,p_2,p_3$, and $F^\perp$ contains pencils of ideals of three points on the line and the three fixed points $p_i$.
-      In the pencil we find an ideal of four points in a plane and two on an independant line passing though one of the four points.    
+      of a line and three independent points $p_1,p_2,p_3$, and $F^\perp$ contains pencils of ideals of three points on the line and the three fixed points $p_i$.
+      In the pencil we find an ideal of four points in a plane and two on an independent line passing though one of the four points.    
       We construct $X_{10}$ in a pencil of quadrics in a P6, and $X_{6}$ as a complete intersection in a P5.
       In the construction the intersection $X\cup X'$ of a component $X$ with the other is an anticanonical divisor on $X$.
       
@@ -328,8 +328,8 @@ doc ///
       3-fold $X = X_{12} \cup X_{4} \subset \bf{P}^7$, 
       of degree 16, having Betti table of type [441], and is on component [441a].
        For an artinian reduction $A_F$, the quadratic part of the ideal $F^\perp$ is the ideal
-      of a conic and an independant point p, and $F^\perp$ contains pencils of ideals of five points on the conic and the point p.    
-      So we construct $X_{12}$ in a pencil of codimension 3 varieties of degree 5 in a quadric in a P6, and $X_{4}$ in an independant P4.
+      of a conic and an independent point p, and $F^\perp$ contains pencils of ideals of five points on the conic and the point p.    
+      So we construct $X_{12}$ in a pencil of codimension 3 varieties of degree 5 in a quadric in a P6, and $X_{4}$ in an independent P4.
       In the construction the intersection $X\cup X'$ of a component $X$ with the other is an anticanonical divisor on $X$.
       
       The Betti table is
@@ -430,7 +430,7 @@ doc ///
       
       For an artinian reduction $A_F$, the quadratic part of the ideal $F^\perp$ is the ideal
       of $\Gamma=\Gamma_4\cup p$, the union of a four points in a plane and one point outside.
-      So we construct $X_{11}$ in the intersection of two quadrics in a P6 and $X_4$ in an independant P4.
+      So we construct $X_{11}$ in the intersection of two quadrics in a P6 and $X_4$ in an independent P4.
       In the construction the intersection $X\cup X'$ of a component $X$ with the other is an anticanonical divisor on $X$.
       
       We start with a linear $\mathbb{P}^3 \subset \mathbb{P}^7$, take the linked ideal via a $(1,2,2,3)$ complete intersection
@@ -530,8 +530,8 @@ doc ///
       3-fold $X = X_7& \cup X_{4} \cup X_{4}' \subset \bf{P}^7$, 
       of degree 15, with components of degrees $7, 4, 4$,
       having Betti table of type [562]. For an artinian reduction $A_F$, the ideal $F^\perp$ contains a pencil of ideals
-      $I_\Gamma$, where $\Gamma=\Gamma_3\cup p_1\cup p_2$, the union of a three points in a fixed line and two independant points outside the line.
-      So we construct $X_7$ in the intersection of two cubics in a P5 and $X_4$ and $X_4'$ as quartics in an independant P4s.
+      $I_\Gamma$, where $\Gamma=\Gamma_3\cup p_1\cup p_2$, the union of a three points in a fixed line and two independent points outside the line.
+      So we construct $X_7$ in the intersection of two cubics in a P5 and $X_4$ and $X_4'$ as quartics in an independent P4s.
       In the construction the intersection $X\cup (X'\cap X'')$ of a component $X$ with the two others is an anticanonical divisor on $X$.
       --, and lying on the
       --component [562b].

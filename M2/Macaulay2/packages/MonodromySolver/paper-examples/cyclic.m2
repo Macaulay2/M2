@@ -14,7 +14,7 @@ parametrizedCyclic = n -> (
 		apply(exponents polys#i, t->(i,t))
 		);
 	AR := CC[apply(ind,i->A_i)][gens R];
-	polysP := for i to #polys-1 list -- system with parameteric coefficients and same support 
+	polysP := for i to #polys-1 list -- system with parametric coefficients and same support 
 	sum(exponents polys#i, t->A_(i,t)*AR_(t));
 	polySystem transpose matrix {polysP}
 );

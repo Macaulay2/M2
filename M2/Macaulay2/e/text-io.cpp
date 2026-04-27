@@ -4,9 +4,10 @@
 #include "newdelete.hpp"
 #include <cstdio>
 #include <cstring>
+#include <atomic>
 
 int MAX_LINE_LENGTH = 75;
-int emit_line_len = 0;
+std::atomic_int emit_line_len = 0;
 
 void bignum_text_out(buffer &o, mpz_srcptr a)
 {

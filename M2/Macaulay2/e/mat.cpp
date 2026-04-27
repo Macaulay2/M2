@@ -57,7 +57,7 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
                                           bool dense)
 {
   MutableMatrix *result = R->makeMutableMatrix(nrows, ncols, dense);
-  if (result != 0) return result;
+  if (result != nullptr) return result;
   // In this case, we just use ring elem arithmetic
   const CoefficientRingR *cR = R->getCoefficientRingR();
   if (dense)

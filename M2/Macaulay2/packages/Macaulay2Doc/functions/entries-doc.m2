@@ -4,7 +4,7 @@
 
 document { 
      Key => {entries,(entries,Matrix),(entries, MutableMatrix)},
-     Headline => "lists the entries of a matrix",
+     Headline => "get the entries of a matrix",
      Usage => "entries M",
      Inputs => {"M" =>  {"a ", TO Matrix, " or a ", TO MutableMatrix} 
 	  },
@@ -25,7 +25,7 @@ document {
 
 document { 
      Key => (entries,Vector),
-     Headline => "lists the entries of a vector",
+     Headline => "get the entries of a vector",
      Usage => "entries v",
      Inputs => {"v" 
 	  },

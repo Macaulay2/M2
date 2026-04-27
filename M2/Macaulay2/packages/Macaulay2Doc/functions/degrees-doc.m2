@@ -11,11 +11,10 @@ document {
     	 (degrees, FractionField),
 	 (degrees, Module),
 	 (degrees, Monoid),
-	 (degrees, Ideal),
-	 (degrees, CoherentSheaf)},
+	 (degrees, Ideal)},
      Headline => "degrees of generators",
      Usage => "degrees A",
-     Inputs => {"A" => {ofClass Ideal, ", ", ofClass Module, ", ", ofClass CoherentSheaf, ", or ", ofClass Monoid }
+     Inputs => {"A" => { ofClass Ring, ", ", ofClass Ideal, ", ", ofClass Module, ", or ", ofClass Monoid }
 	  },
      Outputs => {
 	  List => { "the list of multi-degrees for the generators of ", TT "A"}
@@ -26,7 +25,7 @@ document {
 	  S = ZZ/101[x,y,z,Degrees => {{2,3},{1,2},{2,0}}];
       	  degrees S
       ///,
-     "This function also applies to ideals, modules, and sheaves.",
+     "This function also applies to ideals, modules, and monoids.",
      EXAMPLE lines ///
           I = ideal"xy2,xyz,y3"
 	  degrees I

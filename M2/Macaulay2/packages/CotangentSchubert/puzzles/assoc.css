@@ -1,0 +1,25 @@
+.assoc {
+    transition: x 1s, y 1s, fill 1s linear .5s;
+}
+
+.assoc[data-col='0'] {
+    fill: red;
+}
+.assoc[data-col='1'] {
+    fill: green;
+}
+.assoc[data-col='2'] {
+    fill: blue;
+}
+.assoc[data-col='3'] {
+    fill: yellow;
+}
+
+text {
+    font-size: 0px;
+    stroke: none;
+}
+
+.labels text {
+    font-size: 0.5px;
+}

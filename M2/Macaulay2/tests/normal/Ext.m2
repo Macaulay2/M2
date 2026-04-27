@@ -1,10 +1,10 @@
 -- total Ext
 R = ZZ/103[x,y]/(x^3,y^2)
 N = cokernel random (R^1, R^{-2,-2})
-E = Ext(N,N);
+E = Ext(N,N,MinimalGenerators => false)
 S = ring E;
 E
-E2 = Ext^2(N,N)
+E2 = Ext^2(N,N,MinimalGenerators => false)
 E3 = Ext^3(N,N)
 assert( rank source basis( {-2,-4}, E) === rank source basis( {-4}, E2 ) )
 assert( rank source basis( {-2,-3}, E) === rank source basis( {-3}, E2 ) )

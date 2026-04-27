@@ -1,5 +1,5 @@
 -- Frank Screyer sent this in to us 7/9/2006.  It is supposed to
--- use alot of memory.  But I don't see that effect.
+-- use a lot of memory.  But I don't see that effect.
 
 scalarProduct=method()
      scalarProduct(Matrix,Matrix):=(X,Y)->sum(3,i->X^{i}*Y^{i})

@@ -249,7 +249,8 @@ doc ///
 doc ///
     Key
     	"evaluating gates"
-     	(value, InputGate, ValueHashTable)    
+	(value, Gate, ValueHashTable)    
+	(value, InputGate, ValueHashTable)    
      	(value, SumGate, ValueHashTable)
         (value, ProductGate, ValueHashTable)
         (value, DivideGate, ValueHashTable)
@@ -589,6 +590,7 @@ doc ///
 	(depth,ProductGate)
 	(depth,SumGate)
 	countGates
+	(countGates, Gate)
 	(countGates, GateMatrix)
     Usage
         d = depth g
@@ -626,4 +628,19 @@ doc ///
 	    countGates G2
     SeeAlso
         "compressing circuits"
+///
+
+doc /// 
+  Key 
+    (symbol .., InputGate, InputGate)
+  Headline 
+    Passing .. to InputGate names (see code). TO DO: expand this.
+///
+
+doc ///
+  Key 
+    "creating variables as objects of type InputGate"
+    (vars, IndexedVariable)
+    (vars, Symbol)
+    (vars, InputGate) 
 ///

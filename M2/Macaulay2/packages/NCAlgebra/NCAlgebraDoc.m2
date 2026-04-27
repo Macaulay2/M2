@@ -39,7 +39,7 @@ doc ///
       
       Detailed instructions for installing Bergman, as well as the NCAlgebra system, can be
       found in the file installNCAlgebra.txt file contained in the NCAlgebra package directory.
-      It may also be found at @HREF"https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/NCAlgebra/installNCAlgebra.txt"@.
+      It may also be found at @HREF"https://github.com/Macaulay2/M2/blob/stable/M2/Macaulay2/packages/NCAlgebra/installNCAlgebra.txt"@.
 	 
   Subnodes
     "Basic operations on noncommutative algebras"
@@ -2487,7 +2487,7 @@ doc ///
       Text
          The normal elements in degree 2 are x^2, y^2 and z^2. The basis
 	 calculation shows x^2 and y^2 are normal forms in B. The normalElements
-	 method first checks all basis monomials using @ TO isNormal @. In this case
+	 method first checks all basis monomials using @ TO (isNormal, NCRingElement)@. In this case
 	 it finds x^2 and y^2 are normal and returns this information. However,  
 	 z^2 is not a normal form expression. The normal form of z^2 is x*y+y*x. In 
 	 the second phase of the calculation, the method returns generators of the
@@ -4116,7 +4116,7 @@ doc ///
       Text
          Detailed instructions for installing Bergman, as well as the NCAlgebra system, can be
 	 found in the file installNCAlgebra.txt file contained in the NCAlgebra package directory.
-	 It may also be found at @HREF"https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/NCAlgebra/installNCAlgebra.txt"@.
+	 It may also be found at @HREF"https://github.com/Macaulay2/M2/blob/stable/M2/Macaulay2/packages/NCAlgebra/installNCAlgebra.txt"@.
    SeeAlso
       "Using the Bergman interface"
 ///

@@ -98,10 +98,10 @@ class gb_emitter : public gb_node
   virtual int n_gb_elems() const { return 0; }
   virtual const FreeModule *output_free_module() const { return gens->rows(); }
   virtual Matrix *get_matrix() { return const_cast<Matrix *>(gens); }
-  virtual Matrix *min_gens_matrix() { return 0; }
-  virtual Matrix *initial_matrix(int) { return 0; }
-  virtual Matrix *gb_matrix() { return 0; }
-  virtual Matrix *change_matrix() { return 0; }
+  virtual Matrix *min_gens_matrix() { return nullptr; }
+  virtual Matrix *initial_matrix(int) { return nullptr; }
+  virtual Matrix *gb_matrix() { return nullptr; }
+  virtual Matrix *change_matrix() { return nullptr; }
   virtual void text_out(buffer &o) const;
   virtual void stats() const;
 };

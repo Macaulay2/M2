@@ -18,9 +18,6 @@ doc ///
      for i from 0 to 1000000 do 223131321321*324234324324;
      t2 = cpuTime()
      t2-t1
-  Caveat
-    Under Linux, the cpu time reported is that consumed by the thread, but under MAC OS X,
-    it is that consumed by the process.
   SeeAlso
     "time"
     "timing"

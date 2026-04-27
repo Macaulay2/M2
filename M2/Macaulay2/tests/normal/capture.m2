@@ -16,12 +16,12 @@ i2 : A = matrix\"1,2,3,4;1,3,6,10;19,7,11,13\" ** oo\n
 o2 = | 1  2 3  4  |
      | 1  3 6  10 |
      | 19 7 11 13 |\n
-             3       4
-o2 : Matrix K  <--- K\n" | ".*", out))
+             3      4
+o2 : Matrix K  <-- K\n" | ".*", out))
 
 -- printing errors
 (err, out) = capture "1/0"
-assert(err and match("\\A\ni1 : 1/0\ncurrentString:1:2:\\(3\\):\\[.\\]: error: division by zero\n\\Z", out))
+assert(err and match("\\A\ni1 : 1/0\ncurrentString:1:1:\\(3\\):\\[.\\]: error: division by zero\n\\Z", out))
 
 -- make sure runaway existing private symbols are not changed
 -- TODO: how can we prevent new methods or hooks from escaping capture?

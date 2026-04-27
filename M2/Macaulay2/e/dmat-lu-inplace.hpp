@@ -9,7 +9,17 @@
 
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
-#include <flint/perm.h>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#include <flint/fq_nmod_mat.h>  // for fq_nmod_mat_lu, fq_zech_mat_lu
+#include <flint/perm.h>         // for _perm_parity
+#pragma GCC diagnostic pop
+
+std::vector<double> make_lapack_array(const DMatRR& mat);
+std::vector<double> make_lapack_array(const DMatCC& mat);
+void fill_from_lapack_array(const std::vector <double> & doubles, DMatRR& mat);
+void fill_from_lapack_array(const std::vector <double> & doubles, DMatCC& mat);
 
 template <typename RT>
 class LUUtil
@@ -78,7 +88,8 @@ template <>
 inline void DMatLUinPlace<M2::ARingGFFlintBig>::computeLU()
 {
   if (mIsDone) return;
-
+  //std::cout << "computing LU decomposition GFFlintBig" << std::endl;
+  
   mp_limb_signed_t* perm = newarray_atomic(mp_limb_signed_t, mLU.numRows());
   fq_nmod_mat_lu(perm, mLU.fq_nmod_mat(), false, ring().flintContext());
   // Now we set mPerm:
@@ -97,7 +108,7 @@ template <>
 inline void DMatLUinPlace<M2::ARingGFFlint>::computeLU()
 {
   if (mIsDone) return;
-
+  //  std::cout << "computing LU decomposition GFFlint" << std::endl;
   mp_limb_signed_t* perm = newarray_atomic(mp_limb_signed_t, mLU.numRows());
   fq_zech_mat_lu(perm, mLU.fq_zech_mat(), false, ring().flintContext());
   // Now we set mPerm:
@@ -185,7 +196,7 @@ void DMatLUinPlace<RingType>::computeLU()
 {
   if (mIsDone) return;
 
-  //  std::cout << "computing LU decomposition NAIVE version" << std::endl;
+  //  std::cout << "computing LU decomposition generic version" << std::endl;
   typename RingType::Element tmp(mLU.ring());
 
   size_t col = 0;  // current column we are working on
@@ -274,41 +285,29 @@ inline void DMatLUinPlace<M2::ARingRR>::computeLU()
 {
   if (mIsDone) return;
 
+  //  std::cout << "computing LU decomposition ARingRR" << std::endl;  
   int rows = static_cast<int>(mLU.numRows());
   int cols = static_cast<int>(mLU.numColumns());
   int info;
   int min = (rows <= cols) ? rows : cols;
 
-  // printf("entering DMatLUinPlace::computeLUNaive for RR\n");
+  if (min == 0)
+    return;
 
-  int* perm = newarray_atomic(int, min);
+  int* perm = new int[min];
+  std::vector<double> copyA = make_lapack_array(mLU);
 
-  double* copyA = newarray_atomic(double, mLU.numRows() * mLU.numColumns());
-
-  // place all elements of mLU, but in column major order.
-  double* p = copyA;
-  for (size_t c = 0; c < mLU.numColumns(); c++)
-    {
-      auto end = mLU.columnEnd(c);
-      for (auto a = mLU.columnBegin(c); a != end; ++a) *p++ = *a;
-    }
-
-  dgetrf_(&rows, &cols, copyA, &rows, perm, &info);
+  dgetrf_(&rows, &cols, copyA.data(), &rows, perm, &info);
 
   if (info < 0)
     {
       // First, clean up, then throw an exception
+      delete [] perm;
       throw exc::engine_error("argument passed to dgetrf had an illegal value");
-      // return;
     }
 
   // Now copy back to row major order
-  p = copyA;
-  for (size_t c = 0; c < mLU.numColumns(); c++)
-    {
-      auto end = mLU.columnEnd(c);
-      for (auto a = mLU.columnBegin(c); a != end; ++a) *a = *p++;
-    }
+  fill_from_lapack_array(copyA, mLU);
 
   // Now place the correct permutation into mPerm
   for (int i = 0; i < min; i++)
@@ -326,8 +325,7 @@ inline void DMatLUinPlace<M2::ARingRR>::computeLU()
   LUUtil<RingType>::computePivotColumns(mLU, mPivotColumns);
   mIsDone = true;
 
-  freemem(perm);
-  freemem(copyA);
+  delete [] perm;
 }
 
 template <>
@@ -335,49 +333,28 @@ inline void DMatLUinPlace<M2::ARingCC>::computeLU()
 {
   if (mIsDone) return;
 
+  //  std::cout << "computing LU decomposition ARingCC" << std::endl;
   int rows = static_cast<int>(mLU.numRows());
   int cols = static_cast<int>(mLU.numColumns());
   int info;
   int min = (rows <= cols) ? rows : cols;
 
-  // printf("entering DMatLUtemplate::computeLUNaive for RR\n");
+  if (min == 0)
+    return;
 
-  int* perm = newarray_atomic(int, min);
+  int* perm = new int[min];
+  auto copyA = make_lapack_array(mLU);
 
-  double* copyA = newarray_atomic(double, 2 * mLU.numRows() * mLU.numColumns());
-
-  // place all elements of mLU, but in column major order.
-  double* p = copyA;
-  for (size_t c = 0; c < mLU.numColumns(); c++)
-    {
-      auto end = mLU.columnEnd(c);
-      for (auto a = mLU.columnBegin(c); a != end; ++a)
-        {
-          *p++ = (*a).re;
-          *p++ = (*a).im;
-        }
-    }
-
-  zgetrf_(&rows, &cols, copyA, &rows, perm, &info);
+  zgetrf_(&rows, &cols, copyA.data(), &rows, perm, &info);
 
   if (info < 0)
     {
-      // First, clean up, then throw an exception
+      delete[] perm;
       throw exc::engine_error("argument passed to zgetrf had an illegal value");
-      // return;
     }
 
   // Now copy back to row major order
-  p = copyA;
-  for (size_t c = 0; c < mLU.numColumns(); c++)
-    {
-      auto end = mLU.columnEnd(c);
-      for (auto a = mLU.columnBegin(c); a != end; ++a)
-        {
-          (*a).re = *p++;
-          (*a).im = *p++;
-        }
-    }
+  fill_from_lapack_array(copyA, mLU);
 
   // Now place the correct permutation into mPerm
   for (int i = 0; i < min; i++)
@@ -395,8 +372,7 @@ inline void DMatLUinPlace<M2::ARingCC>::computeLU()
   LUUtil<RingType>::computePivotColumns(mLU, mPivotColumns);
   mIsDone = true;
 
-  freemem(perm);
-  freemem(copyA);
+  delete[] perm;
 }
 
 template <class RingType>

@@ -1,7 +1,13 @@
 document {
      Key => inducedMap,
      Headline => "compute an induced map",
-     SeeAlso => "inducesWellDefinedMap"
+     Subnodes => {
+	 TO (inducedMap, Module, Module),
+	 TO (inducedMap, Module, Module, Matrix),
+	 TO [inducedMap, Degree],
+	 TO [inducedMap, Verify],
+	 TO inducesWellDefinedMap,
+     }
      }
 document {
      Key => [inducedMap,Degree],
@@ -26,7 +32,7 @@ document {
      }
 
 document {
-     Key => {(inducedMap, Module, Module),(inducedMap, ChainComplex, ChainComplex)},
+     Key => {(inducedMap, Module, Module)},
      Headline => "compute the map induced by the identity",
      Usage => "inducedMap(M,N)",
      Inputs => { "M", "N" },

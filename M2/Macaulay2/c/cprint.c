@@ -296,7 +296,7 @@ static void cprintarraydef(node t){
      if (length(m) == 1) put("int len;");
      cprint(typ);
      put(" array[");
-     if (len!=NULL) cprint(len); else put("1");
+     if (len!=NULL) cprint(len);
      put("];};\n");
      }
 
@@ -380,8 +380,6 @@ static void cprintsomesizeof(node t, node arraylen){
 	       cprint(arraylen);
 	       put(")*sizeof(");
 	       cprint(typ);
-	       put(")-sizeof(");
-	       cprint(typ);
 	       put(")");
 	       }
 	  }
@@ -463,7 +461,7 @@ static void cprintdefine(node t,bool definitions) {
 	       threadLocalDeclarationFlag = 1;
 	       cprint(t);
 	       threadLocalDeclarationFlag = 0;	      
-	       put("_id;\n");
+	       put("_id");
 //	       put("__thread ");
           }
      if (flags & const_F) put("const ");

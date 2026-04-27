@@ -78,7 +78,7 @@ document {
 	  },
      
      PARA{}, "Now we have seen how to construct fans, so we turn to functions on fans, 
-     for example the direct product (",TO directProduct,":",
+     for example the direct product (",TO (directProduct, Cone, Cone), "):",
      
      EXAMPLE {
 	  " F3 = fan {coneFromVData matrix {{1}},coneFromVData matrix {{-1}}}",
@@ -347,9 +347,9 @@ document {
      Headline => "computing the convex hull of points, rays and polyhedra",
      Usage => " P = convexHull M \nP = convexHull(M,N) \nP = convexHull(P1,P2) \nP = convexHull L \nP = convexHull(M,N,W)",
      Inputs => {
-	  "M" => Matrix => {"with entries in", TO ZZ," or ", TO QQ},
-	  "N" => Matrix => {"with entries in", TO ZZ," or ", TO QQ},
-	  "W" => Matrix => {"with entries in", TO ZZ," or ", TO QQ},
+	  "M" => Matrix => {"with entries in ", TO ZZ," or ", TO QQ},
+	  "N" => Matrix => {"with entries in ", TO ZZ," or ", TO QQ},
+	  "W" => Matrix => {"with entries in ", TO ZZ," or ", TO QQ},
 	  "P1" => Polyhedron,
 	  "P2" => Polyhedron,
 	  "L" => List
@@ -435,8 +435,8 @@ document {
      Headline => "computes the positive hull of rays, cones, and the cone over a polyhedron",
      Usage => " C = coneFromVData M \nC = coneFromVData(M,N) \nC = coneFromVData(C1,C2) \nC = coneFromVData P \nC = coneFromVData L",
      Inputs => {
-	  "M" => Matrix => {"with entries in", TO ZZ," or ", TO QQ},
-	  "N" => Matrix => {"with entries in", TO ZZ," or ", TO QQ},
+	  "M" => Matrix => {"with entries in ", TO ZZ," or ", TO QQ},
+	  "N" => Matrix => {"with entries in ", TO ZZ," or ", TO QQ},
 	  "C1" => Cone,
 	  "C2" => Cone,
 	  "P" => Polyhedron,
@@ -1489,7 +1489,7 @@ document {
      }
 
 document {
-     Key => {isSmooth, (isSmooth,Cone), (isSmooth,Fan)},
+     Key => {(isSmooth,Cone), (isSmooth,Fan)},
      Headline => "checks if a Cone or Fan is smooth",
      Usage => " b = isSmooth C \nb = isSmooth F",
      Inputs => {
@@ -1512,7 +1512,7 @@ document {
      }
 
 document {
-     Key => {isVeryAmple,(isVeryAmple,Polyhedron)},
+     Key => {(isVeryAmple, Polyhedron)},
      Headline => "checks if the Polyhedron is very ample",
      Usage => " b = isVeryAmple P",
      Inputs => {
@@ -1593,7 +1593,7 @@ document {
      }
 
 document {
-     Key => {(hilbertBasis,Cone)},
+     Key => {hilbertBasis, (hilbertBasis,Cone)},
      Headline => "computes the Hilbert basis of a Cone",
      Usage => " HB = hilbertBasis C",
      Inputs => {
@@ -1612,12 +1612,16 @@ document {
      PARA{}, HREF("http://www.hemmecke.de/raymond/", "Raymond Hemmecke's"), " ", EM "On the 
      computation of Hilbert bases of cones", ", in A. M. Cohen, X.-S. Gao, and N. Takayama, 
      editors, Mathematical Software, ICMS 2002, pages 307317. World Scientific, 2002.",
-     
+
      EXAMPLE {
 	  " C = coneFromVData matrix {{1,2},{2,1}}",
 	  " hilbertBasis C"
-	  }
+	  },
+
+     PARA{}, "Beginning with Macaulay2 version 1.24.11, this method calls the internal function ",
+     TT "rawHilbertBasis", " which calls the C++ library ", TO2 {"normaliz", "libnormaliz"}, ".",
      
+     SeeAlso => {"FourTiTwo::hilbertBasis(Matrix)"}
      }
 
 document {
@@ -2554,12 +2558,6 @@ document {
 --      }
 
 document {
-     Key => directProduct,
-     Headline => "computes the direct product of two convex objects",
-     
-     }
-
-document {
      Key => {(directProduct,Cone,Cone), (directProduct,Cone,Polyhedron), 
 	  (directProduct,Polyhedron,Cone), (directProduct,Polyhedron,Polyhedron)},
      Headline => "computes the direct product of polyhedra and cones",
@@ -3140,7 +3138,7 @@ document {
      PARA{}, "Computes the direct product of ",TT "C1"," and ",TT "C2",". This is the cone 
      ",TT "{(x,y) | x in C1, y in C2}",", in the direct product of the ambient spaces.",
      
-     PARA{}, "See also ",TO directProduct,".",
+     PARA{}, "See also ",TO (directProduct, Cone, Cone),".",
      
      EXAMPLE {
 	  " C1 = coneFromVData matrix {{1,2},{2,1}}",
@@ -3166,7 +3164,7 @@ document {
      PARA{}, "Computes the direct product of ",TT "C"," and ",TT "P",". This is the 
      polyhedron ",TT "{(c,p) | c in C, p in P}",", in the direct product of the ambient spaces.", 
      
-     PARA{}, "See also ",TO directProduct,".",
+     PARA{}, "See also ",TO (directProduct, Cone, Cone),".",
      
      EXAMPLE {
 	  " C = coneFromVData matrix {{1,2},{2,1}}",
@@ -3192,7 +3190,7 @@ document {
      PARA{}, "Computes the direct product of ",TT "P"," and ",TT "C",". This is the polyhedron 
      ",TT "{(p,c) | p in P, x in C}",", in the direct product of the ambient spaces.", 
      
-     PARA{}, "See also ",TO directProduct,".",
+     PARA{}, "See also ",TO (directProduct, Cone, Cone),".",
      
      EXAMPLE {
 	  " P =convexHull matrix {{1},{-1}}",
@@ -3218,7 +3216,7 @@ document {
      PARA{}, "Computes the direct product of ",TT "P1"," and ",TT "P2",".This is the polyhedron 
      ",TT "{(x,y) | x in P1, y in P2}",", in the direct product of the ambient spaces.",
      
-     PARA{}, "See also ",TO directProduct,".",
+     PARA{}, "See also ",TO (directProduct, Cone, Cone),".",
      
      EXAMPLE {
 	  " P1 = convexHull matrix {{1,-1,0,0},{0,0,1,-1}}",

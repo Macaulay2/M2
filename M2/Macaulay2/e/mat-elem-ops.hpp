@@ -19,15 +19,14 @@ class MatElementaryOps<DMat<RT> >
   typedef DMat<RT> Mat;
   typedef typename Mat::ElementType ElementType;
   typedef typename RT::Element Element;
-  typedef typename Mat::Iterator Iterator;
-  typedef typename Mat::ConstIterator ConstIterator;
 
- private:
-  template <typename It1, typename It2, typename It3>
-  static void copy_from_iter(const RT& R, It1 loc1, It2 end1, It3 loc2)
-  {
-    for (; loc1 != end1; ++loc1, ++loc2) R.set(*loc1, *loc2);
-  }
+  // remove
+ // private:
+ //  template <typename It1, typename It2, typename It3>
+ //  static void copy_from_iter(const RT& R, It1 loc1, It2 end1, It3 loc2)
+ //  {
+ //    for (; loc1 != end1; ++loc1, ++loc2) R.set(*loc1, *loc2);
+ //  }
 
  public:
   static size_t lead_row(const Mat& mat, size_t col)
@@ -75,10 +74,8 @@ class MatElementaryOps<DMat<RT> >
     assert(j < mat.numRows());
     if (i == j) return;
 
-    auto ii = mat.rowBegin(i);
-    auto jj = mat.rowBegin(j);
-    auto end = mat.rowEnd(i);
-    for (; ii != end; ++ii, ++jj) mat.ring().swap(*ii, *jj);
+    for (size_t c = 0; c < mat.numColumns(); ++c)
+      mat.ring().swap(mat.entry(i,c), mat.entry(j,c));
   }
 
   static void interchange_columns(Mat& mat, size_t i, size_t j)
@@ -88,58 +85,48 @@ class MatElementaryOps<DMat<RT> >
     assert(j < mat.numColumns());
     if (i == j) return;
 
-    auto ii = mat.columnBegin(i);
-    auto jj = mat.columnBegin(j);
-    auto end = mat.columnEnd(i);
-    for (; ii != end; ++ii, ++jj) mat.ring().swap(*ii, *jj);
+    for (size_t r = 0; r < mat.numRows(); ++r)
+      mat.ring().swap(mat.entry(r,i), mat.entry(r,j));
   }
 
-  static void scale_row(Mat& mat, size_t i, const ElementType& r)
-  /* row(i) <- r * row(i) */
+  static void scale_row(Mat& mat, size_t i, const ElementType& a)
+  /* row(i) <- a * row(i) */
   {
     assert(i < mat.numRows());
 
-    auto loc = mat.rowBegin(i);
-    auto end = mat.rowEnd(i);
-    for (; loc != end; ++loc)
-      mat.ring().mult(*loc, r, *loc);  // *loc = r * *loc
+    for (size_t c = 0; c < mat.numColumns(); ++c)
+      mat.ring().mult(mat.entry(i,c), a, mat.entry(i,c));
   }
 
-  static void scale_column(Mat& mat, size_t i, const ElementType& r)
-  /* column(i) <- r * column(i) */
+  static void scale_column(Mat& mat, size_t i, const ElementType& a)
+  /* column(i) <- a * column(i) */
   {
     assert(i < mat.numColumns());
 
-    auto loc = mat.columnBegin(i);
-    auto end = mat.columnEnd(i);
-    for (; loc != end; ++loc)
-      mat.ring().mult(*loc, r, *loc);  // *loc = r * *loc
+    for (size_t r = 0; r < mat.numRows(); ++r)
+      mat.ring().mult(mat.entry(r,i), a, mat.entry(r,i));
   }
 
-  static void divide_row(Mat& mat, size_t i, const ElementType& r)
-  /* row(i) <- row(i) / r */
+  static void divide_row(Mat& mat, size_t i, const ElementType& a)
+  /* row(i) <- row(i) / a */
   {
     assert(i < mat.numRows());
 
-    auto loc = mat.rowBegin(i);
-    auto end = mat.rowEnd(i);
-    for (; loc != end; ++loc)
-      mat.ring().divide(*loc, *loc, r);  // *loc = *loc / r
+    for (size_t c = 0; c < mat.numColumns(); ++c)
+      mat.ring().divide(mat.entry(i,c), mat.entry(i,c), a);
   }
 
-  static void divide_column(Mat& mat, size_t i, const ElementType& r)
-  /* column(i) <- column(i) / r */
+  static void divide_column(Mat& mat, size_t i, const ElementType& a)
+  /* column(i) <- column(i) / a */
   {
     assert(i < mat.numColumns());
 
-    auto loc = mat.columnBegin(i);
-    auto end = mat.columnEnd(i);
-    for (; loc != end; ++loc)
-      mat.ring().divide(*loc, *loc, r);  // *loc = *loc / r
+    for (size_t r = 0; r < mat.numRows(); ++r)
+      mat.ring().divide(mat.entry(r,i), mat.entry(r,i), a);
   }
 
-  static void row_op(Mat& mat, size_t i, const ElementType& r, size_t j)
-  /* row(i) <- row(i) + r * row(j) */
+  static void row_op(Mat& mat, size_t i, const ElementType& a, size_t j)
+  /* row(i) <- row(i) + a * row(j) */
   {
     assert(i < mat.numRows());
     assert(j < mat.numRows());
@@ -148,19 +135,15 @@ class MatElementaryOps<DMat<RT> >
     Element f(mat.ring());
     mat.ring().set_zero(f);
 
-    auto loc1 = mat.rowBegin(i);
-    auto loc2 = mat.rowBegin(j);
-    auto end = mat.rowEnd(i);
-
-    for (; loc1 != end; ++loc1, ++loc2)
+    for (size_t c = 0; c < mat.numColumns(); ++c)
       {
-        mat.ring().mult(f, r, *loc2);
-        mat.ring().add(*loc1, f, *loc1);
+        mat.ring().mult(f, a, mat.entry(j,c));
+        mat.ring().add(mat.entry(i,c), f, mat.entry(i,c));
       }
   }
 
-  static void column_op(Mat& mat, size_t i, const ElementType& r, size_t j)
-  /* column(i) <- column(i) + r * column(j) */
+  static void column_op(Mat& mat, size_t i, const ElementType& a, size_t j)
+  /* column(i) <- column(i) + a * column(j) */
   {
     assert(i < mat.numColumns());
     assert(j < mat.numColumns());
@@ -169,43 +152,10 @@ class MatElementaryOps<DMat<RT> >
     Element f(mat.ring());
     mat.ring().set_zero(f);
 
-    auto loc1 = mat.columnBegin(i);
-    auto loc2 = mat.columnBegin(j);
-    auto end = mat.columnEnd(i);
-
-    for (; loc1 != end; ++loc1, ++loc2)
+    for (size_t r = 0; r < mat.numRows(); ++r)
       {
-        mat.ring().mult(f, r, *loc2);
-        mat.ring().add(*loc1, f, *loc1);
-      }
-  }
-
- private:
-  static void op2by2(const RT& ring,
-                     Iterator& loc1,
-                     ConstIterator& end,
-                     Iterator& loc2,
-                     const ElementType& a1,
-                     const ElementType& a2,
-                     const ElementType& b1,
-                     const ElementType& b2)
-  {
-    Element f1(ring), f2(ring), g1(ring), g2(ring);
-    ring.set_zero(f1);
-    ring.set_zero(f2);
-    ring.set_zero(g1);
-    ring.set_zero(g2);
-    for (; loc1 != end; ++loc1, ++loc2)
-      {
-        ring.mult(f1, a1, *loc1);
-        ring.mult(f2, a2, *loc2);
-        ring.mult(g1, b1, *loc1);
-        ring.mult(g2, b2, *loc2);
-
-        ring.add(f1, f1, f2);
-        ring.add(g1, g1, g2);
-        ring.set(*loc1, f1);
-        ring.set(*loc2, g1);
+        mat.ring().mult(f, a, mat.entry(r,j));
+        mat.ring().add(mat.entry(r,i), f, mat.entry(r,i));
       }
   }
 
@@ -225,11 +175,26 @@ class MatElementaryOps<DMat<RT> >
     assert(r2 < mat.numRows());
     assert(r1 != r2);
 
-    auto loc1 = mat.rowBegin(r1);
-    auto loc2 = mat.rowBegin(r2);
-    auto end = mat.rowEnd(r1);
+    const RT& ring { mat.ring() };
+    Element f1(ring), f2(ring), g1(ring), g2(ring);
+    ring.set_zero(f1);
+    ring.set_zero(f2);
+    ring.set_zero(g1);
+    ring.set_zero(g2);
 
-    op2by2(mat.ring(), loc1, end, loc2, a1, a2, b1, b2);
+    for (size_t c = 0; c < mat.numColumns(); ++c)
+      {
+        ring.mult(f1, a1, mat.entry(r1,c));
+        ring.mult(f2, a2, mat.entry(r2,c));
+        ring.add(f1, f1, f2);
+        
+        ring.mult(g1, b1, mat.entry(r1,c));
+        ring.mult(g2, b2, mat.entry(r2,c));
+        ring.add(g1, g1, g2);
+
+        ring.set(mat.entry(r1,c), f1);
+        ring.set(mat.entry(r2,c), g1);
+      }
   }
 
   static void column2by2(Mat& mat,
@@ -247,13 +212,29 @@ class MatElementaryOps<DMat<RT> >
     assert(c2 < mat.numColumns());
     assert(c1 != c2);
 
-    auto loc1 = mat.columnBegin(c1);
-    auto loc2 = mat.columnBegin(c2);
-    auto end = mat.columnEnd(c1);
+    const RT& ring { mat.ring() };
+    Element f1(ring), f2(ring), g1(ring), g2(ring);
+    ring.set_zero(f1);
+    ring.set_zero(f2);
+    ring.set_zero(g1);
+    ring.set_zero(g2);
 
-    op2by2(mat.ring(), loc1, end, loc2, a1, a2, b1, b2);
+    for (size_t r = 0; r < mat.numRows(); ++r)
+      {
+        ring.mult(f1, a1, mat.entry(r, c1));
+        ring.mult(f2, a2, mat.entry(r, c2));
+        ring.add(f1, f1, f2);
+        
+        ring.mult(g1, b1, mat.entry(r, c1));
+        ring.mult(g2, b2, mat.entry(r, c2));
+        ring.add(g1, g1, g2);
+
+        ring.set(mat.entry(r, c1), f1);
+        ring.set(mat.entry(r, c2), g1);
+      }
   }
 
+  // dot product of *columns* i,j
   static void dot_product(const Mat& mat,
                           size_t i,
                           size_t j,
@@ -262,27 +243,24 @@ class MatElementaryOps<DMat<RT> >
     assert(i < mat.numColumns());
     assert(j < mat.numColumns());
 
-    auto loc1 = mat.columnBegin(i);
-    auto loc2 = mat.columnBegin(j);
-    auto end = mat.columnEnd(i);
-
     Element f(mat.ring());
     mat.ring().set_zero(f);
     mat.ring().set_zero(result);
-    for (; loc1 != end; ++loc1, ++loc2)
+    
+    for (size_t r = 0; r < mat.numRows(); ++r)
       {
-        mat.ring().mult(f, *loc1, *loc2);
+        mat.ring().mult(f, mat.entry(r,i), mat.entry(r,j));
         mat.ring().add(result, result, f);
       }
   }
 
   static bool row_permute(Mat& mat, size_t start_row, M2_arrayint perm)
   {
-    // We copy one row to another location for each cycle in 'perm' of length >
-    // 1.
+    // We copy one row to another location for each cycle in 'perm' of length > 1
     size_t nrows_to_permute = perm->len;
     std::unique_ptr<bool[]> done(new bool[nrows_to_permute]);
     for (size_t i = 0; i < nrows_to_permute; i++) done[i] = true;
+    // We check that this is a permutation
     for (size_t i = 0; i < nrows_to_permute; i++)
       {
         size_t j = perm->array[i];
@@ -305,27 +283,20 @@ class MatElementaryOps<DMat<RT> >
         else
           {
             // store row 'next' into tmp
-            auto loc1 = mat.rowBegin(start_row + next);
-            auto end1 = mat.rowEnd(start_row + next);
-            copy_from_iter(mat.ring(), tmp.data(), tmp.data()+mat.numColumns(), loc1);
-
+            for (int i=0; i<mat.numColumns(); ++i) std::swap(tmp[i], mat.entry(start_row + next, i));
+            
             size_t r = next;
-            for (;;)
+            while (perm->array[r] != next)
               {
                 // copy row perm[r] to row r
-                auto loc2 = mat.rowBegin(start_row + perm->array[r]);
-                loc1 = mat.rowBegin(start_row + r);
-                end1 = mat.rowEnd(start_row + r);
-
-                copy_from_iter(mat.ring(), loc1, end1, loc2);
+                for (int i = 0; i < mat.numColumns(); ++i)
+                  std::swap(mat.entry(start_row + perm->array[r], i),
+                            mat.entry(start_row + r, i));
                 done[r] = true;
-                size_t next_r = perm->array[r];
-                if (next_r == next) break;  // and so r is the previous one
                 r = perm->array[r];
               }
-            // Now copy tmp back
-            // TODO this is even more evil than the above
-            copy_from_iter(mat.ring(), loc1, end1, tmp.data());
+            // we swap tmp and r
+            for (int i=0; i<mat.numColumns(); ++i) std::swap(tmp[i], mat.entry(start_row + r, i));
             done[r] = true;
           }
       }
@@ -334,11 +305,11 @@ class MatElementaryOps<DMat<RT> >
 
   static bool column_permute(Mat& mat, size_t start_col, M2_arrayint perm)
   {
-    // We copy one column to another location for each cycle in 'perm' of length
-    // > 1.
+    // We copy one col to another location for each cycle in 'perm' of length > 1
     size_t ncols_to_permute = perm->len;
     std::unique_ptr<bool[]> done(new bool[ncols_to_permute]);
     for (size_t i = 0; i < ncols_to_permute; i++) done[i] = true;
+    // We check that this is a permutation
     for (size_t i = 0; i < ncols_to_permute; i++)
       {
         size_t j = perm->array[i];
@@ -360,34 +331,27 @@ class MatElementaryOps<DMat<RT> >
           }
         else
           {
-            auto loc1 = mat.columnBegin(start_col + next);
-            auto end1 = mat.columnEnd(start_col + next);
             // store col 'next' into tmp
-            copy_from_iter(mat.ring(), tmp.data(), tmp.data() + mat.numRows(), loc1);
-
-            size_t r = next;
-            for (;;)
+            for (int i=0; i<mat.numRows(); ++i) std::swap(tmp[i], mat.entry(i, start_col + next));
+            
+            size_t c = next;
+            while (perm->array[c] != next)
               {
-                auto loc2 = mat.columnBegin(start_col + perm->array[r]);
-                loc1 = mat.columnBegin(start_col + r);
-                end1 = mat.columnEnd(start_col + r);
-
-                // copy col perm[r] to col r
-                copy_from_iter(mat.ring(), loc1, end1, loc2);
-
-                done[r] = true;
-                size_t next_r = perm->array[r];
-                if (next_r == next) break;  // and so r is the previous one
-                r = perm->array[r];
+                // swap col perm[c] to col c
+                for (int i = 0; i < mat.numRows(); ++i)
+                  std::swap(mat.entry(i, start_col + perm->array[c]),
+                            mat.entry(i, start_col + c));
+                done[c] = true;
+                c = perm->array[c];
               }
-            // Now copy tmp back
-            copy_from_iter(mat.ring(), loc1, end1, tmp.data());
-            done[r] = true;
+            // we swap tmp and c
+            for (int i=0; i<mat.numRows(); ++i) std::swap(tmp[i], mat.entry(i, start_col + c));
+            done[c] = true;
           }
       }
     return true;
   }
-
+  
   static void insert_columns(Mat& mat, size_t i, size_t n_to_add)
   /* Insert n_to_add columns directly BEFORE column i. TODO: use iterators */
   {
@@ -524,15 +488,14 @@ class MatElementaryOps<DMat<RT> >
 
     for (size_t i = 0; i <= nc; i++)
       {
-        auto p = M.columnBegin(i);
-        auto p_end = M.columnEnd(i);
-        for (size_t j = 0; p != p_end; ++p, ++j)
+        for (size_t j = 0; j < M.numRows(); ++j)
           {
-            if (M.ring().is_zero(*p)) continue;
+            auto& p = M.entry(j,i);
+            if (M.ring().is_zero(p)) continue;
             int pivot_type = 0;
-            if (M.ring().is_equal(one, *p))
+            if (M.ring().is_equal(one, p))
               pivot_type = 1;
-            else if (M.ring().is_equal(minus_one, *p))
+            else if (M.ring().is_equal(minus_one, p))
               pivot_type = -1;
             if (pivot_type != 0)
               {
@@ -554,16 +517,15 @@ class MatElementaryOps<DMat<RT> >
     // Now search for other possible pivots
     for (size_t i = 0; i <= nc; i++)
       {
-        auto p = M.columnBegin(i);
-        auto p_end = M.columnEnd(i);
-        for (size_t j = 0; p != p_end; ++p, ++j)
+        for (size_t j = 0; j < M.numRows(); ++j)
           {
-            if (M.ring().is_zero(*p)) continue;
-            if (!M.ring().is_unit(*p)) continue;
+            auto& p = M.entry(j,i);
+            if (M.ring().is_zero(p)) continue;
+            if (!M.ring().is_unit(p)) continue;
             int pivot_type = 0;
-            if (M.ring().is_equal(one, *p))
+            if (M.ring().is_equal(one, p))
               pivot_type = 1;
-            else if (M.ring().is_equal(minus_one, *p))
+            else if (M.ring().is_equal(minus_one, p))
               pivot_type = -1;
 
             // printf("before general reduction: j=%lu i=%lu:\n",j,i);

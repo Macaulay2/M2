@@ -11,6 +11,7 @@ export {
 
 ZZpFlint = (char) ->
 (
+   assert(isPrime char and char < 2^64);
    ZZp(char, Strategy => "Flint")
 )
 

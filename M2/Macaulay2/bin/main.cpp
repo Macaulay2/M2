@@ -14,7 +14,6 @@
 
 #include <gdbm.h>
 #include <mpfr.h>
-#include <readline/readline.h>
 
 #include <boost/stacktrace.hpp>
 #include <atomic>
@@ -24,6 +23,7 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <flint/flint.h> // for flint_set_abort
 
 /* ######################################################################### */
 
@@ -55,6 +55,14 @@ bool interrupts_interruptShield;
 void* interpFunc(ArgCell* vargs);
 void* profFunc(ArgCell* p);
 void* testFunc(ArgCell* p);
+void  M2_flint_abort(void);
+
+static void * GC_start_performance_measurement_0(void *) {
+#ifdef GC_start_performance_measurement /* added in bdwgc 8 */
+  GC_start_performance_measurement();
+#endif
+  return NULL;
+}
 
 int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[])
 {
@@ -63,6 +71,14 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
   while (env[++envc] != NULL) { /* iterate over environ until you hit NULL */ }
 
   GC_INIT();
+  size_t heap_size = GC_get_heap_size(),
+	 min_heap_size = 150'000'000 + getMaxAllowableThreads() * 8'000'000;
+		// each thread is currently started with 8 MB of stack space
+  if (heap_size < min_heap_size)
+    GC_expand_hp(min_heap_size - heap_size);
+  GC_call_with_alloc_lock(GC_start_performance_measurement_0, NULL);
+    // record total time of (full) gcs for GCstats()
+
   IM2_initialize();
 
 #ifndef NDEBUG
@@ -71,15 +87,12 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
 
   system_cpuTime_init();
 
-#ifdef WITH_PYTHON
-  Py_Initialize();
-#endif
-
   abort_jmp.is_set = FALSE;
   interrupt_jmp.is_set = FALSE;
 
   signal(SIGPIPE,SIG_IGN); /* ignore the broken pipe signal */
-  rl_catch_signals = FALSE; /* tell readline not to catch signals, such as SIGINT */
+
+  flint_set_abort(M2_flint_abort);
 
   static struct ArgCell* M2_vargs;
   M2_vargs = (ArgCell*) GC_MALLOC_UNCOLLECTABLE(sizeof(struct ArgCell));
@@ -109,15 +122,10 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
 
 /* ######################################################################### */
 
-std::ofstream prof_log;
-thread_local std::vector<char*> M2_stack;
-
-void stack_trace(std::ostream &stream, bool M2) {
-  if(M2) {
-    stream << "M2";
-    for (char* M2_frame : M2_stack)
-      stream << ";" << M2_frame;
-    stream << std::endl;
+void profiler_stacktrace(std::ostream &stream, int traceDepth) {
+  if(0 < traceDepth) {
+    // TODO: pipe output to the stream
+    profiler_stacktrace(traceDepth);
   } else {
     stream << "-* stack trace, pid: " << (long) getpid() << std::endl;
     stream << boost::stacktrace::stacktrace();
@@ -125,25 +133,20 @@ void stack_trace(std::ostream &stream, bool M2) {
   }
 }
 
-extern "C" {
-  void M2_stack_trace() { stack_trace(std::cout, false); }
-#if PROFILING
-  void M2_stack_push(char* M2_frame) { M2_stack.emplace_back(M2_frame); }
-  void M2_stack_pop() { M2_stack.pop_back(); }
-#else
-  void M2_stack_push(char* M2_frame) {}
-  void M2_stack_pop() {}
-#endif
+void M2_flint_abort(void) {
+  profiler_stacktrace(std::cerr, 0);
+  abort();
 }
 
 void* profFunc(ArgCell* p)
 {
   using namespace std::chrono_literals;
   std::string filename("profile-" + std::to_string(getpid())+ ".raw");
-  // std::cerr << "Saving profile data in " << filename << std::endl;
-  prof_log.open(filename, std::ios::out | std::ios::trunc );
+  std::cerr << "-- Storing profiling data in " << filename << std::endl;
+  std::ofstream prof_log(filename, std::ios::out | std::ios::trunc );
   while(true) {
-    std::this_thread::sleep_for(1000ms);
+    // use prime number to avoid oversampling scheduled tasks
+    std::this_thread::sleep_for(997ms);
     tryGlobalTrace();
   }
   return NULL;
@@ -217,7 +220,7 @@ extern "C" void oursignal(int sig, void (*handler)(int)) {
 
 void trace_handler(int sig) {
   if (tryGlobalTrace() == 0)
-    stack_trace(prof_log, true);
+    profiler_stacktrace(std::cerr, 1);
   oursignal(SIGUSR1,trace_handler);
 }
 
@@ -235,7 +238,7 @@ void segv_handler(int sig) {
     fprintf(stderr,"-- SIGSEGV handler called a second time, aborting\n");
     _exit(2);
   }
-  stack_trace(std::cerr, false);
+  profiler_stacktrace(std::cerr, 0);
   level --;
   _exit(1);
 }
@@ -274,7 +277,7 @@ void interrupt_handler(int sig) {
 	    }
 	  }
 	  if (buf[0]=='b' || buf[0]=='B') {
-	    stack_trace(std::cout, false);
+	    profiler_stacktrace(std::cout, 0);
 	    fprintf(stderr,"exiting\n");
 	    exit(12);
 	  }

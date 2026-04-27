@@ -43,7 +43,7 @@ class ReducedGB : public GBComputation
   static ReducedGB *create(const PolynomialRing *originalR0,
                            const FreeModule *F0,
                            const FreeModule *Fsyz0,
-                           const GBWeight *wt0 = 0);
+                           const GBWeight *wt0 = nullptr);
 
   virtual GBComputation *cast_to_GBComputation() { return this; }
   virtual void start_computation() {}

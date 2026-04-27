@@ -80,8 +80,12 @@ if(NOT BDWGC_VERSION_OK)
       )
   endif()
 
+  # check that bdwg-gc has C++ support installed (it must be configured with --enable-cplusplus)
+  set(CMAKE_REQUIRED_INCLUDES "${BDWGC_INCLUDE_DIR}")
+  check_include_files(gc/gc_cpp.h BDWGC_CXX_SUPPORT LANGUAGE CXX)
+
   include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(BDWGC DEFAULT_MSG BDWGC_INCLUDE_DIR BDWGC_LIBRARIES BDWGC_VERSION_OK)
+  find_package_handle_standard_args(BDWGC DEFAULT_MSG BDWGC_INCLUDE_DIR BDWGC_LIBRARIES BDWGC_VERSION_OK BDWGC_CXX_SUPPORT)
 
   mark_as_advanced(BDWGC_INCLUDE_DIR BDWGC_LIBRARIES)
 

@@ -7,14 +7,26 @@ export {"refine", "newton", "endGameCauchy"}
 newton = method()
 -- assumes F has coefficients in field RR_prec or CC_prec 
 --         P has coordinates in that can be promoted to the above field 
-newton (PolySystem, AbstractPoint) := (F,P) -> (
+newton (System, AbstractPoint) := (F,P) -> (
     X := transpose matrix P;
-    X' := newton(F,X); 
+    valueJ := evaluateJacobian(F,P);
+    dX := if isSquare F then solve(valueJ, evaluate(F,P))
+    else if numVariables F < numFunctions F then solve(valueJ, evaluate(F,X), ClosestFit=>true)
+    else ( -- underdetermined
+	M := valueJ;
+	(S,U,Vt) := SVD M;
+	invJ := conjugate transpose Vt *
+	        diagonalMatrix(numColumns M, numRows M, apply(S, s->if s==0 then 0 else 1/s)) * 
+		conjugate transpose U; -- pseudo-inverse
+	invJ*evaluate(F,X) 
+	); 
+    X':=X-dX;
     P' := point X';
     P'.cache.ErrorBoundEstimate = norm(X'-X);
     P'
     )
-newton (PolySystem, Matrix) := (F,X) -> (
+-*
+newton (System, Matrix) := (F,X) -> (
     J := jacobian F;
     dX := if isSquare F then solve(evaluate(J,X), evaluate(F,X))
     else if F.NumberOfVariables < F.NumberOfPolys then solve(evaluate(J,X), evaluate(F,X), ClosestFit=>true)
@@ -28,6 +40,7 @@ newton (PolySystem, Matrix) := (F,X) -> (
 	); 
     X-dX
     )
+*-
 
 TEST ///
 -- square 

@@ -2,38 +2,26 @@ doc ///
   Key
     AnnFs
     (AnnFs, RingElement)
-    (AnnFs, List)
   Headline
     differential annihilator of a polynomial in a Weyl algebra
   Usage
     AnnFs(f)
-    AnnFs(L)
   Inputs
     f:RingElement
       polynomial in a Weyl algebra $D$
-    L:List
-      of polynomials in the Weyl algebra $D$
   Outputs
      :Ideal
-      the differential annihilator of $f$ in $D[s]$, for a new variable $s$, or the differential 
-      annihilator of $L$ in $D[t_0,..,t_0,dt_0,..,dt_k]$, where $L$ is a list of $k+1$ elements 
-      and the $t_i$ are new variables.
+      the differential annihilator of $f$ in $D[s]$, for a new variable $s$. 
   Description
     Text
-     This routine computes the ideal of the differential annihilator of a polynomial or list of 
-     polynomials in a Weyl algebra $D$. This ideal is a left ideal of the ring $D[s]$ 
-     or $D[t_0,..,t_k,dt_0,..,dt_k]$.  More
+     This routine computes the ideal of the differential annihilator of a polynomial. This ideal is a left ideal of the ring $D[s]$.  More
      details can be found in 
      [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Chapter 5].  
-     The computation in the case of the element $f$ is via  Algorithm 5.3.6, and the computation
-     in the case of the list $L$ is via the Algorithm 5.3.15.
+     The computation in the case of the element $f$ is via  Algorithm 5.3.6.
     Example
       makeWA(QQ[x,y])
       f = x^2+y
       AnnFs f
-    Example
-      makeWA(QQ[x,y,z])
-      L = {x^3,y+5*z}
   Caveat
      Must be over a ring of characteristic $0$.
 ///
@@ -78,7 +66,7 @@ doc ///
     diffRatFun(m,g,f,a)
   Inputs
     f:RingElement
-      polynomial in a Weyl algebra $D$ in $n$ variables or ratinoal function in the fraction
+      polynomial in a Weyl algebra $D$ in $n$ variables or rational function in the fraction
       field of a polynomial ring in $n$ variables
     g:RingElement
       polynomial in a Weyl algebra $D$ in $n$ variables

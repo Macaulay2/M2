@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -990244196
+-- -*- M2-comint -*- hash: 12504509484145185436
 
 i1 : F=fan ({posHull(matrix{{1,2,3},{0,2,0}}),posHull(matrix{{0},{1}})});
 

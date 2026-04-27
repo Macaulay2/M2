@@ -10,11 +10,11 @@ newPackage(
 	  {Name => "Lily Silverstein", Email => "lsilverstein@cpp.edu", HomePage => "https://www.cpp.edu/faculty/lsilverstein/"}
 	  },
      Headline => "some additional ChainComplex Functions",
+     PackageExports => {"OldChainComplexes"},
      Keywords => {"Homological Algebra"},
      DebuggingMode =>false
      )
 
-export "isExact"
 export "isChainComplex"
 export "isChainComplexMap"
 export "isQuasiIsomorphism"
@@ -24,7 +24,7 @@ export "taylor"
 export "taylorResolution"
 export "chainComplexMap"
 export "InitialDegree"
-export "minimize"
+--export "minimize"
 export "isMinimalChainComplex"
 export "extendFromMiddle"
 export "resolutionOfChainComplex"
@@ -232,7 +232,7 @@ C1=appendZeroMap prependZeroMap C
 removeZeroTrailingTerms C1
 ///
 
-Hom(ChainComplex,ChainComplex) := (F,G)->(
+Hom(ChainComplex, ChainComplex) := opts -> (F,G) -> (
    outputCx := new ChainComplex;
    outputCx.ring = ring F;
    topDegree := max G - min F;
@@ -245,10 +245,10 @@ Hom(ChainComplex,ChainComplex) := (F,G)->(
       myFn := i -> (fold((a,b) -> (a || b),
 		         apply(targetList,
 			       j -> (if (j == i) then 
-			               Hom(F_i,G.dd_(i+index1))
+			               Hom(F_i, G.dd_(i+index1), opts)
 				     else if (j == i+1) then
-				       (-1)^index1*Hom(F.dd_j,G_(i+index1))
-				     else map(Hom(F_j,G_(j+index1-1)),Hom(F_i,G_(i+index1)),0)
+				       (-1)^index1 * Hom(F.dd_j, G_(i+index1), opts)
+				     else map(Hom(F_j, G_(j+index1-1), opts), Hom(F_i, G_(i+index1), opts), 0)
 				     )
 				)
 			   )
@@ -287,8 +287,8 @@ chainComplexMap(ChainComplex,ChainComplex,List):= o -> (D,C,maps) -> (
    F
 )
 
-isExact=method(Options => {LengthLimit => infinity})
-isExact(ChainComplex):= o -> (C) -> (
+--isExact=method(Options => {LengthLimit => infinity})
+isExact(ChainComplex):= { LengthLimit => infinity } >> o -> (C) -> (
    if all((min C,min(max C,o.LengthLimit)), i -> (prune HH_i(C) == 0)) then true else false
 )
 
@@ -484,7 +484,6 @@ nonzeroMax ChainComplex := (cacheValue symbol nonzeroMax)(C -> (
    complete C;
    max for i from min C to max C list if C_i == 0 then continue else i))
 
-minimize = method ()
 minimize ChainComplex := E ->(
     --To simplify the notation consider the complex C = E[min E] that
     --is shifted so that the first nonzero module is C_0.
@@ -763,7 +762,9 @@ beginDocumentation()
 
 document {
      Key => ChainComplexExtras,
-     Headline => "More ChainComplex Functionality."
+     Headline => "More ChainComplex Functionality.",
+     "This package provides more functionality for working with ",
+     TO ChainComplex, " objects."
      }
 
 document {
@@ -804,7 +805,7 @@ document {
      }
 
 document {
-     Key => {isExact, (isExact,ChainComplex)},
+     Key => {(isExact,ChainComplex)},
      Headline => "Test to see if the ChainComplex is exact.",
      Usage => "isExact(F)",
      Inputs => {
@@ -994,11 +995,11 @@ doc ///
      isQuasiIsomorphism(m, LengthLimit=> 10)
      isQuasiIsomorphism(m, LengthLimit => 12)
    SeeAlso
-    isExact
+    (isExact, ChainComplex)
 ///
 doc ///
    Key
-    [isExact,LengthLimit]
+    [(isExact, ChainComplex),LengthLimit]
    Headline
     Option to check exactness only up to a particular homological degree
    Usage
@@ -1135,12 +1136,11 @@ document {
 	  betti source resolutionOfChainComplex C
 	  betti source cartanEilenbergResolution C
         SeeAlso
-	 minimize
+	 (minimize, ChainComplex)
      ///
 
 doc ///
    Key
-    minimize
     (minimize, ChainComplex)
    Headline
     minimal quotient complex of a free ChainComplex 

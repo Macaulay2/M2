@@ -1,0 +1,70 @@
+-- -*- M2-comint -*- hash: 1766209050426497687
+
+i1 : rayList={{1,0},{0,1},{-1,-1},{0,-1}}
+
+o1 = {{1, 0}, {0, 1}, {-1, -1}, {0, -1}}
+
+o1 : List
+
+i2 : coneList={{0,1},{1,2},{2,3},{3,0}}
+
+o2 = {{0, 1}, {1, 2}, {2, 3}, {3, 0}}
+
+o2 : List
+
+i3 : X = normalToricVariety(rayList,coneList)
+
+o3 = X
+
+o3 : NormalToricVariety
+
+i4 : cyc = toricCycle({{2,3} => 1,{3,0} => 4},X)
+
+o4 = X       + 4*X
+      {2, 3}      {3, 0}
+
+o4 : ToricCycle on X
+
+i5 : altcyc = (-2)*cyc
+
+o5 = - 2*X       - 8*X
+          {2, 3}      {3, 0}
+
+o5 : ToricCycle on X
+
+i6 : cyc + altcyc
+
+o6 = - X       - 4*X
+        {2, 3}      {3, 0}
+
+o6 : ToricCycle on X
+
+i7 : cyc - altcyc
+
+o7 = 3*X       + 12*X
+        {2, 3}       {3, 0}
+
+o7 : ToricCycle on X
+
+i8 : -cyc
+
+o8 = - X       - 4*X
+        {2, 3}      {3, 0}
+
+o8 : ToricCycle on X
+
+i9 : X_{0} + X_{1}
+
+o9 = X    + X
+      {0}    {1}
+
+o9 : ToricCycle on X
+
+i10 : 2*X_{0,1} - X_{0,2}
+
+o10 = 2*X       - X
+         {0, 1}    {0, 2}
+
+o10 : ToricCycle on X
+
+i11 : 

@@ -1,0 +1,5 @@
+f = {"a" => 1, "b" => 2} >> o -> x -> (x, o#"a", o#"b")
+g = options f >> o -> x -> f(10 * x, "a" => x, o)
+assert((50, 1, 2) == g(5))
+g = options f >> o -> x -> f(10 * x, o, "a" => x)
+assert((50, 5, 2) == g(5))

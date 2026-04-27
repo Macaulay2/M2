@@ -31,6 +31,10 @@ isChiH0(List, Module) := opts -> (d, M) -> (
     H := hilbertPolynomial(variety ring opts.IrrelevantIdeal, M);
     hilbertFunction(d, M) == sub(H, sub(matrix{d}, QQ)))
 
+
+-- This is the new strategy for products of projective spaces.
+-- It is based on quasilinearity of truncations of modules.
+-- See [BCHS21]: https://arxiv.org/abs/2110.10705
 multigradedRegularityTruncationSearchStrategy = (X, M, opts) -> (
     S := ring X;
     -- TODO: also check that X and S are indeed a product of
@@ -56,19 +60,16 @@ multigradedRegularityTruncationSearchStrategy = (X, M, opts) -> (
     debugInfo \ {
         "HP M = " | toString H,
         "degs = " | toString degs};
-    -- TODO: why is this the right upper bound?
-    high := if opts.UpperLimit =!= null then opts.UpperLimit else apply(n, i -> max({r} | degs / (deg -> deg_i)));
-    -- this is just used for shifting the degrees
-    low  := mindegs - toList(n:d);
+    (low, high) := (opts.LowerLimit, opts.UpperLimit);
     debugInfo("Searching for the quasi-linear region from " | toString low | " to " | toString high);
     -- the combinatorial upperbound on regularity from betti numbers
     U0 := regularityBound M;
     if debugLevel > 2 then plotRegion(U0, low, high);
+    -- lowerbound from degrees where H_B^1 would need to vanish if M was regular
+    L0 := findRegion({low, high}, M, isChiH0,       Inner => U0, IrrelevantIdeal => B);
+    if debugLevel > 2 then plotRegion(L0, low, high);
     -- extend U0 to degrees where the truncation is quasi-linear (see Theorem 2.9 of BES)
-    U0  = findRegion({mindegs, high}, M, isQuasiLinear, Inner => U0, IrrelevantIdeal => B);
-    if debugLevel > 2 then plotRegion(U0, low, high);
-    -- limit U0 to degrees where H_B^1 vanishes
-    U0  = findRegion({mindegs, high}, M, isChiH0,       Outer => U0, IrrelevantIdeal => B);
+    U0  = findRegion({low, high}, M, isQuasiLinear, Inner => U0, IrrelevantIdeal => B, Outer => L0);
     if debugLevel > 2 then plotRegion(U0, low, high);
     debugInfo("Upper bound from LinearTruncations: " | toString U0);
     -* old code before the conjecture was proved

@@ -63,7 +63,7 @@ void res_comp::initialize(const Matrix *mat, int LengthLimit, int /*strategy*/)
                          // here.
       p->compare_num = i;
 
-      if (S == 0)
+      if (S == nullptr)
         p->base_monom = M->make_one();
       else
         p->base_monom = M->make_new(S->base_monom(i));
@@ -87,7 +87,7 @@ void res_comp::initialize(const Matrix *mat, int LengthLimit, int /*strategy*/)
   nminimal = 0;
 
   for (i = 0; i < mat->n_cols(); i++)
-    if ((*mat)[i] != NULL)
+    if ((*mat)[i] != nullptr)
       {
         res_pair *p = new_res_pair(i);  // Makes a generator 'pair'
         int d = mat->cols()->primary_degree(i);
@@ -136,7 +136,7 @@ res_comp::~res_comp()
 
 void res_comp::remove_res_pair(res_pair *p)
 {
-  if (p == NULL) return;
+  if (p == nullptr) return;
   delete p->mi;
   R->remove(p->syz);
   R->remove(p->stripped_syz);
@@ -146,8 +146,8 @@ void res_comp::remove_res_pair(res_pair *p)
 
 void res_comp::remove_res_degree(res_degree *p)
 {
-  if (p == NULL) return;
-  while (p->first != NULL)
+  if (p == nullptr) return;
+  while (p->first != nullptr)
     {
       res_pair *tmp = p->first;
       p->first = tmp->next;
@@ -158,7 +158,7 @@ void res_comp::remove_res_degree(res_degree *p)
 
 void res_comp::remove_res_level(res_level *lev)
 {
-  if (lev == NULL) return;
+  if (lev == nullptr) return;
   int i;
   for (i = 0; i < lev->bin.size(); i++)
     {
@@ -200,10 +200,10 @@ res_degree *res_comp::make_degree_set(int level, int deg)
 res_degree *res_comp::get_degree_set(int level, int d) const
 // find (level,d) pair set, where 'd' is the slanted degree
 {
-  if (level < 0 || level >= resn.size()) return NULL;
+  if (level < 0 || level >= resn.size()) return nullptr;
   res_level *lev = resn[level];
   d -= lodegree;
-  if (d < 0 || d >= lev->bin.size()) return NULL;
+  if (d < 0 || d >= lev->bin.size()) return nullptr;
   return lev->bin[d];
 }
 
@@ -212,18 +212,18 @@ res_pair *res_comp::new_res_pair()
   res_pair *result = reinterpret_cast<res_pair *>(res_pair_stash->new_elem());
   result->me = 0;
   result->compare_num = 0;
-  result->base_monom = NULL;
-  result->next = NULL;
-  result->first = NULL;
-  result->second = NULL;
-  result->base_comp = NULL;
+  result->base_monom = nullptr;
+  result->next = nullptr;
+  result->first = nullptr;
+  result->second = nullptr;
+  result->base_comp = nullptr;
   result->syz_type = 0;
-  result->mi2 = NULL;
-  result->next_mi = NULL;
-  result->syz = NULL;
+  result->mi2 = nullptr;
+  result->next_mi = nullptr;
+  result->syz = nullptr;
   result->minimal_me = 0;
-  result->pivot_term = NULL;
-  result->stripped_syz = NULL;
+  result->pivot_term = nullptr;
+  result->stripped_syz = nullptr;
   return result;
 }
 
@@ -403,8 +403,8 @@ int res_comp::compare_res_pairs(res_pair *f, res_pair *g) const
 
 res_pair *res_comp::merge_res_pairs(res_pair *f, res_pair *g) const
 {
-  if (g == NULL) return f;
-  if (f == NULL) return g;
+  if (g == nullptr) return f;
+  if (f == nullptr) return g;
   res_pair head;
   res_pair *result = &head;
   while (1) switch (compare_res_pairs(f, g))
@@ -414,7 +414,7 @@ res_pair *res_comp::merge_res_pairs(res_pair *f, res_pair *g) const
           result->next = g;
           result = result->next;
           g = g->next;
-          if (g == NULL)
+          if (g == nullptr)
             {
               result->next = f;
               return head.next;
@@ -424,7 +424,7 @@ res_pair *res_comp::merge_res_pairs(res_pair *f, res_pair *g) const
           result->next = f;
           result = result->next;
           f = f->next;
-          if (f == NULL)
+          if (f == nullptr)
             {
               result->next = g;
               return head.next;
@@ -438,17 +438,17 @@ res_pair *res_comp::merge_res_pairs(res_pair *f, res_pair *g) const
 void res_comp::sort_res_pairs(res_pair *&p) const
 {
   // These elements are sorted in ascending 'me' values
-  if (p == NULL || p->next == NULL) return;
-  res_pair *p1 = NULL;
-  res_pair *p2 = NULL;
-  while (p != NULL)
+  if (p == nullptr || p->next == nullptr) return;
+  res_pair *p1 = nullptr;
+  res_pair *p2 = nullptr;
+  while (p != nullptr)
     {
       res_pair *tmp = p;
       p = p->next;
       tmp->next = p1;
       p1 = tmp;
 
-      if (p == NULL) break;
+      if (p == nullptr) break;
       tmp = p;
       p = p->next;
       tmp->next = p2;
@@ -469,9 +469,9 @@ int res_comp::sort_value(res_pair *p, const std::vector<int> sort_order) const
 
 void res_comp::sort_gens(res_degree *mypairs)
 {
-  if (mypairs == NULL) return;
+  if (mypairs == nullptr) return;
   res_pair *p = mypairs->next_gen;
-  if (p == NULL || p->next == NULL) return;
+  if (p == nullptr || p->next == nullptr) return;
   //  for (res_pair *q = p; q!=NULL; q=q->next)
   //    q->compare_num = sort_value(q, s_pair_order); // MES: to be written
 
@@ -481,10 +481,10 @@ void res_comp::sort_gens(res_degree *mypairs)
 void res_comp::sort_pairs(int level, int deg)
 {
   res_degree *mypairs = get_degree_set(level, deg);
-  if (mypairs == NULL) return;
+  if (mypairs == nullptr) return;
   if (mypairs->is_sorted) return;
   res_pair *p = mypairs->first;
-  if (p != NULL && p->next != NULL) sort_res_pairs(mypairs->first);
+  if (p != nullptr && p->next != nullptr) sort_res_pairs(mypairs->first);
 
   mypairs->next_pair = mypairs->first;
   mypairs->next_new_pair = mypairs->first;
@@ -510,8 +510,8 @@ int res_comp::compare_compares(res_pair *f, res_pair *g) const
 
 res_pair *res_comp::merge_compares(res_pair *f, res_pair *g) const
 {
-  if (g == NULL) return f;
-  if (f == NULL) return g;
+  if (g == nullptr) return f;
+  if (f == nullptr) return g;
   res_pair head;
   res_pair *result = &head;
   while (1) switch (compare_compares(f, g))
@@ -520,7 +520,7 @@ res_pair *res_comp::merge_compares(res_pair *f, res_pair *g) const
           result->next_compare = g;
           result = result->next_compare;
           g = g->next_compare;
-          if (g == NULL)
+          if (g == nullptr)
             {
               result->next_compare = f;
               return head.next_compare;
@@ -530,7 +530,7 @@ res_pair *res_comp::merge_compares(res_pair *f, res_pair *g) const
           result->next_compare = f;
           result = result->next_compare;
           f = f->next_compare;
-          if (f == NULL)
+          if (f == nullptr)
             {
               result->next_compare = g;
               return head.next_compare;
@@ -544,17 +544,17 @@ res_pair *res_comp::merge_compares(res_pair *f, res_pair *g) const
 void res_comp::sort_compares(res_pair *&p) const
 {
   // These elements are sorted in ascending 'me' values
-  if (p == NULL || p->next_compare == NULL) return;
-  res_pair *p1 = NULL;
-  res_pair *p2 = NULL;
-  while (p != NULL)
+  if (p == nullptr || p->next_compare == nullptr) return;
+  res_pair *p1 = nullptr;
+  res_pair *p2 = nullptr;
+  while (p != nullptr)
     {
       res_pair *tmp = p;
       p = p->next_compare;
       tmp->next_compare = p1;
       p1 = tmp;
 
-      if (p == NULL) break;
+      if (p == nullptr) break;
       tmp = p;
       p = p->next_compare;
       tmp->next_compare = p2;
@@ -582,11 +582,11 @@ void res_comp::set_compare_nums(int level, int deg)
   // order.
 
   res_degree *mypairs = get_degree_set(level, deg);
-  if (mypairs == NULL) return;
+  if (mypairs == nullptr) return;
 
   res_pair *p;
   res_pair *compare_num_list = mypairs->first;
-  for (p = mypairs->first; p != NULL; p = p->next)
+  for (p = mypairs->first; p != nullptr; p = p->next)
     {
       p->next_compare = p->next;
       p->me = next_me_number++;
@@ -596,7 +596,7 @@ void res_comp::set_compare_nums(int level, int deg)
       merge_compares(resn[level]->compare_num_list, compare_num_list);
 
   int next = 0;
-  for (p = resn[level]->compare_num_list; p != NULL; p = p->next_compare)
+  for (p = resn[level]->compare_num_list; p != nullptr; p = p->next_compare)
     p->compare_num = next++;
 }
 //////////////////////////////////////////////
@@ -642,7 +642,7 @@ void res_comp::new_pairs(res_pair *p)
             {
               thisvp.resize(0);
               varpower::var(w, 1, thisvp);
-              Bag *b = new Bag(static_cast<void *>(0), thisvp);
+              Bag *b = new Bag(static_cast<void *>(nullptr), thisvp);
               elems.push_back(b);
             }
         }
@@ -663,7 +663,7 @@ void res_comp::new_pairs(res_pair *p)
           varpower::quotient(a.monom().data(), vp.data(), thisvp);
           if (varpower::is_equal(a.monom().data(), thisvp.data()))
             continue;
-          Bag *b = new Bag(static_cast<void *>(0), thisvp);
+          Bag *b = new Bag(static_cast<void *>(nullptr), thisvp);
           elems.push_back(b);
         }
     }
@@ -729,7 +729,7 @@ resterm *res_comp::s_pair(res_pair *p) const
   M->divide(p->base_monom, p->first->base_monom, si);
   resterm *result = R->mult_by_monomial(p->first->syz, si);
   ring_elem one = K->from_long(1);
-  if (p->second != NULL)
+  if (p->second != nullptr)
     {
       p->syz->next = R->new_term(K->from_long(-1), p->base_monom, p->second);
       M->divide(p->base_monom, p->second->base_monom, si);
@@ -750,13 +750,13 @@ res_pair *res_comp::reduce(resterm *&f, resterm *&fsyz, resterm *&pivot)
   exponents_t REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
   monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
 
-  resterm *lastterm = (fsyz->next == NULL ? fsyz : fsyz->next);
+  resterm *lastterm = (fsyz->next == nullptr ? fsyz : fsyz->next);
 
   res_pair *q;
   ring_elem rg;
   Bag *b;
 
-  while (f != NULL)
+  while (f != nullptr)
     {
       M->divide(f->monom, f->comp->base_monom, REDUCE_mon);
       M->to_expvector(REDUCE_mon, REDUCE_exp);
@@ -787,7 +787,7 @@ res_pair *res_comp::reduce(resterm *&f, resterm *&fsyz, resterm *&pivot)
           return q;
         }
     }
-  return NULL;
+  return nullptr;
 }
 
 // MES: Uugh.... This should not be a separate routine....?
@@ -800,13 +800,13 @@ res_pair *res_comp::reduce_level_one(resterm *&f,
   exponents_t REDUCE_exp = ALLOCATE_EXPONENTS(exp_size);
   monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
 
-  resterm *lastterm = (fsyz->next == NULL ? fsyz : fsyz->next);
+  resterm *lastterm = (fsyz->next == nullptr ? fsyz : fsyz->next);
 
   res_pair *q;
   ring_elem rg;
   Bag *b;
 
-  while (f != NULL)
+  while (f != nullptr)
     {
       M->divide(f->monom, f->comp->base_monom, REDUCE_mon);
       M->to_expvector(REDUCE_mon, REDUCE_exp);
@@ -838,7 +838,7 @@ res_pair *res_comp::reduce_level_one(resterm *&f,
           return q;
         }
     }
-  return NULL;
+  return nullptr;
 }
 
 void res_comp::reduce_gen(resterm *&f) const
@@ -850,7 +850,7 @@ void res_comp::reduce_gen(resterm *&f) const
   ring_elem rg;
   Bag *b;
 
-  while (f != NULL)
+  while (f != nullptr)
     {
       M->divide(f->monom, f->comp->base_monom, REDUCE_mon);
       M->to_expvector(REDUCE_mon, REDUCE_exp);
@@ -878,7 +878,7 @@ void res_comp::reduce_gen(resterm *&f) const
 
 bool res_comp::stop_conditions_ok()
 {
-  if (stop_.length_limit != 0 && stop_.length_limit->len > 0)
+  if (stop_.length_limit != nullptr && stop_.length_limit->len > 0)
     {
       if (length_limit < stop_.length_limit->array[0])
         {
@@ -972,9 +972,9 @@ enum ComputationStatusCode res_comp::gens(int deg)
   // preconditions: reductions(2,deg), gens(deg-1)
   res_pair *p;
   res_degree *mypairs = get_degree_set(1, deg);
-  if (mypairs != NULL)
+  if (mypairs != nullptr)
     {
-      while ((p = mypairs->next_gen) != NULL)
+      while ((p = mypairs->next_gen) != nullptr)
         {
           mypairs->next_gen = p->next;
           handle_gen(p);  // Consumes 'p'
@@ -1009,9 +1009,9 @@ enum ComputationStatusCode res_comp::pairs(int level, int deg)
   res_pair *p;
   sort_pairs(level, deg);
   res_degree *mypairs = get_degree_set(level, deg);
-  if (mypairs != NULL)
+  if (mypairs != nullptr)
     {
-      while ((p = mypairs->next_new_pair) != NULL)
+      while ((p = mypairs->next_new_pair) != nullptr)
         {
           mypairs->next_new_pair = p->next;
           new_pairs(p);
@@ -1032,8 +1032,8 @@ enum ComputationStatusCode res_comp::reductions(int level, int deg)
     }
   sort_pairs(level, deg);
   res_degree *mypairs = get_degree_set(level, deg);
-  if (mypairs != NULL)
-    while ((p = mypairs->next_pair) != NULL)
+  if (mypairs != nullptr)
+    while ((p = mypairs->next_pair) != nullptr)
       {
         mypairs->next_pair = p->next;
         handle_pair(p);
@@ -1053,12 +1053,12 @@ enum ComputationStatusCode res_comp::reductions(int level, int deg)
 void res_comp::handle_gen(res_pair *p)
 {
   reduce_gen(p->syz);
-  if (p->syz != NULL)
+  if (p->syz != nullptr)
     {
       R->make_monic(p->syz);
       M->copy(p->syz->monom, p->base_monom);
       p->first = p->syz->comp;
-      p->second = NULL;
+      p->second = nullptr;
       p->syz_type = SYZ_MINIMAL;
       p->base_comp = p->syz->comp->base_comp;  // MES: added 7/11/97
       insert_res_pair(1, p);
@@ -1083,7 +1083,7 @@ void res_comp::handle_pair(res_pair *p)
   else
     q = reduce(f, p->syz, p->pivot_term);
 
-  if (f == NULL)
+  if (f == nullptr)
     {
       // minimal syzygy
       p->syz_type = SYZ_MINIMAL;
@@ -1135,17 +1135,17 @@ void res_comp::handle_pair(res_pair *p)
 int res_comp::n_pairs(int lev, int d) const
 {
   res_degree *p = get_degree_set(lev, d);
-  if (p == NULL) return 0;
+  if (p == nullptr) return 0;
   return p->npairs;
 }
 
 int res_comp::n_left(int lev, int d) const
 {
   res_degree *p = get_degree_set(lev, d);
-  if (p == NULL) return 0;
+  if (p == nullptr) return 0;
 
   int result = 0;
-  for (res_pair *q = p->first; q != NULL; q = q->next)
+  for (res_pair *q = p->first; q != nullptr; q = q->next)
     if (q->syz_type == SYZ_S_PAIR || q->syz_type == SYZ_GEN) result++;
 
   return result;
@@ -1154,9 +1154,9 @@ int res_comp::n_left(int lev, int d) const
 int res_comp::n_minimal(int lev, int d) const
 {
   res_degree *p = get_degree_set(lev, d);
-  if (p == NULL) return 0;
+  if (p == nullptr) return 0;
   int result = 0;
-  for (res_pair *q = p->first; q != NULL; q = q->next)
+  for (res_pair *q = p->first; q != nullptr; q = q->next)
     if (q->syz_type == SYZ_MINIMAL) result++;
 
   return result;
@@ -1165,9 +1165,9 @@ int res_comp::n_minimal(int lev, int d) const
 int res_comp::n_monoms(int lev, int d) const
 {
   res_degree *p = get_degree_set(lev, d);
-  if (p == NULL) return 0;
+  if (p == nullptr) return 0;
   int result = 0;
-  for (res_pair *q = p->first; q != NULL; q = q->next)
+  for (res_pair *q = p->first; q != nullptr; q = q->next)
     result += R->n_terms(q->syz);
 
   return result;
@@ -1207,7 +1207,7 @@ M2_arrayint res_comp::get_betti(int type) const
               ERROR(
                   "cannot use Minimize=>true unless "
                   "res(...,FastNonminimal=>true) was used");
-              return 0;
+              return nullptr;
             default:
               val = -1;
               break;
@@ -1229,11 +1229,11 @@ void res_comp::text_out(buffer &o, const res_pair *p) const
   res_pair *a = p->first;
   res_pair *b = p->second;  // possibly NULL
   o << p->me << ' ';
-  if (a != NULL)
+  if (a != nullptr)
     o << a->me << ' ';
   else
     o << ". ";
-  if (b != NULL)
+  if (b != nullptr)
     o << b->me << ' ';
   else
     o << ". ";
@@ -1327,8 +1327,8 @@ void res_comp::text_out(buffer &o) const
         for (int i = 0; i < resn[lev]->bin.size(); i++)
           {
             res_degree *mypairs = resn[lev]->bin[i];
-            if (mypairs == NULL) continue;
-            for (res_pair *p = mypairs->first; p != NULL; p = p->next)
+            if (mypairs == nullptr) continue;
+            for (res_pair *p = mypairs->first; p != nullptr; p = p->next)
               {
                 o.put(i, 4);
                 o << ' ';
@@ -1349,7 +1349,7 @@ const FreeModule *res_comp::free_of(int i) const
   for (int j = 0; j < lev->bin.size(); j++)
     {
       res_degree *mypairs = lev->bin[j];
-      for (res_pair *p = mypairs->first; p != NULL; p = p->next)
+      for (res_pair *p = mypairs->first; p != nullptr; p = p->next)
         {
           multi_degree(p, deg);
           result->append_schreyer(deg, p->base_monom, p->compare_num);
@@ -1372,7 +1372,7 @@ const FreeModule *res_comp::minimal_free_of(int i) const
   for (int j = 0; j < lev->bin.size(); j++)
     {
       res_degree *mypairs = lev->bin[j];
-      for (res_pair *p = mypairs->first; p != NULL; p = p->next)
+      for (res_pair *p = mypairs->first; p != nullptr; p = p->next)
         if (p->syz_type == SYZ_MINIMAL)
           {
             multi_degree(p, deg);
@@ -1389,15 +1389,15 @@ Matrix *res_comp::make(int level) const
 {
   const FreeModule *F = free_of(level - 1);
   const FreeModule *G = free_of(level);
-  MatrixConstructor result(F, G, NULL);
+  MatrixConstructor result(F, G, nullptr);
 
   int n = 0;
-  if (G == 0) return result.to_matrix();
+  if (G == nullptr) return result.to_matrix();
   res_level *lev = resn[level];
   for (int j = 0; j < lev->bin.size(); j++)
     {
       res_degree *mypairs = lev->bin[j];
-      for (res_pair *p = mypairs->first; p != NULL; p = p->next)
+      for (res_pair *p = mypairs->first; p != nullptr; p = p->next)
         result.set_column(n++, R->to_vector(p->syz, F));
     }
   return result.to_matrix();
@@ -1420,7 +1420,7 @@ void res_comp::reduce_minimal(int x,
     {
       res_pair *p = elems[i];
       if (p->syz_type == SYZ_NOT_MINIMAL)
-        while ((tm = R->component_occurs_in(p->pivot_term->comp, f)) != NULL)
+        while ((tm = R->component_occurs_in(p->pivot_term->comp, f)) != nullptr)
           {
             // Subtract the proper multiple to f.  f = ... + c m e_y + ...
             // and                                 p = ... + d n e_y
@@ -1429,7 +1429,7 @@ void res_comp::reduce_minimal(int x,
                 K->divide(tm->coeff, p->pivot_term->coeff);  // exact division
             // MES: is the following line actually needed?
             M->divide(tm->monom, p->pivot_term->monom, MINIMAL_mon);
-            if (p->stripped_syz == NULL) p->stripped_syz = R->strip(p->syz);
+            if (p->stripped_syz == nullptr) p->stripped_syz = R->strip(p->syz);
             R->subtract_multiple_to(f, c, MINIMAL_mon, p->stripped_syz);
           }
     }
@@ -1439,13 +1439,13 @@ Matrix *res_comp::make_minimal(int i) const
 {
   const FreeModule *F = minimal_free_of(i - 1);
   const FreeModule *G = minimal_free_of(i);
-  MatrixConstructor result(F, G, NULL);
+  MatrixConstructor result(F, G, nullptr);
   if (i < 0 || i > length_limit) return result.to_matrix();
   VECTOR(res_pair *) elems;
 
   res_level *lev = resn[i];
   for (int j = 0; j < lev->bin.size(); j++)
-    for (res_pair *p = lev->bin[j]->first; p != NULL; p = p->next)
+    for (res_pair *p = lev->bin[j]->first; p != nullptr; p = p->next)
       elems.push_back(p);
 
   int thisx = 0;
@@ -1454,7 +1454,7 @@ Matrix *res_comp::make_minimal(int i) const
       res_pair *p = elems[x];
       if (p->syz_type == SYZ_MINIMAL)
         {
-          if (p->stripped_syz == NULL)
+          if (p->stripped_syz == nullptr)
             {
               p->stripped_syz = R->strip(p->syz);
               reduce_minimal(x, p->stripped_syz, elems);
@@ -1473,7 +1473,7 @@ Matrix *res_comp::make_minimal(int i) const
 void res_comp::skeleton_init(VECTOR(res_pair *)& reslevel)
 {
   // Do level 0
-  res_pair *pp = NULL;
+  res_pair *pp = nullptr;
   for (auto p = base_components.rbegin(); p != base_components.rend(); ++p)
     {
       (*p)->next = pp;
@@ -1482,9 +1482,9 @@ void res_comp::skeleton_init(VECTOR(res_pair *)& reslevel)
   reslevel.push_back(pp);
 
   // Do level 1
-  pp = NULL;
+  pp = nullptr;
   for (auto i = 0; i < generator_matrix->n_cols(); i++)
-    if ((*generator_matrix)[i] != NULL)
+    if ((*generator_matrix)[i] != nullptr)
       {
         res_pair *p = new_res_pair(i);  // Makes a generator 'pair'
         p->next = pp;
@@ -1529,7 +1529,7 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
             {
               thisvp.resize(0);
               varpower::var(w, 1, thisvp);
-              Bag *b = new Bag(static_cast<void *>(0), thisvp);
+              Bag *b = new Bag(static_cast<void *>(nullptr), thisvp);
               elems.push_back(b);
             }
         }
@@ -1550,7 +1550,7 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
           varpower::quotient(a.monom().data(), vp.data(), thisvp);
           if (varpower::is_equal(a.monom().data(), thisvp.data()))
             continue;
-          Bag *b = new Bag(static_cast<void *>(0), thisvp);
+          Bag *b = new Bag(static_cast<void *>(nullptr), thisvp);
           elems.push_back(b);
         }
     }
@@ -1595,7 +1595,7 @@ int res_comp::skeleton_maxdegree(const VECTOR(res_pair *)& reslevel)
   int result = lodegree;
   for (int level = 0; level < reslevel.size(); level++)
     {
-      for (res_pair *p = reslevel[level]; p != NULL; p = p->next)
+      for (res_pair *p = reslevel[level]; p != nullptr; p = p->next)
         {
           int d = degree(p);
           if (d - level > result) result = d - level;
@@ -1613,7 +1613,7 @@ void res_comp::skeleton_stats(const VECTOR(res_pair *)& reslevel)
   int *bettis = newarray_atomic_clear(int, (maxlevel + 1) * (maxdegree + 1));
   for (level = 0; level < reslevel.size(); level++)
     {
-      for (res_pair *p = reslevel[level]; p != NULL; p = p->next)
+      for (res_pair *p = reslevel[level]; p != nullptr; p = p->next)
         {
           int d = degree(p);
           d -= level;
@@ -1644,7 +1644,7 @@ void res_comp::skeleton_stats(const VECTOR(res_pair *)& reslevel)
   for (level = 0; level <= maxlevel; level++)
     {
       o << "---- level " << level << " ----" << newline;
-      for (res_pair *p = reslevel[level]; p != NULL; p = p->next)
+      for (res_pair *p = reslevel[level]; p != nullptr; p = p->next)
         {
           int d = degree(p);
           o.put(d, 4);
@@ -1672,7 +1672,7 @@ void res_comp::skeleton(int strategy)
     {
       // Sort the pairs in the current level:
       res_pair *pp = reslevel[level];
-      if (pp == NULL) break;
+      if (pp == nullptr) break;
 
       compare_type = strategy;
       sort_res_pairs(pp);
@@ -1681,9 +1681,9 @@ void res_comp::skeleton(int strategy)
 
       // Now compute the pairs at the next level
       res_pair head, *ptrhead;
-      head.next = NULL;
+      head.next = nullptr;
       ptrhead = &head;
-      for (res_pair *p = pp; p != NULL; p = p->next) skeleton_pairs(ptrhead, p);
+      for (res_pair *p = pp; p != nullptr; p = p->next) skeleton_pairs(ptrhead, p);
       reslevel.push_back(head.next);
     }
 

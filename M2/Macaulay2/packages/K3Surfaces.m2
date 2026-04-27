@@ -868,7 +868,8 @@ mukaiModel ZZ := o -> g -> (
 beginDocumentation() 
 
 document {Key => K3Surfaces, 
-Headline => "A package for constructing explicit examples of K3 surfaces",
+Headline => "construction of explicit examples of K3 surfaces",
+"This package is for constructing explicit examples of K3 surfaces.",
 References => UL{{"M. H. and G. S., ",EM"Explicit constructions of K3 surfaces and unirational Noether-Lefschetz divisors",", available at ",HREF{"https://arxiv.org/abs/2110.15819","arXiv:2110.15819"}," (2021)."}}}
 
 document {Key => {LatticePolarizedK3surface}, 

@@ -1,0 +1,19 @@
+-- -*- M2-comint -*- hash: 17682696027004720352
+
+i1 : v = {1,0,0};
+
+i2 : C = {{1,0,0},{0,1,0},{0,0,1}};
+
+i3 : polymakeConeContains(v,C)
+
+o3 = true
+
+i4 : v = {1,0,0};
+
+i5 : C = {{2,1,0},{0,1,0},{0,0,1}};
+
+i6 : polymakeConeContains(v,C)
+
+o6 = false
+
+i7 : 

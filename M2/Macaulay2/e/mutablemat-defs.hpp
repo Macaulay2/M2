@@ -94,20 +94,18 @@ Matrix* toMatrix(const Ring* R, const DMat<CoeffRing>& A)
   MatrixConstructor result(F, ncols);
   if (nrows == 0 || ncols == 0) return result.to_matrix();
 
-  for (int c = 0; c < ncols; c++)
-    {
-      int r = 0;
-      auto end = A.columnEnd(c);
-      for (auto j = A.columnBegin(c); not(j == end); ++j, ++r)
-        {
-          if (not A.ring().is_zero(*j))
+  for (int r = 0; r < nrows; ++r)
+    for (int c = 0; c < ncols; ++c)
+      {
+        const typename CoeffRing::ElementType & a = A.entry(r,c);
+        if (not A.ring().is_zero(a))
             {
-              ring_elem a;
-              A.ring().to_ring_elem(a, *j);
-              result.set_entry(r, c, a);
+              ring_elem ra;
+              A.ring().to_ring_elem(ra, a);
+              result.set_entry(r, c, ra);
             }
-        }
-    }
+      }        
+
   result.compute_column_degrees();
   return result.to_matrix();
 }
@@ -520,8 +518,7 @@ class MutableMat : public MutableMatrix
                 n_cols() - 1);
           return 0;
         }
-    MutableMat* result =
-        new MutableMat(*this);  // zero matrix, over the same ring
+    MutableMat* result = makeZeroMatrix(rows->len, cols->len);
     MatOps::setFromSubmatrix(getMat(), rows, cols, result->getMat());
     return result;
   }
@@ -536,8 +533,7 @@ class MutableMat : public MutableMatrix
                 n_cols() - 1);
           return 0;
         }
-    MutableMat* result =
-        new MutableMat(*this);  // zero matrix, over the same ring
+    MutableMat* result = makeZeroMatrix(n_rows(), cols->len);
     MatOps::setFromSubmatrix(getMat(), cols, result->getMat());
     return result;
   }

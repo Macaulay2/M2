@@ -1,7 +1,6 @@
 // Copyright 2005-2021 Michael E. Stillman
 
 #include "f4/f4-m2-interface.hpp"
-#include "f4/gausser.hpp"              // for Gausser
 #include "f4/moninfo.hpp"              // for monomial_word, MonomialInfo
 #include "f4/ntuple-monomial.hpp"      // for ntuple_word
 #include "freemod.hpp"                 // for FreeModule
@@ -56,31 +55,9 @@ void F4toM2Interface::from_M2_vec(const VectorArithmetic* VA,
   delete [] lexp;
 }
 
-void F4toM2Interface::poly_set_degrees(const VectorArithmetic* VA,
-                                       const MonomialInfo *MI,
-                                       const M2_arrayint wts,
-                                       const GBF4Polynomial &f,
-                                       int &deg_result,
-                                       int &alpha)
-{
-  const monomial_word *w = f.monoms;
-  monomial_word leaddeg = MI->monomial_weight(w, wts);
-  monomial_word deg = leaddeg;
-
-  for (int i = 1; i < f.len; i++)
-    {
-      w = w + MI->monomial_size(w);
-      monomial_word degi = MI->monomial_weight(w, wts);
-      if (degi > deg) deg = degi;
-    }
-  alpha = static_cast<int>(deg - leaddeg);
-  deg_result = static_cast<int>(deg);
-}
-
 void F4toM2Interface::from_M2_matrix(const VectorArithmetic* VA,
                                      const MonomialInfo *MI,
                                      const Matrix *m,
-                                     M2_arrayint wts,
                                      gb_array &result_polys)
 {
   const FreeModule *F = m->rows();
@@ -88,7 +65,6 @@ void F4toM2Interface::from_M2_matrix(const VectorArithmetic* VA,
     {
       gbelem *g = new gbelem;
       from_M2_vec(VA, MI, F, m->elem(i), g->f);
-      if (wts != nullptr) poly_set_degrees(VA, MI, wts, g->f, g->deg, g->alpha);
       result_polys.push_back(g);
     }
 }
@@ -107,8 +83,8 @@ vec F4toM2Interface::to_M2_vec(const VectorArithmetic* VA,
   Nterm **last = newarray(Nterm *, F->rank());
   for (int i = 0; i < F->rank(); i++)
     {
-      comps[i] = 0;
-      last[i] = 0;
+      comps[i] = nullptr;
+      last[i] = nullptr;
     }
 
   int *exp = newarray_atomic(int, M->n_vars() + 1);
@@ -125,7 +101,7 @@ vec F4toM2Interface::to_M2_vec(const VectorArithmetic* VA,
       ring_elem a = VA->ringElemFromElementArray(f.coeffs, i);
       Nterm *g = R->make_flat_term(a, m1);
       g->next = nullptr;
-      if (last[comp] == 0)
+      if (last[comp] == nullptr)
         {
           comps[comp] = g;
           last[comp] = g;
@@ -139,12 +115,12 @@ vec F4toM2Interface::to_M2_vec(const VectorArithmetic* VA,
   vec result = nullptr;
   for (int i = 0; i < F->rank(); i++)
     {
-      if (comps[i] != 0)
+      if (comps[i] != nullptr)
         {
           vec v = R->make_vec(i, comps[i]);
           R->add_vec_to(result, v);
-          comps[i] = 0;
-          last[i] = 0;
+          comps[i] = nullptr;
+          last[i] = nullptr;
         }
     }
 

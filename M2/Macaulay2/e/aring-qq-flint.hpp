@@ -10,8 +10,9 @@
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-//#include <flint/arith.h>
-#include <flint/fmpq.h>
+#include <flint/flint.h>  // for fmpq_denref, fmpq_numref, fmpq, flin...
+#include <flint/fmpq.h>   // for fmpq_init, fmpq_set, fmpq_set_mpq
+#include <flint/fmpz.h>   // for fmpz_get_ui, fmpz_cmp_si, fmpz_is_one
 #pragma GCC diagnostic pop
 
 #include "aring.hpp"

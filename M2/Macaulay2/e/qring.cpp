@@ -26,7 +26,7 @@ void QRingInfo::destroy(GBRing *GR)
   // remove the gbvector's as they are stashed in gbrings.
   // WARNING: these need to be deleted only if the gbring is non-NULL.
 
-  if (GR == 0) return;
+  if (GR == nullptr) return;
   for (int i = 0; i < quotient_gbvectors.size(); i++)
     GR->gbvector_remove(quotient_gbvectors[i]);
 }
@@ -126,7 +126,7 @@ void QRingInfo_field_basic::normal_form(ring_elem &f) const
   Nterm head;
   Nterm *result = &head;
   Nterm *t = f;
-  while (t != NULL)
+  while (t != nullptr)
     {
       M->to_expvector(t->monom, EXP1);
       Bag *b;
@@ -144,7 +144,7 @@ void QRingInfo_field_basic::normal_form(ring_elem &f) const
           result = result->next;
         }
     }
-  result->next = NULL;
+  result->next = nullptr;
   f = head.next;
 }
 
@@ -157,14 +157,14 @@ void QRingInfo_field_basic::gbvector_normal_form(const FreeModule *F,
   gbvector head;
   gbvector *result = &head;
   gbvector *t = f;
-  while (t != NULL)
+  while (t != nullptr)
     {
       GR->gbvector_get_lead_exponents(F, t, EXP1);
       int x = ringtable->find_divisor(EXP1, 1);
       if (x >= 0)
         {
           const gbvector *r = quotient_gbvector(x);
-          gbvector *zero = 0;
+          gbvector *zero = nullptr;
           GR->gbvector_reduce_lead_term(F, F, zero, t, zero, r, zero);
         }
       else
@@ -174,7 +174,7 @@ void QRingInfo_field_basic::gbvector_normal_form(const FreeModule *F,
           result = result->next;
         }
     }
-  result->next = NULL;
+  result->next = nullptr;
   f = head.next;
 }
 
@@ -219,7 +219,7 @@ void QRingInfo_field_QQ::normal_form(ring_elem &f) const
   Nterm head;
   Nterm *result = &head;
   Nterm *t = f;
-  while (t != NULL)
+  while (t != nullptr)
     {
       M->to_expvector(t->monom, EXP1);
       Bag *b;
@@ -237,7 +237,7 @@ void QRingInfo_field_QQ::normal_form(ring_elem &f) const
           result = result->next;
         }
     }
-  result->next = NULL;
+  result->next = nullptr;
   f = head.next;
 }
 
@@ -249,16 +249,16 @@ void QRingInfo_field_QQ::gbvector_normal_form(const FreeModule *F,
   GBRing *GR = R->get_gb_ring();
   gbvector head;
   gbvector *result = &head;
-  result->next = NULL;
+  result->next = nullptr;
   gbvector *t = f;
-  while (t != NULL)
+  while (t != nullptr)
     {
       GR->gbvector_get_lead_exponents(F, t, EXP1);
       int x = ringtable->find_divisor(EXP1, 1);
       if (x >= 0)
         {
           const gbvector *r = quotient_gbvector(x);
-          gbvector *zero = 0;
+          gbvector *zero = nullptr;
           GR->gbvector_reduce_lead_term(F, F, head.next, t, zero, r, zero);
         }
       else
@@ -266,7 +266,7 @@ void QRingInfo_field_QQ::gbvector_normal_form(const FreeModule *F,
           result->next = t;
           t = t->next;
           result = result->next;
-          result->next = NULL;
+          result->next = nullptr;
         }
     }
   f = head.next;
@@ -282,16 +282,16 @@ void QRingInfo_field_QQ::gbvector_normal_form(const FreeModule *F,
   GBRing *GR = R->get_gb_ring();
   gbvector head;
   gbvector *result = &head;
-  result->next = NULL;
+  result->next = nullptr;
   gbvector *t = f;
-  while (t != NULL)
+  while (t != nullptr)
     {
       GR->gbvector_get_lead_exponents(F, t, EXP1);
       int x = ringtable->find_divisor(EXP1, 1);
       if (x >= 0)
         {
           const gbvector *r = quotient_gbvector(x);
-          gbvector *zero = 0;
+          gbvector *zero = nullptr;
           GR->gbvector_reduce_lead_term(
               F, F, head.next, t, zero, r, zero, use_denom, denom);
         }
@@ -300,7 +300,7 @@ void QRingInfo_field_QQ::gbvector_normal_form(const FreeModule *F,
           result->next = t;
           t = t->next;
           result = result->next;
-          result->next = NULL;
+          result->next = nullptr;
         }
     }
   f = head.next;
@@ -337,7 +337,7 @@ QRingInfo_ZZ::QRingInfo_ZZ(const PolyRing *ambientR,
           appendQuotientElement(f, g);
           exp = newarray_atomic(int, R->n_vars());
 
-          if (f->next == 0 && R->getMonoid()->is_one(f->monom))
+          if (f->next == nullptr && R->getMonoid()->is_one(f->monom))
             {
               is_ZZ_quotient_ = true;
               ZZ_quotient_value_ = f->coeff;
@@ -391,7 +391,7 @@ void QRingInfo_ZZ::normal_form(ring_elem &f) const
   Nterm head;
   Nterm *result = &head;
   Nterm *t = f;
-  while (t != NULL)
+  while (t != nullptr)
     {
       M->to_expvector(t->monom, EXP1);
       int w = ringtableZZ->find_smallest_coeff_divisor(EXP1, 1);
@@ -407,7 +407,7 @@ void QRingInfo_ZZ::normal_form(ring_elem &f) const
       t = t->next;
       result = result->next;
     }
-  result->next = NULL;
+  result->next = nullptr;
   f = head.next;
 }
 
@@ -421,7 +421,7 @@ void QRingInfo_ZZ::gbvector_normal_form(const FreeModule *F, gbvector *&f) const
   gbvector head;
   gbvector *result = &head;
   gbvector *t = f;
-  while (t != NULL)
+  while (t != nullptr)
     {
       GR->gbvector_get_lead_exponents(F, t, EXP1);
       int w = ringtableZZ->find_smallest_coeff_divisor(EXP1, 1);
@@ -431,7 +431,7 @@ void QRingInfo_ZZ::gbvector_normal_form(const FreeModule *F, gbvector *&f) const
           // If the lead monomial reduces away, continue,
           //   else tack the monomial onto the result
           const gbvector *g = quotient_gbvector(w);
-          gbvector *zero = 0;
+          gbvector *zero = nullptr;
           if (GR->gbvector_reduce_lead_term_ZZ(F, F, t, zero, g, zero))
             continue;
         }
@@ -439,7 +439,7 @@ void QRingInfo_ZZ::gbvector_normal_form(const FreeModule *F, gbvector *&f) const
       t = t->next;
       result = result->next;
     }
-  result->next = NULL;
+  result->next = nullptr;
   f = head.next;
 }
 

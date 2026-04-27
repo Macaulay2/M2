@@ -9,7 +9,7 @@
 ------------------------------------------
 ------------------------------------------
 
-newPackage select((
+newPackage(
     "AlgebraicSplines",
         Version => "0.1.0", 
         Date => "27. May 2015",
@@ -23,11 +23,11 @@ newPackage select((
 	Keywords => {"Applied Algebraic Geometry"},
         Configuration => {},
         DebuggingMode => false,
-	PackageImports => { "Elimination" },
+	PackageImports => { "OldChainComplexes", "Elimination" },
         PackageExports => {
 	    "FourierMotzkin"
 	    }
-        ), x -> x =!= null)
+    )
 
 export {
    "BaseRing",
@@ -928,7 +928,7 @@ orient = method()
 
 orient(Ideal):=List=> I->(
     LT:= leadTerm I;
-    reverse sort flatten apply(flatten entries LT,f-> support f)
+    reverse sort flatten apply(LT_*,f-> support f)
     )
 
 ------------------------------------------

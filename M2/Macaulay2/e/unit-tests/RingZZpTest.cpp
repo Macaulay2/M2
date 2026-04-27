@@ -28,9 +28,9 @@ TEST(RingZZmod32003, fromStream)
 TEST(RingZZmod101, create)
 {
   Ring* R = Z_mod::create(101);
-  EXPECT_TRUE(R != 0);
+  EXPECT_TRUE(R != nullptr);
 
-  EXPECT_TRUE(dynamic_cast<const Z_mod*>(R) != 0);
+  EXPECT_TRUE(dynamic_cast<const Z_mod*>(R) != nullptr);
   EXPECT_EQ(R->coefficient_type(), Ring::COEFF_BASIC);
   EXPECT_FALSE(R->is_ZZ());
   EXPECT_EQ(ringName(*R), "ZZ/101");
@@ -82,9 +82,9 @@ TEST(RingZZmod101, syzygy)
 TEST(RingZZmod2, create)
 {
   Ring* R = Z_mod::create(2);
-  EXPECT_TRUE(R != 0);
+  EXPECT_TRUE(R != nullptr);
 
-  EXPECT_TRUE(dynamic_cast<const Z_mod*>(R) != 0);
+  EXPECT_TRUE(dynamic_cast<const Z_mod*>(R) != nullptr);
   EXPECT_EQ(R->coefficient_type(), Ring::COEFF_BASIC);
   EXPECT_FALSE(R->is_ZZ());
   EXPECT_EQ(ringName(*R), "ZZ/2");

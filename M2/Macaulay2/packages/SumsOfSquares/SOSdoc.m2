@@ -69,11 +69,15 @@ document {
     some of the difficulties that arise from using these numerical procedures. ",
     "See ", TO "coefficient field", " for more information.",
 
-    HEADER4 "Literature",
+    References =>
     UL {
     LI {"[BPT12] ", EM "Semidefinite Optimization and Convex Algebraic Geometry", " SIAM Textbook, edited by G. Blekherman, P. Parrilo, and R. Thomas, (2012)."},
     LI {"[P05] ", EM "Exploiting Algebraic Structure in Sum of Squares Programs", " P. Parrilo in ", EM"Positive polynomials in control", " (2005)."},
     LI {"[PP] ", EM "Computing sum of squares decompositions with rational coefficients", " H. Peyrl and P. Parrilo ", " in Theoretical Computer Science 409 (2008) p. 269–281."},
+    },
+
+    Acknowledgement => {
+	"Special thanks: Ilir Dema, Nidhi Kaihnsa, Anton Leykin."
     }
     }
 
@@ -547,7 +551,7 @@ doc /// --sosInIdeal
         It accepts two types of inputs that are useful for different purposes.
         The first invocation is to give a one row matrix with polynomial entries and a degree bound.
         The method then tries to find a sum of squares in the generated ideal.
-        More precisely, given equations $h_1(x),...,h_m(x)$, the method looks for polynomial multipliers $h_i(x)$ such that $\sum_i l_i(x) h_i(x)$ is a sum of squares.
+        More precisely, given equations $h_1(x),...,h_m(x)$, the method looks for polynomial multipliers $l_i(x)$ such that $\sum_i l_i(x) h_i(x)$ is a sum of squares.
      Example
         R = QQ[x,y,z];
         h = matrix {{x^2-4*x+2*y^2, 2*z^2-y^2+2}};

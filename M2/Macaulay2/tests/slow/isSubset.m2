@@ -44,7 +44,7 @@ f = J_(numgens J - 1);
 m = a*b*c^6
 assert( m % leadTerm K == 0 )
 assert( m % K != m )
-s = select( flatten entries leadTerm K, n -> m % leadMonomial n == 0 )
+s = select( (leadTerm K)_*, n -> m % leadMonomial n == 0 )
 assert( m % ideal s == 0 )
 assert( f % K == 0 )
 assert isSubset(J,K)

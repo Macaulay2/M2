@@ -2,7 +2,7 @@
 	    by Daniel R. Grayson <dan@math.uiuc.edu>
 	 and Michael Stillman <mike@math.cornell.edu>
 
-	available from http://www.math.uiuc.edu/Macaulay2/
+	available from https://macaulay2.com/
 
 	Fink Macaulay2 package: Dave Morrison <drm@finkproject.org>
 

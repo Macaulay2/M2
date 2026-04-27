@@ -30,25 +30,32 @@ shorten := s -> (
 -- TODO: remove as duplicate
 noopts := x -> select(x,e -> class e =!= Option and class e =!= OptionTable)
 
-texLiteralTable := new MutableHashTable
-scan(0 .. 255, c -> texLiteralTable#(ascii{c}) = concatenate(///{\char ///, toString c, "}"))
-scan(ascii(32 .. 126), c -> texLiteralTable#c = c)
-scan("\\{}$&#^_%~|<>\"", c -> texLiteralTable#c = concatenate("{\\char ", toString (ascii c)#0, "}"))
-texLiteralTable#"\n" = "\n"
-texLiteralTable#"\r" = "\r"
-texLiteralTable#"\t" = "\t"
-texLiteralTable#"`"  = "{`}" -- break ligatures ?` and !` in font \tt. See page 381 of TeX Book.
-texLiteral = s -> concatenate for c in s list texLiteralTable#c
+texLiteralEncode := c -> concatenate apply(ascii c,i->("\\char",toString i))
+texLiteralPairs := splice {
+    apply(0..8|11..12|14..31|127..255|toSequence ascii "\\{}$&#^_%~|<>\"", c -> ascii c => texLiteralEncode ascii c),
+    "`"  => "{`}" -- break ligatures ?` and !` in font \tt. See page 381 of TeX Book.
+    }
+texLiteralTable := hashTable texLiteralPairs
+texLiteral1 := t -> s -> (
+    flag:=false;
+    concatenate apply(characters s,
+	c -> if t#?c then (
+	    s:=t#c;
+	    flag=first s==="\\" and last s =!="}";
+	    s
+	    )
+	else if flag then (flag=false; " "|c) else c
+	) | if flag then " " else ""
+    )
+texLiteral := texLiteral1 texLiteralTable
 
 HALFLINE    := "\\vskip 4.75pt\n"
 ENDLINE     := "\\leavevmode\\hss\\endgraf\n"
 VERBATIM    := "\\begingroup\\tt "
 ENDVERBATIM := "\\endgroup{}"
 
-texExtraLiteralTable := copy texLiteralTable
-texExtraLiteralTable#" " = "\\ "
-texExtraLiteral := s -> demark(ENDLINE,
-    apply(lines s, l -> for c in l list texExtraLiteralTable#c))
+texExtraLiteralTable := hashTable append(texLiteralPairs," " => "\\ ")
+texExtraLiteral := s -> demark(ENDLINE, apply(lines s, l -> apply(l, c -> if texExtraLiteralTable#?c then texExtraLiteralTable#c else c)))
 
 --------------------------------------------
 -- this loop depends on the feature of hash tables that when the keys
@@ -72,25 +79,96 @@ sectionType = sectionNumber -> (
     "\\subsubsubsubsubparagraph");
 
 -----------------------------------------------------------------------------
+keywordTexMath = applyKeys(hashTable { -- both unary and binary keywords
+	symbol |-   => "\\vdash ",
+	symbol ..   => "\\,{.}{.}\\,",
+	symbol ..<  => "\\,{.}{.}{<}\\,",
+	symbol <=   => "\\le ",
+	symbol >=   => "\\ge ",
+	symbol =>   => "\\Rightarrow ",
+	symbol ==>  => "\\Longrightarrow ",
+	symbol <==  => "\\Longleftarrow ",
+	symbol <==> => "\\Longleftrightarrow ",
+	symbol _>   => "{}_>",
+	symbol _<   => "{}_<",
+	symbol ^>   => "{}^>",
+	symbol ^<   => "{}^<",
+	symbol **   => "\\otimes ",
+	symbol ++   => "\\oplus ",
+	symbol !=   => "\\ne ",
+	symbol ->   => "\\rightarrow ",
+	symbol <-   => "\\leftarrow ",
+	symbol ===> => "{\\large\\Longrightarrow}",
+	symbol <=== => "{\\large\\Longleftarrow}",
+	symbol <<   => "\\ll ",
+	symbol >>   => "\\gg ",
+	symbol ^!   => "{}^!",
+	symbol _!   => "{}_!",
+	symbol  ~   => "\\sim ",
+	symbol ^~   => "{}^\\sim",
+	symbol _~   => "{}_\\sim",
+	--symbol ^# => "{}^\\sharp",
+	--symbol _# => "{}_\\sharp",
+	symbol _   => "\\_",
+	symbol {   => "\\{",
+	symbol }   => "\\}",
+	symbol \   => "\\backslash ",
+	symbol \\  => "\\backslash\\backslash ",
+	symbol #   => "\\#",
+	symbol #?  => "\\#?",
+	symbol %   => "\\%",
+	symbol &   => "\\&",
+	symbol ^   => "\\wedge ",
+	symbol ^^  => "\\wedge\\wedge ",
+	symbol <|  => "\\langle ",
+	symbol |>  => "\\rangle ",
+	symbol |   => "\\mid",
+	symbol ||  => "\\mid\\mid",
+	symbol ^** => "{}^{\\otimes}", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
+	symbol _*  => "{}_*", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
+	symbol ^*  => "{}^*", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
+	symbol ·   => "\\cdot",
+	},symbolBody)
 
 bbLetters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
+-- greek letters below are only in math mode
+texMathLiteralTable := merge(texLiteralTable,
+    hashTable {
+	"Α" => "\\Alpha", "Β" => "\\Beta", "Ε" => "\\Epsilon", "Ζ" => "\\Zeta", "Η" => "\\Eta", "Ι" => "\\Iota", "Κ" => "\\Kappa", "Μ" => "\\Mu", "Ν" => "\\Nu", "Ο" => "\\Omicron", "Ρ" => "\\Rho", "Τ" => "\\Tau", "Χ" => "\\Chi",
+	"Γ" => "\\Gamma", "Δ" => "\\Delta", "Θ" => "\\Theta", "Λ" => "\\Lambda", "Ξ" => "\\Xi", "Π" => "\\Pi", "Σ" => "\\Sigma", "Υ" => "\\Upsilon", "Φ" => "\\Phi", "Ψ" => "\\Psi", "Ω" => "\\Omega",
+	"ϱ" => "\\varrho", "ϵ" => "\\epsilon", "π" => "\\pi", "ρ" => "\\rho", "ς" => "\\varsigma", "σ" => "\\sigma", "τ" => "\\tau", "υ" => "\\upsilon", "φ" => "\\varphi", "χ" => "\\chi", "ψ" => "\\psi", "ω" => "\\omega", "ϑ" => "\\vartheta",
+	"α" => "\\alpha", "β" => "\\beta", "γ" => "\\gamma", "ϕ" => "\\phi", "δ" => "\\delta", "ε" => "\\varepsilon", "ϖ" => "\\varpi", "ζ" => "\\zeta", "η" => "\\eta", "θ" => "\\theta", "ι" => "\\iota", "κ" => "\\kappa", "λ" => "\\lambda", "μ" => "\\mu", "ν" => "\\nu", "ξ" => "\\xi", "ο" => "\\omicron",
+	"𝔞" => "\\mathfrak{a}","𝔟" => "\\mathfrak{b}","𝔠" => "\\mathfrak{c}","𝔡" => "\\mathfrak{d}","𝔢" => "\\mathfrak{e}","𝔣" => "\\mathfrak{f}","𝔤" => "\\mathfrak{g}","𝔥" => "\\mathfrak{h}","𝔦" => "\\mathfrak{i}","𝔧" => "\\mathfrak{j}","𝔨" => "\\mathfrak{k}",
+	"𝔩" => "\\mathfrak{l}","𝔪" => "\\mathfrak{m}","𝔫" => "\\mathfrak{n}","𝔬" => "\\mathfrak{o}","𝔭" => "\\mathfrak{p}","𝔮" => "\\mathfrak{q}","𝔯" => "\\mathfrak{r}","𝔰" => "\\mathfrak{s}","𝔱" => "\\mathfrak{t}","𝔲" => "\\mathfrak{u}","𝔳" => "\\mathfrak{v}",
+	"𝔴" => "\\mathfrak{w}","𝔵" => "\\mathfrak{x}","𝔶" => "\\mathfrak{y}","𝔷" => "\\mathfrak{z}","𝔄" => "\\mathfrak{A}","𝔅" => "\\mathfrak{B}","𝔆" => "\\mathfrak{C}","𝔇" => "\\mathfrak{D}","𝔈" => "\\mathfrak{E}","𝔉" => "\\mathfrak{F}","𝔊" => "\\mathfrak{G}",
+	"𝔋" => "\\mathfrak{H}","𝔌" => "\\mathfrak{I}","𝔍" => "\\mathfrak{J}","𝔎" => "\\mathfrak{K}","𝔏" => "\\mathfrak{L}","𝔐" => "\\mathfrak{M}","𝔑" => "\\mathfrak{N}","𝔒" => "\\mathfrak{O}","𝔓" => "\\mathfrak{P}","𝔔" => "\\mathfrak{Q}","𝔕" => "\\mathfrak{R}",
+	"𝔖" => "\\mathfrak{S}","𝔗" => "\\mathfrak{T}","𝔘" => "\\mathfrak{U}","𝔙" => "\\mathfrak{V}","𝔚" => "\\mathfrak{W}","𝔛" => "\\mathfrak{X}","𝔜" => "\\mathfrak{Y}","𝔝" => "\\mathfrak{Z}",
+	"×" => "\\times", "÷" => "\\div", "±" => "\\pm",
+	},last)
+texMathLiteral = texLiteral1 texMathLiteralTable
 -- TODO: expand and document this behavior
 suffixes := {"bar","tilde","hat","vec","dot","ddot","check","acute","grave","breve"};
 suffixesRegExp := "\\w("|demark("|",suffixes)|")$";
 texVariable := x -> (
     if x === "" then return "";
-    xx := separate("\\$", x); if #xx > 1 then return demark("{\\char36}", texVariable \ xx); -- avoid the use of "$" in tex output
     if #x === 2 and x#0 === x#1 and bbLetters#?(x#0) then return "{\\mathbb " | x#0 | "}";
     if last x === "'" then return texVariable substring(x, 0, #x-1) | "'";
     if (r := regex(suffixesRegExp, x)) =!= null then return (
 	r = r#1; "\\" | substring(r, x) | "{" | texVariable substring(x, 0, r#0) | "}");
-    if #x === 1 or regex("[^[:alnum:]]", x) =!= null then x else "\\textit{" | x | "}")
-texMath Symbol := x -> if keywordTexMath#?x then keywordTexMath#x else texVariable toString x
+    if #x === 1 or regex("[^[:alnum:]]", x) =!= null then x else "\\mathit{" | x | "}")
+texMathSymbol :=
+texMath Symbol := texVariable @@ texMathLiteral @@ toString
+texMath Keyword :=  texMath @@ symbolBody
+texMath SymbolBody := s -> if keywordTexMath#?s then keywordTexMath#s else texMathSymbol s
+
+-- add augmented operators
+removeLast := s -> substring(s,0,#s-1)
+keywordTexMath = merge(keywordTexMath, hashTable apply(toList augmentedAssignmentOperators, s -> symbolBody s => (texMath (getGlobalSymbol ( removeLast toString s ))) | "="), last)
 
 -----------------------------------------------------------------------------
 
-tex     Nothing :=
-texMath Nothing := x -> ""
+tex     Nothing := tex @@ toString
+texMath Nothing := texMath @@ toString
 
 tex     Thing := x -> concatenate("$", texMath x, "$")
 texMath Thing := x -> texMath net x -- if we're desperate (in particular, for raw objects)
@@ -118,17 +196,22 @@ texMath BasicList    := L -> concatenate(texMath class L, texMathVisibleList("\\
 texMathMutable :=
 texMath MutableList  := L -> concatenate(texMath class L, "\\left\\{", if #L > 0 then "\\ldots "|#L|"\\ldots" else "\\,", "\\right\\}")
 
-texMath HashTable := H -> if H.?texMath then H.texMath else (
-    if hasAttribute(H, ReverseDictionary) then texMath toString getAttribute(H, ReverseDictionary)
-    else if isMutable H then texMathMutable H
-    else texMath class H | texMath apply(sortByName pairs H, (k, v) -> k => v))
+texMath HashTable := H -> (
+    texMath class H | texMath apply(sortByName pairs H, (k, v) -> k => v)
+    )
+
+texMath MutableHashTable := H -> (
+    if H.?texMath then H.texMath -- used by some rings, e.g., ZZ, QQ, RR
+    else if hasAttribute(H, ReverseDictionary)
+    then texMath toString getAttribute(H, ReverseDictionary)
+    else texMathMutable H)
 
 texMath Function := f -> texMath toString f
 
 texMath ZZ := n -> (
     s := simpleToString n;
     j := 1 - (#s-1) % 3;
-    concatenate for i in s list (if j==2 then (j=0; "\\,",i) else (j=j+1; i))
+    concatenate for i in s list (if j==2 then (j=0; "\\,",i) else (j += 1; i))
     )
 
 --     \rm     Roman
@@ -237,7 +320,7 @@ tex MENU := x -> tex drop(redoMENU x, 1)
 -----------------------------------------------------------------------------
 
 -- TODO: incorporate this with packages/Style/M2book.tex.in
-TeXclass := "\\documentclass{article}"
+TeXclass := "\\documentclass{standalone}"
 TeXpackages := {"amsmath", "amssymb"}
 TeXtemplate := src -> concatenate( TeXclass,                newline,
     apply(TeXpackages, pkg -> "\\usepackage{" | pkg | "}"), newline,

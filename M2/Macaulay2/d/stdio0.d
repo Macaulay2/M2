@@ -9,7 +9,7 @@ export EOF ::= -2;					    -- end of file
 export DEPRECATED := -3;				    -- deprecated syntax
 export STDIN ::= 0;
 export STDOUT ::= 1;
-export STDERR ::= 2;
+export STDERR:int:=2; -- will be modified in webapp mode
 
 export iseof      (c:int ):bool := c == EOF;
 export iserror    (c:int ):bool := c == ERROR;
@@ -24,7 +24,7 @@ export fileOutputSyncState :=
 	     	       	        -- The text after this point may be combined with
 				-- subsequently printed nets.
         hadNet:bool,		-- whether a Net is present, in which case the
-	     	       	        -- buffer will be empty
+				-- buffer will be empty (actually just outbol == outindex)
 	nets:NetList,	        -- list of nets, to be printed after the outbuffer
         bytesWritten:int,       -- bytes written so far
 	lastCharOut:int,        -- when outbuffer empty, last character written, or -1 if none

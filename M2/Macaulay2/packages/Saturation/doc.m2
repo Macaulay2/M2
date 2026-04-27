@@ -97,8 +97,3 @@ Node
     Example
       ann (M/(a*M))
 ///
-
-for n in {BasisElementLimit, PairLimit, DegreeLimit} do
-document {
-    Key => {[quotient, n], [saturate, n]},
-    PARA {"The value for this optional argument for ", TO saturate, " and ", TO quotient, " is passed through to ", TO gb, "." }}

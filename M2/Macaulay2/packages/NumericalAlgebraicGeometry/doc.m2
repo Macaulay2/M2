@@ -672,7 +672,9 @@ isOn(point {{sqrt 5*ii,sqrt 3}},W)
     }
 
 document {
-    Key => {newton, (newton,PolySystem,Matrix), (newton,PolySystem,AbstractPoint)},
+    Key => {newton, 
+	-*(newton,System,Matrix),*- 
+	(newton,System,AbstractPoint)},
     Headline => "Newton-Raphson method",
     "Performs one step of the Newton-Raphson method.",
     Caveat=>{"Works for a regular square or overdetermined system."}
@@ -786,26 +788,68 @@ document {
     }
 
 document {
-    Key => {squareUp, (squareUp,PolySystem), (squareUp,PolySystem,ZZ), (squareUp,PolySystem, Matrix), 
-	SquaredUpSystem, SquareUpMatrix
+    Key => {squareUp, (squareUp,System), (squareUp,System,ZZ), (squareUp,System, Matrix), 
+	SquaredUpSystem, SquareUpMatrix,
+	(squareUp, AbstractPoint, AbstractPoint, GateSystem), 
+	(squareUp, AbstractPoint, GateSystem),
+	[squareUp,Strategy],
+	[squareUp,Field],
+	[squareUp,Verbose]  
 	},
     Headline => "square up a polynomial system",
-    Usage => "G = squareUp F\\nG = squareUp(F,M)\\nsquareUp(F,n)",
+    Usage => "G = squareUp F
+    G = squareUp(F,M)
+    G = squareUp(F,n)
+    G = squareUp(x0,F)
+    G = squareUp(p0,x0,F)
+    ",
     Inputs => { 
-	"F"=>PolySystem,
-	"M"=>Matrix=>{" the matrix used to square up the system (by default a random matrix is picked)"},
-	"n"=>ZZ=>{" the number of polynomials to be formed (by default, this equals the number of variables)"}  
+	"F"=>System,
+	"M"=>Matrix=>{" used to square up the system (by default a random matrix is picked)"},
+	"n"=>ZZ=>{" the number of polynomials to be formed (by default, this equals the number of variables)"},
+	"x0"=>Point=>{" used to compute the dimension of the tangent space (approximately)"},
+	"p0"=>Point=>{" parameters specialization (in case of a parametric system)"} 	 
 	},
     Outputs => { "G"=>PolySystem },
-    "Squares up an overdetermined polynomial system. Attaches keys ", 
-    TO SquareUpMatrix, " and ", TO SquaredUpSystem,
-    " to ", TT "F", ".", 
+    PARA {"There are two flavors of this method: both aimed at producing a regular sequence (either global or local)."},
+    PARA {"The first squares up an overdetermined polynomial system (usually assuming that the user is interested in the isolated solutions; i.e., the components of dimension 0) and attaches keys ", 
+    	TO SquareUpMatrix, " and ", TO SquaredUpSystem,
+    	" to ", TT "F", "."}, 
     EXAMPLE lines ///
-    CC[x,y]; F = polySystem {x^2+y^2,x^3+y^3,x^4+y^4}
+    CC[X,Y]; F = polySystem {X^2+Y^2,X^3+Y^3,X^4+Y^4}
     G := squareUp F
     peek F
     ///,
-    SeeAlso=>{PolySystem}
+    PARA { 
+	"The other computes ", TO "numericalRank", " ", TT "r", 
+	" of the Jacobian of ", TT "F", " and picks out the first ", TT"r", 
+	" polynomials who give the same (approximate) rank at the specified point."   
+	},
+    EXAMPLE lines ///
+    X = gateMatrix{toList vars(x,y,z)}
+    P = gateMatrix{toList vars(a..d)}
+    F = gateSystem(P,X,gateMatrix{{y^2-x*z},{x^2*y-z^2},{x^3-y*z},{a*x+b*y+c*z+d}})
+    X0 = point{{1,1,1_CC}}
+    P0 = point{{1,1,1,-3_CC}}
+    norm evaluate(F, P0, X0) -- should be small
+    numericalRank evaluateJacobian(F, P0, X0) -- should equal number of variables
+    G = squareUp(P0, X0, F)
+    netList entries gateMatrix G
+    ///,
+    PARA {"Optional parameters are:"}, 
+    UL apply({
+	    "block size" => {" (default = 1) How many rows of Jacobian are evaluated at each step when squaring up a system at a specified Point."},
+	    "target rank" => {" (default = full rank) The target rank of the subsystem. "},
+	    Field => {" (default = null). If null, then the coefficient ring is used for ", TO PolySystem, " and CC is used for ", TO GateSystem, "."}, 
+	    Strategy => {" (default = \"random matrix\"). Given an overdetermined system, a random matrix is used to construct
+		as many random linear combinations of the equations as there are variables. ", 
+		"(Another option \"slack variables\" has not been implemented yet.)"},
+	    Verbose => {" (default = false)."}		    
+	    }, 
+	item -> {TT "[", TT toExternalString item#0, TT "]: "} | item#1 
+	)
+    ,
+    SeeAlso=>{PolySystem,GateSystem}
     }
 
 document {
@@ -834,7 +878,7 @@ document {
 	"valuesP" => {" contains (possibly several sets of) values of the parameters"}  
 	},
     Outputs => { "sols"=>" lists of lists of solutions for each set of the parameters" },
-    "Solves a parameteric polynomial system for several values of parameters.", 
+    "Solves a parametric polynomial system for several values of parameters.", 
     EXAMPLE lines ///
     R = CC[u1,u2,u3,x,y]
     f1 = u1*(y-1)+u2*(y-2)+u3*(y-3)
@@ -884,6 +928,39 @@ document {
     SeeAlso=>{()}
     }
 *-
+
+doc ///
+    Key
+      evaluateHt
+      (evaluateHt,Homotopy,Matrix,Number)
+      (evaluateHt,ParameterHomotopy,Matrix,Matrix,Number)
+      (evaluateHt,SpecializedParameterHomotopy,Matrix,Number)
+      (evaluateHt,GateHomotopy,Matrix,Number)
+    Headline
+      evaluates the derivative of the homotopy with respect to the continuation parameter
+///
+
+doc ///
+    Key
+      evaluateHx
+      (evaluateHx,Homotopy,Matrix,Number)
+      (evaluateHx,ParameterHomotopy,Matrix,Matrix,Number)
+      (evaluateHx,SpecializedParameterHomotopy,Matrix,Number)
+      (evaluateHx,GateHomotopy,Matrix,Number)
+    Headline
+      evaluates the jacobian of the homotopy 
+///
+
+doc ///
+    Key
+      evaluateH
+      (evaluateH,Homotopy,Matrix,Number)
+      (evaluateH,ParameterHomotopy,Matrix,Matrix,Number)
+      (evaluateH,SpecializedParameterHomotopy,Matrix,Number)
+      (evaluateH,GateHomotopy,Matrix,Number)
+    Headline
+      evaluates the homotopy 
+///
 
 document {
     Key => {(gateHomotopy, GateMatrix, GateMatrix, InputGate),
@@ -943,15 +1020,6 @@ document {
     }
 
 doc ///
-Key
-  (evaluateH,GateHomotopy,Matrix,Number)
-  (evaluateHt,GateHomotopy,Matrix,Number)
-  (evaluateHx,GateHomotopy,Matrix,Number)
-Headline
-  evaluate gate homotopy and its derivatives 
-///  
-
-doc ///
     Key
 	gateSystem
 	(gateSystem,GateMatrix,GateMatrix)
@@ -959,6 +1027,7 @@ doc ///
 	(gateSystem,Matrix)
 	(gateSystem,PolySystem)
 	(gateSystem,PolySystem,List)
+	(gateSystem,BasicList,BasicList,GateMatrix)
     Headline
         a constructor for GateSystem
     Usage
@@ -972,6 +1041,7 @@ doc ///
     	Text 
             @TO GateMatrix@ {\tt M} is expected to have 1 column.
     	    Matrices {\tt params} and {\tt variables} are expected to have 1 row.
+	    (Later addition: TO DO say something about less restritive syntax.) 
         Example
             variables = declareVariable \ {x,y}
     	    F = gateSystem(matrix{variables}, matrix{{x*y-1},{x^3+y^2-2}})
@@ -993,6 +1063,80 @@ doc ///
         GateSystem	
 ///
 
+doc ///
+    Key
+      (specialize, GateSystem, AbstractPoint)
+    Headline
+      specialize parameters in a gate system
+    Usage
+      specialize(G,p)
+    Description
+      Text
+        Returns a @TO GateSystem@ with parameters specialized to the given values.
+      Example
+        variables = declareVariable \ {x,y}
+	params = declareVariable \ {a,b}  
+	Fab = gateSystem(matrix{params}, matrix{variables}, matrix{{a*x*y-1},{x^3+y^2-b}})
+	F = specialize(Fab, point{{1,2}})
+	p0 = point{{0.1,0.2+ii}}
+        evaluate(F,p0)
+	evaluateJacobian(F,p0)	
+    ///
+
+doc ///
+    Key
+      (symbol ^, GateSystem, List)
+    Headline
+      a subsystem with specified equations
+    Usage
+      G^L
+    Inputs
+      G:
+      L:"indices of the equations"
+    Description
+      Example
+        variables = declareVariable \ {x,y}
+	F = gateSystem(matrix{variables}, matrix{{x*y-1},{x^3+y^2-2},{x^2+2*y-3}})
+	gateMatrix F
+	G = F^{0,2}
+    	gateMatrix G	
+    ///
+
+doc ///
+    Key
+      (polySystem, GateSystem, PolynomialRing)
+    Headline
+      classical polynomial system associated to a gate system
+    Usage
+      F = polySystem(G,R)
+    Inputs
+      G:
+      R:
+    Outputs
+      F: PolySystem
+    Description
+      Text
+        Given a gate system and a polynomial ring,
+	this function constructs a classical (represented via M2 polynomial map) polynomial system.
+      Example
+        variables = declareVariable \ {x,y}
+	G = gateSystem(matrix{variables}, matrix{{x*y-1},{x^3+y^2-2},{x^2+2*y-3}})
+	R = CC[X,Y]
+	F = polySystem(G,R)
+	evaluate(F,matrix{{1,2}})
+	evaluate(G,matrix{{1,2}})
+      Text
+        The ring is expected to be of the form {\tt K[x_1..x_n]} or {\tt K[a_1..a_m][x_1..x_n]}.
+	In the latter case, the gate system is expected to take {\tt m} parameters.  
+      Example
+        variables = declareVariable \ {x,y}
+        params = declareVariable \ {a,b,c}
+	G = gateSystem(matrix{params}, matrix{variables}, matrix{{x*y-1},{a*x^2+b*y^2-c}})
+	R = CC[A,B,C][X,Y]
+	F = polySystem(G,R)
+	equations F
+///
+
 undocumented {
     (toExternalString,GateSystem),
     (evaluateJacobian,GateSystem,Matrix),
@@ -1008,6 +1152,10 @@ Key
 Headline
   jacobian of a (gate) system
 ///
+
+undocumented{    
+    (texMath, GateSystem)
+}
 
 doc ///
     Key
@@ -1060,8 +1208,8 @@ doc ///
         Text
     	    This method implements homotopy continuation: it follows a given list {\tt S} of start solutions along a @TO Homotopy@ {\tt H}.
 	  
-            Option @TO Field@ is unique to this method (the default is @TO CC@, but one can imagine using @TO RR@). 
-	    It specifies which @TO InexactFieldFamily@ to use when adaptive precision is requested via {\tt Precision=>infinity}.
+            Option @TO Field@ (the default is @TO CC@, but one can imagine using @TO RR@) 
+	    specifies which @TO InexactFieldFamily@ to use when adaptive precision is requested via {\tt Precision=>infinity}.
 	    The rest are a subset of @TO "numerical homotopy tracking options"@. 
     Caveat	
             Note for developers: the old implementation @TO track@ eventually will be replaced by a call to @TO trackHomotopy@.
@@ -1134,6 +1282,45 @@ doc ///
 	  that are considered parameters for the evaluation circuit.  
 ///	 
 
+--- HOMOTOPY ---------------------------------
+doc ///
+  Key
+    Homotopy
+  Headline
+    a homotopy abstract type
+  Description
+    Text
+      A type that inherits from this {\bf abstract} type should supply methods for 
+      evaluating a homotopy.
+///
+
+doc ///
+  Key 
+    ParameterHomotopy
+  Headline
+    a homotopy that involves parameters
+  Description
+    Text
+      An abstract type that of homotopy that involves parameters.
+      Can be specialized to produce @TO SpecializedParameterHomotopy@.
+  SeeAlso
+    specialize
+///	    
+
+doc ///
+  Key 
+     SpecializedParameterHomotopy
+  Headline
+    a homotopy obtained from a parameter homotopy by specializing parameters
+///	    
+
+doc ///
+  Key 
+    Parameters
+  Headline
+    a collection of parameters
+///
+
 doc ///
     Key 
       GateParameterHomotopy
@@ -1146,11 +1333,55 @@ doc ///
 ///
 
 doc ///
-Key 
-  (specialize,GateParameterHomotopy,MutableMatrix)
-Headline
-  specialize parameters in a (gate) parameter homotopy 
+    Key
+        (parameters,ParameterHomotopy)
+    Headline
+        the parameters in the parameter homotopy
+    Description
+        Text 
+	  This method returns the 1-row @TO GateMatrix@ that contains @TO InputGate@s 
+	  that are considered parameters in the evaluation circuit for the homotopy, 
+	  excluding the continuation parameter.  
+///	 
+
+doc ///
+    Key
+	(numParameters,ParameterHomotopy)    		
+    Headline
+        the number of parameters in the parameter homotopy
 ///
+
+doc ///
+    Key
+	(numVariables,ParameterHomotopy)    		
+    Headline
+        the number of variables in the parameter homotopy
+///
+
+doc ///
+    Key
+	(numVariables,SpecializedParameterHomotopy)    		
+    Headline
+        the number of variables in the parameter homotopy
+///
+
+doc ///
+  Key 
+    (specialize, ParameterHomotopy, Matrix)
+    specialize
+  Headline
+    specialize a parameter homotopy
+  Usage
+    Hp = specialize(H,p)
+  Inputs 
+    H: 
+      homotopy
+    p: 
+      values of parameters 
+  Outputs
+    Hp:SpecializedParameterHomotopy
+      specialized homotopy
+///	    
 
 doc ///
 Key
@@ -1209,6 +1440,17 @@ doc ///
 	  to the output of @TO segmentHomotopy@. There are {\bf 2 m} parameters in{\tt PH} 
 	  where {\bf m} is the number of parameters in {\tt F}. 
 	  The first {\bf m} parameters correspond to the starting point A in the parameter space.
-	  The last {\bf m} parameters correspond to the end point B in the parameter space.        
+	  The last {\bf m} parameters correspond to the end point B in the parameter space.
+	Example
+	  variables = declareVariable \ {x,y}
+	  params = declareVariable \ {a,b} 
+	  F = gateSystem(matrix{params}, matrix{variables}, matrix{{a*x*y-1},{x^3+y^2-b}})
+	  PH = parametricSegmentHomotopy F;
+	  parameters PH
+	  (a0,b0) = (1,2); startSolution = point{{1,1}};
+    	  (a1,b1) = (2,1);	  
+	  H01 = specialize(PH, matrix{{a0,b0,a1,b1}});
+	  targetSolution = first trackHomotopy(H01,{startSolution})
+	  assert(norm evaluate(F,matrix{{a1,b1}},matrix targetSolution) < 0.0001)    		  
 ///	 
 

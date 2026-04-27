@@ -7,8 +7,8 @@ newPackage (
 	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
 	  },
      Keywords => {"Miscellaneous"},
-     HomePage => "http://www.math.uiuc.edu/Macaulay2/",
-     PackageImports => {"XML"},
+     HomePage => "https://macaulay2.com/",
+     PackageImports => {"OldChainComplexes", "XML"},
      Version => "1.0"
      )
 

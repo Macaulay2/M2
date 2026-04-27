@@ -7,6 +7,8 @@ doc ///
     replace
   Headline
     replacement in strings and lists
+  Subnodes
+    (replace, ZZ, Thing, BasicList)
 ///
 
 doc ///
@@ -68,7 +70,7 @@ doc ///
 
 doc ///
   Key
-    (replace, ZZ, Thing, VisibleList)
+    (replace, ZZ, Thing, BasicList)
   Headline
     copy a list, replacing an element
   Usage
@@ -76,9 +78,9 @@ doc ///
   Inputs
     i:ZZ
     t:Thing
-    l:VisibleList
+    l:BasicList
   Outputs
-    s:VisibleList
+    s:BasicList
       a copy of the list @TT "l"@ in which @TT "t"@ has replaced the element at position @TT "i"@.
   Description
     Text

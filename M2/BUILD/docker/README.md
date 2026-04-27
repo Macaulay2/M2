@@ -7,6 +7,7 @@ The `Dockerfile` in this directory creates a container image based on latest Ubu
 - [`ubuntu`](ubuntu):   Compiling Macaulay2 in a Container
 - [`debian`](debian):   Packaging Macaulay2 for Debian (.deb)
 - [`fedora`](fedora):   Packaging Macaulay2 for Fedora (.rpm)
+- [`rhel`](rhel):       Packaging Macaulay2 for Red Hat Enterprise Linux (.rpm)
 - [`testbot`](testbot): Macaulay2 testbot for GitHub Actions
 - [`brew`](brew):       Bottling  Macaulay2 for [Homebrew](https://brew.sh/)
 - [`nightly`](nightly): Testing the Nightly Build of Macaulay2

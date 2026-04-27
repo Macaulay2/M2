@@ -42,7 +42,7 @@ TEST ///
     W={{-1, 0, 0, 0},{-1, 1, 0, 0},{0,-1, 1, 1},{0, 0,-1, 1},{0, 0, 1,-1},{0, 1,-1,-1},{1,-1, 0, 0},{1, 0, 0, 0}}
     D=dynkinType{{"D",4}}
     setWeights(R,D,W)
-    K=koszul vars R
+    K=koszulComplex vars R
     H0=highestWeightsDecomposition(K)
     T0=new HashTable from {0 => new HashTable from {{0} => new Tally from {{0, 0, 0, 0} => 1}}, 1 => new HashTable from {{1} => new Tally from {{1, 0, 0, 0} => 1}}, 2 => new HashTable from {{2} => new Tally from {{0, 1, 0, 0} => 1}}, 3 => new HashTable from {{3} => new Tally from {{0, 0, 1, 1} => 1}}, 4 => new HashTable from {{4} => new Tally from {{0, 0, 0, 2} => 1, {0, 0, 2, 0} => 1}}, 5 => new HashTable from {{5} => new Tally from {{0, 0, 1, 1} => 1}}, 6 => new HashTable from {{6} => new Tally from {{0, 1, 0, 0} => 1}}, 7 => new HashTable from {{7} => new Tally from {{1, 0, 0, 0} => 1}}, 8 => new HashTable from {{8} => new Tally from {{0, 0, 0, 0} => 1}}}
     assert(H0 === T0)

@@ -5,8 +5,6 @@
 document { 
      Key => {
 	  rank,
-	 (rank, CoherentSheaf),
-	 (rank, GradedModule),
 	 (rank, Matrix),
 	 (rank, Module),
 	 (rank, MutableMatrix)},
@@ -14,10 +12,7 @@ document {
      Usage => "rank M",
      Inputs => {
 	  "M" => { 
-	       ofClass Module, ", ", 
-	       ofClass CoherentSheaf, ", ", 
-	       ofClass GradedModule, ", ", 
-	       ofClass ChainComplex, ", or ", 
+	       ofClass Module, ", or ",
 	       ofClass Matrix
 	       }
 	  },

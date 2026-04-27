@@ -19,7 +19,7 @@ struct binomial : public our_new_delete
   monomial0 lead;
   monomial0 tail;
 
-  binomial() : lead(NULL), tail(NULL) {}
+  binomial() : lead(nullptr), tail(nullptr) {}
   binomial(monomial0 lead0, monomial0 tail0) : lead(lead0), tail(tail0) {}
 };
 
@@ -31,7 +31,7 @@ struct binomial_gb_elem : public our_new_delete
                               // this lead term.
   binomial f;
 
-  binomial_gb_elem(binomial ff) : next(NULL), smaller(NULL), f(ff) {}
+  binomial_gb_elem(binomial ff) : next(nullptr), smaller(nullptr), f(ff) {}
 };
 
 struct binomial_s_pair : public our_new_delete
@@ -156,7 +156,7 @@ class binomial_s_pair_set : public our_new_delete
     binomial_gb_elem *f1;
     binomial_gb_elem *f2;
     s_pair_elem(binomial_gb_elem *ff1, binomial_gb_elem *ff2)
-        : next(NULL), f1(ff1), f2(ff2)
+        : next(nullptr), f1(ff1), f2(ff2)
     {
     }
   };
@@ -262,7 +262,7 @@ class binomialGB : public our_new_delete
   };
 
   iterator begin() const { return iterator(first); }
-  iterator end() const { return iterator(NULL); }
+  iterator end() const { return iterator(nullptr); }
   int n_masks() const;
   void debug_display() const;
 };
@@ -361,7 +361,7 @@ class binomialGB_comp : public GBComputation
 
   virtual const Ring *get_ring() const
   {
-    return 0;
+    return nullptr;
   } /* doesn't have a ring !!  */
   virtual const Matrix /* or null */ *get_gb();
 
