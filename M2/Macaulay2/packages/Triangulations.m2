@@ -1797,6 +1797,11 @@ needsPackage "Triangulations"
   regularTriangulationWeights t0 
 
   -- now let's find flip graph...
+  flipGraph t0
+  G = flipGraph(t0, Fine => false)
+  assert(#G#"triangulations" == #allTriangulations(A, Homogenize => false))
+
+  
   flips t0
   neighbors t0
   affineCircuits(A, max t0)
@@ -1826,6 +1831,57 @@ needsPackage "Triangulations"
   
 ///
 
+BENCHMARK = str -> null
+
+-*
+restart
+needsPackage "Triangulations"
+*-
+BENCHMARK ///
+  -- testing generateTriangulations, and flipGraph (not written yet!)
+  -- Let's start with a reflexive polytope of dim 4, with h11=4.
+  needsPackage "ReflexivePolytopesDB"
+  --tope = (kreuzerSkarke 6)#3
+  tope = KSEntry "4 15  M:32 15 N:11 10 H:6,27 [-42] id:3
+   1   0   1  -1   0   1   0   0  -1   2   3  -2   1  -3  -1
+   0   1  -1   1   0   1   0   0   2  -1  -3   1  -2   3  -1
+   0   0   0   0   1  -1   0   1   0  -1  -2   2  -1   1   0
+   0   0   0   0   0   0   1  -1  -1   1   3  -3   3  -3   0
+   "
+  P = polar convexHull matrix tope
+  A = matrix {select(latticePoints P, x -> x != 0)}
+  elapsedTime Ts = allTriangulations(A, Homogenize => false); -- 4900 triangulations, 5.4 sec
+
+
+  debugLevel = 1
+  t0 = Ts_1
+  isFine t0
+  elapsedTime G = flipGraph(t0, Fine => true);
+  #G#"triangulations" == 2968
+  netList G#"edges"
+  #G#"edges"
+
+  elapsedTime Ts' = generateTriangulations(t0, Homogenize => false, Fine => false, RegularOnly => true); -- 174 sec
+  
+  elapsedTime Gall = flipGraph(t0, Fine => false); -- 71 sec
+  #Gall#"triangulations" == 8387
+  #Gall#"edges"
+
+  elapsedTime Greg = flipGraph(t0, Fine => false, RegularOnly => true); -- 184 sec
+  #Greg#"triangulations" == 4900 -- this is great!  Matches topcom
+  #Greg#"edges" == 15040
+  
+  -- this check uses topcom. 119 sec
+  elapsedTime for t in Gall#"triangulations" list isRegularTriangulation t;
+  tally oo -- 4900 regular, 3487 not.
+
+  -- The following two topcom calls crash.  Probably the same problem.
+  -- regularFineTriangulation(A, Homogenize => false) -- crashes in topcom
+  -- elapsedTime Tsfine = allTriangulations(A, Fine => true, Homogenize => false);
+  
+  -- TODO: secondary cones
+  --       
+///
 
 doc ///
   Key
