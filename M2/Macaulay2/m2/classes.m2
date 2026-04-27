@@ -9,7 +9,7 @@ ancestors  = T -> unique join({T}, while (T = parent T) =!= Thing list T, {Thing
 ancestors' = T -> unique join({T}, while (T = class  T) =!= Type  list T, {Type})
 
 -- TODO: make this TT toString X later?
-synonym = X -> if X.?synonym then X.synonym else "object of class " | toString X
+synonym = X -> X.synonym ?? "object of class " | toString X
 -- TODO: find a more permanent solution
 plurals = new MutableHashTable from {
     "body"       => "bodies",
@@ -22,13 +22,14 @@ pluralize = s -> demark_" " append(
     drop(ws := separate_" " s, -1),
     if  plurals#?(last ws)
     then plurals#(last ws) else last ws | "s")
-pluralsynonym = T -> if T.?synonym then pluralize T.synonym else "objects of class " | toString T
+pluralsynonym = T -> pluralize T.synonym ?? "objects of class " | toString T
 
 Time.synonym = "timing result"
 Boolean.synonym = "Boolean value"
 MutableHashTable.synonym = "mutable hash table"
 HashTable.synonym = "hash table"
 CacheTable.synonym = "cache table"
+Error.synonym = "error"
 Function.synonym = "function"
 FunctionClosure.synonym = "function closure"
 CompiledFunction.synonym = "compiled function"

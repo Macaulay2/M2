@@ -117,6 +117,7 @@ void Z_mod::elem_text_out(buffer &o,
                           bool p_plus,
                           bool p_parens) const
 {
+  (void) p_parens;
   int n = to_int(a.get_int());
   if (n < 0)
     {

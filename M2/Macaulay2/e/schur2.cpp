@@ -15,6 +15,8 @@ const int LARGE_NUMBER = 32000;
 
 void tableau2::initialize(int nvars, int maxwt0)
 {
+  (void) nvars;
+  (void) maxwt0;
   maxwt = SCHUR_MAX_WT;
   wt = 0;
   lambda = nullptr;
@@ -318,12 +320,15 @@ ring_elem SchurRing2::copy(const ring_elem f) const
 
 ring_elem SchurRing2::invert(const ring_elem f) const
 {
+  (void) f;
   // This function is not relevant for this ring
   return zero();
 }
 
 ring_elem SchurRing2::divide(const ring_elem f, const ring_elem g) const
 {
+  (void) f;
+  (void) g;
   // This function is not relevant for this ring
   return zero();
 }
@@ -333,6 +338,8 @@ void SchurRing2::syzygy(const ring_elem a,
                         ring_elem &x,
                         ring_elem &y) const
 {
+  (void) a;
+  (void) b;
   // This function is not relevant for this ring
   x = zero();
   y = zero();
@@ -712,6 +719,8 @@ ring_elem SchurRing2::eval(const RingMap *map,
                            const ring_elem f,
                            int first_var) const
 {
+  (void) f;
+  (void) first_var;
   // Should we allow ring maps to other Schur rings?  No others are that well
   // defined...
   // Use promote and lift for those instead?

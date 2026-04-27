@@ -19,10 +19,10 @@ assert BinaryOperation(symbol ===, fromJSON "[\"a\"]", {"a"})
 assert BinaryOperation(symbol ===, fromJSON "[false]", {false})
 
  -- y_array_heterogeneous.json
-assert BinaryOperation(symbol ===, fromJSON "[null, 1, \"1\", {}]", {nil,1,"1",new HashTable from {}})
+assert BinaryOperation(symbol ===, fromJSON "[null, 1, \"1\", {}]", {,1,"1",new HashTable from {}})
 
  -- y_array_null.json
-assert BinaryOperation(symbol ===, fromJSON "[null]", {nil})
+assert BinaryOperation(symbol ===, fromJSON "[null]", {null})
 
  -- y_array_with_1_and_newline.json
 assert BinaryOperation(symbol ===, fromJSON "[1\n]", {1})
@@ -31,7 +31,7 @@ assert BinaryOperation(symbol ===, fromJSON "[1\n]", {1})
 assert BinaryOperation(symbol ===, fromJSON " [1]", {1})
 
  -- y_array_with_several_null.json
-assert BinaryOperation(symbol ===, fromJSON "[1,null,null,null,2]", {1,nil,nil,nil,2})
+assert BinaryOperation(symbol ===, fromJSON "[1,null,null,null,2]", {1,,,,2})
 
  -- y_array_with_trailing_space.json
 assert BinaryOperation(symbol ===, fromJSON "[2] ", {2})
@@ -111,9 +111,6 @@ assert BinaryOperation(symbol ===, fromJSON "{}", new HashTable from {})
  -- y_object_empty_key.json
 assert BinaryOperation(symbol ===, fromJSON "{\"\":0}", new HashTable from {"" => 0})
 
- -- y_object_escaped_null_in_key.json
-assert BinaryOperation(symbol ===, fromJSON "{\"foo\\u0000bar\": 42}", new HashTable from {"foo\0bar" => 42})
-
  -- y_object_extreme_numbers.json
 assert BinaryOperation(symbol ===, fromJSON "{ \"min\": -1.0e+28, \"max\": 1.0e+28 }", new HashTable from {"max" => .99999999999999996p53e28, "min" => -.99999999999999996p53e28})
 
@@ -133,10 +130,10 @@ assert BinaryOperation(symbol ===, fromJSON "{\n\"a\": \"b\"\n}", new HashTable 
 assert BinaryOperation(symbol ===, fromJSON "[\"\\u0060\\u012a\\u12AB\"]", {"`ÄªáŠ«"})
 
  -- y_string_accepted_surrogate_pair.json
-assert BinaryOperation(symbol ===, fromJSON "[\"\\uD801\\udc37\"]", {"í í°·"})
+assert BinaryOperation(symbol ===, fromJSON "[\"\\uD801\\udc37\"]", {"ğ·"})
 
  -- y_string_accepted_surrogate_pairs.json
-assert BinaryOperation(symbol ===, fromJSON "[\"\\ud83d\\ude39\\ud83d\\udc8d\"]", {"í ½í¸¹í ½í²"})
+assert BinaryOperation(symbol ===, fromJSON "[\"\\ud83d\\ude39\\ud83d\\udc8d\"]", {"ğŸ˜¹ğŸ’"})
 
  -- y_string_allowed_escapes.json
 assert BinaryOperation(symbol ===, fromJSON "[\"\\\"\\\\\\/\\b\\f\\n\\r\\t\"]", {"\"\\/\b\f\n\r\t"})
@@ -157,7 +154,7 @@ assert BinaryOperation(symbol ===, fromJSON "[\"\\\\a\"]", {"\\a"})
 assert BinaryOperation(symbol ===, fromJSON "[\"\\\\n\"]", {"\\n"})
 
  -- y_string_escaped_control_character.json
-assert BinaryOperation(symbol ===, fromJSON "[\"\\u0012\"]", {""})
+assert BinaryOperation(symbol ===, fromJSON "[\"\\u0012\"]", {"\u0012"})
 
  -- y_string_escaped_noncharacter.json
 assert BinaryOperation(symbol ===, fromJSON "[\"\\uFFFF\"]", {"ï¿¿"})
@@ -169,7 +166,7 @@ assert BinaryOperation(symbol ===, fromJSON "[\"asd\"]", {"asd"})
 assert BinaryOperation(symbol ===, fromJSON "[ \"asd\"]", {"asd"})
 
  -- y_string_last_surrogates_1_and_2.json
-assert BinaryOperation(symbol ===, fromJSON "[\"\\uDBFF\\uDFFF\"]", {"í¯¿í¿¿"})
+assert BinaryOperation(symbol ===, fromJSON "[\"\\uDBFF\\uDFFF\"]", {"ô¿¿"})
 
  -- y_string_nbsp_uescaped.json
 assert BinaryOperation(symbol ===, fromJSON "[\"new\\u00A0line\"]", {"newÂ line"})
@@ -181,7 +178,7 @@ assert BinaryOperation(symbol ===, fromJSON "[\"ô¿¿\"]", {"ô¿¿"})
 assert BinaryOperation(symbol ===, fromJSON "[\"ï¿¿\"]", {"ï¿¿"})
 
  -- y_string_null_escape.json
-assert BinaryOperation(symbol ===, fromJSON "[\"\\u0000\"]", {"\0"})
+assert BinaryOperation(symbol ===, fromJSON "[\"\\u0000\"]", {"\u0000"})
 
  -- y_string_one-byte-utf-8.json
 assert BinaryOperation(symbol ===, fromJSON "[\"\\u002c\"]", {","})
@@ -199,7 +196,7 @@ assert BinaryOperation(symbol ===, fromJSON "[\"asd \"]", {"asd "})
 assert BinaryOperation(symbol ===, fromJSON "\" \"", " ")
 
  -- y_string_surrogates_U+1D11E_MUSICAL_SYMBOL_G_CLEF.json
-assert BinaryOperation(symbol ===, fromJSON "[\"\\uD834\\uDd1e\"]", {"í ´í´"})
+assert BinaryOperation(symbol ===, fromJSON "[\"\\uD834\\uDd1e\"]", {"ğ„"})
 
  -- y_string_three-byte-utf-8.json
 assert BinaryOperation(symbol ===, fromJSON "[\"\\u0821\"]", {"à ¡"})
@@ -232,10 +229,10 @@ assert BinaryOperation(symbol ===, fromJSON "[\"â‚ãˆ´â‚\"]", {"â‚ãˆ´â‚"})
 assert BinaryOperation(symbol ===, fromJSON "[\"\\u0022\"]", {"\""})
 
  -- y_string_unicode_U+1FFFE_nonchar.json
-assert BinaryOperation(symbol ===, fromJSON "[\"\\uD83F\\uDFFE\"]", {"í ¿í¿¾"})
+assert BinaryOperation(symbol ===, fromJSON "[\"\\uD83F\\uDFFE\"]", {"ğŸ¿¾"})
 
  -- y_string_unicode_U+10FFFE_nonchar.json
-assert BinaryOperation(symbol ===, fromJSON "[\"\\uDBFF\\uDFFE\"]", {"í¯¿í¿¾"})
+assert BinaryOperation(symbol ===, fromJSON "[\"\\uDBFF\\uDFFE\"]", {"ô¿¾"})
 
  -- y_string_unicode_U+200B_ZERO_WIDTH_SPACE.json
 assert BinaryOperation(symbol ===, fromJSON "[\"\\u200B\"]", {"â€‹"})
@@ -268,7 +265,7 @@ assert BinaryOperation(symbol ===, fromJSON "42", 42)
 assert BinaryOperation(symbol ===, fromJSON "-0.1", -.10000000000000001p53)
 
  -- y_structure_lonely_null.json
-assert BinaryOperation(symbol ===, fromJSON "null", nil)
+assert BinaryOperation(symbol ===, fromJSON "null", null)
 
  -- y_structure_lonely_string.json
 assert BinaryOperation(symbol ===, fromJSON "\"asd\"", "asd")

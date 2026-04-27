@@ -136,13 +136,28 @@ class ARingTower : public RingInterface
   // Routines to help in switch from coeffrings to aring //
   // these will be renamed or go away (hopefully) /////////
   /////////////////////////////////////////////////////////
-  void init_set(elem &result, elem a) const {}  // TODO: write this
-  void set(elem &result, elem a) const {}       // TODO: write this
+  void init_set(elem &result, elem a) const  // TODO: write this
+  {
+    (void) result;
+    (void) a;
+  }
+
+  void set(elem &result, elem a) const // TODO: write this
+  {
+    (void) result;
+    (void) a;
+  }
+
   /////////////////////////////////
   // ElementType informational ////
   /////////////////////////////////
 
-  bool is_unit(ElementType f) const { return false; }  // TODO: write this
+  bool is_unit(ElementType f) const // TODO: write this
+  {
+    (void) f;
+    return false;
+  }
+
   bool is_zero(ElementType f) const { return f == nullptr; }
   bool is_equal(ElementType f, ElementType g) const
   {
@@ -152,6 +167,8 @@ class ARingTower : public RingInterface
   int compare_elems(ElementType f, ElementType g) const
   {
     // TODO: write this
+    (void) f;
+    (void) g;
     return 0;
   }
 
@@ -189,22 +206,34 @@ class ARingTower : public RingInterface
   void copy(elem &result, elem a) const { result = copy(mStartLevel, a); }
   void set_from_long(elem &result, long a) const
   {  // TODO: write this
+    (void) result;
+    (void) a;
   }
 
   // v from 0..n_vars()-1, sets result to 0 if v is out of range
   void set_var(elem &result, int v) const { result = var(mStartLevel, v); }
   void set_from_mpz(elem &result, mpz_srcptr a) const
   {
+    (void) result;
+    (void) a;
     assert(false);
   }  // TODO: write this
 
   bool set_from_mpq(elem &result, mpq_srcptr a) const
   {
+    (void) result;
+    (void) a;
     assert(false);
     return false;
   }  // TODO: write this
 
-  bool set_from_BigReal(elem &result, gmp_RR a) const { return false; }
+  bool set_from_BigReal(elem &result, gmp_RR a) const
+  {
+    (void) result;
+    (void) a;
+    return false;
+  }
+
   // arithmetic
   void negate(elem &result, elem a) const
   {
@@ -213,7 +242,12 @@ class ARingTower : public RingInterface
   }
 
   // we silently assume that a != 0.  If it is, result is set to a^0, i.e. 1
-  void invert(elem &result, elem a) const {}  // TODO: write this
+  void invert(elem &result, elem a) const // TODO: write this
+  {
+    (void) result;
+    (void) a;
+  }
+
   void add(elem &result, elem a, elem b) const
   {
     if (a == nullptr)
@@ -234,13 +268,47 @@ class ARingTower : public RingInterface
     subtract_in_place(mStartLevel, result, b);
   }  // TODO: write this
 
-  void subtract_multiple(elem &result, elem a, elem b) const {}  // TODO: write
-                                                                 // this
-  void mult(elem &result, elem a, elem b) const {}          // TODO: write this
-  void divide(elem &result, elem a, elem b) const {}        // TODO: write this
-  void power(elem &result, elem a, int n) const {}          // TODO: write this
-  void power_mpz(elem &result, elem a, mpz_srcptr n) const {}  // TODO: write this
-  void swap(ElementType &a, ElementType &b) const {}        // TODO: write this
+  void subtract_multiple(elem &result, elem a, elem b) const // TODO: write this
+  {
+    (void) result;
+    (void) a;
+    (void) b;
+  }
+
+  void mult(elem &result, elem a, elem b) const // TODO: write this
+  {
+    (void) result;
+    (void) a;
+    (void) b;
+  }
+
+  void divide(elem &result, elem a, elem b) const // TODO: write this
+  {
+    (void) result;
+    (void) a;
+    (void) b;
+  }
+
+  void power(elem &result, elem a, int n) const // TODO: write this
+  {
+    (void) result;
+    (void) a;
+    (void) n;
+  }
+
+  void power_mpz(elem &result, elem a, mpz_srcptr n) const // TODO: write this
+  {
+    (void) result;
+    (void) a;
+    (void) n;
+  }
+
+  void swap(ElementType &a, ElementType &b) const // TODO: write this
+  {
+    (void) a;
+    (void) b;
+  }
+
   void elem_text_out(buffer &o,
                      ElementType a,
                      bool p_one = true,
@@ -258,14 +326,26 @@ class ARingTower : public RingInterface
               ElementType &x,
               ElementType &y) const
   {
+    (void) a;
+    (void) b;
+    (void) x;
+    (void) y;
   }  // TODO: write this
 
-  void random(ElementType &result) const {}  // TODO: write this
+  void random(ElementType &result) const // TODO: write this
+  {
+    (void) result;
+  }
+
   void eval(const RingMap *map,
             const elem f,
             int first_var,
             ring_elem &result) const
   {
+    (void) map;
+    (void) f;
+    (void) first_var;
+    (void) result;
   }  // TODO: write this
 
   // f *= b, where b is an element in mBaseRing

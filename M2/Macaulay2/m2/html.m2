@@ -26,7 +26,12 @@ KaTeX := () -> (
           "\\QQ": "\\mathbb{Q}",
           "\\RR": "\\mathbb{R}",
           "\\CC": "\\mathbb{C}",
-          "\\PP": "\\mathbb{P}"
+          "\\PP": "\\mathbb{P}",
+          "\\OO": "\\mathcal{O}",
+          "\\Hom": "\\operatorname{Hom}",
+          "\\End": "\\operatorname{End}",
+          "\\Ext": "\\operatorname{Ext}",
+          "\\Tor": "\\operatorname{Tor}"
       }, delimiters = [
           { left: "$$",  right: "$$",  display: true},
           { left: "\\[", right: "\\]", display: true},

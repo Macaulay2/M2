@@ -665,6 +665,7 @@ binomialGB::binomialGB(const binomial_ring *R0, bool bigcell, bool homogprime)
       // use_bigcell(bigcell),
       is_homogeneous_prime(homogprime)
 {
+  (void) bigcell;
 }
 
 binomialGB::~binomialGB()
@@ -997,6 +998,9 @@ binomialGB_comp *binomialGB_comp::create(const Matrix *m,
                                          M2_bool use_max_degree_limit,
                                          int max_degree_limit)
 {
+  (void) gb_weights;
+  (void) use_max_degree_limit;
+  (void) max_degree_limit;
   if (collect_syz || n_rows_to_keep > 0)
     {
       ERROR("Groebner basis Algorithm=>Toric cannot keep syzygies");
@@ -1210,6 +1214,7 @@ Matrix *binomialGB_comp::subringGB()
 
 Matrix *binomialGB_comp::reduce(const Matrix *m, Matrix *& /*lift*/)
 {
+  (void) m;
   ERROR("MES: not implemented yet");
   return nullptr;
 }
@@ -1249,6 +1254,7 @@ const Matrix *binomialGB_comp::get_syzygies() { return nullptr; }
 const Matrix /* or null */ *binomialGB_comp::matrix_remainder(const Matrix *m)
 // likely not planned to be implemented
 {
+  (void) m;
   return nullptr;
 }
 M2_bool binomialGB_comp::matrix_lift(
@@ -1257,6 +1263,7 @@ M2_bool binomialGB_comp::matrix_lift(
     const Matrix /* or null */ **result_quotient)
 // not planned to be implemented
 {
+  (void) m;
   *result_remainder = nullptr;
   *result_quotient = nullptr;
   ERROR("rawGBMatrixLift not implemented for toric GB's");

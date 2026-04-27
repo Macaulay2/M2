@@ -891,8 +891,7 @@ regularizedGamma(e:Expr):Expr := (
 	    when a.0
 	    is s:RRcell do (
 		when a.1
-		is x:RRcell do toExpr(
-		    midpointRR(regularizedGamma(toRRi(s.v), toRRi(x.v))))   -- # typical value: regularizedGamma, RR, RR, RR
+		is x:RRcell do toExpr(regularizedGamma(s.v, x.v))	    -- # typical value: regularizedGamma, RR, RR, RR
 		is x:RRicell do toExpr(regularizedGamma(toRRi(s.v), x.v))   -- # typical value: regularizedGamma, RR, RRi, RRi
 		is x:CCcell do toExpr(regularizedGamma(toCC(s.v), x.v))     -- # typical value: regularizedGamma, RR, CC, CC
 		else WrongArgRRorCC(2))
@@ -956,7 +955,7 @@ erfc(e:Expr):Expr := (
 setupfun("erfc",erfc).Protected=false;
 inverseErf(e:Expr):Expr := (
      when e
-     is x:RRcell do toExpr(midpointRR(inverseErf(toRRi(x.v))))	    -- # typical value: inverseErf, RR, RR
+     is x:RRcell do toExpr(inverseErf(x.v))			    -- # typical value: inverseErf, RR, RR
      is x:RRicell do toExpr(inverseErf(x.v))			    -- # typical value: inverseErf, RRi, RRi
      else WrongArgRRorRRi());
 setupfun("inverseErf",inverseErf).Protected=false;
@@ -976,15 +975,13 @@ BesselJ(e:Expr):Expr := (
 		  else WrongArgRRorCC(2))
 	      else (
 		  when s.1
-		  is x:RRcell do toExpr(
-		      midpointRR(BesselJ(toRRi(n.v), toRRi(x.v))))
+		  is x:RRcell do toExpr(BesselJ(toRR(n.v), x.v))
 		  is x:RRicell do toExpr(BesselJ(toRRi(n.v,precision(x.v)),x.v))
 		  is x:CCcell do toExpr(BesselJ(toCC(n.v), x.v ))
 		  else WrongArgRRorCC(2)))
 	  is n:RRcell do (
 	      when s.1
-	      is x:RRcell do toExpr(
-		  midpointRR(BesselJ(toRRi(n.v), toRRi(x.v))))
+	      is x:RRcell do toExpr(BesselJ(n.v, x.v))
 	      is x:RRicell do toExpr(BesselJ(toRRi(n.v), x.v))
 	      is x:CCcell do toExpr(BesselJ(toCC(n.v), x.v ))
 	      else WrongArgRRorCC(2))
@@ -1017,15 +1014,13 @@ BesselY(e:Expr):Expr := (
 		  else WrongArgRRorCC(2))
 	      else (
 		  when s.1
-		  is x:RRcell do toExpr(
-		      midpointRR(BesselY(toRRi(n.v), toRRi(x.v))))
+		  is x:RRcell do toExpr(BesselY(toRR(n.v), x.v))
 		  is x:RRicell do toExpr(BesselY(toRRi(n.v,precision(x.v)),x.v))
 		  is x:CCcell do toExpr(BesselY(toCC(n.v), x.v ))
 		  else WrongArgRRorCC(2)))
 	  is n:RRcell do (
 	      when s.1
-	      is x:RRcell do toExpr(
-		  midpointRR(BesselY(toRRi(n.v), toRRi(x.v))))
+	      is x:RRcell do toExpr(BesselY(n.v, x.v))
 	      is x:RRicell do toExpr(BesselY(toRRi(n.v), x.v))
 	      is x:CCcell do toExpr(BesselY(toCC(n.v), x.v ))
 	      else WrongArgRRorCC(2))
@@ -1102,8 +1097,7 @@ regularizedBeta(xx:Expr,yy:Expr,zz:Expr):Expr := (
 	when yy
 	is y:RRcell do (
 	    when zz
-	    is z:RRcell do toExpr(
-		midpointRR(regularizedBeta(toRRi(x.v), toRRi(y.v), toRRi(z.v)))) -- # typical value: regularizedBeta, RR, RR, RR, RR
+	    is z:RRcell do toExpr(regularizedBeta(x.v, y.v, z.v))                -- # typical value: regularizedBeta, RR, RR, RR, RR
 	    is z:RRicell do toExpr(regularizedBeta(toRRi(x.v), toRRi(y.v), z.v)) -- # typical value: regularizedBeta, RR, RR, RRi, RRi
 	    is z:CCcell do toExpr(regularizedBeta(toCC(x.v), toCC(y.v), z.v))    -- # typical value: regularizedBeta, RR, RR, CC, CC
 	    else WrongArgRRorCC(3))
@@ -1150,6 +1144,34 @@ regularizedBeta(e:Expr):Expr := (
      else WrongNumArgs(3)
      else WrongNumArgs(3));
 setupfun("regularizedBeta",regularizedBeta).Protected=false;
+
+polylog(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 2 then (
+	    when a.0
+	    is x:RRcell do (
+		when a.1
+		is y:RRcell do (                                                 -- # typical value: polylog, RR, RR, RR
+		    if y.v < 1 then toExpr(polylog(x.v, y.v))
+		    else toExpr(polylog(toCC(x.v), toCC(y.v))))
+		is y:RRicell do toExpr(polylog(toRRi(x.v), y.v))                 -- # typical value: polylog, RR, RRi, RRi
+		is y:CCcell do toExpr(polylog(toCC(x.v), y.v))                   -- # typical value: polylog, RR, CC, CC
+		else WrongArgRRorCC(2))
+	    is x:RRicell do (
+		when a.1
+		is y:RRcell do toExpr(polylog(x.v, toRRi(y.v)))                  -- # typical value: polylog, RRi, RR, RRi
+		is y:RRicell do toExpr(polylog(x.v, y.v))                        -- # typical value: polylog, RRi, RRi, RRi
+		else WrongArgRRorCC(2))
+	    is x:CCcell do (
+		when a.1
+		is y:RRcell do toExpr(polylog(x.v, toCC(y.v)))                   -- # typical value: polylog, CC, RR, CC
+		is y:CCcell do toExpr(polylog(x.v, y.v))                         -- # typical value: polylog, CC, CC, CC
+		else WrongArgRRorCC(2))
+	    else WrongArgRRorCC(1))
+	else WrongNumArgs(2))
+    else WrongNumArgs(2));
+setupfun("polylog", polylog).Protected=false;
 
 cosh(e:Expr):Expr := (
      when e
@@ -2376,6 +2398,28 @@ scanPairs(e:Expr):Expr := (
 	else WrongNumArgs(2))
     else WrongNumArgs(2));
 setupfun("scanPairs", scanPairs);
+
+newMutableListFromZZ(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 2 then (
+	    when a.0
+	    is T:HashTable do (
+		if ancestor(T, mutableListClass) then (
+		    when a.1
+		    is n:ZZcell do (
+			if isInt(n) then (
+			    k := toInt(n);
+			    if k >= 0 then list(T,
+				new Sequence len k do provide nullE, true)
+			    else WrongArg(2, "a nonnegative integer"))
+			else WrongArgSmallInteger(2))
+		    else WrongArgZZ(2))
+		else WrongArg(1, "a type of mutable list"))
+	    else WrongArgHashTable(1))
+	else WrongNumArgs(2))
+    else WrongNumArgs(2));
+installMethod(NewFromS, mutableListClass, ZZClass, newMutableListFromZZ);
 
 nextPrime(e:Expr):Expr := (
      when e

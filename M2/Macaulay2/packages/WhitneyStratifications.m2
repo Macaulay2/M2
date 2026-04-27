@@ -1229,7 +1229,7 @@ Node
      	  Text
 	      This package computes Whitney stratifications of real and complex algebraic varieties using the algorithms described in [1, 2, 4]. For varieties considered over the complex numbers the output is indexed by the strata dimension. When wishing to treat the variety over the reals, the same output may be used, but the dimensions of the strata may differ (and some strata may be empty), see [2] for more details. This post processing in the real case is currently left to the user.    
 	      
-	      A method is also provided to stratify polynomial maps $f:X\to Y$ between algebraic varieties, the output is a Whitney stratification of both $X$ and $Y$, such that for each (open, connected) strata $M$ of $X$ there is an (open, connected) strata $N$ of $Y$ such that $f(M) \subset N$ and such that the restriction of $f$ to $M$ is a submersion. This in particular is sufficient to guarantee that Thom's (first) isotopy lemma holds; namely that the stratified homeomorpism type of $f^{-1}(q)$ is fixed for all $q$ in a given strata of the codomain.   
+	      A method is also provided to stratify polynomial maps $f:X\to Y$ between algebraic varieties, the output is a Whitney stratification of both $X$ and $Y$, such that for each (open, connected) strata $M$ of $X$ there is an (open, connected) strata $N$ of $Y$ such that $f(M) \subset N$ and such that the restriction of $f$ to $M$ is a submersion. This in particular is sufficient to guarantee that Thom's (first) isotopy lemma holds; namely that the stratified homeomorphism type of $f^{-1}(q)$ is fixed for all $q$ in a given strata of the codomain.
 	      
 	      Using the methods of [1] or [4] computing the Conormal variety of a variety is an important step in these algorithms, so a method for this is also provided. An alternative method based on [2] is also provided, this requires the computation of polar varieties, hence a method for this is provided as well.
 
@@ -1529,7 +1529,7 @@ Node
 	(polarSequence, Ideal, Ideal)
 	(polarSequence, Ideal, Ideal,List)
     Headline
-    	Computes the list of multiplcities of a subvareity in the polar varieties of another vareity. 
+    	Computes the list of multiplicities of a subvariety in the polar varieties of another variety.
     Usage
     	polarSequence(I)
     Inputs

@@ -103,6 +103,9 @@ M2_DFILES += monoid.dd
 M2_DFILES += monomial_ordering.dd
 M2_DFILES += boostmath.dd
 M2_DFILES += atomic2.d
+ifeq (@JANSSON@,yes)
+M2_DFILES += json.d
+endif
 ifneq (@LIBFFI@,no)
 M2_DFILES += ffi.d
 else

@@ -813,6 +813,7 @@ class MatElementaryOps<SMat<RT> >
   /* Delete rows i .. j from M */ { mat.delete_rows(i, j); }
   static void reduce_by_pivots(Mat& M)
   {
+    (void) M;
     throw exc::engine_error(
         "reduce_py_pivots not yet implemented for sparse mutable matrices");
     // TODO: write this!!

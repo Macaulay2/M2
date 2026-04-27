@@ -153,8 +153,8 @@ minors(ZZ, Matrix) := Ideal => opts -> (j, m) -> (
 	       if f =!= null then f#0, 
 	       if f =!= null then f#1)))
 
-pfaffians = method(TypicalValue => Ideal)
-pfaffians(ZZ, Matrix) := (j, m) -> (
+pfaffians = method()
+pfaffians(ZZ, Matrix) := Ideal => (j, m) -> (
      ideal(map(ring m, rawPfaffians(j,raw m))))
 
 pfaffian = method()

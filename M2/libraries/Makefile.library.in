@@ -8,7 +8,6 @@ export LD_LIBRARY_PATH:=$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 # prefix that was used at compile time, i.e., the only change allowed to the prefix
 # between compile time and install time is to prepend a string
 PREFIX = $(BUILTLIBPATH)
-.NOTPARALLEL:
 ifneq ($(PARALLEL),yes)
 NOTPARALLEL = -j1
 endif
@@ -264,6 +263,17 @@ CHECKFETCHED = case "$(URL)" in									\
 	esac
 $(TARFILE_DIR)/$(TARFILE) :
 	(cd $(TARFILE_DIR) && $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && $(CHECKFETCHED))
+ifneq ($(SHA256SUM), true)
+	@cd $(TARFILE_DIR) && \
+		actual=$$(sha256sum $(TARFILE) | awk '{print $$1}'); \
+		if test "x$(SHA256SUM)" != "x$$actual"; \
+		then echo "error: *** SHA256 hash of $(TARFILE) does not match the expected value"; \
+		echo "  expected: $(SHA256SUM)"; \
+		echo "    actual: $$actual"; \
+		exit 1; \
+		else echo " \033[32m✓\033[0m SHA256 ok ($(SHA256SUM))"; \
+		fi
+endif
 distclean: package-distclean
 clean::; rm -rf .patched* .untarred* $(LIBNAME)* .checked* .compiled* .configured* .installed* .untarred2* diffs tmp $(UNTARDIR) $(OLDUNTARDIR)
 distclean: clean ; rm -rf Makefile

@@ -85,7 +85,7 @@ class ARingRR : public SimpleARing<ARingRR>
   void set_zero(ElementType &result) const { result = 0.0; }
   static void clear(ElementType &result)
   {
-    // do nothing
+    (void) result;
   }
 
   void copy(ElementType &result, const ElementType &a) const { set(result, a); }
@@ -94,7 +94,12 @@ class ARingRR : public SimpleARing<ARingRR>
     result = static_cast<double>(a);
   }
 
-  void set_var(ElementType &result, int v) const { result = 1.0; }
+  void set_var(ElementType &result, int v) const
+  {
+    (void) v;
+    result = 1.0;
+  }
+
   void set_from_mpz(ElementType &result, mpz_srcptr a) const
   {
     result = mpz_get_d(a);
@@ -226,6 +231,7 @@ class ARingRR : public SimpleARing<ARingRR>
             int first_var,
             ring_elem &result) const
   {
+    (void) first_var;
     if (!map->get_ring()->from_double(f, result))
       {
         result = map->get_ring()->from_long(0);

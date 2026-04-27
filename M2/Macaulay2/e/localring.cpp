@@ -226,6 +226,7 @@ ring_elem LocalRing::fraction(const ring_elem top, const ring_elem bottom) const
 // TODO: implement for MutableMatrix
 void LocalRing::lift_up(const Ring *R, const Matrix *m, Matrix *&result) const
 {
+  (void) R;
   const RingElement *a, *b, *d;
   MatrixConstructor mat(mRing->make_FreeModule(m->n_rows()), m->n_cols());
   Matrix::column_iterator i(m), end(m);
@@ -472,7 +473,7 @@ ring_elem LocalRing::copy(const ring_elem a) const
   return ring_elem(g);
 }
 
-void LocalRing::remove(ring_elem &a) const {}
+void LocalRing::remove(ring_elem &a) const { (void) a; }
 
 ring_elem LocalRing::negate(const ring_elem a) const
 {
@@ -683,6 +684,8 @@ ring_elem LocalRing::get_coeff(const ring_elem f, const int *) const
 }
 ring_elem LocalRing::get_terms(int nvars0, const ring_elem f, int, int) const
 {
+  (void) nvars0;
+  (void) f;
   return f;
 }
 

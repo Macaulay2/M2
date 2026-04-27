@@ -6,17 +6,6 @@ needs "quotient.m2"
 
 -----------------------------------------------------------------------------
 
-notsamering := (X,Y) -> (
-     if X === Y then error("expected ",pluralsynonym X, " for the same ring")
-     else error("expected ",X.synonym," and ",Y.synonym," for the same ring"))
-nottosamering := (X,Y) -> (
-     if X === Y then error("expected ",pluralsynonym X, " for compatible rings")
-     else error("expected ",X.synonym," and ",Y.synonym," for compatible rings"))
-samering = (M,N) -> if ring M === ring N then (M,N) else notsamering(class M,class N)
-tosamering := (M,N) -> if ring M === ring N then (M,N) else (
-     z := try 0_(ring M) + 0_(ring N) else nottosamering(class M,class N);
-     (promote(M,ring z),promote(N,ring z)))
-
 module Ring := Module => (cacheValue symbol module)(R -> R^1)
 
 matrix(RingFamily,List) := Matrix => opts -> (R,m) -> matrix(default R, m, opts)
@@ -57,7 +46,7 @@ makeRawTable := (R,p) -> (					    -- this is messy
 map(Module,Nothing,Matrix) := Matrix => o -> (M,nothing,p) -> (
     -- TODO: why give an error? Compare with map(Module,Nothing,RawMatrix)
      if o.Degree =!= null then error "Degree option given with indeterminate source module";
-     samering(M,p);
+     sameRing(M,p);
      R := ring M;
      if M.?generators then (
 	  M' := source M.generators;
@@ -167,7 +156,7 @@ concatBlocks = mats -> (
      else if #(mats#0) === 1
      then concatRows (mats/first)
      else (
-     	  sameringMatrices flatten mats;
+     	  sameRingMatrices flatten mats;
 	  sources := applyTable(mats,source);
 	  targets := transpose applyTable(mats,target);
 	  -- if not same sources then error "expected matrices in the same column to have equal sources";
@@ -374,8 +363,8 @@ subquotient(Module,Nothing,Nothing) := (F,g,r) -> F
 
 Matrix ** Matrix := Matrix => (A, B) -> tensor(A, B)
 tensor(Matrix, Matrix) := Matrix => {} >> opts -> ((f, g) -> (
-     samering(target f,target g);
-     samering(source f,source g);
+     sameRing(target f,target g);
+     sameRing(source f,source g);
      R := ring target f;
      if f === id_(R^1) then return g;
      if g === id_(R^1) then return f;
@@ -490,11 +479,11 @@ Module / Ideal := Module => (M,J) -> M / (J * M)
 Ideal#AfterPrint = Ideal#AfterNoPrint = (I) ->  (Ideal," of ",ring I)
 
 Ideal ^ ZZ := Ideal => (I,n) -> ideal symmetricPower(n,generators I)
-Ideal * Ideal := Ideal => ((I,J) -> ideal flatten (generators I ** generators J)) @@ samering
-Ideal * Module := Module => ((I,M) -> subquotient (generators I ** generators M, relations M)) @@ samering
-Ideal + Ideal := Ideal => ((I,J) -> ideal (generators I | generators J)) @@ tosamering
-Ideal + RingElement := Ideal + Number := ((I,r) -> I + ideal r) @@ tosamering
-RingElement + Ideal := Number + Ideal := ((r,I) -> ideal r + I) @@ tosamering
+Ideal * Ideal := Ideal => ((I,J) -> ideal flatten (generators I ** generators J)) @@ sameRing
+Ideal * Module := Module => ((I,M) -> subquotient (generators I ** generators M, relations M)) @@ sameRing
+Ideal + Ideal := Ideal => ((I,J) -> ideal (generators I | generators J)) @@ toSameRing
+Ideal + RingElement := Ideal + Number := ((I,r) -> I + ideal r) @@ toSameRing
+RingElement + Ideal := Number + Ideal := ((r,I) -> ideal r + I) @@ toSameRing
 Ideal _ ZZ := RingElement => (I,n) -> (generators I)_(0,n)
 Matrix % Ideal := Matrix => ((f,I) -> 
      if numRows f === 1
@@ -504,7 +493,7 @@ Matrix % Ideal := Matrix => ((f,I) ->
 	  R := ring I;
 	  S := R/I;
 	  lift(promote(f,S),R))
-     ) @@ samering
+     ) @@ sameRing
 Vector % Ideal := (v,I) -> new class v from {v#0%I}
 numgens Ideal := (I) -> numgens source generators I
 leadTerm Ideal := Ideal => (I) -> ideal leadTerm gb I
@@ -522,7 +511,7 @@ Ideal == Ring := (I,R) -> (
 Ring == Ideal := (R,I) -> I == R
 
 Ideal == Ideal := (I,J) -> (
-     samering(I,J);
+     sameRing(I,J);
      ( generators I == generators J or 
 	  -- if isHomogeneous I and isHomogeneous J  -- can be removed later
 	  -- then gb I == gb J 

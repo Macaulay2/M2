@@ -19,13 +19,15 @@ class F4Res;
 
 inline int getIndex(int lev, int sldeg, int nlevels, int nslanted_degrees)
 {
-   return lev + (sldeg * nlevels);
+  (void) nslanted_degrees;
+  return lev + (sldeg * nlevels);
 }
 
 // return value is (lev, sldeg)
 inline std::pair<int,int> getPair(int index, int nlevels, int nslanted_degrees)
 {
-   return std::make_pair(index % nlevels, index / nlevels);
+  (void) nslanted_degrees;
+  return std::make_pair(index % nlevels, index / nlevels);
 }
 
 struct Node {

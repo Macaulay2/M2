@@ -759,7 +759,7 @@ int res2_comp::compare_res2_pairs(res2_pair *f, res2_pair *g) const
                 if (EXP1[i] > EXP2[i]) return compare_use_descending;
               }
           }
-      // Fall through to COMPARE_ORDER
+        [[fallthrough]];
       case COMPARE_ORDER:
         cmp = M->compare(f->syz->monom, g->syz->monom);
         if (cmp != 0) return compare_use_descending * cmp;

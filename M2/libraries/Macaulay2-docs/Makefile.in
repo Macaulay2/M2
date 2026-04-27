@@ -1,5 +1,7 @@
 URL = https://macaulay2.com/Downloads/OtherSourceCode
 VERSION = @PACKAGE_VERSION@
+# we build the tarball after the release, so there's no way to know this
+SHA256SUM = true
 
 CONFIGURECMD = :
 

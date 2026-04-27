@@ -29,22 +29,25 @@
 
 newPackage("TerraciniLoci",
     Headline => "Terracini loci of projective varieties",
-    Version => "0.4",
-    Date => "November 10, 2025",
+    Version => "0.5",
+    Date => "February 10, 2026",
     Authors => {
 	{
 	    Name => "Francesco Galuppi",
-	    Email => "galuppi@mimuw.edu.pl"},
+	    Email => "f.galuppi@uw.edu.pl",
+	    HomePage => "https://www.mimuw.edu.pl/~galuppi/"},
 	{
 	    Name => "Pierpaola Santarsiero",
-	    Email => "pierpaola.santarsiero@unibo.it"},
+	    Email => "p.santarsiero@staff.univpm.it",
+	    HomePage => "https://pierpaolasantarsiero.wixsite.com/pierpaola"},
 	{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"},
 	{
 	    Name => "Ettore Teixeira Turatti",
-	    Email => "ettore.t.turatti@uit.no"}},
+	    Email => "e.teixeira-turatti@uw.edu.pl",
+	    HomePage => "https://turattiettore.wixsite.com/ettoreturatti"}},
     HomePage => "https://github.com/d-torrance/terracini-loci",
     Keywords => {"Projective Algebraic Geometry"},
     PackageImports => {
@@ -57,6 +60,11 @@ newPackage("TerraciniLoci",
 ---------------
 
 -*
+
+0.5 (2026-12-10, M2 1.26.05)
+* update citation information
+* add author webpages
+* update author email addresses
 
 0.4 (2025-11-10, M2 1.25.11)
 * update GPL 2 text (FSF no longer has a physical address)
@@ -135,16 +143,22 @@ doc ///
       This package exports one method, @TO terraciniLocus@, for computing the
       ideals of these varieties.
   Citation
-    @article{Galuppi_2025,
-      title={Geometry of First Nonempty Terracini Loci},
-      ISSN={1793-6683},
-      url={http://dx.doi.org/10.1142/S0219199725500531},
-      DOI={10.1142/s0219199725500531},
-      journal={Communications in Contemporary Mathematics},
-      publisher={World Scientific Pub Co Pte Ltd},
-      author={Galuppi, Francesco and Santarsiero, Pierpaola and Torrance, Douglas A. and Turatti, Ettore Teixeira},
-      year={2025},
-      month=apr }
+      @article {MR5026390,
+          AUTHOR = {Galuppi, Francesco and Santarsiero, Pierpaola and Torrance,
+                    Douglas A. and Turatti, Ettore Teixeira},
+           TITLE = {Geometry of first nonempty {T}erracini loci},
+         JOURNAL = {Commun. Contemp. Math.},
+        FJOURNAL = {Communications in Contemporary Mathematics},
+          VOLUME = {28},
+            YEAR = {2026},
+          NUMBER = {4},
+           PAGES = {Paper No. 2550053},
+            ISSN = {0219-1997,1793-6683},
+         MRCLASS = {14J45 (14Q15 15A69)},
+        MRNUMBER = {5026390},
+             DOI = {10.1142/S0219199725500531},
+             URL = {https://doi.org/10.1142/S0219199725500531},
+      }
 ///
 
 doc ///

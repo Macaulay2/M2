@@ -9,22 +9,15 @@ void ARingRR::elem_text_out(buffer &o,
                             bool p_plus,
                             bool p_parens) const
 {
-  ElementType &ap1 = const_cast<ElementType &>(ap);
-  mpfr_t a;
-  mpfr_init(a);
-  mpfr_set_d(a, ap1, MPFR_RNDN);
-  M2_string s = (*gmp_tostringRRpointer)(a);
-  mpfr_clear(a);
-  bool prepend_plus = p_plus && (s->array[0] != '-');
-  bool strip_last =
-      !p_one && ((s->len == 1 && s->array[0] == '1') ||
-                 (s->len == 2 && s->array[1] == '1' && s->array[0] == '-'));
+  (void) p_parens;
 
-  if (prepend_plus) o << "+";
-  if (strip_last)
-    o.put((char *)s->array, s->len - 1);
-  else
-    o.put((char *)s->array, s->len);
+  if (p_plus && ap > 0)
+    o << "+";
+
+  if (!p_one && ap == -1)
+    o << "-";
+  else if (p_one || ap != 1)
+    o << ap;
 }
 
 };  // end namespace M2

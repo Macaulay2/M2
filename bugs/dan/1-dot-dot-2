@@ -1,8 +1,0 @@
-    i10 : X11 .. a
-    stdio:10:5:(1):[0]: error: X11 is not one of the symbols known to 'vars'
-
-    i11 : vars (-11)
-
-    o11 = X11
-
-    o11 : Symbol

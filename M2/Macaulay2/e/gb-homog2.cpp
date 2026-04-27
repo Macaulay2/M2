@@ -117,6 +117,8 @@ GB_comp *GB_comp::create(const Matrix *m,
                          M2_bool use_max_degree_limit,
                          int max_degree_limit)
 {
+  (void) use_max_degree_limit;
+  (void) max_degree_limit;
   GB_comp *result = new GB_comp;
   result->initialize(m, collect_syz, n_rows_to_keep, gb_weights, strategy);
   return result;

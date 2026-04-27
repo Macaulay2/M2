@@ -11,7 +11,7 @@
 # TODO: turn all these libraries into imported libraries and find incompatibilities another way.
 set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
 set(LIBRARIES_LIST MPSOLVE FROBBY NORMALIZ FACTORY FLINT NTL MPFI MPFR GMP BDWGC LAPACK)
-set(LIBRARY_LIST   READLINE HISTORY GDBM)
+set(LIBRARY_LIST   READLINE HISTORY GDBM JANSSON)
 
 message(CHECK_START " Checking for existing libraries and programs")
 
@@ -35,6 +35,7 @@ endif()
 #   TBB 	libtbb-dev	tbb-devel	tbb (Optional)
 #   OpenMP	libomp-dev	libomp-devel	libomp (Optional)
 #   GDBM	libgdbm-dev	gdbm-devel	gdbm
+#   jansson	libjansson-dev	jansson-devel	jansson
 
 # Set this variable to specify the linear algebra library.
 # See `cmake --help-module FindLAPACK` for the list of options
@@ -42,7 +43,14 @@ endif()
 
 find_package(Threads	REQUIRED QUIET)
 find_package(LAPACK	REQUIRED QUIET)
-find_package(Boost	REQUIRED QUIET COMPONENTS regex OPTIONAL_COMPONENTS stacktrace_backtrace stacktrace_addr2line)
+
+set(Boost_USE_STATIC_LIBS ON)
+if(UNIX)
+  cmake_policy(SET CMP0167 OLD) # load CMake's FindBoost module
+  find_package(Boost	REQUIRED QUIET COMPONENTS regex OPTIONAL_COMPONENTS stacktrace_addr2line)
+else()
+  find_package(Boost	REQUIRED QUIET COMPONENTS regex OPTIONAL_COMPONENTS stacktrace_backtrace)
+endif()
 if(Boost_STACKTRACE_BACKTRACE_FOUND)
   set(Boost_stacktrace_lib "Boost::stacktrace_backtrace")
 elseif(Boost_STACKTRACE_ADDR2LINE_FOUND)
@@ -57,6 +65,10 @@ check_include_files(boost/math/tools/atomic.hpp
 
 # TODO: replace gdbm, see https://github.com/Macaulay2/M2/issues/594
 find_package(GDBM	REQUIRED QUIET) # See FindGDBM.cmake
+
+if (WITH_JANSSON)
+  find_package(Jansson REQUIRED)
+endif()
 
 if(WITH_OMP)
   find_package(OpenMP REQUIRED)
@@ -127,7 +139,20 @@ find_package(GMP	6.0.0 REQUIRED)
 #   givaro	prime field and algebraic computations	(needs gmp)
 #  fflas_ffpack	Finite Field Linear Algebra Routines	(needs gmp, givaro + LAPACK)
 
-find_package(Eigen3	3.3.0 PATHS ${M2_HOST_PREFIX})
+# Prior to 3.4.1, find_package for Eigen3 doesn't support version ranges
+# but Ubuntu only has 3.4.0 right now, so we should support it
+# For Eigen 5.0 and later, the way the version checking is setup, specifying
+# a version of 3.4.0 or similar won't find version 5.0
+find_package(Eigen3	3.4.0 PATHS ${M2_HOST_PREFIX} QUIET)
+if(NOT EIGEN3_FOUND)
+  find_package(Eigen3	3.4.1...5.0 PATHS ${M2_HOST_PREFIX})
+  # FindEigen3 doesn't set EIGEN3_FOUND, and instead we should check
+  # if the target Eigen3::Eigen is defined, so we set EIGEN3_FOUND
+  # for compatibility with the rest of the build code
+  if(TARGET Eigen3::Eigen)
+    set(EIGEN3_FOUND TRUE)
+  endif()
+endif()
 find_package(BDWGC	7.6.4)
 find_package(MPFR	4.0.1)
 find_package(MPFI	1.5.1)

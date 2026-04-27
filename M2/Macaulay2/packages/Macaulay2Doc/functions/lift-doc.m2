@@ -118,19 +118,16 @@ document {
      lift(3.0,QQ)
      ///,
      PARA{
-	  "A continued fraction method is used to lift a real number to a rational number, whereas
-	  ", TO "promote", " uses the internal binary representation.",
+	  "A continued fraction method is used to lift a real number to a rational number."
 	  },
      EXAMPLE lines ///
      lift(123/2341.,QQ)
-     promote(123/2341.,QQ)
      factor oo
      ///,
      PARA { "For numbers and ring elements, an alternate syntax with ", TO "^", " is available,
 	  analogous to the use of ", TO "_", " for ", TO "promote", "." },
      EXAMPLE lines ///
      .0001^QQ
-     .0001_QQ
      ///,
      SeeAlso => { baseRings, promote },
      Subnodes => {

@@ -87,6 +87,20 @@ assert Equation(getIOThreadMode f, 2)
 
 removeFile fn
 
+-- issue #3358
+Foo = taskResult schedule(() -> new Type of HashTable)
+assert BinaryOperation(symbol ===, youngest(Foo, Matrix), Foo)
+
+-- mutexes
+m = new Mutex
+
+lock m
+unlock m
+
+assert try tryLock m then true else false
+assert try tryLock m then false else true
+unlock m
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test threads.out"
 -- End:

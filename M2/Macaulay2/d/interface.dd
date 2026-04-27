@@ -32,7 +32,12 @@ header "// TODO: remove the following headers
 #include <relem.hpp>                        // for RingElement";
 
 -- debugging:
-export engineMemory(e:Expr):Expr := toExpr(Ccode(string, "engineMemory()"));
+export engineMemory(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 0 then toExpr(Ccode(string, "engineMemory()"))
+	else WrongNumArgs(0))
+    else WrongNumArgs(0));
 setupfun("engineMemory", engineMemory);
 
 -- testing C++ exceptions
@@ -40,7 +45,12 @@ header "#include <stdexcept>
 void test_catch0() { throw (std::runtime_error(\"test\")); }
 int test_catch() { try { test_catch0(); } catch (const std::runtime_error& x) { return 1; } return 0; }";
 
-export testCatch(e:Expr):Expr := toExpr(Ccode(bool,"0 != test_catch()"));
+export testCatch(e:Expr):Expr := (
+    when e
+    is a:Sequence do (
+	if length(a) == 0 then toExpr(Ccode(bool,"0 != test_catch()"))
+	else WrongNumArgs(0))
+    else WrongNumArgs(0));
 setupfun("testCatch",testCatch);
 
 -- random numbers
@@ -2126,6 +2136,25 @@ export rawMatrixEntry(e:Expr):Expr := (
      else WrongNumArgs(3)
      );
 setupfun("rawMatrixEntry",rawMatrixEntry);
+
+entriesArrayToExpr(entriesOrNull:RawRingElementArrayArrayOrNull):Expr := (
+    when entriesOrNull is entries:RawRingElementArrayArray do (
+        list(new Sequence len length(entries) do (
+            foreach row in entries do (
+                provide list(listClass, toExpr(row))))))
+    else (
+        nullE
+    ));
+
+export rawMatrixEntries(e:Expr):Expr := (
+    when e
+    is M:RawMutableMatrixCell do (
+        entriesArrayToExpr(Ccode(RawRingElementArrayArrayOrNull, "IM2_MutableMatrix_get_entries(", M.p, ")")))
+    is M:RawMatrixCell do (
+        entriesArrayToExpr(Ccode(RawRingElementArrayArrayOrNull, "IM2_Matrix_get_entries(", M.p, ")")))
+    else WrongArg("a raw matrix or mutable matrix")
+    );
+setupfun("rawMatrixEntries",rawMatrixEntries);
 
 export rawSortColumns(e:Expr):Expr := (
      when e is s:Sequence do

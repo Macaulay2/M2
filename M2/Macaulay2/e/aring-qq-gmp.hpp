@@ -119,8 +119,19 @@ class ARingQQGMP : public SimpleARing<ARingQQGMP>
     return true;
   }
 
-  bool set_from_BigReal(ElementType& result, gmp_RR a) const { return false; }
-  void set_var(ElementType& result, int v) const { mpq_set_si(&result, 1, 1); }
+  bool set_from_BigReal(ElementType& result, gmp_RR a) const
+  {
+    (void) result;
+    (void) a;
+    return false;
+  }
+
+  void set_var(ElementType& result, int v) const
+  {
+    (void) v;
+    mpq_set_si(&result, 1, 1);
+  }
+
   /** @} */
 
   /** @name arithmetic

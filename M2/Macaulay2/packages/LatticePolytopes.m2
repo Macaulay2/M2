@@ -652,7 +652,7 @@ epsilonBounds(Polyhedron,ZZ):=(P,n)->(
 		intInP:=unique(intsect_pos);
 		if (#intInP==2) then(
 		    fVec:=intInP_0-intInP_1;
-		    fv:=gcd(apply(flatten entries(fVec),x->promote(x,QQ)));
+		    fv:=gcd(apply(flatten entries(fVec),x->lift(x,QQ)));
 		    Fvs=append(Fvs,fv);
 		    );
       	    	);

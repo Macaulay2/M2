@@ -1,6 +1,0 @@
---*- M2 -*-
-
--- see test/ringmap.m2
-
-f = map(ZZ/5,ZZ)
-kernel f

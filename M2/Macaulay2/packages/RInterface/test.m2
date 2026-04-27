@@ -157,7 +157,7 @@ assert Equation(sum RObject {1, 3, 5}, RObject 9)
 assert Equation(tan RObject 0, RObject 0)
 assert Equation(tanh RObject 0, RObject 0)
 assert Equation((RObject 1)!, RObject 1)
-assert Equation((RObject 1)~, RObject(-2))
+assert Equation(~RObject 1, RObject(-2))
 assert Equation(conjugate RObject ii, RObject(-ii))
 assert(abs(Digamma RObject 1 + RObject EulerConstant) <
     RObject(1e-15))

@@ -110,7 +110,7 @@ document {
 		LI { TO "Probability::Probability", " has been updated to version 0.6."},
 		LI { TO "Python::Python", " has been updated to version 1.0 with significant updates, including the new ", TO "Python::PythonContext", " class and the method ", TO "Python::pythonRunScript", "."},
 		LI { TO "SCMAlgebras::SCMAlgebras", " has been updated to version 1.1, adding new methods.  It can now compute the unmixed layer of an ideal, check for unmixedness, and check for canonical Cohen-Macaulayness."},
-		LI { TO "SRdeformations::SRdeformations", " has been updated to version 0.53, using ", TO "Polyhedra::Polyhedra", " instead of ", TO "OldPolyhedra::OldPolyhedra", "."},
+		LI { TO "SRdeformations::SRdeformations", " has been updated to version 0.53, using ", TO "Polyhedra::Polyhedra", " instead of ", TT "OldPolyhedra", "."},
 		LI { TO "TerraciniLoci::TerraciniLoci", " has been updated to version 0.4."},
 		LI { TO "ToricHigherDirectImages::ToricHigherDirectImages", " has been updated to version 1.1, fixing unexpected behavior from the output of ", TO "ToricHigherDirectImages::HDI", "."},
 		LI { TO "ToricTopology::ToricTopology", " has been updated to version 1.1, adding a new class ", TO "ToricTopology::MomentAngleComplex", " and associated methods to compute equivariant cohomology, Betti numbers, and Euler characteristic, as well as minor fixes to the rest of the package."}, 
@@ -212,7 +212,7 @@ document {
 	LI { "functionality changed in a way that could break code:",
 	    UL {
 		LI { "The package ", TT "Divisor", " has been renamed as ", TO "WeilDivisors :: WeilDivisors", "." },
-		LI { "The method ", TO "Isomorphism :: isIsomorphism", " now only returns true or false. ",
+		LI { "The method ", TO "Isomorphism :: isIsomorphic", " now only returns true or false. ",
 		    "To retrieved the computed isomorphism, use the method ", TO "Isomorphism :: isomorphism", "." },
 		LI { "The method ", TO (symbol\\, Matrix, Matrix), " is now a shortcut for ", TO (quotient', Matrix, Matrix), ". ",
 		    "The previous functionality is still available via ", TO (symbol//, Matrix, Matrix), ", which is a shortcut for ",
@@ -1486,7 +1486,7 @@ document {
 		       	      "An important difference is that objects of these classes can no longer be used as keys into hash tables, since these objects
 		       	      are implemented as mutable hash tables. In particular ", TO symbol===, " no longer works on cones.  Instead, use
 		       	      a sorted list of e.g. vertices and lineality space.",
-		       	      PARA{"If you need the old behavior, load the package ", TO "OldPolyhedra::OldPolyhedra", ". 
+		       	      PARA{"If you need the old behavior, load the package ", TT "OldPolyhedra", ". 
 		       		   However, if possible, change your code to run with the new package."}
 		       		   }
 	       		      }
@@ -2892,7 +2892,8 @@ document {
 			 saving time.  See ", TO (quotientRemainder,RingElement,RingElement), "."
 			 },
 		    LI {
-			 "The binary representation of a real number is now available using ", TO (promote,RR,QQ), ".
+			 "The binary representation of a real number is now available using ", TT "promote(RR,QQ)", ".
+			 (note: this was reverted in a later version.)
 			 The code for ", TO (lift,RR,QQ), " has been tightened up so a rational number is provided
 			 that provides exactly the same real number when promoted."
 			 },

@@ -611,7 +611,7 @@ AC_SUBST(BUILTLIBS)
 AC_SUBST(LIBLIST, " gc gdbm gmp mpfr mpfi normaliz readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll givaro fflas_ffpack linbox gtest tbb memtailor mathic mathicgb eigen ")
 # The list LIBLIST is the list of libraries that might be used and linked into M2.
 
-AC_SUBST(PROGLIST, "4ti2 gfan csdp nauty cddplus lrslib topcom cohomcalg msolve")
+AC_SUBST(PROGLIST, "4ti2 gfan csdp nauty lrslib topcom cohomcalg msolve")
 # The list PROGLIST is the list of programs and libraries for them that are distributed with M2.
 #     Initially, we offer no option for not compiling some of them.
 
@@ -674,7 +674,7 @@ PKGNAME_fflas_ffpack=fflas-ffpack
 #############################################################################
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpfr mpfi readline ntl factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox 4ti2 gfan normaliz csdp nauty cddplus lrslib msolve)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpfr mpfi readline ntl factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox 4ti2 gfan normaliz csdp nauty lrslib msolve)]),
     [for i in $enableval
      do case " $LIBLIST $PROGLIST " in
 	    *" $i "*) 
@@ -1669,6 +1669,18 @@ AS_IF([test x$with_libffi != xno ],
 AC_SUBST([LIBFFI], [$with_libffi])
 AC_DEFINE_UNQUOTED([FFI_VERSION], ["$FFI_VERSION"], [libffi version])
 
+AC_ARG_WITH([jansson],
+    [AS_HELP_STRING([--without-jansson],
+        [don't link with the jansson for json parsing])],,
+    [with_jansson=yes])
+AS_IF([test "x$with_jansson" = xyes],
+    [AC_CHECK_HEADERS([jansson.h],, [AC_MSG_ERROR([jansson.h not found])])
+     AC_SEARCH_LIBS([json_loadb], [jansson], [],
+         [AC_MSG_ERROR([libjansson not found])])
+     AC_DEFINE([WITH_JANSSON], [1],
+         [whether we are linking with the jansson library])])
+AC_SUBST([JANSSON], [$with_jansson])
+
 # after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()
 SAVELIBS=$LIBS
 
@@ -1930,7 +1942,7 @@ complement() {
     for i in $1
     do 	case "$y" in
 	    *" $i "*) ;;
-	    *) /bin/echo -n "$i " ;;
+	    *) env echo -n "$i " ;;
 	esac
     done
     echo

@@ -282,6 +282,7 @@ class MutableMatrix : public MutableEngineObject
   // engine_error is thrown.
   virtual engine_RawArrayIntPairOrNull LQUPFactorizationInPlace(bool transpose)
   {
+    (void) transpose;
     throw exc::engine_error("not implemented for this ring or matrix type");
   }
 

@@ -314,6 +314,7 @@ void Ring::vec_text_out(buffer &o,
 vec Ring::vec_eval(const RingMap *map, const FreeModule *F, const vec v) const
 // v is a vector over 'this'
 {
+  (void) F;
   const Ring *targetRing = map->get_ring();
 
   vecterm head;
@@ -663,6 +664,8 @@ void Ring::vec_sort(vecterm *&f) const
 
 vec Ring::vec_lead_term(int nparts, const FreeModule *F, vec v) const
 {
+  (void) nparts;
+  (void) F;
   // May be over-ridden by subclasses.  In particular, by polynomial classes.
   if (v == nullptr) return nullptr;
   return make_vec(v->comp, v->coeff);

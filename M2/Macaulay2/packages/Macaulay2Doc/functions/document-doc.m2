@@ -33,6 +33,7 @@ Node
     Subnodes=>List
     SourceCode=>List
     ExampleFiles=>List
+    Citation=>List
   Consequences
     Item
       formatted documentation is created and stored in the @TO2 {"currentPackage", "current package"}@
@@ -118,6 +119,7 @@ Node
     [document, Subnodes]
     [document, SourceCode]
     [document, ExampleFiles]
+    [document, Citation]
 
 Node
   Key
@@ -457,6 +459,27 @@ Node
       EXAMPLE { PRE ////ExampleFiles => {"datafile1", "datafile2"}//// }
   SeeAlso
     [newPackage, AuxiliaryFiles]
+///
+
+doc ///
+Node
+  Key
+    Citation
+    [document, Citation]
+  Headline
+    package citation information
+  Description
+    Text
+      This option gives the BibTeX code to be used to cite the package being
+      documented.  Note this is only used in the main documentation node for
+      the package and is ignored otherwise.
+    Code
+      EXAMPLE { PRE ////Citation => {//////@misc{mypkg,
+        author = "John Doe",
+        title = "My Macaulay2 package",
+        year = "2025" }//////}//// }
+  SeeAlso
+    "PackageCitations::cite"
 ///
 
 doc ///

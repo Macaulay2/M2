@@ -25,11 +25,6 @@ module.exports = {
         },
       },
       {
-        test: require.resolve('jquery'),
-        loader: 'expose-loader',
-        options: { exposes: ['$', 'jQuery'] },
-      },
-      {
         test: require.resolve('nouislider'),
         loader: 'expose-loader',
         options: {

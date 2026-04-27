@@ -63,7 +63,12 @@ class ResMonoidDense
 
   int n_vars() const { return nvars; }
   int max_monomial_size() const { return nslots; }
-  int monomial_size(res_const_packed_monomial m) const { return nslots; }
+  int monomial_size(res_const_packed_monomial m) const
+  {
+    (void) m;
+    return nslots;
+  }
+
   void show() const;
 
   res_monomial_word hash_value(res_const_packed_monomial m) const

@@ -10,27 +10,27 @@ void ARingCCC::elem_text_out(buffer &o,
                              bool p_plus,
                              bool p_parens) const
 {
-  gmp_CC_struct g;
-  g.re = &const_cast<ElementType &>(f).re;
-  g.im = &const_cast<ElementType &>(f).im;
-  M2_string s =
-      p_parens ? (*gmp_tonetCCparenpointer)(&g) : (*gmp_tonetCCpointer)(&g);
+  if (p_plus && (mpfr_cmp_si(&f.re, 0) > 0 ||
+                 (mpfr_cmp_si(&f.re, 0) == 0 && mpfr_cmp_si(&f.im, 0) > 0)))
+    o << "+";
 
-  // if: first char is a "-", and p_plus, o << "+"
-  // if: an internal "+" or "-", then put parens around it.
-  //   otherwise: if the string is "1" or "-1", and !p_one
-  //              then leave out the last character.
+  if (p_parens && mpfr_cmp_si(&f.re, 0) != 0 && mpfr_cmp_si(&f.im, 0) != 0) {
+    if (mpfr_cmp_si(&f.re, 0) < 0) {
+      ElementType neg;
 
-  bool prepend_plus = p_plus && (s->array[0] != '-');
-  bool strip_last =
-      !p_one && ((s->len == 1 && s->array[0] == '1') ||
-                 (s->len == 2 && s->array[1] == '1' && s->array[0] == '-'));
-
-  if (prepend_plus) o << "+";
-  if (strip_last)
-    o.put((char *)s->array, s->len - 1);
-  else
-    o.put((char *)s->array, s->len);
+      init(neg);
+      negate(neg, f);
+      o << "-(" << &neg << ")";
+      clear(neg);
+    } else {
+      o << "(" << &f << ")";
+    }
+  } else {
+    if (!p_one && mpfr_cmp_si(&f.re, -1) == 0 && mpfr_cmp_si(&f.im, 0) == 0)
+      o << "-";
+    else if (p_one || mpfr_cmp_si(&f.re, 1) != 0 || mpfr_cmp_si(&f.im, 0) != 0)
+      o << &f;
+  }
 }
 
 };  // end namespace M2

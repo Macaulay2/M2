@@ -719,7 +719,7 @@ installPackage Package := opts -> pkg -> (
 	    verboseLog("copying auxiliary source files from ", auxiliaryFilesDirectory);
 	    makeDirectory(installPrefix | srcDirectory);
 	    copyDirectory(auxiliaryFilesDirectory, installPrefix | srcDirectory,
-		Exclude    => {"^CVS$", "^\\.svn$", "Makefile"},
+		Exclude    => {"^CVS$", "^\\.svn$", "Makefile", "^\\.gitignore$"},
 		UpdateOnly => true,
 		Verbose    => opts.Verbose or debugLevel > 0))
 	else if pkgopts.AuxiliaryFiles

@@ -320,6 +320,7 @@ template <typename Mat>
 engine_RawArrayIntPairOrNull MutableMat<Mat>::LQUPFactorizationInPlace(
     bool transpose)
 {
+  (void) transpose;
   throw exc::engine_error(
       "LU decomposition currently not implemented for this ring and matrix "
       "type");

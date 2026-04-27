@@ -121,7 +121,7 @@ cubicBivariateDetRep RingElement := List => opts -> f -> (
     L := flatten apply(select(clean(eps, L0), isDoublyStochastic), M -> orthogonalFromOrthostochastic(M, opts));
     if k === QQ then (
         numDigits := ceiling(-log_10(eps));
-        (D1, D2) = (D1/round_numDigits, D2/round_numDigits);
+        (D1, D2) = (D1/round_numDigits/(x->x^QQ), D2/round_numDigits/(x->x^QQ));
         L = L/roundMatrix_numDigits;
     );
     (D1, D2) = (D1, D2)/diagonalMatrix_k;

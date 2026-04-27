@@ -230,6 +230,8 @@ regexSeparate(e:Expr):Expr := (
 	    toExpr(r))
 	else WrongArgZZ(4)
 	else WrongArgZZ(3)
+	-- for subclasses of string
+	is text:SpecialExpr do regexSeparate(Expr(Sequence(s.0, text.e, s.2, s.3)))
 	else WrongArgString(2)
 	else WrongArgString(1))
     else WrongNumArgs(1,4))

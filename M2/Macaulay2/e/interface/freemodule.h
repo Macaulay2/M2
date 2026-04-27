@@ -97,7 +97,7 @@ const FreeModule /* or null */ *IM2_FreeModule_tensor(const FreeModule *F,
                                                       const FreeModule *G);
 /* drg: connected rawTensor*/
 /* The tensor product of two free modules over the same ring, or NULL.
- * If F has (ordered basis {f_1,...,f_r}, and
+ * If F has (ordered) basis {f_1,...,f_r}, and
  * G has (ordered) basis {g_1, ..., g_s}, then
  * the result has (ordered) basis
  *    {f_1 ** g_1, f_1 ** g_2, ..., f_1 ** g_s,

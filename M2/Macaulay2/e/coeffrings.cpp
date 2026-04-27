@@ -6,6 +6,7 @@ void CoefficientRingZZp::elem_text_out(buffer &o,
                              bool p_plus,
                              bool p_parens) const
 {
+  (void) p_parens;
   long n = coerceToLongInteger(a);
   if (n < 0)
     {

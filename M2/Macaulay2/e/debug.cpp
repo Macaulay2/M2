@@ -145,7 +145,7 @@ void dstash()
 void dRRR(gmp_RR a)
 {
   buffer o;
-  o << M2_tocharstar((*gmp_tostringRRpointer)(a)) << newline;
+  o << a << newline;
   emit(o.str());
 }
 

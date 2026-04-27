@@ -11,6 +11,8 @@ ResMonoidDense::ResMonoidDense(int nvars0,
                                const std::vector<int>& weightvecs,
                                const MonomialOrderingType moType)
 {
+  (void) weightvecs;
+  (void) moType;
   nvars = nvars0;
   hashfcn = std::unique_ptr<res_monomial_word[]>(new res_monomial_word[nvars]);
   for (int i = 0; i < nvars; i++) hashfcn[i] = rand();

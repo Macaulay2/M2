@@ -133,3 +133,6 @@ assert(2 == length methods parent class code first)
 -- this used to fail because of a bug in (package, Sequence)
 debug Core
 assert(1 == length methods needsPackage "FirstPackage")
+
+-- used to give an error
+code methods {Standard, Print}

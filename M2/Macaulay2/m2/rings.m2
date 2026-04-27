@@ -107,7 +107,10 @@ Number ^ Ring := lift
 promote = method(Dispatch => {Thing, Type, Type})
 Number _ Ring := promote
 
-isPromotable = (R,S) -> lookup(promote,R,S) =!= null
+isPromotable = method(TypicalValue => Boolean)
+isPromotable(RingFamily,RingFamily) :=
+isPromotable(RingFamily,Ring) :=
+isPromotable(Ring,Ring) := (R,S) -> lookup(promote,R,S) =!= null
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

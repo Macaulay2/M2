@@ -183,6 +183,7 @@ extern "C" {
   void** TS_Get_Local(int refno) { return &TS_Get_LocalArray()[refno]; }
   void TS_Add_ThreadLocal(int* refno, const char* name)
   {
+    (void) name;
     if(NULL == threadSupervisor)
       threadSupervisor = new (GC) ThreadSupervisor(maxNumThreads);
     assert(threadSupervisor);

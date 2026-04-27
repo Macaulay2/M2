@@ -258,7 +258,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 					else buildErrorPacket("error occurred in parsing")))))))));
 
 interpreterDepthS := setupvar("interpreterDepth",zeroE);
-setInterpreterDepth(n:int):void := (
+export setInterpreterDepth(n:int):void := (
      interpreterDepth = n;
      setGlobalVariable(interpreterDepthS, toExpr(interpreterDepth)));
 incrementInterpreterDepth():void := setInterpreterDepth(interpreterDepth + 1);
@@ -538,6 +538,7 @@ value(e:Expr):Expr := (
 	       || err.message == breakMessage then if err.value == dummyExpr then nullE else err.value 
 	       else r)
 	  else r)
+     is x:SpecialExpr do value(x.e)
      else WrongArg(1,"a string, a symbol, or pseudocode"));
 setupfun("value'",value);
 
@@ -588,6 +589,52 @@ capture(e:Expr):Expr := (
      else WrongArg(1,"a string"));
 setupfun("capture", capture).Protected = false; -- will be overloaded in m2/examples.m2
 
+parse(e:Expr):Expr := (
+    when e
+    is code:stringCell do (
+	done := false;
+	numParsed := 0;
+	capacity := 4;
+	result := Sequence(nullE, nullE, nullE, nullE);
+	stringFile := stringTokenFile("currentString", code.v);
+	stringFile.posFile.file.fulllines = stdIO.fulllines; -- for TeXmacs mode
+	while true do (
+	    -- mimic the interpreter
+	    while true do (
+		-- lex for a bit until we see something to parse
+		t := peektoken(stringFile, true).word;
+		if t == wordEOF then ( -- end of string
+		    done = true;
+		    break)
+		else if t.parse.precedence <= SemicolonW.parse.precedence then (
+		    if t == SemicolonW || t == NewlineW || t == wordEOC then (
+			gettoken(stringFile, true);
+			nothing)
+		    -- extra right paren
+		    else return buildErrorPacket("syntax error: unmatched " +
+			t.name))
+		-- we found something to parse!
+		else break);
+	    if done then break;
+	    p := parse(stringFile, SemicolonW.parse.precedence, true);
+	    if p == errorTree
+	    then return buildErrorPacket("--backtrace: parse error--");
+	    numParsed = numParsed + 1;
+	    -- ran out of space -- time to grow our sequence
+	    if numParsed > capacity then (
+		capacity = 2 * capacity;
+		newResult := new Sequence len capacity do (
+		    foreach x in result do provide x;
+		    while true do provide nullE);
+		result = newResult);
+	    result.(numParsed - 1) = toExpr(p));
+	if numParsed == 0 then emptyList
+	else if numParsed == capacity then list(result)
+	else list(new Sequence len numParsed do (
+		foreach x in result do provide x)))
+    else WrongArgString());
+setupfun("parse", parse);
+
 normalExit := 0;
 errorExit := 1;
 interruptExit := 2;					    -- see also M2lib.c
@@ -621,6 +668,7 @@ export process():void := (
      setMaxAllowableThreads();
      -- setLoadDepth(loadDepth);				    -- loaddata() in M2lib.c increments it, so we have to reflect that at top level
      everytimeRun();
+     setStdError(stdError);
      -- we don't know the right directory; calls commandInterpreter and eventually returns:
      ret := readeval(stringTokenFile(startupFile.filename,startupFile.contents),false,false);
      when ret is err:Error do (

@@ -65,6 +65,7 @@ assert( rawLift(raw C, f) == raw C_0 )
 
 -- more sophisticated, m2 level, promotes
 R=QQ[x]; S=R[y];
+assert(1/y + 1/x == 1/x + 1/y)
 a=promote(1/x,frac S)
 assert(lift(a,frac R) == 1/x)
 assert(1/x + 1/y == a + 1/y)

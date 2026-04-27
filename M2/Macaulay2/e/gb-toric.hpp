@@ -369,7 +369,11 @@ class binomialGB_comp : public GBComputation
 
   virtual const Matrix /* or null */ *get_initial(int nparts);
 
-  virtual void text_out(buffer &o) const { /* to do */}
+  virtual void text_out(buffer &o) const
+  {
+    (void) o;
+    /* to do */
+  }
   /* This displays statistical information, and depends on the
      M2_gbTrace value */
 

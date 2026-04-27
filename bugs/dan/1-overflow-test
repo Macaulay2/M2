@@ -1,3 +1,0 @@
-this test can't be right:
-
-./overflow-test sub 2>/dev/null || echo test succeeded

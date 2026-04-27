@@ -5870,7 +5870,7 @@ doc ///
         :ZZdFactorizationMap
     Description
         Text
-            This method constructs the injectice cover of a d-fold matrix factorization. The output
+            This method constructs the injective cover of a d-fold matrix factorization. The output
 	    is a ZZdFactorizationMap, which is the canonical injection from the original factorization into the
 	    injective cover.
         Example
@@ -6218,7 +6218,7 @@ doc ///
         mooreMF(p)
     Inputs
         p: ZZ
-            The characteristing of the underlying field (p = 0 for rational coefficients)
+            The characteristic of the underlying field (p = 0 for rational coefficients)
     Outputs
         : ZZdFactorization
             The Moore matrix factorization

@@ -84,8 +84,8 @@ class CoefficientRingZZp : public M2::SimpleARing<CoefficientRingZZp>
   }
   
   int to_int(int f) const { return exp_table[f]; }
-  void init(elem &result) const {}
-  static void clear(elem &result) { /* nothing */}
+  void init(elem &result) const { (void) result; }
+  static void clear(elem &result) { (void) result; }
   void init_set(elem &result, elem a) const { result = a; }
   void set_zero(elem &result) const { result = zero; }
   void set(elem &result, elem a) const { result = a; }
@@ -228,9 +228,7 @@ class CoefficientRingR
   CoefficientRingR(const Ring *R0) : R(R0) {}
   void init_set(elem &result, elem a) const { result = a; }
   void init(elem &result) const { result = R->zero(); }
-  void clear(elem &result) const
-  { /* do nothing */
-  }
+  void clear(elem &result) const { (void) result; }
 
   void set_zero(elem &result) const { result = R->zero(); }
   void set(elem &result, elem a) const { result = a; }

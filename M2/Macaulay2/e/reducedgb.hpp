@@ -98,6 +98,8 @@ class ReducedGB : public GBComputation
 
   virtual void minimalize(const VECTOR(POLY) & polys0, bool auto_reduce = true)
   {
+    (void) polys0;
+    (void) auto_reduce;
   }
 
   // I have to decide: does this ADD to the existing set?

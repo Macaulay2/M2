@@ -217,7 +217,7 @@ writeSample (Sample, String) := (s, dirname) -> (
     if fileExists dirname then (
 	stderr << "warning: directory or file with this name already exists." << endl;
         if not isDirectory dirname then (
-	    stderr << "warning: overwrting file." << endl;
+	    stderr << "warning: overwriting file." << endl;
 	    removeFile dirname;
 	    mkdir dirname;
 	    );

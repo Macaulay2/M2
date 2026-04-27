@@ -580,6 +580,9 @@ int IM2_Resolution_status(Computation *C,
                           int *complete_up_through_this_degree,
                           int *complete_up_through_this_level)
 {
+  (void) C;
+  (void) complete_up_through_this_degree;
+  (void) complete_up_through_this_level;
 #ifdef DEVELOPMENT
 #warning "IM2_Resolution_status to be written"
 #endif
@@ -593,6 +596,10 @@ enum ComputationStatusCode IM2_Resolution_status_level(
     M2_bool minimize,
     int *complete_up_through_this_degree)
 {
+  (void) C;
+  (void) level;
+  (void) minimize;
+  (void) complete_up_through_this_degree;
 #ifdef DEVELOPMENT
 #warning "IM2_Resolution_status to be written"
 #endif
@@ -888,6 +895,7 @@ ConstPolyList matrixToPolyList(const M2FreeAlgebraOrQuotient* A,
                                const Matrix* input)
 {
   ConstPolyList result;
+  (void) A;
   result.reserve(input->n_cols() * input->n_rows());
   for (int i=0; i < input->n_rows(); i++)
     {

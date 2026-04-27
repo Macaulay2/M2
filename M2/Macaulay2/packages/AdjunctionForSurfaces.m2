@@ -753,7 +753,7 @@ doc ///
     
     	3) P2(9;3p_1,...,3p_8)
     
-    	4) Y=P(E) where E is a indecomposabe rank 2 vector bundle over an elliptic curve
+    	4) Y=P(E) where E is a indecomposable rank 2 vector bundle over an elliptic curve
     	    and H=3B, where B in Y is the section with B^2=1.
 
      Example   

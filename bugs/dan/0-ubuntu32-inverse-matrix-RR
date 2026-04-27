@@ -1,7 +1,0 @@
--- -*- M2 -*-
-
-printingPrecision=2;
-M = map(RR^3, RR^5, (i,j) -> (i+1)^j * 1.0)
-(S,U,V) = SVD(M)
-U^-1							    -- crashes under ubuntu32
-

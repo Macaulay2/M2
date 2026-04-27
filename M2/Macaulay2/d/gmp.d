@@ -64,17 +64,6 @@ export CC := { re:RR, im:RR };
 export CCorNull := CC or null;
 
 export CCcell := {+v:CC};
-dummy(x:RR):string := "";
-dummyi(x:RRi):string := "";  -- Added for MPFI
-
-export tostringRRpointer := dummy;
-export tostringRRipointer := dummyi;  -- Added for MPFI
-dummy(x:CC):string := "";
-
-export tonetCCpointer := dummy;
-
-export tonetCCparenpointer := dummy;
-
 
 export min(x:int,y:int):int := if x<y then x else y;
 

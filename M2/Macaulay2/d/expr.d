@@ -22,20 +22,13 @@ threadLocal export recursionDepth := 0;
 --Maximum function depth before triggering errors
 threadLocal export recursionLimit := 300;
 
-
-threadCounter := 0;
-threadLocal HashCounter := (
-    threadCounter = threadCounter + 1;
-    hash_t(1000000 + 3 + (threadCounter-1) * 10000 ));
--- give 32-bit machines enough space to store a 64-bit hash code
--- TODO: instead, allow 64-bit entries in the array of thread local variables
-threadLocal HashCounterExtraBits := 0;
+header "_Atomic uint64_t HashCounter = 1000004;";
 
 export nextHash():hash_t := (
-     if HashCounter == Ccode(hash_t, "18446744073709551615ull") -- check for integer overflow
+     currentHash := Ccode(hash_t, "atomic_load(&HashCounter)");
+     if currentHash ==  Ccode(hash_t, "18446744073709551615ull") -- check for integer overflow
      then Ccode(void, " fprintf(stderr, \" *** hash code serial number counter overflow (too many mutable objects created)\\n\"); abort(); ");
-     HashCounter = HashCounter + 1;
-     HashCounter);
+     Ccode(hash_t, "atomic_fetch_add(&HashCounter, 1)"));
 
 ------------------------------------------------------------
 -- hash codes for mutable objects that don't use nextHash --
@@ -208,9 +201,6 @@ export newParseinfo():parseinfo := parseinfo(nopr,nopr,nopr,parsefuns(dummyunary
 export dummyUnaryFun(c:Code):Expr := (
      anywhereError("dummy unary function called");
      nullE);
-export dummyPostfixFun(c:Code):Expr := (
-     anywhereError("dummy postfix function called");
-     nullE);
 export dummyBinaryFun(c:Code,d:Code):Expr := (
      anywhereError("dummy binary function called");
      nullE);
@@ -226,7 +216,7 @@ export emptySequenceE := Expr(emptySequence);
 
 export dummySymbol := Symbol(
      Word("-*dummy symbol*-",TCnone,hash_t(0),newParseinfo()),dummySymbolHash,dummyPosition,
-     dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
+     dummyUnaryFun,dummyBinaryFun,
      Macaulay2Dictionary.frameID,dummySymbolFrameIndex,1,
      false,						    -- not protected, so we can use it in parallelAssignmentFun
      false,
@@ -355,6 +345,7 @@ export RRiClass := newbignumbertype();
 export pointerClass := newbasictype();
 export atomicIntClass := newbasictype();
 export pseudocodeClosureClass := newtypeof(pseudocodeClass);
+export mutexClass := newbasictype();
 -- all new types, dictionaries, and classes go just above this line, if possible, so hash codes don't change gratuitously!
 
 

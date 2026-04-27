@@ -34,3 +34,13 @@ Node
     Example
       {1, 2} ** {10, 20, 30}
 ///
+
+document {
+    Key => symbol ⊠,
+    Headline => "a binary operator, usually used for exterior product",
+}
+
+document {
+    Key => symbol ⧢,
+    Headline => "a binary operator, usually used for shuffle product",
+}
