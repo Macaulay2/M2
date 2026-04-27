@@ -267,6 +267,7 @@ foreach(_library IN LISTS LIBRARY_OPTIONS)
       unset(${_name}_INCLUDEDIR CACHE)
       unset(${_name}_INCLUDE_DIR CACHE)
       unset(${_name}_INCLUDE_DIRS CACHE)
+      unset(${_name}_ROOT)
       # for GTest:
       unset(${_name}_MAIN_LIBRARY CACHE)
       unset(${_name}_MAIN_LIBRARY_DEBUG CACHE)
