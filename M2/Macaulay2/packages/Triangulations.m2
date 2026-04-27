@@ -38,7 +38,7 @@ export {
     "isRegularTriangulation", -- note the non-use of isRegular.  Is this ok?
     "regularTriangulationWeights",
     
-    "affineCircuits",
+    "flipCandidates",
     "volumeVector",
     "gkzVector",
     
@@ -81,7 +81,7 @@ toExternalString Triangulation := T -> "triangulation(transpose matrix" | toExte
 
 
 -- XXX working on this 15 June 2022.
--- Change all uses of fineStarTriangulation to return 
+-- Change all uses of fineStarTriangulation to return what?
 -- Assumptions: A is a dxn matrix over the integers, or rationals.
 --              convexHull A 
 -- all columns of A should be boundary points (with the possible exception of the last column).
@@ -322,19 +322,19 @@ codim2s = (tri) -> (
     select(C2, x -> #x == n+1)
     )
 
-affineCircuits = method()
+flipCandidates = method()
 
--- TODO: RENAME to flips, or possibleFlips
--- previously in triangulations-code.m2, named affineCircuits
-affineCircuits(Matrix, List) := (Amat, tri) -> (
-    -- tri: a set of subsets of size d from 0..#columns(Amat)-1, that form
-    --  a triangulation of conv(columns of Amat).
-    -- Amat: d-1 x n matrix over ZZ or QQ of the points, with the d-1 rows independent.
-    --   OR of size d x n, with the last row all 1's. (or the rows are rank (d-1)).
-    -- The d-1 case is auto-homogenized for direct (Matrix, List) callers.
-    -- The Triangulation method already stores a d-row matrix, so the branch
-    -- is a no-op on that path (the data in a Triangulation is already
-    -- correctly shaped).
+-- For each codim-2 wall of `tri` (a pair of maximal simplices whose union has
+-- size d+1), return the signed kernel partition of those d+1 points as a list
+-- {neg, pos} of column-index lists.  These are the affine circuits supported
+-- on walls of the triangulation, and are the candidate inputs to bistellarFlip.
+-- Some candidates do not correspond to a legal flip in `tri` (the wrong half
+-- of the circuit is the one present); for those, bistellarFlip returns null.
+flipCandidates(Matrix, List) := (Amat, tri) -> (
+    -- Amat: d x n with the last row all 1's (homogenized point configuration),
+    --   or d-1 x n which is auto-homogenized here for direct (Matrix, List)
+    --   callers.  The Triangulation method already stores a d-row matrix, so
+    --   the branch is a no-op on that path.
     d := #(tri#0);
     assert all(tri, t -> #t == d);
     if numrows Amat == d-1 then
@@ -346,23 +346,7 @@ affineCircuits(Matrix, List) := (Amat, tri) -> (
         )
     )
 
-affineCircuits Triangulation := T -> affineCircuits(matrix T, max T)
-
--- betterAffineCircuits(Matrix, List) := (Amat, tri) -> (
---     -- tri: a set of subsets of size d from 0..#columns(Amat)-1, that form
---     --  a triangulation of conv(columns of Amat).
---     -- Amat: d-1 x n matrix over ZZ or QQ of the points, with the d-1 rows independent.
---     --   OR of size d x n, with the last row all 1's. (or the rows are rank (d-1)).
---     d := #(tri#0);
---     assert all(tri, t -> #t == d);
---     -- if numrows Amat == d-1 then
---     --   Amat = Amat || matrix{ toList(numcols Amat : 1) };
---     c2 := codim2s tri;
---     unique for c in c2 list (
---         z := flatten entries syz Amat_c;
---         rsort {c_(positions(z, zi -> zi > 0)), c_(positions(z, zi -> zi < 0))}
---         )
---     )
+flipCandidates Triangulation := T -> flipCandidates(matrix T, max T)
 
 -- previously in triangulations-code.m2,
 link = method()
@@ -380,40 +364,34 @@ flips Triangulation := List => opts -> T -> (
 
 bistellarFlip = method()
 
--- previously in triangulations-code.m2, named flip.
+-- Perform the bistellar flip on `tri` determined by `affineCircuit`, where
+-- `affineCircuit = {neg, pos}` is the signed partition of a circuit (typically
+-- one returned by flipCandidates).  The two triangulations of the circuit are
+-- T1 = {whole - {v} : v in neg} and T2 = {whole - {v} : v in pos}.  A flip is
+-- legal iff exactly one of T1, T2 sits in `tri` with a common link L; in that
+-- case we replace L*T_present with L*T_other.  Returns null if the candidate
+-- is not flippable in `tri` (the simplices of one side are present but with
+-- non-matching links, or neither side is fully present).
 bistellarFlip(List,List) := (tri, affineCircuit) -> (
-    -- returns a new triangulation
-    -- input: tri: a list of lists of integers (a triangulation).
-    --        affineCircuit: a pair of lists of integers.  Each is disjoint, the negative/positive part of the affine circuit.
-    -- a. start with an affine circuit
-    -- 1. compute 2 choices of triangulation for the circuit
     whole := sort unique flatten affineCircuit;
-    T1 := for i in affineCircuit#0 list sort toList (set whole - set {i});
-    T2 := for i in affineCircuit#1 list sort toList (set whole - set {i});
-    -- 2. which is contained in tri?
-    -- XXXXXXXXXXXX
+    T1 := for v in affineCircuit#0 list sort toList (set whole - set {v});
+    T2 := for v in affineCircuit#1 list sort toList (set whole - set {v});
     S1 := unique for tau in T1 list link(tau, tri);
     S2 := unique for tau in T2 list link(tau, tri);
-    if #S1 > 1 or #S2 > 1 then (
-        --<< "link is not unique, here they are: S1: " << S1 << " S2: " << S2 << endl;
-        return null;
-        );
+    if #S1 > 1 or #S2 > 1 then return null;
     S1 = first S1;
     S2 = first S2;
-    if #S1 > 0 and #S2 > 0 then (
-        error "my logic is wrong: somehow both links exist...";
-        return null;
-        );
+    -- Both halves of the circuit cannot simultaneously be present in a
+    -- triangulation; if they were, the d+1 points of `whole` would be
+    -- triangulated two different ways at once.
+    assert(#S1 == 0 or #S2 == 0);
     if #S1 == 0 then (
         S1 = S2;
         (T1,T2) = (T2,T1);
         );
-    -- Now we can change the triangulation:
     T := set tri;
     outgoing := set flatten for s in S1 list for tau in T1 list sort join(s,tau);
     incoming := set flatten for s in S1 list for tau in T2 list sort join(s,tau);
-    --<< "outgoing: " << sort toList outgoing << endl;
-    --<< "incoming: " << sort toList incoming << endl;    
     sortTriangulation toList(T - outgoing + incoming)
     )
 
@@ -431,7 +409,7 @@ neighbors Triangulation := List => opts -> T -> (
     -- are considered, so the support of the triangulation is preserved.
     -- With Fine => false, size-1 sides are also allowed, which can drop a
     -- vertex from the support (or, less commonly, add one).
-    circuits0 := affineCircuits T;
+    circuits0 := flipCandidates T;
     circuits := if opts.Fine then
         select(circuits0, z -> #z#0 > 1 and #z#1 > 1)
     else
@@ -471,14 +449,13 @@ generateTriangulations Triangulation := opts -> T0 -> (
         );
     toList queue
     )
-
--- TODO? need Homogenize?
 generateTriangulations Matrix := opts -> Amat -> (
-    generateTriangulations(regularFineTriangulation(Amat, Homogenize => opts.Homogenize), opts)
+    T := regularFineTriangulation(Amat, Homogenize => opts.Homogenize);
+    generateTriangulations(T, opts)
     )
 generateTriangulations(Matrix, List) := opts -> (Amat, triang) -> (
-    tris := generateTriangulations(triangulation(Amat, triang, Homogenize => opts.Homogenize),
-        Limit => opts.Limit, RegularOnly => opts.RegularOnly, Fine => opts.Fine);
+    T := triangulation(Amat, triang, Homogenize => opts.Homogenize); -- really want to Homogenize here?
+    tris := generateTriangulations(T, opts);
     tris/max -- strip the triangulation class from these.  This matches (up to permutation) output of allTriangulations
     )
 
@@ -561,7 +538,7 @@ beginDocumentation()
 -*
       needsPackage "StringTorics"
       topes = kreuzerSkarke(5, Limit => 10)
-      Q = cyPolytopeData topes_7
+      Q = reflexivePolytope topes_7
       isFavorable Q
       rays Q
       A = matrix topes_7
@@ -616,7 +593,7 @@ doc ///
           TO (bistellarFlip, Triangulation, List),
           TO (flips, Triangulation),
           TO (neighbors, Triangulation),
-          TO (affineCircuits, Triangulation),
+          TO (flipCandidates, Triangulation),
           TO (volumeVector, Triangulation),
           TO (gkzVector, Triangulation),
           TO (delaunayWeights, Matrix),
@@ -753,7 +730,7 @@ doc ///
       vectors tri
       max tri
       isWellDefined tri
-      netList affineCircuits tri
+      netList flipCandidates tri
       isFine tri
       isStar tri
       isRegularTriangulation tri
@@ -1244,7 +1221,7 @@ TEST ///
   assert(max tri == (max tri)/sort//sort)
   
   flips tri -- TODO: return list of "affine circuits"
-  possibles = affineCircuits tri -- TODO: change name.  Have it only return possible flips?
+  possibles = flipCandidates tri
   tri2 = bistellarFlip(tri, possibles#0)
   tri3 = bistellarFlip(tri, possibles#1)
   bistellarFlip(tri, possibles#2) -- null
@@ -1288,8 +1265,8 @@ TEST /// -- test of functions here on the square and the cube
   t3 = regularSubdivision(sq9, matrix{{4,4,4,4,1,1,1,1,-4}})
   t4 = regularSubdivision(sq9, matrix{{1,1,1,1,1,1,1,1,-4}})
   
-  affineCircuits(sq9, t3)
-  elapsedTime affineCircuits(sq9, t1) -- TODO: change the name of this function? Why? affineOrientedCircuits?
+  flipCandidates(sq9, t3)
+  elapsedTime flipCandidates(sq9, t1)
   
   elapsedTime tris = allTriangulations sq9; -- computes all triangulations, Fine => false, regular.
   assert(387 == #tris) -- check this number. 
@@ -1370,7 +1347,7 @@ TEST ///
   regularFineStarTriangulation A -- this one works
   
   -- check that T is a triangulation?
-  circs = affineCircuits(A, T) -- NEEDS CLEANING UP (? why?)
+  circs = flipCandidates(A, T)
   bistellarFlip(T, {{5}, {0, 1, 2}})
   for c in circs list bistellarFlip(T, c)
 ///
@@ -1804,7 +1781,7 @@ needsPackage "Triangulations"
   
   flips t0
   neighbors t0
-  affineCircuits(A, max t0)
+  flipCandidates(A, max t0)
   orientedCircuits A
   N0 = neighbors t0 -- only the subgraph of fine triangulations
   t1 = last N0#0
