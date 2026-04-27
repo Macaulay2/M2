@@ -1942,7 +1942,7 @@ complement() {
     for i in $1
     do 	case "$y" in
 	    *" $i "*) ;;
-	    *) /bin/echo -n "$i " ;;
+	    *) env echo -n "$i " ;;
 	esac
     done
     echo
