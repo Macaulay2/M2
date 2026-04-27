@@ -4,7 +4,7 @@
 all: initialize phase1
 include ../../include/config.Makefile
 VPATH = @srcdir@
-srcdir = $(shell cd @srcdir@; /bin/pwd)
+srcdir = $(shell cd @srcdir@; env pwd)
 
 USER ?= unknown-user
 
