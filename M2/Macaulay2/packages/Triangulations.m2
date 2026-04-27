@@ -31,6 +31,7 @@ export {
     "bistellarFlip",
     "neighbors",
     "generateTriangulations",
+    "flipGraph",
     "allTriangulations",
     "isStar",
     "isFine",
@@ -188,7 +189,7 @@ isWellDefined Triangulation := Boolean => T -> (
 Triangulation == Triangulation := Boolean => (S, T) -> S === T
 
 naiveIsTriangulation Triangulation := Boolean => T -> (
-    naiveIsTriangulation(matrix T, max T) -- BUG: needs to take Homogenize?
+    naiveIsTriangulation(matrix T, max T) -- BUG: needs to take Homogenize, I think.
     )
 
 -- The following is currently only for point sets
@@ -330,6 +331,10 @@ affineCircuits(Matrix, List) := (Amat, tri) -> (
     --  a triangulation of conv(columns of Amat).
     -- Amat: d-1 x n matrix over ZZ or QQ of the points, with the d-1 rows independent.
     --   OR of size d x n, with the last row all 1's. (or the rows are rank (d-1)).
+    -- The d-1 case is auto-homogenized for direct (Matrix, List) callers.
+    -- The Triangulation method already stores a d-row matrix, so the branch
+    -- is a no-op on that path (the data in a Triangulation is already
+    -- correctly shaped).
     d := #(tri#0);
     assert all(tri, t -> #t == d);
     if numrows Amat == d-1 then
@@ -418,20 +423,26 @@ bistellarFlip(Triangulation, List) := (T, affineCircuit) -> (
         triangulation(matrix T, tri, Homogenize => false)
     )
 
-neighbors = method()
-neighbors Triangulation := List => T -> (
+neighbors = method(Options => {Fine => true})
+neighbors Triangulation := List => opts -> T -> (
     -- each element of the result is of the form:
     -- {circuit, triangulation}
-    -- only circuits that do not change the support of the triangulation are included.
+    -- With Fine => true (default), only circuits with both sides of size >= 2
+    -- are considered, so the support of the triangulation is preserved.
+    -- With Fine => false, size-1 sides are also allowed, which can drop a
+    -- vertex from the support (or, less commonly, add one).
     circuits0 := affineCircuits T;
-    circuits := select(circuits0, z -> #z#0 > 1 and #z#1 > 1);
+    circuits := if opts.Fine then
+        select(circuits0, z -> #z#0 > 1 and #z#1 > 1)
+    else
+        select(circuits0, z -> #z#0 >= 1 and #z#1 >= 1);
     for c in circuits list (
         T1 := bistellarFlip(T, c);
         if T1 === null then continue else {c, T1}
         )
     )
 
-generateTriangulations = method(Options => {Limit=>infinity, RegularOnly=>false, Homogenize => true})
+generateTriangulations = method(Options => {Limit=>infinity, RegularOnly=>false, Fine => true, Homogenize => true})
 generateTriangulations Triangulation := opts -> T0 -> (
     -- BFS over the bistellar-flip graph starting at T0.
     -- 'seen' records every triangulation we have ever encountered, regardless of
@@ -439,6 +450,7 @@ generateTriangulations Triangulation := opts -> T0 -> (
     -- the same non-regular triangulation reached via different paths.
     -- 'queue' is both the BFS frontier and the result-so-far: a MutableList
     -- giving O(1) push (queue#(#queue) = x) and O(1) pop (advance nextIdx).
+    -- Fine controls whether support-changing flips are considered (see neighbors).
     seen := new MutableHashTable;
     seen#T0 = true;
     queue := new MutableList from {T0};
@@ -446,11 +458,9 @@ generateTriangulations Triangulation := opts -> T0 -> (
     while nextIdx < #queue and #queue < opts.Limit do (
         cur := queue#nextIdx;
         nextIdx = nextIdx + 1;
-        flips := select(affineCircuits cur, z -> #z#0 > 1 and #z#1 > 1);
-        for f in flips do (
+        for cT1 in neighbors(cur, Fine => opts.Fine) do (
             if #queue >= opts.Limit then break;
-            T1 := bistellarFlip(cur, f);
-            if T1 === null then continue;
+            T1 := cT1#1;
             if seen#?T1 then continue;
             seen#T1 = true;
             if opts.RegularOnly and not isRegularTriangulation T1 then continue;
@@ -467,9 +477,62 @@ generateTriangulations Matrix := opts -> Amat -> (
     generateTriangulations(regularFineTriangulation(Amat, Homogenize => opts.Homogenize), opts)
     )
 generateTriangulations(Matrix, List) := opts -> (Amat, triang) -> (
-    tris := generateTriangulations(triangulation(Amat, triang, Homogenize => opts.Homogenize), 
-        Limit => opts.Limit, RegularOnly => opts.RegularOnly);
+    tris := generateTriangulations(triangulation(Amat, triang, Homogenize => opts.Homogenize),
+        Limit => opts.Limit, RegularOnly => opts.RegularOnly, Fine => opts.Fine);
     tris/max -- strip the triangulation class from these.  This matches (up to permutation) output of allTriangulations
+    )
+
+flipGraph = method(Options => {Limit=>infinity, RegularOnly=>false, Fine => true, Homogenize => true})
+flipGraph Triangulation := HashTable => opts -> T0 -> (
+    -- BFS over the bistellar-flip graph starting at T0, recording both the
+    -- list of triangulations reached and the edges (i, j, circuit) connecting them.
+    -- index#T encodes either the position in 'queue' (a non-negative integer)
+    -- or -1 to mark a triangulation that was visited but rejected (e.g.
+    -- non-regular under RegularOnly => true), so we don't re-test it.
+    -- Edges are recorded once per undirected pair, when discovered from the
+    -- lower-indexed endpoint (j > i guard skips back-edges to already-processed nodes).
+    index := new MutableHashTable;
+    index#T0 = 0;
+    queue := new MutableList from {T0};
+    edges := new MutableList from {};
+    nextIdx := 0;
+    while nextIdx < #queue and #queue < opts.Limit do (
+        cur := queue#nextIdx;
+        i := nextIdx;
+        nextIdx = nextIdx + 1;
+        for cT1 in neighbors(cur, Fine => opts.Fine) do (
+            if #queue >= opts.Limit then break;
+            (c, T1) := (cT1#0, cT1#1);
+            if index#?T1 then (
+                jSeen := index#T1;
+                if jSeen === -1 then continue;
+                if jSeen > i then edges#(#edges) = (i, jSeen, c);
+                continue;
+                );
+            if opts.RegularOnly and not isRegularTriangulation T1 then (
+                index#T1 = -1;
+                continue;
+                );
+            jNew := #queue;
+            index#T1 = jNew;
+            queue#(#queue) = T1;
+            edges#(#edges) = (i, jNew, c);
+            );
+        if debugLevel > 0 then
+            << "todo = " << (#queue - nextIdx) << " and #triang = " << #queue << endl;
+        );
+    hashTable {
+        "triangulations" => toList queue,
+        "edges" => toList edges
+        }
+    )
+
+flipGraph Matrix := HashTable => opts -> Amat -> (
+    flipGraph(regularFineTriangulation(Amat, Homogenize => opts.Homogenize), opts)
+    )
+flipGraph(Matrix, List) := HashTable => opts -> (Amat, triang) -> (
+    flipGraph(triangulation(Amat, triang, Homogenize => opts.Homogenize),
+        Limit => opts.Limit, RegularOnly => opts.RegularOnly, Fine => opts.Fine)
     )
 
 volumeVector = method()
@@ -1355,6 +1418,77 @@ TEST ///
   assert(#generateTriangulations Tv == 1)
 ///
 
+TEST ///
+-- Fine => false: square with center.  The only fine triangulation has 4
+-- simplices meeting at the center; both flips drop the center, so with the
+-- default Fine => true we get just T0, but with Fine => false we should
+-- reach the two non-fine triangulations of the square (split along each
+-- diagonal), giving 3 in total.
+-*
+  restart
+  needsPackage "Triangulations"
+*-
+  A = transpose matrix {{-1,-1},{-1,1},{1,-1},{1,1},{0,0}}
+  T = regularFineTriangulation A
+  assert(#generateTriangulations T == 1)
+  assert(#generateTriangulations(T, Fine => false) == 3)
+
+  -- The Fine => false count should match allTriangulations on the same
+  -- configuration (all 3 are regular, all are connected to the regular
+  -- fine triangulation).
+  assert(#generateTriangulations(T, Fine => false) == # allTriangulations A)
+
+  -- 9 lattice points of the square: with Fine => false, the count grows
+  -- beyond the 64 fine triangulations.
+  sq9 = matrix {{-1, -1, 1, 1, -1, 0, 0, 1, 0}, {-1, 1, -1, 1, 0, -1, 1, 0, 0}}
+  Tsq = regularFineTriangulation sq9
+  assert(#generateTriangulations Tsq == 64)
+  trisAll = generateTriangulations(Tsq, Fine => false);
+  assert(#trisAll > 64)
+  -- Every triangulation found should be reachable from T via flips, and
+  -- since all triangulations of sq9 are regular, this should match
+  -- allTriangulations restricted to those connected to a regular fine.
+  assert(#trisAll == # allTriangulations sq9)
+///
+
+TEST ///
+-- flipGraph: smoke test on the same examples used for generateTriangulations.
+-*
+  restart
+  needsPackage "Triangulations"
+*-
+  -- 5-pt configuration: 2 fine triangulations connected by a single flip.
+  A = transpose matrix"0,0;1,1;3,1;5,0;1,5"
+  T = regularFineTriangulation A
+  G = flipGraph T
+  assert(#G#"triangulations" == 2)
+  assert(#G#"edges" == 1)
+  e = first G#"edges"
+  assert(e#0 == 0 and e#1 == 1)
+  -- The triangulations agree (as a set) with generateTriangulations.
+  assert(set G#"triangulations" === set generateTriangulations T)
+
+  -- All edges should respect i < j.
+  sq9 = matrix {{-1, -1, 1, 1, -1, 0, 0, 1, 0}, {-1, 1, -1, 1, 0, -1, 1, 0, 0}}
+  Tsq = regularFineTriangulation sq9
+  Gsq = flipGraph Tsq
+  assert(#Gsq#"triangulations" == 64)
+  assert(all(Gsq#"edges", e -> e#0 < e#1))
+  assert(all(Gsq#"edges", e -> 0 <= e#0 and e#1 < 64))
+
+  -- Square with center: Fine => false gives 3 triangulations.  T0 (fine)
+  -- connects to each of the two diagonal triangulations T1, T2 by a
+  -- size-1 flip that drops the center; and T1 <-> T2 are connected by a
+  -- support-preserving 2-2 flip among {0,1,2,3} (not involving vertex 4),
+  -- so we expect 3 edges.
+  Asq = transpose matrix {{-1,-1},{-1,1},{1,-1},{1,1},{0,0}}
+  Tsq2 = regularFineTriangulation Asq
+  Gsq2 = flipGraph(Tsq2, Fine => false)
+  assert(#Gsq2#"triangulations" == 3)
+  assert(#Gsq2#"edges" == 3)
+  assert(all(Gsq2#"edges", e -> e#0 < e#1))
+///
+
 -- The following is too long for a test.
 ///
   -- how many triangulations at h11=8? (roughly?)
@@ -1635,7 +1769,64 @@ viewHelp
   tri_0
   
 ///
+
+-*
+restart
+needsPackage "Triangulations"
+*-
+///
+  -- testing generateTriangulations, and flipGraph (not written yet!)
+  -- Let's start with a reflexive polytope of dim 4, with h11=4.
+  needsPackage "ReflexivePolytopesDB"
+  --tope = (kreuzerSkarke 4)#100
+  tope = KSEntry "4 10  M:73 10 N:9 7 H:4,58 [-108] id:100
+     1   1   1   0   1   1  -3   1   1  -9
+     0   2   0   0   3  -1  -3  -1   4  -6
+     0   0   2   0  -1   3  -3   4  -1  -6
+     0   0   0   1  -1  -1   1  -1  -1   4
+     "
+  P = polar convexHull matrix tope
+  A = matrix {select(latticePoints P, x -> x != 0)}
+  Ts = allTriangulations(A, Homogenize => false) -- 24 total here.
+  for T in Ts list # sort unique flatten max T
+
+  t0 = regularFineTriangulation(A, Homogenize => false) -- calls topcom
+  assert isWellDefined t0 -- calls topcom
+  assert naiveIsTriangulation t0 -- FAILS
+  assert isRegularTriangulation t0 -- calls topcom
+  regularTriangulationWeights t0 
+
+  -- now let's find flip graph...
+  flips t0
+  neighbors t0
+  affineCircuits(A, max t0)
+  orientedCircuits A
+  N0 = neighbors t0 -- only the subgraph of fine triangulations
+  t1 = last N0#0
+  t2 = last N0#1
+  neighbors t1
+
+  -- now using neighbor's that include non-fines.
+  Nall0 = neighbors t0 -- 5: t1, t2, t3, t4, t5
+  t3 = Nall0_0_1
+  t3 == t0
+  t3 == t1
+  t3 == t2
+  t4 = Nall0_3_1
+  t5 = Nall0_4_1
+  assert(Nall0_2_1 === t2)
+  assert(Nall0_1_1 === t1)
+  neighbors t3
+
+  Ts = generateTriangulations t0
+  Ts_0 == t0
+  Ts_1 == t1
+  Ts_2 == t2
+
   
+///
+
+
 doc ///
   Key
   Headline
