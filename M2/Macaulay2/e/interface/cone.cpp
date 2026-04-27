@@ -253,3 +253,42 @@ MutableMatrix *rawLatticePoints(const Matrix *A,
       return nullptr;
   }
 }
+
+// struct ConeResult {
+//     bool fullDimensional;
+//     int rank;                        // dimension of the cone
+//     std::vector<mpz_class> interior; // valid if fullDimensional: lattice point with Ax > 0
+// };
+
+// // A is m x n, row-major: cone is { x : A x >= 0 }.
+// ConeResult coneInteriorPointNormaliz(int m, int n, const std::vector<mpz_class>& A) {
+//     // Build the m x n matrix of inequality rows.
+//     std::vector<std::vector<mpz_class>> ineqs(m, std::vector<mpz_class>(n));
+//     for (int i = 0; i < m; ++i)
+//         for (int j = 0; j < n; ++j)
+//             ineqs[i][j] = A[i * n + j];
+
+//     // Construct the cone from inequalities (H-representation).
+//     libnormaliz::Cone<mpz_class> C(libnormaliz::Type::inequalities, ineqs);
+
+//     // Ask for rank and (if full-dim) a witness of the interior.
+//     C.compute(libnormaliz::ConeProperty::Rank,
+//               libnormaliz::ConeProperty::IsPointed,
+//               libnormaliz::ConeProperty::Generators);  // extreme rays, used below
+
+//     ConeResult res;
+//     res.rank = C.getRank();
+//     res.fullDimensional = (res.rank == n);
+
+//     if (res.fullDimensional) {
+//         // Sum of extreme rays lies in the relative interior; since the cone
+//         // is full-dimensional, that's the interior, and it's a lattice point.
+//         const auto& rays = C.getExtremeRays();   // vector<vector<mpz_class>>
+//         std::vector<mpz_class> x(n, 0);
+//         for (const auto& r : rays)
+//             for (int j = 0; j < n; ++j)
+//                 x[j] += r[j];
+//         res.interior = std::move(x);
+//     }
+//     return res;
+// }

@@ -120,6 +120,11 @@ callTopcom(String, List) := (command, inputs) -> (
 
 topcomIsRegularTriangulation = method(Options=>{Homogenize=>true})
 topcomIsRegularTriangulation(Matrix, List) := Boolean => opts -> (A, tri) -> (
+    -- Trivial case: linearly independent columns => unique single-simplex triangulation;
+    -- topcom can hang on this, so handle it here.
+    A1 := if opts.Homogenize then augment A else A;
+    if rank A1 == numColumns A1 then
+        return #tri == 1 and sort tri#0 == toList(0 .. numColumns A1 - 1);
     -- now create the output file
     (outfile, errfile) := callTopcom("checkregularity --checktriang -v", {topcomPoints(A, opts), [], tri });
     match("[Cc]hecked 1 triangulations, 0 non-regular so far", get errfile)
@@ -134,8 +139,14 @@ topcomIsRegularTriangulation(Matrix, List) := Boolean => opts -> (A, tri) -> (
 topcomRegularTriangulationWeights = method(Options => options topcomIsRegularTriangulation)
 topcomRegularTriangulationWeights(Matrix, List) := List => opts -> (A, tri) -> (
     -- returns null if the triangulation is not regular.
-    -- otherwise returns a list of rational numbers which are the 
+    -- otherwise returns a list of rational numbers which are the
     -- heights that result in the triangulation.
+    A1 := if opts.Homogenize then augment A else A;
+    if rank A1 == numColumns A1 then (
+        n := numColumns A1;
+        if #tri == 1 and sort tri#0 == toList(0 .. n - 1) then return toList(n : 0)
+        else return null;
+        );
     (outfile, errfile) := callTopcom("checkregularity --heights", {topcomPoints(A, opts), [], tri });
     output := get outfile;
     if match("non-regular", output) then return null;
@@ -149,6 +160,8 @@ topcomRegularTriangulationWeights(Matrix, List) := List => opts -> (A, tri) -> (
 
 topcomRegularFineTriangulation = method(Options => options topcomIsRegularTriangulation)
 topcomRegularFineTriangulation Matrix := List => opts -> (A) -> (
+    A1 := if opts.Homogenize then augment A else A;
+    if rank A1 == numColumns A1 then return {toList(0 .. numColumns A1 - 1)};
     (outfile,errfile) := callTopcom("points2finetriang --regular", {topcomPoints(A, opts)});
     value get outfile
     )
@@ -246,6 +259,8 @@ topcomAllTriangulations = method(Options => {
     })
 topcomAllTriangulations Matrix := List => opts -> (A) -> (
     if not opts.ConnectedToRegular and opts.RegularOnly then error "cannot have both RegularOnly=>true and ConnectedToRegular=>false";
+    A1 := if opts.Homogenize then augment A else A;
+    if rank A1 == numColumns A1 then return {{toList(0 .. numColumns A1 - 1)}};
     executable := allTriangsExecutable#(opts.Fine, opts.ConnectedToRegular);
     args := if opts.RegularOnly then " --regular" else "";
     (outfile, errfile) := callTopcom(executable | args, {topcomPoints(A, Homogenize=>opts.Homogenize)});
@@ -262,6 +277,8 @@ topcomAllTriangulations Matrix := List => opts -> (A) -> (
 topcomNumTriangulations = method(Options => {Homogenize=>true, RegularOnly => true, Fine => false, ConnectedToRegular => true})
 topcomNumTriangulations Matrix := ZZ => opts -> (A) -> (
     if not opts.ConnectedToRegular and opts.RegularOnly then error "cannot have both RegularOnly=>true and ConnectedToRegular=>false";
+    A1 := if opts.Homogenize then augment A else A;
+    if rank A1 == numColumns A1 then return 1;
     executable := numTriangsExecutable#(opts.Fine, opts.ConnectedToRegular);
     args := if opts.RegularOnly then " --regular" else "";
     (outfile, errfile) := callTopcom(executable | args, {topcomPoints(A, Homogenize=>opts.Homogenize)});
@@ -270,6 +287,8 @@ topcomNumTriangulations Matrix := ZZ => opts -> (A) -> (
 
 topcomNumFlips = method(Options => {Homogenize=>true, RegularOnly =>true})
 topcomNumFlips(Matrix, List) := ZZ => opts -> (A, tri) -> (
+    A1 := if opts.Homogenize then augment A else A;
+    if rank A1 == numColumns A1 then return 0;
     executable := "points2nflips";
     args := if opts.RegularOnly then " --regular" else "";
     (outfile, errfile) := callTopcom(executable | args, {topcomPoints(A, Homogenize=>opts.Homogenize), [], tri});
@@ -278,6 +297,8 @@ topcomNumFlips(Matrix, List) := ZZ => opts -> (A, tri) -> (
 
 topcomFlips = method(Options => {Homogenize=>true, RegularOnly =>true})
 topcomFlips(Matrix, List) := List => opts -> (A, tri) -> (
+    A1 := if opts.Homogenize then augment A else A;
+    if rank A1 == numColumns A1 then return {};
     executable := "points2flips";
     args := if opts.RegularOnly then " --regular" else "";
     (outfile, errfile) := callTopcom(executable | args, {topcomPoints(A, Homogenize=>opts.Homogenize), [], tri});
@@ -1208,6 +1229,35 @@ restart
  topcomNumTriangulations(LP)
  topcomAllTriangulations(LP);
 
+///
+
+TEST ///
+-- Trivial-config short-circuit: when the (homogenized) matrix has linearly
+-- independent columns, the unique triangulation is the single full simplex.
+-- Topcom's points2finetriangs has been observed to hang on this corner case,
+-- so the interface handles it directly.
+-*
+  restart
+  needsPackage "Topcom"
+*-
+  -- 4x4 vector configuration: columns are linearly independent
+  A = id_(ZZ^4)
+  assert(topcomRegularFineTriangulation(A, Homogenize => false) === {{0,1,2,3}})
+  assert(topcomAllTriangulations(A, Homogenize => false) === {{{0,1,2,3}}})
+  assert(topcomNumTriangulations(A, Homogenize => false) === 1)
+  assert(topcomIsRegularTriangulation(A, {{0,1,2,3}}, Homogenize => false))
+  assert(not topcomIsRegularTriangulation(A, {{0,1,2}}, Homogenize => false))
+  assert(topcomRegularTriangulationWeights(A, {{0,1,2,3}}, Homogenize => false) === {0,0,0,0})
+  assert(topcomRegularTriangulationWeights(A, {{0,1,2}}, Homogenize => false) === null)
+  assert(topcomNumFlips(A, {{0,1,2,3}}, Homogenize => false) === 0)
+  assert(topcomFlips(A, {{0,1,2,3}}, Homogenize => false) === {})
+
+  -- 3-point set forming an affinely independent simplex (point set, Homogenize => true).
+  -- After augment, the matrix is 3x3 with rank 3.
+  B = transpose matrix{{0,0},{1,0},{0,1}}
+  assert(topcomNumTriangulations B === 1)
+  assert(topcomAllTriangulations B === {{{0,1,2}}})
+  assert(topcomRegularFineTriangulation B === {{0,1,2}})
 ///
 
 end----------------------------------------------------

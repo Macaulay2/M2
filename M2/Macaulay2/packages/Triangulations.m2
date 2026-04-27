@@ -343,6 +343,22 @@ affineCircuits(Matrix, List) := (Amat, tri) -> (
 
 affineCircuits Triangulation := T -> affineCircuits(matrix T, max T)
 
+-- betterAffineCircuits(Matrix, List) := (Amat, tri) -> (
+--     -- tri: a set of subsets of size d from 0..#columns(Amat)-1, that form
+--     --  a triangulation of conv(columns of Amat).
+--     -- Amat: d-1 x n matrix over ZZ or QQ of the points, with the d-1 rows independent.
+--     --   OR of size d x n, with the last row all 1's. (or the rows are rank (d-1)).
+--     d := #(tri#0);
+--     assert all(tri, t -> #t == d);
+--     -- if numrows Amat == d-1 then
+--     --   Amat = Amat || matrix{ toList(numcols Amat : 1) };
+--     c2 := codim2s tri;
+--     unique for c in c2 list (
+--         z := flatten entries syz Amat_c;
+--         rsort {c_(positions(z, zi -> zi > 0)), c_(positions(z, zi -> zi < 0))}
+--         )
+--     )
+
 -- previously in triangulations-code.m2,
 link = method()
 link(List, List) := (tau, triangulation) -> (
@@ -350,6 +366,8 @@ link(List, List) := (tau, triangulation) -> (
     sort for s in S list sort toList (set s - set tau)
     )
 
+-- Note: a Triangulation stores its points as vectors (i.e. the hogenization is already done or not done).
+-- Second, this returns all flips (not just "Fine" flips), i.e. ones that would change the number of vectors.
 flips = method(Options => options topcomFlips)
 flips Triangulation := List => opts -> T -> (
     topcomFlips(matrix T, max T, Homogenize => false, RegularOnly => opts.RegularOnly)
@@ -414,34 +432,39 @@ neighbors Triangulation := List => T -> (
     )
 
 generateTriangulations = method(Options => {Limit=>infinity, RegularOnly=>false, Homogenize => true})
-generateTriangulations Triangulation := opts -> T -> (
-    Amat := matrix T;
-    allT := new MutableHashTable;
-    allT#T = true;
-    TODO := {T};
-    while #TODO > 0 and #(keys allT) < opts.Limit do (
-        nextTRI := TODO#0;
-        TODO = drop(TODO,1);
-        flips := select(affineCircuits nextTRI, z -> #z#0 > 1 and #z#1 > 1);
-        fliptris := for f in flips list bistellarFlip(nextTRI, f);
-        newT := select(fliptris, x -> x =!= null);
-        for T in newT do (
-            if not allT#?T then (
-                --<< "new triangulation: " << T << endl;
-                if not opts.RegularOnly or isRegularTriangulation T then (
-                    allT#T = true;
-                    TODO = append(TODO, T);
-                    );
-                ));
-        if debugLevel > 0 then 
-            << "todo = " << #TODO << " and #triang = " << #(keys allT) << endl;
+generateTriangulations Triangulation := opts -> T0 -> (
+    -- BFS over the bistellar-flip graph starting at T0.
+    -- 'seen' records every triangulation we have ever encountered, regardless of
+    -- whether it was kept; this prevents repeated isRegularTriangulation calls on
+    -- the same non-regular triangulation reached via different paths.
+    -- 'queue' is both the BFS frontier and the result-so-far: a MutableList
+    -- giving O(1) push (queue#(#queue) = x) and O(1) pop (advance nextIdx).
+    seen := new MutableHashTable;
+    seen#T0 = true;
+    queue := new MutableList from {T0};
+    nextIdx := 0;
+    while nextIdx < #queue and #queue < opts.Limit do (
+        cur := queue#nextIdx;
+        nextIdx = nextIdx + 1;
+        flips := select(affineCircuits cur, z -> #z#0 > 1 and #z#1 > 1);
+        for f in flips do (
+            if #queue >= opts.Limit then break;
+            T1 := bistellarFlip(cur, f);
+            if T1 === null then continue;
+            if seen#?T1 then continue;
+            seen#T1 = true;
+            if opts.RegularOnly and not isRegularTriangulation T1 then continue;
+            queue#(#queue) = T1;
+            );
+        if debugLevel > 0 then
+            << "todo = " << (#queue - nextIdx) << " and #triang = " << #queue << endl;
         );
-    keys allT
+    toList queue
     )
 
 -- TODO? need Homogenize?
 generateTriangulations Matrix := opts -> Amat -> (
-    generateTriangulations(regularFineTriangulation Amat, opts)
+    generateTriangulations(regularFineTriangulation(Amat, Homogenize => opts.Homogenize), opts)
     )
 generateTriangulations(Matrix, List) := opts -> (Amat, triang) -> (
     tris := generateTriangulations(triangulation(Amat, triang, Homogenize => opts.Homogenize), 
@@ -1103,10 +1126,11 @@ TEST ///
  
  T = regularFineTriangulation LP
  elapsedTime trisT = generateTriangulations T; -- much slower, and includes 10 non-regular triangulations.
- trisT/(T -> isRegularTriangulation T)//tally
+ assert(#trisT == 741)
+ assert((trisT/(T -> isRegularTriangulation T)//tally) === new Tally from {true => 731, false => 10})
 
  (24) * volume P2  == 29
- 
+
 ///
 
 TEST ///
@@ -1284,11 +1308,52 @@ TEST ///
   
   -- check that T is a triangulation?
   circs = affineCircuits(A, T) -- NEEDS CLEANING UP (? why?)
-  bistellarFlip(T, {{5}, {0, 1, 2}})  
+  bistellarFlip(T, {{5}, {0, 1, 2}})
   for c in circs list bistellarFlip(T, c)
 ///
 
+TEST ///
+-- tests for generateTriangulations
+-*
+  restart
+  needsPackage "Triangulations"
+*-
+  -- 5-pt configuration in 2D: 2 triangulations
+  A = transpose matrix"0,0;1,1;3,1;5,0;1,5"
+  T = regularFineTriangulation A
+  tris = generateTriangulations T
+  assert(#tris == 2)
+  assert(member(T, tris))
 
+  -- 9 lattice points of the square: 64 fine triangulations, all regular
+  sq9 = matrix {{-1, -1, 1, 1, -1, 0, 0, 1, 0}, {-1, 1, -1, 1, 0, -1, 1, 0, 0}}
+  T = regularFineTriangulation sq9
+  tris = generateTriangulations T
+  assert(#tris == 64)
+  assert(set (tris/max) === set ((allTriangulations(sq9, Fine => true))/max))
+
+  -- RegularOnly: same 64 in this case (all are regular)
+  trisR = generateTriangulations(T, RegularOnly => true)
+  assert(#trisR == 64)
+
+  -- Limit is exact, including the boundary cases
+  assert(#generateTriangulations(T, Limit => 1) == 1)
+  assert(generateTriangulations(T, Limit => 1) == {T})
+  assert(#generateTriangulations(T, Limit => 17) == 17)
+  assert(#generateTriangulations(T, Limit => 1000) == 64) -- no overshoot when Limit > #available
+
+  -- Matrix entry points produce the same set of triangulations
+  trisA = generateTriangulations sq9
+  assert(set (trisA/max) === set (tris/max))
+  trisAL = generateTriangulations(sq9, max T)
+  assert(set trisAL === set (tris/max))
+
+  -- Vector configuration: 4 rays in R^3, ray 3 = e1+e2+e3 in interior of cone(e1,e2,e3).
+  -- Only one support-preserving triangulation exists (any flip would remove ray 3).
+  V = matrix"1,0,0,1; 0,1,0,1; 0,0,1,1"
+  Tv = triangulation(V, {{0,1,3},{0,2,3},{1,2,3}}, Homogenize => false)
+  assert(#generateTriangulations Tv == 1)
+///
 
 -- The following is too long for a test.
 ///
