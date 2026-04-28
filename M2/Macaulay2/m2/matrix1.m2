@@ -258,6 +258,10 @@ matrix(Matrix) := Matrix => opts -> (m) -> (
      )
 
 matrix RingElement := matrix Number := opts -> r -> matrix({{r}}, opts)
+matrix(Ring,       RingElement) :=
+matrix(RingFamily, RingElement) :=
+matrix(Ring,       Number)      :=
+matrix(RingFamily, Number)      := opts -> (R, f) -> matrix(R, {{f}}, opts)
 
 matrix List := Matrix => opts -> L -> (
     if #L === 0 then return matrix(ZZ, {});
