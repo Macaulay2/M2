@@ -44,6 +44,15 @@ assert Equation(next i, RObject 10)
 assert Equation(next i, RObject 20)
 assert Equation(next i, RObject 30)
 assert Equation(length RSymbol "letters", 26)
+assert Equation(length RSymbol letters, 26)
+///
+
+TEST ///
+-- RQuote
+assert Equation(toString RQuote "x", "x")
+assert Equation(toString RQuote x, "x")
+assert Equation(toString RQuote log, "log")
+assert Equation((RFunction log) RObject 1, RObject 0)
 ///
 
 TEST ///

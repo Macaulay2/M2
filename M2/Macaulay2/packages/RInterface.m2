@@ -31,6 +31,7 @@ export {
     "RFunction",
 
     -- methods
+    "RQuote",
     "RSymbol",
 
     -- objects
@@ -91,6 +92,8 @@ PROTECT = foreignFunction(Rlib, "Rf_protect", SEXP, SEXP)
 UNPROTECT = foreignFunction(Rlib, "Rf_unprotect", void, int)
 RtryEval = foreignFunction(Rlib, "R_tryEval", SEXP, {SEXP, SEXP, voidstar})
 RGlobalEnv = foreignSymbol(Rlib, "R_GlobalEnv", SEXP)
+PRINTNAME = foreignFunction(Rlib, "PRINTNAME", SEXP, SEXP)
+type2char = foreignFunction(Rlib, "Rf_type2char", charstar, int)
 
 tryEval = x -> (
     err := int 0;
@@ -105,16 +108,27 @@ new RFunction from RObject := (T, f) -> (
 	result := tryEval call;
 	UNPROTECT 1;
 	result))
-new RFunction from String := (T, s) -> RFunction RSymbol s
+new RFunction from String := (T, s) -> T RSymbol s
+new RFunction from Thing := (T, x) -> T toString x
 
 install = foreignFunction(Rlib, "Rf_install", SEXP, charstar)
+
+RQuote = method()
+RQuote String := s -> RObject install s
+RQuote Thing := RQuote @@ toString
+
 RSymbol = method()
-RSymbol String := s -> RObject install s
+RSymbol String := s -> tryEval install s
+RSymbol Thing := RSymbol @@ toString
 
-net RObject := stack @@ value @@ (RFunction "capture.output")
+toStringHelper = (f, x) -> (
+    if TYPEOF x == SYMSXP then value CHAR PRINTNAME x
+    else f x)
 
-typeof = value @@ (RFunction "typeof");
-RObject.AfterPrint = x -> (RObject, " of type ", typeof x)
+toString RObject := toStringHelper_(value @@ (RFunction "toString"))
+net RObject := toStringHelper_(stack @@ value @@ (RFunction "capture.output"))
+
+RObject.AfterPrint = x -> (RObject, " of type ", value type2char TYPEOF x)
 
 --------------------
 -- Macaulay2 -> R --
