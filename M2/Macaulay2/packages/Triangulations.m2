@@ -49,7 +49,8 @@ export {
     "regularFineStarTriangulation",
     "naiveIsTriangulation",
     
-    "ConeIndex"
+    "ConeIndex",
+    "Edges"
     }
 
 augment = method()
@@ -357,7 +358,7 @@ link(List, List) := (tau, triangulation) -> (
 
 -- Note: a Triangulation stores its points as vectors (i.e. the hogenization is already done or not done).
 -- Second, this returns all flips (not just "Fine" flips), i.e. ones that would change the number of vectors.
-flips = method(Options => options topcomFlips)
+flips = method(Options => {RegularOnly => true})
 flips Triangulation := List => opts -> T -> (
     topcomFlips(matrix T, max T, Homogenize => false, RegularOnly => opts.RegularOnly)
     )
@@ -499,8 +500,8 @@ flipGraph Triangulation := HashTable => opts -> T0 -> (
             << "todo = " << (#queue - nextIdx) << " and #triang = " << #queue << endl;
         );
     hashTable {
-        "triangulations" => toList queue,
-        "edges" => toList edges
+        symbol Triangulations => toList queue,
+        symbol Edges => toList edges
         }
     )
 
@@ -751,13 +752,29 @@ doc ///
       is a list of indices in the range $0, \ldots, n-1$, where $n$ is the number of
       columns of $A$)
     Homogenize => Boolean
-      if true, add a row of ones to think of this as a vector configuration in one higher dimension.
+      controls how $A$ is interpreted: if true (default), the columns of $A$
+      are points and the matrix is augmented with a row of $1$'s before being
+      stored, treating it as a homogenised vector configuration in one higher
+      dimension; if false, the columns of $A$ are already a vector configuration
+      and are stored as-is
   Outputs
     :Triangulation
       A @TO Triangulation@ object.  Very little computation is performed.  The matrix and list representing
       a triangulation is packaged into an object to make clear that it is a triangulation
   Description
     Text
+      The {\tt Homogenize} option determines how the input matrix $A$ is
+      interpreted, not just how it is stored internally.  Pass
+      {\tt Homogenize => true} (the default) when $A$ is a point set: the
+      stored matrix is then $A$ with an appended row of $1$'s, and downstream
+      routines (regularity, flips, chirotope, $\ldots$) treat $A$'s columns as
+      affine points.  Pass {\tt Homogenize => false} when $A$ is already a
+      vector configuration (for instance, a $d \times n$ matrix of rays in
+      $\RR^d$): the matrix is stored as given, and downstream routines treat
+      the columns as vectors directly.  In particular, the dimension of the
+      ambient affine/linear space is read from the stored matrix, so the same
+      input may produce different triangulations depending on which interpretation
+      is chosen.
     Example
       P = hypercube 3
       A = vertices P
@@ -1475,7 +1492,6 @@ doc ///
     flips
     (flips, Triangulation)
     [flips, RegularOnly]
-    [flips, Homogenize]
   Headline
     legal bistellar flips of a triangulation, computed via topcom
   Usage
@@ -1484,9 +1500,6 @@ doc ///
     T:Triangulation
     RegularOnly => Boolean
       restrict to flips between regular triangulations (default true)
-    Homogenize => Boolean
-      unused: the matrix stored in a @TO Triangulation@ is already in the
-      shape topcom expects
   Outputs
     :List
       of circuit pairs $\{neg, pos\}$, one per legal bistellar flip of $T$
@@ -1586,10 +1599,10 @@ doc ///
       @TO triangulation@
   Outputs
     G:HashTable
-      with keys {\tt "triangulations"} and {\tt "edges"}: {\tt G#"triangulations"}
-      is the list of @TO Triangulation@'s reached, and {\tt G#"edges"} is a
+      with keys @TT "Triangulations"@ and @TT "Edges"@: @TT "G.Triangulations"@
+      is the list of @TO Triangulation@'s reached, and @TT "G.Edges"@ is a
       list of triples $(i, j, c)$ with $i < j$, where $i$ and $j$ index into
-      {\tt G#"triangulations"} and $c$ is the affine circuit of the flip
+      @TT "G.Triangulations"@ and $c$ is the affine circuit of the flip
       between them
   Description
     Text
@@ -1605,9 +1618,9 @@ doc ///
       A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
       T = regularFineTriangulation A
       G = flipGraph T
-      #G#"triangulations"
-      #G#"edges"
-      first G#"edges"
+      #G.Triangulations
+      #G.Edges
+      first G.Edges
   Caveat
     Like @TO generateTriangulations@, this function is implemented in the
     top-level Macaulay2 language and is much slower than the topcom-based
@@ -2419,20 +2432,20 @@ TEST ///
   A = transpose matrix"0,0;1,1;3,1;5,0;1,5"
   T = regularFineTriangulation A
   G = flipGraph T
-  assert(#G#"triangulations" == 2)
-  assert(#G#"edges" == 1)
-  e = first G#"edges"
+  assert(#G.Triangulations == 2)
+  assert(#G.Edges == 1)
+  e = first G.Edges
   assert(e#0 == 0 and e#1 == 1)
   -- The triangulations agree (as a set) with generateTriangulations.
-  assert(set G#"triangulations" === set generateTriangulations T)
+  assert(set G.Triangulations === set generateTriangulations T)
 
   -- All edges should respect i < j.
   sq9 = matrix {{-1, -1, 1, 1, -1, 0, 0, 1, 0}, {-1, 1, -1, 1, 0, -1, 1, 0, 0}}
   Tsq = regularFineTriangulation sq9
   Gsq = flipGraph Tsq
-  assert(#Gsq#"triangulations" == 64)
-  assert(all(Gsq#"edges", e -> e#0 < e#1))
-  assert(all(Gsq#"edges", e -> 0 <= e#0 and e#1 < 64))
+  assert(#Gsq.Triangulations == 64)
+  assert(all(Gsq.Edges, e -> e#0 < e#1))
+  assert(all(Gsq.Edges, e -> 0 <= e#0 and e#1 < 64))
 
   -- Square with center: Fine => false gives 3 triangulations.  T0 (fine)
   -- connects to each of the two diagonal triangulations T1, T2 by a
@@ -2442,9 +2455,9 @@ TEST ///
   Asq = transpose matrix {{-1,-1},{-1,1},{1,-1},{1,1},{0,0}}
   Tsq2 = regularFineTriangulation Asq
   Gsq2 = flipGraph(Tsq2, Fine => false)
-  assert(#Gsq2#"triangulations" == 3)
-  assert(#Gsq2#"edges" == 3)
-  assert(all(Gsq2#"edges", e -> e#0 < e#1))
+  assert(#Gsq2.Triangulations == 3)
+  assert(#Gsq2.Edges == 3)
+  assert(all(Gsq2.Edges, e -> e#0 < e#1))
 ///
 
 -- The following is too long for a test.
@@ -2757,7 +2770,7 @@ needsPackage "Triangulations"
   -- now let's find flip graph...
   flipGraph t0
   G = flipGraph(t0, Fine => false)
-  assert(#G#"triangulations" == #allTriangulations(A, Homogenize => false))
+  assert(#G.Triangulations == #allTriangulations(A, Homogenize => false))
 
   
   flips t0
@@ -2815,22 +2828,22 @@ BENCHMARK ///
   t0 = Ts_1
   isFine t0
   elapsedTime G = flipGraph(t0, Fine => true);
-  #G#"triangulations" == 2968
-  netList G#"edges"
-  #G#"edges"
+  #G.Triangulations == 2968
+  netList G.Edges
+  #G.Edges
 
   elapsedTime Ts' = generateTriangulations(t0, Homogenize => false, Fine => false, RegularOnly => true); -- 174 sec
-  
+
   elapsedTime Gall = flipGraph(t0, Fine => false); -- 71 sec
-  #Gall#"triangulations" == 8387
-  #Gall#"edges"
+  #Gall.Triangulations == 8387
+  #Gall.Edges
 
   elapsedTime Greg = flipGraph(t0, Fine => false, RegularOnly => true); -- 184 sec
-  #Greg#"triangulations" == 4900 -- this is great!  Matches topcom
-  #Greg#"edges" == 15040
-  
+  #Greg.Triangulations == 4900 -- this is great!  Matches topcom
+  #Greg.Edges == 15040
+
   -- this check uses topcom. 119 sec
-  elapsedTime for t in Gall#"triangulations" list isRegularTriangulation t;
+  elapsedTime for t in Gall.Triangulations list isRegularTriangulation t;
   tally oo -- 4900 regular, 3487 not.
 
   -- The following two topcom calls crash.  Probably the same problem.
