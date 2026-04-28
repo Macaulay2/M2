@@ -556,9 +556,9 @@ doc ///
     generating and manipulating triangulations of point or vector configurations
   Description
     Text
-      {\bf Warning!} This package is experimental, documentation is missing,
-      and the interface will be cleaned up and changed.  Use only if these issues
-      don't bother you!
+      {\bf Warning!} This package is experimental, and the interface
+      may still be cleaned up and changed.  Use only if that bothers
+      you not.
     Text
       @SUBSECTION "Data of a triangulation"@
     Text
@@ -598,9 +598,18 @@ doc ///
           TO (flips, Triangulation),
           TO (bistellarFlip, Triangulation, List),
           TO (neighbors, Triangulation),
-          TO (flipGraph, Triangulation),
-          TO (volumeVector, Triangulation),
-          TO (gkzVector, Triangulation),
+          TO (flipGraph, Triangulation)
+          }@
+    Text
+      @SUBSECTION "Volumes and GKZ vectors"@
+    Text
+      @UL {
+          TO (volumeVector, Triangulation)
+          }@
+    Text
+      @SUBSECTION "Delaunay subdivisions"@
+    Text
+      @UL {
           TO (delaunayWeights, Matrix),
           TO (delaunaySubdivision, Matrix)
           }@
@@ -1766,6 +1775,24 @@ doc ///
   SeeAlso
     delaunayWeights
     "Polyhedra::regularSubdivision"
+///
+
+doc ///
+  Key
+    ConeIndex
+  Headline
+    optional argument: index of the cone center for star triangulations
+  Description
+    Text
+      Used by @TO fineStarTriangulation@ and
+      @TO regularFineStarTriangulation@ to specify which column of the
+      input matrix should serve as the cone center.  If {\tt null}
+      (the default), the functions treat the cone center as a new
+      point at index {\tt numColumns A}; otherwise the value must be
+      an integer in $0, \ldots, n$, where $n$ is the number of columns.
+  SeeAlso
+    fineStarTriangulation
+    regularFineStarTriangulation
 ///
 
 doc ///
