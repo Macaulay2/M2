@@ -5,12 +5,15 @@
 #ifndef _slp_imp_hpp_
 #define _slp_imp_hpp_
 
+//#include "m2tbb.hpp"
 #include <cstdlib>
 #include <algorithm>
 #include <dlfcn.h>
-//#include "timing.hpp"
-#define TIME(t, call) {}
+#include <gc/gc.h>
+#include "timing.hpp"
+//#include <tbb/tbb.h>
 #include <tbb/parallel_for.h>
+#include <tbb/task_arena.h>
 
 // SLEvaluator
 template <typename RT>
@@ -155,7 +158,11 @@ SLEvaluator* SLEvaluatorConcrete<RT>::specialize(
 }
 
 template <typename RT>
-void SLEvaluatorConcrete<RT>::computeNextNode()
+void SLEvaluatorConcrete<RT>::computeNextNode(
+    std::vector<SLProgram::GATE_TYPE>::iterator& nIt,
+    std::vector<SLProgram::GATE_SIZE>::iterator& numInputsIt,
+    std::vector<SLProgram::GATE_POSITION>::iterator& inputPositionsIt,
+    typename std::vector<ElementType>::iterator& vIt)
 {
   ElementType& v = *vIt;
   switch (*nIt++)
@@ -251,16 +258,17 @@ bool SLEvaluatorConcrete<RT>::evaluate(const DMat<RT>& inputs,
       (*compiled_fn)(parametersAndInputs, outputs.unsafeArray());
     }
     return true;
-  } else {                           
+  } else {
+    auto values(this->values);
     size_t i = 0;
     for (size_t r = 0; r < inputs.numRows(); r++)
       for (size_t c = 0; c < inputs.numColumns(); c++)
         ring().set(values[varsPos[i++]], inputs.entry(r, c));
-    nIt = slp->mNodes.begin();
-    numInputsIt = slp->mNumInputs.begin();
-    inputPositionsIt = slp->mInputPositions.begin();
-    for (vIt = values.begin() + slp->inputCounter; vIt != values.end(); ++vIt)
-      computeNextNode();
+    auto nIt = slp->mNodes.begin();
+    auto numInputsIt = slp->mNumInputs.begin();
+    auto inputPositionsIt = slp->mInputPositions.begin();
+    for (auto vIt = values.begin() + slp->inputCounter; vIt != values.end(); ++vIt)
+      computeNextNode(nIt, numInputsIt, inputPositionsIt, vIt);
     i = 0;
     for (size_t r = 0; r < outputs.numRows(); r++)
       for (size_t c = 0; c < outputs.numColumns(); c++)
@@ -360,9 +368,8 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
     gmp_RR infinity_threshold,
     bool checkPrecision)
 {
-  /*  std::chrono::steady_clock::time_point start =
+  std::chrono::steady_clock::time_point start =
       std::chrono::steady_clock::now();
-  */
   size_t solveLinearTime = 0, solveLinearCount = 0, evaluateTime = 0;
   // std::cout << "inside
   // HomotopyConcrete<RT,FixedPrecisionHomotopyAlgorithm>::track" << std::endl;
@@ -419,8 +426,22 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
   typedef typename RT::RealRingType::ElementType RealElementType;
   typedef MatElementaryOps<DMat<RT> > MatOps;
 
-  tbb::parallel_for( tbb::blocked_range<int>(0,n_sols),
+  tbb::task_arena arena(M2_numTBBThreads == 0
+                        ? tbb::task_arena::automatic
+                        : M2_numTBBThreads);
+  arena.execute([&]{
+  tbb::parallel_for(tbb::blocked_range<int>(0,n_sols),
   [&](tbb::blocked_range<int> r) {
+    // Register this TBB worker with the Boehm GC. TBB owns thread creation,
+    // so workers are not GC-aware by default; without this, a collection
+    // triggered from inside the loop aborts with "Collecting from unknown thread".
+    struct GC_stack_base sb;
+    GC_get_stack_base(&sb);
+    int gc_reg = GC_register_my_thread(&sb);
+    if (M2_numericalAlgebraicGeometryTrace > 9) { 
+      // `r` seems to be if length one in all experiments so far
+      std::cout << "r = [" << r.begin() << "," << r.end() << ")\n";
+    }
     RealElement t_step(R), min_step2(R), epsilon2(R), infinity_threshold2(R);
     R.set_from_BigReal(t_step, init_dt);  // initial step
     R.set_from_BigReal(min_step2, min_dt);
@@ -473,7 +494,6 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
     RealElementType& tol2 = epsilon2;  // current tolerance squared
     bool linearSolve_success;
     //end// initial vars setup
-    std::cout << "r = [" << r.begin() << "," << r.end() << ")\n";
     for (size_t s = r.begin(); s < r.end(); ++s) {
       SolutionStatus status = PROCESSING;
       // set initial solution and initial value of the continuation parameter
@@ -757,9 +777,12 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
       oe.ring().set_from_long(oe.entry(0, s), status);
       oe.ring().set_from_long(oe.entry(1, s), count);
     }
+    if (gc_reg == GC_SUCCESS)
+      GC_unregister_my_thread();
   }); //(end) tbb::parallel_for
-
-  /*std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+  }); //(end) arena.execute
+  
+  std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
   if (M2_numericalAlgebraicGeometryTrace > 1)
     {
       std::cout << "-- track took "
@@ -774,7 +797,6 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
       std::cout << "-- time of evaluate calls = " << evaluateTime << " ns."
                 << std::endl;
     }
-  */
   return true;
 }
 
