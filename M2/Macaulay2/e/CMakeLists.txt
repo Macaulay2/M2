@@ -157,6 +157,7 @@ set(CPPONLYFILES
 set(SRCLIST
   computeGV
   cytools/lattice_points
+  cytools/cone-interior-point
   BasicPoly
   BasicPolyList
   BasicPolyListParser

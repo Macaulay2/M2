@@ -44,6 +44,9 @@ MutableMatrix /* or null */ *rawLatticePoints(const Matrix *A,
                                               long max_N_out,
                                               long max_N_nodes);
 
+
+MutableMatrix /* or null */ *rawConeInteriorPoint(const Matrix *A);
+  
 #  if defined(__cplusplus)
 }
 #  endif

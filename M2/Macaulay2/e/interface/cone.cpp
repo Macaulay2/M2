@@ -17,7 +17,8 @@
 #include "util.hpp"
 
 #include "cytools/lattice_points.hpp"
-
+#include "cytools/cone-interior-point.hpp"
+#include "interface/ring.h"
 #include <libnormaliz/cone.h>
 #include <stdexcept>
 #include <vector>
@@ -249,6 +250,61 @@ MutableMatrix *rawLatticePoints(const Matrix *A,
     {
       // catches both std::runtime_error from latticePoints() and
       // exc::engine_error (which derives from std::runtime_error)
+      ERROR(e.what());
+      return nullptr;
+  }
+}
+
+// Macaulay2 convention: rows of A are inequalities A*x <= 0.
+// The helper coneInteriorPoint() works with {x : A x >= 0}, so we negate.
+//
+// Return value is a 1-row MutableMatrix over RR(53):
+//   if full-dimensional: 2 + n columns, [1, tStar, interior point]
+//   else                : 2 + m columns, [0, tStar, dual certificate]
+MutableMatrix /* or null */ *rawConeInteriorPoint(const Matrix *A)
+{
+  try
+    {
+      const size_t m = A->n_rows();  // number of inequalities
+      const size_t n = A->n_cols();  // ambient dimension
+
+      std::vector<int> Avec(m * n);
+      for (size_t i = 0; i < m; i++)
+        for (size_t j = 0; j < n; j++)
+          {
+            mpz_srcptr z = A->elem(i, j).get_mpz();
+            if (mpz_fits_sint_p(z) == 0)
+              {
+                ERROR("rawConeInteriorPoint: entry of A does not fit in a C int");
+                return nullptr;
+              }
+            Avec[i * n + j] = -static_cast<int>(mpz_get_si(z));
+          }
+
+      ConeResult cr = coneInteriorPoint(static_cast<int>(m),
+                                        static_cast<int>(n),
+                                        Avec);
+
+      const Ring *RR = IM2_Ring_RRR(53);
+      const std::vector<double> &tail =
+          cr.fullDimensional ? cr.interiorPoint : cr.dualCert;
+      MutableMatrix *M = MutableMatrix::zero_matrix(
+          RR, 1, 2 + tail.size(), /*dense*/ true);
+
+      ring_elem r;
+      RR->from_double(cr.fullDimensional ? 1.0 : 0.0, r);
+      M->set_entry(0, 0, r);
+      RR->from_double(cr.tStar, r);
+      M->set_entry(0, 1, r);
+      for (size_t k = 0; k < tail.size(); k++)
+        {
+          RR->from_double(tail[k], r);
+          M->set_entry(0, 2 + k, r);
+        }
+
+      return M;
+  } catch (const exc::engine_error &e)
+    {
       ERROR(e.what());
       return nullptr;
   }
