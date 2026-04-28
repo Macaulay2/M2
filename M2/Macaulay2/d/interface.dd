@@ -4620,6 +4620,27 @@ export rawLatticePoints(e:Expr):Expr := (
   );
 setupfun("rawLatticePoints",rawLatticePoints);
 
+-- rawConeInteriorPoint(A): test whether the cone {x : A*x <= 0} is
+-- full-dimensional, returning either a witness interior point or a
+-- dual certificate of degeneracy.
+--   A: RawMatrix over ZZ with m rows (inequalities) and n columns
+--      (ambient dimension); entries must fit in a C int.
+-- Returns: a 1-row MutableMatrix over RR_53.
+--   if full-dimensional:  2 + n columns, [1.0, tStar, x_1, ..., x_n]
+--                         where tStar > 0 and A*x <= 0 strictly (componentwise).
+--   else               :  2 + m columns, [0.0, tStar, y_1, ..., y_m]
+--                         where tStar == 0 and y >= 0, y^T A = 0
+--                         (a Farkas certificate of non-full-dimensionality).
+export rawConeInteriorPoint(e:Expr):Expr := (
+  when e is wC:RawMatrixCell do (C := wC.p;
+    toExpr(Ccode(RawMutableMatrixOrNull,
+      "rawConeInteriorPoint(",
+        C, 
+      ")"
+    ))
+  ) else WrongArg("a raw matrix")
+  );
+setupfun("rawConeInteriorPoint",rawConeInteriorPoint);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d interface.o "
