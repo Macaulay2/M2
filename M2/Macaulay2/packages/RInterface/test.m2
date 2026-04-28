@@ -20,6 +20,7 @@ assert Equation(value RObject(1/2), 0.5)
 assert Equation(value RObject pi, numeric pi)
 assert Equation(value RObject(2 + 3*ii), 2 + 3*ii)
 assert Equation(value RObject "foo", "foo")
+assert Equation(value RObject foo, "foo")
 assert Equation(value RObject {1, 2, 3}, {1, 2, 3})
 assert BinaryOperation(symbol ===,
     value RObject {"foo" => 1, "bar" => 2}, {"foo" => 1, "bar" => 2})
@@ -37,6 +38,12 @@ assert Equation(value c(ii, 2*ii), {ii, 2*ii})
 assert Equation(value c("foo", "bar"), {"foo", "bar"})
 list' = RFunction "list"
 assert Equation(value list'(true, 2, pi), {true, 2, numeric pi})
+x = RObject {10, 20, 30}
+i = iterator x
+assert Equation(next i, RObject 10)
+assert Equation(next i, RObject 20)
+assert Equation(next i, RObject 30)
+assert Equation(length RSymbol "letters", 26)
 ///
 
 TEST ///
@@ -51,6 +58,7 @@ assert Equation(x[1], RObject 2)
 assert Equation(x[1, 3, 5], RObject {2, 6, 10})
 assert Equation(x_1 = 3, RObject {3, 4, 6, 8, 10})
 assert Equation(x[1, 3, 5] = {3, 7, 11}, RObject {3, 4, 7, 8, 11})
+assert Equation(length x, 5)
 ///
 
 TEST ///
@@ -92,6 +100,8 @@ assert Equation(RObject true xor RObject true, RObject false)
 assert Equation(RObject true xor true, RObject false)
 assert Equation(true xor RObject true, RObject false)
 assert Equation(not RObject true, RObject false)
+assert Equation(RObject false and NA, RObject false)
+assert Equation(RObject true or NA, RObject true)
 ///
 
 TEST ///
@@ -126,6 +136,8 @@ assert Equation(value matrix'(c(1, 2, 3, 11, 12, 13), "nrow" => 2, "ncol" => 3),
 assert Equation(value array(c splice(5, 9, 3, 10..15), "dim" => c(3, 3, 2)), {
 	{{5, 9, 3}, {10, 11, 12}, {13, 14, 15}},
 	{{5, 9, 3}, {10, 11, 12}, {13, 14, 15}}})
+A = matrix {{1, 2, 3}, {4, 5, 6}}
+assert Equation(A, transpose matrix value RObject A)
 ///
 
 TEST ///
@@ -196,4 +208,12 @@ assert Equation(Beta(1, RObject 1), RObject 1)
 assert Equation(binomial(RObject 1, RObject 1), RObject 1)
 assert Equation(binomial(RObject 1, 1), RObject 1)
 assert Equation(binomial(1, RObject 1), RObject 1)
+assert Equation(round(RObject 2.567, 2), RObject 2.57)
+assert Equation(round(RObject 2.567, digits => 2), RObject 2.57)
+///
+
+TEST ///
+-- library
+library "MASS"
+assert(instance(RSymbol "abbey", RObject))
 ///
