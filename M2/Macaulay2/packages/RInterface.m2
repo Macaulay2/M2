@@ -33,6 +33,7 @@ export {
     -- methods
     "RQuote",
     "RSymbol",
+    "RValue",
 
     -- objects
     "NA"
@@ -455,5 +456,18 @@ tilde = lookup(symbol ~, RObject, RObject)
     else tilde x)
 
 ?? RObject := x -> if TYPEOF x > 0 then x
+
+-----------------------
+-- evaluating R code --
+-----------------------
+
+Rparse = RFunction "parse"
+Reval = RFunction "eval"
+
+RValue = method(
+    Dispatch => Thing,
+    Options => {Environment => RObject RGlobalEnv})
+RValue String := o -> s -> Reval(Rparse("text" => s), RObject o.Environment)
+RValue Sequence := o -> s -> RValue(concatenate \\ toString \ s, o)
 
 load "./RInterface/doc.m2"
