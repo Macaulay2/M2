@@ -275,9 +275,9 @@ delaunaySubdivision Matrix := A -> regularSubdivision(A, delaunayWeights A)
 -- Chirotope code.  This could potentially go elsewhere? --
 -----------------------------------------------------------
 
-chirotope = method(Options => true)
+chirotope = method(Options => {Homogenize => true})
 
-chirotope String := {} >> opts -> s -> (
+chirotope String := Chirotope => opts -> s -> (
     new Chirotope from {
         cache => new CacheTable,
         symbol String => s
@@ -286,13 +286,13 @@ chirotope String := {} >> opts -> s -> (
 
 toString Chirotope := String => OM -> OM.String
 
-chirotope Matrix := Chirotope => {Homogenize => true} >> opts -> A -> (
-    chirotope chirotopeString(A, opts)
+chirotope Matrix := Chirotope => opts -> A -> (
+    chirotope chirotopeString(A, Homogenize => opts.Homogenize)
     )
 
-naiveChirotope = method(Options => true)
-naiveChirotope Matrix := Chirotope => {Homogenize => true} >> opts -> A -> (
-    chirotope naiveChirotopeString(A, opts)
+naiveChirotope = method(Options => {Homogenize => true})
+naiveChirotope Matrix := Chirotope => opts -> A -> (
+    chirotope naiveChirotopeString(A, Homogenize => opts.Homogenize)
     )
 
 Chirotope == Chirotope := Boolean => (C, D) -> toString C === toString D
@@ -1840,6 +1840,7 @@ doc ///
     chirotope
     (chirotope, Matrix)
     (chirotope, String)
+    [chirotope, Homogenize]
   Headline
     compute the chirotope of a point or vector configuration
   Usage
@@ -1850,17 +1851,18 @@ doc ///
       whose columns are the points (or vectors) of the configuration
     s:String
       a precomputed topcom-format chirotope string
+    Homogenize => Boolean
+      if true (default), augment $A$ with a final row of $1$'s before
+      computing (treating columns of $A$ as a point set); if false, treat
+      the columns of $A$ as a vector configuration as-is
   Outputs
     C:Chirotope
   Description
     Text
       Computes the chirotope by calling
-      @TO "Topcom::chirotopeString"@.  The {\tt (chirotope, Matrix)} form
-      accepts the option {\tt Homogenize => true} (the default), which
-      augments $A$ with a final row of $1$'s before computing.  The
-      {\tt String} form is a thin wrapper that lets you construct a
-      {\tt Chirotope} from an already-computed topcom string -- useful
-      when caching results.
+      @TO "Topcom::chirotopeString"@.  The {\tt String} form is a thin
+      wrapper that lets you construct a {\tt Chirotope} from an
+      already-computed topcom string -- useful when caching results.
     Example
       A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
       C = chirotope A
@@ -1875,12 +1877,17 @@ doc ///
   Key
     naiveChirotope
     (naiveChirotope, Matrix)
+    [naiveChirotope, Homogenize]
   Headline
     compute the chirotope of a configuration via determinants in Macaulay2
   Usage
     C = naiveChirotope A
   Inputs
     A:Matrix
+    Homogenize => Boolean
+      if true (default), augment $A$ with a final row of $1$'s before
+      computing (treating columns of $A$ as a point set); if false, treat
+      the columns of $A$ as a vector configuration as-is
   Outputs
     C:Chirotope
   Description
@@ -1888,9 +1895,7 @@ doc ///
       Computes the chirotope directly in Macaulay2 by enumerating all
       $d$-subsets of the columns and recording the sign of each
       $d \times d$ minor.  Useful for verifying the topcom-based
-      @TO chirotope@.  Accepts the option {\tt Homogenize => true}
-      (the default), which augments $A$ with a final row of $1$'s
-      before computing.
+      @TO chirotope@.
     Example
       A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
       chirotope A == naiveChirotope A
@@ -2854,3 +2859,35 @@ BENCHMARK ///
   --       
 ///
 
+-- Some notes for me for next time using claude:
+ So if I start again later, what should I say to start in on the todo list (signature-review notes accumulated section)?
+
+⏺ Just say something like:
+
+  ▎ "Let's start on the Triangulations signature-review TODO list."
+
+  That phrase ("signature-review") matches the index entry in MEMORY.md, so I'll pull up the full file (project_triangulations-signature-review.md) on the first turn and see all 12
+  items.
+
+  Two things to know:
+
+  1. You need to be in the computegv branch's directory (/Users/mike/src/M2-current-branches/M2-computegv/M2 or its parent) for the per-project memory to load. If you start me from
+  a different repo, the TODO list won't be in scope — ~/.claude/CLAUDE.md will still load the M2 conventions, but the Triangulations-specific items won't.
+  2. Optional sharpening, if you have a preference:
+    - "...starting with item 1 (FlipGraph keying)." — if you want to tackle a specific one
+    - "...go through them in order, one commit per item." — gives me a working cadence
+    - "...read the list and tell me which look like the cheapest wins." — if you want me to triage first
+    - "...skip anything that ripples into reflexive-polytope or external code; just the local-impact items." — to scope down
+
+  Without sharpening, I'll most likely open with a short triage of the 12 items and ask which one you want first. Either is fine.
+
+ Saved. To resume tomorrow, just say:
+
+  ▎ "Let's start the secondary cone project for Triangulations."
+
+  The phrase "secondary cone" matches the MEMORY.md index entry, so I'll pull up project_triangulations-secondary-cone.md on the first turn and have the full plan: math contract
+  (hyperplane = signed circuit, oriented by which half is in $T$), the PR split (a) secondaryCone first, (b) secondaryFan after, your naive interior-point idea (sum the rays of the
+  cone for an interior weight), the verification approach (regularTriangulationWeights T should land inside secondaryCone T), and the deferral of HiGHS to PR 4.
+
+  Make sure you launch from this branch's directory (or its parent), so the per-project memories load. Good night!
+  
