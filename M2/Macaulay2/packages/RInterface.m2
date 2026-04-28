@@ -449,5 +449,4 @@ scan({
 
 ?? RObject := x -> if TYPEOF x > 0 then x
 
-load "./RInterface/test.m2"
 load "./RInterface/doc.m2"
