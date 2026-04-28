@@ -563,8 +563,10 @@ doc ///
       @SUBSECTION "Data of a triangulation"@
     Text
       @UL {
+          TO Triangulation,
           TO (max, Triangulation),
-          TO (vectors, Triangulation)
+          TO (vectors, Triangulation),
+          TO (matrix, Triangulation)
           }@
     Text
       @SUBSECTION "Creating triangulations"@
@@ -590,10 +592,11 @@ doc ///
       @SUBSECTION "Exploring the set of triangulations"@
     Text
       @UL {
-          TO (bistellarFlip, Triangulation, List),
-          TO (flips, Triangulation),
-          TO (neighbors, Triangulation),
           TO (flipCandidates, Triangulation),
+          TO (flips, Triangulation),
+          TO (bistellarFlip, Triangulation, List),
+          TO (neighbors, Triangulation),
+          TO (flipGraph, Triangulation),
           TO (volumeVector, Triangulation),
           TO (gkzVector, Triangulation),
           TO (delaunayWeights, Matrix),
@@ -625,6 +628,8 @@ doc ///
   Key
     isRegularTriangulation
     (isRegularTriangulation, Triangulation)
+    (isRegularTriangulation, Matrix, List)
+    [isRegularTriangulation, Homogenize]
   Headline
     determine if a given triangulation is a regular triangulation
   Usage
@@ -670,39 +675,52 @@ doc ///
     @TO (isWellDefined, Triangulation)@ first.
   SeeAlso
     (regularTriangulationWeights, Triangulation)
-    regularFineTriangulation  
+    regularFineTriangulation
     (isWellDefined, Triangulation)
 ///
 
-///
+doc ///
   Key
-    neighbors
-    (neighbors, Triangulation)
+    Triangulation
   Headline
-    find the neighbors of a triangulation of a point or vector set
-  Usage
-    neighbors T
-    XXX
-  Inputs
-    T:Triangulation
-  Outputs
-    :List
-      of lists of size 2: the first element is a circuit, and the second is @ofClass Triangulation@
+    a triangulation of a point or vector configuration
   Description
     Text
-      The neighbors of a triangulation $T$ are those triangulations which are related to $T$ 
-      by a bistellar flip.  Some flips can change the set of vertices (the support) of a triangulation.
-      This function {\bf does not} consider these.  Thus, if the triangulation is fine, the neighbors 
-      returned from this function are all fine triangulations too.
+      A {\tt Triangulation} packages a point (or vector) configuration $A$
+      together with a triangulation of the columns of $A$, given as a list
+      of maximal simplices.  Each simplex is a sorted list of column
+      indices into $A$, and the outer list is sorted as well.
+    Text
+      Construct a {\tt Triangulation} with @TO triangulation@ from an
+      explicit matrix and list, or with @TO regularFineTriangulation@ from
+      just a matrix.  Inspect one with the accessors
+      @TO (max, Triangulation)@, @TO (vectors, Triangulation)@, and
+      @TO (matrix, Triangulation)@.
     Example
-      TODOwriteMe
-  Caveat
+      A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
+      T = regularFineTriangulation A
+      max T
+      matrix T
+      vectors T
+    Text
+      By default, the matrix stored in {\tt T} is the {\it homogenized}
+      configuration, with a final row of $1$'s appended; most algorithms
+      in this package operate on homogenized vectors.  Pass
+      {\tt Homogenize => false} to @TO triangulation@ if the input is
+      already a vector configuration.
   SeeAlso
+    triangulation
+    regularFineTriangulation
+    (max, Triangulation)
+    (vectors, Triangulation)
+    (matrix, Triangulation)
 ///
 
 doc ///
   Key
     triangulation
+    (triangulation, Matrix, List)
+    [triangulation, Homogenize]
   Headline
     make a Triangulation object
   Usage
@@ -736,10 +754,315 @@ doc ///
       isRegularTriangulation tri
   Caveat
   SeeAlso
+    Triangulation
     (max, Triangulation)
     (vectors, Triangulation)
+    (matrix, Triangulation)
     regularFineTriangulation
     (isWellDefined, Triangulation)
+///
+
+doc ///
+  Key
+    (max, Triangulation)
+  Headline
+    the maximal simplices of a triangulation
+  Usage
+    max T
+  Inputs
+    T:Triangulation
+  Outputs
+    :List
+      of lists, each a sorted list of column indices defining a maximal
+      simplex of $T$
+  Description
+    Text
+      Returns the list of maximal simplices of the triangulation.  The
+      outer list is sorted, and each inner list (a simplex) is sorted as
+      well, so that two triangulations with the same simplices have
+      identical {\tt max}.
+    Example
+      A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
+      T = regularFineTriangulation A
+      max T
+  SeeAlso
+    Triangulation
+    (vectors, Triangulation)
+    (matrix, Triangulation)
+///
+
+doc ///
+  Key
+    vectors
+    (vectors, Triangulation)
+  Headline
+    the column vectors of the configuration underlying a triangulation
+  Usage
+    vectors T
+  Inputs
+    T:Triangulation
+  Outputs
+    :List
+      whose $i$-th entry is the $i$-th column of @TO (matrix, Triangulation)@,
+      represented as a list of integers
+  Description
+    Text
+      Returns the columns of the matrix associated to $T$ as a list of
+      column vectors.  If $T$ was constructed with the default
+      {\tt Homogenize => true}, each vector ends with a $1$.
+    Example
+      A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
+      T = regularFineTriangulation A
+      vectors T
+  SeeAlso
+    Triangulation
+    (matrix, Triangulation)
+    (max, Triangulation)
+///
+
+doc ///
+  Key
+    (matrix, Triangulation)
+  Headline
+    the matrix whose columns are the points of a triangulation
+  Usage
+    matrix T
+  Inputs
+    T:Triangulation
+  Outputs
+    :Matrix
+      whose columns are the points (or vectors) of the configuration
+      that $T$ triangulates
+  Description
+    Text
+      Returns the configuration matrix stored in $T$.  By default this is
+      the homogenized matrix, with a final row of $1$'s appended; if $T$
+      was constructed with {\tt Homogenize => false}, it is the original
+      matrix passed to the constructor.
+    Example
+      A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
+      T = regularFineTriangulation A
+      matrix T
+      numRows matrix T == numRows A + 1
+  SeeAlso
+    Triangulation
+    (vectors, Triangulation)
+    (max, Triangulation)
+    triangulation
+///
+
+doc ///
+  Key
+    (isWellDefined, Triangulation)
+  Headline
+    test whether the simplices of a triangulation form a valid triangulation
+  Usage
+    isWellDefined T
+  Inputs
+    T:Triangulation
+  Outputs
+    :Boolean
+      whether the simplices in {\tt max T} form a valid triangulation of
+      the columns of {\tt matrix T}
+  Description
+    Text
+      Defers to @TO "Topcom::topcomIsTriangulation"@ for the
+      authoritative check.  A {\tt Triangulation} object is just
+      packaging: its construction does not verify that the input simplices
+      actually form a triangulation, so use this method to confirm.
+    Example
+      A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
+      T = regularFineTriangulation A
+      isWellDefined T
+  SeeAlso
+    naiveIsTriangulation
+    isRegularTriangulation
+    triangulation
+///
+
+doc ///
+  Key
+    isFine
+    (isFine, Triangulation)
+    (isFine, Matrix, List)
+  Headline
+    test whether a triangulation uses every point in the configuration
+  Usage
+    isFine T
+    isFine(A, tri)
+  Inputs
+    T:Triangulation
+    A:Matrix
+      whose columns are the points of a configuration
+    tri:List
+      a triangulation of the columns of $A$
+  Outputs
+    :Boolean
+      whether every column index appears in some maximal simplex of the
+      triangulation
+  Description
+    Text
+      A triangulation is {\it fine} if every point of the configuration is
+      a vertex of some simplex.  Non-fine triangulations triangulate the
+      convex hull but leave one or more points (typically interior or on
+      the relative boundary) unused.
+    Example
+      A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
+      Ts = allTriangulations A;
+      tally apply(Ts, isFine)
+  Caveat
+    This function does not check that {\tt tri} is a valid triangulation;
+    it only inspects the support.  See
+    @TO (isWellDefined, Triangulation)@ or @TO naiveIsTriangulation@
+    for that.
+  SeeAlso
+    isStar
+    (isWellDefined, Triangulation)
+    isRegularTriangulation
+///
+
+doc ///
+  Key
+    isStar
+    (isStar, Triangulation)
+    (isStar, Matrix, List)
+  Headline
+    test whether a triangulation is a star with respect to its last point
+  Usage
+    isStar T
+    isStar(A, tri)
+  Inputs
+    T:Triangulation
+    A:Matrix
+    tri:List
+  Outputs
+    :Boolean
+      whether every maximal simplex contains the last column index of
+      the configuration
+  Description
+    Text
+      A triangulation is a {\it star} (with respect to a distinguished
+      point $p$) if every maximal simplex contains $p$ as a vertex.  This
+      function uses the convention that $p$ is the {\bf last} column of
+      the configuration: $T$ is a star iff every simplex of {\tt max T}
+      contains the index {\tt numColumns(matrix T) - 1}.
+    Text
+      This convention is common when triangulating a reflexive polytope
+      with the origin placed last: a fine star triangulation refines the
+      polytope into simplices all sharing the origin.
+    Example
+      A = transpose matrix {{1,1},{-1,1},{-1,-1},{1,-1},{0,0}}
+      T = regularFineTriangulation A
+      max T
+      isStar T
+  Caveat
+    This function does not check that {\tt tri} is a valid triangulation
+    or that the last column is genuinely interior; it only inspects the
+    indices.
+  SeeAlso
+    isFine
+    (isWellDefined, Triangulation)
+    fineStarTriangulation
+    regularFineStarTriangulation
+///
+
+doc ///
+  Key
+    regularTriangulationWeights
+    (regularTriangulationWeights, Triangulation)
+    (regularTriangulationWeights, Matrix, List)
+    [regularTriangulationWeights, Homogenize]
+  Headline
+    height vector inducing a regular triangulation, if one exists
+  Usage
+    regularTriangulationWeights T
+    regularTriangulationWeights(A, tri)
+  Inputs
+    T:Triangulation
+    A:Matrix
+    tri:List
+    Homogenize => Boolean
+      ignored by the @TO Triangulation@ form (its matrix is already
+      homogenized); for the {\tt (Matrix, List)} form, controls whether
+      $A$ is augmented with a final row of $1$'s before being passed to
+      topcom
+  Outputs
+    :List
+      of rational numbers, one per column of the configuration: heights
+      whose lower envelope yields {\tt tri}; or @TO null@ if the
+      triangulation is not regular
+  Description
+    Text
+      A triangulation is regular iff there is a height vector such that
+      lifting each point to that height and taking the lower facets of
+      the resulting upper hull recovers exactly the maximal simplices of
+      the triangulation.  This function returns such a height vector
+      (computed via @TO "Topcom::topcomRegularTriangulationWeights"@), or
+      @TO null@ if no such vector exists.
+    Example
+      A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
+      T = regularFineTriangulation A
+      regularTriangulationWeights T
+      isRegularTriangulation T
+    Text
+      For a non-regular triangulation, the function returns @TO null@:
+    Example
+      tri = {{0,1,2}, {1,3,5}, {2,3,4}, {0,1,5},
+             {0,2,4}, {3,4,5}, {1,2,3}}
+      Tnr = triangulation(A, tri)
+      isRegularTriangulation Tnr
+      regularTriangulationWeights Tnr
+  SeeAlso
+    isRegularTriangulation
+    "Topcom::topcomRegularTriangulationWeights"
+///
+
+doc ///
+  Key
+    naiveIsTriangulation
+    (naiveIsTriangulation, Triangulation)
+    (naiveIsTriangulation, Matrix, List)
+    (naiveIsTriangulation, Matrix, List, List)
+  Headline
+    test whether a list of simplices is a triangulation, in pure Macaulay2
+  Usage
+    naiveIsTriangulation T
+    naiveIsTriangulation(A, tri)
+    naiveIsTriangulation(A, circuits, tri)
+  Inputs
+    T:Triangulation
+    A:Matrix
+      whose columns are the points of the configuration
+    tri:List
+      a putative triangulation of the columns of $A$
+    circuits:List
+      the oriented circuits of $A$; if omitted, computed via
+      @TO "Topcom::orientedCircuits"@
+  Outputs
+    :Boolean
+      whether {\tt tri} forms a valid triangulation of the convex hull of
+      the columns of $A$
+  Description
+    Text
+      A self-contained Macaulay2 implementation of triangulation
+      validity, complementary to @TO (isWellDefined, Triangulation)@
+      which defers to topcom.  Two checks are performed: each codim-1
+      wall must either lie on the boundary of $\mathrm{conv}(A)$ and
+      occur in exactly one simplex, or lie in the interior and occur in
+      exactly two; and for each oriented circuit, at most one of the two
+      sides may be fully present in the triangulation.
+    Example
+      A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
+      T = regularFineTriangulation A
+      naiveIsTriangulation T
+      isWellDefined T
+  Caveat
+    This function carries internal {\tt TODO} comments expressing
+    uncertainty about correctness in edge cases; for an authoritative
+    answer, prefer @TO (isWellDefined, Triangulation)@.
+  SeeAlso
+    (isWellDefined, Triangulation)
+    "Topcom::orientedCircuits"
 ///
 
 doc ///
@@ -905,6 +1228,258 @@ doc ///
     write down all of them.
   SeeAlso
     "allTriangulations"
+///
+
+doc ///
+  Key
+    bistellarFlip
+    (bistellarFlip, Triangulation, List)
+    (bistellarFlip, List, List)
+  Headline
+    perform a bistellar flip on a triangulation
+  Usage
+    T' = bistellarFlip(T, c)
+    tri' = bistellarFlip(tri, c)
+  Inputs
+    T:Triangulation
+    tri:List
+      a triangulation, given as a list of lists of column indices
+    c:List
+      a pair $\{neg, pos\}$ of disjoint lists of column indices: the signed
+      parts of an affine circuit, typically an entry of @TO flipCandidates@
+  Outputs
+    :Thing
+      a @TO Triangulation@ (or, in the {\tt (List, List)} form, a {\tt List})
+      obtained from $T$ by flipping along $c$, or @TO null@ if the circuit
+      is not flippable in $T$
+  Description
+    Text
+      A circuit on $d{+}1$ points admits two triangulations of its convex hull:
+      $T_-$, omitting each vertex listed in {\tt neg}, and $T_+$, omitting each
+      vertex listed in {\tt pos}.  Exactly one of these (say $T_-$) sits inside
+      $T$, supported on a common link $L$; the bistellar flip replaces
+      $L \star T_-$ with $L \star T_+$.
+    Text
+      If neither side has a common link in $T$ -- for example, the simplices
+      of one side appear with mismatched links, or one side is only partially
+      present -- the flip is undefined and this returns @TO null@.
+    Example
+      A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
+      T = regularFineTriangulation A
+      cs = flipCandidates T
+      T' = bistellarFlip(T, cs#0)
+      max T'
+      isWellDefined T'
+    Text
+      Many candidate circuits returned by @TO flipCandidates@ are not
+      flippable in any given $T$; those return @TO null@.
+    Example
+      for c in cs list bistellarFlip(T, c)
+  SeeAlso
+    flipCandidates
+    flips
+    neighbors
+    flipGraph
+///
+
+doc ///
+  Key
+    flipCandidates
+    (flipCandidates, Triangulation)
+    (flipCandidates, Matrix, List)
+  Headline
+    candidate affine circuits for bistellar flips of a triangulation
+  Usage
+    cs = flipCandidates T
+    cs = flipCandidates(A, tri)
+  Inputs
+    T:Triangulation
+    A:Matrix
+      whose columns are the points of the configuration, either of size
+      $d \times n$ (homogenized, with last row all 1's) or $(d{-}1) \times n$
+      (which is auto-homogenized internally)
+    tri:List
+      a triangulation of the columns of $A$
+  Outputs
+    :List
+      of pairs $\{neg, pos\}$, where {\tt neg} and {\tt pos} are disjoint
+      lists of column indices and ${\tt neg} \cup {\tt pos}$ spans a
+      codim-2 wall of the triangulation
+  Description
+    Text
+      For each pair of maximal simplices in $T$ that share a common ridge
+      ({\it i.e.} whose union has $d{+}1$ points), this function returns the
+      signed kernel partition of those points, regarded as an affine circuit.
+      Each pair has the form $\{neg, pos\}$, the negative and positive parts
+      of the kernel relation.
+    Text
+      Each returned circuit is a {\bf candidate} input for @TO bistellarFlip@,
+      but not all candidates yield a valid flip in $T$; see @TO bistellarFlip@.
+      In contrast, @TO "Topcom::orientedCircuits"@ returns {\it all} circuits
+      of the underlying point configuration (most of which are not supported
+      on walls of $T$), and @TO flips@ -- a wrapper around
+      @TO "Topcom::topcomFlips"@ -- returns only those circuits that are
+      actually flippable in $T$.
+    Example
+      A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
+      T = regularFineTriangulation A
+      flipCandidates T
+  SeeAlso
+    bistellarFlip
+    flips
+    neighbors
+    "Topcom::orientedCircuits"
+///
+
+doc ///
+  Key
+    flips
+    (flips, Triangulation)
+    [flips, RegularOnly]
+    [flips, Homogenize]
+  Headline
+    legal bistellar flips of a triangulation, computed via topcom
+  Usage
+    flips T
+  Inputs
+    T:Triangulation
+    RegularOnly => Boolean
+      restrict to flips between regular triangulations (default true)
+    Homogenize => Boolean
+      unused: the matrix stored in a @TO Triangulation@ is already in the
+      shape topcom expects
+  Outputs
+    :List
+      of circuit pairs $\{neg, pos\}$, one per legal bistellar flip of $T$
+  Description
+    Text
+      This is a thin wrapper around @TO "Topcom::topcomFlips"@.  Unlike
+      @TO flipCandidates@, which returns every circuit on a codim-2 wall
+      of $T$ (not all of which are flippable), this function returns only
+      the circuits that correspond to a legal bistellar flip of $T$,
+      including support-changing flips.
+    Example
+      A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
+      T = regularFineTriangulation A
+      flips T
+  SeeAlso
+    flipCandidates
+    bistellarFlip
+    neighbors
+    "Topcom::topcomFlips"
+///
+
+doc ///
+  Key
+    neighbors
+    (neighbors, Triangulation)
+    [neighbors, Fine]
+  Headline
+    triangulations adjacent to a given one in the bistellar-flip graph
+  Usage
+    neighbors T
+  Inputs
+    T:Triangulation
+    Fine => Boolean
+      if true (default), only flips that preserve the support of $T$ are
+      considered; if false, support-changing flips are also returned
+  Outputs
+    :List
+      of pairs $\{c, T'\}$, one per neighbor: $c$ is the affine circuit
+      of the flip and $T'$ is the resulting @TO Triangulation@
+  Description
+    Text
+      Two triangulations are neighbors if they differ by a single bistellar
+      flip.  With the default {\tt Fine => true}, the support of $T$ is
+      preserved: a fine triangulation has only fine neighbors.  With
+      {\tt Fine => false}, flips that drop a vertex from the support
+      (or, less commonly, add one) are also considered.
+    Text
+      This is the building block used by @TO generateTriangulations@ and
+      @TO flipGraph@ to walk the bistellar-flip graph.
+    Example
+      A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
+      T = regularFineTriangulation A
+      ns = neighbors T
+      #ns
+      first ns
+    Text
+      With {\tt Fine => false}, support-changing flips are included:
+    Example
+      #neighbors(T, Fine => false)
+  SeeAlso
+    bistellarFlip
+    flipCandidates
+    flipGraph
+    generateTriangulations
+///
+
+doc ///
+  Key
+    flipGraph
+    (flipGraph, Triangulation)
+    (flipGraph, Matrix)
+    (flipGraph, Matrix, List)
+    [flipGraph, Limit]
+    [flipGraph, RegularOnly]
+    [flipGraph, Fine]
+    [flipGraph, Homogenize]
+  Headline
+    bistellar-flip graph of a point or vector configuration
+  Usage
+    G = flipGraph T
+    G = flipGraph A
+    G = flipGraph(A, tri)
+  Inputs
+    T:Triangulation
+    A:Matrix
+      whose columns are the points (or vectors) to triangulate
+    tri:List
+      a triangulation of the columns of $A$
+    Limit => ZZ
+      stop after this many triangulations have been visited
+    RegularOnly => Boolean
+      restrict the graph to regular triangulations
+    Fine => Boolean
+      if true (default), restrict to support-preserving flips
+    Homogenize => Boolean
+      used only by the {\tt Matrix} and {\tt (Matrix, List)} forms; see
+      @TO triangulation@
+  Outputs
+    G:HashTable
+      with keys {\tt "triangulations"} and {\tt "edges"}: {\tt G#"triangulations"}
+      is the list of @TO Triangulation@'s reached, and {\tt G#"edges"} is a
+      list of triples $(i, j, c)$ with $i < j$, where $i$ and $j$ index into
+      {\tt G#"triangulations"} and $c$ is the affine circuit of the flip
+      between them
+  Description
+    Text
+      Performs a breadth-first search over the bistellar-flip graph starting
+      at $T$ (or at a regular fine triangulation of $A$ if no triangulation
+      is given), recording both the triangulations reached and the edges
+      between them.  Each undirected edge is recorded once, when discovered
+      from its lower-indexed endpoint.
+    Text
+      This is the edge-aware companion of @TO generateTriangulations@, which
+      returns the same triangulations but discards the connectivity.
+    Example
+      A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
+      T = regularFineTriangulation A
+      G = flipGraph T
+      #G#"triangulations"
+      #G#"edges"
+      first G#"edges"
+  Caveat
+    Like @TO generateTriangulations@, this function is implemented in the
+    top-level Macaulay2 language and is much slower than the topcom-based
+    @TO allTriangulations@.  It does, however, expose the flip-graph
+    structure that {\tt allTriangulations} discards, and it accepts a
+    {\tt Limit} for incremental exploration.
+  SeeAlso
+    generateTriangulations
+    neighbors
+    bistellarFlip
+    allTriangulations
 ///
 
 TEST ///
