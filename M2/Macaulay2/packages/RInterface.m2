@@ -400,7 +400,6 @@ length RObject := value @@ (RFunction "length") -- needs to return a ZZ
 scan({
 	(symbol not, "!"),
 	(symbol !, "factorial"),
-	(symbol ~, "bitwNot"),
 	(conjugate, "Conj"),
 	(Digamma, "digamma"),
 	(Gamma, "gamma"),
@@ -437,6 +436,7 @@ scan({
 	(symbol ^^, "bitwXor"),
 	(symbol <<, "bitwShiftL"),
 	(symbol >>, "bitwShiftR"),
+	(symbol ~, "~"),
 	(atan2, "atan2"),
 	(Beta, "beta"),
 	(binomial, "choose"),
@@ -446,6 +446,13 @@ scan({
 	installMethod(m2f, RObject, RObject, rf);
 	installMethod(m2f, RObject, Thing, rf);
 	installMethod(m2f, Thing, RObject, rf)))
+
+bitwNot = RFunction "bitwNot"
+tilde = lookup(symbol ~, RObject, RObject)
+~ RObject := x -> (
+    if member(TYPEOF x, {INTSXP, REALSXP})
+    then bitwNot x
+    else tilde x)
 
 ?? RObject := x -> if TYPEOF x > 0 then x
 

@@ -146,6 +146,8 @@ doc ///
     (lngamma, RObject)
     (binomial, RObject, RObject)
     (symbol !, RObject)
+    :formulas
+    (symbol ~, RObject, RObject)
 ///
 
 doc ///
@@ -360,3 +362,4 @@ load "./doc/trig.m2"
 load "./doc/hyperbolic.m2"
 load "./doc/complex.m2"
 load "./doc/special.m2"
+load "./doc/formulas.m2"

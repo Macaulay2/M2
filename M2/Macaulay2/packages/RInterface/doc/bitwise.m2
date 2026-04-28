@@ -6,21 +6,29 @@ doc ///
   Key
     (symbol ~, RObject)
   Headline
-    bitwise negation of an R object
+    bitwise NOT of an R object, or create a one-sided formula
   Usage
     ~x
   Inputs
     x:RObject
   Outputs
-    :RObject -- the bitwise negation of @VAR "x"@
+    :RObject -- the bitwise NOT of @VAR "x"@ (integer or real input),
+              or a one-sided R formula @SAMP "~x"@ (all other inputs)
   Description
     Text
-      Compute the bitwise negation (NOT) of an R integer vector,
+      For integer and real R vectors, @TO symbol ~@ computes bitwise NOT,
       calling R's @SAMP "bitwNot"@.
     Example
       x = RObject 12
       ~x
+    Text
+      For all other types, @TO symbol ~@ creates a one-sided R formula,
+      equivalent to R's @SAMP "~x"@.  This is the same operator used for
+      two-sided formulas; see @TO (symbol ~, RObject, RObject)@.
+    Example
+      ~ RQuote "x"
   SeeAlso
+    (symbol ~, RObject, RObject)
     (symbol &, RObject, RObject)
     (symbol |, RObject, RObject)
     (symbol ^^, RObject, RObject)
