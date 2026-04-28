@@ -574,6 +574,8 @@ doc ///
       @UL {
           TO (triangulation, Matrix, List),
           TO (regularFineTriangulation, Matrix),
+          TO (fineStarTriangulation, Matrix, List),
+          TO (regularFineStarTriangulation, Matrix),
           TO (generateTriangulations, Triangulation),
           TO (allTriangulations, Matrix)
           }@
@@ -601,6 +603,14 @@ doc ///
           TO (gkzVector, Triangulation),
           TO (delaunayWeights, Matrix),
           TO (delaunaySubdivision, Matrix)
+          }@
+    Text
+      @SUBSECTION "Chirotopes"@
+    Text
+      @UL {
+          TO Chirotope,
+          TO (chirotope, Matrix),
+          TO (naiveChirotope, Matrix)
           }@
     Text
       This package is designed to help compute and explore the set of all (or many) triangulations
@@ -760,6 +770,125 @@ doc ///
     (matrix, Triangulation)
     regularFineTriangulation
     (isWellDefined, Triangulation)
+///
+
+doc ///
+  Key
+    regularFineTriangulation
+    (regularFineTriangulation, Matrix)
+    [regularFineTriangulation, Homogenize]
+  Headline
+    a regular fine triangulation of a point or vector configuration
+  Usage
+    T = regularFineTriangulation A
+  Inputs
+    A:Matrix
+      whose columns are the points of the configuration
+    Homogenize => Boolean
+      if true (default), $A$ is augmented with a final row of $1$'s and
+      treated as a point set; if false, the columns are treated as a
+      vector configuration in their own right
+  Outputs
+    T:Triangulation
+      a regular triangulation that uses every column of $A$, or
+      @TO null@ if no such triangulation exists
+  Description
+    Text
+      Constructs a regular fine triangulation by calling
+      @TO "Topcom::topcomRegularFineTriangulation"@ and wrapping the
+      result in a @TO Triangulation@.
+    Example
+      A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
+      T = regularFineTriangulation A
+      isFine T
+      isRegularTriangulation T
+  SeeAlso
+    triangulation
+    isRegularTriangulation
+    isFine
+    "Topcom::topcomRegularFineTriangulation"
+///
+
+doc ///
+  Key
+    fineStarTriangulation
+    (fineStarTriangulation, Matrix, List)
+    [fineStarTriangulation, ConeIndex]
+  Headline
+    refine a triangulation to a fine star triangulation by coning over a center
+  Usage
+    star = fineStarTriangulation(A, tri)
+  Inputs
+    A:Matrix
+      whose columns are the boundary points of a polytope (and possibly
+      an interior cone center)
+    tri:List
+      a triangulation of the columns of $A$, typically a triangulation
+      of the boundary
+    ConeIndex => ZZ
+      the column index to use as the cone center; if {\tt null} (default),
+      uses {\tt numColumns A}, treating the cone center as a new point
+      to be appended
+  Outputs
+    :List
+      a list of simplices forming a star triangulation centered at the
+      chosen index: each maximal simplex of {\tt tri}, intersected with
+      each facet of $\mathrm{conv}(A)$, is appended with the cone index
+  Description
+    Text
+      Given a triangulation {\tt tri} of (the boundary of) a polytope
+      and an interior cone center, this function refines {\tt tri} into
+      a star triangulation by joining each boundary simplex to the
+      center.  The center is identified by its column index in $A$ (or,
+      by default, treated as a new point at index {\tt numColumns A}).
+    Example
+      A = transpose matrix {{1,1},{-1,1},{-1,-1},{1,-1}}
+      tri = topcomRegularFineTriangulation A
+      fineStarTriangulation(A, tri)
+  Caveat
+    Returns a {\tt List} of simplices, not a @TO Triangulation@; wrap
+    with @TO triangulation@ to attach the configuration matrix.
+  SeeAlso
+    regularFineStarTriangulation
+    isStar
+    triangulation
+///
+
+doc ///
+  Key
+    regularFineStarTriangulation
+    (regularFineStarTriangulation, Matrix)
+    [regularFineStarTriangulation, ConeIndex]
+  Headline
+    a regular fine star triangulation of a polytope's boundary
+  Usage
+    star = regularFineStarTriangulation A
+  Inputs
+    A:Matrix
+      whose columns are the boundary points of a polytope
+    ConeIndex => ZZ
+      the column index to use as the cone center; if {\tt null} (default),
+      the cone center is treated as a new point at index
+      {\tt numColumns A}
+  Outputs
+    :List
+      a list of simplices forming a star triangulation, equivalent to
+      {\tt fineStarTriangulation(A, topcomRegularFineTriangulation A)}
+  Description
+    Text
+      Convenience wrapper that computes a regular fine triangulation of
+      $A$'s boundary via topcom and then cones each boundary simplex to
+      the chosen center.
+    Example
+      A = transpose matrix {{1,1},{-1,1},{-1,-1},{1,-1}}
+      regularFineStarTriangulation A
+  Caveat
+    Returns a {\tt List} of simplices, not a @TO Triangulation@.
+  SeeAlso
+    fineStarTriangulation
+    regularFineTriangulation
+    isStar
+    triangulation
 ///
 
 doc ///
@@ -1163,6 +1292,7 @@ doc ///
     [generateTriangulations, Limit]
     [generateTriangulations, RegularOnly]
     [generateTriangulations, Homogenize]
+    [generateTriangulations, Fine]
   Headline
     generate all triangulations with certain properties
   Usage
@@ -1480,6 +1610,99 @@ doc ///
     neighbors
     bistellarFlip
     allTriangulations
+///
+
+doc ///
+  Key
+    Chirotope
+  Headline
+    the chirotope (oriented matroid) of a point or vector configuration
+  Description
+    Text
+      A {\tt Chirotope} packages the chirotope of a configuration: for
+      each $d$-subset $S$ of the columns, the sign of $\det A_S$, stored
+      as a topcom-format string.  Two configurations have the same
+      chirotope iff they have the same oriented matroid -- in particular,
+      the same set of triangulations.
+    Text
+      Construct one with @TO chirotope@ from a matrix (via topcom) or
+      with @TO naiveChirotope@ (a slower pure-Macaulay2 alternative,
+      useful for verification).  The {\tt String} form of @TO chirotope@
+      wraps a precomputed topcom string.
+    Example
+      A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
+      C = chirotope A
+      C == naiveChirotope A
+  SeeAlso
+    chirotope
+    naiveChirotope
+    "Topcom::chirotopeString"
+///
+
+doc ///
+  Key
+    chirotope
+    (chirotope, Matrix)
+    (chirotope, String)
+  Headline
+    compute the chirotope of a point or vector configuration
+  Usage
+    C = chirotope A
+    C = chirotope s
+  Inputs
+    A:Matrix
+      whose columns are the points (or vectors) of the configuration
+    s:String
+      a precomputed topcom-format chirotope string
+  Outputs
+    C:Chirotope
+  Description
+    Text
+      Computes the chirotope by calling
+      @TO "Topcom::chirotopeString"@.  The {\tt (chirotope, Matrix)} form
+      accepts the option {\tt Homogenize => true} (the default), which
+      augments $A$ with a final row of $1$'s before computing.  The
+      {\tt String} form is a thin wrapper that lets you construct a
+      {\tt Chirotope} from an already-computed topcom string -- useful
+      when caching results.
+    Example
+      A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
+      C = chirotope A
+      toString C
+  SeeAlso
+    Chirotope
+    naiveChirotope
+    "Topcom::chirotopeString"
+///
+
+doc ///
+  Key
+    naiveChirotope
+    (naiveChirotope, Matrix)
+  Headline
+    compute the chirotope of a configuration via determinants in Macaulay2
+  Usage
+    C = naiveChirotope A
+  Inputs
+    A:Matrix
+  Outputs
+    C:Chirotope
+  Description
+    Text
+      Computes the chirotope directly in Macaulay2 by enumerating all
+      $d$-subsets of the columns and recording the sign of each
+      $d \times d$ minor.  Useful for verifying the topcom-based
+      @TO chirotope@.  Accepts the option {\tt Homogenize => true}
+      (the default), which augments $A$ with a final row of $1$'s
+      before computing.
+    Example
+      A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
+      chirotope A == naiveChirotope A
+  Caveat
+    Slower than @TO chirotope@ for configurations with many points.
+  SeeAlso
+    chirotope
+    Chirotope
 ///
 
 TEST ///
@@ -2433,19 +2656,5 @@ BENCHMARK ///
   
   -- TODO: secondary cones
   --       
-///
-
-doc ///
-  Key
-  Headline
-  Usage
-  Inputs
-  Outputs
-  Consequences
-  Description
-    Text
-    Example
-  Caveat
-  SeeAlso
 ///
 
