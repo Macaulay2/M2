@@ -36,7 +36,10 @@ export {
     "RValue",
 
     -- objects
-    "NA"
+    "NA",
+
+    -- symbols
+    "Environment"
     }
 
 ----------
@@ -93,6 +96,7 @@ PROTECT = foreignFunction(Rlib, "Rf_protect", SEXP, SEXP)
 UNPROTECT = foreignFunction(Rlib, "Rf_unprotect", void, int)
 RtryEval = foreignFunction(Rlib, "R_tryEval", SEXP, {SEXP, SEXP, voidstar})
 RGlobalEnv = foreignSymbol(Rlib, "R_GlobalEnv", SEXP)
+RBaseEnv = foreignSymbol(Rlib, "R_BaseEnv", SEXP)
 PRINTNAME = foreignFunction(Rlib, "PRINTNAME", SEXP, SEXP)
 type2char = foreignFunction(Rlib, "Rf_type2char", charstar, int)
 
@@ -126,8 +130,17 @@ toStringHelper = (f, x) -> (
     if TYPEOF x == SYMSXP then value CHAR PRINTNAME x
     else f x)
 
-toString RObject := toStringHelper_(value @@ (RFunction "toString"))
-net RObject := toStringHelper_(stack @@ value @@ (RFunction "capture.output"))
+RtoString = RFunction "toString"
+environmentName = RFunction "environmentName"
+captureOutput = RFunction "capture.output"
+
+toString RObject := x -> value (
+    if TYPEOF x == SYMSXP then CHAR PRINTNAME x
+    else if TYPEOF x == ENVSXP then environmentName x
+    else RtoString x)
+net RObject := x -> (
+    if TYPEOF x == SYMSXP then CHAR PRINTNAME x
+    else stack value captureOutput x)
 
 RObject.AfterPrint = x -> (RObject, " of type ", value type2char TYPEOF x)
 
@@ -178,6 +191,17 @@ new RObject from  Matrix := (RFunction "matrix") @@ ((T, x) -> (
 	"nrow" => numRows x,
 	"ncol" => numColumns x))
 
+NewEnv = foreignFunction(Rlib, "R_NewEnv", SEXP, {SEXP, int, int})
+defineVar = foreignFunction(Rlib, "Rf_defineVar", void, {SEXP, SEXP, SEXP})
+new RObject from HashTable := (T, x) -> (
+    if class x =!= HashTable then return x;
+    if any(keys x, k -> not instance(k, String))
+    then error "expected all keys to be strings";
+    env := PROTECT NewEnv(RBaseEnv, 0, 0);
+    scanPairs(x, (k, v) -> defineVar(RQuote k, RObject v, env));
+    UNPROTECT 1;
+    T env)
+
 --------------------
 -- R -> Macaulay2 --
 --------------------
@@ -191,6 +215,7 @@ COMPLEX = foreignFunction(Rlib, "COMPLEX", voidstar, SEXP)
 stringElt = foreignFunction(Rlib, "STRING_ELT", SEXP, {SEXP, int})
 vectorElt = foreignFunction(Rlib, "VECTOR_ELT", SEXP, {SEXP, int})
 getAttrib = foreignFunction(Rlib, "Rf_getAttrib", SEXP, {SEXP, SEXP})
+lsInternal = foreignFunction(Rlib, "R_lsInternal", SEXP, {SEXP, int})
 NamesSymbol = foreignSymbol(Rlib, "R_NamesSymbol", SEXP)
 DimSymbol = foreignSymbol(Rlib, "R_DimSymbol", SEXP)
 
@@ -199,6 +224,7 @@ NILSXP     = 0
 SYMSXP     = 1
 LISTSXP    = 2
 CLOSXP     = 3
+ENVSXP     = 4
 LANGSXP    = 6
 SPECIALSXP = 7
 BUILTINSXP = 8
@@ -215,6 +241,9 @@ isIterable = set {LGLSXP, INTSXP, REALSXP, CPLXSXP, STRSXP}
 valueFunctions = hashTable {
     NILSXP     => x -> null,
     SYMSXP     => x -> value tryEval x,
+    ENVSXP     => x -> (
+	names := value RObject lsInternal(x, 0);
+	hashTable apply(names ?? {}, name -> (name, value x_name))),
     CHARSXP    => x -> value CHAR x,
     LGLSXP     => x -> value(int * LOGICAL x) == 1,
     INTSXP     => x -> value(int * INTEGER x),
