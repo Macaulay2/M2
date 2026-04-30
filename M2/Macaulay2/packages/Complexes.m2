@@ -160,6 +160,32 @@ if isPackageLoaded "OldChainComplexes" then
 koszul Matrix := Complex => m -> koszulComplex m
 eagonNorthcott Matrix := Complex => m -> eagonNorthcottComplex m
 
+-- TODO: talk to Greg about what to do with this code...
+  -----------------------------------------------------------------------------
+  -- constructing a chain complex with prescribed Betti table
+  -----------------------------------------------------------------------------
+
+  Ring ^ BettiTally := Complex => (R,B) -> (
+    -- donated by Hans-Christian von Bothmer
+    -- given a betti Table B and a Ring R make a chainComplex
+    -- with zero maps over R  that has betti diagram B.
+    -- negative entries are ignored
+    -- rational entries produce an error
+    -- multigraded R's work only if the betti Tally contains degrees of the correct degree length
+    p := sort pairs B;  -- list of (homological degree, multidegree, weight)
+    toplev := p/((k,n) -> first k)//max; -- largest homological degree
+    F := new MutableHashTable;
+    H := partition(x -> x#0#0, p); -- by homological degree.
+    directSum for i in keys H list (
+        degs := flatten for x in H#i list (
+            (i, deg, wt) := x#0;
+            n := x#1;
+            toList(n : -deg)
+            );
+        complex(R^degs, Base => i)
+        )
+    )
+
 --------------------------------------------------------------------
 -- package documentation -------------------------------------------
 --------------------------------------------------------------------

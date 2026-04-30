@@ -135,11 +135,11 @@ o19 : Matrix ringP3  <-- ringP3
 i20 : G = res coker f
 
             1           4           6           4           1
-o20 = ringP3  <-- ringP3  <-- ringP3  <-- ringP3  <-- ringP3  <-- 0
+o20 = ringP3  <-- ringP3  <-- ringP3  <-- ringP3  <-- ringP3 
                                                                    
-      0           1           2           3           4           5
+      0           1           2           3           4      
 
-o20 : ChainComplex
+o20 : Complex
 
 i21 : G.dd
 
@@ -170,11 +170,7 @@ o21 = 0 : ringP3  <----------------------- ringP3  : 1
                      {3} | -x_1 |
                      {3} | x_0  |
 
-                1
-      4 : ringP3  <----- 0 : 5
-                     0
-
-o21 : ChainComplexMap
+o21 : ComplexMap
 
 i22 : G.dd_2
 
@@ -225,11 +221,11 @@ o27 : Ideal of ringP3
 i28 : F = res(ringP3^1/I)
 
             1           6           8           3
-o28 = ringP3  <-- ringP3  <-- ringP3  <-- ringP3  <-- 0
+o28 = ringP3  <-- ringP3  <-- ringP3  <-- ringP3 
                                                        
-      0           1           2           3           4
+      0           1           2           3      
 
-o28 : ChainComplex
+o28 : Complex
 
 i29 : betti F
 
@@ -388,11 +384,11 @@ o47 = 0
 i48 : res (ringP4^1/idealX)
 
             1           2           1
-o48 = ringP4  <-- ringP4  <-- ringP4  <-- 0
+o48 = ringP4  <-- ringP4  <-- ringP4 
                                            
-      0           1           2           3
+      0           1           2      
 
-o48 : ChainComplex
+o48 : Complex
 
 i49 : ringP3 = kk[x_0..x_3];
 
