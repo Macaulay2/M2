@@ -359,6 +359,17 @@ restart
 debug needsPackage "GenerateD"
 -- note: e is not allowed as a variable name, as we use e as the input expression!
 result = str (genFunctionCall(
+        "rawConeInteriorPoint", 
+        "MutableMatrixOrNull",
+        toSequence {"C"=>"Matrix"}
+        ))
+///
+
+TEST ///
+restart
+debug needsPackage "GenerateD"
+-- note: e is not allowed as a variable name, as we use e as the input expression!
+result = str (genFunctionCall(
         "rawLatticePoints", 
         "MutableMatrixOrNull", 
         ("a"=>"Matrix", "b"=>"ints", "c"=>"int", "d"=>"long", "f"=>"long")
