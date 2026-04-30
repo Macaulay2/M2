@@ -371,23 +371,28 @@ flipCandidates(Matrix, List) := (Amat, tri) -> (
 
 flipCandidates Triangulation := T -> flipCandidates(matrix T, max T)
 
--- For each codim-2 wall of `tri`, return a triple {inTri, notInTri, z}:
---   inTri    : indices i in c with z_i > 0.
---   notInTri : indices i in c with z_i < 0.
---   z        : length-(d+1) integer kernel of A_c, indexed by position in
---              c = sort(inTri | notInTri).
--- The kernel is signed so the secondary-cone facet inequality
---   sum_{i in c} z_i * w_i  >=  0
--- holds for every w that induces `tri` (viewing z as a length-n vector,
--- zero outside c).
+-- For each distinct codim-2 circuit of `tri`, return a triple {inTri, notInTri, z}:
+--   inTri    : circuit-support indices i with z_i > 0.
+--   notInTri : circuit-support indices i with z_i < 0.
+--   z        : integer kernel of length #(inTri | notInTri), indexed by
+--              position in sort(inTri | notInTri).  Equivalently, z gives
+--              the secondary-cone facet inequality
+--                sum_{i in inTri | notInTri} z_i * w_i  >=  0
+--              for every w that induces `tri` (viewing z as a vector of
+--              length n = numcols A, zero outside the circuit support).
 --
 -- For a "balanced" circuit (z has both signs), inTri is exactly the half
--- of c whose corresponding simplices c\{v} appear in `tri`.  For a
+-- of the support whose corresponding simplices c\{v} appear in `tri`.  For a
 -- "totally cyclic" circuit (z one-sided -- which can occur e.g. when 0
 -- lies in the interior of cone(c), as in many complete simplicial fans),
--- z is all-positive after orientation, inTri = c, and notInTri = {};
--- only some of the simplices c\{v} for v in c are present in `tri`, but
--- the inequality is still valid.
+-- z is all-positive after orientation, inTri = circuit support, and
+-- notInTri = {}; only some of the simplices c\{v} for v in the support are
+-- present in `tri`, but the inequality is still valid.
+--
+-- Note: a single circuit can appear as the linear-dependence relation in
+-- multiple (d+1)-walls when the circuit support is strictly smaller than
+-- d+1 (i.e., z has zeros).  Such walls produce identical inequalities of
+-- length n; we deduplicate so each distinct circuit appears once.
 wallCircuits = method()
 wallCircuits(Matrix, List) := (Amat, tri) -> (
     d := #(tri#0);
@@ -397,16 +402,23 @@ wallCircuits(Matrix, List) := (Amat, tri) -> (
     triset := set (tri/sort);
     -- True iff some c\{v} for v in S is in `tri`.
     sideInTri := (S, c) -> any(S, v -> member(sort toList(set c - set {v}), triset));
+    seen := new MutableHashTable;
     for c in codim2s tri list (
         Z := syz Amat_c;
         assert(numcols Z == 1);
         z := flatten entries Z;
-        pos := c_(positions(z, zi -> zi > 0));
-        neg := c_(positions(z, zi -> zi < 0));
-        if sideInTri(pos, c) then
-            {pos, neg, z}                       -- inequality already > 0 on pos
-        else
-            {neg, pos, apply(z, x -> -x)}       -- flip sign so it is > 0 on neg
+        -- Restrict z to its support; that is the actual circuit.
+        suppPos := positions(z, zi -> zi != 0);
+        circuit := c_suppPos;
+        zSupp := z_suppPos;
+        pos := circuit_(positions(zSupp, zi -> zi > 0));
+        neg := circuit_(positions(zSupp, zi -> zi < 0));
+        (inTri, notInTri, zSigned) := if sideInTri(pos, c) then (pos, neg, zSupp)
+                                       else (neg, pos, apply(zSupp, x -> -x));
+        key := {inTri, notInTri};
+        if seen#?key then continue;
+        seen#key = true;
+        {inTri, notInTri, zSigned}
         )
     )
 
@@ -2774,14 +2786,40 @@ needsPackage "Triangulations"
   -- regularTriangulationWeights t0 
 ///
 
-/// -- test for wallCircuits
-  vecs = transpose matrix {{1, 1, 1, 1}, {0, 1, 1, 1}, {1, 0, 1, 1}, {1, 1, 0, 1}, {0, 0, 1, 1}, {0, 1, 0, 1}, {1, 0, 0, 1}, {0, 0, 0, 1}}
-  maxsimps = {{0, 1, 2, 3}, {1, 2, 3, 4}, {1, 3, 4, 5}, {2, 3, 4, 6}, {3, 4, 5, 6}, {4, 5, 6, 7}}
-  tri = triangulation(vecs, maxsimps) -- should work
-  assert(flipCandidates tri == flipCandidates(Amat, max tri))
-  wallCircuits tri
-  for x in flipCandidates tri list bistellarFlip(tri, x)
-  neighbors tri
+TEST /// -- wallCircuits with degenerate codim-2 walls (circuit < d+1).
+  -- 8 corners of a unit 3-cube as a vector configuration (homogenized to 4
+  -- rows by appending 1's).  Each codim-2 face of the triangulation has a
+  -- 4-element circuit (a face of the cube), but the (d+1) = 5-element wall
+  -- obtained from a pair of adjacent simplices includes one extra
+  -- "extension" point whose kernel coordinate is zero.  That extension is
+  -- what used to make distinct walls produce the same circuit twice.
+  vecs = {{1,1,1,1},{0,1,1,1},{1,0,1,1},{1,1,0,1},{0,0,1,1},{0,1,0,1},{1,0,0,1},{0,0,0,1}}
+  maxsimps = {{0,1,2,3},{1,2,3,4},{1,3,4,5},{2,3,4,6},{3,4,5,6},{4,5,6,7}}
+  tri = triangulation(vecs, maxsimps)
+  assert isWellDefined tri
+  assert(transpose matrix vecs == transpose matrix vectors tri)
+  assert(#flipCandidates tri == 4)
+  assert(#wallCircuits tri == 4)
+  -- Each circuit has support of size 4 (one face of the cube).
+  assert all(wallCircuits tri, w -> #(w#0) + #(w#1) == 4 and #(w#2) == 4)
+  -- secondaryCone has one row per distinct circuit; each row is a
+  -- length-(numcols A) integer vector.
+  M = secondaryCone tri
+  assert(numrows M == 4 and numcols M == 8)
+  -- Sign canary: the regularity weights satisfy every facet inequality.
+  w = transpose matrix {regularTriangulationWeights tri}
+  assert all(flatten entries (M * w), x -> x >= 0)
+
+  M
+  needsPackage "FourierMotzkin"
+  fourierMotzkin M
+
+  A = transpose matrix vecs
+  Q = transpose syz A
+
+  C = coneFromHData M
+  linealitySpace C
+  dim C
 ///
 
 end----------------------------------------------------
