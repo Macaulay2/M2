@@ -2,8 +2,6 @@
 -- RInterface documentation --
 ------------------------------
 
-beginDocumentation()
-
 doc ///
   Key
     RInterface

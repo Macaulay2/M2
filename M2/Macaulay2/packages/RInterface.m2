@@ -499,4 +499,6 @@ RValue = method(
 RValue String := o -> s -> Reval(Rparse("text" => s), RObject o.Environment)
 RValue Sequence := o -> s -> RValue(concatenate \\ toString \ s, o)
 
+beginDocumentation()
+
 load "./RInterface/doc.m2"
