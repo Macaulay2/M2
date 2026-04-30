@@ -3394,7 +3394,7 @@ Node
 	    ring in $n$ variables is the multiplication action of the signed
 	    $n\times n$ permutation matrices on the vector of the variables.
 	    
-	    This fuction returns a list of of matrices, each representing an
+	    This function returns a list of of matrices, each representing an
 	    element of the hyperoctahedral group acting on the variables
 	    of the polynomial ring in the input as a signed permutation. This
 	    simplifies the setup for hyperoctahedral group actions with the
