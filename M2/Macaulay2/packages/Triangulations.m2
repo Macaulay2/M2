@@ -41,6 +41,9 @@ export {
     "flipCandidates",
     "wallCircuits",
     "secondaryCone",
+    "chargeMatrix",
+    "ChargeMatrix",
+    "interiorLatticePoint",
     "volumeVector",
     "gkzVector",
     
@@ -54,6 +57,9 @@ export {
     "ConeIndex",
     "Edges"
     }
+
+-- Engine LP entry point used by isRegularTriangulation / regularTriangulationWeights.
+importFrom_"Core" {"raw", "rawConeInteriorPoint"}
 
 augment = method()
 augment Matrix := (A) -> (
@@ -238,26 +244,110 @@ isTriangulation(Matrix, List) := (M, tri) -> (
     true
     )
 
-isRegularTriangulation = method(Options => {Homogenize => true})
+-- isRegularTriangulation tests whether the secondary cone of (A, tri) has
+-- nonempty interior, via the engine LP rawConeInteriorPoint.  This avoids
+-- the topcom subprocess on every call (important for RegularOnly bistellar
+-- search).  For comparison the topcom path remains available as
+-- topcomIsRegularTriangulation T.
+isRegularTriangulation = method(Options => {ChargeMatrix => null})
 isRegularTriangulation Triangulation := Boolean => opts -> T -> (
-    topcomIsRegularTriangulation(T.cache.matrix, max T, Homogenize => false)
+    coneFullDim secondaryCone(T, opts)
     )
 isRegularTriangulation(Matrix, List) := Boolean => opts -> (A, tri) -> (
-    topcomIsRegularTriangulation(A, tri, opts)
+    coneFullDim secondaryCone(A, tri, opts)
     )
 
-regularTriangulationWeights = method(Options => options isRegularTriangulation)
+-- regularTriangulationWeights returns a real-valued weight vector w such
+-- that lifting (A_i, w_i) and taking the lower envelope reproduces tri,
+-- computed via the engine LP.  For comparison the topcom path remains
+-- available as topcomRegularTriangulationWeights T (returns rationals).
+-- Returns null if the triangulation is not regular.
+regularTriangulationWeights = method(Options => {ChargeMatrix => null})
 regularTriangulationWeights Triangulation := List => opts -> T -> (
-    topcomRegularTriangulationWeights(matrix T, max T, Homogenize => false)
+    A1 := matrix T;
+    Q := if opts.ChargeMatrix === null then chargeMatrix A1 else opts.ChargeMatrix;
+    weightsFromConeAndQ(secondaryCone(T, ChargeMatrix => Q), Q, numColumns A1)
     )
 regularTriangulationWeights(Matrix, List) := List => opts -> (A, tri) -> (
-    topcomRegularTriangulationWeights(A, tri, opts)
+    d := #(tri#0);
+    A1 := if numrows A == d-1 then A || matrix{ toList(numcols A : 1) } else A;
+    Q := if opts.ChargeMatrix === null then chargeMatrix A1 else opts.ChargeMatrix;
+    weightsFromConeAndQ(secondaryCone(A1, tri, ChargeMatrix => Q), Q, numColumns A1)
     )
 
-regularFineTriangulation = method(Options => options isRegularTriangulation)
+-- Private: cone full-dimensionality test via engine LP.  M is an integer
+-- inequality matrix; cone is { x : M x >= 0 }.  Returns true iff there is
+-- a strict interior point (equivalently, the secondary cone modulo lineality
+-- has full dimension).
+coneFullDim = M -> (
+    if numrows M == 0 then return true;
+    r := map(RR_53, rawConeInteriorPoint raw(-M));
+    (entries r)#0#0 == 1.0
+    )
+
+-- Returns a primitive integer interior point x of the cone { x : A x >= 0 },
+-- or null if the cone has no interior.  Built atop the engine LP
+-- rawConeInteriorPoint: scale + round the real interior point so strict
+-- feasibility is preserved (per row, |A_i . eps| <= sum |A_ij| / 2, so a
+-- scale > rowBound / (2 tStar) suffices), then divide by gcd to keep
+-- entries small.
+interiorLatticePoint = method()
+interiorLatticePoint Matrix := List => A -> (
+    if numrows A == 0 then return toList(numcols A : 0);
+    r := map(RR_53, rawConeInteriorPoint raw(-A));
+    rE := (entries r)#0;
+    if rE#0 != 1.0 then return null;
+    tStar := rE#1;
+    xFloat := drop(rE, 2);
+    rowBound := max apply(entries A, row -> sum(row, abs));
+    scale := if tStar > 0 then ceiling(rowBound / (2.0 * tStar)) + 1 else 1_ZZ;
+    xInt := apply(xFloat, v -> round(scale * v));
+    while any(flatten entries (A * (transpose matrix {xInt})), v -> v <= 0) do (
+        scale = 2 * scale;
+        xInt = apply(xFloat, v -> round(scale * v));
+        );
+    g := gcd xInt;
+    if g > 1 then apply(xInt, v -> v // g) else xInt
+    )
+
+-- Private: lift an integer interior point of M (in Q-coordinates) to an
+-- integer weight vector w of length n.  Any w with Q*w = t induces the
+-- triangulation; the Moore-Penrose pseudo-inverse Q^T (Q Q^T)^{-1} t
+-- gives the canonical rational representative, which we clear to integers
+-- and reduce by gcd.
+weightsFromConeAndQ = (M, Q, n) -> (
+    if numrows M == 0 then return toList(n : 0);
+    tInt := interiorLatticePoint M;
+    if tInt === null then return null;
+    Qq := promote(Q, QQ);
+    tcol := transpose matrix {apply(tInt, x -> x * 1_QQ)};
+    y := solve(Qq * (transpose Qq), tcol);
+    wQ := flatten entries ((transpose Qq) * y);
+    denom := lcm apply(wQ, denominator);
+    wInt := apply(wQ, x -> lift(denom * x, ZZ));
+    g := gcd wInt;
+    if g > 1 then apply(wInt, x -> x // g) else wInt
+    )
+
+-- Triangulation-level dispatches on the topcom (Matrix, List) methods,
+-- so users can compare engine-LP and topcom paths.
+topcomIsRegularTriangulation Triangulation := opts -> T -> (
+    topcomIsRegularTriangulation(matrix T, max T, Homogenize => false)
+    )
+topcomRegularTriangulationWeights Triangulation := opts -> T -> (
+    topcomRegularTriangulationWeights(matrix T, max T, Homogenize => false)
+    )
+topcomIsRegularTriangulation Triangulation := opts -> T -> (
+    topcomIsRegularTriangulation(matrix T, max T, Homogenize => false)
+    )
+topcomRegularTriangulationWeights Triangulation := opts -> T -> (
+    topcomRegularTriangulationWeights(matrix T, max T, Homogenize => false)
+    )
+
+regularFineTriangulation = method(Options => {Homogenize => true})
 regularFineTriangulation Matrix := Triangulation => opts -> (A) -> (
     tri := topcomRegularFineTriangulation(A, opts);
-    if tri === null then null else 
+    if tri === null then null else
         triangulation(A, tri, opts)
     )
 
@@ -424,29 +514,49 @@ wallCircuits(Matrix, List) := (Amat, tri) -> (
 
 wallCircuits Triangulation := T -> wallCircuits(matrix T, max T)
 
--- The secondary cone of (A, tri) as an inequality matrix:
---   secondaryCone(A, tri) is an m x n integer matrix M such that
---   the secondary cone is { w in QQ^n : M * w >= 0 },
--- where n = numcols A and m = number of codim-2 walls of `tri`.
--- The cone has lineality of dim equal to rank(A) (or rank+1 for an
--- un-homogenized point configuration), corresponding to weight
--- perturbations by linear/affine functions of the configuration.
--- (A, tri) is regular iff this cone has nonempty interior in R^n,
--- which can be tested with rawConeInteriorPoint(raw -M).
-secondaryCone = method()
-secondaryCone(Matrix, List) := Matrix => (A, tri) -> (
-    n := numcols A;
-    wcs := wallCircuits(A, tri);
-    if #wcs == 0 then return map(ZZ^0, ZZ^n, 0);
-    matrix for w in wcs list (
+-- Charge matrix Q of a configuration A: an integer matrix whose rows form
+-- a basis of ker A over ZZ.  Rows generate the lattice of linear relations
+-- on the columns of A.  In the GLSM/CY context the rows are the U(1)
+-- charges of the chiral fields.  Defined as transpose syz A; users who
+-- want a reduced basis (e.g., LLL) can compute it themselves and pass it
+-- via ChargeMatrix => myQ to secondaryCone.
+chargeMatrix = method()
+chargeMatrix Matrix := Matrix => A -> transpose syz A
+chargeMatrix Triangulation := Matrix => T -> chargeMatrix matrix T
+
+-- Secondary cone of a triangulation, returned as an integer inequality
+-- matrix M such that the secondary cone (modulo lineality) is
+--   { t in QQ^(N-d) : M * t >= 0 },
+-- where t = Q * w represents weights modulo the row span of A (the
+-- lineality space).  By default Q = chargeMatrix(matrix T) (rows are a
+-- basis of ker A); pass ChargeMatrix => myQ to use a different basis.
+-- Each wall-circuit row z (length N, in ker A) is expressed as z = z' * Q
+-- with z' integer of length (N-d); the rows of M are these z'.
+-- (A, tri) is regular iff this cone has nonempty interior, which can be
+-- tested with rawConeInteriorPoint(raw -M).
+secondaryCone = method(Options => {ChargeMatrix => null})
+secondaryCone(Matrix, List) := Matrix => opts -> (A, tri) -> (
+    -- Match wallCircuits' auto-homogenize convention so chargeMatrix and
+    -- wallCircuits see the same matrix.
+    d := #(tri#0);
+    A1 := if numrows A == d-1 then A || matrix{ toList(numcols A : 1) } else A;
+    Q := if opts.ChargeMatrix === null then chargeMatrix A1 else opts.ChargeMatrix;
+    nQ := numrows Q;
+    n := numcols A1;
+    wcs := wallCircuits(A1, tri);
+    if #wcs == 0 then return map(ZZ^0, ZZ^nQ, 0);
+    -- Build the length-N inequalities row-by-row, then project to the
+    -- charge lattice via z = z' * Q  <=>  z^T = Q^T * (z')^T.
+    M := matrix for w in wcs list (
         c := sort flatten {w#0, w#1};
         z := w#2;
         cz := hashTable apply(#c, k -> c#k => z#k);
         for i from 0 to n-1 list (if cz#?i then cz#i else 0)
-        )
+        );
+    transpose ((transpose M) // (transpose Q))
     )
 
-secondaryCone Triangulation := Matrix => T -> secondaryCone(matrix T, max T)
+secondaryCone Triangulation := Matrix => opts -> T -> secondaryCone(matrix T, max T, opts)
 
 -- previously in triangulations-code.m2,
 link = method()
@@ -748,35 +858,42 @@ doc ///
     isRegularTriangulation
     (isRegularTriangulation, Triangulation)
     (isRegularTriangulation, Matrix, List)
-    [isRegularTriangulation, Homogenize]
+    [isRegularTriangulation, ChargeMatrix]
   Headline
     determine if a given triangulation is a regular triangulation
   Usage
     isRegularTriangulation T
   Inputs
     T:Triangulation
-      A triangulation of a point or vector configuration
-    Homogenize => Boolean
-      unused for this method
+      a triangulation of a point or vector configuration
+    ChargeMatrix => Matrix
+      an integer matrix whose rows are a $\mathbb{Z}$-basis of $\ker A$;
+      passed through to @TO secondaryCone@.  Defaults to
+      {\tt chargeMatrix T}
   Outputs
     :Boolean
       whether the given triangulation is regular
   Description
     Text
-      A triangulation is called regular if it can be constructed in the following way: place the 
+      A triangulation is called regular if it can be constructed in the following way: place the
       point set in one higher dimension at various heights in the new variable.  Compute the
       convex hull.  Collect the list of facets with downward pointing normal (last coordinate of normal vector
       is negative).  If each of these is a simplex, then these form a triangulation of the
-      original point set.  A triangulation which arises this way is called {\it regular}.  See 
+      original point set.  A triangulation which arises this way is called {\it regular}.  See
       the book [deLoera et al] for more details and many beautiful properties of such triangulations.
     Text
+      Tested via the engine LP {\tt rawConeInteriorPoint}: the triangulation
+      is regular iff its @TO secondaryCone@ has nonempty interior.  The
+      topcom-based test, kept for comparison, is available as
+      @TO topcomIsRegularTriangulation@.
+    Text
       The following example is one of the simplest examples of a non-regular
-      triangulation.  Notice that {\tt tri} is a triangulation of the 
-      polytope which is the convex hull of the columns of $A$, which are 
+      triangulation.  Notice that {\tt tri} is a triangulation of the
+      polytope which is the convex hull of the columns of $A$, which are
       the only points allowed in the triangulation.
     Example
       A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
-      tri = {{0,1,2}, {1,3,5}, {2,3,4}, {0,1,5}, 
+      tri = {{0,1,2}, {1,3,5}, {2,3,4}, {0,1,5},
           {0,2,4}, {3,4,5}, {1,2,3}}
       T = triangulation(A, tri)
     Text
@@ -784,16 +901,10 @@ doc ///
     Example
       isWellDefined T
       isRegularTriangulation T
-    Text
-      Many of the functions in this package are wrappers for topcom functions.
-      Setting the global variable {\tt debugLevel} to either 1,2, or 5 will give more detail about
-      what files are written to Topcom, and what the executable is.
-      Setting {\tt debugLevel} to 0 means that the function will run silently.
-  Caveat
-    Does topcom check that the triangulation is actually well defined?  I'm not sure...  This is why we call
-    @TO (isWellDefined, Triangulation)@ first.
   SeeAlso
     (regularTriangulationWeights, Triangulation)
+    secondaryCone
+    "Topcom::topcomIsRegularTriangulation"
     regularFineTriangulation
     (isWellDefined, Triangulation)
 ///
@@ -1252,7 +1363,7 @@ doc ///
     regularTriangulationWeights
     (regularTriangulationWeights, Triangulation)
     (regularTriangulationWeights, Matrix, List)
-    [regularTriangulationWeights, Homogenize]
+    [regularTriangulationWeights, ChargeMatrix]
   Headline
     height vector inducing a regular triangulation, if one exists
   Usage
@@ -1262,24 +1373,30 @@ doc ///
     T:Triangulation
     A:Matrix
     tri:List
-    Homogenize => Boolean
-      ignored by the @TO Triangulation@ form (its matrix is already
-      homogenized); for the {\tt (Matrix, List)} form, controls whether
-      $A$ is augmented with a final row of $1$'s before being passed to
-      topcom
+    ChargeMatrix => Matrix
+      an integer matrix whose rows are a $\mathbb{Z}$-basis of $\ker A$;
+      passed through to @TO secondaryCone@.  Defaults to
+      {\tt chargeMatrix T}
   Outputs
     :List
-      of rational numbers, one per column of the configuration: heights
-      whose lower envelope yields {\tt tri}; or @TO null@ if the
-      triangulation is not regular
+      of @TO RR@ values (machine reals), one per column of the
+      configuration: heights whose lower envelope yields {\tt tri}; or
+      @TO null@ if the triangulation is not regular
   Description
     Text
       A triangulation is regular iff there is a height vector such that
       lifting each point to that height and taking the lower facets of
       the resulting upper hull recovers exactly the maximal simplices of
-      the triangulation.  This function returns such a height vector
-      (computed via @TO "Topcom::topcomRegularTriangulationWeights"@), or
-      @TO null@ if no such vector exists.
+      the triangulation.
+    Text
+      Computed via the engine LP {\tt rawConeInteriorPoint} on the
+      @TO secondaryCone@: an interior point $t \in \mathbb{R}^{N-d}$ is
+      lifted back to weights $w \in \mathbb{R}^N$ via the Moore-Penrose
+      pseudo-inverse of the charge matrix, $w = Q^\top (Q Q^\top)^{-1} t$.
+      Any $w$ with $Q w = t$ induces the same triangulation; this lift is
+      the canonical representative.  For a rational/integer answer
+      compatible with topcom's output, use
+      @TO topcomRegularTriangulationWeights@.
     Example
       A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
       T = regularFineTriangulation A
@@ -1295,6 +1412,8 @@ doc ///
       regularTriangulationWeights Tnr
   SeeAlso
     isRegularTriangulation
+    secondaryCone
+    chargeMatrix
     "Topcom::topcomRegularTriangulationWeights"
 ///
 
@@ -1611,6 +1730,185 @@ doc ///
     flips
     neighbors
     "Topcom::orientedCircuits"
+///
+
+doc ///
+  Key
+    wallCircuits
+    (wallCircuits, Triangulation)
+    (wallCircuits, Matrix, List)
+  Headline
+    distinct codim-2 wall circuits of a triangulation, with sign convention
+  Usage
+    wcs = wallCircuits T
+    wcs = wallCircuits(A, tri)
+  Inputs
+    T:Triangulation
+    A:Matrix
+      whose columns are the points or vectors of the configuration
+    tri:List
+      a triangulation of the columns of $A$
+  Outputs
+    :List
+      of triples $\{inTri, notInTri, z\}$, one per distinct circuit
+      supported on a codim-2 wall of the triangulation
+  Description
+    Text
+      A codim-2 wall of $T$ is the union of two adjacent maximal simplices,
+      a $(d{+}1)$-element subset $c$ of column indices.  The circuit
+      supported on $c$ is the integer kernel relation $\sum_{i \in c} z_i A_i = 0$,
+      restricted to its support (the indices $i$ with $z_i \ne 0$).  When the
+      circuit support is strictly smaller than $d{+}1$ -- which happens when
+      one of the wall vertices has $z = 0$ -- the same circuit can appear in
+      several different walls; these duplicates are removed so each entry of
+      the returned list is a distinct circuit.
+    Text
+      Each triple $\{inTri, notInTri, z\}$ records:
+    Text
+      $\bullet$ {\tt inTri}: the support indices with $z_i > 0$.
+    Text
+      $\bullet$ {\tt notInTri}: the support indices with $z_i < 0$.
+    Text
+      $\bullet$ {\tt z}: an integer kernel of length $\#({\tt inTri} \cup {\tt notInTri})$,
+      indexed by position in {\tt sort(inTri | notInTri)}, signed so the
+      facet inequality
+        $$\sum_{i \in {\tt inTri} \cup {\tt notInTri}} z_i \, w_i \;\ge\; 0$$
+      holds for every $w$ that induces $T$.
+    Text
+      For a {\bf balanced} circuit (both signs present), {\tt inTri} is exactly
+      the half whose simplices $c \setminus \{v\}$ appear in $T$.  For a
+      {\bf totally cyclic} circuit (e.g. when $0$ lies in the interior of
+      $\mathrm{cone}(c)$, as in many complete simplicial fans), $z$ is one-sided:
+      {\tt inTri} is the full circuit support and {\tt notInTri} is empty,
+      yet the inequality still holds.
+    Example
+      A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
+      T = regularFineTriangulation A
+      netList wallCircuits T
+  SeeAlso
+    flipCandidates
+    secondaryCone
+///
+
+doc ///
+  Key
+    chargeMatrix
+    (chargeMatrix, Matrix)
+    (chargeMatrix, Triangulation)
+  Headline
+    charge matrix Q whose rows generate ker A
+  Usage
+    Q = chargeMatrix A
+    Q = chargeMatrix T
+  Inputs
+    A:Matrix
+      a $d \times N$ integer configuration matrix
+    T:Triangulation
+  Outputs
+    :Matrix
+      an integer matrix of shape $(N - d) \times N$ whose rows are a
+      $\mathbb{Z}$-basis of $\ker A$
+  Description
+    Text
+      The charge matrix is computed as {\tt transpose syz A}.  In the
+      GLSM/Calabi-Yau context the rows of $Q$ are the U(1) charges of
+      the chiral fields under the gauge symmetries.  Mathematically,
+      $Q$ provides explicit coordinates on the quotient
+      $\mathbb{R}^N / \mathrm{rowspan}(A)$, which is where the secondary
+      cone naturally lives.
+    Text
+      For $T = $ {\tt triangulation(A, tri)}, {\tt chargeMatrix T} uses
+      the stored configuration matrix {\tt matrix T} (which is $A$
+      auto-homogenized to one extra row of $1$'s when $A$ was supplied
+      as a point set).
+    Text
+      Users who want a reduced basis (for instance, an LLL-reduced one
+      with smaller integer entries) can compute it themselves from
+      {\tt syz A} and pass it to @TO secondaryCone@ via the
+      {\tt ChargeMatrix} option.
+    Example
+      A = transpose matrix {{0,0},{1,0},{0,1},{1,1}}
+      T = triangulation(A, {{0,1,3},{0,2,3}})
+      chargeMatrix T
+  SeeAlso
+    secondaryCone
+    "syz"
+///
+
+doc ///
+  Key
+    secondaryCone
+    (secondaryCone, Triangulation)
+    (secondaryCone, Matrix, List)
+    [secondaryCone, ChargeMatrix]
+    ChargeMatrix
+  Headline
+    secondary cone of a triangulation, in charge-lattice coordinates
+  Usage
+    M = secondaryCone T
+    M = secondaryCone(A, tri)
+  Inputs
+    T:Triangulation
+    A:Matrix
+      whose columns are the points or vectors of the configuration
+    tri:List
+      a triangulation of the columns of $A$
+    ChargeMatrix => Matrix
+      an integer matrix whose rows are a $\mathbb{Z}$-basis of $\ker A$;
+      defaults to @TO chargeMatrix@ {\tt T} (i.e., {\tt transpose syz A})
+  Outputs
+    :Matrix
+      an integer matrix $M$ of shape $m \times (N - d)$ where $m$ is the
+      number of distinct codim-2 wall circuits and $N - d$ is the number
+      of rows of the charge matrix; the secondary cone is
+      $\{t \in \mathbb{Q}^{N-d} : M t \ge 0\}$
+  Description
+    Text
+      Working modulo the lineality space.  In ambient $\mathbb{R}^N$, every
+      weight vector $w$ inducing the triangulation $T$ yields the same
+      regular subdivision when shifted by an element of $\mathrm{rowspan}(A)$
+      (linear/affine functions of the configuration), so the secondary
+      cone has lineality of dimension $\mathrm{rank}(A)$.  Quotienting by
+      this lineality via $t = Q w$ -- where $Q$ is the charge matrix --
+      produces a pointed cone in $\mathbb{R}^{N-d}$, the natural home of
+      the secondary cone (and, in due course, the secondary fan).
+    Text
+      Each row of $M$ comes from one wall circuit $z$ of $T$ (see
+      @TO wallCircuits@): solving $z = z' Q$ over $\mathbb{Z}$ gives the
+      reduced inequality $z'$, and the rows of $M$ are these $z'$.  When
+      the user supplies their own {\tt ChargeMatrix}, each row of $M$ is
+      expressed in that basis instead.
+    Text
+      The triangulation is regular iff this cone has nonempty interior in
+      $\mathbb{R}^{N-d}$, which can be tested with the engine LP
+      {\tt rawConeInteriorPoint} (see @TO isRegularTriangulation@).
+    Text
+      To recover a weight vector $w \in \mathbb{R}^N$ from an interior
+      point $t$ of the reduced cone, lift via any $w$ with $Q w = t$
+      (for instance $w = \mathrm{solve}(Q, t)$).  Any such $w$ induces
+      the triangulation; different lifts differ by an element of the
+      lineality and produce the same triangulation.
+    Example
+      A = transpose matrix {{0,0},{1,0},{0,1},{1,1}}
+      T1 = triangulation(A, {{0,1,3},{0,2,3}})
+      T2 = triangulation(A, {{0,1,2},{1,2,3}})
+      secondaryCone T1
+      secondaryCone T2
+    Text
+      A vector configuration: 8 corners of a 3-cube, treated as a $4 \times 8$
+      vector configuration (homogenized by hand with a row of $1$'s).  The
+      reduced cone lives in $\mathbb{R}^{8-4} = \mathbb{R}^4$.
+    Example
+      V = transpose matrix {{1,1,1,1},{0,1,1,1},{1,0,1,1},{1,1,0,1},{0,0,1,1},{0,1,0,1},{1,0,0,1},{0,0,0,1}}
+      Tv = triangulation(V, {{0,1,2,3},{1,2,3,4},{1,3,4,5},{2,3,4,6},{3,4,5,6},{4,5,6,7}})
+      M = secondaryCone Tv
+      Q = chargeMatrix Tv
+      M * Q * (transpose matrix {regularTriangulationWeights Tv})
+  SeeAlso
+    chargeMatrix
+    wallCircuits
+    isRegularTriangulation
+    regularTriangulationWeights
 ///
 
 doc ///
@@ -2642,25 +2940,31 @@ TEST ///
 -- secondaryCone / wallCircuits
 
 -- Square: 4 points, one circuit, two regular triangulations.
--- Their secondary cones are opposite half-spaces.
+-- The configuration matrix A is 2x4, augmented to 3x4 (rank 3),
+-- so the reduced secondary cone lives in R^(4-3) = R^1.
+-- The two triangulations give opposite half-lines.
 A = transpose matrix {{0,0},{1,0},{0,1},{1,1}};
 T1 = triangulation(A, {{0,1,3},{0,2,3}});
 T2 = triangulation(A, {{0,1,2},{1,2,3}});
 M1 = secondaryCone T1;
 M2 = secondaryCone T2;
-assert(numrows M1 == 1 and numcols M1 == 4);
+assert(numrows M1 == 1 and numcols M1 == 1);
 assert(M1 == -M2);
 
--- Sign canary: regularTriangulationWeights lands in the closed cone.
-w1 = transpose matrix {regularTriangulationWeights T1};
-w2 = transpose matrix {regularTriangulationWeights T2};
-assert all(flatten entries (M1 * w1), x -> x >= 0);
-assert all(flatten entries (M2 * w2), x -> x >= 0);
+-- Sign canary: regularTriangulationWeights, projected to charge-lattice
+-- coordinates t = Q*w, lands in the closed reduced cone.
+Q1 = chargeMatrix T1;
+t1 = Q1 * (transpose matrix {regularTriangulationWeights T1});
+t2 = Q1 * (transpose matrix {regularTriangulationWeights T2});
+assert all(flatten entries (M1 * t1), x -> x >= 0);
+assert all(flatten entries (M2 * t2), x -> x >= 0);
 
--- Single-simplex triangulation: no walls, empty matrix, cone = R^n.
+-- Single-simplex triangulation: no walls, empty matrix, full quotient cone.
+-- A is 2x3, augmented to 3x3 of rank 3, so N-d = 0 and the reduced cone
+-- lives in R^0 (a 0x0 inequality matrix).
 T3 = triangulation(matrix {{0,1,0},{0,0,1}}, {{0,1,2}});
 assert(numrows secondaryCone T3 == 0);
-assert(numcols secondaryCone T3 == 3);
+assert(numcols secondaryCone T3 == 0);
 
 -- wallCircuits: orientation, sign convention.
 wcs = wallCircuits T1;
@@ -2693,8 +2997,9 @@ P = polar convexHull matrix tope;
 A = matrix {select(latticePoints P, x -> x != 0)};
 t0 = regularFineTriangulation(A, Homogenize => false);
 M = secondaryCone t0;
+Q = chargeMatrix t0;
 w = transpose matrix {regularTriangulationWeights t0};
-assert all(flatten entries (M * w), x -> x >= 0);
+assert all(flatten entries (M * (Q * w)), x -> x >= 0);
 -- At least one totally cyclic wall exists in this example.
 wcs = wallCircuits t0;
 assert any(wcs, t -> #(t#0) == 0 or #(t#1) == 0);
@@ -2757,6 +3062,38 @@ assert try (triangulation(A, {}); false) else true
 assert try (triangulation(A, {{0,1,2},{0,1}}); false) else true
 ///
 
+TEST ///
+-- engine-LP isRegularTriangulation / regularTriangulationWeights agree
+-- with the topcom path on a few canonical examples; engine weights are
+-- integer and induce the right triangulation via Polyhedra.
+A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
+T = regularFineTriangulation A
+assert(isRegularTriangulation T == topcomIsRegularTriangulation T)
+assert(isRegularTriangulation T)
+wEngine = regularTriangulationWeights T
+assert(class first wEngine === ZZ)
+assert(regularSubdivision(matrix T, matrix {wEngine}) == sort \ sort max T)
+
+-- Non-regular: both paths return false / null.
+triNR = {{0,1,2}, {1,3,5}, {2,3,4}, {0,1,5}, {0,2,4}, {3,4,5}, {1,2,3}}
+Tnr = triangulation(A, triNR)
+assert(isRegularTriangulation Tnr == topcomIsRegularTriangulation Tnr)
+assert(not isRegularTriangulation Tnr)
+assert(regularTriangulationWeights Tnr === null)
+
+-- interiorLatticePoint directly: cube secondary cone, check {x : M x >= 0}.
+V = transpose matrix {{1,1,1,1},{0,1,1,1},{1,0,1,1},{1,1,0,1},{0,0,1,1},{0,1,0,1},{1,0,0,1},{0,0,0,1}}
+Tv = triangulation(V, {{0,1,2,3},{1,2,3,4},{1,3,4,5},{2,3,4,6},{3,4,5,6},{4,5,6,7}})
+M = secondaryCone Tv
+x = interiorLatticePoint M
+assert(class first x === ZZ)
+assert all(flatten entries (M * (transpose matrix {x})), v -> v > 0)
+
+-- Empty cone (no walls): interiorLatticePoint returns the zero vector.
+M0 = map(ZZ^0, ZZ^3, 0)
+assert(interiorLatticePoint M0 == {0,0,0})
+///
+
 -*
 restart
 needsPackage "Triangulations"
@@ -2802,24 +3139,18 @@ TEST /// -- wallCircuits with degenerate codim-2 walls (circuit < d+1).
   assert(#wallCircuits tri == 4)
   -- Each circuit has support of size 4 (one face of the cube).
   assert all(wallCircuits tri, w -> #(w#0) + #(w#1) == 4 and #(w#2) == 4)
-  -- secondaryCone has one row per distinct circuit; each row is a
-  -- length-(numcols A) integer vector.
+  -- secondaryCone returns the reduced inequality matrix in Q-coordinates:
+  -- one row per distinct circuit, one column per charge basis vector.
+  -- Here d=4, N=8, so the cone lives in R^(8-4) = R^4.
   M = secondaryCone tri
-  assert(numrows M == 4 and numcols M == 8)
-  -- Sign canary: the regularity weights satisfy every facet inequality.
+  Q = chargeMatrix tri
+  assert(numrows M == 4 and numcols M == 4)
+  assert(numrows Q == 4 and numcols Q == 8)
+  -- Sign canary: project the regularity weights to charge-lattice coordinates,
+  -- then check every facet inequality.
   w = transpose matrix {regularTriangulationWeights tri}
-  assert all(flatten entries (M * w), x -> x >= 0)
-
-  M
-  needsPackage "FourierMotzkin"
-  fourierMotzkin M
-
-  A = transpose matrix vecs
-  Q = transpose syz A
-
-  C = coneFromHData M
-  linealitySpace C
-  dim C
+  t = Q * w
+  assert all(flatten entries (M * t), x -> x >= 0)
 ///
 
 end----------------------------------------------------
