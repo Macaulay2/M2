@@ -41,8 +41,10 @@ export {
     "flipCandidates",
     "wallCircuits",
     "secondaryCone",
+    "secondaryFan",
     "chargeMatrix",
     "ChargeMatrix",
+    "Cones",
     "interiorLatticePoint",
     "volumeVector",
     "gkzVector",
@@ -512,7 +514,10 @@ wallCircuits(Matrix, List) := (Amat, tri) -> (
         )
     )
 
-wallCircuits Triangulation := T -> wallCircuits(matrix T, max T)
+wallCircuits Triangulation := T -> (
+    if T.cache#?(symbol wallCircuits) then T.cache#(symbol wallCircuits)
+    else T.cache#(symbol wallCircuits) = wallCircuits(matrix T, max T)
+    )
 
 -- Charge matrix Q of a configuration A: an integer matrix whose rows form
 -- a basis of ker A over ZZ.  Rows generate the lattice of linear relations
@@ -630,7 +635,7 @@ neighbors Triangulation := List => opts -> T -> (
         )
     )
 
-generateTriangulations = method(Options => {Limit=>infinity, RegularOnly=>false, Fine => true, Homogenize => true})
+generateTriangulations = method(Options => {Limit=>infinity, RegularOnly=>false, Fine => true, Homogenize => true, Strategy => "engine"})
 generateTriangulations Triangulation := opts -> T0 -> (
     -- BFS over the bistellar-flip graph starting at T0.
     -- 'seen' records every triangulation we have ever encountered, regardless of
@@ -639,6 +644,10 @@ generateTriangulations Triangulation := opts -> T0 -> (
     -- 'queue' is both the BFS frontier and the result-so-far: a MutableList
     -- giving O(1) push (queue#(#queue) = x) and O(1) pop (advance nextIdx).
     -- Fine controls whether support-changing flips are considered (see neighbors).
+    -- Strategy selects the regularity test: "engine" (default, uses
+    -- rawConeInteriorPoint on secondaryCone) or "topcom" (subprocess).
+    isReg := if opts.Strategy === "topcom" then topcomIsRegularTriangulation
+             else isRegularTriangulation;
     seen := new MutableHashTable;
     seen#T0 = true;
     queue := new MutableList from {T0};
@@ -651,7 +660,7 @@ generateTriangulations Triangulation := opts -> T0 -> (
             T1 := cT1#1;
             if seen#?T1 then continue;
             seen#T1 = true;
-            if opts.RegularOnly and not isRegularTriangulation T1 then continue;
+            if opts.RegularOnly and not isReg T1 then continue;
             queue#(#queue) = T1;
             );
         if debugLevel > 0 then
@@ -669,7 +678,7 @@ generateTriangulations(Matrix, List) := opts -> (Amat, triang) -> (
     tris/max -- strip the triangulation class from these.  This matches (up to permutation) output of allTriangulations
     )
 
-flipGraph = method(Options => {Limit=>infinity, RegularOnly=>false, Fine => true, Homogenize => true})
+flipGraph = method(Options => {Limit=>infinity, RegularOnly=>false, Fine => true, Homogenize => true, Strategy => "engine"})
 flipGraph Triangulation := HashTable => opts -> T0 -> (
     -- BFS over the bistellar-flip graph starting at T0, recording both the
     -- list of triangulations reached and the edges (i, j, circuit) connecting them.
@@ -678,6 +687,9 @@ flipGraph Triangulation := HashTable => opts -> T0 -> (
     -- non-regular under RegularOnly => true), so we don't re-test it.
     -- Edges are recorded once per undirected pair, when discovered from the
     -- lower-indexed endpoint (j > i guard skips back-edges to already-processed nodes).
+    -- Strategy selects the regularity test (see generateTriangulations).
+    isReg := if opts.Strategy === "topcom" then topcomIsRegularTriangulation
+             else isRegularTriangulation;
     index := new MutableHashTable;
     index#T0 = 0;
     queue := new MutableList from {T0};
@@ -696,7 +708,7 @@ flipGraph Triangulation := HashTable => opts -> T0 -> (
                 if jSeen > i then edges#(#edges) = (i, jSeen, c);
                 continue;
                 );
-            if opts.RegularOnly and not isRegularTriangulation T1 then (
+            if opts.RegularOnly and not isReg T1 then (
                 index#T1 = -1;
                 continue;
                 );
@@ -719,7 +731,42 @@ flipGraph Matrix := HashTable => opts -> Amat -> (
     )
 flipGraph(Matrix, List) := HashTable => opts -> (Amat, triang) -> (
     flipGraph(triangulation(Amat, triang, Homogenize => opts.Homogenize),
-        Limit => opts.Limit, RegularOnly => opts.RegularOnly, Fine => opts.Fine)
+        Limit => opts.Limit, RegularOnly => opts.RegularOnly, Fine => opts.Fine,
+        Strategy => opts.Strategy)
+    )
+
+-- Secondary fan: the flipGraph of fine regular triangulations of A,
+-- augmented with each triangulation's secondaryCone in a shared
+-- ChargeMatrix Q.  Returns a HashTable with keys
+--   Triangulations  -- list of fine regular triangulations of A
+--   Edges           -- list of (i, j, circuit) flips between them
+--   Cones           -- list of integer matrices, one per triangulation,
+--                      each giving the inequalities of the corresponding
+--                      secondary cone in coordinates of Q
+--   ChargeMatrix    -- the Q used (so callers can lift t in (N-d)-coords
+--                      back to weights w in N-coords via solve(Q, t))
+secondaryFan = method(Options => {
+        Limit => infinity,
+        ChargeMatrix => null,
+        Strategy => "engine"
+        })
+secondaryFan Triangulation := HashTable => opts -> T -> (
+    Q := if opts.ChargeMatrix === null then chargeMatrix T else opts.ChargeMatrix;
+    G := flipGraph(T,
+        Limit => opts.Limit,
+        RegularOnly => true,
+        Fine => true,
+        Strategy => opts.Strategy);
+    cones := apply(G.Triangulations, Ti -> secondaryCone(Ti, ChargeMatrix => Q));
+    hashTable {
+        symbol Triangulations => G.Triangulations,
+        symbol Edges          => G.Edges,
+        symbol Cones          => cones,
+        symbol ChargeMatrix   => Q
+        }
+    )
+secondaryFan Matrix := HashTable => opts -> A -> (
+    secondaryFan(regularFineTriangulation A, opts)
     )
 
 volumeVector = method()
@@ -1564,6 +1611,7 @@ doc ///
     [generateTriangulations, RegularOnly]
     [generateTriangulations, Homogenize]
     [generateTriangulations, Fine]
+    [generateTriangulations, Strategy]
   Headline
     generate all triangulations with certain properties
   Usage
@@ -2000,6 +2048,7 @@ doc ///
     [flipGraph, RegularOnly]
     [flipGraph, Fine]
     [flipGraph, Homogenize]
+    [flipGraph, Strategy]
   Headline
     bistellar-flip graph of a point or vector configuration
   Usage
@@ -2056,6 +2105,84 @@ doc ///
     neighbors
     bistellarFlip
     allTriangulations
+///
+
+doc ///
+  Key
+    secondaryFan
+    (secondaryFan, Triangulation)
+    (secondaryFan, Matrix)
+    [secondaryFan, Limit]
+    [secondaryFan, ChargeMatrix]
+    [secondaryFan, Strategy]
+    Cones
+  Headline
+    secondary fan of a point or vector configuration, as flip graph + cones
+  Usage
+    F = secondaryFan T
+    F = secondaryFan A
+  Inputs
+    T:Triangulation
+      a fine regular triangulation; used as the BFS seed
+    A:Matrix
+      a configuration matrix; the seed is then {\tt regularFineTriangulation A}
+    Limit => ZZ
+      maximum number of triangulations to enumerate (default {\tt infinity})
+    ChargeMatrix => Matrix
+      shared charge matrix $Q$; defaults to {\tt chargeMatrix T}.  Every
+      cone in the result is expressed in this Q's coordinates, so cones
+      are directly comparable.
+    Strategy => String
+      either {\tt "engine"} (default; uses @TO isRegularTriangulation@,
+      no subprocess) or {\tt "topcom"} (uses
+      @TO topcomIsRegularTriangulation@) for the regularity test in the
+      flip-graph BFS
+  Outputs
+    F:HashTable
+      with keys {\tt Triangulations}, {\tt Edges}, {\tt Cones},
+      {\tt ChargeMatrix}: see Description
+  Description
+    Text
+      Returns a flip-graph-shaped representation of the secondary fan
+      restricted to fine regular triangulations.  Each fine regular
+      triangulation gives a maximal cone of the fan; adjacent cones
+      (sharing a wall) correspond to triangulations connected by a
+      bistellar flip.  Non-fine subdivisions live on lower-dimensional
+      faces and are not enumerated by this function.
+    Text
+      The returned hash table has four entries:
+    Text
+      $\bullet$ {\tt Triangulations}: list of fine regular triangulations
+      reached from the seed.
+    Text
+      $\bullet$ {\tt Edges}: list of triples {\tt (i, j, circuit)} giving
+      the bistellar flips, in the same format as @TO flipGraph@.
+    Text
+      $\bullet$ {\tt Cones}: list of integer matrices, one per
+      triangulation; row $k$ of {\tt F.Cones#i} is the inequality
+      $z_k' \cdot t \ge 0$ defining the $k$-th facet of the
+      $i$-th secondary cone, in the shared $Q$-coordinate system.
+    Text
+      $\bullet$ {\tt ChargeMatrix}: the integer matrix $Q$ used for all
+      the cones (so callers can lift $t \in \mathbb{R}^{N-d}$ back to
+      weights $w \in \mathbb{R}^N$ via {\tt solve(Q, t)}).
+    Example
+      A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
+      F = secondaryFan A
+      # F.Triangulations
+      # F.Edges
+      F.ChargeMatrix
+      first F.Cones
+  Caveat
+    The flip-graph BFS only enumerates triangulations reachable from the
+    seed via support-preserving flips ({\tt Fine => true}).  Pass
+    {\tt Limit => N} to bound the search on large examples.
+  SeeAlso
+    flipGraph
+    secondaryCone
+    chargeMatrix
+    isRegularTriangulation
+    "Topcom::topcomIsRegularTriangulation"
 ///
 
 doc ///
@@ -3092,6 +3219,25 @@ assert all(flatten entries (M * (transpose matrix {x})), v -> v > 0)
 -- Empty cone (no walls): interiorLatticePoint returns the zero vector.
 M0 = map(ZZ^0, ZZ^3, 0)
 assert(interiorLatticePoint M0 == {0,0,0})
+///
+
+TEST ///
+-- secondaryFan and the engine/topcom Strategy switch produce identical
+-- flipGraph data on a small example.  Cones are full-dim (we asked for
+-- regular triangulations only) and live in the same Q-coords.
+A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
+Feng = secondaryFan(A, Strategy => "engine")
+Ftc  = secondaryFan(A, Strategy => "topcom")
+assert(set Feng.Triangulations === set Ftc.Triangulations)
+assert(# Feng.Edges == # Ftc.Edges)
+assert(Feng.ChargeMatrix == Ftc.ChargeMatrix)
+-- Each cone has the same column count (= numrows Q), since Q is shared.
+nQ = numrows Feng.ChargeMatrix
+assert all(Feng.Cones, M -> numcols M == nQ)
+-- Every cone is full-dim (interior point exists).
+assert all(Feng.Cones, M -> interiorLatticePoint M =!= null)
+-- Each edge connects two adjacent (different) triangulations.
+assert all(Feng.Edges, e -> e#0 != e#1 and e#0 < # Feng.Triangulations and e#1 < # Feng.Triangulations)
 ///
 
 -*
