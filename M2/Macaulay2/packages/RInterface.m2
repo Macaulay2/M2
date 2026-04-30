@@ -16,8 +16,8 @@
 
 newPackage("RInterface",
     Headline => "interface to R for statistical computing",
-    Version => "0.1",
-    Date => "January 28, 2024",
+    Version => "0.2",
+    Date => "April 30, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -26,6 +26,24 @@ newPackage("RInterface",
     OptionalComponentsPresent => run("command -v R > /dev/null") == 0,
     AuxiliaryFiles => true,
     PackageImports => {"ForeignFunctions"})
+
+---------------
+-- ChangeLog --
+---------------
+
+-*
+
+0.2 (2026-04-30, M2 1.26.05)
+* Release under GPL
+* Add hash table <-> environment conversion
+* Add RValue, RQuote, RContext
+* Add support for ~ as a binary operator
+* Improved documentation and tests
+
+0.1 (2024-01-28, M2 1.23)
+* initial release
+
+*-
 
 
 endpkg = msg -> (
