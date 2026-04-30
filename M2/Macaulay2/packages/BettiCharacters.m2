@@ -111,11 +111,7 @@ character(PolynomialRing,HashTable) := Character => op -> (R,H) -> (
 	);
     -- check if character ring is already present
     -- if not, construct it and cache it
-    if not R#?cache then R#cache = new CacheTable;
-    if not R#cache#?degreesRing then (
-	R#cache#degreesRing = F degreesMonoid R;
-	);
-    DR := R#cache#degreesRing;
+    DR := R#cache#degreesRing ??= F degreesMonoid R;
     -- get degree length
     dl := numgens DR;
     -- check degree vectors are allowed
@@ -748,11 +744,7 @@ action(Complex,List,List,ZZ) := ActionOnComplex => op -> (C,l,l0,i) -> (
 	);
     -- check if character ring is already present
     -- if not, construct it and cache it
-    if not R#?cache then R#cache = new CacheTable;
-    if not R#cache#?degreesRing then (
-	R#cache#degreesRing = F degreesMonoid R;
-	);
-    DR := R#cache#degreesRing;
+    DR := R#cache#degreesRing ??= F degreesMonoid R;
     --check size of module actors matches rank of starting module
     r := rank C_i;
     if not all(l0,g->numColumns(g)==r and numRows(g)==r) then (
@@ -991,11 +983,7 @@ action(Module,List,List) := ActionOnGradedModule => op -> (M,l,l0) -> (
 	);
     -- check if character ring is already present
     -- if not, construct it and cache it
-    if not R#?cache then R#cache = new CacheTable;
-    if not R#cache#?degreesRing then (
-	R#cache#degreesRing = F degreesMonoid R;
-	);
-    DR := R#cache#degreesRing;
+    DR := R#cache#degreesRing ??= F degreesMonoid R;
     --store everything into a hash table
     new ActionOnGradedModule from {
 	cache => new CacheTable,
