@@ -5,6 +5,7 @@
 doc ///
   Key
     (NewFromMethod, RObject, Nothing)
+    (symbol ??, RObject)
   Headline
     create an R NULL object
   Usage
@@ -18,6 +19,12 @@ doc ///
       Converts Macaulay2's @TO null@ to R's @SAMP "NULL"@.
     Example
       RObject null
+    Text
+      Note that the null coalescing operator @TO symbol ??@ treats
+      R's @SAMP "NULL"@ as null.
+    Example
+      (?? RObject null) === null
+      RObject null ?? RObject 5
   SeeAlso
     RObject
     (value, RObject)
@@ -219,6 +226,27 @@ doc ///
       RObject (baz => 3, qux => 4)
   SeeAlso
     (NewFromMethod, RObject, List)
+///
+
+doc ///
+  Key
+    (NewFromMethod, RObject, HashTable)
+  Headline
+    create an R environment from a hash table
+  Usage
+    RObject t
+  Inputs
+    t:HashTable -- with @TO String@ keys
+  Outputs
+    :RObject -- an R environment
+  Description
+    Text
+      Converts a Macaulay2 @TO HashTable@ with @TO String@ keys to an R
+      @EM "environment"@, with each key-value pair becoming a variable binding.
+    Example
+      env = RObject hashTable {"x" => 5_ZZ, "y" => 2_ZZ}
+      RValue("x^y", Environment => env)
+      value oo
 ///
 
 doc ///

@@ -508,10 +508,10 @@ protect Environment
 new RContext := T -> T {Environment => RObject hashTable {}}
 new RContext from String := (T, s) -> (
     env := RObject hashTable {};
-    RValue(s, Global => env);
+    RValue(s, Environment => env);
     T {Environment => env})
 
-RContext String := (ctx, s) -> RValue(s, Global => ctx.Environment)
+RContext String := (ctx, s) -> RValue(s, Environment => ctx.Environment)
 RContext_String := (ctx, key) -> ctx.Environment_key
 
 importFrom(Core, {"Abbreviate", "TABLE", "TD", "TH"})
