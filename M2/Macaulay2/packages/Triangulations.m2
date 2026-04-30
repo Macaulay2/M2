@@ -1,11 +1,11 @@
 newPackage(
         "Triangulations",
-        Version => "0.2", 
-        Date => "25 Oct 2024",
+        Version => "0.5", 
+        Date => "29 April 2026",
         Authors => {{
                 Name => "Mike Stillman", 
                 Email => "mike@math.cornell.edu", 
-                HomePage=>"http://www.math.cornell.edu/~mike"
+                HomePage=>"https://mikestillman.github.io"
                 }},
         Headline => "triangulations of polyhedra and point sets",
         Keywords => {"Combinatorics"},
@@ -39,6 +39,8 @@ export {
     "regularTriangulationWeights",
     
     "flipCandidates",
+    "wallCircuits",
+    "secondaryCone",
     "volumeVector",
     "gkzVector",
     
@@ -153,19 +155,33 @@ naiveIsTriangulation(Matrix, List) := (A, tri) -> naiveIsTriangulation(A, orient
 
 
 
--- Allow both rays and points, i.e. homogenized A or not
-triangulation = method(Options => {Homogenize => true}) -- true means this is a point set.
+-- Allow both rays and points, i.e. homogenized A or not.
+-- Homogenize => null (default) auto-detects from max-simplex sizes:
+--   simplex size == numRows A     ⇒ vector configuration (no homogenization)
+--   simplex size == numRows A + 1 ⇒ point configuration (homogenize)
+-- Pass Homogenize => true / false to force; an explicit value inconsistent
+-- with the simplex sizes is an error.
+triangulation = method(Options => {Homogenize => null})
 triangulation(Matrix, List) := Triangulation => opts -> (A, tri) -> (
-    -- should we check basic things?  e.g. tri is a list of
-    -- lists of integers in the range 0..numcols A - 1.
-    -- and that A is a matrix over ZZ or QQ?
     if ring A =!= ZZ and ring A =!= QQ then
         error "expected matrix over ZZ or QQ";
-    n := numcols A;
-    if not all(tri, f -> all(f, p -> instance(p, ZZ))) then 
+    if #tri == 0 then
+        error "empty triangulation: expected at least one max simplex";
+    if not all(tri, f -> all(f, p -> instance(p, ZZ))) then
         error "expected a list of list of integers";
-    -- should we sort the sets?  Probably...
-    A1 := if opts.Homogenize then augment A else A;
+    d := numRows A;
+    sizes := unique(tri / length);
+    if #sizes != 1 then
+        error "expected all max simplices to have the same length";
+    sz := sizes#0;
+    inferred := if sz == d + 1 then true
+                else if sz == d then false
+                else error("max simplex size ", sz, " inconsistent with ", d, "-row matrix");
+    homog := opts.Homogenize;
+    if homog === null then homog = inferred
+    else if homog =!= inferred then
+        error("Homogenize => ", toString homog, " contradicts max simplex size ", sz, " for a ", d, "-row matrix");
+    A1 := if homog then augment A else A;
     vecs := transpose entries A1;
     sorted := tri//sort/sort; -- this sorts the triangulation
     T := new Triangulation from {
@@ -173,9 +189,15 @@ triangulation(Matrix, List) := Triangulation => opts -> (A, tri) -> (
         symbol vectors => vecs,
         symbol max => sorted
         };
-    T.cache#"point set" = opts.Homogenize;
+    T.cache#"point set" = homog;
     T.cache.matrix = A1;
     T
+   )
+triangulation(List, List) := Triangulation => opts -> (vecs, tri) -> (
+    if #vecs == 0 then error "expected non-empty list of points or vectors";
+    if not all(vecs, v -> instance(v, List)) then
+        error "expected first argument to be a list of lists";
+    triangulation(transpose matrix vecs, tri, opts)
    )
 
 vectors = method()
@@ -348,6 +370,71 @@ flipCandidates(Matrix, List) := (Amat, tri) -> (
     )
 
 flipCandidates Triangulation := T -> flipCandidates(matrix T, max T)
+
+-- For each codim-2 wall of `tri`, return a triple {inTri, notInTri, z}:
+--   inTri    : indices i in c with z_i > 0.
+--   notInTri : indices i in c with z_i < 0.
+--   z        : length-(d+1) integer kernel of A_c, indexed by position in
+--              c = sort(inTri | notInTri).
+-- The kernel is signed so the secondary-cone facet inequality
+--   sum_{i in c} z_i * w_i  >=  0
+-- holds for every w that induces `tri` (viewing z as a length-n vector,
+-- zero outside c).
+--
+-- For a "balanced" circuit (z has both signs), inTri is exactly the half
+-- of c whose corresponding simplices c\{v} appear in `tri`.  For a
+-- "totally cyclic" circuit (z one-sided -- which can occur e.g. when 0
+-- lies in the interior of cone(c), as in many complete simplicial fans),
+-- z is all-positive after orientation, inTri = c, and notInTri = {};
+-- only some of the simplices c\{v} for v in c are present in `tri`, but
+-- the inequality is still valid.
+wallCircuits = method()
+wallCircuits(Matrix, List) := (Amat, tri) -> (
+    d := #(tri#0);
+    assert all(tri, t -> #t == d);
+    if numrows Amat == d-1 then
+      Amat = Amat || matrix{ toList(numcols Amat : 1) };
+    triset := set (tri/sort);
+    -- True iff some c\{v} for v in S is in `tri`.
+    sideInTri := (S, c) -> any(S, v -> member(sort toList(set c - set {v}), triset));
+    for c in codim2s tri list (
+        Z := syz Amat_c;
+        assert(numcols Z == 1);
+        z := flatten entries Z;
+        pos := c_(positions(z, zi -> zi > 0));
+        neg := c_(positions(z, zi -> zi < 0));
+        if sideInTri(pos, c) then
+            {pos, neg, z}                       -- inequality already > 0 on pos
+        else
+            {neg, pos, apply(z, x -> -x)}       -- flip sign so it is > 0 on neg
+        )
+    )
+
+wallCircuits Triangulation := T -> wallCircuits(matrix T, max T)
+
+-- The secondary cone of (A, tri) as an inequality matrix:
+--   secondaryCone(A, tri) is an m x n integer matrix M such that
+--   the secondary cone is { w in QQ^n : M * w >= 0 },
+-- where n = numcols A and m = number of codim-2 walls of `tri`.
+-- The cone has lineality of dim equal to rank(A) (or rank+1 for an
+-- un-homogenized point configuration), corresponding to weight
+-- perturbations by linear/affine functions of the configuration.
+-- (A, tri) is regular iff this cone has nonempty interior in R^n,
+-- which can be tested with rawConeInteriorPoint(raw -M).
+secondaryCone = method()
+secondaryCone(Matrix, List) := Matrix => (A, tri) -> (
+    n := numcols A;
+    wcs := wallCircuits(A, tri);
+    if #wcs == 0 then return map(ZZ^0, ZZ^n, 0);
+    matrix for w in wcs list (
+        c := sort flatten {w#0, w#1};
+        z := w#2;
+        cz := hashTable apply(#c, k -> c#k => z#k);
+        for i from 0 to n-1 list (if cz#?i then cz#i else 0)
+        )
+    )
+
+secondaryCone Triangulation := Matrix => T -> secondaryCone(matrix T, max T)
 
 -- previously in triangulations-code.m2,
 link = method()
@@ -740,41 +827,55 @@ doc ///
   Key
     triangulation
     (triangulation, Matrix, List)
+    (triangulation, List, List)
     [triangulation, Homogenize]
   Headline
     make a Triangulation object
   Usage
     triangulation(A, T)
+    triangulation(vecs, T)
   Inputs
     A:Matrix
+      whose columns are the points or vectors of the configuration
+    vecs:List
+      a list of points or vectors (each entry a list of integers or rationals);
+      equivalent to passing {\tt transpose matrix vecs}
     T:List
       representing a triangulation of the columns of $A$ (each element in the list
       is a list of indices in the range $0, \ldots, n-1$, where $n$ is the number of
       columns of $A$)
     Homogenize => Boolean
-      controls how $A$ is interpreted: if true (default), the columns of $A$
-      are points and the matrix is augmented with a row of $1$'s before being
-      stored, treating it as a homogenised vector configuration in one higher
-      dimension; if false, the columns of $A$ are already a vector configuration
-      and are stored as-is
+      controls how $A$ is interpreted.  By default ({\tt null}) the
+      interpretation is inferred from the size of the max simplices in $T$
+      (see Description below).  Pass {\tt true} to force a point-set
+      interpretation (a row of $1$'s is appended to $A$ before storing) or
+      {\tt false} to force a vector-configuration interpretation (matrix
+      stored as-is).  An explicit value inconsistent with the simplex sizes
+      is an error.
   Outputs
     :Triangulation
       A @TO Triangulation@ object.  Very little computation is performed.  The matrix and list representing
       a triangulation is packaged into an object to make clear that it is a triangulation
   Description
     Text
-      The {\tt Homogenize} option determines how the input matrix $A$ is
-      interpreted, not just how it is stored internally.  Pass
-      {\tt Homogenize => true} (the default) when $A$ is a point set: the
-      stored matrix is then $A$ with an appended row of $1$'s, and downstream
-      routines (regularity, flips, chirotope, $\ldots$) treat $A$'s columns as
-      affine points.  Pass {\tt Homogenize => false} when $A$ is already a
-      vector configuration (for instance, a $d \times n$ matrix of rays in
-      $\RR^d$): the matrix is stored as given, and downstream routines treat
-      the columns as vectors directly.  In particular, the dimension of the
-      ambient affine/linear space is read from the stored matrix, so the same
-      input may produce different triangulations depending on which interpretation
-      is chosen.
+      The {\tt Homogenize} option determines how $A$ is interpreted, not
+      just how it is stored.  By default the constructor inspects the size
+      of the max simplices in $T$:
+    Text
+      $\bullet$ if every max simplex has size {\tt numRows A + 1},
+      $A$ is treated as a point set and the stored matrix is $A$ with an
+      appended row of $1$'s (homogenisation);
+    Text
+      $\bullet$ if every max simplex has size {\tt numRows A},
+      $A$ is already a vector configuration (e.g., a $d \times n$ matrix
+      of rays in $\RR^d$) and is stored as given.
+    Text
+      Downstream routines (regularity, flips, chirotope, $\ldots$) read the
+      ambient dimension from the stored matrix, so the two interpretations
+      yield genuinely different triangulations of the same combinatorial $T$.
+      Passing {\tt Homogenize => true} or {\tt false} forces a particular
+      interpretation; an explicit value inconsistent with the inferred one
+      is rejected.
     Example
       P = hypercube 3
       A = vertices P
@@ -788,6 +889,19 @@ doc ///
       isFine tri
       isStar tri
       isRegularTriangulation tri
+    Text
+      A vector configuration: simplex size matches the row count of $A$,
+      so no homogenisation is applied.
+    Example
+      V = transpose matrix {{1,1,1,1},{0,1,1,1},{1,0,1,1},{1,1,0,1},{0,0,1,1},{0,1,0,1},{1,0,0,1},{0,0,0,1}}
+      triV = {{0,1,2,3},{1,2,3,4},{1,3,4,5},{2,3,4,6},{3,4,5,6},{4,5,6,7}}
+      Tv = triangulation(V, triV)
+      matrix Tv
+    Text
+      The (List, List) form is convenient when the configuration is given
+      as a list of vectors:
+    Example
+      triangulation({{0,0},{1,0},{0,1},{1,1}}, {{0,1,2},{1,2,3}})
   Caveat
   SeeAlso
     Triangulation
@@ -1906,12 +2020,12 @@ doc ///
     Chirotope
 ///
 
-TEST ///
--- of homogenization and need for it.
 -*
   restart
   debug needsPackage "Triangulations"
 *-
+TEST ///
+-- of homogenization and need for it.
   -- test of isRegularTriangulation
   A = transpose matrix {{-1,-1},{-1,1},{1,-1},{1,1},{0,0}}
   regularFineTriangulation(A, Homogenize=>false) -- returns null.  What does this mean?
@@ -1928,11 +2042,11 @@ TEST ///
   regularTriangulationWeights T == {1,1,0,0,0}
 ///
 
-TEST ///
 -*
   restart
   needsPackage "Triangulations"
 *-
+TEST ///
   A = transpose matrix {{-1,-1},{-1,1},{1,-1},{1,1},{0,0}}
   T = regularFineTriangulation A
   naiveIsTriangulation T -- TODO: doc this, and allow A to be homogenized? Same with topcomIsTriangulation
@@ -1947,12 +2061,12 @@ TEST ///
   allTriangulations A
 ///
 
-TEST ///
--- TODO: this is a test for Topcom, it seems?
 -*
   restart
   needsPackage "Triangulations"
 *-
+TEST ///
+-- TODO: this is a test for Topcom, it seems?
   -- test of isRegularTriangulation
   A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}}
   tri = {{0,1,2}, {1,3,5}, {2,3,4},
@@ -1987,7 +2101,12 @@ TEST ///
   regularTriangulationWeights(A,tri) == {1}
 ///
 
+-*
+  restart
+  needsPackage "Triangulations"
+*-
 ///
+XXXdifhdifhdsihfds
 -- TODO: This test needs to be made to assert correct statements
 -- How to test that triangulations are correct?  What I thought worked does not.
   needsPackage "Triangulations"
@@ -2010,8 +2129,11 @@ TEST ///
   assert isRegularTriangulation(A,tri) 
 ///
 
-TEST ///  
+-*
+  restart
   needsPackage "Triangulations"
+*-
+TEST ///  
   needsPackage "Polyhedra"
   
   A = transpose matrix {{-1,-1,2},{-1,0,1},{-1,1,1},{0,-1,2},{0,1,1},{1,-1,3},{1,0,-1},{1,1,-2}}
@@ -2029,12 +2151,12 @@ TEST ///
 ///
 
 
-TEST ///
--- simple example of chirotope
 -*
   restart
   needsPackage "Triangulations"
 *-
+TEST ///
+-- simple example of chirotope
   A = transpose matrix {{-1,-1},{-1,1},{1,-1},{1,1},{0,0}}
   tri = {{0, 2, 4}, {2, 3, 4}, {0, 1, 4}, {1, 3, 4}}
   ch1 = chirotope A
@@ -2140,8 +2262,11 @@ restart
   -- 3. perform bistellar flips to get new triangulations.
 ///
 
-TEST ///
+-*
   restart
+  needsPackage "Triangulations"  
+*-
+///
   needsPackage "ReflexivePolytopesDB"
   needsPackage "Topcom"  
   needsPackage "Polyhedra"
@@ -2172,14 +2297,14 @@ TEST ///
 
 ///
 
-TEST ///
--- this is an example used in 
--- https://people.inf.ethz.ch/fukudak/lect/mssemi/reports/03_rep_ClemensPohle.pdf
--- (accessed 2 June 2022)
 -*
   restart
   needsPackage "Triangulations"  
 *-
+TEST ///
+-- this is an example used in 
+-- https://people.inf.ethz.ch/fukudak/lect/mssemi/reports/03_rep_ClemensPohle.pdf
+-- (accessed 2 June 2022)
   debug needsPackage "Topcom"  
 
   -- this tests construction of the chirotope.
@@ -2205,11 +2330,11 @@ TEST ///
   -- I don't see how to get topcom to use these though.
 ///
 
-TEST ///
 -*
   restart
   needsPackage "Triangulations"
 *-
+TEST ///
   -- test of bistellar flips code.
   
   -- example 1.
@@ -2501,6 +2626,164 @@ TEST ///
   elapsedTime generateTriangulations(T, Limit => 20000);
 ///
 
+TEST ///
+-- secondaryCone / wallCircuits
+
+-- Square: 4 points, one circuit, two regular triangulations.
+-- Their secondary cones are opposite half-spaces.
+A = transpose matrix {{0,0},{1,0},{0,1},{1,1}};
+T1 = triangulation(A, {{0,1,3},{0,2,3}});
+T2 = triangulation(A, {{0,1,2},{1,2,3}});
+M1 = secondaryCone T1;
+M2 = secondaryCone T2;
+assert(numrows M1 == 1 and numcols M1 == 4);
+assert(M1 == -M2);
+
+-- Sign canary: regularTriangulationWeights lands in the closed cone.
+w1 = transpose matrix {regularTriangulationWeights T1};
+w2 = transpose matrix {regularTriangulationWeights T2};
+assert all(flatten entries (M1 * w1), x -> x >= 0);
+assert all(flatten entries (M2 * w2), x -> x >= 0);
+
+-- Single-simplex triangulation: no walls, empty matrix, cone = R^n.
+T3 = triangulation(matrix {{0,1,0},{0,0,1}}, {{0,1,2}});
+assert(numrows secondaryCone T3 == 0);
+assert(numcols secondaryCone T3 == 3);
+
+-- wallCircuits: orientation, sign convention.
+wcs = wallCircuits T1;
+assert(#wcs == 1);
+(inTri, notInTri, z) = toSequence first wcs;
+-- For balanced circuits, every present simplex c\{v} has v in inTri.
+c = sort flatten {inTri, notInTri};
+trisetT1 = set (max T1)/sort;
+present = select(c, v -> member(sort toList(set c - set {v}), trisetT1));
+assert(isSubset(set present, set inTri));
+assert(#z == #c);
+assert all(inTri, v -> z#(position(c, x -> x == v)) > 0);
+assert all(notInTri, v -> z#(position(c, x -> x == v)) < 0);
+///
+
+TEST ///
+-- secondaryCone on a complete simplicial fan with totally cyclic circuits.
+-- A reflexive polytope's polar lattice points (excluding 0) span R^4
+-- with positive linear dependences, producing one-sided kernel relations
+-- on some codim-2 walls.  The resulting secondary cone must still
+-- contain regularTriangulationWeights componentwise.
+needsPackage "ReflexivePolytopesDB";
+tope = KSEntry "4 10  M:73 10 N:9 7 H:4,58 [-108] id:100
+   1   1   1   0   1   1  -3   1   1  -9
+   0   2   0   0   3  -1  -3  -1   4  -6
+   0   0   2   0  -1   3  -3   4  -1  -6
+   0   0   0   1  -1  -1   1  -1  -1   4
+   ";
+P = polar convexHull matrix tope;
+A = matrix {select(latticePoints P, x -> x != 0)};
+t0 = regularFineTriangulation(A, Homogenize => false);
+M = secondaryCone t0;
+w = transpose matrix {regularTriangulationWeights t0};
+assert all(flatten entries (M * w), x -> x >= 0);
+-- At least one totally cyclic wall exists in this example.
+wcs = wallCircuits t0;
+assert any(wcs, t -> #(t#0) == 0 or #(t#1) == 0);
+///
+
+TEST ///
+-- secondaryCone of a non-regular triangulation has no interior point.
+-- Verified via the engine LP rawConeInteriorPoint: the fullDim flag is 0
+-- iff the secondary cone has empty interior iff the triangulation is
+-- not regular.  Cross-checked against isRegularTriangulation (Topcom).
+debug Core
+A = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{4,-2}};
+tri = {{0,1,2}, {1,3,5}, {2,3,4}, {0,1,5}, {0,2,4}, {3,4,5}, {1,2,3}};
+Ta = triangulation(A, tri);
+Ma = secondaryCone Ta;
+assert(not isRegularTriangulation Ta);
+ra = map(RR_53, rawConeInteriorPoint raw(-Ma));
+assert((entries ra)#0#0 == 0.0);
+
+-- Same combinatorics on a perturbed point set gives a regular
+-- triangulation, whose secondary cone has full-dimensional interior.
+Ab = transpose matrix {{0,3},{0,1},{-1,-1},{1,-1},{-4,-2},{7,-2}};
+Tb = triangulation(Ab, tri);
+Mb = secondaryCone Tb;
+assert(isRegularTriangulation Tb);
+rb = map(RR_53, rawConeInteriorPoint raw(-Mb));
+assert((entries rb)#0#0 == 1.0);
+///
+
+TEST ///
+-- triangulation constructor: auto-detect Homogenize from max-simplex sizes,
+-- (List, List) form, and rejection of inconsistent inputs.
+A = transpose matrix {{0,0},{1,0},{0,1},{1,1}}
+T1 = triangulation(A, {{0,1,2},{1,2,3}})
+assert(numRows matrix T1 == 3)             -- point set: augmented
+assert(T1.cache#"point set" === true)
+
+V = transpose matrix {{1,1,1,1},{0,1,1,1},{1,0,1,1},{1,1,0,1},{0,0,1,1},{0,1,0,1},{1,0,0,1},{0,0,0,1}}
+triV = {{0,1,2,3},{1,2,3,4},{1,3,4,5},{2,3,4,6},{3,4,5,6},{4,5,6,7}}
+Tv = triangulation(V, triV)
+assert(numRows matrix Tv == 4)             -- vector config: stored as-is
+assert(Tv.cache#"point set" === false)
+
+T3 = triangulation({{0,0},{1,0},{0,1},{1,1}}, {{0,1,2},{1,2,3}})  -- (List, List)
+assert(max T3 == max T1)
+assert(matrix T3 == matrix T1)
+
+-- Explicit Homogenize matching the inferred value still works.
+assert(max triangulation(A, {{0,1,2},{1,2,3}}, Homogenize => true) == max T1)
+assert(max triangulation(V, triV, Homogenize => false) == max Tv)
+
+-- Inconsistent explicit option errors.
+assert try (triangulation(V, triV, Homogenize => true); false) else true
+assert try (triangulation(A, {{0,1,2},{1,2,3}}, Homogenize => false); false) else true
+
+-- Empty triangulation errors.
+assert try (triangulation(A, {}); false) else true
+
+-- Mixed simplex sizes error.
+assert try (triangulation(A, {{0,1,2},{0,1}}); false) else true
+///
+
+-*
+restart
+needsPackage "Triangulations"
+*-
+///
+  -- testing generateTriangulations, and flipGraph (not written yet!)
+  -- Let's start with a reflexive polytope of dim 4, with h11=4.
+  needsPackage "ReflexivePolytopesDB"
+  --tope = (kreuzerSkarke 4)#100
+  tope = KSEntry "4 10  M:73 10 N:9 7 H:4,58 [-108] id:100
+     1   1   1   0   1   1  -3   1   1  -9
+     0   2   0   0   3  -1  -3  -1   4  -6
+     0   0   2   0  -1   3  -3   4  -1  -6
+     0   0   0   1  -1  -1   1  -1  -1   4
+     "
+  P = polar convexHull matrix tope
+  A = matrix {select(latticePoints P, x -> x != 0)}
+  -- Ts = allTriangulations(A, Homogenize => false) -- 24 total here.
+  -- for T in Ts list # sort unique flatten max T
+
+  t0 = regularFineTriangulation(A, Homogenize => false) -- calls topcom
+  secondaryCone t0
+  
+  -- assert isWellDefined t0 -- calls topcom
+  -- assert naiveIsTriangulation t0 -- FAILS
+  -- assert isRegularTriangulation t0 -- calls topcom
+  -- regularTriangulationWeights t0 
+///
+
+/// -- test for wallCircuits
+  vecs = transpose matrix {{1, 1, 1, 1}, {0, 1, 1, 1}, {1, 0, 1, 1}, {1, 1, 0, 1}, {0, 0, 1, 1}, {0, 1, 0, 1}, {1, 0, 0, 1}, {0, 0, 0, 1}}
+  maxsimps = {{0, 1, 2, 3}, {1, 2, 3, 4}, {1, 3, 4, 5}, {2, 3, 4, 6}, {3, 4, 5, 6}, {4, 5, 6, 7}}
+  tri = triangulation(vecs, maxsimps) -- should work
+  assert(flipCandidates tri == flipCandidates(Amat, max tri))
+  wallCircuits tri
+  for x in flipCandidates tri list bistellarFlip(tri, x)
+  neighbors tri
+///
+
 end----------------------------------------------------
 
 restart
@@ -2772,6 +3055,9 @@ needsPackage "Triangulations"
   assert isRegularTriangulation t0 -- calls topcom
   regularTriangulationWeights t0 
 
+  -- secondary cone?
+  secondaryCone(transpose matrix vectors t0, max t0)
+  
   -- now let's find flip graph...
   flipGraph t0
   G = flipGraph(t0, Fine => false)
