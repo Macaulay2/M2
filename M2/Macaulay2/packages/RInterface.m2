@@ -29,6 +29,7 @@ export {
     -- types
     "RObject",
     "RFunction",
+    "RContext",
 
     -- methods
     "RQuote",
@@ -498,6 +499,40 @@ RValue = method(
     Options => {Environment => RObject RGlobalEnv})
 RValue String := o -> s -> Reval(Rparse("text" => s), RObject o.Environment)
 RValue Sequence := o -> s -> RValue(concatenate \\ toString \ s, o)
+
+RContext = new SelfInitializingType of MutableHashTable
+RContext.synonym = "R context"
+globalAssignment RContext
+
+protect Environment
+new RContext := T -> T {Environment => RObject hashTable {}}
+new RContext from String := (T, s) -> (
+    env := RObject hashTable {};
+    RValue(s, Global => env);
+    T {Environment => env})
+
+RContext String := (ctx, s) -> RValue(s, Global => ctx.Environment)
+RContext_String := (ctx, key) -> ctx.Environment_key
+
+importFrom(Core, {"Abbreviate", "TABLE", "TD", "TH"})
+listSymbols RObject := x -> (
+    if not TYPEOF x == ENVSXP
+    then error "expected an environment"
+    else TABLE prepend(
+	apply({"symbol", "class", "value"}, s -> TH {s}),
+	apply(value RObject lsInternal(x, 0) ?? {},
+	    name -> (
+		val := x_name;
+		apply({
+			name,
+			type2char TYPEOF val,
+			Abbreviate {val}}, s-> TD {s})))))
+listSymbols RContext := ctx -> listSymbols ctx.Environment
+
+use RContext := ctx -> (
+    scan(value RObject lsInternal(ctx.Environment, 0) ?? {}, key -> (
+	    if not match("[\\._]", toString key)
+	    then getSymbol toString key <- ctx.Environment_key));)
 
 beginDocumentation()
 
