@@ -17,11 +17,11 @@ Node
     (random, ZZ, ZZ)
     (random, QQ)
     (random, Type)
-    (random, List)
     (random, ZZ, Ideal)
     (random, ZZ, Ring)
     (random, Module)
     (random, Module, Module)
+    randomElement
     setRandomSeed
     randomSubset
 
@@ -178,21 +178,25 @@ Node
 
 Node
   Key
-    (random, List)
+     randomElement
+    (randomElement, List)
+--    (random, List)
   Headline
     select a random element of a list
   Usage
-    random L
+    randomElement L
   Inputs
     L:List
   Outputs
     :Thing -- random element of @VAR "L"@
   Description
     Example
-      random toList (0 .. 12)
+      randomElement toList (0 .. 12)
+    Text
+      In the near future, this will also be the behavior of
+      @TO (random, List)@.
   SeeAlso
     setRandomSeed
-    shuffle
 
 Node
   Key

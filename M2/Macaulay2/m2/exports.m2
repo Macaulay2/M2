@@ -1051,6 +1051,7 @@ export {
 	"quotientRemainder",
 	"quotientRemainder'",
 	"random",
+	"randomElement",
 	"randomKRationalPoint",
 	"randomMutableMatrix",
 	"randomSubset",

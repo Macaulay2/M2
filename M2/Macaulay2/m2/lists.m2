@@ -228,7 +228,21 @@ flexibleOperators = sort flexibleOperators
 fixedOperators = sort fixedOperators
 allOperators = sort allOperators
 
-random List := opts -> x -> x#(random(#x))
+randomElement = method()
+randomElement List := x -> (
+    if #x == 0 then error "expected a nonempty list";
+    x#(random(#x)))
+
+-- TODO: change to call randomElement instead (M2 1.26.11 or 1.27.05)
+seenRandomWarning := false;
+random List := opts -> (
+    x -> (
+	if not seenRandomWarning then (
+	    printerr(
+		"the behavior of random(List) will change soon; ",
+		"use shuffle(List) instead");
+	    seenRandomWarning = true);
+	shuffle x))
 
 randomSubset = method()
 -- Knuth Algorithm S, Art of Computer Programming, Section 3.4.2

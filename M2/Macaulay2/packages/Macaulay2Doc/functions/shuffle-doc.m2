@@ -4,6 +4,7 @@ doc ///
     (shuffle, List)
     (shuffle, MutableList)
     (shuffle, List, ZZ)
+    (random, List)
   Headline
     shuffle a list randomly
   Usage
@@ -29,8 +30,13 @@ doc ///
       which preserves the order.
     Example
       shuffle(toList(0..12), 4)
+    Text
+      Currently, @TO random@ has this behavior when given a list.
+      However, in the near future, this will change to the behavior of
+      @TO randomElement@.
+    Example
+      random toList(0..12)
   SeeAlso
     setRandomSeed
-    (random, List)
     randomSubset
 ///
