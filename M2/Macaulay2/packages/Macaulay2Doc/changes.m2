@@ -67,6 +67,17 @@ changesHelper List := opt -> pkgnames -> (
 	    << endl)))
 
 document {
+    Key => "changes, 1.26.05",
+        UL {
+	LI { "improved packages:",
+	    UL {
+		LI { TO "BettiCharacters::BettiCharacters", " has been updated to version 2.6. Changes include significant optimizations of the core algorithm, a new option for semidirect products of finite groups acting on tori, and methods for hyperoctahedral groups. This version introduces breaking changes to the Character type, making it incompatible with previous versions." },
+		}
+	    },
+	}
+    }
+
+document {
     Key => "changes, 1.25.11",
         UL {
 	LI { BOLD "upcoming breaking changes:",
