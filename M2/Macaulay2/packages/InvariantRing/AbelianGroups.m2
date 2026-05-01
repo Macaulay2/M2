@@ -19,7 +19,7 @@ diagonalAction = method()                   -- Constructor for DiagonalAction ob
 
 -------------------------------
 ---- diagonalAction constructor
--->-    W1 & W2 - Weight matricies
+-->-    W1 & W2 - Weight matrices
 -->-    g       - Order of the group
 -->-    R       - Ring
 diagonalAction (Matrix, Matrix, List, PolynomialRing) := DiagonalAction => (W1, W2, d, R) -> (
@@ -65,7 +65,7 @@ diagonalAction (Matrix, Matrix, List, PolynomialRing) := DiagonalAction => (W1, 
 
 -------------------------------
 ---- diagonalAction constructor
--->-    W       - Weight matricies
+-->-    W       - Weight matrices
 -->-    g       - Order of the group
 -->-    R       - Ring
 diagonalAction (Matrix, List, PolynomialRing) := DiagonalAction => (W, d, R) -> (

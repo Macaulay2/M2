@@ -308,7 +308,7 @@ document {
      PARA{
 	  "This page contains a discussion on the two algorithms that are used 
 	  in the function ", TO primaryInvariants, ", which computes a 
-	  homogenous system of parameters (hsop) for the invariant ring ", 
+	  homogeneous system of parameters (hsop) for the invariant ring ", 
 	  TT "R:=K[x", SUB TT "1", TT ",...,x", SUB TT "n", TT "]", SUP TT "G", 
 	  " of a finite group ", TT "G", ". Which algorithm is used depends on 
 	  the ", TO Boolean, " value the optional argument ", TO Dade, " takes. 

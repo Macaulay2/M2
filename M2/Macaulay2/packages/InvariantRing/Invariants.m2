@@ -248,7 +248,7 @@ elementaryInvariants := D -> (
 
 	--> Starting with seed expansion <--
 	-- Note that the "drop" function is used in combination with the seedminimal function in this loop.
-	-- This is because seed minimal appends a "result" and "index" value to the begining of a seed.
+	-- This is because seed minimal appends a "result" and "index" value to the beginning of a seed.
 	-- Thus by saying drop(candidate, 2), we get rid of those information values. 
 	for s when s < #seedList do (		-- We use a "when" loop here because size of newList will change
 		startingSeed := seedList#s;

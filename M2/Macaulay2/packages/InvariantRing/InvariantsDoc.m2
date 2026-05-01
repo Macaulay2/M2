@@ -915,7 +915,7 @@ document {
 	
 	Inputs => {
 	    	"S" => RingOfInvariants,
-		Variable => "name of the varibles in the polynomial ring."
+		Variable => "name of the variables in the polynomial ring."
 		},
 	    
 	Outputs => {
