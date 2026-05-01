@@ -1,6 +1,129 @@
-------------------------------------
--- RObject constructors by type  --
-------------------------------------
+doc ///
+  Key
+    RObject
+    (net, RObject)
+    (toString, RObject)
+  Headline
+    R object
+  Usage
+    RObject x
+  Inputs
+    x:Thing -- a Macaulay2 object
+  Outputs
+    :RObject -- the R equivalent of @VAR "x"@
+  Description
+    Text
+      An @SAMP "RObject"@ is a @SAMP "SEXP"@ (pointer) to an R object
+      in memory.  Note that in R, most objects are actually vectors, and
+      scalars are just vectors of length 1.
+
+      @SAMP "RObject"@ is a @TO SelfInitializingType@, and so it acts
+      as its own constructor method.  When passed a Macaulay2 object
+      as input, the corresponding R object is returned.  See the
+      @SAMP "converting to R objects"@ section below for the supported
+      input types.
+
+      Each @SAMP "RObject"@ is displayed by calling R's
+      @SAMP "capture.output"@ function.
+    Example
+      RObject {2, 4, 6, 8}
+      RObject pi
+    Text
+      It is converted to a string using R's @SAMP "toString"@ function.
+    Example
+      toString RObject {2, 4, 6, 8}
+  Subnodes
+    :converting to R objects
+    (NewFromMethod, RObject, Boolean)
+    (NewFromMethod, RObject, CC)
+    (NewFromMethod, RObject, HashTable)
+    (NewFromMethod, RObject, List)
+    (NewFromMethod, RObject, Matrix)
+    (NewFromMethod, RObject, Nothing)
+    (NewFromMethod, RObject, RR)
+    (NewFromMethod, RObject, Sequence)
+    (NewFromMethod, RObject, String)
+    (NewFromMethod, RObject, Symbol)
+    (NewFromMethod, RObject, ZZ)
+    "NA"
+    :converting from R objects
+    (value, RObject)
+    :extracting or replacing parts
+    (symbol _, RObject, Thing)
+    (symbol SPACE, RObject, Array)
+    :iteration
+    (iterator, RObject)
+    (length, RObject)
+    :arithmetic operators
+    (symbol +, RObject, RObject)
+    (symbol -, RObject, RObject)
+    (symbol *, RObject, RObject)
+    (symbol /, RObject, RObject)
+    (symbol ^, RObject, RObject)
+    (symbol %, RObject, RObject)
+    (symbol //, RObject, RObject)
+    (symbol :, RObject, RObject)
+    :relational operators
+    (symbol ==, RObject, RObject)
+    (symbol ?, RObject, RObject)
+    :logical operators
+    (symbol not, RObject)
+    (symbol and, RObject, RObject)
+    (symbol or, RObject, RObject)
+    (symbol xor, RObject, RObject)
+    :bitwise operators
+    (symbol ~, RObject)
+    (symbol &, RObject, RObject)
+    (symbol |, RObject, RObject)
+    (symbol ^^, RObject, RObject)
+    (symbol <<, RObject, RObject)
+    (symbol >>, RObject, RObject)
+    :rounding
+    (ceiling, RObject)
+    (floor, RObject)
+    (truncate, RObject)
+    (round, RObject, RObject)
+    :maxima, minima, sums, and products
+    (max, RObject)
+    (min, RObject)
+    (sum, RObject)
+    (product, RObject)
+    :power, exponential, and logarithmic functions
+    (abs, RObject)
+    (sqrt, RObject)
+    (exp, RObject)
+    (expm1, RObject)
+    (log, RObject)
+    (log1p, RObject)
+    :trigonometric functions
+    (acos, RObject)
+    (asin, RObject)
+    (atan, RObject)
+    (atan2, RObject, RObject)
+    (cos, RObject)
+    (sin, RObject)
+    (tan, RObject)
+    :hyperbolic functions
+    (acosh, RObject)
+    (asinh, RObject)
+    (atanh, RObject)
+    (cosh, RObject)
+    (sinh, RObject)
+    (tanh, RObject)
+    :complex number functions
+    (conjugate, RObject)
+    (imaginaryPart, RObject)
+    (realPart, RObject)
+    :special mathematical functions
+    (Beta, RObject, RObject)
+    (Digamma, RObject)
+    (Gamma, RObject)
+    (lngamma, RObject)
+    (binomial, RObject, RObject)
+    (symbol !, RObject)
+    :formulas
+    (symbol ~, RObject, RObject)
+///
 
 doc ///
   Key
