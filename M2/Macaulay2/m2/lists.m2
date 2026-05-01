@@ -33,7 +33,8 @@ List /  RingElement := List /  Number := List => (v,b) -> apply(v,x->x /  b)
 List // RingElement := List // Number := List => (v,b) -> apply(v,x->x // b)
 List  % RingElement := List  % Number := List => (v,b) -> apply(v,x->x  % b)
 
-VisibleList _ List := VisibleList => (x,y) -> apply(splice y, i -> x#i)
+VisibleList _ List := VisibleList => (L, ind) -> (
+    new class L from apply(splice ind, i -> L#i))
 
 Sequence .. Sequence := Sequence => (v,w) -> (
      n := #v;
