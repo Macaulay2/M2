@@ -7,6 +7,9 @@ typeCYijn = (i,j,n) -> ( Eijm(i,n+j,2*n)+Eijm(j,n+i,2*n));
 typeCZijn = (i,j,n) -> ( Eijm(n+i,j,2*n)+Eijm(n+j,i,2*n));
 
 
+-- The next five functions about weights are for getting the basis elements
+-- into lex level order
+-- They aren't used for computing weights in representationWeights
 
 -- Want to change between Dynkin basis of the weight lattice and L_i basis
 -- Use the formula for type C in [FH, Section 17.2], p. 259
@@ -86,7 +89,7 @@ sp2nBasisElements = (n) -> (
 );
 
 
-
+-*
 sp2nDualBasis = (n) -> (
     B:={};
     Hbasis := apply(n, i -> 1/2*typeCHin(i,n));
@@ -100,12 +103,12 @@ sp2nDualBasis = (n) -> (
     sigma:=sp2nPermutation(n);
     apply(sigma, i -> unorderedDualBasis_i)
 );
-
+*-
 
 
 sp2nBasisLabels = (n) -> (
     B:={};
-    Hbasis := apply(n, i -> "H_"|toString(i));
+    Hbasis := apply(n, i -> "Ha_"|toString(i));
     Xbasis := flatten apply(n, i -> delete(null,apply(n, j -> if j!=i then "X_"|toString(i,j) )));   
     Ybasis := flatten apply(n, i -> delete(null,apply(n, j -> if i<j then "Y_"|toString(i,j) ))); 
     Zbasis := flatten apply(n, i -> delete(null,apply(n, j -> if i<j then "Z_"|toString(i,j) )));
