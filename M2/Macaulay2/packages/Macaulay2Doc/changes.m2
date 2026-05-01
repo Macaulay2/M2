@@ -6,6 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  -- TO "changes made for the next release",
+	  TO "changes, 1.26.05",
 	  TO "changes, 1.25.11",
 	  TO "changes, 1.25.05",
 	  TO "changes, 1.24.11",
@@ -65,6 +66,17 @@ changesHelper List := opt -> pkgnames -> (
 	    << (if opt.Certification then "published" else "added")
 	    << ".\" },"
 	    << endl)))
+
+document {
+    Key => "changes, 1.26.05",
+        UL {
+	LI { "improved packages:",
+	    UL {
+		LI { TO "InvariantRing::InvariantRing", " has been updated to version 2.4, which includes a new algorithm for invariants of elementary abelian $p$-groups, as well as bugfixes and documentation improvements. The ", TT "permutationMatrix", " method now takes arrays as inputs." },
+		}
+	    },
+	}
+    }
 
 document {
     Key => "changes, 1.25.11",
