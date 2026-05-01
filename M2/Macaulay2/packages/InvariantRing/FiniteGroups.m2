@@ -46,29 +46,26 @@ numgens FiniteGroupAction := ZZ => G -> G.numgens
 
 -------------------------------------------
 
-isAbelian = method()
+isAbelian = method(Options => true)
 
-isAbelian FiniteGroupAction := { } >> opts -> (cacheValue (symbol isAbelian)) (G -> runHooks(FiniteGroupAction, symbol isAbelian, G) )
+isAbelian FiniteGroupAction := { } >> opts -> (cacheValue (symbol isAbelian)) (
+    G -> runHooks((isAbelian, FiniteGroupAction), G) )
 
 
-addHook(FiniteGroupAction, symbol isAbelian, G -> break (
+addHook((isAbelian, FiniteGroupAction), G -> (
 	X := G.generators;
     	n := #X;
-    	if n == 1 then(
-	    true 
-	    )
-    	else(
-	    all(n - 1, i -> all(n - 1 - i, j -> (X#j)*(X#(n - 1 - i)) == (X#(n - 1 - i))*(X#j) ) )
-	    )
-	  ))
+    	if n == 1 then true 
+    	else all(n - 1, i -> all(n - 1 - i, j -> (X#j)*(X#(n - 1 - i)) == (X#(n - 1 - i))*(X#j) ) )
+	))
   
   
 
-generateGroup = method()
+generateGroup = method(Options => true)
 
-generateGroup FiniteGroupAction := { } >> opts -> (cacheValue (symbol generateGroup)) (G -> runHooks(FiniteGroupAction, symbol generateGroup, G) )
+generateGroup FiniteGroupAction := {} >> opts -> (cacheValue (symbol generateGroup)) (G -> runHooks((generateGroup, FiniteGroupAction), G) )
 
-addHook(FiniteGroupAction, symbol generateGroup, G -> break (
+addHook((generateGroup, FiniteGroupAction), G -> (
     m := numgens G;
     n := dim G;
     K := coefficientRing ring G;
@@ -111,40 +108,37 @@ addHook(FiniteGroupAction, symbol generateGroup, G -> break (
 
 -------------------------------------------
 
-schreierGraph = method()
+schreierGraph = method(Options => true)
 
-schreierGraph FiniteGroupAction := { } >> opts -> (cacheValue (symbol schreierGraph)) (G -> runHooks(FiniteGroupAction, symbol schreierGraph, G) )
+schreierGraph FiniteGroupAction := {} >> opts -> (cacheValue (symbol schreierGraph)) (G -> runHooks((schreierGraph, FiniteGroupAction), G) )
 
-addHook(FiniteGroupAction, symbol schreierGraph, 
-    G -> break (generateGroup G)_0  
-    )    
+addHook((schreierGraph, FiniteGroupAction),  G -> (generateGroup G)_0 )    
    
 
 -------------------------------------------
 
-group = method()
+group = method(Options => true)
 
-group FiniteGroupAction := { } >> opts -> (cacheValue (symbol group)) (G -> runHooks(FiniteGroupAction, symbol group, G) )
+group FiniteGroupAction := { } >> opts -> (cacheValue (symbol group)) (G -> runHooks((group, FiniteGroupAction), G) )
 
-addHook(FiniteGroupAction, symbol group, 
-    G -> break keys first schreierGraph G  
-    )
+addHook((group, FiniteGroupAction), G -> keys first schreierGraph G )
 
--------------------------------------------
-
-words = method()
-
-words FiniteGroupAction := { } >> opts -> (cacheValue (symbol words)) (G -> runHooks(FiniteGroupAction, symbol words, G) )
-
-addHook(FiniteGroupAction, symbol words, 
-    G -> break applyValues((generateGroup G)_1, val -> first val)
-    )
 
 -------------------------------------------
 
-relations FiniteGroupAction := { } >> opts -> (cacheValue (symbol relations)) (G -> runHooks(FiniteGroupAction, symbol relations, G) )
+words = method(Options => true)
 
-addHook(FiniteGroupAction, symbol relations, G -> break (
+words FiniteGroupAction := { } >> opts -> (cacheValue (symbol words)) (G -> runHooks((words, FiniteGroupAction), G) )
+
+addHook((words, FiniteGroupAction), G -> applyValues((generateGroup G)_1, val -> first val) )
+
+
+-------------------------------------------
+
+relations FiniteGroupAction := { } >> opts -> (cacheValue (symbol relations)) (
+    G -> runHooks((relations, FiniteGroupAction), G) )
+
+addHook((relations, FiniteGroupAction), G -> (
     relators := values last generateGroup G;
     W := apply(relators, r -> first r);
     relators = flatten apply(#W, i -> apply(drop(relators#i, 1), a -> {W#i,a} ) );
@@ -159,57 +153,43 @@ addHook(FiniteGroupAction, symbol relations, G -> break (
     unique relators 
     )) 
 
+
 -------------------------------------------
 
-permutationMatrix = method()
+permutationMatrix = method(Options => {EntryMode => "one-line"})
 
-permutationMatrix String := Matrix => s -> (
-    n := #s;
-    p := apply(n, i -> (
-	    v := value(s#i);
-	    if v <= 0 or v > n then (
-		error "permutationMatrix: Expected a string of positive integers
-		representing a permutation."
-		)
-	    else v
-	    )
-	);
-    if #(unique p) =!= n then (
-	error "permutationMatrix: Expected a string of distinct integers."
-	);
-    matrix apply(n, i -> 
-	apply(n, j -> if p#j - 1 == i then 1 else 0)
+permutationMatrix Array := Matrix => opts -> p -> (
+    if opts.EntryMode == "cycle" then permutationMatrix(max p, p)
+    else (
+    	n := max p;
+    	if #p =!= n or set (1..n) =!= set p then (
+	    error "permutationMatrix: Expected a sequence of positive integers
+	    representing a permutation."
+	    );
+    	matrix apply(n, i -> apply(n, j -> if p#j - 1 == i then 1 else 0) )
 	)
     )
 
-permutationMatrix (ZZ, Array) := Matrix => (n, c) -> permutationMatrix(n, {c})
-
-permutationMatrix (ZZ, List) := Matrix => (n, p) -> (
-    if n <= 0 then (error "permutationMatrix: Expected the first input to be a positive integer.");
-    if any(p, c -> not instance(c, Array) or any(c, i -> i <= 0 or i > n)) then (
-	error "permutationMatrix: Expected the second input to be a list of arrays
-	 with integer entries between 1 and the first input."
+permutationMatrix (ZZ, Array) := Matrix => opts -> (n, c) -> (
+    if n <= 0 then error "permutationMatrix: Expected a positive integer.";
+    if #c == 0 then error "permutationMatrix: Expected a nonempty array,";
+    if #(set c) =!= #c or not isSubset(set c, set(1..n)) then (
+	error "permutationMatrix: Expected an array of distinct integers 
+	between 1 and the first input."
 	 );
-     if any(p, c -> #(unique toList c) =!= #c) then (error "permutationMatrix: Expected each sequence in 
-	 the list to have distinct entries.");
-     s := new MutableHashTable from apply(n, i -> i + 1 => i + 1);
-     scan(p, c -> (
-	     k := #c;
-	     u := hashTable pairs s;
-	     scan(k, j -> (
-		     if j < k - 1 then s#(c_j) = u#(c_(j+1))
-		     else s#(c_j) = u#(c_0)
-		     )
-		 )
+     permutationMatrix new Array from apply(n, i ->
+	 if (set c)#?(i + 1) then (
+	     k := position(c, j -> j == i + 1);
+	     if k == #c - 1 then c#0 else c#(k + 1)
 	     )
-	 );
-     s = horizontalJoin apply(values s, i -> toString i);
-     permutationMatrix toString s
-     )  
-	 
-permutationMatrix Array := Matrix => c -> permutationMatrix(max c, c)
+	 else i + 1
+	 )
+     )
 
-permutationMatrix List := Matrix => p -> permutationMatrix(max (p/max), p)	     
+permutationMatrix (ZZ, List) := Matrix => opts -> (n, p) -> product apply(p, c -> permutationMatrix(n, c) )
+
+permutationMatrix List := Matrix => opts -> p -> permutationMatrix(max (p/max), p)
+	     
 	 
 	
 
