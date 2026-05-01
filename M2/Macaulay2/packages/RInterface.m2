@@ -287,6 +287,7 @@ valueFunctions = hashTable {
 	z := value(Rcomplex * COMPLEX  x);
 	z#"r" + ii * z#"i"),
     STRSXP     => x -> (
+	if length x == 0 then return "";
 	y := stringElt(x, 0);
 	T := TYPEOF y;
 	if T == CHARSXP then value CHAR y
