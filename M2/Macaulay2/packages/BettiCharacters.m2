@@ -4073,10 +4073,9 @@ A = action(K,S4)
 c = character A
 signrep = character(R, hashTable { (-4,{-4}) => matrix{{-1,1,1,-1,1}} })
 -- adding for debugging purposes
-dual(c,id_QQ)
-peek oo
-c ** signrep
-peek oo
+DR = c.degreesRing
+M = matrix{{DR_{-4}}} * matrix{{-1,1,1,-1,1}}
+degrees M
 -- check duality of representations in Koszul complex
 -- which is true up to a twist by a sign representation
 assert(dual(c,id_QQ) == c ** signrep)
