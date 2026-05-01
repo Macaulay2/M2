@@ -4,7 +4,7 @@
 
 #include "M2mem.h"
 #include "types.h"
-#include "debug.h"
+#include <interface/m2-mem.h>
 #include "supervisorinterface.h"
 
 #include <readline/readline.h>

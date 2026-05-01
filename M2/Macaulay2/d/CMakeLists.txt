@@ -18,7 +18,6 @@ set(CLIST
   M2types.c M2lib.c M2mem.c types.h
   scclib.c ../c/scc-core.h
   memdebug.c memdebug.h
-  debug.c debug.h
   getpagesize.h M2mem.h
   gmp_aux.c gmp_aux.h
   gdbm_interface.c

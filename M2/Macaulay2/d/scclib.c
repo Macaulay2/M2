@@ -6,7 +6,7 @@
 #include "types.h"
 #include "M2mem.h"
 #include "../c/compat.c"
-#include "debug.h"
+#include <interface/m2-mem.h>
 
 #include "../system/supervisorinterface.h"
 
