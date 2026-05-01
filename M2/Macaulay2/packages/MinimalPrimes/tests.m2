@@ -1884,6 +1884,13 @@ TOODAMNSLOW ///
 
   minimalPrimes I -- doesn't seem to finish.  But in fact crashed in <= M2 1.24.05, (see previous test).
 ///
+
+-- issue #3505
+TEST ///
+assert isPrime ideal 0_(ZZ/2)
+assert isPrime ideal 0_(ZZ/4)
+///
+
 end--
 
 -- UHOH problem with finite fields

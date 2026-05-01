@@ -218,8 +218,7 @@ updateComputation(MinimalPrimesComputation, List) := List => options minimalPrim
 -- Helper for minimalPrimes and decompose
 minprimesHelper = (I, key, opts) -> (
     if I == 1 then return {};
-    J := first flattenRing I;
-    if J == 0 then return {I};
+    if I == 0 or (J := first flattenRing I) == 0 then return {I};
     -- TODO: make presentation work for ZZ, then move this line
     if ring I === ZZ then return ideal \ first \ toList factor (trim I)_0;
     S := ring presentation ring J;
