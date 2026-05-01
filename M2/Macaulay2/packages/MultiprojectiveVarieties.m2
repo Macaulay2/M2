@@ -1000,7 +1000,7 @@ line (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := (X,p) -> (
     if dim V >= 2 then return linearSpan {p,point V};
     L := select(decompose V,l -> dim l == 1 and degree l == 1);
     if # L == 0 then error("failed to find line in "|toString(? X));
-    random L
+    randomElement L
 );
 line (EmbeddedProjectiveVariety,ZZ) := (X,n) -> (
     L := try line(X,point X) else null;

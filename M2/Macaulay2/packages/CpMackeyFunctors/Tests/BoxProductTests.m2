@@ -27,7 +27,7 @@ assert (class (inverse f) ===MackeyFunctorHomomorphism)
 
 -- Test induced map on box products
 for i to 5 do (
-    p = random {2,3,5,7};
+    p = randomElement {2,3,5,7};
     n = random 21;
     M = makeRandomCpMackeyFunctor(p);
     A = makeBurnsideMackeyFunctor(p);

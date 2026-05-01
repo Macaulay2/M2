@@ -175,7 +175,7 @@ randomSemistandardTableau (Partition,Partition,ZZ) := (lam,mu,maxEntry) -> (
         --possibleEntries := toList(minEntry .. maxEntry);
         possibleEntries := join toSequence for i from minEntry to maxEntry list toList((2^(i-1)):i);
         
-        T_thePosition = random possibleEntries;
+        T_thePosition = randomElement possibleEntries;
         );
 
     youngTableau(lam,mu,new List from entries T)

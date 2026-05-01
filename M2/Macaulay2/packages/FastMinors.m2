@@ -345,7 +345,7 @@ chooseRandomNonzeroSubmatrix(ZZ, Matrix) := opts -> (n1, M1) -> (
       --curList = flatten entries curM1;
       entryList = entries transpose matrix nonzeroEntries(curM1);
       if #entryList == 0 then return null;
-      curEntry = random entryList;
+      curEntry = randomElement entryList;
       --print (curList#curMax);
       curRow = curEntry#0;
       curCol = curEntry#1;

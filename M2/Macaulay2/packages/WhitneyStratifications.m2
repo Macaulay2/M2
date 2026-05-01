@@ -1205,7 +1205,7 @@ fiberContAssocPrimes=(IY,ConX)->(
     -- if we want to use Msolve here 
     --can replace I with monomialIdeal leadTerm(I), and use Msolve for leadTerm
     mis:= independentSets(IY);
-    u:=support(random mis);
+    u:=support(randomElement mis);
     xMinusU:=rsort toList(set(gens R) - set(u));
     els:=(#xMinusU)+numgens(R);
     S1:=kk[xMinusU, (gens S)_(toList(numgens(R)..numgens(S)-1)),u,MonomialOrder => {els,numgens(S)-els}];

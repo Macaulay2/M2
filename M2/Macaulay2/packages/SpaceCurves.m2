@@ -566,7 +566,7 @@ curve (ZZ,ZZ,Ring) := (d,g,R) -> (
     --generates a random curve of degree d and genus g in a given ring
     if 2*g == (d-1)*(d-2) then return ideal(random(1,R),random(d,R));
     L := smoothDivisors(d,g,R);
-    if L != {}  then return curve random L
+    if L != {}  then return curve randomElement L
     else print "No smooth curve with this degree and genus exists!";   
 )
 curve (ZZ,ZZ) := (d,g) -> (
