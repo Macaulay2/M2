@@ -232,8 +232,15 @@ Ring / List := Ring / Sequence := QuotientRing => (R,f) -> R / promote(ideal f, 
 
 -----------------------------------------------------------------------------
 
-presentation PolynomialRing := Matrix => R -> map(R^1, R^0, 0)
-presentation QuotientRing   := Matrix => R -> R.presentation ??= (
+ZZ.presentation =
+QQ.presentation = R -> presentation module R
+presentation Ring := Matrix => R -> (
+    if R.?presentation then R.presentation R
+    else notImplemented "presentation for this ring")
+presentation InexactFieldFamily := Matrix => R -> presentation default R
+presentation PolynomialRing :=
+presentation InexactField   := Matrix => R -> presentation module R
+presentation QuotientRing   := Matrix => R -> R.cache.presentation ??= (
 	  S := ambient R;
 	  f := generators ideal R;
 	  while class S === QuotientRing do (		    -- untested code
