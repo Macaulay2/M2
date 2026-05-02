@@ -102,7 +102,7 @@ isConstant = method(TypicalValue => Boolean)
 isConstant RingElement := r -> liftable(r, coefficientRing ring r)
 
 lift = method(Dispatch => {Thing, Type, Type}, Options => {Verify => true})
-Number ^ Ring := lift
+Number ^ Ring := RingElement ^ Ring := lift
 
 promote = method(Dispatch => {Thing, Type, Type})
 Number _ Ring := promote

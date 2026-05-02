@@ -10,7 +10,6 @@ undocumented {
      (symbol ^, QQ, InfiniteNumber),
      (symbol ^, RR, InfiniteNumber),
      (symbol ^, Constant, Constant),
-     (symbol ^, Constant, RingFamily),
      (symbol ^, Constant, InexactNumber),
      (symbol ^, Constant, Number),
      (symbol ^, InexactNumber, Constant),

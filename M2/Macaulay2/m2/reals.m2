@@ -363,8 +363,8 @@ Constant _ Ring := (c,R) -> (
 Number   _ RingFamily :=
 Constant _ RingFamily := (x, R) -> x_(default R)
 -- TODO: find examples, or remove
-Number   ^ RingFamily :=
-Constant ^ RingFamily := (x, R) -> lift(x, default R) -- TODO: set Verify => false?
+Number      ^ RingFamily :=
+RingElement ^ RingFamily := (x, R) -> lift(x, default R) -- TODO: set Verify => false?
 
 Constant + Number := (c,x) -> numeric c + x
 Number + Constant := (x,c) -> x + numeric c

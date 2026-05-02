@@ -54,6 +54,8 @@ document {
       (lift, RRi, ZZ),
 	  (symbol ^, Number, Ring),
 	  (symbol ^, Number, RingFamily),
+	  (symbol ^, RingElement, Ring),
+	  (symbol ^, RingElement, RingFamily),
       (lift,Matrix,RRi',QQ),
       (lift,Matrix,RRi',RR'),
       (lift,Matrix,RRi',ZZ)
