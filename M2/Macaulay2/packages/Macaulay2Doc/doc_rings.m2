@@ -197,7 +197,7 @@ document {
     "Macaulay2 provides for fraction fields of integral domains.",
     PARA{},
     "In some cases, normal forms of fractions makes sense, but in general
-    for fraction fieldss of quotient rings, there is no notion of
+    for fraction fields of quotient rings, there is no notion of
     normal form for a fraction.
     In other words, fractions
     may be equal without displaying the same numerator and denominator.",

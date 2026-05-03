@@ -1333,7 +1333,7 @@ Node
 	    WS=new MutableHashTable from for k in keys WS1 list k=>toList((set(WS1)#k)*(set(WS2)#k))
 	    peek WS
 	Text 
-	    There are also several different options to perform the underlying polar variety calculations. The default algorithm uses the M2 saturate command to compute the polar variteies, this option is Algorithm=>. The other options are: Algorithm=>"msolve" and  Algorithm=>"M2F4". The Algorithm=>"msolve" only works in versions 1.25.06 and above of Macaulay2. The  Algorithm=>"M2F4" is mostly beneficial when working over a finite field. Note that over a finite field we can still sometimes obtain useful information about the stratification, but the coefficients appearing in the resulting polynomials may (or likely will) be incorrect. 
+	    There are also several different options to perform the underlying polar variety calculations. The default algorithm uses the M2 saturate command to compute the polar varieties, this option is Algorithm=>. The other options are: Algorithm=>"msolve" and  Algorithm=>"M2F4". The Algorithm=>"msolve" only works in versions 1.25.06 and above of Macaulay2. The  Algorithm=>"M2F4" is mostly beneficial when working over a finite field. Note that over a finite field we can still sometimes obtain useful information about the stratification, but the coefficients appearing in the resulting polynomials may (or likely will) be incorrect. 
 	Example 
 	    WS3=whitneyStratifyPol(I,Algorithm=>"msolve")
 	    peek WS3

@@ -4,7 +4,7 @@ Node
         Tor
         (Tor,ZZ,CpMackeyFunctor,CpMackeyFunctor)
     Headline
-        computes Tor of two Cp-Mackey fuctors
+        computes Tor of two Cp-Mackey functors
     Usage
         Tor_i(M,N)
     Inputs
@@ -25,7 +25,7 @@ Node
         TorCoh
         (TorCoh,ZZ,CpMackeyFunctor,CpMackeyFunctor)
     Headline
-        computes Tor of two cohomological Cp-Mackey fuctors
+        computes Tor of two cohomological Cp-Mackey functors
     Usage
         TorCoh(i,M,N)
     Inputs
@@ -51,7 +51,7 @@ Node
         Ext
         (Ext,ZZ,CpMackeyFunctor,CpMackeyFunctor)
     Headline
-        computes Ext of two Cp-Mackey fuctors
+        computes Ext of two Cp-Mackey functors
     Usage
         Ext^i(M,N)
     Inputs
@@ -72,7 +72,7 @@ Node
         ExtCoh
         (ExtCoh,ZZ,CpMackeyFunctor,CpMackeyFunctor)
     Headline
-        computes Ext of two cohomological Cp-Mackey fuctors
+        computes Ext of two cohomological Cp-Mackey functors
     Usage
         ExtCoh(i,M,N)
     Inputs
