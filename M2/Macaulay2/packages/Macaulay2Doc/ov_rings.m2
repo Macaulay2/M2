@@ -1218,11 +1218,14 @@ document {
 	  "f = a*r+b*s; f^2",
 	  "basis(2,S)",
 	  },
-     "All modules over exterior algebras are right modules.  This means that matrices 
-     multiply from the opposite side:",
+     -- this section should link to "right modules or left modules?"
+     "In macaulay2, matrix arithmetic is all done in the opposite ring. This is
+     visible in multiplication of matrices over exterior algebras:"
      EXAMPLE {
-	  "x*y",
-	  "matrix{{x}} * matrix{{y}}"
+      "T = QQ[a..d, SkewCommutative => true]",
+      "matrix{{a, b}}",
+	  "matrix{{c}, {d}}",
+      "matrix{{a, b}} * matrix{{c}, {d}}",
 	  },
      "You may compute Gröbner bases, syzygies, and form quotient rings of these skew
      commutative rings.",
