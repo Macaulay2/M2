@@ -283,7 +283,7 @@ char QuotientRing := (stashValue symbol char) ((S) -> (
      if isPrime p or isMember(QQ,S.baseRings) then return if S == 0 then 1 else p;
      relns := presentation S;
      if relns == 0 then return char ring relns;
-     if coefficientRing S =!= ZZ then notImplemented();
+     if ultimate(coefficientRing, S) =!= ZZ then notImplemented();
      g := generators gb relns;
      if g == 0 then return char ring g;
      m := g_(0,0);
