@@ -1190,50 +1190,62 @@ document {
      }
 
 document {
-     Key => "exterior algebras",
-     -- making one, making quotients,
-     -- using it.
-     -- modules are right-modules, example of multiplication.
-     "An exterior algebra is a polynomial ring where multiplication is
-     mildly non-commutative, in that, for every x and y in the ring,
-     y*x = (-1)^(deg(x) deg(y)) x*y, and that for every x of odd degree,
-     x*x = 0.",
-     "In Macaulay2, deg(x) is the degree of x, or the first degree of x, in case 
-     a multi-graded ring is being used.  The default degree for each variable is 1, so
-     in this case, y*x = -x*y, if x and y are variables in the ring.",
-     PARA{},
-     "Create an exterior algebra with explicit generators by creating a polynomial
-     ring with the option ", TO "SkewCommutative", ".",
-     EXAMPLE {
-	  "R = QQ[x,y,z, SkewCommutative => true]",
-      	  "y*x",
-      	  "(x+y+z)^2",
-      	  "basis R",
-      	  "basis(2,R)",
-	  },
-     EXAMPLE {
-	  "S = QQ[a,b,r,s,t, SkewCommutative=>true, Degrees=>{2,2,1,1,1}];",
-	  "r*a == a*r",
-	  "a*a",
-	  "f = a*r+b*s; f^2",
-	  "basis(2,S)",
-	  },
-     -- this section should link to "right modules or left modules?"
-     "In macaulay2, matrix arithmetic is all done in the opposite ring. This is
-     visible in multiplication of matrices over exterior algebras:"
-     EXAMPLE {
-      "T = QQ[a..d, SkewCommutative => true]",
-      "matrix{{a, b}}",
-	  "matrix{{c}, {d}}",
-      "matrix{{a, b}} * matrix{{c}, {d}}",
-	  },
-     "You may compute Gröbner bases, syzygies, and form quotient rings of these skew
-     commutative rings.",
-     Subnodes => {
-	 TO isSkewCommutative,
-	 TO antipode,
-         },
-     }
+    Key => "exterior algebras",
+    -- making one, making quotients,
+    -- using it.
+    -- modules are right-modules, example of multiplication.
+    "An exterior algebra is a polynomial ring where multiplication is
+    mildly non-commutative, in that, for every x and y in the ring,
+    y*x = (-1)^(deg(x) deg(y)) x*y, and that for every x of odd degree,
+    x*x = 0.",
+    "In Macaulay2, deg(x) is the degree of x, or the first degree of x, in case
+    a multi-graded ring is being used.  The default degree for each variable is 1, so
+    in this case, y*x = -x*y, if x and y are variables in the ring.",
+    PARA{},
+    "Create an exterior algebra with explicit generators by creating a polynomial
+    ring with the option ", TO "SkewCommutative", ".",
+    EXAMPLE {
+        "R = QQ[x,y,z, SkewCommutative => true]",
+        "y*x",
+        "(x+y+z)^2",
+        "basis R",
+        "basis(2,R)",
+    },
+    PARA{},
+    "The degree of the variables can be specified just as in the commutative case.",
+    EXAMPLE {
+        "S = QQ[a,b,r,s,t, SkewCommutative=>true, Degrees=>{2,2,1,1,1}];",
+        "r*a == a*r",
+        "a*a",
+        "f = a*r+b*s; f^2",
+        "basis(2,S)",
+    },
+    PARA{},
+    "As usual, matrix arithmetic is performed over the opposite ring. This is
+    visible with multiplication of matrices over exterior algebras.",
+    EXAMPLE {
+        "T = QQ[a..d, SkewCommutative => true]",
+        "A = matrix{{a, b}, {1, 1}}",
+        "B = matrix{{c, 1}, {d, 1}}",
+        "A * B"
+    },
+    "See ", TO "right modules or left modules?", " for more details.",
+    PARA{},
+    "You may compute Gröbner bases, syzygies, and form quotient rings of these skew
+    commutative rings. Warning that quotienting by an ideal which is not a
+    2-sided ideal will produce quotient ring where multiplication is not well
+    defined on coset representives.",
+    EXAMPLE {
+        "R = QQ[a..d, SkewCommutative => true]",
+        "I = ideal {a*b + c}",
+        "promote(I_0 * d, R/I)",
+        "promote(I_0, R/I) * promote(d, R/I)"
+    },
+    Subnodes => {
+        TO isSkewCommutative,
+        TO antipode,
+    },
+}
 
 document {
      Key => "symmetric algebras",
