@@ -610,25 +610,28 @@ TEST(LatticePointsNormalizRaw, MatchesBoxEnumWrapper)
 
 TEST(LatticePointsNormalizRaw, BigInt_b_Accepted)
 {
-  // 2^40 in b: rawLatticePoints would error ("does not fit"), Normaliz
-  // wrapper must accept. Constraints: x in {0}, y in [-2, 0]. 3 points.
-  const Matrix* Am = makeZZ({{1, 0}, {-1, 0}, {0, 1}, {0, -1}});
+  // rawLatticePoints would error ("entry of b does not fit") on a 2^40 in b;
+  // the Normaliz wrapper must accept it. We keep the polytope a single point
+  // by pinning x = y = 0 with the first four constraints, then add a fifth
+  // non-binding constraint that carries the 2^40 entry. Expected: 1 point.
+  const Matrix* Am = makeZZ({{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 0}});
 
-  MatrixConstructor bcon(globalZZ->make_FreeModule(4), 1);
-  bcon.set_entry(0, 0, globalZZ->from_long(0));
-  bcon.set_entry(1, 0, globalZZ->from_long(0));
-  bcon.set_entry(2, 0, globalZZ->from_long(0));
+  MatrixConstructor bcon(globalZZ->make_FreeModule(5), 1);
+  bcon.set_entry(0, 0, globalZZ->from_long(0));   // x <=  0
+  bcon.set_entry(1, 0, globalZZ->from_long(0));   // -x <= 0
+  bcon.set_entry(2, 0, globalZZ->from_long(0));   // y <=  0
+  bcon.set_entry(3, 0, globalZZ->from_long(0));   // -y <= 0
   mpz_t big;
   mpz_init(big);
   mpz_ui_pow_ui(big, 2, 40);
-  bcon.set_entry(3, 0, globalZZ->from_int(big));
+  bcon.set_entry(4, 0, globalZZ->from_int(big));  // x <= 2^40 (non-binding)
   mpz_clear(big);
   const Matrix* bm = bcon.to_matrix();
 
   MutableMatrix* M = rawLatticePointsNormaliz(Am, bm);
   ASSERT_NE(M, nullptr);
-  EXPECT_EQ(M->n_cols(), 3u);
-  std::set<std::vector<int>> expected = {{0, -2}, {0, -1}, {0, 0}};
+  EXPECT_EQ(M->n_cols(), 1u);
+  std::set<std::vector<int>> expected = {{0, 0}};
   EXPECT_EQ(pointsAsSet(M), expected);
 }
 
