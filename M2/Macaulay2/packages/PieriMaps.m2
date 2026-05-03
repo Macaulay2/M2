@@ -173,14 +173,13 @@ shuffle = (T, col, row1, row2) -> (
      truncatedrow2 := (T#row2)_{col..len2-1}; -- grab row2 entries
      L := join((T#row1)_{col-1..len1-1}, (T#row2)_{0..col-1});
      P := permutations L;
-     output := {};
      P = apply(P, i-> (for j from 0 to #T-1 list (
 		    if j == row1 then sort join(truncatedrow1, i_{0..len1-col})
 	       	    else if j == row2 then sort join(i_{len1-col+1..#i-1}, truncatedrow2)
 	       	    else T#j)));
      coeff := 0;
      for i in P do if i == T then coeff = coeff + 1;
-     for i in P do if i != T then output = append(output, (i, -1 / coeff));
+     output := for i in P list if i != T then (i, -1 / coeff) else continue;
      return hashTable(plus, output);
      )
 
@@ -198,11 +197,9 @@ towardStandard = T -> (
      if H #? T then (
 	  coeff := -(H#T) + 1;
 	  remove(H,T);
-	  prehash := {};
-	  for i in keys H do 
-	  prehash = append(prehash, (i, H#i / coeff));
+	  prehash := for i in keys H list (i, H#i / coeff);
 	  return hashTable(prehash)
-     	  ) 
+     	  )
      else return new HashTable from H
      )
 
@@ -216,13 +213,8 @@ towardStandard = T -> (
 -- ZZ k: an index
 -- Output:
 -- Subtract one from the kth (in human count, not computer count) row of mu
-subtractOne = (mu, k) -> (
-     result := {};
-     for i from 0 to #mu-1 when true do
-     if i == k-1 then result = append(result, mu_i - 1)
-     else result = append(result, mu_i);
-     return result
-     )
+subtractOne = (mu, k) ->
+     for i from 0 to #mu - 1 list (if i == k - 1 then mu_i - 1 else mu_i)
 
 -------------------------------------------------------------------------------
 -- Convention infrastructure (added in this overhaul).
@@ -283,13 +275,11 @@ conjPartPM = mu -> toList conjugate (new Partition from trimPartPM mu)
 -- Returns dual partition
 dualPart = method()
 dualPart(List) := mu -> (
-     result := {};
-     for i from 1 to mu#0 when true do (
+     for i from 1 to mu#0 list (
 	  counter := 0;
-     	  for j from 0 to #mu-1 when true do if mu#j >= i then counter = counter + 1;
-	  result = append(result, counter);
-	  );
-     return result;
+	  for j from 0 to #mu - 1 do if mu#j >= i then counter = counter + 1;
+	  counter
+	  )
      )
 
 -- Computes the dimension of S_mu V where V has dimension n and 
@@ -316,21 +306,15 @@ standardTableaux = method()
 standardTableaux(ZZ, List) := (dim, mu) -> standardTableauxCache#(dim, mu) ??= (
      if #mu == 0 then {{}}
      else (
-	  output := {};
 	  otherrows := standardTableaux(dim, drop(mu, 1));
 	  firstrow := rsort compositions(dim, mu#0);
-	  for i in firstrow do (
-	       temp := {};
-	       for j from 0 to #i-1 do
-	       for k from 1 to i#j when true do
-	       temp = append(temp,j);
-	       for j in otherrows do (
-		    temp2 := prepend(temp,j);
-		    if isStandardPM(temp2) === null then
-		    output = append(output, temp2);
-		    );
-	       );
-	  output
+	  flatten for i in firstrow list (
+	       temp := flatten for j from 0 to #i - 1 list toList(i#j : j);
+	       for j in otherrows list (
+		    temp2 := prepend(temp, j);
+		    if isStandardPM(temp2) === null then temp2 else continue
+		    )
+	       )
 	  )
      )
 
@@ -576,7 +560,6 @@ pieriHelper = method()
 pieriHelper(List, ZZ, PolynomialRing) := (mu, k, P) -> (
      d := numgens P;
      X := gens P;
-     output := {};
      Sbasis := standardTableaux(d, mu);
      Tbasis := standardTableaux(d, subtractOne(mu, k));
      mu = prepend(0,mu);
@@ -596,22 +579,19 @@ pieriHelper(List, ZZ, PolynomialRing) := (mu, k, P) -> (
 	  for q from 1 to #J-2 when true do cJ = cJ * (mu_(J_q) - mu_k + k - J_q);
 	  (-1)^#J / cJ
 	  );
-     for s in apply(Sbasis, i->prepend({},i)) do (
-	  row := {};
+     output := for s in apply(Sbasis, i->prepend({},i)) list (
      	  H := new HashTable from {};
      	  for jIdx from 0 to #A - 1 do (
 	       J := A#jIdx;
      	       h := hashTable({(s, hCoefs#jIdx)});
-	       for i from 0 to #J-2 when true do (
-	       	    temp := {};
-	       	    for T in keys h do (
-		    	 for b from 0 to #(T_(J_(i+1)))-1 when true do (
+	       for i from 0 to #J - 2 do (
+	       	    temp := flatten for T in keys h list
+		    	 for b from 0 to #(T_(J_(i+1))) - 1 list (
 		    	      U := new MutableList from T;
      	       	    	      U#(J_(i+1)) = drop(U#(J_(i+1)), {b, b});
 			      U#(J_i) = append(U#(J_i), (T_(J_(i+1)))_b);
-			      temp = append(temp, (new List from U, h#T));
+			      (new List from U, h#T)
 			      );
-		    	 );
 	       	    h = hashTable(plus, temp);
 	       	    );
 	       H = merge(H, h, plus);
@@ -625,8 +605,7 @@ pieriHelper(List, ZZ, PolynomialRing) := (mu, k, P) -> (
 	       for i in keys memo#U do
 	       H#i = (H#i ?? 0) + coeff * (memo#U)#i * X_((T_0)_0);
 	       );
-     	  for t in Tbasis do row = append(row, H#t ?? 0);
-	  output = append(output, row);
+     	  for t in Tbasis list (H#t ?? 0)
 	  );
      return map(P^(#Tbasis), P^{#Sbasis:-1}, transpose output);
      )
@@ -830,23 +809,18 @@ pierip(List, List, PolynomialRing) := (mu, boxes, P) -> (
      R := QQ[X];
      f := pierizero(mu, boxes, R);
      mon := apply(compositions(d, #boxes), i-> (output := 1; for j from 0 to #i-1 do output = output * X_j^(i#j); output));
-     result := {};
      denom := 1;
-     for i from 0 to (rank source f)-1 do (
+     result := for i from 0 to (rank source f) - 1 list (
 	  row := flatten entries f_{i};
-	  newrow := {};
-	  for j from 0 to #row-1 do 
-	  for k in mon do (
-	       coeff := coefficient(k, row#j);
-	       temp := ceiling(1 / gcd(coeff, 1));
-	       denom = denom * temp / gcd(denom, temp);
-	       newrow = append(newrow, coeff);
-	       );
-	  result = append(result, newrow);
+	  flatten for j from 0 to #row - 1 list
+	       for k in mon list (
+		    coeff := coefficient(k, row#j);
+		    temp := ceiling(1 / gcd(coeff, 1));
+		    denom = denom * temp / gcd(denom, temp);
+		    coeff
+		    )
 	  );
-     result2 := {};
-     for i in result do 
-     result2 = append(result2, apply(i, j -> round(j*denom)));
+     result2 := apply(result, i -> apply(i, j -> round(j * denom)));
      intmat := map(ZZ^((rank target f) * #mon), ZZ^(rank source f), transpose(result2));
      (D, S, T) := smithNormalForm(intmat);
      S' := (S^(-1))_{0..(rank source D)-1};
@@ -862,14 +836,13 @@ pierip(List, List, PolynomialRing) := (mu, boxes, P) -> (
 pureFree = method(Options => {Convention => "Row"})
 pureFree(List, PolynomialRing) := opts -> (d, P) -> (
      if not isIncreasing(d) then error "The first argument needs to be a strictly increasing list of degrees.";
-     e := {};
-     for i from 1 to #d-1 do e = append(e, d#i - d#(i-1));
-     counter := -#e + 1;
-     for i in e do counter = counter + i;
-     lambda := {counter - e#0};
-     for i from 1 to #e-1 do
-     lambda = append(lambda, lambda#(i-1) - e#i + 1);
-     lambda = prepend(counter, drop(lambda, 1));
+     e := for i from 1 to #d - 1 list (d#i - d#(i-1));
+     counter := -#e + 1 + sum e;
+     -- lambda#0 = counter - e#0; lambda#i = lambda#(i-1) - e#i + 1 for i >= 1.
+     -- Build the running tail; the head is later replaced with counter.
+     cur := counter - e#0;
+     tail := for i from 1 to #e - 1 list (cur = cur - e#i + 1; cur);
+     lambda := prepend(counter, tail);
      pieri(lambda, toList(e#0 : 1), P, Convention => opts.Convention) ** P^{-d#0}
      )
 
