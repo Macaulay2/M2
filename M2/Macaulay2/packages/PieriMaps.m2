@@ -313,26 +313,25 @@ schurRank(ZZ, List) := (n, mu) -> (
 standardTableauxCache = new MutableHashTable
 
 standardTableaux = method()
-standardTableaux(ZZ, List) := (dim, mu) -> (
-     key := (dim, mu);
-     if standardTableauxCache#?key then return standardTableauxCache#key;
-     if #mu == 0 then (standardTableauxCache#key = {{}}; return {{}});
-     output := {};
-     otherrows := standardTableaux(dim, drop(mu, 1));
-     firstrow := rsort compositions(dim, mu#0);
-     for i in firstrow do (
-     	  temp := {};
-     	  for j from 0 to #i-1 do
-     	  for k from 1 to i#j when true do
-     	  temp = append(temp,j);
-     	  for j in otherrows do (
-	       temp2 := prepend(temp,j);
-     	       if isStandardPM(temp2) === null then
-     	       output = append(output, temp2);
+standardTableaux(ZZ, List) := (dim, mu) -> standardTableauxCache#(dim, mu) ??= (
+     if #mu == 0 then {{}}
+     else (
+	  output := {};
+	  otherrows := standardTableaux(dim, drop(mu, 1));
+	  firstrow := rsort compositions(dim, mu#0);
+	  for i in firstrow do (
+	       temp := {};
+	       for j from 0 to #i-1 do
+	       for k from 1 to i#j when true do
+	       temp = append(temp,j);
+	       for j in otherrows do (
+		    temp2 := prepend(temp,j);
+		    if isStandardPM(temp2) === null then
+		    output = append(output, temp2);
+		    );
 	       );
-     	  );
-     standardTableauxCache#key = output;
-     output
+	  output
+	  )
      )
 
 -- Input:
@@ -428,8 +427,7 @@ pmToFillingExpansion = T -> (
           if degenerate then return;
           F := new sfFillingType from sortedCols;
           contribution := (totalSign * 1_QQ) / denom;
-          if accum#?F then accum#F = accum#F + contribution
-          else accum#F = contribution;
+          accum#F = (accum#F ?? 0) + contribution;
           ));
      new HashTable from for k in keys accum list if accum#k != 0 then k => accum#k else continue
      )
@@ -447,7 +445,7 @@ pmToFilling = T -> (
 	  decomp := sfStraightenPM F;
 	  for k in keys decomp do (
 	       v := c * decomp#k;
-	       if out#?k then out#k = out#k + v else out#k = v;
+	       out#k = (out#k ?? 0) + v;
 	       );
 	  );
      new HashTable from for k in keys out list if out#k != 0 then k => out#k else continue
@@ -485,8 +483,7 @@ fillingToPMExpansion = F -> (
                for j from 0 to lambda#i - 1 list (orderedCols#j)#i;
           sortedRows := apply(rows, sort);
           contribution := (totalSign * 1_QQ) / denom;
-          if accum#?sortedRows then accum#sortedRows = accum#sortedRows + contribution
-          else accum#sortedRows = contribution;
+          accum#sortedRows = (accum#sortedRows ?? 0) + contribution;
           ));
      new HashTable from for k in keys accum list if accum#k != 0 then k => accum#k else continue
      )
@@ -502,7 +499,7 @@ fillingToPM = F -> (
           decomp := memo#(apply(K, sort));
           for std in keys decomp do (
                cc := c * decomp#std;
-               if out#?std then out#std = out#std + cc else out#std = cc;
+               out#std = (out#std ?? 0) + cc;
                );
           );
      new HashTable from for k in keys out list if out#k != 0 then k => out#k else continue
@@ -528,10 +525,7 @@ fillingToWeyl = F -> (
 fillingToPMMatrixCache = new MutableHashTable
 pmToFillingMatrixCache = new MutableHashTable
 
-fillingToPMMatrix = (mu, n) -> (
-     mm := trimPartPM mu;
-     key := (mm, n);
-     if fillingToPMMatrixCache#?key then return fillingToPMMatrixCache#key;
+fillingToPMMatrix = (mu, n) -> fillingToPMMatrixCache#(mm := trimPartPM mu, n) ??= (
      pmS := standardTableaux(n, mm);
      muTcols := conjPartPM mm;
      ensureSchurFn();
@@ -544,19 +538,15 @@ fillingToPMMatrix = (mu, n) -> (
           for sj from 0 to #sfS - 1 list (
                decomp := decomps#sj;
                U := pmS#ti;
-               if decomp#?U then decomp#U else 0_QQ
+               decomp#U ?? 0_QQ
                )
           );
      -- Source labels = standard Fillings; target labels = standard PM tableaux.
      attachBasisLabels(result, sfS, pmS);
-     fillingToPMMatrixCache#key = result;
      result
      )
 
-pmToFillingMatrix = (mu, n) -> (
-     mm := trimPartPM mu;
-     key := (mm, n);
-     if pmToFillingMatrixCache#?key then return pmToFillingMatrixCache#key;
+pmToFillingMatrix = (mu, n) -> pmToFillingMatrixCache#(mm := trimPartPM mu, n) ??= (
      pmS := standardTableaux(n, mm);
      muTcols := conjPartPM mm;
      ensureSchurFn();
@@ -566,12 +556,11 @@ pmToFillingMatrix = (mu, n) -> (
           for pj from 0 to #pmS - 1 list (
                decomp := decomps#pj;
                F := sfS#fi;
-               if decomp#?F then decomp#F else 0_QQ
+               decomp#F ?? 0_QQ
                )
           );
      -- Source labels = standard PM tableaux; target labels = standard Fillings.
      attachBasisLabels(result, pmS, sfS);
-     pmToFillingMatrixCache#key = result;
      result
      )
 
@@ -634,10 +623,9 @@ pieriHelper(List, ZZ, PolynomialRing) := (mu, k, P) -> (
 	       remove(H, T);
 	       straighten(U, memo);
 	       for i in keys memo#U do
-	       if H #? i then H#i = H#i + coeff * (memo#U)#i * X_((T_0)_0)
-	       else H#i = coeff * (memo#U)#i * X_((T_0)_0);
+	       H#i = (H#i ?? 0) + coeff * (memo#U)#i * X_((T_0)_0);
 	       );
-     	  for t in Tbasis do if H #? t then row = append(row, H#t) else row = append(row, 0);
+     	  for t in Tbasis do row = append(row, H#t ?? 0);
 	  output = append(output, row);
 	  );
      return map(P^(#Tbasis), P^{#Sbasis:-1}, transpose output);
@@ -750,14 +738,14 @@ pieriColumnHelper = (mu, k, P) -> (
 			      U#(J#i) = prepend(dropped, U#(J#i));
 			      sgn := if b % 2 == 0 then 1 else -1;
 			      key := new List from U;
-			      cur := if temp#?key then temp#key else 0;
+			      cur := temp#key ?? 0;
 			      temp#key = cur + sgn * coeff;
 			      );
 			 );
 		    h = temp;
 		    );
 	       for K in keys h do (
-		    cur := if H#?K then H#K else 0;
+		    cur := H#K ?? 0;
 		    H#K = cur + h#K;
 		    );
 	       );
@@ -771,10 +759,9 @@ pieriColumnHelper = (mu, k, P) -> (
 	       while #U > 0 and #(U#(#U - 1)) == 0 do U = drop(U, -1);
 	       UF := new sfFillingType from U;
 	       UFkey := toList U;
-	       if not memo#?UFkey then memo#UFkey = sfStraightenPM UF;
-	       decomp := memo#UFkey;
+	       decomp := memo#UFkey ??= sfStraightenPM UF;
 	       for std in keys decomp do (
-		    idx := if Tidx#?(toList std) then Tidx#(toList std) else null;
+		    idx := Tidx#(toList std) ?? null;
 		    if idx === null then continue;
 		    rowVec#idx = rowVec#idx + coeff * (decomp#std) * X#poppedEntry;
 		    );
@@ -1038,7 +1025,7 @@ lrMap(Sequence, List, ZZ) := opts -> (shapes, Q, n) -> (
 			 flatten for k from 0 to n - 1 list
 			      toList(expv#(a*n + k) : k);
 		    straighten(tvec, straightenH);
-		    decomp := if straightenH#?tvec then straightenH#tvec else new HashTable from {};
+		    decomp := straightenH#tvec ?? new HashTable from {};
 		    for ssyt in keys decomp do (
 			 if not nuIdx#?ssyt then continue;
 			 dc := decomp#ssyt;
@@ -1108,7 +1095,7 @@ applyLR(Sequence, List, BasicList, ZZ) := opts -> (shapes, Q, T, n) -> (
 	  Tlist := apply(toList T, r -> sort toList r);
 	  h := new MutableHashTable;
 	  straighten(Tlist, h);
-	  decomp := if h#?Tlist then h#Tlist else new HashTable from {};
+	  decomp := h#Tlist ?? new HashTable from {};
 	  idx := new MutableHashTable;
 	  for i from 0 to #Sb - 1 do idx#(Sb#i) = i;
 	  Tcoords = new MutableList from toList(#Sb : 0_QQ);
@@ -1236,7 +1223,7 @@ straightenByConvPM = (T, convention) -> (
 	  Tlist := apply(toList T, r -> sort toList r);
 	  h := new MutableHashTable;
 	  straighten(Tlist, h);
-	  if h#?Tlist then h#Tlist else new HashTable from {}
+	  h#Tlist ?? new HashTable from {}
 	  )
      else if convention === "Filling" then (
 	  ensureSchurFn();
@@ -1265,7 +1252,7 @@ testWellDefinedTwoTuple0 = (applyFn, srcShape, n, conv, zeroVal, verbose) -> (
 	       img := applyFn K;
 	       for pair in img do (
 		    key := if class pair#1 === List then pair#1 else toList pair#1;
-		    cur := if imgM#?key then imgM#key else zeroVal;
+		    cur := imgM#key ?? zeroVal;
 		    imgM#key = cur + c * pair#0;
 		    );
 	       );
@@ -1277,8 +1264,8 @@ testWellDefinedTwoTuple0 = (applyFn, srcShape, n, conv, zeroVal, verbose) -> (
 	  allKeys := unique (keys imgDmap | keys imgM);
 	  caseOk := true;
 	  for k in allKeys do (
-	       a := if imgDmap#?k then imgDmap#k else zeroVal;
-	       b := if imgM#?k then imgM#k else zeroVal;
+	       a := imgDmap#k ?? zeroVal;
+	       b := imgM#k ?? zeroVal;
 	       if a != b then caseOk = false;
 	       );
 	  if not caseOk then (
@@ -1357,7 +1344,7 @@ verifyWellDefined(Sequence, List, ZZ) := opts -> (shapes, Q, n) -> (
 	       img := applyLR(shapes, Q, K, n, Convention => conv);
 	       for trip in img do (
 		    key := (toList trip#1, toList trip#2);
-		    cur := if imgM#?key then imgM#key else 0;
+		    cur := imgM#key ?? 0;
 		    imgM#key = cur + c * trip#0;
 		    );
 	       );
@@ -1366,8 +1353,8 @@ verifyWellDefined(Sequence, List, ZZ) := opts -> (shapes, Q, n) -> (
 	  allKeys := unique (keys imgDmap | keys imgM);
 	  caseOk := true;
 	  for k in allKeys do (
-	       a := if imgDmap#?k then imgDmap#k else 0;
-	       b := if imgM#?k then imgM#k else 0;
+	       a := imgDmap#k ?? 0;
+	       b := imgM#k ?? 0;
 	       if a != b then (
 		    caseOk = false;
 		    if verbose then
@@ -1503,9 +1490,8 @@ pmPermSign = (a, ref) -> (
 -- Build (or look up) the stacked K-matrix and addable-strips list for
 -- the horizontal-strip dual map at parameters (lambda, d, n, conv).
 -- Returns (addable, A, offsets) with offsets#i = first column of block i.
-pmGetDualHBlocks = (lambda, d, n, conv, P, K) -> (
-     key := ("row", toList lambda, d, n, K, conv);
-     if pmDualBlockCache#?key then return pmDualBlockCache#key;
+pmGetDualHBlocks = (lambda, d, n, conv, P, K) ->
+     pmDualBlockCache#("row", toList lambda, d, n, K, conv) ??= (
      monBasis := flatten entries basis(d, P);
      addable := pmAddableHStrips(lambda, d, n);
      blocks := for pair in addable list (
@@ -1516,15 +1502,12 @@ pmGetDualHBlocks = (lambda, d, n, conv, P, K) -> (
 	  );
      A := fold((a, b) -> a | b, blocks);
      offsets := prepend(0, accumulate(plus, 0, apply(blocks, numColumns)));
-     val := (addable, A, offsets);
-     pmDualBlockCache#key = val;
-     val
+     (addable, A, offsets)
      );
 
 -- Vertical-strip analogue.  Requires P SkewCommutative.
-pmGetDualVBlocks = (lambda, d, n, conv, P, K) -> (
-     key := ("col", toList lambda, d, n, K, conv);
-     if pmDualBlockCache#?key then return pmDualBlockCache#key;
+pmGetDualVBlocks = (lambda, d, n, conv, P, K) ->
+     pmDualBlockCache#("col", toList lambda, d, n, K, conv) ??= (
      monBasis := flatten entries basis(d, P);
      addable := pmAddableVStrips(lambda, d, n);
      blocks := for pair in addable list (
@@ -1535,17 +1518,14 @@ pmGetDualVBlocks = (lambda, d, n, conv, P, K) -> (
 	  );
      A := fold((a, b) -> a | b, blocks);
      offsets := prepend(0, accumulate(plus, 0, apply(blocks, numColumns)));
-     val := (addable, A, offsets);
-     pmDualBlockCache#key = val;
-     val
+     (addable, A, offsets)
      );
 
 -- Stacked LR-block matrix for dualLR with parameters (mu, nu, n, conv).
 -- The key intentionally omits lambda (the target), since the same
 -- decomposition supports projection onto every summand at once.
-pmGetDualLRBlocks = (mu, nu, n, conv) -> (
-     key := ("lr", toList mu, toList nu, n, conv);
-     if pmDualBlockCache#?key then return pmDualBlockCache#key;
+pmGetDualLRBlocks = (mu, nu, n, conv) ->
+     pmDualBlockCache#("lr", toList mu, toList nu, n, conv) ??= (
      totalCells := sum mu + sum nu;
      cands := apply(pmPartitionsAtMost(totalCells, n), p -> toList p);
      -- Per-candidate (lambda', Q') pairs along with their lrMap blocks.
@@ -1560,9 +1540,7 @@ pmGetDualLRBlocks = (mu, nu, n, conv) -> (
      if numRows A =!= numColumns A then
 	  error "dualLR: stacked LR matrix not square (decomposition incomplete)";
      offsets := prepend(0, accumulate(plus, 0, apply(blocks, numColumns)));
-     val := (blockInfo, A, offsets);
-     pmDualBlockCache#key = val;
-     val
+     (blockInfo, A, offsets)
      );
 
 -- Extract rows [startRow .. startRow + blockSize - 1] of A^{-1} via a
@@ -1732,14 +1710,14 @@ pmTableauToCoords = (T, shape, n, conv) -> (
 	       else if class T === List then new sfFillingType from T
 	       else error "tableau must be a List (column form) or Filling";
 	  h := sfStraightenPM Tcast;
-	  for s in stdsF list (if h#?s then h#s else 0_QQ)
+	  for s in stdsF list (h#s ?? 0_QQ)
 	  )
      else if conv === "Row" or conv === "Weyl" then (
 	  stds := standardTableaux(n, shape);
 	  hRow := if class T === List then straighten T
 	       else if class T === sfFillingType then fillingToPM T
 	       else error "tableau must be a List (PM row form) or Filling (column form)";
-	  for s in stds list (if hRow#?s then hRow#s else 0_QQ)
+	  for s in stds list (hRow#s ?? 0_QQ)
 	  )
      else error("unknown Convention: ", conv)
      );
@@ -1894,8 +1872,7 @@ pmActE0 = (i, j, T) -> (
 			  else T#r2);
 		    h := straighten Tprime;
 		    for k in keys h do
-			 if totalH#?k then totalH#k = totalH#k + h#k
-			 else totalH#k = h#k;
+			 totalH#k = (totalH#k ?? 0) + h#k;
 		    );
      new HashTable from totalH
      );
@@ -1907,14 +1884,10 @@ pmCLambdaCache = new MutableHashTable
 
 -- Compute c_lambda for the round-trip pmToFilling -> fillingToPM = c * Id.
 -- We extract it as a diagonal entry of the product matrix.
-pmComputeCLambda = (lambda, n) -> (
-     key := (trimPartPM lambda, n);
-     if pmCLambdaCache#?key then return pmCLambdaCache#key;
+pmComputeCLambda = (lambda, n) -> pmCLambdaCache#(trimPartPM lambda, n) ??= (
      A := pmToFillingMatrix(lambda, n);
      B := fillingToPMMatrix(lambda, n);
-     c := (B * A)_(0, 0);
-     pmCLambdaCache#key = c;
-     c
+     (B * A)_(0, 0)
      );
 
 -- E_{i,j} action on a Filling F of shape `lambda` over K^n.  We route through
@@ -1931,14 +1904,14 @@ pmActEFilling0 = (i, j, F, lambda, n) -> (
 	  c := raw#T;
 	  actT := pmActE0(i, j, T);
 	  for k in keys actT do
-	       pmResult#k = (if pmResult#?k then pmResult#k else 0_QQ) + c * actT#k;
+	       pmResult#k = (pmResult#k ?? 0_QQ) + c * actT#k;
 	  );
      fillResult := new MutableHashTable;
      for T in keys pmResult do (
 	  c := pmResult#T;
 	  fillExp := pmToFilling T;
 	  for F2 in keys fillExp do
-	       fillResult#F2 = (if fillResult#?F2 then fillResult#F2 else 0_QQ) + c * fillExp#F2;
+	       fillResult#F2 = (fillResult#F2 ?? 0_QQ) + c * fillExp#F2;
 	  );
      if #fillResult == 0 then return new HashTable from {};
      cLam := pmComputeCLambda(lambda, n);
@@ -2280,23 +2253,21 @@ labelKeyPM = lab -> (
 
 symbolicForm = method()
 symbolicForm Matrix := M -> (
-     if not M.cache#?"sourceBasis" then
-	  M.cache#"sourceBasis" = toList(1..rank source M);
-     if not M.cache#?"targetBasis" then
-	  M.cache#"targetBasis" = toList(1..rank target M);
-     if not M.cache#?"rule" then (
+     M.cache#"sourceBasis" ??= toList(0 .. rank source M - 1);
+     M.cache#"targetBasis" ??= toList(0 .. rank target M - 1);
+     M.cache#"rule" ??= (
 	  -- Build label-to-index map once for O(1) lookup.
 	  srcLabels := M.cache#"sourceBasis";
 	  idxOfSrc := hashTable for k from 0 to #srcLabels - 1 list
 	       labelKeyPM(srcLabels#k) => k;
-	  M.cache#"rule" = i -> (
+	  i -> (
 	       key := labelKeyPM i;
 	       if not idxOfSrc#?key then error "symbolicForm: source label not found";
 	       l := idxOfSrc#key;
 	       col := flatten entries M_{l};
 	       L := positions(col, j -> not(j == 0_(ring M)));
 	       for j in L list ((M.cache#"targetBasis")_j, col_j)
-	       );
+	       )
 	  );
      netList for i in M.cache#"sourceBasis" list (
 	  {prettyLabelPM i, prettyImagePM ((M.cache#"rule")(i))})
