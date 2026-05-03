@@ -251,9 +251,9 @@ Usage
     I = interval(n)
     I = interval(l,r)
     I = interval([l,r])
-    I = interval(n,Precition => prec)
-    I = interval(l,r,Precition => prec)
-    I = interval([l,r],Precition => prec)
+    I = interval(n,Precision => prec)
+    I = interval(l,r,Precision => prec)
+    I = interval([l,r],Precision => prec)
 Inputs
     n:Number
     l:Number

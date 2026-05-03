@@ -13,7 +13,7 @@ newPackage(
 --=========================================================================--
 
 -- This package is based on
--- [BG1] Bermejo, Gimenez "Saturation and Castelnuovo-mumford Regularity", 
+-- [BG1] Bermejo, Gimenez "Saturation and Castelnuovo-Mumford Regularity", 
 --         Journal of Algebra 303/2006
 -- [BG2] Bermejo, Gimenez "Computing the Castelnuovo-Mumford Regularity of some 
 --         subschemes of P^n using quotients of monomial ideals",
@@ -223,7 +223,7 @@ document {
      PARA {TT "Regularity", " is a package for computing the Castelnuovo-Mumford regularity
      of homogeneous ideals in a polynomial ring without having to compute a minimal 
      free resolution of the homogeneous ideal"},
-     PARA {"This package is based on two articles by Bermejo and Gimenez: ", TT"Saturation and Castelnuovo-mumford Regularity", ", Journal of Algebra 303/2006
+     PARA {"This package is based on two articles by Bermejo and Gimenez: ", TT"Saturation and Castelnuovo-Mumford Regularity", ", Journal of Algebra 303/2006
      and ", TT"Computing the Castelnuovo-Mumford Regularity of some subschemes of P^n using quotients of monomial ideals", ", Journal of Pure and Applied Algebra 164/2001."}  
 }
 
@@ -236,7 +236,7 @@ document {
 	  MonCurve => Boolean =>{ " parameter that should be set to true if I is the ideal of a monomial curve"}
 	  },     
      Outputs =>{ "the Castelnuovo-Mumford regularity of the given ideal, if it is homogeneous, and -1 otherwise"},
-     PARA {"This package is based on two articles by Bermejo and Gimenez: ", TT"Saturation and Castelnuovo-mumford Regularity", ", Journal of Algebra 303/2006
+     PARA {"This package is based on two articles by Bermejo and Gimenez: ", TT"Saturation and Castelnuovo-Mumford Regularity", ", Journal of Algebra 303/2006
      and ", TT"Computing the Castelnuovo-Mumford Regularity of some subschemes of P^n using quotients of monomial ideals", ", Journal of Pure and Applied Algebra 164/2001."}, 
      PARA {"computing the regularity of the defining ideal of the second Veronesean of P3"},
      EXAMPLE lines ///

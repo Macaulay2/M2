@@ -649,7 +649,7 @@ minimalBetti Module := BettiTally => opts -> M -> (
     if not useFastNonminimal then 
         return betti resolution(M, DegreeLimit => degreelimit, LengthLimit => lengthlimit);
     -- At this point, we think we are good to use the faster algorithm.        
-    -- First, we need to comppute the non-minimal resolution to one further step.
+    -- First, we need to compute the non-minimal resolution to one further step.
     if instance(opts.LengthLimit, ZZ) then lengthlimit = lengthlimit + 1;
     C = resolution(M,
 	StopBeforeComputation => true, FastNonminimal => true, ParallelizeByDegree => opts.ParallelizeByDegree,

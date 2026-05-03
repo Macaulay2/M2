@@ -3146,7 +3146,7 @@ doc ///
 			a description of the Groebner cone of {\tt M} or {\tt I} or {\tt L}
 	Description
 		Text
-			This method computes the Grobener cone of the input in the case where {\tt M}, {\tt L}, {\tt I} are
+			This method computes the Groebner cone of the input in the case where {\tt M}, {\tt L}, {\tt I} are
 			reduced Groebner bases. If {\tt M}, {\tt L}, {\tt I} are only minimal bases, then
 			a smaller cone is produced.
 

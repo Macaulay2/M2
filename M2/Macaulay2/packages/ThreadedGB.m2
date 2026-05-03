@@ -374,7 +374,7 @@ doc ///
       {\bf Nuts and Bolts}
 
       The main function,  @TO tgb@, uses  @TO Task@s to distribute the reduction of S-polynomials using a
-      a current version of the Groenber basis.
+      a current version of the Gr\"obner basis.
       It can reduce and minimize upon request or print out  task scheduling information
       as it creates new tasks.
       The interesting part of the output may be the lineages of the basis polynomials,

@@ -1625,7 +1625,7 @@ doc ///
 		p_1 = y^2*w;
 		p_2 = y^2*z+x^2*w;
 		I = ideal(p_0,p_1,p_2);
-		-- make the frobenious power of the irrelevant ideal
+		-- make the Frobenius power of the irrelevant ideal
 		B = B_*/(x -> x^2)//ideal;
 		-- need to take a large enough power. 
 		-- it turns out that 2 is large enough for this example 
@@ -1745,7 +1745,7 @@ doc ///
 	       
 	       We first make the multi-graded coordinate ring of 
 	       $\mathbb{P}^1 \times \mathbb{P}^1$, the 
-	       irrelevant ideal, and a sufficentily high Frobenus power of the 
+	       irrelevant ideal, and a sufficiently high Frobenius power of the 
 	       irrelevant ideal needed for our calculations.  Also the complex $G$
 	       below is a resolution of the irrelevant ideal.
     	  Example
