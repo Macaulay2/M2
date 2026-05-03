@@ -372,7 +372,7 @@ debug needsPackage "GenerateD"
 result = str (genFunctionCall(
         "rawLatticePoints", 
         "MutableMatrixOrNull", 
-        ("a"=>"Matrix", "b"=>"ints", "c"=>"int", "d"=>"long", "f"=>"long")
+        ("a"=>"Matrix", "b"=>"Matrix", "c"=>"int", "d"=>"long", "f"=>"long")
         ))
 ///
 

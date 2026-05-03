@@ -201,7 +201,7 @@ MutableMatrix *rawGVInvariants(M2_arrayint a,
 // User-facing convention is A * x <= b. The underlying box_enum function
 // works with H * x >= rhs, so we negate A and b on the way in.
 MutableMatrix *rawLatticePoints(const Matrix *A,
-                                M2_arrayint b,
+                                const Matrix *b,
                                 int B,
                                 long max_N_out,
                                 long max_N_nodes)
@@ -211,9 +211,14 @@ MutableMatrix *rawLatticePoints(const Matrix *A,
       const size_t n_hyps = A->n_rows();
       const size_t dim = A->n_cols();
 
-      if (static_cast<size_t>(b->len) != n_hyps)
+      if (b->get_ring() != globalZZ)
         {
-          ERROR("rawLatticePoints: length of b must equal number of rows of A");
+          ERROR("rawLatticePoints: b must be a matrix over ZZ");
+          return nullptr;
+        }
+      if (static_cast<size_t>(b->n_rows()) != n_hyps || b->n_cols() != 1)
+        {
+          ERROR("rawLatticePoints: b must be a column matrix with n_rows(A) rows");
           return nullptr;
         }
 
@@ -233,7 +238,16 @@ MutableMatrix *rawLatticePoints(const Matrix *A,
           }
 
       std::vector<int> rhsvec(n_hyps);
-      for (size_t i = 0; i < n_hyps; i++) rhsvec[i] = -b->array[i];
+      for (size_t i = 0; i < n_hyps; i++)
+        {
+          mpz_srcptr z = b->elem(i, 0).get_mpz();
+          if (mpz_fits_sint_p(z) == 0)
+            {
+              ERROR("rawLatticePoints: entry of b does not fit in a C int");
+              return nullptr;
+            }
+          rhsvec[i] = -static_cast<int>(mpz_get_si(z));
+        }
 
       auto result = M2::cytools::latticePoints(
           static_cast<int>(dim), B, Hvec, rhsvec, max_N_out, max_N_nodes);

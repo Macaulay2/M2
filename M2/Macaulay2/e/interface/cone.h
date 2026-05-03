@@ -36,10 +36,13 @@ MutableMatrix /* or null */ *rawGVInvariants(M2_arrayint a,
 
 // Enumerate integer vectors x of length d = #cols(A) satisfying
 //   A * x <= b  (componentwise) and  |x_i| <= B  for all i.
+// Both A and b are matrices over ZZ; b must be a column matrix with
+// n_rows(A) rows and 1 column. All entries of A and b must fit in a
+// C int (the underlying box_enum operates on int).
 // Returns a MutableMatrix over ZZ with d rows and one column per
 // lattice point.
 MutableMatrix /* or null */ *rawLatticePoints(const Matrix *A,
-                                              M2_arrayint b,
+                                              const Matrix *b,
                                               int B,
                                               long max_N_out,
                                               long max_N_nodes);

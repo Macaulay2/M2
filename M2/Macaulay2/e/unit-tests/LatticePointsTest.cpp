@@ -1,10 +1,12 @@
 // Tests for the pure-C++ lattice-point enumerator
-// `M2::cytools::latticePoints` (Kannan/box_enum, in cytools/lattice_points.hpp).
+// `M2::cytools::latticePoints` (Kannan/box_enum, in cytools/lattice_points.hpp)
+// AND for the engine wrapper `rawLatticePoints` (interface/cone.h), which is
+// the A*x <= b entry point used by Macaulay2 callers.
 //
-// Convention reminder: this helper enumerates v with H*v >= rhs (componentwise)
-// and |v_i| <= B. The engine wrapper `rawLatticePoints` in interface/cone.cpp
-// is what flips signs to expose the user-facing A*x <= b convention; that
-// wrapper is exercised in a separate engine-side test group.
+// Convention reminder: the cytools helper enumerates v with H*v >= rhs
+// (componentwise) and |v_i| <= B; the engine wrapper flips signs to expose
+// the user-facing A*x <= b convention. The two are exercised in separate
+// gtest groups (LatticePoints / LatticePointsRaw).
 
 #include <set>
 #include <stdexcept>
@@ -13,6 +15,14 @@
 #include <gtest/gtest.h>
 
 #include "cytools/lattice_points.hpp"
+
+#include "ZZp.hpp"
+#include "error.h"
+#include "interface/cone.h"
+#include "mat.hpp"
+#include "matrix-con.hpp"
+#include "matrix.hpp"
+#include "ring.hpp"
 
 using M2::cytools::latticePoints;
 using M2::cytools::LatticePointsResult;
@@ -202,4 +212,172 @@ TEST(LatticePoints, HRowLengthMismatch_Throws)
   EXPECT_THROW(
       latticePoints(2, 1, H, rhs, kBigN, kBigNN),
       std::runtime_error);
+}
+
+// ===========================================================================
+// Engine-wrapper tests for `rawLatticePoints` (interface/cone.h):
+//   - input is two ZZ Matrix*, A (m x dim) and b (m x 1)
+//   - output is a MutableMatrix* over ZZ with dim rows, one col per point
+//   - convention is A*x <= b (the wrapper does the sign flip internally)
+// These exercise the marshaling layer that the pure-C++ tests above bypass:
+// Matrix construction, mpz extraction, ring/shape validation, MutableMatrix
+// construction with globalZZ.
+// ===========================================================================
+
+namespace {
+
+// Build a const Matrix* over globalZZ from a 2D vector of ints.
+const Matrix* makeZZ(const std::vector<std::vector<int>>& rows)
+{
+  const int nrows = static_cast<int>(rows.size());
+  const int ncols = nrows > 0 ? static_cast<int>(rows[0].size()) : 0;
+  MatrixConstructor mat(globalZZ->make_FreeModule(nrows), ncols);
+  for (int i = 0; i < nrows; ++i)
+    for (int j = 0; j < ncols; ++j)
+      mat.set_entry(i, j, globalZZ->from_long(rows[i][j]));
+  return mat.to_matrix();
+}
+
+// Read all columns of a MutableMatrix as lattice points (rows = coords).
+std::set<std::vector<int>> pointsAsSet(const MutableMatrix* M)
+{
+  std::set<std::vector<int>> out;
+  const size_t dim = M->n_rows();
+  const size_t n = M->n_cols();
+  for (size_t c = 0; c < n; ++c)
+    {
+      std::vector<int> p(dim);
+      for (size_t r = 0; r < dim; ++r)
+        {
+          ring_elem v;
+          M->get_entry(r, c, v);
+          p[r] = static_cast<int>(mpz_get_si(v.get_mpz()));
+        }
+      out.insert(std::move(p));
+    }
+  return out;
+}
+
+// Brute-force enumeration in A*x <= b form. Delegates to the H*v >= rhs
+// brute-forcer above by negating: (A,b) for Ax <= b corresponds to (-A,-b)
+// for Hv >= rhs. This keeps a single source-of-truth enumerator and also
+// documents the sign-flip the engine wrapper performs internally.
+std::set<std::vector<int>> bruteForceAxLeqB(
+    int dim, int B,
+    const std::vector<std::vector<int>>& A,
+    const std::vector<int>& b)
+{
+  std::vector<std::vector<int>> H(A.size(), std::vector<int>(dim));
+  std::vector<int> rhs(b.size());
+  for (size_t i = 0; i < A.size(); ++i)
+    {
+      for (int j = 0; j < dim; ++j) H[i][j] = -A[i][j];
+      rhs[i] = -b[i];
+    }
+  return bruteForce(dim, B, H, rhs);
+}
+
+// Read and clear the engine error flag. Returns the message that was set
+// (and "" if no error was set).
+std::string consumeEngineError()
+{
+  if (!error()) return "";
+  return std::string(error_message());  // also clears the flag
+}
+
+}  // namespace
+
+TEST(LatticePointsRaw, Simplex_dim2_B3)
+{
+  // x >= 0, y >= 0, x+y <= 3 in A*x <= b form:
+  //   -x <= 0, -y <= 0, x+y <= 3.  Count = C(5,2) = 10.
+  std::vector<std::vector<int>> A = {{-1, 0}, {0, -1}, {1, 1}};
+  std::vector<int> b = {0, 0, 3};
+  const Matrix* Am = makeZZ(A);
+  const Matrix* bm = makeZZ({{0}, {0}, {3}});
+
+  MutableMatrix* M = rawLatticePoints(Am, bm, /*B*/ 3, kBigN, kBigNN);
+  ASSERT_NE(M, nullptr);
+  EXPECT_EQ(M->n_rows(), 2u);
+  EXPECT_EQ(M->n_cols(), 10u);
+  EXPECT_EQ(pointsAsSet(M), bruteForceAxLeqB(2, 3, A, b));
+}
+
+TEST(LatticePointsRaw, HalfPlane_xPlusY_geq_0)
+{
+  // x + y >= 0 in [-2,2]^2, written A*x <= b:  -x - y <= 0.  Count = 15.
+  std::vector<std::vector<int>> A = {{-1, -1}};
+  std::vector<int> b = {0};
+  const Matrix* Am = makeZZ(A);
+  const Matrix* bm = makeZZ({{0}});
+
+  MutableMatrix* M = rawLatticePoints(Am, bm, /*B*/ 2, kBigN, kBigNN);
+  ASSERT_NE(M, nullptr);
+  EXPECT_EQ(M->n_rows(), 2u);
+  EXPECT_EQ(M->n_cols(), 15u);
+  EXPECT_EQ(pointsAsSet(M), bruteForceAxLeqB(2, 2, A, b));
+}
+
+TEST(LatticePointsRaw, MatchesSmokeExample)
+{
+  // Same shape as the M2-side smoke test: x <= 2, y <= 2, x+y >= 0 in [-5,5]^2.
+  std::vector<std::vector<int>> A = {{1, 0}, {0, 1}, {-1, -1}};
+  std::vector<int> b = {2, 2, 0};
+  const Matrix* Am = makeZZ(A);
+  const Matrix* bm = makeZZ({{2}, {2}, {0}});
+
+  MutableMatrix* M = rawLatticePoints(Am, bm, /*B*/ 5, kBigN, kBigNN);
+  ASSERT_NE(M, nullptr);
+  EXPECT_EQ(M->n_cols(), 15u);
+  EXPECT_EQ(pointsAsSet(M), bruteForceAxLeqB(2, 5, A, b));
+}
+
+TEST(LatticePointsRaw, NonZZ_b_Errors)
+{
+  // b over a finite-field ring should be rejected with a clear engine error.
+  const Matrix* Am = makeZZ({{1, 0}, {0, 1}});
+
+  Ring* Fp = Z_mod::create(101);
+  MatrixConstructor bcon(Fp->make_FreeModule(2), 1);
+  bcon.set_entry(0, 0, Fp->from_long(2));
+  bcon.set_entry(1, 0, Fp->from_long(2));
+  const Matrix* bm = bcon.to_matrix();
+
+  MutableMatrix* M = rawLatticePoints(Am, bm, 3, kBigN, kBigNN);
+  EXPECT_EQ(M, nullptr);
+  std::string msg = consumeEngineError();
+  EXPECT_NE(msg.find("over ZZ"), std::string::npos) << "msg was: " << msg;
+}
+
+TEST(LatticePointsRaw, WrongShape_b_Errors)
+{
+  // b given as a 1x2 row matrix instead of 2x1 column matrix.
+  const Matrix* Am = makeZZ({{1, 0}, {0, 1}});
+  const Matrix* bm_row = makeZZ({{2, 2}});  // 1 row, 2 cols
+
+  MutableMatrix* M = rawLatticePoints(Am, bm_row, 3, kBigN, kBigNN);
+  EXPECT_EQ(M, nullptr);
+  std::string msg = consumeEngineError();
+  EXPECT_NE(msg.find("column matrix"), std::string::npos)
+      << "msg was: " << msg;
+}
+
+TEST(LatticePointsRaw, BigInt_b_Errors)
+{
+  // b entry that doesn't fit in a C int.
+  const Matrix* Am = makeZZ({{1, 0}, {0, 1}});
+  MatrixConstructor bcon(globalZZ->make_FreeModule(2), 1);
+  mpz_t big;
+  mpz_init(big);
+  mpz_ui_pow_ui(big, 2, 40);  // 2^40, well above INT_MAX
+  bcon.set_entry(0, 0, globalZZ->from_int(big));
+  bcon.set_entry(1, 0, globalZZ->from_long(0));
+  mpz_clear(big);
+  const Matrix* bm = bcon.to_matrix();
+
+  MutableMatrix* M = rawLatticePoints(Am, bm, 3, kBigN, kBigNN);
+  EXPECT_EQ(M, nullptr);
+  std::string msg = consumeEngineError();
+  EXPECT_NE(msg.find("does not fit"), std::string::npos)
+      << "msg was: " << msg;
 }

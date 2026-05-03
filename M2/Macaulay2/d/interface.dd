@@ -4581,9 +4581,9 @@ setupfun("rawGVInvariants",rawGVInvariants);
 
 -- Compute lattice points in a polyhedron, up to given bound.
 -- rawLatticePoints(A, b, B, N1, N2)
---  A: RawMatrix
---  b: sequence of integers (length: same as #rows of A.
---    the i-th constraint is (row i in A).(x1...xd) <= b_i)
+--  A: RawMatrix over ZZ, m rows x d columns
+--  b: RawMatrix over ZZ, m rows x 1 column.
+--    the i-th constraint is (row i of A).(x1...xd) <= b_(i,0)
 --  B: bound: only find lattice points whose coordinates xi satisfy -B <= xi <= B.
 --  N1: maximum number of points to be found
 --  N2: maximum number of nodes to visit in the underlying search tree.
@@ -4595,7 +4595,7 @@ export rawLatticePoints(e:Expr):Expr := (
   when e is s:Sequence do (
   if length(s) == 5 then (
   when s.0 is wa:RawMatrixCell do (a := wa.p;
-  if isSequenceOfSmallIntegers(s.1) then (b := getSequenceOfSmallIntegers(s.1);
+  when s.1 is wb:RawMatrixCell do (b := wb.p;
   when s.2 is wc:ZZcell do (
   if isInt(wc) then (c := toInt(wc);
   when s.3 is wd:ZZcell do (
@@ -4604,7 +4604,7 @@ export rawLatticePoints(e:Expr):Expr := (
   if isLong(wf) then (f := toLong(wf);
     toExpr(Ccode(RawMutableMatrixOrNull,
       "rawLatticePoints(",
-        a, ",", b, ",", c, ",", d, ",", f, 
+        a, ",", b, ",", c, ",", d, ",", f,
       ")"
     ))
   ) else WrongArgSmallInteger(4)
@@ -4613,8 +4613,8 @@ export rawLatticePoints(e:Expr):Expr := (
   ) else WrongArgZZ(3)
   ) else WrongArgSmallInteger(2)
   ) else WrongArgZZ(2)
-  ) else WrongArg(1, "a sequence of small integers")
-  ) else WrongArg(0,"a raw matrix")
+  ) else WrongArg(1, "a raw matrix")
+  ) else WrongArg(0, "a raw matrix")
   ) else WrongNumArgs(5)
   ) else WrongNumArgs(5)
   );
