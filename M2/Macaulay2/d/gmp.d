@@ -1406,17 +1406,9 @@ export intersectRRi (x:RRi, y:RRi, prec:ulong):RRi := (
      Ccode( void, "mpfi_intersect(", z, ",",  x, ",",  y, ")" );
      moveToRRiandclear(z));
 
-export hash(x:RR):hash_t := hash_t(precision0(x)) + Ccode(hash_t,
-     "mpfr_hash(",					    -- see gmp_aux.c for this function
-          x, 
-     ")"
-    );
+export hash(x:RR):hash_t := Ccode(hash_t, "mpfr_hash(", x, ")"); -- see gmp_aux.c
 
-export hash(x:RRi):hash_t := hash_t(precision0(x)) + Ccode(hash_t,
-    "mpfi_hash(",     -- Added for MPFI
-    x,
-    ")"
-    ); -- End added for MPFI
+export hash(x:RRi):hash_t := Ccode(hash_t, "mpfi_hash(", x, ")"); -- see gmp_aux.c
 
 export hash(x:CC):hash_t := 123 + hash(x.re) + 111 * hash(x.im);
      
