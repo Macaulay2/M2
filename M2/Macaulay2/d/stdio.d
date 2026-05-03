@@ -136,6 +136,28 @@ texmacsprompt():string := (
      );
 texmacsreward():string := "\2verbatim:";
 
+export errmsg := {+ message:string };
+export FileCell := {file:file,next:(null or FileCell)};
+export openfiles := (null or FileCell)(NULL);
+addfile(o:file):file := (
+     openfiles = FileCell(o,openfiles);
+     o);
+rmfile(o:file):void := (
+     prevcell := (null or FileCell)(NULL);
+     x := openfiles;
+     while true do (
+	  when x is null do break
+	  is thiscell:FileCell do (
+	       if thiscell.file == o then (
+	       	    when prevcell is null do openfiles = thiscell.next
+	       	    is prevcell:FileCell do prevcell.next = thiscell.next
+		    )
+	       else prevcell = x;
+	       x = thiscell.next;
+	       )));
+addfile(stdIO);
+addfile(stdError);
+
 init():void := (
      stdIO.readline = stdIO.infd == STDIN && stdIO.inisatty ;
      foreach arg in args do (
@@ -165,12 +187,14 @@ init():void := (
 	       stdIO.inisatty = true; -- otherwise hangs after first syntax error
 	       stdIO.outisatty = true; -- not so important?
 	       STDERR = 1;
+	       rmfile(stdError);
 	       stdError = newFile(
 	         "stderr", 0,
      	         false, "",
      	         false,NOFD,NOFD,0,
      	         false,NOFD  ,false,          "",        0,0,false,false,noprompt,noprompt,false,true,false,0,
      	         true, STDERR,0!=isatty(2), newbuffer(), 0,0,false,dummyNetList,0,-1,false,1);
+	       addfile(stdError);
 	  )
 	  else
 	  if arg === "--read-only-files" then (
@@ -182,27 +206,6 @@ init():void := (
 
 everytime(init);
 
-export errmsg := {+ message:string };
-export FileCell := {file:file,next:(null or FileCell)};
-export openfiles := (null or FileCell)(NULL);
-addfile(o:file):file := (
-     openfiles = FileCell(o,openfiles);
-     o);
-rmfile(o:file):void := (
-     prevcell := (null or FileCell)(NULL);
-     x := openfiles;
-     while true do (
-	  when x is null do break
-	  is thiscell:FileCell do (
-	       if thiscell.file == o then (
-	       	    when prevcell is null do openfiles = thiscell.next
-	       	    is prevcell:FileCell do prevcell.next = thiscell.next
-		    )
-	       else prevcell = x;
-	       x = thiscell.next;
-	       )));
-addfile(stdIO);
-addfile(stdError);
 opensocket(filename:string,input:bool,output:bool,listener:bool):(file or errmsg) := (
      if readonlyfiles then return (file or errmsg)(errmsg("--read-only-files: opening a socket not permitted"));
      host0 := substr(filename,1);
