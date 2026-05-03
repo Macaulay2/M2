@@ -752,7 +752,7 @@ doc ///
          the homological index to compute
    Outputs
       L:List
-         a list of the depths of Kozul homology
+         a list of the depths of Koszul homology
       d:ZZ
          the depth of the k-th Koszul homology
    Description

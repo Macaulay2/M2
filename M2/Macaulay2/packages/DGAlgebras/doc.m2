@@ -110,7 +110,7 @@ doc ///
     Text
       The Koszul complex on a sequence of elements $f_1,\dots,f_r$ is a complex of R-modules whose underlying graded R-module
       is the exterior algebra on R^r generated in homological degree one.  This algebra structure also respects the boundary map
-      of the complex in the sense that it satisfies the Liebniz rule.  That is, $d(ab) = d(a)b + (-1)^{deg a}ad(b)$.  When one
+      of the complex in the sense that it satisfies the Leibniz rule.  That is, $d(ab) = d(a)b + (-1)^{deg a}ad(b)$.  When one
       speaks of 'the' Koszul complex of a ring, one means the Koszul complex on a minimal set of generators of the maximal ideal of R.
     Example
       R = ZZ/101[a,b,c,d]/ideal{a^3,b^3,c^3,d^3}
