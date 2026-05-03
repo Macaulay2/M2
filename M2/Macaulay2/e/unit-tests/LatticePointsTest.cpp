@@ -14,6 +14,7 @@
 
 #include <gtest/gtest.h>
 
+#include "cytools/lattice-points-normaliz.hpp"
 #include "cytools/lattice_points.hpp"
 
 #include "ZZp.hpp"
@@ -26,6 +27,8 @@
 
 using M2::cytools::latticePoints;
 using M2::cytools::LatticePointsResult;
+using M2::cytools::latticePointsNormaliz;
+using M2::cytools::LatticePointsNormalizResult;
 
 namespace {
 
@@ -380,4 +383,189 @@ TEST(LatticePointsRaw, BigInt_b_Errors)
   std::string msg = consumeEngineError();
   EXPECT_NE(msg.find("does not fit"), std::string::npos)
       << "msg was: " << msg;
+}
+
+// ===========================================================================
+// Pure-C++ tests for `M2::cytools::latticePointsNormaliz` (Normaliz-backed,
+// in cytools/lattice-points-normaliz.hpp).
+//
+// Convention: A*x <= b natively (matches the engine wrapper). Inputs and
+// outputs are mpz_class so big integers are handled without overflow.
+// ===========================================================================
+
+namespace {
+
+std::vector<std::vector<mpz_class>> toMpz(
+    const std::vector<std::vector<int>>& A)
+{
+  std::vector<std::vector<mpz_class>> out(A.size());
+  for (size_t i = 0; i < A.size(); ++i)
+    out[i].assign(A[i].begin(), A[i].end());
+  return out;
+}
+
+std::vector<mpz_class> toMpz(const std::vector<int>& v)
+{
+  return std::vector<mpz_class>(v.begin(), v.end());
+}
+
+std::set<std::vector<int>> asIntSet(const LatticePointsNormalizResult& r)
+{
+  std::set<std::vector<int>> out;
+  for (const auto& p : r.points)
+    {
+      std::vector<int> q;
+      q.reserve(p.size());
+      for (const auto& x : p) q.push_back(static_cast<int>(x.get_si()));
+      out.insert(std::move(q));
+    }
+  return out;
+}
+
+// Append rows |x_i| <= B (i.e., x_i <= B and -x_i <= B) to (A, b). Used to
+// make a polytope bounded so Normaliz can enumerate.
+void addBox(int dim, int B,
+            std::vector<std::vector<int>>& A,
+            std::vector<int>& b)
+{
+  for (int i = 0; i < dim; ++i)
+    {
+      std::vector<int> rowPos(dim, 0);
+      rowPos[i] = 1;
+      A.push_back(rowPos);
+      b.push_back(B);
+      std::vector<int> rowNeg(dim, 0);
+      rowNeg[i] = -1;
+      A.push_back(rowNeg);
+      b.push_back(B);
+    }
+}
+
+}  // namespace
+
+TEST(LatticePointsNormaliz, BoxOnly_dim2_B1)
+{
+  // No "real" inequalities, just |x_i| <= 1: 9 points.
+  std::vector<std::vector<int>> A;
+  std::vector<int> b;
+  addBox(2, 1, A, b);
+
+  auto r = latticePointsNormaliz(2, toMpz(A), toMpz(b));
+  EXPECT_EQ(r.points.size(), 9u);
+  EXPECT_EQ(asIntSet(r), bruteForceAxLeqB(2, 1, A, b));
+}
+
+TEST(LatticePointsNormaliz, Simplex_dim2_B3)
+{
+  // Standard simplex {x>=0, y>=0, x+y<=3}, count = C(5,2) = 10.
+  std::vector<std::vector<int>> A = {{-1, 0}, {0, -1}, {1, 1}};
+  std::vector<int> b = {0, 0, 3};
+
+  auto r = latticePointsNormaliz(2, toMpz(A), toMpz(b));
+  EXPECT_EQ(r.points.size(), 10u);
+  EXPECT_EQ(asIntSet(r), bruteForceAxLeqB(2, 3, A, b));
+}
+
+TEST(LatticePointsNormaliz, MixedSignsAndRhs_with_box)
+{
+  // 2x - y <= 3 and -x + 2y <= 1 in [-3,3]^2. No closed-form count -- we
+  // just check agreement with brute force, locking in the sign convention.
+  std::vector<std::vector<int>> A = {{2, -1}, {-1, 2}};
+  std::vector<int> b = {3, 1};
+  addBox(2, 3, A, b);
+
+  auto r = latticePointsNormaliz(2, toMpz(A), toMpz(b));
+  EXPECT_EQ(asIntSet(r), bruteForceAxLeqB(2, 3, A, b));
+}
+
+TEST(LatticePointsNormaliz, AgreesWithBoxEnum_Simplex_dim3)
+{
+  // Cross-check: the same simplex through both helpers must give the same
+  // answer. (LatticePoints test "Simplex_dim3_B3" hits 20 points.)
+  std::vector<std::vector<int>> A = {{-1, 0, 0}, {0, -1, 0}, {0, 0, -1},
+                                     {1, 1, 1}};
+  std::vector<int> b = {0, 0, 0, 3};
+
+  auto rNm = latticePointsNormaliz(3, toMpz(A), toMpz(b));
+  auto rBox = latticePoints(3, /*B*/ 3,
+                            /*H*/ {{1, 0, 0}, {0, 1, 0}, {0, 0, 1},
+                                   {-1, -1, -1}},
+                            /*rhs*/ {0, 0, 0, -3},
+                            kBigN, kBigNN);
+
+  EXPECT_EQ(rNm.points.size(), 20u);
+  EXPECT_EQ(rBox.points.size(), 20u);
+  EXPECT_EQ(asIntSet(rNm),
+            std::set<std::vector<int>>(rBox.points.begin(), rBox.points.end()));
+}
+
+TEST(LatticePointsNormaliz, Unbounded_Throws)
+{
+  // x >= 0 in dim=1 is unbounded. libnormaliz does NOT throw for
+  // unbounded inhom_inequalities -- it silently returns just the
+  // polytope's vertex lattice points -- so latticePointsNormaliz checks
+  // RecessionRank explicitly and re-raises as runtime_error.
+  std::vector<std::vector<mpz_class>> A = {{mpz_class(-1)}};
+  std::vector<mpz_class> b = {mpz_class(0)};
+
+  try
+    {
+      latticePointsNormaliz(1, A, b);
+      FAIL() << "expected std::runtime_error for unbounded polyhedron";
+  } catch (const std::runtime_error& e)
+    {
+      std::string msg(e.what());
+      EXPECT_NE(msg.find("unbounded"), std::string::npos)
+          << "msg was: " << msg;
+  }
+}
+
+TEST(LatticePointsNormaliz, UnboundedRay_Throws)
+{
+  // 2D unbounded: x >= 0, y == 0 (via y <= 0 and -y <= 0). Recession rank 1.
+  std::vector<std::vector<mpz_class>> A = {
+      {mpz_class(-1), mpz_class(0)},
+      {mpz_class(0), mpz_class(1)},
+      {mpz_class(0), mpz_class(-1)}};
+  std::vector<mpz_class> b = {mpz_class(0), mpz_class(0), mpz_class(0)};
+
+  EXPECT_THROW(latticePointsNormaliz(2, A, b), std::runtime_error);
+}
+
+TEST(LatticePointsNormaliz, BigInt_RhsAccepted)
+{
+  // b entry of 2^40 -- box_enum would reject this (fits-in-int check),
+  // Normaliz must accept it. We use a tiny constraint set so the polytope
+  // collapses to one point at the origin via a tight box around it.
+  std::vector<std::vector<mpz_class>> A = {
+      {mpz_class(1), mpz_class(0)}, {mpz_class(-1), mpz_class(0)},
+      {mpz_class(0), mpz_class(1)}, {mpz_class(0), mpz_class(-1)}};
+  mpz_class big = mpz_class(1) << 40;  // 2^40, > INT_MAX
+  std::vector<mpz_class> b = {mpz_class(0), mpz_class(0),
+                              mpz_class(0), big};
+  // Constraints: x <= 0, x >= 0, y <= 0, y >= -2^40.
+  // Lattice points: (0, y) for y in [-2^40, 0] -- way too many to enumerate.
+  // Tighten with a finite box on y so we can count.
+  A.push_back({mpz_class(0), mpz_class(1)});  b.push_back(mpz_class(2));
+  A.push_back({mpz_class(0), mpz_class(-1)}); b.push_back(mpz_class(2));
+  // Now lattice points are (0, y) for y in [-2, 0]: 3 points.
+
+  auto r = latticePointsNormaliz(2, A, b);
+  EXPECT_EQ(r.points.size(), 3u);
+}
+
+TEST(LatticePointsNormaliz, ShapeMismatch_Throws)
+{
+  std::vector<std::vector<mpz_class>> A = {
+      {mpz_class(1), mpz_class(0)}, {mpz_class(0), mpz_class(1)}};
+  std::vector<mpz_class> b = {mpz_class(0)};  // length 1, should be 2
+  EXPECT_THROW(latticePointsNormaliz(2, A, b), std::runtime_error);
+}
+
+TEST(LatticePointsNormaliz, RowLengthMismatch_Throws)
+{
+  std::vector<std::vector<mpz_class>> A = {
+      {mpz_class(1), mpz_class(0), mpz_class(0)}};  // length 3, dim is 2
+  std::vector<mpz_class> b = {mpz_class(0)};
+  EXPECT_THROW(latticePointsNormaliz(2, A, b), std::runtime_error);
 }

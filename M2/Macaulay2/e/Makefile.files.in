@@ -12,6 +12,7 @@ INTERFACE = \
 	myalloc \
 	computeGV \
 	cytools/lattice_points \
+	cytools/lattice-points-normaliz \
 	cytools/cone-interior-point \
 	BasicPoly \
 	BasicPolyList \

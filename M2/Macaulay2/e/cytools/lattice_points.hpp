@@ -25,6 +25,14 @@ struct LatticePointsResult {
 //   - dim > 256 (unsupported by underlying box_enum)
 //   - the search visited more than max_N_nodes nodes (hard cap, since the
 //     caller cannot easily distinguish "ran out of budget" from "done")
+//
+// TODO: consider flipping this helper's convention to A*x <= b to match the
+// engine wrapper `rawLatticePoints` (and any future Normaliz-backed sibling).
+// Today the wrapper negates A and b before calling this function; if both
+// agreed on Ax <= b, only the C entry point `_box_enum_c` (whose native form
+// is H*v >= rhs and which we don't modify, since it is upstream-sourced)
+// would need a one-line negation at the call site. Cost: flipping the
+// LatticePoints (pure-C++) gtest cases too.
 LatticePointsResult latticePoints(
     int dim,
     int B,
