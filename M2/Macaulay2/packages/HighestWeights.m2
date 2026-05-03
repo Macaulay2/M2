@@ -57,7 +57,7 @@ end
 --0.1: wrote a basic working version of the package! :-)
 --0.2: completed documentation and tests
 --0.2.1: suppressed minimality test for propagate
---0.2.2: now with auxiliary files and freudenthal decomposition
+--0.2.2: now with auxiliary files and Freudenthal decomposition
 --0.2.3: new propagateWeights function
 --0.2.4: preliminary HW decomposition for resolutions (no multigrading)
 --0.2.5: HW decomposition for (multi)-graded rings

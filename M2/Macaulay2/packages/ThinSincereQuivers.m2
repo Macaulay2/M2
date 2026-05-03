@@ -3250,7 +3250,7 @@ multidoc ///
                 This is an optional argument that can be positive integer values, which and which is 
                 used in quiver constructor methods when the optional argument for flow is set to 
                 random {\tt Flow => "Random"}. The {\tt Height} argument sets the maximum value for 
-                the integer-valued random numhber generator so that values in the flow are chosen 
+                the integer-valued random number generator so that values in the flow are chosen 
                 from the interval {\tt [0, Height)}.
             Example
                 -- create a toric quiver from a matrix with random flow with values in the interval [0, 10)

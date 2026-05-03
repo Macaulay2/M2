@@ -86,12 +86,12 @@ cayley(Polyhedron,Polyhedron,Polyhedron,ZZ):=(P1,P2,P3,k)->(
 cayley(Matrix,Matrix,Matrix,ZZ):=(M1,M2,M3,k)->(
     cayley({M1,M2,M3},k));   
    
---  INPUT : A list of Polyhedras or Matrices
+--  INPUT : A list of Polyhedra or Matrices
 -- OUTPUT : Polyhedron - The Cayley sum with height 1 of the elements in the list
 cayley(List):=(Plist)->(
     cayley(Plist,1));
 
---  INPUT : A list of Polyhedras or Matrices and an integer k
+--  INPUT : A list of Polyhedra or Matrices and an integer k
 -- OUTPUT : Polyhedron - The Cayley sum with height k of the elements in the list
 cayley(List,ZZ):=(Plist,k)->(
     if all(Plist,p -> (class p === Matrix)) then Plist=apply(Plist,convexHull);
