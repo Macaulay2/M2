@@ -1,6 +1,16 @@
 document {
      Key => PieriMaps,
      Headline => "Pieri inclusions",
+     Citation => {///@article{Sam2009,
+    AUTHOR = {Sam, Steven V},
+    TITLE = {Computing inclusions of {S}chur modules},
+    JOURNAL = {The Journal of Software for Algebra and Geometry: Macaulay2},
+    VOLUME = {1},
+    YEAR = {2009},
+    PAGES = {5--10},
+    DOI = {10.2140/jsag.2009.1.5},
+    URL = {https://msp.org/jsag/2009/1-1/p02.xhtml}
+}///},
      "For mathematical background of this package and some examples of use, see:",
      BR{},
      "Steven V Sam, Computing inclusions of Schur modules, arXiv:0810.4666",
@@ -102,14 +112,6 @@ document {
      TO pieri,
      " changes the bases of the free modules in a way which is not invertible
      (over ZZ) when the ground field has positive characteristic.",
-     PARA{},
-     "Version 1.0 of this package was accepted for publication in ",
-     HREF{"https://msp.org/jsag/2009/1-1/", "volume 1"}, " of ",
-     HREF{"https://msp.org/jsag/", "The Journal of Software for Algebra and Geometry: Macaulay2"},
-     " on 2009-06-27, in the article ",
-     HREF{"https://msp.org/jsag/2009/1-1/p02.xhtml", "Computing inclusions of Schur modules"},
-     " (DOI: ", HREF{"https://doi.org/10.2140/jsag.2009.1.5", "10.2140/jsag.2009.1.5"},
-     ").",
      PARA{},
      BOLD "Version 2.0 overhaul.", "  This release extends the original
      PieriMaps package in three respects:",

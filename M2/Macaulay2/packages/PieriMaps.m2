@@ -12,6 +12,19 @@ newPackage(
     	  "PieriMaps",
    	  Version => "2.0",
 	  Date => "May 1, 2026",
+	  Certification => {
+	       "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
+	       "journal URI" => "https://msp.org/jsag/",
+	       "article title" => "Computing inclusions of Schur modules",
+	       "acceptance date" => "2009-06-27",
+	       "published article URI" => "https://msp.org/jsag/2009/1-1/p02.xhtml",
+	       "published article DOI" => "10.2140/jsag.2009.1.5",
+	       "published code URI" => "https://msp.org/jsag/2009/1-1/jsag-v1-n1-x02-code.zip",
+	       "release at publication" => "38e96fec660168d488ad0449f8632e6608cc9ede",
+	       "version at publication" => "1.0",
+	       "volume number" => "1",
+	       "volume URI" => "https://msp.org/jsag/2009/1-1/"
+	       },
 	  Authors => {{
 		    Name => "Steven V Sam",
 		    Email => "ssam@math.mit.edu",
@@ -405,13 +418,12 @@ pmToFillingExpansion = T -> (
           cols := for j from 0 to s - 1 list
                for i from 0 to lambdaT#j - 1 list (sigmas#i)#j;
           totalSign := 1;
-          sortedCols := {};
           degenerate := false;
-          for c in cols do (
+          sortedCols := for c in cols list (
                sgn := sortWithSignPM c;
-               if sgn === null then ( degenerate = true; break );
+               if sgn === null then ( degenerate = true; break {} );
                totalSign = totalSign * (sgn#0);
-               sortedCols = append(sortedCols, sgn#1);
+               sgn#1
                );
           if degenerate then return;
           F := new sfFillingType from sortedCols;
@@ -465,10 +477,9 @@ fillingToPMExpansion = F -> (
      accum := new MutableHashTable;
      cartesianForEachPM(colChoices, choice -> (
           totalSign := 1;
-          orderedCols := {};
-          for c in choice do (
+          orderedCols := for c in choice list (
                totalSign = totalSign * (c#0);
-               orderedCols = append(orderedCols, c#1);
+               c#1
                );
           rows := for i from 0 to r - 1 list
                for j from 0 to lambda#i - 1 list (orderedCols#j)#i;
@@ -703,10 +714,10 @@ pieriColumnHelper = (mu, k, P) -> (
      ensureSchurFn();
      n := numgens P;
      X := gens P;
-     for i from 0 to #mu - 2 do if mu#i < mu#(i+1) then error ("not a partition: " | toString mu);
+     for i from 0 to #mu - 2 do if mu#i < mu#(i+1) then error("not a partition: ", mu);
      muTrim := trimPartPM mu;
      muT := conjPartPM muTrim;
-     if k < 1 or k > #muT then error ("column index " | toString k | " out of range");
+     if k < 1 or k > #muT then error("column index ", k, " out of range");
      rowToShorten := muT#(k-1);
      lambda := trimPartPM (for i from 0 to #muTrim - 1 list (if i == rowToShorten - 1 then muTrim#i - 1 else muTrim#i));
      muTaug := prepend(0, muT);
@@ -780,7 +791,7 @@ pieriColumn(List, List, PolynomialRing) := opts -> (mu, cols, P) -> (
      for kk in cols do (
 	  if kk < 1 then error "column index must be positive";
 	  muT := conjPartPM curMu;
-	  if kk > #muT then error ("intermediate shape " | toString curMu | " has no column " | toString kk);
+	  if kk > #muT then error("intermediate shape ", curMu, " has no column ", kk);
 	  rowR := muT#(kk-1);
 	  newMu := trimPartPM (for i from 0 to #curMu - 1 list (if i == rowR - 1 then curMu#i - 1 else curMu#i));
 	  for i from 0 to #newMu - 2 do
@@ -802,7 +813,7 @@ pieriColumn(List, List, PolynomialRing) := opts -> (mu, cols, P) -> (
      n := numgens P;
      muTrim := trimPartPM mu;
      if conv =!= "Filling" and conv =!= "Row" and conv =!= "Weyl" then
-	  error ("pieriColumn: invalid Convention " | toString conv);
+	  error("pieriColumn: invalid Convention ", conv);
      if conv =!= "Filling" then (
 	  -- Convert from native Filling basis to PM basis.
 	  A := pmToFillingMatrix(muTrim, n);
@@ -898,12 +909,9 @@ subOneRowLR = (mu, k) -> (
      )
 
 -- Strip rows (1-indexed) for label a (0-indexed) inside an LR filling Q.
-stripRowsForLabel = (Q, a) -> (
-     rows := {};
-     for i from 0 to #Q - 1 do
-     for lab in Q#i do if lab == a then rows = append(rows, i + 1);
-     rows
-     )
+stripRowsForLabel = (Q, a) ->
+     flatten for i from 0 to #Q - 1 list
+	  for lab in Q#i list if lab == a then i + 1 else continue
 
 -- LR tableau enumerator.  Returns all fillings of lambda/mu with content nu
 -- that satisfy: rows weakly increasing, columns strictly increasing among
@@ -920,11 +928,10 @@ lrTableaux(List, List, List) := (lambda, mu, nu) -> (
      r := #nu;
      rowLens := for i from 0 to L - 1 list lam#i - mm#i;
      -- Cells in reverse-reading-word order.
-     cells := {};
-     for i from 0 to L - 1 do (
+     cells := flatten for i from 0 to L - 1 list (
 	  rs := mm#i;
 	  len := rowLens#i;
-	  for t from 0 to len - 1 do cells = append(cells, (i, rs + len - 1 - t));
+	  for t from 0 to len - 1 list (i, rs + len - 1 - t)
 	  );
      cellIndex := new MutableHashTable;
      for t from 0 to #cells - 1 do cellIndex#(cells#t) = t;
@@ -1027,11 +1034,9 @@ lrMap(Sequence, List, ZZ) := opts -> (shapes, Q, n) -> (
 		    expv := pair#0;
 		    c := pair#1;
 		    if c == 0 then continue;
-		    tvec := for a from 0 to r - 1 list (
-			 ms := {};
-			 for k from 0 to n - 1 do for kk from 1 to expv#(a*n + k) do ms = append(ms, k);
-			 ms
-			 );
+		    tvec := for a from 0 to r - 1 list
+			 flatten for k from 0 to n - 1 list
+			      toList(expv#(a*n + k) : k);
 		    straighten(tvec, straightenH);
 		    decomp := if straightenH#?tvec then straightenH#tvec else new HashTable from {};
 		    for ssyt in keys decomp do (
@@ -1125,7 +1130,7 @@ applyLR(Sequence, List, BasicList, ZZ) := opts -> (shapes, Q, T, n) -> (
 	       if idxF#?Klist then Tcoords#(idxF#Klist) = decompF#K;
 	       );
 	  )
-     else error ("applyLR: invalid Convention " | toString conv);
+     else error("applyLR: invalid Convention ", conv);
      Tcol := transpose matrix {toList Tcoords};
      wcol := M * Tcol;
      out := new MutableList;
@@ -1184,7 +1189,7 @@ displayLRImage List := terms -> (
 -------------------------------------------------------------------------------
 
 genNonStdTableauxPM = (lambda, n, convention) -> (
-     out := {};
+     out := new MutableList;
      if convention === "Filling" then (
 	  ensureSchurFn();
 	  shape := conjPartPM lambda;
@@ -1200,8 +1205,8 @@ genNonStdTableauxPM = (lambda, n, convention) -> (
 			      else (Fl#c)#j
 			      );
 			 newF := for cc from 0 to #Fl - 1 list (if cc == c then swapped else Fl#cc);
-			 out = append(out, new sfFillingType from newF);
-			 if #out >= 3 then return out;
+			 out#(#out) = new sfFillingType from newF;
+			 if #out >= 3 then return toList out;
 			 );
 		    );
 	       );
@@ -1217,13 +1222,13 @@ genNonStdTableauxPM = (lambda, n, convention) -> (
 			      else (T#ri)#j
 			      );
 			 newT := for rr from 0 to #T - 1 list (if rr == ri then swapped else T#rr);
-			 out = append(out, newT);
-			 if #out >= 3 then return out;
+			 out#(#out) = newT;
+			 if #out >= 3 then return toList out;
 			 );
 		    );
 	       );
 	  );
-     out
+     toList out
      )
 
 straightenByConvPM = (T, convention) -> (
@@ -1404,8 +1409,7 @@ pmAddableHStrips = (lambda, d, n) -> (
      while #lam > 0 and lam#-1 == 0 do lam = drop(lam, -1);
      if #lam > n then return {};
      lamPad := lam | toList(n - #lam : 0);
-     out := {};
-     for comp in compositions(n, d) do (
+     for comp in compositions(n, d) list (
 	  muNew := for i from 0 to n-1 list lamPad_i + comp_i;
 	  if not all(0..n-2, i -> muNew_i >= muNew_(i+1)) then continue;
 	  -- horizontal strip: each column has at most one new cell, i.e.
@@ -1414,9 +1418,8 @@ pmAddableHStrips = (lambda, d, n) -> (
 	  muTrim := muNew;
 	  while #muTrim > 0 and muTrim#-1 == 0 do muTrim = drop(muTrim, -1);
 	  boxes := flatten for i from 0 to n-1 list toList((comp_i):(i+1));
-	  out = append(out, (muTrim, boxes));
-	  );
-     out
+	  (muTrim, boxes)
+	  )
      );
 
 -- All partitions of n with at most maxParts parts.
@@ -1432,8 +1435,7 @@ pmAddableVStrips = (lambda, d, n) -> (
      while #lam > 0 and lam#-1 == 0 do lam = drop(lam, -1);
      if #lam > n then return {};
      lamPad := lam | toList(n - #lam : 0);
-     out := {};
-     for sub in subsets(toList(0..n-1), d) do (
+     for sub in subsets(toList(0..n-1), d) list (
 	  muNew := for i from 0 to n-1 list (lamPad_i + (if member(i, sub) then 1 else 0));
 	  if not all(0..n-2, i -> muNew_i >= muNew_(i+1)) then continue;
 	  muTrim := muNew;
@@ -1444,9 +1446,8 @@ pmAddableVStrips = (lambda, d, n) -> (
 	  pairs := sort apply(sub, r -> (lamPad_r + 1, r));
 	  pairs = reverse pairs;
 	  cols := apply(pairs, p -> p#0);
-	  out = append(out, (muTrim, cols));
-	  );
-     out
+	  (muTrim, cols)
+	  )
      );
 
 -- Encode a P-matrix M (dim_lambda x dim_mu, entries deg d) as a K-matrix
@@ -1514,9 +1515,8 @@ pmGetDualHBlocks = (lambda, d, n, conv, P, K) -> (
 	       monBasis, K)
 	  );
      A := fold((a, b) -> a | b, blocks);
-     offsets := new MutableList from {0};
-     for blk in blocks do offsets#(#offsets) = (last toList offsets) + numColumns blk;
-     val := (addable, A, toList offsets);
+     offsets := prepend(0, accumulate(plus, 0, apply(blocks, numColumns)));
+     val := (addable, A, offsets);
      pmDualBlockCache#key = val;
      val
      );
@@ -1534,9 +1534,8 @@ pmGetDualVBlocks = (lambda, d, n, conv, P, K) -> (
 	       monBasis, K)
 	  );
      A := fold((a, b) -> a | b, blocks);
-     offsets := new MutableList from {0};
-     for blk in blocks do offsets#(#offsets) = (last toList offsets) + numColumns blk;
-     val := (addable, A, toList offsets);
+     offsets := prepend(0, accumulate(plus, 0, apply(blocks, numColumns)));
+     val := (addable, A, offsets);
      pmDualBlockCache#key = val;
      val
      );
@@ -1549,23 +1548,19 @@ pmGetDualLRBlocks = (mu, nu, n, conv) -> (
      if pmDualBlockCache#?key then return pmDualBlockCache#key;
      totalCells := sum mu + sum nu;
      cands := apply(pmPartitionsAtMost(totalCells, n), p -> toList p);
-     blocks := {};
-     blockInfo := {};
-     for lamP in cands do (
-	  lrTabs := lrTableaux(lamP, mu, nu);
-	  for Qp in lrTabs do (
-	       blocks = append(blocks,
-		    lrMap((lamP, mu, nu), Qp, n, Convention => conv));
-	       blockInfo = append(blockInfo, (lamP, Qp));
+     -- Per-candidate (lambda', Q') pairs along with their lrMap blocks.
+     pairs := flatten for lamP in cands list
+	  for Qp in lrTableaux(lamP, mu, nu) list (
+	       (lamP, Qp, lrMap((lamP, mu, nu), Qp, n, Convention => conv))
 	       );
-	  );
+     blockInfo := apply(pairs, p -> (p#0, p#1));
+     blocks := apply(pairs, p -> p#2);
      if #blocks == 0 then error "dualLR: no GL_n summands in S_nu V (x) S_mu V";
      A := fold((a, b) -> a | b, blocks);
      if numRows A =!= numColumns A then
 	  error "dualLR: stacked LR matrix not square (decomposition incomplete)";
-     offsets := new MutableList from {0};
-     for blk in blocks do offsets#(#offsets) = (last toList offsets) + numColumns blk;
-     val := (blockInfo, A, toList offsets);
+     offsets := prepend(0, accumulate(plus, 0, apply(blocks, numColumns)));
+     val := (blockInfo, A, offsets);
      pmDualBlockCache#key = val;
      val
      );
@@ -1601,10 +1596,10 @@ dualPieri(List, List, PolynomialRing) := opts -> (mu, boxes, P) -> (
      while #lambda > 0 and lambda#-1 == 0 do lambda = drop(lambda, -1);
      (addable, A, offsets) := pmGetDualHBlocks(lambda, d, n, opts.Convention, P, K);
      muIdx := position(addable, p -> p#0 == mu);
-     if muIdx === null then error("dualPieri: mu = " | toString mu
-	  | " is not a horizontal " | toString d
-	  | "-strip addition to lambda = " | toString lambda
-	  | " in " | toString n | " variables");
+     if muIdx === null then error("dualPieri: mu = ", mu,
+	  " is not a horizontal ", d,
+	  "-strip addition to lambda = ", lambda,
+	  " in ", n, " variables");
      startRow := offsets#muIdx;
      dimMu := offsets#(muIdx + 1) - startRow;
      N := pmDualSolveRows(A, startRow, dimMu);
@@ -1662,14 +1657,14 @@ dualPieriColumn(List, List, PolynomialRing) := opts -> (mu, cols, P) -> (
      (addable, A, offsets) := pmGetDualVBlocks(lambda, d, n, opts.Convention, P, K);
      muTrim := trimPartPM mu;
      muIdx := position(addable, p -> p#0 == muTrim);
-     if muIdx === null then error("dualPieriColumn: mu = " | toString mu
-	  | " is not a vertical " | toString d | "-strip addition to lambda = "
-	  | toString lambda | " in " | toString n | " variables");
+     if muIdx === null then error("dualPieriColumn: mu = ", mu,
+	  " is not a vertical ", d, "-strip addition to lambda = ",
+	  lambda, " in ", n, " variables");
      -- Sign correction: A was built with the canonical cols ordering.
      canCols := addable#muIdx#1;
      sgn := pmPermSign(toList cols, canCols);
-     if sgn == 0 then error("dualPieriColumn: cols " | toString cols
-	  | " are not a permutation of canonical cols " | toString canCols);
+     if sgn == 0 then error("dualPieriColumn: cols ", cols,
+	  " are not a permutation of canonical cols ", canCols);
      startRow := offsets#muIdx;
      dimMu := offsets#(muIdx + 1) - startRow;
      N := pmDualSolveRows(A, startRow, dimMu);
@@ -1690,7 +1685,7 @@ applyDualPieriColumn(Sequence, RingElement, BasicList, ZZ) := opts ->
      P := ring poly;
      d := #(muCols#1);
      if not isHomogeneous poly or first degree poly =!= d then
-	  error("applyDualPieriColumn: poly must be homogeneous of degree d = " | toString d);
+	  error("applyDualPieriColumn: poly must be homogeneous of degree d = ", d);
      K := coefficientRing P;
      monBasis := flatten entries basis(d, P);
      (mu, cols) := muCols;
@@ -1746,13 +1741,13 @@ pmTableauToCoords = (T, shape, n, conv) -> (
 	       else error "tableau must be a List (PM row form) or Filling (column form)";
 	  for s in stds list (if hRow#?s then hRow#s else 0_QQ)
 	  )
-     else error("unknown Convention: " | toString conv)
+     else error("unknown Convention: ", conv)
      );
 
 pmStdTabsByConv = (n, shape, conv) -> (
      if conv === "Filling" then (ensureSchurFn(); sfStandardTabPM(n, conjPartPM shape))
      else if conv === "Row" or conv === "Weyl" then standardTableaux(n, shape)
-     else error("unknown Convention: " | toString conv)
+     else error("unknown Convention: ", conv)
      );
 
 -- applyPieri: point evaluation of the inclusion-direction Pieri map.
@@ -1815,7 +1810,7 @@ applyDualPieri(Sequence, RingElement, BasicList, ZZ) := opts ->
      P := ring poly;
      d := #boxes;
      if not isHomogeneous poly or first degree poly =!= d then
-	  error("applyDualPieri: poly must be homogeneous of degree d = " | toString d);
+	  error("applyDualPieri: poly must be homogeneous of degree d = ", d);
      K := coefficientRing P;
      monBasis := flatten entries basis(d, P);
      lambda := mu;
@@ -1957,7 +1952,7 @@ pmActEFilling0 = (i, j, F, lambda, n) -> (
 pmActEConv0 = (i, j, T, conv, shape, n) -> (
      if conv === "Row" or conv === "Weyl" then pmActE0(i, j, T)
      else if conv === "Filling" then pmActEFilling0(i, j, T, shape, n)
-     else error("unknown Convention: " | toString conv)
+     else error("unknown Convention: ", conv)
      );
 
 verifyEquivariant = method(Options => {Convention => "Row", Verbose => false, Direction => "Inclusion"})
