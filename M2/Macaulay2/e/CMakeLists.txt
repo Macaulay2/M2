@@ -486,6 +486,7 @@ if(BUILD_TESTING)
 
     unit-tests/MatrixIOTest.cpp
     unit-tests/fromStream.cpp
+    unit-tests/LatticePointsTest.cpp
     unit-tests/testMain.cpp # not needed, except for GC_INIT
 
     unit-tests/OverflowTest.cpp

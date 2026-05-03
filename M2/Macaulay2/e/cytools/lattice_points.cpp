@@ -69,15 +69,14 @@ LatticePointsResult latticePoints(
   if (status == -1)
     throw std::runtime_error(
         "rawLatticePoints: dim > 256 not supported by box_enum");
-  if (status == -2)
-    throw std::runtime_error(
-        "rawLatticePoints: exceeded max_N_out = "
-        + std::to_string(max_N_out) + " lattice points");
+  // status == -2 (max_N_out reached) is intentionally NOT an error: return
+  // the points collected so far and let the caller detect truncation by
+  // comparing result.points.size() against max_N_out.
   if (status == -3)
     throw std::runtime_error(
         "rawLatticePoints: exceeded max_N_nodes = "
         + std::to_string(max_N_nodes) + " search nodes");
-  if (status != 0)
+  if (status != 0 && status != -2)
     throw std::runtime_error(
         "rawLatticePoints: unknown box_enum status "
         + std::to_string(status));

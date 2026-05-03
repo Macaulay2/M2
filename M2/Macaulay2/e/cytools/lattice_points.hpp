@@ -18,10 +18,13 @@ struct LatticePointsResult {
 // `H` has N_hyps rows of length `dim` (may be empty for pure box enumeration).
 // `rhs` has length N_hyps (must match H.size(); may be empty if H is empty).
 //
+// max_N_out is a soft cap: when reached, the search stops and the points
+// found so far are returned. Detect truncation by comparing
+// result.points.size() against max_N_out.
 // Throws std::runtime_error if:
 //   - dim > 256 (unsupported by underlying box_enum)
-//   - the search produced more than max_N_out points
-//   - the search visited more than max_N_nodes nodes
+//   - the search visited more than max_N_nodes nodes (hard cap, since the
+//     caller cannot easily distinguish "ran out of budget" from "done")
 LatticePointsResult latticePoints(
     int dim,
     int B,
