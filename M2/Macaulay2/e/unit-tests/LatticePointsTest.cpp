@@ -569,3 +569,105 @@ TEST(LatticePointsNormaliz, RowLengthMismatch_Throws)
   std::vector<mpz_class> b = {mpz_class(0)};
   EXPECT_THROW(latticePointsNormaliz(2, A, b), std::runtime_error);
 }
+
+// ===========================================================================
+// Engine-wrapper tests for `rawLatticePointsNormaliz` (interface/cone.h).
+// Same shape as LatticePointsRaw above, exercising the marshaling layer
+// (mpz <-> mpz_class, MutableMatrix construction, ring/shape validation).
+// ===========================================================================
+
+TEST(LatticePointsNormalizRaw, Simplex_dim2_B3)
+{
+  // Standard simplex {x>=0, y>=0, x+y<=3}, count = C(5,2) = 10.
+  std::vector<std::vector<int>> A = {{-1, 0}, {0, -1}, {1, 1}};
+  std::vector<int> b = {0, 0, 3};
+  const Matrix* Am = makeZZ(A);
+  const Matrix* bm = makeZZ({{0}, {0}, {3}});
+
+  MutableMatrix* M = rawLatticePointsNormaliz(Am, bm);
+  ASSERT_NE(M, nullptr);
+  EXPECT_EQ(M->n_rows(), 2u);
+  EXPECT_EQ(M->n_cols(), 10u);
+  EXPECT_EQ(pointsAsSet(M), bruteForceAxLeqB(2, 3, A, b));
+}
+
+TEST(LatticePointsNormalizRaw, MatchesBoxEnumWrapper)
+{
+  // Same input through both engine wrappers: rawLatticePoints (with a B
+  // large enough to be non-binding) and rawLatticePointsNormaliz must
+  // produce the same set of points.
+  std::vector<std::vector<int>> A = {{1, 0}, {0, 1}, {-1, -1}};
+  std::vector<int> b = {2, 2, 0};
+  const Matrix* Am = makeZZ(A);
+  const Matrix* bm = makeZZ({{2}, {2}, {0}});
+
+  MutableMatrix* M_box = rawLatticePoints(Am, bm, /*B*/ 5, kBigN, kBigNN);
+  MutableMatrix* M_nmz = rawLatticePointsNormaliz(Am, bm);
+  ASSERT_NE(M_box, nullptr);
+  ASSERT_NE(M_nmz, nullptr);
+  EXPECT_EQ(pointsAsSet(M_box), pointsAsSet(M_nmz));
+}
+
+TEST(LatticePointsNormalizRaw, BigInt_b_Accepted)
+{
+  // 2^40 in b: rawLatticePoints would error ("does not fit"), Normaliz
+  // wrapper must accept. Constraints: x in {0}, y in [-2, 0]. 3 points.
+  const Matrix* Am = makeZZ({{1, 0}, {-1, 0}, {0, 1}, {0, -1}});
+
+  MatrixConstructor bcon(globalZZ->make_FreeModule(4), 1);
+  bcon.set_entry(0, 0, globalZZ->from_long(0));
+  bcon.set_entry(1, 0, globalZZ->from_long(0));
+  bcon.set_entry(2, 0, globalZZ->from_long(0));
+  mpz_t big;
+  mpz_init(big);
+  mpz_ui_pow_ui(big, 2, 40);
+  bcon.set_entry(3, 0, globalZZ->from_int(big));
+  mpz_clear(big);
+  const Matrix* bm = bcon.to_matrix();
+
+  MutableMatrix* M = rawLatticePointsNormaliz(Am, bm);
+  ASSERT_NE(M, nullptr);
+  EXPECT_EQ(M->n_cols(), 3u);
+  std::set<std::vector<int>> expected = {{0, -2}, {0, -1}, {0, 0}};
+  EXPECT_EQ(pointsAsSet(M), expected);
+}
+
+TEST(LatticePointsNormalizRaw, Unbounded_Errors)
+{
+  // x >= 0 in dim=1, no upper bound.
+  const Matrix* Am = makeZZ({{-1}});
+  const Matrix* bm = makeZZ({{0}});
+
+  MutableMatrix* M = rawLatticePointsNormaliz(Am, bm);
+  EXPECT_EQ(M, nullptr);
+  std::string msg = consumeEngineError();
+  EXPECT_NE(msg.find("unbounded"), std::string::npos) << "msg was: " << msg;
+}
+
+TEST(LatticePointsNormalizRaw, NonZZ_b_Errors)
+{
+  const Matrix* Am = makeZZ({{1, 0}, {0, 1}});
+
+  Ring* Fp = Z_mod::create(101);
+  MatrixConstructor bcon(Fp->make_FreeModule(2), 1);
+  bcon.set_entry(0, 0, Fp->from_long(2));
+  bcon.set_entry(1, 0, Fp->from_long(2));
+  const Matrix* bm = bcon.to_matrix();
+
+  MutableMatrix* M = rawLatticePointsNormaliz(Am, bm);
+  EXPECT_EQ(M, nullptr);
+  std::string msg = consumeEngineError();
+  EXPECT_NE(msg.find("over ZZ"), std::string::npos) << "msg was: " << msg;
+}
+
+TEST(LatticePointsNormalizRaw, WrongShape_b_Errors)
+{
+  const Matrix* Am = makeZZ({{1, 0}, {0, 1}});
+  const Matrix* bm_row = makeZZ({{2, 2}});  // 1 x 2 instead of 2 x 1
+
+  MutableMatrix* M = rawLatticePointsNormaliz(Am, bm_row);
+  EXPECT_EQ(M, nullptr);
+  std::string msg = consumeEngineError();
+  EXPECT_NE(msg.find("column matrix"), std::string::npos)
+      << "msg was: " << msg;
+}

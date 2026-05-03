@@ -17,6 +17,7 @@
 #include "util.hpp"
 
 #include "cytools/lattice_points.hpp"
+#include "cytools/lattice-points-normaliz.hpp"
 #include "cytools/cone-interior-point.hpp"
 #include "interface/ring.h"
 #include <libnormaliz/cone.h>
@@ -264,6 +265,61 @@ MutableMatrix *rawLatticePoints(const Matrix *A,
     {
       // catches both std::runtime_error from latticePoints() and
       // exc::engine_error (which derives from std::runtime_error)
+      ERROR(e.what());
+      return nullptr;
+  }
+}
+
+// Same user-facing convention as rawLatticePoints (A*x <= b), but backed by
+// libnormaliz: enumerates ALL lattice points of the polyhedron (no box,
+// no caps, big-int entries supported). The polyhedron must be bounded.
+MutableMatrix *rawLatticePointsNormaliz(const Matrix *A, const Matrix *b)
+{
+  try
+    {
+      const size_t n_hyps = A->n_rows();
+      const size_t dim = A->n_cols();
+
+      if (A->get_ring() != globalZZ)
+        {
+          ERROR("rawLatticePointsNormaliz: A must be a matrix over ZZ");
+          return nullptr;
+        }
+      if (b->get_ring() != globalZZ)
+        {
+          ERROR("rawLatticePointsNormaliz: b must be a matrix over ZZ");
+          return nullptr;
+        }
+      if (static_cast<size_t>(b->n_rows()) != n_hyps || b->n_cols() != 1)
+        {
+          ERROR("rawLatticePointsNormaliz: b must be a column matrix with "
+                "n_rows(A) rows");
+          return nullptr;
+        }
+
+      std::vector<std::vector<mpz_class>> Avec(n_hyps,
+                                               std::vector<mpz_class>(dim));
+      for (size_t i = 0; i < n_hyps; i++)
+        for (size_t j = 0; j < dim; j++)
+          Avec[i][j] = static_cast<mpz_class>(A->elem(i, j).get_mpz());
+
+      std::vector<mpz_class> bvec(n_hyps);
+      for (size_t i = 0; i < n_hyps; i++)
+        bvec[i] = static_cast<mpz_class>(b->elem(i, 0).get_mpz());
+
+      auto result = M2::cytools::latticePointsNormaliz(
+          static_cast<int>(dim), Avec, bvec);
+
+      const size_t n_points = result.points.size();
+      MutableMatrix *M =
+          MutableMatrix::zero_matrix(globalZZ, dim, n_points, /*dense*/ true);
+      for (size_t i = 0; i < n_points; i++)
+        for (size_t j = 0; j < dim; j++)
+          M->set_entry(j, i,
+                       globalZZ->from_int(result.points[i][j].get_mpz_t()));
+      return M;
+  } catch (const std::runtime_error &e)
+    {
       ERROR(e.what());
       return nullptr;
   }
