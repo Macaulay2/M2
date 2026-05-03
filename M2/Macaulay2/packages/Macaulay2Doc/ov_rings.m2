@@ -1234,7 +1234,7 @@ document {
     "You may compute Gröbner bases, syzygies, and form quotient rings of these skew
     commutative rings. Warning that quotienting by an ideal which is not a
     2-sided ideal will produce quotient ring where multiplication is not well
-    defined on coset representives.",
+    defined on coset representatives.",
     EXAMPLE {
         "R = QQ[a..d, SkewCommutative => true]",
         "I = ideal {a*b + c}",
