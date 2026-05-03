@@ -73,7 +73,7 @@ export{
   "CodimCheckFunction",
   "PeriodicCheckFunction",
   --"RecursiveMinors",
-  --premade stratgies
+  --premade strategies
   "Recursive",
   "StrategyDefault",
   "StrategyDefaultNonRandom",
