@@ -475,8 +475,7 @@ export lookupUnaryValue(s:HashTable,meth:Expr,methhash:hash_t):Expr := (
      key1 := Key1;
      key1.0 = Expr(s);
      key1.1 = meth;
-     -- the big numbers here are the same as in hash() for sequences in structure.d
-     lookup1(s, Expr(key1), (27449 * 27457 + s.hash) * 27457 + methhash));
+     lookup1(s, Expr(key1), (seqHashSeed * seqHashMult + s.hash) * seqHashMult + methhash));
 -----------------------------------------------------------------------------
 -- binary methods
 export installMethod(meth:Expr,lhs:HashTable,rhs:HashTable,value:Expr):Expr := (
@@ -496,17 +495,16 @@ threadLocal Key2 := Sequence(nullE,nullE,nullE);
 export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:hash_t):Expr := (
      key2 := Key2;
      key2.0 = meth;
-     -- the big numbers here are the same as in hash() for sequences in structure.d
-     keyhash0 := 27449 * 27457 + methhash;
+     keyhash0 := seqHashSeed * seqHashMult + methhash;
      while true do (			  -- loop through ancestors of lhs
 	  key2.1 = Expr(lhs);
 	  lefthash := lhs.hash;
-	  keyhash1 := keyhash0 * 27457 + lefthash;
+	  keyhash1 := keyhash0 * seqHashMult + lefthash;
 	  rhsptr := rhs;
 	  while true do (		  -- loop through ancestors of rhs
 	       key2.2 = Expr(rhsptr);
      	       righthash := rhsptr.hash;
-	       keyhash := keyhash1 * 27457 + righthash;
+	       keyhash := keyhash1 * seqHashMult + righthash;
 	       s := lookup1(
 		    if lefthash > righthash then lhs else rhsptr,
 		    Expr(key2), keyhash);
@@ -524,8 +522,7 @@ export lookupBinaryValue(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:hash_t):
      key2.0 = Expr(lhs);
      key2.1 = Expr(rhs);
      key2.2 = meth;
-     -- the big numbers here are the same as in hash() for sequences in structure.d
-     keyhash := ((27449 * 27457 + lhs.hash) * 27457 + rhs.hash) * 27457 + methhash;
+     keyhash := ((seqHashSeed * seqHashMult + lhs.hash) * seqHashMult + rhs.hash) * seqHashMult + methhash;
      lookup1(if lhs.hash > rhs.hash then lhs else rhs, Expr(key2), keyhash));
 export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:Expr):Expr := (
      lookupBinaryMethod(lhs,rhs,meth,hash(meth)));
@@ -551,22 +548,21 @@ threadLocal Key3 := Sequence(nullE,nullE,nullE,nullE);
 export lookupTernaryMethod(s1:HashTable,s2:HashTable,s3:HashTable,meth:Expr,methhash:hash_t):Expr := (
      key3 := Key3;
      key3.0 = meth;
-     -- the big numbers here are the same is in hash() for sequences in structure.d
-     keyhash0 := 27449 * 27457 + methhash;
+     keyhash0 := seqHashSeed * seqHashMult + methhash;
      while true do (			  -- loop through ancestors of s1
 	  key3.1 = Expr(s1);
 	  s1hash := s1.hash;
-	  keyhash1 := keyhash0 * 27457 + s1hash;
+	  keyhash1 := keyhash0 * seqHashMult + s1hash;
 	  s2ptr := s2;
 	  while true do (		  -- loop through ancestors of s2
 	       key3.2 = Expr(s2ptr);
      	       s2hash := s2ptr.hash;
-	       keyhash2 := keyhash1 * 27457 + s2hash;
+	       keyhash2 := keyhash1 * seqHashMult + s2hash;
 	       s3ptr := s3;
 	       while true do (		  -- loop through ancestors of s3
 		    key3.3 = Expr(s3ptr);
 		    s3hash := s3ptr.hash;
-		    keyhash3 := keyhash2  * 27457 + s3hash;
+		    keyhash3 := keyhash2 * seqHashMult + s3hash;
 	       	    s := lookup1(
 			 if s1hash > s2hash then (
 			      if s1hash > s3hash then s1 else s3ptr
@@ -616,27 +612,26 @@ threadLocal Key4 := Sequence(nullE,nullE,nullE,nullE,nullE);
 export lookupQuaternaryMethod(s1:HashTable,s2:HashTable,s3:HashTable,s4:HashTable,meth:Expr,methhash:hash_t):Expr := (
      key4 := Key4;
      key4.0 = meth;
-     -- the big numbers here are the same is in hash() for sequences in structure.d
-     keyhash0 := 27449 * 27457 + methhash;
+     keyhash0 := seqHashSeed * seqHashMult + methhash;
      while true do (			  -- loop through ancestors of s1
 	  key4.1 = Expr(s1);
 	  s1hash := s1.hash;
-	  keyhash1 := keyhash0 * 27457 + s1hash;
+	  keyhash1 := keyhash0 * seqHashMult + s1hash;
 	  s2ptr := s2;
 	  while true do (		  -- loop through ancestors of s2
 	       key4.2 = Expr(s2ptr);
      	       s2hash := s2ptr.hash;
-	       keyhash2 := keyhash1 * 27457 + s2hash;
+	       keyhash2 := keyhash1 * seqHashMult + s2hash;
 	       s3ptr := s3;
 	       while true do (		  -- loop through ancestors of s3
 		    key4.3 = Expr(s3ptr);
 		    s3hash := s3ptr.hash;
-		    keyhash3 := keyhash2  * 27457 + s3hash;
+		    keyhash3 := keyhash2 * seqHashMult + s3hash;
 		    s4ptr := s4;
 		    while true do (		  -- loop through ancestors of s4
 			 key4.4 = Expr(s4ptr);
 			 s4hash := s4ptr.hash;
-			 keyhash4 := keyhash3  * 27457 + s4hash;
+			 keyhash4 := keyhash3 * seqHashMult + s4hash;
 			 s := lookup1(
 			      if s1hash > s2hash then (
 				   if s1hash > s3hash 

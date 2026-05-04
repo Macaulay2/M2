@@ -4,6 +4,10 @@ use expr;
 
 header "#include <engine.h>"; -- required for raw hash functions
 
+-- used to hash sequences below and for quick method lookup in hashtables.dd
+export seqHashSeed := hash_t(27449);
+export seqHashMult := hash_t(27457);
+
 export hash(e:Expr):hash_t := (
      when e
      is x:HashTable do x.hash
@@ -26,9 +30,8 @@ export hash(e:Expr):hash_t := (
      is x:RRicell do hash(x.v)
      is x:CCcell do hash(x.v)
      is x:Sequence do (
-	  -- the numbers here are the same as in binary lookup() in objects.d!!
-	  h := hash_t(27449);
-	  foreach y in x do h = h * 27457 + hash(y);
+	  h := seqHashSeed;
+	  foreach y in x do h = h * seqHashMult + hash(y);
 	  h)
      is x:stringCell do hash(x.v)				    -- for strings, keep internal and external hash the same
      is n:Net do hash(n)
