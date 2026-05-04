@@ -72,6 +72,7 @@ document {
         UL {
 	LI { "improved packages:",
 	    UL {
+		LI { TO "BettiCharacters::BettiCharacters", " has been updated to version 2.6. Changes include significant optimizations of the core algorithm, a new option for semidirect products of finite groups acting on tori, and methods for hyperoctahedral groups. This version introduces breaking changes to the ", TT "Character", " type, making it incompatible with previous versions." },
 		LI { TO "InvariantRing::InvariantRing", " has been updated to version 2.4, which includes a new algorithm for invariants of elementary abelian $p$-groups, as well as bugfixes and documentation improvements. The ", TT "permutationMatrix", " method now takes arrays as inputs." },
 		}
 	    },
