@@ -1,3 +1,20 @@
+
+doc ///
+ Node
+  Key
+    WittVectors
+  Headline
+     computations with finite-length Witt vectors
+  Description
+    Text
+        This package implements finite-length Witt vectors over rings of positive characteristic. The main method is witt, which can be used to build Witt rings, Witt ring maps, and Witt ring elements; Witt ring elements can be added, multiplied, etc. The Frobenius and Verschiebung maps on Witt rings and Witt ring elements are also implemented. The package also includes methods for working with ideals in Witt rings, as well as a method giving an explicit presentation of a Witt ring as a finitely generated algebra over the integers. Finally, there are methods for finding the equations satisfied by the parameters of a Frobenius lift on a quotient of a polynomial ring, as well as computing quasi-F-splitting heights of complete intersections.
+///
+
+
+
+
+
+
 -------------------------
 --- witt method
 -------------------------
