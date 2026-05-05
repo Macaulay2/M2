@@ -432,12 +432,17 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
   arena.execute([&]{
   tbb::parallel_for(tbb::blocked_range<int>(0,n_sols),
   [&](tbb::blocked_range<int> r) {
-    // Register this TBB worker with the Boehm GC. TBB owns thread creation,
-    // so workers are not GC-aware by default; without this, a collection
-    // triggered from inside the loop aborts with "Collecting from unknown thread".
-    struct GC_stack_base sb;
-    GC_get_stack_base(&sb);
-    int gc_reg = GC_register_my_thread(&sb);
+    // Register this TBB worker with the Boehm GC. TBB workers are created
+    // inside the prebuilt libtbb dylib, which never sees bdwgc's pthread_create
+    // redirect macro, so the workers are unknown to the GC by default; without
+    // this, a collection triggered from inside the loop aborts with
+    // "Collecting from unknown thread".
+    bool gc_was_registered = GC_thread_is_registered();
+    if (!gc_was_registered) {
+      struct GC_stack_base sb;
+      GC_get_stack_base(&sb);
+      GC_register_my_thread(&sb);
+    }
     if (M2_numericalAlgebraicGeometryTrace > 9) { 
       // `r` seems to be if length one in all experiments so far
       std::cout << "r = [" << r.begin() << "," << r.end() << ")\n";
@@ -777,7 +782,7 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
       oe.ring().set_from_long(oe.entry(0, s), status);
       oe.ring().set_from_long(oe.entry(1, s), count);
     }
-    if (gc_reg == GC_SUCCESS)
+    if (!gc_was_registered)
       GC_unregister_my_thread();
   }); //(end) tbb::parallel_for
   }); //(end) arena.execute
