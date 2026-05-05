@@ -625,12 +625,14 @@ end--
 ///
 
 TEST ///
--- promoting to fraction field
-R = QQ[x]
+-- promoting/lifting to/from fraction field
+S = QQ[x]
 p = ideal x
-S = R_p
+R = S_p
 F = frac R
-assert(promote(x_S, F) === x_F)
+assert(promote(x_R, F) === x_F)
+assert(lift(x_F, R) === x_R)
+assert not liftable(1/x, R)
 ///
 
 end--
