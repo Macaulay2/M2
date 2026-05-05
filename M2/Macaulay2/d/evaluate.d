@@ -1433,6 +1433,8 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
         -- if there's a table for the left hand side, it's stored here
         table:HashTableOrNull := null();
         key := nullE;
+        --if we encoute a hash table and need to lock, we should evaluate the right hand side first
+        rexpr := nullE;
         --TODO do we need to special case how this works with hash tables???
 	if s.word.name === "??" -- x ??= y is treated like x ?? (x = y)
 	then (
@@ -1450,6 +1452,9 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
                     when target
                     is targetTable:HashTable do (
                        table = targetTable;
+                       rexpr = eval(x.rhs);
+                       when rexpr is e:Error do return rexpr
+                       else nothing;
                        if y.oper == DotS.symbol then (
                            --this replicates dotfun from actors5.d but using the special version of lookup
                            when y.rhs
@@ -1475,7 +1480,7 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	-- check if user-defined method exists
 	meth := lookup(Class(lexpr), Expr(SymbolClosure(globalFrame, x.oper)));
 	if meth != nullE then (
-	    rexpr := eval(x.rhs);
+	    if table==null() then rexpr = eval(x.rhs); --if table isn't null then rexpr is already valid, although it might be nullE still
 	    when rexpr is e:Error do (
 		maybeUnlock(table);
 		return rexpr)
@@ -1492,10 +1497,11 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 		return r));
 	-- if not, use default behavior
 	c := (
-	    if s.word.name === "??" then x.rhs
+            rcode := if table == null() then x.rhs else Code(evaluatedCode(rexpr, codePosition(x.rhs)));
+	    if s.word.name === "??" then rcode
 	    else Code(binaryCode(s,
 		    Code(evaluatedCode(lexpr, codePosition(x.lhs))),
-		    x.rhs, x.position)));
+		    rcode, x.position)));
 	when x.lhs
 	is y:globalMemoryReferenceCode do (
 	    r := eval(c);
