@@ -1189,6 +1189,11 @@ globalAssignment(frameindex:int,t:Symbol,newvalue:Expr):Expr := ( -- frameID = 0
      vals.frameindex = newvalue;
      newvalue);
 
+assignment(nestingDepth:int,frameindex:int,t:Symbol,newvalue:Expr):Expr := (
+     if nestingDepth == -1
+     then globalAssignment(frameindex,t,newvalue)
+     else localAssignment(nestingDepth,frameindex,newvalue));
+
 globalAssignmentFun(x:globalAssignmentCode):Expr := (
      t := x.lhs;
      newvalue := eval(x.rhs);
@@ -1403,75 +1408,10 @@ augmentedParallelAssignmentFun(oper:Symbol, lhs:CodeSequence, rhs:Code):Expr:= (
 
 HashTableOrNull := HashTable or null;
 
--- check if code is x#k or x.k (where x is a hash table)
--- if so, lock it and return (so we can unlock it later)
-maybeLock(c:Code):HashTableOrNull := (
-    when c
-    is x:binaryCode do (
-	if x.oper == DotS.symbol || x.oper == SharpS.symbol
-	then (
-	    y := eval(x.lhs);
-	    when y is z:HashTable do (
-		if !z.beingInitialized then lockWrite(z.mutex);
-		HashTableOrNull(z))
-	    else HashTableOrNull(null()))
-	else HashTableOrNull(null()))
-    else HashTableOrNull(null()));
-
 maybeUnlock(x:HashTableOrNull):void := (
     when x
-    is y:HashTable do (
-	if !y.beingInitialized then unlock(y.mutex))
+    is y:HashTable do unlockHashTable(y)
     else nothing);
-
---what about mutable lists?
---assumes that the table has been locked on
-hashTableAugmentedAssignmentFun(lhs:binaryCode, oper1: Symbol, oper:Symbol, rexpr:Expr, rpos:Position):Expr := (
-    lexpr := nullE;
-    key := nullE;
-    table := eval(lhs.lhs);
-    when table
-    is Error do return table
-    is hashTable:HashTable do (
-        if lhs.oper == DotS.symbol then (
-            --this replicates dotfun from actors5.d but using the non-locking variation of lookup1force
-            when lhs.rhs
-            is r:globalSymbolClosureCode do (
-                key = Expr(SymbolClosure(globalFrame,r.symbol));
-                lexpr = lookup1forceNoLock(hashTable, key))
-            else nothing) --TODO correct error message printErrorMessageE(rhs,"expected a symbol"))
-        else if lhs.oper == SharpS.symbol then (
-            --TODO
-            key = eval(lhs.rhs);
-            lexpr = lookup1forceNoLock(hashTable, key)
-        )
-        else (
-            --this case should be impossible
-            return nullE;
-        );
-        meth := lookup(Class(lexpr), Expr(SymbolClosure(globalFrame, oper1)));
-        if meth != nullE then (
-            r := applyEEE(meth,lexpr,rexpr);--TODO what if meth tries to assign to the same hash table
-            --check if the returned value is the symbol "Default"
-	    when r
-            is s:SymbolClosure do (
-       	        if (s.symbol.word.name === "Default") then nothing
-	        else (
-                    return r
-                )
-            )
-            else (
-	        return r;
-	    )
-        );
-        left := evaluatedCode(lexpr, codePosition(Code(lhs)));
-        right := evaluatedCode(rexpr, rpos);
-        r := eval(Code(binaryCode(oper, Code(left), right, rpos)));
-        --r := oper.binary(Code(left),Code(right));
-        storeInHashTableNoLock(hashTable,key,hash(key),r);
-        r)
-    else WrongArgHashTable(1)
-    );
 
 augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
     when lookup(x.oper.word, augmentedAssignmentOperatorTable)
@@ -1488,61 +1428,47 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	is y:angleBarListCode do (
 	    return augmentedParallelAssignmentFun(x.oper, y.t, x.rhs))
 	else nothing;
-	-- check if we're modifying a hash table and lock if so
-	table := maybeLock(x.lhs);
 	-- evaluate the left-hand side first
 	lexpr := nullE;
-	-- this will eventually hold the value to assign
+        -- if there's a table for the left hand side, it's stored here
+        table:HashTableOrNull := null();
+        key := nullE;
+        --TODO do we need to special case how this works with hash tables???
 	if s.word.name === "??" -- x ??= y is treated like x ?? (x = y)
 	then (
-	    maybeUnlock(table);
 	    e := nullify(x.lhs);
 	    when e
-	    is Nothing do (
-		return when x.lhs
-		is y:globalMemoryReferenceCode do (
-		    r := eval(x.rhs);
-		    when r is e:Error do r
-		    else globalAssignment(y.var.frameindex, y.var, r))
-		is y:localMemoryReferenceCode do (
-		    r := eval(x.rhs);
-		    when r is e:Error do r
-		    else localAssignment(y.nestingDepth, y.frameindex, r))
-		is y:threadMemoryReferenceCode do (
-		    r := eval(x.rhs);
-		    when r is e:Error do r
-		    else globalAssignment(y.var.frameindex, y.var, r))
-		is y:binaryCode do (
-		    r := x.rhs;
-		    if y.oper == DotS.symbol || y.oper == SharpS.symbol
-		    then (
-			z := AssignElemFun(y.lhs, y.rhs, r);
-			z)
-		    else InstallValueFun(CodeSequence(
-			    convertGlobalOperator(y.oper), y.lhs, y.rhs, r)))
-		is y:adjacentCode do (
-		    r := x.rhs;
-		    InstallValueFun(CodeSequence(
-			    convertGlobalOperator(AdjacentS.symbol), y.lhs, y.rhs, r)))
-		is y:unaryCode do (
-		    r := x.rhs;
-		    UnaryInstallValueFun(convertGlobalOperator(y.oper), y.rhs, r))
-		else buildErrorPacket(
-		    "augmented assignment not implemented for this code")
-		)
-	    else (
-		return e))
+	    is Nothing do nothing
+	    else return e)
 	else (
-            when table is hashTable:HashTable do (
-                when x.lhs is y:binaryCode do (
-                    r := hashTableAugmentedAssignmentFun(y, x.oper, s, eval(x.rhs), codePosition(x.rhs));
-	            unlock(hashTable.mutex);
-	            return r)
-                else nothing; --this case should be impossible
-                )
-            else nothing;
-            lexpr = eval(x.lhs)
-            );
+            --check if we are assiging to a lookup into something
+            when x.lhs is
+            y:binaryCode do(
+                if y.oper == DotS.symbol || y.oper == SharpS.symbol
+	        then (
+                    target := eval(y.lhs);
+                    when target
+                    is targetTable:HashTable do (
+                       table = targetTable;
+                       if y.oper == DotS.symbol then (
+                           --this replicates dotfun from actors5.d but using the special version of lookup
+                           when y.rhs
+                           is r:globalSymbolClosureCode do (
+                               key = Expr(SymbolClosure(globalFrame,r.symbol));
+                               lexpr = lookupAndLockHashTable(targetTable,key))
+                           else lexpr = printErrorMessageE(y.rhs,"expected a symbol")) -- using printErrorMessageE to replicate what dotfun in actors5.d does
+                       else if y.oper == SharpS.symbol then (
+                           key = eval(y.rhs);
+                           lexpr = lookupAndLockHashTable(targetTable,key))
+                       else (
+                           --This case should be impossible
+                           error("internal error: invalid augmented assignment operator");))
+                    else
+                        lexpr = eval(x.lhs)) --TODO we shouldn't be reevaluating the y.lhs
+                else
+                    lexpr = eval(x.lhs))
+            else
+                lexpr = eval(x.lhs));
 	when lexpr is e:Error do (
 	    return lexpr)
 	else nothing;
@@ -1559,8 +1485,10 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	    is s:SymbolClosure do (
 		if s.symbol.word.name === "Default" then nothing
 		else (
+                    maybeUnlock(table);
 		    return r))
 	    else (
+                maybeUnlock(table);
 		return r));
 	-- if not, use default behavior
 	c := (
@@ -1584,8 +1512,14 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	is y:binaryCode do (
 	    if y.oper == DotS.symbol || y.oper == SharpS.symbol
 	    then (
-		z := AssignElemFun(y.lhs, y.rhs, c);
-		z)
+                when table
+                is hashTable:HashTable do (
+                    r := eval(c);
+                    when r is Error do r
+                    else updateAndUnlockHashTable(hashTable,key,r))
+                else (
+		    z := AssignElemFun(y.lhs, y.rhs, c);
+		    z))
 	    else InstallValueFun(CodeSequence(
 		    convertGlobalOperator(y.oper), y.lhs, y.rhs, c)))
 	is y:adjacentCode do (

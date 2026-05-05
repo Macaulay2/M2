@@ -117,37 +117,6 @@ export remove(x:HashTable,key:Expr):Expr := (
      if !x.beingInitialized then unlock(x.mutex);
      ret);
 
-export storeInHashTableNoLock(x:HashTable,key:Expr,h:hash_t,value:Expr):Expr := (
-     if !x.Mutable then return buildErrorPacket("attempted to modify an immutable hash table");
-     hmod := int(h & (length(x.table)-1));
-     p := x.table.hmod;
-     while p != p.next do (
-	  if p.key == key || equal(p.key,key)==True 
-	  then (
-	       p.value = value;
-	       if !x.beingInitialized then unlock(x.mutex);
-	       return value);
-	  p = p.next);
-     if 4 * x.numEntries == 3 * length(x.table) -- SEE ABOVE
-     then (
-	  enlarge(x);
-	  hmod = int(h & (length(x.table)-1));
-	  );
-     -- Old comments:
-     -- In the following statement, a new entry is adding by atomically replacing the pointer x.table.hmod.
-     -- This will not confuse readers that don't lock the hash table, because once the load x.table.hmod, they
-     -- will have a linked list that stays the same, is shortened, or has a value changed, and contains no
-     -- duplicate entries.  Adding a new entry by appending to the end of the list, on the other hand, might
-     -- cause a reader to encounter the same key twice, if the key is removed and added while the reader is
-     -- traversing the list.
-     x.table.hmod = KeyValuePair(key,h,value,x.table.hmod);
-     --Do not increment numEntries until after new value pair has been inserted to maintain consistency.
-     --It is necessary to throw in a compilerBarrier to ensure that there is no memory reordering
-     -- compilerBarrier();
-     x.numEntries = x.numEntries + 1;
-     --Note: x.numEntries may be inconsistent with the number of entries in the table if accessed from another thread
-     value);
-
 export storeInHashTable(x:HashTable,key:Expr,h:hash_t,value:Expr):Expr := (
      if !x.Mutable then return buildErrorPacket("attempted to modify an immutable hash table");
      if !x.beingInitialized then lockWrite(x.mutex);
@@ -255,6 +224,7 @@ export storeInHashTableWithCollisionHandler(x:HashTable,key:Expr,value:Expr,hand
      x.numEntries = x.numEntries + 1;
      if !x.beingInitialized then unlock(x.mutex);
      value);
+
 toHashTableError(i:int):Expr := buildErrorPacket("expected element at position "+tostring(i)+" to be a pair");
 toHashTableWithCollisionHandler(v:Sequence,handler:Expr):Expr := (
      o := newHashTable(hashTableClass,nothingClass);
@@ -380,22 +350,6 @@ KeyNotFound(object:string, key:Expr):Expr := (
 	    msg = msg + ":\n" + info));
     buildErrorPacket(msg));
 
---Don't lock the table, used for augmented assignments
-export lookup1forceNoLock(object:HashTable, key:Expr, keyhash:hash_t):Expr := (
-     res := notfoundE;
-     keymod := int(keyhash & (length(object.table)-1));
-     bucket := object.table.keymod;
-     while bucket != bucket.next do (
-	  if bucket.key == key || bucket.hash == keyhash && equal(bucket.key,key)==True then (
-	       res = bucket.value;
-	       break);
-	  bucket = bucket.next;
-	  );
-     if res != notfoundE then res
-     else KeyNotFound("hash table", key)
-);
-export lookup1forceNoLock(object:HashTable, key:Expr):Expr := lookup1forceNoLock(object,key,hash(key));
-
 export lookup1(object:HashTable,key:Expr,keyhash:hash_t):Expr := (
      -- warning: can return notfoundE, which should not be given to the user
      res := notfoundE;
@@ -438,6 +392,45 @@ export lookup(object:HashTable,key:Expr):Expr := lookup(object,key,hash(key));
 export lookup(object:HashTable,key:SymbolClosure):Expr := (
      lookup(object,Expr(key),key.symbol.hash)
      );
+
+-----------------------------------------------------------------------------
+-- lookup and modify functions for augmented assignment operations
+
+-- This finds a single entry and locks the hash table for write, returning with the lock held
+-- This should be paired with updateAndUnlockHashTable or a call to unlockHashTable
+-- If the key isn't found, the table will be unlocked and a error returned
+export lookupAndLockHashTable(x:HashTable, key:Expr):Expr := (
+    h := hash(key);
+    if !x.beingInitialized then lockWrite(x.mutex);
+    hmod := int(h & (length(x.table)-1));
+    p := x.table.hmod;
+    while p != p.next do (
+        if p.key == key || equal(p.key,key)==True
+        then (
+            return p.value);
+        p = p.next);
+    unlock(x.mutex);
+    KeyNotFound("hash table", key));
+
+-- This must be called with the write lock held, it's intended to be the other half of lookupAndLockHashTable
+export updateAndUnlockHashTable(x:HashTable, key:Expr, value:Expr):Expr := (
+    if !x.Mutable then (
+        if !x.beingInitialized then unlock(x.mutex);
+        return buildErrorPacket("attempted to modify an immutable hash table"));
+    h := hash(key);
+    hmod := int(h & (length(x.table)-1));
+    p := x.table.hmod;
+    while p != p.next do (
+        if p.key == key || equal(p.key,key)==True
+        then (
+            p.value = value;
+            if !x.beingInitialized then unlock(x.mutex);
+            return value);
+        p = p.next);
+    if !x.beingInitialized then unlock(x.mutex);
+    KeyNotFound("hash table", key));
+
+export unlockHashTable(x:HashTable):void := if !x.beingInitialized then unlock(x.mutex);
 
 -----------------------------------------------------------------------------
 
