@@ -4,6 +4,7 @@
 
 #include "ZZ.hpp"          // for RingZZ
 #include "coeffrings.hpp"  // for CoefficientRingR
+#include "exceptions.hpp"  // for exc::engine_error
 #include "freemod.hpp"     // for FreeModule
 #include "monoid.hpp"      // for Monoid
 #include "poly.hpp"        // for PolyRing
@@ -86,10 +87,11 @@ ring_elem Ring::get_non_unit() const
 
 void Ring::set_non_unit(ring_elem non_unit) const
 {
-  if (_isfield == 1)  // i.e. declared to be a field
-    ERROR("a non unit was found in a ring declared to be a field");
+  bool was_field = (_isfield == 1);
   const_cast<Ring *>(this)->_isfield = -1;
   const_cast<Ring *>(this)->_non_unit = non_unit;
+  if (was_field)
+    throw exc::engine_error("a non unit was found in a ring declared to be a field");
 }
 
 ring_elem Ring::var(int v) const
