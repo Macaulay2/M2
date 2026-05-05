@@ -276,7 +276,11 @@ WittIdeal ^ ZZ := (I, nn) -> if nn == 1 then I else trim( I*I^(nn-1))
 
 --WittIdeal display
 
-net WittIdeal := WI -> if length (wgs = WI.wittGenerators) == 1 then( horizontalJoin("ideal ", net (wgs#0))) else horizontalJoin("ideal ", net toSequence( wgs))
+net WittIdeal := WI -> (
+    wgs := WI.wittGenerators;
+    if length wgs == 1 then horizontalJoin("ideal ", net wgs#0)
+    else horizontalJoin("ideal ", net toSequence( wgs))
+    )
 
 
 ----------------------------------
