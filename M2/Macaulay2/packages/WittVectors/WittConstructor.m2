@@ -237,12 +237,12 @@ WittIdeal = new Type of MutableHashTable;
 
 protect wittGenerators
 
-wittIdeal(WittRingElement) := ww -> new WittIdeal from {wittGenerators => toSequence{ww}}
+wittIdeal(WittRingElement) := ww -> new WittIdeal from {wittGenerators => toList{ww}}
 
 wittIdeal List := wittIdeal Sequence := LL -> (
     if not all(LL, ll -> class(ll) === WittRingElement) then error "the suggested generators are not WittRingElement";
     if not length unique apply(LL, ll -> length(ll)) == 1 then error "the generators do not have the same length";
-    new WittIdeal from {wittGenerators => toSequence(LL)}
+    new WittIdeal from {wittGenerators => toList(LL)}
 )
 
 
@@ -276,27 +276,7 @@ WittIdeal ^ ZZ := (I, nn) -> if nn == 1 then I else trim( I*I^(nn-1))
 
 --WittIdeal display
 
-addCommas := LL -> (
-    nn := #LL;
-    out := ();
-    for jj in 0..(2*nn-2) do(
-	if jj % 2 == 0 then(
-	    out = append(out, LL#(jj//2))
-	    ) else (
-	    out = append(out, ", ");
-	    );
-	);
-    out
-)
-
-net WittIdeal := WI -> (
-    wgs := WI.wittGenerators;
-    if #wgs == 1 then( horizontalJoin("ideal ", net (wgs#0))) else (
-	wgsnet := apply( wgs, net );
-	wgsnet = addCommas(wgsnet);
-	horizontalJoin("ideal (", wgsnet, ")"  )
-        )
-)
+net WittIdeal := WI -> if length (wgs = WI.wittGenerators) == 1 then( horizontalJoin("ideal ", net (wgs#0))) else horizontalJoin("ideal ", net toSequence( wgs))
 
 
 ----------------------------------
