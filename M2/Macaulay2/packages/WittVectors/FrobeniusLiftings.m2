@@ -110,7 +110,7 @@ createEquations(ZZ, Ideal) := opts -> (d, I) -> (
 evalMap = method()
 evalMap(List, Ideal, Ring):= (L, I, T) -> (
     S := ring I;
-    if length L != numgens S then return "error: needed a list with as many entries as the variables of S";
+    if length L != numgens S then error "needed a list with as many entries as the variables of S";
     map(S/I, T, L|gens S)
 )
 

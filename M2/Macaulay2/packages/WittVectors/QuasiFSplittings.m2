@@ -78,26 +78,3 @@ pushmultiple = (r, GS, transformS) -> (
 pushideal = (I, GS, transformS) -> matrix{ for i in I_* list pushmultiple(i, GS, transformS)}
 
 
-
-table2 = method()
-table2(ZZ):= n-> (
-x := symbol x;
-y := symbol y;
-z := symbol z;
-w := symbol w;
-S := (ZZ/3)[x, y, z, w];
-I := new MutableHashTable from {};
-I#1 = x^4 + y^4 + z^4 + 2*w^4 + x^2* y*w + y*z^2*w;
-I#2 = x^4 + 2*y^4 + 2*z^4 + 2*w^4 + x*y*z^2;
-I#3 = x^4 + y^4 + z^4 + w^4 + x^2*z^2 + x*y*z^2 + z^3*w;
-I#4 = x^4 + y^4 + z^4 + w^4 + x^2*z^2 + x*y*z^2;
-I#5 = x^4 + y^4 + z^4 + w^4 + x^3*z + z^3*w + y*z^2*w + y*z*w^2;
-I#6 = x^4 + y^4 + z^4 + w^4 + x^2*z^2 + x^2*y*z;
-I#7 = x^4 + y^4 + z^4 + w^4 + x*y^2*z + x*z^2*w + y*z*w^2 + y^2*z*w;
-I#8 = x^4 + x^2*y*z + x^2*y*w + 2*x^2*z^2 + x*y*w^2 + 2*y^4 + y^3*w + z^4 + w^4;
-I#9 = x^4 + y^4 + z^4 + w^4 + x*y^3 + y^3*w + z^2*w^2 + 2*x*y*z^2 + y*z*w^2;
-I#10 = x^4 + 2*x^2*y*z + x^2*y*w + x*y^2*w + y^4 + y^3*w + y^2*z^2 +2*y^2*z*w + y^2*w^2 + y*z^3 + y*z^2*w + y*z*w^2 + z^4 + z*w^3;
-I#11 = x^4 + y^4 + z^4 + w^4;
-if n>10 then return I#11 else return I#n
-)
-

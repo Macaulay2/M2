@@ -15,8 +15,8 @@ newPackage(
         "PushForward",
         "Elimination",
     },
-    Headline => "A Macaulay2 package for Witt vectors",
-    Keywords => {"Witt Vectors"},
+    Headline => "computations with Witt vectors, Frobenius lifts, and quasi-F-splittings",
+    Keywords => {"Commutative Algebra"},
     DebuggingMode => false,
     AuxiliaryFiles => true
     )

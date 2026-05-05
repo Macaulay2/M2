@@ -14,12 +14,15 @@ print("1")
 
 --TEST 1
 TEST /// -- Check that the fSplittingHeight method gives back the correct number
-    debug WittVectors
-    for i from 1 to 4 do (
-        I=ideal table2(i);
-        j=i;
-        assert(fSplittingHeight(I)==j)
-    )
+    S = (ZZ/3)[x,y,z,w]
+    I1 = ideal(x^4 + y^4 + z^4 + 2*w^4 + x^2* y*w + y*z^2*w);
+    I2 = ideal(x^4 + 2*y^4 + 2*z^4 + 2*w^4 + x*y*z^2);
+    I3 = ideal(x^4 + y^4 + z^4 + w^4 + x^2*z^2 + x*y*z^2 + z^3*w);
+    I4 = ideal(x^4 + y^4 + z^4 + w^4 + x^2*z^2 + x*y*z^2);
+    assert(fSplittingHeight(I1)==1)
+    assert(fSplittingHeight(I2)==2)
+    assert(fSplittingHeight(I3)==3)
+    assert(fSplittingHeight(I4)==4)
 ///
 
 --TEST 2

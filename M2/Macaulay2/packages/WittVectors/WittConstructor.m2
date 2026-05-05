@@ -105,7 +105,7 @@ verschiebung(WittRingElement) := ww -> (
 )
 
 truncate(ZZ, WittRingElement) :=  {} >> opts -> (n, w) -> (
-    if length w<n then error "Can't truncate to something longer";
+    if length w<n then error "can't truncate to something longer";
     witt drop(w.tuple, n-length w)
 )
 
