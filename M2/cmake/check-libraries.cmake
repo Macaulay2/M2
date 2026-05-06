@@ -44,7 +44,10 @@ endif()
 find_package(Threads	REQUIRED QUIET)
 find_package(LAPACK	REQUIRED QUIET)
 
-set(Boost_USE_STATIC_LIBS ON)
+if(STATIC_BOOST)
+  message(STATUS "Using static Boost, if Boost is installed but not found, try setting STATIC_BOOST to OFF")
+endif()
+set(Boost_USE_STATIC_LIBS ${STATIC_BOOST})
 if(UNIX)
   cmake_policy(SET CMP0167 OLD) # load CMake's FindBoost module
   find_package(Boost	REQUIRED QUIET COMPONENTS regex OPTIONAL_COMPONENTS stacktrace_addr2line)

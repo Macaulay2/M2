@@ -33,6 +33,7 @@ option(WITH_XML		"Link with the libxml2 library"		ON)
 option(WITH_PYTHON	"Link with the Python library"		ON)
 option(WITH_MYSQL	"Link with the MySQL library"		OFF)
 option(WITH_JANSSON	"Link with the Jansson library"		ON)
+option(STATIC_BOOST     "Use the static version of Boost" ON)
 
 set(BUILD_PROGRAMS  "" CACHE STRING "Build programs, even if found")
 set(BUILD_LIBRARIES "" CACHE STRING "Build libraries, even if found")
