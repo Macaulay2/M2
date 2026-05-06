@@ -370,9 +370,20 @@ restart
 debug needsPackage "GenerateD"
 -- note: e is not allowed as a variable name, as we use e as the input expression!
 result = str (genFunctionCall(
-        "rawLatticePoints", 
-        "MutableMatrixOrNull", 
+        "rawLatticePoints",
+        "MutableMatrixOrNull",
         ("a"=>"Matrix", "b"=>"Matrix", "c"=>"int", "d"=>"long", "f"=>"long")
+        ))
+///
+
+TEST ///
+restart
+debug needsPackage "GenerateD"
+-- note: e is not allowed as a variable name, as we use e as the input expression!
+result = str (genFunctionCall(
+        "rawLatticePointsNormaliz",
+        "MutableMatrixOrNull",
+        ("a"=>"Matrix", "b"=>"Matrix")
         ))
 ///
 

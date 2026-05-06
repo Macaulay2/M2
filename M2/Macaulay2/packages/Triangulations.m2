@@ -3299,6 +3299,17 @@ TEST /// -- wallCircuits with degenerate codim-2 walls (circuit < d+1).
   assert all(flatten entries (M * t), x -> x >= 0)
 ///
 
+-*
+  restart
+  needsPackage "Triangulations"
+*-
+TEST ///
+  -- h11=2, id=2 from KS database.
+  vecs = {{-1, -1, 1, 1}, {-1, -1, 1, 2}, {-1, -1, 2, 1}, {-1, 3, -1, -1}, {2, -1, -1, -1}, {-1, 1, 0, 0}}
+  A = transpose matrix vecs
+  t = regularFineTriangulation(A, Homogenize => false)
+  assert isWellDefined t -- fails??
+///
 end----------------------------------------------------
 
 restart

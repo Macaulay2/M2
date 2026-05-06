@@ -26,6 +26,13 @@ struct LatticePointsNormalizResult {
 //   - shape mismatch (A.size() != b.size(), or row of A has length != dim)
 //   - unbounded polyhedron (Normaliz reports the polytope as not computable)
 //   - other libnormaliz failures (BadInputException, etc.)
+//
+// TODO: no user-facing options for now. Two libnormaliz knobs are worth
+// surfacing later if needed: setVerbose(bool) (currently hard-coded false)
+// for progress output on long runs, and GlobalTimeBound (double seconds)
+// to abort runaway compute. Other libnormaliz options (Approximate,
+// BottomDecomposition, BigInt, etc.) are advanced algorithm-selection flags
+// whose defaults work; expose only on demand.
 LatticePointsNormalizResult latticePointsNormaliz(
     int dim,
     const std::vector<std::vector<mpz_class>>& A,

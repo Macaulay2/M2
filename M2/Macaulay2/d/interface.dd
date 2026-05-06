@@ -4620,6 +4620,32 @@ export rawLatticePoints(e:Expr):Expr := (
   );
 setupfun("rawLatticePoints",rawLatticePoints);
 
+-- Compute ALL lattice points in a (bounded) polyhedron, via libnormaliz.
+-- rawLatticePointsNormaliz(A, b)
+--  A: RawMatrix over ZZ, m rows x d columns
+--  b: RawMatrix over ZZ, m rows x 1 column.
+--    the i-th constraint is (row i of A).(x1...xd) <= b_(i,0)
+-- returns: a MutableMatrix with d = #cols(A) rows, one column per lattice
+--   point satisfying the constraints above. The polyhedron must be bounded;
+--   otherwise an engine error is reported. Big-integer entries in A and b
+--   are supported.
+export rawLatticePointsNormaliz(e:Expr):Expr := (
+  when e is s:Sequence do (
+  if length(s) == 2 then (
+  when s.0 is wa:RawMatrixCell do (a := wa.p;
+  when s.1 is wb:RawMatrixCell do (b := wb.p;
+    toExpr(Ccode(RawMutableMatrixOrNull,
+      "rawLatticePointsNormaliz(",
+        a, ",", b,
+      ")"
+    ))
+  ) else WrongArg(1, "a raw matrix")
+  ) else WrongArg(0, "a raw matrix")
+  ) else WrongNumArgs(2)
+  ) else WrongNumArgs(2)
+  );
+setupfun("rawLatticePointsNormaliz",rawLatticePointsNormaliz);
+
 -- rawConeInteriorPoint(A): test whether the cone {x : A*x <= 0} is
 -- full-dimensional, returning either a witness interior point or a
 -- dual certificate of degeneracy.
