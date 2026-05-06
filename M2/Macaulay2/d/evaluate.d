@@ -1468,8 +1468,10 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
                        else (
                            --This case should be impossible
                            error("internal error: invalid augmented assignment operator");))
-                    else
-                        lexpr = eval(x.lhs)) --TODO we shouldn't be reevaluating the y.lhs
+                    else (
+                        --reconstruct the binary code with the already evaluated y.lhs
+                        targetCode := Code(evaluatedCode(target, codePosition(y.lhs)));
+                        lexpr = eval(Code(binaryCode(y.oper,targetCode,y.rhs,y.position)))))
                 else
                     lexpr = eval(x.lhs))
             else
