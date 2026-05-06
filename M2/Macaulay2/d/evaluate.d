@@ -1429,13 +1429,12 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	    return augmentedParallelAssignmentFun(x.oper, y.t, x.rhs))
 	else nothing;
 	-- evaluate the left-hand side first
-	lexpr := nullE;
+	lexpr := dummyExpr;
         -- if there's a table for the left hand side, it's stored here
         table:HashTableOrNull := null();
-        key := nullE;
+        key := dummyExpr;
         --if we encoute a hash table and need to lock, we should evaluate the right hand side first
-        rexpr := nullE;
-        --TODO do we need to special case how this works with hash tables???
+        rexpr := dummyExpr;
 	if s.word.name === "??" -- x ??= y is treated like x ?? (x = y)
 	then (
 	    e := nullify(x.lhs);
@@ -1482,7 +1481,7 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	-- check if user-defined method exists
 	meth := lookup(Class(lexpr), Expr(SymbolClosure(globalFrame, x.oper)));
 	if meth != nullE then (
-	    if table==null() then rexpr = eval(x.rhs); --if table isn't null then rexpr is already valid, although it might be nullE still
+	    if rexpr == dummyExpr then rexpr = eval(x.rhs);
 	    when rexpr is e:Error do (
 		maybeUnlock(table);
 		return rexpr)
@@ -1499,7 +1498,7 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 		return r));
 	-- if not, use default behavior
 	c := (
-            rcode := if table == null() then x.rhs else Code(evaluatedCode(rexpr, codePosition(x.rhs)));
+            rcode := if rexpr == dummyExpr then x.rhs else Code(evaluatedCode(rexpr, codePosition(x.rhs)));
 	    if s.word.name === "??" then rcode
 	    else Code(binaryCode(s,
 		    Code(evaluatedCode(lexpr, codePosition(x.lhs))),
