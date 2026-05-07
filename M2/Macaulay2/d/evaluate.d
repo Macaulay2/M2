@@ -1189,11 +1189,6 @@ globalAssignment(frameindex:int,t:Symbol,newvalue:Expr):Expr := ( -- frameID = 0
      vals.frameindex = newvalue;
      newvalue);
 
-assignment(nestingDepth:int,frameindex:int,t:Symbol,newvalue:Expr):Expr := (
-     if nestingDepth == -1
-     then globalAssignment(frameindex,t,newvalue)
-     else localAssignment(nestingDepth,frameindex,newvalue));
-
 globalAssignmentFun(x:globalAssignmentCode):Expr := (
      t := x.lhs;
      newvalue := eval(x.rhs);
