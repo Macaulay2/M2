@@ -151,7 +151,7 @@ dismiss Package := pkg     -> (
 readPackage = method(TypicalValue => OptionTable, Options => { FileName => null })
 readPackage Package := opts -> pkg     -> options pkg
 readPackage String  := opts -> pkgname -> (
-    if pkgname === "Core" then return newPackageOptions#"Core";
+    if isMember(pkgname, {"Core","User"}) then return newPackageOptions#pkgname;
     remove(newPackageOptions, pkgname);
     filename := if opts.FileName === null then pkgname | ".m2" else opts.FileName;
     loadPackageOptions#pkgname = new OptionTable from { HeaderOnly => true };
