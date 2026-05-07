@@ -174,7 +174,7 @@ toString RObject := x -> value (
     else if TYPEOF x == ENVSXP then environmentName x
     else RtoString x)
 net RObject := x -> (
-    if TYPEOF x == SYMSXP then CHAR PRINTNAME x
+    if TYPEOF x == SYMSXP then value CHAR PRINTNAME x
     else stack value captureOutput x)
 
 RObject.AfterPrint = x -> (RObject, " of type ", value type2char TYPEOF x)
