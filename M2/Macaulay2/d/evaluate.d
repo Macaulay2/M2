@@ -1517,7 +1517,9 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
                 when table
                 is hashTable:HashTable do (
                     r := eval(c);
-                    when r is Error do r
+                    when r is Error do (
+                        unlockHashTable(hashTable);
+                        r)
                     else updateAndUnlockHashTable(hashTable,key,r))
                 else (
 		    z := AssignElemFun(y.lhs, y.rhs, c);
