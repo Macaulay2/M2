@@ -124,27 +124,105 @@ MutableMatrix /* or null */ *rawGVInvariants(M2_arrayint a,
                                             M2_arrayint f,
                                             M2_arrayint g);
 
-// Enumerate integer vectors x of length d = #cols(A) satisfying
-//   A * x <= b  (componentwise) and  |x_i| <= B  for all i.
-// Both A and b are matrices over ZZ; b must be a column matrix with
-// n_rows(A) rows and 1 column. All entries of A and b must fit in a
-// C int (the underlying box_enum operates on int).
-// Returns a MutableMatrix over ZZ with d rows and one column per
-// lattice point.
+/** \brief Enumerate lattice points in a bounded box of a polyhedron (int-precision).
+ *
+ * Enumerates every integer vector `x` in `ZZ^d` (where `d = n_cols(A)`)
+ * satisfying both
+ *   - `A * x <= b`  componentwise, and
+ *   - `|x_i| <= B`  for every coordinate `i`.
+ *
+ * Backed by the cytools `box_enum.h`, written by Nate MacFadden,, which works in C `int`
+ * arithmetic. The implementation negates `A` and `b` to convert M2's
+ * `A x <= b` into `box_enum`'s `H x >= rhs` convention.
+ *
+ * \note This routine follows the intended M2 engine convention:
+ *       **hyperplanes as rows** of `A`, **lattice points as columns**
+ *       of the result.
+ *
+ * \param A           An m-by-d matrix over ZZ; each row is one
+ *                    inequality. All entries must fit in a C `int`.
+ * \param b           A column matrix over ZZ with `m` rows and 1 column.
+ *                    All entries must fit in a C `int`.
+ * \param B           Per-coordinate absolute-value bound on `x`.
+ * \param max_N_out   **Soft** cap on the number of returned points: if
+ *                    reached, the enumeration stops cleanly and returns
+ *                    the partial list. Callers should compare the
+ *                    returned column count against this bound to detect
+ *                    truncation.
+ * \param max_N_nodes **Hard** cap on the number of search-tree nodes
+ *                    explored: if exceeded, an error is reported (the
+ *                    routine returns `nullptr`) rather than returning
+ *                    a partial result, since otherwise the caller cannot
+ *                    distinguish a complete enumeration from one cut
+ *                    short.
+ * \return A dense MutableMatrix over ZZ with `d` rows and one column
+ *         per enumerated lattice point, or `nullptr` on error (bad
+ *         input shape, ring mismatch, entries that overflow C `int`,
+ *         or `max_N_nodes` exceeded).
+ *
+ * \par Example (M2 top level)
+ * \code{.unparsed}
+ *   debug Core
+ *   A = matrix {{1,1,1}}
+ *   b = matrix {{-2}}
+ *   map(ZZ, rawLatticePoints(raw A, raw b, 1, 100, 1000))
+ *     -- | -1 0  -1 -1 |
+ *     -- | -1 -1 0  -1 |
+ *     -- | -1 -1 -1 0  |
+ * \endcode
+ * Enumerates the integer points `x` in `ZZ^3` with `x_1+x_2+x_3 <= -2`
+ * and `|x_i| <= 1`. There are exactly four such points:
+ * `(-1,-1,-1), (0,-1,-1), (-1,0,-1), (-1,-1,0)`. The output has 3 rows
+ * (the ambient dimension) and 4 columns (one per point).
+ *
+ * \sa rawLatticePointsNormaliz — libnormaliz-backed counterpart with
+ *     big-integer support and no box bound, but requires a bounded
+ *     polyhedron.
+ * \ingroup cones
+ */
 MutableMatrix /* or null */ *rawLatticePoints(const Matrix *A,
                                               const Matrix *b,
                                               int B,
                                               long max_N_out,
                                               long max_N_nodes);
 
-// Enumerate ALL integer vectors x of length d = #cols(A) satisfying
-//   A * x <= b  (componentwise),
-// using libnormaliz. The polyhedron must be bounded (otherwise an error
-// is reported). Both A and b are matrices over ZZ; b must be a column
-// matrix with n_rows(A) rows and 1 column. Big-integer entries are
-// supported (no fits-in-int restriction).
-// Returns a MutableMatrix over ZZ with d rows and one column per
-// lattice point.
+/** \brief Enumerate all lattice points of a bounded polyhedron, via libnormaliz.
+ *
+ * Same user-facing convention as `rawLatticePoints` (enumerate every
+ * integer `x` in `ZZ^d` with `A * x <= b`), but with no box bound and
+ * no caps: every lattice point of the polyhedron is returned. The
+ * polyhedron must be bounded; an unbounded input is reported as an
+ * error. Big-integer entries in `A` and `b` are fully supported (no
+ * fits-in-int restriction).
+ *
+ * \note This routine follows the intended M2 engine convention:
+ *       **hyperplanes as rows** of `A`, **lattice points as columns**
+ *       of the result.
+ *
+ * \param A An m-by-d matrix over ZZ; each row is one inequality.
+ * \param b A column matrix over ZZ with `m` rows and 1 column.
+ * \return A dense MutableMatrix over ZZ with `d` rows and one column
+ *         per lattice point, or `nullptr` on error (ring mismatch,
+ *         bad shape, or unbounded polyhedron).
+ *
+ * \par Example (M2 top level)
+ * \code{.unparsed}
+ *   debug Core
+ *   A = matrix {{1,0},{0,1},{-1,0},{0,-1}}    -- unit square: 0 <= x,y <= 1
+ *   b = matrix {{1},{1},{0},{0}}
+ *   map(ZZ, rawLatticePointsNormaliz(raw A, raw b))
+ *     -- | 0 0 1 1 |
+ *     -- | 0 1 0 1 |
+ * \endcode
+ * The polyhedron is bounded by its inequalities alone (no `B` is
+ * needed, unlike `rawLatticePoints`). The four columns are the four
+ * lattice points `(0,0), (0,1), (1,0), (1,1)` of the unit square.
+ *
+ * \sa rawLatticePoints — cytools `box_enum`-backed counterpart that requires
+ *     a per-coordinate box bound `B` and uses `int` arithmetic, but
+ *     can enumerate inside an unbounded polyhedron clipped by the box.
+ * \ingroup cones
+ */
 MutableMatrix /* or null */ *rawLatticePointsNormaliz(const Matrix *A,
                                                       const Matrix *b);
 
