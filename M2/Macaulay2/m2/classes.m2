@@ -85,7 +85,6 @@ Command Thing := (x,y) -> x#0 y
 
 -- Now some extra stuff:
 
-apply(Thing, Command)   := VisibleList => (v,f) -> apply(v, i -> f i)
 Command   \ VisibleList := VisibleList => (f,v) -> apply(v,f#0)
 Function  \ VisibleList := VisibleList => (f,v) -> apply(v,f)
 Command   \ String      := Sequence    => (f,s) -> apply(s,f#0)
