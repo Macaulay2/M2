@@ -5,8 +5,8 @@ use expr;
 header "#include <engine.h>"; -- required for raw hash functions
 
 -- used to hash sequences below and for quick method lookup in hashtables.dd
-export seqHashSeed := hash_t(27449);
-export seqHashMult := hash_t(27457);
+export seqHashSeed := hash_t(75209);
+export seqHashMult := hash_t(59219);
 
 export hash(e:Expr):hash_t := (
      when e
