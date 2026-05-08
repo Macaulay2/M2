@@ -19,7 +19,7 @@ LICENSEFILES = LICENSE COPYING
 include ../Makefile.library
 
 # clang won't work, so we look for gcc
-CXX_CANDIDATES := g++ $(foreach n,$(shell seq 16 -1 9),g++-$(n)) false
+CXX_CANDIDATES := $(foreach n,$(shell seq 16 -1 9),g++-$(n)) false
 CXX := $(firstword $(foreach c,$(CXX_CANDIDATES), \
 	$(if $(shell command -v $(c) 2>/dev/null),$(c))))
 
