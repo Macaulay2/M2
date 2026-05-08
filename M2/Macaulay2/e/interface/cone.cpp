@@ -138,32 +138,32 @@ auto decodeArrayArrayInt(M2_arrayint a) -> std::vector<std::vector<int>>
   return result;
 }
 
-MutableMatrix *rawGVInvariants(M2_arrayint a,
-                              M2_arrayint b,
-                              M2_arrayint c,
-                              M2_arrayint d, // missing e as that cannot be used in d-file...
-                              M2_arrayint f,
-                              M2_arrayint g,
-                              M2_arrayint h)
+MutableMatrix *rawGVInvariants(M2_arrayint curves,
+                               M2_arrayint lightcone,
+                               M2_arrayint grading,
+                               M2_arrayint Q,
+                               M2_arrayint nefPartition,
+                               M2_arrayint intnums,
+                               M2_arrayint settings)
 {
-  std::vector<std::vector<int>> input_curves {decodeArrayArrayInt(a)};
-  std::vector<std::vector<int>> lightcone_curves {decodeArrayArrayInt(b)};
-  std::vector<int> grading_vec { M2_arrayint_to_stdvector<int>(c) }; // c
-  std::vector<std::vector<int>> Q {decodeArrayArrayInt(d)};  // GLSM charge matrix
-  std::vector<std::vector<int>> nef_partition {decodeArrayArrayInt(f)};
-  std::vector<std::vector<int>> intnums_list {decodeArrayArrayInt(g)};  // intersection numbers
-  std::vector<int> input_settings {M2_arrayint_to_stdvector<int>(h)}; // {h};             // computation settings
+  std::vector<std::vector<int>> input_curves {decodeArrayArrayInt(curves)};
+  std::vector<std::vector<int>> lightcone_curves {decodeArrayArrayInt(lightcone)};
+  std::vector<int> grading_vec { M2_arrayint_to_stdvector<int>(grading) };
+  std::vector<std::vector<int>> charge_matrix {decodeArrayArrayInt(Q)};  // GLSM charge matrix
+  std::vector<std::vector<int>> nef_partition {decodeArrayArrayInt(nefPartition)};
+  std::vector<std::vector<int>> intnums_list {decodeArrayArrayInt(intnums)};  // intersection numbers
+  std::vector<int> input_settings {M2_arrayint_to_stdvector<int>(settings)};
 
   int h11 = input_curves[0].size();
   //  MatrixConstructor resultCurvesAndGVs(globalZZ->make_FreeModule(h11+1));
 
   CurveAndGVCollection curveandgvcollection;
 
-  
+
   gvcompute(input_curves,
             lightcone_curves,
             grading_vec,
-            Q,
+            charge_matrix,
             nef_partition,
             intnums_list,
             input_settings,

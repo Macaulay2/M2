@@ -116,13 +116,103 @@ const Matrix /* or null */ *rawFourierMotzkin(const Matrix *C);
  */
 const Matrix /* or null */ *rawHilbertBasis(const Matrix *C);
 
-MutableMatrix /* or null */ *rawGVInvariants(M2_arrayint a,
-                                            M2_arrayint b,
-                                            M2_arrayint c,
-                                            M2_arrayint d,
-                                            M2_arrayint e,
-                                            M2_arrayint f,
-                                            M2_arrayint g);
+/** \brief Gopakumar-Vafa invariants of a Calabi-Yau threefold.
+ *
+ * Computes Gopakumar-Vafa (GV) invariants for a Calabi-Yau threefold
+ * via the `gvcompute` routine ported from CYTools (see Reference
+ * below for the algorithm and the precise meaning of the inputs).
+ *
+ * Each `M2_arrayint` argument is a flattened encoding produced on
+ * the d-language side: nested-list inputs use a length-prefix-per-row
+ * format, flat-list inputs are passed through.
+ *
+ * \param curves        Input curves: the curve classes whose GV
+ *                      invariants are to be computed. Each inner
+ *                      list has length `h11`.
+ * \param lightcone     Lightcone curves. Currently non-empty values
+ *                      are not yet functional or tested; pass the
+ *                      empty list.
+ * \param grading       Grading vector.
+ * \param Q             GLSM charge matrix.
+ * \param nefPartition  Nef partition data. Currently non-empty values
+ *                      are not yet functional or tested; pass the
+ *                      empty list.
+ * \param intnums       Triple intersection numbers.
+ * \param settings      Computation settings: exactly four `int`s, in
+ *                      order:
+ *                      - `[0] max_deg`: maximum curve degree to
+ *                        enumerate. A negative value `-k` is
+ *                        reinterpreted as a minimum-points request
+ *                        (`min_points = k`, `max_deg` clamped to 0).
+ *                      - `[1] digits`: decimal digits of internal
+ *                        MPFR precision (valid range 17..2000).
+ *                      - `[2] mode`: enumeration strategy and a
+ *                        GV/GW switch; see the bit layout and the
+ *                        Normal / Hilbert / Verbatim modes documented
+ *                        in `Macaulay2/e/computeGV.cpp`.
+ *                      - `[3] min_mem`: **currently ignored** — the
+ *                        memory threshold is hardcoded internally
+ *                        (notably on macOS); the slot is kept in the
+ *                        signature for forward compatibility.
+ *
+ * \return A MutableMatrix over ZZ with `h11 + 1` rows and one column
+ *         per (curve class, GV invariant) pair found by the search:
+ *         rows `0..h11-1` hold the curve coordinates and row `h11`
+ *         holds the GV invariant (an `mpz_class`, which may be very
+ *         large). Returns `nullptr` if `gvcompute` fails.
+ *
+ * \par Reference
+ * M. Demirtas, M. Kim, L. McAllister, J. Moritz, A. Rios-Tascon,
+ * *Computational Mirror Symmetry*, arXiv:2303.00757 (2024).
+ * https://arxiv.org/abs/2303.00757
+ *
+ * \par Example (M2 top level)
+ * \code{.unparsed}
+ *   debug Core
+ *
+ *   -- Helper: pack a list-of-list-of-int into the flat
+ *   -- length-prefix-per-row encoding rawGVInvariants expects.
+ *   encodeArrayArrayInt = method()
+ *   encodeArrayArrayInt List := List => L -> (
+ *       parts := flatten for i from 0 to #L - 1 list prepend(#L#i, L#i);
+ *       prepend(#L, parts))
+ *
+ *   mori       = encodeArrayArrayInt {{-1,3,-1},{0,-2,1},{1,2,-1}}
+ *   lightcone  = encodeArrayArrayInt {}
+ *   gradingvec = {2, 4, 9}
+ *   Q          = encodeArrayArrayInt {{1,0,0,0,1,0,1},{0,1,0,1,0,1,1},
+ *                                     {0,0,1,3,1,2,2}}
+ *   nefpart    = encodeArrayArrayInt {}
+ *   intnums    = encodeArrayArrayInt {{0,0,0,-1},{0,1,1,-2},{0,1,2,1},
+ *                                     {1,1,1,8},{1,1,2,-4},{1,2,2,2},
+ *                                     {2,2,2,-1}}
+ *   settings   = {6, 150, 0, 300000}
+ *
+ *   transpose map(ZZ, rawGVInvariants(mori, lightcone, gradingvec, Q,
+ *                                     nefpart, intnums, settings))
+ *     -- | 1  2  -1 1     |
+ *     -- | 0  -2 1  -2    |
+ *     -- | 1  0  0  126   |
+ *     -- | -1 1  0  1     |
+ *     -- ...
+ *     -- | 1  1  0  20615 |
+ *     -- ...                              (19 rows total)
+ * \endcode
+ * Each row of the (transposed) output is one tuple
+ * `[c_1, c_2, c_3, GV(c)]`: the first `h11 = 3` entries are the curve
+ * coordinates, the last entry is the GV invariant for that class.
+ * Only curve classes with non-zero GV invariants are returned (e.g.
+ * the class `(1,1,0)` has `GV = 20615`).
+ *
+ * \ingroup cones
+ */
+MutableMatrix /* or null */ *rawGVInvariants(M2_arrayint curves,
+                                             M2_arrayint lightcone,
+                                             M2_arrayint grading,
+                                             M2_arrayint Q,
+                                             M2_arrayint nefPartition,
+                                             M2_arrayint intnums,
+                                             M2_arrayint settings);
 
 /** \brief Enumerate lattice points in a bounded box of a polyhedron (int-precision).
  *
@@ -227,6 +317,69 @@ MutableMatrix /* or null */ *rawLatticePointsNormaliz(const Matrix *A,
                                                       const Matrix *b);
 
 
+/** \brief Test full-dimensionality of a cone and produce a witness, via GLPK.
+ *
+ * For the cone `{ x in QQ^n : A * x <= 0 }`, runs a single linear
+ * program (GLPK, double precision) that simultaneously decides
+ * full-dimensionality and produces either an interior witness or a
+ * Farkas-style dual certificate of non-full-dimensionality. The
+ * implementation negates `A` because the helper `coneInteriorPoint()`
+ * works with `{x : A x >= 0}`.
+ *
+ * \par The LP
+ * In the user-facing convention `A x <= 0`, the LP is:
+ * \code{.unparsed}
+ *   maximize     t
+ *   subject to   A_i * x  <=  -t        for each row i = 1, ..., m
+ *                -1 <= x_j <= 1         for j = 1, ..., n  (normalization)
+ *                t >= 0
+ * \endcode
+ * `t` is the strict-feasibility margin. If the optimum `tStar > 0`
+ * (with numerical tolerance `1e-8`), the cone is full-dimensional
+ * and the primal `x` is an interior witness (each `A_i x < 0`
+ * strictly). If `tStar <= 0` the cone is not full-dimensional, and
+ * the row duals supply a non-negative `y >= 0` with `y^T A = 0`.
+ * The `[-1, 1]` box on `x` keeps the LP bounded; without it `t`
+ * could scale to infinity along any interior ray.
+ *
+ * \note Hyperplanes-as-rows convention. Callers whose data is in the
+ *       `M x >= 0` form should pass `-M` (in M2: `raw(-M)`).
+ *
+ * \param A An m-by-n matrix over ZZ; each row is one inequality.
+ *          Entries must fit in a C `int`.
+ * \return A 1-row dense MutableMatrix over RR(53):
+ *         - **Full-dimensional** (`tStar > 0`): `2 + n` columns,
+ *           `[1, tStar, x_1, ..., x_n]`.
+ *         - **Not full-dimensional** (`tStar <= 0`): `2 + m` columns,
+ *           `[0, tStar, y_1, ..., y_m]` where `y >= 0` and
+ *           `y^T A = 0`.
+ *
+ *         Returns `nullptr` on error (entry of `A` overflows C `int`,
+ *         or engine error).
+ *
+ * \par Example (M2 top level)
+ * \code{.unparsed}
+ *   debug Core
+ *
+ *   -- Full-dimensional: first octant in QQ^3
+ *   A = matrix {{-1,0,0},{0,-1,0},{0,0,-1}}
+ *   map(RR_53, rawConeInteriorPoint raw A)
+ *     -- | 1 1 1 1 1 |        -- flag=1, tStar=1, interior=(1,1,1)
+ *
+ *   -- Not full-dimensional: the positive y-axis in QQ^2
+ *   A = matrix {{1,0},{-1,0},{0,-1}}
+ *   map(RR_53, rawConeInteriorPoint raw A)
+ *     -- | 0 0 .5 .5 0 |      -- flag=0, tStar=0, dualCert=(.5,.5,0)
+ * \endcode
+ * In the second example the certificate `(0.5, 0.5, 0)` gives
+ * `0.5*(1,0) + 0.5*(-1,0) + 0*(0,-1) = (0,0)`, witnessing that the
+ * inequalities `x <= 0` and `-x <= 0` collapse the cone to the line
+ * `x = 0`.
+ *
+ * \sa rawFourierMotzkin — consumes the same `A x <= 0` H-representation
+ *     and returns the cone's extreme rays.
+ * \ingroup cones
+ */
 MutableMatrix /* or null */ *rawConeInteriorPoint(const Matrix *A);
   
 #  if defined(__cplusplus)

@@ -4555,16 +4555,16 @@ setupfun("rawZZfactor",rawZZfactor);
 export rawGVInvariants(e:Expr):Expr := (
   when e is s:Sequence do (
   if length(s) == 7 then (
-  if isSequenceOfSmallIntegers(s.0) then (a := getSequenceOfSmallIntegers(s.0);
-  if isSequenceOfSmallIntegers(s.1) then (b := getSequenceOfSmallIntegers(s.1);
-  if isSequenceOfSmallIntegers(s.2) then (c := getSequenceOfSmallIntegers(s.2);
-  if isSequenceOfSmallIntegers(s.3) then (d := getSequenceOfSmallIntegers(s.3);
-  if isSequenceOfSmallIntegers(s.4) then (f := getSequenceOfSmallIntegers(s.4);
-  if isSequenceOfSmallIntegers(s.5) then (g := getSequenceOfSmallIntegers(s.5);
-  if isSequenceOfSmallIntegers(s.6) then (h := getSequenceOfSmallIntegers(s.6);
+  if isSequenceOfSmallIntegers(s.0) then (curves := getSequenceOfSmallIntegers(s.0);
+  if isSequenceOfSmallIntegers(s.1) then (lightcone := getSequenceOfSmallIntegers(s.1);
+  if isSequenceOfSmallIntegers(s.2) then (grading := getSequenceOfSmallIntegers(s.2);
+  if isSequenceOfSmallIntegers(s.3) then (Q := getSequenceOfSmallIntegers(s.3);
+  if isSequenceOfSmallIntegers(s.4) then (nefPartition := getSequenceOfSmallIntegers(s.4);
+  if isSequenceOfSmallIntegers(s.5) then (intnums := getSequenceOfSmallIntegers(s.5);
+  if isSequenceOfSmallIntegers(s.6) then (settings := getSequenceOfSmallIntegers(s.6);
     toExpr(Ccode(RawMutableMatrixOrNull,
       "rawGVInvariants(",
-        a, ",", b, ",", c, ",", d, ",", f, ",", g, ",", h, 
+        curves, ",", lightcone, ",", grading, ",", Q, ",", nefPartition, ",", intnums, ",", settings, 
       ")"
     ))
   ) else WrongArg(6, "a sequence of small integers")
