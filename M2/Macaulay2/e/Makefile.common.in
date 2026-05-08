@@ -71,6 +71,7 @@ COMPILE.cpp = $(COMPILE.cc)
 %.dep: %.c
 #	$(WHY)
 	$(SHOW)"MKDEP $*.c"
+	$(HIDE)$(MKDIR_P) `dirname "$@"`
 	$(HIDE)@CC@  -MT $@ -MT $*.o -MM -MP $(CFLAGS)   $(CPPFLAGS) $(TARGET_ARCH) $(MORE_OPTIONS) $< >$*.dep
 
 @pre_librariesdir@/libengine.so: $(LOFILES)
