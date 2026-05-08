@@ -72,6 +72,7 @@ document {
 	      TO "system facilities",
 	  "developer's corner",
 	      TO "Core",
+	      TO "User",
 	      TO "the engine of Macaulay2",
 	      TO "the interpreter of Macaulay2",
 	  "reference material",
