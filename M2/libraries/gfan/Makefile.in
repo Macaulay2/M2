@@ -1,9 +1,8 @@
-GFAN_VERSION = 0.6.2
+GFAN_VERSION = 0.8beta
 VERSION = $(GFAN_VERSION)
-SHA256SUM = a674d5e5dc43634397de0d55dd5da3c32bd358d05f72b73a50e62c1a1686f10a
-PATCHFILE = @abs_srcdir@/patch-$(GFAN_VERSION)
-# URL = http://home.imf.au.dk/jensen/software/gfan/gfan.html
-URL = https://macaulay2.com/Downloads/OtherSourceCode
+SHA256SUM = fa7884e5f317c50f8fb4f37bcf5d419f0fd5f7b90d6037349d1957ea73cebbee
+# PATCHFILE = @abs_srcdir@/patch-$(GFAN_VERSION)
+URL = https://users-math.au.dk/jensen/software/gfan
 TARFILE = gfan$(VERSION).tar.gz
 TARDIR = gfan$(VERSION)
 CONFIGURECMD = true
