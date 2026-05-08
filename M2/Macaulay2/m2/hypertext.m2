@@ -31,7 +31,7 @@ toExternalString Hypertext := s -> concatenate(toString class s, toExternalStrin
 
 new Hypertext from VisibleList := (M,x) -> x -- needed because otherwise next line takes over
 new Hypertext from Thing  := (M,x) -> {x}
-new Hypertext from Net    := (M,x) -> {toString x}
+new Hypertext from Net    := (M,x) -> between(BR(),unstack x)
 
 Hypertext#AfterPrint = x -> null
 
