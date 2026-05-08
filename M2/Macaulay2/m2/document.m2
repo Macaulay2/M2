@@ -363,14 +363,18 @@ storeRawDocumentation := (tag, rawdoc) -> (
 -----------------------------------------------------------------------------
 -- fetchRawDocumentation, fetchRawDocumentationNoLoad
 -----------------------------------------------------------------------------
+-- if a package object is given, try pkg#rawKey first, then pkg#rawKeyDB
+-- if a package name is given, try its database first, then try loading the package
+getpkgdocs = pkgname -> openPackageDatabase pkgname ?? getpkg pkgname
+
 fetchRawDocumentation = method()
-fetchRawDocumentation DocumentTag      :=  tag            -> fetchRawDocumentation(getpkg tag.Package, format tag)
-fetchRawDocumentation(String,  String) := (pkgname, fkey) -> fetchRawDocumentation(getpkg pkgname, fkey)
-fetchRawDocumentation(Package, String) := (pkg,     fkey) -> ( -- returns null if none
-    rawdoc := pkg#rawKey;
-    if rawdoc#?fkey then rawdoc#fkey else if pkg#?rawKeyDB then (
-	rawdoc = pkg#rawKeyDB;
-	if isOpen rawdoc and rawdoc#?fkey then evaluateWithPackage(getpkg "Text", rawdoc#fkey, value)))
+fetchRawDocumentation DocumentTag        :=  tag        -> fetchRawDocumentation(tag.Package, tag.Format)
+fetchRawDocumentation(String,    String) := (pkg, fkey) -> fetchRawDocumentation(getpkgdocs pkg, fkey)
+fetchRawDocumentation(Package,   String) := (pkg, fkey) -> fetchRawDocumentation(pkg#rawKey, fkey) ?? (
+    if pkg#?rawKeyDB then fetchRawDocumentation(pkg#rawKeyDB, fkey))
+fetchRawDocumentation(HashTable, String) := (rawdoc, fkey) -> if rawdoc#?fkey then rawdoc#fkey
+fetchRawDocumentation(Database,  String) := (rawdb,  fkey) -> if isOpen rawdb and rawdb#?fkey then (
+    evaluateWithPackage(getpkg "Text", rawdb#fkey, value))
 
 fetchRawDocumentationNoLoad = method()
 fetchRawDocumentationNoLoad(Nothing, Thing)  := (pkg,     fkey) -> null

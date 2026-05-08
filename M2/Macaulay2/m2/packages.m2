@@ -11,6 +11,9 @@ needs "system.m2"
 needs "hypertext.m2"
 
 loadedPackages = {}
+loadedDatabases = new MutableHashTable
+
+addEndFunction(() -> apply(values loadedDatabases, db -> if isOpen db then close db))
 
 rawKey   = "raw documentation"
 rawKeyDB = "raw documentation database"
@@ -108,6 +111,27 @@ checkPackageName = (title, checkdeprecated) -> (
     then (deprecatedPackageWarnings#title)() else title)
 
 closePackage = pkg -> if pkg#?rawKeyDB then (db -> if isOpen db then close db) pkg#rawKeyDB
+
+detectPackagePrefix = () -> (
+    -- Try to detect whether we are loading the package from an installed version.
+    -- A better test would be to see if the raw documentation database is there...
+    m := regex("(/|^)" | Layout#2#"packages" | "$", currentFileDirectory);
+    if m#?1 then substring(currentFileDirectory, 0, m#1#0 + m#1#1) else (
+	m = regex("(/|^)" | Layout#1#"packages" | "$", currentFileDirectory);
+	-- this can be useful when running from the source tree, but this is a kludge
+	if m#?1 then substring(currentFileDirectory, 0, m#1#0 + m#1#1) else prefixDirectory))
+
+openDatabaseUntilExit = dbname -> if fileExists dbname then (
+    db := loadedDatabases#dbname ??= openDatabase dbname;
+    db) else if notify then printerr("database not present: ", minimizeFilename dbname)
+
+openPackageDatabase = method()
+openPackageDatabase String := pkgname -> openPackageDatabase(detectPackagePrefix(), pkgname)
+openPackageDatabase(String, String) := (packagePrefix, pkgname) -> (
+    try ( if isOpen(pkg := getpkgNoLoad pkgname)#rawKeyDB then return pkg#rawKeyDB );
+    if (packageLayout := detectCurrentLayout packagePrefix) =!= null then (
+	openDatabaseUntilExit databaseFilename(Layout#packageLayout, packagePrefix, pkgname))
+    else if notify then printerr("package prefix null, not opening database for package ", format pkgname))
 
 -----------------------------------------------------------------------------
 -- Package type declarations and basic constructors
@@ -336,17 +360,7 @@ newPackage String := opts -> pkgname -> (
     if opts.OptionalComponentsPresent === null  then opts = opts ++ {OptionalComponentsPresent => opts.CacheExampleOutput =!= true};
     if opts.UseCachedExampleOutput === null     then opts = opts ++ {UseCachedExampleOutput => not opts.OptionalComponentsPresent};
     --
-    packagePrefix := (
-	-- Try to detect whether we are loading the package from an installed version.
-	-- A better test would be to see if the raw documentation database is there...
-	m := regex("(/|^)" | Layout#2#"packages" | "$", currentFileDirectory);
-	if m#?1 then substring(currentFileDirectory, 0, m#1#0 + m#1#1) else (
-	    m = regex("(/|^)" | Layout#1#"packages" | "$", currentFileDirectory);
-	    -- this can be useful when running from the source tree, but this is a kludge
-	    if m#?1 then substring(currentFileDirectory, 0, m#1#0 + m#1#1) else prefixDirectory));
-    packageLayout := detectCurrentLayout packagePrefix;
-    --
-    newpkg := new Package from nonnull {
+    newpkg := new Package from {
 	"pkgname"                  => pkgname,
 	symbol Options             => opts,
 	symbol Dictionary          => new Dictionary, -- this is the global one
@@ -369,18 +383,13 @@ newPackage String := opts -> pkgname -> (
 	"auxiliary files"          => toAbsolutePath currentFileDirectory | pkgname | "/",
 	"source directory"         => toAbsolutePath currentFileDirectory,
 	"source file"              => toAbsolutePath currentFileName,
-	if packagePrefix =!= null then
-	"package prefix"           => packagePrefix
 	};
     newpkg.PackageIsLoaded = false;
     --
-    if packageLayout =!= null then (
-	rawdbname := databaseFilename(Layout#packageLayout, packagePrefix, pkgname);
-	if fileExists rawdbname then (
-	    newpkg#rawKeyDB = rawdb := openDatabase rawdbname;
-	    addEndFunction(() -> if isOpen rawdb then close rawdb))
-	else if notify then printerr("database not present: ", minimizeFilename rawdbname))
-    else if notify then printerr("package prefix null, not opening database for package ", format pkgname);
+    packagePrefix := detectPackagePrefix();
+    packageDatabase := openPackageDatabase(packagePrefix, pkgname);
+    if packagePrefix   =!= null then newpkg#"package prefix" = packagePrefix;
+    if packageDatabase =!= null then newpkg#rawKeyDB         = packageDatabase;
     --
     pkgsym := (
 	if PackageDictionary#?pkgname then getGlobalSymbol(PackageDictionary, pkgname)
