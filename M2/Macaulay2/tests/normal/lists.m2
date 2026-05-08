@@ -20,3 +20,8 @@ assert (class i === AngleBarList)
 assert (delete(y, i) == <| x, z |>)
 
 assert isTable table(0, 0, identity)
+
+-- issue #4267
+assert try (1,2,3) == {1,2,3} then false else true
+assert try {1,2,3} == (1,2,3) then false else true
+assert try {1,2,3} == [1,2,3] then false else true
