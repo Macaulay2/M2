@@ -205,8 +205,9 @@ searchPrefixPath = mapper -> (
 -- { prefix => { "package table" => { pkgname => < result of makePackageInfo > } } } *-
 installedPackagesByPrefix = new MutableHashTable
 
-allPackages = () -> (
-    unique sort flatten for prefix in
+allPackages = () -> unique sort join(
+    separate(" ", version#"packages"),
+    flatten for prefix in
     keys installedPackagesByPrefix list
     keys installedPackagesByPrefix#prefix#"package table")
 
