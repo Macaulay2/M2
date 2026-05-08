@@ -74,12 +74,19 @@ initInstallDirectory := opts -> (
 -----------------------------------------------------------------------------
 -- htmlFilename
 -----------------------------------------------------------------------------
+
+-- kludge for exceptional cases where a redirect is necessary
+htmlRedirects = new HashTable from {
+    ("User", "User") => ("Macaulay2Doc", "User"),
+    }
+
 -- determines the normalized filename of a key or tag
 htmlFilename = method(Dispatch => Thing)
 htmlFilename Thing       := key -> htmlFilename makeDocumentTag key
 htmlFilename DocumentTag := tag -> (
     fkey := format tag;
     pkgname := tag.Package;
+    if htmlRedirects#?(pkgname, fkey) then (pkgname, fkey) = htmlRedirects#(pkgname, fkey);
     basefilename := if fkey === pkgname then topFileName else toFilename fkey | ".html";
     if currentPackage#"pkgname" === pkgname then (layout, prefix) := (installLayout, installPrefix)
     else (
