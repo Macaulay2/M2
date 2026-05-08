@@ -243,3 +243,24 @@ uninstallPackage "GopakumarVafaInvariants"
 restart
 installPackage "GopakumarVafaInvariants"
 viewHelp "GopakumarVafaInvariants"
+
+
+
+debug Core
+encodeArrayArrayInt = method()
+encodeArrayArrayInt List := List => L -> (
+    -- L is a list of list of ints.
+    -- Encode as follows:
+    -- #L #L#0 L#0#0 ... #L#1 L#1#0 ... etc
+    parts := flatten for i from 0 to #L - 1 list
+      prepend(#L#i, L#i);
+    prepend(#L, parts)
+    )
+mori = encodeArrayArrayInt {{-1, 3, -1}, {0, -2, 1}, {1, 2, -1}}
+lightcone = encodeArrayArrayInt {}
+gradingvec = {2, 4, 9}
+Q = encodeArrayArrayInt {{1, 0, 0, 0, 1, 0, 1}, {0, 1, 0, 1, 0, 1, 1}, {0, 0, 1, 3, 1, 2, 2}}
+nefpart = encodeArrayArrayInt {}
+intnums = encodeArrayArrayInt {{0, 0, 0, -1}, {0, 1, 1, -2}, {0, 1, 2, 1}, {1, 1, 1, 8}, {1, 1, 2, -4}, {1, 2, 2, 2}, {2, 2, 2, -1}}
+settings = {6, 150, 0, 300000} -- 10: max degree, 150: precision, 0: flags (compute GV), 300000: memory setting
+transpose map(ZZ, rawGVInvariants(mori, lightcone, gradingvec, Q, nefpart, intnums, settings))

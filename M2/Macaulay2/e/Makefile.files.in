@@ -10,7 +10,7 @@ INTERFACE2 = interrupted
 
 INTERFACE = \
 	myalloc \
-	computeGV \
+	cytools/computeGV \
 	cytools/lattice_points \
 	cytools/lattice-points-normaliz \
 	cytools/cone-interior-point \
