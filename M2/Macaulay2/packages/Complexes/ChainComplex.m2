@@ -544,6 +544,8 @@ freeResolution = method(Options => {
 	SortStrategy		=> 0,		-- strategy choice for sorting S-pairs
 	Strategy		=> null,     	-- 
         ParallelizeByDegree     => false        -- currently: only used by Strategy => Nonminimal, gives warning if true and another Strategy selected
+        -- legacy option, which is deprecated in favor of Strategy => Nonminimsl
+        -- FastNonminimal          => null
 	}
     )
 
@@ -621,10 +623,8 @@ importFrom_Core { "rawBetti", "RawComputation" };
 betti Matrix  := opts -> f -> betti(complex f, opts)
 betti Complex := opts -> C -> (
     if opts.Minimize then (
-        rawcomp := try (if C.cache.Nonminimal then C.cache.Module.cache.ResolutionObject.RawComputation) else null;
-        if rawcomp === null then error "Minimize option expected non-minimal resolution computation";
-        B := rawBetti(rawcomp, if opts.Minimize then 4 else 0); -- the raw version takes no weight option
-        return betti(B, Weights => (opts.Weights ?? heft ring C))
+        if not C.cache.?Module then error "expected a nonminimal resolution of a module";
+        return minimalBetti C.cache.Module;
         );
     heftfn := heftfun(opts.Weights, heft ring C);
     (lo,hi) := C.concentration;

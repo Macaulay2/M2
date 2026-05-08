@@ -577,7 +577,7 @@ TEST ///
   R = kk[vars(0..3)]
   I = ideal fromDual random(R^1, R^{-3});
   minimalBetti I
-  C = res(I, Strategy => Nonminimal) -- WRONG!! if minimalBetti is done first...!
+  C = res(I, Strategy => Nonminimal)
   betti(C, Minimize => true)  
 
   I = ideal(I_*)
@@ -590,8 +590,8 @@ TEST ///
   assert(isHomogeneous C)
   C1 = betti res ideal(I_*)
   assert(betti(C,Minimize=>true) == betti(C1,Minimize=>true))
-  minimalBetti I -- wrong!!
-  assert(minimalBetti I == betti C1)  -- BUG??
+  minimalBetti I
+  assert(minimalBetti I == betti C1)
 ///
 
 TEST ///  
@@ -602,8 +602,7 @@ TEST ///
   I = ideal fromDual random(R^1, R^{-3});
   gbTrace=2
   elapsedTime C = res(I, Strategy => Nonminimal)
-  minimalBetti I
-  betti(C, Minimize=>true)
+  assert(minimalBetti I ===  betti(C, Minimize=>true))
   betti C
 ///
 

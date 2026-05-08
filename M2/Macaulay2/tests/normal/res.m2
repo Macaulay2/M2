@@ -15,11 +15,12 @@ assert( betti C === new BettiTally from {(0, {0}, 0) => 7, (1, {0}, 0) => 3, (1,
 	  (5, {10}, 10) => 5, (6, {7}, 7) => 1, (6, {8}, 8) => 18, (6, {9}, 9) => 35, (6, {10}, 10) => 31,
 	  (6, {11}, 11) => 18, (6, {12}, 12) => 4})
 
-A=QQ[x,y] 
-C=complex{map(A^1,A^{3:-2},{{x^2,x*y,y^2}}),map(A^{3:-2},A^{2:-3},{{y,0},{-x,y},{0,-x}}),map(A^{2:-3},0,0)}
-M=HH_0 C 
-res M = C
-assert( res M === C )
+-- The Complexes package in M2 1.26.05 does not allow such installation of complexes.  If desired, contact the authors.
+-- A=QQ[x,y] 
+-- C=complex{map(A^1,A^{3:-2},{{x^2,x*y,y^2}}),map(A^{3:-2},A^{2:-3},{{y,0},{-x,y},{0,-x}}),map(A^{2:-3},0,0)}
+-- M=HH_0 C 
+-- res M = C
+-- assert( res M === C )
 
 end
 -- Local Variables:

@@ -81,7 +81,7 @@ doc ///
 	    needsPackage "ChainComplexOperations"
 	    Q = ZZ/2[x_1..x_3];
 	    K = koszulComplex vars Q;
-	    W1 = complex wedge2(chainComplex K) --the classical "naively" defined exterior power functor
+	    W1 = wedge2 K --the classical "naively" defined exterior power functor
 	    W2 = prune extPower(2,K) --the simplicial version of the exterior power functor
 	    prune HH W1
 	    prune HH W2
@@ -3506,7 +3506,7 @@ doc ///
 	    Q = ZZ/2[a,b]
 	    K = koszulComplex vars Q;
 	    S2K = minimize prune schurMap({2}, K)
-	    S2K' = sym2(chainComplex K) --the "naive" sym2 functor
+	    S2K' = sym2 K --the "naive" sym2 functor
 	    S2K.dd
 	    S2K'.dd
 	    prune HH S2K
@@ -3514,7 +3514,7 @@ doc ///
 	    Q = ZZ/3[a,b];
 	    K = koszulComplex vars Q;
 	    prune HH schurMap({2}, K)
-	    prune HH complex sym2(chainComplex K) --quasi-isomorphic in all other characteristics
+	    prune HH sym2 K --quasi-isomorphic in all other characteristics
 	    --S3K = elapsedTime minimize prune schurMap({3}, K) --takes 23 seconds
 	    --S21K = elapsedTime minimize prune schurMap({2,1}, K) --takes 17 seconds
 	    --S21K.dd
@@ -3599,7 +3599,7 @@ doc ///
 	    needsPackage "ChainComplexOperations"
 	    Q = ZZ/3[a..c]
 	    K = koszulComplex vars Q
-	    prune HH wedge2(chainComplex K) --notice: homology concentrated in odd degrees
+	    prune HH wedge2 K --notice: homology concentrated in odd degrees
     Caveat
         This method may take a very long time to run if the user inputs a large/long complex.
 	Use the option {\tt TopDegree => d} to only run the computation up to a certain degree.
@@ -3691,11 +3691,11 @@ doc ///
 	    isWellDefined inclusion
 	    isCommutative inclusion
 	    prune ker inclusion --should be 0 since it is an inclusion
-	    S21' = chainComplex { matrix {{a, b, 0, 0, -b}, {0, 0, a, b, a}}, matrix {{-b, b, 0, 0,
+	    S21' = complex { matrix {{a, b, 0, 0, -b}, {0, 0, a, b, a}}, matrix {{-b, b, 0, 0,
                                              b, 0}, {a, -a, 0, 0, 0, b}, {0, 0, -b, b, -a, 0}, {0, 0, a, -a, 0, -a}, {0, 0, 0, 0, a, b}}, 
                                             matrix {{a, b, 0, -b, -b}, {a, b, 0, 0, -2*b}, {0, a, b, a, 0}, {0, a, b, 0, a}, {0, 0, 0,
                                               -b, b}, {0, 0, 0, a, -a}}, matrix {{3*b, 0}, {-a, 2*b}, {0, -3*a}, {a, b}, {a, b}}}
-	    S21 = complex(S21')[-1]  --this is the S^(2,1) schur functor; note the ranks
+	    S21 = S21'[-1]  --this is the S^(2,1) schur functor; note the ranks
 	    prune HH S21 --note the homology
 	Text
 	    Just for sake of illustration, let us see how the above example changes in the modular
