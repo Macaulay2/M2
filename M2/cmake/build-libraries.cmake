@@ -837,22 +837,27 @@ _ADD_COMPONENT_DEPENDENCY(programs cohomcalg "" COHOMCALG)
 # https://users-math.au.dk/~jensen/software/gfan/gfan.html
 # gfan needs cddlib and is used by the packages gfanInterface and StatePolytopes
 # TODO: would gfan benefit from enabling the USEFACTORY option?
+# gfan 0.8beta requires GCC (does not build with clang)
+find_program(GFAN_CXX NAMES g++-15 g++-14 g++-13 g++-12
+  HINTS /opt/homebrew/bin /usr/local/bin)
+if(NOT GFAN_CXX)
+  message(FATAL_ERROR "GCC (g++) is required to build gfan but was not found")
+endif()
 ExternalProject_Add(build-gfan
-  URL               ${M2_SOURCE_URL}/gfan0.6.2.tar.gz
-  URL_HASH          SHA256=a674d5e5dc43634397de0d55dd5da3c32bd358d05f72b73a50e62c1a1686f10a
+  URL               https://users-math.au.dk/~jensen/software/gfan/gfan0.8beta.tar.gz
+  URL_HASH          SHA256=fa7884e5f317c50f8fb4f37bcf5d419f0fd5f7b90d6037349d1957ea73cebbee
   PREFIX            libraries/gfan
   SOURCE_DIR        libraries/gfan/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/gfan/patch-0.6.2
   CONFIGURE_COMMAND true
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
                       cddnoprefix=yes
                       "GMP_LINKOPTIONS=-L${GMP_LIBRARY_DIRS} -lgmp"
                       "GMP_INCLUDEOPTIONS=-I${GMP_INCLUDE_DIRS}"
                       "OPTFLAGS=${CPPFLAGS} -DGMPRATIONAL -I${CDDLIB_INCLUDE_DIR}"
-                      "CCLINKER=${CMAKE_CXX_COMPILER} ${LDFLAGS} -L${CDDLIB_LIBRARY_DIR}"
-                      "CXX=${CMAKE_CXX_COMPILER}"
+                      "CCLINKER=${GFAN_CXX} ${LDFLAGS} -L${CDDLIB_LIBRARY_DIR}"
+                      "CXX=${GFAN_CXX}"
   INSTALL_COMMAND   ${CMAKE_STRIP} gfan
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/gfan
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different LICENSE COPYING ${M2_INSTALL_LICENSESDIR}/gfan
