@@ -810,8 +810,7 @@ installPackage Package := opts -> pkg -> (
 
 	shield ( moveFile(rawdbnametmp, rawdbname, Verbose => debugLevel > 1); );
 
-	pkg#rawKeyDB = openDatabase rawdbname;
-	addEndFunction(() -> if pkg#?rawKeyDB and isOpen pkg#rawKeyDB then close pkg#rawKeyDB);
+	pkg#rawKeyDB = openDatabaseUntilExit rawdbname;
 
 	-- make table of contents, including next, prev, and up links
 	verboseLog("assembling table of contents");
