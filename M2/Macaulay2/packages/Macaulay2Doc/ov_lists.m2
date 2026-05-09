@@ -468,6 +468,7 @@ doc///
     ultimate
   :Creating iterators
     Iterator
+    ProgressBar
   :Searching in lists
     all
     any
