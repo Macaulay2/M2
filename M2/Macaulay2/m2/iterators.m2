@@ -77,6 +77,12 @@ pairsIterator = x -> Iterator (
 ProgressBar = new Type of MutableHashTable
 ProgressBar.synonym = "progressBar"
 
+protect Iterable
+protect CurrentIndex
+protect StartTime
+protect TotalTimeElapsed
+protect EstimatedRemainingTime
+protect AverageTimePerIteration
 new ProgressBar from Iterator := (typeofProgressBar, theIterator) -> (
     new MutableHashTable from {
         symbol Iterable => theIterator,
@@ -111,7 +117,7 @@ progressBar = method(
     }
 )
 progressBar Iterator := ProgressBar => opts -> (theIterator) -> (
-    theBar = new ProgressBar from theIterator;
+    theBar := new ProgressBar from theIterator;
     theBar.TotalIterations = opts.TotalIterations;
     theBar.Description = opts.Description;
     theBar.BarCharacter = opts.BarCharacter;
