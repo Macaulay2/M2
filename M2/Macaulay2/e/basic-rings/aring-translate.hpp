@@ -80,6 +80,13 @@ bool get_from_complex_double(const RT& R,
   return false;
 }
 
+inline bool get_from_BigReal(const ARingQQ& R,
+                             ARingQQ::ElementType& a,
+                             gmp_RR b)
+{
+  return R.set_from_BigReal(a, b);
+}
+
 inline bool get_from_BigReal(const ARingRR& R,
                              ARingRR::ElementType& a,
                              gmp_RR b)
@@ -634,6 +641,15 @@ inline bool mylift(const ARingRRR& R,
     bool liftstep = mylift(R,T,result_gR,gT);
     S.diameter(gT,gS1);
     return liftstep && T.is_zero(gT);
+}
+
+inline bool mylift(const ARingQQ& R,
+                   const ARingRRR& S,
+                   ARingQQ::ElementType& fR,
+                   const ARingRRR::ElementType& fS)
+{
+  (void) S;
+  return R.set_from_BigReal(fR, &fS);
 }
 
 inline bool mylift(const ARingQQ& R,

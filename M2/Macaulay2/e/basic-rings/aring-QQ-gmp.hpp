@@ -119,11 +119,98 @@ class ARingQQGMP : public SimpleARing<ARingQQGMP>
     return true;
   }
 
+  // Use nearest-integer continued fraction approximation to find the
+  // simplest rational that rounds back to a at its precision.  The
+  // nearest-integer variant (rounding each remainder rather than taking
+  // the floor) keeps remainders in (-1/2, 1/2], so convergents grow
+  // faster than with the standard floor-based algorithm.  At each step
+  // we compute the next convergent n0/d0 and check whether it
+  // round-trips to a; if so, we return it.  Otherwise, once the
+  // convergents grow as large as the exact bit representation of a, we
+  // fall back to returning that exact representation.
+  //
+  // Because remainders can be negative, partial quotients can be
+  // negative, which means both n0 and d0 can come out with the same
+  // negative sign.  We negate both before storing into the mpq_t,
+  // which requires a positive denominator.
   bool set_from_BigReal(ElementType& result, gmp_RR a) const
   {
-    (void) result;
-    (void) a;
-    return false;
+    bool negative, success;
+    mpfr_prec_t prec;
+    mpfr_t q, r;
+    mpz_t c, d0, d1, n0, n1, p2, tmp;
+
+    if (!mpfr_number_p(a)) return false;
+    if (mpfr_zero_p(a)) {
+      mpq_set_si(&result, 0, 1);
+      return true;
+    }
+
+    negative = mpfr_sgn(a) < 0;
+    prec = mpfr_get_prec(a);
+
+    // p2 = 2^prec, the bound used to detect when convergents are large enough
+    mpz_init(p2);
+    mpz_setbit(p2, (mp_bitcnt_t)prec);
+
+    mpz_init_set_ui(n0, 1);
+    mpz_init_set_ui(n1, 0);
+    mpz_init_set_ui(d0, 0);
+    mpz_init_set_ui(d1, 1);
+
+    mpfr_init2(r, prec);
+    mpfr_abs(r, a, MPFR_RNDN);
+
+    mpz_init(c);
+    mpz_init(tmp);
+
+    mpfr_init2(q, prec);
+
+    success = false;
+
+    while (true) {
+      mpfr_get_z(c, r, MPFR_RNDN);
+
+      mpz_swap(n0, n1);
+      mpz_swap(d0, d1);
+
+      mpz_mul(tmp, c, n1);
+      mpz_add(n0, n0, tmp);
+      mpz_mul(tmp, c, d1);
+      mpz_add(d0, d0, tmp);
+
+      mpfr_sub_z(r, r, c, MPFR_RNDN);
+
+      // return the first convergent that rounds back to a
+      mpfr_set_z(q, n0, MPFR_RNDN);
+      mpfr_div_z(q, q, d0, MPFR_RNDN);
+      if (mpfr_cmpabs(a, q) == 0) {
+        if (mpz_sgn(d0) < 0) {
+          mpz_neg(n0, n0);
+          mpz_neg(d0, d0);
+        }
+        mpz_set(mpq_numref(&result), n0);
+        mpz_set(mpq_denref(&result), d0);
+        if (negative) mpq_neg(&result, &result);
+        success = true;
+        break;
+      }
+
+      mpz_mul(tmp, n0, d0);
+      mpz_abs(tmp, tmp);
+      if (mpfr_zero_p(r) || mpz_cmp(tmp, p2) > 0) {
+        mpfr_get_q(&result, a);
+        success = true;
+        break;
+      }
+
+      mpfr_ui_div(r, 1, r, MPFR_RNDN);  // r = 1/r
+    }
+
+    mpz_clears(c, d0, d1, n0, n1, p2, tmp, nullptr);
+    mpfr_clears(q, r, nullptr);
+
+    return success;
   }
 
   void set_var(ElementType& result, int v) const
