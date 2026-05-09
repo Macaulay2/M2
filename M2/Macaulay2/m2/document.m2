@@ -205,11 +205,13 @@ makeDocumentTag String      := opts -> key -> (
     if pkg === null then pkg = opts#Package;
     (makeDocumentTag' new OptionTable from {Package => pkg}) key)
 
+isPackageNode = tag -> tag.Format === tag.Package
+
 -- before creating links, we recreate the document tag as a hack to
 -- correct its package, if it is incorrect (e.g. truncate, quotient)
 -- TODO: can this be modified to fix the tag in-place? then we would only need to
 -- fix the tag in (validate, TO), rather than also in (info, TO) and (html, TO).
-fixup DocumentTag := DocumentTag => tag -> if tag.Format === tag.Package then tag else (
+fixup DocumentTag := DocumentTag => tag -> if isPackageNode tag then tag else (
     tag' := if (rawdoc := fetchAnyRawDocumentation tag) =!= null then rawdoc.DocumentTag else tag;
     if package tag =!= package tag' then printerr("warning: ambiguous reference ",
 	format toString tag, " and ", format toString tag', " when processing ",
@@ -365,7 +367,7 @@ storeRawDocumentation := (tag, rawdoc) -> (
 -----------------------------------------------------------------------------
 -- if a package object is given, try pkg#rawKey first, then pkg#rawKeyDB
 -- if a package name is given, try its database first, then try loading the package
-getpkgdocs = pkgname -> openPackageDatabase pkgname ?? getpkg pkgname
+getpkgdocs = pkgname -> getpkgNoLoad pkgname ?? openPackageDatabase pkgname ?? getpkg pkgname
 
 fetchRawDocumentation = method()
 fetchRawDocumentation DocumentTag        :=  tag        -> fetchRawDocumentation(tag.Package, tag.Format)
@@ -424,9 +426,9 @@ fetchProcessedDocumentation = (pkg, fkey) -> (
 -----------------------------------------------------------------------------
 -- inquiring the status of a key or DocumentTag
 -----------------------------------------------------------------------------
-isMissingDoc     = tag -> ( d := fetchRawDocumentation tag; d === null )
-isSecondaryTag   = tag -> ( d := fetchRawDocumentation tag; d =!= null and d#?PrimaryTag )
-isUndocumented   = tag -> ( d := fetchRawDocumentation tag; d =!= null and d#?"undocumented" and d#"undocumented" === true )
+isMissingDoc     = tag -> not isPackageNode tag and ( d := fetchRawDocumentation tag; d === null )
+isSecondaryTag   = tag -> not isPackageNode tag and ( d := fetchRawDocumentation tag; d =!= null and d#?PrimaryTag )
+isUndocumented   = tag -> not isPackageNode tag and ( d := fetchRawDocumentation tag; d =!= null and d#?"undocumented" and d#"undocumented" === true )
 hasDocumentation = key -> null =!= fetchAnyRawDocumentation makeDocumentTag(key, Package => null)
 
 locate DocumentTag := tag -> new FilePosition from (

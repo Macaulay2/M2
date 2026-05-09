@@ -404,7 +404,7 @@ headline = method(Dispatch => Thing)
 headline Thing := key -> getOption(fetchRawDocumentationNoLoad makeDocumentTag key, Headline)
 headline DocumentTag := tag -> (
     -- TODO: how can we make sure readPackage loads the correct package?
-    if tag.Format === tag.Package then (readPackage tag.Package).Headline
+    if isPackageNode tag then (readPackage tag.Package).Headline
     else getOption(fetchRawDocumentation getPrimaryTag tag, Headline))
 
 headlines = method()
