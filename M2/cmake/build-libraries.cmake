@@ -838,10 +838,12 @@ _ADD_COMPONENT_DEPENDENCY(programs cohomcalg "" COHOMCALG)
 # gfan needs cddlib and is used by the packages gfanInterface and StatePolytopes
 # TODO: would gfan benefit from enabling the USEFACTORY option?
 # gfan 0.8beta requires GCC (does not build with clang)
-find_program(GFAN_CXX NAMES g++-15 g++-14 g++-13 g++-12
-  HINTS /opt/homebrew/bin /usr/local/bin)
-if(NOT GFAN_CXX)
-  message(FATAL_ERROR "GCC (g++) is required to build gfan but was not found")
+if(NOT GFAN)
+  find_program(GFAN_CXX NAMES g++-15 g++-14 g++-13 g++-12
+    HINTS /opt/homebrew/bin /usr/local/bin)
+  if(NOT GFAN_CXX)
+    message(FATAL_ERROR "GCC (g++) is required to build gfan but was not found")
+  endif()
 endif()
 ExternalProject_Add(build-gfan
   URL               https://users-math.au.dk/~jensen/software/gfan/gfan0.8beta.tar.gz
