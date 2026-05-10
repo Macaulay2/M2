@@ -80,14 +80,20 @@ jobs:
           cd macaulay2
           git checkout debian/${{ matrix.release }}
       - name: Generate tarball
-        run: uscan --verbose --rename --force-download
-      - name: Build package
         run: |
           cd macaulay2
-          git submodule update --init M2/Macaulay2/editors/emacs
+          uscan --verbose --rename --force-download
+      - name: Build source package
+        run: |
+          cd macaulay2
+          dpkg-buildpackage --build=source
+      - name: Build binary package
+        run: |
+          dpkg-source -x macaulay2_*.dsc
+          cd macaulay2-*
           if test ${{ matrix.os }} = "ubuntu-latest"; \
-          then dpkg-buildpackage; \
-          else dpkg-buildpackage -B; \
+          then dpkg-buildpackage --build=binary;      \
+          else dpkg-buildpackage --build=any;         \
           fi
       - name: Upload build logs
         if: always()
