@@ -134,6 +134,11 @@ ResolutionComputation *ResolutionComputation::choose_res(
                 "polynomial rings");
             return nullptr;
           }
+        if (K->is_QQ())
+          {
+            ERROR("Nonminimal resolution strategy not available over QQ");
+            return nullptr;
+          }
         if (M2_gbTrace > 0) emit_line("resolution Strategy=>4 (res-f4)");
         C = createF4Res(m, max_level, strategy, numThreads, parallelizeByDegree);
         if (C == nullptr) return nullptr;
