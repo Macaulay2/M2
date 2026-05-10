@@ -183,6 +183,8 @@ doc ///
     (progressBar, Iterator)
     (progressBar, List)
     (progressBar, Set)
+    TotalIterations
+    BarCharacter
     [progressBar, TotalIterations]
     [progressBar, Description]
     [progressBar, BarCharacter]
