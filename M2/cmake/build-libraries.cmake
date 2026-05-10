@@ -855,7 +855,7 @@ ExternalProject_Add(build-gfan
                       cddnoprefix=yes
                       "GMP_LINKOPTIONS=-L${GMP_LIBRARY_DIRS} -lgmp"
                       "GMP_INCLUDEOPTIONS=-I${GMP_INCLUDE_DIRS}"
-                      "OPTFLAGS=${CPPFLAGS} -DGMPRATIONAL -I${CDDLIB_INCLUDE_DIR}"
+                      "OPTFLAGS=${CPPFLAGS} -DGMPRATIONAL -O2 -ffast-math -I${CDDLIB_INCLUDE_DIR}"
                       "CCLINKER=${GFAN_CXX} ${LDFLAGS} -L${CDDLIB_LIBRARY_DIR}"
                       "CXX=${GFAN_CXX}"
   INSTALL_COMMAND   ${CMAKE_STRIP} gfan
