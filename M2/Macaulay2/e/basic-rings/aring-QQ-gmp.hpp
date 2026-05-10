@@ -9,6 +9,7 @@
 #include "basic-rings/aring.hpp"
 #include "buffer.hpp"
 #include "rings/ringelem.hpp"
+#include <cmath>
 #include <iosfwd>
 #include "exceptions.hpp"
 
@@ -133,6 +134,78 @@ class ARingQQGMP : public SimpleARing<ARingQQGMP>
   // negative, which means both n0 and d0 can come out with the same
   // negative sign.  We negate both before storing into the mpq_t,
   // which requires a positive denominator.
+  bool set_from_double(ElementType& result, double a) const
+  {
+    bool negative, success;
+    double q, r;
+    mpz_t c, d0, d1, n0, n1, p2, tmp;
+
+    if (std::isnan(a) || std::isinf(a)) return false;
+    if (a == 0.0) {
+      mpq_set_si(&result, 0, 1);
+      return true;
+    }
+
+    negative = (a < 0.0);
+
+    mpz_init(p2);
+    mpz_setbit(p2, 53);
+
+    mpz_init_set_ui(n0, 1);
+    mpz_init_set_ui(n1, 0);
+    mpz_init_set_ui(d0, 0);
+    mpz_init_set_ui(d1, 1);
+
+    r = std::fabs(a);
+
+    mpz_init(c);
+    mpz_init(tmp);
+
+    success = false;
+
+    while (true) {
+      mpz_set_d(c, std::round(r));
+
+      mpz_swap(n0, n1);
+      mpz_swap(d0, d1);
+
+      mpz_mul(tmp, c, n1);
+      mpz_add(n0, n0, tmp);
+      mpz_mul(tmp, c, d1);
+      mpz_add(d0, d0, tmp);
+
+      r -= mpz_get_d(c);
+
+      // return the first convergent that rounds back to a
+      q = mpz_get_d(n0) / mpz_get_d(d0);
+      if (q == std::fabs(a)) {
+        if (mpz_sgn(d0) < 0) {
+          mpz_neg(n0, n0);
+          mpz_neg(d0, d0);
+        }
+        mpz_set(mpq_numref(&result), n0);
+        mpz_set(mpq_denref(&result), d0);
+        if (negative) mpq_neg(&result, &result);
+        success = true;
+        break;
+      }
+
+      mpz_mul(tmp, n0, d0);
+      mpz_abs(tmp, tmp);
+      if (r == 0.0 || mpz_cmp(tmp, p2) > 0) {
+        mpq_set_d(&result, a);
+        success = true;
+        break;
+      }
+
+      r = 1.0 / r;
+    }
+
+    mpz_clears(c, d0, d1, n0, n1, p2, tmp, nullptr);
+
+    return success;
+  }
+
   bool set_from_BigReal(ElementType& result, gmp_RR a) const
   {
     bool negative, success;

@@ -644,6 +644,15 @@ inline bool mylift(const ARingRRR& R,
 }
 
 inline bool mylift(const ARingQQ& R,
+                   const ARingRR& S,
+                   ARingQQ::ElementType& fR,
+                   const ARingRR::ElementType& fS)
+{
+  (void) S;
+  return R.set_from_double(fR, fS);
+}
+
+inline bool mylift(const ARingQQ& R,
                    const ARingRRR& S,
                    ARingQQ::ElementType& fR,
                    const ARingRRR::ElementType& fS)
