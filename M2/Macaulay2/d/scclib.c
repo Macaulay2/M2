@@ -448,7 +448,7 @@ int system_isRegularFile(M2_string name) {
   return r == ERROR ? -1 : S_ISREG(buf.st_mode);
 }
 
-int always(const struct dirent *p) { return 1; }
+int always(const struct dirent *p) { (void)p; return 1; }
 
 M2_ArrayString system_readDirectory(M2_string name) {
   int n=0, i=0;
