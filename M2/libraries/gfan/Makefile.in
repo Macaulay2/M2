@@ -10,10 +10,10 @@ CONFIGURECMD = true
 CPPFLAGS += -I$(BUILTLIBPATH)/include/cddlib -DGMPRATIONAL
 BUILDOPTIONS = CC="$(CC) $(CPPFLAGS)" CXX="$(CXX) $(CPPFLAGS)"  \
 	CLINKER="$(CC) $(LDFLAGS)" CCLINKER="$(CXX) $(LDFLAGS)" \
-	OPTFLAGS="$(CXXFLAGS)"                                  \
+	OPTFLAGS="$(CXXFLAGS) -ffast-math"                       \
 	PREFIX=/nowhere CDD_LINKOPTIONS=-lcddgmp cddnoprefix=yes
 INSTALLOPTIONS = PREFIX=$(LIBRARIESDIR)
-CHECKTARGET = .
+CHECKTARGET = check
 STRIPFILES = gfan@EXEEXT@
 LICENSEFILES = LICENSE COPYING
 include ../Makefile.library
