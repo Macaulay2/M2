@@ -768,9 +768,8 @@ bool ConcreteRing<RingType>::lift(const Ring *R,
     }
   if (R == globalZZ)
     {
-      printf("error!! lift called with no ZZ lifting method\n");
       // MES:TODO!! WRITE ME
-      return true;
+      return false;
     }
   switch (R->ringID())
     {
