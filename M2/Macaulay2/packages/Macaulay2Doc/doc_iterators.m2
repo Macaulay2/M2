@@ -227,15 +227,15 @@ doc ///
           for i from 0 to 1000000 do 223131321321*223131321324
       )
     Text
-      To bypass this, the @TT TotalIterations@ optional argument is available
-      to provide the @TT ProgressBar@ a way to estimate completion.
+      To bypass this, the @TT "TotalIterations"@ optional argument is available
+      to provide the @TT "ProgressBar"@ a way to estimate completion.
     Example
       for throwaway in progressBar(iterator(1..25), TotalIterations=>25) do (
         -- A nontrivial computation
           for i from 0 to 1000000 do 223131321321*223131321324
       )
     Text
-      The @TT Description@ optional argument can be used to provide a 
+      The @TT "Description"@ optional argument can be used to provide a 
       description of the progress bar.
     Example
       for throwaway in progressBar(toList(1..25), Description=>"Calculating nothing...") do (
@@ -243,7 +243,7 @@ doc ///
           for i from 0 to 1000000 do 223131321321*223131321324
       )
     Text
-      The @TT BarCharacter@ optional argument can be used to change the visuals 
+      The @TT "BarCharacter"@ optional argument can be used to change the visuals 
       of the bar in the progress bar.
     Example
       for throwaway in progressBar(toList(1..25), BarCharacter=>"🔥") do (
