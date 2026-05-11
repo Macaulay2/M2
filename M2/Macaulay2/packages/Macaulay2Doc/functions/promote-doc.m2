@@ -153,6 +153,19 @@ document {
      "A special feature is that if ", TT "f", " is rational, and ", TT "R", " is not
      an algebra over ", TO "QQ", ", then an element of ", TT "R", " is provided
      by attempting the evident division.",
+     PARA {
+	 "Prior to version 1.26.05, promotion of real numbers to rational numbers was accomplished by using all of the bits of
+	 the internal representation.  This feature was removed since there is no natural map from $\\RR\\to\\QQ$.
+	 However, this functionality is still available using the unexported function ", CODE "internalRepresentation", "."
+	 },
+     EXAMPLE lines ///
+     debug Core
+     internalRepresentation 101.
+     internalRepresentation .101
+     factor denominator oo
+     ooo + 0.
+     oo === .101
+     ///,
      SeeAlso => {baseRings, lift, liftable, "substitution and maps between rings",
 	  substitute, (symbol**,Matrix,Ring) },
      Subnodes => { TO setupPromote },

@@ -52,7 +52,7 @@ newPackage(
       Email => "dumitru.stamate@fmi.unibuc.ro"}},
   Headline => "multilinear algebra with labeled bases",
   Keywords => {"Commutative Algebra"},
-  PackageExports => {"OldChainComplexes"},
+  PackageExports => {"Complexes"},
   DebuggingMode => false
   )
 
@@ -620,7 +620,7 @@ pureResTC1 (List,Ring) := LabeledModuleMap =>(d,kk)->(
 
 
 pureResTC=method()
-pureResTC (List,Ring):=ChainComplex => (d,kk)->(
+pureResTC (List,Ring):=Complex => (d,kk)->(
      res coker matrix pureResTC1(d,kk)
      ) 
 
@@ -638,7 +638,7 @@ pureResES1 (List,Ring) := LabeledModuleMap => o -> (d,kk)->(
      )
 
 pureResES=method()
-pureResES (List,Ring):=ChainComplex => (d,kk)->(
+pureResES (List,Ring):=Complex => (d,kk)->(
      res coker matrix pureResES1(d,kk)
      ) 
 
@@ -761,7 +761,7 @@ doc ///
       g = tensorComplex1(f,{0,0});
       transpose g
       betti res coker g
-      betti eagonNorthcott matrix entries matrix f
+      betti eagonNorthcottComplex matrix entries matrix f
       
     Text
       The following example is taken from the introduction to BEKS.
@@ -1145,7 +1145,7 @@ doc ///
      d: List
      kk: Ring
    Outputs
-     : ChainComplex
+     : Complex
    Description
     Text
       Given a degree sequence $d$, this function returns the pure resolution of
@@ -1207,7 +1207,7 @@ doc ///
      d: List
      kk: Ring
    Outputs
-     : ChainComplex
+     : Complex
    Description
     Text
       Given a degree sequence $d$, this function returns a balanced tensor complex

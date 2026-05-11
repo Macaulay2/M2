@@ -45,6 +45,7 @@ newPackage("ForeignFunctions",
 -*
 
 0.7 (2026-02-05, M2 1.26.05)
+* fix garbage collection of mpzT and mpfrT objects
 * update foreignSymbol test so that it doesn't require mpfi since it may not be
   available (e.g., if it's statically linked)
 

@@ -5,7 +5,7 @@ newPackage(
      Headline => "Kronecker and rational normal forms",
      Authors => {{Name => "Edward Carter",
                Email => "edward.carter@gmail.com"}},
-     PackageExports =>{"OldChainComplexes"},
+     PackageExports =>{"Complexes"},
      Keywords => {"Commutative Algebra"},
      DebuggingMode => false
      )
@@ -812,8 +812,8 @@ GradedModuleMap | GradedModuleMap := (f,g) -> (
      map(target f, source f ++ source g, j -> f_j | g_j, Degree => d)
      );
 
-min(GradedModule) := M -> min chainComplex M;
-max(GradedModule) := M -> max chainComplex M;
+min(GradedModule) := M -> min complex M;
+max(GradedModule) := M -> max complex M;
 
 ker(GradedModuleMap) := o -> f -> (
      M := source f;

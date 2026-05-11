@@ -11,7 +11,7 @@ newPackage ( "TorAlgebra",
 	},
     Headline => "classification of local rings based on multiplication in homology",
     Keywords => {"Homological Algebra"},
-    PackageImports => { "OldChainComplexes", "LocalRings" },
+    PackageImports => { "Complexes", "LocalRings" },
     Certification => { -- this package was certified under its old name, "CodepthThree"
 	 "journal name" => "The Journal of Software for Algebra and Geometry",
 	 "journal URI" => "https://msp.org/jsag/",
@@ -364,10 +364,10 @@ toralgdata = R -> (
 		)
 	    else (
 		if isHomogeneous ideal R then (
-		    data := computeBass1 (Q, R, I, e, chainComplex(L.dd_1,L.dd_2), tries)
+		    data := computeBass1 (Q, R, I, e, complex{L.dd_1,L.dd_2}, tries)
 		    )
 		else (
-    	    	    data = computeBass2 (Q, R, I, e, chainComplex(L.dd_1,L.dd_2), tries);
+    	    	    data = computeBass2 (Q, R, I, e, complex{L.dd_1,L.dd_2}, tries);
 		    );
 		mu := data#"bass";
 		c':= data#"codepth";
@@ -400,10 +400,10 @@ toralgdata = R -> (
 		)
 	    else (
 		if isHomogeneous ideal R then (
-		    data = computeBass1 (Q, R, I, e, chainComplex(L.dd_1,L.dd_2), tries)
+		    data = computeBass1 (Q, R, I, e, complex{L.dd_1,L.dd_2}, tries)
 		    )
 		else (
-    	    	    data = computeBass2 (Q, R, I, e, chainComplex(L.dd_1,L.dd_2), tries);
+    	    	    data = computeBass2 (Q, R, I, e, complex{L.dd_1,L.dd_2}, tries);
 		    );
 		mu = data#"bass";
 		c'= data#"codepth";
@@ -436,10 +436,10 @@ toralgdata = R -> (
 		)
 	    else (
 		if isHomogeneous ideal R then (
-		    data = computeBass1 (Q, R, I, e, chainComplex(L.dd_1,L.dd_2,L.dd_3), tries)
+		    data = computeBass1 (Q, R, I, e, complex{L.dd_1,L.dd_2,L.dd_3}, tries)
 		    )
 		else (
-    	    	    data = computeBass2 (Q, R, I, e, chainComplex(L.dd_1,L.dd_2,L.dd_3), tries);
+    	    	    data = computeBass2 (Q, R, I, e, complex{L.dd_1,L.dd_2,L.dd_3}, tries);
 		    );
 		mu = data#"bass";
 		c'= data#"codepth";

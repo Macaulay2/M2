@@ -72,6 +72,7 @@ doc ///
                 TO (symbol SPACE, RingMap, Complex),
                 TO (symbol **, RingMap, Complex),
                 TO (koszulComplex, Matrix),
+                TO (eagonNorthcottComplex, Matrix),
                 TO (naiveTruncation, Complex, ZZ, ZZ),
                 TO (canonicalTruncation, Complex, ZZ, ZZ),
                 TO (minimalPresentation, Complex),
@@ -3479,7 +3480,6 @@ doc ///
 
 /// -- comment about minimize and pruneComplex:
   -- this code can be run for the example ini (minimize,Complex).
-  needsPackage "PruneComplex"
   C' = chainComplex C
   D' = pruneComplex(C', UnitTest => isScalar)
   g' = D'.cache.pruningMap

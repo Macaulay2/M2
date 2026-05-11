@@ -1,42 +1,5 @@
 --============================ Tests Sections ===================================--
 
--- Returns a non-minimal free resolution, for testing purposes.
--- Homogenizes the ideal w.r.t. a new variable, calculates a free resolution
--- using res with option Strategy => Nonminimal, then dehomogenizes
--- Warning: only works for finite fields
-freeRes = I -> (
-    -- Warning: only works for finite fields
-    R := ring I;
-    homogvar := local homogvar;
-    S := (coefficientRing R)(monoid [gens R, homogvar]);
-    Ih := ideal homogenize(sub(gens gb I, S), S_(numgens R));
-    C1 := freeResolution(Ih, Strategy => Nonminimal);
-    phi := map(R,S,gens R | {1});
-    phi C1
-    )
-
--- Runs various sanity checks
-testSuit = (I, P, strategy) -> (
-    R := ring I;
-    if not instance(R, LocalRing) then (
-        C := freeRes I;
-        assert(C.dd^2 == 0);
-        time D := pruneComplex(C, Strategy => strategy, Direction => "left", PruningMap => true);
-        assert(D.dd^2 == 0);
-        if isHomogeneous I then assert(betti D == betti freeResolution I);
-        assert(isCommutative D.cache.pruningMap);
-        assert(isQuasiIsomorphism(D, I));
-        E := D ** R_P;
-        ) else E = freeResolution I;
-    RP := ring E;
-    assert(E.dd^2 == 0);
-    time F := pruneComplex(E, Strategy => strategy, Direction => "left", PruningMap => true);
-    return (
-        F.dd^2 == 0 and isMinimal F and
-        isCommutative F.cache.pruningMap and
-        isQuasiIsomorphism(F, ideal(gens I ** RP)))
-    )
-
 -- Given a homogeneous module, with a non-minimal resolution, the pruned complex should be homogeneous.
 TEST ///
   R = ZZ/32003[x,y,z]
@@ -50,7 +13,7 @@ TEST ///
 ///
 
 TEST ///
-  debug needsPackage "PruneComplex"
+  debug needsPackage "Complexes"
   R = ZZ/32003[vars(0..17)]
   m1 = genericMatrix(R,a,3,3)
   m2 = genericMatrix(R,j,3,3)
@@ -71,7 +34,7 @@ TEST ///
 ///
 
 TEST ///
-  debug needsPackage "PruneComplex"
+  debug needsPackage "Complexes"
   R = ZZ/32003[vars(0..8)]
   M = genericMatrix(R,3,3)
   I = minors(2, M)
@@ -96,7 +59,7 @@ TEST ///
 ///
 
 TEST ///
-  debug needsPackage "PruneComplex"
+  debug needsPackage "Complexes"
   R = ZZ/32003[a..f]
 
   --
@@ -105,11 +68,11 @@ TEST ///
 
   D = pruneComplex(C, UnitTest => isScalar, Strategy => null, Direction => "whole") -- 1 4 4 1
   assert(D.dd^2 == 0)
-  assert(isQuasiIsomorphism(D,I))
+  assert(isQuasiIsomorphismOf(D,I))
 
   D' = pruneComplex(C, UnitTest => isScalar, Strategy => null, Direction => "both") -- 1 4 4 1
   assert(D'.dd^2 == 0)
-  assert(isQuasiIsomorphism(D',I))
+  assert(isQuasiIsomorphismOf(D',I))
 
   --
   I = ideal"abc-def,ab2-cd2,acd-b3"
@@ -117,11 +80,11 @@ TEST ///
 
   D = pruneComplex(C, UnitTest => isScalar) -- 1 3 4 2
   assert(D.dd^2 == 0)
-  assert(isQuasiIsomorphism(D,I))
+  assert(isQuasiIsomorphismOf(D,I))
 ///
 
 TEST ///
-  debug needsPackage "PruneComplex"
+  debug needsPackage "Complexes"
   needsPackage "LocalRings"
   R = ZZ/32003[a..f]
   P = ideal gens R
@@ -137,7 +100,7 @@ TEST ///
 ///
 
 TEST ///
-  debug needsPackage "PruneComplex"
+  debug needsPackage "Complexes"
   R = ZZ/32003[x,y,z]
 
   I = ideal"xyz+z5,2x2+y3+z7,3z5+y5"
@@ -147,7 +110,7 @@ TEST ///
       assert(D.dd^2 == 0);
       assert(isMinimal(D, UnitTest => isScalar));
       assert(isCommutative D.cache.pruningMap);
-      assert(isQuasiIsomorphism(D, I));)
+      assert(isQuasiIsomorphismOf(D, I));)
 
   D = pruneComplex(C, PruningMap => true, UnitTest => isScalar, Strategy => Engine) -- 1 3 4 2
   checker(D, I)
@@ -170,7 +133,7 @@ TEST ///
 ///
 
 TEST ///
-  debug needsPackage "PruneComplex"
+  debug needsPackage "Complexes"
   needsPackage "LocalRings"
 
   R = ZZ/32003[a..f]
@@ -186,7 +149,7 @@ TEST ///
 ///
 
 TEST ///
-  debug needsPackage "PruneComplex"
+  debug needsPackage "Complexes"
   needsPackage "LocalRings"
   R = ZZ/32003[a..d]
 
@@ -201,7 +164,7 @@ TEST ///
 --  use R
 --  setMaxIdeal ideal gens R
 --  L = localResolution I
---  assert(isQuasiIsomorphism(L**RM, E'))
+--  assert(isQuasiIsomorphismOf(L**RM, E'))
 ///
 
 TEST /// -- An example for comparison with Singular
@@ -233,7 +196,7 @@ TEST /// -- An example for comparison with Singular
 --============================ Engine Tests Sections ===================================--
 
 TEST ///
-  debug needsPackage "PruneComplex"
+  debug needsPackage "Complexes"
   debug needsPackage "LocalRings"
   R = ZZ/32003[a..f];
   P = ideal gens R;
@@ -252,7 +215,7 @@ TEST ///
 ///
 
 TEST ///
-  debug needsPackage "PruneComplex"
+  debug needsPackage "Complexes"
   needsPackage "LocalRings"
   R = ZZ/32003[a..d]
   P = ideal"a,b,c"
@@ -263,7 +226,7 @@ TEST ///
 ///
 
 TEST ///
-  debug needsPackage "PruneComplex"
+  debug needsPackage "Complexes"
   needsPackage "LocalRings"
   R = ZZ/32003[x,y,z]
   I = ideal"xyz+z5,2x2+y3+z7,3z5+y5"
@@ -305,7 +268,7 @@ end--
 -------------------------------------------------------------------------------------------------------
 -- Stress Test for Pruning Complexes in the Engine
 restart
-debug needsPackage "PruneComplex"
+debug needsPackage "Complexes"
 needsPackage "RandomIdeals"
 R = ZZ/32003[a..f];
 
@@ -322,15 +285,3 @@ randomCombo = (n, d) -> (
     then (i = i + 1) else ( print "Lookit!"; break; );
     );
 
--------------------------------------------------------------------------------------------------------
---  Development stuff
---  path = prepend("~/src/m2/M2-local-rings/M2/Macaulay2/packages/", path) -- Mike
-restart
-needsPackage "PruneComplex"
-elapsedTime check PruneComplex -- 18 sec
-
-restart
-uninstallPackage "PruneComplex"
-restart
-installPackage "PruneComplex"
-viewHelp "PruneComplex"

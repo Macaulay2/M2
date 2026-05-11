@@ -84,6 +84,7 @@ importFrom_Core {
     "toString'", "expressionValue", "unhold", -- TODO: prune these
     "concatBlocks", "concatCols", "concatRows",
     "addHook", "tryHooks", "cacheHooks",
+    "liftModule", "liftMorphism",
     "isMorphism", "isAbelianCategory",
     "BinaryPowerMethod",
     }
@@ -492,21 +493,18 @@ checkVariety := (X, F) -> (
     if not isAffineRing ring X then error "expected a variety defined over a field";
     )
 
--- pushforward the module to PP^n via S/I <-- S
-flattenModule   = M -> cokernel flattenMorphism presentation M
-flattenMorphism = f -> (
-    g := presentation ring f;
-    S := ring g;
-    -- TODO: sometimes lifting to ring g is enough, how can we detect this?
-    -- TODO: why doesn't lift(f, ring g) do this automatically?
-    map(target f ** S, source f ** S, lift(cover f, S)) ** cokernel g)
--*
-flattenComplex = C -> (
+-- these synonyms are added to avoid a merge conflict
+flattenModule   = liftModule
+flattenMorphism = liftMorphism
+
+-- pushforward the complex to PP^n via S/I <-- S
+-- TODO: move to Complexes?
+flattenComplex = C -> C.cache#"flattenComplex" ??= (
+    if instance(ring C, PolynomialRing) then return C;
     (lo, hi) := C.concentration;
     if lo === hi
     then complex(flattenModule C_lo, Base => lo)
     else complex applyValues(C.dd.map, flattenMorphism))
-*-
 
 -- TODO: this is called twice
 -- TODO: implement for multigraded ring

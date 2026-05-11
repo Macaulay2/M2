@@ -34,7 +34,7 @@ document {
 	  "w" => List => "a weight vector"
 	  },
      Outputs => {
-     	  ChainComplex => {"a Schreyer resolution of the D-module ", EM "M", 
+     	  Complex => {"a Schreyer resolution of the D-module ", EM "M", 
 	       " or a resolution adapted to a weight vector ", EM "w", 
 	       " of the form ", EM "(-u,u)"}
 	  },

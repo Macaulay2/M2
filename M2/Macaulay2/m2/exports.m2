@@ -359,6 +359,7 @@ export {
 	"Reload",
 	"RemakeAllDocumentation",
 	"RerunExamples",
+    "Resolution",
 	"Result",
 	"RevLex",
 	"Reverse",

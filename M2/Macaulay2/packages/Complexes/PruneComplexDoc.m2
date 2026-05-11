@@ -1,4 +1,5 @@
-doc ///
+-- TODO: remove this doc node
+///
 Key
   PruneComplex
 Headline
@@ -401,7 +402,7 @@ Description
     For optional inputs, the Engine algorithms only support PruningMap, "left" or "right" as Direction,
     and isUnit or isScalar as UnitTest.
 
-    Advanced users can implement their own strategies in packages/PruneComplex.m2 and run pruneComplex
+    Advanced users can implement their own strategies in packages/Complexes/PruneComplex.m2 and run pruneComplex
     using the Strategy => null option.
 SeeAlso
   pruneComplex

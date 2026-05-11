@@ -18,7 +18,7 @@ newPackage(
     PackageExports => {
 	"WeylAlgebras",
 	"HolonomicSystems",
-	"OldChainComplexes",
+	"Complexes",
     },
     AuxiliaryFiles => true,
     DebuggingMode => false

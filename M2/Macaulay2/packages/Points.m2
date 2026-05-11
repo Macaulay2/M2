@@ -12,7 +12,7 @@ newPackage(
 	     },
     	Headline => "sets of points",
 	Keywords => {"Examples and Random Objects"},
-        PackageImports => {"OldChainComplexes"},
+        PackageImports => {"Complexes"},
         PackageExports => {"LexIdeals"},
     	DebuggingMode => false
     	)

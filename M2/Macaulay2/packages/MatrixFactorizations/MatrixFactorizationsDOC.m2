@@ -5194,7 +5194,7 @@ doc ///
         Text
             The function tailMF takes a module $M$ over a hypersurface ring $R = S/(f)$ and generates a ZZdFactorization.
 	    This involves computing a resolution of $M$ over the hypersurface $R$, taking a high truncation
-	    of this resolution, lifting it to the ambient ring $S$, then finding a nullhomotopy for multiplication by $f$.
+	    of this resolution, lifting it to the ambient ring $S$, then finding a null homotopy for multiplication by $f$.
         Example
             S = ZZ/101[a,b,c];
 	    R = S/(a^3+b^3+c^3);

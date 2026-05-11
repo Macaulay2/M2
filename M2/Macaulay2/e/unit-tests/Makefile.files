@@ -30,8 +30,7 @@ UNITTEST_CCFILES := \
     MonoidTest \
     MatrixIOTest \
     RingRRRTest \
-    RingCCCTest \
-    LatticePointsTest
+    RingCCCTest
 
 #    WeylAlgebraTest \ # TODO: add in this file
 

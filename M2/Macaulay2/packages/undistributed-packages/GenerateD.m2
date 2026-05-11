@@ -35,18 +35,8 @@ celltype = new HashTable from {
         Synonym => "a small integer", 
         Suffix => "",
         Array => (
-            "isSmallInt",
-            "getSmallInt",
-            "a small integer"
-            )
-        },
-    "ints" => hashTable {
-        DType => "ZZCell",
-        Synonym => "a sequence of small integers", 
-        Suffix => "",
-        Array => (
-            "isSequenceOfSmallIntegers",
-            "getSequenceOfSmallIntegers",
+            "isInt",
+            "toInt",
             "a small integer"
             )
         },
@@ -129,12 +119,6 @@ celltype = new HashTable from {
         DType => "RawMutableMatrixCell",
         Synonym => "a raw mutable matrix", 
         Suffix => ".p"
-        },
-    "MutableMatrixOrNull" => hashTable {
-        DType => "RawMutableMatrixOrNull",
-        Synonym => "a raw mutable matrix or null", 
-        Prefix => "&",
-        Suffix => ""
         },
     "MutableComplex" => hashTable {
         DType => "RawMutableComplexCell",
@@ -236,26 +220,10 @@ genArg(ZZ,String,String) := (argnum, argtype, argname) -> (innards) -> (
             ") else WrongArgZZ("|argnum|")"
             }
         )
-    else if argtype == "ints" then (
-        {
-            "if isSequenceOfSmallIntegers(s."|argnum|") then ("|argname|" := getSequenceOfSmallIntegers(s."|argnum|");",
-            innards,
-            ") else WrongArg("|argnum|", \"a sequence of small integers\")"
-            }
-        )
     else if argtype == "ulong" then (
         {
             "when s."|argnum|" is w"|argname|":ZZcell do (", 
             "if isULong(w"|argname|") then ("|argname|" := toULong(w"|argname|");",
-            innards,
-            ") else WrongArgSmallInteger("|argnum|")",
-            ") else WrongArgZZ("|argnum|")"
-            }
-        )
-    else if argtype == "long" then (
-        {
-            "when s."|argnum|" is w"|argname|":ZZcell do (", 
-            "if isLong(w"|argname|") then ("|argname|" := toLong(w"|argname|");",
             innards,
             ") else WrongArgSmallInteger("|argnum|")",
             ") else WrongArgZZ("|argnum|")"
@@ -341,50 +309,6 @@ ans2 = ///export rawMatrixRowSwap(e:Expr):Expr := (
   ) else WrongNumArgs(3)
   );
 setupfun("rawMatrixRowSwap",rawMatrixRowSwap);
-///
-
-TEST ///
-restart
-debug needsPackage "GenerateD"
--- note: e is not allowed as a variable name, as we use e as the input expression!
-result = str (genFunctionCall(
-        "rawGVInvariants", 
-        "MutableMatrixOrNull", 
-        ("curves"=>"ints", "lightcone"=>"ints", "grading"=>"ints", "Q"=>"ints", "nefPartition"=>"ints", "intnums"=>"ints", "settings"=>"ints")
-        ))
-///
-
-TEST ///
-restart
-debug needsPackage "GenerateD"
--- note: e is not allowed as a variable name, as we use e as the input expression!
-result = str (genFunctionCall(
-        "rawConeInteriorPoint", 
-        "MutableMatrixOrNull",
-        toSequence {"C"=>"Matrix"}
-        ))
-///
-
-TEST ///
-restart
-debug needsPackage "GenerateD"
--- note: e is not allowed as a variable name, as we use e as the input expression!
-result = str (genFunctionCall(
-        "rawLatticePoints",
-        "MutableMatrixOrNull",
-        ("a"=>"Matrix", "b"=>"Matrix", "c"=>"int", "d"=>"long", "f"=>"long")
-        ))
-///
-
-TEST ///
-restart
-debug needsPackage "GenerateD"
--- note: e is not allowed as a variable name, as we use e as the input expression!
-result = str (genFunctionCall(
-        "rawLatticePointsNormaliz",
-        "MutableMatrixOrNull",
-        ("a"=>"Matrix", "b"=>"Matrix")
-        ))
 ///
 
 TEST ///

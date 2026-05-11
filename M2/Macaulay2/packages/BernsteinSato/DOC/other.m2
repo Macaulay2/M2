@@ -106,7 +106,7 @@ logCohomology(f)
      }
 
 document { -- local?
-     Key => {ExternalProduct, (ExternalProduct,ChainComplex,ChainComplex), (ExternalProduct,Module,Module)},
+     Key => {ExternalProduct, (ExternalProduct,Complex,Complex), (ExternalProduct,Module,Module)},
      Headline => "external product of modules or complexes"
      }
 document { -- local?

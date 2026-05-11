@@ -39,7 +39,6 @@ set(CFILES
   error.c
   exptable.c
   table.c
-  cytools/box_enum.c
   )
 # h files
 set(HFILES
@@ -160,10 +159,6 @@ set(CPPONLYFILES
 # these files all have .hpp and .cpp files
 # MES TODO: put these NCAlgebra files (and friends) into alpha order in list
 set(SRCLIST
-  cytools/computeGV
-  cytools/lattice_points
-  cytools/lattice-points-normaliz
-  cytools/cone-interior-point
   BasicPoly
   BasicPolyList
   BasicPolyListParser
@@ -487,7 +482,6 @@ if(BUILD_TESTING)
 
     unit-tests/MatrixIOTest.cpp
     unit-tests/fromStream.cpp
-    unit-tests/LatticePointsTest.cpp
     unit-tests/testMain.cpp # not needed, except for GC_INIT
     )
 

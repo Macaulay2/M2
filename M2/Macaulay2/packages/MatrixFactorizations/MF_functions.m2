@@ -76,8 +76,9 @@ isdFactorization(ZZdFactorization) := (Boolean, RingElement) =>  X -> (
 tailMF = method()
 tailMF(Module) := ZZdFactorization => M -> (
     F := res(M, LengthLimit=>dim ring M + 1);
-    C := chainComplex sub(F.dd_(dim ring M + 1), ambient ring M);
-    h := (nullhomotopy extend(C, C, ((ring M).relations)_(0,0)*id_(C_0)))_0;
+    C := complex sub(F.dd_(dim ring M + 1), ambient ring M);
+    f := extend(C, C, ((ring M).relations)_(0,0)*id_(C_0));
+    h := (nullHomotopy(f, FreeToExact => true))_0;
     ZZdfactorization{sub(F.dd_(dim ring M + 1), ambient ring M), h}
     )
 

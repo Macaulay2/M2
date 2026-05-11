@@ -17,7 +17,7 @@ Version => "1.2.6", Date => "May 15th, 2023", Authors => {
     }
 }, --this file is in the public domain
     Headline => "faster linear algebra operations",
-    PackageImports => {"OldChainComplexes"},
+    PackageImports => {"Complexes"},
     PackageExports => {"RandomPoints"},
     DebuggingMode => false, Reload=>false,
 Keywords => {"Linear Algebra"},

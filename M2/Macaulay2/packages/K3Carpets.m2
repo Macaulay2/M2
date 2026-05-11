@@ -28,7 +28,7 @@ newPackage(
 
 export {
     "schreyerName",
-    -- should be moved to an other package, e.g. NonminimalComplexes
+    -- should be moved to an other package, e.g. Complexes?
     "analyzeStrand",
     "carpetDet",
     "resonanceDet",
@@ -1024,7 +1024,7 @@ $$
         TO carpetBettiTable,
 	TO analyzeStrand,
 	TO degenerateK3BettiTables,
-	TO schreyerName, -- should be moved to an other package, e.g. NonminimalComplexes
+	TO schreyerName, -- should be moved to an other package, e.g. Complexes?
         TO allGradings,
 	TO carpetDet,
 	TO resonanceDet,

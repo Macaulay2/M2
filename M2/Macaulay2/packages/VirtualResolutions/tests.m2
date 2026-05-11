@@ -58,7 +58,7 @@ TEST ///
     d1 = matrix{{x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2,
         x_0*x_1*x_2^3+x_0*x_1*x_2^2*x_3-x_0^2*x_3^2*x_4+x_1^2*x_2*x_4^2+x_1^2*x_3*x_4^2,
         x_1^2*x_2^3+x_1^2*x_2^2*x_3-x_0*x_1*x_3^2*x_4-x_0^2*x_4^3}};
-    C = chainComplex({d1});
+    C = complex({d1});
     elapsedTime assert(isVirtual(irr,C) == false) -- 0.022
     --
     d1 = matrix{{x_1^3*x_2+x_1^3*x_3+x_0^3*x_4,
@@ -69,7 +69,7 @@ TEST ///
         {-x_1*x_2-x_1*x_3, 0, x_0*x_4},
         {x_0, -x_1, 0},
         {0, x_0, x_1}});
-    C = chainComplex({d1,d2});
+    C = complex({d1,d2});
     elapsedTime assert(isVirtual(irr,C) == true) -- 0.028
 ///
 
