@@ -598,8 +598,11 @@ popDictionary  := (d, s) -> (dictionaryPath =    drop(dictionaryPath, 1); s)
 -- Probably only necessary because Text documents Hypertext objects.
 -- Is there an alternative way? Is is used by document.m2 and installPackage.m2
 evaluateWithPackage = (pkg, object, func) -> (
-    if isMember(pkg.Dictionary, dictionaryPath) then return func object;
-    popDictionary(pushDictionary pkg.Dictionary, func object))
+    -- add a temporary mutable dictionary to catch stray symbols
+    -- before they end up in User#"private dictionary" (cf. #4290)
+    popDictionary(pushDictionary new Dictionary,
+	if isMember(pkg.Dictionary, dictionaryPath) then  func object
+	else popDictionary(pushDictionary pkg.Dictionary, func object)))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
