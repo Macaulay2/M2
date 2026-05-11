@@ -169,7 +169,7 @@ doc ///
     Example
       someIterable = toList(1..25);
       for throwaway in progressBar someIterable do (
-          for i from 0 to 1000000 do 223131321321*223131321324
+          for i from 0 to 10000 do 223131321321*223131321324
       )
   Subnodes
     progressBar
@@ -214,7 +214,7 @@ doc ///
       someIterable = toList(1..25);
       for throwaway in progressBar someIterable do (
           -- A nontrivial computation
-          for i from 0 to 1000000 do 223131321321*223131321324
+          for i from 0 to 10000 do 223131321321*223131321324
       )
     Text
       For lists and sets, the length of the iterable is known and can be used
@@ -224,7 +224,7 @@ doc ///
     Example
       for throwaway in progressBar iterator(1..25) do (
         -- A nontrivial computation
-          for i from 0 to 1000000 do 223131321321*223131321324
+          for i from 0 to 10000 do 223131321321*223131321324
       )
     Text
       To bypass this, the @TT "TotalIterations"@ optional argument is available
@@ -232,7 +232,7 @@ doc ///
     Example
       for throwaway in progressBar(iterator(1..25), TotalIterations=>25) do (
         -- A nontrivial computation
-          for i from 0 to 1000000 do 223131321321*223131321324
+          for i from 0 to 10000 do 223131321321*223131321324
       )
     Text
       The @TT "Description"@ optional argument can be used to provide a 
@@ -240,7 +240,7 @@ doc ///
     Example
       for throwaway in progressBar(toList(1..25), Description=>"Calculating nothing...") do (
         -- A nontrivial computation
-          for i from 0 to 1000000 do 223131321321*223131321324
+          for i from 0 to 10000 do 223131321321*223131321324
       )
     Text
       The @TT "BarCharacter"@ optional argument can be used to change the visuals 
@@ -248,7 +248,7 @@ doc ///
     Example
       for throwaway in progressBar(toList(1..25), BarCharacter=>"🔥") do (
         -- A nontrivial computation
-          for i from 0 to 1000000 do 223131321321*223131321324
+          for i from 0 to 10000 do 223131321321*223131321324
       )
   SeeAlso
     iterator
