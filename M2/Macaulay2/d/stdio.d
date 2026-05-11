@@ -726,7 +726,6 @@ completionControlPartialRequest(o:file):bool := (
      true);
 
 completionControlInputInProgress(o:file):bool := (
-     if o != stdIO then return false;
      if o.insize > 0 && completionControlPartialRequest(o) then return true;
      o.inbuffer.(o.insize) == completionControlRequestStart.0);
 
@@ -798,7 +797,7 @@ export filbuf(o:file):int := (
 		    then 0 -- take care of "string files" made by stringTokenFile in interp.d
 		    else (
 			ret := read(o.infd,o.inbuffer,n,o.insize);
-			if ret > 0 && !completionControlInputInProgress(o)
+			if ret > 0 && o == stdIO && !completionControlInputInProgress(o)
 			then addHistory(tocharstarn(o.inbuffer, ret - 1));
 			ret)));
 	  if r == ERROR then (
