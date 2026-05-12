@@ -452,7 +452,8 @@ getDefaultOptions := (nkey, opt) -> DIV (
 getDescription := (key, tag, rawdoc) -> (
     desc := getOption(rawdoc, Description);
     if desc =!= null and #desc > 0 then (
-	desc = processExamples(package' tag, format tag, desc);
+	pkg := getpkgNoLoad tag.Package ?? tag.Package;
+	desc = processExamples(pkg, tag.Format, desc);
 	if instance(key, String) -- overview key
 	or instance(key, Package) then DIV { desc }
 	else DIV { SUBSECTION "Description", desc })
