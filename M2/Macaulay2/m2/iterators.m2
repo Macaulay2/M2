@@ -198,7 +198,14 @@ updateDisplay ProgressBar := (theBar) -> (
                     if theBar.cache.AverageTimePerIteration >= 1 then (
                         concatenate(toString round(2, theBar.cache.AverageTimePerIteration * secondsToUnitFactor), unitString | "/it")
                     )
-                    else (concatenate(toString round(2, 1 / (theBar.cache.AverageTimePerIteration  * secondsToUnitFactor)), "it/" | unitString))
+                    else (
+                        if theBar.cache.AverageTimePerIteration > 0 then (
+                            concatenate(toString round(2, 1 / (theBar.cache.AverageTimePerIteration  * secondsToUnitFactor)), "it/" | unitString)
+                        )
+                        else (
+                            concatenate(toString theBar.cache.CurrentIndex, "it/" | unitString)
+                        )
+                    )
                 )
                 else ("?");
     timeEstimateString := concatenate("[", formatTime theBar.cache.TotalTimeElapsed, "<", remainingTimeString, ", ", rateString, "]");
