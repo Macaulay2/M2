@@ -219,10 +219,12 @@ getDBkeys := dbfn -> (
      dbkeys)
 
 makePackageInfo := (pkgname,prefix,dbfn,layoutIndex) -> (
+    pkgsrcdir := prefix | Layout#layoutIndex#"packages";
     new MutableHashTable from {
 	"name"             => pkgname,
 	"prefix"           => prefix,
 	"layout index"     => layoutIndex,
+	"source directory" => pkgsrcdir,
 	"doc db file name" => dbfn,
 	-- if this package is reinstalled, we can tell by checking this time stamp
 	-- (unless the package takes less than a second to install, which is unlikely)

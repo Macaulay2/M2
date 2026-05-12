@@ -426,8 +426,7 @@ hasDocumentation = key -> null =!= fetchAnyRawDocumentation makeDocumentTag(key,
 locate DocumentTag := tag -> new FilePosition from (
     rawdoc := fetchAnyRawDocumentation tag;
     if rawdoc =!= null then (
-	pkg := package' rawdoc.DocumentTag;
-	src := minimizeFilename(pkg#"source directory" | rawdoc#"filename");
+	src := minimizeFilename(getpkgsrcdir tag.Package | rawdoc#"filename");
 	src, rawdoc#"linenum", 0)
     else (currentFileName, currentRowNumber(), currentColumnNumber()))
 

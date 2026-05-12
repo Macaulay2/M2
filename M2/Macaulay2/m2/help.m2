@@ -381,11 +381,10 @@ getTechnical := (S, s) -> DIV nonnull ( "class" => "waystouse",
     getOperator S)
 
 getLocation := tag -> if tag =!= null then (
-    pkg := package tag;
     docpos := locate tag;
     linepos := ":" | docpos#1 | ":" | docpos#2;
     docfile := toAbsolutePath docpos#0;
-    filename := replace(pkg#"source directory", "", docfile);
+    filename := replace(getpkgsrcdir tag.Package, "", docfile);
     HR{},
     DIV ( "class" => "waystouse",
 	fixup PARA (

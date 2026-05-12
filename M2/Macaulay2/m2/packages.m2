@@ -225,6 +225,9 @@ loadPackageOptions#"default" = new MutableHashTable from options loadPackage
 
 getpkg       = pkgname -> if isPackageLoaded pkgname then value PackageDictionary#pkgname else dismiss needsPackage pkgname
 getpkgNoLoad = pkgname -> if isPackageLoaded pkgname then value PackageDictionary#pkgname
+getpkgsrcdir = pkgname -> (
+    if (pkg := getpkgNoLoad pkgname ?? getPackageInfo pkgname) =!= null
+    then pkg#"source directory" else error "package not loaded or preinstalled")
 
 -----------------------------------------------------------------------------
 -- newPackage
