@@ -6,6 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  -- TO "changes made for the next release",
+	  TO "changes, 1.26.06",
 	  TO "changes, 1.26.05",
 	  TO "changes, 1.25.11",
 	  TO "changes, 1.25.05",
@@ -66,6 +67,56 @@ changesHelper List := opt -> pkgnames -> (
 	    << (if opt.Certification then "published" else "added")
 	    << ".\" },"
 	    << endl)))
+
+document {
+    Key => "changes, 1.26.06",
+    UL {
+        LI { "new packages:",
+            UL {
+                LI { TO "DirectSummands::DirectSummands", ", a package by Devlin Mallory and Mahrud Sayrafi for computing direct sum decompositions of modules and coherent sheaves, has been added." },
+                LI { TO "EuclideanDistanceDegree::EuclideanDistanceDegree", ", a package by Jose Israel Rodriguez and Will Huang for producing critical equations and computing ED degrees, has been added." },
+                LI { TO "LanguageServer::LanguageServer", ", a package by Doug Torrance implementing the ", HREF("https://microsoft.github.io/language-server-protocol/", "Language Server Protocol"), " for Macaulay2, has been added, along with a new ", CODE "M2-language-server", " binary for use with LSP-compatible editors." },
+                LI { TO "NeuralIdeals::NeuralIdeals", ", a package by Hugh Geller and Rebecca R.G. for canonical forms of neural ideals, has been added." },
+                LI { TO "ResultantComplexes::ResultantComplexes", ", a package by Friedemann Groh for calculating resultants using subdivisions and Canny Emiris shift of Newton polytopes, has been added." },
+                LI { TO "TestAudit::TestAudit", ", a package by Taylor Brysiewicz, Ashley Dean, Connor Haynes, David K. Johnson, Guanyu Li, and Keller VandeBogert for auditing tests in Macaulay2 packages, has been added." },
+                LI { TO "WeierstrassSemigroups::WeierstrassSemigroups", ", a package by David Eisenbud and Frank-Olaf Schreyer for computing smoothing families for Weierstrass semigroups, has been added." },
+                },
+            },
+        LI { "packages that have been published and certified:",
+            UL {
+                LI { star, " ", TO "PathSignatures::PathSignatures", ", a package by Felix Lotter, Oriol Reig, Angelo El Saliby, and Carlos Amendola for working with algebraic path signatures, has been published." },
+                LI { star, " ", TO "ResultantComplexes::ResultantComplexes", ", a package by Friedemann Groh for calculating resultants using subdivisions and Canny Emiris shift of Newton polytopes, has been published." },
+                }
+            },
+        LI { "improved packages:" ,
+            UL {
+                LI { TO "ConnectionMatrices::ConnectionMatrices", " has been updated to version 1.1, including function renames (notably ", TT "connectionMatrices", " → ", TO "ConnectionMatrices::pfaffianSystem", "), additional examples, and internal simplifications." },
+                LI { TO "DGAlgebras::DGAlgebras", " has been updated to version 2.1, fixing ", TO "DGAlgebras::minimalSemifreeResolution", " to correctly produce minimal outputs on mixed-degree rings, and strengthening ", TO "DGAlgebras::isMinimalSemifreeResolution", " to also verify acyclicity." },
+                LI { TO "FastMinors::FastMinors", " has been updated to version 1.3.1, fixing a bug in ", TO "FastMinors::projDim", " and adding functionality to verify non-regularity in codimension $n$ via ", TO "FastMinors :: regularInCodimension(...,VerifyNonRegular=>...)", ", together with corresponding documentation and tests." },
+                LI { TO "IntegralClosure::IntegralClosure", " has been updated to version 1.11 with fixes to conductor computations for inhomogeneous ring maps and integral closures, along with documentation improvements and maintenance updates." },
+                LI { TO "InvariantRing::InvariantRing", " has been updated to version 2.5, fixing bugs and speeding up the algorithm for elementary abelian $p$-groups." },
+                LI { TO "RandomCurves::RandomCurves", " has been updated to version 1.0, merging in the functionality of the packages ", TT "RandomCanonicalCurves", ", ", TT "RandomGenus14Curves", ", ", TT "RandomPlaneCurves", ", and ", TT "RandomSpaceCurves", ", which have been removed. "},
+                LI { TO "ToricTopology::ToricTopology", " has been updated to version 1.2 with a refactored package structure, streamlined interfaces for Betti number and Euler characteristic computations, expanded support for normal toric varieties, bug fixes to characteristic class calculations, and enhanced documentation and testing." },
+                LI { TO "Triangulations::Triangulations", " has been updated to version 0.6 with new triangulation capabilities, enhanced support for large and non-acyclic configurations, additional engine-level geometric computations, and improved documentation." },
+                LI { TO "Visualize::Visualize", " has been updated to version 1.10, with minor updates to the JavaScript code." },
+                LI {"Thanks to participants of the ", EM "Future of Macaulay2", " workshop at Georgia Tech in May 2026, nearly every package distributed with Macaulay2 has expanded documentation and test coverage. If you maintain a package, please review the new documentation and tests and open an issue or pull request if anything needs to be added, removed, or revised." },
+                },
+            },
+        LI { "functionality added or improved:",
+            UL {
+                LI { "Using ", TO "augmented assignment", " with mutable hash tables is now thread safe." },
+                LI { "The ", TO (symbol _, String, List), " method has been added for creating substrings. "},
+                LI { "A number of improvements have been made to ", TO "the debugger", ":",
+                    UL {
+                        LI { "The ", TO symbol finish, " command is new, allowing execution to continue until the current stack frame completes." },
+                        LI { "The ", TO symbol breakpoint, " keyword is now documented, with improved functionality." },
+                        },
+                    },
+                LI { "The new function ", TO canUseHilbertHint, " checks whether Hilbert-driven Gröbner basis computation is applicable to a given ring, ideal, module, or matrix.  Documentation for ", TO "using a Hilbert hint for a Groebner basis calculation", " has also been added." },
+                },
+            },
+        }
+    }
 
 document {
     Key => "changes, 1.26.05",
