@@ -284,6 +284,7 @@ getPackageInfoList = () -> flatten (
 	  else {})
 
 tallyInstalledPackages = () -> for prefix in prefixPath do (
+    if notify then printerr("tallying installed packages under ", prefix);
      if not isDirectory prefix then (
 	  remove(installedPackagesByPrefix,prefix);
 	  continue;
