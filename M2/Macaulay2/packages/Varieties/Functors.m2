@@ -2,6 +2,14 @@
 -- helpers for sheaf cohomology
 -----------------------------------------------------------------------------
 
+-- FIXME: a kludge to allow the package to load with OldChainComplexes
+if HomologicalAlgebraPackage =!= "Complexes" then (
+    protect Concentration;
+    freeResolution = res;
+    koszulComplex = x -> notImplemented();
+    liftComplex = x -> notImplemented();
+    )
+
 -- TODO: should this also check that the variety is finite type over the field?
 checkVariety := (X, F) -> (
     if not X === variety F     then error "expected coherent sheaf over the same variety";

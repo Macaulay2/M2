@@ -602,7 +602,7 @@ Node
     Hom
     HH
     sheafExt
-    yonedaSheafExtension
+    -- yonedaSheafExtension
 
 Node
   Key
@@ -733,15 +733,6 @@ Node
     Hom
     HH
     sheafExt
-
-Node
-  Key
-    ExtLongExactSequence
-   (ExtLongExactSequence, CoherentSheaf, SheafMap)
-   (ExtLongExactSequence, CoherentSheaf, SheafMap, SheafMap)
-   [ExtLongExactSequence, Concentration]
-  Headline
-    the long exact sequence of the Ext functor
 
 -----------------------------------------------------------------------------
 -- sheafExt

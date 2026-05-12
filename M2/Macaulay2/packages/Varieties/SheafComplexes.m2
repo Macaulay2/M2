@@ -1,5 +1,13 @@
 export {
     "RHom",
+    "ExtLongExactSequence",
+    "yonedaSheafExtension",
+--  "yonedaSheafExtension'",
+    "eulerSequence",
+    "cotangentSequence",
+    "idealSheafSequence",
+    "cotangentSurjection",
+    "embeddedToAbstract",
     }
 
 -----------------------------------------------------------------------------
@@ -90,6 +98,8 @@ module ComplexMap := ComplexMap => phi -> phi.cache.module ??= (
 
 Complex(ZZ) := Complex(Sequence) := Complex => (C, a) -> complex applyValues(C.dd.map, f -> f(a))
 
+-----------------------------------------------------------------------------
+
 sheafHom(Complex, Complex) := Complex => opts -> (C,D) -> (
     -- signs here are based from Christensen and Foxby
     -- which agrees with Conrad (Grothendieck duality book)
@@ -143,6 +153,124 @@ extend(Complex, Complex, SheafMap) := ComplexMap =>
     lookup(extend, Complex, Complex, Matrix)
 extend(Complex, Complex, SheafMap, Sequence) := ComplexMap =>
     lookup(extend, Complex, Complex, Matrix, Sequence)
+
+-----------------------------------------------------------------------------
+-- Long Exact Sequences and Connecting Homomorphisms
+-----------------------------------------------------------------------------
+
+-- internal method for modules only
+-- TODO: move this to Complexes?
+ExtLES = method(Options => {LengthLimit => null})
+ExtLES(Module, Matrix, Matrix) := ComplexMap => opts -> (M, g, f) -> (
+    F := freeResolution(M, opts);
+    longExactSequence(Hom(F, g), Hom(F, f)))
+ExtLES(Matrix, Matrix, Module) := ComplexMap => opts -> (g, f, N) -> (
+    (g', f') := horseshoeResolution(g, f, opts);
+    G := freeResolution(N, opts);
+    -- TODO: the indexing on opts.Concentration needs to be negated
+    longExactSequence(Hom(f', G), Hom(g', G)))
+
+--TODO: RHom(ZZ, SheafComplex, SheafComplex)
+--TODO: TorLongExactSequence
+
+-- Given f: G -> H, leading to SES 0 -> ker f -> G -> im f -> 0 and F a sheaf,
+-- this method returns the long exact sequence in cohomology;
+-- the concentration argument will give Ext^(lo) -> ... -> Ext^(hi)
+ExtLongExactSequence = method(Options => {Concentration => null})
+ExtLongExactSequence(CoherentSheaf, SheafMap)           := Matrix => opts -> (F, f) ->
+    ExtLongExactSequence(F, inducedMap(image f, source f, f), inducedMap(source f, ker f), opts)
+ExtLongExactSequence(CoherentSheaf, SheafMap, SheafMap) := Matrix => opts -> (F, f, g) -> (
+    d := dim variety F;
+    e := 0; -- this is a sum of twists bound
+    (lo, hi) := if opts.Concentration =!= null then opts.Concentration else (0, d);
+    if not instance(variety F, ProjectiveVariety)
+    then error "expected sheaves on a projective variety";
+    if target g =!= source f then error "expected target g = source f";
+    M := module F;
+    -- 0 <— N1 <— N2 < — N3 <— 0
+    N2 := module source f;
+    N1 := module target f;
+    N3 := module source g;
+    R := ring M;
+    if not isAffineRing R
+    then error "expected sheaves on a variety over a field";
+    l := max(
+	l1 := min(dim N1, max(hi, 0)),
+	l2 := min(dim N2, max(hi, 0)),
+	l3 := min(dim N3, max(hi, 0)));
+    P1 := resolution liftModule N1;
+    P2 := resolution liftModule N2;
+    P3 := resolution liftModule N3;
+    p := max(
+	p1 := length P1,
+	p2 := length P2,
+	p3 := length P3);
+    n := dim ring P1 - 1;
+    -- in the first case the spectral sequence degenerates
+    if p >= n-l then (
+	-- the "regularity" between n-l and p indices
+	a1 := max apply(n - l1 .. p1, j -> (max degrees P1_j)#0 - j);
+	a2 := max apply(n - l2 .. p2, j -> (max degrees P2_j)#0 - j);
+	a3 := max apply(n - l3 .. p3, j -> (max degrees P3_j)#0 - j);
+	r := max(a1, a2, a3) - e - hi + 1;
+        --need to truncate M in a way related to invariants of ker f
+        --probably just add in l3, P3, etc., take max as above
+	M = truncate(r, M, MinimalGenerators => false));
+    -- TODO: can we truncate at the regularity of homology(f,g) instead?
+    reg := 1 + max(regularity coker matrix f, regularity ker matrix g);
+    -- TODO: verify the Base of the complex
+    -- TODO: should lo be used somewhere?
+    part_0 ExtLES(M,
+	truncate(reg,    matrix f, MinimalGenerators => false),
+	subtruncate(reg, matrix g, MinimalGenerators => false),
+	LengthLimit => hi + 1))
+
+-- Given f: G -> H, leading to SES 0 -> ker f -> G -> im f -> 0 and F a sheaf,
+-- this returns the connecting homomorphism Ext^i(F, im f) -> Ext^(i+1)(F, ker f)
+connectingExtMap(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f0) -> (
+    f := inducedMap(image f0, source f0, f0);
+    g := inducedMap(source f, ker f);
+    h := ExtLongExactSequence(F, f, g,
+	Concentration => (m, m + 1));
+    h.dd_(-3*m))
+
+-----------------------------------------------------------------------------
+-- Yoneda Ext
+-----------------------------------------------------------------------------
+
+yonedaSheafExtension = method()
+yonedaSheafExtension Matrix := Complex => f -> (
+    E := target f; -- Ext^d(F,G)
+    (d, F, G) := if (try first formation E) === Ext then last formation E
+    else error "expected target of map to be an Ext^d(F,G) module";
+    X := variety F;
+    r := E.cache.TruncateDegree;
+    M := truncate(r, module F, MinimalGenerators => false);
+    E' := Ext^d(M, module G);
+    f' := basis(0, E') * f;
+    C := yonedaExtension f';
+    complex apply(d + 1, i -> sheaf_X C.dd_(i+1)))
+
+--yonedaSheafExtension' = method(Options => options Ext.argument)
+--yonedaSheafExtension' Complex := Matrix => opts -> C -> ()
+
+///
+    C := freeResolution(, LengthLimit => d+1)
+    inducedMap(G, sheaf(X, C_d))
+    -- K := sheaf(X, image C.dd_d);
+    -- i := inducedMap(sheaf(X, C_(d-1)), K);
+    -- TODO: need connecting map here
+    -- c := map(E, Hom(K, G), ); -- ???
+    -- FIXME: cheating here
+    b := homomorphism f;
+    P := pushout(i, b);
+    -- TODO: add this constructor
+    i1 := map-- depends on truncate methods
+    (module P, C_0, matrix first P.cache.pushoutMaps);
+    i2 := map(P, G, matrix last P.cache.pushoutMaps);
+    p1 := map(F, P, transpose cover i1 // transpose cover (augmentationMap C)_0);
+    (p1, i2))
+///
 
 -----------------------------------------------------------------------------
 -- hh: Cohomology with coefficients in a complex of coherent sheaves
@@ -588,6 +716,12 @@ euler Complex := C -> sum(pairs C.module, (i, M) -> (-1)^i * euler M)
 
 -- TODO: Beilinson resolution of the diagonal for PP^n
 
+-- TODO: follow what koszulComplex from Complexes does instead?
+koszulComplex SheafMap := Complex => {} >> o -> f -> (
+    F := source f;
+    r := rank(module F ** quotient support F);
+    complex apply(r, i -> koszul(i + 1, f)))
+
 eulerSequence = method()
 eulerSequence ProjectiveVariety := Complex => X -> (
     -- Given a projective variety X \subset PP^n, returns the two maps
@@ -608,6 +742,27 @@ idealSheafSequence ProjectiveVariety := Complex => X -> (
     i := inducedMap(ambient IX, IX);
     p := inducedMap(coker i, ambient IX);
     complex {p, i})
+
+-----------------------------------------------------------------------------
+-- Common maps of sheaves
+-----------------------------------------------------------------------------
+
+cotangentSurjection = method()
+cotangentSurjection ProjectiveVariety := SheafMap => X -> X.cache.cotangentSurjection ??= (
+    -- Given a projective variety X \subset PP^n,
+    -- returns the surjection Omega_P^n|X -> Omega_X
+    C := eulerSequence X;
+    OmegaX := cotangentSheaf(X, MinimalGenerators => false);
+    OmegaPX := C_2;
+    if gens module OmegaX != gens module OmegaPX then error "different generators";
+    p := (sheaf inducedMap(coker relations module OmegaX, ambient module OmegaX)) * inducedMap(ambient OmegaPX, OmegaPX);
+    inducedMap(image p, source p))
+
+embeddedToAbstract = method()
+embeddedToAbstract ProjectiveVariety := Matrix => X -> X.cache.embeddedToAbstract ??= (
+     g := dual cotangentSurjection X;
+     h := inducedMap(coker g, target g);
+     connectingExtMap(0, OO_X^1, h, LengthLimit => 2))
 
 -----------------------------------------------------------------------------
 -- naiveCotangentComplex

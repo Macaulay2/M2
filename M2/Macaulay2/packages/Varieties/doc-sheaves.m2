@@ -114,7 +114,7 @@ document {
     Key => {
 	(symbol (*), CoherentSheaf),
 	(symbol (*), SheafOfRings),
-	(symbol (*), Complex),
+	-- (symbol (*), Complex),
 	},
     Headline => "sum of twists",
     Usage => "F(*)",
@@ -847,7 +847,7 @@ Node
   SeeAlso
     idealSheaf
     tangentSheaf
-    cotangentSurjection
+    -- cotangentSurjection
     reflexiveDifferentials
     (cotangentSheaf, ZZ, Variety)
 
@@ -994,7 +994,7 @@ Node
     idealSheaf
     tangentSheaf
     cotangentSheaf
-    cotangentSurjection
+    -- cotangentSurjection
 
 Node
   Key
@@ -1059,7 +1059,7 @@ Node
     (variety, CoherentSheaf)
     (variety, SheafOfRings)
     (variety, SumOfTwists)
-    (variety, SumOfTwistsComplex)    
+    -- (variety, SumOfTwistsComplex)
     (variety, SheafMap)
     variety
   Headline
@@ -1067,7 +1067,7 @@ Node
   Usage
     variety F
   Inputs
-    F:{CoherentSheaf,SheafOfRings,SumOfTwists,SumOfTwistsComplex,SheafMap}
+    F:{CoherentSheaf,SheafOfRings,SumOfTwists,-*SumOfTwistsComplex,*-SheafMap}
   Outputs
     :Variety
   Description
@@ -1088,7 +1088,7 @@ Node
     (ring, CoherentSheaf)
     (ring, SheafOfRings)
     (ring, SumOfTwists)
-    (ring, SumOfTwistsComplex)
+    -- (ring, SumOfTwistsComplex)
     (ring, SheafMap)
   Headline
     the coordinate ring of the underlying variety

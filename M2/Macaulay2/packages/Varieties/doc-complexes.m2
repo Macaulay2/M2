@@ -14,6 +14,16 @@ Node
 
 Node
   Key
+    cotangentSurjection
+   (cotangentSurjection, ProjectiveVariety)
+
+Node
+  Key
+    embeddedToAbstract
+   (embeddedToAbstract, ProjectiveVariety)
+
+Node
+  Key
     idealSheafSequence
    (idealSheafSequence, ProjectiveVariety)
   Headline
@@ -37,7 +47,16 @@ Node
   SeeAlso
     idealSheaf
     ProjectiveVariety
-    
+
+Node
+  Key
+    ExtLongExactSequence
+   (ExtLongExactSequence, CoherentSheaf, SheafMap)
+   (ExtLongExactSequence, CoherentSheaf, SheafMap, SheafMap)
+   [ExtLongExactSequence, Concentration]
+  Headline
+    the long exact sequence of the Ext functor
+
 Node
   Key
     naiveCotangentComplex

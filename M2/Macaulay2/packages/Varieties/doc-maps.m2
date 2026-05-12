@@ -91,16 +91,6 @@ Node
   Headline
     induced maps on coherent sheaves
 
-Node
-  Key
-    cotangentSurjection
-   (cotangentSurjection, ProjectiveVariety)
-
-Node
-  Key
-    embeddedToAbstract
-   (embeddedToAbstract, ProjectiveVariety)
-
 -----------------------------------------------------------------------------
 -- Basic methods for sheaves
 -----------------------------------------------------------------------------
