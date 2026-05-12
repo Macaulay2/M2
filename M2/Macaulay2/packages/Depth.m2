@@ -25,7 +25,7 @@ newPackage(
 	  }
 	  },
      Headline => "aids in computations related to depth",
-     PackageExports => {"Complexes"},
+     PackageExports => { HomologicalAlgebraPackage },
      Keywords => {"Commutative Algebra"},
      DebuggingMode => false
      )
