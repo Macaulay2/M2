@@ -226,7 +226,7 @@ getExampleOutput(String, String, String) := (prefix, pkgname, fkey) -> (
     -- TODO: only get from cache if the hash hasn't changed
     verboseLog := if notify then printerr else identity;
     output := if fileExists filename
-    then ( verboseLog("info: reading cached example results from ", filename); get filename )
+    then ( verboseLog("info: reading cached example results from ", minimizeFilename filename); get filename )
     else ( verboseLog("info: capturing example results for ", fkey); captureExamples(pkgname, fkey) );
     if output === null then {} else separateM2output output)
 
