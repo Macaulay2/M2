@@ -8,14 +8,6 @@ checkVariety := (X, F) -> (
     if not isAffineRing ring X then error "expected a variety defined over a field";
     )
 
--- pushforward the complex to PP^n via S/I <-- S
-flattenComplex = C -> C.cache#"flattenComplex" ??= (
-    if instance(ring C, PolynomialRing) then return C;
-    (lo, hi) := C.concentration;
-    if lo === hi
-    then complex(flattenModule C_lo, Base => lo)
-    else complex applyValues(C.dd.map, flattenMorphism))
-
 -- TODO: this is called twice
 -- TODO: implement for multigraded ring
 degreeList := M -> (
@@ -49,7 +41,7 @@ currentModuleMap = F -> (
     else (
 	N0 := killLocalH0 M;
 	N := minimalPresentation N0;
-	F.cache.TorsionFreeBaseRing = if isPolynomialRing R2 then N else minimalPresentation flattenModule N;
+	F.cache.TorsionFreeBaseRing = if isPolynomialRing R2 then N else minimalPresentation liftModule N;
 	F.cache.TorsionFreeMap = (inverse N.cache.pruningMap) * inducedMap(N0, M)))
 -- In this last step, if M is already torsion-free (but we have not checked that before),
 -- we don't bother to keep literally the same module (in Macaulay2 terms). Indeed, all the cohomology functions
@@ -71,7 +63,7 @@ currentModuleBaseRing = F -> (
 	N0 := killLocalH0 M;
 	N := minimalPresentation N0;
 	F.cache.TorsionFreeMap = (inverse N.cache.pruningMap) * inducedMap(N0, M);
-	F.cache.TorsionFreeBaseRing = if isPolynomialRing R2 then N else minimalPresentation flattenModule N))
+	F.cache.TorsionFreeBaseRing = if isPolynomialRing R2 then N else minimalPresentation liftModule N))
 -- In this last step, if M is already torsion-free (but we have not checked that before),
 -- we don't bother to keep literally the same module (in Macaulay2 terms). Indeed, all the cohomology functions
 -- start with calling a "currentModule" program; so we will not have done significant earlier calculations with M.
@@ -177,7 +169,7 @@ twistedGlobalSectionsModule = (F, bound) -> (
     iota := inverse G.cache.pruningMap; -- map from Gamma_* M to its minimal presentation
     -- quot is the map from M to N (which may be M/M_tors).
     F.cache.SaturationMap = if p <= 0 then iota * quot else iota * phi * quot;
-    F.cache.SaturationBaseRing = minimalPresentation flattenModule G;
+    F.cache.SaturationBaseRing = minimalPresentation liftModule G;
     if complete then (-infinity, -infinity, G)
     else (bound, bound, G))
 
@@ -398,7 +390,7 @@ cohomologyDirect = {Print => true} >> opts -> (cohodeg, S) -> (
 		iota := inverse output.cache.pruningMap; -- the map from G to its minimal presentation, output.
 		-- quot is the map from M to N (which may be M/M_tors).
 		F.cache.SaturationMap = iota * phi * quot;
-		F.cache.SaturationBaseRing = minimalPresentation flattenModule output)
+		F.cache.SaturationBaseRing = minimalPresentation liftModule output)
 	    )
 	else (
 	    -- Following the advice of the Macaulay2 documentation, for c = cohodeg > 0,
@@ -471,7 +463,7 @@ cohomology(ZZ, ProjectiveVariety, CoherentSheaf) := Module => opts -> (p, X, F) 
     G := if p == 0 then twistedGlobalSectionsModule(F, 0) -- HH^0 F(>=0)
     else (
 	-- pushforward F to PP^n
-	M := flattenModule module F;
+	M := liftModule module F;
 	S := ring M;
 	-- TODO: both n and w need to be adjusted for the multigraded case
 	n := dim S-1;
@@ -653,7 +645,7 @@ sheafExt(ZZ, CoherentSheaf, CoherentSheaf) := CoherentSheaf => options Ext.argum
 -- meaning that the output of Ext^m(F, D~(>=b)) (using the number e) will be a module that maps isomorphically
 -- to Ext^m_X(F, D~(*)) in degrees >= b0 and surjectively in degrees >= b1.
 degreeBound = (m, D, b) -> (
-    D' := flattenComplex D; -- This is a complex over a polynomial ring R1.
+    D' := liftComplex D; -- This is a complex over a polynomial ring R1.
     R1 := ring D; -- This should be a singly graded algebra.
     degs := flatten degrees R1; -- This is a list of the form {1,9,15,22}, say.
     n := #degs; -- So P = Proj R1 has dimension n-1.

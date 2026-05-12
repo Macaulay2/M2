@@ -8,12 +8,12 @@ export {
 
 -- pushforward the complex to PP^n via S/I <-- S
 -- TODO: move to Complexes?
-flattenComplex = C -> C.cache#"flattenComplex" ??= (
+liftComplex = C -> C.cache#"liftComplex" ??= (
     if instance(ring C, PolynomialRing) then return C;
     (lo, hi) := C.concentration;
     if lo === hi
-    then complex(flattenModule C_lo, Base => lo)
-    else complex applyValues(C.dd.map, flattenMorphism))
+    then complex(liftModule C_lo, Base => lo)
+    else complex applyValues(C.dd.map, liftMorphism))
 
 clearHom = (M, N) -> (
     H := youngest(M.cache.cache, N.cache.cache);
@@ -187,7 +187,7 @@ toString   SumOfTwistsComplex := toString @@ expression
 --
 hh(ZZ, Complex) := ZZ => opts -> (cohodeg, C) -> (
     R2 := ring module C;
-    M := flattenComplex module C;
+    M := liftComplex module C;
     R1 := ring M; -- R1 is a graded polynomial ring, and M is a complex of graded R1-modules that represents the complex C of sheaves.
     if degreeLength R1 =!= 1 then error "expected degree length 1";
     degs := flatten degrees R1; -- This is a list of the form {1,9,15,22}.
@@ -234,7 +234,7 @@ hh(ZZ, Complex, ZZ, ZZ) := RingElement => opts -> (cohodeg, C, b1, b2) -> (
     if not instance(b1, ZZ) or not instance(b2, ZZ) or b1>b2 then (
 	error "the input should be in the form hh^i(C,b1,b2), with C a complex of sheaves and b1 <= b2 integers");
     R2 := ring module C;
-    M := flattenComplex module C;
+    M := liftComplex module C;
     R1 := ring M; -- R1 is a graded polynomial ring, and M is a complex of graded R1-modules that represents the complex C of sheaves.
     if degreeLength R1 =!= 1 then error "expected degree length 1";
     A := degreesRing R1; -- This is a ring of the form "ZZ[T]" (meaning Z[T,T^(-1)]).
@@ -295,7 +295,7 @@ hh(ZZ, SumOfTwistsComplex) := Sequence => opts -> (cohodeg, sumoftwists) -> (
     C := sumoftwists#0; -- For an input of the form hh^i(C(>=b)), the number b is ignored.
     -- Let's not cache whether C was defined as a twist.
     R2 := ring module C;
-    M := flattenComplex module C;
+    M := liftComplex module C;
     R1 := ring M; -- R1 is a graded polynomial ring, and M is a complex of graded R1-modules that represents the complex C of sheaves.
     if degreeLength R1 =!= 1 then error "expected degree length 1";
     hft := heft R1;
@@ -495,8 +495,8 @@ RHom(Complex, CoherentSheaf) := Complex => (C, D) -> RHom(complex C, complex D)
 RHom(Complex,       Complex) := Complex => (C, D) -> (
     if not instance(variety C, ProjectiveVariety)
     then error "expected sheaves on a projective variety";
-    M := flattenComplex module C;
-    N := flattenComplex module D;
+    M := liftComplex module C;
+    N := liftComplex module D;
     R := ring M;
     if not isAffineRing R
     then error "expected sheaves on a variety over a field";
@@ -504,7 +504,7 @@ RHom(Complex,       Complex) := Complex => (C, D) -> (
     (loH, hiH) := concentration H;
     L := for i from loH to hiH list dim H_i;
     l := max L;
-    Resns := for i from loH to hiH list resolution flattenModule H_i;
+    Resns := for i from loH to hiH list resolution liftModule H_i;
     P := for i in Resns list length i;
     p := max P;
     n := dim ring (H_loH) - 1;
@@ -522,8 +522,8 @@ RHom(Complex, CoherentSheaf, ZZ) := Complex => (C, D, d) -> RHom(complex C, comp
 RHom(Complex, Complex,       ZZ) := Complex => (C, D, d) -> (
     if not instance(variety C, ProjectiveVariety)
     then error "expected sheaves on a projective variety";
-    M := flattenComplex module C;
-    N := flattenComplex module D;
+    M := liftComplex module C;
+    N := liftComplex module D;
     R := ring M;
     if not isAffineRing R
     then error "expected sheaves on a variety over a field";
@@ -531,7 +531,7 @@ RHom(Complex, Complex,       ZZ) := Complex => (C, D, d) -> (
     (loH, hiH) := concentration H;
     L := for i from loH to hiH list dim H_i;
     l := max L;
-    Resns := for i from loH to hiH list resolution flattenModule H_i;
+    Resns := for i from loH to hiH list resolution liftModule H_i;
     P := for i in Resns list length i;
     p := max P;
     n := dim ring (H_loH) - 1;
@@ -546,8 +546,8 @@ Ext(ZZ, SheafOfRings,  Complex) := Complex => opts -> (m, O, D) -> Ext(m, O^1, D
 Ext(ZZ, CoherentSheaf, Complex) := Complex => opts -> (m, C, D) -> (
     if not instance(variety C, ProjectiveVariety)
     then error "expected sheaves on a projective variety";
-    M := flattenModule module C;
-    N := flattenComplex module D;
+    M := liftModule module C;
+    N := liftComplex module D;
     R := ring M;
     if not isAffineRing R
     then error "expected sheaves on a variety over a field";
@@ -555,7 +555,7 @@ Ext(ZZ, CoherentSheaf, Complex) := Complex => opts -> (m, C, D) -> (
     (loH, hiH) := concentration H;
     L := for i from loH to hiH list min(dim H_i,m);
     l := max L;
-    Resns := for i from loH to hiH list resolution flattenModule H_i;
+    Resns := for i from loH to hiH list resolution liftModule H_i;
     P := for i in Resns list length i;
     p := max P;
     n := dim ring (H_loH) - 1;

@@ -63,6 +63,8 @@ export {
     }
 
 importFrom_Core {
+    "liftModule",
+    "liftMorphism",
     "raw", "rawReshape",
     "rawNumberOfColumns",
     "rawNumberOfRows",
@@ -202,7 +204,6 @@ sheaf' = (X, M) -> try sheaf(X, M) else (
 
 changeBaseField(GaloisField, CoherentSheaf) := (L, F) -> sheaf'(variety F, changeBaseField(L, module F))
 
-importFrom_Varieties "flattenModule"
 prune' = method()
 prune' Module := M0 -> M0.cache.prune' ??= (
     M := prune M0;
@@ -210,7 +211,7 @@ prune' Module := M0 -> M0.cache.prune' ??= (
     if isHomogeneous M0
     or instance(R, LocalRing) then return M;
     S := ambient R;
-    MS := flattenModule M;
+    MS := liftModule M;
     Sm := localRing(S, ideal gens S);
     MSm := prune(MS ** Sm);
     R ** liftUp MSm)

@@ -206,9 +206,9 @@ TEST ///
   S = kk[x,y,z]
   R = S/ideal(x)
   f = vars R
-  f' = flattenMorphism f
-  target f' == flattenModule target f
-  source f' == flattenModule source f
+  f' = liftMorphism f
+  target f' == liftModule target f
+  source f' == liftModule source f
 ///
 
 TEST ///

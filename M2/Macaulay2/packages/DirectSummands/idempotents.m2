@@ -37,19 +37,10 @@ isZero = x -> if not instance(F := ultimate(coefficientRing, ring x), InexactFie
 -- TODO: is this okay?
 presentation Ring := Matrix => R -> map(R^1, R^0, 0)
 
--- borrowed from Varieties as hack to get around
--- https://github.com/Macaulay2/M2/issues/3407
-flattenMorphism = f -> (
-    g := presentation ring f;
-    S := ring g;
-    -- TODO: sometimes lifting to ring g is enough, how can we detect this?
-    -- TODO: why doesn't lift(f, ring g) do this automatically?
-    map(target f ** S, source f ** S, lift(cover f, S)) ** cokernel g)
-
 -- reduceCoefficient is a kludge to handle the case when h^2 = ah
 isIdempotent = h -> reduceCoefficient(h^2) == reduceCoefficient h
-isWeakIdempotent = h -> all(flatten entries flattenMorphism(reduceCoefficient(h^2) - reduceCoefficient h), isZero)
---isWeakIdempotent = h -> isZero det cover flattenMorphism(reduceCoefficient(h^2) - reduceCoefficient h)
+isWeakIdempotent = h -> all(flatten entries liftMorphism(reduceCoefficient(h^2) - reduceCoefficient h), isZero)
+--isWeakIdempotent = h -> isZero det cover liftMorphism(reduceCoefficient(h^2) - reduceCoefficient h)
 
 -----------------------------------------------------------------------------
 
