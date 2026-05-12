@@ -319,6 +319,12 @@ isDirectSum Module := (M) -> M.cache.?components
 components Module := M -> if M.cache.?components then M.cache.components else {M}
 components Matrix := f -> if f.cache.?components then f.cache.components else {f}
 
+component = method()
+component(Module, Thing) := Module => (M, k) -> (
+    if not M.cache.?indexComponents then error "expected Module to be a direct sum with indexed components";
+    if not M.cache.indexComponents#?k then error("expected ", k, " to be the index of a component");
+    M.cache.components#(M.cache.indexComponents#k))
+
 formation = method()
 formation Module := M -> if M.cache.?formation then M.cache.formation
 

@@ -399,13 +399,10 @@ Ideal * CoherentSheaf          := CoherentSheaf => (I, F) -> sheaf(F.variety, I 
 directSum CoherentSheaf        := CoherentSheaf =>  F     -> CoherentSheaf.directSum(1 : F)
 
 components CoherentSheaf := List => (cacheValue symbol components) (F -> apply(components module F, N -> sheaf(F.variety, N)))
-
--*
 component(CoherentSheaf, Thing) := (F, k) -> (
     if not F.cache.?indexComponents then error "expected Sheaf to be a direct sum with indexed components";
     if not F.cache.indexComponents#?k then error("expected "|toString k|" to be the index of a component");
     (components F)#(F.cache.indexComponents#k))
-*-
 
 -- multilinear ops
 -- TODO: document

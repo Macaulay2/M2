@@ -859,12 +859,6 @@ cohomology(ZZ,Complex) := opts -> (i,C) -> homology(-i, C)
 --------------------------------------------------------------------
 -- Hom -------------------------------------------------------------
 --------------------------------------------------------------------
-component = method()
-component(Module,Thing) := (M,k) -> (
-    if not M.cache.?indexComponents then error "expected Module to be a direct sum with indexed components";
-    if not M.cache.indexComponents#?k then error("expected "|toString k|" to be the index of a component");
-    (components M)#(M.cache.indexComponents#k)
-    )
 Hom(Complex, Complex) := Complex => opts -> (C,D) -> (
     -- signs here are based from Christensen and Foxby
     -- which agrees with Conrad (Grothendieck duality book)

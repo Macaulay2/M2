@@ -113,6 +113,7 @@ document {
      Subnodes => {
 	 TO isDirectSum,
 	 TO components,
+	 TO component,
      }}
 
 document {
@@ -128,9 +129,16 @@ document {
      TT "components M", " -- the list of components for a module ", TT "M", " which was
      formed as a direct sum, or ", TT "{M}", " if ", TT "M", " was not formed as a direct sum.
      Works also for matrices, chain complexes, etc.",
-     SeeAlso => {"vector", "directSum", "++"},
+     SeeAlso => {"vector", "directSum", "++", "component"},
      Subnodes => { TO indexComponents },
      }
+
+document {
+    Key => { component, (component, Module, Thing) },
+    Headline => "get the direct sum component with given index",
+    TT "component(M, k)", " -- produces the component of ", TT "M", " with index ", TT "k", ".",
+    SeeAlso => { "components", "directSum", "indexComponents" },
+    }
 
 -- TODO:
 -- document { 

@@ -19,7 +19,6 @@ newPackage(
     )
 
 export {
-    "component",
     -- types
     "Complex",
     "ComplexMap",
@@ -197,8 +196,6 @@ undocumented{
     (texMath, Complex),
     (texMath, ComplexMap),
     (expression, ComplexMap),
-    (component,Module,Thing),
-    component
     }
 
 load "./Complexes/ChainComplexDoc.m2"
