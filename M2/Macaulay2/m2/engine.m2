@@ -187,6 +187,7 @@ processWeights = (nvars,weights) -> (
 	       then error("Weights: expected weight vector of length ",toString nvars," but got ",toString (#wt))));
      weights);
 
+makeMonomialOrderingMutex := new Mutex
 makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
      -- 'monsize' is the old MonomialSize option, usually 8 or 16, or 'null' if unset
      -- 'inverses' is true or false, and tells whether the old "Inverses => true" option was used.
@@ -197,10 +198,10 @@ makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
      --    the *separate* Weights option.  Could be an empty list.
      -- 'ordering' is a list of ordering options, e.g., { Lex => 4, GRevLex => 4 }
      --    If it's not a list, we'll make a list of one element from it.
-     if monsize === null then monsize = null;
+     if not isListOfIntegers degs then error "expected a list of integers";
+     lock makeMonomialOrderingMutex;
      ordering = {MonomialSize => monsize, ordering};
      invert = inverses;
-     if not isListOfIntegers degs then error "expected a list of integers";
      deglist = degs;
      varcount = 0;
      MonSize = 0;
@@ -214,7 +215,9 @@ makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
      varcount = 0;
      t := toList nonnull fixup2 t';
      logmo := new FunctionApplication from {rawMonomialOrdering,t};
-     (t,t',value logmo, logmo))
+     ret := (t,t',value logmo, logmo);
+     unlock makeMonomialOrderingMutex;
+     ret)
 
 RawMonomialOrdering ** RawMonomialOrdering := RawMonomialOrdering => rawProductMonomialOrdering
 
