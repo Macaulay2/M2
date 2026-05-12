@@ -336,6 +336,9 @@ tallyInstalledPackages = () -> for prefix in prefixPath do (
 -- gdbm functions
 -----------------------------------------------------------------------------
 
+loadedDatabases = new MutableHashTable
+addEndFunction(() -> apply(values loadedDatabases, db -> if isOpen db then close db))
+
 -- gdbm makes architecture dependent files, so we try to distinguish them, in case
 -- they get mixed.  Yes, that's in addition to installing them in directories that
 -- are specified to be suitable for machine dependent data.
@@ -343,6 +346,20 @@ databaseSuffix := "-" | version#"endianness" | "-" | version#"pointer size" | ".
 
 databaseDirectory = (layout, pre, pkg) -> pre | replace("PKG", pkg, layout#"packagecache")
 databaseFilename  = (layout, pre, pkg) -> databaseDirectory(layout, pre, pkg) | "rawdocumentation" | databaseSuffix
+
+openDatabaseUntilExit = dbname -> if fileExists dbname then (
+    db := loadedDatabases#dbname ??= openDatabase dbname;
+    db) else if notify then printerr("database not present: ", minimizeFilename dbname)
+
+openPackageDatabase = method()
+openPackageDatabase String := pkgname -> (
+    if (pkginfo := getPackageInfo pkgname) =!= null then (
+	openDatabaseUntilExit pkginfo#"doc db file name")
+    else if notify then printerr("could not locate package ", format pkgname, " under current prefixPath"))
+openPackageDatabase(String, String) := (prefix, pkgname) -> (
+    if (layoutID := detectCurrentLayout prefix) =!= null then (
+	openDatabaseUntilExit databaseFilename(Layout#layoutID, prefix, pkgname))
+    else if notify then printerr("could not detect layout for package ", format pkgname, " under ", prefix))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
