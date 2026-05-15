@@ -377,10 +377,10 @@ isCohenMacaulay ProjectiveVariety := {}   >> o -> X -> (
     S := ring M; -- Thus S is a graded polynomial ring, and M is R = S/I as an S-module,
     -- for a graded ring R with X = Proj(R).
     if degreeLength S =!= 1 then error "expected degree length 1";
-    degs := flatten degrees S; -- This is a list of the form {1,9,15,22}, say.
-    dimS := #degs; -- So the ring S has dimension dimS.
+    degs := degrees S; -- This is a list of the form {1,9,15,22}, say.
+    dimS := numgens S; -- So the ring S has dimension dimS.
     dimR := dim M;
-    sumOfWeights := fold(plus, degs); -- This is sum_i |x_i|, where S = k[x_0,...,x_(n-1)].
+    sumOfWeights := sum degs; -- This is sum_i |x_i|, where S = k[x_0,...,x_(n-1)].
     S.cache ??= new MutableHashTable;
     w := S.cache.Dualizing ??= S^{-sumOfWeights};
     -- We fix the dualizing module w, as a graded S-module (even though the grading is irrelevant
