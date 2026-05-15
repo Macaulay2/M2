@@ -641,13 +641,13 @@ Node
       As an example, we compute $\mathrm{Hom}_X(\mathcal I_X,\mathcal O_X)$ and $\mathrm{Ext}^1_X(\mathcal I_X,\mathcal O_X)$,
       for the smooth rational quartic curve in $\PP^3$.
     Example
-      S = ZZ/101[a..d];
+      S = QQ[a..d];
       I = monomialCurveIdeal(S,{1,3,4})
       R = S/I;
       X = Proj R;
       IX = sheaf (module I ** R)
-      Hom(IX, OO_X)
-      Ext^1(IX, OO_X)
+      assert(Hom(IX, OO_X) == QQ^16)
+      assert(Ext^1(IX, OO_X) == 0)
     Text
       The vanishing of $\mathrm{Ext}^1$ says that the point corresponding to $I$
       on the Hilbert scheme is smooth (unobstructed), and the vector space dimension
