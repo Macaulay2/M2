@@ -638,7 +638,7 @@ Node
       The base ring should be a field. Note that it is usually faster
       to work over $\mathbb{Z}/p$ for a prime number $p \leq 32767$, say @TT "ZZ/31991"@, rather than over @TT "QQ"@.
     Text
-      As an example, we compute $\mathrm{Hom}_X(\mathcal I_X,\mathcalO_X)$ and $\mathrm{Ext}^1_X(\mathcal I_X,\mathcal O_X)$,
+      As an example, we compute $\mathrm{Hom}_X(\mathcal I_X,\mathcal O_X)$ and $\mathrm{Ext}^1_X(\mathcal I_X,\mathcal O_X)$,
       for the smooth rational quartic curve in $\PP^3$.
     Example
       S = ZZ/101[a..d];
