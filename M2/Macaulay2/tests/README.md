@@ -10,15 +10,15 @@ lives under [`Macaulay2/e/unit-tests/`](../e/README.md).
 
 | Directory | Purpose | Notes |
 |---|---|---|
-| `engine/` | Engine integration tests written in M2 | Currently skipped in CI; see issue [#1213](https://github.com/Macaulay2/M2/issues/1213) |
-| `ComputationsBook/` | Examples from *Computations in Algebraic Geometry with Macaulay 2* | Run with `ctest -R ComputationsBook` |
-| `normal/` | Default-tier regression tests |  |
-| `slow/` | Slower regression tests | Not always run in CI |
-| `quarantine/` | Tests temporarily disabled, awaiting fixes |  |
-| `goals/` | Worked exercises and "goal" computations |  |
-| `gigantic/` | Stress tests that may need lots of RAM / time |  |
-| `threads/` | Concurrency / thread-supervisor tests |  |
-| `rationality/` | Tests centered on rationality questions |  |
+| [`engine/`](engine/README.md) | Engine integration tests written in M2 | Currently skipped in CI; see issue [#1213](https://github.com/Macaulay2/M2/issues/1213) |
+| [`ComputationsBook/`](ComputationsBook/README.md) | Examples from *Computations in Algebraic Geometry with Macaulay 2* | Run with `ctest -R ComputationsBook` |
+| [`normal/`](normal/README.md) | Default-tier regression tests |  |
+| [`slow/`](slow/README.md) | Slower regression tests | Not always run in CI |
+| [`quarantine/`](quarantine/README.md) | Tests temporarily disabled, awaiting fixes |  |
+| [`goals/`](goals/README.md) | Worked exercises and "goal" computations |  |
+| [`gigantic/`](gigantic/README.md) | Stress tests that may need lots of RAM / time |  |
+| [`threads/`](threads/README.md) | Concurrency / thread-supervisor tests |  |
+| [`rationality/`](rationality/README.md) | Tests centered on rationality questions |  |
 
 Plus build glue: `CMakeLists.txt`, `Makefile.in`, `Makefile.test.in`.
 

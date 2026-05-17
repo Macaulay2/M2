@@ -145,6 +145,71 @@ Convention: `file-<basename>.md` in this directory.
 | [`file-schur.md`](file-schur.md) | `SchurRing` (Schur function ring) | [Polynomial rings](polynomial-rings.md) |
 | [`file-tower.md`](file-tower.md) | `Tower` (legacy tower-of-extensions ring) | [Coefficient rings](coefficient-rings.md) |
 | [`file-ntl-interface.md`](file-ntl-interface.md) | Bridge to the NTL library | [Coefficient rings](coefficient-rings.md) |
+| [`file-gauss.md`](file-gauss.md) | `GaussElimComputation` (field-coeff Gaussian elim GB) | [Gröbner bases](groebner-bases.md) |
+| [`file-hermite.md`](file-hermite.md) | `HermiteComputation` (ZZ Hermite normal form) | [Gröbner bases](groebner-bases.md) |
+| [`file-lapack.md`](file-lapack.md) | LAPACK bridge for `RR` / `CC` matrices | [Matrices](matrices.md) |
+| [`file-eigen.md`](file-eigen.md) | Eigenvalues / SVD (LAPACK + Eigen3 fallback) | [Matrices](matrices.md) |
+| [`file-pfaff.md`](file-pfaff.md) | `PfaffianComputation` (Pfaffians of skew-symmetric matrices) | [Matrices](matrices.md) |
+| [`file-matrix-con.md`](file-matrix-con.md) | `MatrixConstructor` (immutable-matrix builder) | [Matrices](matrices.md) |
+| [`file-matrix-stream.md`](file-matrix-stream.md) | `MatrixStream` (streaming matrix construction) | [Matrices](matrices.md) |
+| [`file-mat-linalg.md`](file-mat-linalg.md) | Templated linear algebra for `DMat<R>` | [Matrices](matrices.md) |
+| [`file-mat-arith.md`](file-mat-arith.md) | Templated matrix arithmetic + `MatrixWindow` | [Matrices](matrices.md) |
+| [`file-mat-elem-ops.md`](file-mat-elem-ops.md) | `MatElementaryOps<MT>` (row/column ops) | [Matrices](matrices.md) |
+| [`file-monomial-sets.md`](file-monomial-sets.md) | Fixed/variable-size monomial sets | [Monoids & monomials](monoids-and-monomials.md) |
+| [`file-mat-util.md`](file-mat-util.md) | Generic matrix helpers (`displayMat`) | [Matrices](matrices.md) |
+| [`file-poly.md`](file-poly.md) | `PolyRing` (standard commutative polynomial ring) | [Polynomial rings](polynomial-rings.md) |
+| [`file-polyquotient.md`](file-polyquotient.md) | `PolyQuotient` (concrete quotient subclass) | [Polynomial rings](polynomial-rings.md) |
+| [`file-sagbi.md`](file-sagbi.md) | SAGBI helpers (legacy) | [Gröbner bases](groebner-bases.md) |
+| [`file-points.md`](file-points.md) | `PointsComputation<CoeffRing>` (ideal of points) | [Other computations](computations.md) |
+| [`file-interreduce.md`](file-interreduce.md) | `Interreducer` | [Gröbner bases](groebner-bases.md) |
+| [`file-fractionfreeLU.md`](file-fractionfreeLU.md) | `FF_LUComputation` (Bareiss LU over a domain) | [Matrices](matrices.md) |
+| [`file-franzi.md`](file-franzi.md) | `franzi-*` (Boolean-ring GB family) | [Gröbner bases](groebner-bases.md) |
+| [`file-mutablemat-defs.md`](file-mutablemat-defs.md) | `MutableMat<Mat>` template internals | [Matrices](matrices.md) |
+| [`file-util.md`](file-util.md) | `util.hpp` (M2-side string/array conversions) | [Utilities](utilities.md) |
+| [`file-cra-impl.md`](file-cra-impl.md) | `ChineseRemainder` internals | [Other computations](computations.md) |
+| [`file-monordering.md`](file-monordering.md) | `MonomialOrdering` constructors (impl) | [Monoids & monomials](monoids-and-monomials.md) |
+| [`file-montableZZ.md`](file-montableZZ.md) | `MonomialTableZZ` (ZZ-coeff monomial table) | [Monoids & monomials](monoids-and-monomials.md) |
+| [`file-monomial-collection.md`](file-monomial-collection.md) | `IntsSet` / `ModuleMonomSet` | [Monoids & monomials](monoids-and-monomials.md) |
+| [`file-monsort.md`](file-monsort.md) | Generic monomial sorter template | [Monoids & monomials](monoids-and-monomials.md) |
+| [`file-mem.md`](file-mem.md) | `stash` (size-class slab allocator) | [Utilities](utilities.md) |
+| [`file-myalloc.md`](file-myalloc.md) | `StatsAllocator` (debug allocator) | [Utilities](utilities.md) |
+| [`file-finalize.md`](file-finalize.md) | Engine-object finalisation hooks | [Utilities](utilities.md) |
+| [`file-ring-vecs.md`](file-ring-vecs.md) | `Ring`'s `vec` operations | [Ring elements & maps](ring-elements-and-maps.md) |
+| [`file-monideal-minprimes.md`](file-monideal-minprimes.md) | `MinimalPrimes` of a monomial ideal | [Other computations](computations.md) |
+| [`file-interrupted.md`](file-interrupted.md) | `system_interrupted()` (Ctrl+C polling) | [Utilities](utilities.md) |
+| [`file-int-bag.md`](file-int-bag.md) | `int_bag` (small value + varpower monomial) | [Monoids & monomials](monoids-and-monomials.md) |
+| [`file-dmat-zz-flint.md`](file-dmat-zz-flint.md) | `DMat<ARingZZ>` FLINT specialisation | [Matrices](matrices.md) |
+| [`file-dmat-zzp-flint.md`](file-dmat-zzp-flint.md) | `DMat<ARingZZpFlint>` FLINT specialisation | [Matrices](matrices.md) |
+| [`file-memory-status.md`](file-memory-status.md) | Placeholder memory-stats hooks | [Utilities](utilities.md) |
+| [`file-dmat-qq-flint.md`](file-dmat-qq-flint.md) | `DMat<ARingQQFlint>` FLINT specialisation | [Matrices](matrices.md) |
+| [`file-dmat-gf-flint.md`](file-dmat-gf-flint.md) | `DMat<ARingGFFlint>` / `ARingGFFlintBig` FLINT specialisations | [Matrices](matrices.md) |
+| [`file-dmat-lu.md`](file-dmat-lu.md) | LU decomposition specialisations (`DMatLinAlg<R>`) | [Matrices](matrices.md) |
+| [`file-dmat-ffpack.md`](file-dmat-ffpack.md) | Historical FFLAS-FFPACK dispatcher (no longer in use) | [Matrices](matrices.md) |
+| [`file-geovec.md`](file-geovec.md) | Geometric heap for `vec` accumulation | [Ring elements & maps](ring-elements-and-maps.md) |
+| [`file-matrix-kbasis.md`](file-matrix-kbasis.md) | k-basis of a graded module | [Matrices](matrices.md) |
+| [`file-matrix-symm.md`](file-matrix-symm.md) | `SymmMatrix` (symmetric power) | [Matrices](matrices.md) |
+| [`file-matrix-sort.md`](file-matrix-sort.md) | `MatrixSorter` (column sort) | [Matrices](matrices.md) |
+| [`file-ZZ.md`](file-ZZ.md) | Legacy `ZZ` (`Ring`-based integers) | [Coefficient rings](coefficient-rings.md) |
+| [`file-ZZp.md`](file-ZZp.md) | Legacy `Z_mod` (`Ring`-based Z/p) | [Coefficient rings](coefficient-rings.md) |
+| [`file-GF.md`](file-GF.md) | Legacy `GF` (`Ring`-based Galois field) | [Coefficient rings](coefficient-rings.md) |
+| [`file-aring-translate.md`](file-aring-translate.md) | Cross-ring coercion templates | [Coefficient rings](coefficient-rings.md) |
+| [`file-aring-wrap.md`](file-aring-wrap.md) | `RElementWrap<RingType>` (typed value wrapper) | [Coefficient rings](coefficient-rings.md) |
+| [`file-aring-qq.md`](file-aring-qq.md) | `ARingQQ` typedef + dispatcher | [Coefficient rings](coefficient-rings.md) |
+| [`file-BasicPolyListParser.md`](file-BasicPolyListParser.md) | `BasicPolyList` text-format parsers | [Polynomial rings](polynomial-rings.md) |
+| [`file-PolynomialStream.md`](file-PolynomialStream.md) | Streaming polynomial-input concept (newf4) | [Polynomial rings](polynomial-rings.md) |
+| [`file-polyroots.md`](file-polyroots.md) | Univariate polynomial root finder | [Other computations](computations.md) |
+| [`file-schur2.md`](file-schur2.md) | `SchurRing2` (refactored Schur ring) | [Polynomial rings](polynomial-rings.md) |
+| [`file-schurSn.md`](file-schurSn.md) | `SchurSnRing` (symmetric-group ring) | [Polynomial rings](polynomial-rings.md) |
+| [`file-schur-poly-heap.md`](file-schur-poly-heap.md) | `schur_poly_heap` (Schur accumulator) | [Polynomial rings](polynomial-rings.md) |
+| [`file-matrix-ncbasis.md`](file-matrix-ncbasis.md) | Non-commutative `basis` | [Matrices](matrices.md) |
+| [`file-SLP-defs.md`](file-SLP-defs.md) | `SLProgram` / `M2SLProgram` declarations | [Other computations](computations.md) |
+| [`file-SLP-imp.md`](file-SLP-imp.md) | `SLEvaluatorConcrete<RT>` (templated SLP evaluator) | [Other computations](computations.md) |
+| [`file-monomial.md`](file-monomial.md) | `EngineMonomial` (boundary monomial type) | [Monoids & monomials](monoids-and-monomials.md) |
+| [`file-godboltTest.md`](file-godboltTest.md) | Standalone Z/p log-table sandbox | (sandbox) |
+| [`file-timing.md`](file-timing.md) | `timing.hpp` (engine-side timestamps) | [Utilities](utilities.md) |
+| [`file-dmat-qq-interface-flint.md`](file-dmat-qq-interface-flint.md) | FLINT-mat translation for GMP-based `DMat<ARingQQ>` | [Matrices](matrices.md) |
+| [`file-Eschreyer-cpp.md`](file-Eschreyer-cpp.md) | `Eschreyer.cpp` implementation notes | [Resolutions](resolutions.md) |
+| [`file-aring-ZZ-comparison.md`](file-aring-ZZ-comparison.md) | Cross-reference: the three `ZZ` paths | [Coefficient rings](coefficient-rings.md) |
 | [`file-m2tbb.md`](file-m2tbb.md) | `m2tbb.hpp` (TBB wrapper) | [Utilities](utilities.md) |
 
 ### Subdirectory file deep dives
