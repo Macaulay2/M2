@@ -13,7 +13,7 @@ rings.
 
 | File pair | Purpose |
 |---|---|
-| `polyring.{cpp,hpp}` | The standard commutative polynomial ring `R[x_1,…,x_n]` |
+| `polyring.{cpp,hpp}` | The standard commutative polynomial ring `R[x_1,…,x_n]`. **Deep dive:** [`file-polyring.md`](file-polyring.md) |
 | `poly.{cpp,hpp}` | The polynomial value type stored in a `polyring` |
 | `Polynomial.{cpp,hpp}` | Modernised polynomial value type used in newer GB code |
 | `BasicPoly.{cpp,hpp}` | Lightweight polynomial value (just a vector of `(coeff, monom)`) |

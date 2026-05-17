@@ -34,6 +34,20 @@ top-level README.
 | [`unit-tests/`](unit-tests/README.md) | gtest suite for the engine |
 | [`doxygen-settings/`](doxygen-settings/README.md) | Doxygen config for the developer API docs |
 
+## Single-file deep dives
+
+For especially central classes, there are dedicated single-file walkthroughs:
+
+| File doc | Class | Area |
+|---|---|---|
+| [`file-monoid.md`](file-monoid.md) | `Monoid` | [Monoids & monomials](monoids-and-monomials.md) |
+| [`file-polyring.md`](file-polyring.md) | `PolynomialRing` | [Polynomial rings](polynomial-rings.md) |
+| [`file-freemod.md`](file-freemod.md) | `FreeModule` | [Free modules](free-modules.md) |
+| [`file-computation-framework.md`](file-computation-framework.md) | `Computation` | [Gröbner bases](groebner-bases.md), [resolutions](resolutions.md), [other computations](computations.md) |
+
+(More single-file deep dives will be added as the per-file documentation
+effort proceeds. The convention is `file-<basename>.md` in this directory.)
+
 ## Top-level files: per-area docs
 
 Files at the top level of `e/` are documented in grouped markdown files, one

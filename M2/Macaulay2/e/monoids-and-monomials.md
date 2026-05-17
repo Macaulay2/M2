@@ -12,7 +12,7 @@ encodings.
 
 | File pair | Purpose |
 |---|---|
-| `monoid.{cpp,hpp}` | The `Monoid` class — variables, ordering, degree map, weight vectors |
+| `monoid.{cpp,hpp}` | The `Monoid` class — variables, ordering, degree map, weight vectors. **Deep dive:** [`file-monoid.md`](file-monoid.md) |
 | `monorder.{cpp,hpp}` | The user-facing description of monomial orderings (lex, GRevLex, weight blocks, …) |
 | `imonorder.{cpp,hpp}` | Internal-monomial-order — the optimised, encoded form of a `monorder` used in hot loops |
 

@@ -12,7 +12,7 @@ free modules.
 
 | File pair | Purpose |
 |---|---|
-| `freemod.{cpp,hpp}` | The `FreeModule` class — base ring, rank, degree vector per generator |
+| `freemod.{cpp,hpp}` | The `FreeModule` class — base ring, rank, degree vector per generator. **Deep dive:** [`file-freemod.md`](file-freemod.md) |
 | `schorder.{cpp,hpp}` | Schreyer orderings on free modules — used to make leading-term computations local to a homological degree in resolutions |
 
 ## Anatomy of a `FreeModule`

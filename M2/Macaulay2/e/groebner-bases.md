@@ -18,7 +18,7 @@ reached via `mathicgb-interface.{cpp,hpp}`.
 
 | File pair | Purpose |
 |---|---|
-| `comp.{cpp,hpp}` | Generic abstract base — `start`, `step`, `status`, `stop_conditions` |
+| `comp.{cpp,hpp}` | Generic abstract base — `start`, `step`, `status`, `stop_conditions`. **Deep dive:** [`file-computation-framework.md`](file-computation-framework.md) |
 | `comp-gb.{cpp,hpp}` | GB Computation subclass — dispatches to a specific algorithm |
 | `comp-gb-declared.{cpp,hpp}` | "Declared" GB — pre-supplied basis used to bootstrap |
 | `comp-gb-proxy.{cpp,hpp}` | Proxy used when the GB engine runs in a separate thread / supervisor task |

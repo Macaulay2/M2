@@ -191,6 +191,17 @@ oldest part of the codebase (~340 source files in `e/`) and the part most
 people new to the project find hardest to navigate. This section is a guided
 tour.
 
+### Single-file deep dives
+
+Dedicated walkthroughs for especially central engine classes:
+
+| File doc | Class | Area |
+|---|---|---|
+| [file-monoid.md](M2/Macaulay2/e/file-monoid.md) | `Monoid` | Monoids & monomials |
+| [file-polyring.md](M2/Macaulay2/e/file-polyring.md) | `PolynomialRing` | Polynomial rings |
+| [file-freemod.md](M2/Macaulay2/e/file-freemod.md) | `FreeModule` | Free modules |
+| [file-computation-framework.md](M2/Macaulay2/e/file-computation-framework.md) | `Computation` | GB / resolutions / other |
+
 ### Per-area docs (quick navigation)
 
 For each top-level area of the engine, there is a dedicated markdown file
