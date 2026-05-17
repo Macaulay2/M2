@@ -480,6 +480,99 @@ Dedicated walkthroughs for especially central engine classes
 | `schreyer-resolution/` | [schreyer-resolution/file-res-f4-m2-interface.md](M2/Macaulay2/e/schreyer-resolution/file-res-f4-m2-interface.md) | `ResF4toM2Interface` |
 | `schreyer-resolution/` | [schreyer-resolution/file-res-memblock.md](M2/Macaulay2/e/schreyer-resolution/file-res-memblock.md) | `ResMemoryBlock<T>` |
 
+**Core M2 layer file deep dives** (per-file docs in `M2/Macaulay2/m2/`):
+
+| File doc | Subject |
+|---|---|
+| [m2/file-Core.md](M2/Macaulay2/m2/file-Core.md) | `Core.m2` — Core package definition |
+| [m2/file-loadsequence.md](M2/Macaulay2/m2/file-loadsequence.md) | `loadsequence` — load order manifest |
+| [m2/file-exports.md](M2/Macaulay2/m2/file-exports.md) | `exports.m2` — public-symbol manifest |
+| [m2/file-packages.md](M2/Macaulay2/m2/file-packages.md) | `packages.m2` — package machinery |
+| [m2/file-classes.md](M2/Macaulay2/m2/file-classes.md) | `classes.m2` — type hierarchy |
+| [m2/file-methods.md](M2/Macaulay2/m2/file-methods.md) | `methods.m2` — method dispatch |
+| [m2/file-expressions.md](M2/Macaulay2/m2/file-expressions.md) | `expressions.m2` — `Expression` AST + precedence |
+| [m2/file-rings.md](M2/Macaulay2/m2/file-rings.md) | `rings.m2` — `Ring` base type |
+| [m2/file-enginering.md](M2/Macaulay2/m2/file-enginering.md) | `enginering.m2` — `EngineRing` + `RingElement` |
+| [m2/file-monoids.md](M2/Macaulay2/m2/file-monoids.md) | `monoids.m2` — `Monoid` type |
+| [m2/file-polyrings.md](M2/Macaulay2/m2/file-polyrings.md) | `polyrings.m2` — `PolynomialRing` type |
+| [m2/file-matrix.md](M2/Macaulay2/m2/file-matrix.md) | `matrix.m2` — M2-side `Matrix` |
+| [m2/file-modules.md](M2/Macaulay2/m2/file-modules.md) | `modules.m2` — `Module` type |
+| [m2/file-gb.md](M2/Macaulay2/m2/file-gb.md) | `gb.m2` — M2-side GB front-end |
+| [m2/file-hilbert.md](M2/Macaulay2/m2/file-hilbert.md) | `hilbert.m2` — Hilbert function / series |
+| [m2/file-betti.md](M2/Macaulay2/m2/file-betti.md) | `betti.m2` — `BettiTally` |
+| [m2/file-complexes.md](M2/Macaulay2/m2/file-complexes.md) | `complexes.m2` — `Complex` / `ChainComplex` dispatch |
+| [m2/file-document.md](M2/Macaulay2/m2/file-document.md) | `document.m2` — docs DSL |
+| [m2/file-installPackage.md](M2/Macaulay2/m2/file-installPackage.md) | `installPackage.m2` — HTML / info / PDF renderer |
+| [m2/file-examples.md](M2/Macaulay2/m2/file-examples.md) | `examples.m2` — example runner |
+| [m2/file-help.md](M2/Macaulay2/m2/file-help.md) | `help.m2` — interactive help |
+| [m2/file-option.md](M2/Macaulay2/m2/file-option.md) | `option.m2` — `Option` / `OptionTable` |
+| [m2/file-gateway.md](M2/Macaulay2/m2/file-gateway.md) | `gateway.m2` — `ScriptedFunctor` |
+| [m2/file-code.md](M2/Macaulay2/m2/file-code.md) | `code.m2` — code introspection |
+| [m2/file-integers.md](M2/Macaulay2/m2/file-integers.md) | `integers.m2` — `Number` + `ZZ` |
+| [m2/file-rationals.md](M2/Macaulay2/m2/file-rationals.md) | `rationals.m2` — `QQ` |
+| [m2/file-reals.md](M2/Macaulay2/m2/file-reals.md) | `reals.m2` — `RR`, `CC`, intervals, `ImmutableType` |
+| [m2/file-nets.md](M2/Macaulay2/m2/file-nets.md) | `nets.m2` — 2-D character grids |
+| [m2/file-printing.md](M2/Macaulay2/m2/file-printing.md) | `printing.m2` — printing primitives |
+| [m2/file-html.md](M2/Macaulay2/m2/file-html.md) | `html.m2` — HTML output formatter |
+| [m2/file-files.md](M2/Macaulay2/m2/file-files.md) | `files.m2` — file / directory operations |
+| [m2/file-system.md](M2/Macaulay2/m2/file-system.md) | `system.m2` — system commands |
+| [m2/file-quotring.md](M2/Macaulay2/m2/file-quotring.md) | `quotring.m2` — `QuotientRing` |
+| [m2/file-ringmap.md](M2/Macaulay2/m2/file-ringmap.md) | `ringmap.m2` — `RingMap` |
+| [m2/file-monideal.md](M2/Macaulay2/m2/file-monideal.md) | `monideal.m2` — `MonomialIdeal` |
+| [m2/file-Hom.md](M2/Macaulay2/m2/file-Hom.md) | `Hom.m2` — `Hom` / `Ext` / `Tor` |
+| [m2/file-intersect.md](M2/Macaulay2/m2/file-intersect.md) | `intersect.m2` — generic `intersect` |
+| [m2/file-factor.md](M2/Macaulay2/m2/file-factor.md) | `factor.m2` — polynomial / integer factorisation |
+| [m2/file-localring.md](M2/Macaulay2/m2/file-localring.md) | `localring.m2` — `LocalRing` stub |
+| [m2/file-galois.md](M2/Macaulay2/m2/file-galois.md) | `galois.m2` — `GaloisField` |
+| [m2/file-freealgebras.md](M2/Macaulay2/m2/file-freealgebras.md) | `freealgebras.m2` — `FreeAlgebra` stubs |
+| [m2/file-hypertext.md](M2/Macaulay2/m2/file-hypertext.md) | `hypertext.m2` — `Hypertext` AST |
+| [m2/file-latex.md](M2/Macaulay2/m2/file-latex.md) | `latex.m2` — `tex` / `texMath` |
+| [m2/file-lists.md](M2/Macaulay2/m2/file-lists.md) | `lists.m2` — `List` / `Sequence` / `Array` |
+| [m2/file-regex.md](M2/Macaulay2/m2/file-regex.md) | `regex.m2` — regex |
+| [m2/file-threads.md](M2/Macaulay2/m2/file-threads.md) | `threads.m2` — `AtomicInt` + `Task` |
+| [m2/file-set.md](M2/Macaulay2/m2/file-set.md) | `set.m2` — `Set` / `Tally` / `VirtualTally` |
+| [m2/file-iterators.md](M2/Macaulay2/m2/file-iterators.md) | `iterators.m2` — `Iterator` |
+| [m2/file-combinatorics.md](M2/Macaulay2/m2/file-combinatorics.md) | `combinatorics.m2` — `subsets`, `partitions` |
+| [m2/file-markdown.md](M2/Macaulay2/m2/file-markdown.md) | `markdown.m2` — Markdown output |
+| [m2/file-mathml.md](M2/Macaulay2/m2/file-mathml.md) | `mathml.m2` — MathML output |
+| [m2/file-texmacs.md](M2/Macaulay2/m2/file-texmacs.md) | `texmacs.m2` — TeXmacs frontend protocol |
+| [m2/file-multilin.md](M2/Macaulay2/m2/file-multilin.md) | `multilin.m2` — `exteriorPower`, `minors`, `pfaffians` |
+| [m2/file-minPres.md](M2/Macaulay2/m2/file-minPres.md) | `minPres.m2` — `minimalPresentation` |
+| [m2/file-pushforward.md](M2/Macaulay2/m2/file-pushforward.md) | `pushforward.m2` — `pushForward` |
+| [m2/file-programs.md](M2/Macaulay2/m2/file-programs.md) | `programs.m2` — external programs |
+| [m2/file-engine.md](M2/Macaulay2/m2/file-engine.md) | `engine.m2` — `Raw*` type wrappers |
+| [m2/file-matrix1.md](M2/Macaulay2/m2/file-matrix1.md) | `matrix1.m2` — `Ideal`, kernel, image |
+| [m2/file-matrix2.md](M2/Macaulay2/m2/file-matrix2.md) | `matrix2.m2` — LU, det, solve, rank |
+| [m2/file-variables.md](M2/Macaulay2/m2/file-variables.md) | `variables.m2` — `IndexedVariable` |
+| [m2/file-indeterminates.md](M2/Macaulay2/m2/file-indeterminates.md) | `indeterminates.m2` — variable-name generation |
+| [m2/file-shared.md](M2/Macaulay2/m2/file-shared.md) | `shared.m2` — method-stub manifest |
+| [m2/file-newring.md](M2/Macaulay2/m2/file-newring.md) | `newring.m2` — `flattenRing`, `tensor` |
+| [m2/file-quotient.md](M2/Macaulay2/m2/file-quotient.md) | `quotient.m2` — `I : J` |
+| [m2/file-computations.md](M2/Macaulay2/m2/file-computations.md) | `computations.m2` — `Computation` framework |
+| [m2/file-mutablemat.md](M2/Macaulay2/m2/file-mutablemat.md) | `mutablemat.m2` — `MutableMatrix` |
+| [m2/file-debugging.md](M2/Macaulay2/m2/file-debugging.md) | `debugging.m2` — warnings + debugger |
+| [m2/file-remember.md](M2/Macaulay2/m2/file-remember.md) | `remember.m2` — `memoize` |
+| [m2/file-basis.md](M2/Macaulay2/m2/file-basis.md) | `basis.m2` — `basis(d, M)` |
+| [m2/file-format.md](M2/Macaulay2/m2/file-format.md) | `format.m2` — formatter dispatch |
+| [m2/file-autoload.md](M2/Macaulay2/m2/file-autoload.md) | `autoload.m2` — lazy loading |
+| [m2/file-typicalvalues.md](M2/Macaulay2/m2/file-typicalvalues.md) | `typicalvalues.m2` — return-type hints |
+| [m2/file-genmat.md](M2/Macaulay2/m2/file-genmat.md) | `genmat.m2` — `genericMatrix` |
+| [m2/file-monomcurve.md](M2/Macaulay2/m2/file-monomcurve.md) | `monomcurve.m2` — `monomialCurveIdeal` |
+| [m2/file-schubert.md](M2/Macaulay2/m2/file-schubert.md) | `schubert.m2` — Schubert calculus |
+| [m2/file-fano.md](M2/Macaulay2/m2/file-fano.md) | `fano.m2` — Fano variety |
+| [m2/file-integrate.md](M2/Macaulay2/m2/file-integrate.md) | `integrate.m2` — Simpson's rule |
+| [m2/file-powers.md](M2/Macaulay2/m2/file-powers.md) | `powers.m2` — `binomial` |
+| [m2/file-fold.md](M2/Macaulay2/m2/file-fold.md) | `fold.m2` — `accumulate` / `fold` |
+| [m2/file-intervals.md](M2/Macaulay2/m2/file-intervals.md) | `intervals.m2` — interval constructors |
+| [m2/file-flint.md](M2/Macaulay2/m2/file-flint.md) | `flint.m2` — `ZZFlintRing` / `QQFlintRing` |
+| [m2/file-profile.md](M2/Macaulay2/m2/file-profile.md) | `profile.m2` — profiler |
+| [m2/file-robust.md](M2/Macaulay2/m2/file-robust.md) | `robust.m2` — `timelimit` (legacy) |
+| [m2/file-validate.md](M2/Macaulay2/m2/file-validate.md) | `validate.m2` — `Hypertext` validation |
+| [m2/file-testing.md](M2/Macaulay2/m2/file-testing.md) | `testing.m2` — `check Package`, `TEST` |
+| [m2/file-max.md](M2/Macaulay2/m2/file-max.md) | `max.m2` — `InfiniteNumber`, `max`, `min` |
+| [m2/file-pretty.md](M2/Macaulay2/m2/file-pretty.md) | `pretty.m2` — pretty-printer |
+| [m2/file-peek.md](M2/Macaulay2/m2/file-peek.md) | `peek.m2` — structural introspection |
+
 ### Per-area docs (quick navigation)
 
 For each top-level area of the engine, there is a dedicated markdown file

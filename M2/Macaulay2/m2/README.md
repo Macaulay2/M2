@@ -29,6 +29,11 @@ Documented Core files (the rest will be added incrementally):
 |---|---|
 | [`file-Core.md`](file-Core.md) | `Core.m2` — Core package definition |
 | [`file-loadsequence.md`](file-loadsequence.md) | `loadsequence` — load order manifest |
+| [`file-exports.md`](file-exports.md) | `exports.m2` — public-symbol manifest |
+| [`file-packages.md`](file-packages.md) | `packages.m2` — `newPackage` / `needsPackage` machinery |
+| [`file-autoload.md`](file-autoload.md) | `autoload.m2` — lazy symbol loading |
+| [`file-shared.md`](file-shared.md) | `shared.m2` — method-stub manifest |
+| [`file-typicalvalues.md`](file-typicalvalues.md) | `typicalvalues.m2` — return-type hints |
 
 ### Type system and dispatch
 
@@ -37,13 +42,66 @@ Documented Core files (the rest will be added incrementally):
 | [`file-classes.md`](file-classes.md) | `classes.m2` — M2 type hierarchy |
 | [`file-methods.md`](file-methods.md) | `methods.m2` — method dispatch |
 | [`file-expressions.md`](file-expressions.md) | `expressions.m2` — `Expression` AST + precedence |
+| [`file-option.md`](file-option.md) | `option.m2` — `Option` / `OptionTable` |
+| [`file-gateway.md`](file-gateway.md) | `gateway.m2` — `ScriptedFunctor` |
+| [`file-code.md`](file-code.md) | `code.m2` — code introspection |
+| [`file-debugging.md`](file-debugging.md) | `debugging.m2` — warnings + interactive debugger |
+| [`file-remember.md`](file-remember.md) | `remember.m2` — `memoize` |
+
+### Numeric types and output pipeline
+
+| File doc | Subject |
+|---|---|
+| [`file-integers.md`](file-integers.md) | `integers.m2` — `Number` + `ZZ` |
+| [`file-rationals.md`](file-rationals.md) | `rationals.m2` — `QQ` |
+| [`file-reals.md`](file-reals.md) | `reals.m2` — `RR`, `CC`, intervals, `ImmutableType` |
+| [`file-nets.md`](file-nets.md) | `nets.m2` — 2-D character grids |
+| [`file-printing.md`](file-printing.md) | `printing.m2` — `pad` and printing primitives |
+| [`file-html.md`](file-html.md) | `html.m2` — HTML output formatter |
+
+### System integration
+
+| File doc | Subject |
+|---|---|
+| [`file-files.md`](file-files.md) | `files.m2` — file / directory operations |
+| [`file-system.md`](file-system.md) | `system.m2` — system commands / external processes |
 
 ### Rings & ideals
 
 | File doc | Subject |
 |---|---|
+| [`file-rings.md`](file-rings.md) | `rings.m2` — `Ring` abstract base |
+| [`file-enginering.md`](file-enginering.md) | `enginering.m2` — `EngineRing` + `RingElement` |
+| [`file-monoids.md`](file-monoids.md) | `monoids.m2` — `Monoid` type |
 | [`file-polyrings.md`](file-polyrings.md) | `polyrings.m2` — `PolynomialRing` type |
+| [`file-quotring.md`](file-quotring.md) | `quotring.m2` — `QuotientRing` (`R/I`) |
+| [`file-matrix.md`](file-matrix.md) | `matrix.m2` — M2-side `Matrix` (basics) |
+| [`file-matrix1.md`](file-matrix1.md) | `matrix1.m2` — `Ideal`, kernel, image, submatrix |
+| [`file-matrix2.md`](file-matrix2.md) | `matrix2.m2` — LU, det, solve, rank |
+| [`file-modules.md`](file-modules.md) | `modules.m2` — `Module` type |
+| [`file-multilin.md`](file-multilin.md) | `multilin.m2` — `exteriorPower`, `minors`, `pfaffians` |
+| [`file-minPres.md`](file-minPres.md) | `minPres.m2` — `minimalPresentation` |
+| [`file-pushforward.md`](file-pushforward.md) | `pushforward.m2` — `pushForward` |
+| [`file-quotient.md`](file-quotient.md) | `quotient.m2` — `I : J` ideal quotient |
+| [`file-newring.md`](file-newring.md) | `newring.m2` — `flattenRing`, `tensor`, ring extensions |
+| [`file-variables.md`](file-variables.md) | `variables.m2` — `IndexedVariable` |
+| [`file-indeterminates.md`](file-indeterminates.md) | `indeterminates.m2` — variable-name generation |
+| [`file-basis.md`](file-basis.md) | `basis.m2` — `basis(d, M)` |
+| [`file-mutablemat.md`](file-mutablemat.md) | `mutablemat.m2` — `MutableMatrix` |
+| [`file-genmat.md`](file-genmat.md) | `genmat.m2` — `genericMatrix` / `genericSymmetricMatrix` |
+| [`file-computations.md`](file-computations.md) | `computations.m2` — `Computation` framework |
 | [`file-gb.md`](file-gb.md) | `gb.m2` — M2-side GB front-end |
+| [`file-hilbert.md`](file-hilbert.md) | `hilbert.m2` — Hilbert function / series / polynomial |
+| [`file-betti.md`](file-betti.md) | `betti.m2` — `BettiTally` |
+| [`file-complexes.md`](file-complexes.md) | `complexes.m2` — `Complexes` / `OldChainComplexes` dispatch |
+| [`file-ringmap.md`](file-ringmap.md) | `ringmap.m2` — `RingMap` |
+| [`file-monideal.md`](file-monideal.md) | `monideal.m2` — `MonomialIdeal` |
+| [`file-Hom.md`](file-Hom.md) | `Hom.m2` — `Hom` / `Ext` / `Tor` |
+| [`file-intersect.md`](file-intersect.md) | `intersect.m2` — generic `intersect` |
+| [`file-factor.md`](file-factor.md) | `factor.m2` — polynomial / integer factorisation |
+| [`file-localring.md`](file-localring.md) | `localring.m2` — `LocalRing` stub |
+| [`file-galois.md`](file-galois.md) | `galois.m2` — `GaloisField` |
+| [`file-freealgebras.md`](file-freealgebras.md) | `freealgebras.m2` — `FreeAlgebra` stubs |
 
 ### Documentation and help
 
@@ -51,7 +109,47 @@ Documented Core files (the rest will be added incrementally):
 |---|---|
 | [`file-document.md`](file-document.md) | `document.m2` — docs DSL |
 | [`file-installPackage.md`](file-installPackage.md) | `installPackage.m2` — render to HTML / info / PDF |
+| [`file-examples.md`](file-examples.md) | `examples.m2` — example runner |
 | [`file-help.md`](file-help.md) | `help.m2` — interactive help system |
+| [`file-hypertext.md`](file-hypertext.md) | `hypertext.m2` — `Hypertext` AST |
+| [`file-latex.md`](file-latex.md) | `latex.m2` — `tex` / `texMath` |
+| [`file-markdown.md`](file-markdown.md) | `markdown.m2` — Markdown output |
+| [`file-mathml.md`](file-mathml.md) | `mathml.m2` — MathML output |
+| [`file-texmacs.md`](file-texmacs.md) | `texmacs.m2` — TeXmacs frontend protocol |
+| [`file-format.md`](file-format.md) | `format.m2` — formatter dispatch + `info` / `net` |
+
+### Language primitives
+
+| File doc | Subject |
+|---|---|
+| [`file-lists.md`](file-lists.md) | `lists.m2` — `List` / `Sequence` / `Array` |
+| [`file-set.md`](file-set.md) | `set.m2` — `Set` / `Tally` / `VirtualTally` |
+| [`file-iterators.md`](file-iterators.md) | `iterators.m2` — `Iterator` |
+| [`file-combinatorics.md`](file-combinatorics.md) | `combinatorics.m2` — `subsets`, `partitions`, … |
+| [`file-regex.md`](file-regex.md) | `regex.m2` — regex operations |
+| [`file-threads.md`](file-threads.md) | `threads.m2` — `AtomicInt` + `Task` |
+| [`file-programs.md`](file-programs.md) | `programs.m2` — external programs |
+| [`file-engine.md`](file-engine.md) | `engine.m2` — `Raw*` type wrappers |
+| [`file-fold.md`](file-fold.md) | `fold.m2` — `accumulate` and `fold` |
+| [`file-max.md`](file-max.md) | `max.m2` — `InfiniteNumber`, `max`, `min` |
+| [`file-powers.md`](file-powers.md) | `powers.m2` — `binomial` |
+| [`file-intervals.md`](file-intervals.md) | `intervals.m2` — interval constructors |
+| [`file-flint.md`](file-flint.md) | `flint.m2` — `ZZFlintRing` / `QQFlintRing` |
+| [`file-pretty.md`](file-pretty.md) | `pretty.m2` — pretty-printer |
+| [`file-peek.md`](file-peek.md) | `peek.m2` — structural introspection |
+| [`file-robust.md`](file-robust.md) | `robust.m2` — `timelimit` (legacy) |
+| [`file-profile.md`](file-profile.md) | `profile.m2` — profiler reporting |
+| [`file-validate.md`](file-validate.md) | `validate.m2` — `Hypertext` validation |
+| [`file-testing.md`](file-testing.md) | `testing.m2` — `check Package`, `TEST` blocks |
+
+### Mathematical helpers
+
+| File doc | Subject |
+|---|---|
+| [`file-monomcurve.md`](file-monomcurve.md) | `monomcurve.m2` — `monomialCurveIdeal` |
+| [`file-schubert.md`](file-schubert.md) | `schubert.m2` — Schubert calculus |
+| [`file-fano.md`](file-fano.md) | `fano.m2` — Fano variety |
+| [`file-integrate.md`](file-integrate.md) | `integrate.m2` — Simpson's rule |
 
 ## File groups (overview)
 
