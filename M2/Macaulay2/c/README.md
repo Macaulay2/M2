@@ -27,25 +27,26 @@ The `.dd` variant compiles to C++ instead of C; everything else is the same.
 
 ## Files
 
-| File | Role |
-|---|---|
-| `scc1.c`, `scc1.h` | Driver / entry point for the translator |
-| `scc.h`, `scc-core.c`, `scc-core.h` | Core data structures shared by the front end and the code generator |
-| `grammar.y`, `grammar.h` | Yacc/Bison grammar for the `.d` language |
-| `keywords.h` | Reserved word table consumed by the lexer |
-| `type.c`, `type.h` | Type system (`Type`, `atomicType`, sum types) |
-| `dictionary.c`, `dictionary.h` | Symbol table / scope management |
-| `cprint.c`, `cprint.h` | C/C++ code emitter — the back end |
-| `error.c`, `error.h` | Translator-side error reporting |
-| `chk.c`, `chk.h` | Semantic checks |
-| `list.c`, `list.h` | Generic linked-list helpers used throughout the translator |
-| `readfile.c`, `readfile.h` | Source file reader |
-| `compat.c`, `compat.h` | Portability shims |
-| `debugging.c`, `debugging.h` | Debug-only diagnostics |
-| `foo.d` | Tiny `.d` smoke-test input |
-| `README` | The `.d` language specification (plain text) |
-| `COPYRIGHT` | License notice |
-| `CMakeLists.txt`, `Makefile.in` | Build glue |
+| File | Role | Deep dive |
+|---|---|---|
+| `scc1.c`, `scc1.h` | Driver / entry point | [`file-scc1.md`](file-scc1.md) |
+| `scc.h`, `scc-core.c`, `scc-core.h` | Core data structures & runtime support | [`file-scc-h.md`](file-scc-h.md) |
+| `grammar.y`, `grammar.h`, `keywords.h` | Bison grammar + reserved words | [`file-grammar.md`](file-grammar.md) |
+| `type.c`, `type.h` | `.d` type system | [`file-type.md`](file-type.md) |
+| `dictionary.c`, `dictionary.h` | Symbol table / scope | [`file-dictionary.md`](file-dictionary.md) |
+| `cprint.c`, `cprint.h` | C/C++ code emitter | [`file-cprint.md`](file-cprint.md) |
+| `chk.c`, `chk.h` | Type checker | [`file-chk.md`](file-chk.md) |
+| `list.c`, `list.h` | Linked-list helpers | [`file-list.md`](file-list.md) |
+| `readfile.c`, `readfile.h` | Source file reader | [`file-readfile.md`](file-readfile.md) |
+| `error.c`, `error.h` | Error reporting | [`file-error.md`](file-error.md) |
+| `compat.c`, `compat.h` | Portability shims | [`file-compat.md`](file-compat.md) |
+| `debugging.c`, `debugging.h` | Debug helpers | [`file-debugging.md`](file-debugging.md) |
+| `foo.d` | Smoke-test input | [`file-foo.md`](file-foo.md) |
+| `README` | The `.d` language specification (plain text) | — |
+| `COPYRIGHT` | License notice | — |
+| `CMakeLists.txt`, `Makefile.in` | Build glue | — |
+
+**Coverage:** every source file in this directory has a dedicated deep-dive doc.
 
 ## How it fits in
 

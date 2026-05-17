@@ -18,6 +18,146 @@ Sources here are **mostly `.d` and `.dd`**, translated to C and C++ by
 [`scc1`](../c/README.md). A few hand-written `.c`/`.cpp`/`.h` files supply
 runtime glue.
 
+## Per-file deep dives
+
+### Bootstrap and main loop
+
+| File doc | Subject |
+|---|---|
+| [`file-M2.md`](file-M2.md) | `M2.d` — top-level interpreter module declarations |
+| [`file-M2lib.md`](file-M2lib.md) | `M2lib.c` — interpreter `main()` / startup glue |
+| [`file-main.md`](file-main.md) | `main.cpp` — C++ entry point |
+| [`file-interp.md`](file-interp.md) | `interp.dd` — top-level interpreter loop |
+| [`file-scclib-c.md`](file-scclib-c.md) | `scclib.c` — `scc1` runtime support |
+
+### Lexer / parser / evaluator
+
+| File doc | Subject |
+|---|---|
+| [`file-lex.md`](file-lex.md) | `lex.d` — the M2 lexer |
+| [`file-tokens.md`](file-tokens.md) | `tokens.d` — token / `Symbol` / `Word` types |
+| [`file-parse.md`](file-parse.md) | `parse.d` — parser-level declarations |
+| [`file-parser.md`](file-parser.md) | `parser.d` — actual parser (with stdio) |
+| [`file-expr.md`](file-expr.md) | `expr.d` — operations on `Expr` |
+| [`file-binding.md`](file-binding.md) | `binding.d` — name binding and the symbol table |
+| [`file-evaluate.md`](file-evaluate.md) | `evaluate.d` — the M2 expression evaluator |
+
+### Built-in operators
+
+| File doc | Subject |
+|---|---|
+| [`file-actors.md`](file-actors.md) | `actors.d`, `actors2.dd`, …, `actors5.d` — built-in operators |
+
+### I/O
+
+| File doc | Subject |
+|---|---|
+| [`file-stdio.md`](file-stdio.md) | `stdio.d`, `stdio0.d`, `stdiop.d`, `stdiop0.d` — buffered I/O |
+
+### Engine boundary
+
+| File doc | Subject |
+|---|---|
+| [`file-engine-dd.md`](file-engine-dd.md) | `engine.dd` — interpreter ↔ engine bridge |
+
+### Numeric foundations
+
+| File doc | Subject |
+|---|---|
+| [`file-gmp.md`](file-gmp.md) | `gmp.d`, `gmp1.d` — GMP integer / rational bindings |
+| [`file-ballarith.md`](file-ballarith.md) | `ballarith.d` — FLINT/Arb ball arithmetic |
+
+### Errors and interrupts
+
+| File doc | Subject |
+|---|---|
+| [`file-err.md`](file-err.md) | `err.d`, `errio.d` — error reporting |
+| [`file-interrupts.md`](file-interrupts.md) | `interrupts.d` — Ctrl+C / signal handling |
+| [`file-atomic.md`](file-atomic.md) | `atomic.d`, `atomic2.d` — atomic operations |
+
+### Data structures
+
+| File doc | Subject |
+|---|---|
+| [`file-hashtables.md`](file-hashtables.md) | `hashtables.dd` — `HashTable` / `MutableHashTable` |
+
+### Threading
+
+| File doc | Subject |
+|---|---|
+| [`file-threads.md`](file-threads.md) | `threads.dd` — M2-level `Task` API |
+
+### FFI and external libraries
+
+| File doc | Subject |
+|---|---|
+| [`file-python.md`](file-python.md) | `python.d` — CPython embedding |
+| [`file-ffi.md`](file-ffi.md) | `ffi.d` — libffi generic FFI |
+| [`file-xml.md`](file-xml.md) | `xml.d` — libxml2 bindings |
+| [`file-regex-dd.md`](file-regex-dd.md) | `regex.dd` — Boost.Regex bindings |
+| [`file-json.md`](file-json.md) | `json.d` — JSON parser (Jansson) |
+| [`file-mysql.md`](file-mysql.md) | `mysql.d`, `mysqldummy.d` — MySQL client bindings |
+| [`file-boostmath.md`](file-boostmath.md) | `boostmath.dd` — Boost.Math special functions |
+| [`file-texmacs.md`](file-texmacs.md) | `texmacs.d` — TeXmacs frontend bindings |
+
+### Shared infrastructure
+
+| File doc | Subject |
+|---|---|
+| [`file-classes-dd.md`](file-classes-dd.md) | `classes.dd` — M2 root type registry |
+| [`file-common.md`](file-common.md) | `common.d` — shared helpers |
+| [`file-util.md`](file-util.md) | `util.d` — argument-checking helpers |
+| [`file-system.md`](file-system.md) | `system.d` — POSIX / OS bindings |
+| [`file-equality.md`](file-equality.md) | `equality.dd` — engine-aware equality |
+| [`file-version.md`](file-version.md) | `version.dd` — build / version constants |
+
+### Strings, nets, sets
+
+| File doc | Subject |
+|---|---|
+| [`file-strings.md`](file-strings.md) | `strings.d`, `strings1.d`, `varstrin.d` — strings |
+| [`file-nets.md`](file-nets.md) | `nets.d`, `varnets.d` — 2D character grids |
+| [`file-sets.md`](file-sets.md) | `sets.dd` — `Set`, `Tally`, `VirtualTally` |
+| [`file-buckets.md`](file-buckets.md) | `buckets.dd` — Dictionary bucket iteration |
+
+### Profiling, debugging, timing
+
+| File doc | Subject |
+|---|---|
+| [`file-profiler.md`](file-profiler.md) | `profiler.dd` — line-level profiler |
+| [`file-debugging.md`](file-debugging.md) | `debugging.dd` — interactive debugger backend |
+| [`file-chrono.md`](file-chrono.md) | `chrono.dd` — wall-clock / CPU timing |
+
+### Engine boundary (top-level wrappers)
+
+| File doc | Subject |
+|---|---|
+| [`file-engine-interfaces.md`](file-engine-interfaces.md) | `interface.dd`, `interface2.d`, `monoid.dd`, `monomial_ordering.dd` |
+| [`file-pthread.md`](file-pthread.md) | `pthread.d`, `pthread0.d` — POSIX threads bindings |
+
+### Low-level foundations
+
+| File doc | Subject |
+|---|---|
+| [`file-arithmetic.md`](file-arithmetic.md) | `arithmetic.d` — integer type aliases |
+| [`file-basic.md`](file-basic.md) | `basic.d` — universal `hash(Expr)` |
+| [`file-convertr.md`](file-convertr.md) | `convertr.d` — late-bound function-pointer registry |
+| [`file-ctype.md`](file-ctype.md) | `ctype.d` — character classification table |
+| [`file-getline.md`](file-getline.md) | `getline.d` — `getLine(file)` primitive |
+| [`file-vararray.md`](file-vararray.md) | `vararray.d` — variable-length `int` arrays |
+| [`file-xmlactors.md`](file-xmlactors.md) | `xmlactors.d` — XML operator overloads |
+
+### C / C++ glue
+
+| File doc | Subject |
+|---|---|
+| [`file-c-glue.md`](file-c-glue.md) | `M2mem.{c,h}`, `M2types.c`, `types.h`, `gmp_aux`, `memdebug`, `gdbm_interface`, `xml-c`, `python-c`, `boost-regex` — hand-written C/C++ glue |
+
+## Original notes
+
+The plain-text [`README`](README) preserved in this directory is the
+original to-do list — many items have been resolved over time.
+
 ## What lives here
 
 The interpreter is essentially a collection of inter-dependent `.d` "packages."
@@ -25,112 +165,9 @@ Each file uses `export` to publish names and `use foo;` to import them. After
 translation, signature (`.sig`) files declare cross-file types — sometimes
 `make` needs to run twice on the autotools build when these get stale.
 
-### Front-end (parsing & evaluation)
-
-| File | Purpose |
-|---|---|
-| `lex.d` | Lexer |
-| `parse.d`, `parser.d`, `tokens.d` | Parser and token definitions |
-| `binding.d` | Name resolution / scope binding |
-| `evaluate.d` | Tree-walking evaluator |
-| `expr.d` | Expression AST representation |
-| `interp.dd` | Top-level interpreter loop |
-| `actors.d`, `actors2.dd`, `actors3.d`, `actors4.d`, `actors5.d` | Built-in operator implementations ("actors") split across files for compile-time reasons |
-
-### Core runtime
-
-| File | Purpose |
-|---|---|
-| `M2.d`, `M2lib.c` | Top-level startup and main-line glue |
-| `M2mem.c`, `M2mem.h`, `memdebug.c`, `memdebug.h` | Memory allocation wrappers over bdwgc |
-| `M2types.c`, `types.h` | C-side type definitions |
-| `scclib.c` | scc1 runtime support library |
-| `main.cpp` | C++ entry point |
-| `err.d`, `errio.d` | Error handling and reporting |
-| `debugging.dd`, `profiler.dd` | Debug/profile hooks |
-| `interrupts.d` | Signal handling and user-interrupt logic |
-| `system.d` | OS interaction (fork, exec, env) |
-| `version.dd` | Embedded version string |
-| `startup-header.h`, `startup-trailer.h` | Wrappers around the generated `startup.m2` |
-
-### Data structures
-
-| File | Purpose |
-|---|---|
-| `hashtables.dd` | Hash tables |
-| `sets.dd` | Set type |
-| `buckets.dd` | Mutable buckets used by polynomial arithmetic |
-| `vararray.d`, `varstrin.d`, `varnets.d` | Variable-length arrays / strings / nets |
-| `strings.d`, `strings1.d` | String type |
-| `struct.d` | Generic struct support |
-| `nets.d` | "Nets" — 2-D character grids used for pretty-printing |
-| `classes.dd` | Class/type machinery exposed to the M2 language |
-
-### I/O
-
-| File | Purpose |
-|---|---|
-| `stdio.d`, `stdio0.d`, `stdiop.d`, `stdiop0.d` | Buffered I/O layer (split for bootstrapping reasons) |
-| `getline.d` | Line input |
-| `texmacs.d` | TeXmacs frontend protocol |
-| `gdbm_interface.c` | GDBM database binding (used for the package info DB) |
-
-### Numerics
-
-| File | Purpose |
-|---|---|
-| `gmp.d`, `gmp1.d`, `gmp_aux.c`, `gmp_aux.h` | GMP integer/rational bindings |
-| `ballarith.d` | Arb ball arithmetic |
-| `boostmath.dd` | Boost.Math bindings |
-| `arithmetic.d` | Generic numeric operations |
-| `atomic.d`, `atomic2.d` | Atomic operations |
-
-### Foreign function interface
-
-| File | Purpose |
-|---|---|
-| `ffi.d` | libffi bindings (generic FFI) |
-| `python.d`, `python-c.c`, `pythoncapi_compat.h` | CPython embedding |
-| `mysql.d`, `mysqldummy.d` | MySQL client (dummy provided when MySQL is absent) |
-| `xml.d`, `xml-c.c`, `xml-c.h`, `xmlactors.d` | libxml2 binding |
-| `regex.dd`, `boost-regex.cpp` | Boost regex binding |
-| `json.d` | JSON parser |
-| `chrono.dd` | C++ `<chrono>` binding |
-
-### Threads & concurrency
-
-| File | Purpose |
-|---|---|
-| `pthread.d`, `pthread0.d` | POSIX threads binding |
-| `threads.dd` | High-level threading primitives exposed to M2 |
-
-### Engine bridge
-
-| File | Purpose |
-|---|---|
-| `engine.dd` | Calls into the C++ engine via the C interface in [`e/engine.h`](../e/engine.h) and [`e/interface/`](../e/interface) |
-| `interface.dd`, `interface2.d` | Higher-level wrappers used by the M2 layer |
-| `monoid.dd`, `monomial_ordering.dd` | Monoid / monomial-order bindings |
-
-### Misc
-
-| File | Purpose |
-|---|---|
-| `basic.d`, `common.d`, `equality.d`, `convertr.d`, `ctype.d`, `lex.d`, `util.d` | Cross-cutting helpers |
-| `getpagesize.h` | Portability shim |
-| `Makefile.in`, `Makefile.files.in`, `CMakeLists.txt` | Build glue |
-| `README` | Original TODO notes |
-| `COPYRIGHT` | License notice |
-
-## Workflow for adding a feature
-
-If you are adding a new engine-backed operation:
-
-1. Implement it in C++ in [`Macaulay2/e/`](../e/README.md).
-2. Expose it through [`e/interface/<area>.{h,cpp}`](../e/interface).
-3. Add the interpreter binding **here**, in `d/<area>.dd`.
-4. Add the M2-language wrapper in [`m2/<area>.m2`](../m2/README.md).
-5. Add a gtest in `e/unit-tests/<area>.cpp`.
+For the broader catalogue of files (and quick navigation to those not yet
+documented), see the
+[original layout in `M2/Macaulay2/d/README`](README) and the [repository TOC](../../../README.md#under-m2macaulay2).
 
 ## Related
 

@@ -150,6 +150,28 @@ Documented Core files (the rest will be added incrementally):
 | [`file-schubert.md`](file-schubert.md) | `schubert.m2` — Schubert calculus |
 | [`file-fano.md`](file-fano.md) | `fano.m2` — Fano variety |
 | [`file-integrate.md`](file-integrate.md) | `integrate.m2` — Simpson's rule |
+| [`file-local.md`](file-local.md) | `local.m2` — local-cohomology stubs |
+| [`file-modules2.md`](file-modules2.md) | `modules2.m2` — second-tier `Module` operations |
+
+### Frontends and protocols
+
+| File doc | Subject |
+|---|---|
+| [`file-book.md`](file-book.md) | `book.m2` — package-to-LaTeX-book |
+| [`file-http.md`](file-http.md) | `http.m2` — `getWWW` (basic HTTP) |
+| [`file-webapp.md`](file-webapp.md) | `webapp.m2` — Macaulay2Web protocol |
+| [`file-content.md`](file-content.md) | `content.m2` — MathML 2 DTD tables |
+| [`file-dotdot.md`](file-dotdot.md) | `dotdot.m2` — `..` operator overloads |
+
+### Bootstrap finalisation
+
+| File doc | Subject |
+|---|---|
+| [`file-last.md`](file-last.md) | `last.m2` — final load-sequence file |
+| [`file-obsolete.md`](file-obsolete.md) | `obsolete.m2` — deprecation placeholder |
+| [`file-run.md`](file-run.md) | `run.m2` — execution helpers |
+
+**Coverage:** every `.m2` file in this directory has a deep-dive doc above.
 
 ## File groups (overview)
 
