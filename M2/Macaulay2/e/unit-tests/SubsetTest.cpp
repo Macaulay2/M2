@@ -7,81 +7,25 @@
 #include <gtest/gtest.h>
 
 #include "comb.hpp"
-
-TEST(Subsets, encode1)
-{
-  Subsets C(5, 2);
-
-  Subset a(2, 0);
-
-  for (int i = 0; i < 10; i++)
-    {
-      C.decode(i, a);
-      EXPECT_TRUE(C.isValid(a));
-      size_t j = C.encode(a);
-      EXPECT_EQ(i, j);
-    }
+constexpr int binom(int n, int k) {
+    return (k < 1 || n <= 1 || n <= k) ? 1 : (binom(n-1, k) * n/(n-k));
 }
 
-TEST(Subsets, encode2)
-{
-  Subsets C(12, 6);
+#define TESTSubsets(n, k, e)            \
+TEST(Subsets, e) {                      \
+  Subsets C(n, k);                      \
+  Subset a(k, 0);                       \
+  for (int i = 0; i < binom(n,k); i++) {\
+      C.decode(i, a);                   \
+      EXPECT_TRUE(C.isValid(a));        \
+      size_t j = C.encode(a);           \
+      EXPECT_EQ(i, j); } }
 
-  Subset a(6, 0);
-
-  for (int i = 0; i < 924; i++)
-    {
-      C.decode(i, a);
-      EXPECT_TRUE(C.isValid(a));
-      size_t j = C.encode(a);
-      EXPECT_EQ(i, j);
-    }
-}
-
-TEST(Subsets, encode3)
-{
-  Subsets C(12, 0);
-
-  Subset a(0, 0);
-
-  for (int i = 0; i < 1; i++)
-    {
-      C.decode(i, a);
-      EXPECT_TRUE(C.isValid(a));
-      size_t j = C.encode(a);
-      EXPECT_EQ(i, j);
-    }
-}
-
-TEST(Subsets, encode4)
-{
-  Subsets C(21, 7);
-
-  Subset a(7, 0);
-
-  for (int i = 0; i < 116280; i++)
-    {
-      C.decode(i, a);
-      EXPECT_TRUE(C.isValid(a));
-      size_t j = C.encode(a);
-      EXPECT_EQ(i, j);
-    }
-}
-
-TEST(Subsets, encode5)
-{
-  Subsets C(21, 21);
-
-  Subset a(21, 0);
-
-  for (int i = 0; i < 1; i++)
-    {
-      C.decode(i, a);
-      EXPECT_TRUE(C.isValid(a));
-      size_t j = C.encode(a);
-      EXPECT_EQ(i, j);
-    }
-}
+TESTSubsets(5,  2, encode1)
+TESTSubsets(12, 6, encode2)
+TESTSubsets(12, 0, encode3)
+TESTSubsets(21, 7, encode4)
+TESTSubsets(21,21, encode5)
 
 bool sameSubset(const Subset &a, const Subset &b)
 {
