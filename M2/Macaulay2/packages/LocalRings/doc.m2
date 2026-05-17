@@ -78,10 +78,6 @@ Node
       P = ideal(x,y,z,w)
       setMaxIdeal P -- version 1.0
       R = localRing(S, P) -- version 2.0 and above
--- TODO
---    Text
---      @TO localComplement@
---    Example
     Text
       Computing syzygies using @TO localsyz@ and @TO syz@:
     Example

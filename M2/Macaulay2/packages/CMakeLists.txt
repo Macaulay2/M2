@@ -33,6 +33,7 @@ set(PACKAGES_DEVEL       "EngineTests" CACHE INTERNAL "the list of packages to o
 ## Arguments to M2
 set(errorDepth                  "1" CACHE STRING "set the error printing depth")
 set(debugLevel                  "0" CACHE STRING "set the debugging level")
+set(gbTrace                     "0" CACHE STRING "set the Groebner basis trace level")
 ## Options to installPackage
 set(CheckDocumentation       "true" CACHE STRING "check documentation for completeness")
 set(IgnoreExampleErrors     "false" CACHE STRING "ignore errors in example code")

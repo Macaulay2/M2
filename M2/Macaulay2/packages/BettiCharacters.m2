@@ -809,98 +809,87 @@ actors = method(TypicalValue=>List)
 -- returns actors on resolution in a given homological degree
 -- if homological degree is not the one passed by user upon construction,
 -- the actors are computed and stored
-actors(ActionOnComplex,ZZ) := List => (A,i) -> (
-    -- if not cached, compute
-    if not A.cache#?(symbol actors,i) then (
-	-- homological degrees where action is already cached
-	places := apply(select(keys A.cache, k -> instance(k,Sequence) and k#0 == symbol actors), k -> k#1);
-	-- get the complex
-	C := A.target;
-	-- if zero in that hom degree, return zeros
-	if zero(C_i) then return toList(A.numActors:map(C_i));
-	-- if hom degree is to the right of previously computed
-	if i > max places then (
-	    -- compute GB of differential but only up to min gens
-	    -- NOTE: does not work if ChangeMatrix=>false (which is default)
-	    GB := gb(C.dd_i,StopWithMinimalGenerators=>true,ChangeMatrix=>true);
-	    A.cache#(symbol actors,i) =
-	    apply(A.ringActors, actors(A,i-1),
-		-- given a map of free modules C.dd_i : F <-- F',
-		-- the group action on the ring (as substitution)
-		-- and the group action on F, computes the group action on F'
-		(g,g0) -> g0*sub(C.dd_i,g)//GB
-		);
-	    )
-	-- if hom degree is to the left of previously computed
-	else (
-	    -- may need to compute inverse of ring actors
-	    if not A.cache.?inverse then (
-		--convert variable substitutions to matrices
-		--then invert and convert back to substitutions
-		R := A.ring;
-		b := gb(vars R,StopWithMinimalGenerators=>true,ChangeMatrix=>true);
-		A.cache.inverse = apply(A.ringActors, g ->
-		    (vars R) * (inverse lift(g//b,coefficientRing R))
-		    );
-		);
-	    GB = gb(transpose(C.dd_(i+1)),StopWithMinimalGenerators=>true,ChangeMatrix=>true);
-	    A.cache#(symbol actors,i) =
-	    apply(A.cache.inverse,actors(A,i+1),
-		-- given a map of free modules C.dd_i : F <-- F',
-		-- the inverse group action on the ring (as substitution)
-		-- and the group action on F', computes the group action on F
-		(gInv,g0) -> (
-		    transpose(transpose(sub(C.dd_(i+1),gInv)*g0)//GB)
-		    )
-		);
+actors(ActionOnComplex,ZZ) := List => (A,i) -> A.cache#(symbol actors,i) ??= (
+    -- homological degrees where action is already cached
+    places := apply(select(keys A.cache, k -> instance(k,Sequence) and k#0 == symbol actors), k -> k#1);
+    -- get the complex
+    C := A.target;
+    -- if zero in that hom degree, return zeros
+    if zero(C_i) then return toList(A.numActors:map(C_i));
+    -- if hom degree is to the right of previously computed
+    if i > max places then (
+	-- compute GB of differential but only up to min gens
+	-- NOTE: does not work if ChangeMatrix=>false (which is default)
+	GB := gb(C.dd_i,StopWithMinimalGenerators=>true,ChangeMatrix=>true);
+	A.cache#(symbol actors,i) =
+	apply(A.ringActors, actors(A,i-1),
+	    -- given a map of free modules C.dd_i : F <-- F',
+	    -- the group action on the ring (as substitution)
+	    -- and the group action on F, computes the group action on F'
+	    (g,g0) -> g0*sub(C.dd_i,g)//GB
+	    );
+	)
+    -- if hom degree is to the left of previously computed
+    else (
+	-- may need to compute inverse of ring actors
+	A.cache.inverse ??= (
+	    --convert variable substitutions to matrices
+	    --then invert and convert back to substitutions
+	    R := A.ring;
+	    b := gb(vars R,StopWithMinimalGenerators=>true,ChangeMatrix=>true);
+	    apply(A.ringActors, g ->(vars R) * (inverse lift(g//b,coefficientRing R)))
+	    );
+	GB = gb(transpose(C.dd_(i+1)),StopWithMinimalGenerators=>true,ChangeMatrix=>true);
+	A.cache#(symbol actors,i) =
+	apply(A.cache.inverse,actors(A,i+1),
+	    -- given a map of free modules C.dd_i : F <-- F',
+	    -- the inverse group action on the ring (as substitution)
+	    -- and the group action on F', computes the group action on F
+	    (gInv,g0) -> (
+		transpose(transpose(sub(C.dd_(i+1),gInv)*g0)//GB)
+		)
 	    );
 	);
-    -- return cached value
     A.cache#(symbol actors,i)
     )
 
 -- return the character of one free module of a resolution
 -- in a given homological degree
-character(ActionOnComplex,ZZ) := Character => op -> (A,i) -> (
-    -- if not cached, compute
-    if not A.cache#?(symbol character,i) then (
-	F := coefficientRing A.ring;
-	DR := A.degreesRing;
-	n := A.numActors;
-	-- if complex is zero in hom degree i, return empty character, don't cache
-	if zero (A.target)_i then (
-	    return new Character from {
-		cache => new CacheTable,
-		(symbol degreesRing) => DR,
-		(symbol degreeOrbit) => A.degreeOrbit,
-		(symbol degreeRepresentative) => A.degreeRepresentative,
-		(symbol numActors) => n,
-		(symbol characters) => hashTable {},
-		};
-	    );
-	-- create raw character from actors
-	a := actors(A,i);
-	r := rank((A.target)_i) - 1;
-	-- for each basis element extract corresponding diagonal entry
-	-- put it in a row matrix and multiply by degree, then add
-	-- this will give the graded raw character as a matrix
-	raw := sum parallelApply(toList(0..r), j -> (
-		d := degree( ((A.target)_i)_j );
-		lift(matrix{apply(a, g -> g_(j,j) )},F) * (DR_d)
-		)
-	    );
-	-- cache character
-	A.cache#(symbol character,i) = 	new Character from {
+character(ActionOnComplex,ZZ) := Character => op -> (A,i) -> A.cache#(symbol character,i) ??= (
+    F := coefficientRing A.ring;
+    DR := A.degreesRing;
+    n := A.numActors;
+    -- if complex is zero in hom degree i, return empty character, don't cache
+    if zero (A.target)_i then (
+	return new Character from {
 	    cache => new CacheTable,
 	    (symbol degreesRing) => DR,
 	    (symbol degreeOrbit) => A.degreeOrbit,
 	    (symbol degreeRepresentative) => A.degreeRepresentative,
-	    (symbol numActors) => A.numActors,
-	    (symbol characters) => hashTable {i=>raw},
+	    (symbol numActors) => n,
+	    (symbol characters) => hashTable {},
 	    };
 	);
-    -- return cached value
-    A.cache#(symbol character,i)
+    -- create raw character from actors
+    a := actors(A,i);
+    r := rank((A.target)_i) - 1;
+    -- for each basis element extract corresponding diagonal entry
+    -- put it in a row matrix and multiply by degree, then add
+    -- this will give the graded raw character as a matrix
+    raw := sum parallelApply(toList(0..r), j -> (
+	    d := degree( ((A.target)_i)_j );
+	    lift(matrix{apply(a, g -> g_(j,j) )},F) * (DR_d)
+	    )
+	);
+    -- cache character
+    A.cache#(symbol character,i) = new Character from {
+	cache => new CacheTable,
+	(symbol degreesRing) => DR,
+	(symbol degreeOrbit) => A.degreeOrbit,
+	(symbol degreeRepresentative) => A.degreeRepresentative,
+	(symbol numActors) => A.numActors,
+	(symbol characters) => hashTable {i=>raw},
+	}
     )
 
 -- return characters of all free modules in a resolution
@@ -1026,8 +1015,7 @@ ActionOnGradedModule == ActionOnGradedModule := (A,B) -> A === B
 actors(ActionOnGradedModule,List) := List => (A,d) -> (
     -- ensure function is computed with rep of degree orbit
     degRep := A.degreeRepresentative d;
-    -- if not cached, compute
-    if not A.cache#?(symbol actors,degRep) then (
+    A.cache#(symbol actors,degRep) ??= (
 	M := A.module;
 	-- get basis in degree d as map of free modules
 	-- (after semidirect: single degree d replaced by degree orbit)
@@ -1045,17 +1033,16 @@ actors(ActionOnGradedModule,List) := List => (A,d) -> (
 	else (
 	    GB := gb(b,StopWithMinimalGenerators=>true,ChangeMatrix=>true);
 	    A.cache#(symbol actors,degRep) =
-		apply(A.ringActors, A.actors,
+	    apply(A.ringActors, A.actors,
 		--g0*b acts on the basis of the ambient module
 		--sub(-,g) acts on the polynomial coefficients
 		--result must be reduced against module relations
 		--then factored by original basis to get action matrix
 		(g,g0) -> (sub(g0*b,g) % A.relations) // GB
+		);
 	    );
-	);
-    );
-    -- return cached value
-    A.cache#(symbol actors,degRep)
+	A.cache#(symbol actors,degRep)
+	)
     )
 
 -- returns actors on component of given degree
@@ -1065,8 +1052,7 @@ actors(ActionOnGradedModule,ZZ) := List => (A,d) -> actors(A,{d})
 character(ActionOnGradedModule,List) := Character => op -> (A,d) -> (
     -- ensure function is computed with rep of degree orbit
     degRep := A.degreeRepresentative d;
-    -- if not cached, compute
-    if not A.cache#?(symbol character,degRep) then (
+    A.cache#(symbol character,degRep) ??= (
 	F := coefficientRing A.ring;
 	DR := A.degreesRing;
 	-- zero action, return empty character and don't cache
@@ -1093,17 +1079,15 @@ character(ActionOnGradedModule,List) := Character => op -> (A,d) -> (
 		lift(matrix{apply(acts, g -> g_(j,j) )},F) * (DR_d)
 		)
 	    );
-	A.cache#(symbol character,degRep) = new Character from {
-		cache => new CacheTable,
-		(symbol degreesRing) => DR,
-		(symbol degreeOrbit) => A.degreeOrbit,
-		(symbol degreeRepresentative) => A.degreeRepresentative,
-		(symbol numActors) => A.numActors,
-		(symbol characters) => hashTable {0 => raw},
-		};
-	);
-    -- return cached value
-    A.cache#(symbol character,degRep)
+	new Character from {
+	    cache => new CacheTable,
+	    (symbol degreesRing) => DR,
+	    (symbol degreeOrbit) => A.degreeOrbit,
+	    (symbol degreeRepresentative) => A.degreeRepresentative,
+	    (symbol numActors) => A.numActors,
+	    (symbol characters) => hashTable {0 => raw},
+	    }
+	)
     )
 
 -- return character of component of given degree
@@ -1422,7 +1406,7 @@ hyperoctahedralGroupActors PolynomialRing := R -> (
 -- printing for characters
 -- the next function preps a character for printing by caching
 -- a bigraded hash table of its data as before v2.5
-prepCharacter := c -> (
+prepCharacter := c -> c.cache.print ??= (
     DR := c.degreesRing;
     F := coefficientRing DR;
     -- go through homological degrees
@@ -1441,14 +1425,13 @@ prepCharacter := c -> (
 	    mons = mons - set(orbit);
 	    );
 	);
-    c.cache.print = new HashTable from h;
+    new HashTable from h
     )
 
 -- create net for pretty printing of character
 net Character := c -> (
-    if not c.cache.?print then prepCharacter c;
-    bottom := apply(sort pairs c.cache.print,
-	(k,v) -> {net k} | apply(flatten entries v,net));
+    pc := prepCharacter c;
+    bottom := apply(sort pairs pc, (k,v) -> {net k} | apply(flatten entries v,net));
     F := coefficientRing c.degreesRing;
     stack("Character over "|(net F)," ",
 	netList(bottom,BaseRow=>0,Alignment=>Right,Boxes=>{false,{1}},HorizontalSpace=>2))
@@ -1456,14 +1439,12 @@ net Character := c -> (
 
 -- create tex string for characters
 texMath Character := c -> (
-    if not c.cache.?print then prepCharacter c;
+    pc := prepCharacter c;
     -- make table headers, one column per actor
     s := concatenate("\\begin{array}{c|",c.numActors:"r","}\n");
     -- character entries
-    rows := apply(sort pairs c.cache.print,
-	(k,v) -> concatenate(texMath k,"&",
-	    between("&",apply(flatten entries v,texMath))
-	    )
+    rows := apply(sort pairs pc, (k,v) -> concatenate(texMath k,"&",
+	    between("&",apply(flatten entries v,texMath)))
 	);
     -- assemble and close array
     s | concatenate(between("\\\\ \n",rows),"\n\\end{array}")
@@ -1499,7 +1480,7 @@ texMath CharacterTable := T -> (
 -- printing character decompositions
 -- the next function preps a character for printing by caching
 -- a bigraded hash table of its data as before v2.5
-prepDecomposition := D -> (
+prepDecomposition := D -> D.cache.print ??= (
     DR := D.degreesRing;
     F := coefficientRing DR;
     -- go through homological degrees
@@ -1518,20 +1499,19 @@ prepDecomposition := D -> (
 	    mons = mons - set(orbit);
 	    );
 	);
-    D.cache.print = new HashTable from h;
+    new HashTable from h
     )
 
 -- create net for pretty printing of character decomposition
 net CharacterDecomposition := D -> (
-    if not D.cache.?print then prepDecomposition D;
+    pd := prepDecomposition D;
     -- find non zero columns of table for printing
     M := matrix apply(values D.decompose, m -> flatten entries m);
     p := positions(toList(0..numColumns M - 1), i -> M_i != 0*M_0);
     -- top row of decomposition table
     a := {{""} | (first D.Labels)_p };
     -- body of decomposition table
-    b := apply(sort pairs D.cache.print,
-	(k,v) -> {k} | (flatten entries v)_p );
+    b := apply(sort pairs pd, (k,v) -> {k} | (flatten entries v)_p );
     stack("Decomposition table"," ",
 	netList(a|b,BaseRow=>1,Alignment=>Right,Boxes=>{{1},{1}},HorizontalSpace=>2)
 	)
@@ -1539,7 +1519,7 @@ net CharacterDecomposition := D -> (
 
 -- tex string for character decompositions
 texMath CharacterDecomposition := D -> (
-    if not D.cache.?print then prepDecomposition D;
+    pd := prepDecomposition D;
     -- find non zero columns of table for printing
     M := matrix apply(values D.decompose, m -> flatten entries m);
     p := positions(toList(0..numColumns M - 1), i -> M_i != 0*M_0);
@@ -1548,10 +1528,8 @@ texMath CharacterDecomposition := D -> (
     -- top row with labels of characters appearing in decomposition
     s = s | concatenate("&",between("&",(last D.Labels)_p),"\\\\ \\hline\n");
     -- decomposition table entries
-    rows := apply(sort pairs D.cache.print,
-	(k,v) -> concatenate(texMath k,"&",
-	    between("&",apply((flatten entries v)_p,texMath))
-	    )
+    rows := apply(sort pairs pd, (k,v) -> concatenate(texMath k,"&",
+	    between("&",apply((flatten entries v)_p,texMath)) )
 	);
     -- assemble and close array
     s | concatenate(between("\\\\ \n",rows),"\n\\end{array}")

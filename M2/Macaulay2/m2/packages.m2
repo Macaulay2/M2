@@ -109,6 +109,15 @@ checkPackageName = (title, checkdeprecated) -> (
 
 closePackage = pkg -> if pkg#?rawKeyDB then (db -> if isOpen db then close db) pkg#rawKeyDB
 
+detectPackagePrefix = pkgdir -> (
+    -- Try to detect whether we are loading the package from an installed version.
+    -- A better test would be to see if the raw documentation database is there...
+    m := regex("(/|^)" | Layout#2#"packages" | "$", pkgdir);
+    if m#?1 then substring(pkgdir, 0, m#1#0 + m#1#1) else (
+	m = regex("(/|^)" | Layout#1#"packages" | "$", pkgdir);
+	-- this can be useful when running from the source tree, but this is a kludge
+	if m#?1 then substring(pkgdir, 0, m#1#0 + m#1#1) else prefixDirectory))
+
 -----------------------------------------------------------------------------
 -- Package type declarations and basic constructors
 -----------------------------------------------------------------------------
@@ -151,7 +160,7 @@ dismiss Package := pkg     -> (
 readPackage = method(TypicalValue => OptionTable, Options => { FileName => null })
 readPackage Package := opts -> pkg     -> options pkg
 readPackage String  := opts -> pkgname -> (
-    if pkgname === "Core" then return newPackageOptions#"Core";
+    if isMember(pkgname, {"Core","User"}) then return newPackageOptions#pkgname;
     remove(newPackageOptions, pkgname);
     filename := if opts.FileName === null then pkgname | ".m2" else opts.FileName;
     loadPackageOptions#pkgname = new OptionTable from { HeaderOnly => true };
@@ -216,6 +225,9 @@ loadPackageOptions#"default" = new MutableHashTable from options loadPackage
 
 getpkg       = pkgname -> if isPackageLoaded pkgname then value PackageDictionary#pkgname else dismiss needsPackage pkgname
 getpkgNoLoad = pkgname -> if isPackageLoaded pkgname then value PackageDictionary#pkgname
+getpkgsrcdir = pkgname -> (
+    if (pkg := getpkgNoLoad pkgname ?? getPackageInfo pkgname) =!= null
+    then pkg#"source directory" else error "package not loaded or preinstalled")
 
 -----------------------------------------------------------------------------
 -- newPackage
@@ -336,17 +348,7 @@ newPackage String := opts -> pkgname -> (
     if opts.OptionalComponentsPresent === null  then opts = opts ++ {OptionalComponentsPresent => opts.CacheExampleOutput =!= true};
     if opts.UseCachedExampleOutput === null     then opts = opts ++ {UseCachedExampleOutput => not opts.OptionalComponentsPresent};
     --
-    packagePrefix := (
-	-- Try to detect whether we are loading the package from an installed version.
-	-- A better test would be to see if the raw documentation database is there...
-	m := regex("(/|^)" | Layout#2#"packages" | "$", currentFileDirectory);
-	if m#?1 then substring(currentFileDirectory, 0, m#1#0 + m#1#1) else (
-	    m = regex("(/|^)" | Layout#1#"packages" | "$", currentFileDirectory);
-	    -- this can be useful when running from the source tree, but this is a kludge
-	    if m#?1 then substring(currentFileDirectory, 0, m#1#0 + m#1#1) else prefixDirectory));
-    packageLayout := detectCurrentLayout packagePrefix;
-    --
-    newpkg := new Package from nonnull {
+    newpkg := new Package from {
 	"pkgname"                  => pkgname,
 	symbol Options             => opts,
 	symbol Dictionary          => new Dictionary, -- this is the global one
@@ -369,18 +371,13 @@ newPackage String := opts -> pkgname -> (
 	"auxiliary files"          => toAbsolutePath currentFileDirectory | pkgname | "/",
 	"source directory"         => toAbsolutePath currentFileDirectory,
 	"source file"              => toAbsolutePath currentFileName,
-	if packagePrefix =!= null then
-	"package prefix"           => packagePrefix
 	};
     newpkg.PackageIsLoaded = false;
     --
-    if packageLayout =!= null then (
-	rawdbname := databaseFilename(Layout#packageLayout, packagePrefix, pkgname);
-	if fileExists rawdbname then (
-	    newpkg#rawKeyDB = rawdb := openDatabase rawdbname;
-	    addEndFunction(() -> if isOpen rawdb then close rawdb))
-	else if notify then printerr("database not present: ", minimizeFilename rawdbname))
-    else if notify then printerr("package prefix null, not opening database for package ", format pkgname);
+    packagePrefix := detectPackagePrefix(currentFileDirectory);
+    packageDatabase := openPackageDatabase(packagePrefix, pkgname);
+    if packagePrefix   =!= null then newpkg#"package prefix" = packagePrefix;
+    if packageDatabase =!= null then newpkg#rawKeyDB         = packageDatabase;
     --
     pkgsym := (
 	if PackageDictionary#?pkgname then getGlobalSymbol(PackageDictionary, pkgname)
@@ -589,8 +586,11 @@ popDictionary  := (d, s) -> (dictionaryPath =    drop(dictionaryPath, 1); s)
 -- Probably only necessary because Text documents Hypertext objects.
 -- Is there an alternative way? Is is used by document.m2 and installPackage.m2
 evaluateWithPackage = (pkg, object, func) -> (
-    if isMember(pkg.Dictionary, dictionaryPath) then return func object;
-    popDictionary(pushDictionary pkg.Dictionary, func object))
+    -- add a temporary mutable dictionary to catch stray symbols
+    -- before they end up in User#"private dictionary" (cf. #4290)
+    popDictionary(pushDictionary new Dictionary,
+	if isMember(pkg.Dictionary, dictionaryPath) then  func object
+	else popDictionary(pushDictionary pkg.Dictionary, func object)))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

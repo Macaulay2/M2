@@ -143,10 +143,10 @@ updateComputation(QuotientComputation, Thing) := Thing => options quotient >> op
 
 --quotient = method(...) -- defined in m2/quotient.m2
 quotient(Ideal,  Ideal)       := Ideal  => opts -> (I, J) -> quotientHelper(I, J, (quotient, Ideal, Ideal), opts)
-quotient(Ideal,  Number)      :=
+quotient(Ideal,  Number)      := Ideal  => opts -> (I, f) -> quotient(I, ideal f, opts)
 quotient(Ideal,  RingElement) := Ideal  => opts -> (I, f) -> quotient(I, ideal f, opts)
 Ideal  : Ideal                := Ideal  =>         (I, J) -> quotient(I, J)
-Ideal  : Number               :=
+Ideal  : Number               := Ideal
 Ideal  : RingElement          := Ideal  =>         (I, f) -> quotient(I, f)
 
 -- TODO: why is this the right thing to do?
@@ -901,3 +901,6 @@ elapsedTime saturate(J, I, Strategy => Eliminate);
 
 degree I
 elapsedTime(J : I_0);
+
+
+      

@@ -49,7 +49,7 @@ exportFrom_Core { "LocalRing" }
 export {
     "localRing",
     "liftUp",
-    "presentationComplex", -- TODO: what was this for?
+--    "presentationComplex", -- TODO: what was this for?
     "hilbertSamuelFunction",
     -- Legacy
     "setMaxIdeal",
@@ -63,6 +63,7 @@ export {
     "maxIdeal" -- not documented
     }
 
+protect presentationComplex
 -- << "--------------------------------------------------------------------------------------" << endl;
 -- << "-- The LocalRings package is experimental, but old methods are still available.     --" << endl;
 -- << "-- See the documentation and comments in the package to learn more.                 --" << endl;
@@ -504,7 +505,13 @@ beginDocumentation()
 load ("./LocalRings/doc.m2")
 
 end--
-
+restart
+load "LocalRings.m2"
+uninstallPackage"LocalRings"
+restart
+installPackage"LocalRings"
+check "LocalRings"
+viewHelp LocalRings
 --==================================== Under Development ====================================--
 --TODO: implement a prime filtration
 

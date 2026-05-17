@@ -20,9 +20,13 @@ export {
     "picture",
     "displayBlocks",
     "extractBlocks",
+
+    "mapComponents",
+-*
     "hasMinimalMult",
     "isGolodAInf",
     "burkeDifferential",
+*-
     --symbols
     "Check",
     "ShowRanks"
@@ -591,6 +595,61 @@ mapComponents(HashTable, HashTable, ZZ) := List =>(mA,mG,len) ->(
    for t from 1 to len list burkeDifferentialList(mA,mG,t)
 )
 
+mapComponents1 = method()
+mapComponents1(HashTable, HashTable, ZZ) := List =>(mA,mG,i) ->(
+    --The output is a list D_1..D_len
+    --where D_t is a list of  the matrices of maps 
+    --F_t ->comp(u,F_t) -> comp(v, F_(t-1) -> F_(t-1)
+    --where comp(u,F_t) is the component of F_t labeled u
+    --and similarly for v,F_(t-1).
+    --Thus sum D_t will be the map F.dd_t in the Burke resolution.
+    R := mA#"ring";
+    S := ring presentation R;
+    B := mA#"resolution";
+    M := mG#"module";
+    G := mG#"resolution";
+    F := burkeData(M,i+1); -- the list of labeled free modules
+   --Now form the components of the maps. 
+
+      for t from i to i+1 list (
+  
+   --First construct vv, the list of valid maps F_t --> F_(t-1).
+	c :=componentsAndIndices F_t;
+	flatten apply(#c_0, s-> (
+	    u := c_1_s;
+	--now focus on the maps starting from the u component of F_t
+    	    numRComponents := #u-1;
+    	    vv0 := mapComponents u; -- not all the vv0_i are valid.
+	    (C,K) := componentsAndIndices F_(t-1);	    
+	    vv := select(vv0, v-> member(v_3,K)); 
+	  --for each member v of  vv, the list v_3 is the index of a component
+	  --of F_(t-1) to which the u component maps.
+	  --The rest of v describes the map, as follows:
+    	    for v in vv list (
+		sign := v_0;
+		p := v_1;
+		q := v_2;
+		v_0*map(F_(t-1), F_t, 
+		    (F_(t-1))_[u_{0..p-1}|{-1+sum u_{p..q}}|u_{q+1..numRComponents}]*
+		    (if q<numRComponents 
+		     then 
+		       (tensor (S, for i from 0 to p-1 list B_(u_i))
+			**
+	 		mA#(u_{p..q})
+			**
+	 		tensor(S, for i from q+1 to numRComponents-1 list B_(u_i))
+			**
+	 		G_(u_numRComponents)
+			)
+                     else
+	     		tensor(S, for i from 0 to p-1 list B_(u_i))
+			**
+	     		mG#(u_{p..q})
+		    )*(F_t)^[u]
+		    
+             )))))
+    )
+
 
 ///
 restart
@@ -1047,6 +1106,21 @@ golodBetti (Module,ZZ) := BettiTally => (M,b) ->(
         K = localResolution MS;
         F = localResolution coker p);
     golodBetti0(F,K,b)
+    )
+
+totalBetti = method()
+totalBetti(Module, ZZ) := ZZ => (M,i) ->(
+    R := ring M;
+    mA := aInfinity R;
+    mG := aInfinity(mA,M);
+elapsedTime    D := mapComponents1(mA, mG, i);
+    n := numcols D#0#0;-- nonminimal rank
+    S := ring D#0#0;
+    kS := map(coefficientRing S, S);
+elapsedTime    maps := D/sum/kS;
+elapsedTime maps = maps/mutableMatrix;
+elapsedTime  ranks := maps/rank;
+    n-sum ranks
     )
 
 beginDocumentation()
@@ -1947,12 +2021,23 @@ isGolod(S/I), isHomologyAlgebraTrivial(H))
 
 ---------
 restart
-needsPackage "AInfinity"
----
+loadPackage "AInfinity"
+peek loadedFiles
+--
+mapComponents
+
 S = ZZ/101[x_1..x_5]
 I = x_1*ideal(vars S)
 R = S/I
+use R
 M = R^1/ideal(x_1..x_3)
+
+
+    R = ring M;
+    mA = aInfinity R;
+    mG = aInfinity(mA,M);
+    D = mapComponents(mA,mG,3);
+netList D
 
 time F = burkeResolution(M, 8, Check =>false)
 time F = burkeResolution(M, 8, Check =>true)
@@ -1978,6 +2063,56 @@ R = S/gor 3
 elapsedTime burkeResolution(coker vars R, 7)
 elapsedTime res(coker vars R, LengthLimit => 7) 
 picture burkeResolution(coker vars R, 5)
+
+
+-----------
+restart
+debug needsPackage "AInfinity"
+
+--
+
+    
+
+S = ZZ/101[x_1..x_2]
+I = (ideal vars S)^2
+R = S/I
+use R
+M = coker random(R^2, R^{3:-1})
+
+
+S = ZZ/101[x_1..x_3]
+I = ideal random(S^1, S^{-2,-3,-4,-5,-6});
+R = S/I
+M = coker random(R^1, R^{1:-4})
+
+elapsedTime aR = aInfinity R;
+elapsedTime aM = aInfinity (aR, M);
+elapsedTime betti res (M, LengthLimit=>10)
+elapsedTime totalBetti(M,10)
+elapsedTime burkeResolution(M,11)
+
+mm = mapComponents1(aR, aM, 8);
+numcols mm#0#0
+numcols mm#1#0
+    R = ring M;
+mA
+mG
+
+    D = mapComponents1(mA,mG,3)
+    D/sum
+redu = map(ZZ/101,S)
+D/sum/redu/rank
+numrows first (D#1)
+betti res M
+
+F = burkeResolution(M,3)
+picture F
+netList D
+viewHelp AInfinity
+prune HH F
+options picture
+transpose picture o25.dd_10
+-*
 picture(burkeResolution(coker vars R, 5),"ShowRanks"=>true)
 
 mR = aInfinity R
@@ -1993,3 +2128,4 @@ I = ideal(u^3, x*y^2, (x+y)*z^2, x^2*u+z*u^2, y^2*u+x*z*u, y^2*z+y*z^2)
 J = trim (I + (ideal vars S)^6)
 hasMinimalMult(quotient J, 2)
 isGolodAInf quotient J
+*-

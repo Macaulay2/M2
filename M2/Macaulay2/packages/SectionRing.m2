@@ -472,6 +472,49 @@ doc ///
 	  
 ///
 
+doc ///
+   	Key
+   	 convertScalarVect
+   	Headline
+   	 substitute a list of ring elements into a target ring
+   	Usage
+   	 convertScalarVect(S, L)
+   	Inputs
+   	 S:Ring
+   	  the target ring
+   	 L:List
+   	  a list of ring elements
+   	Outputs
+   	 :List
+   	  a list with elements substituted into the target ring
+        Description
+	 Text
+	  convertScalarVect is a helper function used internally by the SectionRing package to convert
+	  scalar vector entries from one ring to another. Specifically, it takes a list L of elements
+	  from an ambient ring and applies the substitution map into the target ring S, returning a
+	  new list with the substituted elements.
+
+	  This function is applied when processing the kernel of a matrix in the computation of the
+	  section ring of a Weil divisor. When a scalar vector is detected in the kernel of the
+	  matrix MapTot (using isVectScalar), its entries are converted to live in the quotient ring S
+	  so they can be used to generate relations in the section ring.
+
+	 Text
+	  The substitution is performed using Macaulay2's @TO sub@ function, which maps each element
+	  z in the input list L to sub(z, S) in the target ring. This operation is essential for
+	  maintaining consistency of ring elements during the iterative computation of section rings.
+
+	 Example
+	  R = QQ[x,y];
+	  S = QQ[a,b,c];
+	  L = {x+y, x-y};
+	  convertScalarVect(S, L)
+
+	 Text
+	  Note that convertScalarVect is typically not called directly by users; it is used internally
+	  by the sectionRing function as part of the algorithm for computing relations in the section ring.
+///
+
 TEST ///
 R = QQ[x,y,z]/ideal(x^3+y^3-z^3);
 I = ideal(x,y-z);
