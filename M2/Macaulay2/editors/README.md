@@ -15,6 +15,16 @@ application.
   in Python.
 * [`vim`](vim): Symbols for the Vim editor.
 
+## Per-file deep dives
+
+| File / subdir | Subject | Deep dive |
+|---|---|---|
+| `make-M2-symbols.m2` | Generator that emits each grammar from a running M2 | [`file-make-M2-symbols.md`](file-make-M2-symbols.md) |
+| `prism/`, `pygments/`, `vim/`, `emacs/` | Per-editor packages produced by the generator | [`file-subdirs.md`](file-subdirs.md) |
+| `Makefile.in`, `CMakeLists.txt` | Build glue | — |
+
+**Coverage:** every source file and editor subdir in this directory has a dedicated deep-dive doc.
+
 Several template files that formerly were kept in this directory have since
 been moved to their own repositories:
 

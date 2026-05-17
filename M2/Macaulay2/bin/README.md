@@ -11,14 +11,16 @@ and link them into a single binary along with the bundled startup script.
 
 ## Files
 
-| File | Role |
-|---|---|
-| `main.cpp` | `int main()` — the program entry point. Wires interpreter + engine and hands control to `interp.dd` |
-| `startup.c.cmake` | Template for `startup.c`. The CMake module [`M2/cmake/startup.cmake`](../../cmake/) substitutes paths into this template at configure time so the binary knows where its installed `share/`, `lib/`, etc. live. Autotools has the equivalent in `M2.in` |
-| `M2.in` | The autotools-side wrapper script (used in development builds when running an uninstalled `M2`) |
-| `timestamp.cpp`, `timestamp.h` | Records build timestamp and configure-time metadata so `version` reports something useful |
-| `Makefile.in`, `CMakeLists.txt` | Build glue for both build systems |
-| `README` | Brief original notes |
+| File | Role | Deep dive |
+|---|---|---|
+| `main.cpp` | `int main()` for `M2-binary`: GC init → engine init → supervisor init → interpreter top-level | [`file-main.md`](file-main.md) |
+| `startup.c.cmake` | CMake template producing `startup.c`: embeds `startup.m2` and `--check` test strings as byte arrays | [`file-startup.md`](file-startup.md) |
+| `M2.in` | autotools shell-wrapper template: sets `LD_LIBRARY_PATH`/`DYLD_LIBRARY_PATH` and execs `M2-binary` | [`file-M2-in.md`](file-M2-in.md) |
+| `timestamp.cpp`, `timestamp.h` | Two-line build-timestamp trick (`__DATE__`/`__TIME__`) | [`file-timestamp.md`](file-timestamp.md) |
+| `Makefile.in`, `CMakeLists.txt` | Build glue for both build systems | — |
+| `README` | Brief original notes | — |
+
+**Coverage:** every source file in this directory has a dedicated deep-dive doc.
 
 ## How the runtime locates its data
 

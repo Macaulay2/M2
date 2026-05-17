@@ -30,6 +30,17 @@ appropriate `Makefile.in`:
 Plus shared build glue: `Makefile.in`, `Makefile.library.in`,
 `Makefile.template`.
 
+## Per-file deep dives
+
+| File / pattern | Subject | Deep dive |
+|---|---|---|
+| `Makefile.in` | Top-level driver that loops over every library/program | [`file-Makefile-in.md`](file-Makefile-in.md) |
+| `Makefile.library.in` | Shared per-library build recipe | [`file-Makefile-library-in.md`](file-Makefile-library-in.md) |
+| `Makefile.template` | Starter template for new libraries | [`file-Makefile-template.md`](file-Makefile-template.md) |
+| `*/Makefile.in` (36 subdirs) | Per-library wrappers — catalogued by role | [`file-per-library-subdirs.md`](file-per-library-subdirs.md) |
+
+**Coverage:** every shared build file and the 36 per-library subdirs have dedicated deep-dive docs.
+
 ## Adding a new library / program
 
 Summary (see [`README`](README) for full details):

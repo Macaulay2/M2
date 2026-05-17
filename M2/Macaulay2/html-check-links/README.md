@@ -6,13 +6,16 @@ verifies that internal hyperlinks resolve. Invoked from the top-level
 
 ## Files
 
-| File | Role |
-|---|---|
-| `html-check-links.c`, `html-check-links.h` | Main program |
-| `lex.l` | Flex lexer that pulls `<a href=…>`, `<img src=…>`, etc. out of HTML |
-| `grammar.y`, `grammar.h` | Yacc grammar driving the lexer |
-| `buffer.h`, `getmem.c`, `getmem.h` | Tiny support library |
-| `Makefile.in` | Build glue |
+| File | Role | Deep dive |
+|---|---|---|
+| `html-check-links.{c,h}` | `main()` driver, demangle table, link-resolution loop | [`file-html-check-links.md`](file-html-check-links.md) |
+| `grammar.y`, `grammar.h` | Bison grammar for HTML scanning | [`file-grammar.md`](file-grammar.md) |
+| `lex.l` | Flex lexer for HTML tokens | [`file-lex.md`](file-lex.md) |
+| `buffer.h` | `BUFFER(T)` macro — typed resizable arrays in C | [`file-buffer.md`](file-buffer.md) |
+| `getmem.{c,h}` | GC-aware allocator helpers | [`file-getmem.md`](file-getmem.md) |
+| `Makefile.in` | Build glue | — |
+
+**Coverage:** every source file in this directory has a dedicated deep-dive doc.
 
 It is intentionally self-contained — no library dependencies beyond libc and
 flex/bison — so it can run early in the build pipeline before anything else is

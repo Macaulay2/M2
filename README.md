@@ -404,6 +404,28 @@ Dedicated walkthroughs for especially central engine classes
 | [file-Eschreyer-cpp.md](M2/Macaulay2/e/file-Eschreyer-cpp.md) | `Eschreyer.cpp` implementation notes | Resolutions |
 | [file-aring-ZZ-comparison.md](M2/Macaulay2/e/file-aring-ZZ-comparison.md) | Cross-reference: the three `ZZ` paths | Coefficient rings |
 | [file-m2tbb.md](M2/Macaulay2/e/file-m2tbb.md) | `m2tbb.hpp` (TBB wrapper) | Utilities |
+| [file-ring.md](M2/Macaulay2/e/file-ring.md) | `Ring` (legacy ring base class) | Coefficient rings |
+| [file-mat.md](M2/Macaulay2/e/file-mat.md) | `MutableMatrix` (matrix abstract base) | Matrices |
+| [file-smat.md](M2/Macaulay2/e/file-smat.md) | `SMat<R>` (sparse matrix template) | Matrices |
+| [file-mutablemat-imp.md](M2/Macaulay2/e/file-mutablemat-imp.md) | `MutableMat<Mat>` SLP factory bodies | Matrices |
+| [file-comp.md](M2/Macaulay2/e/file-comp.md) | `Computation` (incremental computation base) | Other computations |
+| [file-cra.md](M2/Macaulay2/e/file-cra.md) | `ChineseRemainder` (CRT + rational reconstruction) | Other computations |
+| [file-reader.md](M2/Macaulay2/e/file-reader.md) | `Reader<RingType>` (stream → ring element) | Utilities |
+| [file-BasicPolyList.md](M2/Macaulay2/e/file-BasicPolyList.md) | `BasicPolyList` (ring-agnostic polynomial list) | Polynomial rings |
+| [file-geobucket.md](M2/Macaulay2/e/file-geobucket.md) | `geobucket<F,V>`, `polyheap` (geometric buckets) | Gröbner bases |
+| [file-aring-qq-gmp.md](M2/Macaulay2/e/file-aring-qq-gmp.md) | `ARingQQGMP` (GMP-backed rationals) | Coefficient rings |
+| [file-res-old.md](M2/Macaulay2/e/file-res-old.md) | `res-a0`/`res-a1`/`res-a2` (older resolution engines) | Resolutions |
+| [file-fplll.md](M2/Macaulay2/e/file-fplll.md) | `fp_LLL` (fplll lattice reduction) | Other computations |
+| [file-comp-gb-declared-proxy.md](M2/Macaulay2/e/file-comp-gb-declared-proxy.md) | `GBDeclared`, `GBProxy` | Gröbner bases |
+| [file-complex-h.md](M2/Macaulay2/e/file-complex-h.md) | `gmp_CC` C primitives | Coefficient rings |
+| [file-defgroups.md](M2/Macaulay2/e/file-defgroups.md) | Doxygen group definitions | docs |
+| [file-dmat-gf-flint-big.md](M2/Macaulay2/e/file-dmat-gf-flint-big.md) | `DMat<ARingGFFlintBig>` FLINT-native ops | Matrices |
+| [file-dmat-lu-variants.md](M2/Macaulay2/e/file-dmat-lu-variants.md) | `DMatLinAlg<R>` specialisations | Matrices |
+| [file-exptable-table.md](M2/Macaulay2/e/file-exptable-table.md) | Hanson `Table_T` + exponent wrapper | Utilities |
+| [file-mpreal.md](M2/Macaulay2/e/file-mpreal.md) | Vendored `mpreal` (MPFR C++) | vendored |
+| [file-overflow-test.md](M2/Macaulay2/e/file-overflow-test.md) | `safe::*` benchmark | Utilities |
+| [file-ntl-glue.md](M2/Macaulay2/e/file-ntl-glue.md) | NTL glue (`ntl-debugio`, `ntl-internal`) | Utilities |
+| [file-franzi-brp.md](M2/Macaulay2/e/file-franzi-brp.md) | Franziska Hinkelmann's boolean-ring GB | Gröbner bases |
 
 **Subdirectory file deep dives** (per-file docs alongside their source):
 
@@ -479,6 +501,21 @@ Dedicated walkthroughs for especially central engine classes
 | `schreyer-resolution/` | [schreyer-resolution/file-res-f4-monlookup.md](M2/Macaulay2/e/schreyer-resolution/file-res-f4-monlookup.md) | `ResF4MonomialLookupTableT<Key>` |
 | `schreyer-resolution/` | [schreyer-resolution/file-res-f4-m2-interface.md](M2/Macaulay2/e/schreyer-resolution/file-res-f4-m2-interface.md) | `ResF4toM2Interface` |
 | `schreyer-resolution/` | [schreyer-resolution/file-res-memblock.md](M2/Macaulay2/e/schreyer-resolution/file-res-memblock.md) | `ResMemoryBlock<T>` |
+| `unit-tests/` | [unit-tests/file-ARingTest-hpp.md](M2/Macaulay2/e/unit-tests/file-ARingTest-hpp.md) | aring test fixture |
+| `unit-tests/` | [unit-tests/file-RingTest-hpp.md](M2/Macaulay2/e/unit-tests/file-RingTest-hpp.md) | legacy ring test fixture |
+| `unit-tests/` | [unit-tests/file-aring-zz-tests.md](M2/Macaulay2/e/unit-tests/file-aring-zz-tests.md) | `ARingZZ`, `ARingZZp`, `ARingQQ*` tests |
+| `unit-tests/` | [unit-tests/file-aring-gf-tests.md](M2/Macaulay2/e/unit-tests/file-aring-gf-tests.md) | Galois-field tests (FLINT + Givaro) |
+| `unit-tests/` | [unit-tests/file-aring-real-complex-tests.md](M2/Macaulay2/e/unit-tests/file-aring-real-complex-tests.md) | RR / RRR / RRi / CC / CCC tests |
+| `unit-tests/` | [unit-tests/file-ring-tests.md](M2/Macaulay2/e/unit-tests/file-ring-tests.md) | Legacy `Ring` API tests |
+| `unit-tests/` | [unit-tests/file-dmat-matrix-tests.md](M2/Macaulay2/e/unit-tests/file-dmat-matrix-tests.md) | `DMat`, matrix I/O, `PolyRing` tests |
+| `unit-tests/` | [unit-tests/file-MonoidTest.md](M2/Macaulay2/e/unit-tests/file-MonoidTest.md) | `Monoid` + `ExponentVector` |
+| `unit-tests/` | [unit-tests/file-NewF4Test.md](M2/Macaulay2/e/unit-tests/file-NewF4Test.md) | newer F4 GB engine |
+| `unit-tests/` | [unit-tests/file-NCGroebnerTest.md](M2/Macaulay2/e/unit-tests/file-NCGroebnerTest.md) | non-commutative GB |
+| `unit-tests/` | [unit-tests/file-ResTest.md](M2/Macaulay2/e/unit-tests/file-ResTest.md) | Schreyer-resolution monoid |
+| `unit-tests/` | [unit-tests/file-misc-tests.md](M2/Macaulay2/e/unit-tests/file-misc-tests.md) | `PointArray`, `Subsets`, basics |
+| `unit-tests/` | [unit-tests/file-test-harness.md](M2/Macaulay2/e/unit-tests/file-test-harness.md) | `testMain`, stubs, helpers |
+
+**Coverage for `e/unit-tests/`:** every test source file in `M2/Macaulay2/e/unit-tests/` now has a dedicated deep-dive doc — see [`M2/Macaulay2/e/unit-tests/README.md`](M2/Macaulay2/e/unit-tests/README.md) for the index.
 
 **Core M2 layer file deep dives** (per-file docs in `M2/Macaulay2/m2/`):
 
@@ -664,6 +701,75 @@ Dedicated walkthroughs for especially central engine classes
 | [c/file-foo.md](M2/Macaulay2/c/file-foo.md) | `foo.d` — smoke-test input |
 
 **Coverage for `c/`:** every source file in `M2/Macaulay2/c/` now has a dedicated deep-dive doc — see [`M2/Macaulay2/c/README.md`](M2/Macaulay2/c/README.md) for the index.
+
+**Final-binary linkage (`bin/`) deep dives** (per-file docs in `M2/Macaulay2/bin/`):
+
+| File doc | Subject |
+|---|---|
+| [bin/file-main.md](M2/Macaulay2/bin/file-main.md) | `main.cpp` — `M2-binary` entry point |
+| [bin/file-startup.md](M2/Macaulay2/bin/file-startup.md) | `startup.c.cmake` — embedded `startup.m2` table |
+| [bin/file-M2-in.md](M2/Macaulay2/bin/file-M2-in.md) | `M2.in` — autotools shell wrapper |
+| [bin/file-timestamp.md](M2/Macaulay2/bin/file-timestamp.md) | `timestamp.cpp` — build-stamp trick |
+
+**Coverage for `bin/`:** every source file in `M2/Macaulay2/bin/` now has a dedicated deep-dive doc — see [`M2/Macaulay2/bin/README.md`](M2/Macaulay2/bin/README.md).
+
+**Thread supervisor (`system/`) deep dives** (per-file docs in `M2/Macaulay2/system/`):
+
+| File doc | Subject |
+|---|---|
+| [system/file-supervisor.md](M2/Macaulay2/system/file-supervisor.md) | `supervisor.{cpp,hpp}`, `supervisorinterface.h` — worker pool |
+| [system/file-m2file.md](M2/Macaulay2/system/file-m2file.md) | `m2file.{cpp,hpp}`, `m2fileinterface.h` — thread-safe file state |
+| [system/file-mutex.md](M2/Macaulay2/system/file-mutex.md) | `mutex.h`, `mutexclass.hpp`, `pthread-methods.hpp`, `gc_std.hpp` — sync primitives |
+| [system/file-m2util.md](M2/Macaulay2/system/file-m2util.md) | `m2util.hpp` — M2-value construction helpers |
+| [system/file-tests.md](M2/Macaulay2/system/file-tests.md) | `tests.cpp` — supervisor self-tests |
+
+**Coverage for `system/`:** every source file in `M2/Macaulay2/system/` now has a dedicated deep-dive doc — see [`M2/Macaulay2/system/README.md`](M2/Macaulay2/system/README.md).
+
+**HTML link checker (`html-check-links/`) deep dives** (per-file docs in `M2/Macaulay2/html-check-links/`):
+
+| File doc | Subject |
+|---|---|
+| [html-check-links/file-html-check-links.md](M2/Macaulay2/html-check-links/file-html-check-links.md) | `html-check-links.{c,h}` — main driver |
+| [html-check-links/file-grammar.md](M2/Macaulay2/html-check-links/file-grammar.md) | `grammar.y`, `grammar.h` — Bison grammar |
+| [html-check-links/file-lex.md](M2/Macaulay2/html-check-links/file-lex.md) | `lex.l` — Flex lexer |
+| [html-check-links/file-buffer.md](M2/Macaulay2/html-check-links/file-buffer.md) | `buffer.h` — `BUFFER(T)` macro |
+| [html-check-links/file-getmem.md](M2/Macaulay2/html-check-links/file-getmem.md) | `getmem.{c,h}` — GC-aware allocator |
+
+**Coverage for `html-check-links/`:** every source file in `M2/Macaulay2/html-check-links/` now has a dedicated deep-dive doc — see [`M2/Macaulay2/html-check-links/README.md`](M2/Macaulay2/html-check-links/README.md).
+
+**Editor grammar generation (`editors/`) deep dives** (per-file docs in `M2/Macaulay2/editors/`):
+
+| File doc | Subject |
+|---|---|
+| [editors/file-make-M2-symbols.md](M2/Macaulay2/editors/file-make-M2-symbols.md) | `make-M2-symbols.m2` — single-source grammar generator |
+| [editors/file-subdirs.md](M2/Macaulay2/editors/file-subdirs.md) | `prism/`, `pygments/`, `vim/`, `emacs/` — per-editor packages |
+
+**Coverage for `editors/`:** every source file and editor subdir has a dedicated deep-dive doc — see [`M2/Macaulay2/editors/README.md`](M2/Macaulay2/editors/README.md).
+
+**Engine developer docs (`docs/`) deep dives** (per-file docs in `M2/Macaulay2/docs/`):
+
+| File doc | Subject |
+|---|---|
+| [docs/file-conf-py.md](M2/Macaulay2/docs/file-conf-py.md) | `conf.py` — Sphinx configuration |
+| [docs/file-index-rst.md](M2/Macaulay2/docs/file-index-rst.md) | `index.rst`, `modules.rst` — Sphinx entry points |
+| [docs/file-Doxyfile-in.md](M2/Macaulay2/docs/file-Doxyfile-in.md) | `Doxyfile.in` — templated Doxygen configuration |
+| [docs/file-CMakeLists.md](M2/Macaulay2/docs/file-CMakeLists.md) | `CMakeLists.txt` — Sphinx + Doxygen build driver |
+
+**Coverage for `docs/`:** every source file in `M2/Macaulay2/docs/` now has a dedicated deep-dive doc — see [`M2/Macaulay2/docs/README.md`](M2/Macaulay2/docs/README.md).
+
+**CMake build modules (`cmake/`) deep dives** (per-file docs in `M2/cmake/`):
+
+| File doc | Subject |
+|---|---|
+| [cmake/file-configure-cmake.md](M2/cmake/file-configure-cmake.md) | `configure.cmake` — top-level options + feature detection |
+| [cmake/file-check-libraries-cmake.md](M2/cmake/file-check-libraries-cmake.md) | `check-libraries.cmake` — library-detection driver |
+| [cmake/file-build-libraries-cmake.md](M2/cmake/file-build-libraries-cmake.md) | `build-libraries.cmake` — build-from-source fallback |
+| [cmake/file-scc-cmake.md](M2/cmake/file-scc-cmake.md) | `scc.cmake` — `scc1` invocation macro |
+| [cmake/file-startup-cmake.md](M2/cmake/file-startup-cmake.md) | `startup.cmake` — C-escapes `startup.m2` |
+| [cmake/file-find-cmakes.md](M2/cmake/file-find-cmakes.md) | `Find*.cmake` — library-detection modules (25 files) |
+| [cmake/file-misc-cmakes.md](M2/cmake/file-misc-cmakes.md) | `prechecks`, `flavor`, `darwin`, `packaging`, `coverage`, `profiling`, `latex`, `stackcollapse-m2.sh` |
+
+**Coverage for `cmake/`:** every CMake module in `M2/cmake/` now has a dedicated deep-dive doc — see [`M2/cmake/README.md`](M2/cmake/README.md).
 
 ### Per-area docs (quick navigation)
 

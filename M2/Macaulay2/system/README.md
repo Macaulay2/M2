@@ -6,17 +6,16 @@ signals are delivered. The supervisor sources live here.
 
 ## Files
 
-| File | Role |
-|---|---|
-| `supervisor.hpp`, `supervisor.cpp` | The supervisor itself — a pthread-based task scheduler that the interpreter delegates parallel work to |
-| `supervisorinterface.h` | C-callable interface used from the `.d`/`.dd` interpreter (specifically [`d/threads.dd`](../d/README.md)) |
-| `m2file.hpp`, `m2file.cpp`, `m2fileinterface.h` | Thread-safe file/stream abstraction layered on top of stdio |
-| `gc_std.hpp` | C++ standard-library allocator that goes through bdwgc, so STL containers are GC-friendly |
-| `mutex.h`, `mutexclass.hpp` | Mutex primitives |
-| `pthread-methods.hpp` | Helper templates for pthread-based primitives |
-| `m2util.hpp` | Misc utilities shared with the supervisor |
-| `tests.cpp` | Standalone tests for the supervisor |
-| `Makefile.in`, `Makefile.files`, `CMakeLists.txt` | Build glue |
+| File | Role | Deep dive |
+|---|---|---|
+| `supervisor.{hpp,cpp}`, `supervisorinterface.h` | Worker-pool manager backing M2 `Task` / `schedule` / `taskResult` | [`file-supervisor.md`](file-supervisor.md) |
+| `m2file.{hpp,cpp}`, `m2fileinterface.h` | `M2File` per-thread file-handle state with sync/unsync modes | [`file-m2file.md`](file-m2file.md) |
+| `mutex.h`, `mutexclass.hpp`, `pthread-methods.hpp`, `gc_std.hpp` | Spinlocks, mutex class, pthread portability, GC-aware STL allocators | [`file-mutex.md`](file-mutex.md) |
+| `m2util.hpp` | Supervisor-side helpers for constructing M2-shaped values | [`file-m2util.md`](file-m2util.md) |
+| `tests.cpp` | Standalone supervisor self-tests | [`file-tests.md`](file-tests.md) |
+| `Makefile.in`, `Makefile.files`, `CMakeLists.txt` | Build glue | — |
+
+**Coverage:** every source file in this directory has a dedicated deep-dive doc.
 
 ## Why a separate process?
 

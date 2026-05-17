@@ -7,20 +7,18 @@ the various `Makefile.in` files.)
 
 ## Top-level orchestration
 
-| File | Role |
-|---|---|
-| `configure.cmake` | Aggregates user-facing build options (`BUILD_SHARED`, package set selection, dev features, etc.) |
-| `prechecks.cmake` | Sanity checks before the rest of configure runs |
-| `flavor.cmake` | Detects compiler / platform "flavor" and sets defaults |
-| `check-libraries.cmake` | Enumerates the libraries M2 needs and reports what was found |
-| `build-libraries.cmake` | Describes how to download and build third-party libs from source when the system doesn't supply them |
-| `scc.cmake` | Builds and invokes [`scc1`](../Macaulay2/c/README.md) on the `.d` sources |
-| `startup.cmake` | Substitutes installation paths into [`Macaulay2/bin/startup.c.cmake`](../Macaulay2/bin/README.md) |
-| `coverage.cmake`, `profiling.cmake` | Optional code-coverage and profiling toggles |
-| `darwin.cmake` | macOS-specific tweaks |
-| `latex.cmake` | LaTeX detection for documentation builds |
-| `packaging.cmake` | CPack configuration for binary distribution |
-| `stackcollapse-m2.sh` | Helper script for profiling (`perf` → flame-graph) |
+| File | Role | Deep dive |
+|---|---|---|
+| `configure.cmake` | User-facing build options, install layout, compiler flags, feature detection | [`file-configure-cmake.md`](file-configure-cmake.md) |
+| `check-libraries.cmake` | Library-detection driver (calls every `Find*.cmake`) | [`file-check-libraries-cmake.md`](file-check-libraries-cmake.md) |
+| `build-libraries.cmake` | Build-from-source fallback (`ExternalProject_Add`) | [`file-build-libraries-cmake.md`](file-build-libraries-cmake.md) |
+| `scc.cmake` | `scc1` invocation macro for `.d`/`.dd` files | [`file-scc-cmake.md`](file-scc-cmake.md) |
+| `startup.cmake` | C-escapes `startup.m2` into `startup.c` | [`file-startup-cmake.md`](file-startup-cmake.md) |
+| `prechecks.cmake` | clang-tidy / clang-format / cppcheck / IWYU / valgrind detection | [`file-misc-cmakes.md`](file-misc-cmakes.md) |
+| `flavor.cmake` | OS / distro detection for package metadata | [`file-misc-cmakes.md`](file-misc-cmakes.md) |
+| `darwin.cmake` | macOS cross-compile toolchain file | [`file-misc-cmakes.md`](file-misc-cmakes.md) |
+| `packaging.cmake` | CPack configuration for `.deb`/`.rpm`/`.tar.gz`/`.dmg` | [`file-misc-cmakes.md`](file-misc-cmakes.md) |
+| `coverage.cmake`, `profiling.cmake`, `latex.cmake`, `stackcollapse-m2.sh` | Optional dev-tool integrations | [`file-misc-cmakes.md`](file-misc-cmakes.md) |
 
 ## `Find*.cmake` — library detection
 
@@ -33,10 +31,14 @@ dependency:
 `FindMathicgb`, `FindMemtailor`, `FindNTL`, `FindNauty`, `FindNormaliz`,
 `FindReadline`, `FindSphinx`, `FindTBB`.
 
+Common-shape deep dive: [`file-find-cmakes.md`](file-find-cmakes.md).
+
 If a `Find*` script fails, the corresponding library is added to the
 `build-libraries` target list and built from source by
 `build-libraries.cmake` (often by pulling it via the matching
 [submodule](../submodules/README.md)).
+
+**Coverage:** every CMake module in this directory has a dedicated deep-dive doc (some grouped: the 25 `Find*.cmake` share one doc, and the small misc modules share one).
 
 ## Workflow
 

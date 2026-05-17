@@ -10,13 +10,14 @@ the `document.m2` machinery in [`Macaulay2/m2/`](../m2/README.md), driven by
 
 ## Files
 
-| File | Role |
-|---|---|
-| `conf.py` | Sphinx configuration |
-| `index.rst` | Top-level RST entry point |
-| `modules.rst` | Generated module index |
-| `Doxyfile.in` | Templated Doxyfile — substituted at configure time to point at the engine sources |
-| `CMakeLists.txt` | Drives Sphinx + Doxygen invocation from CMake |
+| File | Role | Deep dive |
+|---|---|---|
+| `conf.py` | Sphinx configuration | [`file-conf-py.md`](file-conf-py.md) |
+| `index.rst`, `modules.rst` | RST entry points | [`file-index-rst.md`](file-index-rst.md) |
+| `Doxyfile.in` | Templated Doxygen configuration | [`file-Doxyfile-in.md`](file-Doxyfile-in.md) |
+| `CMakeLists.txt` | Sphinx + Doxygen build driver | [`file-CMakeLists.md`](file-CMakeLists.md) |
+
+**Coverage:** every source file in this directory has a dedicated deep-dive doc.
 
 ## Building
 

@@ -211,6 +211,28 @@ Convention: `file-<basename>.md` in this directory.
 | [`file-Eschreyer-cpp.md`](file-Eschreyer-cpp.md) | `Eschreyer.cpp` implementation notes | [Resolutions](resolutions.md) |
 | [`file-aring-ZZ-comparison.md`](file-aring-ZZ-comparison.md) | Cross-reference: the three `ZZ` paths | [Coefficient rings](coefficient-rings.md) |
 | [`file-m2tbb.md`](file-m2tbb.md) | `m2tbb.hpp` (TBB wrapper) | [Utilities](utilities.md) |
+| [`file-ring.md`](file-ring.md) | `Ring` (legacy ring base class) | [Coefficient rings](coefficient-rings.md) |
+| [`file-mat.md`](file-mat.md) | `MutableMatrix` (matrix abstract base) | [Matrices](matrices.md) |
+| [`file-smat.md`](file-smat.md) | `SMat<R>` (sparse matrix template) | [Matrices](matrices.md) |
+| [`file-mutablemat-imp.md`](file-mutablemat-imp.md) | `MutableMat<Mat>` SLP factory bodies | [Matrices](matrices.md) |
+| [`file-comp.md`](file-comp.md) | `Computation` (incremental computation base) | [Other computations](computations.md) |
+| [`file-cra.md`](file-cra.md) | `ChineseRemainder` (CRT + rational reconstruction) | [Other computations](computations.md) |
+| [`file-reader.md`](file-reader.md) | `Reader<RingType>` (stream → ring element) | [Utilities](utilities.md) |
+| [`file-BasicPolyList.md`](file-BasicPolyList.md) | `BasicPolyList` (ring-agnostic polynomial list) | [Polynomial rings](polynomial-rings.md) |
+| [`file-geobucket.md`](file-geobucket.md) | `geobucket<F,V>`, `polyheap` (geometric buckets) | [Gröbner bases](groebner-bases.md) |
+| [`file-aring-qq-gmp.md`](file-aring-qq-gmp.md) | `ARingQQGMP` (GMP-backed rationals) | [Coefficient rings](coefficient-rings.md) |
+| [`file-res-old.md`](file-res-old.md) | `res-a0`/`res-a1`/`res-a2` (older resolution engines) | [Resolutions](resolutions.md) |
+| [`file-fplll.md`](file-fplll.md) | `fp_LLL` (fplll lattice reduction) | [Other computations](computations.md) |
+| [`file-comp-gb-declared-proxy.md`](file-comp-gb-declared-proxy.md) | `GBDeclared`, `GBProxy` | [Gröbner bases](groebner-bases.md) |
+| [`file-complex-h.md`](file-complex-h.md) | `gmp_CC` C primitives | [Coefficient rings](coefficient-rings.md) |
+| [`file-defgroups.md`](file-defgroups.md) | Doxygen group definitions | (docs) |
+| [`file-dmat-gf-flint-big.md`](file-dmat-gf-flint-big.md) | `DMat<ARingGFFlintBig>` FLINT-native ops | [Matrices](matrices.md) |
+| [`file-dmat-lu-variants.md`](file-dmat-lu-variants.md) | `DMatLinAlg<R>` specialisations for Z/p, QQ, GF | [Matrices](matrices.md) |
+| [`file-exptable-table.md`](file-exptable-table.md) | Hanson's `Table_T` + exponent-vector wrapper | [Utilities](utilities.md) |
+| [`file-mpreal.md`](file-mpreal.md) | Vendored `mpreal` (MPFR C++ wrapper) | (vendored) |
+| [`file-overflow-test.md`](file-overflow-test.md) | `safe::*` benchmark binary | [Utilities](utilities.md) |
+| [`file-ntl-glue.md`](file-ntl-glue.md) | `ntl-debugio`, `ntl-internal` (NTL glue) | [Utilities](utilities.md) |
+| [`file-franzi-brp.md`](file-franzi-brp.md) | Franziska Hinkelmann's boolean-ring GB | [Gröbner bases](groebner-bases.md) |
 
 ### Subdirectory file deep dives
 
