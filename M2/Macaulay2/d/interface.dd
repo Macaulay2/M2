@@ -988,7 +988,7 @@ setupfun("rawInverse",rawInverse);
 export rawMultiDegree(e:Expr):Expr := (
      when e
      is x:RawRingElementCell do toExpr( Ccode(RawArrayIntOrNull, "IM2_RingElement_multidegree(", x.p, ")" ) )
-     is x:RawFreeModuleCell do toExpr( Ccode(RawArrayIntOrNull, "IM2_FreeModule_get_degrees(", x.p, ")" ) )
+     is x:RawFreeModuleCell do toExpr( Ccode(RawArrayIntOrNull, "rawFreeModuleGetDegrees(", x.p, ")" ) )
      is x:RawMatrixCell do toExpr( Ccode(RawArrayIntOrNull, "IM2_Matrix_get_degree(", x.p, ")" ) )
      else WrongArg("a raw ring element, matrix, or free module"));
 setupfun("rawMultiDegree",rawMultiDegree);
@@ -1310,7 +1310,7 @@ export rawRing(e:Expr):Expr := (
      is x:RawRingElementCell do toExpr(
 	  Ccode(RawRing, "IM2_RingElement_ring(", x.p, ")" ))
      is x:RawFreeModuleCell do toExpr(
-	  Ccode(RawRing, "IM2_FreeModule_ring(", x.p, ")" ))
+	  Ccode(RawRing, "rawFreeModuleRing(", x.p, ")" ))
      else WrongArg("a raw ring element or free module")
      );
 setupfun("rawRing", rawRing);
@@ -1719,7 +1719,7 @@ setupfun("rawTowerTranslatePoly",rawTowerTranslatePoly);
 
 export rawRank(e:Expr):Expr := (
      when e
-     is x:RawFreeModuleCell do toExpr( Ccode( int, "IM2_FreeModule_rank(", x.p, ")" ))
+     is x:RawFreeModuleCell do toExpr( Ccode( int, "rawFreeModuleRank(", x.p, ")" ))
      else WrongArg("a raw free module")
      );
 setupfun("rawRank",rawRank);
@@ -1727,7 +1727,7 @@ setupfun("rawRank",rawRank);
 export rawSchreyerSource(e:Expr):Expr := (
      when e
      is m:RawMatrixCell do toExpr(
-	  Ccode(RawFreeModuleOrNull, "IM2_FreeModule_make_schreyer(",
+	  Ccode(RawFreeModuleOrNull, "rawFreeModuleMakeSchreyer(",
 	       m.p, ")" ) )
      else WrongArgMatrix());
 setupfun("rawSchreyerSource",rawSchreyerSource);
@@ -1742,13 +1742,13 @@ export rawFreeModule(e:Expr):Expr := (
 	       is rank:ZZcell do (
 		    if isInt(rank)
 		    then toExpr( Ccode( RawFreeModuleOrNull, 
-			      "IM2_FreeModule_make(",
+			      "rawFreeModuleMake(",
 			      R.p, ",", toInt(rank), ")" ))
 		    else WrongArg(2,"a small integer or a sequence of small integers"))
 	       is degs:Sequence do (
 		    if isSequenceOfSmallIntegers(degs)
 		    then toExpr( Ccode( RawFreeModuleOrNull, 
-			      "IM2_FreeModule_make_degs(",
+			      "rawFreeModuleMakeDegs(",
 			      R.p, ",", 
 			      getSequenceOfSmallIntegers(degs),
 			      ")" ))
@@ -1762,7 +1762,7 @@ setupfun("rawFreeModule",rawFreeModule);
 export rawGetSchreyer(e:Expr):Expr := (
      when e
      is F:RawFreeModuleCell do toExpr(
-	  Ccode(RawMatrix, "IM2_FreeModule_get_schreyer(", F.p, ")" ) )
+	  Ccode(RawMatrix, "rawFreeModuleGetSchreyer(", F.p, ")" ) )
      else WrongArg("a raw free module"));
 setupfun("rawGetSchreyer",rawGetSchreyer);
 
@@ -1789,7 +1789,7 @@ export rawExteriorPower(e:Expr):Expr := (
      when s.0 is n:ZZcell do
      if !isInt(n) then WrongArgSmallInteger(1) else
      when s.1 is F:RawFreeModuleCell do toExpr(Ccode(RawFreeModule, 
-	       "IM2_FreeModule_exterior(",
+	       "rawFreeModuleExterior(",
 	       toInt(n), ",",
 	       F.p,
 	       ")" ))
@@ -1820,7 +1820,7 @@ export rawSymmetricPower(e:Expr):Expr := (
      if !isInt(n) then WrongArgSmallInteger(1) else
      when s.1
      is F:RawFreeModuleCell do toExpr(Ccode(RawFreeModule, 
-	       "IM2_FreeModule_symm(",
+	       "rawFreeModuleSymm(",
 	       toInt(n), ",",
 	       F.p,
 	       ")" ))
@@ -1836,7 +1836,7 @@ setupfun("rawSymmetricPower",rawSymmetricPower);
 
 export rawDual(e:Expr):Expr := (
      when e
-     is F:RawFreeModuleCell do toExpr(Ccode(RawFreeModuleOrNull, "IM2_FreeModule_dual(", F.p, ")" ))
+     is F:RawFreeModuleCell do toExpr(Ccode(RawFreeModuleOrNull, "rawFreeModuleDual(", F.p, ")" ))
      is M:RawMatrixCell do toExpr(Ccode(RawMatrixOrNull, "IM2_Matrix_transpose(", M.p, ")" ))
      is M:RawMutableMatrixCell do toExpr(Ccode(RawMutableMatrixOrNull, "rawMutableMatrixTranspose(", M.p, ")" ))
      else WrongArg("a raw free module, matrix, or mutable matrix"));
@@ -1851,7 +1851,7 @@ export rawDirectSum(e:Expr):Expr := (
      if length(s) == 2 then
      when s.0 is F:RawFreeModuleCell do
      when s.1 is G:RawFreeModuleCell do toExpr(Ccode(RawFreeModuleOrNull, 
-	       "IM2_FreeModule_sum(", F.p, ",", G.p, ")" ))
+	       "rawFreeModuleSum(", F.p, ",", G.p, ")" ))
      else WrongArg(2,"a raw free module")
      else WrongArg(1,"a raw matrix or free module")
      else WrongArg("a sequence of raw matrices or a pair of raw free modules")
@@ -1866,7 +1866,7 @@ export rawSubmodule(e:Expr):Expr := (
      if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else (
 	  selection := getSequenceOfSmallIntegers(s.1);
 	  toExpr(Ccode(RawFreeModuleOrNull, 
-		    "IM2_FreeModule_submodule(",
+		    "rawFreeModuleSubmodule(",
 		    M.p, ",",
 		    selection,
 		    ")" ) ) )
@@ -2341,7 +2341,7 @@ export rawTensor(e:Expr):Expr := (
      is M:RawFreeModuleCell do
      when s.1 is N:RawFreeModuleCell do (
 	  toExpr(Ccode(RawFreeModuleOrNull,
-		    "IM2_FreeModule_tensor(",
+		    "rawFreeModuleTensor(",
 		    M.p, ",",
 		    N.p,
 		    ")"
