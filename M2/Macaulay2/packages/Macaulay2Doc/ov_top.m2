@@ -46,6 +46,7 @@ Node
 	> "Tutorial: Canonical Embeddings of Plane Curves and Gonality"
 	> "Tutorial: Fano varieties"
 	> "Tutorial: Divisors"
+	> "Tutorial: Numerical algebraic geometry"
       :Mathematical Computations
         > "elementary arithmetic"
         > "commutative algebra"
@@ -89,7 +90,7 @@ Node
       - Boyana Martinova
       - Eliana Duarte
       - Lars Kastner
-      - Kinsun Lee
+      - Kisun Lee
       -- the following contributors don't appear in git history
       -- but have been credited in various documentation files.
       - Sorin Popescu
