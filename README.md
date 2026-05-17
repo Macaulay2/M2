@@ -34,6 +34,34 @@ determined by `check`, in the latest version of Macaulay2.
 
 ---
 
+## Documentation map
+
+Three levels of documentation are reachable from this file:
+
+1. **Top-level navigation** — the
+   [Repository Architecture Table of Contents](#repository-architecture-table-of-contents)
+   below covers every directory in the source tree at one click of depth.
+2. **Per-directory READMEs** — every subdirectory has its own `README.md`
+   describing its contents, build glue, and how it fits into the larger
+   pipeline. Linked from the TOC.
+3. **Engine deep-dive** — the
+   [Engine deep-dive](#engine-deep-dive-m2macaulay2e) section presents the
+   `M2/Macaulay2/e/` source tree in architectural layers, links to the 10
+   per-area markdown files inside `e/`, and gives per-file groupings for every
+   top-level engine source file.
+
+### Quick links
+
+- Source root: [`M2/`](M2/README.md) → [`M2/Macaulay2/`](M2/Macaulay2/README.md)
+- The four layers: [`c/`](M2/Macaulay2/c/README.md) · [`d/`](M2/Macaulay2/d/README.md) · [`e/`](M2/Macaulay2/e/README.md) · [`m2/`](M2/Macaulay2/m2/README.md)
+- Engine areas: [coefficient rings](M2/Macaulay2/e/coefficient-rings.md) · [polynomial rings](M2/Macaulay2/e/polynomial-rings.md) · [monoids](M2/Macaulay2/e/monoids-and-monomials.md) · [matrices](M2/Macaulay2/e/matrices.md) · [free modules](M2/Macaulay2/e/free-modules.md) · [Gröbner bases](M2/Macaulay2/e/groebner-bases.md) · [resolutions](M2/Macaulay2/e/resolutions.md) · [other computations](M2/Macaulay2/e/computations.md) · [ring elements / maps](M2/Macaulay2/e/ring-elements-and-maps.md) · [utilities](M2/Macaulay2/e/utilities.md)
+- Build & packaging: [`cmake/`](M2/cmake/README.md) · [`libraries/`](M2/libraries/README.md) · [`submodules/`](M2/submodules/README.md) · [`distributions/`](M2/distributions/README.md)
+- Tests: [`tests/`](M2/Macaulay2/tests/README.md) · [`e/unit-tests/`](M2/Macaulay2/e/unit-tests/README.md)
+- Packages: [`packages/`](M2/Macaulay2/packages/README.md)
+- Build instructions: project [`CLAUDE.md`](CLAUDE.md) at the repo root
+
+---
+
 ## Repository Architecture: Table of Contents
 
 This section is a navigable map of the Macaulay2 source tree. Every directory
@@ -104,6 +132,38 @@ is the fastest way to orient yourself:
 | [`M2/Macaulay2/tests/`](M2/Macaulay2/tests/README.md) | Top-level CTest suites: `engine`, `ComputationsBook`, `normal`, `slow`, `threads`, `rationality`, `gigantic`, `quarantine`, `goals` |
 | [`M2/Macaulay2/man/`](M2/Macaulay2/man/README.md) | Man pages |
 | [`M2/Macaulay2/html-check-links/`](M2/Macaulay2/html-check-links/README.md) | HTML link checker used by `make check` |
+
+### Deeper subdirectories
+
+Documented multi-level paths under the entries above:
+
+**Under [`M2/distributions/`](M2/distributions/README.md)**
+
+| Path | Purpose |
+|---|---|
+| [`M2/distributions/top/`](M2/distributions/top/README.md) | User-facing top-level distribution templates (`INSTALL.in`, post-install, pre-remove) |
+| [`M2/distributions/dmg/`](M2/distributions/dmg/README.md) | macOS disk-image packaging |
+| [`M2/distributions/freebsd/`](M2/distributions/freebsd/README.md) | FreeBSD port packaging |
+| [`M2/distributions/install/`](M2/distributions/install/README.md) | Generic install-time helpers |
+| [`M2/distributions/tar/`](M2/distributions/tar/README.md) | Portable tarball packaging |
+
+**Under [`M2/include/`](M2/include/README.md)**
+
+| Path | Purpose |
+|---|---|
+| [`M2/include/M2/`](M2/include/M2/README.md) | Public M2 C/C++ headers (`atomic-field.h`, `gc-include.h`, `math-include.h`, `synchronization.h.in`, `config.h.cmake`) |
+| [`M2/include/valgrind/`](M2/include/valgrind/README.md) | Bundled Valgrind client headers |
+
+**Under [`M2/Macaulay2/editors/`](M2/Macaulay2/editors/README.md)**
+
+| Path | Purpose |
+|---|---|
+| [`M2/Macaulay2/editors/emacs/`](M2/Macaulay2/editors/emacs/README.md) | M2-emacs submodule pointer |
+| [`M2/Macaulay2/editors/vim/`](M2/Macaulay2/editors/vim/README.md) | Vim syntax / dictionary templates |
+| `M2/Macaulay2/editors/prism/` | Prism (JS) syntax templates — README inside |
+| `M2/Macaulay2/editors/pygments/` | Pygments (Python) syntax templates — README inside |
+
+**Under [`M2/Macaulay2/e/`](M2/Macaulay2/e/README.md)** — full engine subdirectory and per-area listing is in the [Engine deep-dive](#engine-deep-dive-m2macaulay2e) section.
 
 ### Cross-cutting concerns
 
