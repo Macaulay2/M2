@@ -46,7 +46,7 @@ monomial basis.
 
 | File pair | Purpose |
 |---|---|
-| `M2FreeAlgebra.{cpp,hpp}` | M2-facing wrapper around [`NCAlgebras/FreeAlgebra`](NCAlgebras/README.md) |
+| `M2FreeAlgebra.{cpp,hpp}` | M2-facing wrapper around [`NCAlgebras/FreeAlgebra`](NCAlgebras/README.md). **Deep dive:** [`file-M2FreeAlgebra.md`](file-M2FreeAlgebra.md) |
 | `M2FreeAlgebraQuotient.{cpp,hpp}` | Wrapper around [`NCAlgebras/FreeAlgebraQuotient`](NCAlgebras/README.md) |
 
 ## How polynomial arithmetic dispatches

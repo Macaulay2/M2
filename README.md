@@ -294,6 +294,36 @@ Dedicated walkthroughs for especially central engine classes
 | [file-aring-zz-flint.md](M2/Macaulay2/e/file-aring-zz-flint.md) | `ARingZZ` (ZZ via FLINT) | Coefficient rings |
 | [file-aring-zzp-flint.md](M2/Macaulay2/e/file-aring-zzp-flint.md) | `ARingZZpFlint` (Z/p via FLINT) | Coefficient rings |
 | [file-aring-RR.md](M2/Macaulay2/e/file-aring-RR.md) | `ARingRR` (RR via hardware `double`) | Coefficient rings |
+| [file-aring-CC.md](M2/Macaulay2/e/file-aring-CC.md) | `ARingCC` (CC via pair of `double`) | Coefficient rings |
+| [file-aring-qq-flint.md](M2/Macaulay2/e/file-aring-qq-flint.md) | `ARingQQFlint` (QQ via FLINT) | Coefficient rings |
+| [file-aring-gf-flint.md](M2/Macaulay2/e/file-aring-gf-flint.md) | `ARingGFFlint` (small GF via FLINT Zech) | Coefficient rings |
+| [file-aring-zz-gmp.md](M2/Macaulay2/e/file-aring-zz-gmp.md) | `ARingZZGMP` (ZZ via GMP) | Coefficient rings |
+| [file-aring-zzp.md](M2/Macaulay2/e/file-aring-zzp.md) | `ARingZZp` (portable Z/p via log tables) | Coefficient rings |
+| [file-aring-zzp-ffpack.md](M2/Macaulay2/e/file-aring-zzp-ffpack.md) | `ARingZZpFFPACK` (Z/p via FFLAS-FFPACK) | Coefficient rings |
+| [file-aring-RRR.md](M2/Macaulay2/e/file-aring-RRR.md) | `ARingRRR` (RR via MPFR) | Coefficient rings |
+| [file-aring-CCC.md](M2/Macaulay2/e/file-aring-CCC.md) | `ARingCCC` (CC via MPFR pair) | Coefficient rings |
+| [file-aring-tower.md](M2/Macaulay2/e/file-aring-tower.md) | `ARingTower` (iterated finite extension) | Coefficient rings |
+| [file-aring-RRi.md](M2/Macaulay2/e/file-aring-RRi.md) | `ARingRRi` (real intervals via MPFI) | Coefficient rings |
+| [file-aring-CCi.md](M2/Macaulay2/e/file-aring-CCi.md) | `ARingCCi` (complex intervals via MPFI) | Coefficient rings |
+| [file-aring-m2-gf.md](M2/Macaulay2/e/file-aring-m2-gf.md) | `ARingGFM2` (native M2 GF, no external dep) | Coefficient rings |
+| [file-aring-gf-flint-big.md](M2/Macaulay2/e/file-aring-gf-flint-big.md) | `ARingGFFlintBig` (large GF via FLINT `fq_nmod`) | Coefficient rings |
+| [file-M2FreeAlgebra.md](M2/Macaulay2/e/file-M2FreeAlgebra.md) | `M2FreeAlgebra` (`Ring` wrapper for NC algebras) | Polynomial rings |
+| [file-skew.md](M2/Macaulay2/e/file-skew.md) | `SkewMultiplication` (skew-commutative config) | Polynomial rings |
+| [file-ringelem.md](M2/Macaulay2/e/file-ringelem.md) | `ring_elem` (universal value type) | Ring elements & maps |
+| [file-hash.md](M2/Macaulay2/e/file-hash.md) | `EngineObject` / `MutableEngineObject` (GC bases) | Utilities |
+| [file-exceptions.md](M2/Macaulay2/e/file-exceptions.md) | Engine C++ exception hierarchy | Utilities |
+| [file-engine-h.md](M2/Macaulay2/e/file-engine-h.md) | `engine.h` aggregating header | Public interface |
+| [file-style.md](M2/Macaulay2/e/file-style.md) | `style.hpp` (comparison codes, `GEOHEAP_SIZE`) | Utilities |
+| [file-newdelete.md](M2/Macaulay2/e/file-newdelete.md) | `our_new_delete` GC allocation hook | Utilities |
+| [file-M2FreeAlgebraQuotient.md](M2/Macaulay2/e/file-M2FreeAlgebraQuotient.md) | `M2FreeAlgebraQuotient` (`Ring` wrapper for NC quotients) | Polynomial rings |
+| [file-BasicPoly.md](M2/Macaulay2/e/file-BasicPoly.md) | `BasicPoly` / `BasicPolyList` (portable polynomial type) | Polynomial rings |
+| [file-ExponentVector.md](M2/Macaulay2/e/file-ExponentVector.md) | `ExponentVector` (dense monomial encoding template) | Monoids & monomials |
+| [file-det.md](M2/Macaulay2/e/file-det.md) | Determinants and minors | Matrices |
+| [file-mutablecomplex.md](M2/Macaulay2/e/file-mutablecomplex.md) | `MutableComplex` (in-place chain complex) | Matrices |
+| [file-dpoly.md](M2/Macaulay2/e/file-dpoly.md) | Univariate polys over QQ ext. / finite fields | Other computations |
+| [file-schur.md](M2/Macaulay2/e/file-schur.md) | `SchurRing` (Schur function ring) | Polynomial rings |
+| [file-tower.md](M2/Macaulay2/e/file-tower.md) | `Tower` (legacy tower-of-extensions) | Coefficient rings |
+| [file-ntl-interface.md](M2/Macaulay2/e/file-ntl-interface.md) | Bridge to the NTL library | Coefficient rings |
 | [file-m2tbb.md](M2/Macaulay2/e/file-m2tbb.md) | `m2tbb.hpp` (TBB wrapper) | Utilities |
 
 **Subdirectory file deep dives** (per-file docs alongside their source):
@@ -309,12 +339,20 @@ Dedicated walkthroughs for especially central engine classes
 | `NCAlgebras/` | [NCAlgebras/file-NCReduction.md](M2/Macaulay2/e/NCAlgebras/file-NCReduction.md) | `PolynomialHeap` (NC reduction) |
 | `NCAlgebras/` | [NCAlgebras/file-SuffixTree.md](M2/Macaulay2/e/NCAlgebras/file-SuffixTree.md) | `SuffixTree` |
 | `NCAlgebras/` | [NCAlgebras/file-FreeAlgebraQuotient.md](M2/Macaulay2/e/NCAlgebras/file-FreeAlgebraQuotient.md) | `FreeAlgebraQuotient` |
+| `NCAlgebras/` | [NCAlgebras/file-Word.md](M2/Macaulay2/e/NCAlgebras/file-Word.md) | `Word` (non-owning word view) |
+| `NCAlgebras/` | [NCAlgebras/file-Range.md](M2/Macaulay2/e/NCAlgebras/file-Range.md) | `Range<T>` (iterator-pair view) |
 | `f4/` | [f4/file-f4-computation.md](M2/Macaulay2/e/f4/file-f4-computation.md) | `F4Computation` |
 | `f4/` | [f4/file-f4-spairs.md](M2/Macaulay2/e/f4/file-f4-spairs.md) | `F4SPairSet` |
 | `f4/` | [f4/file-f4-m2-interface.md](M2/Macaulay2/e/f4/file-f4-m2-interface.md) | `F4toM2Interface` |
 | `f4/` | [f4/file-monhashtable.md](M2/Macaulay2/e/f4/file-monhashtable.md) | Monomial hash-table traits |
 | `f4/` | [f4/file-varpower-monomial.md](M2/Macaulay2/e/f4/file-varpower-monomial.md) | F4-internal sparse monomial encoding |
 | `f4/` | [f4/file-ntuple-monomial.md](M2/Macaulay2/e/f4/file-ntuple-monomial.md) | F4-internal dense monomial encoding |
+| `f4/` | [f4/file-moninfo.md](M2/Macaulay2/e/f4/file-moninfo.md) | `MonomialInfo` (F4 monomial layout) |
+| `f4/` | [f4/file-f4.md](M2/Macaulay2/e/f4/file-f4.md) | `F4GB` (the F4 algorithm) |
+| `f4/` | [f4/file-hilb-fcn.md](M2/Macaulay2/e/f4/file-hilb-fcn.md) | `HilbertController` |
+| `f4/` | [f4/file-memblock.md](M2/Macaulay2/e/f4/file-memblock.md) | `F4MemoryBlock<T>` |
+| `f4/` | [f4/file-f4-monlookup.md](M2/Macaulay2/e/f4/file-f4-monlookup.md) | `F4MonomialLookupTableT<Key>` |
+| `f4/` | [f4/file-f4-types.md](M2/Macaulay2/e/f4/file-f4-types.md) | F4 type vocabulary |
 | `bibasis/` | [bibasis/file-bibasis.md](M2/Macaulay2/e/bibasis/file-bibasis.md) | `BIBasis` driver |
 | `bibasis/` | [bibasis/file-monom.md](M2/Macaulay2/e/bibasis/file-monom.md) | `Monom` + ordering specialisations |
 | `bibasis/` | [bibasis/file-janettree.md](M2/Macaulay2/e/bibasis/file-janettree.md) | `JanetTree<MonomType>` |
@@ -335,16 +373,33 @@ Dedicated walkthroughs for especially central engine classes
 | `interface/` | [interface/file-flint-interface.md](M2/Macaulay2/e/interface/file-flint-interface.md) | FLINT primality / factorisation |
 | `interface/` | [interface/file-cone-interface.md](M2/Macaulay2/e/interface/file-cone-interface.md) | Cone operations |
 | `interface/` | [interface/file-factory-interface.md](M2/Macaulay2/e/interface/file-factory-interface.md) | Polynomial GCD / factorisation |
+| `interface/` | [interface/file-cra-interface.md](M2/Macaulay2/e/interface/file-cra-interface.md) | CRT / rational reconstruction |
+| `interface/` | [interface/file-NAG-interface.md](M2/Macaulay2/e/interface/file-NAG-interface.md) | Numerical Algebraic Geometry C API |
+| `interface/` | [interface/file-random-interface.md](M2/Macaulay2/e/interface/file-random-interface.md) | Engine RNG entry points |
+| `interface/` | [interface/file-gmp-util-interface.md](M2/Macaulay2/e/interface/file-gmp-util-interface.md) | GMP/MPFR allocation helpers |
+| `interface/` | [interface/file-m2-mem-interface.md](M2/Macaulay2/e/interface/file-m2-mem-interface.md) | Engine memory hooks + debug traps |
+| `interface/` | [interface/file-m2-types-interface.md](M2/Macaulay2/e/interface/file-m2-types-interface.md) | Base type aliases |
 | `gb-f4/` | [gb-f4/file-GBF4Computation.md](M2/Macaulay2/e/gb-f4/file-GBF4Computation.md) | `GBF4Computation` |
 | `gb-f4/` | [gb-f4/file-MacaulayMatrix.md](M2/Macaulay2/e/gb-f4/file-MacaulayMatrix.md) | `MacaulayMatrix` |
 | `gb-f4/` | [gb-f4/file-Basis.md](M2/Macaulay2/e/gb-f4/file-Basis.md) | `Basis` |
 | `gb-f4/` | [gb-f4/file-SPairs.md](M2/Macaulay2/e/gb-f4/file-SPairs.md) | `SPairs` (refactored F4) |
 | `gb-f4/` | [gb-f4/file-MonomialHashTable.md](M2/Macaulay2/e/gb-f4/file-MonomialHashTable.md) | `MonomialHashFunction` + table |
+| `gb-f4/` | [gb-f4/file-MonomialLookupTable.md](M2/Macaulay2/e/gb-f4/file-MonomialLookupTable.md) | `MonomialLookupTable` (divisibility) |
+| `gb-f4/` | [gb-f4/file-PolynomialList.md](M2/Macaulay2/e/gb-f4/file-PolynomialList.md) | `PolynomialList` |
+| `gb-f4/` | [gb-f4/file-MonomialView.md](M2/Macaulay2/e/gb-f4/file-MonomialView.md) | `MonomialView` |
+| `gb-f4/` | [gb-f4/file-MonomialTypes.md](M2/Macaulay2/e/gb-f4/file-MonomialTypes.md) | Typed integers (`newf4` vocabulary) |
 | `schreyer-resolution/` | [schreyer-resolution/file-res-f4-computation.md](M2/Macaulay2/e/schreyer-resolution/file-res-f4-computation.md) | `F4ResComputation` |
 | `schreyer-resolution/` | [schreyer-resolution/file-res-schreyer-frame.md](M2/Macaulay2/e/schreyer-resolution/file-res-schreyer-frame.md) | `SchreyerFrame` |
 | `schreyer-resolution/` | [schreyer-resolution/file-res-poly-ring.md](M2/Macaulay2/e/schreyer-resolution/file-res-poly-ring.md) | `ResPolyRing` / `ResPolynomial` |
 | `schreyer-resolution/` | [schreyer-resolution/file-res-monomial-sorter.md](M2/Macaulay2/e/schreyer-resolution/file-res-monomial-sorter.md) | `MonomialSorterObject` |
 | `schreyer-resolution/` | [schreyer-resolution/file-res-dep-graph.md](M2/Macaulay2/e/schreyer-resolution/file-res-dep-graph.md) | TBB dependency graph |
+| `schreyer-resolution/` | [schreyer-resolution/file-res-moninfo.md](M2/Macaulay2/e/schreyer-resolution/file-res-moninfo.md) | `ResMonoid` dispatcher |
+| `schreyer-resolution/` | [schreyer-resolution/file-res-schreyer-order.md](M2/Macaulay2/e/schreyer-resolution/file-res-schreyer-order.md) | `ResSchreyerOrder` |
+| `schreyer-resolution/` | [schreyer-resolution/file-res-f4.md](M2/Macaulay2/e/schreyer-resolution/file-res-f4.md) | `F4Res` (F4 reduction loop) |
+| `schreyer-resolution/` | [schreyer-resolution/file-res-monomial-types.md](M2/Macaulay2/e/schreyer-resolution/file-res-monomial-types.md) | Type vocabulary + encoding typedefs |
+| `schreyer-resolution/` | [schreyer-resolution/file-res-f4-monlookup.md](M2/Macaulay2/e/schreyer-resolution/file-res-f4-monlookup.md) | `ResF4MonomialLookupTableT<Key>` |
+| `schreyer-resolution/` | [schreyer-resolution/file-res-f4-m2-interface.md](M2/Macaulay2/e/schreyer-resolution/file-res-f4-m2-interface.md) | `ResF4toM2Interface` |
+| `schreyer-resolution/` | [schreyer-resolution/file-res-memblock.md](M2/Macaulay2/e/schreyer-resolution/file-res-memblock.md) | `ResMemoryBlock<T>` |
 
 ### Per-area docs (quick navigation)
 

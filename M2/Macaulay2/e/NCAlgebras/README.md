@@ -16,6 +16,8 @@ non-commutative Gröbner bases (including a non-commutative F4 variant).
 | [`file-NCReduction.md`](file-NCReduction.md) | `PolynomialHeap` (NC reduction) |
 | [`file-SuffixTree.md`](file-SuffixTree.md) | `SuffixTree` (experimental word index) |
 | [`file-FreeAlgebraQuotient.md`](file-FreeAlgebraQuotient.md) | `FreeAlgebraQuotient` |
+| [`file-Word.md`](file-Word.md) | `Word` (non-owning word view) |
+| [`file-Range.md`](file-Range.md) | `Range<T>` (iterator-pair view) |
 
 ## Files
 

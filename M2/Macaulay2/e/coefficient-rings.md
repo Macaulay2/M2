@@ -40,7 +40,7 @@ versa) so old code can call new and vice-versa.
 | File pair | Backed by |
 |---|---|
 | `ZZ.{cpp,hpp}` | Legacy ZZ (GMP) |
-| `aring-zz-gmp.{cpp,hpp}` | aring ZZ using `mpz_t` |
+| `aring-zz-gmp.{cpp,hpp}` | aring ZZ using `mpz_t`. **Deep dive:** [`file-aring-zz-gmp.md`](file-aring-zz-gmp.md) |
 | `aring-zz-flint.{cpp,hpp}` | aring ZZ using FLINT's `fmpz_t`. **Deep dive:** [`file-aring-zz-flint.md`](file-aring-zz-flint.md) |
 
 ### Rationals (QQ)
@@ -49,42 +49,42 @@ versa) so old code can call new and vice-versa.
 |---|---|
 | `aring-qq.hpp` | aring QQ — header-only abstract base |
 | `aring-qq-gmp.{cpp,hpp}` | QQ via GMP's `mpq_t` |
-| `aring-qq-flint.{cpp,hpp}` | QQ via FLINT's `fmpq_t` |
+| `aring-qq-flint.{cpp,hpp}` | QQ via FLINT's `fmpq_t`. **Deep dive:** [`file-aring-qq-flint.md`](file-aring-qq-flint.md) |
 
 ### Finite prime fields (Z/p)
 
 | File pair | Notes |
 |---|---|
 | `ZZp.{cpp,hpp}` | Legacy Z/p |
-| `aring-zzp.{cpp,hpp}` | Generic aring Z/p (table-based for small p) |
+| `aring-zzp.{cpp,hpp}` | Generic aring Z/p (table-based for small p). **Deep dive:** [`file-aring-zzp.md`](file-aring-zzp.md) |
 | `aring-zzp-flint.{cpp,hpp}` | Z/p via FLINT (`nmod`). **Deep dive:** [`file-aring-zzp-flint.md`](file-aring-zzp-flint.md) |
-| `aring-zzp-ffpack.{cpp,hpp}` | Z/p via FFLAS-FFPACK (BLAS-style dispatch) |
+| `aring-zzp-ffpack.{cpp,hpp}` | Z/p via FFLAS-FFPACK (BLAS-style dispatch). **Deep dive:** [`file-aring-zzp-ffpack.md`](file-aring-zzp-ffpack.md) |
 
 ### Galois fields (GF)
 
 | File pair | Notes |
 |---|---|
 | `GF.{cpp,hpp}` | Legacy GF (table-based, characteristic small) |
-| `aring-m2-gf.{cpp,hpp}` | Native M2 implementation |
-| `aring-gf-flint.{cpp,hpp}` | GF via FLINT for small extension |
-| `aring-gf-flint-big.{cpp,hpp}` | GF via FLINT for large extension |
+| `aring-m2-gf.{cpp,hpp}` | Native M2 implementation. **Deep dive:** [`file-aring-m2-gf.md`](file-aring-m2-gf.md) |
+| `aring-gf-flint.{cpp,hpp}` | GF via FLINT for small extension. **Deep dive:** [`file-aring-gf-flint.md`](file-aring-gf-flint.md) |
+| `aring-gf-flint-big.{cpp,hpp}` | GF via FLINT for large extension. **Deep dive:** [`file-aring-gf-flint-big.md`](file-aring-gf-flint-big.md) |
 
 ### Real and complex numbers
 
 | File pair | Precision model |
 |---|---|
 | `aring-RR.{cpp,hpp}` | Hardware `double`. **Deep dive:** [`file-aring-RR.md`](file-aring-RR.md) |
-| `aring-RRR.{cpp,hpp}` | Arbitrary-precision via MPFR |
-| `aring-RRi.{cpp,hpp}` | Real intervals (Arb / MPFI) |
-| `aring-CC.{cpp,hpp}` | Complex (pair of `double`) |
-| `aring-CCC.{cpp,hpp}` | Complex with MPFR precision |
-| `aring-CCi.{cpp,hpp}` | Complex intervals |
+| `aring-RRR.{cpp,hpp}` | Arbitrary-precision via MPFR. **Deep dive:** [`file-aring-RRR.md`](file-aring-RRR.md) |
+| `aring-RRi.{cpp,hpp}` | Real intervals (Arb / MPFI). **Deep dive:** [`file-aring-RRi.md`](file-aring-RRi.md) |
+| `aring-CC.{cpp,hpp}` | Complex (pair of `double`). **Deep dive:** [`file-aring-CC.md`](file-aring-CC.md) |
+| `aring-CCC.{cpp,hpp}` | Complex with MPFR precision. **Deep dive:** [`file-aring-CCC.md`](file-aring-CCC.md) |
+| `aring-CCi.{cpp,hpp}` | Complex intervals. **Deep dive:** [`file-aring-CCi.md`](file-aring-CCi.md) |
 
 ### Iterated extensions
 
 | File pair | Purpose |
 |---|---|
-| `aring-tower.{cpp,hpp}` | Tower of finite extension rings (used to build large GF efficiently) |
+| `aring-tower.{cpp,hpp}` | Tower of finite extension rings (used to build large GF efficiently). **Deep dive:** [`file-aring-tower.md`](file-aring-tower.md) |
 
 ## How to add a new coefficient ring
 

@@ -115,6 +115,36 @@ Convention: `file-<basename>.md` in this directory.
 | [`file-aring-zz-flint.md`](file-aring-zz-flint.md) | `ARingZZ` (ZZ via FLINT) | [Coefficient rings](coefficient-rings.md) |
 | [`file-aring-zzp-flint.md`](file-aring-zzp-flint.md) | `ARingZZpFlint` (Z/p via FLINT) | [Coefficient rings](coefficient-rings.md) |
 | [`file-aring-RR.md`](file-aring-RR.md) | `ARingRR` (RR via hardware `double`) | [Coefficient rings](coefficient-rings.md) |
+| [`file-aring-CC.md`](file-aring-CC.md) | `ARingCC` (CC via pair of `double`) | [Coefficient rings](coefficient-rings.md) |
+| [`file-aring-qq-flint.md`](file-aring-qq-flint.md) | `ARingQQFlint` (QQ via FLINT) | [Coefficient rings](coefficient-rings.md) |
+| [`file-aring-gf-flint.md`](file-aring-gf-flint.md) | `ARingGFFlint` (small GF via FLINT Zech) | [Coefficient rings](coefficient-rings.md) |
+| [`file-aring-zz-gmp.md`](file-aring-zz-gmp.md) | `ARingZZGMP` (ZZ via GMP) | [Coefficient rings](coefficient-rings.md) |
+| [`file-aring-zzp.md`](file-aring-zzp.md) | `ARingZZp` (portable Z/p via log tables) | [Coefficient rings](coefficient-rings.md) |
+| [`file-aring-zzp-ffpack.md`](file-aring-zzp-ffpack.md) | `ARingZZpFFPACK` (Z/p via FFLAS-FFPACK) | [Coefficient rings](coefficient-rings.md) |
+| [`file-aring-RRR.md`](file-aring-RRR.md) | `ARingRRR` (RR via MPFR) | [Coefficient rings](coefficient-rings.md) |
+| [`file-aring-CCC.md`](file-aring-CCC.md) | `ARingCCC` (CC via MPFR pair) | [Coefficient rings](coefficient-rings.md) |
+| [`file-aring-tower.md`](file-aring-tower.md) | `ARingTower` (iterated finite extension) | [Coefficient rings](coefficient-rings.md) |
+| [`file-aring-RRi.md`](file-aring-RRi.md) | `ARingRRi` (real intervals via MPFI) | [Coefficient rings](coefficient-rings.md) |
+| [`file-aring-CCi.md`](file-aring-CCi.md) | `ARingCCi` (complex intervals via MPFI) | [Coefficient rings](coefficient-rings.md) |
+| [`file-aring-m2-gf.md`](file-aring-m2-gf.md) | `ARingGFM2` (native M2 GF, no external dep) | [Coefficient rings](coefficient-rings.md) |
+| [`file-aring-gf-flint-big.md`](file-aring-gf-flint-big.md) | `ARingGFFlintBig` (large GF via FLINT `fq_nmod`) | [Coefficient rings](coefficient-rings.md) |
+| [`file-M2FreeAlgebra.md`](file-M2FreeAlgebra.md) | `M2FreeAlgebra` (`Ring` wrapper for NC algebras) | [Polynomial rings](polynomial-rings.md) |
+| [`file-skew.md`](file-skew.md) | `SkewMultiplication` (skew-commutative config) | [Polynomial rings](polynomial-rings.md) |
+| [`file-ringelem.md`](file-ringelem.md) | `ring_elem` (universal value type) | [Ring elements & maps](ring-elements-and-maps.md) |
+| [`file-hash.md`](file-hash.md) | `EngineObject` / `MutableEngineObject` (GC bases) | [Utilities](utilities.md) |
+| [`file-exceptions.md`](file-exceptions.md) | Engine C++ exception hierarchy | [Utilities](utilities.md) |
+| [`file-engine-h.md`](file-engine-h.md) | `engine.h` aggregating header | (Public interface) |
+| [`file-style.md`](file-style.md) | `style.hpp` (comparison codes, `GEOHEAP_SIZE`) | [Utilities](utilities.md) |
+| [`file-newdelete.md`](file-newdelete.md) | `our_new_delete` GC allocation hook | [Utilities](utilities.md) |
+| [`file-M2FreeAlgebraQuotient.md`](file-M2FreeAlgebraQuotient.md) | `M2FreeAlgebraQuotient` (`Ring` wrapper for NC quotients) | [Polynomial rings](polynomial-rings.md) |
+| [`file-BasicPoly.md`](file-BasicPoly.md) | `BasicPoly` / `BasicPolyList` (portable polynomial type) | [Polynomial rings](polynomial-rings.md) |
+| [`file-ExponentVector.md`](file-ExponentVector.md) | `ExponentVector` (dense monomial encoding template) | [Monoids & monomials](monoids-and-monomials.md) |
+| [`file-det.md`](file-det.md) | Determinants and minors (`DET_BAREISS`/`COFACTOR`/`DYNAMIC`) | [Matrices](matrices.md) |
+| [`file-mutablecomplex.md`](file-mutablecomplex.md) | `MutableComplex` (in-place chain complex) | [Matrices](matrices.md) |
+| [`file-dpoly.md`](file-dpoly.md) | Univariate polynomials over QQ extensions / finite fields | [Other computations](computations.md) |
+| [`file-schur.md`](file-schur.md) | `SchurRing` (Schur function ring) | [Polynomial rings](polynomial-rings.md) |
+| [`file-tower.md`](file-tower.md) | `Tower` (legacy tower-of-extensions ring) | [Coefficient rings](coefficient-rings.md) |
+| [`file-ntl-interface.md`](file-ntl-interface.md) | Bridge to the NTL library | [Coefficient rings](coefficient-rings.md) |
 | [`file-m2tbb.md`](file-m2tbb.md) | `m2tbb.hpp` (TBB wrapper) | [Utilities](utilities.md) |
 
 ### Subdirectory file deep dives
@@ -133,12 +163,20 @@ subdirectories:
 | `NCAlgebras/` | [`NCAlgebras/file-NCReduction.md`](NCAlgebras/file-NCReduction.md) | `PolynomialHeap` (NC reduction) |
 | `NCAlgebras/` | [`NCAlgebras/file-SuffixTree.md`](NCAlgebras/file-SuffixTree.md) | `SuffixTree` |
 | `NCAlgebras/` | [`NCAlgebras/file-FreeAlgebraQuotient.md`](NCAlgebras/file-FreeAlgebraQuotient.md) | `FreeAlgebraQuotient` |
+| `NCAlgebras/` | [`NCAlgebras/file-Word.md`](NCAlgebras/file-Word.md) | `Word` (non-owning word view) |
+| `NCAlgebras/` | [`NCAlgebras/file-Range.md`](NCAlgebras/file-Range.md) | `Range<T>` (iterator-pair view) |
 | `f4/` | [`f4/file-f4-computation.md`](f4/file-f4-computation.md) | `F4Computation` |
 | `f4/` | [`f4/file-f4-spairs.md`](f4/file-f4-spairs.md) | `F4SPairSet` |
 | `f4/` | [`f4/file-f4-m2-interface.md`](f4/file-f4-m2-interface.md) | `F4toM2Interface` |
 | `f4/` | [`f4/file-monhashtable.md`](f4/file-monhashtable.md) | Monomial hash-table traits |
 | `f4/` | [`f4/file-varpower-monomial.md`](f4/file-varpower-monomial.md) | F4-internal sparse encoding |
 | `f4/` | [`f4/file-ntuple-monomial.md`](f4/file-ntuple-monomial.md) | F4-internal dense encoding |
+| `f4/` | [`f4/file-moninfo.md`](f4/file-moninfo.md) | `MonomialInfo` (F4 monomial layout) |
+| `f4/` | [`f4/file-f4.md`](f4/file-f4.md) | `F4GB` (the F4 algorithm) |
+| `f4/` | [`f4/file-hilb-fcn.md`](f4/file-hilb-fcn.md) | `HilbertController` |
+| `f4/` | [`f4/file-memblock.md`](f4/file-memblock.md) | `F4MemoryBlock<T>` |
+| `f4/` | [`f4/file-f4-monlookup.md`](f4/file-f4-monlookup.md) | `F4MonomialLookupTableT<Key>` |
+| `f4/` | [`f4/file-f4-types.md`](f4/file-f4-types.md) | F4 type vocabulary |
 | `bibasis/` | [`bibasis/file-bibasis.md`](bibasis/file-bibasis.md) | `BIBasis` driver |
 | `bibasis/` | [`bibasis/file-monom.md`](bibasis/file-monom.md) | `Monom` + ordering specialisations |
 | `bibasis/` | [`bibasis/file-janettree.md`](bibasis/file-janettree.md) | `JanetTree<MonomType>` |
@@ -159,16 +197,33 @@ subdirectories:
 | `interface/` | [`interface/file-flint-interface.md`](interface/file-flint-interface.md) | FLINT primality / factorisation |
 | `interface/` | [`interface/file-cone-interface.md`](interface/file-cone-interface.md) | Cone operations |
 | `interface/` | [`interface/file-factory-interface.md`](interface/file-factory-interface.md) | Polynomial GCD / factorisation |
+| `interface/` | [`interface/file-cra-interface.md`](interface/file-cra-interface.md) | CRT / rational reconstruction |
+| `interface/` | [`interface/file-NAG-interface.md`](interface/file-NAG-interface.md) | Numerical Algebraic Geometry C API |
+| `interface/` | [`interface/file-random-interface.md`](interface/file-random-interface.md) | Engine RNG entry points |
+| `interface/` | [`interface/file-gmp-util-interface.md`](interface/file-gmp-util-interface.md) | GMP/MPFR allocation helpers |
+| `interface/` | [`interface/file-m2-mem-interface.md`](interface/file-m2-mem-interface.md) | Engine memory hooks + debug traps |
+| `interface/` | [`interface/file-m2-types-interface.md`](interface/file-m2-types-interface.md) | Base type aliases |
 | `gb-f4/` | [`gb-f4/file-GBF4Computation.md`](gb-f4/file-GBF4Computation.md) | `GBF4Computation` |
 | `gb-f4/` | [`gb-f4/file-MacaulayMatrix.md`](gb-f4/file-MacaulayMatrix.md) | `MacaulayMatrix` |
 | `gb-f4/` | [`gb-f4/file-Basis.md`](gb-f4/file-Basis.md) | `Basis` |
 | `gb-f4/` | [`gb-f4/file-SPairs.md`](gb-f4/file-SPairs.md) | `SPairs` (refactored F4) |
 | `gb-f4/` | [`gb-f4/file-MonomialHashTable.md`](gb-f4/file-MonomialHashTable.md) | `MonomialHashFunction` + table |
+| `gb-f4/` | [`gb-f4/file-MonomialLookupTable.md`](gb-f4/file-MonomialLookupTable.md) | `MonomialLookupTable` (divisibility index) |
+| `gb-f4/` | [`gb-f4/file-PolynomialList.md`](gb-f4/file-PolynomialList.md) | `PolynomialList` |
+| `gb-f4/` | [`gb-f4/file-MonomialView.md`](gb-f4/file-MonomialView.md) | `MonomialView` |
+| `gb-f4/` | [`gb-f4/file-MonomialTypes.md`](gb-f4/file-MonomialTypes.md) | Typed integers (`newf4` vocabulary) |
 | `schreyer-resolution/` | [`schreyer-resolution/file-res-f4-computation.md`](schreyer-resolution/file-res-f4-computation.md) | `F4ResComputation` |
 | `schreyer-resolution/` | [`schreyer-resolution/file-res-schreyer-frame.md`](schreyer-resolution/file-res-schreyer-frame.md) | `SchreyerFrame` |
 | `schreyer-resolution/` | [`schreyer-resolution/file-res-poly-ring.md`](schreyer-resolution/file-res-poly-ring.md) | `ResPolyRing` / `ResPolynomial` |
 | `schreyer-resolution/` | [`schreyer-resolution/file-res-monomial-sorter.md`](schreyer-resolution/file-res-monomial-sorter.md) | `MonomialSorterObject` |
 | `schreyer-resolution/` | [`schreyer-resolution/file-res-dep-graph.md`](schreyer-resolution/file-res-dep-graph.md) | TBB dependency graph |
+| `schreyer-resolution/` | [`schreyer-resolution/file-res-moninfo.md`](schreyer-resolution/file-res-moninfo.md) | `ResMonoid` dispatcher |
+| `schreyer-resolution/` | [`schreyer-resolution/file-res-schreyer-order.md`](schreyer-resolution/file-res-schreyer-order.md) | `ResSchreyerOrder` |
+| `schreyer-resolution/` | [`schreyer-resolution/file-res-f4.md`](schreyer-resolution/file-res-f4.md) | `F4Res` (F4 reduction loop) |
+| `schreyer-resolution/` | [`schreyer-resolution/file-res-monomial-types.md`](schreyer-resolution/file-res-monomial-types.md) | Type vocabulary + encoding typedefs |
+| `schreyer-resolution/` | [`schreyer-resolution/file-res-f4-monlookup.md`](schreyer-resolution/file-res-f4-monlookup.md) | `ResF4MonomialLookupTableT<Key>` |
+| `schreyer-resolution/` | [`schreyer-resolution/file-res-f4-m2-interface.md`](schreyer-resolution/file-res-f4-m2-interface.md) | `ResF4toM2Interface` |
+| `schreyer-resolution/` | [`schreyer-resolution/file-res-memblock.md`](schreyer-resolution/file-res-memblock.md) | `ResMemoryBlock<T>` |
 | [`file-comp-res.md`](file-comp-res.md) | `ResolutionComputation` | [Resolutions](resolutions.md) |
 | [`file-gbring.md`](file-gbring.md) | `GBRing` / `gbvector` | [Gröbner bases](groebner-bases.md) |
 | [`file-Eschreyer.md`](file-Eschreyer.md) | `GBKernelComputation` (older Schreyer) | [Resolutions](resolutions.md) |

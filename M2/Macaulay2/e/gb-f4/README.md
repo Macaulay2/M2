@@ -17,6 +17,10 @@ refactoring notes.
 | [`file-Basis.md`](file-Basis.md) | `Basis` (evolving GB) |
 | [`file-SPairs.md`](file-SPairs.md) | `SPairs` (refactored F4 S-pair queue) |
 | [`file-MonomialHashTable.md`](file-MonomialHashTable.md) | `MonomialHashFunction` + table |
+| [`file-MonomialLookupTable.md`](file-MonomialLookupTable.md) | `MonomialLookupTable` (divisibility index) |
+| [`file-PolynomialList.md`](file-PolynomialList.md) | `PolynomialList` (typed polynomial container) |
+| [`file-MonomialView.md`](file-MonomialView.md) | `MonomialView` (non-owning encoded-monomial view) |
+| [`file-MonomialTypes.md`](file-MonomialTypes.md) | Typed integers (`Index`, `MonomialIndex`, `HashInt`, …) |
 
 ## Files
 

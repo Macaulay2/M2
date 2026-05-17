@@ -41,6 +41,12 @@ the top of `e/`. New code goes here; old code is being migrated.
 | [`file-flint-interface.md`](file-flint-interface.md) | `interface/flint.{h,cpp}` — primality / factorisation via FLINT |
 | [`file-cone-interface.md`](file-cone-interface.md) | `interface/cone.{h,cpp}` — rational polyhedral cone operations |
 | [`file-factory-interface.md`](file-factory-interface.md) | `interface/factory.{h,cpp}` — polynomial GCD / factorisation |
+| [`file-cra-interface.md`](file-cra-interface.md) | `interface/cra.{h,cpp}` — CRT / rational reconstruction |
+| [`file-NAG-interface.md`](file-NAG-interface.md) | `interface/NAG.h` — Numerical Algebraic Geometry C API |
+| [`file-random-interface.md`](file-random-interface.md) | `interface/random.{h,cpp}` — engine RNG entry points |
+| [`file-gmp-util-interface.md`](file-gmp-util-interface.md) | `interface/gmp-util.h` — multiprecision allocation helpers |
+| [`file-m2-mem-interface.md`](file-m2-mem-interface.md) | `interface/m2-mem.{h,cpp}` — engine memory hooks (`getmem`, debug traps) |
+| [`file-m2-types-interface.md`](file-m2-types-interface.md) | `interface/m2-types.{h,cpp}` — `M2_bool`, `M2_arrayint`, `hash_t` |
 
 ## Areas
 

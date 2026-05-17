@@ -19,6 +19,13 @@ of Macaulay-matrix form.
 | [`file-res-poly-ring.md`](file-res-poly-ring.md) | `ResPolyRing` / `ResPolynomial` |
 | [`file-res-monomial-sorter.md`](file-res-monomial-sorter.md) | `MonomialSorterObject` |
 | [`file-res-dep-graph.md`](file-res-dep-graph.md) | TBB dependency graph |
+| [`file-res-moninfo.md`](file-res-moninfo.md) | `ResMonoid` (dense/sparse dispatcher) |
+| [`file-res-schreyer-order.md`](file-res-schreyer-order.md) | `ResSchreyerOrder` |
+| [`file-res-f4.md`](file-res-f4.md) | `F4Res` (F4 reduction loop for resolutions) |
+| [`file-res-monomial-types.md`](file-res-monomial-types.md) | Type vocabulary + `ResMonoid` encoding typedefs |
+| [`file-res-f4-monlookup.md`](file-res-f4-monlookup.md) | `ResF4MonomialLookupTableT<Key>` |
+| [`file-res-f4-m2-interface.md`](file-res-f4-m2-interface.md) | `ResF4toM2Interface` (translation layer) |
+| [`file-res-memblock.md`](file-res-memblock.md) | `ResMemoryBlock<T>` (slab allocator) |
 
 ## Files
 
