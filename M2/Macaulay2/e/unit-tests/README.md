@@ -1,5 +1,7 @@
 # `M2/Macaulay2/e/unit-tests/` — engine gtest suite
 
+**See [`architecture.md`](architecture.md)** for the standalone architectural reference (four-layer design: harness → fixtures → helpers → per-area tests; test patterns including templated cross-backend validation; floating-point `almostEqual` helpers; build wiring; why test the engine in C++ directly).
+
 C++ unit tests for the engine, built with [googletest](https://github.com/google/googletest)
 (vendored as a [submodule](../../../submodules/README.md)). These tests exercise
 the engine **directly** in C++ — no interpreter, no `.d` translation layer.

@@ -39,6 +39,7 @@ rules, and a reference flow of "M2 user → engine inner loop".
 - [`NCAlgebras/architecture.md`](NCAlgebras/architecture.md) — non-commutative algebras + GB
 - [`NCResolutions/architecture.md`](NCResolutions/architecture.md) — non-commutative free resolutions
 - [`bibasis/architecture.md`](bibasis/architecture.md) — Boolean involutive bases
+- [`unit-tests/architecture.md`](unit-tests/architecture.md) — engine gtest suite
 
 ## Subdirectories
 

@@ -57,7 +57,7 @@ Four levels of documentation are reachable from this file:
    them; the lower half of this file mirrors the same entries into
    per-folder tables you can scan top-to-bottom.
 
-Plus **ten cross-cutting top-level meta docs** at the repo root:
+Plus **sixteen cross-cutting top-level meta docs** at the repo root:
 
 | Doc | What it is | When to use |
 |---|---|---|
@@ -70,6 +70,12 @@ Plus **ten cross-cutting top-level meta docs** at the repo root:
 | [`THREADING.md`](THREADING.md) | Unified concurrency story across supervisor pthreads + M2-level `Task` + engine TBB + per-thread state | Writing parallel algorithms; debugging race conditions / deadlocks; understanding which threading mechanism applies |
 | [`TESTING.md`](TESTING.md) | End-to-end testing reference unifying six test infrastructures (gtest, `--check`, per-package, normal/slow/ComputationsBook CTest suites) | Running tests; deciding where to add a new one; understanding CI |
 | [`PACKAGES.md`](PACKAGES.md) | Package ecosystem reference (~400 distributed packages, Core boundary, conventions, lifecycle, doc DSL, external-library dependencies) | Writing a new package; understanding package discovery; debugging install failures |
+| [`DEBUG.md`](DEBUG.md) | Practical debugging reference — symptom-driven recipes (crashes, hangs, wrong answers, memory, threading, tests, performance, builds) | When M2 misbehaves and you need to figure out why |
+| [`DOCUMENTATION-SYSTEM.md`](DOCUMENTATION-SYSTEM.md) | Doc pipeline reference (`doc ///...///` DSL → typed nodes → executed examples → HTML/info/in-session help → editor grammar generation) | Writing M2 docs; debugging install errors; understanding cross-reference validation |
+| [`STYLE.md`](STYLE.md) | Code style guide across all four layers (engine C++, `.d`/`.dd`, Core M2, CMake, translator C) | Writing or reviewing code; setting up `clang-format`; understanding naming conventions |
+| [`DEPENDENCIES.md`](DEPENDENCIES.md) | External-library catalogue: every required and optional dependency, what it's for, version constraints, fallback behaviour, license info | Setting up a build; debugging "library not found"; understanding why a specific feature exists |
+| [`RING-ZOO.md`](RING-ZOO.md) | Complete catalogue of every ring M2 supports: constructors, backends, when to use each, example sessions | Choosing a ring for a computation; mapping user-facing types to engine classes; reference for ring authors |
+| [`COMPUTATIONS.md`](COMPUTATIONS.md) | Catalogue of every computation engine: GB variants (default/F4/gb-f4/mathicgb/NC/BIBasis/...), resolution variants, Hilbert, LLL, NAG, factoring, primary decomposition | Choosing a strategy; understanding which backend handles which input; engine comparison tables |
 | [`CONTRIBUTING-DOCS.md`](CONTRIBUTING-DOCS.md) | Conventions the docs follow | When editing docs (file naming, README structure, deep-dive shape, link integrity audit) |
 
 Plus build-system instructions: see the project
@@ -94,7 +100,8 @@ Plus build-system instructions: see the project
    [`schreyer-resolution/architecture.md`](M2/Macaulay2/e/schreyer-resolution/architecture.md) (F4-style resolution) ·
    [`NCAlgebras/architecture.md`](M2/Macaulay2/e/NCAlgebras/architecture.md) (non-commutative algebras) ·
    [`NCResolutions/architecture.md`](M2/Macaulay2/e/NCResolutions/architecture.md) (NC resolutions) ·
-   [`bibasis/architecture.md`](M2/Macaulay2/e/bibasis/architecture.md) (Boolean involutive)
+   [`bibasis/architecture.md`](M2/Macaulay2/e/bibasis/architecture.md) (Boolean involutive) ·
+   [`unit-tests/architecture.md`](M2/Macaulay2/e/unit-tests/architecture.md) (gtest suite)
 - Engine areas: [coefficient rings](M2/Macaulay2/e/coefficient-rings.md) · [polynomial rings](M2/Macaulay2/e/polynomial-rings.md) · [monoids](M2/Macaulay2/e/monoids-and-monomials.md) · [matrices](M2/Macaulay2/e/matrices.md) · [free modules](M2/Macaulay2/e/free-modules.md) · [Gröbner bases](M2/Macaulay2/e/groebner-bases.md) · [resolutions](M2/Macaulay2/e/resolutions.md) · [other computations](M2/Macaulay2/e/computations.md) · [ring elements / maps](M2/Macaulay2/e/ring-elements-and-maps.md) · [utilities](M2/Macaulay2/e/utilities.md)
 - Engine subdirs: [`interface/`](M2/Macaulay2/e/interface/README.md) · [`f4/`](M2/Macaulay2/e/f4/README.md) · [`gb-f4/`](M2/Macaulay2/e/gb-f4/README.md) · [`schreyer-resolution/`](M2/Macaulay2/e/schreyer-resolution/README.md) · [`NCAlgebras/`](M2/Macaulay2/e/NCAlgebras/README.md) · [`NCResolutions/`](M2/Macaulay2/e/NCResolutions/README.md) · [`bibasis/`](M2/Macaulay2/e/bibasis/README.md) · [`unit-tests/`](M2/Macaulay2/e/unit-tests/README.md) · [`doxygen-settings/`](M2/Macaulay2/e/doxygen-settings/README.md)
 - Build & packaging: [`cmake/`](M2/cmake/README.md) · [`libraries/`](M2/libraries/README.md) · [`submodules/`](M2/submodules/README.md) · [`distributions/`](M2/distributions/README.md) · [`BUILD/`](M2/BUILD/README.md) · [`m4/`](M2/m4/README.md) · [`include/`](M2/include/README.md)
@@ -112,6 +119,12 @@ Plus build-system instructions: see the project
 - **End-to-end build pipeline: [`BUILD.md`](BUILD.md)** — the seven phases from `cmake` invocation through configure → scc1 translate → library build → compile → link → install → optional steps, with the build-artifact catalogue, incremental-rebuild trigger table, build options, and CMake-vs-autotools comparison
 - **End-to-end threading model: [`THREADING.md`](THREADING.md)** — the three independent threading mechanisms (supervisor pthreads, engine TBB, per-thread state machinery), what runs where, GC integration, atomic primitives, common pitfalls, and a "when to use which" decision table
 - **Package ecosystem: [`PACKAGES.md`](PACKAGES.md)** — how the ~400 distributed packages work, Core vs distributed boundary, the `newPackage` declaration, the documentation DSL, the full lifecycle (write → load → install → test → distribute), external-library dependencies, discovery, auto-loaded packages, common pitfalls
+- **Practical debugging reference: [`DEBUG.md`](DEBUG.md)** — symptom-driven recipes: startup crashes / runtime crashes / wrong answers / hangs / memory / threading / tests / performance / builds / M2-level errors. Each with concrete tool invocations (gdb, lldb, valgrind, TSAN, helgrind, perf, gtest filters, `debugError`)
+- **Documentation system: [`DOCUMENTATION-SYSTEM.md`](DOCUMENTATION-SYSTEM.md)** — the `doc ///...///` DSL in full, typed doc nodes, `Example` execution / capture, `SeeAlso` validation, HTML + info + in-session help rendering, GDBM databases, editor grammar generation, common pitfalls
+- **Code style guide: [`STYLE.md`](STYLE.md)** — coding conventions per layer (engine C++ with clang-format, interpreter `.d`/`.dd`, Core M2 `.m2`, translator C, CMake), cross-layer naming patterns (M2 ↔ `raw…` ↔ `IM2_*` ↔ internal class), modernisation hot-takes, pre-commit checklist, common style mistakes
+- **Dependency catalogue: [`DEPENDENCIES.md`](DEPENDENCIES.md)** — every external library M2 uses (GMP, MPFR, FLINT, NTL, BDWGC, Boost, LAPACK, FFLAS-FFPACK, mathicgb, MPSolve, Frobby, Normaliz, ...), required vs optional, version constraints, license compatibility, M2-finds-libraries decision flow
+- **Ring zoo: [`RING-ZOO.md`](RING-ZOO.md)** — every ring M2 supports (`ZZ`, `QQ`, `ZZ/p`, `GF(q)`, `RR`, `CC`, `RRi`, polynomial rings, quotient rings, fraction fields, local rings, Weyl algebras, exterior algebras, NC free algebras, Schur rings, towers, …), with engine-class mapping, example sessions, and a decision tree for "which ring should I use"
+- **Computation engines: [`COMPUTATIONS.md`](COMPUTATIONS.md)** — sister catalogue of the algorithmic engines (GB: default/F4/gb-f4/mathicgb/NC/BIBasis/toric/walk/sugarless; resolution: Schreyer/res-a0/a1/a2/Eschreyer/NC; plus Hilbert, LLL, NAG, factoring, root finding, primary decomposition, polyhedral), strategy selection, comparison tables, when-to-use-which decision tree
 
 ### Finding a deep dive
 
@@ -291,9 +304,9 @@ layers:
 
 | Layer | Count | Examples |
 |---|---|---|
-| Top-level meta docs | 10 | [`README.md`](README.md) · [`GLOSSARY.md`](GLOSSARY.md) · [`TOUR.md`](TOUR.md) · [`BUILD.md`](BUILD.md) · [`STARTUP.md`](STARTUP.md) · [`MEMORY.md`](MEMORY.md) · [`THREADING.md`](THREADING.md) · [`TESTING.md`](TESTING.md) · [`PACKAGES.md`](PACKAGES.md) · [`CONTRIBUTING-DOCS.md`](CONTRIBUTING-DOCS.md) |
+| Top-level meta docs | 16 | [`README.md`](README.md) · [`GLOSSARY.md`](GLOSSARY.md) · [`TOUR.md`](TOUR.md) · [`BUILD.md`](BUILD.md) · [`STARTUP.md`](STARTUP.md) · [`MEMORY.md`](MEMORY.md) · [`THREADING.md`](THREADING.md) · [`TESTING.md`](TESTING.md) · [`PACKAGES.md`](PACKAGES.md) · [`DEBUG.md`](DEBUG.md) · [`DOCUMENTATION-SYSTEM.md`](DOCUMENTATION-SYSTEM.md) · [`STYLE.md`](STYLE.md) · [`DEPENDENCIES.md`](DEPENDENCIES.md) · [`RING-ZOO.md`](RING-ZOO.md) · [`COMPUTATIONS.md`](COMPUTATIONS.md) · [`CONTRIBUTING-DOCS.md`](CONTRIBUTING-DOCS.md) |
 | Per-directory READMEs | 70 | one for every subdirectory under `M2/` |
-| Architecture references | 12 | 4 per-layer (`c/`, `d/`, `e/`, `m2/`) + 7 per-engine-subdir (`interface/`, `f4/`, `gb-f4/`, `schreyer-resolution/`, `NCAlgebras/`, `NCResolutions/`, `bibasis/`) + 1 supervisor (`system/`) |
+| Architecture references | 13 | 4 per-layer (`c/`, `d/`, `e/`, `m2/`) + 8 per-engine-subdir (`interface/`, `f4/`, `gb-f4/`, `schreyer-resolution/`, `NCAlgebras/`, `NCResolutions/`, `bibasis/`, `unit-tests/`) + 1 supervisor (`system/`) |
 | Per-area engine docs | ~10 | `coefficient-rings.md`, `polynomial-rings.md`, `monoids-and-monomials.md`, … |
 | Per-file deep dives | 483 | `file-<basename>.md` alongside each source file (some consolidated per family) |
 
