@@ -1,0 +1,14 @@
+# `M2/files/` — runtime auxiliary files
+
+A small directory of static files bundled with the distribution.
+
+| File | Role |
+|---|---|
+| `M2-suppressions.supp` | Valgrind suppression list for M2-specific false positives — used by the engine's memory-checking targets |
+| `info-dir-template` | Template for the `dir` file installed alongside texinfo `*.info` outputs, so M2 documentation shows up in `info` menus |
+
+If you add new auxiliary runtime files (config, data, suppressions, …) that
+need to ship with M2 but don't belong to a specific source dir, this is the
+home for them.
+
+[← back to repository TOC](../../README.md#under-m2)
