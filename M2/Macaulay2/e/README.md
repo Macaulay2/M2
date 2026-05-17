@@ -37,6 +37,7 @@ rules, and a reference flow of "M2 user → engine inner loop".
 - [`gb-f4/architecture.md`](gb-f4/architecture.md) — refactored F4 GB engine
 - [`schreyer-resolution/architecture.md`](schreyer-resolution/architecture.md) — F4-style resolution
 - [`NCAlgebras/architecture.md`](NCAlgebras/architecture.md) — non-commutative algebras + GB
+- [`NCResolutions/architecture.md`](NCResolutions/architecture.md) — non-commutative free resolutions
 - [`bibasis/architecture.md`](bibasis/architecture.md) — Boolean involutive bases
 
 ## Subdirectories

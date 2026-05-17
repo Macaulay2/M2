@@ -27,8 +27,9 @@ M2/
 └── ...
 ```
 
-CI uses `M2/BUILD/build` exactly, so commands documented in
-[`CLAUDE.md`](../../CLAUDE.md) work both locally and in CI.
+CI uses `M2/BUILD/build` exactly, so commands documented in the
+project [Wiki](https://github.com/Macaulay2/M2/wiki) and
+`.github/workflows/test_build.yml` work both locally and in CI.
 
 ## Subdirectory conventions
 

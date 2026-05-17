@@ -1,5 +1,7 @@
 # `M2/Macaulay2/e/NCResolutions/` — non-commutative free resolutions
 
+**See [`architecture.md`](architecture.md)** for the standalone architectural reference (current scope, two-line architecture, entry point, why-separate-from-NCAlgebras, algorithmic differences vs commutative, pending future work).
+
 Resolution code for non-commutative graded algebras (working over the rings
 defined in [`../NCAlgebras/`](../NCAlgebras/README.md)).
 

@@ -1,5 +1,7 @@
 # `M2/Macaulay2/system/` — thread supervisor
 
+**See [`architecture.md`](architecture.md)** for the standalone architectural reference (three-layer architecture, `ThreadTask` lifecycle, thread-pool sizing, GC integration, per-thread file-handle state, C/C++ split, synchronisation primitives, "how to extend").
+
 The Macaulay2 binary runs under a small **supervisor process** that manages a
 pool of worker threads and provides the boundary across which user-interrupt
 signals are delivered. The supervisor sources live here.

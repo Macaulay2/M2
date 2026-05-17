@@ -59,6 +59,10 @@ README to its `file-*.md` deep dive.
 
 A bug shows up. You need to find the responsible code fast.
 
+If the crash happens at **startup** (before the prompt), jump
+straight to [`STARTUP.md`](STARTUP.md) — it identifies the eight
+boot phases and their failure modes. For post-startup crashes:
+
 1. **Reproduce in M2** — get a minimal test case.
 2. **Identify the operation involved** — `gb`, `resolution`,
    matrix-multiply, ring-construction, ...
