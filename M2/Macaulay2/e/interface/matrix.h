@@ -24,11 +24,11 @@ typedef struct RingElement RingElement;
 extern "C" {
 #  endif
 
-const Matrix /* or null */ *IM2_Matrix_promote(const FreeModule *newTarget,
+const Matrix /* or null */ *rawMatrixPromote(const FreeModule *newTarget,
                                                const Matrix *f);
 /* connected to rawPromote*/
 
-const Matrix /* or null */ *IM2_Matrix_lift(int *success_return,
+const Matrix /* or null */ *rawMatrixLift(int *success_return,
                                             const FreeModule *newTarget,
                                             const Matrix *f);
 /* connected to rawLift */
@@ -38,54 +38,54 @@ const Matrix /* or null */ *IM2_Matrix_lift(int *success_return,
 /**** Matrix routines *****************************/
 /**************************************************/
 
-const FreeModule *IM2_Matrix_get_target(
+const FreeModule *rawMatrixTarget(
     const Matrix *M); /* drg: connected rawTarget*/
 
-const FreeModule *IM2_Matrix_get_source(
+const FreeModule *rawMatrixSource(
     const Matrix *M); /* drg: connected rawSource, used in rawMatrixColumns*/
 
-int IM2_Matrix_n_rows(const Matrix *M); /* drg: connected rawNumberOfRows*/
+int rawMatrixNumRows(const Matrix *M); /* drg: connected rawNumberOfRows*/
 
-int IM2_Matrix_n_cols(const Matrix *M); /* drg: connected rawNumberOfColumns*/
+int rawMatrixNumColumns(const Matrix *M); /* drg: connected rawNumberOfColumns*/
 
-M2_arrayint IM2_Matrix_get_degree(
+M2_arrayint rawMatrixDegree(
     const Matrix *M); /* drg: connected rawMultiDegree*/
 
-M2_string IM2_Matrix_to_string(const Matrix *M); /* drg: connected */
+M2_string rawMatrixToString(const Matrix *M); /* drg: connected */
 
 unsigned int rawMatrixHash(const Matrix *M); /* drg: connected to "hash"  */
 
-const RingElement /* or null */ *IM2_Matrix_get_entry(
+const RingElement /* or null */ *rawMatrixEntry(
     const Matrix *M,
     int r,
     int c); /* drg: connected rawMatrixEntry, OK*/
 
-engine_RawRingElementArrayArrayOrNull IM2_Matrix_get_entries(const Matrix *M);
+engine_RawRingElementArrayArrayOrNull rawMatrixEntries(const Matrix *M);
 
 /*******************************************************************************/
-const Matrix *IM2_Matrix_identity(
+const Matrix *rawMatrixIdentity(
     const FreeModule *F,
     int preference); /* drg: connected rawIdentity, OK*/
 
-const Matrix /* or null */ *IM2_Matrix_zero(
+const Matrix /* or null */ *rawMatrixZero(
     const FreeModule *F,
     const FreeModule *G,
     int preference); /* drg: connected rawZero, OK */
 
-const Matrix /* or null */ *IM2_Matrix_make1(
+const Matrix /* or null */ *rawMatrix1(
     const FreeModule *target,
     int ncols,
     const engine_RawRingElementArray M,
     int preference); /* drg: connected rawMatrix1, OK */
 
-const Matrix /* or null */ *IM2_Matrix_make2(
+const Matrix /* or null */ *rawMatrix2(
     const FreeModule *target,
     const FreeModule *source,
     M2_arrayint deg,
     const engine_RawRingElementArray M,
     int preference); /* drg: connected rawMatrix2, OK */
 
-const Matrix /* or null */ *IM2_Matrix_make_sparse1(
+const Matrix /* or null */ *rawSparseMatrix1(
     const FreeModule *target,
     int ncols,
     M2_arrayint rows,
@@ -93,7 +93,7 @@ const Matrix /* or null */ *IM2_Matrix_make_sparse1(
     const engine_RawRingElementArray entries,
     int preference); /* drg: connected rawSparseMatrix1, OK */
 
-const Matrix /* or null */ *IM2_Matrix_make_sparse2(
+const Matrix /* or null */ *rawSparseMatrix2(
     const FreeModule *target,
     const FreeModule *source,
     M2_arrayint deg,
@@ -102,11 +102,11 @@ const Matrix /* or null */ *IM2_Matrix_make_sparse2(
     const engine_RawRingElementArray entries,
     int preference); /* drg: connected rawSparseMatrix2, OK */
 
-M2_bool IM2_Matrix_is_implemented_as_dense(
+M2_bool rawMatrixIsDense(
     const Matrix *M); /* connected to rawIsDense */
 /* Is the matrix M implemented in the engine as a dense matrix? */
 
-const Matrix /* or null */ *IM2_Matrix_remake1(
+const Matrix /* or null */ *rawMatrixRemake1(
     const FreeModule *target,
     const Matrix *M,
     int preference); /* drg: connected rawMatrixRemake1, OK  */
@@ -116,7 +116,7 @@ const Matrix /* or null */ *IM2_Matrix_remake1(
    columns of the matrix.
 */
 
-const Matrix /* or null */ *IM2_Matrix_remake2(
+const Matrix /* or null */ *rawMatrixRemake2(
     const FreeModule *target,
     const FreeModule *source,
     M2_arrayint deg,
@@ -127,7 +127,7 @@ const Matrix /* or null */ *IM2_Matrix_remake2(
    the expected rank.
 */
 
-const Matrix /* or null */ *IM2_Matrix_random(
+const Matrix /* or null */ *rawRandomConstantMatrix(
     const Ring *R,
     int r,
     int c,
@@ -141,9 +141,9 @@ const Matrix* /* or null */ rawMatrixReadMsolveFile(const Ring* R, M2_string fil
 
 /**********************************************************************************/
 
-M2_bool IM2_Matrix_is_zero(const Matrix *M); /* drg: connected rawIsZero*/
+M2_bool rawMatrixIsZero(const Matrix *M); /* drg: connected rawIsZero*/
 
-int IM2_Matrix_is_equal(
+int rawMatrixIsEqual(
     const Matrix *M,
     const Matrix *N); /* drg: connected === and to rawIsEqual for use with == */
                       // 1 = true, 0 = false, -1 = error
@@ -152,28 +152,28 @@ int IM2_Matrix_is_equal(
    Therefore, it can happen that M-N == 0, but M != N.
 */
 
-M2_bool IM2_Matrix_is_graded(
+M2_bool rawMatrixIsHomogeneous(
     const Matrix *M); /* drg: connected rawIsHomogeneous*/
 
-const Matrix /* or null */ *IM2_Matrix_concat(
+const Matrix /* or null */ *rawMatrixConcat(
     const engine_RawMatrixArray Ms); /* drg: connected rawConcat*/
 
-const Matrix /* or null */ *IM2_Matrix_direct_sum(
+const Matrix /* or null */ *rawMatrixDirectSum(
     const engine_RawMatrixArray Ms); /* drg: connected rawDirectSum*/
 
-const Matrix /* or null */ *IM2_Matrix_tensor(
+const Matrix /* or null */ *rawMatrixTensor(
     const Matrix *M,
     const Matrix *N); /* drg: connected rawTensor*/
 
-const Matrix /* or null */ *IM2_Matrix_transpose(
+const Matrix /* or null */ *rawMatrixDual(
     const Matrix *M); /* drg: connected rawDual*/
 
-const Matrix /* or null */ *IM2_Matrix_reshape(
+const Matrix /* or null */ *rawMatrixReshape(
     const Matrix *M,
     const FreeModule *F,
     const FreeModule *G); /* drg: connected rawReshape*/
 
-const Matrix /* or null */ *IM2_Matrix_flip(
+const Matrix /* or null */ *rawMatrixFlip(
     const FreeModule *F,
     const FreeModule *G); /* drg: connected rawFlip*/
 
@@ -185,16 +185,16 @@ const Matrix /* or null */ *rawWedgeProduct(
    exterior(p,F) ** exterior(q,F) --> exterior(p+q,F)
 */
 
-const Matrix /* or null */ *IM2_Matrix_submatrix(
+const Matrix /* or null */ *rawMatrixSubmatrix(
     const Matrix *M,
     M2_arrayint rows,
     M2_arrayint cols); /* drg: connected rawSubmatrix*/
 
-const Matrix /* or null */ *IM2_Matrix_submatrix1(
+const Matrix /* or null */ *rawMatrixSubmatrixColumns(
     const Matrix *M,
     M2_arrayint cols); /* drg: connected rawSubmatrix*/
 
-const Matrix /* or null */ *IM2_Matrix_koszul(
+const Matrix /* or null */ *rawMatrixKoszul(
     int p,
     const Matrix *M); /* drg: connected rawKoszul*/
 
@@ -209,22 +209,22 @@ const Matrix /* or null */ *rawKoszulMonomials(
    exterior algebra (on this set of variables).  The actual commutativity of the
    common ring of M and N is ignored. */
 
-const Matrix /* or null */ *IM2_Matrix_symm(
+const Matrix /* or null */ *rawMatrixSymmetricPower(
     int p,
     const Matrix *M); /* drg: connected rawSymmetricPower*/
 
-const Matrix /* or null */ *IM2_Matrix_exterior(
+const Matrix /* or null */ *rawMatrixExteriorPower(
     int p,
     const Matrix *M,
     int strategy); /* drg: connected rawExteriorPower*/
 
-M2_arrayint IM2_Matrix_sort_columns(
+M2_arrayint rawMatrixSortColumns(
     const Matrix *M,
     int deg_order,
     int mon_order); /* drg: connected rawSortColumns*/
 
 const Matrix /* or null */ *
-IM2_Matrix_minors(int p, const Matrix *M, int strategy); /* drg: unconnected*/
+rawMatrixMinors(int p, const Matrix *M, int strategy); /* drg: unconnected*/
 
 const Matrix /* or null */ *rawMinors(
     int p,
@@ -239,11 +239,11 @@ const Matrix /* or null */ *rawMinors(
    if given, otherwise starting at the first (0..p-1,0..p-1).
 */
 
-const Matrix /* or null */ *IM2_Matrix_pfaffians(
+const Matrix /* or null */ *rawMatrixPfaffians(
     int p,
     const Matrix *M); /* drg: connected rawPfaffians*/
 
-const RingElement /* or null */ *IM2_Matrix_pfaffian(
+const RingElement /* or null */ *rawMatrixPfaffian(
     const Matrix *M);
 
 const Matrix *rawMatrixCompress(
@@ -297,15 +297,15 @@ const Matrix /* or null */ *IM2_Matrix_remove_content(
 
 /* Routines for use when the base ring is a polynomial ring of some sort */
 
-const Matrix /* or null */ *IM2_Matrix_diff(
+const Matrix /* or null */ *rawMatrixDiff(
     const Matrix *M,
     const Matrix *N); /* drg: connected rawMatrixDiff*/
 
-const Matrix /* or null */ *IM2_Matrix_contract(
+const Matrix /* or null */ *rawMatrixContract(
     const Matrix *M,
     const Matrix *N); /* drg: connected rawMatrixContract*/
 
-const Matrix /* or null */ *IM2_Matrix_homogenize(
+const Matrix /* or null */ *rawMatrixHomogenize(
     const Matrix *M,
     int var,
     M2_arrayint wts); /* drg: connected rawHomogenize*/
@@ -334,23 +334,23 @@ const Matrix /* or null */ *rawCoefficients(
  * will be used (which one is left undefined)
  */
 
-const Matrix /* or null */ *IM2_Matrix_monomials(
+const Matrix /* or null */ *rawMatrixMonomials(
     M2_arrayint vars,
     const Matrix *M); /* drg: connected rawMonomials*/
 
-const Matrix *IM2_Matrix_initial(
+const Matrix *rawMatrixInitial(
     int nparts,
     const Matrix *M); /* drg: connected rawInitial*/
 
-M2_arrayint IM2_Matrix_elim_vars(
+M2_arrayint rawMatrixEliminateVariables(
     int nparts,
     const Matrix *M); /* drg: connected rawEliminateVariables*/
 
-M2_arrayint IM2_Matrix_keep_vars(
+M2_arrayint rawMatrixKeepVariables(
     int nparts,
     const Matrix *M); /* drg: connected rawKeepVariables*/
 
-engine_RawMatrixAndInt IM2_Matrix_divide_by_var(
+engine_RawMatrixAndInt rawMatrixDivideByVariable(
     const Matrix *M,
     int var,
     int maxdegree); /* drg: connected rawDivideByVariable*/
