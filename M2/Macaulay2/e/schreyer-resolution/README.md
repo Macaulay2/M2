@@ -17,6 +17,8 @@ of Macaulay-matrix form.
 | [`file-res-f4-computation.md`](file-res-f4-computation.md) | `F4ResComputation` (top-level) |
 | [`file-res-schreyer-frame.md`](file-res-schreyer-frame.md) | `SchreyerFrame` |
 | [`file-res-poly-ring.md`](file-res-poly-ring.md) | `ResPolyRing` / `ResPolynomial` |
+| [`file-res-monomial-sorter.md`](file-res-monomial-sorter.md) | `MonomialSorterObject` |
+| [`file-res-dep-graph.md`](file-res-dep-graph.md) | TBB dependency graph |
 
 ## Files
 

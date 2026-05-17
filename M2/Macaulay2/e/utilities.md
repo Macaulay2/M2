@@ -9,8 +9,8 @@ reporting, debug printing, overflow-checked arithmetic, and a bump allocator.
 
 | File pair | Purpose |
 |---|---|
-| `buffer.{cpp,hpp}` | Append-only byte buffer — used for serialisation, pretty-printing, error messages |
-| `text-io.{cpp,hpp}` | Text I/O helpers layered on `buffer` |
+| `buffer.{cpp,hpp}` | Append-only byte buffer — used for serialisation, pretty-printing, error messages. **Deep dive:** [`file-buffer.md`](file-buffer.md) |
+| `text-io.{cpp,hpp}` | Text I/O helpers layered on `buffer`. **Deep dive:** [`file-text-io.md`](file-text-io.md) |
 
 The `buffer` is intentionally simpler than `std::ostringstream` — it is
 GC-aware (uses `our_new_delete`) and avoids C++ stream-state overhead in hot
@@ -20,8 +20,8 @@ loops.
 
 | File pair | Purpose |
 |---|---|
-| `error.{cpp,hpp}` | Engine-side error reporting (sets a thread-local error message the interpreter then surfaces) |
-| `debug.{cpp,hpp}` | Debug-time printing of engine values |
+| `error.{c,h}` | Engine-side error reporting (sets a thread-local error message the interpreter then surfaces). **Deep dive:** [`file-error.md`](file-error.md) |
+| `debug.{cpp,hpp}` | Debug-time printing of engine values. **Deep dive:** [`file-debug.md`](file-debug.md) |
 
 ## Overflow-checked arithmetic
 
@@ -38,7 +38,7 @@ section) for the list of files that depend on `overflow.hpp`.
 
 | File pair / header | Purpose |
 |---|---|
-| `MemoryBlock.hpp` | Bump-pointer allocator used by F4 inner loops and other tight code paths |
+| `MemoryBlock.hpp` | Bump-pointer allocator used by F4 inner loops and other tight code paths. **Deep dive:** [`file-MemoryBlock.md`](file-MemoryBlock.md) |
 | `newdelete.hpp` (in subdirectories) | GC-friendly `operator new` / `delete` overloads (`our_new_delete`, `our_new_gc`) |
 
 For a deeper discussion of memory and GC see

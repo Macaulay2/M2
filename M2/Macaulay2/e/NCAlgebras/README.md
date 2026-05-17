@@ -11,6 +11,11 @@ non-commutative Gröbner bases (including a non-commutative F4 variant).
 | [`file-FreeAlgebra.md`](file-FreeAlgebra.md) | `FreeAlgebra` (free algebra) |
 | [`file-NCGroebner.md`](file-NCGroebner.md) | `NCGroebner` (Buchberger-style NC GB) |
 | [`file-NCF4.md`](file-NCF4.md) | `NCF4` (F4-style NC GB) |
+| [`file-WordTable.md`](file-WordTable.md) | `WordTable` (leading-word index) |
+| [`file-OverlapTable.md`](file-OverlapTable.md) | `OverlapTable` (overlap queue / NC S-pairs) |
+| [`file-NCReduction.md`](file-NCReduction.md) | `PolynomialHeap` (NC reduction) |
+| [`file-SuffixTree.md`](file-SuffixTree.md) | `SuffixTree` (experimental word index) |
+| [`file-FreeAlgebraQuotient.md`](file-FreeAlgebraQuotient.md) | `FreeAlgebraQuotient` |
 
 ## Files
 

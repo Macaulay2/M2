@@ -18,6 +18,8 @@ hard to refactor. Both are still built.
 | [`file-f4-spairs.md`](file-f4-spairs.md) | `F4SPairSet` |
 | [`file-f4-m2-interface.md`](file-f4-m2-interface.md) | `F4toM2Interface` |
 | [`file-monhashtable.md`](file-monhashtable.md) | Monomial hash-table traits |
+| [`file-varpower-monomial.md`](file-varpower-monomial.md) | Sparse `(variable, exponent)` encoding |
+| [`file-ntuple-monomial.md`](file-ntuple-monomial.md) | Dense `int64_t[nvars]` encoding |
 
 ## Files
 

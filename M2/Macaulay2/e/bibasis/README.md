@@ -10,6 +10,15 @@ specific cones) faster than with a generic GB.
 
 The original short notes are in plain text in [`README`](README).
 
+## Per-file deep dives
+
+| File doc | Class |
+|---|---|
+| [`file-bibasis.md`](file-bibasis.md) | `BIBasis` driver |
+| [`file-monom.md`](file-monom.md) | `Monom` + Lex/DegLex/DegRevLex specialisations |
+| [`file-janettree.md`](file-janettree.md) | `JanetTree<MonomType>` involutive-division structure |
+| [`file-polynom.md`](file-polynom.md) | `Polynom<MonomType>` polynomial value type |
+
 ## Files
 
 ### Driver

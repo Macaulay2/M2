@@ -5,7 +5,7 @@ defined in [`../NCAlgebras/`](../NCAlgebras/README.md)).
 
 | File | Role |
 |---|---|
-| `nc-res-computation.{cpp,hpp}` | Top-level NC-resolution Computation |
+| `nc-res-computation.{cpp,hpp}` | Top-level NC-resolution Computation. **Deep dive:** [`file-nc-res-computation.md`](file-nc-res-computation.md) |
 | `notes.txt` | Design and algorithm notes |
 
 This subdirectory is small and very young; expect more files to appear as the

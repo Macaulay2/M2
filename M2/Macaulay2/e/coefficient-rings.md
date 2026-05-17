@@ -30,10 +30,10 @@ versa) so old code can call new and vice-versa.
 | File pair | Purpose |
 |---|---|
 | `aring.{cpp,hpp}` | Tag enum + dispatcher base for all aring types. **Deep dive:** [`file-aring.md`](file-aring.md) |
-| `aring-glue.hpp` | Templates that build a legacy `Ring` wrapper around an aring |
+| `aring-glue.hpp` | Templates that build a legacy `Ring` wrapper around an aring. **Deep dive:** [`file-aring-glue.md`](file-aring-glue.md) |
 | `aring-translate.hpp` | Compile-time translation between ring types (e.g. promoting `int` to `mpz_t`) |
 | `aring-wrap.{cpp,hpp}` | Concrete wrapper instantiations |
-| `coeffrings.{cpp,hpp}` | Registry: maps a coefficient-ring tag to its concrete type |
+| `coeffrings.{cpp,hpp}` | Registry: maps a coefficient-ring tag to its concrete type. **Deep dive:** [`file-coeffrings.md`](file-coeffrings.md) |
 
 ### Integers (ZZ)
 
@@ -41,7 +41,7 @@ versa) so old code can call new and vice-versa.
 |---|---|
 | `ZZ.{cpp,hpp}` | Legacy ZZ (GMP) |
 | `aring-zz-gmp.{cpp,hpp}` | aring ZZ using `mpz_t` |
-| `aring-zz-flint.{cpp,hpp}` | aring ZZ using FLINT's `fmpz_t` |
+| `aring-zz-flint.{cpp,hpp}` | aring ZZ using FLINT's `fmpz_t`. **Deep dive:** [`file-aring-zz-flint.md`](file-aring-zz-flint.md) |
 
 ### Rationals (QQ)
 
@@ -57,7 +57,7 @@ versa) so old code can call new and vice-versa.
 |---|---|
 | `ZZp.{cpp,hpp}` | Legacy Z/p |
 | `aring-zzp.{cpp,hpp}` | Generic aring Z/p (table-based for small p) |
-| `aring-zzp-flint.{cpp,hpp}` | Z/p via FLINT (`nmod`) |
+| `aring-zzp-flint.{cpp,hpp}` | Z/p via FLINT (`nmod`). **Deep dive:** [`file-aring-zzp-flint.md`](file-aring-zzp-flint.md) |
 | `aring-zzp-ffpack.{cpp,hpp}` | Z/p via FFLAS-FFPACK (BLAS-style dispatch) |
 
 ### Galois fields (GF)
@@ -73,7 +73,7 @@ versa) so old code can call new and vice-versa.
 
 | File pair | Precision model |
 |---|---|
-| `aring-RR.{cpp,hpp}` | Hardware `double` |
+| `aring-RR.{cpp,hpp}` | Hardware `double`. **Deep dive:** [`file-aring-RR.md`](file-aring-RR.md) |
 | `aring-RRR.{cpp,hpp}` | Arbitrary-precision via MPFR |
 | `aring-RRi.{cpp,hpp}` | Real intervals (Arb / MPFI) |
 | `aring-CC.{cpp,hpp}` | Complex (pair of `double`) |

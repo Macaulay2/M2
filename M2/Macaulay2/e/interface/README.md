@@ -22,6 +22,26 @@ types so it can be called from `.dd`/`.d` after translation by
 This directory replaces the older flat `x-*.cpp` layout that still exists at
 the top of `e/`. New code goes here; old code is being migrated.
 
+## Per-file deep dives
+
+| File doc | Subject |
+|---|---|
+| [`file-aring-interface.md`](file-aring-interface.md) | `interface/aring.{h,cpp}` — coefficient-ring constructors |
+| [`file-groebner-interface.md`](file-groebner-interface.md) | `interface/groebner.{h,cpp}` — GB / resolution entry points |
+| [`file-ring-interface.md`](file-ring-interface.md) | `interface/ring.{h,cpp}` — legacy `Ring` constructors |
+| [`file-matrix-interface.md`](file-matrix-interface.md) | `interface/matrix.{h,cpp}` — immutable `Matrix` API |
+| [`file-freemodule-interface.md`](file-freemodule-interface.md) | `interface/freemodule.{h,cpp}` — `FreeModule` API |
+| [`file-monoid-interface.md`](file-monoid-interface.md) | `interface/monoid.{h,cpp}` — `Monoid` API |
+| [`file-computation-interface.md`](file-computation-interface.md) | `interface/computation.h` — status / stop-condition enums |
+| [`file-ringelement-interface.md`](file-ringelement-interface.md) | `interface/ringelement.{h,cpp}` — `RingElement` API |
+| [`file-ringmap-interface.md`](file-ringmap-interface.md) | `interface/ringmap.{h,cpp}` — `RingMap` API |
+| [`file-monomial-ideal-interface.md`](file-monomial-ideal-interface.md) | `interface/monomial-ideal.{h,cpp}` — `MonomialIdeal` API |
+| [`file-mutable-matrix-interface.md`](file-mutable-matrix-interface.md) | `interface/mutable-matrix.{h,cpp}` — `MutableMatrix` API |
+| [`file-monomial-ordering-interface.md`](file-monomial-ordering-interface.md) | `interface/monomial-ordering.{h,cpp}` — ordering enum + constructors |
+| [`file-flint-interface.md`](file-flint-interface.md) | `interface/flint.{h,cpp}` — primality / factorisation via FLINT |
+| [`file-cone-interface.md`](file-cone-interface.md) | `interface/cone.{h,cpp}` — rational polyhedral cone operations |
+| [`file-factory-interface.md`](file-factory-interface.md) | `interface/factory.{h,cpp}` — polynomial GCD / factorisation |
+
 ## Areas
 
 | Area | Files | Exposes |
