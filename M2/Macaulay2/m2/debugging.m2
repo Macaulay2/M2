@@ -162,8 +162,8 @@ localSymbols Type := X -> select2(X,localSymbols ())
 listSymbols = method()
 listSymbols Dictionary := d -> listSymbols values d
 listSymbols List := x -> TABLE prepend(
-    apply({"symbol", "class", "value", "location of symbol"},s->TH {s}),
-    apply(x, y -> apply({y,Abbreviate {class value y},Abbreviate {value y},locate y},s->TD {s}))
+    apply({"symbol", "class", "location of symbol", "value"},s->TH {s}),
+    apply(x, y -> apply({y,Abbreviate {class value y},locate y,Abbreviate {value y}},s->TD {s}))
     );
 
 
