@@ -430,13 +430,12 @@ Node
       Invent. Math. 110 (1992) 207-235. However, we use @TO (localize, Ideal, Ideal)@.
 
       The @TT "Strategy"@ option value sets the strategy option for @TO localize@, and should be one of the following:
-      -- TODO: The default value is 2.
 
       @UL{
-	  LI ("Strategy => 0", " -- Uses ", TT "localize", " Strategy 0"),
-	  LI ("Strategy => 1", " -- Uses ", TT "localize", " Strategy 1"),
-	  LI ("Strategy => 2", " -- Uses ", TT "localize", " Strategy 2")
-	  }@
+          LI ("Strategy => 0", " -- Uses ", TO "localize", " Strategy 0"),
+          LI ("Strategy => 1", " -- Uses ", TO "localize", " Strategy 1"),
+          LI ("Strategy => 2", " -- Uses ", TO "localize", " Strategy 2 - default")
+      }@
 
       The @TT "Increment"@ option value should be an integer. The algorithm given in
       Eisenbud-Huneke-Vasconcelos, Invent. Math. 110 (1992) 207-235, relies on @TT "topComponents(I + P^m)"@
