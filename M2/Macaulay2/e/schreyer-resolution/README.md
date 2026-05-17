@@ -10,6 +10,14 @@ each homological degree. This dramatically reduces the work compared to a
 naïve approach. The F4 layer here computes the necessary reductions in batches
 of Macaulay-matrix form.
 
+## Per-file deep dives
+
+| File doc | Class |
+|---|---|
+| [`file-res-f4-computation.md`](file-res-f4-computation.md) | `F4ResComputation` (top-level) |
+| [`file-res-schreyer-frame.md`](file-res-schreyer-frame.md) | `SchreyerFrame` |
+| [`file-res-poly-ring.md`](file-res-poly-ring.md) | `ResPolyRing` / `ResPolynomial` |
+
 ## Files
 
 ### Driver

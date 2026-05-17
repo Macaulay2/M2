@@ -25,17 +25,17 @@ rings.
 
 | File pair | What it builds |
 |---|---|
-| `qring.{cpp,hpp}` | Quotient ring `R/I` |
-| `frac.{cpp,hpp}` | Field of fractions of an integral domain |
-| `localring.{cpp,hpp}` | Local ring (localised at a prime ideal) |
+| `qring.{cpp,hpp}` | Quotient ring `R/I`. **Deep dive:** [`file-qring.md`](file-qring.md) |
+| `frac.{cpp,hpp}` | Field of fractions of an integral domain. **Deep dive:** [`file-frac.md`](file-frac.md) |
+| `localring.{cpp,hpp}` | Local ring (localised at a prime ideal). **Deep dive:** [`file-localring.md`](file-localring.md) |
 
 ## Non-commutative algebras
 
 | File pair | What it builds |
 |---|---|
-| `weylalg.{cpp,hpp}` | Weyl algebra (rings of differential operators) |
-| `skewpoly.{cpp,hpp}` | Skew-commutative polynomial ring (exterior-algebra-like) |
-| `solvable.{cpp,hpp}` | Solvable algebras (PBW-style ordered algebras) |
+| `weylalg.{cpp,hpp}` | Weyl algebra (rings of differential operators). **Deep dive:** [`file-weylalg.md`](file-weylalg.md) |
+| `skewpoly.{cpp,hpp}` | Skew-commutative polynomial ring (exterior-algebra-like). **Deep dive:** [`file-skewpoly.md`](file-skewpoly.md) |
+| `solvable.{cpp,hpp}` | Solvable algebras (PBW-style ordered algebras). **Deep dive:** [`file-solvable.md`](file-solvable.md) |
 
 The free-algebra side of non-commutative algebra lives in
 [`NCAlgebras/`](NCAlgebras/README.md); the files here are the

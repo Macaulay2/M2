@@ -163,6 +163,24 @@ Documented multi-level paths under the entries above:
 | `M2/Macaulay2/editors/prism/` | Prism (JS) syntax templates — README inside |
 | `M2/Macaulay2/editors/pygments/` | Pygments (Python) syntax templates — README inside |
 
+**Under [`M2/BUILD/docker/`](M2/BUILD/docker/README.md)**
+
+| Path | Purpose |
+|---|---|
+| [`M2/BUILD/docker/actions/`](M2/BUILD/docker/actions/README.md) | GitHub Actions Ubuntu container |
+| [`M2/BUILD/docker/arch/`](M2/BUILD/docker/arch/README.md) | Arch Linux container (experimental) |
+| [`M2/BUILD/docker/autotools/`](M2/BUILD/docker/autotools/README.md) | Reusable `build-autotools` target snippet |
+| [`M2/BUILD/docker/brew/`](M2/BUILD/docker/brew/README.md) | Homebrew bottling container |
+| [`M2/BUILD/docker/debian/`](M2/BUILD/docker/debian/README.md) | Debian / Ubuntu `.deb` packaging |
+| [`M2/BUILD/docker/fedora/`](M2/BUILD/docker/fedora/README.md) | Fedora `.rpm` packaging |
+| [`M2/BUILD/docker/gentoo/`](M2/BUILD/docker/gentoo/README.md) | Gentoo container (experimental) |
+| [`M2/BUILD/docker/nightly/`](M2/BUILD/docker/nightly/README.md) | Nightly-build smoke test |
+| [`M2/BUILD/docker/rhel/`](M2/BUILD/docker/rhel/README.md) | RHEL-compatible build container |
+| [`M2/BUILD/docker/storage/`](M2/BUILD/docker/storage/README.md) | Container home-dir scratch assets |
+| [`M2/BUILD/docker/testbot/`](M2/BUILD/docker/testbot/README.md) | Workshop testbot container |
+| [`M2/BUILD/docker/ubuntu/`](M2/BUILD/docker/ubuntu/README.md) | CMake-based Ubuntu container |
+| [`M2/BUILD/docker/valgrind/`](M2/BUILD/docker/valgrind/README.md) | Valgrind debugging container |
+
 **Under [`M2/Macaulay2/e/`](M2/Macaulay2/e/README.md)** — full engine subdirectory and per-area listing is in the [Engine deep-dive](#engine-deep-dive-m2macaulay2e) section.
 
 ### Cross-cutting concerns
@@ -193,14 +211,95 @@ tour.
 
 ### Single-file deep dives
 
-Dedicated walkthroughs for especially central engine classes:
+Dedicated walkthroughs for especially central engine classes
+(convention: `file-<basename>.md` in `M2/Macaulay2/e/`):
+
+**Foundations**
 
 | File doc | Class | Area |
 |---|---|---|
 | [file-monoid.md](M2/Macaulay2/e/file-monoid.md) | `Monoid` | Monoids & monomials |
+| [file-aring.md](M2/Macaulay2/e/file-aring.md) | `aring` framework / dispatcher | Coefficient rings |
 | [file-polyring.md](M2/Macaulay2/e/file-polyring.md) | `PolynomialRing` | Polynomial rings |
 | [file-freemod.md](M2/Macaulay2/e/file-freemod.md) | `FreeModule` | Free modules |
-| [file-computation-framework.md](M2/Macaulay2/e/file-computation-framework.md) | `Computation` | GB / resolutions / other |
+| [file-schorder.md](M2/Macaulay2/e/file-schorder.md) | `SchreyerOrder` | Free modules |
+| [file-matrix.md](M2/Macaulay2/e/file-matrix.md) | `Matrix` (immutable) | Matrices |
+| [file-mutablemat.md](M2/Macaulay2/e/file-mutablemat.md) | `MutableMatrix` | Matrices |
+
+**Polynomial ring variants**
+
+| File doc | Class | Area |
+|---|---|---|
+| [file-frac.md](M2/Macaulay2/e/file-frac.md) | `FractionField` | Polynomial rings |
+| [file-qring.md](M2/Macaulay2/e/file-qring.md) | `QRingInfo` / `PolyQuotient` | Polynomial rings |
+| [file-localring.md](M2/Macaulay2/e/file-localring.md) | `LocalRing` | Polynomial rings |
+| [file-weylalg.md](M2/Macaulay2/e/file-weylalg.md) | `WeylAlgebra` | Polynomial rings |
+| [file-skewpoly.md](M2/Macaulay2/e/file-skewpoly.md) | `SkewPolynomialRing` | Polynomial rings |
+| [file-solvable.md](M2/Macaulay2/e/file-solvable.md) | `SolvableAlgebra` (PBW) | Polynomial rings |
+
+**Monomial machinery**
+
+| File doc | Class | Area |
+|---|---|---|
+| [file-imonorder.md](M2/Macaulay2/e/file-imonorder.md) | Internal monomial order | Monoids & monomials |
+| [file-montable.md](M2/Macaulay2/e/file-montable.md) | `MonomialTable` | Monoids & monomials |
+
+**Matrices (template internals)**
+
+| File doc | Class | Area |
+|---|---|---|
+| [file-dmat.md](M2/Macaulay2/e/file-dmat.md) | `DMat<R>` (dense matrix template) | Matrices |
+
+**Ring elements and maps**
+
+| File doc | Class | Area |
+|---|---|---|
+| [file-relem.md](M2/Macaulay2/e/file-relem.md) | `RingElement` | Ring elements & maps |
+| [file-ringmap.md](M2/Macaulay2/e/file-ringmap.md) | `RingMap` | Ring elements & maps |
+
+**Computations**
+
+| File doc | Class | Area |
+|---|---|---|
+| [file-computation-framework.md](M2/Macaulay2/e/file-computation-framework.md) | `Computation` (abstract base) | GB / res / other |
+| [file-comp-gb.md](M2/Macaulay2/e/file-comp-gb.md) | `GBComputation` | Gröbner bases |
+| [file-gb-default.md](M2/Macaulay2/e/file-gb-default.md) | `gbA` (default GB algorithm) | Gröbner bases |
+| [file-gb-variants.md](M2/Macaulay2/e/file-gb-variants.md) | `gb-homog2`/`gb-sugarless`/`gb-toric`/`gb-walk` | Gröbner bases |
+| [file-mathicgb-interface.md](M2/Macaulay2/e/file-mathicgb-interface.md) | mathicgb bridge | Gröbner bases |
+| [file-reducedgb.md](M2/Macaulay2/e/file-reducedgb.md) | `ReducedGB` family | Gröbner bases |
+| [file-spair.md](M2/Macaulay2/e/file-spair.md) | `s_pair`, `gb_elem` | Gröbner bases |
+| [file-gbweight.md](M2/Macaulay2/e/file-gbweight.md) | `GBWeight` | Gröbner bases |
+| [file-comp-res.md](M2/Macaulay2/e/file-comp-res.md) | `ResolutionComputation` | Resolutions |
+| [file-gbring.md](M2/Macaulay2/e/file-gbring.md) | `GBRing` / `gbvector` | Gröbner bases |
+| [file-Eschreyer.md](M2/Macaulay2/e/file-Eschreyer.md) | `GBKernelComputation` (older Schreyer) | Resolutions |
+| [file-betti.md](M2/Macaulay2/e/file-betti.md) | `BettiDisplay` | Resolutions |
+| [file-hilb.md](M2/Macaulay2/e/file-hilb.md) | Hilbert function (Bigatti) | Other computations |
+| [file-LLL.md](M2/Macaulay2/e/file-LLL.md) | LLL lattice reduction | Other computations |
+| [file-monideal.md](M2/Macaulay2/e/file-monideal.md) | `MonomialIdeal` | Other computations |
+| [file-NAG.md](M2/Macaulay2/e/file-NAG.md) | Numerical AG | Other computations |
+| [file-SLP.md](M2/Macaulay2/e/file-SLP.md) | Straight-line programs | Other computations |
+| [file-assprime.md](M2/Macaulay2/e/file-assprime.md) | `AssociatedPrimes` | Other computations |
+| [file-comb.md](M2/Macaulay2/e/file-comb.md) | `Subsets` (combinatorial helpers) | Other computations |
+| [file-overflow.md](M2/Macaulay2/e/file-overflow.md) | Overflow-checked arithmetic | Utilities |
+
+**Subdirectory file deep dives** (per-file docs alongside their source):
+
+| Subdir | File doc | Class |
+|---|---|---|
+| `NCAlgebras/` | [NCAlgebras/file-FreeMonoid.md](M2/Macaulay2/e/NCAlgebras/file-FreeMonoid.md) | `FreeMonoid` |
+| `NCAlgebras/` | [NCAlgebras/file-FreeAlgebra.md](M2/Macaulay2/e/NCAlgebras/file-FreeAlgebra.md) | `FreeAlgebra` |
+| `NCAlgebras/` | [NCAlgebras/file-NCGroebner.md](M2/Macaulay2/e/NCAlgebras/file-NCGroebner.md) | `NCGroebner` |
+| `NCAlgebras/` | [NCAlgebras/file-NCF4.md](M2/Macaulay2/e/NCAlgebras/file-NCF4.md) | `NCF4` |
+| `f4/` | [f4/file-f4-computation.md](M2/Macaulay2/e/f4/file-f4-computation.md) | `F4Computation` |
+| `f4/` | [f4/file-f4-spairs.md](M2/Macaulay2/e/f4/file-f4-spairs.md) | `F4SPairSet` |
+| `f4/` | [f4/file-f4-m2-interface.md](M2/Macaulay2/e/f4/file-f4-m2-interface.md) | `F4toM2Interface` |
+| `f4/` | [f4/file-monhashtable.md](M2/Macaulay2/e/f4/file-monhashtable.md) | Monomial hash-table traits |
+| `gb-f4/` | [gb-f4/file-GBF4Computation.md](M2/Macaulay2/e/gb-f4/file-GBF4Computation.md) | `GBF4Computation` |
+| `gb-f4/` | [gb-f4/file-MacaulayMatrix.md](M2/Macaulay2/e/gb-f4/file-MacaulayMatrix.md) | `MacaulayMatrix` |
+| `gb-f4/` | [gb-f4/file-Basis.md](M2/Macaulay2/e/gb-f4/file-Basis.md) | `Basis` |
+| `schreyer-resolution/` | [schreyer-resolution/file-res-f4-computation.md](M2/Macaulay2/e/schreyer-resolution/file-res-f4-computation.md) | `F4ResComputation` |
+| `schreyer-resolution/` | [schreyer-resolution/file-res-schreyer-frame.md](M2/Macaulay2/e/schreyer-resolution/file-res-schreyer-frame.md) | `SchreyerFrame` |
+| `schreyer-resolution/` | [schreyer-resolution/file-res-poly-ring.md](M2/Macaulay2/e/schreyer-resolution/file-res-poly-ring.md) | `ResPolyRing` / `ResPolynomial` |
 
 ### Per-area docs (quick navigation)
 
@@ -212,7 +311,7 @@ you care about.
 |---|---|---|
 | Coefficient rings | [coefficient-rings.md](M2/Macaulay2/e/coefficient-rings.md) | `aring-*`, `ZZ`, `ZZp`, `GF`, `coeffrings` |
 | Polynomial rings | [polynomial-rings.md](M2/Macaulay2/e/polynomial-rings.md) | `polyring`, `poly`, `qring`, `frac`, `weylalg`, `skewpoly`, `solvable`, `localring`, `BasicPoly*` |
-| Monoids & monomials | [monoids-and-monomials.md](M2/Macaulay2/e/monoids-and-monomials.md) | `monoid`, `monorder`, `imonorder`, `varpower`, `ntuple`, `montable*`, `ExponentList`, `ExponentVector` |
+| Monoids & monomials | [monoids-and-monomials.md](M2/Macaulay2/e/monoids-and-monomials.md) | `monoid`, `monorder`, `imonorder`, `montable*`, `ExponentList`, `ExponentVector`; `f4/varpower-monomial`, `f4/ntuple-monomial` |
 | Matrices | [matrices.md](M2/Macaulay2/e/matrices.md) | `matrix*`, `dmat*`, `smat`, `mat-*`, `mutablemat*` |
 | Free modules | [free-modules.md](M2/Macaulay2/e/free-modules.md) | `freemod`, `schorder` |
 | Gröbner bases | [groebner-bases.md](M2/Macaulay2/e/groebner-bases.md) | `comp-gb*`, `gb-*`, `reducedgb*`, `gbring`, `gbweight`, `spair`, `mathicgb-interface` |
@@ -343,7 +442,7 @@ Concrete top-level ring files (predating `aring`, still used in many paths):
 | `monoid.{cpp,hpp}` | Monoid base |
 | `monorder.{cpp,hpp}`, `imonorder.{cpp,hpp}` | Monomial orders, internal-monomial-order helpers |
 | `montable.{cpp,hpp}`, `montableZZ.{cpp,hpp}` | Monomial lookup tables (over ZZ-coefficient case included) |
-| `varpower.{cpp,hpp}`, `ntuple.{cpp,hpp}` | Two monomial encodings |
+| `ExponentList.{cpp,hpp}`, `ExponentVector.hpp` | Top-level monomial encodings (sparse list + dense vector view); `f4/varpower-monomial.hpp`, `f4/ntuple-monomial.hpp` are F4-internal variants |
 | `ExponentList.{cpp,hpp}`, `ExponentVector.hpp` | Variable-length and fixed-length exponent representations used in newer code |
 
 #### Matrices

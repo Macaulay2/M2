@@ -36,17 +36,101 @@ top-level README.
 
 ## Single-file deep dives
 
-For especially central classes, there are dedicated single-file walkthroughs:
+For especially central classes, there are dedicated single-file walkthroughs.
+Convention: `file-<basename>.md` in this directory.
+
+### Foundations
 
 | File doc | Class | Area |
 |---|---|---|
 | [`file-monoid.md`](file-monoid.md) | `Monoid` | [Monoids & monomials](monoids-and-monomials.md) |
+| [`file-aring.md`](file-aring.md) | `aring` framework / dispatcher | [Coefficient rings](coefficient-rings.md) |
 | [`file-polyring.md`](file-polyring.md) | `PolynomialRing` | [Polynomial rings](polynomial-rings.md) |
 | [`file-freemod.md`](file-freemod.md) | `FreeModule` | [Free modules](free-modules.md) |
-| [`file-computation-framework.md`](file-computation-framework.md) | `Computation` | [Gröbner bases](groebner-bases.md), [resolutions](resolutions.md), [other computations](computations.md) |
+| [`file-schorder.md`](file-schorder.md) | `SchreyerOrder` | [Free modules](free-modules.md) |
+| [`file-matrix.md`](file-matrix.md) | `Matrix` (immutable) | [Matrices](matrices.md) |
+| [`file-mutablemat.md`](file-mutablemat.md) | `MutableMatrix` | [Matrices](matrices.md) |
+
+### Polynomial ring variants
+
+| File doc | Class | Area |
+|---|---|---|
+| [`file-frac.md`](file-frac.md) | `FractionField` | [Polynomial rings](polynomial-rings.md) |
+| [`file-qring.md`](file-qring.md) | `QRingInfo` / `PolyQuotient` | [Polynomial rings](polynomial-rings.md) |
+| [`file-localring.md`](file-localring.md) | `LocalRing` | [Polynomial rings](polynomial-rings.md) |
+| [`file-weylalg.md`](file-weylalg.md) | `WeylAlgebra` | [Polynomial rings](polynomial-rings.md) |
+| [`file-skewpoly.md`](file-skewpoly.md) | `SkewPolynomialRing` | [Polynomial rings](polynomial-rings.md) |
+| [`file-solvable.md`](file-solvable.md) | `SolvableAlgebra` (PBW) | [Polynomial rings](polynomial-rings.md) |
+
+### Monomial machinery
+
+| File doc | Class | Area |
+|---|---|---|
+| [`file-imonorder.md`](file-imonorder.md) | Internal monomial order | [Monoids & monomials](monoids-and-monomials.md) |
+| [`file-montable.md`](file-montable.md) | `MonomialTable` | [Monoids & monomials](monoids-and-monomials.md) |
+
+### Matrices
+
+| File doc | Class | Area |
+|---|---|---|
+| [`file-dmat.md`](file-dmat.md) | `DMat<R>` (dense matrix template) | [Matrices](matrices.md) |
+
+### Ring elements and maps
+
+| File doc | Class | Area |
+|---|---|---|
+| [`file-relem.md`](file-relem.md) | `RingElement` | [Ring elements & maps](ring-elements-and-maps.md) |
+| [`file-ringmap.md`](file-ringmap.md) | `RingMap` | [Ring elements & maps](ring-elements-and-maps.md) |
+
+### Computations
+
+| File doc | Class | Area |
+|---|---|---|
+| [`file-computation-framework.md`](file-computation-framework.md) | `Computation` (abstract base) | [GB](groebner-bases.md), [res](resolutions.md), [other](computations.md) |
+| [`file-comp-gb.md`](file-comp-gb.md) | `GBComputation` | [Gröbner bases](groebner-bases.md) |
+| [`file-gb-default.md`](file-gb-default.md) | `gbA` (default GB algorithm) | [Gröbner bases](groebner-bases.md) |
+| [`file-gb-variants.md`](file-gb-variants.md) | `gb-homog2`/`gb-sugarless`/`gb-toric`/`gb-walk` | [Gröbner bases](groebner-bases.md) |
+| [`file-mathicgb-interface.md`](file-mathicgb-interface.md) | mathicgb bridge | [Gröbner bases](groebner-bases.md) |
+| [`file-reducedgb.md`](file-reducedgb.md) | `ReducedGB` family | [Gröbner bases](groebner-bases.md) |
+| [`file-spair.md`](file-spair.md) | `s_pair`, `gb_elem` | [Gröbner bases](groebner-bases.md) |
+| [`file-gbweight.md`](file-gbweight.md) | `GBWeight` | [Gröbner bases](groebner-bases.md) |
+| [`file-assprime.md`](file-assprime.md) | `AssociatedPrimes` | [Other computations](computations.md) |
+| [`file-comb.md`](file-comb.md) | `Subsets` (combinatorial helpers) | [Other computations](computations.md) |
+| [`file-overflow.md`](file-overflow.md) | Overflow-checked arithmetic | [Utilities](utilities.md) |
+
+### Subdirectory file deep dives
+
+Per-file walkthroughs that live alongside their source inside engine
+subdirectories:
+
+| Subdir | File doc | Class |
+|---|---|---|
+| `NCAlgebras/` | [`NCAlgebras/file-FreeMonoid.md`](NCAlgebras/file-FreeMonoid.md) | `FreeMonoid` |
+| `NCAlgebras/` | [`NCAlgebras/file-FreeAlgebra.md`](NCAlgebras/file-FreeAlgebra.md) | `FreeAlgebra` |
+| `NCAlgebras/` | [`NCAlgebras/file-NCGroebner.md`](NCAlgebras/file-NCGroebner.md) | `NCGroebner` |
+| `NCAlgebras/` | [`NCAlgebras/file-NCF4.md`](NCAlgebras/file-NCF4.md) | `NCF4` |
+| `f4/` | [`f4/file-f4-computation.md`](f4/file-f4-computation.md) | `F4Computation` |
+| `f4/` | [`f4/file-f4-spairs.md`](f4/file-f4-spairs.md) | `F4SPairSet` |
+| `f4/` | [`f4/file-f4-m2-interface.md`](f4/file-f4-m2-interface.md) | `F4toM2Interface` |
+| `f4/` | [`f4/file-monhashtable.md`](f4/file-monhashtable.md) | Monomial hash-table traits |
+| `gb-f4/` | [`gb-f4/file-GBF4Computation.md`](gb-f4/file-GBF4Computation.md) | `GBF4Computation` |
+| `gb-f4/` | [`gb-f4/file-MacaulayMatrix.md`](gb-f4/file-MacaulayMatrix.md) | `MacaulayMatrix` |
+| `gb-f4/` | [`gb-f4/file-Basis.md`](gb-f4/file-Basis.md) | `Basis` |
+| `schreyer-resolution/` | [`schreyer-resolution/file-res-f4-computation.md`](schreyer-resolution/file-res-f4-computation.md) | `F4ResComputation` |
+| `schreyer-resolution/` | [`schreyer-resolution/file-res-schreyer-frame.md`](schreyer-resolution/file-res-schreyer-frame.md) | `SchreyerFrame` |
+| `schreyer-resolution/` | [`schreyer-resolution/file-res-poly-ring.md`](schreyer-resolution/file-res-poly-ring.md) | `ResPolyRing` / `ResPolynomial` |
+| [`file-comp-res.md`](file-comp-res.md) | `ResolutionComputation` | [Resolutions](resolutions.md) |
+| [`file-gbring.md`](file-gbring.md) | `GBRing` / `gbvector` | [Gröbner bases](groebner-bases.md) |
+| [`file-Eschreyer.md`](file-Eschreyer.md) | `GBKernelComputation` (older Schreyer) | [Resolutions](resolutions.md) |
+| [`file-betti.md`](file-betti.md) | `BettiDisplay` | [Resolutions](resolutions.md) |
+| [`file-hilb.md`](file-hilb.md) | Hilbert function (Bigatti) | [Other computations](computations.md) |
+| [`file-LLL.md`](file-LLL.md) | LLL lattice reduction | [Other computations](computations.md) |
+| [`file-monideal.md`](file-monideal.md) | `MonomialIdeal` | [Other computations](computations.md) |
+| [`file-NAG.md`](file-NAG.md) | Numerical AG | [Other computations](computations.md) |
+| [`file-SLP.md`](file-SLP.md) | Straight-line programs | [Other computations](computations.md) |
 
 (More single-file deep dives will be added as the per-file documentation
-effort proceeds. The convention is `file-<basename>.md` in this directory.)
+effort proceeds.)
 
 ## Top-level files: per-area docs
 
@@ -77,7 +161,7 @@ per area. These are the **engine deep-dive** references:
 | Older interface | `x-*.cpp` | Older flat-layout entry points, slowly migrating into `interface/` |
 | Abstract rings | `aring-*.{cpp,hpp}` | One file per coefficient type (ZZ, ZZp, QQ, RR, CC, GF, …) |
 | Rings (concrete) | `ZZ.{cpp,hpp}`, `ZZp.{cpp,hpp}`, `GF.{cpp,hpp}`, `poly*.{cpp,hpp}`, `qring.{cpp,hpp}`, `weylalg.{cpp,hpp}`, `skewpoly.{cpp,hpp}`, `solvable.{cpp,hpp}`, `frac.{cpp,hpp}`, … | Specific ring constructions |
-| Monoids | `monoid.{cpp,hpp}`, `monorder.{cpp,hpp}`, `imonorder.{cpp,hpp}`, `montable*.{cpp,hpp}`, `varpower*.{cpp,hpp}`, `ntuple.{cpp,hpp}` | Monoid representation and ordering |
+| Monoids | `monoid.{cpp,hpp}`, `monorder.cpp`, `imonorder.{cpp,hpp}`, `montable*.{cpp,hpp}`, `ExponentList.{cpp,hpp}`, `ExponentVector.hpp` (top-level); `f4/varpower-monomial.hpp`, `f4/ntuple-monomial.hpp` (F4-internal) | Monoid representation and ordering |
 | Matrices | `matrix*.{cpp,hpp}`, `dmat*.{cpp,hpp}`, `mat-*.{cpp,hpp}`, `smat*.{cpp,hpp}` | Dense, sparse, and mutable matrices |
 | Modules | `freemod*.{cpp,hpp}`, `schorder.{cpp,hpp}` | Free / Schreyer modules |
 | Gröbner basis | `gb-*.{cpp,hpp}`, `comp-gb*.{cpp,hpp}`, `reducedgb*.{cpp,hpp}`, `gbring.{cpp,hpp}`, `gbweight.{cpp,hpp}`, `spair.{cpp,hpp}` | Several GB algorithms and the Computation glue |

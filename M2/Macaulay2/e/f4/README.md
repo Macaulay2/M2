@@ -10,6 +10,15 @@ This is the older of the two F4 implementations in the engine; the newer one
 lives in [`../gb-f4/`](../gb-f4/README.md) and was added when this one became
 hard to refactor. Both are still built.
 
+## Per-file deep dives
+
+| File doc | Class |
+|---|---|
+| [`file-f4-computation.md`](file-f4-computation.md) | `F4Computation` (top-level glue) |
+| [`file-f4-spairs.md`](file-f4-spairs.md) | `F4SPairSet` |
+| [`file-f4-m2-interface.md`](file-f4-m2-interface.md) | `F4toM2Interface` |
+| [`file-monhashtable.md`](file-monhashtable.md) | Monomial hash-table traits |
+
 ## Files
 
 | File | Role |

@@ -14,7 +14,7 @@ Matrices in M2 come in two broad flavours:
 
 | File pair | Purpose |
 |---|---|
-| `matrix.{cpp,hpp}` | The `Matrix` class itself — columns, source, target |
+| `matrix.{cpp,hpp}` | The `Matrix` class itself — columns, source, target. **Deep dive:** [`file-matrix.md`](file-matrix.md) |
 | `matrix-con.{cpp,hpp}` | `MatrixConstructor` helper for building matrices column-by-column |
 | `matrix-kbasis.{cpp,hpp}` | k-basis computation (basis of a module in given degrees) |
 | `matrix-ncbasis.{cpp,hpp}` | Non-commutative analogue of k-basis |
@@ -26,7 +26,7 @@ Matrices in M2 come in two broad flavours:
 
 | File pair | Purpose |
 |---|---|
-| `mutablemat.{cpp,hpp}` | The `MutableMatrix` class, dispatching to either dense or sparse storage |
+| `mutablemat.{cpp,hpp}` | The `MutableMatrix` class, dispatching to either dense or sparse storage. **Deep dive:** [`file-mutablemat.md`](file-mutablemat.md) |
 | `mutablemat-defs.hpp`, `mutablemat-imp.hpp` | Template definitions and implementations |
 | `mutablecomplex.{cpp,hpp}` | A mutable chain complex (sequence of mutable matrices) |
 
@@ -50,7 +50,7 @@ Each specialisation pairs a coefficient ring with an optimised back end:
 
 | File | Specialisation |
 |---|---|
-| `dmat.{cpp,hpp}` | Generic dense matrix entry point |
+| `dmat.{cpp,hpp}` | Generic dense matrix entry point. **Deep dive:** [`file-dmat.md`](file-dmat.md) |
 | `dmat-ffpack.cpp` | FFLAS-FFPACK back end (Z/p, mostly) |
 | `dmat-zz-flint.hpp` | ZZ via FLINT |
 | `dmat-zzp-flint.hpp` | Z/p via FLINT |

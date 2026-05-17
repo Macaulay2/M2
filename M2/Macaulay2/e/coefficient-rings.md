@@ -29,7 +29,7 @@ versa) so old code can call new and vice-versa.
 
 | File pair | Purpose |
 |---|---|
-| `aring.{cpp,hpp}` | Tag enum + dispatcher base for all aring types |
+| `aring.{cpp,hpp}` | Tag enum + dispatcher base for all aring types. **Deep dive:** [`file-aring.md`](file-aring.md) |
 | `aring-glue.hpp` | Templates that build a legacy `Ring` wrapper around an aring |
 | `aring-translate.hpp` | Compile-time translation between ring types (e.g. promoting `int` to `mpz_t`) |
 | `aring-wrap.{cpp,hpp}` | Concrete wrapper instantiations |

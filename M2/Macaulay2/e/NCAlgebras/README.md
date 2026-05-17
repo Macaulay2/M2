@@ -3,6 +3,15 @@
 The non-commutative side of the engine: free algebras, free monoids, and
 non-commutative Gröbner bases (including a non-commutative F4 variant).
 
+## Per-file deep dives
+
+| File doc | Class |
+|---|---|
+| [`file-FreeMonoid.md`](file-FreeMonoid.md) | `FreeMonoid` (word side) |
+| [`file-FreeAlgebra.md`](file-FreeAlgebra.md) | `FreeAlgebra` (free algebra) |
+| [`file-NCGroebner.md`](file-NCGroebner.md) | `NCGroebner` (Buchberger-style NC GB) |
+| [`file-NCF4.md`](file-NCF4.md) | `NCF4` (F4-style NC GB) |
+
 ## Files
 
 ### Algebra structures

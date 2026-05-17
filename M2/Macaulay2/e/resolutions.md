@@ -20,7 +20,7 @@ The older series of implementations lives at the top level of `e/`:
 | `res-a0.{cpp,hpp}`, `res-a0-pair.hpp`, `res-a0-poly.{cpp,hpp}` | "Generation 0" | First-generation resolution code, retained for compatibility |
 | `res-a1.{cpp,hpp}`, `res-a1-poly.{cpp,hpp}` | "Generation 1" | Second-generation; some performance improvements |
 | `res-a2.{cpp,hpp}`, `res-a2-gb.cpp` | "Generation 2" | Drives an internal GB engine per homological step |
-| `Eschreyer.{cpp,hpp}` | Schreyer-style | Predecessor to [`schreyer-resolution/`](schreyer-resolution/README.md) |
+| `Eschreyer.{cpp,hpp}` | Schreyer-style | Predecessor to [`schreyer-resolution/`](schreyer-resolution/README.md). **Deep dive:** [`file-Eschreyer.md`](file-Eschreyer.md) |
 
 These older files are still built and selectable from M2 via the
 `Strategy => …` option to `resolution`. They are useful both for regression
@@ -34,8 +34,8 @@ The non-commutative analogue lives in
 
 | File pair | Purpose |
 |---|---|
-| `comp-res.{cpp,hpp}` | Resolution Computation — dispatches to one of the implementations above |
-| `betti.{cpp,hpp}` | Betti table extraction (the standard human-readable summary of a resolution) |
+| `comp-res.{cpp,hpp}` | Resolution Computation — dispatches to one of the implementations above. **Deep dive:** [`file-comp-res.md`](file-comp-res.md) |
+| `betti.{cpp,hpp}` | Betti table extraction (the standard human-readable summary of a resolution). **Deep dive:** [`file-betti.md`](file-betti.md) |
 
 ## Anatomy of a Schreyer-frame resolution
 

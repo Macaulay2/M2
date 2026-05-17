@@ -13,21 +13,21 @@ see `comp.{cpp,hpp}` in [`groebner-bases.md`](groebner-bases.md)).
 
 | File pair | Purpose |
 |---|---|
-| `hilb.{cpp,hpp}` | Hilbert function, Hilbert series, Hilbert polynomial |
+| `hilb.{cpp,hpp}` | Hilbert function, Hilbert series, Hilbert polynomial. **Deep dive:** [`file-hilb.md`](file-hilb.md) |
 
 ## LLL lattice reduction
 
 | File pair | Purpose |
 |---|---|
-| `LLL.{cpp,hpp}` | Lenstra-Lenstra-Lovász basis reduction over `ZZ` |
+| `LLL.{cpp,hpp}` | Lenstra-Lenstra-Lovász basis reduction over `ZZ`. **Deep dive:** [`file-LLL.md`](file-LLL.md) |
 
 ## Numerical algebraic geometry
 
 | File pair | Purpose |
 |---|---|
-| `NAG.{cpp,hpp}` | Numerical AG entry points: continuation, witness sets, sample |
-| `SLP.{cpp,hpp}` | Straight-line programs — the evaluation model used in NAG |
-| `SLP-defs.hpp`, `SLP-imp.hpp` | Templates and concrete implementations of SLP node types |
+| `NAG.{cpp,hpp}` | Numerical AG entry points: continuation, witness sets, sample. **Deep dive:** [`file-NAG.md`](file-NAG.md) |
+| `SLP.{cpp,hpp}` | Straight-line programs — the evaluation model used in NAG. **Deep dive:** [`file-SLP.md`](file-SLP.md) |
+| `SLP-defs.hpp`, `SLP-imp.hpp` | Templates and concrete implementations of SLP node types — see [`file-SLP.md`](file-SLP.md) |
 
 SLPs let NAG cheaply evaluate the same polynomial system at many points
 without re-parsing — essential for homotopy continuation. The TODOs file
@@ -37,13 +37,13 @@ without re-parsing — essential for homotopy continuation. The TODOs file
 
 | File pair | Purpose |
 |---|---|
-| `assprime.{cpp,hpp}` | Associated primes / minimal primes |
+| `assprime.{cpp,hpp}` | Associated primes / minimal primes. **Deep dive:** [`file-assprime.md`](file-assprime.md) |
 
 ## Monomial ideals
 
 | File pair | Purpose |
 |---|---|
-| `monideal.{cpp,hpp}` | Monomial ideal operations: intersection, radical, primary decomposition (specialised, much faster than the polynomial path) |
+| `monideal.{cpp,hpp}` | Monomial ideal operations: intersection, radical, primary decomposition (specialised, much faster than the polynomial path). **Deep dive:** [`file-monideal.md`](file-monideal.md) |
 
 A separate page of notes lives at
 [`README-monideals.md`](README-monideals.md).
@@ -52,7 +52,7 @@ A separate page of notes lives at
 
 | File pair | Purpose |
 |---|---|
-| `comb.{cpp,hpp}` | Binomial coefficients, partitions, combinatorial iterators used internally |
+| `comb.{cpp,hpp}` | Binomial coefficients, partitions, combinatorial iterators used internally. **Deep dive:** [`file-comb.md`](file-comb.md) |
 
 ## Related
 

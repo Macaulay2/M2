@@ -8,6 +8,14 @@ The older implementation in [`../f4/`](../f4/README.md) is still in the tree
 and built alongside this one. See `TODO-refactor-f4` here for the long-running
 refactoring notes.
 
+## Per-file deep dives
+
+| File doc | Class |
+|---|---|
+| [`file-GBF4Computation.md`](file-GBF4Computation.md) | `GBF4Computation` (top-level) |
+| [`file-MacaulayMatrix.md`](file-MacaulayMatrix.md) | `MacaulayMatrix` |
+| [`file-Basis.md`](file-Basis.md) | `Basis` (evolving GB) |
+
 ## Files
 
 | File | Role |

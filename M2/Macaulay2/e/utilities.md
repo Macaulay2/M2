@@ -27,7 +27,7 @@ loops.
 
 | File pair | Purpose |
 |---|---|
-| `overflow.{cpp,hpp}` | Overflow-checked add/multiply for the small integer types used in monomial exponents and degrees |
+| `overflow.{cpp,hpp}` | Overflow-checked add/multiply for the small integer types used in monomial exponents and degrees. **Deep dive:** [`file-overflow.md`](file-overflow.md) |
 
 The engine uses `overflow.hpp` extensively. A silent monomial-exponent
 overflow can corrupt a Gröbner basis without any visible error; centralised

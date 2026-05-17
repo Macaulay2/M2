@@ -10,7 +10,7 @@ representation of a homomorphism between rings.
 
 | File pair | Purpose |
 |---|---|
-| `relem.{cpp,hpp}` | `RingElement` — pair of `(Ring*, ring-specific-value)` |
+| `relem.{cpp,hpp}` | `RingElement` — pair of `(Ring*, ring-specific-value)`. **Deep dive:** [`file-relem.md`](file-relem.md) |
 
 A `RingElement` is essentially a tagged union: a pointer to the ring it
 belongs to plus an opaque value the ring knows how to interpret. All
@@ -21,7 +21,7 @@ templated [`aring`](coefficient-rings.md) machinery for newer code).
 
 | File pair | Purpose |
 |---|---|
-| `ringmap.{cpp,hpp}` | `RingMap` — specifies a homomorphism by giving images of generators |
+| `ringmap.{cpp,hpp}` | `RingMap` — specifies a homomorphism by giving images of generators. **Deep dive:** [`file-ringmap.md`](file-ringmap.md) |
 
 A `RingMap : R → S` is built from:
 
