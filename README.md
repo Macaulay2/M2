@@ -57,11 +57,36 @@ Four levels of documentation are reachable from this file:
    them; the lower half of this file mirrors the same entries into
    per-folder tables you can scan top-to-bottom.
 
+Plus **four cross-cutting top-level meta docs** at the repo root:
+
+| Doc | What it is | When to use |
+|---|---|---|
+| [`README.md`](README.md) | This file — repository TOC | First stop for any contributor |
+| [`GLOSSARY.md`](GLOSSARY.md) | Cross-cutting terminology dictionary | When you see jargon (`scc1`, `aring`, `Schreyer frame`, `Macaulay matrix`, …) and need its definition |
+| [`TOUR.md`](TOUR.md) | Audience-specific reading orders | When starting fresh; pick the path matching your role (newcomer / debugger / package author / build maintainer / engine extender / algorithm-curious) |
+| [`CONTRIBUTING-DOCS.md`](CONTRIBUTING-DOCS.md) | Conventions the docs follow | When editing docs (file naming, README structure, deep-dive shape, link integrity audit) |
+
+Plus build-system instructions: see the project
+[Wiki](https://github.com/Macaulay2/M2/wiki),
+`M2/INSTALL` / `M2/INSTALL-CMake.md` in a release tarball, and
+`.github/workflows/test_build.yml` for the canonical CI build matrix.
+
 ### Quick links
 
 - Source root: [`M2/`](M2/README.md) → [`M2/Macaulay2/`](M2/Macaulay2/README.md)
 - The four layers: [`c/`](M2/Macaulay2/c/README.md) · [`d/`](M2/Macaulay2/d/README.md) · [`e/`](M2/Macaulay2/e/README.md) · [`m2/`](M2/Macaulay2/m2/README.md)
-- **Engine architecture: [`architecture.md`](M2/Macaulay2/e/architecture.md)** — complete standalone reference (layers, dual representation, memory model, computation framework, threading, boundary rules)
+- **Per-layer architecture references** — standalone "how does this layer fit together" docs:
+   [`c/architecture.md`](M2/Macaulay2/c/architecture.md) (scc1 translator) ·
+   [`d/architecture.md`](M2/Macaulay2/d/architecture.md) (interpreter) ·
+   [`e/architecture.md`](M2/Macaulay2/e/architecture.md) (engine) ·
+   [`m2/architecture.md`](M2/Macaulay2/m2/architecture.md) (Core M2)
+- **Engine subdir architecture references**:
+   [`interface/architecture.md`](M2/Macaulay2/e/interface/architecture.md) (public C boundary) ·
+   [`f4/architecture.md`](M2/Macaulay2/e/f4/architecture.md) (original F4 GB) ·
+   [`gb-f4/architecture.md`](M2/Macaulay2/e/gb-f4/architecture.md) (refactored F4 GB) ·
+   [`schreyer-resolution/architecture.md`](M2/Macaulay2/e/schreyer-resolution/architecture.md) (F4-style resolution) ·
+   [`NCAlgebras/architecture.md`](M2/Macaulay2/e/NCAlgebras/architecture.md) (non-commutative algebras) ·
+   [`bibasis/architecture.md`](M2/Macaulay2/e/bibasis/architecture.md) (Boolean involutive)
 - Engine areas: [coefficient rings](M2/Macaulay2/e/coefficient-rings.md) · [polynomial rings](M2/Macaulay2/e/polynomial-rings.md) · [monoids](M2/Macaulay2/e/monoids-and-monomials.md) · [matrices](M2/Macaulay2/e/matrices.md) · [free modules](M2/Macaulay2/e/free-modules.md) · [Gröbner bases](M2/Macaulay2/e/groebner-bases.md) · [resolutions](M2/Macaulay2/e/resolutions.md) · [other computations](M2/Macaulay2/e/computations.md) · [ring elements / maps](M2/Macaulay2/e/ring-elements-and-maps.md) · [utilities](M2/Macaulay2/e/utilities.md)
 - Engine subdirs: [`interface/`](M2/Macaulay2/e/interface/README.md) · [`f4/`](M2/Macaulay2/e/f4/README.md) · [`gb-f4/`](M2/Macaulay2/e/gb-f4/README.md) · [`schreyer-resolution/`](M2/Macaulay2/e/schreyer-resolution/README.md) · [`NCAlgebras/`](M2/Macaulay2/e/NCAlgebras/README.md) · [`NCResolutions/`](M2/Macaulay2/e/NCResolutions/README.md) · [`bibasis/`](M2/Macaulay2/e/bibasis/README.md) · [`unit-tests/`](M2/Macaulay2/e/unit-tests/README.md) · [`doxygen-settings/`](M2/Macaulay2/e/doxygen-settings/README.md)
 - Build & packaging: [`cmake/`](M2/cmake/README.md) · [`libraries/`](M2/libraries/README.md) · [`submodules/`](M2/submodules/README.md) · [`distributions/`](M2/distributions/README.md) · [`BUILD/`](M2/BUILD/README.md) · [`m4/`](M2/m4/README.md) · [`include/`](M2/include/README.md)
@@ -69,7 +94,10 @@ Four levels of documentation are reachable from this file:
 - Supporting tools: [`bin/`](M2/Macaulay2/bin/README.md) · [`system/`](M2/Macaulay2/system/README.md) · [`html-check-links/`](M2/Macaulay2/html-check-links/README.md) · [`editors/`](M2/Macaulay2/editors/README.md) · [`docs/`](M2/Macaulay2/docs/README.md) · [`man/`](M2/Macaulay2/man/README.md)
 - Tests: [`tests/`](M2/Macaulay2/tests/README.md) · [`e/unit-tests/`](M2/Macaulay2/e/unit-tests/README.md)
 - Packages: [`packages/`](M2/Macaulay2/packages/README.md) (with foundational deep dives for [`Macaulay2Doc`](M2/Macaulay2/packages/file-Macaulay2Doc.md) · [`Style`](M2/Macaulay2/packages/file-Style.md) · [`EngineTests`](M2/Macaulay2/packages/file-EngineTests.md) · [conventions](M2/Macaulay2/packages/file-package-conventions.md))
-- Build instructions: project [`CLAUDE.md`](CLAUDE.md) at the repo root
+- Build instructions: project [Wiki](https://github.com/Macaulay2/M2/wiki), `M2/INSTALL`, `M2/INSTALL-CMake.md`, and `.github/workflows/test_build.yml`
+- **Cross-cutting glossary: [`GLOSSARY.md`](GLOSSARY.md)** — terminology used across the documentation tree, with links to the deep-dives where each term is treated in detail (`scc1`, `aring` vs `Ring`, `ring_elem` vs `ElementType`, Schreyer frame, F4, Macaulay matrix, involutive basis, `our_new_delete`, `Computation`, `Expr`, error/interrupt flags, …)
+- **Guided reading tour: [`TOUR.md`](TOUR.md)** — suggested reading orders for different audiences (newcomer overview, engine debugger, package author, M2 user, build/port maintainer, engine extension, algorithm-specific paths)
+- **Documentation contribution guide: [`CONTRIBUTING-DOCS.md`](CONTRIBUTING-DOCS.md)** — conventions the docs themselves follow (file naming, README structure, deep-dive shape, cross-reference rules, link-integrity audit, when to write architecture docs, avoiding doc rot)
 
 ### Finding a deep dive
 
@@ -244,24 +272,41 @@ they will cross-link to one another along these axes:
 
 ### Documentation status
 
-Every directory under `M2/` has both a `README.md` index and per-file
-deep-dive markdown files (`file-<basename>.md`) for every source file it
-contains. Some closely-related files share a consolidated deep-dive (e.g.
-`bibasis/file-monom-orders.md` covers `monomLex`, `monomDL`, `monomDRL`
-together because they form a cohesive family).
+The documentation tree comprises **584 markdown files** across four
+layers:
 
-The engine subtree (`M2/Macaulay2/e/` and its seven subdirectories
+| Layer | Count | Examples |
+|---|---|---|
+| Top-level meta docs | 4 | [`README.md`](README.md) · [`GLOSSARY.md`](GLOSSARY.md) · [`TOUR.md`](TOUR.md) · [`CONTRIBUTING-DOCS.md`](CONTRIBUTING-DOCS.md) |
+| Per-directory READMEs | 70 | one for every subdirectory under `M2/` |
+| Architecture references | 10 | 4 per-layer (`c/`, `d/`, `e/`, `m2/`) + 6 per-engine-subdir (`interface/`, `f4/`, `gb-f4/`, `schreyer-resolution/`, `NCAlgebras/`, `bibasis/`) |
+| Per-area engine docs | ~10 | `coefficient-rings.md`, `polynomial-rings.md`, `monoids-and-monomials.md`, … |
+| Per-file deep dives | 483 | `file-<basename>.md` alongside each source file (some consolidated per family) |
+
+Every directory under `M2/` has both a `README.md` index and per-file
+deep-dive markdown files for every source file it contains. Some
+closely-related files share a consolidated deep-dive (e.g.
+`bibasis/file-monom-orders.md` covers `monomLex`, `monomDL`, `monomDRL`
+together because they form a cohesive family — see
+[`CONTRIBUTING-DOCS.md`](CONTRIBUTING-DOCS.md) for the full list of
+consolidated families).
+
+The engine subtree (`M2/Macaulay2/e/` and its nine subdirectories
 `interface/`, `f4/`, `gb-f4/`, `schreyer-resolution/`, `NCAlgebras/`,
-`NCResolutions/`, `bibasis/`, plus `unit-tests/` and `doxygen-settings/`)
+`NCResolutions/`, `bibasis/`, `unit-tests/`, `doxygen-settings/`)
 has the deepest coverage and is the subject of the [engine
 deep-dive](#engine-deep-dive-m2macaulay2e) section below. The per-area
-markdown files there (10 of them — `coefficient-rings.md`,
-`polynomial-rings.md`, …) provide architectural overviews; the per-file
+markdown files there provide architectural overviews; the per-file
 docs give source-level walkthroughs.
 
 The lower half of this README mirrors every per-directory's per-file index
 into one document, so you can find a deep-dive without first opening the
 subdirectory's `README.md`.
+
+**Link integrity**: zero broken cross-references across the entire tree
+— verified by the audit command in
+[`CONTRIBUTING-DOCS.md`](CONTRIBUTING-DOCS.md#link-integrity-audit). New
+contributions are expected to maintain this.
 
 ---
 

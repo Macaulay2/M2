@@ -1,5 +1,7 @@
 # `M2/Macaulay2/e/interface/` — public C interface of the engine
 
+**See [`architecture.md`](architecture.md)** for the standalone architectural reference (the boundary contract, `IM2_<Type>_<verb>` convention, dispatch pattern, three-layer separation, file-by-file roles, "how to add a new public function").
+
 This is the modern, organised home for **engine entry points** — the C-callable
 functions the [`d/` interpreter](../../d/README.md) reaches across the
 engine/front-end boundary to invoke.

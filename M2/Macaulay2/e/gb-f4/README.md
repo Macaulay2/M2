@@ -1,5 +1,7 @@
 # `M2/Macaulay2/e/gb-f4/` — refactored F4 Gröbner basis engine
 
+**See [`architecture.md`](architecture.md)** for the standalone architectural reference (the `newf4::` namespace, typed-integer family, struct-of-arrays polynomial representation, monomial hashing, comparison with original `f4/`).
+
 A newer implementation of F4 that splits the algorithm along cleaner lines:
 basis, S-pairs, monomial tables, and the Macaulay matrix each get their own
 header pair, making the code easier to test and reuse.

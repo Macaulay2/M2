@@ -1,5 +1,7 @@
 # `M2/Macaulay2/c/` — the `scc1` translator
 
+**See [`architecture.md`](architecture.md)** for the standalone architectural reference (pipeline, `node` tagged-union AST, layered design, "how to extend `scc1`").
+
 This directory contains the source for **`scc1`**, the custom compiler-compiler
 that translates Macaulay2's home-grown `.d` / `.dd` language into ordinary C
 (`.c`) and C++ (`.cpp`). It is the first stage of the [four-language

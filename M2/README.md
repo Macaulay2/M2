@@ -40,8 +40,8 @@ share state):
 - **CMake** (preferred): `cmake -GNinja -S M2 -B M2/BUILD/build`
 - **autotools**: `cd M2/BUILD/build && ../../autogen.sh && ../../configure …`
 
-Full build / test / lint commands are documented in the root
-[`CLAUDE.md`](../CLAUDE.md) and tracked in CI by
+Full build / test / lint commands are documented in the project
+[Wiki](https://github.com/Macaulay2/M2/wiki) and tracked in CI by
 `.github/workflows/test_build.yml`.
 
 [← back to repository TOC](../README.md#repository-architecture-table-of-contents)

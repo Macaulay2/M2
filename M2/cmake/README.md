@@ -49,7 +49,7 @@ cmake --build M2/BUILD/build --target M2-core M2-emacs
 cmake --build M2/BUILD/build --target install-packages check-packages
 ```
 
-See the root [`CLAUDE.md`](../../CLAUDE.md) for the canonical command list.
+See the project [Wiki](https://github.com/Macaulay2/M2/wiki) and `.github/workflows/test_build.yml` for the canonical command list.
 
 ## Related
 

@@ -1,5 +1,7 @@
 # `M2/Macaulay2/d/` — the interpreter
 
+**See [`architecture.md`](architecture.md)** for the standalone architectural reference (five-stage pipeline, `Expr` sum type, engine boundary, error/interrupt model, memory model, FFI bindings, "how to extend the interpreter").
+
 The Macaulay2 **interpreter** is implemented here. These files become the
 `M2-interpreter` binary, which is then linked against the [C++ engine](../e/README.md)
 to produce the final `M2` executable.

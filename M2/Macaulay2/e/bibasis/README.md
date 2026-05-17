@@ -1,5 +1,7 @@
 # `M2/Macaulay2/e/bibasis/` — involutive (Janet) bases for Boolean rings
 
+**See [`architecture.md`](architecture.md)** for the standalone architectural reference (Boolean-ring specialisation, 64-bit packed monomial trick, involutive-vs-Gröbner distinction, Janet tree data structure, templated dispatch on monomial order, `FastAllocator` slab strategy).
+
 A specialised Gröbner-basis engine that computes **involutive Janet bases**
 over the Boolean polynomial ring `F_2[x_1,…,x_n]/(x_i^2 - x_i)`. Used by the
 [`BIBasis`](../../packages/BIBasis.m2) package.

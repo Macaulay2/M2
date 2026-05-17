@@ -1,5 +1,7 @@
 # `M2/Macaulay2/e/f4/` — original F4 Gröbner basis engine
 
+**See [`architecture.md`](architecture.md)** for the standalone architectural reference (pipeline, three-layer design, Macaulay-matrix sweep details, memory model, comparison with `gb-f4/`).
+
 A native implementation of the **F4 algorithm** for computing Gröbner bases.
 F4 reduces Gröbner basis computation to linear algebra on the so-called
 *Macaulay matrix* — at each step it picks a set of S-pairs, builds the matrix

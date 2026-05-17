@@ -1,5 +1,7 @@
 # `M2/Macaulay2/e/schreyer-resolution/` — F4-style Schreyer resolutions
 
+**See [`architecture.md`](architecture.md)** for the standalone architectural reference (Schreyer-frame trick, three-layer design, TBB task-graph parallelism, dense vs sparse monoid choice, memory model).
+
 This directory implements a **Schreyer-frame–based free resolution** built on
 F4-style matrix reduction. It is the modern resolution engine that replaces
 the older `res-a*` series at the top level of `e/`.

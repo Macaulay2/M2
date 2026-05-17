@@ -1,5 +1,7 @@
 # `M2/Macaulay2/m2/` — Core M2 source
 
+**See [`architecture.md`](architecture.md)** for the standalone architectural reference (the four conceptual layers, Core package, type system + method dispatch, documentation DSL, engine calling, package machinery, "how to extend Core").
+
 The ~100 `.m2` files in this directory are loaded at startup by the
 `M2-interpreter` binary and together define the **Core package** —
 everything you get in a fresh `M2` session before any `needsPackage`.

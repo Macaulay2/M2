@@ -20,7 +20,7 @@ For a much fuller cross-cutting tour of how the engine is organised, see the
 [engine deep-dive](../../../README.md#engine-deep-dive-m2macaulay2e) in the
 top-level README.
 
-## Standalone architecture reference
+## Standalone architecture references
 
 [`architecture.md`](architecture.md) — the complete **architectural
 reference** for the engine. Covers the four-layer architecture
@@ -29,6 +29,15 @@ the dual legacy-`Ring` vs modern-`aring` representation story, memory
 model (GC-managed / pool-allocated / external-library-managed), the
 `Computation` framework, threading (supervisor + TBB), engine boundary
 rules, and a reference flow of "M2 user → engine inner loop".
+
+**Subdirectory-specific architecture docs**:
+
+- [`interface/architecture.md`](interface/architecture.md) — public C boundary contract
+- [`f4/architecture.md`](f4/architecture.md) — original F4 GB engine
+- [`gb-f4/architecture.md`](gb-f4/architecture.md) — refactored F4 GB engine
+- [`schreyer-resolution/architecture.md`](schreyer-resolution/architecture.md) — F4-style resolution
+- [`NCAlgebras/architecture.md`](NCAlgebras/architecture.md) — non-commutative algebras + GB
+- [`bibasis/architecture.md`](bibasis/architecture.md) — Boolean involutive bases
 
 ## Subdirectories
 

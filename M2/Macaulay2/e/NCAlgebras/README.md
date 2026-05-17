@@ -1,5 +1,7 @@
 # `M2/Macaulay2/e/NCAlgebras/` — non-commutative algebras
 
+**See [`architecture.md`](architecture.md)** for the standalone architectural reference (three core abstractions `FreeMonoid`/`FreeAlgebra`/`FreeAlgebraQuotient`, the two NC GB algorithms `NCGroebner` and `NCF4`, suffix-tree-based overlap detection, memory model).
+
 The non-commutative side of the engine: free algebras, free monoids, and
 non-commutative Gröbner bases (including a non-commutative F4 variant).
 
