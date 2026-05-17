@@ -1,4 +1,129 @@
-## Engine Notes
+# `M2/Macaulay2/e/` — the Macaulay2 engine
+
+The **engine** is the C++ mathematical kernel of Macaulay2 (~340 source files
+here). It supplies the heavy machinery — rings, monoids, matrices, modules,
+Gröbner bases, resolutions, Hilbert functions, LLL, numerical AG — and is
+linked into the final `M2` binary alongside the
+[interpreter](../d/README.md).
+
+Position in the [four-language stack](../../../README.md#the-four-language-stack):
+
+```
+.d / .dd  ──▶  .c / .cpp  ──▶  M2-interpreter ──▶ M2
+                                     ▲
+                                     │ linked
+                                  M2-engine ← you are here
+                                  [Macaulay2/e/]
+```
+
+For a much fuller cross-cutting tour of how the engine is organised, see the
+[engine deep-dive](../../../README.md#engine-deep-dive-m2macaulay2e) in the
+top-level README.
+
+## Subdirectories
+
+| Directory | Purpose |
+|---|---|
+| [`interface/`](interface/README.md) | Public C interface — entry points called from `d/engine.dd` |
+| [`f4/`](f4/README.md) | Original F4 Gröbner basis engine |
+| [`gb-f4/`](gb-f4/README.md) | Refactored F4 Gröbner basis engine |
+| [`schreyer-resolution/`](schreyer-resolution/README.md) | F4-style free resolutions via Schreyer frames |
+| [`NCAlgebras/`](NCAlgebras/README.md) | Non-commutative free algebras and GB |
+| [`NCResolutions/`](NCResolutions/README.md) | Non-commutative free resolutions |
+| [`bibasis/`](bibasis/README.md) | Involutive (Janet) bases for Boolean rings |
+| [`unit-tests/`](unit-tests/README.md) | gtest suite for the engine |
+| [`doxygen-settings/`](doxygen-settings/README.md) | Doxygen config for the developer API docs |
+
+## Top-level files: per-area docs
+
+Files at the top level of `e/` are documented in grouped markdown files, one
+per area. These are the **engine deep-dive** references:
+
+| Area | Documentation | Covers |
+|---|---|---|
+| Coefficient rings | [`coefficient-rings.md`](coefficient-rings.md) | `aring-*`, `ZZ`, `ZZp`, `GF`, `coeffrings` |
+| Polynomial rings | [`polynomial-rings.md`](polynomial-rings.md) | `polyring`, `poly`, `qring`, `frac`, `weylalg`, `skewpoly`, `solvable`, `localring`, `BasicPoly*`, `Polynomial*` |
+| Monoids & monomials | [`monoids-and-monomials.md`](monoids-and-monomials.md) | `monoid`, `monorder`, `imonorder`, `varpower`, `ntuple`, `montable*`, `ExponentList`, `ExponentVector` |
+| Matrices | [`matrices.md`](matrices.md) | `matrix*`, `dmat*`, `smat`, `mat-*`, `mutablemat*` |
+| Free modules | [`free-modules.md`](free-modules.md) | `freemod`, `schorder` |
+| Gröbner bases | [`groebner-bases.md`](groebner-bases.md) | `comp-gb*`, `gb-*`, `reducedgb*`, `gbring`, `gbweight`, `spair`, `mathicgb-interface` |
+| Resolutions | [`resolutions.md`](resolutions.md) | `comp-res`, `res-a0*`, `res-a1*`, `res-a2*`, `Eschreyer`, `betti` |
+| Other computations | [`computations.md`](computations.md) | `hilb`, `LLL`, `NAG`, `SLP*`, `assprime`, `monideal`, `comb` |
+| Ring elements & maps | [`ring-elements-and-maps.md`](ring-elements-and-maps.md) | `relem`, `ringmap`, `M2FreeAlgebra*` |
+| Utilities | [`utilities.md`](utilities.md) | `buffer`, `text-io`, `error`, `debug`, `overflow`, `MemoryBlock` |
+
+## File groups at the top level
+
+> Detailed per-file tables are in the
+> [engine deep-dive](../../../README.md#engine-deep-dive-m2macaulay2e).
+
+| Group | Pattern | Description |
+|---|---|---|
+| Public top header | `engine.h` | The legacy aggregating header. New code goes in [`interface/`](interface/README.md) instead |
+| Older interface | `x-*.cpp` | Older flat-layout entry points, slowly migrating into `interface/` |
+| Abstract rings | `aring-*.{cpp,hpp}` | One file per coefficient type (ZZ, ZZp, QQ, RR, CC, GF, …) |
+| Rings (concrete) | `ZZ.{cpp,hpp}`, `ZZp.{cpp,hpp}`, `GF.{cpp,hpp}`, `poly*.{cpp,hpp}`, `qring.{cpp,hpp}`, `weylalg.{cpp,hpp}`, `skewpoly.{cpp,hpp}`, `solvable.{cpp,hpp}`, `frac.{cpp,hpp}`, … | Specific ring constructions |
+| Monoids | `monoid.{cpp,hpp}`, `monorder.{cpp,hpp}`, `imonorder.{cpp,hpp}`, `montable*.{cpp,hpp}`, `varpower*.{cpp,hpp}`, `ntuple.{cpp,hpp}` | Monoid representation and ordering |
+| Matrices | `matrix*.{cpp,hpp}`, `dmat*.{cpp,hpp}`, `mat-*.{cpp,hpp}`, `smat*.{cpp,hpp}` | Dense, sparse, and mutable matrices |
+| Modules | `freemod*.{cpp,hpp}`, `schorder.{cpp,hpp}` | Free / Schreyer modules |
+| Gröbner basis | `gb-*.{cpp,hpp}`, `comp-gb*.{cpp,hpp}`, `reducedgb*.{cpp,hpp}`, `gbring.{cpp,hpp}`, `gbweight.{cpp,hpp}`, `spair.{cpp,hpp}` | Several GB algorithms and the Computation glue |
+| Resolutions | `res-a0*`, `res-a1*`, `res-a2*`, `comp-res.{cpp,hpp}`, `Eschreyer.{cpp,hpp}` | Older resolution implementations |
+| Hilbert | `hilb.{cpp,hpp}` | Hilbert function / series |
+| Numerics | `LLL.{cpp,hpp}`, `NAG.{cpp,hpp}`, `SLP*.{cpp,hpp}` | LLL, numerical AG, straight-line programs |
+| Ideals | `assprime.{cpp,hpp}`, `monideal.{cpp,hpp}` | Associated primes; monomial ideals |
+| Memory | `MemoryBlock.hpp`, `newdelete.hpp` (in subdirs) | GC integration helpers |
+| Utility | `buffer.{cpp,hpp}`, `text-io.{cpp,hpp}`, `error.{cpp,hpp}`, `debug.{cpp,hpp}`, `overflow.{cpp,hpp}` | Generic helpers |
+
+## Build
+
+```sh
+cmake --build M2/BUILD/build --target M2-core              # engine + interpreter glue
+cmake --build M2/BUILD/build --target M2-unit-tests        # gtest binary
+ctest -R "unit-tests" --output-on-failure                 # run gtests
+```
+
+## Adding an engine function (workflow)
+
+1. **Implement** in C++ here, internal headers in subdirectories
+   (e.g. a new matrix routine goes in `e/matrix/foo.{cpp,hpp}`).
+2. **Expose** through [`interface/<area>.{h,cpp}`](interface/README.md), with
+   minimal includes and **no dependency on `engine.h`**.
+3. **Bind** in the interpreter at [`d/<area>.dd`](../d/README.md) via the
+   `engine.dd` bridge.
+4. **Wrap** at the M2 level in [`m2/<area>.m2`](../m2/README.md).
+5. **Test** with a gtest in [`unit-tests/<area>.cpp`](unit-tests/README.md).
+
+## Style and memory
+
+- `STYLE.txt` in this directory captures C++ formatting conventions; the
+  repository also has a `.clang-format` one level up at `M2/.clang-format`.
+- Memory management goes through bdwgc. Use `our_new_delete` / `our_new_gc`
+  helpers and the `MemoryBlock` allocator in hot loops.
+- Long-running GC barrier concerns between engine and front-end are
+  documented in the "Historical notes" below.
+
+## Related TODOs
+
+The engine carries several long-running design TODOs in plain text files
+alongside the source:
+
+- `TODO` — general
+- `TODO-numerics` — numerical AG cleanup
+- `TODO-rings-matrices` — ring/matrix refactor
+- `TODO-SLPs` — straight-line programs
+- `TODO-reallocate-heap` — GC-related allocator changes
+
+## Topic-specific notes
+
+- [`README-monideals.md`](README-monideals.md) — monomial ideal implementation
+  notes.
+
+---
+
+## Historical notes
+
+The remainder of this file preserves the older "Engine Notes" content that
+predates this navigation README, so links to specific notes stay valid.
 
 ### Fall 2020 Work in Progress
 
@@ -147,3 +272,5 @@ these files depends on overflow.hpp
     x-gb.o
     x-mat.o
     x-relem.o
+
+[← back to repository TOC](../../../README.md#under-m2macaulay2)
