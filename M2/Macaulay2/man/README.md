@@ -2,10 +2,12 @@
 
 Source for the `M2(1)` man page.
 
-| File | Role |
-|---|---|
-| `M2.1.in` | Templated man-page source. `@…@` substitutions are filled in at configure time |
-| `Makefile.in` | Build glue that runs the substitution and installs into `share/man/man1/` |
+| File | Role | Deep dive |
+|---|---|---|
+| `M2.1.in` | Templated man-page source. `@…@` substitutions filled in at configure time | [`file-M2-1-in.md`](file-M2-1-in.md) |
+| `Makefile.in` | Build glue that runs the substitution and installs into `share/man/man1/` | — |
+
+**Coverage:** the man page source has a dedicated deep-dive doc.
 
 The installed man page is intentionally minimal — long-form documentation for
 the Macaulay2 language lives in the in-language help system (`help`,

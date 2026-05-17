@@ -455,9 +455,14 @@ Dedicated walkthroughs for especially central engine classes
 | `f4/` | [f4/file-f4-monlookup.md](M2/Macaulay2/e/f4/file-f4-monlookup.md) | `F4MonomialLookupTableT<Key>` |
 | `f4/` | [f4/file-f4-types.md](M2/Macaulay2/e/f4/file-f4-types.md) | F4 type vocabulary |
 | `bibasis/` | [bibasis/file-bibasis.md](M2/Macaulay2/e/bibasis/file-bibasis.md) | `BIBasis` driver |
-| `bibasis/` | [bibasis/file-monom.md](M2/Macaulay2/e/bibasis/file-monom.md) | `Monom` + ordering specialisations |
-| `bibasis/` | [bibasis/file-janettree.md](M2/Macaulay2/e/bibasis/file-janettree.md) | `JanetTree<MonomType>` |
+| `bibasis/` | [bibasis/file-launcher.md](M2/Macaulay2/e/bibasis/file-launcher.md) | `launcher.{cpp,hpp}` — order dispatch |
+| `bibasis/` | [bibasis/file-involutive.md](M2/Macaulay2/e/bibasis/file-involutive.md) | `Involutive<MonomType>` templated algorithm |
+| `bibasis/` | [bibasis/file-monom.md](M2/Macaulay2/e/bibasis/file-monom.md) | `Monom` base class |
+| `bibasis/` | [bibasis/file-monom-orders.md](M2/Macaulay2/e/bibasis/file-monom-orders.md) | `MonomLex`, `MonomDL`, `MonomDRL` |
 | `bibasis/` | [bibasis/file-polynom.md](M2/Macaulay2/e/bibasis/file-polynom.md) | `Polynom<MonomType>` |
+| `bibasis/` | [bibasis/file-janettree.md](M2/Macaulay2/e/bibasis/file-janettree.md) | `JanetTree<MonomType>` |
+| `bibasis/` | [bibasis/file-allocator.md](M2/Macaulay2/e/bibasis/file-allocator.md) | `FastAllocator` slab pool |
+| `bibasis/` | [bibasis/file-bibasis-internals.md](M2/Macaulay2/e/bibasis/file-bibasis-internals.md) | `Triple`, `TSet`, `QSet`, `PComparator`, `SettingsManager` |
 | `NCResolutions/` | [NCResolutions/file-nc-res-computation.md](M2/Macaulay2/e/NCResolutions/file-nc-res-computation.md) | `NCResComputation` |
 | `interface/` | [interface/file-aring-interface.md](M2/Macaulay2/e/interface/file-aring-interface.md) | aring C entry points |
 | `interface/` | [interface/file-groebner-interface.md](M2/Macaulay2/e/interface/file-groebner-interface.md) | GB / resolution C entry points |
@@ -770,6 +775,102 @@ Dedicated walkthroughs for especially central engine classes
 | [cmake/file-misc-cmakes.md](M2/cmake/file-misc-cmakes.md) | `prechecks`, `flavor`, `darwin`, `packaging`, `coverage`, `profiling`, `latex`, `stackcollapse-m2.sh` |
 
 **Coverage for `cmake/`:** every CMake module in `M2/cmake/` now has a dedicated deep-dive doc — see [`M2/cmake/README.md`](M2/cmake/README.md).
+
+**Autotools library build (`libraries/`) deep dives** (per-file docs in `M2/libraries/`):
+
+| File doc | Subject |
+|---|---|
+| [libraries/file-Makefile-in.md](M2/libraries/file-Makefile-in.md) | `Makefile.in` — top-level libraries-build driver |
+| [libraries/file-Makefile-library-in.md](M2/libraries/file-Makefile-library-in.md) | `Makefile.library.in` — shared per-library recipe |
+| [libraries/file-Makefile-template.md](M2/libraries/file-Makefile-template.md) | `Makefile.template` — starter template for new libraries |
+| [libraries/file-per-library-subdirs.md](M2/libraries/file-per-library-subdirs.md) | The 36 per-library subdirs catalogued by role |
+
+**Coverage for `libraries/`:** every shared build file and per-library subdir has a dedicated deep-dive doc — see [`M2/libraries/README.md`](M2/libraries/README.md).
+
+**Autotools m4 macros (`m4/`) deep dives** (per-file docs in `M2/m4/`):
+
+| File doc | Subject |
+|---|---|
+| [m4/file-autoconf-archive.md](M2/m4/file-autoconf-archive.md) | `ax_blas`, `ax_lapack`, `ax_boost_*`, `ax_compare_version`, `ax_recursive_eval` (vendored from autoconf-archive) |
+| [m4/file-m4-local.md](M2/m4/file-m4-local.md) | `openmp.m4`, `search-libraries.m4`, `files` (M2-local) |
+
+**Coverage for `m4/`:** every m4 macro and helper has a dedicated deep-dive doc — see [`M2/m4/README.md`](M2/m4/README.md).
+
+**Shared headers (`include/`) deep dives** (per-file docs in `M2/include/`):
+
+| File doc | Subject |
+|---|---|
+| [include/file-configuration-in.md](M2/include/file-configuration-in.md) | `configuration.in`, `config.Makefile.in` — generated-header templates |
+| [include/file-M2-headers.md](M2/include/file-M2-headers.md) | `M2/` (gc-include, math-include, atomic-field, config.h) and `valgrind/` |
+
+**Coverage for `include/`:** every file and subdir has a dedicated deep-dive doc — see [`M2/include/README.md`](M2/include/README.md).
+
+**Runtime auxiliary files (`files/`) deep dives** (per-file docs in `M2/files/`):
+
+| File doc | Subject |
+|---|---|
+| [files/file-files-content.md](M2/files/file-files-content.md) | `M2-suppressions.supp`, `info-dir-template` |
+
+**Coverage for `files/`:** every file in this directory has a dedicated deep-dive doc — see [`M2/files/README.md`](M2/files/README.md).
+
+**Packaging (`distributions/`) deep dives** (per-file docs in `M2/distributions/`):
+
+| File doc | Subject |
+|---|---|
+| [distributions/file-distributions.md](M2/distributions/file-distributions.md) | `Makefile.in`, `tar-exclusions`, `top/`, `dmg/`, `freebsd/`, `install/`, `tar/` consolidated walkthrough |
+
+**Coverage for `distributions/`:** every packaging file and subdir is covered in the deep-dive doc — see [`M2/distributions/README.md`](M2/distributions/README.md).
+
+**Vendored upstream sources (`submodules/`) deep dives** (per-file docs in `M2/submodules/`):
+
+| File doc | Subject |
+|---|---|
+| [submodules/file-submodules.md](M2/submodules/file-submodules.md) | All 9 submodules catalogued (bdwgc, flint, frobby, fflas_ffpack, givaro, googletest, mathic, mathicgb, memtailor) |
+
+**Coverage for `submodules/`:** every submodule has dedicated coverage — see [`M2/submodules/README.md`](M2/submodules/README.md).
+
+**Build tree & container builds (`BUILD/`) deep dives** (per-file docs in `M2/BUILD/`):
+
+| File doc | Subject |
+|---|---|
+| [BUILD/file-build-layout.md](M2/BUILD/file-build-layout.md) | Build-tree conventions, `tarfiles/`, per-developer subdirs |
+| [BUILD/docker/file-docker.md](M2/BUILD/docker/file-docker.md) | Docker-based build & packaging recipes |
+| [BUILD/rpm/file-rpm.md](M2/BUILD/rpm/file-rpm.md) | RPM packaging in containers (AlmaLinux/Fedora/RHEL) |
+
+**Coverage for `BUILD/`:** all subdirs have dedicated coverage — see [`M2/BUILD/README.md`](M2/BUILD/README.md).
+
+**Build-system entry points (`M2/`) deep dives** (per-file docs at the M2 source root):
+
+| File doc | Subject |
+|---|---|
+| [M2/file-CMakeLists-txt.md](M2/file-CMakeLists-txt.md) | `CMakeLists.txt` — CMake build entry point |
+| [M2/file-configure-ac.md](M2/file-configure-ac.md) | `configure.ac` — autoconf input |
+| [M2/file-autogen-sh.md](M2/file-autogen-sh.md) | `autogen.sh` — autotools bootstrap script |
+| [M2/file-Makefile-in.md](M2/file-Makefile-in.md) | `Makefile.in` — top-level autotools driver |
+| [M2/file-Makefile-doc-dist.md](M2/file-Makefile-doc-dist.md) | `Makefile.doc-dist` — doc-only distribution Makefile |
+| [M2/file-VERSION.md](M2/file-VERSION.md) | `VERSION` — single source of truth for the project version |
+| [M2/check-configure/file-check-configure.md](M2/check-configure/file-check-configure.md) | `check-configure/Makefile.in` — configure-sanity sandbox |
+
+**Coverage for `M2/` top level + `check-configure/`:** every build-system entry point has a dedicated deep-dive doc.
+
+**Man page (`man/`) deep dives** (per-file docs in `M2/Macaulay2/man/`):
+
+| File doc | Subject |
+|---|---|
+| [man/file-M2-1-in.md](M2/Macaulay2/man/file-M2-1-in.md) | `M2.1.in` — the `M2(1)` man page template |
+
+**Coverage for `man/`:** the man page source has a dedicated deep-dive doc — see [`M2/Macaulay2/man/README.md`](M2/Macaulay2/man/README.md).
+
+**Distributed packages (`packages/`) deep dives** (per-file docs in `M2/Macaulay2/packages/`):
+
+| File doc | Subject |
+|---|---|
+| [packages/file-Macaulay2Doc.md](M2/Macaulay2/packages/file-Macaulay2Doc.md) | `Macaulay2Doc.m2` — main user documentation package |
+| [packages/file-Style.md](M2/Macaulay2/packages/file-Style.md) | `Style.m2` — doc styling + `generateGrammar` |
+| [packages/file-EngineTests.md](M2/Macaulay2/packages/file-EngineTests.md) | `EngineTests.m2` — M2-level engine test suite |
+| [packages/file-package-conventions.md](M2/Macaulay2/packages/file-package-conventions.md) | Package conventions — layout, dependencies, doc DSL, tests |
+
+**Coverage for `packages/`:** structural conventions plus the three foundational packages (`Macaulay2Doc`, `Style`, `EngineTests`) have dedicated deep-dive docs — see [`M2/Macaulay2/packages/README.md`](M2/Macaulay2/packages/README.md). Domain-specific packages (~400 total) are individually catalogued there but not given per-file dives, since each follows the conventions doc.
 
 ### Per-area docs (quick navigation)
 

@@ -265,9 +265,14 @@ subdirectories:
 | `f4/` | [`f4/file-f4-monlookup.md`](f4/file-f4-monlookup.md) | `F4MonomialLookupTableT<Key>` |
 | `f4/` | [`f4/file-f4-types.md`](f4/file-f4-types.md) | F4 type vocabulary |
 | `bibasis/` | [`bibasis/file-bibasis.md`](bibasis/file-bibasis.md) | `BIBasis` driver |
-| `bibasis/` | [`bibasis/file-monom.md`](bibasis/file-monom.md) | `Monom` + ordering specialisations |
-| `bibasis/` | [`bibasis/file-janettree.md`](bibasis/file-janettree.md) | `JanetTree<MonomType>` |
+| `bibasis/` | [`bibasis/file-launcher.md`](bibasis/file-launcher.md) | `launcher.{cpp,hpp}` — order dispatch |
+| `bibasis/` | [`bibasis/file-involutive.md`](bibasis/file-involutive.md) | `Involutive<MonomType>` templated algorithm |
+| `bibasis/` | [`bibasis/file-monom.md`](bibasis/file-monom.md) | `Monom` base class |
+| `bibasis/` | [`bibasis/file-monom-orders.md`](bibasis/file-monom-orders.md) | `MonomLex`, `MonomDL`, `MonomDRL` |
 | `bibasis/` | [`bibasis/file-polynom.md`](bibasis/file-polynom.md) | `Polynom<MonomType>` |
+| `bibasis/` | [`bibasis/file-janettree.md`](bibasis/file-janettree.md) | `JanetTree<MonomType>` |
+| `bibasis/` | [`bibasis/file-allocator.md`](bibasis/file-allocator.md) | `FastAllocator` slab pool |
+| `bibasis/` | [`bibasis/file-bibasis-internals.md`](bibasis/file-bibasis-internals.md) | `Triple`, `TSet`, `QSet`, `PComparator`, `SettingsManager` |
 | `NCResolutions/` | [`NCResolutions/file-nc-res-computation.md`](NCResolutions/file-nc-res-computation.md) | `NCResComputation` |
 | `interface/` | [`interface/file-aring-interface.md`](interface/file-aring-interface.md) | aring C entry points |
 | `interface/` | [`interface/file-groebner-interface.md`](interface/file-groebner-interface.md) | GB / resolution C entry points |

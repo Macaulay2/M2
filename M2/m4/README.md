@@ -19,4 +19,13 @@ the **autotools** build; the CMake build's equivalent detection logic lives in
 To regenerate `configure` after editing here, run `autogen.sh` at
 `M2/`.
 
+## Per-file deep dives
+
+| Files | Deep dive |
+|---|---|
+| `ax_blas.m4`, `ax_lapack.m4`, `ax_boost_*.m4`, `ax_compare_version.m4`, `ax_recursive_eval.m4` | [`file-autoconf-archive.md`](file-autoconf-archive.md) |
+| `openmp.m4`, `search-libraries.m4`, `files` | [`file-m4-local.md`](file-m4-local.md) |
+
+**Coverage:** every m4 macro and helper has a dedicated deep-dive doc.
+
 [← back to repository TOC](../../README.md#under-m2)

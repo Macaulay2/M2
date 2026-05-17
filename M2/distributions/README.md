@@ -31,4 +31,12 @@ a templated `INSTALL` file.
 The `INSTALL` shown to end users is **templated** from
 [`top/INSTALL.in`](top/INSTALL.in) — edit the template, not the generated file.
 
+## Per-file deep dives
+
+Single consolidated doc covering the top-level `Makefile.in`, `tar-exclusions`, the `top/` user-facing templates (`INSTALL.in`, `postinstall.in`, `preremove.in`), and the four per-format subdirs (`dmg/`, `freebsd/`, `install/`, `tar/`):
+
+- [`file-distributions.md`](file-distributions.md) — packaging machinery walkthrough.
+
+**Coverage:** every packaging file and subdir has dedicated coverage in the deep-dive doc above.
+
 [← back to repository TOC](../../README.md#under-m2)

@@ -22,12 +22,15 @@ For installation instructions, see the
 | [`files/`](files/README.md) | Auxiliary runtime files shipped with M2 |
 | [`m4/`](m4/README.md) | Autoconf m4 macros |
 | [`check-configure/`](check-configure/README.md) | Configure-time sanity checks |
-| `BUILD/` | Conventional out-of-tree build location (in-source builds are blocked) |
-| `VERSION` | Single source of truth for the project version |
-| `configure.ac` | Autoconf input |
-| `CMakeLists.txt` | CMake entry point |
-| `autogen.sh` | Bootstrap the autotools build |
-| `Makefile.in`, `Makefile.doc-dist` | Templated top-level makefiles (autotools) |
+| [`BUILD/`](BUILD/README.md) | Conventional out-of-tree build location (in-source builds are blocked) |
+| `VERSION` | Single source of truth for the project version — [deep dive](file-VERSION.md) |
+| `configure.ac` | Autoconf input — [deep dive](file-configure-ac.md) |
+| `CMakeLists.txt` | CMake entry point — [deep dive](file-CMakeLists-txt.md) |
+| `autogen.sh` | Bootstrap the autotools build — [deep dive](file-autogen-sh.md) |
+| `Makefile.in` | Top-level autotools driver — [deep dive](file-Makefile-in.md) |
+| `Makefile.doc-dist` | Documentation-only distribution Makefile — [deep dive](file-Makefile-doc-dist.md) |
+
+**Coverage:** every top-level build-system entry point has a dedicated deep-dive doc.
 
 ## Build systems
 

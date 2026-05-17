@@ -37,6 +37,12 @@ git submodule update --init --recursive
 Follow the same instructions as in [`../libraries/README`](../libraries/README)
 for adding a new library or program.
 
+## Per-file deep dive
+
+- [`file-submodules.md`](file-submodules.md) — full catalogue of the 9 submodules with upstream URLs, licenses, and per-submodule role detail.
+
+**Coverage:** every submodule has dedicated coverage in the deep-dive doc above.
+
 ## Related
 
 - [`M2/libraries/`](../libraries/README.md) — per-library build wrappers

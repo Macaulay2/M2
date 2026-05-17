@@ -74,6 +74,17 @@ The full procedure lives in [`README`](README), but the short version:
 5. Verify `installPackage "Foo"` and `check "Foo"` both succeed in a fresh
    build, then open a PR.
 
+## Key-package and conventions deep dives
+
+| Topic | Deep dive |
+|---|---|
+| `Macaulay2Doc.m2` — main user documentation package | [`file-Macaulay2Doc.md`](file-Macaulay2Doc.md) |
+| `Style.m2` — doc styling + `generateGrammar` export | [`file-Style.md`](file-Style.md) |
+| `EngineTests.m2` — M2-level engine test suite | [`file-EngineTests.md`](file-EngineTests.md) |
+| Package conventions — layout, dependencies, doc DSL, tests | [`file-package-conventions.md`](file-package-conventions.md) |
+
+The full ~400 per-package coverage would be repetitive — these four deep-dives cover the structural patterns every package follows plus the three foundational packages that ship.
+
 ## Related
 
 - [`Macaulay2/m2/installPackage.m2`](../m2/installPackage.m2) — the engine of

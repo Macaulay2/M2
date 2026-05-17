@@ -35,3 +35,13 @@ such as `x86_64-Linux-Ubuntu-8.10`.  (Actually, this is being changed...)
 
 Alternatively, see the [this guide](docker/README.md) for instructions on using
 Docker to build Linux container images running Macaulay2.
+
+## Per-file deep dives
+
+| Subdir / topic | Deep dive |
+|---|---|
+| Build-tree layout, `tarfiles/`, per-developer subdirs | [`file-build-layout.md`](file-build-layout.md) |
+| `docker/` Docker recipes | [`docker/file-docker.md`](docker/file-docker.md) |
+| `rpm/` RPM packaging in containers | [`rpm/file-rpm.md`](rpm/file-rpm.md) |
+
+**Coverage:** all BUILD/ subdirs have dedicated deep-dive coverage.
