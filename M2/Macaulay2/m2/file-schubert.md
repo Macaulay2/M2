@@ -37,8 +37,9 @@ The file defines functions for:
   corresponding to a given partition / index set.
 - **Pieri rules** — `c_i · σ_λ` decompositions.
 - **`SchurRing` integration** — Schubert classes can be expressed in
-  terms of Schur polynomials via the [`file-schur.md`](file-schur.md)
-  / [`file-schur2.md`](file-schur2.md) machinery.
+  terms of Schur polynomials via the engine's
+  [`file-schur.md`](../e/file-schur.md) / [`file-schur2.md`](../e/file-schur2.md)
+  machinery.
 
 ## Used by
 

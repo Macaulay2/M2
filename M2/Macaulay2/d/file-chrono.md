@@ -73,5 +73,5 @@ output.
 - [`file-profiler.md`](file-profiler.md) — built on this.
 - [`file-system.md`](file-system.md) — sister POSIX time bindings
   (`time(2)`).
-- [`../m2/file-time.md`](../m2/file-time.md) — M2-side wrappers
-  (if any).
+- M2-side wrappers (`time`, `elapsedTime`) live in the Core M2
+  load sequence — see [`../m2/README.md`](../m2/README.md).

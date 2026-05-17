@@ -66,7 +66,8 @@ the top of `e/`. New code goes here; old code is being migrated.
 | Cones / polyhedra | `cone.{h,cpp}` | Cone operations |
 | Factoring | `factory.{h,cpp}` | Bridge to the Factory library |
 | CRT | `cra.{h,cpp}` | Chinese remainder algorithm |
-| Numerics | `random.{h,cpp}`, `polyroots.cpp` | RNG, root finding |
+| Numerics | `random.{h,cpp}` | RNG ([deep dive](file-random-interface.md)) |
+| Numerics | `polyroots.cpp` | MPSolve univariate root finder ([deep dive](file-polyroots.md)) |
 | Memory | `m2-mem.{h,cpp}` | Allocation hooks exposed to interpreter |
 | Engine types | `m2-types.{h,cpp}` | The opaque type tags interpreter sees |
 | Utilities | `gmp-util.h` | GMP helpers |

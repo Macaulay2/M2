@@ -111,6 +111,6 @@ Used heavily by [`NewF4Test.cpp`](file-NewF4Test.md),
   template declarations.
 - [`../file-engine-h.md`](../file-engine-h.md) (if added) —
   `IM2_initialize` declaration.
-- [`../interrupted.md`](../interrupted.md) (if added) — the
+- [`../file-interrupted.md`](../file-interrupted.md) — the
   `system_interrupted` function that `M2-cpp-replacement.cpp`
   stubs out.

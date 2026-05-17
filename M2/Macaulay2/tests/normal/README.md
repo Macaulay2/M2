@@ -51,6 +51,12 @@ make -C tests/normal   # autotools
 
 Both run every `.m2` file in this directory.
 
+## Catalogue
+
+[`file-normal-tests-catalogue.md`](file-normal-tests-catalogue.md) — full
+walkthrough of test patterns, naming conventions, what gets tested, and
+how to add a new test. Covers all 373 test files structurally.
+
 ## Related
 
 - [`../README.md`](../README.md) — overall test-suite overview.

@@ -54,7 +54,7 @@ its specific ring type. Callers dispatch through `Ring*`.
 ## Why "legacy"
 
 The 2012-onward `aring` framework
-([`file-aring-hpp.md`](file-aring-hpp.md) if added) uses templates
+([`file-aring.md`](file-aring.md)) uses templates
 instead of virtual dispatch — faster inner loops, more
 type-safety. New rings target `aring`.
 

@@ -30,7 +30,7 @@ Part of the [engine](README.md) — documentation.
 
 The `\mainpage` directive sets the top-level title of the
 Doxygen-generated HTML in
-[`../docs/`](../../docs/README.md). The doxygen run pulls
+[`../docs/`](../docs/README.md). The doxygen run pulls
 `defgroups.h` first to establish:
 
 - The mainpage description shown above.
@@ -64,13 +64,13 @@ file Doxygen happened to read first.
 
 ## Used by
 
-- The Doxygen build in [`../../docs/`](../../docs/README.md).
+- The Doxygen build in [`../docs/`](../docs/README.md).
 - Every class header that uses `\ingroup`.
 
 ## Related
 
 - [`README.md`](README.md) — engine overview.
-- [`../../docs/README.md`](../../docs/README.md) — Sphinx + Doxygen
+- [`../docs/README.md`](../docs/README.md) — Sphinx + Doxygen
   C++ API docs.
 - [`doxygen-settings/README.md`](doxygen-settings/README.md) —
   Doxygen styling.

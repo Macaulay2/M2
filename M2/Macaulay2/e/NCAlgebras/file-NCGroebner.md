@@ -57,7 +57,7 @@ analogous to `gbvectorHeap` in [`gbring`](../file-gbring.md).
 ## `tryOutMathicCode`
 
 The header declares an `extern void tryOutMathicCode()` — a hook for
-benchmarking experimental integration with the [`mathic`](../../submodules/README.md)
+benchmarking experimental integration with the [`mathic`](../../../submodules/README.md)
 data-structures library. Not part of the production API.
 
 ## Termination

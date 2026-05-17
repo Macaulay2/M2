@@ -59,7 +59,7 @@ Five constructors covering the common cases:
 ## Why not `std::span`?
 
 `std::span` is C++20; the engine's baseline is C++17 (per
-[`../../CLAUDE.md`](../../../CLAUDE.md)). `Range` is the engine's
+[`CLAUDE.md`](../../../../CLAUDE.md)). `Range` is the engine's
 home-rolled equivalent. If/when the baseline moves to C++20, this
 file can probably be replaced with a type alias.
 

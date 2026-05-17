@@ -106,6 +106,6 @@ GC sees the big slabs as black-box allocations.
 ## Related
 
 - [`README.md`](README.md) — bibasis/ overview.
-- [`file-triple.md`](file-triple.md) — heavy user.
+- [`file-bibasis-internals.md`](file-bibasis-internals.md) — heavy user.
 - [`file-polynom.md`](file-polynom.md) — heavy user.
 - [`file-monom.md`](file-monom.md) — heavy user.

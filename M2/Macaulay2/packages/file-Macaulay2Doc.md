@@ -153,5 +153,5 @@ declarations in doc nodes.
   — what runs the docs build.
 - [`file-Style.md`](file-Style.md) — sister package for visual
   styling.
-- [`../../docs/README.md`](../../docs/README.md) — separate
+- [`../docs/README.md`](../docs/README.md) — separate
   developer-facing Sphinx docs.

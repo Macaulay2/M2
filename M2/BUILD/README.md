@@ -1,5 +1,5 @@
-See [INSTALL](../INSTALL) or [INSTALL-CMake.md](../INSTALL-CMake.md) for build
-requirements and instructions.
+See the project [Wiki](https://github.com/Macaulay2/M2/wiki) and root
+[`CLAUDE.md`](../../CLAUDE.md) for build requirements and instructions.
 
 This directory may be used as a convenient location for the build directory
 trees.  For example, it may contain subdirectories `Linux-i686` and

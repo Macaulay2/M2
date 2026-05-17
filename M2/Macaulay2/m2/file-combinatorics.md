@@ -59,8 +59,8 @@ M2-side recursion is fast enough.
 
 ## Used by
 
-- Schubert calculus packages
-  ([`file-schur2.md`](file-schur2.md)-related).
+- Schubert calculus packages (the engine's
+  [`file-schur2.md`](../e/file-schur2.md)-related).
 - Enumeration packages.
 - M2 users learning combinatorics.
 

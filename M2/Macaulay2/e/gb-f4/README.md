@@ -21,6 +21,9 @@ refactoring notes.
 | [`file-PolynomialList.md`](file-PolynomialList.md) | `PolynomialList` (typed polynomial container) |
 | [`file-MonomialView.md`](file-MonomialView.md) | `MonomialView` (non-owning encoded-monomial view) |
 | [`file-MonomialTypes.md`](file-MonomialTypes.md) | Typed integers (`Index`, `MonomialIndex`, `HashInt`, …) |
+| [`file-GBF4Interface.md`](file-GBF4Interface.md) | `createGBF4Interface` — engine-boundary entry to the new F4 |
+
+**Coverage:** every source file in this directory has a dedicated deep-dive doc.
 
 ## Files
 

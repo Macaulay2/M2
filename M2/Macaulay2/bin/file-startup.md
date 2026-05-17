@@ -82,6 +82,6 @@ a script). Both produce equivalent `startup.c` files.
 - [`README.md`](README.md) — bin/ overview.
 - `M2/cmake/startup.cmake` — CMake module that processes this
   template.
-- [`../m2/file-startup.md`](../m2/file-startup.md) — the M2-side
-  `startup.m2` content.
+- `../m2/startup.m2.in` — the M2-side template (see
+  [`../m2/README.md`](../m2/README.md) for Core M2 overview).
 - [`file-main.md`](file-main.md) — primary consumer.

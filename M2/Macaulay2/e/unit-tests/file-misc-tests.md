@@ -91,6 +91,5 @@ buried in unrelated noise."
 - [`README.md`](README.md) — unit-tests overview.
 - [`../file-NAG.md`](../file-NAG.md) (if added) — Numerical AG
   source.
-- [`../file-comb-hpp.md`](../file-comb-hpp.md) (if added) — subset
-  combinatorics.
+- [`../file-comb.md`](../file-comb.md) — subset combinatorics.
 - [`../utilities.md`](../utilities.md) — broader utility area.

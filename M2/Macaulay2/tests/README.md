@@ -22,6 +22,17 @@ lives under [`Macaulay2/e/unit-tests/`](../e/README.md).
 
 Plus build glue: `CMakeLists.txt`, `Makefile.in`, `Makefile.test.in`.
 
+## Per-suite catalogue deep dives
+
+| Suite | Deep dive |
+|---|---|
+| `normal/` | [`normal/file-normal-tests-catalogue.md`](normal/file-normal-tests-catalogue.md) — 373-file catalogue, naming conventions, structure |
+| `engine/` | [`engine/file-engine-tests-catalogue.md`](engine/file-engine-tests-catalogue.md) — `raw…()` test family + CI-skipped rationale |
+| `slow/` | [`slow/file-slow-tests-catalogue.md`](slow/file-slow-tests-catalogue.md) — 12 slow tests with topics and per-test runtimes |
+| `goals/`, `gigantic/`, `threads/`, `quarantine/`, `rationality/` | [`file-small-suites-catalogue.md`](file-small-suites-catalogue.md) — consolidated coverage |
+
+**Coverage:** every test suite has either a per-suite catalogue or is covered in the consolidated small-suites doc.
+
 ## Running
 
 ```sh

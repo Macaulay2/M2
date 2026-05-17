@@ -75,7 +75,7 @@ testing uses M2's `===` (identity) and `==` (value equality).
 ## Related
 
 - [`README.md`](README.md) — d/ overview.
-- [`file-classes.md`](file-classes.md) (if added) — `Type` system
+- [`file-classes-dd.md`](file-classes-dd.md) — `Type` system
   using `HashTable`.
 - [`file-expr.md`](file-expr.md), [`file-evaluate.md`](file-evaluate.md)
   — pattern-match on `HashTable` Expr variants.

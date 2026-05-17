@@ -51,5 +51,5 @@ to register it and add a `Makefile.in` to the new directory.
 - [`README.md`](README.md) — overall test-suite overview.
 - Each per-suite README (linked from above).
 - `.github/workflows/test_build.yml` — CI invocation.
-- [`../../e/unit-tests/`](../../e/unit-tests/README.md) — C++
+- [`../e/unit-tests/`](../e/unit-tests/README.md) — C++
   gtest suite (registered separately).

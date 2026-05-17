@@ -98,5 +98,5 @@ Embedding it at compile time:
 - [`README.md`](README.md) — cmake/ overview.
 - [`../Macaulay2/bin/file-startup.md`](../Macaulay2/bin/file-startup.md)
   — the template materialised here.
-- [`../Macaulay2/m2/file-startup.md`](../Macaulay2/m2/file-startup.md)
-  — the M2-side `startup.m2`.
+- `../Macaulay2/m2/startup.m2.in` — the M2-side template
+  embedded into `startup.c` by this script.

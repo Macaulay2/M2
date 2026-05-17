@@ -46,6 +46,12 @@ The slow tests are also more sensitive to environment — they can be
 killed by OOM on small machines, can require lots of disk space, etc.
 Keeping them out of CI avoids spurious failures.
 
+## Catalogue
+
+[`file-slow-tests-catalogue.md`](file-slow-tests-catalogue.md) — full
+walkthrough with per-file topic mapping, approximate runtimes, the
+`-a`/`-b` split convention, and `.aux` data-file pattern.
+
 ## Related
 
 - [`../README.md`](../README.md) — overall test-suite overview.

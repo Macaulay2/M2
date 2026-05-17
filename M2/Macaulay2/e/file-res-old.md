@@ -19,7 +19,7 @@ Part of the [engine](README.md) — resolutions.
 | `res-a2` | `gb2_comp` | Multi-stage version with Hilbert hints (1997-2006) |
 
 User-facing `resolution(I)` is dispatched by the M2 layer (Core
-M2 file [`../m2/file-res.md`](../m2/file-res.md)) to one of these
+M2 file `../m2/res.m2`) to one of these
 based on heuristics:
 
 - Strategy 0 / 1 → `res-a0` family.
@@ -99,5 +99,6 @@ Users picking a strategy effectively pick which generation runs.
 - [`resolutions.md`](resolutions.md) — area.
 - [`schreyer-resolution/README.md`](schreyer-resolution/README.md)
   — the modern engine (where most work goes).
-- [`file-comp-res.md`](file-comp-res.md) if added — common base.
-- [`../m2/file-res.md`](../m2/file-res.md) — M2-side dispatcher.
+- [`file-comp-res.md`](file-comp-res.md) — common base.
+- M2-side `resolution` dispatcher lives in the Core M2 load
+  sequence — see [`../m2/README.md`](../m2/README.md).

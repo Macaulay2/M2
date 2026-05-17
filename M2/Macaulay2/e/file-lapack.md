@@ -62,7 +62,7 @@ into output `DMat` slots.
 ## Linking
 
 LAPACK is detected at configure time via
-[`cmake/M2/m4/ax_lapack.m4`](../m4/README.md) (autotools) and
+[`m4/ax_lapack.m4`](../../m4/README.md) (autotools) and
 [`cmake/Find*.cmake`](../../cmake/README.md) (CMake). The engine links
 against either system LAPACK, Apple Accelerate (on macOS), or OpenBLAS,
 depending on what configure found.

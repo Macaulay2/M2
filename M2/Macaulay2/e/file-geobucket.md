@@ -95,9 +95,9 @@ dispatch in the inner loop — critical for performance.
 ## Where geobuckets show up
 
 - Almost every Gröbner-basis engine
-  ([`comp-gb.md`](file-comp-gb.md), [`gb-default.md`](file-gb-default.md)).
+  ([`file-comp-gb.md`](file-comp-gb.md), [`file-gb-default.md`](file-gb-default.md)).
 - Resolution reduction loops
-  ([`res-a2.md`](file-res-a2.md)).
+  ([`file-res-old.md`](file-res-old.md) — the `res-a2` family).
 - Some matrix multiplication paths.
 
 If you grep `geobucket` you'll find usage everywhere reduction

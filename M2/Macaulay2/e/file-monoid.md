@@ -5,8 +5,8 @@ polynomial ring: a finite set of named variables together with a monomial
 ordering and (multi-)grading.
 
 This file is part of the [Monoids & monomials](monoids-and-monomials.md)
-area. See [`imonorder.cpp`](imonorder.cpp) for the encoded internal form, and
-[`monorder.cpp`](monorder.cpp) for the user-facing ordering description.
+area. See [`file-imonorder.md`](file-imonorder.md) for the encoded internal form, and
+[`file-monordering.md`](file-monordering.md) for the user-facing ordering description.
 
 [← per-area: monoids-and-monomials](monoids-and-monomials.md) · [← engine overview](README.md)
 
@@ -79,6 +79,6 @@ PolynomialRing                ← uses
 ## Related
 
 - [`monoids-and-monomials.md`](monoids-and-monomials.md) — area overview.
-- [`imonorder.cpp`](imonorder.cpp), [`monorder.cpp`](monorder.cpp) — ordering layers.
+- [`file-imonorder.md`](file-imonorder.md), [`file-monordering.md`](file-monordering.md) — ordering layers.
 - [`file-polyring.md`](file-polyring.md) — `PolynomialRing` holds a `Monoid*`.
 - [`interface/monoid.{h,cpp}`](interface/README.md) — public C interface.

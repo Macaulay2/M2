@@ -86,5 +86,5 @@ The version info is shown:
 - [`README.md`](README.md) — d/ overview.
 - `M2/VERSION` — single source of truth for the version.
 - `Macaulay2/packages/=distributed-packages` — the package list.
-- [`../m2/file-startup.md`](../m2/file-startup.md) — uses the
-  version info on startup.
+- `../m2/startup.m2.in` — uses the version info on startup (see
+  [`../m2/README.md`](../m2/README.md) for Core M2 overview).

@@ -105,8 +105,7 @@ Every section here runs before any source is touched.
 - [`README.md`](README.md) — cmake/ overview.
 - [`file-check-libraries-cmake.md`](file-check-libraries-cmake.md)
   — library detection.
-- [`file-prechecks-cmake.md`](file-prechecks-cmake.md) — pre-check
-  steps.
-- [`file-flavor-cmake.md`](file-flavor-cmake.md) — OS detection.
-- [`../Macaulay2/include/`](../Macaulay2/include/README.md) — where
-  the resulting `config.h` lives.
+- [`file-misc-cmakes.md`](file-misc-cmakes.md) — pre-check steps
+  (`prechecks`), OS detection (`flavor`), packaging, profiling, etc.
+- [`../include/`](../include/README.md) — where the resulting
+  `config.h` lives.

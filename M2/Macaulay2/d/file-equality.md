@@ -66,5 +66,7 @@ Hence the engine-side `IM2_*_is_equal` functions.
   declarations.
 - [`file-hashtables.md`](file-hashtables.md) — uses `==` for
   bucket lookups.
-- [`../e/file-interface.md`](../e/file-interface.md) (if added) —
-  engine-side `IM2_*_is_equal` implementations.
+- [`../e/interface/file-freemodule-interface.md`](../e/interface/file-freemodule-interface.md),
+  [`../e/interface/file-matrix-interface.md`](../e/interface/file-matrix-interface.md),
+  [`../e/interface/file-monomial-ideal-interface.md`](../e/interface/file-monomial-ideal-interface.md)
+  — engine-side `IM2_*_is_equal` implementations.

@@ -87,9 +87,8 @@ Templated dispatch: zero overhead, perfectly inlinable.
 
 - [`README.md`](README.md) — bibasis/ overview.
 - [`file-polynom.md`](file-polynom.md) — the polynomial type.
-- [`file-pcomparator.md`](file-pcomparator.md) — comparator used
-  for basis ordering.
-- [`file-tset.md`](file-tset.md), [`file-qset.md`](file-qset.md)
-  — auxiliary sets the algorithm maintains.
+- [`file-bibasis-internals.md`](file-bibasis-internals.md) —
+  `Triple`, `TSet`, `QSet`, `PComparator`, `SettingsManager`
+  (the auxiliary structures the algorithm operates on).
 - [`file-janettree.md`](file-janettree.md) — the Janet-division
   index structure.

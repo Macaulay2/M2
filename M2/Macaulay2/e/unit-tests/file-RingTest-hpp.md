@@ -83,7 +83,7 @@ specialization (since polynomial rings build on it).
 ## Used by
 
 - Every `Ring*Test.cpp` (the legacy suite).
-- [`file-fromStream.md`](file-fromStream.md) — provides
+- [`file-test-harness.md`](file-test-harness.md) — provides
   specialisations.
 
 ## Related
@@ -91,6 +91,6 @@ specialization (since polynomial rings build on it).
 - [`README.md`](README.md) — unit-tests overview.
 - [`file-ARingTest-hpp.md`](file-ARingTest-hpp.md) — sister
   fixture for the templated `aring` tests.
-- [`../ring.md`](../ring.md) (if added) — legacy `Ring` API.
+- [`../file-ring.md`](../file-ring.md) — legacy `Ring` API.
 - [`../coefficient-rings.md`](../coefficient-rings.md) — area
   these tests cover.

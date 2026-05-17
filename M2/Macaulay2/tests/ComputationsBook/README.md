@@ -63,6 +63,14 @@ mathematically identical results across versions. A subtle change in
 monomial ordering or normal-form choice would break a printed book —
 this suite catches that before it ships.
 
+## Catalogue
+
+[`file-computations-book-catalogue.md`](file-computations-book-catalogue.md)
+— full walkthrough of the canonical per-chapter file pattern
+(`chapter.m2`, `chapter.out.expected`, `test.m2`, `test.oldvalues`,
+`patterns`, ...), how the `capture.m2` value-capture harness works, and
+chapter-by-chapter contents.
+
 ## Related
 
 - The book itself: *Computations in Algebraic Geometry with Macaulay

@@ -63,7 +63,7 @@ The tests verify:
 ```
 
 A small helper library (defined in
-[`file-util-polyring-creation.md`](file-util-polyring-creation.md))
+[`file-test-harness.md`](file-test-harness.md))
 that builds polynomial rings from convenient string-based specs:
 
 ```cpp
@@ -85,8 +85,8 @@ keeps each test focused on what it's verifying.
 - [`README.md`](README.md) — unit-tests overview.
 - [`../gb-f4/README.md`](../gb-f4/README.md) — the F4 engine
   under test.
-- [`../file-VectorArithmetic-hpp.md`](../file-VectorArithmetic-hpp.md)
-  (if added) — vector-arithmetic primitives.
-- [`file-util-polyring-creation.md`](file-util-polyring-creation.md)
+- [`../file-VectorArithmetic.md`](../file-VectorArithmetic.md)
+  — vector-arithmetic primitives.
+- [`file-test-harness.md`](file-test-harness.md)
   — test helper.
 - [`../groebner-bases.md`](../groebner-bases.md) — area.

@@ -82,14 +82,14 @@ balance: enough to catch most bugs, fast enough for CI.
 ## Used by
 
 - Every `ARing*Test.cpp` in this directory.
-- The fixtures in [`file-fromStream.md`](file-fromStream.md).
+- The fixtures in [`file-test-harness.md`](file-test-harness.md).
 
 ## Related
 
 - [`README.md`](README.md) — unit-tests overview.
 - [`file-RingTest-hpp.md`](file-RingTest-hpp.md) — sister fixture
   for legacy-ring tests.
-- [`../aring.md`](../aring.md) (if added) — engine-side `aring`
+- [`../file-aring.md`](../file-aring.md) — engine-side `aring`
   framework.
 - [`../coefficient-rings.md`](../coefficient-rings.md) — area
   these tests cover.

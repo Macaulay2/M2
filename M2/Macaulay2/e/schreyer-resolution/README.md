@@ -26,6 +26,10 @@ of Macaulay-matrix form.
 | [`file-res-f4-monlookup.md`](file-res-f4-monlookup.md) | `ResF4MonomialLookupTableT<Key>` |
 | [`file-res-f4-m2-interface.md`](file-res-f4-m2-interface.md) | `ResF4toM2Interface` (translation layer) |
 | [`file-res-memblock.md`](file-res-memblock.md) | `ResMemoryBlock<T>` (slab allocator) |
+| [`file-res-moninfo-impls.md`](file-res-moninfo-impls.md) | `ResMonoidDense` / `ResMonoidSparse` (the two concrete monoid implementations) |
+| [`file-res-tasking-example.md`](file-res-tasking-example.md) | `res-tasking-example.cpp` — TBB task-graph sandbox |
+
+**Coverage:** every source file in this directory has a dedicated deep-dive doc.
 
 ## Files
 

@@ -53,6 +53,13 @@ make
 A subset will likely fail; the failures are documented in #1213 and
 adjacent issues.
 
+## Catalogue
+
+[`file-engine-tests-catalogue.md`](file-engine-tests-catalogue.md) — full
+walkthrough of the `raw…()` test family with per-file topic mapping, why
+CI skips them, and how the modern `EngineTests` package supersedes most
+coverage.
+
 ## Related
 
 - Upstream issue [#1213](https://github.com/Macaulay2/M2/issues/1213).
