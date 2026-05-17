@@ -144,4 +144,3 @@ with this program; if not, see https://www.gnu.org/licenses/.
 
 Macaulay2 binaries are licensed under GPL-3.0 due to linking with LGPL-3.0 libraries (FLINT, MPFR).
 See https://www.gnu.org/licenses/gpl-faq.html#AllCompatibility
-test
