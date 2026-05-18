@@ -598,6 +598,8 @@ matters more than the engine algorithm:
 | Bertini numerical solver interface (zero-dim / pos-dim / parameter homotopies, adaptive precision) | [`Bertini`](M2/Macaulay2/packages/file-Bertini.md) — `bertiniZeroDimSolve`, `bertiniPosDimSolve`, `bertiniParameterHomotopy`, `bertiniTrackHomotopy`; backend for `Software => BERTINI` in NAG |
 | PHCpack interface (polyhedral homotopy, mixed-volume / BKK bound, cascade, multi-threaded path tracking) | [`PHCpack`](M2/Macaulay2/packages/file-PHCpack.md) — JSAG-certified; `solveSystem`, `mixedVolume`, `cascade`, `numericalIrreducibleDecomposition`; backend for `Software => PHCPACK` in NAG |
 | 4ti2 interface (Markov bases, Graver bases, circuits, Hilbert bases, toric Gröbner) | [`FourTiTwo`](M2/Macaulay2/packages/file-FourTiTwo.md) — `toricMarkov`, `toricGroebner`, `toricCircuits`, `toricGraver`, `hilbertBasis`; depended on by `Polyhedra` (re-exports it), `BernsteinSato`, `HolonomicSystems`, `GraphicalModels` |
+| Normaliz interface (Hilbert basis of cones, integral closures, Ehrhart polynomials, torus invariants, class groups) | [`Normaliz`](M2/Macaulay2/packages/file-Normaliz.md) — JSAG-certified; `normalToricRing`, `intclToricRing`, `intclMonIdeal`, `ehrhartRing`, `torusInvariants`; OpenMP-threaded; sibling to `FourTiTwo` |
+| Gfan interface (Gröbner fans, tropical varieties, fan refinements / products / Minkowski sums) | [`gfanInterface`](M2/Macaulay2/packages/file-gfanInterface.md) — ~60 `gfan*` operations, `MarkedPolynomialList`, tropical-basis / variety / traverse suite |
 
 For symbol-level lookups (given an M2 function or engine class name, find its deep dive), see [`SYMBOLS.md`](SYMBOLS.md).
 

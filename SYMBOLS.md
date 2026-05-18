@@ -227,6 +227,11 @@ Operations from the 27 packages with dedicated deep dives. **Auto-loaded** packa
 | `computingPrecision`, `numThreads`, `randomSeed`, `seeProgress`, `intermediateSolutions`, `StartDimension`, `StartSystem`, `StableMixedVolume`, `versionNumber` (PHCpack tunable options) | `PHCpack` | same |
 | `toricMarkov A`, `toricGroebner A`, `toricCircuits A`, `toricGraver A`, `toricGraverDegrees A`, `hilbertBasis A` (Matrix-input override of `Polyhedra`'s) | `FourTiTwo` | [`packages/file-FourTiTwo.md`](M2/Macaulay2/packages/file-FourTiTwo.md) |
 | `toBinomial(M, S)`, `getMatrix filename`, `putMatrix(F, B)`, `InputType` option | `FourTiTwo` | same |
+| `normalToricRing M`, `intclToricRing M`, `intclMonIdeal I`, `ehrhartRing M`, `torusInvariants`, `finiteDiagInvariants`, `diagInvariants` | `Normaliz` | [`packages/file-Normaliz.md`](M2/Macaulay2/packages/file-Normaliz.md) |
+| `normaliz`, `setNmzOption("opt", true)`, `showNmzOptions`, `writeNmzData`, `readNmzData`, `rmNmzFiles`, `allComputations`, `getNumInvs`, `MonomialSubalgebra`, `RationalCone`, `nmzNumberThreads` | `Normaliz` | same |
+| `gfan I`, `gfanBuchberger I`, `gfanGroebnerCone L`, `gfanInitialForms(L, w)`, `gfanMarkPolynomialSet L`, `gfanIsMarkedGroebnerBasis L`, `gfanLeadingTerms L`, `gfanHomogenize`, `gfanKrullDimension I`, `gfanSaturation I` | `gfanInterface` | [`packages/file-gfanInterface.md`](M2/Macaulay2/packages/file-gfanInterface.md) |
+| `gfanTropicalVariety I`, `gfanTropicalBasis I`, `gfanTropicalStartingCone I`, `gfanTropicalIntersection I`, `gfanTropicalLinearSpace M`, `gfanTropicalRank M`, `gfanTropicalTraverse(C, I)`, `gfanTropicalLifting` (tropical operations) | `gfanInterface` | same |
+| `gfanFanCommonRefinement`, `gfanFanProduct`, `gfanFanLink`, `gfanMinkowskiSum`, `gfanSecondaryFan`, `gfanResultantFan`, `gfanLatticeIdeal`, `gfanMinors`, `gfanRender`, `MarkedPolynomialList`, `markedPolynomialList` | `gfanInterface` | same |
 | `taylorResolution I`, `scarfSimplicialComplex I`, `buchbergerSimplicialComplex I`, `lyubeznikSimplicialComplex I` | `SimplicialComplexes` | same |
 | `kleinBottleComplex`, `dunceHatComplex`, `realProjectiveSpaceComplex n`, `poincareSphereComplex`, `smallManifold(d, n, k)` | `SimplicialComplexes` | same |
 

@@ -420,10 +420,12 @@ The heavily-used non-auto-loaded packages with dedicated coverage:
 | `Bertini` | Interface to the external Bertini numerical solver: `bertiniZeroDimSolve`, `bertiniPosDimSolve`, `bertiniParameterHomotopy`, `bertiniTrackHomotopy`, `bertiniSample`; backend of `Software => BERTINI` in `NumericalAlgebraicGeometry` | [`file-Bertini.md`](M2/Macaulay2/packages/file-Bertini.md) |
 | `PHCpack` | JSAG-certified interface to the PHCpack polyhedral-homotopy solver: `solveSystem`, `mixedVolume`, `cascade`, `numericalIrreducibleDecomposition`, multi-threaded path tracking; backend of `Software => PHCPACK` | [`file-PHCpack.md`](M2/Macaulay2/packages/file-PHCpack.md) |
 | `FourTiTwo` | Interface to the 4ti2 library: `toricMarkov`/`toricGroebner`/`toricCircuits`/`toricGraver`/`toricGraverDegrees`/`hilbertBasis`/`toBinomial`; foundational toric-ideal toolkit used by `Polyhedra` (re-exports), `BernsteinSato`, `HolonomicSystems`, `GraphicalModels` | [`file-FourTiTwo.md`](M2/Macaulay2/packages/file-FourTiTwo.md) |
+| `Normaliz` | JSAG-certified interface to the Normaliz cone/affine-monoid library: `normalToricRing`, `intclToricRing`, `intclMonIdeal`, `ehrhartRing`, `torusInvariants`, OpenMP-threaded Hilbert basis / integral closure / Ehrhart algorithms | [`file-Normaliz.md`](M2/Macaulay2/packages/file-Normaliz.md) |
+| `gfanInterface` | Interface to Anders Jensen's Gfan: ~60 `gfan*` operations covering Gröbner fans, tropical varieties (`gfanTropicalVariety`, `gfanTropicalBasis`, `gfanTropicalTraverse`), fan refinements / products / Minkowski sums, `MarkedPolynomialList` type | [`file-gfanInterface.md`](M2/Macaulay2/packages/file-gfanInterface.md) |
 
 Plus the **3 foundational structural packages** documented at the top of this doc (`Macaulay2Doc`, `Style`, `EngineTests`) and the **conventions doc** ([`file-package-conventions.md`](M2/Macaulay2/packages/file-package-conventions.md)) covering the patterns every package follows.
 
-**Coverage:** all 17 auto-loaded packages + 18 most-used non-auto-loaded + 3 structural + 1 conventions = **39 dedicated package deep dives**. See the [packages overview](M2/Macaulay2/packages/README.md) and [`SYMBOLS.md`](SYMBOLS.md) for symbol-level navigation across the ~400-package ecosystem.
+**Coverage:** all 17 auto-loaded packages + 20 most-used non-auto-loaded + 3 structural + 1 conventions = **41 dedicated package deep dives**. See the [packages overview](M2/Macaulay2/packages/README.md) and [`SYMBOLS.md`](SYMBOLS.md) for symbol-level navigation across the ~400-package ecosystem.
 
 ## CMake-side package wiring
 

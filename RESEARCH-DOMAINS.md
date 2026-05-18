@@ -53,6 +53,8 @@ M2 session has them without `needsPackage`.
 | Convex polyhedra, cones, fans, polyhedral complexes | [`Polyhedra`](M2/Macaulay2/packages/file-Polyhedra.md) | — (effectively auto-loaded via Truncations) |
 | Normal toric varieties, toric divisors, smooth Fano database | [`NormalToricVarieties`](M2/Macaulay2/packages/file-NormalToricVarieties.md) | — |
 | 4ti2 interface: toric Markov / Groebner / circuits / Graver / Hilbert bases | [`FourTiTwo`](M2/Macaulay2/packages/file-FourTiTwo.md) | — |
+| Normaliz interface: Hilbert basis / integral closure / Ehrhart polynomials / torus invariants (OpenMP-threaded) | [`Normaliz`](M2/Macaulay2/packages/file-Normaliz.md) | — |
+| Gfan interface: Gröbner fans, tropical varieties, fan refinements | [`gfanInterface`](M2/Macaulay2/packages/file-gfanInterface.md) | — |
 
 ### Combinatorial commutative algebra
 
