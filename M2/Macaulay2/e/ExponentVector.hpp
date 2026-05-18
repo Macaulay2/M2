@@ -35,19 +35,19 @@ class ExponentVector
   typedef const Exponent *ConstExponents;
   typedef typename std::make_unsigned<Exponent>::type HashExponent;
 
-  // result = a
+  /// result = a
   static inline void copy(int nvars, ConstExponents a, Exponents result)
   {
     memcpy(result, a, nvars * sizeof(Exponent));
   }
 
-  // result = (0, 0, ..., 0)
+  /// result = (0, 0, ..., 0)
   static inline void one(int nvars, Exponents result)
   {
     for (int i = 0; i < nvars; i++) *result++ = 0;
   }
 
-  // returns whether a_i == 0, all i
+  /// returns whether a_i == 0, all i
   static inline bool is_one(int nvars, ConstExponents a)
   {
     for (int i = 0; i < nvars; i++)
@@ -55,13 +55,13 @@ class ExponentVector
     return true;
   }
 
-  // returns whether a_i == b_i, all i
+  /// returns whether a_i == b_i, all i
   static inline bool equal(int nvars, ConstExponents a, ConstExponents b)
   {
     return std::equal(a, a + nvars, b);
   }
 
-  // result = a + b
+  /// result = a + b
   static inline void mult(int nvars,
                           ConstExponents a,
                           ConstExponents b,
@@ -73,7 +73,7 @@ class ExponentVector
       for (int i = nvars; i > 0; i--) *result++ = *a++ + *b++;
   }
 
-  // result = n * a
+  /// result = n * a
   static inline void power(int nvars,
                            ConstExponents a,
                            const Exponent n,
@@ -85,7 +85,7 @@ class ExponentVector
       for (int i = nvars; i > 0; i--) *result++ = *a++ * n;
   }
 
-  // result = a + n * b
+  /// result = a + n * b
   static inline void multpower(int nvars,
                                ConstExponents a,
                                ConstExponents b,
@@ -99,7 +99,7 @@ class ExponentVector
       for (int i = nvars; i > 0; i--) *result++ = *a++ + *b++ * n;
   }
 
-  // returns whether b_i >= a_i, all i
+  /// returns whether b_i >= a_i, all i
   static inline bool divides(int nvars, ConstExponents a, ConstExponents b)
   {
     // we go upward, because some rings have unused variables at the end
@@ -108,7 +108,7 @@ class ExponentVector
     return true;
   }
 
-  // result = a - b
+  /// result = a - b
   static inline void divide(int nvars,
                             ConstExponents a,
                             ConstExponents b,
@@ -120,7 +120,7 @@ class ExponentVector
       for (int i = 0; i < nvars; i++) *result++ = *a++ - *b++;
   }
 
-  // result = max(a - b, 0)
+  /// result = max(a - b, 0)
   static inline void quotient(int nvars,
                               ConstExponents a,
                               ConstExponents b,
@@ -142,7 +142,7 @@ class ExponentVector
         }
   }
 
-  // result = min(a_i, b_i), all i
+  /// result = min(a_i, b_i), all i
   static inline void gcd(int nvars,
                          ConstExponents a,
                          ConstExponents b,
@@ -156,7 +156,7 @@ class ExponentVector
       }
   }
 
-  // result = max(a_i, b_i), all i
+  /// result = max(a_i, b_i), all i
   static inline void lcm(int nvars,
                          ConstExponents a,
                          ConstExponents b,
@@ -170,7 +170,7 @@ class ExponentVector
       }
   }
 
-  // returns GT, LT, or EQ
+  /// returns GT, LT, or EQ
   static inline int lex_compare(int nvars, ConstExponents a, ConstExponents b)
   {
     for (int i = 0; i < nvars; i++)
@@ -181,7 +181,7 @@ class ExponentVector
     return EQ;
   }
 
-  // returns sum_i a_i
+  /// returns sum_i a_i
   static inline Exponent simple_degree(int nvars, ConstExponents a)
   {
     // TODO: use std::accumulate?
@@ -195,7 +195,7 @@ class ExponentVector
     return sum;
   }
 
-  // returns sum_i a_i * wt_i
+  /// returns sum_i a_i * wt_i
   static inline Exponent weight(int nvars,
                                 ConstExponents a,
                                 const std::vector<Exponent> &wts)
@@ -214,11 +214,11 @@ class ExponentVector
     return weight(nvars, a, M2_arrayint_to_stdvector<int>(wts));
   }
 
-  // i-th bit of output is 1 if 0 < a[i + k * size_of(int)] for some k
+  /// i-th bit of output is 1 if 0 < a[i + k * size_of(int)] for some k
   static HashExponent mask(int nvars, ConstExponents a);
   // FIXME: merge diverging specializations
 
-  // assigns c and d such that a*c = d*b = lcm(a,b)
+  /// assigns c and d such that a*c = d*b = lcm(a,b)
   static inline void syz(int nvars,
                          ConstExponents a,
                          ConstExponents b,

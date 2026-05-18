@@ -1,13 +1,20 @@
 // Copyright 2008  Michael E. Stillman
+/** 
+ * \file complex.h
+ * \author Michael E. Stillman
+ * \date 2008
+ * \brief declares the engine's gmp_CC complex number primitives
+ *
+ * Initialisation, arithmetic, and special functions on arbitrary-precision complex values built from two MPFR reals.
+ * The interface is similar to mpfr:
+ *  - Every gmp_CC struct needs to be initialized with init or init_set.
+ *  - All rounding is MPFR_RNDN.
+ *  - Resulting values are the first argument
+*/
 
 #ifndef _complex_h_
 #define _complex_h_
 
-/* The interface is similar to mpfr:
-   Every gmp_CC struct needs to be initialized with init or init_set.
-   All rounding is MPFR_RNDN.
-   Resulting values are the first argument
-*/
 
 #if !defined(SAFEC_EXPORTS)
 //#include <engine-exports.h>
@@ -31,8 +38,8 @@ extern "C" {
   void mpfc_mul(gmp_CCmutable result, gmp_CCmutable a, gmp_CCmutable b);
   void mpfc_invert(gmp_CCmutable result, gmp_CCmutable v);
 
+  /// result -= a * b
   void mpfc_sub_mult(gmp_CCmutable result, gmp_CCmutable a, gmp_CCmutable b);
-  /* result -= a*b */
 
   void mpfc_div(gmp_CCmutable result, gmp_CCmutable a, gmp_CCmutable b);
   void mpfc_abs(gmp_RRmutable result, gmp_CCmutable a);
