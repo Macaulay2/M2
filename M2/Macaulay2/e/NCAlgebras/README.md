@@ -55,6 +55,61 @@ non-commutative Gröbner bases (including a non-commutative F4 variant).
 | `Range.hpp` | Lightweight iterator pair |
 | `NCGB.m2`, `roos.m2` | M2-level inputs / examples used while developing the algorithms |
 
+## What triggers this engine
+
+The NC algebras engine is selected when:
+
+| M2 user code | What happens | Why this engine |
+|---|---|---|
+| `R = freeAlgebra(QQ, {x, y, z})` | Engine builds a `FreeAlgebra` wrapped by `M2FreeAlgebra` (see [`../file-M2FreeAlgebra.md`](../file-M2FreeAlgebra.md)) | The user explicitly asked for a free associative algebra |
+| `R = freeAlgebra(QQ, …)/I` | Builds a `FreeAlgebraQuotient` wrapped by `M2FreeAlgebraQuotient` (see [`../file-M2FreeAlgebraQuotient.md`](../file-M2FreeAlgebraQuotient.md)) | Quotient by a two-sided ideal; requires NC GB |
+| `gb I` in a free or NC-quotient algebra | Auto-selected → `NCGroebner` (or `NCF4` if requested) | The general-purpose dispatcher in `comp-gb.cpp` recognises NC rings and routes here; **no flag needed** |
+| `gb(I, Strategy => NCF4)` in an NC ring | Explicitly route to `NCF4` instead of the default `NCGroebner` | Strategy flag for the F4-style variant; faster on some inputs, slower on others |
+| `R^n / I` (`Module` over a free algebra) | Module operations route through `FreeAlgebra` arithmetic plus NC GB for syzygies | Module side of NC theory |
+
+For the full M2-spec → engine mapping see the parent [`groebner-bases.md`](../groebner-bases.md) "M2 strategy → engine algorithm" table — the NC entry is auto-routed by ring shape.
+
+## Where in the engine pipeline this fits
+
+```
+M2:  R = freeAlgebra(QQ, {x, y, z}); I = ideal(x*y - y*x, …); gb I
+   ↓
+M2FreeAlgebra (file-M2FreeAlgebra.md)        — Ring-protocol wrapper
+   ↓ holds
+FreeAlgebra (file-FreeAlgebra.md)             — internal NC ring
+   ↓ uses
+FreeMonoid (file-FreeMonoid.md)               — words as monomials
+   ↳ Word (file-Word.md)                      — non-owning word view
+   ↳ Range<T> (file-Range.md)                 — iterator-pair view
+WordTable (file-WordTable.md)                 — leading-word index
+   ↳ SuffixTree (file-SuffixTree.md)          — experimental fast index
+
+gb I  →  comp-gb.cpp dispatcher  →  NCGroebner (default)
+                                       or NCF4 (if Strategy => NCF4)
+   ↓ uses
+OverlapTable (file-OverlapTable.md)           — NC S-pair queue
+   ↓ each step
+PolynomialHeap (file-NCReduction.md)          — NC reduction
+WordTable                                       — find divisors of leading words
+   ↓ produces
+A two-sided NC Gröbner basis, returned via comp-gb
+```
+
+The **key distinction from commutative GB**: monomials are now *words* (non-commuting), not exponent vectors. The `WordTable` + `SuffixTree` indexes accelerate divisibility checks; `OverlapTable` replaces S-pair queues (because NC S-pairs come from word overlaps, not LCM of monomials).
+
+## When to use this vs commutative GB
+
+| Want | Pick |
+|---|---|
+| Polynomials in variables that commute | Stay in `f4/` / `gb-f4/` / `gb-default` — much faster |
+| Polynomials in variables that don't commute | This engine — auto-selected |
+| Free associative algebra `k<x_1, …, x_n>` | This engine via `freeAlgebra` |
+| Path algebras / group algebras | This engine; the path/group quotient ideal goes into `freeAlgebra/I` |
+| Quasi-polynomial Weyl-like (variables satisfy `xy - yx = scalar`) | The commutative `WeylAlgebra` is much faster — see [`../file-weylalg.md`](../file-weylalg.md) |
+| Solvable algebra (PBW-ordered NC) | The commutative `SolvableAlgebra` is much faster — see [`../file-solvable.md`](../file-solvable.md) |
+
+If your algebra has a known "almost-commutative" structure (Weyl, skew, PBW solvable), it's worth using the commutative-side specialised class. Only fall back to this engine when the algebra has no such structure (true free algebras and their generic quotients).
+
 ## Related
 
 - The M2-level wrapper of non-commutative rings lives in
@@ -63,5 +118,6 @@ non-commutative Gröbner bases (including a non-commutative F4 variant).
   level of `e/` are the M2-facing wrappers for these classes.
 - [`../NCResolutions/`](../NCResolutions/README.md) — resolutions in the NC
   setting.
+- [`../groebner-bases.md`](../groebner-bases.md) — parent area doc; NC entry in the "M2 strategy → engine algorithm" table.
 
 [← back to engine overview](../README.md)
