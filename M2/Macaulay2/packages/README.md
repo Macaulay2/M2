@@ -94,24 +94,34 @@ The full procedure lives in [`README`](README), but the short version:
 | `LLLBases.m2` — auto-loaded `LLL`, `kernelLLL`, `hermite`, `gcdLLL`, `gramm`; dispatches across NTL / fpLLL / Cohen backends with bit-encoded strategy flags | [`file-LLLBases.md`](file-LLLBases.md) |
 | `InverseSystems.m2` — auto-loaded Macaulay inverse systems: `inverseSystem` / `toDividedPowers` / `fromDividedPowers` / `fromDual` / `toDual`; the standard tool for constructing artinian Gorenstein ideals | [`file-InverseSystems.md`](file-InverseSystems.md) |
 | `Isomorphism.m2` — auto-loaded probabilistic `isIsomorphic(N,M)` / `isomorphism(N,M)` / `checkDegrees` for modules; random-map approach + degree-shift detection + result caching | [`file-Isomorphism.md`](file-Isomorphism.md) |
+| The five small auto-loaded utility packages: `Classic` (classic-Macaulay polynomial parser), `ConwayPolynomials` (`GF(q)` database), `OnlineLookup` (`oeis` / `isc`), `PackageCitations` (`cite`), `TangentCone` (`tangentCone`) | [`file-utility-packages.md`](file-utility-packages.md) |
+| `Truncations.m2` — re-exported-by-`Complexes` `truncate` for modules/ideals/matrices + `effCone` / `nefCone` for the effective and nef cones | [`file-Truncations.md`](file-Truncations.md) |
 
 The full ~400 per-package coverage would be repetitive — these deep-dives cover the structural patterns every package follows plus the foundational and frequently-used packages that ship.
 
 ## Auto-loaded packages
 
-The following 16+ packages are **preloaded** at every M2 startup (listed in `Core.m2`'s `Core#"preloaded packages"` table). Users get these without any `needsPackage` call:
+The following 17 packages are **preloaded** at every M2 startup (listed in `Core.m2`'s `Core#"preloaded packages"` table plus `HomologicalAlgebraPackage`, which resolves to `Complexes`). Users get these without any `needsPackage` call. **All 17 now have deep-dive coverage**:
 
-```
-Classic            HomologicalAlgebraPackage (Complexes)
-ConwayPolynomials  OnlineLookup
-Elimination        PackageCitations
-IntegralClosure    PrimaryDecomposition  ← deep dive
-InverseSystems     ReesAlgebra
-Isomorphism        Saturation
-LLLBases           SimpleDoc
-MinimalPrimes      ← deep dive          TangentCone
-                    Varieties
-```
+| Package | Deep dive |
+|---|---|
+| `Classic` | [`file-utility-packages.md`](file-utility-packages.md) (batched) |
+| `Complexes` (HomologicalAlgebraPackage) | [`file-Complexes.md`](file-Complexes.md) |
+| `ConwayPolynomials` | [`file-utility-packages.md`](file-utility-packages.md) (batched) |
+| `Elimination` | [`file-Elimination.md`](file-Elimination.md) |
+| `IntegralClosure` | [`file-IntegralClosure.md`](file-IntegralClosure.md) |
+| `InverseSystems` | [`file-InverseSystems.md`](file-InverseSystems.md) |
+| `Isomorphism` | [`file-Isomorphism.md`](file-Isomorphism.md) |
+| `LLLBases` | [`file-LLLBases.md`](file-LLLBases.md) |
+| `MinimalPrimes` | [`file-MinimalPrimes.md`](file-MinimalPrimes.md) |
+| `OnlineLookup` | [`file-utility-packages.md`](file-utility-packages.md) (batched) |
+| `PackageCitations` | [`file-utility-packages.md`](file-utility-packages.md) (batched) |
+| `PrimaryDecomposition` | [`file-PrimaryDecomposition.md`](file-PrimaryDecomposition.md) |
+| `ReesAlgebra` | [`file-ReesAlgebra.md`](file-ReesAlgebra.md) |
+| `Saturation` | [`file-Saturation.md`](file-Saturation.md) |
+| `SimpleDoc` | [`file-SimpleDoc.md`](file-SimpleDoc.md) |
+| `TangentCone` | [`file-utility-packages.md`](file-utility-packages.md) (batched) |
+| `Varieties` | [`file-Varieties.md`](file-Varieties.md) |
 
 Adjusting that list (e.g. dropping `IntegralClosure` for a lightweight session) is done by modifying `Core#"preloaded packages"` per the comment in [`m2/system.m2`](../m2/system.m2).
 
