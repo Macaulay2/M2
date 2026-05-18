@@ -1488,11 +1488,25 @@ doc ///
   Key
     attemptsAtGenericReduction
   Headline
-    see setAttemptsAtGenericReduction
+    number of attempts to compute Bass numbers via a generic reduction
   Description
   
     Text 
-      See @TO setAttemptsAtGenericReduction@
+      The value stored in {\tt R.attemptsAtGenericReduction} controls how many
+      attempts are made to reduce {\tt R} modulo a generic regular sequence
+      when Bass numbers are computed by @TO torAlgClass@.  Use
+      @TO setAttemptsAtGenericReduction@ to set this value.
+
+    Example
+      Q = ZZ/2[u,v,w,x,y,z];
+      R = Q/ideal(x*y,y*z,x^3,x^2*z,x*z^2-y^3,z^3);
+      R.?attemptsAtGenericReduction
+      setAttemptsAtGenericReduction(R,100)
+      R.attemptsAtGenericReduction
+
+  SeeAlso
+    setAttemptsAtGenericReduction
+    torAlgClass
 
 ///
 
