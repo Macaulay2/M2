@@ -368,7 +368,7 @@ target_include_directories(M2-engine PUBLIC
   $<INSTALL_INTERFACE:include/Macaulay2>)
 
 # TODO: make engine independent of interpreter headers
-target_link_libraries(M2-engine PUBLIC memtailor mathic mathicgb)
+target_link_libraries(M2-engine PUBLIC memtailor mathic mathicgb M2-supervisor)
 
 if(EIGEN3_FOUND)
   target_link_libraries(M2-engine PUBLIC Eigen3::Eigen)
