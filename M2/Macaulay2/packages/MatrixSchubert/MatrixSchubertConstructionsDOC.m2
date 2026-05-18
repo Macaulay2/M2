@@ -14,36 +14,36 @@ doc ///
         Text
             This package provides functions for constructing and investigating matrix Schubert varieties. Many of the functions in this package can take as input either a permutation in 1-line notation, or an alternating sign matrix.
         Text
-            @UL {
-	    {"[CV20] Aldo Conca and Matteo Varbaro, ",
-	    HREF("https://arxiv.org/abs/1805.11923", EM "Square-free Gröbner degenerations"),
-	    ", Inventiones mathematicae, 221(3), pp.713-730."},
-	    {"[Ful92] William Fulton, ",
-	    HREF("https://sites.math.washington.edu/~billey/classes/schubert.library/fulton.essential.set.pdf",
-		EM "Flags, Schubert polynomials, degeneracy loci, and determinantal formulas"),
-	    ", Duke Math J. 65 (1992): 381-420."},
-            {"[KM05] Allen Knutson and Ezra Miller, ",
-            HREF("https://arxiv.org/abs/math/0110058", EM "Gröbner geometry of Schubert polynomials"),
-            ", Annals of Mathematics (2005): 1245-1318."},
-	    {"[KW21] Patricia Klein and Anna Weigandt, ",
-	    HREF("https://arxiv.org/abs/2108.08370", EM "Bumpless pipe dreams encode Gröbner geometry of Schubert polynomials"),
-	    ", arxiv preprint 2108.08370."},
-            {"[PSW24] Oliver Pechenik, David Speyer, and Anna Weigandt, ",
-            HREF("https://arxiv.org/abs/2111.10681", EM "Castelnuovo-Mumford regularity of matrix Schubert varieties"),
-            ", Selecta Mathematica New Series 30, 66 (2024)."},
-            {"[Wei17] Anna Weigandt, ",
-            HREF("https://arxiv.org/abs/1708.07236", EM "Prism tableaux for alternating sign matrix varieties"),
-            ", arXiv preprint 1708.07236."}
-            }@  
-        Text
             @SUBSECTION "Contributors"@
         Text
             The following people have generously contributed code, improved existing code, or enhanced the documentation:
             @HREF("https://sites.google.com/illinois.edu/shiliang-gao", "Shiliang Gao")@,
             @HREF("https://www.math.tamu.edu/directory/graduate.html", "Pooja Joshi")@,
-	    @HREF("https://www-users.cse.umn.edu/~mahrud/", "Mahrud Sayrafi")@, and
+            @HREF("https://www-users.cse.umn.edu/~mahrud/", "Mahrud Sayrafi")@, and
             @HREF("https://www.clemson.edu/science/academics/departments/mathstat/about/profiles/arakoto", "Antsa Tantely Fandresena Rakotondrafara")@.
-	    We also thank the anonymous referees for their helpful suggestions.
+            We also thank the anonymous referees for their helpful suggestions.
+    References
+        @UL {
+        {"[CV20] Aldo Conca and Matteo Varbaro, ",
+        HREF("https://arxiv.org/abs/1805.11923", EM "Square-free Gröbner degenerations"),
+        ", Inventiones mathematicae, 221(3), pp.713-730."},
+        {"[Ful92] William Fulton, ",
+        HREF("https://sites.math.washington.edu/~billey/classes/schubert.library/fulton.essential.set.pdf",
+            EM "Flags, Schubert polynomials, degeneracy loci, and determinantal formulas"),
+        ", Duke Math J. 65 (1992): 381-420."},
+        {"[KM05] Allen Knutson and Ezra Miller, ",
+        HREF("https://arxiv.org/abs/math/0110058", EM "Gröbner geometry of Schubert polynomials"),
+        ", Annals of Mathematics (2005): 1245-1318."},
+        {"[KW21] Patricia Klein and Anna Weigandt, ",
+        HREF("https://arxiv.org/abs/2108.08370", EM "Bumpless pipe dreams encode Gröbner geometry of Schubert polynomials"),
+        ", arxiv preprint 2108.08370."},
+        {"[PSW24] Oliver Pechenik, David Speyer, and Anna Weigandt, ",
+        HREF("https://arxiv.org/abs/2111.10681", EM "Castelnuovo-Mumford regularity of matrix Schubert varieties"),
+        ", Selecta Mathematica New Series 30, 66 (2024)."},
+        {"[Wei17] Anna Weigandt, ",
+        HREF("https://arxiv.org/abs/1708.07236", EM "Prism tableaux for alternating sign matrix varieties"),
+        ", arXiv preprint 1708.07236."}
+        }@
     SeeAlso 
         "Investigating matrix Schubert varieties"
         "Investigating ASM varieties"
