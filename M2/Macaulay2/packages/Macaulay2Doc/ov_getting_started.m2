@@ -20,6 +20,9 @@ Node
       Once Macaulay2 is installed on your system, use the information here to set up
       the Emacs interface (the recommended way to run Macaulay2), bookmark the html documentation,
       and start your first Macaulay2 session.
+      After installation, the usual path is to try @TO "a first Macaulay2 session"@,
+      learn how to search with @TO "reading the documentation"@, and then choose
+      a tutorial or computation page matching the mathematical problem you want to solve.
     Text
       @HEADER2 "Checking your installation"@
 
@@ -87,6 +90,10 @@ Node
       for other popular editors that at least support syntax highlighting for Macaulay2 files.
 
       Once you are set up, it is time for @TO "a first Macaulay2 session"@.
+      After that first tour, the front page sections on mathematical objects,
+      mathematical computations, and packages are the main paths from a goal
+      such as constructing an ideal, computing a Gröbner basis, finding a resolution,
+      or loading a specialized package to the corresponding command.
 
 Node
   Key
@@ -340,6 +347,17 @@ Node
 	> (symbol ?, Symbol)
       :Getting other information from documentation
 	> examples
+
+    Text
+      When you know the mathematical goal but not the command name, start with
+      @TO "about"@ for topic searches, @TO "apropos"@ for command-name searches,
+      and @TO "headlines"@ to scan the matching commands with their short descriptions.
+      For example, Hilbert invariants are usually found by searching for
+      @KBD "hilbert"@, Gröbner-basis commands by searching for @KBD "gb"@ or
+      @KBD "Groebner"@, and package-level tools by browsing
+      @TO2("packages provided with Macaulay2", "packages by subject area")@.
+      Once you find a promising command, use @TO "help"@ or @TO "viewHelp"@ to
+      read its documentation and @TO "examples"@ to extract its example code.
 
     Text
       To begin, the @TO "about"@ method allows for searching all documentation nodes

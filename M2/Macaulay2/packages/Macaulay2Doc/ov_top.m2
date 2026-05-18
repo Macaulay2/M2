@@ -15,10 +15,14 @@ Node
       This documentation includes getting-started guides, language and reference material,
       tutorials, and package documentation for the packages distributed with Macaulay2.
     Text
-      If you are new to Macaulay2, start with the setup notes and a first Macaulay2
-      session.  If you know the mathematics you want to do but not yet the command or
-      package name, browse the sections on practical guides, mathematical objects,
-      computations, and packages.
+      If you are new to Macaulay2, start with @TO "setting up Macaulay2"@,
+      @TO "a first Macaulay2 session"@, and @TO "reading the documentation"@.
+      If you know the mathematical object or computation you want, use the
+      Mathematical Objects and Mathematical Computations sections below to move
+      from concepts such as rings, ideals, matrices, modules, Gröbner bases,
+      Hilbert functions, and resolutions to the corresponding commands and examples.
+      For package-level tools, start with @TO2("packages", "loading and using packages")@
+      or @TO2("packages provided with Macaulay2", "browsing packages by subject area")@.
     Tree
       :Getting Started
 	> "setting up Macaulay2"

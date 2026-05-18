@@ -287,6 +287,15 @@ Node
     Example
       betti gb j
     Text
+      This first session has touched the commands most users need when translating
+      a basic algebra problem into Macaulay2: create a @TO2("rings", "ring")@, build an
+      @TO "ideal"@ or @TO matrix@, form modules with @TO kernel@, @TO cokernel@,
+      and @TO image@, compute a resolution with @TO "OldChainComplexes :: resolution"@,
+      compute a Gröbner basis with @TO gb@, and inspect answers with
+      @TO generators@ and @TO betti@.  For more examples organized by subject,
+      return to the front page sections on mathematical objects, mathematical
+      computations, and tutorials.
+    Text
       To exit your first session, you can type @KBD "exit"@ or @KBD "quit"@.
   SeeAlso
     "reading the documentation"
