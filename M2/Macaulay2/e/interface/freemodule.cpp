@@ -44,27 +44,6 @@ const FreeModule /* or null */ *rawFreeModuleMakeDegs(const Ring *R,
 {
   try
     {
-      //auto D = R->degree_monoid();
-      //unsigned int eachdeg = D->n_vars();
-      //if (eachdeg == 0)
-      //  {
-      //    ERROR("rawFreeModule: degree rank 0, but sequence of degrees given");
-      //    return nullptr;
-      //  }
-      //unsigned int rank = degs->len / eachdeg;
-      //if (rank * eachdeg != degs->len)
-      //  {
-      //    ERROR("inappropriate number of degrees");
-      //    return nullptr;
-      //  }
-      //monomial deg = D->make_one();
-      //FreeModule *F = R->make_FreeModule();
-      //for (unsigned int i = 0; i < rank; i++)
-      //  {
-      //    D->from_expvector(degs->array + i * eachdeg, deg);
-      //    F->append(deg);
-      //  }
-      //return F;
       return R->make_FreeModule(degs->len, degs->array);
   } catch (const exc::engine_error& e)
     {

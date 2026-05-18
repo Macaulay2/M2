@@ -86,7 +86,7 @@ FreeModule *Ring::make_FreeModule(int ndegrees, int *degrees) const
     }
 
   monomial deg = D->make_one();
-  FreeModule *F = new FreeModule(this, 0, true);
+  FreeModule *F = new FreeModule(this, 0, false);
   for (unsigned int i = 0; i < rank; i++)
     {
       D->from_expvector(degrees + i * eachdeg, deg);
