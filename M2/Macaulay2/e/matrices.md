@@ -66,6 +66,68 @@ Each specialisation pairs a coefficient ring with an optimised back end:
 |---|---|
 | `smat.hpp` | Sparse matrix template — column-major linked lists of `(row, value)` |
 
+## M2 operation → engine matrix backend
+
+The mapping from M2-user matrix expressions to the engine backend that does the work:
+
+| M2 operation | Backend chosen | Source file | Notes |
+|---|---|---|---|
+| `matrix {{a,b},{c,d}}` (over `ZZ/p`, `QQ`, `ZZ`, …) | Immutable `Matrix` over the coefficient ring | `matrix.{cpp,hpp}` | Stored column-by-column; immutable; carries source/target `FreeModule`s |
+| `mutableMatrix M` (dense, default) | `DMat<RingType>` | `dmat.{cpp,hpp}` + per-ring specialisation | Dense storage; ring-templated for inlined arithmetic |
+| `mutableMatrix(M, Dense => false)` | `SMat<RingType>` | `smat.hpp` | Sparse column-major linked-list storage |
+| `det M`, `rank M`, `inverse M` (over `ZZ/p`) | `DMat<ARingZZpFFPACK>` ops via FFLAS-FFPACK | `dmat-zzp-ffpack.hpp` + `dmat-ffpack.cpp` | BLAS-style dispatch; orders of magnitude faster than generic |
+| `det M`, `rank M` (over `QQ`) | `DMat<ARingQQFlint>` via FLINT | `dmat-qq-flint.hpp` | FLINT's `fmpq_mat` operations |
+| `det M`, `rank M` (over `ZZ`) | `DMat<ARingZZGMP>` via FLINT or generic | `dmat-zz-flint.hpp` | FLINT `fmpz_mat` when available |
+| LU decomposition (Z/p, generic) | `DMatLUtemplate<RingType>` | `dmat-LU-template.hpp` | Templated fallback; in-place |
+| LU decomposition (Z/p, FFPACK) | `DMat-lu-zzp-ffpack` | `dmat-lu-zzp-ffpack.hpp` | BLAS-backed LU; fast |
+| LU decomposition (Z/p, FLINT) | `DMat-lu-zzp-flint` | `dmat-lu-zzp-flint.hpp` | FLINT-backed LU |
+| LU decomposition (QQ) | `DMat-lu-qq` | `dmat-lu-qq.hpp` | FLINT `fmpq_mat_*` |
+| `basis(d, R)` (k-basis of a quotient ring) | `matrix-kbasis.cpp` | `matrix-kbasis.{cpp,hpp}` | Enumerates monomials of degree `d`; uses the monoid's basis function |
+| `basis(d, R)` over an NC ring | `matrix-ncbasis.cpp` | `matrix-ncbasis.{cpp,hpp}` | Non-commutative analogue; integrates with [`NCAlgebras/`](NCAlgebras/README.md) |
+| `symmetricPower(d, M)` | `matrix-symm.cpp` | `matrix-symm.{cpp,hpp}` | Symmetric-power computation on free modules |
+
+## Matrix-backend selection
+
+The runtime picks a dense-matrix backend by inspecting the coefficient ring's type tag. Roughly:
+
+```
+M2: M = mutableMatrix M0; rank M
+   ↓
+m2/mutable.m2   →  rawRank(M)
+   ↓
+d/interface.dd  →  Ccode(int, "IM2_MutableMatrix_rank(M.p)")
+   ↓
+e/interface/mutable-matrix.h  →  IM2_MutableMatrix_rank(M)
+   ↓
+e/dmat.cpp  dispatcher:
+   if ring is ZZ/p (small, FFPACK available)   → dmat-zzp-ffpack
+   if ring is ZZ/p (FLINT)                      → dmat-zzp-flint
+   if ring is ZZ (FLINT)                        → dmat-zz-flint
+   if ring is QQ (FLINT)                        → dmat-qq-flint
+   if ring is GF (FLINT, small)                 → dmat-gf-flint
+   if ring is GF (FLINT, big)                   → dmat-gf-flint-big
+   if ring is CC arbitrary precision            → dmat-CCC-flint
+   else                                          → templated `mat-arith.hpp` over the ring's `ElementType`
+```
+
+The selection happens at construction time and is **stable** for the lifetime of the matrix — once an `MutableMatrix` is built over a specific ring, its operations all route to the same backend.
+
+## Which storage / backend when
+
+When picking a representation for a new algorithm:
+
+| Want | Pick |
+|---|---|
+| User-visible matrix that will be returned to M2 | `Matrix` (immutable); never `MutableMatrix` |
+| Inner-loop scratch space | `MutableMatrix`; specifically `DMat<…>` if dense, `SMat<…>` if sparse |
+| Dense linear algebra over `Z/p`, fast | `DMat<ARingZZpFFPACK>` |
+| Dense linear algebra over `Z/p`, any `p` | `DMat<ARingZZpFlint>` |
+| Dense linear algebra over `ZZ` or `QQ` | `DMat<ARingZZGMP>` / `DMat<ARingQQFlint>` |
+| Sparse matrix with many zero rows | `SMat<…>` (column-major linked lists; rare insertion/deletion is cheap) |
+| Need both — small but mostly zero | `SMat`; consider hybrid only when profiling shows it matters |
+| Numerical linear algebra (`RR`, `CC`) | `DMat<ARingRR>` / `DMat<ARingCC>` (hardware FP) or `DMat<ARingRRR>` / `DMat<ARingCCC>` (MPFR/MPC) |
+| Interval arithmetic (rigorous bounds) | `DMat<ARingRRi>` / `DMat<ARingCCi>` |
+
 ## Related
 
 - [`free-modules.md`](free-modules.md) — `Matrix` source/target are

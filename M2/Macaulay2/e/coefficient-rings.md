@@ -86,6 +86,67 @@ versa) so old code can call new and vice-versa.
 |---|---|
 | `aring-tower.{cpp,hpp}` | Tower of finite extension rings (used to build large GF efficiently). **Deep dive:** [`file-aring-tower.md`](file-aring-tower.md) |
 
+## M2 ring constructor → engine class
+
+The mapping from what an M2 user types to which engine class actually handles the arithmetic:
+
+| M2 expression | Engine class | Source file | Notes |
+|---|---|---|---|
+| `ZZ` (the constant) | `ARingZZGMP` via `ConcreteRing<ARingZZGMP>` | `aring-zz-gmp.{cpp,hpp}` | GMP `mpz_t`; default integer backend |
+| `QQ` (the constant) | `ARingQQGMP` via `ConcreteRing<ARingQQGMP>` | `aring-qq-gmp.{cpp,hpp}` | GMP `mpq_t` |
+| `ZZ/p` (small `p` ≤ 32 749) | `ARingZZpFlint` | `aring-zz-flint.{cpp,hpp}` | FLINT `nmod`; word-size; the fast default |
+| `ZZ/p` (medium-`p`, BLAS-style code paths) | `ARingZZpFFPACK` | `aring-zzp-ffpack.{cpp,hpp}` | Linbox-style dispatch; selected when an FFLAS-FFPACK-backed dense matrix is involved |
+| `ZZ/p` (any `p`, generic) | `ARingZZp` | `aring-zzp.{cpp,hpp}` | Generic table-based; fallback |
+| `GF(p, n)` (small `p^n`) | `ARingGFFlint` | `aring-gf-flint.{cpp,hpp}` | FLINT `fq_nmod`; default for small extensions |
+| `GF(p, n)` (large `p^n`) | `ARingGFFlintBig` | `aring-gf-flint-big.{cpp,hpp}` | FLINT `fq`; default for big extensions |
+| `GF(q, Variable => …)` legacy | `ARingGFM2` via `GF` | `aring-m2-gf.{cpp,hpp}`, `GF.{cpp,hpp}` | M2's own table-based GF; used when the user explicitly names the generator |
+| `RR` (default precision) | `ARingRR` | `aring-RR.{cpp,hpp}` | Hardware `double` (53-bit) |
+| `RR_53`, `RR_n` | `ARingRRR` | `aring-RRR.{cpp,hpp}` | MPFR; `n`-bit precision |
+| `RRi` | `ARingRRi` | `aring-RRi.{cpp,hpp}` | Real intervals (MPFI) |
+| `CC` | `ARingCC` | `aring-CC.{cpp,hpp}` | `complex<double>` |
+| `CC_n` | `ARingCCC` | `aring-CCC.{cpp,hpp}` | MPC; `n`-bit precision |
+| `CCi` | `ARingCCi` | `aring-CCi.{cpp,hpp}` | Complex intervals |
+| `frac R` | `FractionField` (legacy `Ring`) | `frac.{cpp,hpp}` | Fraction field; not an `aring` — see [`polynomial-rings.md`](polynomial-rings.md) |
+| User-defined ring as coefficient | `ConcreteRing<…>` wrapping any of the above | `aring-glue.hpp` | The bridge between `aring` and the legacy `Ring*` hierarchy |
+
+Construction routes through:
+
+```
+M2: R = ZZ/101
+   ↓
+m2/setup.m2  →  rawZZp(101)        (or similar raw* call)
+   ↓
+d/interface.dd  →  Ccode(RawRing, "IM2_Ring_ZZp(101)")
+   ↓
+e/interface/ring.h  →  IM2_Ring_ZZp(p)
+   ↓
+e/aring-zz-flint.cpp  →  new ARingZZpFlint(p)
+   ↓ wrap
+e/aring-glue.hpp  →  new ConcreteRing<ARingZZpFlint>(...)
+   ↓
+returned as Ring* to interpreter
+```
+
+The `ConcreteRing<ARingType>` wrapper makes an `aring` look like a legacy `Ring`, which is how the interpreter holds it. Inside the engine, performance-critical loops cast back to the concrete `ARingType` and use the templated arithmetic.
+
+## Choosing a backend — quick reference
+
+When implementing a new GB / matrix / resolution algorithm that templates on the coefficient ring, the **backend choice for the test inputs** dominates benchmarks. Rough rules:
+
+| Want | Pick |
+|---|---|
+| Generic correctness testing | `ARingQQGMP` (slow but always correct, never overflows) |
+| Fast Z/p for **small p** | `ARingZZpFlint` (FLINT `nmod`) |
+| Z/p for **dense linear algebra** | `ARingZZpFFPACK` (BLAS dispatch — the matrix ops auto-select this) |
+| Z/p with **arbitrary p** | `ARingZZp` (generic) |
+| Galois field, `q = p^n` small | `ARingGFFlint` (FLINT `fq_nmod`) |
+| Galois field, large `q` | `ARingGFFlintBig` (FLINT `fq`) |
+| Floating-point with **adaptive precision** | `ARingRRR` (MPFR) or `ARingCCC` (MPC) |
+| Interval arithmetic for **certified bounds** | `ARingRRi` or `ARingCCi` |
+| New ring with **fast inline arithmetic** | New `aring-*.{cpp,hpp}` — see "How to add a new coefficient ring" below |
+
+The benchmark suite in [`unit-tests/ARingTest-hpp.md`](unit-tests/file-ARingTest-hpp.md) compares backends across a standard battery of operations — run it after adding a new ring to see how your implementation stacks up.
+
 ## How to add a new coefficient ring
 
 1. Choose a representative concrete C type for elements (e.g. `mpz_t`,
