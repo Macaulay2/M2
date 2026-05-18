@@ -208,6 +208,13 @@ Operations from the 27 packages with dedicated deep dives. **Auto-loaded** packa
 | `isCM G`, `isSCM G`, `isChordal G`, `isPerfect G`, `getGoodLeaf`, `hasGoodLeaf`, `allOddHoles G`, `allEvenHoles G`, `lineGraph G` | `EdgeIdeals` | same |
 | `fpt f` (F-pure threshold), `isFPT(t, f)`, `compareFPT(t, f)`, `isFJumpingExponent(t, f)`, `frobeniusNu(e, f)` | `FrobeniusThresholds` | [`packages/file-FrobeniusThresholds.md`](M2/Macaulay2/packages/file-FrobeniusThresholds.md) |
 | `FrobeniusPower`, `FrobeniusRoot`, `GlobalFrobeniusRoot`, `isSimpleNormalCrossing`, `ContainmentTest` options | `FrobeniusThresholds` | same |
+| `Poset` (type), `poset(G, R)`, `transitiveClosure`, `mobiusMatrix P`, `mobiusFunction(P, a, b)`, `characteristicPolynomial P` | `Posets` | [`packages/file-Posets.md`](M2/Macaulay2/packages/file-Posets.md) |
+| `booleanLattice n`, `chain n`, `divisorPoset n`, `dominanceLattice n`, `lcmLattice I`, `partitionLattice n`, `facePoset Δ`, `youngSubposet λ`, etc. (15 named families) | `Posets` | same |
+| `hibiIdeal P`, `hibiRing P`, `pPartitionRing P`, `hasseDiagram P`, `orderComplex P`, `comparabilityGraph P` (algebraic/combinatorial bridges) | `Posets` | same |
+| `isCM P`, `isShellable P`, `isLattice P`, `isDistributive`, `isAtomic`, `isBoolean`, `isEulerian P`, `isGraded P` | `Posets` | same |
+| `markovRing(d_1, …, d_n)`, `gaussianRing G`, `covarianceMatrix R`, `bidirectedEdgesMatrix G`, `directedEdgesMatrix G` | `GraphicalModels` | [`packages/file-GraphicalModels.md`](M2/Macaulay2/packages/file-GraphicalModels.md) |
+| `discreteVanishingIdeal(G, R)`, `gaussianVanishingIdeal(G, R)`, `conditionalIndependenceIdeal`, `gaussianParametrization`, `markovMatrices`, `gaussianMatrices` | `GraphicalModels` | same |
+| `globalMarkov G`, `localMarkov G`, `pairMarkov G`, `trekIdeal(R, G)`, `trekSeparation(G, A, B)`, `identifyParameters G`, `hiddenMap`, `marginMap` | `GraphicalModels` | same |
 | `taylorResolution I`, `scarfSimplicialComplex I`, `buchbergerSimplicialComplex I`, `lyubeznikSimplicialComplex I` | `SimplicialComplexes` | same |
 | `kleinBottleComplex`, `dunceHatComplex`, `realProjectiveSpaceComplex n`, `poincareSphereComplex`, `smallManifold(d, n, k)` | `SimplicialComplexes` | same |
 

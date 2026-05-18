@@ -591,6 +591,8 @@ matters more than the engine algorithm:
 | Graph theory + edge ideals (commutative-algebra bridge) | [`Graphs`](M2/Macaulay2/packages/file-Graphs.md) — `Graph`/`Digraph` types, 40+ named graph families, chromatic/clique/independence numbers, `edgeIdeal`/`coverIdeal`; single-file 5 542-line package |
 | (Hyper)graphs tuned for edge-ideal workflows + Cohen-Macaulay tests | [`EdgeIdeals`](M2/Macaulay2/packages/file-EdgeIdeals.md) — JSAG-certified; `HyperGraph` type, `cliqueComplex`/`independenceComplex` bridges, `getGoodLeaf` splitting, `isCM`/`isSCM` tests |
 | Characteristic-p commutative algebra: F-pure threshold, F-jumping exponents, Frobenius `nu` invariants | [`FrobeniusThresholds`](M2/Macaulay2/packages/file-FrobeniusThresholds.md) — JSAG-certified; `fpt f`, `isFPT`, `compareFPT`, `frobeniusNu`, Frobenius powers/roots; char-p counterpart of `BernsteinSato` |
+| Partially ordered sets (combinatorial / Möbius / Hibi-ring) | [`Posets`](M2/Macaulay2/packages/file-Posets.md) — JSAG-certified; 15 named families, Möbius function, Hibi ideal, order complex, Cohen-Macaulay / shellability predicates |
+| Algebraic statistics: vanishing ideals of graphical / Markov / Gaussian models | [`GraphicalModels`](M2/Macaulay2/packages/file-GraphicalModels.md) — `markovRing` / `gaussianRing`, `discreteVanishingIdeal` / `gaussianVanishingIdeal`, `trekIdeal`/`trekSeparation`, three Markov properties |
 
 For symbol-level lookups (given an M2 function or engine class name, find its deep dive), see [`SYMBOLS.md`](SYMBOLS.md).
 
