@@ -1558,7 +1558,7 @@ steppingFurther(c:Code):bool := steppingFlag && (
 	  microStepCount >= 0)
      else false);
 
-handleError(c:Code,e:Expr):Expr := (
+export handleError(c:Code,e:Expr):Expr := (
      when e is err:Error do (
 	  p := codePosition(c);
 	  if SuppressErrors
@@ -1591,6 +1591,7 @@ handleError(c:Code,e:Expr):Expr := (
      	       	    	      	   lastCodePosition.filename = "";
 				   z.value)
 			      else if z.message == stepMessageWithArg || z.message == stepMessage then (
+				   printMessage(codePosition(c), "printing step message");
 				   setSteppingFlag();
      	       	    	      	   lastCodePosition.filename = "";
 				   stepCount = (
@@ -1623,8 +1624,10 @@ export evalraw(c:Code):Expr := (
      -- better would for cancellation requests to set exceptionFlag:
      -- Ccode(void,"pthread_testcancel()");
      e := (
+	  -- at some point we should check !steppingFurther(c)
 	  if test(exceptionFlag) && !steppingFurther(c) then (    -- compare this code to the code in evalexcept() below
-	       if steppingFlag then (
+		   printMessage(codePosition(c), "testtest");
+		   if steppingFlag then (
 		    clearSteppingFlag();
 		    buildErrorPacket(steppingMessage))
 	       else if alarmedFlag then (
@@ -1861,9 +1864,12 @@ continueFun(a:Code):Expr := (
 	       e,false,dummyFrame)));
 setupop(continueS,continueFun);
 
-stepFun(a:Code):Expr := (
+export stepFun(a:Code):Expr := (
      e := if a == dummyCode then nullE else eval(a);
      when e is Error do e else (
+	  printMessage(codePosition(a), "printing code position step2");
+	  printMessage(codePosition(a), tostring(a));
+	  printMessage(codePosition(a), stepMessage);
 	  Expr(Error(dummyPosition,
 	       if a == dummyCode then stepMessage else stepMessageWithArg,
 	       e,false,dummyFrame))));

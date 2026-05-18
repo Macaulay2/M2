@@ -28,3 +28,9 @@
 [submodule "M2/Macaulay2/editors/emacs"]
 	path = M2/Macaulay2/editors/emacs
 	url = https://github.com/Macaulay2/M2-emacs.git
+[submodule "vscode-macaulay2"]
+	path = vscode-macaulay2
+	url = https://github.com/Macaulay2/vscode-macaulay2.git
+[submodule "Workshop-2026-Atlanta"]
+	path = Workshop-2026-Atlanta
+	url = https://github.com/Macaulay2/Workshop-2026-Atlanta.git
