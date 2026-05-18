@@ -1,12 +1,12 @@
 [submodule "M2/submodules/memtailor"]
 	path = M2/submodules/memtailor
-	url = https://github.com/Macaulay2/memtailor
+	url = https://github.com/passagemath/upstream-memtailor
 [submodule "M2/submodules/mathic"]
 	path = M2/submodules/mathic
-	url = https://github.com/Macaulay2/mathic
+	url = https://github.com/passagemath/upstream-mathic
 [submodule "M2/submodules/mathicgb"]
 	path = M2/submodules/mathicgb
-	url = https://github.com/Macaulay2/mathicgb
+	url = https://github.com/passagemath/upstream-mathicgb
 [submodule "M2/submodules/bdwgc"]
 	path = M2/submodules/bdwgc
 	url = https://github.com/ivmai/bdwgc.git
