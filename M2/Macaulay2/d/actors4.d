@@ -12,7 +12,7 @@ header "// required for toString routines
 #include <engine.h>                         // for IM2_GB_to_string, rawMuta... // TODO: remove this one
 #include <interface/NAG.h>                  // for rawHomotopyToString, rawP...
 #include <interface/freemodule.h>           // for IM2_FreeModule_to_string
-#include <interface/matrix.h>               // for IM2_Matrix_to_string
+#include <interface/matrix.h>               // for rawMatrixToString
 #include <interface/monoid.h>               // for rawMonoidToString
 #include <interface/monomial-ordering.h>    // for IM2_MonomialOrdering_to_s...
 #include <interface/mutable-matrix.h>       // for IM2_MutableMatrix_to_string
@@ -999,7 +999,7 @@ tostringfun(e:Expr):Expr := (
      is s:SpecialExpr do tostringfun(s.e)
      is x:RawMonomialCell do toExpr(tostring(x.p))
      is x:RawFreeModuleCell do toExpr(Ccode(string, "IM2_FreeModule_to_string(",x.p,")" ))
-     is x:RawMatrixCell do toExpr(Ccode(string, "IM2_Matrix_to_string(",x.p,")" ))
+     is x:RawMatrixCell do toExpr(Ccode(string, "rawMatrixToString(",x.p,")" ))
      is x:RawMutableMatrixCell do toExpr(Ccode(string, "IM2_MutableMatrix_to_string(",x.p,")" ))
      is x:RawMutableComplexCell do toExpr(Ccode(string, "rawMutableComplexToString(",x.p,")" ))
      -- NAG stuff begin
