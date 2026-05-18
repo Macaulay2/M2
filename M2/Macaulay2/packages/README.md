@@ -86,6 +86,8 @@ The full procedure lives in [`README`](README), but the short version:
 | `PrimaryDecomposition.m2` — auto-loaded `primaryDecomposition` / `associatedPrimes` / `localize` (SY, EHV, GTZ strategies) | [`file-PrimaryDecomposition.md`](file-PrimaryDecomposition.md) |
 | `Saturation.m2` — auto-loaded `saturate` / `quotient` / `annihilator` (with the `addHook` strategy table architecture) | [`file-Saturation.md`](file-Saturation.md) |
 | `Elimination.m2` — auto-loaded `eliminate` / `resultant` / `discriminant` / `sylvesterMatrix` (imported by the three above) | [`file-Elimination.md`](file-Elimination.md) |
+| `Complexes.m2` — auto-loaded `HomologicalAlgebraPackage`: `Complex` / `ComplexMap` / `freeResolution` / `Ext` / `Tor` / Yoneda / pruning (12-file aux dir, ~17 500 lines) | [`file-Complexes.md`](file-Complexes.md) |
+| `SimpleDoc.m2` — auto-loaded indentation-aware doc DSL (`doc ///…///` syntax used by virtually every package) | [`file-SimpleDoc.md`](file-SimpleDoc.md) |
 
 The full ~400 per-package coverage would be repetitive — these deep-dives cover the structural patterns every package follows plus the foundational and frequently-used packages that ship.
 
