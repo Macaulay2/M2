@@ -84,6 +84,26 @@ the engine **directly** in C++ — no interpreter, no `.d` translation layer.
 (`CMakeLists.txt` for this target lives one level up, alongside the rest of
 the engine.)
 
+## What gets tested where
+
+Mapping engine area → test files. Use this when adding tests after touching engine code:
+
+| If you touched … | Run these tests |
+|---|---|
+| Any `aring-*` ring (`ARingZZ`, `ARingZZpFlint`, `ARingGFFlint`, `ARingRR`, …) | `ARing*Test.cpp` family — grouped by ring kind in [`file-aring-zz-tests.md`](file-aring-zz-tests.md), [`file-aring-gf-tests.md`](file-aring-gf-tests.md), [`file-aring-real-complex-tests.md`](file-aring-real-complex-tests.md) |
+| Legacy `Ring`/`Z_mod`/`Tower` (in `ZZ.cpp`, `ZZp.cpp`, `tower.cpp`, …) | `Ring*Test.cpp` family — covered in [`file-ring-tests.md`](file-ring-tests.md) |
+| Monoid / monomial-order code (`monoid.cpp`, `monordering.cpp`, `imonorder.cpp`) | `MonoidTest.cpp` — [`file-MonoidTest.md`](file-MonoidTest.md) |
+| Polynomial-ring code (`polyring.cpp`, `BasicPoly.cpp`, …) | `PolyRingTest.cpp` — covered in [`file-dmat-matrix-tests.md`](file-dmat-matrix-tests.md) |
+| Dense-matrix code (`dmat.cpp`, `dmat-*-flint.cpp`, `mat-arith.hpp`) | `DMatZZpTest.cpp`, `MatrixIOTest.cpp` — [`file-dmat-matrix-tests.md`](file-dmat-matrix-tests.md) |
+| `f4/` or `gb-f4/` GB engine | `NewF4Test.cpp` — [`file-NewF4Test.md`](file-NewF4Test.md) |
+| `NCAlgebras/` GB engine | `NCGroebnerTest.cpp` — [`file-NCGroebnerTest.md`](file-NCGroebnerTest.md) |
+| `schreyer-resolution/` engine | `ResTest.cpp` — [`file-ResTest.md`](file-ResTest.md) |
+| Numerical AG (`NAG.cpp`, `SLP.cpp`) | `PointArray.cpp` — [`file-misc-tests.md`](file-misc-tests.md) |
+| Combinatorial helpers (`comb.cpp`) | `SubsetTest.cpp` — [`file-misc-tests.md`](file-misc-tests.md) |
+| The test harness itself (`testMain.cpp`, `M2-cpp-replacement.cpp`, `fromStream.cpp`, `util-polyring-creation.cpp`) | [`file-test-harness.md`](file-test-harness.md) |
+
+Then run a targeted gtest filter (see below) rather than the whole suite.
+
 ## Running
 
 ```sh
@@ -96,6 +116,17 @@ For a single test file:
 
 ```sh
 ./Macaulay2/e/unit-tests/M2-unit-tests --gtest_filter='ARingZZ*'
+```
+
+Common gtest filters when iterating on one area:
+
+```sh
+--gtest_filter='ARing*'         # all ARing tests
+--gtest_filter='ARingZZ*'        # ARingZZ family
+--gtest_filter='*F4*'            # F4 tests
+--gtest_filter='*Monoid*'        # MonoidTest
+--gtest_filter='*Subset*'        # Subset / combinatorial tests
+--gtest_filter='-PointArray*'    # everything EXCEPT PointArray
 ```
 
 ## Adding tests

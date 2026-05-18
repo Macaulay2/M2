@@ -75,6 +75,33 @@ the top of `e/`. New code goes here; old code is being migrated.
 | Utilities | `gmp-util.h` | GMP helpers |
 | Numerical AG | `NAG.h` | Numerical algebraic geometry entry points |
 
+## M2 operation → interface file
+
+When tracing a user-level M2 operation into the engine, the **interface file** is the C-callable boundary it crosses. The mapping:
+
+| M2 operation | Interface file | Notes |
+|---|---|---|
+| `ZZ`, `QQ`, `ZZ/p`, `GF`, `RR`, `CC`, etc. (ring construction) | [`aring.h`](file-aring-interface.md), [`flint.h`](file-flint-interface.md), [`ring.h`](file-ring-interface.md) | Modern `aring` boundary + FLINT-backed shortcuts + legacy `ring` paths |
+| `a + b`, `a * b`, `promote`, `lift` on ring elements | [`ringelement.h`](file-ringelement-interface.md) | All `RingElement` arithmetic |
+| `map(S, R, …)` and applying a ring map | [`ringmap.h`](file-ringmap-interface.md) | Ring homomorphism construction + application |
+| `R[x, y, z]`, `monomialOrdering`, `Eliminate(k)` | [`monoid.h`](file-monoid-interface.md), [`monomial-ordering.h`](file-monomial-ordering-interface.md) | Monoid and monomial-order construction |
+| `matrix {{…}}`, `mutableMatrix`, `det`, `rank`, `inverse` | [`matrix.h`](file-matrix-interface.md), [`mutable-matrix.h`](file-mutable-matrix-interface.md) | All matrix operations |
+| `R^n`, `R^{-d_1, …}`, `++`, `**`, `dual` on free modules | [`freemodule.h`](file-freemodule-interface.md) | Free-module construction and operations |
+| `MonomialIdeal` ops (intersect, radical, quotient) | [`monomial-ideal.h`](file-monomial-ideal-interface.md) | Specialised monomial-ideal entry points |
+| `gb I`, `Algorithm => LinearAlgebra`, `Strategy => …` | [`groebner.h`](file-groebner-interface.md) | All Gröbner-basis entry points (largest single file at 298 lines) |
+| `Stop => {…}`, `isComputationDone`, computation framework | [`computation.h`](file-computation-interface.md) | Generic Computation protocol |
+| `convexHull`, `Cone` operations | [`cone.h`](file-cone-interface.md) | Polyhedral-cone boundary (used by `Polyhedra` package) |
+| `factor`, `irreducibleFactors`, `gcd` over polynomial rings | [`factory.h`](file-factory-interface.md) | Bridge to the Singular Factory library |
+| `chineseRemainder`, rational reconstruction | [`cra.h`](file-cra-interface.md) | CRT operations |
+| `random ZZ`, `random RR`, ring-specific randoms | [`random.h`](file-random-interface.md) | Seed-controlled RNG ([deep dive](file-random-interface.md)) |
+| `roots f` (univariate polynomial roots) | [`polyroots.cpp`](file-polyroots.md) | MPSolve-backed |
+| GMP integer ops, MPFR-specific helpers | [`gmp-util.h`](file-gmp-util-interface.md) | Cross-cuts everything |
+| Numerical AG (`solveSystem`, `track`, witness sets) | [`NAG.h`](file-NAG-interface.md) | Used by [`NumericalAlgebraicGeometry`](../../packages/file-NumericalAlgebraicGeometry.md) |
+| M2 string / array passing | [`m2-types.h`](file-m2-types-interface.md) | The opaque `M2_string` / `M2_arrayint` types |
+| Engine memory hooks | [`m2-mem.h`](file-m2-mem-interface.md) | `getmem` traps and debug allocators |
+
+When a header (e.g. `groebner.h`) contains many user-visible operations, the corresponding per-file deep dive groups them. Use the area docs ([`coefficient-rings.md`](../coefficient-rings.md), [`matrices.md`](../matrices.md), etc.) to see the **complete dispatch path** including which internal C++ class the interface routes to.
+
 ## How to add a new engine function
 
 1. Implement it in C++ in [`../`](../README.md) (internal headers in subdirs

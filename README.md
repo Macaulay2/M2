@@ -371,6 +371,23 @@ This is the fastest path from user-level code into the engine.
 If you ever wonder "this M2 expression — where in the engine does it
 actually run?", start at the appropriate area doc's mapping table.
 
+Two additional area docs got the same treatment in a later pass:
+
+| Engine area doc | Mapping covers |
+|---|---|
+| [`resolutions.md`](M2/Macaulay2/e/resolutions.md) | `freeResolution`, `res`, all `Strategy => 0..4` / `Nonminimal` / `NonminimalWithGB` / `Homogenization` / `OverField` / `OverZZ` / `LocalRing` → 5 engine resolution implementations, with the dispatch path through `comp-res.cpp` |
+| [`computations.md`](M2/Macaulay2/e/computations.md) | `hilbertSeries`, `LLL`, `solveSystem`, `evaluate(M, SLP, ...)`, `associatedPrimes`, `intersect`/`radical`/`colon` on `MonomialIdeal`, combinatorial helpers → engine entry points + cross-links to wrapper packages |
+
+The same pattern has been applied to **every engine subdirectory README**, so a reader landing inside `M2/Macaulay2/e/f4/` (or any other engine subdir) gets the same M2→engine traversal aid there:
+
+| Engine subdir README | Adds |
+|---|---|
+| [`f4/`](M2/Macaulay2/e/f4/README.md), [`gb-f4/`](M2/Macaulay2/e/gb-f4/README.md), [`bibasis/`](M2/Macaulay2/e/bibasis/README.md), [`schreyer-resolution/`](M2/Macaulay2/e/schreyer-resolution/README.md), [`NCAlgebras/`](M2/Macaulay2/e/NCAlgebras/README.md), [`NCResolutions/`](M2/Macaulay2/e/NCResolutions/README.md) | **"What triggers this engine"** + **"Where in the pipeline this fits"** — which M2 invocation routes to the subdir, and the per-step dispatch diagram |
+| [`interface/`](M2/Macaulay2/e/interface/README.md) | **"M2 operation → interface file"** — the reverse-direction lookup (M2 op → which `.h` boundary file owns it) |
+| [`unit-tests/`](M2/Macaulay2/e/unit-tests/README.md) | **"What gets tested where"** + a gtest-filter cookbook for targeted re-runs |
+
+The collective effect: from any starting point — an M2 user expression, an engine class name, a source file, or a test — you can navigate cross-layer with one click via these tables.
+
 ### Single-file deep dives
 
 Dedicated walkthroughs for especially central engine classes

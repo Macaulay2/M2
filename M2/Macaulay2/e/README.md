@@ -43,17 +43,19 @@ rules, and a reference flow of "M2 user → engine inner loop".
 
 ## Subdirectories
 
-| Directory | Purpose |
-|---|---|
-| [`interface/`](interface/README.md) | Public C interface — entry points called from `d/engine.dd` |
-| [`f4/`](f4/README.md) | Original F4 Gröbner basis engine |
-| [`gb-f4/`](gb-f4/README.md) | Refactored F4 Gröbner basis engine |
-| [`schreyer-resolution/`](schreyer-resolution/README.md) | F4-style free resolutions via Schreyer frames |
-| [`NCAlgebras/`](NCAlgebras/README.md) | Non-commutative free algebras and GB |
-| [`NCResolutions/`](NCResolutions/README.md) | Non-commutative free resolutions |
-| [`bibasis/`](bibasis/README.md) | Involutive (Janet) bases for Boolean rings |
-| [`unit-tests/`](unit-tests/README.md) | gtest suite for the engine |
-| [`doxygen-settings/`](doxygen-settings/README.md) | Doxygen config for the developer API docs |
+Each subdirectory README contains an **area-appropriate cross-layer mapping table**: which M2 invocation routes to this engine (for the algorithm subdirs) plus the per-step dispatch pipeline. The `interface/` README has the reverse direction (M2 op → which boundary header), and `unit-tests/` has a "which engine subsystem maps to which test file" table plus a gtest-filter cookbook.
+
+| Directory | Purpose | Table added |
+|---|---|---|
+| [`interface/`](interface/README.md) | Public C interface — entry points called from `d/engine.dd` | M2 op → interface file |
+| [`f4/`](f4/README.md) | Original F4 Gröbner basis engine | What triggers + pipeline |
+| [`gb-f4/`](gb-f4/README.md) | Refactored F4 Gröbner basis engine | What triggers + pipeline + comparison-with-`f4/` |
+| [`schreyer-resolution/`](schreyer-resolution/README.md) | F4-style free resolutions via Schreyer frames | What triggers + pipeline + dense-vs-sparse-monoid |
+| [`NCAlgebras/`](NCAlgebras/README.md) | Non-commutative free algebras and GB | What triggers + pipeline + when-vs-commutative |
+| [`NCResolutions/`](NCResolutions/README.md) | Non-commutative free resolutions | What triggers + pipeline |
+| [`bibasis/`](bibasis/README.md) | Involutive (Janet) bases for Boolean rings | What triggers (opt-in via `BIBasis` package) + pipeline |
+| [`unit-tests/`](unit-tests/README.md) | gtest suite for the engine | Engine subsystem → test file + gtest filters |
+| [`doxygen-settings/`](doxygen-settings/README.md) | Doxygen config for the developer API docs | (small; no cross-layer table needed) |
 
 ## Single-file deep dives
 
