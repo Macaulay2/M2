@@ -497,15 +497,6 @@ checkVariety := (X, F) -> (
 flattenModule   = liftModule
 flattenMorphism = liftMorphism
 
--- pushforward the complex to PP^n via S/I <-- S
--- TODO: move to Complexes?
-flattenComplex = C -> C.cache#"flattenComplex" ??= (
-    if instance(ring C, PolynomialRing) then return C;
-    (lo, hi) := C.concentration;
-    if lo === hi
-    then complex(flattenModule C_lo, Base => lo)
-    else complex applyValues(C.dd.map, flattenMorphism))
-
 -- TODO: this is called twice
 -- TODO: implement for multigraded ring
 degreeList := M -> (

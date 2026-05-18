@@ -18,6 +18,7 @@ Node
       :Available packages:
         "packages provided with Macaulay2"
         :The directory containing the packages is @HREF { currentLayout#"packages", currentLayout#"packages" }@
+	:In addition, there are two meta-packages: @TO "Macaulay2Doc::Core"@ and @TO "Macaulay2Doc::User"@.
 
       :Functions useful when @TO "using packages"@:
         needsPackage

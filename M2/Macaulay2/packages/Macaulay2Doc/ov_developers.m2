@@ -1,4 +1,4 @@
-document { Key => Core,
+document { Key => "Core",
     Headline => "the core of Macaulay2",
     PARA {
 	"This package contains the core functionality of Macaulay2, without the documentation,
@@ -7,6 +7,13 @@ document { Key => Core,
     Subnodes => {
 	TO "how Macaulay2 finds its files",
     }
+}
+
+-- FIXME: this causes warning: ambiguous reference "User :: User" and "Macaulay2Doc :: User"
+document { Key => "User",
+    Headline => "default package for interpreter interactions",
+    PARA { "This package contains the symbols defined by the user during interactive interactions." },
+    SeeAlso => { getSymbol, listUserSymbols, showUserStructure, debug }
 }
 
 -- TODO: merge this with the node above.
