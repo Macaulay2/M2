@@ -587,6 +587,8 @@ matters more than the engine algorithm:
 | Schubert calculus, intersection theory | [`Schubert2`](M2/Macaulay2/packages/file-Schubert2.md) — "abstract varieties" by their Chow rings; M2 successor to the Maple Schubert package |
 | Simplicial complexes, Stanley-Reisner | [`SimplicialComplexes`](M2/Macaulay2/packages/file-SimplicialComplexes.md) — JSAG-certified; named examples (Klein bottle, Poincaré sphere, …) + monomial-ideal resolutions (Taylor, Scarf, Buchberger, Lyubeznik) |
 | Local-ring computations (`R_P`, singularity analysis) | [`LocalRings`](M2/Macaulay2/packages/file-LocalRings.md) — `localRing`, `liftUp`, `hilbertSamuelFunction`, `localResolution`; lift-and-descend pattern |
+| D-modules: Bernstein-Sato polynomials, multiplier ideals, D-module restriction/localisation, de Rham / local / intersection cohomology | [`BernsteinSato`](M2/Macaulay2/packages/file-BernsteinSato.md) — `globalBFunction f`, `multiplierIdeal(f, c)`, `Dresolution`, `Drestriction`, `Dlocalize`, `DHom`, `DeRham`, `localCohom`, `intersectionCohom`, `WeylClosure`; ~6 600 lines across 15 algorithmic modules |
+| Graph theory + edge ideals (commutative-algebra bridge) | [`Graphs`](M2/Macaulay2/packages/file-Graphs.md) — `Graph`/`Digraph` types, 40+ named graph families, chromatic/clique/independence numbers, `edgeIdeal`/`coverIdeal`; single-file 5 542-line package |
 
 For symbol-level lookups (given an M2 function or engine class name, find its deep dive), see [`SYMBOLS.md`](SYMBOLS.md).
 

@@ -3,7 +3,7 @@
 Flat alphabetical catalogue of **every documentation file** in
 the M2 source tree. Counts: 19 top-level meta docs + 70
 per-directory READMEs + 13 architecture references + 10 engine
-area docs + 509 per-file deep dives = **621 listed; 628 total
+area docs + 511 per-file deep dives = **623 listed; 630 total
 markdown files including consolidated/auxiliary docs**.
 
 This file is the **"I remember a doc about X but not where it
@@ -141,7 +141,7 @@ M2/submodules/README.md
 Each describes the contents of its directory and links into the
 per-file deep dives.
 
-## Per-file deep dives (509)
+## Per-file deep dives (511)
 
 Per-file docs are at `<dir>/file-<basename>.md`. To find one,
 follow the chain:

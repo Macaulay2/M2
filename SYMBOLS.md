@@ -197,6 +197,13 @@ Operations from the 27 packages with dedicated deep dives. **Auto-loaded** packa
 | `numericalIrreducibleDecomposition I`, `parameterHomotopy(F, ...)` | `NumericalAlgebraicGeometry` | same |
 | `simplicialComplex {…}`, `link(D, σ)`, `star(D, σ)`, `barycentricSubdivision D` | `SimplicialComplexes` | [`packages/file-SimplicialComplexes.md`](M2/Macaulay2/packages/file-SimplicialComplexes.md) |
 | `localRing(S, P)`, `liftUp M`, `hilbertSamuelFunction(R, M, n)`, `localResolution`, `localsyz`, `localMingens`, `localPrune`, `setMaxIdeal` (legacy) | `LocalRings` | [`packages/file-LocalRings.md`](M2/Macaulay2/packages/file-LocalRings.md) |
+| `globalBFunction f`, `multiplierIdeal(f, c)`, `jumpingCoefficients f`, `bFunction I`, `localBFunction(f, P)`, `Dresolution M`, `Drestriction(M, w)`, `Dlocalize(M, f)`, `DHom(M, N)`, `DeRham M`, `localCohom(I, M)`, `intersectionCohom M`, `WeylClosure I`, `annFs f` | `BernsteinSato` | [`packages/file-BernsteinSato.md`](M2/Macaulay2/packages/file-BernsteinSato.md) |
+| `graph(…)`, `digraph(…)`, `Graph`, `Digraph` (types) | `Graphs` | [`packages/file-Graphs.md`](M2/Macaulay2/packages/file-Graphs.md) |
+| `adjacencyMatrix G`, `edges G`, `vertexSet G`, `laplacianMatrix G`, `degreeSequence G` | `Graphs` | same |
+| `completeGraph n`, `cycleGraph n`, `pathGraph n`, `generalizedPetersenGraph(n,k)`, `kneserGraph(n,k)`, `johnsonGraph(n,k)`, `barbellGraph`, `cocktailParty`, `friendshipGraph`, `lollipopGraph`, … (40+ named families) | `Graphs` | same |
+| `chromaticNumber G`, `cliqueNumber G`, `independenceNumber G`, `girth G`, `diameter G`, `chromaticPolynomial G`, `spanningTree G` | `Graphs` | same |
+| `edgeIdeal G`, `coverIdeal G`, `edgeRing G` (commutative-algebra bridge) | `Graphs` | same |
+| `displayGraph G`, `writeDotFile(G, fname)`, `showTikZ G` (Graphviz / TikZ rendering) | `Graphs` | same |
 | `taylorResolution I`, `scarfSimplicialComplex I`, `buchbergerSimplicialComplex I`, `lyubeznikSimplicialComplex I` | `SimplicialComplexes` | same |
 | `kleinBottleComplex`, `dunceHatComplex`, `realProjectiveSpaceComplex n`, `poincareSphereComplex`, `smallManifold(d, n, k)` | `SimplicialComplexes` | same |
 

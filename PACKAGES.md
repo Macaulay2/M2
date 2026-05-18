@@ -409,10 +409,12 @@ The heavily-used non-auto-loaded packages with dedicated coverage:
 | `NumericalAlgebraicGeometry` | `solveSystem`, `track`, witness sets, irreducible decomposition; multi-backend (M2engine / BERTINI / PHCPACK / HOM4PS2) | [`file-NumericalAlgebraicGeometry.md`](M2/Macaulay2/packages/file-NumericalAlgebraicGeometry.md) |
 | `SimplicialComplexes` | `simplicialComplex`, `link`, `star`, `barycentricSubdivision`, monomial-ideal resolutions, named topological examples | [`file-SimplicialComplexes.md`](M2/Macaulay2/packages/file-SimplicialComplexes.md) |
 | `LocalRings` | `localRing(S, P)`, `liftUp`, `hilbertSamuelFunction`, `localResolution`, `localsyz`, `localMingens`, `localPrune` — singularity analysis via lift-and-descend | [`file-LocalRings.md`](M2/Macaulay2/packages/file-LocalRings.md) |
+| `BernsteinSato` | `globalBFunction f`, `multiplierIdeal(f, c)`, `jumpingCoefficients`, full D-module suite (`Dresolution`, `Drestriction`, `Dlocalize`, `DHom`, `DeRham`, `localCohom`, `intersectionCohom`, `WeylClosure`); ~6 600 lines | [`file-BernsteinSato.md`](M2/Macaulay2/packages/file-BernsteinSato.md) |
+| `Graphs` | `Graph`, `Digraph`, ~40+ named graph families (Petersen, Kneser, …), chromatic/clique/independence numbers, `edgeIdeal`/`coverIdeal` bridge to commutative algebra; single-file 5 542-line package | [`file-Graphs.md`](M2/Macaulay2/packages/file-Graphs.md) |
 
 Plus the **3 foundational structural packages** documented at the top of this doc (`Macaulay2Doc`, `Style`, `EngineTests`) and the **conventions doc** ([`file-package-conventions.md`](M2/Macaulay2/packages/file-package-conventions.md)) covering the patterns every package follows.
 
-**Coverage:** all 17 auto-loaded packages + 7 most-used non-auto-loaded + 3 structural + 1 conventions = **28 dedicated package deep dives**. See the [packages overview](M2/Macaulay2/packages/README.md) and [`SYMBOLS.md`](SYMBOLS.md) for symbol-level navigation across the ~400-package ecosystem.
+**Coverage:** all 17 auto-loaded packages + 9 most-used non-auto-loaded + 3 structural + 1 conventions = **30 dedicated package deep dives**. See the [packages overview](M2/Macaulay2/packages/README.md) and [`SYMBOLS.md`](SYMBOLS.md) for symbol-level navigation across the ~400-package ecosystem.
 
 ## CMake-side package wiring
 
