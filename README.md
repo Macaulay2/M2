@@ -305,7 +305,7 @@ they will cross-link to one another along these axes:
 
 ### Documentation status
 
-The documentation tree comprises **607 markdown files** across four
+The documentation tree comprises **609 markdown files** across four
 layers:
 
 | Layer | Count | Examples |
@@ -314,7 +314,7 @@ layers:
 | Per-directory READMEs | 70 | one for every subdirectory under `M2/` |
 | Architecture references | 13 | 4 per-layer (`c/`, `d/`, `e/`, `m2/`) + 8 per-engine-subdir (`interface/`, `f4/`, `gb-f4/`, `schreyer-resolution/`, `NCAlgebras/`, `NCResolutions/`, `bibasis/`, `unit-tests/`) + 1 supervisor (`system/`) |
 | Per-area engine docs | ~10 | `coefficient-rings.md`, `polynomial-rings.md`, `monoids-and-monomials.md`, … |
-| Per-file deep dives | 503 | `file-<basename>.md` alongside each source file (some consolidated per family) |
+| Per-file deep dives | 505 | `file-<basename>.md` alongside each source file (some consolidated per family) |
 
 Every directory under `M2/` has both a `README.md` index and per-file
 deep-dive markdown files for every source file it contains. Some
@@ -1029,6 +1029,8 @@ Dedicated walkthroughs for especially central engine classes
 | [packages/file-Isomorphism.md](M2/Macaulay2/packages/file-Isomorphism.md) | `Isomorphism.m2` — auto-loaded probabilistic `isIsomorphic(N,M)` / `isomorphism(N,M)` / `checkDegrees` for modules |
 | [packages/file-utility-packages.md](M2/Macaulay2/packages/file-utility-packages.md) | Five batched small auto-loaded packages: `Classic`, `ConwayPolynomials`, `OnlineLookup`, `PackageCitations`, `TangentCone` |
 | [packages/file-Truncations.md](M2/Macaulay2/packages/file-Truncations.md) | `Truncations.m2` — re-exported-by-`Complexes` `truncate` for modules/ideals/matrices + `effCone` / `nefCone` |
+| [packages/file-Polyhedra.md](M2/Macaulay2/packages/file-Polyhedra.md) | `Polyhedra.m2` — JSAG-certified convex polyhedra / cones / fans / polyhedral complexes (largest single package, ~44 000 lines) |
+| [packages/file-NormalToricVarieties.md](M2/Macaulay2/packages/file-NormalToricVarieties.md) | `NormalToricVarieties.m2` — normal toric varieties, the 5-divisor-group diagram, toric Chow rings, smooth-Fano database through dim 6 (~11 500 lines) |
 
 **Coverage for `packages/`:** structural conventions plus the three foundational packages (`Macaulay2Doc`, `Style`, `EngineTests`) have dedicated deep-dive docs — see [`M2/Macaulay2/packages/README.md`](M2/Macaulay2/packages/README.md). Domain-specific packages (~400 total) are individually catalogued there but not given per-file dives, since each follows the conventions doc.
 
