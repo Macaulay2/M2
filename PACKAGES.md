@@ -422,10 +422,12 @@ The heavily-used non-auto-loaded packages with dedicated coverage:
 | `FourTiTwo` | Interface to the 4ti2 library: `toricMarkov`/`toricGroebner`/`toricCircuits`/`toricGraver`/`toricGraverDegrees`/`hilbertBasis`/`toBinomial`; foundational toric-ideal toolkit used by `Polyhedra` (re-exports), `BernsteinSato`, `HolonomicSystems`, `GraphicalModels` | [`file-FourTiTwo.md`](M2/Macaulay2/packages/file-FourTiTwo.md) |
 | `Normaliz` | JSAG-certified interface to the Normaliz cone/affine-monoid library: `normalToricRing`, `intclToricRing`, `intclMonIdeal`, `ehrhartRing`, `torusInvariants`, OpenMP-threaded Hilbert basis / integral closure / Ehrhart algorithms | [`file-Normaliz.md`](M2/Macaulay2/packages/file-Normaliz.md) |
 | `gfanInterface` | Interface to Anders Jensen's Gfan: ~60 `gfan*` operations covering Gröbner fans, tropical varieties (`gfanTropicalVariety`, `gfanTropicalBasis`, `gfanTropicalTraverse`), fan refinements / products / Minkowski sums, `MarkedPolynomialList` type | [`file-gfanInterface.md`](M2/Macaulay2/packages/file-gfanInterface.md) |
+| `Tropical` | M2-level tropical geometry: `TropicalCycle` type, `tropicalVariety`, `tropicalPrevariety`, `isTropicalBasis`, `stableIntersection`, `BergmanFan`, `isBalanced`, `multiplicities`, min/max convention switch | [`file-Tropical.md`](M2/Macaulay2/packages/file-Tropical.md) |
+| `Matroids` | JSAG-certified matroid theory: `Matroid` type from matrices/graphs/ideals/axioms, ~97 exported operations (deletion / contraction / duality / minors / Tutte polynomial), `matroidIdeal`, `chowRing M` (Adiprasito-Huh-Katz), database of named matroids | [`file-Matroids.md`](M2/Macaulay2/packages/file-Matroids.md) |
 
 Plus the **3 foundational structural packages** documented at the top of this doc (`Macaulay2Doc`, `Style`, `EngineTests`) and the **conventions doc** ([`file-package-conventions.md`](M2/Macaulay2/packages/file-package-conventions.md)) covering the patterns every package follows.
 
-**Coverage:** all 17 auto-loaded packages + 20 most-used non-auto-loaded + 3 structural + 1 conventions = **41 dedicated package deep dives**. See the [packages overview](M2/Macaulay2/packages/README.md) and [`SYMBOLS.md`](SYMBOLS.md) for symbol-level navigation across the ~400-package ecosystem.
+**Coverage:** all 17 auto-loaded packages + 22 most-used non-auto-loaded + 3 structural + 1 conventions = **43 dedicated package deep dives**. See the [packages overview](M2/Macaulay2/packages/README.md) and [`SYMBOLS.md`](SYMBOLS.md) for symbol-level navigation across the ~400-package ecosystem.
 
 ## CMake-side package wiring
 

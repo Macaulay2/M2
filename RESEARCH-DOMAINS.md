@@ -55,6 +55,7 @@ M2 session has them without `needsPackage`.
 | 4ti2 interface: toric Markov / Groebner / circuits / Graver / Hilbert bases | [`FourTiTwo`](M2/Macaulay2/packages/file-FourTiTwo.md) | — |
 | Normaliz interface: Hilbert basis / integral closure / Ehrhart polynomials / torus invariants (OpenMP-threaded) | [`Normaliz`](M2/Macaulay2/packages/file-Normaliz.md) | — |
 | Gfan interface: Gröbner fans, tropical varieties, fan refinements | [`gfanInterface`](M2/Macaulay2/packages/file-gfanInterface.md) | — |
+| Research-level tropical geometry: tropical varieties / prevarieties / cycles / stable intersection / Bergman fans | [`Tropical`](M2/Macaulay2/packages/file-Tropical.md) | — |
 
 ### Combinatorial commutative algebra
 
@@ -64,6 +65,7 @@ M2 session has them without `needsPackage`.
 | Graph theory + edge ideals (broad toolkit) | [`Graphs`](M2/Macaulay2/packages/file-Graphs.md) | — |
 | Graphs + hypergraphs tuned for edge-ideal workflows (Cohen-Macaulay tests, good-leaf splitting) | [`EdgeIdeals`](M2/Macaulay2/packages/file-EdgeIdeals.md) | — |
 | Partially ordered sets (Hibi ideal, Möbius function, lattice predicates) | [`Posets`](M2/Macaulay2/packages/file-Posets.md) | — |
+| Matroid theory (Tutte polynomial, Chow ring, named matroids) | [`Matroids`](M2/Macaulay2/packages/file-Matroids.md) | — |
 
 ### Numerical algebraic geometry
 

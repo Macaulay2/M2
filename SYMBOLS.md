@@ -232,6 +232,12 @@ Operations from the 27 packages with dedicated deep dives. **Auto-loaded** packa
 | `gfan I`, `gfanBuchberger I`, `gfanGroebnerCone L`, `gfanInitialForms(L, w)`, `gfanMarkPolynomialSet L`, `gfanIsMarkedGroebnerBasis L`, `gfanLeadingTerms L`, `gfanHomogenize`, `gfanKrullDimension I`, `gfanSaturation I` | `gfanInterface` | [`packages/file-gfanInterface.md`](M2/Macaulay2/packages/file-gfanInterface.md) |
 | `gfanTropicalVariety I`, `gfanTropicalBasis I`, `gfanTropicalStartingCone I`, `gfanTropicalIntersection I`, `gfanTropicalLinearSpace M`, `gfanTropicalRank M`, `gfanTropicalTraverse(C, I)`, `gfanTropicalLifting` (tropical operations) | `gfanInterface` | same |
 | `gfanFanCommonRefinement`, `gfanFanProduct`, `gfanFanLink`, `gfanMinkowskiSum`, `gfanSecondaryFan`, `gfanResultantFan`, `gfanLatticeIdeal`, `gfanMinors`, `gfanRender`, `MarkedPolynomialList`, `markedPolynomialList` | `gfanInterface` | same |
+| `TropicalCycle` type, `tropicalCycle(F, mults)`, `tropicalVariety I`, `tropicalPrevariety L`, `isTropicalBasis L`, `isBalanced C`, `multiplicities C`, `stableIntersection(C, D)`, `BergmanFan M`, `visualizeHypersurface f` | `Tropical` | [`packages/file-Tropical.md`](M2/Macaulay2/packages/file-Tropical.md) |
+| `ComputeMultiplicities`, `Prime`, `Symmetry`, `Valuation`, `IsHomogeneous`, `tropicalMax` (Tropical options) | `Tropical` | same |
+| `Matroid` type, `matroid B`, `matroid M`, `matroid G`, `groundSet M`, `bases M`, `circuits M`, `flats M`, `loops M`, `coloops M`, `rank M`, `closure(M, S)`, `latticeOfFlats M` | `Matroids` | [`packages/file-Matroids.md`](M2/Macaulay2/packages/file-Matroids.md) |
+| `restriction`, `deletion`, `contraction`, `minor(M, S, T)`, `dualMatroid`, `directSum`, `seriesConnection`, `parallelConnection`, `twoSum`, `hasMinor(M, N)`, `tuttePolynomial M`, `characteristicPolynomial M`, `chromaticPolynomial M` | `Matroids` | same |
+| `matroidIdeal M`, `brokenCircuitComplex M`, `chowRing M`, `augmentedChowRing M`, `intersectionRing M`, `hilbertSeriesChow M` (algebraic bridges) | `Matroids` | same |
+| `uniformMatroid(r, n)`, `graphicMatroid G`, `projectiveGeometry`, `affineGeometry`, `vamos`, `fano`, `nonfano`, `pappus`, `nonpappus`, `desargues`, `allMatroids n`, `specificMatroid "name"` | `Matroids` | same |
 | `taylorResolution I`, `scarfSimplicialComplex I`, `buchbergerSimplicialComplex I`, `lyubeznikSimplicialComplex I` | `SimplicialComplexes` | same |
 | `kleinBottleComplex`, `dunceHatComplex`, `realProjectiveSpaceComplex n`, `poincareSphereComplex`, `smallManifold(d, n, k)` | `SimplicialComplexes` | same |
 

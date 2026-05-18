@@ -600,6 +600,8 @@ matters more than the engine algorithm:
 | 4ti2 interface (Markov bases, Graver bases, circuits, Hilbert bases, toric Gröbner) | [`FourTiTwo`](M2/Macaulay2/packages/file-FourTiTwo.md) — `toricMarkov`, `toricGroebner`, `toricCircuits`, `toricGraver`, `hilbertBasis`; depended on by `Polyhedra` (re-exports it), `BernsteinSato`, `HolonomicSystems`, `GraphicalModels` |
 | Normaliz interface (Hilbert basis of cones, integral closures, Ehrhart polynomials, torus invariants, class groups) | [`Normaliz`](M2/Macaulay2/packages/file-Normaliz.md) — JSAG-certified; `normalToricRing`, `intclToricRing`, `intclMonIdeal`, `ehrhartRing`, `torusInvariants`; OpenMP-threaded; sibling to `FourTiTwo` |
 | Gfan interface (Gröbner fans, tropical varieties, fan refinements / products / Minkowski sums) | [`gfanInterface`](M2/Macaulay2/packages/file-gfanInterface.md) — ~60 `gfan*` operations, `MarkedPolynomialList`, tropical-basis / variety / traverse suite |
+| Tropical geometry: tropical varieties / prevarieties / cycles / stable intersection / Bergman fans | [`Tropical`](M2/Macaulay2/packages/file-Tropical.md) — `TropicalCycle` type, `tropicalVariety`, `tropicalPrevariety`, `isTropicalBasis`, `stableIntersection`, `BergmanFan`, `isBalanced`; min/max convention switch |
+| Matroid theory: Tutte / characteristic / chromatic polynomials, Chow ring (Adiprasito-Huh-Katz), broken-circuit complex | [`Matroids`](M2/Macaulay2/packages/file-Matroids.md) — JSAG-certified; `Matroid` type from matrices/graphs/ideals, ~97 operations including `tuttePolynomial`, `chowRing M`, `brokenCircuitComplex M`, named-matroid database |
 
 For symbol-level lookups (given an M2 function or engine class name, find its deep dive), see [`SYMBOLS.md`](SYMBOLS.md).
 
