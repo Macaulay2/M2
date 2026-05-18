@@ -37,7 +37,28 @@ codeFunction := (key, func, level) -> if level <= limit then (
 previousMethodsFound = null
 
 codeAddress = pos -> ( pos, ": --source code:" ) -- [addr]:[line]:[char]-[line]:[char]:
-codeContent = (s, e, filelines) -> PRE M2CODE stack filelines_{s-1 .. e-1}
+codeContent = (pos, s, e, filelines) -> (
+    posL := toList(pos);
+    << posL << endl;
+--    tmp := stack filelines_{s-1 .. e-1};
+
+    str := "";
+    for i from 0 to (posL#2)-1 do str = concatenate(str," ");
+    if (#posL == 3) then (
+	str = concatenate(str,"^");
+    );
+    if (#posL == 5 or #posL == 7) then (
+	for i from posL#2 to posL#4 do str = concatenate(str,"^");
+    );
+--    << str << endl;
+    
+    
+    out := PRE M2CODE stack((filelines_{s-1 .. e-1}) | {str});
+    out
+--    << s << endl;
+--    << "s = " << s-1 << endl;
+--    << "e = " << e-1 << endl;
+);
 
 -- e.g. see code methods(map, Module, List)
 dedupMethods = L -> (
@@ -74,7 +95,7 @@ code FilePosition := x -> (
 	       );
 	  file = lines file;
 	  if #file < stop then error("line number ",toString stop, " not found in file ", filename);
-	  DIV splice { codeAddress(x), codeContent(start, stop, file) }
+	  DIV splice { codeAddress(x), codeContent(x, start, stop, file) }
 	  ))
 code Symbol     :=
 code Pseudocode := s -> code locate s
