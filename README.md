@@ -57,7 +57,7 @@ Four levels of documentation are reachable from this file:
    them; the lower half of this file mirrors the same entries into
    per-folder tables you can scan top-to-bottom.
 
-Plus **sixteen cross-cutting top-level meta docs** at the repo root:
+Plus **eighteen cross-cutting top-level meta docs** at the repo root:
 
 | Doc | What it is | When to use |
 |---|---|---|
@@ -76,6 +76,8 @@ Plus **sixteen cross-cutting top-level meta docs** at the repo root:
 | [`DEPENDENCIES.md`](DEPENDENCIES.md) | External-library catalogue: every required and optional dependency, what it's for, version constraints, fallback behaviour, license info | Setting up a build; debugging "library not found"; understanding why a specific feature exists |
 | [`RING-ZOO.md`](RING-ZOO.md) | Complete catalogue of every ring M2 supports: constructors, backends, when to use each, example sessions | Choosing a ring for a computation; mapping user-facing types to engine classes; reference for ring authors |
 | [`COMPUTATIONS.md`](COMPUTATIONS.md) | Catalogue of every computation engine: GB variants (default/F4/gb-f4/mathicgb/NC/BIBasis/...), resolution variants, Hilbert, LLL, NAG, factoring, primary decomposition | Choosing a strategy; understanding which backend handles which input; engine comparison tables |
+| [`INDEX.md`](INDEX.md) | Flat alphabetical catalogue of every doc file with one-line descriptions and concept-to-doc lookup hints | Looking up a doc by name when you don't remember its location; finding a doc by concept rather than by directory |
+| [`CHEATSHEET.md`](CHEATSHEET.md) | One-page quick-reference of common workflows: build, test, debug, find things, add things, file-naming conventions | Day-to-day commands you keep forgetting; pointer table back to the in-depth docs |
 | [`CONTRIBUTING-DOCS.md`](CONTRIBUTING-DOCS.md) | Conventions the docs follow | When editing docs (file naming, README structure, deep-dive shape, link integrity audit) |
 
 Plus build-system instructions: see the project
@@ -125,6 +127,8 @@ Plus build-system instructions: see the project
 - **Dependency catalogue: [`DEPENDENCIES.md`](DEPENDENCIES.md)** — every external library M2 uses (GMP, MPFR, FLINT, NTL, BDWGC, Boost, LAPACK, FFLAS-FFPACK, mathicgb, MPSolve, Frobby, Normaliz, ...), required vs optional, version constraints, license compatibility, M2-finds-libraries decision flow
 - **Ring zoo: [`RING-ZOO.md`](RING-ZOO.md)** — every ring M2 supports (`ZZ`, `QQ`, `ZZ/p`, `GF(q)`, `RR`, `CC`, `RRi`, polynomial rings, quotient rings, fraction fields, local rings, Weyl algebras, exterior algebras, NC free algebras, Schur rings, towers, …), with engine-class mapping, example sessions, and a decision tree for "which ring should I use"
 - **Computation engines: [`COMPUTATIONS.md`](COMPUTATIONS.md)** — sister catalogue of the algorithmic engines (GB: default/F4/gb-f4/mathicgb/NC/BIBasis/toric/walk/sugarless; resolution: Schreyer/res-a0/a1/a2/Eschreyer/NC; plus Hilbert, LLL, NAG, factoring, root finding, primary decomposition, polyhedral), strategy selection, comparison tables, when-to-use-which decision tree
+- **Flat alphabetical index: [`INDEX.md`](INDEX.md)** — every doc in the tree (top-level meta docs, architecture refs, per-area engine docs, per-directory READMEs, per-file deep dives) listed in one place, with a concept-to-doc lookup hints table and a "how to find a doc" flow chart for when you don't remember where something lives
+- **Day-to-day cheatsheet: [`CHEATSHEET.md`](CHEATSHEET.md)** — one-page command card: how to build / test / debug / find / add things, plus the file-naming conventions table and common slowdowns-and-fixes table
 
 ### Finding a deep dive
 
@@ -299,16 +303,16 @@ they will cross-link to one another along these axes:
 
 ### Documentation status
 
-The documentation tree comprises **584 markdown files** across four
+The documentation tree comprises **589 markdown files** across four
 layers:
 
 | Layer | Count | Examples |
 |---|---|---|
-| Top-level meta docs | 16 | [`README.md`](README.md) · [`GLOSSARY.md`](GLOSSARY.md) · [`TOUR.md`](TOUR.md) · [`BUILD.md`](BUILD.md) · [`STARTUP.md`](STARTUP.md) · [`MEMORY.md`](MEMORY.md) · [`THREADING.md`](THREADING.md) · [`TESTING.md`](TESTING.md) · [`PACKAGES.md`](PACKAGES.md) · [`DEBUG.md`](DEBUG.md) · [`DOCUMENTATION-SYSTEM.md`](DOCUMENTATION-SYSTEM.md) · [`STYLE.md`](STYLE.md) · [`DEPENDENCIES.md`](DEPENDENCIES.md) · [`RING-ZOO.md`](RING-ZOO.md) · [`COMPUTATIONS.md`](COMPUTATIONS.md) · [`CONTRIBUTING-DOCS.md`](CONTRIBUTING-DOCS.md) |
+| Top-level meta docs | 18 | [`README.md`](README.md) · [`GLOSSARY.md`](GLOSSARY.md) · [`TOUR.md`](TOUR.md) · [`BUILD.md`](BUILD.md) · [`STARTUP.md`](STARTUP.md) · [`MEMORY.md`](MEMORY.md) · [`THREADING.md`](THREADING.md) · [`TESTING.md`](TESTING.md) · [`PACKAGES.md`](PACKAGES.md) · [`DEBUG.md`](DEBUG.md) · [`DOCUMENTATION-SYSTEM.md`](DOCUMENTATION-SYSTEM.md) · [`STYLE.md`](STYLE.md) · [`DEPENDENCIES.md`](DEPENDENCIES.md) · [`RING-ZOO.md`](RING-ZOO.md) · [`COMPUTATIONS.md`](COMPUTATIONS.md) · [`INDEX.md`](INDEX.md) · [`CHEATSHEET.md`](CHEATSHEET.md) · [`CONTRIBUTING-DOCS.md`](CONTRIBUTING-DOCS.md) |
 | Per-directory READMEs | 70 | one for every subdirectory under `M2/` |
 | Architecture references | 13 | 4 per-layer (`c/`, `d/`, `e/`, `m2/`) + 8 per-engine-subdir (`interface/`, `f4/`, `gb-f4/`, `schreyer-resolution/`, `NCAlgebras/`, `NCResolutions/`, `bibasis/`, `unit-tests/`) + 1 supervisor (`system/`) |
 | Per-area engine docs | ~10 | `coefficient-rings.md`, `polynomial-rings.md`, `monoids-and-monomials.md`, … |
-| Per-file deep dives | 483 | `file-<basename>.md` alongside each source file (some consolidated per family) |
+| Per-file deep dives | 486 | `file-<basename>.md` alongside each source file (some consolidated per family) |
 
 Every directory under `M2/` has both a `README.md` index and per-file
 deep-dive markdown files for every source file it contains. Some
@@ -448,7 +452,10 @@ Dedicated walkthroughs for especially central engine classes
 | [file-hash.md](M2/Macaulay2/e/file-hash.md) | `EngineObject` / `MutableEngineObject` (GC bases) | Utilities |
 | [file-exceptions.md](M2/Macaulay2/e/file-exceptions.md) | Engine C++ exception hierarchy | Utilities |
 | [file-engine-h.md](M2/Macaulay2/e/file-engine-h.md) | `engine.h` aggregating header | Public interface |
+| [file-engine-cpp.md](M2/Macaulay2/e/file-engine-cpp.md) | `engine.cpp` engine-wide globals (`heap_size`, `mNextMutableHashValue`, `doubles`, `doubling_stash`) | Utilities |
+| [file-engine-includes-hpp.md](M2/Macaulay2/e/file-engine-includes-hpp.md) | `engine-includes.hpp` common include prelude | Utilities |
 | [file-style.md](M2/Macaulay2/e/file-style.md) | `style.hpp` (comparison codes, `GEOHEAP_SIZE`) | Utilities |
+| [file-geopoly-hpp.md](M2/Macaulay2/e/file-geopoly-hpp.md) | `geopoly.hpp` geometric-heap polynomial accumulator | Gröbner bases |
 | [file-newdelete.md](M2/Macaulay2/e/file-newdelete.md) | `our_new_delete` GC allocation hook | Utilities |
 | [file-M2FreeAlgebraQuotient.md](M2/Macaulay2/e/file-M2FreeAlgebraQuotient.md) | `M2FreeAlgebraQuotient` (`Ring` wrapper for NC quotients) | Polynomial rings |
 | [file-BasicPoly.md](M2/Macaulay2/e/file-BasicPoly.md) | `BasicPoly` / `BasicPolyList` (portable polynomial type) | Polynomial rings |

@@ -155,7 +155,10 @@ Convention: `file-<basename>.md` in this directory.
 | [`file-hash.md`](file-hash.md) | `EngineObject` / `MutableEngineObject` (GC bases) | [Utilities](utilities.md) |
 | [`file-exceptions.md`](file-exceptions.md) | Engine C++ exception hierarchy | [Utilities](utilities.md) |
 | [`file-engine-h.md`](file-engine-h.md) | `engine.h` aggregating header | (Public interface) |
+| [`file-engine-cpp.md`](file-engine-cpp.md) | `engine.cpp` (engine-wide global definitions) | [Utilities](utilities.md) |
+| [`file-engine-includes-hpp.md`](file-engine-includes-hpp.md) | `engine-includes.hpp` (common include prelude) | [Utilities](utilities.md) |
 | [`file-style.md`](file-style.md) | `style.hpp` (comparison codes, `GEOHEAP_SIZE`) | [Utilities](utilities.md) |
+| [`file-geopoly-hpp.md`](file-geopoly-hpp.md) | `geopoly.hpp` (geometric-heap polynomial accumulator) | [Gröbner bases](groebner-bases.md) |
 | [`file-newdelete.md`](file-newdelete.md) | `our_new_delete` GC allocation hook | [Utilities](utilities.md) |
 | [`file-M2FreeAlgebraQuotient.md`](file-M2FreeAlgebraQuotient.md) | `M2FreeAlgebraQuotient` (`Ring` wrapper for NC quotients) | [Polynomial rings](polynomial-rings.md) |
 | [`file-BasicPoly.md`](file-BasicPoly.md) | `BasicPoly` / `BasicPolyList` (portable polynomial type) | [Polynomial rings](polynomial-rings.md) |

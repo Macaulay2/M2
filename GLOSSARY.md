@@ -382,6 +382,9 @@ at configure time.
 ## Related
 
 - [`README.md`](README.md) — top-level repository TOC.
+- [`INDEX.md`](INDEX.md) — flat alphabetical doc catalogue.
+- [`CHEATSHEET.md`](CHEATSHEET.md) — one-page command card.
+- [`TOUR.md`](TOUR.md) — audience-specific reading orders.
 - Project [Wiki](https://github.com/Macaulay2/M2/wiki) and
   `.github/workflows/test_build.yml` — build instructions.
 - All architecture references —

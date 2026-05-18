@@ -353,7 +353,7 @@ saturate(I, J)
 ```
 
 - **Engine**: [`e/file-monideal.md`](M2/Macaulay2/e/file-monideal.md),
-  [`e/file-monideal2.md`](M2/Macaulay2/e/file-monideal2.md).
+  [`e/file-monideal-minprimes.md`](M2/Macaulay2/e/file-monideal-minprimes.md).
 - **Specialised**: fast algorithms exploiting monomial structure.
 
 ## Linear algebra
@@ -393,7 +393,7 @@ needsPackage "Polyhedra"
 C = posHull matrix{{1, 0}, {1, 1}}
 ```
 
-- **Engine**: [`e/file-cone.md`](M2/Macaulay2/e/file-cone.md).
+- **Engine**: [`e/interface/file-cone-interface.md`](M2/Macaulay2/e/interface/file-cone-interface.md).
 - **Backends**:
   - **CDDlib** (external program).
   - **lrslib** (external program).

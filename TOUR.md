@@ -302,6 +302,11 @@ When you need to read **actual source code**:
 ## Other helpful entry points
 
 - **[`GLOSSARY.md`](GLOSSARY.md)** — terminology dictionary.
+- **[`INDEX.md`](INDEX.md)** — flat alphabetical catalogue of every
+  doc, with a concept-to-doc lookup table.
+- **[`CHEATSHEET.md`](CHEATSHEET.md)** — one-page command card for
+  build / test / debug / find / add workflows, with pointers back into
+  the in-depth meta docs.
 - Project [Wiki](https://github.com/Macaulay2/M2/wiki) and
   `.github/workflows/test_build.yml` — build / test / lint commands.
 - The wiki: https://github.com/Macaulay2/M2/wiki
