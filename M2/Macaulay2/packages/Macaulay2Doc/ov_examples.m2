@@ -312,20 +312,31 @@ Node
   Description
     Text
       Representation theory in Macaulay2 currently centers on symmetric
-      functions, Schur and Weyl functors, root systems, Weyl groups, and
-      related character computations.
+      functions, Schur and Weyl functors, Lie algebras and their
+      representations, highest-weight methods, group actions, invariant
+      theory, and related character computations.
     Tree
       :Selected Packages
         > @TOH "SchurRings :: SchurRings"@
         > @TOH "SchurFunctors :: SchurFunctors"@
         > @TOH "PieriMaps::PieriMaps"@
         > @TOH "WeylGroups :: WeylGroups"@
+        > @TOH "LieAlgebraRepresentations :: LieAlgebraRepresentations"@
+        > @TOH "GradedLieAlgebras :: GradedLieAlgebras"@
+        > @TOH "HighestWeights :: HighestWeights"@
+        > @TOH "InvariantRing :: InvariantRing"@
+        > @TOH "BettiCharacters :: BettiCharacters"@
         > @TO2("packages provided with Macaulay2", "browse packages by subject area")@
       :Core topics
         > @TOH "SchurFunctors :: schur"@
         > @TOH "SchurFunctors :: schurModule"@
         > @TOH "SchurRings :: plethysm"@
         > @TOH "SchurRings :: internalProduct"@
+        > @TOH "LieAlgebraRepresentations :: simpleLieAlgebra"@
+        > @TOH "HighestWeights :: setWeights"@
+        > @TO2("HighestWeights :: HighestWeights", "highest-weight decompositions")@
+        > @TO2("InvariantRing :: InvariantRing", "group actions and invariant rings")@
+        > @TO2("BettiCharacters :: BettiCharacters", "characters on resolutions and graded modules")@
         > @TOH "WeylGroups :: rootSystem"@
         > @TOH "WeylGroups :: dynkinType"@
         > @TOH "WeylGroups :: cartanMatrix"@
@@ -338,15 +349,27 @@ Node
     "SchurFunctors :: SchurFunctors"
     "PieriMaps::PieriMaps"
     "WeylGroups :: WeylGroups"
+    "LieAlgebraRepresentations :: LieAlgebraRepresentations"
+    "GradedLieAlgebras :: GradedLieAlgebras"
+    "HighestWeights :: HighestWeights"
+    "InvariantRing :: InvariantRing"
+    "BettiCharacters :: BettiCharacters"
   Subnodes
     @TO "SchurRings :: SchurRings"@
     @TO "SchurFunctors :: SchurFunctors"@
     @TO "PieriMaps::PieriMaps"@
     @TO "WeylGroups :: WeylGroups"@
+    @TO "LieAlgebraRepresentations :: LieAlgebraRepresentations"@
+    @TO "GradedLieAlgebras :: GradedLieAlgebras"@
+    @TO "HighestWeights :: HighestWeights"@
+    @TO "InvariantRing :: InvariantRing"@
+    @TO "BettiCharacters :: BettiCharacters"@
     "SchurFunctors :: schur"
     "SchurFunctors :: schurModule"
     "SchurRings :: plethysm"
     "SchurRings :: internalProduct"
+    "LieAlgebraRepresentations :: simpleLieAlgebra"
+    "HighestWeights :: setWeights"
     "WeylGroups :: rootSystem"
     "WeylGroups :: dynkinType"
     "WeylGroups :: cartanMatrix"
