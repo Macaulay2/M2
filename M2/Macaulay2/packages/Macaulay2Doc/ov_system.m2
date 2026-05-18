@@ -32,7 +32,7 @@ document {
     Subnodes => {
 	"Input and output:",
 	  TO "printing to the screen",
-	  TO "printing to a file",
+	  TO2("file", "printing to a file"),
 	  TO "reading files",
 	  TO "getting input from the user",
 	  TO "creating and writing files",

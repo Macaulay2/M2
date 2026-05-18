@@ -195,17 +195,55 @@ document {
 	  "One useful way to debug code suspected of being in error is to insert an explicit error message, such
 	  as ", TT ///error "debug me"///, ", and start stepping from there, as in the following demonstration."
 	  },
-     EXAMPLE lines ///
-     load "Macaulay2Doc/demos/demo2.m2"
-     code f
-     f 0
-     return
-     current
-     disassemble oo
-     step(-3)
-     step
-     step
-     t
+     EXAMPLE PRE ///
+i1 : load "Macaulay2Doc/demos/demo2.m2"
+
+i2 : code f
+
+o2 = .../Macaulay2Doc/demos/demo2.m2:6:4-12:6
+     : --source code:
+     f = t -> (
+          x := 1;
+          error "debug me";
+          y := t+1;
+          z := 1/t;
+          w := x+t;
+          )
+
+i3 : f 0
+.../Macaulay2Doc/demos/demo2.m2:8:10:(3):[1]: error: debug me
+.../Macaulay2Doc/demos/demo2.m2:8:10:(3): entering debugger
+
+ii4 : return
+.../Macaulay2Doc/demos/demo2.m2:9:11:(3):[1]: --stepping limit reached
+.../Macaulay2Doc/demos/demo2.m2:9:11:(3): entering debugger
+
+ii5 : current
+
+oo5 = local-assign 2 0 2-OP + local-fetch 0 0
+                              1
+
+oo5 : PseudocodeClosure
+
+ii6 : disassemble oo
+
+oo6 = (local-assign 2 0 (2-OP + (local-fetch 0 0) 1))
+
+ii7 : step(-3)
+.../Macaulay2Doc/demos/demo2.m2:9:11:(3):[1]: --evaluating: (local-assign 2 0 (2-OP + (local-fetch 0 0) 1))
+.../Macaulay2Doc/demos/demo2.m2:9:11:(3):[1]: --evaluating: (2-OP + (local-fetch 0 0) 1)
+.../Macaulay2Doc/demos/demo2.m2:9:10:(3):[1]: --evaluating: (local-fetch 0 0)
+.../Macaulay2Doc/demos/demo2.m2:9:12:(3):[1]: --stepping limit reached
+
+ii8 : step
+.../Macaulay2Doc/demos/demo2.m2:10:11:(3):[1]: --stepping limit reached
+
+ii9 : step
+.../Macaulay2Doc/demos/demo2.m2:10:11:(3):[1]: error: division by zero
+
+ii10 : t
+
+oo10 = 0
      ///,
      SeeAlso => { "debugging" }
      }
