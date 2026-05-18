@@ -13,7 +13,8 @@ The modern, F4-style implementation lives in its own subdirectory:
 - [`schreyer-resolution/`](schreyer-resolution/README.md) — Schreyer-frame
   resolution with F4 reductions. Used for most workloads.
 
-The older series of implementations lives at the top level of `e/`:
+The older series of implementations lives at the top level of `e/`
+and is **collectively covered by one deep dive**: [`file-res-old.md`](file-res-old.md).
 
 | File pair / triple | Era | Notes |
 |---|---|---|
@@ -26,6 +27,24 @@ These older files are still built and selectable from M2 via the
 `Strategy => …` option to `resolution`. They are useful both for regression
 testing and for the (rare) cases where the modern implementation is slower on
 a given input.
+
+## Strategy selection
+
+From M2:
+
+```m2
+resolution(M, Strategy => 0)   -- res-a0 (gen-0)
+resolution(M, Strategy => 1)   -- res-a1 (gen-1)
+resolution(M, Strategy => 2)   -- res-a2 (gen-2)
+resolution(M, Strategy => 3)   -- Eschreyer
+resolution(M, Strategy => 4)   -- schreyer-resolution/ (modern F4-style, default)
+```
+
+The dispatch logic lives in [`file-comp-res.md`](file-comp-res.md).
+
+The complete cross-engine catalogue (with input characteristics,
+relative-speed table, and a "when to use which" decision tree) is in
+[`../../../COMPUTATIONS.md`](../../../COMPUTATIONS.md).
 
 The non-commutative analogue lives in
 [`NCResolutions/`](NCResolutions/README.md).

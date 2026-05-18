@@ -57,7 +57,7 @@ Four levels of documentation are reachable from this file:
    them; the lower half of this file mirrors the same entries into
    per-folder tables you can scan top-to-bottom.
 
-Plus **eighteen cross-cutting top-level meta docs** at the repo root:
+Plus **nineteen cross-cutting top-level meta docs** at the repo root:
 
 | Doc | What it is | When to use |
 |---|---|---|
@@ -78,6 +78,7 @@ Plus **eighteen cross-cutting top-level meta docs** at the repo root:
 | [`COMPUTATIONS.md`](COMPUTATIONS.md) | Catalogue of every computation engine: GB variants (default/F4/gb-f4/mathicgb/NC/BIBasis/...), resolution variants, Hilbert, LLL, NAG, factoring, primary decomposition | Choosing a strategy; understanding which backend handles which input; engine comparison tables |
 | [`INDEX.md`](INDEX.md) | Flat alphabetical catalogue of every doc file with one-line descriptions and concept-to-doc lookup hints | Looking up a doc by name when you don't remember its location; finding a doc by concept rather than by directory |
 | [`CHEATSHEET.md`](CHEATSHEET.md) | One-page quick-reference of common workflows: build, test, debug, find things, add things, file-naming conventions | Day-to-day commands you keep forgetting; pointer table back to the in-depth docs |
+| [`SYMBOLS.md`](SYMBOLS.md) | Symbol-to-doc reverse index: engine class name or M2 function name → source file + deep-dive doc | Looking up a doc starting from a class/function name you saw in code |
 | [`CONTRIBUTING-DOCS.md`](CONTRIBUTING-DOCS.md) | Conventions the docs follow | When editing docs (file naming, README structure, deep-dive shape, link integrity audit) |
 
 Plus build-system instructions: see the project
@@ -129,6 +130,7 @@ Plus build-system instructions: see the project
 - **Computation engines: [`COMPUTATIONS.md`](COMPUTATIONS.md)** — sister catalogue of the algorithmic engines (GB: default/F4/gb-f4/mathicgb/NC/BIBasis/toric/walk/sugarless; resolution: Schreyer/res-a0/a1/a2/Eschreyer/NC; plus Hilbert, LLL, NAG, factoring, root finding, primary decomposition, polyhedral), strategy selection, comparison tables, when-to-use-which decision tree
 - **Flat alphabetical index: [`INDEX.md`](INDEX.md)** — every doc in the tree (top-level meta docs, architecture refs, per-area engine docs, per-directory READMEs, per-file deep dives) listed in one place, with a concept-to-doc lookup hints table and a "how to find a doc" flow chart for when you don't remember where something lives
 - **Day-to-day cheatsheet: [`CHEATSHEET.md`](CHEATSHEET.md)** — one-page command card: how to build / test / debug / find / add things, plus the file-naming conventions table and common slowdowns-and-fixes table
+- **Symbol-to-doc index: [`SYMBOLS.md`](SYMBOLS.md)** — given an engine class name (`FreeModule`, `Computation`, `ARingZZpFlint`, …) or an M2 function name (`gb`, `resolution`, `installPackage`, …), points at the source file and the deep-dive doc; covers the rings, modules, matrices, computations, memory, and NC-algebra hierarchies
 
 ### Finding a deep dive
 
@@ -303,16 +305,16 @@ they will cross-link to one another along these axes:
 
 ### Documentation status
 
-The documentation tree comprises **589 markdown files** across four
+The documentation tree comprises **593 markdown files** across four
 layers:
 
 | Layer | Count | Examples |
 |---|---|---|
-| Top-level meta docs | 18 | [`README.md`](README.md) · [`GLOSSARY.md`](GLOSSARY.md) · [`TOUR.md`](TOUR.md) · [`BUILD.md`](BUILD.md) · [`STARTUP.md`](STARTUP.md) · [`MEMORY.md`](MEMORY.md) · [`THREADING.md`](THREADING.md) · [`TESTING.md`](TESTING.md) · [`PACKAGES.md`](PACKAGES.md) · [`DEBUG.md`](DEBUG.md) · [`DOCUMENTATION-SYSTEM.md`](DOCUMENTATION-SYSTEM.md) · [`STYLE.md`](STYLE.md) · [`DEPENDENCIES.md`](DEPENDENCIES.md) · [`RING-ZOO.md`](RING-ZOO.md) · [`COMPUTATIONS.md`](COMPUTATIONS.md) · [`INDEX.md`](INDEX.md) · [`CHEATSHEET.md`](CHEATSHEET.md) · [`CONTRIBUTING-DOCS.md`](CONTRIBUTING-DOCS.md) |
+| Top-level meta docs | 19 | [`README.md`](README.md) · [`GLOSSARY.md`](GLOSSARY.md) · [`TOUR.md`](TOUR.md) · [`BUILD.md`](BUILD.md) · [`STARTUP.md`](STARTUP.md) · [`MEMORY.md`](MEMORY.md) · [`THREADING.md`](THREADING.md) · [`TESTING.md`](TESTING.md) · [`PACKAGES.md`](PACKAGES.md) · [`DEBUG.md`](DEBUG.md) · [`DOCUMENTATION-SYSTEM.md`](DOCUMENTATION-SYSTEM.md) · [`STYLE.md`](STYLE.md) · [`DEPENDENCIES.md`](DEPENDENCIES.md) · [`RING-ZOO.md`](RING-ZOO.md) · [`COMPUTATIONS.md`](COMPUTATIONS.md) · [`INDEX.md`](INDEX.md) · [`CHEATSHEET.md`](CHEATSHEET.md) · [`SYMBOLS.md`](SYMBOLS.md) · [`CONTRIBUTING-DOCS.md`](CONTRIBUTING-DOCS.md) |
 | Per-directory READMEs | 70 | one for every subdirectory under `M2/` |
 | Architecture references | 13 | 4 per-layer (`c/`, `d/`, `e/`, `m2/`) + 8 per-engine-subdir (`interface/`, `f4/`, `gb-f4/`, `schreyer-resolution/`, `NCAlgebras/`, `NCResolutions/`, `bibasis/`, `unit-tests/`) + 1 supervisor (`system/`) |
 | Per-area engine docs | ~10 | `coefficient-rings.md`, `polynomial-rings.md`, `monoids-and-monomials.md`, … |
-| Per-file deep dives | 486 | `file-<basename>.md` alongside each source file (some consolidated per family) |
+| Per-file deep dives | 489 | `file-<basename>.md` alongside each source file (some consolidated per family) |
 
 Every directory under `M2/` has both a `README.md` index and per-file
 deep-dive markdown files for every source file it contains. Some

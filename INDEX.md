@@ -1,9 +1,9 @@
 # Documentation index
 
 Flat alphabetical catalogue of **every documentation file** in
-the M2 source tree. Counts: 18 top-level meta docs + 70
+the M2 source tree. Counts: 19 top-level meta docs + 70
 per-directory READMEs + 13 architecture references + 10 engine
-area docs + 486 per-file deep dives = **~597 total docs**.
+area docs + 489 per-file deep dives = **~601 total docs**.
 
 This file is the **"I remember a doc about X but not where it
 lives"** lookup. The [`README.md`](README.md) is the
@@ -38,6 +38,7 @@ hierarchical view; this is the flat-by-name view.
 | [`PACKAGES.md`](PACKAGES.md) | Package ecosystem reference |
 | [`README.md`](README.md) | Repository TOC and architectural overview |
 | [`RING-ZOO.md`](RING-ZOO.md) | Catalogue of every ring M2 supports |
+| [`SYMBOLS.md`](SYMBOLS.md) | Symbol-to-doc reverse index: engine class name or M2 function name → source file + deep-dive doc |
 | [`STARTUP.md`](STARTUP.md) | End-to-end boot path (`main()` → ready prompt) |
 | [`STYLE.md`](STYLE.md) | Code style guide across the four layers |
 | [`TESTING.md`](TESTING.md) | Six test infrastructures unified |

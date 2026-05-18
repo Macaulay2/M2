@@ -157,6 +157,27 @@ handles with **finalisers** from
 [`file-finalize.md`](file-finalize.md) that call the library's
 free function when the GC reclaims the wrapper.
 
+### 4. Geometric heaps — polynomial accumulation
+
+When you need to add **many** polynomials together (the dominant
+work in any Buchberger-style GB reduction), naive merging is
+`O(N²)`. The engine instead drops polynomials into a **geometric
+heap**: 15 bucket slots with quadrupling capacities (4, 16, 64,
+256, …, 67 M terms), each lazily merged. Five flavours exist for
+different element types:
+
+| Type | Element | Defined in |
+|---|---|---|
+| `polyheap` | classical `Nterm *` | [`file-geopoly-hpp.md`](file-geopoly-hpp.md) |
+| `vecheap` | `vecterm *` (free-module vector) | [`file-geovec.md`](file-geovec.md) |
+| `geobucket<F,V>` | templated, modern | [`file-geobucket.md`](file-geobucket.md) |
+| GB-ring heap | `gbvector *` | inline in [`file-gbring.md`](file-gbring.md) |
+| Schur-ring heap | `ring_elem` | [`file-schur-poly-heap.md`](file-schur-poly-heap.md) |
+
+Bucket sizes come from `heap_size[]` in
+[`file-engine-cpp.md`](file-engine-cpp.md); `GEOHEAP_SIZE = 15`
+lives in [`file-style.md`](file-style.md).
+
 ## The Computation framework
 
 ```
@@ -335,6 +356,14 @@ canonical recipes:
 - [`README.md`](README.md) — engine navigation hub.
 - [`../../../README.md#engine-deep-dive-m2macaulay2e`](../../../README.md#engine-deep-dive-m2macaulay2e)
   — the same architecture from the top-level perspective.
+- [`../../../SYMBOLS.md`](../../../SYMBOLS.md) — symbol-to-doc
+  reverse index (engine class name → source file → deep-dive doc).
+- [`../../../RING-ZOO.md`](../../../RING-ZOO.md) — every ring with
+  the engine class that backs it.
+- [`../../../COMPUTATIONS.md`](../../../COMPUTATIONS.md) — every
+  computation strategy with its source files.
+- [`../../../CHEATSHEET.md`](../../../CHEATSHEET.md) — day-to-day
+  command card.
 - Per-area docs (8 files, listed in [Layer 3](#layer-3-mathematical-objects)
   above plus [Layer 4](#layer-4-primitives--utilitiesmd)).
 - Per-file deep dives — ~300 `file-*.md` files alongside each
