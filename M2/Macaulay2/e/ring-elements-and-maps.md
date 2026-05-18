@@ -147,6 +147,61 @@ Each step is one or two function calls; the templated inner loop is the hot
 path. Modern code shortcuts to call `ARingZZpFlint::add` directly when both
 operands' types are statically known.
 
+## M2 operation → engine entry
+
+Common `RingElement` / `RingMap` operations and where they bottom out in the engine:
+
+| M2 operation | Engine entry | Source file | Notes |
+|---|---|---|---|
+| `a + b`, `a - b`, `a * b`, `-a` | `Ring::add` / `subtract` / `mult` / `negate` virtual | `ring.hpp` + per-ring override | Each ring overrides the four basic arithmetic ops |
+| `a^n` | `Ring::power` virtual (or `BinaryPowerMethod` from Core) | `ring.hpp` + per-ring | Repeated-squaring; can be overridden for special rings |
+| `1_R` | `Ring::one()` | `ring.hpp` + per-ring | The multiplicative identity |
+| `0_R` | `Ring::zero()` | `ring.hpp` + per-ring | The additive identity |
+| `1//a` (inverse) | `Ring::invert` virtual | `ring.hpp` + per-ring | Errors for non-units in a non-field |
+| `promote(a, S)` | `Ring::promote` virtual | per-ring | Embed `a ∈ R` into a containing ring `S` |
+| `lift(a, R)` | `Ring::lift` virtual | per-ring | Pull `a ∈ S` back to a subring `R` (errors if not possible) |
+| `degree a` | `Ring::degree` virtual | per-ring | Multi-degree as a list of integers |
+| `f a` for a ring map `f : R → S` applied to `a ∈ R` | `RingMap::eval` | `ringmap.{cpp,hpp}` | Substitutes generators with their images |
+| `map(S, R, {s_1, …, s_n})` | `RingMap` constructor | `ringmap.{cpp,hpp}` | Build the map from images of source generators |
+| `f * g` (composition of ring maps) | `RingMap::compose` | `ringmap.{cpp,hpp}` | Walks through generators applying outer then inner |
+| `kernel f` for `f : R → S` | `kernel` (in M2 `m2/`) calls `gb` of the elimination ideal | `m2/ringmap.m2` + GB | Not a method on the ring directly |
+| `coefficientRing R` | `Ring::baseRing()` | `ring.hpp` | Returns the ring `R` was built over |
+
+The construction path for a typical arithmetic operation `a + b`:
+
+```
+M2:  c = a + b
+   ↓
+m2/ringelement.m2  →  RingElement.+  →  rawAdd(a, b)
+   ↓
+d/interface.dd     →  Ccode(RawRingElement, "IM2_RingElement_add(a, b)")
+   ↓
+e/interface/ringelement.cpp  →  IM2_RingElement_add(a, b)
+   ↓
+calls  R->add(a, b)            virtual dispatch on Ring*
+   ↓
+For aring-backed rings: ConcreteRing<ARingType>::add(...)
+   unpacks ring_elem → ElementType
+   calls templated ARingType::add(a, b, c)  [inlined inner loop]
+   wraps result back as ring_elem
+```
+
+The boundary is **`ring_elem`** — the universal tagged value. Inside the engine, `ARingType::ElementType` (a properly-typed C++ struct) does the actual work.
+
+## Choosing a representation
+
+When implementing a new ring or new ring-element operation:
+
+| Want | Pick |
+|---|---|
+| New coefficient ring with fast inner loops | New `aring-*.{cpp,hpp}` with a typed `ElementType`; wrap with `ConcreteRing<>` for the legacy boundary |
+| Custom polynomial-ring quotient / Weyl / skew | Subclass `Ring` directly; override `add`/`mult`/`degree`/`promote`/`lift` |
+| Cross-ring coercion known at compile time | `ConversionMap<From, To>` template in `aring-translate.hpp` |
+| Cross-ring coercion needed at runtime | `Ring::promote(a, S)` / `Ring::lift(a, R)` virtual methods |
+| Build a ring map programmatically | `RingMap` constructor; pass images of generators as a list |
+| Make a ring callable like a function | Implement `RingMap::eval` and the dispatch surface; the interpreter will auto-thread through `f a` |
+| Track the ring map's effect on a Gröbner basis | Combine `RingMap::eval` with `gb` of the image ideal; see `kernel f` |
+
 ## Memory model
 
 Both `ring_elem` and `ElementType` are GC-managed:

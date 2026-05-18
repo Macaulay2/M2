@@ -44,6 +44,56 @@ homological degrees, which is the trick that makes Schreyer-style resolutions
 efficient. See [`schreyer-resolution/`](schreyer-resolution/README.md) for the
 F4-style implementation.
 
+## M2 operation → engine entry
+
+Common operations on `FreeModule` and how they bottom out in the engine:
+
+| M2 operation | Engine entry | Source file | Notes |
+|---|---|---|---|
+| `R^n` (rank-`n` free module) | `Ring::makeFreeModule(n)` → `new FreeModule(R, n, …)` | `freemod.{cpp,hpp}` | The simplest constructor; generators all in degree 0 |
+| `R^{-d_1, -d_2, …}` (twisted free module) | `new FreeModule` with `degree_monomial[]` populated from negated degrees | `freemod.{cpp,hpp}` | Negation because M2 convention is `R^{-d}` ↔ generator in degree `d` |
+| `F ++ G` (direct sum) | `FreeModule::direct_sum(F, G)` | `freemod.{cpp,hpp}` | Concatenates degree lists |
+| `F ** G` (tensor product) | `FreeModule::tensor(F, G)` | `freemod.{cpp,hpp}` | Cartesian product of degree lists (sums them) |
+| `dual F` (dual module) | `FreeModule::dual(F)` | `freemod.{cpp,hpp}` | Negates every degree |
+| `degrees F` | `FreeModule::get_degrees()` | `freemod.{cpp,hpp}` | Returns the list of generator degrees |
+| `rank F` | `FreeModule::rank()` | `freemod.{cpp,hpp}` | Just the count |
+| Schreyer-ordered free module (in a resolution) | `FreeModule::set_schreyer_order(...)` | `schorder.{cpp,hpp}` | Used during `freeResolution` construction; not directly exposed to users |
+| Matrix construction `matrix {{a,b},{c,d}}` | Auto-builds source and target `FreeModule`s | `matrix-con.{cpp,hpp}` | Inferred degrees and ranks from the entries |
+
+Construction routes through:
+
+```
+M2: F = R^{-1, -2}
+   ↓
+m2/modules.m2  →  rawFreeModule(R, {-1, -2})
+   ↓
+d/interface.dd  →  Ccode(RawFreeModule, "IM2_FreeModule_make(R, ...)")
+   ↓
+e/interface/freemodule.h  →  IM2_FreeModule_make(R, degrees)
+   ↓
+e/freemod.cpp  →  new FreeModule(R, degrees)
+   ↓
+returned as FreeModule* to interpreter (held as `RawFreeModuleCell` in d/)
+```
+
+## When to use what
+
+| Want | Pick |
+|---|---|
+| Plain rank-n free module | `R^n` — uses degree-0 generators |
+| Free module with non-zero generator degrees | `R^{-d_1, …}` — note the minus convention |
+| Source / target of a matrix | Constructed implicitly by `matrix {{…}}`; query via `source f` / `target f` |
+| Schreyer-ordered free module (advanced) | Not constructed directly; let `freeResolution` produce it; query via `F.cache.?schreyer` |
+| Direct sum / tensor / dual | Use `++`, `**`, `dual` at the M2 level — never construct by hand at the engine level |
+| Quotient of a free module | `R^n / I` — produces a `Module` (subquotient), not a `FreeModule` |
+
+A `FreeModule` is **lighter** than a general `Module`: it stores just `(ring, rank, generator-degrees, optional Schreyer order)`. A `Module` adds presentation data (generators + relations). When in doubt:
+
+| Question | Answer |
+|---|---|
+| Does the object only need rank + degrees? | `FreeModule` (cheaper, in this file) |
+| Does the object need generators and relations? | `Module` — see [`matrices.md`](matrices.md) and the `subquotient` constructor |
+
 ## Related
 
 - [`matrices.md`](matrices.md) — matrices between free modules.
