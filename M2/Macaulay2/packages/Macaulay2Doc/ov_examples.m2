@@ -96,7 +96,7 @@ Node
       :Tutorials
         > "Tutorial: Modules in Macaulay2"
         > "Tutorial: Elementary uses of Gröbner bases"
-        > @TO2("A first course in commutative algebra", "teaching materials")@
+        > "Teaching Materials"
       :Selected Packages
         > @TOH "IntegralClosure :: IntegralClosure"@
         > @TOH "PrimaryDecomposition :: PrimaryDecomposition"@
@@ -431,18 +431,15 @@ Node
 ///
 
 document {
-     Key => "A first course in commutative algebra",
-     "This section includes tutorials showing how to do
-     basic commutative algebra constructions in Macaulay2.
-     This section is being written by Mike Stillman, for use
-     with his Fall 2005 course: Math 634, Commutative algebra,
-     at Cornell University.  This course covers basic commutative
-     algebra, at the level of Atiyah-Macdonald, and Greuel-Pfister.",
+     Key => {"Teaching Materials", "A first course in commutative algebra"},
+     "This section collects teaching materials and introductory tutorials
+     for basic commutative algebra in Macaulay2, at roughly the level of
+     Atiyah-Macdonald and Greuel-Pfister.",
      PARA{},
-     "Macaulay2 examples corresponding to the Singular examples in the
-     book by Greuel-Pfister may also be found here.",
+     "Macaulay2 examples corresponding to examples in the Greuel-Pfister
+     text may also be found here.",
      Subnodes => {
-	  TO "Elementary uses of Groebner bases I. Math 634 Fall 2005",
+	  TO2("Elementary uses of Groebner bases I. Math 634 Fall 2005", "Elementary uses of Groebner bases"),
 	  TO "M2SingularBook"
 	  }
      }

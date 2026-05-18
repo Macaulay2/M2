@@ -1,3 +1,8 @@
+-- These materials were created by Mike Stillman for his Fall 2005
+-- course Math 634, Commutative Algebra, at Cornell University.
+-- The course covered basic commutative algebra at the level of
+-- Atiyah-Macdonald and Greuel-Pfister.
+--
 -- In this tutorial we introduce a number of basic operations 
 -- using Gröbner bases, and at the same time become familiar
 -- with a range of useful Macaulay2 constructs.

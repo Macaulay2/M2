@@ -35,13 +35,13 @@ Node
       :Mathematical Tutorials
 	-- These tutorials begin with broader introductions and continue with
 	-- more specialized worked examples in algebra and geometry.
-	> "A first course in commutative algebra"
 	> "Tutorial: Modules in Macaulay2"
 	> "Tutorial: Elementary uses of Gröbner bases"
 	> "Tutorial: Divisors"
 	> "Tutorial: Canonical Embeddings of Plane Curves and Gonality"
 	> "Tutorial: Fano varieties"
 	> "Tutorial: Numerical algebraic geometry"
+	> "Teaching Materials"
       :Mathematical Objects
         > "rings"
         > "ideals"
