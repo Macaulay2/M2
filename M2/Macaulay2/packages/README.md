@@ -88,6 +88,8 @@ The full procedure lives in [`README`](README), but the short version:
 | `Elimination.m2` — auto-loaded `eliminate` / `resultant` / `discriminant` / `sylvesterMatrix` (imported by the three above) | [`file-Elimination.md`](file-Elimination.md) |
 | `Complexes.m2` — auto-loaded `HomologicalAlgebraPackage`: `Complex` / `ComplexMap` / `freeResolution` / `Ext` / `Tor` / Yoneda / pruning (12-file aux dir, ~17 500 lines) | [`file-Complexes.md`](file-Complexes.md) |
 | `SimpleDoc.m2` — auto-loaded indentation-aware doc DSL (`doc ///…///` syntax used by virtually every package) | [`file-SimpleDoc.md`](file-SimpleDoc.md) |
+| `Varieties.m2` — auto-loaded `Variety` / `AffineVariety` / `ProjectiveVariety` / `CoherentSheaf` / `SheafMap`; `Spec`, `Proj`, `sheaf`, `tangentSheaf`, `canonicalBundle`, `OO`, `HH^i`, `hh` | [`file-Varieties.md`](file-Varieties.md) |
+| `IntegralClosure.m2` — auto-loaded `integralClosure` (ring/ideal), `conductor`, `icMap`, `icFractions`, `icFracP` (char-p variant), 6 strategies | [`file-IntegralClosure.md`](file-IntegralClosure.md) |
 
 The full ~400 per-package coverage would be repetitive — these deep-dives cover the structural patterns every package follows plus the foundational and frequently-used packages that ship.
 
