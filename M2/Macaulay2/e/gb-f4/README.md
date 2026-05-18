@@ -43,9 +43,61 @@ refactoring notes.
 | `mathicGBExample.m2`, `testing.m2` | M2-level test inputs |
 | `TODO-refactor-f4` | Design notes / outstanding work |
 
+## What triggers this engine
+
+This refactored F4 engine is selected when:
+
+| M2 user code | What happens | Why this engine |
+|---|---|---|
+| `gb(I, Algorithm => LinearAlgebra, Strategy => NewF4)` | Engine dispatcher → `GBF4Computation` here | Explicit user request for the newer F4 variant |
+| `gb(I, …)` with input shapes the dispatcher decides are better served here | Auto-routed when heuristics favour the cleaner code paths | Heuristic in `comp-gb.cpp`; depends on `I` shape and ring |
+| Calls to `createGBF4Interface(...)` from new engine code | Direct API for engine-internal callers (no M2 user path) | The C-level entry point in `GBF4Interface` |
+
+For the full M2-spec → engine mapping see the parent [`groebner-bases.md`](../groebner-bases.md) "M2 strategy → engine algorithm" table.
+
+## Where in the engine pipeline this fits
+
+```
+M2:  gb(I, Algorithm => LinearAlgebra, Strategy => NewF4)
+   ↓ comp-gb.cpp dispatcher
+   ↓
+GBF4Computation (file-GBF4Computation.md)
+   ↓ exposed to engine boundary via
+GBF4Interface (file-GBF4Interface.md)
+   ↓ owns and drives
+Basis (file-Basis.md)                          — the evolving GB
+SPairs (file-SPairs.md)                        — S-pair queue
+MacaulayMatrix (file-MacaulayMatrix.md)        — the matrix built and reduced each step
+MonomialHashTable (file-MonomialHashTable.md)  — monomial → hash → index
+MonomialLookupTable (file-MonomialLookupTable.md) — divisibility lookups
+PolynomialList (file-PolynomialList.md)        — typed polynomial container
+MonomialView, MonomialTypes (file-MonomialView.md, file-MonomialTypes.md)
+                                                 — lightweight monomial views
+                                                   (Index, MonomialIndex, HashInt typed-integer family)
+   ↓ produces
+A sequence of (degree, basis-element) data returned as a normal GBComputation
+   back to the interpreter
+```
+
+The **clean separation** of concerns is the architectural improvement over `../f4/`: each phase of an F4 step (S-pair selection, symbolic preprocessing, matrix construction, matrix reduction, basis update) lives in its own type with its own header. The `newf4::` namespace contains everything.
+
+## Comparison with `../f4/`
+
+| Aspect | `../f4/` (original) | `gb-f4/` (refactored) |
+|---|---|---|
+| Polynomial representation | Mix of `Nterm*` and templated monomial | Struct-of-arrays via `PolynomialList` |
+| Monomial encoding | Templated over two choices (`varpower`/`ntuple`) | Single typed `MonomialView` + `MonomialHashFunction` |
+| S-pair selection | `F4SPairSet` | `SPairs` (cleaner queue interface) |
+| Macaulay matrix | Inlined in `F4GB::do_spairs` | Separate `MacaulayMatrix` class |
+| Testability | Hard — tightly coupled | Easier — each piece has its own tests |
+| Strategy name | default `LinearAlgebra` | `LinearAlgebra` with `Strategy => NewF4` |
+
+Both implementations remain in the tree and produce identical results; the choice is performance/maintainability trade-off per input. The `TODO-refactor-f4` design notes track outstanding work.
+
 ## Related
 
 - [`../f4/`](../f4/README.md) — the original F4 implementation.
+- [`../groebner-bases.md`](../groebner-bases.md) — the parent area doc with the full M2-spec → engine GB algorithm mapping.
 - mathicgb submodule — another GB option used in some paths.
 
 [← back to engine overview](../README.md)
