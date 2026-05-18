@@ -11,7 +11,7 @@ use regex;
 header "// required for toString routines
 #include <engine.h>                         // for IM2_GB_to_string, rawMuta... // TODO: remove this one
 #include <interface/NAG.h>                  // for rawHomotopyToString, rawP...
-#include <interface/freemodule.h>           // for IM2_FreeModule_to_string
+#include <interface/freemodule.h>           // for rawFreeModuleToString
 #include <interface/matrix.h>               // for IM2_Matrix_to_string
 #include <interface/monoid.h>               // for rawMonoidToString
 #include <interface/monomial-ordering.h>    // for IM2_MonomialOrdering_to_s...
@@ -998,7 +998,7 @@ tostringfun(e:Expr):Expr := (
 	 else toExpr("<<a list>>"))
      is s:SpecialExpr do tostringfun(s.e)
      is x:RawMonomialCell do toExpr(tostring(x.p))
-     is x:RawFreeModuleCell do toExpr(Ccode(string, "IM2_FreeModule_to_string(",x.p,")" ))
+     is x:RawFreeModuleCell do toExpr(Ccode(string, "rawFreeModuleToString(",x.p,")" ))
      is x:RawMatrixCell do toExpr(Ccode(string, "IM2_Matrix_to_string(",x.p,")" ))
      is x:RawMutableMatrixCell do toExpr(Ccode(string, "IM2_MutableMatrix_to_string(",x.p,")" ))
      is x:RawMutableComplexCell do toExpr(Ccode(string, "rawMutableComplexToString(",x.p,")" ))
