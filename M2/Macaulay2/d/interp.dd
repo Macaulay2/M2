@@ -501,7 +501,6 @@ debugger(f:Frame,c:Code):Expr := (
 		when r is Error do return r else nothing;
 		);
 	   ret := loadprintstdin(newStaticLocalDictionaryClosure(localDictionaryClosure(f)),true,false);
-	   printMessage(codePosition(c),"here I am");
 	   if debuggerHook != nullE then (
 		r := applyEE(debuggerHook,False);
 		when r is Error do return r else nothing;
@@ -751,10 +750,7 @@ threadLocal lastCodePosition := Position("",ushort(0),ushort(0),ushort(0),ushort
 
 -- enter the debugger
 breakpoint(c:Code):Expr := (
-    printMessage(codePosition(c), "calling breakpoint function");
-
     e := debuggerpointer(localFrame, c);
-    printMessage(codePosition(c), "post debugger pointer");
 
     when e is err:Error do (
 		if err.message == breakMessage then ( buildErrorPacket(unwindMessage) )
@@ -763,7 +759,6 @@ breakpoint(c:Code):Expr := (
 			lastCodePosition.filename = "";
 			err.value)
 		else if err.message == stepMessage || err.message == stepMessageWithArg then (
-			printMessage(codePosition(c), "printing step message");
 			setSteppingFlag();
 			lastCodePosition.filename = "";
 			stepCount = (
@@ -781,27 +776,6 @@ breakpoint(c:Code):Expr := (
 	else e
 );
 
---		if err.message == stepMessage || err.message == stepMessageWithArg then (
---			printMessage(codePosition(c), "step message");
---			
---		)
---		else if err.message == breakMessage then (
---			printMessage(codePosition(c), "this is break message condition");
---		)
---		else if err.message == continueMessage then (
---			printMessage(codePosition(c), "this is continue message condition");
---			return eval(c);
---		)
---		else printMessage(codePosition(c), "not step or break or continue");
---
---        printMessage(codePosition(c),"I am an error weeee.");
---        printMessage(codePosition(c),err.message);
---		-- this error is propogated to top level instead of properly being handled
---		-- check if error message stepMessage
---		e
---    )
---    else e
---);
 setupop(breakpointS, breakpoint);
 
 -- Local Variables:
