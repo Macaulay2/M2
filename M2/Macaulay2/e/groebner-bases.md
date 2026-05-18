@@ -73,6 +73,71 @@ The dispatching logic lives in `comp-gb.cpp` and is driven from the M2 layer
 ([`m2/gb.m2`](../m2/README.md)) through the public interface in
 [`interface/groebner.{h,cpp}`](interface/README.md).
 
+## M2 strategy → engine algorithm
+
+What M2 users type when calling `gb` and where the actual computation happens:
+
+| M2 expression | Engine algorithm | Source file | Notes |
+|---|---|---|---|
+| `gb I` (default) | `GBDefault` | `gb-default.{cpp,hpp}` | Buchberger with sugar; the workhorse |
+| `gb(I, Strategy => Homogeneous2)` | `GBhomog2` | `gb-homog2.{cpp,hpp}` | Homogeneous specialisation; uses graded structure to skip degree-tracking |
+| `gb(I, Strategy => Sugarless)` | `GBSugarless` | `gb-sugarless.{cpp,hpp}` | Buchberger without sugar; for the rare case sugar hurts more than it helps |
+| `gb(I, Algorithm => Toric)` | `GBToric` | `gb-toric.{cpp,hpp}` | Specialised for toric (binomial) ideals |
+| `gb(I, Algorithm => Walk, ...)` | `GBWalk` | `gb-walk.{cpp,hpp}` | Gröbner walk: convert GB w.r.t. one order to another |
+| `gb(I, Algorithm => LinearAlgebra)` | F4-style: `F4Computation` | [`f4/F4Computation.hpp`](f4/file-f4-computation.md) | Original F4 engine |
+| `gb(I, Algorithm => LinearAlgebra, Strategy => NewF4)` | Refactored F4: `GBF4Computation` | [`gb-f4/file-GBF4Computation.md`](gb-f4/file-GBF4Computation.md), [`gb-f4/file-GBF4Interface.md`](gb-f4/file-GBF4Interface.md) | Cleaner separation of concerns |
+| `gb(I, Algorithm => MathicGB)` | mathicgb-driven GB | `mathicgb-interface.{cpp,hpp}` | Calls the mathicgb submodule |
+| `gb I` over `F_2[x_i]/(x_i^2-x_i)` | `BIBasis` (involutive) | [`bibasis/bibasis.{cpp,hpp}`](bibasis/file-bibasis.md) | Specialised for Boolean rings; auto-selected by ring shape |
+| `gb I` in a non-commutative ring | `NCGroebner` | [`NCAlgebras/NCGroebner.{cpp,hpp}`](NCAlgebras/file-NCGroebner.md) | NC algebra GB; auto-selected by ring shape |
+| `gb(I, ChangeMatrix => true)` | adds matrix-tracking to any of the above | `comp-gb.cpp` | Returns the matrix expressing the GB in terms of original generators |
+| `forceGB I` | `GBDeclared` (no computation, just verify) | `comp-gb-declared.{cpp,hpp}` | Accept user-supplied basis; verifies leading terms only |
+| `gb(I, Stop => {…})` | any of the above with stop conditions | `comp.{cpp,hpp}` framework | Bound by `DegreeLimit`, `BasisElementLimit`, `PairLimit`, `CodimensionLimit`, …; resumable |
+
+Construction routes through:
+
+```
+M2:  gb(I, Algorithm => LinearAlgebra)
+   ↓
+m2/gb.m2  →  rawGB(I.generators, ..., flag-bits)
+   ↓
+d/interface.dd  →  Ccode(RawComputationOrNull, "IM2_GB_make(...)")
+   ↓
+e/interface/groebner.h  →  IM2_GB_make(matrix, *, strategy, ...)
+   ↓
+e/comp-gb.cpp  dispatcher:
+   if Boolean ring  → bibasis/bibasis  (BIBasis)
+   if NC ring       → NCAlgebras/NCGroebner
+   else by strategy → gb-default | f4/F4Computation | gb-f4/GBF4Computation |
+                      mathicgb-interface | gb-homog2 | gb-toric | gb-walk | …
+   ↓
+returned as Computation* (resumable, stoppable)
+```
+
+## Choosing a GB algorithm
+
+Practical guidance for which `Algorithm =>` / `Strategy =>` to pick:
+
+| Want | Pick |
+|---|---|
+| Default workflow, any ring | **Don't pass anything** — the default heuristic picks `gb-default` for most inputs and auto-routes to specialised engines for Boolean / NC |
+| Very dense input, mod-p coefficients | `Algorithm => LinearAlgebra` (F4); typically 2–10× faster |
+| Newer F4 with cleaner code paths | `Algorithm => LinearAlgebra, Strategy => NewF4` (gb-f4) |
+| Toric / binomial ideal | `Algorithm => Toric`; specialised path 100× faster than generic |
+| Boolean polynomial ring (`F_2[x_i]/(x_i² - x_i)`) | No flag needed; **auto-selected** via [`bibasis/`](bibasis/README.md) |
+| Non-commutative algebra | No flag needed; **auto-selected** via [`NCAlgebras/`](NCAlgebras/README.md) |
+| Change-of-order from `Lex` to `GRevLex` (or vice versa) | `Algorithm => Walk`; faster than recomputing |
+| Comparison / regression testing | Pin `Algorithm => Homogeneous2` (the homogeneous workhorse) for reproducibility |
+| Resumable / bounded computation | Pass `StopBeforeComputation => true` then `gb(I, …, Stop => {DegreeLimit => 5, …})` |
+| Stand-alone external benchmark | `Algorithm => MathicGB`; uses the mathicgb library for comparison with academic baselines |
+
+When `gb I` hangs:
+
+1. **First**, try `Algorithm => LinearAlgebra` — F4 is usually faster on hard inputs.
+2. **If that hangs**, try `Algorithm => MathicGB` — sometimes the algorithmic differences matter.
+3. **Try a degree bound**: `gb(I, DegreeLimit => 5)` — partial GB returned in seconds.
+4. **Trace it**: `gbTrace = 3` then `gb I` — prints per-step progress to stderr.
+5. **Profile it**: `time gb I` shows where the time is going.
+
 ## Related
 
 - [`resolutions.md`](resolutions.md) — resolutions drive a GB at each step.

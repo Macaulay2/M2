@@ -62,6 +62,60 @@ Addition / multiplication of polynomial values dispatches first through the
 ring's flag set, then through the base ring's `aring` (or `Ring*`) for
 coefficient arithmetic, then through the monoid for monomial arithmetic.
 
+## M2 ring constructor → engine class
+
+The mapping from what an M2 user types when building a polynomial-style ring to which engine class actually holds it:
+
+| M2 expression | Engine class | Source file | Notes |
+|---|---|---|---|
+| `R[x, y, z]` (commutative poly) | `PolynomialRing` | `polyring.{cpp,hpp}` | The default; entries via `Nterm *` |
+| `R[x, y, z]/I` | `PolynomialRing` (with `quotient_ideal` flag) | `polyring.{cpp,hpp}` + `qring.{cpp,hpp}` | Quotient ring; relations stored alongside the ambient `PolynomialRing` |
+| `frac R` (fraction field of integral domain) | `FractionField` | `frac.{cpp,hpp}` | Each element is a pair `(numerator, denominator)`; normalisation lazy |
+| `R[x, y, z, Weights => {1,1,1}]` | `PolynomialRing` with weighted monoid | `polyring.{cpp,hpp}` + custom `Monoid` | Grading is in the monoid, not the ring |
+| `R[x, y, z, SkewCommutative => {x,y}]` | `SkewPolynomialRing` | `skewpoly.{cpp,hpp}` | `x*y = -y*x` for skew vars; tracks skew-pair bitmask |
+| `R[x, y, ∂_x, ∂_y, WeylAlgebra => {x => ∂_x, …}]` | `WeylAlgebra` | `weylalg.{cpp,hpp}` | Differential-operator ring; tracks commutator data |
+| `R[x, y, z, SkewCommutative => …, …]` (generic ordered NC) | `SolvableAlgebra` | `solvable.{cpp,hpp}` | PBW-style; user supplies the `<` ordering |
+| `freeAlgebra(R, vars)` (no commutativity) | `FreeAlgebra` / `M2FreeAlgebra` | `M2FreeAlgebra.{cpp,hpp}` + [`NCAlgebras/FreeAlgebra.{cpp,hpp}`](NCAlgebras/file-FreeAlgebra.md) | True free associative algebra; monomials are words, not exponent vectors |
+| `freeAlgebra(R, vars)/I` | `FreeAlgebraQuotient` / `M2FreeAlgebraQuotient` | `M2FreeAlgebraQuotient.{cpp,hpp}` + [`NCAlgebras/FreeAlgebraQuotient.{cpp,hpp}`](NCAlgebras/file-FreeAlgebraQuotient.md) | NC quotient; requires a Gröbner basis of the two-sided ideal |
+| `R = localRing(P, P_maxIdeal)` | `LocalRing` | `localring.{cpp,hpp}` | Localisation at a maximal ideal; element = `(num, denom)` with denom outside the ideal |
+| `schurRing(QQ, "s", n)` | `SchurRing` | `schur.{cpp,hpp}` | Ring of symmetric functions in the Schur basis |
+| `Tower` (legacy nested extensions) | `Tower` | `tower.{cpp,hpp}` | Older nested extension representation; mostly superseded by aring-tower |
+
+Construction routes through:
+
+```
+M2: R = QQ[x, y, z]
+   ↓
+m2/setup.m2  →  R = polynomialRing(QQ, getSymbol \ {"x","y","z"}, ...)
+   ↓
+d/monoid.dd / d/interface.dd  →  rawMonoid(...) then rawPolynomialRing(...)
+   ↓
+e/interface/ring.h  →  IM2_Ring_polyring(QQ, monoid, ...)
+   ↓
+e/polyring.cpp  →  new PolynomialRing(base, monoid, ...)
+   ↓
+wrapped via ConcreteRing if needed, returned as Ring* to interpreter
+```
+
+The flag set (`isWeyl`, `isSkew`, `isQuotient`, `isLocal`) is checked in every arithmetic operation — that's the first dispatch layer. The second is the base ring's `mult`/`add`/etc.; the third is the monoid's `multmon`/`compare`.
+
+## Choosing a polynomial-ring backend
+
+When implementing a new operation that needs to work over multiple polynomial-ring shapes:
+
+| Want | Pick |
+|---|---|
+| Standard commutative + GB workflow | `PolynomialRing` (the default) |
+| Quotient by an ideal | `PolynomialRing` + `quotient_ideal`; the ambient ring carries the relations |
+| Differential operators (D-modules) | `WeylAlgebra`; commutator data is in the ring |
+| Skew/exterior algebra | `SkewPolynomialRing` (very fast; skew bitmask is checked inline) |
+| True non-commutative free algebra | `M2FreeAlgebra` / `FreeAlgebra` (deeper subsystem; see [`NCAlgebras/`](NCAlgebras/README.md)) |
+| Local ring at a prime | `LocalRing`; localisation is lazy until needed |
+| Symmetric-function manipulation | `SchurRing`; the only ring whose elements are stored in a non-monomial basis |
+| Fraction field | `frac R` (only valid when `R` is an integral domain) |
+
+The decision is driven by **which arithmetic flags you need** more than by which type symbol. The `PolynomialRing` class with various flag combinations covers most workflows; the dedicated `SkewPolynomialRing` / `WeylAlgebra` / `SolvableAlgebra` classes exist because their inner loops benefit from specialised code paths beyond what the generic flag-based dispatch can inline.
+
 ## Related
 
 - [`coefficient-rings.md`](coefficient-rings.md) — base rings used as
