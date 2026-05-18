@@ -98,6 +98,8 @@ The full procedure lives in [`README`](README), but the short version:
 | `Truncations.m2` — re-exported-by-`Complexes` `truncate` for modules/ideals/matrices + `effCone` / `nefCone` for the effective and nef cones | [`file-Truncations.md`](file-Truncations.md) |
 | `Polyhedra.m2` — JSAG-certified convex polyhedra, cones, fans, polyhedral complexes; the largest single package (~44 000 lines across 60+ files); imported by `Truncations` so effectively auto-loaded | [`file-Polyhedra.md`](file-Polyhedra.md) |
 | `NormalToricVarieties.m2` — normal toric varieties: `NormalToricVariety`, `ToricDivisor`, `ToricMap`; the five-divisor-group diagram; toric Chow rings; database of all smooth toric Fano varieties through dim 6 (~11 500 lines) | [`file-NormalToricVarieties.md`](file-NormalToricVarieties.md) |
+| `Schubert2.m2` — intersection theory for "abstract varieties": `AbstractVariety`, `AbstractSheaf`, Chern/Todd classes, `schubertCycle`, `blowup`, `flagBundle`; M2 successor to the classical Maple `Schubert` package | [`file-Schubert2.md`](file-Schubert2.md) |
+| `NumericalAlgebraicGeometry.m2` — JSAG-certified numerical AG: homotopy continuation, `solveSystem`, witness sets, irreducible decomposition; multiple software backends (M2engine, BERTINI, PHCPACK, HOM4PS2) | [`file-NumericalAlgebraicGeometry.md`](file-NumericalAlgebraicGeometry.md) |
 
 The full ~400 per-package coverage would be repetitive — these deep-dives cover the structural patterns every package follows plus the foundational and frequently-used packages that ship.
 

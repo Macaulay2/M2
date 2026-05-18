@@ -3,7 +3,7 @@
 Flat alphabetical catalogue of **every documentation file** in
 the M2 source tree. Counts: 19 top-level meta docs + 70
 per-directory READMEs + 13 architecture references + 10 engine
-area docs + 505 per-file deep dives = **~617 total docs**.
+area docs + 507 per-file deep dives = **~619 total docs**.
 
 This file is the **"I remember a doc about X but not where it
 lives"** lookup. The [`README.md`](README.md) is the
