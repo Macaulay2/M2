@@ -439,7 +439,7 @@ document {
      "Macaulay2 examples corresponding to examples in the Greuel-Pfister
      text may also be found here.",
      Subnodes => {
-	  TO2("Elementary uses of Groebner bases I. Math 634 Fall 2005", "Elementary uses of Groebner bases"),
+	  TO2("Elementary uses of Groebner bases I", "Elementary uses of Groebner bases"),
 	  TO "M2SingularBook"
 	  }
      }
