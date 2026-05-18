@@ -13,6 +13,7 @@
 #include "style.hpp"
 #include "text-io.hpp"
 #include "ring.hpp"
+#include "ringelem.hpp"
 #include "comb.hpp"
 #include "polyring.hpp"
 #include "assprime.hpp"
@@ -55,6 +56,53 @@ unsigned int Matrix::computeHashValue() const
         }
     }
   return hashval;
+}
+
+engine_RawRingElementArrayArrayOrNull Matrix::entries() const
+{
+  int ncols = n_cols();
+  int nrows = n_rows();
+  if (nrows < 0 || ncols < 0)
+    {
+      ERROR("internal error: matrix has a negative size %d by %d",
+            nrows,
+            ncols);
+      return nullptr;
+    }
+
+  engine_RawRingElementArrayArray entries =
+      getmemarraytype(engine_RawRingElementArrayArray, nrows);
+  entries->len = nrows;
+
+  const Ring *R = get_ring();
+  RingElement *zero = RingElement::make_raw(R, R->zero());
+  for (int r = 0; r < nrows; r++)
+    {
+      engine_RawRingElementArray currRow =
+          getmemarraytype(engine_RawRingElementArray, ncols);
+      currRow->len = ncols;
+      std::fill_n(currRow->array, ncols, zero);
+      entries->array[r] = currRow;
+    }
+
+  for (int c = 0; c < ncols; c++)
+    {
+      const vec &column = elem(c);
+      for (const vecterm &term : column)
+        {
+          if (term.comp < 0 || term.comp >= nrows)
+            {
+              ERROR("internal error: matrix contains invalid entries:"
+                    "row index %d out of range 0 .. %d",
+                    term.comp,
+                    nrows - 1);
+              continue;
+            }
+          entries->array[term.comp]->array[c] =
+              RingElement::make_raw(R, term.coeff);
+        }
+    }
+  return entries;
 }
 
 const Matrix /* or null */ *Matrix::make(const FreeModule *target,

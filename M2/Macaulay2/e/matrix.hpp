@@ -89,6 +89,7 @@ class Matrix : public EngineObject
   ring_elem elem(int i, int j) const;
   vec &elem(int i) { return mEntries[i]; }
   const vec &elem(int i) const { return mEntries[i]; }
+  engine_RawRingElementArrayArrayOrNull entries() const;
   /*****************************************/
 
   /* The non-const versions of these will go away */
