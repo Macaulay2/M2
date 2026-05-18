@@ -13,9 +13,16 @@ Node
   Key
     kernel
   Headline
-    kernel of a map
+    kernel of a map of modules or rings
+  Description
+   Text
+    See the separate documentation nodes for the two cases. To compute
+    the kernel of a map of free modules the command @TO syz@ is usually faster,
+    since it computes only the generators of the kernel, not the relations on them,
+    as is necessary to return the kernel as a module.
   SeeAlso
     source
+    syz
 ///
 
 document { 
@@ -48,27 +55,35 @@ document {
 document { 
      Key => {(kernel,Matrix),
 	  (kernel, RingElement)},
-     Headline => "kernel of a matrix",
-     Usage => "kernel f",
+     Headline => "kernel of a map of modules",
+     Usage => "kernel f, kernel a",
      Inputs => {
 	  "f" => {"a map of modules ", TT "M --> N"}
 	  },
      Outputs => {
 	  Module => {"the kernel of f, a submodule of M"}
 	  },
-     "If f is ", ofClass RingElement, ", then it will be interpreted as a one by one matrix.",
      PARA{},
-     "The kernel is the submodule of M of all elements mapping to zero under ", TT "f", ".
-     Over polynomial rings, this is computed using a Gröbner basis computation.",
+     "The kernel is the submodule of M of all elements mapping to zero under ", TT "f", ".",
+     "If f is a RingElement it is interpreted as a 1 by 1 matrix",".",
      EXAMPLE lines ///
-     	  R = ZZ/32003[vars(0..10)]
-	  M = genericSkewMatrix(R,a,5)
-	  ker M
+     	  R = ZZ/32003[a,b]/(ideal(a,b))^3
+	  M = R^1/(ideal a^2)
+	  mat = matrix{{a^2,b^2},{b,a}}
+	  ker mat
+          presentation ker mat
+	  syz mat
+          f = map(M++M, M++M, mat)
+	  ker f
 	  ///,
      SeeAlso => {syz, 
-	  -- Mike wanted this: "kernel, cokernel and image of a map of modules",
-	  genericSkewMatrix}
-     }
+	         cokernel,
+		 image,
+		 map,
+		 matrix
+		 }
+	  }
+     
 
 document {
     Key => [kernel, SubringLimit],

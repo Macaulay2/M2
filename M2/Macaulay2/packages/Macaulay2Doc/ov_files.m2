@@ -107,7 +107,7 @@ document {
 	  value get fn
 	  removeFile fn
      ///,
-     SeeAlso => { endl, flush, close, removeFile,  Database },
+     SeeAlso => { endl, flush, close, removeFile,  Database, File },
      Subnodes => {
 	 TO printString,
          TO stdio,
