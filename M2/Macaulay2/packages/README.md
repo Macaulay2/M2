@@ -84,6 +84,8 @@ The full procedure lives in [`README`](README), but the short version:
 | Package conventions — layout, dependencies, doc DSL, tests | [`file-package-conventions.md`](file-package-conventions.md) |
 | `MinimalPrimes.m2` — auto-loaded `minimalPrimes` / `radical` / `isPrime` implementation | [`file-MinimalPrimes.md`](file-MinimalPrimes.md) |
 | `PrimaryDecomposition.m2` — auto-loaded `primaryDecomposition` / `associatedPrimes` / `localize` (SY, EHV, GTZ strategies) | [`file-PrimaryDecomposition.md`](file-PrimaryDecomposition.md) |
+| `Saturation.m2` — auto-loaded `saturate` / `quotient` / `annihilator` (with the `addHook` strategy table architecture) | [`file-Saturation.md`](file-Saturation.md) |
+| `Elimination.m2` — auto-loaded `eliminate` / `resultant` / `discriminant` / `sylvesterMatrix` (imported by the three above) | [`file-Elimination.md`](file-Elimination.md) |
 
 The full ~400 per-package coverage would be repetitive — these deep-dives cover the structural patterns every package follows plus the foundational and frequently-used packages that ship.
 
