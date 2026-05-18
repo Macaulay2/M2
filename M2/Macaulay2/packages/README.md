@@ -100,6 +100,7 @@ The full procedure lives in [`README`](README), but the short version:
 | `NormalToricVarieties.m2` — normal toric varieties: `NormalToricVariety`, `ToricDivisor`, `ToricMap`; the five-divisor-group diagram; toric Chow rings; database of all smooth toric Fano varieties through dim 6 (~11 500 lines) | [`file-NormalToricVarieties.md`](file-NormalToricVarieties.md) |
 | `Schubert2.m2` — intersection theory for "abstract varieties": `AbstractVariety`, `AbstractSheaf`, Chern/Todd classes, `schubertCycle`, `blowup`, `flagBundle`; M2 successor to the classical Maple `Schubert` package | [`file-Schubert2.md`](file-Schubert2.md) |
 | `NumericalAlgebraicGeometry.m2` — JSAG-certified numerical AG: homotopy continuation, `solveSystem`, witness sets, irreducible decomposition; multiple software backends (M2engine, BERTINI, PHCPACK, HOM4PS2) | [`file-NumericalAlgebraicGeometry.md`](file-NumericalAlgebraicGeometry.md) |
+| `SimplicialComplexes.m2` — JSAG-certified abstract simplicial complexes; Stanley-Reisner interface; named topological examples (Klein bottle, Poincaré sphere, …); resolutions of monomial ideals (Taylor, Scarf, Buchberger, Lyubeznik) | [`file-SimplicialComplexes.md`](file-SimplicialComplexes.md) |
 
 The full ~400 per-package coverage would be repetitive — these deep-dives cover the structural patterns every package follows plus the foundational and frequently-used packages that ship.
 

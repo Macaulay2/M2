@@ -43,6 +43,37 @@ local representations.
 | `montable.{cpp,hpp}` | Generic monomial table — map monomial → polynomial / row index. **Deep dive:** [`file-montable.md`](file-montable.md) |
 | `montableZZ.{cpp,hpp}` | Specialisation for the ZZ-coefficient case (where leading-coefficient signs matter for GB) |
 
+## M2 `MonomialOrder` ↔ engine ordering
+
+The orderings M2 users see when constructing a ring (`R = QQ[x,y,z, MonomialOrder => …]`) map to engine `MonomialOrdering` and `imonorder` representations:
+
+| M2 spec | Engine ordering | Defined in | Notes |
+|---|---|---|---|
+| `Lex` | `MO_LEX` | `monordering.{c,h}` | Lexicographic; expensive but small encoding |
+| `GLex` | `MO_GREVLEX` ⊕ block | composed | Graded lex via degree-then-lex block |
+| `GRevLex` (default) | `MO_GREVLEX` | `monordering.{c,h}` | Graded reverse lex; the cheapest ordering and the GB default |
+| `RevLex` | `MO_REVLEX` | `monordering.{c,h}` | Reverse lex; usually wrapped in a graded block |
+| `Weights => {w_1, …}` | `MO_WEIGHTS` block | `monordering.{c,h}` | A leading weight block ahead of the main order |
+| `Eliminate(k)` | `MO_GREVLEX` over first k + `MO_GREVLEX` over rest | composed | Elimination order used by [`Elimination` package](../packages/file-Elimination.md) |
+| `GroupLex(n)` / `GroupRevLex(n)` | `MO_GROUP_LEX` / `MO_GROUP_REVLEX` | `monordering.{c,h}` | Allow negative exponents (Laurent polynomials) |
+| `Position => Up` / `Down` | `MO_POSITION_UP` / `MO_POSITION_DOWN` | `monordering.{c,h}` | Module-component tiebreaker |
+| Block syntax `{Lex => 2, GRevLex => 3}` | sequence of `imonorder` blocks | `imonorder.{cpp,hpp}` | Composite orderings stack their blocks |
+
+Construction routes through [`d/monomial_ordering.dd`](../d/file-engine-interfaces.md) (interpreter binding) → [`interface/monomial-ordering.h`](interface/file-monomial-ordering-interface.md) (engine C boundary) → `monordering.c` / `imonorder.cpp` (internal).
+
+## Choosing an encoding — quick reference
+
+When implementing a new GB-style algorithm, the encoding choice dominates performance. Rough rules:
+
+| Need | Pick |
+|---|---|
+| Few generators, low degree, dense exponents | `ExponentVector` (fixed-length array) |
+| Many generators, mostly-zero exponents | `ExponentList` or `varpower-monomial` (sparse) |
+| Templated over both — write code that compiles to either | `f4/MonomialView` and the templated `f4` infrastructure ([`f4/file-monhashtable.md`](f4/file-monhashtable.md), [`f4/file-moninfo.md`](f4/file-moninfo.md)) |
+| Frequent comparison, infrequent arithmetic | `f4/ntuple-monomial` (dense, comparison via byte memcmp at the cost of larger storage) |
+| Boolean polynomial ring `F_2[x]/(x_i^2-x_i)` | `bibasis/Monom` 64-bit packed bitmask ([`bibasis/file-monom.md`](bibasis/file-monom.md)) |
+| Need a custom packed form | Subclass `monomial` and follow the `imonorder` interface |
+
 ## Overflow safety
 
 Monomial arithmetic is overflow-prone: multiplying two monomials adds their
