@@ -3,7 +3,7 @@ use util;
 use tokens;
 
 header "// required for equality checks
-#include <interface/freemodule.h>           // for IM2_FreeModule_is_equal
+#include <interface/freemodule.h>           // for rawFreeModuleIsEqual
 #include <interface/matrix.h>               // for rawMatrixIsEqual
 #include <interface/monomial-ideal.h>       // for IM2_MonomialIdeal_is_equal
 #include <interface/ringelement.h>          // for IM2_RingElement_is_equal
@@ -208,7 +208,7 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
      is x:RawFreeModuleCell do (
 	  when rhs
 	  is y:RawFreeModuleCell do (
-	       if Ccode(bool, "IM2_FreeModule_is_equal(",x.p,",",y.p,")")
+	       if Ccode(bool, "rawFreeModuleIsEqual(",x.p,",",y.p,")")
 	       then True else False
 	       )
 	  else False
