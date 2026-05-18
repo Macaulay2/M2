@@ -3,9 +3,11 @@
 #include <gtest/gtest.h>
 
 #include "util-polyring-creation.hpp"
+#include "matrix-con.hpp"
 #include "matrix.hpp"
 #include "BasicPolyList.hpp"
 #include "BasicPolyListParser.hpp"
+#include "relem.hpp"
 #include "gb-f4/PolynomialList.hpp"
 #include "gb-f4/GBF4Interface.hpp"
 #include "VectorArithmetic.hpp"
@@ -93,6 +95,48 @@ TEST(MatrixIO, readMsolve)
 
   EXPECT_TRUE(M->n_rows() == 1);
   EXPECT_TRUE(M->n_cols() == 4);
+}
+
+TEST(Matrix, entriesFromSparseColumns)
+{
+  const Ring* R = simplePolynomialRing(101, {"x"});
+  const FreeModule* target = R->make_FreeModule(5);
+  MatrixConstructor mat(target, 15);
+
+  mat.set_entry(1, 3, R->from_long(11));
+  mat.set_entry(3, 2, R->from_long(22));
+  mat.set_entry(4, 1, R->from_long(33));
+  mat.compute_column_degrees();
+
+  const Matrix* M = mat.to_matrix();
+  engine_RawRingElementArrayArray entries = M->entries();
+
+  ASSERT_NE(entries, nullptr);
+  EXPECT_EQ(entries->len, 5);
+
+  for (int r = 0; r < 5; r++)
+    {
+      ASSERT_NE(entries->array[r], nullptr);
+      EXPECT_EQ(entries->array[r]->len, 15);
+
+      for (int c = 0; c < 15; c++)
+        {
+          ASSERT_NE(entries->array[r]->array[c], nullptr);
+          EXPECT_EQ(entries->array[r]->array[c]->get_ring(), R);
+
+          ring_elem expected = R->zero();
+          if (r == 1 && c == 3)
+            expected = R->from_long(11);
+          else if (r == 3 && c == 2)
+            expected = R->from_long(22);
+          else if (r == 4 && c == 1)
+            expected = R->from_long(33);
+
+          EXPECT_TRUE(R->is_equal(entries->array[r]->array[c]->get_value(),
+                                  expected))
+              << "entry (" << r << ", " << c << ")";
+        }
+    }
 }
 
 #if 0
