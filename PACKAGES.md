@@ -350,14 +350,43 @@ viewHelp PackageName        -- open HTML docs in browser
 ## Auto-loaded packages
 
 The M2 banner lists packages "with packages: ..." — these are
-**auto-loaded at startup**. Currently:
+**auto-loaded at startup**. The full list (from `Core.m2`'s
+`Core#"preloaded packages"`) is:
 
 ```
-ConwayPolynomials, Elimination, IntegralClosure, InverseSystems,
-Isomorphism, LLLBases, MinimalPrimes, OnlineLookup,
-PrimaryDecomposition, ReesAlgebra, Saturation, TangentCone,
-Truncations, Varieties
+Classic, ConwayPolynomials, Elimination, IntegralClosure,
+InverseSystems, Isomorphism, LLLBases, MinimalPrimes, OnlineLookup,
+PackageCitations, PrimaryDecomposition, ReesAlgebra, Saturation,
+SimpleDoc, TangentCone, Varieties
 ```
+
+plus `HomologicalAlgebraPackage` (resolves to `Complexes` by
+default) — **17 packages total**.
+
+All 17 now have dedicated deep-dive docs:
+
+| Package | Function | Deep dive |
+|---|---|---|
+| `Classic` | classic-Macaulay polynomial parser (`poly "x2y"`) | [`file-utility-packages.md`](M2/Macaulay2/packages/file-utility-packages.md) (batched) |
+| `Complexes` | `freeResolution`, `Ext`, `Tor`, Yoneda — the `HomologicalAlgebraPackage` | [`file-Complexes.md`](M2/Macaulay2/packages/file-Complexes.md) |
+| `ConwayPolynomials` | `conwayPolynomial(p, n)` — `GF(q)` database | [`file-utility-packages.md`](M2/Macaulay2/packages/file-utility-packages.md) (batched) |
+| `Elimination` | `eliminate`, `resultant`, `discriminant`, `sylvesterMatrix` | [`file-Elimination.md`](M2/Macaulay2/packages/file-Elimination.md) |
+| `IntegralClosure` | `integralClosure`, `conductor`, `icMap`, `icFractions`, `icFracP` | [`file-IntegralClosure.md`](M2/Macaulay2/packages/file-IntegralClosure.md) |
+| `InverseSystems` | `inverseSystem`, `toDividedPowers` — artinian Gorenstein construction | [`file-InverseSystems.md`](M2/Macaulay2/packages/file-InverseSystems.md) |
+| `Isomorphism` | `isIsomorphic(N, M)`, `isomorphism(N, M)`, `checkDegrees` | [`file-Isomorphism.md`](M2/Macaulay2/packages/file-Isomorphism.md) |
+| `LLLBases` | `LLL`, `kernelLLL`, `hermite`, `gcdLLL` + NTL/fpLLL/Cohen backends | [`file-LLLBases.md`](M2/Macaulay2/packages/file-LLLBases.md) |
+| `MinimalPrimes` | `minimalPrimes`, `radical`, `isPrime` | [`file-MinimalPrimes.md`](M2/Macaulay2/packages/file-MinimalPrimes.md) |
+| `OnlineLookup` | `oeis L`, `isc x` — online math-database lookups | [`file-utility-packages.md`](M2/Macaulay2/packages/file-utility-packages.md) (batched) |
+| `PackageCitations` | `cite "Pkg"` — BibTeX entry generation | [`file-utility-packages.md`](M2/Macaulay2/packages/file-utility-packages.md) (batched) |
+| `PrimaryDecomposition` | `primaryDecomposition`, `associatedPrimes`, `localize`, `isPrimary` | [`file-PrimaryDecomposition.md`](M2/Macaulay2/packages/file-PrimaryDecomposition.md) |
+| `ReesAlgebra` | `reesIdeal`, `associatedGradedRing`, `specialFiber`, `analyticSpread`, `multiplicity`, `distinguished` | [`file-ReesAlgebra.md`](M2/Macaulay2/packages/file-ReesAlgebra.md) |
+| `Saturation` | `saturate`, `quotient`, `annihilator` + `addHook` strategy-table architecture | [`file-Saturation.md`](M2/Macaulay2/packages/file-Saturation.md) |
+| `SimpleDoc` | `doc ///...///` DSL, `multidoc`, `arXiv`/`stacksProject`/`wikipedia`, `packageTemplate` | [`file-SimpleDoc.md`](M2/Macaulay2/packages/file-SimpleDoc.md) |
+| `TangentCone` | `tangentCone I` | [`file-utility-packages.md`](M2/Macaulay2/packages/file-utility-packages.md) (batched) |
+| `Varieties` | `Variety`, `Spec`, `Proj`, `sheaf`, `tangentSheaf`, `HH^i`, `OO_X`, etc. | [`file-Varieties.md`](M2/Macaulay2/packages/file-Varieties.md) |
+
+`Truncations` is also effectively auto-loaded (re-exported by
+`Complexes`); it has its own [deep dive](M2/Macaulay2/packages/file-Truncations.md).
 
 These are foundational enough that they're useful without
 `needsPackage` and small enough that auto-load doesn't bloat
@@ -366,6 +395,23 @@ startup time impact.
 
 See [`STARTUP.md`](STARTUP.md) phase 8 (Core load) — auto-loaded
 packages are loaded there.
+
+## Non-auto-loaded packages with deep dives
+
+The heavily-used non-auto-loaded packages with dedicated coverage:
+
+| Package | Function | Deep dive |
+|---|---|---|
+| `Truncations` | `truncate(d, M)`, `effCone R`, `nefCone R` — re-exported by `Complexes` so effectively auto-loaded | [`file-Truncations.md`](M2/Macaulay2/packages/file-Truncations.md) |
+| `Polyhedra` | `Cone`, `Polyhedron`, `Fan`, `PolyhedralComplex` + V/H-rep + Fourier-Motzkin; the largest single package | [`file-Polyhedra.md`](M2/Macaulay2/packages/file-Polyhedra.md) |
+| `NormalToricVarieties` | `NormalToricVariety`, `ToricDivisor`, `ToricMap` + the 5-divisor-group diagram + smooth-Fano database through dim 6 | [`file-NormalToricVarieties.md`](M2/Macaulay2/packages/file-NormalToricVarieties.md) |
+| `Schubert2` | `AbstractVariety`, `flagBundle`, `schubertCycle`, `chern`, `blowup` — intersection theory for varieties without equations | [`file-Schubert2.md`](M2/Macaulay2/packages/file-Schubert2.md) |
+| `NumericalAlgebraicGeometry` | `solveSystem`, `track`, witness sets, irreducible decomposition; multi-backend (M2engine / BERTINI / PHCPACK / HOM4PS2) | [`file-NumericalAlgebraicGeometry.md`](M2/Macaulay2/packages/file-NumericalAlgebraicGeometry.md) |
+| `SimplicialComplexes` | `simplicialComplex`, `link`, `star`, `barycentricSubdivision`, monomial-ideal resolutions, named topological examples | [`file-SimplicialComplexes.md`](M2/Macaulay2/packages/file-SimplicialComplexes.md) |
+
+Plus the **3 foundational structural packages** documented at the top of this doc (`Macaulay2Doc`, `Style`, `EngineTests`) and the **conventions doc** ([`file-package-conventions.md`](M2/Macaulay2/packages/file-package-conventions.md)) covering the patterns every package follows.
+
+**Coverage:** all 17 auto-loaded packages + 6 most-used non-auto-loaded + 3 structural + 1 conventions = **27 dedicated package deep dives**. See the [packages overview](M2/Macaulay2/packages/README.md) and [`SYMBOLS.md`](SYMBOLS.md) for symbol-level navigation across the ~400-package ecosystem.
 
 ## CMake-side package wiring
 

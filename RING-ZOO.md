@@ -553,17 +553,43 @@ The `promote` / `lift` machinery handles automatic conversion
 between related rings. See
 [`e/file-aring-translate.md`](M2/Macaulay2/e/file-aring-translate.md).
 
+## Package deep dives that operate on these rings
+
+The packages with dedicated deep-dive docs that specifically depend
+on or extend the ring types catalogued above:
+
+| Ring type | Packages that specifically operate on it |
+|---|---|
+| `ZZ`, `QQ`, `ZZ/p`, `GF(q)`, `RR`, `CC` (any coefficient ring) | All auto-loaded packages — [`MinimalPrimes`](M2/Macaulay2/packages/file-MinimalPrimes.md), [`PrimaryDecomposition`](M2/Macaulay2/packages/file-PrimaryDecomposition.md), [`Saturation`](M2/Macaulay2/packages/file-Saturation.md), [`Elimination`](M2/Macaulay2/packages/file-Elimination.md), [`Complexes`](M2/Macaulay2/packages/file-Complexes.md), [`Truncations`](M2/Macaulay2/packages/file-Truncations.md), [`Varieties`](M2/Macaulay2/packages/file-Varieties.md), [`IntegralClosure`](M2/Macaulay2/packages/file-IntegralClosure.md), [`ReesAlgebra`](M2/Macaulay2/packages/file-ReesAlgebra.md), [`InverseSystems`](M2/Macaulay2/packages/file-InverseSystems.md), [`Isomorphism`](M2/Macaulay2/packages/file-Isomorphism.md) |
+| `ZZ` (specifically — lattice / linear algebra) | [`LLLBases`](M2/Macaulay2/packages/file-LLLBases.md) |
+| `ZZ/p` for small `p` (Frobenius / characteristic-p) | [`IntegralClosure`](M2/Macaulay2/packages/file-IntegralClosure.md) (`icFracP` variant) |
+| `GF(q)` (database lookup) | [`ConwayPolynomials`](M2/Macaulay2/packages/file-utility-packages.md) (auto) — the `GF(q)` database backing the constructor |
+| Standard graded polynomial ring `k[x_1, …, x_n]` | [`InverseSystems`](M2/Macaulay2/packages/file-InverseSystems.md) (artinian Gorenstein construction) |
+| Standard graded + grading + Stanley-Reisner | [`SimplicialComplexes`](M2/Macaulay2/packages/file-SimplicialComplexes.md) |
+| Graded polynomial rings for sheafification | [`Varieties`](M2/Macaulay2/packages/file-Varieties.md) — provides `Proj R` |
+| Multi-graded polynomial rings (Cox rings) | [`NormalToricVarieties`](M2/Macaulay2/packages/file-NormalToricVarieties.md) |
+| Polynomial rings over `QQ` or `ZZ/p` (numerical AG inputs) | [`NumericalAlgebraicGeometry`](M2/Macaulay2/packages/file-NumericalAlgebraicGeometry.md) — also `CC`-coefficient evaluation |
+| Free algebras `F<x_1, …, x_n>` and their quotients | [`Schubert2`](M2/Macaulay2/packages/file-Schubert2.md) (abstract-variety Chow rings — graded quotients, not free algebras, but related) |
+| Boolean ring `F_2[x] / (x_i^2 - x_i)` | `BIBasis` package (no dedicated deep dive yet; covered by engine [`bibasis/`](M2/Macaulay2/e/bibasis/README.md)) |
+| Polyhedral convex objects (not strictly a ring but ring-adjacent) | [`Polyhedra`](M2/Macaulay2/packages/file-Polyhedra.md) — provides `Cone`, `Polyhedron`, `Fan`, `PolyhedralComplex` types |
+
+The polynomial-style rings with **specialised arithmetic** (`SkewPolynomialRing`, `WeylAlgebra`, `SolvableAlgebra`) are documented in their per-file engine deep dives ([`e/file-skewpoly.md`](M2/Macaulay2/e/file-skewpoly.md), [`e/file-weylalg.md`](M2/Macaulay2/e/file-weylalg.md), [`e/file-solvable.md`](M2/Macaulay2/e/file-solvable.md)). Add-on packages building on Weyl algebras (e.g. `BernsteinSato`, `WeylAlgebras`, `Dmodules`) don't yet have dedicated deep dives — see the [packages overview](M2/Macaulay2/packages/README.md).
+
+For a symbol-level reverse index (ring-class name → deep dive), see [`SYMBOLS.md`](SYMBOLS.md).
+
 ## Related
 
 - [`README.md`](README.md) — repository TOC.
 - [`GLOSSARY.md`](GLOSSARY.md) — definitions of ring-related
   terms.
+- [`SYMBOLS.md`](SYMBOLS.md) — symbol-to-doc reverse index covering ring classes and M2-level constructors.
+- [`COMPUTATIONS.md`](COMPUTATIONS.md) — sister catalogue of computation engines.
 - [`M2/Macaulay2/e/coefficient-rings.md`](M2/Macaulay2/e/coefficient-rings.md)
-  — coefficient ring area overview.
+  — coefficient ring area overview (now with M2-spec → engine-class mapping table).
 - [`M2/Macaulay2/e/polynomial-rings.md`](M2/Macaulay2/e/polynomial-rings.md)
-  — polynomial ring area overview.
+  — polynomial ring area overview (now with M2-spec → engine-class mapping table).
 - [`M2/Macaulay2/e/ring-elements-and-maps.md`](M2/Macaulay2/e/ring-elements-and-maps.md)
-  — value-representation strategy across rings.
+  — value-representation strategy across rings (now with M2-operation → engine-method mapping).
 - Each `e/file-aring-*.md` deep dive — backend-specific details.
 - M2 user documentation — `help "rings"`, `viewHelp` for each
   ring type.
