@@ -307,7 +307,7 @@ they will cross-link to one another along these axes:
 
 ### Documentation status
 
-The documentation tree comprises **638 markdown files** across four
+The documentation tree comprises **640 markdown files** across four
 layers:
 
 | Layer | Count | Examples |
@@ -316,7 +316,7 @@ layers:
 | Per-directory READMEs | 70 | one for every subdirectory under `M2/` |
 | Architecture references | 13 | 4 per-layer (`c/`, `d/`, `e/`, `m2/`) + 8 per-engine-subdir (`interface/`, `f4/`, `gb-f4/`, `schreyer-resolution/`, `NCAlgebras/`, `NCResolutions/`, `bibasis/`, `unit-tests/`) + 1 supervisor (`system/`) |
 | Per-area engine docs | ~10 | `coefficient-rings.md`, `polynomial-rings.md`, `monoids-and-monomials.md`, … |
-| Per-file deep dives | 518 | `file-<basename>.md` alongside each source file (some consolidated per family) |
+| Per-file deep dives | 520 | `file-<basename>.md` alongside each source file (some consolidated per family) |
 
 Every directory under `M2/` has both a `README.md` index and per-file
 deep-dive markdown files for every source file it contains. Some
@@ -1081,6 +1081,8 @@ Dedicated walkthroughs for especially central engine classes
 | [packages/file-WeylAlgebras.md](M2/Macaulay2/packages/file-WeylAlgebras.md) | `WeylAlgebras.m2` — D-module infrastructure: `makeWeylAlgebra`, `gbw`, `Ddim`, `isHolonomic`, Fourier, Stafford-Smith `makeCyclic` (foundation under `BernsteinSato`) |
 | [packages/file-HolonomicSystems.md](M2/Macaulay2/packages/file-HolonomicSystems.md) | `HolonomicSystems.m2` — holonomic D-module algorithms: GKZ systems (`gkz`, `AppellF1`), canonical-series solutions, differential-operator rings (middle layer between `WeylAlgebras` and `BernsteinSato`) |
 | [packages/file-Bertini.md](M2/Macaulay2/packages/file-Bertini.md) | `Bertini.m2` — interface to the external Bertini numerical solver: `bertiniZeroDimSolve`/`bertiniPosDimSolve`/`bertiniParameterHomotopy`, adaptive multi-precision; backs `Software => BERTINI` in NAG |
+| [packages/file-PHCpack.md](M2/Macaulay2/packages/file-PHCpack.md) | `PHCpack.m2` — JSAG-certified interface to the PHCpack polyhedral-homotopy solver: `solveSystem`/`mixedVolume`/`cascade`/`numericalIrreducibleDecomposition`; backs `Software => PHCPACK` in NAG |
+| [packages/file-FourTiTwo.md](M2/Macaulay2/packages/file-FourTiTwo.md) | `FourTiTwo.m2` — interface to the 4ti2 library: `toricMarkov`/`toricGroebner`/`toricCircuits`/`toricGraver`/`hilbertBasis`; foundational toric-ideal / Markov-basis / Graver-basis toolkit |
 | [packages/file-Schubert2.md](M2/Macaulay2/packages/file-Schubert2.md) | `Schubert2.m2` — intersection theory for abstract varieties; Chern/Todd classes, `schubertCycle`, `blowup`, `flagBundle`, etc. (M2 successor to the classical Maple Schubert package) |
 | [packages/file-NumericalAlgebraicGeometry.md](M2/Macaulay2/packages/file-NumericalAlgebraicGeometry.md) | `NumericalAlgebraicGeometry.m2` — JSAG-certified numerical AG: homotopy continuation, witness sets, irreducible decomposition; M2engine + BERTINI + PHCPACK + HOM4PS2 backends |
 | [packages/file-SimplicialComplexes.md](M2/Macaulay2/packages/file-SimplicialComplexes.md) | `SimplicialComplexes.m2` — JSAG-certified abstract simplicial complexes; Stanley-Reisner, named topological examples, monomial-ideal resolutions (Taylor / Scarf / Buchberger / Lyubeznik) |

@@ -596,6 +596,8 @@ matters more than the engine algorithm:
 | D-module infrastructure: Weyl algebra construction, GB with weight orders, Fourier transform, Stafford-Smith make-cyclic, factoring | [`WeylAlgebras`](M2/Macaulay2/packages/file-WeylAlgebras.md) — `makeWeylAlgebra`, `gbw`, `Ddim`, `isHolonomic`, `Fourier`/`FourierInverse`/`Dtransposition`, `makeCyclic M`, `factorWA f` |
 | Holonomic systems: GKZ hypergeometric systems, canonical-series solutions, differential-operator rings | [`HolonomicSystems`](M2/Macaulay2/packages/file-HolonomicSystems.md) — `gkz(A, β)`, `AppellF1`, `cssExpts`, `indicialIdeal`, `solveFrobeniusIdeal`, `diffOps` |
 | Bertini numerical solver interface (zero-dim / pos-dim / parameter homotopies, adaptive precision) | [`Bertini`](M2/Macaulay2/packages/file-Bertini.md) — `bertiniZeroDimSolve`, `bertiniPosDimSolve`, `bertiniParameterHomotopy`, `bertiniTrackHomotopy`; backend for `Software => BERTINI` in NAG |
+| PHCpack interface (polyhedral homotopy, mixed-volume / BKK bound, cascade, multi-threaded path tracking) | [`PHCpack`](M2/Macaulay2/packages/file-PHCpack.md) — JSAG-certified; `solveSystem`, `mixedVolume`, `cascade`, `numericalIrreducibleDecomposition`; backend for `Software => PHCPACK` in NAG |
+| 4ti2 interface (Markov bases, Graver bases, circuits, Hilbert bases, toric Gröbner) | [`FourTiTwo`](M2/Macaulay2/packages/file-FourTiTwo.md) — `toricMarkov`, `toricGroebner`, `toricCircuits`, `toricGraver`, `hilbertBasis`; depended on by `Polyhedra` (re-exports it), `BernsteinSato`, `HolonomicSystems`, `GraphicalModels` |
 
 For symbol-level lookups (given an M2 function or engine class name, find its deep dive), see [`SYMBOLS.md`](SYMBOLS.md).
 

@@ -223,6 +223,10 @@ Operations from the 27 packages with dedicated deep dives. **Auto-loaded** packa
 | `diffOps(I, k)`, `putWeylAlgebra W`, `PolyGens`, `BasisElts` (differential operators on R/I) | `HolonomicSystems` | same |
 | `bertiniZeroDimSolve F`, `bertiniPosDimSolve F`, `bertiniParameterHomotopy(F, p, vals)`, `bertiniTrackHomotopy(H, start, end)`, `bertiniSample(W, n)`, `bertiniRefineSols`, `bertiniComponentMemberTest`, `bertiniUserHomotopy` | `Bertini` | [`packages/file-Bertini.md`](M2/Macaulay2/packages/file-Bertini.md) |
 | `MPType` option (machine / fixed / adaptive precision), `Configuration => { "BERTINIexecutable" => … }`, `subPoint`, `makeB'InputFile`, `importMainDataFile` | `Bertini` | same |
+| `solveSystem F`, `solveRationalSystem`, `trackPaths`, `refineSolutions`, `numericalIrreducibleDecomposition F`, `mixedVolume F`, `cascade(F, n)`, `topWitnessSet F`, `factorWitnessSet`, `isWitnessSetMember(p, W)`, `intersectSlice(W, L)`, `realSlice1D`/`realSlice2D` | `PHCpack` | [`packages/file-PHCpack.md`](M2/Macaulay2/packages/file-PHCpack.md) |
+| `computingPrecision`, `numThreads`, `randomSeed`, `seeProgress`, `intermediateSolutions`, `StartDimension`, `StartSystem`, `StableMixedVolume`, `versionNumber` (PHCpack tunable options) | `PHCpack` | same |
+| `toricMarkov A`, `toricGroebner A`, `toricCircuits A`, `toricGraver A`, `toricGraverDegrees A`, `hilbertBasis A` (Matrix-input override of `Polyhedra`'s) | `FourTiTwo` | [`packages/file-FourTiTwo.md`](M2/Macaulay2/packages/file-FourTiTwo.md) |
+| `toBinomial(M, S)`, `getMatrix filename`, `putMatrix(F, B)`, `InputType` option | `FourTiTwo` | same |
 | `taylorResolution I`, `scarfSimplicialComplex I`, `buchbergerSimplicialComplex I`, `lyubeznikSimplicialComplex I` | `SimplicialComplexes` | same |
 | `kleinBottleComplex`, `dunceHatComplex`, `realProjectiveSpaceComplex n`, `poincareSphereComplex`, `smallManifold(d, n, k)` | `SimplicialComplexes` | same |
 
