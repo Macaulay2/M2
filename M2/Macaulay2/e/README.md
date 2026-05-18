@@ -360,7 +360,10 @@ effort proceeds.)
 ## Top-level files: per-area docs
 
 Files at the top level of `e/` are documented in grouped markdown files, one
-per area. These are the **engine deep-dive** references:
+per area. These are the **engine deep-dive** references. Each one now
+contains an **M2-expression → engine-class mapping table** plus a **"which
+backend / representation when?" decision table** — the fastest path from
+user-visible M2 syntax to the engine source file that implements it.
 
 | Area | Documentation | Covers |
 |---|---|---|

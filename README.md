@@ -350,6 +350,27 @@ oldest part of the codebase (~340 source files in `e/`) and the part most
 people new to the project find hardest to navigate. This section is a guided
 tour.
 
+### Cross-layer mapping tables — "what M2 syntax does this come from?"
+
+Every engine area doc now has an **M2-expression → engine-class mapping
+table** plus a **"which backend / representation when?" decision table**.
+The mappings show, for each user-visible M2 construct, exactly which
+engine class is instantiated and which source file owns the arithmetic.
+This is the fastest path from user-level code into the engine.
+
+| Engine area doc | Mapping covers |
+|---|---|
+| [`coefficient-rings.md`](M2/Macaulay2/e/coefficient-rings.md) | `ZZ`, `QQ`, `ZZ/p`, `GF(p,n)`, `RR`, `RRi`, `CC`, `CCi`, `frac R`, custom rings → 11 `ARing*` backends |
+| [`polynomial-rings.md`](M2/Macaulay2/e/polynomial-rings.md) | `R[x,…]`, `R[x,…]/I`, `frac R`, `SkewCommutative`, `WeylAlgebra`, custom NC, `freeAlgebra`, `localRing`, `schurRing` → engine ring classes |
+| [`monoids-and-monomials.md`](M2/Macaulay2/e/monoids-and-monomials.md) | `Lex`/`GLex`/`GRevLex`/`Weights`/`Eliminate`/`GroupLex`/`Position`/block-syntax → engine `MO_*` constants + monomial encodings (sparse / dense / packed / FastAllocator bitmask) |
+| [`matrices.md`](M2/Macaulay2/e/matrices.md) | `matrix`, `mutableMatrix`, `det`, `rank`, `inverse`, LU variants, `basis`, `symmetricPower` → dense/sparse + FFPACK/FLINT/templated backends, plus the runtime dispatch diagram |
+| [`free-modules.md`](M2/Macaulay2/e/free-modules.md) | `R^n`, `R^{-d_1, …}`, `F ++ G`, `F ** G`, `dual`, Schreyer-ordered → `FreeModule` constructor variants, plus `FreeModule` vs `Module` contract |
+| [`groebner-bases.md`](M2/Macaulay2/e/groebner-bases.md) | `gb I`, all `Algorithm => …` / `Strategy => …` / `Stop => …` / `ChangeMatrix => …` / `forceGB` → 11 engine GB algorithms (default / homog2 / sugarless / toric / walk / F4 / NewF4 / mathicgb / BIBasis / NCGroebner / forced), plus a 5-step "when `gb` hangs" debug checklist |
+| [`ring-elements-and-maps.md`](M2/Macaulay2/e/ring-elements-and-maps.md) | `a + b`, `a * b`, `a^n`, `1_R`, `0_R`, `1//a`, `promote`/`lift`, `degree`, `f a`, `map(...)`, `f * g`, `kernel f`, `coefficientRing` → `Ring::*` virtuals with the full `ring_elem` ↔ `ElementType` dispatch path |
+
+If you ever wonder "this M2 expression — where in the engine does it
+actually run?", start at the appropriate area doc's mapping table.
+
 ### Single-file deep dives
 
 Dedicated walkthroughs for especially central engine classes
