@@ -7,28 +7,35 @@ document {
      PARA{},
      "See ", TO "Tutorial: Modules in Macaulay2", " for an overview tutorial on modules.",
      PARA{},
+     "Common module tasks usually start with one of the following pages or commands.",
+     UL {
+	  {"To create free modules, submodules, quotients, and subquotients, see ", TO "free modules", ", ", TO module, ", ", TO "submodules and quotients", ", and ", TO "subquotient modules", "."},
+	  {"To move between matrices and modules, use ", TO "matrices to and from modules", ", ", TO kernel, ", ", TO image, ", ", TO cokernel, ", ", TO generators, ", ", TO relations, ", and ", TO presentation, "."},
+	  {"To construct or inspect maps between modules, start with ", TO "module homomorphisms", ", ", TO "maps between modules", ", ", TO "constructing maps between modules", ", ", TO source, ", ", TO target, ", and ", TO isWellDefined, "."},
+	  {"To compute syzygies, resolutions, and graded invariants, see ", TO "computing syzygies", ", ", TO syz, ", ", TO "OldChainComplexes :: resolution", ", ", TO betti, ", and ", TO "Hilbert functions and free resolutions", "."}
+	  },
+     PARA{},
      "For additional common operations and a comprehensive list of all routines
      in Macaulay2 which return or use modules, see ", TO Module, ".",
      Subnodes => {
 	TO Module,
 	TO module,
 	TO isModule,
-	  "construction of modules",
+	  "creating modules",
 	  TO "free modules",
-	  TO "matrices to and from modules",
 	  TO "making modules from matrices",
 	  TO "submodules and quotients",
 	  TO "subquotient modules",
 
-	  "properties of modules",
+	  "matrices, kernels, images, and presentations",
+	  TO "matrices to and from modules",
+	  TO "kernel, cokernel and image of a map of modules",
 	  TO "manipulating modules",
-	  TO "computing syzygies",
 	  TO "extracting elements",
 	  TO "minimal presentations and generators",
 	  TO "equality and containment of modules",
 
-	  "homomorphisms (maps) between modules",
-	  -- TODO: combine these
+	  "maps between modules",
 	  TO "module homomorphisms",
 	  TO "maps between modules",
 	  TO "information about a map of modules",
@@ -43,7 +50,8 @@ document {
 	  -- Mike wanted this: TO "annihilators and submodule quotients",
 	  TO "Saturation :: module quotients, saturation, and annihilator",
 
-	  "graded modules",
+	  "syzygies, resolutions, and graded invariants",
+	  TO "computing syzygies",
 	  TO gradedModule,
 	  TO "Hilbert functions and free resolutions",
 	  -- Mike wanted this: TO "degrees of elements and free modules",
@@ -382,6 +390,11 @@ document {
 
 document {
      Key => "module homomorphisms",
+     "Start here when you have two modules and want to describe a homomorphism
+     between them.  The basic command is ", TO map, "; after construction use
+     ", TO source, ", ", TO target, ", ", TO matrix, ", and ", TO isWellDefined,
+     " to inspect the result.",
+     PARA{},
      "A homomorphism ", TT "f : M --> N", " is represented as a matrix
      from the generators of M to the generators of N.",
      EXAMPLE {
@@ -471,21 +484,16 @@ document {
 document {
      -- old??
      Key => "constructing maps between modules",
-	"Let's start with a free module.",
-	EXAMPLE {
-		"R = ZZ/5[x,y,z];",
-		"F = R^3"
-		},
-	"A list of indices can be used to produce homomorphisms corresponding to the corresponding basis vectors.",
-	EXAMPLE {
-		"F_{0,1,2}",
-		"F_{0,1}",
-		"F_{1,2}"
-		},
-	"Matrices are viewed as linear transformations.",
-	EXAMPLE {
-		"f = matrix{{x,y,z}}"
-		},
+     "There are three common ways to construct maps between modules.  For maps
+     specified by images of generators, use ", TO "module homomorphisms", " and
+     the command ", TO map, ".  For projection and inclusion maps coming from
+     selected basis elements, see ", TO "maps between modules", ".  For natural
+     maps induced by inclusions, quotients, kernels, images, or cokernels, use
+     ", TO inducedMap, ".",
+     PARA{},
+     "Matrices are viewed as linear transformations, but the target and source
+     matter.  Use ", TO source, ", ", TO target, ", and ", TO isWellDefined,
+     " when checking that a matrix really defines the module map you intend.",
 --     "The standard way to define a map from an R-module M to an 
 --     R-module N is to give a matrix whose columns are the image vectors
 --     of the generators of M.",
@@ -750,12 +758,29 @@ document {
      "usual information: source, target, ring.",
      }
 
--- no links to this node
--* -- Mike wanted this: 
 document {
      Key => "kernel, cokernel and image of a map of modules",
+     "For a map of modules, the most common associated modules are its ",
+     TO kernel, ", ", TO image, ", and ", TO cokernel, ".  These commands
+     measure, respectively, the relations killed by the map, the submodule
+     reached by the map, and the quotient of the target by that image.",
+     PARA{},
+     "Use ", TO source, " and ", TO target, " to check the direction of the
+     map before interpreting these modules.  The predicates ", TO isInjective,
+     " and ", TO isSurjective, " test whether the kernel or cokernel is zero,
+     and ", TO isWellDefined, " checks that the proposed matrix actually gives
+     a well-defined map between the requested modules.",
+     SeeAlso => {
+	  (kernel, Matrix),
+	  (image, Matrix),
+	  (cokernel, Matrix),
+	  source,
+	  target,
+	  isInjective,
+	  isSurjective,
+	  isWellDefined
+	  }
      }
-*-
 
 -* -- Mike wanted this: 
 
@@ -867,9 +892,11 @@ document {
 
 document {
     Key => "maps between modules",			    -- map
-    "Maps between free modules are usually specified as matrices, as
-    described in the section on ", TO "matrices", ".  In this section 
-    we cover a few other techniques.",
+    "Use this page as a command index for maps between modules.  Maps between
+    free modules are usually specified as matrices, as described in the section
+    on ", TO "matrices", ".  For maps between submodules, quotients, and
+    subquotients, start with ", TO "module homomorphisms", " or ", TO inducedMap,
+    ".",
     PARA{},
     "Let's set up a ring, a matrix, and a free module.",
     EXAMPLE {
@@ -897,8 +924,9 @@ document {
     Key => "computing syzygies",
     "A syzygy among the columns of a matrix is, by definition, an
     element of the kernel of the corresponding map between free modules,
-    and the easiest way to compute the syzygies applying the 
-    function ", TO "kernel", ".",
+    and the easiest way to compute the syzygies is often to apply the
+    function ", TO "kernel", ".  Use ", TO "syz", " when you want the
+    syzygy command directly or need its computation options.",
     EXAMPLE {
 	"R = QQ[x..z];",
 	"f = vars R",

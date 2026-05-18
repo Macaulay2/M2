@@ -90,6 +90,18 @@ document {
 document {
      Key => "substitution and maps between rings",
      HEADER2 "An overview",
+     "Use this page when you need to move objects between rings, substitute
+     values for variables, construct a ring map, or compute implicit equations
+     from a parametrization.",
+     PARA{},
+     "Common ring-map tasks are routed as follows.",
+     UL {
+	  {"To substitute values or move an object to a related ring, start with ", TO substitute, ", ", TO "substituting values for variables", ", and ", TO "working with multiple rings", "."},
+	  {"To define a map between rings, use ", TO map, " and then inspect it with ", TO source, ", ", TO target, ", and ", TT ".matrix", "."},
+	  {"To apply or compose maps, see ", TO "evaluation and composition of ring maps", ", ", TO (symbol SPACE, RingMap, RingElement), ", and ", TO (symbol *, RingMap, RingMap), "."},
+	  {"To find equations, images, or inverse images, use ", TO "kernel and coimage of a ring map", ", ", TO (kernel, RingMap), ", ", TO coimage, ", ", TO (preimage, RingMap, Ideal), ", ", TO graphIdeal, ", and ", TO graphRing, "."}
+	  },
+     PARA{},
      Subnodes => {
 	  TO substitute,
 	  TO "substituting values for variables",
@@ -278,6 +290,10 @@ document {
 
 document {
      Key => "basic construction, source and target of a ring map",
+     "Use this page when you know the images of the variables in a source
+     ring and want to build the corresponding map.  In Macaulay2 the target
+     ring is given first, the source ring second, and the images of the source
+     variables third.",
      
 	  SUBSECTION "constructing a ring map", 
 	       "Use the function ", TO "map", " to construct a map 
@@ -330,6 +346,9 @@ document {
 
 document {
      Key => "evaluation and composition of ring maps",
+     "After a ring map is constructed, apply it to elements, ideals, matrices,
+     vectors, and some modules using function notation.  Compose two ring maps
+     with ", TO (symbol*,RingMap,RingMap), ".",
      
 	  SUBSECTION "evaluating ring maps",
      	       "Once a ring map ", TT "F", " is defined, the image of an 
@@ -360,10 +379,14 @@ document {
 
 document {
      Key => "kernel and coimage of a ring map",
-     "The kernel and coimage of a ring map can be computed
-     using ", TO "coimage", " and ", TO2(kernel, "ker"), " .  The output
-     of ", TT "ker", " is an ideal and the output of ", TT "coimage", " is a
-     ring or quotient ring.",
+     "Use this page when a map is described parametrically and you want the
+     equations it satisfies.  The kernel of a ring map is an ideal in the
+     source; it is often the implicit ideal of the parametrized image.  The
+     coimage is the quotient of the source by that kernel.",
+     PARA{},
+     "The kernel and coimage of a ring map can be computed using ", TO "coimage",
+     " and ", TO2(kernel, "ker"), ".  The output of ", TT "ker", " is an ideal
+     and the output of ", TT "coimage", " is a ring or quotient ring.",
      EXAMPLE {
 	  "R = QQ[x,y,w]; U = QQ[s,t]/ideal(s^4+t^4);",
 	  "H = map(U,R,matrix{{s^2,s*t,t^2}})",
@@ -372,6 +395,15 @@ document {
 	  }
      -- if module and ring map are homogeneous, and Hilbert F is known,
      -- this is used in computing the kernel (or coimage).
+     ,
+     SeeAlso => {
+	  (kernel, RingMap),
+	  coimage,
+	  (preimage, RingMap, Ideal),
+	  graphIdeal,
+	  graphRing,
+	  "elimination of variables"
+	  }
      }
 undocumented {
      (symbol SPACE, RingMap, Number)
