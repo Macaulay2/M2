@@ -67,6 +67,7 @@ M2 session has them without `needsPackage`.
 | Operation | Package | Auto? |
 |---|---|---|
 | Homotopy continuation, witness sets, numerical irreducible decomposition | [`NumericalAlgebraicGeometry`](M2/Macaulay2/packages/file-NumericalAlgebraicGeometry.md) | — |
+| Bertini numerical-solver interface (backend of `Software => BERTINI`) | [`Bertini`](M2/Macaulay2/packages/file-Bertini.md) | — |
 | Lattice basis reduction (used by NAG and resolution paths) | [`LLLBases`](M2/Macaulay2/packages/file-LLLBases.md) | ✓ |
 
 ### D-modules and characteristic-p singularities
@@ -74,7 +75,8 @@ M2 session has them without `needsPackage`.
 | Operation | Package | Auto? |
 |---|---|---|
 | Weyl algebra infrastructure: construction, weight-order GB, Fourier, Stafford-Smith make-cyclic | [`WeylAlgebras`](M2/Macaulay2/packages/file-WeylAlgebras.md) | — |
-| Bernstein-Sato polynomials, multiplier ideals, D-module operations (char 0; built on WeylAlgebras) | [`BernsteinSato`](M2/Macaulay2/packages/file-BernsteinSato.md) | — |
+| Holonomic systems: GKZ hypergeometric systems, canonical-series solutions, differential-operator rings | [`HolonomicSystems`](M2/Macaulay2/packages/file-HolonomicSystems.md) | — |
+| Bernstein-Sato polynomials, multiplier ideals, D-module operations (char 0; built on WeylAlgebras+HolonomicSystems) | [`BernsteinSato`](M2/Macaulay2/packages/file-BernsteinSato.md) | — |
 | F-pure threshold, F-jumping exponents, Frobenius `nu` (char `p`) | [`FrobeniusThresholds`](M2/Macaulay2/packages/file-FrobeniusThresholds.md) | — |
 
 ### Algebraic statistics

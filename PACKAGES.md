@@ -416,10 +416,12 @@ The heavily-used non-auto-loaded packages with dedicated coverage:
 | `Posets` | JSAG-certified partially ordered sets: 15 named families (`booleanLattice`, `divisorPoset`, `dominanceLattice`, `lcmLattice I`, …), Möbius function, Hibi ideal, order complex, lattice/Cohen-Macaulay/shellability predicates | [`file-Posets.md`](M2/Macaulay2/packages/file-Posets.md) |
 | `GraphicalModels` | algebraic statistics: `markovRing`/`gaussianRing`, `discreteVanishingIdeal`/`gaussianVanishingIdeal`, `conditionalIndependenceIdeal`, `trekIdeal`/`trekSeparation`, global/local/pair Markov properties | [`file-GraphicalModels.md`](M2/Macaulay2/packages/file-GraphicalModels.md) |
 | `WeylAlgebras` | D-module infrastructure: `makeWeylAlgebra R`, `gbw(I, w)`, `inw(I, w)`, `Ddim M`, `isHolonomic M`, `Fourier`/`FourierInverse`/`Dtransposition`, `makeCyclic M`, `factorWA f` | [`file-WeylAlgebras.md`](M2/Macaulay2/packages/file-WeylAlgebras.md) |
+| `HolonomicSystems` | Holonomic D-module algorithms: GKZ hypergeometric systems (`gkz(A, β)`, `AppellF1`), canonical-series (`cssExpts`, `indicialIdeal`, `solveFrobeniusIdeal`, `truncatedCanonicalSeries`), differential-operator rings (`diffOps`); middle layer between `WeylAlgebras` and `BernsteinSato` | [`file-HolonomicSystems.md`](M2/Macaulay2/packages/file-HolonomicSystems.md) |
+| `Bertini` | Interface to the external Bertini numerical solver: `bertiniZeroDimSolve`, `bertiniPosDimSolve`, `bertiniParameterHomotopy`, `bertiniTrackHomotopy`, `bertiniSample`; backend of `Software => BERTINI` in `NumericalAlgebraicGeometry` | [`file-Bertini.md`](M2/Macaulay2/packages/file-Bertini.md) |
 
 Plus the **3 foundational structural packages** documented at the top of this doc (`Macaulay2Doc`, `Style`, `EngineTests`) and the **conventions doc** ([`file-package-conventions.md`](M2/Macaulay2/packages/file-package-conventions.md)) covering the patterns every package follows.
 
-**Coverage:** all 17 auto-loaded packages + 14 most-used non-auto-loaded + 3 structural + 1 conventions = **35 dedicated package deep dives**. See the [packages overview](M2/Macaulay2/packages/README.md) and [`SYMBOLS.md`](SYMBOLS.md) for symbol-level navigation across the ~400-package ecosystem.
+**Coverage:** all 17 auto-loaded packages + 16 most-used non-auto-loaded + 3 structural + 1 conventions = **37 dedicated package deep dives**. See the [packages overview](M2/Macaulay2/packages/README.md) and [`SYMBOLS.md`](SYMBOLS.md) for symbol-level navigation across the ~400-package ecosystem.
 
 ## CMake-side package wiring
 

@@ -594,6 +594,8 @@ matters more than the engine algorithm:
 | Partially ordered sets (combinatorial / Möbius / Hibi-ring) | [`Posets`](M2/Macaulay2/packages/file-Posets.md) — JSAG-certified; 15 named families, Möbius function, Hibi ideal, order complex, Cohen-Macaulay / shellability predicates |
 | Algebraic statistics: vanishing ideals of graphical / Markov / Gaussian models | [`GraphicalModels`](M2/Macaulay2/packages/file-GraphicalModels.md) — `markovRing` / `gaussianRing`, `discreteVanishingIdeal` / `gaussianVanishingIdeal`, `trekIdeal`/`trekSeparation`, three Markov properties |
 | D-module infrastructure: Weyl algebra construction, GB with weight orders, Fourier transform, Stafford-Smith make-cyclic, factoring | [`WeylAlgebras`](M2/Macaulay2/packages/file-WeylAlgebras.md) — `makeWeylAlgebra`, `gbw`, `Ddim`, `isHolonomic`, `Fourier`/`FourierInverse`/`Dtransposition`, `makeCyclic M`, `factorWA f` |
+| Holonomic systems: GKZ hypergeometric systems, canonical-series solutions, differential-operator rings | [`HolonomicSystems`](M2/Macaulay2/packages/file-HolonomicSystems.md) — `gkz(A, β)`, `AppellF1`, `cssExpts`, `indicialIdeal`, `solveFrobeniusIdeal`, `diffOps` |
+| Bertini numerical solver interface (zero-dim / pos-dim / parameter homotopies, adaptive precision) | [`Bertini`](M2/Macaulay2/packages/file-Bertini.md) — `bertiniZeroDimSolve`, `bertiniPosDimSolve`, `bertiniParameterHomotopy`, `bertiniTrackHomotopy`; backend for `Software => BERTINI` in NAG |
 
 For symbol-level lookups (given an M2 function or engine class name, find its deep dive), see [`SYMBOLS.md`](SYMBOLS.md).
 
