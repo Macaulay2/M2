@@ -408,10 +408,11 @@ The heavily-used non-auto-loaded packages with dedicated coverage:
 | `Schubert2` | `AbstractVariety`, `flagBundle`, `schubertCycle`, `chern`, `blowup` — intersection theory for varieties without equations | [`file-Schubert2.md`](M2/Macaulay2/packages/file-Schubert2.md) |
 | `NumericalAlgebraicGeometry` | `solveSystem`, `track`, witness sets, irreducible decomposition; multi-backend (M2engine / BERTINI / PHCPACK / HOM4PS2) | [`file-NumericalAlgebraicGeometry.md`](M2/Macaulay2/packages/file-NumericalAlgebraicGeometry.md) |
 | `SimplicialComplexes` | `simplicialComplex`, `link`, `star`, `barycentricSubdivision`, monomial-ideal resolutions, named topological examples | [`file-SimplicialComplexes.md`](M2/Macaulay2/packages/file-SimplicialComplexes.md) |
+| `LocalRings` | `localRing(S, P)`, `liftUp`, `hilbertSamuelFunction`, `localResolution`, `localsyz`, `localMingens`, `localPrune` — singularity analysis via lift-and-descend | [`file-LocalRings.md`](M2/Macaulay2/packages/file-LocalRings.md) |
 
 Plus the **3 foundational structural packages** documented at the top of this doc (`Macaulay2Doc`, `Style`, `EngineTests`) and the **conventions doc** ([`file-package-conventions.md`](M2/Macaulay2/packages/file-package-conventions.md)) covering the patterns every package follows.
 
-**Coverage:** all 17 auto-loaded packages + 6 most-used non-auto-loaded + 3 structural + 1 conventions = **27 dedicated package deep dives**. See the [packages overview](M2/Macaulay2/packages/README.md) and [`SYMBOLS.md`](SYMBOLS.md) for symbol-level navigation across the ~400-package ecosystem.
+**Coverage:** all 17 auto-loaded packages + 7 most-used non-auto-loaded + 3 structural + 1 conventions = **28 dedicated package deep dives**. See the [packages overview](M2/Macaulay2/packages/README.md) and [`SYMBOLS.md`](SYMBOLS.md) for symbol-level navigation across the ~400-package ecosystem.
 
 ## CMake-side package wiring
 

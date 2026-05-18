@@ -586,6 +586,7 @@ matters more than the engine algorithm:
 | Normal toric varieties, toric divisors | [`NormalToricVarieties`](M2/Macaulay2/packages/file-NormalToricVarieties.md) — the 5-divisor-group diagram + smooth-Fano database through dim 6 |
 | Schubert calculus, intersection theory | [`Schubert2`](M2/Macaulay2/packages/file-Schubert2.md) — "abstract varieties" by their Chow rings; M2 successor to the Maple Schubert package |
 | Simplicial complexes, Stanley-Reisner | [`SimplicialComplexes`](M2/Macaulay2/packages/file-SimplicialComplexes.md) — JSAG-certified; named examples (Klein bottle, Poincaré sphere, …) + monomial-ideal resolutions (Taylor, Scarf, Buchberger, Lyubeznik) |
+| Local-ring computations (`R_P`, singularity analysis) | [`LocalRings`](M2/Macaulay2/packages/file-LocalRings.md) — `localRing`, `liftUp`, `hilbertSamuelFunction`, `localResolution`; lift-and-descend pattern |
 
 For symbol-level lookups (given an M2 function or engine class name, find its deep dive), see [`SYMBOLS.md`](SYMBOLS.md).
 

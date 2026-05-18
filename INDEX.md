@@ -3,7 +3,8 @@
 Flat alphabetical catalogue of **every documentation file** in
 the M2 source tree. Counts: 19 top-level meta docs + 70
 per-directory READMEs + 13 architecture references + 10 engine
-area docs + 508 per-file deep dives = **~620 total docs**.
+area docs + 509 per-file deep dives = **621 listed; 628 total
+markdown files including consolidated/auxiliary docs**.
 
 This file is the **"I remember a doc about X but not where it
 lives"** lookup. The [`README.md`](README.md) is the
@@ -21,7 +22,7 @@ hierarchical view; this is the flat-by-name view.
 - **Per-file deep dives** are at `<dir>/file-<basename>.md`
   alongside their source files.
 
-## Top-level meta docs (16)
+## Top-level meta docs (19)
 
 | Doc | Subject |
 |---|---|
@@ -140,7 +141,7 @@ M2/submodules/README.md
 Each describes the contents of its directory and links into the
 per-file deep dives.
 
-## Per-file deep dives (483)
+## Per-file deep dives (509)
 
 Per-file docs are at `<dir>/file-<basename>.md`. To find one,
 follow the chain:
@@ -153,7 +154,7 @@ follow the chain:
    `dmat-lu-*.hpp`), look for the family doc instead:
    `file-dmat-lu-variants.md`.
 
-The full enumeration is impractical to list here (483 entries).
+The full enumeration is impractical to list here (508 entries).
 Each subdirectory's `README.md` indexes its own per-file docs.
 
 ### Per-directory per-file index pointers

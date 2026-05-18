@@ -196,6 +196,7 @@ Operations from the 27 packages with dedicated deep dives. **Auto-loaded** packa
 | `solveSystem F`, `track(start, target, ...)`, `refine(F, sols)` | `NumericalAlgebraicGeometry` | [`packages/file-NumericalAlgebraicGeometry.md`](M2/Macaulay2/packages/file-NumericalAlgebraicGeometry.md) |
 | `numericalIrreducibleDecomposition I`, `parameterHomotopy(F, ...)` | `NumericalAlgebraicGeometry` | same |
 | `simplicialComplex {…}`, `link(D, σ)`, `star(D, σ)`, `barycentricSubdivision D` | `SimplicialComplexes` | [`packages/file-SimplicialComplexes.md`](M2/Macaulay2/packages/file-SimplicialComplexes.md) |
+| `localRing(S, P)`, `liftUp M`, `hilbertSamuelFunction(R, M, n)`, `localResolution`, `localsyz`, `localMingens`, `localPrune`, `setMaxIdeal` (legacy) | `LocalRings` | [`packages/file-LocalRings.md`](M2/Macaulay2/packages/file-LocalRings.md) |
 | `taylorResolution I`, `scarfSimplicialComplex I`, `buchbergerSimplicialComplex I`, `lyubeznikSimplicialComplex I` | `SimplicialComplexes` | same |
 | `kleinBottleComplex`, `dunceHatComplex`, `realProjectiveSpaceComplex n`, `poincareSphereComplex`, `smallManifold(d, n, k)` | `SimplicialComplexes` | same |
 
