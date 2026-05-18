@@ -173,7 +173,7 @@ So `globalBFunction` is the central computational primitive that everything else
 ## See also
 
 - [`file-package-conventions.md`](file-package-conventions.md) — package conventions
-- [`WeylAlgebras.m2`](WeylAlgebras.m2) — re-exported by this package; defines the Weyl-algebra type
+- [`file-WeylAlgebras.md`](file-WeylAlgebras.md) — re-exported by this package; defines the Weyl-algebra type, weight-order GB, make-cyclic, and the auxiliary `IntRing` / `ThetaRing` / `HomWeylAlgebra` constructions
 - [`HolonomicSystems.m2`](HolonomicSystems.m2) — re-exported; holonomic D-modules
 - [`file-Complexes.md`](file-Complexes.md) — re-exported; D-module resolutions return `Complex` objects
 - [`file-PrimaryDecomposition.md`](file-PrimaryDecomposition.md) — imported (auto-loaded; used internally)

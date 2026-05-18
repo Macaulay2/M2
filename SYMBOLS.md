@@ -215,6 +215,9 @@ Operations from the 27 packages with dedicated deep dives. **Auto-loaded** packa
 | `markovRing(d_1, …, d_n)`, `gaussianRing G`, `covarianceMatrix R`, `bidirectedEdgesMatrix G`, `directedEdgesMatrix G` | `GraphicalModels` | [`packages/file-GraphicalModels.md`](M2/Macaulay2/packages/file-GraphicalModels.md) |
 | `discreteVanishingIdeal(G, R)`, `gaussianVanishingIdeal(G, R)`, `conditionalIndependenceIdeal`, `gaussianParametrization`, `markovMatrices`, `gaussianMatrices` | `GraphicalModels` | same |
 | `globalMarkov G`, `localMarkov G`, `pairMarkov G`, `trekIdeal(R, G)`, `trekSeparation(G, A, B)`, `identifyParameters G`, `hiddenMap`, `marginMap` | `GraphicalModels` | same |
+| `makeWeylAlgebra R`, `makeWA R`, `Ddim M`, `holonomicRank M`, `isHolonomic M`, `dpairInds W`, `dpairVars W` | `WeylAlgebras` | [`packages/file-WeylAlgebras.md`](M2/Macaulay2/packages/file-WeylAlgebras.md) |
+| `gbw(I, w)`, `inw(I, w)`, `Dprune f`, `Fourier`, `FourierInverse`, `Dtransposition`, `makeCyclic M`, `factorWA f` | `WeylAlgebras` | same |
+| `createIntRing W`, `IntRing`, `WtoIR`, `IRtoW`, `createThetaRing`, `ThetaRing`, `createHomWeylAlgebra`, `HomWeylAlgebra` | `WeylAlgebras` | same |
 | `taylorResolution I`, `scarfSimplicialComplex I`, `buchbergerSimplicialComplex I`, `lyubeznikSimplicialComplex I` | `SimplicialComplexes` | same |
 | `kleinBottleComplex`, `dunceHatComplex`, `realProjectiveSpaceComplex n`, `poincareSphereComplex`, `smallManifold(d, n, k)` | `SimplicialComplexes` | same |
 

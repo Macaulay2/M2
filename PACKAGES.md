@@ -415,10 +415,11 @@ The heavily-used non-auto-loaded packages with dedicated coverage:
 | `FrobeniusThresholds` | JSAG-certified char-p commutative algebra: `fpt f` (F-pure threshold), `isFJumpingExponent`, `frobeniusNu`, Frobenius powers / roots; the char-p analogue of `BernsteinSato` | [`file-FrobeniusThresholds.md`](M2/Macaulay2/packages/file-FrobeniusThresholds.md) |
 | `Posets` | JSAG-certified partially ordered sets: 15 named families (`booleanLattice`, `divisorPoset`, `dominanceLattice`, `lcmLattice I`, …), Möbius function, Hibi ideal, order complex, lattice/Cohen-Macaulay/shellability predicates | [`file-Posets.md`](M2/Macaulay2/packages/file-Posets.md) |
 | `GraphicalModels` | algebraic statistics: `markovRing`/`gaussianRing`, `discreteVanishingIdeal`/`gaussianVanishingIdeal`, `conditionalIndependenceIdeal`, `trekIdeal`/`trekSeparation`, global/local/pair Markov properties | [`file-GraphicalModels.md`](M2/Macaulay2/packages/file-GraphicalModels.md) |
+| `WeylAlgebras` | D-module infrastructure: `makeWeylAlgebra R`, `gbw(I, w)`, `inw(I, w)`, `Ddim M`, `isHolonomic M`, `Fourier`/`FourierInverse`/`Dtransposition`, `makeCyclic M`, `factorWA f` | [`file-WeylAlgebras.md`](M2/Macaulay2/packages/file-WeylAlgebras.md) |
 
 Plus the **3 foundational structural packages** documented at the top of this doc (`Macaulay2Doc`, `Style`, `EngineTests`) and the **conventions doc** ([`file-package-conventions.md`](M2/Macaulay2/packages/file-package-conventions.md)) covering the patterns every package follows.
 
-**Coverage:** all 17 auto-loaded packages + 13 most-used non-auto-loaded + 3 structural + 1 conventions = **34 dedicated package deep dives**. See the [packages overview](M2/Macaulay2/packages/README.md) and [`SYMBOLS.md`](SYMBOLS.md) for symbol-level navigation across the ~400-package ecosystem.
+**Coverage:** all 17 auto-loaded packages + 14 most-used non-auto-loaded + 3 structural + 1 conventions = **35 dedicated package deep dives**. See the [packages overview](M2/Macaulay2/packages/README.md) and [`SYMBOLS.md`](SYMBOLS.md) for symbol-level navigation across the ~400-package ecosystem.
 
 ## CMake-side package wiring
 

@@ -593,6 +593,7 @@ matters more than the engine algorithm:
 | Characteristic-p commutative algebra: F-pure threshold, F-jumping exponents, Frobenius `nu` invariants | [`FrobeniusThresholds`](M2/Macaulay2/packages/file-FrobeniusThresholds.md) — JSAG-certified; `fpt f`, `isFPT`, `compareFPT`, `frobeniusNu`, Frobenius powers/roots; char-p counterpart of `BernsteinSato` |
 | Partially ordered sets (combinatorial / Möbius / Hibi-ring) | [`Posets`](M2/Macaulay2/packages/file-Posets.md) — JSAG-certified; 15 named families, Möbius function, Hibi ideal, order complex, Cohen-Macaulay / shellability predicates |
 | Algebraic statistics: vanishing ideals of graphical / Markov / Gaussian models | [`GraphicalModels`](M2/Macaulay2/packages/file-GraphicalModels.md) — `markovRing` / `gaussianRing`, `discreteVanishingIdeal` / `gaussianVanishingIdeal`, `trekIdeal`/`trekSeparation`, three Markov properties |
+| D-module infrastructure: Weyl algebra construction, GB with weight orders, Fourier transform, Stafford-Smith make-cyclic, factoring | [`WeylAlgebras`](M2/Macaulay2/packages/file-WeylAlgebras.md) — `makeWeylAlgebra`, `gbw`, `Ddim`, `isHolonomic`, `Fourier`/`FourierInverse`/`Dtransposition`, `makeCyclic M`, `factorWA f` |
 
 For symbol-level lookups (given an M2 function or engine class name, find its deep dive), see [`SYMBOLS.md`](SYMBOLS.md).
 

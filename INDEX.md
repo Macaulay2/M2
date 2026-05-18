@@ -1,9 +1,9 @@
 # Documentation index
 
 Flat alphabetical catalogue of **every documentation file** in
-the M2 source tree. Counts: 19 top-level meta docs + 70
+the M2 source tree. Counts: 20 top-level meta docs + 70
 per-directory READMEs + 13 architecture references + 10 engine
-area docs + 515 per-file deep dives = **627 listed; 634 total
+area docs + 516 per-file deep dives = **629 listed; 636 total
 markdown files including consolidated/auxiliary docs**.
 
 This file is the **"I remember a doc about X but not where it
@@ -22,7 +22,7 @@ hierarchical view; this is the flat-by-name view.
 - **Per-file deep dives** are at `<dir>/file-<basename>.md`
   alongside their source files.
 
-## Top-level meta docs (19)
+## Top-level meta docs (20)
 
 | Doc | Subject |
 |---|---|
@@ -38,6 +38,7 @@ hierarchical view; this is the flat-by-name view.
 | [`MEMORY.md`](MEMORY.md) | Five-layer memory model (Boehm GC → pools → externals → overflow) |
 | [`PACKAGES.md`](PACKAGES.md) | Package ecosystem reference |
 | [`README.md`](README.md) | Repository TOC and architectural overview |
+| [`RESEARCH-DOMAINS.md`](RESEARCH-DOMAINS.md) | The 34 documented packages organised by research domain |
 | [`RING-ZOO.md`](RING-ZOO.md) | Catalogue of every ring M2 supports |
 | [`SYMBOLS.md`](SYMBOLS.md) | Symbol-to-doc reverse index: engine class name or M2 function name → source file + deep-dive doc |
 | [`STARTUP.md`](STARTUP.md) | End-to-end boot path (`main()` → ready prompt) |
@@ -141,7 +142,7 @@ M2/submodules/README.md
 Each describes the contents of its directory and links into the
 per-file deep dives.
 
-## Per-file deep dives (515)
+## Per-file deep dives (516)
 
 Per-file docs are at `<dir>/file-<basename>.md`. To find one,
 follow the chain:

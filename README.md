@@ -57,7 +57,7 @@ Four levels of documentation are reachable from this file:
    them; the lower half of this file mirrors the same entries into
    per-folder tables you can scan top-to-bottom.
 
-Plus **nineteen cross-cutting top-level meta docs** at the repo root:
+Plus **twenty cross-cutting top-level meta docs** at the repo root:
 
 | Doc | What it is | When to use |
 |---|---|---|
@@ -79,6 +79,7 @@ Plus **nineteen cross-cutting top-level meta docs** at the repo root:
 | [`INDEX.md`](INDEX.md) | Flat alphabetical catalogue of every doc file with one-line descriptions and concept-to-doc lookup hints | Looking up a doc by name when you don't remember its location; finding a doc by concept rather than by directory |
 | [`CHEATSHEET.md`](CHEATSHEET.md) | One-page quick-reference of common workflows: build, test, debug, find things, add things, file-naming conventions | Day-to-day commands you keep forgetting; pointer table back to the in-depth docs |
 | [`SYMBOLS.md`](SYMBOLS.md) | Symbol-to-doc reverse index: engine class name or M2 function name → source file + deep-dive doc | Looking up a doc starting from a class/function name you saw in code |
+| [`RESEARCH-DOMAINS.md`](RESEARCH-DOMAINS.md) | The 34 documented packages organised by research domain (commutative algebra / AG / toric / combinatorial / numerical AG / D-modules / char-p / algebraic statistics) | When you know your mathematical area but not which packages serve it |
 | [`CONTRIBUTING-DOCS.md`](CONTRIBUTING-DOCS.md) | Conventions the docs follow | When editing docs (file naming, README structure, deep-dive shape, link integrity audit) |
 
 Plus build-system instructions: see the project
@@ -130,6 +131,7 @@ Plus build-system instructions: see the project
 - **Computation engines: [`COMPUTATIONS.md`](COMPUTATIONS.md)** — sister catalogue of the algorithmic engines (GB: default/F4/gb-f4/mathicgb/NC/BIBasis/toric/walk/sugarless; resolution: Schreyer/res-a0/a1/a2/Eschreyer/NC; plus Hilbert, LLL, NAG, factoring, root finding, primary decomposition, polyhedral), strategy selection, comparison tables, when-to-use-which decision tree
 - **Flat alphabetical index: [`INDEX.md`](INDEX.md)** — every doc in the tree (top-level meta docs, architecture refs, per-area engine docs, per-directory READMEs, per-file deep dives) listed in one place, with a concept-to-doc lookup hints table and a "how to find a doc" flow chart for when you don't remember where something lives
 - **Day-to-day cheatsheet: [`CHEATSHEET.md`](CHEATSHEET.md)** — one-page command card: how to build / test / debug / find / add things, plus the file-naming conventions table and common slowdowns-and-fixes table
+- **Research-domain index: [`RESEARCH-DOMAINS.md`](RESEARCH-DOMAINS.md)** — the 34 documented packages organised by mathematical area: commutative algebra (9 packages), homological algebra (3), algebraic geometry (2), toric geometry (2), combinatorial commutative algebra (4), numerical algebraic geometry (2), D-modules and char-p (2), algebraic statistics (1), documentation/infrastructure (5), number-theoretic utilities + misc auto-loaded (4)
 - **Symbol-to-doc index: [`SYMBOLS.md`](SYMBOLS.md)** — given an engine class name (`FreeModule`, `Computation`, `ARingZZpFlint`, …) or an M2 function name (`gb`, `resolution`, `installPackage`, …), points at the source file and the deep-dive doc; covers the rings, modules, matrices, computations, memory, and NC-algebra hierarchies
 
 ### Finding a deep dive
@@ -305,16 +307,16 @@ they will cross-link to one another along these axes:
 
 ### Documentation status
 
-The documentation tree comprises **634 markdown files** across four
+The documentation tree comprises **636 markdown files** across four
 layers:
 
 | Layer | Count | Examples |
 |---|---|---|
-| Top-level meta docs | 19 | [`README.md`](README.md) · [`GLOSSARY.md`](GLOSSARY.md) · [`TOUR.md`](TOUR.md) · [`BUILD.md`](BUILD.md) · [`STARTUP.md`](STARTUP.md) · [`MEMORY.md`](MEMORY.md) · [`THREADING.md`](THREADING.md) · [`TESTING.md`](TESTING.md) · [`PACKAGES.md`](PACKAGES.md) · [`DEBUG.md`](DEBUG.md) · [`DOCUMENTATION-SYSTEM.md`](DOCUMENTATION-SYSTEM.md) · [`STYLE.md`](STYLE.md) · [`DEPENDENCIES.md`](DEPENDENCIES.md) · [`RING-ZOO.md`](RING-ZOO.md) · [`COMPUTATIONS.md`](COMPUTATIONS.md) · [`INDEX.md`](INDEX.md) · [`CHEATSHEET.md`](CHEATSHEET.md) · [`SYMBOLS.md`](SYMBOLS.md) · [`CONTRIBUTING-DOCS.md`](CONTRIBUTING-DOCS.md) |
+| Top-level meta docs | 20 | [`README.md`](README.md) · [`GLOSSARY.md`](GLOSSARY.md) · [`TOUR.md`](TOUR.md) · [`BUILD.md`](BUILD.md) · [`STARTUP.md`](STARTUP.md) · [`MEMORY.md`](MEMORY.md) · [`THREADING.md`](THREADING.md) · [`TESTING.md`](TESTING.md) · [`PACKAGES.md`](PACKAGES.md) · [`DEBUG.md`](DEBUG.md) · [`DOCUMENTATION-SYSTEM.md`](DOCUMENTATION-SYSTEM.md) · [`STYLE.md`](STYLE.md) · [`DEPENDENCIES.md`](DEPENDENCIES.md) · [`RING-ZOO.md`](RING-ZOO.md) · [`COMPUTATIONS.md`](COMPUTATIONS.md) · [`INDEX.md`](INDEX.md) · [`CHEATSHEET.md`](CHEATSHEET.md) · [`SYMBOLS.md`](SYMBOLS.md) · [`RESEARCH-DOMAINS.md`](RESEARCH-DOMAINS.md) · [`CONTRIBUTING-DOCS.md`](CONTRIBUTING-DOCS.md) |
 | Per-directory READMEs | 70 | one for every subdirectory under `M2/` |
 | Architecture references | 13 | 4 per-layer (`c/`, `d/`, `e/`, `m2/`) + 8 per-engine-subdir (`interface/`, `f4/`, `gb-f4/`, `schreyer-resolution/`, `NCAlgebras/`, `NCResolutions/`, `bibasis/`, `unit-tests/`) + 1 supervisor (`system/`) |
 | Per-area engine docs | ~10 | `coefficient-rings.md`, `polynomial-rings.md`, `monoids-and-monomials.md`, … |
-| Per-file deep dives | 515 | `file-<basename>.md` alongside each source file (some consolidated per family) |
+| Per-file deep dives | 516 | `file-<basename>.md` alongside each source file (some consolidated per family) |
 
 Every directory under `M2/` has both a `README.md` index and per-file
 deep-dive markdown files for every source file it contains. Some
@@ -1076,6 +1078,7 @@ Dedicated walkthroughs for especially central engine classes
 | [packages/file-FrobeniusThresholds.md](M2/Macaulay2/packages/file-FrobeniusThresholds.md) | `FrobeniusThresholds.m2` — JSAG-certified char-p commutative algebra: F-pure threshold `fpt f`, F-jumping exponents, Frobenius `nu` invariants |
 | [packages/file-Posets.md](M2/Macaulay2/packages/file-Posets.md) | `Posets.m2` — JSAG-certified partially ordered sets: 15 named families, Hibi ideal, order complex, Möbius function, lattice predicates (6 889-line single-file package) |
 | [packages/file-GraphicalModels.md](M2/Macaulay2/packages/file-GraphicalModels.md) | `GraphicalModels.m2` — algebraic statistics: vanishing ideals of discrete and Gaussian models, conditional-independence ideals, trek combinatorics, parameter identification |
+| [packages/file-WeylAlgebras.md](M2/Macaulay2/packages/file-WeylAlgebras.md) | `WeylAlgebras.m2` — D-module infrastructure: `makeWeylAlgebra`, `gbw`, `Ddim`, `isHolonomic`, Fourier, Stafford-Smith `makeCyclic` (foundation under `BernsteinSato`) |
 | [packages/file-Schubert2.md](M2/Macaulay2/packages/file-Schubert2.md) | `Schubert2.m2` — intersection theory for abstract varieties; Chern/Todd classes, `schubertCycle`, `blowup`, `flagBundle`, etc. (M2 successor to the classical Maple Schubert package) |
 | [packages/file-NumericalAlgebraicGeometry.md](M2/Macaulay2/packages/file-NumericalAlgebraicGeometry.md) | `NumericalAlgebraicGeometry.m2` — JSAG-certified numerical AG: homotopy continuation, witness sets, irreducible decomposition; M2engine + BERTINI + PHCPACK + HOM4PS2 backends |
 | [packages/file-SimplicialComplexes.md](M2/Macaulay2/packages/file-SimplicialComplexes.md) | `SimplicialComplexes.m2` — JSAG-certified abstract simplicial complexes; Stanley-Reisner, named topological examples, monomial-ideal resolutions (Taylor / Scarf / Buchberger / Lyubeznik) |
