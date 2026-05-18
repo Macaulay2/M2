@@ -357,9 +357,8 @@ endif()
 ## Compile the engine
 # TODO: enable INTERPROCEDURAL_OPTIMIZATION?
 
-# TODO: remove STATIC once M2-engine can be used independently, then we can
-# set -DBUILD_SHARED_LIBS=ON to generate a shared library
-add_library(M2-engine STATIC ${SOURCES} ${HEADERS} ${TAGS})
+# Set -DBUILD_SHARED_LIBS=ON to generate a shared library
+add_library(M2-engine ${SOURCES} ${HEADERS} ${TAGS})
 
 # TODO: Which headers should be included in the development build?
 set_target_properties(M2-engine PROPERTIES PUBLIC_HEADER "${HEADERS}")
