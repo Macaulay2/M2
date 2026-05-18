@@ -1591,7 +1591,6 @@ export handleError(c:Code,e:Expr):Expr := (
      	       	    	      	   lastCodePosition.filename = "";
 				   z.value)
 			      else if z.message == stepMessageWithArg || z.message == stepMessage then (
-				   printMessage(codePosition(c), "printing step message");
 				   setSteppingFlag();
      	       	    	      	   lastCodePosition.filename = "";
 				   stepCount = (
@@ -1626,7 +1625,6 @@ export evalraw(c:Code):Expr := (
      e := (
 	  -- at some point we should check !steppingFurther(c)
 	  if test(exceptionFlag) && !steppingFurther(c) then (    -- compare this code to the code in evalexcept() below
-		   printMessage(codePosition(c), "testtest");
 		   if steppingFlag then (
 		    clearSteppingFlag();
 		    buildErrorPacket(steppingMessage))
@@ -1867,9 +1865,6 @@ setupop(continueS,continueFun);
 export stepFun(a:Code):Expr := (
      e := if a == dummyCode then nullE else eval(a);
      when e is Error do e else (
-	  printMessage(codePosition(a), "printing code position step2");
-	  printMessage(codePosition(a), tostring(a));
-	  printMessage(codePosition(a), stepMessage);
 	  Expr(Error(dummyPosition,
 	       if a == dummyCode then stepMessage else stepMessageWithArg,
 	       e,false,dummyFrame))));
