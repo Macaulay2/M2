@@ -416,9 +416,8 @@ target_compile_options(M2-engine PRIVATE
 ###############################################################################
 ## Export the target
 
-# TODO: change ARCHIVE to LIBRARY once M2-engine can be used independently
 install(TARGETS M2-engine mathicgb mathic memtailor EXPORT Macaulay2
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   COMPONENT devel EXCLUDE_FROM_ALL
   PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Macaulay2
   COMPONENT devel EXCLUDE_FROM_ALL)
