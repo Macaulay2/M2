@@ -90,6 +90,8 @@ The full procedure lives in [`README`](README), but the short version:
 | `SimpleDoc.m2` — auto-loaded indentation-aware doc DSL (`doc ///…///` syntax used by virtually every package) | [`file-SimpleDoc.md`](file-SimpleDoc.md) |
 | `Varieties.m2` — auto-loaded `Variety` / `AffineVariety` / `ProjectiveVariety` / `CoherentSheaf` / `SheafMap`; `Spec`, `Proj`, `sheaf`, `tangentSheaf`, `canonicalBundle`, `OO`, `HH^i`, `hh` | [`file-Varieties.md`](file-Varieties.md) |
 | `IntegralClosure.m2` — auto-loaded `integralClosure` (ring/ideal), `conductor`, `icMap`, `icFractions`, `icFracP` (char-p variant), 6 strategies | [`file-IntegralClosure.md`](file-IntegralClosure.md) |
+| `ReesAlgebra.m2` — auto-loaded JSAG-certified Rees algebras: `reesIdeal`, `associatedGradedRing`, `specialFiber`, `analyticSpread`, `multiplicity`, `minimalReduction`, `distinguished` | [`file-ReesAlgebra.md`](file-ReesAlgebra.md) |
+| `LLLBases.m2` — auto-loaded `LLL`, `kernelLLL`, `hermite`, `gcdLLL`, `gramm`; dispatches across NTL / fpLLL / Cohen backends with bit-encoded strategy flags | [`file-LLLBases.md`](file-LLLBases.md) |
 
 The full ~400 per-package coverage would be repetitive — these deep-dives cover the structural patterns every package follows plus the foundational and frequently-used packages that ship.
 
