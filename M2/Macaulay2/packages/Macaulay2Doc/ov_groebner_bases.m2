@@ -5,6 +5,7 @@
 
 document {
      Key => "Gröbner bases",
+     Headline => "an overview of Gröbner basis computations",
      "A Gröbner basis is a specific generating set for an ideal or submodule, often
      used to compute other information, such as numerical invariants, operations such as
      intersections and ideal quotients, syzygies, etc.  In Macaulay2, Gröbner bases
@@ -117,6 +118,7 @@ document {
 
 document {
      Key => "normal forms",
+     Headline => "compute normal forms with Gröbner bases",
      TEX ///Let $R = k[x_1, ..., x_n]$ be a polynomial ring over a field k,
 	and let $I \subset{} R$ be an ideal. Let $\{g_1, ..., g_t\}$ be a Gröbner
 	basis for $I$. For any $f \in{} R$, there is a unique `remainder' $r \in{} R$ such
@@ -141,6 +143,7 @@ document {
 -- needsPackage "Elimination"
 document {
      Key => "elimination of variables",
+     Headline => "eliminate variables with Gröbner bases",
      TEX "Let's consider the problem of finding the polynomial relation
      of the three polynomials $x = s^3+st+1$, $y = t^3+3t^2+t$, and $z = st^3$.
      The first method we use is to compute a Gröbner basis using an elimination

@@ -11,20 +11,37 @@ Node
       IMG ("src" => replace("PKG", "Style", currentLayout#"package") | "9planets.gif", "alt" => "image of nine planets")
     Text
       Macaulay2 is an interpreted, dynamically typed programming language designed to
-      support research in commutative algebra, algebraic geometry and related fields.
-      All components of the language are open sourced, including over two hundred
-      contributed packages, and generously funded by the National Science Foundation.
+      support research in commutative algebra, algebraic geometry, and related fields.
+      This documentation includes getting-started guides, language and reference material,
+      tutorials, and package documentation for the packages distributed with Macaulay2.
+    Text
+      If you are new to Macaulay2, start with the setup notes and a first Macaulay2
+      session.  If you know the mathematics you want to do but not yet the command or
+      package name, browse the sections on practical guides, mathematical objects,
+      computations, and packages.
     Tree
       :Getting Started
 	> "setting up Macaulay2"
 	> "a first Macaulay2 session"
 	> "reading the documentation"
 	> "getting help or reporting bugs"
-	-- TODO: "contributing to Macaulay2"
-	-- Macaulay2 is an open source project, and we welcome programming contributions of all kinds.
-      :Reference Manual
+      :Practical Guides
         > "The Macaulay2 language"
-        > "packages provided with Macaulay2"
+        > @TO2("packages", "loading and using packages")@
+        > @TO2("packages provided with Macaulay2", "browsing packages by subject area")@
+        > "debugging"
+        > "the debugger"
+        > "error handling"
+      :Mathematical Tutorials
+	-- These tutorials begin with broader introductions and continue with
+	-- more specialized worked examples in algebra and geometry.
+	> "A first course in commutative algebra"
+	> "Tutorial: Modules in Macaulay2"
+	> "Tutorial: Elementary uses of Gröbner bases"
+	> "Tutorial: Divisors"
+	> "Tutorial: Canonical Embeddings of Plane Curves and Gonality"
+	> "Tutorial: Fano varieties"
+	> "Tutorial: Numerical algebraic geometry"
       :Mathematical Objects
         > "rings"
         > "ideals"
@@ -33,27 +50,19 @@ Node
         > @TO2(map, "morphisms")@
         > @TO2("Complexes :: Complexes", "chain complexes")@ (also see @TO2("OldChainComplexes :: OldChainComplexes", "legacy version")@)
         > @TO2("Varieties :: Varieties", "varieties and sheaves")@
-      :Mathematical Tutorials
-	-- In this section we present some tutorials that aim to introduce
-	-- the user to some mathematical ways of using Macaulay2.  The tutorials
-	-- are relatively independent of each other, and each one introduces the use
-	-- of some features of Macaulay2 in a slow and leisurely way, assuming the
-	-- reader is already familiar with the mathematical concepts involved.
-	-- -- @TO "David Eisenbud"@ joins us as a co-author of these tutorials.
-	> "A first course in commutative algebra"
-	> "Tutorial: Modules in Macaulay2"
-	> "Tutorial: Elementary uses of Gröbner bases"
-	> "Tutorial: Canonical Embeddings of Plane Curves and Gonality"
-	> "Tutorial: Fano varieties"
-	> "Tutorial: Divisors"
-	> "Tutorial: Numerical algebraic geometry"
+        > @TO2("Graphs :: Graphs", "graphs")@
+        > @TO2("Posets :: Posets", "posets")@
+        > @TO2("SimplicialComplexes :: SimplicialComplexes", "simplicial complexes")@
+        > @TO2("Polyhedra :: Polyhedra", "polyhedra")@
       :Mathematical Computations
-        > "elementary arithmetic"
-        > "commutative algebra"
-        > "homological algebra"
-        > "algebraic geometry"
-        > "combinatorics"
-        > "analytic functions"
+        > @TO2("elementary arithmetic", "Elementary Arithmetic")@
+        > @TO2("linear algebra", "Linear Algebra")@
+        > @TO2("commutative algebra", "Commutative Algebra")@
+        > @TO2("homological algebra", "Homological Algebra")@
+        > @TO2("algebraic geometry", "Algebraic Geometry")@
+        > "Representation Theory"
+        > @TO2("combinatorics", "Combinatorics")@
+        > @TO2("analytic functions", "Analytic Functions")@
     Tree
       :Appendix
         > "changes to Macaulay2, by version"
@@ -62,47 +71,18 @@ Node
   Acknowledgement
    Tree
     > "Acknowledgements"
-    > "Copyright and license"
-  Contributors
-   Tree
     > "The authors of Macaulay2"
     > "The authors of Macaulay2 packages"
-    - The contributors of Macaulay2 documentation:
-      - Daniel Grayson
-      - Michael Stillman
-      - Mahrud Sayrafi
-      - Doug Torrance
-      - Paul Zinn-Justin
-      - Lily Silverstein
-      - Frédéric Chapoton
-      - Zach Teitler
-      - Anton Leykin
-      - Guillem Blanco
-      - Dave Barton
-      - Brian Pike
-      - Michael Burr
-      - Frank Moore
-      - Fatemeh Tarashi
-      - Dylan Peifer
-      - Thomas Kahle
-      - Marc Harkonen
-      - David Eisenbud
-      - Boyana Martinova
-      - Eliana Duarte
-      - Lars Kastner
-      - Kisun Lee
-      -- the following contributors don't appear in git history
-      -- but have been credited in various documentation files.
-      - Sorin Popescu
-      - Manoj Kummini
-      - Leah Gold
-      - Amelia Taylor
-      - Giulio Caviglia
-      - Gregory G. Smith
-      - Wolfram Decker
-      - Jonah Blasiak
-      - Josephine Yu
-      - Irena Peeva
+    > "Copyright and license"
+  Contributors
+    Contributors to Macaulay2 documentation include Daniel Grayson, Michael Stillman,
+    Mahrud Sayrafi, Doug Torrance, Paul Zinn-Justin, Lily Silverstein, Frédéric Chapoton,
+    Zach Teitler, Anton Leykin, Guillem Blanco, Dave Barton, Brian Pike, Michael Burr,
+    Frank Moore, Fatemeh Tarashi, Dylan Peifer, Thomas Kahle, Marc Harkonen, David Eisenbud,
+    Boyana Martinova, Eliana Duarte, Lars Kastner, and Kisun Lee; additional names credited
+    in documentation files outside git history include Sorin Popescu, Manoj Kummini,
+    Leah Gold, Amelia Taylor, Giulio Caviglia, Gregory G. Smith, Wolfram Decker,
+    Jonah Blasiak, Josephine Yu, and Irena Peeva.
   References
     -- TODO: node to be written, will point to our book, Hal's book, Mike's Arizona notes, Sage, etc:
     @UL {
