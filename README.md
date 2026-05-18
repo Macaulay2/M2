@@ -111,7 +111,7 @@ Plus build-system instructions: see the project
 - Build entry points: [`CMakeLists.txt`](M2/file-CMakeLists-txt.md) · [`configure.ac`](M2/file-configure-ac.md) · [`autogen.sh`](M2/file-autogen-sh.md) · [`Makefile.in`](M2/file-Makefile-in.md) · [`VERSION`](M2/file-VERSION.md)
 - Supporting tools: [`bin/`](M2/Macaulay2/bin/README.md) · [`system/`](M2/Macaulay2/system/README.md) · [`html-check-links/`](M2/Macaulay2/html-check-links/README.md) · [`editors/`](M2/Macaulay2/editors/README.md) · [`docs/`](M2/Macaulay2/docs/README.md) · [`man/`](M2/Macaulay2/man/README.md)
 - Tests: [`tests/`](M2/Macaulay2/tests/README.md) · [`e/unit-tests/`](M2/Macaulay2/e/unit-tests/README.md)
-- Packages: [`packages/`](M2/Macaulay2/packages/README.md) (with foundational deep dives for [`Macaulay2Doc`](M2/Macaulay2/packages/file-Macaulay2Doc.md) · [`Style`](M2/Macaulay2/packages/file-Style.md) · [`EngineTests`](M2/Macaulay2/packages/file-EngineTests.md) · [conventions](M2/Macaulay2/packages/file-package-conventions.md) · [`MinimalPrimes`](M2/Macaulay2/packages/file-MinimalPrimes.md) · [`PrimaryDecomposition`](M2/Macaulay2/packages/file-PrimaryDecomposition.md) · [`Saturation`](M2/Macaulay2/packages/file-Saturation.md) · [`Elimination`](M2/Macaulay2/packages/file-Elimination.md) · [`Complexes`](M2/Macaulay2/packages/file-Complexes.md) · [`SimpleDoc`](M2/Macaulay2/packages/file-SimpleDoc.md) · [`Varieties`](M2/Macaulay2/packages/file-Varieties.md) · [`IntegralClosure`](M2/Macaulay2/packages/file-IntegralClosure.md) · [`ReesAlgebra`](M2/Macaulay2/packages/file-ReesAlgebra.md) · [`LLLBases`](M2/Macaulay2/packages/file-LLLBases.md))
+- Packages: [`packages/`](M2/Macaulay2/packages/README.md) (with foundational deep dives for [`Macaulay2Doc`](M2/Macaulay2/packages/file-Macaulay2Doc.md) · [`Style`](M2/Macaulay2/packages/file-Style.md) · [`EngineTests`](M2/Macaulay2/packages/file-EngineTests.md) · [conventions](M2/Macaulay2/packages/file-package-conventions.md) · [`MinimalPrimes`](M2/Macaulay2/packages/file-MinimalPrimes.md) · [`PrimaryDecomposition`](M2/Macaulay2/packages/file-PrimaryDecomposition.md) · [`Saturation`](M2/Macaulay2/packages/file-Saturation.md) · [`Elimination`](M2/Macaulay2/packages/file-Elimination.md) · [`Complexes`](M2/Macaulay2/packages/file-Complexes.md) · [`SimpleDoc`](M2/Macaulay2/packages/file-SimpleDoc.md) · [`Varieties`](M2/Macaulay2/packages/file-Varieties.md) · [`IntegralClosure`](M2/Macaulay2/packages/file-IntegralClosure.md) · [`ReesAlgebra`](M2/Macaulay2/packages/file-ReesAlgebra.md) · [`LLLBases`](M2/Macaulay2/packages/file-LLLBases.md) · [`InverseSystems`](M2/Macaulay2/packages/file-InverseSystems.md) · [`Isomorphism`](M2/Macaulay2/packages/file-Isomorphism.md))
 - Build instructions: project [Wiki](https://github.com/Macaulay2/M2/wiki), `M2/INSTALL`, `M2/INSTALL-CMake.md`, and `.github/workflows/test_build.yml`
 - **Cross-cutting glossary: [`GLOSSARY.md`](GLOSSARY.md)** — terminology used across the documentation tree, with links to the deep-dives where each term is treated in detail (`scc1`, `aring` vs `Ring`, `ring_elem` vs `ElementType`, Schreyer frame, F4, Macaulay matrix, involutive basis, `our_new_delete`, `Computation`, `Expr`, error/interrupt flags, …)
 - **Guided reading tour: [`TOUR.md`](TOUR.md)** — suggested reading orders for different audiences (newcomer overview, engine debugger, package author, M2 user, build/port maintainer, engine extension, algorithm-specific paths)
@@ -305,7 +305,7 @@ they will cross-link to one another along these axes:
 
 ### Documentation status
 
-The documentation tree comprises **603 markdown files** across four
+The documentation tree comprises **605 markdown files** across four
 layers:
 
 | Layer | Count | Examples |
@@ -314,7 +314,7 @@ layers:
 | Per-directory READMEs | 70 | one for every subdirectory under `M2/` |
 | Architecture references | 13 | 4 per-layer (`c/`, `d/`, `e/`, `m2/`) + 8 per-engine-subdir (`interface/`, `f4/`, `gb-f4/`, `schreyer-resolution/`, `NCAlgebras/`, `NCResolutions/`, `bibasis/`, `unit-tests/`) + 1 supervisor (`system/`) |
 | Per-area engine docs | ~10 | `coefficient-rings.md`, `polynomial-rings.md`, `monoids-and-monomials.md`, … |
-| Per-file deep dives | 499 | `file-<basename>.md` alongside each source file (some consolidated per family) |
+| Per-file deep dives | 501 | `file-<basename>.md` alongside each source file (some consolidated per family) |
 
 Every directory under `M2/` has both a `README.md` index and per-file
 deep-dive markdown files for every source file it contains. Some
@@ -1025,6 +1025,8 @@ Dedicated walkthroughs for especially central engine classes
 | [packages/file-IntegralClosure.md](M2/Macaulay2/packages/file-IntegralClosure.md) | `IntegralClosure.m2` — auto-loaded `integralClosure`, `conductor`, `icMap`, `icFractions`, `icFracP` (char-p), 6 strategies |
 | [packages/file-ReesAlgebra.md](M2/Macaulay2/packages/file-ReesAlgebra.md) | `ReesAlgebra.m2` — auto-loaded JSAG-certified: `reesIdeal`, `associatedGradedRing`, `specialFiber`, `analyticSpread`, `multiplicity`, `distinguished` |
 | [packages/file-LLLBases.md](M2/Macaulay2/packages/file-LLLBases.md) | `LLLBases.m2` — auto-loaded `LLL`, `kernelLLL`, `hermite`, `gcdLLL`, `gramm` with NTL / fpLLL / Cohen backend dispatch |
+| [packages/file-InverseSystems.md](M2/Macaulay2/packages/file-InverseSystems.md) | `InverseSystems.m2` — auto-loaded Macaulay inverse systems; `inverseSystem` for artinian Gorenstein ideal construction, divided-powers basis converters |
+| [packages/file-Isomorphism.md](M2/Macaulay2/packages/file-Isomorphism.md) | `Isomorphism.m2` — auto-loaded probabilistic `isIsomorphic(N,M)` / `isomorphism(N,M)` / `checkDegrees` for modules |
 
 **Coverage for `packages/`:** structural conventions plus the three foundational packages (`Macaulay2Doc`, `Style`, `EngineTests`) have dedicated deep-dive docs — see [`M2/Macaulay2/packages/README.md`](M2/Macaulay2/packages/README.md). Domain-specific packages (~400 total) are individually catalogued there but not given per-file dives, since each follows the conventions doc.
 

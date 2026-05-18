@@ -92,6 +92,8 @@ The full procedure lives in [`README`](README), but the short version:
 | `IntegralClosure.m2` — auto-loaded `integralClosure` (ring/ideal), `conductor`, `icMap`, `icFractions`, `icFracP` (char-p variant), 6 strategies | [`file-IntegralClosure.md`](file-IntegralClosure.md) |
 | `ReesAlgebra.m2` — auto-loaded JSAG-certified Rees algebras: `reesIdeal`, `associatedGradedRing`, `specialFiber`, `analyticSpread`, `multiplicity`, `minimalReduction`, `distinguished` | [`file-ReesAlgebra.md`](file-ReesAlgebra.md) |
 | `LLLBases.m2` — auto-loaded `LLL`, `kernelLLL`, `hermite`, `gcdLLL`, `gramm`; dispatches across NTL / fpLLL / Cohen backends with bit-encoded strategy flags | [`file-LLLBases.md`](file-LLLBases.md) |
+| `InverseSystems.m2` — auto-loaded Macaulay inverse systems: `inverseSystem` / `toDividedPowers` / `fromDividedPowers` / `fromDual` / `toDual`; the standard tool for constructing artinian Gorenstein ideals | [`file-InverseSystems.md`](file-InverseSystems.md) |
+| `Isomorphism.m2` — auto-loaded probabilistic `isIsomorphic(N,M)` / `isomorphism(N,M)` / `checkDegrees` for modules; random-map approach + degree-shift detection + result caching | [`file-Isomorphism.md`](file-Isomorphism.md) |
 
 The full ~400 per-package coverage would be repetitive — these deep-dives cover the structural patterns every package follows plus the foundational and frequently-used packages that ship.
 
