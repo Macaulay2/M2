@@ -305,7 +305,7 @@ they will cross-link to one another along these axes:
 
 ### Documentation status
 
-The documentation tree comprises **630 markdown files** across four
+The documentation tree comprises **632 markdown files** across four
 layers:
 
 | Layer | Count | Examples |
@@ -314,7 +314,7 @@ layers:
 | Per-directory READMEs | 70 | one for every subdirectory under `M2/` |
 | Architecture references | 13 | 4 per-layer (`c/`, `d/`, `e/`, `m2/`) + 8 per-engine-subdir (`interface/`, `f4/`, `gb-f4/`, `schreyer-resolution/`, `NCAlgebras/`, `NCResolutions/`, `bibasis/`, `unit-tests/`) + 1 supervisor (`system/`) |
 | Per-area engine docs | ~10 | `coefficient-rings.md`, `polynomial-rings.md`, `monoids-and-monomials.md`, … |
-| Per-file deep dives | 511 | `file-<basename>.md` alongside each source file (some consolidated per family) |
+| Per-file deep dives | 513 | `file-<basename>.md` alongside each source file (some consolidated per family) |
 
 Every directory under `M2/` has both a `README.md` index and per-file
 deep-dive markdown files for every source file it contains. Some
@@ -1072,6 +1072,8 @@ Dedicated walkthroughs for especially central engine classes
 | [packages/file-LocalRings.md](M2/Macaulay2/packages/file-LocalRings.md) | `LocalRings.m2` — operations over localised rings `R_P`: `localRing`, `liftUp`, `localResolution`, `hilbertSamuelFunction`, lift-and-descend pattern |
 | [packages/file-BernsteinSato.md](M2/Macaulay2/packages/file-BernsteinSato.md) | `BernsteinSato.m2` — `globalBFunction f`, multiplier ideals `J(f^c)`, D-module algorithms (~6 600 lines, 15 algorithmic modules); JSAG-ish for D-modules in M2 |
 | [packages/file-Graphs.md](M2/Macaulay2/packages/file-Graphs.md) | `Graphs.m2` — `Graph`/`Digraph` types, ~40+ named families, chromatic/clique/independence numbers, edge ideals (5 542-line single-file package) |
+| [packages/file-EdgeIdeals.md](M2/Macaulay2/packages/file-EdgeIdeals.md) | `EdgeIdeals.m2` — JSAG-certified `Graph` + `HyperGraph` for edge-ideal analysis: `edgeIdeal`, `coverIdeal`, `cliqueComplex`, good-leaf splitting, `isCM`/`isSCM` |
+| [packages/file-FrobeniusThresholds.md](M2/Macaulay2/packages/file-FrobeniusThresholds.md) | `FrobeniusThresholds.m2` — JSAG-certified char-p commutative algebra: F-pure threshold `fpt f`, F-jumping exponents, Frobenius `nu` invariants |
 | [packages/file-Schubert2.md](M2/Macaulay2/packages/file-Schubert2.md) | `Schubert2.m2` — intersection theory for abstract varieties; Chern/Todd classes, `schubertCycle`, `blowup`, `flagBundle`, etc. (M2 successor to the classical Maple Schubert package) |
 | [packages/file-NumericalAlgebraicGeometry.md](M2/Macaulay2/packages/file-NumericalAlgebraicGeometry.md) | `NumericalAlgebraicGeometry.m2` — JSAG-certified numerical AG: homotopy continuation, witness sets, irreducible decomposition; M2engine + BERTINI + PHCPACK + HOM4PS2 backends |
 | [packages/file-SimplicialComplexes.md](M2/Macaulay2/packages/file-SimplicialComplexes.md) | `SimplicialComplexes.m2` — JSAG-certified abstract simplicial complexes; Stanley-Reisner, named topological examples, monomial-ideal resolutions (Taylor / Scarf / Buchberger / Lyubeznik) |

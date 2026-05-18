@@ -204,6 +204,10 @@ Operations from the 27 packages with dedicated deep dives. **Auto-loaded** packa
 | `chromaticNumber G`, `cliqueNumber G`, `independenceNumber G`, `girth G`, `diameter G`, `chromaticPolynomial G`, `spanningTree G` | `Graphs` | same |
 | `edgeIdeal G`, `coverIdeal G`, `edgeRing G` (commutative-algebra bridge) | `Graphs` | same |
 | `displayGraph G`, `writeDotFile(G, fname)`, `showTikZ G` (Graphviz / TikZ rendering) | `Graphs` | same |
+| `HyperGraph` type, `hyperGraph(R, edges)`, `cliqueComplex G`, `independenceComplex G`, `edgeIdeal G`, `coverIdeal G` (edge-ideal-first variant) | `EdgeIdeals` | [`packages/file-EdgeIdeals.md`](M2/Macaulay2/packages/file-EdgeIdeals.md) |
+| `isCM G`, `isSCM G`, `isChordal G`, `isPerfect G`, `getGoodLeaf`, `hasGoodLeaf`, `allOddHoles G`, `allEvenHoles G`, `lineGraph G` | `EdgeIdeals` | same |
+| `fpt f` (F-pure threshold), `isFPT(t, f)`, `compareFPT(t, f)`, `isFJumpingExponent(t, f)`, `frobeniusNu(e, f)` | `FrobeniusThresholds` | [`packages/file-FrobeniusThresholds.md`](M2/Macaulay2/packages/file-FrobeniusThresholds.md) |
+| `FrobeniusPower`, `FrobeniusRoot`, `GlobalFrobeniusRoot`, `isSimpleNormalCrossing`, `ContainmentTest` options | `FrobeniusThresholds` | same |
 | `taylorResolution I`, `scarfSimplicialComplex I`, `buchbergerSimplicialComplex I`, `lyubeznikSimplicialComplex I` | `SimplicialComplexes` | same |
 | `kleinBottleComplex`, `dunceHatComplex`, `realProjectiveSpaceComplex n`, `poincareSphereComplex`, `smallManifold(d, n, k)` | `SimplicialComplexes` | same |
 

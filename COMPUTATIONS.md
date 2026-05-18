@@ -589,6 +589,8 @@ matters more than the engine algorithm:
 | Local-ring computations (`R_P`, singularity analysis) | [`LocalRings`](M2/Macaulay2/packages/file-LocalRings.md) — `localRing`, `liftUp`, `hilbertSamuelFunction`, `localResolution`; lift-and-descend pattern |
 | D-modules: Bernstein-Sato polynomials, multiplier ideals, D-module restriction/localisation, de Rham / local / intersection cohomology | [`BernsteinSato`](M2/Macaulay2/packages/file-BernsteinSato.md) — `globalBFunction f`, `multiplierIdeal(f, c)`, `Dresolution`, `Drestriction`, `Dlocalize`, `DHom`, `DeRham`, `localCohom`, `intersectionCohom`, `WeylClosure`; ~6 600 lines across 15 algorithmic modules |
 | Graph theory + edge ideals (commutative-algebra bridge) | [`Graphs`](M2/Macaulay2/packages/file-Graphs.md) — `Graph`/`Digraph` types, 40+ named graph families, chromatic/clique/independence numbers, `edgeIdeal`/`coverIdeal`; single-file 5 542-line package |
+| (Hyper)graphs tuned for edge-ideal workflows + Cohen-Macaulay tests | [`EdgeIdeals`](M2/Macaulay2/packages/file-EdgeIdeals.md) — JSAG-certified; `HyperGraph` type, `cliqueComplex`/`independenceComplex` bridges, `getGoodLeaf` splitting, `isCM`/`isSCM` tests |
+| Characteristic-p commutative algebra: F-pure threshold, F-jumping exponents, Frobenius `nu` invariants | [`FrobeniusThresholds`](M2/Macaulay2/packages/file-FrobeniusThresholds.md) — JSAG-certified; `fpt f`, `isFPT`, `compareFPT`, `frobeniusNu`, Frobenius powers/roots; char-p counterpart of `BernsteinSato` |
 
 For symbol-level lookups (given an M2 function or engine class name, find its deep dive), see [`SYMBOLS.md`](SYMBOLS.md).
 
