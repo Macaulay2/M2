@@ -94,7 +94,4 @@ document {
      Key => "Tutorial: Fano varieties",
      ld "tu_Fano.m2"
      }
-document {
-     Key => "Tutorial: Numerical algebraic geometry",
-     ld "tu_NAG.m2"
-     }
+load "./tu_NAG.m2"
