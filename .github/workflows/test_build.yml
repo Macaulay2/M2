@@ -143,6 +143,7 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release -DBUILD_NATIVE=OFF \
             -DCMAKE_PREFIX_PATH="`brew --prefix`;`brew --prefix libffi`" \
             -DCMAKE_INSTALL_PREFIX=/usr \
+            -DBUILD_SHARED_LIBS=ON \
             --debug-trycompile
 
       - name: Build libraries using Ninja
