@@ -521,8 +521,9 @@ topComponents Ideal       := Ideal  =>  I     -> (
     annihilator Ext^c(cokernel generators I, R))
 
 topComponents Module      := Module =>  M     -> (
-	  N := 0*M
-          if not isPolynomialRing R or not isAffineRing R then error "expected a polynomial ring";
+	  N := 0*M;
+	  R := ring M;
+ if not isPolynomialRing R or not isAffineRing R then error "expected a polynomial ring";
           c := codim M;
           p := pdim M;  -- will compute a resolution if needed...
           while p > c do (
@@ -547,7 +548,7 @@ topComponents(Module, ZZ) := Module => (M, e) -> (
 	    if debugLevel > 0 then printerr("Getting annihilator of Ext...");
 	    I := annihilator E;
 	    if debugLevel > 0 then printerr("Removing components of codim " | toString(f));
-	    N = saturate(N, I);
+	    N = saturate(N, I));
 	f = f-1);
     M/N)
 
@@ -560,15 +561,14 @@ topComponents(Module, ZZ) := Module => (M, e) -> (
 --removeLowestDimension = method()
 removeLowestDimension Module := Module => M -> (
     -- only works for polynomial rings...
-    local E;
     R := ring M;
     c := codim M;
     p := pdim M;
     -- now loop (starting at p) trying to find the largest
     -- d such that codim Ext^d(M,R) == d
-    if p == c then return coker matrix{{1_R}}; --M is pure-dimensional.
+    if p == c then return coker matrix{{1_R}} --M is pure-dimensional.
     else ( -- use the annihilator of Ext to improve M
-	E := Ext^d(M,R);
+	E := Ext^p(M,R);
         J := annihilator E;
         cokernel generators saturate(image presentation M, J))
     )

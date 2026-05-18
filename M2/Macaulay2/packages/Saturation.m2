@@ -146,7 +146,7 @@ quotient(Ideal,  Ideal)       := Ideal  => opts -> (I, J) -> quotientHelper(I, J
 quotient(Ideal,  Number)      := Ideal  => opts -> (I, f) -> quotient(I, ideal f, opts)
 quotient(Ideal,  RingElement) := Ideal  => opts -> (I, f) -> quotient(I, ideal f, opts)
 Ideal  : Ideal                := Ideal  =>         (I, J) -> quotient(I, J)
-Ideal  : Number               := Ideal
+Ideal  : Number               := Ideal  => opts -> (I, f) -> quotient(I, ideal f, opts)
 Ideal  : RingElement          := Ideal  =>         (I, f) -> quotient(I, f)
 
 -- TODO: why is this the right thing to do?
