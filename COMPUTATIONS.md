@@ -561,6 +561,34 @@ issue.
 - Distribution maintainers wondering which optional libraries
   enable which engines.
 
+## Package deep dives for computation-heavy packages
+
+The packages that wrap or extend these engine computations now have
+dedicated deep-dive docs. Use these when the M2-level entry point
+matters more than the engine algorithm:
+
+| Computation area | Package deep dive |
+|---|---|
+| Minimal primes, radicals, `isPrime` | [`MinimalPrimes`](M2/Macaulay2/packages/file-MinimalPrimes.md) — splitting-based with `AnnotatedIdeal` + hooks strategy system |
+| Primary decomposition, associated primes | [`PrimaryDecomposition`](M2/Macaulay2/packages/file-PrimaryDecomposition.md) — three strategies: Shimoyama-Yokoyama (default), EHV via Ext, GTZ family |
+| Saturation, ideal quotient, annihilator | [`Saturation`](M2/Macaulay2/packages/file-Saturation.md) — `addHook` strategy tables: Iterate / Quotient / Linear / Monomial / Eliminate / Bayer / GRevLex |
+| Variable elimination, Sylvester resultants | [`Elimination`](M2/Macaulay2/packages/file-Elimination.md) — short module, but imported by every algebraic-decomposition package |
+| Free resolutions, Ext, Tor, Yoneda product | [`Complexes`](M2/Macaulay2/packages/file-Complexes.md) — the `HomologicalAlgebraPackage`; 5 strategy variants for `freeResolution` |
+| Truncations of modules + `effCone` / `nefCone` | [`Truncations`](M2/Macaulay2/packages/file-Truncations.md) — re-exported by `Complexes` |
+| Sheaf cohomology, sheaf Ext / Hom | [`Varieties`](M2/Macaulay2/packages/file-Varieties.md) — built on `Complexes`; routes `HH^i F` through truncation + module Ext |
+| Integral closure of rings and ideals | [`IntegralClosure`](M2/Macaulay2/packages/file-IntegralClosure.md) — six strategies (Radical / RadicalCodim1 / AllCodimensions / SimplifyFractions / StartWithOneMinor / Vasconcelos) + char-p variant `icFracP` |
+| Rees algebras, associated graded, multiplicity | [`ReesAlgebra`](M2/Macaulay2/packages/file-ReesAlgebra.md) — JSAG-certified; foundational for ideal integral closure |
+| LLL lattice reduction with backend dispatch | [`LLLBases`](M2/Macaulay2/packages/file-LLLBases.md) — NTL / fpLLL / Cohen backends + BKZ / Givens / FP-precision overlays via bit-encoded `Strategy` |
+| Inverse systems (artinian Gorenstein construction) | [`InverseSystems`](M2/Macaulay2/packages/file-InverseSystems.md) |
+| Module isomorphism (probabilistic) | [`Isomorphism`](M2/Macaulay2/packages/file-Isomorphism.md) — random-map approach with degree-shift detection |
+| Numerical algebraic geometry | [`NumericalAlgebraicGeometry`](M2/Macaulay2/packages/file-NumericalAlgebraicGeometry.md) — JSAG-certified; M2engine / BERTINI / PHCPACK / HOM4PS2 backends |
+| Convex polyhedra, cones, fans | [`Polyhedra`](M2/Macaulay2/packages/file-Polyhedra.md) — JSAG-certified; the largest single package (~44 000 lines) |
+| Normal toric varieties, toric divisors | [`NormalToricVarieties`](M2/Macaulay2/packages/file-NormalToricVarieties.md) — the 5-divisor-group diagram + smooth-Fano database through dim 6 |
+| Schubert calculus, intersection theory | [`Schubert2`](M2/Macaulay2/packages/file-Schubert2.md) — "abstract varieties" by their Chow rings; M2 successor to the Maple Schubert package |
+| Simplicial complexes, Stanley-Reisner | [`SimplicialComplexes`](M2/Macaulay2/packages/file-SimplicialComplexes.md) — JSAG-certified; named examples (Klein bottle, Poincaré sphere, …) + monomial-ideal resolutions (Taylor, Scarf, Buchberger, Lyubeznik) |
+
+For symbol-level lookups (given an M2 function or engine class name, find its deep dive), see [`SYMBOLS.md`](SYMBOLS.md).
+
 ## Related
 
 - [`README.md`](README.md) — repository TOC.
@@ -569,12 +597,13 @@ issue.
 - [`RING-ZOO.md`](RING-ZOO.md) — sister catalogue of rings.
 - [`DEPENDENCIES.md`](DEPENDENCIES.md) — external libraries each
   engine needs.
+- [`SYMBOLS.md`](SYMBOLS.md) — symbol-to-doc reverse index.
 - [`M2/Macaulay2/e/groebner-bases.md`](M2/Macaulay2/e/groebner-bases.md)
-  — engine-area overview.
+  — engine-area overview (now with M2-strategy → engine-algorithm mapping table).
 - [`M2/Macaulay2/e/resolutions.md`](M2/Macaulay2/e/resolutions.md)
-  — engine-area overview.
+  — engine-area overview (now with M2-strategy → engine-implementation mapping).
 - [`M2/Macaulay2/e/computations.md`](M2/Macaulay2/e/computations.md)
-  — engine-area overview.
+  — engine-area overview (now with M2-operation → engine-entry mapping).
 - [`M2/Macaulay2/e/architecture.md`](M2/Macaulay2/e/architecture.md)
   — engine architectural reference.
 - All engine-subdir architectures

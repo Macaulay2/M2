@@ -142,6 +142,65 @@ Full memory model: [`MEMORY.md`](MEMORY.md).
 | `viewHelp` / `help` | (no engine) | [`m2/file-help.md`](M2/Macaulay2/m2/file-help.md) | — |
 | `task` / `schedule` | (supervisor) | [`m2/file-threads.md`](M2/Macaulay2/m2/file-threads.md) | [`d/file-threads.md`](M2/Macaulay2/d/file-threads.md) |
 
+## M2 functions from documented packages
+
+Operations from the 27 packages with dedicated deep dives. **Auto-loaded** packages are available without `needsPackage`:
+
+| M2 function | Package (auto?) | Deep dive |
+|---|---|---|
+| `minimalPrimes I` / `minprimes I` | `MinimalPrimes` (auto) | [`packages/file-MinimalPrimes.md`](M2/Macaulay2/packages/file-MinimalPrimes.md) |
+| `radical I` | `MinimalPrimes` (auto) | same |
+| `isPrime I` | `MinimalPrimes` (auto) override | same |
+| `primaryDecomposition I` | `PrimaryDecomposition` (auto) | [`packages/file-PrimaryDecomposition.md`](M2/Macaulay2/packages/file-PrimaryDecomposition.md) |
+| `associatedPrimes I` / `ass I` | `PrimaryDecomposition` (auto) | same |
+| `localize(I, P)`, `primaryComponent(I, P)` | `PrimaryDecomposition` (auto) | same |
+| `isPrimary I`, `irreducibleDecomposition I`, `topComponents I` | `PrimaryDecomposition` (auto) | same |
+| `saturate(I, J)`, `quotient(I, J)`, `annihilator M` | `Saturation` (auto) | [`packages/file-Saturation.md`](M2/Macaulay2/packages/file-Saturation.md) |
+| `eliminate(v, I)` | `Elimination` (auto) | [`packages/file-Elimination.md`](M2/Macaulay2/packages/file-Elimination.md) |
+| `resultant(f, g, x)`, `discriminant(f, x)`, `sylvesterMatrix(f, g, x)` | `Elimination` (auto) | same |
+| `freeResolution M`, `res M`, `resolution M` | `Complexes` (auto) | [`packages/file-Complexes.md`](M2/Macaulay2/packages/file-Complexes.md) |
+| `Ext^i(M, N)`, `Tor_i(M, N)` | `Complexes` (auto) | same |
+| `Hom(M, N)`, `koszulComplex`, `eagonNorthcottComplex` | `Complexes` (auto) | same |
+| `yonedaProduct`, `yonedaExtension`, `yonedaMap` | `Complexes` (auto) | same |
+| `naiveTruncation`, `canonicalTruncation`, `constantStrand` | `Complexes` (auto) | same |
+| `nullHomotopy`, `isNullHomotopic`, `isQuasiIsomorphism` | `Complexes` (auto) | same |
+| `truncate(d, M)` | `Truncations` (re-exported by `Complexes`) | [`packages/file-Truncations.md`](M2/Macaulay2/packages/file-Truncations.md) |
+| `effCone R`, `nefCone R`, `effGenerators R`, `nefGenerators R` | `Truncations` (re-exported by `Complexes`) | same |
+| `doc ///...///`, `multidoc`, `packageTemplate` | `SimpleDoc` (auto) | [`packages/file-SimpleDoc.md`](M2/Macaulay2/packages/file-SimpleDoc.md) |
+| `arXiv`, `stacksProject`, `wikipedia` (HTML helpers) | `SimpleDoc` (auto) | same |
+| `Variety`, `AffineVariety`, `ProjectiveVariety`, `Spec R`, `Proj R` | `Varieties` (auto) | [`packages/file-Varieties.md`](M2/Macaulay2/packages/file-Varieties.md) |
+| `CoherentSheaf`, `sheaf M`, `sheafHom`, `sheafExt^i` | `Varieties` (auto) | same |
+| `tangentSheaf X`, `cotangentSheaf X`, `canonicalBundle X` | `Varieties` (auto) | same |
+| `HH^i F` (sheaf cohomology), `hh^(p,q)`, `OO_X`, `F(d)` | `Varieties` (auto) | same |
+| `integralClosure R`, `integralClosure I` | `IntegralClosure` (auto) | [`packages/file-IntegralClosure.md`](M2/Macaulay2/packages/file-IntegralClosure.md) |
+| `conductor R`, `icMap R`, `icFractions R`, `icFracP R` | `IntegralClosure` (auto) | same |
+| `reesIdeal I`, `reesAlgebra I`, `associatedGradedRing I`, `specialFiber I` | `ReesAlgebra` (auto) | [`packages/file-ReesAlgebra.md`](M2/Macaulay2/packages/file-ReesAlgebra.md) |
+| `analyticSpread I`, `multiplicity I`, `minimalReduction I`, `distinguished I J` | `ReesAlgebra` (auto) | same |
+| `LLL M`, `kernelLLL M`, `hermite M`, `gcdLLL L`, `gramm M` | `LLLBases` (auto) | [`packages/file-LLLBases.md`](M2/Macaulay2/packages/file-LLLBases.md) |
+| `inverseSystem M`, `toDividedPowers p`, `fromDividedPowers p` | `InverseSystems` (auto) | [`packages/file-InverseSystems.md`](M2/Macaulay2/packages/file-InverseSystems.md) |
+| `fromDual M`, `toDual(d, I)` (legacy aliases) | `InverseSystems` (auto) | same |
+| `isIsomorphic(N, M)`, `isomorphism(N, M)`, `checkDegrees(A, B)` | `Isomorphism` (auto) | [`packages/file-Isomorphism.md`](M2/Macaulay2/packages/file-Isomorphism.md) |
+| `poly "x2y - 3xz3"` (classic-Macaulay polynomial syntax) | `Classic` (auto) | [`packages/file-utility-packages.md`](M2/Macaulay2/packages/file-utility-packages.md) |
+| `conwayPolynomial(p, n)` | `ConwayPolynomials` (auto) | same |
+| `oeis L`, `isc x` (online lookup) | `OnlineLookup` (auto) | same |
+| `cite "Pkg"` (BibTeX entry) | `PackageCitations` (auto) | same |
+| `tangentCone I` (engine path via homogenisation) | `TangentCone` (auto) | same |
+| `convexHull V`, `coneFromVData R`, `polyhedronFromHData(M, v)` | `Polyhedra` (re-exported chain) | [`packages/file-Polyhedra.md`](M2/Macaulay2/packages/file-Polyhedra.md) |
+| `Polyhedron`, `Cone`, `Fan`, `PolyhedralComplex` (types) | `Polyhedra` | same |
+| `vertices P`, `rays C`, `halfspaces P`, `hilbertBasis C`, `latticePoints P` | `Polyhedra` | same |
+| `normalToricVariety(rays, cones)`, `affineSpace n`, `toricProjectiveSpace n` | `NormalToricVarieties` | [`packages/file-NormalToricVarieties.md`](M2/Macaulay2/packages/file-NormalToricVarieties.md) |
+| `hirzebruchSurface n`, `kleinschmidt(d, L)`, `smoothFanoToricVariety(d, i)` | `NormalToricVarieties` | same |
+| `weilDivisorGroup X`, `cartierDivisorGroup X`, `classGroup X`, `picardGroup X` | `NormalToricVarieties` | same |
+| `flagBundle(L, V)`, `schubertCycle(λ, G)`, `chern V`, `ch V`, `todd V` | `Schubert2` | [`packages/file-Schubert2.md`](M2/Macaulay2/packages/file-Schubert2.md) |
+| `AbstractVariety`, `abstractProjectiveSpace n`, `tangentBundle X`, `blowup f` | `Schubert2` | same |
+| `solveSystem F`, `track(start, target, ...)`, `refine(F, sols)` | `NumericalAlgebraicGeometry` | [`packages/file-NumericalAlgebraicGeometry.md`](M2/Macaulay2/packages/file-NumericalAlgebraicGeometry.md) |
+| `numericalIrreducibleDecomposition I`, `parameterHomotopy(F, ...)` | `NumericalAlgebraicGeometry` | same |
+| `simplicialComplex {…}`, `link(D, σ)`, `star(D, σ)`, `barycentricSubdivision D` | `SimplicialComplexes` | [`packages/file-SimplicialComplexes.md`](M2/Macaulay2/packages/file-SimplicialComplexes.md) |
+| `taylorResolution I`, `scarfSimplicialComplex I`, `buchbergerSimplicialComplex I`, `lyubeznikSimplicialComplex I` | `SimplicialComplexes` | same |
+| `kleinBottleComplex`, `dunceHatComplex`, `realProjectiveSpaceComplex n`, `poincareSphereComplex`, `smallManifold(d, n, k)` | `SimplicialComplexes` | same |
+
+For the complete package list with all exported symbols, see each package's deep dive linked above, or the [packages overview](M2/Macaulay2/packages/README.md).
+
 ## Interpreter-layer `.d`/`.dd` symbols
 
 | Symbol | Defined in | Deep dive |
