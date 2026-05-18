@@ -1,10 +1,11 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
 document {
-     Key => File,
+     Key => "File",
      Headline => "the class of all files",
+     "For ordinary printing to a file see ", TO "file" , " .",
      "Files may be input files, output files, pipes, or sockets.
-     A list of currently open files may be obtained with ", TO "openFiles", ".",
+      A list of currently open files may be obtained with ", TO "openFiles", ".",
      }
 
 document {
@@ -62,10 +63,10 @@ document {
      }
 
 document {
-     Key => { "printing to a file", (symbol <<, File, Thing),(symbol <<, String, Thing), (symbol <<, File, Manipulator),
+     Key => {"file", (symbol <<, File, Thing),(symbol <<, String, Thing), (symbol <<, File, Manipulator),
 	  (symbol <<, Nothing, Thing),(symbol <<, Nothing, Manipulator), (symbol <<, Thing),
 	  (symbol <<, File, Symbol),(symbol <<, File, Net),(symbol <<,File,String) },
-     Headline => "print to a file",
+     Headline => "print to, or read from a file",
      Usage => "f << x\n  << x",
      Inputs => {
 	  "f" => Nothing => { ofClass {File, String, Nothing} },
@@ -86,6 +87,10 @@ document {
      PARA {
 	  "Parsing of ", TO "<<", " associates leftward, so that several objects  may be displayed with an expression such as ", TT "f<<x<<y<<z", "."
 	  },
+     PARA {
+	  "Note that the file must be closed with ",TT "f<<close","before it can be read with", TT "get", ".", "Its existence can be verified with ",
+	  TT "openFiles()", ".", "It can be removed with", TT"removeFile f", "."
+	  },
      EXAMPLE lines ///
      	  stderr << "-- hi there --" << endl
      	  << "-- ho there --" << endl
@@ -102,7 +107,7 @@ document {
 	  value get fn
 	  removeFile fn
      ///,
-     SeeAlso => { endl, flush, close },
+     SeeAlso => { endl, flush, close, removeFile,  Database },
      Subnodes => {
 	 TO printString,
          TO stdio,
