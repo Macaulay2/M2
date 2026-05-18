@@ -82,8 +82,28 @@ The full procedure lives in [`README`](README), but the short version:
 | `Style.m2` — doc styling + `generateGrammar` export | [`file-Style.md`](file-Style.md) |
 | `EngineTests.m2` — M2-level engine test suite | [`file-EngineTests.md`](file-EngineTests.md) |
 | Package conventions — layout, dependencies, doc DSL, tests | [`file-package-conventions.md`](file-package-conventions.md) |
+| `MinimalPrimes.m2` — auto-loaded `minimalPrimes` / `radical` / `isPrime` implementation | [`file-MinimalPrimes.md`](file-MinimalPrimes.md) |
+| `PrimaryDecomposition.m2` — auto-loaded `primaryDecomposition` / `associatedPrimes` / `localize` (SY, EHV, GTZ strategies) | [`file-PrimaryDecomposition.md`](file-PrimaryDecomposition.md) |
 
-The full ~400 per-package coverage would be repetitive — these four deep-dives cover the structural patterns every package follows plus the three foundational packages that ship.
+The full ~400 per-package coverage would be repetitive — these deep-dives cover the structural patterns every package follows plus the foundational and frequently-used packages that ship.
+
+## Auto-loaded packages
+
+The following 16+ packages are **preloaded** at every M2 startup (listed in `Core.m2`'s `Core#"preloaded packages"` table). Users get these without any `needsPackage` call:
+
+```
+Classic            HomologicalAlgebraPackage (Complexes)
+ConwayPolynomials  OnlineLookup
+Elimination        PackageCitations
+IntegralClosure    PrimaryDecomposition  ← deep dive
+InverseSystems     ReesAlgebra
+Isomorphism        Saturation
+LLLBases           SimpleDoc
+MinimalPrimes      ← deep dive          TangentCone
+                    Varieties
+```
+
+Adjusting that list (e.g. dropping `IntegralClosure` for a lightweight session) is done by modifying `Core#"preloaded packages"` per the comment in [`m2/system.m2`](../m2/system.m2).
 
 ## Related
 
