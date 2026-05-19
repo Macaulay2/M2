@@ -140,6 +140,35 @@ TEST(Matrix, entriesFromSparseColumns)
     }
 }
 
+TEST(Matrix, entry)
+{
+  const Ring* R = simplePolynomialRing(101, {"x"});
+  const FreeModule* target = R->make_FreeModule(3);
+  MatrixConstructor mat(target, 4);
+
+  mat.set_entry(1, 2, R->from_long(17));
+  mat.compute_column_degrees();
+
+  const Matrix* M = mat.to_matrix();
+  const RingElement* nonzero = M->entry(1, 2);
+  ASSERT_NE(nonzero, nullptr);
+  EXPECT_EQ(nonzero->get_ring(), R);
+  EXPECT_TRUE(R->is_equal(nonzero->get_value(), R->from_long(17)));
+
+  const RingElement* zero = M->entry(0, 0);
+  ASSERT_NE(zero, nullptr);
+  EXPECT_EQ(zero->get_ring(), R);
+  EXPECT_TRUE(R->is_zero(zero->get_value()));
+
+  EXPECT_EQ(M->entry(3, 0), nullptr);
+  EXPECT_TRUE(error());
+  EXPECT_STREQ(error_message(), "matrix row index 3 out of range 0 .. 2");
+
+  EXPECT_EQ(M->entry(0, 4), nullptr);
+  EXPECT_TRUE(error());
+  EXPECT_STREQ(error_message(), "matrix column index 4 out of range 0 .. 3");
+}
+
 TEST(Matrix, concatArray)
 {
   const PolynomialRing* R = simplePolynomialRing(101, {"x", "y"});

@@ -58,6 +58,23 @@ unsigned int Matrix::computeHashValue() const
   return hashval;
 }
 
+const RingElement /* or null */ *Matrix::entry(int r, int c) const
+{
+  if (r < 0 || r >= n_rows())
+    {
+      ERROR("matrix row index %d out of range 0 .. %d", r, n_rows() - 1);
+      return nullptr;
+    }
+  if (c < 0 || c >= n_cols())
+    {
+      ERROR("matrix column index %d out of range 0 .. %d",
+            c,
+            n_cols() - 1);
+      return nullptr;
+    }
+  return RingElement::make_raw(get_ring(), elem(r, c));
+}
+
 engine_RawRingElementArrayArrayOrNull Matrix::entries() const
 {
   int ncols = n_cols();

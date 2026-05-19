@@ -10,6 +10,7 @@
 #include <vector>
 
 class MatrixConstructor;
+class RingElement;
 
 /**
  * \ingroup matrices
@@ -92,6 +93,7 @@ class Matrix : public EngineObject
   ring_elem elem(int i, int j) const;
   vec &elem(int i) { return mEntries[i]; }
   const vec &elem(int i) const { return mEntries[i]; }
+  const RingElement /* or null */ *entry(int r, int c) const;
   engine_RawRingElementArrayArrayOrNull entries() const;
   /*****************************************/
 

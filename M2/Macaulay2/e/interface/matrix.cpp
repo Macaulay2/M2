@@ -57,21 +57,7 @@ const RingElement /* or null */ *rawMatrixEntry(const Matrix *M,
 {
   try
     {
-      if (r < 0 || r >= M->n_rows())
-        {
-          ERROR("matrix row index %d out of range 0 .. %d", r, M->n_rows() - 1);
-          return nullptr;
-        }
-      if (c < 0 || c >= M->n_cols())
-        {
-          ERROR("matrix column index %d out of range 0 .. %d",
-                c,
-                M->n_cols() - 1);
-          return nullptr;
-        }
-      ring_elem result;
-      result = M->elem(r, c);
-      return RingElement::make_raw(M->get_ring(), result);
+      return M->entry(r, c);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
