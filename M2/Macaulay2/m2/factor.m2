@@ -21,7 +21,7 @@ gcd(RingElement, RingElement) := RingElement => (r, s) -> (
 
     -- GaloisFields are QuotientRings so this line has to go before the QuotientRing check
     if isField R then return if r == 0 and s == 0 then 0_R else 1_R;
-    if instance(R, QuotientRing) then notImplemented("gcd for quotient rings is")
+    if instance(R, QuotientRing) then notImplemented("gcd for quotient rings is");
 
     if factoryAlmostGood R then (
         if (options R).Inverses then (r, s) = (numerator r, numerator s);
@@ -46,11 +46,18 @@ gcd(RingElement, RingElement) := RingElement => (r, s) -> (
 )
 gcd RingElement := identity
 
+gcdCoefficientsField := (R, r, s) -> (
+    if (r == 0 and s == 0) then (0_R, 0_R, 0_R)
+        else if r == 0 then (1_R, 0_R, 1/s)
+        else (1_R, 1/r, 0_R)
+)
+
 gcdCoefficients(ZZ, RingElement) := (r, s) -> gcdCoefficients(r_(ring s), s)
 gcdCoefficients(RingElement, ZZ) := (r, s) -> gcdCoefficients(r, s_(ring r))
 gcdCoefficients(RingElement,RingElement) := (f,g) -> (	    -- ??
      R := ring f;
      if R =!= ring g then error "expected elements of the same ring";
+     if isField R then return gcdCoefficientsField(R, f, g);
      if not isPolynomialRing R then error "expected a polynomial ring";
      if not isField coefficientRing R then error "expected a polynomial ring over a field";
      if numgens R > 1 then error "expected a polynomial ring in at most one variable";

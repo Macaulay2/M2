@@ -82,8 +82,13 @@ R = QQ[x]; R2=R[t];
 assert ( gcd(t^2-x^2,t^3-x^3) == t-x )
 
 R = GF(9);
-for i = 0 to 8 assert(gcd(R_0, R_0^i) == 1_R and gcd(R_0^i, 0_R) == 0_R)
-S = R[x];
+for i from 0 to 8 do assert(gcd(R_0, R_0^i) == 1_R and gcd(R_0^i, 0_R) == 1_R);
+assert(gcd(0_R, 0_R) == 0_R)
+assert(gcdCoefficients(0_R, 0_R) == (0_R, 0_R, 0_R))
+assert(gcdCoefficients(R_0, 0_R) == (1_R, 1/R_0, 0_R))
+assert(gcdCoefficients(0_R, R_0) == (1_R, 0_R, 1/R_0))
+assert(gcdCoefficients(R_0, R_0 + 1) == (1_R, 1/R_0, 0_R))
+
 
 debug Core
 R = QQ[x,y]
