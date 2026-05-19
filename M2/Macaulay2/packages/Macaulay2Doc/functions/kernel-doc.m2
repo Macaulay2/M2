@@ -106,7 +106,7 @@ Description
   Text
     @TT "SubringLimit => n"@ -- an option for @TO kernel@ which
     causes the computation of the kernel of a ring map to stop after @TT "n"@
-    elements have been discovered."
+    elements have been discovered.
 ///
 
 
@@ -117,9 +117,9 @@ Headline
     stop after finding enough elements of a subring
 Description
   Text
-    @TT "DegreeLimit => n"@ -- an option for @TO kernel@ which
-    causes the computation of the kernel of a ring map to stop after generators for the degree @TT "n"@
-    part of the kernel have been discovered."
+    @TT "DegreeLimit => d"@ -- an option for @TO kernel@ which
+    causes the computation of the kernel of a ring map to stop after generators for the degree @TT "d"@
+    part of the kernel have been discovered.
 ///
 
 
