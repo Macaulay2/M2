@@ -107,6 +107,8 @@ Description
     @TT "SubringLimit => n"@ -- an option for @TO kernel@ which
     causes the computation of the kernel of a ring map to stop after @TT "n"@
     elements have been discovered.
+Caveat
+  Used only for computing the kernel of a @TO RingMap@.
 ///
 
 
@@ -120,6 +122,8 @@ Description
     @TT "DegreeLimit => d"@ -- an option for @TO kernel@ which
     causes the computation of the kernel of a ring map to stop after generators for the degree @TT "d"@
     part of the kernel have been discovered.
+Caveat
+  Used only for computing the kernel of a @TO RingMap@.
 ///
 
 
@@ -131,6 +135,8 @@ Headline
 Description
   Text
     This option is passed through to @TO gb@ when computing the kernel of a @TT "RingMap"@.
+Caveat
+  Used only for computing the kernel of a @TO RingMap@.
 SeeAlso
   gb
 ///
