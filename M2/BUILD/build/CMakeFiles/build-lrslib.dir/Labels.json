@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-lrslib"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-lrslib.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-lrslib-complete.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/lrslib/src/build-lrslib-stamp/build-lrslib-build.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/lrslib/src/build-lrslib-stamp/build-lrslib-configure.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/lrslib/src/build-lrslib-stamp/build-lrslib-download.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/lrslib/src/build-lrslib-stamp/build-lrslib-install.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/lrslib/src/build-lrslib-stamp/build-lrslib-mkdir.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/lrslib/src/build-lrslib-stamp/build-lrslib-patch.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/lrslib/src/build-lrslib-stamp/build-lrslib-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"build-lrslib"
+		],
+		"name" : "build-lrslib"
+	}
+}

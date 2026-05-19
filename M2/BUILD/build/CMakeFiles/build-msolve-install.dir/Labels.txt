@@ -1,0 +1,12 @@
+# Target labels
+ build-msolve
+# Source files and their labels
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-msolve-install
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-msolve-install.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/msolve/src/build-msolve-stamp/build-msolve-install.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/msolve/src/build-msolve-stamp/build-msolve-build.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/msolve/src/build-msolve-stamp/build-msolve-configure.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/msolve/src/build-msolve-stamp/build-msolve-patch.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/msolve/src/build-msolve-stamp/build-msolve-update.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/msolve/src/build-msolve-stamp/build-msolve-download.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/msolve/src/build-msolve-stamp/build-msolve-mkdir.rule

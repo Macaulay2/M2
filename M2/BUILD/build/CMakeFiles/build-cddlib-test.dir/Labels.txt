@@ -1,0 +1,13 @@
+# Target labels
+ build-cddlib
+# Source files and their labels
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-cddlib-test
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-cddlib-test.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/cddlib/src/build-cddlib-stamp/build-cddlib-test.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/cddlib/src/build-cddlib-stamp/build-cddlib-install.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/cddlib/src/build-cddlib-stamp/build-cddlib-build.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/cddlib/src/build-cddlib-stamp/build-cddlib-configure.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/cddlib/src/build-cddlib-stamp/build-cddlib-patch.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/cddlib/src/build-cddlib-stamp/build-cddlib-update.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/cddlib/src/build-cddlib-stamp/build-cddlib-download.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/cddlib/src/build-cddlib-stamp/build-cddlib-mkdir.rule

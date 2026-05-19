@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-factory"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-factory.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-factory-complete.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/factory/src/build-factory-stamp/build-factory-build.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/factory/src/build-factory-stamp/build-factory-configure.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/factory/src/build-factory-stamp/build-factory-download.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/factory/src/build-factory-stamp/build-factory-install.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/factory/src/build-factory-stamp/build-factory-mkdir.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/factory/src/build-factory-stamp/build-factory-patch.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/factory/src/build-factory-stamp/build-factory-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"build-factory"
+		],
+		"name" : "build-factory"
+	}
+}

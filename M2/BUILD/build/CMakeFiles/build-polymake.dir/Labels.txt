@@ -1,0 +1,13 @@
+# Target labels
+ build-polymake
+# Source files and their labels
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-polymake
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-polymake.rule
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-polymake-complete.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/polymake/src/build-polymake-stamp/build-polymake-build.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/polymake/src/build-polymake-stamp/build-polymake-configure.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/polymake/src/build-polymake-stamp/build-polymake-download.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/polymake/src/build-polymake-stamp/build-polymake-install.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/polymake/src/build-polymake-stamp/build-polymake-mkdir.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/polymake/src/build-polymake-stamp/build-polymake-patch.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/polymake/src/build-polymake-stamp/build-polymake-update.rule

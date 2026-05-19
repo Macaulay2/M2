@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-givaro-test"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-givaro-test.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/givaro/src/build-givaro-stamp/build-givaro-test.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/givaro/src/build-givaro-stamp/build-givaro-install.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/givaro/src/build-givaro-stamp/build-givaro-build.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/givaro/src/build-givaro-stamp/build-givaro-configure.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/givaro/src/build-givaro-stamp/build-givaro-patch.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/givaro/src/build-givaro-stamp/build-givaro-update.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/givaro/src/build-givaro-stamp/build-givaro-download.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/givaro/src/build-givaro-stamp/build-givaro-mkdir.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"build-givaro"
+		],
+		"name" : "build-givaro-test"
+	}
+}

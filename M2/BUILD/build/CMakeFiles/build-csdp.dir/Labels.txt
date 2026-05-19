@@ -1,0 +1,13 @@
+# Target labels
+ build-csdp
+# Source files and their labels
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-csdp
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-csdp.rule
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-csdp-complete.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/csdp/src/build-csdp-stamp/build-csdp-build.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/csdp/src/build-csdp-stamp/build-csdp-configure.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/csdp/src/build-csdp-stamp/build-csdp-download.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/csdp/src/build-csdp-stamp/build-csdp-install.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/csdp/src/build-csdp-stamp/build-csdp-mkdir.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/csdp/src/build-csdp-stamp/build-csdp-patch.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/csdp/src/build-csdp-stamp/build-csdp-update.rule

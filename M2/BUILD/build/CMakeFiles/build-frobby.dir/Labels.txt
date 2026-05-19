@@ -1,0 +1,13 @@
+# Target labels
+ build-frobby
+# Source files and their labels
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-frobby
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-frobby.rule
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-frobby-complete.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/frobby/src/build-frobby-stamp/build-frobby-build.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/frobby/src/build-frobby-stamp/build-frobby-configure.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/frobby/src/build-frobby-stamp/build-frobby-download.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/frobby/src/build-frobby-stamp/build-frobby-install.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/frobby/src/build-frobby-stamp/build-frobby-mkdir.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/frobby/src/build-frobby-stamp/build-frobby-patch.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/frobby/src/build-frobby-stamp/build-frobby-update.rule

@@ -1,0 +1,40 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-bertini-install"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-bertini-install.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/bertini/src/build-bertini-stamp/build-bertini-install.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/bertini/src/build-bertini-stamp/build-bertini-build.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/bertini/src/build-bertini-stamp/build-bertini-configure.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/bertini/src/build-bertini-stamp/build-bertini-patch.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/bertini/src/build-bertini-stamp/build-bertini-update.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/bertini/src/build-bertini-stamp/build-bertini-download.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/bertini/src/build-bertini-stamp/build-bertini-mkdir.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"build-bertini"
+		],
+		"name" : "build-bertini-install"
+	}
+}

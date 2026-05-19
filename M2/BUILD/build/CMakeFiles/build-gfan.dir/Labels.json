@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-gfan"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-gfan.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-gfan-complete.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/gfan/src/build-gfan-stamp/build-gfan-build.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/gfan/src/build-gfan-stamp/build-gfan-configure.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/gfan/src/build-gfan-stamp/build-gfan-download.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/gfan/src/build-gfan-stamp/build-gfan-install.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/gfan/src/build-gfan-stamp/build-gfan-mkdir.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/gfan/src/build-gfan-stamp/build-gfan-patch.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/gfan/src/build-gfan-stamp/build-gfan-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"build-gfan"
+		],
+		"name" : "build-gfan"
+	}
+}

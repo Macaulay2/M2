@@ -1,0 +1,21 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/ubuntu/M2/M2/BUILD/build/cmake_install.cmake",
+		"/home/ubuntu/M2/M2/BUILD/build/Macaulay2/cmake_install.cmake",
+		"/home/ubuntu/M2/M2/BUILD/build/Macaulay2/c/cmake_install.cmake",
+		"/home/ubuntu/M2/M2/BUILD/build/Macaulay2/d/cmake_install.cmake",
+		"/home/ubuntu/M2/M2/BUILD/build/Macaulay2/e/cmake_install.cmake",
+		"/home/ubuntu/M2/M2/BUILD/build/Macaulay2/e/memtailor/cmake_install.cmake",
+		"/home/ubuntu/M2/M2/BUILD/build/Macaulay2/e/mathic/cmake_install.cmake",
+		"/home/ubuntu/M2/M2/BUILD/build/Macaulay2/e/mathicgb/cmake_install.cmake",
+		"/home/ubuntu/M2/M2/BUILD/build/Macaulay2/system/cmake_install.cmake",
+		"/home/ubuntu/M2/M2/BUILD/build/Macaulay2/bin/cmake_install.cmake",
+		"/home/ubuntu/M2/M2/BUILD/build/Macaulay2/m2/cmake_install.cmake",
+		"/home/ubuntu/M2/M2/BUILD/build/Macaulay2/packages/cmake_install.cmake",
+		"/home/ubuntu/M2/M2/BUILD/build/Macaulay2/editors/cmake_install.cmake",
+		"/home/ubuntu/M2/M2/BUILD/build/Macaulay2/tests/cmake_install.cmake",
+		"/home/ubuntu/M2/M2/BUILD/build/Macaulay2/docs/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

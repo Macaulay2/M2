@@ -1,0 +1,6 @@
+# Target labels
+ build-ntl
+# Source files and their labels
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-ntl-wizard
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-ntl-wizard.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/ntl/src/build-ntl-stamp/build-ntl-wizard.rule

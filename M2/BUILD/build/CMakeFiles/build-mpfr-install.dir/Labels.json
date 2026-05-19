@@ -1,0 +1,40 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-mpfr-install"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-mpfr-install.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/mpfr/src/build-mpfr-stamp/build-mpfr-install.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/mpfr/src/build-mpfr-stamp/build-mpfr-build.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/mpfr/src/build-mpfr-stamp/build-mpfr-configure.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/mpfr/src/build-mpfr-stamp/build-mpfr-patch.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/mpfr/src/build-mpfr-stamp/build-mpfr-update.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/mpfr/src/build-mpfr-stamp/build-mpfr-download.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/mpfr/src/build-mpfr-stamp/build-mpfr-mkdir.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"build-mpfr"
+		],
+		"name" : "build-mpfr-install"
+	}
+}

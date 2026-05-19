@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-msolve"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-msolve.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-msolve-complete.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/msolve/src/build-msolve-stamp/build-msolve-build.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/msolve/src/build-msolve-stamp/build-msolve-configure.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/msolve/src/build-msolve-stamp/build-msolve-download.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/msolve/src/build-msolve-stamp/build-msolve-install.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/msolve/src/build-msolve-stamp/build-msolve-mkdir.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/msolve/src/build-msolve-stamp/build-msolve-patch.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/msolve/src/build-msolve-stamp/build-msolve-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"build-msolve"
+		],
+		"name" : "build-msolve"
+	}
+}

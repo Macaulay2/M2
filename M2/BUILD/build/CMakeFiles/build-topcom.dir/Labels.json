@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-topcom"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-topcom.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-topcom-complete.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/topcom/src/build-topcom-stamp/build-topcom-build.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/topcom/src/build-topcom-stamp/build-topcom-configure.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/topcom/src/build-topcom-stamp/build-topcom-download.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/topcom/src/build-topcom-stamp/build-topcom-install.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/topcom/src/build-topcom-stamp/build-topcom-mkdir.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/topcom/src/build-topcom-stamp/build-topcom-patch.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/topcom/src/build-topcom-stamp/build-topcom-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"build-topcom"
+		],
+		"name" : "build-topcom"
+	}
+}

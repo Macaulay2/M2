@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-fflas_ffpack"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-fflas_ffpack.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-fflas_ffpack-complete.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/fflas_ffpack/src/build-fflas_ffpack-stamp/build-fflas_ffpack-build.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/fflas_ffpack/src/build-fflas_ffpack-stamp/build-fflas_ffpack-configure.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/fflas_ffpack/src/build-fflas_ffpack-stamp/build-fflas_ffpack-download.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/fflas_ffpack/src/build-fflas_ffpack-stamp/build-fflas_ffpack-install.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/fflas_ffpack/src/build-fflas_ffpack-stamp/build-fflas_ffpack-mkdir.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/fflas_ffpack/src/build-fflas_ffpack-stamp/build-fflas_ffpack-patch.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/fflas_ffpack/src/build-fflas_ffpack-stamp/build-fflas_ffpack-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"build-fflas_ffpack"
+		],
+		"name" : "build-fflas_ffpack"
+	}
+}

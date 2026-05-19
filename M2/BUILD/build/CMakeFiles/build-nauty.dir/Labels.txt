@@ -1,0 +1,13 @@
+# Target labels
+ build-nauty
+# Source files and their labels
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-nauty
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-nauty.rule
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-nauty-complete.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/nauty/src/build-nauty-stamp/build-nauty-build.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/nauty/src/build-nauty-stamp/build-nauty-configure.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/nauty/src/build-nauty-stamp/build-nauty-download.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/nauty/src/build-nauty-stamp/build-nauty-install.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/nauty/src/build-nauty-stamp/build-nauty-mkdir.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/nauty/src/build-nauty-stamp/build-nauty-patch.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/nauty/src/build-nauty-stamp/build-nauty-update.rule

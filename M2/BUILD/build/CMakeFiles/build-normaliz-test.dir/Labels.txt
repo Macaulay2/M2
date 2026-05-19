@@ -1,0 +1,13 @@
+# Target labels
+ build-normaliz
+# Source files and their labels
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-normaliz-test
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-normaliz-test.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/normaliz/src/build-normaliz-stamp/build-normaliz-test.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/normaliz/src/build-normaliz-stamp/build-normaliz-install.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/normaliz/src/build-normaliz-stamp/build-normaliz-build.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/normaliz/src/build-normaliz-stamp/build-normaliz-configure.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/normaliz/src/build-normaliz-stamp/build-normaliz-patch.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/normaliz/src/build-normaliz-stamp/build-normaliz-update.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/normaliz/src/build-normaliz-stamp/build-normaliz-download.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/normaliz/src/build-normaliz-stamp/build-normaliz-mkdir.rule

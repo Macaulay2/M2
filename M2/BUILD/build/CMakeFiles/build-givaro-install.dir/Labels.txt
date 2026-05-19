@@ -1,0 +1,12 @@
+# Target labels
+ build-givaro
+# Source files and their labels
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-givaro-install
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-givaro-install.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/givaro/src/build-givaro-stamp/build-givaro-install.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/givaro/src/build-givaro-stamp/build-givaro-build.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/givaro/src/build-givaro-stamp/build-givaro-configure.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/givaro/src/build-givaro-stamp/build-givaro-patch.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/givaro/src/build-givaro-stamp/build-givaro-update.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/givaro/src/build-givaro-stamp/build-givaro-download.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/givaro/src/build-givaro-stamp/build-givaro-mkdir.rule

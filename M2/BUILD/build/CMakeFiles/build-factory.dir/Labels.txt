@@ -1,0 +1,13 @@
+# Target labels
+ build-factory
+# Source files and their labels
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-factory
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-factory.rule
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-factory-complete.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/factory/src/build-factory-stamp/build-factory-build.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/factory/src/build-factory-stamp/build-factory-configure.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/factory/src/build-factory-stamp/build-factory-download.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/factory/src/build-factory-stamp/build-factory-install.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/factory/src/build-factory-stamp/build-factory-mkdir.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/factory/src/build-factory-stamp/build-factory-patch.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/factory/src/build-factory-stamp/build-factory-update.rule

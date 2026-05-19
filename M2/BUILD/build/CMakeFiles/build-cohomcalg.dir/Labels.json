@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-cohomcalg"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-cohomcalg.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-cohomcalg-complete.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/cohomcalg/src/build-cohomcalg-stamp/build-cohomcalg-build.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/cohomcalg/src/build-cohomcalg-stamp/build-cohomcalg-configure.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/cohomcalg/src/build-cohomcalg-stamp/build-cohomcalg-download.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/cohomcalg/src/build-cohomcalg-stamp/build-cohomcalg-install.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/cohomcalg/src/build-cohomcalg-stamp/build-cohomcalg-mkdir.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/cohomcalg/src/build-cohomcalg-stamp/build-cohomcalg-patch.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/cohomcalg/src/build-cohomcalg-stamp/build-cohomcalg-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"build-cohomcalg"
+		],
+		"name" : "build-cohomcalg"
+	}
+}

@@ -1,0 +1,22 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-ntl-wizard"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-ntl-wizard.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/ntl/src/build-ntl-stamp/build-ntl-wizard.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"build-ntl"
+		],
+		"name" : "build-ntl-wizard"
+	}
+}

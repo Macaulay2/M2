@@ -1,0 +1,13 @@
+# Target labels
+ build-mathic
+# Source files and their labels
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-mathic-test
+/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-mathic-test.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/mathic/src/build-mathic-stamp/build-mathic-test.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/mathic/src/build-mathic-stamp/build-mathic-install.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/mathic/src/build-mathic-stamp/build-mathic-build.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/mathic/src/build-mathic-stamp/build-mathic-configure.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/mathic/src/build-mathic-stamp/build-mathic-patch.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/mathic/src/build-mathic-stamp/build-mathic-update.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/mathic/src/build-mathic-stamp/build-mathic-download.rule
+/home/ubuntu/M2/M2/BUILD/build/libraries/mathic/src/build-mathic-stamp/build-mathic-mkdir.rule

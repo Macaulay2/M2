@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-bdwgc-test"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/CMakeFiles/build-bdwgc-test.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/bdwgc/src/build-bdwgc-stamp/build-bdwgc-test.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/bdwgc/src/build-bdwgc-stamp/build-bdwgc-install.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/bdwgc/src/build-bdwgc-stamp/build-bdwgc-build.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/bdwgc/src/build-bdwgc-stamp/build-bdwgc-configure.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/bdwgc/src/build-bdwgc-stamp/build-bdwgc-patch.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/bdwgc/src/build-bdwgc-stamp/build-bdwgc-update.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/bdwgc/src/build-bdwgc-stamp/build-bdwgc-download.rule"
+		},
+		{
+			"file" : "/home/ubuntu/M2/M2/BUILD/build/libraries/bdwgc/src/build-bdwgc-stamp/build-bdwgc-mkdir.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"build-bdwgc"
+		],
+		"name" : "build-bdwgc-test"
+	}
+}
