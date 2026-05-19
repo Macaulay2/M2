@@ -470,7 +470,7 @@ doc ///
       R = kk[a, b, c]
       I = ideal (a, b); A = I/I^2
       J = ideal (b, c); B = J/J^2
-      K = ideal (a, c); F = K/K^2
+      K = ideal (a, c); C = K/K^2
       T =  A_0 ** (B_0 ** C_0)
       T' = (A_0 ** B_0) ** C_0
       assert(tensorAssociativity(A, B, C) * T == T')
