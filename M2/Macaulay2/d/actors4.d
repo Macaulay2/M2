@@ -9,7 +9,7 @@ use pthread;
 use regex;
 
 header "// required for toString routines
-#include <engine.h>                         // for IM2_GB_to_string, rawMuta... // TODO: remove this one
+#include <engine.h>                         // for rawGBToString, rawMuta... // TODO: remove this one
 #include <interface/NAG.h>                  // for rawHomotopyToString, rawP...
 #include <interface/freemodule.h>           // for rawFreeModuleToString
 #include <interface/matrix.h>               // for rawMatrixToString
@@ -1016,7 +1016,7 @@ tostringfun(e:Expr):Expr := (
      is x:RawRingCell do toExpr(Ccode(string, "IM2_Ring_to_string(",x.p,")" ))
      is x:RawRingElementCell do toExpr( Ccode(string, "IM2_RingElement_to_string(",x.p,")" ) )
      is x:RawMonomialIdealCell do toExpr( Ccode(string, "IM2_MonomialIdeal_to_string(",x.p,")" ) )
-     is c:RawComputationCell do toExpr(Ccode(string, "IM2_GB_to_string(",c.p,")" ))
+     is c:RawComputationCell do toExpr(Ccode(string, "rawGBToString(",c.p,")" ))
      is pythonObjectCell do toExpr("<<a python object>>")
      is x:xmlNodeCell do toExpr(toString(x.v))
      is xmlAttrCell do toExpr("<<libxml attribute>>")

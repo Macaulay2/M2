@@ -24,7 +24,7 @@ header "// TODO: break apart this file so each piece includes only one:
 #include <interface/ringmap.h>";
 
 header "// TODO: remove the following headers
-#include <engine.h>                         // for IM2_Computation_set_stop
+#include <engine.h>                         // for rawComputationSetStop
 #include <error.h>                          // for ERROR
 #include <ZZp.hpp>                          // for Z_mod
 #include <exceptions.hpp>                   // for engine_error, CATCH, TRY
@@ -2651,7 +2651,7 @@ export rawHilbert(e:Expr):Expr := (
      when e
      is M:RawMatrixCell do (
 	  toExpr(Ccode(RawRingElementOrNull,
-		    "IM2_Matrix_Hilbert(",
+		    "rawMatrixHilbert(",
 		    M.p, ")" ) ) )
      is M:RawMonomialIdealCell do (
 	  toExpr(Ccode(RawRingElementOrNull,
@@ -3438,7 +3438,7 @@ export rawStatusResolution(e:Expr):Expr := (
      when e is G:RawComputationCell do (
 	  completionDegree := 0;
 	  completionLevel := 0;
-	  ret := Ccode(int,"IM2_Resolution_status(",
+	  ret := Ccode(int,"rawResolutionStatus(",
 	       G.p,",",
 	       "&",completionDegree,",",
 	       "&",completionLevel,
@@ -3464,7 +3464,7 @@ export rawGB(e:Expr):Expr := (
      when s.8 is maxReductionCount:ZZcell do if !isInt(maxReductionCount) then WrongArgSmallInteger(9) else
      toExpr(
 	  Ccode(RawComputationOrNull,
-	       "IM2_GB_make(",
+	       "rawGBMake(",
 		   m.p,",",
 		   isTrue(collectSyz),",",
 		   toInt(nRowsToKeep),",",
@@ -3504,7 +3504,7 @@ export rawResolution(e:Expr):Expr := (
      if !isInt(algorithm) then WrongArgSmallInteger(8) else
      toExpr(
 	  Ccode(RawComputationOrNull,
-	       "IM2_res_make(",
+	       "rawResMake(",
 		   m.p,",",
 		   isTrue(resolveCokernel),",",
 		   toInt(maxLevel),",",
@@ -3534,7 +3534,7 @@ export rawGBSetHilbertFunction(e:Expr):Expr := (
      when a.0 is G:RawComputationCell do 
      when a.1 is h:RawRingElementCell do toExpr(
 	  Ccode(RawComputationOrNull, 
-		    "IM2_GB_set_hilbert_function(",
+		    "rawGBSetHilbertFunction(",
 		    G.p,
 		    ",", h.p,
 		    ")" ))
@@ -3552,7 +3552,7 @@ export rawGBForce(e:Expr):Expr := (
      when a.2 is change:RawMatrixCell do 
      when a.3 is syz:RawMatrixCell do toExpr(
 	  Ccode(RawComputationOrNull, 
-		    "IM2_GB_force(",
+		    "rawGBForce(",
 		    m.p,
 		    ",", gb.p,
 		    ",", change.p,
@@ -3631,7 +3631,7 @@ export rawGBSetStop(e:Expr):Expr := (
      when s.8 is just_min_gens:Boolean do
      if !isSequenceOfSmallIntegers(s.9) then WrongArg(10,"a sequence of small integers") else -- length_limit
      toExpr(
-	  Ccode(RawComputationOrNull,"IM2_Computation_set_stop(",
+	  Ccode(RawComputationOrNull,"rawComputationSetStop(",
 		    G.p, ",",
 		    True == always_stop, ",",
 		    getSequenceOfSmallIntegers(s.2), ",",
@@ -3775,7 +3775,7 @@ export rawResolutionStatusLevel(e:Expr):Expr := (
      if !isInt(level) then WrongArgSmallInteger(2) else
      when s.2 is minimize:Boolean do (
 	  completionDegree := 0;
-	  ret := Ccode(int,"IM2_Resolution_status_level(",
+	  ret := Ccode(int,"rawResolutionStatusLevel(",
 	       G.p,",", toInt(level), ",", True == minimize, ",", "&",completionDegree, ")" );
 	  if ret == -1 then engineErrorMessage() 
 	  else Expr(Sequence(toExpr(ret),toExpr(completionDegree))))
@@ -3850,7 +3850,7 @@ export rawGBMatrixLift(e:Expr):Expr := (
      when a.1 is m:RawMatrixCell do (
 	  resultRemainder := RawMatrixOrNull(NULL);
 	  resultQuotient := RawMatrixOrNull(NULL);
-	  cplt := Ccode(bool, "IM2_GB_matrix_lift(",
+	  cplt := Ccode(bool, "rawGBMatrixLift(",
 		    G.p, ",",
 		    m.p, ",",
 		    "&", resultRemainder, ",",
@@ -3869,7 +3869,7 @@ export rawGBContains(e:Expr):Expr := (
      when a.0 is G:RawComputationCell do 
      when a.1 is m:RawMatrixCell do toExpr(
 	  Ccode(int, 
-		    "IM2_GB_contains(",
+		    "rawGBContains(",
 		    G.p, ",",
 		    m.p,		    
 		    ")" ))
