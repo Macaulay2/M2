@@ -4,10 +4,10 @@ newPackage(
     	Version => "1.16", 
     	Date => "May 2023",
     	Authors => {
-	     {Name => "Timothy Duff", Email => "timduff@uw.edu"},
+	     {Name => "Timothy Duff", Email => "tduff@missouri.edu"},
 	     {Name => "Cvetelina Hill", Email => "cvetelina.hill@math.gatech.edu"},
 	     {Name => "Anders Nedergaard Jensen", Email => "jensen@math.au.dk"},
-	     {Name => "Kisun Lee", Email => "klee669@math.gatech.edu"},
+	     {Name => "Kisun Lee", Email => "kisunl@clemson.edu"},
 	     {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"},
 	     {Name => "Jeff Sommars", Email => "sommars1@uic.edu"}
 	     },
