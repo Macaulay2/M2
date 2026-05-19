@@ -50,7 +50,7 @@ M2_arrayint rawMinimalBetti(Computation *G,
                             M2_arrayint length_limit);
 /* connected: rawMinimalBetti */
 
-const RingElement /* or null */ *IM2_Matrix_Hilbert(const Matrix *M);
+const RingElement /* or null */ *rawMatrixHilbert(const Matrix *M);
 /* This routine computes the numerator of the Hilbert series
    for coker leadterms(M), using the degrees of the rows of M.
    NULL is returned if the ring is not appropriate for
@@ -64,7 +64,7 @@ const Matrix *rawKernelOfGB(const Matrix *M);
 ///////////////////////////////////////////////////////////////////////////////
 /////// The following will be removed once the new code is functional  ///////
 ///////////////////////////////////////////////////////////////////////////////
-Computation /* or null */ *IM2_GB_make(
+Computation /* or null */ *rawGBMake(
     const Matrix *m,
     M2_bool collect_syz,
     int n_rows_to_keep,
@@ -75,7 +75,7 @@ Computation /* or null */ *IM2_GB_make(
     int strategy,
     int max_reduction_count); /* drg: connected rawGB */
 
-Computation /* or null */ *IM2_res_make(const Matrix *m,
+Computation /* or null */ *rawResMake(const Matrix *m,
                                         M2_bool resolve_cokernel,
                                         int max_level,
                                         M2_bool use_max_slanted_degree,
@@ -85,11 +85,11 @@ Computation /* or null */ *IM2_res_make(const Matrix *m,
                                         M2_bool parallelizeByDegree);
 
 /* rawGBSetHilbertFunction */
-Computation /* or null */ *IM2_GB_set_hilbert_function(Computation *C,
+Computation /* or null */ *rawGBSetHilbertFunction(Computation *C,
                                                        const RingElement *h);
 
 /* rawGBForce */
-Computation /* or null */ *IM2_GB_force(
+Computation /* or null */ *rawGBForce(
     const Matrix *m, /* trimmed or minimal gens, may be the same as gb */
     const Matrix *gb,
     const Matrix *change, /* same number of columns as 'gb', if not 0 */
@@ -114,7 +114,7 @@ Computation /* or null */ *rawMarkedGB(
 Computation /* or null */ *rawGroebnerWalk(const Matrix *gb,
                                            const MonomialOrdering *order1);
 
-Computation /* or null */ *IM2_Computation_set_stop(
+Computation /* or null */ *rawComputationSetStop(
     Computation *G,
     M2_bool always_stop,
     M2_arrayint degree_limit,
@@ -171,7 +171,7 @@ const Matrix /* or null */ *rawGBMatrixRemainder(Computation *C,
 
 /* rawGBMatrixLift: false is returned if there is an error or if the
    remainder is NON-zero */
-M2_bool IM2_GB_matrix_lift(Computation *C,
+M2_bool rawGBMatrixLift(Computation *C,
                            const Matrix *m,
                            const Matrix /* or null */ **result_remainder,
                            const Matrix /* or null */ **result_quotient);
@@ -180,7 +180,7 @@ M2_bool IM2_GB_matrix_lift(Computation *C,
  -2 for errors
  -1 for containment of span(m) in span(C)
  i  for the smallest index of a column of m not contained in span(C) */
-int IM2_GB_contains(Computation *C, const Matrix *m);
+int rawGBContains(Computation *C, const Matrix *m);
 
 /*******************************************
  * Noncommutative Groebner bases ***********
@@ -241,12 +241,12 @@ MutableMatrix /* or null */ *rawResolutionGetMutableMatrix2B(
 const FreeModule /* or null */ *rawResolutionGetFree(Computation *C, int level);
 
 /* TODO */
-int IM2_Resolution_status(Computation *C,
+int rawResolutionStatus(Computation *C,
                           int *complete_up_through_this_degree,
                           int *complete_up_through_this_level);
 
 /* TODO */
-enum ComputationStatusCode IM2_Resolution_status_level(
+enum ComputationStatusCode rawResolutionStatusLevel(
     Computation *C,
     int level,
     M2_bool minimize,
@@ -255,7 +255,7 @@ enum ComputationStatusCode IM2_Resolution_status_level(
 M2_arrayintOrNull rawResolutionBetti(Computation *C, int type);
 /* see engine.h for description of what 'type' should be */
 
-M2_string IM2_GB_to_string(Computation *C);
+M2_string rawGBToString(Computation *C);
 /* TODO */
 
 unsigned int rawComputationHash(const Computation *C);

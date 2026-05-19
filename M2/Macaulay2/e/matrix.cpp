@@ -13,6 +13,7 @@
 #include "style.hpp"
 #include "text-io.hpp"
 #include "ring.hpp"
+#include "ringelem.hpp"
 #include "comb.hpp"
 #include "polyring.hpp"
 #include "assprime.hpp"
@@ -55,6 +56,53 @@ unsigned int Matrix::computeHashValue() const
         }
     }
   return hashval;
+}
+
+engine_RawRingElementArrayArrayOrNull Matrix::entries() const
+{
+  int ncols = n_cols();
+  int nrows = n_rows();
+  if (nrows < 0 || ncols < 0)
+    {
+      ERROR("internal error: matrix has a negative size %d by %d",
+            nrows,
+            ncols);
+      return nullptr;
+    }
+
+  engine_RawRingElementArrayArray entries =
+      getmemarraytype(engine_RawRingElementArrayArray, nrows);
+  entries->len = nrows;
+
+  const Ring *R = get_ring();
+  RingElement *zero = RingElement::make_raw(R, R->zero());
+  for (int r = 0; r < nrows; r++)
+    {
+      engine_RawRingElementArray currRow =
+          getmemarraytype(engine_RawRingElementArray, ncols);
+      currRow->len = ncols;
+      std::fill_n(currRow->array, ncols, zero);
+      entries->array[r] = currRow;
+    }
+
+  for (int c = 0; c < ncols; c++)
+    {
+      const vec &column = elem(c);
+      for (const vecterm &term : column)
+        {
+          if (term.comp < 0 || term.comp >= nrows)
+            {
+              ERROR("internal error: matrix contains invalid entries:"
+                    "row index %d out of range 0 .. %d",
+                    term.comp,
+                    nrows - 1);
+              continue;
+            }
+          entries->array[term.comp]->array[c] =
+              RingElement::make_raw(R, term.coeff);
+        }
+    }
+  return entries;
 }
 
 const Matrix /* or null */ *Matrix::make(const FreeModule *target,
@@ -274,6 +322,28 @@ const Matrix /* or null */ *Matrix::remake(const FreeModule *target) const
   MatrixConstructor mat(target, n_cols());
   for (int i = 0; i < n_cols(); i++)
     mat.set_column(i, R->copy_vec(mEntries[i]));
+  mat.compute_column_degrees();
+  return mat.to_matrix();
+}
+
+const Matrix /* or null */ *Matrix::promote(const FreeModule *target) const
+{
+  ring_elem a;
+  const Ring *R = get_ring();
+  const Ring *S = target->get_ring();
+  MatrixConstructor mat(target, n_cols());
+  Matrix::iterator i(this);
+  for (int c = 0; c < n_cols(); c++)
+    for (i.set(c); i.valid(); i.next())
+      if (S->promote(R, i.entry(), a))
+        mat.set_entry(i.row(), c, a);
+      else
+        {
+          ERROR("first error occurred while promoting matrix entry at row %d, column %d",
+                i.row(),
+                c);
+          return nullptr;
+        }
   mat.compute_column_degrees();
   return mat.to_matrix();
 }

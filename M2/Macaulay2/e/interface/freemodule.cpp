@@ -12,9 +12,9 @@
 
 class Matrix;
 
-const Ring *IM2_FreeModule_ring(const FreeModule *F) { return F->get_ring(); }
-int IM2_FreeModule_rank(const FreeModule *F) { return F->rank(); }
-M2_string IM2_FreeModule_to_string(const FreeModule *F)
+const Ring *rawFreeModuleRing(const FreeModule *F) { return F->get_ring(); }
+int rawFreeModuleRank(const FreeModule *F) { return F->rank(); }
+M2_string rawFreeModuleToString(const FreeModule *F)
 {
   buffer o;
   F->text_out(o);
@@ -22,7 +22,7 @@ M2_string IM2_FreeModule_to_string(const FreeModule *F)
 }
 
 unsigned int rawFreeModuleHash(const FreeModule *F) { return F->hash(); }
-const FreeModule /* or null */ *IM2_FreeModule_make(const Ring *R, int rank)
+const FreeModule /* or null */ *rawFreeModuleMake(const Ring *R, int rank)
 {
   try
     {
@@ -39,32 +39,12 @@ const FreeModule /* or null */ *IM2_FreeModule_make(const Ring *R, int rank)
   }
 }
 
-const FreeModule /* or null */ *IM2_FreeModule_make_degs(const Ring *R,
+const FreeModule /* or null */ *rawFreeModuleMakeDegs(const Ring *R,
                                                          M2_arrayint degs)
 {
   try
     {
-      auto D = R->degree_monoid();
-      unsigned int eachdeg = D->n_vars();
-      if (eachdeg == 0)
-        {
-          ERROR("rawFreeModule: degree rank 0, but sequence of degrees given");
-          return nullptr;
-        }
-      unsigned int rank = degs->len / eachdeg;
-      if (rank * eachdeg != degs->len)
-        {
-          ERROR("inappropriate number of degrees");
-          return nullptr;
-        }
-      monomial deg = D->make_one();
-      FreeModule *F = R->make_FreeModule();
-      for (unsigned int i = 0; i < rank; i++)
-        {
-          D->from_expvector(degs->array + i * eachdeg, deg);
-          F->append(deg);
-        }
-      return F;
+      return R->make_FreeModule(degs->len, degs->array);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -72,7 +52,7 @@ const FreeModule /* or null */ *IM2_FreeModule_make_degs(const Ring *R,
   }
 }
 
-const FreeModule /* or null */ *IM2_FreeModule_make_schreyer(const Matrix *m)
+const FreeModule /* or null */ *rawFreeModuleMakeSchreyer(const Matrix *m)
 {
   try
     {
@@ -84,7 +64,7 @@ const FreeModule /* or null */ *IM2_FreeModule_make_schreyer(const Matrix *m)
   }
 }
 
-M2_arrayint IM2_FreeModule_get_degrees(const FreeModule *F)
+M2_arrayint rawFreeModuleGetDegrees(const FreeModule *F)
 {
   auto D = F->get_ring()->degree_monoid();
   auto n = D->n_vars();
@@ -95,12 +75,12 @@ M2_arrayint IM2_FreeModule_get_degrees(const FreeModule *F)
   return result;
 }
 
-const Matrix *IM2_FreeModule_get_schreyer(const FreeModule *F)
+const Matrix *rawFreeModuleGetSchreyer(const FreeModule *F)
 {
   return F->get_induced_order();
 }
 
-M2_bool IM2_FreeModule_is_equal(const FreeModule *F, const FreeModule *G)
+M2_bool rawFreeModuleIsEqual(const FreeModule *F, const FreeModule *G)
 /* Determines if F and G are the same graded module.  If one has a
    Schreyer order and one does not, but their ranks and degrees are the
    same, then they are considered equal by this routine. */
@@ -108,13 +88,13 @@ M2_bool IM2_FreeModule_is_equal(const FreeModule *F, const FreeModule *G)
   return F->is_equal(G);
 }
 
-const FreeModule /* or null */ *IM2_FreeModule_sum(const FreeModule *F,
+const FreeModule /* or null */ *rawFreeModuleSum(const FreeModule *F,
                                                    const FreeModule *G)
 {
   return F->direct_sum(G);
 }
 
-const FreeModule /* or null */ *IM2_FreeModule_tensor(const FreeModule *F,
+const FreeModule /* or null */ *rawFreeModuleTensor(const FreeModule *F,
                                                       const FreeModule *G)
 {
   try
@@ -127,7 +107,7 @@ const FreeModule /* or null */ *IM2_FreeModule_tensor(const FreeModule *F,
   }
 }
 
-const FreeModule /* or null */ *IM2_FreeModule_dual(const FreeModule *F)
+const FreeModule /* or null */ *rawFreeModuleDual(const FreeModule *F)
 {
   try
     {
@@ -139,7 +119,7 @@ const FreeModule /* or null */ *IM2_FreeModule_dual(const FreeModule *F)
   }
 }
 
-const FreeModule *IM2_FreeModule_symm(int n, const FreeModule *F)
+const FreeModule *rawFreeModuleSymm(int n, const FreeModule *F)
 {
   try
     {
@@ -151,7 +131,7 @@ const FreeModule *IM2_FreeModule_symm(int n, const FreeModule *F)
   }
 }
 
-const FreeModule *IM2_FreeModule_exterior(int n, const FreeModule *F)
+const FreeModule *rawFreeModuleExterior(int n, const FreeModule *F)
 {
   try
     {
@@ -163,7 +143,7 @@ const FreeModule *IM2_FreeModule_exterior(int n, const FreeModule *F)
   }
 }
 
-const FreeModule *IM2_FreeModule_submodule(const FreeModule *F,
+const FreeModule *rawFreeModuleSubmodule(const FreeModule *F,
                                            M2_arrayint selection)
 {
   try

@@ -38,22 +38,22 @@ typedef struct Ring Ring;
 extern "C" {
 #  endif
 
-const Ring *IM2_FreeModule_ring(const FreeModule *F);
+const Ring *rawFreeModuleRing(const FreeModule *F);
 /* drg: connected rawRing*/
 
-int IM2_FreeModule_rank(const FreeModule *F);
+int rawFreeModuleRank(const FreeModule *F);
 /* drg: connected rawRank*/
 
-M2_string IM2_FreeModule_to_string(const FreeModule *F);
+M2_string rawFreeModuleToString(const FreeModule *F);
 /* drg: connected */
 
 unsigned int rawFreeModuleHash(const FreeModule *F);
 /* not quite connected */
 
-const FreeModule /* or null */ *IM2_FreeModule_make(const Ring *R, int rank);
+const FreeModule /* or null */ *rawFreeModuleMake(const Ring *R, int rank);
 /* drg: connected rawFreeModule*/
 
-const FreeModule /* or null */ *IM2_FreeModule_make_degs(const Ring *R,
+const FreeModule /* or null */ *rawFreeModuleMakeDegs(const Ring *R,
                                                          M2_arrayint degs);
 /* drg: connected rawFreeModule*/
 /* Make a graded free module over R.  'degs' should be of length
@@ -62,7 +62,7 @@ const FreeModule /* or null */ *IM2_FreeModule_make_degs(const Ring *R,
  * i = 0.
  */
 
-const FreeModule /* or null */ *IM2_FreeModule_make_schreyer(const Matrix *m);
+const FreeModule /* or null */ *rawFreeModuleMakeSchreyer(const Matrix *m);
 /* drg: connected rawSchreyerSource */
 /* Returns G, (a copy of) the source free module of 'm', modified to
  * use the induced order via m: compare two monomials of G via
@@ -73,27 +73,27 @@ const FreeModule /* or null */ *IM2_FreeModule_make_schreyer(const Matrix *m);
  * handled efficiently.
  */
 
-M2_arrayint IM2_FreeModule_get_degrees(const FreeModule *F);
+M2_arrayint rawFreeModuleGetDegrees(const FreeModule *F);
 /* drg: connected rawMultiDegree*/
 
-const Matrix *IM2_FreeModule_get_schreyer(const FreeModule *F);
+const Matrix *rawFreeModuleGetSchreyer(const FreeModule *F);
 /* drg: connected rawGetSchreyer*/
 
-M2_bool IM2_FreeModule_is_equal(const FreeModule *F, const FreeModule *G);
+M2_bool rawFreeModuleIsEqual(const FreeModule *F, const FreeModule *G);
 /* drg: connected === */
 /* Determines if F and G are the same graded module.  If one has a
  * Schreyer order and one does not, but their ranks and degrees are the
  * same, then they are considered equal by this routine.
  */
 
-const FreeModule /* or null */ *IM2_FreeModule_sum(const FreeModule *F,
+const FreeModule /* or null */ *rawFreeModuleSum(const FreeModule *F,
                                                    const FreeModule *G);
 /* drg: connected rawDirectSum */
 /* The direct sum of two free modules over the same ring, or NULL.
  * If F or G has a Schreyer order, then so does their direct sum
  */
 
-const FreeModule /* or null */ *IM2_FreeModule_tensor(const FreeModule *F,
+const FreeModule /* or null */ *rawFreeModuleTensor(const FreeModule *F,
                                                       const FreeModule *G);
 /* drg: connected rawTensor*/
 /* The tensor product of two free modules over the same ring, or NULL.
@@ -108,7 +108,7 @@ const FreeModule /* or null */ *IM2_FreeModule_tensor(const FreeModule *F,
  *  At the moment, the answer is almost yes...
  */
 
-const FreeModule /* or null */ *IM2_FreeModule_dual(const FreeModule *F);
+const FreeModule /* or null */ *rawFreeModuleDual(const FreeModule *F);
 /* drg: connected rawDual*/
 /* Returns the graded dual F^* of F: if F has basis {f_1,...,f_r},
  * with degrees {d_1, ..., d_r}, then F^* has rank r, with
@@ -116,7 +116,7 @@ const FreeModule /* or null */ *IM2_FreeModule_dual(const FreeModule *F);
  * Schreyer order (even if F does).
  */
 
-const FreeModule *IM2_FreeModule_symm(int n, const FreeModule *F);
+const FreeModule *rawFreeModuleSymm(int n, const FreeModule *F);
 /* drg: connected rawSymmetricPower*/
 /* Returns the n th symmetric power G of F.
  * If F has basis {f_1,...,f_r}, then G has basis
@@ -125,7 +125,7 @@ const FreeModule *IM2_FreeModule_symm(int n, const FreeModule *F);
  * If F has a Schreyer order, then G is set to have one as well.
  */
 
-const FreeModule *IM2_FreeModule_exterior(int n, const FreeModule *F);
+const FreeModule *rawFreeModuleExterior(int n, const FreeModule *F);
 /* drg: connected rawExteriorPower*/
 /* Returns the n th exterior power G of F.
  * If F has basis {f_1,...,f_r}, then G has basis
@@ -134,7 +134,7 @@ const FreeModule *IM2_FreeModule_exterior(int n, const FreeModule *F);
  * If F has a Schreyer order, then G is set to have one as well.
  */
 
-const FreeModule /* or null */ *IM2_FreeModule_submodule(const FreeModule *F,
+const FreeModule /* or null */ *rawFreeModuleSubmodule(const FreeModule *F,
                                                          M2_arrayint selection);
 /* drg: connected rawSubmodule*/
 /* Returns a free module obtained by choosing basis elements of F:

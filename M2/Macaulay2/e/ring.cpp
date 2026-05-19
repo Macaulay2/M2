@@ -65,6 +65,36 @@ FreeModule *Ring::make_FreeModule(int n) const
   return new FreeModule(this, n, false);
 }
 
+FreeModule *Ring::make_FreeModule(int ndegrees, int *degrees) const
+{
+  auto D = this->degree_monoid();
+  unsigned int eachdeg = D->n_vars();
+
+  if (eachdeg == 0)
+    {
+      //ERROR("rawFreeModule: degree rank 0, but sequence of degrees given");
+      throw exc::engine_error("rawFreeModule: degree rank 0, but sequence of degrees given");
+      return nullptr;
+    }
+
+  unsigned int rank = ndegrees / eachdeg;
+  if (rank * eachdeg != ndegrees)
+    {
+      //ERROR("inappropriate number of degrees");
+      throw exc::engine_error("inappropriate number of degrees");
+      return nullptr;
+    }
+
+  monomial deg = D->make_one();
+  FreeModule *F = new FreeModule(this, 0, false);
+  for (unsigned int i = 0; i < rank; i++)
+    {
+      D->from_expvector(degrees + i * eachdeg, deg);
+      F->append(deg);
+    }
+  return F;
+}
+
 bool Ring::is_field() const { return _isfield == 1; }
 bool Ring::declare_field()
 {
