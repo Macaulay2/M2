@@ -140,6 +140,50 @@ TEST(Matrix, entriesFromSparseColumns)
     }
 }
 
+TEST(Matrix, concatArray)
+{
+  const PolynomialRing* R = simplePolynomialRing(101, {"x", "y"});
+  const FreeModule* target = R->make_FreeModule(2);
+
+  MatrixConstructor left(target, 2);
+  left.set_entry(0, 0, R->from_long(2));
+  left.set_entry(1, 1, R->var(0));
+  left.compute_column_degrees();
+  const Matrix* A = left.to_matrix();
+
+  MatrixConstructor empty(target, 0);
+  const Matrix* E = empty.to_matrix();
+
+  MatrixConstructor right(target, 2);
+  right.set_entry(1, 0, R->from_long(5));
+  right.set_entry(0, 1, R->var(1));
+  right.compute_column_degrees();
+  const Matrix* B = right.to_matrix();
+
+  const Matrix* const matrices[] = {A, E, B};
+  const Matrix* C = Matrix::concat(3, matrices);
+
+  ASSERT_NE(C, nullptr);
+  EXPECT_EQ(C->rows(), target);
+  EXPECT_EQ(C->n_rows(), 2);
+  EXPECT_EQ(C->n_cols(), 4);
+
+  EXPECT_TRUE(R->is_equal(C->elem(0, 0), R->from_long(2)));
+  EXPECT_TRUE(R->is_zero(C->elem(1, 0)));
+  EXPECT_TRUE(R->is_zero(C->elem(0, 1)));
+  EXPECT_TRUE(R->is_equal(C->elem(1, 1), R->var(0)));
+  EXPECT_TRUE(R->is_zero(C->elem(0, 2)));
+  EXPECT_TRUE(R->is_equal(C->elem(1, 2), R->from_long(5)));
+  EXPECT_TRUE(R->is_equal(C->elem(0, 3), R->var(1)));
+  EXPECT_TRUE(R->is_zero(C->elem(1, 3)));
+
+  const Monoid* D = R->degree_monoid();
+  EXPECT_EQ(D->compare(C->cols()->degree(0), A->cols()->degree(0)), 0);
+  EXPECT_EQ(D->compare(C->cols()->degree(1), A->cols()->degree(1)), 0);
+  EXPECT_EQ(D->compare(C->cols()->degree(2), B->cols()->degree(0)), 0);
+  EXPECT_EQ(D->compare(C->cols()->degree(3), B->cols()->degree(1)), 0);
+}
+
 TEST(Matrix, promote)
 {
   const Ring* ZZ = globalZZ;

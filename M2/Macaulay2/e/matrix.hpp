@@ -121,6 +121,8 @@ class Matrix : public EngineObject
   Matrix *scalar_mult(const ring_elem r, bool opposite_mult) const;
   Matrix *mult(const Matrix *m, bool opposite_mult) const;
   Matrix *concat(const Matrix &m) const;
+  static Matrix /* or null */ *concat(unsigned int n,
+                                      const Matrix *const matrices[]);
 
   static Matrix *identity(const FreeModule *F);
   static Matrix /* or null */ *zero(const FreeModule *F, const FreeModule *G);

@@ -718,6 +718,40 @@ Matrix *Matrix::concat(const Matrix &m) const
   return mat.to_matrix();
 }
 
+Matrix *Matrix::concat(unsigned int n, const Matrix *const matrices[])
+{
+  if (n == 0)
+    {
+      ERROR("matrix concat: expects at least one matrix");
+      return nullptr;
+    }
+
+  const FreeModule *F = matrices[0]->rows();
+  const Ring *R = F->get_ring();
+  MatrixConstructor mat(F, 0);
+  int next = 0;
+  for (unsigned int i = 0; i < n; i++)
+    {
+      const Matrix *M = matrices[i];
+      if (R != M->get_ring())
+        {
+          ERROR("matrix concat: different base rings");
+          return nullptr;
+        }
+      if (F->rank() != M->n_rows())
+        {
+          ERROR("matrix concat: row sizes are not equal");
+          return nullptr;
+        }
+      for (int j = 0; j < M->n_cols(); j++)
+        {
+          mat.append(R->copy_vec(M->elem(j)));
+          mat.set_column_degree(next++, M->cols()->degree(j));
+        }
+    }
+  return mat.to_matrix();
+}
+
 Matrix *Matrix::direct_sum(const Matrix *m) const
 {
   auto R = get_ring();

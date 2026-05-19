@@ -15,7 +15,6 @@
 #include "interface/gmp-util.h"
 #include "interface/monoid.h"
 #include "mat.hpp"
-#include "matrix-con.hpp"
 #include "matrix.hpp"
 #include "mutablemat-defs.hpp"
 #include "relem.hpp"
@@ -288,36 +287,7 @@ const Matrix /* or null */ *rawMatrixConcat(const engine_RawMatrixArray Ms)
 {
   try
     {
-      unsigned int n = Ms->len;
-      if (n == 0)
-        {
-          ERROR("matrix concat: expects at least one matrix");
-          return nullptr;
-        }
-      const FreeModule *F = Ms->array[0]->rows();
-      const Ring *R = F->get_ring();
-      MatrixConstructor mat(Ms->array[0]->rows(), 0);
-      int next = 0;
-      for (unsigned int i = 0; i < n; i++)
-        {
-          const Matrix *M = Ms->array[i];
-          if (R != M->get_ring())
-            {
-              ERROR("matrix concat: different base rings");
-              return nullptr;
-            }
-          if (F->rank() != M->n_rows())
-            {
-              ERROR("matrix concat: row sizes are not equal");
-              return nullptr;
-            }
-          for (int j = 0; j < M->n_cols(); j++)
-            {
-              mat.append(R->copy_vec(M->elem(j)));
-              mat.set_column_degree(next++, M->cols()->degree(j));
-            }
-        }
-      return mat.to_matrix();
+      return Matrix::concat(Ms->len, Ms->array);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
