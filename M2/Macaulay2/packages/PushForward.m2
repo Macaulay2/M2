@@ -296,10 +296,23 @@ doc ///
             
             This package was originally implemented by Claudiu Raicu, some changes were
             introduced by Karl Schwede, and later by David Eisenbud and Mike Stillman.
+        Text
+            Start with a finite ring map and a module over the target ring.
+        Example
+            kk = QQ;
+            T = kk[t];
+            S = kk[a,b]/ideal(a*b);
+            use S;
+            M = module ideal(a);
+            phi = map(S,T,{a});
+            pushFwd(phi, M)
     Subnodes
         (pushFwd, RingMap)
         (pushFwd, RingMap, Module)
         (pushFwd, RingMap, Matrix)
+    SeeAlso
+        pushFwd
+        isModuleFinite
 ///
 
 doc ///
@@ -445,11 +458,24 @@ document{
   Key => pushFwd,
   Headline => "push forward",
   "The push forward functor",
+  PARA {
+       "Start with a finite ring map and a module over the target ring."
+     },
+  EXAMPLE lines ///
+  kk = QQ;
+  T = kk[t];
+  S = kk[a,b]/ideal(a*b);
+  use S;
+  M = module ideal(a);
+  phi = map(S,T,{a});
+  pushFwd(phi, M)
+  ///,
   UL {
        {TO (pushFwd,RingMap)," - for a finite ring map"},
        {TO (pushFwd,RingMap,Module), " - for a module"},
        {TO (pushFwd,RingMap,Matrix), " - for a map of modules"}
-     }
+     },
+  SeeAlso => {(pushFwd,RingMap),(pushFwd,RingMap,Module),(pushFwd,RingMap,Matrix),isModuleFinite}
   }   
 
 -- document{
