@@ -2,10 +2,42 @@
 --- author(s): 
 --- notes: 
 
--*
--- TODO
-(map,GaloisField,GaloisField)
-*-
+doc ///
+Node
+  Key
+   (map, GaloisField, GaloisField, List)
+   (map, GaloisField, GaloisField)
+  Headline
+   maps of Galois fields
+  Usage
+   phi = map(F,G)
+   phi = map(F,G,x)
+  Inputs
+   F:GaloisField
+   G:GaloisField
+   x:List
+    one element of F generating a subfield isomorphic to G
+  Outputs
+   phi:RingMap
+    carrying 1 to x
+  Description
+    Text
+     GF(p^n) contains GF(p^m) if and only if m divides n
+    Example
+     F4 = GF(2^2)
+     F8 = GF(2^3)
+     F16 = GF(2^4)
+     map(F16, F4)
+     map(F16, F8)
+    Text
+     It is possible to "define a map" that is not well-defined:
+    Example
+     phi = map(F16, F4, {1})
+     isWellDefined phi
+  SeeAlso
+   isWellDefined
+   GF
+///
 
 undocumented {(map, RingFamily, Thing, Thing),(map, Thing, RingFamily, Thing),
     (map, RingFamily, Thing), (map, Thing, RingFamily)}

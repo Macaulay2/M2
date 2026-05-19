@@ -3,8 +3,6 @@
 --- author(s): 
 --- notes: 
 
-undocumented (NewFromMethod, GroebnerBasis, Matrix, GroebnerBasisOptions, OptionTable)
-
 document { 
      Key => {gb,
 	  (gb,Ideal),
