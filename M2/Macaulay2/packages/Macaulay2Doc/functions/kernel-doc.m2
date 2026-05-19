@@ -48,7 +48,8 @@ doc ///
       R = QQ[a..d];
       S = QQ[s,t];
       F = map(S,R,{s^3, s^2*t, s*t^2, t^3})
-      ker(F, SubringLimit => 1)
+      K = ker(F, SubringLimit => 1)
+      assert(numgens K == 1)
     Text
       In the case when everything is homogeneous, Hilbert functions are used to speed up the computations.
   Caveat
