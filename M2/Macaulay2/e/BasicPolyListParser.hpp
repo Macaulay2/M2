@@ -1,5 +1,7 @@
-// This class implements parsing of polynomials from a string or file
-// as well as Msolve format.
+/** 
+ * This class implements parsing of polynomials from a string or file
+ * as well as Msolve format.
+*/ 
 #pragma once
 
 

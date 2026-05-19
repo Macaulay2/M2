@@ -116,8 +116,8 @@ class PointArray
  private:
   std::map<Weight, int> mMap;
   std::vector<RealVector> mPoints;
-  Weight mEpsilon;      // tolerance
-  RealVector mWeights;  // random positive numbers summing up to 1
+  Weight mEpsilon;      /**< \brief tolerance */
+  RealVector mWeights;  /**< \brief random positive numbers summing up to 1 */
 
   decltype(mMap)::const_iterator left(Weight key) const
   {
@@ -132,11 +132,20 @@ class PointArray
 // patching defs and functions: /////////////////////////////////////////
 // switching from CCC to ConcreteRing<ARingCC> /////////////////////////
 #define CCC M2::ConcreteRing<M2::ARingCC>
+/**
+ * \brief Cast a ring to a concrete, complex ring
+ * \param R the ring to cast
+ */
 inline const CCC* cast_to_CCC(const Ring* R)
 {
   return dynamic_cast<const CCC*>(R);
 }
 
+/**
+ * \brief Construct a ring element of ARingCC from a real and imaginary part
+ * \param re the real part
+ * \param im the imaginary part
+ */
 inline ring_elem from_doubles(const CCC* C, double re, double im)
 {
   M2::ARingCC::Element a(C->ring());
@@ -146,6 +155,11 @@ inline ring_elem from_doubles(const CCC* C, double re, double im)
   return result;
 }
 
+/**
+ * \brief Convert a ring element of ARingCC to GMP's complex type
+ * \param C the concrete ring `a` belongs to 
+ * \param a the element to convert
+ */
 inline gmp_CC toBigComplex(const CCC* C, ring_elem a)
 {
   M2::ARingCC::Element b(C->ring());
@@ -155,12 +169,14 @@ inline gmp_CC toBigComplex(const CCC* C, ring_elem a)
 }
 ///////////////////////////////////////////////////////////////////////////
 
-// Simple complex number class
+/**
+ * \brief Simple complex number class
+ */
 class complex
 {
  private:
-  double real;  // Real Part
-  double imag;  //  Imaginary Part
+  double real;  /**< \brief real part */
+  double imag;  /**< \brief imaginary part */
  public:
   complex();
   complex(double);
@@ -185,19 +201,30 @@ class complex
 
 //                                        CONSTRUCTOR
 inline complex::complex() {}
+/**
+ * \param r real part
+ */
 inline complex::complex(double r)
 {
   real = r;
   imag = 0;
 }
 
+/**
+ *
+ * \param r real part
+ * \param im imaginary part
+ */ 
 inline complex::complex(double r, double im)
 {
   real = r;
   imag = im;
 }
 
-//                                 COPY CONSTRUCTOR
+/**
+ * \brief Copy constructor
+ * \param c the complex number to copy from
+ */
 inline complex::complex(const complex& c)
 {
   this->real = c.real;
@@ -422,17 +449,19 @@ class SLP : public MutableEngineObject
   static SLP<Field>* catalog[MAX_NUM_SLPs];  // get rid of... !!!
   static int num_slps;
 
-  bool is_relative_position;  // can use relative or absolute addressing
-  M2_arrayint program;        // std::vector???
-  element_type* nodes;        // array of CCs
-  gc_vector<int> node_index;  // points to position in program (rel. to start)
-                              // of operation corresponding to a node
+  bool is_relative_position;  /**< \brief can use relative or absolute addressing */
+  M2_arrayint program;        /**< \brief std::vector??? */
+  element_type* nodes;        /**< \brief array of CCs */
+  /**
+   * \brief points to position in program (relative to start) of operation corresponding to a node
+   */
+  gc_vector<int> node_index;  
   int num_consts, num_inputs, num_operations, rows_out, cols_out;
 
-  void* handle;  // dynamic library handle
+  void* handle;  /**< \brief dynamic library handle */
   void (*compiled_fn)(element_type*, element_type*);
-  clock_t eval_time;  // accumulates time spent in evaluation
-  int n_calls;        // number of times called
+  clock_t eval_time;  /**< \brief accumulates time spent in evaluation */
+  int n_calls;        /**< \brief number of times called */
 
   SLP();
 
@@ -528,13 +557,13 @@ class StraightLineProgram : public SLP<ComplexField>
 // enum SolutionStatus { ... defined in SLP-imp.hpp ... };
 struct Solution
 {
-  int n;             // number of coordinates
-  complex* x;        // array of n coordinates
-  double t;          // last value of parameter t used
-  complex* start_x;  // start of the path that produced x
-  double cond;       // reverse condition number of Hx
-  SolutionStatus status;
-  int num_steps;  // number of steps taken along the path
+  int n;             /**< \brief number of coordinates */
+  complex* x;        /**< \brief array of n coordinates */
+  double t;          /**< \brief last value of parameter t used */
+  complex* start_x;  /**< \brief start of the path that produced x */
+  double cond;       /**< \brief reverse condition number of Hx */
+  SolutionStatus status; /**< \brief current status of the solution */
+  int num_steps;     /**< \brief number of steps taken along the path */
 
   Solution() { status = UNDETERMINED; }
   void make(int m, const complex* s_s);
@@ -551,18 +580,22 @@ class PathTracker : public MutableEngineObject
   static PathTracker* catalog[MAX_NUM_PATH_TRACKERS];
   static int num_path_trackers;
 
-  int number;  // trackers are enumerated
+  int number;  /**< \brief trackers are enumerated */
 
   Matrix* target;
-  const Matrix *H, *S, *T;  // homotopy, start, target
-  StraightLineProgram *slpH, *slpHxt, *slpHxtH,
-      *slpHxH,  // slps for evaluating H, H_{x,t}, H_{x,t}|H, H_{x}|H
-      *slpS, *slpSx, *slpSxS, *slpT, *slpTx,
-      *slpTxT;       // slps for S and T, needed if is_projective
-  double productST,  // real part of the Bombieri-Weyl (hermitian) product <S,T>
-      bigT;          // length of arc between S and T
-  double* DMforPN;   // multipliers used in ProjectiveNewton
-  double maxDegreeTo3halves;  // max(degree of equation)^{3/2}
+  const Matrix *H, *S, *T;  /**< \brief homotopy, start, target */
+  /**
+   * \brief slps for evaluating H, H_{x,t}, H_{x,t}|H, H_{x}|H
+   */
+  StraightLineProgram *slpH, *slpHxt, *slpHxtH, *slpHxH;
+  /**
+   * \brief slps for S and T, needed if is_projective
+   */
+  StraightLineProgram *slpS, *slpSx, *slpSxS, *slpT, *slpTx, *slpTxT;
+  double productST;  /**< \brief real part of the Bombieri-Weyl (hermitian) product <S,T> */
+  double bigT;       /**< \brief length of the arc between S and T */
+  double* DMforPN;   /**< \brief multipliers used in ProjectiveNewton */
+  double maxDegreeTo3halves;  /**< \brief max(degree of equation)^{3/2} */
   // inline functions needed by track
   void evaluate_slpHxt(int n, const complex* x0t0, complex* Hxt)
   {
@@ -635,13 +668,15 @@ class PathTracker : public MutableEngineObject
       slpHxH->evaluate(n + 1, x0t0, HxH);
   }
 
-  const CCC* C;                // coefficient field (complex numbers)
-  const PolyRing* homotopy_R;  // polynomial ring where homotopy lives (does not
-                               // include t if is_projective)
+  const CCC* C;                /**< \brief coefficient field (complex numbers) */
+  /**
+   * \brief polynomial rign where homotopy lives (does no include t if is_projective) 
+   */
+  const PolyRing* homotopy_R;
   int n_coords;
   int n_sols;
-  Solution* raw_solutions;  // solutions + stats
-  Matrix* solutions;        // Matrix of solutions passed to top level
+  Solution* raw_solutions;  /**< \brief solutions + stats */
+  Matrix* solutions;        /**< \brief Matrix of solutions passed to top level */
 
   // parameters
   M2_bool is_projective;
@@ -654,7 +689,7 @@ class PathTracker : public MutableEngineObject
   gmp_RR infinity_threshold;
   int pred_type;
 
-  void make_slps();  // creates slpHxt and alpHxH
+  void make_slps();  /**< \brief creates slpHxt and alpHxH */
 
   PathTracker();
 
@@ -715,6 +750,11 @@ class PathTracker : public MutableEngineObject
 // ------------ service functions
 // --------------------------------------------------
 int degree_ring_elem(const PolyRing* R, ring_elem re);
+/**
+ * \brief Prints a square complex matrix to stdout in human-readable form.
+ * \param size number of rows/columns
+ * \param A pointer to the matrix data stored in row-major order
+ */
 void print_complex_matrix(int size, const double* A);
 
 #endif

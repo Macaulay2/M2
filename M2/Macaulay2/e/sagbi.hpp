@@ -7,31 +7,41 @@
 #include "comp-gb.hpp"
 
 /**
-    @ingroup comp
-
-    @brief Helper routines for computing Sagbi bases.  Not currently functional?
+* A basic class that implements SAGBI bases (aka canonical subalgebra bases, or Khovanskii bases.)
 */
-
 class sagbi
 {
  public:
-  static ring_elem subduct(int numslots,
-                           const PolyRing *R,
-                           ring_elem f,
-                           const RingMap *phi,
-                           GBComputation *J);
 
-  static Matrix *subduct(int numparts, const Matrix *m, const RingMap *phi, GBComputation *J);
+  /**
+   * A subduction routine for a single ring element: unclear if/how this is ever used.
+   */
+  static ring_elem subduct(int numslots, /**< the number of blocks in a monomial order */
+                           const PolyRing *R, /**< a polynomial ring */
+                           ring_elem f, /**< the ring element to be subducted */
+                           const RingMap *phi, /**< a ring map presenting an algebra */
+                           GBComputation *J /**< a Groebner basis computation object */
+                           ); 
+
+  /**
+   * A subduction routine for multiple ring elements in a matrix: unclear if/how this is ever used.
+   */  
+  static Matrix *subduct(int numparts, /**< the number of blocks in a monomial order */
+                         const Matrix *m, /**< a matrix of ring elements to be subducted */
+                         const RingMap *phi,/**< a ring map presenting an algebra */
+                         GBComputation *J /**< a Groebner basis computation object */
+                         );
     
   static ring_elem subduct1(int numslots,
-                            const PolyRing *T, // this is the tensor ring
-                            const PolyRing *S, // this is the poly ring
-                            ring_elem a,
-                            const RingMap *inclusionAmbient,
-                            const RingMap *fullSubstitution,
-                            const RingMap *substitutionInclusion,
-                            GBComputation *gbI,
-                            GBComputation *gbReductionIdeal);
+                            const PolyRing *T, /**< this is the tensor ring (containing original variables for subalgebra and extra variables tagging algebra generators) */
+                            const PolyRing *S, /**< polynomial ring containing original variables*/
+                            ring_elem a, /**< this is the ring element to be subducteda*/
+                            const RingMap *inclusionAmbient, /**< the inclusion map reprensenting a subalgebra */
+                            const RingMap *fullSubstitution, /**< substitution map sending tag variables to generators */
+                            const RingMap *substitutionInclusion, /**< combined   */
+                            GBComputation *gbI, /**< Groebner basis of ideal in S encoding quotient ideal */
+                            GBComputation *gbReductionIdeal /**< Groebner basis of ideal in T encoding generator reductions and lead term of I */
+                            );
 
   static Matrix *subduct1(int numparts, 
                           const Ring *rawT, 
