@@ -39,21 +39,63 @@ previousMethodsFound = null
 codeAddress = pos -> ( pos, ": --source code:" ) -- [addr]:[line]:[char]-[line]:[char]:
 codeContent = (pos, s, e, filelines) -> (
     posL := toList(pos);
-    << posL << endl;
+--   << posL << endl;
 --    tmp := stack filelines_{s-1 .. e-1};
 
     str := "";
-    for i from 0 to (posL#2)-1 do str = concatenate(str," ");
+    tmp := "";
+    tmpInt := 0;
+    leftPadding := 3;
+    rightPadding := 3;
+    padding := "";
+    outputList := {};
+    maxLen := 0;
+
+    --Get max length of padding
+    for i from s-1 to e-1 do (
+	tmpInt = toString((posL#1+(i-s+1)));
+	maxLen = max(0,length tmpInt);
+--	<< "ti = " << tmpInt << ", ml = " << maxLen << endl;
+    );
+    
+    --Creating carets.
+    str = concatenate ((posL#2):" ");
+--    for i from 0 to (posL#2)-1 do str = concatenate(str," ");
     if (#posL == 3) then (
 	str = concatenate(str,"^");
+	
     );
     if (#posL == 5 or #posL == 7) then (
-	for i from posL#2 to posL#4 do str = concatenate(str,"^");
+	tmp = concatenate ((posL#4 - posL#2):"^");
+	str = concatenate(str,tmp);
+--	for i from posL#2 to (posL#4)-1 do str = concatenate(str,"^");
     );
 --    << str << endl;
     
+--    << filelines_{s-1} << endl;
+
+--    << "ml = " << maxLen << endl;
+
+
+    if (s != e) then (
+	outputList = outputList | { concatenate( ((leftPadding + maxLen + rightPadding + posL#2:" ")), "v") };
+    );
+    for i from s-1 to e-2 do (
+	tmp = toString((posL#1)+(i-s+1));
+	outputList = outputList | {concatenate( ((leftPadding + (maxLen - length tmp)):" "), tmp, ((rightPadding):" "), filelines_{i})};
+    );
+    tmp = toString((posL#1)+(e-s));
+
+    if (s == e) then (
+	outputList = outputList | {concatenate( ((leftPadding + (maxLen - length tmp)):" "), tmp, ((rightPadding):" "), filelines_{e-1},"\n", ((leftPadding + maxLen + rightPadding):" "), str)};
+    );
+    if (s != e) then (
+	outputList = outputList | {concatenate( ((leftPadding + (maxLen - length tmp)):" "), tmp, ((rightPadding):" "), filelines_{e-1},"\n", ((leftPadding + maxLen + rightPadding + posL#4-1):" "), "^")};
+    );
     
-    out := PRE M2CODE stack((filelines_{s-1 .. e-1}) | {str});
+    
+    out := PRE M2CODE stack( outputList  );    
+--    out := PRE M2CODE stack((filelines_{s-1 .. e-1}) | {str});
     out
 --    << s << endl;
 --    << "s = " << s-1 << endl;
