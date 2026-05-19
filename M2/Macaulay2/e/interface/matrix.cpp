@@ -295,31 +295,11 @@ const Matrix /* or null */ *rawMatrixConcat(const engine_RawMatrixArray Ms)
   }
 }
 
-const Matrix /* or null */ *rawMatrixDirectSum(
-    const engine_RawMatrixArray Ms)
+const Matrix /* or null */ *rawMatrixDirectSum(const engine_RawMatrixArray Ms)
 {
   try
     {
-      // Check that the matrices all have the same ring, and that there is
-      // at least one matrix.
-      unsigned int n = Ms->len;
-      if (n == 0)
-        {
-          ERROR("matrix direct sum: expects at least one matrix");
-          return nullptr;
-        }
-      const Matrix *result = Ms->array[0];
-      const Ring *R = result->get_ring();
-      for (unsigned int i = 1; i < n; i++)
-        if (R != Ms->array[i]->get_ring())
-          {
-            ERROR("matrix direct sum: different base rings");
-            return nullptr;
-          }
-      for (unsigned int i = 1; i < n; i++)
-        result = result->direct_sum(Ms->array[i]);
-
-      return result;
+      return Matrix::direct_sum(Ms->len, Ms->array);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());

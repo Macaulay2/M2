@@ -123,7 +123,6 @@ class Matrix : public EngineObject
   Matrix *concat(const Matrix &m) const;
   static Matrix /* or null */ *concat(unsigned int n,
                                       const Matrix *const matrices[]);
-
   static Matrix *identity(const FreeModule *F);
   static Matrix /* or null */ *zero(const FreeModule *F, const FreeModule *G);
 
@@ -137,6 +136,8 @@ class Matrix : public EngineObject
   static Matrix /* or null */ *flip(const FreeModule *G, const FreeModule *H);
 
   Matrix /* or null */ *direct_sum(const Matrix *m) const;
+  static const Matrix /* or null */ *direct_sum(unsigned int n,
+                                                const Matrix *const matrices[]);
   Matrix /* or null */ *module_tensor(const Matrix *m) const;
   Matrix /* or null */ *tensor(const Matrix *m) const;
   Matrix /* or null */ *diff(const Matrix *m, int use_coef) const;

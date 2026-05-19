@@ -752,6 +752,47 @@ Matrix *Matrix::concat(unsigned int n, const Matrix *const matrices[])
   return mat.to_matrix();
 }
 
+const Matrix *Matrix::direct_sum(unsigned int n, const Matrix *const matrices[])
+{
+  if (n == 0)
+    {
+      ERROR("matrix direct sum: expects at least one matrix");
+      return nullptr;
+    }
+
+  const Ring *R = matrices[0]->get_ring();
+  for (unsigned int i = 1; i < n; i++)
+    if (R != matrices[i]->get_ring())
+      {
+        ERROR("matrix direct sum: different base rings");
+        return nullptr;
+      }
+
+  if (n == 1) return matrices[0];
+
+  FreeModule *F = R->make_FreeModule();
+  FreeModule *G = R->make_FreeModule();
+  for (unsigned int i = 0; i < n; i++)
+    {
+      F->direct_sum_to(matrices[i]->rows());
+      G->direct_sum_to(matrices[i]->cols());
+    }
+
+  MatrixConstructor mat(F, G, nullptr);
+  int row_offset = 0;
+  int col_offset = 0;
+  for (unsigned int i = 0; i < n; i++)
+    {
+      const Matrix *M = matrices[i];
+      for (int j = 0; j < M->n_cols(); j++)
+        mat.set_column(col_offset + j,
+                       R->component_shift(row_offset, M->elem(j)));
+      row_offset += M->n_rows();
+      col_offset += M->n_cols();
+    }
+  return mat.to_matrix();
+}
+
 Matrix *Matrix::direct_sum(const Matrix *m) const
 {
   auto R = get_ring();
