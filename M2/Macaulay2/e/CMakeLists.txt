@@ -35,14 +35,12 @@ set(UNDETERMINED
 # TODO: convert to cpp or simplify if not needed
 # MES TODO:   monordering.c removed this, is that correct?
 set(CFILES
-  complex.c
   error.c
   exptable.c
   table.c
   )
 # h files
 set(HFILES
-  complex.h
   error.h
   exptable.h
   table.h
