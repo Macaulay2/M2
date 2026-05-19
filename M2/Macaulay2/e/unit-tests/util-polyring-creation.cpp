@@ -67,13 +67,12 @@ const Monoid* simpleMonoid(const std::vector<std::string>& names,
   // #heft == #gens degreesRing.
   // heft of each degree vector for each vector should be > 0, if heft is non-empty.
 
-  const Monoid* M = Monoid::create(
-                             monorder,
-                             degRing,
-                             names,
-                             degs,
-                             heft
-                             );
+  return Monoid::create(
+      monorder,
+      degRing,
+      names,
+      degs,
+      heft);
 }
 
                            
@@ -174,15 +173,15 @@ const Matrix* idealFromStrings(const PolynomialRing* R,
 const Matrix* computeGB(const Matrix* M)
 {
   M2_arrayint weights = stdvector_to_M2_arrayint(std::vector<int>{});
-  Computation* C = IM2_GB_make(M,
-                               false,  // collect_syz
-                               0,      // n_rows_to_keep
-                               weights,
-                               false,  // use_max_degree
-                               0,      // max_degree
-                               0,      // algorithm (default)
-                               0,      // strategy (default)
-                               10);    // max_reduction_count (engine default)
+  Computation* C = rawGBMake(M,
+                             false,  // collect_syz
+                             0,      // n_rows_to_keep
+                             weights,
+                             false,  // use_max_degree
+                             0,      // max_degree
+                             0,      // algorithm (default)
+                             0,      // strategy (default)
+                             10);    // max_reduction_count (engine default)
   if (C == nullptr) return nullptr;
   rawStartComputation(C);
   return rawGBGetMatrix(C);
