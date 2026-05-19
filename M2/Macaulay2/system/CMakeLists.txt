@@ -3,7 +3,7 @@
 ## entity responsible for managing Macaulay2 threads.
 
 # TODO: m2util.hpp is not used
-add_library(M2-supervisor OBJECT
+add_library(M2-supervisor
   supervisorinterface.h supervisor.hpp supervisor.cpp # used .. a lot
   m2fileinterface.h     m2file.hpp     m2file.cpp     # used by stdio.d
   pthread-methods.hpp # used by m2file
