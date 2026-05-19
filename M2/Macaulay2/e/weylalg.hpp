@@ -11,6 +11,8 @@
 
 class WeylAlgebra : public PolyRing
 {
+  friend class WeylAlgebraTestAccessor;
+
   int _nderivatives;
   bool _homogeneous_weyl_algebra;
   int _homog_var;    // Only used if 'homogeneous_weyl_algebra' is true.

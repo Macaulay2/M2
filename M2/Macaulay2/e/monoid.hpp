@@ -122,6 +122,7 @@ class Monoid : public MutableEngineObject
   const MonomialOrdering *getMonomialOrdering() const { return mo_; }
   const PolynomialRing *get_degree_ring() const { return mDegreeRing; }
   const Monoid *degree_monoid() const { return mDegreeMonoid; }
+  const std::vector<std::string> &variableNames() const { return mVariableNames; }
   const_monomial degree_of_var(int v) const { return mDegreeOfVar[v]; }
   int primary_degree_of_var(int v) const { return mHeftDegrees[v]; }
   const std::vector<int> &primary_degree_of_vars() const { return mHeftDegrees; }
