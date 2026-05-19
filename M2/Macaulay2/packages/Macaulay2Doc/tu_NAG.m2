@@ -6,13 +6,32 @@ Node
     Numerical algebraic geometry
   Description
     Text
+      @BOLD "Quick start: Solving a system of equations"@
+
+      Suppose that you would like to solve a system of polynomial equations (polynomial system).
+      Using Macaulay2, one can simply run the following:
+
+    Example
+      needsPackage "NumericalAlgebraicGeometry"
+      R = CC[x,y];
+      f = {x^2+y^2-2, (x-2)^2-y^2-6}; -- your system of interest
+      solveSystem f
+
+    Text
+      The system $f$ describes the intersection of a circle and a hyperbola,
+      and therefore has four intersection points over the complex numbers.
+
+      Solving polynomial systems is a central problem in algebraic geometry,
+      with many applications in areas such as engineering and scientific computing.
+    
       {\it Numerical algebraic geometry} uses techniques from numerical analysis
-      to study and approximate solutions of systems of polynomial equations.
+      to find (approximate) solutions of systems of polynomial equations.
 
       Traditionally, polynomial systems are studied using symbolic methods
-      such as Gr\"obner bases, resultants, and elimination techniques.
+      such as Gröbner bases, resultants, and elimination techniques.
       While these methods are powerful, they often become prohibitively slow
       for large or complicated systems.
+
       Numerical algebraic geometry provides an alternative by replacing exact
       symbolic computations with high-precision numerical approximations.
 
@@ -44,22 +63,31 @@ Node
       R = CC[x,y]
       g = {x^2-1,y^2-1}
       f = {x^2+y^2-1, (x-y)^2-1}
-      solsS = {(1,-1),(1,1),(-1,1),(-1,-1)}
+      solsS = {(1,-1),(1,1),(-1,1),(-1,-1)} -- solutions to g
       track(g,f,solsS)
 
     Text
-      In this example, the start system is a {\it B\'ezout start system},
+      In this example, the start system is a {\it Bézout start system},
       giving a total number of paths equal to the product of the degrees
       of the defining polynomials. This number is an upper bound
       for the number of isolated solutions of the target system.
 
-      The same computation can also be carried out using:
+      The same process can also simply be carried out using:
 
     Example
       R = CC[x,y];
       f = {x^2+y^2-1, (x-y)^2-1};
       solveSystem f
 
+    Text
+      Note that homotopy continuation techniques are typically applied to
+      zero-dimensional systems, that is, systems with finitely many solutions.
+
+      This often occurs when the system has the same number of equations
+      as variables and the equations are sufficiently generic,
+      yielding a complete intersection.
+
+      
     Text
       @BOLD "B. Witness sets and numerical irreducible decomposition"@
 
@@ -89,7 +117,8 @@ Node
           (x^2+y^2+z^2-1)*(z-x^3)
           };
       W = components numericalIrreducibleDecomposition I
-      sample first W
+      p = sample first W -- sampling a point from the first component
+      evaluate(gens I, p)
 
     Text
       @BOLD "C. Monodromy methods"@      
@@ -117,7 +146,6 @@ Node
 
     Example
       needsPackage "MonodromySolver"
-      setRandomSeed 0;
       declareVariable \ {A,B,C,D,X,Y};
       F = gateSystem(
           matrix{{A,B,C,D}},
@@ -209,7 +237,30 @@ Node
       q = first numericalImageSample(F, I) -- sampling a point from the variety
       isOnImage(F, I, q, Verbose => false)
 
-
     Text
+      Some references for numerical algebraic geometry:
+
+      * Andrew J. Sommese, and Charles W. Wampler. "The Numerical solution of systems of polynomials arising in engineering and science." {\it World Scientific} (2005).,
+
+      * Anton Leykin. "Numerical algebraic geometry" {\it Journal of Software for Algebra and Geometry} 3(1) (2011): 5-10.,
+
+      * Timothy Duff, Cvetelina Hill, Anders Jensen, Kisun Lee, Anton Leykin, and Jeff Sommars. "Solving polynomial systems via homotopy continuation and monodromy." {\it IMA Journal of Numerical Analysis} 39.3 (2019): 1421-1446.,
+
+      * Jonathan D. Hauenstein, and Frank Sottile "Algorithm 921: alphaCertified: certifying solutions to polynomial systems" {\it ACM Transactions on Mathematical Software (TOMS)} 38.4 (2012): 1-20.,
+
+      * Michael Burr, Kisun Lee, and Anton Leykin. "Effective certification of approximate solutions to systems of equations involving analytic functions." {\it Proceedings of the 2019 International Symposium on Symbolic and Algebraic Computation}. (2019): 267-274.,
+
+      * Justin Chen, and Joe Kileel. "Numerical implicitization." {\it Journal of Software for Algebra and Geometry} 9.1 (2019): 55-63.
+     
+      	    
+
+    
       This tutorial is written by Kisun Lee.
+
+  SeeAlso
+      "NumericalAlgebraicGeometry"
+      "MonodromySolver"
+      "NumericalCertification"
+      "NumericalImplicitization"
+
 ///
