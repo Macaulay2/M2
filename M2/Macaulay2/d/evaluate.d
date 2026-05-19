@@ -1561,6 +1561,7 @@ steppingFurther(c:Code):bool := steppingFlag && (
 export handleError(c:Code,e:Expr):Expr := (
      when e is err:Error do (
 	  p := codePosition(c);
+	  -- TODO: consider splitting SuppressErrors and the message errors
 	  if SuppressErrors
 	  || err.message == returnMessage
 	  || err.message == continueMessage || err.message == continueMessageWithArg
@@ -1568,6 +1569,7 @@ export handleError(c:Code,e:Expr):Expr := (
 	  || err.message == breakMessage
 	  || err.message == unwindMessage
 	  || err.message == throwMessage
+	  || err.message == finishMessage
 	  then (
 	       -- an error message that is really being used to transfer control must be passed up the line
 	       -- the position is plugged in just in case it's unhandled
@@ -1585,7 +1587,7 @@ export handleError(c:Code,e:Expr):Expr := (
 			 if !err.printed then printError(err);
 			 z := debuggerpointer(localFrame,c);
 			 when z is z:Error do (
-			      if z.message == breakMessage then buildErrorPacket(unwindMessage)
+			      if z.message == breakMessage || z.message == finishMessage then buildErrorPacket(unwindMessage)
 			      else if z.message == returnMessage then (
 				   setSteppingFlag();
      	       	    	      	   lastCodePosition.filename = "";
@@ -1874,6 +1876,14 @@ breakFun(a:Code):Expr := (
      e := if a == dummyCode then dummyExpr else eval(a);
      when e is Error do e else Expr(Error(dummyPosition,breakMessage,e,false,dummyFrame)));
 setupop(breakS,breakFun);
+
+finishFun(a:Code):Expr := (
+     e := if a == dummyCode then nullE else eval(a);
+     when e is Error do e else (
+	  Expr(Error(dummyPosition,
+	       finishMessage,
+	       e,false,dummyFrame))));
+setupop(finishS,finishFun);
 
 addTestS := setupvar("addTest", nullE); -- will be overwritten in testing.m2
 testfun(c:Code):Expr := (

@@ -753,6 +753,7 @@ breakpoint(c:Code):Expr := (
     e := debuggerpointer(localFrame, c);
 
     when e is err:Error do (
+		printMessage(codePosition(c), err.message);
 		if err.message == breakMessage then ( buildErrorPacket(unwindMessage) )
 		else if err.message == returnMessage then (
 			setSteppingFlag();
@@ -770,8 +771,12 @@ breakpoint(c:Code):Expr := (
 				stepCount = -1;
 			);
 			eval(c))
-			else if err.message == continueMessage then (eval(c))
-			else e
+		else if err.message == continueMessage then (eval(c))
+		else if err.message == finishMessage then (
+			printMessage(codePosition(c), "finish has been called");
+			eval(c)
+		)
+		else e
 	)
 	else e
 );
