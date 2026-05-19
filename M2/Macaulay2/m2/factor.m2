@@ -21,7 +21,7 @@ gcd(RingElement, RingElement) := RingElement => (r, s) -> (
 
     -- GaloisFields are QuotientRings so this line has to go before the QuotientRing check
     if isField R then return if r == 0 and s == 0 then 0_R else 1_R;
-    if instance(R, QuotientRing) then notImplemented("gcd for quotient rings is")
+    if instance(R, QuotientRing) then notImplemented("gcd for quotient rings is");
 
     if factoryAlmostGood R then (
         if (options R).Inverses then (r, s) = (numerator r, numerator s);
