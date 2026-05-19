@@ -43,7 +43,7 @@ importFrom_Core {
     "Computation"
     }
 
-importFrom_Core "Resolution"
+--importFrom_Core "Resolution"
 
 ResolutionObject = new Type of MutableHashTable
 ResolutionObject.synonym = "resolution object"
@@ -680,7 +680,7 @@ minimalBetti Module := BettiTally => opts -> M -> (
     if not useFastNonminimal then 
         return betti resolution(M, DegreeLimit => degreelimit, LengthLimit => lengthlimit);
     -- At this point, we think we are good to use the faster algorithm.        
-    -- First, we need to comppute the non-minimal resolution to one further step.
+    -- First, we need to compute the non-minimal resolution to one further step.
     if instance(opts.LengthLimit, ZZ) then lengthlimit = lengthlimit + 1;
     C = resolution(M,
 	StopBeforeComputation => true, FastNonminimal => true, ParallelizeByDegree => opts.ParallelizeByDegree,
@@ -717,14 +717,21 @@ minimalBetti Module := BettiTally => opts -> M -> (
         then (
             return truncate(betti(C, Weights => opts.Weights), degreelimit, lengthlimit);
             );
+        if C.cache.Nonminimal then (
+            -- as of May 2026, nonminimal resolutions computed earlier do not allow for correct minimal betti diagram.
+            remove(M.cache, symbol ResolutionObject);
+            remove(M.cache, symbol Resolution);
+            );
         );
     A := ultimate(coefficientRing, R);
-    if not (
-        R.?Engine and
-        heft R =!= null and
-        (isSkewCommutative R or isCommutative R) and (
-            A =!= R and isField A
-        ))
+    if (
+        not R.?Engine or
+        not (isCommutative R or isSkewCommutative R) or
+        heft R === null or
+        not isField A or
+        A =!= ZZ/(char A) or
+        A === R
+        )
     then return betti freeResolution(M, DegreeLimit => degreelimit, LengthLimit => lengthlimit);
 
     if lengthlimit === infinity then (
@@ -732,13 +739,16 @@ minimalBetti Module := BettiTally => opts -> M -> (
 	nvars := # generators(R, CoefficientRing => A);
 	lengthlimit = nvars + (if A === ZZ then 1 else 0);
         );
+    
     C = freeResolution(M, DegreeLimit => degreelimit, LengthLimit => lengthlimit + 1,
         Strategy => Nonminimal, StopBeforeComputation => true);
     rC := M.cache.ResolutionObject.RawComputation;
     B := unpackEngineBetti rawMinimalBetti(rC,
         if opts.DegreeLimit === infinity then {} else
 	if opts.DegreeLimit =!= null     then {opts.DegreeLimit} else {},
-	if opts.LengthLimit =!= infinity then {opts.LengthLimit} else {});
+	if opts.LengthLimit =!= infinity then {lengthlimit} else {});
+    remove(M.cache, symbol ResolutionObject);
+    remove(M.cache, symbol Resolution);
     ans := betti(B, Weights => heftvec(opts.Weights, heft R));
     ans
     )

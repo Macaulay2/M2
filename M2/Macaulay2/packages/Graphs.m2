@@ -1171,7 +1171,7 @@ topologicalSort Digraph := List => D -> topologicalSort(D, "")
 topologicalSort (Digraph, String) := List => (D,s) -> (
     if instance(D, Digraph) then (
         s = toLower s;
-        processor := if s == "random" then random
+        processor := if s == "random" then shuffle
             else if s == "min" then sort
             else if s == "max" then rsort
             else if s == "degree" then L -> last \ sort transpose {apply(L, v -> degree(D, v)), L}
@@ -1581,7 +1581,7 @@ reindexBy (Graph, String) := Graph => (G, s) -> (
              );
         return graph (V', edges G)
         );
-    if s == "random" then return graph (random vertexSet G, edges G, EntryMode => "edges");
+    if s == "random" then return graph (shuffle vertexSet G, edges G, EntryMode => "edges");
     if s == "components" then return graph (flatten connectedComponents G, edges G, EntryMode => "edges");
     if s == "sort" then return graph (sort vertexSet G, edges G, EntryMode => "edges");
     )
@@ -1653,7 +1653,7 @@ reindexBy (Digraph, String) := Digraph => (D, s) -> (
              );
         return digraph (V', edges D, EntryMode => "edges")
         );
-    if s == "random" then return digraph(random vertexSet D, edges D, EntryMode => "edges");
+    if s == "random" then return digraph(shuffle vertexSet D, edges D, EntryMode => "edges");
     if s == "sort" then return digraph(sort vertexSet D, edges D, EntryMode => "edges");
     )
 

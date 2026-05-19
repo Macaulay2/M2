@@ -247,6 +247,7 @@ OnlineLookup
 MergeTeX
 Probability
 Isomorphism
+DirectSummands
 CodingTheory
 WhitneyStratifications
 JSON
@@ -286,6 +287,11 @@ AllMarkovBases
 Tableaux
 CpMackeyFunctors
 JSONRPC
+SimplicialModules
 MatrixFactorizations
 PathSignatures
 MacaulayPosets
+MRDI
+EliminationTemplates
+WittVectors
+Padic

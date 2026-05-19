@@ -1899,7 +1899,7 @@ extVsCohomology(Matrix, Module) := (ff,N) ->(
     --N is an R=S/(ff)-module
     --M is a high syzy of N
     --compares the coho tables of the even and odd parts of Ext(M,k)
-    --with the tate resolution of Ext_S(M,k) as a module
+    --with the Tate resolution of Ext_S(M,k) as a module
     --over the exterior alg.
     S:= ring ff;
     p := map(ring N,S);

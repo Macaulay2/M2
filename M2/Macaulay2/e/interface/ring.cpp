@@ -30,6 +30,7 @@
 #include "aring.hpp"
 #include "aring-glue.hpp"
 #include "aring-RRi.hpp"
+#include "aring-CCi.hpp"
 #include "aring-RR.hpp"
 #include "aring-CC.hpp"
 #include "aring-RRR.hpp"
@@ -91,6 +92,11 @@ const Ring /* or null */ *rawGaloisField(const RingElement *f)
 const Ring /* or null */ *IM2_Ring_RRi(unsigned long prec)
 {
   return M2::ConcreteRing<M2::ARingRRi>::create(prec);
+}
+
+const Ring /* or null */ *IM2_Ring_CCi(unsigned long prec)
+{
+  return M2::ConcreteRing<M2::ARingCCi>::create(prec);
 }
 
 const Ring /* or null */ *IM2_Ring_RRR(unsigned long prec)

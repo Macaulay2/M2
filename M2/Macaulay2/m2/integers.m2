@@ -54,7 +54,7 @@ gcd(QQ,QQ) := QQ => (x,y) -> (
 gcd ZZ := gcd QQ := identity
 
 abs = method()
-abs ZZ := abs RR := abs RRi := abs CC := abs QQ := abs0
+abs Number := abs0
 abs Constant := abs @@ numeric
 
 sign = method()

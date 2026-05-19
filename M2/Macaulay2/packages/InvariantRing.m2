@@ -1,5 +1,5 @@
 -*
-   Copyright 2020, Luigi Ferraro, Federico Galetto,
+   Copyright 2020-2026, Luigi Ferraro, Federico Galetto,
    Francesca Gandini, Hang Huang, Matthew Mastroeni, Xianglong Ni.
 
    You may redistribute this file under the terms of the GNU General Public
@@ -9,12 +9,12 @@
 
 newPackage(
         "InvariantRing",
-        Version => "2.0", 
-        Date => "November 11, 2020",
+        Version => "2.4", 
+        Date => "May 1, 2026",
         Authors => {
 	    {Name => "Luigi Ferraro", 
-		 Email => "lferraro@ttu.edu", 
-		 HomePage => "http://www.math.ttu.edu/~lferraro/"
+		 Email => "luigi.ferraro@utrgv.edu", 
+		 HomePage => "https://faculty.utrgv.edu/luigi.ferraro/"
 		 },
              {Name => "Federico Galetto", 
 		 Email => "f.galetto@csuohio.edu", 
@@ -30,7 +30,7 @@ newPackage(
 		 },
 	     {Name => "Thomas Hawes", Email => "thomas.hawes@maths.ox.ac.uk"},
 	     {Name => "Matthew Mastroeni", 
-		 Email => "mmastro@okstate.edu", 
+		 Email => "mmastro@iastate.edu", 
 		 HomePage => "https://mnmastro.github.io/"
 		 },
              {Name => "Xianglong Ni", 
@@ -47,49 +47,62 @@ newPackage(
 	     "published article URI" => "https://msp.org/jsag/2024/14-1/p02.xhtml",
 	     "published article DOI" => "10.2140/jsag.2024.14.5",
 	     "published code URI" => "https://msp.org/jsag/2024/14-1/jsag-v14-n1-x02-InvariantRing.m2",
+	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/InvariantRing.m2",
 	     "release at publication" => "d708862d93052a37b7f9ff1e584a9b57d1cb7870",
 	     "version at publication" => "2.0",
 	     "volume number" => "14",
 	     "volume URI" => "https://msp.org/jsag/2024/14-1/"
 	     },
 	AuxiliaryFiles => true,
-        DebuggingMode => false
+        DebuggingMode => false,
+	PackageExports => {
+	    "Graphs"
+	    }
         )
 
 
 
 export {
-    "GroupAction",    	      	  
-    "finiteAction",    	       	  
-    "FiniteGroupAction",    	  
+    -- New Types
+    "GroupAction",
+    "FiniteGroupAction",
+    "DiagonalAction",
+    "LinearlyReductiveAction",
+    
+    --FiniteGroups.m2    	      	  
+    "finiteAction",    	       	      	  
     "group",	    	    	  
     "isAbelian",    	    	  
     "permutationMatrix",          
     "schreierGraph",	    	  
-    "words",    	       	  
-    "cyclicFactors",	    	  
-    "DiagonalAction",	     	  
+    "words",
+    
+    --AbelianGroups.m2    	       	  
+    "cyclicFactors",	    	  	     	  
     "diagonalAction",	     	  
     "equivariantHilbert",    	  
     "equivariantHilbertSeries",   
-    "weights",	      	      	  
+    "weights",
+    
+    --LinearlyReductiveGroups.m2	      	      	  
     "actionMatrix",    	       	  
     "groupIdeal",    	     	  
     "hilbertIdeal",    	       	  
-    "linearlyReductiveAction",	  
-    "LinearlyReductiveAction",	  
+    "linearlyReductiveAction",	  	
+    
+    --Invariants.m2  
     "action",	     	     	  
     "definingIdeal",              
     "DegreeBound",    	      	  
     "invariants",    	     	  
     "invariantRing",	    	  
     "isInvariant",    	      	  
-    "reynoldsOperator",	       	  
-    "UseLinearAlgebra",     	  
+    "reynoldsOperator",	       	     	  
     "RingOfInvariants",	       	  
-    "UseCoefficientRing",    	  
-    "UseNormaliz",    	      	  
-    "UsePolyhedra",    	      	  
+    "UseCoefficientRing",
+    "UsePolyhedra",
+    
+    --Hawes.m2    	      	      	  
     "hironakaDecomposition",   	  
     "molienSeries",    	       	  
     "primaryInvariants",    	  
@@ -98,7 +111,6 @@ export {
     "DegreeVector",    	       	  
     "PrintDegreePolynomial"    	  
     }
-
 
 needsPackage("Elimination")
 needsPackage("Normaliz")

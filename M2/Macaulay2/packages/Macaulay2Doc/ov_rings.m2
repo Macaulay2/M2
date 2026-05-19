@@ -52,6 +52,7 @@ document {
 	  TO "RR",
 	  TO "RRi",
 	  TO "CC",
+	  TO "CCi",
 	  },
      "The names of some of these rings are double letters so the corresponding symbols
      with single letters are preserved for use as variables.",
@@ -106,6 +107,7 @@ document {
 	  TO "RR",
 	  TO "RRi",
 	  TO "CC",
+	  TO "CCi",
      }
 }
 
@@ -449,7 +451,7 @@ document {
      results.  That allows numbers of various precisions
      to be used without creating a new ring for each precision.",
      EXAMPLE {"class interval(3.1,3.5)", "ring interval(3.1,3.5)"},
-     "The precision can be specified on input by specifying the precision of both input ", TO "RR", " numbers.",
+     "The precision can be specified on input by specifying the precision of both input ", TO "RR", " numbers. ",
      "Alternatively, the precision can be specified by including the option ", TT "Precision", ".",
      EXAMPLE {"interval(2.5p100,3.2p1000)","interval(2.5,3.2,Precision=>200)"},
      "Intervals can also be created using ", TO (span,Sequence), " to create the smallest interval containing the inputs.",
@@ -465,7 +467,9 @@ document {
      EXAMPLE {"exp(interval(2,4))","cos(interval(1,1.3))","sqrt(interval(2))"},
      "Transcendental functions are available to high precision, with ", TO "numericInterval", ".",
     EXAMPLE {"numericInterval(100,pi)","numericInterval_200 EulerConstant"},
-    SeeAlso => {toRRi, numericInterval, precision, interval, (span,Sequence), (span,List)},
+    "The left and right endpoints of an interval can be accessed with ", TO "left", " and ", TO "right", ".  Similarly, the midpoint and the length of an interval can be found with ", TO "midpoint", " and ", TO "diameter", ".",
+    EXAMPLE {"left interval(1,5)","right interval(1,5)","midpoint interval(1,5)","diameter interval(1,5)"},
+    SeeAlso => {CCi, toRRi, numericInterval, precision, interval, (span,Sequence), (span,List)},
     Subnodes => {
 	TO toRRi,
 	TO interval,
@@ -478,9 +482,56 @@ document {
         TO (isMember, QQ, RRi),
         TO (isEmpty, RRi),
         TO (isSubset, RRi, RRi),
-	TO span, -- TODO: perhaps this should be shared
-	TO (span, List),
-	TO (span, Sequence),
+	TO span
+        },
+	  }
+
+undocumented {"CCi_*"}
+
+document {
+     Key => CCi,
+     Headline => "the class of all complex intervals",
+     "A complex interval is entered as a pair of real intervals to the ", TO "interval", " function.  It is stored internally as a pair of arbitrary precision intervals using the ", TO "MPFI", " library.",
+     EXAMPLE "interval(interval(3.1415,3.1416), interval(2.7182,2.7183))",
+     "The precision is measured in bits, is visible in the ring displayed on
+     the second of each pair of output lines, and can be recovered using ", TO "precision", ".",
+     EXAMPLE "precision interval(interval(3.1415,3.1416), interval(2.7182,2.7183))",
+     "Complex intervals are objects in ", TO "class", " CCi which is an ", TO "InexactFieldFamily", ".", "For complex intervals, the functions ", TO "class", " and ", TO "ring", " yield different
+     results.  That allows numbers of various precisions
+     to be used without creating a new ring for each precision.",
+     EXAMPLE {"class interval(interval(3.1,3.5),interval(1.1,1.2))"},
+     "The precision can be specified on input by specifying the precision of both input ", TO "CC", " numbers. ",
+     "Alternatively, the precision can be specified by including the option ", TT "Precision", ".",
+     EXAMPLE {"interval(interval(2.5p1000,3.2p100),interval(2.3,3.1,Precision=>200))"},
+     "Complex intervals can also be created using ", TO (span,Sequence), " to create the smallest complex axis-aligned rectangle containing the inputs.",
+     EXAMPLE {"span(2+3*ii,Precision=>100)","span(2,3*ii,interval(interval(-1.5,-0.5),interval(3,3.1)),73)"},
+     "Operations using complex intervals are computed as sets so that the resulting intervals contain all possible outputs from pairs of points in input intervals.",
+     EXAMPLE {"	(I, J, K) = (interval(interval(.5,.8),interval(.6,.9)), interval(interval(.54,.78),interval(.65,.89)), interval(interval(.45,.6),interval(.3,.78)));",
+	 	"I + J",
+		"I - J",
+		"I * K",
+		"I / K",
+		"I ^ 3",
+		"2 * I",
+		"(2+3*ii) * I"},
+    "The real and imaginary parts of a complex interval can be accessed with ", TO "realPart", " and ", TO "imaginaryPart", ".  These are real intervals of class ", TO "RRi", ".  The ", TO "diameter", " of a complex interval is the (rounded) approximation to the length of its diagonal, while its ", TO "midpoint", " is the complex midpoint of its real and imaginary parts",
+    EXAMPLE {"realPart interval(1+2*ii,3+4*ii)","imaginaryPart interval(1+2*ii,3+4*ii)","diameter interval(1+2*ii,3+4*ii)","midpoint interval(1+2*ii,3+4*ii)"},
+    SeeAlso => {
+	RRi,
+	toCCi,
+	precision,
+	interval,
+	midpoint,
+	diameter,
+    realPart,
+    imaginaryPart,
+    intersect,
+    isEmpty,
+    isSubset,
+    span,
+    },
+    Subnodes => {
+	TO toCCi,
         },
 	  }
 
@@ -1188,49 +1239,71 @@ document {
 	  -- needs an example
 	  }
      }
+doc ///
+    Key
+        "exterior algebras"
+    Headline
+        a polynomial ring with skew-commutative variables
+    Description
+        Text
+            An exterior algebra is a polynomial ring $R$ where multiplication of
+            the variables obeys the commutation relation $xy = (-1)^{\textrm{deg}(x)
+            \textrm{deg}(y)}yx$. One notable consequence of this is
+            that if $\textrm{deg}(x)$ is odd, then $x^2 = 0$.
 
-document {
-     Key => "exterior algebras",
-     -- making one, making quotients,
-     -- using it.
-     -- modules are right-modules, example of multiplication.
-     "An exterior algebra is a polynomial ring where multiplication is
-     mildly non-commutative, in that, for every x and y in the ring,
-     y*x = (-1)^(deg(x) deg(y)) x*y, and that for every x of odd degree,
-     x*x = 0.",
-     "In Macaulay2, deg(x) is the degree of x, or the first degree of x, in case 
-     a multi-graded ring is being used.  The default degree for each variable is 1, so
-     in this case, y*x = -x*y, if x and y are variables in the ring.",
-     PARA{},
-     "Create an exterior algebra with explicit generators by creating a polynomial
-     ring with the option ", TO "SkewCommutative", ".",
-     EXAMPLE {
-	  "R = QQ[x,y,z, SkewCommutative => true]",
-      	  "y*x",
-      	  "(x+y+z)^2",
-      	  "basis R",
-      	  "basis(2,R)",
-	  },
-     EXAMPLE {
-	  "S = QQ[a,b,r,s,t, SkewCommutative=>true, Degrees=>{2,2,1,1,1}];",
-	  "r*a == a*r",
-	  "a*a",
-	  "f = a*r+b*s; f^2",
-	  "basis(2,S)",
-	  },
-     "All modules over exterior algebras are right modules.  This means that matrices 
-     multiply from the opposite side:",
-     EXAMPLE {
-	  "x*y",
-	  "matrix{{x}} * matrix{{y}}"
-	  },
-     "You may compute Gröbner bases, syzygies, and form quotient rings of these skew
-     commutative rings.",
-     Subnodes => {
-	 TO isSkewCommutative,
-	 TO antipode,
-         },
-     }
+            Here, $\textrm{deg}(x)$ is the degree of $x$ - or the first
+            degree of $x$ in case $R$ is multi-graded. By default, the
+            degree of each variable in a polynomial ring is 1, so in this case
+            we have the simple rule $xy = -yx$ for multiplying variables.
+        Text
+            Create an exterior algebra with explicit generators by creating a polynomial
+            ring with the option @TO "SkewCommutative"@.
+        Example
+            R = QQ[x,y,z, SkewCommutative => true]
+            y*x
+            (x+y+z)^2
+            basis R
+            basis(2,R)
+        Text
+            You can declare that only a subset of the variables are skew-commutative.
+        Example
+            R = QQ[a..c, SkewCommutative => {b, c}]
+            a*b == b*a
+            a*c == c*a
+            b*c == -c*b
+        Text
+            The degree of the variables can be specified just as in the commutative case.
+        Example
+            R = QQ[a,b,r,s,t, SkewCommutative=>true, Degrees=>{2,2,1,1,1}]
+            r*a == a*r
+            a*a
+            f = a*r+b*s; f^2
+            basis(2,R)
+        Text
+            As usual in Macaulay2, matrices are actually matrices over
+            $R^\textrm{op}$ and so matrix arithmetic over exterior algebras is
+            slightly different from what you see in the commutative case.
+        Example
+            R = QQ[a..d, SkewCommutative => true]
+            A = matrix {{a, b}, {1, 1}}
+            B = matrix {{c, 1}, {d, 1}}
+            A * B
+        Text
+            See  @TO "right modules or left modules?"@ for more details.
+        Text
+            You may compute Gröbner bases, syzygies, and form quotient rings of these skew
+            commutative rings. Warning that quotienting by an ideal which is not a
+            2-sided ideal will produce quotient ring where multiplication is not well
+            defined on coset representatives.
+        Example
+            R = QQ[a..d, SkewCommutative => true]
+            I = ideal {a*b + c}
+            promote(I_0 * d, R/I)
+            promote(I_0, R/I) * promote(d, R/I)
+    Subnodes
+        "isSkewCommutative"
+        "antipode"
+///
 
 document {
      Key => "symmetric algebras",

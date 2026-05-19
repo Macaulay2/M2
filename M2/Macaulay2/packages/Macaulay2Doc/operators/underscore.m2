@@ -3,6 +3,8 @@ undocumented {
      (symbol _, EngineRing, ZZ),
      (symbol _, RR, EngineRing),
      (symbol _, RRi, EngineRing),
+     (symbol _, CC, EngineRing),
+     (symbol _, CCi, EngineRing),
      (symbol _, ZZ, Monoid),
      (symbol _, Vector, ZZ),
      (symbol _, Monoid, List),

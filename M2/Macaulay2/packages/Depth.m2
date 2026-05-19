@@ -105,7 +105,7 @@ assert( depth(ideal(1_A),A) === infinity )
 ///
 
 TEST///
-S = ZZ/101[x_1..x_(9)];
+S = ZZ/101[x_1..x_4];
 J = ideal vars S;
 T = S/J^5;
 I = ideal vars T;

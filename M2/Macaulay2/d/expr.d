@@ -346,6 +346,7 @@ export pointerClass := newbasictype();
 export atomicIntClass := newbasictype();
 export pseudocodeClosureClass := newtypeof(pseudocodeClass);
 export mutexClass := newbasictype();
+export CCiClass := newbignumbertype();
 -- all new types, dictionaries, and classes go just above this line, if possible, so hash codes don't change gratuitously!
 
 

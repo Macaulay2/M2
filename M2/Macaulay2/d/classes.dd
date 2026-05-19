@@ -24,6 +24,7 @@ setupconst("InexactFieldFamily",Expr(inexactNumberTypeClass));
 setupconst("RRi",Expr(RRiClass));
 setupconst("RR",Expr(RRClass));
 setupconst("CC",Expr(CCClass));
+setupconst("CCi",Expr(CCiClass));
 setupconst("RingElement",Expr(ringElementClass));
 setupconst("Number",Expr(numberClass));
 setupconst("InexactNumber",Expr(inexactNumberClass));
@@ -157,6 +158,7 @@ export Class(e:Expr):HashTable := (
      is RRicell do RRiClass
      is RRcell do RRClass
      is CCcell do CCClass
+     is CCicell do CCiClass
      is RawComputationCell do rawComputationClass
      is Nothing do nothingClass
      is Database do dbClass

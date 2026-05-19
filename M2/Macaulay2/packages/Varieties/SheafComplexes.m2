@@ -6,6 +6,15 @@ export {
 -- Local utilities
 -----------------------------------------------------------------------------
 
+-- pushforward the complex to PP^n via S/I <-- S
+-- TODO: move to Complexes?
+flattenComplex = C -> C.cache#"flattenComplex" ??= (
+    if instance(ring C, PolynomialRing) then return C;
+    (lo, hi) := C.concentration;
+    if lo === hi
+    then complex(flattenModule C_lo, Base => lo)
+    else complex applyValues(C.dd.map, flattenMorphism))
+
 clearHom = (M, N) -> (
     H := youngest(M.cache.cache, N.cache.cache);
     apply(keys H, k -> remove(H, k)))

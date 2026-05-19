@@ -7,11 +7,11 @@ TEST ///
     -- valid permutations should be nonempty lists consisting of only all numbers 1..n
     assert(isWellDefined permutation {1})
     assert(isWellDefined permutation  toList (1..8))
-    assert(isWellDefined permutation random toList (1..8))
+    assert(isWellDefined permutation shuffle toList (1..8))
     assert(not isWellDefined permutation {})
     assert(not isWellDefined permutation {0})
     assert(not isWellDefined permutation toList (0..8))
-    assert(not isWellDefined permutation random toList (0..8))
+    assert(not isWellDefined permutation shuffle toList (0..8))
     assert(not isWellDefined permutation {1,1,2})
 ///
 

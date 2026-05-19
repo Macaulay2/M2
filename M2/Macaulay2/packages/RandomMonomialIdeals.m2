@@ -355,7 +355,8 @@ randomMonomialSet (PolynomialRing,ZZ,ZZ) := List => o -> (R,D,M) -> (
     if M<0 then stderr << "warning: M expected to be a nonnegative integer" << endl;
     if o.Strategy === "Minimal" then error "Minimal not implemented for fixed size ER model";
     allMonomials := flatten flatten apply(toList(1..D),d->entries basis(d,R));
-    C := take(random(allMonomials), M);
+    print(#allMonomials);
+    C := shuffle(allMonomials, min(M, #allMonomials));
     if C==={} then {0_R} else C
 )
 
@@ -376,12 +377,13 @@ randomMonomialSet (PolynomialRing,ZZ,List) := List => o -> (R,D,pOrM) -> (
         if o.Strategy === "Minimal" then (
             currentRingM := R;
             apply(D, d->(
-                chosen := take(random(flatten entries basis(d+1, currentRingM)), pOrM_d);
+		mons := flatten entries basis(d+1, currentRingM);
+                chosen := shuffle(mons, min(pOrM_d, #mons));
                 B = flatten append(B, chosen/(i->sub(i, R)));
                 currentRingM = currentRingM/promote(ideal(chosen), currentRingM)
 		)
 	    )
-	) else B = flatten apply(toList(1..D), d->take(random(flatten entries basis(d,R)), pOrM_(d-1)));
+	) else B = flatten apply(toList(1..D), d->shuffle(flatten entries basis(d,R), pOrM_(d-1)));
     ) else if all(pOrM,q->instance(q,RR)) then (
         if any(pOrM,q-> q<0.0 or 1.0<q) then error "pOrM expected to be a list of real numbers between 0.0 and 1.0";
         if o.Strategy === "Minimal" then (

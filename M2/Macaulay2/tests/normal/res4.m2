@@ -1,7 +1,7 @@
 R = ZZ/101[x,y]/(x^2-y^2)
 I = ideal(x,y)
 M = Hom(I,I)
-C = res M
+C = res(M, LengthLimit => 4)
 M = Hom(I,I)
 D = res(M, Strategy=>3, LengthLimit=>6)
 assert(length D > 4)

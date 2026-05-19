@@ -66,8 +66,6 @@ LIBFILES :=
 
 # to get getmem
 LIBFILES += M2mem.o 
-# to get trapchk()
-LIBFILES += debug.o
 LIBFILES += gmp_aux.o arithmetic.o atomic.o M2.o system.o strings.o varstrin.o errio.o vararray.o ctype.o nets.o varnets.o interrupts.o pthread0.o stdio.o stdiop.o err.o gmp.o
 libd.a: $(LIBFILES) ; ar -r $@ $?
 rm-libd.a:; rm libd.a
@@ -208,9 +206,9 @@ M2lib.o : M2_CFLAGS += -Wno-frame-address
 endif
 
 M2lib.o scclib.o : | interp-exports.h.tmp
-scclib.o : expr-exports.h M2mem.h debug.h types.h ../c/compat.h ../e/engine.h
-M2lib.o : types.h ../c/compat.c debug.h M2mem.h ../c/compat.h ../e/engine.h
-M2lib.o scclib.o gdbm_interface.o gc_cpp.o debug.o : ../../include/M2/config.h
+scclib.o : expr-exports.h M2mem.h types.h ../c/compat.h ../e/engine.h
+M2lib.o : types.h ../c/compat.c M2mem.h ../c/compat.h ../e/engine.h
+M2lib.o scclib.o gdbm_interface.o gc_cpp.o : ../../include/M2/config.h
 M2.o : ../../include/M2/config.h @srcdir@/../c/scc-core.h
 
 clean::; rm -f startup.c

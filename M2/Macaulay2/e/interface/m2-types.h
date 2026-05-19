@@ -78,6 +78,12 @@ struct gmp_CC_struct BASECLASS {mpfr_srcptr re;mpfr_srcptr im;};
 typedef struct gmp_CCmutable_struct * gmp_CCmutable;
 struct gmp_CCmutable_struct BASECLASS {mpfr_ptr re;mpfr_ptr im;};
 
+typedef struct gmp_CCi_struct * gmp_CCi;
+typedef gmp_CCi gmp_CCiorNull;
+struct gmp_CCi_struct BASECLASS {mpfi_srcptr re;mpfi_srcptr im;};
+typedef struct gmp_CCimutable_struct * gmp_CCimutable;
+struct gmp_CCimutable_struct BASECLASS {mpfi_ptr re;mpfi_ptr im;};
+
 typedef struct gmp_arrayZZ_struct * gmp_arrayZZ;
 struct gmp_arrayZZ_struct {int len;mpz_srcptr array[];};
 

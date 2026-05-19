@@ -287,6 +287,11 @@ selectVariables(List,PolynomialRing) := (v,R) -> (
 antipode = method();
 antipode RingElement := (f) -> new ring f from rawAntipode raw f;
 
+midpoint PolynomialRing := R -> R.cache.midpoint ??= (
+    S := midpoint coefficientRing R;
+    if S === coefficientRing R then R
+    else S monoid R)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

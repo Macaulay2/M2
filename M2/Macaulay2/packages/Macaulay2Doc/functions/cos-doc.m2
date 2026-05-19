@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => {cos, (cos,CC),(cos,RR),(cos, RRi)},
+     Key => {cos, (cos,InexactNumber)},
      Headline => "compute the cosine",
      Usage => "cos x\ncos I",
      Inputs => { "x" => RR,"I"=>RRi},

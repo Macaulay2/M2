@@ -686,6 +686,12 @@ bindParallelAssignmentItem(e:ParseTree,dictionary:Dictionary,colon:bool):void :=
      else bind(e, dictionary));
 bindParallelAssignmentList(e:ParseTree,dictionary:Dictionary,colon:bool):void := (
      when e
+     is unary:Unary do (
+	 if unary.Operator.word == CommaW
+	 then (
+	     bindop(unary.Operator, dictionary);
+	     bindParallelAssignmentItem(unary.rhs, dictionary, colon))
+	 else bind(e, dictionary))
      is binary:Binary do (
 	  if binary.Operator.word == CommaW
 	  then (

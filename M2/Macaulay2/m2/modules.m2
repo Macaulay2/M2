@@ -47,10 +47,12 @@ scan( {ZZ,QQ}, K -> (
 	  ))
 
 scan((
-	  (ZZ, { QQ, RR', CC', RRi' }),
-	  (QQ, { RR', CC', RRi' }),
-	  (RR',{ RR', CC', RRi' }),
-	  (CC', { CC' })
+	  (ZZ, { QQ, RR', CC', RRi', CCi' }),
+	  (QQ, { RR', CC', RRi', CCi' }),
+	  (RR',{ RR', CC', RRi', CCi' }),
+	  (CC', { CC', CCi' }),
+	  (RRi', { RRi', CCi' }),
+	  (CCi', { CCi' })
 	  ), 
      (K,Ls) -> scan(Ls, L -> (
 	       p := makepromoter 0;
@@ -79,6 +81,7 @@ Vector.synonym = "vector"
 Vector _ ZZ := (v,i) -> (ambient v#0)_(i,0)
 entries Vector := v -> entries ambient v#0 / first
 norm Vector := v -> norm v#0
+norm(Number, Vector) := (p, v) -> norm(p, v#0)
 expression Vector := v -> VectorExpression apply(flatten entries super v#0,expression)
 net Vector := v -> net expression v
 describe Vector := v -> Describe expression FunctionApplication(

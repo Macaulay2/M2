@@ -114,6 +114,10 @@ document {
 	   ". Heidelberg: Springer. pp 159-164"}
         },
 	
+	PARA { 
+	    "and works in arbitrary characteristic.",
+	    },
+
 	PARA {
 	    "The next example constructs a cyclic group of order 2
 	    as a set of two affine points. Then it introduces an
@@ -155,7 +159,11 @@ document {
 	    generators for the Hilbert ideal."
 	    },
     	 Caveat => "The generators of the Hilbert ideal computed
-	 by this function need not be invariant."	    
+	 by this function need not be invariant.
+	 
+	 Although this method could in principle be used for any group
+	 that can be represented as an affine variety, it tends to be
+	 slow; other specialized methods are likely to be faster."
 	    }
 
 

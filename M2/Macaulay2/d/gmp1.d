@@ -6,6 +6,7 @@ header "";
 --Functions in this file may make calls to stdio.
 
 use gmp;
+use ballarith;
 use stdio;
 use err;
 
@@ -173,6 +174,29 @@ export tostringRRi(x:RRi):string := concatenate(
         if isEmpty(x) then " (an empty interval)" else ""
        	));  
 
+
+export tostringRRiforCCi(x:RRi):string := concatenate( 
+    array(string)(
+       	"[",
+       	tostringRR(leftRR(x)),
+       	",",
+       	tostringRR(rightRR(x)),
+       	"]"
+       	));  
+--tostringRRiforCCipointer = tostringRRiforCCi;  
+
+export tostringCCi(x:CCi):string := (
+     re := tostringRRiforCCi(x.re);
+     im := tostringRRiforCCi(x.im) + "*ii";
+     r := (
+	 if isZero(x.im) then re
+	 else if isZero(x.re) then im
+	 else re + "+" + im);
+     if isEmpty(x) then r = r + " (an empty interval)";
+     r
+);
+tostringCCipointer = tostringCCi;  
+
 numericstr(prec:ulong, str:string, ng:bool):string := (
     "numeric(" + tostring(prec) + ", " + if ng then "-" else "" + str + ")");
 
@@ -233,6 +257,14 @@ export toExternalString(z:CC):string := concatenate(array(string)(
 	  toExternalString(imaginaryPart(z)),
 	  ")"
 	  ));
+
+export toExternalString(z:CCi):string := concatenate(array(string)(
+     	  "toCCi(",
+       toExternalString(z.re),
+       ",",
+       toExternalString(z.im),
+       ")"
+       ));
 
 
 export (o:file) << (s:charstarOrNull) : file := o << if s == null() then "(null)" else tostring(s);

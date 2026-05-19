@@ -82,11 +82,12 @@ INTERFACE = \
 	aring-zz-flint \
 	aring-qq-flint \
 	aring-zzp-flint \
-	aring-RRi \
 	aring-RR \
 	aring-CC \
 	aring-RRR \
 	aring-CCC \
+	aring-RRi \
+	aring-CCi \
 	aring-tower \
 	aring-gf-flint-big \
 	aring-gf-flint \

@@ -1420,7 +1420,7 @@ bott(List, ZZ):=(L,u)->(
      )
 
 bott(List,ZZ,ZZ,Symbol):=(L,low,high,old)->(
-     --produces the betti diagram of the tate resolution of the sheaf S_L(Q),
+     --produces the Betti diagram of the Tate resolution of the sheaf S_L(Q),
      --between the column whose index is "low" and the column whose index is "high"
      n:=#L;
      r:=high-low-n;
@@ -1433,7 +1433,7 @@ bott(List,ZZ,ZZ,Symbol):=(L,low,high,old)->(
      )
 
 bott(List,ZZ,ZZ):=(L,low,high)->(
-     --produces the betti diagram of the tate resolution of the sheaf S_L(Q),
+     --produces the Betti diagram of the Tate resolution of the sheaf S_L(Q),
      --between the column whose index is "low" and the column whose index is "high"
      n:=#L;
      C := for u from low-n to high list (

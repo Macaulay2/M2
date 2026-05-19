@@ -231,6 +231,8 @@ then DOCUMENTATION="html info"
 elif test "$DOCUMENTATION" = download
 then DOCUMENTATION=""
      BUILDLIST="$BUILDLIST Macaulay2-docs"
+     AC_CHECK_PROGS(GETCONF,getconf,false)
+     AS_IF([test $GETCONF = false], AC_MSG_ERROR([getconf is required]))
 else for DOCTYPE in $DOCUMENTATION
     do case $DOCTYPE in
             html|pdf)
@@ -1942,7 +1944,7 @@ complement() {
     for i in $1
     do 	case "$y" in
 	    *" $i "*) ;;
-	    *) /bin/echo -n "$i " ;;
+	    *) env echo -n "$i " ;;
 	esac
     done
     echo

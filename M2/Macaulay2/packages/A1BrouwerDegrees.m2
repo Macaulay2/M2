@@ -213,7 +213,7 @@ Node
         a package for working with A1-Brouwer degree computations and quadratic forms
     Description
         Text
-            This package is intended to allow the computation of local and global A1-Brouer degrees in both the stable and unstable settings, and for manipulations of unstable Grothendieck-Witt classes and symmetric bilinear forms including their invariants and decompositions. 
+            This package is intended to allow the computation of local and global A1-Brouwer degrees in both the stable and unstable settings, and for manipulations of unstable Grothendieck-Witt classes and symmetric bilinear forms including their invariants and decompositions. 
 
             Version history: 
             

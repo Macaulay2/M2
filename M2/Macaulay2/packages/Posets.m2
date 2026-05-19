@@ -1050,7 +1050,7 @@ transitiveOrientation Graph := Poset => opts -> G -> (
         true
         );
     E := toList \ edges G;
-    E = (if opts.Random then random else identity) join(E, reverse \ E);
+    E = (if opts.Random then shuffle else identity) join(E, reverse \ E);
     orientation := new MutableHashTable from apply(E, e -> e => 0);
     k := 0;
     for e in E do if orientation#e === 0 then (

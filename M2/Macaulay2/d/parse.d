@@ -22,6 +22,7 @@ extern void err_error(struct M2_string_struct*);
 
 use nets;
 use gmp;
+use ballarith;
 use xml;
 use engine;
 use varnets;
@@ -367,6 +368,7 @@ export mutexCell := {+ v:ThreadMutex, hash:hash_t };
 
 export Expr := (
      CCcell or
+     CCicell or
      RRcell or
      RRicell or
      Boolean or

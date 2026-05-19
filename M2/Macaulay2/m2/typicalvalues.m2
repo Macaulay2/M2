@@ -152,35 +152,35 @@ typval = x -> (
 	 f := redefs#f';
 	 args := drop(drop(x,-1),1);
 	 installMethod append(prepend(f,args),last x => f');
-	 if args === sequence RR then variants#(f,Number) = f' @@ numeric
+	 if args === sequence InexactNumber then variants#(f,Number) = f' @@ numeric
 	 else if #args === 2 then (
-	     if args#0 === RR then variants#(f,Number,args#1) = (x,y) -> f'(numeric_(precision y) x,y);
-	     if args#1 === RR then variants#(f,args#0,Number) = (x,y) -> f'(x,numeric_(precision x) y);
-	     if args === (RR,RR) then variants#(f,Number,Number) = (x,y) -> f'(numeric x,numeric y); -- phew
+	     if args#0 === InexactNumber then variants#(f,Number,args#1) = (x,y) -> f'(numeric_(precision y) x,y);
+	     if args#1 === InexactNumber then variants#(f,args#0,Number) = (x,y) -> f'(x,numeric_(precision x) y);
+	     if args === (InexactNumber,InexactNumber) then variants#(f,Number,Number) = (x,y) -> f'(numeric x,numeric y); -- phew
 	     )
 	 else if #args === 3 then (
-	     if args#0 === RR then
+	     if args#0 === InexactNumber then
 		 variants#(f, Number,   args#1, args#2) =
 		 (x,y,z) -> f'(numeric(min(precision y, precision z), x), y, z);
-	     if args#1 === RR then
+	     if args#1 === InexactNumber then
 		 variants#(f, args#0, Number,   args#2) =
 		 (x,y,z) -> f'(x, numeric(min(precision x, precision z), y), z);
-	     if args#2 === RR then
+	     if args#2 === InexactNumber then
 		 variants#(f, args#0, args#1, Number)   =
 		 (x,y,z) -> f'(x, y, numeric(min(precision x, precision y), z));
-	     if args#0 === RR and args#1 === RR then
+	     if args#0 === InexactNumber and args#1 === InexactNumber then
 		 variants#(f, Number,   Number,   args#2) =
 		 (x,y,z) ->
 		     f'(numeric_(precision z) x, numeric_(precision z) y, z);
-	     if args#0 === RR and args#2 === RR then
+	     if args#0 === InexactNumber and args#2 === InexactNumber then
 	         variants#(f, Number,   args#1, Number)   =
 		 (x,y,z) ->
 		     f'(numeric_(precision y) x, y, numeric_(precision y) z);
-	     if args#1 === RR and args#2 === RR then
+	     if args#1 === InexactNumber and args#2 === InexactNumber then
 		 variants#(f, args#0, Number,   Number)   =
 		 (x,y,z) ->
 		     f'(x, numeric_(precision x) y, numeric_(precision x) z);
-	     if args === (RR, RR, RR) then
+	     if args === (InexactNumber, InexactNumber, InexactNumber) then
 		 variants#(f, Number,   Number,   Number)   =
 		 (x,y,z) -> f'(numeric x, numeric y, numeric z);
 	     );

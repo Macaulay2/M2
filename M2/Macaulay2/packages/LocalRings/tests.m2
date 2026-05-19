@@ -624,6 +624,17 @@ end--
   gens gb Iloc
 ///
 
+TEST ///
+-- promoting/lifting to/from fraction field
+S = QQ[x]
+p = ideal x
+R = S_p
+F = frac R
+assert(promote(x_R, F) === x_F)
+assert(lift(x_F, R) === x_R)
+assert not liftable(1/x, R)
+///
+
 end--
 
 --  Development stuff

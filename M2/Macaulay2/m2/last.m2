@@ -67,9 +67,8 @@ addStartFunction( () -> (
 	  if not noinitfile and getenv "HOME" =!= "" then (
 	       prefixPath = prepend(applicationDirectory()|"local/", prefixPath);
 	       setUpApplicationDirectory();
-	       makePackageIndex())))
-
-addStartFunction( () -> tallyInstalledPackages() )
+	       makePackageIndex())
+	  else tallyInstalledPackages()))
 
 addStartFunction( () -> if not noinitfile then (
 	  -- remove empty directories and dead symbolic links from the local application directory

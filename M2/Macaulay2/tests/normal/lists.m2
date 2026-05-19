@@ -18,5 +18,6 @@ assert (net i == "<|x, y, z|>"^0)
 assert (toList i === {x,y,z})
 assert (class i === AngleBarList)
 assert (delete(y, i) == <| x, z |>)
+assert (i_{0,2} == <| x, z |>)
 
 assert isTable table(0, 0, identity)

@@ -747,7 +747,7 @@ relabel (Matroid, List) := Matroid => (M, perm) -> (
 )
 relabel Matroid := Matroid => M -> (
 	E := toList(0..<#M_*);
-	relabel(M, (transpose{E, random E})/toSequence//hashTable)
+	relabel(M, (transpose{E, shuffle E})/toSequence//hashTable)
 )
 
 -- Recursively finds all permutations inducing a bijection on circuits (note: permutations(10) is already slow on a typical machine)

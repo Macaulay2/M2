@@ -255,6 +255,7 @@ raw Number := x -> x_((class x).RawRing)
 raw InexactNumber := x -> x_((ring x).RawRing)
 Number _ RawRing := (n,R) -> rawFromNumber(R,n)
 RawRingElement _ RawRing := (x,R) -> rawPromote(R,x)
+raw Constant := raw @@ numeric
 
 RawRingElement == RawRingElement := (x,y) -> x === y
 

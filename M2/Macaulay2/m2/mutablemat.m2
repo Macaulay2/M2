@@ -45,9 +45,9 @@ mutableMatrix(RingFamily,ZZ,ZZ) := o -> (R,nrows,ncols) -> mutableMatrix(default
 matrix MutableMatrix := o -> m -> map(ring m, rawMatrix raw m)
 
 clean(RR,MutableMatrix) := (epsilon,M) -> map(ring M, clean(epsilon,raw M))
-norm(RR,MutableMatrix) := (p,M) -> new RR from norm(p,raw M)
-norm(InexactField,MutableMatrix) := (p,M) -> norm(numeric(precision M, p), M)
-norm(MutableMatrix) := (M) -> new RR from norm(numeric(precision M,infinity),raw M)
+
+norm MutableMatrix := norm_infinity
+norm(Number, MutableMatrix) := lookup(norm, Number, Matrix)
 
 mutableIdentity = method(Options => {Dense => true}, TypicalValue=>MutableMatrix)
 mutableIdentity(Ring,ZZ) := o -> (R,nrows) -> 

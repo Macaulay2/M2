@@ -53,6 +53,8 @@ Ring#id = R -> map(R, R, vars R)
 
 map(RingFamily, Thing, Thing) := RingMap => opts -> (R, S, m) -> map(default R, S, m, opts)
 map(Thing, RingFamily, Thing) := RingMap => opts -> (R, S, m) -> map(R, default S, m, opts)
+map(RingFamily, Thing) := RingMap => opts -> (R, S) -> map(default R, S, opts)
+map(Thing, RingFamily) := RingMap => opts -> (R, S) -> map(R, default S, opts)
 
 map(Ring, Ring)          := RingMap => opts -> (R, S   ) -> map(R, S, matrix(R, {{}}), opts)
 map(Ring, Ring, RingMap) := RingMap => opts -> (R, S, f) -> map(R, S, matrix f,        opts)
@@ -317,7 +319,7 @@ algorithms#(kernel, RingMap) = new MutableHashTable from {
 	       assert (not chh or G#?"rawGBSetHilbertFunction log"); -- ensure the Hilbert function hint was actually used in gb.m2
 	       ideal mapback selectInSubring(1,generators G)
 	),
-
+    ZZ => (opts, f) -> if source f === ZZ then ideal char target f,
     Default => (opts, f) -> (
 	(F, R) := (target f, source f);
 	       numsame := 0;
@@ -342,7 +344,7 @@ algorithms#(kernel, RingMap) = new MutableHashTable from {
     }
 
 -- Installing hooks for kernel RingMap
-scan({Default, "AffineRing", FractionField}, strategy ->
+scan({Default, ZZ, "AffineRing", FractionField}, strategy ->
     addHook(key := (kernel, RingMap), algorithms#key#strategy, Strategy => strategy))
 
 -----------------------------------------------------------------------------

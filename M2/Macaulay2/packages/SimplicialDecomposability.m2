@@ -266,7 +266,7 @@ shellingOrder SimplicialComplex := opts -> S -> (
        if tmp != toList(0..#F-1) then error("shellingOrder: Option Permutation must be the same length as the number of facets and must be increasing consecutive integers.");
        F = F_(opts.Permutation);
    )
-   else if opts.Random then F = random F;
+   else if opts.Random then F = shuffle F;
 
    O := {};
    -- The pure case is easier, so separate it
