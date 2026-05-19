@@ -725,22 +725,7 @@ const Matrix /* or null */ *rawMatrixPromote(const FreeModule *newTarget,
 {
   try
     {
-      ring_elem a;
-      const Ring *R = f->get_ring();
-      const Ring *S = newTarget->get_ring();
-      MatrixConstructor mat(newTarget, f->n_cols());
-      Matrix::iterator i(f);
-      for (int c = 0; c < f->n_cols(); c++)
-        for (i.set(c); i.valid(); i.next())
-          if (S->promote(R, i.entry(), a))
-            mat.set_entry(i.row(), c, a);
-          else
-            {
-              ERROR("cannot promote given matrix");
-              return nullptr;
-            }
-      mat.compute_column_degrees();
-      return mat.to_matrix();
+      return f->promote(newTarget);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());

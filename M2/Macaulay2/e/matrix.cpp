@@ -326,6 +326,28 @@ const Matrix /* or null */ *Matrix::remake(const FreeModule *target) const
   return mat.to_matrix();
 }
 
+const Matrix /* or null */ *Matrix::promote(const FreeModule *target) const
+{
+  ring_elem a;
+  const Ring *R = get_ring();
+  const Ring *S = target->get_ring();
+  MatrixConstructor mat(target, n_cols());
+  Matrix::iterator i(this);
+  for (int c = 0; c < n_cols(); c++)
+    for (i.set(c); i.valid(); i.next())
+      if (S->promote(R, i.entry(), a))
+        mat.set_entry(i.row(), c, a);
+      else
+        {
+          ERROR("first error occurred while promoting matrix entry at row %d, column %d",
+                i.row(),
+                c);
+          return nullptr;
+        }
+  mat.compute_column_degrees();
+  return mat.to_matrix();
+}
+
 const Matrix /* or null */ *Matrix::make(const MonomialIdeal *mi)
 {
   const PolynomialRing *P = mi->get_ring()->cast_to_PolynomialRing();
