@@ -6,7 +6,7 @@ newPackage("XtremeMacaulay2",
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu (maybe?)",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance/"}},
-    Keywords => {"here", "are", "a", "bunch", "of", "keywords"})
+    Keywords => {"Algebraic Geometry")
 
 export {
     "xtremeList"
