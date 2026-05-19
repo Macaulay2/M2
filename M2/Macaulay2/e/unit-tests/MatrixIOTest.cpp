@@ -184,6 +184,87 @@ TEST(Matrix, concatArray)
   EXPECT_EQ(D->compare(C->cols()->degree(3), B->cols()->degree(1)), 0);
 }
 
+TEST(Matrix, directSum)
+{
+  const PolynomialRing* R = simplePolynomialRing(101, {"x", "y"});
+  const FreeModule* target = R->make_FreeModule(2);
+
+  MatrixConstructor left(target, 2);
+  left.set_entry(0, 0, R->from_long(2));
+  left.set_entry(1, 1, R->var(0));
+  left.compute_column_degrees();
+  const Matrix* A = left.to_matrix();
+
+  MatrixConstructor mid(target, 1);
+  mid.set_entry(0, 0, R->from_long(7));
+  mid.compute_column_degrees();
+  const Matrix* M = mid.to_matrix();
+
+  MatrixConstructor right(target, 2);
+  right.set_entry(1, 0, R->from_long(5));
+  right.set_entry(0, 1, R->var(1));
+  right.compute_column_degrees();
+  const Matrix* B = right.to_matrix();
+
+  const Matrix* const singleton[] = {A};
+  EXPECT_EQ(Matrix::direct_sum(1, singleton), A);
+
+  const Matrix* const matrices[] = {A, M, B};
+  const Matrix* C = Matrix::direct_sum(3, matrices);
+
+  ASSERT_NE(C, nullptr);
+  EXPECT_EQ(C->n_rows(), 6);
+  EXPECT_EQ(C->n_cols(), 5);
+
+  EXPECT_TRUE(R->is_equal(C->elem(0, 0), R->from_long(2))); // from A
+  EXPECT_TRUE(R->is_zero(C->elem(1, 0)));
+  EXPECT_TRUE(R->is_zero(C->elem(2, 0)));
+  EXPECT_TRUE(R->is_zero(C->elem(3, 0)));
+  EXPECT_TRUE(R->is_zero(C->elem(4, 0)));
+  EXPECT_TRUE(R->is_zero(C->elem(5, 0)));
+
+  EXPECT_TRUE(R->is_zero(C->elem(0, 1)));
+  EXPECT_TRUE(R->is_equal(C->elem(1, 1), R->var(0))); // from A
+  EXPECT_TRUE(R->is_zero(C->elem(2, 1)));
+  EXPECT_TRUE(R->is_zero(C->elem(3, 1)));
+  EXPECT_TRUE(R->is_zero(C->elem(4, 1)));
+  EXPECT_TRUE(R->is_zero(C->elem(5, 1)));
+
+  EXPECT_TRUE(R->is_zero(C->elem(0, 2)));
+  EXPECT_TRUE(R->is_zero(C->elem(1, 2)));
+  EXPECT_TRUE(R->is_equal(C->elem(2, 2), R->from_long(7))); // from M
+  EXPECT_TRUE(R->is_zero(C->elem(3, 2)));
+  EXPECT_TRUE(R->is_zero(C->elem(4, 2)));
+  EXPECT_TRUE(R->is_zero(C->elem(5, 2)));
+
+  EXPECT_TRUE(R->is_zero(C->elem(0, 3)));
+  EXPECT_TRUE(R->is_zero(C->elem(1, 3)));
+  EXPECT_TRUE(R->is_zero(C->elem(2, 3)));
+  EXPECT_TRUE(R->is_zero(C->elem(3, 3)));
+  EXPECT_TRUE(R->is_zero(C->elem(4, 3)));
+  EXPECT_TRUE(R->is_equal(C->elem(5, 3), R->from_long(5))); // from B
+
+  EXPECT_TRUE(R->is_zero(C->elem(0, 4)));
+  EXPECT_TRUE(R->is_zero(C->elem(1, 4)));
+  EXPECT_TRUE(R->is_zero(C->elem(2, 4)));
+  EXPECT_TRUE(R->is_zero(C->elem(3, 4)));
+  EXPECT_TRUE(R->is_equal(C->elem(4, 4), R->var(1))); // from B
+  EXPECT_TRUE(R->is_zero(C->elem(5, 4)));
+
+  const Monoid* D = R->degree_monoid();
+  EXPECT_EQ(D->compare(C->rows()->degree(0), A->rows()->degree(0)), 0);
+  EXPECT_EQ(D->compare(C->rows()->degree(1), A->rows()->degree(1)), 0);
+  EXPECT_EQ(D->compare(C->rows()->degree(2), M->rows()->degree(0)), 0);
+  EXPECT_EQ(D->compare(C->rows()->degree(3), M->rows()->degree(1)), 0);
+  EXPECT_EQ(D->compare(C->rows()->degree(4), B->rows()->degree(0)), 0);
+  EXPECT_EQ(D->compare(C->rows()->degree(5), B->rows()->degree(1)), 0);
+  EXPECT_EQ(D->compare(C->cols()->degree(0), A->cols()->degree(0)), 0);
+  EXPECT_EQ(D->compare(C->cols()->degree(1), A->cols()->degree(1)), 0);
+  EXPECT_EQ(D->compare(C->cols()->degree(2), M->cols()->degree(0)), 0);
+  EXPECT_EQ(D->compare(C->cols()->degree(3), B->cols()->degree(0)), 0);
+  EXPECT_EQ(D->compare(C->cols()->degree(4), B->cols()->degree(1)), 0);
+}
+
 TEST(Matrix, promote)
 {
   const Ring* ZZ = globalZZ;
