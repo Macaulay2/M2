@@ -176,6 +176,18 @@ doc ///
     \ \ \ \ \ [Mu] S. Mukai, Curves, $K3$ surfaces and Fano $3$-folds of genus $\leq 10$. Algebraic geometry and commutative algebra, Vol. I, 357-377, Kinokuniya, Tokyo, 1988.
 
     \ \ \ \ \ [Ve] A. Verra, The unirationality of the moduli spaces of curves of genus 14 or lower. Compos. Math. 141 (2005), no. 6, 1425-1444.
+   Text
+    The example below starts with a homogeneous coordinate ring of $\PP^6$ over a finite field and constructs a genus 14 curve of degree 18.
+   Example
+    setRandomSeed("alpha");
+    FF = ZZ/10007;
+    S = FF[u_0..u_6];
+    I = randomCurveGenus14Degree18inP6 S;
+    (dim I, degree I, genus I)
+  SeeAlso
+    canonicalCurveGenus14
+    curveGenus14Degree18inP6
+    randomCanonicalCurveGenus8with8Points
 ///
 
 doc ///
