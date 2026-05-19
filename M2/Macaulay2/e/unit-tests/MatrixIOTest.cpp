@@ -190,6 +190,50 @@ TEST(Matrix, promoteFailureReportsFirstEntry)
                "first error occurred while promoting matrix entry at row 2, column 0");
 }
 
+TEST(Matrix, liftFromPolynomialRingToCoefficientRing)
+{
+  const Ring* ZZ = globalZZ;
+  const PolynomialRing* P = degreeRing({"x"});
+
+  const FreeModule* polynomialTarget = P->make_FreeModule(3);
+  MatrixConstructor mat(polynomialTarget, 4);
+
+  mat.set_entry(0, 0, P->from_long(7));
+  mat.set_entry(2, 1, P->from_long(-3));
+  mat.set_entry(1, 3, P->from_long(11));
+  mat.compute_column_degrees();
+
+  const Matrix* M = mat.to_matrix();
+  const Matrix* lifted = M->lift(ZZ->make_FreeModule(3));
+
+  ASSERT_NE(lifted, nullptr);
+  EXPECT_EQ(lifted->get_ring(), ZZ);
+  EXPECT_EQ(lifted->n_rows(), 3);
+  EXPECT_EQ(lifted->n_cols(), 4);
+
+  EXPECT_TRUE(ZZ->is_equal(lifted->elem(0, 0), ZZ->from_long(7)));
+  EXPECT_TRUE(ZZ->is_equal(lifted->elem(2, 1), ZZ->from_long(-3)));
+  EXPECT_TRUE(ZZ->is_equal(lifted->elem(1, 3), ZZ->from_long(11)));
+  EXPECT_TRUE(ZZ->is_zero(lifted->elem(1, 1)));
+}
+
+TEST(Matrix, liftFailureReturnsNull)
+{
+  const Ring* ZZ = globalZZ;
+  const PolynomialRing* P = degreeRing({"x"});
+
+  const FreeModule* polynomialTarget = P->make_FreeModule(2);
+  MatrixConstructor mat(polynomialTarget, 1);
+  mat.set_entry(0, 0, P->var(0));
+  mat.compute_column_degrees();
+
+  const Matrix* M = mat.to_matrix();
+  EXPECT_EQ(M->lift(ZZ->make_FreeModule(2)), nullptr);
+  EXPECT_TRUE(error());
+  EXPECT_STREQ(error_message(),
+               "first error occurred while lifting matrix entry at row 0, column 0");
+}
+
 #if 0
 TEST(MatrixIO, readMsolveBig1)
 {

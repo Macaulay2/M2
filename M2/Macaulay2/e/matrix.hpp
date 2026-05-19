@@ -81,6 +81,7 @@ class Matrix : public EngineObject
   const Matrix /* or null */ *remake(const FreeModule *target) const;
 
   const Matrix /* or null */ *promote(const FreeModule *target) const;
+  const Matrix /* or null */ *lift(const FreeModule *target) const;
 
   static const Matrix *make(const MonomialIdeal *mi);
 

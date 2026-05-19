@@ -737,25 +737,13 @@ const Matrix /* or null */ *rawMatrixLift(int *success_return,
                                             const FreeModule *newTarget,
                                             const Matrix *f)
 {
+  *success_return = 0;
   try
     {
-      ring_elem a;
-      const Ring *R = f->get_ring();
-      const Ring *S = newTarget->get_ring();
-      MatrixConstructor mat(newTarget, f->n_cols());
-      Matrix::iterator i(f);
-      for (int c = 0; c < f->n_cols(); c++)
-        for (i.set(c); i.valid(); i.next())
-          if (R->lift(S, i.entry(), a))
-            mat.set_entry(i.row(), c, a);
-          else
-            {
-              // ERROR("cannot lift given matrix");
-              return nullptr;
-            }
-      mat.compute_column_degrees();
+      const Matrix *result = f->lift(newTarget);
+      if (result == nullptr) return nullptr;
       *success_return = 1;
-      return mat.to_matrix();
+      return result;
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
