@@ -8,6 +8,7 @@
 #include "BasicPolyList.hpp"
 #include "BasicPolyListParser.hpp"
 #include "relem.hpp"
+#include "error.h"
 #include "gb-f4/PolynomialList.hpp"
 #include "gb-f4/GBF4Interface.hpp"
 #include "VectorArithmetic.hpp"
@@ -137,6 +138,56 @@ TEST(Matrix, entriesFromSparseColumns)
               << "entry (" << r << ", " << c << ")";
         }
     }
+}
+
+TEST(Matrix, promote)
+{
+  const Ring* ZZ = globalZZ;
+  const PolynomialRing* P = degreeRing({"x"});
+
+  const FreeModule* zzTarget = ZZ->make_FreeModule(3);
+  MatrixConstructor mat(zzTarget, 4);
+
+  mat.set_entry(0, 0, ZZ->from_long(7));
+  mat.set_entry(2, 1, ZZ->from_long(-3));
+  mat.set_entry(1, 3, ZZ->from_long(11));
+  mat.compute_column_degrees();
+
+  const Matrix* M = mat.to_matrix();
+  const FreeModule* polynomialTarget = P->make_FreeModule(3);
+  const Matrix* promoted = M->promote(polynomialTarget);
+
+  ASSERT_NE(promoted, nullptr);
+  EXPECT_EQ(promoted->rows(), polynomialTarget);
+  EXPECT_EQ(promoted->get_ring(), P);
+  EXPECT_EQ(promoted->n_rows(), 3);
+  EXPECT_EQ(promoted->n_cols(), 4);
+
+  EXPECT_TRUE(P->is_equal(promoted->elem(0, 0), P->from_long(7)));
+  EXPECT_TRUE(P->is_equal(promoted->elem(2, 1), P->from_long(-3)));
+  EXPECT_TRUE(P->is_equal(promoted->elem(1, 3), P->from_long(11)));
+  EXPECT_TRUE(P->is_zero(promoted->elem(1, 1)));
+}
+
+TEST(Matrix, promoteFailureReportsFirstEntry)
+{
+  const Ring* ZZ = globalZZ;
+  const PolynomialRing* P = degreeRing({"x"});
+
+  const FreeModule* polynomialTarget = P->make_FreeModule(3);
+  MatrixConstructor mat(polynomialTarget, 2);
+
+  mat.set_entry(2, 0, P->from_long(7));
+  mat.set_entry(0, 1, P->from_long(11));
+  mat.compute_column_degrees();
+
+  const Matrix* M = mat.to_matrix();
+  const Matrix* promoted = M->promote(ZZ->make_FreeModule(3));
+
+  EXPECT_EQ(promoted, nullptr);
+  EXPECT_TRUE(error());
+  EXPECT_STREQ(error_message(),
+               "first error occurred while promoting matrix entry at row 2, column 0");
 }
 
 #if 0
