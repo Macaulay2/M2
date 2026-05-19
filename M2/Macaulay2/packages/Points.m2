@@ -726,6 +726,15 @@ doc ///
      In version 3.0, F. Galetto and J.W. Skelton added code to
      compute ideals of fat points and projective points using
      the Buchberger-Moeller algorithm.
+    Example
+     R = QQ[x,y,z]
+     M = matrix {{1,0,0,1}, {0,1,0,1}, {0,0,1,1}}
+     (inG,G) = projectivePoints(M,R)
+     monomialIdeal G == inG
+   SeeAlso
+    randomPointsMat
+    projectivePoints
+    projectiveFatPoints
 ///
 
 --documentation for the code for points in projective space
@@ -904,6 +913,10 @@ doc ///
     Text
      Default is false, in which case the first (up to) r+1 points
      returned are the standard simplex; if true, all the points are random.
+    Example
+     S = ZZ/11[vars(0..2)]
+     setRandomSeed 0
+     randomPointsMat(S,3, AllRandom=>true)
    SeeAlso
     randomPointsMat
 ///
@@ -1155,6 +1168,13 @@ doc ///
    Description
     Text
      Default is true, in which case the function removes zero columns and duplicate columns giving rise to the same projective point.
+    Example
+     R = QQ[x,y,z]
+     Mbad = matrix {{1,2,0,1}, {0,0,0,1}, {0,0,0,1}}
+     Mclean = matrix {{1,1}, {0,1}, {0,1}}
+     (inG1,G1) = projectivePoints(Mbad,R)
+     (inG2,G2) = projectivePoints(Mclean,R)
+     (inG1 == inG2, G1 == G2)
    SeeAlso
     projectivePoints
 ///
@@ -1167,6 +1187,13 @@ doc ///
    Description
     Text
      Default is true, in which case the function removes zero columns and duplicate columns giving rise to the same projective point.
+    Example
+     R = QQ[x,y,z]
+     Mbad = matrix {{1,2,0,1}, {0,0,0,1}, {0,0,0,1}}
+     Mclean = matrix {{1,1}, {0,1}, {0,1}}
+     (inG1,G1) = projectivePoints(Mbad,R)
+     (inG2,G2) = projectivePoints(Mclean,R)
+     (inG1 == inG2, G1 == G2)
    SeeAlso
     projectivePoints
 ///
@@ -1180,6 +1207,15 @@ doc ///
     Text
      Default is true, in which case the function removes zero columns and duplicate columns giving rise to the same projective point.
      For duplicate points, a single instance is retained with the largest multiplicity.
+    Example
+     R = QQ[x,y,z]
+     Mbad = matrix {{1,2,0,1}, {0,0,0,1}, {0,0,0,1}}
+     Mclean = matrix {{1,1}, {0,1}, {0,1}}
+     mults = {1,3,5,2}
+     multsClean = {3,2}
+     (inF1,GF1) = projectiveFatPoints(Mbad,mults,R)
+     (inF2,GF2) = projectiveFatPoints(Mclean,multsClean,R)
+     (inF1 == inF2, GF1 == GF2)
    SeeAlso
     projectiveFatPoints
 ///

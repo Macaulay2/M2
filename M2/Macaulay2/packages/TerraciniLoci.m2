@@ -142,6 +142,13 @@ doc ///
 
       This package exports one method, @TO terraciniLocus@, for computing the
       ideals of these varieties.
+    Example
+      R = QQ[s,t]
+      S = QQ[x_0..x_3]
+      f = map(R, S, {s^3, s^2*t, s*t^2, t^3})
+      terraciniLocus(2, f)
+  SeeAlso
+    terraciniLocus
   Citation
       @article {MR5026390,
           AUTHOR = {Galuppi, Francesco and Santarsiero, Pierpaola and Torrance,
