@@ -150,7 +150,7 @@ Node
       F = gateSystem(
           matrix{{A,B,C,D}},
           matrix{{X,Y}},
-          matrix{{A*(X-1)^2-B}, {C*(Y+2)^2+D}}
+          matrix{{A*(X-1)^2+B}, {C*(Y+2)^2+D}}
           ); -- Define a parameter system with parameters A,B,C,D in variables X,Y
       p0 = point{{1,1,1,1}}; -- a parameter point
       sols = solveFamily(p0, F, NumberOfNodes=>3) -- 4 solutions for a fixed parameter p0
