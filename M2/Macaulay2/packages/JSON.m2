@@ -274,6 +274,7 @@ doc ///
     [toJSON,NameSeparator]
     [toJSON,Sort]
     Indent
+    IndentLevel
     ValueSeparator
     NameSeparator
   Headline
@@ -304,6 +305,12 @@ doc ///
       number of spaces to indent for each level of indentation.
     Example
       toJSON(x, Indent => 2)
+    Text
+      The @TT "IndentLevel"@ option is used internally to track the current
+      indentation depth.  It can also be set directly to format output as if
+      it were already nested inside a larger JSON value.
+    Example
+      toJSON(x, Indent => 2, IndentLevel => 1)
     Text
       Alternatively, the @TT "Indent"@ option can be a string corresponding to
       the indentation used for each level.
