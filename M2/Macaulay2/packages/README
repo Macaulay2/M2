@@ -1,17 +1,29 @@
+Package documentation in this directory usually lives in the package file
+`Foo.m2` and sometimes in an auxiliary directory `Foo/`. To browse the
+distributed packages from within Macaulay2, use:
+
+    help "packages provided with Macaulay2"
+
+To open a package landing page directly, use:
+
+    viewHelp "Foo"
+
+If a package has additional auxiliary files, examples, or supporting data, they
+will generally be stored in a directory whose name matches the package.
+
 To add your package to Macaulay2:
 
-First test that your package works by running "installPackage" and "check" on
-it.  View the documentation with "viewHelp" to make sure it looks sensible,
+First test that your package works by running `installPackage` and `check` on
+it.  View the documentation with `viewHelp` to make sure it looks sensible,
 paging through each node by pressing the "next" button repeatedly.
 
 Then create an account on github.com and fork our repository
-https://github.com/Macaulay2/M2, clone your copy of M2, and add your package
-file to this "packages" directory, along with its directory of auxiliary files,
-if any.  Also add a line to the end of the file =distributed-packages
-containing the name of your package.  Add those changes, commit them, and push
-them to your repository.  Then on the github page for your copy of M2, push the
-button called "Pull request".  That will notify us that you'd like your
-addition to become part of Macaulay2/M2.
+https://github.com/Macaulay2/M2, clone your copy of the `development` branch of
+M2, and add your package file to this "packages" directory, along with its
+directory of auxiliary files, if any.  Also add a line to the end of the file
+`=distributed-packages` containing the name of your package.  Add those
+changes, commit them, and push them to your repository.  Then open a pull
+request against `Macaulay2/M2:development`.
 
 More advanced users will want to add their new package to a new branch of the
 repository.

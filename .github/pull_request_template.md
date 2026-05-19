@@ -4,7 +4,7 @@ Describe the documentation change and the main files it touches.
 
 ## Related Issue
 
-Link the issue in `aalmousa/M2` that this PR addresses.
+Link the issue in `Macaulay2/M2` or `aalmousa/M2` that this PR addresses.
 
 ## Verification
 
@@ -13,8 +13,6 @@ html, or any verification you could not complete.
 
 ## Notes
 
-- For the documentation refresh workflow in this fork, open PRs against
-  `doc-updates`, not `master`.
 - Keep the scope focused. Split unrelated documentation work into separate PRs.
-- See `DocumentationGuide.md` and `DocumentationStyleGuide.md` for the current
-  workflow and documentation standards.
+- See `README.md` and the Macaulay2 wiki for the current contribution
+  workflow.

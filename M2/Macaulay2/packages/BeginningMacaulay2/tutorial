@@ -2,10 +2,11 @@
 Key
      "BeginningMacaulay2"
 Headline
-     Mathematicians' Introduction to  Macaulay2
+     introductory tutorial for new Macaulay2 users
 Description
      Text
-	  We assume you've installed {\em Macaulay2} and can type
+	  This tutorial is a first stop for new users. We assume you've
+	  installed {\em Macaulay2} and can type
      Code
           EXAMPLE { PRE ///M2/// }
      Text
@@ -16,7 +17,7 @@ Description
 		  newline, "Type `help` to see useful commands")}
      Text
           We suggest you do that now, so that you can experiment while you read
-	  this tutorial!
+	  through the examples in this tutorial.
 
 
      Code
