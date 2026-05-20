@@ -8,6 +8,15 @@ needs "methods.m2"
 needs "nets.m2"
 
 -----------------------------------------------------------------------------
+-- Global variables
+
+debggerPrintCarets = true
+debggerPrintLineNumbers = true
+
+-----------------------------------------------------------------------------
+
+
+-----------------------------------------------------------------------------
 -- code
 -----------------------------------------------------------------------------
 
@@ -169,11 +178,17 @@ dedupMethods = L -> (
 	    L#i = join(tag, L#i)));
     toList L)
 
-code = method(Dispatch => Thing)
-code Nothing    := identity
-code FilePosition := x -> (
+code = method(
+    Dispatch => Thing,
+    Options => {
+	PrintCaret => true,
+	PrintLineNum => true
+    }
+)
+code Nothing := opt -> identity
+code FilePosition := opt -> x -> (
     filename := x#0; start := x#1; stop := x#3 ?? x#1;
-     (
+     (	 
 	  wp := set characters " \t\r);";
 	  file := (
 	       if match("startup\\.m2\\.in$", filename) then startupString
@@ -193,11 +208,11 @@ code FilePosition := x -> (
 	       );
 	  file = lines file;
 	  if #file < stop then error("line number ",toString stop, " not found in file ", filename);
-	  DIV splice { codeAddress(x), codeContent(PrintCaret => false, PrintLineNum => false, x, start, stop, file) }
+	  DIV splice { codeAddress(x), codeContent(PrintCaret => debggerPrintCarets, PrintLineNum => debggerPrintLineNumbers, x, start, stop, file) }
 	  ))
-code Symbol     :=
-code Pseudocode := s -> code locate s
-code Sequence   := s -> (
+code Symbol     := opt -> ()
+code Pseudocode := opt -> s -> code locate s
+code Sequence   := opt -> s -> (
     key := select(s, x -> not instance(x, Option));
     -- handle strategies
     mesg := "-- code for method: ";
@@ -214,10 +229,10 @@ code Sequence   := s -> (
     if func =!= null or (func = lookup key) =!= null
     then DIV { DIV { mesg, formatDocumentTag s }, codeFunction(s, func, 0) }
     else "-- no method function found: " | formatDocumentTag key)
-code Function   := f -> codeFunction(null, f, 0)
-code Command    := C -> code C#0
-code List       := L -> DIV between_(HR{}) dedupMethods apply(L, code)
-code ZZ         := i -> code previousMethodsFound#i
+code Function   := opt -> f -> codeFunction(null, f, 0)
+code Command    := opt -> C -> code C#0
+code List       := opt -> L -> DIV between_(HR{}) dedupMethods apply(L, code)
+code ZZ         := opt -> i -> code previousMethodsFound#i
 
 -----------------------------------------------------------------------------
 -- edit
