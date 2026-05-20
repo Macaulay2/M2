@@ -6,7 +6,26 @@ Node
     Numerical algebraic geometry
   Description
     Text
-      @BOLD "Quick start: Solving a system of equations"@
+ 	In this tutorial we introduce basics of numerical algebraic geometry
+	to solve systems of polynomial equations, and useful numerical Macaulay2 packages. 
+	The sections are:
+
+	A.  Homotopy continuation
+
+	B.  Witness sets and numerical irreducible decomposition
+
+	C.  Monodromy method
+
+	D.  Numerical certification
+
+	E.  Numerical implicitization 
+
+
+
+
+
+    Text
+       @BOLD "Quick start: Solving a system of equations"@
 
       Suppose that you would like to solve a system of polynomial equations (polynomial system).
       Using Macaulay2, one can simply run the following:
