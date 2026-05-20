@@ -537,7 +537,8 @@ class Ring : public MutableEngineObject
   /// vector operations ////////////////////
   //////////////////////////////////////////
   // These routines all act on linked lists
-  // of vecterm's, sorted by descending component.
+  // of vecterm's, sorted by descending component;
+  // zero-coefficient entries are omitted.
   // We always assume that ringelem's are immutable:
   // The same value might be shared in several vecterms.
   //

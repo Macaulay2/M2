@@ -7,7 +7,9 @@
  * @note AI-generated documentation. Verify against the source before relying on it.
  *
  * Implements the `vec` (sparse `(component, ring_elem)` linked
- * list of `vecterm` nodes) methods declared on `Ring`.
+ * list of `vecterm` nodes, kept in strictly decreasing order of
+ * `comp` with zero-coefficient entries omitted) methods declared
+ * on `Ring`.
  * Construction / lifecycle: `new_vec`, `remove_vec_node`,
  * `make_vec`, `make_vec_from_array`, `e_sub_i`, `copy_vec`,
  * `remove_vec`. Inspection / traversal: `is_equal`,

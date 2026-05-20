@@ -295,8 +295,9 @@ class Matrix : public EngineObject
    *
    * @details Constructed in a "no column" state (`col == -1`, `v == nullptr`)
    * and then `set(col)` aims it at a specific column; `next()`
-   * advances through that column's sparse `vec` list. Read-only by
-   * design --- the matrix itself is immutable.
+   * advances through that column's sparse `vec` list (decreasing
+   * row order; zero entries are not present). Read-only by design
+   * --- the matrix itself is immutable.
    */
   class iterator : public our_new_delete
   {
@@ -328,7 +329,8 @@ class Matrix : public EngineObject
    * @details Simpler companion to `iterator`: holds a raw `const vecterm*`
    * cursor, increments it with `operator++`, dereferences with
    * `operator*`, and ends at `nullptr`. Suitable for range-for over
-   * a single column's terms.
+   * a single column's terms (decreasing row order; zero entries are
+   * not present).
    */
   class column_iterator
   {

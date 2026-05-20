@@ -161,7 +161,9 @@ struct Nterm
 };
 
 typedef struct vecterm *vec;
-/* Implements a linked list of module monomials along with coefficients */
+/* Implements a linked list of module monomials along with coefficients.
+   Nodes are kept in strictly decreasing order of `comp`; zero-coefficient
+   entries are omitted. */
 // TODO: why is this garbage collected?
 struct vecterm : public our_new_delete
 {
